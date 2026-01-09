@@ -1,8 +1,4 @@
-import { BattleStyle } from "#enums/battle-style";
-import { UiMode } from "#enums/ui-mode";
-import { CommandPhase } from "#phases/command-phase";
 import { TitlePhase } from "#phases/title-phase";
-import { TurnInitPhase } from "#phases/turn-init-phase";
 import type { GameManager } from "#test/test-utils/game-manager";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
 import type { SessionSaveData } from "#types/save-data";
@@ -55,33 +51,9 @@ export class ReloadHelper extends GameManagerHelper {
       );
       this.game.scene.modifiers = [];
     }
-    titlePhase.loadSaveSlot(-1); // Load the desired session data
-    this.game.phaseInterceptor.shiftPhase(); // Loading the save slot also ended TitlePhase, clean it up
+    await titlePhase["loadSaveSlot"](0); // Load the desired session data
 
-    // Run through prompts for switching Pokemon, copied from classicModeHelper.ts
-    if (this.game.scene.battleStyle === BattleStyle.SWITCH) {
-      this.game.onNextPrompt(
-        "CheckSwitchPhase",
-        UiMode.CONFIRM,
-        () => {
-          this.game.setMode(UiMode.MESSAGE);
-          this.game.endPhase();
-        },
-        () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase),
-      );
-
-      this.game.onNextPrompt(
-        "CheckSwitchPhase",
-        UiMode.CONFIRM,
-        () => {
-          this.game.setMode(UiMode.MESSAGE);
-          this.game.endPhase();
-        },
-        () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase),
-      );
-    }
-
-    await this.game.phaseInterceptor.to(CommandPhase);
+    await this.game.phaseInterceptor.to("CommandPhase");
     console.log("==================[New Turn (Reloaded)]==================");
   }
 }

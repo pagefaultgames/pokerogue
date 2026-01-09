@@ -10,6 +10,7 @@ import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { speciesStarterCosts } from "#balance/starters";
 import { bypassLogin, isBeta, isDev } from "#constants/app-constants";
 import { EntryHazardTag } from "#data/arena-tag";
+import { getSerializedDailyRunConfig, parseDailySeed } from "#data/daily-seed/daily-seed-utils";
 import { allMoves, allSpecies } from "#data/data-lists";
 import type { Egg } from "#data/egg";
 import { pokemonFormChanges } from "#data/pokemon-forms";
@@ -76,6 +77,7 @@ import { applyChallenges } from "#utils/challenge-utils";
 import { executeIf, fixedInt, NumberHolder, randInt, randSeedItem } from "#utils/common";
 import { decrypt, encrypt } from "#utils/data";
 import { getEnumKeys } from "#utils/enums";
+import { getSaveDataLocalStorageKey } from "#utils/game-data-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import { AES, enc } from "crypto-js";
@@ -227,7 +229,11 @@ export class GameData {
 
       localStorage.setItem(`data_${loggedInUser?.username}`, encrypt(systemData, bypassLogin));
 
-      if (!bypassLogin) {
+      if (bypassLogin) {
+        globalScene.ui.savingIcon.hide();
+
+        resolve(true);
+      } else {
         pokerogueApi.savedata.system.update({ clientSessionId }, systemData).then(error => {
           globalScene.ui.savingIcon.hide();
           if (error) {
@@ -240,10 +246,6 @@ export class GameData {
           }
           resolve(true);
         });
-      } else {
-        globalScene.ui.savingIcon.hide();
-
-        resolve(true);
       }
     });
   }
@@ -256,7 +258,9 @@ export class GameData {
         return resolve(false);
       }
 
-      if (!bypassLogin) {
+      if (bypassLogin) {
+        this.initSystem(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`)!, bypassLogin)).then(resolve); // TODO: is this bang correct?
+      } else {
         pokerogueApi.savedata.system.get({ clientSessionId }).then(saveDataOrErr => {
           if (
             typeof saveDataOrErr === "number"
@@ -289,8 +293,6 @@ export class GameData {
             cachedSystem ? AES.decrypt(cachedSystem, saveKey).toString(enc.Utf8) : undefined,
           ).then(resolve);
         });
-      } else {
-        this.initSystem(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`)!, bypassLogin)).then(resolve); // TODO: is this bang correct?
       }
     });
   }
@@ -802,6 +804,7 @@ export class GameData {
       seed: globalScene.seed,
       playTime: globalScene.sessionPlayTime,
       gameMode: globalScene.gameMode.modeId,
+      dailyConfig: getSerializedDailyRunConfig(),
       party: globalScene.getPlayerParty().map(p => new PokemonData(p)),
       enemyParty: globalScene.getEnemyParty().map(p => new PokemonData(p)),
       modifiers: globalScene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
@@ -825,57 +828,45 @@ export class GameData {
     } as SessionSaveData;
   }
 
-  async getSession(slotId: number): Promise<SessionSaveData | null> {
-    const { promise, resolve, reject } = Promise.withResolvers<SessionSaveData | null>();
+  async getSession(slotId: number): Promise<SessionSaveData | undefined> {
+    // TODO: Do we need this fallback anymore?
     if (slotId < 0) {
-      resolve(null);
-      return promise;
+      return;
     }
-    const handleSessionData = async (sessionDataStr: string) => {
-      try {
-        const sessionData = this.parseSessionData(sessionDataStr);
-        resolve(sessionData);
-      } catch (err) {
-        reject(err);
+
+    // Check local storage for the cached session data
+    if (bypassLogin || localStorage.getItem(getSaveDataLocalStorageKey(slotId))) {
+      const sessionData = localStorage.getItem(getSaveDataLocalStorageKey(slotId));
+      if (!sessionData) {
+        console.error("No session data found!");
         return;
       }
-    };
-
-    if (!bypassLogin && !localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`)) {
-      const response = await pokerogueApi.savedata.session.get({ slot: slotId, clientSessionId });
-
-      if (!response || response?.length === 0 || response?.[0] !== "{") {
-        console.error(response);
-        resolve(null);
-        return promise;
-      }
-
-      localStorage.setItem(
-        `sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`,
-        encrypt(response, bypassLogin),
-      );
-
-      await handleSessionData(response);
-      return promise;
+      return this.parseSessionData(decrypt(sessionData, bypassLogin));
     }
-    const sessionData = localStorage.getItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
-    if (sessionData) {
-      await handleSessionData(decrypt(sessionData, bypassLogin));
-      return promise;
+
+    // Ask the server API for the save data and store it in localstorage
+    const response = await pokerogueApi.savedata.session.get({ slot: slotId, clientSessionId });
+
+    // TODO: This is a far cry from proper JSON validation
+    if (response == null || response.length === 0 || response.charAt(0) !== "{") {
+      console.error("Invalid save data JSON detected!", response);
+      return;
     }
-    resolve(null);
-    return promise;
+
+    localStorage.setItem(getSaveDataLocalStorageKey(slotId), encrypt(response, bypassLogin));
+
+    return this.parseSessionData(response);
   }
 
   async renameSession(slotId: number, newName: string): Promise<boolean> {
     if (slotId < 0) {
       return false;
     }
+    // TODO: Why do we consider renaming to an empty string successful if it does nothing?
     if (newName === "") {
       return true;
     }
-    const sessionData: SessionSaveData | null = await this.getSession(slotId);
-
+    const sessionData = await this.getSession(slotId);
     if (!sessionData) {
       return false;
     }
@@ -889,10 +880,7 @@ export class GameData {
     const trainerId = this.trainerId;
 
     if (bypassLogin) {
-      localStorage.setItem(
-        `sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`,
-        encrypt(updatedDataStr, bypassLogin),
-      );
+      localStorage.setItem(getSaveDataLocalStorageKey(slotId), encrypt(updatedDataStr, bypassLogin));
       return true;
     }
 
@@ -904,175 +892,169 @@ export class GameData {
     if (response) {
       return false;
     }
-    localStorage.setItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`, encrypted);
+    localStorage.setItem(getSaveDataLocalStorageKey(slotId), encrypted);
     const success = await updateUserInfo();
     return !(success !== null && !success);
   }
 
-  async loadSession(slotId: number, sessionData?: SessionSaveData): Promise<boolean> {
-    const { promise, resolve, reject } = Promise.withResolvers<boolean>();
-    try {
-      const initSessionFromData = (fromSession: SessionSaveData) => {
-        if (isBeta || isDev) {
-          try {
-            console.debug(
-              this.parseSessionData(
-                JSON.stringify(fromSession, (_, v: any) => (typeof v === "bigint" ? v.toString() : v)),
-              ),
-            );
-          } catch (err) {
-            console.debug("Attempt to log session data failed:", err);
-          }
-        }
+  /**
+   * Load stored session data and re-initialize the game with its contents.
+   * @param slotIndex - The 0-indexed position of the save slot to load.
+   *   Values `< 0` are considered invalid.
+   * @returns A Promise that resolves with whether the session load succeeded
+   * (i.e. whether a save in the given slot exists)
+   */
+  public async loadSession(slotIndex: number): Promise<boolean> {
+    const sessionData = await this.getSession(slotIndex);
+    if (!sessionData) {
+      return false;
+    }
+    this.initSessionFromData(sessionData);
+    return true;
+  }
 
-        globalScene.gameMode = getGameMode(fromSession.gameMode || GameModes.CLASSIC);
-        if (fromSession.challenges) {
-          globalScene.gameMode.challenges = fromSession.challenges.map(c => c.toChallenge());
-        }
-
-        globalScene.setSeed(fromSession.seed || globalScene.game.config.seed[0]);
-        globalScene.resetSeed();
-
-        console.log("Seed:", globalScene.seed);
-
-        globalScene.sessionPlayTime = fromSession.playTime || 0;
-        globalScene.lastSavePlayTime = 0;
-
-        const loadPokemonAssets: Promise<void>[] = [];
-
-        const party = globalScene.getPlayerParty();
-        party.splice(0, party.length);
-
-        for (const p of fromSession.party) {
-          const pokemon = p.toPokemon() as PlayerPokemon;
-          pokemon.setVisible(false);
-          loadPokemonAssets.push(pokemon.loadAssets(false));
-          party.push(pokemon);
-        }
-
-        Object.keys(globalScene.pokeballCounts).forEach((key: string) => {
-          globalScene.pokeballCounts[key] = fromSession.pokeballCounts[key] || 0;
-        });
-        if (Overrides.POKEBALL_OVERRIDE.active) {
-          globalScene.pokeballCounts = Overrides.POKEBALL_OVERRIDE.pokeballs;
-        }
-
-        globalScene.money = Math.floor(fromSession.money || 0);
-        globalScene.updateMoneyText();
-
-        if (globalScene.money > this.gameStats.highestMoney) {
-          this.gameStats.highestMoney = globalScene.money;
-        }
-
-        globalScene.score = fromSession.score;
-        globalScene.updateScoreText();
-
-        globalScene.mysteryEncounterSaveData = new MysteryEncounterSaveData(fromSession.mysteryEncounterSaveData);
-
-        globalScene.newArena(fromSession.arena.biome, fromSession.playerFaints);
-
-        const battleType = fromSession.battleType ?? BattleType.WILD;
-        const battle = globalScene.newBattle(fromSession);
-        battle.enemyLevels = fromSession.enemyParty.map(p => p.level);
-
-        globalScene.arena.init();
-
-        fromSession.enemyParty.forEach((enemyData, e) => {
-          const enemyPokemon = enemyData.toPokemon(
-            battleType,
-            e,
-            fromSession.trainer?.variant === TrainerVariant.DOUBLE,
-          ) as EnemyPokemon;
-          battle.enemyParty[e] = enemyPokemon;
-          if (battleType === BattleType.WILD) {
-            battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);
-          }
-
-          loadPokemonAssets.push(enemyPokemon.loadAssets());
-        });
-
-        globalScene.arena.weather = fromSession.arena.weather;
-        globalScene.arena.eventTarget.dispatchEvent(
-          new WeatherChangedEvent(
-            WeatherType.NONE,
-            globalScene.arena.weather?.weatherType!,
-            globalScene.arena.weather?.turnsLeft!,
-            globalScene.arena.weather?.maxDuration!,
-          ),
-        ); // TODO: is this bang correct?
-
-        globalScene.arena.terrain = fromSession.arena.terrain;
-        globalScene.arena.eventTarget.dispatchEvent(
-          new TerrainChangedEvent(
-            TerrainType.NONE,
-            globalScene.arena.terrain?.terrainType!,
-            globalScene.arena.terrain?.turnsLeft!,
-            globalScene.arena.terrain?.maxDuration!,
-          ),
-        ); // TODO: is this bang correct?
-
-        globalScene.arena.playerTerasUsed = fromSession.arena.playerTerasUsed;
-
-        globalScene.arena.tags = fromSession.arena.tags;
-        if (globalScene.arena.tags) {
-          for (const tag of globalScene.arena.tags) {
-            if (tag instanceof EntryHazardTag) {
-              const { tagType, side, turnCount, maxDuration, layers, maxLayers } = tag as EntryHazardTag;
-              globalScene.arena.eventTarget.dispatchEvent(
-                new TagAddedEvent(tagType, side, turnCount, maxDuration, layers, maxLayers),
-              );
-            } else {
-              globalScene.arena.eventTarget.dispatchEvent(
-                new TagAddedEvent(tag.tagType, tag.side, tag.turnCount, tag.maxDuration),
-              );
-            }
-          }
-        }
-
-        globalScene.arena.positionalTagManager.tags = fromSession.arena.positionalTags.map(tag =>
-          loadPositionalTag(tag),
+  // TODO: This needs a giant refactor and overhaul
+  private async initSessionFromData(fromSession: SessionSaveData): Promise<void> {
+    if (isBeta || isDev) {
+      try {
+        console.debug(
+          this.parseSessionData(JSON.stringify(fromSession, (_, v: any) => (typeof v === "bigint" ? v.toString() : v))),
         );
-
-        if (globalScene.modifiers.length > 0) {
-          console.warn("Existing modifiers not cleared on session load, deleting...");
-          globalScene.modifiers = [];
-        }
-        for (const modifierData of fromSession.modifiers) {
-          const modifier = modifierData.toModifier(Modifier[modifierData.className]);
-          if (modifier) {
-            globalScene.addModifier(modifier, true);
-          }
-        }
-        globalScene.updateModifiers(true);
-
-        for (const enemyModifierData of fromSession.enemyModifiers) {
-          const modifier = enemyModifierData.toModifier(Modifier[enemyModifierData.className]);
-          if (modifier) {
-            globalScene.addEnemyModifier(modifier, true);
-          }
-        }
-
-        globalScene.updateModifiers(false);
-
-        Promise.all(loadPokemonAssets).then(() => resolve(true));
-      };
-      if (sessionData) {
-        initSessionFromData(sessionData);
-      } else {
-        this.getSession(slotId)
-          .then(data => {
-            return data && initSessionFromData(data);
-          })
-          .catch(err => {
-            reject(err);
-            return;
-          });
+      } catch (err) {
+        console.debug("Attempt to log session data failed: ", err);
       }
-    } catch (err) {
-      reject(err);
     }
 
-    return promise;
+    globalScene.gameMode = getGameMode(fromSession.gameMode || GameModes.CLASSIC);
+    if (fromSession.challenges) {
+      globalScene.gameMode.challenges = fromSession.challenges.map(c => c.toChallenge());
+    }
+
+    globalScene.setSeed(fromSession.seed || globalScene.game.config.seed[0]);
+    globalScene.resetSeed();
+
+    console.log("Seed:", globalScene.seed);
+
+    globalScene.gameMode.trySetCustomDailyConfig(JSON.stringify(fromSession.dailyConfig));
+
+    globalScene.sessionPlayTime = fromSession.playTime || 0;
+    globalScene.lastSavePlayTime = 0;
+
+    const loadPokemonAssets: Promise<void>[] = [];
+
+    const party = globalScene.getPlayerParty();
+    party.splice(0, party.length);
+
+    for (const p of fromSession.party) {
+      const pokemon = p.toPokemon() as PlayerPokemon;
+      pokemon.setVisible(false);
+      loadPokemonAssets.push(pokemon.loadAssets(false));
+      party.push(pokemon);
+    }
+
+    Object.keys(globalScene.pokeballCounts).forEach((key: string) => {
+      globalScene.pokeballCounts[key] = fromSession.pokeballCounts[key] || 0;
+    });
+    if (Overrides.POKEBALL_OVERRIDE.active) {
+      globalScene.pokeballCounts = Overrides.POKEBALL_OVERRIDE.pokeballs;
+    }
+
+    globalScene.money = Math.floor(fromSession.money || 0);
+    globalScene.updateMoneyText();
+
+    if (globalScene.money > this.gameStats.highestMoney) {
+      this.gameStats.highestMoney = globalScene.money;
+    }
+
+    globalScene.score = fromSession.score;
+    globalScene.updateScoreText();
+
+    globalScene.mysteryEncounterSaveData = new MysteryEncounterSaveData(fromSession.mysteryEncounterSaveData);
+
+    globalScene.newArena(fromSession.arena.biome, fromSession.playerFaints);
+
+    const battle = globalScene.newBattle(fromSession);
+    const { battleType } = battle;
+    battle.enemyLevels = fromSession.enemyParty.map(p => p.level);
+
+    globalScene.arena.init();
+
+    fromSession.enemyParty.forEach((enemyData, e) => {
+      const enemyPokemon = enemyData.toPokemon(
+        battleType,
+        e,
+        fromSession.trainer?.variant === TrainerVariant.DOUBLE,
+      ) as EnemyPokemon;
+      battle.enemyParty[e] = enemyPokemon;
+      if (battleType === BattleType.WILD) {
+        battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);
+      }
+
+      loadPokemonAssets.push(enemyPokemon.loadAssets());
+    });
+
+    globalScene.arena.weather = fromSession.arena.weather;
+    globalScene.arena.eventTarget.dispatchEvent(
+      new WeatherChangedEvent(
+        WeatherType.NONE,
+        globalScene.arena.weather?.weatherType!,
+        globalScene.arena.weather?.turnsLeft!,
+        globalScene.arena.weather?.maxDuration!,
+      ),
+    ); // TODO: is this bang correct?
+
+    globalScene.arena.terrain = fromSession.arena.terrain;
+    globalScene.arena.eventTarget.dispatchEvent(
+      new TerrainChangedEvent(
+        TerrainType.NONE,
+        globalScene.arena.terrain?.terrainType!,
+        globalScene.arena.terrain?.turnsLeft!,
+        globalScene.arena.terrain?.maxDuration!,
+      ),
+    ); // TODO: is this bang correct?
+
+    globalScene.arena.playerTerasUsed = fromSession.arena.playerTerasUsed;
+
+    globalScene.arena.tags = fromSession.arena.tags;
+    if (globalScene.arena.tags) {
+      for (const tag of globalScene.arena.tags) {
+        if (tag instanceof EntryHazardTag) {
+          const { tagType, side, turnCount, maxDuration, layers, maxLayers } = tag as EntryHazardTag;
+          globalScene.arena.eventTarget.dispatchEvent(
+            new TagAddedEvent(tagType, side, turnCount, maxDuration, layers, maxLayers),
+          );
+        } else {
+          globalScene.arena.eventTarget.dispatchEvent(
+            new TagAddedEvent(tag.tagType, tag.side, tag.turnCount, tag.maxDuration),
+          );
+        }
+      }
+    }
+
+    globalScene.arena.positionalTagManager.tags = fromSession.arena.positionalTags.map(tag => loadPositionalTag(tag));
+
+    if (globalScene.modifiers.length > 0) {
+      console.warn("Existing modifiers not cleared on session load, deleting...");
+      globalScene.modifiers = [];
+    }
+    for (const modifierData of fromSession.modifiers) {
+      const modifier = modifierData.toModifier(Modifier[modifierData.className]);
+      if (modifier) {
+        globalScene.addModifier(modifier, true);
+      }
+    }
+    globalScene.updateModifiers(true);
+
+    for (const enemyModifierData of fromSession.enemyModifiers) {
+      const modifier = enemyModifierData.toModifier(Modifier[enemyModifierData.className]);
+      if (modifier) {
+        globalScene.addEnemyModifier(modifier, true);
+      }
+    }
+
+    globalScene.updateModifiers(false);
+
+    await Promise.all(loadPokemonAssets);
   }
 
   /**
@@ -1084,7 +1066,7 @@ export class GameData {
   deleteSession(slotId: number): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       if (bypassLogin) {
-        localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
+        localStorage.removeItem(getSaveDataLocalStorageKey(slotId));
         return resolve(true);
       }
 
@@ -1105,7 +1087,7 @@ export class GameData {
               loggedInUser.lastSessionSlot = -1;
             }
 
-            localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
+            localStorage.removeItem(getSaveDataLocalStorageKey(slotId));
             resolve(true);
           }
         });
@@ -1149,7 +1131,7 @@ export class GameData {
     let result: [boolean, boolean] = [false, false];
 
     if (bypassLogin) {
-      localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
+      localStorage.removeItem(getSaveDataLocalStorageKey(slotId));
       result = [true, true];
     } else {
       const sessionData = this.getSessionSaveData();
@@ -1159,13 +1141,7 @@ export class GameData {
         sessionData,
       );
 
-      if (!jsonResponse?.error) {
-        result = [true, jsonResponse?.success ?? false];
-        if (loggedInUser) {
-          loggedInUser!.lastSessionSlot = -1;
-        }
-        localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
-      } else {
+      if (jsonResponse?.error) {
         if (jsonResponse?.error?.startsWith("session out of date")) {
           globalScene.phaseManager.clearPhaseQueue();
           globalScene.phaseManager.unshiftNew("ReloadSessionPhase");
@@ -1173,6 +1149,12 @@ export class GameData {
 
         console.error(jsonResponse);
         result = [false, false];
+      } else {
+        result = [true, jsonResponse?.success ?? false];
+        if (loggedInUser) {
+          loggedInUser!.lastSessionSlot = -1;
+        }
+        localStorage.removeItem(getSaveDataLocalStorageKey(slotId));
       }
     }
 
@@ -1241,6 +1223,10 @@ export class GameData {
         case "mysteryEncounterSaveData":
           return new MysteryEncounterSaveData(v);
 
+        case "dailyConfig":
+          // make sure the config is valid
+          return parseDailySeed(JSON.stringify(v));
+
         default:
           return v;
       }
@@ -1254,7 +1240,7 @@ export class GameData {
   saveAll(skipVerification = false, sync = false, useCachedSession = false, useCachedSystem = false): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       executeIf(!skipVerification, updateUserInfo).then(success => {
-        if (success !== null && !success) {
+        if (success != null && !success) {
           return resolve(false);
         }
         if (sync) {
@@ -1681,20 +1667,7 @@ export class GameData {
       const hasNewAttr = (caughtAttr & dexAttr) !== dexAttr;
 
       if (incrementCount) {
-        if (!fromEgg) {
-          dexEntry.caughtCount++;
-          this.gameStats.pokemonCaught++;
-          if (pokemon.species.subLegendary) {
-            this.gameStats.subLegendaryPokemonCaught++;
-          } else if (pokemon.species.legendary) {
-            this.gameStats.legendaryPokemonCaught++;
-          } else if (pokemon.species.mythical) {
-            this.gameStats.mythicalPokemonCaught++;
-          }
-          if (pokemon.isShiny()) {
-            this.gameStats.shinyPokemonCaught++;
-          }
-        } else {
+        if (fromEgg) {
           dexEntry.hatchedCount++;
           this.gameStats.pokemonHatched++;
           if (pokemon.species.subLegendary) {
@@ -1706,6 +1679,19 @@ export class GameData {
           }
           if (pokemon.isShiny()) {
             this.gameStats.shinyPokemonHatched++;
+          }
+        } else {
+          dexEntry.caughtCount++;
+          this.gameStats.pokemonCaught++;
+          if (pokemon.species.subLegendary) {
+            this.gameStats.subLegendaryPokemonCaught++;
+          } else if (pokemon.species.legendary) {
+            this.gameStats.legendaryPokemonCaught++;
+          } else if (pokemon.species.mythical) {
+            this.gameStats.mythicalPokemonCaught++;
+          }
+          if (pokemon.isShiny()) {
+            this.gameStats.shinyPokemonCaught++;
           }
         }
 
