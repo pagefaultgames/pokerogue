@@ -40,6 +40,21 @@ export interface DailySeedBoss {
 }
 
 /**
+ * Configuration for a custom daily run forced wave.
+ * @example
+ * ```ts
+ * const forcedWave: DailyForcedWave = {
+ *   waveIndex: 7,
+ *   speciesId: SpeciesId.MEW,
+ * };
+ * ```
+ */
+export interface DailyForcedWave {
+  waveIndex: number;
+  speciesId: SpeciesId;
+}
+
+/**
  * Configuration for a custom daily run seed.
  * @privateRemarks
  * When updating this interface, also update:
@@ -51,6 +66,7 @@ export interface CustomDailyRunConfig {
   biome?: BiomeId;
   luck?: number;
   startingMoney?: number;
+  forcedWaves?: DailyForcedWave[];
   /** The actual seed used for the daily run. */
   seed: string;
 }
@@ -61,5 +77,6 @@ export interface CustomDailyRunConfig {
 export interface SerializedDailyRunConfig {
   boss?: DailySeedBoss;
   luck?: number;
+  forcedWaves?: DailyForcedWave[];
   seed: string;
 }

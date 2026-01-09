@@ -76,6 +76,12 @@
       "type": "integer",
       "minimum": 0
     },
+    "forcedWaves": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/forcedWave"
+      }
+    },
     "seed": {
       "type": "string"
     },
@@ -120,6 +126,21 @@
       },
       "minItems": 1,
       "maxItems": 4
+    },
+    "forcedWave": {
+      "type": "object",
+      "properties": {
+        "waveIndex": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 49
+        },
+        "speciesId": {
+          "$ref": "#/$defs/speciesId"
+        }
+      },
+      "required": ["waveIndex", "speciesId"],
+      "additionalProperties": false
     }
   },
   "required": ["seed"],

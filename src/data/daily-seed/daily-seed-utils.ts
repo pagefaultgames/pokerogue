@@ -66,11 +66,12 @@ export function getSerializedDailyRunConfig(): SerializedDailyRunConfig | undefi
     return;
   }
 
-  const { seed, boss, luck } = globalScene.gameMode.dailyConfig;
+  const { seed, boss, luck, forcedWaves } = globalScene.gameMode.dailyConfig;
   return {
     seed,
     boss,
     luck,
+    forcedWaves,
   } satisfies SerializedDailyRunConfig;
 }
 

@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { dailyBiomeWeights } from "#balance/daily-biome-weights";
 import { pokemonStarters } from "#balance/pokemon-evolutions";
 import { speciesStarterCosts } from "#balance/starters";
+import type { PokemonSpecies } from "#data/pokemon-species";
 import { BiomeId } from "#enums/biome-id";
 import { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import { MoveId } from "#enums/move-id";
@@ -207,6 +208,24 @@ export function getDailyEventSeedBoss(): DailySeedBoss | null {
 
   const bossConfig = validateDailyBossConfig(dailyConfig.boss);
   return bossConfig;
+}
+
+/**
+ * Get the species for a forced wave for custom daily run.
+ * @param waveIndex - The wave index to check
+ * @returns The {@linkcode PokemonSpecies} to use, or `null` if there is no forced wave for the given index.
+ */
+export function getDailyForcedWaveSpecies(waveIndex: number): PokemonSpecies | null {
+  if (!isDailyEventSeed()) {
+    return null;
+  }
+
+  const forcedWave = globalScene.gameMode.dailyConfig?.forcedWaves?.find(w => w.waveIndex === waveIndex);
+  if (forcedWave == null) {
+    return null;
+  }
+
+  return getPokemonSpecies(forcedWave.speciesId);
 }
 
 /**
