@@ -1,4 +1,3 @@
-// biome-ignore lint/correctness/noUnusedImports: TSDoc
 import type { HealBlockTag } from "#data/battler-tags";
 import { MoveId } from "#enums/move-id";
 
