@@ -4,12 +4,15 @@ on:
   workflow_call:
     inputs:
       shard:
+        description: The numerical index of the current shard; must be no greater than totalShards.
         required: true
         type: number
       totalShards:
+        description: The total number of shards to split tests into; should be the same across shards.
         required: true
         type: number
       coverage:
+        description: Whether to collect test coverage.
         required: false
         type: boolean
         default: false

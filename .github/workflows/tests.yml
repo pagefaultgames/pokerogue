@@ -22,7 +22,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  COVERAGE_DIR: coverage/coverage-summary.json
+  COVERAGE_FILE: coverage/coverage-summary.json
+  SHOULD_UPLOAD_COVERAGE: ${{github.event_name == 'push' && github.ref_name == 'beta'}}
 
 jobs:
   check-path-change-filter:
@@ -58,7 +59,8 @@ jobs:
     with:
       shard: ${{ matrix.shard }}
       totalShards: 5
-      coverage: true
+      # Need to duplicate condition from SHOULD_UPLOAD_COVERAGE as `env` is not valid context here
+      coverage: ${{github.event_name == 'push' && github.ref_name == 'beta'}}
 
   check-results:
     name: Check Test Results
@@ -66,11 +68,11 @@ jobs:
     needs: run-tests
     runs-on: ubuntu-latest
     if: ${{ needs.run-tests.result != 'skipped' && needs.run-tests.result != 'cancelled' }}
+
     # Only output coverage badges on pushes to beta, as that will allow us to access the gist coverage token.
-    env:
-      SHOULD_UPLOAD_COVERAGE: ${{github.event_name == 'push' && github.ref_name == 'beta'}}
     outputs:
       coverage_report: ${{ steps.output-coverage.outputs.report }}
+      # Setting this as an output bypasses env not being available inside job if statements
       should_upload_coverage: ${{ env.SHOULD_UPLOAD_COVERAGE }}
 
     steps:
@@ -92,13 +94,13 @@ jobs:
           merge-multiple: true
 
       - name: Merge blobs
-        run: pnpm test:merge-reports
+        run: pnpm test:merge-reports --coverage=${{ env.SHOULD_UPLOAD_COVERAGE }}
         id: merge-reports
 
       - name: Output coverage report
         id: output-coverage
         if: ${{ env.SHOULD_UPLOAD_COVERAGE && success()}}
-        run: echo "report="$(cat ${{ env.COVERAGE_DIR }})"" >> $GITHUB_OUTPUT
+        run: echo "report="$(cat ${{ env.COVERAGE_FILE }})"" >> $GITHUB_OUTPUT
 
   upload-coverage:
     name: Upload Test Coverage Badge
@@ -132,7 +134,7 @@ jobs:
           forceUpdate: true
 
       - name: Extract coverage percentage
-        run: echo "COVERAGE_PERCENTAGE=$(jq '.total.branches.pct' <<< "${{needs.check-results.outputs.coverage_report}}")" >> $GITHUB_ENV
+        run: echo "COVERAGE_PERCENTAGE="$(jq '.total.branches.pct' <<< "${{needs.check-results.outputs.coverage_report}}")""" >> $GITHUB_ENV
         if: ${{ needs.check-results.result == 'success' && success()}}
 
       - name: Update coverage README badge
