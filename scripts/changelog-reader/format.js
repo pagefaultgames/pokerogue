@@ -61,25 +61,21 @@ export function formatChangelog(changelog) {
  * @returns {string | null} The formatted PR or `null` if the PR is missing a changelog.
  */
 function formatPullRequest(pr) {
-  let output = `- #${pr.number}\n`;
-
   if (!pr.body) {
     return null;
   }
 
   const sanitizedBody = sanitizeBody(pr.body);
-  if (sanitizedBody) {
-    output += `  - ${sanitizedBody}\n`;
-  } else {
+  if (!sanitizedBody) {
     return null;
   }
-  output += "\n";
-  return output;
+
+  return `- #${pr.number}\n  - ${sanitizedBody}\n`;
 }
 
 /**
  * sanitize the body of a PR.
- * @param {string | null} body - The body to sanitize
+ * @param {string} body - The body to sanitize
  * @returns {string} The sanitized body.
  */
 function sanitizeBody(body) {
@@ -87,15 +83,13 @@ function sanitizeBody(body) {
     return "";
   }
 
-  /** @type {string} */
-  let result;
   // remove any comments (<!-- -->)
-  result = body.replace(/<!--[\s\S]*?-->/g, "");
+  let result = body.replace(/<!--[\s\S]*?-->/g, "");
 
   // remove section header
   result = result.replace(CONFIG.CHANGELOG_SECTION, "");
 
-  for (const filter of CONFIG.FILTER) {
+  for (const filter of CONFIG.FILTERS) {
     if (result.toLowerCase().includes(filter.toLowerCase())) {
       return "";
     }

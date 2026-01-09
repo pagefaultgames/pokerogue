@@ -27,7 +27,7 @@ export const CONFIG = {
   CHANGELOG_SECTION: "## What are the changes the user will see?",
   OUTPUT_FILE: "changelog.md",
   /** @type {string[]} */
-  FILTER: ["n/a"],
+  FILTERS: ["n/a"],
   /** @type {Category[]} */
   CATEGORIES: [
     {

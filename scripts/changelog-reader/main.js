@@ -122,18 +122,18 @@ async function getPullRequests(commits) {
       }
       const section = getChangelogSection(pr.body || "");
       /** @type {PullRequest} */
-      const PullRequest = {
+      const pullRequest = {
         number: pr.number,
         title: pr.title,
         body: section,
         labels: pr.labels.map(l => /** @type {Label} */ (l.name)),
       };
-      pullRequests.push(PullRequest);
+      pullRequests.push(pullRequest);
     } catch (error) {
       console.error(`Failed to get PR ${sha}: ${error}`);
     }
   }
-  return pullRequests.filter(Boolean);
+  return pullRequests;
 }
 
 const sectionRegex = new RegExp(`${CONFIG.CHANGELOG_SECTION}([\\s\\S]*?)(?=##)`, "i");
@@ -188,7 +188,8 @@ async function loadConfig() {
     process.exitCode = 1;
     return false;
   }
-  const [_, branch] = process.env.PR_BRANCH.split(":");
+  // Extract the "branch" part of "remote:branch"
+  const branch = process.env.PR_BRANCH.split(":")[1];
   if (!branch) {
     console.error("Failed to parse PR branch.");
     process.exitCode = 1;
