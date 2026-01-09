@@ -7,7 +7,6 @@
 
 import chalk from "chalk";
 import { Octokit } from "octokit";
-import { writeFileSafe } from "../helpers/file.js";
 import { CONFIG } from "./config.js";
 import { formatChangelog } from "./format.js";
 
@@ -75,6 +74,8 @@ async function getChangelog() {
   if (process.env.GITHUB_ACTIONS) {
     await updateDescription(output);
   } else {
+    // dynamically imported to not need `@inquirer/prompts` during the workflow
+    const { writeFileSafe } = await import("../helpers/file.js");
     writeFileSafe(CONFIG.OUTPUT_FILE, output, "utf8");
     console.log(`✔ Output written to ${CONFIG.OUTPUT_FILE} successfully!`);
   }
