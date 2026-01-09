@@ -15,7 +15,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:cov": "vitest run --silent='passed-only' --coverage",
-    "test:watch": "vitest watch--silent='passed-only'",
+    "test:watch": "vitest watch --silent='passed-only'",
     "test:silent": "vitest run --silent='passed-only'",
     "test:merge-reports": "MERGE_REPORTS=1 vitest run --merge-reports=test-results --silent='passed-only' --configLoader runner",
     "test:create": "node scripts/create-test/create-test.js",
