@@ -12,11 +12,29 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            .nvmrc
+            pnpm-lock.yaml
+            scripts
+          sparse-checkout-cone-mode: false
 
-      - uses: ./.github/actions/setup-deps
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Install Node.js dependencies
+        run: pnpm add chalk octokit
 
       - name: Generate Changelog
-        run: pnpm changelog
+        run: node scripts/changelog-reader/main.js
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.number }}
