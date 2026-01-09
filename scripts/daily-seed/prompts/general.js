@@ -11,10 +11,19 @@ import chalk from "chalk";
 import customDailyRunSchema from "../../../src/data/daily-seed/schema.json" with { type: "json" };
 import { toTitleCase, toUpperSnakeCase } from "../../helpers/casing.js";
 import { BIOMES } from "../constants.js";
+import { promptSpeciesId } from "./pokemon.js";
+
+/**
+ * @typedef {{
+ *   waveIndex: number,
+ *   speciesId: number,
+ * }} ForcedWaveConfig
+ */
 
 const ajv = new Ajv({
   allErrors: true,
 });
+
 /**
  * The validator for the {@linkcode CustomDailyRunConfig}.
  */
@@ -110,4 +119,39 @@ export async function promptSeed() {
       return true;
     },
   });
+}
+
+/**
+ * Prompt the user to enter a list of forced waves.
+ * @returns {Promise<ForcedWaveConfig[] | undefined>} A Promise that resolves with the list of forced waves.
+ */
+export async function promptForcedWaves() {
+  /** @type {ForcedWaveConfig[]} */
+  const forcedWaves = [];
+
+  async function addForcedWave() {
+    const waveIndex = await number({
+      message: "Please enter the wave to force.\nPressing ENTER will end the prompt early.",
+      min: 1,
+      max: 49,
+      validate: value => {
+        if (forcedWaves.some(wave => wave.waveIndex === value)) {
+          return chalk.red.bold("Wave already forced!");
+        }
+        return true;
+      },
+    });
+    if (!waveIndex) {
+      return;
+    }
+    const speciesId = await promptSpeciesId();
+    forcedWaves.push({ waveIndex, speciesId });
+    await addForcedWave();
+  }
+
+  await addForcedWave();
+  if (forcedWaves.length === 0) {
+    return;
+  }
+  return forcedWaves;
 }
