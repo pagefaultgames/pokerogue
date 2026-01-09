@@ -74,7 +74,7 @@ import {
 } from "#utils/common";
 import type { StarterPreferences } from "#utils/data";
 import { deepCopy, loadStarterPreferences, saveStarterPreferences } from "#utils/data";
-import { getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
+import { getDexNumber, getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
@@ -3558,8 +3558,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.lastSpecies = species!; // TODO: is this bang correct?
 
     if (species && (this.speciesStarterDexEntry?.seenAttr || this.speciesStarterDexEntry?.caughtAttr)) {
-      //mod 2000 to keep the pokedex number normal for regional variants and Bloodmoon Ursaluna
-      this.pokemonNumberText.setText(padInt(species.speciesId % 2000, 4));
+      this.pokemonNumberText.setText(padInt(getDexNumber(species.speciesId), 4));
       if (starterAttributes?.nickname) {
         const name = decodeURIComponent(escape(atob(starterAttributes.nickname)));
         this.pokemonNameText.setText(name);

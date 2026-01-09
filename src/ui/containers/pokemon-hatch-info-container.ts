@@ -11,7 +11,7 @@ import { TextStyle } from "#enums/text-style";
 import type { PlayerPokemon } from "#field/pokemon";
 import { addTextObject } from "#ui/text";
 import { padInt, rgbHexToRgba } from "#utils/common";
-import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { getDexNumber, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { argbFromRgba } from "@material/material-color-utilities";
 import { PokemonInfoContainer } from "./pokemon-info-container";
 
@@ -167,8 +167,7 @@ export class PokemonHatchInfoContainer extends PokemonInfoContainer {
     this.pokemonCandyOverlayIcon.setVisible(true);
     this.pokemonCandyCountText.setText(`×${globalScene.gameData.starterData[species.speciesId].candyCount}`);
     this.pokemonCandyCountText.setVisible(true);
-    //mod 2000 to keep the regional forms normal
-    this.pokemonNumberText.setText(padInt(species.speciesId % 2000, 4));
+    this.pokemonNumberText.setText(padInt(getDexNumber(species.speciesId), 4));
     this.pokemonNameText.setText(species.name);
 
     const hasEggMoves = species && speciesEggMoves.hasOwnProperty(species.speciesId);
