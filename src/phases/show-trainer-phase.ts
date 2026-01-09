@@ -7,9 +7,9 @@ export class ShowTrainerPhase extends BattlePhase {
   start() {
     super.start();
 
-    globalScene.trainer.setVisible(true);
-
-    globalScene.trainer.setTexture(`trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`);
+    globalScene.trainer
+      .setVisible(true)
+      .setTexture(`trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`);
 
     globalScene.tweens.add({
       targets: globalScene.trainer,

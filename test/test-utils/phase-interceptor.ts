@@ -26,12 +26,12 @@ type StateType = "running" | "interrupted" | "idling";
  * It allows tests to exert finer control over the phase system, providing logging, manual advancing, and other helpful utilities.
  */
 export class PhaseInterceptor {
-  private scene: BattleScene;
+  private readonly scene: BattleScene;
   /**
    * A log containing all phases having been executed in FIFO order. \
    * Entries are appended each time {@linkcode run} is called, and can be cleared manually with {@linkcode clearLogs}.
    */
-  public log: PhaseString[] = [];
+  public readonly log: PhaseString[] = [];
   /**
    * The interceptor's current state.
    * @see {@linkcode StateType}
@@ -182,17 +182,6 @@ export class PhaseInterceptor {
   }
 
   /**
-   * Deprecated no-op function.
-   *
-   * This was previously used to reset timers created using `setInterval` to wait for phases to end
-   * and undo various method stubs after each test run. \
-   * However, since we now use {@linkcode vi.waitUntil} and {@linkcode vi.spyOn} to perform these tasks
-   * respectively, this function has become no longer needed.
-   * @deprecated This is no longer needed and will be removed in a future PR
-   */
-  public restoreOg() {}
-
-  /**
    * Method to log the start of a phase.
    * Called in place of {@linkcode PhaseManager.startCurrentPhase} to allow for manual intervention.
    * @param phaseName - The name of the phase to log
@@ -206,7 +195,7 @@ export class PhaseInterceptor {
    * Clear all prior phase logs.
    */
   public clearLogs(): void {
-    this.log = [];
+    this.log.splice(0, this.log.length);
   }
 
   /**
