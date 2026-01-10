@@ -2,7 +2,7 @@ import { BiomeId } from "#enums/biome-id";
 import { GameModes } from "#enums/game-modes";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 const EndlessBossWave = {
   Minor: 250,
@@ -22,10 +22,6 @@ describe("Endless Boss", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.startingBiome(BiomeId.END).criticalHits(false);
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   it(`should spawn a minor boss every ${EndlessBossWave.Minor} waves in END biome in Endless`, async () => {

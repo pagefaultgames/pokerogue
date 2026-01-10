@@ -6,7 +6,7 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { TurnHeldItemTransferModifier } from "#modifiers/modifier";
 import { GameManager } from "#test/test-utils/game-manager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 const FinalWave = {
   Classic: 200,
@@ -30,10 +30,6 @@ describe("Final Boss", () => {
       .criticalHits(false)
       .enemyMoveset(MoveId.SPLASH)
       .startingLevel(10000);
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   it("should spawn Eternatus on wave 200 in END biome", async () => {
