@@ -31,10 +31,11 @@ The screenshot/video section is mandatory if you made any visual changes (such a
 ## What are the changes the user will see?
 <!--
 Summarize what are the changes from a user perspective on the application.
-If you want to explain the changes in more detail, you can do so after the cutoff.
+Try to keep it short and concise.
+Additional details can be provided below the cutoff if needed.
 -->
 
-## <!-- Cutoff so the changelog only gets the above summary (DO NOT REMOVE) -->
+## <!-- Changelog cutoff (DO NOT REMOVE) -->
 
 ## Why am I making these changes?
 <!--
