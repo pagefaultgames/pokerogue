@@ -1,5 +1,6 @@
 import type { AbilityId } from "#enums/ability-id";
 import type { BiomeId } from "#enums/biome-id";
+import type { BiomePoolTier } from "#enums/biome-pool-tier";
 import type { Nature } from "#enums/nature";
 import type { SpeciesId } from "#enums/species-id";
 import type { Variant } from "#sprites/variant";
@@ -49,10 +50,17 @@ export interface DailySeedBoss {
  * };
  * ```
  */
-export interface DailyForcedWave {
-  waveIndex: number;
-  speciesId: SpeciesId;
-}
+export type DailyForcedWave =
+  | {
+      waveIndex: number;
+      speciesId: SpeciesId;
+      tier?: never;
+    }
+  | {
+      waveIndex: number;
+      tier: BiomePoolTier;
+      speciesId?: never;
+    };
 
 /**
  * Configuration for a custom daily run seed.

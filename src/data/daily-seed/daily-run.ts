@@ -4,6 +4,7 @@ import { pokemonStarters } from "#balance/pokemon-evolutions";
 import { speciesStarterCosts } from "#balance/starters";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { BiomeId } from "#enums/biome-id";
+import type { BiomePoolTier } from "#enums/biome-pool-tier";
 import { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import { MoveId } from "#enums/move-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
@@ -225,7 +226,28 @@ export function getDailyForcedWaveSpecies(waveIndex: number): PokemonSpecies | n
     return null;
   }
 
+  if (forcedWave.speciesId == null) {
+    return null;
+  }
+
   return getPokemonSpecies(forcedWave.speciesId);
+}
+
+export function getDailyForcedWaveBiomePoolTier(waveIndex: number): BiomePoolTier | null {
+  if (!isDailyEventSeed()) {
+    return null;
+  }
+
+  const forcedWave = globalScene.gameMode.dailyConfig?.forcedWaves?.find(w => w.waveIndex === waveIndex);
+  if (forcedWave == null) {
+    return null;
+  }
+
+  if (forcedWave.tier == null) {
+    return null;
+  }
+
+  return forcedWave.tier;
 }
 
 /**

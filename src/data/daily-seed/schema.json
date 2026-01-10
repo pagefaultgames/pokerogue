@@ -137,9 +137,28 @@
         },
         "speciesId": {
           "$ref": "#/$defs/speciesId"
+        },
+        "tier": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8
         }
       },
-      "required": ["waveIndex", "speciesId"],
+      "required": ["waveIndex"],
+      "oneOf": [
+        {
+          "required": ["speciesId"],
+          "not": {
+            "required": ["tier"]
+          }
+        },
+        {
+          "required": ["tier"],
+          "not": {
+            "required": ["speciesId"]
+          }
+        }
+      ],
       "additionalProperties": false
     }
   },
