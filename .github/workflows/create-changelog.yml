@@ -34,7 +34,7 @@ jobs:
         run: pnpm add chalk octokit
 
       - name: Generate Changelog
-        run: node scripts/changelog-reader/main.js
+        run: node scripts/changelog-reader/main.mjs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.number }}

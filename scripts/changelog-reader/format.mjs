@@ -6,10 +6,10 @@
  */
 
 /**
- * @import {Label, CategoryName} from "./config.js"
+ * @import {Label, CategoryName} from "./config.mjs"
  */
 
-import { CONFIG } from "./config.js";
+import { CONFIG } from "./config.mjs";
 
 /**
  * @typedef {{

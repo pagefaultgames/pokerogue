@@ -7,14 +7,14 @@
 
 import chalk from "chalk";
 import { Octokit } from "octokit";
-import { CONFIG } from "./config.js";
-import { formatChangelog } from "./format.js";
+import { CONFIG } from "./config.mjs";
+import { formatChangelog } from "./format.mjs";
 
 chalk.level = 2;
 
 /**
- * @import {Label} from "./config.js"
- * @import {PullRequest} from "./format.js"
+ * @import {Label} from "./config.mjs"
+ * @import {PullRequest} from "./format.mjs"
  */
 
 /**
