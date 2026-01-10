@@ -4,6 +4,7 @@ import { TextStyle } from "#enums/text-style";
 import type { nil } from "#types/common";
 import type { TimedEvent } from "#types/events";
 import { addTextObject } from "#ui/text";
+import { padInt } from "#utils/common";
 import i18next from "i18next";
 
 export class TimedEventDisplay extends Phaser.GameObjects.Container {
@@ -92,10 +93,6 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
   }
 
   private timeToGo(date: Date): string {
-    // Utility to add leading zero
-    function z(n) {
-      return (n < 10 ? "0" : "") + n;
-    }
     const now = new Date();
     let diff = Math.abs(date.getTime() - now.getTime());
 
@@ -110,10 +107,10 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
 
     // Return formatted string
     return i18next.t("menu:eventTimer", {
-      days: z(days),
-      hours: z(hours),
-      mins: z(mins),
-      secs: z(secs),
+      days: padInt(days, 2),
+      hours: padInt(hours, 2),
+      mins: padInt(mins, 2),
+      secs: padInt(secs, 2),
     });
   }
 
