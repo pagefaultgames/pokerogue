@@ -9,10 +9,11 @@ export class PositionalTagManager {
    * Array containing all pending unactivated {@linkcode PositionalTag}s,
    * sorted by order of creation (oldest first).
    */
-  public tags: PositionalTag[] = [];
+  public readonly tags: PositionalTag[] = [];
 
   /**
    * Add a new {@linkcode PositionalTag} to the arena.
+   * @param tag - The parameters required to construct the given tag.
    * @remarks
    * This function does not perform any checking if the added tag is valid.
    */
