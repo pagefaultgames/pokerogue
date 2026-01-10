@@ -144,7 +144,9 @@ export function applyOnGainAbAttrs(params: AbAttrBaseParams): void {
  * This will not apply any attributes that extend off of `PostSummonFormChangeAbAttr` to prevent infinite loops.
  */
 export function applyPostFormChangeAbAttrs(params: Omit<AbAttrBaseParams, "passive">): void {
-  applyAbAttrsInternal("PostSummonAbAttr", params, { attrFilter: attr => !attr.is("PostSummonFormChangeAbAttr") });
+  applyAbAttrsInternal("PostSummonAbAttr", params, {
+    attrFilter: attr => !attr.is("PostSummonFormChangeAbAttr") && !attr.is("PostSummonFormChangeByWeatherAbAttr"),
+  });
 }
 
 /**
