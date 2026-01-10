@@ -3,7 +3,12 @@ import { CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES, CLASSIC_MODE_MYSTERY_ENCOUNTER_
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { allChallenges, type Challenge, copyChallenge } from "#data/challenge";
-import { getDailyEventSeedBoss, getDailyStartingBiome, getDailyStartingMoney } from "#data/daily-seed/daily-run";
+import {
+  getDailyEventSeedBoss,
+  getDailyForcedWaveSpecies,
+  getDailyStartingBiome,
+  getDailyStartingMoney,
+} from "#data/daily-seed/daily-run";
 import { parseDailySeed } from "#data/daily-seed/daily-seed-utils";
 import { allSpecies } from "#data/data-lists";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -267,7 +272,7 @@ export class GameMode implements GameModeConfig {
       return randSeedItem(allFinalBossSpecies);
     }
 
-    return null;
+    return getDailyForcedWaveSpecies(waveIndex);
   }
 
   /**

@@ -5,7 +5,6 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { initEncounterAnims, loadEncounterAnimAssets } from "#data/battle-anims";
-import { getDailyForcedWaveSpecies } from "#data/daily-seed/daily-run";
 import { getCharVariantFromDialogue } from "#data/dialogue";
 import { getNatureName } from "#data/nature";
 import { getRandomWeatherType } from "#data/weather";
@@ -109,8 +108,7 @@ export class EncounterPhase extends BattlePhase {
         if (battle.battleType === BattleType.TRAINER) {
           battle.enemyParty[e] = battle.trainer?.genPartyMember(e)!; // TODO:: is the bang correct here?
         } else {
-          let enemySpecies =
-            getDailyForcedWaveSpecies(battle.waveIndex) ?? globalScene.randomSpecies(battle.waveIndex, level, true);
+          let enemySpecies = globalScene.randomSpecies(battle.waveIndex, level, true);
           // If player has golden bug net, rolls 10% chance to replace non-boss wave wild species from the golden bug net bug pool
           if (
             globalScene.findModifier(m => m instanceof BoostBugSpawnModifier)
