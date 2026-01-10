@@ -21,8 +21,10 @@ export class TimedEventDisplay extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Set the width that can be used to display the event timer and banner. By default
-   * these elements get centered horizontally in that space, in the bottom left of the screen
+   * Set the width that can be used to display the event timer and banner.
+   *
+   * By default these elements get centered horizontally in that space,
+   * in the bottom left of the screen
    */
   public setWidth(width: number): void {
     if (width !== this.availableWidth) {
