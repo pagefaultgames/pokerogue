@@ -9,7 +9,7 @@ export class PositionalTagManager {
    * Array containing all pending unactivated {@linkcode PositionalTag}s,
    * sorted by order of creation (oldest first).
    */
-  public readonly tags: PositionalTag[] = [];
+  public tags: PositionalTag[] = [];
 
   /**
    * Add a new {@linkcode PositionalTag} to the arena.
@@ -51,6 +51,6 @@ export class PositionalTagManager {
         tag.trigger();
       }
     }
-    this.tags.splice(0, this.tags.length, ...leftoverTags);
+    this.tags = leftoverTags;
   }
 }
