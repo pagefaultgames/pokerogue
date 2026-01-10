@@ -155,17 +155,3 @@ export function applyOnLoseAbAttrs(params: AbAttrBaseParams): void {
 
   applySingleAbAttrs("IllusionBreakAbAttr", params);
 }
-
-/**
- * Helper function to return whether a {@linkcode Pokemon}'s ability has changed after changing forms.
- *
- * Used when re-triggering on-gain abilities.
- * @param pokemon - The {@linkcode Pokemon} having changed forms
- * @param prevForm - The previous form `pokemon` had prior to changing forms
- * @returns A 2-length tuple containing whether `pokemon`'s active/passive abilities have changed from its previous form.
- * If `pokemon` does not have its passive enabled, it will count as not changing.
- * @remarks
- * Does _not_ check for ability-overridding effects.
- */
-// NOTE: `hasDifferentFormAbilities` removed — applyPostFormChangeAbAttrs now
-// applies post-summon attributes regardless of whether the abilities changed.
