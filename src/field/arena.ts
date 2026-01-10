@@ -345,6 +345,7 @@ export class Arena {
     }
 
     for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
+      // TODO: fix
       pokemon.findAndRemoveTags(
         tag => "weatherTypes" in tag && !(tag.weatherTypes as WeatherType[]).find(t => t === weather),
       );
