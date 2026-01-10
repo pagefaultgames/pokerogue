@@ -101,6 +101,22 @@ export const NATURES = {
   QUIRKY: 24,
 };
 
+/**
+ * A mapping of biome pool tier names to their corresponding IDs.
+ * @enum {number}
+ */
+export const BIOME_POOL_TIERS = {
+  COMMON: 0,
+  UNCOMMON: 1,
+  RARE: 2,
+  SUPER_RARE: 3,
+  ULTRA_RARE: 4,
+  BOSS: 5,
+  BOSS_RARE: 6,
+  BOSS_SUPER_RARE: 7,
+  BOSS_ULTRA_RARE: 8,
+};
+
 // #endregion Constants
 
 // #region Options

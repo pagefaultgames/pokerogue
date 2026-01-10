@@ -10,13 +10,16 @@ import { Ajv } from "ajv";
 import chalk from "chalk";
 import customDailyRunSchema from "../../../src/data/daily-seed/schema.json" with { type: "json" };
 import { toTitleCase, toUpperSnakeCase } from "../../helpers/casing.js";
-import { BIOMES } from "../constants.js";
+import { BIOME_POOL_TIERS, BIOMES } from "../constants.js";
 import { promptSpeciesId } from "./pokemon.js";
 
 /**
  * @typedef {{
  *   waveIndex: number,
  *   speciesId: number,
+ * } | {
+ *   waveIndex: number,
+ *   tier: number,
  * }} ForcedWaveConfig
  */
 
@@ -144,8 +147,30 @@ export async function promptForcedWaves() {
     if (!waveIndex) {
       return;
     }
-    const speciesId = await promptSpeciesId();
-    forcedWaves.push({ waveIndex, speciesId });
+    /** @type {"Species" | "Tier"} */
+    const type = await select({
+      message: "Please select the type of wave to force.",
+      choices: ["Species", "Tier"],
+    });
+    switch (type) {
+      case "Species": {
+        const speciesId = await promptSpeciesId();
+        forcedWaves.push({ waveIndex, speciesId });
+        break;
+      }
+      case "Tier": {
+        const poolTier = await select({
+          message: "Please select the pool tier to force.",
+          choices: [...Object.keys(BIOME_POOL_TIERS).map(toTitleCase)],
+          pageSize: 10,
+        });
+        forcedWaves.push({
+          waveIndex,
+          tier: BIOME_POOL_TIERS[/** @type {keyof typeof BIOME_POOL_TIERS} */ (toUpperSnakeCase(poolTier))],
+        });
+        break;
+      }
+    }
     await addForcedWave();
   }
 
