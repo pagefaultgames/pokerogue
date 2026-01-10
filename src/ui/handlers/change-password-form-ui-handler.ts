@@ -10,6 +10,9 @@ export class ChangePasswordFormUiHandler extends FormModalUiHandler {
   private readonly ERR_PASSWORD: string = "invalid password";
   private readonly ERR_ACCOUNT_EXIST: string = "account doesn't exist";
   private readonly ERR_PASSWORD_MISMATCH: string = "password doesn't match";
+  private readonly ERR_GENERATE_SALT: string = "failed to generate salt";
+  private readonly ERR_REMOVE_SESSIONS: string = "failed to remove sessions";
+  private readonly ERR_ADD_RECORD: string = "failed to add account record";
 
   constructor(mode: UiMode | null = null) {
     super(mode);
@@ -47,6 +50,10 @@ export class ChangePasswordFormUiHandler extends FormModalUiHandler {
         return i18next.t("menu:accountNonExistent");
       case this.ERR_PASSWORD_MISMATCH:
         return i18next.t("menu:passwordNotMatchingConfirmPassword");
+      case this.ERR_GENERATE_SALT:
+      case this.ERR_REMOVE_SESSIONS:
+      case this.ERR_ADD_RECORD:
+        return i18next.t("menu:serverError");
     }
 
     return super.getReadableErrorMessage(error);
