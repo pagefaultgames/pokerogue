@@ -76,14 +76,6 @@ export class PokemonMove {
     return [true, ""];
   }
 
-  /**
-   * @returns Whether this Move is currently out of PP.
-   */
-  public isOutOfPp(): boolean {
-    // TODO: Do we need the `-1` check?
-    return this.getMove().pp !== -1 && this.ppUsed >= this.getMovePp();
-  }
-
   getMove(): Move {
     return allMoves[this.moveId];
   }
