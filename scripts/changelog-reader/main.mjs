@@ -201,8 +201,8 @@ async function loadConfig() {
     process.exitCode = 1;
     return false;
   }
-  if (branch !== "beta" && !branch.startsWith("hotfix-")) {
-    console.error("PR branch must be 'beta' or start with 'hotfix-'.");
+  if (branch !== "beta" && branch !== "release" && !branch.startsWith("hotfix-")) {
+    console.error("PR branch must be 'beta', 'release', or start with 'hotfix-'.");
     process.exitCode = 1;
     return false;
   }
