@@ -107,7 +107,7 @@ export class ArenaTagAddedEvent extends ArenaEvent {
   public readonly trapLayers: [current: number, max: number] | undefined;
 
   constructor(
-    side: ArenaTagType,
+    tagType: ArenaTagType,
     arenaTagSide: ArenaTagSide,
     duration: number,
     trapLayers?: [current: number, max: number],
@@ -115,7 +115,7 @@ export class ArenaTagAddedEvent extends ArenaEvent {
   ) {
     super(ArenaEventType.ARENA_TAG_ADDED);
 
-    this.tagType = side;
+    this.tagType = tagType;
     this.side = arenaTagSide;
     this.duration = duration;
     this.maxDuration = maxDuration;

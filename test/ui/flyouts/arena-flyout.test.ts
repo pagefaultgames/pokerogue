@@ -1,4 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagType } from "#enums/arena-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
@@ -6,7 +7,7 @@ import { mockI18next } from "#test/test-utils/test-utils";
 import type { ArenaFlyout } from "#ui/containers/arena-flyout";
 import type i18next from "i18next";
 import Phaser from "phaser";
-import { afterAll, beforeAll, beforeEach, describe, expect, it, type MockInstance } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, type MockInstance } from "vitest";
 
 describe("UI - Arena Flyout", () => {
   let phaserGame: Phaser.Game;
@@ -36,17 +37,12 @@ describe("UI - Arena Flyout", () => {
   });
 
   beforeEach(() => {
-    // Reset i18n mock before each test
     tSpy = mockI18next();
-  });
-
-  afterAll(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   describe("localizeEffectName", () => {
     it("should retrieve locales from an effect name", () => {
-      const name = flyout["localizeEffectName"]("STEALTH_ROCK");
+      const name = flyout["localizeEffectName"](ArenaTagType[ArenaTagType.STEALTH_ROCK]);
       expect(name).toBe("arenaFlyout:stealthRock");
       expect(tSpy).toHaveBeenCalledExactlyOnceWith("arenaFlyout:stealthRock");
     });
