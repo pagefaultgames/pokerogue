@@ -1,10 +1,9 @@
 import { globalScene } from "#app/global-scene";
+import { allMoves } from "#data/data-lists";
 import type { BattlerIndex } from "#enums/battler-index";
 import { Command } from "#enums/command";
 import { UiMode } from "#enums/ui-mode";
 import { PokemonPhase } from "#phases/pokemon-phase";
-import { allMoves } from "#data/data-lists";
-import i18next from "i18next";
 
 export class SelectTargetPhase extends PokemonPhase {
   public readonly phaseName = "SelectTargetPhase";
@@ -47,11 +46,10 @@ export class SelectTargetPhase extends PokemonPhase {
 
         // TODO: when would this occur?
         if (targets[0]) {
-          const restrictingTag = user.getTargetRestrictingTag(moveId, fieldSide[targets[0]])
+          const restrictingTag = user.getTargetRestrictingTag(moveId, fieldSide[targets[0]]);
           if (restrictingTag) {
             globalScene.phaseManager.queueMessage(restrictingTag.selectionDeniedText(user, moveId));
             targets = [];
-
           }
         }
 
