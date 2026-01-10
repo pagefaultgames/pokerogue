@@ -1,10 +1,8 @@
 import { globalScene } from "#app/global-scene";
-// biome-ignore-start lint/correctness/noUnusedImports: TSDocs
 import type { ArenaTag } from "#data/arena-tag";
 import { type Terrain, TerrainType } from "#data/terrain";
 import type { Weather } from "#data/weather";
 import { ArenaEventType } from "#enums/arena-event-type";
-// biome-ignore-end lint/correctness/noUnusedImports: TSDocs
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { TextStyle } from "#enums/text-style";

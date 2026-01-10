@@ -8,7 +8,7 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { GameManager } from "#test/test-utils/game-manager";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import Phaser from "phaser";
-import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 
 function testMoveEffectiveness(
   game: GameManager,
@@ -46,10 +46,6 @@ describe("Moves - Type Effectiveness", () => {
     game = new GameManager(phaserGame);
 
     game.override.ability(AbilityId.BALL_FETCH);
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   it("Normal-type attacks are neutrally effective against Normal-type Pokemon", () =>

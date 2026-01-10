@@ -5,7 +5,7 @@ import { SpeciesId } from "#enums/species-id";
 import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Victory Star", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +15,6 @@ describe("Abilities - Victory Star", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -35,7 +31,7 @@ describe("Abilities - Victory Star", () => {
   it("should increase the accuracy of its user", async () => {
     await game.classicMode.startBattle([SpeciesId.VICTINI, SpeciesId.MAGIKARP]);
 
-    const user = game.scene.getPlayerField()[0];
+    const user = game.field.getPlayerPokemon();
 
     vi.spyOn(user, "getAccuracyMultiplier");
     game.move.select(MoveId.TACKLE, 0, BattlerIndex.ENEMY);
@@ -48,7 +44,7 @@ describe("Abilities - Victory Star", () => {
   it("should increase the accuracy of its user's ally", async () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.VICTINI]);
 
-    const ally = game.scene.getPlayerField()[0];
+    const ally = game.field.getPlayerPokemon();
     vi.spyOn(ally, "getAccuracyMultiplier");
 
     game.move.select(MoveId.TACKLE, 0, BattlerIndex.ENEMY);

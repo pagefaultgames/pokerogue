@@ -56,7 +56,7 @@ export class SelectStarterPhase extends Phase {
       }
 
       let starterGender =
-        species.malePercent !== null ? (!starter.female ? Gender.MALE : Gender.FEMALE) : Gender.GENDERLESS;
+        species.malePercent !== null ? (starter.female ? Gender.FEMALE : Gender.MALE) : Gender.GENDERLESS;
       if (Overrides.GENDER_OVERRIDE !== null) {
         starterGender = Overrides.GENDER_OVERRIDE;
       }

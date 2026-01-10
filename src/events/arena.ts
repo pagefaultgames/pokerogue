@@ -1,3 +1,4 @@
+import type { ArenaTag, EntryHazardTag } from "#data/arena-tag";
 import type { TerrainType } from "#data/terrain";
 import { ArenaEventType } from "#enums/arena-event-type";
 import type { ArenaTagSide } from "#enums/arena-tag-side";
@@ -31,12 +32,12 @@ export class WeatherChangedEvent extends ArenaEvent {
   public readonly weatherType: WeatherType;
   /**
    * The new weather's current duration.
-   * Unused if {@linkcode weatherType} is set to {@linkcode WeatherType.NONE}.
+   * Unused if `weatherType` is set to {@linkcode WeatherType.NONE}.
    */
   public readonly duration: number;
   /**
    * The new weather's maximum duration.
-   * Unused if {@linkcode weatherType} is set to {@linkcode WeatherType.NONE}.
+   * Unused if `weatherType` is set to {@linkcode WeatherType.NONE}.
    */
   public readonly maxDuration: number;
 
@@ -61,12 +62,12 @@ export class TerrainChangedEvent extends ArenaEvent {
   public readonly terrainType: TerrainType;
   /**
    * The new terrain's current duration.
-   * Unused if {@linkcode terrainType} is set to {@linkcode TerrainType.NONE}.
+   * Unused if `terrainType` is set to {@linkcode TerrainType.NONE}.
    */
   public readonly duration: number;
   /**
    * The new terrain's maximum duration.
-   * Unused if {@linkcode weatherType} is set to {@linkcode WeatherType.NONE}.
+   * Unused if `terrainType` is set to {@linkcode TerrainType.NONE}.
    */
   public readonly maxDuration: number;
 
@@ -82,7 +83,7 @@ export class TerrainChangedEvent extends ArenaEvent {
 /**
  * Container class for {@linkcode ArenaEventType.ARENA_TAG_ADDED} events. \
  * Emitted whenever a new {@linkcode ArenaTag} is added to the arena, or whenever an existing
- * {@linkcode ArenaTrapTag} overlaps and adds new layers.
+ * {@linkcode EntryHazardTag} overlaps and adds new layers.
  * @eventProperty
  */
 export class ArenaTagAddedEvent extends ArenaEvent {
@@ -90,15 +91,18 @@ export class ArenaTagAddedEvent extends ArenaEvent {
 
   /** The {@linkcode ArenaTagType} of the tag being added */
   public readonly tagType: ArenaTagType;
-  /** The {@linkcode ArenaTagSide} the tag is being added too */
+  /** The {@linkcode ArenaTagSide} to which the tag is being added */
   public readonly side: ArenaTagSide;
   /** The tag's initial duration. */
   public readonly duration: number;
-  /** The tag's maximum duration. */
+  /**
+   * The tag's maximum duration.
+   * @defaultValue `duration`
+   */
   public readonly maxDuration: number;
   /**
-   * A tuple containing the current and maximum number of layers of the current {@linkcode ArenaTrapTag},
-   * or `undefined` if the tag was not a trap.
+   * A tuple containing the current and maximum number of layers of the current {@linkcode EntryHazardTag},
+   * or `undefined` if the tag was not an entry hazard.
    */
   public readonly trapLayers: [current: number, max: number] | undefined;
 

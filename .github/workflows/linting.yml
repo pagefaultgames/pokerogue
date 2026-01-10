@@ -17,6 +17,10 @@ on:
     types: [checks_requested]
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   run-linters:
     name: Run all linters
@@ -25,21 +29,12 @@ jobs:
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: "recursive"
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
 
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: ".nvmrc"
-          cache: "pnpm"
-
-      - name: Install Node modules
-        run: pnpm i
+      - uses: ./.github/actions/setup-deps
 
       # Lint files with Biome-Lint - https://biomejs.dev/linter/
       - name: Lint with Biome
@@ -52,23 +47,16 @@ jobs:
         if: ${{ !cancelled() }}
 
       # Validate types with tsc - https://www.typescriptlang.org/docs/handbook/compiler-options.html#using-the-cli
-      - name: Run Typecheck
+      - name: Run Typecheck (TS files)
         run: pnpm typecheck
         id: typecheck
         if: ${{ !cancelled() }}
 
-      # Run tsc again on the scripts folder.
-      # Required in order to use separate rules for script js files and regular ts files
-      - name: Run Typecheck (scripts)
-        run: pnpm typecheck:scripts
-        id: typecheck-scripts
-        if: ${{ !cancelled() }}
-
-      # NOTE: These steps *must* be ran last for the moment due to deleting files in `assets/`.
-      # Some asset files do not yet have full licensing information, and thus must be removed 
-      # before checking for REUSE compliance
-      - name: Prepare for REUSE compliance
-        run: rm -rf assets/* LICENSES/LicenseRef-*
+      # Run tsc again on all JS files.
+      # Required in order to use separate rules for different types of files
+      - name: Run Typecheck (JS files)
+        run: pnpm typecheck:js
+        id: typecheck-js
         if: ${{ !cancelled() }}
 
       - name: Check for REUSE compliance

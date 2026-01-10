@@ -6,7 +6,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Wide Guard", () => {
   let phaserGame: Phaser.Game;
@@ -16,10 +16,6 @@ describe("Moves - Wide Guard", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -70,7 +66,7 @@ describe("Moves - Wide Guard", () => {
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
 
-    const charizard = game.scene.getPlayerPokemon()!;
+    const charizard = game.field.getPlayerPokemon();
     const [snorlax1, snorlax2] = game.scene.getEnemyField();
 
     game.move.select(MoveId.WIDE_GUARD, BattlerIndex.PLAYER);
@@ -86,7 +82,7 @@ describe("Moves - Wide Guard", () => {
     game.override.battleStyle("single");
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const charizard = game.scene.getPlayerPokemon()!;
+    const charizard = game.field.getPlayerPokemon();
     // force protect to fail on anything other than a guaranteed success
     vi.spyOn(charizard, "randBattleSeedInt").mockReturnValue(1);
 

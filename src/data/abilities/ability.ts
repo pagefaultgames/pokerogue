@@ -67,6 +67,7 @@ import { BooleanHolder, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, 
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
+import type { NonEmptyTuple } from "type-fest";
 
 //#region Bit sets
 /** Bit set for an ability's `bypass faint` flag */
@@ -1700,11 +1701,6 @@ export class IgnoreMoveEffectsAbAttr extends PreDefendAbAttr {
   }
 }
 
-export interface FieldPreventExplosiveMovesAbAttrParams extends AbAttrBaseParams {
-  /** Holds whether the explosive move should be prevented*/
-  cancelled: BooleanHolder;
-}
-
 export class FieldPreventExplosiveMovesAbAttr extends CancelInteractionAbAttr {}
 
 export interface FieldMultiplyStatAbAttrParams extends AbAttrBaseParams {
@@ -1766,53 +1762,65 @@ export interface MoveTypeChangeAbAttrParams extends AugmentMoveInteractionAbAttr
   // TODO: Replace the number holder with a holder for the type.
   /** Holds the type of the move, which may change after ability application */
   moveType: NumberHolder;
-  /** Holds the power of the move, which may change after ability application */
-  power: NumberHolder;
 }
+
+/**
+ * Condition function checking whether a move can have its type changed by an ability.
+ * - Variable-type moves (e.g. {@linkcode MoveId.MULTI_ATTACK}) can't have their type changed.
+ * - Tera-based moves can't have their type changed if the move's type would be changed due to the user being Terastallized.
+ * @returns Whether the move can have its type changed by an ability
+ * @remarks
+ * Used for {@link https://bulbapedia.bulbagarden.net/wiki/Normalize_(Ability) | Normalize}
+ * and as part of the conditions for similar type-changing abilities
+ */
+const anyTypeMoveConversionCondition: PokemonAttackCondition = (user, _target, move) => {
+  if (noAbilityTypeOverrideMoves.has(move.id)) {
+    return false;
+  }
+
+  if (!user.isTerastallized) {
+    return true;
+  }
+
+  if (move.id === MoveId.TERA_BLAST) {
+    return false;
+  }
+  if (
+    move.id === MoveId.TERA_STARSTORM
+    && user.getTeraType() === PokemonType.STELLAR
+    && user.hasSpecies(SpeciesId.TERAPAGOS)
+  ) {
+    return false;
+  }
+
+  return true;
+};
+
+/**
+ * Similar to {@linkcode anyTypeMoveConversionCondition}, except that the given move must also be Normal-type.
+ * @remarks
+ * Used for {@link https://bulbapedia.bulbagarden.net/wiki/Pixilate_(Ability) | Pixilate} et al.
+ */
+const normalTypeMoveConversionCondition: PokemonAttackCondition = (user, target, move) =>
+  move.type === PokemonType.NORMAL && anyTypeMoveConversionCondition(user, target, move);
 
 export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
   private readonly newType: PokemonType;
-  private readonly powerMultiplier: number;
-  private readonly condition?: PokemonAttackCondition;
+  private readonly condition: PokemonAttackCondition;
 
-  constructor(
-    newType: PokemonType,
-    powerMultiplier: number,
-    // TODO: all moves with this attr solely check the move being used...
-    condition?: PokemonAttackCondition,
-  ) {
+  constructor(newType: PokemonType, condition: PokemonAttackCondition) {
     super(false);
+
     this.newType = newType;
-    this.powerMultiplier = powerMultiplier;
     this.condition = condition;
   }
 
-  /**
-   * Determine if the move type change attribute can be applied.
-   *
-   * Can be applied if:
-   * - The ability's condition is met, e.g. pixilate only boosts normal moves,
-   * - The move is not forbidden from having its type changed by an ability, e.g. {@linkcode MoveId.MULTI_ATTACK}
-   * - The user is not Terastallized and using Tera Blast
-   * - The user is not a Terastallized Terapagos using Stellar-type Tera Starstorm
-   */
-  override canApply({ pokemon, opponent: target, move }: MoveTypeChangeAbAttrParams): boolean {
-    return (
-      (!this.condition || this.condition(pokemon, target, move))
-      && !noAbilityTypeOverrideMoves.has(move.id)
-      && !(
-        pokemon.isTerastallized
-        && (move.id === MoveId.TERA_BLAST
-          || (move.id === MoveId.TERA_STARSTORM
-            && pokemon.getTeraType() === PokemonType.STELLAR
-            && pokemon.hasSpecies(SpeciesId.TERAPAGOS)))
-      )
-    );
+  override canApply({ pokemon, opponent, move }: MoveTypeChangeAbAttrParams): boolean {
+    return this.condition(pokemon, opponent, move);
   }
 
-  override apply({ moveType, power }: MoveTypeChangeAbAttrParams): void {
+  override apply({ moveType }: MoveTypeChangeAbAttrParams): void {
     moveType.value = this.newType;
-    power.value *= this.powerMultiplier;
   }
 }
 
@@ -2352,7 +2360,7 @@ export class PostAttackApplyBattlerTagAbAttr extends PostAttackAbAttr {
 
   override canApply(params: PostMoveInteractionAbAttrParams): boolean {
     const { pokemon, move, opponent } = params;
-    /**Battler tags inflicted by abilities post attacking are also considered additional effects.*/
+    // Battler tags inflicted by abilities post attacking are also considered additional effects.
     return (
       super.canApply(params)
       && !opponent.hasAbilityWithAttr("IgnoreMoveEffectsAbAttr")
@@ -2695,9 +2703,6 @@ export abstract class PostSummonAbAttr extends AbAttr {
     return true;
   }
 
-  /**
-   * Applies ability post summon (after switching in)
-   */
   apply(_params: Closed<AbAttrBaseParams>): void {}
 }
 
@@ -2705,32 +2710,32 @@ export abstract class PostSummonAbAttr extends AbAttr {
  * Base class for ability attributes which remove an effect on summon
  */
 export abstract class PostSummonRemoveEffectAbAttr extends PostSummonAbAttr {}
-
 /**
- * Removes specified arena tags when a Pokemon is summoned.
+ * Attribute to remove the specified arena tags when a Pokemon is summoned.
  */
 export class PostSummonRemoveArenaTagAbAttr extends PostSummonAbAttr {
-  private readonly arenaTags: readonly ArenaTagType[];
+  /**
+   * The arena tags that this attribute should remove.
+   */
+  private readonly arenaTags: NonEmptyTuple<ArenaTagType>;
 
   /**
-   * @param arenaTags - The arena tags to be removed
+   * @param tagTypes - The arena tags that this attribute should remove
    */
-  constructor(arenaTags: readonly ArenaTagType[]) {
+  constructor(tagTypes: NonEmptyTuple<ArenaTagType>) {
     super(true);
-
-    this.arenaTags = arenaTags;
+    this.arenaTags = tagTypes;
   }
 
   override canApply(_params: AbAttrBaseParams): boolean {
-    return globalScene.arena.tags.some(tag => this.arenaTags.includes(tag.tagType));
+    return globalScene.arena.hasTag(this.arenaTags);
   }
 
   override apply({ simulated }: AbAttrBaseParams): void {
-    if (!simulated) {
-      for (const arenaTag of this.arenaTags) {
-        globalScene.arena.removeTag(arenaTag);
-      }
+    if (simulated) {
+      return;
     }
+    globalScene.arena.removeTagsOnSide(this.arenaTags, ArenaTagSide.BOTH);
   }
 }
 
@@ -3361,6 +3366,7 @@ export class CommanderAbAttr extends AbAttr {
 /**
  * Base class for ability attributes that apply their effect when their user switches out.
  */
+// TODO: Clarify the differences between this and `PreLeaveFieldAbAttr`
 export abstract class PreSwitchOutAbAttr extends AbAttr {
   constructor(showAbility = true) {
     super(showAbility);
@@ -3390,65 +3396,6 @@ export class PreSwitchOutResetStatusAbAttr extends PreSwitchOutAbAttr {
       pokemon.resetStatus();
       pokemon.updateInfo();
     }
-  }
-}
-
-/**
- * Clears Desolate Land/Primordial Sea/Delta Stream upon the Pokemon switching out.
- */
-export class PreSwitchOutClearWeatherAbAttr extends PreSwitchOutAbAttr {
-  override apply({ pokemon, simulated }: AbAttrBaseParams): boolean {
-    // TODO: Evaluate why this is returning a boolean rather than relay
-    const weatherType = globalScene.arena.weather?.weatherType;
-    let turnOffWeather = false;
-
-    // Clear weather only if user's ability matches the weather and no other pokemon has the ability.
-    switch (weatherType) {
-      case WeatherType.HARSH_SUN:
-        if (
-          pokemon.hasAbility(AbilityId.DESOLATE_LAND)
-          && globalScene
-            .getField(true)
-            .filter(p => p !== pokemon)
-            .filter(p => p.hasAbility(AbilityId.DESOLATE_LAND)).length === 0
-        ) {
-          turnOffWeather = true;
-        }
-        break;
-      case WeatherType.HEAVY_RAIN:
-        if (
-          pokemon.hasAbility(AbilityId.PRIMORDIAL_SEA)
-          && globalScene
-            .getField(true)
-            .filter(p => p !== pokemon)
-            .filter(p => p.hasAbility(AbilityId.PRIMORDIAL_SEA)).length === 0
-        ) {
-          turnOffWeather = true;
-        }
-        break;
-      case WeatherType.STRONG_WINDS:
-        if (
-          pokemon.hasAbility(AbilityId.DELTA_STREAM)
-          && globalScene
-            .getField(true)
-            .filter(p => p !== pokemon)
-            .filter(p => p.hasAbility(AbilityId.DELTA_STREAM)).length === 0
-        ) {
-          turnOffWeather = true;
-        }
-        break;
-    }
-
-    if (simulated) {
-      return turnOffWeather;
-    }
-
-    if (turnOffWeather) {
-      globalScene.arena.trySetWeather(WeatherType.NONE);
-      return true;
-    }
-
-    return false;
   }
 }
 
@@ -3685,8 +3632,6 @@ export class ProtectStatAbAttr extends PreStatStageChangeAbAttr {
 export interface ConfusionOnStatusEffectAbAttrParams extends AbAttrBaseParams {
   /** The status effect that was applied */
   effect: StatusEffect;
-  /** The move that applied the status effect */
-  move: Move;
   /** The opponent that was inflicted with the status effect */
   opponent: Pokemon;
 }
@@ -3715,9 +3660,9 @@ export class ConfusionOnStatusEffectAbAttr extends AbAttr {
   /**
    * Applies confusion to the target pokemon.
    */
-  override apply({ opponent, simulated, pokemon, move }: ConfusionOnStatusEffectAbAttrParams): void {
+  override apply({ opponent, simulated, pokemon }: ConfusionOnStatusEffectAbAttrParams): void {
     if (!simulated) {
-      opponent.addTag(BattlerTagType.CONFUSED, pokemon.randBattleSeedIntRange(2, 5), move.id, opponent.id);
+      opponent.addTag(BattlerTagType.CONFUSED, pokemon.randBattleSeedIntRange(2, 5), undefined, opponent.id);
     }
   }
 }
@@ -5160,7 +5105,6 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
    */
   override apply({ source, pokemon, move, targets, simulated }: PostMoveUsedAbAttrParams): void {
     if (!simulated) {
-      pokemon.turnData.extraTurns++;
       // If the move is an AttackMove or a StatusMove the Dancer must replicate the move on the source of the Dance
       if (move.getMove().is("AttackMove") || move.getMove().is("StatusMove")) {
         const target = this.getTarget(pokemon, source, targets);
@@ -5852,10 +5796,10 @@ export interface MoveAbilityBypassAbAttrParams extends AbAttrBaseParams {
 export class MoveAbilityBypassAbAttr extends AbAttr {
   private readonly moveIgnoreFunc: (pokemon: Pokemon, move: Move) => boolean;
 
-  constructor(moveIgnoreFunc?: (pokemon: Pokemon, move: Move) => boolean) {
+  constructor(moveIgnoreFunc: (pokemon: Pokemon, move: Move) => boolean = () => true) {
     super(false);
 
-    this.moveIgnoreFunc = moveIgnoreFunc || ((_pokemon, _move) => true);
+    this.moveIgnoreFunc = moveIgnoreFunc;
   }
 
   override canApply({ pokemon, move, cancelled }: MoveAbilityBypassAbAttrParams): boolean {
@@ -6149,7 +6093,7 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
         return false;
       }
     }
-    return !pokemon.summonData.illusionBroken;
+    return pokemon.summonData.illusion != null;
   }
 }
 
@@ -6159,29 +6103,25 @@ export class IllusionBreakAbAttr extends AbAttr {
   // TODO: Consider adding a `canApply` method that checks if the pokemon has an active illusion
   override apply({ pokemon }: AbAttrBaseParams): void {
     pokemon.breakIllusion();
-    pokemon.summonData.illusionBroken = true;
   }
 }
 
 /** @sealed */
 export class PostDefendIllusionBreakAbAttr extends PostDefendAbAttr {
-  /**
-   * Destroy the illusion upon taking damage
-   * @returns - Whether the illusion was destroyed.
-   */
   override apply({ pokemon }: PostMoveInteractionAbAttrParams): void {
     pokemon.breakIllusion();
-    pokemon.summonData.illusionBroken = true;
   }
 
   override canApply({ pokemon, hitResult }: PostMoveInteractionAbAttrParams): boolean {
-    const breakIllusion: HitResult[] = [
+    // TODO: I remember this or a derivative being declared elsewhere - merge the 2 into 1
+    // and store it somewhere globally accessible
+    const damagingHitResults: ReadonlySet<HitResult> = new Set([
       HitResult.EFFECTIVE,
       HitResult.SUPER_EFFECTIVE,
       HitResult.NOT_VERY_EFFECTIVE,
       HitResult.ONE_HIT_KO,
-    ];
-    return breakIllusion.includes(hitResult) && !!pokemon.summonData.illusion;
+    ]);
+    return damagingHitResults.has(hitResult) && pokemon.summonData.illusion != null;
   }
 }
 
@@ -6370,7 +6310,6 @@ class ForceSwitchOutHelper {
       }
 
       if (switchOutTarget.hp > 0) {
-        switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
         globalScene.phaseManager.queueDeferred(
           "SwitchPhase",
           this.switchType,
@@ -6389,7 +6328,6 @@ class ForceSwitchOutHelper {
         return false;
       }
       if (switchOutTarget.hp > 0) {
-        switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
         const summonIndex = globalScene.currentBattle.trainer
           ? globalScene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot)
           : 0;
@@ -6730,7 +6668,6 @@ const AbilityAttrs = Object.freeze({
   CommanderAbAttr,
   PreSwitchOutAbAttr,
   PreSwitchOutResetStatusAbAttr,
-  PreSwitchOutClearWeatherAbAttr,
   PreSwitchOutHealAbAttr,
   PreSwitchOutFormChangeAbAttr,
   PreLeaveFieldAbAttr,
@@ -7194,8 +7131,8 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.RIVALRY, 4)
-      .attr(MovePowerBoostAbAttr, (user, target, _move) => user?.gender !== Gender.GENDERLESS && target?.gender !== Gender.GENDERLESS && user?.gender === target?.gender, 1.25)
-      .attr(MovePowerBoostAbAttr, (user, target, _move) => user?.gender !== Gender.GENDERLESS && target?.gender !== Gender.GENDERLESS && user?.gender !== target?.gender, 0.75)
+      .attr(MovePowerBoostAbAttr, (user, target, _move) => user.gender !== Gender.GENDERLESS && target?.gender !== Gender.GENDERLESS && user.gender === target?.gender, 1.25)
+      .attr(MovePowerBoostAbAttr, (user, target, _move) => user.gender !== Gender.GENDERLESS && target?.gender !== Gender.GENDERLESS && user.gender !== target?.gender, 0.75)
       .build(),
     new AbBuilder(AbilityId.STEADFAST, 4)
       .attr(FlinchStatStageChangeAbAttr, [ Stat.SPD ], 1)
@@ -7264,7 +7201,8 @@ export function initAbilities() {
       .conditionalAttr(pokemon => !!pokemon.status || pokemon.hasAbility(AbilityId.COMATOSE), StatMultiplierAbAttr, Stat.SPD, 1.5)
       .build(),
     new AbBuilder(AbilityId.NORMALIZE, 4)
-      .attr(MoveTypeChangeAbAttr, PokemonType.NORMAL, 1.2)
+      .attr(MoveTypeChangeAbAttr, PokemonType.NORMAL, anyTypeMoveConversionCondition)
+      .attr(MovePowerBoostAbAttr, anyTypeMoveConversionCondition, 1.2)
       .build(),
     new AbBuilder(AbilityId.SNIPER, 4)
       .attr(MultCritAbAttr, 1.5)
@@ -7428,10 +7366,10 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.TOXIC_BOOST, 5)
-      .attr(MovePowerBoostAbAttr, (user, _target, move) => move.category === MoveCategory.PHYSICAL && (user?.status?.effect === StatusEffect.POISON || user?.status?.effect === StatusEffect.TOXIC), 1.5)
+      .attr(MovePowerBoostAbAttr, (user, _target, move) => move.category === MoveCategory.PHYSICAL && (user.status?.effect === StatusEffect.POISON || user.status?.effect === StatusEffect.TOXIC), 1.5)
       .build(),
     new AbBuilder(AbilityId.FLARE_BOOST, 5)
-      .attr(MovePowerBoostAbAttr, (user, _target, move) => move.category === MoveCategory.SPECIAL && user?.status?.effect === StatusEffect.BURN, 1.5)
+      .attr(MovePowerBoostAbAttr, (user, _target, move) => move.category === MoveCategory.SPECIAL && user.status?.effect === StatusEffect.BURN, 1.5)
       .build(),
     new AbBuilder(AbilityId.HARVEST, 5)
       .attr(
@@ -7475,7 +7413,7 @@ export function initAbilities() {
     new AbBuilder(AbilityId.ANALYTIC, 5)
       .attr(MovePowerBoostAbAttr, (user) =>
         // Boost power if all other Pokemon have already moved (no other moves are slated to execute)
-        !globalScene.phaseManager.hasPhaseOfType("MovePhase", phase => phase.pokemon.id !== user?.id),
+        !globalScene.phaseManager.hasPhaseOfType("MovePhase", phase => phase.pokemon.id !== user.id),
         1.3)
       .build(),
     new AbBuilder(AbilityId.ILLUSION, 5)
@@ -7612,7 +7550,8 @@ export function initAbilities() {
       .attr(MovePowerBoostAbAttr, (_user, _target, move) => move.hasFlag(MoveFlags.BITING_MOVE), 1.5)
       .build(),
     new AbBuilder(AbilityId.REFRIGERATE, 6)
-      .attr(MoveTypeChangeAbAttr, PokemonType.ICE, 1.2, (_user, _target, move) => move.type === PokemonType.NORMAL)
+      .attr(MoveTypeChangeAbAttr, PokemonType.ICE, normalTypeMoveConversionCondition)
+      .attr(MovePowerBoostAbAttr, normalTypeMoveConversionCondition, 1.2)
       .build(),
     new AbBuilder(AbilityId.SWEET_VEIL, 6)
       .attr(UserFieldStatusEffectImmunityAbAttr, StatusEffect.SLEEP)
@@ -7644,21 +7583,22 @@ export function initAbilities() {
       .attr(MovePowerBoostAbAttr, (_user, _target, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), 1.3)
       .build(),
     new AbBuilder(AbilityId.PIXILATE, 6)
-      .attr(MoveTypeChangeAbAttr, PokemonType.FAIRY, 1.2, (_user, _target, move) => move.type === PokemonType.NORMAL)
+      .attr(MoveTypeChangeAbAttr, PokemonType.FAIRY, normalTypeMoveConversionCondition)
+      .attr(MovePowerBoostAbAttr, normalTypeMoveConversionCondition, 1.2)
       .build(),
     new AbBuilder(AbilityId.GOOEY, 6)
       .attr(PostDefendStatStageChangeAbAttr, (_target, _user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), Stat.SPD, -1, false)
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.AERILATE, 6)
-      .attr(MoveTypeChangeAbAttr, PokemonType.FLYING, 1.2, (_user, _target, move) => move.type === PokemonType.NORMAL)
+      .attr(MoveTypeChangeAbAttr, PokemonType.FLYING, normalTypeMoveConversionCondition)
+      .attr(MovePowerBoostAbAttr, normalTypeMoveConversionCondition, 1.2)
       .build(),
     new AbBuilder(AbilityId.PARENTAL_BOND, 6)
       .attr(AddSecondStrikeAbAttr)
       // Only multiply damage on the last strike of multi-strike moves
       .attr(MoveDamageBoostAbAttr, 0.25, (user, target, move) => (
-          !!user
-          && user.turnData.hitCount > 1 // move was originally multi hit
+          user.turnData.hitCount > 1 // move was originally multi hit
           && user.turnData.hitsLeft === 1 // move is on its final strike
           && move.canBeMultiStrikeEnhanced(user, true, target)
         )
@@ -7757,13 +7697,18 @@ export function initAbilities() {
       .attr(IgnoreContactAbAttr)
       .build(),
     new AbBuilder(AbilityId.LIQUID_VOICE, 7)
-      .attr(MoveTypeChangeAbAttr, PokemonType.WATER, 1, (_user, _target, move) => move.hasFlag(MoveFlags.SOUND_BASED))
+      .attr(
+        MoveTypeChangeAbAttr,
+        PokemonType.WATER,
+        (user, target, move) => move.hasFlag(MoveFlags.SOUND_BASED) && anyTypeMoveConversionCondition(user, target, move)
+      )
       .build(),
     new AbBuilder(AbilityId.TRIAGE, 7)
       .attr(ChangeMovePriorityAbAttr, (_pokemon, move) => move.hasFlag(MoveFlags.TRIAGE_MOVE), 3)
       .build(),
     new AbBuilder(AbilityId.GALVANIZE, 7)
-      .attr(MoveTypeChangeAbAttr, PokemonType.ELECTRIC, 1.2, (_user, _target, move) => move.type === PokemonType.NORMAL)
+      .attr(MoveTypeChangeAbAttr, PokemonType.ELECTRIC, normalTypeMoveConversionCondition)
+      .attr(MovePowerBoostAbAttr, normalTypeMoveConversionCondition, 1.2)
       .build(),
     new AbBuilder(AbilityId.SURGE_SURFER, 7)
       .conditionalAttr(getTerrainCondition(TerrainType.ELECTRIC), StatMultiplierAbAttr, Stat.SPD, 2)
@@ -7918,7 +7863,7 @@ export function initAbilities() {
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => target.getMoveEffectiveness(user, move) >= 2, 0.75)
       .build(),
     new AbBuilder(AbilityId.NEUROFORCE, 7)
-      .attr(MovePowerBoostAbAttr, (user, target, move) => (target?.getMoveEffectiveness(user!, move) ?? 1) >= 2, 1.25)
+      .attr(MovePowerBoostAbAttr, (user, target, move) => (target?.getMoveEffectiveness(user, move) ?? 1) >= 2, 1.25)
       .build(),
     new AbBuilder(AbilityId.INTREPID_SWORD, 8)
       .attr(PostSummonStatStageChangeAbAttr, [ Stat.ATK ], 1, true)
@@ -8148,7 +8093,6 @@ export function initAbilities() {
       .attr(CommanderAbAttr)
       .attr(DoubleBattleChanceAbAttr)
       .uncopiable()
-      .unreplaceable()
       .edgeCase() // Encore, Frenzy, and other non-`TURN_END` tags don't lapse correctly on the commanding Pokemon.
       .build(),
     new AbBuilder(AbilityId.ELECTROMORPHOSIS, 9)
@@ -8291,19 +8235,16 @@ export function initAbilities() {
     new AbBuilder(AbilityId.TERA_SHELL, 9)
       .attr(FullHpResistTypeAbAttr)
       .uncopiable()
-      .unreplaceable()
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.TERAFORM_ZERO, 9)
       .attr(ClearWeatherAbAttr)
       .attr(ClearTerrainAbAttr)
       .uncopiable()
-      .unreplaceable()
       .condition(getOncePerBattleCondition(AbilityId.TERAFORM_ZERO))
       .build(),
     new AbBuilder(AbilityId.POISON_PUPPETEER, 9)
       .uncopiable()
-      .unreplaceable() // TODO is this true?
       .attr(ConfusionOnStatusEffectAbAttr, StatusEffect.POISON, StatusEffect.TOXIC).build()
   );
 }

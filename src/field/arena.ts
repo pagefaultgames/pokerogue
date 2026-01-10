@@ -42,9 +42,11 @@ import type { BiomeTierTrainerPools, PokemonPools } from "#types/biomes";
 import type { Constructor } from "#types/common";
 import type { AbstractConstructor } from "#types/type-helpers";
 import type { TypedEventTarget } from "#types/typed-event-target";
+import { coerceArray } from "#utils/array";
 import { NumberHolder, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
+import type { NonEmptyTuple } from "type-fest";
 
 export class Arena {
   public biomeType: BiomeId;
@@ -136,8 +138,15 @@ export class Arena {
       luckModifier = luckValue * (isBossSpecies ? 0.5 : 2);
     }
     const tierValue = randSeedInt(randVal - luckModifier);
-    let tier = !isBossSpecies
-      ? tierValue >= 156
+    let tier = isBossSpecies
+      ? tierValue >= 20
+        ? BiomePoolTier.BOSS
+        : tierValue >= 6
+          ? BiomePoolTier.BOSS_RARE
+          : tierValue >= 1
+            ? BiomePoolTier.BOSS_SUPER_RARE
+            : BiomePoolTier.BOSS_ULTRA_RARE
+      : tierValue >= 156
         ? BiomePoolTier.COMMON
         : tierValue >= 32
           ? BiomePoolTier.UNCOMMON
@@ -145,14 +154,7 @@ export class Arena {
             ? BiomePoolTier.RARE
             : tierValue >= 1
               ? BiomePoolTier.SUPER_RARE
-              : BiomePoolTier.ULTRA_RARE
-      : tierValue >= 20
-        ? BiomePoolTier.BOSS
-        : tierValue >= 6
-          ? BiomePoolTier.BOSS_RARE
-          : tierValue >= 1
-            ? BiomePoolTier.BOSS_SUPER_RARE
-            : BiomePoolTier.BOSS_ULTRA_RARE;
+              : BiomePoolTier.ULTRA_RARE;
     console.log(BiomePoolTier[tier]);
     while (this.pokemonPool[tier]?.length === 0) {
       console.log(`Downgraded rarity tier from ${BiomePoolTier[tier]} to ${BiomePoolTier[tier - 1]}`);
@@ -216,9 +218,16 @@ export class Arena {
       this.trainerPool[BiomePoolTier.BOSS].length > 0
       && (globalScene.gameMode.isTrainerBoss(waveIndex, this.biomeType, globalScene.offsetGym) || isBoss);
     console.log(isBoss, this.trainerPool);
-    const tierValue = randSeedInt(!isTrainerBoss ? 512 : 64);
-    let tier = !isTrainerBoss
-      ? tierValue >= 156
+    const tierValue = randSeedInt(isTrainerBoss ? 64 : 512);
+    let tier = isTrainerBoss
+      ? tierValue >= 20
+        ? BiomePoolTier.BOSS
+        : tierValue >= 6
+          ? BiomePoolTier.BOSS_RARE
+          : tierValue >= 1
+            ? BiomePoolTier.BOSS_SUPER_RARE
+            : BiomePoolTier.BOSS_ULTRA_RARE
+      : tierValue >= 156
         ? BiomePoolTier.COMMON
         : tierValue >= 32
           ? BiomePoolTier.UNCOMMON
@@ -226,14 +235,7 @@ export class Arena {
             ? BiomePoolTier.RARE
             : tierValue >= 1
               ? BiomePoolTier.SUPER_RARE
-              : BiomePoolTier.ULTRA_RARE
-      : tierValue >= 20
-        ? BiomePoolTier.BOSS
-        : tierValue >= 6
-          ? BiomePoolTier.BOSS_RARE
-          : tierValue >= 1
-            ? BiomePoolTier.BOSS_SUPER_RARE
-            : BiomePoolTier.BOSS_ULTRA_RARE;
+              : BiomePoolTier.ULTRA_RARE;
     console.log(BiomePoolTier[tier]);
     while (tier && this.trainerPool[tier].length === 0) {
       console.log(`Downgraded trainer rarity tier from ${BiomePoolTier[tier]} to ${BiomePoolTier[tier - 1]}`);
@@ -708,8 +710,8 @@ export class Arena {
    * @param side - The {@linkcode ArenaTagSide}(s) to which the tag should apply; default `ArenaTagSide.BOTH`.
    * @param quiet - Whether to suppress messages produced by tag addition; default `false`.
    * @returns `true` if the tag was successfully added without overlapping.
-  // TODO: Do we need the return value here? literally nothing uses it
    */
+  // TODO: Do we need the return value here? literally nothing uses it
   addTag(
     tagType: ArenaTagType,
     turnCount: number,
@@ -753,8 +755,14 @@ export class Arena {
     return this.getTagOnSide(tagType, ArenaTagSide.BOTH);
   }
 
-  hasTag(tagType: ArenaTagType): boolean {
-    return !!this.getTag(tagType);
+  /**
+   * Check whether the Arena has any of the given tags.
+   * @param tagTypes - One or more tag types to check
+   * @returns Whether a tag exists on either side of the field with any of the given type(s).
+   */
+  hasTag(tagTypes: ArenaTagType | NonEmptyTuple<ArenaTagType>): boolean {
+    tagTypes = coerceArray(tagTypes);
+    return this.tags.some(tag => tagTypes.includes(tag.tagType));
   }
 
   /**
@@ -842,7 +850,7 @@ export class Arena {
    * @param side - The {@linkcode ArenaTagSide} to remove the tags from (for side-based tags), or {@linkcode ArenaTagSide.BOTH}
    * to clear all tags on either side of the field
    * @param quiet - Whether to suppress removal messages from currently-present tags; default `false`
-   * @todo Review the other tag manipulation functions to see if they can be migrated towards using this (more efficient)
+   * @todo Review the other tag manipulation functions to see if they can be migrated towards using this (more efficient + foolproof)
    */
   public removeTagsOnSide(tagTypes: ArenaTagType[] | readonly ArenaTagType[], side: ArenaTagSide, quiet = false): void {
     const leftoverTags: ArenaTag[] = [];
@@ -857,6 +865,7 @@ export class Arena {
       }
 
       tag.onRemove(quiet);
+      this.eventTarget.dispatchEvent(new TagRemovedEvent(tag.tagType, tag.side, tag.turnCount));
     }
 
     this.tags = leftoverTags;

@@ -17,6 +17,7 @@ import type { GameStats } from "#system/game-stats";
 import type { ModifierData } from "#system/modifier-data";
 import type { PokemonData } from "#system/pokemon-data";
 import type { TrainerData } from "#system/trainer-data";
+import type { SerializedDailyRunConfig } from "./daily-run";
 import type { DexData } from "./dex-data";
 
 export interface SystemSaveData {
@@ -41,6 +42,7 @@ export interface SessionSaveData {
   seed: string;
   playTime: number;
   gameMode: GameModes;
+  dailyConfig?: SerializedDailyRunConfig;
   party: PokemonData[];
   enemyParty: PokemonData[];
   modifiers: ModifierData[];
@@ -131,7 +133,7 @@ export type RunHistoryData = Record<number, RunEntry>;
 export interface RunEntry {
   entry: SessionSaveData;
   isVictory: boolean;
-  /*Automatically set to false at the moment - implementation TBD*/
+  /** Automatically set to false at the moment - implementation TBD */
   isFavorite: boolean;
 }
 

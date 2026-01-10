@@ -12,7 +12,7 @@ import { WeatherType } from "#enums/weather-type";
 import { GameManager } from "#test/test-utils/game-manager";
 import { toDmgValue } from "#utils/common";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Wimp Out", () => {
   let phaserGame: Phaser.Game;
@@ -22,10 +22,6 @@ describe("Abilities - Wimp Out", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -417,7 +413,8 @@ describe("Abilities - Wimp Out", () => {
 
     game.move.select(MoveId.ENDURE);
     game.doSelectPartyPokemon(1);
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.phaseInterceptor.to("MoveEndPhase");
+    await game.phaseInterceptor.to("MoveEndPhase", false);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     expect(enemyPokemon.turnData.hitsLeft).toBe(0);
@@ -433,7 +430,8 @@ describe("Abilities - Wimp Out", () => {
 
     game.move.select(MoveId.ENDURE);
     game.doSelectPartyPokemon(1);
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.phaseInterceptor.to("MoveEndPhase");
+    await game.phaseInterceptor.to("MoveEndPhase", false);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     expect(enemyPokemon.turnData.hitsLeft).toBe(0);
@@ -448,7 +446,8 @@ describe("Abilities - Wimp Out", () => {
 
     game.move.select(MoveId.ENDURE);
     game.doSelectPartyPokemon(1);
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.phaseInterceptor.to("MoveEndPhase");
+    await game.phaseInterceptor.to("MoveEndPhase", false);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     expect(enemyPokemon.turnData.hitsLeft).toBe(0);

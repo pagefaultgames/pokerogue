@@ -996,7 +996,7 @@ class ToxicSpikesTag extends EntryHazardTag {
 
     // Attempt to poison the target, suppressing any status effect messages
     const effect = this.layers === 1 ? StatusEffect.POISON : StatusEffect.TOXIC;
-    return pokemon.trySetStatus(effect, null, 0, this.getMoveName(), false, true);
+    return pokemon.trySetStatus(effect, undefined, 0, this.getMoveName(), false, true);
   }
 
   getMatchupScoreMultiplier(pokemon: Pokemon): number {
@@ -1536,7 +1536,7 @@ export class SuppressAbilitiesTag extends SerializableArenaTag {
       // Could have a custom message that plays when a specific pokemon's NG ends? This entire thing exists due to passives after all
       const setter = globalScene
         .getField(true)
-        .filter(p => p.hasAbilityWithAttr("PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr", false))[0];
+        .find(p => p.hasAbilityWithAttr("PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr", false));
       // Setter may not exist if both NG Pokemon faint simultaneously
       if (setter == null) {
         return;
