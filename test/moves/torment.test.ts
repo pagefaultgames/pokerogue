@@ -6,7 +6,7 @@ import { SpeciesId } from "#enums/species-id";
 import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Torment", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +15,6 @@ describe("Moves - Torment", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -45,7 +41,7 @@ describe("Moves - Torment", () => {
     const move1 = playerPokemon.getLastXMoves(1)[0]!;
     expect(move1.move).toBe(MoveId.TACKLE);
     expect(move1.result).toBe(MoveResult.SUCCESS);
-    expect(playerPokemon?.getTag(BattlerTagType.TORMENT)).toBeDefined();
+    expect(playerPokemon.getTag(BattlerTagType.TORMENT)).toBeDefined();
 
     // Second turn, Torment forces Struggle to occur
     game.move.select(MoveId.TACKLE);

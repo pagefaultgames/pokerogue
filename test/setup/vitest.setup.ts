@@ -1,4 +1,7 @@
 import "vitest-canvas-mock";
+import "#plugins/i18n"; // tests don't go through `main.ts`, requiring this to be imported here as well
+
+import { PromptHandler } from "#test/test-utils/helpers/prompt-handler";
 import { MockConsole } from "#test/test-utils/mocks/mock-console/mock-console";
 import { logTestEnd, logTestStart } from "#test/test-utils/setup/test-end-log";
 import { initTests } from "#test/test-utils/test-file-initialization";
@@ -42,7 +45,7 @@ vi.mock(import("i18next"), async importOriginal => {
         }
         return HttpResponse.json(json);
       } catch (err) {
-        console.log(`Failed to load locale ${filename}!`, err);
+        console.error(`Failed to load locale ${filename}\n`, err);
         return HttpResponse.json({});
       }
     }),
@@ -56,17 +59,12 @@ vi.mock(import("i18next"), async importOriginal => {
   return await importOriginal();
 });
 
-global.testFailed = false;
+//#endregion Mocking
+
+//#region Hooks
 
 beforeAll(() => {
   initTests();
-});
-
-beforeEach(context => {
-  logTestStart(context.task);
-});
-afterEach(context => {
-  logTestEnd(context.task);
 });
 
 afterAll(() => {
@@ -74,3 +72,15 @@ afterAll(() => {
   MockConsole.printPostTestWarnings();
   console.log(chalk.hex("#dfb8d8")("Closing i18n MSW server!"));
 });
+
+beforeEach(context => {
+  logTestStart(context.task);
+});
+
+afterEach(context => {
+  logTestEnd(context.task);
+  clearInterval(PromptHandler.runInterval);
+  PromptHandler.runInterval = undefined;
+});
+
+//#endregion Hooks

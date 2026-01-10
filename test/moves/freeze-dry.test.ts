@@ -46,10 +46,6 @@ describe.sequential("Move - Freeze-Dry", () => {
     enemy.isTerastallized = false;
   });
 
-  afterAll(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   /**
    * Check that Freeze-Dry is the given effectiveness against the given type.
    * @param types - The base {@linkcode PokemonType}s to set; will populate `addedType` if above 3

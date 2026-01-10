@@ -7,6 +7,8 @@
 
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
+import { confirm } from "@inquirer/prompts";
+import chalk from "chalk";
 
 /**
  * @import {PathOrFileDescriptor, WriteFileOptions} from "node:fs"
@@ -15,7 +17,7 @@ import { dirname } from "node:path";
 /**
  * "Safely" write to a file, creating any parent directories as required.
  * @param {PathOrFileDescriptor} file - The filename or file descriptor to open
- * @param {string | NodeJS.ArrayBufferView<ArrayBufferLike>} content - The content which will be written
+ * @param {string | NodeJS.ArrayBufferView<ArrayBufferLike>} content - The content that will be written
  * @param {WriteFileOptions} [options]
  * @returns {void}
  * @remarks
@@ -33,4 +35,16 @@ export function writeFileSafe(file, content, options) {
   }
 
   writeFileSync(file, content, options);
+}
+
+/**
+ * Confirm overwriting an already-existing file.
+ * @param {string} outFile - The file name to override
+ * @returns {Promise<boolean>} A Promise that resolves with whether to overwrite the file.
+ */
+export async function promptOverwrite(outFile) {
+  return await confirm({
+    message: chalk.hex("#ffa500")(`File ${chalk.blue(outFile)} already exists!\nDo you want to replace it?`),
+    default: false,
+  });
 }
