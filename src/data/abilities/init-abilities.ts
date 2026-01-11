@@ -1,5 +1,6 @@
 import {
   AddSecondStrikeAbAttr,
+  AiMovegenMoveStatsAbAttr,
   AlliedFieldDamageReductionAbAttr,
   AllyMoveCategoryPowerBoostAbAttr,
   AllyStatMultiplierAbAttr,
@@ -204,7 +205,8 @@ import { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import { noAbilityTypeOverrideMoves } from "#moves/invalid-moves";
-import type { AbAttrCondition, PokemonAttackCondition } from "#types/ability-types";
+import { failIfDampCondition } from "#moves/move-condition";
+import type { AbAttrCondition, AiMovegenMoveStatsAbAttrParams, PokemonAttackCondition } from "#types/ability-types";
 import type { Move } from "#types/move-types";
 import { NumberHolder, randSeedInt, toDmgValue } from "#utils/common";
 import i18next from "i18next";
@@ -223,6 +225,7 @@ export function initAbilities() {
     new AbBuilder(AbilityId.DRIZZLE, 3) //
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.RAIN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.RAIN)
+      .attr(AiMovegenMoveStatsAbAttr, drizzleAiMovegenEffect)
       .build(),
     new AbBuilder(AbilityId.SPEED_BOOST, 3) //
       .attr(SpeedBoostAbAttr)
@@ -238,6 +241,11 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.DAMP, 3) //
       .attr(FieldPreventExplosiveMovesAbAttr)
+      .attr(AiMovegenMoveStatsAbAttr, params => {
+        if (params.move.hasCondition(failIfDampCondition)) {
+          params.powerMult.value = 0;
+        }
+      })
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.LIMBER, 3) //
@@ -278,6 +286,9 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.COMPOUND_EYES, 3) //
       .attr(StatMultiplierAbAttr, Stat.ACC, 1.3)
+      .attr(AiMovegenMoveStatsAbAttr, params => {
+        params.accMult.value *= 1.3;
+      })
       .build(),
     new AbBuilder(AbilityId.INSOMNIA, 3) //
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
@@ -541,6 +552,7 @@ export function initAbilities() {
     new AbBuilder(AbilityId.DROUGHT, 3) //
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SUNNY)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SUNNY)
+      .attr(AiMovegenMoveStatsAbAttr, draughtAiMovegenEffect)
       .build(),
     new AbBuilder(AbilityId.ARENA_TRAP, 3) //
       .attr(ArenaTrapAbAttr, (_user, target) => target.isGrounded())
@@ -643,6 +655,9 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.SKILL_LINK, 4) //
       .attr(MaxMultiHitAbAttr)
+      .attr(AiMovegenMoveStatsAbAttr, ({ maxMultiHit }: AiMovegenMoveStatsAbAttrParams) => {
+        maxMultiHit.value = true;
+      })
       .build(),
     new AbBuilder(AbilityId.HYDRATION, 4) //
       .attr(PostTurnResetStatusAbAttr)
@@ -767,6 +782,25 @@ export function initAbilities() {
     new AbBuilder(AbilityId.SNOW_WARNING, 4) //
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SNOW)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SNOW)
+      .attr(AiMovegenMoveStatsAbAttr, ({ move, powerMult, accMult, instantCharge }: AiMovegenMoveStatsAbAttrParams) => {
+        if (move.id === MoveId.WEATHER_BALL) {
+          // double power in addition to weather boost
+          powerMult.value *= 2;
+          return;
+        }
+        if (move.hasAttr("BlizzardAccuracyAttr")) {
+          accMult.value = Number.POSITIVE_INFINITY;
+        }
+        if (move.hasAttr("AntiSunlightPowerDecreaseAttr")) {
+          powerMult.value *= 0.5;
+        }
+        if (
+          move.isChargingMove()
+          && move.getChargeAttrs("WeatherInstantChargeAttr").some(attr => attr.weatherTypes.includes(WeatherType.SNOW))
+        ) {
+          instantCharge.value = true;
+        }
+      })
       .build(),
     new AbBuilder(AbilityId.HONEY_GATHER, 4) //
       .attr(MoneyAbAttr)
@@ -1025,9 +1059,9 @@ export function initAbilities() {
       .attr(ChangeMovePriorityAbAttr, (_pokemon, move: Move) => move.category === MoveCategory.STATUS, 1)
       .build(),
     new AbBuilder(AbilityId.SAND_FORCE, 5) //
-      .attr(MoveTypePowerBoostAbAttr, PokemonType.ROCK, 1.3)
-      .attr(MoveTypePowerBoostAbAttr, PokemonType.GROUND, 1.3)
-      .attr(MoveTypePowerBoostAbAttr, PokemonType.STEEL, 1.3)
+      .attr(MoveTypePowerBoostAbAttr, PokemonType.ROCK, 1.3, true)
+      .attr(MoveTypePowerBoostAbAttr, PokemonType.GROUND, 1.3, true)
+      .attr(MoveTypePowerBoostAbAttr, PokemonType.STEEL, 1.3, true)
       .attr(BlockWeatherDamageAttr, WeatherType.SANDSTORM)
       .condition(getWeatherCondition(WeatherType.SANDSTORM))
       .build(),
@@ -1048,6 +1082,9 @@ export function initAbilities() {
     new AbBuilder(AbilityId.VICTORY_STAR, 5) //
       .attr(StatMultiplierAbAttr, Stat.ACC, 1.1)
       .attr(AllyStatMultiplierAbAttr, Stat.ACC, 1.1, false)
+      .attr(AiMovegenMoveStatsAbAttr, ({ accMult }) => {
+        accMult.value *= 1.1;
+      })
       .build(),
     new AbBuilder(AbilityId.TURBOBLAZE, 5) //
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) =>
@@ -1221,12 +1258,28 @@ export function initAbilities() {
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HEAVY_RAIN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HEAVY_RAIN)
       .attr(PreLeaveFieldClearWeatherAbAttr, WeatherType.HEAVY_RAIN)
+      .attr(AiMovegenMoveStatsAbAttr, params => {
+        // hardcode fire type move as having 0 power
+        if (params.move.type === PokemonType.FIRE) {
+          params.powerMult.value *= 0;
+        } else {
+          drizzleAiMovegenEffect(params);
+        }
+      })
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.DESOLATE_LAND, 6) //
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HARSH_SUN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HARSH_SUN)
       .attr(PreLeaveFieldClearWeatherAbAttr, WeatherType.HARSH_SUN)
+      .attr(AiMovegenMoveStatsAbAttr, params => {
+        // hardcode fire type move as having 0 power
+        if (params.move.type === PokemonType.WATER) {
+          params.powerMult.value *= 0;
+        } else {
+          draughtAiMovegenEffect(params);
+        }
+      })
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.DELTA_STREAM, 6) //
@@ -1523,21 +1576,37 @@ export function initAbilities() {
       .unreplaceable()
       .unsuppressable()
       .build(),
-    new AbBuilder(AbilityId.ELECTRIC_SURGE, 7) //
+    new AbBuilder(AbilityId.ELECTRIC_SURGE, 7)
       .attr(PostSummonTerrainChangeAbAttr, TerrainType.ELECTRIC)
       .attr(PostBiomeChangeTerrainChangeAbAttr, TerrainType.ELECTRIC)
+      .attr(SummonTerrainAiMovegenMoveStatsAbAttr, PokemonType.ELECTRIC, [MoveId.RISING_VOLTAGE, 2])
       .build(),
-    new AbBuilder(AbilityId.PSYCHIC_SURGE, 7) //
+    new AbBuilder(AbilityId.PSYCHIC_SURGE, 7)
       .attr(PostSummonTerrainChangeAbAttr, TerrainType.PSYCHIC)
       .attr(PostBiomeChangeTerrainChangeAbAttr, TerrainType.PSYCHIC)
+      .attr(SummonTerrainAiMovegenMoveStatsAbAttr, PokemonType.PSYCHIC, [MoveId.EXPANDING_FORCE, 1.5])
       .build(),
-    new AbBuilder(AbilityId.MISTY_SURGE, 7) //
+    new AbBuilder(AbilityId.MISTY_SURGE, 7)
       .attr(PostSummonTerrainChangeAbAttr, TerrainType.MISTY)
       .attr(PostBiomeChangeTerrainChangeAbAttr, TerrainType.MISTY)
+      .attr(AiMovegenMoveStatsAbAttr, ({ pokemon, move, powerMult }) => {
+        if (move.type === PokemonType.DRAGON) {
+          powerMult.value *= 0.5;
+        }
+        if (pokemon.hasAbility(AbilityId.LEVITATE) || pokemon.isOfType(PokemonType.FLYING)) {
+          return;
+        }
+        if (move.id === MoveId.MISTY_EXPLOSION) {
+          powerMult.value *= 1.5;
+        } else if (move.id === MoveId.TERRAIN_PULSE) {
+          powerMult.value *= 1.5;
+        }
+      })
       .build(),
-    new AbBuilder(AbilityId.GRASSY_SURGE, 7) //
+    new AbBuilder(AbilityId.GRASSY_SURGE, 7)
       .attr(PostSummonTerrainChangeAbAttr, TerrainType.GRASSY)
       .attr(PostBiomeChangeTerrainChangeAbAttr, TerrainType.GRASSY)
+      .attr(SummonTerrainAiMovegenMoveStatsAbAttr, PokemonType.GRASS)
       .build(),
     new AbBuilder(AbilityId.FULL_METAL_BODY, 7) //
       .attr(ProtectStatAbAttr)
@@ -2188,3 +2257,58 @@ const sheerForceHitDisableAbCondition: AbAttrCondition = (pokemon: Pokemon): boo
 
   return !sheerForceAffected;
 };
+
+/**
+ * DRY implementation for the AIMovegenMoveStatsAbAttr effect of harsh-sunlight summoning abilities.
+ * @param __namedParameters.move - Needed for proper typedoc rendering
+ */
+function drizzleAiMovegenEffect({ move, powerMult, accMult }: AiMovegenMoveStatsAbAttrParams) {
+  if (move.id === MoveId.WEATHER_BALL) {
+    // double power plus weather boost
+    powerMult.value *= 3;
+    return;
+  }
+  switch (move.type) {
+    case PokemonType.FIRE:
+      powerMult.value *= 0.5;
+      break;
+    case PokemonType.WATER:
+      powerMult.value *= 1.5;
+      break;
+  }
+  if (move.hasAttr("ThunderAccuracyAttr") || move.hasAttr("StormAccuracyAttr")) {
+    accMult.value = Number.POSITIVE_INFINITY;
+  }
+  if (move.hasAttr("AntiSunlightPowerDecreaseAttr")) {
+    powerMult.value *= 0.5;
+  }
+}
+
+/**
+ * DRY implementation for the AIMovegenMoveStatsAbAttr effect of harsh-sunlight summoning abilities
+ * @param __namedParameters.move - Needed for proper typedoc rendering
+ */
+function draughtAiMovegenEffect({ move, powerMult, accMult, instantCharge }: AiMovegenMoveStatsAbAttrParams) {
+  if (move.id === MoveId.WEATHER_BALL) {
+    // double power in addition to weather boost
+    powerMult.value *= 3;
+    return;
+  }
+
+  if (move.id === MoveId.HYDRO_STEAM || move.type === PokemonType.FIRE) {
+    powerMult.value *= 1.5;
+  } else if (move.type === PokemonType.WATER) {
+    powerMult.value *= 0.5;
+  }
+
+  if (move.hasAttr("ThunderAccuracyAttr")) {
+    accMult.value *= 0.5;
+  }
+
+  if (
+    move.isChargingMove()
+    && move.getChargeAttrs("WeatherInstantChargeAttr").some(attr => attr.weatherTypes.includes(WeatherType.SUNNY))
+  ) {
+    instantCharge.value = true;
+  }
+}

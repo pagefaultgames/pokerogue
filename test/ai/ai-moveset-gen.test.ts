@@ -3,7 +3,7 @@ import {
   COMMON_TIER_TM_LEVEL_REQUIREMENT,
   GREAT_TIER_TM_LEVEL_REQUIREMENT,
   ULTRA_TIER_TM_LEVEL_REQUIREMENT,
-} from "#balance/moveset-generation";
+} from "#balance/moves/moveset-generation";
 import { allMoves, allSpecies } from "#data/data-lists";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";

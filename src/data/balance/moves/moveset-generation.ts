@@ -1,5 +1,6 @@
 /*
- * SPDX-Copyright-Text: 2025 Pagefault Games
+ * SPDX-Copyright-Text: 2025-2026 Pagefault Games
+ * SPDX-FileContributor: SirzBenjie
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
@@ -142,7 +143,7 @@ export const BOSS_EXTRA_WEIGHT_MULTIPLIER = 0.4;
 
 
 /**
- * Set of moves that should be blacklisted from the forced STAB during moveset generation
+ * Set of moves that should be excluded from the forced STAB during moveset generation
  *
  * @remarks
  * During moveset generation, trainer pokemon attempt to force their pokemon to generate with STAB
@@ -235,3 +236,6 @@ export function getMaxEggMoveCount(level: number): number {
   }
   return 4;
 }
+
+
+

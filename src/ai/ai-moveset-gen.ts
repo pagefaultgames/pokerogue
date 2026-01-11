@@ -1,6 +1,6 @@
 import { EVOLVE_MOVE, RELEARN_MOVE } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { speciesEggMoves } from "#balance/egg-moves";
+import { speciesEggMoves } from "#balance/moves/egg-moves";
 import {
   BASE_LEVEL_WEIGHT_OFFSET,
   BASE_WEIGHT_MULTIPLIER,
@@ -19,7 +19,7 @@ import {
   STAB_BLACKLIST,
   ULTRA_TIER_TM_LEVEL_REQUIREMENT,
   ULTRA_TM_MOVESET_WEIGHT,
-} from "#balance/moveset-generation";
+} from "#balance/moves/moveset-generation";
 import { speciesTmMoves, tmPoolTiers } from "#balance/tms";
 import { IS_TEST, isBeta, isDev } from "#constants/app-constants";
 import { allMoves } from "#data/data-lists";
@@ -372,9 +372,13 @@ function adjustWeightsForTrainer(pool: Map<MoveId, number>): void {
 function adjustDamageMoveWeights(pool: Map<MoveId, number>, pokemon: Pokemon, willTera = false): void {
   // begin max power at 40 to avoid inflating weights too much when there are only low power moves
   let maxPower = 40;
+  /** Memoized move effective power to avoid redundant calculations */
+  const movePowers: Partial<Record<MoveId, number>> = {};
   for (const moveId of pool.keys()) {
     const move = allMoves[moveId];
-    maxPower = Math.max(maxPower, move.calculateEffectivePower());
+    const power = move.calculateEffectivePower();
+    movePowers[moveId] = power;
+    maxPower = Math.max(maxPower, power);
     if (maxPower >= 90) {
       maxPower = 90;
       break;
@@ -395,8 +399,10 @@ function adjustDamageMoveWeights(pool: Map<MoveId, number>, pokemon: Pokemon, wi
     if (move.category === MoveCategory.STATUS) {
       continue;
     }
-    // Scale weight based on their ratio to the highest power move, capping at 50% reduction
-    adjustedWeight *= Math.max(Math.min(move.calculateEffectivePower() / maxPower, 1), 0.5);
+    const power = movePowers[moveId] ?? move.calculateEffectivePower();
+
+    // Scale weight based on their ratio to the highest power move, capping at 75% reduction
+    adjustedWeight *= Phaser.Math.Clamp(power / maxPower, 0.25, 1);
 
     // Scale weight based the stat it uses to deal damage, based on the ratio between said stat
     // and the higher stat
@@ -416,9 +422,7 @@ function adjustDamageMoveWeights(pool: Map<MoveId, number>, pokemon: Pokemon, wi
       adjustedWeight *= adjustmentRatio;
     }
 
-    if (adjustedWeight !== weight) {
-      pool.set(moveId, adjustedWeight);
-    }
+    pool.set(moveId, adjustedWeight);
   }
 }
 
@@ -649,6 +653,7 @@ function debugMoveWeights(pokemon: Pokemon, pool: Map<MoveId, number>, note: str
  * @returns A reference to the Pokémon's moveset array
  */
 export function generateMoveset(pokemon: Pokemon): void {
+  globalScene.movesetGenInProgress = true;
   pokemon.moveset = [];
   // Step 1: Generate the pools from various sources: level up, egg moves, and TMs
   const learnPool = getAndWeightLevelMoves(pokemon);
@@ -718,6 +723,8 @@ export function generateMoveset(pokemon: Pokemon): void {
     baseWeights,
     filterPool(baseWeights, (m: MoveId) => !pokemon.moveset.some(mo => m === mo.moveId)),
   );
+
+  globalScene.movesetGenInProgress = false;
 }
 
 /**

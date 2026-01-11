@@ -1,8 +1,10 @@
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import type { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { TrappedTag } from "#data/battler-tags";
 import { allMoves } from "#data/data-lists";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Command } from "#enums/command";
 import { MoveCategory, type MoveDamageCategory } from "#enums/move-category";
@@ -12,6 +14,8 @@ import { PokemonType } from "#enums/pokemon-type";
 import type { Pokemon } from "#field/pokemon";
 import type { Move, MoveConditionFunc, UserMoveConditionFunc } from "#moves/move";
 import { getCounterAttackTarget } from "#moves/move-utils";
+import { BooleanHolder } from "#utils/common";
+import { inSpeedOrder } from "#utils/speed-order-generator";
 import i18next from "i18next";
 
 /**
@@ -192,6 +196,23 @@ export const lastResortCondition = new MoveCondition((user, _target, move) => {
 
   // Since `Set.intersection()` is only present in ESNext, we have to do this to check inclusion
   return [...otherMovesInMoveset].every(m => movesInHistory.has(m));
+});
+
+export const failIfDampCondition = new MoveCondition((user, _target, move) => {
+  const cancelled = new BooleanHolder(false);
+  // temporary workaround to prevent displaying the message during enemy command phase
+  // TODO: either move this, or make the move condition func have a `simulated` param
+  const simulated = globalScene.phaseManager.getCurrentPhase()?.is("EnemyCommandPhase");
+  for (const p of inSpeedOrder(ArenaTagSide.BOTH)) {
+    applyAbAttrs("FieldPreventExplosiveMovesAbAttr", { pokemon: p, cancelled, simulated });
+  }
+  // Queue a message if an ability prevented usage of the move
+  if (!simulated && cancelled.value) {
+    globalScene.phaseManager.queueMessage(
+      i18next.t("moveTriggers:cannotUseMove", { pokemonName: getPokemonNameWithAffix(user), moveName: move.name }),
+    );
+  }
+  return !cancelled.value;
 });
 
 /**
