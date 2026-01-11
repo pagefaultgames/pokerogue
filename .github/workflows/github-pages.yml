@@ -30,6 +30,14 @@ jobs:
     outputs:
       all: ${{ steps.filter.outputs.all }}
     steps:
+      # ensure the correct commit is detected on push workflow
+      - name: Checkout GitHub repository
+        uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            .nvmrc
+          sparse-checkout-cone-mode: false
+
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
         id: filter
         with:
