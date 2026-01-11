@@ -637,13 +637,14 @@ function fillInRemainingMovesetSlots(
  * @param note - Short note to include in the log for context
  */
 function debugMoveWeights(pokemon: Pokemon, pool: Map<MoveId, number>, note: string): void {
-  if ((isBeta || isDev) && !IS_TEST) {
+  if (isBeta || isDev || (import.meta.env.MODE === "test" && __INTERNAL_TEST_EXPORTS.forceLogging)) {
     const moveNameToWeightMap = new Map<string, number>();
     const sortedByValue = Array.from(pool.entries()).sort((a, b) => b[1] - a[1]);
     for (const [moveId, weight] of sortedByValue) {
       moveNameToWeightMap.set(allMoves[moveId].name, weight);
     }
     console.log("%cComputed move weights [%s] for %s", "color: blue", note, pokemon.name, moveNameToWeightMap);
+  } else {
   }
 }
 
@@ -748,6 +749,7 @@ export const __INTERNAL_TEST_EXPORTS: {
   forceStabMove: typeof forceStabMove;
   filterRemainingTrainerMovePool: typeof filterRemainingTrainerMovePool;
   fillInRemainingMovesetSlots: typeof fillInRemainingMovesetSlots;
+  forceLogging?: boolean;
 } = {} as any;
 
 if (IS_TEST) {
@@ -767,5 +769,6 @@ if (IS_TEST) {
     forceStabMove,
     filterRemainingTrainerMovePool,
     fillInRemainingMovesetSlots,
+    forceLogging: false,
   });
 }
