@@ -37,6 +37,10 @@ jobs:
             all:
               - "src/**/*.ts"
               - "test/test-utils/*.ts"
+              - "typedoc.config.js"
+              - "tsdoc.json"
+              - "tsconfig.json"
+              - "typedoc-plugins/**/*"
 
   pages:
     name: Github Pages
