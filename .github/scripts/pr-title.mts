@@ -80,6 +80,7 @@ async function run(): Promise<void> {
     });
 
     const { title } = pullRequest;
+    core.info("Info on PR title formatting: https://github.com/pagefaultgames/pokerogue/blob/beta/CONTRIBUTING.md#-submitting-a-pull-request");
     core.info(`Pull Request title: "${title}"`);
 
     // if (title.length > 72) {
