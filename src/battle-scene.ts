@@ -249,6 +249,16 @@ export class BattleScene extends SceneBase {
 
   /** Manager for the phases active in the battle scene */
   public readonly phaseManager: PhaseManager;
+  /**
+   * Global state variable indicating AI moveset generation is in progress
+   *
+   * @remarks
+   * It is intended that this is set to `true` while movesets are being generated.
+   * Its purpose is to skip certain checks and effects that are not relevant during
+   * the moveset generation process, such as ability suppression checks.
+   */
+  public movesetGenInProgress = false;
+
   public field: Phaser.GameObjects.Container;
   public fieldUI: Phaser.GameObjects.Container;
   public charSprite: CharSprite;

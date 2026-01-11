@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
 import Overrides from "#app/overrides";
-import { speciesEggMoves } from "#balance/egg-moves";
+import { speciesEggMoves } from "#balance/moves/egg-moves";
 import { starterPassiveAbilities } from "#balance/passives";
 import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { pokemonEvolutions, pokemonPrevolutions, pokemonStarters } from "#balance/pokemon-evolutions";
