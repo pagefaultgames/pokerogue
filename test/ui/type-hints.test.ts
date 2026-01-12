@@ -7,7 +7,7 @@ import type { MockText } from "#test/test-utils/mocks/mocks-container/mock-text"
 import { FightUiHandler } from "#ui/fight-ui-handler";
 import i18next from "i18next";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("UI - Type Hints", () => {
   let phaserGame: Phaser.Game;
@@ -17,10 +17,6 @@ describe("UI - Type Hints", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(async () => {

@@ -24,6 +24,7 @@ import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
 import type { ModifierOverride } from "#modifiers/modifier-type";
 import { Variant } from "#sprites/variant";
+import type { CustomDailyRunConfig } from "#types/daily-run";
 import type { IntClosedRange, TupleOf } from "type-fest";
 
 /**
@@ -61,7 +62,11 @@ class DefaultOverrides {
   // -----------------
   /** a specific seed (default: a random string of 24 characters) */
   readonly SEED_OVERRIDE: string = "";
-  readonly DAILY_RUN_SEED_OVERRIDE: string | null = null;
+  /**
+   * A {@linkcode CustomDailyRunConfig} or a stringified version thereof
+   * used to customize the daily run (such as to use custom starters or final boss).
+   */
+  readonly DAILY_RUN_SEED_OVERRIDE: CustomDailyRunConfig | string | null = null;
   readonly WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
   /**
    * If `null`, ignore this override.
@@ -93,6 +98,7 @@ class DefaultOverrides {
    */
   readonly CRITICAL_HIT_OVERRIDE: boolean | null = null;
   /** @defaultValue `1000` */
+  // TODO: Make default value something other than `0`
   readonly STARTING_MONEY_OVERRIDE: number = 0;
   /** Sets all shop item prices to 0 */
   readonly WAIVE_SHOP_FEES_OVERRIDE: boolean = false;

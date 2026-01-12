@@ -25,7 +25,8 @@
     // and having to verify whether each individual file is ignored
     "includes": [
       "**",
-      "!!.github",
+      "!.github/**/*.*", // workaround due to bug/design limitation, should be `"!.github"`
+      ".github/**/*.ts",
       "!!assets",
       "!!coverage",
       "!!dist",
@@ -86,7 +87,7 @@
         },
         "useAtIndex": "error",
         "noNegationElse": {
-          "level": "info", // TODO: Promote to error eventually
+          "level": "error",
           "fix": "unsafe", // duplicates else blocks
           "options": {}
         },

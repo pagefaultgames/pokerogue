@@ -3,7 +3,7 @@ import { getGameMode } from "#app/game-mode";
 import { GameModes } from "#enums/game-modes";
 import { GameManager } from "#test/test-utils/game-manager";
 import * as Utils from "#utils/common";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("game-mode", () => {
   let phaserGame: Phaser.Game;
@@ -13,12 +13,11 @@ describe("game-mode", () => {
       type: Phaser.HEADLESS,
     });
   });
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
+
   beforeEach(() => {
     game = new GameManager(phaserGame);
   });
+
   describe("classic", () => {
     let classicGameMode: GameMode;
     beforeEach(() => {

@@ -3,13 +3,12 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import { MysteryEncounterOptionSelectedPhase } from "#phases/mystery-encounter-phases";
 import { GameManager } from "#test/test-utils/game-manager";
 import type { MessageUiHandler } from "#ui/message-ui-handler";
 import type { MysteryEncounterUiHandler } from "#ui/mystery-encounter-ui-handler";
 import i18next from "i18next";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Mystery Encounter Phases", () => {
   let phaserGame: Phaser.Game;
@@ -19,10 +18,6 @@ describe("Mystery Encounter Phases", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -83,11 +78,7 @@ describe("Mystery Encounter Phases", () => {
       handler.processInput(Button.ACTION);
 
       // Waitfor required so that option select messages and preOptionPhase logic are handled
-      await vi.waitFor(() =>
-        expect(game.scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(
-          MysteryEncounterOptionSelectedPhase.name,
-        ),
-      );
+      await vi.waitFor(() => expect(game).toBeAtPhase("MysteryEncounterOptionSelectedPhase"));
       expect(ui.getMode()).toBe(UiMode.MESSAGE);
       expect(ui.showDialogue).toHaveBeenCalledTimes(1);
       expect(ui.showText).toHaveBeenCalledTimes(2);

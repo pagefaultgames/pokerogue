@@ -13,8 +13,8 @@
 import fs from "node:fs";
 import { join } from "node:path";
 import chalk from "chalk";
+import { toKebabCase, toTitleCase } from "../helpers/casing.js";
 import { writeFileSafe } from "../helpers/file.js";
-import { toKebabCase, toTitleCase } from "../helpers/strings.js";
 import { getFileName, getTestType } from "./cli.js";
 import { getBoilerplatePath, getTestFileFullPath } from "./dirs.js";
 import { HELP_FLAGS, showHelpText } from "./help-message.js";
