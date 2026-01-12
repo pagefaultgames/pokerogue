@@ -36,6 +36,7 @@ export class RegistrationFormUiHandler extends LoginRegisterInfoContainerUiHandl
     if (colonIndex > 0) {
       error = error.slice(0, colonIndex);
     }
+    // TODO: Consider replacing server error strings with numeric error codes for better maintainability
     switch (error) {
       case "invalid username":
         return i18next.t("menu:invalidRegisterUsername");
