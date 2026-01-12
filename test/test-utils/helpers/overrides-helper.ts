@@ -292,9 +292,10 @@ export class OverridesHelper extends GameManagerHelper {
    * @param ivs - The IVs to set, either as a single number or a 6-length array.
    * If set to `null`, the override is disabled.
    * @returns `this`
+   * @remarks
+   * This will disable player/enemy IV normalization when called.
    */
-  // TODO: Add `type-fest` as a dev dependency and use an integer range type to enforce values between 0-31
-  public playerIVs(ivs: number | [number, number, number, number, number, number] | null): this {
+  public playerIVs(ivs: (typeof Overrides)["IVS_OVERRIDE"]): this {
     this.normalizeIVs = false;
     vi.spyOn(Overrides, "IVS_OVERRIDE", "get").mockReturnValue(ivs);
     if (ivs === null) {
@@ -326,8 +327,10 @@ export class OverridesHelper extends GameManagerHelper {
    * @param ivs - The IVs to set, either as a single number or a 6-length array.
    * If set to `null`, the override is disabled.
    * @returns `this`
+   * @remarks
+   * This will disable player/enemy IV normalization when called.
    */
-  public enemyIVs(ivs: number | [number, number, number, number, number, number] | null): this {
+  public enemyIVs(ivs: (typeof Overrides)["IVS_OVERRIDE"]): this {
     this.normalizeIVs = false;
     vi.spyOn(Overrides, "ENEMY_IVS_OVERRIDE", "get").mockReturnValue(ivs);
     if (ivs === null) {

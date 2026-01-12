@@ -24,7 +24,7 @@ import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
 import type { ModifierOverride } from "#modifiers/modifier-type";
 import { Variant } from "#sprites/variant";
-import type { ClosedIntRange, TupleOf } from "type-fest";
+import type { IntClosedRange, TupleOf } from "type-fest";
 
 /**
  * This comment block exists to prevent IDEs from automatically removing unused imports
@@ -174,7 +174,7 @@ class DefaultOverrides {
    * - If set to an array, set the IVs of all player pokemon to that array. Array length must be exactly `6`!
    * - If set to `null`, disable the override.
    */
-  readonly IVS_OVERRIDE: ClosedIntRange<0, 31> | TupleOf<6, ClosedIntRange<0, 31>> | null = null;
+  readonly IVS_OVERRIDE: IntClosedRange<0, 31> | TupleOf<6, IntClosedRange<0, 31>> | null = null;
   /** Override the nature of all player pokemon to the specified nature. Disabled if `null`. */
   readonly NATURE_OVERRIDE: Nature | null = null;
 
@@ -192,7 +192,7 @@ class DefaultOverrides {
   readonly ENEMY_HAS_PASSIVE_ABILITY_OVERRIDE: boolean | null = null;
   readonly ENEMY_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly ENEMY_GENDER_OVERRIDE: Gender | null = null;
-  readonly ENEMY_MOVE  SET_OVERRIDE: MoveId | MoveId[] = [];
+  readonly ENEMY_MOVESET_OVERRIDE: MoveId | MoveId[] = [];
   readonly ENEMY_SHINY_OVERRIDE: boolean | null = null;
   readonly ENEMY_VARIANT_OVERRIDE: Variant | null = null;
 
@@ -202,7 +202,7 @@ class DefaultOverrides {
    * - If set to an array, set the IVs of all enemy pokemon to that array. Array length must be exactly `6`!
    * - If set to `null`, disable the override.
    */
-  readonly ENEMY_IVS_OVERRIDE: ClosedIntRange<0, 31> | TupleOf<6, ClosedIntRange<0, 31>> | null = null;
+  readonly ENEMY_IVS_OVERRIDE: IntClosedRange<0, 31> | TupleOf<6, IntClosedRange<0, 31>> | null = null;
   /** Override the nature of all enemy pokemon to the specified nature. Disabled if `null`. */
   readonly ENEMY_NATURE_OVERRIDE: Nature | null = null;
   readonly ENEMY_FORM_OVERRIDES: Partial<Record<SpeciesId, number>> = {};
