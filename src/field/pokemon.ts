@@ -112,7 +112,6 @@ import { SwitchType } from "#enums/switch-type";
 import type { TrainerSlot } from "#enums/trainer-slot";
 import { UiMode } from "#enums/ui-mode";
 import { WeatherType } from "#enums/weather-type";
-import { doShinySparkleAnim } from "#field/anims";
 import {
   BaseStatModifier,
   CritBoosterModifier,
@@ -5294,7 +5293,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /** Play the shiny sparkle animation and effects, if applicable */
   sparkle(): void {
     if (this.shinySparkle) {
-      doShinySparkleAnim(this.shinySparkle, this.variant);
+      globalScene.animations.doShinySparkleAnim(this.shinySparkle, this.variant);
     }
   }
 
