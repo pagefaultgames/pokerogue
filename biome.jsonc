@@ -25,7 +25,8 @@
     // and having to verify whether each individual file is ignored
     "includes": [
       "**",
-      "!!.github",
+      "!.github/**/*.*", // workaround due to bug/design limitation, should be `"!.github"`
+      ".github/**/*.ts",
       "!!assets",
       "!!coverage",
       "!!dist",
@@ -286,18 +287,7 @@
       }
     },
 
-    // Overrides to prevent unused import removal inside `overrides.ts`, enums & `.d.ts` files (for TSDoc linkcodes),
-    // as well as inside script boilerplate files (whose imports will _presumably_ be used in the generated file).
-    {
-      "includes": ["**/src/overrides.ts", "**/src/enums/**/*", "**/*.d.ts", "scripts/**/*.boilerplate.ts"],
-      "linter": {
-        "rules": {
-          "correctness": {
-            "noUnusedImports": "off"
-          }
-        }
-      }
-    },
+    // Prevent forcing type-only imports inside `overrides.ts` (where they serve as placeholders for actual runtime symbols)
     {
       "includes": ["**/src/overrides.ts"],
       "linter": {
