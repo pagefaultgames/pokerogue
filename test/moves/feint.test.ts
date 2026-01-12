@@ -52,7 +52,7 @@ describe("Move - Feint", () => {
     await game.move.forceEnemyMove(moveId);
     await game.toEndOfTurn();
 
-    expect(game).not.toHaveArenaTag({ tagType, side: ArenaTagSide.ENEMY });
+    expect(game).not.toHaveArenaTag(tagType, ArenaTagSide.ENEMY);
     expect(game.field.getEnemyPokemon()).not.toHaveFullHp();
   });
 
@@ -69,7 +69,7 @@ describe("Move - Feint", () => {
     game.move.use(moveId, BattlerIndex.PLAYER_2);
     await game.toEndOfTurn();
 
-    expect(game).not.toHaveArenaTag({ tagType, side: ArenaTagSide.PLAYER });
+    expect(game).not.toHaveArenaTag(tagType, ArenaTagSide.PLAYER);
     expect(game.field.getPlayerParty()[1]).not.toHaveFullHp();
   });
 
