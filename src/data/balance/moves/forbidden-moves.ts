@@ -1,5 +1,5 @@
 /*
- * SPDX-Copyright-Text: 2026 Pagefault Games
+ * SPDX-FileCopyrightText: 2026 Pagefault Games
  * SPDX-FileContributor: SirzBenjie
  *
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -30,4 +30,24 @@ export const FORBIDDEN_SINGLES_MOVES: ReadonlySet<MoveId> = new Set([
   MoveId.MAT_BLOCK,
   MoveId.QUICK_GUARD,
   MoveId.WIDE_GUARD,
+]);
+
+export const FORBIDDEN_TM_MOVES: ReadonlySet<MoveId> = new Set([
+  MoveId.NIGHT_SHADE,
+  MoveId.PSYCH_UP,
+  MoveId.FLASH,
+  MoveId.SNORE,
+  MoveId.SLEEP_TALK,
+  MoveId.FALSE_SWIPE,
+  MoveId.ENDEAVOR,
+  MoveId.SKILL_SWAP,
+  MoveId.DRAGON_CHEER,
+  MoveId.CONFIDE,
+  MoveId.VENOM_DRENCH,
+  MoveId.STEEL_ROLLER,
+  MoveId.DREAM_EATER,
+  MoveId.PAY_DAY,
+  MoveId.FOCUS_PUNCH,
+  MoveId.UPPER_HAND,
+  MoveId.SCARY_FACE,
 ]);

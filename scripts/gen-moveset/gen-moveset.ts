@@ -1,5 +1,5 @@
 /*
- * SPDX-Copyright-Text: 2026 Pagefault Games
+ * SPDX-FileCopyrightText: 2026 Pagefault Games
  * SPDX-FileContributor: SirzBenjie
  *
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -127,7 +127,7 @@ describe("gen-moveset", () => {
       });
     }
     pokemon = createTestablePokemon(payload.speciesId, { boss: payload.boss, level: payload.level });
-    vi.spyOn(pokemon, "hasTrainer").mockReturnValue(true);
+    vi.spyOn(pokemon, "hasTrainer").mockReturnValue(payload.forTrainer);
     for (let i = 0; i < payload.trials; ++i) {
       if (payload.printWeights && i === 0) {
         __INTERNAL_TEST_EXPORTS.forceLogging = true;
