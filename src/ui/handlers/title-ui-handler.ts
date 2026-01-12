@@ -3,7 +3,6 @@ import { loggedInUser } from "#app/account";
 import { FAKE_TITLE_LOGO_CHANCE } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { TimedEventDisplay } from "#app/timed-event-manager";
 import { isBeta, isDev } from "#constants/app-constants";
 import { getSplashMessages } from "#data/splash-messages";
 import { PlayerGender } from "#enums/player-gender";
@@ -11,6 +10,7 @@ import type { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { version } from "#package.json";
+import { TimedEventDisplay } from "#ui/event-display";
 import { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
 import { addTextObject } from "#ui/text";
 import { fixedInt, randInt, randItem } from "#utils/common";
@@ -261,6 +261,7 @@ export class TitleUiHandler extends OptionSelectUiHandler {
   private getSnow(): void {
     const width = globalScene.scaledCanvas.width;
     const height = globalScene.scaledCanvas.height;
+    this.snow?.destroy(); // Ensures no duplicate snow layers
     this.snow = globalScene.add.tileSprite(width, height, width, height, "snow");
     this.snow.setOrigin(1, 1);
 
