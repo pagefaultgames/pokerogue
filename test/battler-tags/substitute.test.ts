@@ -11,7 +11,7 @@ import type { Pokemon } from "#field/pokemon";
 import type { MoveEffectPhase } from "#phases/move-effect-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import type { TurnMove } from "#types/turn-move";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("BattlerTag - SubstituteTag", () => {
   let phaserGame: Phaser.Game;
@@ -21,10 +21,6 @@ describe("BattlerTag - SubstituteTag", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {

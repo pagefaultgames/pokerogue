@@ -11,7 +11,7 @@ import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import i18next from "i18next";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
 
 describe("Moves - Swallow & Spit Up - ", () => {
   let phaserGame: Phaser.Game;
@@ -21,10 +21,6 @@ describe("Moves - Swallow & Spit Up - ", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
