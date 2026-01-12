@@ -1,5 +1,12 @@
+/*
+ * SPDX-Copyright-Text: 2026 Pagefault Games
+ * SPDX-FileContributor: SirzBenjie
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 /**
- * Command line tool that generates movesets for a Pokémon species. Used to
+ * Command line tool that generates movesets for a Pokémon species.
  */
 
 import { __INTERNAL_TEST_EXPORTS, generateMoveset } from "#app/ai/ai-moveset-gen";

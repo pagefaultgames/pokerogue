@@ -1,13 +1,15 @@
-// import { SpeciesId } from "#enums/species-id";
-// import { getPokemonSpecies } from "#utils/pokemon-utils";
+/*
+ * SPDX-Copyright-Text: 2026 Pagefault Games
+ * SPDX-FileContributor: SirzBenjie
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
 
 import { SpeciesId } from "#enums/species-id";
 import { spawn } from "node:child_process";
 import net from "node:net";
 import { confirm, input, number as promptNumber } from "@inquirer/prompts";
 import type { SamplerPayload } from "./types";
-
-// import { input, select } from "@inquirer/prompts";
 
 /**
  * Starts a TCP server and returns a Promise that resolves with the dataPromise and port.
