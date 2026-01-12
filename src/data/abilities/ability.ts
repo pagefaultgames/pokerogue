@@ -541,8 +541,6 @@ export class UngroundedAbAttr extends CancelInteractionAbAttr {
   constructor() {
     super(false);
   }
-
-  override;
 }
 
 export class BlockRecoilDamageAttr extends CancelInteractionAbAttr {

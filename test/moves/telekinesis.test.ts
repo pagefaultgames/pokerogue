@@ -50,13 +50,13 @@ describe("Move - Telekinesis", () => {
     // This used to re-use Magnet Rise's effect in its prior state, hence why we need to check
     expect(enemy).not.toHaveBattlerTag(BattlerTagType.FLOATING);
 
-    game.move.use(MoveId.MUD_BOMB);
+    game.move.use(MoveId.ICICLE_CRASH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceMiss();
     await game.toEndOfTurn();
 
     expect(enemy).not.toHaveFullHp();
-    expect(player).toHaveUsedMove({ move: MoveId.MUD_BOMB, result: MoveResult.SUCCESS });
+    expect(player).toHaveUsedMove({ move: MoveId.ICICLE_CRASH, result: MoveResult.SUCCESS });
   });
 
   it("should forcibly unground the target", async () => {
