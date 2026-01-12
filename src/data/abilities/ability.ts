@@ -1,3 +1,9 @@
+/*
+ * SPDX-Copyright-Text: 2024-2026 Pagefault Games
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 import { type AbAttr, AbilityAttrs } from "#abilities/ab-attrs";
 import { AbilityId } from "#enums/ability-id";
 import type { AbAttrCondition, AbAttrMap, AbAttrString } from "#types/ability-types";
