@@ -1,16 +1,30 @@
+import type { MovePhase } from "#phases/move-phase";
 import type { ObjectValues } from "#types/type-helpers";
 
 /**
- * Enum representing modifiers for the timing of MovePhases.
+ * Enum representing modifiers for the timing of {@linkcode MovePhase}s. \
+ * Used by effects that force Pokemon to move in a certain order.
  *
  * @remarks
- * This system is entirely independent of and takes precedence over move priority
+ * This system is entirely independent of, and _takes full precedence over_,
+ * speed order and move priority.
  */
 export const MovePhaseTimingModifier = Object.freeze({
-  /** Used when moves go last regardless of speed and priority (i.e. Quash) */
+  /**
+   * Forces the given move to always act last.
+   * @see {@link https://bulbapedia.bulbagarden.net/wiki/Quash_(move) | Quash (Bulbapedia)}
+   */
   LAST: 0,
+  /**
+   * The default priority modifier; has no bearing on move order.
+   */
   NORMAL: 1,
-  /** Used to trigger moves immediately (i.e. ones that were called through Instruct). */
+  /**
+   * Forces the given move to always act first.
+   * @see {@link https://bulbapedia.bulbagarden.net/wiki/Instruct_(move) | Instruct (Bulbapedia)}
+   * @see {@link https://bulbapedia.bulbagarden.net/wiki/After_You_(move) | After You (Bulbapedia)}
+   */
   FIRST: 2,
 });
+
 export type MovePhaseTimingModifier = ObjectValues<typeof MovePhaseTimingModifier>;

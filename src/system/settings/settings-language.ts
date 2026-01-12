@@ -102,6 +102,10 @@ export const languageOptions = [
     handler: () => changeLocaleHandler("nb-NO"),
   },
   {
+    label: "Svenska",
+    handler: () => changeLocaleHandler("sv"),
+  },
+  {
     label: "Română (Needs Help)",
     handler: () => changeLocaleHandler("ro"),
   },
