@@ -10,7 +10,7 @@ import type { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
 import { stringifyEnumArray } from "#test/test-utils/string-utils";
 import Phaser from "phaser";
-import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, describe, expect, it } from "vitest";
 
 type typesArray = [PokemonType] | [PokemonType, PokemonType] | [PokemonType, PokemonType, PokemonType];
 
