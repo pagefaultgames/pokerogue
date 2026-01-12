@@ -26,7 +26,6 @@ import { TurnEndPhase } from "#phases/turn-end-phase";
 import { TurnStartPhase } from "#phases/turn-start-phase";
 import { GameData } from "#system/game-data";
 import { generateStarters } from "#test/test-utils/game-manager-utils";
-import { GameWrapper } from "#test/test-utils/game-wrapper";
 import { ChallengeModeHelper } from "#test/test-utils/helpers/challenge-mode-helper";
 import { ClassicModeHelper } from "#test/test-utils/helpers/classic-mode-helper";
 import { DailyModeHelper } from "#test/test-utils/helpers/daily-mode-helper";
@@ -57,7 +56,6 @@ import { expect, vi } from "vitest";
  * Class to manage the game state and transitions between phases.
  */
 export class GameManager {
-  public gameWrapper: GameWrapper;
   public scene: BattleScene;
   public phaseInterceptor: PhaseInterceptor;
   public textInterceptor: TextInterceptor;
@@ -75,28 +73,20 @@ export class GameManager {
 
   /**
    * Creates an instance of GameManager.
-   * @param phaserGame - The Phaser game instance.
-   * @param bypassLogin - Whether to bypass the login phase.
    */
-  constructor(phaserGame: Phaser.Game, bypassLogin = true) {
+  constructor() {
     localStorage.clear();
     // Simulate max rolls on RNG functions
     // TODO: Create helpers for disabling/enabling battle RNG
     BattleScene.prototype.randBattleSeedInt = (range, min = 0) => min + range - 1;
-    this.gameWrapper = new GameWrapper(phaserGame, bypassLogin);
 
     // TODO: Figure out a way to optimize and re-use the same game manager for each test
 
     // Re-use an existing `globalScene` if present, or else create a new scene from scratch.
-    if (globalScene) {
-      this.scene = globalScene;
-      this.phaseInterceptor = new PhaseInterceptor(this.scene);
-      this.resetScene();
-    } else {
-      this.scene = new BattleScene();
-      this.phaseInterceptor = new PhaseInterceptor(this.scene);
-      this.gameWrapper.setScene(this.scene);
-    }
+    expect(globalScene, "globalScene was not initialized before GameManager construction").toBeDefined();
+    this.scene = globalScene;
+    this.phaseInterceptor = new PhaseInterceptor(this.scene);
+    this.resetScene();
 
     this.textInterceptor = new TextInterceptor(this.scene);
     this.promptHandler = new PromptHandler(this);
@@ -117,6 +107,13 @@ export class GameManager {
   }
 
   /**
+   * Initialize a BattleScene on first time load.
+   * @param callback - Optional callback to run once the scene is initialized.
+   * Required in order to keep initialization fully asynchronous.
+   */
+  private initScene(): void {}
+
+  /**
    * Reset a prior `BattleScene` instance to the proper initial state.
    * @todo Review why our UI doesn't reset between runs and why we need to do it manually
    */
@@ -126,8 +123,6 @@ export class GameManager {
 
     this.scene.reset(false, true);
     (this.scene.ui.handlers[UiMode.STARTER_SELECT] as StarterSelectUiHandler).clearStarterPreferences();
-
-    this.gameWrapper.scene = this.scene;
 
     this.scene.phaseManager.toTitleScreen(true);
     this.scene.phaseManager.shiftPhase();
