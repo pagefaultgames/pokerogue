@@ -83,6 +83,11 @@ async function promptInputs(): Promise<SamplerPayload> {
     default: true,
   });
 
+  const forTrainer = await confirm({
+    message: "Generate as for a trainer (default yes)?",
+    default: true,
+  });
+
   const level = await promptNumber({
     message: "Enter the level of the Pokémon (default 100):",
     default: 100,
@@ -109,6 +114,7 @@ async function promptInputs(): Promise<SamplerPayload> {
     level,
     trials,
     printWeights,
+    forTrainer,
   };
 }
 

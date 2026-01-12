@@ -1,5 +1,5 @@
 /*
- * SPDX-Copyright-Text: 2026 Pagefault Games
+ * SPDX-FileCopyrightText: 2026 Pagefault Games
  * SPDX-FileContributor: SirzBenjie
  *
  * SPDX-License-Identifier: AGPL-3.0-only

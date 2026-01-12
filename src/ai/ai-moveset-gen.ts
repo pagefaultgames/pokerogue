@@ -1,5 +1,5 @@
 /*
- * SPDX-Copyright-Text: 2025-2026 Pagefault Games
+ * SPDX-FileCopyrightText: 2025-2026 Pagefault Games
  * SPDX-FileContributor: SirzBenjie
  * SPDX-FileContributor: Xavion3
  *
@@ -9,7 +9,7 @@
 import { EVOLVE_MOVE, RELEARN_MOVE } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { speciesEggMoves } from "#balance/moves/egg-moves";
-import { FORBIDDEN_SINGLES_MOVES } from "#balance/moves/forbidden-moves";
+import { FORBIDDEN_SINGLES_MOVES, FORBIDDEN_TM_MOVES } from "#balance/moves/forbidden-moves";
 import {
   BASE_LEVEL_WEIGHT_OFFSET,
   BASE_WEIGHT_MULTIPLIER,
@@ -164,7 +164,7 @@ function getTmPoolForSpecies(
       moveId = tm;
     }
 
-    if (levelPool.has(moveId) || eggPool.has(moveId) || tmPool.has(moveId)) {
+    if (FORBIDDEN_TM_MOVES.has(moveId) || levelPool.has(moveId) || eggPool.has(moveId) || tmPool.has(moveId)) {
       continue;
     }
     switch (tmPoolTiers[moveId]) {
@@ -345,7 +345,7 @@ function filterSupercededMoves(pool: Map<MoveId, number>, ...otherPools: Map<Mov
  */
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Intentionally a series of if checks.
 function filterMovePool(pool: Map<MoveId, number>, isBoss: boolean, hasTrainer: boolean): void {
-  const isSingles = !!globalScene.currentBattle?.double;
+  const isSingles = !globalScene.currentBattle?.double;
   for (const [moveId, weight] of pool) {
     if (weight <= 0) {
       pool.delete(moveId);
