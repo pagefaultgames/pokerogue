@@ -147,8 +147,16 @@ export function randSeedShuffle<T>(items: T[]): T[] {
   return items;
 }
 
+const FPS = 60;
+const MILLISECONDS_PER_FRAME = 1000 / FPS;
+
+/**
+ * Convert a frame count into a millisecond duration for Phaser.
+ * @param frameCount - The desired number of frames
+ * @returns The duration of `frameCount` in milliseconds, assuming constant frame rate.
+ */
 export function getFrameMs(frameCount: number): number {
-  return Math.floor((1 / 60) * 1000 * frameCount);
+  return Math.floor(MILLISECONDS_PER_FRAME * frameCount);
 }
 
 export function getCurrentTime(): number {
@@ -417,6 +425,7 @@ export function hasAllLocalizedSprites(lang?: string): boolean {
     case "hi":
     case "tl":
     case "nb-NO":
+    case "sv":
       return true;
     default:
       return false;

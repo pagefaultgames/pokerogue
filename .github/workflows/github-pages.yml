@@ -21,15 +21,45 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  gh-pages-path-filter:
+    name: GitHub Pages path filter
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      all: ${{ steps.filter.outputs.all }}
+    steps:
+      # ensure the correct commit is detected on push workflow
+      - name: Checkout GitHub repository
+        uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            .nvmrc
+          sparse-checkout-cone-mode: false
+
+      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
+        id: filter
+        with:
+          filters: |
+            all:
+              - "src/**/*.ts"
+              - "test/test-utils/*.ts"
+              - "typedoc.config.js"
+              - "tsdoc.json"
+              - "tsconfig.json"
+              - "typedoc-plugins/**/*"
+
   pages:
     name: Github Pages
-    if: github.repository == 'pagefaultgames/pokerogue'
+    needs: gh-pages-path-filter
+    if: github.repository == 'pagefaultgames/pokerogue' && needs.gh-pages-path-filter.outputs.all == 'true'
     timeout-minutes: 10
     runs-on: ubuntu-latest
     env:
       docs-dir: ./pokerogue_docs
       # Only push docs when running on pushes to main/beta
-      DRY_RUN: ${{github.event_name != 'push' || (github.ref_name != 'beta' && github.ref_name != 'main')}}
+      DRY_RUN: ${{ github.event_name != 'push' || (github.ref_name != 'beta' && github.ref_name != 'main') }}
 
     steps:
       - name: Checkout repository for Typedoc
@@ -75,14 +105,14 @@ jobs:
           ref: gh-pages
 
       - name: Install Node.js dependencies
-        working-directory: ${{env.docs-dir}}
+        working-directory: ${{ env.docs-dir }}
         run: pnpm i
 
       - name: Generate Typedoc docs
-        working-directory: ${{env.docs-dir}}
+        working-directory: ${{ env.docs-dir }}
         env:
-          REF_NAME: ${{github.ref_name}}
-          DRY_RUN: ${{env.DRY_RUN}}
+          REF_NAME: ${{ github.ref_name }}
+          DRY_RUN: ${{ env.DRY_RUN }}
         run: pnpm typedoc
 
       - name: Commit & Push docs

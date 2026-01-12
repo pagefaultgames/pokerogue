@@ -189,6 +189,7 @@ fix(move): Future Sight no longer crashes
 - "github" - Updating the CI pipeline or otherwise modifying something in the `./github/**` directory
 - "i18n" - Adding/modifying translation keys, etc
 - "misc" - A change that doesn't fit any other prefix
+- "perf" - A refactor aimed at improving performance
 - "refactor" - A change that doesn't impact functionality or fix any bugs (except incidentally)
 - "test" - Primarily adding/updating tests or modifying the test framework
 
