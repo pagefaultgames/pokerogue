@@ -3,6 +3,7 @@ import "vitest";
 import type Overrides from "#app/overrides";
 import type { Phase } from "#app/phase";
 import type { ArenaTag } from "#data/arena-tag";
+import type { BattlerTag } from "#data/battler-tags";
 import type { PositionalTag } from "#data/positional-tags/positional-tag";
 import type { TerrainType } from "#data/terrain";
 import type { AbilityId } from "#enums/ability-id";

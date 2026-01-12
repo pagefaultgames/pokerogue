@@ -23,7 +23,9 @@
       "ESNext.Iterator",
       "ESNext.Collection"
     ],
-    "skipLibCheck": true, // Safe and almost always beneficial
+    // Skip typechecking `.d.ts` files for a ~20% speed boost;
+    // CI builds will explicitly disable this to ensure full type safety
+    "skipLibCheck": true,
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "esModuleInterop": true,
