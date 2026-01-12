@@ -865,7 +865,7 @@ export class Arena {
       }
 
       tag.onRemove(quiet);
-      this.eventTarget.dispatchEvent(new ArenaTagRemovedEvent(tag.tagType, tag.side, tag.turnCount));
+      this.eventTarget.dispatchEvent(new ArenaTagRemovedEvent(tag.tagType, tag.side));
     }
 
     this.tags = leftoverTags;
