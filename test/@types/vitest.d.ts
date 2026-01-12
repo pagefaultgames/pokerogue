@@ -3,7 +3,7 @@ import "vitest";
 import type Overrides from "#app/overrides";
 import type { Phase } from "#app/phase";
 import type { ArenaTag } from "#data/arena-tag";
-import type { BattlerTag,  BattlerTagTypeMap } from "#data/battler-tags";
+import type { BattlerTag, BattlerTagTypeMap } from "#data/battler-tags";
 import type { PositionalTag } from "#data/positional-tags/positional-tag";
 import type { Status } from "#data/status-effect";
 import type { Terrain, TerrainType } from "#data/terrain";
@@ -32,11 +32,10 @@ import type { PartiallyFilledStatus } from "#test/test-utils/matchers/to-have-st
 import type { ToHaveTypesOptions } from "#test/test-utils/matchers/to-have-types";
 import type { PhaseString } from "#types/phase-types";
 import type { TurnMove } from "#types/turn-move";
-import type { Negate } from "#types/type-helpers";
 import type { toDmgValue } from "#utils/common";
 import type { If, IntClosedRange, Integer, IsNumericLiteral, IsStringLiteral, NonNegativeInteger } from "type-fest";
 import type { expect } from "vitest";
-import type { GetMatchers, MatcherInterface, MatchersBase, RestrictMatcher } from "./matcher-helpers";
+import type { GetMatchers, MatchersBase, RestrictMatcher } from "./matcher-helpers";
 
 // #region Helper Types
 
