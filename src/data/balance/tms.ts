@@ -76,7 +76,7 @@ function transposeTmSpecies(): SpeciesTmMoves {
 export const speciesTmMoves: SpeciesTmMoves = transposeTmSpecies();
 
 interface TmPoolTiers {
-    [key: number]: ModifierTier
+    [key: number]: Exclude<ModifierTier, ModifierTier.ROGUE | ModifierTier.MASTER | ModifierTier.LUXURY>;
 }
 
 export const tmPoolTiers: TmPoolTiers = {

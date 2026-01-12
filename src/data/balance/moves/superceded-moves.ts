@@ -1,6 +1,12 @@
+/*
+ * SPDX-Copyright-Text: 2026 Pagefault Games
+ * SPDX-FileContributor: SirzBenjie
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
 import { MoveId } from "#enums/move-id";
 
-// Save memory by reusing same array here
+// Save memory by reusing same arrays for common replacement sets here
 const _60_POW_DARK_TYPE_REPLACEMENTS: readonly MoveId[] = [
     MoveId.CRUNCH,
     MoveId.KNOCK_OFF,
@@ -11,6 +17,40 @@ const _60_POW_DARK_TYPE_REPLACEMENTS: readonly MoveId[] = [
     MoveId.LASH_OUT,
     MoveId.KOWTOW_CLEAVE
   ];
+
+// For harden, withdraw, and defense curl
+const SINGLE_STAGE_DEF_BOOST_REPLACEMENTS: readonly MoveId[] = [
+  MoveId.ACID_ARMOR,
+  MoveId.BARRIER,
+  MoveId.BULK_UP,
+  MoveId.COIL,
+  MoveId.COSMIC_POWER,
+  MoveId.COTTON_GUARD,
+  MoveId.DEFEND_ORDER,
+  MoveId.IRON_DEFENSE,
+  MoveId.VICTORY_DANCE,
+];
+
+// For howl, sharpen, and meditate
+const SINGLE_STAGE_ATK_BOOST_REPLACEMENTS: readonly MoveId[] = [
+  MoveId.BULK_UP,
+  MoveId.DRAGON_DANCE,
+  MoveId.GROWTH,
+  MoveId.HONE_CLAWS,
+  MoveId.SHIFT_GEAR,
+  MoveId.SWORDS_DANCE,
+  MoveId.TIDY_UP,
+  MoveId.WORK_UP,
+  MoveId.VICTORY_DANCE,
+]
+
+/**
+ * Map of moves to moves that are strictly better replacements.
+ *
+ * @remarks
+ * Intended to be used by moveset generation to avoid giving Pokémon
+ * moves that are unequivocally worse than another move it learns from the same set.
+ */
 export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
   [MoveId.ABSORB]: [MoveId.MEGA_DRAIN, MoveId.GIGA_DRAIN],
   [MoveId.ACID]: [
@@ -55,7 +95,6 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
     MoveId.CRUSH_CLAW,
     MoveId.ROCK_CLIMB,
     MoveId.TAIL_SLAP,
-    MoveId.HYPER_DRILL,
   ],
   [MoveId.BIND]: [MoveId.WRAP],
   [MoveId.BITE]: _60_POW_DARK_TYPE_REPLACEMENTS,
@@ -179,4 +218,20 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
   [MoveId.WATER_GUN]: [MoveId.SURF,MoveId.BUBBLE_BEAM,MoveId.BUBBLE,MoveId.WATER_PULSE,MoveId.BRINE,MoveId.SCALD,MoveId.STEAM_ERUPTION,MoveId.SPARKLING_ARIA,MoveId.SPLISHY_SPLASH,MoveId.CHILLING_WATER],
   [MoveId.WING_ATTACK]: [MoveId.DRILL_PECK,MoveId.AERIAL_ACE,MoveId.PLUCK,MoveId.FLOATY_FALL],
   [MoveId.WRAP]: [MoveId.BIND],
+
+  // Status moves
+  // technically, defense curl is better than harden because it boosts rollout and ice ball.
+  [MoveId.HARDEN]: SINGLE_STAGE_DEF_BOOST_REPLACEMENTS,
+  [MoveId.WITHDRAW]: SINGLE_STAGE_DEF_BOOST_REPLACEMENTS,
+  [MoveId.DEFENSE_CURL]: SINGLE_STAGE_DEF_BOOST_REPLACEMENTS,
+  [MoveId.HOWL]: SINGLE_STAGE_ATK_BOOST_REPLACEMENTS,
+  [MoveId.SHARPEN]: SINGLE_STAGE_ATK_BOOST_REPLACEMENTS,
+  [MoveId.MEDITATE]: SINGLE_STAGE_ATK_BOOST_REPLACEMENTS,
+  [MoveId.CALM_MIND]: [MoveId.QUIVER_DANCE, MoveId.TAKE_HEART],
+  [MoveId.SUPERSONIC]: [MoveId.CONFUSE_RAY],
+  [MoveId.LEER]: [MoveId.TICKLE, MoveId.OCTOLOCK],
+  [MoveId.GROWL]: [MoveId.FEATHER_DANCE, MoveId.BABY_DOLL_EYES, MoveId.CHARM, MoveId.NOBLE_ROAR, MoveId.PLAY_NICE, MoveId.TEARFUL_LOOK, MoveId.TICKLE, MoveId.STRENGTH_SAP],
+  [MoveId.METAL_SOUND]: [MoveId.FAKE_TEARS],
+  [MoveId.PROTECT]: [MoveId.BANEFUL_BUNKER, MoveId.KINGS_SHIELD, MoveId.SPIKY_SHIELD],
+  [MoveId.DETECT]: [MoveId.BANEFUL_BUNKER, MoveId.KINGS_SHIELD, MoveId.SPIKY_SHIELD],
 };

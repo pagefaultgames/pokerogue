@@ -1,6 +1,15 @@
+/*
+ * SPDX-Copyright-Text: 2025-2026 Pagefault Games
+ * SPDX-FileContributor: SirzBenjie
+ * SPDX-FileContributor: Xavion3
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 import { EVOLVE_MOVE, RELEARN_MOVE } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { speciesEggMoves } from "#balance/moves/egg-moves";
+import { FORBIDDEN_SINGLES_MOVES } from "#balance/moves/forbidden-moves";
 import {
   BASE_LEVEL_WEIGHT_OFFSET,
   BASE_WEIGHT_MULTIPLIER,
@@ -10,16 +19,21 @@ import {
   EGG_MOVE_LEVEL_REQUIREMENT,
   EGG_MOVE_TO_LEVEL_WEIGHT,
   EGG_MOVE_WEIGHT_MAX,
+  EVO_MOVE_BP_THRESHOLD,
   EVOLUTION_MOVE_WEIGHT,
+  FORCED_SIGNATURE_MOVE_CHANCE,
   GREAT_TIER_TM_LEVEL_REQUIREMENT,
   GREAT_TM_MOVESET_WEIGHT,
   getMaxEggMoveCount,
   getMaxTmCount,
   RARE_EGG_MOVE_LEVEL_REQUIREMENT,
+  RELEARN_MOVE_WEIGHT,
   STAB_BLACKLIST,
   ULTRA_TIER_TM_LEVEL_REQUIREMENT,
   ULTRA_TM_MOVESET_WEIGHT,
 } from "#balance/moves/moveset-generation";
+import { FORCED_SIGNATURE_MOVES } from "#balance/moves/signature-moves";
+import { SUPERCEDED_MOVES } from "#balance/moves/superceded-moves";
 import { speciesTmMoves, tmPoolTiers } from "#balance/tms";
 import { IS_TEST, isBeta, isDev } from "#constants/app-constants";
 import { allMoves } from "#data/data-lists";
@@ -31,7 +45,8 @@ import type { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import { PokemonMove } from "#moves/pokemon-move";
-import { NumberHolder, randSeedInt } from "#utils/common";
+import type { Move } from "#types/move-types";
+import { NumberHolder, randSeedInt, randSeedItem } from "#utils/common";
 import { willTerastallize } from "#utils/pokemon-utils";
 
 /**
@@ -79,16 +94,14 @@ function getAndWeightLevelMoves(pokemon: Pokemon): Map<MoveId, number> {
       case EVOLVE_MOVE:
         weight = EVOLUTION_MOVE_WEIGHT;
         break;
-      // Assume level 1 moves with 80+ BP are "move reminder" moves and bump their weight. Trainers use actual relearn moves.
+      // level 1 moves with bp higher than EVO_MOVE_BP_THRESHOLD are treated as "move reminder" moves and bump their weight. Trainers use actual relearn moves.
       case 1:
-        if (move.power >= 80) {
-          weight = 60;
+        if (move.power >= EVO_MOVE_BP_THRESHOLD) {
+          weight = RELEARN_MOVE_WEIGHT;
         }
         break;
       case RELEARN_MOVE:
-        if (hasTrainer) {
-          weight = 60;
-        }
+        weight = hasTrainer ? RELEARN_MOVE_WEIGHT : 0;
     }
 
     movePool.set(id, weight);
@@ -302,12 +315,37 @@ function getAndWeightEggMoves(
 }
 
 /**
+ * Filter `pool`, removing moves that are superceded by other moves in the pool
+ * @param pool - The move pool to filter
+ * @param otherPools - Other move pools to consider as available when filtering
+ * @see {@linkcode SUPERCEDED_MOVES}
+ */
+function filterSupercededMoves(pool: Map<MoveId, number>, ...otherPools: Map<MoveId, number>[]): void {
+  const presentMoves = new Set<MoveId>(pool.keys());
+
+  for (const otherPool of otherPools) {
+    for (const moveId of otherPool.keys()) {
+      presentMoves.add(moveId);
+    }
+  }
+  for (const move of pool.keys()) {
+    const superceded = SUPERCEDED_MOVES[move];
+    if (superceded == null || new Set(superceded).isDisjointFrom(presentMoves)) {
+      continue;
+    }
+    pool.delete(move);
+  }
+}
+
+/**
  * Filter a move pool, removing moves that are not allowed based on conditions
  * @param pool - The move pool to filter
  * @param isBoss - Whether the Pokémon is a boss
  * @param hasTrainer - Whether the Pokémon has a trainer
  */
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Intentionally a series of if checks.
 function filterMovePool(pool: Map<MoveId, number>, isBoss: boolean, hasTrainer: boolean): void {
+  const isSingles = !!globalScene.currentBattle?.double;
   for (const [moveId, weight] of pool) {
     if (weight <= 0) {
       pool.delete(moveId);
@@ -332,6 +370,11 @@ function filterMovePool(pool: Map<MoveId, number>, isBoss: boolean, hasTrainer: 
 
     // Trainers never get OHKO moves
     if (hasTrainer && move.hasAttr("OneHitKOAttr")) {
+      pool.delete(moveId);
+    }
+
+    // Trainers and boss pokemon don't get doubles-only moves in singles battles
+    if (isSingles && (isBoss || hasTrainer) && FORBIDDEN_SINGLES_MOVES.has(moveId)) {
       pool.delete(moveId);
     }
   }
@@ -400,6 +443,8 @@ function adjustDamageMoveWeights(pool: Map<MoveId, number>, pokemon: Pokemon, wi
       continue;
     }
     const power = movePowers[moveId] ?? move.calculateEffectivePower();
+
+    // Take power and multiply by the
 
     // Scale weight based on their ratio to the highest power move, capping at 75% reduction
     adjustedWeight *= Phaser.Math.Clamp(power / maxPower, 0.25, 1);
@@ -470,6 +515,78 @@ function filterPool(
   return newPool;
 }
 
+function doSignatureCoinFlip() {
+  return randSeedInt(100) < FORCED_SIGNATURE_MOVE_CHANCE;
+}
+
+/**
+ * Helper method that adds the move to the Pokémon's moveset and removes it from the provided pools
+ * The parameters are the exact same as those for {@linkcode forceSignatureMove}
+ */
+function addToMoveset(
+  move: MoveId,
+  pokemon: Pokemon,
+  pool: Map<MoveId, number>,
+  tmPool: Map<MoveId, number>,
+  eggPool: Map<MoveId, number>,
+  tmCount: NumberHolder,
+  eggMoveCount: NumberHolder,
+): boolean {
+  pool.delete(move);
+  if (tmPool.has(move)) {
+    tmPool.delete(move);
+    tmCount.value++;
+  } else if (eggPool.has(move)) {
+    eggPool.delete(move);
+    eggMoveCount.value++;
+  }
+  pokemon.moveset.push(new PokemonMove(move));
+  return true;
+}
+
+/**
+ * Attempt to force a signature move into the Pokémon's moveset from the provided pools
+ *
+ * @remarks
+ * Takes care of removing the move from each pool and adjusting the TM and egg move counts as necessary.
+ *
+ * @param pokemon - The Pokémon for which the moveset is being generated
+ * @param pool - The pool of available moves
+ * @param tmPool - The TM move pool
+ * @param eggMovePool - The egg move pool
+ * @param tmCount - A holder for the count of moves that have been added to the moveset from TMs
+ * @param eggMoveCount - A holder for the count of moves that have been added to the moveset from egg moves
+ * @returns `true` if a signature move was successfully added, `false` otherwise
+ */
+function forceSignatureMove(
+  pokemon: Pokemon,
+  pool: Map<MoveId, number>,
+  tmPool: Map<MoveId, number>,
+  eggPool: Map<MoveId, number>,
+  tmCount: NumberHolder,
+  eggMoveCount: NumberHolder,
+): boolean {
+  const forcedSignatures = FORCED_SIGNATURE_MOVES[pokemon.species.speciesId];
+  if (forcedSignatures == null) {
+    return false;
+  }
+
+  if (typeof forcedSignatures === "number") {
+    if (pool.has(forcedSignatures) && doSignatureCoinFlip()) {
+      addToMoveset(forcedSignatures, pokemon, pool, tmPool, eggPool, tmCount, eggMoveCount);
+      return true;
+    }
+    return false;
+  }
+
+  const availableSignatures = forcedSignatures.filter(m => pool.has(m));
+  if (availableSignatures.length === 0 || !doSignatureCoinFlip()) {
+    return false;
+  }
+  addToMoveset(randSeedItem(availableSignatures), pokemon, pool, tmPool, eggPool, tmCount, eggMoveCount);
+  return true;
+}
+
 /**
  * Forcibly add a STAB move to the Pokémon's moveset from the provided pools
  *
@@ -496,15 +613,20 @@ function forceStabMove(
   willTera = false,
   forceAnyDamageIfNoStab = false,
 ): void {
+  // Attempt to force a signature move first
+  if (forceSignatureMove(pokemon, pool, tmPool, eggPool, tmCount, eggMoveCount)) {
+    return;
+  }
   // All Pokemon force a STAB move first
   const totalWeight = new NumberHolder(0);
+  const typesForStab = new Set(pokemon.getTypes());
   const stabMovePool = filterPool(
     pool,
     moveId => {
       const move = allMoves[moveId];
       return (
         move.category !== MoveCategory.STATUS
-        && (pokemon.isOfType(move.type)
+        && (typesForStab.has(getMoveType(move, pokemon, willTera))
           || (willTera && move.hasAttr("TeraBlastTypeAttr") && pokemon.getTeraType() !== PokemonType.STELLAR))
         && !STAB_BLACKLIST.has(moveId)
       );
@@ -524,16 +646,52 @@ function forceStabMove(
       rand -= chosenPool[index++][1];
     }
     const selectedId = chosenPool[index][0];
-    pool.delete(selectedId);
-    if (tmPool.has(selectedId)) {
-      tmPool.delete(selectedId);
-      tmCount.value++;
-    } else if (eggPool.has(selectedId)) {
-      eggPool.delete(selectedId);
-      eggMoveCount.value++;
-    }
-    pokemon.moveset.push(new PokemonMove(selectedId));
+    addToMoveset(selectedId, pokemon, pool, tmPool, eggPool, tmCount, eggMoveCount);
   }
+}
+
+/**
+ * Get the type that a move will be when used by a specific Pokémon
+ * @param move - The move being considered
+ * @param pokemon - The pokemon using the move
+ * @param willTera - Whether the pokemon will terastallize
+ * @returns The type of the move, considering variable type moves
+ */
+function getMoveType(move: MoveId | Move, pokemon: Pokemon, willTera: boolean): PokemonType {
+  if (typeof move === "number") {
+    move = allMoves[move];
+  }
+
+  if (move.category !== MoveCategory.STATUS) {
+    const VariableMoveAttr = move.getAttrs("VariableMoveTypeAttr").at(-1);
+    if (VariableMoveAttr != null) {
+      return VariableMoveAttr.getTypeForMovegen(pokemon, move, willTera);
+    }
+  }
+
+  return move.type;
+}
+
+/**
+ * Compute the types of damaging moves in the Pokémon's moveset, accounting for variable type moves
+ *
+ * @privateRemarks
+ * - Damage moves only; status moves are ignored
+ * - Moves with FixedDamageAttr are ignored
+ * - Types are via {@linkcode getMoveType} to account for variable type moves
+ * @param pokemon - The pokemon to get move types for
+ * @param willTera - Whether the pokemon is guaranteed to Tera
+ * @returns The set of existing damaging move types in the Pokémon's moveset
+ */
+function getExistingDamageMoveTypes(pokemon: Pokemon, willTera: boolean): Set<PokemonType> {
+  const existingMoveTypes = new Set<PokemonType>();
+  for (const mo of pokemon.moveset) {
+    const move = mo.getMove();
+    if (move.category !== MoveCategory.STATUS && !move.hasAttr("FixedDamageAttr")) {
+      existingMoveTypes.add(getMoveType(move, pokemon, willTera));
+    }
+  }
+  return existingMoveTypes;
 }
 
 /**
@@ -548,23 +706,38 @@ function filterRemainingTrainerMovePool(pool: [id: MoveId, weight: number][], po
   // Sqrt the weight of any damaging moves with overlapping types. pokemon is about a 0.05 - 0.1 multiplier.
   // Other damaging moves 2x weight if 0-1 damaging moves, 0.5x if 2, 0.125x if 3. These weights get 20x if STAB.
   // Status moves remain unchanged on weight, pokemon encourages 1-2
+
+  // TODO: Optimize this by adding the information as moves are added to the moveset rather than recalculating every time
+  const numDamageMoves = pokemon.moveset.filter(mo => (mo.getMove().power ?? 0) > 1).length;
+  const weightDenominator = Math.max(Math.pow(4, numDamageMoves) / 8, 0.5);
+  const typesForStab = new Set(pokemon.getTypes());
+  const willTera = willTerastallize(pokemon);
+
+  // Add Tera type for STAB consideration if the pokemon is going to tera
+  if (willTerastallize(pokemon)) {
+    typesForStab.add(pokemon.getTeraType());
+  }
+
+  const existingMoveTypes = getExistingDamageMoveTypes(pokemon, willTera);
+
   for (const [idx, [moveId, weight]] of pool.entries()) {
     let ret: number;
-    if (
-      pokemon.moveset.some(
-        mo => mo.getMove().category !== MoveCategory.STATUS && mo.getMove().type === allMoves[moveId].type,
-      )
-    ) {
-      ret = Math.ceil(Math.sqrt(weight));
-    } else if (allMoves[moveId].category !== MoveCategory.STATUS) {
-      ret = Math.ceil(
-        (weight / Math.max(Math.pow(4, pokemon.moveset.filter(mo => (mo.getMove().power ?? 0) > 1).length) / 8, 0.5))
-          * (pokemon.isOfType(allMoves[moveId].type) && !STAB_BLACKLIST.has(moveId) ? 20 : 1),
-      );
-    } else {
-      ret = weight;
+    const move = allMoves[moveId];
+    if (move.category === MoveCategory.STATUS) {
+      continue;
     }
-    pool[idx] = [moveId, ret];
+
+    const moveType = getMoveType(move, pokemon as EnemyPokemon, willTera);
+
+    if (existingMoveTypes.has(moveType) && moveType !== PokemonType.UNKNOWN) {
+      ret = Math.sqrt(weight);
+    } else {
+      ret = weight / weightDenominator;
+      if (typesForStab.has(moveType) && !STAB_BLACKLIST.has(moveId)) {
+        ret *= 20;
+      }
+    }
+    pool[idx] = [moveId, Math.ceil(ret)];
   }
 }
 
@@ -656,6 +829,7 @@ function debugMoveWeights(pokemon: Pokemon, pool: Map<MoveId, number>, note: str
 export function generateMoveset(pokemon: Pokemon): void {
   globalScene.movesetGenInProgress = true;
   pokemon.moveset = [];
+  const isBoss = pokemon.isBoss();
   // Step 1: Generate the pools from various sources: level up, egg moves, and TMs
   const learnPool = getAndWeightLevelMoves(pokemon);
   debugMoveWeights(pokemon, learnPool, "Initial Level Moves");
@@ -663,11 +837,21 @@ export function generateMoveset(pokemon: Pokemon): void {
   const tmPool = new Map<MoveId, number>();
   const eggMovePool = new Map<MoveId, number>();
 
+  if (hasTrainer || isBoss) {
+    filterSupercededMoves(learnPool);
+  }
+
   if (hasTrainer) {
     getAndWeightEggMoves(pokemon, learnPool, eggMovePool);
-    eggMovePool.size > 0 && debugMoveWeights(pokemon, eggMovePool, "Initial Egg Moves");
+    if (eggMovePool.size > 0) {
+      filterSupercededMoves(eggMovePool, learnPool);
+      debugMoveWeights(pokemon, eggMovePool, "Initial Egg Moves");
+    }
     getAndWeightTmMoves(pokemon, learnPool, eggMovePool, tmPool);
-    tmPool.size > 0 && debugMoveWeights(pokemon, tmPool, "Initial Tm Moves");
+    if (tmPool.size > 0) {
+      debugMoveWeights(pokemon, tmPool, "Initial Tm Moves");
+      filterSupercededMoves(tmPool, learnPool, eggMovePool);
+    }
   }
 
   // Now, combine pools into one master pool.
@@ -675,7 +859,6 @@ export function generateMoveset(pokemon: Pokemon): void {
   const movePool = new Map<MoveId, number>([...tmPool.entries(), ...eggMovePool.entries(), ...learnPool.entries()]);
 
   // Step 2: Filter out forbidden moves
-  const isBoss = pokemon.isBoss();
   filterMovePool(movePool, isBoss, hasTrainer);
 
   // Step 3: Adjust weights for trainers
@@ -711,8 +894,7 @@ export function generateMoveset(pokemon: Pokemon): void {
   // Step 4: Force a STAB move if possible
   forceStabMove(baseWeights, tmPool, eggMovePool, pokemon, tmCount, eggMoveCount, willTera);
   // Note: To force a secondary stab, call this a second time, and pass `false` for the last parameter
-  // Would also tweak the function to not consider moves already in the moveset
-  // e.g. forceStabMove(..., false);
+  // Should also tweak the function to skip the signature move forcing step
 
   // Step 5: Fill in remaining slots
   fillInRemainingMovesetSlots(

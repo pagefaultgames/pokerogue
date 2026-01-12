@@ -1,3 +1,9 @@
+/*
+ * SPDX-Copyright-Text: 2024-2026 Pagefault Games
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 import { allMoves } from "#data/data-lists";
 import { ChallengeType } from "#enums/challenge-type";
 import { MoveId } from "#enums/move-id";

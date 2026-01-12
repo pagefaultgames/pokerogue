@@ -2580,7 +2580,7 @@ export class DownloadAbAttr extends PostSummonAbAttr {
 }
 
 export class PostSummonWeatherChangeAbAttr extends PostSummonAbAttr {
-  private readonly weatherType: WeatherType;
+  public readonly weatherType: WeatherType;
 
   constructor(weatherType: WeatherType) {
     super();

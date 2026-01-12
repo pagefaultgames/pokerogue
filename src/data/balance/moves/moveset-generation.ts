@@ -33,6 +33,7 @@
  */
 
 import { MoveId } from "#enums/move-id";
+import type { IntRange } from "type-fest";
 
 
 //#region Constants
@@ -56,6 +57,9 @@ export const ULTRA_TIER_TM_LEVEL_REQUIREMENT = 55;
 export const EGG_MOVE_LEVEL_REQUIREMENT = 60;
 /** Below this level, Pokémon will be unable to generate with rare egg moves */
 export const RARE_EGG_MOVE_LEVEL_REQUIREMENT = 170;
+
+/** The rate, out of 100 */
+export const FORCED_SIGNATURE_MOVE_CHANCE = 60 satisfies IntRange<1, 100>; // 1 in X chance
 
 // Note: Not exported, only for use with `getMaxTmCount
 /** Below this level, Pokémon will be unable to generate with any TMs */
@@ -110,6 +114,9 @@ export const ULTRA_TM_MOVESET_WEIGHT = 18;
  * For a complete picture, see {@link https://www.desmos.com/calculator/wgln4dxigl}
  */
 export const BASE_LEVEL_WEIGHT_OFFSET = 20;
+
+/** The bp threshold for considering a level 1 move as a "move reminder" */
+export const EVO_MOVE_BP_THRESHOLD = 70;
 
 /**
  * The maximum weight an egg move can ever have
@@ -194,6 +201,9 @@ export const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
   MoveId.SUPER_FANG,
   MoveId.SYNCHRONOISE,
   MoveId.UPPER_HAND,
+  // Moves that always change type.
+  MoveId.NATURE_POWER,
+  MoveId.HIDDEN_POWER,
 ]);
 
 //#endregion Constants

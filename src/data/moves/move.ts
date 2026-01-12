@@ -1,3 +1,9 @@
+/*
+ * SPDX-Copyright-Text: 2024-2026 Pagefault Games
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 import type {
   AbAttrParamsWithCancel,
   AiMovegenMoveStatsAbAttrParams,
@@ -1248,6 +1254,7 @@ export abstract class Move implements Localizable {
    * - Abilities with `AiMovegenMoveStatsAbAttr` or
    * - Abilities with `VariableMovePowerAbAttr`
    */
+  // TODO: include bp floor for forced tera
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Unavoidable due to math formulation
   public calculateEffectivePower(pokemon?: Pokemon, considerAbilities = !!pokemon): number {
     // Status moves are set to 0 effective power
@@ -5668,6 +5675,17 @@ export class VariableMoveTypeAttr extends MoveAttr {
   getTypesForItemSpawn(_user: Pokemon, move: Move): PokemonType[] {
     return [move.type];
   }
+
+  /**
+   * Get the type of the move for the purpose of AI move generation (e.g., Tera Type changes)
+   * @param _user - The user the move is being generated for
+   * @param _move - The move in question
+   * @param _willTera - Whether the user will terastallize
+   * @returns The type the move should be counted as for moveset generation
+   */
+  public getTypeForMovegen(_user: Pokemon, move: Move, _willTera: boolean): PokemonType {
+    return move.type;
+  }
 }
 
 export class FormChangeItemTypeAttr extends VariableMoveTypeAttr {
@@ -5708,10 +5726,14 @@ export class FormChangeItemTypeAttr extends VariableMoveTypeAttr {
     this.apply(user, user, move, [typeHolder]);
     return [typeHolder.value];
   }
+
+  override getTypeForMovegen(user: Pokemon, move: Move): PokemonType {
+    return this.getTypesForItemSpawn(user, move)[0];
+  }
 }
 
 export class TechnoBlastTypeAttr extends VariableMoveTypeAttr {
-  apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: [NumberHolder, ...any[]]): boolean {
     const moveType = args[0];
     if (!(moveType instanceof NumberHolder)) {
       return false;
@@ -5747,6 +5769,10 @@ export class TechnoBlastTypeAttr extends VariableMoveTypeAttr {
     const typeHolder = new NumberHolder(move.type);
     this.apply(user, user, move, [typeHolder]);
     return [typeHolder.value];
+  }
+
+  override getTypeForMovegen(user: Pokemon, move: Move): PokemonType {
+    return this.getTypesForItemSpawn(user, move)[0];
   }
 }
 
@@ -5816,6 +5842,10 @@ export class RagingBullTypeAttr extends VariableMoveTypeAttr {
     this.apply(user, user, move, [typeHolder]);
     return [typeHolder.value];
   }
+
+  override getTypeForMovegen(user: Pokemon, move: Move): PokemonType {
+    return this.getTypesForItemSpawn(user, move)[0];
+  }
 }
 
 export class IvyCudgelTypeAttr extends VariableMoveTypeAttr {
@@ -5857,6 +5887,10 @@ export class IvyCudgelTypeAttr extends VariableMoveTypeAttr {
     this.apply(user, user, move, [typeHolder]);
     return [typeHolder.value];
   }
+
+  override getTypeForMovegen(user: Pokemon, move: Move): PokemonType {
+    return this.getTypesForItemSpawn(user, move)[0];
+  }
 }
 
 export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
@@ -5894,6 +5928,25 @@ export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
     }
 
     return false;
+  }
+
+  override getTypeForMovegen(user: Pokemon, move: Move): PokemonType {
+    const userAbilityAttrs = user.getAbilityAttrs("PostSummonWeatherChangeAbAttr");
+    switch (userAbilityAttrs.at(-1)?.weatherType) {
+      case WeatherType.SUNNY:
+      case WeatherType.HARSH_SUN:
+        return PokemonType.FIRE;
+      case WeatherType.RAIN:
+      case WeatherType.HEAVY_RAIN:
+        return PokemonType.WATER;
+      case WeatherType.SANDSTORM:
+        return PokemonType.ROCK;
+      case WeatherType.HAIL:
+      case WeatherType.SNOW:
+        return PokemonType.ICE;
+      default:
+        return move.type;
+    }
   }
 }
 
@@ -5993,6 +6046,10 @@ export class HiddenPowerTypeAttr extends VariableMoveTypeAttr {
     this.apply(user, user, move, [typeHolder]);
     return [typeHolder.value];
   }
+
+  override getTypeForMovegen(user: Pokemon, move: Move): PokemonType {
+    return this.getTypesForItemSpawn(user, move)[0];
+  }
 }
 
 /**
@@ -6036,6 +6093,13 @@ export class TeraBlastTypeAttr extends VariableMoveTypeAttr {
     }
     return [coreType, teraType];
   }
+
+  override getTypeForMovegen(user: Pokemon, move: Move, willTera: boolean): PokemonType {
+    if (willTera) {
+      return user.getTeraType();
+    }
+    return move.type;
+  }
 }
 
 /**
@@ -6058,6 +6122,13 @@ export class TeraStarstormTypeAttr extends VariableMoveTypeAttr {
       return true;
     }
     return false;
+  }
+
+  override getTypeForMovegen(user: Pokemon, move: Move, willTera: boolean): PokemonType {
+    if (willTera && user.hasSpecies(SpeciesId.TERAPAGOS)) {
+      return PokemonType.STELLAR;
+    }
+    return move.type;
   }
 }
 
@@ -6087,6 +6158,18 @@ export class MatchUserTypeAttr extends VariableMoveTypeAttr {
     // this avoids inconsistencies when the user's type is temporarily changed
     // from tera
     return [user.getTypes(false, true, true, false)[0] ?? move.type];
+  }
+
+  override getTypeForMovegen(user: Pokemon, move: Move, willTera: boolean): PokemonType {
+    const defaultType = user.getTypes(false, true, true, false)[0] ?? move.type;
+    if (willTera) {
+      const type = user.getTeraType();
+      if (type !== PokemonType.STELLAR) {
+        return type;
+      }
+    }
+
+    return defaultType;
   }
 }
 
