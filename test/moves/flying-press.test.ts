@@ -10,7 +10,7 @@ import { GameManager } from "#test/test-utils/game-manager";
 import { getEnumValues } from "#utils/enums";
 import { toTitleCase } from "#utils/strings";
 import Phaser from "phaser";
-import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, describe, expect, it } from "vitest";
 
 describe.sequential("Move - Flying Press", () => {
   let phaserGame: Phaser.Game;
@@ -35,10 +35,6 @@ describe.sequential("Move - Flying Press", () => {
 
     hawlucha = game.field.getPlayerPokemon();
     enemy = game.field.getEnemyPokemon();
-  });
-
-  afterAll(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   // Reset temp data after each test
