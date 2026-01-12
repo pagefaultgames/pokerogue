@@ -57,8 +57,9 @@ export class LoginFormUiHandler extends OAuthProvidersUiHandler {
       case ERR_PASSWORD_MATCH:
         return i18next.t("menu:unmatchingPassword");
       case ERR_GENERATE_TOKEN:
+        return i18next.t("menu:serverErrorGenerateToken");
       case ERR_ADD_SESSION:
-        return i18next.t("menu:serverError");
+        return i18next.t("menu:serverErrorAddSession");
     }
 
     return super.getReadableErrorMessage(error);
