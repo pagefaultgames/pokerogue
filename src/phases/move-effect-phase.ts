@@ -986,7 +986,7 @@ export class MoveEffectPhase extends PokemonPhase {
  * @param useMode - The {@linkcode MoveUseMode} dictating how the move was used
  * @returns Whether `target` can reflect `move`.
  * @remarks
- * To be reflectbale, this requires that:
+ * To be reflectable, this requires that:
  * 1. `move` is both reflectable and was not just reflected
  * 2. `target` is not semi invulnerable
  * 3. `target` has a valid reflection effect active
