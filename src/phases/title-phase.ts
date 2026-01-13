@@ -9,7 +9,6 @@ import { bypassLogin } from "#constants/app-constants";
 import { getDailyRunStarters } from "#data/daily-seed/daily-run";
 import { modifierTypes } from "#data/data-lists";
 import { Gender } from "#data/gender";
-import { BattleType } from "#enums/battle-type";
 import { GameModes } from "#enums/game-modes";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { UiMode } from "#enums/ui-mode";
@@ -355,29 +354,6 @@ export class TitlePhase extends Phase {
     }
 
     globalScene.phaseManager.pushNew("EncounterPhase", this.loaded);
-
-    if (this.loaded) {
-      const availablePartyMembers = globalScene.getPokemonAllowedInBattle().length;
-
-      globalScene.phaseManager.pushNew("SummonPhase", 0, true, true);
-      if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-        globalScene.phaseManager.pushNew("SummonPhase", 1, true, true);
-      }
-
-      if (
-        globalScene.currentBattle.battleType !== BattleType.TRAINER
-        && (globalScene.currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily)
-      ) {
-        const minPartySize = globalScene.currentBattle.double ? 2 : 1;
-        if (availablePartyMembers > minPartySize) {
-          globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
-          if (globalScene.currentBattle.double) {
-            globalScene.phaseManager.pushNew("CheckSwitchPhase", 1, globalScene.currentBattle.double);
-          }
-        }
-      }
-    }
-
     // TODO: Move this to a migrate script instead of running it on save slot load
     for (const achv of Object.keys(globalScene.gameData.achvUnlocks)) {
       if (vouchers.hasOwnProperty(achv) && achv !== "CLASSIC_VICTORY") {

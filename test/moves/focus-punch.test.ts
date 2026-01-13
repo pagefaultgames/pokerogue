@@ -3,7 +3,6 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { BerryPhase } from "#phases/berry-phase";
 import { MessagePhase } from "#phases/message-phase";
-import { SwitchSummonPhase } from "#phases/switch-summon-phase";
 import { TurnStartPhase } from "#phases/turn-start-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import i18next from "i18next";
@@ -110,9 +109,10 @@ describe("Moves - Focus Punch", () => {
 
     await game.phaseInterceptor.to(TurnStartPhase);
 
-    expect(game.scene.phaseManager.getCurrentPhase() instanceof SwitchSummonPhase).toBeTruthy();
+    expect(game).toBeAtPhase("RecallPhase");
     expect(game.scene.phaseManager.hasPhaseOfType("MoveHeaderPhase")).toBe(true);
   });
+
   it("should replace the 'but it failed' text when the user gets hit", async () => {
     game.override.enemyMoveset([MoveId.TACKLE]);
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);

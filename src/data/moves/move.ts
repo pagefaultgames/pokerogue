@@ -6864,65 +6864,51 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
     super(true);
   }
 
-  /**
-   *
-   * @param user {@linkcode Pokemon} using this move
-   * @param target {@linkcode Pokemon} target of this move
-   * @param move {@linkcode Move} being used
-   * @param args N/A
-   * @returns `true` if function succeeds.
-   */
   override apply(user: Pokemon, _target: Pokemon, _move: Move, _args: any[]): boolean {
+    const { phaseManager } = globalScene;
+
     // If user is player, checks if the user has fainted pokemon
     if (user.isPlayer()) {
-      globalScene.phaseManager.unshiftNew("RevivalBlessingPhase", user);
+      phaseManager.unshiftNew("RevivalBlessingPhase", user);
       return true;
     }
+
+    // Revive one of the user's allies selected at random.
+    // Due to the condition, this will only trigger on enemy pokemon.
+    const faintedPokemon = globalScene.getEnemyParty().filter(p => p.isFainted() && !p.isBoss());
+    const slotIndex = user.randBattleSeedInt(faintedPokemon.length);
+    const pokemon = faintedPokemon[slotIndex];
+
+    pokemon.resetStatus(true, false, false, true);
+    pokemon.heal(Math.min(toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
+    phaseManager.queueMessage(
+      i18next.t("moveTriggers:revivalBlessing", { pokemonName: getPokemonNameWithAffix(pokemon) }),
+      0,
+      true,
+    );
+
+    // Handle cases where the revived pokemon needs to get switched in on same turn
+    const allyPokemon = user.getAlly();
     if (
-      user.isEnemy()
-      && user.hasTrainer()
-      && globalScene.getEnemyParty().findIndex(p => p.isFainted() && !p.isBoss()) > -1
+      globalScene.currentBattle.double
+      && globalScene.getEnemyParty().length > 1
+      && allyPokemon != null
+      && (allyPokemon.isFainted() || allyPokemon === pokemon)
     ) {
-      // If used by an enemy trainer with at least one fainted non-boss Pokemon, this
-      // revives one of said Pokemon selected at random.
-      const faintedPokemon = globalScene.getEnemyParty().filter(p => p.isFainted() && !p.isBoss());
-      const pokemon = faintedPokemon[user.randBattleSeedInt(faintedPokemon.length)];
-      const slotIndex = globalScene.getEnemyParty().findIndex(p => pokemon.id === p.id);
-      pokemon.resetStatus(true, false, false, true);
-      pokemon.heal(Math.min(toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
-      globalScene.phaseManager.queueMessage(
-        i18next.t("moveTriggers:revivalBlessing", { pokemonName: getPokemonNameWithAffix(pokemon) }),
-        0,
-        true,
-      );
-      const allyPokemon = user.getAlly();
-      if (
-        globalScene.currentBattle.double
-        && globalScene.getEnemyParty().length > 1
-        && allyPokemon != null // Handle cases where revived pokemon needs to get switched in on same turn
-        && (allyPokemon.isFainted() || allyPokemon === pokemon)
-      ) {
-        // Enemy switch phase should be removed and replaced with the revived pkmn switching in
-        globalScene.phaseManager.tryRemovePhase("SwitchSummonPhase", phase => phase.getFieldIndex() === slotIndex);
-        // If the pokemon being revived was alive earlier in the turn, cancel its move
-        // TODO: check if revived pokemon shouldn't be able to move in the same turn they're brought back
-        // TODO: might make sense to move this to `FaintPhase` after checking for Rev Seed (rather than handling it in the move)
-        globalScene.phaseManager.getMovePhase((phase: MovePhase) => phase.pokemon === pokemon)?.cancel();
-        if (user.fieldPosition === FieldPosition.CENTER) {
-          user.setFieldPosition(FieldPosition.LEFT);
-        }
-        globalScene.phaseManager.unshiftNew(
-          "SwitchSummonPhase",
-          SwitchType.SWITCH,
-          allyPokemon.getFieldIndex(),
-          slotIndex,
-          false,
-          false,
-        );
+      // Enemy switch phase should be removed and replaced with the revived pkmn switching in
+      // TODO: This is a byproduct of `FaintPhase` scheduling replacement switch phases immediately.
+      // It should be removed afterwards
+      phaseManager.tryRemovePhase("SwitchPhase", phase => phase.fieldIndex === slotIndex);
+      // If the pokemon being revived was alive earlier in the turn, cancel its move
+      // (revived pokemon can't move in the turn they're brought back)
+      // TODO: move this to `FaintPhase` after checking for Rev Seed; to fix issues with repeated force switching
+      phaseManager.getMovePhase((phase: MovePhase) => phase.pokemon === pokemon)?.cancel();
+      if (user.fieldPosition === FieldPosition.CENTER) {
+        user.setFieldPosition(FieldPosition.LEFT);
       }
-      return true;
+      phaseManager.queueBattlerEntrance(allyPokemon.getBattlerIndex(), { when: "delayed", playTrainerAnim: false });
     }
-    return false;
+    return true;
   }
 
   getCondition(): MoveConditionFunc {
@@ -6996,27 +6982,15 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       }
 
       if (switchOutTarget.hp > 0) {
-        if (this.switchType === SwitchType.FORCE_SWITCH) {
-          const slotIndex = eligibleNewIndices[user.randBattleSeedInt(eligibleNewIndices.length)];
-          globalScene.phaseManager.queueDeferred(
-            "SwitchSummonPhase",
-            this.switchType,
-            switchOutTarget.getFieldIndex(),
-            slotIndex,
-            false,
-            true,
-          );
-        } else {
-          switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
-          globalScene.phaseManager.queueDeferred(
-            "SwitchPhase",
-            this.switchType,
-            switchOutTarget.getFieldIndex(),
-            true,
-            true,
-          );
-          return true;
-        }
+        globalScene.phaseManager.queueBattlerSwitchOut(switchOutTarget.getBattlerIndex(), {
+          switchType: this.switchType,
+          when: "deferred",
+          switchInIndex:
+            this.switchType === SwitchType.FORCE_SWITCH
+              ? eligibleNewIndices[user.randBattleSeedInt(eligibleNewIndices.length)]
+              : undefined,
+        });
+        return true;
       }
       return false;
     }
@@ -7040,28 +7014,14 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       }
 
       if (switchOutTarget.hp > 0) {
-        if (this.switchType === SwitchType.FORCE_SWITCH) {
-          const slotIndex = eligibleNewIndices[user.randBattleSeedInt(eligibleNewIndices.length)];
-          globalScene.phaseManager.queueDeferred(
-            "SwitchSummonPhase",
-            this.switchType,
-            switchOutTarget.getFieldIndex(),
-            slotIndex,
-            false,
-            false,
-          );
-        } else {
-          globalScene.phaseManager.queueDeferred(
-            "SwitchSummonPhase",
-            this.switchType,
-            switchOutTarget.getFieldIndex(),
-            globalScene.currentBattle.trainer
-              ? globalScene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot)
-              : 0,
-            false,
-            false,
-          );
-        }
+        globalScene.phaseManager.queueBattlerSwitchOut(switchOutTarget.getBattlerIndex(), {
+          switchType: this.switchType,
+          when: "deferred",
+          switchInIndex:
+            this.switchType === SwitchType.FORCE_SWITCH
+              ? eligibleNewIndices[user.randBattleSeedInt(eligibleNewIndices.length)]
+              : undefined,
+        });
       }
     } else {
       // Switch out logic for wild pokemon

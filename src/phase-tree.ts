@@ -1,6 +1,7 @@
 import type { Phase } from "#app/phase";
 import type { DynamicPhaseMarker } from "#phases/dynamic-phase-marker";
 import type { PhaseConditionFunc, PhaseManager, PhaseMap, PhaseString } from "#types/phase-types";
+import { coerceArray } from "#utils/array";
 
 /**
  * The PhaseTree is the central storage location for {@linkcode Phase}s by the {@linkcode PhaseManager}.
@@ -34,7 +35,8 @@ export class PhaseTree {
    * @throws {Error}
    * Error if `level` is out of legal bounds
    */
-  private add(phase: Phase, level: number): void {
+  private add(phases: Phase | readonly Phase[], level: number): void {
+    phases = coerceArray(phases);
     // Add a new level if trying to push to non-initialized layer
     if (level === this.currentLevel + 1 && level === this.levels.length) {
       this.levels.push([]);
@@ -44,7 +46,7 @@ export class PhaseTree {
     if (addLevel == null) {
       throw new Error("Attempted to add a phase to a nonexistent level of the PhaseTree!\nLevel: " + level.toString());
     }
-    addLevel.push(phase);
+    addLevel.push(...phases);
   }
 
   /**
@@ -61,7 +63,7 @@ export class PhaseTree {
    *
    * @todo `setPhaseQueueSplice` had strange behavior. This is simpler, but there are probably some remnant edge cases with the current implementation
    */
-  public addPhase(phase: Phase, defer = false): void {
+  public addPhase(phase: Phase | readonly Phase[], defer = false): void {
     if (defer && !this.deferredActive) {
       this.deferredActive = true;
       this.levels.splice(-1, 0, []);

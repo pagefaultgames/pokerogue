@@ -1,83 +1,184 @@
+/* biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
+import type { RecallPhase } from "#phases/recall-phase";
+import type { SummonPhase, SummonPhaseOptions } from "#phases/summon-phase";
+
+/* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
+
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
+import type { SwitchEffectTransferModifier } from "#app/modifier/modifier";
+import type { FieldBattlerIndex } from "#enums/battler-index";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { SwitchType } from "#enums/switch-type";
+import { TrainerSlot } from "#enums/trainer-slot";
 import { UiMode } from "#enums/ui-mode";
-import { BattlePhase } from "#phases/battle-phase";
-import { PartyOption, PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
+import type { Pokemon } from "#field/pokemon";
+import { PokemonPhase } from "#phases/pokemon-phase";
+import { PartyOption, PartyUiMode } from "#ui/party-ui-handler";
 
 /**
- * Opens the party selector UI and transitions into a {@linkcode SwitchSummonPhase}
- * for the player (if a switch would be valid for the current battle state).
+ * Phase to handle all logical elements of switching 2 Pokemon in battle.
+ * @see {@linkcode SummonPhase} - Phase handling visual aspects of sending in Pokemon
  */
-export class SwitchPhase extends BattlePhase {
-  public readonly phaseName = "SwitchPhase";
-  protected readonly fieldIndex: number;
-  private readonly switchType: SwitchType;
-  private readonly isModal: boolean;
-  private readonly doReturn: boolean;
+export class SwitchPhase extends PokemonPhase {
+  public override readonly phaseName = "SwitchPhase";
+
+  private switchType: SwitchType;
+  private switchInIndex: number;
 
   /**
-   * Creates a new SwitchPhase
-   * @param switchType {@linkcode SwitchType} The type of switch logic this phase implements
-   * @param fieldIndex Field index to switch out
-   * @param isModal Indicates if the switch should be forced (true) or is
-   * optional (false).
-   * @param doReturn Indicates if the party member on the field should be
-   * recalled to ball or has already left the field. Passed to {@linkcode SwitchSummonPhase},
-   * and is (ostensibly) only set to `false` from `FaintPhase`.
+   * @param battlerIndex - The {@linkcode FieldBattlerIndex} of the Pokemon switching **out**
+   * @param switchType - A {@linkcode SwitchType} dictating the type of switch behavior
+   * to perform
+   * @param switchInIndex - The party index of the Pokemon switching **in**, or `-1` to prompt a switch
+   * from the Player party selector or enemy AI; default `-1`
    */
-  constructor(switchType: SwitchType, fieldIndex: number, isModal: boolean, doReturn: boolean) {
-    super();
+  constructor(battlerIndex: FieldBattlerIndex, switchType: SwitchType, switchInIndex = -1) {
+    super(battlerIndex);
 
     this.switchType = switchType;
-    this.fieldIndex = fieldIndex;
-    this.isModal = isModal;
-    this.doReturn = doReturn;
+    this.switchInIndex = switchInIndex;
   }
 
-  start() {
-    super.start();
-
-    // Skip modal switch if impossible (no remaining party members that aren't already in battle)
-    if (this.isModal && globalScene.getPokemonAllowedInBattle().every(p => p.isOnField())) {
-      return super.end();
+  public override start(): void {
+    if (this.switchInIndex !== -1) {
+      this.updatePokemonData();
+      this.end();
+      return;
     }
 
-    /**
-     * Skip if the fainted party member has been revived already. doReturn is
-     * only passed as `false` from FaintPhase (as opposed to other usages such
-     * as ForceSwitchOutAttr or CheckSwitchPhase), so we only want to check this
-     * if the mon should have already been returned but is still alive and well
-     * on the field. see also; battle.test.ts
-     */
-    // TODO: If a Phasing move kills its own user, when does said user appear on field?
-    // Is it after the user faints
-    if (this.isModal && !this.doReturn && !globalScene.getPlayerParty()[this.fieldIndex].isFainted()) {
-      return super.end();
+    // If this is a faint-triggered switch, and the target Pokemon is somehow not fainted,
+    // end this phase (and resummon the target Pokemon)
+    // TODO: This is a bandaid fix that can be avoided if `TurnEndPhase` is responsible for scheduling faint switches
+    if (this.switchType === SwitchType.FAINT_SWITCH && this.getPokemon().isAllowedInBattle()) {
+      this.end();
+      return;
     }
 
-    // Check if there is any space still in field
-    if (this.isModal && globalScene.getPlayerField(true).length > globalScene.currentBattle.getBattlerCount()) {
-      return super.end();
+    if (this.player) {
+      this.resolvePlayerSwitchInIndex();
+    } else {
+      this.resolveEnemySwitchInIndex();
     }
+  }
 
-    // Override field index to 0 in case of double battle where 2/3 remaining legal party members fainted at once
-    const fieldIndex =
-      globalScene.currentBattle.getBattlerCount() === 1 || globalScene.getPokemonAllowedInBattle().length > 1
-        ? this.fieldIndex
-        : 0;
-
+  private resolvePlayerSwitchInIndex(): void {
     globalScene.ui.setMode(
       UiMode.PARTY,
-      this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH,
-      fieldIndex,
-      (slotIndex: number, option: PartyOption) => {
-        if (slotIndex >= globalScene.currentBattle.getBattlerCount() && slotIndex < 6) {
-          const switchType = option === PartyOption.PASS_BATON ? SwitchType.BATON_PASS : this.switchType;
-          globalScene.phaseManager.unshiftNew("SwitchSummonPhase", switchType, fieldIndex, slotIndex, this.doReturn);
-        }
-        globalScene.ui.setMode(UiMode.MESSAGE).then(() => super.end());
-      },
-      PartyUiHandler.FilterNonFainted,
+      PartyUiMode.MODAL_SWITCH,
+      this.fieldIndex,
+      (cursor: number, option: PartyOption) => this.onPartyModeSelection(cursor, option),
     );
+  }
+
+  private async onPartyModeSelection(cursor: number, option: PartyOption): Promise<void> {
+    this.switchInIndex = cursor;
+    if (option === PartyOption.PASS_BATON) {
+      this.switchType = SwitchType.BATON_PASS;
+    }
+    await globalScene.ui.setMode(UiMode.MESSAGE);
+    this.updatePokemonData();
+    this.end();
+  }
+
+  private resolveEnemySwitchInIndex(): void {
+    const { trainer } = globalScene.currentBattle;
+    if (!trainer) {
+      throw new Error("SwitchPhase: Enemy Pokemon does not have a trainer!");
+    }
+
+    this.switchInIndex = trainer.getNextSummonIndex(
+      this.fieldIndex ? TrainerSlot.TRAINER_PARTNER : TrainerSlot.TRAINER,
+    );
+
+    this.updatePokemonData();
+    this.end();
+  }
+
+  /**
+   * Updates *all* data that needs to be changed as a direct result of this
+   * phase's switch action.
+   *
+   * Note that the affected Pokemon are visually off the field when this is
+   * called. Any pre-switch effects that require the Pokemon to be visible
+   * should be applied when or before the Pokemon is {@linkcode RecallPhase | recalled}.
+   */
+  private updatePokemonData(): void {
+    const party = this.getAlliedParty();
+    const activePokemon = this.getPokemon();
+    const switchedInPokemon = party[this.switchInIndex];
+
+    // Apply pre-switch effects from abilities (e.g. Regenerator)
+    const params = { pokemon: activePokemon };
+    applyAbAttrs("PreSwitchOutAbAttr", params);
+
+    // Remove all tags applied to the active Pokemon's opponents by the active Pokemon
+    // (e.g. "binding" effects from Bind, Fire Spin, etc.)
+    activePokemon.getOpponents().forEach(opp => opp.removeTagsBySourceId(activePokemon.id));
+
+    // If this switch is the result of a Baton (item/move), transfer all
+    // relevant effects from the active Pokemon to the switched in Pokemon.
+    // A similar effect occurs for the user's active Substitute and Shed Tail.
+    if (this.switchType === SwitchType.BATON_PASS) {
+      this.transferBatonPassableEffects(activePokemon, switchedInPokemon);
+      activePokemon.resetSummonData();
+    } else if (this.switchType === SwitchType.SHED_TAIL) {
+      const subTag = activePokemon.getTag(BattlerTagType.SUBSTITUTE);
+      if (subTag) {
+        switchedInPokemon.summonData.tags.push(subTag);
+      }
+      activePokemon.resetSummonData();
+    }
+
+    // If a Substitute was transferred, update the switched in Pokemon's sprite
+    // to a "behind Substitute" state
+    const transferredSubTag = switchedInPokemon.getTag(BattlerTagType.SUBSTITUTE);
+    if (transferredSubTag) {
+      switchedInPokemon.x += switchedInPokemon.getSubstituteOffset()[0];
+      switchedInPokemon.y += switchedInPokemon.getSubstituteOffset()[1];
+      switchedInPokemon.setAlpha(0.5);
+    }
+
+    // Swap the party positions of the switching Pokemon
+    party[this.switchInIndex] = activePokemon;
+    party[this.fieldIndex] = switchedInPokemon;
+
+    if (this.switchType !== SwitchType.INITIAL_SWITCH) {
+      switchedInPokemon.turnData.switchedInThisTurn = true;
+    }
+  }
+
+  /**
+   * Transfers all effects that can be passed from the active Pokemon to the
+   * Pokemon about to switch in via {@linkcode SwitchType.BATON_PASS | Baton or Baton Pass}
+   * @param activePokemon - The {@linkcode Pokemon} switching out
+   * @param switchedInPokemon - The {@linkcode Pokemon} switching in
+   */
+  private transferBatonPassableEffects(activePokemon: Pokemon, switchedInPokemon: Pokemon): void {
+    this.getOpposingField().forEach((opposingPokemon: Pokemon) =>
+      opposingPokemon.transferTagsBySourceId(activePokemon.id, switchedInPokemon.id),
+    );
+
+    // If the prior pokemon held a Baton and the current one doesn't, pass it along
+    const switchedInPokemonHeldBaton = globalScene.findModifier(
+      m => m.is("SwitchEffectTransferModifier") && m.pokemonId === switchedInPokemon.id,
+    ) as SwitchEffectTransferModifier | undefined;
+    const lastPokemonHeldBaton = globalScene.findModifier(
+      m => m.is("SwitchEffectTransferModifier") && m.pokemonId === activePokemon.id,
+    ) as SwitchEffectTransferModifier | undefined;
+
+    if (lastPokemonHeldBaton && !switchedInPokemonHeldBaton) {
+      globalScene.tryTransferHeldItemModifier(
+        lastPokemonHeldBaton,
+        switchedInPokemon,
+        false,
+        undefined,
+        undefined,
+        undefined,
+        false,
+      );
+    }
+
+    switchedInPokemon.transferSummon(activePokemon);
   }
 }

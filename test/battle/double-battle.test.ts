@@ -1,10 +1,13 @@
 import { getGameMode } from "#app/game-mode";
 import { Status } from "#data/status-effect";
 import { AbilityId } from "#enums/ability-id";
+import { BattleType } from "#enums/battle-type";
+import { BattlerIndex } from "#enums/battler-index";
 import { GameModes } from "#enums/game-modes";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
+import { TrainerType } from "#enums/trainer-type";
 import { BattleEndPhase } from "#phases/battle-end-phase";
 import { TurnInitPhase } from "#phases/turn-init-phase";
 import { GameManager } from "#test/test-utils/game-manager";
@@ -89,5 +92,63 @@ describe("Double Battles", () => {
 
     expect(doubleCount).toBe(1);
     expect(singleCount).toBe(DOUBLE_CHANCE - 1);
+  });
+
+  it("should transition to and from double battles without crashing", async () => {
+    game.override.battleStyle("even-doubles");
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER]);
+
+    // Run 2 single -> double transitions and 2 double -> single transitions
+    for (let waveNumber = 1; waveNumber < 5; waveNumber++) {
+      const isDouble = waveNumber % 2 === 0;
+      expect(game.scene.currentBattle.double).toBe(isDouble);
+      expect(game.scene.currentBattle.waveIndex).toBe(waveNumber);
+
+      game.move.use(MoveId.SPLASH);
+      if (isDouble) {
+        game.move.use(MoveId.SPLASH, 1);
+      }
+      await game.doKillOpponents();
+      await game.toNextWave();
+
+      expect(game.scene.currentBattle.double).toBe(!isDouble);
+    }
+  });
+
+  describe("Trainer Double Battles", () => {
+    beforeEach(() => {
+      game.override
+        .randomTrainer({ trainerType: TrainerType.TWINS })
+        .battleType(BattleType.TRAINER)
+        .startingLevel(1000)
+        .startingWave(12);
+    });
+
+    it.each<{ side: string; order: BattlerIndex[] }>([
+      { side: "left", order: [BattlerIndex.PLAYER, BattlerIndex.PLAYER_2] },
+      { side: "right", order: [BattlerIndex.PLAYER_2, BattlerIndex.PLAYER] },
+    ])("should advance exactly one wave if the $side opponent is defeated first", async ({ order }) => {
+      await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
+
+      game.move.use(MoveId.MOONBLAST, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+      game.move.use(MoveId.MOONBLAST, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2);
+      await game.setTurnOrder([...order, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+      await game.toNextWave();
+
+      expect(game.scene.currentBattle.waveIndex).toBe(13);
+      expect(game.phaseInterceptor.log.filter(phase => phase === "SelectModifierPhase")).toHaveLength(1);
+      expect(game.scene.phaseManager.hasPhaseOfType("SelectModifierPhase")).toBe(false);
+    });
+
+    it("should advance exactly one wave if both opponents are defeated at the same time", async () => {
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+
+      game.move.use(MoveId.DAZZLING_GLEAM);
+      await game.toNextWave();
+
+      expect(game.scene.currentBattle.waveIndex).toBe(13);
+      expect(game.phaseInterceptor.log.filter(phase => phase === "SelectModifierPhase")).toHaveLength(1);
+      expect(game.scene.phaseManager.hasPhaseOfType("SelectModifierPhase")).toBe(false);
+    });
   });
 });
