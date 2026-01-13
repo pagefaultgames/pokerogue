@@ -23,7 +23,7 @@ concurrency:
 
 env:
   COVERAGE_FILE: coverage/coverage-summary.json
-  SHOULD_UPLOAD_COVERAGE: ${{github.event_name == 'push' && github.ref_name == 'beta'}}
+  SHOULD_UPLOAD_COVERAGE: ${{ github.repository == 'pagefaultgames/pokerogue' && github.ref_name == 'beta' && github.event_name == 'push' }}
 
 jobs:
   check-path-change-filter:
