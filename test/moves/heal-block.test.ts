@@ -79,7 +79,7 @@ describe("Moves - Heal Block", () => {
     await game.toNextTurn();
 
     // wish triggered, but did NOT heal the player
-    expect(game).toHavePositionalTag(PositionalTagType.WISH, 0);
+    expect(game).not.toHavePositionalTag(PositionalTagType.WISH);
     expect(player.hp).toBe(1);
   });
 
