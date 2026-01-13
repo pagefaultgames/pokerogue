@@ -1064,7 +1064,8 @@ export class BattleScene extends SceneBase {
       fusionIcon.setFrame(fusionIconFrameId);
 
       const frameY = (originalFrame.y + originalFusionFrame.y) / 2;
-      icon.frame.y = fusionIcon.frame.y = frameY;
+      icon.frame.y = frameY;
+      fusionIcon.frame.y = frameY;
 
       container.add(fusionIcon);
 
