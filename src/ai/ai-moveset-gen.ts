@@ -9,7 +9,7 @@
 import { EVOLVE_MOVE, RELEARN_MOVE } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { speciesEggMoves } from "#balance/moves/egg-moves";
-import { FORBIDDEN_SINGLES_MOVES, FORBIDDEN_TM_MOVES } from "#balance/moves/forbidden-moves";
+import { FORBIDDEN_SINGLES_MOVES, FORBIDDEN_TM_MOVES, LEVEL_BASED_DENYLIST } from "#balance/moves/forbidden-moves";
 import {
   BASE_LEVEL_WEIGHT_OFFSET,
   BASE_WEIGHT_MULTIPLIER,
@@ -374,7 +374,11 @@ function filterMovePool(pool: Map<MoveId, number>, isBoss: boolean, hasTrainer: 
     }
 
     // Trainers and boss pokemon don't get doubles-only moves in singles battles
-    if (isSingles && (isBoss || hasTrainer) && FORBIDDEN_SINGLES_MOVES.has(moveId)) {
+    if (
+      isSingles
+      && (isBoss || hasTrainer)
+      && (FORBIDDEN_SINGLES_MOVES.has(moveId) || LEVEL_BASED_DENYLIST.has(moveId))
+    ) {
       pool.delete(moveId);
     }
   }
