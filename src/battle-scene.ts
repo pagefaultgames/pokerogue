@@ -1,4 +1,5 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import { Animation } from "#app/animations";
 import { Battle } from "#app/battle";
 import {
   ANTI_VARIANCE_WEIGHT_MODIFIER,
@@ -340,6 +341,8 @@ export class BattleScene extends SceneBase {
    */
   public readonly eventTarget: EventTarget = new EventTarget();
 
+  /** A helper class containing several animation-related functions. */
+  public readonly animations: Animation = new Animation();
   declare renderer: Phaser.Renderer.WebGL.WebGLRenderer;
 
   constructor() {

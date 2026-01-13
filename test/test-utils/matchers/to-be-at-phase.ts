@@ -10,7 +10,11 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @param expectedPhase - The expected {@linkcode PhaseString}
  * @returns The result of the matching
  */
-export function toBeAtPhase(this: MatcherState, received: unknown, expectedPhase: PhaseString): SyncExpectationResult {
+export function toBeAtPhase(
+  this: Readonly<MatcherState>,
+  received: unknown,
+  expectedPhase: PhaseString,
+): SyncExpectationResult {
   if (!isGameManagerInstance(received)) {
     return {
       pass: this.isNot,
