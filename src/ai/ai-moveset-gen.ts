@@ -315,10 +315,9 @@ function getAndWeightEggMoves(
 }
 
 /**
- * Filter `pool`, removing moves that are superceded by other moves in the pool
+ * Filter `pool`, removing moves that are {@link SUPERCEDED_MOVES | superceded} by other moves in the pool
  * @param pool - The move pool to filter
  * @param otherPools - Other move pools to consider as available when filtering
- * @see {@linkcode SUPERCEDED_MOVES}
  */
 function filterSupercededMoves(pool: Map<MoveId, number>, ...otherPools: Map<MoveId, number>[]): void {
   const presentMoves = new Set<MoveId>(pool.keys());
