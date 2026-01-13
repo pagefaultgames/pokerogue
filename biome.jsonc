@@ -59,6 +59,7 @@
       "recommended": true,
       "correctness": {
         "noUndeclaredVariables": "error",
+        // we virtually always use base 10 number conversion
         "useParseIntRadix": "off",
         "noUnusedVariables": "error",
         "noSwitchDeclarations": "error",
@@ -154,8 +155,8 @@
         },
         // TODO: Consider enabling
         "useNodejsImportProtocol": "off",
-        // string concatenation is faster: https://stackoverflow.com/questions/29055518/are-es6-template-literals-faster-than-string-concatenation
-        // TODO: Revisit this?
+        // String concatenation can be more readable than template literals
+        // in some situations.
         "useTemplate": "off",
         "useAsConstAssertion": "error",
         "noUnusedTemplateLiteral": "error",
