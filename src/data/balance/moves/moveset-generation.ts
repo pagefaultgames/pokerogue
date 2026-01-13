@@ -83,7 +83,7 @@ const ONE_EGG_MOVE_THRESHOLD = 80;
 const TWO_EGG_MOVE_THRESHOLD = 121;
 /** Below this level, Pokémon will generate with at most 2 egg moves */
 const THREE_EGG_MOVE_THRESHOLD = 161;
-/** Above this level, Pokémon will generate with at most 3 egg moves */
+/** Below this level, Pokémon will generate with at most 3 egg moves */
 const FOUR_EGG_MOVE_THRESHOLD = 201;
 
 
