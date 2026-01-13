@@ -903,7 +903,9 @@ export class MoveEffectPhase extends PokemonPhase {
 
   /**
    * @returns The {@linkcode Pokemon} using this phase's invoked move.
-   * Is guaranteed to be defined during move execution itself, as the `start` method
+   *
+   * @remarks
+   * The returned Pokémon is guaranteed to be defined during move execution itself, as the `start` method
    * ends this phase immediately if a source is missing.
    */
   // TODO: Delete in favor of overridding {@linkcode PokemonPhase.getPokemon}
