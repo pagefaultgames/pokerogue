@@ -29,78 +29,65 @@ describe("Moves - Stockpile", () => {
   });
 
   it("should gain a stockpile stack and raise DEF and SPDEF when used, up to 3 times", async () => {
-    await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const user = game.field.getPlayerPokemon();
+    const feebas = game.field.getPlayerPokemon();
 
-    expect(user).toHaveStatStage(Stat.DEF, 0);
-    expect(user).toHaveStatStage(Stat.SPDEF, 0);
-
-    // use Stockpile thrice
-    for (let i = 0; i < 3; i++) {
+    for (let i = 1; i <= 3; i++) {
       game.move.use(MoveId.STOCKPILE);
       await game.toNextTurn();
 
-      const stockpilingTag = user.getTag(BattlerTagType.STOCKPILING)!;
+      const stockpilingTag = feebas.getTag(BattlerTagType.STOCKPILING)!;
       expect(stockpilingTag).toBeDefined();
-      expect(stockpilingTag.stockpiledCount).toBe(i + 1);
-      expect(user).toHaveStatStage(Stat.DEF, i + 1);
-      expect(user).toHaveStatStage(Stat.SPDEF, i + 1);
+      expect(stockpilingTag.stockpiledCount).toBe(i);
+      expect(feebas).toHaveStatStage(Stat.DEF, i as 1 | 2 | 3);
+      expect(feebas).toHaveStatStage(Stat.SPDEF, i as 1 | 2 | 3);
     }
   });
 
   it("should fail when used at max stacks", async () => {
-    await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const user = game.field.getPlayerPokemon();
+    const feebas = game.field.getPlayerPokemon();
 
-    user.addTag(BattlerTagType.STOCKPILING);
-    user.addTag(BattlerTagType.STOCKPILING);
-    user.addTag(BattlerTagType.STOCKPILING);
+    feebas.addTag(BattlerTagType.STOCKPILING);
+    feebas.addTag(BattlerTagType.STOCKPILING);
+    feebas.addTag(BattlerTagType.STOCKPILING);
 
-    const stockpilingTag = user.getTag(BattlerTagType.STOCKPILING)!;
-    expect(stockpilingTag).toBeDefined();
-    expect(stockpilingTag.stockpiledCount).toBe(3);
+    expect(feebas).toHaveBattlerTag({ tagType: BattlerTagType.STOCKPILING, stockpiledCount: 3 });
 
     game.move.use(MoveId.STOCKPILE);
-    await game.toNextTurn();
+    await game.toEndOfTurn();
 
-    // should have failed
-    expect(user).toHaveStatStage(Stat.DEF, 3);
-    expect(user).toHaveStatStage(Stat.SPDEF, 3);
-    expect(stockpilingTag.stockpiledCount).toBe(3);
-    expect(user).toHaveUsedMove({
+    // should have failed and did nothing
+    expect(feebas).toHaveStatStage(Stat.DEF, 3);
+    expect(feebas).toHaveStatStage(Stat.SPDEF, 3);
+    expect(feebas).toHaveBattlerTag({ tagType: BattlerTagType.STOCKPILING, stockpiledCount: 3 });
+    expect(feebas).toHaveUsedMove({
       move: MoveId.STOCKPILE,
       result: MoveResult.FAIL,
     });
   });
 
-  it("gains a stockpile stack even if user's DEF and SPDEF stat stages are at +6", async () => {
-    await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
+  it("should gain stockpile stacks even when at max stat stages", async () => {
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    const user = game.field.getPlayerPokemon();
-
-    user.setStatStage(Stat.DEF, 6);
-    user.setStatStage(Stat.SPDEF, 6);
-
-    expect(user).not.toHaveBattlerTag(BattlerTagType.STOCKPILING);
+    const feebas = game.field.getPlayerPokemon();
+    feebas.setStatStage(Stat.DEF, 6);
+    feebas.setStatStage(Stat.SPDEF, 6);
 
     game.move.use(MoveId.STOCKPILE);
     await game.toNextTurn();
 
-    const stockpilingTag = user.getTag(BattlerTagType.STOCKPILING)!;
-    expect(stockpilingTag).toBeDefined();
-    expect(stockpilingTag.stockpiledCount).toBe(1);
-    expect(user).toHaveStatStage(Stat.DEF, 6);
-    expect(user).toHaveStatStage(Stat.SPDEF, 6);
+    expect(feebas).toHaveBattlerTag({ tagType: BattlerTagType.STOCKPILING, stockpiledCount: 1 });
+    expect(feebas).toHaveStatStage(Stat.DEF, 6);
+    expect(feebas).toHaveStatStage(Stat.SPDEF, 6);
 
     game.move.use(MoveId.STOCKPILE);
     await game.toNextTurn();
 
-    const stockpilingTagAgain = user.getTag(BattlerTagType.STOCKPILING)!;
-    expect(stockpilingTagAgain).toBeDefined();
-    expect(stockpilingTagAgain.stockpiledCount).toBe(2);
-    expect(user).toHaveStatStage(Stat.DEF, 6);
-    expect(user).toHaveStatStage(Stat.SPDEF, 6);
+    expect(feebas).toHaveBattlerTag({ tagType: BattlerTagType.STOCKPILING, stockpiledCount: 2 });
+    expect(feebas).toHaveStatStage(Stat.DEF, 6);
+    expect(feebas).toHaveStatStage(Stat.SPDEF, 6);
   });
 });
