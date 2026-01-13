@@ -55,7 +55,7 @@ export class Arena {
   /** All currently-active {@linkcode ArenaTag}s on both sides of the field. */
   public tags: ArenaTag[] = [];
   /** A manager for the currently-active {@linkcode PositionalTag}s on both sides of the field. */
-  public positionalTagManager: PositionalTagManager = new PositionalTagManager();
+  public readonly positionalTagManager: PositionalTagManager = new PositionalTagManager();
 
   public bgm: string;
   public ignoreAbilities: boolean;
