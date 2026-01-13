@@ -8,7 +8,6 @@ import { FieldPosition } from "#enums/field-position";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { PlayerGender } from "#enums/player-gender";
 import { TrainerSlot } from "#enums/trainer-slot";
-import { addPokeballOpenParticles } from "#field/anims";
 import type { Pokemon } from "#field/pokemon";
 import { PartyMemberPokemonPhase } from "#phases/party-member-pokemon-phase";
 import i18next from "i18next";
@@ -176,7 +175,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
               }
               globalScene.currentBattle.seenEnemyPartyMemberIds.add(pokemon.id);
             }
-            addPokeballOpenParticles(pokemon.x, pokemon.y - 16, pokemon.getPokeball(true));
+            globalScene.animations.addPokeballOpenParticles(pokemon.x, pokemon.y - 16, pokemon.getPokeball(true));
             globalScene.updateModifiers(this.player);
             globalScene.updateFieldScale();
             pokemon.showInfo();

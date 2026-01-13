@@ -10,7 +10,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @returns The result of the matching
  */
 export function toHaveShownMessage(
-  this: MatcherState,
+  this: Readonly<MatcherState>,
   received: unknown,
   expectedMessage: string,
 ): SyncExpectationResult {
