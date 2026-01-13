@@ -35,7 +35,6 @@ jobs:
         run: >
           pnpm test:silent
           --shard=${{ inputs.shard }}/${{ inputs.totalShards }}
-          --reporter=blob
           --coverage=${{ inputs.coverage }}
           --outputFile=test-results/blob-${{ inputs.shard }}.json
           || true
