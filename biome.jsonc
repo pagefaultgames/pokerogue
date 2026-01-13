@@ -232,7 +232,7 @@
         "noBarrelFile": "error"
       },
       "nursery": {
-        // TODO: Enable once more mature
+        // TODO: Fix violations then enable this
         "useAwaitThenable": "off",
         "noMultiAssign": "error",
         "noMultiStr": "error",
