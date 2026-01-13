@@ -32,6 +32,8 @@
  * @module
  */
 
+import type { LEVEL_BASED_DENYLIST } from "#balance/moves/forbidden-moves";
+import type { FORCED_SIGNATURE_MOVES } from "#balance/moves/signature-moves";
 import { MoveId } from "#enums/move-id";
 import type { IntRange } from "type-fest";
 
@@ -58,8 +60,12 @@ export const EGG_MOVE_LEVEL_REQUIREMENT = 60;
 /** Below this level, Pokémon will be unable to generate with rare egg moves */
 export const RARE_EGG_MOVE_LEVEL_REQUIREMENT = 170;
 
-/** The rate, out of 100 */
+/**The rate, out of 100, for {@link FORCED_SIGNATURE_MOVES | forced signature moves} to be generated. */
 export const FORCED_SIGNATURE_MOVE_CHANCE = 60 satisfies IntRange<1, 100>; // 1 in X chance
+
+/** The level threshold above which moves in the {@linkcode LEVEL_BASED_DENYLIST} are prevented from spawning */
+export const LEVEL_BASED_DENYLIST_THRESHOLD = 70;
+
 
 // Note: Not exported, only for use with `getMaxTmCount
 /** Below this level, Pokémon will be unable to generate with any TMs */
