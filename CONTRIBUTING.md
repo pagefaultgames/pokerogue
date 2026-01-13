@@ -133,18 +133,28 @@ You can get help testing your specific changes, and you might have found a new o
 
 ### 2 - Automatic Testing
 
-> PokéRogue uses [Vitest](https://vitest.dev/) for automatic testing. Checking out the existing tests in the [test](./test/) folder is a great way to understand how this works, and to get familiar with the project as a whole.
+PokéRogue uses [Vitest](https://vitest.dev/) for automated testing. \
+Checking out existing tests in the [test](./test/) folder is a great way to understand how the existing system works, as well as familiarizing yourself with the project as a whole.
 
-To make sure your changes didn't break any existing test cases, run `pnpm test:silent` in your terminal. You can also provide an argument to the command: to run only the Dancer (ability) tests, you could write `pnpm test:silent dancer`.
-  - __Note that passing all test cases does *not* guarantee that everything is working properly__. The project does not have complete regression testing.
-
+#### Writing tests
 Most non-trivial changes (*especially bug fixes*) should come along with new test cases.
-  - To make a new test file, run `pnpm test:create` and follow the prompts. If the move/ability/etc. you're modifying already has tests, simply add new cases to the end of the file. As mentioned before, the easiest way to get familiar with the system and understand how to write your own tests is simply to read the existing tests, particularly ones similar to the tests you intend to write.
-  - Ensure that new tests:
-    - Are deterministic. In other words, the test should never pass or fail when it shouldn't due to randomness. This involves primarily ensuring that abilities and moves are never randomly selected.
-    - As much as possible, are unit tests. If you have made two distinct changes, they should be tested in two separate cases.
-    - Test edge cases. A good strategy is to think of edge cases beforehand and create tests for them using `it.todo`. Once the edge case has been handled, you can remove the `todo` marker.
 
+To create a new test file, run `pnpm test:create` and follow the prompts. \
+If the move/ability/etc. you're modifying already has tests, you can add new cases to the test file or edit existing ones.
+
+- Ensure that new test cases:
+  - Are deterministic. In other words, the test should never pass or fail when it shouldn't due to randomness. Among other things, this involves ensuring that abilities and moves are never randomly selected.
+  - Are unit tests. If you have made two distinct changes, they should be tested in two separate cases.
+  - Cover as many edge cases as possible. A good strategy is to think of edge cases beforehand and create tests for them using `it.todo`. Once the edge case has been handled, you can remove the `todo` marker.
+
+#### Running tests
+To make sure your changes didn't break any existing test cases, run `pnpm test:silent` in your terminal to run the full test suite. \
+You can provide arguments to the command to change its behavior or specify which test files to run;
+a full list of supported arguments can be found on [Vitest's website](https://vitest.dev/guide/cli.html).
+
+> [!IMPORTANT]
+> Passing all test cases does **not** guarantee that everything is working properly.
+> The project does not have complete regression testing, so manual verification is still advised for most changes.
 
 ## 💾 Development Save File
 > Some issues may require you to have unlocks on your save file which go beyond normal overrides.
@@ -153,19 +163,15 @@ Most non-trivial changes (*especially bug fixes*) should come along with new tes
 1. Start the game up locally and navigate to `Menu -> Manage Data -> Import Data`
 2. Select [everything.prsv](test/test-utils/saves/everything.prsv) (`test/test-utils/saves/everything.prsv`) and confirm.
 
-
 ## ✅ Submitting a Pull Request
 
-Most information related to submitting a pull request is contained in comments within the pull request template that is shown when you open a new pull request,
-however full documentation on the pull request title format is here to best utilize the space available.
+Most information related to submitting a pull request is contained within comments inside the [default pull request template](./.github/pull_request_template.md). \
+This section serves to elaborate on particular parts of the PR creation workflow that cannot fit fully inside the margins.
 
-The pull request title must follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) format with a valid prefix and optionally a valid scope. \
-If a save migrator, version increase or other breaking change is part of the PR, a `!` must be added before the `:`.
+### PR Title Format
+This repository follows the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) standard for PR titles, enforced by an automated GitHub Actions workflow.
 
-Try to keep the PR title to 72 characters or less (GitHub cuts off commit titles longer than this).
-
-### Examples
-
+Each PR must contain a valid prefix (and optionally a valid scope), followed by a colon and then the PR's subject line. \
 ```
 fix(move): Future Sight no longer crashes
 ^   ^      ^
@@ -174,11 +180,19 @@ fix(move): Future Sight no longer crashes
 |_____________ Prefix
 ```
 
+> [!IMPORTANT]
+> If a save migrator, version increase or other breaking change is part of the PR, a `!` must be added before the `:`.
+
+Try to keep the PR title to 72 characters or less (GitHub cuts off commit titles longer than this).
+
+#### Examples
 `refactor(data)!: improve serialization of Pokemon save data`
 
 `balance: update TM compatibility lists`
+`fix(move): Retaliate now saves power boost between waves`
+`test: preserve text output of original shards`
 
-### List of valid prefixes
+#### List of valid prefixes
 
 - "balance" - Changes related to game balance
 - "chore" - Misc project upkeep (e.g. updating submodules, updating dependencies, reverting a bad commit) not covered by other prefixes
@@ -193,7 +207,7 @@ fix(move): Future Sight no longer crashes
 - "refactor" - A change that doesn't impact functionality or fix any bugs (except incidentally)
 - "test" - Primarily adding/updating tests or modifying the test framework
 
-### List of valid scopes
+#### List of valid scopes
 
 - "ability"
 - "ai"
