@@ -127,6 +127,9 @@ describe("gen-moveset", () => {
       });
     }
     pokemon = createTestablePokemon(payload.speciesId, { boss: payload.boss, level: payload.level });
+    if (payload.abilityIndex != null) {
+      pokemon.abilityIndex = payload.abilityIndex;
+    }
     vi.spyOn(pokemon, "hasTrainer").mockReturnValue(payload.forTrainer);
     for (let i = 0; i < payload.trials; ++i) {
       if (payload.printWeights && i === 0) {

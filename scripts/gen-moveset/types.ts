@@ -13,4 +13,5 @@ export interface SamplerPayload {
   trials: number;
   forTrainer: boolean;
   printWeights: boolean;
+  abilityIndex?: number;
 }
