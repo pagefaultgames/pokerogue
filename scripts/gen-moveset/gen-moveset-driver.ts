@@ -96,6 +96,13 @@ async function promptInputs(): Promise<SamplerPayload> {
     required: true,
   });
 
+  const abilityIndex = await promptNumber({
+    message: "Enter an ability index to force (leave blank to not force any):",
+    min: 0,
+    max: 2,
+    required: false,
+  });
+
   const trials = await promptNumber({
     message: "Enter the number of movesets to generate (default 100):",
     default: 100,
@@ -115,6 +122,7 @@ async function promptInputs(): Promise<SamplerPayload> {
     trials,
     printWeights,
     forTrainer,
+    abilityIndex,
   };
 }
 
