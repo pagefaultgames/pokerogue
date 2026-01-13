@@ -910,7 +910,7 @@ export class MoveEffectPhase extends PokemonPhase {
    */
   // TODO: Delete in favor of overridding {@linkcode PokemonPhase.getPokemon}
   public getUserPokemon(): Pokemon {
-    return super.getPokemon()!;
+    return super.getPokemon();
   }
 
   /**
