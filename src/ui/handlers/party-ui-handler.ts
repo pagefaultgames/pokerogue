@@ -1080,11 +1080,10 @@ export class PartyUiHandler extends MessageUiHandler {
 
     // Pressing return button
     if (this.cursor === 6) {
-      if (!this.allowCancel()) {
-        ui.playError();
-      } else {
+      if (this.allowCancel()) {
         return this.processInput(Button.CANCEL);
       }
+      ui.playError();
     }
     return true;
   }
@@ -1481,11 +1480,11 @@ export class PartyUiHandler extends MessageUiHandler {
         this.updateOptionsWithRememberMoveModifierMode(pokemon);
         break;
       case PartyUiMode.MODIFIER_TRANSFER:
-        if (!this.transferMode) {
-          this.updateOptionsWithModifierTransferMode(pokemon);
-        } else {
+        if (this.transferMode) {
           this.options.push(PartyOption.TRANSFER);
           this.addCommonOptions(pokemon);
+        } else {
+          this.updateOptionsWithModifierTransferMode(pokemon);
         }
         break;
       case PartyUiMode.DISCARD:
@@ -1515,9 +1514,6 @@ export class PartyUiHandler extends MessageUiHandler {
           );
         }
         this.addCommonOptions(pokemon);
-        if (this.partyUiMode === PartyUiMode.SWITCH && pokemon.isFusion()) {
-          this.options.push(PartyOption.UNSPLICE);
-        }
         break;
       case PartyUiMode.REVIVAL_BLESSING:
         this.options.push(PartyOption.REVIVE);
@@ -1551,6 +1547,9 @@ export class PartyUiHandler extends MessageUiHandler {
       case PartyUiMode.CHECK:
         this.addCommonOptions(pokemon);
         if (globalScene.phaseManager.getCurrentPhase().is("SelectModifierPhase")) {
+          if (pokemon.isFusion()) {
+            this.options.push(PartyOption.UNSPLICE);
+          }
           this.options.push(PartyOption.RELEASE);
           const formChangeItemModifiers = this.getFormChangeItemsModifiers(pokemon);
           for (let i = 0; i < formChangeItemModifiers.length; i++) {
@@ -1575,11 +1574,11 @@ export class PartyUiHandler extends MessageUiHandler {
 
     switch (this.partyUiMode) {
       case PartyUiMode.MODIFIER_TRANSFER:
-        if (!this.transferMode) {
-          this.updateOptionsWithModifierTransferMode(pokemon);
-        } else {
+        if (this.transferMode) {
           this.options.push(PartyOption.TRANSFER);
           this.addCommonOptions(pokemon);
+        } else {
+          this.updateOptionsWithModifierTransferMode(pokemon);
         }
         break;
       case PartyUiMode.DISCARD:

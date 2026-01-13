@@ -10,7 +10,7 @@ module.exports = {
         + "and thus should not contain anything with a bearing on runtime code.",
       from: {},
       to: {
-        path: "(^|/)src/@types",
+        path: ["(^|/)src/@types", "(^|/)test/@types"],
         dependencyTypesNot: ["type-only"],
       },
     },
@@ -19,8 +19,8 @@ module.exports = {
       severity: "error",
       comment: "Files in 'enums/' and '@types/' must only use type imports.",
       from: {
-        path: ["(^|/)src/@types", "(^|/)src/enums"],
-        pathNot: ["(^|/)src/@types/phaser[.]d[.]ts"],
+        path: ["(^|/)src/@types", "(^|/)src/enums", "(^|/)test/@types"],
+        pathNot: ["(^|/)src/@types/phaser[.]d[.]ts", "(^|/)test/@types/vitest[.]d[.]ts"],
       },
       to: {
         dependencyTypesNot: ["type-only"],
@@ -172,7 +172,12 @@ module.exports = {
         + "from.pathNot re of the not-to-dev-dep rule in the dependency-cruiser configuration",
       from: {
         path: "^(src)",
-        pathNot: ["[.](?:spec|test|setup|script)[.](?:js|mjs|cjs|jsx|ts|mts|cts|tsx)$", "./test"],
+        pathNot: [
+          "[.](?:spec|test|setup|script)[.](?:js|mjs|cjs|jsx|ts|mts|cts|tsx)$",
+          "./test",
+          "(^|/)src/plugins/vite/.+[.]ts",
+          "(^|/)src/vite[.]env[.]d[.]ts",
+        ],
       },
       to: {
         dependencyTypes: ["npm-dev"],
@@ -210,7 +215,7 @@ module.exports = {
     },
   ],
   options: {
-    exclude: ["src/plugins/vite/*", "src/vite.env.d.ts"],
+    exclude: [],
     /* Which modules not to follow further when encountered */
     doNotFollow: {
       /* path: an array of regular expressions in strings to match against */

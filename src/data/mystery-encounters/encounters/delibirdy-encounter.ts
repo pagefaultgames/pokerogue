@@ -80,6 +80,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   MysteryEncounterType.DELIBIRDY,
 )
   .withEncounterTier(MysteryEncounterTier.GREAT)
+  .withMaxAllowedEncounters(4)
   .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
   .withSceneRequirement(new MoneyRequirement(0, DELIBIRDY_MONEY_PRICE_MULTIPLIER)) // Must have enough money for it to spawn at the very least
   .withPrimaryPokemonRequirement(

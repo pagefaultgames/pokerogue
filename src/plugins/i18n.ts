@@ -80,13 +80,13 @@ const fonts: LoadingFontFaceProperty[] = [
     face: new FontFace("emerald", "url(./fonts/pokemon-bw.ttf)", {
       unicodeRange: rangesByLanguage.japanese,
     }),
-    only: ["en", "es", "fr", "it", "de", "pt", "ko", "ja", "ca", "da", "tr", "ro", "ru", "tl"],
+    only: ["en", "es", "fr", "it", "de", "pt", "ko", "ja", "ca", "da", "tr", "ro", "ru", "id", "hi", "tl", "sv"],
   },
   {
     face: new FontFace("pkmnems", "url(./fonts/pokemon-bw.ttf)", {
       unicodeRange: rangesByLanguage.japanese,
     }),
-    only: ["en", "es", "fr", "it", "de", "pt", "ko", "ja", "ca", "da", "tr", "ro", "ru", "tl"],
+    only: ["en", "es", "fr", "it", "de", "pt", "ko", "ja", "ca", "da", "tr", "ro", "ru", "id", "hi", "tl", "sv"],
   },
   // devanagari
   {
@@ -196,8 +196,11 @@ await i18next
         "tr",
         "ro",
         "ru",
+        "id",
+        "hi",
         "tl",
         "nb-NO",
+        "sv",
       ],
       backend: {
         loadPath(lng: string, [ns]: string[]) {

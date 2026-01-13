@@ -4,8 +4,9 @@ import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
+import i18next from "i18next";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Shed Tail", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +16,6 @@ describe("Moves - Shed Tail", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -64,5 +61,18 @@ describe("Moves - Shed Tail", () => {
 
     expect(magikarp.isOnField()).toBeTruthy();
     expect(magikarp.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+  });
+
+  it("should show the correct failure message between 26-50% HP", async () => {
+    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.ABRA]);
+
+    const feebas = game.field.getPlayerPokemon();
+    feebas.hp *= 0.4;
+
+    game.move.use(MoveId.SHED_TAIL);
+    await game.toEndOfTurn();
+
+    expect(feebas).toHaveUsedMove({ move: MoveId.SHED_TAIL, result: MoveResult.FAIL });
+    expect(game).toHaveShownMessage(i18next.t("moveTriggers:substituteNotEnoughHp"));
   });
 });

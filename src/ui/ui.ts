@@ -26,6 +26,7 @@ import { GamepadBindingUiHandler } from "#ui/gamepad-binding-ui-handler";
 import { KeyboardBindingUiHandler } from "#ui/keyboard-binding-ui-handler";
 import { LoadingModalUiHandler } from "#ui/loading-modal-ui-handler";
 import { LoginFormUiHandler } from "#ui/login-form-ui-handler";
+import { LoginOrRegisterUiHandler } from "#ui/login-or-register-ui-handler";
 import { MenuUiHandler } from "#ui/menu-ui-handler";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
@@ -163,6 +164,7 @@ export class UI extends Phaser.GameObjects.Container {
       new PokedexUiHandler(),
       new PokedexScanUiHandler(UiMode.TEST_DIALOGUE),
       new PokedexPageUiHandler(),
+      new LoginOrRegisterUiHandler(),
       new LoginFormUiHandler(),
       new RegistrationFormUiHandler(),
       new LoadingModalUiHandler(),
@@ -520,6 +522,7 @@ export class UI extends Phaser.GameObjects.Container {
   }
 
   private setModeInternal(
+    this: UI,
     mode: UiMode,
     clear: boolean,
     forceTransition: boolean,
