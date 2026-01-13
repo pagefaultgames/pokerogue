@@ -135,7 +135,7 @@ jobs:
 
       - name: Extract coverage percentage
         run: echo "COVERAGE_PERCENTAGE=$(jq '.total.branches.pct' <<< '${{needs.check-results.outputs.coverage_report}}')" >> $GITHUB_ENV
-        if: ${{ needs.check-results.result == 'success' && success()}}
+        if: ${{ needs.check-results.result == 'success' && success() }}
 
       - name: Verify coverage percentage validity
         run: |
@@ -147,6 +147,7 @@ jobs:
             printf "COVERAGE_PERCENTAGE env variable (value \"%s\") is not between 0 and 100!\n" '${{ env.COVERAGE_PERCENTAGE}}'
             return 1
           fi
+        if: ${{ needs.check-results.result == 'success' && success() }}
 
       - name: Update coverage README badge
         uses: schneegans/dynamic-badges-action@e9a478b16159b4d31420099ba146cdc50f134483 # v1.7.0
