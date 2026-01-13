@@ -121,8 +121,10 @@ export class TurnStartPhase extends FieldPhase {
         break;
       case Command.POKEMON: {
         const switchType = turnCommand.args?.[0] ? SwitchType.BATON_PASS : SwitchType.SWITCH;
-        globalScene.phaseManager.unshiftNew("RecallPhase", pokemon.getBattlerIndex(), switchType);
-        globalScene.phaseManager.unshiftNew("SwitchPhase", pokemon.getBattlerIndex(), switchType, turnCommand.cursor!); // TODO: Is this bang correct?
+        globalScene.phaseManager.queueBattlerSwitchOut(pokemon.getBattlerIndex(), {
+          switchType,
+          switchInIndex: turnCommand.cursor!,
+        }); // TODO: Fix typing and remove bang
         break;
       }
       case Command.RUN:

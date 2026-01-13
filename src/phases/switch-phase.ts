@@ -1,9 +1,3 @@
-/* biome-ignore-start lint/correctness/noUnusedImports: tsdoc imports */
-import type { RecallPhase } from "#phases/recall-phase";
-import type { SummonPhase, SummonPhaseOptions } from "#phases/summon-phase";
-
-/* biome-ignore-end lint/correctness/noUnusedImports: tsdoc imports */
-
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import type { SwitchEffectTransferModifier } from "#app/modifier/modifier";
@@ -14,6 +8,8 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { UiMode } from "#enums/ui-mode";
 import type { Pokemon } from "#field/pokemon";
 import { PokemonPhase } from "#phases/pokemon-phase";
+import type { RecallPhase } from "#phases/recall-phase";
+import type { SummonPhase } from "#phases/summon-phase";
 import { PartyOption, PartyUiMode } from "#ui/party-ui-handler";
 
 /**

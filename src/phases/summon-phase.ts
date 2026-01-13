@@ -374,6 +374,7 @@ export class SummonPhase extends PokemonPhase {
     }
 
     // TODO: Review these conditions
+    // TODO: Gameplay changes shouldn't happen here???
     if (
       !this.loaded
       || [BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(battleType)
