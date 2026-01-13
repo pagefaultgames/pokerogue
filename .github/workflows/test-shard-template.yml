@@ -28,7 +28,6 @@ jobs:
         run: >
           pnpm test:silent
           --shard=${{ inputs.shard }}/${{ inputs.totalShards }}
-          --reporter=blob
           --outputFile=test-results/blob-${{ inputs.shard }}.json || true
 
       # NB: This CANNOT be made into a job output due to not being extractable from the matrix:
