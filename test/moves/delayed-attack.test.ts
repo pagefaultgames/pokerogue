@@ -205,7 +205,7 @@ describe("Moves - Delayed Attacks", () => {
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.toNextTurn();
 
-    expect(game).toHavePositionalTag(PositionalTagType.DELAYED_ATTACK, 1);
+    expect(game).toHavePositionalTag(PositionalTagType.DELAYED_ATTACK);
 
     // Milotic / Feebas // Karp
     game.doSwitchPokemon(2);
@@ -270,7 +270,7 @@ describe("Moves - Delayed Attacks", () => {
     game.move.use(MoveId.FUTURE_SIGHT, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2);
     await game.toNextTurn();
 
-    expect(game).toHavePositionalTag(PositionalTagType.DELAYED_ATTACK, 1);
+    expect(game).toHavePositionalTag(PositionalTagType.DELAYED_ATTACK);
 
     game.move.use(MoveId.SPLASH);
     await game.killPokemon(enemy2);
@@ -300,7 +300,7 @@ describe("Moves - Delayed Attacks", () => {
     game.move.use(MoveId.FUTURE_SIGHT, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2);
     await game.toNextTurn();
 
-    expect(game).toHavePositionalTag(PositionalTagType.DELAYED_ATTACK, 1);
+    expect(game).toHavePositionalTag(PositionalTagType.DELAYED_ATTACK);
 
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
     await game.toNextTurn();
@@ -398,7 +398,7 @@ describe("Moves - Delayed Attacks", () => {
     await game.move.forceEnemyMove(MoveId.FUTURE_SIGHT);
     await game.toNextTurn();
 
-    expect(game).toHavePositionalTag(PositionalTagType.DELAYED_ATTACK, 1);
+    expect(game).toHavePositionalTag(PositionalTagType.DELAYED_ATTACK);
 
     await passTurns(1);
 

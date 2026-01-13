@@ -9,6 +9,8 @@ import { defineConfig } from "vitest/config";
 import { BaseSequencer, type TestSpecification } from "vitest/node";
 import { sharedConfig } from "./vite.config";
 
+const customReporterFile = "./test/test-utils/reporters/custom-default-reporter.ts" as const;
+
 // biome-ignore lint/style/noDefaultExport: required for vitest
 export default defineConfig(async config => {
   const viteConfig = await sharedConfig(config);
@@ -16,9 +18,11 @@ export default defineConfig(async config => {
     ...viteConfig,
     test: {
       passWithNoTests: false,
-      reporters: process.env.GITHUB_ACTIONS
-        ? ["github-actions", "./test/test-utils/reporters/custom-default-reporter.ts"]
-        : ["./test/test-utils/reporters/custom-default-reporter.ts"],
+      reporters: process.env.MERGE_REPORTS
+        ? ["github-actions", customReporterFile]
+        : process.env.GITHUB_ACTIONS
+          ? ["blob", customReporterFile]
+          : [customReporterFile],
       env: {
         TZ: "UTC",
       },

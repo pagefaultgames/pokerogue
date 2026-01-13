@@ -9,10 +9,10 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @returns Whether the matcher passed
  * @privateRemarks
  * Since this function can receive both readonly and non-readonly arrays, we restrict ourselves
- * to only using methods that do not mutate the passed in arguments.
+ * to only using methods that do not mutate the passed-in arguments.
  */
 export function toEqualUnsorted<T>(
-  this: MatcherState,
+  this: Readonly<MatcherState>,
   received: readonly T[],
   expected: readonly T[],
 ): SyncExpectationResult {

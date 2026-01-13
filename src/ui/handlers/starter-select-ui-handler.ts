@@ -74,7 +74,7 @@ import {
 } from "#utils/common";
 import type { StarterPreferences } from "#utils/data";
 import { deepCopy, loadStarterPreferences, saveStarterPreferences } from "#utils/data";
-import { getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
+import { getDexNumber, getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
@@ -183,6 +183,10 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: "38px",
   },
   "nb-NO": {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "38px",
+  },
+  sv: {
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
   },
@@ -3558,7 +3562,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.lastSpecies = species!; // TODO: is this bang correct?
 
     if (species && (this.speciesStarterDexEntry?.seenAttr || this.speciesStarterDexEntry?.caughtAttr)) {
-      this.pokemonNumberText.setText(padInt(species.speciesId, 4));
+      this.pokemonNumberText.setText(padInt(getDexNumber(species.speciesId), 4));
       if (starterAttributes?.nickname) {
         const name = decodeURIComponent(escape(atob(starterAttributes.nickname)));
         this.pokemonNameText.setText(name);
