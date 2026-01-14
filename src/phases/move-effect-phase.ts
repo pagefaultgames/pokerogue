@@ -48,7 +48,7 @@ export type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
 /**
  * Type representing the resolved status of a move's damage processing.
  */
-type MoveDamageTuple = [
+type MoveDamageTuple = readonly [
   /** The {@linkcode HitResult} of the interaction. */
   result: HitResult,
   /** The final amount of damage that was dealt. */
@@ -648,10 +648,7 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
    * @param target - The {@linkcode Pokemon} targeted by the move
    * @param effectiveness - The type effectiveness of the move against the target
-   * @returns A tuple containing:
-   * 1. The {@linkcode HitResult} of the move against the target
-   * 2. The final amount of damage dealt
-   * 3. Whether the attack was a critical hit
+   * @returns A {@linkcode MoveDamageTuple} containing the results of damage application.
    */
   protected applyMoveDamage(user: Pokemon, target: Pokemon, effectiveness: TypeDamageMultiplier): MoveDamageTuple {
     const isCritical = target.getCriticalHitResult(user, this.move);
@@ -662,7 +659,7 @@ export class MoveEffectPhase extends PokemonPhase {
      */
     applyMoveAttrs("StatChangeBeforeDmgCalcAttr", user, target, this.move);
 
-    const { result, damage: dmg } = target.getAttackDamage({
+    const { result, damage: initialDmg } = target.getAttackDamage({
       source: user,
       move: this.move,
       ignoreAbility: false,
@@ -682,7 +679,7 @@ export class MoveEffectPhase extends PokemonPhase {
       user.removeTag(typeBoost.tagType);
     }
 
-    if (dmg <= 0) {
+    if (initialDmg <= 0) {
       return [result, 0, false];
     }
 
@@ -690,17 +687,18 @@ export class MoveEffectPhase extends PokemonPhase {
     target.lapseTags(BattlerTagLapseType.HIT);
 
     const substitute = target.getTag(SubstituteTag);
-    const isBlockedBySubstitute = substitute && this.move.hitsSubstitute(user, target);
+    const isBlockedBySubstitute = !!substitute && this.move.hitsSubstitute(user, target);
     if (isBlockedBySubstitute) {
-      user.turnData.totalDamageDealt += Math.min(dmg, substitute.hp);
-      substitute.hp -= dmg;
-    } else if (!target.isPlayer() && dmg >= target.hp) {
+      user.turnData.totalDamageDealt += Math.min(initialDmg, substitute.hp);
+      substitute.hp -= initialDmg;
+    } else if (!target.isPlayer() && initialDmg >= target.hp) {
       globalScene.applyModifiers(EnemyEndureChanceModifier, false, target);
     }
 
-    const actualDmgDealt = isBlockedBySubstitute
+    const finalDmg = isBlockedBySubstitute
       ? 0
-      : target.damageAndUpdate(dmg, {
+      : target.damageAndUpdate(initialDmg, {
+          // Type assertion is OK as all non-damaging HitResults will have returned by now
           result: result as DamageResult,
           ignoreFaintPhase: true,
           ignoreSegments: isOneHitKo,
@@ -712,37 +710,37 @@ export class MoveEffectPhase extends PokemonPhase {
       globalScene.phaseManager.queueMessage(i18next.t("battle:hitResultCriticalHit"));
     }
 
-    if (actualDmgDealt <= 0) {
+    if (finalDmg <= 0) {
       return [result, 0, isCritical];
     }
 
     if (user.isPlayer()) {
-      globalScene.validateAchvs(DamageAchv, new NumberHolder(actualDmgDealt));
+      globalScene.validateAchvs(DamageAchv, new NumberHolder(finalDmg));
 
-      if (actualDmgDealt > globalScene.gameData.gameStats.highestDamage) {
-        globalScene.gameData.gameStats.highestDamage = actualDmgDealt;
+      if (finalDmg > globalScene.gameData.gameStats.highestDamage) {
+        globalScene.gameData.gameStats.highestDamage = finalDmg;
       }
     }
 
-    user.turnData.totalDamageDealt += actualDmgDealt;
-    user.turnData.singleHitDamageDealt = actualDmgDealt;
+    user.turnData.totalDamageDealt += finalDmg;
+    user.turnData.singleHitDamageDealt = finalDmg;
     target.battleData.hitCount++;
-    target.turnData.damageTaken += actualDmgDealt;
+    target.turnData.damageTaken += finalDmg;
 
     target.turnData.attacksReceived.unshift({
       move: this.move.id,
       result: result as DamageResult,
-      damage: actualDmgDealt,
+      damage: finalDmg,
       critical: isCritical,
       sourceId: user.id,
       sourceBattlerIndex: user.getBattlerIndex(),
     });
 
     if (user.isPlayer() && target.isEnemy()) {
-      globalScene.applyModifiers(DamageMoneyRewardModifier, true, user, new NumberHolder(actualDmgDealt));
+      globalScene.applyModifiers(DamageMoneyRewardModifier, true, user, new NumberHolder(finalDmg));
     }
 
-    return [result, actualDmgDealt, isCritical];
+    return [result, finalDmg, isCritical];
   }
 
   /**
@@ -794,10 +792,15 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param user - The {@linkcode Pokemon} using the move
    * @param target - The {@linkcode Pokemon} targeted by the move
    * @param firstTarget - `true` if the target is the first Pokemon hit by the attack
-   * @param tuple - A {@linkcode MoveDamageTuple} containing the resolved damage result.
+   * @param dmgTuple - A {@linkcode MoveDamageTuple} containing the results of damage application
    */
-  protected applyOnTargetEffects(user: Pokemon, target: Pokemon, firstTarget: boolean, tuple: MoveDamageTuple): void {
-    const [hitResult, damage] = tuple;
+  protected applyOnTargetEffects(
+    user: Pokemon,
+    target: Pokemon,
+    firstTarget: boolean,
+    dmgTuple: MoveDamageTuple,
+  ): void {
+    const [hitResult, damage] = dmgTuple;
     /** Does {@linkcode hitResult} indicate that damage was dealt to the target? */
     const dealsDamage = [
       HitResult.EFFECTIVE,
@@ -808,7 +811,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
     this.triggerMoveEffects(MoveEffectTrigger.POST_APPLY, user, target, firstTarget, false);
     this.applyHeldItemFlinchCheck(user, target, dealsDamage);
-    this.applyOnGetHitAbEffects(user, target, tuple);
+    this.applyOnGetHitAbEffects(user, target, dmgTuple);
     applyAbAttrs("PostAttackAbAttr", { pokemon: user, opponent: target, move: this.move, hitResult, damage });
 
     // We assume only enemy Pokemon are able to have the EnemyAttackStatusEffectChanceModifier from tokens
