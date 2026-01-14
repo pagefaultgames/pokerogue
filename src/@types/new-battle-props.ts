@@ -12,10 +12,10 @@ import type { BattleType } from "#enums/battle-type";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { Trainer } from "#field/trainer";
 import type { TrainerData } from "#system/trainer-data";
-import type  { SetRequired } from "type-fest";
+import type { SetRequired } from "type-fest";
 
 /**
- * Interface representing the base type of a new battle config, used for DRY. 
+ * Interface representing the base type of a new battle config, used for DRY.
  * @internal
  */
 interface NewBattleBaseProps {
@@ -45,8 +45,8 @@ interface NewBattleBaseProps {
   waveIndex: number;
   /**
    * Whether the battle is a double battle.
-   * 
-   * ⚠️ Mystery Encounters will ignore this property 
+   *
+   * ⚠️ Mystery Encounters will ignore this property
    * and set it to `false`.
    */
   double?: boolean;
@@ -71,9 +71,9 @@ export interface NewBattleInitialProps extends SetRequired<Partial<NewBattleReso
  * Interface representing the type of a partially resolved new battle config, used when passing stuff around during double battle generation.
  * Only contains properties known to be present after all 3 sub-methods finish resolving.
  */
-export interface NewBattleConstructedProps extends SetRequired<NewBattleInitialProps, "battleType"> {};
+export interface NewBattleConstructedProps extends SetRequired<NewBattleInitialProps, "battleType"> {}
 
 /**
  * Interface representing the fully resolved type of a new battle config, used to create a new {@linkcode Battle} instance.
  */
-export interface NewBattleResolvedProps extends Omit<NewBattleBaseProps, "trainerData"> {};
+export interface NewBattleResolvedProps extends Omit<NewBattleBaseProps, "trainerData"> {}
