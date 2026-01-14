@@ -12,9 +12,7 @@ import type { BattleType } from "#enums/battle-type";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { Trainer } from "#field/trainer";
 import type { TrainerData } from "#system/trainer-data";
-
-/** @internal */
-type MakeRequired<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>;
+import type  { SetRequired } from "type-fest";
 
 /**
  * Interface representing the base type of a new battle config, used for DRY. 
@@ -42,7 +40,7 @@ interface NewBattleBaseProps {
   mysteryEncounterType?: MysteryEncounterType;
   /**
    * The wave number of the NEW wave to spawn.
-   * Will always be >=1 (barring save data corruption).
+   * Will always be `>=1` (barring save data corruption).
    */
   waveIndex: number;
   /**
@@ -67,13 +65,13 @@ export interface NewBattleProps extends Omit<NewBattleBaseProps, "trainer"> {}
  * The reason all "missing" properties are marked as `Partial` rather than simply being `undefined`
  * is to allow assignment during function calls.
  */
-export interface NewBattleInitialProps extends MakeRequired<Partial<NewBattleResolvedProps>, "waveIndex"> {}
+export interface NewBattleInitialProps extends SetRequired<Partial<NewBattleResolvedProps>, "waveIndex"> {}
 
 /**
  * Interface representing the type of a partially resolved new battle config, used when passing stuff around during double battle generation.
  * Only contains properties known to be present after all 3 sub-methods finish resolving.
  */
-export type NewBattleConstructedProps extends MakeRequired<NewBattleInitialProps, "battleType"> {};
+export interface NewBattleConstructedProps extends SetRequired<NewBattleInitialProps, "battleType"> {};
 
 /**
  * Interface representing the fully resolved type of a new battle config, used to create a new {@linkcode Battle} instance.
