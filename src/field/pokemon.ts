@@ -4388,7 +4388,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!this.isOnField()) {
       return;
     }
-    turnMove.turn = globalScene.currentBattle?.turn;
     this.getMoveHistory().push(turnMove);
   }
 
