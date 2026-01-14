@@ -2071,7 +2071,7 @@ export class TruantTag extends AbilityBattlerTag {
       return super.lapse(pokemon, lapseType);
     }
 
-    const lastMove = pokemon.getLastXMoves()[0];
+    const lastMove = pokemon.getLastXMoves(1)[0];
 
     if (!lastMove || lastMove.move === MoveId.NONE) {
       // Don't interrupt move if last move was `MoveId.NONE` OR no prior move was found
@@ -3267,6 +3267,7 @@ export class TormentTag extends MoveRestrictionBattlerTag {
    * @param move - The move under investigation
    * @returns `true` if there is valid consecutive usage | `false` if the moves are different from each other
    */
+  // TODO: Verify how this interacts with move calling moves
   public override isMoveRestricted(move: MoveId, user: Pokemon): boolean {
     if (!user) {
       return false;

@@ -3909,6 +3909,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param ignoreFaintPhase - Whether to ignore adding a FaintPhase if this damage causes a faint
    * @returns The actual damage dealt
    */
+  // TODO: Rework this to not use a dummy `ignoreSegments` parameter that is only used by a superclass
+  // TODO: This should ostensibly be private, but Pain Split still uses it for whatever reason...
   damage(damage: number, _ignoreSegments = false, preventEndure = false, ignoreFaintPhase = false): number {
     if (this.isFainted()) {
       return 0;
@@ -3970,7 +3972,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       ignoreSegments?: boolean;
       /** Whether to ignore adding a FaintPhase if this damage causes a faint; default `false` */
       ignoreFaintPhase?: boolean;
-      /** The Pokémon inflicting the damage, or undefined if not caused by a Pokémon */
+      /** The Pokémon inflicting the damage, or `undefined` if not caused by a Pokémon */
       source?: Pokemon;
     } = {},
   ): number {
@@ -4394,19 +4396,23 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Return a list of the most recent move entries in this {@linkcode Pokemon}'s move history.
-   * The retrieved move entries are sorted in order from **NEWEST** to **OLDEST**.
+   * The retrieved values are sorted in order from **NEWEST** to **OLDEST**.
    * @param moveCount - The maximum number of move entries to retrieve.
-   * If negative, retrieves the Pokemon's entire move history (equivalent to reversing the output of {@linkcode getMoveHistory()}).
+   * If negative, retrieves the Pokemon's entire move history (equivalent to reversing the output of {@linkcode getMoveHistory}).
    * Default is `1`.
-   * @returns An array of {@linkcode TurnMove}, as specified above.
+   * @returns An array of {@linkcode TurnMove}s, as specified above.
+   * @privateRemarks
+   * Callers that want to obtain the last move actually _executed_ (i.e. selected from the user's moveset)
+   * should use {@linkcode getLastNonVirtualMove} instead.
    */
-  // TODO: Update documentation in dancer PR to mention "getLastNonVirtualMove"
-  public getLastXMoves(moveCount = 1): TurnMove[] {
-    const moveHistory = this.getMoveHistory();
-    if (moveCount > 0) {
-      return moveHistory.slice(Math.max(moveHistory.length - moveCount, 0)).reverse();
+  // TODO: Most of the time, callers either pass 1 or -1; review whether we need to even allow other values
+  // TODO: Most moves accessing this can be reworked to use the current "move in flight" once implemented
+  public getLastXMoves(moveCount = 1): readonly TurnMove[] {
+    const hist = this.getMoveHistory().toReversed();
+    if (moveCount <= 0) {
+      return hist;
     }
-    return moveHistory.slice().reverse();
+    return hist.slice(0, moveCount);
   }
 
   /**
@@ -4420,7 +4426,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * or `undefined` if no applicable moves have been used since switching in.
    */
   public getLastNonVirtualMove(ignoreStruggle = false, ignoreFollowUp = true): TurnMove | undefined {
-    return this.getLastXMoves(-1).find(
+    return this.summonData.moveHistory.findLast(
       m =>
         m.move !== MoveId.NONE
         && (!ignoreStruggle || m.move !== MoveId.STRUGGLE)
