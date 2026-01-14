@@ -29,8 +29,9 @@ export class FaintPhase extends PokemonPhase {
   private preventInstantRevive: boolean;
 
   /**
-   * The source Pokemon that dealt fatal damage
+   * The source Pokemon that dealt fatal damage; only present for faints triggered by a move.
    */
+  // TODO: This should be handled by a move in flight object/similar
   private source?: Pokemon;
 
   constructor(battlerIndex: BattlerIndex, preventInstantRevive = false, source?: Pokemon) {
