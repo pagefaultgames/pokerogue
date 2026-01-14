@@ -33,7 +33,6 @@ import {
   EncoreTag,
   ExposedTag,
   GroundedTag,
-  type GrudgeTag,
   getBattlerTag,
   HighestStatBoostTag,
   MoveRestrictionBattlerTag,
@@ -4120,11 +4119,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return false;
   }
 
-  // TODO: Utilize a type map for these so we can avoid overloads
-  public getTag(tagType: BattlerTagType.GRUDGE): GrudgeTag | undefined;
-  public getTag(tagType: BattlerTagType.SUBSTITUTE): SubstituteTag | undefined;
-  public getTag(tagType: BattlerTagType): BattlerTag | undefined;
-  public getTag<T extends BattlerTag>(tagType: Constructor<T>): T | undefined;
+  public getTag<T extends BattlerTagType | AbstractConstructor<BattlerTag> | Constructor<BattlerTag>>(
+    tagType: T,
+  ): getBattlerTag<T> | undefined;
   public getTag(tagType: BattlerTagType | Constructor<BattlerTag>): BattlerTag | undefined {
     return typeof tagType === "function"
       ? this.summonData.tags.find(t => t instanceof tagType)
@@ -4159,17 +4156,21 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @remarks
    * Also responsible for removing the tag when the lapse method returns `false`.
    *
-   *
    * ⚠️ Lapse types other than `CUSTOM` are generally lapsed automatically. However, some tags
    * support manually lapsing
    *
    * @param tagType - The {@linkcode BattlerTagType} to search for
    * @param lapseType - The lapse type to use for the lapse method; defaults to {@linkcode BattlerTagLapseType.CUSTOM}
+   * @param args - Any optional arguments required to lapse the given tag
    * @returns Whether a tag matching the given type was found
    * @see {@linkcode BattlerTag.lapse}
    */
-  public lapseTag(tagType: BattlerTagType, lapseType = BattlerTagLapseType.CUSTOM): boolean {
-    const tags = this.summonData.tags;
+  public lapseTag(
+    tagType: BattlerTagType,
+    // TODO: Enforce that this is an acceptable lapse type for the tag being triggered
+    lapseType: BattlerTagLapseType = BattlerTagLapseType.CUSTOM,
+  ): boolean {
+    const { tags } = this.summonData;
     const tag = tags.find(t => t.tagType === tagType);
     if (!tag) {
       return false;
