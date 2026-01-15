@@ -4126,7 +4126,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   public getTag(tagType: BattlerTagType.SUBSTITUTE): SubstituteTag | undefined;
   public getTag(tagType: BattlerTagType): BattlerTag | undefined;
   public getTag<T extends BattlerTag>(tagType: Constructor<T>): T | undefined;
-  public getTag(tagType: BattlerTagType | Constructor<BattlerTag>): BattlerTag | undefined {
+  public getTag(tagType: BattlerTagType | typeof BattlerTag): BattlerTag | undefined {
     return typeof tagType === "function"
       ? this.summonData.tags.find(t => t instanceof tagType)
       : this.summonData.tags.find(t => t.tagType === tagType);
