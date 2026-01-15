@@ -5,10 +5,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+import { EGG_MOVE_LEVEL_REQUIREMENT } from "#balance/moves/moveset-generation";
 import { SpeciesId } from "#enums/species-id";
 import { spawn } from "node:child_process";
 import net from "node:net";
 import { confirm, input, number as promptNumber } from "@inquirer/prompts";
+import chalk from "chalk";
 import type { SamplerPayload } from "./types";
 
 /**
@@ -70,16 +72,21 @@ async function promptInputs(): Promise<SamplerPayload> {
 
   let speciesName: string;
   let speciesId = Number(speciesInput) as SpeciesId;
+  let wasNum = false;
   if (Number.isNaN(speciesId)) {
     speciesName = speciesInput;
     speciesId = SpeciesId[speciesInput.toUpperCase()] as SpeciesId;
   } else {
-    speciesName = SpeciesId[speciesId].toUpperCase();
+    speciesName = SpeciesId[speciesId];
+    wasNum = true;
   }
   speciesName = speciesName[0].toUpperCase() + speciesName.slice(1).toLowerCase();
+  if (wasNum) {
+    console.log(chalk.bold(`  Selected species: ${speciesName}`));
+  }
 
   const boss = await confirm({
-    message: `Selected species: ${speciesName}\nGenerate as boss (default yes)?`,
+    message: "Generate as boss (default yes)?",
     default: true,
   });
 
@@ -94,6 +101,20 @@ async function promptInputs(): Promise<SamplerPayload> {
     max: 200,
     min: 3,
     required: true,
+  });
+
+  let allowEggMoves: boolean | undefined;
+  if (forTrainer && level >= EGG_MOVE_LEVEL_REQUIREMENT) {
+    allowEggMoves = await confirm({
+      message: "Allow egg moves? (default no)?",
+      default: false,
+    });
+  }
+  const formIndex = await promptNumber({
+    message: "Enter the form index to generate (if empty or invalid, will default to the base form):",
+    default: 0,
+    min: 0,
+    required: false,
   });
 
   const abilityIndex = await promptNumber({
@@ -123,11 +144,23 @@ async function promptInputs(): Promise<SamplerPayload> {
     printWeights,
     forTrainer,
     abilityIndex,
+    allowEggMoves,
+    formIndex,
   };
 }
 
 async function main() {
-  const payload = await promptInputs();
+  let payload: SamplerPayload;
+  try {
+    payload = await promptInputs();
+  } catch (err: any) {
+    // Suppress annoying stack trace on SIGINT
+    if (err?.message.includes("User force closed the prompt with SIGINT")) {
+      process.exit(130);
+    }
+    throw err;
+  }
+
   await getDataFromChildProcess(payload);
 }
 

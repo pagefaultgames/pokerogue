@@ -269,7 +269,7 @@ function getEggPoolForSpecies(
     if (levelPool.has(moveId) || (idx === 3 && excludeRare)) {
       continue;
     }
-    eggPool.set(Math.max(moveId, eggPool.get(moveId) ?? 0), idx === 3 ? rareEggMoveWeight : eggMoveWeight);
+    eggPool.set(moveId, Math.max(eggPool.get(moveId) ?? 0, idx === 3 ? rareEggMoveWeight : eggMoveWeight));
   }
 }
 
@@ -422,7 +422,7 @@ function adjustDamageMoveWeights(pool: Map<MoveId, number>, pokemon: Pokemon, wi
   const movePowers: Partial<Record<MoveId, number>> = {};
   for (const moveId of pool.keys()) {
     const move = allMoves[moveId];
-    const power = move.calculateEffectivePower();
+    const power = move.calculateEffectivePower(pokemon);
     movePowers[moveId] = power;
     maxPower = Math.max(maxPower, power);
     if (maxPower >= 90) {
@@ -445,7 +445,7 @@ function adjustDamageMoveWeights(pool: Map<MoveId, number>, pokemon: Pokemon, wi
     if (move.category === MoveCategory.STATUS) {
       continue;
     }
-    const power = movePowers[moveId] ?? move.calculateEffectivePower();
+    const power = movePowers[moveId] ?? move.calculateEffectivePower(pokemon);
 
     // Take power and multiply by the
 
@@ -518,6 +518,10 @@ function filterPool(
   return newPool;
 }
 
+/**
+ * Perform a weighted coin flip which is heads with probability {@linkcode FORCED_SIGNATURE_MOVE_CHANCE}
+ * @returns Whether the coin flip was heads
+ */
 function doSignatureCoinFlip() {
   return randSeedInt(100) < FORCED_SIGNATURE_MOVE_CHANCE;
 }
@@ -559,7 +563,11 @@ function addToMoveset(
  * @param eggMovePool - The egg move pool
  * @param tmCount - A holder for the count of moves that have been added to the moveset from TMs
  * @param eggMoveCount - A holder for the count of moves that have been added to the moveset from egg moves
- * @returns `true` if a signature move was successfully added, `false` otherwise
+ * @returns The move that was added, or `undefined` if no move was added
+ *
+ * @privateRemarks
+ * ⚠️ If the logic of this method changes, be sure to update the doc comment on {@linkcode FORCED_SIGNATURE_MOVES},
+ * which describes how signature moves are selected.
  */
 function forceSignatureMove(
   pokemon: Pokemon,
@@ -568,30 +576,30 @@ function forceSignatureMove(
   eggPool: Map<MoveId, number>,
   tmCount: NumberHolder,
   eggMoveCount: NumberHolder,
-): boolean {
-  const forcedSignatures = FORCED_SIGNATURE_MOVES[pokemon.species.speciesId];
-  if (forcedSignatures == null) {
-    return false;
+): undefined | Move {
+  let forcedSignature = FORCED_SIGNATURE_MOVES[pokemon.species.speciesId];
+  if (forcedSignature == null) {
+    return;
   }
 
-  if (typeof forcedSignatures === "number") {
-    if (pool.has(forcedSignatures) && doSignatureCoinFlip()) {
-      addToMoveset(forcedSignatures, pokemon, pool, tmPool, eggPool, tmCount, eggMoveCount);
-      return true;
+  if (typeof forcedSignature === "number") {
+    if (!(pool.has(forcedSignature) && doSignatureCoinFlip())) {
+      return;
     }
-    return false;
+  } else {
+    const availableSignatures = forcedSignature.filter(m => pool.has(m));
+    if (availableSignatures.length === 0 || !doSignatureCoinFlip()) {
+      return;
+    }
+    forcedSignature = randSeedItem(availableSignatures);
   }
 
-  const availableSignatures = forcedSignatures.filter(m => pool.has(m));
-  if (availableSignatures.length === 0 || !doSignatureCoinFlip()) {
-    return false;
-  }
-  addToMoveset(randSeedItem(availableSignatures), pokemon, pool, tmPool, eggPool, tmCount, eggMoveCount);
-  return true;
+  addToMoveset(forcedSignature, pokemon, pool, tmPool, eggPool, tmCount, eggMoveCount);
+  return allMoves[forcedSignature];
 }
 
 /**
- * Forcibly add a STAB move to the Pokémon's moveset from the provided pools
+ * Forcibly add a STAB move to the Pokémon's moveset from the provided pools.
  *
  * @remarks
  * If no STAB move is available, add any damaging move.
@@ -617,12 +625,9 @@ function forceStabMove(
   forceAnyDamageIfNoStab = false,
 ): void {
   // Attempt to force a signature move first
-  if (forceSignatureMove(pokemon, pool, tmPool, eggPool, tmCount, eggMoveCount)) {
-    return;
-  }
+  const typesForStab = new Set(pokemon.getTypes());
   // All Pokemon force a STAB move first
   const totalWeight = new NumberHolder(0);
-  const typesForStab = new Set(pokemon.getTypes());
   const stabMovePool = filterPool(
     pool,
     moveId => {
@@ -894,8 +899,18 @@ export function generateMoveset(pokemon: Pokemon): void {
 
   debugMoveWeights(pokemon, baseWeights, "Pre STAB Move");
 
-  // Step 4: Force a STAB move if possible
-  forceStabMove(baseWeights, tmPool, eggMovePool, pokemon, tmCount, eggMoveCount, willTera);
+  // Step 4: Attempt to force a signature move
+  const forcedSignature = forceSignatureMove(pokemon, baseWeights, tmPool, eggMovePool, tmCount, eggMoveCount);
+
+  // Step 5: Force a STAB move if no signature was generated or was not a damaging STAB move
+  if (
+    forcedSignature != null
+    && forcedSignature.category !== MoveCategory.STATUS
+    && pokemon.getTypes().includes(getMoveType(forcedSignature, pokemon, willTera))
+  ) {
+    forceStabMove(baseWeights, tmPool, eggMovePool, pokemon, tmCount, eggMoveCount, willTera);
+  }
+
   // Note: To force a secondary stab, call this a second time, and pass `false` for the last parameter
   // Should also tweak the function to skip the signature move forcing step
 
