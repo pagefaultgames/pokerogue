@@ -17,7 +17,7 @@ export function initGameSpeed(this: BattleScene) {
     if (value instanceof FixedInt) {
       return (value as FixedInt).value;
     }
-    return this.gameSpeed === 1 ? value : Math.ceil((value /= this.gameSpeed));
+    return Math.ceil(value / this.gameSpeed);
   };
 
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complexity is necessary here
