@@ -4,7 +4,7 @@ import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { SettingType } from "#system/settings";
 import { Setting, SettingKeys } from "#system/settings";
-import { MappingSettingName } from "#types/configs/inputs";
+import type { MappingSettingName } from "#types/configs/inputs";
 import type { InputsIcons } from "#ui/abstract-control-settings-ui-handler";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { NavigationManager, NavigationMenu } from "#ui/navigation-menu";

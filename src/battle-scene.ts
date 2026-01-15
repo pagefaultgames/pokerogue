@@ -357,7 +357,7 @@ export class BattleScene extends SceneBase {
     );
   }
 
-    /**
+  /**
    * Load game assets necessary for the scene to run.
    * Called by Phaser on new game start.
    */
@@ -690,9 +690,9 @@ export class BattleScene extends SceneBase {
   cachedFetch(url: string, init?: RequestInit): Promise<Response> {
     const { manifest } = this.game;
     const timestamp = manifest?.[`/${url.replace("./", "")}`];
-      if (timestamp) {
-        url += `?t=${timestamp}`;
-      }
+    if (timestamp) {
+      url += `?t=${timestamp}`;
+    }
     return fetch(url, init);
   }
 
@@ -1916,21 +1916,21 @@ export class BattleScene extends SceneBase {
   showShopOverlay(duration: number): Promise<void> {
     this.shopOverlayShown = true;
     return playTween({
-        targets: this.shopOverlay,
-        alpha: this.shopOverlayOpacity,
-        ease: "Sine.easeOut",
-        duration,
-      });
+      targets: this.shopOverlay,
+      alpha: this.shopOverlayOpacity,
+      ease: "Sine.easeOut",
+      duration,
+    });
   }
 
   hideShopOverlay(duration: number): Promise<void> {
     this.shopOverlayShown = false;
     return playTween({
-        targets: this.shopOverlay,
-        alpha: 0,
-        duration,
-        ease: "Cubic.easeIn",
-      });
+      targets: this.shopOverlay,
+      alpha: 0,
+      duration,
+      ease: "Cubic.easeIn",
+    });
   }
 
   showEnemyModifierBar(): void {

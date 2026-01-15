@@ -1,4 +1,3 @@
-import type { AnyFn } from "#types/type-helpers";
 import type { SetupServerApi } from "msw/node";
 
 declare global {
