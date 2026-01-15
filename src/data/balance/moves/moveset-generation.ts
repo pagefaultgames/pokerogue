@@ -56,7 +56,7 @@ export const GREAT_TIER_TM_LEVEL_REQUIREMENT = 40;
 export const ULTRA_TIER_TM_LEVEL_REQUIREMENT = 55;
 
 /** Below this level, Pokémon will be unable to generate with any egg moves */
-export const EGG_MOVE_LEVEL_REQUIREMENT = 60;
+export const EGG_MOVE_LEVEL_REQUIREMENT = 80;
 /** Below this level, Pokémon will be unable to generate with rare egg moves */
 export const RARE_EGG_MOVE_LEVEL_REQUIREMENT = 170;
 
@@ -78,7 +78,7 @@ const THREE_TM_THRESHOLD = 71;
 const FOUR_TM_THRESHOLD = 101;
 
 /** Below this level, Pokémon will be unable to generate any egg moves */
-const ONE_EGG_MOVE_THRESHOLD = 80;
+const ONE_EGG_MOVE_THRESHOLD = EGG_MOVE_LEVEL_REQUIREMENT;
 /** Below this level, Pokémon will generate with at most 1 egg moves */
 const TWO_EGG_MOVE_THRESHOLD = 121;
 /** Below this level, Pokémon will generate with at most 2 egg moves */

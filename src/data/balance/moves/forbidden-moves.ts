@@ -114,5 +114,7 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.SWEET_SCENT,
   MoveId.MUD_SPORT,
   MoveId.WATER_SPORT,
+  // Long discussion with balance team about this one
+  MoveId.METAL_CLAW,
 ]);
 

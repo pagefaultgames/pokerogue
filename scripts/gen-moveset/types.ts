@@ -14,4 +14,6 @@ export interface SamplerPayload {
   forTrainer: boolean;
   printWeights: boolean;
   abilityIndex?: number;
+  allowEggMoves?: boolean;
+  formIndex?: number;
 }

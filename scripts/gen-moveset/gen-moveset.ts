@@ -10,9 +10,12 @@
  */
 
 import { __INTERNAL_TEST_EXPORTS, generateMoveset } from "#app/ai/ai-moveset-gen";
+import { globalScene } from "#app/global-scene";
+import type { PokemonForm } from "#data/pokemon-species";
 import { BattleType } from "#enums/battle-type";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerSlot } from "#enums/trainer-slot";
+import type { Pokemon } from "#field/pokemon";
 import { EnemyPokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
 import { randomString } from "#utils/common";
@@ -45,6 +48,22 @@ interface MockPokemonParams {
   formIndex?: number;
 }
 
+function genPokemonConfig(pokemon: Pokemon): string {
+  const formName = (pokemon.getSpeciesForm() as PokemonForm)?.formName;
+  return JSON.stringify(
+    {
+      pokemon: pokemon.name + (formName ? ` (${formName})` : ""),
+      ability: pokemon.getAbility().name,
+      passive: pokemon.hasPassive() ? pokemon.getPassiveAbility().name : "None",
+      level: pokemon.level,
+      hasTrainer: pokemon.hasTrainer(),
+      boss: pokemon.isBoss(),
+    },
+    undefined,
+    2,
+  );
+}
+
 /**
  * Construct an `EnemyPokemon` that can be used for testing
  * @param species - The species ID of the pokemon to create
@@ -57,11 +76,7 @@ function createTestablePokemon(
 ): EnemyPokemon {
   const species = getPokemonSpecies(speciesId);
   const pokemon = new EnemyPokemon(species, level, trainerSlot, boss);
-  if (formIndex !== 0) {
-    const formIndexLength = species?.forms.length;
-    expect(formIndex, `${pokemon.name} does not have a form with index ${formIndex}`).toBeLessThan(
-      formIndexLength ?? 1,
-    );
+  if (formIndex !== 0 && species?.forms.length > formIndex) {
     pokemon.formIndex = formIndex;
   }
 
@@ -73,16 +88,32 @@ describe("gen-moveset", () => {
   let game: GameManager;
   /**A pokemon object that will be cleaned up after every test */
   let pokemon: EnemyPokemon | undefined;
+  let payload: SamplerPayload;
+  let socket: net.Socket;
 
   // Open the IPC
   beforeAll(async () => {
+    const port = Number(process.env.COMMUNICATION_PORT);
+    expect(port).toBeGreaterThan(0);
+
+    socket = net.createConnection({ port });
+    const { promise, resolve } = Promise.withResolvers<SamplerPayload>();
+    socket.once("data", data => {
+      resolve(JSON.parse(data.toString()));
+    });
+
+    payload = await promise;
+
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
 
     const consoleLog = vi.spyOn(console, "log").mockImplementation(() => {});
     game = new GameManager(phaserGame);
-    game.override.battleType(BattleType.TRAINER).seed(randomString(24));
+    game.override.seed(randomString(24));
+    if (payload.forTrainer) {
+      game.override.battleType(BattleType.TRAINER);
+    }
 
     // Need to be in a wave for moveset generation to not actually break
     await game.classicMode.runToSummon([SpeciesId.PIKACHU]);
@@ -95,22 +126,17 @@ describe("gen-moveset", () => {
   });
 
   it("Sample moveset generation", async () => {
-    const port = Number(process.env.COMMUNICATION_PORT);
-    expect(port).toBeGreaterThan(0);
-
-    const socket = net.createConnection({ port });
-    const { promise, resolve } = Promise.withResolvers<SamplerPayload>();
-    socket.once("data", data => {
-      const payload: SamplerPayload = JSON.parse(data.toString());
-      resolve(payload);
+    pokemon = createTestablePokemon(payload.speciesId, {
+      boss: payload.boss,
+      level: payload.level,
+      formIndex: payload.formIndex,
     });
-
-    const payload = await promise;
-
-    let trials = "";
-
+    if (payload.abilityIndex != null) {
+      pokemon.abilityIndex = payload.abilityIndex;
+    }
     const orig = console.log;
 
+    let trials = "";
     // Intercept
     if (payload.printWeights) {
       vi.spyOn(console, "log").mockImplementation((...args: any[]) => {
@@ -126,11 +152,24 @@ describe("gen-moveset", () => {
         }
       });
     }
-    pokemon = createTestablePokemon(payload.speciesId, { boss: payload.boss, level: payload.level });
+    const params = payload;
+    if (payload.formIndex && getPokemonSpecies(params.speciesId).forms[payload.formIndex] == null) {
+      payload.formIndex = undefined;
+    }
+    pokemon = createTestablePokemon(payload.speciesId, payload);
     if (payload.abilityIndex != null) {
       pokemon.abilityIndex = payload.abilityIndex;
     }
     vi.spyOn(pokemon, "hasTrainer").mockReturnValue(payload.forTrainer);
+
+    if (payload.forTrainer && payload.allowEggMoves != null) {
+      expect(globalScene.currentBattle.trainer).toBeDefined();
+      vi.spyOn(globalScene.currentBattle.trainer!.config, "allowEggMoves", "get").mockReturnValue(
+        payload.allowEggMoves,
+      );
+    }
+
+    trials += `\nConfig: ${genPokemonConfig(pokemon)}\n`;
     for (let i = 0; i < payload.trials; ++i) {
       if (payload.printWeights && i === 0) {
         __INTERNAL_TEST_EXPORTS.forceLogging = true;
@@ -140,6 +179,7 @@ describe("gen-moveset", () => {
 
       trials += `\n[${pokemon.moveset.map(m => m.getName()).join(", ")}]`;
     }
+
     const { promise: socketPromise, resolve: writeResolve } = Promise.withResolvers<void>();
     socket.write(trials.trimStart(), () => {
       socket.end();
