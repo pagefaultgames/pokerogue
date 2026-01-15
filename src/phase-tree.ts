@@ -1,23 +1,25 @@
-// biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports
-import type { PhaseManager } from "#app/@types/phase-types";
-import type { DynamicPhaseMarker } from "#phases/dynamic-phase-marker";
-// biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports
-
-import type { PhaseMap, PhaseString } from "#app/@types/phase-types";
 import type { Phase } from "#app/phase";
-import type { PhaseConditionFunc } from "#types/phase-types";
+import type { DynamicPhaseMarker } from "#phases/dynamic-phase-marker";
+import type { PhaseConditionFunc, PhaseManager, PhaseMap, PhaseString } from "#types/phase-types";
 
 /**
  * The PhaseTree is the central storage location for {@linkcode Phase}s by the {@linkcode PhaseManager}.
  *
- * It has a tiered structure, where unshifted phases are added one level above the currently running Phase. Phases are generally popped from the Tree in FIFO order.
+ * It has a tiered structure, where unshifted phases are added one level above the currently running Phase. \
+ * Phases are generally popped from the Tree in FIFO order.
  *
- * Dynamically ordered phases are queued into the Tree only as {@linkcode DynamicPhaseMarker | Marker}s and as such are not guaranteed to run FIFO (otherwise, they would not be dynamic)
+ * Dynamically ordered phases are queued into the Tree only as {@linkcode DynamicPhaseMarker | Marker}s and
+ * are not guaranteed to run FIFO (otherwise, they would not be dynamic)
  */
 export class PhaseTree {
-  /** Storage for all levels in the tree. This is a simple array because only one Phase may have "children" at a time. */
+  /**
+   * Storage for all levels in the tree.
+   * This is a simple array because only one Phase may run and have "children" at a time.
+   * @remarks
+   * This does _not_ include the currently-running Phase, which is removed prior to being run.
+   */
   private levels: Phase[][] = [[]];
-  /** The level of the currently running {@linkcode Phase} in the Tree (note that such phase is not actually in the Tree while it is running) */
+  /** The level of the currently-running {@linkcode Phase} in the Tree. */
   private currentLevel = 0;
   /**
    * True if a "deferred" level exists
@@ -26,17 +28,23 @@ export class PhaseTree {
   private deferredActive = false;
 
   /**
-   * Adds a {@linkcode Phase} to the specified level
-   * @param phase - The phase to add
+   * Internal helper method to add a {@linkcode Phase} to the specified level.
+   * @param phase - The `Phase` to add
    * @param level - The numeric level to add the phase
-   * @throws Error if `level` is out of legal bounds
+   * @throws {Error}
+   * Error if `level` is out of legal bounds
    */
   private add(phase: Phase, level: number): void {
-    const addLevel = this.levels[level];
+    // Add a new level if trying to push to non-initialized layer
+    if (level === this.currentLevel + 1 && level === this.levels.length) {
+      this.levels.push([]);
+    }
+
+    const addLevel: Phase[] | undefined = this.levels[level];
     if (addLevel == null) {
       throw new Error("Attempted to add a phase to a nonexistent level of the PhaseTree!\nLevel: " + level.toString());
     }
-    this.levels[level].push(phase);
+    addLevel.push(phase);
   }
 
   /**
@@ -57,14 +65,16 @@ export class PhaseTree {
     if (defer && !this.deferredActive) {
       this.deferredActive = true;
       this.levels.splice(-1, 0, []);
+      this.currentLevel += 1;
     }
-    this.add(phase, this.levels.length - 1 - +defer);
+    this.add(phase, this.currentLevel + 1 - +defer);
   }
 
   /**
-   * Adds a {@linkcode Phase} after the first occurence of the given type, or to the top of the Tree if no such phase exists
+   * Add a {@linkcode Phase} after the first occurence of a given `Phase` in the Tree,
+   * or to the top of the Tree if no such phase exists.
    * @param phase - The {@linkcode Phase} to be added
-   * @param type - A {@linkcode PhaseString} representing the type to search for
+   * @param type - The {@linkcode PhaseString | name} of the Phase to search for
    */
   public addAfter(phase: Phase, type: PhaseString): void {
     for (let i = this.levels.length - 1; i >= 0; i--) {
@@ -79,27 +89,20 @@ export class PhaseTree {
   }
 
   /**
-   * Unshifts a {@linkcode Phase} to the current level.
-   * This is effectively the same as if the phase were added immediately after the currently-running phase, before it started.
-   * @param phase - The {@linkcode Phase} to be added
-   */
-  public unshiftToCurrent(phase: Phase): void {
-    this.levels[this.currentLevel].unshift(phase);
-  }
-
-  /**
-   * Pushes a {@linkcode Phase} to the last level of the queue. It will run only after all previously queued phases have been executed.
-   * @param phase - The {@linkcode Phase} to be added
+   * Push a {@linkcode Phase} to the last level of the queue.
+   * It will run only after all previously queued phases have been executed.
+   * @param phase - The {@linkcode Phase} to add
    */
   public pushPhase(phase: Phase): void {
     this.add(phase, 0);
   }
 
   /**
-   * Removes and returns the first {@linkcode Phase} from the topmost level of the tree
-   * @returns - The next {@linkcode Phase}, or `undefined` if the Tree is empty
+   * Remove and return the first {@linkcode Phase} from the topmost level of the tree.
+   * @returns The next {@linkcode Phase}, or `undefined` if the Tree is empty
    */
   public getNextPhase(): Phase | undefined {
+    // Clear out all empty levels from the tree
     this.currentLevel = this.levels.length - 1;
     while (this.currentLevel > 0 && this.levels[this.currentLevel].length === 0) {
       this.deferredActive = false;
@@ -107,21 +110,19 @@ export class PhaseTree {
       this.currentLevel--;
     }
 
-    // TODO: right now, this is preventing properly marking when one set of unshifted phases ends
-    this.levels.push([]);
     return this.levels[this.currentLevel].shift();
   }
 
   /**
-   * Finds a particular {@linkcode Phase} in the Tree by searching in pop order
-   * @param phaseType - The {@linkcode PhaseString | type} of phase to search for
-   * @param phaseFilter - A {@linkcode PhaseConditionFunc} to specify conditions for the phase
-   * @returns The matching {@linkcode Phase}, or `undefined` if none exists
+   * Find and return the first {@linkcode Phase} in the Tree matching the given conditions.
+   * @param phaseName - The {@linkcode PhaseString | name} of the Phase to search for
+   * @param phaseFilter - An optional {@linkcode PhaseConditionFunc} to add conditions to the search
+   * @returns The first `Phase` that matches the criteria, or `undefined` if none exists
    */
-  public find<P extends PhaseString>(phaseType: P, phaseFilter?: PhaseConditionFunc<P>): PhaseMap[P] | undefined {
+  public find<P extends PhaseString>(phaseName: P, phaseFilter?: PhaseConditionFunc<P>): PhaseMap[P] | undefined {
     for (let i = this.levels.length - 1; i >= 0; i--) {
       const level = this.levels[i];
-      const phase = level.find((p): p is PhaseMap[P] => p.is(phaseType) && (!phaseFilter || phaseFilter(p)));
+      const phase = level.find((p): p is PhaseMap[P] => p.is(phaseName) && (!phaseFilter || phaseFilter(p)));
       if (phase) {
         return phase;
       }
@@ -129,44 +130,43 @@ export class PhaseTree {
   }
 
   /**
-   * Finds a particular {@linkcode Phase} in the Tree by searching in pop order
-   * @param phaseType - The {@linkcode PhaseString | type} of phase to search for
-   * @param phaseFilter - A {@linkcode PhaseConditionFunc} to specify conditions for the phase
-   * @returns The matching {@linkcode Phase}, or `undefined` if none exists
+   * Find and return all {@linkcode Phase}s in the Tree matching the given conditions.
+   * @param phaseName - The {@linkcode PhaseString | name} of the Phase to search for
+   * @param phaseFilter - An optional {@linkcode PhaseConditionFunc} to add conditions to the search
+   * @returns An array containing all `Phase`s matching the criteria.
    */
-  public findAll<P extends PhaseString>(phaseType: P, phaseFilter?: PhaseConditionFunc<P>): PhaseMap[P][] {
+  public findAll<P extends PhaseString>(phaseName: P, phaseFilter?: PhaseConditionFunc<P>): PhaseMap[P][] {
     const phases: PhaseMap[P][] = [];
     for (let i = this.levels.length - 1; i >= 0; i--) {
       const level = this.levels[i];
-      const levelPhases = level.filter((p): p is PhaseMap[P] => p.is(phaseType) && (!phaseFilter || phaseFilter(p)));
-      phases.push(...levelPhases);
+      phases.push(...level.filter((p): p is PhaseMap[P] => p.is(phaseName) && (!phaseFilter || phaseFilter(p))));
     }
     return phases;
   }
 
   /**
-   * Clears the Tree
-   * @param leaveFirstLevel - If `true`, leaves the top level of the tree intact
-   *
-   * @privateremarks
+   * Clear all levels (and their constituent Phases) from the Tree.
+   * @param leaveFirstLevel - Whether to leave the top level of the tree intact; default `false`
+   * @privateRemarks
    * The parameter on this method exists because {@linkcode PhaseManager.clearPhaseQueue} previously (probably by mistake) ignored `phaseQueuePrepend`.
    *
    * This is (probably by mistake) relied upon by certain ME functions.
    */
   public clear(leaveFirstLevel = false) {
     this.levels = [leaveFirstLevel ? (this.levels.at(-1) ?? []) : []];
+    this.currentLevel = 0;
   }
 
   /**
-   * Finds and removes a single {@linkcode Phase} from the Tree
-   * @param phaseType - The {@linkcode PhaseString | type} of phase to search for
-   * @param phaseFilter - A {@linkcode PhaseConditionFunc} to specify conditions for the phase
+   * Find and remove a single {@linkcode Phase} from the Tree.
+   * @param phaseName - The {@linkcode PhaseString | name} of the Phase to search for
+   * @param phaseFilter - An optional {@linkcode PhaseConditionFunc} to add conditions to the search
    * @returns Whether a removal occurred
    */
-  public remove<P extends PhaseString>(phaseType: P, phaseFilter?: PhaseConditionFunc<P>): boolean {
+  public remove<P extends PhaseString>(phaseName: P, phaseFilter?: PhaseConditionFunc<P>): boolean {
     for (let i = this.levels.length - 1; i >= 0; i--) {
       const level = this.levels[i];
-      const phaseIndex = level.findIndex(p => p.is(phaseType) && (!phaseFilter || phaseFilter(p)));
+      const phaseIndex = level.findIndex(p => p.is(phaseName) && (!phaseFilter || phaseFilter(p)));
       if (phaseIndex !== -1) {
         level.splice(phaseIndex, 1);
         return true;
@@ -176,30 +176,22 @@ export class PhaseTree {
   }
 
   /**
-   * Removes all occurrences of {@linkcode Phase}s of the given type
-   * @param phaseType - The {@linkcode PhaseString | type} of phase to search for
+   * Remove all {@linkcode Phase}s of the given type from the Tree.
+   * @param phaseName - The {@linkcode PhaseString | name} of the Phase to remove
    */
-  public removeAll(phaseType: PhaseString): void {
+  public removeAll(phaseName: PhaseString): void {
     for (let i = 0; i < this.levels.length; i++) {
-      const level = this.levels[i].filter(phase => !phase.is(phaseType));
-      this.levels[i] = level;
+      this.levels[i] = this.levels[i].filter(phase => !phase.is(phaseName));
     }
   }
 
   /**
-   * Determines if a particular phase exists in the Tree
-   * @param phaseType - The {@linkcode PhaseString | type} of phase to search for
-   * @param phaseFilter - A {@linkcode PhaseConditionFunc} to specify conditions for the phase
+   * Check whether a particular Phase exists in the Tree.
+   * @param phaseName - The {@linkcode PhaseString | name} of the Phase to search for
+   * @param phaseFilter - An optional `PhaseConditionFunc` to specify conditions for the phase
    * @returns Whether a matching phase exists
    */
-  public exists<P extends PhaseString>(phaseType: P, phaseFilter?: PhaseConditionFunc<P>): boolean {
-    for (const level of this.levels) {
-      for (const phase of level) {
-        if (phase.is(phaseType) && (!phaseFilter || phaseFilter(phase))) {
-          return true;
-        }
-      }
-    }
-    return false;
+  public exists<P extends PhaseString>(phaseName: P, phaseFilter: PhaseConditionFunc<P> = () => true): boolean {
+    return this.levels.some(level => level.some(phase => phase.is(phaseName) && phaseFilter(phase)));
   }
 }

@@ -16,9 +16,16 @@
       "DOM.AsyncIterable",
       "DOM.Iterable",
       "ScriptHost",
-      "WebWorker.ImportScripts"
+      "WebWorker.ImportScripts",
+      "ES2024.Object",
+      // NOTE: Be *very* mindful of these when updating typescript versions,
+      // as their definitions may change in breaking ways
+      "ESNext.Iterator",
+      "ESNext.Collection"
     ],
-    "skipLibCheck": true, // Safe and almost always beneficial
+    // Skip typechecking `.d.ts` files for a ~20% speed boost;
+    // CI builds will explicitly disable this to ensure full type safety
+    "skipLibCheck": true,
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "esModuleInterop": true,
@@ -67,7 +74,7 @@
         "./src/system/*.ts"
       ],
       "#trainers/*": ["./src/data/trainers/*.ts"],
-      "#types/*": ["./src/@types/helpers/*.ts", "./src/@types/*.ts", "./src/typings/phaser/*.ts"],
+      "#types/*": ["./src/@types/*.ts"],
       "#ui/*": [
         "./src/ui/battle-info/*.ts",
         "./src/ui/containers/*.ts",
@@ -83,13 +90,6 @@
     }
   },
   // Exclude checking for script JS files as those are covered by the folder's `jsconfig.json`
-  "include": ["**/*.ts", "**/*.d.ts"],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "vite.config.ts",
-    "vitest.config.ts",
-    "vitest.workspace.ts",
-    "assets/service-worker.js"
-  ]
+  "include": ["**/*.ts", "**/*.d.ts", "**/*.mts"],
+  "exclude": ["dist", "node_modules"]
 }

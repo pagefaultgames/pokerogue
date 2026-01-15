@@ -105,10 +105,34 @@ export class SettingsDisplayUiHandler extends AbstractSettingsUiHandler {
             label: "Русский (Needs Help)",
           };
           break;
+        case "id":
+          this.settings[languageIndex].options[0] = {
+            value: "Bahasa Indonesia",
+            label: "Bahasa Indonesia (Needs Help)",
+          };
+          break;
+        case "hi":
+          this.settings[languageIndex].options[0] = {
+            value: "हिन्दी",
+            label: "हिन्दी (Needs Help)",
+          };
+          break;
         case "da":
           this.settings[languageIndex].options[0] = {
             value: "Dansk",
             label: "Dansk (Needs Help)",
+          };
+          break;
+        case "nb-NO":
+          this.settings[languageIndex].options[0] = {
+            value: "Norsk bokmål",
+            label: "Norsk bokmål (Needs Help)",
+          };
+          break;
+        case "sv":
+          this.settings[languageIndex].options[0] = {
+            value: "Svenska",
+            label: "Svenska",
           };
           break;
         case "ro":

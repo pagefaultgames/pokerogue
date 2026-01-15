@@ -81,9 +81,12 @@ export class VictoryPhase extends PokemonPhase {
             globalScene.phaseManager.pushNew("ModifierRewardPhase", modifierTypes.GOLDEN_POKEBALL);
           }
         } else {
-          const superExpWave = !gameMode.isEndless ? (globalScene.offsetGym ? 0 : 20) : 10;
+          const superExpWave = gameMode.isEndless ? 10 : globalScene.offsetGym ? 0 : 20;
           if (gameMode.isEndless && currentWaveIndex === 10) {
             globalScene.phaseManager.pushNew("ModifierRewardPhase", modifierTypes.EXP_SHARE);
+          }
+          if (gameMode.isClassic && currentWaveIndex === 10) {
+            globalScene.phaseManager.pushNew("ModifierRewardPhase", modifierTypes.EXP_CHARM);
           }
           if (currentWaveIndex <= 750 && (currentWaveIndex <= 500 || currentWaveIndex % 30 === superExpWave)) {
             globalScene.phaseManager.pushNew(
@@ -99,7 +102,7 @@ export class VictoryPhase extends PokemonPhase {
           if (gameMode.isEndless && !(currentWaveIndex % 50)) {
             globalScene.phaseManager.pushNew(
               "ModifierRewardPhase",
-              !(currentWaveIndex % 250) ? modifierTypes.VOUCHER_PREMIUM : modifierTypes.VOUCHER_PLUS,
+              currentWaveIndex % 250 ? modifierTypes.VOUCHER_PLUS : modifierTypes.VOUCHER_PREMIUM,
             );
             globalScene.phaseManager.pushNew("AddEnemyBuffModifierPhase");
           }

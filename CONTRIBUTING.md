@@ -11,9 +11,9 @@ Thank you for taking the time to contribute, every little bit helps. This projec
 Please make sure you understand everything relevant to your changes from the [Table of Contents](#-table-of-contents), and absolutely *feel free to reach out in the **#dev-corner** channel on [Discord](https://discord.gg/pokerogue)*.
 We are here to help and the better you understand what you're working on, the easier it will be for it to find its way into the game.
 
-
 Note that, as per GitHub's [terms of service](https://docs.github.com/en/site-policy/github-terms/github-terms-of-service#6-contributions-under-repository-license), any contributions made to this repository will be licensed under this repository's terms.
 If you use any external code, please make sure to follow its licensing information. Please make use of [SPDX snippets](https://reuse.software/spec-3.3/#in-line-snippet-comments) for the portion of the file that is licensed differently.
+
 
 ## 📄 Table of Contents
 
@@ -23,12 +23,15 @@ If you use any external code, please make sure to follow its licensing informati
 - [Documentation](#-documentation)
 - [Testing Your Changes](#-testing-your-changes)
 - [Development Save File (Unlock Everything)](#-development-save-file)
+- [Submitting a Pull Request](#-submitting-a-pull-request)
+
 
 ## 🛠️ Development Basics
 
-PokéRogue is built with [Typescript](https://www.typescriptlang.org/docs/handbook/intro.html), using the [Phaser](https://github.com/phaserjs/phaser) game framework.
+PokéRogue is built with [TypeScript](https://www.typescriptlang.org/docs/handbook/intro.html), using the [Phaser](https://github.com/phaserjs/phaser) game framework.
 
-If you have the motivation and experience with Typescript/Javascript (or are willing to learn), you can contribute by forking the repository and making pull requests with contributions.
+If you have the motivation and experience with TypeScript/JavaScript (or are willing to learn), you can contribute by forking the repository and making pull requests with contributions.
+
 
 ## 💻 Environment Setup
 
@@ -47,11 +50,19 @@ This Linux environment comes with all required dependencies needed to start work
 [codespaces-link]: <https://github.com/codespaces/new?hide_repo_select=true&repo=620476224&ref=beta>
 [devcontainer-ext]: <https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers>
 
+> [!IMPORTANT]
+> Due to quirks of devcontainer port forwarding, you must use **`pnpm start:podman`** to start a local dev server from within a devcontainer.
+> All other instructions remain the same as local development.
+
+### Podman
+
+For those who prefer Docker containers, see [this instructions page](./docs/podman.md) for information on how to setup a development environment with Podman.
+
 ### Local Development
 
 #### Prerequisites
 
-- node: >=22.14.0 - [manage with pnpm](https://pnpm.io/cli/env) | [manage with fnm](https://github.com/Schniz/fnm) | [manage with nvm](https://github.com/nvm-sh/nvm) | [manage with volta.sh](https://volta.sh/)
+- node: >=24.9.0 - [manage with pnpm](https://pnpm.io/cli/env) | [manage with fnm](https://github.com/Schniz/fnm) | [manage with nvm](https://github.com/nvm-sh/nvm) | [manage with volta.sh](https://volta.sh/)
 - pnpm: 10.x - [how to install](https://pnpm.io/installation) (not recommended to install via `npm` on Windows native) | [alternate method - volta.sh](https://volta.sh/)
 - The repository [forked](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) and [cloned](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) locally on your device
 
@@ -60,6 +71,7 @@ This Linux environment comes with all required dependencies needed to start work
 1. Run `pnpm install` from the repository root
     - *if you run into any errors, reach out in the **#dev-corner** channel on Discord*
 2. Run `pnpm start:dev` to locally run the project at `localhost:8000`
+
 
 ## 🚀 Getting Started
 
@@ -81,6 +93,7 @@ Also under issues, you can take a look at the [List of Partial / Unimplemented M
 
 You are free to comment on any issue so that you may be assigned to it and we can avoid multiple people working on the same thing.
 
+
 ## 📚 Documentation
 
 You can find the auto-generated documentation [here](https://pagefaultgames.github.io/pokerogue/main/index.html).
@@ -90,10 +103,11 @@ Notable topics include:
 - [Commenting your code](./docs/comments.md)
 - [Linting & Formatting](./docs/linting.md)
 - [Localization](./docs/localization.md)
-- [Enemy AI move selection](./docs/enemy-ai.md) 
+- [Enemy AI move selection](./docs/enemy-ai.md)
 - [Running with Podman](./docs/podman.md)
 
 Again, if you have unanswered questions please feel free to ask!
+
 
 ## 🧪 Testing Your Changes
 
@@ -103,7 +117,7 @@ You've just made a change - how can you check if it works? You have two areas to
 
 > This will likely be your first stop. After making a change, you'll want to spin the game up and make sure everything is as you expect. To do this, you will need a way to manipulate the game to produce the situation you're looking to test.
 
-[src/overrides.ts](../src/overrides.ts) contains overrides for most values you'll need to change for testing, controlled through the `overrides` object.
+[src/overrides.ts](./src/overrides.ts) contains overrides for most values you'll need to change for testing, controlled through the `overrides` object.
 For example, here is how you could test a scenario where the player Pokemon has the ability Drought and the enemy Pokemon has the move Water Gun:
 
 ```typescript
@@ -131,8 +145,70 @@ Most non-trivial changes (*especially bug fixes*) should come along with new tes
     - As much as possible, are unit tests. If you have made two distinct changes, they should be tested in two separate cases.
     - Test edge cases. A good strategy is to think of edge cases beforehand and create tests for them using `it.todo`. Once the edge case has been handled, you can remove the `todo` marker.
 
-## 😈 Development Save File
-> Some issues may require you to have unlocks on your save file which go beyond normal overrides. For this reason, the repository contains a [save file](../test/test-utils/saves/everything.psrv) with _everything_ unlocked (even ones not legitimately obtainable, like unimplemented variant shinies).
+
+## 💾 Development Save File
+> Some issues may require you to have unlocks on your save file which go beyond normal overrides.
+> For this reason, the repository contains a [save file](test/test-utils/saves/everything.psrv) with _everything_ unlocked (it may also contain things that are not legitimately obtainable).
 
 1. Start the game up locally and navigate to `Menu -> Manage Data -> Import Data`
 2. Select [everything.prsv](test/test-utils/saves/everything.prsv) (`test/test-utils/saves/everything.prsv`) and confirm.
+
+
+## ✅ Submitting a Pull Request
+
+Most information related to submitting a pull request is contained in comments within the pull request template that is shown when you open a new pull request,
+however full documentation on the pull request title format is here to best utilize the space available.
+
+The pull request title must follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) format with a valid prefix and optionally a valid scope. \
+If a save migrator, version increase or other breaking change is part of the PR, a `!` must be added before the `:`.
+
+Try to keep the PR title to 72 characters or less (GitHub cuts off commit titles longer than this).
+
+### Examples
+
+```
+fix(move): Future Sight no longer crashes
+^   ^      ^
+|   |      |__ Subject
+|   |_________ Scope (optional)
+|_____________ Prefix
+```
+
+`refactor(data)!: improve serialization of Pokemon save data`
+
+`balance: update TM compatibility lists`
+
+### List of valid prefixes
+
+- "balance" - Changes related to game balance
+- "chore" - Misc project upkeep (e.g. updating submodules, updating dependencies, reverting a bad commit) not covered by other prefixes
+- "dev" - Improving the developer experience (such as by modifying lint rules or creating cli scripts)
+- "docs" - Primarily adding/updating documentation
+- "feat" - Adding a new feature (e.g. adding a new implementation of a move) or redesigning an existing feature
+- "fix" - Fixing a bug
+- "github" - Updating the CI pipeline or otherwise modifying something in the `./github/**` directory
+- "i18n" - Adding/modifying translation keys, etc
+- "misc" - A change that doesn't fit any other prefix
+- "perf" - A refactor aimed at improving performance
+- "refactor" - A change that doesn't impact functionality or fix any bugs (except incidentally)
+- "test" - Primarily adding/updating tests or modifying the test framework
+
+### List of valid scopes
+
+- "ability"
+- "ai"
+- "audio"
+- "battle" - Relating to the general battle engine
+- "biomes"
+- "challenge"
+- "encounter" - Mystery Encounters
+- "event" - e.g. adding a Christmas event to the game
+- "graphics" - Anything related to art/graphics (adding new sprites, fixing a sprite that isn't displaying properly, etc)
+- "item"
+- "move"
+- "ui" - UI/UX
+
+> [!IMPORTANT]
+> All scopes are valid when using the "docs", "feat", "fix", "refactor" and "test" prefixes. \
+> All scopes except "audio", "battle", "graphics", and "ui" are valid when using the "balance" prefix. \
+> No other prefixes have valid scopes.

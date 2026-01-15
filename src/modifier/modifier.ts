@@ -218,10 +218,10 @@ export abstract class PersistentModifier extends Modifier {
 
   incrementStack(amount: number, virtual: boolean): boolean {
     if (this.getStackCount() + amount <= this.getMaxStackCount()) {
-      if (!virtual) {
-        this.stackCount += amount;
-      } else {
+      if (virtual) {
         this.virtualStackCount += amount;
+      } else {
+        this.stackCount += amount;
       }
       return true;
     }
@@ -479,7 +479,7 @@ export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier
   override apply(doubleBattleChance: NumberHolder): boolean {
     // This is divided because the chance is generated as a number from 0 to doubleBattleChance.value using randSeedInt
     // A double battle will initiate if the generated number is 0
-    doubleBattleChance.value = doubleBattleChance.value / 4;
+    doubleBattleChance.value /= 4;
 
     return true;
   }
@@ -502,7 +502,7 @@ export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
     this.stat = stat;
     // Note that, because we want X Accuracy to maintain its original behavior,
     // it will increment as it did previously, directly to the stat stage.
-    this.boost = stat !== Stat.ACC ? 0.3 : 1;
+    this.boost = stat !== Stat.ACC ? 0.2 : 1;
   }
 
   match(modifier: Modifier): boolean {
@@ -694,9 +694,11 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
   }
 
   getIcon(forSummary?: boolean): Phaser.GameObjects.Container {
-    const container = !forSummary ? globalScene.add.container(0, 0) : super.getIcon();
+    const container = forSummary ? super.getIcon() : globalScene.add.container(0, 0);
 
-    if (!forSummary) {
+    if (forSummary) {
+      container.setScale(0.5);
+    } else {
       const pokemon = this.getPokemon();
       if (pokemon) {
         const pokemonIcon = globalScene.addPokemonIcon(pokemon, -2, 10, 0, 0.5, undefined, true);
@@ -719,8 +721,6 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
       if (virtualStackText) {
         container.add(virtualStackText);
       }
-    } else {
-      container.setScale(0.5);
     }
 
     return container;
@@ -1915,9 +1915,7 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
     // Remove the Pokemon's FAINT status
     pokemon.resetStatus(true, false, true, false);
 
-    // Reapply Commander on the Pokemon's side of the field, if applicable
-    const field = pokemon.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
-    for (const p of field) {
+    for (const p of pokemon.getAlliesGenerator()) {
       applyAbAttrs("CommanderAbAttr", { pokemon: p });
     }
     return true;
@@ -2686,7 +2684,7 @@ export class PokemonMoveAccuracyBoosterModifier extends PokemonHeldItemModifier 
    * @returns always `true`
    */
   override apply(_pokemon: Pokemon, moveAccuracy: NumberHolder): boolean {
-    moveAccuracy.value = moveAccuracy.value + this.accuracyAmount * this.getStackCount();
+    moveAccuracy.value += this.accuracyAmount * this.getStackCount();
 
     return true;
   }

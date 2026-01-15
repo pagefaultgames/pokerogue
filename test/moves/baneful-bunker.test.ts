@@ -5,7 +5,7 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Baneful Bunker", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +15,6 @@ describe("Moves - Baneful Bunker", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -35,8 +31,8 @@ describe("Moves - Baneful Bunker", () => {
   });
 
   function expectProtected() {
-    expect(game.scene.getEnemyPokemon()?.hp).toBe(game.scene.getEnemyPokemon()?.getMaxHp());
-    expect(game.scene.getPlayerPokemon()?.status?.effect).toBe(StatusEffect.POISON);
+    expect(game.field.getEnemyPokemon().hp).toBe(game.field.getEnemyPokemon().getMaxHp());
+    expect(game.field.getPlayerPokemon().status?.effect).toBe(StatusEffect.POISON);
   }
 
   it("should protect the user and poison attackers that make contact", async () => {

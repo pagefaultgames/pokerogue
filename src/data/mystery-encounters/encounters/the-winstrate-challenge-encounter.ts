@@ -45,6 +45,8 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter = MysteryEncounter
 )
   .withEncounterTier(MysteryEncounterTier.ROGUE)
   .withSceneWaveRangeRequirement(100, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
+  .withScenePartySizeRequirement(3, 6)
+  .withMaxAllowedEncounters(1)
   .withIntroSpriteConfigs([
     {
       spriteKey: "vito",
@@ -153,7 +155,9 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter = MysteryEncounter
 async function spawnNextTrainerOrEndEncounter() {
   const encounter = globalScene.currentBattle.mysteryEncounter!;
   const nextConfig = encounter.enemyPartyConfigs.pop();
-  if (!nextConfig) {
+  if (nextConfig) {
+    await initBattleWithEnemyConfig(nextConfig);
+  } else {
     await transitionMysteryEncounterIntroVisuals(false, false);
     await showEncounterDialogue(`${namespace}:victory`, `${namespace}:speaker`);
 
@@ -173,8 +177,6 @@ async function spawnNextTrainerOrEndEncounter() {
     });
     encounter.doContinueEncounter = undefined;
     leaveEncounterWithoutBattle(false, MysteryEncounterMode.NO_BATTLE);
-  } else {
-    await initBattleWithEnemyConfig(nextConfig);
   }
 }
 

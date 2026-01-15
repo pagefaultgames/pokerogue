@@ -11,7 +11,7 @@ import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import { NumberHolder } from "#utils/common";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 let globalScene: BattleScene;
 
@@ -25,10 +25,6 @@ describe("Moves - Light Screen", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -127,15 +123,8 @@ const getMockedMoveDamage = (defender: Pokemon, attacker: Pokemon, move: Move) =
   const multiplierHolder = new NumberHolder(1);
   const side = defender.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
-  if (globalScene.arena.getTagOnSide(ArenaTagType.LIGHT_SCREEN, side) && move.getAttrs("CritOnlyAttr").length === 0) {
-    globalScene.arena.applyTagsForSide(
-      ArenaTagType.LIGHT_SCREEN,
-      side,
-      false,
-      attacker,
-      move.category,
-      multiplierHolder,
-    );
+  if (globalScene.arena.getTagOnSide(ArenaTagType.LIGHT_SCREEN, side) && !move.hasAttr("CritOnlyAttr")) {
+    globalScene.arena.applyTagsForSide(ArenaTagType.LIGHT_SCREEN, side, attacker, move.category, multiplierHolder);
   }
 
   return move.power * multiplierHolder.value;

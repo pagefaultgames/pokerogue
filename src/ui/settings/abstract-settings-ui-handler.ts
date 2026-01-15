@@ -4,13 +4,13 @@ import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { SettingType } from "#system/settings";
 import { Setting, SettingKeys } from "#system/settings";
-import type { MappingSettingName } from "#types/configs/inputs";
-import type { AnyFn } from "#types/type-helpers";
+import { MappingSettingName } from "#types/configs/inputs";
 import type { InputsIcons } from "#ui/abstract-control-settings-ui-handler";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { NavigationManager, NavigationMenu } from "#ui/navigation-menu";
 import { ScrollBar } from "#ui/scroll-bar";
 import { addTextObject, getTextColor } from "#ui/text";
+import type { TitleUiHandler } from "#ui/title-ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import i18next from "i18next";
 
@@ -40,7 +40,7 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
 
   protected rowsToDisplay: number;
   protected title: string;
-  protected settings: Array<Setting>;
+  protected settings: Setting[];
   protected localStorageKey: string;
 
   constructor(type: SettingType, mode: UiMode | null = null) {
@@ -499,6 +499,7 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
     this.setScrollCursor(0);
     this.eraseCursor();
     this.getUi().bgmBar.toggleBgmBar(globalScene.showBgmBar);
+    (this.getUi().handlers[UiMode.TITLE] as TitleUiHandler)?.updateUsername();
     if (this.reloadRequired) {
       this.reloadRequired = false;
       globalScene.reset(true, false, true);
@@ -518,7 +519,7 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
   override showText(
     text: string,
     delay?: number,
-    callback?: AnyFn,
+    callback?: () => void,
     callbackDelay?: number,
     prompt?: boolean,
     promptDelay?: number,

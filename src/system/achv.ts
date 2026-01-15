@@ -455,7 +455,7 @@ export const achvs = {
   CLASSIC_VICTORY: new Achv(
     "classicVictory",
     "classicVictory.description",
-    "relic_crown",
+    "classic_ribbon_default",
     250,
     _ => globalScene.gameData.gameStats.sessionsWon === 0,
   ),
@@ -480,7 +480,7 @@ export const achvs = {
   LV_250: new LevelAchv("lv250", 250, "rarer_candy", 25).setSecret(true),
   LV_1000: new LevelAchv("lv1000", 1000, "candy_jar", 50).setSecret(true),
   TRANSFER_MAX_STAT_STAGE: new Achv("transferMaxStatStage", "transferMaxStatStage.description", "baton", 25),
-  MAX_FRIENDSHIP: new Achv("maxFriendship", "maxFriendship.description", "soothe_bell", 25),
+  MAX_FRIENDSHIP: new Achv("maxFriendship", "maxFriendship.description", "ribbon_friendship", 25),
   MEGA_EVOLVE: new Achv("megaEvolve", "megaEvolve.description", "mega_bracelet", 50),
   GIGANTAMAX: new Achv("gigantamax", "gigantamax.description", "dynamax_band", 50),
   TERASTALLIZE: new Achv("terastallize", "terastallize.description", "tera_orb", 25),
@@ -648,7 +648,7 @@ export const achvs = {
   MONO_NORMAL: new ChallengeAchv(
     "monoNormal",
     "monoNormal.description",
-    "silk_scarf",
+    "ribbon_normal",
     100,
     c =>
       c instanceof SingleTypeChallenge
@@ -660,7 +660,7 @@ export const achvs = {
   MONO_FIGHTING: new ChallengeAchv(
     "monoFighting",
     "monoFighting.description",
-    "black_belt",
+    "ribbon_fighting",
     100,
     c =>
       c instanceof SingleTypeChallenge
@@ -672,7 +672,7 @@ export const achvs = {
   MONO_FLYING: new ChallengeAchv(
     "monoFlying",
     "monoFlying.description",
-    "sharp_beak",
+    "ribbon_flying",
     100,
     c =>
       c instanceof SingleTypeChallenge
@@ -684,7 +684,7 @@ export const achvs = {
   MONO_POISON: new ChallengeAchv(
     "monoPoison",
     "monoPoison.description",
-    "poison_barb",
+    "ribbon_poison",
     100,
     c =>
       c instanceof SingleTypeChallenge
@@ -696,7 +696,7 @@ export const achvs = {
   MONO_GROUND: new ChallengeAchv(
     "monoGround",
     "monoGround.description",
-    "soft_sand",
+    "ribbon_ground",
     100,
     c =>
       c instanceof SingleTypeChallenge
@@ -708,7 +708,7 @@ export const achvs = {
   MONO_ROCK: new ChallengeAchv(
     "monoRock",
     "monoRock.description",
-    "hard_stone",
+    "ribbon_rock",
     100,
     c =>
       c instanceof SingleTypeChallenge
@@ -720,7 +720,7 @@ export const achvs = {
   MONO_BUG: new ChallengeAchv(
     "monoBug",
     "monoBug.description",
-    "silver_powder",
+    "ribbon_bug",
     100,
     c =>
       c instanceof SingleTypeChallenge
@@ -732,7 +732,7 @@ export const achvs = {
   MONO_GHOST: new ChallengeAchv(
     "monoGhost",
     "monoGhost.description",
-    "spell_tag",
+    "ribbon_ghost",
     100,
     c =>
       c instanceof SingleTypeChallenge
@@ -744,7 +744,7 @@ export const achvs = {
   MONO_STEEL: new ChallengeAchv(
     "monoSteel",
     "monoSteel.description",
-    "metal_coat",
+    "ribbon_steel",
     100,
     c =>
       c instanceof SingleTypeChallenge
@@ -756,7 +756,7 @@ export const achvs = {
   MONO_FIRE: new ChallengeAchv(
     "monoFire",
     "monoFire.description",
-    "charcoal",
+    "ribbon_fire",
     100,
     c =>
       c instanceof SingleTypeChallenge
@@ -768,7 +768,7 @@ export const achvs = {
   MONO_WATER: new ChallengeAchv(
     "monoWater",
     "monoWater.description",
-    "mystic_water",
+    "ribbon_water",
     100,
     c =>
       c instanceof SingleTypeChallenge
@@ -780,7 +780,7 @@ export const achvs = {
   MONO_GRASS: new ChallengeAchv(
     "monoGrass",
     "monoGrass.description",
-    "miracle_seed",
+    "ribbon_grass",
     100,
     c =>
       c instanceof SingleTypeChallenge
@@ -792,7 +792,7 @@ export const achvs = {
   MONO_ELECTRIC: new ChallengeAchv(
     "monoElectric",
     "monoElectric.description",
-    "magnet",
+    "ribbon_electric",
     100,
     c =>
       c instanceof SingleTypeChallenge
@@ -804,7 +804,7 @@ export const achvs = {
   MONO_PSYCHIC: new ChallengeAchv(
     "monoPsychic",
     "monoPsychic.description",
-    "twisted_spoon",
+    "ribbon_psychic",
     100,
     c =>
       c instanceof SingleTypeChallenge
@@ -816,7 +816,7 @@ export const achvs = {
   MONO_ICE: new ChallengeAchv(
     "monoIce",
     "monoIce.description",
-    "never_melt_ice",
+    "ribbon_ice",
     100,
     c =>
       c instanceof SingleTypeChallenge
@@ -828,7 +828,7 @@ export const achvs = {
   MONO_DRAGON: new ChallengeAchv(
     "monoDragon",
     "monoDragon.description",
-    "dragon_fang",
+    "ribbon_dragon",
     100,
     c =>
       c instanceof SingleTypeChallenge
@@ -840,7 +840,7 @@ export const achvs = {
   MONO_DARK: new ChallengeAchv(
     "monoDark",
     "monoDark.description",
-    "black_glasses",
+    "ribbon_dark",
     100,
     c =>
       c instanceof SingleTypeChallenge
@@ -852,7 +852,7 @@ export const achvs = {
   MONO_FAIRY: new ChallengeAchv(
     "monoFairy",
     "monoFairy.description",
-    "fairy_feather",
+    "ribbon_fairy",
     100,
     c =>
       c instanceof SingleTypeChallenge

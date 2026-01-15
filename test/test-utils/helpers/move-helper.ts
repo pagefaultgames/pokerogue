@@ -67,7 +67,6 @@ export class MoveHelper extends GameManagerHelper {
     const movePosition = this.getMovePosition(pkmIndex, move);
     if (movePosition === -1) {
       expect.fail(
-        // biome-ignore lint/complexity/noUselessStringConcat: Biome does not currently detect this as multiline (BUG)
         `MoveHelper.select called with move '${toTitleCase(MoveId[move])}' not in moveset!`
           + `\nBattler Index: ${toTitleCase(BattlerIndex[pkmIndex])}`
           + `\nMoveset: [${this.game.scene
@@ -112,7 +111,6 @@ export class MoveHelper extends GameManagerHelper {
     const movePosition = this.getMovePosition(pkmIndex, move);
     if (movePosition === -1) {
       expect.fail(
-        // biome-ignore lint/complexity/noUselessStringConcat: Biome does not currently detect this as multiline (BUG)
         `MoveHelper.selectWithTera called with move '${toTitleCase(MoveId[move])}' not in moveset!`
           + `\nBattler Index: ${toTitleCase(BattlerIndex[pkmIndex])}`
           + `\nMoveset: [${this.game.scene
@@ -249,17 +247,19 @@ export class MoveHelper extends GameManagerHelper {
    * @param moveId - The {@linkcode Move | move ID} the enemy will be forced to use.
    * @param target - The {@linkcode BattlerIndex | target} against which the enemy will use the given move;
    * defaults to normal target selection priorities if omitted or not single-target.
+   * @param tera - (Default `false`) If set to `true`, will also force the enemy to terastallize on their next action
+   * even if a trainer is not present
    * @remarks
    * If you do not need to check for changes in the enemy's moveset as part of the test, it may be
    * best to use {@linkcode forceEnemyMove} instead.
    */
-  public async selectEnemyMove(moveId: MoveId, target?: BattlerIndex) {
+  public async selectEnemyMove(moveId: MoveId, target?: BattlerIndex, tera?: true | undefined) {
     // Wait for the next EnemyCommandPhase to start
     await this.game.phaseInterceptor.to("EnemyCommandPhase", false);
-    const enemy =
-      this.game.scene.getEnemyField()[
-        (this.game.scene.phaseManager.getCurrentPhase() as EnemyCommandPhase).getFieldIndex()
-      ];
+
+    const phase = this.game.scene.phaseManager.getCurrentPhase() as EnemyCommandPhase;
+    const enemy = this.game.scene.getEnemyField()[phase.getFieldIndex()];
+
     const legalTargets = getMoveTargets(enemy, moveId);
 
     vi.spyOn(enemy, "getNextMove").mockReturnValueOnce({
@@ -270,6 +270,10 @@ export class MoveHelper extends GameManagerHelper {
           : enemy.getNextTargets(moveId),
       useMode: MoveUseMode.NORMAL,
     });
+
+    if (tera) {
+      (vi.spyOn(phase as any, "shouldTera") as MockInstance<(typeof phase)["shouldTera"]>).mockReturnValueOnce(true);
+    }
 
     /**
      * Run the EnemyCommandPhase to completion.
@@ -286,21 +290,21 @@ export class MoveHelper extends GameManagerHelper {
    * Does not require the given move to be in the enemy's moveset beforehand,
    * but **overwrites the pokemon's moveset** and **disables any prior moveset overrides**!
    *
-   * @param moveId - The {@linkcode Move | move ID} the enemy will be forced to use.
+   * @param moveId - The {@linkcode MoveId | move ID} the enemy will be forced to use.
    * @param target - The {@linkcode BattlerIndex | target} against which the enemy will use the given move;
    * defaults to normal target selection priorities if omitted or not single-target.
+   * @param tera - (Default `false`) If set to `true`, will also force the enemy to terastallize on their next action,
+   * even if a trainer is not present
    * @remarks
    * If you need to check for changes in the enemy's moveset as part of the test, it may be
    * best to use {@linkcode changeMoveset} and {@linkcode selectEnemyMove} instead.
    */
-  public async forceEnemyMove(moveId: MoveId, target?: BattlerIndex) {
+  public async forceEnemyMove(moveId: MoveId, target?: BattlerIndex, tera?: true | undefined) {
     // Wait for the next EnemyCommandPhase to start
     await this.game.phaseInterceptor.to("EnemyCommandPhase", false);
 
-    const enemy =
-      this.game.scene.getEnemyField()[
-        (this.game.scene.phaseManager.getCurrentPhase() as EnemyCommandPhase).getFieldIndex()
-      ];
+    const phase = this.game.scene.phaseManager.getCurrentPhase() as EnemyCommandPhase;
+    const enemy = this.game.scene.getEnemyField()[phase.getFieldIndex()];
 
     if ([Overrides.ENEMY_MOVESET_OVERRIDE].flat().length > 0) {
       vi.spyOn(Overrides, "ENEMY_MOVESET_OVERRIDE", "get").mockReturnValue([]);
@@ -319,6 +323,10 @@ export class MoveHelper extends GameManagerHelper {
           : enemy.getNextTargets(moveId),
       useMode: MoveUseMode.NORMAL,
     });
+
+    if (tera) {
+      (vi.spyOn(phase as any, "shouldTera") as MockInstance<(typeof phase)["shouldTera"]>).mockReturnValueOnce(true);
+    }
 
     /**
      * Run the EnemyCommandPhase to completion.

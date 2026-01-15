@@ -1,4 +1,3 @@
-// biome-ignore lint/correctness/noUnusedImports: TSDoc
 import type { GameManager } from "#test/test-utils/game-manager";
 import { isGameManagerInstance, receivedStr } from "#test/test-utils/test-utils";
 import { truncateString } from "#utils/common";
@@ -11,7 +10,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @returns The result of the matching
  */
 export function toHaveShownMessage(
-  this: MatcherState,
+  this: Readonly<MatcherState>,
   received: unknown,
   expectedMessage: string,
 ): SyncExpectationResult {

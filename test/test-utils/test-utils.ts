@@ -1,5 +1,5 @@
 import { Pokemon } from "#field/pokemon";
-import type { GameManager } from "#test/test-utils/game-manager";
+import { GameManager } from "#test/test-utils/game-manager";
 import i18next, { type ParseKeys } from "i18next";
 import { vi } from "vitest";
 
@@ -37,34 +37,40 @@ export function getApiBaseUrl() {
   return import.meta.env.VITE_SERVER_URL ?? "http://localhost:8001";
 }
 
-type TypeOfResult = "undefined" | "object" | "boolean" | "number" | "bigint" | "string" | "symbol" | "function";
+// #region Matcher utilities
 
 /**
  * Helper to determine the actual type of the received object as human readable string
  * @param received - The received object
  * @returns A human readable string of the received object (type)
  */
-export function receivedStr(received: unknown, expectedType: TypeOfResult = "object"): string {
+export function receivedStr(received: unknown): string {
   if (received === null) {
     return "null";
   }
-  if (received === undefined) {
-    return "undefined";
-  }
-  if (typeof received !== expectedType) {
-    return typeof received;
-  }
-  if (expectedType === "object") {
-    return received.constructor.name;
-  }
 
-  return "unknown";
+  switch (typeof received) {
+    case "undefined":
+      return "undefined";
+    case "object":
+      // Null-prototype objects have no constructors
+      return received.constructor?.name ?? "a null-prototype object";
+    case "function":
+      return `function ${received.name}`;
+    case "boolean":
+    case "number":
+    case "string":
+    case "symbol":
+    case "bigint":
+    default:
+      return received.toString();
+  }
 }
 
 /**
- * Helper to check if the received object is an {@linkcode object}
- * @param received - The object to check
- * @returns Whether the object is an {@linkcode object}.
+ * Helper function to check if the received object or primitive is a non-`null` object.
+ * @param received - The object or primitive to check
+ * @returns Whether `received` is an instance of {@linkcode Object}.
  */
 function isObject(received: unknown): received is object {
   return received !== null && typeof received === "object";
@@ -72,18 +78,20 @@ function isObject(received: unknown): received is object {
 
 /**
  * Helper function to check if a given object is a {@linkcode Pokemon}.
- * @param received - The object to check
- * @returns Whether `received` is a {@linkcode Pokemon} instance.
+ * @param received - The object or primitive to check
+ * @returns Whether `received` is an instance of {@linkcode Pokemon}.
  */
 export function isPokemonInstance(received: unknown): received is Pokemon {
   return isObject(received) && received instanceof Pokemon;
 }
 
 /**
- * Checks if an object is a {@linkcode GameManager} instance
- * @param received - The object to check
- * @returns Whether the object is a {@linkcode GameManager} instance.
+ * Helper function to check if a given object is a {@linkcode GameManager}.
+ * @param received - The object or primitive to check
+ * @returns Whether `received` is an instance of {@linkcode GameManager}.
  */
 export function isGameManagerInstance(received: unknown): received is GameManager {
-  return isObject(received) && (received as GameManager).constructor.name === "GameManager";
+  return isObject(received) && received instanceof GameManager;
 }
+
+// #endregion Matcher utilities

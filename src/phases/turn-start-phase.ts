@@ -18,7 +18,7 @@ export class TurnStartPhase extends FieldPhase {
    * Returns an ordering of the current field based on command priority
    * @returns The sequence of commands for this turn
    */
-  getCommandOrder(): BattlerIndex[] {
+  private getCommandOrder(): BattlerIndex[] {
     const playerField = globalScene.getPlayerField(true).map(p => p.getBattlerIndex());
     const enemyField = globalScene.getEnemyField(true).map(p => p.getBattlerIndex());
     const orderedTargets: BattlerIndex[] = playerField.concat(enemyField);
@@ -69,6 +69,10 @@ export class TurnStartPhase extends FieldPhase {
 
     const phaseManager = globalScene.phaseManager;
     for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
+      if (globalScene.currentBattle.turnCommands[pokemon.getBattlerIndex()]?.command !== Command.FIGHT) {
+        continue;
+      }
+
       applyAbAttrs("BypassSpeedChanceAbAttr", { pokemon });
       globalScene.applyModifiers(BypassSpeedChanceModifier, pokemon.isPlayer(), pokemon);
     }

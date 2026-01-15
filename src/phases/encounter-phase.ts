@@ -129,7 +129,7 @@ export class EncounterPhase extends BattlePhase {
           }
           globalScene
             .getPlayerParty()
-            .slice(0, !battle.double ? 1 : 2)
+            .slice(0, battle.double ? 2 : 1)
             .reverse()
             .forEach(playerPokemon => {
               applyAbAttrs("SyncEncounterNatureAbAttr", { pokemon: playerPokemon, target: battle.enemyParty[e] });
@@ -220,8 +220,9 @@ export class EncounterPhase extends BattlePhase {
       // Load Mystery Encounter Exclamation bubble and sfx
       loadEnemyAssets.push(
         new Promise<void>(resolve => {
-          globalScene.loadSe("GEN8- Exclaim", "battle_anims", "GEN8- Exclaim.wav");
-          globalScene.loadImage("encounter_exclaim", "mystery-encounters");
+          globalScene
+            .loadSe("GEN8- Exclaim", "battle_anims", "GEN8- Exclaim.wav")
+            .loadImage("encounter_exclaim", "mystery-encounters");
           globalScene.load.once(Phaser.Loader.Events.COMPLETE, () => resolve());
           if (!globalScene.load.isLoading()) {
             globalScene.load.start();
@@ -562,41 +563,41 @@ export class EncounterPhase extends BattlePhase {
 
     if (!this.loaded) {
       const availablePartyMembers = globalScene.getPokemonAllowedInBattle();
-      const minPartySize = globalScene.currentBattle.double ? 2 : 1;
-      const currentBattle = globalScene.currentBattle;
-      const checkSwitch =
-        currentBattle.battleType !== BattleType.TRAINER
-        && (currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily)
-        && availablePartyMembers.length > minPartySize;
-      const checkSwitchIndices: number[] = [];
 
-      const phaseManager = globalScene.phaseManager;
       if (!availablePartyMembers[0].isOnField()) {
-        phaseManager.pushNew("SummonPhase", 0, true, false, checkSwitch);
-      } else if (checkSwitch) {
-        checkSwitchIndices.push(0);
+        globalScene.phaseManager.pushNew("SummonPhase", 0);
       }
 
-      if (currentBattle.double) {
+      if (globalScene.currentBattle.double) {
         if (availablePartyMembers.length > 1) {
-          phaseManager.pushNew("ToggleDoublePositionPhase", true);
+          globalScene.phaseManager.pushNew("ToggleDoublePositionPhase", true);
           if (!availablePartyMembers[1].isOnField()) {
-            phaseManager.pushNew("SummonPhase", 1, true, false, checkSwitch);
-          } else if (checkSwitch) {
-            checkSwitchIndices.push(1);
+            globalScene.phaseManager.pushNew("SummonPhase", 1);
           }
         }
       } else {
         if (availablePartyMembers.length > 1 && availablePartyMembers[1].isOnField()) {
-          phaseManager.pushNew("ReturnPhase", 1);
+          globalScene.phaseManager.pushNew("ReturnPhase", 1);
         }
-        phaseManager.pushNew("ToggleDoublePositionPhase", false);
+        globalScene.phaseManager.pushNew("ToggleDoublePositionPhase", false);
       }
-      checkSwitchIndices.forEach(i => {
-        phaseManager.pushNew("CheckSwitchPhase", i, globalScene.currentBattle.double);
-      });
+
+      if (
+        globalScene.currentBattle.battleType !== BattleType.TRAINER
+        && (globalScene.currentBattle.waveIndex > 1 || !globalScene.gameMode.isDaily)
+      ) {
+        const minPartySize = globalScene.currentBattle.double ? 2 : 1;
+        if (availablePartyMembers.length > minPartySize) {
+          globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
+          if (globalScene.currentBattle.double) {
+            globalScene.phaseManager.pushNew("CheckSwitchPhase", 1, globalScene.currentBattle.double);
+          }
+        }
+      }
     }
     handleTutorial(Tutorial.Access_Menu).then(() => super.end());
+
+    globalScene.phaseManager.pushNew("InitEncounterPhase");
   }
 
   tryOverrideForBattleSpec(): boolean {

@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 import { getCharVariantFromDialogue } from "#data/dialogue";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import { BattleSpec } from "#enums/battle-spec";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -15,6 +16,7 @@ import { transitionMysteryEncounterIntroVisuals } from "#mystery-encounters/enco
 import type { MysteryEncounterOption, OptionPhaseCallback } from "#mystery-encounters/mystery-encounter-option";
 import { SeenEncounterData } from "#mystery-encounters/mystery-encounter-save-data";
 import { randSeedItem } from "#utils/common";
+import { inSpeedOrder } from "#utils/speed-order-generator";
 import i18next from "i18next";
 
 /**
@@ -216,7 +218,7 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
 
     // Lapse any residual flinches/endures but ignore all other turn-end battle tags
     const includedLapseTags = [BattlerTagType.FLINCHED, BattlerTagType.ENDURING];
-    globalScene.getField(true).forEach(pokemon => {
+    for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
       const tags = pokemon.summonData.tags;
       tags
         .filter(
@@ -229,7 +231,7 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
           t.onRemove(pokemon);
           tags.splice(tags.indexOf(t), 1);
         });
-    });
+    }
 
     // Remove any status tick phases
     globalScene.phaseManager.removeAllPhasesOfType("PostTurnStatusEffectPhase");
@@ -336,10 +338,10 @@ export class MysteryEncounterBattlePhase extends Phase {
         globalScene.phaseManager.unshiftNew("SummonPhase", 1, false);
       }
 
-      if (!globalScene.currentBattle.mysteryEncounter?.hideBattleIntroMessage) {
-        globalScene.ui.showText(this.getBattleMessage(), null, () => this.endBattleSetup(), 0);
-      } else {
+      if (globalScene.currentBattle.mysteryEncounter?.hideBattleIntroMessage) {
         this.endBattleSetup();
+      } else {
+        globalScene.ui.showText(this.getBattleMessage(), null, () => this.endBattleSetup(), 0);
       }
     } else if (encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
       this.showEnemyTrainer();
@@ -357,10 +359,10 @@ export class MysteryEncounterBattlePhase extends Phase {
           }
           this.endBattleSetup();
         };
-        if (!globalScene.currentBattle.mysteryEncounter?.hideBattleIntroMessage) {
-          globalScene.ui.showText(this.getBattleMessage(), null, doTrainerSummon, 1000, true);
-        } else {
+        if (globalScene.currentBattle.mysteryEncounter?.hideBattleIntroMessage) {
           doTrainerSummon();
+        } else {
+          globalScene.ui.showText(this.getBattleMessage(), null, doTrainerSummon, 1000, true);
         }
       };
 
@@ -413,39 +415,39 @@ export class MysteryEncounterBattlePhase extends Phase {
     }
 
     const availablePartyMembers = globalScene.getPlayerParty().filter(p => p.isAllowedInBattle());
-    const minPartySize = globalScene.currentBattle.double ? 2 : 1;
-    const checkSwitch =
-      encounterMode !== MysteryEncounterMode.TRAINER_BATTLE
-      && !this.disableSwitch
-      && availablePartyMembers.length > minPartySize;
-    const checkSwitchIndices: number[] = [];
 
     if (!availablePartyMembers[0].isOnField()) {
-      globalScene.phaseManager.pushNew("SummonPhase", 0, true, false, checkSwitch);
-    } else if (checkSwitch) {
-      checkSwitchIndices.push(0);
+      globalScene.phaseManager.pushNew("SummonPhase", 0);
     }
 
     if (globalScene.currentBattle.double) {
       if (availablePartyMembers.length > 1) {
         globalScene.phaseManager.pushNew("ToggleDoublePositionPhase", true);
         if (!availablePartyMembers[1].isOnField()) {
-          globalScene.phaseManager.pushNew("SummonPhase", 1, true, false, checkSwitch);
-        } else if (checkSwitch) {
-          checkSwitchIndices.push(1);
+          globalScene.phaseManager.pushNew("SummonPhase", 1);
         }
       }
     } else {
       if (availablePartyMembers.length > 1 && availablePartyMembers[1].isOnField()) {
-        globalScene.getPlayerField().forEach(pokemon => pokemon.lapseTag(BattlerTagType.COMMANDED));
+        for (const pokemon of inSpeedOrder(ArenaTagSide.PLAYER)) {
+          pokemon.lapseTag(BattlerTagType.COMMANDED);
+        }
         globalScene.phaseManager.pushNew("ReturnPhase", 1);
       }
       globalScene.phaseManager.pushNew("ToggleDoublePositionPhase", false);
     }
 
-    checkSwitchIndices.forEach(i => {
-      globalScene.phaseManager.pushNew("CheckSwitchPhase", i, globalScene.currentBattle.double);
-    });
+    if (encounterMode !== MysteryEncounterMode.TRAINER_BATTLE && !this.disableSwitch) {
+      const minPartySize = globalScene.currentBattle.double ? 2 : 1;
+      if (availablePartyMembers.length > minPartySize) {
+        globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
+        if (globalScene.currentBattle.double) {
+          globalScene.phaseManager.pushNew("CheckSwitchPhase", 1, globalScene.currentBattle.double);
+        }
+      }
+    }
+
+    globalScene.phaseManager.pushNew("InitEncounterPhase");
     this.end();
   }
 

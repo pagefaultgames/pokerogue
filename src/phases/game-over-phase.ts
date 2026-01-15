@@ -85,12 +85,19 @@ export class GameOverPhase extends BattlePhase {
                 globalScene.phaseManager.pushNew("EncounterPhase", true);
 
                 const availablePartyMembers = globalScene.getPokemonAllowedInBattle().length;
-                const checkSwitch =
-                  globalScene.currentBattle.waveIndex > 1
-                  && globalScene.currentBattle.battleType !== BattleType.TRAINER;
-                globalScene.phaseManager.pushNew("SummonPhase", 0, true, false, checkSwitch);
+
+                globalScene.phaseManager.pushNew("SummonPhase", 0);
                 if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-                  globalScene.phaseManager.pushNew("SummonPhase", 1, true, false, checkSwitch);
+                  globalScene.phaseManager.pushNew("SummonPhase", 1);
+                }
+                if (
+                  globalScene.currentBattle.waveIndex > 1
+                  && globalScene.currentBattle.battleType !== BattleType.TRAINER
+                ) {
+                  globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
+                  if (globalScene.currentBattle.double && availablePartyMembers > 1) {
+                    globalScene.phaseManager.pushNew("CheckSwitchPhase", 1, globalScene.currentBattle.double);
+                  }
                 }
 
                 globalScene.ui.fadeIn(1250);
@@ -206,7 +213,11 @@ export class GameOverPhase extends BattlePhase {
           if (this.isVictory && globalScene.gameMode.isClassic) {
             const dialogueKey = "miscDialogue:ending";
 
-            if (!globalScene.ui.shouldSkipDialogue(dialogueKey)) {
+            if (globalScene.ui.shouldSkipDialogue(dialogueKey)) {
+              const endCardPhase = globalScene.phaseManager.create("EndCardPhase");
+              globalScene.phaseManager.unshiftPhase(endCardPhase);
+              clear(endCardPhase);
+            } else {
               globalScene.ui.fadeIn(500).then(() => {
                 const genderIndex = globalScene.gameData.gender ?? PlayerGender.UNSET;
                 const genderStr = PlayerGender[genderIndex].toLowerCase();
@@ -236,10 +247,6 @@ export class GameOverPhase extends BattlePhase {
                     );
                   });
               });
-            } else {
-              const endCardPhase = globalScene.phaseManager.create("EndCardPhase");
-              globalScene.phaseManager.unshiftPhase(endCardPhase);
-              clear(endCardPhase);
             }
           } else {
             clear();

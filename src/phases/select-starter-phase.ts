@@ -56,7 +56,7 @@ export class SelectStarterPhase extends Phase {
       }
 
       let starterGender =
-        species.malePercent !== null ? (!starter.female ? Gender.MALE : Gender.FEMALE) : Gender.GENDERLESS;
+        species.malePercent !== null ? (starter.female ? Gender.FEMALE : Gender.MALE) : Gender.GENDERLESS;
       if (Overrides.GENDER_OVERRIDE !== null) {
         starterGender = Overrides.GENDER_OVERRIDE;
       }
@@ -71,7 +71,9 @@ export class SelectStarterPhase extends Phase {
         starter.ivs,
         starter.nature,
       );
-      starter.moveset && starterPokemon.tryPopulateMoveset(starter.moveset);
+      if (starter.moveset) {
+        starterPokemon.tryPopulateMoveset(starter.moveset);
+      }
       if (starter.passive) {
         starterPokemon.passive = true;
       }

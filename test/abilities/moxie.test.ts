@@ -5,7 +5,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Moxie", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +15,6 @@ describe("Abilities - Moxie", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -49,25 +45,21 @@ describe("Abilities - Moxie", () => {
   });
 
   // TODO: Activate this test when MOXIE is corrected to work on faint and not on battle victory
-  it.todo(
-    "should raise ATK stat stage by 1 when defeating an ally Pokemon",
-    async () => {
-      game.override.battleStyle("double");
-      const moveToUse = MoveId.AERIAL_ACE;
-      await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.MIGHTYENA]);
+  it.todo("should raise ATK stat stage by 1 when defeating an ally Pokemon", async () => {
+    game.override.battleStyle("double");
+    const moveToUse = MoveId.AERIAL_ACE;
+    await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.MIGHTYENA]);
 
-      const [firstPokemon, secondPokemon] = game.scene.getPlayerField();
+    const [firstPokemon, secondPokemon] = game.scene.getPlayerField();
 
-      expect(firstPokemon.getStatStage(Stat.ATK)).toBe(0);
+    expect(firstPokemon.getStatStage(Stat.ATK)).toBe(0);
 
-      secondPokemon.hp = 1;
+    secondPokemon.hp = 1;
 
-      game.move.select(moveToUse, BattlerIndex.PLAYER_2);
+    game.move.select(moveToUse, BattlerIndex.PLAYER_2);
 
-      await game.phaseInterceptor.to("TurnEndPhase");
+    await game.phaseInterceptor.to("TurnEndPhase");
 
-      expect(firstPokemon.getStatStage(Stat.ATK)).toBe(1);
-    },
-    20000,
-  );
+    expect(firstPokemon.getStatStage(Stat.ATK)).toBe(1);
+  }, 20000);
 });

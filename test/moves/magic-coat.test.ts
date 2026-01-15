@@ -10,7 +10,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Magic Coat", () => {
   let phaserGame: Phaser.Game;
@@ -20,10 +20,6 @@ describe("Moves - Magic Coat", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -88,7 +84,7 @@ describe("Moves - Magic Coat", () => {
     game.move.select(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
 
-    const user = game.scene.getPlayerField()[0];
+    const user = game.field.getPlayerPokemon();
     expect(user.getStatStage(Stat.ATK)).toBe(-2);
   });
 
@@ -133,7 +129,7 @@ describe("Moves - Magic Coat", () => {
     await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getEnemyField()[0].getStatStage(Stat.ATK)).toBe(0);
+    expect(game.field.getEnemyPokemon().getStatStage(Stat.ATK)).toBe(0);
   });
 
   // todo while Mirror Armor is not implemented
@@ -219,30 +215,27 @@ describe("Moves - Magic Coat", () => {
   });
 
   // TODO: stomping tantrum should consider moves that were bounced.
-  it.todo(
-    "should properly cause the enemy's stomping tantrum to be doubled in power after bouncing and failing",
-    async () => {
-      game.override.enemyMoveset([MoveId.STOMPING_TANTRUM, MoveId.SPLASH, MoveId.CHARM]);
-      await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
+  it.todo("should properly cause the enemy's stomping tantrum to be doubled in power after bouncing and failing", async () => {
+    game.override.enemyMoveset([MoveId.STOMPING_TANTRUM, MoveId.SPLASH, MoveId.CHARM]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
-      const stomping_tantrum = allMoves[MoveId.STOMPING_TANTRUM];
-      const enemy = game.field.getEnemyPokemon();
-      vi.spyOn(stomping_tantrum, "calculateBattlePower");
+    const stomping_tantrum = allMoves[MoveId.STOMPING_TANTRUM];
+    const enemy = game.field.getEnemyPokemon();
+    vi.spyOn(stomping_tantrum, "calculateBattlePower");
 
-      game.move.select(MoveId.SPORE);
-      await game.move.selectEnemyMove(MoveId.CHARM);
-      await game.phaseInterceptor.to("TurnEndPhase");
-      expect(enemy.getLastXMoves(1)[0].result).toBe("success");
+    game.move.select(MoveId.SPORE);
+    await game.move.selectEnemyMove(MoveId.CHARM);
+    await game.phaseInterceptor.to("TurnEndPhase");
+    expect(enemy.getLastXMoves(1)[0].result).toBe("success");
 
-      await game.phaseInterceptor.to("BerryPhase");
-      expect(stomping_tantrum.calculateBattlePower).toHaveReturnedWith(75);
+    await game.phaseInterceptor.to("BerryPhase");
+    expect(stomping_tantrum.calculateBattlePower).toHaveReturnedWith(75);
 
-      await game.toNextTurn();
-      game.move.select(MoveId.GROWL);
-      await game.phaseInterceptor.to("BerryPhase");
-      expect(stomping_tantrum.calculateBattlePower).toHaveReturnedWith(75);
-    },
-  );
+    await game.toNextTurn();
+    game.move.select(MoveId.GROWL);
+    await game.phaseInterceptor.to("BerryPhase");
+    expect(stomping_tantrum.calculateBattlePower).toHaveReturnedWith(75);
+  });
 
   it("should respect immunities when bouncing a move", async () => {
     vi.spyOn(allMoves[MoveId.THUNDER_WAVE], "accuracy", "get").mockReturnValue(100);

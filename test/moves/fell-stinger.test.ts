@@ -7,7 +7,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Fell Stinger", () => {
   let phaserGame: Phaser.Game;
@@ -17,10 +17,6 @@ describe("Moves - Fell Stinger", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -130,7 +126,7 @@ describe("Moves - Fell Stinger", () => {
 
     await game.classicMode.startBattle([SpeciesId.LEAVANNY]);
     const leadPokemon = game.field.getPlayerPokemon();
-    const leftEnemy = game.scene.getEnemyField()[0]!;
+    const leftEnemy = game.field.getEnemyPokemon();
 
     // Turn 1: set Bind, enemy splashes and does nothing
     game.move.select(MoveId.BIND, 0, leftEnemy.getBattlerIndex());
@@ -153,7 +149,7 @@ describe("Moves - Fell Stinger", () => {
 
     await game.classicMode.startBattle([SpeciesId.LEAVANNY]);
     const leadPokemon = game.field.getPlayerPokemon();
-    const leftEnemy = game.scene.getEnemyField()[0]!;
+    const leftEnemy = game.field.getEnemyPokemon();
 
     // Turn 1: set Leech Seed, enemy splashes and does nothing
     game.move.select(MoveId.LEECH_SEED, 0, leftEnemy.getBattlerIndex());

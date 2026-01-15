@@ -1,8 +1,5 @@
-/** biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports */
 import type { Phase } from "#app/phase";
 import type { GameManager } from "#test/test-utils/game-manager";
-// biome-ignore-end lint/correctness/noUnusedImports: TSDoc
-
 import { isGameManagerInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { PhaseString } from "#types/phase-types";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
@@ -13,7 +10,11 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @param expectedPhase - The expected {@linkcode PhaseString}
  * @returns The result of the matching
  */
-export function toBeAtPhase(this: MatcherState, received: unknown, expectedPhase: PhaseString): SyncExpectationResult {
+export function toBeAtPhase(
+  this: Readonly<MatcherState>,
+  received: unknown,
+  expectedPhase: PhaseString,
+): SyncExpectationResult {
   if (!isGameManagerInstance(received)) {
     return {
       pass: this.isNot,

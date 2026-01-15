@@ -6,7 +6,7 @@ import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Fishious Rend & Bolt Beak", () => {
   let phaserGame: Phaser.Game;
@@ -16,10 +16,6 @@ describe("Moves - Fishious Rend & Bolt Beak", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -97,7 +93,7 @@ describe("Moves - Fishious Rend & Bolt Beak", () => {
   it.each<{ type: string; allyMove: MoveId }>([
     { type: "a Dancer-induced", allyMove: MoveId.FIERY_DANCE },
     { type: "an Instructed", allyMove: MoveId.INSTRUCT },
-  ])("should double power if $type move is used as the target's first action that turn", async ({ allyMove }) => {
+  ])("should not double power if $type move is used as the target's first action that turn", async ({ allyMove }) => {
     game.override.battleStyle("double").enemyAbility(AbilityId.DANCER);
     const powerSpy = vi.spyOn(allMoves[MoveId.FISHIOUS_REND], "calculateBattlePower");
     await game.classicMode.startBattle([SpeciesId.DRACOVISH, SpeciesId.ARCTOZOLT]);

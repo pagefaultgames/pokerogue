@@ -28,6 +28,15 @@ export function getPokemonSpecies(species: SpeciesId | SpeciesId[]): PokemonSpec
 }
 
 /**
+ * Converts the internal id of the Pokemon into its national dex number
+ * @param speciesId - The {@linkcode SpeciesId} to get the dex number of
+ * @returns The national dex number matching the `SpeciesId`
+ */
+export function getDexNumber(speciesId: SpeciesId): SpeciesId {
+  return speciesId % 2000;
+}
+
+/**
  * Method to get the daily list of starters with Pokerus.
  * @returns A list of starters with Pokerus
  */
@@ -118,11 +127,9 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
 }
 
 export function getPokemonSpeciesForm(species: SpeciesId, formIndex: number): PokemonSpeciesForm {
-  const retSpecies: PokemonSpecies =
-    species >= 2000
-      ? allSpecies.find(s => s.speciesId === species)! // TODO: is the bang correct?
-      : allSpecies[species - 1];
-  if (formIndex < retSpecies.forms?.length) {
+  const retSpecies: PokemonSpecies = getPokemonSpecies(species);
+
+  if (formIndex < retSpecies.forms.length) {
     return retSpecies.forms[formIndex];
   }
   return retSpecies;

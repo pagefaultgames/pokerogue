@@ -602,7 +602,7 @@ export class PartyUiHandler extends MessageUiHandler {
           );
         }
         const hasMatchingModifier = matchingModifiers.some(m => m !== undefined); // checks if any items match
-        const partySlot = this.partySlots.filter(m => m.getPokemon() === newPokemon)[0]; // this gets pokemon [p] for us
+        const partySlot = this.partySlots.find(m => m.getPokemon() === newPokemon)!; // this gets pokemon [p] for us
         if (p !== this.transferCursor) {
           // this skips adding the able/not able labels on the pokemon doing the transfer
           if (hasMatchingModifier) {
@@ -1080,11 +1080,10 @@ export class PartyUiHandler extends MessageUiHandler {
 
     // Pressing return button
     if (this.cursor === 6) {
-      if (!this.allowCancel()) {
-        ui.playError();
-      } else {
+      if (this.allowCancel()) {
         return this.processInput(Button.CANCEL);
       }
+      ui.playError();
     }
     return true;
   }
@@ -1289,7 +1288,7 @@ export class PartyUiHandler extends MessageUiHandler {
   showText(
     text: string,
     delay?: number | null,
-    callback?: Function | null,
+    callback?: (() => void) | null,
     callbackDelay?: number | null,
     prompt?: boolean | null,
     promptDelay?: number | null,
@@ -1481,11 +1480,11 @@ export class PartyUiHandler extends MessageUiHandler {
         this.updateOptionsWithRememberMoveModifierMode(pokemon);
         break;
       case PartyUiMode.MODIFIER_TRANSFER:
-        if (!this.transferMode) {
-          this.updateOptionsWithModifierTransferMode(pokemon);
-        } else {
+        if (this.transferMode) {
           this.options.push(PartyOption.TRANSFER);
           this.addCommonOptions(pokemon);
+        } else {
+          this.updateOptionsWithModifierTransferMode(pokemon);
         }
         break;
       case PartyUiMode.DISCARD:
@@ -1515,12 +1514,6 @@ export class PartyUiHandler extends MessageUiHandler {
           );
         }
         this.addCommonOptions(pokemon);
-        if (this.partyUiMode === PartyUiMode.SWITCH) {
-          if (pokemon.isFusion()) {
-            this.options.push(PartyOption.UNSPLICE);
-          }
-          this.options.push(PartyOption.RELEASE);
-        }
         break;
       case PartyUiMode.REVIVAL_BLESSING:
         this.options.push(PartyOption.REVIVE);
@@ -1554,6 +1547,10 @@ export class PartyUiHandler extends MessageUiHandler {
       case PartyUiMode.CHECK:
         this.addCommonOptions(pokemon);
         if (globalScene.phaseManager.getCurrentPhase().is("SelectModifierPhase")) {
+          if (pokemon.isFusion()) {
+            this.options.push(PartyOption.UNSPLICE);
+          }
+          this.options.push(PartyOption.RELEASE);
           const formChangeItemModifiers = this.getFormChangeItemsModifiers(pokemon);
           for (let i = 0; i < formChangeItemModifiers.length; i++) {
             this.options.push(PartyOption.FORM_CHANGE_ITEM + i);
@@ -1577,20 +1574,19 @@ export class PartyUiHandler extends MessageUiHandler {
 
     switch (this.partyUiMode) {
       case PartyUiMode.MODIFIER_TRANSFER:
-        if (!this.transferMode) {
-          this.updateOptionsWithModifierTransferMode(pokemon);
-        } else {
+        if (this.transferMode) {
           this.options.push(PartyOption.TRANSFER);
           this.addCommonOptions(pokemon);
+        } else {
+          this.updateOptionsWithModifierTransferMode(pokemon);
         }
         break;
       case PartyUiMode.DISCARD:
         this.updateOptionsWithModifierTransferMode(pokemon);
         break;
       case PartyUiMode.SWITCH:
-        this.options.push(PartyOption.RELEASE);
-        break;
       case PartyUiMode.RELEASE:
+      case PartyUiMode.CHECK:
         this.options.push(PartyOption.RELEASE);
         break;
     }
