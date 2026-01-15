@@ -1196,8 +1196,9 @@ export class PostDefendHpGatedStatStageChangeAbAttr extends PostDefendAbAttr {
     this.selfTarget = selfTarget;
   }
 
-  // TODO: This should trigger after the final hit of multi-strike moves, which would require an aggregated damage total
-  // across all hits (similar to Wimp Out).
+  // TODO: This should trigger after the final hit of multi-strike moves, which requires an aggregated damage total
+  // across all strikes (similar to Wimp Out).
+  // The structure used for the former can likely be re-used for the latter.
   override canApply({ pokemon, move, damage }: PostMoveInteractionAbAttrParams): boolean {
     if (move.category === MoveCategory.STATUS) {
       return false;
