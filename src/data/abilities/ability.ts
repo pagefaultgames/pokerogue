@@ -1072,10 +1072,11 @@ export class MoveImmunityStatStageChangeAbAttr extends MoveImmunityAbAttr {
 /**
  * Shared parameters for ability attributes that apply an effect after move was used by or against the the user.
  */
+// TODO: Have this take a copy of whatever move-in-flight object is passed around
 export interface PostMoveInteractionAbAttrParams extends AugmentMoveInteractionAbAttrParams {
   /** Stores the hit result of the move used in the interaction */
   readonly hitResult: HitResult;
-  /** The amount of damage dealt in the interaction */
+  /** The amount of damage dealt by the interaction. */
   readonly damage: number;
 }
 
@@ -1121,7 +1122,10 @@ export class ReverseDrainAbAttr extends PostDefendAbAttr {
   }
 }
 
+// TODO: Move `allOthers` to its own attribute class
+
 export class PostDefendStatStageChangeAbAttr extends PostDefendAbAttr {
+  // TODO: Review what conditions are actually used and whether they can be consolidated into the main class
   private readonly condition: PokemonDefendCondition;
   private readonly stat: BattleStat;
   private readonly stages: number;
@@ -1178,35 +1182,29 @@ export class PostDefendStatStageChangeAbAttr extends PostDefendAbAttr {
 }
 
 export class PostDefendHpGatedStatStageChangeAbAttr extends PostDefendAbAttr {
-  private readonly condition: PokemonDefendCondition;
   private readonly hpGate: number;
   private readonly stats: readonly BattleStat[];
   private readonly stages: number;
   private readonly selfTarget: boolean;
 
-  constructor(
-    condition: PokemonDefendCondition,
-    hpGate: number,
-    stats: BattleStat[],
-    stages: number,
-    selfTarget = true,
-  ) {
+  constructor(hpGate: number, stats: BattleStat[], stages: number, selfTarget = true) {
     super(true);
 
-    this.condition = condition;
     this.hpGate = hpGate;
     this.stats = stats;
     this.stages = stages;
     this.selfTarget = selfTarget;
   }
 
-  override canApply({ pokemon, opponent: attacker, move }: PostMoveInteractionAbAttrParams): boolean {
-    const hpGateFlat: number = Math.ceil(pokemon.getMaxHp() * this.hpGate);
-    const lastAttackReceived = pokemon.turnData.attacksReceived.at(-1);
-    const damageReceived = lastAttackReceived?.damage ?? 0;
-    return (
-      this.condition(pokemon, attacker, move) && pokemon.hp <= hpGateFlat && pokemon.hp + damageReceived > hpGateFlat
-    );
+  // TODO: This should trigger after the final hit of multi-strike moves, which would require an aggregated damage total
+  // across all hits (similar to Wimp Out).
+  override canApply({ pokemon, move, damage }: PostMoveInteractionAbAttrParams): boolean {
+    if (move.category === MoveCategory.STATUS) {
+      return false;
+    }
+
+    const threshold = toDmgValue(pokemon.getMaxHp() * this.hpGate);
+    return pokemon.hp <= threshold && pokemon.hp + damage > threshold;
   }
 
   override apply({ simulated, pokemon, opponent }: PostMoveInteractionAbAttrParams): void {
@@ -3181,7 +3179,7 @@ export class PostSummonUserFieldRemoveStatusEffectAbAttr extends PostSummonAbAtt
 
   override canApply({ pokemon }: AbAttrBaseParams): boolean {
     const party = pokemon.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
-    return party.filter(p => p.isAllowedInBattle()).length > 0;
+    return party.some(p => p.isAllowedInBattle());
   }
 
   /**
@@ -7686,8 +7684,10 @@ export function initAbilities() {
       .attr(MoveTypePowerBoostAbAttr, PokemonType.STEEL)
       .build(),
     new AbBuilder(AbilityId.BERSERK, 7)
-      .attr(PostDefendHpGatedStatStageChangeAbAttr, (_target, _user, move) => move.category !== MoveCategory.STATUS, 0.5, [ Stat.SPATK ], 1)
+      .attr(PostDefendHpGatedStatStageChangeAbAttr, 0.5, [ Stat.SPATK ], 1)
       .condition(sheerForceHitDisableAbCondition)
+      // Should trigger after the last strike of multi-strike moves, not in the middle
+      .edgeCase()
       .build(),
     new AbBuilder(AbilityId.SLUSH_RUSH, 7)
       .attr(StatMultiplierAbAttr, Stat.SPD, 2)
@@ -8050,9 +8050,11 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.ANGER_SHELL, 9)
-      .attr(PostDefendHpGatedStatStageChangeAbAttr, (_target, _user, move) => move.category !== MoveCategory.STATUS, 0.5, [ Stat.ATK, Stat.SPATK, Stat.SPD ], 1)
-      .attr(PostDefendHpGatedStatStageChangeAbAttr, (_target, _user, move) => move.category !== MoveCategory.STATUS, 0.5, [ Stat.DEF, Stat.SPDEF ], -1)
+      .attr(PostDefendHpGatedStatStageChangeAbAttr, 0.5, [ Stat.ATK, Stat.SPATK, Stat.SPD ], 1)
+      .attr(PostDefendHpGatedStatStageChangeAbAttr, 0.5, [ Stat.DEF, Stat.SPDEF ], -1)
       .condition(sheerForceHitDisableAbCondition)
+      // Should trigger after the last strike of multi-strike moves, not in the middle
+      .edgeCase()
       .build(),
     new AbBuilder(AbilityId.PURIFYING_SALT, 9)
       .attr(StatusEffectImmunityAbAttr)

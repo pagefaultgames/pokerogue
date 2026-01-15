@@ -1,3 +1,4 @@
+import type { PostMoveInteractionAbAttrParams } from "#abilities/ability";
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -851,7 +852,14 @@ export class MoveEffectPhase extends PokemonPhase {
     damage: number,
     wasCritical = false,
   ): void {
-    const params = { pokemon: target, opponent: user, move: this.move, hitResult, damage };
+    const { move } = this;
+    const params: PostMoveInteractionAbAttrParams = {
+      pokemon: target,
+      opponent: user,
+      move,
+      hitResult,
+      damage,
+    };
     applyAbAttrs("PostDefendAbAttr", params);
 
     if (wasCritical) {
