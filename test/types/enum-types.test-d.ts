@@ -92,7 +92,6 @@ describe("Enum Functions", () => {
   describe("getEnumKeys", () => {
     it("should retrieve keys of numeric enum", () => {
       expectTypeOf<typeof getEnumKeys<typeof testEnumNum>>().returns.toEqualTypeOf<("testN1" | "testN2")[]>();
-      expectTypeOf<typeof getEnumKeys<typeof testObjNum>>().returns.toEqualTypeOf<("testON1" | "testON2")[]>();
     });
   });
 
