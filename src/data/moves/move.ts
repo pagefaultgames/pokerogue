@@ -4831,8 +4831,9 @@ export class FriendshipPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
     const power = args[0] as NumberHolder;
 
+    const useUserFriendship = user.isPlayer() || user.hasTrainer();
     const friendshipPower = Math.floor(
-      Math.min(user.isPlayer() ? user.friendship : user.species.baseFriendship, 255) / 2.5,
+      Math.min(useUserFriendship ? user.friendship : user.species.baseFriendship, 255) / 2.5,
     );
     power.value = Math.max(this.invert ? 102 - friendshipPower : friendshipPower, 1);
 
