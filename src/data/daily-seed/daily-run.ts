@@ -45,7 +45,7 @@ export function getDailyRunStarters(): StarterTuple {
       for (const cost of starterCosts) {
         const costSpecies = Object.keys(speciesStarterCosts)
           .map(s => Number.parseInt(s) as SpeciesId) // TODO: Remove
-          .filter(s => speciesStarterCosts[s] === cost);
+          .filter(s => speciesStarterCosts[s] === cost && !starters.some(st => st.speciesId === s));
         const randPkmSpecies = getPokemonSpecies(randSeedItem(costSpecies));
         const starterSpecies = getPokemonSpecies(
           randPkmSpecies.getTrainerSpeciesForLevel(
