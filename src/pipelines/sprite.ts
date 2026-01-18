@@ -62,11 +62,11 @@ export class SpritePipeline extends FieldSpritePipeline {
       position[1] += field.y / field.scale;
     }
     position[0] +=
-      -(sprite.width - sprite.frame.width) / 2 + sprite.frame.x + (!ignoreFieldPos ? sprite.x - field.x : 0);
+      -(sprite.width - sprite.frame.width) / 2 + sprite.frame.x + (ignoreFieldPos ? 0 : sprite.x - field.x);
     if (sprite.originY === 0.5) {
       position[1] +=
         (sprite.height / 2) * ((isEntityObj ? sprite.parentContainer : sprite).scale - 1)
-        + (!ignoreFieldPos ? sprite.y - field.y : 0);
+        + (ignoreFieldPos ? 0 : sprite.y - field.y);
     }
     this.set1f("teraTime", (this.game.getTime() % 500000) / 500000);
     this.set3fv(
@@ -205,7 +205,8 @@ export class SpritePipeline extends FieldSpritePipeline {
       const baseY = ((isEntityObj ? sprite.parentContainer.y : sprite.y + sprite.height) * 6) / fieldScaleRatio;
       const bottomPadding = (Math.ceil(sprite.height * 0.05 + Math.max(yShadowOffset, 0)) * 6) / fieldScaleRatio;
       const yDelta = (baseY - y1) / field.scale;
-      y2 = y1 = baseY + bottomPadding;
+      y1 = baseY + bottomPadding;
+      y2 = y1;
       const pixelHeight =
         (v1 - v0) / (sprite.frame.height * (isEntityObj ? sprite.parentContainer.scale : sprite.scale));
       v1 += (yDelta + bottomPadding / field.scale) * pixelHeight;

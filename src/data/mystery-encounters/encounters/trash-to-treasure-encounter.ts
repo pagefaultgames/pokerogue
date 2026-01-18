@@ -26,9 +26,9 @@ import {
 import { applyModifierTypeToPlayerPokemon } from "#mystery-encounters/encounter-pokemon-utils";
 import { type MysteryEncounter, MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
-import i18next from "#plugins/i18n";
 import { randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import i18next from "i18next";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/trashToTreasure";
@@ -131,8 +131,9 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
     // Load animations/sfx for Garbodor fight start moves
     loadCustomMovesForEncounter([MoveId.TOXIC, MoveId.STOCKPILE]);
 
-    globalScene.loadSe("PRSFX- Dig2", "battle_anims", "PRSFX- Dig2.wav");
-    globalScene.loadSe("PRSFX- Venom Drench", "battle_anims", "PRSFX- Venom Drench.wav");
+    globalScene
+      .loadSe("PRSFX- Dig2", "battle_anims", "PRSFX- Dig2.wav")
+      .loadSe("PRSFX- Venom Drench", "battle_anims", "PRSFX- Venom Drench.wav");
 
     encounter.setDialogueToken("costMultiplier", SHOP_ITEM_COST_MULTIPLIER.toString());
 

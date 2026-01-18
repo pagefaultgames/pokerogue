@@ -135,9 +135,9 @@ export function randSeedItem<T>(items: ArrayLike<T>): T {
 }
 
 /**
- * Shuffle a list in place using the seeded rng and the Fisher-Yates algorithm.
- * @param items - An array of items.
- * @returns The same `items` array, now shuffled in place.
+ * Shuffle an array using seeded RNG via the Fisher-Yates algorithm.
+ * @param items - The array to shuffle; will be mutated
+ * @returns A reference to the same `items` array, now shuffled in place.
  */
 export function randSeedShuffle<T>(items: T[]): T[] {
   for (let i = items.length - 1; i > 0; i--) {
@@ -147,8 +147,16 @@ export function randSeedShuffle<T>(items: T[]): T[] {
   return items;
 }
 
+const FPS = 60;
+const MILLISECONDS_PER_FRAME = 1000 / FPS;
+
+/**
+ * Convert a frame count into a millisecond duration for Phaser.
+ * @param frameCount - The desired number of frames
+ * @returns The duration of `frameCount` in milliseconds, assuming constant frame rate.
+ */
 export function getFrameMs(frameCount: number): number {
-  return Math.floor((1 / 60) * 1000 * frameCount);
+  return Math.floor(MILLISECONDS_PER_FRAME * frameCount);
 }
 
 export function getCurrentTime(): number {
@@ -264,8 +272,8 @@ export function formatStat(stat: number, forHp = false): string {
   return formatLargeNumber(stat, forHp ? 100_000 : 1_000_000);
 }
 
-export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T | null> {
-  return condition ? promiseFunc() : new Promise<T | null>(resolve => resolve(null));
+export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T | undefined> {
+  return condition ? promiseFunc() : Promise.resolve(undefined);
 }
 
 export const sessionIdKey = "pokerogue_sessionId";
@@ -413,8 +421,11 @@ export function hasAllLocalizedSprites(lang?: string): boolean {
     case "ja":
     case "ca":
     case "ru":
+    case "id":
+    case "hi":
     case "tl":
     case "nb-NO":
+    case "sv":
       return true;
     default:
       return false;
