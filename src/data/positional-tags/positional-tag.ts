@@ -155,8 +155,8 @@ export class WishTag extends PositionalTag implements WishArgs {
   }
 
   public override trigger(): void {
-    // TODO: Rename this locales key - wish shows a message on REMOVAL, not addition
-    // TODO: What messages does Wish show when healing a Pokemon at full HP?
+    // TODO: Rename this locales key later - wish shows a message on REMOVAL, not addition
+    // (and is emphatically not an arena tag anymore)
     globalScene.phaseManager.unshiftNew("PokemonHealPhase", this.targetIndex, this.healHp, {
       message: i18next.t("arenaTag:wishTagOnAdd", {
         pokemonNameWithAffix: this.pokemonName,
