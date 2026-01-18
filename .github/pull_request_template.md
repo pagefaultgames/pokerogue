@@ -26,7 +26,7 @@ fix(move): Future Sight no longer crashes
 Summarize the changes from a user perspective on the application.
 Try to keep this section (relatively) brief as it is used to generate changelogs.
 
-PRs with no user-facing changes should instead write "N/A" or similar to be ommitted from auto-generated changelogs.
+PRs with no user-facing changes should instead write "N/A" to be ommitted from auto-generated changelogs.
 -->
 
 ## Why am I making these changes?
