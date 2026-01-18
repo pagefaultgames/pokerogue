@@ -5,6 +5,22 @@ Open-source contributions like yours are what keep this project going.
 Note that these comment blocks are purely informative and can be removed once you're done reading them.
 -->
 
+<!--
+Make sure your title matches the https://www.conventionalcommits.org/en/v1.0.0/ format.
+Attempt to make the title no longer than 72 characters (GitHub cuts off commit titles longer than this length).
+
+See https://github.com/pagefaultgames/pokerogue/blob/beta/CONTRIBUTING.md#-submitting-a-pull-request
+for more information on the allowed scopes and prefixes.
+
+Example:
+fix(move): Future Sight no longer crashes
+^   ^      ^
+|   |      |__ Subject
+|   |_________ Scope (optional)
+|_____________ Prefix
+-->
+
+
 ## What are the changes the user will see?
 <!--
 Summarize the changes from a user perspective on the application.
@@ -63,7 +79,7 @@ Please ensure the following requirements are all met before creating your PR.
 If this is not the case, consider [marking the PR as a draft](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/changing-the-stage-of-a-pull-request) until all bullets have been resolved.
 
 If an item or category isn't valid for the particular changes being made (for example, you didn't make any locales changes)
-you can strike out with the `~` character to mark them as not applicable.
+you can strike it out with the `~` character to mark them as not applicable.
 -->
 
 - [ ] The PR is correctly formatted
