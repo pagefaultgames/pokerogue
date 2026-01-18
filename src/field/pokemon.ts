@@ -4427,7 +4427,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * or `undefined` if no applicable moves have been used since switching in.
    */
   public getLastNonVirtualMove(ignoreStruggle = false, ignoreFollowUp = true): TurnMove | undefined {
-    return this.summonData.moveHistory.findLast(
+    return this.getMoveHistory().findLast(
       m =>
         m.move !== MoveId.NONE
         && (!ignoreStruggle || m.move !== MoveId.STRUGGLE)
