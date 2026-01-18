@@ -3910,7 +3910,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns The actual damage dealt
    */
   // TODO: Rework this to not use a dummy `ignoreSegments` parameter that is only used by a superclass
-  // TODO: This should ostensibly be private, but Pain Split still uses it for whatever reason...
+  // TODO: Remove uses of this outside of the `Pokemon` class and subclasses and change to `protected`
+  // Known violators: Pain Split, Status effect code
   damage(damage: number, _ignoreSegments = false, preventEndure = false, ignoreFaintPhase = false): number {
     if (this.isFainted()) {
       return 0;
