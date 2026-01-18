@@ -17,6 +17,10 @@
     {
       "tagName": "@interface",
       "syntaxKind": "modifier"
+    },
+    {
+      "tagName": "@package",
+      "syntaxKind": "modifier"
     }
   ]
 }

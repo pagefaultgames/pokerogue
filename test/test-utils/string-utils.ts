@@ -237,7 +237,7 @@ export function getStatName(s: Stat): string {
  * const diff = getOnelineDiffStr.call(this, obj)
  * ```
  */
-export function getOnelineDiffStr(this: MatcherState, obj: unknown): string {
+export function getOnelineDiffStr(this: Readonly<MatcherState>, obj: unknown): string {
   return this.utils
     .stringify(obj, undefined, { maxLength: 35, indent: 0, printBasicPrototype: false })
     .replace(/\n/g, " ") // Replace newlines with spaces

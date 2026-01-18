@@ -23,13 +23,26 @@
       "ESNext.Iterator",
       "ESNext.Collection"
     ],
-    "skipLibCheck": true, // Safe and almost always beneficial
+    // Skip typechecking `.d.ts` files for a ~20% speed boost
+    // Won't be necessary if https://github.com/microsoft/TypeScript/issues/30511 is ever resolved
+    "skipLibCheck": true,
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "strictNullChecks": true,
     "sourceMap": false,
     "strict": false, // TODO: Enable this eventually
+    "strictNullChecks": true,
+    "strictBindCallApply": true,
+    "strictBuiltinIteratorReturn": true,
+    "strictFunctionTypes": true,
+    // TODO: Enable this when possible
+    "strictPropertyInitialization": false,
+    // TODO: Enable this when possible.
+    "noImplicitAny": false,
+    "noImplicitThis": true,
+    // Even with strict mode on, this is not useful as we do not throw non Errors,
+    // and it just makes it more cumbersome to catch errors.
+    "useUnknownInCatchVariables": false,
     "rootDir": ".",
     "outDir": "./build",
     "noEmit": true,
@@ -77,6 +90,6 @@
     }
   },
   // Exclude checking for script JS files as those are covered by the folder's `jsconfig.json`
-  "include": ["**/*.ts", "**/*.d.ts"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["**/*.ts", "**/*.d.ts", "**/*.mts"],
+  "exclude": ["dist", "node_modules"]
 }

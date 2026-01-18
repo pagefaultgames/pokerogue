@@ -67,6 +67,7 @@ import { BooleanHolder, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, 
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
+import type { NonEmptyTuple } from "type-fest";
 
 //#region Bit sets
 /** Bit set for an ability's `bypass faint` flag */
@@ -1777,53 +1778,65 @@ export interface MoveTypeChangeAbAttrParams extends AugmentMoveInteractionAbAttr
   // TODO: Replace the number holder with a holder for the type.
   /** Holds the type of the move, which may change after ability application */
   moveType: NumberHolder;
-  /** Holds the power of the move, which may change after ability application */
-  power: NumberHolder;
 }
+
+/**
+ * Condition function checking whether a move can have its type changed by an ability.
+ * - Variable-type moves (e.g. {@linkcode MoveId.MULTI_ATTACK}) can't have their type changed.
+ * - Tera-based moves can't have their type changed if the move's type would be changed due to the user being Terastallized.
+ * @returns Whether the move can have its type changed by an ability
+ * @remarks
+ * Used for {@link https://bulbapedia.bulbagarden.net/wiki/Normalize_(Ability) | Normalize}
+ * and as part of the conditions for similar type-changing abilities
+ */
+const anyTypeMoveConversionCondition: PokemonAttackCondition = (user, _target, move) => {
+  if (noAbilityTypeOverrideMoves.has(move.id)) {
+    return false;
+  }
+
+  if (!user.isTerastallized) {
+    return true;
+  }
+
+  if (move.id === MoveId.TERA_BLAST) {
+    return false;
+  }
+  if (
+    move.id === MoveId.TERA_STARSTORM
+    && user.getTeraType() === PokemonType.STELLAR
+    && user.hasSpecies(SpeciesId.TERAPAGOS)
+  ) {
+    return false;
+  }
+
+  return true;
+};
+
+/**
+ * Similar to {@linkcode anyTypeMoveConversionCondition}, except that the given move must also be Normal-type.
+ * @remarks
+ * Used for {@link https://bulbapedia.bulbagarden.net/wiki/Pixilate_(Ability) | Pixilate} et al.
+ */
+const normalTypeMoveConversionCondition: PokemonAttackCondition = (user, target, move) =>
+  move.type === PokemonType.NORMAL && anyTypeMoveConversionCondition(user, target, move);
 
 export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
   private readonly newType: PokemonType;
-  private readonly powerMultiplier: number;
-  private readonly condition?: PokemonAttackCondition;
+  private readonly condition: PokemonAttackCondition;
 
-  constructor(
-    newType: PokemonType,
-    powerMultiplier: number,
-    // TODO: all moves with this attr solely check the move being used...
-    condition?: PokemonAttackCondition,
-  ) {
+  constructor(newType: PokemonType, condition: PokemonAttackCondition) {
     super(false);
+
     this.newType = newType;
-    this.powerMultiplier = powerMultiplier;
     this.condition = condition;
   }
 
-  /**
-   * Determine if the move type change attribute can be applied.
-   *
-   * Can be applied if:
-   * - The ability's condition is met, e.g. pixilate only boosts normal moves,
-   * - The move is not forbidden from having its type changed by an ability, e.g. {@linkcode MoveId.MULTI_ATTACK}
-   * - The user is not Terastallized and using Tera Blast
-   * - The user is not a Terastallized Terapagos using Stellar-type Tera Starstorm
-   */
-  override canApply({ pokemon, opponent: target, move }: MoveTypeChangeAbAttrParams): boolean {
-    return (
-      (!this.condition || this.condition(pokemon, target, move))
-      && !noAbilityTypeOverrideMoves.has(move.id)
-      && !(
-        pokemon.isTerastallized
-        && (move.id === MoveId.TERA_BLAST
-          || (move.id === MoveId.TERA_STARSTORM
-            && pokemon.getTeraType() === PokemonType.STELLAR
-            && pokemon.hasSpecies(SpeciesId.TERAPAGOS)))
-      )
-    );
+  override canApply({ pokemon, opponent, move }: MoveTypeChangeAbAttrParams): boolean {
+    return this.condition(pokemon, opponent, move);
   }
 
-  override apply({ moveType, power }: MoveTypeChangeAbAttrParams): void {
+  override apply({ moveType }: MoveTypeChangeAbAttrParams): void {
     moveType.value = this.newType;
-    power.value *= this.powerMultiplier;
   }
 }
 
@@ -2706,9 +2719,6 @@ export abstract class PostSummonAbAttr extends AbAttr {
     return true;
   }
 
-  /**
-   * Applies ability post summon (after switching in)
-   */
   apply(_params: Closed<AbAttrBaseParams>): void {}
 }
 
@@ -2716,32 +2726,32 @@ export abstract class PostSummonAbAttr extends AbAttr {
  * Base class for ability attributes which remove an effect on summon
  */
 export abstract class PostSummonRemoveEffectAbAttr extends PostSummonAbAttr {}
-
 /**
- * Removes specified arena tags when a Pokemon is summoned.
+ * Attribute to remove the specified arena tags when a Pokemon is summoned.
  */
 export class PostSummonRemoveArenaTagAbAttr extends PostSummonAbAttr {
-  private readonly arenaTags: readonly ArenaTagType[];
+  /**
+   * The arena tags that this attribute should remove.
+   */
+  private readonly arenaTags: NonEmptyTuple<ArenaTagType>;
 
   /**
-   * @param arenaTags - The arena tags to be removed
+   * @param tagTypes - The arena tags that this attribute should remove
    */
-  constructor(arenaTags: readonly ArenaTagType[]) {
+  constructor(tagTypes: NonEmptyTuple<ArenaTagType>) {
     super(true);
-
-    this.arenaTags = arenaTags;
+    this.arenaTags = tagTypes;
   }
 
   override canApply(_params: AbAttrBaseParams): boolean {
-    return globalScene.arena.tags.some(tag => this.arenaTags.includes(tag.tagType));
+    return globalScene.arena.hasTag(this.arenaTags);
   }
 
   override apply({ simulated }: AbAttrBaseParams): void {
-    if (!simulated) {
-      for (const arenaTag of this.arenaTags) {
-        globalScene.arena.removeTag(arenaTag);
-      }
+    if (simulated) {
+      return;
     }
+    globalScene.arena.removeTagsOnSide(this.arenaTags, ArenaTagSide.BOTH);
   }
 }
 
@@ -7207,7 +7217,8 @@ export function initAbilities() {
       .conditionalAttr(pokemon => !!pokemon.status || pokemon.hasAbility(AbilityId.COMATOSE), StatMultiplierAbAttr, Stat.SPD, 1.5)
       .build(),
     new AbBuilder(AbilityId.NORMALIZE, 4)
-      .attr(MoveTypeChangeAbAttr, PokemonType.NORMAL, 1.2)
+      .attr(MoveTypeChangeAbAttr, PokemonType.NORMAL, anyTypeMoveConversionCondition)
+      .attr(MovePowerBoostAbAttr, anyTypeMoveConversionCondition, 1.2)
       .build(),
     new AbBuilder(AbilityId.SNIPER, 4)
       .attr(MultCritAbAttr, 1.5)
@@ -7555,7 +7566,8 @@ export function initAbilities() {
       .attr(MovePowerBoostAbAttr, (_user, _target, move) => move.hasFlag(MoveFlags.BITING_MOVE), 1.5)
       .build(),
     new AbBuilder(AbilityId.REFRIGERATE, 6)
-      .attr(MoveTypeChangeAbAttr, PokemonType.ICE, 1.2, (_user, _target, move) => move.type === PokemonType.NORMAL)
+      .attr(MoveTypeChangeAbAttr, PokemonType.ICE, normalTypeMoveConversionCondition)
+      .attr(MovePowerBoostAbAttr, normalTypeMoveConversionCondition, 1.2)
       .build(),
     new AbBuilder(AbilityId.SWEET_VEIL, 6)
       .attr(UserFieldStatusEffectImmunityAbAttr, StatusEffect.SLEEP)
@@ -7587,14 +7599,16 @@ export function initAbilities() {
       .attr(MovePowerBoostAbAttr, (_user, _target, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), 1.3)
       .build(),
     new AbBuilder(AbilityId.PIXILATE, 6)
-      .attr(MoveTypeChangeAbAttr, PokemonType.FAIRY, 1.2, (_user, _target, move) => move.type === PokemonType.NORMAL)
+      .attr(MoveTypeChangeAbAttr, PokemonType.FAIRY, normalTypeMoveConversionCondition)
+      .attr(MovePowerBoostAbAttr, normalTypeMoveConversionCondition, 1.2)
       .build(),
     new AbBuilder(AbilityId.GOOEY, 6)
       .attr(PostDefendStatStageChangeAbAttr, (_target, _user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), Stat.SPD, -1, false)
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.AERILATE, 6)
-      .attr(MoveTypeChangeAbAttr, PokemonType.FLYING, 1.2, (_user, _target, move) => move.type === PokemonType.NORMAL)
+      .attr(MoveTypeChangeAbAttr, PokemonType.FLYING, normalTypeMoveConversionCondition)
+      .attr(MovePowerBoostAbAttr, normalTypeMoveConversionCondition, 1.2)
       .build(),
     new AbBuilder(AbilityId.PARENTAL_BOND, 6)
       .attr(AddSecondStrikeAbAttr)
@@ -7699,13 +7713,18 @@ export function initAbilities() {
       .attr(IgnoreContactAbAttr)
       .build(),
     new AbBuilder(AbilityId.LIQUID_VOICE, 7)
-      .attr(MoveTypeChangeAbAttr, PokemonType.WATER, 1, (_user, _target, move) => move.hasFlag(MoveFlags.SOUND_BASED))
+      .attr(
+        MoveTypeChangeAbAttr,
+        PokemonType.WATER,
+        (user, target, move) => move.hasFlag(MoveFlags.SOUND_BASED) && anyTypeMoveConversionCondition(user, target, move)
+      )
       .build(),
     new AbBuilder(AbilityId.TRIAGE, 7)
       .attr(ChangeMovePriorityAbAttr, (_pokemon, move) => move.hasFlag(MoveFlags.TRIAGE_MOVE), 3)
       .build(),
     new AbBuilder(AbilityId.GALVANIZE, 7)
-      .attr(MoveTypeChangeAbAttr, PokemonType.ELECTRIC, 1.2, (_user, _target, move) => move.type === PokemonType.NORMAL)
+      .attr(MoveTypeChangeAbAttr, PokemonType.ELECTRIC, normalTypeMoveConversionCondition)
+      .attr(MovePowerBoostAbAttr, normalTypeMoveConversionCondition, 1.2)
       .build(),
     new AbBuilder(AbilityId.SURGE_SURFER, 7)
       .conditionalAttr(getTerrainCondition(TerrainType.ELECTRIC), StatMultiplierAbAttr, Stat.SPD, 2)

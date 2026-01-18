@@ -10,7 +10,7 @@ import { GameManager } from "#test/test-utils/game-manager";
 import { toDmgValue } from "#utils/common";
 import i18next from "i18next";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Move - Wish", () => {
   let phaserGame: Phaser.Game;
@@ -20,10 +20,6 @@ describe("Move - Wish", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -54,7 +50,7 @@ describe("Move - Wish", () => {
     game.doSwitchPokemon(1);
     await game.toEndOfTurn();
 
-    expect(game).toHavePositionalTag(PositionalTagType.WISH, 0);
+    expect(game).not.toHavePositionalTag(PositionalTagType.WISH);
     expect(game).toHaveShownMessage(
       i18next.t("arenaTag:wishTagOnAdd", {
         pokemonNameWithAffix: getPokemonNameWithAffix(alomomola),
@@ -133,7 +129,7 @@ describe("Move - Wish", () => {
     await game.phaseInterceptor.to("PositionalTagPhase");
 
     // all wishes have activated and added healing phases
-    expect(game).toHavePositionalTag(PositionalTagType.WISH, 0);
+    expect(game).not.toHavePositionalTag(PositionalTagType.WISH);
 
     const healPhases = game.scene.phaseManager["phaseQueue"].findAll("PokemonHealPhase");
     expect(healPhases).toHaveLength(4);
@@ -164,7 +160,7 @@ describe("Move - Wish", () => {
     await game.toEndOfTurn();
 
     // Wish went away without doing anything
-    expect(game).toHavePositionalTag(PositionalTagType.WISH, 0);
+    expect(game).not.toHavePositionalTag(PositionalTagType.WISH);
     expect(game).not.toHaveShownMessage(
       i18next.t("arenaTag:wishTagOnAdd", {
         pokemonNameWithAffix: getPokemonNameWithAffix(blissey),

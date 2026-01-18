@@ -13,6 +13,7 @@ export class PositionalTagManager {
 
   /**
    * Add a new {@linkcode PositionalTag} to the arena.
+   * @param tag - The parameters required to construct the given tag.
    * @remarks
    * This function does not perform any checking if the added tag is valid.
    */

@@ -843,7 +843,7 @@ export class RunInfoUiHandler extends UiHandler {
         shinyStar.setOrigin(0, 0);
         shinyStar.setScale(0.65);
         shinyStar.setPositionRelative(pokeInfoTextContainer, 28, 0);
-        shinyStar.setTint(getVariantTint(!doubleShiny ? pokemon.getVariant() : pokemon.variant));
+        shinyStar.setTint(getVariantTint(doubleShiny ? pokemon.variant : pokemon.getVariant()));
         marksContainer.add(shinyStar);
         this.getUi().bringToTop(shinyStar);
         if (doubleShiny) {
@@ -956,7 +956,7 @@ export class RunInfoUiHandler extends UiHandler {
    * False -> Shows the Pokemon's held items and hides default information
    */
   private showParty(partyVisible: boolean): void {
-    const allContainers = this.partyContainer.getAll("name", "PkmnInfo");
+    const allContainers = this.partyContainer.getAll<Phaser.GameObjects.Container>("name", "PkmnInfo");
     allContainers.forEach((c: Phaser.GameObjects.Container) => {
       c.getByName<Phaser.GameObjects.Container>("PkmnMoves").setVisible(partyVisible);
       c.getByName<Phaser.GameObjects.Container>("PkmnInfoText").setVisible(partyVisible);
@@ -1140,12 +1140,12 @@ export class RunInfoUiHandler extends UiHandler {
         break;
       case Button.CYCLE_SHINY:
         if (this.isVictory && this.pageMode !== RunInfoUiMode.ENDING_ART) {
-          if (!this.hallofFameContainer.visible) {
-            this.hallofFameContainer.setVisible(true);
-            this.pageMode = RunInfoUiMode.HALL_OF_FAME;
-          } else {
+          if (this.hallofFameContainer.visible) {
             this.hallofFameContainer.setVisible(false);
             this.pageMode = RunInfoUiMode.MAIN;
+          } else {
+            this.hallofFameContainer.setVisible(true);
+            this.pageMode = RunInfoUiMode.HALL_OF_FAME;
           }
         }
         break;
