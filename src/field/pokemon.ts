@@ -4406,7 +4406,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Callers that want to obtain the last move actually _executed_ (i.e. selected from the user's moveset)
    * should use {@linkcode getLastNonVirtualMove} instead.
    */
-  // TODO: Most of the time, callers either pass 1 or -1; review whether we need to even allow other values
   // TODO: Most moves accessing this can be reworked to use the current "move in flight" once implemented
   public getLastXMoves(moveCount = 1): readonly TurnMove[] {
     const hist = this.getMoveHistory().toReversed();
