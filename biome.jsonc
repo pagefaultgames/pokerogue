@@ -27,6 +27,7 @@
       "**",
       "!.github/**/*.*", // workaround due to bug/design limitation, should be `"!.github"`
       ".github/**/*.ts",
+      ".github/**/*.mts",
       "!!assets",
       "!!coverage",
       "!!dist",

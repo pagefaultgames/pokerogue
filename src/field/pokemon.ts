@@ -1,6 +1,7 @@
 import type { Ability, PreAttackModifyDamageAbAttrParams } from "#abilities/ability";
 import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
 import { generateMoveset } from "#app/ai/ai-moveset-gen";
+import type { Battle } from "#app/battle";
 import type { AnySound, BattleScene } from "#app/battle-scene";
 import { EVOLVE_MOVE, PLAYER_PARTY_MAX_SIZE, RARE_CANDY_FRIENDSHIP_CAP, RELEARN_MOVE } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
@@ -5614,7 +5615,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     [this.getSprite(), this.getTintSprite()]
       .filter(s => !!s)
-      .map(s => {
+      .forEach(s => {
         s.pipelineData[`spriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`] = spriteColors;
         s.pipelineData[`fusionSpriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`] =
           fusionSpriteColors;
@@ -5628,37 +5629,34 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Generate a random number using the current battle's seed, or the global seed if `globalScene.currentBattle` is falsy
-   *
-   * @remarks
-   * This calls either {@linkcode BattleScene.randBattleSeedInt}({@linkcode range}, {@linkcode min}) in `src/battle-scene.ts`
-   * which calls {@linkcode Battle.randSeedInt}({@linkcode range}, {@linkcode min}) in `src/battle.ts`
-   * which calls {@linkcode randSeedInt randSeedInt}({@linkcode range}, {@linkcode min}) in `src/utils.ts`,
-   * or it directly calls {@linkcode randSeedInt randSeedInt}({@linkcode range}, {@linkcode min}) in `src/utils.ts` if there is no current battle
-   *
-   * @param range - How large of a range of random numbers to choose from. If {@linkcode range} <= 1, returns {@linkcode min}
-   * @param min - The minimum integer to pick; default `0`
-   * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1)
+   * @param range - How large of a range of random numbers to choose from.
+   * @param min - (Default `0`) The minimum integer to pick
+   * @returns A random integer between `min` and `min + range - 1`
+   * @remarks If `range <= 1`, this returns `min`
+   * @privateRemarks
+   * This calls either {@linkcode BattleScene.randBattleSeedInt}
+   * which calls {@linkcode Battle.randSeedInt}
+   * which calls {@linkcode randSeedInt}, \
+   * or it directly calls {@linkcode randSeedInt} if there is no current battle.
    */
   randBattleSeedInt(range: number, min = 0): number {
     return globalScene.currentBattle ? globalScene.randBattleSeedInt(range, min) : randSeedInt(range, min);
   }
 
   /**
-   * Generate a random number using the current battle's seed, or the global seed if `globalScene.currentBattle` is falsy
+   * Generate a random number within the specified range
    * @param min - The minimum integer to generate
    * @param max - The maximum integer to generate
-   * @returns A random integer between {@linkcode min} and {@linkcode max} (inclusive)
+   * @returns A random integer between `min` and `max` (inclusive)
    */
   randBattleSeedIntRange(min: number, max: number): number {
-    return globalScene.currentBattle ? globalScene.randBattleSeedInt(max - min + 1, min) : randSeedIntRange(min, max);
+    return this.randBattleSeedInt(max - min + 1, min);
   }
 
   /**
    * Causes a Pokemon to leave the field (such as in preparation for a switch out/escape).
-   * @param clearEffects - Indicates if effects should be cleared (true) or passed
-   *    to the next pokemon, such as during a baton pass (false)
-   * @param hideInfo - Indicates if this should also play the animation to hide the Pokemon's
-   * info container.
+   * @param clearEffects - Whether effects should be cleared, or passed to the next pokemon (e.g. due to Baton Pass)
+   * @param hideInfo - Indicates if this should also play the animation to hide the Pokemon's info container
    */
   leaveField(clearEffects = true, hideInfo = true, destroy = false) {
     this.resetSprite();
