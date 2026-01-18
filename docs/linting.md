@@ -57,4 +57,4 @@ A complete list of rules can be found in the [`biome.jsonc`](../biome.jsonc) fil
 > Certain lint rules may be marked as `info` or `warn` to allow for gradual refactoring without blocking development.
 > **Do not write new code that triggers these rules!**
 
-Any questions about linting rules can be brought up in the `#dev-corner` channel in the community Discord.
+Any questions about linting rules can be brought up in the `#pokerogue-dev` channel in the community Discord.
