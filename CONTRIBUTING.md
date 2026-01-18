@@ -93,7 +93,6 @@ Also under issues, you can take a look at the [List of Partial / Unimplemented M
 
 You are free to comment on any issue so that you may be assigned to it and we can avoid multiple people working on the same thing.
 
-
 ## 📚 Documentation
 
 You can find the auto-generated documentation [here](https://pagefaultgames.github.io/pokerogue/main/index.html).
@@ -137,9 +136,9 @@ PokéRogue uses [Vitest](https://vitest.dev/) for automated testing. \
 Checking out existing tests in the [test](./test/) folder is a great way to understand how the existing system works, as well as familiarizing yourself with the project as a whole.
 
 #### Writing tests
-Most non-trivial changes (*especially bug fixes*) should come along with new test cases.
+Most non-trivial changes (_especially bug fixes_) should be accompanied by one or more new automated test cases.
 
-To create a new test file, run `pnpm test:create` and follow the prompts. \
+To create a new test file, run `pnpm test:create` and follow the on-screen prompts. \
 If the move/ability/etc. you're modifying already has tests, you can add new cases to the test file or edit existing ones.
 
 - Ensure that new test cases:
@@ -147,12 +146,14 @@ If the move/ability/etc. you're modifying already has tests, you can add new cas
   - Do not test multiple separate things in the same test case. If you have made two distinct changes, they should be tested in two separate cases.
   - Cover as many edge cases as possible. A good strategy is to think of edge cases beforehand and create tests for them using `it.todo`. Once the edge case has been handled, you can remove the `todo` marker.
 
+<!-- TODO: Decide on and suggest a specific placement heiarchy for test cases involving interactions between different moves/abilities/etc. -->
+
 #### Running tests
 To make sure your changes didn't break any existing test cases, run `pnpm test:silent` in your terminal to run the full test suite. \
-You can provide arguments to the command to change its behavior or specify which test files to run;
+You can provide additional arguments to the command to change its behavior or specify which test files to run;
 a full list of supported arguments can be found on [Vitest's website](https://vitest.dev/guide/cli.html).
 
-> [!IMPORTANT]
+> [!CAUTION]
 > Passing all test cases does **not** guarantee that everything is working properly.
 > The project does not have complete regression testing, so manual verification is still advised for most changes.
 
