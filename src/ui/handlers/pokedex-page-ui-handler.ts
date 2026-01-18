@@ -57,7 +57,7 @@ import { addBBCodeTextObject, addTextObject, getTextColor, getTextStyleOptions }
 import { addWindow } from "#ui/ui-theme";
 import { BooleanHolder, getLocalizedSpriteKey, padInt, rgbHexToRgba } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
-import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { getDexNumber, getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
@@ -156,6 +156,10 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: "38px",
   },
   "nb-NO": {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "38px",
+  },
+  sv: {
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
   },
@@ -2253,11 +2257,11 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     this.instructionsContainer.removeAll();
     this.filterInstructionsContainer.removeAll();
 
-    // biome-ignore lint/suspicious/noImplicitAnyLet: TODO
-    let gamepadType;
+    let gamepadType: string;
     if (globalScene.inputMethod === "gamepad") {
       gamepadType = globalScene.inputController.getConfig(
-        globalScene.inputController.selectedDevice[Device.GAMEPAD],
+        // TODO: is this bang safe?
+        globalScene.inputController.selectedDevice[Device.GAMEPAD]!,
       ).padType;
     } else {
       gamepadType = globalScene.inputMethod;
@@ -2310,13 +2314,13 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     const ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = globalScene.add.image(0, 0, "cursor");
-      this.cursorObj.setOrigin(0, 0);
+      this.cursorObj = globalScene.add.image(0, 0, "cursor").setOrigin(0);
       this.menuContainer.add(this.cursorObj);
     }
 
-    this.cursorObj.setScale(this.scale * 6);
-    this.cursorObj.setPositionRelative(this.menuBg, 7, 6 + (18 + this.cursor * 96) * this.scale);
+    this.cursorObj
+      .setScale(this.scale * 6)
+      .setPositionRelative(this.menuBg, 7, 6 + (18 + this.cursor * 96) * this.scale);
 
     const ui = this.getUi();
 
@@ -2401,7 +2405,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     }
 
     if (species && (this.isSeen() || this.isCaught())) {
-      this.pokemonNumberText.setText(padInt(species.speciesId, 4));
+      this.pokemonNumberText.setText(padInt(getDexNumber(species.speciesId), 4));
 
       if (this.isCaught()) {
         const defaultDexAttr = this.getCurrentDexProps(species.speciesId);
@@ -2447,7 +2451,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonSprite.setTint(0x808080);
       }
     } else {
-      this.pokemonNumberText.setText(species ? padInt(species.speciesId, 4) : "");
+      this.pokemonNumberText.setText(species ? padInt(getDexNumber(species.speciesId), 4) : "");
       this.pokemonNameText.setText(species ? "???" : "");
       this.pokemonGrowthRateText.setText("");
       this.pokemonGrowthRateLabelText.setVisible(false);

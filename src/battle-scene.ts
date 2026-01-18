@@ -1,4 +1,5 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import { Animation } from "#app/animations";
 import type { FixedBattleConfig } from "#app/battle";
 import { Battle } from "#app/battle";
 import {
@@ -149,7 +150,6 @@ import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 import Phaser from "phaser";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import type UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 
 export interface PokeballCounts {
   [pb: string]: number;
@@ -163,7 +163,6 @@ export interface InfoToggle {
 }
 
 export class BattleScene extends SceneBase {
-  public rexUI: UIPlugin;
   public inputController: InputsController;
   public uiInputs: UiInputs;
 
@@ -329,6 +328,8 @@ export class BattleScene extends SceneBase {
    */
   public readonly eventTarget: EventTarget = new EventTarget();
 
+  /** A helper class containing several animation-related functions. */
+  public readonly animations: Animation = new Animation();
   declare renderer: Phaser.Renderer.WebGL.WebGLRenderer;
 
   constructor() {
@@ -1061,7 +1062,8 @@ export class BattleScene extends SceneBase {
       fusionIcon.setFrame(fusionIconFrameId);
 
       const frameY = (originalFrame.y + originalFusionFrame.y) / 2;
-      icon.frame.y = fusionIcon.frame.y = frameY;
+      icon.frame.y = frameY;
+      fusionIcon.frame.y = frameY;
 
       container.add(fusionIcon);
 
@@ -1630,6 +1632,8 @@ export class BattleScene extends SceneBase {
       case SpeciesId.POLTCHAGEIST:
       case SpeciesId.SINISTCHA:
         return randSeedInt(16) ? 0 : 1;
+      case SpeciesId.PICHU:
+        return randSeedInt(8) ? 0 : 1;
       case SpeciesId.PIKACHU:
         if (this.currentBattle?.battleType === BattleType.TRAINER && this.currentBattle?.waveIndex < 30) {
           return 0; // Ban Cosplay and Partner Pika from Trainers before wave 30
@@ -3230,14 +3234,14 @@ export class BattleScene extends SceneBase {
     return true;
   }
 
-  validateAchvs(achvType: Constructor<Achv>, ...args: unknown[]): void {
+  validateAchvs<T extends Achv>(achvType: Constructor<T>, ...args: NonNullable<Parameters<T["validate"]>[0]>): void {
     const filteredAchvs = Object.values(achvs).filter(a => a instanceof achvType);
     for (const achv of filteredAchvs) {
       this.validateAchv(achv, args);
     }
   }
 
-  validateAchv(achv: Achv, args?: unknown[]): boolean {
+  validateAchv<T extends Achv>(achv: T, args?: Parameters<T["validate"]>[0]): boolean {
     if (
       (!this.gameData.achvUnlocks.hasOwnProperty(achv.id) || Overrides.ACHIEVEMENTS_REUNLOCK_OVERRIDE)
       && achv.validate(args)
