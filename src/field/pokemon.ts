@@ -3909,7 +3909,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param ignoreFaintPhase - Whether to ignore adding a FaintPhase if this damage causes a faint
    * @returns The actual damage dealt
    */
-  // TODO: Rework this to not use a dummy `ignoreSegments` parameter that is only used by a superclass
+  // TODO: Rework this to use an object for the optional parameters
   // TODO: Remove uses of this outside of the `Pokemon` class and subclasses and change to `protected`
   // Known violators: Pain Split, Status effect code
   damage(damage: number, _ignoreSegments = false, preventEndure = false, ignoreFaintPhase = false): number {
