@@ -23,7 +23,7 @@ concurrency:
 
 env:
   COVERAGE_FILE: coverage/coverage-summary.json
-  SHOULD_UPLOAD_COVERAGE: ${{github.event_name == 'push' && github.ref_name == 'beta'}}
+  SHOULD_UPLOAD_COVERAGE: ${{ github.repository == 'pagefaultgames/pokerogue' && github.ref_name == 'beta' && github.event_name == 'push' }}
 
 jobs:
   check-path-change-filter:
@@ -113,11 +113,11 @@ jobs:
         run: |
           if [ -z "${{ secrets.COVERAGE_GIST_ACCESS_TOKEN }}" ]; then
             printf "COVERAGE_GIST_ACCESS_TOKEN secret is not set!\nAre you trying to run this from inside a fork?"
-            exit 1
+            return 1
           fi
           if [ -z "${{ vars.COVERAGE_BADGE_GIST_ID }}" ]; then
             printf "COVERAGE_BADGE_GIST_ID variable is not set!\nAre you trying to run this from inside a fork?"
-            exit 1
+            return 1
           fi
 
       - name: Update failure README badge
@@ -134,8 +134,20 @@ jobs:
           forceUpdate: true
 
       - name: Extract coverage percentage
-        run: echo "COVERAGE_PERCENTAGE="$(jq '.total.branches.pct' <<< "${{needs.check-results.outputs.coverage_report}}")"" >> $GITHUB_ENV
-        if: ${{ needs.check-results.result == 'success' && success()}}
+        run: echo "COVERAGE_PERCENTAGE=$(jq '.total.branches.pct' <<< '${{needs.check-results.outputs.coverage_report}}')" >> $GITHUB_ENV
+        if: ${{ needs.check-results.result == 'success' && success() }}
+
+      - name: Verify coverage percentage validity
+        run: |
+          if ! [[ '${{ env.COVERAGE_PERCENTAGE}}' =~ ^[0-9]+\.?[0-9]+$ ]]; then
+            printf "COVERAGE_PERCENTAGE env variable (value \"%s\") is not a valid number!\n" '${{ env.COVERAGE_PERCENTAGE}}'
+            return 1
+          fi
+          if ! (( "$(echo "0 <= $COVERAGE_PERCENTAGE <= 100" | bc -l)" )); then
+            printf "COVERAGE_PERCENTAGE env variable (value \"%s\") is not between 0 and 100!\n" '${{ env.COVERAGE_PERCENTAGE}}'
+            return 1
+          fi
+        if: ${{ needs.check-results.result == 'success' && success() }}
 
       - name: Update coverage README badge
         uses: schneegans/dynamic-badges-action@e9a478b16159b4d31420099ba146cdc50f134483 # v1.7.0

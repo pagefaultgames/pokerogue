@@ -8,8 +8,13 @@ import { type MockInstance, vi } from "vitest";
  *
  * @returns A {@linkcode MockInstance} for `i18next.t`
  */
-export function mockI18next(): MockInstance<(typeof i18next)["t"]> {
-  return vi.spyOn(i18next, "t").mockImplementation((key: ParseKeys) => key);
+export function mockI18next() {
+  return (
+    vi
+      .spyOn(i18next, "t")
+      // @ts-expect-error - ignoring type mismatch for mock
+      .mockImplementation((key: ParseKeys) => key)
+  );
 }
 
 /**
