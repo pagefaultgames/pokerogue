@@ -144,7 +144,7 @@ If the move/ability/etc. you're modifying already has tests, you can add new cas
 
 - Ensure that new test cases:
   - Are deterministic. In other words, the test should never pass or fail when it shouldn't due to randomness. Among other things, this involves ensuring that abilities and moves are never randomly selected.
-  - Are unit tests. If you have made two distinct changes, they should be tested in two separate cases.
+  - Do not test multiple separate things in the same test case. If you have made two distinct changes, they should be tested in two separate cases.
   - Cover as many edge cases as possible. A good strategy is to think of edge cases beforehand and create tests for them using `it.todo`. Once the edge case has been handled, you can remove the `todo` marker.
 
 #### Running tests
