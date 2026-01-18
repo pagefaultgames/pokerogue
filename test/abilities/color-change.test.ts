@@ -12,7 +12,7 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Ability - Color Change", () => {
   let phaserGame: Phaser.Game;
@@ -22,10 +22,6 @@ describe("Ability - Color Change", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -51,11 +47,7 @@ describe("Ability - Color Change", () => {
       return;
     }
     expect(enemy).not.toHaveAbilityApplied(AbilityId.COLOR_CHANGE);
-    const enemyBaseTypes: PokemonType[] = [];
-    for (const type of enemy.getTypes(true, true)) {
-      enemyBaseTypes.push(type);
-    }
-    expect(enemy).toHaveTypes(enemyBaseTypes);
+    expect(enemy).toHaveTypes(enemy.getTypes(true, true, true), { mode: "ordered" });
   }
 
   it("should change the pokemon's type to the move's type", async () => {
