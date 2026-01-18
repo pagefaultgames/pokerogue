@@ -10,10 +10,10 @@ import type { TurnMove } from "#types/turn-move";
 interface OldTurnMove {
   move: MoveId;
   targets: BattlerIndex[];
-  result?: MoveResult;
-  turn?: number;
-  virtual?: boolean;
-  ignorePP?: boolean;
+  result?: MoveResult | undefined;
+  turn?: number | undefined;
+  virtual?: boolean | undefined;
+  ignorePP?: boolean | undefined;
 }
 
 /**

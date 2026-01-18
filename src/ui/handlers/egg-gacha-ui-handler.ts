@@ -41,7 +41,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
   private defaultText: string;
 
   /** The tween chain playing the egg drop animation sequence */
-  private eggDropTweenChain?: Phaser.Tweens.TweenChain;
+  private eggDropTweenChain?: Phaser.Tweens.TweenChain | undefined;
 
   private scale = 0.1666666667;
 

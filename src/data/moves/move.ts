@@ -848,8 +848,8 @@ export abstract class Move implements Localizable {
   }: {
     flag: MoveFlags;
     user: Pokemon;
-    target?: Pokemon;
-    isFollowUp?: boolean;
+    target?: Pokemon | undefined;
+    isFollowUp?: boolean | undefined;
   }): boolean {
     // special cases below, eg: if the move flag is MAKES_CONTACT, and the user pokemon has an ability that ignores contact (like "Long Reach"), then overrides and move does not make contact
     switch (flag) {
@@ -1549,7 +1549,7 @@ export class MoveEffectAttr extends MoveAttr {
    * A container for this attribute's optional parameters
    * @see {@linkcode MoveEffectAttrOptions} for supported params.
    */
-  protected options?: MoveEffectAttrOptions;
+  protected options?: MoveEffectAttrOptions | undefined;
 
   constructor(selfTarget?: boolean, options?: MoveEffectAttrOptions) {
     super(selfTarget);
@@ -1942,7 +1942,7 @@ export class MatchHpAttr extends FixedDamageAttr {
 
 export class CounterDamageAttr extends FixedDamageAttr {
   /** The damage category of counter attacks to process, or `undefined` for either */
-  private readonly moveFilter?: MoveDamageCategory;
+  private readonly moveFilter?: MoveDamageCategory | undefined;
   private readonly multiplier: number;
 
   /**
@@ -1951,8 +1951,8 @@ export class CounterDamageAttr extends FixedDamageAttr {
    */
   constructor(multiplier: number, moveFilter?: MoveDamageCategory) {
     super(0);
-    this.moveFilter = moveFilter;
     this.multiplier = multiplier;
+    this.moveFilter = moveFilter;
   }
 
   apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
@@ -2656,7 +2656,7 @@ export class BoostHealAttr extends HealAttr {
   /** Healing received when {@linkcode condition} is true */
   private readonly boostedHealRatio: number;
   /** The lambda expression to check against when boosting the healing value */
-  private readonly condition?: MoveConditionFunc;
+  private readonly condition?: MoveConditionFunc | undefined;
 
   constructor(
     normalHealRatio = 0.5,
@@ -3809,7 +3809,7 @@ export class StatStageChangeAttr extends MoveEffectAttr {
    * Container for optional parameters to this attribute.
    * @see {@linkcode StatStageChangeAttrOptions} for available optional params
    */
-  protected override options?: StatStageChangeAttrOptions;
+  protected override options?: StatStageChangeAttrOptions | undefined;
 
   constructor(stats: BattleStat[], stages: number, selfTarget?: boolean, options?: StatStageChangeAttrOptions) {
     super(selfTarget, options);
@@ -4066,7 +4066,7 @@ export class SecretPowerAttr extends MoveEffectAttr {
 export class PostVictoryStatStageChangeAttr extends MoveAttr {
   private readonly stats: BattleStat[];
   private readonly stages: number;
-  private readonly condition?: MoveConditionFunc;
+  private readonly condition?: MoveConditionFunc | undefined;
   private readonly showMessage: boolean;
 
   constructor(

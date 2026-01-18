@@ -171,10 +171,10 @@ const valueReductionMax = 2;
 const speciesContainerX = 109;
 
 interface SpeciesDetails {
-  shiny?: boolean;
-  formIndex?: number;
-  female?: boolean;
-  variant?: number;
+  shiny?: boolean | undefined;
+  formIndex?: number | undefined;
+  female?: boolean | undefined;
+  variant?: number | undefined;
 }
 
 enum MenuOptions {

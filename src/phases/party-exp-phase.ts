@@ -8,9 +8,10 @@ import { Phase } from "#app/phase";
 export class PartyExpPhase extends Phase {
   public readonly phaseName = "PartyExpPhase";
   expValue: number;
-  useWaveIndexMultiplier?: boolean;
-  pokemonParticipantIds?: Set<number>;
+  useWaveIndexMultiplier: boolean | undefined;
+  pokemonParticipantIds: Set<number> | undefined;
 
+  // TODO: Fix this
   constructor(expValue: number, useWaveIndexMultiplier?: boolean, pokemonParticipantIds?: Set<number>) {
     super();
 

@@ -70,7 +70,7 @@ function deserializePokemonSpeciesForm(value: SerializedSpeciesForm | PokemonSpe
 
 interface SerializedIllusionData extends Omit<IllusionData, "fusionSpecies"> {
   /** The id of the illusioned fusion species, or `undefined` if not a fusion */
-  fusionSpecies?: SpeciesId;
+  fusionSpecies?: SpeciesId | undefined;
 }
 
 interface SerializedPokemonSummonData {
@@ -78,17 +78,17 @@ interface SerializedPokemonSummonData {
   moveQueue: TurnMove[];
   tags: BattlerTag[];
   abilitySuppressed: boolean;
-  speciesForm?: SerializedSpeciesForm;
-  fusionSpeciesForm?: SerializedSpeciesForm;
-  ability?: AbilityId;
-  passiveAbility?: AbilityId;
-  gender?: Gender;
-  fusionGender?: Gender;
+  speciesForm?: SerializedSpeciesForm | undefined;
+  fusionSpeciesForm?: SerializedSpeciesForm | undefined;
+  ability?: AbilityId | undefined;
+  passiveAbility?: AbilityId | undefined;
+  gender?: Gender | undefined;
+  fusionGender?: Gender | undefined;
   stats: number[];
-  moveset?: PokemonMove[];
+  moveset?: PokemonMove[] | undefined;
   types: PokemonType[];
-  addedType?: PokemonType;
-  illusion?: SerializedIllusionData;
+  addedType?: PokemonType | undefined;
+  illusion?: SerializedIllusionData | undefined;
   berriesEatenLast: BerryType[];
   moveHistory: TurnMove[];
 }

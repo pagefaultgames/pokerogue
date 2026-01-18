@@ -194,30 +194,34 @@ export function getIconForLatestInput(
 
 export function assign(config: CustomInterfaceConfig, settingNameTarget: MappingSettingName, keycode: number): boolean {
   // first, we need to check if this keycode is already used on another settingName
+  const { custom } = config;
   if (
-    !canIAssignThisKey(config, getKeyWithKeycode(config, keycode))
+    // TODO: Why is custom even optional in the first place?
+    !custom
+    || !canIAssignThisKey(config, getKeyWithKeycode(config, keycode))
     || !canIOverrideThisSetting(config, settingNameTarget)
   ) {
     return false;
   }
+
   const previousSettingName = getSettingNameWithKeycode(config, keycode);
   // if it was already bound, we delete the bind
   if (previousSettingName) {
     const previousKey = getKeyWithSettingName(config, previousSettingName);
-    if (previousKey && config.custom) {
-      config.custom[previousKey] = -1;
+    if (previousKey) {
+      custom[previousKey] = -1;
     }
   }
   // then, we need to delete the current key for this settingName
   const currentKey = getKeyWithSettingName(config, settingNameTarget);
   if (currentKey) {
-    config.custom[currentKey] = -1;
+    custom[currentKey] = -1;
   }
 
   // then, the new key is assigned to the new settingName
   const newKey = getKeyWithKeycode(config, keycode);
   if (newKey) {
-    config.custom[newKey] = settingNameTarget;
+    custom[newKey] = settingNameTarget;
   }
   return true;
 }

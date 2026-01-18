@@ -1,7 +1,10 @@
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
 import { getCookie } from "#utils/cookies";
+import type { SetRequired, UndefinedOnPartialDeep } from "type-fest";
 
 type DataType = "json" | "form-urlencoded";
+
+interface doFetchType extends SetRequired<UndefinedOnPartialDeep<RequestInit>, "method"> {}
 
 export abstract class ApiBase {
   //#region Fields
@@ -27,42 +30,50 @@ export abstract class ApiBase {
   }
 
   /**
-   * Send a POST request.
-   * @param path THe path to send the request to.
-   * @param bodyData The body-data to send.
-   * @param dataType The data-type of the {@linkcode bodyData}.
+   * Send an HTTP POST request.
+   * @param path - The path to send the request to
+   * @param bodyData - The body-data to send; will be stringified if needed
+   * @param dataType - (Default `"json"`) The type of data to send
    */
-  protected async doPost<D = undefined>(path: string, bodyData?: D, dataType: DataType = "json") {
-    let body: string | undefined;
-    const headers: HeadersInit = {};
-
-    if (bodyData) {
-      if (dataType === "json") {
-        body = typeof bodyData === "string" ? bodyData : JSON.stringify(bodyData);
-        headers["Content-Type"] = "application/json";
-      } else if (dataType === "form-urlencoded") {
-        if (bodyData instanceof Object) {
-          body = this.toUrlSearchParams(bodyData).toString();
-        } else {
-          console.warn("Could not add body data to form-urlencoded!", bodyData);
-        }
-        headers["Content-Type"] = "application/x-www-form-urlencoded";
-      } else {
-        console.warn(`Unsupported data type: ${dataType}`);
-        body = String(bodyData);
-        headers["Content-Type"] = "text/plain";
-      }
+  protected async doPost(path: string, bodyData?: Record<string, any> | string, dataType?: "json"): Promise<Response>;
+  protected async doPost(path: string, bodyData: Record<string, any>, dataType: "form-urlencoded"): Promise<Response>;
+  protected async doPost(path: string, bodyData?: Record<string, any>, dataType: DataType = "json"): Promise<Response> {
+    if (bodyData === undefined) {
+      return this.doFetch(path, { method: "POST" });
     }
 
+    let body: string;
+    const headers: HeadersInit = {};
+
+    switch (dataType) {
+      case "json":
+        body = typeof bodyData === "string" ? bodyData : JSON.stringify(bodyData);
+        headers["Content-Type"] = "application/json";
+        break;
+      case "form-urlencoded":
+        if (typeof bodyData !== "object" || Array.isArray(bodyData) || bodyData === null) {
+          console.error(`Incorrect type of bodyData passed to form-urlencoded POST request!\nBodyData:${bodyData}`);
+          return Promise.reject("Invalid bodyData for form-urlencoded POST request");
+        }
+
+        body = this.toUrlSearchParams(bodyData).toString();
+        headers["Content-Type"] = "application/x-www-form-urlencoded";
+        break;
+      default:
+        console.error(`Unsupported data type: ${dataType}`);
+        body = String(bodyData);
+        headers["Content-Type"] = "text/plain";
+        break;
+    }
     return await this.doFetch(path, { method: "POST", body, headers });
   }
 
   /**
    * A generic request helper.
-   * @param path The path to send the request to.
-   * @param config The request {@linkcode RequestInit | Configuration}.
+   * @param path - The path to send the request to
+   * @param config - The request {@linkcode doFetchType | configuration}
    */
-  protected async doFetch(path: string, config: RequestInit): Promise<Response> {
+  protected async doFetch(path: string, config: doFetchType): Promise<Response> {
     config.headers = {
       ...config.headers,
       Authorization: getCookie(SESSION_ID_COOKIE_NAME),
@@ -71,11 +82,11 @@ export abstract class ApiBase {
 
     // can't import `isLocal` due to circular import issues
     if (import.meta.env.MODE === "development") {
-      console.log(`Sending ${config.method ?? "GET"} request to: `, this.base + path, config);
+      console.log(`Sending ${config.method} request to: `, this.base + path, config);
     }
 
     // TODO: need some sort of error handling here?
-    return await fetch(this.base + path, config);
+    return await fetch(this.base + path, config as RequestInit);
   }
 
   /**
@@ -85,7 +96,7 @@ export abstract class ApiBase {
    * @param data the data to transform to {@linkcode URLSearchParams}
    * @returns a {@linkcode URLSearchParams} representaton of {@linkcode data}
    */
-  protected toUrlSearchParams<D extends Record<string, any>>(data: D) {
+  protected toUrlSearchParams(data: Record<string, any>): URLSearchParams {
     const arr = Object.entries(data)
       .map(([key, value]) => (value !== undefined ? [key, String(value)] : [key, ""]))
       .filter(([, value]) => value !== "");

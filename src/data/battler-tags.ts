@@ -161,7 +161,9 @@ export class BattlerTag implements BaseBattlerTag {
     if (sourceMove) {
       this.sourceMove = sourceMove;
     }
-    this.sourceId = sourceId;
+    if (sourceId !== undefined) {
+      this.sourceId = sourceId;
+    }
     this.#isBatonPassable = isBatonPassable;
   }
 
@@ -212,9 +214,14 @@ export class BattlerTag implements BaseBattlerTag {
    * @param source - An object containing the fields needed to reconstruct this tag
    */
   public loadTag<const T extends this>(source: BaseBattlerTag & Pick<T, "tagType">): void {
-    this.turnCount = source.turnCount;
-    this.sourceMove = source.sourceMove;
-    this.sourceId = source.sourceId;
+    const { sourceMove, turnCount, sourceId } = source;
+    this.turnCount = turnCount;
+    if (sourceMove) {
+      this.sourceMove = sourceMove;
+    }
+    if (sourceId !== undefined) {
+      this.sourceId = sourceId;
+    }
   }
 
   /**

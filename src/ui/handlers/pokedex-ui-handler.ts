@@ -152,12 +152,12 @@ function calcStarterPosition(index: number): { x: number; y: number } {
 }
 
 interface SpeciesDetails {
-  shiny?: boolean;
-  formIndex?: number;
-  female?: boolean;
-  variant?: Variant;
-  abilityIndex?: number;
-  natureIndex?: number;
+  shiny?: boolean | undefined;
+  formIndex?: number | undefined;
+  female?: boolean | undefined;
+  variant?: Variant | undefined;
+  abilityIndex?: number | undefined;
+  natureIndex?: number | undefined;
 }
 
 export class PokedexUiHandler extends MessageUiHandler {
@@ -238,7 +238,7 @@ export class PokedexUiHandler extends MessageUiHandler {
   private filteredIndices: SpeciesId[];
 
   private gameData: GameData;
-  private exitCallback?: () => void;
+  private exitCallback?: (() => void) | undefined;
   private blockOpenPage = false;
 
   constructor() {

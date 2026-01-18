@@ -20,7 +20,7 @@ interface UIPrompt {
    * An optional callback function to determine if the prompt has expired and should be removed.
    * Expired prompts are removed upon the next UI mode change without executing their callback.
    */
-  expireFn?: () => boolean;
+  expireFn?: (() => boolean) | undefined;
   /**
    * If `true`, restricts the prompt to only activate when the current {@linkcode AwaitableUiHandler} is waiting for input.
    * @defaultValue `false`
@@ -55,8 +55,11 @@ export class PromptHandler extends GameManagerHelper {
   /** The original `setModeInternal` function, stored for use in {@linkcode setMode}. */
   private readonly originalSetModeInternal: (typeof this.game.scene.ui)["setModeInternal"];
 
-  /** A {@linkcode NodeJS.Timeout | Timeout} containing an interval used to check prompts. */
-  public static runInterval?: NodeJS.Timeout;
+  /**
+   * A {@linkcode NodeJS.Timeout | Timeout} containing an interval used to check prompts.
+   * Is unused during test execution itself, as pre- and post-test hooks automatically set and clear it to avoid deadlocks.
+   */
+  public static runInterval?: NodeJS.Timeout | undefined;
 
   constructor(game: GameManager) {
     super(game);

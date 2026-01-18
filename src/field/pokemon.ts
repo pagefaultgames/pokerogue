@@ -196,7 +196,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * The Pokemon's current nickname, or `undefined` if it currently lacks one.
    * If omitted, references to this should refer to the default name for this Pokemon's species.
    */
-  public nickname?: string;
+  public nickname?: string | undefined;
   public species: PokemonSpecies;
   public formIndex: number;
   public abilityIndex: number;

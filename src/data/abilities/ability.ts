@@ -414,7 +414,7 @@ export interface AbAttrBaseParams {
    * Used to prevent message flyouts and other effects from being triggered.
    * @defaultValue `false`
    */
-  readonly simulated?: boolean;
+  readonly simulated?: boolean | undefined;
 
   /**
    * (For callers of {@linkcode applyAbAttrs}): If provided, **only** apply ability attributes of the passive (true) or active (false).
@@ -425,7 +425,7 @@ export interface AbAttrBaseParams {
    * (For implementations of {@linkcode AbAttr}): This will *never* be undefined, and will be `true` if the ability being applied
    * is the pokemon's passive, and `false` otherwise.
    */
-  passive?: boolean;
+  passive?: boolean | undefined;
 }
 
 export interface AbAttrParamsWithCancel extends AbAttrBaseParams {
@@ -2236,8 +2236,8 @@ export abstract class PostAttackAbAttr extends AbAttr {
 }
 
 export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
-  private readonly stealCondition?: PokemonAttackCondition;
-  private stolenItem?: PokemonHeldItemModifier;
+  private readonly stealCondition?: PokemonAttackCondition | undefined;
+  private stolenItem?: PokemonHeldItemModifier | undefined;
 
   constructor(stealCondition?: PokemonAttackCondition) {
     super();
@@ -2382,8 +2382,8 @@ export class PostAttackApplyBattlerTagAbAttr extends PostAttackAbAttr {
 }
 
 export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
-  private readonly condition?: PokemonDefendCondition;
-  private stolenItem?: PokemonHeldItemModifier;
+  private readonly condition?: PokemonDefendCondition | undefined;
+  private stolenItem?: PokemonHeldItemModifier | undefined;
 
   constructor(condition?: PokemonDefendCondition) {
     super();
@@ -2435,7 +2435,7 @@ export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
  */
 export interface PostSetStatusAbAttrParams extends AbAttrBaseParams {
   /** The pokemon that set the status condition, or `undefined` if not set by a pokemon */
-  sourcePokemon?: Pokemon;
+  sourcePokemon?: Pokemon | undefined;
   /** The status effect that was set */
   effect: StatusEffect;
 }
@@ -2745,8 +2745,8 @@ export class PostSummonRemoveArenaTagAbAttr extends PostSummonAbAttr {
 export class PostSummonAddArenaTagAbAttr extends PostSummonAbAttr {
   private readonly tagType: ArenaTagType;
   private readonly turnCount: number;
-  private readonly side?: ArenaTagSide;
-  private readonly quiet?: boolean;
+  private readonly side?: ArenaTagSide | undefined;
+  private readonly quiet?: boolean | undefined;
   // TODO: This should not need to track the source ID in a tempvar
   private sourceId: number;
 
@@ -3533,7 +3533,7 @@ export interface PreStatStageChangeAbAttrParams extends AbAttrBaseParams {
    * @remarks
    * Currently, only used by {@linkcode ReflectStatStageChangeAbAttr} in order to reflect the stat stage change
    */
-  source?: Pokemon;
+  source?: Pokemon | undefined;
   /** Holder that will be set to true if the stat stage change should be cancelled due to the ability */
   cancelled: BooleanHolder;
 }
@@ -5413,7 +5413,7 @@ export abstract class PostBattleAbAttr extends AbAttr {
 }
 
 export class PostBattleLootAbAttr extends PostBattleAbAttr {
-  private randItem?: PokemonHeldItemModifier;
+  private randItem?: PokemonHeldItemModifier | undefined;
 
   override canApply({ simulated, victory, pokemon }: PostBattleAbAttrParams): boolean {
     const postBattleLoot = globalScene.currentBattle.postBattleLoot;
@@ -5448,12 +5448,9 @@ export class PostBattleLootAbAttr extends PostBattleAbAttr {
  */
 export interface PostFaintAbAttrParams extends AbAttrBaseParams {
   /** The pokemon that caused the user to faint, or `undefined` if not caused by a Pokemon */
-  readonly attacker?: Pokemon;
+  readonly attacker?: Pokemon | undefined;
   /** The move that caused the user to faint, or `undefined` if not caused by a move */
-  readonly move?: Move;
-  /** The result of the hit that caused the user to faint */
-  // TODO: Do we need this? It's unused by all classes
-  readonly hitResult?: HitResult;
+  readonly move?: Move | undefined;
 }
 
 export abstract class PostFaintAbAttr extends AbAttr {
@@ -6463,7 +6460,7 @@ function calculateShellBellRecovery(pokemon: Pokemon): number {
 
 export interface PostDamageAbAttrParams extends AbAttrBaseParams {
   /** The pokemon that caused the damage; omitted if the damage was not from a pokemon */
-  source?: Pokemon;
+  source?: Pokemon | undefined;
   /** The amount of damage that was dealt */
   readonly damage: number;
 }

@@ -8,6 +8,6 @@ export interface TurnMove {
   move: MoveId;
   targets: BattlerIndex[];
   useMode: MoveUseMode;
-  result?: MoveResult;
-  turn?: number;
+  result?: MoveResult | undefined;
+  turn?: number | undefined;
 }
