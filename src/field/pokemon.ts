@@ -1934,10 +1934,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Evaluate and return this Pokemon's typing.
-   * @param includeTeraType - Whether to use this Pokemon's tera type if Terastallized; default `false`
-   * @param forDefend - Whether this Pokemon is currently receiving an attack; default `false`
-   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform}; default `false`
-   * @param useIllusion - Whether to consider an active illusion; default `false`
+   * @param includeTeraType - (Default `false`) Whether to use this Pokemon's Tera Type if Terastallized
+   * @param forDefend - (Default `false`) Whether this Pokemon is currently receiving an attack
+   * @param ignoreOverride - (Default `false`) Whether to ignore temporary type changes (such as those caused by {@linkcode MoveId.TRANSFORM | Transform} and similar effects)
+   * @param useIllusion - (Default `false`) Whether to consider this Pokemon's illusion if active
    * @returns An array of {@linkcode PokemonType}s corresponding to this Pokemon's typing (real or perceived).
    */
   public getTypes(
