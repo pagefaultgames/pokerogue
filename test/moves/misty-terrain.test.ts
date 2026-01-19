@@ -70,7 +70,7 @@ describe("Move - Misty Terrain", () => {
     await game.move.forceHit();
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(enemyPokemon.getTag(BattlerTagType.CONFUSED)?.tagType).not.toBe("CONFUSED");
+    expect(enemyPokemon.getTag(BattlerTagType.CONFUSED)).not.toBeDefined();
     expect(game).not.toHaveShownMessage(
       i18next.t("terrain:mistyBlockMessage", {
         pokemonNameWithAffix: "Wild Magikarp",

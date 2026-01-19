@@ -799,8 +799,8 @@ export class ConfusedTag extends SerializableBattlerTag {
 
       if (phaseData?.move?.category === MoveCategory.STATUS) {
         pokemon.queueStatusImmuneMessage(false, TerrainType.MISTY);
-        return false;
       }
+      return false;
     }
     return true;
   }

@@ -47,7 +47,9 @@ import type { CustomDailyRunConfig } from "#types/daily-run";
  * }
  * ```
  */
-const overrides = {} satisfies Partial<InstanceType<OverridesType>>;
+const overrides = {
+  MOVESET_OVERRIDE: [MoveId.CONFUSE_RAY, MoveId.MISTY_TERRAIN, MoveId.DYNAMIC_PUNCH],
+} satisfies Partial<InstanceType<OverridesType>>;
 
 /**
  * If you need to add Overrides values for local testing do that inside {@linkcode overrides}
