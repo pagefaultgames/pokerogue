@@ -2657,16 +2657,14 @@ export class IntimidateImmunityAbAttr extends CancelInteractionAbAttr {
 export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
   private readonly stats: readonly BattleStat[];
   private readonly stages: number;
-  private readonly overwrites: boolean;
 
-  constructor(stats: readonly BattleStat[], stages: number, overwrites?: boolean) {
+  constructor(stats: readonly BattleStat[], stages: number) {
     super(true);
     this.stats = stats;
     this.stages = stages;
-    this.overwrites = !!overwrites;
   }
 
-  override apply({ pokemon, simulated, cancelled }: AbAttrParamsWithCancel): void {
+  override apply({ pokemon, simulated }: AbAttrBaseParams): void {
     if (!simulated) {
       globalScene.phaseManager.unshiftNew(
         "StatStageChangePhase",
@@ -2676,7 +2674,6 @@ export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
         this.stages,
       );
     }
-    cancelled.value = this.overwrites;
   }
 }
 
@@ -2882,11 +2879,9 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
 
     for (const opponent of pokemon.getOpponentsGenerator()) {
       const cancelled = new BooleanHolder(false);
+      const params: AbAttrParamsWithCancel = { pokemon: opponent, cancelled, simulated };
       if (this.intimidate) {
-        const params: AbAttrParamsWithCancel = { pokemon: opponent, cancelled, simulated };
         applyAbAttrs("IntimidateImmunityAbAttr", params);
-        applyAbAttrs("PostIntimidateStatStageChangeAbAttr", params);
-
         if (opponent.getTag(BattlerTagType.SUBSTITUTE)) {
           cancelled.value = true;
         }
@@ -2900,6 +2895,9 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
           this.stages,
         );
       }
+      // TODO: Ensure that the stat stage change phase applied here applies after intimidate's
+      // TODO: This will cause rattled to increase with scrappy if mon has both.
+      applyAbAttrs("PostIntimidateStatStageChangeAbAttr", params);
     }
   }
 }
@@ -8069,7 +8067,8 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.GUARD_DOG, 9)
-      .attr(PostIntimidateStatStageChangeAbAttr, [ Stat.ATK ], 1, true)
+      .attr(PostIntimidateStatStageChangeAbAttr, [ Stat.ATK ], 1)
+      .attr(IntimidateImmunityAbAttr)
       .attr(ForceSwitchOutImmunityAbAttr)
       .ignorable()
       .build(),
