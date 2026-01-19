@@ -1,5 +1,6 @@
 /*
- * SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+ * SPDX-FileCopyrightText: 2024-2026 Pagefault Games
+ * SPDX-FileContributor: NightKev
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
