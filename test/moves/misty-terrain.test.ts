@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+import { getPokemonNameWithAffix } from "#app/messages";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
@@ -50,10 +51,10 @@ describe("Move - Misty Terrain", () => {
     await game.move.forceHit();
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(enemyPokemon.getTag(BattlerTagType.CONFUSED)?.tagType).not.toBe("CONFUSED");
+    expect(enemyPokemon).not.toHaveBattlerTag(BattlerTagType.CONFUSED);
     expect(game).toHaveShownMessage(
       i18next.t("terrain:mistyBlockMessage", {
-        pokemonNameWithAffix: "Wild Magikarp",
+        pokemonNameWithAffix: getPokemonNameWithAffix(enemyPokemon),
       }),
     );
   });
@@ -70,10 +71,10 @@ describe("Move - Misty Terrain", () => {
     await game.move.forceHit();
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(enemyPokemon.getTag(BattlerTagType.CONFUSED)).not.toBeDefined();
+    expect(enemyPokemon).not.toHaveBattlerTag(BattlerTagType.CONFUSED);
     expect(game).not.toHaveShownMessage(
       i18next.t("terrain:mistyBlockMessage", {
-        pokemonNameWithAffix: "Wild Magikarp",
+        pokemonNameWithAffix: getPokemonNameWithAffix(enemyPokemon),
       }),
     );
   });
