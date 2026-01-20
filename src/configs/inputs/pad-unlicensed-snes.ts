@@ -1,10 +1,11 @@
 import { Button } from "#enums/buttons";
 import { SettingGamepad } from "#system/settings-gamepad";
+import type { PadConfig, UnlicensedSnesButtons } from "#types/configs/inputs";
 
 /**
  * 081f-e401 - UnlicensedSNES
  */
-const pad_unlicensedSNES = {
+export const PAD_UNLICENSED_SNES: PadConfig<UnlicensedSnesButtons> = {
   padID: "081f-e401",
   padType: "xbox",
   deviceMapping: {
@@ -72,5 +73,3 @@ const pad_unlicensedSNES = {
     RS: -1,
   },
 };
-
-export default pad_unlicensedSNES;

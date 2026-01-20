@@ -2014,7 +2014,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     const slotInfoContainer = globalScene.add.container(0, 0);
     this.add(slotInfoContainer);
 
-    let displayName = this.pokemon.getNameToRender(false);
+    let displayName = this.pokemon.getNameToRender({ useIllusion: false });
     let nameTextWidth: number;
 
     const nameSizeTest = addTextObject(0, 0, displayName, TextStyle.PARTY);
