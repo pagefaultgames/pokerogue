@@ -1,6 +1,5 @@
 import type { MoveCategory } from "#enums/move-category";
 import type { Pokemon } from "#field/pokemon";
-// biome-ignore lint/correctness/noUnusedImports: TSDoc
 import type { Move, VariableMoveTypeChartAttr } from "#types/move-types";
 
 /**
