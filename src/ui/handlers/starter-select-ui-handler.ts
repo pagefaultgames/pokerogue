@@ -186,6 +186,10 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
   },
+  sv: {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "38px",
+  },
 };
 
 const valueReductionMax = 2;
@@ -1394,12 +1398,14 @@ export class StarterSelectUiHandler extends MessageUiHandler {
    * @param speciesId The ID of the species to check the passive of
    * @returns true if the user has enough candies and a passive has not been unlocked already
    */
-  isPassiveAvailable(speciesId: number): boolean {
+  isPassiveAvailable(speciesId: SpeciesId): boolean {
     // Get this species ID's starter data
     const starterData = globalScene.gameData.starterData[speciesId];
+    const starterCost = speciesStarterCosts[speciesId];
 
     return (
-      starterData.candyCount >= getPassiveCandyCount(speciesStarterCosts[speciesId])
+      starterCost != null
+      && starterData.candyCount >= getPassiveCandyCount(starterCost)
       && !(starterData.passiveAttr & PassiveAttr.UNLOCKED)
     );
   }
@@ -1409,12 +1415,14 @@ export class StarterSelectUiHandler extends MessageUiHandler {
    * @param speciesId The ID of the species to check the value reduction of
    * @returns true if the user has enough candies and all value reductions have not been unlocked already
    */
-  isValueReductionAvailable(speciesId: number): boolean {
+  isValueReductionAvailable(speciesId: SpeciesId): boolean {
     // Get this species ID's starter data
     const starterData = globalScene.gameData.starterData[speciesId];
+    const starterCost = speciesStarterCosts[speciesId];
 
     return (
-      starterData.candyCount >= getValueReductionCandyCounts(speciesStarterCosts[speciesId])[starterData.valueReduction]
+      starterCost != null
+      && starterData.candyCount >= getValueReductionCandyCounts(starterCost)[starterData.valueReduction]
       && starterData.valueReduction < valueReductionMax
     );
   }
@@ -1424,12 +1432,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
    * @param speciesId The ID of the species to check the value reduction of
    * @returns true if the user has enough candies
    */
-  isSameSpeciesEggAvailable(speciesId: number): boolean {
-    // Get this species ID's starter data
+  isSameSpeciesEggAvailable(speciesId: SpeciesId): boolean {
     const starterData = globalScene.gameData.starterData[speciesId];
+    const starterCost = speciesStarterCosts[speciesId];
     const hatchedCount = globalScene.gameData.dexData[speciesId].hatchedCount;
 
-    return starterData.candyCount >= getSameSpeciesEggCandyCounts(speciesStarterCosts[speciesId], hatchedCount);
+    return starterCost != null && starterData.candyCount >= getSameSpeciesEggCandyCounts(starterCost, hatchedCount);
   }
 
   /**
@@ -2860,7 +2868,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     iconElement: GameObjects.Sprite,
     controlLabel: GameObjects.Text,
   ): void {
-    let iconPath: string;
+    let iconPath: string | undefined;
     // touch controls cannot be rebound as is, and are just emulating a keyboard event.
     // Additionally, since keyboard controls can be rebound (and will be displayed when they are), we need to have special handling for the touch controls
     if (gamepadType === "touch") {
@@ -2915,7 +2923,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     iconElement: GameObjects.Sprite,
     controlLabel: GameObjects.Text,
   ): void {
-    let iconPath: string;
+    let iconPath: string | undefined;
     // touch controls cannot be rebound as is, and are just emulating a keyboard event.
     // Additionally, since keyboard controls can be rebound (and will be displayed when they are), we need to have special handling for the touch controls
     if (gamepadType === "touch") {
@@ -2950,7 +2958,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     let gamepadType: string;
     if (globalScene.inputMethod === "gamepad") {
       gamepadType = globalScene.inputController.getConfig(
-        globalScene.inputController.selectedDevice[Device.GAMEPAD],
+        globalScene.inputController.selectedDevice[Device.GAMEPAD]!, // TODO: re-evaluate bang
       ).padType;
     } else {
       gamepadType = globalScene.inputMethod;
@@ -3206,6 +3214,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         if (misc.val === "WIN" && misc.state === DropDownState.OFF) {
           return true;
         }
+        return false;
       });
 
       // HA Filter
@@ -3223,6 +3232,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         if (misc.val === "HIDDEN_ABILITY" && misc.state === DropDownState.OFF) {
           return true;
         }
+        return false;
       });
 
       // Egg Purchasable Filter
@@ -3237,6 +3247,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         if (misc.val === "EGG" && misc.state === DropDownState.OFF) {
           return true;
         }
+        return false;
       });
 
       // Pokerus Filter
@@ -3250,6 +3261,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         if (misc.val === "POKERUS" && misc.state === DropDownState.OFF) {
           return true;
         }
+        return false;
       });
 
       if (
@@ -4198,7 +4210,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
 
     for (let em = 0; em < 4; em++) {
-      const eggMove = hasEggMoves ? allMoves[speciesEggMoves[species.speciesId][em]] : null;
+      const eggMove = hasEggMoves
+        ? allMoves[speciesEggMoves[species.speciesId as keyof typeof speciesEggMoves][em]]
+        : null;
       const eggMoveUnlocked = eggMove && eggMoves & (1 << em);
       this.pokemonEggMoveBgs[em].setFrame(
         PokemonType[eggMove ? eggMove.type : PokemonType.UNKNOWN].toString().toLowerCase(),
@@ -4288,6 +4302,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   updateStarterValueLabel(starter: StarterContainer): void {
     const speciesId = starter.species.speciesId;
     const baseStarterValue = speciesStarterCosts[speciesId];
+    if (baseStarterValue == null) {
+      return;
+    }
     const starterValue = globalScene.gameData.getSpeciesStarterValue(speciesId);
     starter.cost = starterValue;
     let valueStr = starterValue.toString();

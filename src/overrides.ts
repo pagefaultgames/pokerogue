@@ -31,6 +31,7 @@ import type { CustomDailyRunConfig } from "#types/daily-run";
  * {@linkcode BerryType}, {@linkcode EvolutionItem}, {@linkcode FormChangeItem}
  * {@linkcode Stat}, {@linkcode PokemonType}
  */
+
 /**
  * Overrides that are using when testing different in game situations
  *
