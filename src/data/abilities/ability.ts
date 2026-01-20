@@ -4252,7 +4252,6 @@ function getWeatherCondition(...weatherTypes: WeatherType[]): AbAttrCondition {
 const anticipationCondition: AbAttrCondition = (pokemon: Pokemon) =>
   pokemon.getOpponents().some(opponent =>
     opponent.moveset.some(movesetMove => {
-      // ignore non-attacks
       const move = movesetMove.getMove();
       if (!move.is("AttackMove")) {
         return false;
