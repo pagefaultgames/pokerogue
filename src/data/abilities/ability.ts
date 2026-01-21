@@ -1277,21 +1277,37 @@ export class PostDefendApplyBattlerTagAbAttr extends PostDefendAbAttr {
 export class PostDefendTypeChangeAbAttr extends PostDefendAbAttr {
   private type: PokemonType;
 
-  override canApply({
-    opponent: attacker,
-    move,
-    pokemon,
-    hitResult,
-    simulated,
-  }: PostMoveInteractionAbAttrParams): boolean {
+  override canApply({ opponent: attacker, move, pokemon, hitResult }: PostMoveInteractionAbAttrParams): boolean {
+    if (hitResult >= HitResult.NO_EFFECT) {
+      return false;
+    }
+
+    if (pokemon.isTerastallized) {
+      return false;
+    }
+
+    if (move.hasAttr("TypelessAttr")) {
+      return false;
+    }
+
+    if (attacker.turnData.hitsLeft > 1) {
+      return false;
+    }
+
     this.type = attacker.getMoveType(move);
-    const pokemonTypes = pokemon.getTypes(true);
-    return hitResult < HitResult.NO_EFFECT && (simulated || pokemonTypes.length !== 1 || pokemonTypes[0] !== this.type);
+    if (pokemon.isOfType(this.type, true, true)) {
+      return false;
+    }
+
+    return true;
   }
 
-  override apply({ pokemon, opponent: attacker, move }: PostMoveInteractionAbAttrParams): void {
-    const type = attacker.getMoveType(move);
-    pokemon.summonData.types = [type];
+  override apply({ pokemon, simulated }: PostMoveInteractionAbAttrParams): void {
+    if (simulated) {
+      return;
+    }
+
+    pokemon.summonData.types = [this.type];
   }
 
   override getTriggerMessage({ pokemon }: PostMoveInteractionAbAttrParams, abilityName: string): string {
