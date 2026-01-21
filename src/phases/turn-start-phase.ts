@@ -119,16 +119,14 @@ export class TurnStartPhase extends FieldPhase {
       case Command.BALL:
         globalScene.phaseManager.unshiftNew("AttemptCapturePhase", turnCommand.targets![0] % 2, turnCommand.cursor!); //TODO: is the bang correct here?
         break;
-      case Command.POKEMON:
-        globalScene.phaseManager.unshiftNew(
-          "SwitchSummonPhase",
-          turnCommand.args?.[0] ? SwitchType.BATON_PASS : SwitchType.SWITCH,
-          pokemon.getFieldIndex(),
-          turnCommand.cursor!, // TODO: Is this bang correct?
-          true,
-          pokemon.isPlayer(),
-        );
+      case Command.POKEMON: {
+        const switchType = turnCommand.args?.[0] ? SwitchType.BATON_PASS : SwitchType.SWITCH;
+        globalScene.phaseManager.queueBattlerSwitchOut(pokemon.getBattlerIndex(), {
+          switchType,
+          switchInIndex: turnCommand.cursor!,
+        }); // TODO: Fix typing and remove bang
         break;
+      }
       case Command.RUN:
         globalScene.phaseManager.unshiftNew("AttemptRunPhase");
         break;

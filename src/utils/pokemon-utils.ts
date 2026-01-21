@@ -153,6 +153,16 @@ export function areAllies(a: BattlerIndex, b: BattlerIndex): boolean {
 }
 
 /**
+ * Return whether a {@linkcode BattlerIndex} refers to an enemy Pokemon.
+ * To instead check with {@linkcode Pokemon} objects, use {@linkcode Pokemon.isEnemy}.
+ * @param index - The `BattlerIndex` to check
+ * @returns Whether `index` refers to an enemy Pokemon
+ */
+export function isEnemy(index: BattlerIndex): index is BattlerIndex.ENEMY | BattlerIndex.ENEMY_2 {
+  return index === BattlerIndex.ENEMY || index === BattlerIndex.ENEMY_2;
+}
+
+/**
  * Determine whether an enemy Pokémon will Terastallize the user
  *
  * Does not check if the Pokémon is allowed to Terastallize (e.g., if it's a mega)

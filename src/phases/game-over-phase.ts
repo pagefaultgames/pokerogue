@@ -6,7 +6,6 @@ import { bypassLogin } from "#constants/app-constants";
 import { modifierTypes } from "#data/data-lists";
 import { getCharVariantFromDialogue } from "#data/dialogue";
 import type { PokemonSpecies } from "#data/pokemon-species";
-import { BattleType } from "#enums/battle-type";
 import { PlayerGender } from "#enums/player-gender";
 import { TrainerType } from "#enums/trainer-type";
 import { UiMode } from "#enums/ui-mode";
@@ -77,33 +76,15 @@ export class GameOverPhase extends BattlePhase {
       globalScene.ui.showText(i18next.t("battle:retryBattle"), null, () => {
         globalScene.ui.setMode(
           UiMode.CONFIRM,
-          () => {
-            globalScene.ui.fadeOut(1250).then(() => {
-              globalScene.reset();
-              globalScene.phaseManager.clearPhaseQueue();
-              globalScene.gameData.loadSession(globalScene.sessionSlotId).then(() => {
-                globalScene.phaseManager.pushNew("EncounterPhase", true);
+          async () => {
+            await globalScene.ui.fadeOut(1250);
+            globalScene.reset();
+            globalScene.phaseManager.clearPhaseQueue();
+            await globalScene.gameData.loadSession(globalScene.sessionSlotId);
+            globalScene.phaseManager.pushNew("EncounterPhase", true);
 
-                const availablePartyMembers = globalScene.getPokemonAllowedInBattle().length;
-
-                globalScene.phaseManager.pushNew("SummonPhase", 0);
-                if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-                  globalScene.phaseManager.pushNew("SummonPhase", 1);
-                }
-                if (
-                  globalScene.currentBattle.waveIndex > 1
-                  && globalScene.currentBattle.battleType !== BattleType.TRAINER
-                ) {
-                  globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
-                  if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-                    globalScene.phaseManager.pushNew("CheckSwitchPhase", 1, globalScene.currentBattle.double);
-                  }
-                }
-
-                globalScene.ui.fadeIn(1250);
-                this.end();
-              });
-            });
+            globalScene.ui.fadeIn(1250);
+            this.end();
           },
           () => this.handleGameOver(),
           false,

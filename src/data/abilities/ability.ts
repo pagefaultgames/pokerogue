@@ -6326,14 +6326,10 @@ class ForceSwitchOutHelper {
       }
 
       if (switchOutTarget.hp > 0) {
-        globalScene.phaseManager.queueDeferred(
-          "SwitchPhase",
-          this.switchType,
-          switchOutTarget.getFieldIndex(),
-          true,
-          true,
-        );
-        return true;
+        globalScene.phaseManager.queueBattlerSwitchOut(switchOutTarget.getBattlerIndex(), {
+          switchType: this.switchType,
+          when: "deferred",
+        });
       }
       /**
        * For non-wild battles, it checks if the opposing party has any available Pokémon to switch in.
@@ -6347,14 +6343,11 @@ class ForceSwitchOutHelper {
         const summonIndex = globalScene.currentBattle.trainer
           ? globalScene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot)
           : 0;
-        globalScene.phaseManager.queueDeferred(
-          "SwitchSummonPhase",
-          this.switchType,
-          switchOutTarget.getFieldIndex(),
-          summonIndex,
-          false,
-          false,
-        );
+        globalScene.phaseManager.queueBattlerSwitchOut(switchOutTarget.getBattlerIndex(), {
+          switchType: this.switchType,
+          when: "deferred",
+          switchInIndex: summonIndex,
+        });
         return true;
       }
       /**

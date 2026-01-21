@@ -1,4 +1,4 @@
-import type { Ability, PreAttackModifyDamageAbAttrParams } from "#abilities/ability";
+import type { PreAttackModifyDamageAbAttrParams } from "#abilities/ability";
 import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
 import { generateMoveset } from "#app/ai/ai-moveset-gen";
 import type { Battle } from "#app/battle";
@@ -77,7 +77,7 @@ import { AiType } from "#enums/ai-type";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
-import { BattlerIndex } from "#enums/battler-index";
+import { BattlerIndex, type FieldBattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import type { BerryType } from "#enums/berry-type";
@@ -109,9 +109,7 @@ import {
   Stat,
 } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
-import { SwitchType } from "#enums/switch-type";
 import type { TrainerSlot } from "#enums/trainer-slot";
-import { UiMode } from "#enums/ui-mode";
 import { WeatherType } from "#enums/weather-type";
 import {
   BaseStatModifier,
@@ -135,7 +133,6 @@ import {
   TempStatStageBoosterModifier,
 } from "#modifiers/modifier";
 import { applyMoveAttrs } from "#moves/apply-attrs";
-import type { Move } from "#moves/move";
 import { getMoveTargets } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import { loadMoveAnimations } from "#sprites/pokemon-asset-loader";
@@ -145,18 +142,18 @@ import { achvs } from "#system/achv";
 import type { PokemonData } from "#system/pokemon-data";
 import { RibbonData } from "#system/ribbons/ribbon-data";
 import { awardRibbonsToSpeciesLine } from "#system/ribbons/ribbon-methods";
-import type { AbAttrMap, AbAttrString, TypeMultiplierAbAttrParams } from "#types/ability-types";
+import type { AbAttrMap, AbAttrString, Ability, TypeMultiplierAbAttrParams } from "#types/ability-types";
 import type { Constructor } from "#types/common";
 import type { getAttackDamageParams, getBaseDamageParams } from "#types/damage-params";
 import type { DamageCalculationResult, DamageResult } from "#types/damage-result";
+import type { Move } from "#types/move-types";
 import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { TurnMove } from "#types/turn-move";
 import { BattleInfo } from "#ui/battle-info";
 import { EnemyBattleInfo } from "#ui/enemy-battle-info";
-import type { PartyOption } from "#ui/party-ui-handler";
-import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import { PlayerBattleInfo } from "#ui/player-battle-info";
+import { playTween } from "#utils/anim-utils";
 import { coerceArray } from "#utils/array";
 import { applyChallenges } from "#utils/challenge-utils";
 import {
@@ -757,7 +754,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   abstract getFieldIndex(): number;
 
-  abstract getBattlerIndex(): BattlerIndex;
+  abstract getBattlerIndex(): FieldBattlerIndex;
 
   /**
    * Load all assets needed for this Pokemon's use in battle
@@ -1245,7 +1242,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     this.tryPlaySprite(this.getSprite(), this.getTintSprite()!, this.getBattleSpriteKey()); // TODO: is the bang correct?
   }
 
-  getFieldPositionOffset(): [number, number] {
+  getFieldPositionOffset(): [x: number, y: number] {
     switch (this.fieldPosition) {
       case FieldPosition.CENTER:
         return [0, 0];
@@ -1294,50 +1291,47 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param fieldPosition - The new field position
    * @param duration - How long the transition should take, in milliseconds; if `0` or `undefined`, the position is changed instantly
    */
-  public setFieldPosition(fieldPosition: FieldPosition, duration?: number): Promise<void> {
-    return new Promise(resolve => {
-      if (fieldPosition === this.fieldPosition) {
-        resolve();
-        return;
+  public async setFieldPosition(fieldPosition: FieldPosition, duration?: number): Promise<void> {
+    if (fieldPosition === this.fieldPosition) {
+      return;
+    }
+
+    const initialOffset = this.getFieldPositionOffset();
+
+    this.fieldPosition = fieldPosition;
+
+    // TODO: These should method chain
+    this.battleInfo.setMini(fieldPosition !== FieldPosition.CENTER);
+    this.battleInfo.setOffset(fieldPosition === FieldPosition.RIGHT);
+
+    const newOffset = this.getFieldPositionOffset();
+
+    const relX = newOffset[0] - initialOffset[0];
+    const relY = newOffset[1] - initialOffset[1];
+
+    const subTag = this.getTag(SubstituteTag);
+
+    if (duration) {
+      // TODO: can this use stricter typing?
+      const targets: any[] = [this];
+      if (subTag?.sprite) {
+        targets.push(subTag.sprite);
       }
-
-      const initialOffset = this.getFieldPositionOffset();
-
-      this.fieldPosition = fieldPosition;
-
-      this.battleInfo.setMini(fieldPosition !== FieldPosition.CENTER);
-      this.battleInfo.setOffset(fieldPosition === FieldPosition.RIGHT);
-
-      const newOffset = this.getFieldPositionOffset();
-
-      const relX = newOffset[0] - initialOffset[0];
-      const relY = newOffset[1] - initialOffset[1];
-
-      const subTag = this.getTag(SubstituteTag);
-
-      if (duration) {
-        // TODO: can this use stricter typing?
-        const targets: any[] = [this];
-        if (subTag?.sprite) {
-          targets.push(subTag.sprite);
-        }
-        globalScene.tweens.add({
-          targets,
-          x: (_target, _key, value: number) => value + relX,
-          y: (_target, _key, value: number) => value + relY,
-          duration,
-          ease: "Sine.easeOut",
-          onComplete: () => resolve(),
-        });
-      } else {
-        this.x += relX;
-        this.y += relY;
-        if (subTag?.sprite) {
-          subTag.sprite.x += relX;
-          subTag.sprite.y += relY;
-        }
+      await playTween({
+        targets,
+        x: (_target, _key, value: number) => value + relX,
+        y: (_target, _key, value: number) => value + relY,
+        duration,
+        ease: "Sine.easeOut",
+      });
+    } else {
+      this.x += relX;
+      this.y += relY;
+      if (subTag?.sprite) {
+        subTag.sprite.x += relX;
+        subTag.sprite.y += relY;
       }
-    });
+    }
   }
 
   /**
@@ -3242,27 +3236,21 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /** Hide this Pokémon's info panel */
   async hideInfo(): Promise<void> {
-    return new Promise(resolve => {
-      if (this.battleInfo?.visible) {
-        globalScene.tweens.add({
-          targets: [this.battleInfo, this.battleInfo.expMaskRect],
-          x: this.isPlayer() ? "+=150" : `-=${this.isBoss() ? 246 : 150}`,
-          duration: 500,
-          ease: "Cubic.easeIn",
-          onComplete: () => {
-            if (this.isPlayer()) {
-              // TODO: How do you get this to not require a private property access?
-              this["battleInfo"].expMaskRect.x -= 150;
-            }
-            this.battleInfo.setVisible(false);
-            this.battleInfo.setX(this.battleInfo.x - (this.isPlayer() ? 150 : this.isBoss() ? -198 : -150));
-            resolve();
-          },
-        });
-      } else {
-        resolve();
-      }
+    if (!this.battleInfo?.visible) {
+      return;
+    }
+    await playTween({
+      targets: [this.battleInfo, this.battleInfo.expMaskRect],
+      x: this.isPlayer() ? "+=150" : `-=${this.isBoss() ? 246 : 150}`,
+      duration: 500,
+      ease: "Cubic.easeIn",
     });
+    if (this.isPlayer()) {
+      // TODO: How do you get this to not require a private property access?
+      this["battleInfo"].expMaskRect.x -= 150;
+    }
+    this.battleInfo.setVisible(false);
+    this.battleInfo.setX(this.battleInfo.x - (this.isPlayer() ? 150 : this.isBoss() ? -198 : -150));
   }
 
   updateInfo(instant?: boolean): Promise<void> {
@@ -3341,6 +3329,15 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   getAlliesGenerator(): Generator<Pokemon, number> {
     return inSpeedOrder(this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY);
+  }
+
+  /**
+   * Gets the Pokémon on the opposing field.
+   *
+   * @returns An array of Pokémon on the opposite side of the field.
+   */
+  public getOpposingField(): Pokemon[] {
+    return this.isPlayer() ? globalScene.getEnemyField() : globalScene.getPlayerField();
   }
 
   /**
@@ -5872,8 +5869,8 @@ export class PlayerPokemon extends Pokemon {
     return globalScene.getPlayerField().indexOf(this);
   }
 
-  getBattlerIndex(): BattlerIndex {
-    return this.getFieldIndex();
+  getBattlerIndex(): FieldBattlerIndex {
+    return this.getFieldIndex() as FieldBattlerIndex;
   }
 
   generateCompatibleTms(): void {
@@ -5907,37 +5904,6 @@ export class PlayerPokemon extends Pokemon {
     }
   }
 
-  /**
-   * Cause this Pokémon to leave the field (via {@linkcode leaveField}) and then
-   * open the party switcher UI to switch in a new Pokémon
-   * @param switchType - The type of this switch-out. If this is
-   * `BATON_PASS` or `SHED_TAIL`, this Pokémon's effects are not cleared upon leaving
-   * the field.
-   */
-  switchOut(switchType: SwitchType = SwitchType.SWITCH): Promise<void> {
-    return new Promise(resolve => {
-      this.leaveField(switchType === SwitchType.SWITCH);
-
-      globalScene.ui.setMode(
-        UiMode.PARTY,
-        PartyUiMode.FAINT_SWITCH,
-        this.getFieldIndex(),
-        (slotIndex: number, _option: PartyOption) => {
-          if (slotIndex >= globalScene.currentBattle.getBattlerCount() && slotIndex < 6) {
-            globalScene.phaseManager.queueDeferred(
-              "SwitchSummonPhase",
-              switchType,
-              this.getFieldIndex(),
-              slotIndex,
-              false,
-            );
-          }
-          globalScene.ui.setMode(UiMode.MESSAGE).then(resolve);
-        },
-        PartyUiHandler.FilterNonFainted,
-      );
-    });
-  }
   /**
    * Add friendship to this Pokemon
    *
@@ -7010,12 +6976,13 @@ export class EnemyPokemon extends Pokemon {
     return globalScene.getEnemyField().indexOf(this);
   }
 
-  public getBattlerIndex(): BattlerIndex {
+  public getBattlerIndex(): FieldBattlerIndex {
     const fieldIndex = this.getFieldIndex();
     if (fieldIndex === -1) {
-      return BattlerIndex.ATTACKER;
+      // TODO: FIX THIS
+      return BattlerIndex.ATTACKER as unknown as FieldBattlerIndex;
     }
-    return BattlerIndex.ENEMY + this.getFieldIndex();
+    return (BattlerIndex.ENEMY + this.getFieldIndex()) as FieldBattlerIndex;
   }
 
   /**

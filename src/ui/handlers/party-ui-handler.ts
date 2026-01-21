@@ -52,7 +52,7 @@ export enum PartyUiMode {
    * Indicates that the party UI is open because of a faint or other forced
    * switch (eg, move effect). This type of switch cannot be cancelled.
    */
-  FAINT_SWITCH,
+  MODAL_SWITCH,
   /**
    * Indicates that the party UI is open because of a start-of-encounter optional
    * switch. This type of switch can be cancelled.
@@ -886,7 +886,7 @@ export class PartyUiHandler extends MessageUiHandler {
     // For what modes is a selectCallback needed?
     // PartyUiMode.SELECT (SELECT)
     // PartyUiMode.RELEASE (RELEASE)
-    // PartyUiMode.FAINT_SWITCH (SEND_OUT or PASS_BATON (?))
+    // PartyUiMode.MODAL_SWITCH (SEND_OUT or PASS_BATON (?))
     // PartyUiMode.REVIVAL_BLESSING (REVIVE)
     // PartyUiMode.MODIFIER_TRANSFER (held items, and ALL)
     // PartyUiMode.CHECK --- no specific option, only relevant on cancel?
@@ -1026,7 +1026,7 @@ export class PartyUiHandler extends MessageUiHandler {
   }
 
   private allowCancel(): boolean {
-    return !(this.partyUiMode === PartyUiMode.FAINT_SWITCH || this.partyUiMode === PartyUiMode.REVIVAL_BLESSING);
+    return !(this.partyUiMode === PartyUiMode.MODAL_SWITCH || this.partyUiMode === PartyUiMode.REVIVAL_BLESSING);
   }
 
   /**
@@ -1365,7 +1365,7 @@ export class PartyUiHandler extends MessageUiHandler {
 
   private allowBatonModifierSwitch(): boolean {
     return !!(
-      this.partyUiMode !== PartyUiMode.FAINT_SWITCH
+      this.partyUiMode !== PartyUiMode.MODAL_SWITCH
       && globalScene.findModifier(
         m => m.is("SwitchEffectTransferModifier") && m.pokemonId === globalScene.getPlayerField()[this.fieldIndex].id,
       )
@@ -1377,7 +1377,7 @@ export class PartyUiHandler extends MessageUiHandler {
   private isBatonPassMove(): boolean {
     const lastMove: TurnMove | undefined = globalScene.getPlayerField()[this.fieldIndex].getLastXMoves()[0];
     return (
-      this.partyUiMode === PartyUiMode.FAINT_SWITCH
+      this.partyUiMode === PartyUiMode.MODAL_SWITCH
       && lastMove?.result === MoveResult.SUCCESS
       && allMoves[lastMove.move].getAttrs("ForceSwitchOutAttr")[0]?.isBatonPass()
     );
@@ -1494,7 +1494,7 @@ export class PartyUiHandler extends MessageUiHandler {
       // It could use a rework differentiating different kind of switches
       // to treat baton passing separately from switching on faint.
       case PartyUiMode.SWITCH:
-      case PartyUiMode.FAINT_SWITCH:
+      case PartyUiMode.MODAL_SWITCH:
       case PartyUiMode.POST_BATTLE_SWITCH:
         if (this.cursor >= globalScene.currentBattle.getBattlerCount()) {
           const allowBatonModifierSwitch = this.allowBatonModifierSwitch();
