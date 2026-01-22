@@ -1,4 +1,3 @@
-import type { Ability } from "#abilities/ability";
 import type { globalScene } from "#app/global-scene";
 import { allAbilities } from "#data/data-lists";
 import type { AbilityId } from "#enums/ability-id";
@@ -107,7 +106,7 @@ export class FieldHelper extends GameManagerHelper {
    * @see {@linkcode vi.spyOn}
    * @see https://vitest.dev/api/mock#mockreturnvalue
    */
-  public mockAbility(pokemon: Pokemon, ability: AbilityId): MockInstance<(ignoreOverride?: boolean) => Ability> {
+  public mockAbility(pokemon: Pokemon, ability: AbilityId): MockInstance<Pokemon["getAbility"]> {
     return vi.spyOn(pokemon, "getAbility").mockReturnValue(allAbilities[ability]);
   }
 
@@ -118,7 +117,8 @@ export class FieldHelper extends GameManagerHelper {
    * @param teraType - The {@linkcode PokemonType} to Terastallize into; defaults to `pokemon`'s primary type if not provided
    * @remarks
    * This function only mocks the Pokemon's tera-related variables; it does NOT activate any tera-related abilities.
-   * If activating on-Terastallize effects is desired, use either {@linkcode MoveHelper.use} with `useTera=true`,
+   *
+   * If activating on-Terastallize effects is desired, use either {@linkcode MoveHelper.use} with `useTera=true`
    * or {@linkcode MoveHelper.selectWithTera} instead.
    */
   public forceTera(pokemon: Pokemon, teraType: PokemonType = pokemon.getSpeciesForm(true).type1): void {

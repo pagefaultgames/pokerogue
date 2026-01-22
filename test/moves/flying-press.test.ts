@@ -12,7 +12,7 @@ import { toTitleCase } from "#utils/strings";
 import Phaser from "phaser";
 import { afterEach, beforeAll, describe, expect, it } from "vitest";
 
-describe.sequential("Move - Flying Press", () => {
+describe("Move - Flying Press", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
   let hawlucha: PlayerPokemon;
@@ -65,7 +65,7 @@ describe.sequential("Move - Flying Press", () => {
     }
   }
 
-  describe("Normal -", () => {
+  describe("Normal", () => {
     it("should deal damage as a Fighting/Flying type move by default", async () => {
       checkEffForAllTypes(PokemonType.FIGHTING);
     });
@@ -93,7 +93,7 @@ describe.sequential("Move - Flying Press", () => {
     });
   });
 
-  describe("Inverse Battle -", () => {
+  describe("Inverse Battle", () => {
     beforeAll(() => {
       game.challengeMode.overrideGameWithChallenges(Challenges.INVERSE_BATTLE, 1, 1);
     });

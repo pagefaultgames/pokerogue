@@ -43,7 +43,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
    * Selects 3 daily run starters with a fixed seed of "test"
    * (see `DailyRunConfig.getDailyRunStarters` in `daily-run.ts` for more info).
    * @returns A promise that resolves when the summon phase is reached.
-   * @deprecated - Specifying the starters helps prevent inconsistencies from internal RNG changes.
+   * @deprecated Specifying the starters helps prevent inconsistencies from internal RNG changes.
    * @todo This duplicates all but 1 line of code from the classic mode variant...
    */
   // biome-ignore lint/style/useUnifiedTypeSignatures: Marks for deprecation
@@ -82,7 +82,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
    * Selects 3 daily run starters with a fixed seed of "test"
    * (see `DailyRunConfig.getDailyRunStarters` in `daily-run.ts` for more info).
    * @returns A promise that resolves when the battle is started.
-   * @deprecated - Specifying the starters helps prevent inconsistencies from internal RNG changes.
+   * @deprecated Specifying the starters helps prevent inconsistencies from internal RNG changes.
    * @todo This duplicates all its code with the classic mode variant...
    */
   // biome-ignore lint/style/useUnifiedTypeSignatures: Marks for deprecation
@@ -121,8 +121,8 @@ export class ChallengeModeHelper extends GameManagerHelper {
    * @param id - The challenge id
    * @param value - The challenge value
    * @param severity - The challenge severity
-   * @todo Make severity optional for challenges that do not require it
    */
+  // TODO: Make severity optional for challenges that do not require it
   public overrideGameWithChallenges(id: Challenges, value: number, severity: number): void;
   /**
    * Override an already-started game with the given challenges.

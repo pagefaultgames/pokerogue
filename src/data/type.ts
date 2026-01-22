@@ -3,12 +3,13 @@ import { PokemonType } from "#enums/pokemon-type";
 import { applyChallenges } from "#utils/challenge-utils";
 import { NumberHolder } from "#utils/common";
 
+// TODO: Expand granularity to account for other multipliers - this can actually go as far as 32x at some callsites
 export type TypeDamageMultiplier = 0 | 0.125 | 0.25 | 0.5 | 1 | 2 | 4 | 8;
 
 export type SingleTypeDamageMultiplier = 0 | 0.5 | 1 | 2;
 
 /**
- * Get the base type effectiveness of one `PokemonType` against another. \
+ * Get the baseline type effectiveness of one `PokemonType` against another. \
  * Accounts for Inverse Battle's reversed type effectiveness, but does not apply any other effects.
  * @param attackType - The {@linkcode PokemonType} of the attacker
  * @param defType - The {@linkcode PokemonType} of the defender
@@ -284,9 +285,10 @@ function getTypeChartMultiplier(attackType: PokemonType, defType: PokemonType): 
       return 1;
   }
 }
+
 /**
  * Retrieve the color corresponding to a specific damage multiplier
- * @returns A color or undefined if the default color should be used
+ * @returns A color or `undefined` if the default color should be used
  */
 export function getTypeDamageMultiplierColor(
   multiplier: TypeDamageMultiplier,
@@ -312,25 +314,23 @@ export function getTypeDamageMultiplierColor(
         return "#52C200";
     }
   }
-  if (side === "defense") {
-    switch (multiplier) {
-      case 0:
-        return "#B1B100";
-      case 0.125:
-        return "#2DB4FF";
-      case 0.25:
-        return "#00A4FF";
-      case 0.5:
-        return "#0093FF";
-      case 1:
-        return;
-      case 2:
-        return "#FE8E00";
-      case 4:
-        return "#FF7400";
-      case 8:
-        return "#FF5500";
-    }
+  switch (multiplier) {
+    case 0:
+      return "#B1B100";
+    case 0.125:
+      return "#2DB4FF";
+    case 0.25:
+      return "#00A4FF";
+    case 0.5:
+      return "#0093FF";
+    case 1:
+      return;
+    case 2:
+      return "#FE8E00";
+    case 4:
+      return "#FF7400";
+    case 8:
+      return "#FF5500";
   }
 }
 

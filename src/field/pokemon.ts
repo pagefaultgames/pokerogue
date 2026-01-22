@@ -2540,16 +2540,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Calculate the type effectiveness multiplier of a Move used **against** this Pokemon.
    * @param moveType - The {@linkcode PokemonType} of the move being used
-   * @param source - The {@linkcode Pokemon} using the move, used to check the user's Scrappy and Mind's Eye abilities
-   * and the effects of Foresight/Odor Sleuth
-   * @param ignoreStrongWinds - If `true`, ignores the effect of strong winds (used by anticipation, forewarn, stealth rocks);
-   * default `false`
-   * @param simulated - If `true`, will prevent changes to game state during calculations; default `false`
-   * @param move - The {@linkcode Move} whose type effectiveness is being checked. Used for applying {@linkcode VariableMoveTypeChartAttr}
-   * @param useIllusion - Whether to consider this Pokemon's {@linkcode IllusionData | illusion} when determining types; default `false`
+   * @param params - Parameters used to modify the type effectiveness
    * @returns The computed type effectiveness multiplier.
    */
-  getAttackTypeEffectiveness(
+  public getAttackTypeEffectiveness(
     moveType: PokemonType,
     {
       source,
@@ -2568,7 +2562,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     // Handle flying v ground type immunity without removing flying type so effective types are still effective
     // Related to https://github.com/pagefaultgames/pokerogue/issues/524
-    // TODO: Fix once gravity makes pokemon actually grounded
+    // TODO: Fix once gravity makes pokemon actually grounded in #5950
     if (
       moveType === PokemonType.GROUND
       && types.includes(PokemonType.FLYING)
@@ -2667,15 +2661,16 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
      * Based on how effectively this Pokemon defends against the opponent's types.
      * This score cannot be higher than 4.
      */
+    // TODO: This should use a `reduce` over the types
     let defScore = 1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[0], { source: opponent }), 0.25);
     if (enemyTypes.length > 1) {
-      defScore *=
-        // TODO: Shouldn't this pass `simulated=true` here?
-        1
-        / Math.max(
-          this.getAttackTypeEffectiveness(enemyTypes[1], { source: opponent, simulated: false, useIllusion: true }),
-          0.25,
-        );
+      // TODO: Shouldn't this pass `simulated=true` here?
+      const secondTypeEff = this.getAttackTypeEffectiveness(enemyTypes[1], {
+        source: opponent,
+        simulated: false,
+        useIllusion: true,
+      });
+      defScore /= Math.max(secondTypeEff, 0.25);
     }
 
     const moveset = this.moveset;
@@ -4212,7 +4207,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   findTag(tagFilter: (tag: BattlerTag) => boolean): BattlerTag | undefined;
   findTag(tagFilter: (tag: BattlerTag) => boolean) {
-    return this.summonData.tags.find(t => tagFilter(t));
+    return this.summonData.tags.find(tagFilter);
   }
 
   /**
@@ -4232,7 +4227,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   findTags(tagFilter: (tag: BattlerTag) => boolean): BattlerTag[];
   findTags(tagFilter: (tag: BattlerTag) => boolean): BattlerTag[] {
-    return this.summonData.tags.filter(t => tagFilter(t));
+    return this.summonData.tags.filter(tagFilter);
   }
 
   /**

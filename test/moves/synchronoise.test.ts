@@ -33,8 +33,7 @@ describe("Moves - Synchronoise", () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle([SpeciesId.BIBAREL, SpeciesId.STARLY]);
 
-    const [bidoof, starly] = game.scene.getPlayerField();
-    const [karp1, karp2] = game.scene.getEnemyField();
+    const [bibarel, starly, karp1, karp2] = game.scene.getField();
     // Mock 2nd magikarp to be a completely different type
     vi.spyOn(karp2, "getTypes").mockReturnValue([PokemonType.GRASS]);
 
@@ -42,7 +41,7 @@ describe("Moves - Synchronoise", () => {
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.toEndOfTurn();
 
-    expect(bidoof).toHaveUsedMove({ move: MoveId.SYNCHRONOISE, result: MoveResult.SUCCESS });
+    expect(bibarel).toHaveUsedMove({ move: MoveId.SYNCHRONOISE, result: MoveResult.SUCCESS });
     expect(starly).not.toHaveFullHp();
     expect(karp1).not.toHaveFullHp();
     expect(karp2).toHaveFullHp();
@@ -86,6 +85,7 @@ describe("Moves - Synchronoise", () => {
     game.move.use(MoveId.SYNCHRONOISE);
     await game.toEndOfTurn();
 
+    // NB: Type immunities currently use HitResult.MISS; this may (and arguably should) change later
     expect(magneton).toHaveUsedMove({ move: MoveId.SYNCHRONOISE, result: MoveResult.MISS });
     expect(karp).toHaveFullHp();
   });

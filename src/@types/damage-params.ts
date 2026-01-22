@@ -1,6 +1,7 @@
 import type { MoveCategory } from "#enums/move-category";
 import type { Pokemon } from "#field/pokemon";
-import type { Move, VariableMoveTypeChartAttr } from "#types/move-types";
+import type { IllusionData } from "#types/illusion-data";
+import type { Move, MoveTypeChartOverrideAttr } from "#types/move-types";
 
 /**
  * Collection of types for methods like {@linkcode Pokemon.getBaseDamage} and {@linkcode Pokemon.getAttackDamage}.
@@ -8,7 +9,7 @@ import type { Move, VariableMoveTypeChartAttr } from "#types/move-types";
  */
 
 /** Base type for damage parameter methods, used for DRY */
-export interface damageParams {
+interface damageParams {
   /** The attacking {@linkcode Pokemon} */
   source: Pokemon;
   /** The move used in the attack */
@@ -32,20 +33,19 @@ export interface damageParams {
 }
 
 /**
- * Type for the parameters of {@linkcode Pokemon#=.getBaseDamage | getBaseDamage}
+ * Type for the parameters of {@linkcode Pokemon.getBaseDamage}
  * @interface
  */
 export type getBaseDamageParams = Omit<damageParams, "effectiveness">;
 
 /**
- * Type for the parameters of {@linkcode Pokemon#=.getAttackDamage | getAttackDamage}
+ * Type for the parameters of {@linkcode Pokemon.getAttackDamage}
  * @interface
  */
 export type getAttackDamageParams = Omit<damageParams, "moveCategory">;
 
 /**
- * Type for the parameters of {@linkcode Pokemon.getAttackTypeEffectiveness | getAttackTypeEffectiveness}
- * and associated helper functions.
+ * Type for the parameters of {@linkcode Pokemon.getAttackTypeEffectiveness}.
  */
 export interface getAttackTypeEffectivenessParams {
   /**
@@ -65,7 +65,7 @@ export interface getAttackTypeEffectivenessParams {
   simulated?: boolean;
   /**
    * The {@linkcode Move} whose type effectiveness is being checked.
-   * Used for applying {@linkcode VariableMoveTypeChartAttr}
+   * Used for applying {@linkcode MoveTypeChartOverrideAttr}.
    */
   move?: Move;
   /**

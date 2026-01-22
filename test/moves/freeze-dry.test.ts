@@ -10,11 +10,12 @@ import type { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
 import { stringifyEnumArray } from "#test/test-utils/string-utils";
 import Phaser from "phaser";
+import type { IntClosedRange, TupleOf } from "type-fest";
 import { afterEach, beforeAll, describe, expect, it } from "vitest";
 
-type typesArray = [PokemonType] | [PokemonType, PokemonType] | [PokemonType, PokemonType, PokemonType];
+type TypesArray = TupleOf<IntClosedRange<1, 3>, PokemonType>;
 
-describe.sequential("Move - Freeze-Dry", () => {
+describe("Move - Freeze-Dry", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
   let feebas: PlayerPokemon;
@@ -49,9 +50,9 @@ describe.sequential("Move - Freeze-Dry", () => {
   /**
    * Check that Freeze-Dry is the given effectiveness against the given type.
    * @param types - The base {@linkcode PokemonType}s to set; will populate `addedType` if above 3
-   * @param multi - The expected {@linkcode TypeDamageMultiplier}
+   * @param expectedMult - The expected {@linkcode TypeDamageMultiplier}
    */
-  function expectEffectiveness(types: typesArray, multi: TypeDamageMultiplier): void {
+  function expectEffectiveness(types: TypesArray, expectedMult: TypeDamageMultiplier): void {
     enemy.summonData.types = types.slice(0, 2);
     if (types[2] !== undefined) {
       enemy.summonData.addedType = types[2];
@@ -61,12 +62,12 @@ describe.sequential("Move - Freeze-Dry", () => {
     const eff = enemy.getAttackTypeEffectiveness(moveType, { source: feebas, move: allMoves[MoveId.FREEZE_DRY] });
     expect(
       eff,
-      `Freeze-dry effectiveness against ${stringifyEnumArray(PokemonType, types)} was ${eff} instead of ${multi}!`,
-    ).toBe(multi);
+      `Freeze-dry effectiveness against ${stringifyEnumArray(PokemonType, types)} was ${eff} instead of ${expectedMult}!`,
+    ).toBe(expectedMult);
   }
 
-  describe("Normal -", () => {
-    it.each<{ name: string; types: typesArray; eff: TypeDamageMultiplier }>([
+  describe("Normal", () => {
+    it.each<{ name: string; types: TypesArray; eff: TypeDamageMultiplier }>([
       { name: "Pure Water", types: [PokemonType.WATER], eff: 2 },
       { name: "Water/Ground", types: [PokemonType.WATER, PokemonType.GROUND], eff: 4 },
       { name: "Water/Flying/Grass", types: [PokemonType.WATER, PokemonType.FLYING, PokemonType.GRASS], eff: 8 },
@@ -93,7 +94,7 @@ describe.sequential("Move - Freeze-Dry", () => {
       expectEffectiveness([PokemonType.WATER], 0.5);
     });
 
-    it.each<{ name: string; types: typesArray; eff: TypeDamageMultiplier }>([
+    it.each<{ name: string; types: TypesArray; eff: TypeDamageMultiplier }>([
       { name: "Pure Water", types: [PokemonType.WATER], eff: 2 },
       { name: "Water/Ghost", types: [PokemonType.WATER, PokemonType.GHOST], eff: 0 },
     ])("should be $effx effective against a $name-type opponent with Normalize", ({ types, eff }) => {
@@ -109,7 +110,7 @@ describe.sequential("Move - Freeze-Dry", () => {
     });
   });
 
-  describe("Inverse Battle -", () => {
+  describe("Inverse Battle", () => {
     beforeAll(() => {
       game.challengeMode.overrideGameWithChallenges(Challenges.INVERSE_BATTLE, 1, 1);
     });
