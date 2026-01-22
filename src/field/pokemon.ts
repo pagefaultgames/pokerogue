@@ -458,22 +458,43 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Return the name that will be displayed when this Pokemon is sent out into battle.
-   * @param useIllusion - Whether to consider this Pokemon's illusion if present; default `true`
+   * @param useIllusion - (Default `true`) Whether to consider this Pokemon's illusion if present
+   * @param prependFormName - (Default `true`) Whether to put "Mega"/etc in front of the Pokemon's name if applicable
    * @returns The name to render for this {@linkcode Pokemon}.
    */
-  getNameToRender(useIllusion = true) {
-    const illusion = this.summonData.illusion;
-    const name = useIllusion ? (illusion?.name ?? this.name) : this.name;
-    const nickname: string | undefined = useIllusion ? (illusion?.nickname ?? this.nickname) : this.nickname;
-    try {
-      if (nickname) {
-        return decodeURIComponent(escape(atob(nickname))); // TODO: Remove `atob` and `escape`... eventually...
+  getNameToRender({
+    useIllusion = true,
+    prependFormName = true,
+  }: {
+    useIllusion?: boolean;
+    prependFormName?: boolean;
+  } = {}) {
+    const decodeNickname = (nickname: string): string => {
+      try {
+        return decodeURIComponent(escape(atob(nickname))); // TODO: this seems jank, and `escape` is deprecated
+      } catch (err) {
+        console.error(`Failed to decode nickname for ${this.name}`, err);
+        return this.name;
       }
-      return name;
-    } catch (err) {
-      console.error(`Failed to decode nickname for ${name}`, err);
-      return name;
+    };
+
+    const { illusion } = this.summonData;
+    if (useIllusion && illusion) {
+      if (illusion.nickname) {
+        return decodeNickname(illusion.nickname);
+      }
+      return illusion.name;
     }
+
+    if (this.nickname) {
+      return decodeNickname(this.nickname);
+    }
+
+    if (prependFormName) {
+      return this.name;
+    }
+
+    return this.species.getName();
   }
 
   /**
@@ -1913,10 +1934,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Evaluate and return this Pokemon's typing.
-   * @param includeTeraType - Whether to use this Pokemon's tera type if Terastallized; default `false`
-   * @param forDefend - Whether this Pokemon is currently receiving an attack; default `false`
-   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform}; default `false`
-   * @param useIllusion - Whether to consider an active illusion; default `false`
+   * @param includeTeraType - (Default `false`) Whether to use this Pokemon's Tera Type if Terastallized
+   * @param forDefend - (Default `false`) Whether this Pokemon is currently receiving an attack
+   * @param ignoreOverride - (Default `false`) Whether to ignore temporary type changes (such as those caused by {@linkcode MoveId.TRANSFORM | Transform} and similar effects)
+   * @param useIllusion - (Default `false`) Whether to consider this Pokemon's illusion if active
    * @returns An array of {@linkcode PokemonType}s corresponding to this Pokemon's typing (real or perceived).
    */
   public getTypes(
