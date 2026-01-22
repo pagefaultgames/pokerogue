@@ -5,7 +5,6 @@ import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { PositionalTagType } from "#enums/positional-tag-type";
 import { SpeciesId } from "#enums/species-id";
-import { Stat } from "#enums/stat";
 import type { PokemonHealPhase } from "#phases/pokemon-heal-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import { toDmgValue } from "#utils/common";
@@ -106,39 +105,39 @@ describe("Move - Wish", () => {
     vi.spyOn(karp1, "getNameToRender").mockReturnValue("Karp 1");
     vi.spyOn(karp2, "getNameToRender").mockReturnValue("Karp 2");
 
-    const oldOrder = game.field.getSpeedOrder();
-
     game.move.use(MoveId.WISH, BattlerIndex.PLAYER);
     game.move.use(MoveId.WISH, BattlerIndex.PLAYER_2);
     await game.move.forceEnemyMove(MoveId.WISH);
     await game.move.forceEnemyMove(MoveId.WISH);
-    // Ensure that the wishes are used deterministically in speed order (for speed ties)
-    await game.setTurnOrder(oldOrder.map(p => p.getBattlerIndex()));
+
+    const oldOrder = [BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2];
+    await game.setTurnOrder(oldOrder);
     await game.toNextTurn();
 
     expect(game).toHavePositionalTag(PositionalTagType.WISH, 4);
 
-    // Lower speed to change turn order
-    alomomola.setStatStage(Stat.SPD, 6);
-    blissey.setStatStage(Stat.SPD, -6);
-
-    const newOrder = game.field.getSpeedOrder();
-    expect(newOrder).not.toEqual(oldOrder);
-
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    await game.move.forceEnemyMove(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.SPLASH);
+
+    // change turn order
+    // NB: this does nothing until #6779 is merged, as set order currently only affects move uses
+    // (and would not affect the order of any other phases)
+    await game.setTurnOrder([BattlerIndex.ENEMY_2, BattlerIndex.ENEMY, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("PositionalTagPhase");
 
-    // all wishes have activated and added healing phases
+    // all wishes should have activated and added healing phases
     expect(game).not.toHavePositionalTag(PositionalTagType.WISH);
+    expect(game).toBeAtPhase("PokemonHealPhase");
 
     const healPhases = game.scene.phaseManager["phaseQueue"].findAll("PokemonHealPhase");
-    // account for phase interceptor stopping _after_ the first PokemonHealPhase is started
-    // TODO: Remove in phase-interceptor PR (intentionally will fail if not removed)
-    expect(game).toBeAtPhase("PokemonHealPhase");
+    // account for the current phase about to be ran also being a PHP
+    // TODO: Make this into a matcher or similar
     healPhases.unshift(game.scene.phaseManager.getCurrentPhase() as PokemonHealPhase);
+
     expect(healPhases).toHaveLength(4);
-    expect(healPhases.map(php => php.getPokemon())).toEqual(oldOrder);
+    expect(healPhases.map(php => php["battlerIndex"])).toEqual(oldOrder);
 
     await game.toEndOfTurn();
 
