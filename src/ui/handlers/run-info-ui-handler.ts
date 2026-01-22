@@ -956,7 +956,7 @@ export class RunInfoUiHandler extends UiHandler {
    * False -> Shows the Pokemon's held items and hides default information
    */
   private showParty(partyVisible: boolean): void {
-    const allContainers = this.partyContainer.getAll("name", "PkmnInfo");
+    const allContainers = this.partyContainer.getAll<Phaser.GameObjects.Container>("name", "PkmnInfo");
     allContainers.forEach((c: Phaser.GameObjects.Container) => {
       c.getByName<Phaser.GameObjects.Container>("PkmnMoves").setVisible(partyVisible);
       c.getByName<Phaser.GameObjects.Container>("PkmnInfoText").setVisible(partyVisible);

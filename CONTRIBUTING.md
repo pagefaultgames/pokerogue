@@ -8,7 +8,7 @@ SPDX-License-Identifier: CC-BY-NC-SA-4.0
 
 Thank you for taking the time to contribute, every little bit helps. This project is entirely open-source and unmonetized - community contributions are what keep it alive!
 
-Please make sure you understand everything relevant to your changes from the [Table of Contents](#-table-of-contents), and absolutely *feel free to reach out in the **#dev-corner** channel on [Discord](https://discord.gg/pokerogue)*.
+Please make sure you understand everything relevant to your changes from the [Table of Contents](#-table-of-contents), and absolutely *feel free to reach out in the **#pokerogue-dev** channel on [Discord](https://discord.gg/pokerogue)*.
 We are here to help and the better you understand what you're working on, the easier it will be for it to find its way into the game.
 
 Note that, as per GitHub's [terms of service](https://docs.github.com/en/site-policy/github-terms/github-terms-of-service#6-contributions-under-repository-license), any contributions made to this repository will be licensed under this repository's terms.
@@ -69,7 +69,7 @@ For those who prefer Docker containers, see [this instructions page](./docs/podm
 #### Running Locally
 
 1. Run `pnpm install` from the repository root
-    - *if you run into any errors, reach out in the **#dev-corner** channel on Discord*
+    - *if you run into any errors, reach out in the **#pokerogue-dev** channel on Discord*
 2. Run `pnpm start:dev` to locally run the project at `localhost:8000`
 
 
@@ -78,7 +78,7 @@ For those who prefer Docker containers, see [this instructions page](./docs/podm
 A great way to develop an understanding of how the project works is to look at test cases (located in [the `test` folder](./test/)).
 Tests show you both how things are supposed to work and the expected "flow" to get from point A to point B in battles.
 
-*This is a big project and you will be confused at times - never be afraid to reach out and ask questions in **#dev-corner***!
+*This is a big project and you will be confused at times - never be afraid to reach out and ask questions in **#pokerogue-dev***!
 
 ### Where to Look
 
@@ -128,7 +128,7 @@ const overrides = {
 ```
 
 Read through `src/overrides.ts` file to find the override that fits your needs - there are a lot of them!
-If the situation you're trying to test can't be created using existing overrides (or with the [Dev Save](#-development-save-file)), reach out in **#dev-corner**.
+If the situation you're trying to test can't be created using existing overrides (or with the [Dev Save](#-development-save-file)), reach out in **#pokerogue-dev**.
 You can get help testing your specific changes, and you might have found a new override that needs to be created!
 
 ### 2 - Automatic Testing
@@ -189,6 +189,7 @@ fix(move): Future Sight no longer crashes
 - "github" - Updating the CI pipeline or otherwise modifying something in the `./github/**` directory
 - "i18n" - Adding/modifying translation keys, etc
 - "misc" - A change that doesn't fit any other prefix
+- "perf" - A refactor aimed at improving performance
 - "refactor" - A change that doesn't impact functionality or fix any bugs (except incidentally)
 - "test" - Primarily adding/updating tests or modifying the test framework
 

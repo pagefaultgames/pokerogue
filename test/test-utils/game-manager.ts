@@ -36,6 +36,7 @@ import { MoveHelper } from "#test/test-utils/helpers/move-helper";
 import { OverridesHelper } from "#test/test-utils/helpers/overrides-helper";
 import { PromptHandler } from "#test/test-utils/helpers/prompt-handler";
 import { ReloadHelper } from "#test/test-utils/helpers/reload-helper";
+import { RngHelper } from "#test/test-utils/helpers/rng-helper";
 import { SettingsHelper } from "#test/test-utils/helpers/settings-helper";
 import type { InputsHandler } from "#test/test-utils/inputs-handler";
 import { MockFetch } from "#test/test-utils/mocks/mock-fetch";
@@ -72,6 +73,7 @@ export class GameManager {
   public readonly reload: ReloadHelper;
   public readonly modifiers: ModifierHelper;
   public readonly field: FieldHelper;
+  public readonly rng: RngHelper;
 
   /**
    * Creates an instance of GameManager.
@@ -109,6 +111,7 @@ export class GameManager {
     this.reload = new ReloadHelper(this);
     this.modifiers = new ModifierHelper(this);
     this.field = new FieldHelper(this);
+    this.rng = new RngHelper(this);
 
     this.initDefaultOverrides();
 
