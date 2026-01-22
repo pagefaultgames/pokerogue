@@ -42,11 +42,15 @@ interface TerrainInfo {
   readonly terrainType: TerrainType;
 }
 
-/** Interface for info about an {@linkcode ArenaTag}'s effects */
+/** Interface for info about an {@linkcode ArenaTag}'s effects. */
 interface ArenaTagInfo {
-  /** The localized name of the tag. */
+  /**
+   * The localized name of the tag.
+   * @privateRemarks
+   * Made mutable to allow for updating entry hazard layer counts.
+   */
   name: string;
-  /** The {@linkcode ArenaTagSide} that the tag applies to. */
+  /** The {@linkcode ArenaTagSide} to which the tag applies. */
   readonly side: ArenaTagSide;
   /** The maximum duration of the tag, or `0` if it should last indefinitely. */
   readonly maxDuration: number;
@@ -56,107 +60,106 @@ interface ArenaTagInfo {
   readonly tagType: ArenaTagType;
 }
 
-// #endregion interfaces
+// #endregion Interfaces
+
+// #region Constants
+/** The restricted width of the flyout which should be drawn to */
+const FLYOUT_WIDTH = 170;
+/** The restricted height of the flyout which should be drawn to */
+const FLYOUT_HEIGHT = 51;
+/** The amount of translation animation on the x-axis */
+const FLYOUT_TRANSLATION_X = FLYOUT_WIDTH;
+/** The x-axis point where the flyout should sit when activated */
+const FLYOUT_ANCHOR_X = 0;
+/** The y-axis point where the flyout should sit when activated */
+const FLYOUT_ANCHOR_Y = -98;
+// #endregion Constants
 
 /**
  * Class to display and update the on-screen arena flyout.
  */
 export class ArenaFlyout extends Phaser.GameObjects.Container {
-  /** The restricted width of the flyout which should be drawn to */
-  private flyoutWidth = 170;
-  /** The restricted height of the flyout which should be drawn to */
-  private flyoutHeight = 51;
-
-  /** The amount of translation animation on the x-axis */
-  private translationX: number;
-  /** The x-axis point where the flyout should sit when activated */
-  private anchorX: number;
-  /** The y-axis point where the flyout should sit when activated */
-  private anchorY: number;
-
   /** The initial container which defines where the flyout should be attached */
-  private flyoutParent: Phaser.GameObjects.Container;
+  private readonly flyoutParent: Phaser.GameObjects.Container;
   /** The container which defines the drawable dimensions of the flyout */
-  private flyoutContainer: Phaser.GameObjects.Container;
+  private readonly flyoutContainer: Phaser.GameObjects.Container;
 
   /** The background {@linkcode Phaser.GameObjects.NineSlice} window for the flyout */
-  private flyoutWindow: Phaser.GameObjects.NineSlice;
+  private readonly flyoutWindow: Phaser.GameObjects.NineSlice;
 
   /** The header {@linkcode Phaser.GameObjects.NineSlice} window for the flyout */
-  private flyoutWindowHeader: Phaser.GameObjects.NineSlice;
+  private readonly flyoutWindowHeader: Phaser.GameObjects.NineSlice;
   /** The {@linkcode Phaser.GameObjects.Text} that goes inside of the header */
-  private flyoutTextHeader: Phaser.GameObjects.Text;
+  private readonly flyoutTextHeader: Phaser.GameObjects.Text;
 
-  private timeOfDayWidget: TimeOfDayWidget;
+  private readonly timeOfDayWidget: TimeOfDayWidget;
 
   /** The {@linkcode Phaser.GameObjects.Text} header used to indicate the player's effects */
-  private flyoutTextHeaderPlayer: Phaser.GameObjects.Text;
+  private readonly flyoutTextHeaderPlayer: Phaser.GameObjects.Text;
   /** The {@linkcode Phaser.GameObjects.Text} header used to indicate the enemy's effects */
-  private flyoutTextHeaderEnemy: Phaser.GameObjects.Text;
+  private readonly flyoutTextHeaderEnemy: Phaser.GameObjects.Text;
   /** The {@linkcode Phaser.GameObjects.Text} header used to indicate field effects */
-  private flyoutTextHeaderField: Phaser.GameObjects.Text;
+  private readonly flyoutTextHeaderField: Phaser.GameObjects.Text;
 
   /** The {@linkcode Phaser.GameObjects.Text} used to indicate the player's effects */
-  private flyoutTextPlayer: Phaser.GameObjects.Text;
+  private readonly flyoutTextPlayer: Phaser.GameObjects.Text;
   /** The {@linkcode Phaser.GameObjects.Text} used to indicate the enemy's effects */
-  private flyoutTextEnemy: Phaser.GameObjects.Text;
+  private readonly flyoutTextEnemy: Phaser.GameObjects.Text;
   /** The {@linkcode Phaser.GameObjects.Text} used to indicate field effects */
-  private flyoutTextField: Phaser.GameObjects.Text;
+  private readonly flyoutTextField: Phaser.GameObjects.Text;
 
   /** Holds info about the current active {@linkcode Weather}, if any are active. */
-  private weatherInfo?: WeatherInfo;
+  private weatherInfo?: WeatherInfo | undefined;
   /** Holds info about the current active {@linkcode Terrain}, if any are active. */
-  private terrainInfo?: TerrainInfo;
+  private terrainInfo?: TerrainInfo | undefined;
 
   /** Container for all {@linkcode ArenaTag}s observed by this object. */
   private arenaTags: ArenaTagInfo[] = [];
 
   constructor() {
     super(globalScene, 0, 0);
+
     this.setName("arena-flyout");
 
-    this.translationX = this.flyoutWidth;
-    this.anchorX = 0;
-    this.anchorY = -98;
-
-    this.flyoutParent = globalScene.add.container(this.anchorX - this.translationX, this.anchorY);
-    this.flyoutParent.setAlpha(0);
+    this.flyoutParent = globalScene.add
+      .container(FLYOUT_ANCHOR_X - FLYOUT_TRANSLATION_X, FLYOUT_ANCHOR_Y)
+      .setAlpha(0)
+      .setName("arena-flyout-parent");
     this.add(this.flyoutParent);
 
     this.flyoutContainer = globalScene.add.container(0, 0);
     this.flyoutParent.add(this.flyoutContainer);
 
-    this.flyoutWindow = addWindow(0, 0, this.flyoutWidth, this.flyoutHeight, false, false, 0, 0, WindowVariant.THIN);
+    this.flyoutWindow = addWindow(0, 0, FLYOUT_WIDTH, FLYOUT_HEIGHT, false, false, 0, 0, WindowVariant.THIN);
     this.flyoutContainer.add(this.flyoutWindow);
 
     this.flyoutWindowHeader = addWindow(
-      this.flyoutWidth / 2,
+      FLYOUT_WIDTH / 2,
       0,
-      this.flyoutWidth / 2,
+      FLYOUT_WIDTH / 2,
       14,
       false,
       false,
       0,
       0,
       WindowVariant.XTHIN,
-    );
-    this.flyoutWindowHeader.setOrigin();
+    ).setOrigin();
 
     this.flyoutContainer.add(this.flyoutWindowHeader);
 
     this.flyoutTextHeader = addTextObject(
-      this.flyoutWidth / 2,
+      FLYOUT_WIDTH / 2,
       0,
       i18next.t("arenaFlyout:activeBattleEffects"),
       TextStyle.BATTLE_INFO,
-    );
-    this.flyoutTextHeader.setFontSize(54);
-    this.flyoutTextHeader.setAlign("center");
-    this.flyoutTextHeader.setOrigin();
+    )
+      .setFontSize(54)
+      .setAlign("center")
+      .setOrigin();
 
     this.flyoutContainer.add(this.flyoutTextHeader);
 
-    this.timeOfDayWidget = new TimeOfDayWidget(this.flyoutWidth / 2 + this.flyoutWindowHeader.displayWidth / 2);
+    this.timeOfDayWidget = new TimeOfDayWidget(FLYOUT_WIDTH / 2 + this.flyoutWindowHeader.displayWidth / 2);
     this.flyoutContainer.add(this.timeOfDayWidget);
 
     this.flyoutTextHeaderPlayer = addTextObject(6, 5, i18next.t("arenaFlyout:player"), TextStyle.SUMMARY_BLUE);
@@ -167,7 +170,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     this.flyoutContainer.add(this.flyoutTextHeaderPlayer);
 
     this.flyoutTextHeaderField = addTextObject(
-      this.flyoutWidth / 2,
+      FLYOUT_WIDTH / 2,
       5,
       i18next.t("arenaFlyout:field"),
       TextStyle.SUMMARY_GREEN,
@@ -179,7 +182,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     this.flyoutContainer.add(this.flyoutTextHeaderField);
 
     this.flyoutTextHeaderEnemy = addTextObject(
-      this.flyoutWidth - 6,
+      FLYOUT_WIDTH - 6,
       5,
       i18next.t("arenaFlyout:enemy"),
       TextStyle.SUMMARY_RED,
@@ -198,7 +201,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
 
     this.flyoutContainer.add(this.flyoutTextPlayer);
 
-    this.flyoutTextField = addTextObject(this.flyoutWidth / 2, 13, "", TextStyle.BATTLE_INFO);
+    this.flyoutTextField = addTextObject(FLYOUT_WIDTH / 2, 13, "", TextStyle.BATTLE_INFO);
     this.flyoutTextField.setLineSpacing(-1);
     this.flyoutTextField.setFontSize(48);
     this.flyoutTextField.setAlign("center");
@@ -206,7 +209,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
 
     this.flyoutContainer.add(this.flyoutTextField);
 
-    this.flyoutTextEnemy = addTextObject(this.flyoutWidth - 6, 13, "", TextStyle.BATTLE_INFO);
+    this.flyoutTextEnemy = addTextObject(FLYOUT_WIDTH - 6, 13, "", TextStyle.BATTLE_INFO);
     this.flyoutTextEnemy.setLineSpacing(-1);
     this.flyoutTextEnemy.setFontSize(48);
     this.flyoutTextEnemy.setAlign("right");
@@ -214,25 +217,25 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
 
     this.flyoutContainer.add(this.flyoutTextEnemy);
 
-    this.name = "Fight Flyout";
-    this.flyoutParent.name = "Fight Flyout Parent";
-
     // Subscribe to required events available on game start
-    globalScene.eventTarget.addEventListener(BattleSceneEventType.NEW_ARENA, this.onNewArena);
-    globalScene.eventTarget.addEventListener(BattleSceneEventType.TURN_END, this.onTurnEnd);
+    const { eventTarget } = globalScene;
+    eventTarget.addEventListener(BattleSceneEventType.NEW_ARENA, this.onNewArena);
+    eventTarget.addEventListener(BattleSceneEventType.TURN_END, this.onTurnEnd);
   }
+
+  // #region Setup/Teardown
 
   /**
    * Initialize listeners upon creating a new arena.
    */
-  private onNewArena() {
+  private onNewArena(): void {
     this.arenaTags = [];
+    const { eventTarget } = globalScene.arena;
 
-    // Subscribe to required events available on battle start
-    globalScene.arena.eventTarget.addEventListener(ArenaEventType.WEATHER_CHANGED, this.onWeatherChanged);
-    globalScene.arena.eventTarget.addEventListener(ArenaEventType.TERRAIN_CHANGED, this.onTerrainChanged);
-    globalScene.arena.eventTarget.addEventListener(ArenaEventType.ARENA_TAG_ADDED, this.onArenaTagAdded);
-    globalScene.arena.eventTarget.addEventListener(ArenaEventType.ARENA_TAG_REMOVED, this.onArenaTagRemoved);
+    eventTarget.addEventListener(ArenaEventType.WEATHER_CHANGED, this.onWeatherChanged);
+    eventTarget.addEventListener(ArenaEventType.TERRAIN_CHANGED, this.onTerrainChanged);
+    eventTarget.addEventListener(ArenaEventType.ARENA_TAG_ADDED, this.onArenaTagAdded);
+    eventTarget.addEventListener(ArenaEventType.ARENA_TAG_REMOVED, this.onArenaTagRemoved);
   }
 
   /**
@@ -243,6 +246,21 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
 
     this.updateFieldText();
   }
+
+  /** Destroy this element and remove all associated listeners. */
+  public destroy(fromScene?: boolean): void {
+    globalScene.eventTarget.removeEventListener(BattleSceneEventType.NEW_ARENA, this.onNewArena);
+    globalScene.eventTarget.removeEventListener(BattleSceneEventType.TURN_END, this.onTurnEnd);
+
+    globalScene.arena.eventTarget.removeEventListener(ArenaEventType.WEATHER_CHANGED, this.onWeatherChanged);
+    globalScene.arena.eventTarget.removeEventListener(ArenaEventType.TERRAIN_CHANGED, this.onTerrainChanged);
+    globalScene.arena.eventTarget.removeEventListener(ArenaEventType.ARENA_TAG_ADDED, this.onArenaTagAdded);
+    globalScene.arena.eventTarget.removeEventListener(ArenaEventType.ARENA_TAG_REMOVED, this.onArenaTagRemoved);
+
+    super.destroy(fromScene);
+  }
+
+  // #endregion Setup/Teardown
 
   // #region ArenaTags
 
@@ -313,7 +331,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
    * Update the current weather text when the weather changes.
    * @param event - The {@linkcode WeatherChangedEvent} having been emitted
    */
-  private onWeatherChanged(event: WeatherChangedEvent) {
+  private onWeatherChanged(event: WeatherChangedEvent): void {
     if (event.weatherType === WeatherType.NONE) {
       this.weatherInfo = undefined;
       this.updateFieldText();
@@ -334,7 +352,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
    * Update the current terrain text when the terrain changes.
    * @param event - The {@linkcode TerrainChangedEvent} having been emitted
    */
-  private onTerrainChanged(event: TerrainChangedEvent) {
+  private onTerrainChanged(event: TerrainChangedEvent): void {
     if (event.terrainType === TerrainType.NONE) {
       this.terrainInfo = undefined;
       this.updateFieldText();
@@ -353,34 +371,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
 
   // #endregion Weather/Terrain
 
-  /**
-   * Animate the flyout to either show or hide the modal.
-   * @param visible - Whether the the flyout should be shown
-   */
-  public toggleFlyout(visible: boolean): void {
-    globalScene.tweens.add({
-      targets: this.flyoutParent,
-      x: visible ? this.anchorX : this.anchorX - this.translationX,
-      duration: fixedInt(125),
-      ease: "Sine.easeInOut",
-      alpha: visible ? 1 : 0,
-      onComplete: () => (this.timeOfDayWidget.parentVisible = visible),
-    });
-  }
-
-  /** Destroy this element and remove all associated listeners. */
-  public destroy(fromScene?: boolean): void {
-    globalScene.eventTarget.removeEventListener(BattleSceneEventType.NEW_ARENA, this.onNewArena);
-    globalScene.eventTarget.removeEventListener(BattleSceneEventType.TURN_END, this.onTurnEnd);
-
-    globalScene.arena.eventTarget.removeEventListener(ArenaEventType.WEATHER_CHANGED, this.onWeatherChanged);
-    globalScene.arena.eventTarget.removeEventListener(ArenaEventType.TERRAIN_CHANGED, this.onTerrainChanged);
-    globalScene.arena.eventTarget.removeEventListener(ArenaEventType.ARENA_TAG_ADDED, this.onArenaTagAdded);
-    globalScene.arena.eventTarget.removeEventListener(ArenaEventType.ARENA_TAG_REMOVED, this.onArenaTagRemoved);
-
-    super.destroy(fromScene);
-  }
-
+  // #region Text display functions
   /** Clear out the contents of all arena texts. */
   private clearText(): void {
     this.flyoutTextPlayer.text = "";
@@ -388,10 +379,8 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     this.flyoutTextEnemy.text = "";
   }
 
-  // #region Text display functions
-
   /**
-   * Iterate over all field effects and update the corresponding {@linkcode Phaser.GameObjects.Text} object.
+   * Iterate over all field effects and update the corresponding {@linkcode Phaser.GameObjects.Text} objects.
    */
   // TODO: Make this use scrolling text objects per individual effect to allow for longer messages and allow
   // Future Sight and similar to appear on the flyout again
@@ -443,9 +432,26 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     }
   }
 
-  // # endregion Text display functions
+  // #endregion Text display functions
 
-  // #region Utilities
+  // #region Misc
+
+  /**
+   * Animate the flyout to either show or hide the modal.
+   * @param visible - Whether the the flyout should be shown
+   */
+  public toggleFlyout(visible: boolean): void {
+    globalScene.tweens.add({
+      targets: this.flyoutParent,
+      x: visible ? FLYOUT_ANCHOR_X : FLYOUT_ANCHOR_X - FLYOUT_TRANSLATION_X,
+      duration: fixedInt(125),
+      ease: "Sine.easeInOut",
+      alpha: +visible,
+      onComplete: () => {
+        this.timeOfDayWidget.parentVisible = visible;
+      },
+    });
+  }
 
   /**
    * Return the localized text for a given effect.
@@ -459,5 +465,5 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     return resultName;
   }
 
-  // #endregion Utility emthods
+  // #endregion Misc
 }

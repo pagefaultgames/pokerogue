@@ -29,7 +29,7 @@ import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
 import { WeatherType } from "#enums/weather-type";
 import {
-  type ArenaEvent,
+  type ArenaEventMap,
   ArenaTagAddedEvent,
   ArenaTagRemovedEvent,
   TerrainChangedEvent,
@@ -73,10 +73,10 @@ export class Arena {
   private trainerPool: BiomeTierTrainerPools;
 
   /**
-   * Event dispatcher for various {@linkcode ArenaEvent}s.
+   * Event dispatcher for various `ArenaEvent`s.
    * Used primarily to update the arena flyout.
    */
-  public readonly eventTarget: TypedEventTarget<ArenaEvent> = new EventTarget();
+  public readonly eventTarget = new EventTarget() as TypedEventTarget<ArenaEventMap>;
 
   constructor(biome: BiomeId, playerFaints = 0) {
     this.biomeType = biome;

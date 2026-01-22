@@ -11,7 +11,7 @@ import type { WeatherType } from "#enums/weather-type";
  */
 abstract class ArenaEvent extends Event {
   /** The {@linkcode ArenaEventType} being emitted. */
-  public declare abstract readonly type: ArenaEventType; // that's a mouthful!
+  public declare abstract readonly type: ArenaEventType;
   // biome-ignore lint/complexity/noUselessConstructor: changes the type of the type field
   constructor(type: ArenaEventType) {
     super(type);
@@ -143,3 +143,20 @@ export class ArenaTagRemovedEvent extends ArenaEvent {
     this.side = side;
   }
 }
+
+export type ArenaEventMap = {
+  [ArenaEventType.WEATHER_CHANGED]: WeatherChangedEvent;
+  [ArenaEventType.TERRAIN_CHANGED]: TerrainChangedEvent;
+  [ArenaEventType.ARENA_TAG_ADDED]: ArenaTagAddedEvent;
+  [ArenaEventType.ARENA_TAG_REMOVED]: ArenaTagRemovedEvent;
+};
+
+/**
+ * Dummy, type-only declaration to ensure that
+ * {@linkcode ArenaEventMap} has an entry for all `ArenaEventType`s.
+ *
+ * If an event is missing from the map, TypeScript will throw an error on this statement.
+ *
+ * ⚠️ Does not actually exist at runtime, so it must not be used!
+ */
+declare const EnsureAllArenaEventsAreMapped: ArenaEventMap[ArenaEventType] & never;

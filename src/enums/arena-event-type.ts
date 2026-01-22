@@ -5,6 +5,13 @@ import type { ArenaEvent } from "#events/arena";
 import type { ObjectValues } from "#types/type-helpers";
 
 /**
+ * Doc comment removal prevention block
+ * {@linkcode WeatherType}
+ * {@linkcode TerrainType}
+ * {@linkcode ArenaTag}
+ */
+
+/**
  * Enum representing the types of all {@linkcode ArenaEvent}s that can be emitted.
  * @eventProperty
  * @enum
@@ -22,10 +29,3 @@ export const ArenaEventType = {
 } as const;
 
 export type ArenaEventType = ObjectValues<typeof ArenaEventType>;
-
-/**
-  Doc comment removal prevention block
-  {@linkcode WeatherType}
-  {@linkcode TerrainType}
-  {@linkcode ArenaTag}
-*/
