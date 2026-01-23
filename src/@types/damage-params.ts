@@ -9,7 +9,7 @@ import type { Move, MoveTypeChartOverrideAttr } from "#types/move-types";
  */
 
 /** Base type for damage parameter methods, used for DRY */
-interface damageParams {
+interface DamageParams {
   /** The attacking {@linkcode Pokemon} */
   source: Pokemon;
   /** The move used in the attack */
@@ -36,18 +36,18 @@ interface damageParams {
  * Type for the parameters of {@linkcode Pokemon.getBaseDamage}
  * @interface
  */
-export type getBaseDamageParams = Omit<damageParams, "effectiveness">;
+export type GetBaseDamageParams = Omit<DamageParams, "effectiveness">;
 
 /**
  * Type for the parameters of {@linkcode Pokemon.getAttackDamage}
  * @interface
  */
-export type getAttackDamageParams = Omit<damageParams, "moveCategory">;
+export type GetAttackDamageParams = Omit<DamageParams, "moveCategory">;
 
 /**
  * Type for the parameters of {@linkcode Pokemon.getAttackTypeEffectiveness}.
  */
-export interface getAttackTypeEffectivenessParams {
+export interface GetAttackTypeEffectivenessParams {
   /**
    * The {@linkcode Pokemon} using the move, used to check the user's Scrappy and Mind's Eye abilities
    * and the effects of Foresight/Odor Sleuth.
