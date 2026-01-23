@@ -38,7 +38,7 @@ describe("Moves - Camouflage", () => {
     game.move.select(MoveId.CAMOUFLAGE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.scene.arena.getTerrainType()).toBe(TerrainType.PSYCHIC);
+    expect(game).toHaveTerrain(TerrainType.PSYCHIC);
     const pokemonType = playerPokemon.getTypes()[0];
     expect(pokemonType).toBe(PokemonType.PSYCHIC);
   });

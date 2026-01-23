@@ -30,10 +30,6 @@ describe("Abilities - Desolate Land", () => {
       .enemyMoveset(MoveId.SPLASH);
   });
 
-  /**
-   * This checks that the weather has changed after the Enemy Pokemon with {@linkcode AbilityId.DESOLATE_LAND}
-   * is forcefully moved out of the field from moves such as Roar {@linkcode MoveId.ROAR}
-   */
   it("should lift only when all pokemon with this ability leave the field", async () => {
     game.override.battleStyle("double").enemyMoveset([MoveId.SPLASH, MoveId.ROAR]);
     await game.classicMode.startBattle([

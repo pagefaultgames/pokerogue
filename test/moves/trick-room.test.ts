@@ -56,7 +56,7 @@ describe("Move - Trick Room", () => {
     await game.move.forceEnemyMove(MoveId.RAIN_DANCE);
     await game.toEndOfTurn();
 
-    expect(game.scene.arena.getWeatherType()).toBe(WeatherType.SUNNY);
+    expect(game).toHaveWeather(WeatherType.SUNNY);
   });
 
   it("should be removed when overlapped", async () => {

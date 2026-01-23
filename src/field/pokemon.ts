@@ -418,7 +418,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
       this.friendship = species.baseFriendship;
       this.metLevel = level;
-      this.metBiome = globalScene.currentBattle ? globalScene.arena.biomeType : -1;
+      this.metBiome = globalScene.currentBattle ? globalScene.arena.biomeId : -1;
       this.metSpecies = species.speciesId;
       this.metWave = globalScene.currentBattle ? globalScene.currentBattle.waveIndex : -1;
       this.pokerus = false;
@@ -2923,7 +2923,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   trySetShiny(thresholdOverride?: number): boolean {
     // Shiny Pokemon should not spawn in the end biome in endless
-    if (globalScene.gameMode.isEndless && globalScene.arena.biomeType === BiomeId.END) {
+    if (globalScene.gameMode.isEndless && globalScene.arena.biomeId === BiomeId.END) {
       return false;
     }
 
@@ -4846,11 +4846,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         isImmune = this.isOfType(PokemonType.ELECTRIC);
         break;
       case StatusEffect.SLEEP:
-        isImmune = this.isGrounded() && globalScene.arena.getTerrainType() === TerrainType.ELECTRIC;
+        isImmune = this.isGrounded() && globalScene.arena.terrainType === TerrainType.ELECTRIC;
         reason = TerrainType.ELECTRIC;
         break;
       case StatusEffect.FREEZE: {
-        const weatherType = globalScene.arena.getWeatherType();
+        const weatherType = globalScene.arena.weatherType;
         isImmune =
           this.isOfType(PokemonType.ICE)
           || (!ignoreField && (weatherType === WeatherType.SUNNY || weatherType === WeatherType.HARSH_SUN));
@@ -7032,7 +7032,7 @@ export class EnemyPokemon extends Pokemon {
     if (party.length < PLAYER_PARTY_MAX_SIZE) {
       this.pokeball = pokeballType;
       this.metLevel = this.level;
-      this.metBiome = globalScene.arena.biomeType;
+      this.metBiome = globalScene.arena.biomeId;
       this.metWave = globalScene.currentBattle.waveIndex;
       this.metSpecies = this.species.speciesId;
       const newPokemon = globalScene.addPlayerPokemon(

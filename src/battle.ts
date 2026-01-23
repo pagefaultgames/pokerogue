@@ -269,7 +269,7 @@ export class Battle {
         pokemon.species.legendary
         || pokemon.species.subLegendary
         || pokemon.species.mythical
-        || (pokemon.species.category.startsWith("Paradox") && globalScene.arena.biomeType !== BiomeId.END)
+        || (pokemon.species.category.startsWith("Paradox") && globalScene.arena.biomeId !== BiomeId.END)
       ) {
         if (globalScene.musicPreference === MusicPreference.GENFIVE) {
           switch (pokemon.species.speciesId) {
