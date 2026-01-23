@@ -11,7 +11,7 @@ export class PartyExpPhase extends Phase {
   useWaveIndexMultiplier: boolean | undefined;
   pokemonParticipantIds: Set<number> | undefined;
 
-  // TODO: Fix this
+  // TODO: Document these using descriptions from `applyPartyExp`
   constructor(expValue: number, useWaveIndexMultiplier?: boolean, pokemonParticipantIds?: Set<number>) {
     super();
 
