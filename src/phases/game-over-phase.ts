@@ -213,7 +213,11 @@ export class GameOverPhase extends BattlePhase {
           if (this.isVictory && globalScene.gameMode.isClassic) {
             const dialogueKey = "miscDialogue:ending";
 
-            if (!globalScene.ui.shouldSkipDialogue(dialogueKey)) {
+            if (globalScene.ui.shouldSkipDialogue(dialogueKey)) {
+              const endCardPhase = globalScene.phaseManager.create("EndCardPhase");
+              globalScene.phaseManager.unshiftPhase(endCardPhase);
+              clear(endCardPhase);
+            } else {
               globalScene.ui.fadeIn(500).then(() => {
                 const genderIndex = globalScene.gameData.gender ?? PlayerGender.UNSET;
                 const genderStr = PlayerGender[genderIndex].toLowerCase();
@@ -243,10 +247,6 @@ export class GameOverPhase extends BattlePhase {
                     );
                   });
               });
-            } else {
-              const endCardPhase = globalScene.phaseManager.create("EndCardPhase");
-              globalScene.phaseManager.unshiftPhase(endCardPhase);
-              clear(endCardPhase);
             }
           } else {
             clear();

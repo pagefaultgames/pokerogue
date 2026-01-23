@@ -51,7 +51,7 @@ export class Arena {
    * All currently-active {@linkcode PositionalTag}s on both sides of the field,
    * sorted by tag type.
    */
-  public positionalTagManager: PositionalTagManager = new PositionalTagManager();
+  public readonly positionalTagManager: PositionalTagManager = new PositionalTagManager();
 
   public bgm: string;
   public ignoreAbilities: boolean;
@@ -130,8 +130,15 @@ export class Arena {
       luckModifier = luckValue * (isBossSpecies ? 0.5 : 2);
     }
     const tierValue = randSeedInt(randVal - luckModifier);
-    let tier = !isBossSpecies
-      ? tierValue >= 156
+    let tier = isBossSpecies
+      ? tierValue >= 20
+        ? BiomePoolTier.BOSS
+        : tierValue >= 6
+          ? BiomePoolTier.BOSS_RARE
+          : tierValue >= 1
+            ? BiomePoolTier.BOSS_SUPER_RARE
+            : BiomePoolTier.BOSS_ULTRA_RARE
+      : tierValue >= 156
         ? BiomePoolTier.COMMON
         : tierValue >= 32
           ? BiomePoolTier.UNCOMMON
@@ -139,14 +146,7 @@ export class Arena {
             ? BiomePoolTier.RARE
             : tierValue >= 1
               ? BiomePoolTier.SUPER_RARE
-              : BiomePoolTier.ULTRA_RARE
-      : tierValue >= 20
-        ? BiomePoolTier.BOSS
-        : tierValue >= 6
-          ? BiomePoolTier.BOSS_RARE
-          : tierValue >= 1
-            ? BiomePoolTier.BOSS_SUPER_RARE
-            : BiomePoolTier.BOSS_ULTRA_RARE;
+              : BiomePoolTier.ULTRA_RARE;
     console.log(BiomePoolTier[tier]);
     while (this.pokemonPool[tier]?.length === 0) {
       console.log(`Downgraded rarity tier from ${BiomePoolTier[tier]} to ${BiomePoolTier[tier - 1]}`);
@@ -210,9 +210,16 @@ export class Arena {
       this.trainerPool[BiomePoolTier.BOSS].length > 0
       && (globalScene.gameMode.isTrainerBoss(waveIndex, this.biomeType, globalScene.offsetGym) || isBoss);
     console.log(isBoss, this.trainerPool);
-    const tierValue = randSeedInt(!isTrainerBoss ? 512 : 64);
-    let tier = !isTrainerBoss
-      ? tierValue >= 156
+    const tierValue = randSeedInt(isTrainerBoss ? 64 : 512);
+    let tier = isTrainerBoss
+      ? tierValue >= 20
+        ? BiomePoolTier.BOSS
+        : tierValue >= 6
+          ? BiomePoolTier.BOSS_RARE
+          : tierValue >= 1
+            ? BiomePoolTier.BOSS_SUPER_RARE
+            : BiomePoolTier.BOSS_ULTRA_RARE
+      : tierValue >= 156
         ? BiomePoolTier.COMMON
         : tierValue >= 32
           ? BiomePoolTier.UNCOMMON
@@ -220,14 +227,7 @@ export class Arena {
             ? BiomePoolTier.RARE
             : tierValue >= 1
               ? BiomePoolTier.SUPER_RARE
-              : BiomePoolTier.ULTRA_RARE
-      : tierValue >= 20
-        ? BiomePoolTier.BOSS
-        : tierValue >= 6
-          ? BiomePoolTier.BOSS_RARE
-          : tierValue >= 1
-            ? BiomePoolTier.BOSS_SUPER_RARE
-            : BiomePoolTier.BOSS_ULTRA_RARE;
+              : BiomePoolTier.ULTRA_RARE;
     console.log(BiomePoolTier[tier]);
     while (tier && this.trainerPool[tier].length === 0) {
       console.log(`Downgraded trainer rarity tier from ${BiomePoolTier[tier]} to ${BiomePoolTier[tier - 1]}`);
@@ -235,35 +235,6 @@ export class Arena {
     }
     const tierPool = this.trainerPool[tier] || [];
     return tierPool.length === 0 ? TrainerType.BREEDER : tierPool[randSeedInt(tierPool.length)];
-  }
-
-  getSpeciesFormIndex(species: PokemonSpecies): number {
-    switch (species.speciesId) {
-      case SpeciesId.BURMY:
-      case SpeciesId.WORMADAM:
-        switch (this.biomeType) {
-          case BiomeId.BEACH:
-            return 1;
-          case BiomeId.SLUM:
-            return 2;
-        }
-        break;
-      case SpeciesId.LYCANROC: {
-        const timeOfDay = this.getTimeOfDay();
-        switch (timeOfDay) {
-          case TimeOfDay.DAY:
-          case TimeOfDay.DAWN:
-            return 0;
-          case TimeOfDay.DUSK:
-            return 2;
-          case TimeOfDay.NIGHT:
-            return 1;
-        }
-        break;
-      }
-    }
-
-    return 0;
   }
 
   getBgTerrainColorRatioForBiome(): number {

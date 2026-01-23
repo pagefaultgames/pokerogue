@@ -8,7 +8,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Defog", () => {
   let phaserGame: Phaser.Game;
@@ -18,10 +18,6 @@ describe("Moves - Defog", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -72,8 +68,8 @@ describe("Moves - Defog", () => {
     game.move.use(MoveId.DEFOG);
     await game.toEndOfTurn();
 
-    expect(game).not.toHaveArenaTag({ tagType, side: ArenaTagSide.PLAYER });
-    expect(game).not.toHaveArenaTag({ tagType, side: ArenaTagSide.ENEMY });
+    expect(game).not.toHaveArenaTag(tagType, ArenaTagSide.PLAYER);
+    expect(game).not.toHaveArenaTag(tagType, ArenaTagSide.ENEMY);
   });
 
   it.each<{ tagType: ArenaTagType; tagName: string }>([
@@ -91,8 +87,8 @@ describe("Moves - Defog", () => {
     game.move.use(MoveId.DEFOG);
     await game.toEndOfTurn();
 
-    expect(game).toHaveArenaTag({ tagType, side: ArenaTagSide.PLAYER });
-    expect(game).not.toHaveArenaTag({ tagType, side: ArenaTagSide.ENEMY });
+    expect(game).toHaveArenaTag(tagType, ArenaTagSide.PLAYER);
+    expect(game).not.toHaveArenaTag(tagType, ArenaTagSide.ENEMY);
   });
 
   it.each<{ tagType: ArenaTagType; tagName: string }>([
@@ -111,6 +107,6 @@ describe("Moves - Defog", () => {
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.toEndOfTurn();
 
-    expect(game).not.toHaveArenaTag({ tagType, side: ArenaTagSide.PLAYER });
+    expect(game).not.toHaveArenaTag(tagType, ArenaTagSide.PLAYER);
   });
 });

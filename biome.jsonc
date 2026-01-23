@@ -5,7 +5,7 @@
  */
 
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.8/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.3.11/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -25,7 +25,9 @@
     // and having to verify whether each individual file is ignored
     "includes": [
       "**",
-      "!!.github",
+      "!.github/**/*.*", // workaround due to bug/design limitation, should be `"!.github"`
+      ".github/**/*.ts",
+      ".github/**/*.mts",
       "!!assets",
       "!!coverage",
       "!!dist",
@@ -36,12 +38,7 @@
       "!!*.css",
       "!!*.html",
       // this file is too big
-      "!src/data/balance/tm-species-map.ts",
-      // there's some sort of bug when Biome parses this file
-      // relating to recursive variable assignment
-      // cf https://github.com/biomejs/biome/issues/8204
-      // TODO: remove this exclusion when the bug is fixed
-      "!!test/test-utils/setup/test-end-log.ts"
+      "!src/data/balance/tm-species-map.ts"
     ]
   },
   "assist": {
@@ -63,6 +60,7 @@
       "recommended": true,
       "correctness": {
         "noUndeclaredVariables": "error",
+        // we virtually always use base 10 number conversion
         "useParseIntRadix": "off",
         "noUnusedVariables": "error",
         "noSwitchDeclarations": "error",
@@ -86,7 +84,7 @@
         },
         "useAtIndex": "error",
         "noNegationElse": {
-          "level": "info", // TODO: Promote to error eventually
+          "level": "error",
           "fix": "unsafe", // duplicates else blocks
           "options": {}
         },
@@ -156,8 +154,11 @@
           "fix": "safe",
           "options": {}
         },
+        // TODO: Consider enabling
         "useNodejsImportProtocol": "off",
-        "useTemplate": "off", // string concatenation is faster: https://stackoverflow.com/questions/29055518/are-es6-template-literals-faster-than-string-concatenation
+        // String concatenation can be more readable than template literals
+        // in some situations.
+        "useTemplate": "off",
         "useAsConstAssertion": "error",
         "noUnusedTemplateLiteral": "error",
         "useNumberNamespace": "error",
@@ -187,6 +188,7 @@
         "useNumericSeparators": "off" // TODO: Consider enabling?
       },
       "suspicious": {
+        "noExtraNonNullAssertion": "error",
         "useErrorMessage": "error",
         "noEvolvingTypes": "warn", // TODO: Review and enable ASAP - this is VERY VERY BAD
         "useNumberToFixedDigitsArgument": "error",
@@ -202,6 +204,7 @@
         "noImplicitAnyLet": "warn", // TODO: Refactor and make this an error
         "noRedeclare": "info", // TODO: Refactor and make this an error
         "noGlobalIsNan": "error",
+        "noGlobalIsFinite": "error",
         "noAsyncPromiseExecutor": "warn", // TODO: Refactor and make this an error
         "noVar": "error",
         "noDocumentCookie": "off", // Firefox has minimal support for the "Cookie Store API"
@@ -231,6 +234,10 @@
         "noBarrelFile": "error"
       },
       "nursery": {
+        // TODO: Fix violations then enable this
+        "useAwaitThenable": "off",
+        "noMultiAssign": "error",
+        "noMultiStr": "error",
         "noProto": "error",
         "useFind": "error",
         "noUselessUndefined": "error",
@@ -286,18 +293,7 @@
       }
     },
 
-    // Overrides to prevent unused import removal inside `overrides.ts`, enums & `.d.ts` files (for TSDoc linkcodes),
-    // as well as inside script boilerplate files (whose imports will _presumably_ be used in the generated file).
-    {
-      "includes": ["**/src/overrides.ts", "**/src/enums/**/*", "**/*.d.ts", "scripts/**/*.boilerplate.ts"],
-      "linter": {
-        "rules": {
-          "correctness": {
-            "noUnusedImports": "off"
-          }
-        }
-      }
-    },
+    // Prevent forcing type-only imports inside `overrides.ts` (where they serve as placeholders for actual runtime symbols)
     {
       "includes": ["**/src/overrides.ts"],
       "linter": {
