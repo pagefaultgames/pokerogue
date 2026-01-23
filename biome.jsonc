@@ -205,6 +205,12 @@
                 "formats": ["PascalCase"]
               },
               {
+                "selector": {
+                  "kind": "class"
+                },
+                "formats": ["PascalCase"]
+              },
+              {
                 "match": ".*"
               }
             ]
