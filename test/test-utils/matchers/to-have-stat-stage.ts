@@ -13,7 +13,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @returns Whether the matcher passed
  */
 export function toHaveStatStage(
-  this: MatcherState,
+  this: Readonly<MatcherState>,
   received: unknown,
   stat: BattleStat,
   expectedStage: number,

@@ -1,4 +1,5 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import { Animation } from "#app/animations";
 import type { FixedBattleConfig } from "#app/battle";
 import { Battle } from "#app/battle";
 import {
@@ -60,6 +61,7 @@ import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { TextStyle } from "#enums/text-style";
+import { TimeOfDay } from "#enums/time-of-day";
 import type { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
@@ -149,7 +151,6 @@ import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 import Phaser from "phaser";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import type UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 
 export interface PokeballCounts {
   [pb: string]: number;
@@ -163,7 +164,6 @@ export interface InfoToggle {
 }
 
 export class BattleScene extends SceneBase {
-  public rexUI: UIPlugin;
   public inputController: InputsController;
   public uiInputs: UiInputs;
 
@@ -329,6 +329,8 @@ export class BattleScene extends SceneBase {
    */
   public readonly eventTarget: EventTarget = new EventTarget();
 
+  /** A helper class containing several animation-related functions. */
+  public readonly animations: Animation = new Animation();
   declare renderer: Phaser.Renderer.WebGL.WebGLRenderer;
 
   constructor() {
@@ -1061,7 +1063,8 @@ export class BattleScene extends SceneBase {
       fusionIcon.setFrame(fusionIconFrameId);
 
       const frameY = (originalFrame.y + originalFusionFrame.y) / 2;
-      icon.frame.y = fusionIcon.frame.y = frameY;
+      icon.frame.y = frameY;
+      fusionIcon.frame.y = frameY;
 
       container.add(fusionIcon);
 
@@ -1531,8 +1534,12 @@ export class BattleScene extends SceneBase {
     });
   }
 
-  getSpeciesFormIndex(species: PokemonSpecies, gender?: Gender, nature?: Nature, ignoreArena?: boolean): number {
-    if (species.forms?.length === 0) {
+  public getSpeciesFormIndex(species: PokemonSpecies, gender?: Gender, nature?: Nature, ignoreArena = false): number {
+    if (species.forms == null) {
+      console.warn(`Form data missing for ${species.name}!\n`, species);
+      return 0;
+    }
+    if (species.forms.length === 0) {
       return 0;
     }
 
@@ -1540,13 +1547,10 @@ export class BattleScene extends SceneBase {
       this.phaseManager.getCurrentPhase().is("EggLapsePhase")
       || this.phaseManager.getCurrentPhase().is("EggHatchPhase");
 
-    if (
-      // Give trainers with specialty types an appropriately-typed form for Wormadam, Rotom, Arceus, Oricorio, Silvally, or Paldean Tauros.
-      !isEggPhase
-      && this.currentBattle?.battleType === BattleType.TRAINER
-      && this.currentBattle.trainer != null
-      && this.currentBattle.trainer.config.hasSpecialtyType()
-    ) {
+    const isTrainerBattle = this.currentBattle?.battleType === BattleType.TRAINER;
+
+    // Give trainers with specialty types an appropriately-typed form for Wormadam, Rotom, Arceus, Oricorio, Silvally, or Paldean Tauros.
+    if (!isEggPhase && isTrainerBattle && this.currentBattle.trainer?.config.hasSpecialtyType()) {
       if (species.speciesId === SpeciesId.WORMADAM) {
         switch (this.currentBattle.trainer.config.specialtyType) {
           case PokemonType.GROUND:
@@ -1565,10 +1569,10 @@ export class BattleScene extends SceneBase {
             return 0; // Lightbulb Rotom
           case PokemonType.FIRE:
             return 1; // Heat Rotom
-          case PokemonType.GRASS:
-            return 5; // Mow Rotom
           case PokemonType.WATER:
             return 2; // Wash Rotom
+          case PokemonType.GRASS:
+            return 5; // Mow Rotom
           case PokemonType.ICE:
             return 3; // Frost Rotom
         }
@@ -1630,24 +1634,22 @@ export class BattleScene extends SceneBase {
       case SpeciesId.POLTCHAGEIST:
       case SpeciesId.SINISTCHA:
         return randSeedInt(16) ? 0 : 1;
+      case SpeciesId.PICHU:
+        return randSeedInt(8) ? 0 : 1;
       case SpeciesId.PIKACHU:
-        if (this.currentBattle?.battleType === BattleType.TRAINER && this.currentBattle?.waveIndex < 30) {
+        if (isTrainerBattle && this.currentBattle?.waveIndex < 30) {
           return 0; // Ban Cosplay and Partner Pika from Trainers before wave 30
         }
         return randSeedInt(8);
       case SpeciesId.EEVEE:
-        if (
-          this.currentBattle?.battleType === BattleType.TRAINER
-          && this.currentBattle?.waveIndex < 30
-          && !isEggPhase
-        ) {
+        if (isTrainerBattle && this.currentBattle?.waveIndex < 30 && !isEggPhase) {
           return 0; // No Partner Eevee for Wave 12 Preschoolers
         }
         return randSeedInt(2);
       case SpeciesId.FROAKIE:
       case SpeciesId.FROGADIER:
       case SpeciesId.GRENINJA:
-        if (this.currentBattle?.battleType === BattleType.TRAINER && !isEggPhase) {
+        if (isTrainerBattle && !isEggPhase) {
           return 0; // Don't give trainers Battle Bond Greninja, Froakie or Frogadier
         }
         return randSeedInt(2);
@@ -1665,7 +1667,7 @@ export class BattleScene extends SceneBase {
       case SpeciesId.OINKOLOGNE:
         return gender === Gender.FEMALE ? 1 : 0;
       case SpeciesId.TOXTRICITY: {
-        const lowkeyNatures = [
+        const lowkeyNatures: readonly Nature[] = [
           Nature.LONELY,
           Nature.BOLD,
           Nature.RELAXED,
@@ -1679,30 +1681,47 @@ export class BattleScene extends SceneBase {
           Nature.GENTLE,
           Nature.CAREFUL,
         ];
-        if (nature !== undefined && lowkeyNatures.indexOf(nature) > -1) {
+        if (nature !== undefined && lowkeyNatures.includes(nature)) {
           return 1;
         }
         return 0;
       }
       case SpeciesId.GIMMIGHOUL:
-        // Chest form can only be found in Mysterious Chest Encounter, if this is a game mode with MEs
+        // In game modes with MEs (currently Classic only),
+        // chest form Gimmighoul is only allowed to appear in the Mysterious Chest Encounter
         if (this.gameMode.hasMysteryEncounters && !isEggPhase) {
           return 1; // Wandering form
         }
         return randSeedInt(species.forms.length);
-    }
-
-    if (ignoreArena) {
-      switch (species.speciesId) {
-        case SpeciesId.BURMY:
-        case SpeciesId.WORMADAM:
-        case SpeciesId.LYCANROC:
+      case SpeciesId.BURMY:
+      case SpeciesId.WORMADAM:
+        if (ignoreArena) {
           return randSeedInt(species.forms.length);
-      }
-      return 0;
+        }
+        switch (this.arena.biomeType) {
+          case BiomeId.BEACH:
+            return 1;
+          case BiomeId.SLUM:
+            return 2;
+        }
+        return 0;
+      case SpeciesId.LYCANROC:
+        if (ignoreArena) {
+          return randSeedInt(species.forms.length);
+        }
+        switch (this.arena.getTimeOfDay()) {
+          case TimeOfDay.DAWN:
+          case TimeOfDay.DAY:
+            return 0;
+          case TimeOfDay.DUSK:
+            return 2;
+          case TimeOfDay.NIGHT:
+            return 1;
+        }
+        return 0;
     }
 
-    return this.arena.getSpeciesFormIndex(species);
+    return 0;
   }
 
   private getGeneratedOffsetGym(): boolean {
@@ -3230,14 +3249,14 @@ export class BattleScene extends SceneBase {
     return true;
   }
 
-  validateAchvs(achvType: Constructor<Achv>, ...args: unknown[]): void {
+  validateAchvs<T extends Achv>(achvType: Constructor<T>, ...args: NonNullable<Parameters<T["validate"]>[0]>): void {
     const filteredAchvs = Object.values(achvs).filter(a => a instanceof achvType);
     for (const achv of filteredAchvs) {
       this.validateAchv(achv, args);
     }
   }
 
-  validateAchv(achv: Achv, args?: unknown[]): boolean {
+  validateAchv<T extends Achv>(achv: T, args?: Parameters<T["validate"]>[0]): boolean {
     if (
       (!this.gameData.achvUnlocks.hasOwnProperty(achv.id) || Overrides.ACHIEVEMENTS_REUNLOCK_OVERRIDE)
       && achv.validate(args)
