@@ -10545,8 +10545,9 @@ export function initMoves() {
       .attr(HighCritAttr)
       .makesContact(false),
     new StatusMove(MoveId.CAPTIVATE, PokemonType.NORMAL, 100, 20, -1, 0, 4)
-      .attr(StatStageChangeAttr, [Stat.SPATK], -2)
-      .condition((user, target, _move) => target.isOppositeGender(user))
+      .attr(StatStageChangeAttr, [Stat.SPATK], -2, false, {
+        condition: (user, target) => target.isOppositeGender(user),
+      })
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .reflectable(),
     new StatusMove(MoveId.STEALTH_ROCK, PokemonType.ROCK, -1, 20, -1, 0, 4)

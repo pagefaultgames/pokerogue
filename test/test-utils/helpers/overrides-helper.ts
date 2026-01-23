@@ -1,6 +1,7 @@
 import { OVERRIDES_COLOR } from "#app/constants/colors";
 import type { BattleStyle, RandomTrainerOverride } from "#app/overrides";
 import Overrides from "#app/overrides";
+import { Gender } from "#data/gender";
 import { AbilityId } from "#enums/ability-id";
 import type { BattleType } from "#enums/battle-type";
 import { BiomeId } from "#enums/biome-id";
@@ -20,6 +21,7 @@ import { coerceArray } from "#utils/array";
 import { shiftCharCodes } from "#utils/common";
 import chalk from "chalk";
 import { vi } from "vitest";
+import { getEnumStr } from "../string-utils";
 
 /**
  * Helper to handle overrides in tests
@@ -229,13 +231,34 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player pokemon's initial {@linkcode StatusEffect | status-effect},
+   * Override the player pokemon's initial {@linkcode StatusEffect | status-effect}
    * @param statusEffect - The {@linkcode StatusEffect | status-effect} to set
    * @returns `this`
    */
   public statusEffect(statusEffect: StatusEffect): this {
     vi.spyOn(Overrides, "STATUS_OVERRIDE", "get").mockReturnValue(statusEffect);
     this.log(`Player Pokemon status-effect set to ${StatusEffect[statusEffect]} (=${statusEffect})!`);
+    return this;
+  }
+
+  /**
+   * Override the initial gender of newly generated player pokemon.
+   * @param gender - The gender to set, or `null` to disable the override
+   * @returns `this`
+   * @remarks
+   * This will ignore and supercede species gender distributions,
+   * potentially resulting in invalid combinations of gender/species.
+   */
+  public playerGender(gender: Gender | null): this {
+    vi.spyOn(Overrides, "GENDER_OVERRIDE", "get").mockReturnValue(gender);
+
+    if (gender === null) {
+      this.log("Player Pokemon initial gender override disabled!");
+    } else {
+      const genderStr = getEnumStr(Gender, gender);
+      this.log(`Player Pokemon initial gender set to ${genderStr}!`);
+    }
+
     return this;
   }
 
@@ -506,6 +529,27 @@ export class OverridesHelper extends GameManagerHelper {
   public enemyStatusEffect(statusEffect: StatusEffect): this {
     vi.spyOn(Overrides, "ENEMY_STATUS_OVERRIDE", "get").mockReturnValue(statusEffect);
     this.log(`Enemy Pokemon status-effect set to ${StatusEffect[statusEffect]} (=${statusEffect})!`);
+    return this;
+  }
+
+  /**
+   * Override the initial gender of newly generated enemy pokemon.
+   * @param gender - The {@linkcode Gender} to set, or `null` to disable the override
+   * @returns `this`
+   * @remarks
+   * This will ignore and supercede species gender distributions,
+   * potentially resulting in invalid combinations of gender/species.
+   */
+  public enemyGender(gender: Gender | null): this {
+    vi.spyOn(Overrides, "ENEMY_GENDER_OVERRIDE", "get").mockReturnValue(gender);
+
+    if (gender === null) {
+      this.log("Enemy Pokemon initial gender override disabled!");
+    } else {
+      const genderStr = getEnumStr(Gender, gender, { casing: "Title" });
+      this.log(`Enemy Pokemon initial gender set to ${genderStr}!`);
+    }
+
     return this;
   }
 
