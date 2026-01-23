@@ -9,7 +9,6 @@ import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import type { EnemyPokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
 import i18next from "i18next";
 import Phaser from "phaser";
@@ -42,7 +41,7 @@ describe("Move - Misty Terrain", () => {
   it("status moves do not confuse target and display message in misty terrain", async () => {
     await game.classicMode.startBattle([SpeciesId.FLOETTE]);
 
-    const enemyPokemon: EnemyPokemon = game.field.getEnemyPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.MISTY_TERRAIN);
     await game.toNextTurn();
@@ -62,7 +61,7 @@ describe("Move - Misty Terrain", () => {
   it("damaging moves that confuse do not display message in misty terrain", async () => {
     await game.classicMode.startBattle([SpeciesId.FLOETTE]);
 
-    const enemyPokemon: EnemyPokemon = game.field.getEnemyPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.MISTY_TERRAIN);
     await game.toNextTurn();
