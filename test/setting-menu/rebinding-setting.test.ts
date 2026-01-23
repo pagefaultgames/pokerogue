@@ -30,7 +30,7 @@ describe("Test Rebinding", () => {
     expect(config).not.toBeNull();
   });
   it("Check button for setting name", () => {
-    const settingName = SettingKeyboard.Button_Left;
+    const settingName = SettingKeyboard.BUTTON_LEFT;
     const button = config.settings[settingName];
     expect(button).toEqual(Button.LEFT);
   });
@@ -48,12 +48,12 @@ describe("Test Rebinding", () => {
   });
 
   it("Check key for currenly Assigned to setting name", () => {
-    const settingName = SettingKeyboard.Button_Left;
+    const settingName = SettingKeyboard.BUTTON_LEFT;
     const key = getKeyWithSettingName(config, settingName);
     expect(key).toEqual("KEY_ARROW_LEFT");
   });
   it("Check key for currenly Assigned to setting name alt", () => {
-    const settingName = SettingKeyboard.Alt_Button_Left;
+    const settingName = SettingKeyboard.ALT_BUTTON_LEFT;
     const key = getKeyWithSettingName(config, settingName);
     expect(key).toEqual("KEY_A");
   });
@@ -75,13 +75,13 @@ describe("Test Rebinding", () => {
     expect(icon).toEqual("A.png");
   });
   it("Check icon for currenly Assigned to setting name", () => {
-    const settingName = SettingKeyboard.Button_Left;
+    const settingName = SettingKeyboard.BUTTON_LEFT;
     const key = getKeyWithSettingName(config, settingName) ?? "";
     const icon = config.icons[key as keyof typeof config.icons];
     expect(icon).toEqual("KEY_ARROW_LEFT.png");
   });
   it("Check icon for currenly Assigned to setting name alt", () => {
-    const settingName = SettingKeyboard.Alt_Button_Left;
+    const settingName = SettingKeyboard.ALT_BUTTON_LEFT;
     const key = getKeyWithSettingName(config, settingName) ?? "";
     const icon = config.icons[key as keyof typeof config.icons];
     expect(icon).toEqual("A.png");
@@ -318,18 +318,18 @@ describe("Test Rebinding", () => {
 
   it("Delete blacklisted bind", () => {
     inGame.whenWePressOnKeyboard("LEFT").weShouldTriggerTheButton("Button_Left");
-    inTheSettingMenu.whenWeDelete(SettingKeyboard.Button_Left).weCantDelete().iconDisplayedIs("KEY_ARROW_LEFT");
+    inTheSettingMenu.whenWeDelete(SettingKeyboard.BUTTON_LEFT).weCantDelete().iconDisplayedIs("KEY_ARROW_LEFT");
     inGame.whenWePressOnKeyboard("LEFT").weShouldTriggerTheButton("Button_Left");
   });
 
   it("Delete bind", () => {
     inGame.whenWePressOnKeyboard("A").weShouldTriggerTheButton("Alt_Button_Left");
-    inTheSettingMenu.whenWeDelete(SettingKeyboard.Alt_Button_Left).thereShouldBeNoIconAnymore();
+    inTheSettingMenu.whenWeDelete(SettingKeyboard.ALT_BUTTON_LEFT).thereShouldBeNoIconAnymore();
     inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
   });
 
   it("Delete bind then assign a not yet binded button", () => {
-    inTheSettingMenu.whenWeDelete(SettingKeyboard.Alt_Button_Left).thereShouldBeNoIconAnymore();
+    inTheSettingMenu.whenWeDelete(SettingKeyboard.ALT_BUTTON_LEFT).thereShouldBeNoIconAnymore();
     inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("B").nothingShouldHappen();
     inTheSettingMenu
@@ -366,7 +366,7 @@ describe("Test Rebinding", () => {
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Button_Cycle_Shiny");
     inGame.whenWePressOnKeyboard("A").weShouldTriggerTheButton("Alt_Button_Left");
 
-    inTheSettingMenu.whenWeDelete(SettingKeyboard.Alt_Button_Left).thereShouldBeNoIconAnymore();
+    inTheSettingMenu.whenWeDelete(SettingKeyboard.ALT_BUTTON_LEFT).thereShouldBeNoIconAnymore();
     inGame.whenWePressOnKeyboard("R").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("F").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("W").weShouldTriggerTheButton("Button_Cycle_Form");
@@ -393,7 +393,7 @@ describe("Test Rebinding", () => {
     inGame.whenWePressOnKeyboard("A").weShouldTriggerTheButton("Alt_Button_Left");
     inGame.whenWePressOnKeyboard("B").nothingShouldHappen();
 
-    inTheSettingMenu.whenWeDelete(SettingKeyboard.Alt_Button_Left).thereShouldBeNoIconAnymore();
+    inTheSettingMenu.whenWeDelete(SettingKeyboard.ALT_BUTTON_LEFT).thereShouldBeNoIconAnymore();
     inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("B").nothingShouldHappen();
 
@@ -471,11 +471,11 @@ describe("Test Rebinding", () => {
     inGame.whenWePressOnKeyboard("A").weShouldTriggerTheButton("Alt_Button_Left");
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Alt_Button_Right");
 
-    inTheSettingMenu.whenWeDelete(SettingKeyboard.Alt_Button_Left).thereShouldBeNoIconAnymore();
+    inTheSettingMenu.whenWeDelete(SettingKeyboard.ALT_BUTTON_LEFT).thereShouldBeNoIconAnymore();
     inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("D").weShouldTriggerTheButton("Alt_Button_Right");
 
-    inTheSettingMenu.whenWeDelete(SettingKeyboard.Alt_Button_Right).thereShouldBeNoIconAnymore();
+    inTheSettingMenu.whenWeDelete(SettingKeyboard.ALT_BUTTON_RIGHT).thereShouldBeNoIconAnymore();
     inGame.whenWePressOnKeyboard("A").nothingShouldHappen();
     inGame.whenWePressOnKeyboard("D").nothingShouldHappen();
 

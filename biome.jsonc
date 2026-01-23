@@ -217,6 +217,12 @@
                 "formats": ["PascalCase"]
               },
               {
+                "selector": {
+                  "kind": "enumMember"
+                },
+                "formats": ["CONSTANT_CASE"]
+              },
+              {
                 "match": ".*"
               }
             ]

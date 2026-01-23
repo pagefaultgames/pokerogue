@@ -4,13 +4,13 @@ import type { ObjectValues } from "#types/type-helpers";
 import { describe, expectTypeOf, it } from "vitest";
 
 enum TestEnumNum {
-  testN1 = 1,
-  testN2 = 2,
+  TEST_N1 = 1,
+  TEST_N2 = 2,
 }
 
 enum TestEnumString {
-  testS1 = "apple",
-  testS2 = "banana",
+  TEST_S1 = "apple",
+  TEST_S2 = "banana",
 }
 
 const testObjNum = { testON1: 1, testON2: 2 } as const;
@@ -35,7 +35,7 @@ describe("Enum Type Helpers", () => {
 
       expectTypeOf<ObjectValues<typeof TestEnumString>>().toEqualTypeOf<TestEnumString>();
       expectTypeOf<ObjectValues<typeof TestEnumString>>().toEqualTypeOf<
-        TestEnumString.testS1 | TestEnumString.testS2
+        TestEnumString.TEST_S1 | TestEnumString.TEST_S2
       >();
 
       expectTypeOf<ObjectValues<typeof TestEnumString>>().toExtend<"apple" | "banana">();
@@ -91,7 +91,7 @@ describe("Enum Type Helpers", () => {
 describe("Enum Functions", () => {
   describe("getEnumKeys", () => {
     it("should retrieve keys of numeric enum", () => {
-      expectTypeOf<typeof getEnumKeys<typeof TestEnumNum>>().returns.toEqualTypeOf<("testN1" | "testN2")[]>();
+      expectTypeOf<typeof getEnumKeys<typeof TestEnumNum>>().returns.toEqualTypeOf<("TEST_N1" | "TEST_N2")[]>();
     });
   });
 
@@ -104,10 +104,10 @@ describe("Enum Functions", () => {
   describe("enumValueToKey", () => {
     it("should retrieve values for a given key", () => {
       expectTypeOf<
-        typeof enumValueToKey<typeof TestEnumString, TestEnumString.testS1>
-      >().returns.toEqualTypeOf<"testS1">();
+        typeof enumValueToKey<typeof TestEnumString, TestEnumString.TEST_S1>
+      >().returns.toEqualTypeOf<"TEST_S1">();
       expectTypeOf<typeof enumValueToKey<typeof TestEnumString, TestEnumString>>().returns.toEqualTypeOf<
-        "testS1" | "testS2"
+        "TEST_S1" | "TEST_S2"
       >();
       expectTypeOf<typeof enumValueToKey<typeof testObjNum, 1>>().returns.toEqualTypeOf<"testON1">();
       expectTypeOf<typeof enumValueToKey<typeof testObjNum, 1 | 2>>().returns.toEqualTypeOf<"testON1" | "testON2">();

@@ -595,7 +595,7 @@ export class EncounterPhase extends BattlePhase {
         }
       }
     }
-    handleTutorial(Tutorial.Access_Menu).then(() => super.end());
+    handleTutorial(Tutorial.ACCESS_MENU).then(() => super.end());
 
     globalScene.phaseManager.pushNew("InitEncounterPhase");
   }
