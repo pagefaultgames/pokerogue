@@ -191,6 +191,7 @@
           "options": {
             "requireAscii": true,
             "strictCase": false,
+            // evaluated in order from top to bottom
             "conventions": [
               {
                 "selector": {
@@ -222,6 +223,7 @@
                 },
                 "formats": ["CONSTANT_CASE"]
               },
+              // having this section last disables the built-in conventions
               {
                 "match": ".*"
               }
