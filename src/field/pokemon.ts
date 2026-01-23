@@ -2609,10 +2609,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Sub-method of {@linkcode getAttackTypeEffectiveness} that handles nullifying type immunities.
-   * @param source - The {@linkcode Pokemon} from whom the attack is sourced
-   * @param simulated - If `true`, will prevent displaying messages upon activation
-   * @param moveType - The {@linkcode PokemonType} whose offensive typing is being checked
-   * @param defenderType - The defender's {@linkcode PokemonType} being checked
+   * @param source - The {@linkcode Pokemon} using the move
+   * @param simulated - Whether to prevent changes to game state during calculations
+   * @param moveType - The {@linkcode PokemonType} of the move being used
+   * @param defenderType - The {@linkcode PokemonType} of the defender
    * @returns Whether the type immunity was bypassed
    */
   private checkIgnoreTypeImmunity({
@@ -2626,8 +2626,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     moveType: PokemonType;
     defenderType: PokemonType;
   }): boolean {
-    const exposedTags = this.findTags(tag => tag instanceof ExposedTag) as ExposedTag[];
-    const hasExposed = exposedTags.some(t => t.ignoreImmunity(defenderType, moveType));
+    // TODO: remove type assertion once method is properly typed
+    const hasExposed = !!this.findTag(tag => tag instanceof ExposedTag && tag.ignoreImmunity(defenderType, moveType));
     if (hasExposed) {
       return true;
     }
