@@ -12236,6 +12236,8 @@ export function initMoves() {
           ? 1.5
           : 1;
       }),
+    new AttackMove(MoveId.RUINATION, PokemonType.DARK, MoveCategory.SPECIAL, -1, 90, 10, -1, 0, 9) //
+      .attr(TargetHalfHpDamageAttr),
     new AttackMove(MoveId.COLLISION_COURSE, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 9) //
       .attr(MovePowerMultiplierAttr, (user, target, move) =>
         target.getAttackTypeEffectiveness(move.type, { source: user }) >= 2 ? 4 / 3 : 1,
