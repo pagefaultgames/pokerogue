@@ -211,6 +211,12 @@
                 "formats": ["PascalCase"]
               },
               {
+                "selector": {
+                  "kind": "enum"
+                },
+                "formats": ["PascalCase"]
+              },
+              {
                 "match": ".*"
               }
             ]
