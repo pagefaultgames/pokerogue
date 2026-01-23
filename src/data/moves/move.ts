@@ -6084,8 +6084,9 @@ export class HitsSameTypeAttr extends MoveTypeChartOverrideAttr {
     const [multiplier, oppTypes] = args;
     const userTypes = user.getTypes(true);
     // Synchronoise is never effective if the user is typeless
-    if (userTypes.some(type => type === PokemonType.UNKNOWN || !oppTypes.includes(type))) {
-      return false;
+    if (userTypes.includes(PokemonType.UNKNOWN)) {
+      multiplier.value = 0;
+      return true;
     }
 
     const sharesType = userTypes.some(type => oppTypes.includes(type));
