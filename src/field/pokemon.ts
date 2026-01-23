@@ -1,4 +1,5 @@
-import type { Ability, PreAttackModifyDamageAbAttrParams } from "#abilities/ability";
+import type { PreAttackModifyDamageAbAttrParams } from "#abilities/ab-attrs";
+import type { Ability } from "#abilities/ability";
 import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
 import { generateMoveset } from "#app/ai/ai-moveset-gen";
 import type { Battle } from "#app/battle";
@@ -2172,6 +2173,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       this.summonData.ability = ability.id;
     }
     applyOnGainAbAttrs({ pokemon: this, passive });
+  }
+
+  /** Sets the Pokemon's ability as revealed. */
+  public revealAbility(): void {
+    this.waveData.abilityRevealed = true;
   }
 
   /**
