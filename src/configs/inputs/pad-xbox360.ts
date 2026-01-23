@@ -1,11 +1,11 @@
 import { Button } from "#enums/buttons";
 import { SettingGamepad } from "#system/settings-gamepad";
-import type { PadConfig, xbox360Buttons } from "#types/configs/inputs";
+import type { PadConfig, Xbox360Buttons } from "#types/configs/inputs";
 
 /**
  * Generic pad mapping
  */
-export const PAD_XBOX360: PadConfig<xbox360Buttons> = {
+export const PAD_XBOX360: PadConfig<Xbox360Buttons> = {
   padID: "Xbox 360 controller (XInput STANDARD GAMEPAD)",
   padType: "xbox",
   deviceMapping: {

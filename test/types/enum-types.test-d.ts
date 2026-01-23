@@ -17,7 +17,7 @@ const testObjNum = { testON1: 1, testON2: 2 } as const;
 
 const testObjString = { testOS1: "apple", testOS2: "banana" } as const;
 
-interface testObject {
+interface TestObject {
   key_1: "1";
   key_2: "2";
   key_3: "3";
@@ -26,7 +26,7 @@ interface testObject {
 describe("Enum Type Helpers", () => {
   describe("ObjectValues", () => {
     it("should produce a union of an object's values", () => {
-      expectTypeOf<ObjectValues<testObject>>().toEqualTypeOf<"1" | "2" | "3">();
+      expectTypeOf<ObjectValues<TestObject>>().toEqualTypeOf<"1" | "2" | "3">();
     });
 
     it("should go from enum object type to value type", () => {

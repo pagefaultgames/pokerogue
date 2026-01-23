@@ -185,7 +185,31 @@
         },
         "useGroupedAccessorPairs": "error",
         "useObjectSpread": "error",
-        "useNumericSeparators": "off" // TODO: Consider enabling?
+        "useNumericSeparators": "off", // TODO: Consider enabling?
+        "useNamingConvention": {
+          "level": "error",
+          "options": {
+            "requireAscii": true,
+            "strictCase": false,
+            "conventions": [
+              {
+                "selector": {
+                  "kind": "interface"
+                },
+                "formats": ["PascalCase"]
+              },
+              {
+                "selector": {
+                  "kind": "typeAlias"
+                },
+                "formats": ["PascalCase"]
+              },
+              {
+                "match": ".*"
+              }
+            ]
+          }
+        }
       },
       "suspicious": {
         "noExtraNonNullAssertion": "error",

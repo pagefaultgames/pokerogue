@@ -6,12 +6,12 @@ import { describe, expect, it } from "vitest";
 describe("Utils - Strings", () => {
   describe("Casing", () => {
     describe("splitWords", () => {
-      interface testCase {
+      interface TestCase {
         input: string;
         words: string[];
       }
 
-      const testCases: testCase[] = [
+      const testCases: TestCase[] = [
         {
           input: "Lorem ipsum dolor sit amet",
           words: ["Lorem", "ipsum", "dolor", "sit", "amet"],
