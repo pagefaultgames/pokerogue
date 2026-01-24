@@ -49,7 +49,7 @@ describe("Terrain -", () => {
     { name: "Misty", type: PokemonType.FAIRY, terrain: TerrainType.MISTY, move: MoveId.DRAGON_BREATH },
   ])("Common Tests - $name Terrain", ({ type, terrain, move }) => {
     beforeEach(() => {
-      game.override.terrain(terrain).enemyPassiveAbility(AbilityId.LEVITATE);
+      game.override.startingTerrain(terrain).enemyPassiveAbility(AbilityId.LEVITATE);
     });
 
     const typeStr = toTitleCase(PokemonType[type]);
@@ -114,7 +114,7 @@ describe("Terrain -", () => {
 
   describe("Grassy Terrain", () => {
     beforeEach(() => {
-      game.override.terrain(TerrainType.GRASSY);
+      game.override.startingTerrain(TerrainType.GRASSY);
     });
 
     it("should heal all grounded, non semi-invulnerable Pokemon for 1/16th max HP at end of turn", async () => {
@@ -182,7 +182,7 @@ describe("Terrain -", () => {
 
   describe("Electric Terrain", () => {
     beforeEach(() => {
-      game.override.terrain(TerrainType.ELECTRIC);
+      game.override.startingTerrain(TerrainType.ELECTRIC);
     });
 
     it("should prevent all grounded Pokemon from being put to sleep", async () => {
@@ -235,7 +235,7 @@ describe("Terrain -", () => {
 
   describe("Misty Terrain", () => {
     beforeEach(() => {
-      game.override.terrain(TerrainType.MISTY).enemyPassiveAbility(AbilityId.LEVITATE);
+      game.override.startingTerrain(TerrainType.MISTY).enemyPassiveAbility(AbilityId.LEVITATE);
     });
 
     it("should prevent all grounded Pokemon from gaining non-volatile statuses", async () => {
@@ -316,7 +316,7 @@ describe("Terrain -", () => {
 
   describe("Psychic Terrain", () => {
     beforeEach(() => {
-      game.override.terrain(TerrainType.PSYCHIC);
+      game.override.startingTerrain(TerrainType.PSYCHIC);
     });
 
     it("should block all opponent-targeted priority moves", async () => {

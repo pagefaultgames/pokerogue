@@ -374,7 +374,7 @@ export class OverridesHelper extends GameManagerHelper {
    * The newly added terrain will be refreshed upon reaching
    * a new biome, and will be overridden as normal if a new terrain is set.
    */
-  public terrain(type: TerrainType): this {
+  public startingTerrain(type: TerrainType): this {
     vi.spyOn(Overrides, "STARTING_TERRAIN_OVERRIDE", "get").mockReturnValue(type);
     this.log(`Starting terrain for next biome set to ${getEnumStr(TerrainType, type)}!`);
     return this;
