@@ -57,6 +57,7 @@ export class PromptHandler extends GameManagerHelper {
 
   /**
    * A {@linkcode NodeJS.Timeout | Timeout} containing an interval used to check prompts.
+   *
    * Is unused during test execution itself, as pre- and post-test hooks automatically set and clear it to avoid deadlocks.
    */
   public static runInterval?: NodeJS.Timeout | undefined;
