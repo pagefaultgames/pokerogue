@@ -4,7 +4,11 @@ import type { SetRequired, UndefinedOnPartialDeep } from "type-fest";
 
 type DataType = "json" | "form-urlencoded";
 
-interface doFetchType extends SetRequired<UndefinedOnPartialDeep<RequestInit>, "method"> {}
+/**
+ * Configuration type for {@linkcode ApiBase.doFetch}.
+ * @internal
+ */
+interface DoFetchConfig extends SetRequired<UndefinedOnPartialDeep<RequestInit>, "method"> {}
 
 export abstract class ApiBase {
   //#region Fields
@@ -22,8 +26,8 @@ export abstract class ApiBase {
   //#region Protected
 
   /**
-   * Send a GET request.
-   * @param path The path to send the request to.
+   * Send an HTTP GET request.
+   * @param path - The path to send the request to
    */
   protected async doGet(path: string) {
     return this.doFetch(path, { method: "GET" });
@@ -36,6 +40,12 @@ export abstract class ApiBase {
    * @param dataType - (Default `"json"`) The type of data to send
    */
   protected async doPost(path: string, bodyData?: Record<string, any> | string, dataType?: "json"): Promise<Response>;
+  /**
+   * Send an HTTP POST request.
+   * @param path - The path to send the request to
+   * @param bodyData - The body-data to send; will be stringified if needed
+   * @param dataType - (Default `"json"`) The type of data to send
+   */
   protected async doPost(path: string, bodyData: Record<string, any>, dataType: "form-urlencoded"): Promise<Response>;
   protected async doPost(path: string, bodyData?: Record<string, any>, dataType: DataType = "json"): Promise<Response> {
     if (bodyData === undefined) {
@@ -71,9 +81,9 @@ export abstract class ApiBase {
   /**
    * A generic request helper.
    * @param path - The path to send the request to
-   * @param config - The request {@linkcode doFetchType | configuration}
+   * @param config - The request configuration
    */
-  protected async doFetch(path: string, config: doFetchType): Promise<Response> {
+  protected async doFetch(path: string, config: DoFetchConfig): Promise<Response> {
     config.headers = {
       ...config.headers,
       Authorization: getCookie(SESSION_ID_COOKIE_NAME),
