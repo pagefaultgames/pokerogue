@@ -107,7 +107,6 @@ Notable topics include:
 
 Again, if you have unanswered questions please feel free to ask!
 
-
 ## 🧪 Testing Your Changes
 
 You've just made a change - how can you check if it works? You have two areas to hit:
@@ -132,19 +131,19 @@ You can get help testing your specific changes, and you might have found a new o
 
 ### 2 - Automatic Testing
 
-PokéRogue uses [Vitest](https://vitest.dev/) for automated testing. \
+PokéRogue uses [Vitest](https://vitest.dev/) for automated testing.
 Checking out existing tests in the [test](./test/) folder is a great way to understand how the existing system works, as well as familiarizing yourself with the project as a whole.
 
 #### Writing tests
 Most non-trivial changes (_especially bug fixes_) should be accompanied by one or more new automated test cases.
 
-To create a new test file, run `pnpm test:create` and follow the on-screen prompts. \
+To create a new test file, run `pnpm test:create` and follow the on-screen prompts.
 If the move/ability/etc. you're modifying already has tests, you can add new cases to the test file or edit existing ones.
 
-- Ensure that new test cases:
-  - Are deterministic. In other words, the test should never pass or fail when it shouldn't due to randomness. Among other things, this involves ensuring that abilities and moves are never randomly selected.
-  - Do not test multiple separate things in the same test case. If you have made two distinct changes, they should be tested in two separate cases.
-  - Cover as many edge cases as possible. A good strategy is to think of edge cases beforehand and create tests for them using `it.todo`. Once the edge case has been handled, you can remove the `todo` marker.
+Ensure that new test cases:
+- Are deterministic. In other words, the test should never pass or fail when it shouldn't due to randomness. Among other things, this involves ensuring that abilities and moves are never randomly selected.
+- Do not test multiple separate things in the same test case. If you have made two distinct changes, they should be tested in two separate cases.
+- Cover as many edge cases as possible. A good strategy is to think of edge cases beforehand and create tests for them using `it.todo`. Once the edge case has been handled, you can remove the `todo` marker.
 
 <!-- TODO: Decide on and suggest a specific placement heiarchy for test cases involving interactions between different moves/abilities/etc. -->
 
@@ -184,7 +183,7 @@ fix(move): Future Sight no longer crashes
 > [!IMPORTANT]
 > If a save migrator, version increase or other breaking change is part of the PR, a `!` must be added before the `:`.
 
-Try to keep the PR title to 72 characters or less (GitHub cuts off commit titles longer than this).
+Try to keep the title under 72 characters, as GitHub cuts off commit titles longer than this length.
 
 #### Examples
 `refactor(data)!: improve serialization of Pokemon save data`
