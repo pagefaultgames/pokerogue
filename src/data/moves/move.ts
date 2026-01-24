@@ -4745,12 +4745,13 @@ export class TurnDamagedDoublePowerAttr extends VariablePowerAttr {
   }
 }
 
-const magnitudeMessageFunc = (_user: Pokemon, _target: Pokemon, _move: Move) => {
-  let message: string;
+const magnitudeThresholds = [5, 15, 35, 65, 85, 95];
+
+const magnitudeMessageFunc = (): string => {
+  let message!: string;
+
   globalScene.executeWithSeedOffset(
     () => {
-      const magnitudeThresholds = [5, 15, 35, 65, 75, 95];
-
       const rand = randSeedInt(100);
 
       let m = 0;
@@ -4765,32 +4766,32 @@ const magnitudeMessageFunc = (_user: Pokemon, _target: Pokemon, _move: Move) => 
     globalScene.currentBattle.turn << 6,
     globalScene.waveSeed,
   );
-  return message!;
+
+  return message;
 };
 
 export class MagnitudePowerAttr extends VariablePowerAttr {
-  apply(_user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
-    const power = args[0] as NumberHolder;
+  apply(_user: Pokemon, _target: Pokemon, _move: Move, args: [NumberHolder, ...any[]]): boolean {
+    const power = args[0];
 
-    const magnitudeThresholds = [5, 15, 35, 65, 75, 95];
-    const magnitudePowers = [10, 30, 50, 70, 90, 100, 110, 150];
-
-    let rand: number;
+    const magnitudePowers = [10, 30, 50, 70, 90, 110, 150];
 
     globalScene.executeWithSeedOffset(
-      () => (rand = randSeedInt(100)),
+      () => {
+        const rand = randSeedInt(100);
+
+        let m = 0;
+        for (; m < magnitudeThresholds.length; m++) {
+          if (rand < magnitudeThresholds[m]) {
+            break;
+          }
+        }
+
+        power.value = magnitudePowers[m];
+      },
       globalScene.currentBattle.turn << 6,
       globalScene.waveSeed,
     );
-
-    let m = 0;
-    for (; m < magnitudeThresholds.length; m++) {
-      if (rand! < magnitudeThresholds[m]) {
-        break;
-      }
-    }
-
-    power.value = magnitudePowers[m];
 
     return true;
   }
@@ -4829,8 +4830,9 @@ export class FriendshipPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
     const power = args[0] as NumberHolder;
 
+    const useUserFriendship = user.isPlayer() || user.hasTrainer();
     const friendshipPower = Math.floor(
-      Math.min(user.isPlayer() ? user.friendship : user.species.baseFriendship, 255) / 2.5,
+      Math.min(useUserFriendship ? user.friendship : user.species.baseFriendship, 255) / 2.5,
     );
     power.value = Math.max(this.invert ? 102 - friendshipPower : friendshipPower, 1);
 

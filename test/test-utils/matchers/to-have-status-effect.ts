@@ -60,7 +60,7 @@ export function toHaveStatusEffect(
 
   // Check for equality of all fields (for toxic turn count/etc)
   const actualStatus = received.status;
-  const pass = this.equals(received, expectedStatus, [
+  const pass = this.equals(actualStatus, expectedStatus, [
     ...this.customTesters,
     this.utils.subsetEquality,
     this.utils.iterableEquality,

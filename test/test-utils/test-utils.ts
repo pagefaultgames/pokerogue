@@ -10,7 +10,12 @@ import { vi } from "vitest";
  * @returns A spy/mock of i18next
  */
 export function mockI18next() {
-  return vi.spyOn(i18next, "t").mockImplementation((key: ParseKeys) => key);
+  return (
+    vi
+      .spyOn(i18next, "t")
+      // @ts-expect-error - ignoring type mismatch for mock
+      .mockImplementation((key: ParseKeys) => key)
+  );
 }
 
 /**

@@ -1,10 +1,11 @@
 import { Button } from "#enums/buttons";
 import { SettingGamepad } from "#system/settings-gamepad";
+import type { GenericPadButtons, PadConfig } from "#types/configs/inputs";
 
 /**
  * Generic pad mapping
  */
-const pad_generic = {
+export const PAD_GENERIC: PadConfig<GenericPadButtons> = {
   padID: "Generic",
   padType: "xbox",
   deviceMapping: {
@@ -81,5 +82,3 @@ const pad_generic = {
   },
   blacklist: ["LC_N", "LC_S", "LC_W", "LC_E"],
 };
-
-export default pad_generic;
