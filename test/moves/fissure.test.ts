@@ -26,7 +26,6 @@ describe("Moves - Fissure", () => {
     game.override
       .battleStyle("single")
       .criticalHits(false)
-      .starterSpecies(SpeciesId.SNORLAX)
       .moveset(MoveId.FISSURE)
       .passiveAbility(AbilityId.BALL_FETCH)
       .startingLevel(100)
@@ -35,7 +34,7 @@ describe("Moves - Fissure", () => {
       .enemyPassiveAbility(AbilityId.BALL_FETCH)
       .enemyLevel(100);
 
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.SNORLAX);
 
     partyPokemon = game.field.getPlayerPokemon();
     enemyPokemon = game.field.getEnemyPokemon();

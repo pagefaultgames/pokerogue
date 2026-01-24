@@ -30,7 +30,7 @@ describe("Moves - Heart Swap", () => {
   });
 
   it("should swap all of the user's stat stages with the target's", async () => {
-    await game.classicMode.startBattle([SpeciesId.MANAPHY]);
+    await game.classicMode.startBattle(SpeciesId.MANAPHY);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();

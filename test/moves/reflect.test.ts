@@ -42,7 +42,7 @@ describe("Moves - Reflect", () => {
 
   it("reduces damage of physical attacks by half in a single battle", async () => {
     const moveToUse = MoveId.TACKLE;
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE);
 
     game.move.select(moveToUse);
 
@@ -60,7 +60,7 @@ describe("Moves - Reflect", () => {
     game.override.battleStyle("double");
 
     const moveToUse = MoveId.ROCK_SLIDE;
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE, SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE, SpeciesId.SHUCKLE);
 
     game.move.select(moveToUse);
     game.move.select(moveToUse, 1);
@@ -77,7 +77,7 @@ describe("Moves - Reflect", () => {
 
   it("does not affect special attacks", async () => {
     const moveToUse = MoveId.ABSORB;
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE);
 
     game.move.select(moveToUse);
 
@@ -95,7 +95,7 @@ describe("Moves - Reflect", () => {
   it("does not affect critical hits", async () => {
     game.override.moveset([MoveId.WICKED_BLOW]);
     const moveToUse = MoveId.WICKED_BLOW;
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE);
 
     game.move.select(moveToUse);
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -112,7 +112,7 @@ describe("Moves - Reflect", () => {
   it("does not affect critical hits", async () => {
     game.override.moveset([MoveId.WICKED_BLOW]);
     const moveToUse = MoveId.WICKED_BLOW;
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE);
 
     game.move.select(moveToUse);
     await game.phaseInterceptor.to(TurnEndPhase);

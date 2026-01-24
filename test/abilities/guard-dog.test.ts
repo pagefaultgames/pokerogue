@@ -25,7 +25,7 @@ describe("Ability - Guard Dog", () => {
   });
 
   it("should raise attack by 1 stage when Intimidated instead of being lowered", async () => {
-    await game.classicMode.startBattle([SpeciesId.MABOSSTIFF]);
+    await game.classicMode.startBattle(SpeciesId.MABOSSTIFF);
 
     const mabostiff = game.field.getPlayerPokemon();
     expect(mabostiff.getStatStage(Stat.ATK)).toBe(1);

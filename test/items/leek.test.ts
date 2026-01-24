@@ -28,7 +28,7 @@ describe("Items - Leek", () => {
   });
 
   it("should raise CRIT stage by 2 when held by FARFETCHD", async () => {
-    await game.classicMode.startBattle([SpeciesId.FARFETCHD]);
+    await game.classicMode.startBattle(SpeciesId.FARFETCHD);
 
     const enemyMember = game.field.getEnemyPokemon();
 
@@ -42,7 +42,7 @@ describe("Items - Leek", () => {
   });
 
   it("should raise CRIT stage by 2 when held by GALAR_FARFETCHD", async () => {
-    await game.classicMode.startBattle([SpeciesId.GALAR_FARFETCHD]);
+    await game.classicMode.startBattle(SpeciesId.GALAR_FARFETCHD);
 
     const enemyMember = game.field.getEnemyPokemon();
 
@@ -56,7 +56,7 @@ describe("Items - Leek", () => {
   });
 
   it("should raise CRIT stage by 2 when held by SIRFETCHD", async () => {
-    await game.classicMode.startBattle([SpeciesId.SIRFETCHD]);
+    await game.classicMode.startBattle(SpeciesId.SIRFETCHD);
 
     const enemyMember = game.field.getEnemyPokemon();
 
@@ -73,7 +73,7 @@ describe("Items - Leek", () => {
     // Randomly choose from the Farfetch'd line
     const species = [SpeciesId.FARFETCHD, SpeciesId.GALAR_FARFETCHD, SpeciesId.SIRFETCHD];
 
-    await game.classicMode.startBattle([species[randInt(species.length)], SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(species[randInt(species.length)], SpeciesId.PIKACHU);
 
     const [partyMember, ally] = game.scene.getPlayerParty();
 
@@ -101,7 +101,7 @@ describe("Items - Leek", () => {
     // Randomly choose from the Farfetch'd line
     const species = [SpeciesId.FARFETCHD, SpeciesId.GALAR_FARFETCHD, SpeciesId.SIRFETCHD];
 
-    await game.classicMode.startBattle([SpeciesId.PIKACHU, species[randInt(species.length)]]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU, species[randInt(species.length)]);
 
     const [partyMember, ally] = game.scene.getPlayerParty();
 
@@ -126,7 +126,7 @@ describe("Items - Leek", () => {
   });
 
   it("should not raise CRIT stage when held by a Pokemon outside of FARFETCHD line", async () => {
-    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
 
     const enemyMember = game.field.getEnemyPokemon();
 

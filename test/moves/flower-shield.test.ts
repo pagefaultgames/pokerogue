@@ -33,7 +33,7 @@ describe("Moves - Flower Shield", () => {
   it("raises DEF stat stage by 1 for all Grass-type Pokemon on the field by one stage - single battle", async () => {
     game.override.enemySpecies(SpeciesId.CHERRIM);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
     const cherrim = game.field.getEnemyPokemon();
     const magikarp = game.field.getPlayerPokemon();
 
@@ -50,7 +50,7 @@ describe("Moves - Flower Shield", () => {
   it("raises DEF stat stage by 1 for all Grass-type Pokemon on the field by one stage - double battle", async () => {
     game.override.enemySpecies(SpeciesId.MAGIKARP).startingBiome(BiomeId.GRASS).battleStyle("double");
 
-    await game.classicMode.startBattle([SpeciesId.CHERRIM, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.CHERRIM, SpeciesId.MAGIKARP);
     const field = game.scene.getField(true);
 
     const grassPokemons = field.filter(p => p.getTypes().includes(PokemonType.GRASS));
@@ -73,7 +73,7 @@ describe("Moves - Flower Shield", () => {
   it("does not raise DEF stat stage for a Pokemon in semi-vulnerable state", async () => {
     game.override.enemySpecies(SpeciesId.PARAS).enemyMoveset(MoveId.DIG).enemyLevel(50);
 
-    await game.classicMode.startBattle([SpeciesId.CHERRIM]);
+    await game.classicMode.startBattle(SpeciesId.CHERRIM);
     const paras = game.field.getEnemyPokemon();
     const cherrim = game.field.getPlayerPokemon();
 
@@ -92,7 +92,7 @@ describe("Moves - Flower Shield", () => {
   it("does nothing if there are no Grass-type Pokemon on the field", async () => {
     game.override.enemySpecies(SpeciesId.MAGIKARP);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
     const enemy = game.field.getEnemyPokemon();
     const ally = game.field.getPlayerPokemon();
 

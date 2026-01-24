@@ -50,7 +50,7 @@ describe("SelectModifierPhase", () => {
   });
 
   it("should generate random modifiers", async () => {
-    await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
+    await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     game.move.select(MoveId.FISSURE);
     await game.phaseInterceptor.to("SelectModifierPhase");
 
@@ -83,7 +83,7 @@ describe("SelectModifierPhase", () => {
   });
 
   it.todo("should generate random modifiers from reroll", async () => {
-    await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
+    await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     scene.money = 1000000;
     scene.shopCursorTarget = 0;
 
@@ -107,7 +107,7 @@ describe("SelectModifierPhase", () => {
 
   it.todo("should generate random modifiers of same tier for reroll with reroll lock", async () => {
     game.override.startingModifier([{ name: "LOCK_CAPSULE" }]);
-    await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
+    await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     scene.money = 1000000;
     // Just use fully random seed for this test
     vi.spyOn(scene, "resetSeed").mockImplementation(() => {
@@ -146,7 +146,7 @@ describe("SelectModifierPhase", () => {
   });
 
   it("should generate custom modifiers", async () => {
-    await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
+    await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     scene.money = 1000000;
     const customModifiers: CustomModifierSettings = {
       guaranteedModifierTypeFuncs: [
@@ -175,7 +175,7 @@ describe("SelectModifierPhase", () => {
   });
 
   it("should generate custom modifier tiers that can upgrade from luck", async () => {
-    await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
+    await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     scene.money = 1000000;
     const customModifiers: CustomModifierSettings = {
       guaranteedModifierTiers: [
@@ -227,7 +227,7 @@ describe("SelectModifierPhase", () => {
   });
 
   it("should generate custom modifiers and modifier tiers together", async () => {
-    await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
+    await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     scene.money = 1000000;
     const customModifiers: CustomModifierSettings = {
       guaranteedModifierTypeFuncs: [modifierTypes.MEMORY_MUSHROOM, modifierTypes.TM_COMMON],
@@ -250,7 +250,7 @@ describe("SelectModifierPhase", () => {
   });
 
   it("should fill remaining modifiers if fillRemaining is true with custom modifiers", async () => {
-    await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
+    await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     scene.money = 1000000;
     const customModifiers: CustomModifierSettings = {
       guaranteedModifierTypeFuncs: [modifierTypes.MEMORY_MUSHROOM],

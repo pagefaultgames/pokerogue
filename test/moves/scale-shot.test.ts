@@ -37,7 +37,7 @@ describe("Moves - Scale Shot", () => {
   it("applies stat changes after last hit", async () => {
     game.override.enemySpecies(SpeciesId.FORRETRESS);
 
-    await game.classicMode.startBattle([SpeciesId.MINCCINO]);
+    await game.classicMode.startBattle(SpeciesId.MINCCINO);
     const minccino = game.field.getPlayerPokemon();
     game.move.select(MoveId.SCALE_SHOT);
 
@@ -65,7 +65,7 @@ describe("Moves - Scale Shot", () => {
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.classicMode.startBattle([SpeciesId.MINCCINO]);
+    await game.classicMode.startBattle(SpeciesId.MINCCINO);
     const minccino = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.SCALE_SHOT);

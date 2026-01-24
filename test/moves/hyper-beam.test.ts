@@ -34,7 +34,7 @@ describe("Moves - Hyper Beam", () => {
   });
 
   it("should force the user to recharge on the next turn (and only that turn)", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const leadPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();

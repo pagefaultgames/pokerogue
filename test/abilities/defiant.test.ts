@@ -30,7 +30,7 @@ describe("Abilities - Defiant", () => {
   });
 
   it("lower atk and def by 1 via tickle, then increase atk by 4 via defiant", async () => {
-    await game.classicMode.startBattle([SpeciesId.FLYGON]);
+    await game.classicMode.startBattle(SpeciesId.FLYGON);
 
     const playerPokemon = game.field.getPlayerPokemon();
     game.move.select(MoveId.SPLASH);
@@ -42,7 +42,7 @@ describe("Abilities - Defiant", () => {
 
   it("lowering your own stats should not trigger defiant", async () => {
     game.override.enemyMoveset(MoveId.SPLASH);
-    await game.classicMode.startBattle([SpeciesId.FLYGON]);
+    await game.classicMode.startBattle(SpeciesId.FLYGON);
 
     const playerPokemon = game.field.getPlayerPokemon();
     game.move.select(MoveId.CLOSE_COMBAT);
@@ -55,7 +55,7 @@ describe("Abilities - Defiant", () => {
 
   it("white herb should remove only the negative effects", async () => {
     game.override.startingHeldItems([{ name: "WHITE_HERB" }]);
-    await game.classicMode.startBattle([SpeciesId.FLYGON]);
+    await game.classicMode.startBattle(SpeciesId.FLYGON);
 
     const playerPokemon = game.field.getPlayerPokemon();
     game.move.select(MoveId.SPLASH);

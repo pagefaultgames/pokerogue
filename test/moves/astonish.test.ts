@@ -36,7 +36,7 @@ describe("Moves - Astonish", () => {
   });
 
   test("move effect should cancel the target's move on the turn it applies", async () => {
-    await game.classicMode.startBattle([SpeciesId.MEOWSCARADA]);
+    await game.classicMode.startBattle(SpeciesId.MEOWSCARADA);
 
     const leadPokemon = game.field.getPlayerPokemon();
 

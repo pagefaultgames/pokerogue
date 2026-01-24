@@ -26,13 +26,12 @@ describe("Moves - Safeguard", () => {
       .enemyMoveset([MoveId.SAFEGUARD])
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyLevel(5)
-      .starterSpecies(SpeciesId.DRATINI)
       .moveset([MoveId.NUZZLE, MoveId.SPORE, MoveId.YAWN, MoveId.SPLASH])
       .ability(AbilityId.UNNERVE); // Stop wild Pokemon from potentially eating Lum Berry
   });
 
   it("protects from damaging moves with additional effects", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.DRATINI);
     const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.NUZZLE);
@@ -43,7 +42,7 @@ describe("Moves - Safeguard", () => {
   });
 
   it("protects from status moves", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.DRATINI);
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.SPORE);
@@ -55,7 +54,7 @@ describe("Moves - Safeguard", () => {
 
   it("protects from confusion", async () => {
     game.override.moveset([MoveId.CONFUSE_RAY]);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.DRATINI);
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.CONFUSE_RAY);
@@ -68,7 +67,7 @@ describe("Moves - Safeguard", () => {
   it("protects ally from status", async () => {
     game.override.battleStyle("double");
 
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.DRATINI);
 
     game.move.select(MoveId.SPORE, 0, BattlerIndex.ENEMY_2);
     game.move.select(MoveId.NUZZLE, 1, BattlerIndex.ENEMY_2);
@@ -84,7 +83,7 @@ describe("Moves - Safeguard", () => {
   });
 
   it("protects from Yawn", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.DRATINI);
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.YAWN);
@@ -95,7 +94,7 @@ describe("Moves - Safeguard", () => {
   });
 
   it("doesn't protect from already existing Yawn", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.DRATINI);
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.YAWN);
@@ -110,7 +109,7 @@ describe("Moves - Safeguard", () => {
 
   it("doesn't protect from self-inflicted status from Rest or Flame Orb", async () => {
     game.override.enemyHeldItems([{ name: "FLAME_ORB" }]);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.DRATINI);
     const enemyPokemon = game.field.getEnemyPokemon();
     enemyPokemon.hp = 1;
 
@@ -130,7 +129,7 @@ describe("Moves - Safeguard", () => {
   });
 
   it("protects from ability-inflicted status", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.DRATINI);
 
     const player = game.field.getPlayerPokemon();
     game.field.mockAbility(player, AbilityId.STATIC);

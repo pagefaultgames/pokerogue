@@ -34,7 +34,7 @@ describe("Moves - Shell Trap", () => {
   });
 
   it("should activate after the user is hit by a physical attack", async () => {
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.TURTONATOR]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD, SpeciesId.TURTONATOR);
 
     const playerPokemon = game.scene.getPlayerField();
     const enemyPokemon = game.scene.getEnemyField();
@@ -57,7 +57,7 @@ describe("Moves - Shell Trap", () => {
   it("should fail if the user is only hit by special attacks", async () => {
     game.override.enemyMoveset([MoveId.SWIFT]);
 
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.TURTONATOR]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD, SpeciesId.TURTONATOR);
 
     const playerPokemon = game.scene.getPlayerField();
     const enemyPokemon = game.scene.getEnemyField();
@@ -80,7 +80,7 @@ describe("Moves - Shell Trap", () => {
   it("should fail if the user isn't hit with any attack", async () => {
     game.override.enemyMoveset(MoveId.SPLASH);
 
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.TURTONATOR]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD, SpeciesId.TURTONATOR);
 
     const playerPokemon = game.scene.getPlayerField();
     const enemyPokemon = game.scene.getEnemyField();
@@ -103,7 +103,7 @@ describe("Moves - Shell Trap", () => {
   it("should not activate from an ally's attack", async () => {
     game.override.enemyMoveset(MoveId.SPLASH);
 
-    await game.classicMode.startBattle([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.BLASTOISE, SpeciesId.CHARIZARD);
 
     const playerPokemon = game.scene.getPlayerField();
     const enemyPokemon = game.scene.getEnemyField();
@@ -127,7 +127,7 @@ describe("Moves - Shell Trap", () => {
     game.override.battleStyle("single");
     vi.spyOn(allMoves[MoveId.RAZOR_LEAF], "priority", "get").mockReturnValue(-4);
 
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();

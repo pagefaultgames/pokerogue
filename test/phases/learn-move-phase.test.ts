@@ -24,7 +24,7 @@ describe("Learn Move Phase", () => {
 
   it("If Pokemon has less than 4 moves, its newest move will be added to the lowest empty index", async () => {
     game.override.moveset([MoveId.SPLASH]);
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR);
     const pokemon = game.field.getPlayerPokemon();
     const newMovePos = pokemon.getMoveset().length;
     game.move.select(MoveId.SPLASH);
@@ -38,7 +38,7 @@ describe("Learn Move Phase", () => {
   });
 
   it("If a pokemon has 4 move slots filled, the chosen move will be deleted and replaced", async () => {
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR);
     const bulbasaur = game.field.getPlayerPokemon();
     const prevMoveset = [MoveId.SPLASH, MoveId.ABSORB, MoveId.ACID, MoveId.VINE_WHIP];
     const moveSlotNum = 3;
@@ -69,7 +69,7 @@ describe("Learn Move Phase", () => {
   });
 
   it("selecting the newly deleted move will reject it and keep old moveset", async () => {
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR);
     const bulbasaur = game.field.getPlayerPokemon();
     const prevMoveset = [MoveId.SPLASH, MoveId.ABSORB, MoveId.ACID, MoveId.VINE_WHIP];
 

@@ -22,12 +22,11 @@ describe("Moves - Foresight", () => {
       .enemySpecies(SpeciesId.GASTLY)
       .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(5)
-      .starterSpecies(SpeciesId.MAGIKARP)
       .moveset([MoveId.FORESIGHT, MoveId.QUICK_ATTACK, MoveId.MACH_PUNCH]);
   });
 
   it("should allow Normal and Fighting moves to hit Ghost types", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const enemy = game.field.getEnemyPokemon();
 
@@ -51,7 +50,7 @@ describe("Moves - Foresight", () => {
 
   it("should ignore target's evasiveness boosts", async () => {
     game.override.enemyMoveset([MoveId.MINIMIZE]);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const pokemon = game.field.getPlayerPokemon();
     vi.spyOn(pokemon, "getAccuracyMultiplier");

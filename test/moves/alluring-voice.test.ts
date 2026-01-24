@@ -32,7 +32,7 @@ describe("Moves - Alluring Voice", () => {
   });
 
   it("should confuse the opponent if their stat stages were raised", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const enemy = game.field.getEnemyPokemon();
 

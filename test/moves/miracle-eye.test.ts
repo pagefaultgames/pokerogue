@@ -23,12 +23,11 @@ describe("Moves - Miracle Eye", () => {
       .enemySpecies(SpeciesId.UMBREON)
       .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(5)
-      .starterSpecies(SpeciesId.MAGIKARP)
       .moveset([MoveId.MIRACLE_EYE, MoveId.CONFUSION]);
   });
 
   it("should allow Psychic moves to hit Dark types", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const enemy = game.field.getEnemyPokemon();
 

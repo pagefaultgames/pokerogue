@@ -37,7 +37,7 @@ describe("Moves - Swallow", () => {
       const stacksToSetup = 1;
       const expectedHeal = 25;
 
-      await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
+      await game.classicMode.startBattle(SpeciesId.ABOMASNOW);
 
       const pokemon = game.field.getPlayerPokemon();
       vi.spyOn(pokemon, "getMaxHp").mockReturnValue(100);
@@ -64,7 +64,7 @@ describe("Moves - Swallow", () => {
       const stacksToSetup = 2;
       const expectedHeal = 50;
 
-      await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
+      await game.classicMode.startBattle(SpeciesId.ABOMASNOW);
 
       const pokemon = game.field.getPlayerPokemon();
       vi.spyOn(pokemon, "getMaxHp").mockReturnValue(100);
@@ -92,7 +92,7 @@ describe("Moves - Swallow", () => {
       const stacksToSetup = 3;
       const expectedHeal = 100;
 
-      await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
+      await game.classicMode.startBattle(SpeciesId.ABOMASNOW);
 
       const pokemon = game.field.getPlayerPokemon();
       vi.spyOn(pokemon, "getMaxHp").mockReturnValue(100);
@@ -119,7 +119,7 @@ describe("Moves - Swallow", () => {
   });
 
   it("fails without stacks", async () => {
-    await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
+    await game.classicMode.startBattle(SpeciesId.ABOMASNOW);
 
     const pokemon = game.field.getPlayerPokemon();
 
@@ -138,7 +138,7 @@ describe("Moves - Swallow", () => {
 
   describe("restores stat stage boosts granted by stacks", () => {
     it("decreases stats based on stored values (both boosts equal)", async () => {
-      await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
+      await game.classicMode.startBattle(SpeciesId.ABOMASNOW);
 
       const pokemon = game.field.getPlayerPokemon();
       pokemon.addTag(BattlerTagType.STOCKPILING);
@@ -167,7 +167,7 @@ describe("Moves - Swallow", () => {
     });
 
     it("lower stat stages based on stored values (different boosts)", async () => {
-      await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
+      await game.classicMode.startBattle(SpeciesId.ABOMASNOW);
 
       const pokemon = game.field.getPlayerPokemon();
       pokemon.addTag(BattlerTagType.STOCKPILING);

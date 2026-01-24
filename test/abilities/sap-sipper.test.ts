@@ -39,7 +39,7 @@ describe("Abilities - Sap Sipper", () => {
 
     game.override.moveset(moveToUse);
 
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     const initialEnemyHp = enemyPokemon.hp;
@@ -57,7 +57,7 @@ describe("Abilities - Sap Sipper", () => {
 
     game.override.moveset(moveToUse);
 
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 
@@ -74,7 +74,7 @@ describe("Abilities - Sap Sipper", () => {
 
     game.override.moveset(moveToUse);
 
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR);
 
     game.move.select(moveToUse);
 
@@ -90,7 +90,7 @@ describe("Abilities - Sap Sipper", () => {
 
     game.override.moveset(moveToUse);
 
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     const initialEnemyHp = enemyPokemon.hp;
@@ -108,7 +108,7 @@ describe("Abilities - Sap Sipper", () => {
 
     game.override.moveset(moveToUse);
 
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR);
 
     const playerPokemon = game.field.getPlayerPokemon();
 
@@ -134,7 +134,7 @@ describe("Abilities - Sap Sipper", () => {
 
     game.override.moveset(moveToUse);
 
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     const initialEnemyHp = enemyPokemon.hp;
@@ -150,7 +150,7 @@ describe("Abilities - Sap Sipper", () => {
   it("still activates regardless of accuracy check", async () => {
     game.override.moveset(MoveId.LEAF_BLADE);
 
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 

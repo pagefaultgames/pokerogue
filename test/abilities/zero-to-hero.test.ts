@@ -34,7 +34,7 @@ describe("Abilities - ZERO TO HERO", () => {
       [SpeciesId.PALAFIN]: heroForm,
     });
 
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.PALAFIN, SpeciesId.PALAFIN]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.PALAFIN, SpeciesId.PALAFIN);
 
     const [, palafin1, palafin2] = game.scene.getPlayerParty();
     expect(palafin1.formIndex).toBe(heroForm);
@@ -55,7 +55,7 @@ describe("Abilities - ZERO TO HERO", () => {
   });
 
   it("should swap to Hero form when switching out during a battle", async () => {
-    await game.classicMode.startBattle([SpeciesId.PALAFIN, SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.PALAFIN, SpeciesId.FEEBAS);
 
     const palafin = game.field.getPlayerPokemon();
     expect(palafin.formIndex).toBe(baseForm);
@@ -66,7 +66,7 @@ describe("Abilities - ZERO TO HERO", () => {
   });
 
   it("should not swap to Hero form if switching due to faint", async () => {
-    await game.classicMode.startBattle([SpeciesId.PALAFIN, SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.PALAFIN, SpeciesId.FEEBAS);
 
     const palafin = game.field.getPlayerPokemon();
     expect(palafin.formIndex).toBe(baseForm);
@@ -83,7 +83,7 @@ describe("Abilities - ZERO TO HERO", () => {
       [SpeciesId.PALAFIN]: heroForm,
     });
 
-    await game.classicMode.startBattle([SpeciesId.PALAFIN, SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.PALAFIN, SpeciesId.FEEBAS);
 
     const palafin = game.field.getPlayerPokemon();
     expect(palafin.formIndex).toBe(heroForm);

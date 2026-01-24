@@ -49,7 +49,7 @@ describe("Abilities - Unseen Fist", () => {
   it("should cause a contact move to ignore Protect, but not Substitute", async () => {
     game.override.enemyLevel(1).moveset([MoveId.TACKLE]);
 
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     enemyPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, enemyPokemon.id);
@@ -71,7 +71,7 @@ async function testUnseenFistHitResult(
 ): Promise<void> {
   game.override.moveset([attackMove]).enemyMoveset(protectMove);
 
-  await game.classicMode.startBattle();
+  await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
   const leadPokemon = game.field.getPlayerPokemon();
   expect(leadPokemon).not.toBe(undefined);

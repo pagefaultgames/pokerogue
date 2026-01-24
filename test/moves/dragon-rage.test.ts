@@ -29,7 +29,6 @@ describe("Moves - Dragon Rage", () => {
 
     game.override
       .battleStyle("single")
-      .starterSpecies(SpeciesId.SNORLAX)
       .moveset([MoveId.DRAGON_RAGE])
       .ability(AbilityId.BALL_FETCH)
       .passiveAbility(AbilityId.BALL_FETCH)
@@ -40,7 +39,7 @@ describe("Moves - Dragon Rage", () => {
       .enemyPassiveAbility(AbilityId.BALL_FETCH)
       .enemyLevel(100);
 
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.SNORLAX);
 
     partyPokemon = game.field.getPlayerPokemon();
     enemyPokemon = game.field.getEnemyPokemon();

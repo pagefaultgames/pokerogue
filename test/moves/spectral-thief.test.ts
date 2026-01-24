@@ -29,8 +29,8 @@ describe("Moves - Spectral Thief", () => {
       .criticalHits(false);
   });
 
-  it("should steal max possible positive stat changes and ignore negative ones.", async () => {
-    await game.classicMode.startBattle();
+  it("should steal max possible positive stat changes and ignore negative ones", async () => {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
@@ -50,7 +50,7 @@ describe("Moves - Spectral Thief", () => {
     game.move.select(MoveId.SPECTRAL_THIEF);
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    /**
+    /*
      * enemy has +6 ATK and player +4 => player only steals +2
      * enemy has -6 DEF and player 1 => player should not steal
      * enemy has +6 SPATK and player 0 => player only steals +6
@@ -63,7 +63,7 @@ describe("Moves - Spectral Thief", () => {
 
   it("should steal stat stages before dmg calculation", async () => {
     game.override.enemySpecies(SpeciesId.MAGIKARP).enemyLevel(50);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
@@ -80,9 +80,9 @@ describe("Moves - Spectral Thief", () => {
     expect(dmgBefore).toBeLessThan(enemy.getAttackDamage({ source: player, move: moveToCheck }).damage);
   });
 
-  it("should steal stat stages as a negative value with Contrary.", async () => {
+  it("should steal stat stages as a negative value with Contrary", async () => {
     game.override.ability(AbilityId.CONTRARY);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
@@ -98,9 +98,9 @@ describe("Moves - Spectral Thief", () => {
     expect(enemy.getStatStage(Stat.ATK)).toEqual(0);
   });
 
-  it("should steal double the stat stages with Simple.", async () => {
+  it("should steal double the stat stages with Simple", async () => {
     game.override.ability(AbilityId.SIMPLE);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
@@ -116,9 +116,9 @@ describe("Moves - Spectral Thief", () => {
     expect(enemy.getStatStage(Stat.ATK)).toEqual(0);
   });
 
-  it("should steal the stat stages through Clear Body.", async () => {
+  it("should steal the stat stages through Clear Body", async () => {
     game.override.enemyAbility(AbilityId.CLEAR_BODY);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
@@ -134,9 +134,9 @@ describe("Moves - Spectral Thief", () => {
     expect(enemy.getStatStage(Stat.ATK)).toEqual(0);
   });
 
-  it("should steal the stat stages through White Smoke.", async () => {
+  it("should steal the stat stages through White Smoke", async () => {
     game.override.enemyAbility(AbilityId.WHITE_SMOKE);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
@@ -152,9 +152,9 @@ describe("Moves - Spectral Thief", () => {
     expect(enemy.getStatStage(Stat.ATK)).toEqual(0);
   });
 
-  it("should steal the stat stages through Hyper Cutter.", async () => {
+  it("should steal the stat stages through Hyper Cutter", async () => {
     game.override.enemyAbility(AbilityId.HYPER_CUTTER);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
@@ -170,9 +170,9 @@ describe("Moves - Spectral Thief", () => {
     expect(enemy.getStatStage(Stat.ATK)).toEqual(0);
   });
 
-  it("should bypass Substitute.", async () => {
+  it("should bypass Substitute", async () => {
     game.override.enemyMoveset(MoveId.SUBSTITUTE);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
@@ -190,9 +190,9 @@ describe("Moves - Spectral Thief", () => {
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp() - 1);
   });
 
-  it("should get blocked by protect.", async () => {
+  it("should get blocked by protect", async () => {
     game.override.enemyMoveset(MoveId.PROTECT);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();

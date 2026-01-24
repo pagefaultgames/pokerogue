@@ -36,7 +36,7 @@ describe("Abilities - Power Spot", () => {
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.classicMode.startBattle([SpeciesId.REGIELEKI, SpeciesId.STONJOURNER]);
+    await game.classicMode.startBattle(SpeciesId.REGIELEKI, SpeciesId.STONJOURNER);
     game.move.select(MoveId.DAZZLING_GLEAM);
     game.move.select(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to(MoveEffectPhase);
@@ -50,7 +50,7 @@ describe("Abilities - Power Spot", () => {
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.classicMode.startBattle([SpeciesId.REGIELEKI, SpeciesId.STONJOURNER]);
+    await game.classicMode.startBattle(SpeciesId.REGIELEKI, SpeciesId.STONJOURNER);
     game.move.select(MoveId.BREAKING_SWIPE);
     game.move.select(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to(MoveEffectPhase);
@@ -64,7 +64,7 @@ describe("Abilities - Power Spot", () => {
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.classicMode.startBattle([SpeciesId.STONJOURNER, SpeciesId.REGIELEKI]);
+    await game.classicMode.startBattle(SpeciesId.STONJOURNER, SpeciesId.REGIELEKI);
     game.move.select(MoveId.BREAKING_SWIPE);
     game.move.select(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to(TurnEndPhase);

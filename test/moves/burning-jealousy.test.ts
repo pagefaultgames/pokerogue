@@ -28,13 +28,12 @@ describe("Moves - Burning Jealousy", () => {
       .enemyMoveset([MoveId.HOWL])
       .startingLevel(10)
       .enemyLevel(10)
-      .starterSpecies(SpeciesId.FEEBAS)
       .ability(AbilityId.BALL_FETCH)
       .moveset([MoveId.BURNING_JEALOUSY, MoveId.GROWL]);
   });
 
   it("should burn the opponent if their stat stages were raised", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const enemy = game.field.getEnemyPokemon();
 
@@ -47,7 +46,7 @@ describe("Moves - Burning Jealousy", () => {
 
   it("should still burn the opponent if their stat stages were both raised and lowered in the same turn", async () => {
     game.override.starterSpecies(0).battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.ABRA]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.ABRA);
 
     const enemy = game.field.getEnemyPokemon();
 
@@ -61,7 +60,7 @@ describe("Moves - Burning Jealousy", () => {
 
   it("should ignore stat stages raised by IMPOSTER", async () => {
     game.override.enemySpecies(SpeciesId.DITTO).enemyAbility(AbilityId.IMPOSTER).enemyMoveset(MoveId.SPLASH);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const enemy = game.field.getEnemyPokemon();
 
@@ -73,13 +72,13 @@ describe("Moves - Burning Jealousy", () => {
 
   // TODO: Make this test if WP is implemented
   it.todo("should ignore weakness policy", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
   });
 
   it("should be boosted by Sheer Force even if opponent didn't raise stat stages", async () => {
     game.override.ability(AbilityId.SHEER_FORCE).enemyMoveset(MoveId.SPLASH);
     vi.spyOn(allMoves[MoveId.BURNING_JEALOUSY], "calculateBattlePower");
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.BURNING_JEALOUSY);
     await game.phaseInterceptor.to("BerryPhase");

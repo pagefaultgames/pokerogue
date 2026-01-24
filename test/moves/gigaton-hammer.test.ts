@@ -29,7 +29,7 @@ describe("Moves - Gigaton Hammer", () => {
   });
 
   it("can't be used two turns in a row", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const enemy1 = game.field.getEnemyPokemon();
 
@@ -52,7 +52,7 @@ describe("Moves - Gigaton Hammer", () => {
 
   it("can be used again if recalled and sent back out", async () => {
     game.override.startingWave(4);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const enemy1 = game.field.getEnemyPokemon();
 

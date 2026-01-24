@@ -29,7 +29,7 @@ describe("Abilities - COSTAR", () => {
   test("ability copies positive stat stages", async () => {
     game.override.enemyAbility(AbilityId.BALL_FETCH);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP, SpeciesId.FLAMIGO]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.MAGIKARP, SpeciesId.FLAMIGO);
 
     let [leftPokemon, rightPokemon] = game.scene.getPlayerField();
 
@@ -52,7 +52,7 @@ describe("Abilities - COSTAR", () => {
   test("ability copies negative stat stages", async () => {
     game.override.enemyAbility(AbilityId.INTIMIDATE);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP, SpeciesId.FLAMIGO]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.MAGIKARP, SpeciesId.FLAMIGO);
 
     let [leftPokemon, rightPokemon] = game.scene.getPlayerField();
 

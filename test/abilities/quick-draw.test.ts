@@ -36,7 +36,7 @@ describe("Abilities - Quick Draw", () => {
   });
 
   it("makes pokemon go first in its priority bracket", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const pokemon = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
@@ -53,7 +53,7 @@ describe("Abilities - Quick Draw", () => {
   });
 
   it("is not triggered by non damaging moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const pokemon = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
@@ -72,7 +72,7 @@ describe("Abilities - Quick Draw", () => {
   it("does not increase priority", async () => {
     game.override.enemyMoveset([MoveId.EXTREME_SPEED]);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const pokemon = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();

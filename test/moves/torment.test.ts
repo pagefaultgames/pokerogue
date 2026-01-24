@@ -30,7 +30,7 @@ describe("Moves - Torment", () => {
   });
 
   it("Pokemon should not be able to use the same move consecutively", async () => {
-    await game.classicMode.startBattle([SpeciesId.CHANSEY]);
+    await game.classicMode.startBattle(SpeciesId.CHANSEY);
 
     const playerPokemon = game.field.getPlayerPokemon();
 

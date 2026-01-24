@@ -19,9 +19,8 @@ describe("Moves - Thunder Wave", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override
+    game.override //
       .battleStyle("single")
-      .starterSpecies(SpeciesId.PIKACHU)
       .moveset([MoveId.THUNDER_WAVE])
       .enemyMoveset(MoveId.SPLASH);
   });
@@ -30,7 +29,7 @@ describe("Moves - Thunder Wave", () => {
 
   it("paralyzes non-statused Pokemon that are not Ground types", async () => {
     game.override.enemySpecies(SpeciesId.MAGIKARP);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
 
     const enemyPokemon: EnemyPokemon = game.field.getEnemyPokemon();
 
@@ -43,7 +42,7 @@ describe("Moves - Thunder Wave", () => {
 
   it("does not paralyze if the Pokemon is a Ground-type", async () => {
     game.override.enemySpecies(SpeciesId.DIGLETT);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
 
     const enemyPokemon: EnemyPokemon = game.field.getEnemyPokemon();
 
@@ -56,7 +55,7 @@ describe("Moves - Thunder Wave", () => {
 
   it("does not paralyze if the Pokemon already has a status effect", async () => {
     game.override.enemySpecies(SpeciesId.MAGIKARP).enemyStatusEffect(StatusEffect.BURN);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
 
     const enemyPokemon: EnemyPokemon = game.field.getEnemyPokemon();
 
@@ -69,7 +68,7 @@ describe("Moves - Thunder Wave", () => {
 
   it("affects Ground types if the user has Normalize", async () => {
     game.override.ability(AbilityId.NORMALIZE).enemySpecies(SpeciesId.DIGLETT);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
 
     const enemyPokemon: EnemyPokemon = game.field.getEnemyPokemon();
 
@@ -82,7 +81,7 @@ describe("Moves - Thunder Wave", () => {
 
   it("does not affect Ghost types if the user has Normalize", async () => {
     game.override.ability(AbilityId.NORMALIZE).enemySpecies(SpeciesId.HAUNTER);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
 
     const enemyPokemon: EnemyPokemon = game.field.getEnemyPokemon();
 

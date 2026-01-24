@@ -41,7 +41,7 @@ describe("Moves - Last Respects", () => {
   });
 
   it("should have 150 power if 2 allies faint before using move", async () => {
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE);
 
     /**
      * Bulbasur faints once
@@ -67,7 +67,7 @@ describe("Moves - Last Respects", () => {
   });
 
   it("should have 200 power if an ally fainted twice and another one once", async () => {
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE);
 
     /**
      * Bulbasur faints once
@@ -109,7 +109,7 @@ describe("Moves - Last Respects", () => {
       .startingLevel(100)
       .enemyMoveset(MoveId.SPLASH);
 
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE);
 
     /**
      * The first Pokemon faints and another Pokemon in the party is selected.
@@ -142,7 +142,7 @@ describe("Moves - Last Respects", () => {
       .enemyMoveset(MoveId.LAST_RESPECTS)
       .moveset([MoveId.LUNAR_DANCE, MoveId.LAST_RESPECTS, MoveId.SPLASH]);
 
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE);
 
     /**
      * The first Pokemon faints and another Pokemon in the party is selected.
@@ -172,7 +172,7 @@ describe("Moves - Last Respects", () => {
   it("should reset playerFaints count if we enter new trainer battle", async () => {
     game.override.enemySpecies(SpeciesId.MAGIKARP).startingWave(4).enemyLevel(1).startingLevel(100);
 
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE);
 
     game.move.select(MoveId.LUNAR_DANCE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -193,7 +193,7 @@ describe("Moves - Last Respects", () => {
   it("should reset playerFaints count if we enter new biome", async () => {
     game.override.enemySpecies(SpeciesId.MAGIKARP).startingWave(10).enemyLevel(1).startingLevel(100);
 
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE);
 
     game.move.select(MoveId.LUNAR_DANCE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);

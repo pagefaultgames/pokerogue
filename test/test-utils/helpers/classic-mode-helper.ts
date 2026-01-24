@@ -96,7 +96,7 @@ export class ClassicModeHelper extends GameManagerHelper {
    * @todo Make this work for double battles
    * @example
    * ```ts
-   * await game.classicMode.runToSummon([SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA])
+   * await game.classicMode.runToSummon(SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA)
    * await game.startBattleWithSwitch(1);
    * ```
    */
