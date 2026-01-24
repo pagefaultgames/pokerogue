@@ -650,7 +650,8 @@ export class UI extends Phaser.GameObjects.Container {
    */
   public getGamepadType(): string {
     if (globalScene.inputMethod === "gamepad") {
-      return globalScene.inputController.getConfig(globalScene.inputController.selectedDevice[Device.GAMEPAD]).padType;
+      // TODO: is this bang correct?
+      return globalScene.inputController.getConfig(globalScene.inputController.selectedDevice[Device.GAMEPAD]!).padType;
     }
     return globalScene.inputMethod;
   }

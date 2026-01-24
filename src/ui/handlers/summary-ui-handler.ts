@@ -36,6 +36,7 @@ import {
   rgbHexToRgba,
 } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
+import { getDexNumber } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
@@ -385,7 +386,7 @@ export class SummaryUiHandler extends UiHandler {
     this.candyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
     this.candyOverlay.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
 
-    this.numberText.setText(padInt(this.pokemon.species.speciesId, 4));
+    this.numberText.setText(padInt(getDexNumber(this.pokemon.species.speciesId), 4));
     this.numberText.setColor(getTextColor(this.pokemon.isShiny() ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY));
     this.numberText.setShadowColor(
       getTextColor(this.pokemon.isShiny() ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY, true),
@@ -403,7 +404,7 @@ export class SummaryUiHandler extends UiHandler {
       .setPipelineData("spriteKey", this.pokemon.getSpriteKey())
       .setPipelineData("shiny", this.pokemon.shiny)
       .setPipelineData("variant", this.pokemon.variant);
-    ["spriteColors", "fusionSpriteColors"].map(k => {
+    ["spriteColors", "fusionSpriteColors"].forEach(k => {
       delete this.pokemonSprite.pipelineData[`${k}Base`];
       if (this.pokemon?.summonData.speciesForm) {
         k += "Base";
@@ -412,7 +413,7 @@ export class SummaryUiHandler extends UiHandler {
     });
     this.pokemon.cry();
 
-    this.nameText.setText(this.pokemon.getNameToRender(false));
+    this.nameText.setText(this.pokemon.getNameToRender({ useIllusion: false }));
 
     const isFusion = this.pokemon.isFusion();
 

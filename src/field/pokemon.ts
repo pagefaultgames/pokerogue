@@ -1,6 +1,7 @@
 import type { Ability, PreAttackModifyDamageAbAttrParams } from "#abilities/ability";
 import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
 import { generateMoveset } from "#app/ai/ai-moveset-gen";
+import type { Battle } from "#app/battle";
 import type { AnySound, BattleScene } from "#app/battle-scene";
 import { EVOLVE_MOVE, PLAYER_PARTY_MAX_SIZE, RARE_CANDY_FRIENDSHIP_CAP, RELEARN_MOVE } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
@@ -44,7 +45,8 @@ import {
   TrappedTag,
   TypeImmuneTag,
 } from "#data/battler-tags";
-import { getDailyEventSeedBoss, getDailyEventSeedBossVariant } from "#data/daily-run";
+import { getDailyEventSeedBoss } from "#data/daily-seed/daily-run";
+import { isDailyFinalBoss } from "#data/daily-seed/daily-seed-utils";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import {
@@ -111,7 +113,6 @@ import { SwitchType } from "#enums/switch-type";
 import type { TrainerSlot } from "#enums/trainer-slot";
 import { UiMode } from "#enums/ui-mode";
 import { WeatherType } from "#enums/weather-type";
-import { doShinySparkleAnim } from "#field/anims";
 import {
   BaseStatModifier,
   CritBoosterModifier,
@@ -457,22 +458,43 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Return the name that will be displayed when this Pokemon is sent out into battle.
-   * @param useIllusion - Whether to consider this Pokemon's illusion if present; default `true`
+   * @param useIllusion - (Default `true`) Whether to consider this Pokemon's illusion if present
+   * @param prependFormName - (Default `true`) Whether to put "Mega"/etc in front of the Pokemon's name if applicable
    * @returns The name to render for this {@linkcode Pokemon}.
    */
-  getNameToRender(useIllusion = true) {
-    const illusion = this.summonData.illusion;
-    const name = useIllusion ? (illusion?.name ?? this.name) : this.name;
-    const nickname: string | undefined = useIllusion ? (illusion?.nickname ?? this.nickname) : this.nickname;
-    try {
-      if (nickname) {
-        return decodeURIComponent(escape(atob(nickname))); // TODO: Remove `atob` and `escape`... eventually...
+  getNameToRender({
+    useIllusion = true,
+    prependFormName = true,
+  }: {
+    useIllusion?: boolean;
+    prependFormName?: boolean;
+  } = {}) {
+    const decodeNickname = (nickname: string): string => {
+      try {
+        return decodeURIComponent(escape(atob(nickname))); // TODO: this seems jank, and `escape` is deprecated
+      } catch (err) {
+        console.error(`Failed to decode nickname for ${this.name}`, err);
+        return this.name;
       }
-      return name;
-    } catch (err) {
-      console.error(`Failed to decode nickname for ${name}`, err);
-      return name;
+    };
+
+    const { illusion } = this.summonData;
+    if (useIllusion && illusion) {
+      if (illusion.nickname) {
+        return decodeNickname(illusion.nickname);
+      }
+      return illusion.name;
     }
+
+    if (this.nickname) {
+      return decodeNickname(this.nickname);
+    }
+
+    if (prependFormName) {
+      return this.name;
+    }
+
+    return this.species.getName();
   }
 
   /**
@@ -1912,10 +1934,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Evaluate and return this Pokemon's typing.
-   * @param includeTeraType - Whether to use this Pokemon's tera type if Terastallized; default `false`
-   * @param forDefend - Whether this Pokemon is currently receiving an attack; default `false`
-   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform}; default `false`
-   * @param useIllusion - Whether to consider an active illusion; default `false`
+   * @param includeTeraType - (Default `false`) Whether to use this Pokemon's Tera Type if Terastallized
+   * @param forDefend - (Default `false`) Whether this Pokemon is currently receiving an attack
+   * @param ignoreOverride - (Default `false`) Whether to ignore temporary type changes (such as those caused by {@linkcode MoveId.TRANSFORM | Transform} and similar effects)
+   * @param useIllusion - (Default `false`) Whether to consider this Pokemon's illusion if active
    * @returns An array of {@linkcode PokemonType}s corresponding to this Pokemon's typing (real or perceived).
    */
   public getTypes(
@@ -2072,6 +2094,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.customPokemonData.ability != null && this.customPokemonData.ability !== -1) {
       return allAbilities[this.customPokemonData.ability];
     }
+    if (this.isBoss() && isDailyFinalBoss()) {
+      const eventBoss = getDailyEventSeedBoss();
+      if (eventBoss?.ability != null) {
+        return allAbilities[eventBoss.ability];
+      }
+    }
     let abilityId = this.getSpeciesForm(ignoreOverride).getAbility(this.abilityIndex);
     if (abilityId === AbilityId.NONE) {
       abilityId = this.species.ability1;
@@ -2095,6 +2123,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     if (this.customPokemonData.passive != null && this.customPokemonData.passive !== -1) {
       return allAbilities[this.customPokemonData.passive];
+    }
+    if (this.isBoss() && isDailyFinalBoss()) {
+      const eventBoss = getDailyEventSeedBoss();
+      if (eventBoss?.passive != null) {
+        return allAbilities[eventBoss.passive];
+      }
     }
 
     return allAbilities[this.species.getPassiveAbility(this.formIndex)];
@@ -2383,15 +2417,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     applyMoveAttrs("VariableMoveTypeAttr", this, null, move, moveTypeHolder);
 
-    const power = new NumberHolder(move.power);
-    applyAbAttrs("MoveTypeChangeAbAttr", {
-      pokemon: this,
-      move,
-      simulated,
-      moveType: moveTypeHolder,
-      power,
-      opponent: this,
-    });
+    applyAbAttrs("MoveTypeChangeAbAttr", { pokemon: this, move, simulated, moveType: moveTypeHolder, opponent: this });
 
     // If the user is terastallized and the move is tera blast, or tera starstorm that is stellar type,
     // then bypass the check for ion deluge and electrify
@@ -3150,6 +3176,29 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     ) {
       globalScene.triggerPokemonFormChange(this, SpeciesFormChangeMoveLearnedTrigger);
     }
+  }
+
+  /**
+   * Attempt to populate this Pokemon's moveset based on those from a Starter
+   * @param moveset - The {@linkcode StarterMoveset} to use; will override corresponding slots
+   * of this Pokemon's moveset
+   * @param ignoreValidate - Whether to ignore validating the passed-in moveset; default `false`
+   */
+  tryPopulateMoveset(moveset: StarterMoveset, ignoreValidate = false): void {
+    // TODO: Why do we need to re-validate starter movesets after picking them?
+    if (
+      !ignoreValidate
+      && !this.getSpeciesForm().validateStarterMoveset(
+        moveset,
+        globalScene.gameData.starterData[this.species.getRootSpeciesId()].eggMoves,
+      )
+    ) {
+      return;
+    }
+
+    moveset.forEach((m, i) => {
+      this.moveset[i] = new PokemonMove(m);
+    });
   }
 
   /**
@@ -4098,7 +4147,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   public getTag(tagType: BattlerTagType.SUBSTITUTE): SubstituteTag | undefined;
   public getTag(tagType: BattlerTagType): BattlerTag | undefined;
   public getTag<T extends BattlerTag>(tagType: Constructor<T>): T | undefined;
-  public getTag(tagType: BattlerTagType | Constructor<BattlerTag>): BattlerTag | undefined {
+  public getTag(tagType: BattlerTagType | typeof BattlerTag): BattlerTag | undefined {
     return typeof tagType === "function"
       ? this.summonData.tags.find(t => t instanceof tagType)
       : this.summonData.tags.find(t => t.tagType === tagType);
@@ -4361,7 +4410,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!this.isOnField()) {
       return;
     }
-    turnMove.turn = globalScene.currentBattle?.turn;
     this.getMoveHistory().push(turnMove);
   }
 
@@ -5266,7 +5314,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /** Play the shiny sparkle animation and effects, if applicable */
   sparkle(): void {
     if (this.shinySparkle) {
-      doShinySparkleAnim(this.shinySparkle, this.variant);
+      globalScene.animations.doShinySparkleAnim(this.shinySparkle, this.variant);
     }
   }
 
@@ -5585,7 +5633,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     [this.getSprite(), this.getTintSprite()]
       .filter(s => !!s)
-      .map(s => {
+      .forEach(s => {
         s.pipelineData[`spriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`] = spriteColors;
         s.pipelineData[`fusionSpriteColors${ignoreOverride && this.summonData.speciesForm ? "Base" : ""}`] =
           fusionSpriteColors;
@@ -5599,37 +5647,34 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Generate a random number using the current battle's seed, or the global seed if `globalScene.currentBattle` is falsy
-   *
-   * @remarks
-   * This calls either {@linkcode BattleScene.randBattleSeedInt}({@linkcode range}, {@linkcode min}) in `src/battle-scene.ts`
-   * which calls {@linkcode Battle.randSeedInt}({@linkcode range}, {@linkcode min}) in `src/battle.ts`
-   * which calls {@linkcode randSeedInt randSeedInt}({@linkcode range}, {@linkcode min}) in `src/utils.ts`,
-   * or it directly calls {@linkcode randSeedInt randSeedInt}({@linkcode range}, {@linkcode min}) in `src/utils.ts` if there is no current battle
-   *
-   * @param range - How large of a range of random numbers to choose from. If {@linkcode range} <= 1, returns {@linkcode min}
-   * @param min - The minimum integer to pick; default `0`
-   * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1)
+   * @param range - How large of a range of random numbers to choose from.
+   * @param min - (Default `0`) The minimum integer to pick
+   * @returns A random integer between `min` and `min + range - 1`
+   * @remarks If `range <= 1`, this returns `min`
+   * @privateRemarks
+   * This calls either {@linkcode BattleScene.randBattleSeedInt}
+   * which calls {@linkcode Battle.randSeedInt}
+   * which calls {@linkcode randSeedInt}, \
+   * or it directly calls {@linkcode randSeedInt} if there is no current battle.
    */
   randBattleSeedInt(range: number, min = 0): number {
     return globalScene.currentBattle ? globalScene.randBattleSeedInt(range, min) : randSeedInt(range, min);
   }
 
   /**
-   * Generate a random number using the current battle's seed, or the global seed if `globalScene.currentBattle` is falsy
+   * Generate a random number within the specified range
    * @param min - The minimum integer to generate
    * @param max - The maximum integer to generate
-   * @returns A random integer between {@linkcode min} and {@linkcode max} (inclusive)
+   * @returns A random integer between `min` and `max` (inclusive)
    */
   randBattleSeedIntRange(min: number, max: number): number {
-    return globalScene.currentBattle ? globalScene.randBattleSeedInt(max - min + 1, min) : randSeedIntRange(min, max);
+    return this.randBattleSeedInt(max - min + 1, min);
   }
 
   /**
    * Causes a Pokemon to leave the field (such as in preparation for a switch out/escape).
-   * @param clearEffects - Indicates if effects should be cleared (true) or passed
-   *    to the next pokemon, such as during a baton pass (false)
-   * @param hideInfo - Indicates if this should also play the animation to hide the Pokemon's
-   * info container.
+   * @param clearEffects - Whether effects should be cleared, or passed to the next pokemon (e.g. due to Baton Pass)
+   * @param hideInfo - Indicates if this should also play the animation to hide the Pokemon's info container
    */
   leaveField(clearEffects = true, hideInfo = true, destroy = false) {
     this.resetSprite();
@@ -5859,29 +5904,6 @@ export class PlayerPokemon extends Pokemon {
         this.compatibleTms.push(moveId);
       }
     }
-  }
-
-  /**
-   * Attempt to populate this Pokemon's moveset based on those from a Starter
-   * @param moveset - The {@linkcode StarterMoveset} to use; will override corresponding slots
-   * of this Pokemon's moveset
-   * @param ignoreValidate - Whether to ignore validating the passed-in moveset; default `false`
-   */
-  tryPopulateMoveset(moveset: StarterMoveset, ignoreValidate = false): void {
-    // TODO: Why do we need to re-validate starter movesets after picking them?
-    if (
-      !ignoreValidate
-      && !this.getSpeciesForm().validateStarterMoveset(
-        moveset,
-        globalScene.gameData.starterData[this.species.getRootSpeciesId()].eggMoves,
-      )
-    ) {
-      return;
-    }
-
-    moveset.forEach((m, i) => {
-      this.moveset[i] = new PokemonMove(m);
-    });
   }
 
   /**
@@ -6369,11 +6391,6 @@ export class EnemyPokemon extends Pokemon {
       && this.species.forms[Overrides.ENEMY_FORM_OVERRIDES[speciesId]]
     ) {
       this.formIndex = Overrides.ENEMY_FORM_OVERRIDES[speciesId];
-    } else if (globalScene.gameMode.isDaily && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex)) {
-      const eventBoss = getDailyEventSeedBoss(globalScene.seed);
-      if (eventBoss != null) {
-        this.formIndex = eventBoss.formIndex;
-      }
     }
 
     if (!dataSource) {
@@ -6389,21 +6406,13 @@ export class EnemyPokemon extends Pokemon {
         this.initShinySparkle();
       }
 
-      const eventBossVariant = getDailyEventSeedBossVariant(globalScene.seed);
-      const eventBossVariantEnabled =
-        eventBossVariant != null && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex);
-      if (eventBossVariantEnabled) {
-        this.shiny = true;
-      }
-
       if (this.shiny) {
-        this.variant = eventBossVariantEnabled ? eventBossVariant : this.generateShinyVariant();
-        if (Overrides.ENEMY_VARIANT_OVERRIDE !== null) {
-          this.variant = Overrides.ENEMY_VARIANT_OVERRIDE;
-        }
+        this.variant = Overrides.ENEMY_VARIANT_OVERRIDE ?? this.generateShinyVariant();
       }
 
       this.luck = (this.shiny ? this.variant + 1 : 0) + (this.fusionShiny ? this.fusionVariant + 1 : 0);
+
+      this.applyCustomDailyBossConfig();
 
       if (this.hasTrainer() && globalScene.currentBattle) {
         const { waveIndex } = globalScene.currentBattle;
@@ -6451,6 +6460,37 @@ export class EnemyPokemon extends Pokemon {
       bossSegments
       ?? globalScene.getEncounterBossSegments(globalScene.currentBattle.waveIndex, this.level, this.species, true);
     this.bossSegmentIndex = this.bossSegments - 1;
+  }
+
+  /**
+   * Helper method to apply the custom daily boss config to this pokemon.
+   */
+  private applyCustomDailyBossConfig(): void {
+    if (!isDailyFinalBoss()) {
+      return;
+    }
+
+    const bossConfig = getDailyEventSeedBoss();
+    if (!bossConfig) {
+      return;
+    }
+
+    if (bossConfig.formIndex != null) {
+      this.formIndex = bossConfig.formIndex;
+    }
+
+    if (bossConfig.variant != null) {
+      this.shiny = true;
+      this.variant = bossConfig.variant;
+    }
+
+    if (bossConfig.nature != null) {
+      this.setNature(bossConfig.nature);
+    }
+
+    if (bossConfig.moveset != null) {
+      this.tryPopulateMoveset(bossConfig.moveset, true);
+    }
   }
 
   generateAndPopulateMoveset(formIndex?: number): void {

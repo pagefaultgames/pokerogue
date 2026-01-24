@@ -15,7 +15,7 @@ This document aims to cover everything you need to know to help keep the integra
 Before you continue, this document assumes:
 - You have already forked the repository and set up a development environment according to [CONTRIBUTING.md](../CONTRIBUTING.md).
 - You have a basic level of familiarity with Git commands and GitHub repositories.
-- You have joined the [community Discord](https://discord.gg/pokerogue) and have access to `#dev-corner` and related channels via **[#select-roles](https://discord.com/channels/1125469663833370665/1194825607738052621)**.
+- You have joined the [community Discord](https://discord.gg/pokerogue) and have access to `#pokerogue-dev` and related channels via **[#select-roles](https://discord.com/channels/1125469663833370665/1194825607738052621)**.
 This is the easiest way to keep in touch with both the Translation Team and other like-minded contributors!
 
 # About the `pokerogue-locales` submodule
@@ -147,7 +147,7 @@ The basic procedure is roughly as follows:
 ## Notifying Translation
 Put simply, stating that a PR exists makes it much easier to review and merge.
 
-The easiest way to do this is by **pinging the current Head of Translation** in the [community Discord](https://discord.gg/pokerogue) (ideally in `#dev-corner` or similar).
+The easiest way to do this is by **pinging the current Head of Translation** in the [community Discord](https://discord.gg/pokerogue) (ideally in `#pokerogue-dev` or similar).
 
 <!-- Remember to update this everytime the head of translation changes! -->
 > [!IMPORTANT]

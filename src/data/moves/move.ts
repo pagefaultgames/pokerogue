@@ -200,6 +200,14 @@ export abstract class Move implements Localizable {
   private readonly restrictions: MoveRestriction[] = [];
   /** The move's {@linkcode MoveFlags} */
   private flags = 0;
+  private _allyTargetDefault = false;
+  /**
+   * Whether this move should default to targeting an ally in Double Battles.
+   * @defaultValue `false`
+   */
+  public get allyTargetDefault() {
+    return this._allyTargetDefault;
+  }
   private nameAppend = "";
 
   /**
@@ -800,6 +808,19 @@ export abstract class Move implements Localizable {
   }
 
   /**
+   * Set the `allyTargetDefault` property for the calling `Move`, causing it to default to targeting the user's ally in Double Battles.
+   * @see {@linkcode MoveId.INSTRUCT}
+   * @returns `this`
+   * @remarks
+   * This should not be called for moves that can _only_ target allies (in which case it becomes moot.)
+   * Manual switching to enemy targets is still allowed.
+   */
+  targetsAllyDefault(): this {
+    this._allyTargetDefault = true;
+    return this;
+  }
+
+  /**
    * Checks if the move flag applies to the pokemon(s) using/receiving the move
    *
    * This method will take the `user`'s ability into account when reporting flags, e.g.
@@ -1043,7 +1064,6 @@ export abstract class Move implements Localizable {
 
     applyMoveAttrs("VariablePowerAttr", source, target, this, power);
 
-    const typeChangeMovePowerMultiplier = new NumberHolder(1);
     const typeChangeHolder = new NumberHolder(this.type);
 
     applyAbAttrs("MoveTypeChangeAbAttr", {
@@ -1052,7 +1072,6 @@ export abstract class Move implements Localizable {
       move: this,
       simulated: true,
       moveType: typeChangeHolder,
-      power: typeChangeMovePowerMultiplier,
     });
 
     const abAttrParams: PreAttackModifyPowerAbAttrParams = {
@@ -1069,9 +1088,8 @@ export abstract class Move implements Localizable {
       applyAbAttrs("AllyMoveCategoryPowerBoostAbAttr", { ...abAttrParams, pokemon: ally });
     }
 
-    // Non-priority, single-hit moves of the user's Tera Type are always a bare minimum of 60 power
-
     const sourceTeraType = source.getTeraType();
+    // Non-priority, single-hit moves of the user's Tera Type are always a minimum of 60 power
     if (
       source.isTerastallized
       && sourceTeraType === this.type
@@ -1099,8 +1117,6 @@ export abstract class Move implements Localizable {
     for (const p of source.getAlliesGenerator()) {
       applyAbAttrs("UserFieldMoveTypePowerBoostAbAttr", { pokemon: p, opponent: target, move: this, simulated, power });
     }
-
-    power.value *= typeChangeMovePowerMultiplier.value;
 
     const typeBoost = source.findTag(
       t => t instanceof TypeBoostTag && t.boostedType === typeChangeHolder.value,
@@ -3668,7 +3684,6 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
       targets: [target.getBattlerIndex()],
       result: MoveResult.OTHER,
       useMode,
-      turn: globalScene.currentBattle.turn,
     });
     // Queue up an attack on the given slot
     globalScene.arena.positionalTagManager.addTag({
@@ -4730,12 +4745,13 @@ export class TurnDamagedDoublePowerAttr extends VariablePowerAttr {
   }
 }
 
-const magnitudeMessageFunc = (_user: Pokemon, _target: Pokemon, _move: Move) => {
-  let message: string;
+const magnitudeThresholds = [5, 15, 35, 65, 85, 95];
+
+const magnitudeMessageFunc = (): string => {
+  let message!: string;
+
   globalScene.executeWithSeedOffset(
     () => {
-      const magnitudeThresholds = [5, 15, 35, 65, 75, 95];
-
       const rand = randSeedInt(100);
 
       let m = 0;
@@ -4750,32 +4766,32 @@ const magnitudeMessageFunc = (_user: Pokemon, _target: Pokemon, _move: Move) => 
     globalScene.currentBattle.turn << 6,
     globalScene.waveSeed,
   );
-  return message!;
+
+  return message;
 };
 
 export class MagnitudePowerAttr extends VariablePowerAttr {
-  apply(_user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
-    const power = args[0] as NumberHolder;
+  apply(_user: Pokemon, _target: Pokemon, _move: Move, args: [NumberHolder, ...any[]]): boolean {
+    const power = args[0];
 
-    const magnitudeThresholds = [5, 15, 35, 65, 75, 95];
-    const magnitudePowers = [10, 30, 50, 70, 90, 100, 110, 150];
-
-    let rand: number;
+    const magnitudePowers = [10, 30, 50, 70, 90, 110, 150];
 
     globalScene.executeWithSeedOffset(
-      () => (rand = randSeedInt(100)),
+      () => {
+        const rand = randSeedInt(100);
+
+        let m = 0;
+        for (; m < magnitudeThresholds.length; m++) {
+          if (rand < magnitudeThresholds[m]) {
+            break;
+          }
+        }
+
+        power.value = magnitudePowers[m];
+      },
       globalScene.currentBattle.turn << 6,
       globalScene.waveSeed,
     );
-
-    let m = 0;
-    for (; m < magnitudeThresholds.length; m++) {
-      if (rand! < magnitudeThresholds[m]) {
-        break;
-      }
-    }
-
-    power.value = magnitudePowers[m];
 
     return true;
   }
@@ -4814,8 +4830,9 @@ export class FriendshipPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
     const power = args[0] as NumberHolder;
 
+    const useUserFriendship = user.isPlayer() || user.hasTrainer();
     const friendshipPower = Math.floor(
-      Math.min(user.isPlayer() ? user.friendship : user.species.baseFriendship, 255) / 2.5,
+      Math.min(useUserFriendship ? user.friendship : user.species.baseFriendship, 255) / 2.5,
     );
     power.value = Math.max(this.invert ? 102 - friendshipPower : friendshipPower, 1);
 
@@ -10708,6 +10725,7 @@ export function initMoves() {
       .target(MoveTarget.NEAR_OTHER)
       .condition(failIfSingleBattle)
       .condition((_user, target, _move) => !target.turnData.acted)
+      .targetsAllyDefault()
       .attr(AfterYouAttr),
     new AttackMove(MoveId.ROUND, PokemonType.NORMAL, MoveCategory.SPECIAL, 60, 100, 15, -1, 0, 5)
       .attr(CueNextRoundAttr)
@@ -10738,6 +10756,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [Stat.DEF, Stat.SPDEF], -1, true),
     new StatusMove(MoveId.HEAL_PULSE, PokemonType.PSYCHIC, -1, 10, -1, 0, 5)
       .attr(HealAttr, 0.5, false, false)
+      .targetsAllyDefault()
       .pulseMove()
       .triageMove()
       .reflectable(),
@@ -11391,6 +11410,7 @@ export function initMoves() {
        * TODO: Verify whether Instruct can repeat Struggle
        * TODO: Verify whether Instruct can fail when using a copied move also in one's own moveset
        */
+      .targetsAllyDefault()
       .edgeCase(),
     new AttackMove(MoveId.BEAK_BLAST, PokemonType.FLYING, MoveCategory.PHYSICAL, 100, 100, 15, -1, -3, 7)
       .attr(BeakBlastHeaderAttr)
@@ -11709,6 +11729,7 @@ export function initMoves() {
       .attr(DefAtkAttr),
     new StatusMove(MoveId.DECORATE, PokemonType.FAIRY, -1, 15, -1, 0, 8)
       .attr(StatStageChangeAttr, [Stat.ATK, Stat.SPATK], 2)
+      .targetsAllyDefault()
       .ignoresProtect(),
     new AttackMove(MoveId.DRUM_BEATING, PokemonType.GRASS, MoveCategory.PHYSICAL, 80, 100, 10, 100, 0, 8)
       .attr(StatStageChangeAttr, [Stat.SPD], -1)
