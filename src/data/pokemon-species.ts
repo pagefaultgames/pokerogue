@@ -22,6 +22,7 @@ import type { PokemonType } from "#enums/pokemon-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import type { Stat } from "#enums/stat";
+import type { Pokemon } from "#field/pokemon";
 import { loadPokemonVariantAssets } from "#sprites/pokemon-sprite";
 import { hasExpSprite } from "#sprites/sprite-utils";
 import type { Variant, VariantSet } from "#sprites/variant";
@@ -773,7 +774,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
   getName(formIndex?: number): string {
     if (formIndex !== undefined && this.forms.length > 0) {
       const form = this.forms[formIndex];
-      let key: string | null;
+      let key: string | undefined;
       switch (form.formKey) {
         case SpeciesFormKey.MEGA:
         case SpeciesFormKey.PRIMAL:
@@ -785,15 +786,11 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
         default:
           if (form.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1) {
             key = "gigantamax";
-          } else {
-            key = null;
           }
       }
 
       if (key) {
-        return i18next.t(`battlePokemonForm:${toCamelCase(key)}`, {
-          pokemonName: this.name,
-        });
+        return i18next.t(`battlePokemonForm:${toCamelCase(key)}`, { pokemonName: this.name });
       }
     }
     return this.name;

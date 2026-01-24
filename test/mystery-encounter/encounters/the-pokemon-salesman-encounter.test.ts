@@ -191,7 +191,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
       vi.spyOn(Phaser.Math.RND, "realInRange").mockImplementation((min: number, max: number) => {
         return rngSweepProgress * (max - min) + min;
       });
-      vi.spyOn(Phaser.Math.RND, "shuffle").mockImplementation((arr: any[]) => arr);
+      vi.spyOn(Phaser.Math.RND, "shuffle").mockImplementation(<T>(arr: T[] | undefined): T[] => arr!);
 
       for (let i = 0; i < NUM_ROLLS; i++) {
         rngSweepProgress = (2 * i + 1) / (2 * NUM_ROLLS);
