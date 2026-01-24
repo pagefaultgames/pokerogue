@@ -193,7 +193,7 @@ export class RunInfoUiHandler extends UiHandler {
           0,
           2,
           gamepadType,
-          globalScene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.Button_Cycle_Ability),
+          globalScene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.BUTTON_CYCLE_ABILITY),
         );
       }
       abilityButtonContainer.add([abilityButtonText, abilityButtonElement]);
@@ -257,14 +257,14 @@ export class RunInfoUiHandler extends UiHandler {
           0,
           4,
           gamepadType,
-          globalScene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.Button_Cycle_Shiny),
+          globalScene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.BUTTON_CYCLE_SHINY),
         );
         formButtonElement = new Phaser.GameObjects.Sprite(
           globalScene,
           0,
           16,
           gamepadType,
-          globalScene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.Button_Cycle_Form),
+          globalScene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.BUTTON_CYCLE_FORM),
         );
       }
       hallofFameInstructionContainer.add([shinyButtonText, shinyButtonElement]);
