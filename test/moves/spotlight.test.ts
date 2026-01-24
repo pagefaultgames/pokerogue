@@ -19,7 +19,6 @@ describe("Moves - Spotlight", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("double")
-      .starterSpecies(SpeciesId.AMOONGUSS)
       .enemySpecies(SpeciesId.SNORLAX)
       .startingLevel(100)
       .enemyLevel(100)

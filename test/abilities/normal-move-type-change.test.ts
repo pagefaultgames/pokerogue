@@ -142,18 +142,16 @@ describe.each([
     { moveName: "Multi Attack", move: MoveId.MULTI_ATTACK, expected_ty: PokemonType.NORMAL },
     { moveName: "Techno Blast", move: MoveId.TECHNO_BLAST, expected_ty: PokemonType.NORMAL },
   ])("should not change the type of $moveName", async ({ move, expected_ty: expectedTy }) => {
-    game.override
+    game.override //
       .enemySpecies(SpeciesId.MAGIKARP)
-      .enemyAbility(AbilityId.BALL_FETCH)
-      .moveset([move])
-      .starterSpecies(SpeciesId.MAGIKARP);
+      .enemyAbility(AbilityId.BALL_FETCH);
 
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const playerPokemon = game.field.getPlayerPokemon();
     const tySpy = vi.spyOn(playerPokemon, "getMoveType");
 
-    game.move.select(move);
+    game.move.use(move);
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(tySpy).toHaveLastReturnedWith(expectedTy);

@@ -20,7 +20,6 @@ describe("Moves - Gigaton Hammer", () => {
     game.override
       .battleStyle("single")
       .enemySpecies(SpeciesId.MAGIKARP)
-      .starterSpecies(SpeciesId.FEEBAS)
       .moveset([MoveId.GIGATON_HAMMER])
       .startingLevel(10)
       .enemyLevel(100)

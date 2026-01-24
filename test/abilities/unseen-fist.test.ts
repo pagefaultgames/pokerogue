@@ -20,7 +20,7 @@ describe("Abilities - Unseen Fist", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .starterSpecies(SpeciesId.URSHIFU)
+      .ability(AbilityId.UNSEEN_FIST)
       .enemySpecies(SpeciesId.SNORLAX)
       .enemyMoveset(MoveId.PROTECT)
       .startingLevel(100)

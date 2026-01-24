@@ -25,7 +25,6 @@ describe("Moves - BELLY DRUM", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .starterSpecies(SpeciesId.MAGIKARP)
       .enemySpecies(SpeciesId.SNORLAX)
       .startingLevel(100)
       .enemyLevel(100)
