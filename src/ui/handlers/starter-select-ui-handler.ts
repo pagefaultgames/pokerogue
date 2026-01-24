@@ -168,6 +168,12 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoYOffset: 0.5,
     starterInfoXPos: 26,
   },
+  uk: {
+    starterInfoTextSize: "46px",
+    instructionTextSize: "38px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 26,
+  },
   id: {
     starterInfoTextSize: "48px",
     instructionTextSize: "42px",
@@ -1206,7 +1212,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.setCursor(0);
       this.tryUpdateValue(0);
 
-      handleTutorial(Tutorial.Starter_Select);
+      handleTutorial(Tutorial.STARTER_SELECT);
 
       return true;
     }
@@ -2874,25 +2880,25 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     if (gamepadType === "touch") {
       gamepadType = "keyboard";
       switch (iconSetting) {
-        case SettingKeyboard.Button_Cycle_Shiny:
+        case SettingKeyboard.BUTTON_CYCLE_SHINY:
           iconPath = "R.png";
           break;
-        case SettingKeyboard.Button_Cycle_Form:
+        case SettingKeyboard.BUTTON_CYCLE_FORM:
           iconPath = "F.png";
           break;
-        case SettingKeyboard.Button_Cycle_Gender:
+        case SettingKeyboard.BUTTON_CYCLE_GENDER:
           iconPath = "G.png";
           break;
-        case SettingKeyboard.Button_Cycle_Ability:
+        case SettingKeyboard.BUTTON_CYCLE_ABILITY:
           iconPath = "E.png";
           break;
-        case SettingKeyboard.Button_Cycle_Nature:
+        case SettingKeyboard.BUTTON_CYCLE_NATURE:
           iconPath = "N.png";
           break;
-        case SettingKeyboard.Button_Cycle_Tera:
+        case SettingKeyboard.BUTTON_CYCLE_TERA:
           iconPath = "V.png";
           break;
-        case SettingKeyboard.Button_Stats:
+        case SettingKeyboard.BUTTON_STATS:
           iconPath = "C.png";
           break;
         default:
@@ -2970,14 +2976,14 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     if (this.speciesStarterDexEntry?.caughtAttr) {
       if (this.canCycleShiny) {
-        this.updateButtonIcon(SettingKeyboard.Button_Cycle_Shiny, gamepadType, this.shinyIconElement, this.shinyLabel);
+        this.updateButtonIcon(SettingKeyboard.BUTTON_CYCLE_SHINY, gamepadType, this.shinyIconElement, this.shinyLabel);
       }
       if (this.canCycleForm) {
-        this.updateButtonIcon(SettingKeyboard.Button_Cycle_Form, gamepadType, this.formIconElement, this.formLabel);
+        this.updateButtonIcon(SettingKeyboard.BUTTON_CYCLE_FORM, gamepadType, this.formIconElement, this.formLabel);
       }
       if (this.canCycleGender) {
         this.updateButtonIcon(
-          SettingKeyboard.Button_Cycle_Gender,
+          SettingKeyboard.BUTTON_CYCLE_GENDER,
           gamepadType,
           this.genderIconElement,
           this.genderLabel,
@@ -2985,7 +2991,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       }
       if (this.canCycleAbility) {
         this.updateButtonIcon(
-          SettingKeyboard.Button_Cycle_Ability,
+          SettingKeyboard.BUTTON_CYCLE_ABILITY,
           gamepadType,
           this.abilityIconElement,
           this.abilityLabel,
@@ -2993,21 +2999,21 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       }
       if (this.canCycleNature) {
         this.updateButtonIcon(
-          SettingKeyboard.Button_Cycle_Nature,
+          SettingKeyboard.BUTTON_CYCLE_NATURE,
           gamepadType,
           this.natureIconElement,
           this.natureLabel,
         );
       }
       if (this.canCycleTera) {
-        this.updateButtonIcon(SettingKeyboard.Button_Cycle_Tera, gamepadType, this.teraIconElement, this.teraLabel);
+        this.updateButtonIcon(SettingKeyboard.BUTTON_CYCLE_TERA, gamepadType, this.teraIconElement, this.teraLabel);
       }
     }
 
     // if filter mode is inactivated and gamepadType is not undefined, update the button icons
     if (!this.filterMode) {
       this.updateFilterButtonIcon(
-        SettingKeyboard.Button_Stats,
+        SettingKeyboard.BUTTON_STATS,
         gamepadType,
         this.goFilterIconElement,
         this.goFilterLabel,
@@ -3724,7 +3730,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
         this.pokemonSprite.clearTint();
         if (this.pokerusSpecies.includes(species)) {
-          handleTutorial(Tutorial.Pokerus);
+          handleTutorial(Tutorial.POKERUS);
         }
       } else {
         this.pokemonGrowthRateText.setText("");

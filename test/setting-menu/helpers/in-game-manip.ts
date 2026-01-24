@@ -1,7 +1,7 @@
 import { getIconForLatestInput, getSettingNameWithKeycode } from "#inputs/config-handler";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { InterfaceConfig, MappingSettingName, SelectedDevice } from "#types/configs/inputs";
-import { toPascalSnakeCase } from "#utils/strings";
+import { toUpperSnakeCase } from "#utils/strings";
 import { expect } from "vitest";
 
 export class InGameManip {
@@ -35,8 +35,8 @@ export class InGameManip {
   }
 
   forTheWantedBind(settingName: string) {
-    if (!settingName.includes("Button_")) {
-      settingName = "Button_" + settingName;
+    if (!settingName.includes("BUTTON_")) {
+      settingName = "BUTTON_" + settingName;
     }
     this.settingName = SettingKeyboard[settingName];
     return this;
@@ -64,10 +64,10 @@ export class InGameManip {
   }
 
   weShouldTriggerTheButton(settingName: string) {
-    if (!settingName.includes("Button_")) {
-      settingName = "Button_" + settingName;
+    if (!settingName.includes("BUTTON_")) {
+      settingName = "BUTTON_" + settingName;
     }
-    this.settingName = SettingKeyboard[toPascalSnakeCase(settingName) as keyof typeof SettingKeyboard];
+    this.settingName = SettingKeyboard[toUpperSnakeCase(settingName) as keyof typeof SettingKeyboard];
     expect(getSettingNameWithKeycode(this.config, this.keycode!)).toEqual(this.settingName);
     return this;
   }

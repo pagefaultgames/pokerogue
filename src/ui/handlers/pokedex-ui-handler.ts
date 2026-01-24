@@ -1320,13 +1320,13 @@ export class PokedexUiHandler extends MessageUiHandler {
     if (gamepadType === "touch") {
       gamepadType = "keyboard";
       switch (iconSetting) {
-        case SettingKeyboard.Button_Cycle_Shiny:
+        case SettingKeyboard.BUTTON_CYCLE_SHINY:
           iconPath = "R.png";
           break;
-        case SettingKeyboard.Button_Cycle_Form:
+        case SettingKeyboard.BUTTON_CYCLE_FORM:
           iconPath = "F.png";
           break;
-        case SettingKeyboard.Button_Stats:
+        case SettingKeyboard.BUTTON_STATS:
           iconPath = "C.png";
           break;
         default:

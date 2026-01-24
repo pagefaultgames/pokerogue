@@ -133,9 +133,9 @@ export class TestDialogueUiHandler extends FormModalUiHandler {
     if (super.show(args)) {
       const config = args[0] as ModalConfig;
       this.inputs[0].resize(1150, 116);
-      // @ts-expect-error: Resolve
       // TODO: Figure out what the type of `this.inputContainers.list` is
-      this.inputContainers[0].list[0].width = 200;
+      this.inputContainers[0].list[0]["width"] = 200;
+      // TODO: shouldn't this be `const playerPokemon: PlayerPokemon | undefined = args[1];` and `if (playerPokemon)`?
       if (args[1] && typeof (args[1] as PlayerPokemon).getNameToRender === "function") {
         this.inputs[0].text = (args[1] as PlayerPokemon).getNameToRender();
       } else {
