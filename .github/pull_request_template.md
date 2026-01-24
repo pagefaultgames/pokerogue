@@ -20,7 +20,6 @@ fix(move): Future Sight no longer crashes
 |_____________ Prefix
 -->
 
-
 ## What are the changes the user will see?
 <!--
 Summarize the changes from a user perspective on the application.
