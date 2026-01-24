@@ -9658,7 +9658,7 @@ export function initMoves() {
       .condition(failAgainstFinalBossCondition, 2)
       // Destiny Bond fails if it was successfully used last turn
       .condition((user, _target, move) => {
-        const lastTurnMove: TurnMove | undefined = user.getLastXMoves(1)[0];
+        const lastTurnMove = user.getLastXMoves(1).at(0);
         return !(lastTurnMove?.move === move.id && lastTurnMove.result === MoveResult.SUCCESS);
       }),
     new StatusMove(MoveId.PERISH_SONG, PokemonType.NORMAL, -1, 5, -1, 0, 2)
