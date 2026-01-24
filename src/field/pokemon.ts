@@ -1200,15 +1200,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     this.setScale(this.getSpriteScale());
   }
 
-  // TODO: Use declaration merging to make this type safe maybe?
-  async updateSpritePipelineData(): Promise<void> {
+  updateSpritePipelineData(): void {
     [this.getSprite(), this.getTintSprite()]
       .filter(s => !!s)
-      .forEach(s => {
+      .map(s => {
         s.pipelineData["teraColor"] = getTypeRgb(this.getTeraType());
         s.pipelineData["isTerastallized"] = this.isTerastallized;
       });
-    await this.updateInfo(true);
+    this.updateInfo(true);
   }
 
   initShinySparkle(): void {
