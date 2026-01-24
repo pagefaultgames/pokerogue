@@ -4,8 +4,6 @@ import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { TempCritBoosterModifier } from "#modifiers/modifier";
-import { CommandPhase } from "#phases/command-phase";
-import { NewBattlePhase } from "#phases/new-battle-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import Phaser from "phaser";
@@ -70,7 +68,7 @@ describe("Items - Dire Hit", () => {
         handler.setRowCursor(ShopCursorTarget.REWARDS);
         handler.processInput(Button.ACTION);
       },
-      () => game.isCurrentPhase(CommandPhase) || game.isCurrentPhase(NewBattlePhase),
+      () => game.isCurrentPhase("CommandPhase") || game.isCurrentPhase("NewBattlePhase"),
       true,
     );
 

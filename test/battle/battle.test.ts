@@ -6,7 +6,6 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { UiMode } from "#enums/ui-mode";
 import { CommandPhase } from "#phases/command-phase";
-import { NextEncounterPhase } from "#phases/next-encounter-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -178,7 +177,7 @@ describe("Phase - Battle Phase", () => {
       () => {
         expect.fail("Switch was forced");
       },
-      () => game.isCurrentPhase(NextEncounterPhase),
+      () => game.isCurrentPhase("NextEncounterPhase"),
     );
     await game.phaseInterceptor.to("SwitchPhase");
   });
