@@ -2,7 +2,7 @@ import type { FixedBattleConfig } from "#app/battle";
 import { getRandomTrainerFunc } from "#app/battle";
 import { globalScene } from "#app/global-scene";
 import { defaultStarterSpeciesAndEvolutions } from "#balance/pokemon-evolutions";
-import { speciesStarterCosts } from "#balance/starters";
+import { type StarterSpeciesId, speciesStarterCosts } from "#balance/starters";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { AbilityAttr } from "#enums/ability-attr";
 import { BattleType } from "#enums/battle-type";
@@ -749,7 +749,7 @@ export class SingleGenerationChallenge extends Challenge {
   }
 }
 
-interface monotypeOverride {
+interface MonotypeOverride {
   /** The species to override */
   species: SpeciesId;
   /** The type to count as */
@@ -768,7 +768,7 @@ export class SingleTypeChallenge extends Challenge {
     // and we shift it by 1 for the specific type.
     return this.value ? ((RibbonData.MONO_NORMAL << (BigInt(this.value) - 1n)) as RibbonFlag) : 0n;
   }
-  private static TYPE_OVERRIDES: monotypeOverride[] = [
+  private static TYPE_OVERRIDES: MonotypeOverride[] = [
     { species: SpeciesId.CASTFORM, type: PokemonType.NORMAL, fusion: false },
   ];
   // TODO: Find a solution for all Pokemon with this ssui issue, including Basculin and Burmy
@@ -867,7 +867,7 @@ export class FreshStartChallenge extends Challenge {
     return false;
   }
 
-  applyStarterCost(species: SpeciesId, cost: NumberHolder): boolean {
+  applyStarterCost(species: StarterSpeciesId, cost: NumberHolder): boolean {
     cost.value = speciesStarterCosts[species];
     return true;
   }
