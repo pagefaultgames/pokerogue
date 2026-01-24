@@ -6,13 +6,10 @@ import { GameModes } from "#enums/game-modes";
 import { Nature } from "#enums/nature";
 import type { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import { CommandPhase } from "#phases/command-phase";
-import { EncounterPhase } from "#phases/encounter-phase";
 import { SelectStarterPhase } from "#phases/select-starter-phase";
-import { TurnInitPhase } from "#phases/turn-init-phase";
 import { generateStarters } from "#test/test-utils/game-manager-utils";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
-import type { IntClosedRange } from "type-fest";
+import type { IntClosedRange, TupleOf } from "type-fest";
 
 /**
  * Helper to handle classic-mode specific operations.
@@ -20,23 +17,13 @@ import type { IntClosedRange } from "type-fest";
 export class ClassicModeHelper extends GameManagerHelper {
   /**
    * Run the classic game to the summon phase.
-   * @param species - An array of {@linkcode SpeciesId} to summon
+   * @param speciesIds - An array of {@linkcode SpeciesId} to summon
    * @returns A Promise that resolves when the summon phase is reached.
    * @remarks
-   * Do not use this when {@linkcode startBattle} can be used!
+   * Normally you should use `startBattle` instead, only use this if you need
+   * to do something before the `CommandPhase` starts.
    */
-  async runToSummon(species: SpeciesId[]): Promise<void>;
-  /**
-   * Run the classic game to the summon phase.
-   * Selects 3 daily run starters with a fixed seed of "test"
-   * (see `DailyRunConfig.getDailyRunStarters` in `daily-run.ts` for more info)
-   * @returns A Promise that resolves when the summon phase is reached.
-   * @deprecated - Specifying the starters helps prevent inconsistencies from internal RNG changes.
-   */
-  // biome-ignore lint/style/useUnifiedTypeSignatures: Marks the overload for deprecation
-  async runToSummon(): Promise<void>;
-  async runToSummon(species: SpeciesId[] | undefined): Promise<void>;
-  async runToSummon(speciesIds?: SpeciesId[]): Promise<void> {
+  public async runToSummon(...speciesIds: TupleOf<1 | 2 | 3 | 4 | 5 | 6, SpeciesId>): Promise<void> {
     await this.game.runToTitle();
 
     if (this.game.override.disableShinies) {
@@ -53,11 +40,11 @@ export class ClassicModeHelper extends GameManagerHelper {
       this.game.scene.gameMode = getGameMode(GameModes.CLASSIC);
       const starters = generateStarters(this.game.scene, speciesIds);
       const selectStarterPhase = new SelectStarterPhase();
-      this.game.scene.phaseManager.pushPhase(new EncounterPhase(false));
+      this.game.scene.phaseManager.pushNew("EncounterPhase", false);
       selectStarterPhase.initBattle(starters);
     });
 
-    await this.game.phaseInterceptor.to(EncounterPhase);
+    await this.game.phaseInterceptor.to("EncounterPhase");
     if (overrides.ENEMY_HELD_ITEMS_OVERRIDE.length === 0 && this.game.override.removeEnemyStartingItems) {
       this.game.removeEnemyHeldItems();
     }
@@ -65,21 +52,11 @@ export class ClassicModeHelper extends GameManagerHelper {
 
   /**
    * Transitions to the start of a battle.
-   * @param species - An array of {@linkcode SpeciesId}s with which to start the battle
+   * @param speciesIds - An array of {@linkcode SpeciesId}s with which to start the battle
    * @returns A Promise that resolves when the battle is started.
    */
-  async startBattle(species: SpeciesId[]): Promise<void>;
-  /**
-   * Transitions to the start of a battle.
-   * Will select 3 daily run starters with a fixed seed of "test"
-   * (see `DailyRunConfig.getDailyRunStarters` in `daily-run.ts` for more info)
-   * @returns A Promise that resolves when the battle is started.
-   * @deprecated - Specifying the starters helps prevent inconsistencies from internal RNG changes.
-   */
-  // biome-ignore lint/style/useUnifiedTypeSignatures: Marks the overload for deprecation
-  async startBattle(): Promise<void>;
-  async startBattle(species?: SpeciesId[]): Promise<void> {
-    await this.runToSummon(species);
+  public async startBattle(...speciesIds: TupleOf<1 | 2 | 3 | 4 | 5 | 6, SpeciesId>): Promise<void> {
+    await this.runToSummon(...speciesIds);
 
     if (this.game.scene.battleStyle === BattleStyle.SWITCH) {
       this.game.onNextPrompt(
@@ -89,7 +66,7 @@ export class ClassicModeHelper extends GameManagerHelper {
           this.game.setMode(UiMode.MESSAGE);
           this.game.endPhase();
         },
-        () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase),
+        () => this.game.isCurrentPhase("CommandPhase") || this.game.isCurrentPhase("TurnInitPhase"),
       );
 
       this.game.onNextPrompt(
@@ -99,11 +76,11 @@ export class ClassicModeHelper extends GameManagerHelper {
           this.game.setMode(UiMode.MESSAGE);
           this.game.endPhase();
         },
-        () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase),
+        () => this.game.isCurrentPhase("CommandPhase") || this.game.isCurrentPhase("TurnInitPhase"),
       );
     }
 
-    await this.game.phaseInterceptor.to(CommandPhase);
+    await this.game.phaseInterceptor.to("CommandPhase");
     console.log("==================[New Turn]==================");
   }
 

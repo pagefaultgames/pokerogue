@@ -5,12 +5,10 @@ import { BattleStyle } from "#enums/battle-style";
 import type { Challenges } from "#enums/challenges";
 import type { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import { CommandPhase } from "#phases/command-phase";
-import { EncounterPhase } from "#phases/encounter-phase";
 import { SelectStarterPhase } from "#phases/select-starter-phase";
-import { TurnInitPhase } from "#phases/turn-init-phase";
 import { generateStarters } from "#test/test-utils/game-manager-utils";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
+import type { TupleOf } from "type-fest";
 
 /**
  * Helper to handle Challenge mode specifics
@@ -31,10 +29,13 @@ export class ChallengeModeHelper extends GameManagerHelper {
 
   /**
    * Runs the Challenge game to the summon phase.
-   * @param gameMode - Optional game mode to set.
+   * @param speciesIds - An array of {@linkcode SpeciesId} to summon
    * @returns A promise that resolves when the summon phase is reached.
+   * @remarks
+   * Normally you should use `startBattle` instead, only use this if you need
+   * to do something before the `CommandPhase` starts.
    */
-  async runToSummon(speciesIds?: SpeciesId[]) {
+  async runToSummon(...speciesIds: TupleOf<1 | 2 | 3 | 4 | 5 | 6, SpeciesId>) {
     await this.game.runToTitle();
 
     if (this.game.override.disableShinies) {
@@ -45,7 +46,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
       this.game.scene.gameMode.challenges = this.challenges;
       const starters = generateStarters(this.game.scene, speciesIds);
       const selectStarterPhase = new SelectStarterPhase();
-      this.game.scene.phaseManager.pushPhase(new EncounterPhase(false));
+      this.game.scene.phaseManager.pushNew("EncounterPhase", false);
       selectStarterPhase.initBattle(starters);
     });
 
@@ -56,12 +57,12 @@ export class ChallengeModeHelper extends GameManagerHelper {
   }
 
   /**
-   * Transitions to the start of a battle.
-   * @param species - Optional array of species to start the battle with.
+   * Transitions to the start of a challenge mode battle.
+   * @param speciesIds - Optional array of species to start the battle with.
    * @returns A promise that resolves when the battle is started.
    */
-  async startBattle(species?: SpeciesId[]) {
-    await this.runToSummon(species);
+  async startBattle(...speciesIds: TupleOf<1 | 2 | 3 | 4 | 5 | 6, SpeciesId>) {
+    await this.runToSummon(...speciesIds);
 
     if (this.game.scene.battleStyle === BattleStyle.SWITCH) {
       this.game.onNextPrompt(
@@ -71,7 +72,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
           this.game.setMode(UiMode.MESSAGE);
           this.game.endPhase();
         },
-        () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase),
+        () => this.game.isCurrentPhase("CommandPhase") || this.game.isCurrentPhase("TurnInitPhase"),
       );
 
       this.game.onNextPrompt(
@@ -81,11 +82,11 @@ export class ChallengeModeHelper extends GameManagerHelper {
           this.game.setMode(UiMode.MESSAGE);
           this.game.endPhase();
         },
-        () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase),
+        () => this.game.isCurrentPhase("CommandPhase") || this.game.isCurrentPhase("TurnInitPhase"),
       );
     }
 
-    await this.game.phaseInterceptor.to(CommandPhase);
+    await this.game.phaseInterceptor.to("CommandPhase");
     console.log("==================[New Turn]==================");
   }
 }
