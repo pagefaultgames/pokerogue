@@ -33,7 +33,9 @@ PRs with no user-facing changes should instead write "N/A" to be ommitted from a
 <!--
 Explain why you decided to introduce these changes.
 Does it come from another issue, PR or other prior discussion? Link to them if possible.
-Explain why you believe this can enhance user experience or otherwise improve the codebase.
+How can this can enhance user experience or otherwise improve the codebase?
+
+Try to keep this explanation as objective as possible — avoid referring to personal feelings or making derogatory comments about existing code.
 
 If this PR fixes an existing GitHub issue,
 you can add "Fixes #[issue number]" (e.g.: "Fixes #1234") to link the issue
@@ -44,14 +46,15 @@ so that it will automatically be closed when the PR is merged.
 <!--
 Describe the changes this PR introduces to the codebase.
 You can make use of a comparison between the state of the code before and after your changes.
-Ex: What files have been changed? What classes/functions/variables/etc have been added or changed?
+Ex: What files have been changed? What classes/functions/variables/etc. have been added or changed?
 
-Include enough detail to convey the changes being made and the rationale behind their implementation.
+Include enough detail to convey the scope of the changes being made and the rationale behind their implementation.
+Feel free to include small code snippets if you think they will help illustrate your points.
 -->
 
 ## Screenshots/Videos
 <!--
-If you are changing anything visual (such as UI/UX), include screenshot(s) and/or video(s) showing the changes within collapsible blocks, like below:
+If you are changing anything visual (UI/UX, locales changes, etc.), please include screenshot(s) and/or video(s) showing the changes within collapsible blocks, like below:
 
 <details><summary>Before</summary>
 
@@ -104,4 +107,4 @@ Are there any localization additions or changes? If so:
 
 Does this require any additions or changes to in-game assets? If so:
 - [ ] I have created an associated PR on the [assets](https://github.com/pagefaultgames/pokerogue-assets) repository
-  - If so, include a link to the PR here: _____ 
+  - If so, include a link to the PR here: _____
