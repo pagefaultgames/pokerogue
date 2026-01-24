@@ -3684,7 +3684,6 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
       targets: [target.getBattlerIndex()],
       result: MoveResult.OTHER,
       useMode,
-      turn: globalScene.currentBattle.turn,
     });
     // Queue up an attack on the given slot
     globalScene.arena.positionalTagManager.addTag({
