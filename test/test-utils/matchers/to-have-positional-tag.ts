@@ -1,4 +1,4 @@
-import type { toSerializedPosTag } from "#data/positional-tags/load-positional-tag";
+import type { ToSerializedPosTag } from "#data/positional-tags/load-positional-tag";
 import { PositionalTag } from "#data/positional-tags/positional-tag";
 import type { PositionalTagType } from "#enums/positional-tag-type";
 import type { OneOther } from "#test/@types/test-helpers";
@@ -15,7 +15,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @sealed
  */
 export type PartiallyFilledPositionalTag<P extends PositionalTagType> = //
-  OneOther<toSerializedPosTag<P>, "tagType">;
+  OneOther<ToSerializedPosTag<P>, "tagType">;
 
 /**
  * Matcher to check if the {@linkcode Arena} has a certain number of {@linkcode PositionalTag}s active.

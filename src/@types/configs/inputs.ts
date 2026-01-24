@@ -216,7 +216,7 @@ export type ProconButtons = {
 };
 
 /** Button keycode mappings for xbox360 controller */
-export type xbox360Buttons = {
+export type Xbox360Buttons = {
   RC_S: 0;
   RC_E: 1;
   RC_W: 2;
