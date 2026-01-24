@@ -1,8 +1,12 @@
 import { modifierTypes } from "#data/data-lists";
+import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
 import { AbilityId } from "#enums/ability-id";
+import { FormChangeItem } from "#enums/form-change-item";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
+import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
+import type { PokemonFormChangeItemModifier } from "#modifiers/modifier";
 import { generateModifierType } from "#mystery-encounters/encounter-phase-utils";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
@@ -52,5 +56,34 @@ describe("Form Change Phase", () => {
     expect(zacian.getFormKey()).toBe("crowned");
     expect(zacian.getTypes()).toStrictEqual([PokemonType.FAIRY, PokemonType.STEEL]);
     expect(zacian.calculateBaseStats()).toStrictEqual([92, 150, 115, 80, 115, 148]);
+  });
+
+  it("reverts G-Max Partner Pikachu back to Partner form on deactivation", async () => {
+    game.override.starterForms({
+      [SpeciesId.PIKACHU]: 1,
+    });
+
+    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+
+    const pikachu = game.field.getPlayerPokemon();
+    expect(pikachu.getFormKey()).toBe("partner");
+
+    const maxMushroomsType = generateModifierType(modifierTypes.FORM_CHANGE_ITEM, [FormChangeItem.MAX_MUSHROOMS])!;
+    const maxMushrooms = maxMushroomsType.newModifier(pikachu) as PokemonFormChangeItemModifier;
+    await game.scene.addModifier(maxMushrooms);
+
+    game.move.select(MoveId.SPLASH);
+    await game.toNextTurn();
+
+    expect(pikachu.getFormKey()).toBe(SpeciesFormKey.GIGANTAMAX);
+    expect(maxMushrooms.preFormKey).toBe("partner");
+
+    maxMushrooms.active = false;
+    game.scene.triggerPokemonFormChange(pikachu, SpeciesFormChangeItemTrigger);
+
+    game.move.select(MoveId.SPLASH);
+    await game.toNextTurn();
+
+    expect(pikachu.getFormKey()).toBe("partner");
   });
 });
