@@ -86,6 +86,10 @@ export const languageOptions = [
     handler: () => changeLocaleHandler("ru"),
   },
   {
+    label: "Українська (Needs Help)",
+    handler: () => changeLocaleHandler("uk"),
+  },
+  {
     label: "Bahasa Indonesia (Needs Help)",
     handler: () => changeLocaleHandler("id"),
   },
@@ -100,6 +104,10 @@ export const languageOptions = [
   {
     label: "Norsk bokmål (Needs Help)",
     handler: () => changeLocaleHandler("nb-NO"),
+  },
+  {
+    label: "Svenska",
+    handler: () => changeLocaleHandler("sv"),
   },
   {
     label: "Română (Needs Help)",

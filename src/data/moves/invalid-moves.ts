@@ -1,8 +1,18 @@
+/**
+ * Contains various move-related banlists and related constants.
+ *
+ * @remarks
+ * Note that PokéRogue intentionally diverges from the mainline games in these lists, as follows:
+ * - Most signature moves can be called by move-calling moves like Metronome.
+ * - Sketch can Sketch everything except itself and Struggle
+ * @module
+ */
+
 import type { HealBlockTag } from "#data/battler-tags";
 import { MoveId } from "#enums/move-id";
 
 /**
- * Array containing all move-calling moves, used for DRY when writing move banlists
+ * Array containing all move-calling moves, used for DRY when writing move banlists.
  */
 const moveCallingMoves = [
   MoveId.ASSIST,
@@ -17,14 +27,13 @@ const moveCallingMoves = [
 
 /** Set of moves that cannot be called by {@linkcode MoveId.METRONOME | Metronome}. */
 export const invalidMetronomeMoves: ReadonlySet<MoveId> = new Set([
+  ...moveCallingMoves,
   MoveId.AFTER_YOU,
-  MoveId.ASSIST,
   MoveId.BANEFUL_BUNKER,
   MoveId.BEAK_BLAST,
   MoveId.BELCH,
   MoveId.BESTOW,
   MoveId.COMEUPPANCE,
-  MoveId.COPYCAT,
   MoveId.COUNTER,
   MoveId.CRAFTY_SHIELD,
   MoveId.DESTINY_BOND,
@@ -37,11 +46,8 @@ export const invalidMetronomeMoves: ReadonlySet<MoveId> = new Set([
   MoveId.INSTRUCT,
   MoveId.KINGS_SHIELD,
   MoveId.MAT_BLOCK,
-  MoveId.ME_FIRST,
-  MoveId.METRONOME,
   MoveId.MIMIC,
   MoveId.MIRROR_COAT,
-  MoveId.MIRROR_MOVE,
   MoveId.OBSTRUCT,
   MoveId.PROTECT,
   MoveId.QUASH,
@@ -51,8 +57,6 @@ export const invalidMetronomeMoves: ReadonlySet<MoveId> = new Set([
   MoveId.SHELL_TRAP,
   MoveId.SILK_TRAP,
   MoveId.SKETCH,
-  MoveId.SLEEP_TALK,
-  MoveId.SNATCH,
   MoveId.SNORE,
   MoveId.SPIKY_SHIELD,
   MoveId.SPOTLIGHT,
@@ -61,9 +65,10 @@ export const invalidMetronomeMoves: ReadonlySet<MoveId> = new Set([
   MoveId.WIDE_GUARD,
 ]);
 
-/** Set of moves that cannot be called by {@linkcode MoveId.ASSIST Assist} */
+/** Set of moves that cannot be called by {@linkcode MoveId.ASSIST | Assist} */
+// TODO: Decide on whether to remove event exclusives like Hold Hands/Celebrate
 export const invalidAssistMoves: ReadonlySet<MoveId> = new Set([
-  MoveId.ASSIST,
+  ...moveCallingMoves,
   MoveId.BANEFUL_BUNKER,
   MoveId.BEAK_BLAST,
   MoveId.BELCH,
@@ -71,8 +76,8 @@ export const invalidAssistMoves: ReadonlySet<MoveId> = new Set([
   MoveId.BOUNCE,
   MoveId.CELEBRATE,
   MoveId.CHATTER,
+  // NB: Comeuppance is allowed due to Metal Burst being legal from gens 4-6
   MoveId.CIRCLE_THROW,
-  MoveId.COPYCAT,
   MoveId.COUNTER,
   MoveId.DESTINY_BOND,
   MoveId.DETECT,
@@ -88,12 +93,8 @@ export const invalidAssistMoves: ReadonlySet<MoveId> = new Set([
   MoveId.HOLD_HANDS,
   MoveId.KINGS_SHIELD,
   MoveId.MAT_BLOCK,
-  MoveId.ME_FIRST,
-  MoveId.METRONOME,
   MoveId.MIMIC,
   MoveId.MIRROR_COAT,
-  MoveId.MIRROR_MOVE,
-  MoveId.NATURE_POWER,
   MoveId.PHANTOM_FORCE,
   MoveId.PROTECT,
   MoveId.RAGE_POWDER,
@@ -102,8 +103,6 @@ export const invalidAssistMoves: ReadonlySet<MoveId> = new Set([
   MoveId.SHELL_TRAP,
   MoveId.SKETCH,
   MoveId.SKY_DROP,
-  MoveId.SLEEP_TALK,
-  MoveId.SNATCH,
   MoveId.SPIKY_SHIELD,
   MoveId.SPOTLIGHT,
   MoveId.STRUGGLE,
@@ -115,12 +114,11 @@ export const invalidAssistMoves: ReadonlySet<MoveId> = new Set([
 
 /** Set of moves that cannot be called by {@linkcode MoveId.SLEEP_TALK Sleep Talk} */
 export const invalidSleepTalkMoves: ReadonlySet<MoveId> = new Set([
-  MoveId.ASSIST,
+  ...moveCallingMoves,
   MoveId.BELCH,
   MoveId.BEAK_BLAST,
   MoveId.BIDE,
   MoveId.BOUNCE,
-  MoveId.COPYCAT,
   MoveId.DIG,
   MoveId.DIVE,
   MoveId.FREEZE_SHOCK,
@@ -128,9 +126,6 @@ export const invalidSleepTalkMoves: ReadonlySet<MoveId> = new Set([
   MoveId.FOCUS_PUNCH,
   MoveId.GEOMANCY,
   MoveId.ICE_BURN,
-  MoveId.ME_FIRST,
-  MoveId.METRONOME,
-  MoveId.MIRROR_MOVE,
   MoveId.MIMIC,
   MoveId.PHANTOM_FORCE,
   MoveId.RAZOR_WIND,
@@ -140,7 +135,6 @@ export const invalidSleepTalkMoves: ReadonlySet<MoveId> = new Set([
   MoveId.SKULL_BASH,
   MoveId.SKY_ATTACK,
   MoveId.SKY_DROP,
-  MoveId.SLEEP_TALK,
   MoveId.SOLAR_BLADE,
   MoveId.SOLAR_BEAM,
   MoveId.STRUGGLE,
@@ -149,14 +143,13 @@ export const invalidSleepTalkMoves: ReadonlySet<MoveId> = new Set([
 
 /** Set of moves that cannot be copied by {@linkcode MoveId.COPYCAT Copycat} */
 export const invalidCopycatMoves: ReadonlySet<MoveId> = new Set([
-  MoveId.ASSIST,
+  ...moveCallingMoves,
   MoveId.BANEFUL_BUNKER,
   MoveId.BEAK_BLAST,
   MoveId.BESTOW,
   MoveId.CELEBRATE,
   MoveId.CHATTER,
   MoveId.CIRCLE_THROW,
-  MoveId.COPYCAT,
   MoveId.COUNTER,
   MoveId.DESTINY_BOND,
   MoveId.DETECT,
@@ -169,18 +162,13 @@ export const invalidCopycatMoves: ReadonlySet<MoveId> = new Set([
   MoveId.HOLD_HANDS,
   MoveId.KINGS_SHIELD,
   MoveId.MAT_BLOCK,
-  MoveId.ME_FIRST,
-  MoveId.METRONOME,
   MoveId.MIMIC,
   MoveId.MIRROR_COAT,
-  MoveId.MIRROR_MOVE,
   MoveId.PROTECT,
   MoveId.RAGE_POWDER,
   MoveId.ROAR,
   MoveId.SHELL_TRAP,
   MoveId.SKETCH,
-  MoveId.SLEEP_TALK,
-  MoveId.SNATCH,
   MoveId.SPIKY_SHIELD,
   MoveId.SPOTLIGHT,
   MoveId.STRUGGLE,
@@ -190,7 +178,9 @@ export const invalidCopycatMoves: ReadonlySet<MoveId> = new Set([
   MoveId.WHIRLWIND,
 ]);
 
+/** Set of all moves that cannot be called by {@linkcode MoveId.MIRROR_MOVE | Mirror Move}. */
 export const invalidMirrorMoveMoves: ReadonlySet<MoveId> = new Set([
+  ...moveCallingMoves,
   MoveId.ACUPRESSURE,
   MoveId.AFTER_YOU,
   MoveId.AROMATIC_MIST,
@@ -213,6 +203,7 @@ export const invalidMirrorMoveMoves: ReadonlySet<MoveId> = new Set([
   MoveId.FOCUS_PUNCH,
   MoveId.FUTURE_SIGHT,
   MoveId.GEAR_UP,
+  // TODO: Verify these
   MoveId.GRASSY_TERRAIN,
   MoveId.GRAVITY,
   MoveId.GUARD_SPLIT,
@@ -225,10 +216,8 @@ export const invalidMirrorMoveMoves: ReadonlySet<MoveId> = new Set([
   MoveId.ION_DELUGE,
   MoveId.MAGNETIC_FLUX,
   MoveId.MAT_BLOCK,
-  MoveId.ME_FIRST,
   MoveId.MIMIC,
   MoveId.MIRROR_COAT,
-  MoveId.MIRROR_MOVE,
   MoveId.MIST,
   MoveId.MISTY_TERRAIN,
   MoveId.MUD_SPORT,
@@ -272,11 +261,9 @@ export const noAbilityTypeOverrideMoves: ReadonlySet<MoveId> = new Set([
   MoveId.HIDDEN_POWER,
 ]);
 
-/** Set of all moves that cannot be copied by {@linkcode MoveId.SKETCH}. */
+/** Set of all moves that cannot be learned by {@linkcode MoveId.SKETCH | Sketch}. */
 export const invalidSketchMoves: ReadonlySet<MoveId> = new Set([
-  MoveId.NONE,
-  MoveId.MIRROR_MOVE,
-  MoveId.SLEEP_TALK,
+  MoveId.NONE, // TODO: Remove from banlist and do explicit check
   MoveId.STRUGGLE,
   MoveId.SKETCH,
 ]);
@@ -325,16 +312,16 @@ export const healBlockedMoves: ReadonlySet<MoveId> = new Set([
   MoveId.MATCHA_GOTCHA,
 ]);
 
-/** Set of all moves that cannot be locked into by {@linkcode MoveId.ENCORE}. */
+/** Set of all moves that cannot be locked into by {@linkcode MoveId.ENCORE | Encore}. */
+// TODO: Check in Pokemon Champions to see if Dynamax Cannon is still blacklisted
 export const invalidEncoreMoves: ReadonlySet<MoveId> = new Set([
   ...moveCallingMoves,
   MoveId.TRANSFORM,
   MoveId.MIMIC,
   MoveId.SKETCH,
   MoveId.STRUGGLE,
-  MoveId.DYNAMAX_CANNON,
-  MoveId.SLEEP_TALK,
   MoveId.ENCORE,
+  MoveId.DYNAMAX_CANNON,
   // NB: Add Max/G-Max/Z-Move blockage if or when they are implemented
 ]);
 
@@ -389,7 +376,6 @@ export const invalidInstructMoves: ReadonlySet<MoveId> = new Set([
   ...moveCallingMoves,
   MoveId.INSTRUCT,
   // Misc moves
-  MoveId.KINGS_SHIELD,
   MoveId.SKETCH,
   MoveId.TRANSFORM,
   MoveId.MIMIC,
