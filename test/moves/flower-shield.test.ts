@@ -5,7 +5,6 @@ import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -41,7 +40,7 @@ describe("Moves - Flower Shield", () => {
     expect(cherrim.getStatStage(Stat.DEF)).toBe(0);
 
     game.move.select(MoveId.FLOWER_SHIELD);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(magikarp.getStatStage(Stat.DEF)).toBe(0);
     expect(cherrim.getStatStage(Stat.DEF)).toBe(1);
@@ -61,7 +60,7 @@ describe("Moves - Flower Shield", () => {
 
     game.move.select(MoveId.FLOWER_SHIELD);
     game.move.select(MoveId.SPLASH, 1);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     grassPokemons.forEach(p => expect(p.getStatStage(Stat.DEF)).toBe(1));
     nonGrassPokemons.forEach(p => expect(p.getStatStage(Stat.DEF)).toBe(0));
@@ -82,7 +81,7 @@ describe("Moves - Flower Shield", () => {
     expect(paras.getTag(SemiInvulnerableTag)).toBeUndefined;
 
     game.move.select(MoveId.FLOWER_SHIELD);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(paras.getTag(SemiInvulnerableTag)).toBeDefined();
     expect(paras.getStatStage(Stat.DEF)).toBe(0);
@@ -100,7 +99,7 @@ describe("Moves - Flower Shield", () => {
     expect(ally.getStatStage(Stat.DEF)).toBe(0);
 
     game.move.select(MoveId.FLOWER_SHIELD);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(enemy.getStatStage(Stat.DEF)).toBe(0);
     expect(ally.getStatStage(Stat.DEF)).toBe(0);

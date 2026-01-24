@@ -3,10 +3,6 @@ import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { BerryPhase } from "#phases/berry-phase";
-import { FaintPhase } from "#phases/faint-phase";
-import { MoveEffectPhase } from "#phases/move-effect-phase";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -44,12 +40,12 @@ describe("Moves - Jaw Lock", () => {
     game.move.select(MoveId.JAW_LOCK);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
-    await game.phaseInterceptor.to(MoveEffectPhase, false);
+    await game.phaseInterceptor.to("MoveEffectPhase", false);
 
     expect(leadPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
     expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(leadPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
     expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
@@ -65,17 +61,17 @@ describe("Moves - Jaw Lock", () => {
     game.move.select(MoveId.JAW_LOCK);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
-    await game.phaseInterceptor.to(MoveEffectPhase, false);
+    await game.phaseInterceptor.to("MoveEffectPhase", false);
 
     expect(leadPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
     expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
 
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(leadPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
     expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
 
-    await game.phaseInterceptor.to(FaintPhase);
+    await game.phaseInterceptor.to("FaintPhase");
 
     expect(leadPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
     expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
@@ -90,12 +86,12 @@ describe("Moves - Jaw Lock", () => {
     game.move.select(MoveId.JAW_LOCK);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(leadPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
     expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     await game.doKillOpponents();
 
@@ -115,7 +111,7 @@ describe("Moves - Jaw Lock", () => {
     game.move.select(MoveId.SPLASH, 1);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(playerPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
     expect(enemyPokemon[0].getTag(BattlerTagType.TRAPPED)).toBeDefined();
@@ -125,7 +121,7 @@ describe("Moves - Jaw Lock", () => {
     game.move.select(MoveId.JAW_LOCK, 0, BattlerIndex.ENEMY_2);
     game.move.select(MoveId.SPLASH, 1);
 
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(enemyPokemon[1].getTag(BattlerTagType.TRAPPED)).toBeUndefined();
     expect(playerPokemon.getTag(BattlerTagType.TRAPPED)).toBeDefined();
@@ -142,7 +138,7 @@ describe("Moves - Jaw Lock", () => {
 
     game.move.select(MoveId.JAW_LOCK);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(playerPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();
     expect(enemyPokemon.getTag(BattlerTagType.TRAPPED)).toBeUndefined();

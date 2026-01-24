@@ -2,8 +2,6 @@ import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { BerryPhase } from "#phases/berry-phase";
-import { MoveEffectPhase } from "#phases/move-effect-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -36,11 +34,11 @@ describe("Moves - Thousand Arrows", () => {
 
     game.move.select(MoveId.THOUSAND_ARROWS);
 
-    await game.phaseInterceptor.to(MoveEffectPhase, false);
+    await game.phaseInterceptor.to("MoveEffectPhase", false);
     // Enemy should not be grounded before move effect is applied
     expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeUndefined();
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
@@ -55,11 +53,11 @@ describe("Moves - Thousand Arrows", () => {
 
     game.move.select(MoveId.THOUSAND_ARROWS);
 
-    await game.phaseInterceptor.to(MoveEffectPhase, false);
+    await game.phaseInterceptor.to("MoveEffectPhase", false);
     // Enemy should not be grounded before move effect is applied
     expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeUndefined();
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
@@ -76,7 +74,7 @@ describe("Moves - Thousand Arrows", () => {
 
     game.move.select(MoveId.THOUSAND_ARROWS);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(enemyPokemon.getTag(BattlerTagType.FLOATING)).toBeUndefined();
     expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();

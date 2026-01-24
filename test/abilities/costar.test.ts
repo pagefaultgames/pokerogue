@@ -2,7 +2,6 @@ import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { MessagePhase } from "#phases/message-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
@@ -42,7 +41,7 @@ describe("Abilities - COSTAR", () => {
 
     game.move.select(MoveId.SPLASH);
     game.doSwitchPokemon(2);
-    await game.phaseInterceptor.to(MessagePhase);
+    await game.phaseInterceptor.to("MessagePhase");
 
     [leftPokemon, rightPokemon] = game.scene.getPlayerField();
     expect(leftPokemon.getStatStage(Stat.SPATK)).toBe(2);
@@ -61,7 +60,7 @@ describe("Abilities - COSTAR", () => {
 
     game.move.select(MoveId.SPLASH);
     game.doSwitchPokemon(2);
-    await game.phaseInterceptor.to(MessagePhase);
+    await game.phaseInterceptor.to("MessagePhase");
 
     [leftPokemon, rightPokemon] = game.scene.getPlayerField();
     expect(leftPokemon.getStatStage(Stat.ATK)).toBe(-2);

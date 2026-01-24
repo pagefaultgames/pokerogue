@@ -1,7 +1,6 @@
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import { TurnStartPhase } from "#phases/turn-start-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -37,7 +36,7 @@ describe("Moves - Fusion Flare", () => {
 
     game.move.select(fusionFlare);
 
-    await game.phaseInterceptor.to(TurnStartPhase, false);
+    await game.phaseInterceptor.to("TurnStartPhase", false);
 
     // Inflict freeze quietly and check if it was properly inflicted
     partyMember.doSetStatus(StatusEffect.FREEZE);

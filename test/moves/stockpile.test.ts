@@ -4,7 +4,6 @@ import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { TurnInitPhase } from "#phases/turn-init-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -84,7 +83,7 @@ describe("Moves - Stockpile", () => {
       expect(user.getStatStage(Stat.SPDEF)).toBe(6);
 
       game.move.select(MoveId.STOCKPILE);
-      await game.phaseInterceptor.to(TurnInitPhase);
+      await game.phaseInterceptor.to("TurnInitPhase");
 
       const stockpilingTag = user.getTag(StockpilingTag)!;
       expect(stockpilingTag).toBeDefined();
@@ -93,7 +92,7 @@ describe("Moves - Stockpile", () => {
       expect(user.getStatStage(Stat.SPDEF)).toBe(6);
 
       game.move.select(MoveId.STOCKPILE);
-      await game.phaseInterceptor.to(TurnInitPhase);
+      await game.phaseInterceptor.to("TurnInitPhase");
 
       const stockpilingTagAgain = user.getTag(StockpilingTag)!;
       expect(stockpilingTagAgain).toBeDefined();

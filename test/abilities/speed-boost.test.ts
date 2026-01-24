@@ -4,7 +4,6 @@ import { Command } from "#enums/command";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { AttemptRunPhase } from "#phases/attempt-run-phase";
 import type { CommandPhase } from "#phases/command-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
@@ -102,7 +101,7 @@ describe("Abilities - Speed Boost", () => {
     const commandPhase = game.scene.phaseManager.getCurrentPhase() as CommandPhase;
     commandPhase.handleCommand(Command.RUN, 0);
 
-    await game.phaseInterceptor.to(AttemptRunPhase);
+    await game.phaseInterceptor.to("AttemptRunPhase");
     await game.toNextTurn();
 
     const playerPokemon = game.field.getPlayerPokemon();

@@ -2,7 +2,6 @@ import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -39,7 +38,7 @@ describe("Moves - Speed Swap", () => {
     const enemySpd = enemy.getStat(Stat.SPD, false);
 
     game.move.select(MoveId.SPEED_SWAP);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(player.getStat(Stat.SPD, false)).toBe(enemySpd);
     expect(enemy.getStat(Stat.SPD, false)).toBe(playerSpd);

@@ -4,7 +4,6 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import type { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
-import { MoveEndPhase } from "#phases/move-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
@@ -41,7 +40,7 @@ describe("Moves - Purify", () => {
 
     game.move.select(MoveId.PURIFY);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to(MoveEndPhase);
+    await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(enemyPokemon.status).toBeNull();
     expect(playerPokemon.isFullHp()).toBe(true);
@@ -57,7 +56,7 @@ describe("Moves - Purify", () => {
 
     game.move.select(MoveId.PURIFY);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to(MoveEndPhase);
+    await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(playerPokemon.hp).toBe(playerInitialHp);
   });

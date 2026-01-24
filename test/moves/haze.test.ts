@@ -2,7 +2,6 @@ import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { TurnInitPhase } from "#phases/turn-init-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -39,16 +38,16 @@ describe("Moves - Haze", () => {
       expect(enemy.getStatStage(Stat.ATK)).toBe(0);
 
       game.move.select(MoveId.SWORDS_DANCE);
-      await game.phaseInterceptor.to(TurnInitPhase);
+      await game.phaseInterceptor.to("TurnInitPhase");
 
       game.move.select(MoveId.CHARM);
-      await game.phaseInterceptor.to(TurnInitPhase);
+      await game.phaseInterceptor.to("TurnInitPhase");
 
       expect(user.getStatStage(Stat.ATK)).toBe(2);
       expect(enemy.getStatStage(Stat.ATK)).toBe(-2);
 
       game.move.select(MoveId.HAZE);
-      await game.phaseInterceptor.to(TurnInitPhase);
+      await game.phaseInterceptor.to("TurnInitPhase");
 
       expect(user.getStatStage(Stat.ATK)).toBe(0);
       expect(enemy.getStatStage(Stat.ATK)).toBe(0);

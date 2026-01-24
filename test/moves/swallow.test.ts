@@ -5,8 +5,6 @@ import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { MovePhase } from "#phases/move-phase";
-import { TurnInitPhase } from "#phases/turn-init-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -52,7 +50,7 @@ describe("Moves - Swallow", () => {
       vi.spyOn(pokemon, "heal");
 
       game.move.select(MoveId.SWALLOW);
-      await game.phaseInterceptor.to(TurnInitPhase);
+      await game.phaseInterceptor.to("TurnInitPhase");
 
       expect(pokemon.heal).toHaveBeenCalledOnce();
       expect(pokemon.heal).toHaveReturnedWith(expectedHeal);
@@ -80,7 +78,7 @@ describe("Moves - Swallow", () => {
       vi.spyOn(pokemon, "heal");
 
       game.move.select(MoveId.SWALLOW);
-      await game.phaseInterceptor.to(TurnInitPhase);
+      await game.phaseInterceptor.to("TurnInitPhase");
 
       expect(pokemon.heal).toHaveBeenCalledOnce();
       expect(pokemon.heal).toHaveReturnedWith(expectedHeal);
@@ -109,7 +107,7 @@ describe("Moves - Swallow", () => {
       vi.spyOn(pokemon, "heal");
 
       game.move.select(MoveId.SWALLOW);
-      await game.phaseInterceptor.to(TurnInitPhase);
+      await game.phaseInterceptor.to("TurnInitPhase");
 
       expect(pokemon.heal).toHaveBeenCalledOnce();
       expect(pokemon.heal).toHaveReturnedWith(expect.closeTo(expectedHeal));
@@ -127,7 +125,7 @@ describe("Moves - Swallow", () => {
     expect(stockpilingTag).toBeUndefined();
 
     game.move.select(MoveId.SWALLOW);
-    await game.phaseInterceptor.to(TurnInitPhase);
+    await game.phaseInterceptor.to("TurnInitPhase");
 
     expect(pokemon.getMoveHistory().at(-1)).toMatchObject({
       move: MoveId.SWALLOW,
@@ -147,12 +145,12 @@ describe("Moves - Swallow", () => {
       expect(stockpilingTag).toBeDefined();
 
       game.move.select(MoveId.SWALLOW);
-      await game.phaseInterceptor.to(MovePhase);
+      await game.phaseInterceptor.to("MovePhase");
 
       expect(pokemon.getStatStage(Stat.DEF)).toBe(1);
       expect(pokemon.getStatStage(Stat.SPDEF)).toBe(1);
 
-      await game.phaseInterceptor.to(TurnInitPhase);
+      await game.phaseInterceptor.to("TurnInitPhase");
 
       expect(pokemon.getMoveHistory().at(-1)).toMatchObject({
         move: MoveId.SWALLOW,
@@ -183,7 +181,7 @@ describe("Moves - Swallow", () => {
 
       game.move.select(MoveId.SWALLOW);
 
-      await game.phaseInterceptor.to(TurnInitPhase);
+      await game.phaseInterceptor.to("TurnInitPhase");
 
       expect(pokemon.getMoveHistory().at(-1)).toMatchObject({
         move: MoveId.SWALLOW,

@@ -4,7 +4,7 @@ import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
-import { MovePhase } from "#phases/move-phase";
+import type { MovePhase } from "#phases/move-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -38,7 +38,7 @@ describe("Moves - After You", () => {
     game.move.select(MoveId.SPLASH, 1);
 
     await game.phaseInterceptor.to("MoveEffectPhase");
-    await game.phaseInterceptor.to(MovePhase, false);
+    await game.phaseInterceptor.to("MovePhase", false);
     const phase = game.scene.phaseManager.getCurrentPhase() as MovePhase;
     expect(phase.pokemon).toBe(game.scene.getPlayerField()[1]);
     await game.phaseInterceptor.to("MoveEndPhase");
@@ -53,7 +53,7 @@ describe("Moves - After You", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.phaseInterceptor.to("MoveEndPhase");
-    await game.phaseInterceptor.to(MovePhase);
+    await game.phaseInterceptor.to("MovePhase");
 
     expect(game.scene.getPlayerField()[1].getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
   });

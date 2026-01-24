@@ -3,7 +3,6 @@ import { BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT, WEIGHT_INCREMENT_ON_SPAWN_MISS } f
 import { BattleType } from "#enums/battle-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
-import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -31,7 +30,7 @@ describe("Mystery Encounters", () => {
       SpeciesId.VOLCARONA,
     ]);
 
-    await game.phaseInterceptor.to(MysteryEncounterPhase, false);
+    await game.phaseInterceptor.to("MysteryEncounterPhase", false);
     expect(game).toBeAtPhase("MysteryEncounterPhase");
   });
 

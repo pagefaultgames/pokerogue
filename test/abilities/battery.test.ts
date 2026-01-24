@@ -2,8 +2,6 @@ import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { MoveEffectPhase } from "#phases/move-effect-phase";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -40,7 +38,7 @@ describe("Abilities - Battery", () => {
 
     game.move.select(MoveId.DAZZLING_GLEAM);
     game.move.select(MoveId.SPLASH, 1);
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(basePower * batteryMultiplier);
   });
@@ -55,7 +53,7 @@ describe("Abilities - Battery", () => {
 
     game.move.select(MoveId.BREAKING_SWIPE);
     game.move.select(MoveId.SPLASH, 1);
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(basePower);
   });
@@ -70,7 +68,7 @@ describe("Abilities - Battery", () => {
 
     game.move.select(MoveId.DAZZLING_GLEAM);
     game.move.select(MoveId.SPLASH, 1);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(basePower);
   });

@@ -2,8 +2,6 @@ import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { BATTLE_STATS, Stat } from "#enums/stat";
-import { MoveEndPhase } from "#phases/move-end-phase";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -39,14 +37,14 @@ describe("Moves - Guard Swap", () => {
 
     game.move.select(MoveId.GUARD_SWAP);
 
-    await game.phaseInterceptor.to(MoveEndPhase);
+    await game.phaseInterceptor.to("MoveEndPhase");
 
     for (const s of BATTLE_STATS) {
       expect(player.getStatStage(s)).toBe(0);
       expect(enemy.getStatStage(s)).toBe(1);
     }
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     for (const s of BATTLE_STATS) {
       if (s === Stat.DEF || s === Stat.SPDEF) {

@@ -5,8 +5,6 @@ import { GameModes } from "#enums/game-modes";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import { BattleEndPhase } from "#phases/battle-end-phase";
-import { TurnInitPhase } from "#phases/turn-init-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -44,13 +42,13 @@ describe("Double Battles", () => {
 
     await game.doKillOpponents();
 
-    await game.phaseInterceptor.to(BattleEndPhase);
+    await game.phaseInterceptor.to("BattleEndPhase");
     game.doSelectModifier();
 
     const charizard = game.scene.getPlayerParty().findIndex(p => p.species.speciesId === SpeciesId.CHARIZARD);
     game.doRevivePokemon(charizard);
 
-    await game.phaseInterceptor.to(TurnInitPhase);
+    await game.phaseInterceptor.to("TurnInitPhase");
     expect(game.scene.getPlayerField().filter(p => !p.isFainted())).toHaveLength(2);
   });
 

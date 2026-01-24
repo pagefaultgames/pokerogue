@@ -3,7 +3,6 @@ import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import { TurnStartPhase } from "#phases/turn-start-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -37,7 +36,7 @@ describe("Weather - Strong Winds", () => {
 
     game.move.select(MoveId.THUNDERBOLT);
 
-    await game.phaseInterceptor.to(TurnStartPhase);
+    await game.phaseInterceptor.to("TurnStartPhase");
     expect(enemy.getAttackTypeEffectiveness(allMoves[MoveId.THUNDERBOLT].type, pikachu)).toBe(0.5);
   });
 
@@ -48,7 +47,7 @@ describe("Weather - Strong Winds", () => {
 
     game.move.select(MoveId.THUNDERBOLT);
 
-    await game.phaseInterceptor.to(TurnStartPhase);
+    await game.phaseInterceptor.to("TurnStartPhase");
     expect(enemy.getAttackTypeEffectiveness(allMoves[MoveId.THUNDERBOLT].type, pikachu)).toBe(1);
   });
 
@@ -59,7 +58,7 @@ describe("Weather - Strong Winds", () => {
 
     game.move.select(MoveId.ICE_BEAM);
 
-    await game.phaseInterceptor.to(TurnStartPhase);
+    await game.phaseInterceptor.to("TurnStartPhase");
     expect(enemy.getAttackTypeEffectiveness(allMoves[MoveId.ICE_BEAM].type, pikachu)).toBe(1);
   });
 
@@ -70,7 +69,7 @@ describe("Weather - Strong Winds", () => {
 
     game.move.select(MoveId.ROCK_SLIDE);
 
-    await game.phaseInterceptor.to(TurnStartPhase);
+    await game.phaseInterceptor.to("TurnStartPhase");
     expect(enemy.getAttackTypeEffectiveness(allMoves[MoveId.ROCK_SLIDE].type, pikachu)).toBe(1);
   });
 

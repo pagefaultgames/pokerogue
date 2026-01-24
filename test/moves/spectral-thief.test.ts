@@ -4,7 +4,6 @@ import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -48,7 +47,7 @@ describe("Moves - Spectral Thief", () => {
     player.setStatStage(Stat.SPD, -2);
 
     game.move.select(MoveId.SPECTRAL_THIEF);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     /*
      * enemy has +6 ATK and player +4 => player only steals +2
@@ -75,7 +74,7 @@ describe("Moves - Spectral Thief", () => {
     player.setStatStage(Stat.ATK, 0);
 
     game.move.select(MoveId.SPECTRAL_THIEF);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(dmgBefore).toBeLessThan(enemy.getAttackDamage({ source: player, move: moveToCheck }).damage);
   });
@@ -92,7 +91,7 @@ describe("Moves - Spectral Thief", () => {
     player.setStatStage(Stat.ATK, 0);
 
     game.move.select(MoveId.SPECTRAL_THIEF);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(player.getStatStage(Stat.ATK)).toEqual(-6);
     expect(enemy.getStatStage(Stat.ATK)).toEqual(0);
@@ -110,7 +109,7 @@ describe("Moves - Spectral Thief", () => {
     player.setStatStage(Stat.ATK, 0);
 
     game.move.select(MoveId.SPECTRAL_THIEF);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(player.getStatStage(Stat.ATK)).toEqual(6);
     expect(enemy.getStatStage(Stat.ATK)).toEqual(0);
@@ -128,7 +127,7 @@ describe("Moves - Spectral Thief", () => {
     player.setStatStage(Stat.ATK, 0);
 
     game.move.select(MoveId.SPECTRAL_THIEF);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(player.getStatStage(Stat.ATK)).toEqual(3);
     expect(enemy.getStatStage(Stat.ATK)).toEqual(0);
@@ -146,7 +145,7 @@ describe("Moves - Spectral Thief", () => {
     player.setStatStage(Stat.ATK, 0);
 
     game.move.select(MoveId.SPECTRAL_THIEF);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(player.getStatStage(Stat.ATK)).toEqual(3);
     expect(enemy.getStatStage(Stat.ATK)).toEqual(0);
@@ -164,7 +163,7 @@ describe("Moves - Spectral Thief", () => {
     player.setStatStage(Stat.ATK, 0);
 
     game.move.select(MoveId.SPECTRAL_THIEF);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(player.getStatStage(Stat.ATK)).toEqual(3);
     expect(enemy.getStatStage(Stat.ATK)).toEqual(0);
@@ -183,7 +182,7 @@ describe("Moves - Spectral Thief", () => {
 
     game.move.select(MoveId.SPECTRAL_THIEF);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(player.getStatStage(Stat.ATK)).toEqual(3);
     expect(enemy.getStatStage(Stat.ATK)).toEqual(0);
@@ -202,7 +201,7 @@ describe("Moves - Spectral Thief", () => {
     player.setStatStage(Stat.ATK, 0);
 
     game.move.select(MoveId.SPECTRAL_THIEF);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(player.getStatStage(Stat.ATK)).toEqual(0);
     expect(enemy.getStatStage(Stat.ATK)).toEqual(3);

@@ -5,7 +5,6 @@ import { MoveResult } from "#enums/move-result";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import { BerryPhase } from "#phases/berry-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -42,7 +41,7 @@ describe("Moves - Powder", () => {
 
     game.move.select(MoveId.POWDER);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
     expect(enemyPokemon.moveset[0].ppUsed).toBe(1);
@@ -51,7 +50,7 @@ describe("Moves - Powder", () => {
 
     game.move.select(MoveId.SPLASH);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
     expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
     expect(enemyPokemon.moveset[0].ppUsed).toBe(2);
@@ -66,7 +65,7 @@ describe("Moves - Powder", () => {
 
     game.move.select(MoveId.POWDER);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
   });
@@ -80,7 +79,7 @@ describe("Moves - Powder", () => {
 
     game.move.select(MoveId.POWDER);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
   });
@@ -94,7 +93,7 @@ describe("Moves - Powder", () => {
 
     game.move.select(MoveId.POWDER);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
   });
@@ -108,7 +107,7 @@ describe("Moves - Powder", () => {
 
     game.move.select(MoveId.POWDER);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
   });
@@ -122,7 +121,7 @@ describe("Moves - Powder", () => {
 
     game.move.select(MoveId.POWDER);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.status?.effect).not.toBe(StatusEffect.FREEZE);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
@@ -137,7 +136,7 @@ describe("Moves - Powder", () => {
 
     game.move.select(MoveId.POWDER);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
     expect(enemyPokemon.summonData.types).not.toBe(PokemonType.FIRE);
@@ -185,7 +184,7 @@ describe("Moves - Powder", () => {
 
     game.move.select(MoveId.POWDER);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
     expect(playerPokemon.getLastXMoves()[0].move).toBe(MoveId.POWDER);
@@ -200,7 +199,7 @@ describe("Moves - Powder", () => {
 
     game.move.select(MoveId.POWDER);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
   });
@@ -214,7 +213,7 @@ describe("Moves - Powder", () => {
 
     game.move.select(MoveId.POWDER);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
   });
@@ -231,7 +230,7 @@ describe("Moves - Powder", () => {
     await game.move.selectEnemyMove(MoveId.FIRE_PLEDGE, BattlerIndex.PLAYER);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2, BattlerIndex.ENEMY]);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
   });
@@ -248,7 +247,7 @@ describe("Moves - Powder", () => {
     await game.move.selectEnemyMove(MoveId.WATER_PLEDGE, BattlerIndex.PLAYER);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
   });
@@ -265,7 +264,7 @@ describe("Moves - Powder", () => {
     await game.move.selectEnemyMove(MoveId.WATER_PLEDGE, BattlerIndex.PLAYER);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2, BattlerIndex.ENEMY]);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
   });

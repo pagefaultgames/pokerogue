@@ -3,7 +3,6 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -39,7 +38,7 @@ describe("Moves - Power Trick", () => {
 
     game.move.select(MoveId.POWER_TRICK);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(player.getStat(Stat.ATK, false)).toBe(baseDEF);
     expect(player.getStat(Stat.DEF, false)).toBe(baseATK);
@@ -55,11 +54,11 @@ describe("Moves - Power Trick", () => {
 
     game.move.select(MoveId.POWER_TRICK);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     game.move.select(MoveId.POWER_TRICK);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(player.getStat(Stat.ATK, false)).toBe(baseATK);
     expect(player.getStat(Stat.DEF, false)).toBe(baseDEF);
@@ -76,7 +75,7 @@ describe("Moves - Power Trick", () => {
     game.move.select(MoveId.BATON_PASS);
     game.doSelectPartyPokemon(1);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     const switchedPlayer = game.field.getPlayerPokemon();
     const baseATK = switchedPlayer.getStat(Stat.ATK);
@@ -96,7 +95,7 @@ describe("Moves - Power Trick", () => {
 
     game.move.select(MoveId.TRANSFORM);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     const enemy = game.field.getEnemyPokemon();
     const baseATK = enemy.getStat(Stat.ATK);

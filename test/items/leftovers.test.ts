@@ -1,7 +1,6 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { DamageAnimPhase } from "#phases/damage-anim-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -43,7 +42,7 @@ describe("Items - Leftovers", () => {
     game.move.select(MoveId.SPLASH);
 
     // We should have less hp after the attack
-    await game.phaseInterceptor.to(DamageAnimPhase, false);
+    await game.phaseInterceptor.to("DamageAnimPhase", false);
     expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
 
     const leadHpAfterDamage = leadPokemon.hp;

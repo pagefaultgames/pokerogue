@@ -1,10 +1,7 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { BerryPhase } from "#phases/berry-phase";
-import { MessagePhase } from "#phases/message-phase";
 import { SwitchSummonPhase } from "#phases/switch-summon-phase";
-import { TurnStartPhase } from "#phases/turn-start-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import i18next from "i18next";
 import Phaser from "phaser";
@@ -43,12 +40,12 @@ describe("Moves - Focus Punch", () => {
 
     game.move.select(MoveId.FOCUS_PUNCH);
 
-    await game.phaseInterceptor.to(MessagePhase);
+    await game.phaseInterceptor.to("MessagePhase");
 
     expect(enemyPokemon.hp).toBe(enemyStartingHp);
     expect(leadPokemon.getMoveHistory().length).toBe(0);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
     expect(leadPokemon.getMoveHistory().length).toBe(1);
@@ -67,12 +64,12 @@ describe("Moves - Focus Punch", () => {
 
     game.move.select(MoveId.FOCUS_PUNCH);
 
-    await game.phaseInterceptor.to(MessagePhase);
+    await game.phaseInterceptor.to("MessagePhase");
 
     expect(enemyPokemon.hp).toBe(enemyStartingHp);
     expect(leadPokemon.getMoveHistory().length).toBe(0);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(enemyPokemon.hp).toBe(enemyStartingHp);
     expect(leadPokemon.getMoveHistory().length).toBe(1);
@@ -89,11 +86,11 @@ describe("Moves - Focus Punch", () => {
 
     game.move.select(MoveId.FOCUS_PUNCH);
 
-    await game.phaseInterceptor.to(MessagePhase); // Header message
+    await game.phaseInterceptor.to("MessagePhase"); // Header message
 
     expect(leadPokemon.getMoveHistory().length).toBe(0);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(leadPokemon.getMoveHistory().length).toBe(1);
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
@@ -108,7 +105,7 @@ describe("Moves - Focus Punch", () => {
     game.forceEnemyToSwitch();
     game.move.select(MoveId.FOCUS_PUNCH);
 
-    await game.phaseInterceptor.to(TurnStartPhase);
+    await game.phaseInterceptor.to("TurnStartPhase");
 
     expect(game.scene.phaseManager.getCurrentPhase() instanceof SwitchSummonPhase).toBeTruthy();
     expect(game.scene.phaseManager.hasPhaseOfType("MoveHeaderPhase")).toBe(true);

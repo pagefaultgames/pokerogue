@@ -3,11 +3,6 @@ import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { MoveEffectPhase } from "#phases/move-effect-phase";
-import { MoveEndPhase } from "#phases/move-end-phase";
-import { QuietFormChangePhase } from "#phases/quiet-form-change-phase";
-import { TurnEndPhase } from "#phases/turn-end-phase";
-import { TurnInitPhase } from "#phases/turn-init-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -38,7 +33,7 @@ describe("Abilities - Ice Face", () => {
 
     game.move.select(MoveId.TACKLE);
 
-    await game.phaseInterceptor.to(MoveEndPhase);
+    await game.phaseInterceptor.to("MoveEndPhase");
 
     const eiscue = game.field.getEnemyPokemon();
 
@@ -57,17 +52,17 @@ describe("Abilities - Ice Face", () => {
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeDefined();
 
     // First hit
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
     expect(eiscue.isFullHp()).toBe(true);
     expect(eiscue.formIndex).toBe(icefaceForm);
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeUndefined();
 
     // Second hit
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
     expect(eiscue.hp).lessThan(eiscue.getMaxHp());
     expect(eiscue.formIndex).toBe(noiceForm);
 
-    await game.phaseInterceptor.to(MoveEndPhase);
+    await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(eiscue.hp).lessThan(eiscue.getMaxHp());
     expect(eiscue.formIndex).toBe(noiceForm);
@@ -79,7 +74,7 @@ describe("Abilities - Ice Face", () => {
 
     game.move.select(MoveId.ICE_BEAM);
 
-    await game.phaseInterceptor.to(MoveEndPhase);
+    await game.phaseInterceptor.to("MoveEndPhase");
 
     const eiscue = game.field.getEnemyPokemon();
 
@@ -93,7 +88,7 @@ describe("Abilities - Ice Face", () => {
 
     game.move.select(MoveId.TOXIC_THREAD);
 
-    await game.phaseInterceptor.to(MoveEndPhase);
+    await game.phaseInterceptor.to("MoveEndPhase");
 
     const eiscue = game.field.getEnemyPokemon();
 
@@ -108,7 +103,7 @@ describe("Abilities - Ice Face", () => {
 
     game.move.select(MoveId.QUICK_ATTACK);
 
-    await game.phaseInterceptor.to(MoveEndPhase);
+    await game.phaseInterceptor.to("MoveEndPhase");
 
     const eiscue = game.field.getEnemyPokemon();
 
@@ -116,7 +111,7 @@ describe("Abilities - Ice Face", () => {
     expect(eiscue.formIndex).toBe(noiceForm);
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeUndefined();
 
-    await game.phaseInterceptor.to(MoveEndPhase);
+    await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).not.toBeNull();
     expect(eiscue.formIndex).toBe(icefaceForm);
@@ -129,7 +124,7 @@ describe("Abilities - Ice Face", () => {
 
     game.move.select(MoveId.SNOWSCAPE);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     let eiscue = game.field.getPlayerPokemon();
 
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeUndefined();
@@ -141,7 +136,7 @@ describe("Abilities - Ice Face", () => {
     await game.toNextTurn();
     game.doSwitchPokemon(1);
 
-    await game.phaseInterceptor.to(QuietFormChangePhase);
+    await game.phaseInterceptor.to("QuietFormChangePhase");
     eiscue = game.field.getPlayerPokemon();
 
     expect(eiscue.formIndex).toBe(icefaceForm);
@@ -156,12 +151,12 @@ describe("Abilities - Ice Face", () => {
     game.move.select(MoveId.HAIL);
     const eiscue = game.field.getPlayerPokemon();
 
-    await game.phaseInterceptor.to(QuietFormChangePhase);
+    await game.phaseInterceptor.to("QuietFormChangePhase");
 
     expect(eiscue.formIndex).toBe(noiceForm);
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeUndefined();
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(eiscue.formIndex).toBe(noiceForm);
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeUndefined();
@@ -174,7 +169,7 @@ describe("Abilities - Ice Face", () => {
 
     game.move.select(MoveId.ICE_BEAM);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     let eiscue = game.field.getPlayerPokemon();
 
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).toBeUndefined();
@@ -184,7 +179,7 @@ describe("Abilities - Ice Face", () => {
     await game.toNextTurn();
     game.doSwitchPokemon(1);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     eiscue = game.scene.getPlayerParty()[1];
 
     expect(eiscue.formIndex).toBe(noiceForm);
@@ -209,9 +204,9 @@ describe("Abilities - Ice Face", () => {
 
     game.move.select(MoveId.ICE_BEAM);
     await game.doKillOpponents();
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     game.doSelectModifier();
-    await game.phaseInterceptor.to(TurnInitPhase);
+    await game.phaseInterceptor.to("TurnInitPhase");
 
     expect(eiscue.formIndex).toBe(icefaceForm);
     expect(eiscue.getTag(BattlerTagType.ICE_FACE)).not.toBe(undefined);
@@ -235,7 +230,7 @@ describe("Abilities - Ice Face", () => {
 
     game.move.select(MoveId.GASTRO_ACID);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     const eiscue = game.field.getEnemyPokemon();
 
@@ -251,7 +246,7 @@ describe("Abilities - Ice Face", () => {
 
     game.move.select(MoveId.SKILL_SWAP);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     const eiscue = game.field.getEnemyPokemon();
 

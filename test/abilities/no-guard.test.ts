@@ -3,8 +3,7 @@ import { BattlerIndex } from "#enums/battler-index";
 import { HitCheckResult } from "#enums/hit-check-result";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { MoveEffectPhase } from "#phases/move-effect-phase";
-import { MoveEndPhase } from "#phases/move-end-phase";
+import type { MoveEffectPhase } from "#phases/move-effect-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -39,12 +38,12 @@ describe("Abilities - No Guard", () => {
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
-    await game.phaseInterceptor.to(MoveEffectPhase, false);
+    await game.phaseInterceptor.to("MoveEffectPhase", false);
 
     const moveEffectPhase = game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase;
     vi.spyOn(moveEffectPhase, "hitCheck");
 
-    await game.phaseInterceptor.to(MoveEndPhase);
+    await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(moveEffectPhase.hitCheck).toHaveReturnedWith([HitCheckResult.HIT, 1]);
   });

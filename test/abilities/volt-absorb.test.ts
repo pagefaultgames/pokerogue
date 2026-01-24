@@ -4,7 +4,6 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -42,7 +41,7 @@ describe("Abilities - Volt Absorb", () => {
 
     game.move.select(moveToUse);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(playerPokemon.getStatStage(Stat.SPDEF)).toBe(1);
     expect(playerPokemon.getTag(BattlerTagType.CHARGED)).toBeDefined();

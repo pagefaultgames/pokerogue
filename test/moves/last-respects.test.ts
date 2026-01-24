@@ -4,7 +4,6 @@ import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import type { Move } from "#moves/move";
-import { MoveEffectPhase } from "#phases/move-effect-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -61,7 +60,7 @@ describe("Moves - Last Respects", () => {
 
     game.move.select(MoveId.LAST_RESPECTS);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(move.calculateBattlePower).toHaveReturnedWith(basePower + 2 * 50);
   });
@@ -96,7 +95,7 @@ describe("Moves - Last Respects", () => {
 
     game.move.select(MoveId.LAST_RESPECTS);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(move.calculateBattlePower).toHaveReturnedWith(basePower + 3 * 50);
   });

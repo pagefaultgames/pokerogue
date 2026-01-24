@@ -3,7 +3,6 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -53,7 +52,7 @@ describe("Moves - Torment", () => {
     // Third turn, Tackle can be used.
     game.move.select(MoveId.TACKLE);
     await game.move.selectEnemyMove(MoveId.SPLASH);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     const move3 = playerPokemon.getLastXMoves(1)[0]!;
     expect(move3.move).toBe(MoveId.TACKLE);
   });

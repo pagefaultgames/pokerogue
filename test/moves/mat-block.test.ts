@@ -3,9 +3,6 @@ import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { BerryPhase } from "#phases/berry-phase";
-import { CommandPhase } from "#phases/command-phase";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import i18next from "i18next";
 import Phaser from "phaser";
@@ -42,7 +39,7 @@ describe("Moves - Mat Block", () => {
     game.move.select(MoveId.MAT_BLOCK);
     game.move.select(MoveId.SPLASH, 1);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
 
     leadPokemon.forEach(p => expect(p.hp).toBe(p.getMaxHp()));
     expect(game.textInterceptor.logs).toContain(
@@ -62,7 +59,7 @@ describe("Moves - Mat Block", () => {
     game.move.select(MoveId.MAT_BLOCK);
     game.move.select(MoveId.SPLASH, 1);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
 
     leadPokemon.forEach(p => expect(p.getStatStage(Stat.ATK)).toBe(-2));
   });
@@ -75,15 +72,15 @@ describe("Moves - Mat Block", () => {
     game.move.select(MoveId.SPLASH);
     game.move.select(MoveId.SPLASH, 1);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     const leadStartingHp = leadPokemon.map(p => p.hp);
 
-    await game.phaseInterceptor.to(CommandPhase, false);
+    await game.phaseInterceptor.to("CommandPhase", false);
     game.move.select(MoveId.MAT_BLOCK);
     game.move.select(MoveId.MAT_BLOCK, 1);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(leadPokemon.some((p, i) => p.hp < leadStartingHp[i])).toBeTruthy();
   });

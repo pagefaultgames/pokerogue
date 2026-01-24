@@ -44,7 +44,7 @@ describe("SelectModifierPhase", () => {
     initSceneWithoutEncounterPhase(scene, [SpeciesId.ABRA, SpeciesId.VOLCARONA]);
     const selectModifierPhase = new SelectModifierPhase();
     scene.phaseManager.unshiftPhase(selectModifierPhase);
-    await game.phaseInterceptor.to(SelectModifierPhase);
+    await game.phaseInterceptor.to("SelectModifierPhase");
 
     expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
   });
