@@ -12,7 +12,7 @@ import { TurnInitPhase } from "#phases/turn-init-phase";
 import { generateStarters } from "#test/test-utils/game-manager-utils";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
 
-type challengeStub = { id: Challenges; value: number; severity: number };
+type ChallengeStub = { id: Challenges; value: number; severity: number };
 
 /**
  * Helper to handle Challenge mode specifics
@@ -128,8 +128,8 @@ export class ChallengeModeHelper extends GameManagerHelper {
    * Override an already-started game with the given challenges.
    * @param challenges - One or more challenges to set.
    */
-  public overrideGameWithChallenges(challenges: challengeStub[]): void;
-  public overrideGameWithChallenges(challenges: challengeStub[] | Challenges, value?: number, severity?: number): void {
+  public overrideGameWithChallenges(challenges: ChallengeStub[]): void;
+  public overrideGameWithChallenges(challenges: ChallengeStub[] | Challenges, value?: number, severity?: number): void {
     if (typeof challenges !== "object") {
       challenges = [{ id: challenges, value: value!, severity: severity! }];
     }
