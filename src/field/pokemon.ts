@@ -3650,7 +3650,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param __namedParameters.source - Needed for proper typedoc rendering
    * @returns The {@linkcode DamageCalculationResult}
    */
-  // TODO: Condense various multipliers into a single function
+  // TODO: Condense various multipliers into a single function for easier unit testing
   getAttackDamage({
     source,
     move,
@@ -4465,7 +4465,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!this.isOnField()) {
       return;
     }
-    turnMove.turn = globalScene.currentBattle?.turn;
     this.getMoveHistory().push(turnMove);
   }
 

@@ -105,6 +105,12 @@ export class SettingsDisplayUiHandler extends AbstractSettingsUiHandler {
             label: "Русский (Needs Help)",
           };
           break;
+        case "uk":
+          this.settings[languageIndex].options[0] = {
+            value: "Українська",
+            label: "Українська (Needs Help)",
+          };
+          break;
         case "id":
           this.settings[languageIndex].options[0] = {
             value: "Bahasa Indonesia",

@@ -1,4 +1,6 @@
 import type { BattleScene } from "#app/battle-scene";
+import { BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/constants";
+import { BattleType } from "#enums/battle-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
@@ -55,5 +57,21 @@ describe("Mystery Encounters", () => {
     await game.runToMysteryEncounter();
 
     expect(scene.currentBattle.mysteryEncounter).toBeUndefined();
+  });
+
+  it("increases by WEIGHT_INCREMENT_ON_SPAWN_MISS for a failed encounter chance", async () => {
+    game.override.mysteryEncounterChance(0).battleType(BattleType.WILD);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+
+    expect(scene.mysteryEncounterSaveData.encounterSpawnChance).toBe(
+      BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WEIGHT_INCREMENT_ON_SPAWN_MISS,
+    );
+  });
+
+  it("does not increases in chance when an encounter was not possible", async () => {
+    game.override.mysteryEncounterChance(0).battleType(BattleType.TRAINER);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+
+    expect(scene.mysteryEncounterSaveData.encounterSpawnChance).toBe(BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT);
   });
 });

@@ -26,17 +26,13 @@ export class MenuManip {
 
   // TODO: Review this
   convertNameToButtonString(input: SettingKeyboard) {
-    // Check if the input starts with "Alt_Button"
-    if (input.startsWith("Alt_Button")) {
-      // Return the last part in uppercase
+    if (input.startsWith("ALT_BUTTON")) {
       // Bang is fine as we already match on `_`
       return input.split("_").pop()!.toUpperCase();
     }
 
-    // Split the input string by underscore
     const parts = input.split("_");
 
-    // Skip the first part and join the rest with an underscore
     const result = parts
       .slice(1)
       .map(part => part.toUpperCase())
@@ -46,8 +42,8 @@ export class MenuManip {
   }
 
   whenCursorIsOnSetting(settingName: string) {
-    if (!settingName.includes("Button_")) {
-      settingName = "Button_" + settingName;
+    if (!settingName.includes("BUTTON_")) {
+      settingName = "BUTTON_" + settingName;
     }
     this.settingName = SettingKeyboard[settingName as keyof typeof SettingKeyboard];
     return this;

@@ -109,6 +109,7 @@ const noTransitionModes = [
   UiMode.CHANGE_PASSWORD_FORM,
 ];
 
+// biome-ignore lint/style/useNamingConvention: a unique case (only 2 letters)
 export class UI extends Phaser.GameObjects.Container {
   private mode: UiMode;
   private modeChain: UiMode[];

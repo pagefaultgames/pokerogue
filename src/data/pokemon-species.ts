@@ -440,19 +440,22 @@ export abstract class PokemonSpeciesForm {
         case SpeciesFormKey.MEGA:
         case SpeciesFormKey.MEGA_X:
         case SpeciesFormKey.MEGA_Y:
+        case SpeciesFormKey.PRIMAL:
         case SpeciesFormKey.GIGANTAMAX:
         case SpeciesFormKey.GIGANTAMAX_SINGLE:
         case SpeciesFormKey.GIGANTAMAX_RAPID:
+        case SpeciesFormKey.ETERNAMAX:
         case "white":
         case "black":
         case "therian":
         case "sky":
         case "gorging":
         case "gulping":
+        case "lowkey":
         case "no-ice":
         case "hangry":
         case "crowned":
-        case "eternamax":
+        case "rapid-strike":
         case "four":
         case "droopy":
         case "stretchy":
@@ -475,6 +478,14 @@ export abstract class PokemonSpeciesForm {
         case "ultra":
           ret += `-${formKey}`;
           break;
+      }
+      switch (this.speciesId) {
+        case SpeciesId.INDEEDEE:
+        case SpeciesId.OINKOLOGNE:
+          if (formKey === "female") {
+            ret += `-${formKey}`;
+            break;
+          }
       }
     }
     return `cry/${ret}`;
