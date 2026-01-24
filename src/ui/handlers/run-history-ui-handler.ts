@@ -300,8 +300,9 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
           TextStyle.WINDOW,
         );
         enemyContainer.add(gameOutcomeLabel);
+        const textWidth = gameOutcomeLabel.displayWidth;
         data.enemyParty.forEach((enemyData, e) => {
-          const enemyIconContainer = globalScene.add.container(65 + e * 25, -8);
+          const enemyIconContainer = globalScene.add.container(textWidth + e * 25, -8);
           enemyIconContainer.setScale(0.75);
           enemyData.boss = false;
           enemyData["player"] = true;
