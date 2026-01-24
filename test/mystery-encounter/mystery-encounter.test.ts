@@ -60,7 +60,7 @@ describe("Mystery Encounters", () => {
 
   it("increases by WEIGHT_INCREMENT_ON_SPAWN_MISS for a failed encounter chance", async () => {
     game.override.mysteryEncounterChance(0).battleType(BattleType.WILD);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     expect(scene.mysteryEncounterSaveData.encounterSpawnChance).toBe(
       BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WEIGHT_INCREMENT_ON_SPAWN_MISS,
@@ -69,7 +69,7 @@ describe("Mystery Encounters", () => {
 
   it("does not increases in chance when an encounter was not possible", async () => {
     game.override.mysteryEncounterChance(0).battleType(BattleType.TRAINER);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     expect(scene.mysteryEncounterSaveData.encounterSpawnChance).toBe(BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT);
   });
