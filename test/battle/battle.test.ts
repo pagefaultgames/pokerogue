@@ -163,7 +163,7 @@ describe("Phase - Battle Phase", () => {
       .enemyMoveset(MoveId.SPLASH)
       .startingHeldItems([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC }]);
 
-    await game.classicMode.startBattle(SpeciesId.SAWK);
+    await game.classicMode.startBattle(SpeciesId.SAWK, SpeciesId.FEEBAS);
     game.field.getPlayerPokemon().hp = 1;
     game.move.select(moveToUse);
 
