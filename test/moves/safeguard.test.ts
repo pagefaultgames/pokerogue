@@ -67,7 +67,7 @@ describe("Moves - Safeguard", () => {
   it("protects ally from status", async () => {
     game.override.battleStyle("double");
 
-    await game.classicMode.startBattle(SpeciesId.DRATINI);
+    await game.classicMode.startBattle(SpeciesId.DRATINI, SpeciesId.DRATINI);
 
     game.move.select(MoveId.SPORE, 0, BattlerIndex.ENEMY_2);
     game.move.select(MoveId.NUZZLE, 1, BattlerIndex.ENEMY_2);
