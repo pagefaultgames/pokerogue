@@ -14,7 +14,7 @@ import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe.each<{ moveId: MoveId; moveName: string }>([
   { moveId: MoveId.RAPID_SPIN, moveName: "Rapid Spin" },
@@ -27,10 +27,6 @@ describe.each<{ moveId: MoveId; moveName: string }>([
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(async () => {
@@ -60,8 +56,8 @@ describe.each<{ moveId: MoveId; moveName: string }>([
     game.move.use(moveId);
     await game.toEndOfTurn();
 
-    expect(game).not.toHaveArenaTag({ tagType, side: ArenaTagSide.PLAYER });
-    expect(game).toHaveArenaTag({ tagType, side: ArenaTagSide.ENEMY });
+    expect(game).not.toHaveArenaTag(tagType, ArenaTagSide.PLAYER);
+    expect(game).toHaveArenaTag(tagType, ArenaTagSide.ENEMY);
   });
 
   it.each<{ tagType: BattlerTagType; tagName: string }>([

@@ -6,7 +6,7 @@ import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Fishious Rend & Bolt Beak", () => {
   let phaserGame: Phaser.Game;
@@ -16,10 +16,6 @@ describe("Moves - Fishious Rend & Bolt Beak", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -107,7 +103,6 @@ describe("Moves - Fishious Rend & Bolt Beak", () => {
     enemy.pushMoveHistory({
       move: MoveId.SPLASH,
       targets: [BattlerIndex.ENEMY],
-      turn: game.scene.currentBattle.turn - 1,
       useMode: MoveUseMode.NORMAL,
     });
 

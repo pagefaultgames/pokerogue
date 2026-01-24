@@ -8,6 +8,7 @@ import { DefaultReporter } from "vitest/reporters";
 /**
  * Custom Vitest reporter to strip the current file names from the output.
  */
+// biome-ignore lint/style/noDefaultExport: Required by Vitest
 export default class CustomDefaultReporter extends DefaultReporter {
   public override onUserConsoleLog(log: UserConsoleLog, taskState?: TestState): void {
     // This code is more or less copied verbatim from `vitest/reporters` source, with minor tweaks to use

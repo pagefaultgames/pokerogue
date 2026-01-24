@@ -15,7 +15,7 @@ import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Move - Feint", () => {
   let phaserGame: Phaser.Game;
@@ -25,10 +25,6 @@ describe("Move - Feint", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(async () => {
@@ -56,7 +52,7 @@ describe("Move - Feint", () => {
     await game.move.forceEnemyMove(moveId);
     await game.toEndOfTurn();
 
-    expect(game).not.toHaveArenaTag({ tagType, side: ArenaTagSide.ENEMY });
+    expect(game).not.toHaveArenaTag(tagType, ArenaTagSide.ENEMY);
     expect(game.field.getEnemyPokemon()).not.toHaveFullHp();
   });
 
@@ -73,7 +69,7 @@ describe("Move - Feint", () => {
     game.move.use(moveId, BattlerIndex.PLAYER_2);
     await game.toEndOfTurn();
 
-    expect(game).not.toHaveArenaTag({ tagType, side: ArenaTagSide.PLAYER });
+    expect(game).not.toHaveArenaTag(tagType, ArenaTagSide.PLAYER);
     expect(game.field.getPlayerParty()[1]).not.toHaveFullHp();
   });
 
