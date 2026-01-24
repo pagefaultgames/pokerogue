@@ -749,7 +749,7 @@ export class SingleGenerationChallenge extends Challenge {
   }
 }
 
-interface monotypeOverride {
+interface MonotypeOverride {
   /** The species to override */
   species: SpeciesId;
   /** The type to count as */
@@ -768,7 +768,7 @@ export class SingleTypeChallenge extends Challenge {
     // and we shift it by 1 for the specific type.
     return this.value ? ((RibbonData.MONO_NORMAL << (BigInt(this.value) - 1n)) as RibbonFlag) : 0n;
   }
-  private static TYPE_OVERRIDES: monotypeOverride[] = [
+  private static TYPE_OVERRIDES: MonotypeOverride[] = [
     { species: SpeciesId.CASTFORM, type: PokemonType.NORMAL, fusion: false },
   ];
   // TODO: Find a solution for all Pokemon with this ssui issue, including Basculin and Burmy

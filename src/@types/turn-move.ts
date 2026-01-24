@@ -9,5 +9,4 @@ export interface TurnMove {
   targets: BattlerIndex[];
   useMode: MoveUseMode;
   result?: MoveResult | undefined;
-  turn?: number | undefined;
 }

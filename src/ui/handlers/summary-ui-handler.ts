@@ -53,7 +53,7 @@ export enum SummaryUiMode {
 }
 
 /** Holds all objects related to an ability for each iteration */
-interface abilityContainer {
+interface AbilityContainer {
   /** An image displaying the summary label */
   labelImage: Phaser.GameObjects.Image;
   /** The ability object */
@@ -90,9 +90,9 @@ export class SummaryUiHandler extends UiHandler {
   /** The pixel button prompt indicating a passive is unlocked */
   private abilityPrompt: Phaser.GameObjects.Image;
   /** Object holding everything needed to display an ability */
-  private abilityContainer: abilityContainer;
+  private abilityContainer: AbilityContainer;
   /** Object holding everything needed to display a passive */
-  private passiveContainer: abilityContainer;
+  private passiveContainer: AbilityContainer;
   private summaryPageContainer: Phaser.GameObjects.Container;
   private movesContainer: Phaser.GameObjects.Container;
   private movesContainerMovesTitle: Phaser.GameObjects.Image;

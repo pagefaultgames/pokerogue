@@ -341,7 +341,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
 
     this.eggGachaContainer.setActive(true).setVisible(true);
 
-    handleTutorial(Tutorial.Egg_Gacha);
+    handleTutorial(Tutorial.EGG_GACHA);
 
     this.legendaryExpiration.setText(this.getLegendaryGachaTimeLeft());
     this.legendaryGachaTimer();
