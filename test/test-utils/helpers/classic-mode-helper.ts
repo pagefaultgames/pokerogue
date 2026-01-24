@@ -16,14 +16,14 @@ import type { IntClosedRange, TupleOf } from "type-fest";
  */
 export class ClassicModeHelper extends GameManagerHelper {
   /**
-   * Run the classic game to the summon phase.
-   * @param speciesIds - An array of {@linkcode SpeciesId} to summon
+   * Transition from the title screen to the summon phase of a new Classic game.
+   * @param speciesIds - The {@linkcode SpeciesId}s to summon; must be between 1-6
    * @returns A Promise that resolves when the summon phase is reached.
-   * @remarks
-   * Normally you should use `startBattle` instead, only use this if you need
-   * to do something before the `CommandPhase` starts.
+   * @privateRemarks
+   * {@linkcode startBattle} is the preferred way to start a battle; this should only be used for tests
+   * that need to stop and do something before the `CommandPhase` starts.
    */
-  public async runToSummon(...speciesIds: TupleOf<1 | 2 | 3 | 4 | 5 | 6, SpeciesId>): Promise<void> {
+  public async runToSummon(...speciesIds: TupleOf<IntClosedRange<1, 6>, SpeciesId>): Promise<void> {
     await this.game.runToTitle();
 
     if (this.game.override.disableShinies) {
@@ -51,11 +51,11 @@ export class ClassicModeHelper extends GameManagerHelper {
   }
 
   /**
-   * Transitions to the start of a battle.
-   * @param speciesIds - An array of {@linkcode SpeciesId}s with which to start the battle
+   * Transition from the title screen to the start of a new Classic Mode battle.
+   * @param speciesIds - The {@linkcode SpeciesId}s with which to start the battle; must be between 1-6
    * @returns A Promise that resolves when the battle is started.
    */
-  public async startBattle(...speciesIds: TupleOf<1 | 2 | 3 | 4 | 5 | 6, SpeciesId>): Promise<void> {
+  public async startBattle(...speciesIds: TupleOf<IntClosedRange<1, 6>, SpeciesId>): Promise<void> {
     await this.runToSummon(...speciesIds);
 
     if (this.game.scene.battleStyle === BattleStyle.SWITCH) {
