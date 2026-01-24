@@ -5,8 +5,9 @@ import { PokeballType } from "#enums/pokeball";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
+// TODO: Rework and re-enable once Illusion is implemented again, however that may be
 describe.todo("Abilities - Illusion", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -15,10 +16,6 @@ describe.todo("Abilities - Illusion", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -146,7 +143,7 @@ describe.todo("Abilities - Illusion", () => {
     const zoroark = game.field.getPlayerPokemon();
 
     expect(zoroark.summonData.illusion?.name).equals("Axew");
-    expect(zoroark.getNameToRender(true)).equals("axew nickname");
+    expect(zoroark.getNameToRender()).equals("axew nickname");
     expect(zoroark.getGender(false, true)).equals(Gender.FEMALE);
     expect(zoroark.isShiny(true)).equals(true);
     expect(zoroark.getPokeball(true)).equals(PokeballType.GREAT_BALL);

@@ -1532,7 +1532,7 @@ export class SuppressAbilitiesTag extends SerializableArenaTag {
       // Could have a custom message that plays when a specific pokemon's NG ends? This entire thing exists due to passives after all
       const setter = globalScene
         .getField(true)
-        .filter(p => p.hasAbilityWithAttr("PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr", false))[0];
+        .find(p => p.hasAbilityWithAttr("PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr", false));
       // Setter may not exist if both NG Pokemon faint simultaneously
       if (setter == null) {
         return;

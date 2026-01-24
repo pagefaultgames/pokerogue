@@ -81,7 +81,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
     let pokemonIconX = -20;
     let pokemonIconY = 6;
 
-    if (["de", "es-ES", "es-419", "fr", "ko", "pt-BR", "ja", "ru", "tr"].includes(currentLanguage)) {
+    if (["de", "es-ES", "es-419", "fr", "ko", "pt-BR", "ja", "ru", "uk", "tr"].includes(currentLanguage)) {
       gachaTextStyle = TextStyle.SMALLER_WINDOW_ALT;
       gachaX = 2;
       gachaY = 2;
@@ -119,14 +119,14 @@ export class EggGachaUiHandler extends MessageUiHandler {
         }
         break;
       case GachaType.MOVE:
-        if (["de", "es-ES", "fr", "pt-BR", "ru", "tr"].includes(currentLanguage)) {
+        if (["de", "es-ES", "fr", "pt-BR", "ru", "uk", "tr"].includes(currentLanguage)) {
           gachaUpLabel.setAlign("center").setY(0);
         }
 
         gachaUpLabel.setText(i18next.t("egg:moveUpGacha")).setX(0).setOrigin(0.5, 0);
         break;
       case GachaType.SHINY:
-        if (["de", "fr", "ko", "ru", "tr"].includes(currentLanguage)) {
+        if (["de", "fr", "ko", "ru", "uk", "tr"].includes(currentLanguage)) {
           gachaUpLabel.setAlign("center").setY(0);
         }
 
@@ -203,6 +203,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
     let eggGachaOptionSelectWidth = 0;
     switch (i18next.resolvedLanguage) {
       case "ru":
+      case "uk":
         eggGachaOptionSelectWidth = 100;
         break;
       default:
@@ -587,7 +588,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
 
           const eggText = addTextObject(0, 14, egg.getEggDescriptor(), TextStyle.PARTY, { align: "center" });
           eggText.setOrigin(0.5, 0);
-          eggText.setTint(getEggTierTextTint(!egg.isManaphyEgg() ? egg.tier : EggTier.EPIC));
+          eggText.setTint(getEggTierTextTint(egg.isManaphyEgg() ? EggTier.EPIC : egg.tier));
           ret.add(eggText);
 
           this.eggGachaSummaryContainer.addAt(ret, 0);
@@ -597,7 +598,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
         // If action/cancel was pressed when the overlay was easing in, show all eggs at once
         // Otherwise show the eggs one by one with a small delay between each
         eggContainers.forEach((eggContainer, index) => {
-          const delay = !this.transitionCancelled ? this.getDelayValue(index * 100) : 0;
+          const delay = this.transitionCancelled ? 0 : this.getDelayValue(index * 100);
           globalScene.time.delayedCall(delay, () =>
             globalScene.tweens.add({
               targets: eggContainer,

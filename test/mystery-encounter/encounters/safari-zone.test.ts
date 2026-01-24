@@ -16,7 +16,7 @@ import {
 } from "#test/mystery-encounter/encounter-test-utils";
 import { GameManager } from "#test/test-utils/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/safariZone";
 const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
@@ -48,10 +48,6 @@ describe("Safari Zone - Mystery Encounter", () => {
       [BiomeId.JUNGLE, [MysteryEncounterType.SAFARI_ZONE]],
     ]);
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(biomeMap);
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   it("should have the correct properties", async () => {
@@ -132,7 +128,7 @@ describe("Safari Zone - Mystery Encounter", () => {
       vi.spyOn(Phaser.Math.RND, "realInRange").mockImplementation((min: number, max: number) => {
         return rngSweepProgress * (max - min) + min;
       });
-      vi.spyOn(Phaser.Math.RND, "shuffle").mockImplementation((arr: any[]) => arr);
+      vi.spyOn(Phaser.Math.RND, "shuffle").mockImplementation(<T>(arr: T[] | undefined): T[] => arr!);
 
       for (let i = 0; i < NUM_ROLLS; i++) {
         rngSweepProgress = (2 * i + 1) / (2 * NUM_ROLLS);

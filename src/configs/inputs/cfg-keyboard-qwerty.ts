@@ -1,7 +1,8 @@
 import { Button } from "#enums/buttons";
 import { SettingKeyboard } from "#system/settings-keyboard";
+import type { KeyboardConfig } from "#types/configs/inputs";
 
-const cfg_keyboard_qwerty = {
+export const CFG_KEYBOARD_QWERTY: KeyboardConfig = {
   padID: "default",
   padType: "keyboard",
   deviceMapping: {
@@ -292,6 +293,10 @@ const cfg_keyboard_qwerty = {
     KEY_RIGHT_BRACKET: -1,
     KEY_SEMICOLON: -1,
     KEY_ALT: -1,
+    KEY_COMMA: -1,
+    KEY_PERIOD: -1,
+    KEY_BACK_SLASH: -1,
+    KEY_FORWARD_SLASH: -1,
   },
   blacklist: [
     "KEY_ENTER",
@@ -306,5 +311,3 @@ const cfg_keyboard_qwerty = {
     "KEY_HOME",
   ],
 };
-
-export default cfg_keyboard_qwerty;

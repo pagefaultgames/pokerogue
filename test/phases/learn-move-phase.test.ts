@@ -5,7 +5,7 @@ import { UiMode } from "#enums/ui-mode";
 import { LearnMovePhase } from "#phases/learn-move-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Learn Move Phase", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +15,6 @@ describe("Learn Move Phase", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {

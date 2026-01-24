@@ -2,7 +2,7 @@ import type { FixedBattleConfig } from "#app/battle";
 import { getRandomTrainerFunc } from "#app/battle";
 import { globalScene } from "#app/global-scene";
 import { defaultStarterSpeciesAndEvolutions } from "#balance/pokemon-evolutions";
-import { speciesStarterCosts } from "#balance/starters";
+import { type StarterSpeciesId, speciesStarterCosts } from "#balance/starters";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { AbilityAttr } from "#enums/ability-attr";
 import { BattleType } from "#enums/battle-type";
@@ -867,7 +867,7 @@ export class FreshStartChallenge extends Challenge {
     return false;
   }
 
-  applyStarterCost(species: SpeciesId, cost: NumberHolder): boolean {
+  applyStarterCost(species: StarterSpeciesId, cost: NumberHolder): boolean {
     cost.value = speciesStarterCosts[species];
     return true;
   }

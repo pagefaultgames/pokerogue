@@ -1,7 +1,7 @@
 import "#app/polyfills"; // All polyfills MUST be loaded first for side effects
+import "#plugins/i18n"; // Initializes i18n on import
 
 import { InvertPostFX } from "#app/pipelines/invert";
-import { initI18n } from "#app/plugins/i18n";
 import { isBeta, isDev } from "#constants/app-constants";
 import { version } from "#package.json";
 import Phaser from "phaser";
@@ -31,7 +31,6 @@ window.addEventListener("unhandledrejection", event => {
 });
 
 async function startGame(gameManifest?: Record<string, string>): Promise<void> {
-  await initI18n();
   const LoadingScene = (await import("./loading-scene")).LoadingScene;
   const BattleScene = (await import("./battle-scene")).BattleScene;
   const game = new Phaser.Game({
