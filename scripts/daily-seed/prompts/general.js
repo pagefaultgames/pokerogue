@@ -5,12 +5,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { input, number, select } from "@inquirer/prompts";
+import { input, number, search, select } from "@inquirer/prompts";
 import { Ajv } from "ajv";
 import chalk from "chalk";
 import customDailyRunSchema from "../../../src/data/daily-seed/schema.json" with { type: "json" };
+import { BIOMES } from "../../enums/biomes.js";
 import { toTitleCase, toUpperSnakeCase } from "../../helpers/casing.js";
-import { BIOME_POOL_TIERS, BIOMES } from "../constants.js";
+import { BIOME_POOL_TIERS } from "../constants.js";
 import { promptSpeciesId } from "./pokemon.js";
 
 /**
@@ -64,12 +65,18 @@ export async function promptLuck() {
  * @returns {Promise<number>} A Promise that resolves with the chosen biome.
  */
 export async function promptBiome() {
-  const biome = await select({
+  const biomeName = await search({
     message: "Please enter the starting biome to set.",
-    choices: [...Object.keys(BIOMES).map(toTitleCase)],
-    pageSize: 10,
+    source: term => {
+      const biomes = Object.keys(BIOMES).map(toTitleCase);
+      if (!term) {
+        return biomes;
+      }
+      return biomes.filter(id => id.toLowerCase().includes(term.toLowerCase()));
+    },
   });
-  return BIOMES[/** @type {keyof typeof BIOMES} */ (toUpperSnakeCase(biome))];
+  const biomeId = BIOMES[/** @type {keyof typeof BIOMES} */ (toUpperSnakeCase(biomeName))];
+  return biomeId;
 }
 
 /**
