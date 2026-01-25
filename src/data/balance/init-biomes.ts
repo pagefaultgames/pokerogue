@@ -5929,9 +5929,9 @@ export function initBiomes() {
       uncatchableSpecies.push(speciesId);
     }
 
-    type mutableSpecies = Mutable<typeof catchableSpecies[SpeciesId]>;
+    type MutableSpecies = Mutable<typeof catchableSpecies[SpeciesId]>;
     // array of biome options for the current species
-    (catchableSpecies[speciesId] as mutableSpecies) = [];
+    (catchableSpecies[speciesId] as MutableSpecies) = [];
 
     for (const b of biomeEntries) {
       const biome = b[0];
@@ -5942,7 +5942,7 @@ export function initBiomes() {
           : [b[2]]
         : [TimeOfDay.ALL];
 
-      (catchableSpecies[speciesId] as mutableSpecies).push({
+      (catchableSpecies[speciesId] as MutableSpecies).push({
         biome: biome as BiomeId,
         tier: tier as BiomePoolTier,
         tod: timesOfDay as TimeOfDay[]

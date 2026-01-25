@@ -1,9 +1,12 @@
+minimumReleaseAge: 1440
+
 onlyBuiltDependencies:
   - core-js
   - esbuild
   - lefthook
   - msw
 
-shellEmulator: true
+overrides:
+  undici@<6.23.0: '>=6.23.0'
 
-minimumReleaseAge: 1440
+shellEmulator: true
