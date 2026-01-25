@@ -3692,8 +3692,6 @@ export class SuppressWeatherEffectAbAttr extends PreWeatherEffectAbAttr {
 }
 
 /**
- * Ability attribute used by {@linkcode AbilityId.FOREWARN}.
- * @remarks
  * Displays a message on switch-in containing the highest power Move known by the user's opponents,
  * picking randomly in the case of a tie.
  *
