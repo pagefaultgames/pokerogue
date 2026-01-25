@@ -4,10 +4,10 @@ import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
-import { MovePhase } from "#phases/move-phase";
+import type { MovePhase } from "#phases/move-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - After You", () => {
   let phaserGame: Phaser.Game;
@@ -17,10 +17,6 @@ describe("Moves - After You", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -36,13 +32,13 @@ describe("Moves - After You", () => {
   });
 
   it("makes the target move immediately after the user", async () => {
-    await game.classicMode.startBattle([SpeciesId.REGIELEKI, SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.REGIELEKI, SpeciesId.SHUCKLE);
 
     game.move.select(MoveId.AFTER_YOU, 0, BattlerIndex.PLAYER_2);
     game.move.select(MoveId.SPLASH, 1);
 
     await game.phaseInterceptor.to("MoveEffectPhase");
-    await game.phaseInterceptor.to(MovePhase, false);
+    await game.phaseInterceptor.to("MovePhase", false);
     const phase = game.scene.phaseManager.getCurrentPhase() as MovePhase;
     expect(phase.pokemon).toBe(game.scene.getPlayerField()[1]);
     await game.phaseInterceptor.to("MoveEndPhase");
@@ -50,14 +46,14 @@ describe("Moves - After You", () => {
 
   it("fails if target already moved", async () => {
     game.override.enemySpecies(SpeciesId.SHUCKLE);
-    await game.classicMode.startBattle([SpeciesId.REGIELEKI, SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.REGIELEKI, SpeciesId.PIKACHU);
 
     game.move.select(MoveId.SPLASH);
     game.move.select(MoveId.AFTER_YOU, 1, BattlerIndex.PLAYER);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.phaseInterceptor.to("MoveEndPhase");
-    await game.phaseInterceptor.to(MovePhase);
+    await game.phaseInterceptor.to("MovePhase");
 
     expect(game.scene.getPlayerField()[1].getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
   });
@@ -67,7 +63,7 @@ describe("Moves - After You", () => {
   // within `MovePhase`, but should be enabled once that jank is removed
   it.todo("should maintain PP ignore status of rampaging moves", async () => {
     game.override.moveset([]);
-    await game.classicMode.startBattle([SpeciesId.ACCELGOR, SpeciesId.RATTATA]);
+    await game.classicMode.startBattle(SpeciesId.ACCELGOR, SpeciesId.RATTATA);
 
     const [accelgor, rattata] = game.scene.getPlayerField();
     expect(accelgor).toBeDefined();

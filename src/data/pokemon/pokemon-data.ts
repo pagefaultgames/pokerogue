@@ -11,6 +11,8 @@ import type { Nature } from "#enums/nature";
 import type { PokemonType } from "#enums/pokemon-type";
 import type { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
+// biome-ignore lint/correctness/noUnusedImports: TSDoc
+import type { Pokemon } from "#field/pokemon";
 import type { AttackMoveResult } from "#types/attack-move-result";
 import type { IllusionData } from "#types/illusion-data";
 import type { SerializedSpeciesForm } from "#types/pokemon-common";
@@ -89,7 +91,6 @@ interface SerializedPokemonSummonData {
   types: PokemonType[];
   addedType?: PokemonType;
   illusion?: SerializedIllusionData;
-  illusionBroken: boolean;
   berriesEatenLast: BerryType[];
   moveHistory: TurnMove[];
 }
@@ -113,7 +114,7 @@ export class PokemonSummonData {
   public tags: BattlerTag[] = [];
   public abilitySuppressed = false;
 
-  // Overrides for transform.
+  // Overrides for transform and company.
   // TODO: Move these into a separate class & add rage fist hit count
   public speciesForm: PokemonSpeciesForm | null = null;
   public fusionSpeciesForm: PokemonSpeciesForm | null = null;
@@ -129,14 +130,6 @@ export class PokemonSummonData {
 
   /** Data pertaining to this pokemon's Illusion, if it has one. */
   public illusion: IllusionData | null = null;
-  /**
-   * Whether this Pokemon's illusion has been broken since switching out.
-   * @defaultValue `false`
-   */
-  // TODO: Since Illusion applies on switch in, and this entire class is reset on switch-in,
-  // this may be replaceable with a check for `pokemon.summonData.illusionData !== null`
-  public illusionBroken = false;
-
   /** Array containing all berries eaten in the last turn; used by {@linkcode AbilityId.CUD_CHEW} */
   public berriesEatenLast: BerryType[] = [];
 
@@ -296,6 +289,7 @@ export class PokemonWaveData {
    */
   public abilitiesApplied: Set<AbilityId> = new Set<AbilityId>();
   /** Whether the pokemon's ability has been revealed or not */
+  // TODO: this doesn't account for passives
   public abilityRevealed = false;
 }
 

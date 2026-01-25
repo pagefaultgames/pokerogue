@@ -2,7 +2,8 @@
  * A collection of custom utility types that aid in type checking and ensuring strict type conformity
  */
 
-import type { AbAttr } from "#abilities/ability";
+import type { AbAttr } from "#abilities/ab-attrs";
+import type { NegativeInfinity, PositiveInfinity } from "type-fest";
 
 /**
  * Exactly matches the type of the argument, preventing adding additional properties.
@@ -112,6 +113,41 @@ export type AtLeastOne<T extends object> = Partial<T> & ObjectValues<{ [K in key
  * @remarks
  * Brands should be either a string or unique symbol. This prevents overlap with other types.
  */
-export declare class Brander<B> {
+export declare class Brander<B extends string | symbol> {
   private __brand: B;
 }
+
+/**
+ * Negate a number, converting its sign from positive to negative or vice versa.
+ * @typeParam N - The number to negate
+ * @privateRemarks
+ * This should be used sparingly due to being slow for TypeScript to validate. \
+ * Moreover, `tsc`'s limitations on "round-tripping" of numbers inside template literals
+ * will cause this to fail for numbers not already in "simplest form"
+ * (cf. https://github.com/microsoft/TypeScript/issues/57404).
+ */
+export type Negate<N extends number> =
+  // Handle edge cases
+  number extends N
+    ? number
+    : N extends 0
+      ? 0
+      : N extends PositiveInfinity
+        ? NegativeInfinity
+        : N extends NegativeInfinity
+          ? PositiveInfinity
+          : // Handle negative numbers
+            `${N}` extends `-${infer P extends number}`
+            ? P
+            : // Handle positive numbers
+              `-${N}` extends `${infer R extends number}`
+              ? R
+              : number;
+
+/** Extract the required keys from an object that has optional ones */
+export type RequiredKeys<T> = {
+  [K in keyof T]-?: object extends Pick<T, K> ? never : K;
+}[keyof T];
+
+/** Pick from `T` the set of required properties  */
+export type OnlyRequired<T> = Pick<T, RequiredKeys<T>>;

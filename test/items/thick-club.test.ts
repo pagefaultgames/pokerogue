@@ -6,7 +6,7 @@ import { GameManager } from "#test/test-utils/game-manager";
 import { NumberHolder, randInt } from "#utils/common";
 import i18next from "i18next";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Items - Thick Club", () => {
   let phaserGame: Phaser.Game;
@@ -18,10 +18,6 @@ describe("Items - Thick Club", () => {
     });
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
@@ -31,7 +27,7 @@ describe("Items - Thick Club", () => {
   it("THICK_CLUB activates in battle correctly", async () => {
     game.override.startingHeldItems([{ name: "RARE_SPECIES_STAT_BOOSTER", type: "THICK_CLUB" }]);
     const consoleSpy = vi.spyOn(console, "log");
-    await game.classicMode.startBattle([SpeciesId.CUBONE]);
+    await game.classicMode.startBattle(SpeciesId.CUBONE);
 
     const partyMember = game.field.getPlayerPokemon();
 
@@ -82,7 +78,7 @@ describe("Items - Thick Club", () => {
   });
 
   it("THICK_CLUB held by CUBONE", async () => {
-    await game.classicMode.startBattle([SpeciesId.CUBONE]);
+    await game.classicMode.startBattle(SpeciesId.CUBONE);
 
     const partyMember = game.field.getPlayerPokemon();
 
@@ -105,7 +101,7 @@ describe("Items - Thick Club", () => {
   });
 
   it("THICK_CLUB held by MAROWAK", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAROWAK]);
+    await game.classicMode.startBattle(SpeciesId.MAROWAK);
 
     const partyMember = game.field.getPlayerPokemon();
 
@@ -128,7 +124,7 @@ describe("Items - Thick Club", () => {
   });
 
   it("THICK_CLUB held by ALOLA_MAROWAK", async () => {
-    await game.classicMode.startBattle([SpeciesId.ALOLA_MAROWAK]);
+    await game.classicMode.startBattle(SpeciesId.ALOLA_MAROWAK);
 
     const partyMember = game.field.getPlayerPokemon();
 
@@ -155,7 +151,7 @@ describe("Items - Thick Club", () => {
     const species = [SpeciesId.CUBONE, SpeciesId.MAROWAK, SpeciesId.ALOLA_MAROWAK];
     const randSpecies = randInt(species.length);
 
-    await game.classicMode.startBattle([species[randSpecies], SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(species[randSpecies], SpeciesId.PIKACHU);
 
     const [partyMember, ally] = game.scene.getPlayerParty();
 
@@ -191,7 +187,7 @@ describe("Items - Thick Club", () => {
     const species = [SpeciesId.CUBONE, SpeciesId.MAROWAK, SpeciesId.ALOLA_MAROWAK];
     const randSpecies = randInt(species.length);
 
-    await game.classicMode.startBattle([SpeciesId.PIKACHU, species[randSpecies]]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU, species[randSpecies]);
 
     const [partyMember, ally] = game.scene.getPlayerParty();
 
@@ -223,7 +219,7 @@ describe("Items - Thick Club", () => {
   });
 
   it("THICK_CLUB not held by CUBONE", async () => {
-    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
 
     const partyMember = game.field.getPlayerPokemon();
 

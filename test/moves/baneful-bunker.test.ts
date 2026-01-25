@@ -5,7 +5,7 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Baneful Bunker", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +15,6 @@ describe("Moves - Baneful Bunker", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -40,7 +36,7 @@ describe("Moves - Baneful Bunker", () => {
   }
 
   it("should protect the user and poison attackers that make contact", async () => {
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     game.move.select(MoveId.SLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -50,7 +46,7 @@ describe("Moves - Baneful Bunker", () => {
   });
 
   it("should ignore accuracy checks", async () => {
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     game.move.select(MoveId.SLASH);
     await game.phaseInterceptor.to("MoveEndPhase"); // baneful bunker
@@ -62,7 +58,7 @@ describe("Moves - Baneful Bunker", () => {
   });
 
   it("should block non-contact moves without poisoning attackers", async () => {
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     const charizard = game.field.getPlayerPokemon();
     const toxapex = game.field.getEnemyPokemon();

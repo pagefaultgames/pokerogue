@@ -5,7 +5,7 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - U-turn", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +15,6 @@ describe("Moves - U-turn", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -37,7 +33,7 @@ describe("Moves - U-turn", () => {
     // arrange
     const playerHp = 1;
     game.override.ability(AbilityId.REGENERATOR);
-    await game.classicMode.startBattle([SpeciesId.RAICHU, SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.RAICHU, SpeciesId.SHUCKLE);
     game.field.getPlayerPokemon().hp = playerHp;
 
     // act
@@ -56,7 +52,7 @@ describe("Moves - U-turn", () => {
   it("triggers rough skin on the u-turn user before a new pokemon is switched in", async () => {
     // arrange
     game.override.enemyAbility(AbilityId.ROUGH_SKIN);
-    await game.classicMode.startBattle([SpeciesId.RAICHU, SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.RAICHU, SpeciesId.SHUCKLE);
 
     // act
     game.move.select(MoveId.U_TURN);
@@ -74,7 +70,7 @@ describe("Moves - U-turn", () => {
   it("triggers contact abilities on the u-turn user (eg poison point) before a new pokemon is switched in", async () => {
     // arrange
     game.override.enemyAbility(AbilityId.POISON_POINT);
-    await game.classicMode.startBattle([SpeciesId.RAICHU, SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.RAICHU, SpeciesId.SHUCKLE);
     vi.spyOn(game.field.getEnemyPokemon(), "randBattleSeedInt").mockReturnValue(0);
 
     // act
@@ -91,7 +87,7 @@ describe("Moves - U-turn", () => {
 
   it("still forces a switch if u-turn KO's the opponent", async () => {
     game.override.startingLevel(1000); // Ensure that U-Turn KO's the opponent
-    await game.classicMode.startBattle([SpeciesId.RAICHU, SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.RAICHU, SpeciesId.SHUCKLE);
     const enemy = game.field.getEnemyPokemon();
 
     // KO the opponent with U-Turn
@@ -107,7 +103,7 @@ describe("Moves - U-turn", () => {
 
   it("should not crash when KOing the user from a reactive effect", async () => {
     game.override.enemyAbility(AbilityId.ROUGH_SKIN);
-    await game.classicMode.startBattle([SpeciesId.SHEDINJA, SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.SHEDINJA, SpeciesId.FEEBAS);
 
     const player1 = game.field.getPlayerPokemon();
 
@@ -120,7 +116,7 @@ describe("Moves - U-turn", () => {
   });
 
   it("should not crash when KOing the user via Destiny Bond", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
 
     const feebas = game.field.getPlayerPokemon();
     const karp = game.field.getEnemyPokemon();

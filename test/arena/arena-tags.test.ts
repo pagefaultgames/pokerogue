@@ -11,16 +11,12 @@ import { getEnumValues } from "#utils/enums";
 import { toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import Phaser from "phaser";
-import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Arena Tags", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
   let playerId: number;
-
-  afterAll(() => {
-    game.phaseInterceptor.restoreOg();
-  });
 
   beforeAll(async () => {
     phaserGame = new Phaser.Game({
@@ -38,7 +34,7 @@ describe("Arena Tags", () => {
       .enemyMoveset(MoveId.SPLASH)
       .battleType(BattleType.TRAINER);
 
-    await game.classicMode.startBattle([SpeciesId.MORELULL]);
+    await game.classicMode.startBattle(SpeciesId.MORELULL);
 
     playerId = game.field.getPlayerPokemon().id;
   });

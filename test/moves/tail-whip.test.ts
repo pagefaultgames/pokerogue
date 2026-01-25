@@ -4,7 +4,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Tail whip", () => {
   let phaserGame: Phaser.Game;
@@ -14,10 +14,6 @@ describe("Moves - Tail whip", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -35,7 +31,7 @@ describe("Moves - Tail whip", () => {
 
   it("should lower DEF stat stage by 1", async () => {
     const moveToUse = MoveId.TAIL_WHIP;
-    await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.MIGHTYENA]);
+    await game.classicMode.startBattle(SpeciesId.MIGHTYENA, SpeciesId.MIGHTYENA);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(0);

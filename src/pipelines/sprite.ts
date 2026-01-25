@@ -203,7 +203,8 @@ export class SpritePipeline extends FieldSpritePipeline {
       const baseY = ((isEntityObj ? sprite.parentContainer.y : sprite.y + sprite.height) * 6) / fieldScaleRatio;
       const bottomPadding = (Math.ceil(sprite.height * 0.05 + Math.max(yShadowOffset, 0)) * 6) / fieldScaleRatio;
       const yDelta = (baseY - y1) / field.scale;
-      y2 = y1 = baseY + bottomPadding;
+      y1 = baseY + bottomPadding;
+      y2 = y1;
       const pixelHeight =
         (v1 - v0) / (sprite.frame.height * (isEntityObj ? sprite.parentContainer.scale : sprite.scale));
       v1 += (yDelta + bottomPadding / field.scale) * pixelHeight;

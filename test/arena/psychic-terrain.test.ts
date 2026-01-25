@@ -7,7 +7,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Arena - Psychic Terrain", () => {
   let phaserGame: Phaser.Game;
@@ -16,10 +16,6 @@ describe("Arena - Psychic Terrain", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -36,7 +32,7 @@ describe("Arena - Psychic Terrain", () => {
   });
 
   it("Dark Void with Prankster is not blocked", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     game.move.select(MoveId.PSYCHIC_TERRAIN);
     await game.toNextTurn();
@@ -48,7 +44,7 @@ describe("Arena - Psychic Terrain", () => {
   });
 
   it("Rain Dance with Prankster is not blocked", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     game.move.select(MoveId.PSYCHIC_TERRAIN);
     await game.toNextTurn();
@@ -61,7 +57,7 @@ describe("Arena - Psychic Terrain", () => {
 
   it("should not block non-priority moves boosted by Quick Claw", async () => {
     game.override.startingHeldItems([{ name: "QUICK_CLAW", count: 10 }]);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.PSYCHIC_TERRAIN);
     await game.toNextTurn();
@@ -82,7 +78,7 @@ describe("Arena - Psychic Terrain", () => {
 
   it("should block priority moves boosted by Quick Claw", async () => {
     game.override.startingHeldItems([{ name: "QUICK_CLAW", count: 10 }]);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.PSYCHIC_TERRAIN);
     await game.toNextTurn();

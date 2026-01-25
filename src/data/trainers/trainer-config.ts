@@ -512,7 +512,7 @@ export class TrainerConfig {
    * @returns this
    */
   setRandomTeraModifiers(count: () => number, slot?: number): TrainerConfig {
-    this.genAIFuncs.push((party: EnemyPokemon[]) => {
+    this.genAIFuncs.push((party: readonly EnemyPokemon[]) => {
       const shedinjaCanTera = !this.hasSpecialtyType() || this.specialtyType === PokemonType.BUG; // Better to check one time than 6
       const partyMemberIndexes = new Array(party.length)
         .fill(null)
@@ -2003,9 +2003,6 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.HOUNDOOM], TrainerSlot.TRAINER, true, p => {
-        if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_ADMIN_3) {
-          p.setBoss(true, 2);
-        }
         p.abilityIndex = 1; // Flash Fire
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;

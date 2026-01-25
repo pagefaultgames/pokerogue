@@ -6,7 +6,7 @@ import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import i18next from "i18next";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Shed Tail", () => {
   let phaserGame: Phaser.Game;
@@ -16,10 +16,6 @@ describe("Moves - Shed Tail", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -33,7 +29,7 @@ describe("Moves - Shed Tail", () => {
   });
 
   it("transfers a Substitute doll to the switched in Pokemon", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS);
 
     const magikarp = game.field.getPlayerPokemon();
 
@@ -54,7 +50,7 @@ describe("Moves - Shed Tail", () => {
   });
 
   it("should fail if no ally is available to switch in", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const magikarp = game.field.getPlayerPokemon();
     expect(game.scene.getPlayerParty().length).toBe(1);
@@ -68,7 +64,7 @@ describe("Moves - Shed Tail", () => {
   });
 
   it("should show the correct failure message between 26-50% HP", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.ABRA]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.ABRA);
 
     const feebas = game.field.getPlayerPokemon();
     feebas.hp *= 0.4;

@@ -10,7 +10,6 @@ import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils"
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { HUMAN_TRANSITABLE_BIOMES } from "#mystery-encounters/mystery-encounters";
 import type { PartyHealPhase } from "#phases/party-heal-phase";
-import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import {
   runMysteryEncounterToEnd,
   skipBattleRunMysteryEncounterRewardsPhase,
@@ -18,7 +17,7 @@ import {
 import { GameManager } from "#test/test-utils/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
 import i18next from "i18next";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/aTrainersTest";
 const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
@@ -50,10 +49,6 @@ describe("A Trainer's Test - Mystery Encounter", () => {
       biomeMap.set(biome, [MysteryEncounterType.A_TRAINERS_TEST]);
     });
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(biomeMap);
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   it("should have the correct properties", async () => {
@@ -129,7 +124,7 @@ describe("A Trainer's Test - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      await game.phaseInterceptor.to(SelectModifierPhase, false);
+      await game.phaseInterceptor.to("SelectModifierPhase", false);
       expect(game).toBeAtPhase("SelectModifierPhase");
 
       const eggsAfter = scene.gameData.eggs;
@@ -177,7 +172,7 @@ describe("A Trainer's Test - Mystery Encounter", () => {
       const eggsBeforeLength = eggsBefore.length;
 
       await runMysteryEncounterToEnd(game, 2);
-      await game.phaseInterceptor.to(SelectModifierPhase, false);
+      await game.phaseInterceptor.to("SelectModifierPhase", false);
       expect(game).toBeAtPhase("SelectModifierPhase");
 
       const eggsAfter = scene.gameData.eggs;

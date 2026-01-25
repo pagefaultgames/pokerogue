@@ -5,7 +5,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Moxie", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +15,6 @@ describe("Abilities - Moxie", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -36,7 +32,7 @@ describe("Abilities - Moxie", () => {
 
   it("should raise ATK stat stage by 1 when winning a battle", async () => {
     const moveToUse = MoveId.AERIAL_ACE;
-    await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.MIGHTYENA]);
+    await game.classicMode.startBattle(SpeciesId.MIGHTYENA, SpeciesId.MIGHTYENA);
 
     const playerPokemon = game.field.getPlayerPokemon();
 
@@ -52,7 +48,7 @@ describe("Abilities - Moxie", () => {
   it.todo("should raise ATK stat stage by 1 when defeating an ally Pokemon", async () => {
     game.override.battleStyle("double");
     const moveToUse = MoveId.AERIAL_ACE;
-    await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.MIGHTYENA]);
+    await game.classicMode.startBattle(SpeciesId.MIGHTYENA, SpeciesId.MIGHTYENA);
 
     const [firstPokemon, secondPokemon] = game.scene.getPlayerField();
 

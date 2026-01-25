@@ -5,7 +5,7 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Pastel Veil", () => {
   let phaserGame: Phaser.Game;
@@ -17,17 +17,13 @@ describe("Abilities - Pastel Veil", () => {
     });
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("double").enemyAbility(AbilityId.BALL_FETCH).enemySpecies(SpeciesId.TOXAPEX);
   });
 
   it("should prevent the user and its allies from being poisoned", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.GALAR_PONYTA]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.GALAR_PONYTA);
     const [magikarp, ponyta] = game.scene.getPlayerField();
     game.field.mockAbility(ponyta, AbilityId.PASTEL_VEIL);
 
@@ -42,7 +38,7 @@ describe("Abilities - Pastel Veil", () => {
   });
 
   it("should cure allies' poison if user is sent out into battle", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS, SpeciesId.GALAR_PONYTA]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS, SpeciesId.GALAR_PONYTA);
     const [magikarp, , ponyta] = game.scene.getPlayerParty();
     game.field.mockAbility(ponyta, AbilityId.PASTEL_VEIL);
 

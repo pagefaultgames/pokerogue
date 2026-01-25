@@ -2,11 +2,9 @@ import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { BerryPhase } from "#phases/berry-phase";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Unseen Fist", () => {
   let phaserGame: Phaser.Game;
@@ -18,15 +16,11 @@ describe("Abilities - Unseen Fist", () => {
     });
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .starterSpecies(SpeciesId.URSHIFU)
+      .ability(AbilityId.UNSEEN_FIST)
       .enemySpecies(SpeciesId.SNORLAX)
       .enemyMoveset(MoveId.PROTECT)
       .startingLevel(100)
@@ -53,14 +47,14 @@ describe("Abilities - Unseen Fist", () => {
   it("should cause a contact move to ignore Protect, but not Substitute", async () => {
     game.override.enemyLevel(1).moveset([MoveId.TACKLE]);
 
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     enemyPokemon.addTag(BattlerTagType.SUBSTITUTE, 0, MoveId.NONE, enemyPokemon.id);
 
     game.move.select(MoveId.TACKLE);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(enemyPokemon.getTag(BattlerTagType.SUBSTITUTE)).toBeUndefined();
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
@@ -75,7 +69,7 @@ async function testUnseenFistHitResult(
 ): Promise<void> {
   game.override.moveset([attackMove]).enemyMoveset(protectMove);
 
-  await game.classicMode.startBattle();
+  await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
   const leadPokemon = game.field.getPlayerPokemon();
   expect(leadPokemon).not.toBe(undefined);
@@ -86,7 +80,7 @@ async function testUnseenFistHitResult(
   const enemyStartingHp = enemyPokemon.hp;
 
   game.move.select(attackMove);
-  await game.phaseInterceptor.to(TurnEndPhase, false);
+  await game.phaseInterceptor.to("TurnEndPhase", false);
 
   if (shouldSucceed) {
     expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);

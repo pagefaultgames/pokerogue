@@ -5,7 +5,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Electrify", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +15,6 @@ describe("Moves - Electrify", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -34,7 +30,7 @@ describe("Moves - Electrify", () => {
   });
 
   it("should convert attacks to Electric type", async () => {
-    await game.classicMode.startBattle([SpeciesId.EXCADRILL]);
+    await game.classicMode.startBattle(SpeciesId.EXCADRILL);
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
@@ -52,7 +48,7 @@ describe("Moves - Electrify", () => {
   it("should override type changes from abilities", async () => {
     game.override.enemyAbility(AbilityId.PIXILATE);
 
-    await game.classicMode.startBattle([SpeciesId.EXCADRILL]);
+    await game.classicMode.startBattle(SpeciesId.EXCADRILL);
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getPlayerPokemon();

@@ -5,7 +5,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Items - Multi Lens", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +15,6 @@ describe("Items - Multi Lens", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -46,7 +42,7 @@ describe("Items - Multi Lens", () => {
     async ({ stackCount, firstHitDamage }) => {
       game.override.startingHeldItems([{ name: "MULTI_LENS", count: stackCount }]);
 
-      await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+      await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
       const enemyPokemon = game.field.getEnemyPokemon();
       const spy = vi.spyOn(enemyPokemon, "getAttackDamage");
@@ -67,7 +63,7 @@ describe("Items - Multi Lens", () => {
   it("should stack additively with Parental Bond", async () => {
     game.override.ability(AbilityId.PARENTAL_BOND);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const playerPokemon = game.field.getPlayerPokemon();
 
@@ -79,7 +75,7 @@ describe("Items - Multi Lens", () => {
   });
 
   it("should apply secondary effects on each hit", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const playerPokemon = game.field.getPlayerPokemon();
 
@@ -90,7 +86,7 @@ describe("Items - Multi Lens", () => {
   });
 
   it("should not enhance multi-hit moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const playerPokemon = game.field.getPlayerPokemon();
 
@@ -103,7 +99,7 @@ describe("Items - Multi Lens", () => {
   it("should enhance multi-target moves", async () => {
     game.override.battleStyle("double").moveset([MoveId.SWIFT, MoveId.SPLASH]);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS);
 
     const magikarp = game.field.getPlayerPokemon();
 
@@ -120,7 +116,7 @@ describe("Items - Multi Lens", () => {
   it("should enhance fixed-damage moves while also applying damage reduction", async () => {
     game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]).moveset(MoveId.SEISMIC_TOSS);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
@@ -142,7 +138,7 @@ describe("Items - Multi Lens", () => {
       .startingHeldItems([{ name: "MULTI_LENS", count: lensCount }])
       .enemyLevel(1000)
       .enemySpecies(SpeciesId.BLISSEY); // allows for unrealistically high levels of accuracy
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const blissey = game.field.getEnemyPokemon();
 
@@ -159,7 +155,7 @@ describe("Items - Multi Lens", () => {
       .enemyLevel(1000)
       .enemySpecies(SpeciesId.BLISSEY); // allows for unrealistically high levels of accuracy
 
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const blissey = game.field.getEnemyPokemon();
 
@@ -171,7 +167,7 @@ describe("Items - Multi Lens", () => {
 
   it("should not allow Future Sight to hit infinitely many times if the user switches out", async () => {
     game.override.enemyLevel(1000);
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     vi.spyOn(enemyPokemon, "damageAndUpdate");

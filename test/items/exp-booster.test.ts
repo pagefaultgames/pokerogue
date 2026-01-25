@@ -1,9 +1,10 @@
 import { AbilityId } from "#enums/ability-id";
+import { SpeciesId } from "#enums/species-id";
 import { PokemonExpBoosterModifier } from "#modifiers/modifier";
 import { GameManager } from "#test/test-utils/game-manager";
 import { NumberHolder } from "#utils/common";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("EXP Modifier Items", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +16,6 @@ describe("EXP Modifier Items", () => {
     });
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
@@ -27,7 +24,7 @@ describe("EXP Modifier Items", () => {
 
   it("EXP booster items stack multiplicatively", async () => {
     game.override.startingHeldItems([{ name: "LUCKY_EGG", count: 3 }, { name: "GOLDEN_EGG" }]);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const partyMember = game.field.getPlayerPokemon();
     partyMember.exp = 100;

@@ -57,7 +57,7 @@ import { addBBCodeTextObject, addTextObject, getTextColor, getTextStyleOptions }
 import { addWindow } from "#ui/ui-theme";
 import { BooleanHolder, getLocalizedSpriteKey, padInt, rgbHexToRgba } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
-import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { getDexNumber, getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
@@ -147,6 +147,12 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoYOffset: 0.5,
     starterInfoXPos: 26,
   },
+  uk: {
+    starterInfoTextSize: "46px",
+    instructionTextSize: "38px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 26,
+  },
   id: {
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
@@ -156,6 +162,10 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: "38px",
   },
   "nb-NO": {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "38px",
+  },
+  sv: {
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
   },
@@ -1239,9 +1249,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       if (button === Button.ACTION) {
         switch (this.cursor) {
           case MenuOptions.BASE_STATS:
-            if (!isSeen) {
-              error = true;
-            } else {
+            if (isSeen) {
               this.blockInput = true;
 
               ui.setMode(UiMode.POKEDEX_PAGE, "refresh").then(() => {
@@ -1255,13 +1263,13 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                 });
                 success = true;
               });
+            } else {
+              error = true;
             }
             break;
 
           case MenuOptions.LEVEL_MOVES:
-            if (!isSeen) {
-              error = true;
-            } else {
+            if (isSeen) {
               this.blockInput = true;
 
               ui.setMode(UiMode.POKEDEX_PAGE, "refresh").then(() => {
@@ -1313,13 +1321,13 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                 });
               });
               success = true;
+            } else {
+              error = true;
             }
             break;
 
           case MenuOptions.EGG_MOVES:
-            if (!isSeen) {
-              error = true;
-            } else {
+            if (isSeen) {
               this.blockInput = true;
 
               ui.setMode(UiMode.POKEDEX_PAGE, "refresh").then(() => {
@@ -1380,6 +1388,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                 });
               });
               success = true;
+            } else {
+              error = true;
             }
             break;
 
@@ -1435,9 +1445,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
             break;
 
           case MenuOptions.ABILITIES:
-            if (!isSeen) {
-              error = true;
-            } else {
+            if (isSeen) {
               this.blockInput = true;
 
               ui.setMode(UiMode.POKEDEX_PAGE, "refresh").then(() => {
@@ -1519,13 +1527,13 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                 });
               });
               success = true;
+            } else {
+              error = true;
             }
             break;
 
           case MenuOptions.BIOMES:
-            if (!isSeen) {
-              error = true;
-            } else {
+            if (isSeen) {
               this.blockInput = true;
 
               ui.setMode(UiMode.POKEDEX_PAGE, "refresh").then(() => {
@@ -1598,13 +1606,13 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                 });
               });
               success = true;
+            } else {
+              error = true;
             }
             break;
 
           case MenuOptions.EVOLUTIONS:
-            if (!isSeen) {
-              error = true;
-            } else {
+            if (isSeen) {
               this.blockInput = true;
 
               ui.setMode(UiMode.POKEDEX_PAGE, "refresh").then(() => {
@@ -1782,6 +1790,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                 });
               });
               success = true;
+            } else {
+              error = true;
             }
             break;
 
@@ -1803,9 +1813,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
             break;
 
           case MenuOptions.NATURES:
-            if (!isStarterCaught) {
-              error = true;
-            } else {
+            if (isStarterCaught) {
               this.blockInput = true;
               ui.setMode(UiMode.POKEDEX_PAGE, "refresh").then(() => {
                 ui.showText(i18next.t("pokedexUiHandler:showNature"), null, () => {
@@ -1838,6 +1846,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                 });
               });
               success = true;
+            } else {
+              error = true;
             }
             break;
         }
@@ -1849,19 +1859,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         switch (button) {
           case Button.CYCLE_SHINY:
             if (this.canCycleShiny) {
-              if (!starterAttributes.shiny) {
-                // Change to shiny, we need to get the proper default variant
-                const newVariant = starterAttributes.variant ? (starterAttributes.variant as Variant) : 0;
-                this.setSpeciesDetails(this.species, {
-                  shiny: true,
-                  variant: newVariant,
-                });
-
-                globalScene.playSound("se/sparkle");
-
-                starterAttributes.shiny = true;
-                this.savedStarterAttributes.shiny = starterAttributes.shiny;
-              } else {
+              if (starterAttributes.shiny) {
                 let newVariant = props.variant;
                 do {
                   newVariant = (newVariant + 1) % 3;
@@ -1894,6 +1892,18 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                   });
                   success = true;
                 }
+              } else {
+                // Change to shiny, we need to get the proper default variant
+                const newVariant = starterAttributes.variant ? (starterAttributes.variant as Variant) : 0;
+                this.setSpeciesDetails(this.species, {
+                  shiny: true,
+                  variant: newVariant,
+                });
+
+                globalScene.playSound("se/sparkle");
+
+                starterAttributes.shiny = true;
+                this.savedStarterAttributes.shiny = starterAttributes.shiny;
               }
             }
             break;
@@ -2212,19 +2222,19 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     if (gamepadType === "touch") {
       gamepadType = "keyboard";
       switch (iconSetting) {
-        case SettingKeyboard.Button_Cycle_Shiny:
+        case SettingKeyboard.BUTTON_CYCLE_SHINY:
           iconPath = "R.png";
           break;
-        case SettingKeyboard.Button_Cycle_Form:
+        case SettingKeyboard.BUTTON_CYCLE_FORM:
           iconPath = "F.png";
           break;
-        case SettingKeyboard.Button_Cycle_Gender:
+        case SettingKeyboard.BUTTON_CYCLE_GENDER:
           iconPath = "G.png";
           break;
-        case SettingKeyboard.Button_Cycle_Ability:
+        case SettingKeyboard.BUTTON_CYCLE_ABILITY:
           iconPath = "E.png";
           break;
-        case SettingKeyboard.Button_Cycle_Tera:
+        case SettingKeyboard.BUTTON_CYCLE_TERA:
           iconPath = "V.png";
           break;
         default:
@@ -2253,11 +2263,11 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     this.instructionsContainer.removeAll();
     this.filterInstructionsContainer.removeAll();
 
-    // biome-ignore lint/suspicious/noImplicitAnyLet: TODO
-    let gamepadType;
+    let gamepadType: string;
     if (globalScene.inputMethod === "gamepad") {
       gamepadType = globalScene.inputController.getConfig(
-        globalScene.inputController.selectedDevice[Device.GAMEPAD],
+        // TODO: is this bang safe?
+        globalScene.inputController.selectedDevice[Device.GAMEPAD]!,
       ).padType;
     } else {
       gamepadType = globalScene.inputMethod;
@@ -2273,7 +2283,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       if (isFormCaught) {
         if (this.canUseCandies) {
           this.updateButtonIcon(
-            SettingKeyboard.Button_Stats,
+            SettingKeyboard.BUTTON_STATS,
             gamepadType,
             this.candyUpgradeIconElement,
             this.candyUpgradeLabel,
@@ -2281,7 +2291,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         }
         if (this.canCycleShiny) {
           this.updateButtonIcon(
-            SettingKeyboard.Button_Cycle_Shiny,
+            SettingKeyboard.BUTTON_CYCLE_SHINY,
             gamepadType,
             this.shinyIconElement,
             this.shinyLabel,
@@ -2289,7 +2299,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         }
         if (this.canCycleGender) {
           this.updateButtonIcon(
-            SettingKeyboard.Button_Cycle_Gender,
+            SettingKeyboard.BUTTON_CYCLE_GENDER,
             gamepadType,
             this.genderIconElement,
             this.genderLabel,
@@ -2300,9 +2310,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         this.instructionRowY += 8;
       }
       if (this.canCycleForm) {
-        this.updateButtonIcon(SettingKeyboard.Button_Cycle_Form, gamepadType, this.formIconElement, this.formLabel);
+        this.updateButtonIcon(SettingKeyboard.BUTTON_CYCLE_FORM, gamepadType, this.formIconElement, this.formLabel);
       }
-      this.updateButtonIcon(SettingKeyboard.Button_Cycle_Tera, gamepadType, this.ivIconElement, this.ivLabel);
+      this.updateButtonIcon(SettingKeyboard.BUTTON_CYCLE_TERA, gamepadType, this.ivIconElement, this.ivLabel);
     }
   }
 
@@ -2310,13 +2320,13 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     const ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = globalScene.add.image(0, 0, "cursor");
-      this.cursorObj.setOrigin(0, 0);
+      this.cursorObj = globalScene.add.image(0, 0, "cursor").setOrigin(0);
       this.menuContainer.add(this.cursorObj);
     }
 
-    this.cursorObj.setScale(this.scale * 6);
-    this.cursorObj.setPositionRelative(this.menuBg, 7, 6 + (18 + this.cursor * 96) * this.scale);
+    this.cursorObj
+      .setScale(this.scale * 6)
+      .setPositionRelative(this.menuBg, 7, 6 + (18 + this.cursor * 96) * this.scale);
 
     const ui = this.getUi();
 
@@ -2401,7 +2411,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     }
 
     if (species && (this.isSeen() || this.isCaught())) {
-      this.pokemonNumberText.setText(padInt(species.speciesId, 4));
+      this.pokemonNumberText.setText(padInt(getDexNumber(species.speciesId), 4));
 
       if (this.isCaught()) {
         const defaultDexAttr = this.getCurrentDexProps(species.speciesId);
@@ -2447,7 +2457,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonSprite.setTint(0x808080);
       }
     } else {
-      this.pokemonNumberText.setText(species ? padInt(species.speciesId, 4) : "");
+      this.pokemonNumberText.setText(species ? padInt(getDexNumber(species.speciesId), 4) : "");
       this.pokemonNameText.setText(species ? "???" : "");
       this.pokemonGrowthRateText.setText("");
       this.pokemonGrowthRateLabelText.setVisible(false);
@@ -2598,7 +2608,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         : species.forms.filter(f => f.isStarterSelectable).filter(f => f).length > 1;
 
       if (caughtAttr && species.malePercent !== null) {
-        const gender = !female ? Gender.MALE : Gender.FEMALE;
+        const gender = female ? Gender.FEMALE : Gender.MALE;
         this.pokemonGenderText.setText(getGenderSymbol(gender));
         this.pokemonGenderText.setColor(getGenderColor(gender));
         this.pokemonGenderText.setShadowColor(getGenderColor(gender, true));

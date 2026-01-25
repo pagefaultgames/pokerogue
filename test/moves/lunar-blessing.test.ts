@@ -4,7 +4,7 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Lunar Blessing", () => {
   let phaserGame: Phaser.Game;
@@ -12,10 +12,6 @@ describe("Moves - Lunar Blessing", () => {
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({ type: Phaser.HEADLESS });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -31,7 +27,7 @@ describe("Moves - Lunar Blessing", () => {
   });
 
   it("should restore 25% HP of the user and its ally", async () => {
-    await game.classicMode.startBattle([SpeciesId.RATTATA, SpeciesId.RATTATA]);
+    await game.classicMode.startBattle(SpeciesId.RATTATA, SpeciesId.RATTATA);
     const [leftPlayer, rightPlayer] = game.scene.getPlayerField();
 
     vi.spyOn(leftPlayer, "getMaxHp").mockReturnValue(100);
@@ -58,7 +54,7 @@ describe("Moves - Lunar Blessing", () => {
 
   it("should cure status effect of the user and its ally", async () => {
     game.override.statusEffect(StatusEffect.BURN);
-    await game.classicMode.startBattle([SpeciesId.RATTATA, SpeciesId.RATTATA]);
+    await game.classicMode.startBattle(SpeciesId.RATTATA, SpeciesId.RATTATA);
     const [leftPlayer, rightPlayer] = game.scene.getPlayerField();
 
     vi.spyOn(leftPlayer, "resetStatus");

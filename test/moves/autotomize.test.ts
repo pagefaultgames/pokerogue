@@ -3,7 +3,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Autotomize", () => {
   let phaserGame: Phaser.Game;
@@ -14,10 +14,6 @@ describe("Moves - Autotomize", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -37,7 +33,7 @@ describe("Moves - Autotomize", () => {
       const twoAutotomizeDracozoltWeight = 0.1;
       const threeAutotomizeDracozoltWeight = 0.1;
 
-      await game.classicMode.startBattle([SpeciesId.DRACOZOLT]);
+      await game.classicMode.startBattle(SpeciesId.DRACOZOLT);
       const playerPokemon = game.field.getPlayerPokemon();
       expect(playerPokemon.getWeight()).toBe(baseDracozoltWeight);
       game.move.select(MoveId.AUTOTOMIZE);
@@ -61,7 +57,7 @@ describe("Moves - Autotomize", () => {
       const baseAegislashWeight = 53;
       const autotomizeAegislashWeight = 0.1;
 
-      await game.classicMode.startBattle([SpeciesId.AEGISLASH]);
+      await game.classicMode.startBattle(SpeciesId.AEGISLASH);
       const playerPokemon = game.field.getPlayerPokemon();
 
       expect(playerPokemon.getWeight()).toBe(baseAegislashWeight);
@@ -97,7 +93,7 @@ describe("Moves - Autotomize", () => {
       const baseLightGroudonWeight = 475;
       const autotomizeLightGroudonWeight = 425;
       game.override.ability(AbilityId.LIGHT_METAL);
-      await game.classicMode.startBattle([SpeciesId.GROUDON]);
+      await game.classicMode.startBattle(SpeciesId.GROUDON);
       const playerPokemon = game.field.getPlayerPokemon();
       expect(playerPokemon.getWeight()).toBe(baseLightGroudonWeight);
       game.move.select(MoveId.AUTOTOMIZE);

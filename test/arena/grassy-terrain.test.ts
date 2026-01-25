@@ -4,7 +4,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Arena - Grassy Terrain", () => {
   let phaserGame: Phaser.Game;
@@ -13,10 +13,6 @@ describe("Arena - Grassy Terrain", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -33,7 +29,7 @@ describe("Arena - Grassy Terrain", () => {
   });
 
   it("halves the damage of Earthquake", async () => {
-    await game.classicMode.startBattle([SpeciesId.TAUROS]);
+    await game.classicMode.startBattle(SpeciesId.TAUROS);
 
     const eq = allMoves[MoveId.EARTHQUAKE];
     vi.spyOn(eq, "calculateBattlePower");
@@ -53,7 +49,7 @@ describe("Arena - Grassy Terrain", () => {
   });
 
   it("Does not halve the damage of Earthquake if opponent is not grounded", async () => {
-    await game.classicMode.startBattle([SpeciesId.NINJASK]);
+    await game.classicMode.startBattle(SpeciesId.NINJASK);
 
     const eq = allMoves[MoveId.EARTHQUAKE];
     vi.spyOn(eq, "calculateBattlePower");

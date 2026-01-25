@@ -1,7 +1,6 @@
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import { isBeta, isDev } from "#constants/app-constants";
 import { SubstituteTag } from "#data/battler-tags";
 import { Gender } from "#data/gender";
@@ -18,7 +17,6 @@ import { ChallengeType } from "#enums/challenge-type";
 import type { PokeballType } from "#enums/pokeball";
 import { StatusEffect } from "#enums/status-effect";
 import { UiMode } from "#enums/ui-mode";
-import { addPokeballCaptureStars, addPokeballOpenParticles } from "#field/anims";
 import type { EnemyPokemon } from "#field/pokemon";
 import { PokemonHeldItemModifier } from "#modifiers/modifier";
 import { PokemonPhase } from "#phases/pokemon-phase";
@@ -112,7 +110,7 @@ export class AttemptCapturePhase extends PokemonPhase {
         globalScene.playSound("se/pb_rel");
         pokemon.tint(getPokeballTintColor(this.pokeballType));
 
-        addPokeballOpenParticles(this.pokeball.x, this.pokeball.y, this.pokeballType);
+        globalScene.animations.addPokeballOpenParticles(this.pokeball.x, this.pokeball.y, this.pokeballType);
 
         globalScene.tweens.add({
           // Mon enters ball
@@ -171,7 +169,7 @@ export class AttemptCapturePhase extends PokemonPhase {
                     this.failCatch(shakeCount);
                   } else {
                     globalScene.playSound("se/pb_lock");
-                    addPokeballCaptureStars(this.pokeball);
+                    globalScene.animations.addPokeballCaptureStars(this.pokeball);
 
                     const pbTint = globalScene.add.sprite(this.pokeball.x, this.pokeball.y, "pb", "pb");
                     pbTint.setOrigin(this.pokeball.originX, this.pokeball.originY);
@@ -247,7 +245,7 @@ export class AttemptCapturePhase extends PokemonPhase {
   catch() {
     const pokemon = this.getPokemon() as EnemyPokemon;
 
-    const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
+    const speciesForm = pokemon.fusionSpecies ? pokemon.getFusionSpeciesForm() : pokemon.getSpeciesForm();
 
     if (
       speciesForm.abilityHidden
@@ -278,7 +276,7 @@ export class AttemptCapturePhase extends PokemonPhase {
 
     globalScene.ui.showText(
       i18next.t(addStatus.value ? "battle:pokemonCaught" : "battle:pokemonCaughtButChallenge", {
-        pokemonName: getPokemonNameWithAffix(pokemon),
+        pokemonName: pokemon.name,
       }),
       null,
       () => {

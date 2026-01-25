@@ -6,7 +6,7 @@ import type { EffectiveStat } from "#enums/stat";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Geomancy", () => {
   let phaserGame: Phaser.Game;
@@ -16,10 +16,6 @@ describe("Moves - Geomancy", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -35,7 +31,7 @@ describe("Moves - Geomancy", () => {
   });
 
   it("should boost the user's stats on the second turn of use", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const player = game.field.getPlayerPokemon();
     const affectedStats: EffectiveStat[] = [Stat.SPATK, Stat.SPDEF, Stat.SPD];
@@ -56,7 +52,7 @@ describe("Moves - Geomancy", () => {
   });
 
   it("should execute over 2 turns between waves", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const player = game.field.getPlayerPokemon();
     const affectedStats: EffectiveStat[] = [Stat.SPATK, Stat.SPDEF, Stat.SPD];

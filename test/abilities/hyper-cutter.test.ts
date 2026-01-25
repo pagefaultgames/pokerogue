@@ -4,7 +4,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Hyper Cutter", () => {
   let phaserGame: Phaser.Game;
@@ -16,15 +16,10 @@ describe("Abilities - Hyper Cutter", () => {
     });
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .moveset([MoveId.SAND_ATTACK, MoveId.NOBLE_ROAR, MoveId.DEFOG, MoveId.OCTOLOCK])
       .ability(AbilityId.BALL_FETCH)
       .enemySpecies(SpeciesId.SHUCKLE)
       .enemyAbility(AbilityId.HYPER_CUTTER)
@@ -34,23 +29,23 @@ describe("Abilities - Hyper Cutter", () => {
   // Reference Link: https://bulbapedia.bulbagarden.net/wiki/Hyper_Cutter_(Ability)
 
   it("only prevents ATK drops", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const enemy = game.field.getEnemyPokemon();
 
-    game.move.select(MoveId.OCTOLOCK);
+    game.move.use(MoveId.OCTOLOCK);
     await game.toNextTurn();
-    game.move.select(MoveId.DEFOG);
+    game.move.use(MoveId.DEFOG);
     await game.toNextTurn();
-    game.move.select(MoveId.NOBLE_ROAR);
+    game.move.use(MoveId.NOBLE_ROAR);
     await game.toNextTurn();
-    game.move.select(MoveId.SAND_ATTACK);
+    game.move.use(MoveId.SAND_ATTACK);
     await game.toNextTurn();
-    game.override.moveset([MoveId.STRING_SHOT]);
-    game.move.select(MoveId.STRING_SHOT);
+    game.move.use(MoveId.STRING_SHOT);
     await game.toNextTurn();
 
     expect(enemy.getStatStage(Stat.ATK)).toEqual(0);
+    // biome-ignore lint/suspicious/useIterableCallbackReturn: false positive
     [Stat.ACC, Stat.DEF, Stat.EVA, Stat.SPATK, Stat.SPDEF, Stat.SPD].forEach((stat: number) =>
       expect(enemy.getStatStage(stat)).toBeLessThan(0),
     );
