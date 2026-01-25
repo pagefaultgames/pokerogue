@@ -36,7 +36,7 @@ describe("Abilities - BATTLE BOND", () => {
   });
 
   it("check if fainted pokemon switches to base form on arena reset", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.GRENINJA]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.GRENINJA);
 
     const greninja = game.scene.getPlayerParty()[1];
     expect(greninja.formIndex).toBe(ashForm);
@@ -55,7 +55,7 @@ describe("Abilities - BATTLE BOND", () => {
   });
 
   it("should not keep buffing Water Shuriken after Greninja switches to base form", async () => {
-    await game.classicMode.startBattle([SpeciesId.GRENINJA]);
+    await game.classicMode.startBattle(SpeciesId.GRENINJA);
 
     const waterShuriken = allMoves[MoveId.WATER_SHURIKEN];
     vi.spyOn(waterShuriken, "calculateBattlePower");
@@ -69,7 +69,7 @@ describe("Abilities - BATTLE BOND", () => {
 
     // Wave 4: Use Water Shuriken in Ash form
     let expectedBattlePower = 20;
-    let expectedMultiHitType = MultiHitType._3;
+    let expectedMultiHitType = MultiHitType.THREE;
 
     game.move.select(MoveId.WATER_SHURIKEN);
     await game.phaseInterceptor.to("BerryPhase", false);
@@ -81,7 +81,7 @@ describe("Abilities - BATTLE BOND", () => {
 
     // Wave 5: Use Water Shuriken in base form
     expectedBattlePower = 15;
-    expectedMultiHitType = MultiHitType._2_TO_5;
+    expectedMultiHitType = MultiHitType.TWO_TO_FIVE;
 
     game.move.select(MoveId.WATER_SHURIKEN);
     await game.phaseInterceptor.to("BerryPhase", false);

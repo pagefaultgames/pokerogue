@@ -27,7 +27,7 @@ describe("Moves - Baddy Bad", () => {
 
   it("should not activate Reflect if the move fails due to Protect", async () => {
     game.override.enemyMoveset(MoveId.PROTECT);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.BADDY_BAD);
     await game.phaseInterceptor.to("BerryPhase");

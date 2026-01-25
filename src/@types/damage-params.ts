@@ -8,7 +8,7 @@ import type { Move } from "#types/move-types";
  */
 
 /** Base type for damage parameter methods, used for DRY */
-export interface damageParams {
+export interface DamageParams {
   /** The attacking {@linkcode Pokemon} */
   source: Pokemon;
   /** The move used in the attack */
@@ -35,10 +35,10 @@ export interface damageParams {
  * Type for the parameters of {@linkcode Pokemon#getBaseDamage | getBaseDamage}
  * @interface
  */
-export type getBaseDamageParams = Omit<damageParams, "effectiveness">;
+export type GetBaseDamageParams = Omit<DamageParams, "effectiveness">;
 
 /**
  * Type for the parameters of {@linkcode Pokemon#getAttackDamage | getAttackDamage}
  * @interface
  */
-export type getAttackDamageParams = Omit<damageParams, "moveCategory">;
+export type GetAttackDamageParams = Omit<DamageParams, "moveCategory">;

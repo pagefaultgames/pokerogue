@@ -3,7 +3,6 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import type { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -26,7 +25,6 @@ describe("Moves - Fissure", () => {
     game.override
       .battleStyle("single")
       .criticalHits(false)
-      .starterSpecies(SpeciesId.SNORLAX)
       .moveset(MoveId.FISSURE)
       .passiveAbility(AbilityId.BALL_FETCH)
       .startingLevel(100)
@@ -35,7 +33,7 @@ describe("Moves - Fissure", () => {
       .enemyPassiveAbility(AbilityId.BALL_FETCH)
       .enemyLevel(100);
 
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.SNORLAX);
 
     partyPokemon = game.field.getPlayerPokemon();
     enemyPokemon = game.field.getEnemyPokemon();
@@ -58,7 +56,7 @@ describe("Moves - Fissure", () => {
     game.move.select(MoveId.FISSURE);
 
     // wait for TurnEndPhase instead of DamagePhase as fissure might not actually inflict damage
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(partyPokemon.getAccuracyMultiplier).toHaveReturnedWith(1);
   });
@@ -71,7 +69,7 @@ describe("Moves - Fissure", () => {
     game.move.select(MoveId.FISSURE);
 
     // wait for TurnEndPhase instead of DamagePhase as fissure might not actually inflict damage
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(partyPokemon.getAccuracyMultiplier).toHaveReturnedWith(1);
   });

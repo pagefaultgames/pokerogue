@@ -14,7 +14,7 @@ import type { ObjectValues } from "#types/type-helpers";
 export function loadPositionalTag<T extends PositionalTagType>({
   tagType,
   ...args
-}: toSerializedPosTag<T>): posTagInstanceMap[T];
+}: ToSerializedPosTag<T>): PosTagInstanceMap[T];
 /**
  * Load the attributes of a {@linkcode PositionalTag}.
  * @param tag - The {@linkcode SerializedPositionalTag} to instantiate
@@ -26,14 +26,14 @@ export function loadPositionalTag(tag: SerializedPositionalTag): PositionalTag;
 export function loadPositionalTag<T extends PositionalTagType>({
   tagType,
   ...rest
-}: toSerializedPosTag<T>): posTagInstanceMap[T] {
+}: ToSerializedPosTag<T>): PosTagInstanceMap[T] {
   // Note: We need 2 type assertions here:
   // 1 because TS doesn't narrow the type of TagClass correctly based on `T`.
   // It converts it into `new (DelayedAttackTag | WishTag) => DelayedAttackTag & WishTag`
-  const tagClass = posTagConstructorMap[tagType] as new (args: posTagParamMap[T]) => posTagInstanceMap[T];
+  const tagClass = posTagConstructorMap[tagType] as new (args: PosTagParamMap[T]) => PosTagInstanceMap[T];
   // 2 because TS doesn't narrow the type of `rest` correctly
   // (from `Omit<serializedPosTagParamMap[T], "tagType"> into `posTagParamMap[T]`)
-  return new tagClass(rest as unknown as posTagParamMap[T]);
+  return new tagClass(rest as unknown as PosTagParamMap[T]);
 }
 
 /** Const object mapping tag types to their constructors. */
@@ -46,16 +46,16 @@ const posTagConstructorMap = Object.freeze({
 };
 
 /** Type mapping positional tag types to their constructors. */
-type posTagMap = typeof posTagConstructorMap;
+type PosTagMap = typeof posTagConstructorMap;
 
 /** Type mapping all positional tag types to their instances. */
-type posTagInstanceMap = {
-  [k in PositionalTagType]: InstanceType<posTagMap[k]>;
+type PosTagInstanceMap = {
+  [k in PositionalTagType]: InstanceType<PosTagMap[k]>;
 };
 
 /** Type mapping all positional tag types to their constructors' parameters. */
-type posTagParamMap = {
-  [k in PositionalTagType]: ConstructorParameters<posTagMap[k]>[0];
+type PosTagParamMap = {
+  [k in PositionalTagType]: ConstructorParameters<PosTagMap[k]>[0];
 };
 
 /**
@@ -63,15 +63,15 @@ type posTagParamMap = {
  *
  * Used in place of a mapped type to work around Typescript deficiencies in function type signatures.
  */
-export type toSerializedPosTag<T extends PositionalTagType> = posTagParamMap[T] & { readonly tagType: T };
+export type ToSerializedPosTag<T extends PositionalTagType> = PosTagParamMap[T] & { readonly tagType: T };
 
 /**
  * Type mapping all positional tag types to their constructors' parameters, alongside the `tagType` selector.
  * Equivalent to their serialized representations.
  */
-type serializedPosTagMap = {
-  [k in PositionalTagType]: toSerializedPosTag<k>;
+type SerializedPosTagMap = {
+  [k in PositionalTagType]: ToSerializedPosTag<k>;
 };
 
 /** Union type containing all serialized {@linkcode PositionalTag}s. */
-export type SerializedPositionalTag = ObjectValues<serializedPosTagMap>;
+export type SerializedPositionalTag = ObjectValues<SerializedPosTagMap>;

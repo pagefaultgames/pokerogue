@@ -32,12 +32,7 @@ describe("Abilities - Desolate Land", () => {
 
   it("should lift only when all pokemon with this ability leave the field", async () => {
     game.override.battleStyle("double").enemyMoveset([MoveId.SPLASH, MoveId.ROAR]);
-    await game.classicMode.startBattle([
-      SpeciesId.MAGCARGO,
-      SpeciesId.MAGCARGO,
-      SpeciesId.MAGIKARP,
-      SpeciesId.MAGIKARP,
-    ]);
+    await game.classicMode.startBattle(SpeciesId.MAGCARGO, SpeciesId.MAGCARGO, SpeciesId.MAGIKARP, SpeciesId.MAGIKARP);
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
 
@@ -82,7 +77,7 @@ describe("Abilities - Desolate Land", () => {
       .enemyMoveset([MoveId.SPLASH])
       .enemySpecies(SpeciesId.MAGCARGO)
       .enemyHasPassiveAbility(true);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
 
@@ -95,7 +90,7 @@ describe("Abilities - Desolate Land", () => {
 
   it("should lift when pokemon returns upon switching from double to single battle", async () => {
     game.override.battleStyle("even-doubles").enemyMoveset([MoveId.SPLASH, MoveId.MEMENTO]).startingWave(12);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGCARGO]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.MAGCARGO);
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
 
@@ -119,7 +114,7 @@ describe("Abilities - Desolate Land", () => {
       .enemyMoveset([MoveId.SPLASH])
       .enemySpecies(SpeciesId.MAGCARGO)
       .enemyHasPassiveAbility(true);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
 
@@ -134,7 +129,7 @@ describe("Abilities - Desolate Land", () => {
 
   it("should lift after fleeing from a wild pokemon", async () => {
     game.override.enemyAbility(AbilityId.DESOLATE_LAND).ability(AbilityId.BALL_FETCH);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
 
     vi.spyOn(game.field.getPlayerPokemon(), "randBattleSeedInt").mockReturnValue(0);

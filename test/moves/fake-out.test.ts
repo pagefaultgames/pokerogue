@@ -26,7 +26,7 @@ describe("Moves - Fake Out", () => {
   });
 
   it("should only work the first turn a pokemon is sent out in a battle", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.FAKE_OUT);
     await game.toNextTurn();
@@ -43,7 +43,7 @@ describe("Moves - Fake Out", () => {
 
   // This is a PokeRogue buff to Fake Out
   it("should succeed at the start of each new wave, even if user wasn't recalled", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     // set hp to 1 for easy knockout
     game.field.getEnemyPokemon().hp = 1;
@@ -58,7 +58,7 @@ describe("Moves - Fake Out", () => {
   });
 
   it("should succeed if recalled and sent back out", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MAGIKARP);
 
     game.move.use(MoveId.FAKE_OUT);
     await game.toNextTurn();

@@ -3,9 +3,6 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import { BerryPhase } from "#phases/berry-phase";
-import { MovePhase } from "#phases/move-phase";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -34,75 +31,75 @@ describe("Moves - Beak Blast", () => {
   });
 
   it("should add a charge effect that burns attackers on contact", async () => {
-    await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
+    await game.classicMode.startBattle(SpeciesId.BLASTOISE);
 
     const leadPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.BEAK_BLAST);
 
-    await game.phaseInterceptor.to(MovePhase, false);
+    await game.phaseInterceptor.to("MovePhase", false);
     expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeDefined();
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.status?.effect).toBe(StatusEffect.BURN);
   });
 
   it("should still charge and burn opponents if the user is sleeping", async () => {
     game.override.statusEffect(StatusEffect.SLEEP);
 
-    await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
+    await game.classicMode.startBattle(SpeciesId.BLASTOISE);
 
     const leadPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.BEAK_BLAST);
 
-    await game.phaseInterceptor.to(MovePhase, false);
+    await game.phaseInterceptor.to("MovePhase", false);
     expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeDefined();
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.status?.effect).toBe(StatusEffect.BURN);
   });
 
   it("should not burn attackers that don't make contact", async () => {
     game.override.enemyMoveset([MoveId.WATER_GUN]);
 
-    await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
+    await game.classicMode.startBattle(SpeciesId.BLASTOISE);
 
     const leadPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.BEAK_BLAST);
 
-    await game.phaseInterceptor.to(MovePhase, false);
+    await game.phaseInterceptor.to("MovePhase", false);
     expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeDefined();
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.status?.effect).not.toBe(StatusEffect.BURN);
   });
 
   it("should be blocked by Protect", async () => {
     game.override.enemyMoveset([MoveId.PROTECT]);
 
-    await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
+    await game.classicMode.startBattle(SpeciesId.BLASTOISE);
 
     const leadPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.BEAK_BLAST);
 
-    await game.phaseInterceptor.to(MovePhase, false);
+    await game.phaseInterceptor.to("MovePhase", false);
     expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeDefined();
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
     expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeUndefined();
   });
 
   it("should still burn the enemy if the user is knocked out", async () => {
     game.override.ability(AbilityId.BALL_FETCH);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.MAGIKARP);
     const enemyPokemon = game.field.getEnemyPokemon();
     const user = game.field.getPlayerPokemon();
     user.hp = 1;
@@ -113,7 +110,7 @@ describe("Moves - Beak Blast", () => {
 
   it("should not burn a long reach enemy that hits the user with a contact move", async () => {
     game.override.enemyAbility(AbilityId.LONG_REACH).enemyMoveset([MoveId.FALSE_SWIPE]).enemyLevel(100);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
     game.move.select(MoveId.BEAK_BLAST);
     await game.phaseInterceptor.to("BerryPhase", false);
     const enemyPokemon = game.field.getEnemyPokemon();
