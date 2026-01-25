@@ -1055,8 +1055,8 @@ export abstract class Move implements Localizable {
   /**
    * Calculates the power of a move in battle based on various conditions and attributes.
    *
-   * @param source {@linkcode Pokemon} The Pokémon using the move.
-   * @param target {@linkcode Pokemon} The Pokémon being targeted by the move.
+   * @param source - The {@linkcode Pokemon} using the move
+   * @param target - The Pokémon being targeted by the move
    * @returns The calculated power of the move.
    */
   calculateBattlePower(source: Pokemon, target: Pokemon, simulated = false): number {
@@ -1140,6 +1140,10 @@ export abstract class Move implements Localizable {
 
     power.value *= (source.getTag(BattlerTagType.SUPREME_OVERLORD) as SupremeOverlordTag | undefined)?.getBoost() ?? 1;
 
+    if (source.isGrounded()) {
+      power.value *= globalScene.arena.getTerrainPowerMultiplier(source.getMoveType(this));
+    }
+
     return power.value;
   }
 
@@ -1166,13 +1170,14 @@ export abstract class Move implements Localizable {
   }
 
   /**
-   * Calculate the [Expected Power](https://en.wikipedia.org/wiki/Expected_value) per turn
-   * of this move, taking into account multi hit moves, accuracy, and the number of turns it
-   * takes to execute.
+   * Calculate the {@link https://en.wikipedia.org/wiki/Expected_value | Expected Power} per turn of this move,
+   * taking into account multi hit moves, accuracy, and the number of turns it takes to execute.
    *
-   * Does not (yet) consider the current field effects or the user's abilities.
+   * Used for AI calculations.
+   * @remarks
+   * Does not currently consider the current field effects or the user's abilities.
    */
-  calculateEffectivePower(): number {
+  public calculateEffectivePower(): number {
     let effectivePower: number;
     // Triple axel and triple kick are easier to special case.
     if (this.id === MoveId.TRIPLE_AXEL) {
@@ -1207,8 +1212,8 @@ export abstract class Move implements Localizable {
 
   /**
    * Check whether this Move can be given additional strikes from enhancing effects.
-   * Currently used for {@link https://bulbapedia.bulbagarden.net/wiki/Parental_Bond_(Ability) | Parental Bond}
-   * and {@linkcode PokemonMultiHitModifier | Multi Lens}.
+   * @see {@link https://bulbapedia.bulbagarden.net/wiki/Parental_Bond_(Ability) | Parental Bond (Bulbapedia)}
+   * and {@linkcode PokemonMultiHitModifier | Multi Lens}
    * @param user - The {@linkcode Pokemon} using the move
    * @param restrictSpread - (Default `false`) Whether the enhancing effect should ignore multi-target moves
    * @param target - (Optional) The targeted pokemon, used for Pollen Puff
@@ -2573,30 +2578,23 @@ export class SacrificialFullRestoreAttr extends SacrificialAttr {
 }
 
 /**
- * Attribute used for moves which ignore type-based debuffs from weather, namely Hydro Steam.
- * Called during damage calculation after getting said debuff from getAttackTypeMultiplier in the Pokemon class.
+ * Attribute used for moves which ignore type-based debuffs from weather.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Hydro_Steam_(move)}
  */
 export class IgnoreWeatherTypeDebuffAttr extends MoveAttr {
   /** The {@linkcode WeatherType} this move ignores */
-  public weather: WeatherType;
+  public readonly weather: WeatherType;
 
   constructor(weather: WeatherType) {
     super();
+
     this.weather = weather;
   }
-  /**
-   * Changes the type-based weather modifier if this move's power would be reduced by it
-   * @param user {@linkcode Pokemon} that used the move
-   * @param target N/A
-   * @param move {@linkcode Move} with this attribute
-   * @param args [0] {@linkcode NumberHolder} for arenaAttackTypeMultiplier
-   * @returns true if the function succeeds
-   */
-  apply(_user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
-    const weatherModifier = args[0] as NumberHolder;
-    //If the type-based attack power modifier due to weather (e.g. Water moves in Sun) is below 1, set it to 1
-    if (globalScene.arena.weather?.weatherType === this.weather) {
-      weatherModifier.value = Math.max(weatherModifier.value, 1);
+
+  apply(_user: Pokemon, _target: Pokemon, _move: Move, args: [NumberHolder, ...any[]]): boolean {
+    const weatherModifier = args[0];
+    if (globalScene.arena.weatherType === this.weather) {
+      weatherModifier.value = 1.5;
     }
     return true;
   }
@@ -12191,17 +12189,8 @@ export function initMoves() {
         globalScene.arena.terrainType === TerrainType.ELECTRIC && user.isGrounded() ? 1.5 : 1,
       )
       .slicingMove(),
-    new AttackMove(MoveId.HYDRO_STEAM, PokemonType.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, 0, 9)
-      .attr(IgnoreWeatherTypeDebuffAttr, WeatherType.SUNNY)
-      .attr(MovePowerMultiplierAttr, (_user, _target, _move) => {
-        const weather = globalScene.arena.weather;
-        if (!weather) {
-          return 1;
-        }
-        return [WeatherType.SUNNY, WeatherType.HARSH_SUN].includes(weather.weatherType) && !weather.isEffectSuppressed()
-          ? 1.5
-          : 1;
-      }),
+    new AttackMove(MoveId.HYDRO_STEAM, PokemonType.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, 0, 9) //
+      .attr(IgnoreWeatherTypeDebuffAttr, WeatherType.SUNNY),
     new AttackMove(MoveId.RUINATION, PokemonType.DARK, MoveCategory.SPECIAL, -1, 90, 10, -1, 0, 9) //
       .attr(TargetHalfHpDamageAttr),
     new AttackMove(MoveId.COLLISION_COURSE, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 9) //

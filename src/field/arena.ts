@@ -23,7 +23,7 @@ import { BiomeId } from "#enums/biome-id";
 import { BiomePoolTier } from "#enums/biome-pool-tier";
 import { CommonAnim } from "#enums/move-anims-common";
 import type { MoveId } from "#enums/move-id";
-import type { PokemonType } from "#enums/pokemon-type";
+import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
@@ -32,6 +32,7 @@ import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEven
 import type { Pokemon } from "#field/pokemon";
 import { FieldEffectModifier } from "#modifiers/modifier";
 import type { Move } from "#moves/move";
+import { isFieldTargeted, isSpreadMove } from "#moves/move-utils";
 import type { BiomeTierTrainerPools, PokemonPools } from "#types/biomes";
 import type { Constructor } from "#types/common";
 import type { AbstractConstructor } from "#types/type-helpers";
@@ -241,6 +242,17 @@ export class Arena {
     }
   }
 
+  /**
+   * @param attackType - The {@linkcode PokemonType} of the attack
+   * @returns The weather damage multiplier
+   */
+  public getWeatherDamageMultiplier(attackType: PokemonType): number {
+    if (this.weather && !this.weather.isEffectSuppressed()) {
+      return this.weather.getAttackTypeMultiplier(attackType);
+    }
+    return 1;
+  }
+
   // #endregion
   // #region Terrain
 
@@ -292,7 +304,7 @@ export class Arena {
 
     for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
       pokemon.findAndRemoveTags(
-        t => "terrainTypes" in t && !(t.terrainTypes as TerrainType[]).find(t => t === terrain),
+        tag => "terrainTypes" in tag && !(tag.terrainTypes as TerrainType[]).find(t => t === terrain),
       );
       applyAbAttrs("PostTerrainChangeAbAttr", { pokemon, terrain });
       applyAbAttrs("TerrainEventTypeChangeAbAttr", { pokemon });
@@ -301,8 +313,34 @@ export class Arena {
     return true;
   }
 
+  /** @see {@link https://bulbapedia.bulbagarden.net/wiki/Psychic_Terrain_(move)#Effect} */
   public isMoveTerrainCancelled(user: Pokemon, targets: BattlerIndex[], move: Move): boolean {
-    return !!this.terrain && this.terrain.isMoveTerrainCancelled(user, targets, move);
+    if (this.terrainType === TerrainType.PSYCHIC) {
+      return (
+        !isFieldTargeted(move)
+        && !isSpreadMove(move)
+        && move.getPriority(user) > 0
+        && user.getOpponents(true).some(o => targets.includes(o.getBattlerIndex()) && o.isGrounded())
+      );
+    }
+    return false;
+  }
+
+  /**
+   * @param attackType - The {@linkcode PokemonType} of the attack
+   * @returns The terrain power multiplier
+   */
+  public getTerrainPowerMultiplier(attackType: PokemonType): number {
+    if (this.terrainType === TerrainType.ELECTRIC && attackType === PokemonType.ELECTRIC) {
+      return 1.3;
+    }
+    if (this.terrainType === TerrainType.GRASSY && attackType === PokemonType.GRASS) {
+      return 1.3;
+    }
+    if (this.terrainType === TerrainType.PSYCHIC && attackType === PokemonType.PSYCHIC) {
+      return 1.3;
+    }
+    return 1;
   }
 
   // #endregion
@@ -543,6 +581,7 @@ export class Arena {
     if (side !== ArenaTagSide.BOTH) {
       tags = tags.filter(t => t.side === side);
     }
+    // biome-ignore lint/suspicious/useIterableCallbackReturn: the function returns `void`
     tags.forEach(t => t.apply(...args));
   }
 
@@ -867,21 +906,6 @@ export class Arena {
   }
 
   // #endregion
-
-  // TODO: replace this
-  getAttackTypeMultiplier(attackType: PokemonType, grounded: boolean): number {
-    let weatherMultiplier = 1;
-    if (this.weather && !this.weather.isEffectSuppressed()) {
-      weatherMultiplier = this.weather.getAttackTypeMultiplier(attackType);
-    }
-
-    let terrainMultiplier = 1;
-    if (this.terrain && grounded) {
-      terrainMultiplier = this.terrain.getAttackTypeMultiplier(attackType);
-    }
-
-    return weatherMultiplier * terrainMultiplier;
-  }
 }
 
 // #region Helper Functions
