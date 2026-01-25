@@ -42,7 +42,7 @@ describe.todo("Ability - Ball Fetch", () => {
   });
 
   it("should restore the user's first failed ball throw at end of turn", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     const karp = game.field.getEnemyPokemon();
@@ -68,7 +68,7 @@ describe.todo("Ability - Ball Fetch", () => {
 
   it("should not work on enemies", async () => {
     game.override.ability(AbilityId.AIR_LOCK).enemyAbility(AbilityId.BALL_FETCH);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const karp = game.field.getEnemyPokemon();
 

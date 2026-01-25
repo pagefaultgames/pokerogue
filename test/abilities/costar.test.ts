@@ -29,7 +29,7 @@ describe("Abilities - Costar", () => {
   });
 
   it("copies the ally's stat stages", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.GIBLE, SpeciesId.MILOTIC]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.GIBLE, SpeciesId.MILOTIC);
 
     const [player1, , player3] = game.scene.getPlayerParty();
 
@@ -54,7 +54,7 @@ describe("Abilities - Costar", () => {
     { move: MoveId.FOCUS_ENERGY, tagType: BattlerTagType.CRIT_BOOST, moveName: "Focus Energy" },
     { move: MoveId.LASER_FOCUS, tagType: BattlerTagType.ALWAYS_CRIT, moveName: "Laser Focus" },
   ])("copies the ally's critical hit stages from $moveName", async ({ move, tagType }) => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.GYARADOS, SpeciesId.MILOTIC]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.GYARADOS, SpeciesId.MILOTIC);
 
     const [player1, , player3] = game.scene.getPlayerParty();
 
@@ -75,7 +75,7 @@ describe("Abilities - Costar", () => {
     { speciesId: SpeciesId.GYARADOS, critStages: 1 },
     { speciesId: SpeciesId.GIBLE, critStages: 2 },
   ])("copies the number of crit stages from Dragon Cheer ($critStages)", async ({ speciesId, critStages }) => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, speciesId, SpeciesId.MILOTIC]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, speciesId, SpeciesId.MILOTIC);
 
     const [, player2, player3] = game.scene.getPlayerParty();
 

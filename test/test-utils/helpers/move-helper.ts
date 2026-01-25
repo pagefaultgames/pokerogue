@@ -10,7 +10,7 @@ import { getMoveTargets } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { CommandPhase } from "#phases/command-phase";
 import type { EnemyCommandPhase } from "#phases/enemy-command-phase";
-import { MoveEffectPhase } from "#phases/move-effect-phase";
+import type { MoveEffectPhase } from "#phases/move-effect-phase";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
 import { coerceArray } from "#utils/array";
 import { toTitleCase } from "#utils/strings";
@@ -27,7 +27,7 @@ export class MoveHelper extends GameManagerHelper {
    * @returns A promise that resolves once the next MoveEffectPhase has been reached (not run).
    */
   public async forceHit(): Promise<void> {
-    await this.game.phaseInterceptor.to(MoveEffectPhase, false);
+    await this.game.phaseInterceptor.to("MoveEffectPhase", false);
     const moveEffectPhase = this.game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase;
     vi.spyOn(moveEffectPhase.move, "calculateBattleAccuracy").mockReturnValue(-1);
   }
@@ -39,7 +39,7 @@ export class MoveHelper extends GameManagerHelper {
    * @returns A promise that resolves once the next MoveEffectPhase has been reached (not run).
    */
   public async forceMiss(firstTargetOnly = false): Promise<void> {
-    await this.game.phaseInterceptor.to(MoveEffectPhase, false);
+    await this.game.phaseInterceptor.to("MoveEffectPhase", false);
     const moveEffectPhase = this.game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase;
     const accuracy = vi.spyOn(moveEffectPhase.move, "calculateBattleAccuracy");
 

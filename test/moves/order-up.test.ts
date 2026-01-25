@@ -46,7 +46,7 @@ describe("Moves - Order Up", () => {
     async ({ formIndex, stat }) => {
       game.override.starterForms({ [SpeciesId.TATSUGIRI]: formIndex });
 
-      await game.classicMode.startBattle([SpeciesId.TATSUGIRI, SpeciesId.DONDOZO]);
+      await game.classicMode.startBattle(SpeciesId.TATSUGIRI, SpeciesId.DONDOZO);
 
       const [tatsugiri, dondozo] = game.scene.getPlayerField();
 

@@ -2,10 +2,7 @@ import overrides from "#app/overrides";
 import { BattleStyle } from "#enums/battle-style";
 import { Button } from "#enums/buttons";
 import { UiMode } from "#enums/ui-mode";
-import { CommandPhase } from "#phases/command-phase";
-import { EncounterPhase } from "#phases/encounter-phase";
 import { TitlePhase } from "#phases/title-phase";
-import { TurnInitPhase } from "#phases/turn-init-phase";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
 import type { SaveSlotSelectUiHandler } from "#ui/save-slot-select-ui-handler";
 
@@ -35,7 +32,7 @@ export class DailyModeHelper extends GameManagerHelper {
       uihandler.processInput(Button.ACTION); // select first slot. that's fine
     });
 
-    await this.game.phaseInterceptor.to(EncounterPhase);
+    await this.game.phaseInterceptor.to("EncounterPhase");
 
     if (overrides.ENEMY_HELD_ITEMS_OVERRIDE.length === 0 && this.game.override.removeEnemyStartingItems) {
       this.game.removeEnemyHeldItems();
@@ -57,7 +54,7 @@ export class DailyModeHelper extends GameManagerHelper {
           this.game.setMode(UiMode.MESSAGE);
           this.game.endPhase();
         },
-        () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase),
+        () => this.game.isCurrentPhase("CommandPhase") || this.game.isCurrentPhase("TurnInitPhase"),
       );
 
       this.game.onNextPrompt(
@@ -67,11 +64,11 @@ export class DailyModeHelper extends GameManagerHelper {
           this.game.setMode(UiMode.MESSAGE);
           this.game.endPhase();
         },
-        () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase),
+        () => this.game.isCurrentPhase("CommandPhase") || this.game.isCurrentPhase("TurnInitPhase"),
       );
     }
 
-    await this.game.phaseInterceptor.to(CommandPhase);
+    await this.game.phaseInterceptor.to("CommandPhase");
     console.log("==================[New Turn]==================");
   }
 }
