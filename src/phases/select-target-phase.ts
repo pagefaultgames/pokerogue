@@ -4,7 +4,6 @@ import type { BattlerIndex } from "#enums/battler-index";
 import { Command } from "#enums/command";
 import { UiMode } from "#enums/ui-mode";
 import { PokemonPhase } from "#phases/pokemon-phase";
-import i18next from "i18next";
 
 export class SelectTargetPhase extends PokemonPhase {
   public readonly phaseName = "SelectTargetPhase";
@@ -42,13 +41,18 @@ export class SelectTargetPhase extends PokemonPhase {
       move.id,
       (targets: BattlerIndex[]) => {
         globalScene.ui.setMode(UiMode.MESSAGE);
-        if (targets[0] && user.isMoveTargetRestricted(move.id, user, fieldSide[targets[0]])) {
-          const errorMessage = user
-            .getRestrictingTag(move.id, user, fieldSide[targets[0]])!
-            .selectionDeniedText(user, move.id);
-          globalScene.phaseManager.queueMessage(i18next.t(errorMessage, { moveName: move.name }), 0, true);
-          targets = [];
+        // Find any tags blocking this target from being selected
+        // TODO: Denest and make less jank
+
+        // TODO: when would this occur?
+        if (targets[0]) {
+          const restrictingTag = user.getTargetRestrictingTag(moveId, fieldSide[targets[0]]);
+          if (restrictingTag) {
+            globalScene.phaseManager.queueMessage(restrictingTag.selectionDeniedText(user, moveId));
+            targets = [];
+          }
         }
+
         if (targets.length === 0) {
           globalScene.currentBattle.turnCommands[this.fieldIndex] = null;
           globalScene.phaseManager.unshiftNew("CommandPhase", this.fieldIndex);

@@ -1,4 +1,4 @@
-import { PostReceiveCritStatStageChangeAbAttr } from "#abilities/ability";
+import { PostReceiveCritStatStageChangeAbAttr } from "#abilities/ab-attrs";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
