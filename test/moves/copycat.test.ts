@@ -36,7 +36,7 @@ describe("Moves - Copycat", () => {
 
   it("should copy the last move executed across turns", async () => {
     game.override.enemyMoveset(MoveId.SUCKER_PUNCH);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.SWORDS_DANCE);
     await game.toNextTurn();
@@ -50,7 +50,7 @@ describe("Moves - Copycat", () => {
 
   it("should fail when the last move used is not a valid Copycat move", async () => {
     game.override.enemyMoveset(MoveId.PROTECT); // Protect is not a valid move for Copycat to copy
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.SPIKY_SHIELD); // Spiky Shield is not a valid move for Copycat to copy
     await game.toNextTurn();
@@ -63,7 +63,7 @@ describe("Moves - Copycat", () => {
 
   it("should copy the called move when the last move successfully calls another", async () => {
     game.override.moveset([MoveId.SPLASH, MoveId.METRONOME]).enemyMoveset(MoveId.COPYCAT);
-    await game.classicMode.startBattle([SpeciesId.DRAMPA]);
+    await game.classicMode.startBattle(SpeciesId.DRAMPA);
     game.move.forceMetronomeMove(MoveId.SWORDS_DANCE, true);
 
     game.move.select(MoveId.METRONOME);
@@ -81,7 +81,7 @@ describe("Moves - Copycat", () => {
 
   it("should apply move secondary effects", async () => {
     game.override.enemyMoveset(MoveId.ACID_SPRAY); // Secondary effect lowers SpDef by 2 stages
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.COPYCAT);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -91,7 +91,7 @@ describe("Moves - Copycat", () => {
   });
 
   it("should not update the lastMove tracker for move failures in sequence 2", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.COPYCAT);
     await game.move.forceEnemyMove(MoveId.DOUBLE_SHOCK);
