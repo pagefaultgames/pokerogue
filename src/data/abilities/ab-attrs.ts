@@ -2992,7 +2992,6 @@ export class PreLeaveFieldAbAttr extends AbAttr {
 /**
  * Ability attribute to clear a primal {@linkcode WeatherType} upon this Pokemon switching out.
  */
-// TODO: Keeping a reference to the Pokemon from within the Weather class would make this far cleaner
 export class PreLeaveFieldClearWeatherAbAttr extends PreLeaveFieldAbAttr {
   private readonly weatherType: Exclude<WeatherType, WeatherType.NONE>;
 
