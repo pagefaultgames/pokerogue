@@ -90,7 +90,7 @@ describe("Moves - Copycat", () => {
     expect(game.field.getEnemyPokemon().getStatStage(Stat.SPDEF)).toBe(-2);
   });
 
-  it("should not update the lastMove tracker for move failures in sequences 2", async () => {
+  it("should not update the lastMove tracker for move failures in sequence 2", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     game.move.use(MoveId.COPYCAT);
