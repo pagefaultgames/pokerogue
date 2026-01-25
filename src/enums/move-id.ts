@@ -1,3 +1,4 @@
+// biome-ignore-all lint/style/useNamingConvention: Z moves are weird
 export enum MoveId {
   /**{@link https://bulbapedia.bulbagarden.net/wiki/None_(move) | Source} */
   NONE,

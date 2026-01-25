@@ -47,7 +47,7 @@ import { addWindow } from "#ui/ui-theme";
 import { BooleanHolder, fixedInt, getLocalizedSpriteKey, padInt, randIntRange, rgbHexToRgba } from "#utils/common";
 import type { StarterPreferences } from "#utils/data";
 import { loadStarterPreferences } from "#utils/data";
-import { getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
+import { getDexNumber, getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
@@ -1320,13 +1320,13 @@ export class PokedexUiHandler extends MessageUiHandler {
     if (gamepadType === "touch") {
       gamepadType = "keyboard";
       switch (iconSetting) {
-        case SettingKeyboard.Button_Cycle_Shiny:
+        case SettingKeyboard.BUTTON_CYCLE_SHINY:
           iconPath = "R.png";
           break;
-        case SettingKeyboard.Button_Cycle_Form:
+        case SettingKeyboard.BUTTON_CYCLE_FORM:
           iconPath = "F.png";
           break;
-        case SettingKeyboard.Button_Stats:
+        case SettingKeyboard.BUTTON_STATS:
           iconPath = "C.png";
           break;
         default:
@@ -2140,7 +2140,9 @@ export class PokedexUiHandler extends MessageUiHandler {
       species
       && (this.speciesStarterDexEntry?.seenAttr || this.speciesStarterDexEntry?.caughtAttr || globalScene.dexForDevs)
     ) {
-      this.pokemonNumberText.setText(i18next.t("pokedexUiHandler:pokemonNumber") + padInt(species.speciesId, 4));
+      this.pokemonNumberText.setText(
+        i18next.t("pokedexUiHandler:pokemonNumber") + padInt(getDexNumber(species.speciesId), 4),
+      );
 
       this.pokemonNameText.setText(species.name);
 
@@ -2165,7 +2167,7 @@ export class PokedexUiHandler extends MessageUiHandler {
       }
     } else {
       this.pokemonNumberText.setText(
-        species ? i18next.t("pokedexUiHandler:pokemonNumber") + padInt(species.speciesId, 4) : "",
+        species ? i18next.t("pokedexUiHandler:pokemonNumber") + padInt(getDexNumber(species.speciesId), 4) : "",
       );
       this.pokemonNameText.setText(species ? "???" : "");
       this.pokemonFormText.setText("");

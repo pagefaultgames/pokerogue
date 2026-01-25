@@ -239,7 +239,7 @@ export class StatStageChangePhase extends PokemonPhase {
 
       pokemon.updateInfo();
 
-      handleTutorial(Tutorial.Stat_Change).then(() => super.end());
+      handleTutorial(Tutorial.STAT_CHANGE).then(() => super.end());
     };
 
     if (relLevels.filter(l => l).length > 0 && globalScene.moveAnimations) {
