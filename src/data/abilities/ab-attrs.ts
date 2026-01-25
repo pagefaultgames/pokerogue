@@ -2,7 +2,7 @@ import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { EntryHazardTag, SuppressAbilitiesTag } from "#data/arena-tag";
-import type { BattlerTag } from "#data/battler-tags";
+import { type BattlerTag, CritBoostTag } from "#data/battler-tags";
 import { getBerryEffectFunc } from "#data/berry";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { SpeciesFormChangeAbilityTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
@@ -53,7 +53,7 @@ import type {
   PokemonStatStageChangeCondition,
 } from "#types/ability-types";
 import type { Move, StatusEffectAttr } from "#types/move-types";
-import type { Closed, Exact } from "#types/type-helpers";
+import type { Closed, Exact, Mutable } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
 import { BooleanHolder, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
 import { inSpeedOrder } from "#utils/speed-order-generator";
@@ -2753,34 +2753,58 @@ export class PostSummonUserFieldRemoveStatusEffectAbAttr extends PostSummonAbAtt
   }
 }
 
-/** Attempt to copy the stat changes on an ally pokemon */
+/**
+ * Copies the stat stages and critical hit stage of the user's ally.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Costar_(Ability) | Costar (Bulbapedia)}
+ */
 export class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
+  private ally: Pokemon;
+
   override canApply({ pokemon }: AbAttrBaseParams): boolean {
     if (!globalScene.currentBattle.double) {
       return false;
     }
 
     const ally = pokemon.getAlly();
-    return !(ally == null || ally.getStatStages().every(s => s === 0));
+    if (!ally?.isActive(true)) {
+      return false;
+    }
+    this.ally = ally;
+
+    return true;
   }
 
   override apply({ pokemon, simulated }: AbAttrBaseParams): void {
     if (simulated) {
       return;
     }
-    const ally = pokemon.getAlly();
-    if (ally != null) {
-      for (const s of BATTLE_STATS) {
-        pokemon.setStatStage(s, ally.getStatStage(s));
-      }
-      pokemon.updateInfo();
+
+    for (const s of BATTLE_STATS) {
+      pokemon.setStatStage(s, this.ally.getStatStage(s));
+    }
+    pokemon.updateInfo();
+
+    const dragonCheerTag = this.ally.getTag(BattlerTagType.DRAGON_CHEER) as CritBoostTag;
+    if (dragonCheerTag) {
+      pokemon.addTag(BattlerTagType.DRAGON_CHEER);
+      (pokemon.getTag(CritBoostTag) as Mutable<CritBoostTag>).critStages = dragonCheerTag.critStages;
+    }
+
+    const critBoostTag = this.ally.getTag(BattlerTagType.CRIT_BOOST);
+    if (critBoostTag) {
+      pokemon.addTag(BattlerTagType.CRIT_BOOST);
+    }
+
+    const laserFocusTag = this.ally.getTag(BattlerTagType.ALWAYS_CRIT);
+    if (laserFocusTag) {
+      pokemon.addTag(BattlerTagType.ALWAYS_CRIT);
     }
   }
 
   getTriggerMessage({ pokemon }: AbAttrBaseParams, _abilityName: string): string {
     return i18next.t("abilityTriggers:costar", {
       pokemonName: getPokemonNameWithAffix(pokemon),
-      allyName: getPokemonNameWithAffix(pokemon.getAlly()),
+      allyName: getPokemonNameWithAffix(this.ally),
     });
   }
 }

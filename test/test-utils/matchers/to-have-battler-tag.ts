@@ -37,7 +37,9 @@ type PartiallyFilledNonSerializableBattlerTag<B extends BattlerTagType> = //
  */
 export type PartiallyFilledBattlerTag<B extends BattlerTagType> = [B] extends [SerializableBattlerTagType]
   ? PartiallyFilledSerializableBattlerTag<B>
-  : PartiallyFilledNonSerializableBattlerTag<B>; /**
+  : PartiallyFilledNonSerializableBattlerTag<B>;
+
+/**
  * Matcher that checks if a {@linkcode Pokemon} has a specific {@linkcode BattlerTag}.
  * @param received - The object to check. Should be a {@linkcode Pokemon}
  * @param expectedTag - The `BattlerTagType` of the desired tag, an existing `BattlerTag` to verify ownership of,
