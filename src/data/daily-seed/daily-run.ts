@@ -11,6 +11,7 @@ import { PartyMemberStrength } from "#enums/party-member-strength";
 import type { SpeciesId } from "#enums/species-id";
 import type { DailySeedBoss } from "#types/daily-run";
 import type { Starter, StarterMoveset } from "#types/save-data";
+import type { TupleRange } from "#types/type-helpers";
 import { isBetween, randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
@@ -21,7 +22,7 @@ import {
   validateDailyStarterConfig,
 } from "./daily-seed-utils";
 
-type StarterTuple = [Starter, Starter, Starter];
+type StarterTuple = TupleRange<1, 6, Starter>;
 
 /**
  * Generate the daily run starters.
@@ -169,8 +170,7 @@ function getDailyEventSeedStarters(): StarterTuple | null {
 
   const speciesConfigurations = globalScene.gameMode.dailyConfig?.starters;
 
-  if (speciesConfigurations == null || speciesConfigurations.length !== 3) {
-    console.error(`Invalid starters used for custom daily run seed!\nStarters:${speciesConfigurations}`);
+  if (speciesConfigurations == null) {
     return null;
   }
 

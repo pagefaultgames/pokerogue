@@ -31,8 +31,8 @@
         "required": ["speciesId"],
         "additionalProperties": false
       },
-      "minItems": 3,
-      "maxItems": 3
+      "minItems": 1,
+      "maxItems": 6
     },
     "boss": {
       "type": "object",

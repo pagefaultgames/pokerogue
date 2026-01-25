@@ -4,8 +4,8 @@ import type { BiomePoolTier } from "#enums/biome-pool-tier";
 import type { Nature } from "#enums/nature";
 import type { SpeciesId } from "#enums/species-id";
 import type { Variant } from "#sprites/variant";
-import type { TupleOf } from "type-fest";
 import type { StarterMoveset } from "./save-data";
+import type { TupleRange } from "./type-helpers";
 
 /**
  * Configuration for a custom daily run starter Pokémon.
@@ -22,7 +22,7 @@ export interface DailySeedStarter {
   abilityIndex?: number;
 }
 
-type DailySeedStarterTuple = TupleOf<3, DailySeedStarter>;
+type DailySeedStarterTuple = TupleRange<1, 6, DailySeedStarter>;
 
 /**
  * Configuration for a custom daily run boss Pokémon.
