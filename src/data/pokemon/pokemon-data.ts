@@ -289,6 +289,7 @@ export class PokemonWaveData {
    */
   public abilitiesApplied: Set<AbilityId> = new Set<AbilityId>();
   /** Whether the pokemon's ability has been revealed or not */
+  // TODO: this doesn't account for passives
   public abilityRevealed = false;
 }
 

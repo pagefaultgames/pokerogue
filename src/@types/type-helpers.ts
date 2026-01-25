@@ -2,7 +2,7 @@
  * A collection of custom utility types that aid in type checking and ensuring strict type conformity
  */
 
-import type { AbAttr } from "#abilities/ability";
+import type { AbAttr } from "#abilities/ab-attrs";
 import type { NegativeInfinity, PositiveInfinity } from "type-fest";
 
 /**
