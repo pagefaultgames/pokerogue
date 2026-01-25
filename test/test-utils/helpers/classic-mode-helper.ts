@@ -63,7 +63,6 @@ export class ClassicModeHelper extends GameManagerHelper {
     }
   }
 
-  // TODO: change to `startBattle(...species: NonEmptyTuple<SpeciesId>)`
   /**
    * Transitions to the start of a battle.
    * @param species - An array of {@linkcode SpeciesId}s with which to start the battle
