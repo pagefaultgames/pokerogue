@@ -57,11 +57,11 @@ export class ChallengeModeHelper extends GameManagerHelper {
   }
 
   /**
-   * Transitions to the start of a challenge mode battle.
-   * @param speciesIds - Optional array of species to start the battle with.
-   * @returns A promise that resolves when the battle is started.
+   * Transition from the title screen to the start of a new Challenge Mode battle.
+   * @param speciesIds - The {@linkcode SpeciesId}s with which to start the battle; must be between 1-6
+   * @returns A Promise that resolves when the battle is started.
    */
-  async startBattle(...speciesIds: TupleOf<1 | 2 | 3 | 4 | 5 | 6, SpeciesId>) {
+  async startBattle(...speciesIds: TupleOf<IntClosedRange<1, 6>, SpeciesId>) {
     await this.runToSummon(...speciesIds);
 
     if (this.game.scene.battleStyle === BattleStyle.SWITCH) {
