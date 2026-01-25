@@ -1,4 +1,4 @@
-import { PostTurnResetStatusAbAttr } from "#abilities/ability";
+import { PostTurnResetStatusAbAttr } from "#abilities/ab-attrs";
 import { allAbilities } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";

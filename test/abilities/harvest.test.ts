@@ -1,4 +1,4 @@
-import { PostTurnRestoreBerryAbAttr } from "#abilities/ability";
+import { PostTurnRestoreBerryAbAttr } from "#abilities/ab-attrs";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { BerryType } from "#enums/berry-type";

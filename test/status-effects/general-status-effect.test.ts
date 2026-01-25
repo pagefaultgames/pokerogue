@@ -1,3 +1,4 @@
+import type { PostAttackContactApplyStatusEffectAbAttr } from "#abilities/ab-attrs";
 import { allAbilities } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
@@ -5,7 +6,6 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { ObtainStatusEffectPhase } from "#phases/obtain-status-effect-phase";
 import { GameManager } from "#test/test-utils/game-manager";
-import type { PostAttackContactApplyStatusEffectAbAttr } from "#types/ability-types";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
