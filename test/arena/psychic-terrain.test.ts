@@ -32,7 +32,7 @@ describe("Arena - Psychic Terrain", () => {
   });
 
   it("Dark Void with Prankster is not blocked", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     game.move.select(MoveId.PSYCHIC_TERRAIN);
     await game.toNextTurn();
@@ -44,7 +44,7 @@ describe("Arena - Psychic Terrain", () => {
   });
 
   it("Rain Dance with Prankster is not blocked", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     game.move.select(MoveId.PSYCHIC_TERRAIN);
     await game.toNextTurn();
@@ -57,7 +57,7 @@ describe("Arena - Psychic Terrain", () => {
 
   it("should not block non-priority moves boosted by Quick Claw", async () => {
     game.override.startingHeldItems([{ name: "QUICK_CLAW", count: 10 }]);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.PSYCHIC_TERRAIN);
     await game.toNextTurn();
@@ -78,7 +78,7 @@ describe("Arena - Psychic Terrain", () => {
 
   it("should block priority moves boosted by Quick Claw", async () => {
     game.override.startingHeldItems([{ name: "QUICK_CLAW", count: 10 }]);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.PSYCHIC_TERRAIN);
     await game.toNextTurn();

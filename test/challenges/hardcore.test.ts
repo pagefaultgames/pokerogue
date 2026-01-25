@@ -36,7 +36,7 @@ describe("Challenges - Hardcore", () => {
 
   it("should render Revival Blessing unusable by players only", async () => {
     game.override.enemyMoveset(MoveId.REVIVAL_BLESSING).moveset(MoveId.REVIVAL_BLESSING);
-    await game.challengeMode.startBattle([SpeciesId.NUZLEAF]);
+    await game.challengeMode.startBattle(SpeciesId.NUZLEAF);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
@@ -54,7 +54,7 @@ describe("Challenges - Hardcore", () => {
 
   it("prevents REVIVE items in shop and in wave rewards", async () => {
     game.override.startingWave(181).startingLevel(200);
-    await game.challengeMode.startBattle();
+    await game.challengeMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
@@ -76,7 +76,7 @@ describe("Challenges - Hardcore", () => {
 
   it("prevents the automatic party heal from reviving fainted Pokémon", async () => {
     game.override.startingWave(10).startingLevel(200);
-    await game.challengeMode.startBattle([SpeciesId.NUZLEAF, SpeciesId.WHISMUR]);
+    await game.challengeMode.startBattle(SpeciesId.NUZLEAF, SpeciesId.WHISMUR);
 
     const faintedPokemon = game.scene.getPlayerParty()[1];
     faintedPokemon.hp = 0;
@@ -94,7 +94,7 @@ describe("Challenges - Hardcore", () => {
   // TODO: Couldn't figure out how to select party Pokémon
   it.skip("prevents fusion with a fainted Pokémon", async () => {
     game.override.itemRewards([{ name: "DNA_SPLICERS" }]);
-    await game.challengeMode.startBattle([SpeciesId.NUZLEAF, SpeciesId.WHISMUR]);
+    await game.challengeMode.startBattle(SpeciesId.NUZLEAF, SpeciesId.WHISMUR);
 
     const faintedPokemon = game.scene.getPlayerParty()[1];
     faintedPokemon.hp = 0;
@@ -131,7 +131,7 @@ describe("Challenges - Hardcore", () => {
   // TODO: Couldn't figure out how to select party Pokémon
   it.skip("prevents fainted Pokémon from being revived", async () => {
     game.override.itemRewards([{ name: "MAX_REVIVE" }]);
-    await game.challengeMode.startBattle([SpeciesId.NUZLEAF, SpeciesId.WHISMUR]);
+    await game.challengeMode.startBattle(SpeciesId.NUZLEAF, SpeciesId.WHISMUR);
 
     const faintedPokemon = game.scene.getPlayerParty()[1];
     faintedPokemon.hp = 0;

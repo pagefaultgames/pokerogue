@@ -41,7 +41,7 @@ describe("Abilities - Flower Veil", () => {
       .enemyMoveset([MoveId.TACKLE, MoveId.SPLASH])
       .moveset([MoveId.REST, MoveId.SPLASH])
       .startingHeldItems([{ name: "FLAME_ORB" }]);
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR);
     const user = game.field.getPlayerPokemon();
     game.move.select(MoveId.REST);
     await game.move.selectEnemyMove(MoveId.TACKLE);
@@ -59,7 +59,7 @@ describe("Abilities - Flower Veil", () => {
 
   it("should prevent drowsiness from yawn for a grass user and its grass allies", async () => {
     game.override.enemyMoveset([MoveId.YAWN]).moveset([MoveId.SPLASH]).battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.BULBASAUR]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.BULBASAUR);
 
     // Clear the ability of the ally to isolate the test
     const ally = game.scene.getPlayerField()[1];
@@ -78,7 +78,7 @@ describe("Abilities - Flower Veil", () => {
   it("should prevent status conditions from moves like Thunder Wave for a grass user and its grass allies", async () => {
     game.override.enemyMoveset([MoveId.THUNDER_WAVE]).moveset([MoveId.SPLASH]).battleStyle("double");
     vi.spyOn(allMoves[MoveId.THUNDER_WAVE], "accuracy", "get").mockReturnValue(100);
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR);
 
     game.move.select(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.THUNDER_WAVE);
@@ -88,7 +88,7 @@ describe("Abilities - Flower Veil", () => {
 
   it("should not prevent status conditions for a non-grass user and its non-grass allies", async () => {
     game.override.enemyMoveset([MoveId.THUNDER_WAVE]).moveset([MoveId.SPLASH]).battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.MAGIKARP);
     const [user, ally] = game.scene.getPlayerField();
     vi.spyOn(allMoves[MoveId.THUNDER_WAVE], "accuracy", "get").mockReturnValue(100);
     // Clear the ally ability to isolate the test
@@ -108,7 +108,7 @@ describe("Abilities - Flower Veil", () => {
 
   it("should prevent the status drops from enemies for the a grass user and its grass allies", async () => {
     game.override.enemyMoveset([MoveId.GROWL]).moveset([MoveId.SPLASH]).battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.BULBASAUR]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.BULBASAUR);
     const [user, ally] = game.scene.getPlayerField();
     // Clear the ally ability to isolate the test
     vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[AbilityId.BALL_FETCH]);
@@ -121,7 +121,7 @@ describe("Abilities - Flower Veil", () => {
 
   it("should not prevent status drops for a non-grass user and its non-grass allies", async () => {
     game.override.enemyMoveset([MoveId.GROWL]).moveset([MoveId.SPLASH]).battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.MAGIKARP);
     const [user, ally] = game.scene.getPlayerField();
     // Clear the ally ability to isolate the test
     vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[AbilityId.BALL_FETCH]);
@@ -134,7 +134,7 @@ describe("Abilities - Flower Veil", () => {
 
   it("should not prevent self-inflicted stat drops from moves like Close Combat for a user or its allies", async () => {
     game.override.moveset([MoveId.CLOSE_COMBAT]).battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.BULBASAUR]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.BULBASAUR);
     const [user, ally] = game.scene.getPlayerField();
     // Clear the ally ability to isolate the test
     vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[AbilityId.BALL_FETCH]);
@@ -150,7 +150,7 @@ describe("Abilities - Flower Veil", () => {
 
   it("should prevent the drops while retaining the boosts from spicy extract", async () => {
     game.override.enemyMoveset([MoveId.SPICY_EXTRACT]).moveset([MoveId.SPLASH]);
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR);
     const user = game.field.getPlayerPokemon();
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");

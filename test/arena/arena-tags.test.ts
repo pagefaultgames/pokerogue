@@ -34,7 +34,7 @@ describe("Arena Tags", () => {
       .enemyMoveset(MoveId.SPLASH)
       .battleType(BattleType.TRAINER);
 
-    await game.classicMode.startBattle([SpeciesId.MORELULL]);
+    await game.classicMode.startBattle(SpeciesId.MORELULL);
 
     playerId = game.field.getPlayerPokemon().id;
   });
