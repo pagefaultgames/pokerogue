@@ -2175,7 +2175,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     applyOnGainAbAttrs({ pokemon: this, passive });
   }
 
-  /** Sets the Pokemon's ability as revealed. */
+  /** Mark the Pokémon's ability as revealed. */
   public revealAbility(): void {
     this.waveData.abilityRevealed = true;
   }

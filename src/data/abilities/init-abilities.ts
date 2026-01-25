@@ -138,7 +138,7 @@ import {
   PostTurnStatusHealAbAttr,
   PostVictoryFormChangeAbAttr,
   PostVictoryStatStageChangeAbAttr,
-  PostWeatherChangeAddBattlerTagAttr,
+  PostWeatherChangeAddBattlerTagAbAttr,
   PostWeatherChangeFormChangeAbAttr,
   PostWeatherLapseDamageAbAttr,
   PostWeatherLapseHealAbAttr,
@@ -1639,7 +1639,7 @@ export function initAbilities() {
         0,
       )
       // When weather changes to HAIL or SNOW while pokemon is fielded, add BattlerTagType.ICE_FACE
-      .attr(PostWeatherChangeAddBattlerTagAttr, BattlerTagType.ICE_FACE, 0, WeatherType.HAIL, WeatherType.SNOW)
+      .attr(PostWeatherChangeAddBattlerTagAbAttr, BattlerTagType.ICE_FACE, 0, WeatherType.HAIL, WeatherType.SNOW)
       .attr(
         FormBlockDamageAbAttr,
         (target, _user, move) => move.category === MoveCategory.PHYSICAL && !!target.getTag(BattlerTagType.ICE_FACE),
@@ -1853,7 +1853,7 @@ export function initAbilities() {
         true,
       )
       .attr(
-        PostWeatherChangeAddBattlerTagAttr,
+        PostWeatherChangeAddBattlerTagAbAttr,
         BattlerTagType.PROTOSYNTHESIS,
         0,
         WeatherType.SUNNY,

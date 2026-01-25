@@ -2035,9 +2035,8 @@ export class PostSetStatusAbAttr extends AbAttr {
 }
 
 /**
- * If another Pokemon burns, paralyzes, poisons, or badly poisons this Pokemon,
- * that Pokemon receives the same non-volatile status condition as part of this
- * ability attribute. For Synchronize ability.
+ * When the user is burned, paralyzed, or poisoned by an opponent, the opponent receives the same status.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Synchronize_(Ability) | Synchronize (Bulbapedia)}
  */
 export class SynchronizeStatusAbAttr extends PostSetStatusAbAttr {
   /**
@@ -2529,9 +2528,8 @@ export class PostSummonClearAllyStatStagesAbAttr extends PostSummonAbAttr {
 }
 
 /**
- * Download raises either the Attack stat or Special Attack stat by one stage depending on the foe's currently lowest defensive stat:
- * it will raise Attack if the foe's current Defense is lower than its current Special Defense stat;
- * otherwise, it will raise Special Attack.
+ * Raises the user's Attack Special Attack stat by one stage depending on the lower of the foes' defensive stats.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Download_(Ability) | Download (Bulbapedia)}
  */
 export class DownloadAbAttr extends PostSummonAbAttr {
   private enemyDef: number;
@@ -2788,7 +2786,8 @@ export class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
 }
 
 /**
- * Attribute used by {@linkcode AbilityId.IMPOSTER} to transform into a random opposing pokemon on entry.
+ * Causes the user to transform into a random opposing Pokémon on entry.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Imposter_(Ability) | Imposter (Bulbapedia)}
  */
 export class PostSummonTransformAbAttr extends PostSummonAbAttr {
   private targetIndex: BattlerIndex = BattlerIndex.ATTACKER;
@@ -3041,8 +3040,7 @@ export class PreLeaveFieldClearWeatherAbAttr extends PreLeaveFieldAbAttr {
 }
 
 /**
- * Updates the active {@linkcode SuppressAbilitiesTag} when a pokemon with {@linkcode AbilityId.NEUTRALIZING_GAS} leaves the field
- *
+ * Attribute that updates the active {@linkcode SuppressAbilitiesTag} when its user leaves the field.
  * @sealed
  */
 export class PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr extends PreLeaveFieldAbAttr {
@@ -3089,10 +3087,10 @@ export abstract class PreStatStageChangeAbAttr extends AbAttr {
 
 /**
  * Reflect all {@linkcode BattleStat} reductions caused by other Pokémon's moves and Abilities.
- * Currently only applies to Mirror Armor.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Mirror_Armor_(Ability) | Mirror Armor (Bulbapedia)}
  */
 export class ReflectStatStageChangeAbAttr extends PreStatStageChangeAbAttr {
-  /** {@linkcode BattleStat} to reflect */
+  /** The stat to reflect */
   private reflectedStat?: BattleStat;
 
   override canApply({ source, cancelled }: PreStatStageChangeAbAttrParams): boolean {
@@ -3296,8 +3294,7 @@ export class UserFieldStatusEffectImmunityAbAttr extends CancelInteractionAbAttr
 
 /**
  * Conditionally provides immunity to status effects for the user's field.
- *
- * @see {@linkcode AbilityId.FLOWER_VEIL | Flower Veil}.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Flower_Veil_(Ability) | Flower Veil (Bulbapedia)}.
  */
 export class ConditionalUserFieldStatusEffectImmunityAbAttr extends UserFieldStatusEffectImmunityAbAttr {
   /**
@@ -3338,11 +3335,10 @@ export interface ConditionalUserFieldProtectStatAbAttrParams extends AbAttrBaseP
 
 /**
  * Conditionally provides immunity to stat drop effects to the user's field.
- *
- * @see {@linkcode AbilityId.FLOWER_VEIL | Flower Veil}
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Flower_Veil_(Ability) | Flower Veil (Bulbapedia)}
  */
 export class ConditionalUserFieldProtectStatAbAttr extends PreStatStageChangeAbAttr {
-  /** {@linkcode BattleStat} to protect or `undefined` if **all** {@linkcode BattleStat} are protected */
+  /** The {@linkcode BattleStat} to protect or `undefined` if **all** stats are protected */
   protected protectedStat?: BattleStat;
 
   /** If the method evaluates to true, the stat will be protected. */
@@ -3380,7 +3376,7 @@ export interface PreApplyBattlerTagAbAttrParams extends AbAttrBaseParams {
 
 /**
  * Base class for ability attributes that apply their effect before a BattlerTag {@linkcode BattlerTag} is applied.
- *
+ * @remarks
  * ⚠️ Subclasses violate Liskov Substitution Principle, so this class must not be provided to {@linkcode applyAbAttrs}
  */
 export abstract class PreApplyBattlerTagAbAttr extends AbAttr {
@@ -3424,9 +3420,9 @@ abstract class BaseBattlerTagImmunityAbAttr<P extends PreApplyBattlerTagAbAttrPa
 // It is unclear why there is a `PreApplyBattlerTagImmunityAbAttr` class that isn't used,
 // and then why there's a BattlerTagImmunityAbAttr class as well.
 /**
- * Provides immunity to BattlerTags {@linkcode BattlerTag} to specified targets.
- *
- * This does not check whether the tag is already applied; that check should happen in the caller.
+ * Provides immunity to {@linkcode BattlerTag}s to specified targets.
+ * @remarks
+ * Does not check whether the tag is already applied; that check should happen in the caller.
  */
 export class PreApplyBattlerTagImmunityAbAttr extends BaseBattlerTagImmunityAbAttr<PreApplyBattlerTagAbAttrParams> {}
 
@@ -3581,10 +3577,10 @@ export interface ChangeMovePriorityAbAttrParams extends AbAttrBaseParams {
 
 /**
  * This governs abilities that alter the priority of moves
+ * @remarks
+ * Used by Prankster, Gale Wings, Triage, Mycelium Might, and Stall.
  *
- * Abilities: Prankster, Gale Wings, Triage, Mycelium Might, Stall
- *
- * Note - Quick Claw has a separate and distinct implementation outside of priority
+ * NB: Quick Claw has a separate and distinct implementation outside of priority
  *
  * @sealed
  */
@@ -3697,9 +3693,10 @@ export class SuppressWeatherEffectAbAttr extends PreWeatherEffectAbAttr {
 
 /**
  * Ability attribute used by {@linkcode AbilityId.FOREWARN}.
- *
+ * @remarks
  * Displays a message on switch-in containing the highest power Move known by the user's opponents,
  * picking randomly in the case of a tie.
+ *
  * @see {@link https://www.smogon.com/dex/sv/abilities/forewarn/}
  * @sealed
  */
@@ -3826,7 +3823,9 @@ export abstract class PostWeatherChangeAbAttr extends AbAttr {
 
 /**
  * Triggers weather-based form change when weather changes.
- * Used by Forecast and Flower Gift.
+ *
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Forecast_(Ability) | Forecast (Bulbapedia)}
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Flower_Gift_(Ability) | Flower Gift (Bulbapedia)}
  *
  * @sealed
  */
@@ -3872,10 +3871,10 @@ export class PostWeatherChangeFormChangeAbAttr extends PostWeatherChangeAbAttr {
 }
 
 /**
- * Add a battler tag to the pokemon when the weather changes.
+ * Adds a battler tag to the pokemon when the weather changes.
  * @sealed
  */
-export class PostWeatherChangeAddBattlerTagAttr extends PostWeatherChangeAbAttr {
+export class PostWeatherChangeAddBattlerTagAbAttr extends PostWeatherChangeAbAttr {
   private readonly tagType: BattlerTagType;
   private readonly turnCount: number;
   private readonly weatherTypes: readonly WeatherType[];
@@ -4061,8 +4060,7 @@ export class PostTurnStatusHealAbAttr extends PostTurnAbAttr {
 }
 
 /**
- * After the turn ends, resets the status of either the user or their ally.
- * @param allyTarget Whether to target the user's ally; default `false` (self-target)
+ * Resets the status of either the user or their ally at the end of each turn.
  *
  * @sealed
  */
@@ -4099,7 +4097,7 @@ export class PostTurnResetStatusAbAttr extends PostTurnAbAttr {
 
 /**
  * Attribute to try and restore eaten berries after the turn ends.
- * @see {@linkcode AbilityId.HARVEST}
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Harvest_(Ability) | Harvest (Bulbapedia)}
  */
 export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
   /**
@@ -4145,9 +4143,9 @@ export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
   }
 
   /**
-   * Create a new berry chosen randomly from all berries the pokemon ate this battle
+   * Create a new berry chosen randomly from all berries the user consumed in the current battle.
    * @param pokemon - The {@linkcode Pokemon} with this ability
-   * @returns `true` if a new berry was created
+   * @returns Whether a new berry was created
    */
   private createEatenBerry(pokemon: Pokemon): boolean {
     // Pick a random available berry to yoink
@@ -4186,8 +4184,11 @@ export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
 
 /**
  * Attribute to track and re-trigger last turn's berries at the end of the `BerryPhase`.
- * Must only be used by Cud Chew! Do _not_ reuse this attribute for anything else
- * Used by {@linkcode AbilityId.CUD_CHEW}.
+ *
+ * @remarks
+ * ⚠️ Must only be used by Cud Chew; do _not_ reuse this attribute for anything else.
+ *
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Cud_Chew_(Ability) | Cud Chew (Bulbapedia)}
  * @sealed
  */
 export class CudChewConsumeBerryAbAttr extends AbAttr {
@@ -4223,8 +4224,11 @@ export class CudChewConsumeBerryAbAttr extends AbAttr {
 /**
  * Consume a berry at the end of the turn if the pokemon has one.
  *
- * Must be used in conjunction with {@linkcode CudChewConsumeBerryAbAttr}, and is
- * only used by {@linkcode AbilityId.CUD_CHEW}.
+ * @remarks
+ * Must be used in conjunction with {@linkcode CudChewConsumeBerryAbAttr}.
+ *
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Cud_Chew_(Ability) | Cud Chew (Bulbapedia)}
+ * @sealed
  */
 export class CudChewRecordBerryAbAttr extends PostTurnAbAttr {
   constructor() {
@@ -4242,17 +4246,18 @@ export class CudChewRecordBerryAbAttr extends PostTurnAbAttr {
 }
 
 /**
- * Attribute used for {@linkcode AbilityId.MOODY} to randomly raise and lower stats at turn end.
+ * Randomly raises and lowers stats at the end of the turn.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Moody_(Ability) | Moody (Bulbapedia)}
  */
 export class MoodyAbAttr extends PostTurnAbAttr {
   constructor() {
     super(true);
   }
   /**
-   * Randomly increases one stat stage by 2 and decreases a different stat stage by 1
-   * Any stat stages at +6 or -6 are excluded from being increased or decreased, respectively
-   * If the pokemon already has all stat stages raised to 6, it will only decrease one stat stage by 1
-   * If the pokemon already has all stat stages lowered to -6, it will only increase one stat stage by 2
+   * Randomly increases one stat stage by 2 and decreases a different stat stage by 1. \
+   * Any stat stages at +6 or -6 are excluded from being increased or decreased, respectively. \
+   * If the pokemon already has all stat stages raised to 6, it will only decrease one stat stage by 1. \
+   * If the pokemon already has all stat stages lowered to -6, it will only increase one stat stage by 2.
    */
   override apply({ pokemon, simulated }: AbAttrBaseParams): void {
     if (simulated) {
@@ -4335,7 +4340,8 @@ export class PostTurnFormChangeAbAttr extends PostTurnAbAttr {
 }
 
 /**
- * Attribute used for abilities (Bad Dreams) that damages the opponents for being asleep
+ * Damages sleeping opponents at the end of the turn.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Bad_Dreams_(Ability) | Bad Dreams (Bulbapedia)}
  * @sealed
  */
 export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
@@ -4464,7 +4470,7 @@ export class PostMoveUsedAbAttr extends AbAttr {
 /** Triggers after a dance move is used either by the opponent or the player */
 export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
   override canApply({ source, pokemon }: PostMoveUsedAbAttrParams): boolean {
-    // List of tags that prevent the Dancer from replicating the move
+    /** Tags that prevent Dancer from replicating the move */
     const forbiddenTags = [
       BattlerTagType.FLYING,
       BattlerTagType.UNDERWATER,
@@ -4478,10 +4484,6 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
     );
   }
 
-  /**
-   * Resolves the Dancer ability by replicating the move used by the source of the dance
-   * either on the source itself or on the target of the dance
-   */
   override apply({ source, pokemon, move, targets, simulated }: PostMoveUsedAbAttrParams): void {
     if (!simulated) {
       // If the move is an AttackMove or a StatusMove the Dancer must replicate the move on the source of the Dance
@@ -4512,8 +4514,8 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
   /**
    * Get the correct targets of Dancer ability
    *
-   * @param dancer - Pokemon with Dancer ability
-   * @param source - Source of the dancing move
+   * @param dancer - Pokémon with Dancer ability
+   * @param source - The user of the dancing move
    * @param targets - Targets of the dancing move
    */
   private getTarget(dancer: Pokemon, source: Pokemon, targets: BattlerIndex[]): BattlerIndex[] {
@@ -4545,11 +4547,6 @@ export class PostItemLostApplyBattlerTagAbAttr extends PostItemLostAbAttr {
     return !pokemon.getTag(this.tagType) && !simulated;
   }
 
-  /**
-   * Adds the last used Pokeball back into the player's inventory
-   * @param pokemon {@linkcode Pokemon} with this ability
-   * @param _args N/A
-   */
   override apply({ pokemon }: AbAttrBaseParams): void {
     pokemon.addTag(this.tagType);
   }
@@ -4933,8 +4930,7 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
 /**
  * Attribute used for abilities that damage opponents causing the user to faint
  * equal to the amount of damage the last attack inflicted.
- *
- * @see {@linkcode AbilityId.INNARDS_OUT | Innards Out}
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Innards_Out_(Ability) | Innards Out (Bulbapedia)}
  * @sealed
  */
 export class PostFaintHPDamageAbAttr extends PostFaintAbAttr {
@@ -5577,7 +5573,7 @@ export class PreventBypassSpeedChanceAbAttr extends AbAttr {
 // Also consider making this a postTerrainChange attribute instead of a post-summon attribute
 /**
  * This applies a terrain-based type change to the Pokemon.
- * Used by Mimicry.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Mimicry_(Ability) | Mimicry (Bulbapedia)}
  * @sealed
  */
 export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
@@ -5602,10 +5598,7 @@ export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
   }
 
   /**
-   * Retrieves the type(s) the Pokemon should change to in response to a terrain
-   * @param pokemon
-   * @param currentTerrain {@linkcode TerrainType}
-   * @returns a list of type(s)
+   * @returns the type(s) the Pokemon should change to based on the terrain
    */
   private determineTypeChange(pokemon: Pokemon, currentTerrain: TerrainType): PokemonType[] {
     const typeChange: PokemonType[] = [];
@@ -5653,7 +5646,7 @@ class ForceSwitchOutHelper {
   /**
    * Handles the logic for switching out a Pokémon based on battle conditions, HP, and the switch type.
    *
-   * @param pokemon The {@linkcode Pokemon} attempting to switch out.
+   * @param pokemon - The Pokémon attempting to switch out.
    * @returns `true` if the switch is successful
    */
   // TODO: Make this cancel pending move phases on the switched out target
@@ -5745,8 +5738,8 @@ class ForceSwitchOutHelper {
   /**
    * Determines if a Pokémon can switch out based on its status, the opponent's status, and battle conditions.
    *
-   * @param pokemon The Pokémon attempting to switch out.
-   * @param opponent The opponent Pokémon.
+   * @param pokemon - The Pokémon attempting to switch out
+   * @param opponent - The opponent Pokémon
    * @returns `true` if the switch-out condition is met
    */
   public getSwitchOutCondition(pokemon: Pokemon, opponent: Pokemon): boolean {
@@ -5804,11 +5797,11 @@ class ForceSwitchOutHelper {
 }
 
 /**
- * Calculates the amount of recovery from the Shell Bell item.
- *
+ * Calculate the amount of recovery from the Shell Bell item.
+ * @remarks
  * If the Pokémon is holding a Shell Bell, this function computes the amount of health
- * recovered based on the damage dealt in the current turn. The recovery is multiplied by the
- * Shell Bell's modifier (if any).
+ * recovered based on the damage dealt in the current turn. \
+ * The recovery is multiplied by the Shell Bell's modifier (if any).
  *
  * @param pokemon - The Pokémon whose Shell Bell recovery is being calculated.
  * @returns The amount of health recovered by Shell Bell.
@@ -5828,9 +5821,7 @@ export interface PostDamageAbAttrParams extends AbAttrBaseParams {
   readonly damage: number;
 }
 
-/**
- * Triggers after the Pokemon takes any damage
- */
+/** Triggers after the Pokemon takes any damage */
 export class PostDamageAbAttr extends AbAttr {
   override canApply(_params: PostDamageAbAttrParams): boolean {
     return true;
@@ -5919,7 +5910,7 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
 }
 
 /**
- * Returns all Pokemon on field with weather-based forms
+ * @returns all Pokémon on field that have weather-based forms
  */
 function getPokemonWithWeatherBasedForms() {
   return globalScene
