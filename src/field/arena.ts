@@ -86,7 +86,6 @@ export class Arena {
   }
 
   // #endregion
-
   // #region Misc Public Methods
 
   public init() {
@@ -113,9 +112,6 @@ export class Arena {
     this.playerFaints = 0;
   }
 
-  // #endregion
-  // #region Weather
-
   /** Clears weather, terrain and arena tags when entering new biome or trainer battle. */
   public resetArenaEffects(): void {
     // Don't reset weather if a Biome's permanent weather is active
@@ -126,6 +122,9 @@ export class Arena {
     this.resetPlayerFaintCount();
     this.removeAllTags();
   }
+
+  // #endregion
+  // #region Weather
 
   /** @returns Whether or not the weather can be changed to {@linkcode weather} */
   public canSetWeather(weather: WeatherType): boolean {
