@@ -103,7 +103,6 @@ describe("Moves - Fishious Rend & Bolt Beak", () => {
     enemy.pushMoveHistory({
       move: MoveId.SPLASH,
       targets: [BattlerIndex.ENEMY],
-      turn: game.scene.currentBattle.turn - 1,
       useMode: MoveUseMode.NORMAL,
     });
 

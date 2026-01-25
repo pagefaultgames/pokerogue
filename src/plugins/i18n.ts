@@ -201,6 +201,7 @@ await i18next
         "tl",
         "nb-NO",
         "sv",
+        "uk",
       ],
       backend: {
         loadPath(lng: string, [ns]: string[]) {
