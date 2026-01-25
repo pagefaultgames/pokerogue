@@ -14,16 +14,11 @@ import { UiMode } from "#enums/ui-mode";
 import type { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
 import { ModifierTypeOption } from "#modifiers/modifier-type";
-import { CheckSwitchPhase } from "#phases/check-switch-phase";
 import { CommandPhase } from "#phases/command-phase";
 import { EncounterPhase } from "#phases/encounter-phase";
-import { MovePhase } from "#phases/move-phase";
-import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
-import { NewBattlePhase } from "#phases/new-battle-phase";
 import { SelectStarterPhase } from "#phases/select-starter-phase";
 import type { SelectTargetPhase } from "#phases/select-target-phase";
 import { TurnEndPhase } from "#phases/turn-end-phase";
-import { TurnStartPhase } from "#phases/turn-start-phase";
 import { GameData } from "#system/game-data";
 import { generateStarters } from "#test/test-utils/game-manager-utils";
 import { GameWrapper } from "#test/test-utils/game-wrapper";
@@ -42,7 +37,7 @@ import type { InputsHandler } from "#test/test-utils/inputs-handler";
 import { MockFetch } from "#test/test-utils/mocks/mock-fetch";
 import { PhaseInterceptor } from "#test/test-utils/phase-interceptor";
 import { TextInterceptor } from "#test/test-utils/text-interceptor";
-import type { PhaseClass, PhaseString } from "#types/phase-types";
+import type { PhaseString } from "#types/phase-types";
 import type { BallUiHandler } from "#ui/ball-ui-handler";
 import type { BattleMessageUiHandler } from "#ui/battle-message-ui-handler";
 import type { CommandUiHandler } from "#ui/command-ui-handler";
@@ -53,6 +48,7 @@ import type { StarterSelectUiHandler } from "#ui/starter-select-ui-handler";
 import type { TargetSelectUiHandler } from "#ui/target-select-ui-handler";
 import fs from "node:fs";
 import { AES, enc } from "crypto-js";
+import type { NonEmptyTuple } from "type-fest";
 import { expect, vi } from "vitest";
 
 /**
@@ -235,10 +231,10 @@ export class GameManager {
   /**
    * Runs the game to a mystery encounter phase.
    * @param encounterType - If specified, will expect encounter to be the given type.
-   * @param species - Optional array of species for party to start with.
+   * @param speciesIds - Optional array of species for party to start with.
    * @returns A Promise that resolves when the EncounterPhase ends.
    */
-  async runToMysteryEncounter(encounterType?: MysteryEncounterType, species?: SpeciesId[]) {
+  async runToMysteryEncounter(encounterType?: MysteryEncounterType, speciesIds?: SpeciesId[]) {
     if (encounterType != null) {
       this.override.disableTrainerWaves();
       this.override.mysteryEncounter(encounterType);
@@ -251,12 +247,12 @@ export class GameManager {
       UiMode.TITLE,
       () => {
         this.scene.gameMode = getGameMode(GameModes.CLASSIC);
-        const starters = generateStarters(this.scene, species);
+        const starters = generateStarters(this.scene, speciesIds);
         const selectStarterPhase = new SelectStarterPhase();
         this.scene.phaseManager.pushPhase(new EncounterPhase(false));
         selectStarterPhase.initBattle(starters);
       },
-      () => this.isCurrentPhase(EncounterPhase),
+      () => this.isCurrentPhase("EncounterPhase"),
     );
 
     this.onNextPrompt(
@@ -266,7 +262,7 @@ export class GameManager {
         const handler = this.scene.ui.getHandler() as BattleMessageUiHandler;
         handler.processInput(Button.ACTION);
       },
-      () => this.isCurrentPhase(MysteryEncounterPhase),
+      () => this.isCurrentPhase("MysteryEncounterPhase"),
       true,
     );
 
@@ -305,10 +301,10 @@ export class GameManager {
         handler.processInput(Button.ACTION);
       },
       () =>
-        this.isCurrentPhase(CommandPhase)
-        || this.isCurrentPhase(MovePhase)
-        || this.isCurrentPhase(TurnStartPhase)
-        || this.isCurrentPhase(TurnEndPhase),
+        this.isCurrentPhase("CommandPhase")
+        || this.isCurrentPhase("MovePhase")
+        || this.isCurrentPhase("TurnStartPhase")
+        || this.isCurrentPhase("TurnEndPhase"),
     );
   }
 
@@ -330,9 +326,9 @@ export class GameManager {
         handler.processInput(Button.CANCEL);
       },
       () =>
-        this.isCurrentPhase(CommandPhase)
-        || this.isCurrentPhase(NewBattlePhase)
-        || this.isCurrentPhase(CheckSwitchPhase),
+        this.isCurrentPhase("CommandPhase")
+        || this.isCurrentPhase("NewBattlePhase")
+        || this.isCurrentPhase("CheckSwitchPhase"),
       true,
     );
 
@@ -344,9 +340,9 @@ export class GameManager {
         handler.processInput(Button.ACTION);
       },
       () =>
-        this.isCurrentPhase(CommandPhase)
-        || this.isCurrentPhase(NewBattlePhase)
-        || this.isCurrentPhase(CheckSwitchPhase),
+        this.isCurrentPhase("CommandPhase")
+        || this.isCurrentPhase("NewBattlePhase")
+        || this.isCurrentPhase("CheckSwitchPhase"),
     );
   }
 
@@ -405,20 +401,11 @@ export class GameManager {
    * Checks if the current phase matches the target phase.
    * @param phaseTargets - The target phase(s) to check
    * @returns Whether the current phase matches any of the target phases
-   * @todo Remove `phaseClass` from signature
-   * @todo Convert existing calls of `game.isCurrentPhase(A) || game.isCurrentPhase(B)` to pass them together in 1 call
+   * @todo Convert existing calls of `game.isCurrentPhase("A") || game.isCurrentPhase("B")` to pass them together in 1 call
    */
-  public isCurrentPhase(...phaseTargets: [PhaseString, ...PhaseString[]]): boolean;
-  /**
-   * Checks if the current phase matches the target phase.
-   * @param phaseTargets - The target phase to check
-   * @returns Whether the current phase matches the target phase
-   * @deprecated Use `PhaseString` instead
-   */
-  public isCurrentPhase(phaseTargets: PhaseClass): boolean;
-  public isCurrentPhase(...phaseTargets: (PhaseString | PhaseClass)[]): boolean {
+  public isCurrentPhase(...phaseTargets: NonEmptyTuple<PhaseString>): boolean {
     const phase = this.scene.phaseManager.getCurrentPhase();
-    return phaseTargets.some(p => phase.is(typeof p === "string" ? p : (p.name as PhaseString)));
+    return phaseTargets.some(p => phase.is(p));
   }
 
   /**
@@ -436,7 +423,7 @@ export class GameManager {
    */
   exportSaveToTest(): Promise<string> {
     const saveKey = "x0i2O7WRiANTqPmZ";
-    return new Promise(async resolve => {
+    return new Promise(resolve => {
       const sessionSaveData = this.scene.gameData.getSessionSaveData();
       const encryptedSaveData = AES.encrypt(JSON.stringify(sessionSaveData), saveKey).toString();
       resolve(encryptedSaveData);

@@ -33,7 +33,7 @@ describe("Abilities - ZEN MODE", () => {
   });
 
   it("shouldn't change form when taking damage if not dropping below 50% HP", async () => {
-    await game.classicMode.startBattle([SpeciesId.DARMANITAN]);
+    await game.classicMode.startBattle(SpeciesId.DARMANITAN);
     const darmanitan = game.field.getPlayerPokemon();
     expect(darmanitan.formIndex).toBe(baseForm);
 
@@ -46,7 +46,7 @@ describe("Abilities - ZEN MODE", () => {
   });
 
   it("should change form when falling below 50% HP", async () => {
-    await game.classicMode.startBattle([SpeciesId.DARMANITAN]);
+    await game.classicMode.startBattle(SpeciesId.DARMANITAN);
 
     const darmanitan = game.field.getPlayerPokemon();
     darmanitan.hp = darmanitan.getMaxHp() / 2 + 1;
@@ -60,7 +60,7 @@ describe("Abilities - ZEN MODE", () => {
   });
 
   it("should stay zen mode when fainted", async () => {
-    await game.classicMode.startBattle([SpeciesId.DARMANITAN, SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.DARMANITAN, SpeciesId.CHARIZARD);
     const darmanitan = game.field.getPlayerPokemon();
     darmanitan.hp = darmanitan.getMaxHp() / 2 + 1;
     expect(darmanitan.formIndex).toBe(baseForm);
@@ -85,7 +85,7 @@ describe("Abilities - ZEN MODE", () => {
       [SpeciesId.DARMANITAN]: zenForm,
     });
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.DARMANITAN]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.DARMANITAN);
 
     const darmanitan = game.scene.getPlayerParty()[1];
     darmanitan.hp = 1;

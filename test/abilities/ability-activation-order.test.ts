@@ -31,7 +31,7 @@ describe("Ability Activation Order", () => {
 
   it("should activate the ability of the faster Pokemon first", async () => {
     game.override.enemyLevel(100).ability(AbilityId.DRIZZLE).enemyAbility(AbilityId.DROUGHT);
-    await game.classicMode.startBattle([SpeciesId.SLOWPOKE]);
+    await game.classicMode.startBattle(SpeciesId.SLOWPOKE);
 
     // Enemy's ability should activate first, so sun ends up replaced with rain
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.RAIN);
@@ -46,7 +46,7 @@ describe("Ability Activation Order", () => {
       .ability(AbilityId.DRIZZLE)
       .startingHeldItems([{ name: "BASE_STAT_BOOSTER", type: Stat.SPD, count: 100 }]);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SUNNY);
   });
 
@@ -59,7 +59,7 @@ describe("Ability Activation Order", () => {
       .ability(AbilityId.DRIZZLE)
       .startingHeldItems([{ name: "SPECIES_STAT_BOOSTER", type: "QUICK_POWDER" }]);
 
-    await game.classicMode.startBattle([SpeciesId.DITTO]);
+    await game.classicMode.startBattle(SpeciesId.DITTO);
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SUNNY);
   });
 
@@ -71,7 +71,7 @@ describe("Ability Activation Order", () => {
       .enemyAbility(AbilityId.DROUGHT)
       .ability(AbilityId.NEUTRALIZING_GAS);
 
-    await game.classicMode.startBattle([SpeciesId.SLOWPOKE]);
+    await game.classicMode.startBattle(SpeciesId.SLOWPOKE);
     expect(game.scene.arena.weather).toBeUndefined();
   });
 
@@ -84,7 +84,7 @@ describe("Ability Activation Order", () => {
       .enemyPassiveAbility(AbilityId.DROUGHT)
       .ability(AbilityId.DRIZZLE);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
     // Slow start activates and makes enemy slower, so drought activates after drizzle
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SUNNY);
   });

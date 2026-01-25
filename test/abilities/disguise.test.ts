@@ -22,16 +22,16 @@ describe("Abilities - Disguise", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override
+    game.override //
       .battleStyle("single")
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MIMIKYU)
       .enemyMoveset(MoveId.SPLASH)
-      .starterSpecies(SpeciesId.REGIELEKI)
-      .moveset([MoveId.SHADOW_SNEAK, MoveId.VACUUM_WAVE, MoveId.TOXIC_THREAD, MoveId.SPLASH]);
+      .enemyLevel(5);
   });
 
   it("takes no damage from attacking move and transforms to Busted form, takes 1/8 max HP damage from the disguise breaking", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.REGIELEKI);
 
     const mimikyu = game.field.getEnemyPokemon();
     const maxHp = mimikyu.getMaxHp();
@@ -39,7 +39,7 @@ describe("Abilities - Disguise", () => {
 
     expect(mimikyu.formIndex).toBe(disguisedForm);
 
-    game.move.select(MoveId.SHADOW_SNEAK);
+    game.move.use(MoveId.SHADOW_SNEAK);
 
     await game.phaseInterceptor.to("MoveEndPhase");
 
@@ -48,13 +48,13 @@ describe("Abilities - Disguise", () => {
   });
 
   it("doesn't break disguise when attacked with ineffective move", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.REGIELEKI);
 
     const mimikyu = game.field.getEnemyPokemon();
 
     expect(mimikyu.formIndex).toBe(disguisedForm);
 
-    game.move.select(MoveId.VACUUM_WAVE);
+    game.move.use(MoveId.VACUUM_WAVE);
 
     await game.phaseInterceptor.to("MoveEndPhase");
 
@@ -62,8 +62,7 @@ describe("Abilities - Disguise", () => {
   });
 
   it("takes no damage from the first hit of a multihit move and transforms to Busted form, then takes damage from the second hit", async () => {
-    game.override.moveset([MoveId.SURGING_STRIKES]).enemyLevel(5);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.REGIELEKI);
 
     const mimikyu = game.field.getEnemyPokemon();
     const maxHp = mimikyu.getMaxHp();
@@ -71,7 +70,7 @@ describe("Abilities - Disguise", () => {
 
     expect(mimikyu.formIndex).toBe(disguisedForm);
 
-    game.move.select(MoveId.SURGING_STRIKES);
+    game.move.use(MoveId.SURGING_STRIKES);
 
     // First hit
     await game.phaseInterceptor.to("MoveEffectPhase");
@@ -85,12 +84,12 @@ describe("Abilities - Disguise", () => {
   });
 
   it("takes effects from status moves and damage from status effects", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.REGIELEKI);
 
     const mimikyu = game.field.getEnemyPokemon();
     expect(mimikyu.hp).toBe(mimikyu.getMaxHp());
 
-    game.move.select(MoveId.TOXIC_THREAD);
+    game.move.use(MoveId.TOXIC_THREAD);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -101,15 +100,14 @@ describe("Abilities - Disguise", () => {
   });
 
   it("persists form change when switched out", async () => {
-    game.override.enemyMoveset([MoveId.SHADOW_SNEAK]).starterSpecies(null);
-
-    await game.classicMode.startBattle([SpeciesId.MIMIKYU, SpeciesId.FURRET]);
+    game.override.enemyMoveset([MoveId.SHADOW_SNEAK]);
+    await game.classicMode.startBattle(SpeciesId.MIMIKYU, SpeciesId.FURRET);
 
     const mimikyu = game.field.getPlayerPokemon();
     const maxHp = mimikyu.getMaxHp();
     const disguiseDamage = toDmgValue(maxHp / 8);
 
-    game.move.select(MoveId.SPLASH);
+    game.move.use(MoveId.SPLASH);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -125,15 +123,13 @@ describe("Abilities - Disguise", () => {
   });
 
   it("persists form change when wave changes with no arena reset", async () => {
-    game.override.starterSpecies(null).starterForms({
-      [SpeciesId.MIMIKYU]: bustedForm,
-    });
-    await game.classicMode.startBattle([SpeciesId.FURRET, SpeciesId.MIMIKYU]);
+    game.override.starterForms({ [SpeciesId.MIMIKYU]: bustedForm });
+    await game.classicMode.startBattle(SpeciesId.FURRET, SpeciesId.MIMIKYU);
 
     const mimikyu = game.scene.getPlayerParty()[1];
     expect(mimikyu.formIndex).toBe(bustedForm);
 
-    game.move.select(MoveId.SPLASH);
+    game.move.use(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.toNextWave();
 
@@ -141,20 +137,17 @@ describe("Abilities - Disguise", () => {
   });
 
   it("reverts to Disguised form on arena reset", async () => {
-    game.override
+    game.override //
       .startingWave(4)
-      .starterSpecies(SpeciesId.MIMIKYU)
-      .starterForms({
-        [SpeciesId.MIMIKYU]: bustedForm,
-      });
+      .starterForms({ [SpeciesId.MIMIKYU]: bustedForm });
 
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.MIMIKYU);
 
     const mimikyu = game.field.getPlayerPokemon();
 
     expect(mimikyu.formIndex).toBe(bustedForm);
 
-    game.move.select(MoveId.SPLASH);
+    game.move.use(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.toNextWave();
 
@@ -162,20 +155,17 @@ describe("Abilities - Disguise", () => {
   });
 
   it("reverts to Disguised form when fainted", async () => {
-    game.override
+    game.override //
       .startingWave(10)
-      .starterSpecies(null)
-      .starterForms({
-        [SpeciesId.MIMIKYU]: bustedForm,
-      });
+      .starterForms({ [SpeciesId.MIMIKYU]: bustedForm });
 
-    await game.classicMode.startBattle([SpeciesId.MIMIKYU, SpeciesId.FURRET]);
+    await game.classicMode.startBattle(SpeciesId.MIMIKYU, SpeciesId.FURRET);
 
     const mimikyu1 = game.field.getPlayerPokemon();
 
     expect(mimikyu1.formIndex).toBe(bustedForm);
 
-    game.move.select(MoveId.SPLASH);
+    game.move.use(MoveId.SPLASH);
     await game.killPokemon(mimikyu1);
     await game.phaseInterceptor.to("QuietFormChangePhase");
 
@@ -184,12 +174,12 @@ describe("Abilities - Disguise", () => {
 
   it("doesn't faint twice when fainting due to Disguise break damage, nor prevent faint from Disguise break damage if using Endure", async () => {
     game.override.enemyMoveset([MoveId.ENDURE]);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.REGIELEKI);
 
     const mimikyu = game.field.getEnemyPokemon();
     mimikyu.hp = 1;
 
-    game.move.select(MoveId.SHADOW_SNEAK);
+    game.move.use(MoveId.SHADOW_SNEAK);
     await game.toNextWave();
 
     expect(game).toBeAtPhase("CommandPhase");
@@ -197,15 +187,14 @@ describe("Abilities - Disguise", () => {
   });
 
   it("activates when Aerilate circumvents immunity to the move's base type", async () => {
-    game.override.ability(AbilityId.AERILATE).moveset([MoveId.TACKLE]);
-
-    await game.classicMode.startBattle();
+    game.override.ability(AbilityId.AERILATE);
+    await game.classicMode.startBattle(SpeciesId.REGIELEKI);
 
     const mimikyu = game.field.getEnemyPokemon();
     const maxHp = mimikyu.getMaxHp();
     const disguiseDamage = toDmgValue(maxHp / 8);
 
-    game.move.select(MoveId.TACKLE);
+    game.move.use(MoveId.TACKLE);
 
     await game.phaseInterceptor.to("MoveEndPhase");
 
@@ -214,10 +203,10 @@ describe("Abilities - Disguise", () => {
   });
 
   it("doesn't trigger if user is behind a substitute", async () => {
-    game.override.enemyMoveset(MoveId.SUBSTITUTE).moveset(MoveId.POWER_TRIP);
-    await game.classicMode.startBattle();
+    game.override.enemyMoveset(MoveId.SUBSTITUTE);
+    await game.classicMode.startBattle(SpeciesId.REGIELEKI);
 
-    game.move.select(MoveId.POWER_TRIP);
+    game.move.use(MoveId.POWER_TRIP);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 

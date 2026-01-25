@@ -31,7 +31,7 @@ describe("Move - Magnitude", () => {
   });
 
   it("should have the correct rng thresholds and power values", async () => {
-    await game.classicMode.runToSummon([SpeciesId.FEEBAS]);
+    await game.classicMode.runToSummon(SpeciesId.FEEBAS);
 
     const magnitudeAttr = allMoves[MoveId.MAGNITUDE].getAttrs("MagnitudePowerAttr")[0];
     const movePower = new NumberHolder(0);

@@ -31,7 +31,7 @@ describe("Moves - Metal Burst", () => {
   });
 
   it("should redirect target if intended target faints", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.FEEBAS);
 
     const [, enemy2] = game.scene.getEnemyField();
 
@@ -52,7 +52,7 @@ describe("Moves - Metal Burst", () => {
   });
 
   it("should not crash if both opponents faint before the move is used", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.ARCEUS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.ARCEUS);
 
     const [enemy1, enemy2] = game.scene.getEnemyField();
 

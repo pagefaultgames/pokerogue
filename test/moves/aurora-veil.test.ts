@@ -43,7 +43,7 @@ describe("Moves - Aurora Veil", () => {
 
   it("reduces damage of physical attacks by half in a single battle", async () => {
     const moveToUse = MoveId.TACKLE;
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE);
 
     game.move.select(moveToUse);
 
@@ -61,7 +61,7 @@ describe("Moves - Aurora Veil", () => {
     game.override.battleStyle("double");
 
     const moveToUse = MoveId.ROCK_SLIDE;
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE, SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE, SpeciesId.SHUCKLE);
 
     game.move.select(moveToUse);
     game.move.select(moveToUse, 1);
@@ -77,7 +77,7 @@ describe("Moves - Aurora Veil", () => {
   });
 
   it("reduces damage of special attacks by half in a single battle", async () => {
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE);
 
     game.move.use(MoveId.ABSORB);
 
@@ -94,7 +94,7 @@ describe("Moves - Aurora Veil", () => {
 
   it("reduces damage of special attacks by a third in a double battle", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE);
 
     game.move.use(MoveId.ABSORB);
     await game.toEndOfTurn();
@@ -108,7 +108,7 @@ describe("Moves - Aurora Veil", () => {
   });
 
   it("does not affect critical hits", async () => {
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE);
 
     game.move.use(MoveId.WICKED_BLOW);
     await game.toEndOfTurn();
