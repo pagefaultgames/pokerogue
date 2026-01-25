@@ -123,7 +123,7 @@ export class CommandPhase extends FieldPhase {
       if (
         queuedMove.move !== MoveId.NONE
         && !isVirtual(queuedMove.useMode)
-        && !movesetQueuedMove?.isUsable(playerPokemon, isIgnorePP(queuedMove.useMode), true)
+        && !(movesetQueuedMove?.isUsable(playerPokemon, isIgnorePP(queuedMove.useMode), true)?.[0] ?? false)
       ) {
         entriesToDelete++;
       } else {

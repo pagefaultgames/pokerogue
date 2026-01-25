@@ -37,7 +37,7 @@ describe("Abilities - Arena Trap", () => {
   // TODO: Figure out how to wrangle the UI into not timing out
   it.todo("should interrupt player switch attempt and display message", async () => {
     game.override.battleStyle("single");
-    await game.classicMode.startBattle([SpeciesId.DUGTRIO, SpeciesId.GOTHITELLE]);
+    await game.classicMode.startBattle(SpeciesId.DUGTRIO, SpeciesId.GOTHITELLE);
 
     const enemy = game.field.getEnemyPokemon();
 
@@ -63,14 +63,14 @@ describe("Abilities - Arena Trap", () => {
 
   it("should guarantee double battle with any one LURE", async () => {
     game.override.startingModifier([{ name: "LURE" }]).startingWave(2);
-    await game.classicMode.startBattle([SpeciesId.DUGTRIO]);
+    await game.classicMode.startBattle(SpeciesId.DUGTRIO);
 
     expect(game.scene.getEnemyField()).toHaveLength(2);
   });
 
   it("should lift if pokemon with this ability leaves the field", async () => {
     game.override.battleStyle("single");
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();

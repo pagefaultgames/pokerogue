@@ -2,7 +2,6 @@ import { allAbilities } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { FaintPhase } from "#phases/faint-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -36,7 +35,7 @@ describe("Abilities - Quick Draw", () => {
   });
 
   it("makes pokemon go first in its priority bracket", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const pokemon = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
@@ -45,7 +44,7 @@ describe("Abilities - Quick Draw", () => {
     enemy.hp = 1;
 
     game.move.select(MoveId.TACKLE);
-    await game.phaseInterceptor.to(FaintPhase, false);
+    await game.phaseInterceptor.to("FaintPhase", false);
 
     expect(pokemon.isFainted()).toBe(false);
     expect(enemy.isFainted()).toBe(true);
@@ -53,7 +52,7 @@ describe("Abilities - Quick Draw", () => {
   });
 
   it("is not triggered by non damaging moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const pokemon = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
@@ -62,7 +61,7 @@ describe("Abilities - Quick Draw", () => {
     enemy.hp = 1;
 
     game.move.select(MoveId.TAIL_WHIP);
-    await game.phaseInterceptor.to(FaintPhase, false);
+    await game.phaseInterceptor.to("FaintPhase", false);
 
     expect(pokemon.isFainted()).toBe(true);
     expect(enemy.isFainted()).toBe(false);
@@ -72,7 +71,7 @@ describe("Abilities - Quick Draw", () => {
   it("does not increase priority", async () => {
     game.override.enemyMoveset([MoveId.EXTREME_SPEED]);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const pokemon = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
@@ -81,7 +80,7 @@ describe("Abilities - Quick Draw", () => {
     enemy.hp = 1;
 
     game.move.select(MoveId.TACKLE);
-    await game.phaseInterceptor.to(FaintPhase, false);
+    await game.phaseInterceptor.to("FaintPhase", false);
 
     expect(pokemon.isFainted()).toBe(true);
     expect(enemy.isFainted()).toBe(false);

@@ -29,7 +29,7 @@ describe("Moves - Trick Or Treat", () => {
   });
 
   it("will replace added type from Forest's Curse", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     game.move.select(MoveId.FORESTS_CURSE);

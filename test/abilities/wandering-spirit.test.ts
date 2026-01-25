@@ -29,7 +29,7 @@ describe("Abilities - Wandering Spirit", () => {
   });
 
   it("should exchange abilities when hit with a contact move", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
@@ -40,7 +40,7 @@ describe("Abilities - Wandering Spirit", () => {
 
   it("should not exchange abilities when hit with a non-contact move", async () => {
     game.override.enemyMoveset(MoveId.EARTHQUAKE);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
@@ -51,7 +51,7 @@ describe("Abilities - Wandering Spirit", () => {
 
   it("should activate post-summon abilities", async () => {
     game.override.enemyAbility(AbilityId.INTIMIDATE);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");

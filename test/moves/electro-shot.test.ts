@@ -32,7 +32,7 @@ describe("Moves - Electro Shot", () => {
   });
 
   it("should increase the user's Sp. Atk on the first turn, then attack on the second turn", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
@@ -62,7 +62,7 @@ describe("Moves - Electro Shot", () => {
   ])("should fully resolve in one turn if $name is active", async ({ weatherType }) => {
     game.override.weather(weatherType);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
@@ -85,7 +85,7 @@ describe("Moves - Electro Shot", () => {
   it("should only increase Sp. Atk once with Multi-Lens", async () => {
     game.override.weather(WeatherType.RAIN).startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const playerPokemon = game.field.getPlayerPokemon();
 

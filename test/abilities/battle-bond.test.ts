@@ -36,7 +36,7 @@ describe("Abilities - BATTLE BOND", () => {
   });
 
   it("check if fainted pokemon switches to base form on arena reset", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.GRENINJA]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.GRENINJA);
 
     const greninja = game.scene.getPlayerParty()[1];
     expect(greninja.formIndex).toBe(ashForm);
@@ -55,7 +55,7 @@ describe("Abilities - BATTLE BOND", () => {
   });
 
   it("should not keep buffing Water Shuriken after Greninja switches to base form", async () => {
-    await game.classicMode.startBattle([SpeciesId.GRENINJA]);
+    await game.classicMode.startBattle(SpeciesId.GRENINJA);
 
     const waterShuriken = allMoves[MoveId.WATER_SHURIKEN];
     vi.spyOn(waterShuriken, "calculateBattlePower");
