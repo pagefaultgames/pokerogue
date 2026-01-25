@@ -34,7 +34,7 @@ describe("Abilities - Oblivious", () => {
       .enemyAbility(AbilityId.BALL_FETCH)
       .moveset(MoveId.SKILL_SWAP)
       .enemyMoveset(MoveId.SPLASH);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
     const enemy = game.field.getEnemyPokemon();
     enemy.addTag(BattlerTagType.TAUNT);
     expect(enemy.getTag(BattlerTagType.TAUNT)).toBeDefined();
@@ -51,7 +51,7 @@ describe("Abilities - Oblivious", () => {
       .enemyAbility(AbilityId.BALL_FETCH)
       .moveset(MoveId.SKILL_SWAP)
       .enemyMoveset(MoveId.SPLASH);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "isOppositeGender").mockReturnValue(true);

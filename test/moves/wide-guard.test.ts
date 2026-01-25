@@ -32,7 +32,7 @@ describe("Moves - Wide Guard", () => {
   });
 
   it("should protect the user and allies from multi-target attack and status moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD, SpeciesId.BLASTOISE);
     const [charizard, blastoise] = game.scene.getPlayerField();
 
     game.move.select(MoveId.WIDE_GUARD, BattlerIndex.PLAYER);
@@ -48,7 +48,7 @@ describe("Moves - Wide Guard", () => {
   });
 
   it("should not protect the user and allies from single-target moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD, SpeciesId.BLASTOISE);
 
     const [charizard, blastoise] = game.scene.getPlayerField();
     game.move.select(MoveId.WIDE_GUARD, BattlerIndex.PLAYER);
@@ -64,7 +64,7 @@ describe("Moves - Wide Guard", () => {
   it("should protect the user from its ally's multi-target move", async () => {
     game.override.enemyMoveset(MoveId.SPLASH);
 
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD, SpeciesId.BLASTOISE);
 
     const charizard = game.field.getPlayerPokemon();
     const [snorlax1, snorlax2] = game.scene.getEnemyField();
@@ -80,7 +80,7 @@ describe("Moves - Wide Guard", () => {
 
   it("should increment (but not respect) other protection moves' fail counters", async () => {
     game.override.battleStyle("single");
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     const charizard = game.field.getPlayerPokemon();
     // force protect to fail on anything other than a guaranteed success

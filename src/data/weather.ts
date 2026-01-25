@@ -1,4 +1,4 @@
-import type { SuppressWeatherEffectAbAttr } from "#abilities/ability";
+import type { SuppressWeatherEffectAbAttr } from "#abilities/ab-attrs";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";

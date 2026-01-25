@@ -30,7 +30,7 @@ describe("Reload", () => {
   });
 
   it("should not have RNG inconsistencies in a Classic run", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const preReloadRngState = Phaser.Math.RND.state();
 
@@ -82,7 +82,8 @@ describe("Reload", () => {
       .disableTrainerWaves()
       .moveset([MoveId.SPLASH])
       .enemyMoveset(MoveId.SPLASH);
-    await game.classicMode.startBattle(); // Apparently daily mode would override the biome
+
+    await game.classicMode.startBattle(SpeciesId.FEEBAS); // Apparently daily mode would override the biome
 
     // Transition from Wave 10 to Wave 11 in order to trigger biome switch
     game.move.select(MoveId.SPLASH);

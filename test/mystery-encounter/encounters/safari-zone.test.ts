@@ -104,7 +104,7 @@ describe("Safari Zone - Mystery Encounter", () => {
     it("should NOT be selectable if the player doesn't have enough money", async () => {
       game.scene.money = 0;
       await game.runToMysteryEncounter(MysteryEncounterType.SAFARI_ZONE, defaultParty);
-      await game.phaseInterceptor.to(MysteryEncounterPhase, false);
+      await game.phaseInterceptor.to("MysteryEncounterPhase", false);
 
       const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
@@ -128,7 +128,7 @@ describe("Safari Zone - Mystery Encounter", () => {
       vi.spyOn(Phaser.Math.RND, "realInRange").mockImplementation((min: number, max: number) => {
         return rngSweepProgress * (max - min) + min;
       });
-      vi.spyOn(Phaser.Math.RND, "shuffle").mockImplementation((arr: any[]) => arr);
+      vi.spyOn(Phaser.Math.RND, "shuffle").mockImplementation(<T>(arr: T[] | undefined): T[] => arr!);
 
       for (let i = 0; i < NUM_ROLLS; i++) {
         rngSweepProgress = (2 * i + 1) / (2 * NUM_ROLLS);

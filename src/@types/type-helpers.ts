@@ -2,7 +2,7 @@
  * A collection of custom utility types that aid in type checking and ensuring strict type conformity
  */
 
-import type { AbAttr } from "#abilities/ability";
+import type { AbAttr } from "#abilities/ab-attrs";
 import type { NegativeInfinity, PositiveInfinity } from "type-fest";
 
 /**
@@ -143,3 +143,11 @@ export type Negate<N extends number> =
               `-${N}` extends `${infer R extends number}`
               ? R
               : number;
+
+/** Extract the required keys from an object that has optional ones */
+export type RequiredKeys<T> = {
+  [K in keyof T]-?: object extends Pick<T, K> ? never : K;
+}[keyof T];
+
+/** Pick from `T` the set of required properties  */
+export type OnlyRequired<T> = Pick<T, RequiredKeys<T>>;
