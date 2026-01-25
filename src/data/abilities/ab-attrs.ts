@@ -2995,6 +2995,7 @@ export class PreLeaveFieldAbAttr extends AbAttr {
 // TODO: Keeping a reference to the Pokemon from within the Weather class would make this far cleaner
 export class PreLeaveFieldClearWeatherAbAttr extends PreLeaveFieldAbAttr {
   private readonly weatherType: Exclude<WeatherType, WeatherType.NONE>;
+
   constructor(weatherType: Exclude<WeatherType, WeatherType.NONE>) {
     super(false);
     this.weatherType = weatherType;
