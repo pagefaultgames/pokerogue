@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2026 Pagefault Games
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 /**
  * A mapping of ability names to their corresponding IDs.
  * @enum {number}
