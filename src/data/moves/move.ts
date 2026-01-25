@@ -1,4 +1,4 @@
-import type { AbAttrParamsWithCancel, PreAttackModifyPowerAbAttrParams } from "#abilities/ability";
+import type { AbAttrParamsWithCancel, PreAttackModifyPowerAbAttrParams } from "#abilities/ab-attrs";
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { loggedInUser } from "#app/account";
 import type { GameMode } from "#app/game-mode";
