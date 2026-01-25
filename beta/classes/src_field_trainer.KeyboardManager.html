@@ -56,15 +56,15 @@ and cause the default browser behavior.</p>
 <p>Please note that keyboard captures are global. This means that if you call this method from within a Scene, to say prevent
 the SPACE BAR from triggering a page scroll, then it will prevent it for any Scene in your game, not just the calling one.</p>
 <p>You can pass in a single key code value, or an array of key codes, or a string:</p>
-<pre><code class="javascript"><span class="hl-2">this</span><span class="hl-1">.</span><span class="hl-0">input</span><span class="hl-1">.</span><span class="hl-0">keyboard</span><span class="hl-1">.</span><span class="hl-4">addCapture</span><span class="hl-1">(</span><span class="hl-3">62</span><span class="hl-1">);</span>
+<pre><code class="javascript"><span class="hl-2">this</span><span class="hl-1">.</span><span class="hl-0">input</span><span class="hl-1">.</span><span class="hl-0">keyboard</span><span class="hl-1">.</span><span class="hl-9">addCapture</span><span class="hl-1">(</span><span class="hl-7">62</span><span class="hl-1">);</span>
 </code><button type="button">Copy</button></pre>
 
 <p>An array of key codes:</p>
-<pre><code class="javascript"><span class="hl-2">this</span><span class="hl-1">.</span><span class="hl-0">input</span><span class="hl-1">.</span><span class="hl-0">keyboard</span><span class="hl-1">.</span><span class="hl-4">addCapture</span><span class="hl-1">([ </span><span class="hl-3">62</span><span class="hl-1">, </span><span class="hl-3">63</span><span class="hl-1">, </span><span class="hl-3">64</span><span class="hl-1"> ]);</span>
+<pre><code class="javascript"><span class="hl-2">this</span><span class="hl-1">.</span><span class="hl-0">input</span><span class="hl-1">.</span><span class="hl-0">keyboard</span><span class="hl-1">.</span><span class="hl-9">addCapture</span><span class="hl-1">([ </span><span class="hl-7">62</span><span class="hl-1">, </span><span class="hl-7">63</span><span class="hl-1">, </span><span class="hl-7">64</span><span class="hl-1"> ]);</span>
 </code><button type="button">Copy</button></pre>
 
 <p>Or a string:</p>
-<pre><code class="javascript"><span class="hl-2">this</span><span class="hl-1">.</span><span class="hl-0">input</span><span class="hl-1">.</span><span class="hl-0">keyboard</span><span class="hl-1">.</span><span class="hl-4">addCapture</span><span class="hl-1">(</span><span class="hl-7">&#39;W,S,A,D&#39;</span><span class="hl-1">);</span>
+<pre><code class="javascript"><span class="hl-2">this</span><span class="hl-1">.</span><span class="hl-0">input</span><span class="hl-1">.</span><span class="hl-0">keyboard</span><span class="hl-1">.</span><span class="hl-9">addCapture</span><span class="hl-1">(</span><span class="hl-4">&#39;W,S,A,D&#39;</span><span class="hl-1">);</span>
 </code><button type="button">Copy</button></pre>
 
 <p>To use non-alpha numeric keys, use a string, such as 'UP', 'SPACE' or 'LEFT'.</p>
@@ -77,15 +77,15 @@ the SPACE BAR from triggering a page scroll, then it will prevent it for any Sce
 <p>Please note that keyboard captures are global. This means that if you call this method from within a Scene, to remove
 the capture of a key, then it will remove it for any Scene in your game, not just the calling one.</p>
 <p>You can pass in a single key code value, or an array of key codes, or a string:</p>
-<pre><code class="javascript"><span class="hl-2">this</span><span class="hl-1">.</span><span class="hl-0">input</span><span class="hl-1">.</span><span class="hl-0">keyboard</span><span class="hl-1">.</span><span class="hl-4">removeCapture</span><span class="hl-1">(</span><span class="hl-3">62</span><span class="hl-1">);</span>
+<pre><code class="javascript"><span class="hl-2">this</span><span class="hl-1">.</span><span class="hl-0">input</span><span class="hl-1">.</span><span class="hl-0">keyboard</span><span class="hl-1">.</span><span class="hl-9">removeCapture</span><span class="hl-1">(</span><span class="hl-7">62</span><span class="hl-1">);</span>
 </code><button type="button">Copy</button></pre>
 
 <p>An array of key codes:</p>
-<pre><code class="javascript"><span class="hl-2">this</span><span class="hl-1">.</span><span class="hl-0">input</span><span class="hl-1">.</span><span class="hl-0">keyboard</span><span class="hl-1">.</span><span class="hl-4">removeCapture</span><span class="hl-1">([ </span><span class="hl-3">62</span><span class="hl-1">, </span><span class="hl-3">63</span><span class="hl-1">, </span><span class="hl-3">64</span><span class="hl-1"> ]);</span>
+<pre><code class="javascript"><span class="hl-2">this</span><span class="hl-1">.</span><span class="hl-0">input</span><span class="hl-1">.</span><span class="hl-0">keyboard</span><span class="hl-1">.</span><span class="hl-9">removeCapture</span><span class="hl-1">([ </span><span class="hl-7">62</span><span class="hl-1">, </span><span class="hl-7">63</span><span class="hl-1">, </span><span class="hl-7">64</span><span class="hl-1"> ]);</span>
 </code><button type="button">Copy</button></pre>
 
 <p>Or a string:</p>
-<pre><code class="javascript"><span class="hl-2">this</span><span class="hl-1">.</span><span class="hl-0">input</span><span class="hl-1">.</span><span class="hl-0">keyboard</span><span class="hl-1">.</span><span class="hl-4">removeCapture</span><span class="hl-1">(</span><span class="hl-7">&#39;W,S,A,D&#39;</span><span class="hl-1">);</span>
+<pre><code class="javascript"><span class="hl-2">this</span><span class="hl-1">.</span><span class="hl-0">input</span><span class="hl-1">.</span><span class="hl-0">keyboard</span><span class="hl-1">.</span><span class="hl-9">removeCapture</span><span class="hl-1">(</span><span class="hl-4">&#39;W,S,A,D&#39;</span><span class="hl-1">);</span>
 </code><button type="button">Copy</button></pre>
 
 <p>To use non-alpha numeric keys, use a string, such as 'UP', 'SPACE' or 'LEFT'.</p>
