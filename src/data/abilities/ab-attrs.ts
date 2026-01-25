@@ -2997,6 +2997,7 @@ export class PreLeaveFieldClearWeatherAbAttr extends PreLeaveFieldAbAttr {
 
   constructor(weatherType: Exclude<WeatherType, WeatherType.NONE>) {
     super(false);
+
     this.weatherType = weatherType;
   }
 
