@@ -794,11 +794,17 @@ export class ConfusedTag extends SerializableBattlerTag {
 
   canAdd(pokemon: Pokemon): boolean {
     const blockedByTerrain = pokemon.isGrounded() && globalScene.arena.terrain?.terrainType === TerrainType.MISTY;
-    if (blockedByTerrain) {
-      pokemon.queueStatusImmuneMessage(false, TerrainType.MISTY);
-      return false;
+    if (!blockedByTerrain) {
+      return true;
     }
-    return true;
+
+    // avoid showing cancellation messages for attack moves
+    const phaseData = getMoveEffectPhaseData(pokemon);
+    if (phaseData?.move?.category === MoveCategory.STATUS) {
+      pokemon.queueStatusImmuneMessage(false, TerrainType.MISTY);
+    }
+
+    return false;
   }
 
   onAdd(pokemon: Pokemon): void {
