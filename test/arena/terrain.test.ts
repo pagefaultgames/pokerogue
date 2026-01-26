@@ -104,8 +104,8 @@ describe("Terrain -", () => {
 
       // player grounded terrain pulse was boosted & type converted; enemy ungrounded one wasn't
       expect(powerSpy).toHaveLastReturnedWith(
-        allMoves[MoveId.TERRAIN_PULSE].power * (terrain === TerrainType.MISTY ? 2 : 2.6),
-      ); // 2 * 1.3
+        allMoves[MoveId.TERRAIN_PULSE].power * 2 * (terrain === TerrainType.MISTY ? 1 : 1.3),
+      );
       expect(playerTypeSpy).toHaveLastReturnedWith(type);
       expect(powerSpy).toHaveNthReturnedWith(1, allMoves[MoveId.TERRAIN_PULSE].power);
       expect(enemyTypeSpy).toHaveNthReturnedWith(1, allMoves[MoveId.TERRAIN_PULSE].type);
