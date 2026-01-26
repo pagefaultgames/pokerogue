@@ -27,7 +27,7 @@ describe("Moves - Lunar Blessing", () => {
   });
 
   it("should restore 25% HP of the user and its ally", async () => {
-    await game.classicMode.startBattle([SpeciesId.RATTATA, SpeciesId.RATTATA]);
+    await game.classicMode.startBattle(SpeciesId.RATTATA, SpeciesId.RATTATA);
     const [leftPlayer, rightPlayer] = game.scene.getPlayerField();
 
     vi.spyOn(leftPlayer, "getMaxHp").mockReturnValue(100);
@@ -54,7 +54,7 @@ describe("Moves - Lunar Blessing", () => {
 
   it("should cure status effect of the user and its ally", async () => {
     game.override.statusEffect(StatusEffect.BURN);
-    await game.classicMode.startBattle([SpeciesId.RATTATA, SpeciesId.RATTATA]);
+    await game.classicMode.startBattle(SpeciesId.RATTATA, SpeciesId.RATTATA);
     const [leftPlayer, rightPlayer] = game.scene.getPlayerField();
 
     vi.spyOn(leftPlayer, "resetStatus");

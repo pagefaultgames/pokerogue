@@ -29,7 +29,7 @@ describe("Moves - Struggle", () => {
 
   it("should not have its power boosted by adaptability or stab", async () => {
     game.override.moveset([MoveId.STRUGGLE]).ability(AbilityId.ADAPTABILITY);
-    await game.classicMode.startBattle([SpeciesId.RATTATA]);
+    await game.classicMode.startBattle(SpeciesId.RATTATA);
 
     const enemy = game.field.getEnemyPokemon();
     game.move.select(MoveId.STRUGGLE);
@@ -43,7 +43,7 @@ describe("Moves - Struggle", () => {
 
   it("should ignore type effectiveness", async () => {
     game.override.moveset([MoveId.STRUGGLE]);
-    await game.classicMode.startBattle([SpeciesId.GASTLY]);
+    await game.classicMode.startBattle(SpeciesId.GASTLY);
 
     const enemy = game.field.getEnemyPokemon();
     game.move.select(MoveId.STRUGGLE);

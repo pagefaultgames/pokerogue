@@ -36,7 +36,7 @@ describe("Moves - Fell Stinger", () => {
   it("should not grant stat boost if opponent gets KO'd by recoil", async () => {
     game.override.enemyMoveset([MoveId.DOUBLE_EDGE]);
 
-    await game.classicMode.startBattle([SpeciesId.LEAVANNY]);
+    await game.classicMode.startBattle(SpeciesId.LEAVANNY);
     const leadPokemon = game.field.getPlayerPokemon();
     game.move.select(MoveId.FELL_STINGER);
 
@@ -48,7 +48,7 @@ describe("Moves - Fell Stinger", () => {
   it("should not grant stat boost if enemy is KO'd by status effect", async () => {
     game.override.enemyMoveset(MoveId.SPLASH).enemyStatusEffect(StatusEffect.BURN);
 
-    await game.classicMode.startBattle([SpeciesId.LEAVANNY]);
+    await game.classicMode.startBattle(SpeciesId.LEAVANNY);
     const leadPokemon = game.field.getPlayerPokemon();
     game.move.select(MoveId.FELL_STINGER);
 
@@ -60,7 +60,7 @@ describe("Moves - Fell Stinger", () => {
   it("should not grant stat boost if enemy is KO'd by damaging weather", async () => {
     game.override.weather(WeatherType.HAIL);
 
-    await game.classicMode.startBattle([SpeciesId.LEAVANNY]);
+    await game.classicMode.startBattle(SpeciesId.LEAVANNY);
     const leadPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.FELL_STINGER);
@@ -73,7 +73,7 @@ describe("Moves - Fell Stinger", () => {
   it("should not grant stat boost if enemy is KO'd by Dry Skin + Harsh Sunlight", async () => {
     game.override.enemyPassiveAbility(AbilityId.STURDY).enemyAbility(AbilityId.DRY_SKIN).weather(WeatherType.HARSH_SUN);
 
-    await game.challengeMode.startBattle([SpeciesId.LEAVANNY]);
+    await game.challengeMode.startBattle(SpeciesId.LEAVANNY);
     const leadPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.FELL_STINGER);
@@ -86,7 +86,7 @@ describe("Moves - Fell Stinger", () => {
   it("should not grant stat boost if enemy is saved by Reviver Seed", async () => {
     game.override.enemyAbility(AbilityId.BALL_FETCH).enemyHeldItems([{ name: "REVIVER_SEED" }]);
 
-    await game.classicMode.startBattle([SpeciesId.LEAVANNY]);
+    await game.classicMode.startBattle(SpeciesId.LEAVANNY);
     const leadPokemon = game.field.getPlayerPokemon();
     game.move.select(MoveId.FELL_STINGER);
 
@@ -101,7 +101,7 @@ describe("Moves - Fell Stinger", () => {
     vi.spyOn(saltCure, "accuracy", "get").mockReturnValue(100);
     vi.spyOn(fellStinger, "power", "get").mockReturnValue(50000);
 
-    await game.classicMode.startBattle([SpeciesId.LEAVANNY]);
+    await game.classicMode.startBattle(SpeciesId.LEAVANNY);
     const leadPokemon = game.field.getPlayerPokemon();
     const leftEnemy = game.field.getEnemyPokemon();
 
@@ -124,7 +124,7 @@ describe("Moves - Fell Stinger", () => {
     vi.spyOn(allMoves[MoveId.BIND], "accuracy", "get").mockReturnValue(100);
     vi.spyOn(allMoves[MoveId.FELL_STINGER], "power", "get").mockReturnValue(50000);
 
-    await game.classicMode.startBattle([SpeciesId.LEAVANNY]);
+    await game.classicMode.startBattle(SpeciesId.LEAVANNY);
     const leadPokemon = game.field.getPlayerPokemon();
     const leftEnemy = game.field.getEnemyPokemon();
 
@@ -147,7 +147,7 @@ describe("Moves - Fell Stinger", () => {
     vi.spyOn(allMoves[MoveId.LEECH_SEED], "accuracy", "get").mockReturnValue(100);
     vi.spyOn(allMoves[MoveId.FELL_STINGER], "power", "get").mockReturnValue(50000);
 
-    await game.classicMode.startBattle([SpeciesId.LEAVANNY]);
+    await game.classicMode.startBattle(SpeciesId.LEAVANNY);
     const leadPokemon = game.field.getPlayerPokemon();
     const leftEnemy = game.field.getEnemyPokemon();
 
@@ -168,7 +168,7 @@ describe("Moves - Fell Stinger", () => {
   it("should grant stat boost if enemy dies directly to hit", async () => {
     game.override.enemyAbility(AbilityId.KLUTZ);
 
-    await game.classicMode.startBattle([SpeciesId.LEAVANNY]);
+    await game.classicMode.startBattle(SpeciesId.LEAVANNY);
     const leadPokemon = game.field.getPlayerPokemon();
     game.move.select(MoveId.FELL_STINGER);
 

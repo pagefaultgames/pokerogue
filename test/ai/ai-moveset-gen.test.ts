@@ -257,7 +257,7 @@ describe("Regression Tests - ai-moveset-gen.ts", () => {
     game = new GameManager(phaserGame);
 
     // Need to be in a wave for moveset generation to not actually break
-    await game.classicMode.runToSummon([SpeciesId.PIKACHU]);
+    await game.classicMode.runToSummon(SpeciesId.PIKACHU);
   });
 
   afterEach(() => {

@@ -38,7 +38,7 @@ describe("Abilities - Shields Down", () => {
       [SpeciesId.MINIOR]: meteorIndex,
     });
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MINIOR]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.MINIOR);
 
     const minior = game.scene.getPlayerParty()[1];
     expect(minior.formIndex).toBe(meteorIndex);
@@ -61,7 +61,7 @@ describe("Abilities - Shields Down", () => {
     game.override.startingWave(4).starterForms({
       [SpeciesId.MINIOR]: redCoreForm,
     });
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MINIOR]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.MINIOR);
 
     const minior = game.scene.getPlayerParty()[1];
     expect(minior.formIndex).toBe(redCoreForm);
@@ -83,7 +83,7 @@ describe("Abilities - Shields Down", () => {
   it("should ignore Mold Breaker", async () => {
     game.override.enemyAbility(AbilityId.MOLD_BREAKER).enemyMoveset([MoveId.SPORE]);
 
-    await game.classicMode.startBattle([SpeciesId.MINIOR]);
+    await game.classicMode.startBattle(SpeciesId.MINIOR);
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.SPORE);
@@ -93,7 +93,7 @@ describe("Abilities - Shields Down", () => {
   });
 
   it("should ignore non-volatile status effects & Yawn in Meteor Form", async () => {
-    await game.classicMode.startBattle([SpeciesId.MINIOR]);
+    await game.classicMode.startBattle(SpeciesId.MINIOR);
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.NUZZLE);
@@ -112,7 +112,7 @@ describe("Abilities - Shields Down", () => {
   });
 
   it("should not ignore non-volatile status effects & Yawn in Core Form", async () => {
-    await game.classicMode.startBattle([SpeciesId.MINIOR]);
+    await game.classicMode.startBattle(SpeciesId.MINIOR);
 
     // Drop minior to below half to prevent reverting to Core Form
     const minior = game.field.getPlayerPokemon();
@@ -138,7 +138,7 @@ describe("Abilities - Shields Down", () => {
 
   // TODO: Gravity does not make a Pokemon be considered as "grounded" for hazards
   it.todo("should be poisoned by toxic spikes when Gravity is active before changing forms", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MINIOR]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.MINIOR);
 
     // Change minior to Core form in a state where it would revert to Meteor form on switch
     const minior = game.scene.getPlayerParty()[1];
@@ -160,7 +160,7 @@ describe("Abilities - Shields Down", () => {
   it("should not ignore volatile status effects", async () => {
     game.override.enemyMoveset([MoveId.CONFUSE_RAY]);
 
-    await game.classicMode.startBattle([SpeciesId.MINIOR]);
+    await game.classicMode.startBattle(SpeciesId.MINIOR);
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.CONFUSE_RAY);
@@ -172,7 +172,7 @@ describe("Abilities - Shields Down", () => {
 
   it("should not activate when transformed", async () => {
     game.override.enemyAbility(AbilityId.IMPOSTER);
-    await game.classicMode.startBattle([SpeciesId.MINIOR]);
+    await game.classicMode.startBattle(SpeciesId.MINIOR);
 
     game.move.use(MoveId.SPORE);
     await game.toEndOfTurn();
