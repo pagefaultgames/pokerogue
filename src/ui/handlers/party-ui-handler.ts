@@ -1586,7 +1586,12 @@ export class PartyUiHandler extends MessageUiHandler {
         break;
       case PartyUiMode.SWITCH:
       case PartyUiMode.RELEASE:
+        this.options.push(PartyOption.RELEASE);
+        break;
       case PartyUiMode.CHECK:
+        if (globalScene.phaseManager.getCurrentPhase().is("MysteryEncounterPhase")) {
+          break;
+        }
         this.options.push(PartyOption.RELEASE);
         break;
     }
