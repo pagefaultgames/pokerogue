@@ -59,7 +59,7 @@ describe("Moves - Entry Hazards", () => {
     },
   ])("General checks - $name", ({ move, tagType }) => {
     it("should add a persistent tag to the opposing side of the field", async () => {
-      await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA]);
+      await game.classicMode.startBattle(SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA);
 
       expect(game).not.toHaveArenaTag(tagType);
 
@@ -74,7 +74,7 @@ describe("Moves - Entry Hazards", () => {
     // TODO: re-enable after re-fixing hazards moves
     it.todo("should work when all targets fainted", async () => {
       game.override.battleStyle("double");
-      await game.classicMode.startBattle([SpeciesId.RAYQUAZA, SpeciesId.SHUCKLE]);
+      await game.classicMode.startBattle(SpeciesId.RAYQUAZA, SpeciesId.SHUCKLE);
 
       const [enemy1, enemy2] = game.scene.getEnemyField();
 
@@ -95,7 +95,7 @@ describe("Moves - Entry Hazards", () => {
         : `can be added up to ${maxLayers} times in a row before failing`;
 
     it(caseText, async () => {
-      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
       const feebas = game.field.getPlayerPokemon();
 
@@ -126,7 +126,7 @@ describe("Moves - Entry Hazards", () => {
         game.scene.arena.addTag(ArenaTagType.SPIKES, 0, undefined, 0, ArenaTagSide.ENEMY);
       }
 
-      await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA]);
+      await game.classicMode.startBattle(SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA);
 
       const enemy = game.field.getEnemyPokemon();
       expect(enemy).toHaveTakenDamage((enemy.getMaxHp() * damage) / 100);
@@ -146,7 +146,7 @@ describe("Moves - Entry Hazards", () => {
       for (let i = 0; i < layers; i++) {
         game.scene.arena.addTag(ArenaTagType.TOXIC_SPIKES, 0, undefined, 0, ArenaTagSide.ENEMY);
       }
-      await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA]);
+      await game.classicMode.startBattle(SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA);
 
       const enemy = game.field.getEnemyPokemon();
       expect(enemy).toHaveStatusEffect(status);
@@ -154,7 +154,7 @@ describe("Moves - Entry Hazards", () => {
   });
 
   it("should be removed upon a grounded Poison-type switching in", async () => {
-    await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.EKANS]);
+    await game.classicMode.startBattle(SpeciesId.MIGHTYENA, SpeciesId.EKANS);
 
     game.scene.arena.addTag(ArenaTagType.TOXIC_SPIKES, 0, undefined, 0, ArenaTagSide.PLAYER);
 
@@ -177,7 +177,7 @@ describe("Moves - Entry Hazards", () => {
     ])("should deal damage based on the target's weakness to Rock - $multi", async ({ multi, species }) => {
       game.override.enemySpecies(species);
       game.scene.arena.addTag(ArenaTagType.STEALTH_ROCK, 0, undefined, 0, ArenaTagSide.ENEMY);
-      await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.EKANS]);
+      await game.classicMode.startBattle(SpeciesId.MIGHTYENA, SpeciesId.EKANS);
 
       const enemy = game.field.getEnemyPokemon();
       expect(enemy.getAttackTypeEffectiveness(PokemonType.ROCK, undefined, true)).toBe(multi);
@@ -192,7 +192,7 @@ describe("Moves - Entry Hazards", () => {
     it("should ignore strong winds for type effectiveness", async () => {
       game.override.enemyAbility(AbilityId.DELTA_STREAM).enemySpecies(SpeciesId.RAYQUAZA);
       game.scene.arena.addTag(ArenaTagType.STEALTH_ROCK, 0, undefined, 0, ArenaTagSide.ENEMY);
-      await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.EKANS]);
+      await game.classicMode.startBattle(SpeciesId.MIGHTYENA, SpeciesId.EKANS);
 
       const rayquaza = game.field.getEnemyPokemon();
       // took 25% damage despite strong winds halving effectiveness
@@ -203,7 +203,7 @@ describe("Moves - Entry Hazards", () => {
   describe("Sticky Web", () => {
     it("should lower the target's speed by 1 stage on entry", async () => {
       game.scene.arena.addTag(ArenaTagType.STICKY_WEB, 0, undefined, 0, ArenaTagSide.ENEMY);
-      await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.EKANS]);
+      await game.classicMode.startBattle(SpeciesId.MIGHTYENA, SpeciesId.EKANS);
 
       const enemy = game.field.getEnemyPokemon();
       expect(enemy).toHaveStatStage(Stat.SPD, -1);

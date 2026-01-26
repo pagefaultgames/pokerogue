@@ -4,7 +4,6 @@ import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { TurnInitPhase } from "#phases/turn-init-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -32,7 +31,7 @@ describe("Moves - Stockpile", () => {
     });
 
     it("gains a stockpile stack and raises user's DEF and SPDEF stat stages by 1 on each use, fails at max stacks (3)", async () => {
-      await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
+      await game.classicMode.startBattle(SpeciesId.ABOMASNOW);
 
       const user = game.field.getPlayerPokemon();
 
@@ -72,7 +71,7 @@ describe("Moves - Stockpile", () => {
     });
 
     it("gains a stockpile stack even if user's DEF and SPDEF stat stages are at +6", async () => {
-      await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
+      await game.classicMode.startBattle(SpeciesId.ABOMASNOW);
 
       const user = game.field.getPlayerPokemon();
 
@@ -84,7 +83,7 @@ describe("Moves - Stockpile", () => {
       expect(user.getStatStage(Stat.SPDEF)).toBe(6);
 
       game.move.select(MoveId.STOCKPILE);
-      await game.phaseInterceptor.to(TurnInitPhase);
+      await game.phaseInterceptor.to("TurnInitPhase");
 
       const stockpilingTag = user.getTag(StockpilingTag)!;
       expect(stockpilingTag).toBeDefined();
@@ -93,7 +92,7 @@ describe("Moves - Stockpile", () => {
       expect(user.getStatStage(Stat.SPDEF)).toBe(6);
 
       game.move.select(MoveId.STOCKPILE);
-      await game.phaseInterceptor.to(TurnInitPhase);
+      await game.phaseInterceptor.to("TurnInitPhase");
 
       const stockpilingTagAgain = user.getTag(StockpilingTag)!;
       expect(stockpilingTagAgain).toBeDefined();

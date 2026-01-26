@@ -27,7 +27,7 @@ describe("Moves - Heal Bell", () => {
   });
 
   it("should cure status effect of the user, its ally, and all party pokemon", async () => {
-    await game.classicMode.startBattle([SpeciesId.RATTATA, SpeciesId.RATTATA, SpeciesId.RATTATA]);
+    await game.classicMode.startBattle(SpeciesId.RATTATA, SpeciesId.RATTATA, SpeciesId.RATTATA);
     const [leftPlayer, rightPlayer, partyPokemon] = game.scene.getPlayerParty();
 
     vi.spyOn(leftPlayer, "resetStatus");
@@ -49,7 +49,7 @@ describe("Moves - Heal Bell", () => {
 
   it("should not cure status effect of the target/target's allies", async () => {
     game.override.enemyStatusEffect(StatusEffect.BURN);
-    await game.classicMode.startBattle([SpeciesId.RATTATA, SpeciesId.RATTATA]);
+    await game.classicMode.startBattle(SpeciesId.RATTATA, SpeciesId.RATTATA);
     const [leftOpp, rightOpp] = game.scene.getEnemyField();
 
     vi.spyOn(leftOpp, "resetStatus");
@@ -71,7 +71,7 @@ describe("Moves - Heal Bell", () => {
 
   it("should not cure status effect of allies ON FIELD with Soundproof, should still cure allies in party", async () => {
     game.override.ability(AbilityId.SOUNDPROOF);
-    await game.classicMode.startBattle([SpeciesId.RATTATA, SpeciesId.RATTATA, SpeciesId.RATTATA]);
+    await game.classicMode.startBattle(SpeciesId.RATTATA, SpeciesId.RATTATA, SpeciesId.RATTATA);
     const [leftPlayer, rightPlayer, partyPokemon] = game.scene.getPlayerParty();
 
     vi.spyOn(leftPlayer, "resetStatus");

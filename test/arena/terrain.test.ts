@@ -57,7 +57,7 @@ describe("Terrain -", () => {
     it.skipIf(terrain === TerrainType.MISTY)(
       `should boost power of grounded ${typeStr}-type moves by 1.3x, even against ungrounded targets`,
       async () => {
-        await game.classicMode.startBattle([SpeciesId.BLISSEY]);
+        await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
         const powerSpy = vi.spyOn(allMoves[move], "calculateBattlePower");
 
@@ -75,7 +75,7 @@ describe("Terrain -", () => {
     it.runIf(terrain === TerrainType.MISTY)(
       "should cut power of grounded Dragon-type moves in half, even from ungrounded users",
       async () => {
-        await game.classicMode.startBattle([SpeciesId.BLISSEY]);
+        await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
         const powerSpy = vi.spyOn(allMoves[move], "calculateBattlePower");
         game.move.use(move);
@@ -91,7 +91,7 @@ describe("Terrain -", () => {
 
     // TODO: Move to a dedicated terrain pulse test file
     it(`should change Terrain Pulse into a ${typeStr}-type move and double its base power`, async () => {
-      await game.classicMode.startBattle([SpeciesId.BLISSEY]);
+      await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
       const powerSpy = vi.spyOn(allMoves[MoveId.TERRAIN_PULSE], "calculateBattlePower");
       const playerTypeSpy = vi.spyOn(game.field.getPlayerPokemon(), "getMoveType");
@@ -118,7 +118,7 @@ describe("Terrain -", () => {
     });
 
     it("should heal all grounded, non semi-invulnerable Pokemon for 1/16th max HP at end of turn", async () => {
-      await game.classicMode.startBattle([SpeciesId.BLISSEY]);
+      await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
       // blissey is grounded, shuckle isn't
       const blissey = game.field.getPlayerPokemon();
@@ -155,7 +155,7 @@ describe("Terrain -", () => {
       move,
       basePower = allMoves[move].power,
     }) => {
-      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
       // force high rolls for guaranteed magnitude 10s
       vi.spyOn(Phaser.Math.RND, "integerInRange").mockImplementation((_min, max) => max);
@@ -185,7 +185,7 @@ describe("Terrain -", () => {
     });
 
     it("should prevent all grounded Pokemon from being put to sleep", async () => {
-      await game.classicMode.startBattle([SpeciesId.PIDGEOT]);
+      await game.classicMode.startBattle(SpeciesId.PIDGEOT);
 
       game.move.use(MoveId.SPORE);
       await game.move.forceEnemyMove(MoveId.SPORE);
@@ -209,7 +209,7 @@ describe("Terrain -", () => {
 
     it("should prevent attack moves from applying sleep without showing text/failing move", async () => {
       vi.spyOn(allMoves[MoveId.RELIC_SONG], "chance", "get").mockReturnValue(100);
-      await game.classicMode.startBattle([SpeciesId.BLISSEY]);
+      await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
       const blissey = game.field.getPlayerPokemon();
       const shuckle = game.field.getEnemyPokemon();
@@ -237,8 +237,8 @@ describe("Terrain -", () => {
       game.override.startingTerrain(TerrainType.MISTY).enemyPassiveAbility(AbilityId.LEVITATE);
     });
 
-    it("should prevent all grounded Pokemon from gaining non-volatile statuses", async () => {
-      await game.classicMode.startBattle([SpeciesId.BLISSEY]);
+    it("should prevent all grounded Pokemon from gaining non-volatile status conditions", async () => {
+      await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
       game.move.use(MoveId.TOXIC);
       await game.move.forceEnemyMove(MoveId.TOXIC);
@@ -250,8 +250,8 @@ describe("Terrain -", () => {
       expect(blissey).toHaveStatusEffect(StatusEffect.NONE);
       expect(shuckle).toHaveStatusEffect(StatusEffect.TOXIC);
       // TODO: These don't work due to how move failures are propagated
-      // expect(blissey.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
-      // expect(shuckle.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+      // expect(blissey).toHaveUsedMove({ move: MoveId.TOXIC, result: MoveResult.SUCCESS });
+      // expect(shuckle).toHaveUsedMove({ move: MoveId.TOXIC, result: MoveResult.FAIL });
 
       expect(game).toHaveShownMessage(
         i18next.t("terrain:mistyBlockMessage", {
@@ -262,7 +262,7 @@ describe("Terrain -", () => {
 
     it("should block confusion and display message", async () => {
       game.override.confusionActivation(false); // prevent self hits from cancelling move
-      await game.classicMode.startBattle([SpeciesId.BLISSEY]);
+      await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
       game.move.use(MoveId.CONFUSE_RAY);
       await game.move.forceEnemyMove(MoveId.CONFUSE_RAY);
@@ -290,7 +290,7 @@ describe("Terrain -", () => {
       { status: "Confusion", move: MoveId.MAGICAL_TORQUE },
     ])("should prevent attack moves from applying $status without showing text/failing move", async ({ move }) => {
       vi.spyOn(allMoves[move], "chance", "get").mockReturnValue(100);
-      await game.classicMode.startBattle([SpeciesId.BLISSEY]);
+      await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
       game.move.use(MoveId.SPLASH);
       await game.move.forceEnemyMove(move);
@@ -318,7 +318,7 @@ describe("Terrain -", () => {
     });
 
     it("should block all opponent-targeted priority moves", async () => {
-      await game.classicMode.startBattle([SpeciesId.BLISSEY]);
+      await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
       game.move.use(MoveId.QUICK_ATTACK);
       await game.move.forceEnemyMove(MoveId.WIDE_GUARD);
@@ -338,7 +338,7 @@ describe("Terrain -", () => {
 
     it("should affect moves that only become priority due to abilities", async () => {
       game.override.ability(AbilityId.PRANKSTER).enemyAbility(AbilityId.PRANKSTER);
-      await game.classicMode.startBattle([SpeciesId.BLISSEY]);
+      await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
       game.move.use(MoveId.FEATHER_DANCE);
       await game.move.forceEnemyMove(MoveId.SWORDS_DANCE);
@@ -372,7 +372,7 @@ describe("Terrain -", () => {
         },
       },
     ])("should not block $category moves that become priority", async ({ move, effect }) => {
-      await game.classicMode.startBattle([SpeciesId.BLISSEY]);
+      await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
       game.move.use(move);
       await game.move.forceEnemyMove(MoveId.SPLASH);
@@ -384,7 +384,7 @@ describe("Terrain -", () => {
     });
 
     it("should not block non-priority moves boosted by Quick Claw/Quick Draw", async () => {
-      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
       const feebas = game.field.getPlayerPokemon();
       feebas.addTag(BattlerTagType.BYPASS_SPEED);
@@ -399,7 +399,7 @@ describe("Terrain -", () => {
     });
 
     it("should block priority moves boosted by Quick Claw/Quick Draw", async () => {
-      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
       const feebas = game.field.getPlayerPokemon();
       feebas.addTag(BattlerTagType.BYPASS_SPEED);
