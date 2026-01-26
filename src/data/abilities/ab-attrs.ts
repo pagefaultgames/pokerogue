@@ -3013,47 +3013,32 @@ export class PreLeaveFieldAbAttr extends AbAttr {
   apply(_params: Closed<AbAttrBaseParams>): void {}
 }
 
-/** Clears Desolate Land/Primordial Sea/Delta Stream upon the Pokemon switching out. */
+/**
+ * Ability attribute to clear a primal {@linkcode WeatherType} upon this Pokemon switching out.
+ */
 export class PreLeaveFieldClearWeatherAbAttr extends PreLeaveFieldAbAttr {
+  private readonly weatherType: Exclude<WeatherType, WeatherType.NONE>;
+
+  constructor(weatherType: Exclude<WeatherType, WeatherType.NONE>) {
+    super(false);
+
+    this.weatherType = weatherType;
+  }
+
   override canApply({ pokemon }: AbAttrBaseParams): boolean {
-    const weatherType = globalScene.arena.weather?.weatherType;
-    // Clear weather only if user's ability matches the weather and no other pokemon has the ability.
-    switch (weatherType) {
-      case WeatherType.HARSH_SUN:
-        if (
-          pokemon.hasAbility(AbilityId.DESOLATE_LAND)
-          && globalScene
-            .getField(true)
-            .filter(p => p !== pokemon)
-            .filter(p => p.hasAbility(AbilityId.DESOLATE_LAND)).length === 0
-        ) {
-          return true;
-        }
-        break;
-      case WeatherType.HEAVY_RAIN:
-        if (
-          pokemon.hasAbility(AbilityId.PRIMORDIAL_SEA)
-          && globalScene
-            .getField(true)
-            .filter(p => p !== pokemon)
-            .filter(p => p.hasAbility(AbilityId.PRIMORDIAL_SEA)).length === 0
-        ) {
-          return true;
-        }
-        break;
-      case WeatherType.STRONG_WINDS:
-        if (
-          pokemon.hasAbility(AbilityId.DELTA_STREAM)
-          && globalScene
-            .getField(true)
-            .filter(p => p !== pokemon)
-            .filter(p => p.hasAbility(AbilityId.DELTA_STREAM)).length === 0
-        ) {
-          return true;
-        }
-        break;
+    const weatherType = globalScene.arena.getWeatherType();
+    if (weatherType !== this.weatherType) {
+      return false;
     }
-    return false;
+
+    // Clear immutable weather only if no other Pokemon with this attribute for the given weather type exists
+    return !globalScene
+      .getField(true)
+      .some(
+        p =>
+          p !== pokemon
+          && p.getAbilityAttrs("PreLeaveFieldClearWeatherAbAttr").some(attr => attr.weatherType === this.weatherType),
+      );
   }
 
   override apply({ simulated }: AbAttrBaseParams): void {

@@ -1220,19 +1220,19 @@ export function initAbilities() {
     new AbBuilder(AbilityId.PRIMORDIAL_SEA, 6) //
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HEAVY_RAIN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HEAVY_RAIN)
-      .attr(PreLeaveFieldClearWeatherAbAttr)
+      .attr(PreLeaveFieldClearWeatherAbAttr, WeatherType.HEAVY_RAIN)
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.DESOLATE_LAND, 6) //
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HARSH_SUN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HARSH_SUN)
-      .attr(PreLeaveFieldClearWeatherAbAttr)
+      .attr(PreLeaveFieldClearWeatherAbAttr, WeatherType.HARSH_SUN)
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.DELTA_STREAM, 6) //
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.STRONG_WINDS)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.STRONG_WINDS)
-      .attr(PreLeaveFieldClearWeatherAbAttr)
+      .attr(PreLeaveFieldClearWeatherAbAttr, WeatherType.STRONG_WINDS)
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.STAMINA, 7) //
