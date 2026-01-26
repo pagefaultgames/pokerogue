@@ -3026,7 +3026,7 @@ export class PreLeaveFieldClearWeatherAbAttr extends PreLeaveFieldAbAttr {
   }
 
   override canApply({ pokemon }: AbAttrBaseParams): boolean {
-    const weatherType = globalScene.arena.getWeatherType();
+    const weatherType = globalScene.arena.weatherType;
     if (weatherType !== this.weatherType) {
       return false;
     }
