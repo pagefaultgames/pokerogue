@@ -288,8 +288,7 @@ describe("Terrain -", () => {
       { status: "Paralysis", move: MoveId.NUZZLE },
       { status: "Poison", move: MoveId.SLUDGE_BOMB },
       { status: "Toxic Poison", move: MoveId.MALIGNANT_CHAIN },
-      // TODO: Confusion currently displays terrain block message even from damaging moves
-      // { status: "Confusion", move: MoveId.MAGICAL_TORQUE },
+      { status: "Confusion", move: MoveId.MAGICAL_TORQUE },
     ])("should prevent attack moves from applying $status without showing text/failing move", async ({ move }) => {
       vi.spyOn(allMoves[move], "chance", "get").mockReturnValue(100);
       await game.classicMode.startBattle([SpeciesId.BLISSEY]);
