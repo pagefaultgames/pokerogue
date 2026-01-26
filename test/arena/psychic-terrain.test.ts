@@ -2,7 +2,9 @@ import { allMoves } from "#data/data-lists";
 import { TerrainType } from "#data/terrain";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
 import { GameManager } from "#test/test-utils/game-manager";
@@ -23,36 +25,67 @@ describe("Arena - Psychic Terrain", () => {
     game.override
       .battleStyle("single")
       .criticalHits(false)
-      .enemyLevel(1)
-      .enemySpecies(SpeciesId.SHUCKLE)
+      .enemyLevel(10)
+      .enemySpecies(SpeciesId.ELECTRODE)
       .enemyAbility(AbilityId.STURDY)
       .enemyMoveset(MoveId.SPLASH)
-      .moveset([MoveId.PSYCHIC_TERRAIN, MoveId.RAIN_DANCE, MoveId.DARK_VOID])
-      .ability(AbilityId.NO_GUARD);
+      .ability(AbilityId.BALL_FETCH)
+      .passiveAbility(AbilityId.NO_GUARD);
   });
 
-  it("Dark Void with Prankster is not blocked", async () => {
-    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
+  it("blocks increased priority moves", async () => {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    game.move.select(MoveId.PSYCHIC_TERRAIN);
+    game.move.use(MoveId.PSYCHIC_TERRAIN);
     await game.toNextTurn();
 
-    game.move.select(MoveId.DARK_VOID);
+    game.move.use(MoveId.QUICK_ATTACK);
     await game.toEndOfTurn();
 
-    expect(game.field.getEnemyPokemon().status?.effect).toBe(StatusEffect.SLEEP);
+    expect(game.field.getPlayerPokemon()).toHaveUsedMove({ move: MoveId.QUICK_ATTACK, result: MoveResult.FAIL });
+    expect(game.field.getEnemyPokemon()).toHaveFullHp();
   });
 
-  it("Rain Dance with Prankster is not blocked", async () => {
-    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
+  it("blocks single-target status moves that have their priority boosted by Prankster", async () => {
+    game.override.ability(AbilityId.PRANKSTER);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    game.move.select(MoveId.PSYCHIC_TERRAIN);
+    game.move.use(MoveId.PSYCHIC_TERRAIN);
     await game.toNextTurn();
 
-    game.move.select(MoveId.RAIN_DANCE);
+    game.move.use(MoveId.CHARM);
     await game.toEndOfTurn();
 
-    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.RAIN);
+    expect(game.field.getPlayerPokemon()).toHaveUsedMove({ move: MoveId.CHARM, result: MoveResult.FAIL });
+    expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, 0);
+  });
+
+  it("does not block spread-target status moves that have their priority boosted with Prankster", async () => {
+    game.override.ability(AbilityId.PRANKSTER);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+    game.move.use(MoveId.PSYCHIC_TERRAIN);
+    await game.toNextTurn();
+
+    game.move.use(MoveId.DARK_VOID);
+    await game.toEndOfTurn();
+
+    expect(game.field.getPlayerPokemon()).toHaveUsedMove({ move: MoveId.DARK_VOID, result: MoveResult.SUCCESS });
+    expect(game.field.getEnemyPokemon()).toHaveStatusEffect(StatusEffect.SLEEP);
+  });
+
+  it("does not block arena-target status moves that have their priority boosted with Prankster", async () => {
+    game.override.ability(AbilityId.PRANKSTER);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+    game.move.use(MoveId.PSYCHIC_TERRAIN);
+    await game.toNextTurn();
+
+    game.move.use(MoveId.RAIN_DANCE);
+    await game.toEndOfTurn();
+
+    expect(game.field.getPlayerPokemon()).toHaveUsedMove({ move: MoveId.RAIN_DANCE, result: MoveResult.SUCCESS });
+    expect(game).toHaveWeather(WeatherType.RAIN);
   });
 
   it("should not block non-priority moves boosted by Quick Claw", async () => {
@@ -74,6 +107,7 @@ describe("Arena - Psychic Terrain", () => {
 
     const shuckle = game.field.getEnemyPokemon();
     expect(shuckle).not.toHaveFullHp();
+    expect(feebas).toHaveUsedMove({ move: MoveId.POUND, result: MoveResult.SUCCESS });
   });
 
   it("should block priority moves boosted by Quick Claw", async () => {
@@ -95,5 +129,6 @@ describe("Arena - Psychic Terrain", () => {
 
     const shuckle = game.field.getEnemyPokemon();
     expect(shuckle).toHaveFullHp();
+    expect(feebas).toHaveUsedMove({ move: MoveId.QUICK_ATTACK, result: MoveResult.FAIL });
   });
 });
