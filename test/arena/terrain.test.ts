@@ -150,8 +150,7 @@ describe("Terrain -", () => {
     it.each<{ name: string; move: MoveId; basePower?: number }>([
       { name: "Bulldoze", move: MoveId.BULLDOZE },
       { name: "Earthquake", move: MoveId.EARTHQUAKE },
-      // TODO: Enable once magnitude is reworked to be able to return a specific power rating on demand
-      // { name: "Magnitude", move: MoveId.MAGNITUDE, basePower: 150 }, // magnitude 10
+      { name: "Magnitude", move: MoveId.MAGNITUDE, basePower: 150 }, // magnitude 10
     ])("should halve $name's base power against grounded, on-field targets", async ({
       move,
       basePower = allMoves[move].power,
