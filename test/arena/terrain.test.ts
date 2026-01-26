@@ -365,6 +365,7 @@ describe("Terrain -", () => {
         },
       },
       {
+        // TODO: Review if this is actually how it works in mainline
         category: "Enemy-targeting spread",
         move: MoveId.DARK_VOID,
         effect: () => {
