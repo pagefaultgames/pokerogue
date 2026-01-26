@@ -39,7 +39,7 @@ describe("Move - Misty Terrain", () => {
   });
 
   it("status moves do not confuse target and display message in misty terrain", async () => {
-    await game.classicMode.startBattle([SpeciesId.FLOETTE]);
+    await game.classicMode.startBattle(SpeciesId.FLOETTE);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 
@@ -59,7 +59,7 @@ describe("Move - Misty Terrain", () => {
   });
 
   it("damaging moves that confuse do not display message in misty terrain", async () => {
-    await game.classicMode.startBattle([SpeciesId.FLOETTE]);
+    await game.classicMode.startBattle(SpeciesId.FLOETTE);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 
