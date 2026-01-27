@@ -1971,7 +1971,7 @@ export function initAbilities() {
       .attr(NoTransformAbilityAbAttr)
       .build(),
     new AbBuilder(AbilityId.EMBODY_ASPECT_WELLSPRING, 9) //
-      .attr(PostSummonStatStageChangeAbAttr, [Stat.SPDEF], 1)
+      .attr(PostSummonStatStageChangeAbAttr, [Stat.SPDEF], 1, true)
       .uncopiable()
       .unreplaceable()
       .attr(NoTransformAbilityAbAttr)

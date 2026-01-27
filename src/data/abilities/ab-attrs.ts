@@ -2528,6 +2528,7 @@ export class PostSummonWeatherChangeAbAttr extends PostSummonAbAttr {
       this.weatherType === WeatherType.HEAVY_RAIN
       || this.weatherType === WeatherType.HARSH_SUN
       || this.weatherType === WeatherType.STRONG_WINDS
+      || this.weatherType === WeatherType.NONE
       || !globalScene.arena.weather?.isImmutable();
     return weatherReplaceable && globalScene.arena.canSetWeather(this.weatherType);
   }
@@ -3849,7 +3850,6 @@ export class IceFaceFormChangeAbAttr extends PostWeatherChangeAbAttr {
     globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
   }
 }
-
 
 /**
  * Adds a battler tag to the pokemon when the weather changes.
@@ -5383,7 +5383,6 @@ export class FormBlockDamageAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
     return i18next.t(this.i18nKey, { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName });
   }
 }
-
 
 /**
  * Base class for defining {@linkcode Ability} attributes before summon

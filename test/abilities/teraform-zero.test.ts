@@ -11,7 +11,7 @@ import { SpeciesId } from "#enums/species-id";
 import { WeatherType } from "#enums/weather-type";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Ability - Teraform Zero", () => {
   let phaserGame: Phaser.Game;
@@ -31,8 +31,7 @@ describe("Ability - Teraform Zero", () => {
       .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(MoveId.SPLASH)
-      .startingLevel(100);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should remove terrain on summon", async () => {
@@ -45,13 +44,12 @@ describe("Ability - Teraform Zero", () => {
   });
 
   it("should remove weather on summon, including immutable ones", async () => {
-    game.override.enemyAbility(AbilityId.PRIMORDIAL_SEA);
-    const weatherSpy = vi.spyOn(game.scene.arena, "trySetWeather");
+    // Ensure we are slower so primordial sea procs first
+    game.override.enemyAbility(AbilityId.PRIMORDIAL_SEA).enemyLevel(100);
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     expect(feebas).toHaveAbilityApplied(AbilityId.TERAFORM_ZERO);
-    expect(weatherSpy).toHaveBeenCalledWith(WeatherType.NONE);
     expect(game).toHaveWeather(WeatherType.NONE);
   });
 });

@@ -11,7 +11,7 @@ type AbAttrPredicate<T extends AbAttrString> = (attr: AbAttrMap[T]) => boolean;
 
 interface ApplyAbAttrConfig<T extends AbAttrString> {
   /** An optional array to which ability trigger messges will be added */
-  messages?: string[];
+  messages?: string[] | undefined;
   /**
    * An optional filter to use when determining what attributes to use.
    * Any {@linkcode AbAttr}s for which this returns `false` will be skipped during attribute application.
