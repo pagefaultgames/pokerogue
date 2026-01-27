@@ -14,10 +14,11 @@ import { SettingKeyboard } from "#system/settings-keyboard";
 import type { KeyboardConfig } from "#types/configs/inputs";
 import { expect } from "vitest";
 
+// TODO: Review what the literal fuck this class does
 export class MenuManip {
   private readonly config: Required<KeyboardConfig>;
-  private settingName?: SettingKeyboard;
-  private keycode?: number;
+  private settingName?: SettingKeyboard | undefined;
+  private keycode?: number | undefined;
   private iconDisplayed?: string;
 
   constructor(config: KeyboardConfig) {

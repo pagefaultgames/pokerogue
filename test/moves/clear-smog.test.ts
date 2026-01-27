@@ -28,7 +28,7 @@ describe("Moves - Clear Smog", () => {
   });
 
   it("should clear stat changes of target", async () => {
-    await game.classicMode.startBattle([SpeciesId.RATTATA]);
+    await game.classicMode.startBattle(SpeciesId.RATTATA);
     const enemy = game.field.getEnemyPokemon();
 
     expect(enemy).toHaveStatStage(Stat.ATK, 0);

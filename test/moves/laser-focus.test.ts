@@ -33,7 +33,7 @@ describe("Move - Laser Focus", () => {
   });
 
   it("should make the user's next attack a guaranteed critical hit", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.LASER_FOCUS);
     await game.toNextTurn();
@@ -56,7 +56,7 @@ describe("Move - Laser Focus", () => {
   });
 
   it("should disappear at the end of the next turn", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
 
@@ -80,7 +80,7 @@ describe("Move - Laser Focus", () => {
   });
 
   it("should boost all attacks until the end of the next turn", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.LASER_FOCUS);
     await game.toNextTurn();

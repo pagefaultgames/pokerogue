@@ -39,7 +39,7 @@ export class GameMode implements GameModeConfig {
   public isClassic: boolean;
   public isEndless: boolean;
   public isDaily: boolean;
-  public dailyConfig?: CustomDailyRunConfig;
+  public dailyConfig?: CustomDailyRunConfig | undefined;
   public hasTrainers: boolean;
   public hasNoShop: boolean;
   public hasShortBiomes: boolean;

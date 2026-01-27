@@ -34,12 +34,12 @@ async function runPokeballTest(
   mode: "classic" | "daily" | "challenge" = "classic",
 ) {
   if (mode === "classic") {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
   } else if (mode === "daily") {
     // Have to do it this way because daily run is weird...
     await game.runToFinalBossEncounter([SpeciesId.MAGIKARP], GameModes.DAILY);
   } else if (mode === "challenge") {
-    await game.challengeMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.challengeMode.startBattle(SpeciesId.MAGIKARP);
   }
 
   const partyLength = game.scene.getPlayerParty().length;

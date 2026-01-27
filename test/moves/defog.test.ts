@@ -32,7 +32,7 @@ describe("Moves - Defog", () => {
   });
 
   it("should remove terrains", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.DEFOG);
     await game.move.forceEnemyMove(MoveId.ELECTRIC_TERRAIN);
@@ -46,7 +46,7 @@ describe("Moves - Defog", () => {
   });
 
   it("should lower opponent's evasion by 1 stage", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.DEFOG);
     await game.toEndOfTurn();
@@ -60,7 +60,7 @@ describe("Moves - Defog", () => {
     { tagType: ArenaTagType.TOXIC_SPIKES, tagName: "Toxic Spikes" },
     { tagType: ArenaTagType.STICKY_WEB, tagName: "Sticky Web" },
   ])("should remove $tagName from both sides of the field", async ({ tagType }) => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.scene.arena.addTag(tagType, 0, undefined, game.field.getEnemyPokemon().id, ArenaTagSide.PLAYER);
     game.scene.arena.addTag(tagType, 0, undefined, game.field.getPlayerPokemon().id, ArenaTagSide.ENEMY);
@@ -79,7 +79,7 @@ describe("Moves - Defog", () => {
     { tagType: ArenaTagType.SAFEGUARD, tagName: "Safeguard" },
     { tagType: ArenaTagType.MIST, tagName: "Mist" },
   ])("should remove $tagName only from the target's side of the field", async ({ tagType }) => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.scene.arena.addTag(tagType, 0, undefined, game.field.getEnemyPokemon().id, ArenaTagSide.ENEMY);
     game.scene.arena.addTag(tagType, 0, undefined, game.field.getPlayerPokemon().id, ArenaTagSide.PLAYER);
@@ -99,7 +99,7 @@ describe("Moves - Defog", () => {
     { tagType: ArenaTagType.MIST, tagName: "Mist" },
   ])("should remove $tagName from the target's side even if the target is the user's ally", async ({ tagType }) => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
 
     game.scene.arena.addTag(tagType, 0, undefined, game.field.getPlayerPokemon().id, ArenaTagSide.PLAYER);
 

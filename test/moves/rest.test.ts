@@ -32,7 +32,7 @@ describe("Move - Rest", () => {
 
   it("should fully heal the user, cure its prior status and put it to sleep", async () => {
     game.override.statusEffect(StatusEffect.POISON);
-    await game.classicMode.startBattle([SpeciesId.SNORLAX]);
+    await game.classicMode.startBattle(SpeciesId.SNORLAX);
 
     const snorlax = game.field.getPlayerPokemon();
     snorlax.hp = 1;
@@ -46,7 +46,7 @@ describe("Move - Rest", () => {
   });
 
   it("should always last 3 turns", async () => {
-    await game.classicMode.startBattle([SpeciesId.SNORLAX]);
+    await game.classicMode.startBattle(SpeciesId.SNORLAX);
 
     const snorlax = game.field.getPlayerPokemon();
     snorlax.hp = 1;
@@ -74,7 +74,7 @@ describe("Move - Rest", () => {
   });
 
   it("should preserve non-volatile status conditions", async () => {
-    await game.classicMode.startBattle([SpeciesId.SNORLAX]);
+    await game.classicMode.startBattle(SpeciesId.SNORLAX);
 
     const snorlax = game.field.getPlayerPokemon();
     snorlax.hp = 1;
@@ -93,7 +93,7 @@ describe("Move - Rest", () => {
     { name: "has Comatose", ability: AbilityId.COMATOSE },
   ])("should fail if the user $name", async ({ status = StatusEffect.NONE, ability = AbilityId.NONE, dmg = 1 }) => {
     game.override.ability(ability).statusEffect(status);
-    await game.classicMode.startBattle([SpeciesId.SNORLAX]);
+    await game.classicMode.startBattle(SpeciesId.SNORLAX);
 
     const snorlax = game.field.getPlayerPokemon();
 
@@ -107,7 +107,7 @@ describe("Move - Rest", () => {
 
   it("should fail if called while already asleep", async () => {
     game.override.statusEffect(StatusEffect.SLEEP).moveset([MoveId.REST, MoveId.SLEEP_TALK]);
-    await game.classicMode.startBattle([SpeciesId.SNORLAX]);
+    await game.classicMode.startBattle(SpeciesId.SNORLAX);
 
     const snorlax = game.field.getPlayerPokemon();
     snorlax.hp = 1;
@@ -123,7 +123,7 @@ describe("Move - Rest", () => {
 
   it("should succeed if called the same turn as the user wakes", async () => {
     game.override.statusEffect(StatusEffect.SLEEP);
-    await game.classicMode.startBattle([SpeciesId.SNORLAX]);
+    await game.classicMode.startBattle(SpeciesId.SNORLAX);
 
     const snorlax = game.field.getPlayerPokemon();
     snorlax.hp = 1;

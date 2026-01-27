@@ -48,7 +48,7 @@ describe("Moves - Synchronoise", () => {
   });
 
   it("should consider the user's Tera Type if it is Terastallized", async () => {
-    await game.classicMode.startBattle([SpeciesId.BIDOOF]);
+    await game.classicMode.startBattle(SpeciesId.BIDOOF);
 
     const bidoof = game.field.getPlayerPokemon();
     const karp = game.field.getEnemyPokemon();

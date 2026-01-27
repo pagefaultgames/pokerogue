@@ -28,7 +28,7 @@ describe("Move - Belch", () => {
   });
 
   it("should only be selectable if the user has previously eaten a berry", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
     const player = game.field.getPlayerPokemon();
     expect(
       !game.field.getPlayerPokemon().isMoveSelectable(MoveId.BELCH),

@@ -5,7 +5,6 @@ import type { Phase } from "#app/phase";
 import { UiMode } from "#enums/ui-mode";
 import type { GameManager } from "#test/test-utils/game-manager";
 import type { PromptHandler } from "#test/test-utils/helpers/prompt-handler";
-import type { Constructor } from "#types/common";
 import { inspect } from "util";
 import chalk from "chalk";
 import { vi } from "vitest";
@@ -72,13 +71,8 @@ export class PhaseInterceptor {
    * await game.phaseInterceptor.to("MoveEffectPhase", false);
    * ```
    */
-  public async to(target: PhaseString, runTarget?: boolean): Promise<void>;
-  /**
-   * @deprecated Use `PhaseString` instead for `target`
-   */
-  public async to(target: Constructor<Phase>, runTarget?: boolean): Promise<void>;
-  public async to(target: PhaseString | Constructor<Phase>, runTarget = true): Promise<void> {
-    this.target = typeof target === "string" ? target : (target.name as PhaseString);
+  public async to(target: PhaseString, runTarget = true): Promise<void> {
+    this.target = target;
 
     const pm = this.scene.phaseManager;
 

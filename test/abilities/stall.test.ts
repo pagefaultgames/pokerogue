@@ -33,7 +33,7 @@ describe("Abilities - Stall", () => {
    */
 
   it("Pokemon with Stall should move last in its priority bracket regardless of speed", async () => {
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE);
 
     const player = game.field.getPlayerPokemon();
 
@@ -46,7 +46,7 @@ describe("Abilities - Stall", () => {
   });
 
   it("Pokemon with Stall will go first if a move that is in a higher priority bracket than the opponent's move is used", async () => {
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE);
 
     const player = game.field.getPlayerPokemon();
 
@@ -60,7 +60,7 @@ describe("Abilities - Stall", () => {
 
   it("If both Pokemon have stall and use the same move, speed is used to determine who goes first.", async () => {
     game.override.ability(AbilityId.STALL);
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE);
 
     const player = game.field.getPlayerPokemon();
 
