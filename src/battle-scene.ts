@@ -66,7 +66,7 @@ import type { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import { UiTheme } from "#enums/ui-theme";
-import type { BattleSceneEvent } from "#events/battle-scene";
+import type { BattleSceneEventMap } from "#events/battle-scene";
 import { NewArenaEvent } from "#events/battle-scene";
 import { Arena, ArenaBase } from "#field/arena";
 import { DamageNumberHandler } from "#field/damage-number-handler";
@@ -323,7 +323,7 @@ export class BattleScene extends SceneBase {
   /**
    * Allows subscribers to listen for events.
    */
-  public readonly eventTarget: TypedEventTarget<BattleSceneEvent> = new EventTarget();
+  public readonly eventTarget = new EventTarget() as TypedEventTarget<BattleSceneEventMap>;
 
   /** A helper class containing several animation-related functions. */
   public readonly animations: Animation = new Animation();
