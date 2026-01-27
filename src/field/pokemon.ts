@@ -4191,42 +4191,24 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Find the first `BattlerTag` matching the specified predicate.
-   * @param tagFilter - The predicate to match against
-   * @returns The first matching tag, or `undefined` if none match.
+   * Find the first `BattlerTag` matching the specified predicate
    * @remarks
    * Equivalent to `this.summonData.tags.find(tagFilter)`.
-   */
-  findTag<T extends BattlerTag>(tagFilter: (tag: BattlerTag) => tag is T): T | undefined;
-  /**
-   * Find the first `BattlerTag` matching the specified predicate.
    * @param tagFilter - The predicate to match against
-   * @returns The first matching tag, or `undefined` if none match.
-   * @remarks
-   * Equivalent to `this.summonData.tags.find(tagFilter)`.
+   * @returns The first matching tag, or `undefined` if none match
    */
-  findTag(tagFilter: (tag: BattlerTag) => boolean): BattlerTag | undefined;
-  findTag(tagFilter: (tag: BattlerTag) => boolean) {
+  public findTag(tagFilter: (tag: BattlerTag) => boolean) {
     return this.summonData.tags.find(tagFilter);
   }
 
   /**
-   * Return all `BattlerTag`s satisfying the given predicate.
-   * @param tagFilter - The predicate to match against
-   * @returns The filtered list of tags.
+   * Return the list of `BattlerTag`s that satisfy the given predicate
    * @remarks
    * Equivalent to `this.summonData.tags.filter(tagFilter)`.
-   */
-  findTags<T extends BattlerTag>(tagFilter: (tag: BattlerTag) => tag is T): T[];
-  /**
-   * Return all `BattlerTag`s satisfying the given predicate.
    * @param tagFilter - The predicate to match against
-   * @returns The filtered list of tags.
-   * @remarks
-   * Equivalent to `this.summonData.tags.filter(tagFilter)`.
+   * @returns The filtered list of tags
    */
-  findTags(tagFilter: (tag: BattlerTag) => boolean): BattlerTag[];
-  findTags(tagFilter: (tag: BattlerTag) => boolean): BattlerTag[] {
+  public findTags(tagFilter: (tag: BattlerTag) => boolean): BattlerTag[] {
     return this.summonData.tags.filter(tagFilter);
   }
 
