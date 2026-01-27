@@ -46,7 +46,7 @@ describe("Moves - Move-calling Moves", () => {
   describe("Nature Power", () => {
     // Note: We have to access the prototype here since `allMoves` isn't initialized yet when we want to
     // determine the test case names
-    const getMoveIdForTerrain = NaturePowerAttr.prototype['getMoveIdForTerrain'];
+    const getMoveIdForTerrain = NaturePowerAttr.prototype["getMoveIdForTerrain"];
     let spy: MockInstance<typeof getMoveIdForTerrain>;
 
     beforeEach(() => {
