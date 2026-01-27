@@ -29,7 +29,7 @@ describe("Moves - Stockpile", () => {
   });
 
   it("should gain a stockpile stack and raise DEF and SPDEF when used, up to 3 times", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
 
@@ -46,7 +46,7 @@ describe("Moves - Stockpile", () => {
   });
 
   it("should fail when used at max stacks", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
 
@@ -70,7 +70,7 @@ describe("Moves - Stockpile", () => {
   });
 
   it("should gain stockpile stacks even when at max stat stages", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     feebas.setStatStage(Stat.DEF, 6);

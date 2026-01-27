@@ -52,7 +52,7 @@ describe("Ability - Color Change", () => {
   }
 
   it("should change the pokemon's type to the move's type", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.TACKLE);
     await game.toEndOfTurn();
@@ -62,7 +62,7 @@ describe("Ability - Color Change", () => {
 
   it("should not change the pokemon's type if their current typing includes the move's type", async () => {
     game.override.enemySpecies(SpeciesId.TENTACOOL);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.WATER_GUN);
     await game.toEndOfTurn();
@@ -71,7 +71,7 @@ describe("Ability - Color Change", () => {
   });
 
   it("should not change the pokemon's type if they are behind a substitute", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.TACKLE);
     await game.move.forceEnemyMove(MoveId.SUBSTITUTE);
@@ -89,7 +89,7 @@ describe("Ability - Color Change", () => {
     status,
     type,
   }) => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(moveId);
     await game.toEndOfTurn();
@@ -99,7 +99,7 @@ describe("Ability - Color Change", () => {
   });
 
   it("should not change the pokemon's type when hit by pain split", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.PAIN_SPLIT);
     await game.toEndOfTurn();
@@ -108,7 +108,7 @@ describe("Ability - Color Change", () => {
   });
 
   it("should not change the pokemon's type when hit by typeless moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.STRUGGLE);
     await game.toEndOfTurn();
@@ -117,7 +117,7 @@ describe("Ability - Color Change", () => {
   });
 
   it("should not change the pokemon's type until after the last hit of a multi-hit move", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.DOUBLE_KICK);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -129,7 +129,7 @@ describe("Ability - Color Change", () => {
   });
 
   it("should change the pokemon's type when hit by future sight", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.FUTURE_SIGHT);
     await game.toNextTurn();
@@ -142,7 +142,7 @@ describe("Ability - Color Change", () => {
   });
 
   it("should not change the pokemon's type when the pokemon is terastallized", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.field.forceTera(game.field.getEnemyPokemon());
 

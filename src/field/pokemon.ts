@@ -1,4 +1,5 @@
-import type { Ability, PreAttackModifyDamageAbAttrParams } from "#abilities/ability";
+import type { PreAttackModifyDamageAbAttrParams } from "#abilities/ab-attrs";
+import type { Ability } from "#abilities/ability";
 import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
 import { generateMoveset } from "#app/ai/ai-moveset-gen";
 import type { Battle } from "#app/battle";
@@ -147,7 +148,7 @@ import { RibbonData } from "#system/ribbons/ribbon-data";
 import { awardRibbonsToSpeciesLine } from "#system/ribbons/ribbon-methods";
 import type { AbAttrMap, AbAttrString, TypeMultiplierAbAttrParams } from "#types/ability-types";
 import type { Constructor } from "#types/common";
-import type { getAttackDamageParams, getBaseDamageParams } from "#types/damage-params";
+import type { GetAttackDamageParams, GetBaseDamageParams } from "#types/damage-params";
 import type { DamageCalculationResult, DamageResult } from "#types/damage-result";
 import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
@@ -196,7 +197,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * The Pokemon's current nickname, or `undefined` if it currently lacks one.
    * If omitted, references to this should refer to the default name for this Pokemon's species.
    */
-  public nickname?: string;
+  public nickname?: string | undefined;
   public species: PokemonSpecies;
   public formIndex: number;
   public abilityIndex: number;
@@ -2175,6 +2176,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     applyOnGainAbAttrs({ pokemon: this, passive });
   }
 
+  /** Mark the Pokémon's ability as revealed. */
+  public revealAbility(): void {
+    this.waveData.abilityRevealed = true;
+  }
+
   /**
    * Suppresses an ability and calls its onlose attributes
    */
@@ -2193,6 +2199,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   public hasPassive(): boolean {
     // returns override if valid for current case
+    // TODO: This can be simplified greatly with minimal effort via ternaries
     if (
       (Overrides.HAS_PASSIVE_ABILITY_OVERRIDE === false && this.isPlayer())
       || (Overrides.ENEMY_HAS_PASSIVE_ABILITY_OVERRIDE === false && this.isEnemy())
@@ -3209,8 +3216,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns A tuple containing a boolean indicating if the move can be selected, and a string with the reason if it cannot be selected
    */
   public trySelectMove(moveIndex: number, ignorePp?: boolean): [isUsable: boolean, failureMessage: string] {
-    const move = this.getMoveset().length > moveIndex ? this.getMoveset()[moveIndex] : null;
-    return move?.isUsable(this, ignorePp, true) ?? [false, ""];
+    const move: PokemonMove | undefined = this.getMoveset()[moveIndex];
+    if (!move) {
+      // should never happen
+      return [false, ""];
+    }
+    return move.isUsable(this, ignorePp, true);
   }
 
   /** Show this Pokémon's info panel */
@@ -3506,7 +3517,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     ignoreSourceAllyAbility = false,
     isCritical = false,
     simulated = true,
-  }: getBaseDamageParams): number {
+  }: GetBaseDamageParams): number {
     const isPhysical = moveCategory === MoveCategory.PHYSICAL;
 
     /** A base damage multiplier based on the source's level */
@@ -3625,7 +3636,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     isCritical = false,
     simulated = true,
     effectiveness,
-  }: getAttackDamageParams): DamageCalculationResult {
+  }: GetAttackDamageParams): DamageCalculationResult {
     const damage = new NumberHolder(0);
     const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
@@ -4158,6 +4169,15 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param tagFilter - The predicate to match against
    * @returns The first matching tag, or `undefined` if none match
    */
+  public findTag<T extends BattlerTag>(tagFilter: (tag: BattlerTag) => tag is T): T | undefined;
+  /**
+   * Find the first `BattlerTag` matching the specified predicate
+   * @remarks
+   * Equivalent to `this.summonData.tags.find(tagFilter)`.
+   * @param tagFilter - The predicate to match against
+   * @returns The first matching tag, or `undefined` if none match
+   */
+  public findTag(tagFilter: (tag: BattlerTag) => boolean): BattlerTag | undefined;
   public findTag(tagFilter: (tag: BattlerTag) => boolean) {
     return this.summonData.tags.find(tagFilter);
   }
@@ -4169,6 +4189,15 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param tagFilter - The predicate to match against
    * @returns The filtered list of tags
    */
+  public findTags<T extends BattlerTag>(tagFilter: (tag: BattlerTag) => tag is T): T[];
+  /**
+   * Return the list of `BattlerTag`s that satisfy the given predicate
+   * @remarks
+   * Equivalent to `this.summonData.tags.filter(tagFilter)`.
+   * @param tagFilter - The predicate to match against
+   * @returns The filtered list of tags
+   */
+  public findTags(tagFilter: (tag: BattlerTag) => boolean): BattlerTag[];
   public findTags(tagFilter: (tag: BattlerTag) => boolean): BattlerTag[] {
     return this.summonData.tags.filter(tagFilter);
   }
@@ -4336,10 +4365,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @remarks
    * Checks both the move's own restrictions and any restrictions imposed by battler tags like disable or throat chop.
    *
-   * @param moveId - The move ID to check
-   * @returns A tuple of the form [response, msg], where msg contains the text to display if `response` is false.
-   *
-   * @see {@linkcode isMoveRestricted}
+   * @param moveId - The `MoveId` to check
+   * @param target - If provided, will also check any `TargetRestriction`s based on the target
+   * @returns A tuple containing a boolean indicating whether the move can be selected, and a string with the reason if it cannot
    */
   public isMoveSelectable(moveId: MoveId): [boolean, string] {
     const restrictedTag = this.getRestrictingTag(moveId);
@@ -4354,37 +4382,53 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param moveId - The `MoveId` of the move being used
    * @param target - The `Pokemon` being targeted by the move
    * @returns Whether `moveId` is unable to target `target` due to a restricting effect
-   * @see {@linkcode MoveRestrictionBattlerTag}
+   * @remarks
+   * Currently used solely to prevent Pollen Puff from being used on an ally with Heal Block active.
    */
-  // TODO: Expand `MoveRestriction`s to allow for target based stuff and
-  // refactor this entire line of functions
+  // TODO: Expand `MoveRestriction`s to allow for target based conditions and
+  // remove this entire line of functions
+  // TODO: Move into matcher and remove (used solely for tests)
   isMoveTargetRestricted(moveId: MoveId, target: Pokemon): boolean {
-    for (const tag of this.findTags(t => t instanceof MoveRestrictionBattlerTag)) {
-      if ((tag as MoveRestrictionBattlerTag).isMoveTargetRestricted(moveId, this, target)) {
-        return (tag as MoveRestrictionBattlerTag) !== null;
-      }
-    }
-    return false;
+    return !!this.getTargetRestrictingTag(moveId, target);
   }
 
   /**
-   * Get the {@link MoveRestrictionBattlerTag} that is restricting this Pokemon's move usage,
-   * if one exists.
+   * Return the `BattlerTag` preventing this Pokemon from using a move against the given target.
+   * @param moveId - The `MoveId` of the move being used
+   * @param target - The `Pokemon` being targeted by the move
+   * @returns The first `BattlerTag` preventing this Pokemon from using `moveId` against `target` (if one exists).
+   * @remarks
+   * Currently used solely to prevent Pollen Puff from being used on an ally with Heal Block active.
+   * @privateRemarks
+   * Note that the tag in question will be attached to the **target** of the move, not the user!
+   */
+  getTargetRestrictingTag(moveId: MoveId, target: Pokemon): MoveRestrictionBattlerTag | undefined {
+    // NB: We check the target's tags because Heal Block belongs to the opponent
+    return target.findTag(
+      (tag): tag is MoveRestrictionBattlerTag =>
+        tag instanceof MoveRestrictionBattlerTag && tag.isMoveTargetRestricted(moveId, this, target),
+    );
+  }
+
+  /**
+   * Get the {@link MoveRestrictionBattlerTag} that is restricting this Pokemon's move usage, if one exists.
    *
    * @param moveId - The ID of the move to check
    * @param target - The target of the move; optional, and used when the target is a factor in the move's restricted status
    * @returns The first tag on this Pokemon that restricts the move, or `null` if the move is not restricted.
    */
+  // TODO: swap `null` in return with `undefined`
   getRestrictingTag(moveId: MoveId, target?: Pokemon): MoveRestrictionBattlerTag | null {
     for (const tag of this.findTags(t => t instanceof MoveRestrictionBattlerTag)) {
-      if ((tag as MoveRestrictionBattlerTag).isMoveRestricted(moveId, this)) {
-        return tag as MoveRestrictionBattlerTag;
-      }
-      if (target && (tag as MoveRestrictionBattlerTag).isMoveTargetRestricted(moveId, this, target)) {
-        return tag as MoveRestrictionBattlerTag;
+      if (tag.isMoveRestricted(moveId, this)) {
+        return tag;
       }
     }
-    return null;
+
+    if (!target) {
+      return null;
+    }
+    return this.getTargetRestrictingTag(moveId, target) ?? null;
   }
 
   /**
@@ -4406,7 +4450,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!this.isOnField()) {
       return;
     }
-    turnMove.turn = globalScene.currentBattle?.turn;
     this.getMoveHistory().push(turnMove);
   }
 

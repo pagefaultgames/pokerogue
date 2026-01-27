@@ -1,16 +1,21 @@
+import { getPokemonNameWithAffix } from "#app/messages";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
 import { PositionalTagType } from "#enums/positional-tag-type";
 import { SpeciesId } from "#enums/species-id";
-import { WeatherType } from "#enums/weather-type";
+import { healBlockedMoves } from "#moves/invalid-moves";
 import { GameManager } from "#test/test-utils/game-manager";
+import { toTitleCase } from "#utils/strings";
+import i18next from "i18next";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 // Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/Heal_Block_(move)
-describe("Moves - Heal Block", () => {
+describe("Move - Heal Block", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -23,123 +28,167 @@ describe("Moves - Heal Block", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([MoveId.ABSORB, MoveId.WISH, MoveId.SPLASH, MoveId.AQUA_RING])
       .enemyMoveset(MoveId.HEAL_BLOCK)
       .ability(AbilityId.NO_GUARD)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemySpecies(SpeciesId.BLISSEY)
+      .enemySpecies(SpeciesId.CHANSEY)
       .criticalHits(false);
   });
 
-  it("shouldn't stop damage from HP-drain attacks, just HP restoration", async () => {
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+  const blockTestCases = Array.from(healBlockedMoves).map(move => ({
+    move,
+    name: toTitleCase(MoveId[move]),
+  }));
 
-    const player = game.field.getPlayerPokemon();
-    const enemy = game.field.getEnemyPokemon();
+  it.each(blockTestCases)("should cause $name to become unselectable by the user", async ({ move }) => {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    player.damageAndUpdate(player.getMaxHp() - 1);
+    const feebas = game.field.getPlayerPokemon();
+    feebas.addTag(BattlerTagType.HEAL_BLOCK);
 
-    game.move.select(MoveId.ABSORB);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.phaseInterceptor.to("TurnEndPhase");
-
-    expect(player.hp).toBe(1);
-    expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
+    expect(feebas.isMoveSelectable(move)).toEqual([
+      false,
+      i18next.t("battle:moveDisabledHealBlock", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(feebas),
+        moveName: allMoves[move].name,
+      }),
+    ]);
   });
 
-  it("shouldn't stop Liquid Ooze from dealing damage", async () => {
+  it("should prevent the target from receiving healing via normal means", async () => {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+    const feebas = game.field.getPlayerPokemon();
+    feebas.hp = 1;
+    feebas.addTag(BattlerTagType.HEAL_BLOCK);
+
+    // "Fake" feebas having recieved a 1 hp healing instance
+    game.scene.phaseManager.unshiftNew("PokemonHealPhase", BattlerIndex.PLAYER, 1);
+    game.move.use(MoveId.SPLASH);
+    await game.phaseInterceptor.to("PokemonHealPhase");
+
+    expect(feebas).toHaveHp(1);
+  });
+
+  it("should prevent Pollen Puff from targeting Heal Blocked allies, but should still work against Heal Blocked enemies", async () => {
+    game.override.battleStyle("double");
+    await game.classicMode.startBattle(SpeciesId.BLISSEY, SpeciesId.SNORLAX);
+
+    const [blissey, snorlax, chansey] = game.scene.getField();
+    snorlax.hp = 1;
+    snorlax.addTag(BattlerTagType.HEAL_BLOCK);
+    chansey.addTag(BattlerTagType.HEAL_BLOCK);
+    expect(snorlax).toHaveBattlerTag(BattlerTagType.HEAL_BLOCK);
+    expect(chansey).toHaveBattlerTag(BattlerTagType.HEAL_BLOCK);
+
+    // Blissey should not be able to use Pollen Puff on Snorlax (who has heal block), while
+    // Snorlax should still be able to target Blissey despite being Heal Blocked themself.
+    // Chansey, being an enemy, should be targetable by both
+    expect(blissey.isMoveTargetRestricted(MoveId.POLLEN_PUFF, snorlax)).toBe(true);
+    expect(snorlax.isMoveTargetRestricted(MoveId.POLLEN_PUFF, blissey)).toBe(false);
+    expect(blissey.isMoveTargetRestricted(MoveId.POLLEN_PUFF, chansey)).toBe(false);
+    expect(snorlax.isMoveTargetRestricted(MoveId.POLLEN_PUFF, chansey)).toBe(false);
+
+    // Remove heal blocks for the duration of the `CommandPhases`,
+    // then re-add them after move selection
+    snorlax.removeTag(BattlerTagType.HEAL_BLOCK);
+    chansey.removeTag(BattlerTagType.HEAL_BLOCK);
+
+    game.move.use(MoveId.POLLEN_PUFF, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2);
+    game.move.use(MoveId.POLLEN_PUFF, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY);
+    await game.phaseInterceptor.to("EnemyCommandPhase", false);
+    snorlax.addTag(BattlerTagType.HEAL_BLOCK);
+    chansey.addTag(BattlerTagType.HEAL_BLOCK);
+    await game.toEndOfTurn();
+
+    // Ally-targeting PP didn't heal; enemy-targeting PP damaged correctly
+    expect(blissey).toHaveUsedMove({ move: MoveId.POLLEN_PUFF, result: MoveResult.FAIL });
+    expect(snorlax).toHaveHp(1);
+    expect(chansey).not.toHaveFullHp();
+    expect(snorlax).toHaveUsedMove({ move: MoveId.POLLEN_PUFF, result: MoveResult.SUCCESS });
+
+    // TODO: Pollen Puff should show a unique message for its failure
+    // expect(game).toHaveShownMessage(
+    //   i18next.t("battle:moveDisabledHealBlock", {
+    //     pokemonNameWithAffix: getPokemonNameWithAffix(blissey),
+    //     moveName: allMoves[MoveId.POLLEN_PUFF].name,
+    //   }),
+    // );
+    expect(game).not.toHaveShownMessage(
+      i18next.t("battle:moveDisabledHealBlock", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(snorlax),
+        moveName: allMoves[MoveId.POLLEN_PUFF].name,
+      }),
+    );
+    // nobody got actually healed
+    expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
+  });
+
+  it("shouldn't stop Leech Seed from dealing damage, but should nullify healing", async () => {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+    const feebas = game.field.getPlayerPokemon();
+    feebas.hp = 1;
+    const enemy = game.field.getEnemyPokemon();
+
+    game.move.use(MoveId.LEECH_SEED);
+    await game.toNextTurn();
+
+    expect(feebas).toHaveHp(1);
+    expect(enemy).not.toHaveFullHp();
+  });
+
+  it("shouldn't prevent Leech Seed from damaging the user with Liquid Ooze", async () => {
     game.override.enemyAbility(AbilityId.LIQUID_OOZE);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    const feebas = game.field.getPlayerPokemon();
 
-    const player = game.field.getPlayerPokemon();
-    const enemy = game.field.getEnemyPokemon();
+    game.move.use(MoveId.LEECH_SEED);
+    await game.toNextTurn();
 
-    game.move.select(MoveId.ABSORB);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.phaseInterceptor.to("TurnEndPhase");
-
-    expect(player.isFullHp()).toBe(false);
-    expect(enemy.isFullHp()).toBe(false);
+    expect(feebas).not.toHaveFullHp();
   });
 
-  it("should prevent Wish from restoring HP", async () => {
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+  it("should prevent pending Wishes from restoring HP", async () => {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();
-
     player.hp = 1;
 
+    // Cannot use heal block turn 1 as that will render Wish unusable
     game.move.use(MoveId.WISH);
+    await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(game.scene.arena.positionalTagManager.tags.filter(t => t.tagType === PositionalTagType.WISH)) //
-      .toHaveLength(1);
+    expect(game).toHavePositionalTag(PositionalTagType.WISH, 1);
 
     game.move.use(MoveId.SPLASH);
-    await game.toNextTurn();
+    await game.move.forceEnemyMove(MoveId.HEAL_BLOCK);
+    await game.toEndOfTurn();
 
     // wish triggered, but did NOT heal the player
-    expect(game.scene.arena.positionalTagManager.tags.filter(t => t.tagType === PositionalTagType.WISH)) //
-      .toHaveLength(0);
-    expect(player.hp).toBe(1);
+    expect(game).not.toHavePositionalTag(PositionalTagType.WISH);
+    expect(player).toHaveHp(1);
   });
 
-  it("should prevent Grassy Terrain from restoring HP", async () => {
-    game.override.enemyAbility(AbilityId.GRASSY_SURGE);
+  it.each([
+    { name: "Aqua Ring", move: MoveId.AQUA_RING, tagType: BattlerTagType.AQUA_RING },
+    { name: "Ingrain", move: MoveId.INGRAIN, tagType: BattlerTagType.INGRAIN },
+  ])("should not cause $name to fail, but should still prevent healing", async ({ move, tagType }) => {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    const feebas = game.field.getPlayerPokemon();
+    feebas.hp = 1;
 
-    const player = game.field.getPlayerPokemon();
+    game.move.use(move);
+    await game.toEndOfTurn();
 
-    player.damageAndUpdate(player.getMaxHp() - 1);
-
-    game.move.select(MoveId.SPLASH);
-    await game.phaseInterceptor.to("TurnEndPhase");
-
-    expect(player.hp).toBe(1);
+    expect(feebas).toHaveBattlerTag(tagType);
+    expect(feebas).toHaveHp(1);
   });
 
-  it("should prevent healing from heal-over-time moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
-
-    const player = game.field.getPlayerPokemon();
-
-    player.damageAndUpdate(player.getMaxHp() - 1);
-
-    game.move.select(MoveId.AQUA_RING);
-    await game.phaseInterceptor.to("TurnEndPhase");
-
-    expect(player.getTag(BattlerTagType.AQUA_RING)).toBeDefined();
-    expect(player.hp).toBe(1);
-  });
-
-  it("should prevent abilities from restoring HP", async () => {
-    game.override.weather(WeatherType.RAIN).ability(AbilityId.RAIN_DISH);
-
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
-
-    const player = game.field.getPlayerPokemon();
-
-    player.damageAndUpdate(player.getMaxHp() - 1);
-
-    game.move.select(MoveId.SPLASH);
-    await game.phaseInterceptor.to("TurnEndPhase");
-
-    expect(player.hp).toBe(1);
-  });
-
-  it("should stop healing from items", async () => {
-    game.override.startingHeldItems([{ name: "LEFTOVERS" }]);
-
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
-
-    const player = game.field.getPlayerPokemon();
-    player.damageAndUpdate(player.getMaxHp() - 1);
-
-    game.move.select(MoveId.SPLASH);
-    await game.phaseInterceptor.to("TurnEndPhase");
-
-    expect(player.hp).toBe(1);
-  });
+  // TODO: Write tests
+  it.todo("should not affect Pain Split");
+  it.todo("should not affect Regenerator");
 });

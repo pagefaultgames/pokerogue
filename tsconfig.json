@@ -31,6 +31,7 @@
     "esModuleInterop": true,
     "sourceMap": false,
     "strict": false, // TODO: Enable this eventually
+    "exactOptionalPropertyTypes": true,
     "strictNullChecks": true,
     "strictBindCallApply": true,
     "strictBuiltinIteratorReturn": true,

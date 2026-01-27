@@ -32,7 +32,7 @@ describe("Move - Return", () => {
   });
 
   it("should increase the power based on friendship", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     feebas.friendship = 200;
@@ -47,7 +47,7 @@ describe("Move - Return", () => {
   });
 
   it("should NOT increase the power based on friendship for wild pokemon", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const magikarp = game.field.getEnemyPokemon();
     magikarp.friendship = 200;
@@ -64,7 +64,7 @@ describe("Move - Return", () => {
 
   it("should increase the power based on friendship for Trainer pokemon", async () => {
     game.override.battleType(BattleType.TRAINER);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const magikarp = game.field.getEnemyPokemon();
     magikarp.friendship = 200;

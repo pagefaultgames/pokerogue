@@ -6,4 +6,5 @@ export type Primitive = string | number | boolean | bigint | null | undefined | 
 /** Alias for the constructor of a class */
 export type Constructor<T> = new (...args: any[]) => T;
 
+// biome-ignore lint/style/useNamingConvention: this is a pseudo-primitive type
 export type nil = null | undefined;

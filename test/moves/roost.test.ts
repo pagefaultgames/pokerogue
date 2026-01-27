@@ -30,7 +30,7 @@ describe("Moves - Roost", () => {
   });
 
   it("should remove the user's Flying type until end of turn", async () => {
-    await game.classicMode.startBattle([SpeciesId.HAWLUCHA]);
+    await game.classicMode.startBattle(SpeciesId.HAWLUCHA);
 
     const hawlucha = game.field.getPlayerPokemon();
     hawlucha.hp = 1;
@@ -51,7 +51,7 @@ describe("Moves - Roost", () => {
   });
 
   it("should preserve types of non-Flying type Pokemon", async () => {
-    await game.classicMode.startBattle([SpeciesId.MEW]);
+    await game.classicMode.startBattle(SpeciesId.MEW);
 
     const mew = game.field.getPlayerPokemon();
     mew.hp = 1;
@@ -65,7 +65,7 @@ describe("Moves - Roost", () => {
   });
 
   it("should not remove the user's Tera Type", async () => {
-    await game.classicMode.startBattle([SpeciesId.PIDGEOT]);
+    await game.classicMode.startBattle(SpeciesId.PIDGEOT);
 
     const pidgeot = game.field.getPlayerPokemon();
     pidgeot.hp = 1;
@@ -80,7 +80,7 @@ describe("Moves - Roost", () => {
   });
 
   it("should convert pure Flying types into normal types", async () => {
-    await game.classicMode.startBattle([SpeciesId.TORNADUS]);
+    await game.classicMode.startBattle(SpeciesId.TORNADUS);
 
     const tornadus = game.field.getPlayerPokemon();
     tornadus.hp = 1;
@@ -97,7 +97,7 @@ describe("Moves - Roost", () => {
     { name: "Burn Up", move: MoveId.BURN_UP, species: SpeciesId.MOLTRES },
     { name: "Double Shock", move: MoveId.DOUBLE_SHOCK, species: SpeciesId.ZAPDOS },
   ])("should render user typeless when roosting after using $name", async ({ move, species }) => {
-    await game.classicMode.startBattle([species]);
+    await game.classicMode.startBattle(species);
 
     const player = game.field.getPlayerPokemon();
     player.hp = 1;

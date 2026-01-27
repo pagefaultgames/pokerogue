@@ -47,7 +47,7 @@ describe("Moves - Healing Moves", () => {
       { name: "Shore Up", move: MoveId.SHORE_UP },
     ])("$name", ({ move }) => {
       it("should heal 50% of the user's maximum HP, rounded half up", async () => {
-        await game.classicMode.startBattle([SpeciesId.BLISSEY]);
+        await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
         const blissey = game.field.getPlayerPokemon();
         blissey.hp = 1;
@@ -63,7 +63,7 @@ describe("Moves - Healing Moves", () => {
       });
 
       it("should fail if the user is at full HP", async () => {
-        await game.classicMode.startBattle([SpeciesId.BLISSEY]);
+        await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
         const blissey = game.field.getPlayerPokemon();
         expect(blissey).toHaveFullHp();
@@ -88,7 +88,7 @@ describe("Moves - Healing Moves", () => {
         { name: "Extremely Harsh Sunlight", weather: WeatherType.HARSH_SUN },
       ])("should heal 66% of the user's maximum HP under $name", async ({ weather }) => {
         game.override.weather(weather);
-        await game.classicMode.startBattle([SpeciesId.BLISSEY]);
+        await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
         const blissey = game.field.getPlayerPokemon();
         blissey.hp = 1;
@@ -110,7 +110,7 @@ describe("Moves - Healing Moves", () => {
 
       it.each(nonSunWTs)("should heal 25% of the user's maximum HP under $name", async ({ weather }) => {
         game.override.weather(weather);
-        await game.classicMode.startBattle([SpeciesId.BLISSEY]);
+        await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
         const blissey = game.field.getPlayerPokemon();
         blissey.hp = 1;
@@ -123,7 +123,7 @@ describe("Moves - Healing Moves", () => {
 
       it("should heal normal HP amount under strong winds", async () => {
         game.override.ability(AbilityId.DELTA_STREAM);
-        await game.classicMode.startBattle([SpeciesId.BLISSEY]);
+        await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
         const blissey = game.field.getPlayerPokemon();
         blissey.hp = 1;
@@ -138,7 +138,7 @@ describe("Moves - Healing Moves", () => {
     describe("Shore Up", () => {
       it("should heal 66% of the user's maximum HP in a sandstorm", async () => {
         game.override.weather(WeatherType.SANDSTORM);
-        await game.classicMode.startBattle([SpeciesId.BLISSEY]);
+        await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
         const blissey = game.field.getPlayerPokemon();
         blissey.hp = 1;
@@ -171,7 +171,7 @@ describe("Moves - Healing Moves", () => {
       it("should heal 50% of the target's maximum HP, rounded half up", async () => {
         // NB: These moves round down heal amounts in mainline if their boost conditions are met,
         // but we keep them the same regardless for consistency
-        await game.classicMode.startBattle([SpeciesId.BLISSEY]);
+        await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
         const chansey = game.field.getEnemyPokemon();
         chansey.hp = 1;
@@ -187,7 +187,7 @@ describe("Moves - Healing Moves", () => {
       });
 
       it("should fail if the target is at full HP", async () => {
-        await game.classicMode.startBattle([SpeciesId.BLISSEY]);
+        await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
         game.move.use(move);
         await game.toEndOfTurn();
@@ -207,7 +207,7 @@ describe("Moves - Healing Moves", () => {
       it(`should heal ${(percent * 100).toPrecision(2)}% of the target's maximum HP if ${condText}`, async () => {
         // Give enemy Levitate to prevent them from receiving Grassy Terrain passive heal
         game.override.ability(ability).enemyAbility(AbilityId.LEVITATE);
-        await game.classicMode.startBattle([SpeciesId.BLISSEY]);
+        await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
         const chansey = game.field.getEnemyPokemon();
         chansey.hp = 1;
@@ -229,7 +229,7 @@ describe("Moves - Healing Moves", () => {
     describe("Pollen Puff", () => {
       it("should damage an enemy when used, or heal an ally for 50% max HP", async () => {
         game.override.battleStyle("double");
-        await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.OMANYTE]);
+        await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.OMANYTE);
 
         const [_, omantye, karp1] = game.scene.getField();
         omantye.hp = 1;
@@ -246,7 +246,7 @@ describe("Moves - Healing Moves", () => {
 
       it("should display message & fail when healing a full HP ally", async () => {
         game.override.battleStyle("double");
-        await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.OMANYTE]);
+        await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.OMANYTE);
 
         const [bulbasaur, omantye] = game.scene.getPlayerField();
 
@@ -267,7 +267,7 @@ describe("Moves - Healing Moves", () => {
 
       it("should not heal an ally multiple times if the user has a source of multi-hit", async () => {
         game.override.battleStyle("double").ability(AbilityId.PARENTAL_BOND);
-        await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.OMANYTE]);
+        await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.OMANYTE);
 
         const [bulbasaur, omantye] = game.scene.getPlayerField();
         omantye.hp = 1;
@@ -283,7 +283,7 @@ describe("Moves - Healing Moves", () => {
 
       it("should damage an enemy multiple times if the user has a source of multi-hit", async () => {
         game.override.ability(AbilityId.PARENTAL_BOND);
-        await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+        await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
         game.move.use(MoveId.POLLEN_PUFF);
         await game.toEndOfTurn();

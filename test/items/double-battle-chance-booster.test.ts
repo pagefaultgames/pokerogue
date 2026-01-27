@@ -25,7 +25,7 @@ describe("Items - Double Battle Chance Boosters", () => {
   it("should guarantee double battle with 2 unique tiers", async () => {
     game.override.startingModifier([{ name: "LURE" }, { name: "SUPER_LURE" }]).startingWave(2);
 
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     expect(game.scene.getEnemyField()).toHaveLength(2);
   });
@@ -33,7 +33,7 @@ describe("Items - Double Battle Chance Boosters", () => {
   it("should guarantee double boss battle with 3 unique tiers", async () => {
     game.override.startingModifier([{ name: "LURE" }, { name: "SUPER_LURE" }, { name: "MAX_LURE" }]).startingWave(10);
 
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const enemyField = game.scene.getEnemyField();
 
@@ -49,7 +49,7 @@ describe("Items - Double Battle Chance Boosters", () => {
       .moveset(MoveId.SPLASH)
       .startingLevel(200);
 
-    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
 
     game.move.select(MoveId.SPLASH);
 

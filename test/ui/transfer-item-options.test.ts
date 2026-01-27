@@ -33,7 +33,7 @@ describe("UI - Transfer Item Options", () => {
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyMoveset(MoveId.SPLASH);
 
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.SQUIRTLE, SpeciesId.CHARMANDER]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.SQUIRTLE, SpeciesId.CHARMANDER);
 
     game.move.use(MoveId.DRAGON_CLAW);
 

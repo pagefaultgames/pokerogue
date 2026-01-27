@@ -29,7 +29,7 @@ describe("Abilities - Moody", () => {
   });
 
   it("should increase one stat stage by 2 and decrease a different stat stage by 1", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const playerPokemon = game.field.getPlayerPokemon();
     game.move.select(MoveId.SPLASH);
@@ -46,7 +46,7 @@ describe("Abilities - Moody", () => {
   });
 
   it("should only increase one stat stage by 2 if all stat stages are at -6", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const playerPokemon = game.field.getPlayerPokemon();
 
@@ -64,7 +64,7 @@ describe("Abilities - Moody", () => {
   });
 
   it("should only decrease one stat stage by 1 stage if all stat stages are at 6", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const playerPokemon = game.field.getPlayerPokemon();
 
@@ -82,7 +82,7 @@ describe("Abilities - Moody", () => {
   });
 
   it("should only try to increase a stat stage by 1 if the stat stage is not at 6", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const playerPokemon = game.field.getPlayerPokemon();
 
@@ -100,7 +100,7 @@ describe("Abilities - Moody", () => {
   });
 
   it("should only try to decrease a stat stage by 1 if the stat stage is not at -6", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const playerPokemon = game.field.getPlayerPokemon();
 

@@ -44,7 +44,7 @@ describe("Moves - Swallow & Spit Up - ", () => {
       stackCount,
       healPercent,
     }) => {
-      await game.classicMode.startBattle([SpeciesId.SWALOT]);
+      await game.classicMode.startBattle(SpeciesId.SWALOT);
 
       const swalot = game.field.getPlayerPokemon();
       swalot.hp = 1;
@@ -69,7 +69,7 @@ describe("Moves - Swallow & Spit Up - ", () => {
     });
 
     it("should fail without Stockpile stacks", async () => {
-      await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
+      await game.classicMode.startBattle(SpeciesId.ABOMASNOW);
 
       const player = game.field.getPlayerPokemon();
       player.hp = 1;
@@ -86,7 +86,7 @@ describe("Moves - Swallow & Spit Up - ", () => {
     });
 
     it("should count as a success and consume stacks despite displaying message at full HP", async () => {
-      await game.classicMode.startBattle([SpeciesId.SWALOT]);
+      await game.classicMode.startBattle(SpeciesId.SWALOT);
 
       const swalot = game.field.getPlayerPokemon();
       swalot.addTag(BattlerTagType.STOCKPILING);
@@ -121,7 +121,7 @@ describe("Moves - Swallow & Spit Up - ", () => {
       { stackCount: 2, power: 200 },
       { stackCount: 3, power: 300 },
     ])("should have $power base power when consuming $stackCount stockpile stacks", async ({ stackCount, power }) => {
-      await game.classicMode.startBattle([SpeciesId.SWALOT]);
+      await game.classicMode.startBattle(SpeciesId.SWALOT);
 
       const swalot = game.field.getPlayerPokemon();
 
@@ -141,7 +141,7 @@ describe("Moves - Swallow & Spit Up - ", () => {
     });
 
     it("should fail without Stockpile stacks", async () => {
-      await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
+      await game.classicMode.startBattle(SpeciesId.ABOMASNOW);
 
       const player = game.field.getPlayerPokemon();
 
@@ -159,7 +159,7 @@ describe("Moves - Swallow & Spit Up - ", () => {
 
   describe("Stockpile stack removal", () => {
     it("should undo stat boosts when losing stacks", async () => {
-      await game.classicMode.startBattle([SpeciesId.SWALOT]);
+      await game.classicMode.startBattle(SpeciesId.SWALOT);
 
       const player = game.field.getPlayerPokemon();
 
@@ -184,7 +184,7 @@ describe("Moves - Swallow & Spit Up - ", () => {
     });
 
     it("should double stat drops when gaining Simple", async () => {
-      await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
+      await game.classicMode.startBattle(SpeciesId.ABOMASNOW);
 
       const player = game.field.getPlayerPokemon();
 
@@ -208,7 +208,7 @@ describe("Moves - Swallow & Spit Up - ", () => {
 
     it("should invert stat drops when gaining Contrary", async () => {
       game.override.enemyAbility(AbilityId.CONTRARY);
-      await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
+      await game.classicMode.startBattle(SpeciesId.ABOMASNOW);
 
       const player = game.field.getPlayerPokemon();
 
