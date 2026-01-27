@@ -24,7 +24,7 @@ jobs:
           sparse-checkout: |
             pnpm-lock.yaml
             .nvmrc
-            .github/scripts/pr-title.ts
+            .github/scripts/pr-title.mts
           sparse-checkout-cone-mode: false
 
       - name: Install pnpm
@@ -42,6 +42,6 @@ jobs:
         run: pnpm add @actions/core @actions/github
 
       - name: Lint PR title
-        run: node ./.github/scripts/pr-title.ts
+        run: node ./.github/scripts/pr-title.mts
         env:
           INPUT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

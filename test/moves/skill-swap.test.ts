@@ -30,7 +30,7 @@ describe("Moves - Skill Swap", () => {
 
   it("should swap the two abilities", async () => {
     game.override.ability(AbilityId.ADAPTABILITY);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.SKILL_SWAP);
     await game.phaseInterceptor.to("BerryPhase");
@@ -41,7 +41,7 @@ describe("Moves - Skill Swap", () => {
 
   it("should activate post-summon abilities", async () => {
     game.override.ability(AbilityId.INTIMIDATE);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.SKILL_SWAP);
     await game.phaseInterceptor.to("BerryPhase");

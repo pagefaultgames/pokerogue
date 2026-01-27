@@ -1,7 +1,9 @@
 import { globalScene } from "#app/global-scene";
 import { dailyBiomeWeights } from "#balance/daily-biome-weights";
+import { pokemonStarters } from "#balance/pokemon-evolutions";
 import { speciesStarterCosts } from "#balance/starters";
 import { BiomeId } from "#enums/biome-id";
+import { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import { MoveId } from "#enums/move-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import type { SpeciesId } from "#enums/species-id";
@@ -44,10 +46,19 @@ export function getDailyRunStarters(): StarterTuple {
       for (const cost of starterCosts) {
         const costSpecies = Object.keys(speciesStarterCosts)
           .map(s => Number.parseInt(s) as SpeciesId) // TODO: Remove
-          .filter(s => speciesStarterCosts[s] === cost);
+          .filter(
+            s =>
+              speciesStarterCosts[s] === cost
+              && !starters.some(st => s === st.speciesId || pokemonStarters[st.speciesId] === s),
+          );
         const randPkmSpecies = getPokemonSpecies(randSeedItem(costSpecies));
         const starterSpecies = getPokemonSpecies(
-          randPkmSpecies.getTrainerSpeciesForLevel(startingLevel, true, PartyMemberStrength.STRONGER),
+          randPkmSpecies.getTrainerSpeciesForLevel(
+            startingLevel,
+            true,
+            PartyMemberStrength.STRONGER,
+            EvoLevelThresholdKind.STRONG,
+          ),
         );
         starters.push(getDailyRunStarter(starterSpecies));
       }

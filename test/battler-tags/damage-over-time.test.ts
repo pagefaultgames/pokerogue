@@ -34,7 +34,7 @@ describe("Battler Tags - Damage Over Time", () => {
       .startingLevel(100)
       .criticalHits(false);
 
-    await game.classicMode.startBattle([SpeciesId.SHUPPET]);
+    await game.classicMode.startBattle(SpeciesId.SHUPPET);
 
     feebas = game.field.getPlayerPokemon();
     karp = game.field.getEnemyPokemon();

@@ -5,7 +5,6 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { WeatherType } from "#enums/weather-type";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -23,7 +22,7 @@ describe("Abilities - Flower Gift", () => {
    */
   const testRevertFormAgainstAbility = async (game: GameManager, ability: AbilityId) => {
     game.override.starterForms({ [SpeciesId.CASTFORM]: SUNSHINE_FORM }).enemyAbility(ability);
-    await game.classicMode.startBattle([SpeciesId.CASTFORM]);
+    await game.classicMode.startBattle(SpeciesId.CASTFORM);
 
     game.move.select(MoveId.SPLASH);
 
@@ -57,7 +56,7 @@ describe("Abilities - Flower Gift", () => {
     const enemy_move = allyAttacker ? MoveId.SPLASH : move;
     const ally_target = allyAttacker ? BattlerIndex.ENEMY : null;
 
-    await game.classicMode.startBattle([SpeciesId.CHERRIM, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.CHERRIM, SpeciesId.MAGIKARP);
     const target = allyAttacker ? game.field.getEnemyPokemon() : game.scene.getPlayerField()[1];
     const initialHp = target.getMaxHp();
 
@@ -72,7 +71,7 @@ describe("Abilities - Flower Gift", () => {
     await game.move.selectEnemyMove(MoveId.SPLASH);
     // Ensure sunny day is used last.
     await game.setTurnOrder([attacker_index, target_index, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER]);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     const damageWithoutGift = initialHp - target.hp;
 
     target.hp = initialHp;
@@ -83,7 +82,7 @@ describe("Abilities - Flower Gift", () => {
     await game.move.selectEnemyMove(enemy_move, BattlerIndex.PLAYER_2);
     await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, target_index, attacker_index]);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     const damageWithGift = initialHp - target.hp;
 
     return [damageWithoutGift, damageWithGift];
@@ -108,7 +107,7 @@ describe("Abilities - Flower Gift", () => {
 
   it("increases the ATK and SPDEF stat stages of the Pokémon with this Ability and its allies by 1.5× during Harsh Sunlight", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.CHERRIM, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.CHERRIM, SpeciesId.MAGIKARP);
 
     const [cherrim, magikarp] = game.scene.getPlayerField();
     const cherrimAtkStat = cherrim.getEffectiveStat(Stat.ATK);
@@ -163,7 +162,7 @@ describe("Abilities - Flower Gift", () => {
 
   it("changes the Pokemon's form during Harsh Sunlight", async () => {
     game.override.weather(WeatherType.HARSH_SUN);
-    await game.classicMode.startBattle([SpeciesId.CHERRIM]);
+    await game.classicMode.startBattle(SpeciesId.CHERRIM);
 
     const cherrim = game.field.getPlayerPokemon();
     expect(cherrim.formIndex).toBe(SUNSHINE_FORM);
@@ -182,7 +181,7 @@ describe("Abilities - Flower Gift", () => {
   it("reverts to Overcast Form when the Flower Gift is suppressed, changes form under Harsh Sunlight/Sunny when it regains it", async () => {
     game.override.enemyMoveset([MoveId.GASTRO_ACID]).weather(WeatherType.HARSH_SUN);
 
-    await game.classicMode.startBattle([SpeciesId.CHERRIM, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.CHERRIM, SpeciesId.MAGIKARP);
 
     const cherrim = game.field.getPlayerPokemon();
 
@@ -210,7 +209,7 @@ describe("Abilities - Flower Gift", () => {
   it("should be in Overcast Form after the user is switched out", async () => {
     game.override.weather(WeatherType.SUNNY);
 
-    await game.classicMode.startBattle([SpeciesId.CASTFORM, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.CASTFORM, SpeciesId.MAGIKARP);
     const cherrim = game.field.getPlayerPokemon();
 
     expect(cherrim.formIndex).toBe(SUNSHINE_FORM);

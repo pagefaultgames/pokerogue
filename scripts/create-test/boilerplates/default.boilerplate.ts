@@ -39,7 +39,7 @@ describe("{{description}}", () => {
 
   // Find more awesome utility functions inside `#test/test-utils`!
   it("should do XYZ", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
 

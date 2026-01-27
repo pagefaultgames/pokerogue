@@ -7,7 +7,7 @@ import i18next from "i18next";
 
 type Casing = "Preserve" | "Title";
 
-interface getEnumStrKeyOptions {
+interface GetEnumStrKeyOptions {
   /**
    * A string denoting the casing method to use.
    * @defaultValue "Preserve"
@@ -23,7 +23,7 @@ interface getEnumStrKeyOptions {
   suffix?: string;
 }
 
-interface getEnumStrValueOptions {
+interface GetEnumStrValueOptions {
   /**
    * A numeric base that will be used to convert `val` into a number.
    * Special formatting will be applied for binary, octal and hexadecimal to add base prefixes,
@@ -43,14 +43,14 @@ interface getEnumStrValueOptions {
  *
  * Selectively includes properties based on the type of `Val`
  */
-type getEnumStrOptions<Val extends string | number = string | number, X extends boolean = boolean> = {
+type GetEnumStrOptions<Val extends string | number = string | number, X extends boolean = boolean> = {
   /**
    * Whether to omit the enum members' values from the output.
    * @defaultValue Whether `Val` is a string
    */
   excludeValues?: X;
-} & getEnumStrKeyOptions &
-  ([Val] extends [string] ? unknown : [X] extends [true] ? unknown : getEnumStrValueOptions);
+} & GetEnumStrKeyOptions &
+  ([Val] extends [string] ? unknown : [X] extends [true] ? unknown : GetEnumStrValueOptions);
 
 /**
  * Return the name of an enum member or `const object` value, alongside its corresponding value.
@@ -73,7 +73,7 @@ type getEnumStrOptions<Val extends string | number = string | number, X extends 
 export function getEnumStr<E extends EnumOrObject, V extends E[keyof E], X extends boolean>(
   obj: E,
   val: V,
-  options: getEnumStrOptions<V, X> = {},
+  options: GetEnumStrOptions<V, X> = {},
 ): string {
   const {
     casing = "Preserve",
@@ -82,7 +82,7 @@ export function getEnumStr<E extends EnumOrObject, V extends E[keyof E], X exten
     excludeValues = typeof val === "string",
     base = 10,
     padding = 0,
-  } = options as getEnumStrOptions;
+  } = options as GetEnumStrOptions;
 
   const keyPart = excludeValues ? "" : getKeyPart(obj, val, { casing, prefix, suffix });
   const valuePart = typeof val === "string" ? val : getValuePart(val, { base, padding });
@@ -93,7 +93,7 @@ export function getEnumStr<E extends EnumOrObject, V extends E[keyof E], X exten
 function getKeyPart<E extends EnumOrObject, V extends E[keyof E]>(
   obj: E,
   val: V,
-  { casing, prefix, suffix }: Required<getEnumStrKeyOptions>,
+  { casing, prefix, suffix }: Required<GetEnumStrKeyOptions>,
 ): string {
   let casingFunc: (s: string) => string;
   switch (casing) {
@@ -123,7 +123,7 @@ function getKeyPart<E extends EnumOrObject, V extends E[keyof E]>(
  * @param addParen - Whether to add enclosing parentheses and `=` sign; default `true`
  * @returns The stringified version of `val`
  */
-function getValuePart(val: number, options: Required<getEnumStrValueOptions>, addParen = true): string {
+function getValuePart(val: number, options: Required<GetEnumStrValueOptions>, addParen = true): string {
   const { base, padding } = options;
   const valFormatted = `${getPrefixForBase(base)}${val.toString(base).toUpperCase().padStart(padding, "0")}`;
 
@@ -167,7 +167,7 @@ function getPrefixForBase(base: number): string {
 export function stringifyEnumArray<E extends EnumOrObject, V extends E[keyof E], X extends boolean>(
   obj: E,
   values: readonly V[],
-  options: getEnumStrOptions<V, X> = {},
+  options: GetEnumStrOptions<V, X> = {},
 ): string {
   if (values.length === 0) {
     return "[]";
@@ -180,7 +180,7 @@ export function stringifyEnumArray<E extends EnumOrObject, V extends E[keyof E],
     excludeValues = typeof values[0] === "string",
     base = 10,
     padding = 0,
-  } = options as getEnumStrOptions;
+  } = options as GetEnumStrOptions;
 
   const keyPart = values.map(v => getKeyPart(obj, v, { casing, prefix, suffix })).join(", ");
   if (excludeValues) {
@@ -238,7 +238,7 @@ export function getStatName(s: Stat): string {
  * const diff = getOnelineDiffStr.call(this, obj)
  * ```
  */
-export function getOnelineDiffStr(this: MatcherState, obj: unknown): string {
+export function getOnelineDiffStr(this: Readonly<MatcherState>, obj: unknown): string {
   return this.utils
     .stringify(obj, undefined, { maxLength: 35, indent: 0, printBasicPrototype: false })
     .replace(/\n/g, " ") // Replace newlines with spaces

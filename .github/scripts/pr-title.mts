@@ -20,7 +20,9 @@ const PREFIXES = [
   "github", // Updating the CI pipeline or otherwise modifying something in the `./github/**` directory
   "i18n", // Adding/modifying translation keys, etc
   "misc", // A change that doesn't fit any other prefix
+  "perf", // A refactor aimed at improving performance
   "refactor", // A change that doesn't impact functionality or fix any bugs (except incidentally)
+  "revert", // Reverting a bad commit
   "test", // Primarily adding/updating tests or modifying the test framework
 ] as const;
 
@@ -53,7 +55,9 @@ const PREFIX_SCOPE_MAP = {
   github: [],
   i18n: [],
   misc: [],
+  perf: [],
   refactor: ALL_SCOPES,
+  revert: [],
   test: ALL_SCOPES,
 } as const satisfies Record<Prefixes, readonly AllScopes[]>;
 
@@ -78,6 +82,9 @@ async function run(): Promise<void> {
     });
 
     const { title } = pullRequest;
+    core.info(
+      "Info on PR title formatting: https://github.com/pagefaultgames/pokerogue/blob/beta/CONTRIBUTING.md#-submitting-a-pull-request",
+    );
     core.info(`Pull Request title: "${title}"`);
 
     // if (title.length > 72) {
@@ -96,8 +103,8 @@ Terminology: fix(move): Future Sight no longer crashes
 
     core.info(info.trim());
 
-    // Example usage of regex: https://regex101.com/r/FeN8jG/7
-    const regex = /^([a-z]+)!?(\([a-z]+\))?: .+/;
+    // Example usage of regex: https://regex101.com/r/FeN8jG/8
+    const regex = /^([a-z0-9]+)!?(\([a-z]+\))?: .+/;
     if (!regex.test(title)) {
       core.setFailed(`Pull Request title "${title}" failed to match - "Prefix(Scope): Subject"`);
       return;

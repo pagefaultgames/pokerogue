@@ -8,7 +8,7 @@ SPDX-License-Identifier: CC-BY-NC-SA-4.0
 
 Thank you for taking the time to contribute, every little bit helps. This project is entirely open-source and unmonetized - community contributions are what keep it alive!
 
-Please make sure you understand everything relevant to your changes from the [Table of Contents](#-table-of-contents), and absolutely *feel free to reach out in the **#dev-corner** channel on [Discord](https://discord.gg/pokerogue)*.
+Please make sure you understand everything relevant to your changes from the [Table of Contents](#-table-of-contents), and absolutely *feel free to reach out in the **#pokerogue-dev** channel on [Discord](https://discord.gg/pokerogue)*.
 We are here to help and the better you understand what you're working on, the easier it will be for it to find its way into the game.
 
 Note that, as per GitHub's [terms of service](https://docs.github.com/en/site-policy/github-terms/github-terms-of-service#6-contributions-under-repository-license), any contributions made to this repository will be licensed under this repository's terms.
@@ -69,7 +69,7 @@ For those who prefer Docker containers, see [this instructions page](./docs/podm
 #### Running Locally
 
 1. Run `pnpm install` from the repository root
-    - *if you run into any errors, reach out in the **#dev-corner** channel on Discord*
+    - *if you run into any errors, reach out in the **#pokerogue-dev** channel on Discord*
 2. Run `pnpm start:dev` to locally run the project at `localhost:8000`
 
 
@@ -78,7 +78,7 @@ For those who prefer Docker containers, see [this instructions page](./docs/podm
 A great way to develop an understanding of how the project works is to look at test cases (located in [the `test` folder](./test/)).
 Tests show you both how things are supposed to work and the expected "flow" to get from point A to point B in battles.
 
-*This is a big project and you will be confused at times - never be afraid to reach out and ask questions in **#dev-corner***!
+*This is a big project and you will be confused at times - never be afraid to reach out and ask questions in **#pokerogue-dev***!
 
 ### Where to Look
 
@@ -93,7 +93,6 @@ Also under issues, you can take a look at the [List of Partial / Unimplemented M
 
 You are free to comment on any issue so that you may be assigned to it and we can avoid multiple people working on the same thing.
 
-
 ## 📚 Documentation
 
 You can find the auto-generated documentation [here](https://pagefaultgames.github.io/pokerogue/main/index.html).
@@ -107,7 +106,6 @@ Notable topics include:
 - [Running with Podman](./docs/podman.md)
 
 Again, if you have unanswered questions please feel free to ask!
-
 
 ## 🧪 Testing Your Changes
 
@@ -128,23 +126,35 @@ const overrides = {
 ```
 
 Read through `src/overrides.ts` file to find the override that fits your needs - there are a lot of them!
-If the situation you're trying to test can't be created using existing overrides (or with the [Dev Save](#-development-save-file)), reach out in **#dev-corner**.
+If the situation you're trying to test can't be created using existing overrides (or with the [Dev Save](#-development-save-file)), reach out in **#pokerogue-dev**.
 You can get help testing your specific changes, and you might have found a new override that needs to be created!
 
 ### 2 - Automatic Testing
 
-> PokéRogue uses [Vitest](https://vitest.dev/) for automatic testing. Checking out the existing tests in the [test](./test/) folder is a great way to understand how this works, and to get familiar with the project as a whole.
+PokéRogue uses [Vitest](https://vitest.dev/) for automated testing.
+Checking out existing tests in the [test](./test/) folder is a great way to understand how the existing system works, as well as familiarizing yourself with the project as a whole.
 
-To make sure your changes didn't break any existing test cases, run `pnpm test:silent` in your terminal. You can also provide an argument to the command: to run only the Dancer (ability) tests, you could write `pnpm test:silent dancer`.
-  - __Note that passing all test cases does *not* guarantee that everything is working properly__. The project does not have complete regression testing.
+#### Writing tests
+Most non-trivial changes (_especially bug fixes_) should be accompanied by one or more new automated test cases.
 
-Most non-trivial changes (*especially bug fixes*) should come along with new test cases.
-  - To make a new test file, run `pnpm test:create` and follow the prompts. If the move/ability/etc. you're modifying already has tests, simply add new cases to the end of the file. As mentioned before, the easiest way to get familiar with the system and understand how to write your own tests is simply to read the existing tests, particularly ones similar to the tests you intend to write.
-  - Ensure that new tests:
-    - Are deterministic. In other words, the test should never pass or fail when it shouldn't due to randomness. This involves primarily ensuring that abilities and moves are never randomly selected.
-    - As much as possible, are unit tests. If you have made two distinct changes, they should be tested in two separate cases.
-    - Test edge cases. A good strategy is to think of edge cases beforehand and create tests for them using `it.todo`. Once the edge case has been handled, you can remove the `todo` marker.
+To create a new test file, run `pnpm test:create` and follow the on-screen prompts.
+If the move/ability/etc. you're modifying already has tests, you can add new cases to the test file or edit existing ones.
 
+Ensure that new test cases:
+- Are deterministic. In other words, the test should never pass or fail when it shouldn't due to randomness. Among other things, this involves ensuring that abilities and moves are never randomly selected.
+- Do not test multiple separate things in the same test case. If you have made two distinct changes, they should be tested in two separate cases.
+- Cover as many edge cases as possible. A good strategy is to think of edge cases beforehand and create tests for them using `it.todo`. Once the edge case has been handled, you can remove the `todo` marker.
+
+<!-- TODO: Decide on and suggest a specific placement heiarchy for test cases involving interactions between different moves/abilities/etc. -->
+
+#### Running tests
+To make sure your changes didn't break any existing test cases, run `pnpm test:silent` in your terminal to run the full test suite. \
+You can provide additional arguments to the command to change its behavior or specify which test files to run;
+a full list of supported arguments can be found on [Vitest's website](https://vitest.dev/guide/cli.html).
+
+> [!CAUTION]
+> Passing all test cases does **not** guarantee that everything is working properly.
+> The project does not have complete regression testing, so manual verification is still advised for most changes.
 
 ## 💾 Development Save File
 > Some issues may require you to have unlocks on your save file which go beyond normal overrides.
@@ -153,19 +163,15 @@ Most non-trivial changes (*especially bug fixes*) should come along with new tes
 1. Start the game up locally and navigate to `Menu -> Manage Data -> Import Data`
 2. Select [everything.prsv](test/test-utils/saves/everything.prsv) (`test/test-utils/saves/everything.prsv`) and confirm.
 
-
 ## ✅ Submitting a Pull Request
 
-Most information related to submitting a pull request is contained in comments within the pull request template that is shown when you open a new pull request,
-however full documentation on the pull request title format is here to best utilize the space available.
+Most information related to submitting a pull request is contained within comments inside the [default pull request template](./.github/pull_request_template.md). \
+This section serves to elaborate on particular parts of the PR creation workflow that cannot fit fully inside the margins.
 
-The pull request title must follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) format with a valid prefix and optionally a valid scope. \
-If a save migrator, version increase or other breaking change is part of the PR, a `!` must be added before the `:`.
+### PR Title Format
+This repository follows the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) standard for PR titles, enforced by an automated GitHub Actions workflow.
 
-Try to keep the PR title to 72 characters or less (GitHub cuts off commit titles longer than this).
-
-### Examples
-
+Each PR must contain a valid prefix (and optionally a valid scope), followed by a colon and then the PR's subject line. \
 ```
 fix(move): Future Sight no longer crashes
 ^   ^      ^
@@ -174,11 +180,19 @@ fix(move): Future Sight no longer crashes
 |_____________ Prefix
 ```
 
+> [!IMPORTANT]
+> If a save migrator, version increase or other breaking change is part of the PR, a `!` must be added before the `:`.
+
+Try to keep the title under 72 characters, as GitHub cuts off commit titles longer than this length.
+
+#### Examples
 `refactor(data)!: improve serialization of Pokemon save data`
 
 `balance: update TM compatibility lists`
+`fix(move): Retaliate now saves power boost between waves`
+`test: preserve text output of original shards`
 
-### List of valid prefixes
+#### List of valid prefixes
 
 - "balance" - Changes related to game balance
 - "chore" - Misc project upkeep (e.g. updating submodules, updating dependencies, reverting a bad commit) not covered by other prefixes
@@ -189,10 +203,11 @@ fix(move): Future Sight no longer crashes
 - "github" - Updating the CI pipeline or otherwise modifying something in the `./github/**` directory
 - "i18n" - Adding/modifying translation keys, etc
 - "misc" - A change that doesn't fit any other prefix
+- "perf" - A refactor aimed at improving performance
 - "refactor" - A change that doesn't impact functionality or fix any bugs (except incidentally)
 - "test" - Primarily adding/updating tests or modifying the test framework
 
-### List of valid scopes
+#### List of valid scopes
 
 - "ability"
 - "ai"

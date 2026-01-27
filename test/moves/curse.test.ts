@@ -40,7 +40,7 @@ describe("Move - Curse", () => {
   });
 
   it("should give +1 ATK/DEF, -1 SPD when used by non-Ghost types", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     const karp = game.field.getEnemyPokemon();
@@ -63,7 +63,7 @@ describe("Move - Curse", () => {
   });
 
   it("should sacrifice 50% maximum HP if Ghost-type to add a CurseTag to the target", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     const karp = game.field.getEnemyPokemon();
@@ -86,7 +86,7 @@ describe("Move - Curse", () => {
   });
 
   it("should curse the target if Tera Ghost", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     const karp = game.field.getEnemyPokemon();
@@ -100,7 +100,7 @@ describe("Move - Curse", () => {
   });
 
   it("should respect Tera Stellar and Curse the opponent", async () => {
-    await game.classicMode.startBattle([SpeciesId.SHUPPET]);
+    await game.classicMode.startBattle(SpeciesId.SHUPPET);
 
     const shuppet = game.field.getPlayerPokemon();
     const karp = game.field.getEnemyPokemon();
