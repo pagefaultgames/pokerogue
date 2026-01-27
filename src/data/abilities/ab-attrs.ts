@@ -5593,7 +5593,7 @@ export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
   }
 
   override apply({ pokemon }: AbAttrBaseParams): void {
-    const currentTerrain = globalScene.arena.getTerrainType();
+    const currentTerrain = globalScene.arena.terrainType;
     const typeChange: PokemonType[] = this.determineTypeChange(pokemon, currentTerrain);
     if (typeChange.length > 0) {
       if (pokemon.summonData.addedType && typeChange.includes(pokemon.summonData.addedType)) {
@@ -5632,7 +5632,7 @@ export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
   }
 
   override getTriggerMessage({ pokemon }: AbAttrBaseParams, _abilityName: string) {
-    const currentTerrain = globalScene.arena.getTerrainType();
+    const currentTerrain = globalScene.arena.terrainType;
     const pokemonNameWithAffix = getPokemonNameWithAffix(pokemon);
     if (currentTerrain === TerrainType.NONE) {
       return i18next.t("abilityTriggers:pokemonTypeChangeRevert", { pokemonNameWithAffix });

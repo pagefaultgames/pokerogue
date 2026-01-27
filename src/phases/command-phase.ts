@@ -48,11 +48,11 @@ export class CommandPhase extends FieldPhase {
     const commandUiHandler = globalScene.ui.handlers[UiMode.COMMAND];
     const { arena, commandCursorMemory, currentBattle } = globalScene;
     const { battleType, turn } = currentBattle;
-    const { biomeType } = arena;
+    const { biomeId } = arena;
 
     // If one of these conditions is true, we always reset the cursor to Command.FIGHT
     const cursorResetEvent =
-      battleType === BattleType.MYSTERY_ENCOUNTER || battleType === BattleType.TRAINER || biomeType === BiomeId.END;
+      battleType === BattleType.MYSTERY_ENCOUNTER || battleType === BattleType.TRAINER || biomeId === BiomeId.END;
 
     if (!commandUiHandler) {
       return;
@@ -356,7 +356,7 @@ export class CommandPhase extends FieldPhase {
   private checkCanUseBall(): boolean {
     const { arena, currentBattle, gameData, gameMode } = globalScene;
     const { battleType } = currentBattle;
-    const { biomeType } = arena;
+    const { biomeId } = arena;
     const { isClassic, isEndless, isDaily } = gameMode;
     const { dexData } = gameData;
 
@@ -369,7 +369,7 @@ export class CommandPhase extends FieldPhase {
     const missingMultipleStarters =
       gameData.getStarterCount(d => !!d.caughtAttr) < Object.keys(speciesStarterCosts).length - 1;
 
-    if (biomeType === BiomeId.END && battleType === BattleType.WILD) {
+    if (biomeId === BiomeId.END && battleType === BattleType.WILD) {
       if (
         (isClassic && !isClassicFinalBoss && someUncaughtSpeciesOnField)
         || (isFullFreshStart && !isClassicFinalBoss)
@@ -556,7 +556,7 @@ export class CommandPhase extends FieldPhase {
   private handleRunCommand(): boolean {
     const { currentBattle, arena } = globalScene;
     const mysteryEncounterFleeAllowed = currentBattle.mysteryEncounter?.fleeAllowed ?? true;
-    if (arena.biomeType === BiomeId.END || !mysteryEncounterFleeAllowed) {
+    if (arena.biomeId === BiomeId.END || !mysteryEncounterFleeAllowed) {
       this.queueShowText("battle:noEscapeForce");
       return false;
     }

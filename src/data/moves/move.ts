@@ -1055,8 +1055,8 @@ export abstract class Move implements Localizable {
   /**
    * Calculates the power of a move in battle based on various conditions and attributes.
    *
-   * @param source {@linkcode Pokemon} The Pokémon using the move.
-   * @param target {@linkcode Pokemon} The Pokémon being targeted by the move.
+   * @param source - The {@linkcode Pokemon} using the move
+   * @param target - The Pokémon being targeted by the move
    * @returns The calculated power of the move.
    */
   calculateBattlePower(source: Pokemon, target: Pokemon, simulated = false): number {
@@ -1140,6 +1140,10 @@ export abstract class Move implements Localizable {
 
     power.value *= (source.getTag(BattlerTagType.SUPREME_OVERLORD) as SupremeOverlordTag | undefined)?.getBoost() ?? 1;
 
+    if (source.isGrounded()) {
+      power.value *= globalScene.arena.getTerrainPowerMultiplier(source.getMoveType(this));
+    }
+
     return power.value;
   }
 
@@ -1166,13 +1170,14 @@ export abstract class Move implements Localizable {
   }
 
   /**
-   * Calculate the [Expected Power](https://en.wikipedia.org/wiki/Expected_value) per turn
-   * of this move, taking into account multi hit moves, accuracy, and the number of turns it
-   * takes to execute.
+   * Calculate the {@link https://en.wikipedia.org/wiki/Expected_value | Expected Power} per turn of this move,
+   * taking into account multi hit moves, accuracy, and the number of turns it takes to execute.
    *
-   * Does not (yet) consider the current field effects or the user's abilities.
+   * Used for AI calculations.
+   * @remarks
+   * Does not currently consider the current field effects or the user's abilities.
    */
-  calculateEffectivePower(): number {
+  public calculateEffectivePower(): number {
     let effectivePower: number;
     // Triple axel and triple kick are easier to special case.
     if (this.id === MoveId.TRIPLE_AXEL) {
@@ -1207,8 +1212,8 @@ export abstract class Move implements Localizable {
 
   /**
    * Check whether this Move can be given additional strikes from enhancing effects.
-   * Currently used for {@link https://bulbapedia.bulbagarden.net/wiki/Parental_Bond_(Ability) | Parental Bond}
-   * and {@linkcode PokemonMultiHitModifier | Multi Lens}.
+   * @see {@link https://bulbapedia.bulbagarden.net/wiki/Parental_Bond_(Ability) | Parental Bond (Bulbapedia)}
+   * and {@linkcode PokemonMultiHitModifier | Multi Lens}
    * @param user - The {@linkcode Pokemon} using the move
    * @param restrictSpread - (Default `false`) Whether the enhancing effect should ignore multi-target moves
    * @param target - (Optional) The targeted pokemon, used for Pollen Puff
@@ -2573,30 +2578,23 @@ export class SacrificialFullRestoreAttr extends SacrificialAttr {
 }
 
 /**
- * Attribute used for moves which ignore type-based debuffs from weather, namely Hydro Steam.
- * Called during damage calculation after getting said debuff from getAttackTypeMultiplier in the Pokemon class.
+ * Attribute used for moves which ignore type-based debuffs from weather.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Hydro_Steam_(move)}
  */
 export class IgnoreWeatherTypeDebuffAttr extends MoveAttr {
   /** The {@linkcode WeatherType} this move ignores */
-  public weather: WeatherType;
+  public readonly weather: WeatherType;
 
   constructor(weather: WeatherType) {
     super();
+
     this.weather = weather;
   }
-  /**
-   * Changes the type-based weather modifier if this move's power would be reduced by it
-   * @param user {@linkcode Pokemon} that used the move
-   * @param target N/A
-   * @param move {@linkcode Move} with this attribute
-   * @param args [0] {@linkcode NumberHolder} for arenaAttackTypeMultiplier
-   * @returns true if the function succeeds
-   */
-  apply(_user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
-    const weatherModifier = args[0] as NumberHolder;
-    //If the type-based attack power modifier due to weather (e.g. Water moves in Sun) is below 1, set it to 1
-    if (globalScene.arena.weather?.weatherType === this.weather) {
-      weatherModifier.value = Math.max(weatherModifier.value, 1);
+
+  apply(_user: Pokemon, _target: Pokemon, _move: Move, args: [NumberHolder, ...any[]]): boolean {
+    const weatherModifier = args[0];
+    if (globalScene.arena.weatherType === this.weather) {
+      weatherModifier.value = 1.5;
     }
     return true;
   }
@@ -3943,11 +3941,11 @@ export class SecretPowerAttr extends MoveEffectAttr {
       return false;
     }
     let secondaryEffect: MoveEffectAttr;
-    const terrain = globalScene.arena.getTerrainType();
+    const terrain = globalScene.arena.terrainType;
     if (terrain !== TerrainType.NONE) {
       secondaryEffect = this.determineTerrainEffect(terrain);
     } else {
-      const biome = globalScene.arena.biomeType;
+      const biome = globalScene.arena.biomeId;
       secondaryEffect = this.determineBiomeEffect(biome);
     }
     return secondaryEffect.apply(user, target, move, []);
@@ -5791,7 +5789,7 @@ export class TerrainPulseTypeAttr extends VariableMoveTypeAttr {
       return false;
     }
 
-    const currentTerrain = globalScene.arena.getTerrainType();
+    const currentTerrain = globalScene.arena.terrainType;
     switch (currentTerrain) {
       case TerrainType.MISTY:
         moveType.value = PokemonType.FAIRY;
@@ -7321,12 +7319,12 @@ export class CopyBiomeTypeAttr extends MoveEffectAttr {
       return false;
     }
 
-    const terrainType = globalScene.arena.getTerrainType();
+    const terrainType = globalScene.arena.terrainType;
     let typeChange: PokemonType;
     if (terrainType !== TerrainType.NONE) {
-      typeChange = this.getTypeForTerrain(globalScene.arena.getTerrainType());
+      typeChange = this.getTypeForTerrain(globalScene.arena.terrainType);
     } else {
-      typeChange = this.getTypeForBiome(globalScene.arena.biomeType);
+      typeChange = this.getTypeForBiome(globalScene.arena.biomeId);
     }
 
     user.summonData.types = [typeChange];
@@ -7653,10 +7651,10 @@ export class RandomMovesetMoveAttr extends CallMoveAttr {
 export class NaturePowerAttr extends OverrideMoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
     let moveId = MoveId.NONE;
-    switch (globalScene.arena.getTerrainType()) {
+    switch (globalScene.arena.terrainType) {
       // this allows terrains to 'override' the biome move
       case TerrainType.NONE:
-        switch (globalScene.arena.biomeType) {
+        switch (globalScene.arena.biomeId) {
           case BiomeId.TOWN:
             moveId = MoveId.ROUND;
             break;
@@ -9326,7 +9324,7 @@ export function initMoves() {
     new AttackMove(MoveId.EARTHQUAKE, PokemonType.GROUND, MoveCategory.PHYSICAL, 100, 100, 10, -1, 0, 1)
       .attr(HitsTagForDoubleDamageAttr, BattlerTagType.UNDERGROUND)
       .attr(MovePowerMultiplierAttr, (_user, target, _move) =>
-        globalScene.arena.getTerrainType() === TerrainType.GRASSY && target.isGrounded() ? 0.5 : 1,
+        globalScene.arena.terrainType === TerrainType.GRASSY && target.isGrounded() ? 0.5 : 1,
       )
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_OTHERS),
@@ -9769,7 +9767,7 @@ export function initMoves() {
       .attr(PreMoveMessageAttr, magnitudeMessageFunc)
       .attr(MagnitudePowerAttr)
       .attr(MovePowerMultiplierAttr, (_user, target, _move) =>
-        globalScene.arena.getTerrainType() === TerrainType.GRASSY && target.isGrounded() ? 0.5 : 1,
+        globalScene.arena.terrainType === TerrainType.GRASSY && target.isGrounded() ? 0.5 : 1,
       )
       .attr(HitsTagForDoubleDamageAttr, BattlerTagType.UNDERGROUND)
       .makesContact(false)
@@ -10858,7 +10856,7 @@ export function initMoves() {
     new AttackMove(MoveId.BULLDOZE, PokemonType.GROUND, MoveCategory.PHYSICAL, 60, 100, 20, 100, 0, 5)
       .attr(StatStageChangeAttr, [Stat.SPD], -1)
       .attr(MovePowerMultiplierAttr, (_user, target, _move) =>
-        globalScene.arena.getTerrainType() === TerrainType.GRASSY && target.isGrounded() ? 0.5 : 1,
+        globalScene.arena.terrainType === TerrainType.GRASSY && target.isGrounded() ? 0.5 : 1,
       )
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_OTHERS),
@@ -11790,10 +11788,10 @@ export function initMoves() {
       .attr(HalfSacrificialAttr),
     new AttackMove(MoveId.EXPANDING_FORCE, PokemonType.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 8)
       .attr(MovePowerMultiplierAttr, (user, _target, _move) =>
-        globalScene.arena.getTerrainType() === TerrainType.PSYCHIC && user.isGrounded() ? 1.5 : 1,
+        globalScene.arena.terrainType === TerrainType.PSYCHIC && user.isGrounded() ? 1.5 : 1,
       )
       .attr(VariableTargetAttr, (user, _target, _move) =>
-        globalScene.arena.getTerrainType() === TerrainType.PSYCHIC && user.isGrounded()
+        globalScene.arena.terrainType === TerrainType.PSYCHIC && user.isGrounded()
           ? MoveTarget.ALL_NEAR_ENEMIES
           : MoveTarget.NEAR_OTHER,
       ),
@@ -11816,23 +11814,23 @@ export function initMoves() {
       .attr(SacrificialAttr)
       .target(MoveTarget.ALL_NEAR_OTHERS)
       .attr(MovePowerMultiplierAttr, (user, _target, _move) =>
-        globalScene.arena.getTerrainType() === TerrainType.MISTY && user.isGrounded() ? 1.5 : 1,
+        globalScene.arena.terrainType === TerrainType.MISTY && user.isGrounded() ? 1.5 : 1,
       )
       .condition(failIfDampCondition, 3)
       .makesContact(false),
     new AttackMove(MoveId.GRASSY_GLIDE, PokemonType.GRASS, MoveCategory.PHYSICAL, 55, 100, 20, -1, 0, 8) //
       .attr(
         IncrementMovePriorityAttr,
-        (user, _target, _move) => globalScene.arena.getTerrainType() === TerrainType.GRASSY && user.isGrounded(),
+        (user, _target, _move) => globalScene.arena.terrainType === TerrainType.GRASSY && user.isGrounded(),
       ),
     new AttackMove(MoveId.RISING_VOLTAGE, PokemonType.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 20, -1, 0, 8) //
       .attr(MovePowerMultiplierAttr, (_user, target, _move) =>
-        globalScene.arena.getTerrainType() === TerrainType.ELECTRIC && target.isGrounded() ? 2 : 1,
+        globalScene.arena.terrainType === TerrainType.ELECTRIC && target.isGrounded() ? 2 : 1,
       ),
     new AttackMove(MoveId.TERRAIN_PULSE, PokemonType.NORMAL, MoveCategory.SPECIAL, 50, 100, 10, -1, 0, 8)
       .attr(TerrainPulseTypeAttr)
       .attr(MovePowerMultiplierAttr, (user, _target, _move) =>
-        globalScene.arena.getTerrainType() !== TerrainType.NONE && user.isGrounded() ? 2 : 1,
+        globalScene.arena.terrainType !== TerrainType.NONE && user.isGrounded() ? 2 : 1,
       )
       .pulseMove(),
     new AttackMove(MoveId.SKITTER_SMACK, PokemonType.BUG, MoveCategory.PHYSICAL, 70, 90, 10, 100, 0, 8) //
@@ -12188,20 +12186,11 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(MoveId.PSYBLADE, PokemonType.PSYCHIC, MoveCategory.PHYSICAL, 80, 100, 15, -1, 0, 9)
       .attr(MovePowerMultiplierAttr, (user, _target, _move) =>
-        globalScene.arena.getTerrainType() === TerrainType.ELECTRIC && user.isGrounded() ? 1.5 : 1,
+        globalScene.arena.terrainType === TerrainType.ELECTRIC && user.isGrounded() ? 1.5 : 1,
       )
       .slicingMove(),
-    new AttackMove(MoveId.HYDRO_STEAM, PokemonType.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, 0, 9)
-      .attr(IgnoreWeatherTypeDebuffAttr, WeatherType.SUNNY)
-      .attr(MovePowerMultiplierAttr, (_user, _target, _move) => {
-        const weather = globalScene.arena.weather;
-        if (!weather) {
-          return 1;
-        }
-        return [WeatherType.SUNNY, WeatherType.HARSH_SUN].includes(weather.weatherType) && !weather.isEffectSuppressed()
-          ? 1.5
-          : 1;
-      }),
+    new AttackMove(MoveId.HYDRO_STEAM, PokemonType.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, 0, 9) //
+      .attr(IgnoreWeatherTypeDebuffAttr, WeatherType.SUNNY),
     new AttackMove(MoveId.RUINATION, PokemonType.DARK, MoveCategory.SPECIAL, -1, 90, 10, -1, 0, 9) //
       .attr(TargetHalfHpDamageAttr),
     new AttackMove(MoveId.COLLISION_COURSE, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 9) //

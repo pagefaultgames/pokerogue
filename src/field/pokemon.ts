@@ -136,7 +136,7 @@ import {
   TempStatStageBoosterModifier,
 } from "#modifiers/modifier";
 import { applyMoveAttrs } from "#moves/apply-attrs";
-import type { Move } from "#moves/move";
+import type { HitsTagAttr, Move } from "#moves/move";
 import { getMoveTargets } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import { loadMoveAnimations } from "#sprites/pokemon-asset-loader";
@@ -419,7 +419,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
       this.friendship = species.baseFriendship;
       this.metLevel = level;
-      this.metBiome = globalScene.currentBattle ? globalScene.arena.biomeType : -1;
+      this.metBiome = globalScene.currentBattle ? globalScene.arena.biomeId : -1;
       this.metSpecies = species.speciesId;
       this.metWave = globalScene.currentBattle ? globalScene.currentBattle.waveIndex : -1;
       this.pokerus = false;
@@ -2930,7 +2930,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   trySetShiny(thresholdOverride?: number): boolean {
     // Shiny Pokemon should not spawn in the end biome in endless
-    if (globalScene.gameMode.isEndless && globalScene.arena.biomeType === BiomeId.END) {
+    if (globalScene.gameMode.isEndless && globalScene.arena.biomeId === BiomeId.END) {
       return false;
     }
 
@@ -3501,7 +3501,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Calculates the base damage of the given move against this Pokemon when attacked by the given source.
+   * Calculates the base damage of the given move against this Pokemon when attacked by the given source. \
    * Used during damage calculation and for Shell Side Arm's forecasting effect.
    * @param __namedParameters.source - Needed for proper typedoc rendering
    * @returns The move's base damage against this Pokemon when used by the source Pokemon.
@@ -3636,6 +3636,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     simulated = true,
     effectiveness,
   }: GetAttackDamageParams): DamageCalculationResult {
+    const { arena } = globalScene;
+
     const damage = new NumberHolder(0);
     const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
@@ -3650,24 +3652,23 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const cancelled = new BooleanHolder(false);
 
     /**
-     * The effectiveness of the move being used. Along with type matchups, this
-     * accounts for changes in effectiveness from the move's attributes and the
-     * abilities of both the source and this Pokemon.
+     * The effectiveness of the move being used.
      *
-     * Note that the source's abilities are not ignored here
+     * Along with type matchups,
+     * this accounts for changes in effectiveness from the move's attributes
+     * and the abilities of both the source and this Pokemon.
+     *
+     * Note that the source's abilities are not ignored here.
      */
     const typeMultiplier =
       effectiveness ?? this.getMoveEffectiveness(source, move, ignoreAbility, simulated, cancelled);
 
     const isPhysical = moveCategory === MoveCategory.PHYSICAL;
 
-    /** Combined damage multiplier from field effects such as weather, terrain, etc. */
-    const arenaAttackTypeMultiplier = new NumberHolder(
-      globalScene.arena.getAttackTypeMultiplier(moveType, source.isGrounded()),
-    );
-    applyMoveAttrs("IgnoreWeatherTypeDebuffAttr", source, this, move, arenaAttackTypeMultiplier);
+    const weatherDamageMultiplier = new NumberHolder(arena.getWeatherDamageMultiplier(moveType));
+    applyMoveAttrs("IgnoreWeatherTypeDebuffAttr", source, this, move, weatherDamageMultiplier);
 
-    const isTypeImmune = typeMultiplier * arenaAttackTypeMultiplier.value === 0;
+    const isTypeImmune = typeMultiplier === 0;
 
     if (cancelled.value || isTypeImmune) {
       return {
@@ -3791,10 +3792,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     /**
-     * For each {@linkcode HitsTagAttr} the move has, doubles the damage of the move if:
-     * The target has a {@linkcode BattlerTagType} that this move interacts with
-     * AND
-     * The move doubles damage when used against that tag
+     * For each {@linkcode HitsTagAttr} the move has, doubles the damage of the move if both:
+     * - The target has a {@linkcode BattlerTagType} that this move interacts with, and
+     * - The move doubles damage when used against that tag
      */
     const hitsTagMultiplier = new NumberHolder(1);
     move
@@ -3818,7 +3818,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       baseDamage
         * targetMultiplier
         * multiStrikeEnhancementMultiplier.value
-        * arenaAttackTypeMultiplier.value
+        * weatherDamageMultiplier.value
         * glaiveRushMultiplier.value
         * criticalMultiplier.value
         * randomMultiplier
@@ -4888,11 +4888,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         isImmune = this.isOfType(PokemonType.ELECTRIC);
         break;
       case StatusEffect.SLEEP:
-        isImmune = this.isGrounded() && globalScene.arena.getTerrainType() === TerrainType.ELECTRIC;
+        isImmune = this.isGrounded() && globalScene.arena.terrainType === TerrainType.ELECTRIC;
         reason = TerrainType.ELECTRIC;
         break;
       case StatusEffect.FREEZE: {
-        const weatherType = globalScene.arena.getWeatherType();
+        const weatherType = globalScene.arena.weatherType;
         isImmune =
           this.isOfType(PokemonType.ICE)
           || (!ignoreField && (weatherType === WeatherType.SUNNY || weatherType === WeatherType.HARSH_SUN));
@@ -7074,7 +7074,7 @@ export class EnemyPokemon extends Pokemon {
     if (party.length < PLAYER_PARTY_MAX_SIZE) {
       this.pokeball = pokeballType;
       this.metLevel = this.level;
-      this.metBiome = globalScene.arena.biomeType;
+      this.metBiome = globalScene.arena.biomeId;
       this.metWave = globalScene.currentBattle.waveIndex;
       this.metSpecies = this.species.speciesId;
       const newPokemon = globalScene.addPlayerPokemon(
