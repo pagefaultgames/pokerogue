@@ -3665,7 +3665,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param __namedParameters.source - Needed for proper typedoc rendering
    * @returns The {@linkcode DamageCalculationResult}
    */
-  // TODO: Condense various multipliers into a single function for easier unit testing
+  // TODO: Condense various multipliers into a separate function for easier unit testing
   getAttackDamage({
     source,
     move,
