@@ -74,7 +74,7 @@ class DefaultOverrides {
    *
    * If `"single"`, set every non-trainer battle to be a single battle.
    *
-   * If `"double"`, set every battle (_including_ trainer battles that are normally singles-only_)
+   * If `"double"`, set every battle (_including trainer battles that are normally singles-only_)
    * to be a double battle.
    *
    * If `"even-doubles"`, follow the `"double"` rule on even wave numbers,
@@ -85,11 +85,12 @@ class DefaultOverrides {
    * @defaultValue `null`
    * @privateRemarks
    * Prefer using {@linkcode RANDOM_TRAINER_OVERRIDE} to override trainer battles.
-   * This override's ability to override trainer battles is inconsistent and may be removed in a future PR.
+   * This override's ability to force doubles trainer battles is deprecated due to not altering the spawned trainer's variant,
+   * and may be removed in a future PR.
    */
   readonly BATTLE_STYLE_OVERRIDE: BattleStyle | null = null;
   /**
-   * If present and non-null, will override the starting wave # when starting a new run.
+   * If present and non-`null`, will override the starting wave # when starting a new run.
    * Should never be set to a negative value.
    * @defaultValue `null`
    */
