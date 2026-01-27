@@ -6,7 +6,7 @@ import { Stat } from "#enums/stat";
 
 // TODO: Add tests for these
 /** Interface representing an object associated with a specific Pokemon */
-interface hasPokemon {
+interface HasPokemon {
   getPokemon(): Pokemon;
 }
 
@@ -18,7 +18,7 @@ interface hasPokemon {
  * @remarks
  * Unlike {@linkcode Array.sort}, this does _not_ mutate `pokemonList` in place.
  */
-export function sortInSpeedOrder<T extends Pokemon | hasPokemon>(pokemonList: readonly T[]): T[] {
+export function sortInSpeedOrder<T extends Pokemon | HasPokemon>(pokemonList: readonly T[]): T[] {
   const grouped = groupPokemon(pokemonList);
   shufflePokemonList(grouped);
   sortBySpeed(grouped);
@@ -29,7 +29,7 @@ export function sortInSpeedOrder<T extends Pokemon | hasPokemon>(pokemonList: re
  * Helper function to randomly shuffle an array of Pokemon.
  * @param pokemonList - The array of Pokemon or objects containing Pokemon to shuffle
  */
-function shufflePokemonList<T extends Pokemon | hasPokemon>(pokemonList: T[][]): void {
+function shufflePokemonList<T extends Pokemon | HasPokemon>(pokemonList: T[][]): void {
   // This is seeded with the current turn to prevent an inconsistency where it
   // was varying based on how long since you last reloaded
   globalScene.executeWithSeedOffset(
@@ -42,11 +42,11 @@ function shufflePokemonList<T extends Pokemon | hasPokemon>(pokemonList: T[][]):
 }
 
 /** Type guard for {@linkcode sortBySpeed} to avoid importing {@linkcode Pokemon} */
-function isPokemon(p: Pokemon | hasPokemon): p is Pokemon {
-  return typeof (p as hasPokemon).getPokemon !== "function";
+function isPokemon(p: Pokemon | HasPokemon): p is Pokemon {
+  return typeof (p as HasPokemon).getPokemon !== "function";
 }
 
-function getPokemon(p: Pokemon | hasPokemon): Pokemon {
+function getPokemon(p: Pokemon | HasPokemon): Pokemon {
   return isPokemon(p) ? p : p.getPokemon();
 }
 
@@ -54,7 +54,7 @@ function getPokemon(p: Pokemon | hasPokemon): Pokemon {
  * Sort an array of {@linkcode Pokemon} (or objects containing them) in speed order, without shuffling.
  * @param groupedPokemonList - A grouped array of objects to sort; will be mutated in place
  */
-function sortBySpeed<T extends Pokemon | hasPokemon>(groupedPokemonList: T[][]): void {
+function sortBySpeed<T extends Pokemon | HasPokemon>(groupedPokemonList: T[][]): void {
   const { setOrder } = globalScene.turnCommandManager;
 
   // If a set turn order was provided, use that in ascending order.
@@ -88,7 +88,7 @@ function sortBySpeed<T extends Pokemon | hasPokemon>(groupedPokemonList: T[][]):
  * @returns A 2-dimensional array where every instance of consecutive actions from the same Pokemon
  * have been grouped together.
  */
-function groupPokemon<T extends Pokemon | hasPokemon>(pokemonList: readonly T[]): T[][] {
+function groupPokemon<T extends Pokemon | HasPokemon>(pokemonList: readonly T[]): T[][] {
   const runs: T[][] = [];
   for (const pkmn of pokemonList) {
     const pokemon = getPokemon(pkmn);

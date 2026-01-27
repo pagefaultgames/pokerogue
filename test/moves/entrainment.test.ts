@@ -29,7 +29,7 @@ describe("Moves - Entrainment", () => {
   });
 
   it("gives its ability to the target", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.ENTRAINMENT);
     await game.phaseInterceptor.to("BerryPhase");
@@ -39,7 +39,7 @@ describe("Moves - Entrainment", () => {
 
   it("should activate post-summon abilities", async () => {
     game.override.ability(AbilityId.INTIMIDATE);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.ENTRAINMENT);
     await game.phaseInterceptor.to("BerryPhase");

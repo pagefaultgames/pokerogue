@@ -32,7 +32,7 @@ describe("Abilities - Normalize", () => {
   });
 
   it("should boost the power of normal type moves by 20%", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
     const powerSpy = vi.spyOn(allMoves[MoveId.TACKLE], "calculateBattlePower");
 
     game.move.select(MoveId.TACKLE);
@@ -41,7 +41,7 @@ describe("Abilities - Normalize", () => {
   });
 
   it("should boost variable power moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
     const magikarp = game.field.getPlayerPokemon();
     magikarp.friendship = 255;
 
@@ -58,7 +58,7 @@ describe("Abilities - Normalize", () => {
       .moveset([MoveId.LEAFAGE]);
 
     const powerSpy = vi.spyOn(allMoves[MoveId.LEAFAGE], "calculateBattlePower");
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
     game.move.select(MoveId.LEAFAGE);
     await game.phaseInterceptor.to("BerryPhase");
 
@@ -72,7 +72,7 @@ describe("Abilities - Normalize", () => {
       .moveset([MoveId.LEAFAGE]);
 
     const powerSpy = vi.spyOn(allMoves[MoveId.LEAFAGE], "calculateBattlePower");
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
     game.move.select(MoveId.LEAFAGE);
     await game.phaseInterceptor.to("BerryPhase");
 
@@ -92,7 +92,7 @@ describe("Abilities - Normalize", () => {
     { moveName: "Hidden Power", move: MoveId.HIDDEN_POWER },
   ])("should not boost the power of $moveName", async ({ move }) => {
     game.override.moveset([move]);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
     const powerSpy = vi.spyOn(allMoves[move], "calculateBattlePower");
 
     game.move.select(move);

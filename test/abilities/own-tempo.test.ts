@@ -34,7 +34,7 @@ describe("Abilities - Own Tempo", () => {
       .enemyAbility(AbilityId.BALL_FETCH)
       .moveset(MoveId.SKILL_SWAP)
       .enemyMoveset(MoveId.SPLASH);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const enemy = game.field.getEnemyPokemon();
     enemy.addTag(BattlerTagType.CONFUSED);

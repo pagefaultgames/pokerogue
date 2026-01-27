@@ -5,7 +5,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { UiMode } from "#enums/ui-mode";
 // biome-ignore lint/performance/noNamespaceImport: Necessary for mocks
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
-import { MysteryEncounterBattlePhase, MysteryEncounterRewardsPhase } from "#phases/mystery-encounter-phases";
+import { MysteryEncounterRewardsPhase } from "#phases/mystery-encounter-phases";
 import { VictoryPhase } from "#phases/victory-phase";
 import type { GameManager } from "#test/test-utils/game-manager";
 import type { MessageUiHandler } from "#ui/message-ui-handler";
@@ -38,7 +38,7 @@ export async function runMysteryEncounterToEnd(
       const uiHandler = game.scene.ui.getHandler<MysteryEncounterUiHandler>();
       uiHandler.processInput(Button.ACTION);
     },
-    () => game.isCurrentPhase(MysteryEncounterBattlePhase) || game.isCurrentPhase(MysteryEncounterRewardsPhase),
+    () => game.isCurrentPhase("MysteryEncounterBattlePhase") || game.isCurrentPhase("MysteryEncounterRewardsPhase"),
   );
 
   if (!isBattle) {
