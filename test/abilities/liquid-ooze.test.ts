@@ -27,7 +27,7 @@ describe("Ability - Liquid Ooze", () => {
   });
 
   it("should reverse the effect of HP-draining moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.GIGA_DRAIN);
     await game.toEndOfTurn();
@@ -41,7 +41,7 @@ describe("Ability - Liquid Ooze", () => {
 
   it("should not drain the attacker's HP if it ignores indirect damage", async () => {
     game.override.ability(AbilityId.MAGIC_GUARD);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.GIGA_DRAIN);
     await game.toEndOfTurn();
@@ -52,7 +52,7 @@ describe("Ability - Liquid Ooze", () => {
   // Regression test
   it("should not apply if suppressed", async () => {
     game.override.ability(AbilityId.NEUTRALIZING_GAS);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.GIGA_DRAIN);
     await game.toEndOfTurn();

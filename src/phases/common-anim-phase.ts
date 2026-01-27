@@ -9,8 +9,10 @@ export class CommonAnimPhase extends PokemonPhase {
   // we need to allow phaseName to be a union of the two
   public readonly phaseName: "CommonAnimPhase" | "PokemonHealPhase" | "WeatherEffectPhase" = "CommonAnimPhase";
   private anim: CommonAnim | null;
-  private targetIndex?: BattlerIndex;
+  private targetIndex?: BattlerIndex | undefined;
 
+  // TODO: Why can common anim be null?
+  // TODO: Pass in pokemon directly instead of operating with unsafe indices
   constructor(battlerIndex?: BattlerIndex, targetIndex?: BattlerIndex, anim: CommonAnim | null = null) {
     super(battlerIndex);
 

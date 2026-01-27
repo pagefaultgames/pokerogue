@@ -5,7 +5,6 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import type { Move } from "#moves/move";
-import { MoveEffectPhase } from "#phases/move-effect-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -41,7 +40,7 @@ describe("Abilities - Supreme Overlord", () => {
   });
 
   it("should increase Power by 20% if 2 Pokemon are fainted in the party", async () => {
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE);
 
     game.move.select(MoveId.EXPLOSION);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -55,13 +54,13 @@ describe("Abilities - Supreme Overlord", () => {
 
     game.move.select(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(move.calculateBattlePower).toHaveReturnedWith(basePower * 1.2);
   });
 
   it("should increase Power by 30% if an ally fainted twice and another one once", async () => {
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE);
 
     /**
      * Bulbasur faints once
@@ -90,7 +89,7 @@ describe("Abilities - Supreme Overlord", () => {
 
     game.move.select(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(move.calculateBattlePower).toHaveReturnedWith(basePower * 1.3);
   });
@@ -98,7 +97,7 @@ describe("Abilities - Supreme Overlord", () => {
   it("should maintain its power during next battle if it is within the same arena encounter", async () => {
     game.override.enemySpecies(SpeciesId.MAGIKARP).startingWave(1).enemyLevel(1).startingLevel(100);
 
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE);
 
     /**
      * The first Pokemon faints and another Pokemon in the party is selected.
@@ -125,7 +124,7 @@ describe("Abilities - Supreme Overlord", () => {
   it("should reset playerFaints count if we enter new trainer battle", async () => {
     game.override.enemySpecies(SpeciesId.MAGIKARP).startingWave(4).enemyLevel(1).startingLevel(100);
 
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE);
 
     game.move.select(MoveId.LUNAR_DANCE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -146,7 +145,7 @@ describe("Abilities - Supreme Overlord", () => {
   it("should reset playerFaints count if we enter new biome", async () => {
     game.override.enemySpecies(SpeciesId.MAGIKARP).startingWave(10).enemyLevel(1).startingLevel(100);
 
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE);
 
     game.move.select(MoveId.LUNAR_DANCE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -166,7 +165,7 @@ describe("Abilities - Supreme Overlord", () => {
 
   it("should not increase in power if ally faints while on the field", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE);
 
     game.move.select(MoveId.TACKLE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.select(MoveId.LUNAR_DANCE, BattlerIndex.PLAYER_2);
@@ -181,7 +180,7 @@ describe("Abilities - Supreme Overlord", () => {
     // Avoid learning moves
     game.override.startingLevel(1000);
 
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE);
 
     game.move.select(MoveId.LUNAR_DANCE);
     game.doSelectPartyPokemon(1);

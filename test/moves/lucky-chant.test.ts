@@ -31,7 +31,7 @@ describe("Moves - Lucky Chant", () => {
 
   it("should prevent random critical hits from moves", async () => {
     game.override.criticalHits(true);
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     const charizard = game.field.getPlayerPokemon();
     expect(charizard).toBeDefined();
@@ -53,7 +53,7 @@ describe("Moves - Lucky Chant", () => {
 
   it("should prevent guaranteed critical hits from moves", async () => {
     game.override.enemyMoveset(MoveId.FLOWER_TRICK);
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     const charizard = game.field.getPlayerPokemon();
     expect(charizard).toBeDefined();
@@ -73,7 +73,7 @@ describe("Moves - Lucky Chant", () => {
   it("should prevent critical hits against the user's ally", async () => {
     game.override.battleStyle("double").criticalHits(true);
 
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD, SpeciesId.BLASTOISE);
 
     const charizard = game.field.getPlayerPokemon();
     expect(charizard).toBeDefined();
@@ -94,7 +94,7 @@ describe("Moves - Lucky Chant", () => {
   });
 
   it("should prevent critical hits from field effects", async () => {
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     const charizard = game.field.getPlayerPokemon();
     const snorlax = game.field.getEnemyPokemon();
