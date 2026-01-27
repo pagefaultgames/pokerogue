@@ -44,7 +44,7 @@ describe.each<{ name: string; ability: AbilityId; stages: Partial<Record<BattleS
   });
 
   it("should change the user's stat stages when dropping below 50% HP", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     feebas.hp = toDmgValue(feebas.getMaxHp() / 2) + 1;
@@ -55,13 +55,14 @@ describe.each<{ name: string; ability: AbilityId; stages: Partial<Record<BattleS
 
     expect(feebas).toHaveAbilityApplied(ability);
     for (const [statStr, stage] of Object.entries(stages)) {
+      // TODO: Remove type assertion once Object.entries is properly typed
       const stat = Number(statStr) as BattleStat;
       expect(feebas).toHaveStatStage(stat, stage);
     }
   });
 
   it("should not trigger if not knocked below half HP", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     vi.spyOn(feebas, "getBaseDamage").mockReturnValue(1);
@@ -88,7 +89,7 @@ describe.each<{ name: string; ability: AbilityId; stages: Partial<Record<BattleS
 
   it("should only proc once for multi-hits with parental bond", async () => {
     game.override.enemyAbility(AbilityId.PARENTAL_BOND);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     feebas.hp = toDmgValue(feebas.getMaxHp() / 2) + 2;
@@ -101,14 +102,14 @@ describe.each<{ name: string; ability: AbilityId; stages: Partial<Record<BattleS
     expect(feebas.getHpRatio()).toBeLessThan(0.5);
 
     // Fake the 2nd hit to always do 1 damage.
-    // This checks for a bug where the ability would only look at the first hit's damage for HP threshold
+    // This checks for a bug where the ability would only look at the first hit's damage for HP thresholds
     // and potentially proc twice
     vi.spyOn(feebas, "getBaseDamage").mockReturnValue(1);
 
     await game.toEndOfTurn();
 
     expect(feebas).toHaveAbilityApplied(ability);
-    // TODO: Currently Anger Shell technically activates its ability twice instead of once due to its stat lowering using a separate attribute.
+    // TODO: Currently Anger Shell technically activates its ability twice due to its stat increases & drops both using a separate attribute.
     // Fix once stat changing effects are reworked to allow changing multiple stats in differing amounts.
     expect(applySpy).toHaveBeenCalledTimes(ability === AbilityId.ANGER_SHELL ? 2 : 1);
     for (const [statStr, stage] of Object.entries(stages)) {
@@ -117,9 +118,9 @@ describe.each<{ name: string; ability: AbilityId; stages: Partial<Record<BattleS
     }
   });
 
-  // TODO: This is not implemented yet for lack of damage aggregates
+  // TODO: This is not implemented yet for lack of multi-hit damage aggregates
   it.todo("should only trigger once after all multi-strike hits finish", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     feebas.hp = toDmgValue(feebas.getMaxHp() / 2) + 1;
