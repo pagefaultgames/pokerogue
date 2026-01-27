@@ -31,6 +31,7 @@ import { NoCritTag, WeakenMoveScreenTag } from "#data/arena-tag";
 import {
   AutotomizedTag,
   BattlerTag,
+  type BattlerTagFromType,
   CritBoostTag,
   EncoreTag,
   ExposedTag,
@@ -4155,7 +4156,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   public getTag<T extends BattlerTagType | AbstractConstructor<BattlerTag> | Constructor<BattlerTag>>(
     tagType: T,
-  ): getBattlerTag<T> | undefined;
+  ): BattlerTagFromType<T> | undefined;
   public getTag(tagType: BattlerTagType | Constructor<BattlerTag>): BattlerTag | undefined {
     return typeof tagType === "function"
       ? this.summonData.tags.find(t => t instanceof tagType)

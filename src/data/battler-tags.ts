@@ -4045,10 +4045,10 @@ export type BattlerTagTypeMap = {
 };
 
 /**
- * Helper type to convert a BattlerTagType or BattlerTag constructor to its corresponding BattlerTag class instance.
+ * Helper type to convert a `BattlerTagType` or `BattlerTag` constructor to its corresponding BattlerTag class instance.
  * Declared as a separate type literal to allow caching by TypeScript.
  */
-export type getBattlerTag<T extends BattlerTagType | Constructor<BattlerTag> | AbstractConstructor<BattlerTag>> =
+export type BattlerTagFromType<T extends BattlerTagType | Constructor<BattlerTag> | AbstractConstructor<BattlerTag>> =
   T extends BattlerTagType
     ? BattlerTagTypeMap[T]
     : T extends Constructor<infer U> | AbstractConstructor<infer U>
