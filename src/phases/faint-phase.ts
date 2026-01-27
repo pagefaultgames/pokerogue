@@ -31,7 +31,7 @@ export class FaintPhase extends PokemonPhase {
   /**
    * The source Pokemon that dealt fatal damage
    */
-  private source?: Pokemon;
+  private source?: Pokemon | undefined;
 
   constructor(battlerIndex: BattlerIndex, preventInstantRevive = false, source?: Pokemon) {
     super(battlerIndex);
@@ -121,7 +121,6 @@ export class FaintPhase extends PokemonPhase {
         attacker: globalScene.getPokemonById(lastAttack.sourceId) ?? undefined,
         // TODO: improve the way that we provide the move that knocked out the pokemon...
         move: new PokemonMove(lastAttack.move).getMove(),
-        hitResult: lastAttack.result,
       }); // TODO: is this bang correct?
     } else {
       //If killed by indirect damage, apply post-faint abilities without providing a last move
