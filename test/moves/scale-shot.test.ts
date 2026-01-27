@@ -4,10 +4,6 @@ import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { DamageAnimPhase } from "#phases/damage-anim-phase";
-import { MoveEffectPhase } from "#phases/move-effect-phase";
-import { MoveEndPhase } from "#phases/move-end-phase";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -37,22 +33,22 @@ describe("Moves - Scale Shot", () => {
   it("applies stat changes after last hit", async () => {
     game.override.enemySpecies(SpeciesId.FORRETRESS);
 
-    await game.classicMode.startBattle([SpeciesId.MINCCINO]);
+    await game.classicMode.startBattle(SpeciesId.MINCCINO);
     const minccino = game.field.getPlayerPokemon();
     game.move.select(MoveId.SCALE_SHOT);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
-    await game.phaseInterceptor.to(MoveEffectPhase);
-    await game.phaseInterceptor.to(DamageAnimPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
+    await game.phaseInterceptor.to("DamageAnimPhase");
 
     //check that stats haven't changed after one or two hits have occurred
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
     expect(minccino.getStatStage(Stat.DEF)).toBe(0);
     expect(minccino.getStatStage(Stat.SPD)).toBe(0);
 
     //check that stats changed on last hit
-    await game.phaseInterceptor.to(MoveEndPhase);
+    await game.phaseInterceptor.to("MoveEndPhase");
     expect(minccino.getStatStage(Stat.DEF)).toBe(-1);
     expect(minccino.getStatStage(Stat.SPD)).toBe(1);
   });
@@ -65,11 +61,11 @@ describe("Moves - Scale Shot", () => {
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.classicMode.startBattle([SpeciesId.MINCCINO]);
+    await game.classicMode.startBattle(SpeciesId.MINCCINO);
     const minccino = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.SCALE_SHOT);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     //effect not nullified by sheer force
     expect(minccino.getStatStage(Stat.DEF)).toBe(-1);

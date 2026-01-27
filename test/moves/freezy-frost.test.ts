@@ -32,7 +32,7 @@ describe("Moves - Freezy Frost", () => {
   });
 
   it("should clear stat changes of user and opponent", async () => {
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE);
     const user = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
 
@@ -51,7 +51,7 @@ describe("Moves - Freezy Frost", () => {
 
   it("should clear all stat changes even when enemy uses the move", async () => {
     game.override.enemyMoveset(MoveId.FREEZY_FROST);
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE]); // Shuckle for slower Howl on first turn so Freezy Frost doesn't affect it.
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE); // Shuckle for slower Howl on first turn so Freezy Frost doesn't affect it.
     const user = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.HOWL);
@@ -67,7 +67,7 @@ describe("Moves - Freezy Frost", () => {
 
   it("should clear all stat changes in double battle", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE, SpeciesId.RATTATA]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE, SpeciesId.RATTATA);
     const [leftPlayer, rightPlayer] = game.scene.getPlayerField();
     const [leftOpp, rightOpp] = game.scene.getEnemyField();
 

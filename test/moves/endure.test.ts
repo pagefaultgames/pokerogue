@@ -30,7 +30,7 @@ describe("Moves - Endure", () => {
   });
 
   it("should let the pokemon survive with 1 HP from attacks", async () => {
-    await game.classicMode.startBattle([SpeciesId.ARCEUS]);
+    await game.classicMode.startBattle(SpeciesId.ARCEUS);
 
     game.move.select(MoveId.THUNDER);
     await game.phaseInterceptor.to("BerryPhase");
@@ -39,7 +39,7 @@ describe("Moves - Endure", () => {
   });
 
   it("should let the pokemon survive with 1 HP from multi-strike moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.ARCEUS]);
+    await game.classicMode.startBattle(SpeciesId.ARCEUS);
 
     game.move.select(MoveId.BULLET_SEED);
     await game.phaseInterceptor.to("BerryPhase");
@@ -48,7 +48,7 @@ describe("Moves - Endure", () => {
   });
 
   it("should let the pokemon survive against OHKO moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
     const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.SHEER_COLD);
@@ -66,7 +66,7 @@ describe("Moves - Endure", () => {
     { moveType: "Weather", move: MoveId.SANDSTORM },
   ])("should not prevent fainting from $moveType Damage", async ({ move }) => {
     game.override.moveset(move).enemyLevel(100);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS);
     const enemy = game.field.getEnemyPokemon();
     enemy.hp = 2;
     // force attack to do 1 dmg (for salt cure)

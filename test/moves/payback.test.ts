@@ -35,7 +35,7 @@ describe("Move - Payback", () => {
   });
 
   it("should double power if the user moves after the target", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     // turn 1: enemy, then player (boost)
     game.move.use(MoveId.PAYBACK);
@@ -54,7 +54,7 @@ describe("Move - Payback", () => {
 
   // TODO: Enable test once ability to force catch failure is added
   it.todo("should trigger for enemies on player failed ball catch", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.doThrowPokeball(PokeballType.POKEBALL);
     await game.move.forceEnemyMove(MoveId.PAYBACK);

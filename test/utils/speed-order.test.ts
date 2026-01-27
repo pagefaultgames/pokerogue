@@ -29,7 +29,7 @@ describe("Utils - Speed Order", () => {
   });
 
   it("Sorts correctly in the basic case", async () => {
-    await game.classicMode.startBattle([SpeciesId.SLOWPOKE, SpeciesId.MEW]);
+    await game.classicMode.startBattle(SpeciesId.SLOWPOKE, SpeciesId.MEW);
     const [slowpoke, mew] = game.field.getPlayerParty();
     const regieleki = game.field.getEnemyPokemon();
     const pkmnList = [slowpoke, regieleki, mew];
@@ -38,7 +38,7 @@ describe("Utils - Speed Order", () => {
   });
 
   it("Correctly sorts grouped pokemon", async () => {
-    await game.classicMode.startBattle([SpeciesId.SLOWPOKE, SpeciesId.MEW, SpeciesId.DITTO]);
+    await game.classicMode.startBattle(SpeciesId.SLOWPOKE, SpeciesId.MEW, SpeciesId.DITTO);
     const [slowpoke, mew, ditto] = game.field.getPlayerParty();
     const regieleki = game.field.getEnemyPokemon();
     ditto.stats[Stat.SPD] = slowpoke.getStat(Stat.SPD);

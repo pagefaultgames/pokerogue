@@ -33,7 +33,7 @@ describe("Check Biome End Phase", () => {
       .startingWave(10)
       .weather(WeatherType.SANDSTORM)
       .startingHeldItems([{ name: "BERRY", type: BerryType.SITRUS }]);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();
 
@@ -47,7 +47,7 @@ describe("Check Biome End Phase", () => {
 
   it("should not prevent end of turn effects when transitioning waves within a biome", async () => {
     game.override.weather(WeatherType.SANDSTORM);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();
 

@@ -39,7 +39,7 @@ export enum SortCriteria {
 export class DropDownLabel {
   public state: DropDownState;
   public text: string;
-  public sprite?: Phaser.GameObjects.Sprite;
+  public sprite?: Phaser.GameObjects.Sprite | undefined;
 
   constructor(label: string, sprite?: Phaser.GameObjects.Sprite, state: DropDownState = DropDownState.OFF) {
     this.text = label || "";

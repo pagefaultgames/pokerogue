@@ -32,7 +32,7 @@ describe("Moves - Grudge", () => {
   });
 
   it("should reduce the PP of an attack that faints the user to 0", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     const ratatta = game.field.getEnemyPokemon();
@@ -75,7 +75,7 @@ describe("Moves - Grudge", () => {
   });
 
   it("should remain in effect until the user's next move", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     const ratatta = game.field.getEnemyPokemon();
@@ -99,7 +99,7 @@ describe("Moves - Grudge", () => {
   it("should not reduce PP if the user dies to weather/indirect damage", async () => {
     // Opponent will be reduced to 1 HP by False Swipe, then faint to Sandstorm
     game.override.weather(WeatherType.SANDSTORM);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     const ratatta = game.field.getEnemyPokemon();

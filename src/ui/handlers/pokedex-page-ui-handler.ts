@@ -147,6 +147,12 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoYOffset: 0.5,
     starterInfoXPos: 26,
   },
+  uk: {
+    starterInfoTextSize: "46px",
+    instructionTextSize: "38px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 26,
+  },
   id: {
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
@@ -171,10 +177,10 @@ const valueReductionMax = 2;
 const speciesContainerX = 109;
 
 interface SpeciesDetails {
-  shiny?: boolean;
-  formIndex?: number;
-  female?: boolean;
-  variant?: number;
+  shiny?: boolean | undefined;
+  formIndex?: number | undefined;
+  female?: boolean | undefined;
+  variant?: number | undefined;
 }
 
 enum MenuOptions {
@@ -2216,19 +2222,19 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     if (gamepadType === "touch") {
       gamepadType = "keyboard";
       switch (iconSetting) {
-        case SettingKeyboard.Button_Cycle_Shiny:
+        case SettingKeyboard.BUTTON_CYCLE_SHINY:
           iconPath = "R.png";
           break;
-        case SettingKeyboard.Button_Cycle_Form:
+        case SettingKeyboard.BUTTON_CYCLE_FORM:
           iconPath = "F.png";
           break;
-        case SettingKeyboard.Button_Cycle_Gender:
+        case SettingKeyboard.BUTTON_CYCLE_GENDER:
           iconPath = "G.png";
           break;
-        case SettingKeyboard.Button_Cycle_Ability:
+        case SettingKeyboard.BUTTON_CYCLE_ABILITY:
           iconPath = "E.png";
           break;
-        case SettingKeyboard.Button_Cycle_Tera:
+        case SettingKeyboard.BUTTON_CYCLE_TERA:
           iconPath = "V.png";
           break;
         default:
@@ -2277,7 +2283,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       if (isFormCaught) {
         if (this.canUseCandies) {
           this.updateButtonIcon(
-            SettingKeyboard.Button_Stats,
+            SettingKeyboard.BUTTON_STATS,
             gamepadType,
             this.candyUpgradeIconElement,
             this.candyUpgradeLabel,
@@ -2285,7 +2291,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         }
         if (this.canCycleShiny) {
           this.updateButtonIcon(
-            SettingKeyboard.Button_Cycle_Shiny,
+            SettingKeyboard.BUTTON_CYCLE_SHINY,
             gamepadType,
             this.shinyIconElement,
             this.shinyLabel,
@@ -2293,7 +2299,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         }
         if (this.canCycleGender) {
           this.updateButtonIcon(
-            SettingKeyboard.Button_Cycle_Gender,
+            SettingKeyboard.BUTTON_CYCLE_GENDER,
             gamepadType,
             this.genderIconElement,
             this.genderLabel,
@@ -2304,9 +2310,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         this.instructionRowY += 8;
       }
       if (this.canCycleForm) {
-        this.updateButtonIcon(SettingKeyboard.Button_Cycle_Form, gamepadType, this.formIconElement, this.formLabel);
+        this.updateButtonIcon(SettingKeyboard.BUTTON_CYCLE_FORM, gamepadType, this.formIconElement, this.formLabel);
       }
-      this.updateButtonIcon(SettingKeyboard.Button_Cycle_Tera, gamepadType, this.ivIconElement, this.ivLabel);
+      this.updateButtonIcon(SettingKeyboard.BUTTON_CYCLE_TERA, gamepadType, this.ivIconElement, this.ivLabel);
     }
   }
 

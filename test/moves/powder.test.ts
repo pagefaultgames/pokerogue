@@ -5,7 +5,6 @@ import { MoveResult } from "#enums/move-result";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import { BerryPhase } from "#phases/berry-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -35,14 +34,14 @@ describe("Moves - Powder", () => {
   it("should cancel the target's Fire-type move, damage the target, and still consume the target's PP", async () => {
     // Cannot use enemy moveset override for this test, since it interferes with checking PP
     game.override.enemyMoveset([]);
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     game.move.changeMoveset(enemyPokemon, MoveId.EMBER);
 
     game.move.select(MoveId.POWDER);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
     expect(enemyPokemon.moveset[0].ppUsed).toBe(1);
@@ -51,7 +50,7 @@ describe("Moves - Powder", () => {
 
     game.move.select(MoveId.SPLASH);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
     expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
     expect(enemyPokemon.moveset[0].ppUsed).toBe(2);
@@ -60,13 +59,13 @@ describe("Moves - Powder", () => {
   it("should have no effect against Grass-type Pokemon", async () => {
     game.override.enemySpecies(SpeciesId.AMOONGUSS);
 
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.POWDER);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
   });
@@ -74,13 +73,13 @@ describe("Moves - Powder", () => {
   it("should have no effect against Pokemon with Overcoat", async () => {
     game.override.enemyAbility(AbilityId.OVERCOAT);
 
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.POWDER);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
   });
@@ -88,13 +87,13 @@ describe("Moves - Powder", () => {
   it("should not damage the target if the target has Magic Guard", async () => {
     game.override.enemyAbility(AbilityId.MAGIC_GUARD);
 
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.POWDER);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
   });
@@ -102,13 +101,13 @@ describe("Moves - Powder", () => {
   it("should not damage the target if Primordial Sea is active", async () => {
     game.override.enemyAbility(AbilityId.PRIMORDIAL_SEA);
 
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.POWDER);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
   });
@@ -116,13 +115,13 @@ describe("Moves - Powder", () => {
   it("should not prevent the target from thawing out with Flame Wheel", async () => {
     game.override.enemyMoveset(MoveId.FLAME_WHEEL).enemyStatusEffect(StatusEffect.FREEZE);
 
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.POWDER);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.status?.effect).not.toBe(StatusEffect.FREEZE);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
@@ -131,13 +130,13 @@ describe("Moves - Powder", () => {
   it("should not allow a target with Protean to change to Fire type", async () => {
     game.override.enemyAbility(AbilityId.PROTEAN);
 
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.POWDER);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
     expect(enemyPokemon.summonData.types).not.toBe(PokemonType.FIRE);
@@ -146,7 +145,7 @@ describe("Moves - Powder", () => {
   it("should cancel Fire-type moves generated by the target's Dancer ability", async () => {
     game.override.battleStyle("double").enemySpecies(SpeciesId.BLASTOISE).enemyAbility(AbilityId.DANCER);
 
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD, SpeciesId.CHARIZARD);
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
@@ -178,14 +177,14 @@ describe("Moves - Powder", () => {
   it("should cancel Fiery Dance and prevent it from triggering Dancer", async () => {
     game.override.ability(AbilityId.DANCER).enemyMoveset(MoveId.FIERY_DANCE);
 
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.POWDER);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
     expect(playerPokemon.getLastXMoves()[0].move).toBe(MoveId.POWDER);
@@ -194,13 +193,13 @@ describe("Moves - Powder", () => {
   it("should cancel Revelation Dance if it becomes a Fire-type move", async () => {
     game.override.enemySpecies(SpeciesId.CHARIZARD).enemyMoveset(MoveId.REVELATION_DANCE);
 
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.POWDER);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
   });
@@ -208,13 +207,13 @@ describe("Moves - Powder", () => {
   it("should cancel Shell Trap and damage the target, even if the move would fail", async () => {
     game.override.enemyMoveset(MoveId.SHELL_TRAP);
 
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.POWDER);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
   });
@@ -222,7 +221,7 @@ describe("Moves - Powder", () => {
   it("should cancel Grass Pledge if used after ally's Fire Pledge", async () => {
     game.override.enemyMoveset([MoveId.FIRE_PLEDGE, MoveId.GRASS_PLEDGE]).battleStyle("double");
 
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD, SpeciesId.CHARIZARD);
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.POWDER, 0, BattlerIndex.ENEMY);
@@ -231,7 +230,7 @@ describe("Moves - Powder", () => {
     await game.move.selectEnemyMove(MoveId.FIRE_PLEDGE, BattlerIndex.PLAYER);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2, BattlerIndex.ENEMY]);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
   });
@@ -239,7 +238,7 @@ describe("Moves - Powder", () => {
   it("should cancel Fire Pledge if used before ally's Water Pledge", async () => {
     game.override.enemyMoveset([MoveId.FIRE_PLEDGE, MoveId.WATER_PLEDGE]).battleStyle("double");
 
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD, SpeciesId.CHARIZARD);
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.POWDER, 0, BattlerIndex.ENEMY);
@@ -248,7 +247,7 @@ describe("Moves - Powder", () => {
     await game.move.selectEnemyMove(MoveId.WATER_PLEDGE, BattlerIndex.PLAYER);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     expect(enemyPokemon.hp).toBe(Math.ceil((3 * enemyPokemon.getMaxHp()) / 4));
   });
@@ -256,7 +255,7 @@ describe("Moves - Powder", () => {
   it("should NOT cancel Fire Pledge if used after ally's Water Pledge", async () => {
     game.override.enemyMoveset([MoveId.FIRE_PLEDGE, MoveId.WATER_PLEDGE]).battleStyle("double");
 
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD, SpeciesId.CHARIZARD);
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.POWDER, 0, BattlerIndex.ENEMY);
@@ -265,7 +264,7 @@ describe("Moves - Powder", () => {
     await game.move.selectEnemyMove(MoveId.WATER_PLEDGE, BattlerIndex.PLAYER);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2, BattlerIndex.ENEMY]);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
   });
