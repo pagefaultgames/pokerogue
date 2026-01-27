@@ -31,7 +31,7 @@ describe("Moves - Disable", () => {
   });
 
   it("should restrict the last move used", async () => {
-    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
 
     const enemyMon = game.field.getEnemyPokemon();
 
@@ -50,7 +50,7 @@ describe("Moves - Disable", () => {
   });
 
   it("should fail if enemy has no move history", async () => {
-    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
 
     const playerMon = game.field.getPlayerPokemon();
     const enemyMon = game.field.getEnemyPokemon();
@@ -67,7 +67,7 @@ describe("Moves - Disable", () => {
   });
 
   it("causes STRUGGLE if all usable moves are disabled", async () => {
-    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
 
     const enemyMon = game.field.getEnemyPokemon();
 
@@ -84,7 +84,7 @@ describe("Moves - Disable", () => {
   });
 
   it("should fail if it would otherwise disable struggle", async () => {
-    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
 
     const playerMon = game.field.getPlayerPokemon();
     const enemyMon = game.field.getEnemyPokemon();
@@ -100,7 +100,7 @@ describe("Moves - Disable", () => {
   });
 
   it("should interrupt target's move if used first", async () => {
-    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
 
     const enemyMon = game.field.getEnemyPokemon();
     // add splash to enemy move history
@@ -126,7 +126,7 @@ describe("Moves - Disable", () => {
     { name: "Metronome", moveId: MoveId.METRONOME },
   ])("should ignore virtual moves called by $name", async ({ moveId }) => {
     vi.spyOn(RandomMoveAttr.prototype, "getMoveOverride").mockReturnValue(MoveId.ABSORB);
-    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
 
     const playerMon = game.field.getPlayerPokemon();
     playerMon.pushMoveHistory({ move: MoveId.SPLASH, targets: [BattlerIndex.ENEMY], useMode: MoveUseMode.NORMAL });
@@ -152,7 +152,7 @@ describe("Moves - Disable", () => {
       .enemyAbility(AbilityId.DANCER)
       .moveset([MoveId.DISABLE, MoveId.SWORDS_DANCE])
       .enemyMoveset([MoveId.SPLASH, MoveId.SWORDS_DANCE]);
-    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
 
     game.move.select(MoveId.SWORDS_DANCE);
     await game.move.selectEnemyMove(MoveId.SPLASH);

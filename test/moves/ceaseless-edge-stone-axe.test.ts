@@ -35,7 +35,7 @@ describe.each<{ name: string; move: MoveId; hazard: EntryHazardTagType; hazardNa
   });
 
   it(`should hit and apply ${hazardName}`, async () => {
-    await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
+    await game.classicMode.startBattle(SpeciesId.ILLUMISE);
 
     game.move.use(move);
     await game.phaseInterceptor.to("MoveEffectPhase", false);
@@ -52,7 +52,7 @@ describe.each<{ name: string; move: MoveId; hazard: EntryHazardTagType; hazardNa
   const maxLayers = hazard === ArenaTagType.SPIKES ? 3 : 1;
 
   it(`should not fail if ${hazardName} already has max layers (${maxLayers})`, async () => {
-    await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
+    await game.classicMode.startBattle(SpeciesId.ILLUMISE);
 
     for (let i = 0; i < maxLayers; i++) {
       game.scene.arena.addTag(hazard, 0, undefined, 0, ArenaTagSide.ENEMY);
@@ -73,7 +73,7 @@ describe.each<{ name: string; move: MoveId; hazard: EntryHazardTagType; hazardNa
     "should apply 1 layer of spikes per hit when given multiple hits",
     async () => {
       game.override.startingHeldItems([{ name: "MULTI_LENS" }]);
-      await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
+      await game.classicMode.startBattle(SpeciesId.ILLUMISE);
 
       game.move.use(MoveId.CEASELESS_EDGE);
       await game.phaseInterceptor.to("MoveEffectPhase");

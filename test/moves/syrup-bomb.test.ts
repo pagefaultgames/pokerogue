@@ -34,7 +34,7 @@ describe("Moves - SYRUP BOMB", () => {
   //Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/syrup_bomb_(move)
 
   it("decreases the target Pokemon's speed stat once per turn for 3 turns", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const targetPokemon = game.field.getEnemyPokemon();
     expect(targetPokemon.getStatStage(Stat.SPD)).toBe(0);
@@ -59,7 +59,7 @@ describe("Moves - SYRUP BOMB", () => {
 
   it("does not affect Pokemon with the ability Bulletproof", async () => {
     game.override.enemyAbility(AbilityId.BULLETPROOF);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const targetPokemon = game.field.getEnemyPokemon();
 
@@ -73,7 +73,7 @@ describe("Moves - SYRUP BOMB", () => {
   });
 
   it("stops lowering the target's speed if the user leaves the field", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
 
     game.move.select(MoveId.SYRUP_BOMB);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);

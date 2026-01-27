@@ -28,7 +28,7 @@ describe("Moves - Simple Beam", () => {
   });
 
   it("sets the target's ability to simple", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.SIMPLE_BEAM);
     await game.phaseInterceptor.to("BerryPhase");

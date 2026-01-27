@@ -27,7 +27,7 @@ describe("Moves - Imprison", () => {
   });
 
   it("Pokemon under Imprison cannot use shared moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
+    await game.classicMode.startBattle(SpeciesId.REGIELEKI);
 
     const playerPokemon = game.field.getPlayerPokemon();
 
@@ -54,7 +54,7 @@ describe("Moves - Imprison", () => {
   });
 
   it("Imprison applies to Pokemon switched into Battle", async () => {
-    await game.classicMode.startBattle([SpeciesId.REGIELEKI, SpeciesId.BULBASAUR]);
+    await game.classicMode.startBattle(SpeciesId.REGIELEKI, SpeciesId.BULBASAUR);
 
     const playerPokemon1 = game.field.getPlayerPokemon();
 
@@ -78,7 +78,7 @@ describe("Moves - Imprison", () => {
 
   it("The effects of Imprison only end when the source is no longer active", async () => {
     game.override.moveset([MoveId.SPLASH, MoveId.IMPRISON]);
-    await game.classicMode.startBattle([SpeciesId.REGIELEKI, SpeciesId.BULBASAUR]);
+    await game.classicMode.startBattle(SpeciesId.REGIELEKI, SpeciesId.BULBASAUR);
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();

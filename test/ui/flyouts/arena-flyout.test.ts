@@ -31,7 +31,7 @@ describe("UI - Arena Flyout", () => {
       .startingLevel(100)
       .enemyLevel(100);
 
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     flyout = game.scene.arenaFlyout;
   });

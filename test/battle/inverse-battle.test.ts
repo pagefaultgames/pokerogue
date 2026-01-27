@@ -27,7 +27,6 @@ describe("Inverse Battle", () => {
 
     game.override
       .battleStyle("single")
-      .starterSpecies(SpeciesId.FEEBAS)
       .ability(AbilityId.BALL_FETCH)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
@@ -37,7 +36,7 @@ describe("Inverse Battle", () => {
   it("Immune types are 2x effective - Thunderbolt against Ground Type", async () => {
     game.override.moveset([MoveId.THUNDERBOLT]).enemySpecies(SpeciesId.SANDSHREW);
 
-    await game.challengeMode.startBattle();
+    await game.challengeMode.startBattle(SpeciesId.FEEBAS);
 
     const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");
@@ -52,7 +51,7 @@ describe("Inverse Battle", () => {
   it("2x effective types are 0.5x effective - Thunderbolt against Flying Type", async () => {
     game.override.moveset([MoveId.THUNDERBOLT]).enemySpecies(SpeciesId.PIDGEY);
 
-    await game.challengeMode.startBattle();
+    await game.challengeMode.startBattle(SpeciesId.FEEBAS);
 
     const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");
@@ -67,7 +66,7 @@ describe("Inverse Battle", () => {
   it("0.5x effective types are 2x effective - Thunderbolt against Electric Type", async () => {
     game.override.moveset([MoveId.THUNDERBOLT]).enemySpecies(SpeciesId.CHIKORITA);
 
-    await game.challengeMode.startBattle();
+    await game.challengeMode.startBattle(SpeciesId.FEEBAS);
 
     const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");
@@ -83,7 +82,7 @@ describe("Inverse Battle", () => {
     game.scene.arena.addTag(ArenaTagType.STEALTH_ROCK, 1, MoveId.STEALTH_ROCK, 0);
     game.override.enemySpecies(SpeciesId.CHARIZARD).enemyLevel(100);
 
-    await game.challengeMode.startBattle();
+    await game.challengeMode.startBattle(SpeciesId.FEEBAS);
 
     const charizard = game.field.getEnemyPokemon();
 
@@ -105,7 +104,7 @@ describe("Inverse Battle", () => {
   it("Freeze Dry is 2x effective against Water Type like other Ice type Move - Freeze Dry against Squirtle", async () => {
     game.override.moveset([MoveId.FREEZE_DRY]).enemySpecies(SpeciesId.SQUIRTLE);
 
-    await game.challengeMode.startBattle();
+    await game.challengeMode.startBattle(SpeciesId.FEEBAS);
 
     const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");
@@ -120,7 +119,7 @@ describe("Inverse Battle", () => {
   it("Water Absorb should heal against water moves - Water Absorb against Water gun", async () => {
     game.override.moveset([MoveId.WATER_GUN]).enemyAbility(AbilityId.WATER_ABSORB);
 
-    await game.challengeMode.startBattle();
+    await game.challengeMode.startBattle(SpeciesId.FEEBAS);
 
     const enemy = game.field.getEnemyPokemon();
     enemy.hp = enemy.getMaxHp() - 1;
@@ -134,7 +133,7 @@ describe("Inverse Battle", () => {
   it("Fire type does not get burned - Will-O-Wisp against Charmander", async () => {
     game.override.moveset([MoveId.WILL_O_WISP]).enemySpecies(SpeciesId.CHARMANDER);
 
-    await game.challengeMode.startBattle();
+    await game.challengeMode.startBattle(SpeciesId.FEEBAS);
 
     const enemy = game.field.getEnemyPokemon();
 
@@ -149,7 +148,7 @@ describe("Inverse Battle", () => {
   it("Electric type does not get paralyzed - Nuzzle against Pikachu", async () => {
     game.override.moveset([MoveId.NUZZLE]).enemySpecies(SpeciesId.PIKACHU).enemyLevel(50);
 
-    await game.challengeMode.startBattle();
+    await game.challengeMode.startBattle(SpeciesId.FEEBAS);
 
     const enemy = game.field.getEnemyPokemon();
 
@@ -163,7 +162,7 @@ describe("Inverse Battle", () => {
   it("Ground type is not immune to Thunder Wave - Thunder Wave against Sandshrew", async () => {
     game.override.moveset([MoveId.THUNDER_WAVE]).enemySpecies(SpeciesId.SANDSHREW);
 
-    await game.challengeMode.startBattle();
+    await game.challengeMode.startBattle(SpeciesId.FEEBAS);
 
     const enemy = game.field.getEnemyPokemon();
 
@@ -178,7 +177,7 @@ describe("Inverse Battle", () => {
   it("Anticipation should trigger on 2x effective moves", async () => {
     game.override.moveset([MoveId.THUNDERBOLT]).enemySpecies(SpeciesId.SANDSHREW).enemyAbility(AbilityId.ANTICIPATION);
 
-    await game.challengeMode.startBattle();
+    await game.challengeMode.startBattle(SpeciesId.FEEBAS);
 
     expect(game.field.getEnemyPokemon().waveData.abilitiesApplied).toContain(AbilityId.ANTICIPATION);
   });
@@ -186,7 +185,7 @@ describe("Inverse Battle", () => {
   it("Conversion 2 should change the type to the resistive type - Conversion 2 against Dragonite", async () => {
     game.override.moveset([MoveId.CONVERSION_2]).enemyMoveset(MoveId.DRAGON_CLAW);
 
-    await game.challengeMode.startBattle();
+    await game.challengeMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();
 
@@ -201,7 +200,7 @@ describe("Inverse Battle", () => {
   it("Flying Press should be 0.25x effective against Grass + Dark Type - Flying Press against Meowscarada", async () => {
     game.override.moveset([MoveId.FLYING_PRESS]).enemySpecies(SpeciesId.MEOWSCARADA);
 
-    await game.challengeMode.startBattle();
+    await game.challengeMode.startBattle(SpeciesId.FEEBAS);
 
     const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");
@@ -216,7 +215,7 @@ describe("Inverse Battle", () => {
   it("Scrappy ability has no effect - Tackle against Ghost Type still 2x effective with Scrappy", async () => {
     game.override.moveset([MoveId.TACKLE]).ability(AbilityId.SCRAPPY).enemySpecies(SpeciesId.GASTLY);
 
-    await game.challengeMode.startBattle();
+    await game.challengeMode.startBattle(SpeciesId.FEEBAS);
 
     const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");
@@ -231,7 +230,7 @@ describe("Inverse Battle", () => {
   it("FORESIGHT has no effect - Tackle against Ghost Type still 2x effective with Foresight", async () => {
     game.override.moveset([MoveId.FORESIGHT, MoveId.TACKLE]).enemySpecies(SpeciesId.GASTLY);
 
-    await game.challengeMode.startBattle();
+    await game.challengeMode.startBattle(SpeciesId.FEEBAS);
 
     const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getMoveEffectiveness");

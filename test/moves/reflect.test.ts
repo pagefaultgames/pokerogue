@@ -7,7 +7,6 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import type { Pokemon } from "#field/pokemon";
 import type { Move } from "#moves/move";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import { NumberHolder } from "#utils/common";
 import Phaser from "phaser";
@@ -42,11 +41,11 @@ describe("Moves - Reflect", () => {
 
   it("reduces damage of physical attacks by half in a single battle", async () => {
     const moveToUse = MoveId.TACKLE;
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE);
 
     game.move.select(moveToUse);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     const mockedDmg = getMockedMoveDamage(
       game.field.getEnemyPokemon(),
       game.field.getPlayerPokemon(),
@@ -60,12 +59,12 @@ describe("Moves - Reflect", () => {
     game.override.battleStyle("double");
 
     const moveToUse = MoveId.ROCK_SLIDE;
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE, SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE, SpeciesId.SHUCKLE);
 
     game.move.select(moveToUse);
     game.move.select(moveToUse, 1);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     const mockedDmg = getMockedMoveDamage(
       game.field.getEnemyPokemon(),
       game.field.getPlayerPokemon(),
@@ -77,11 +76,11 @@ describe("Moves - Reflect", () => {
 
   it("does not affect special attacks", async () => {
     const moveToUse = MoveId.ABSORB;
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE);
 
     game.move.select(moveToUse);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     const mockedDmg = getMockedMoveDamage(
       game.field.getEnemyPokemon(),
@@ -95,10 +94,10 @@ describe("Moves - Reflect", () => {
   it("does not affect critical hits", async () => {
     game.override.moveset([MoveId.WICKED_BLOW]);
     const moveToUse = MoveId.WICKED_BLOW;
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE);
 
     game.move.select(moveToUse);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     const mockedDmg = getMockedMoveDamage(
       game.field.getEnemyPokemon(),
@@ -112,10 +111,10 @@ describe("Moves - Reflect", () => {
   it("does not affect critical hits", async () => {
     game.override.moveset([MoveId.WICKED_BLOW]);
     const moveToUse = MoveId.WICKED_BLOW;
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE);
 
     game.move.select(moveToUse);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     const mockedDmg = getMockedMoveDamage(
       game.field.getEnemyPokemon(),

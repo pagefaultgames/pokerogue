@@ -151,7 +151,14 @@ export abstract class ArenaTag implements BaseArenaTag {
   constructor(turnCount: number, sourceMove?: MoveId, sourceId?: number, side: ArenaTagSide = ArenaTagSide.BOTH) {
     this.turnCount = turnCount;
     this.maxDuration = turnCount;
-    this.sourceMove = sourceMove;
+    // TODO: Rework tags passing `MoveId.NONE` to instead pass `undefined` for consistency
+    // TODO: Enforce that all arena tags explicitly declare any used properties to ensure only required properties are serialized
+    if (sourceMove) {
+      this.sourceMove = sourceMove;
+    }
+    if (sourceId !== undefined) {
+      this.sourceId = sourceId;
+    }
     this.sourceId = sourceId;
     this.side = side;
   }
@@ -228,11 +235,16 @@ export abstract class ArenaTag implements BaseArenaTag {
    * @param source - The arena tag being loaded
    */
   loadTag<const T extends this>(source: BaseArenaTag & Pick<T, "tagType">): void {
-    this.turnCount = source.turnCount;
-    this.maxDuration = source.maxDuration;
-    this.sourceMove = source.sourceMove;
-    this.sourceId = source.sourceId;
-    this.side = source.side;
+    const { sourceMove, turnCount, sourceId, maxDuration, side } = source;
+    this.turnCount = turnCount;
+    this.maxDuration = maxDuration;
+    if (sourceMove) {
+      this.sourceMove = sourceMove;
+    }
+    if (sourceId !== undefined) {
+      this.sourceId = sourceId;
+    }
+    this.side = side;
   }
 
   /**
@@ -1689,7 +1701,7 @@ export class PendingHealTag extends SerializableArenaTag {
 
     targetEffects.splice(targetEffects.indexOf(healEffect), 1);
 
-    return healEffect != null;
+    return true;
   }
 
   /**

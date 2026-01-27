@@ -23,7 +23,7 @@ describe("Abilities - Pastel Veil", () => {
   });
 
   it("should prevent the user and its allies from being poisoned", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.GALAR_PONYTA]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.GALAR_PONYTA);
     const [magikarp, ponyta] = game.scene.getPlayerField();
     game.field.mockAbility(ponyta, AbilityId.PASTEL_VEIL);
 
@@ -38,7 +38,7 @@ describe("Abilities - Pastel Veil", () => {
   });
 
   it("should cure allies' poison if user is sent out into battle", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS, SpeciesId.GALAR_PONYTA]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS, SpeciesId.GALAR_PONYTA);
     const [magikarp, , ponyta] = game.scene.getPlayerParty();
     game.field.mockAbility(ponyta, AbilityId.PASTEL_VEIL);
 
