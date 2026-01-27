@@ -8767,7 +8767,7 @@ const attackedByItemMessageFunc = (_user: Pokemon, target: Pokemon, _move: Move)
 /**
  * Attribute used for Conversion 2, to convert the user's type to a random type that resists the target's last used move.
  */
-// TODO: If a move has its type changed (e.g. {@linkcode MoveId.HIDDEN_POWER}), it should check the new type.
+// TODO: If a move has its type changed (e.g. Hidden Power), it should check the new type.
 // TODO: Does not fail when it should
 export class ResistLastMoveTypeAttr extends MoveEffectAttr {
   constructor() {
