@@ -28,7 +28,7 @@ describe("Moves - Reflect Type", () => {
   });
 
   it("will make the user Normal/Grass if targetting a typeless Pokemon affected by Forest's Curse", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     const charmander = game.field.getEnemyPokemon();

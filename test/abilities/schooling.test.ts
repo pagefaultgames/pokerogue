@@ -3,8 +3,6 @@ import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import { QuietFormChangePhase } from "#phases/quiet-form-change-phase";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 
@@ -31,7 +29,7 @@ describe("Abilities - SCHOOLING", () => {
       [SpeciesId.WISHIWASHI]: schoolForm,
     });
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.WISHIWASHI]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.WISHIWASHI);
 
     const wishiwashi = game.scene.getPlayerParty().find(p => p.species.speciesId === SpeciesId.WISHIWASHI)!;
     expect(wishiwashi).not.toBe(undefined);
@@ -43,9 +41,9 @@ describe("Abilities - SCHOOLING", () => {
 
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     game.doSelectModifier();
-    await game.phaseInterceptor.to(QuietFormChangePhase);
+    await game.phaseInterceptor.to("QuietFormChangePhase");
 
     expect(wishiwashi.formIndex).toBe(soloForm);
   });

@@ -42,7 +42,7 @@ describe.todo("UI - Battle Info", () => {
     game.settings.expGainsSpeed(expGainsSpeed);
     vi.spyOn(Math, "pow");
 
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();

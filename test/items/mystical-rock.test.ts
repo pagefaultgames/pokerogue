@@ -29,7 +29,7 @@ describe("Items - Mystical Rock", () => {
   });
 
   it("should increase weather duration by +2 turns per stack", async () => {
-    await game.classicMode.startBattle([SpeciesId.GASTLY]);
+    await game.classicMode.startBattle(SpeciesId.GASTLY);
 
     game.move.select(MoveId.SUNNY_DAY);
 
@@ -42,7 +42,7 @@ describe("Items - Mystical Rock", () => {
   });
 
   it("should increase terrain duration by +2 turns per stack", async () => {
-    await game.classicMode.startBattle([SpeciesId.GASTLY]);
+    await game.classicMode.startBattle(SpeciesId.GASTLY);
 
     game.move.select(MoveId.GRASSY_TERRAIN);
 

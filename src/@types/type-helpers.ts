@@ -2,8 +2,8 @@
  * A collection of custom utility types that aid in type checking and ensuring strict type conformity
  */
 
-import type { AbAttr } from "#abilities/ability";
-import type { NegativeInfinity, PositiveInfinity } from "type-fest";
+import type { AbAttr } from "#abilities/ab-attrs";
+import type { IntClosedRange, NegativeInfinity, PositiveInfinity, TupleOf } from "type-fest";
 
 /**
  * Exactly matches the type of the argument, preventing adding additional properties.
@@ -143,3 +143,24 @@ export type Negate<N extends number> =
               `-${N}` extends `${infer R extends number}`
               ? R
               : number;
+
+/** Extract the required keys from an object that has optional ones */
+export type RequiredKeys<T> = {
+  [K in keyof T]-?: object extends Pick<T, K> ? never : K;
+}[keyof T];
+
+/** Pick from `T` the set of required properties  */
+export type OnlyRequired<T> = Pick<T, RequiredKeys<T>>;
+
+/**
+ * Type helper to create a union of tuples in a given range.
+ * @typeParam Min - The minimum length of the tuple (inclusive)
+ * @typeParam Max - The maximum length of the tuple (inclusive)
+ * @typeParam T - The type of the elements in the tuple
+ */
+export type TupleRange<Min extends number, Max extends number, T> = IntClosedRange<
+  Min,
+  Max
+> extends infer Lengths extends number
+  ? TupleOf<Lengths, T>
+  : never;

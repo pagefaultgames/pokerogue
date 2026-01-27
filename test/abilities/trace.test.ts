@@ -29,7 +29,7 @@ describe("Abilities - Trace", () => {
   });
 
   it("should copy the opponent's ability", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
@@ -39,7 +39,7 @@ describe("Abilities - Trace", () => {
 
   it("should activate a copied post-summon ability", async () => {
     game.override.enemyAbility(AbilityId.INTIMIDATE);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");

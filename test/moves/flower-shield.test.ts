@@ -7,7 +7,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Flower Shield", () => {
   let phaserGame: Phaser.Game;
@@ -17,6 +17,10 @@ describe("Moves - Flower Shield", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
+  });
+
+  afterEach(() => {
+    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -31,7 +35,7 @@ describe("Moves - Flower Shield", () => {
 
   it("should raise the Defense of all Grass-type Pokemon by 1 stage, including the user", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.CHERRIM, SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.CHERRIM, SpeciesId.FEEBAS);
 
     const [cherrim, feebas, karp1, karp2] = game.scene.getField();
     karp1.summonData.types = [PokemonType.GRASS];
@@ -49,7 +53,7 @@ describe("Moves - Flower Shield", () => {
 
   it("should not affect semi-invulnerable Pokemon", async () => {
     game.override.enemySpecies(SpeciesId.PARAS);
-    await game.classicMode.startBattle([SpeciesId.CHERRIM]);
+    await game.classicMode.startBattle(SpeciesId.CHERRIM);
 
     const cherrim = game.field.getPlayerPokemon();
     const paras = game.field.getEnemyPokemon();
@@ -65,7 +69,7 @@ describe("Moves - Flower Shield", () => {
 
   it("should check all affected targets' Tera Types, including Tera Stellar", async () => {
     game.override.enemySpecies(SpeciesId.PARAS);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     // Tera Grass Feebas, Tera Stellar Paras
     const feebas = game.field.getPlayerPokemon();
@@ -82,7 +86,7 @@ describe("Moves - Flower Shield", () => {
 
   it("should fail if no vulnerable Grass-type Pokemon are on field", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.CHERRIM]);
+    await game.classicMode.startBattle(SpeciesId.CHERRIM);
 
     const [cherrim, _, karp1, karp2] = game.scene.getField();
 

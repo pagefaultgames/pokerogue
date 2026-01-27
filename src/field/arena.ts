@@ -237,35 +237,6 @@ export class Arena {
     return tierPool.length === 0 ? TrainerType.BREEDER : tierPool[randSeedInt(tierPool.length)];
   }
 
-  getSpeciesFormIndex(species: PokemonSpecies): number {
-    switch (species.speciesId) {
-      case SpeciesId.BURMY:
-      case SpeciesId.WORMADAM:
-        switch (this.biomeType) {
-          case BiomeId.BEACH:
-            return 1;
-          case BiomeId.SLUM:
-            return 2;
-        }
-        break;
-      case SpeciesId.LYCANROC: {
-        const timeOfDay = this.getTimeOfDay();
-        switch (timeOfDay) {
-          case TimeOfDay.DAY:
-          case TimeOfDay.DAWN:
-            return 0;
-          case TimeOfDay.DUSK:
-            return 2;
-          case TimeOfDay.NIGHT:
-            return 1;
-        }
-        break;
-      }
-    }
-
-    return 0;
-  }
-
   getBgTerrainColorRatioForBiome(): number {
     switch (this.biomeType) {
       case BiomeId.SPACE:
@@ -278,20 +249,18 @@ export class Arena {
   }
 
   /**
-   * Sets weather to the override specified in overrides.ts
-   * @param weather new {@linkcode WeatherType} to set
-   * @returns true to force trySetWeather to return true
+   * Sets weather to the override specified in `overrides.ts`
    */
-  trySetWeatherOverride(weather: WeatherType): boolean {
+  private overrideWeather(): void {
+    const weather = Overrides.WEATHER_OVERRIDE;
     this.weather = new Weather(weather, 0);
     globalScene.phaseManager.unshiftNew("CommonAnimPhase", undefined, undefined, CommonAnim.SUNNY + (weather - 1));
     globalScene.phaseManager.queueMessage(getWeatherStartMessage(weather)!); // TODO: is this bang correct?
-    return true;
   }
 
   /** Returns weather or not the weather can be changed to {@linkcode weather} */
   canSetWeather(weather: WeatherType): boolean {
-    return !(this.weather?.weatherType === (weather || undefined));
+    return this.getWeatherType() !== weather;
   }
 
   /**
@@ -302,14 +271,15 @@ export class Arena {
    */
   trySetWeather(weather: WeatherType, user?: Pokemon): boolean {
     if (Overrides.WEATHER_OVERRIDE) {
-      return this.trySetWeatherOverride(Overrides.WEATHER_OVERRIDE);
+      this.overrideWeather();
+      return true;
     }
 
     if (!this.canSetWeather(weather)) {
       return false;
     }
 
-    const oldWeatherType = this.weather?.weatherType || WeatherType.NONE;
+    const oldWeatherType = this.getWeatherType();
 
     if (
       this.weather?.isImmutable()
@@ -390,25 +360,24 @@ export class Arena {
     }
   }
 
-  /** Returns whether or not the terrain can be set to {@linkcode terrain} */
+  /** Return whether or not the terrain can be set to {@linkcode terrain} */
   canSetTerrain(terrain: TerrainType): boolean {
-    return !(this.terrain?.terrainType === (terrain || undefined));
+    return this.getTerrainType() !== terrain;
   }
 
   /**
-   * Attempts to set a new terrain effect to the battle
-   * @param terrain {@linkcode TerrainType} new {@linkcode TerrainType} to set
-   * @param ignoreAnim boolean if the terrain animation should be ignored
-   * @param user {@linkcode Pokemon} that caused the terrain effect
-   * @returns true if new terrain set, false if no terrain provided or attempting to set the same terrain as currently in use
+   * Attempt to set the current terrain to the specified type.
+   * @param terrain - The {@linkcode TerrainType} to try and set.
+   * @param ignoreAnim - Whether to prevent showing an the animation; default `false`
+   * @param user - The {@linkcode Pokemon} creating the terrain (if any)
+   * @returns Whether the terrain was successfully set.
    */
   trySetTerrain(terrain: TerrainType, ignoreAnim = false, user?: Pokemon): boolean {
     if (!this.canSetTerrain(terrain)) {
       return false;
     }
 
-    const oldTerrainType = this.terrain?.terrainType || TerrainType.NONE;
-
+    const oldTerrainType = this.getTerrainType();
     const terrainDuration = new NumberHolder(0);
 
     if (user != null) {
@@ -445,6 +414,27 @@ export class Arena {
     }
 
     return true;
+  }
+
+  /** Attempt to override the terrain to the value set inside {@linkcode Overrides.STARTING_TERRAIN_OVERRIDE}. */
+  tryOverrideTerrain(): void {
+    const terrain = Overrides.STARTING_TERRAIN_OVERRIDE;
+    if (terrain === TerrainType.NONE) {
+      return;
+    }
+
+    // TODO: Add a flag for permanent terrains
+    this.terrain = new Terrain(terrain, 0);
+    this.eventTarget.dispatchEvent(
+      new TerrainChangedEvent(TerrainType.NONE, this.terrain.terrainType, this.terrain.turnsLeft),
+    );
+    globalScene.phaseManager.unshiftNew(
+      "CommonAnimPhase",
+      undefined,
+      undefined,
+      CommonAnim.MISTY_TERRAIN + (terrain - 1),
+    );
+    globalScene.phaseManager.queueMessage(getTerrainStartMessage(terrain) ?? ""); // TODO: Remove `?? ""` when terrain-fail-msg branch removes `null` from these signatures
   }
 
   public isMoveWeatherCancelled(user: Pokemon, move: Move): boolean {

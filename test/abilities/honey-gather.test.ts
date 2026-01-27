@@ -33,7 +33,7 @@ describe("Abilities - Honey Gather", () => {
   });
 
   it("should give money when winning a battle", async () => {
-    await game.classicMode.startBattle([SpeciesId.MILOTIC]);
+    await game.classicMode.startBattle(SpeciesId.MILOTIC);
     game.scene.money = 1000;
 
     game.move.select(MoveId.THUNDERBOLT);
@@ -43,7 +43,7 @@ describe("Abilities - Honey Gather", () => {
   });
 
   it("should not give money when the enemy pokemon flees", async () => {
-    await game.classicMode.startBattle([SpeciesId.MILOTIC]);
+    await game.classicMode.startBattle(SpeciesId.MILOTIC);
     game.scene.money = 1000;
 
     game.move.select(MoveId.ROAR);
@@ -54,7 +54,7 @@ describe("Abilities - Honey Gather", () => {
   });
 
   it("should not give money when the player flees", async () => {
-    await game.classicMode.startBattle([SpeciesId.MILOTIC]);
+    await game.classicMode.startBattle(SpeciesId.MILOTIC);
     game.scene.money = 1000;
 
     // something weird is going on with the test framework, so this is required to prevent a crash

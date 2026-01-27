@@ -31,7 +31,7 @@ describe("Moves - Revival Blessing", () => {
   });
 
   it("should revive a selected fainted Pokemon when used by the player", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MAGIKARP);
 
     game.move.select(MoveId.MEMENTO);
     game.doSelectPartyPokemon(1, "SwitchPhase");
@@ -55,7 +55,7 @@ describe("Moves - Revival Blessing", () => {
   it("should revive a random fainted enemy when used by an enemy Trainer", async () => {
     game.override.enemyMoveset(MoveId.REVIVAL_BLESSING).startingWave(8);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
@@ -72,7 +72,7 @@ describe("Moves - Revival Blessing", () => {
   });
 
   it("should fail when there are no fainted Pokemon to target", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MAGIKARP);
 
     game.move.select(MoveId.REVIVAL_BLESSING);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -88,7 +88,7 @@ describe("Moves - Revival Blessing", () => {
       .enemyMoveset([MoveId.SPLASH, MoveId.FISSURE])
       .enemyAbility(AbilityId.NO_GUARD)
       .enemyLevel(100);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC, SpeciesId.GYARADOS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC, SpeciesId.GYARADOS);
 
     const feebas = game.field.getPlayerPokemon();
 
@@ -118,7 +118,7 @@ describe("Moves - Revival Blessing", () => {
       .moveset([MoveId.SPLASH, MoveId.JUDGMENT])
       .startingLevel(100)
       .startingWave(25); // 2nd rival battle - must have 3+ pokemon
-    await game.classicMode.startBattle([SpeciesId.ARCEUS, SpeciesId.GIRATINA]);
+    await game.classicMode.startBattle(SpeciesId.ARCEUS, SpeciesId.GIRATINA);
 
     const enemyFainting = game.field.getEnemyPokemon();
 
