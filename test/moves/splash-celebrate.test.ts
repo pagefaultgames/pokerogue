@@ -38,7 +38,7 @@ describe.each<{ name: string; move: MoveId; message: () => string }>([
   });
 
   it("should show a message on use", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(move);
     await game.toEndOfTurn();

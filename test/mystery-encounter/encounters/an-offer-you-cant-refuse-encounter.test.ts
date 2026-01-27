@@ -11,7 +11,6 @@ import { AnOfferYouCantRefuseEncounter } from "#mystery-encounters/an-offer-you-
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { HUMAN_TRANSITABLE_BIOMES } from "#mystery-encounters/mystery-encounters";
-import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
 import { GameManager } from "#test/test-utils/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
@@ -192,7 +191,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
       const expBefore = gyarados.exp;
 
       await runMysteryEncounterToEnd(game, 2);
-      await game.phaseInterceptor.to(SelectModifierPhase, false);
+      await game.phaseInterceptor.to("SelectModifierPhase", false);
 
       expect(gyarados.exp).toBe(
         expBefore + Math.floor((getPokemonSpecies(SpeciesId.LIEPARD).baseExp * defaultWave) / 5 + 1),
@@ -207,7 +206,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
       const expBefore = abra.exp;
 
       await runMysteryEncounterToEnd(game, 2);
-      await game.phaseInterceptor.to(SelectModifierPhase, false);
+      await game.phaseInterceptor.to("SelectModifierPhase", false);
 
       expect(abra.exp).toBe(
         expBefore + Math.floor((getPokemonSpecies(SpeciesId.LIEPARD).baseExp * defaultWave) / 5 + 1),

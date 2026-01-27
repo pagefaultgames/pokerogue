@@ -60,7 +60,7 @@ describe("Boss Pokemon / Shields", () => {
 
   it("should reduce the number of shields if we are in a double battle", async () => {
     game.override.battleStyle("double").startingWave(150); // Floor 150 > 2 shields / 3 health segments
-    await game.classicMode.startBattle([SpeciesId.MEWTWO]);
+    await game.classicMode.startBattle(SpeciesId.MEWTWO);
 
     const [boss1, boss2] = game.scene.getEnemyParty();
     expect(boss1.isBoss()).toBe(true);
@@ -73,7 +73,7 @@ describe("Boss Pokemon / Shields", () => {
   it.todo("shields should stop overflow damage and give stat stage boosts when broken", async () => {
     game.override.startingWave(150).startingLevel(5000); // Floor 150 > 2 shields / 3 health segments
 
-    await game.classicMode.startBattle([SpeciesId.MEWTWO]);
+    await game.classicMode.startBattle(SpeciesId.MEWTWO);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     const segmentHp = enemyPokemon.getMaxHp() / enemyPokemon.bossSegments;
@@ -102,7 +102,7 @@ describe("Boss Pokemon / Shields", () => {
   it("breaking multiple shields at once requires extra damage", async () => {
     game.override.battleStyle("double").enemyHealthSegments(5);
 
-    await game.classicMode.startBattle([SpeciesId.MEWTWO]);
+    await game.classicMode.startBattle(SpeciesId.MEWTWO);
 
     // In this test we want to break through 3 shields at once
     const brokenShields = 3;
@@ -138,7 +138,7 @@ describe("Boss Pokemon / Shields", () => {
 
     game.override.battleStyle("double").enemyHealthSegments(shieldsToBreak + 1);
 
-    await game.classicMode.startBattle([SpeciesId.MEWTWO]);
+    await game.classicMode.startBattle(SpeciesId.MEWTWO);
 
     const boss1 = game.field.getEnemyPokemon();
     boss1.setStat(Stat.HP, (shieldsToBreak + 1) * segmentHp); // Set HP to a known value for easier calculations
@@ -187,7 +187,7 @@ describe("Boss Pokemon / Shields", () => {
   it("the boss enduring does not proc an extra stat boost", async () => {
     game.override.enemyHealthSegments(2).enemyAbility(AbilityId.STURDY);
 
-    await game.classicMode.startBattle([SpeciesId.MEWTWO]);
+    await game.classicMode.startBattle(SpeciesId.MEWTWO);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     expect(enemyPokemon.isBoss()).toBe(true);

@@ -34,7 +34,7 @@ describe("Moves - Assist", () => {
 
   it("should only use an ally's moves", async () => {
     game.override.enemyMoveset(MoveId.SWORDS_DANCE);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.SHUCKLE);
 
     const [feebas, shuckle] = game.scene.getPlayerField();
     // These are all moves Assist cannot call; Sketch will be used to test that it can call other moves properly
@@ -51,7 +51,7 @@ describe("Moves - Assist", () => {
   });
 
   it("should fail if there are no allies", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     game.move.changeMoveset(feebas, [MoveId.ASSIST, MoveId.SKETCH, MoveId.PROTECT, MoveId.DRAGON_TAIL]);
@@ -63,7 +63,7 @@ describe("Moves - Assist", () => {
 
   it("should fail if ally has no usable moves and user has usable moves", async () => {
     game.override.enemyMoveset(MoveId.SWORDS_DANCE);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.SHUCKLE);
 
     const [feebas, shuckle] = game.scene.getPlayerField();
     game.move.changeMoveset(feebas, [MoveId.ASSIST, MoveId.SKETCH, MoveId.PROTECT, MoveId.DRAGON_TAIL]);
@@ -82,7 +82,7 @@ describe("Moves - Assist", () => {
   });
 
   it("should apply secondary effects of a move", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.SHUCKLE);
 
     const [feebas, shuckle] = game.scene.getPlayerField();
     game.move.changeMoveset(feebas, [MoveId.ASSIST, MoveId.WOOD_HAMMER]);

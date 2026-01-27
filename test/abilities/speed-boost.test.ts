@@ -4,7 +4,6 @@ import { Command } from "#enums/command";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { AttemptRunPhase } from "#phases/attempt-run-phase";
 import type { CommandPhase } from "#phases/command-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
@@ -34,7 +33,7 @@ describe("Abilities - Speed Boost", () => {
   });
 
   it("should increase speed by 1 stage at end of turn", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const playerPokemon = game.field.getPlayerPokemon();
     game.move.select(MoveId.SPLASH);
@@ -44,7 +43,7 @@ describe("Abilities - Speed Boost", () => {
   });
 
   it("should not trigger this turn if pokemon was switched into combat via attack, but the turn after", async () => {
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE, SpeciesId.NINJASK]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE, SpeciesId.NINJASK);
 
     game.move.select(MoveId.U_TURN);
     game.doSelectPartyPokemon(1);
@@ -58,7 +57,7 @@ describe("Abilities - Speed Boost", () => {
   });
 
   it("checking back to back swtiches", async () => {
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE, SpeciesId.NINJASK]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE, SpeciesId.NINJASK);
 
     const [shuckle, ninjask] = game.scene.getPlayerParty();
 
@@ -80,7 +79,7 @@ describe("Abilities - Speed Boost", () => {
   });
 
   it("should not trigger this turn if pokemon was switched into combat via normal switch, but the turn after", async () => {
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE, SpeciesId.NINJASK]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE, SpeciesId.NINJASK);
 
     game.doSwitchPokemon(1);
     await game.toNextTurn();
@@ -95,14 +94,14 @@ describe("Abilities - Speed Boost", () => {
   it("should not trigger if pokemon fails to escape", async () => {
     //Account for doubles, should not trigger on either pokemon
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE);
 
     vi.spyOn(Overrides, "RUN_SUCCESS_OVERRIDE", "get").mockReturnValue(false);
 
     const commandPhase = game.scene.phaseManager.getCurrentPhase() as CommandPhase;
     commandPhase.handleCommand(Command.RUN, 0);
 
-    await game.phaseInterceptor.to(AttemptRunPhase);
+    await game.phaseInterceptor.to("AttemptRunPhase");
     await game.toNextTurn();
 
     const playerPokemon = game.field.getPlayerPokemon();
