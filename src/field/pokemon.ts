@@ -2634,7 +2634,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     defenderType: PokemonType;
   }): boolean {
     // TODO: remove type assertion once method is properly typed
-    const hasExposed = !!this.findTag(tag => tag instanceof ExposedTag && tag.ignoreImmunity(defenderType, moveType));
+    const hasExposed = !!this.findTag(
+      tag =>
+        [BattlerTagType.IGNORE_DARK, BattlerTagType.IGNORE_GHOST].includes(tag.tagType)
+        && (tag as ExposedTag).ignoreImmunity(defenderType, moveType),
+    );
     if (hasExposed) {
       return true;
     }
