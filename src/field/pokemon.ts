@@ -153,6 +153,7 @@ import type { DamageCalculationResult, DamageResult } from "#types/damage-result
 import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { TurnMove } from "#types/turn-move";
+import type { Mutable } from "#types/type-helpers";
 import { BattleInfo } from "#ui/battle-info";
 import { EnemyBattleInfo } from "#ui/enemy-battle-info";
 import type { PartyOption } from "#ui/party-ui-handler";
@@ -184,7 +185,7 @@ import { argbFromRgba, QuantizerCelebi, rgbaFromArgb } from "@material/material-
 import i18next from "i18next";
 import Phaser from "phaser";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { NonEmptyTuple } from "type-fest";
+import type { NonEmptyTuple } from "type-fest";
 
 export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
@@ -1948,7 +1949,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     forDefend = false,
     ignoreOverride = false,
     useIllusion = false,
-  ): NonEmptyTuple<PokemonType> {
+  ): Mutable<NonEmptyTuple<PokemonType>> {
     const types: PokemonType[] = [];
     const teraType = this.getTeraType();
     // Stellar tera does nothing defensively (uses original types)
@@ -1985,7 +1986,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       types.splice(0, 1);
     }
 
-    return types as unknown as NonEmptyTuple<PokemonType>;
+    return types as Mutable<NonEmptyTuple<PokemonType>>;
   }
 
   /**
