@@ -3,8 +3,6 @@ import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { BerryPhase } from "#phases/berry-phase";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -34,14 +32,14 @@ describe("Moves - Hyper Beam", () => {
   });
 
   it("should force the user to recharge on the next turn (and only that turn)", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const leadPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.HYPER_BEAM);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
     expect(leadPokemon.getTag(BattlerTagType.RECHARGING)).toBeDefined();
@@ -49,14 +47,14 @@ describe("Moves - Hyper Beam", () => {
     const enemyPostAttackHp = enemyPokemon.hp;
 
     /** Game should progress without a new command from the player */
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(enemyPokemon.hp).toBe(enemyPostAttackHp);
     expect(leadPokemon.getTag(BattlerTagType.RECHARGING)).toBeUndefined();
 
     game.move.select(MoveId.TACKLE);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(enemyPokemon.hp).toBeLessThan(enemyPostAttackHp);
   });

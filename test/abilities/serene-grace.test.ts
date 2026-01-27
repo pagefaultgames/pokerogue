@@ -31,7 +31,7 @@ describe("Abilities - Serene Grace", () => {
   });
 
   it("Serene Grace should double the secondary effect chance of a move", async () => {
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE);
 
     const airSlashMove = allMoves[MoveId.AIR_SLASH];
     const airSlashFlinchAttr = airSlashMove.getAttrs("FlinchAttr")[0];

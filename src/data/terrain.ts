@@ -30,7 +30,12 @@ export class Terrain {
     this.maxDuration = maxDuration;
   }
 
+  /**
+   * Tick down this terrain's duration.
+   * @returns Whether the current terrain should remain active (`turnsLeft > 0`)
+   */
   lapse(): boolean {
+    // TODO: Add separate flag for infinite duration terrains
     if (this.turnsLeft) {
       return !!--this.turnsLeft;
     }

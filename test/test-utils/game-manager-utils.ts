@@ -1,7 +1,7 @@
 import { Battle } from "#app/battle";
 import type { BattleScene } from "#app/battle-scene";
 import { getGameMode } from "#app/game-mode";
-import { getDailyRunStarters } from "#data/daily-run";
+import { getDailyRunStarters } from "#data/daily-seed/daily-run";
 import { Gender } from "#data/gender";
 import { BattleType } from "#enums/battle-type";
 import { GameModes } from "#enums/game-modes";
@@ -12,12 +12,12 @@ import type { Starter, StarterMoveset } from "#types/save-data";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 /** Function to convert Blob to string */
-export function blobToString(blob) {
+export function blobToString(blob: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
 
     reader.onloadend = () => {
-      resolve(reader.result);
+      resolve(reader.result as string);
     };
 
     reader.onerror = () => {
@@ -33,8 +33,8 @@ export function holdOn(ms: number) {
 }
 
 export function generateStarters(scene: BattleScene, speciesIds?: SpeciesId[]): Starter[] {
-  const seed = "test";
-  const starters = getTestRunStarters(seed, speciesIds);
+  scene.seed = "test";
+  const starters = getTestRunStarters(speciesIds);
   const startingLevel = scene.gameMode.getStartingLevel();
   for (const starter of starters) {
     const species = getPokemonSpecies(starter.speciesId);
@@ -61,9 +61,9 @@ export function generateStarters(scene: BattleScene, speciesIds?: SpeciesId[]): 
   return starters;
 }
 
-function getTestRunStarters(seed: string, speciesIds?: SpeciesId[]): Starter[] {
+function getTestRunStarters(speciesIds?: SpeciesId[]): Starter[] {
   if (!speciesIds || speciesIds.length === 0) {
-    return getDailyRunStarters(seed);
+    return getDailyRunStarters();
   }
   const starters: Starter[] = [];
   const startingLevel = getGameMode(GameModes.CLASSIC).getStartingLevel();

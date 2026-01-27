@@ -27,7 +27,7 @@ describe("Phases - Quiet Form Change Phase", () => {
   });
 
   it("should trigger any on-summon abilities when switching forms", async () => {
-    await game.classicMode.startBattle([SpeciesId.MORPEKO]);
+    await game.classicMode.startBattle(SpeciesId.MORPEKO);
 
     const morpeko = game.field.getPlayerPokemon();
     expect(morpeko.getFormKey()).toBe("full-belly");

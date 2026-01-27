@@ -4,11 +4,6 @@ import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { TempCritBoosterModifier } from "#modifiers/modifier";
-import { BattleEndPhase } from "#phases/battle-end-phase";
-import { CommandPhase } from "#phases/command-phase";
-import { NewBattlePhase } from "#phases/new-battle-phase";
-import { TurnEndPhase } from "#phases/turn-end-phase";
-import { TurnInitPhase } from "#phases/turn-init-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import Phaser from "phaser";
@@ -36,7 +31,7 @@ describe("Items - Dire Hit", () => {
   });
 
   it("should raise CRIT stage by 1", async () => {
-    await game.classicMode.startBattle([SpeciesId.GASTLY]);
+    await game.classicMode.startBattle(SpeciesId.GASTLY);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 
@@ -44,7 +39,7 @@ describe("Items - Dire Hit", () => {
 
     game.move.select(MoveId.POUND);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(enemyPokemon.getCritStage).toHaveReturnedWith(1);
   });
@@ -52,12 +47,12 @@ describe("Items - Dire Hit", () => {
   it("should renew how many battles are left of existing DIRE_HIT when picking up new DIRE_HIT", async () => {
     game.override.itemRewards([{ name: "DIRE_HIT" }]);
 
-    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
 
     game.move.use(MoveId.SPLASH);
     await game.doKillOpponents();
 
-    await game.phaseInterceptor.to(BattleEndPhase);
+    await game.phaseInterceptor.to("BattleEndPhase");
 
     const modifier = game.scene.findModifier(m => m instanceof TempCritBoosterModifier) as TempCritBoosterModifier;
     expect(modifier.getBattleCount()).toBe(4);
@@ -73,11 +68,11 @@ describe("Items - Dire Hit", () => {
         handler.setRowCursor(ShopCursorTarget.REWARDS);
         handler.processInput(Button.ACTION);
       },
-      () => game.isCurrentPhase(CommandPhase) || game.isCurrentPhase(NewBattlePhase),
+      () => game.isCurrentPhase("CommandPhase") || game.isCurrentPhase("NewBattlePhase"),
       true,
     );
 
-    await game.phaseInterceptor.to(TurnInitPhase);
+    await game.phaseInterceptor.to("TurnInitPhase");
 
     // Making sure only one booster is in the modifier list even after picking up another
     let count = 0;

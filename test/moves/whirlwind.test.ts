@@ -42,7 +42,7 @@ describe("Moves - Whirlwind", () => {
   ])("should not hit a flying target: $name (=$move)", async ({ move }) => {
     game.override.moveset([move]);
     // Must have a pokemon in the back so that the move misses instead of fails.
-    await game.classicMode.startBattle([SpeciesId.STARAPTOR, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.STARAPTOR, SpeciesId.MAGIKARP);
 
     const staraptor = game.field.getPlayerPokemon();
 
@@ -56,7 +56,7 @@ describe("Moves - Whirlwind", () => {
   });
 
   it("should force switches randomly", async () => {
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE);
 
     const [bulbasaur, charmander, squirtle] = game.scene.getPlayerParty();
 
@@ -88,7 +88,7 @@ describe("Moves - Whirlwind", () => {
   it("should not force a switch to a challenge-ineligible Pokemon", async () => {
     // Mono-Water challenge, Eevee is ineligible
     game.challengeMode.addChallenge(Challenges.SINGLE_TYPE, PokemonType.WATER + 1, 0);
-    await game.challengeMode.startBattle([SpeciesId.LAPRAS, SpeciesId.EEVEE, SpeciesId.TOXAPEX, SpeciesId.PRIMARINA]);
+    await game.challengeMode.startBattle(SpeciesId.LAPRAS, SpeciesId.EEVEE, SpeciesId.TOXAPEX, SpeciesId.PRIMARINA);
 
     const [lapras, eevee, toxapex, primarina] = game.scene.getPlayerParty();
 
@@ -107,7 +107,7 @@ describe("Moves - Whirlwind", () => {
   });
 
   it("should not force a switch to a fainted Pokemon", async () => {
-    await game.classicMode.startBattle([SpeciesId.LAPRAS, SpeciesId.EEVEE, SpeciesId.TOXAPEX, SpeciesId.PRIMARINA]);
+    await game.classicMode.startBattle(SpeciesId.LAPRAS, SpeciesId.EEVEE, SpeciesId.TOXAPEX, SpeciesId.PRIMARINA);
 
     const [lapras, eevee, toxapex, primarina] = game.scene.getPlayerParty();
 
@@ -134,7 +134,7 @@ describe("Moves - Whirlwind", () => {
   });
 
   it("should not force a switch if there are no available Pokemon to switch into", async () => {
-    await game.classicMode.startBattle([SpeciesId.LAPRAS, SpeciesId.EEVEE]);
+    await game.classicMode.startBattle(SpeciesId.LAPRAS, SpeciesId.EEVEE);
 
     const [lapras, eevee] = game.scene.getPlayerParty();
 
@@ -161,7 +161,7 @@ describe("Moves - Whirlwind", () => {
   it("should fail when player uses Whirlwind against an opponent with only one available Pokémon", async () => {
     // Set up the battle scenario with the player knowing Whirlwind
     game.override.startingWave(5).enemySpecies(SpeciesId.PIDGEY).moveset([MoveId.WHIRLWIND]);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const enemyParty = game.scene.getEnemyParty();
 
@@ -194,7 +194,7 @@ describe("Moves - Whirlwind", () => {
       })
       .enemyMoveset([MoveId.SPLASH, MoveId.LUNAR_DANCE])
       .moveset([MoveId.WHIRLWIND, MoveId.SPLASH]);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.TOTODILE]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.TOTODILE);
 
     // expect the enemy to have at least 4 pokemon, necessary for this check to even work
     expect(game.scene.getEnemyParty().length, "enemy must have exactly 4 pokemon").toBeGreaterThanOrEqual(4);
@@ -231,7 +231,7 @@ describe("Moves - Whirlwind", () => {
       .moveset([MoveId.WHIRLWIND, MoveId.SPLASH])
       .enemyMoveset(MoveId.SPLASH)
       .ability(AbilityId.BALL_FETCH);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const user = game.field.getPlayerPokemon();
 

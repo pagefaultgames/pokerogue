@@ -109,6 +109,7 @@ const noTransitionModes = [
   UiMode.CHANGE_PASSWORD_FORM,
 ];
 
+// biome-ignore lint/style/useNamingConvention: a unique case (only 2 letters)
 export class UI extends Phaser.GameObjects.Container {
   private mode: UiMode;
   private modeChain: UiMode[];
@@ -650,7 +651,8 @@ export class UI extends Phaser.GameObjects.Container {
    */
   public getGamepadType(): string {
     if (globalScene.inputMethod === "gamepad") {
-      return globalScene.inputController.getConfig(globalScene.inputController.selectedDevice[Device.GAMEPAD]).padType;
+      // TODO: is this bang correct?
+      return globalScene.inputController.getConfig(globalScene.inputController.selectedDevice[Device.GAMEPAD]!).padType;
     }
     return globalScene.inputMethod;
   }

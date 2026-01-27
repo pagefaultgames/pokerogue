@@ -33,7 +33,7 @@ describe("Moves - Crafty Shield", () => {
   });
 
   it("should protect the user and allies from status moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD, SpeciesId.BLASTOISE);
 
     const [charizard, blastoise] = game.scene.getPlayerField();
     game.move.use(MoveId.CRAFTY_SHIELD, BattlerIndex.PLAYER);
@@ -49,7 +49,7 @@ describe("Moves - Crafty Shield", () => {
 
   it("should not protect the user and allies from attack moves", async () => {
     game.override.enemyMoveset(MoveId.TACKLE);
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD, SpeciesId.BLASTOISE);
 
     const [charizard, blastoise] = game.scene.getPlayerField();
 
@@ -65,7 +65,7 @@ describe("Moves - Crafty Shield", () => {
 
   it("should not block entry hazards and field-targeted moves", async () => {
     game.override.enemyMoveset([MoveId.PERISH_SONG, MoveId.TOXIC_SPIKES]);
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD, SpeciesId.BLASTOISE);
 
     const [charizard, blastoise] = game.scene.getPlayerField();
 
@@ -83,7 +83,7 @@ describe("Moves - Crafty Shield", () => {
   it("should protect the user and allies from moves that ignore other protection", async () => {
     game.override.moveset(MoveId.CURSE);
 
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD, SpeciesId.BLASTOISE);
 
     const [charizard, blastoise] = game.scene.getPlayerField();
 
@@ -103,7 +103,7 @@ describe("Moves - Crafty Shield", () => {
   });
 
   it("should not block allies' self or ally-targeted moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD, SpeciesId.BLASTOISE);
 
     const [charizard, blastoise] = game.scene.getPlayerField();
 
