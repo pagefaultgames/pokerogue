@@ -57,7 +57,7 @@ describe("Moves - Grudge", () => {
   });
 
   it("should drain PP of the original move used for move-calling moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     const ratatta = game.field.getEnemyPokemon();
@@ -82,7 +82,7 @@ describe("Moves - Grudge", () => {
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.GRUDGE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     expect(ratatta).toHaveBattlerTag(BattlerTagType.GRUDGE);
