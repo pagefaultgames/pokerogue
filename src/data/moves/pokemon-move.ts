@@ -42,8 +42,6 @@ export class PokemonMove {
    * Checks whether this move can be performed by a Pokemon, without consideration for the move's targets.
    * The move is unusable if it is out of PP, restricted by an effect, or unimplemented.
    *
-   * Should not be confused with {@linkcode isSelectable}, which only checks if the move can be selected by a Pokemon.
-   *
    * @param pokemon - The {@linkcode Pokemon} attempting to use this move
    * @param ignorePp - Whether to ignore checking if the move is out of PP; default `false`
    * @param forSelection - Whether this is being checked for move selection; default `false`
@@ -58,7 +56,7 @@ export class PokemonMove {
       return [false, i18next.t("battle:moveNotImplemented", { moveName: moveName.replace(" (N)", "") })];
     }
 
-    if (!ignorePp && move.pp !== -1 && this.ppUsed >= this.getMovePp()) {
+    if (!ignorePp && this.isOutOfPp()) {
       return [false, i18next.t("battle:moveNoPp", { moveName: move.name })];
     }
 
@@ -79,17 +77,6 @@ export class PokemonMove {
 
   getMove(): Move {
     return allMoves[this.moveId];
-  }
-
-  /**
-   * Determine whether the move can be selected by the pokemon based on its own requirements
-   * @remarks
-   * Does not check for PP, moves blocked by challenges, or unimplemented moves, all of which are handled by {@linkcode isUsable}
-   * @param pokemon - The Pokemon under consideration
-   * @returns An tuple containing a boolean indicating whether the move can be selected, and a string with the reason if it cannot
-   */
-  public isSelectable(pokemon: Pokemon): [selectable: boolean, preventionText: string] {
-    return pokemon.isMoveSelectable(this.moveId);
   }
 
   /**
