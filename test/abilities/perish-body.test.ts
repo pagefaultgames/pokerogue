@@ -22,14 +22,13 @@ describe("Abilities - Perish Song", () => {
       .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .starterSpecies(SpeciesId.CURSOLA)
       .ability(AbilityId.PERISH_BODY)
       .moveset(MoveId.SPLASH)
       .enemyMoveset(MoveId.AQUA_JET);
   });
 
   it("should trigger when hit with damaging move", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.CURSOLA);
     const cursola = game.field.getPlayerPokemon();
     const magikarp = game.field.getEnemyPokemon();
 
@@ -42,7 +41,7 @@ describe("Abilities - Perish Song", () => {
 
   it("should trigger even when fainting", async () => {
     game.override.enemyLevel(100).startingLevel(1);
-    await game.classicMode.startBattle([SpeciesId.CURSOLA, SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.CURSOLA, SpeciesId.FEEBAS);
     const magikarp = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.SPLASH);
@@ -54,7 +53,7 @@ describe("Abilities - Perish Song", () => {
 
   it("should not activate if attacker already has perish song", async () => {
     game.override.enemyMoveset([MoveId.PERISH_SONG, MoveId.AQUA_JET, MoveId.SPLASH]);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.CURSOLA]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.CURSOLA);
     const feebas = game.field.getPlayerPokemon();
     const magikarp = game.field.getEnemyPokemon();
 
@@ -86,7 +85,7 @@ describe("Abilities - Perish Song", () => {
       .enemyMoveset([MoveId.PERISH_SONG, MoveId.AQUA_JET, MoveId.SPLASH])
       .moveset([MoveId.WHIRLWIND, MoveId.SPLASH])
       .startingWave(5);
-    await game.classicMode.startBattle([SpeciesId.CURSOLA]);
+    await game.classicMode.startBattle(SpeciesId.CURSOLA);
     const cursola = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.WHIRLWIND);

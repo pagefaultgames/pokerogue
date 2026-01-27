@@ -14,7 +14,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @returns Whether the matcher passed
  */
 export function toHaveTakenDamage(
-  this: MatcherState,
+  this: Readonly<MatcherState>,
   received: unknown,
   expectedDamageTaken: number,
   roundDown = true,

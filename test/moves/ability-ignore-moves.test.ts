@@ -33,7 +33,7 @@ describe("Moves - Ability-Ignoring Moves", () => {
     { name: "Moongeist Beam", move: MoveId.MOONGEIST_BEAM },
     { name: "Photon Geyser", move: MoveId.PHOTON_GEYSER },
   ])("$name should ignore ignorable enemy abilities during move use", async ({ move }) => {
-    await game.classicMode.startBattle([SpeciesId.NECROZMA]);
+    await game.classicMode.startBattle(SpeciesId.NECROZMA);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
@@ -53,7 +53,7 @@ describe("Moves - Ability-Ignoring Moves", () => {
   });
 
   it("should not ignore enemy abilities when called by move-calling moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.MILOTIC]);
+    await game.classicMode.startBattle(SpeciesId.MILOTIC);
 
     game.move.use(MoveId.METRONOME);
     game.move.forceMetronomeMove(MoveId.PHOTON_GEYSER, true);
@@ -69,7 +69,7 @@ describe("Moves - Ability-Ignoring Moves", () => {
   // TODO: Verify this behavior on cart
   it("should ignore enemy abilities when called by Instruct", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.SOLGALEO, SpeciesId.LUNALA]);
+    await game.classicMode.startBattle(SpeciesId.SOLGALEO, SpeciesId.LUNALA);
 
     const solgaleo = game.field.getPlayerPokemon();
 

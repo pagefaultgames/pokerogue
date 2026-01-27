@@ -11,6 +11,8 @@ import type { Nature } from "#enums/nature";
 import type { PokemonType } from "#enums/pokemon-type";
 import type { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
+// biome-ignore lint/correctness/noUnusedImports: TSDoc
+import type { Pokemon } from "#field/pokemon";
 import type { AttackMoveResult } from "#types/attack-move-result";
 import type { IllusionData } from "#types/illusion-data";
 import type { SerializedSpeciesForm } from "#types/pokemon-common";
@@ -70,7 +72,7 @@ function deserializePokemonSpeciesForm(value: SerializedSpeciesForm | PokemonSpe
 
 interface SerializedIllusionData extends Omit<IllusionData, "fusionSpecies"> {
   /** The id of the illusioned fusion species, or `undefined` if not a fusion */
-  fusionSpecies?: SpeciesId;
+  fusionSpecies?: SpeciesId | undefined;
 }
 
 interface SerializedPokemonSummonData {
@@ -78,17 +80,17 @@ interface SerializedPokemonSummonData {
   moveQueue: TurnMove[];
   tags: BattlerTag[];
   abilitySuppressed: boolean;
-  speciesForm?: SerializedSpeciesForm;
-  fusionSpeciesForm?: SerializedSpeciesForm;
-  ability?: AbilityId;
-  passiveAbility?: AbilityId;
-  gender?: Gender;
-  fusionGender?: Gender;
+  speciesForm?: SerializedSpeciesForm | undefined;
+  fusionSpeciesForm?: SerializedSpeciesForm | undefined;
+  ability?: AbilityId | undefined;
+  passiveAbility?: AbilityId | undefined;
+  gender?: Gender | undefined;
+  fusionGender?: Gender | undefined;
   stats: number[];
-  moveset?: PokemonMove[];
+  moveset?: PokemonMove[] | undefined;
   types: PokemonType[];
-  addedType?: PokemonType;
-  illusion?: SerializedIllusionData;
+  addedType?: PokemonType | undefined;
+  illusion?: SerializedIllusionData | undefined;
   berriesEatenLast: BerryType[];
   moveHistory: TurnMove[];
 }
@@ -112,7 +114,7 @@ export class PokemonSummonData {
   public tags: BattlerTag[] = [];
   public abilitySuppressed = false;
 
-  // Overrides for transform.
+  // Overrides for transform and company.
   // TODO: Move these into a separate class & add rage fist hit count
   public speciesForm: PokemonSpeciesForm | null = null;
   public fusionSpeciesForm: PokemonSpeciesForm | null = null;
@@ -287,6 +289,7 @@ export class PokemonWaveData {
    */
   public abilitiesApplied: Set<AbilityId> = new Set<AbilityId>();
   /** Whether the pokemon's ability has been revealed or not */
+  // TODO: this doesn't account for passives
   public abilityRevealed = false;
 }
 

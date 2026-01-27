@@ -10,7 +10,7 @@ import { getMoveTargets } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { CommandPhase } from "#phases/command-phase";
 import type { EnemyCommandPhase } from "#phases/enemy-command-phase";
-import { MoveEffectPhase } from "#phases/move-effect-phase";
+import type { MoveEffectPhase } from "#phases/move-effect-phase";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
 import type { RandomMoveAttr } from "#types/move-types";
 import { coerceArray } from "#utils/array";
@@ -28,7 +28,7 @@ export class MoveHelper extends GameManagerHelper {
    * @returns A promise that resolves once the next MoveEffectPhase has been reached (not run).
    */
   public async forceHit(): Promise<void> {
-    await this.game.phaseInterceptor.to(MoveEffectPhase, false);
+    await this.game.phaseInterceptor.to("MoveEffectPhase", false);
     const moveEffectPhase = this.game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase;
     vi.spyOn(moveEffectPhase.move, "calculateBattleAccuracy").mockReturnValue(-1);
   }
@@ -40,7 +40,7 @@ export class MoveHelper extends GameManagerHelper {
    * @returns A promise that resolves once the next MoveEffectPhase has been reached (not run).
    */
   public async forceMiss(firstTargetOnly = false): Promise<void> {
-    await this.game.phaseInterceptor.to(MoveEffectPhase, false);
+    await this.game.phaseInterceptor.to("MoveEffectPhase", false);
     const moveEffectPhase = this.game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase;
     const accuracy = vi.spyOn(moveEffectPhase.move, "calculateBattleAccuracy");
 
@@ -291,7 +291,7 @@ export class MoveHelper extends GameManagerHelper {
    * Does not require the given move to be in the enemy's moveset beforehand,
    * but **overwrites the pokemon's moveset** and **disables any prior moveset overrides**!
    *
-   * @param moveId - The {@linkcode Move | move ID} the enemy will be forced to use.
+   * @param moveId - The {@linkcode MoveId | move ID} the enemy will be forced to use.
    * @param target - The {@linkcode BattlerIndex | target} against which the enemy will use the given move;
    * defaults to normal target selection priorities if omitted or not single-target.
    * @param tera - (Default `false`) If set to `true`, will also force the enemy to terastallize on their next action,

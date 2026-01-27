@@ -10,6 +10,7 @@ import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { speciesStarterCosts } from "#balance/starters";
 import { bypassLogin, isBeta, isDev } from "#constants/app-constants";
 import { EntryHazardTag } from "#data/arena-tag";
+import { getSerializedDailyRunConfig, parseDailySeed } from "#data/daily-seed/daily-seed-utils";
 import { allMoves, allSpecies } from "#data/data-lists";
 import type { Egg } from "#data/egg";
 import { pokemonFormChanges } from "#data/pokemon-forms";
@@ -804,6 +805,7 @@ export class GameData {
       seed: globalScene.seed,
       playTime: globalScene.sessionPlayTime,
       gameMode: globalScene.gameMode.modeId,
+      dailyConfig: getSerializedDailyRunConfig(),
       party: globalScene.getPlayerParty().map(p => new PokemonData(p)),
       enemyParty: globalScene.getEnemyParty().map(p => new PokemonData(p)),
       modifiers: globalScene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
@@ -933,6 +935,8 @@ export class GameData {
     globalScene.resetSeed();
 
     console.log("Seed:", globalScene.seed);
+
+    globalScene.gameMode.trySetCustomDailyConfig(JSON.stringify(fromSession.dailyConfig));
 
     globalScene.sessionPlayTime = fromSession.playTime || 0;
     globalScene.lastSavePlayTime = 0;
@@ -1230,6 +1234,10 @@ export class GameData {
         case "mysteryEncounterSaveData":
           return new MysteryEncounterSaveData(v);
 
+        case "dailyConfig":
+          // make sure the config is valid
+          return parseDailySeed(JSON.stringify(v));
+
         default:
           return v;
       }
@@ -1243,7 +1251,7 @@ export class GameData {
   saveAll(skipVerification = false, sync = false, useCachedSession = false, useCachedSystem = false): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       executeIf(!skipVerification, updateUserInfo).then(success => {
-        if (success !== null && !success) {
+        if (success != null && !success) {
           return resolve(false);
         }
         if (sync) {
@@ -1992,7 +2000,8 @@ export class GameData {
   }
 
   getSpeciesStarterValue(speciesId: SpeciesId): number {
-    const baseValue = speciesStarterCosts[speciesId];
+    // TODO: is this bang correct?
+    const baseValue = speciesStarterCosts[speciesId]!;
     let value = baseValue;
 
     const decrementValue = (value: number) => {

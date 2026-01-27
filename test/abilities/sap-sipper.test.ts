@@ -31,7 +31,7 @@ describe("Abilities - Sap Sipper", () => {
   });
 
   it("should nullify all effects of Grass-type attacks and raise ATK by 1 stage", async () => {
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR);
 
     game.move.use(MoveId.LEAFAGE);
     await game.toNextTurn();
@@ -42,7 +42,7 @@ describe("Abilities - Sap Sipper", () => {
   });
 
   it("should work on grass status moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 
@@ -54,7 +54,7 @@ describe("Abilities - Sap Sipper", () => {
   });
 
   it("should not activate on non Grass-type moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR);
 
     game.move.use(MoveId.TACKLE);
     await game.toEndOfTurn();
@@ -66,7 +66,7 @@ describe("Abilities - Sap Sipper", () => {
   });
 
   it("should not activate against field-targeted moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR);
 
     game.move.use(MoveId.GRASSY_TERRAIN);
     await game.toNextTurn();
@@ -77,7 +77,7 @@ describe("Abilities - Sap Sipper", () => {
 
   it("should trigger and cancel multi-hit moves, including ones called indirectly", async () => {
     game.move.forceMetronomeMove(MoveId.BULLET_SEED);
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
@@ -98,7 +98,7 @@ describe("Abilities - Sap Sipper", () => {
   });
 
   it("should not activate on self-targeted status moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR);
 
     const player = game.field.getPlayerPokemon();
 
@@ -114,7 +114,7 @@ describe("Abilities - Sap Sipper", () => {
   });
 
   it("should activate even on missed moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR);
 
     game.move.use(MoveId.LEAF_BLADE);
     await game.move.forceMiss();

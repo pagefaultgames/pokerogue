@@ -46,8 +46,8 @@ describe("Moves - Move-calling Moves", () => {
   describe("Nature Power", () => {
     // Note: We have to access the prototype here since `allMoves` isn't initialized yet when we want to
     // determine the test case names
-    const getNaturePowerType = NaturePowerAttr.prototype["getMoveIdForTerrain"];
-    let spy: MockInstance<typeof getNaturePowerType>;
+    const getMoveIdForTerrain = NaturePowerAttr.prototype['getMoveIdForTerrain'];
+    let spy: MockInstance<typeof getMoveIdForTerrain>;
 
     beforeEach(() => {
       spy = vi.spyOn(
@@ -59,14 +59,14 @@ describe("Moves - Move-calling Moves", () => {
 
     it.each(
       getEnumValues(BiomeId).map(biome => ({
-        move: getNaturePowerType(TerrainType.NONE, biome),
-        moveName: toTitleCase(MoveId[getNaturePowerType(TerrainType.NONE, biome)]),
+        move: getMoveIdForTerrain(TerrainType.NONE, biome),
+        moveName: toTitleCase(MoveId[getMoveIdForTerrain(TerrainType.NONE, biome)]),
         biome,
         biomeName: BiomeId[biome],
       })),
     )("should select $moveName if the current biome is $biomeName", async ({ move, biome }) => {
       game.override.startingBiome(biome);
-      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
       game.move.use(MoveId.NATURE_POWER);
       await game.toEndOfTurn();
@@ -85,14 +85,14 @@ describe("Moves - Move-calling Moves", () => {
     // TODO: Add after terrain override is added
     it.todo.each(
       getEnumValues(TerrainType).map(terrain => ({
-        move: getNaturePowerType(terrain, BiomeId.TOWN),
-        moveName: toTitleCase(MoveId[getNaturePowerType(terrain, BiomeId.TOWN)]),
+        move: getMoveIdForTerrain(terrain, BiomeId.TOWN),
+        moveName: toTitleCase(MoveId[getMoveIdForTerrain(terrain, BiomeId.TOWN)]),
         terrain,
         terrainName: TerrainType[terrain],
       })),
     )("should select $moveName if the current terrain is $terrainName", async ({ move /*, terrain */ }) => {
       //  game.override.terrain(terrainType);
-      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
       game.move.use(MoveId.NATURE_POWER);
       await game.toEndOfTurn();
@@ -179,7 +179,7 @@ describe("Moves - Move-calling Moves", () => {
       "should target called moves randomly if multiple valid targets exist",
       async () => {
         game.override.battleStyle("double");
-        await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+        await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
         const feebas = game.field.getPlayerPokemon();
 
@@ -216,7 +216,7 @@ describe("Moves - Move-calling Moves", () => {
 
     it.runIf(move === MoveId.MIRROR_MOVE)("should always target the Mirror Move recipient if possible", async () => {
       game.override.battleStyle("double");
-      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
       const feebas = game.field.getPlayerPokemon();
       // Mock RNG functions to return high rolls (ie last eligible target)
@@ -247,7 +247,7 @@ describe("Moves - Move-calling Moves", () => {
 
     // testing Metronome here is pointless since we literally mock out its randomness
     it.skipIf(move === MoveId.METRONOME)("should return MoveId.NONE if an invalid move would be picked", async () => {
-      await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
       const firstBanlistedMove = [...banlist.values()][0];
       expect(attr["isMoveAllowed"](firstBanlistedMove)).toBe(false);
 
@@ -256,7 +256,7 @@ describe("Moves - Move-calling Moves", () => {
     });
 
     it("should fail if MoveId.NONE would otherwise be called", async () => {
-      await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
 
       getMoveSpy.mockReturnValueOnce(MoveId.NONE);
 
@@ -275,7 +275,7 @@ describe("Moves - Move-calling Moves", () => {
 
     it("should call a random valid move from the user's moveset", async () => {
       game.override.moveset([MoveId.SLEEP_TALK, MoveId.DIG, MoveId.FLY, MoveId.SWORDS_DANCE]); // Dig and Fly are invalid moves, Swords Dance should always be called
-      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
       game.move.select(MoveId.SLEEP_TALK);
       await game.toNextTurn();
@@ -299,7 +299,7 @@ describe("Moves - Move-calling Moves", () => {
 
     it("should fail if all the user's moves are invalid", async () => {
       game.override.moveset([MoveId.SLEEP_TALK, MoveId.COPYCAT]);
-      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
       const feebas = game.field.getPlayerPokemon();
       game.move.select(MoveId.SLEEP_TALK);
@@ -310,7 +310,7 @@ describe("Moves - Move-calling Moves", () => {
 
     it("should fail if the user is not asleep", async () => {
       game.override.statusEffect(StatusEffect.POISON);
-      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
       game.move.select(MoveId.SLEEP_TALK);
       await game.toEndOfTurn();
@@ -320,7 +320,7 @@ describe("Moves - Move-calling Moves", () => {
     });
 
     it("should fail the turn that the user wakes up from Sleep", async () => {
-      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
       const feebas = game.field.getPlayerPokemon();
       expect(feebas).toHaveStatusEffect(StatusEffect.SLEEP);
@@ -336,7 +336,7 @@ describe("Moves - Move-calling Moves", () => {
   describe("Assist", () => {
     it("should call a random eligible move from an ally's moveset", async () => {
       game.override.battleStyle("double");
-      await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.SHUCKLE]);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.SHUCKLE);
 
       const [feebas, shuckle] = game.scene.getPlayerField();
       game.move.changeMoveset(feebas, [MoveId.CIRCLE_THROW, MoveId.ASSIST, MoveId.WOOD_HAMMER, MoveId.ACID_SPRAY]);
@@ -357,7 +357,7 @@ describe("Moves - Move-calling Moves", () => {
     });
 
     it("should consider off-field allies", async () => {
-      await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.SHUCKLE]);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.SHUCKLE);
 
       const [feebas, shuckle] = game.scene.getPlayerParty();
       game.move.changeMoveset(shuckle, MoveId.SOAK);
@@ -373,7 +373,7 @@ describe("Moves - Move-calling Moves", () => {
     });
 
     it("should fail if there are no allies, even if user has eligible moves", async () => {
-      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
       const feebas = game.field.getPlayerPokemon();
       game.move.changeMoveset(feebas, [MoveId.ASSIST, MoveId.TACKLE]);
@@ -385,7 +385,7 @@ describe("Moves - Move-calling Moves", () => {
     });
 
     it("should fail if allies have no eligible moves", async () => {
-      await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.SHUCKLE]);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.SHUCKLE);
 
       const [feebas, shuckle] = game.scene.getPlayerParty();
       // All of these are ineligible moves
@@ -416,7 +416,7 @@ describe("Moves - Move-calling Moves", () => {
       'should update "last move" tracker for moves failing conditions, but not pre-move interrupts',
       async () => {
         game.override.enemyStatusEffect(StatusEffect.SLEEP);
-        await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+        await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
         game.move.use(MoveId.SUCKER_PUNCH);
         await game.move.forceEnemyMove(MoveId.SPLASH);
@@ -434,7 +434,7 @@ describe("Moves - Move-calling Moves", () => {
     );
 
     it("should fail if no prior moves have been made", async () => {
-      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
       game.move.use(move);
       await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -445,7 +445,7 @@ describe("Moves - Move-calling Moves", () => {
     });
 
     it("should fail when trying to copy an invalid move", async () => {
-      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
       expect(banlist).toContain(move);
 
@@ -459,7 +459,7 @@ describe("Moves - Move-calling Moves", () => {
     });
 
     it("should copy moves called by other move-calling moves", async () => {
-      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
       game.move.use(MoveId.METRONOME);
       game.move.forceMetronomeMove(MoveId.SWORDS_DANCE);

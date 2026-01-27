@@ -31,7 +31,7 @@ describe("Form Change Phase", () => {
   });
 
   it("Zacian should successfully change into Crowned form", async () => {
-    await game.classicMode.startBattle([SpeciesId.ZACIAN]);
+    await game.classicMode.startBattle(SpeciesId.ZACIAN);
 
     // Before the form change: Should be Hero form
     const zacian = game.field.getPlayerPokemon();

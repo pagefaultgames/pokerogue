@@ -31,7 +31,7 @@ describe("Ability - Embody Aspect", () => {
   });
 
   it("should activate on switch-in if user is Terastallized", async () => {
-    await game.classicMode.startBattle([SpeciesId.OGERPON, SpeciesId.ABOMASNOW]);
+    await game.classicMode.startBattle(SpeciesId.OGERPON, SpeciesId.ABOMASNOW);
 
     const ogerpon = game.field.getPlayerPokemon();
     expect(ogerpon.formIndex).toBe(baseForm);
