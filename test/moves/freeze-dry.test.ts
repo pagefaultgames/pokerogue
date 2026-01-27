@@ -34,7 +34,7 @@ describe("Move - Freeze-Dry", () => {
       .enemyMoveset(MoveId.SPLASH)
       .ability(AbilityId.BALL_FETCH);
 
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     feebas = game.field.getPlayerPokemon();
     enemy = game.field.getEnemyPokemon();

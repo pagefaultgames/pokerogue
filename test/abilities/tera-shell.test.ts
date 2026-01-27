@@ -112,7 +112,7 @@ describe("Abilities - Tera Shell", () => {
   });
 
   it("should overwrite Freeze-Dry", async () => {
-    await game.classicMode.startBattle([SpeciesId.TERAPAGOS]);
+    await game.classicMode.startBattle(SpeciesId.TERAPAGOS);
 
     const terapagos = game.field.getPlayerPokemon();
     terapagos.summonData.types = [PokemonType.WATER];

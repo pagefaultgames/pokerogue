@@ -31,7 +31,7 @@ describe("Moves - Synchronoise", () => {
 
   it("should affect all opponents that share a type with the user", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.BIBAREL, SpeciesId.STARLY]);
+    await game.classicMode.startBattle(SpeciesId.BIBAREL, SpeciesId.STARLY);
 
     const [bibarel, starly, karp1, karp2] = game.scene.getField();
     // Mock 2nd magikarp to be a completely different type
@@ -62,7 +62,7 @@ describe("Moves - Synchronoise", () => {
   });
 
   it("should consider the user/target's normal types if Terastallized into Tera Stellar", async () => {
-    await game.classicMode.startBattle([SpeciesId.ABRA]);
+    await game.classicMode.startBattle(SpeciesId.ABRA);
 
     const abra = game.field.getPlayerPokemon();
     const karp = game.field.getEnemyPokemon();
@@ -77,7 +77,7 @@ describe("Moves - Synchronoise", () => {
   });
 
   it("should count as ineffective if no enemies share types with the user", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGNETON]);
+    await game.classicMode.startBattle(SpeciesId.MAGNETON);
 
     const magneton = game.field.getPlayerPokemon();
     const karp = game.field.getEnemyPokemon();
@@ -91,7 +91,7 @@ describe("Moves - Synchronoise", () => {
   });
 
   it("should never affect any Pokemon if the user is typeless", async () => {
-    await game.classicMode.startBattle([SpeciesId.BIBAREL]);
+    await game.classicMode.startBattle(SpeciesId.BIBAREL);
 
     const bibarel = game.field.getPlayerPokemon();
     const karp = game.field.getEnemyPokemon();

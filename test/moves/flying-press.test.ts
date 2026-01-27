@@ -31,7 +31,7 @@ describe("Move - Flying Press", () => {
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
 
-    await game.classicMode.startBattle([SpeciesId.HAWLUCHA]);
+    await game.classicMode.startBattle(SpeciesId.HAWLUCHA);
 
     hawlucha = game.field.getPlayerPokemon();
     enemy = game.field.getEnemyPokemon();
