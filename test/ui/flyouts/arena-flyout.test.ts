@@ -49,14 +49,14 @@ describe("UI - Arena Flyout", () => {
   });
 
   // Helper type to get around unexportedness
-  type infoType = Parameters<(typeof flyout)["getTagText"]>[0];
+  type InfoType = Parameters<(typeof flyout)["getTagText"]>[0];
 
   describe("getTagText", () => {
-    it.each<{ info: Pick<infoType, "name" | "duration" | "maxDuration">; text: string }>([
+    it.each<{ info: Pick<InfoType, "name" | "duration" | "maxDuration">; text: string }>([
       { info: { name: "Spikes (1)", duration: 0, maxDuration: 0 }, text: "Spikes (1)\n" },
       { info: { name: "Grassy Terrain", duration: 1, maxDuration: 5 }, text: "Grassy Terrain  (1/5)\n" },
     ])("should get the name of an arena effect", ({ info, text }) => {
-      const got = flyout["getTagText"](info as infoType);
+      const got = flyout["getTagText"](info as InfoType);
       expect(got).toBe(text);
     });
   });
