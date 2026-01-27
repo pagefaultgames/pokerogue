@@ -28,6 +28,15 @@ export function getPokemonSpecies(species: SpeciesId | SpeciesId[]): PokemonSpec
 }
 
 /**
+ * Converts the internal id of the Pokemon into its national dex number
+ * @param speciesId - The {@linkcode SpeciesId} to get the dex number of
+ * @returns The national dex number matching the `SpeciesId`
+ */
+export function getDexNumber(speciesId: SpeciesId): SpeciesId {
+  return speciesId % 2000;
+}
+
+/**
  * Method to get the daily list of starters with Pokerus.
  * @returns A list of starters with Pokerus
  */

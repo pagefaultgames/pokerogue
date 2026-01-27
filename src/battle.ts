@@ -43,7 +43,7 @@ import i18next from "i18next";
 
 export interface TurnCommand {
   command: Command;
-  cursor?: number;
+  cursor?: number | undefined;
   move?: TurnMove;
   targets?: BattlerIndex[];
   skip?: boolean;
@@ -112,9 +112,9 @@ export class Battle {
    */
   public enemyFaintedThisTurn = false;
 
-  public mysteryEncounterType?: MysteryEncounterType;
+  public mysteryEncounterType?: MysteryEncounterType | undefined;
   /** If the current battle is a Mystery Encounter, this will always be defined */
-  public mysteryEncounter?: MysteryEncounter;
+  public mysteryEncounter?: MysteryEncounter | undefined;
 
   /**
    * Tracker for whether the last run attempt failed.

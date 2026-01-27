@@ -31,7 +31,7 @@ describe("Moves - Octolock", () => {
   });
 
   it("lowers DEF and SPDEF stat stages of the target Pokemon by 1 each turn", async () => {
-    await game.classicMode.startBattle([SpeciesId.GRAPPLOCT]);
+    await game.classicMode.startBattle(SpeciesId.GRAPPLOCT);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 
@@ -52,7 +52,7 @@ describe("Moves - Octolock", () => {
 
   it("if target pokemon has BIG_PECKS, should only lower SPDEF stat stage by 1", async () => {
     game.override.enemyAbility(AbilityId.BIG_PECKS);
-    await game.classicMode.startBattle([SpeciesId.GRAPPLOCT]);
+    await game.classicMode.startBattle(SpeciesId.GRAPPLOCT);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 
@@ -66,7 +66,7 @@ describe("Moves - Octolock", () => {
 
   it("if target pokemon has WHITE_SMOKE, should not reduce any stat stages", async () => {
     game.override.enemyAbility(AbilityId.WHITE_SMOKE);
-    await game.classicMode.startBattle([SpeciesId.GRAPPLOCT]);
+    await game.classicMode.startBattle(SpeciesId.GRAPPLOCT);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 
@@ -80,7 +80,7 @@ describe("Moves - Octolock", () => {
 
   it("if target pokemon has CLEAR_BODY, should not reduce any stat stages", async () => {
     game.override.enemyAbility(AbilityId.CLEAR_BODY);
-    await game.classicMode.startBattle([SpeciesId.GRAPPLOCT]);
+    await game.classicMode.startBattle(SpeciesId.GRAPPLOCT);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 
@@ -93,7 +93,7 @@ describe("Moves - Octolock", () => {
   });
 
   it("traps the target pokemon", async () => {
-    await game.classicMode.startBattle([SpeciesId.GRAPPLOCT]);
+    await game.classicMode.startBattle(SpeciesId.GRAPPLOCT);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 
@@ -109,7 +109,7 @@ describe("Moves - Octolock", () => {
 
   it("does not work on ghost type pokemon", async () => {
     game.override.enemyMoveset(MoveId.OCTOLOCK);
-    await game.classicMode.startBattle([SpeciesId.GASTLY]);
+    await game.classicMode.startBattle(SpeciesId.GASTLY);
 
     const playerPokemon = game.field.getPlayerPokemon();
 
@@ -126,7 +126,7 @@ describe("Moves - Octolock", () => {
   });
 
   it("does not work on pokemon with added ghost type via Trick-or-Treat", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const enemy = game.field.getEnemyPokemon();
 

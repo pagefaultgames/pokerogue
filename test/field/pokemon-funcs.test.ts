@@ -30,7 +30,7 @@ describe("Spec - Pokemon Functions", () => {
 
   describe("doSetStatus", () => {
     it("should change the Pokemon's status, ignoring feasibility checks", async () => {
-      await game.classicMode.startBattle([SpeciesId.ACCELGOR]);
+      await game.classicMode.startBattle(SpeciesId.ACCELGOR);
 
       const player = game.field.getPlayerPokemon();
 

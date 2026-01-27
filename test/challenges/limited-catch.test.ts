@@ -33,7 +33,7 @@ describe("Challenges - Limited Catch", () => {
 
   it("should allow wild Pokémon to be caught on X1 waves", async () => {
     game.override.startingWave(31);
-    await game.challengeMode.startBattle([SpeciesId.NUZLEAF]);
+    await game.challengeMode.startBattle(SpeciesId.NUZLEAF);
 
     game.doThrowPokeball(PokeballType.MASTER_BALL);
     await game.toEndOfTurn();
@@ -43,7 +43,7 @@ describe("Challenges - Limited Catch", () => {
 
   it("should prevent Pokémon from being caught on non-X1 waves", async () => {
     game.override.startingWave(53);
-    await game.challengeMode.startBattle([SpeciesId.NUZLEAF]);
+    await game.challengeMode.startBattle(SpeciesId.NUZLEAF);
 
     game.doThrowPokeball(PokeballType.MASTER_BALL);
     await game.toEndOfTurn();
@@ -58,7 +58,7 @@ describe("Challenges - Limited Catch", () => {
       .startingWave(12);
     game.scene.money = 20000;
 
-    await game.challengeMode.runToSummon([SpeciesId.NUZLEAF]);
+    await game.challengeMode.runToSummon(SpeciesId.NUZLEAF);
 
     await runMysteryEncounterToEnd(game, 1);
 

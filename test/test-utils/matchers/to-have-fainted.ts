@@ -8,7 +8,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @param received - The object to check. Should be a {@linkcode Pokemon}
  * @returns Whether the matcher passed
  */
-export function toHaveFainted(this: MatcherState, received: unknown): SyncExpectationResult {
+export function toHaveFainted(this: Readonly<MatcherState>, received: unknown): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
     return {
       pass: this.isNot,

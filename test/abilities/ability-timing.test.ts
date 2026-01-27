@@ -27,7 +27,7 @@ describe("Ability Timing", () => {
   });
 
   it("should trigger after switch check", async () => {
-    await game.classicMode.runToSummon([SpeciesId.EEVEE, SpeciesId.FEEBAS]);
+    await game.classicMode.runToSummon(SpeciesId.EEVEE, SpeciesId.FEEBAS);
     await game.classicMode.startBattleWithSwitch(1);
 
     expect(i18next.t).toHaveBeenCalledWith("battle:statFell", expect.objectContaining({ count: 1 }));

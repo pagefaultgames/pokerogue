@@ -37,7 +37,7 @@ describe("Moves - Retaliate", () => {
   });
 
   it("should double in power if an allied party member fainted last turn", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
 
     const [feebas, milotic] = game.scene.getPlayerParty();
 
@@ -64,7 +64,7 @@ describe("Moves - Retaliate", () => {
 
   it("should not work for same-turn faints", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
 
     game.move.use(MoveId.RETALIATE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.use(MoveId.MEMENTO, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY);
@@ -82,7 +82,7 @@ describe("Moves - Retaliate", () => {
 
   it("should work for enemies", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const karp2 = game.scene.getEnemyField()[1];
 
@@ -100,7 +100,7 @@ describe("Moves - Retaliate", () => {
   });
 
   it("should reset enemy counter on new wave start", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.GUILLOTINE);
     await game.toEndOfTurn();
@@ -113,7 +113,7 @@ describe("Moves - Retaliate", () => {
   });
 
   it("should preserve tracker on new wave/reload for players", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
 
     const feebas = game.field.getPlayerPokemon();
     feebas.hp = 1;

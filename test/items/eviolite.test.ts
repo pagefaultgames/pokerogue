@@ -22,7 +22,7 @@ describe("Items - Eviolite", () => {
   });
 
   it("should provide 50% boost to DEF and SPDEF for unevolved, unfused pokemon", async () => {
-    await game.classicMode.startBattle([SpeciesId.PICHU]);
+    await game.classicMode.startBattle(SpeciesId.PICHU);
 
     const partyMember = game.field.getPlayerPokemon();
 
@@ -43,7 +43,7 @@ describe("Items - Eviolite", () => {
   });
 
   it("should not provide a boost for fully evolved, unfused pokemon", async () => {
-    await game.classicMode.startBattle([SpeciesId.RAICHU]);
+    await game.classicMode.startBattle(SpeciesId.RAICHU);
 
     const partyMember = game.field.getPlayerPokemon();
 
@@ -64,7 +64,7 @@ describe("Items - Eviolite", () => {
   });
 
   it("should provide 50% boost to DEF and SPDEF for completely unevolved, fused pokemon", async () => {
-    await game.classicMode.startBattle([SpeciesId.PICHU, SpeciesId.CLEFFA]);
+    await game.classicMode.startBattle(SpeciesId.PICHU, SpeciesId.CLEFFA);
 
     const [partyMember, ally] = game.scene.getPlayerParty();
 
@@ -94,7 +94,7 @@ describe("Items - Eviolite", () => {
   });
 
   it("should provide 25% boost to DEF and SPDEF for partially unevolved (base), fused pokemon", async () => {
-    await game.classicMode.startBattle([SpeciesId.PICHU, SpeciesId.CLEFABLE]);
+    await game.classicMode.startBattle(SpeciesId.PICHU, SpeciesId.CLEFABLE);
 
     const [partyMember, ally] = game.scene.getPlayerParty();
 
@@ -124,7 +124,7 @@ describe("Items - Eviolite", () => {
   });
 
   it("should provide 25% boost to DEF and SPDEF for partially unevolved (fusion), fused pokemon", async () => {
-    await game.classicMode.startBattle([SpeciesId.RAICHU, SpeciesId.CLEFFA]);
+    await game.classicMode.startBattle(SpeciesId.RAICHU, SpeciesId.CLEFFA);
 
     const [partyMember, ally] = game.scene.getPlayerParty();
 
@@ -154,7 +154,7 @@ describe("Items - Eviolite", () => {
   });
 
   it("should not provide a boost for fully evolved, fused pokemon", async () => {
-    await game.classicMode.startBattle([SpeciesId.RAICHU, SpeciesId.CLEFABLE]);
+    await game.classicMode.startBattle(SpeciesId.RAICHU, SpeciesId.CLEFABLE);
 
     const [partyMember, ally] = game.scene.getPlayerParty();
 
@@ -193,7 +193,7 @@ describe("Items - Eviolite", () => {
 
     const gMaxablePokemon = [SpeciesId.PIKACHU, SpeciesId.EEVEE, SpeciesId.DURALUDON, SpeciesId.MEOWTH];
 
-    await game.classicMode.startBattle([randItem(gMaxablePokemon)]);
+    await game.classicMode.startBattle(randItem(gMaxablePokemon));
 
     const partyMember = game.field.getPlayerPokemon();
 

@@ -32,7 +32,7 @@ describe("Move - Poltergeist", () => {
 
   it("should not crash when used after both opponents have fainted", async () => {
     game.override.battleStyle("double").enemyLevel(5);
-    await game.classicMode.startBattle([SpeciesId.STARYU, SpeciesId.SLOWPOKE]);
+    await game.classicMode.startBattle(SpeciesId.STARYU, SpeciesId.SLOWPOKE);
 
     game.move.use(MoveId.DAZZLING_GLEAM);
     game.move.use(MoveId.POLTERGEIST, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY);

@@ -11,32 +11,29 @@ import {
   getSettingNameWithKeycode,
 } from "#inputs/config-handler";
 import { SettingKeyboard } from "#system/settings-keyboard";
+import type { KeyboardConfig } from "#types/configs/inputs";
 import { expect } from "vitest";
 
+// TODO: Review what the literal fuck this class does
 export class MenuManip {
-  private config;
-  private settingName;
-  private keycode;
-  private iconDisplayed;
+  private readonly config: Required<KeyboardConfig>;
+  private settingName?: SettingKeyboard | undefined;
+  private keycode?: number | undefined;
+  private iconDisplayed?: string;
 
-  constructor(config) {
-    this.config = config;
-    this.settingName = null;
-    this.iconDisplayed = null;
+  constructor(config: KeyboardConfig) {
+    this.config = config as Required<KeyboardConfig>;
   }
 
   // TODO: Review this
-  convertNameToButtonString(input) {
-    // Check if the input starts with "Alt_Button"
-    if (input.startsWith("Alt_Button")) {
-      // Return the last part in uppercase
-      return input.split("_").pop().toUpperCase();
+  convertNameToButtonString(input: SettingKeyboard) {
+    if (input.startsWith("ALT_BUTTON")) {
+      // Bang is fine as we already match on `_`
+      return input.split("_").pop()!.toUpperCase();
     }
 
-    // Split the input string by underscore
     const parts = input.split("_");
 
-    // Skip the first part and join the rest with an underscore
     const result = parts
       .slice(1)
       .map(part => part.toUpperCase())
@@ -45,19 +42,19 @@ export class MenuManip {
     return result;
   }
 
-  whenCursorIsOnSetting(settingName) {
-    if (!settingName.includes("Button_")) {
-      settingName = "Button_" + settingName;
+  whenCursorIsOnSetting(settingName: string) {
+    if (!settingName.includes("BUTTON_")) {
+      settingName = "BUTTON_" + settingName;
     }
-    this.settingName = SettingKeyboard[settingName];
+    this.settingName = SettingKeyboard[settingName as keyof typeof SettingKeyboard];
     return this;
   }
 
-  iconDisplayedIs(icon) {
+  iconDisplayedIs(icon: string) {
     if (!icon.toUpperCase().includes("KEY_")) {
       icon = "KEY_" + icon.toUpperCase();
     }
-    this.iconDisplayed = this.config.icons[icon];
+    this.iconDisplayed = this.config.icons[icon as keyof typeof this.config.icons];
     expect(getIconWithSettingName(this.config, this.settingName)).toEqual(this.iconDisplayed);
     return this;
   }
@@ -78,32 +75,32 @@ export class MenuManip {
     return this;
   }
 
-  weWantThisBindInstead(keycode) {
-    this.keycode = Phaser.Input.Keyboard.KeyCodes[keycode];
+  weWantThisBindInstead(keycode: string) {
+    this.keycode = Phaser.Input.Keyboard.KeyCodes[keycode as keyof typeof Phaser.Input.Keyboard.KeyCodes];
     const icon = getIconWithKeycode(this.config, this.keycode);
     const key = getKeyWithKeycode(this.config, this.keycode)!; // TODO: is this bang correct?
     const _keys = key.toLowerCase().split("_");
     const iconIdentifier = _keys.at(-1);
-    expect(icon.toLowerCase()).toContain(iconIdentifier);
+    expect(icon?.toLowerCase()).toContain(iconIdentifier);
     return this;
   }
 
-  whenWeDelete(settingName?: string) {
-    this.settingName = settingName ? SettingKeyboard[settingName] : this.settingName;
+  whenWeDelete(settingName?: SettingKeyboard) {
+    this.settingName = settingName ?? this.settingName;
     // const key = getKeyWithSettingName(this.config, this.settingName);
     deleteBind(this.config, this.settingName);
     // expect(this.config.custom[key]).toEqual(-1);
     return this;
   }
 
-  whenWeTryToDelete(settingName?: string) {
-    this.settingName = settingName ? SettingKeyboard[settingName] : this.settingName;
+  whenWeTryToDelete(settingName?: SettingKeyboard) {
+    this.settingName = settingName ?? this.settingName;
     deleteBind(this.config, this.settingName);
     return this;
   }
 
   confirmAssignment() {
-    assign(this.config, this.settingName, this.keycode);
+    assign(this.config, this.settingName!, this.keycode!);
   }
 
   butLetsForceIt() {
@@ -111,7 +108,7 @@ export class MenuManip {
   }
 
   confirm() {
-    assign(this.config, this.settingName, this.keycode);
+    assign(this.config, this.settingName!, this.keycode!);
   }
 
   weCantAssignThisKey() {
