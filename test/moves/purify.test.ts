@@ -4,7 +4,6 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import type { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
-import { MoveEndPhase } from "#phases/move-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";
@@ -23,7 +22,6 @@ describe("Moves - Purify", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .starterSpecies(SpeciesId.PYUKUMUKU)
       .startingLevel(10)
       .moveset([MoveId.PURIFY, MoveId.SIZZLY_SLIDE])
       .enemySpecies(SpeciesId.MAGIKARP)
@@ -32,7 +30,7 @@ describe("Moves - Purify", () => {
   });
 
   test("Purify heals opponent status effect and restores user hp", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.PYUKUMUKU);
 
     const enemyPokemon: EnemyPokemon = game.field.getEnemyPokemon();
     const playerPokemon: PlayerPokemon = game.field.getPlayerPokemon();
@@ -42,14 +40,14 @@ describe("Moves - Purify", () => {
 
     game.move.select(MoveId.PURIFY);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to(MoveEndPhase);
+    await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(enemyPokemon.status).toBeNull();
     expect(playerPokemon.isFullHp()).toBe(true);
   });
 
   test("Purify does not heal if opponent doesnt have any status effect", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.PYUKUMUKU);
 
     const playerPokemon: PlayerPokemon = game.field.getPlayerPokemon();
 
@@ -58,7 +56,7 @@ describe("Moves - Purify", () => {
 
     game.move.select(MoveId.PURIFY);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to(MoveEndPhase);
+    await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(playerPokemon.hp).toBe(playerInitialHp);
   });

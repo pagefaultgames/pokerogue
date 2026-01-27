@@ -349,8 +349,8 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
     this.updateNameText(pokemon);
     const nameTextWidth = this.nameText.displayWidth;
 
-    this.name = pokemon.getNameToRender();
-    this.box.name = pokemon.getNameToRender();
+    this.name = pokemon.getNameToRender({ prependFormName: false });
+    this.box.name = pokemon.getNameToRender({ prependFormName: false });
 
     this.genderText
       .setText(getGenderSymbol(pokemon.gender))
@@ -454,7 +454,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
 
   /** Update the pokemon name inside the container */
   protected updateName(pokemon: Pokemon): boolean {
-    const name = pokemon.getNameToRender();
+    const name = pokemon.getNameToRender({ prependFormName: false });
     if (this.lastName === name) {
       return false;
     }
@@ -627,7 +627,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
   //#endregion
 
   updateNameText(pokemon: Pokemon): void {
-    let displayName = pokemon.getNameToRender().replace(/[♂♀]/g, "");
+    let displayName = pokemon.getNameToRender({ prependFormName: false }).replace(/[♂♀]/g, "");
     let nameTextWidth: number;
 
     const nameSizeTest = addTextObject(0, 0, displayName, TextStyle.BATTLE_INFO);
@@ -650,7 +650,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
     nameSizeTest.destroy();
 
     this.nameText.setText(displayName);
-    this.lastName = pokemon.getNameToRender();
+    this.lastName = pokemon.getNameToRender({ prependFormName: false });
 
     if (this.nameText.visible) {
       this.nameText.setInteractive(

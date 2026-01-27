@@ -1989,7 +1989,8 @@ export class GameData {
   }
 
   getSpeciesStarterValue(speciesId: SpeciesId): number {
-    const baseValue = speciesStarterCosts[speciesId];
+    // TODO: is this bang correct?
+    const baseValue = speciesStarterCosts[speciesId]!;
     let value = baseValue;
 
     const decrementValue = (value: number) => {

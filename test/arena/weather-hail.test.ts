@@ -27,7 +27,7 @@ describe("Weather - Hail", () => {
   });
 
   it("inflicts damage equal to 1/16 of Pokemon's max HP at turn end", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     game.move.select(MoveId.SPLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -41,7 +41,7 @@ describe("Weather - Hail", () => {
 
   it("does not inflict damage to a Pokemon that is underwater (Dive) or underground (Dig)", async () => {
     game.override.moveset([MoveId.DIG]);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     game.move.select(MoveId.DIG);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -56,7 +56,7 @@ describe("Weather - Hail", () => {
   });
 
   it("does not inflict damage to Ice type Pokemon", async () => {
-    await game.classicMode.startBattle([SpeciesId.CLOYSTER]);
+    await game.classicMode.startBattle(SpeciesId.CLOYSTER);
 
     game.move.select(MoveId.SPLASH);
 

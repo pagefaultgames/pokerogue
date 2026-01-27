@@ -2,7 +2,7 @@ import { OVERRIDES_COLOR } from "#app/constants/colors";
 import type { BattleStyle, RandomTrainerOverride } from "#app/overrides";
 import Overrides from "#app/overrides";
 import { AbilityId } from "#enums/ability-id";
-import type { BattleType } from "#enums/battle-type";
+import { BattleType } from "#enums/battle-type";
 import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
 import type { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -10,16 +10,22 @@ import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
+import { TrainerType } from "#enums/trainer-type";
+import { TrainerVariant } from "#enums/trainer-variant";
 import type { Unlockables } from "#enums/unlockables";
 import { WeatherType } from "#enums/weather-type";
 import type { NewArenaEvent } from "#events/battle-scene";
 import type { ModifierOverride } from "#modifiers/modifier-type";
 import type { Variant } from "#sprites/variant";
+import type { ClassicModeHelper } from "#test/test-utils/helpers/classic-mode-helper";
+import type { FieldHelper } from "#test/test-utils/helpers/field-helper";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
+import type { MoveHelper } from "#test/test-utils/helpers/move-helper";
 import { coerceArray } from "#utils/array";
 import { shiftCharCodes } from "#utils/common";
 import chalk from "chalk";
 import { vi } from "vitest";
+import { getEnumStr, stringifyEnumArray } from "../string-utils";
 
 /**
  * Helper to handle overrides in tests
@@ -47,10 +53,11 @@ export class OverridesHelper extends GameManagerHelper {
   public normalizeNatures = true;
 
   /**
-   * Override the starting biome
+   * Override the starting biome.
    *
    * ⚠️ Any event listeners that are attached to {@linkcode NewArenaEvent} may need to be handled down the line
    * @param biome - The biome to set
+   * @returns `this`
    */
   public startingBiome(biome: BiomeId): this {
     this.game.scene.newArena(biome);
@@ -73,8 +80,8 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player pokemon's starting level
-   * @param level - The level to set
+   * Override the starting level of newly generated player Pokemon.
+   * @param level - The starting level to set
    * @returns `this`
    */
   public startingLevel(level: number): this {
@@ -95,9 +102,9 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the wave level cap
-   * @param cap - The level cap value to set; 0 uses normal level caps and negative values
-   * disable it completely
+   * Override the wave level cap.
+   * @param cap - The level cap value to set, or a negative number to disable level caps altogether.
+   * `0` disables the override.
    * @returns `this`
    */
   public levelCap(cap: number): this {
@@ -126,18 +133,26 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player pokemon's {@linkcode SpeciesId | species}
-   * @param species - The {@linkcode SpeciesId | species} to set
+   * Override the initial species used when creating new starter Pokemon.
+   * @param species - The {@linkcode SpeciesId} to set, or `null` to disable the override
    * @returns `this`
+   * @deprecated
+   * This override is deprecated and heavily discouraged in automated test files;
+   * a similar effect can be used by passing an array of `SpeciesId`s to
+   * {@linkcode ClassicModeHelper.startBattle | startBattle}
    */
-  public starterSpecies(species: SpeciesId | number): this {
+  public starterSpecies(species: SpeciesId | null): this {
     vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(species);
-    this.log(`Player Pokemon species set to ${SpeciesId[species]} (=${species})!`);
+    if (species === null) {
+      this.log("Player Pokemon starter species override disabled!");
+    } else {
+      this.log(`Player Pokemon species set to ${getEnumStr(SpeciesId, species)}!`);
+    }
     return this;
   }
 
   /**
-   * Override the player pokemon to be a random fusion
+   * Override whether starter Pokemon will be fused with random Pokemon.
    * @returns `this`
    */
   public enableStarterFusion(): this {
@@ -147,13 +162,21 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player pokemon's fusion species
-   * @param species - The fusion species to set
+   * Override the initial fusion species used when generating new starter Pokemon in Spliced Endless-like modes.
+   * @param species - The fusion {@linkcode SpeciesId} to set, or `null` to disable the override
    * @returns `this`
+   * @remarks
+   * Does nothing if {@linkcode Overrides.STARTER_FUSION_OVERRIDE} is not enabled
+   * @see {@linkcode enableStarterFusions}
    */
-  public starterFusionSpecies(species: SpeciesId | number): this {
+  // TODO: Should we just bundle these 2 together?
+  public starterFusionSpecies(species: SpeciesId | null): this {
     vi.spyOn(Overrides, "STARTER_FUSION_SPECIES_OVERRIDE", "get").mockReturnValue(species);
-    this.log(`Player Pokemon fusion species set to ${SpeciesId[species]} (=${species})!`);
+    if (species === null) {
+      this.log("Player Pokemon starter fusion species override disabled!");
+    } else {
+      this.log(`Player Pokemon starter fusion species set to ${getEnumStr(SpeciesId, species)}!`);
+    }
     return this;
   }
 
@@ -183,126 +206,147 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player pokemon's {@linkcode AbilityId | ability}.
-   * @param ability - The {@linkcode AbilityId | ability} to set
+   * Override the ability of all player Pokemon.
+   * @param ability - The {@linkcode AbilityId} to set
    * @returns `this`
    */
   public ability(ability: AbilityId): this {
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(ability);
-    this.log(`Player Pokemon ability set to ${AbilityId[ability]} (=${ability})!`);
-    return this;
-  }
-
-  /**
-   * Override the player pokemon's **passive** {@linkcode AbilityId | ability}
-   * @param passiveAbility - The **passive** {@linkcode AbilityId | ability} to set
-   * @returns `this`
-   */
-  public passiveAbility(passiveAbility: AbilityId): this {
-    vi.spyOn(Overrides, "PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(passiveAbility);
-    this.log(`Player Pokemon PASSIVE ability set to ${AbilityId[passiveAbility]} (=${passiveAbility})!`);
-    return this;
-  }
-
-  /**
-   * Forces the status of the player pokemon **passive** {@linkcode AbilityId | ability}
-   * @param hasPassiveAbility - Forces the passive to be active if `true`, inactive if `false`
-   * @returns `this`
-   */
-  public hasPassiveAbility(hasPassiveAbility: boolean | null): this {
-    vi.spyOn(Overrides, "HAS_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(hasPassiveAbility);
-    if (hasPassiveAbility === null) {
-      this.log("Player Pokemon PASSIVE ability no longer force enabled or disabled!");
+    if (ability === AbilityId.NONE) {
+      this.log("Player Pokemon ability override disabled!");
     } else {
-      this.log(`Player Pokemon PASSIVE ability is force ${hasPassiveAbility ? "enabled" : "disabled"}!`);
+      this.log(`Player Pokemon ability set to ${getEnumStr(AbilityId, ability)}!`);
     }
     return this;
   }
+
   /**
-   * Override the player pokemon's {@linkcode MoveId | moves}set
-   * @param moveset - The {@linkcode MoveId | moves}set to set
+   * Override the **passive** ability of all player Pokemon.
+   * @param passive - The **passive** {@linkcode AbilityId} to set, or `AbilityId.NONE` to disable
    * @returns `this`
+   * @remarks
+   * Setting a custom passive ability will force said passive to always be enabled,
+   * even if not unlocked.
+   */
+  // TODO: Review uses and make sure callers aren't mistakedly passing `AbilityId.NONE`
+  public passiveAbility(passive: AbilityId): this {
+    vi.spyOn(Overrides, "PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(passive);
+    if (passive === AbilityId.NONE) {
+      this.log("Player Pokemon passive ability override disabled!");
+    } else {
+      this.log(`Player Pokemon passive ability set to ${getEnumStr(AbilityId, passive)}!`);
+    }
+    return this;
+  }
+
+  /**
+   * Override the enabled status of the passive {@linkcode AbilityId | abilities} of all player Pokemon.
+   * @param hasPassive - Whether passives should be enabled/disabled, or `null` to disable the override
+   * @returns `this`
+   * @deprecated
+   * This override should not be used - setting a custom passive ability via {@linkcode passiveAbility}
+   * will forcibly enable passives without relying on individual species having specific passives.
+   * If a granular per-Pokemon override is required, consider using {@linkcode FieldHelper.mockAbility}
+   */
+  public hasPassiveAbility(hasPassive: boolean | null): this {
+    vi.spyOn(Overrides, "HAS_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(hasPassive);
+    if (hasPassive === null) {
+      this.log("Player Pokemon passive ability override disabled!");
+    } else {
+      this.log(`Player Pokemon passive ability forcibly ${hasPassive ? "enabled" : "disabled"}!`);
+    }
+    return this;
+  }
+
+  /**
+   * Override the movesets of all player Pokemon.
+   * @param moveset - One or more {@linkcode MoveId}s to set
+   * @returns `this`
+   * @deprecated
+   * While kept for legacy reasons, new tests should prefer using
+   * {@linkcode MoveHelper.use} in nearly all cases.
    */
   public moveset(moveset: MoveId | MoveId[]): this {
-    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue(moveset);
     moveset = coerceArray(moveset);
-    const movesetStr = moveset.map(moveId => MoveId[moveId]).join(", ");
-    this.log(`Player Pokemon moveset set to ${movesetStr} (=[${moveset.join(", ")}])!`);
+    vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue(moveset);
+    this.log(`Player Pokemon moveset set to ${stringifyEnumArray(MoveId, moveset)}!`);
     return this;
   }
 
   /**
-   * Override the player pokemon's initial {@linkcode StatusEffect | status-effect},
-   * @param statusEffect - The {@linkcode StatusEffect | status-effect} to set
+   * Override the initial status condition of all player Pokemon.
+   * @param effect - The {@linkcode StatusEffect} to set
    * @returns `this`
+   * @remarks
+   * If this is set to `StatusEffect.SLEEP`, the duration will be set to a guaranteed 4 turns.
    */
-  public statusEffect(statusEffect: StatusEffect): this {
-    vi.spyOn(Overrides, "STATUS_OVERRIDE", "get").mockReturnValue(statusEffect);
-    this.log(`Player Pokemon status-effect set to ${StatusEffect[statusEffect]} (=${statusEffect})!`);
+  public statusEffect(effect: StatusEffect): this {
+    vi.spyOn(Overrides, "STATUS_OVERRIDE", "get").mockReturnValue(effect);
+    if (effect === StatusEffect.NONE) {
+      this.log("Player Pokemon status effect override disabled!");
+    } else {
+      this.log(`Player Pokemon initial status effect set to ${getEnumStr(StatusEffect, effect)}!`);
+    }
     return this;
   }
 
   /**
-   * Overrides the IVs of the player pokemon
-   * @param ivs - If set to a number, all IVs are set to the same value. Must be between `0` and `31`!
-   *
-   * If set to an array, that array is applied to the pokemon's IV field as-is.
-   * All values must be between `0` and `31`, and the array must be of exactly length `6`!
-   *
+   * Override the initial IVs of all player Pokemon.
+   * @param ivs - The IVs to set, either as a single number or a 6-length array.
    * If set to `null`, the override is disabled.
    * @returns `this`
+   * @remarks
+   * This will disable player/enemy IV normalization when called.
    */
-  public playerIVs(ivs: number | number[] | null): this {
+  public playerIVs(ivs: (typeof Overrides)["IVS_OVERRIDE"]): this {
     this.normalizeIVs = false;
     vi.spyOn(Overrides, "IVS_OVERRIDE", "get").mockReturnValue(ivs);
     if (ivs === null) {
-      this.log("Player IVs override disabled!");
+      this.log("Player Pokemon IVs override disabled!");
     } else {
-      this.log(`Player IVs set to ${ivs}!`);
+      this.log(`Player Pokemon IVs set to ${ivs}!`);
     }
     return this;
   }
 
   /**
-   * Overrides the nature of the player's pokemon
-   * @param nature - The nature to set, or `null` to disable the override.
+   * Override the initial nature of all player Pokemon.
+   * @param nature - The {@linkcode Nature} to set, or `null` to disable the override.
    * @returns `this`
    */
   public nature(nature: Nature | null): this {
     this.normalizeNatures = false;
     vi.spyOn(Overrides, "NATURE_OVERRIDE", "get").mockReturnValue(nature);
     if (nature === null) {
-      this.log("Player Nature override disabled!");
+      this.log("Player Pokemon Nature override disabled!");
     } else {
-      this.log(`Player Nature set to ${Nature[nature]} (=${nature})!`);
+      this.log(`Player Pokemon Natures set to ${getEnumStr(Nature, nature)}!`);
     }
     return this;
   }
 
   /**
-   * Overrides the IVs of the enemy pokemon
-   * @param ivs - If set to a number, all IVs are set to the same value. Must be between `0` and `31`!
-   *
-   * If set to an array, that array is applied to the pokemon's IV field as-is.
-   * All values must be between `0` and `31`, and the array must be of exactly length `6`!
-   *
+   * Override the initial IVs of all enemy Pokemon.
+   * @param ivs - The IVs to set, either as a single number or a 6-length array.
    * If set to `null`, the override is disabled.
    * @returns `this`
+   * @remarks
+   * This will disable player/enemy IV normalization when called.
    */
-  public enemyIVs(ivs: number | number[] | null): this {
+  public enemyIVs(ivs: (typeof Overrides)["IVS_OVERRIDE"]): this {
     this.normalizeIVs = false;
     vi.spyOn(Overrides, "ENEMY_IVS_OVERRIDE", "get").mockReturnValue(ivs);
     if (ivs === null) {
-      this.log("Enemy IVs override disabled!");
+      this.log("Enemy Pokemon IVs override disabled!");
     } else {
-      this.log(`Enemy IVs set to ${ivs}!`);
+      this.log(`Enemy Pokemon IVs set to ${ivs}!`);
     }
     return this;
   }
 
   /**
-   * Overrides the nature of the enemy's pokemon
-   * @param nature - The nature to set, or `null` to disable the override.
+   * Override the initial nature of all enemy Pokemon.
+   * @param nature - The {@linkcode Nature} to set, or `null` to disable the override.
    * @returns `this`
    */
   public enemyNature(nature: Nature | null): this {
@@ -311,14 +355,16 @@ export class OverridesHelper extends GameManagerHelper {
     if (nature === null) {
       this.log("Enemy Nature override disabled!");
     } else {
-      this.log(`Enemy Nature set to ${Nature[nature]} (=${nature})!`);
+      this.log(`Enemy Nature set to ${getEnumStr(Nature, nature)}!`);
     }
     return this;
   }
 
   /**
-   * Override each wave to not have standard trainer battles
+   * Override waves to not have standard trainer battles
    * @returns `this`
+   * @deprecated
+   * Use {@linkcode battleType} instead
    */
   public disableTrainerWaves(): this {
     vi.spyOn(Overrides, "DISABLE_STANDARD_TRAINERS_OVERRIDE", "get").mockReturnValue(true);
@@ -327,43 +373,54 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the trainer chosen when a random trainer is selected.
-   *
-   * Does not force the battle to be a trainer battle.
-   * @see {@linkcode setBattleType}
+   * Override the trainer type & variant when a random trainer is generated.
+   * @param trainer - An {@linkcode RandomTrainerOverride | object} dictating the type & variant of trainer to spawn,
+   * or `null` to disable the override
    * @returns `this`
+   * @remarks
+   * Does **not** force the wave to be a trainer battle.
    */
   public randomTrainer(trainer: RandomTrainerOverride | null): this {
     vi.spyOn(Overrides, "RANDOM_TRAINER_OVERRIDE", "get").mockReturnValue(trainer);
-    this.log("Partner battle is forced!");
+    if (trainer === null) {
+      this.log("Random trainer override disabled!");
+    } else {
+      this.log(
+        `Random trainer set to a ${trainer.trainerVariant ? `${getEnumStr(TrainerVariant, trainer.trainerVariant)} ` : ""}${getEnumStr(TrainerType, trainer.trainerType)}${trainer.trainerVariant === TrainerVariant.DOUBLE ? " battle" : ""}!`,
+      );
+    }
     return this;
   }
 
   /**
-   * Force random critical hit rolls to always or never suceed.
-   * @param crits - `true` to guarantee crits on eligible moves, `false` to force rolls to fail, `null` to disable override
+   * Override random critical hit rolls to always or never suceed.
+   * @param alwaysCrit - `true` to guarantee crits on eligible moves, `false` to force rolls to fail, `null` to disable override
    * @remarks
    * This does not change any effects that guarantee or block critical hits;
-   * it merely mocks any chance-based rolls not already at 100%. \
+   * it merely intercepts any chance-based rolls _not already at 100%_. \
    * For instance, a Pokemon at +3 crit stages will still critically hit with the override set to `false`,
    * whereas one at +2 crit stages (a 50% chance) will not.
    * @returns `this`
    */
-  public criticalHits(crits: boolean | null): this {
-    vi.spyOn(Overrides, "CRITICAL_HIT_OVERRIDE", "get").mockReturnValue(crits);
-    const freq = crits === true ? "always" : crits === false ? "never" : "randomly";
+  public criticalHits(alwaysCrit: boolean | null): this {
+    vi.spyOn(Overrides, "CRITICAL_HIT_OVERRIDE", "get").mockReturnValue(alwaysCrit);
+    const freq = alwaysCrit === true ? "always" : alwaysCrit === false ? "never" : "randomly";
     this.log(`Critical hit rolls set to ${freq} succeed!`);
     return this;
   }
 
   /**
-   * Override the {@linkcode WeatherType | weather type}
-   * @param type - The {@linkcode WeatherType | weather type} to set
+   * Override the arena's current weather.
+   * @param type - The {@linkcode WeatherType} to set
    * @returns `this`
+   * @remarks
+   * Oddly enough, this override is perpetually applied and will supercede any and all attempts
+   * to change/remove weather.
+   * This behavior is dubious in quality and should hopefully be made sane.
    */
   public weather(type: WeatherType): this {
     vi.spyOn(Overrides, "WEATHER_OVERRIDE", "get").mockReturnValue(type);
-    this.log(`Weather set to ${WeatherType[type]} (=${type})!`);
+    this.log(`Weather set to ${getEnumStr(WeatherType, type)}!`);
     return this;
   }
 
@@ -372,6 +429,7 @@ export class OverridesHelper extends GameManagerHelper {
    * @param seed - The seed to set
    * @returns `this`
    */
+  // TODO: Document this and our other RNG functions - this is really scuffed
   public seed(seed: string): this {
     // Shift the seed here with a negative wave number, to compensate for `resetSeed()` shifting the seed itself.
     this.game.scene.setSeed(shiftCharCodes(seed, (this.game.scene.currentBattle?.waveIndex ?? 0) * -1));
@@ -382,8 +440,7 @@ export class OverridesHelper extends GameManagerHelper {
 
   /**
    * Override the battle style (e.g., single or double).
-   * @see {@linkcode Overrides.BATTLE_STYLE_OVERRIDE}
-   * @param battleStyle - The battle style to set
+   * @param battleStyle - The {@linkcode BattleStyle} to set, or `null` to disable the override
    * @returns `this`
    */
   public battleStyle(battleStyle: BattleStyle | null): this {
@@ -393,34 +450,40 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the battle type (e.g., WILD, or Trainer) for non-scripted battles.
-   * @see {@linkcode Overrides.BATTLE_TYPE_OVERRIDE}
-   * @param battleType - The battle type to set
+   * Override the battle type for non-scripted battles.
+   * @param battleType - The {@linkcode BattleType} to set
    * @returns `this`
+   * @remarks
+   * Typically used to either guarantee or forbid trainer battles.
    */
   public battleType(battleType: Exclude<BattleType, BattleType.CLEAR>): this {
     vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue(battleType);
     this.log(
       battleType === null
         ? "Battle type override disabled!"
-        : `Battle type set to ${battleType[battleType]} (=${battleType})!`,
+        : `Battle type set to ${getEnumStr(BattleType, battleType)}!`,
     );
     return this;
   }
 
   /**
-   * Override the {@linkcode SpeciesId | species} of enemy pokemon
-   * @param species - The {@linkcode SpeciesId | species} to set
+   * Override the initial species used when creating new enemy Pokemon.
+   * @param species - The {@linkcode SpeciesId} to set, or `null` to disable the override
    * @returns `this`
    */
-  public enemySpecies(species: SpeciesId | number): this {
+  public enemySpecies(species: SpeciesId | null): this {
     vi.spyOn(Overrides, "ENEMY_SPECIES_OVERRIDE", "get").mockReturnValue(species);
-    this.log(`Enemy Pokemon species set to ${SpeciesId[species]} (=${species})!`);
+    if (species === null) {
+      this.log("Enemy Pokemon starter species override disabled!");
+    } else {
+      this.log(`Enemy Pokemon species set to ${getEnumStr(SpeciesId, species)}!`);
+    }
+
     return this;
   }
 
   /**
-   * Override the enemy pokemon to be a random fusion
+   * Override whether enemy Pokemon will be fused with random Pokemon.
    * @returns `this`
    */
   public enableEnemyFusion(): this {
@@ -430,63 +493,91 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the enemy pokemon fusion species
-   * @param species - The fusion species to set
+   * Override the initial fusion species used when generating new enemy Pokemon in Spliced Endless-like modes.
+   * @param species - The fusion {@linkcode SpeciesId} to set, or `null` to disable the override
    * @returns `this`
+   * @remarks
+   * Does nothing if {@linkcode Overrides.ENEMY_FUSION_OVERRIDE} is not enabled
+   * {@see {@linkcode enableEnemyFusion}}
    */
-  public enemyFusionSpecies(species: SpeciesId | number): this {
+  // TODO: Should we just bundle these 2 together?
+  public enemyFusionSpecies(species: SpeciesId | null): this {
     vi.spyOn(Overrides, "ENEMY_FUSION_SPECIES_OVERRIDE", "get").mockReturnValue(species);
-    this.log(`Enemy Pokemon fusion species set to ${SpeciesId[species]} (=${species})!`);
-    return this;
-  }
-
-  /**
-   * Override the {@linkcode AbilityId | ability} of enemy pokemon
-   * @param ability - The {@linkcode AbilityId | ability} to set
-   * @returns `this`
-   */
-  public enemyAbility(ability: AbilityId): this {
-    vi.spyOn(Overrides, "ENEMY_ABILITY_OVERRIDE", "get").mockReturnValue(ability);
-    this.log(`Enemy Pokemon ability set to ${AbilityId[ability]} (=${ability})!`);
-    return this;
-  }
-
-  /**
-   * Override the **passive** {@linkcode AbilityId | ability} of enemy pokemon
-   * @param passiveAbility - The **passive** {@linkcode AbilityId | ability} to set
-   * @returns `this`
-   */
-  public enemyPassiveAbility(passiveAbility: AbilityId): this {
-    vi.spyOn(Overrides, "ENEMY_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(passiveAbility);
-    this.log(`Enemy Pokemon PASSIVE ability set to ${AbilityId[passiveAbility]} (=${passiveAbility})!`);
-    return this;
-  }
-
-  /**
-   * Forces the status of the enemy pokemon **passive** {@linkcode AbilityId | ability}
-   * @param hasPassiveAbility - Forces the passive to be active if `true`, inactive if `false`
-   * @returns `this`
-   */
-  public enemyHasPassiveAbility(hasPassiveAbility: boolean | null): this {
-    vi.spyOn(Overrides, "ENEMY_HAS_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(hasPassiveAbility);
-    if (hasPassiveAbility === null) {
-      this.log("Enemy Pokemon PASSIVE ability no longer force enabled or disabled!");
+    if (species === null) {
+      this.log("Enemy Pokemon fusion species override disabled!");
     } else {
-      this.log(`Enemy Pokemon PASSIVE ability is force ${hasPassiveAbility ? "enabled" : "disabled"}!`);
+      this.log(`Enemy Pokemon fusion species set to ${getEnumStr(SpeciesId, species)}!`);
     }
     return this;
   }
 
   /**
-   * Override the {@linkcode MoveId | move}set of enemy pokemon
-   * @param moveset - The {@linkcode MoveId | move}set to set
+   * Override the ability of all enemy Pokemon.
+   * @param ability - The {@linkcode AbilityId} to set
    * @returns `this`
    */
+  public enemyAbility(ability: AbilityId): this {
+    vi.spyOn(Overrides, "ENEMY_ABILITY_OVERRIDE", "get").mockReturnValue(ability);
+    if (ability === AbilityId.NONE) {
+      this.log("Enemy Pokemon ability override disabled!");
+    } else {
+      this.log(`Enemy Pokemon ability set to ${getEnumStr(AbilityId, ability)}!`);
+    }
+    return this;
+  }
+
+  /**
+   * Override the **passive** ability of all enemy Pokemon.
+   * @param passive - The **passive** {@linkcode AbilityId} to set, or `AbilityId.NONE` to disable
+   * @returns `this`
+   * @remarks
+   * Setting a custom passive ability will force said passive to always be enabled,
+   * even if not unlocked.
+   */
+  // TODO: Review uses and make sure callers aren't mistakedly passing `AbilityId.NONE`
+  public enemyPassiveAbility(passive: AbilityId): this {
+    vi.spyOn(Overrides, "ENEMY_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(passive);
+    if (passive === AbilityId.NONE) {
+      this.log("Enemy Pokemon passive ability override disabled!");
+    } else {
+      this.log(`Enemy Pokemon passive ability set to ${getEnumStr(AbilityId, passive)}!`);
+    }
+    return this;
+  }
+
+  /**
+   * Override the enabled status of the passive {@linkcode AbilityId | abilities} of all enemy Pokemon.
+   * @param hasPassive - Whether passives should be enabled/disabled, or `null` to disable the override
+   * @returns `this`
+   * @deprecated
+   * This override should not be used - setting a custom passive ability via {@linkcode passiveAbility}
+   * will forcibly enable passives without relying on individual species having specific passives.
+   * If a granular per-Pokemon override is required, consider using {@linkcode FieldHelper.mockAbility}
+   */
+  public enemyHasPassiveAbility(hasPassive: boolean | null): this {
+    vi.spyOn(Overrides, "ENEMY_HAS_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(hasPassive);
+    if (hasPassive === null) {
+      this.log("Enemy Pokemon passive ability override disabled!");
+    } else {
+      this.log(`Enemy Pokemon passive ability forcibly ${hasPassive ? "enabled" : "disabled"}!`);
+    }
+    return this;
+  }
+
+  /**
+   * Override the movesets of all enemy Pokemon.
+   * @param moveset - One or more {@linkcode MoveId}s to set
+   * @returns `this`
+   * @remarks
+   * New tests should prefer using {@linkcode MoveHelper.forceEnemyMove}
+   * in most cases, though a global override can still be convenient to
+   * "disable" enemies globally.
+   */
+  // TODO: Make the default value for the override actually sensible and forbid 1-length arrays
   public enemyMoveset(moveset: MoveId | MoveId[]): this {
     vi.spyOn(Overrides, "ENEMY_MOVESET_OVERRIDE", "get").mockReturnValue(moveset);
     moveset = coerceArray(moveset);
-    const movesetStr = moveset.map(moveId => MoveId[moveId]).join(", ");
-    this.log(`Enemy Pokemon moveset set to ${movesetStr} (=[${moveset.join(", ")}])!`);
+    this.log(`Enemy Pokemon moveset set to ${stringifyEnumArray(MoveId, moveset)}!`);
     return this;
   }
 
@@ -502,13 +593,19 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the enemy pokemon's initial {@linkcode StatusEffect | status-effect}.
-   * @param statusEffect - The {@linkcode StatusEffect | status-effect} to set
+   * Override the initial status condition of all enemy Pokemon.
+   * @param effect - The {@linkcode StatusEffect} to set
    * @returns `this`
+   * @remarks
+   * If this is set to `StatusEffect.SLEEP`, the duration will be set to a guaranteed 4 turns.
    */
-  public enemyStatusEffect(statusEffect: StatusEffect): this {
-    vi.spyOn(Overrides, "ENEMY_STATUS_OVERRIDE", "get").mockReturnValue(statusEffect);
-    this.log(`Enemy Pokemon status-effect set to ${StatusEffect[statusEffect]} (=${statusEffect})!`);
+  public enemyStatusEffect(effect: StatusEffect): this {
+    vi.spyOn(Overrides, "ENEMY_STATUS_OVERRIDE", "get").mockReturnValue(effect);
+    if (effect === StatusEffect.NONE) {
+      this.log("Enemy Pokemon status effect override disabled!");
+    } else {
+      this.log(`Enemy Pokemon initial status effect set to ${getEnumStr(StatusEffect, effect)}!`);
+    }
     return this;
   }
 
@@ -546,64 +643,78 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override player shininess
-   * @param shininess - `true` or `false` to force the player's pokemon to be shiny or not shiny,
-   *   `null` to disable the override and re-enable RNG shinies.
+   * Override player Pokemon to either always or never be Shiny.
+   * @param shininess - Whether to forcibly enable (`true`) or disable (`false`) Shininess,
+   * or `null` to disable the override altogether
    * @returns `this`
    */
-  public shiny(shininess: boolean | null): this {
+  public shiny(shininess: false | null): this;
+  /**
+   * Override player Pokemon to either always or never be Shiny.
+   * @param shininess - Whether to forcibly enable (`true`) or disable (`false`) Shininess,
+   * or `null` to disable the override altogether
+   * @param variant - If provided, will force newly generated Shinies to have the specified {@linkcode Variant}.
+   * @returns `this`
+   */
+  public shiny(shininess: true, variant?: Variant): this;
+  public shiny(shininess: boolean | null, variant?: Variant): this {
     vi.spyOn(Overrides, "SHINY_OVERRIDE", "get").mockReturnValue(shininess);
     if (shininess === null) {
-      this.log("Disabled player Pokemon shiny override!");
+      this.log("Player Pokemon shininess override disabled!");
     } else {
-      this.log(`Set player Pokemon to be ${shininess ? "" : "not "}shiny!`);
+      this.log(`Player Pokemon set to ${shininess ? "always" : "never"} be shiny!`);
     }
+
+    if (variant != null) {
+      vi.spyOn(Overrides, "VARIANT_OVERRIDE", "get").mockReturnValue(variant);
+      this.log(`Player Pokemon shiny variant set to ${variant}!`);
+    }
+
     return this;
   }
 
   /**
-   * Override player shiny variant
-   * @param variant - The player's shiny variant.
+   * Override enemy Pokemon to either always or never be Shiny.
+   * @param shininess - Whether to forcibly enable (`true`) or disable (`false`) Shininess,
+   * or `null` to disable the override altogether
    * @returns `this`
    */
-  public shinyVariant(variant: Variant): this {
-    vi.spyOn(Overrides, "VARIANT_OVERRIDE", "get").mockReturnValue(variant);
-    this.log(`Set player Pokemon's shiny variant to ${variant}!`);
-    return this;
-  }
-
+  public enemyShiny(shininess: false | null): this;
   /**
-   * Override enemy shininess
-   * @param shininess - `true` or `false` to force the enemy's pokemon to be shiny or not shiny,
-   *   `null` to disable the override and re-enable RNG shinies.
-   * @param variant - (Optional) The enemy's shiny {@linkcode Variant}.
+   * Override enemy Pokemon to either always or never be Shiny.
+   * @param shininess - Whether to forcibly enable (`true`) or disable (`false`) Shininess,
+   * or `null` to disable the override altogether
+   * @param variant - If provided, will force newly generated Shinies to have the specified {@linkcode Variant}.
+   * @returns `this`
    */
-  enemyShiny(shininess: boolean | null, variant?: Variant): this {
+  public enemyShiny(shininess: true, variant?: Variant): this;
+  public enemyShiny(shininess: boolean | null, variant?: Variant): this {
     vi.spyOn(Overrides, "ENEMY_SHINY_OVERRIDE", "get").mockReturnValue(shininess);
     if (shininess === null) {
-      this.log("Disabled enemy Pokemon shiny override!");
+      this.log("Enemy Pokemon shininess override disabled!");
     } else {
-      this.log(`Set enemy Pokemon to be ${shininess ? "" : "not "}shiny!`);
+      this.log(`Enemy Pokemon set to ${shininess ? "always" : "never"} be shiny!`);
     }
 
-    if (variant !== undefined) {
+    if (variant != null) {
       vi.spyOn(Overrides, "ENEMY_VARIANT_OVERRIDE", "get").mockReturnValue(variant);
-      this.log(`Set enemy shiny variant to be ${variant}!`);
+      this.log(`Enemy Pokemon shiny variant set to ${variant}!`);
     }
+
     return this;
   }
 
   /**
-   * Override the enemy Pokemon to have the given amount of health segments
-   * @param healthSegments - The number of segments to give
-   * - `0` (default): the health segments will be handled like in the game based on wave, level and species
-   * - `1`: the Pokemon will not be a boss
-   * - `2`+: the Pokemon will be a boss with the given number of health segments
+   * Override enemy Pokemon to have the given amount of boss health segments.
+   * @param healthSegments - The number of segments to give, as follows:
+   * - `0`: Boss segments will be computed normally based on wave and enemy level
+   * - `1`: The Pokemon will not be a boss
+   * - `2`+: The Pokemon will be a boss with the given number of health segments
    * @returns `this`
    */
   public enemyHealthSegments(healthSegments: number): this {
     vi.spyOn(Overrides, "ENEMY_HEALTH_SEGMENTS_OVERRIDE", "get").mockReturnValue(healthSegments);
-    this.log("Enemy Pokemon health segments set to:", healthSegments);
+    this.log(`Enemy Pokemon health segment count set to ${healthSegments}!`);
     return this;
   }
 
@@ -643,7 +754,7 @@ export class OverridesHelper extends GameManagerHelper {
    * @returns `this`
    */
   public mysteryEncounterChance(percentage: number): this {
-    const maxRate: number = 256; // 100%
+    const maxRate = 256; // 100%
     const rate = maxRate * (percentage / 100);
     vi.spyOn(Overrides, "MYSTERY_ENCOUNTER_RATE_OVERRIDE", "get").mockReturnValue(rate);
     this.log(`Mystery encounter chance set to ${percentage}% (=${rate})!`);
@@ -672,7 +783,11 @@ export class OverridesHelper extends GameManagerHelper {
     return this;
   }
 
-  private log(...params: any[]) {
+  /**
+   * Log a message to the console with coloration.
+   * @param params - The parameters to log
+   */
+  private log(...params: any[]): void {
     console.log(chalk.hex(OVERRIDES_COLOR)(...params));
   }
 }

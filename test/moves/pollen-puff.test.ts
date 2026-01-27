@@ -30,7 +30,7 @@ describe("Moves - Pollen Puff", () => {
 
   it("should not heal more than once when the user has a source of multi-hit", async () => {
     game.override.battleStyle("double").moveset([MoveId.POLLEN_PUFF, MoveId.ENDURE]).ability(AbilityId.PARENTAL_BOND);
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.OMANYTE]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.OMANYTE);
 
     const [_, rightPokemon] = game.scene.getPlayerField();
 
@@ -47,7 +47,7 @@ describe("Moves - Pollen Puff", () => {
 
   it("should damage an enemy multiple times when the user has a source of multi-hit", async () => {
     game.override.moveset([MoveId.POLLEN_PUFF]).ability(AbilityId.PARENTAL_BOND).enemyLevel(100);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const target = game.field.getEnemyPokemon();
 
@@ -60,7 +60,7 @@ describe("Moves - Pollen Puff", () => {
 
   // Regression test for pollen puff healing an enemy after dealing damage
   it("should not heal an enemy after dealing damage", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
     const target = game.field.getEnemyPokemon();
     game.move.use(MoveId.POLLEN_PUFF);
 

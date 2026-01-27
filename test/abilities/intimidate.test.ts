@@ -29,7 +29,7 @@ describe("Abilities - Intimidate", () => {
   });
 
   it("should lower all opponents' ATK by 1 stage on entry and switch", async () => {
-    await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA]);
+    await game.classicMode.startBattle(SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA);
 
     const [mightyena, poochyena] = game.scene.getPlayerParty();
 
@@ -46,7 +46,7 @@ describe("Abilities - Intimidate", () => {
   });
 
   it("should trigger once on initial switch prompt without cancelling opposing abilities", async () => {
-    await game.classicMode.runToSummon([SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA]);
+    await game.classicMode.runToSummon(SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA);
     await game.classicMode.startBattleWithSwitch(1);
 
     const [poochyena, mightyena] = game.scene.getPlayerParty();
@@ -61,7 +61,7 @@ describe("Abilities - Intimidate", () => {
   });
 
   it("should activate on reload with single party", async () => {
-    await game.classicMode.startBattle([SpeciesId.MIGHTYENA]);
+    await game.classicMode.startBattle(SpeciesId.MIGHTYENA);
 
     expect(game.field.getPlayerPokemon()).toHaveAbilityApplied(AbilityId.INTIMIDATE);
     expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, -1);
@@ -74,7 +74,7 @@ describe("Abilities - Intimidate", () => {
 
   it("should lower ATK of all opponents in a double battle", async () => {
     game.override.startingWave(2).battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.MIGHTYENA]);
+    await game.classicMode.startBattle(SpeciesId.MIGHTYENA);
 
     const [enemy1, enemy2] = game.scene.getEnemyField();
 
@@ -84,7 +84,7 @@ describe("Abilities - Intimidate", () => {
 
   it("should not trigger on switching moves used by wild Pokemon", async () => {
     game.override.enemyMoveset(MoveId.VOLT_SWITCH);
-    await game.classicMode.startBattle([SpeciesId.VENUSAUR]);
+    await game.classicMode.startBattle(SpeciesId.VENUSAUR);
 
     const player = game.field.getPlayerPokemon();
     expect(player.getStatStage(Stat.ATK)).toBe(-1);
@@ -98,7 +98,7 @@ describe("Abilities - Intimidate", () => {
 
   it("should trigger on moves that switch user/target out during trainer battles", async () => {
     game.override.startingWave(5).enemyLevel(100);
-    await game.classicMode.startBattle([SpeciesId.MIGHTYENA]);
+    await game.classicMode.startBattle(SpeciesId.MIGHTYENA);
 
     const player = game.field.getPlayerPokemon();
     expect(player.getStatStage(Stat.ATK)).toBe(-1);

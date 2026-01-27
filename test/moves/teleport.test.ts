@@ -34,7 +34,7 @@ describe("Move - Teleport", () => {
   describe("used by a wild pokemon", () => {
     it("should fail in a double battle", async () => {
       game.override.battleStyle("double");
-      await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.FEEBAS]);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.FEEBAS);
 
       const [enemy1, enemy2] = game.scene.getEnemyField();
 
@@ -55,7 +55,7 @@ describe("Move - Teleport", () => {
     });
 
     it("should fail if used by a wild pokemon under a trapping effect", async () => {
-      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
       const enemy = game.field.getEnemyPokemon();
 
@@ -70,7 +70,7 @@ describe("Move - Teleport", () => {
 
   it("should succeed if used by a trapped wild pokemon that is ghost type", async () => {
     game.override.enemySpecies(SpeciesId.GASTLY);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const enemy = game.field.getEnemyPokemon();
 
@@ -84,7 +84,7 @@ describe("Move - Teleport", () => {
 
   it("should succeed if used by a trapped wild pokemon that has run away", async () => {
     game.override.enemyAbility(AbilityId.RUN_AWAY);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const enemy = game.field.getEnemyPokemon();
 
