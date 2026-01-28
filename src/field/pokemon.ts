@@ -1143,7 +1143,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getSprite(): Phaser.GameObjects.Sprite {
-    return this.getAt(0) as Phaser.GameObjects.Sprite;
+    return this.getAt(0);
   }
 
   getTintSprite(): Phaser.GameObjects.Sprite | null {
@@ -1201,14 +1201,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     this.setScale(this.getSpriteScale());
   }
 
-  updateSpritePipelineData(): void {
+  async updateSpritePipelineData(): Promise<void> {
     [this.getSprite(), this.getTintSprite()]
       .filter(s => !!s)
       .map(s => {
         s.pipelineData["teraColor"] = getTypeRgb(this.getTeraType());
         s.pipelineData["isTerastallized"] = this.isTerastallized;
       });
-    this.updateInfo(true);
+    await this.updateInfo(true);
   }
 
   initShinySparkle(): void {
@@ -3942,6 +3942,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param ignoreFaintPhase - Whether to ignore adding a FaintPhase if this damage causes a faint
    * @returns The actual damage dealt
    */
+  // TODO: Rework this to use an object for the optional parameters
+  // TODO: Remove uses of this outside of the `Pokemon` class and subclasses and change to `protected`
+  // Known violators: Pain Split, Status effect code
   damage(damage: number, _ignoreSegments = false, preventEndure = false, ignoreFaintPhase = false): number {
     if (this.isFainted()) {
       return 0;
@@ -4003,7 +4006,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       ignoreSegments?: boolean;
       /** Whether to ignore adding a FaintPhase if this damage causes a faint; default `false` */
       ignoreFaintPhase?: boolean;
-      /** The Pokémon inflicting the damage, or undefined if not caused by a Pokémon */
+      /** The Pokémon inflicting the damage, or `undefined` if not caused by a Pokémon */
       source?: Pokemon;
     } = {},
   ): number {
@@ -4458,19 +4461,22 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Return a list of the most recent move entries in this {@linkcode Pokemon}'s move history.
-   * The retrieved move entries are sorted in order from **NEWEST** to **OLDEST**.
+   * The retrieved values are sorted in order from **NEWEST** to **OLDEST**.
    * @param moveCount - The maximum number of move entries to retrieve.
-   * If negative, retrieves the Pokemon's entire move history (equivalent to reversing the output of {@linkcode getMoveHistory()}).
+   * If negative, retrieves the Pokemon's entire move history (equivalent to reversing the output of {@linkcode getMoveHistory}).
    * Default is `1`.
-   * @returns An array of {@linkcode TurnMove}, as specified above.
+   * @returns An array of {@linkcode TurnMove}s, as specified above.
+   * @privateRemarks
+   * Callers that want to obtain the last move actually _executed_ (i.e. selected from the user's moveset)
+   * should use {@linkcode getLastNonVirtualMove} instead.
    */
-  // TODO: Update documentation in dancer PR to mention "getLastNonVirtualMove"
-  public getLastXMoves(moveCount = 1): TurnMove[] {
-    const moveHistory = this.getMoveHistory();
-    if (moveCount > 0) {
-      return moveHistory.slice(Math.max(moveHistory.length - moveCount, 0)).reverse();
+  // TODO: Most moves accessing this can be reworked to use the current "move in flight" once implemented
+  public getLastXMoves(moveCount = 1): readonly TurnMove[] {
+    const hist = this.getMoveHistory().toReversed();
+    if (moveCount <= 0) {
+      return hist;
     }
-    return moveHistory.slice().reverse();
+    return hist.slice(0, moveCount);
   }
 
   /**
@@ -4484,7 +4490,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * or `undefined` if no applicable moves have been used since switching in.
    */
   public getLastNonVirtualMove(ignoreStruggle = false, ignoreFollowUp = true): TurnMove | undefined {
-    return this.getLastXMoves(-1).find(
+    return this.getMoveHistory().findLast(
       m =>
         m.move !== MoveId.NONE
         && (!ignoreStruggle || m.move !== MoveId.STRUGGLE)

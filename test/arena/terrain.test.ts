@@ -54,9 +54,8 @@ describe("Terrain -", () => {
 
     const typeStr = toTitleCase(PokemonType[type]);
 
-    it.skipIf(terrain === TerrainType.MISTY)(
-      `should boost power of grounded ${typeStr}-type moves by 1.3x, even against ungrounded targets`,
-      async () => {
+    if (terrain !== TerrainType.MISTY) {
+      it(`should boost power of grounded ${typeStr}-type moves by 1.3x, even against ungrounded targets`, async () => {
         await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
         const powerSpy = vi.spyOn(allMoves[move], "calculateBattlePower");
@@ -69,12 +68,9 @@ describe("Terrain -", () => {
         // Player grounded attack got boosted while enemy ungrounded attack didn't
         expect(powerSpy).toHaveLastReturnedWith(allMoves[move].power * 1.3);
         expect(powerSpy).toHaveNthReturnedWith(1, allMoves[move].power);
-      },
-    );
-
-    it.runIf(terrain === TerrainType.MISTY)(
-      "should cut power of grounded Dragon-type moves in half, even from ungrounded users",
-      async () => {
+      });
+    } else {
+      it("should cut power of grounded Dragon-type moves in half, even from ungrounded users", async () => {
         await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
         const powerSpy = vi.spyOn(allMoves[move], "calculateBattlePower");
@@ -86,8 +82,8 @@ describe("Terrain -", () => {
         // Enemy dragon breath got nerfed against grounded player; player dragon breath did not
         expect(powerSpy).toHaveLastReturnedWith(allMoves[move].power);
         expect(powerSpy).toHaveNthReturnedWith(1, allMoves[move].power * 0.5);
-      },
-    );
+      });
+    }
 
     // TODO: Move to a dedicated terrain pulse test file
     it(`should change Terrain Pulse into a ${typeStr}-type move and double its base power`, async () => {
