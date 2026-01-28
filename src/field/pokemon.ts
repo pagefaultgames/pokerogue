@@ -4362,7 +4362,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Get the {@link MoveRestrictionBattlerTag} that is restricting this Pokemon's move usage, if one exists.
+   * Get the {@linkcode MoveRestrictionBattlerTag} that is restricting this Pokemon's move usage, if one exists.
    *
    * @param moveId - The ID of the move to check
    * @returns The first tag on this Pokemon that restricts the move, or `undefined` if the move is not restricted.
