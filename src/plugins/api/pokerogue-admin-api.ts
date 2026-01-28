@@ -47,7 +47,9 @@ export class PokerogueAdminApi extends ApiBase {
    * @param params The {@linkcode SearchAccountRequest} to send
    * @returns an array of {@linkcode SearchAccountResponse} and error. Both can be `undefined`
    */
-  public async searchAccount(params: SearchAccountRequest): Promise<[data?: SearchAccountResponse, error?: string]> {
+  public async searchAccount(
+    params: SearchAccountRequest,
+  ): Promise<[data?: SearchAccountResponse | undefined, error?: string | undefined]> {
     try {
       const urlSearchParams = this.toUrlSearchParams(params);
       const response = await this.doGet(`/admin/account/adminSearch?${urlSearchParams}`);

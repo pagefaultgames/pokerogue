@@ -275,7 +275,7 @@ export class BattleScene extends SceneBase {
   /** Session save data that pertains to Mystery Encounters */
   public mysteryEncounterSaveData: MysteryEncounterSaveData = new MysteryEncounterSaveData();
   /** If the previous wave was a MysteryEncounter, tracks the object with this variable. Mostly used for visual object cleanup */
-  public lastMysteryEncounter?: MysteryEncounter;
+  public lastMysteryEncounter?: MysteryEncounter | undefined;
   /** Combined Biome and Wave count text */
   private biomeWaveText: Phaser.GameObjects.Text;
   private moneyText: Phaser.GameObjects.Text;
@@ -3376,16 +3376,17 @@ export class BattleScene extends SceneBase {
    * Updates Exp and level values for Player's party, adding new level up phases as required
    * @param expValue raw value of exp to split among participants, OR the base multiplier to use with waveIndex
    * @param pokemonDefeated If true, will increment Macho Brace stacks and give the party Pokemon friendship increases
-   * @param useWaveIndexMultiplier Default false. If true, will multiply expValue by a scaling waveIndex multiplier. Not needed if expValue is already scaled by level/wave
-   * @param pokemonParticipantIds Participants. If none are defined, no exp will be given. To spread evenly among the party, should pass all ids of party members.
+   * @param useWaveIndexMultiplier Default `false`. If true, will multiply expValue by a scaling waveIndex multiplier. Not needed if expValue is already scaled by level/wave
+   * @param participantIds - A `Set` containing the IDs of all Pokemon that will share the EXP earned.
+   * If omitted, will default to the current battle's participants.
    */
   applyPartyExp(
     expValue: number,
     pokemonDefeated: boolean,
-    useWaveIndexMultiplier?: boolean,
-    pokemonParticipantIds?: Set<number>,
+    useWaveIndexMultiplier = false,
+    participantIds = this.currentBattle.playerParticipantIds,
   ): void {
-    const participantIds = pokemonParticipantIds ?? this.currentBattle.playerParticipantIds;
+    // TODO: make this code actually not insane
     const party = this.getPlayerParty();
     const expShareModifier = this.findModifier(m => m instanceof ExpShareModifier) as ExpShareModifier;
     const expBalanceModifier = this.findModifier(m => m instanceof ExpBalanceModifier) as ExpBalanceModifier;

@@ -160,7 +160,9 @@ export class BattlerTag implements BaseBattlerTag {
     if (sourceMove) {
       this.sourceMove = sourceMove;
     }
-    this.sourceId = sourceId;
+    if (sourceId !== undefined) {
+      this.sourceId = sourceId;
+    }
     this.#isBatonPassable = isBatonPassable;
   }
 
@@ -211,9 +213,14 @@ export class BattlerTag implements BaseBattlerTag {
    * @param source - An object containing the fields needed to reconstruct this tag
    */
   public loadTag<const T extends this>(source: BaseBattlerTag & Pick<T, "tagType">): void {
-    this.turnCount = source.turnCount;
-    this.sourceMove = source.sourceMove;
-    this.sourceId = source.sourceId;
+    const { sourceMove, turnCount, sourceId } = source;
+    this.turnCount = turnCount;
+    if (sourceMove) {
+      this.sourceMove = sourceMove;
+    }
+    if (sourceId !== undefined) {
+      this.sourceId = sourceId;
+    }
   }
 
   /**
@@ -794,11 +801,17 @@ export class ConfusedTag extends SerializableBattlerTag {
 
   canAdd(pokemon: Pokemon): boolean {
     const blockedByTerrain = pokemon.isGrounded() && globalScene.arena.terrain?.terrainType === TerrainType.MISTY;
-    if (blockedByTerrain) {
-      pokemon.queueStatusImmuneMessage(false, TerrainType.MISTY);
-      return false;
+    if (!blockedByTerrain) {
+      return true;
     }
-    return true;
+
+    // avoid showing cancellation messages for attack moves
+    const phaseData = getMoveEffectPhaseData(pokemon);
+    if (phaseData?.move?.category === MoveCategory.STATUS) {
+      pokemon.queueStatusImmuneMessage(false, TerrainType.MISTY);
+    }
+
+    return false;
   }
 
   onAdd(pokemon: Pokemon): void {
