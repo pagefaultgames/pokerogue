@@ -6031,7 +6031,8 @@ abstract class MoveTypeChartOverrideAttr extends MoveAttr {
 export type { MoveTypeChartOverrideAttr };
 
 /**
- * Attribute to implement {@linkcode MoveId.FREEZE_DRY}'s guaranteed Water-type super effectiveness.
+ * Attribute to implement {@link https://bulbapedia.bulbagarden.net/wiki/Freeze-Dry_(move) | Freeze Dry}'s
+ * guaranteed Water-type super effectiveness.
  */
 export class FreezeDryAttr extends MoveTypeChartOverrideAttr {
   public override apply(
@@ -6053,8 +6054,8 @@ export class FreezeDryAttr extends MoveTypeChartOverrideAttr {
 }
 
 /**
- * Attribute used by {@linkcode MoveId.THOUSAND_ARROWS} to cause it to deal a fixed 1x damage
- * against all ungrounded flying types.
+ * Attribute used by {@link https://bulbapedia.bulbagarden.net/wiki/Thousand_Arrows_(move) | Thousand Arrows}
+ * to cause it to deal a fixed 1x damage against all ungrounded flying types.
  */
 // TODO: Add mention in #5950 about this disabling groundedness-based immunities (once implemented)
 export class NeutralDamageAgainstFlyingTypeAttr extends MoveTypeChartOverrideAttr {
@@ -6074,8 +6075,8 @@ export class NeutralDamageAgainstFlyingTypeAttr extends MoveTypeChartOverrideAtt
 }
 
 /**
- * Move attribute used by {@linkcode MoveId.SYNCHRONOISE} to render the move ineffective
- * against all targets that do not share a type with the user.
+ * Attribute implementing the effect of {@link https://bulbapedia.bulbagarden.net/wiki/Synchronoise_(move) | Synchronoise},
+ * rendering the move ineffective against all targets that do not share at least 1 type with the user.
  */
 export class HitsSameTypeAttr extends MoveTypeChartOverrideAttr {
   public override apply(
@@ -6103,7 +6104,8 @@ export class HitsSameTypeAttr extends MoveTypeChartOverrideAttr {
 }
 
 /**
- * Attribute used by {@linkcode MoveId.FLYING_PRESS} to add the Flying-type to its type effectiveness.
+ * Attribute used by {@link https://bulbapedia.bulbagarden.net/wiki/Flying_Press_(move) | Flying Press}
+ * to add the Flying type to its type effectiveness multiplier.
  */
 export class FlyingTypeMultiplierAttr extends MoveTypeChartOverrideAttr {
   apply(
@@ -6122,7 +6124,8 @@ export class FlyingTypeMultiplierAttr extends MoveTypeChartOverrideAttr {
 }
 
 /**
- * Attribute used by {@linkcode MoveId.SHEER_COLD} to implement its Gen VII+ ice ineffectiveness.
+ * Attribute used by {@link https://bulbapedia.bulbagarden.net/wiki/Sheer_Cold_(move) | Sheer Cold}
+ * to implement its Gen VII+ ice ineffectiveness.
  */
 export class IceNoEffectTypeAttr extends MoveTypeChartOverrideAttr {
   apply(

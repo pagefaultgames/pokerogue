@@ -288,9 +288,9 @@ function getTypeChartMultiplier(attackType: PokemonType, defType: PokemonType): 
 
 /**
  * Retrieve the color corresponding to a specific damage multiplier
- * @returns A color or `undefined` if the default color should be used
+ * @returns The color, or `undefined` if the default color should be used
  */
-// TODO: This is literally never called with `defense`; can probably be removed
+// TODO: This is literally never called with `defense`; remove that option
 // TODO: Move these colors into a constants file instead of using magic strings
 export function getTypeDamageMultiplierColor(
   multiplier: TypeDamageMultiplier,
