@@ -2076,8 +2076,8 @@ function getTerrainCondition(...terrainTypes: TerrainType[]): AbAttrCondition {
 }
 
 /**
- * Condition used by {@linkcode AbilityId.ANTICIPATION} to show a message if any opponent knows a
- * "dangerous" move.
+ * Condition used by {@link https://bulbapedia.bulbagarden.net/wiki/Anticipation_(Ability) | Anticipation}
+ * to show a message if any opponent knows a "dangerous" move.
  * @param pokemon - The {@linkcode Pokemon} with this ability
  * @returns Whether the message should be shown
  */
