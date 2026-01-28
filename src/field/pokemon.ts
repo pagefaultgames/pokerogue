@@ -197,7 +197,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * The Pokemon's current nickname, or `undefined` if it currently lacks one.
    * If omitted, references to this should refer to the default name for this Pokemon's species.
    */
-  public nickname?: string;
+  public nickname?: string | undefined;
   public species: PokemonSpecies;
   public formIndex: number;
   public abilityIndex: number;
@@ -1143,7 +1143,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getSprite(): Phaser.GameObjects.Sprite {
-    return this.getAt(0) as Phaser.GameObjects.Sprite;
+    return this.getAt(0);
   }
 
   getTintSprite(): Phaser.GameObjects.Sprite | null {
@@ -1201,14 +1201,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     this.setScale(this.getSpriteScale());
   }
 
-  updateSpritePipelineData(): void {
+  async updateSpritePipelineData(): Promise<void> {
     [this.getSprite(), this.getTintSprite()]
       .filter(s => !!s)
       .map(s => {
         s.pipelineData["teraColor"] = getTypeRgb(this.getTeraType());
         s.pipelineData["isTerastallized"] = this.isTerastallized;
       });
-    this.updateInfo(true);
+    await this.updateInfo(true);
   }
 
   initShinySparkle(): void {
