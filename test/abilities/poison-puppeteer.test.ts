@@ -31,7 +31,7 @@ describe("Abilities - Poison Puppeteer", () => {
   });
 
   it("should confuse the target if the user poisons the target directly", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAREANIE]);
+    await game.classicMode.startBattle(SpeciesId.MAREANIE);
 
     game.move.use(MoveId.MORTAL_SPIN);
     await game.toEndOfTurn();
@@ -42,7 +42,7 @@ describe("Abilities - Poison Puppeteer", () => {
   });
 
   it("should confuse the target if the user badly poisons the target directly", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAREANIE]);
+    await game.classicMode.startBattle(SpeciesId.MAREANIE);
 
     game.move.use(MoveId.TOXIC);
     await game.toEndOfTurn();
@@ -54,7 +54,7 @@ describe("Abilities - Poison Puppeteer", () => {
 
   it("should not confuse the target if the user poisons the target via Toxic Spikes", async () => {
     game.override.startingWave(5);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.TOXIC_SPIKES);
     await game.toNextTurn();
@@ -69,7 +69,7 @@ describe("Abilities - Poison Puppeteer", () => {
   });
 
   it("should not confuse the target if the user paralyzes the target", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.NUZZLE);
     await game.toEndOfTurn();
@@ -81,7 +81,7 @@ describe("Abilities - Poison Puppeteer", () => {
 
   it("should confuse the target if the target was poisoned due to Synchronize", async () => {
     game.override.passiveAbility(AbilityId.SYNCHRONIZE).enemyAbility(AbilityId.NO_GUARD);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.POISON_POWDER);
@@ -93,7 +93,7 @@ describe("Abilities - Poison Puppeteer", () => {
 
   it("should confuse the target if the target was poisoned due to Toxic Chain", async () => {
     game.override.passiveAbility(AbilityId.TOXIC_CHAIN);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const toxicChainAttr = allAbilities[AbilityId.TOXIC_CHAIN].getAttrs("PostAttackApplyStatusEffectAbAttr")[0];
     // @ts-expect-error: `chance` is private

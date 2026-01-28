@@ -27,7 +27,7 @@ describe("Items - Light Ball", () => {
   it("LIGHT_BALL activates in battle correctly", async () => {
     game.override.startingHeldItems([{ name: "RARE_SPECIES_STAT_BOOSTER", type: "LIGHT_BALL" }]);
     const consoleSpy = vi.spyOn(console, "log");
-    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
 
     const partyMember = game.field.getPlayerPokemon();
 
@@ -78,7 +78,7 @@ describe("Items - Light Ball", () => {
   });
 
   it("LIGHT_BALL held by PIKACHU", async () => {
-    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
 
     const partyMember = game.field.getPlayerPokemon();
 
@@ -107,7 +107,7 @@ describe("Items - Light Ball", () => {
   });
 
   it("LIGHT_BALL held by fused PIKACHU (base)", async () => {
-    await game.classicMode.startBattle([SpeciesId.PIKACHU, SpeciesId.MAROWAK]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU, SpeciesId.MAROWAK);
 
     const [partyMember, ally] = game.scene.getPlayerParty();
 
@@ -145,7 +145,7 @@ describe("Items - Light Ball", () => {
   });
 
   it("LIGHT_BALL held by fused PIKACHU (part)", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAROWAK, SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.MAROWAK, SpeciesId.PIKACHU);
 
     const [partyMember, ally] = game.scene.getPlayerParty();
 
@@ -183,7 +183,7 @@ describe("Items - Light Ball", () => {
   });
 
   it("LIGHT_BALL not held by PIKACHU", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAROWAK]);
+    await game.classicMode.startBattle(SpeciesId.MAROWAK);
 
     const partyMember = game.field.getPlayerPokemon();
 
