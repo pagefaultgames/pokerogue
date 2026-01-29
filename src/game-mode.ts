@@ -65,15 +65,24 @@ export class GameMode implements GameModeConfig {
 
   /**
    * Enables challenges if they are disabled and sets the specified challenge's value
-   * @param challenge The challenge to set
-   * @param value The value to give the challenge. Impact depends on the specific challenge
+   * @param challenge - The challenge to set
+   * @param value - The value to give the challenge. Impact depends on the specific challenge
+   * @param severity - If provided, will override the given severity amount. Unused if `challenge` does not use severity
+   * @todo Add severity support to daily mode challenge setting
    */
-  setChallengeValue(challenge: Challenges, value: number) {
+  setChallengeValue(challenge: Challenges, value: number, severity?: number) {
     if (!this.isChallenge) {
       this.isChallenge = true;
       this.challenges = allChallenges.map(c => copyChallenge(c));
     }
-    this.challenges.filter((chal: Challenge) => chal.id === challenge).map((chal: Challenge) => (chal.value = value));
+    this.challenges
+      .filter((chal: Challenge) => chal.id === challenge)
+      .forEach(chal => {
+        chal.value = value;
+        if (chal.hasSeverity()) {
+          chal.severity = severity ?? chal.severity;
+        }
+      });
   }
 
   /**
