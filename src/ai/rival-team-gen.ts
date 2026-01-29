@@ -3,15 +3,13 @@ import { isBeta, isDev } from "#constants/app-constants";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { getTypeDamageMultiplier } from "#data/type";
 import { AbilityId } from "#enums/ability-id";
-import { ChallengeType } from "#enums/challenge-type";
 import type { PartyMemberStrength } from "#enums/party-member-strength";
 import { PokemonType } from "#enums/pokemon-type";
 import type { SpeciesId } from "#enums/species-id";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type { EnemyPokemon } from "#field/pokemon";
 import { RIVAL_6_POOL, type RivalPoolConfig } from "#trainers/rival-party-config";
-import { applyChallenges } from "#utils/challenge-utils";
-import { NumberHolder, randSeedItem } from "#utils/common";
+import { randSeedItem } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 
@@ -64,30 +62,30 @@ function rivalRollToSpecies(
  * Calculates the types that the given species is weak to
  *
  * @remarks
- * - Considers Levitate as a guaranteed ability if the species has it as all 3 possible abilities.
- * - Accounts for type effectiveness challenges via {@linkcode applyChallenges}
+ * This considers Levitate as a guaranteed ability if the species has it as all 3 possible abilities.
  *
  * @privateRemarks
  * Despite potentially being a useful utility method, this is intentionally *not*
  * exported because it uses logic specific to this file, such as excluding the second type for Tera starters
  *
  * @param species - The species to calculate weaknesses for
- * @param exclude2ndType - (Default `false`) Whether to exclude the second type when calculating weaknesses
+ * @param exclude2ndType - (Default `false`) Whether to exclude the second type when calculating weaknesses.
  *  Intended to be used for starters since they will terastallize to their primary type.
  * @returns The set of types that the species is weak to
  */
 function getWeakTypes(species: PokemonSpecies, exclude2ndType = false): Set<PokemonType> {
   const weaknesses = new Set<PokemonType>();
-  // If the species is always immune to ground, skip ground type checks
-  // Note that there are no other Pokémon with guaranteed immunities due to all 3 of their abilities providing
-  // an immunity.
-  // At this point, we do not have an ability to know which ability the Pokémon generated with, so we can only
-  // work with guaranteed immunities.
+  // If the species is always immune to ground, skip ground type checks.
+  // Note that there are no other Pokémon with guaranteed immunities
+  // due to all 3 of their abilities providing an immunity.
+  // At this point we do not have an ability to know which ability the Pokémon generated with,
+  // so we can only work with guaranteed immunities.
   const groundImmunityAbilities: readonly AbilityId[] = [AbilityId.LEVITATE, AbilityId.EARTH_EATER];
   const isAlwaysGroundImmune =
     groundImmunityAbilities.includes(species.ability1)
     && (species.ability2 == null || groundImmunityAbilities.includes(species.ability2))
     && (species.abilityHidden == null || groundImmunityAbilities.includes(species.ability2));
+
   for (const ty of getEnumValues(PokemonType)) {
     if (
       ty === PokemonType.UNKNOWN
@@ -96,18 +94,16 @@ function getWeakTypes(species: PokemonSpecies, exclude2ndType = false): Set<Poke
     ) {
       continue;
     }
-    const multiplier = new NumberHolder(getTypeDamageMultiplier(ty, species.type1));
-    applyChallenges(ChallengeType.TYPE_EFFECTIVENESS, multiplier);
 
-    if (multiplier.value >= 2 && !exclude2ndType) {
+    let multiplier = getTypeDamageMultiplier(ty, species.type1);
+
+    if (multiplier >= 2 && !exclude2ndType) {
       const type2 = species.type2;
       if (type2 != null) {
-        const multiplier2 = new NumberHolder(getTypeDamageMultiplier(ty, type2));
-        applyChallenges(ChallengeType.TYPE_EFFECTIVENESS, multiplier2);
-        multiplier.value *= multiplier2.value;
+        multiplier *= getTypeDamageMultiplier(ty, type2);
       }
     }
-    if (multiplier.value >= 2) {
+    if (multiplier >= 2) {
       weaknesses.add(ty);
     }
   }
@@ -138,6 +134,9 @@ function calcPartyTypings(
   referenceConfig: RivalPoolConfig = RIVAL_6_POOL,
 ): void {
   if (!balanceTypes && !balanceWeaknesses) {
+    console.warn(
+      "At least one of the `balanceTypes` and/or `balanceWeaknesses` params of `calcPartyTypings` should be passed `true`, but neither was!",
+    );
     return;
   }
   for (let i = 0; i < targetSlot; i++) {
