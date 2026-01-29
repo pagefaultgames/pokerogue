@@ -4,7 +4,7 @@
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Type | Types on Bulbapedia}
  */
 export enum PokemonType {
-  /** Also known as typelessness. */
+  /** Also known as {@link https://bulbapedia.bulbagarden.net/wiki/Type#Typeless | typeless}. */
   UNKNOWN = -1,
 
   NORMAL = 0,
