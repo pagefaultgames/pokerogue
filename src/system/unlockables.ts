@@ -4,14 +4,13 @@ import { Unlockables } from "#enums/unlockables";
 import i18next from "i18next";
 
 export function getUnlockableName(unlockable: Unlockables) {
-  const mode = i18next.exists("gameMode:mode") ? i18next.t("gameMode:mode") : "Mode";
   switch (unlockable) {
     case Unlockables.ENDLESS_MODE:
-      return `${GameMode.getModeName(GameModes.ENDLESS)} ${mode}`;
+      return i18next.t("gameMode:mode", { mode: GameMode.getModeName(GameModes.ENDLESS) });
     case Unlockables.MINI_BLACK_HOLE:
       return i18next.t("modifierType:ModifierType.MINI_BLACK_HOLE.name");
     case Unlockables.SPLICED_ENDLESS_MODE:
-      return `${GameMode.getModeName(GameModes.SPLICED_ENDLESS)} ${mode}`;
+      return i18next.t("gameMode:mode", { mode: GameMode.getModeName(GameModes.SPLICED_ENDLESS) });
     case Unlockables.EVIOLITE:
       return i18next.t("modifierType:ModifierType.EVIOLITE.name");
   }
