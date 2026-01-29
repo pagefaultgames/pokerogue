@@ -25,31 +25,31 @@ interface NewBattleBaseProps {
    * The `Trainer` to spawn.
    * Only present in populated data and will be `undefined` for non-trainer battles.
    */
-  trainer?: Trainer;
+  trainer?: Trainer | undefined;
   /**
    * Saved data used to initialize the trainer.
    * Only present in data initialized from a saved session,
    * and will be `undefined` for non-trainer battles.
    */
-  trainerData?: TrainerData;
+  trainerData?: TrainerData | undefined;
   /**
    * The type of Mystery Encounter to spawn.
    * Only present in data initialized from a saved session,
    * and will be `undefined` for non-ME battles.
    */
-  mysteryEncounterType?: MysteryEncounterType;
+  mysteryEncounterType?: MysteryEncounterType | undefined;
   /**
    * The wave number of the NEW wave to spawn.
    * Will always be `>=1` (barring save data corruption).
    */
-  waveIndex: number;
+  waveIndex: number | undefined;
   /**
    * Whether the battle is a double battle.
    *
    * ⚠️ Mystery Encounters will ignore this property
    * and set it to `false`.
    */
-  double?: boolean;
+  double?: boolean | undefined;
 }
 
 /**
