@@ -787,7 +787,7 @@ export class MoveEffectPhase extends PokemonPhase {
   }
 
   /**
-   * Sub-method of {@linkcode applyMovetEffects} that applies all effects aimed at the move's target.
+   * Sub-method of {@linkcode applyMoveEffects} that applies all effects aimed at the move's target.
    * To be used when the target is successfully and directly hit by the move.
    * @param user - The {@linkcode Pokemon} using the move
    * @param target - The {@linkcode Pokemon} targeted by the move
