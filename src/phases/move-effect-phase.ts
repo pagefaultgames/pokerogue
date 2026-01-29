@@ -984,8 +984,9 @@ export class MoveEffectPhase extends PokemonPhase {
 }
 
 /**
- * Check whether a given Move is able to be reflected by either
- * {@linkcode MoveId.MAGIC_COAT | Magic Coat} or {@linkcode AbilityId.MAGIC_BOUNCE | Magic Bounce}.
+ * Check whether a given Move is able to be reflected.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Magic_Bounce_(Ability)}
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Magic_Coat_(move)}
  * @param move - The {@linkcode Move} being used
  * @param target - The targeted {@linkcode Pokemon} attempting to reflect the move
  * @param useMode - The {@linkcode MoveUseMode} dictating how the move was used
