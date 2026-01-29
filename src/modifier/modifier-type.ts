@@ -2476,7 +2476,7 @@ export interface CustomModifierSettings {
    */
   fillRemaining?: boolean;
   /** If specified, can adjust the amount of money required for a shop reroll. If set to a negative value, the shop will not allow rerolls at all. */
-  rerollMultiplier?: number;
+  rerollMultiplier?: number | undefined;
   /**
    * If `false`, will prevent set item tiers from upgrading via luck.
    * @defaultValue `true`
