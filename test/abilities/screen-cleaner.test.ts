@@ -36,7 +36,7 @@ describe("Abilities - Screen Cleaner", () => {
     game.scene.arena.addTag(tagType, 0, 0, 0, ArenaTagSide.BOTH);
     expect(game).toHaveArenaTag(tagType);
 
-    await game.classicMode.startBattle([SpeciesId.SLOWKING]);
+    await game.classicMode.startBattle(SpeciesId.SLOWKING);
 
     const slowking = game.field.getPlayerPokemon();
     expect(slowking).toHaveAbilityApplied(AbilityId.SCREEN_CLEANER);
@@ -51,7 +51,7 @@ describe("Abilities - Screen Cleaner", () => {
     expect(game).toHaveArenaTag(ArenaTagType.LIGHT_SCREEN);
     expect(game).toHaveArenaTag(ArenaTagType.AURORA_VEIL);
 
-    await game.classicMode.startBattle([SpeciesId.SLOWKING]);
+    await game.classicMode.startBattle(SpeciesId.SLOWKING);
 
     const slowking = game.field.getPlayerPokemon();
     expect(slowking).toHaveAbilityApplied(AbilityId.SCREEN_CLEANER);

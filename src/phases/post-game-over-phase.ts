@@ -4,7 +4,7 @@ import type { EndCardPhase } from "#phases/end-card-phase";
 
 export class PostGameOverPhase extends Phase {
   public readonly phaseName = "PostGameOverPhase";
-  private endCardPhase?: EndCardPhase;
+  private endCardPhase?: EndCardPhase | undefined;
   private slotId: number;
 
   constructor(slotId: number, endCardPhase?: EndCardPhase) {
@@ -21,8 +21,8 @@ export class PostGameOverPhase extends Phase {
         if (!success) {
           return globalScene.reset(true);
         }
-        globalScene.gameData.tryClearSession(this.slotId).then((success: boolean | [boolean, boolean]) => {
-          if (!success[0]) {
+        globalScene.gameData.tryClearSession(this.slotId).then(([success]) => {
+          if (!success) {
             return globalScene.reset(true);
           }
           globalScene.reset();

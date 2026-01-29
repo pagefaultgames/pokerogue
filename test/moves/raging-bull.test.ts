@@ -44,7 +44,7 @@ describe("Move - Raging Bull", () => {
     { tagType: ArenaTagType.LIGHT_SCREEN, tagName: "Light Screen" },
     { tagType: ArenaTagType.AURORA_VEIL, tagName: "Aurora Veil" },
   ])("should remove $tagName only from the target's side of the field", async ({ tagType }) => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.scene.arena.addTag(tagType, 0, undefined, game.field.getEnemyPokemon().id, ArenaTagSide.ENEMY);
     game.scene.arena.addTag(tagType, 0, undefined, game.field.getPlayerPokemon().id, ArenaTagSide.PLAYER);
@@ -62,7 +62,7 @@ describe("Move - Raging Bull", () => {
     { tagType: ArenaTagType.AURORA_VEIL, tagName: "Aurora Veil" },
   ])("should remove $tagName from the target's side even if the target is an ally", async ({ tagType }) => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
 
     game.scene.arena.addTag(tagType, 0, undefined, game.field.getPlayerPokemon().id, ArenaTagSide.PLAYER);
 
@@ -97,7 +97,7 @@ describe("Move - Raging Bull", () => {
     if (formIndex != null) {
       game.override.starterForms({ [SpeciesId.PALDEA_TAUROS]: formIndex });
     }
-    await game.classicMode.startBattle([speciesId]);
+    await game.classicMode.startBattle(speciesId);
 
     expect(game.field.getPlayerPokemon().getMoveType(allMoves[MoveId.RAGING_BULL])).toBe(moveType);
   });

@@ -31,7 +31,7 @@ describe("Abilities - Storm Drain", () => {
   });
 
   it("should redirect water type moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MAGIKARP);
 
     const [enemy1, enemy2] = game.scene.getEnemyField();
     game.field.mockAbility(enemy2, AbilityId.STORM_DRAIN);
@@ -45,7 +45,7 @@ describe("Abilities - Storm Drain", () => {
 
   it("should not redirect non-water type moves", async () => {
     game.override.moveset([MoveId.SPLASH, MoveId.AERIAL_ACE]);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MAGIKARP);
 
     const [enemy1, enemy2] = game.scene.getEnemyField();
 
@@ -59,7 +59,7 @@ describe("Abilities - Storm Drain", () => {
   });
 
   it("should boost the user's spatk without damaging", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MAGIKARP);
 
     const enemy2 = game.scene.getEnemyField()[1];
     game.field.mockAbility(enemy2, AbilityId.STORM_DRAIN);
@@ -74,7 +74,7 @@ describe("Abilities - Storm Drain", () => {
 
   it("should not redirect moves changed from water type via ability", async () => {
     game.override.ability(AbilityId.NORMALIZE);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MAGIKARP);
 
     const [enemy1, enemy2] = game.scene.getEnemyField();
     game.field.mockAbility(enemy2, AbilityId.STORM_DRAIN);
@@ -88,7 +88,7 @@ describe("Abilities - Storm Drain", () => {
 
   it("should redirect moves changed to water type via ability", async () => {
     game.override.ability(AbilityId.LIQUID_VOICE);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const [enemy1, enemy2] = game.scene.getEnemyField();
 

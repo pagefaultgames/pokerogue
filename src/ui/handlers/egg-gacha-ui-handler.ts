@@ -41,7 +41,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
   private defaultText: string;
 
   /** The tween chain playing the egg drop animation sequence */
-  private eggDropTweenChain?: Phaser.Tweens.TweenChain;
+  private eggDropTweenChain?: Phaser.Tweens.TweenChain | undefined;
 
   private scale = 0.1666666667;
 
@@ -341,7 +341,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
 
     this.eggGachaContainer.setActive(true).setVisible(true);
 
-    handleTutorial(Tutorial.Egg_Gacha);
+    handleTutorial(Tutorial.EGG_GACHA);
 
     this.legendaryExpiration.setText(this.getLegendaryGachaTimeLeft());
     this.legendaryGachaTimer();

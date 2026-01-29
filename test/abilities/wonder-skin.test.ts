@@ -2,7 +2,6 @@ import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { MoveEffectPhase } from "#phases/move-effect-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -33,9 +32,9 @@ describe("Abilities - Wonder Skin", () => {
 
     vi.spyOn(moveToCheck, "calculateBattleAccuracy");
 
-    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
     game.move.select(MoveId.CHARM);
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(50);
   });
@@ -45,9 +44,9 @@ describe("Abilities - Wonder Skin", () => {
 
     vi.spyOn(moveToCheck, "calculateBattleAccuracy");
 
-    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
     game.move.select(MoveId.TACKLE);
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(100);
   });
@@ -66,9 +65,9 @@ describe("Abilities - Wonder Skin", () => {
       game.override.ability(ability[0]);
       vi.spyOn(moveToCheck, "calculateBattleAccuracy");
 
-      await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+      await game.classicMode.startBattle(SpeciesId.PIKACHU);
       game.move.select(MoveId.CHARM);
-      await game.phaseInterceptor.to(MoveEffectPhase);
+      await game.phaseInterceptor.to("MoveEffectPhase");
 
       expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(100);
     });

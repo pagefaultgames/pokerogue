@@ -31,11 +31,11 @@ export interface IMysteryEncounterOption {
   secondaryPokemonRequirements: EncounterPokemonRequirement[];
   excludePrimaryFromSecondaryRequirements: boolean;
 
-  dialogue?: OptionTextDisplay;
+  dialogue?: OptionTextDisplay | undefined;
 
-  onPreOptionPhase?: OptionPhaseCallback;
+  onPreOptionPhase?: OptionPhaseCallback | undefined;
   onOptionPhase: OptionPhaseCallback;
-  onPostOptionPhase?: OptionPhaseCallback;
+  onPostOptionPhase?: OptionPhaseCallback | undefined;
 }
 
 export class MysteryEncounterOption implements IMysteryEncounterOption {
@@ -44,22 +44,22 @@ export class MysteryEncounterOption implements IMysteryEncounterOption {
   requirements: EncounterSceneRequirement[];
   primaryPokemonRequirements: EncounterPokemonRequirement[];
   secondaryPokemonRequirements: EncounterPokemonRequirement[];
-  primaryPokemon?: PlayerPokemon;
-  secondaryPokemon?: PlayerPokemon[];
+  primaryPokemon: PlayerPokemon | undefined;
+  secondaryPokemon: PlayerPokemon[] | undefined;
   excludePrimaryFromSecondaryRequirements: boolean;
 
   /**
    * Dialogue object containing all the dialogue, messages, tooltips, etc. for this option
    * Will be populated on {@linkcode MysteryEncounter} initialization
    */
-  dialogue?: OptionTextDisplay;
+  dialogue?: OptionTextDisplay | undefined;
 
   /** Executes before any following dialogue or business logic from option. Usually this will be for calculating dialogueTokens or performing scene/data updates */
-  onPreOptionPhase?: OptionPhaseCallback;
+  onPreOptionPhase?: OptionPhaseCallback | undefined;
   /** Business logic function for option */
   onOptionPhase: OptionPhaseCallback;
   /** Executes after the encounter is over. Usually this will be for calculating dialogueTokens or performing data updates */
-  onPostOptionPhase?: OptionPhaseCallback;
+  onPostOptionPhase?: OptionPhaseCallback | undefined;
 
   constructor(option: IMysteryEncounterOption | null) {
     if (option != null) {
@@ -69,6 +69,8 @@ export class MysteryEncounterOption implements IMysteryEncounterOption {
     this.requirements = this.requirements ?? [];
     this.primaryPokemonRequirements = this.primaryPokemonRequirements ?? [];
     this.secondaryPokemonRequirements = this.secondaryPokemonRequirements ?? [];
+    this.primaryPokemon = undefined;
+    this.secondaryPokemon = undefined;
   }
 
   /**

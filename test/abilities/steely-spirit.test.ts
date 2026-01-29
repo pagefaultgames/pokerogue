@@ -33,7 +33,7 @@ describe("Abilities - Steely Spirit", () => {
   });
 
   it("increases Steel-type moves' power used by the user and its allies by 50%", async () => {
-    await game.classicMode.startBattle([SpeciesId.PIKACHU, SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU, SpeciesId.SHUCKLE);
     const boostSource = game.scene.getPlayerField()[1];
     const enemyToCheck = game.field.getEnemyPokemon();
 
@@ -49,7 +49,7 @@ describe("Abilities - Steely Spirit", () => {
   });
 
   it("stacks if multiple users with this ability are on the field.", async () => {
-    await game.classicMode.startBattle([SpeciesId.PIKACHU, SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU, SpeciesId.PIKACHU);
     const enemyToCheck = game.field.getEnemyPokemon();
 
     game.scene.getPlayerField().forEach(p => {
@@ -68,7 +68,7 @@ describe("Abilities - Steely Spirit", () => {
   });
 
   it("does not take effect when suppressed", async () => {
-    await game.classicMode.startBattle([SpeciesId.PIKACHU, SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU, SpeciesId.SHUCKLE);
     const boostSource = game.scene.getPlayerField()[1];
     const enemyToCheck = game.field.getEnemyPokemon();
 
@@ -93,7 +93,7 @@ describe("Abilities - Steely Spirit", () => {
     const revelationDance = allMoves[MoveId.REVELATION_DANCE];
     vi.spyOn(revelationDance, "calculateBattlePower");
 
-    await game.classicMode.startBattle([SpeciesId.KLINKLANG]);
+    await game.classicMode.startBattle(SpeciesId.KLINKLANG);
 
     game.move.select(MoveId.REVELATION_DANCE);
 
