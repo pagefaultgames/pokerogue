@@ -6615,7 +6615,7 @@ export class ProtectAttr extends AddBattlerTagAttr {
     return (user, _target, _move): boolean => {
       let timesUsed = 0;
 
-      for (const turnMove of user.getLastXMoves(-1).slice()) {
+      for (const turnMove of user.getLastXMoves(-1)) {
         if (
           // Quick & Wide guard increment the Protect counter without using it for fail chance
           !(
@@ -9704,11 +9704,10 @@ export function initMoves() {
       .ignoresProtect()
       .attr(DestinyBondAttr)
       .condition(failAgainstFinalBossCondition, 2)
+      // Destiny Bond fails if it was successfully used last turn
       .condition((user, _target, move) => {
-        const lastTurnMove = user.getLastXMoves(1);
-        return (
-          lastTurnMove.length === 0 || lastTurnMove[0].move !== move.id || lastTurnMove[0].result !== MoveResult.SUCCESS
-        );
+        const lastTurnMove = user.getLastXMoves(1).at(0);
+        return !(lastTurnMove?.move === move.id && lastTurnMove.result === MoveResult.SUCCESS);
       }),
     new StatusMove(MoveId.PERISH_SONG, PokemonType.NORMAL, -1, 5, -1, 0, 2)
       .attr(AddBattlerTagAttr, BattlerTagType.PERISH_SONG, false, true, 4)
