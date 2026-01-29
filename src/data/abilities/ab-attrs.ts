@@ -5937,7 +5937,7 @@ export function getWeatherCondition(...weatherTypes: WeatherType[]): AbAttrCondi
     if (globalScene.arena.weather?.isEffectSuppressed()) {
       return false;
     }
-    return weatherTypes.includes(globalScene.arena.getWeatherType());
+    return weatherTypes.includes(globalScene.arena.weatherType);
   };
 }
 

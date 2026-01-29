@@ -2601,7 +2601,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     // Handle strong winds lowering effectiveness of types super effective against pure flying
     if (
       !ignoreStrongWinds
-      && arena.getWeatherType() === WeatherType.STRONG_WINDS
+      && arena.weatherType === WeatherType.STRONG_WINDS
       && !arena.weather?.isEffectSuppressed()
       && this.isOfType(PokemonType.FLYING)
       && getTypeDamageMultiplier(moveType, PokemonType.FLYING) === 2
