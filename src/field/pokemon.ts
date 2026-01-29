@@ -148,7 +148,11 @@ import { RibbonData } from "#system/ribbons/ribbon-data";
 import { awardRibbonsToSpeciesLine } from "#system/ribbons/ribbon-methods";
 import type { AbAttrMap, AbAttrString, TypeMultiplierAbAttrParams } from "#types/ability-types";
 import type { Constructor } from "#types/common";
-import type { GetAttackDamageParams, GetBaseDamageParams } from "#types/damage-params";
+import type {
+  GetAttackDamageParams,
+  GetAttackTypeEffectivenessParams,
+  GetBaseDamageParams,
+} from "#types/damage-params";
 import type { DamageCalculationResult, DamageResult } from "#types/damage-result";
 import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
@@ -2475,11 +2479,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const typeMultiplier = new NumberHolder(
       move.category !== MoveCategory.STATUS || move.hasAttr("RespectAttackTypeImmunityAttr")
-        ? this.getAttackTypeEffectiveness(moveType, source, false, simulated, move, useIllusion)
+        ? this.getAttackTypeEffectiveness(moveType, { source, simulated, move, useIllusion })
         : 1,
     );
 
-    applyMoveAttrs("VariableMoveTypeMultiplierAttr", source, this, move, typeMultiplier);
     if (this.getTypes(true, true).find(t => move.isTypeImmune(source, this, t))) {
       typeMultiplier.value = 0;
     }
@@ -2542,85 +2545,113 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Calculates the move's type effectiveness multiplier based on the target's type/s.
-   * @param moveType {@linkcode PokemonType} the type of the move being used
-   * @param source {@linkcode Pokemon} the Pokemon using the move
-   * @param ignoreStrongWinds whether or not this ignores strong winds (anticipation, forewarn, stealth rocks)
-   * @param simulated tag to only apply the strong winds effect message when the move is used
-   * @param move (optional) the move whose type effectiveness is to be checked. Used for applying {@linkcode VariableMoveTypeChartAttr}
-   * @param useIllusion - Whether we want the attack type effectiveness on the illusion or not
-   * @returns a multiplier for the type effectiveness
+   * Calculate the type effectiveness multiplier of a Move used **against** this Pokemon.
+   * @param moveType - The {@linkcode PokemonType} of the move being used
+   * @param params - Parameters used to modify the type effectiveness
+   * @returns The computed type effectiveness multiplier.
    */
-  getAttackTypeEffectiveness(
+  public getAttackTypeEffectiveness(
     moveType: PokemonType,
-    source?: Pokemon,
-    ignoreStrongWinds = false,
-    simulated = true,
-    move?: Move,
-    useIllusion = false,
+    {
+      source,
+      ignoreStrongWinds = false,
+      simulated = true,
+      move,
+      useIllusion = false,
+    }: GetAttackTypeEffectivenessParams = {},
   ): TypeDamageMultiplier {
     if (moveType === PokemonType.STELLAR) {
       return this.isTerastallized ? 2 : 1;
     }
-    const types = this.getTypes(true, true, undefined, useIllusion);
-    const arena = globalScene.arena;
+
+    const types = this.getTypes(true, true, false, useIllusion);
+    const { arena } = globalScene;
 
     // Handle flying v ground type immunity without removing flying type so effective types are still effective
     // Related to https://github.com/pagefaultgames/pokerogue/issues/524
-    if (moveType === PokemonType.GROUND && (this.isGrounded() || arena.hasTag(ArenaTagType.GRAVITY))) {
-      const flyingIndex = types.indexOf(PokemonType.FLYING);
-      if (flyingIndex > -1) {
-        types.splice(flyingIndex, 1);
-      }
+    // TODO: Fix once gravity makes pokemon actually grounded in #5950
+    if (
+      moveType === PokemonType.GROUND
+      && types.includes(PokemonType.FLYING)
+      && (this.isGrounded() || arena.hasTag(ArenaTagType.GRAVITY))
+    ) {
+      types.splice(types.indexOf(PokemonType.FLYING), 1);
     }
 
-    let multiplier = types
-      .map(defenderType => {
-        const multiplier = new NumberHolder(getTypeDamageMultiplier(moveType, defenderType));
-        applyChallenges(ChallengeType.TYPE_EFFECTIVENESS, multiplier);
-        if (move) {
-          applyMoveAttrs("VariableMoveTypeChartAttr", null, this, move, multiplier, defenderType);
-        }
-        if (source) {
-          const ignoreImmunity = new BooleanHolder(false);
-          if (source.isActive(true) && source.hasAbilityWithAttr("IgnoreTypeImmunityAbAttr")) {
-            applyAbAttrs("IgnoreTypeImmunityAbAttr", {
-              pokemon: source,
-              cancelled: ignoreImmunity,
-              simulated,
-              moveType,
-              defenderType,
-            });
-          }
-          if (ignoreImmunity.value && multiplier.value === 0) {
-            return 1;
-          }
+    const multi = new NumberHolder(1);
+    for (const defenderType of types) {
+      const typeMulti = getTypeDamageMultiplier(moveType, defenderType);
+      // If the target is immune to the type in question, check for effects that would ignore said nullification
+      // TODO: Review if the `isActive` check is needed anymore
+      if (
+        source?.isActive(true)
+        && typeMulti === 0
+        && this.checkIgnoreTypeImmunity({ source, simulated, moveType, defenderType })
+      ) {
+        continue;
+      }
+      multi.value *= typeMulti;
+    }
 
-          const exposedTags = this.findTags(tag => tag instanceof ExposedTag) as ExposedTag[];
-          if (exposedTags.some(t => t.ignoreImmunity(defenderType, moveType)) && multiplier.value === 0) {
-            return 1;
-          }
-        }
-        return multiplier.value;
-      })
-      .reduce((acc, cur) => acc * cur, 1) as TypeDamageMultiplier;
+    // Apply any typing changes from Freeze-Dry, etc.
+    if (move) {
+      applyMoveAttrs("MoveTypeChartOverrideAttr", source ?? null, this, move, multi, types, moveType);
+    }
 
-    const typeMultiplierAgainstFlying = new NumberHolder(getTypeDamageMultiplier(moveType, PokemonType.FLYING));
-    applyChallenges(ChallengeType.TYPE_EFFECTIVENESS, typeMultiplierAgainstFlying);
     // Handle strong winds lowering effectiveness of types super effective against pure flying
     if (
       !ignoreStrongWinds
-      && arena.weather?.weatherType === WeatherType.STRONG_WINDS
-      && !arena.weather.isEffectSuppressed()
+      && arena.getWeatherType() === WeatherType.STRONG_WINDS
+      && !arena.weather?.isEffectSuppressed()
       && this.isOfType(PokemonType.FLYING)
-      && typeMultiplierAgainstFlying.value === 2
+      && getTypeDamageMultiplier(moveType, PokemonType.FLYING) === 2
     ) {
-      multiplier /= 2;
+      multi.value /= 2;
       if (!simulated) {
         globalScene.phaseManager.queueMessage(i18next.t("weather:strongWindsEffectMessage"));
       }
     }
-    return multiplier as TypeDamageMultiplier;
+    return multi.value as TypeDamageMultiplier;
+  }
+
+  /**
+   * Sub-method of {@linkcode getAttackTypeEffectiveness} that handles nullifying type immunities.
+   * @param source - The {@linkcode Pokemon} using the move
+   * @param simulated - Whether to prevent changes to game state during calculations
+   * @param moveType - The {@linkcode PokemonType} of the move being used
+   * @param defenderType - The {@linkcode PokemonType} of the defender
+   * @returns Whether the type immunity was bypassed
+   */
+  private checkIgnoreTypeImmunity({
+    source,
+    simulated,
+    moveType,
+    defenderType,
+  }: {
+    source: Pokemon;
+    simulated: boolean;
+    moveType: PokemonType;
+    defenderType: PokemonType;
+  }): boolean {
+    // TODO: remove type assertion once method is properly typed
+    const hasExposed = !!this.findTag(
+      tag =>
+        [BattlerTagType.IGNORE_DARK, BattlerTagType.IGNORE_GHOST].includes(tag.tagType)
+        && (tag as ExposedTag).ignoreImmunity(defenderType, moveType),
+    );
+    if (hasExposed) {
+      return true;
+    }
+
+    const ignoreImmunity = new BooleanHolder(false);
+    applyAbAttrs("IgnoreTypeImmunityAbAttr", {
+      pokemon: source,
+      cancelled: ignoreImmunity,
+      simulated,
+      moveType,
+      defenderType,
+    });
+    return ignoreImmunity.value;
   }
 
   /**
@@ -2641,10 +2672,16 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
      * Based on how effectively this Pokemon defends against the opponent's types.
      * This score cannot be higher than 4.
      */
-    let defScore = 1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[0], opponent), 0.25);
+    // TODO: This should use a `reduce` over the types
+    let defScore = 1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[0], { source: opponent }), 0.25);
     if (enemyTypes.length > 1) {
-      defScore *=
-        1 / Math.max(this.getAttackTypeEffectiveness(enemyTypes[1], opponent, false, false, undefined, true), 0.25);
+      // TODO: Shouldn't this pass `simulated=true` here?
+      const secondTypeEff = this.getAttackTypeEffectiveness(enemyTypes[1], {
+        source: opponent,
+        simulated: false,
+        useIllusion: true,
+      });
+      defScore /= Math.max(secondTypeEff, 0.25);
     }
 
     const moveset = this.moveset;
@@ -2658,7 +2695,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         continue;
       }
       const moveType = resolvedMove.type;
-      let thisScore = opponent.getAttackTypeEffectiveness(moveType, this, false, true, undefined, true);
+      let thisScore = opponent.getAttackTypeEffectiveness(moveType, {
+        source: this,
+        simulated: true,
+        useIllusion: true,
+      });
 
       // Add STAB multiplier for attack type effectiveness.
       // For now, simply don't apply STAB to moves that may change type
@@ -3624,7 +3665,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param __namedParameters.source - Needed for proper typedoc rendering
    * @returns The {@linkcode DamageCalculationResult}
    */
-  // TODO: Condense various multipliers into a single function
+  // TODO: Condense various multipliers into a separate function for easier unit testing
   getAttackDamage({
     source,
     move,
