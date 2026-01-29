@@ -911,7 +911,7 @@ export class MoveEffectPhase extends PokemonPhase {
    * The returned Pokémon is guaranteed to be defined during move execution itself, as the `start` method
    * ends this phase immediately if a source is missing.
    */
-  // TODO: Delete in favor of overridding {@linkcode PokemonPhase.getPokemon}
+  // TODO: Delete in favor of using `getPokemon` from the inherited `PokemonPhase` class
   public getUserPokemon(): Pokemon {
     return super.getPokemon();
   }
