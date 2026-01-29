@@ -4370,9 +4370,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Does not consider target-based restrictions from Heal Block, which is done by {@linkcode getTargetRestrictingTag}.
    */
   private getRestrictingTag(moveId: MoveId): MoveRestrictionBattlerTag | undefined {
-    return this.findTag(
-      (t): t is MoveRestrictionBattlerTag => t instanceof MoveRestrictionBattlerTag && t.isMoveRestricted(moveId, this),
-    );
+    return this.findTag(t => t instanceof MoveRestrictionBattlerTag && t.isMoveRestricted(moveId, this)) as
+      | MoveRestrictionBattlerTag
+      | undefined;
   }
 
   /**
