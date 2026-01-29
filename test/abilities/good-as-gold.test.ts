@@ -37,7 +37,7 @@ describe("Abilities - Good As Gold", () => {
 
   it("should block normal status moves", async () => {
     game.override.enemyMoveset([MoveId.GROWL]);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const player = game.field.getPlayerPokemon();
 
@@ -51,7 +51,7 @@ describe("Abilities - Good As Gold", () => {
 
   it("should block memento and prevent the user from fainting", async () => {
     game.override.enemyAbility(AbilityId.GOOD_AS_GOLD);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     game.move.use(MoveId.MEMENTO);
     await game.phaseInterceptor.to("BerryPhase");
@@ -64,7 +64,7 @@ describe("Abilities - Good As Gold", () => {
       .battleStyle("double")
       .enemyMoveset([MoveId.STEALTH_ROCK, MoveId.HAZE])
       .moveset([MoveId.SWORDS_DANCE, MoveId.SAFEGUARD]);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS);
     const [good_as_gold, ball_fetch] = game.scene.getPlayerField();
 
     // Force second pokemon to have ball fetch to isolate to a single mon.
@@ -84,7 +84,7 @@ describe("Abilities - Good As Gold", () => {
 
   it("should not block field targeted effects in singles", async () => {
     game.override.battleStyle("single").enemyMoveset([MoveId.SPIKES]);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     game.move.select(MoveId.SPLASH, 0);
     await game.phaseInterceptor.to("BerryPhase");
@@ -94,7 +94,7 @@ describe("Abilities - Good As Gold", () => {
 
   it("should block the ally's helping hand", async () => {
     game.override.battleStyle("double").moveset([MoveId.HELPING_HAND, MoveId.TACKLE]);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS);
 
     game.move.select(MoveId.HELPING_HAND, 0);
     game.move.select(MoveId.TACKLE, 1);
@@ -106,7 +106,7 @@ describe("Abilities - Good As Gold", () => {
   // TODO: re-enable when heal bell is fixed
   it.todo("should block the ally's heal bell, but only if the good as gold user is on the field", async () => {
     game.override.battleStyle("double").statusEffect(StatusEffect.BURN);
-    await game.classicMode.startBattle([SpeciesId.MILOTIC, SpeciesId.FEEBAS, SpeciesId.ABRA]);
+    await game.classicMode.startBattle(SpeciesId.MILOTIC, SpeciesId.FEEBAS, SpeciesId.ABRA);
     const [milotic, feebas, abra] = game.scene.getPlayerParty();
     game.field.mockAbility(milotic, AbilityId.GOOD_AS_GOLD);
     game.field.mockAbility(feebas, AbilityId.BALL_FETCH);
@@ -126,7 +126,7 @@ describe("Abilities - Good As Gold", () => {
 
   it("should not block field targeted effects like rain dance", async () => {
     game.override.battleStyle("single").enemyMoveset([MoveId.RAIN_DANCE]);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     game.move.use(MoveId.SPLASH, 0);
     await game.phaseInterceptor.to("BerryPhase");

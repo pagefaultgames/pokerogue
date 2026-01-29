@@ -23,7 +23,6 @@ describe("Frenzy Move Reset", () => {
     game.override
       .battleStyle("single")
       .criticalHits(false)
-      .starterSpecies(SpeciesId.MAGIKARP)
       .moveset(MoveId.THRASH)
       .statusEffect(StatusEffect.PARALYSIS)
       .enemyMoveset(MoveId.SPLASH)
@@ -46,7 +45,7 @@ describe("Frenzy Move Reset", () => {
    *
    */
   it("should cancel frenzy move if move fails turn 2", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const playerPokemon = game.field.getPlayerPokemon();
 

@@ -1586,7 +1586,12 @@ export class PartyUiHandler extends MessageUiHandler {
         break;
       case PartyUiMode.SWITCH:
       case PartyUiMode.RELEASE:
+        this.options.push(PartyOption.RELEASE);
+        break;
       case PartyUiMode.CHECK:
+        if (globalScene.phaseManager.getCurrentPhase().is("MysteryEncounterPhase")) {
+          break;
+        }
         this.options.push(PartyOption.RELEASE);
         break;
     }
@@ -2014,7 +2019,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     const slotInfoContainer = globalScene.add.container(0, 0);
     this.add(slotInfoContainer);
 
-    let displayName = this.pokemon.getNameToRender(false);
+    let displayName = this.pokemon.getNameToRender({ useIllusion: false });
     let nameTextWidth: number;
 
     const nameSizeTest = addTextObject(0, 0, displayName, TextStyle.PARTY);

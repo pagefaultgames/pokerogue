@@ -39,7 +39,7 @@ export class Achv {
   public hasParent: boolean;
   public parentId: string;
 
-  private conditionFunc: ConditionFn | undefined;
+  protected conditionFunc?: ConditionFn;
 
   constructor(
     localizationKey: string,
@@ -51,7 +51,9 @@ export class Achv {
     this.description = description;
     this.iconImage = iconImage;
     this.score = score;
-    this.conditionFunc = conditionFunc;
+    if (conditionFunc != null) {
+      this.conditionFunc = conditionFunc;
+    }
     this.localizationKey = localizationKey;
   }
 
@@ -107,7 +109,7 @@ export class MoneyAchv extends Achv {
   moneyAmount: number;
 
   constructor(localizationKey: string, moneyAmount: number, iconImage: string, score: number) {
-    super(localizationKey, "", iconImage, score, (_args: any[]) => globalScene.money >= this.moneyAmount);
+    super(localizationKey, "", iconImage, score, () => globalScene.money >= this.moneyAmount);
     this.moneyAmount = moneyAmount;
   }
 }
@@ -121,7 +123,7 @@ export class RibbonAchv extends Achv {
       "",
       iconImage,
       score,
-      (_args: any[]) => globalScene.gameData.gameStats.ribbonsOwned >= this.ribbonAmount,
+      () => globalScene.gameData.gameStats.ribbonsOwned >= this.ribbonAmount,
     );
     this.ribbonAmount = ribbonAmount;
   }
@@ -129,30 +131,25 @@ export class RibbonAchv extends Achv {
 
 export class DamageAchv extends Achv {
   damageAmount: number;
+  // intentionally overwriting base property
+  protected declare readonly conditionFunc: ConditionFn<[number | NumberHolder]>;
 
   constructor(localizationKey: string, damageAmount: number, iconImage: string, score: number) {
-    super(
-      localizationKey,
-      "",
-      iconImage,
-      score,
-      (args: any[]) => (args[0] instanceof NumberHolder ? args[0].value : args[0]) >= this.damageAmount,
-    );
+    super(localizationKey, "", iconImage, score);
+    this.conditionFunc = (args: [NumberHolder | number]) =>
+      (args[0] instanceof NumberHolder ? args[0].value : args[0]) >= this.damageAmount;
     this.damageAmount = damageAmount;
   }
 }
 
 export class HealAchv extends Achv {
   healAmount: number;
+  protected declare readonly conditionFunc: ConditionFn<[number | NumberHolder]>;
 
   constructor(localizationKey: string, healAmount: number, iconImage: string, score: number) {
-    super(
-      localizationKey,
-      "",
-      iconImage,
-      score,
-      (args: any[]) => (args[0] instanceof NumberHolder ? args[0].value : args[0]) >= this.healAmount,
-    );
+    super(localizationKey, "", iconImage, score);
+    this.conditionFunc = (args: [number | NumberHolder]) =>
+      (args[0] instanceof NumberHolder ? args[0].value : args[0]) >= this.healAmount;
     this.healAmount = healAmount;
   }
 }
@@ -885,8 +882,8 @@ export const achvs = {
 };
 
 export function initAchievements() {
-  const achvKeys = Object.keys(achvs);
-  achvKeys.forEach((a: string, i: number) => {
+  const achvKeys = Object.keys(achvs) as (keyof typeof achvs)[];
+  achvKeys.forEach((a: keyof typeof achvs, i: number) => {
     achvs[a].id = a;
     if (achvs[a].hasParent) {
       achvs[a].parentId = achvKeys[i - 1];

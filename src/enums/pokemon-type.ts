@@ -1,7 +1,12 @@
+/**
+ * A `PokemonType` represents the type of a Pokemon or its moves.
+ *
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Type | Types on Bulbapedia}
+ */
 export enum PokemonType {
-  /** Also known as typelessness. */
-  // TODO: Rename this to `TYPELESS`
+  /** Also known as {@link https://bulbapedia.bulbagarden.net/wiki/Type#Typeless | typeless}. */
   UNKNOWN = -1,
+
   NORMAL = 0,
   FIGHTING,
   FLYING,
@@ -20,6 +25,7 @@ export enum PokemonType {
   DRAGON,
   DARK,
   FAIRY,
+
   STELLAR,
 }
 

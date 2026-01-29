@@ -55,7 +55,7 @@ describe("Enemy Commands - Move Selection", () => {
       .startingLevel(1)
       .enemyLevel(100);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     enemyPokemon.aiType = AiType.SMART_RANDOM;
@@ -79,7 +79,7 @@ describe("Enemy Commands - Move Selection", () => {
       .startingLevel(1)
       .enemyLevel(100);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     enemyPokemon.aiType = AiType.SMART_RANDOM;

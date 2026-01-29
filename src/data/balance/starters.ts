@@ -621,6 +621,11 @@ export const speciesStarterCosts = {
   [SpeciesId.BLOODMOON_URSALUNA]: 5,
 };
 
+/**
+ * Type for the valid species ids that can be used as starters, based on the keys of {@linkcode speciesStarterCosts}
+ */
+export type StarterSpeciesId = keyof typeof speciesStarterCosts;
+
 interface StarterCandyCosts {
   /** The candy cost to unlock the starter's passive ability */
   readonly passive: number;

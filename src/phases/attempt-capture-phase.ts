@@ -17,7 +17,6 @@ import { ChallengeType } from "#enums/challenge-type";
 import type { PokeballType } from "#enums/pokeball";
 import { StatusEffect } from "#enums/status-effect";
 import { UiMode } from "#enums/ui-mode";
-import { addPokeballCaptureStars, addPokeballOpenParticles } from "#field/anims";
 import type { EnemyPokemon } from "#field/pokemon";
 import { PokemonHeldItemModifier } from "#modifiers/modifier";
 import { PokemonPhase } from "#phases/pokemon-phase";
@@ -111,7 +110,7 @@ export class AttemptCapturePhase extends PokemonPhase {
         globalScene.playSound("se/pb_rel");
         pokemon.tint(getPokeballTintColor(this.pokeballType));
 
-        addPokeballOpenParticles(this.pokeball.x, this.pokeball.y, this.pokeballType);
+        globalScene.animations.addPokeballOpenParticles(this.pokeball.x, this.pokeball.y, this.pokeballType);
 
         globalScene.tweens.add({
           // Mon enters ball
@@ -170,7 +169,7 @@ export class AttemptCapturePhase extends PokemonPhase {
                     this.failCatch(shakeCount);
                   } else {
                     globalScene.playSound("se/pb_lock");
-                    addPokeballCaptureStars(this.pokeball);
+                    globalScene.animations.addPokeballCaptureStars(this.pokeball);
 
                     const pbTint = globalScene.add.sprite(this.pokeball.x, this.pokeball.y, "pb", "pb");
                     pbTint.setOrigin(this.pokeball.originX, this.pokeball.originY);

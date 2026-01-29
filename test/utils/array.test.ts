@@ -64,8 +64,7 @@ describe("Utils - Array", () => {
       it("typed array input", () => {
         const arr = new Uint8Array([1, 2, 3, 4]);
         const result = subArray(arr, 2);
-        // @ts-expect-error We get a questionable error about Uint8Array not being assignable to Uint8Array...
-        expectTypeOf(result).toEqualTypeOf<Uint8Array>();
+        expectTypeOf(result).toEqualTypeOf<Uint8Array<ArrayBuffer>>();
       });
 
       it("readonly array input", () => {

@@ -39,7 +39,7 @@ describe("Moves - Last Resort", () => {
 
   it("should fail unless all other moves (excluding itself) has been used at least once", async () => {
     game.override.moveset([MoveId.LAST_RESORT, MoveId.SPLASH, MoveId.GROWL, MoveId.GROWTH]);
-    await game.classicMode.startBattle([SpeciesId.BLISSEY]);
+    await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
     const blissey = game.field.getPlayerPokemon();
     expect(blissey).toBeDefined();
@@ -79,7 +79,7 @@ describe("Moves - Last Resort", () => {
       .enemyMoveset([MoveId.SWORDS_DANCE, MoveId.ABSORB])
       .ability(AbilityId.DANCER)
       .enemySpecies(SpeciesId.ABOMASNOW); // magikarp has 50% chance to be okho'd on absorb crit
-    await game.classicMode.startBattle([SpeciesId.BLISSEY]);
+    await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
     // use mirror move normally to trigger absorb virtually
     game.move.select(MoveId.MIRROR_MOVE);
@@ -95,7 +95,7 @@ describe("Moves - Last Resort", () => {
 
   it("should fail if no other moves in moveset", async () => {
     game.override.moveset(MoveId.LAST_RESORT);
-    await game.classicMode.startBattle([SpeciesId.BLISSEY]);
+    await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
     game.move.select(MoveId.LAST_RESORT);
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -105,7 +105,7 @@ describe("Moves - Last Resort", () => {
 
   it("should work if invoked virtually when all other moves have been used", async () => {
     game.override.moveset([MoveId.LAST_RESORT, MoveId.SLEEP_TALK]).ability(AbilityId.COMATOSE);
-    await game.classicMode.startBattle([SpeciesId.KOMALA]);
+    await game.classicMode.startBattle(SpeciesId.KOMALA);
 
     game.move.select(MoveId.SLEEP_TALK);
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -126,7 +126,7 @@ describe("Moves - Last Resort", () => {
 
   it("should preserve usability status on reload", async () => {
     game.override.moveset([MoveId.LAST_RESORT, MoveId.SPLASH]).ability(AbilityId.COMATOSE);
-    await game.classicMode.startBattle([SpeciesId.BLISSEY]);
+    await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
@@ -148,7 +148,7 @@ describe("Moves - Last Resort", () => {
 
   it("should fail if used while not in moveset", async () => {
     game.override.moveset(MoveId.MIRROR_MOVE).enemyMoveset([MoveId.ABSORB, MoveId.LAST_RESORT]);
-    await game.classicMode.startBattle([SpeciesId.BLISSEY]);
+    await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
     // ensure enemy last resort succeeds
     game.move.select(MoveId.MIRROR_MOVE);

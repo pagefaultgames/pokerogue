@@ -27,20 +27,20 @@ describe("Utils - Phase Interceptor - Integration", () => {
   });
 
   it("runToSummon", async () => {
-    await game.classicMode.runToSummon([SpeciesId.ABOMASNOW]);
+    await game.classicMode.runToSummon(SpeciesId.ABOMASNOW);
 
     expect(game).toBeAtPhase("SummonPhase");
   });
 
   it("startBattle", async () => {
-    await game.classicMode.startBattle([SpeciesId.RABOOT]);
+    await game.classicMode.startBattle(SpeciesId.RABOOT);
 
     expect(game.scene.ui.getMode()).toBe(UiMode.COMMAND);
     expect(game).toBeAtPhase("CommandPhase");
   });
 
   it("1 Full Turn", async () => {
-    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
+    await game.classicMode.startBattle(SpeciesId.REGIELEKI);
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.SPLASH);
@@ -51,7 +51,7 @@ describe("Utils - Phase Interceptor - Integration", () => {
   });
 
   it("should not break when phase ended early via prompt", async () => {
-    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
+    await game.classicMode.startBattle(SpeciesId.REGIELEKI);
     game.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
       game.endPhase();
     });

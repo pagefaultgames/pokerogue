@@ -27,7 +27,7 @@ describe("Moves - Chloroblast", () => {
   });
 
   it("should not deal recoil damage if the opponent uses protect", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.CHLOROBLAST);
     await game.move.forceEnemyMove(MoveId.PROTECT);

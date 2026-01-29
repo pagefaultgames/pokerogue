@@ -33,7 +33,7 @@ describe("Abilities - Stakeout", () => {
   });
 
   it("should do double damage to a pokemon that switched out", async () => {
-    await game.classicMode.startBattle([SpeciesId.MILOTIC]);
+    await game.classicMode.startBattle(SpeciesId.MILOTIC);
 
     const [enemy1] = game.scene.getEnemyParty();
 
@@ -56,7 +56,7 @@ describe("Abilities - Stakeout", () => {
   });
 
   it("should do double damage to a pokemon that switched out via U-Turn/etc", async () => {
-    await game.classicMode.startBattle([SpeciesId.MILOTIC]);
+    await game.classicMode.startBattle(SpeciesId.MILOTIC);
 
     const [enemy1] = game.scene.getEnemyParty();
 
