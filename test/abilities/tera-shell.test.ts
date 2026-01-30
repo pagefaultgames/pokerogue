@@ -1,6 +1,7 @@
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
+import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
@@ -108,5 +109,19 @@ describe("Abilities - Tera Shell", () => {
       expect(spy).toHaveLastReturnedWith(0.5);
     }
     expect(spy).toHaveReturnedTimes(2);
+  });
+
+  it("should overwrite Freeze-Dry", async () => {
+    await game.classicMode.startBattle(SpeciesId.TERAPAGOS);
+
+    const terapagos = game.field.getPlayerPokemon();
+    terapagos.summonData.types = [PokemonType.WATER];
+    const spy = vi.spyOn(terapagos, "getMoveEffectiveness");
+
+    game.move.use(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.FREEZE_DRY);
+    await game.toEndOfTurn();
+
+    expect(spy).toHaveLastReturnedWith(0.5);
   });
 });
