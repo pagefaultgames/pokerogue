@@ -142,6 +142,9 @@
           "type": "integer",
           "minimum": 0,
           "maximum": 8
+        },
+        "hiddenAbility": {
+          "type": "boolean"
         }
       },
       "required": ["waveIndex"],

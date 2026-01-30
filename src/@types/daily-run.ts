@@ -55,11 +55,13 @@ export type DailyForcedWave =
       waveIndex: number;
       speciesId: SpeciesId;
       tier?: never;
+      hiddenAbility?: boolean | undefined;
     }
   | {
       waveIndex: number;
       tier: BiomePoolTier;
       speciesId?: never;
+      hiddenAbility?: boolean | undefined;
     };
 
 /**

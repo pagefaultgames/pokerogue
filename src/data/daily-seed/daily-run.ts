@@ -221,6 +221,11 @@ export function getDailyForcedWaveSpecies(waveIndex: number): PokemonSpecies | n
     return null;
   }
 
+  // Only override the first enemy if it's a double battle
+  if (globalScene.getEnemyParty().length > 0) {
+    return null;
+  }
+
   const forcedWave = globalScene.gameMode.dailyConfig?.forcedWaves?.find(w => w.waveIndex === waveIndex);
   if (forcedWave == null) {
     return null;
@@ -238,6 +243,11 @@ export function getDailyForcedWaveBiomePoolTier(waveIndex: number): BiomePoolTie
     return null;
   }
 
+  // Only override the first enemy if it's a double battle
+  if (globalScene.getEnemyParty().length > 0) {
+    return null;
+  }
+
   const forcedWave = globalScene.gameMode.dailyConfig?.forcedWaves?.find(w => w.waveIndex === waveIndex);
   if (forcedWave == null) {
     return null;
@@ -248,6 +258,26 @@ export function getDailyForcedWaveBiomePoolTier(waveIndex: number): BiomePoolTie
   }
 
   return forcedWave.tier;
+}
+
+export function isDailyForcedWaveHiddenAbility(): boolean {
+  if (!isDailyEventSeed()) {
+    return false;
+  }
+
+  // Only override the first enemy if it's a double battle
+  if (globalScene.getEnemyParty().length > 0) {
+    return false;
+  }
+
+  const forcedWave = globalScene.gameMode.dailyConfig?.forcedWaves?.find(
+    w => w.waveIndex === globalScene.currentBattle.waveIndex,
+  );
+  if (forcedWave == null) {
+    return false;
+  }
+
+  return forcedWave.hiddenAbility ?? false;
 }
 
 /**
