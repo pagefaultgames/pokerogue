@@ -169,6 +169,32 @@ const nsEn: string[] = [];
  * A: In src/system/settings.ts, add a new case to the Setting.Language switch statement.
  */
 
+// supportedLanguages object
+export const supportedLngs = {
+  en: "English",
+  "es-ES": "Español (ES)",
+  "es-419": "Español (LATAM)", // LATAM Spanish
+  de: "Deutsch",
+  fr: "Français",
+  it: "Italiano",
+  "pt-BR": "Português (BR)",
+  ko: "한국어",
+  ja: "日本語",
+  "zh-Hans": "简体中文",
+  "zh-Hant": "繁體中文",
+  ca: "Català (Needs Help)",
+  tr: "Türkçe (Needs Help)",
+  ru: "Русский (Needs Help)",
+  uk: "Українська (Needs Help)",
+  id: "Bahasa Indonesia (Needs Help)",
+  hi: "हिन्दी (Needs Help)",
+  da: "Dansk (Needs Help)",
+  "nb-NO": "Norsk bokmål (Needs Help)",
+  sv: "Svenska",
+  ro: "Română (Needs Help)",
+  tl: "Tagalog (Needs Help)",
+};
+
 await i18next
   .use(HttpBackend)
   .use(LanguageDetector)
@@ -179,30 +205,7 @@ await i18next
         "es-419": ["es-ES", "en"],
         default: ["en"],
       },
-      supportedLngs: [
-        "en",
-        "es-ES",
-        "es-419", // LATAM Spanish
-        "fr",
-        "it",
-        "de",
-        "zh-Hans",
-        "zh-Hant",
-        "pt-BR",
-        "ko",
-        "ja",
-        "ca",
-        "da",
-        "tr",
-        "ro",
-        "ru",
-        "id",
-        "hi",
-        "tl",
-        "nb-NO",
-        "sv",
-        "uk",
-      ],
+      supportedLngs: Object.keys(supportedLngs),
       backend: {
         loadPath(lng: string, [ns]: string[]) {
           // Use namespace maps where required
