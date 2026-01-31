@@ -101,7 +101,7 @@ interface SerializedPokemonSummonData {
  *
  * @sealed
  */
-// TODO: Change these `null`s into `undefined`s to save on storage space
+// TODO: Change these `null`s into `undefined`s to save on storage space (or use custom serialization to skip them entirely)
 export class PokemonSummonData {
   /** [Atk, Def, SpAtk, SpDef, Spd, Acc, Eva] */
   public statStages: number[] = [0, 0, 0, 0, 0, 0, 0];
@@ -129,10 +129,10 @@ export class PokemonSummonData {
   /**
    * An array containing any temporary {@link https://bulbapedia.bulbagarden.net/wiki/Type_change | typing overrides}
    * the user has been inflicted with, barring any added types from Forest's Curse or Trick-or-Treat.
-   * @todo Review all instances where this is used to ensure that they interact with type-change moves correctly
    */
+  // TODO: Review all instances where this is used to ensure that they interact with type-change moves correctly
   public types: PokemonType[] = [];
-  /** The "third" type added from Trick-or-Treat or Forest's Curse. */
+  /** The "third" type added from Trick-or-Treat or Forest's Curse, if present. */
   public addedType: PokemonType | null = null;
 
   /** Data pertaining to this pokemon's Illusion, if it has one. */
