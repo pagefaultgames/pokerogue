@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { biomeLinks, getBiomeName } from "#balance/biomes";
+import { biomeLinks } from "#balance/biomes";
 import { BiomeId } from "#enums/biome-id";
 import { ChallengeType } from "#enums/challenge-type";
 import { UiMode } from "#enums/ui-mode";
@@ -7,7 +7,7 @@ import { MapModifier, MoneyInterestModifier } from "#modifiers/modifier";
 import { BattlePhase } from "#phases/battle-phase";
 import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
-import { BooleanHolder, randSeedInt } from "#utils/common";
+import { BooleanHolder, getBiomeName, randSeedInt } from "#utils/common";
 
 export class SelectBiomePhase extends BattlePhase {
   public readonly phaseName = "SelectBiomePhase";
@@ -44,9 +44,9 @@ export class SelectBiomePhase extends BattlePhase {
     };
 
     if (
-      (gameMode.isClassic && gameMode.isWaveFinal(nextWaveIndex + 9)) ||
-      (gameMode.isDaily && gameMode.isWaveFinal(nextWaveIndex)) ||
-      (gameMode.hasShortBiomes && !(nextWaveIndex % 50))
+      (gameMode.isClassic && gameMode.isWaveFinal(nextWaveIndex + 9))
+      || (gameMode.isDaily && gameMode.isWaveFinal(nextWaveIndex))
+      || (gameMode.hasShortBiomes && !(nextWaveIndex % 50))
     ) {
       setNextBiome(BiomeId.END);
     } else if (gameMode.hasRandomBiomes) {
@@ -54,7 +54,7 @@ export class SelectBiomePhase extends BattlePhase {
     } else if (Array.isArray(biomeLinks[currentBiome])) {
       const biomes: BiomeId[] = (biomeLinks[currentBiome] as (BiomeId | [BiomeId, number])[])
         .filter(b => !Array.isArray(b) || !randSeedInt(b[1]))
-        .map(b => (!Array.isArray(b) ? b : b[0]));
+        .map(b => (Array.isArray(b) ? b[0] : b));
 
       if (biomes.length > 1 && globalScene.findModifier(m => m instanceof MapModifier)) {
         const biomeSelectItems = biomes.map(b => {

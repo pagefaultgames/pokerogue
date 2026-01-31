@@ -14,7 +14,7 @@ import type { EnemyPokemon } from "#field/pokemon";
 import { Pokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
 
 // TODO: Add more tests once Transform/Imposter are fully implemented
 describe("Transforming Effects", () => {
@@ -25,10 +25,6 @@ describe("Transforming Effects", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -46,7 +42,7 @@ describe("Transforming Effects", () => {
   // Contains logic shared by both Transform and Impostor (for brevity)
   describe("Phases - PokemonTransformPhase", async () => {
     it("should copy target's species, ability, gender, all stats except HP, all stat stages, moveset and types", async () => {
-      await game.classicMode.startBattle([SpeciesId.DITTO]);
+      await game.classicMode.startBattle(SpeciesId.DITTO);
 
       const ditto = game.field.getPlayerPokemon();
       const mew = game.field.getEnemyPokemon();
@@ -79,7 +75,7 @@ describe("Transforming Effects", () => {
     // TODO: This is not implemented
     it.todo("should copy the target's original typing if target is typeless", async () => {
       game.override.enemySpecies(SpeciesId.MAGMAR);
-      await game.classicMode.startBattle([SpeciesId.DITTO]);
+      await game.classicMode.startBattle(SpeciesId.DITTO);
 
       const ditto = game.field.getPlayerPokemon();
       const magmar = game.field.getEnemyPokemon();
@@ -95,7 +91,7 @@ describe("Transforming Effects", () => {
 
     it("should not consider the target's Tera Type when copying types", async () => {
       game.override.enemySpecies(SpeciesId.MAGMAR);
-      await game.classicMode.startBattle([SpeciesId.DITTO]);
+      await game.classicMode.startBattle(SpeciesId.DITTO);
 
       const ditto = game.field.getPlayerPokemon();
       const magmar = game.field.getEnemyPokemon();
@@ -110,7 +106,7 @@ describe("Transforming Effects", () => {
 
     // TODO: This is not currently implemented
     it.todo("should copy volatile status effects", async () => {
-      await game.classicMode.startBattle([SpeciesId.DITTO]);
+      await game.classicMode.startBattle(SpeciesId.DITTO);
 
       const ditto = game.field.getPlayerPokemon();
       const mew = game.field.getEnemyPokemon();
@@ -129,7 +125,7 @@ describe("Transforming Effects", () => {
 
     it("should not copy friendship, held items, nickname, level or non-volatile status effects", async () => {
       game.override.enemyHeldItems([{ name: "BERRY", count: 1, type: BerryType.SITRUS }]);
-      await game.classicMode.startBattle([SpeciesId.DITTO]);
+      await game.classicMode.startBattle(SpeciesId.DITTO);
 
       const ditto = game.field.getPlayerPokemon();
       const mew = game.field.getEnemyPokemon();
@@ -149,7 +145,7 @@ describe("Transforming Effects", () => {
     });
 
     it("should copy in-battle overridden stats", async () => {
-      await game.classicMode.startBattle([SpeciesId.DITTO]);
+      await game.classicMode.startBattle(SpeciesId.DITTO);
 
       const player = game.field.getPlayerPokemon();
       const enemy = game.field.getEnemyPokemon();
@@ -169,7 +165,7 @@ describe("Transforming Effects", () => {
 
     it("should set each move's pp to a maximum of 5 without affecting PP ups", async () => {
       game.override.enemyMoveset([MoveId.SWORDS_DANCE, MoveId.GROWL, MoveId.SKETCH, MoveId.RECOVER]);
-      await game.classicMode.startBattle([SpeciesId.DITTO]);
+      await game.classicMode.startBattle(SpeciesId.DITTO);
 
       const player = game.field.getPlayerPokemon();
 
@@ -191,7 +187,7 @@ describe("Transforming Effects", () => {
 
     it("should activate its ability if it copies one that activates on summon", async () => {
       game.override.enemyAbility(AbilityId.INTIMIDATE);
-      await game.classicMode.startBattle([SpeciesId.DITTO]);
+      await game.classicMode.startBattle(SpeciesId.DITTO);
 
       game.move.use(MoveId.TRANSFORM);
       game.phaseInterceptor.clearLogs();
@@ -202,7 +198,7 @@ describe("Transforming Effects", () => {
     });
 
     it("should persist transformed attributes across reloads", async () => {
-      await game.classicMode.startBattle([SpeciesId.DITTO]);
+      await game.classicMode.startBattle(SpeciesId.DITTO);
 
       const player = game.field.getPlayerPokemon();
       const enemy = game.field.getEnemyPokemon();
@@ -229,7 +225,7 @@ describe("Transforming Effects", () => {
 
     it("should stay transformed with the correct form after reload", async () => {
       game.override.enemySpecies(SpeciesId.DARMANITAN);
-      await game.classicMode.startBattle([SpeciesId.DITTO]);
+      await game.classicMode.startBattle(SpeciesId.DITTO);
 
       const player = game.field.getPlayerPokemon();
       const enemy = game.field.getEnemyPokemon();
@@ -292,7 +288,7 @@ describe("Transforming Effects", () => {
       },
     ])("should fail if $cause", async ({ callback, player = true }) => {
       game.override.battleType(BattleType.TRAINER); // ensures 2 enemy pokemon for illusion
-      await game.classicMode.startBattle([SpeciesId.DITTO, SpeciesId.ABOMASNOW]);
+      await game.classicMode.startBattle(SpeciesId.DITTO, SpeciesId.ABOMASNOW);
 
       callback(player ? game.field.getPlayerPokemon() : game.field.getEnemyPokemon());
 
@@ -328,7 +324,7 @@ describe("Transforming Effects", () => {
       },
     ])("should ignore $name during target selection", async ({ callback }) => {
       game.override.battleStyle("double");
-      await game.classicMode.startBattle([SpeciesId.GYARADOS, SpeciesId.MILOTIC, SpeciesId.DITTO]);
+      await game.classicMode.startBattle(SpeciesId.GYARADOS, SpeciesId.MILOTIC, SpeciesId.DITTO);
 
       const ditto = game.scene.getPlayerParty()[2];
 
@@ -353,7 +349,7 @@ describe("Transforming Effects", () => {
 
     it("should not activate if both opponents are fused or have illusions", async () => {
       game.override.battleStyle("double");
-      await game.classicMode.startBattle([SpeciesId.GYARADOS, SpeciesId.MILOTIC, SpeciesId.DITTO]);
+      await game.classicMode.startBattle(SpeciesId.GYARADOS, SpeciesId.MILOTIC, SpeciesId.DITTO);
 
       const [gyarados, , ditto] = game.scene.getPlayerParty();
       const [enemy1, enemy2] = game.scene.getEnemyParty();

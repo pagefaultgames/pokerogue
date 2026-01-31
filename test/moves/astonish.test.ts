@@ -3,13 +3,9 @@ import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { BerryPhase } from "#phases/berry-phase";
-import { CommandPhase } from "#phases/command-phase";
-import { MoveEndPhase } from "#phases/move-end-phase";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("Moves - Astonish", () => {
   let phaserGame: Phaser.Game;
@@ -19,10 +15,6 @@ describe("Moves - Astonish", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -40,7 +32,7 @@ describe("Moves - Astonish", () => {
   });
 
   test("move effect should cancel the target's move on the turn it applies", async () => {
-    await game.classicMode.startBattle([SpeciesId.MEOWSCARADA]);
+    await game.classicMode.startBattle(SpeciesId.MEOWSCARADA);
 
     const leadPokemon = game.field.getPlayerPokemon();
 
@@ -48,20 +40,20 @@ describe("Moves - Astonish", () => {
 
     game.move.select(MoveId.ASTONISH);
 
-    await game.phaseInterceptor.to(MoveEndPhase, false);
+    await game.phaseInterceptor.to("MoveEndPhase", false);
 
     expect(enemyPokemon.getTag(BattlerTagType.FLINCHED)).toBeDefined();
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
     expect(enemyPokemon.getTag(BattlerTagType.FLINCHED)).toBeUndefined();
 
-    await game.phaseInterceptor.to(CommandPhase, false);
+    await game.phaseInterceptor.to("CommandPhase", false);
 
     game.move.select(MoveId.SPLASH);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
   });

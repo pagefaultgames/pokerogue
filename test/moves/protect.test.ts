@@ -8,7 +8,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Protect", () => {
   let phaserGame: Phaser.Game;
@@ -18,10 +18,6 @@ describe("Moves - Protect", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -37,7 +33,7 @@ describe("Moves - Protect", () => {
   });
 
   it("should protect the user from attacks and their secondary effects", async () => {
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     const charizard = game.field.getPlayerPokemon();
 
@@ -55,9 +51,9 @@ describe("Moves - Protect", () => {
     { numTurns: 3, chance: 27 },
     { numTurns: 4, chance: 81 },
   ])("should have a 1/$chance success rate after $numTurns successful uses", async ({ numTurns, chance }) => {
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
-    const charizard = game.scene.getPlayerPokemon()!;
+    const charizard = game.field.getPlayerPokemon();
 
     // mock RNG roll to suceed unless exactly the desired chance is hit
     vi.spyOn(charizard, "randBattleSeedInt").mockImplementation(range => (range !== chance ? 0 : 1));
@@ -82,7 +78,7 @@ describe("Moves - Protect", () => {
   });
 
   it("should share fail chance with all move variants", async () => {
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     const charizard = game.field.getPlayerPokemon();
     charizard.summonData.moveHistory = [
@@ -104,9 +100,9 @@ describe("Moves - Protect", () => {
   });
 
   it("should reset fail chance on move failure", async () => {
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
-    const charizard = game.scene.getPlayerPokemon()!;
+    const charizard = game.field.getPlayerPokemon();
     // force protect to always fail if RNG roll attempt is made
     vi.spyOn(charizard, "randBattleSeedInt").mockReturnValue(1);
 
@@ -124,9 +120,9 @@ describe("Moves - Protect", () => {
   });
 
   it("should reset fail chance on using another move", async () => {
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
-    const charizard = game.scene.getPlayerPokemon()!;
+    const charizard = game.field.getPlayerPokemon();
     // force protect to always fail if RNG roll attempt is made
     vi.spyOn(charizard, "randBattleSeedInt").mockReturnValue(1);
 
@@ -143,7 +139,7 @@ describe("Moves - Protect", () => {
   });
 
   it("should reset fail chance on starting a new wave", async () => {
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     const charizard = game.field.getPlayerPokemon();
     // force protect to always fail if RNG roll attempt is made
@@ -162,9 +158,9 @@ describe("Moves - Protect", () => {
 
   it("should not be blocked by Psychic Terrain", async () => {
     game.override.ability(AbilityId.PSYCHIC_SURGE);
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
-    const charizard = game.scene.getPlayerPokemon()!;
+    const charizard = game.field.getPlayerPokemon();
     game.move.select(MoveId.PROTECT);
     await game.toNextTurn();
 
@@ -173,13 +169,14 @@ describe("Moves - Protect", () => {
 
   it("should stop subsequent hits of multi-hit moves", async () => {
     game.override.enemyMoveset([MoveId.TACHYON_CUTTER]);
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     const charizard = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.PROTECT);
-    await game.phaseInterceptor.to("BerryPhase", false);
+    await game.phaseInterceptor.to("MoveEndPhase");
+    await game.phaseInterceptor.to("MoveEndPhase", false);
 
     expect(charizard.hp).toBe(charizard.getMaxHp());
     expect(enemyPokemon.turnData.hitCount).toBe(1);
@@ -187,7 +184,7 @@ describe("Moves - Protect", () => {
 
   it("should fail if the user moves last in the turn", async () => {
     game.override.enemyMoveset(MoveId.PROTECT);
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     const charizard = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
@@ -202,9 +199,9 @@ describe("Moves - Protect", () => {
 
   it("should not block Protection-bypassing moves or Future Sight", async () => {
     game.override.enemyMoveset([MoveId.FUTURE_SIGHT, MoveId.MIGHTY_CLEAVE, MoveId.SPORE]);
-    await game.classicMode.startBattle([SpeciesId.AGGRON]);
+    await game.classicMode.startBattle(SpeciesId.AGGRON);
 
-    const aggron = game.scene.getPlayerPokemon()!;
+    const aggron = game.field.getPlayerPokemon();
     vi.spyOn(aggron, "randBattleSeedInt").mockReturnValue(0);
 
     // Turn 1: setup future sight

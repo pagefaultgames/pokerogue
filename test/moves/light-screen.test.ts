@@ -7,11 +7,10 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import type { Pokemon } from "#field/pokemon";
 import type { Move } from "#moves/move";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import { NumberHolder } from "#utils/common";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 let globalScene: BattleScene;
 
@@ -25,10 +24,6 @@ describe("Moves - Light Screen", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -46,11 +41,11 @@ describe("Moves - Light Screen", () => {
 
   it("reduces damage of special attacks by half in a single battle", async () => {
     const moveToUse = MoveId.ABSORB;
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE);
 
     game.move.select(moveToUse);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     const mockedDmg = getMockedMoveDamage(
       game.field.getEnemyPokemon(),
@@ -65,12 +60,12 @@ describe("Moves - Light Screen", () => {
     game.override.battleStyle("double");
 
     const moveToUse = MoveId.DAZZLING_GLEAM;
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE, SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE, SpeciesId.SHUCKLE);
 
     game.move.select(moveToUse);
     game.move.select(moveToUse, 1);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     const mockedDmg = getMockedMoveDamage(
       game.field.getEnemyPokemon(),
       game.field.getPlayerPokemon(),
@@ -82,11 +77,11 @@ describe("Moves - Light Screen", () => {
 
   it("does not affect physical attacks", async () => {
     const moveToUse = MoveId.TACKLE;
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE);
 
     game.move.select(moveToUse);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     const mockedDmg = getMockedMoveDamage(
       game.field.getEnemyPokemon(),
       game.field.getPlayerPokemon(),
@@ -100,10 +95,10 @@ describe("Moves - Light Screen", () => {
     game.override.moveset([MoveId.FROST_BREATH]);
     const moveToUse = MoveId.FROST_BREATH;
     vi.spyOn(allMoves[MoveId.FROST_BREATH], "accuracy", "get").mockReturnValue(100);
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE);
 
     game.move.select(moveToUse);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     const mockedDmg = getMockedMoveDamage(
       game.field.getEnemyPokemon(),
@@ -127,17 +122,8 @@ const getMockedMoveDamage = (defender: Pokemon, attacker: Pokemon, move: Move) =
   const multiplierHolder = new NumberHolder(1);
   const side = defender.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
-  if (globalScene.arena.getTagOnSide(ArenaTagType.LIGHT_SCREEN, side)) {
-    if (move.getAttrs("CritOnlyAttr").length === 0) {
-      globalScene.arena.applyTagsForSide(
-        ArenaTagType.LIGHT_SCREEN,
-        side,
-        false,
-        attacker,
-        move.category,
-        multiplierHolder,
-      );
-    }
+  if (globalScene.arena.getTagOnSide(ArenaTagType.LIGHT_SCREEN, side) && !move.hasAttr("CritOnlyAttr")) {
+    globalScene.arena.applyTagsForSide(ArenaTagType.LIGHT_SCREEN, side, attacker, move.category, multiplierHolder);
   }
 
   return move.power * multiplierHolder.value;

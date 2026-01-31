@@ -9,15 +9,17 @@ export abstract class PokemonPhase extends FieldPhase {
    * TODO: Make this either use IDs or `BattlerIndex`es, not a weird mix of both
    */
   protected battlerIndex: BattlerIndex | number;
+  // TODO: Why is this needed?
   public player: boolean;
+  /** @todo Remove in favor of `battlerIndex` pleas for fuck's sake */
   public fieldIndex: number;
 
   constructor(battlerIndex?: BattlerIndex | number) {
     super();
 
     battlerIndex =
-      battlerIndex ??
-      globalScene
+      battlerIndex
+      ?? globalScene
         .getField()
         .find(p => p?.isActive())
         ?.getBattlerIndex();
@@ -32,10 +34,11 @@ export abstract class PokemonPhase extends FieldPhase {
     this.fieldIndex = battlerIndex % 2;
   }
 
+  // TODO: This should have `undefined` in its signature
   getPokemon(): Pokemon {
     if (this.battlerIndex > BattlerIndex.ENEMY_2) {
-      return globalScene.getPokemonById(this.battlerIndex)!; //TODO: is this bang correct?
+      return globalScene.getPokemonById(this.battlerIndex)!;
     }
-    return globalScene.getField()[this.battlerIndex]!; //TODO: is this bang correct?
+    return globalScene.getField()[this.battlerIndex]!;
   }
 }

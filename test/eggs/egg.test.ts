@@ -9,7 +9,7 @@ import { EggData } from "#system/egg-data";
 import { GameManager } from "#test/test-utils/game-manager";
 import * as Utils from "#utils/common";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Egg Generation Tests", () => {
   let phaserGame: Phaser.Game;
@@ -21,10 +21,6 @@ describe("Egg Generation Tests", () => {
       type: Phaser.HEADLESS,
     });
     game = new GameManager(phaserGame);
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(async () => {
@@ -202,7 +198,7 @@ describe("Egg Generation Tests", () => {
     const scene = game.scene;
 
     const eggMoveIndex = new Egg({ scene }).eggMoveIndex;
-    const result = !Utils.isNullOrUndefined(eggMoveIndex) && eggMoveIndex >= 0 && eggMoveIndex <= 3;
+    const result = eggMoveIndex != null && eggMoveIndex >= 0 && eggMoveIndex <= 3;
 
     expect(result).toBe(true);
   });

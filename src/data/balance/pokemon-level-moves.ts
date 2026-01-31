@@ -1,26 +1,15 @@
+// @ts-nocheck
+/**
+ * @internal
+ * @module
+ */
+
+import { EVOLVE_MOVE, RELEARN_MOVE } from "#app/constants";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import type { PokemonSpeciesFormLevelMoves, PokemonSpeciesLevelMoves } from "#types/pokemon-level-moves";
 
-export type LevelMoves = ([number, MoveId])[];
-
-interface PokemonSpeciesLevelMoves {
-  [key: number]: LevelMoves
-}
-
-interface PokemonFormLevelMoves {
-  [key: number]: LevelMoves
-}
-
-interface PokemonSpeciesFormLevelMoves {
-  [key: number]: PokemonFormLevelMoves
-}
-
-/** Moves that can only be learned with a memory-mushroom */
-export const RELEARN_MOVE = -1;
-/** Moves that can only be learned with an evolve */
-export const EVOLVE_MOVE = 0;
-
-export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
+export const pokemonSpeciesLevelMoves = {
   [SpeciesId.BULBASAUR]: [
     [ 1, MoveId.TACKLE ],
     [ 1, MoveId.GROWL ],
@@ -3947,23 +3936,18 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 48, MoveId.SOAK ],
     [ 54, MoveId.HYPER_BEAM ],
   ],
-  [SpeciesId.DELIBIRD]: [ // Given a custom level up learnset
+  [SpeciesId.DELIBIRD]: [
     [ 1, MoveId.PRESENT ],
-    [ 1, MoveId.METRONOME ],
-    [ 5, MoveId.FAKE_OUT ],
-    [ 5, MoveId.POWDER_SNOW ],
-    [ 6, MoveId.MIST ],
-    [ 10, MoveId.ICE_SHARD ],
-    [ 15, MoveId.AERIAL_ACE ],
-    [ 20, MoveId.ICY_WIND ],
+    [ 1, MoveId.PECK ],
+    [ 15, MoveId.ICY_WIND ],
+    [ 18, MoveId.AERIAL_ACE ],
+    [ 22, MoveId.ICE_SHARD ],
     [ 25, MoveId.DRILL_PECK ],
-    [ 30, MoveId.ICE_PUNCH ],
-    [ 35, MoveId.HAZE ],
-    [ 40, MoveId.AIR_SLASH ],
-    [ 45, MoveId.TAILWIND ],
-    [ 50, MoveId.SNOWSCAPE ],
-    [ 55, MoveId.BLIZZARD ],
-    [ 60, MoveId.BRAVE_BIRD ],
+    [ 28, MoveId.AIR_SLASH ],
+    [ 32, MoveId.FEATHER_DANCE ],
+    [ 35, MoveId.ICE_PUNCH ],
+    [ 37, MoveId.FREEZE_DRY ],
+    [ 40, MoveId.BLIZZARD ],
   ],
   [SpeciesId.MANTINE]: [
     [ 1, MoveId.WING_ATTACK ],
@@ -18932,9 +18916,9 @@ export const pokemonSpeciesLevelMoves: PokemonSpeciesLevelMoves = {
     [ 64, MoveId.HAMMER_ARM ],
     [ 70, MoveId.BLOOD_MOON ],
   ]
-};
+} as PokemonSpeciesLevelMoves;
 
-export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
+export const pokemonFormLevelMoves = {
   [SpeciesId.PIKACHU]: { // Custom
     1: [
       [ 1, MoveId.TAIL_WHIP ],
@@ -20018,4 +20002,4 @@ export const pokemonFormLevelMoves: PokemonSpeciesFormLevelMoves = {
       [ 60, MoveId.CLOSE_COMBAT ],
     ]
   }
-};
+} as PokemonSpeciesFormLevelMoves;

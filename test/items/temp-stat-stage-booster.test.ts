@@ -9,7 +9,7 @@ import { TempStatStageBoosterModifier } from "#modifiers/modifier";
 import { GameManager } from "#test/test-utils/game-manager";
 import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Items - Temporary Stat Stage Boosters", () => {
   let phaserGame: Phaser.Game;
@@ -19,10 +19,6 @@ describe("Items - Temporary Stat Stage Boosters", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -38,7 +34,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
   });
 
   it("should provide a x1.3 stat stage multiplier", async () => {
-    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
 
     const partyMember = game.field.getPlayerPokemon();
 
@@ -48,13 +44,13 @@ describe("Items - Temporary Stat Stage Boosters", () => {
 
     await game.toEndOfTurn();
 
-    expect(partyMember.getStatStageMultiplier).toHaveReturnedWith(1.3);
+    expect(partyMember.getStatStageMultiplier).toHaveReturnedWith(1.2);
   });
 
   it("should increase existing ACC stat stage by 1 for X_ACCURACY only", async () => {
     game.override.startingModifier([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC }]).ability(AbilityId.SIMPLE);
 
-    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
 
     const partyMember = game.field.getPlayerPokemon();
 
@@ -74,7 +70,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
   });
 
   it("should increase existing stat stage multiplier by 3/10 for the rest of the boosters", async () => {
-    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
 
     const partyMember = game.field.getPlayerPokemon();
 
@@ -89,8 +85,8 @@ describe("Items - Temporary Stat Stage Boosters", () => {
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    // ATK at +1 stat stage yields a x1.5 multiplier, add 0.3 from X_ATTACK
-    expect(partyMember.getStatStageMultiplier).toHaveReturnedWith(1.8);
+    // ATK at +1 stat stage yields a x1.5 multiplier, add 0.2 from X_ATTACK
+    expect(partyMember.getStatStageMultiplier).toHaveReturnedWith(1.7);
   });
 
   it("should not increase past maximum stat stage multiplier", async () => {
@@ -99,7 +95,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
       { name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ATK },
     ]);
 
-    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
 
     const partyMember = game.field.getPlayerPokemon();
 
@@ -120,7 +116,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
   it("should renew how many battles are left of existing booster when picking up new booster of same type", async () => {
     game.override.startingLevel(200).itemRewards([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ATK }]);
 
-    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
 
     game.move.select(MoveId.SPLASH);
 

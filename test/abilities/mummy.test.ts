@@ -3,7 +3,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Mummy", () => {
   let phaserGame: Phaser.Game;
@@ -13,10 +13,6 @@ describe("Abilities - Mummy", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -32,7 +28,7 @@ describe("Abilities - Mummy", () => {
   });
 
   it("should set the enemy's ability to mummy when hit by a contact move", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
@@ -42,7 +38,7 @@ describe("Abilities - Mummy", () => {
 
   it("should not change the enemy's ability hit by a non-contact move", async () => {
     game.override.enemyMoveset(MoveId.EARTHQUAKE);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");

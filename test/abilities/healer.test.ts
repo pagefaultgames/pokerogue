@@ -1,4 +1,4 @@
-import { PostTurnResetStatusAbAttr } from "#abilities/ability";
+import { PostTurnResetStatusAbAttr } from "#abilities/ab-attrs";
 import { allAbilities } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
@@ -6,9 +6,8 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import type { Pokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
-import { isNullOrUndefined } from "#utils/common";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Healer", () => {
   let phaserGame: Phaser.Game;
@@ -18,10 +17,6 @@ describe("Abilities - Healer", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -37,14 +32,14 @@ describe("Abilities - Healer", () => {
 
     // Mock healer to have a 100% chance of healing its ally
     vi.spyOn(allAbilities[AbilityId.HEALER].getAttrs("PostTurnResetStatusAbAttr")[0], "getCondition").mockReturnValue(
-      (pokemon: Pokemon) => !isNullOrUndefined(pokemon.getAlly()),
+      (pokemon: Pokemon) => pokemon.getAlly() != null,
     );
   });
 
   it("should not queue a message phase for healing if the ally has fainted", async () => {
     const abSpy = vi.spyOn(PostTurnResetStatusAbAttr.prototype, "canApply");
     game.override.moveset([MoveId.SPLASH, MoveId.LUNAR_DANCE]);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.MAGIKARP);
 
     const user = game.field.getPlayerPokemon();
     // Only want one magikarp to have the ability
@@ -61,7 +56,7 @@ describe("Abilities - Healer", () => {
   });
 
   it("should heal the status of an ally if the ally has a status", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.MAGIKARP);
     const [user, ally] = game.scene.getPlayerField();
 
     // Only want one magikarp to have the ability.
@@ -78,7 +73,7 @@ describe("Abilities - Healer", () => {
 
   // TODO: Healer is currently checked before the
   it.todo("should heal a burn before its end of turn damage", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.MAGIKARP);
     const [user, ally] = game.scene.getPlayerField();
     // Only want one magikarp to have the ability.
     vi.spyOn(user, "getAbility").mockReturnValue(allAbilities[AbilityId.HEALER]);

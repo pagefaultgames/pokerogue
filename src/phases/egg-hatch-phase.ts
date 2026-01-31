@@ -5,12 +5,11 @@ import type { Egg } from "#data/egg";
 import type { EggHatchData } from "#data/egg-hatch-data";
 import { UiMode } from "#enums/ui-mode";
 import { EggCountChangedEvent } from "#events/egg";
-import { doShinySparkleAnim } from "#field/anims";
 import type { PlayerPokemon } from "#field/pokemon";
 import type { EggLapsePhase } from "#phases/egg-lapse-phase";
 import { achvs } from "#system/achv";
 import { EggCounterContainer } from "#ui/egg-counter-container";
-import type { EggHatchSceneHandler } from "#ui/egg-hatch-scene-handler";
+import type { EggHatchSceneUiHandler } from "#ui/egg-hatch-scene-ui-handler";
 import { PokemonInfoContainer } from "#ui/pokemon-info-container";
 import { fixedInt, getFrameMs, randInt } from "#utils/common";
 import i18next from "i18next";
@@ -32,7 +31,7 @@ export class EggHatchPhase extends Phase {
   private eggCounterContainer: EggCounterContainer;
 
   /** The scene handler for egg hatching */
-  private eggHatchHandler: EggHatchSceneHandler;
+  private eggHatchHandler: EggHatchSceneUiHandler;
   /** The phaser gameobject container that holds everything */
   private eggHatchContainer: Phaser.GameObjects.Container;
   /** The phaser image that is the background */
@@ -92,7 +91,7 @@ export class EggHatchPhase extends Phase {
 
       globalScene.fadeOutBgm(undefined, false);
 
-      this.eggHatchHandler = globalScene.ui.getHandler() as EggHatchSceneHandler;
+      this.eggHatchHandler = globalScene.ui.getHandler() as EggHatchSceneUiHandler;
 
       this.eggHatchContainer = this.eggHatchHandler.eggHatchContainer;
 
@@ -225,11 +224,12 @@ export class EggHatchPhase extends Phase {
   }
 
   end() {
-    if (globalScene.phaseManager.findPhase(p => p.is("EggHatchPhase"))) {
+    if (globalScene.phaseManager.hasPhaseOfType("EggHatchPhase")) {
       this.eggHatchHandler.clear();
     } else {
       globalScene.time.delayedCall(250, () => globalScene.setModifiersVisible(true));
     }
+    this.pokemon?.destroy();
     super.end();
   }
 
@@ -292,10 +292,10 @@ export class EggHatchPhase extends Phase {
       return false;
     }
     this.skipped = true;
-    if (!this.hatched) {
-      this.doHatch();
-    } else {
+    if (this.hatched) {
       this.doReveal();
+    } else {
+      this.doHatch();
     }
     return true;
   }
@@ -370,10 +370,12 @@ export class EggHatchPhase extends Phase {
       this.pokemon.cry();
       if (isShiny) {
         globalScene.time.delayedCall(fixedInt(500), () => {
-          doShinySparkleAnim(this.pokemonShinySparkle, this.pokemon.variant);
+          globalScene.animations.doShinySparkleAnim(this.pokemonShinySparkle, this.pokemon.variant);
         });
       }
-      globalScene.time.delayedCall(fixedInt(!this.skipped ? (!isShiny ? 1250 : 1750) : !isShiny ? 250 : 750), () => {
+      const skipDuration = this.skipped ? 0 : 1000;
+      const duration = skipDuration + (isShiny ? 750 : 250);
+      globalScene.time.delayedCall(fixedInt(duration), () => {
         this.infoContainer.show(this.pokemon, false, this.skipped ? 2 : 1);
 
         globalScene.playSoundWithoutBgm("evolution_fanfare");
@@ -408,20 +410,11 @@ export class EggHatchPhase extends Phase {
   }
 
   /**
-   * Helper function to generate sine. (Why is this not a Utils?!?)
-   * @param index random number from 0-7 being passed in to scale pi/128
-   * @param amplitude Scaling
-   * @returns a number
-   */
-  sin(index: number, amplitude: number): number {
-    return amplitude * Math.sin(index * (Math.PI / 128));
-  }
-
-  /**
    * Animates spraying
    * @param intensity number of times this is repeated (this is a badly named variable)
    * @param offsetY how much to offset the Y coordinates
    */
+  // TODO: Can we merge this with Animations.doSpray?
   doSpray(intensity: number, offsetY?: number) {
     globalScene.tweens.addCounter({
       repeat: intensity,
@@ -440,7 +433,7 @@ export class EggHatchPhase extends Phase {
   doSprayParticle(trigIndex: number, offsetY: number) {
     const initialX = this.eggHatchBg.displayWidth / 2;
     const initialY = this.eggHatchBg.displayHeight / 2 + offsetY;
-    const shardKey = !this.egg.isManaphyEgg() ? this.egg.tier.toString() : "1";
+    const shardKey = this.egg.isManaphyEgg() ? "1" : this.egg.tier.toString();
     const particle = globalScene.add.image(initialX, initialY, "egg_shard", `${shardKey}_${Math.floor(trigIndex / 2)}`);
     this.eggHatchContainer.add(particle);
 
@@ -462,7 +455,7 @@ export class EggHatchPhase extends Phase {
       yOffset += speedMultiplier;
       if (trigIndex < 160) {
         particle.setPosition(initialX + (speed * f) / 3, initialY + yOffset);
-        particle.y += -this.sin(trigIndex, amp);
+        particle.y += -globalScene.animations.sin(trigIndex, amp);
         if (f > 108) {
           particle.setScale(1 - (f - 108) / 20);
         }

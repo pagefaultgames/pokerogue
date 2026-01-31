@@ -7,8 +7,9 @@ export class Status {
   public effect: StatusEffect;
   /** Toxic damage is `1/16 max HP * toxicTurnCount` */
   public toxicTurnCount = 0;
-  public sleepTurnsRemaining?: number;
+  public sleepTurnsRemaining?: number | undefined;
 
+  // TODO: Make this take an object?
   constructor(effect: StatusEffect, toxicTurnCount = 0, sleepTurnsRemaining?: number) {
     this.effect = effect;
     this.toxicTurnCount = toxicTurnCount;
@@ -59,12 +60,12 @@ export function getStatusEffectObtainText(
 
   if (!sourceText) {
     const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.obtain` as ParseKeys;
-    return i18next.t(i18nKey, { pokemonNameWithAffix: pokemonNameWithAffix });
+    return i18next.t(i18nKey, { pokemonNameWithAffix });
   }
   const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.obtainSource` as ParseKeys;
   return i18next.t(i18nKey, {
-    pokemonNameWithAffix: pokemonNameWithAffix,
-    sourceText: sourceText,
+    pokemonNameWithAffix,
+    sourceText,
   });
 }
 
@@ -73,7 +74,7 @@ export function getStatusEffectActivationText(statusEffect: StatusEffect, pokemo
     return "";
   }
   const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.activation` as ParseKeys;
-  return i18next.t(i18nKey, { pokemonNameWithAffix: pokemonNameWithAffix });
+  return i18next.t(i18nKey, { pokemonNameWithAffix });
 }
 
 export function getStatusEffectOverlapText(statusEffect: StatusEffect, pokemonNameWithAffix: string): string {
@@ -81,7 +82,7 @@ export function getStatusEffectOverlapText(statusEffect: StatusEffect, pokemonNa
     return "";
   }
   const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.overlap` as ParseKeys;
-  return i18next.t(i18nKey, { pokemonNameWithAffix: pokemonNameWithAffix });
+  return i18next.t(i18nKey, { pokemonNameWithAffix });
 }
 
 export function getStatusEffectHealText(statusEffect: StatusEffect, pokemonNameWithAffix: string): string {
@@ -89,7 +90,7 @@ export function getStatusEffectHealText(statusEffect: StatusEffect, pokemonNameW
     return "";
   }
   const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.heal` as ParseKeys;
-  return i18next.t(i18nKey, { pokemonNameWithAffix: pokemonNameWithAffix });
+  return i18next.t(i18nKey, { pokemonNameWithAffix });
 }
 
 export function getStatusEffectDescriptor(statusEffect: StatusEffect): string {
@@ -158,7 +159,7 @@ export function getRandomStatus(statusA: Status | null, statusB: Status | null):
  * Gets all non volatile status effects
  * @returns A list containing all non volatile status effects
  */
-export function getNonVolatileStatusEffects(): Array<StatusEffect> {
+export function getNonVolatileStatusEffects(): StatusEffect[] {
   return [
     StatusEffect.POISON,
     StatusEffect.TOXIC,

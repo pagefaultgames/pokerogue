@@ -18,7 +18,7 @@ import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils
 import {
   generateModifierType,
   generateModifierTypeOption,
-  getRandomEncounterSpecies,
+  getRandomEncounterPokemon,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
   setEncounterExp,
@@ -34,10 +34,10 @@ import {
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
-import i18next from "#plugins/i18n";
 import { PokemonData } from "#system/pokemon-data";
 import { randSeedItem } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
+import i18next from "i18next";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/berriesAbound";
@@ -66,12 +66,17 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
 
     // Calculate boss mon
     const level = getEncounterPokemonLevelForWave(STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
-    const bossPokemon = getRandomEncounterSpecies(level, true);
+    const bossPokemon = getRandomEncounterPokemon({
+      level,
+      isBoss: true,
+      eventShinyRerolls: 2,
+      eventHiddenRerolls: 1,
+    });
     encounter.setDialogueToken("enemyPokemon", getPokemonNameWithAffix(bossPokemon));
     const config: EnemyPartyConfig = {
       pokemonConfigs: [
         {
-          level: level,
+          level,
           species: bossPokemon.species,
           dataSource: new PokemonData(bossPokemon),
           isBoss: true,
@@ -105,8 +110,8 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
         hasShadow: true,
       },
       {
-        spriteKey: spriteKey,
-        fileRoot: fileRoot,
+        spriteKey,
+        fileRoot,
         hasShadow: true,
         tint: 0.25,
         x: -5,
@@ -320,9 +325,9 @@ function tryGiveBerry(prioritizedPokemon?: PlayerPokemon) {
   if (prioritizedPokemon) {
     const heldBerriesOfType = globalScene.findModifier(
       m =>
-        m instanceof BerryModifier &&
-        m.pokemonId === prioritizedPokemon.id &&
-        (m as BerryModifier).berryType === berryType,
+        m instanceof BerryModifier
+        && m.pokemonId === prioritizedPokemon.id
+        && (m as BerryModifier).berryType === berryType,
       true,
     ) as BerryModifier;
 

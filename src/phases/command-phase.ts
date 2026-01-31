@@ -9,7 +9,6 @@ import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleType } from "#enums/battle-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
-import { ChallengeType } from "#enums/challenge-type";
 import { Command } from "#enums/command";
 import { FieldPosition } from "#enums/field-position";
 import { MoveId } from "#enums/move-id";
@@ -20,11 +19,8 @@ import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
 import type { MoveTargetSet } from "#moves/move";
 import { getMoveTargets } from "#moves/move-utils";
-import type { PokemonMove } from "#moves/pokemon-move";
 import { FieldPhase } from "#phases/field-phase";
 import type { TurnMove } from "#types/turn-move";
-import { applyChallenges } from "#utils/challenge-utils";
-import { BooleanHolder } from "#utils/common";
 import i18next from "i18next";
 
 export class CommandPhase extends FieldPhase {
@@ -62,8 +58,8 @@ export class CommandPhase extends FieldPhase {
       return;
     }
     if (
-      (turn === 1 && (!commandCursorMemory || cursorResetEvent)) ||
-      commandUiHandler.getCursor() === Command.POKEMON
+      (turn === 1 && (!commandCursorMemory || cursorResetEvent))
+      || commandUiHandler.getCursor() === Command.POKEMON
     ) {
       commandUiHandler.setCursor(Command.FIGHT);
     }
@@ -98,8 +94,8 @@ export class CommandPhase extends FieldPhase {
   private checkCommander(): void {
     // If the Pokemon has applied Commander's effects to its ally, skip this command
     if (
-      globalScene.currentBattle?.double &&
-      this.getPokemon().getAlly()?.getTag(BattlerTagType.COMMANDED)?.getSourcePokemon() === this.getPokemon()
+      globalScene.currentBattle?.double
+      && this.getPokemon().getAlly()?.getTag(BattlerTagType.COMMANDED)?.getSourcePokemon() === this.getPokemon()
     ) {
       globalScene.currentBattle.turnCommands[this.fieldIndex] = {
         command: Command.FIGHT,
@@ -125,9 +121,9 @@ export class CommandPhase extends FieldPhase {
     for (const queuedMove of moveQueue) {
       const movesetQueuedMove = moveset.find(m => m.moveId === queuedMove.move);
       if (
-        queuedMove.move !== MoveId.NONE &&
-        !isVirtual(queuedMove.useMode) &&
-        !movesetQueuedMove?.isUsable(playerPokemon, isIgnorePP(queuedMove.useMode))
+        queuedMove.move !== MoveId.NONE
+        && !isVirtual(queuedMove.useMode)
+        && !(movesetQueuedMove?.isUsable(playerPokemon, isIgnorePP(queuedMove.useMode), true)?.[0] ?? false)
       ) {
         entriesToDelete++;
       } else {
@@ -194,8 +190,8 @@ export class CommandPhase extends FieldPhase {
     }
 
     if (
-      globalScene.currentBattle.isBattleMysteryEncounter() &&
-      globalScene.currentBattle.mysteryEncounter?.skipToFightInput
+      globalScene.currentBattle.isBattleMysteryEncounter()
+      && globalScene.currentBattle.mysteryEncounter?.skipToFightInput
     ) {
       globalScene.ui.clearText();
       globalScene.ui.setMode(UiMode.FIGHT, this.fieldIndex);
@@ -205,39 +201,18 @@ export class CommandPhase extends FieldPhase {
   }
 
   /**
-   * Submethod of {@linkcode handleFightCommand} responsible for queuing the appropriate
-   * error message when a move cannot be used.
-   * @param user - The pokemon using the move
-   * @param move - The move that cannot be used
+   * Submethod of {@linkcode handleFightCommand} responsible for queuing the provided error message when the move cannot be used
+   * @param msg - The reason why the move cannot be used
    */
-  private queueFightErrorMessage(user: PlayerPokemon, move: PokemonMove) {
-    globalScene.ui.setMode(UiMode.MESSAGE);
-
-    // Set the translation key for why the move cannot be selected
-    let cannotSelectKey: string;
-    const moveStatus = new BooleanHolder(true);
-    applyChallenges(ChallengeType.POKEMON_MOVE, move.moveId, moveStatus);
-    if (!moveStatus.value) {
-      cannotSelectKey = "battle:moveCannotUseChallenge";
-    } else if (move.getPpRatio() === 0) {
-      cannotSelectKey = "battle:moveNoPP";
-    } else if (move.getName().endsWith(" (N)")) {
-      cannotSelectKey = "battle:moveNotImplemented";
-    } else if (user.isMoveRestricted(move.moveId, user)) {
-      cannotSelectKey = user.getRestrictingTag(move.moveId, user)!.selectionDeniedText(user, move.moveId);
-    } else {
-      // TODO: Consider a message that signals a being unusable for an unknown reason
-      cannotSelectKey = "";
-    }
-
-    const moveName = move.getName().replace(" (N)", ""); // Trims off the indicator
-
-    globalScene.ui.showText(
-      i18next.t(cannotSelectKey, { moveName: moveName }),
+  private queueFightErrorMessage(msg: string): void {
+    const ui = globalScene.ui;
+    ui.setMode(UiMode.MESSAGE);
+    ui.showText(
+      msg,
       null,
       () => {
-        globalScene.ui.clearText();
-        globalScene.ui.setMode(UiMode.FIGHT, this.fieldIndex);
+        ui.clearText();
+        ui.setMode(UiMode.FIGHT, this.fieldIndex);
       },
       null,
       true,
@@ -274,22 +249,16 @@ export class CommandPhase extends FieldPhase {
   ): boolean {
     const playerPokemon = this.getPokemon();
     const ignorePP = isIgnorePP(useMode);
-
-    let canUse = cursor === -1 || playerPokemon.trySelectMove(cursor, ignorePP);
-
-    const moveset = playerPokemon.getMoveset();
+    const [canUse, reason] = cursor === -1 ? [true, ""] : playerPokemon.trySelectMove(cursor, ignorePP);
 
     // Ternary here ensures we don't compute struggle conditions unless necessary
-    const useStruggle = canUse ? false : cursor > -1 && !moveset.some(m => m.isUsable(playerPokemon));
+    const useStruggle = canUse
+      ? false
+      : cursor > -1 && !playerPokemon.getMoveset().some(m => m.isUsable(playerPokemon, ignorePP, true)[0]);
 
-    canUse ||= useStruggle;
-
-    if (!canUse) {
-      // Selected move *may* be undefined if the cursor is over a position that the mon does not have
-      const selectedMove: PokemonMove | undefined = moveset[cursor];
-      if (selectedMove) {
-        this.queueFightErrorMessage(playerPokemon, moveset[cursor]);
-      }
+    if (!canUse && !useStruggle) {
+      console.error("Cannot use move:", reason);
+      this.queueFightErrorMessage(reason);
       return false;
     }
 
@@ -335,9 +304,9 @@ export class CommandPhase extends FieldPhase {
     if (turnCommand.move && (moveTargets.targets.length <= 1 || moveTargets.multiple)) {
       turnCommand.move.targets = moveTargets.targets;
     } else if (
-      turnCommand.move &&
-      playerPokemon.getTag(BattlerTagType.CHARGING) &&
-      playerPokemon.getMoveQueue().length >= 1
+      turnCommand.move
+      && playerPokemon.getTag(BattlerTagType.CHARGING)
+      && playerPokemon.getMoveQueue().length > 0
     ) {
       turnCommand.move.targets = playerPokemon.getMoveQueue()[0].targets;
     } else {
@@ -402,17 +371,17 @@ export class CommandPhase extends FieldPhase {
 
     if (biomeType === BiomeId.END && battleType === BattleType.WILD) {
       if (
-        (isClassic && !isClassicFinalBoss && someUncaughtSpeciesOnField) ||
-        (isFullFreshStart && !isClassicFinalBoss) ||
-        (isEndless && !isEndlessMinorBoss)
+        (isClassic && !isClassicFinalBoss && someUncaughtSpeciesOnField)
+        || (isFullFreshStart && !isClassicFinalBoss)
+        || (isEndless && !isEndlessMinorBoss)
       ) {
         // Uncatchable paradox mons in classic and endless
         this.queueShowText("battle:noPokeballForce");
       } else if (
-        (isClassic && isClassicFinalBoss && missingMultipleStarters) ||
-        (isFullFreshStart && isClassicFinalBoss) ||
-        (isEndless && isEndlessMinorBoss) ||
-        isDaily
+        (isClassic && isClassicFinalBoss && missingMultipleStarters)
+        || (isFullFreshStart && isClassicFinalBoss)
+        || (isEndless && isEndlessMinorBoss)
+        || isDaily
       ) {
         // Uncatchable final boss in classic, endless and daily
         this.queueShowText("battle:noPokeballForceFinalBoss");
@@ -458,16 +427,15 @@ export class CommandPhase extends FieldPhase {
     if (cursor < numBallTypes) {
       const targetPokemon = globalScene.getEnemyPokemon(false);
       if (
-        targetPokemon?.isBoss() &&
-        targetPokemon?.bossSegmentIndex >= 1 &&
-        // TODO: Decouple this hardcoded exception for wonder guard and just check the target...
-        !targetPokemon?.hasAbility(AbilityId.WONDER_GUARD, false, true)
+        targetPokemon?.isBoss()
+        && targetPokemon?.bossSegmentIndex >= 1 // TODO: Decouple this hardcoded exception for wonder guard and just check the target...
+        && !targetPokemon?.hasAbility(AbilityId.WONDER_GUARD, false, true)
       ) {
         // When facing the final boss, it must be weakened unless a Master Ball is used AND no challenges are active.
         // The message is customized for the final boss.
         if (
-          isFinalBoss &&
-          (cursor < PokeballType.MASTER_BALL || (cursor === PokeballType.MASTER_BALL && isChallengeActive))
+          isFinalBoss
+          && (cursor < PokeballType.MASTER_BALL || (cursor === PokeballType.MASTER_BALL && isChallengeActive))
         ) {
           this.queueShowText("battle:noPokeballForceFinalBossCatchable");
           return false;
@@ -481,7 +449,7 @@ export class CommandPhase extends FieldPhase {
 
       globalScene.currentBattle.turnCommands[this.fieldIndex] = {
         command: Command.BALL,
-        cursor: cursor,
+        cursor,
       };
       globalScene.currentBattle.turnCommands[this.fieldIndex]!.targets = targets;
       if (this.fieldIndex) {
@@ -593,8 +561,8 @@ export class CommandPhase extends FieldPhase {
       return false;
     }
     if (
-      currentBattle.battleType === BattleType.TRAINER ||
-      currentBattle.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE
+      currentBattle.battleType === BattleType.TRAINER
+      || currentBattle.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE
     ) {
       this.queueShowText("battle:noEscapeTrainer");
       return false;
@@ -641,9 +609,8 @@ export class CommandPhase extends FieldPhase {
    * @returns Whether the command was successful
    */
   handleCommand(command: Command.FIGHT | Command.TERA, cursor: number, useMode?: MoveUseMode, move?: TurnMove): boolean;
-  handleCommand(command: Command.BALL, cursor: number): boolean;
   handleCommand(command: Command.POKEMON, cursor: number, useBaton: boolean): boolean;
-  handleCommand(command: Command.RUN, cursor: number): boolean;
+  handleCommand(command: Command.BALL | Command.RUN, cursor: number): boolean;
   handleCommand(command: Command, cursor: number, useMode?: boolean | MoveUseMode, move?: TurnMove): boolean;
 
   public handleCommand(

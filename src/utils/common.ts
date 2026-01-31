@@ -1,9 +1,10 @@
 import { pokerogueApi } from "#api/pokerogue-api";
+import { bypassLogin, isDev } from "#constants/app-constants";
+import { BiomeId } from "#enums/biome-id";
 import { MoneyFormat } from "#enums/money-format";
 import type { Variant } from "#sprites/variant";
+import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
-
-export type nil = null | undefined;
 
 export const MissingTextureKey = "__MISSING";
 
@@ -125,33 +126,37 @@ export function randSeedFloat(): number {
   return Phaser.Math.RND.frac();
 }
 
-export function randItem<T>(items: T[]): T {
+export function randItem<T>(items: ArrayLike<T>): T {
   return items.length === 1 ? items[0] : items[randInt(items.length)];
 }
 
-export function randSeedItem<T>(items: T[]): T {
+export function randSeedItem<T>(items: ArrayLike<T>): T {
   return items.length === 1 ? items[0] : Phaser.Math.RND.pick(items);
 }
 
 /**
- * Shuffle a list using the seeded rng. Utilises the Fisher-Yates algorithm.
- * @param {Array} items An array of items.
- * @returns {Array} A new shuffled array of items.
+ * Shuffle an array using seeded RNG via the Fisher-Yates algorithm.
+ * @param items - The array to shuffle; will be mutated
+ * @returns A reference to the same `items` array, now shuffled in place.
  */
 export function randSeedShuffle<T>(items: T[]): T[] {
-  if (items.length <= 1) {
-    return items;
-  }
-  const newArray = items.slice(0);
   for (let i = items.length - 1; i > 0; i--) {
     const j = Phaser.Math.RND.integerInRange(0, i);
-    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    [items[i], items[j]] = [items[j], items[i]];
   }
-  return newArray;
+  return items;
 }
 
+const FPS = 60;
+const MILLISECONDS_PER_FRAME = 1000 / FPS;
+
+/**
+ * Convert a frame count into a millisecond duration for Phaser.
+ * @param frameCount - The desired number of frames
+ * @returns The duration of `frameCount` in milliseconds, assuming constant frame rate.
+ */
 export function getFrameMs(frameCount: number): number {
-  return Math.floor((1 / 60) * 1000 * frameCount);
+  return Math.floor(MILLISECONDS_PER_FRAME * frameCount);
 }
 
 export function getCurrentTime(): number {
@@ -176,7 +181,7 @@ export function getPlayTimeString(totalSeconds: number): string {
  * @param id 32-bit number
  * @returns An array of six numbers corresponding to 5-bit chunks from {@linkcode id}
  */
-export function getIvsFromId(id: number): number[] {
+export function getIvsFromId(id: number): [number, number, number, number, number, number] {
   return [
     (id & 0x3e000000) >>> 25,
     (id & 0x01f00000) >>> 20,
@@ -267,17 +272,14 @@ export function formatStat(stat: number, forHp = false): string {
   return formatLargeNumber(stat, forHp ? 100_000 : 1_000_000);
 }
 
-export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T | null> {
-  return condition ? promiseFunc() : new Promise<T | null>(resolve => resolve(null));
+export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T | undefined> {
+  return condition ? promiseFunc() : Promise.resolve(undefined);
 }
 
 export const sessionIdKey = "pokerogue_sessionId";
 
-/** `true` when run via `pnpm start:dev` (which runs `vite --mode development`) */
-export const isLocal = import.meta.env.MODE === "development";
-
-/** Used to disable api calls when isLocal is true and a server is not found */
-export let isLocalServerConnected = true;
+/** Used to disable api calls when `isDev` is true and a server is not found */
+export let isLocalServerConnected = !bypassLogin;
 
 /**
  * When locally running the game, "pings" the local server
@@ -285,15 +287,12 @@ export let isLocalServerConnected = true;
  * sets isLocalServerConnected based on results
  */
 export async function localPing(): Promise<void> {
-  if (isLocal) {
+  if (isDev) {
     const titleStats = await pokerogueApi.getGameTitleStats();
     isLocalServerConnected = !!titleStats;
     console.log("isLocalServerConnected:", isLocalServerConnected);
   }
 }
-
-/** Alias for the constructor of a class */
-export type Constructor<T> = new (...args: unknown[]) => T;
 
 export class BooleanHolder {
   public value: boolean;
@@ -340,10 +339,10 @@ export function rgbToHsv(r: number, g: number, b: number) {
 
 /**
  * Compare color difference in RGB
- * @param {Array} rgb1 First RGB color in array
- * @param {Array} rgb2 Second RGB color in array
+ * @param rgb1 First RGB color in array
+ * @param rgb2 Second RGB color in array
  */
-export function deltaRgb(rgb1: number[], rgb2: number[]): number {
+export function deltaRgb(rgb1: readonly number[], rgb2: readonly number[]): number {
   const [r1, g1, b1] = rgb1;
   const [r2, g2, b2] = rgb2;
   const drp2 = Math.pow(r1 - r2, 2);
@@ -367,7 +366,7 @@ export function rgbHexToRgba(hex: string) {
   };
 }
 
-export function rgbaToInt(rgba: number[]): number {
+export function rgbaToInt(rgba: readonly number[]): number {
   return (rgba[0] << 24) + (rgba[1] << 16) + (rgba[2] << 8) + rgba[3];
 }
 
@@ -408,13 +407,13 @@ export function hasAllLocalizedSprites(lang?: string): boolean {
 
   switch (lang) {
     case "es-ES":
-    case "es-MX":
+    case "es-419":
     case "fr":
     case "da":
     case "de":
     case "it":
-    case "zh-CN":
-    case "zh-TW":
+    case "zh-Hans":
+    case "zh-Hant":
     case "pt-BR":
     case "ro":
     case "tr":
@@ -422,7 +421,12 @@ export function hasAllLocalizedSprites(lang?: string): boolean {
     case "ja":
     case "ca":
     case "ru":
+    case "id":
+    case "hi":
     case "tl":
+    case "nb-NO":
+    case "sv":
+    case "uk":
       return true;
     default:
       return false;
@@ -459,15 +463,6 @@ export function truncateString(str: string, maxLength = 10) {
 }
 
 /**
- * Report whether a given value is nullish (`null`/`undefined`).
- * @param val - The value whose nullishness is being checked
- * @returns `true` if `val` is either `null` or `undefined`
- */
-export function isNullOrUndefined(val: any): val is null | undefined {
-  return val === null || val === undefined;
-}
-
-/**
  * This function is used in the context of a Pokémon battle game to calculate the actual integer damage value from a float result.
  * Many damage calculation formulas involve various parameters and result in float values.
  * The actual damage applied to a Pokémon's HP must be an integer.
@@ -491,7 +486,7 @@ export function getLocalizedSpriteKey(baseKey: string) {
 }
 
 /**
- * Check if a number is **inclusively** between two numbers
+ * Check if a number is **inclusively** between two numbers.
  * @param num - the number to check
  * @param min - the minimum value (inclusive)
  * @param max - the maximum value (inclusive)
@@ -523,4 +518,20 @@ export function getShinyDescriptor(variant: Variant): string {
 export function coerceArray<T>(input: T): T extends any[] ? T : [T];
 export function coerceArray<T>(input: T): T | [T] {
   return Array.isArray(input) ? input : [input];
+}
+
+export function getBiomeName(biome: BiomeId | -1) {
+  if (biome === -1) {
+    return i18next.t("biome:unknownLocation");
+  }
+  switch (biome) {
+    case BiomeId.GRASS:
+      return i18next.t("biome:grass");
+    case BiomeId.RUINS:
+      return i18next.t("biome:ruins");
+    case BiomeId.END:
+      return i18next.t("biome:end");
+    default:
+      return i18next.t(`biome:${toCamelCase(BiomeId[biome])}`);
+  }
 }

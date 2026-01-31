@@ -8,7 +8,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { RandomMoveAttr } from "#moves/move";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Sketch", () => {
   let phaserGame: Phaser.Game;
@@ -18,10 +18,6 @@ describe("Moves - Sketch", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -36,7 +32,7 @@ describe("Moves - Sketch", () => {
   });
 
   it("Sketch should not fail even if a previous Sketch failed to retrieve a valid move and ran out of PP", async () => {
-    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
+    await game.classicMode.startBattle(SpeciesId.REGIELEKI);
     const playerPokemon = game.field.getPlayerPokemon();
     // can't use normal moveset override because we need to check moveset changes
     game.move.changeMoveset(playerPokemon, [MoveId.SKETCH, MoveId.SKETCH]);
@@ -58,7 +54,7 @@ describe("Moves - Sketch", () => {
 
   it("Sketch should retrieve the most recent valid move from its target history", async () => {
     game.override.enemyStatusEffect(StatusEffect.PARALYSIS);
-    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
+    await game.classicMode.startBattle(SpeciesId.REGIELEKI);
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
     game.move.changeMoveset(playerPokemon, [MoveId.SKETCH, MoveId.GROWL]);
@@ -86,7 +82,7 @@ describe("Moves - Sketch", () => {
     vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(MoveId.FALSE_SWIPE);
 
     game.override.enemyMoveset([MoveId.METRONOME]);
-    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
+    await game.classicMode.startBattle(SpeciesId.REGIELEKI);
 
     const playerPokemon = game.field.getPlayerPokemon();
     game.move.changeMoveset(playerPokemon, MoveId.SKETCH);

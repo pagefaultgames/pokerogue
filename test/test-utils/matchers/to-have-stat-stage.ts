@@ -1,9 +1,6 @@
-/** biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports */
-import type { Pokemon } from "#field/pokemon";
-/** biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports */
-
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { BattleStat } from "#enums/stat";
+import type { Pokemon } from "#field/pokemon";
 import { getStatName } from "#test/test-utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
@@ -16,7 +13,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @returns Whether the matcher passed
  */
 export function toHaveStatStage(
-  this: MatcherState,
+  this: Readonly<MatcherState>,
   received: unknown,
   stat: BattleStat,
   expectedStage: number,

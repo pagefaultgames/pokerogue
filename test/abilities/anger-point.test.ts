@@ -1,11 +1,11 @@
-import { PostReceiveCritStatStageChangeAbAttr } from "#abilities/ability";
+import { PostReceiveCritStatStageChangeAbAttr } from "#abilities/ab-attrs";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Ability - Anger Point", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +15,6 @@ describe("Ability - Anger Point", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -35,7 +31,7 @@ describe("Ability - Anger Point", () => {
 
   it("should set the user's attack stage to +6 when hit by a critical hit", async () => {
     game.override.enemyAbility(AbilityId.ANGER_POINT).moveset(MoveId.FALSE_SWIPE);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
     const enemy = game.field.getEnemyPokemon();
 
     // minimize the enemy's attack stage to ensure it is always set to +6
@@ -52,7 +48,7 @@ describe("Ability - Anger Point", () => {
       .enemyLevel(50)
       .enemyAbility(AbilityId.ANGER_POINT)
       .ability(AbilityId.SKILL_LINK);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
     const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getCriticalHitResult").mockReturnValueOnce(true);
     const angerPointSpy = vi.spyOn(PostReceiveCritStatStageChangeAbAttr.prototype, "apply");
@@ -67,7 +63,7 @@ describe("Ability - Anger Point", () => {
       .enemyPassiveAbility(AbilityId.CONTRARY)
       .enemyHasPassiveAbility(true)
       .moveset(MoveId.FALSE_SWIPE);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
     const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getCriticalHitResult").mockReturnValueOnce(true);
     enemy.setStatStage(Stat.ATK, 6);

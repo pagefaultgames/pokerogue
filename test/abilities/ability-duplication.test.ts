@@ -4,7 +4,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Ability Duplication", () => {
   let phaserGame: Phaser.Game;
@@ -14,10 +14,6 @@ describe("Ability Duplication", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -30,12 +26,13 @@ describe("Ability Duplication", () => {
       .enemyMoveset(MoveId.SPLASH);
   });
 
+  // TODO: Find a cleaner way of checking ability duplication effects than suppressing the ability
   it("huge power should only be applied once if both normal and passive", async () => {
     game.override.passiveAbility(AbilityId.HUGE_POWER);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
-    const [magikarp] = game.scene.getPlayerField();
+    const magikarp = game.field.getPlayerPokemon();
     const magikarpAttack = magikarp.getEffectiveStat(Stat.ATK);
 
     magikarp.summonData.abilitySuppressed = true;
@@ -46,9 +43,9 @@ describe("Ability Duplication", () => {
   it("huge power should stack with pure power", async () => {
     game.override.passiveAbility(AbilityId.PURE_POWER);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
-    const [magikarp] = game.scene.getPlayerField();
+    const magikarp = game.field.getPlayerPokemon();
     const magikarpAttack = magikarp.getEffectiveStat(Stat.ATK);
 
     magikarp.summonData.abilitySuppressed = true;

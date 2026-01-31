@@ -16,7 +16,7 @@ import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { shiftCharCodes } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("SelectModifierPhase", () => {
   let phaserGame: Phaser.Game;
@@ -40,21 +40,17 @@ describe("SelectModifierPhase", () => {
       .enemySpecies(SpeciesId.MAGIKARP);
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   it("should start a select modifier phase", async () => {
     initSceneWithoutEncounterPhase(scene, [SpeciesId.ABRA, SpeciesId.VOLCARONA]);
     const selectModifierPhase = new SelectModifierPhase();
     scene.phaseManager.unshiftPhase(selectModifierPhase);
-    await game.phaseInterceptor.to(SelectModifierPhase);
+    await game.phaseInterceptor.to("SelectModifierPhase");
 
     expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
   });
 
   it("should generate random modifiers", async () => {
-    await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
+    await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     game.move.select(MoveId.FISSURE);
     await game.phaseInterceptor.to("SelectModifierPhase");
 
@@ -87,7 +83,7 @@ describe("SelectModifierPhase", () => {
   });
 
   it.todo("should generate random modifiers from reroll", async () => {
-    await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
+    await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     scene.money = 1000000;
     scene.shopCursorTarget = 0;
 
@@ -111,14 +107,13 @@ describe("SelectModifierPhase", () => {
 
   it.todo("should generate random modifiers of same tier for reroll with reroll lock", async () => {
     game.override.startingModifier([{ name: "LOCK_CAPSULE" }]);
-    await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
+    await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     scene.money = 1000000;
     // Just use fully random seed for this test
     vi.spyOn(scene, "resetSeed").mockImplementation(() => {
       scene.waveSeed = shiftCharCodes(scene.seed, 5);
       Phaser.Math.RND.sow([scene.waveSeed]);
       console.log("Wave Seed:", scene.waveSeed, 5);
-      scene.rngCounter = 0;
     });
 
     game.move.select(MoveId.FISSURE);
@@ -137,21 +132,21 @@ describe("SelectModifierPhase", () => {
     expect(modifierSelectHandler.options.length).toEqual(3);
     // Reroll with lock can still upgrade
     expect(
-      modifierSelectHandler.options[0].modifierTypeOption.type.tier -
-        modifierSelectHandler.options[0].modifierTypeOption.upgradeCount,
+      modifierSelectHandler.options[0].modifierTypeOption.type.tier
+        - modifierSelectHandler.options[0].modifierTypeOption.upgradeCount,
     ).toEqual(firstRollTiers[0]);
     expect(
-      modifierSelectHandler.options[1].modifierTypeOption.type.tier -
-        modifierSelectHandler.options[1].modifierTypeOption.upgradeCount,
+      modifierSelectHandler.options[1].modifierTypeOption.type.tier
+        - modifierSelectHandler.options[1].modifierTypeOption.upgradeCount,
     ).toEqual(firstRollTiers[1]);
     expect(
-      modifierSelectHandler.options[2].modifierTypeOption.type.tier -
-        modifierSelectHandler.options[2].modifierTypeOption.upgradeCount,
+      modifierSelectHandler.options[2].modifierTypeOption.type.tier
+        - modifierSelectHandler.options[2].modifierTypeOption.upgradeCount,
     ).toEqual(firstRollTiers[2]);
   });
 
   it("should generate custom modifiers", async () => {
-    await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
+    await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     scene.money = 1000000;
     const customModifiers: CustomModifierSettings = {
       guaranteedModifierTypeFuncs: [
@@ -180,7 +175,7 @@ describe("SelectModifierPhase", () => {
   });
 
   it("should generate custom modifier tiers that can upgrade from luck", async () => {
-    await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
+    await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     scene.money = 1000000;
     const customModifiers: CustomModifierSettings = {
       guaranteedModifierTiers: [
@@ -210,29 +205,29 @@ describe("SelectModifierPhase", () => {
     ) as ModifierSelectUiHandler;
     expect(modifierSelectHandler.options.length).toEqual(5);
     expect(
-      modifierSelectHandler.options[0].modifierTypeOption.type.tier -
-        modifierSelectHandler.options[0].modifierTypeOption.upgradeCount,
+      modifierSelectHandler.options[0].modifierTypeOption.type.tier
+        - modifierSelectHandler.options[0].modifierTypeOption.upgradeCount,
     ).toEqual(ModifierTier.COMMON);
     expect(
-      modifierSelectHandler.options[1].modifierTypeOption.type.tier -
-        modifierSelectHandler.options[1].modifierTypeOption.upgradeCount,
+      modifierSelectHandler.options[1].modifierTypeOption.type.tier
+        - modifierSelectHandler.options[1].modifierTypeOption.upgradeCount,
     ).toEqual(ModifierTier.GREAT);
     expect(
-      modifierSelectHandler.options[2].modifierTypeOption.type.tier -
-        modifierSelectHandler.options[2].modifierTypeOption.upgradeCount,
+      modifierSelectHandler.options[2].modifierTypeOption.type.tier
+        - modifierSelectHandler.options[2].modifierTypeOption.upgradeCount,
     ).toEqual(ModifierTier.ULTRA);
     expect(
-      modifierSelectHandler.options[3].modifierTypeOption.type.tier -
-        modifierSelectHandler.options[3].modifierTypeOption.upgradeCount,
+      modifierSelectHandler.options[3].modifierTypeOption.type.tier
+        - modifierSelectHandler.options[3].modifierTypeOption.upgradeCount,
     ).toEqual(ModifierTier.ROGUE);
     expect(
-      modifierSelectHandler.options[4].modifierTypeOption.type.tier -
-        modifierSelectHandler.options[4].modifierTypeOption.upgradeCount,
+      modifierSelectHandler.options[4].modifierTypeOption.type.tier
+        - modifierSelectHandler.options[4].modifierTypeOption.upgradeCount,
     ).toEqual(ModifierTier.MASTER);
   });
 
   it("should generate custom modifiers and modifier tiers together", async () => {
-    await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
+    await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     scene.money = 1000000;
     const customModifiers: CustomModifierSettings = {
       guaranteedModifierTypeFuncs: [modifierTypes.MEMORY_MUSHROOM, modifierTypes.TM_COMMON],
@@ -255,7 +250,7 @@ describe("SelectModifierPhase", () => {
   });
 
   it("should fill remaining modifiers if fillRemaining is true with custom modifiers", async () => {
-    await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
+    await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     scene.money = 1000000;
     const customModifiers: CustomModifierSettings = {
       guaranteedModifierTypeFuncs: [modifierTypes.MEMORY_MUSHROOM],

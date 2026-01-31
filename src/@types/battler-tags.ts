@@ -1,10 +1,7 @@
-// biome-ignore-start lint/correctness/noUnusedImports: Used in a TSDoc comment
 import type { AbilityBattlerTag, BattlerTagTypeMap, SerializableBattlerTag, TypeBoostTag } from "#data/battler-tags";
 import type { AbilityId } from "#enums/ability-id";
-import type { SessionSaveData } from "#system/game-data";
-// biome-ignore-end lint/correctness/noUnusedImports: Used in a TSDoc comment
-
 import type { BattlerTagType } from "#enums/battler-tag-type";
+import type { SessionSaveData } from "#types/save-data";
 import type { InferKeys, ObjectValues } from "#types/type-helpers";
 
 /**
@@ -89,7 +86,8 @@ export type AbilityBattlerTagType =
   | BattlerTagType.QUARK_DRIVE
   | BattlerTagType.UNBURDEN
   | BattlerTagType.SLOW_START
-  | BattlerTagType.TRUANT;
+  | BattlerTagType.TRUANT
+  | BattlerTagType.SUPREME_OVERLORD;
 
 /** Subset of {@linkcode BattlerTagType}s that provide type boosts */
 export type TypeBoostTagType = BattlerTagType.FIRE_BOOST | BattlerTagType.CHARGED;

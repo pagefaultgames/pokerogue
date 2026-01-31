@@ -1,6 +1,7 @@
-import { type PokeballCounts } from "#app/battle-scene";
+import type { PokeballCounts } from "#app/battle-scene";
 import { EvolutionItem } from "#balance/pokemon-evolutions";
 import { Gender } from "#data/gender";
+import { TerrainType } from "#data/terrain";
 import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
 import { BerryType } from "#enums/berry-type";
@@ -18,17 +19,21 @@ import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
+import { TrainerVariant } from "#enums/trainer-variant";
 import { Unlockables } from "#enums/unlockables";
 import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
-import { type ModifierOverride } from "#modifiers/modifier-type";
+import type { ModifierOverride } from "#modifiers/modifier-type";
 import { Variant } from "#sprites/variant";
+import type { CustomDailyRunConfig } from "#types/daily-run";
+import type { IntClosedRange, TupleOf } from "type-fest";
 
 /**
  * This comment block exists to prevent IDEs from automatically removing unused imports
  * {@linkcode BerryType}, {@linkcode EvolutionItem}, {@linkcode FormChangeItem}
  * {@linkcode Stat}, {@linkcode PokemonType}
  */
+
 /**
  * Overrides that are using when testing different in game situations
  *
@@ -59,8 +64,18 @@ class DefaultOverrides {
   // -----------------
   /** a specific seed (default: a random string of 24 characters) */
   readonly SEED_OVERRIDE: string = "";
-  readonly DAILY_RUN_SEED_OVERRIDE: string | null = null;
+  /**
+   * A {@linkcode CustomDailyRunConfig} or a stringified version thereof
+   * used to customize the daily run (such as to use custom starters or final boss).
+   */
+  readonly DAILY_RUN_SEED_OVERRIDE: CustomDailyRunConfig | string | null = null;
   readonly WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
+  /**
+   * If set, will override the in-game terrain at the start of each biome transition.
+   *
+   * Lasts until cleared or replaced by another effect, and is refreshed at the start of each new biome.
+   */
+  readonly STARTING_TERRAIN_OVERRIDE: TerrainType = TerrainType.NONE;
   /**
    * If `null`, ignore this override.
    *
@@ -75,7 +90,13 @@ class DefaultOverrides {
   readonly BATTLE_STYLE_OVERRIDE: BattleStyle | null = null;
   readonly STARTING_WAVE_OVERRIDE: number = 0;
   readonly STARTING_BIOME_OVERRIDE: BiomeId | null = null;
-  readonly ARENA_TINT_OVERRIDE: TimeOfDay | null = null;
+  /**
+   * Overrides the Time of Day for the given biome.
+   * Set to `null` to disable.
+   * @remarks
+   * Will also influence field sprite tint coloration.
+   */
+  readonly TIME_OF_DAY_OVERRIDE: Exclude<TimeOfDay, TimeOfDay.ALL> | null = null;
   /** Multiplies XP gained by this value including 0. Set to null to ignore the override. */
   readonly XP_MULTIPLIER_OVERRIDE: number | null = null;
   /**
@@ -91,6 +112,7 @@ class DefaultOverrides {
    */
   readonly CRITICAL_HIT_OVERRIDE: boolean | null = null;
   /** @defaultValue `1000` */
+  // TODO: Make default value something other than `0`
   readonly STARTING_MONEY_OVERRIDE: number = 0;
   /** Sets all shop item prices to 0 */
   readonly WAIVE_SHOP_FEES_OVERRIDE: boolean = false;
@@ -148,17 +170,22 @@ class DefaultOverrides {
   /** @defaultValue `20` for Daily and `5` for all other modes */
   readonly STARTING_LEVEL_OVERRIDE: number = 0;
   /** Will override the species of your pokemon when starting a new run */
-  readonly STARTER_SPECIES_OVERRIDE: SpeciesId | 0 = 0;
+  readonly STARTER_SPECIES_OVERRIDE: SpeciesId | null = null;
   /** This will force your starter to be a random fusion */
   readonly STARTER_FUSION_OVERRIDE: boolean = false;
   /** This will override the species of the fusion */
-  readonly STARTER_FUSION_SPECIES_OVERRIDE: SpeciesId | 0 = 0;
+  readonly STARTER_FUSION_SPECIES_OVERRIDE: SpeciesId | null = null;
   readonly ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
   readonly PASSIVE_ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
   readonly HAS_PASSIVE_ABILITY_OVERRIDE: boolean | null = null;
   readonly STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly GENDER_OVERRIDE: Gender | null = null;
-  readonly MOVESET_OVERRIDE: MoveId | Array<MoveId> = [];
+  /**
+   * If set and non-empty, will override the moveset of every Pokemon in the player's party.
+   * @defaultValue `[]`
+   */
+  // TODO: Make the zero value something like `null` instead of an empty array
+  readonly MOVESET_OVERRIDE: MoveId | MoveId[] = [];
   readonly SHINY_OVERRIDE: boolean | null = null;
   readonly VARIANT_OVERRIDE: Variant | null = null;
   /**
@@ -167,25 +194,25 @@ class DefaultOverrides {
    * - If set to an array, set the IVs of all player pokemon to that array. Array length must be exactly `6`!
    * - If set to `null`, disable the override.
    */
-  readonly IVS_OVERRIDE: number | number[] | null = null;
+  readonly IVS_OVERRIDE: IntClosedRange<0, 31> | TupleOf<6, IntClosedRange<0, 31>> | null = null;
   /** Override the nature of all player pokemon to the specified nature. Disabled if `null`. */
   readonly NATURE_OVERRIDE: Nature | null = null;
 
   // --------------------------
   // OPPONENT / ENEMY OVERRIDES
   // --------------------------
-  readonly ENEMY_SPECIES_OVERRIDE: SpeciesId | number = 0;
+  readonly ENEMY_SPECIES_OVERRIDE: SpeciesId | null = null;
   /** This will make all enemies fused Pokemon */
   readonly ENEMY_FUSION_OVERRIDE: boolean = false;
   /** This will override the species of the fusion only when the enemy is already a fusion */
-  readonly ENEMY_FUSION_SPECIES_OVERRIDE: SpeciesId | number = 0;
+  readonly ENEMY_FUSION_SPECIES_OVERRIDE: SpeciesId | null = null;
   readonly ENEMY_LEVEL_OVERRIDE: number = 0;
   readonly ENEMY_ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
   readonly ENEMY_PASSIVE_ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
   readonly ENEMY_HAS_PASSIVE_ABILITY_OVERRIDE: boolean | null = null;
   readonly ENEMY_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly ENEMY_GENDER_OVERRIDE: Gender | null = null;
-  readonly ENEMY_MOVESET_OVERRIDE: MoveId | Array<MoveId> = [];
+  readonly ENEMY_MOVESET_OVERRIDE: MoveId | MoveId[] = [];
   readonly ENEMY_SHINY_OVERRIDE: boolean | null = null;
   readonly ENEMY_VARIANT_OVERRIDE: Variant | null = null;
 
@@ -195,7 +222,7 @@ class DefaultOverrides {
    * - If set to an array, set the IVs of all enemy pokemon to that array. Array length must be exactly `6`!
    * - If set to `null`, disable the override.
    */
-  readonly ENEMY_IVS_OVERRIDE: number | number[] | null = null;
+  readonly ENEMY_IVS_OVERRIDE: IntClosedRange<0, 31> | TupleOf<6, IntClosedRange<0, 31>> | null = null;
   /** Override the nature of all enemy pokemon to the specified nature. Disabled if `null`. */
   readonly ENEMY_NATURE_OVERRIDE: Nature | null = null;
   readonly ENEMY_FORM_OVERRIDES: Partial<Record<SpeciesId, number>> = {};
@@ -311,8 +338,12 @@ export type BattleStyle = "double" | "single" | "even-doubles" | "odd-doubles";
 export type RandomTrainerOverride = {
   /** The Type of trainer to force */
   trainerType: Exclude<TrainerType, TrainerType.UNKNOWN>;
-  /* If the selected trainer type has a double version, it will always use its double version. */
-  alwaysDouble?: boolean;
+  /**
+   * The {@linkcode TrainerVariant} to force.
+   * @remarks
+   * `TrainerVariant.DOUBLE` cannot be forced on the first wave of a game due to issues with trainer party generation.
+   */
+  trainerVariant?: TrainerVariant;
 };
 
 /** The type of the {@linkcode DefaultOverrides} class */

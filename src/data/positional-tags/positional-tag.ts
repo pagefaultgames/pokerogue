@@ -1,8 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-// biome-ignore-start lint/correctness/noUnusedImports: TSDoc
 import type { ArenaTag } from "#data/arena-tag";
-// biome-ignore-end lint/correctness/noUnusedImports: TSDoc
 import { allMoves } from "#data/data-lists";
 import type { BattlerIndex } from "#enums/battler-index";
 import type { MoveId } from "#enums/move-id";
@@ -20,7 +18,7 @@ import i18next from "i18next";
  * and should refrain from adding extra serializable fields not contained in said interface.
  * This ensures that all tags truly "become" their respective interfaces when converted to and from JSON.
  */
-export interface PositionalTagBaseArgs {
+interface PositionalTagBaseArgs {
   /**
    * The number of turns remaining until this tag's activation. \
    * Decremented by 1 at the end of each turn until reaching 0, at which point it will
@@ -30,16 +28,16 @@ export interface PositionalTagBaseArgs {
   /**
    * The {@linkcode BattlerIndex} targeted by this effect.
    */
-  targetIndex: BattlerIndex;
+  readonly targetIndex: BattlerIndex;
 }
 
 /**
  * A {@linkcode PositionalTag} is a variant of an {@linkcode ArenaTag} that targets a single *slot* of the battlefield.
- * Each tag can last one or more turns, triggering various effects on removal.
+ * Each tag can last one or more turns, triggering various effects on removal. \
  * Multiple tags of the same kind can stack with one another, provided they are affecting different targets.
  */
 export abstract class PositionalTag implements PositionalTagBaseArgs {
-  /** This tag's {@linkcode PositionalTagType | type} */
+  /** This tag's {@linkcode PositionalTagType | type}. */
   public abstract readonly tagType: PositionalTagType;
   // These arguments have to be public to implement the interface, but are functionally private
   // outside this and the tag manager.
@@ -76,9 +74,9 @@ interface DelayedAttackArgs extends PositionalTagBaseArgs {
   /**
    * The {@linkcode Pokemon.id | PID} of the {@linkcode Pokemon} having created this effect.
    */
-  sourceId: number;
+  readonly sourceId: number;
   /** The {@linkcode MoveId} that created this attack. */
-  sourceMove: MoveId;
+  readonly sourceMove: MoveId;
 }
 
 /**
@@ -88,6 +86,7 @@ interface DelayedAttackArgs extends PositionalTagBaseArgs {
  */
 export class DelayedAttackTag extends PositionalTag implements DelayedAttackArgs {
   public override readonly tagType = PositionalTagType.DELAYED_ATTACK;
+
   public readonly sourceMove: MoveId;
   public readonly sourceId: number;
 
@@ -100,10 +99,8 @@ export class DelayedAttackTag extends PositionalTag implements DelayedAttackArgs
   public override trigger(): void {
     // Bangs are justified as the `shouldTrigger` method will queue the tag for removal
     // if the source or target no longer exist
-    const source = globalScene.getPokemonById(this.sourceId)!;
     const target = this.getTarget()!;
 
-    source.turnData.extraTurns++;
     globalScene.phaseManager.queueMessage(
       i18next.t("moveTriggers:tookMoveAttack", {
         pokemonName: getPokemonNameWithAffix(target),
@@ -113,7 +110,9 @@ export class DelayedAttackTag extends PositionalTag implements DelayedAttackArgs
 
     globalScene.phaseManager.unshiftNew(
       "MoveEffectPhase",
-      this.sourceId, // TODO: Find an alternate method of passing the source pokemon without a source ID
+      // TODO: Find an alternate method of passing the (currently off-field) source pokemon
+      // instead of relying on pokemon getter jank
+      this.sourceId,
       [this.targetIndex],
       allMoves[this.sourceMove],
       MoveUseMode.DELAYED_ATTACK,
@@ -126,16 +125,18 @@ export class DelayedAttackTag extends PositionalTag implements DelayedAttackArgs
     // Silently disappear if either source or target are missing or happen to be the same pokemon
     // (i.e. targeting oneself)
     // We also need to check for fainted targets as they don't technically leave the field until _after_ the turn ends
-    return !!source && !!target && source !== target && !target.isFainted();
+    // TODO: Figure out a way to store the target's offensive stat if they faint to allow pending attacks to persist
+    // TODO: Remove the `?.scene` checks once battle anims are cleaned up - needed to avoid catch+release crash
+    return !!source?.scene && !!target?.scene && source !== target && !target.isFainted();
   }
 }
 
 /** Interface containing arguments used to construct a {@linkcode WishTag}. */
 interface WishArgs extends PositionalTagBaseArgs {
   /** The amount of {@linkcode Stat.HP | HP} to heal; set to 50% of the user's max HP during move usage. */
-  healHp: number;
+  readonly healHp: number;
   /** The name of the {@linkcode Pokemon} having created the tag. */
-  pokemonName: string;
+  readonly pokemonName: string;
 }
 
 /**

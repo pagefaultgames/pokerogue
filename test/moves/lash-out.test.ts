@@ -5,7 +5,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Lash Out", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +15,6 @@ describe("Moves - Lash Out", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -31,14 +27,13 @@ describe("Moves - Lash Out", () => {
       .enemyMoveset([MoveId.GROWL])
       .startingLevel(10)
       .enemyLevel(10)
-      .starterSpecies(SpeciesId.FEEBAS)
       .ability(AbilityId.BALL_FETCH)
       .moveset([MoveId.LASH_OUT]);
   });
 
   it("should deal double damage if the user's stat stages were lowered this turn", async () => {
     vi.spyOn(allMoves[MoveId.LASH_OUT], "calculateBattlePower");
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.LASH_OUT);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);

@@ -3,10 +3,9 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Torment", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +14,6 @@ describe("Moves - Torment", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -34,7 +29,7 @@ describe("Moves - Torment", () => {
   });
 
   it("Pokemon should not be able to use the same move consecutively", async () => {
-    await game.classicMode.startBattle([SpeciesId.CHANSEY]);
+    await game.classicMode.startBattle(SpeciesId.CHANSEY);
 
     const playerPokemon = game.field.getPlayerPokemon();
 
@@ -45,7 +40,7 @@ describe("Moves - Torment", () => {
     const move1 = playerPokemon.getLastXMoves(1)[0]!;
     expect(move1.move).toBe(MoveId.TACKLE);
     expect(move1.result).toBe(MoveResult.SUCCESS);
-    expect(playerPokemon?.getTag(BattlerTagType.TORMENT)).toBeDefined();
+    expect(playerPokemon.getTag(BattlerTagType.TORMENT)).toBeDefined();
 
     // Second turn, Torment forces Struggle to occur
     game.move.select(MoveId.TACKLE);
@@ -57,7 +52,7 @@ describe("Moves - Torment", () => {
     // Third turn, Tackle can be used.
     game.move.select(MoveId.TACKLE);
     await game.move.selectEnemyMove(MoveId.SPLASH);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     const move3 = playerPokemon.getLastXMoves(1)[0]!;
     expect(move3.move).toBe(MoveId.TACKLE);
   });

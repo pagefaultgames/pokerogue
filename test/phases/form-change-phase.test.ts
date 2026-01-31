@@ -6,7 +6,7 @@ import { SpeciesId } from "#enums/species-id";
 import { generateModifierType } from "#mystery-encounters/encounter-phase-utils";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Form Change Phase", () => {
   let phaserGame: Phaser.Game;
@@ -16,10 +16,6 @@ describe("Form Change Phase", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -35,7 +31,7 @@ describe("Form Change Phase", () => {
   });
 
   it("Zacian should successfully change into Crowned form", async () => {
-    await game.classicMode.startBattle([SpeciesId.ZACIAN]);
+    await game.classicMode.startBattle(SpeciesId.ZACIAN);
 
     // Before the form change: Should be Hero form
     const zacian = game.field.getPlayerPokemon();

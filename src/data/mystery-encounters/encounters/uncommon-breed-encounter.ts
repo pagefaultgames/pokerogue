@@ -15,7 +15,7 @@ import { PokemonMove } from "#moves/pokemon-move";
 import { queueEncounterMessage } from "#mystery-encounters/encounter-dialogue-utils";
 import type { EnemyPartyConfig } from "#mystery-encounters/encounter-phase-utils";
 import {
-  getRandomEncounterSpecies,
+  getRandomEncounterPokemon,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
   setEncounterExp,
@@ -32,7 +32,7 @@ import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encou
 import { MoveRequirement, PersistentModifierRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { CHARMING_MOVES } from "#mystery-encounters/requirement-groups";
 import { PokemonData } from "#system/pokemon-data";
-import { isNullOrUndefined, randSeedInt } from "#utils/common";
+import { randSeedInt } from "#utils/common";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/uncommonBreed";
@@ -62,7 +62,12 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
     // Calculate boss mon
     // Level equal to 2 below highest party member
     const level = getHighestLevelPlayerPokemon(false, true).level - 2;
-    const pokemon = getRandomEncounterSpecies(level, true, true);
+    const pokemon = getRandomEncounterPokemon({
+      level,
+      isBoss: true,
+      eventShinyRerolls: 2,
+      eventHiddenRerolls: 1,
+    });
 
     // Pokemon will always have one of its egg moves in its moveset
     const eggMoves = pokemon.getEggMoves();
@@ -71,7 +76,7 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
       const randomEggMove: MoveId = eggMoves[eggMoveIndex];
       encounter.misc = {
         eggMove: randomEggMove,
-        pokemon: pokemon,
+        pokemon,
       };
       if (pokemon.moveset.length < 4) {
         pokemon.moveset.push(new PokemonMove(randomEggMove));
@@ -91,7 +96,7 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
     const config: EnemyPartyConfig = {
       pokemonConfigs: [
         {
-          level: level,
+          level,
           species: pokemon.species,
           dataSource: new PokemonData(pokemon),
           isBoss: false,
@@ -114,8 +119,8 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
     const { spriteKey, fileRoot } = getSpriteKeysFromPokemon(pokemon);
     encounter.spriteConfigs = [
       {
-        spriteKey: spriteKey,
-        fileRoot: fileRoot,
+        spriteKey,
+        fileRoot,
         hasShadow: true,
         x: -5,
         repeat: true,
@@ -167,7 +172,7 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
       const encounter = globalScene.currentBattle.mysteryEncounter!;
 
       const eggMove = encounter.misc.eggMove;
-      if (!isNullOrUndefined(eggMove)) {
+      if (eggMove != null) {
         // Check what type of move the egg move is to determine target
         const pokemonMove = new PokemonMove(eggMove);
         const move = pokemonMove.getMove();

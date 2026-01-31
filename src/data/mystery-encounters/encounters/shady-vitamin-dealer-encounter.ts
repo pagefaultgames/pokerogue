@@ -48,13 +48,14 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
   .withPrimaryPokemonHealthRatioRequirement([0.51, 1]) // At least 1 Pokemon must have above half HP
   .withIntroSpriteConfigs([
     {
-      spriteKey: SpeciesId.KROOKODILE.toString(),
+      spriteKey: SpeciesId.KROKOROK.toString(),
       fileRoot: "pokemon",
       hasShadow: true,
-      repeat: true,
-      x: 12,
-      y: -5,
-      yShadow: -5,
+      repeat: false,
+      scale: 1.1,
+      x: 24,
+      y: 0,
+      yShadow: 0,
     },
     {
       spriteKey: "shady_vitamin_dealer",
@@ -104,7 +105,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
           encounter.setDialogueToken("boost2", modifiers[1].name);
           encounter.misc = {
             chosenPokemon: pokemon,
-            modifiers: modifiers,
+            modifiers,
           };
         };
 
@@ -187,7 +188,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
           encounter.setDialogueToken("boost2", modifiers[1].name);
           encounter.misc = {
             chosenPokemon: pokemon,
-            modifiers: modifiers,
+            modifiers,
           };
         };
 

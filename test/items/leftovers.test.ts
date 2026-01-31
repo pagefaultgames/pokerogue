@@ -1,10 +1,9 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { DamageAnimPhase } from "#phases/damage-anim-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Items - Leftovers", () => {
   let phaserGame: Phaser.Game;
@@ -14,10 +13,6 @@ describe("Items - Leftovers", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -34,7 +29,7 @@ describe("Items - Leftovers", () => {
   });
 
   it("leftovers works", async () => {
-    await game.classicMode.startBattle([SpeciesId.ARCANINE]);
+    await game.classicMode.startBattle(SpeciesId.ARCANINE);
 
     // Make sure leftovers are there
     expect(game.scene.modifiers[0].type.id).toBe("LEFTOVERS");
@@ -47,7 +42,7 @@ describe("Items - Leftovers", () => {
     game.move.select(MoveId.SPLASH);
 
     // We should have less hp after the attack
-    await game.phaseInterceptor.to(DamageAnimPhase, false);
+    await game.phaseInterceptor.to("DamageAnimPhase", false);
     expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
 
     const leadHpAfterDamage = leadPokemon.hp;

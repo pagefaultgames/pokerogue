@@ -27,35 +27,34 @@ export class TrainerVictoryPhase extends BattlePhase {
 
     const trainerType = globalScene.currentBattle.trainer?.config.trainerType!; // TODO: is this bang correct?
     // Validate Voucher for boss trainers
-    if (vouchers.hasOwnProperty(TrainerType[trainerType])) {
-      if (
-        !globalScene.validateVoucher(vouchers[TrainerType[trainerType]]) &&
-        globalScene.currentBattle.trainer?.config.isBoss
-      ) {
-        if (timedEventManager.getUpgradeUnlockedVouchers()) {
-          globalScene.phaseManager.unshiftNew(
-            "ModifierRewardPhase",
-            [
-              modifierTypes.VOUCHER_PLUS,
-              modifierTypes.VOUCHER_PLUS,
-              modifierTypes.VOUCHER_PLUS,
-              modifierTypes.VOUCHER_PREMIUM,
-            ][vouchers[TrainerType[trainerType]].voucherType],
-          );
-        } else {
-          globalScene.phaseManager.unshiftNew(
-            "ModifierRewardPhase",
-            [modifierTypes.VOUCHER, modifierTypes.VOUCHER, modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PREMIUM][
-              vouchers[TrainerType[trainerType]].voucherType
-            ],
-          );
-        }
+    if (
+      vouchers.hasOwnProperty(TrainerType[trainerType])
+      && !globalScene.validateVoucher(vouchers[TrainerType[trainerType]])
+      && globalScene.currentBattle.trainer?.config.isBoss
+    ) {
+      if (timedEventManager.getUpgradeUnlockedVouchers()) {
+        globalScene.phaseManager.unshiftNew(
+          "ModifierRewardPhase",
+          [
+            modifierTypes.VOUCHER_PLUS,
+            modifierTypes.VOUCHER_PLUS,
+            modifierTypes.VOUCHER_PLUS,
+            modifierTypes.VOUCHER_PREMIUM,
+          ][vouchers[TrainerType[trainerType]].voucherType],
+        );
+      } else {
+        globalScene.phaseManager.unshiftNew(
+          "ModifierRewardPhase",
+          [modifierTypes.VOUCHER, modifierTypes.VOUCHER, modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PREMIUM][
+            vouchers[TrainerType[trainerType]].voucherType
+          ],
+        );
       }
     }
     // Breeders in Space achievement
     if (
-      globalScene.arena.biomeType === BiomeId.SPACE &&
-      (trainerType === TrainerType.BREEDER || trainerType === TrainerType.EXPERT_POKEMON_BREEDER)
+      globalScene.arena.biomeType === BiomeId.SPACE
+      && (trainerType === TrainerType.BREEDER || trainerType === TrainerType.EXPERT_POKEMON_BREEDER)
     ) {
       globalScene.validateAchv(achvs.BREEDERS_IN_SPACE);
     }
@@ -87,7 +86,7 @@ export class TrainerVictoryPhase extends BattlePhase {
           showMessageOrEnd();
         };
         let showMessageOrEnd = () => this.end();
-        if (victoryMessages?.length) {
+        if (victoryMessages?.length > 0) {
           if (globalScene.currentBattle.trainer?.config.hasCharSprite && !globalScene.ui.shouldSkipDialogue(message)) {
             const originalFunc = showMessageOrEnd;
             showMessageOrEnd = () =>

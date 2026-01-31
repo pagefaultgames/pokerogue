@@ -6,7 +6,7 @@ import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import i18next from "i18next";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Ability - Truant", () => {
   let phaserGame: Phaser.Game;
@@ -16,10 +16,6 @@ describe("Ability - Truant", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -35,7 +31,7 @@ describe("Ability - Truant", () => {
   });
 
   it("should loaf around and prevent using moves every other turn", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
@@ -54,7 +50,7 @@ describe("Ability - Truant", () => {
 
     expect(player.getLastXMoves(1)[0]).toEqual(expect.objectContaining({ move: MoveId.NONE, result: MoveResult.FAIL }));
     expect(enemy.hp).toBe(enemy.getMaxHp());
-    expect(game.textInterceptor.logs).toContain(
+    expect(game).toHaveShownMessage(
       i18next.t("battlerTags:truantLapse", {
         pokemonNameWithAffix: getPokemonNameWithAffix(player),
       }),

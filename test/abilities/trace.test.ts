@@ -4,7 +4,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Trace", () => {
   let phaserGame: Phaser.Game;
@@ -14,10 +14,6 @@ describe("Abilities - Trace", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -33,7 +29,7 @@ describe("Abilities - Trace", () => {
   });
 
   it("should copy the opponent's ability", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
@@ -43,7 +39,7 @@ describe("Abilities - Trace", () => {
 
   it("should activate a copied post-summon ability", async () => {
     game.override.enemyAbility(AbilityId.INTIMIDATE);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");

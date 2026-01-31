@@ -7,7 +7,7 @@ import { Stat } from "#enums/stat";
 import { WeatherType } from "#enums/weather-type";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Electro Shot", () => {
   let phaserGame: Phaser.Game;
@@ -17,10 +17,6 @@ describe("Moves - Electro Shot", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -36,7 +32,7 @@ describe("Moves - Electro Shot", () => {
   });
 
   it("should increase the user's Sp. Atk on the first turn, then attack on the second turn", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
@@ -66,7 +62,7 @@ describe("Moves - Electro Shot", () => {
   ])("should fully resolve in one turn if $name is active", async ({ weatherType }) => {
     game.override.weather(weatherType);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
@@ -89,13 +85,13 @@ describe("Moves - Electro Shot", () => {
   it("should only increase Sp. Atk once with Multi-Lens", async () => {
     game.override.weather(WeatherType.RAIN).startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const playerPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.ELECTRO_SHOT);
 
-    await game.phaseInterceptor.to("MoveEndPhase");
+    await game.phaseInterceptor.to("MoveEndPhase", false);
     expect(playerPokemon.turnData.hitCount).toBe(1);
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(1);
   });

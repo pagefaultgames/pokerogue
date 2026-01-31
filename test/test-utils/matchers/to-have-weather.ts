@@ -1,20 +1,17 @@
-/** biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports */
-import type { GameManager } from "#test/test-utils/game-manager";
-/** biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports */
-
 import { WeatherType } from "#enums/weather-type";
+import type { GameManager } from "#test/test-utils/game-manager";
 import { isGameManagerInstance, receivedStr } from "#test/test-utils/test-utils";
 import { toTitleCase } from "#utils/strings";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
- * Matcher that checks if the {@linkcode WeatherType} is as expected
- * @param received - The object to check. Expects an instance of {@linkcode GameManager}.
+ * Matcher that checks if the current {@linkcode WeatherType} is as expected.
+ * @param received - The object to check. Should be the current {@linkcode GameManager}
  * @param expectedWeatherType - The expected {@linkcode WeatherType}
  * @returns Whether the matcher passed
  */
 export function toHaveWeather(
-  this: MatcherState,
+  this: Readonly<MatcherState>,
   received: unknown,
   expectedWeatherType: WeatherType,
 ): SyncExpectationResult {

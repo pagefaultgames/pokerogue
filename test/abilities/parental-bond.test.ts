@@ -8,7 +8,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
 import { toDmgValue } from "#utils/common";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Parental Bond", () => {
   let phaserGame: Phaser.Game;
@@ -18,10 +18,6 @@ describe("Abilities - Parental Bond", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -37,10 +33,12 @@ describe("Abilities - Parental Bond", () => {
       .enemyLevel(100);
   });
 
+  // TODO: Review how many of these tests are duplicated in other files
+  // and/or in Multi Lens' suite
   it("should add second strike to attack move", async () => {
     game.override.moveset([MoveId.TACKLE]);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const leadPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
@@ -53,7 +51,7 @@ describe("Abilities - Parental Bond", () => {
     const firstStrikeDamage = enemyStartingHp - enemyPokemon.hp;
     enemyStartingHp = enemyPokemon.hp;
 
-    await game.phaseInterceptor.to("BerryPhase", false);
+    await game.phaseInterceptor.to("MoveEndPhase", false);
 
     const secondStrikeDamage = enemyStartingHp - enemyPokemon.hp;
 
@@ -64,13 +62,13 @@ describe("Abilities - Parental Bond", () => {
   it("should apply secondary effects to both strikes", async () => {
     game.override.moveset([MoveId.POWER_UP_PUNCH]).enemySpecies(SpeciesId.AMOONGUSS);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const leadPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.POWER_UP_PUNCH);
 
-    await game.phaseInterceptor.to("BerryPhase", false);
+    await game.phaseInterceptor.to("MoveEndPhase", false);
 
     expect(leadPokemon.turnData.hitCount).toBe(2);
     expect(leadPokemon.getStatStage(Stat.ATK)).toBe(2);
@@ -79,13 +77,13 @@ describe("Abilities - Parental Bond", () => {
   it("should not apply to Status moves", async () => {
     game.override.moveset([MoveId.BABY_DOLL_EYES]);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.BABY_DOLL_EYES);
 
-    await game.phaseInterceptor.to("BerryPhase", false);
+    await game.phaseInterceptor.to("MoveEndPhase", false);
 
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-1);
   });
@@ -93,14 +91,14 @@ describe("Abilities - Parental Bond", () => {
   it("should not apply to multi-hit moves", async () => {
     game.override.moveset([MoveId.DOUBLE_HIT]);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const leadPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.DOUBLE_HIT);
     await game.move.forceHit();
 
-    await game.phaseInterceptor.to("BerryPhase", false);
+    await game.phaseInterceptor.to("MoveEndPhase", false);
 
     expect(leadPokemon.turnData.hitCount).toBe(2);
   });
@@ -108,7 +106,7 @@ describe("Abilities - Parental Bond", () => {
   it("should not apply to self-sacrifice moves", async () => {
     game.override.moveset([MoveId.SELF_DESTRUCT]);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const leadPokemon = game.field.getPlayerPokemon();
 
@@ -122,7 +120,7 @@ describe("Abilities - Parental Bond", () => {
   it("should not apply to Rollout", async () => {
     game.override.moveset([MoveId.ROLLOUT]);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const leadPokemon = game.field.getPlayerPokemon();
 
@@ -137,12 +135,12 @@ describe("Abilities - Parental Bond", () => {
   it("should not apply multiplier to fixed-damage moves", async () => {
     game.override.moveset([MoveId.DRAGON_RAGE]);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.DRAGON_RAGE);
-    await game.phaseInterceptor.to("BerryPhase", false);
+    await game.phaseInterceptor.to("MoveEndPhase", false);
 
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp() - 80);
   });
@@ -150,17 +148,17 @@ describe("Abilities - Parental Bond", () => {
   it("should not apply multiplier to counter moves", async () => {
     game.override.moveset([MoveId.COUNTER]).enemyMoveset([MoveId.TACKLE]);
 
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE);
 
     const leadPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.COUNTER);
-    await game.phaseInterceptor.to("DamageAnimPhase");
+    await game.phaseInterceptor.to("MoveEndPhase");
 
     const playerDamage = leadPokemon.getMaxHp() - leadPokemon.hp;
 
-    await game.phaseInterceptor.to("BerryPhase", false);
+    await game.phaseInterceptor.to("MoveEndPhase", false);
 
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp() - 4 * playerDamage);
   });
@@ -168,22 +166,19 @@ describe("Abilities - Parental Bond", () => {
   it("should not apply to multi-target moves", async () => {
     game.override.battleStyle("double").moveset([MoveId.EARTHQUAKE]).passiveAbility(AbilityId.LEVITATE);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
-
-    const playerPokemon = game.scene.getPlayerField();
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     game.move.select(MoveId.EARTHQUAKE);
-    game.move.select(MoveId.EARTHQUAKE, 1);
 
-    await game.phaseInterceptor.to("BerryPhase", false);
+    await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    playerPokemon.forEach(p => expect(p.turnData.hitCount).toBe(1));
+    expect(game.field.getPlayerPokemon().turnData.hitCount).toBe(1);
   });
 
   it("should apply to multi-target moves when hitting only one target", async () => {
     game.override.moveset([MoveId.EARTHQUAKE]);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const leadPokemon = game.field.getPlayerPokemon();
 
@@ -197,7 +192,7 @@ describe("Abilities - Parental Bond", () => {
   it("should only trigger post-target move effects once", async () => {
     game.override.moveset([MoveId.MIND_BLOWN]);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const leadPokemon = game.field.getPlayerPokemon();
 
@@ -208,7 +203,7 @@ describe("Abilities - Parental Bond", () => {
     expect(leadPokemon.turnData.hitCount).toBe(2);
 
     // This test will time out if the user faints
-    await game.phaseInterceptor.to("BerryPhase", false);
+    await game.phaseInterceptor.to("MoveEndPhase", false);
 
     expect(leadPokemon.hp).toBe(Math.ceil(leadPokemon.getMaxHp() / 2));
   });
@@ -216,7 +211,7 @@ describe("Abilities - Parental Bond", () => {
   it("Burn Up only removes type after the second strike", async () => {
     game.override.moveset([MoveId.BURN_UP]);
 
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     const leadPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
@@ -229,7 +224,7 @@ describe("Abilities - Parental Bond", () => {
     expect(enemyPokemon.hp).toBeGreaterThan(0);
     expect(leadPokemon.isOfType(PokemonType.FIRE)).toBe(true);
 
-    await game.phaseInterceptor.to("BerryPhase", false);
+    await game.phaseInterceptor.to("MoveEndPhase", false);
 
     expect(leadPokemon.isOfType(PokemonType.FIRE)).toBe(false);
   });
@@ -237,7 +232,7 @@ describe("Abilities - Parental Bond", () => {
   it("Hyper Beam boosted by this ability should strike twice, then recharge", async () => {
     game.override.moveset([MoveId.HYPER_BEAM]);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const leadPokemon = game.field.getPlayerPokemon();
 
@@ -257,7 +252,7 @@ describe("Abilities - Parental Bond", () => {
   it("Anchor Shot boosted by this ability should only trap the target after the second hit", async () => {
     game.override.moveset([MoveId.ANCHOR_SHOT]);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const leadPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
@@ -281,7 +276,7 @@ describe("Abilities - Parental Bond", () => {
   it("Smack Down boosted by this ability should only ground the target after the second hit", async () => {
     game.override.moveset([MoveId.SMACK_DOWN]);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const leadPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
@@ -302,7 +297,7 @@ describe("Abilities - Parental Bond", () => {
   it("U-turn boosted by this ability should strike twice before forcing a switch", async () => {
     game.override.moveset([MoveId.U_TURN]);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.BLASTOISE]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.BLASTOISE);
 
     const leadPokemon = game.field.getPlayerPokemon();
 
@@ -319,7 +314,7 @@ describe("Abilities - Parental Bond", () => {
   it("Wake-Up Slap boosted by this ability should only wake up the target after the second hit", async () => {
     game.override.moveset([MoveId.WAKE_UP_SLAP]).enemyStatusEffect(StatusEffect.SLEEP);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const leadPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
@@ -332,42 +327,28 @@ describe("Abilities - Parental Bond", () => {
     expect(leadPokemon.turnData.hitCount).toBe(2);
     expect(enemyPokemon.status?.effect).toBe(StatusEffect.SLEEP);
 
-    await game.phaseInterceptor.to("BerryPhase", false);
+    await game.phaseInterceptor.to("MoveEndPhase", false);
 
     expect(enemyPokemon.status?.effect).toBeUndefined();
-  });
-
-  it("should not cause user to hit into King's Shield more than once", async () => {
-    game.override.moveset([MoveId.TACKLE]).enemyMoveset([MoveId.KINGS_SHIELD]);
-
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
-
-    const leadPokemon = game.field.getPlayerPokemon();
-
-    game.move.select(MoveId.TACKLE);
-
-    await game.phaseInterceptor.to("BerryPhase", false);
-
-    expect(leadPokemon.getStatStage(Stat.ATK)).toBe(-1);
   });
 
   it("should not cause user to hit into Storm Drain more than once", async () => {
     game.override.moveset([MoveId.WATER_GUN]).enemyAbility(AbilityId.STORM_DRAIN);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.WATER_GUN);
 
-    await game.phaseInterceptor.to("BerryPhase", false);
+    await game.phaseInterceptor.to("MoveEndPhase", false);
 
     expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(1);
   });
 
   it("should not allow Future Sight to hit infinitely many times if the user switches out", async () => {
     game.override.enemyLevel(1000).moveset(MoveId.FUTURE_SIGHT);
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     vi.spyOn(enemyPokemon, "damageAndUpdate");
@@ -383,5 +364,25 @@ describe("Abilities - Parental Bond", () => {
 
     // TODO: Update hit count to 1 once Future Sight is fixed to not activate abilities if user is off the field
     expect(enemyPokemon.damageAndUpdate).toHaveBeenCalledTimes(2);
+  });
+
+  it("should not reduce damage against the remaining target if the first one faints", async () => {
+    game.override.battleStyle("double").enemySpecies(SpeciesId.MAGIKARP);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+    const feebas = game.field.getPlayerPokemon();
+    const [karp1, karp2] = game.scene.getEnemyField();
+
+    // Mock base damage for both mons for consistent results
+    vi.spyOn(karp1, "getBaseDamage").mockReturnValue(100);
+    vi.spyOn(karp2, "getBaseDamage").mockReturnValue(100);
+    karp1.hp = 1;
+
+    game.move.use(MoveId.HYPER_VOICE);
+    await game.toEndOfTurn();
+
+    expect(karp1).toHaveFainted();
+    expect(feebas).not.toHaveAbilityApplied(AbilityId.PARENTAL_BOND);
+    expect(karp2).toHaveTakenDamage(100);
   });
 });

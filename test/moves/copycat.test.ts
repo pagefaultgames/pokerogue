@@ -7,7 +7,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Copycat", () => {
   let phaserGame: Phaser.Game;
@@ -17,10 +17,6 @@ describe("Moves - Copycat", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -35,14 +31,15 @@ describe("Moves - Copycat", () => {
       .enemyMoveset(MoveId.SPLASH);
   });
 
-  it("should copy the last move successfully executed", async () => {
+  it("should copy the last move executed across turns", async () => {
     game.override.enemyMoveset(MoveId.SUCKER_PUNCH);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.SWORDS_DANCE);
     await game.toNextTurn();
 
     game.move.select(MoveId.COPYCAT); // Last successful move should be Swords Dance
+    await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
 
     expect(game.field.getPlayerPokemon().getStatStage(Stat.ATK)).toBe(4);
@@ -50,7 +47,7 @@ describe("Moves - Copycat", () => {
 
   it("should fail when the last move used is not a valid Copycat move", async () => {
     game.override.enemyMoveset(MoveId.PROTECT); // Protect is not a valid move for Copycat to copy
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.SPIKY_SHIELD); // Spiky Shield is not a valid move for Copycat to copy
     await game.toNextTurn();
@@ -63,7 +60,7 @@ describe("Moves - Copycat", () => {
 
   it("should copy the called move when the last move successfully calls another", async () => {
     game.override.moveset([MoveId.SPLASH, MoveId.METRONOME]).enemyMoveset(MoveId.COPYCAT);
-    await game.classicMode.startBattle([SpeciesId.DRAMPA]);
+    await game.classicMode.startBattle(SpeciesId.DRAMPA);
     game.move.forceMetronomeMove(MoveId.SWORDS_DANCE, true);
 
     game.move.select(MoveId.METRONOME);
@@ -81,7 +78,7 @@ describe("Moves - Copycat", () => {
 
   it("should apply move secondary effects", async () => {
     game.override.enemyMoveset(MoveId.ACID_SPRAY); // Secondary effect lowers SpDef by 2 stages
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.COPYCAT);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);

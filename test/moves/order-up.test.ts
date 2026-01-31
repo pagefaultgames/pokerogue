@@ -8,7 +8,7 @@ import type { EffectiveStat } from "#enums/stat";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Order Up", () => {
   let phaserGame: Phaser.Game;
@@ -18,10 +18,6 @@ describe("Moves - Order Up", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -40,6 +36,7 @@ describe("Moves - Order Up", () => {
     vi.spyOn(game.scene, "triggerPokemonBattleAnim").mockReturnValue(true);
   });
 
+  // biome-ignore format: prefer pre-2.3.6 formatting
   it.each([
     { formIndex: 0, formName: "Curly", stat: Stat.ATK, statName: "Attack" },
     { formIndex: 1, formName: "Droopy", stat: Stat.DEF, statName: "Defense" },
@@ -49,7 +46,7 @@ describe("Moves - Order Up", () => {
     async ({ formIndex, stat }) => {
       game.override.starterForms({ [SpeciesId.TATSUGIRI]: formIndex });
 
-      await game.classicMode.startBattle([SpeciesId.TATSUGIRI, SpeciesId.DONDOZO]);
+      await game.classicMode.startBattle(SpeciesId.TATSUGIRI, SpeciesId.DONDOZO);
 
       const [tatsugiri, dondozo] = game.scene.getPlayerField();
 

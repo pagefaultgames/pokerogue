@@ -4,7 +4,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Ability - Embody Aspect", () => {
   let phaserGame: Phaser.Game;
@@ -19,10 +19,6 @@ describe("Ability - Embody Aspect", () => {
     });
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
@@ -35,7 +31,7 @@ describe("Ability - Embody Aspect", () => {
   });
 
   it("should activate on switch-in if user is Terastallized", async () => {
-    await game.classicMode.startBattle([SpeciesId.OGERPON, SpeciesId.ABOMASNOW]);
+    await game.classicMode.startBattle(SpeciesId.OGERPON, SpeciesId.ABOMASNOW);
 
     const ogerpon = game.field.getPlayerPokemon();
     expect(ogerpon.formIndex).toBe(baseForm);

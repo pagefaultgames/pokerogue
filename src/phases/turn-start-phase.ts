@@ -1,89 +1,31 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import type { TurnCommand } from "#app/battle";
 import { globalScene } from "#app/global-scene";
-import { TrickRoomTag } from "#data/arena-tag";
-import { allMoves } from "#data/data-lists";
-import { BattlerIndex } from "#enums/battler-index";
+import { ArenaTagSide } from "#enums/arena-tag-side";
+import type { BattlerIndex } from "#enums/battler-index";
 import { Command } from "#enums/command";
-import { Stat } from "#enums/stat";
 import { SwitchType } from "#enums/switch-type";
 import type { Pokemon } from "#field/pokemon";
 import { BypassSpeedChanceModifier } from "#modifiers/modifier";
 import { PokemonMove } from "#moves/pokemon-move";
 import { FieldPhase } from "#phases/field-phase";
-import { BooleanHolder, randSeedShuffle } from "#utils/common";
+import { inSpeedOrder } from "#utils/speed-order-generator";
 
 export class TurnStartPhase extends FieldPhase {
   public readonly phaseName = "TurnStartPhase";
 
   /**
-   * Helper method to retrieve the current speed order of the combattants.
-   * It also checks for Trick Room and reverses the array if it is present.
-   * @returns The {@linkcode BattlerIndex}es of all on-field Pokemon, sorted in speed order.
-   * @todo Make this private
+   * Returns an ordering of the current field based on command priority
+   * @returns The sequence of commands for this turn
    */
-  getSpeedOrder(): BattlerIndex[] {
-    const playerField = globalScene.getPlayerField().filter(p => p.isActive());
-    const enemyField = globalScene.getEnemyField().filter(p => p.isActive());
-
-    // Shuffle the list before sorting so speed ties produce random results
-    // This is seeded with the current turn to prevent turn order varying
-    // based on how long since you last reloaded.
-    let orderedTargets = (playerField as Pokemon[]).concat(enemyField);
-    globalScene.executeWithSeedOffset(
-      () => {
-        orderedTargets = randSeedShuffle(orderedTargets);
-      },
-      globalScene.currentBattle.turn,
-      globalScene.waveSeed,
-    );
-
-    // Check for Trick Room and reverse sort order if active.
-    // Notably, Pokerogue does NOT have the "outspeed trick room" glitch at >1809 spd.
-    const speedReversed = new BooleanHolder(false);
-    globalScene.arena.applyTags(TrickRoomTag, false, speedReversed);
-
-    orderedTargets.sort((a: Pokemon, b: Pokemon) => {
-      const aSpeed = a.getEffectiveStat(Stat.SPD);
-      const bSpeed = b.getEffectiveStat(Stat.SPD);
-
-      return speedReversed.value ? aSpeed - bSpeed : bSpeed - aSpeed;
-    });
-
-    return orderedTargets.map(t => t.getFieldIndex() + (t.isEnemy() ? BattlerIndex.ENEMY : BattlerIndex.PLAYER));
-  }
-
-  /**
-   * This takes the result of {@linkcode getSpeedOrder} and applies priority / bypass speed attributes to it.
-   * This also considers the priority levels of various commands and changes the result of `getSpeedOrder` based on such.
-   * @returns The `BattlerIndex`es of all on-field Pokemon sorted in action order.
-   */
-  getCommandOrder(): BattlerIndex[] {
-    let moveOrder = this.getSpeedOrder();
-    // The creation of the battlerBypassSpeed object contains checks for the ability Quick Draw and the held item Quick Claw
-    // The ability Mycelium Might disables Quick Claw's activation when using a status move
-    // This occurs before the main loop because of battles with more than two Pokemon
-    const battlerBypassSpeed = {};
-
-    globalScene.getField(true).forEach(p => {
-      const bypassSpeed = new BooleanHolder(false);
-      const canCheckHeldItems = new BooleanHolder(true);
-      applyAbAttrs("BypassSpeedChanceAbAttr", { pokemon: p, bypass: bypassSpeed });
-      applyAbAttrs("PreventBypassSpeedChanceAbAttr", {
-        pokemon: p,
-        bypass: bypassSpeed,
-        canCheckHeldItems: canCheckHeldItems,
-      });
-      if (canCheckHeldItems.value) {
-        globalScene.applyModifiers(BypassSpeedChanceModifier, p.isPlayer(), p, bypassSpeed);
-      }
-      battlerBypassSpeed[p.getBattlerIndex()] = bypassSpeed;
-    });
+  private getCommandOrder(): BattlerIndex[] {
+    const playerField = globalScene.getPlayerField(true).map(p => p.getBattlerIndex());
+    const enemyField = globalScene.getEnemyField(true).map(p => p.getBattlerIndex());
+    const orderedTargets: BattlerIndex[] = playerField.concat(enemyField);
 
     // The function begins sorting orderedTargets based on command priority, move priority, and possible speed bypasses.
     // Non-FIGHT commands (SWITCH, BALL, RUN) have a higher command priority and will always occur before any FIGHT commands.
-    moveOrder = moveOrder.slice(0);
-    moveOrder.sort((a, b) => {
+    orderedTargets.sort((a, b) => {
       const aCommand = globalScene.currentBattle.turnCommands[a];
       const bCommand = globalScene.currentBattle.turnCommands[b];
 
@@ -94,41 +36,14 @@ export class TurnStartPhase extends FieldPhase {
         if (bCommand?.command === Command.FIGHT) {
           return -1;
         }
-      } else if (aCommand?.command === Command.FIGHT) {
-        const aMove = allMoves[aCommand.move!.move];
-        const bMove = allMoves[bCommand!.move!.move];
-
-        const aUser = globalScene.getField(true).find(p => p.getBattlerIndex() === a)!;
-        const bUser = globalScene.getField(true).find(p => p.getBattlerIndex() === b)!;
-
-        const aPriority = aMove.getPriority(aUser, false);
-        const bPriority = bMove.getPriority(bUser, false);
-
-        // The game now checks for differences in priority levels.
-        // If the moves share the same original priority bracket, it can check for differences in battlerBypassSpeed and return the result.
-        // This conditional is used to ensure that Quick Claw can still activate with abilities like Stall and Mycelium Might (attack moves only)
-        // Otherwise, the game returns the user of the move with the highest priority.
-        const isSameBracket = Math.ceil(aPriority) - Math.ceil(bPriority) === 0;
-        if (aPriority !== bPriority) {
-          if (isSameBracket && battlerBypassSpeed[a].value !== battlerBypassSpeed[b].value) {
-            return battlerBypassSpeed[a].value ? -1 : 1;
-          }
-          return aPriority < bPriority ? 1 : -1;
-        }
       }
 
-      // If there is no difference between the move's calculated priorities,
-      // check for differences in battlerBypassSpeed and returns the result.
-      if (battlerBypassSpeed[a].value !== battlerBypassSpeed[b].value) {
-        return battlerBypassSpeed[a].value ? -1 : 1;
-      }
-
-      const aIndex = moveOrder.indexOf(a);
-      const bIndex = moveOrder.indexOf(b);
+      const aIndex = orderedTargets.indexOf(a);
+      const bIndex = orderedTargets.indexOf(b);
 
       return aIndex < bIndex ? -1 : aIndex > bIndex ? 1 : 0;
     });
-    return moveOrder;
+    return orderedTargets;
   }
 
   // TODO: Refactor this alongside `CommandPhase.handleCommand` to use SEPARATE METHODS
@@ -139,9 +54,8 @@ export class TurnStartPhase extends FieldPhase {
     const field = globalScene.getField();
     const moveOrder = this.getCommandOrder();
 
-    for (const o of this.getSpeedOrder()) {
-      const pokemon = field[o];
-      const preTurnCommand = globalScene.currentBattle.preTurnCommands[o];
+    for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
+      const preTurnCommand = globalScene.currentBattle.preTurnCommands[pokemon.getBattlerIndex()];
 
       if (preTurnCommand?.skip) {
         continue;
@@ -154,6 +68,14 @@ export class TurnStartPhase extends FieldPhase {
     }
 
     const phaseManager = globalScene.phaseManager;
+    for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
+      if (globalScene.currentBattle.turnCommands[pokemon.getBattlerIndex()]?.command !== Command.FIGHT) {
+        continue;
+      }
+
+      applyAbAttrs("BypassSpeedChanceAbAttr", { pokemon });
+      globalScene.applyModifiers(BypassSpeedChanceModifier, pokemon.isPlayer(), pokemon);
+    }
 
     moveOrder.forEach((o, index) => {
       const pokemon = field[o];
@@ -178,13 +100,8 @@ export class TurnStartPhase extends FieldPhase {
     // TODO: Re-order these phases to be consistent with mainline turn order:
     // https://www.smogon.com/forums/threads/sword-shield-battle-mechanics-research.3655528/page-64#post-9244179
 
-    phaseManager.pushNew("WeatherEffectPhase");
-    phaseManager.pushNew("PositionalTagPhase");
-    phaseManager.pushNew("BerryPhase");
-
-    phaseManager.pushNew("CheckStatusEffectPhase", moveOrder);
-
-    phaseManager.pushNew("TurnEndPhase");
+    // TODO: In an ideal world, this is handled by the phase manager. The change is nontrivial due to the ordering of post-turn phases like those queued by VictoryPhase
+    globalScene.phaseManager.queueTurnEndPhases();
 
     /*
      * `this.end()` will call `PhaseManager#shiftPhase()`, which dumps everything from `phaseQueuePrepend`
@@ -226,8 +143,8 @@ export class TurnStartPhase extends FieldPhase {
 
     // TODO: This seems somewhat dubious
     const move =
-      pokemon.getMoveset().find(m => m.moveId === queuedMove.move && m.ppUsed < m.getMovePp()) ??
-      new PokemonMove(queuedMove.move);
+      pokemon.getMoveset().find(m => m.moveId === queuedMove.move && m.ppUsed < m.getMovePp())
+      ?? new PokemonMove(queuedMove.move);
 
     if (move.getMove().hasAttr("MoveHeaderAttr")) {
       globalScene.phaseManager.unshiftNew("MoveHeaderPhase", pokemon, move);

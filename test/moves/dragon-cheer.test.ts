@@ -7,7 +7,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Move - Dragon Cheer", () => {
   let phaserGame: Phaser.Game;
@@ -17,10 +17,6 @@ describe("Move - Dragon Cheer", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -34,7 +30,7 @@ describe("Move - Dragon Cheer", () => {
   });
 
   it("should increase non-Dragon type allies' crit ratios by 1 stage", async () => {
-    await game.classicMode.startBattle([SpeciesId.DRAGONAIR, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.DRAGONAIR, SpeciesId.MAGIKARP);
 
     const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getCritStage");
@@ -51,7 +47,7 @@ describe("Move - Dragon Cheer", () => {
   });
 
   it("should increase Dragon-type allies' crit ratios by 2 stages", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.DRAGONAIR]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.DRAGONAIR);
 
     const enemy = game.field.getEnemyPokemon();
     vi.spyOn(enemy, "getCritStage");
@@ -68,7 +64,7 @@ describe("Move - Dragon Cheer", () => {
   });
 
   it("should maintain crit boost amount even if user's type is changed", async () => {
-    await game.classicMode.startBattle([SpeciesId.DRAGONAIR, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.DRAGONAIR, SpeciesId.MAGIKARP);
 
     // Use Reflect Type to become Dragon-type mid-turn
     game.move.use(MoveId.DRAGON_CHEER, BattlerIndex.PLAYER);
@@ -92,7 +88,7 @@ describe("Move - Dragon Cheer", () => {
     { name: "Focus Energy", tagType: BattlerTagType.CRIT_BOOST },
     { name: "Dragon Cheer", tagType: BattlerTagType.DRAGON_CHEER },
   ])("should fail if $name is already present", async ({ tagType }) => {
-    await game.classicMode.startBattle([SpeciesId.DRAGONAIR, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.DRAGONAIR, SpeciesId.MAGIKARP);
 
     const [dragonair, magikarp] = game.scene.getPlayerField();
     magikarp.addTag(tagType);

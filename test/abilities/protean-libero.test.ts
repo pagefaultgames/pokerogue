@@ -10,7 +10,7 @@ import { SpeciesId } from "#enums/species-id";
 import type { PlayerPokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Protean/Libero", () => {
   let phaserGame: Phaser.Game;
@@ -20,10 +20,6 @@ describe("Abilities - Protean/Libero", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -80,7 +76,7 @@ describe("Abilities - Protean/Libero", () => {
     { name: "Libero", ability: AbilityId.PROTEAN },
   ])("$name should change the user's type to the type of the move being used", async ({ ability }) => {
     game.override.ability(ability);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const leadPokemon = game.field.getPlayerPokemon();
 
@@ -93,7 +89,7 @@ describe("Abilities - Protean/Libero", () => {
   // Test for Gen9+ functionality, we are using previous funcionality
   it.skip("should apply only once per switch in", async () => {
     game.override.moveset([MoveId.SPLASH, MoveId.AGILITY]);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.BULBASAUR]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.BULBASAUR);
 
     const bulbasaur = game.field.getPlayerPokemon();
 
@@ -121,6 +117,7 @@ describe("Abilities - Protean/Libero", () => {
     expectTypeChange(bulbasaur);
   });
 
+  // biome-ignore format: prefer pre-2.3.6 formatting
   it.each<{ category: string; move?: MoveId; passive?: AbilityId; enemyMove?: MoveId }>([
     { category: "Variable type Moves'", move: MoveId.WEATHER_BALL, passive: AbilityId.DROUGHT },
     { category: "Type Change Abilities'", passive: AbilityId.REFRIGERATE },
@@ -131,7 +128,7 @@ describe("Abilities - Protean/Libero", () => {
     "should respect $category final type",
     async ({ move = MoveId.TACKLE, passive = AbilityId.NONE, enemyMove = MoveId.SPLASH }) => {
       game.override.passiveAbility(passive);
-      await game.classicMode.startBattle([SpeciesId.LINOONE]); // Pure normal type for move overrides
+      await game.classicMode.startBattle(SpeciesId.LINOONE); // Pure normal type for move overrides
 
       const linoone = game.field.getPlayerPokemon();
 
@@ -146,6 +143,7 @@ describe("Abilities - Protean/Libero", () => {
     },
   );
 
+  // biome-ignore format: prefer pre-2.3.6 formatting
   it.each<{ cause: string; move?: MoveId; passive?: AbilityId; enemyMove?: MoveId }>([
     { cause: "misses", move: MoveId.FOCUS_BLAST },
     { cause: "is protected against", enemyMove: MoveId.PROTECT },
@@ -156,7 +154,7 @@ describe("Abilities - Protean/Libero", () => {
     "should still trigger if the user's move $cause",
     async ({ move = MoveId.TACKLE, passive = AbilityId.NONE, enemyMove = MoveId.SPLASH }) => {
       game.override.passiveAbility(passive).enemySpecies(SpeciesId.SKARMORY);
-      await game.classicMode.startBattle([SpeciesId.MEOWSCARADA]);
+      await game.classicMode.startBattle(SpeciesId.MEOWSCARADA);
 
       vi.spyOn(allMoves[MoveId.FOCUS_BLAST], "accuracy", "get").mockReturnValue(0);
 
@@ -177,7 +175,7 @@ describe("Abilities - Protean/Libero", () => {
     { cause: "the user's move fails", move: MoveId.BURN_UP },
   ])("should not apply if $cause", async ({ move = MoveId.TACKLE, tera = false, passive = AbilityId.NONE }) => {
     game.override.enemyPassiveAbility(passive);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const karp = game.field.getPlayerPokemon();
 
@@ -190,7 +188,7 @@ describe("Abilities - Protean/Libero", () => {
   });
 
   it("should not apply if user is already the move's type", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const karp = game.field.getPlayerPokemon();
 
@@ -208,7 +206,7 @@ describe("Abilities - Protean/Libero", () => {
     { moveName: "Trick-or-Treat", move: MoveId.TRICK_OR_TREAT },
   ])("should still apply if the user's $moveName fails", async ({ move }) => {
     game.override.battleType(BattleType.TRAINER).enemySpecies(SpeciesId.TREVENANT); // ghost/grass makes both moves fail
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const leadPokemon = game.field.getPlayerPokemon();
 
@@ -225,7 +223,7 @@ describe("Abilities - Protean/Libero", () => {
   });
 
   it("should trigger on the first turn of charging moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const karp = game.field.getPlayerPokemon();
 
@@ -239,7 +237,7 @@ describe("Abilities - Protean/Libero", () => {
   });
 
   it("should cause the user to cast Ghost-type Curse on itself", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const karp = game.field.getPlayerPokemon();
     expect(karp.isOfType(PokemonType.GHOST)).toBe(false);
@@ -254,7 +252,7 @@ describe("Abilities - Protean/Libero", () => {
 
   it("should not trigger during Focus Punch's start-of-turn message or being interrupted", async () => {
     game.override.moveset(MoveId.FOCUS_PUNCH).enemyMoveset(MoveId.ABSORB);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const karp = game.field.getPlayerPokemon();
     expect(karp.isOfType(PokemonType.FIGHTING)).toBe(false);

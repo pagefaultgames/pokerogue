@@ -1,8 +1,8 @@
-import "#app/polyfills";
-// All polyfills MUST be loaded first for side effects
+import "#app/polyfills"; // All polyfills MUST be loaded first for side effects
+import "#plugins/i18n"; // Initializes i18n on import
 
 import { InvertPostFX } from "#app/pipelines/invert";
-import { initI18n } from "#app/plugins/i18n";
+import { isBeta, isDev } from "#constants/app-constants";
 import { version } from "#package.json";
 import Phaser from "phaser";
 import BBCodeTextPlugin from "phaser3-rex-plugins/plugins/bbcodetext-plugin";
@@ -10,7 +10,7 @@ import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin";
 import TransitionImagePackPlugin from "phaser3-rex-plugins/templates/transitionimagepack/transitionimagepack-plugin";
 import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 
-if (import.meta.env.DEV) {
+if (isBeta || isDev) {
   document.title += " (Beta)";
 }
 
@@ -30,33 +30,10 @@ window.addEventListener("unhandledrejection", event => {
   //alert(errorString);
 });
 
-/**
- * Sets this object's position relative to another object with a given offset
- */
-const setPositionRelative = function (guideObject: Phaser.GameObjects.GameObject, x: number, y: number) {
-  const offsetX = guideObject.width * (-0.5 + (0.5 - guideObject.originX));
-  const offsetY = guideObject.height * (-0.5 + (0.5 - guideObject.originY));
-  return this.setPosition(guideObject.x + offsetX + x, guideObject.y + offsetY + y);
-};
-
-Phaser.GameObjects.Container.prototype.setPositionRelative = setPositionRelative;
-Phaser.GameObjects.Sprite.prototype.setPositionRelative = setPositionRelative;
-Phaser.GameObjects.Image.prototype.setPositionRelative = setPositionRelative;
-Phaser.GameObjects.NineSlice.prototype.setPositionRelative = setPositionRelative;
-Phaser.GameObjects.Text.prototype.setPositionRelative = setPositionRelative;
-Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative;
-
-document.fonts.load("16px emerald").then(() => document.fonts.load("10px pkmnems"));
-// biome-ignore lint/suspicious/noImplicitAnyLet: TODO
-let game;
-// biome-ignore lint/suspicious/noImplicitAnyLet: TODO
-let manifest;
-
-const startGame = async () => {
-  await initI18n();
+async function startGame(gameManifest?: Record<string, string>): Promise<void> {
   const LoadingScene = (await import("./loading-scene")).LoadingScene;
   const BattleScene = (await import("./battle-scene")).BattleScene;
-  game = new Phaser.Game({
+  const game = new Phaser.Game({
     type: Phaser.WEBGL,
     parent: "app",
     scale: {
@@ -105,25 +82,21 @@ const startGame = async () => {
     antialias: false,
     pipeline: [InvertPostFX] as unknown as Phaser.Types.Core.PipelineConfig,
     scene: [LoadingScene, BattleScene],
-    version: version,
+    version,
   });
   game.sound.pauseOnBlur = false;
-  if (manifest) {
-    game["manifest"] = manifest;
-  }
-};
+  game.manifest = gameManifest;
+}
 
-fetch("/manifest.json")
-  .then(res => res.json())
-  .then(jsonResponse => {
-    manifest = jsonResponse.manifest;
-  })
-  .catch(err => {
-    // Manifest not found (likely local build or path error on live)
-    console.log(`Manifest not found. ${err}`);
-  })
-  .finally(() => {
-    startGame();
-  });
-
-export default game;
+let manifest: Record<string, string> | undefined;
+try {
+  const loadFonts = Promise.all([document.fonts.load("16px emerald"), document.fonts.load("10px pkmnems")]);
+  const [jsonResponse] = await Promise.all([fetch("/manifest.json").then(r => r.json()), loadFonts]);
+  manifest = jsonResponse.manifest;
+} catch (err) {
+  // Manifest not found (likely local build or path error on live)
+  // TODO: Do we want actual error handling here?
+  console.log("Manifest not found:", err);
+} finally {
+  await startGame(manifest);
+}

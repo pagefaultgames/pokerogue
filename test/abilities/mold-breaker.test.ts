@@ -3,7 +3,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Mold Breaker", () => {
   let phaserGame: Phaser.Game;
@@ -13,10 +13,6 @@ describe("Abilities - Mold Breaker", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -31,7 +27,7 @@ describe("Abilities - Mold Breaker", () => {
   });
 
   it("should turn off the ignore abilities arena variable after the user's move", async () => {
-    await game.classicMode.startBattle([SpeciesId.PINSIR]);
+    await game.classicMode.startBattle(SpeciesId.PINSIR);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();

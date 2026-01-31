@@ -1,6 +1,3 @@
-import type { PostDancingMoveAbAttr } from "#abilities/ability";
-import type { DelayedAttackAttr } from "#app/@types/move-types";
-import type { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import type { ObjectValues } from "#types/type-helpers";
 
 /**
@@ -8,16 +5,16 @@ import type { ObjectValues } from "#types/type-helpers";
  * Each one inherits the properties (or exclusions) of all types preceding it.
  * Properties newly found on a given use mode will be **bolded**,
  * while oddities breaking a previous trend will be listed in _italics_.
-
+ *
  * Callers should refrain from performing non-equality checks on `MoveUseMode`s directly,
  * instead using the available helper functions
  * ({@linkcode isVirtual}, {@linkcode isIgnoreStatus}, {@linkcode isIgnorePP} and {@linkcode isReflected}).
  */
 export const MoveUseMode = {
   /**
-  * This move was used normally (i.e. clicking on the button) or called via Instruct.
-  * It deducts PP from the user's moveset (failing if out of PP), and interacts normally with other moves and abilities.
-  */
+   * This move was used normally (i.e. clicking on the button) or called via Instruct.
+   * It deducts PP from the user's moveset (failing if out of PP), and interacts normally with other moves and abilities.
+   */
   NORMAL: 1,
 
   /**
@@ -62,6 +59,7 @@ export const MoveUseMode = {
    * **cannot be reflected by other reflecting effects**.
    */
   REFLECTED: 5,
+
   /**
    * This "move" was created by a transparent effect that **does not count as using a move**,
    * such as {@linkcode DelayedAttackAttr | Future Sight/Doom Desire}.
@@ -71,7 +69,7 @@ export const MoveUseMode = {
    * @todo Consider other means of implementing FS/DD than this - we currently only use it
    * to prevent pushing to move history and avoid re-delaying the attack portion
    */
-  DELAYED_ATTACK: 6
+  DELAYED_ATTACK: 6,
 } as const;
 
 export type MoveUseMode = ObjectValues<typeof MoveUseMode>;
@@ -80,9 +78,10 @@ export type MoveUseMode = ObjectValues<typeof MoveUseMode>;
 // Please update the markdown tables if any new `MoveUseMode`s get added.
 
 /**
- * Check if a given {@linkcode MoveUseMode} is virtual (i.e. called by another move or effect).
+ * Check if a given `MoveUseMode` is virtual (i.e. called by another move or effect).
  * Virtual moves are ignored by most moveset-related effects due to not being executed directly.
- * @returns Whether {@linkcode useMode} is virtual.
+ * @param useMode - The {@linkcode MoveUseMode} to check
+ * @returns Whether `useMode` is virtual.
  * @remarks
  * This function is equivalent to the following truth table:
  *
@@ -96,14 +95,14 @@ export type MoveUseMode = ObjectValues<typeof MoveUseMode>;
  * | {@linkcode MoveUseMode.DELAYED_ATTACK} | `true`  |
  */
 export function isVirtual(useMode: MoveUseMode): boolean {
-  return useMode >= MoveUseMode.INDIRECT
+  return useMode >= MoveUseMode.INDIRECT;
 }
 
 /**
- * Check if a given {@linkcode MoveUseMode} should ignore pre-move cancellation checks
+ * Check if a given `MoveUseMode` should ignore pre-move cancellation checks
  * from {@linkcode StatusEffect.PARALYSIS} and {@linkcode BattlerTagLapseType.MOVE}-type effects.
- * @param useMode - The {@linkcode MoveUseMode} to check.
- * @returns Whether {@linkcode useMode} should ignore status and otehr cancellation checks.
+ * @param useMode - The {@linkcode MoveUseMode} to check
+ * @returns Whether `useMode` should ignore status and other cancellation checks.
  * @remarks
  * This function is equivalent to the following truth table:
  *
@@ -121,10 +120,10 @@ export function isIgnoreStatus(useMode: MoveUseMode): boolean {
 }
 
 /**
- * Check if a given {@linkcode MoveUseMode} should ignore PP.
+ * Check if a given `MoveUseMode` should ignore PP.
  * PP-ignoring moves will ignore normal PP consumption as well as associated failure checks.
- * @param useMode - The {@linkcode MoveUseMode} to check.
- * @returns Whether {@linkcode useMode} ignores PP.
+ * @param useMode - The {@linkcode MoveUseMode} to check
+ * @returns Whether `useMode` ignores PP consumption.
  * @remarks
  * This function is equivalent to the following truth table:
  *
@@ -142,11 +141,11 @@ export function isIgnorePP(useMode: MoveUseMode): boolean {
 }
 
 /**
- * Check if a given {@linkcode MoveUseMode} is reflected.
+ * Check if a given `MoveUseMode` is reflected.
  * Reflected moves cannot be reflected, copied, or cancelled by status effects,
  * nor will they trigger {@linkcode PostDancingMoveAbAttr | Dancer}.
- * @param useMode - The {@linkcode MoveUseMode} to check.
- * @returns Whether {@linkcode useMode} is reflected.
+ * @param useMode - The {@linkcode MoveUseMode} to check
+ * @returns Whether `useMode` is reflected.
  * @remarks
  * This function is equivalent to the following truth table:
  *

@@ -8,7 +8,7 @@ import { RandomMoveAttr } from "#moves/move";
 import { GameManager } from "#test/test-utils/game-manager";
 import i18next from "i18next";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Chilly Reception", () => {
   let phaserGame: Phaser.Game;
@@ -18,10 +18,6 @@ describe("Moves - Chilly Reception", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -35,7 +31,7 @@ describe("Moves - Chilly Reception", () => {
   });
 
   it("should display message before use, switch the user out and change the weather to snow", async () => {
-    await game.classicMode.startBattle([SpeciesId.SLOWKING, SpeciesId.MEOWTH]);
+    await game.classicMode.startBattle(SpeciesId.SLOWKING, SpeciesId.MEOWTH);
 
     const [slowking, meowth] = game.scene.getPlayerParty();
 
@@ -47,13 +43,13 @@ describe("Moves - Chilly Reception", () => {
     expect(game.field.getPlayerPokemon()).toBe(meowth);
     expect(slowking.isOnField()).toBe(false);
     expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
-    expect(game.textInterceptor.logs).toContain(
+    expect(game).toHaveShownMessage(
       i18next.t("moveTriggers:chillyReception", { pokemonName: getPokemonNameWithAffix(slowking) }),
     );
   });
 
   it("should still change weather if user can't switch out", async () => {
-    await game.classicMode.startBattle([SpeciesId.SLOWKING]);
+    await game.classicMode.startBattle(SpeciesId.SLOWKING);
 
     game.move.select(MoveId.CHILLY_RECEPTION);
     await game.toEndOfTurn();
@@ -64,7 +60,7 @@ describe("Moves - Chilly Reception", () => {
   });
 
   it("should still switch out even if weather cannot be changed", async () => {
-    await game.classicMode.startBattle([SpeciesId.SLOWKING, SpeciesId.MEOWTH]);
+    await game.classicMode.startBattle(SpeciesId.SLOWKING, SpeciesId.MEOWTH);
 
     expect(game.scene.arena.weather?.weatherType).not.toBe(WeatherType.SNOW);
 
@@ -91,7 +87,7 @@ describe("Moves - Chilly Reception", () => {
 
   // Source: https://replay.pokemonshowdown.com/gen9ou-2367532550
   it("should fail (while still displaying message) if neither weather change nor switch out succeeds", async () => {
-    await game.classicMode.startBattle([SpeciesId.SLOWKING]);
+    await game.classicMode.startBattle(SpeciesId.SLOWKING);
 
     expect(game.scene.arena.weather?.weatherType).not.toBe(WeatherType.SNOW);
 
@@ -110,14 +106,14 @@ describe("Moves - Chilly Reception", () => {
     expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
     expect(game.field.getPlayerPokemon()).toBe(slowking);
     expect(slowking.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-    expect(game.textInterceptor.logs).toContain(
+    expect(game).toHaveShownMessage(
       i18next.t("moveTriggers:chillyReception", { pokemonName: getPokemonNameWithAffix(slowking) }),
     );
   });
 
   it("should succeed without message if called indirectly", async () => {
     vi.spyOn(RandomMoveAttr.prototype, "getMoveOverride").mockReturnValue(MoveId.CHILLY_RECEPTION);
-    await game.classicMode.startBattle([SpeciesId.SLOWKING, SpeciesId.MEOWTH]);
+    await game.classicMode.startBattle(SpeciesId.SLOWKING, SpeciesId.MEOWTH);
 
     const [slowking, meowth] = game.scene.getPlayerParty();
 
@@ -129,7 +125,7 @@ describe("Moves - Chilly Reception", () => {
     expect(game.field.getPlayerPokemon()).toBe(meowth);
     expect(slowking.isOnField()).toBe(false);
     expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
-    expect(game.textInterceptor.logs).not.toContain(
+    expect(game).not.toHaveShownMessage(
       i18next.t("moveTriggers:chillyReception", { pokemonName: getPokemonNameWithAffix(slowking) }),
     );
   });
@@ -137,7 +133,7 @@ describe("Moves - Chilly Reception", () => {
   // Bugcheck test for enemy AI bug
   it("check case - enemy not selecting chilly reception doesn't change weather", async () => {
     game.override.enemyMoveset([MoveId.CHILLY_RECEPTION, MoveId.TACKLE]);
-    await game.classicMode.startBattle([SpeciesId.SLOWKING, SpeciesId.MEOWTH]);
+    await game.classicMode.startBattle(SpeciesId.SLOWKING, SpeciesId.MEOWTH);
 
     game.move.select(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.TACKLE);

@@ -35,14 +35,14 @@ import {
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
-import i18next from "#plugins/i18n";
 import { achvs } from "#system/achv";
 import { PokemonData } from "#system/pokemon-data";
 import { trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyTemplate } from "#trainers/trainer-party-template";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
-import { isNullOrUndefined, NumberHolder, randSeedInt, randSeedShuffle } from "#utils/common";
+import { NumberHolder, randSeedInt, randSeedShuffle } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import i18next from "i18next";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounters/weirdDream";
@@ -127,8 +127,9 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
 )
   .withEncounterTier(MysteryEncounterTier.ROGUE)
   .withDisallowedChallenges(Challenges.SINGLE_TYPE, Challenges.SINGLE_GENERATION)
-  // TODO: should reset minimum wave to 10 when there are more Rogue tiers in pool. Matching Dark Deal minimum for now.
   .withSceneWaveRangeRequirement(30, 140)
+  .withScenePartySizeRequirement(3, 6)
+  .withMaxAllowedEncounters(1)
   .withIntroSpriteConfigs([
     {
       spriteKey: "weird_dream_woman",
@@ -285,7 +286,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
           species: transformation.newSpecies,
           isBoss: newPokemon.getSpeciesForm().getBaseStatTotal() > NON_LEGENDARY_BST_THRESHOLD,
           level: previousPokemon.level,
-          dataSource: dataSource,
+          dataSource,
           modifierConfigs: newPokemonHeldItemConfigs,
         };
 
@@ -299,7 +300,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
         ].clone();
       trainerConfig.setPartyTemplates(new TrainerPartyTemplate(transformations.length, PartyMemberStrength.STRONG));
       const enemyPartyConfig: EnemyPartyConfig = {
-        trainerConfig: trainerConfig,
+        trainerConfig,
         pokemonConfigs: enemyPokemonConfigs,
         female: genderIndex === PlayerGender.FEMALE,
       };
@@ -462,7 +463,7 @@ async function doNewTeamPostProcess(transformations: PokemonTransformation[]) {
     // Any pokemon that is below 570 BST gets +20 permanent BST to 3 stats
     if (shouldGetOldGateau(newPokemon)) {
       const modType = modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU();
-      const modifier = modType?.newModifier(newPokemon);
+      const modifier = modType.withIdFromFunc(modifierTypes.MYSTERY_ENCOUNTER_OLD_GATEAU).newModifier(newPokemon);
       if (modifier) {
         globalScene.addModifier(modifier, false, false, false, true);
       }
@@ -541,12 +542,12 @@ async function postProcessTransformedPokemon(
 
   // For pokemon at/below 570 BST or any shiny pokemon, unlock it permanently as if you had caught it
   if (
-    !forBattle &&
-    (newPokemon.getSpeciesForm().getBaseStatTotal() <= NON_LEGENDARY_BST_THRESHOLD || newPokemon.isShiny())
+    !forBattle
+    && (newPokemon.getSpeciesForm().getBaseStatTotal() <= NON_LEGENDARY_BST_THRESHOLD || newPokemon.isShiny())
   ) {
     if (
-      newPokemon.getSpeciesForm().abilityHidden &&
-      newPokemon.abilityIndex === newPokemon.getSpeciesForm().getAbilityCount() - 1
+      newPokemon.getSpeciesForm().abilityHidden
+      && newPokemon.abilityIndex === newPokemon.getSpeciesForm().getAbilityCount() - 1
     ) {
       globalScene.validateAchv(achvs.HIDDEN_ABILITY);
     }
@@ -634,7 +635,7 @@ function getTransformedSpecies(
   alreadyUsedSpecies: PokemonSpecies[],
 ): PokemonSpecies {
   let newSpecies: PokemonSpecies | undefined;
-  while (isNullOrUndefined(newSpecies)) {
+  while (newSpecies == null) {
     const bstCap = originalBst + bstSearchRange[1];
     const bstMin = Math.max(originalBst + bstSearchRange[0], 0);
 
@@ -644,10 +645,10 @@ function getTransformedSpecies(
       const bstInRange = speciesBst >= bstMin && speciesBst <= bstCap;
       // Checks that a Pokemon has not already been added in the +600 or 570-600 slots;
       const validBst =
-        (!hasPokemonBstBetween570And600 ||
-          speciesBst < NON_LEGENDARY_BST_THRESHOLD ||
-          speciesBst > SUPER_LEGENDARY_BST_THRESHOLD) &&
-        (!hasPokemonBstHigherThan600 || speciesBst <= SUPER_LEGENDARY_BST_THRESHOLD);
+        (!hasPokemonBstBetween570And600
+          || speciesBst < NON_LEGENDARY_BST_THRESHOLD
+          || speciesBst > SUPER_LEGENDARY_BST_THRESHOLD)
+        && (!hasPokemonBstHigherThan600 || speciesBst <= SUPER_LEGENDARY_BST_THRESHOLD);
       return bstInRange && validBst && !EXCLUDED_TRANSFORMATION_SPECIES.includes(s.speciesId);
     });
 
@@ -655,7 +656,7 @@ function getTransformedSpecies(
     if (validSpecies?.length > 20) {
       validSpecies = randSeedShuffle(validSpecies);
       newSpecies = validSpecies.pop();
-      while (isNullOrUndefined(newSpecies) || alreadyUsedSpecies.includes(newSpecies)) {
+      while (newSpecies == null || alreadyUsedSpecies.includes(newSpecies)) {
         newSpecies = validSpecies.pop();
       }
     } else {
@@ -771,12 +772,12 @@ async function addEggMoveToNewPokemonMoveset(
   if (eggMoves) {
     const eggMoveIndices = randSeedShuffle([0, 1, 2, 3]);
     let randomEggMoveIndex = eggMoveIndices.pop();
-    let randomEggMove = !isNullOrUndefined(randomEggMoveIndex) ? eggMoves[randomEggMoveIndex] : null;
+    let randomEggMove = randomEggMoveIndex != null ? eggMoves[randomEggMoveIndex] : null;
     let retries = 0;
     while (retries < 3 && (!randomEggMove || newPokemon.moveset.some(m => m.moveId === randomEggMove))) {
       // If Pokemon already knows this move, roll for another egg move
       randomEggMoveIndex = eggMoveIndices.pop();
-      randomEggMove = !isNullOrUndefined(randomEggMoveIndex) ? eggMoves[randomEggMoveIndex] : null;
+      randomEggMove = randomEggMoveIndex != null ? eggMoves[randomEggMoveIndex] : null;
       retries++;
     }
 
@@ -791,11 +792,7 @@ async function addEggMoveToNewPokemonMoveset(
       }
 
       // For pokemon that the player owns (including ones just caught), unlock the egg move
-      if (
-        !forBattle &&
-        !isNullOrUndefined(randomEggMoveIndex) &&
-        !!globalScene.gameData.dexData[speciesRootForm].caughtAttr
-      ) {
+      if (!forBattle && randomEggMoveIndex != null && !!globalScene.gameData.dexData[speciesRootForm].caughtAttr) {
         await globalScene.gameData.setEggMoveUnlocked(getPokemonSpecies(speciesRootForm), randomEggMoveIndex, true);
       }
     }

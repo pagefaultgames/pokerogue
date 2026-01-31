@@ -11,7 +11,7 @@ import { GameManager } from "#test/test-utils/game-manager";
 import { mockI18next } from "#test/test-utils/test-utils";
 import i18next from "i18next";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 /**
  * Helper function to run tests on cactching mons
@@ -34,12 +34,12 @@ async function runPokeballTest(
   mode: "classic" | "daily" | "challenge" = "classic",
 ) {
   if (mode === "classic") {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
   } else if (mode === "daily") {
     // Have to do it this way because daily run is weird...
     await game.runToFinalBossEncounter([SpeciesId.MAGIKARP], GameModes.DAILY);
   } else if (mode === "challenge") {
-    await game.challengeMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.challengeMode.startBattle(SpeciesId.MAGIKARP);
   }
 
   const partyLength = game.scene.getPlayerParty().length;
@@ -72,10 +72,6 @@ describe("Throwing balls in classic", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -143,10 +139,6 @@ describe("Throwing balls in fresh start challenge", () => {
     });
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.challengeMode.addChallenge(Challenges.FRESH_START, 2, 1);
@@ -198,10 +190,6 @@ describe("Throwing balls in full fresh start challenge", () => {
     });
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.challengeMode.addChallenge(Challenges.FRESH_START, 1, 1);
@@ -237,10 +225,6 @@ describe("Throwing balls in daily run", () => {
     });
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   beforeEach(() => {
     game = new GameManager(phaserGame);
     vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue("test-seed");
@@ -266,10 +250,6 @@ describe("Throwing balls at trainers", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {

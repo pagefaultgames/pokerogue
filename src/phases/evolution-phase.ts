@@ -1,17 +1,16 @@
 import type { AnySound } from "#app/battle-scene";
+import { EVOLVE_MOVE } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { Phase } from "#app/phase";
 import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { FusionSpeciesFormEvolution } from "#balance/pokemon-evolutions";
-import { EVOLVE_MOVE } from "#balance/pokemon-level-moves";
 import { getTypeRgb } from "#data/type";
 import { LearnMoveSituation } from "#enums/learn-move-situation";
 import { UiMode } from "#enums/ui-mode";
-import { cos, sin } from "#field/anims";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
-import type { EvolutionSceneHandler } from "#ui/evolution-scene-handler";
-import { fixedInt, getFrameMs, randInt } from "#utils/common";
+import type { EvolutionSceneUiHandler } from "#ui/evolution-scene-ui-handler";
+import { fixedInt } from "#utils/common";
 import i18next from "i18next";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 
@@ -29,7 +28,7 @@ export class EvolutionPhase extends Phase {
   private evolution: SpeciesFormEvolution | null;
   private fusionSpeciesEvolved: boolean; // Whether the evolution is of the fused species
   private evolutionBgm: AnySound | null;
-  private evolutionHandler: EvolutionSceneHandler;
+  private evolutionHandler: EvolutionSceneUiHandler;
 
   /** Container for all assets used by the scene. When the scene is cleared, the children within this are destroyed. */
   protected evolutionContainer: Phaser.GameObjects.Container;
@@ -79,7 +78,7 @@ export class EvolutionPhase extends Phase {
    *
    */
   private setupEvolutionAssets(): void {
-    this.evolutionHandler = globalScene.ui.getHandler() as EvolutionSceneHandler;
+    this.evolutionHandler = globalScene.ui.getHandler() as EvolutionSceneUiHandler;
     this.evolutionContainer = this.evolutionHandler.evolutionContainer;
     this.evolutionBaseBg = globalScene.add.image(0, 0, "default_bg").setOrigin(0);
 
@@ -227,7 +226,7 @@ export class EvolutionPhase extends Phase {
             this.evolutionBg.setVisible(true).play();
           });
           globalScene.playSound("se/charge");
-          this.doSpiralUpward();
+          globalScene.animations.doSpiralUpward(this.evolutionBaseBg, this.evolutionContainer);
           this.fadeOutPokemonSprite(evolvedPokemon);
         },
       });
@@ -246,7 +245,7 @@ export class EvolutionPhase extends Phase {
         this.pokemonSprite.setVisible(false);
         globalScene.time.delayedCall(1100, () => {
           globalScene.playSound("se/beam");
-          this.doArcDownward();
+          globalScene.animations.doArcDownward(this.evolutionBaseBg, this.evolutionContainer);
           this.prepareForCycle(evolvedPokemon);
         });
       },
@@ -260,7 +259,7 @@ export class EvolutionPhase extends Phase {
     globalScene.time.delayedCall(1500, () => {
       this.pokemonEvoTintSprite.setScale(0.25).setVisible(true);
       this.evolutionHandler.canCancel = this.canCancel;
-      this.doCycle(1, undefined, () => {
+      globalScene.animations.doCycle(1, 15, this.pokemonTintSprite, this.pokemonEvoTintSprite).then(() => {
         if (this.evolutionHandler.cancelled) {
           this.handleFailedEvolution(evolvedPokemon);
         } else {
@@ -420,7 +419,7 @@ export class EvolutionPhase extends Phase {
     globalScene.phaseManager.unshiftNew("EndEvolutionPhase");
 
     globalScene.playSound("se/shine");
-    this.doSpray();
+    globalScene.animations.doSpray(this.evolutionBaseBg, this.evolutionContainer);
 
     globalScene.tweens.chain({
       targets: null,
@@ -459,269 +458,12 @@ export class EvolutionPhase extends Phase {
   private handleSuccessEvolution(evolvedPokemon: Pokemon): void {
     globalScene.playSound("se/sparkle");
     this.pokemonEvoSprite.setVisible(true);
-    this.doCircleInward();
+    globalScene.animations.doCircleInward(this.evolutionBaseBg, this.evolutionContainer);
 
     globalScene.time.delayedCall(900, () => {
       this.evolutionHandler.canCancel = this.canCancel;
 
       this.pokemon.evolve(this.evolution, this.pokemon.species).then(() => this.postEvolve(evolvedPokemon));
     });
-  }
-
-  doSpiralUpward() {
-    let f = 0;
-    globalScene.tweens.addCounter({
-      repeat: 64,
-      duration: getFrameMs(1),
-      onRepeat: () => {
-        if (f < 64) {
-          if (!(f & 7)) {
-            for (let i = 0; i < 4; i++) {
-              this.doSpiralUpwardParticle((f & 120) * 2 + i * 64);
-            }
-          }
-          f++;
-        }
-      },
-    });
-  }
-
-  doArcDownward() {
-    let f = 0;
-
-    globalScene.tweens.addCounter({
-      repeat: 96,
-      duration: getFrameMs(1),
-      onRepeat: () => {
-        if (f < 96) {
-          if (f < 6) {
-            for (let i = 0; i < 9; i++) {
-              this.doArcDownParticle(i * 16);
-            }
-          }
-          f++;
-        }
-      },
-    });
-  }
-
-  /**
-   * Return a tween chain that cycles the evolution sprites
-   */
-  doCycle(cycles: number, lastCycle = 15, onComplete = () => {}): void {
-    // Make our tween start both at the same time
-    const tweens: Phaser.Types.Tweens.TweenBuilderConfig[] = [];
-    for (let i = cycles; i <= lastCycle; i += 0.5) {
-      tweens.push({
-        targets: [this.pokemonTintSprite, this.pokemonEvoTintSprite],
-        scale: (_target, _key, _value, targetIndex: number, _totalTargets, _tween) => (targetIndex === 0 ? 0.25 : 1),
-        ease: "Cubic.easeInOut",
-        duration: 500 / i,
-        yoyo: i !== lastCycle,
-        onComplete: () => {
-          if (this.evolutionHandler.cancelled) {
-            // cause the tween chain to complete instantly, skipping the remaining tweens.
-            this.pokemonEvoTintSprite.setScale(1);
-            this.pokemonEvoTintSprite.setVisible(false);
-            this.evoChain?.complete?.();
-            return;
-          }
-          if (i === lastCycle) {
-            this.pokemonTintSprite.setVisible(false).setActive(false);
-            this.pokemonEvoTintSprite.setScale(1);
-          }
-        },
-      });
-    }
-
-    this.evoChain = globalScene.tweens.chain({
-      targets: null,
-      tweens,
-      onComplete: () => {
-        this.evoChain = null;
-        onComplete();
-      },
-    });
-  }
-
-  doCircleInward() {
-    let f = 0;
-
-    globalScene.tweens.addCounter({
-      repeat: 48,
-      duration: getFrameMs(1),
-      onRepeat: () => {
-        if (!f) {
-          for (let i = 0; i < 16; i++) {
-            this.doCircleInwardParticle(i * 16, 4);
-          }
-        } else if (f === 32) {
-          for (let i = 0; i < 16; i++) {
-            this.doCircleInwardParticle(i * 16, 8);
-          }
-        }
-        f++;
-      },
-    });
-  }
-
-  doSpray() {
-    let f = 0;
-
-    globalScene.tweens.addCounter({
-      repeat: 48,
-      duration: getFrameMs(1),
-      onRepeat: () => {
-        if (!f) {
-          for (let i = 0; i < 8; i++) {
-            this.doSprayParticle(i);
-          }
-        } else if (f < 50) {
-          this.doSprayParticle(randInt(8));
-        }
-        f++;
-      },
-    });
-  }
-
-  doSpiralUpwardParticle(trigIndex: number) {
-    const initialX = this.evolutionBaseBg.displayWidth / 2;
-    const particle = globalScene.add.image(initialX, 0, "evo_sparkle");
-    this.evolutionContainer.add(particle);
-
-    let f = 0;
-    let amp = 48;
-
-    const particleTimer = globalScene.tweens.addCounter({
-      repeat: -1,
-      duration: getFrameMs(1),
-      onRepeat: () => {
-        updateParticle();
-      },
-    });
-
-    const updateParticle = () => {
-      if (!f || particle.y > 8) {
-        particle.setPosition(initialX, 88 - (f * f) / 80);
-        particle.y += sin(trigIndex, amp) / 4;
-        particle.x += cos(trigIndex, amp);
-        particle.setScale(1 - f / 80);
-        trigIndex += 4;
-        if (f & 1) {
-          amp--;
-        }
-        f++;
-      } else {
-        particle.destroy();
-        particleTimer.remove();
-      }
-    };
-
-    updateParticle();
-  }
-
-  doArcDownParticle(trigIndex: number) {
-    const initialX = this.evolutionBaseBg.displayWidth / 2;
-    const particle = globalScene.add.image(initialX, 0, "evo_sparkle");
-    particle.setScale(0.5);
-    this.evolutionContainer.add(particle);
-
-    let f = 0;
-    let amp = 8;
-
-    const particleTimer = globalScene.tweens.addCounter({
-      repeat: -1,
-      duration: getFrameMs(1),
-      onRepeat: () => {
-        updateParticle();
-      },
-    });
-
-    const updateParticle = () => {
-      if (!f || particle.y < 88) {
-        particle.setPosition(initialX, 8 + (f * f) / 5);
-        particle.y += sin(trigIndex, amp) / 4;
-        particle.x += cos(trigIndex, amp);
-        amp = 8 + sin(f * 4, 40);
-        f++;
-      } else {
-        particle.destroy();
-        particleTimer.remove();
-      }
-    };
-
-    updateParticle();
-  }
-
-  doCircleInwardParticle(trigIndex: number, speed: number) {
-    const initialX = this.evolutionBaseBg.displayWidth / 2;
-    const initialY = this.evolutionBaseBg.displayHeight / 2;
-    const particle = globalScene.add.image(initialX, initialY, "evo_sparkle");
-    this.evolutionContainer.add(particle);
-
-    let amp = 120;
-
-    const particleTimer = globalScene.tweens.addCounter({
-      repeat: -1,
-      duration: getFrameMs(1),
-      onRepeat: () => {
-        updateParticle();
-      },
-    });
-
-    const updateParticle = () => {
-      if (amp > 8) {
-        particle.setPosition(initialX, initialY);
-        particle.y += sin(trigIndex, amp);
-        particle.x += cos(trigIndex, amp);
-        amp -= speed;
-        trigIndex += 4;
-      } else {
-        particle.destroy();
-        particleTimer.remove();
-      }
-    };
-
-    updateParticle();
-  }
-
-  doSprayParticle(trigIndex: number) {
-    const initialX = this.evolutionBaseBg.displayWidth / 2;
-    const initialY = this.evolutionBaseBg.displayHeight / 2;
-    const particle = globalScene.add.image(initialX, initialY, "evo_sparkle");
-    this.evolutionContainer.add(particle);
-
-    let f = 0;
-    let yOffset = 0;
-    const speed = 3 - randInt(8);
-    const amp = 48 + randInt(64);
-
-    const particleTimer = globalScene.tweens.addCounter({
-      repeat: -1,
-      duration: getFrameMs(1),
-      onRepeat: () => {
-        updateParticle();
-      },
-    });
-
-    const updateParticle = () => {
-      if (!(f & 3)) {
-        yOffset++;
-      }
-      if (trigIndex < 128) {
-        particle.setPosition(initialX + (speed * f) / 3, initialY + yOffset);
-        particle.y += -sin(trigIndex, amp);
-        if (f > 108) {
-          particle.setScale(1 - (f - 108) / 20);
-        }
-        trigIndex++;
-        f++;
-      } else {
-        particle.destroy();
-        particleTimer.remove();
-      }
-    };
-
-    updateParticle();
   }
 }

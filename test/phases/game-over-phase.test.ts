@@ -6,7 +6,7 @@ import { Unlockables } from "#enums/unlockables";
 import { achvs } from "#system/achv";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Game Over Phase", () => {
   let phaserGame: Phaser.Game;
@@ -16,10 +16,6 @@ describe("Game Over Phase", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -37,7 +33,7 @@ describe("Game Over Phase", () => {
   });
 
   it("winning a run should give rewards", async () => {
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR);
     vi.spyOn(game.scene, "validateAchv");
 
     // Note: `game.doKillOpponents()` does not properly handle final boss
@@ -60,7 +56,7 @@ describe("Game Over Phase", () => {
   });
 
   it("losing a run should not give rewards", async () => {
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR);
     vi.spyOn(game.scene, "validateAchv");
 
     game.move.select(MoveId.MEMENTO);

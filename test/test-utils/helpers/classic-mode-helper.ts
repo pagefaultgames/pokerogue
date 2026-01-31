@@ -6,33 +6,24 @@ import { GameModes } from "#enums/game-modes";
 import { Nature } from "#enums/nature";
 import type { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import { CommandPhase } from "#phases/command-phase";
-import { EncounterPhase } from "#phases/encounter-phase";
 import { SelectStarterPhase } from "#phases/select-starter-phase";
-import { TurnInitPhase } from "#phases/turn-init-phase";
-import { generateStarter } from "#test/test-utils/game-manager-utils";
+import { generateStarters } from "#test/test-utils/game-manager-utils";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
+import type { IntClosedRange, TupleOf } from "type-fest";
 
 /**
  * Helper to handle classic-mode specific operations.
  */
 export class ClassicModeHelper extends GameManagerHelper {
   /**
-   * Runs the classic game to the summon phase.
-   * @param species - An array of {@linkcode Species} to summon.
-   * @returns A promise that resolves when the summon phase is reached.
+   * Transition from the title screen to the summon phase of a new Classic game.
+   * @param speciesIds - The {@linkcode SpeciesId}s to summon; must be between 1-6
+   * @returns A Promise that resolves when the summon phase is reached.
+   * @privateRemarks
+   * {@linkcode startBattle} is the preferred way to start a battle; this should only be used for tests
+   * that need to stop and do something before the `CommandPhase` starts.
    */
-  async runToSummon(species: SpeciesId[]): Promise<void>;
-  /**
-   * Runs the classic game to the summon phase.
-   * Selects 3 daily run starters with a fixed seed of "test"
-   * (see `DailyRunConfig.getDailyRunStarters` in `daily-run.ts` for more info).
-   * @returns A promise that resolves when the summon phase is reached.
-   * @deprecated - Specifying the starters helps prevent inconsistencies from internal RNG changes.
-   */
-  async runToSummon(): Promise<void>;
-  async runToSummon(species: SpeciesId[] | undefined): Promise<void>;
-  async runToSummon(species?: SpeciesId[]): Promise<void> {
+  public async runToSummon(...speciesIds: TupleOf<IntClosedRange<1, 6>, SpeciesId>): Promise<void> {
     await this.game.runToTitle();
 
     if (this.game.override.disableShinies) {
@@ -47,34 +38,25 @@ export class ClassicModeHelper extends GameManagerHelper {
 
     this.game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       this.game.scene.gameMode = getGameMode(GameModes.CLASSIC);
-      const starters = generateStarter(this.game.scene, species);
+      const starters = generateStarters(this.game.scene, speciesIds);
       const selectStarterPhase = new SelectStarterPhase();
-      this.game.scene.phaseManager.pushPhase(new EncounterPhase(false));
+      this.game.scene.phaseManager.pushNew("EncounterPhase", false);
       selectStarterPhase.initBattle(starters);
     });
 
-    await this.game.phaseInterceptor.to(EncounterPhase);
+    await this.game.phaseInterceptor.to("EncounterPhase");
     if (overrides.ENEMY_HELD_ITEMS_OVERRIDE.length === 0 && this.game.override.removeEnemyStartingItems) {
       this.game.removeEnemyHeldItems();
     }
   }
 
   /**
-   * Transitions to the start of a battle.
-   * @param species - An array of {@linkcode Species} to start the battle with.
-   * @returns A promise that resolves when the battle is started.
+   * Transition from the title screen to the start of a new Classic Mode battle.
+   * @param speciesIds - The {@linkcode SpeciesId}s with which to start the battle; must be between 1-6
+   * @returns A Promise that resolves when the battle is started.
    */
-  async startBattle(species: SpeciesId[]): Promise<void>;
-  /**
-   * Transitions to the start of a battle.
-   * Will select 3 daily run starters with a fixed seed of "test"
-   * (see `DailyRunConfig.getDailyRunStarters` in `daily-run.ts` for more info).
-   * @returns A promise that resolves when the battle is started.
-   * @deprecated - Specifying the starters helps prevent inconsistencies from internal RNG changes.
-   */
-  async startBattle(): Promise<void>;
-  async startBattle(species?: SpeciesId[]): Promise<void> {
-    await this.runToSummon(species);
+  public async startBattle(...speciesIds: TupleOf<IntClosedRange<1, 6>, SpeciesId>): Promise<void> {
+    await this.runToSummon(...speciesIds);
 
     if (this.game.scene.battleStyle === BattleStyle.SWITCH) {
       this.game.onNextPrompt(
@@ -84,7 +66,7 @@ export class ClassicModeHelper extends GameManagerHelper {
           this.game.setMode(UiMode.MESSAGE);
           this.game.endPhase();
         },
-        () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase),
+        () => this.game.isCurrentPhase("CommandPhase") || this.game.isCurrentPhase("TurnInitPhase"),
       );
 
       this.game.onNextPrompt(
@@ -94,28 +76,32 @@ export class ClassicModeHelper extends GameManagerHelper {
           this.game.setMode(UiMode.MESSAGE);
           this.game.endPhase();
         },
-        () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase),
+        () => this.game.isCurrentPhase("CommandPhase") || this.game.isCurrentPhase("TurnInitPhase"),
       );
     }
 
-    await this.game.phaseInterceptor.to(CommandPhase);
+    await this.game.phaseInterceptor.to("CommandPhase");
     console.log("==================[New Turn]==================");
   }
 
   /**
    * Queue inputs to switch at the start of the next battle, and then start it.
    * @param pokemonIndex - The 0-indexed position of the party pokemon to switch to.
-   * Should never be called with 0 as that will select the currently active pokemon and freeze
-   * @returns A Promise that resolves once the battle has been started and the switch prompt resolved
+   * @throws {@linkcode Error}
+   * Fails test if `pokemonIndex` is out of valid bounds
+   * @returns A Promise that resolves once the battle has been started and the switch prompt resolved.
+   * @remarks
+   * This will temporarily set the current {@linkcode BattleStyle} to `SWITCH` for the duration
+   * of the `CheckSwitchPhase`.
    * @todo Make this work for double battles
    * @example
    * ```ts
-   * await game.classicMode.runToSummon([SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA])
+   * await game.classicMode.runToSummon(SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA)
    * await game.startBattleWithSwitch(1);
    * ```
    */
-  public async startBattleWithSwitch(pokemonIndex: number): Promise<void> {
-    this.game.scene.battleStyle = BattleStyle.SWITCH;
+  public async startBattleWithSwitch(pokemonIndex: IntClosedRange<1, 5>): Promise<void> {
+    this.game.settings.battleStyle(BattleStyle.SWITCH);
     this.game.onNextPrompt(
       "CheckSwitchPhase",
       UiMode.CONFIRM,
@@ -129,5 +115,6 @@ export class ClassicModeHelper extends GameManagerHelper {
 
     await this.game.phaseInterceptor.to("CommandPhase");
     console.log("==================[New Battle (Initial Switch)]==================");
+    this.game.settings.battleStyle(BattleStyle.SET);
   }
 }

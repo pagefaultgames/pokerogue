@@ -4,7 +4,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Lucky Chant", () => {
   let phaserGame: Phaser.Game;
@@ -14,10 +14,6 @@ describe("Moves - Lucky Chant", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -35,7 +31,7 @@ describe("Moves - Lucky Chant", () => {
 
   it("should prevent random critical hits from moves", async () => {
     game.override.criticalHits(true);
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     const charizard = game.field.getPlayerPokemon();
     expect(charizard).toBeDefined();
@@ -57,7 +53,7 @@ describe("Moves - Lucky Chant", () => {
 
   it("should prevent guaranteed critical hits from moves", async () => {
     game.override.enemyMoveset(MoveId.FLOWER_TRICK);
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     const charizard = game.field.getPlayerPokemon();
     expect(charizard).toBeDefined();
@@ -77,7 +73,7 @@ describe("Moves - Lucky Chant", () => {
   it("should prevent critical hits against the user's ally", async () => {
     game.override.battleStyle("double").criticalHits(true);
 
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD, SpeciesId.BLASTOISE);
 
     const charizard = game.field.getPlayerPokemon();
     expect(charizard).toBeDefined();
@@ -98,7 +94,7 @@ describe("Moves - Lucky Chant", () => {
   });
 
   it("should prevent critical hits from field effects", async () => {
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
     const charizard = game.field.getPlayerPokemon();
     const snorlax = game.field.getEnemyPokemon();

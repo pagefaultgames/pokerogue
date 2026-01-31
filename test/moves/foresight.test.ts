@@ -1,9 +1,8 @@
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { MoveEffectPhase } from "#phases/move-effect-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Foresight", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +14,6 @@ describe("Moves - Foresight", () => {
     });
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
@@ -26,12 +21,11 @@ describe("Moves - Foresight", () => {
       .enemySpecies(SpeciesId.GASTLY)
       .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(5)
-      .starterSpecies(SpeciesId.MAGIKARP)
       .moveset([MoveId.FORESIGHT, MoveId.QUICK_ATTACK, MoveId.MACH_PUNCH]);
   });
 
   it("should allow Normal and Fighting moves to hit Ghost types", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const enemy = game.field.getEnemyPokemon();
 
@@ -48,14 +42,14 @@ describe("Moves - Foresight", () => {
     enemy.hp = enemy.getMaxHp();
 
     game.move.select(MoveId.MACH_PUNCH);
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
   });
 
   it("should ignore target's evasiveness boosts", async () => {
     game.override.enemyMoveset([MoveId.MINIMIZE]);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const pokemon = game.field.getPlayerPokemon();
     vi.spyOn(pokemon, "getAccuracyMultiplier");
@@ -63,7 +57,7 @@ describe("Moves - Foresight", () => {
     game.move.select(MoveId.FORESIGHT);
     await game.toNextTurn();
     game.move.select(MoveId.QUICK_ATTACK);
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(pokemon.getAccuracyMultiplier).toHaveReturnedWith(1);
   });

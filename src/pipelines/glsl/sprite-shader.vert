@@ -1,7 +1,15 @@
+/*
+ * SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+ * SPDX-FileContributor: FlashfyreDev
+ * SPDX-FileContributor: SirzBenjie
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 precision mediump float;
 
 uniform mat4 uProjectionMatrix;
-uniform int uRoundPixels;
+uniform bool uRoundPixels;
 uniform vec2 uResolution;
 
 attribute vec2 inPosition;
@@ -19,7 +27,7 @@ varying vec4 outTint;
 void main()
 {
 	gl_Position = uProjectionMatrix * vec4(inPosition, 1.0, 1.0);
-	if (uRoundPixels == 1)
+	if (uRoundPixels)
 	{
 		gl_Position.xy = floor(((gl_Position.xy + 1.0) * 0.5 * uResolution) + 0.5) / uResolution * 2.0 - 1.0;
 	}

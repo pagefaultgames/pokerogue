@@ -1,12 +1,17 @@
-// @ts-check
-
-import { PageKind, Renderer } from "typedoc";
+/*
+ * SPDX-FileCopyrightText: 2025 Pagefault Games
+ * SPDX-FileContributor: Bertie690
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
 
 /**
- * @module
  * Typedoc plugin to run post-processing on the `index.html` file and replace the coverage SVG
  * for Beta with the newly generated file for the current branch.
+ * @module
  */
+
+import { PageKind, Renderer } from "typedoc";
 
 /**
  * @param {import('typedoc').Application} app
@@ -19,15 +24,10 @@ export function load(app) {
   app.renderer.on(Renderer.EVENT_END_PAGE, page => {
     if (page.pageKind === PageKind.Index && page.contents) {
       page.contents = page.contents
-        // Replace links to the beta documentation site with the current ref name
+        // Replace the SVG to the beta documentation site with the current ref name
         .replace(
-          /href="(.*pagefaultgames.github.io\/pokerogue\/).*?"/, // formatting
-          `href="$1/${process.env.REF_NAME}"`,
-        )
-        // Replace the link to Beta's coverage SVG with the SVG file for the branch in question.
-        .replace(
-          /img src=".*?coverage.svg/, // formatting
-          `img src="coverage.svg"`,
+          /^<a href="(.*?)\/beta(.*?)"><img src=".*coverage.svg"/m, // formatting
+          `<a href="$1/${process.env.REF_NAME}$2"><img src="coverage.svg"`,
         );
     }
   });

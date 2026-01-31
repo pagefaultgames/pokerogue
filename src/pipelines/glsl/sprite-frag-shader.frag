@@ -1,3 +1,11 @@
+/*
+ * SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+ * SPDX-FileContributor: FlashfyreDev
+ * SPDX-FileContributor: SirzBenjie
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 #ifdef GL_FRAGMENT_PRECISION_HIGH
 precision highp float;
 #else
@@ -13,15 +21,16 @@ varying float outTintEffect;
 varying vec4 outTint;
 
 uniform float time;
-uniform int ignoreTimeTint;
-uniform int isOutside;
+uniform bool ignoreTimeTint;
+uniform bool isOutside;
+uniform vec3 overrideTint;
 uniform vec3 dayTint;
 uniform vec3 duskTint;
 uniform vec3 nightTint;
 uniform float teraTime;
 uniform vec3 teraColor;
-uniform int hasShadow;
-uniform int yCenter;
+uniform bool hasShadow;
+uniform bool yCenter;
 uniform float fieldScale;
 uniform float vCutoff;
 uniform vec2 relPosition;
@@ -179,7 +188,7 @@ void main() {
 	//  Multiply texture tint
 	vec4 color = texture * texel;
 
-	if (color.a > 0.0 && teraColor.r > 0.0 && teraColor.g > 0.0 && teraColor.b > 0.0) {
+	if (color.a > 0.0 && all(lessThan(vec3(0.0), teraColor))) {
 		vec2 relUv = (outTexCoord.xy - texFrameUv.xy) / (size.xy / texSize.xy);
 		vec2 teraTexCoord = vec2(relUv.x * (size.x / 200.0), relUv.y * (size.y / 120.0));
 		vec4 teraCol = texture2D(uMainSampler[1], teraTexCoord);
@@ -213,12 +222,14 @@ void main() {
 	color.rgb += tone.rgb * (color.a / 255.0);
 
 	/* Apply day/night tint */
-	if (color.a > 0.0 && ignoreTimeTint == 0) {
+	if (color.a > 0.0 && !ignoreTimeTint) {
 		vec3 dayNightTint;
 
-		if (time < 0.25) {
+		if (any(lessThan(vec3(0.0), overrideTint))) {
+			dayNightTint = overrideTint;
+		} else if (time < 0.25) {
 			dayNightTint = dayTint;
-		} else if (isOutside == 0 && time < 0.5) {
+		} else if (!isOutside && time < 0.5) {
 			dayNightTint = mix(dayTint, nightTint, (time - 0.25) / 0.25);
 		} else if (time < 0.375) {
 			dayNightTint = mix(dayTint, duskTint, (time - 0.25) / 0.125);
@@ -226,7 +237,7 @@ void main() {
 			dayNightTint = mix(duskTint, nightTint, (time - 0.375) / 0.125);
 		} else if (time < 0.75) {
 			dayNightTint = nightTint;
-		} else if (isOutside == 0) {
+		} else if (!isOutside) {
 			dayNightTint = mix(nightTint, dayTint, (time - 0.75) / 0.25);
 		} else if (time < 0.875) {
 			dayNightTint = mix(nightTint, duskTint, (time - 0.75) / 0.125);
@@ -237,13 +248,13 @@ void main() {
 		color.rgb = blendHardLight(color.rgb, dayNightTint);
 	}
 
-	if (hasShadow == 1) {
+	if (hasShadow) {
 		float width = size.x - (yOffset / 2.0);
 
 		float spriteX = ((floor(outPosition.x / fieldScale) - relPosition.x) / width) + 0.5;
 		float spriteY = ((floor(outPosition.y / fieldScale) - relPosition.y - yShadowOffset) / size.y);
 
-		if (yCenter == 1) {
+		if (yCenter) {
 			spriteY += 0.5;
 		} else {
 			spriteY += 1.0;

@@ -1,4 +1,4 @@
-import type { SuppressWeatherEffectAbAttr } from "#abilities/ability";
+import type { SuppressWeatherEffectAbAttr } from "#abilities/ab-attrs";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -17,18 +17,26 @@ export interface SerializedWeather {
 }
 
 export class Weather {
+  // TODO: Exclude `WeatherType.NONE` from this (which indicates a lack of weather)
   public weatherType: WeatherType;
   public turnsLeft: number;
+  public maxDuration: number;
 
-  constructor(weatherType: WeatherType, turnsLeft?: number) {
+  constructor(weatherType: WeatherType, turnsLeft = 0, maxDuration: number = turnsLeft) {
     this.weatherType = weatherType;
-    this.turnsLeft = !this.isImmutable() ? turnsLeft || 0 : 0;
+    this.turnsLeft = this.isImmutable() ? 0 : turnsLeft;
+    this.maxDuration = this.isImmutable() ? 0 : maxDuration;
   }
 
+  /**
+   * Tick down this weather's duration.
+   * @returns Whether the current weather should remain active (`turnsLeft > 0`)
+   */
   lapse(): boolean {
     if (this.isImmutable()) {
       return true;
     }
+    // TODO: Add a flag for infinite duration weathers separate from "0 turn count"
     if (this.turnsLeft) {
       return !!--this.turnsLeft;
     }
@@ -127,6 +135,8 @@ export class Weather {
   }
 }
 
+// TODO: These functions should not be able to accept `WeatherType.NONE`
+// and should have `null` removed from the signature
 export function getWeatherStartMessage(weatherType: WeatherType): string | null {
   switch (weatherType) {
     case WeatherType.SUNNY:
@@ -249,25 +259,31 @@ export function getRandomWeatherType(arena: Arena): WeatherType {
   const hasSun = arena.getTimeOfDay() < 2;
   switch (arena.biomeType) {
     case BiomeId.GRASS:
-      weatherPool = [{ weatherType: WeatherType.NONE, weight: 7 }];
-      if (hasSun) {
-        weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 3 });
-      }
-      break;
-    case BiomeId.TALL_GRASS:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 8 },
-        { weatherType: WeatherType.RAIN, weight: 5 },
+        { weatherType: WeatherType.RAIN, weight: 4 },
       ];
       if (hasSun) {
         weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 8 });
       }
       break;
+    case BiomeId.TALL_GRASS:
+      weatherPool = [
+        { weatherType: WeatherType.NONE, weight: 8 },
+        { weatherType: WeatherType.RAIN, weight: 4 },
+      ];
+      if (hasSun) {
+        weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 4 });
+      }
+      break;
     case BiomeId.FOREST:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 8 },
-        { weatherType: WeatherType.RAIN, weight: 5 },
+        { weatherType: WeatherType.RAIN, weight: 4 },
       ];
+      if (!hasSun) {
+        weatherPool.push({ weatherType: WeatherType.FOG, weight: 1 });
+      }
       break;
     case BiomeId.SEA:
       weatherPool = [
@@ -294,7 +310,7 @@ export function getRandomWeatherType(arena: Arena): WeatherType {
     case BiomeId.LAKE:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 10 },
-        { weatherType: WeatherType.RAIN, weight: 5 },
+        { weatherType: WeatherType.RAIN, weight: 4 },
         { weatherType: WeatherType.FOG, weight: 1 },
       ];
       break;
@@ -311,9 +327,12 @@ export function getRandomWeatherType(arena: Arena): WeatherType {
       }
       break;
     case BiomeId.DESERT:
-      weatherPool = [{ weatherType: WeatherType.SANDSTORM, weight: 2 }];
+      weatherPool = [
+        { weatherType: WeatherType.NONE, weight: 2 },
+        { weatherType: WeatherType.SANDSTORM, weight: 8 },
+      ];
       if (hasSun) {
-        weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 2 });
+        weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 5 });
       }
       break;
     case BiomeId.ICE_CAVE:
@@ -324,9 +343,9 @@ export function getRandomWeatherType(arena: Arena): WeatherType {
       ];
       break;
     case BiomeId.MEADOW:
-      weatherPool = [{ weatherType: WeatherType.NONE, weight: 2 }];
+      weatherPool = [{ weatherType: WeatherType.NONE, weight: 3 }];
       if (hasSun) {
-        weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 2 });
+        weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 5 });
       }
       break;
     case BiomeId.VOLCANO:
@@ -346,7 +365,8 @@ export function getRandomWeatherType(arena: Arena): WeatherType {
     case BiomeId.JUNGLE:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 8 },
-        { weatherType: WeatherType.RAIN, weight: 2 },
+        { weatherType: WeatherType.RAIN, weight: 6 },
+        { weatherType: WeatherType.FOG, weight: 1 },
       ];
       break;
     case BiomeId.SNOWY_FOREST:
@@ -357,11 +377,11 @@ export function getRandomWeatherType(arena: Arena): WeatherType {
       break;
     case BiomeId.ISLAND:
       weatherPool = [
-        { weatherType: WeatherType.NONE, weight: 5 },
-        { weatherType: WeatherType.RAIN, weight: 1 },
+        { weatherType: WeatherType.NONE, weight: 7 },
+        { weatherType: WeatherType.RAIN, weight: 3 },
       ];
       if (hasSun) {
-        weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 2 });
+        weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 5 });
       }
       break;
   }
@@ -386,5 +406,5 @@ export function getRandomWeatherType(arena: Arena): WeatherType {
     }
   }
 
-  return weatherPool.length ? weatherPool[0].weatherType : WeatherType.NONE;
+  return weatherPool.length > 0 ? weatherPool[0].weatherType : WeatherType.NONE;
 }

@@ -7,11 +7,15 @@ import { AnimBlendType, AnimFocus, AnimFrameTarget, ChargeAnim, CommonAnim } fro
 import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
 import type { Pokemon } from "#field/pokemon";
-import { coerceArray, getFrameMs, isNullOrUndefined, type nil } from "#utils/common";
+import type { nil } from "#types/common";
+import { coerceArray } from "#utils/array";
+import { getFrameMs } from "#utils/common";
 import { getEnumKeys, getEnumValues } from "#utils/enums";
 import { toKebabCase } from "#utils/strings";
 import Phaser from "phaser";
 
+// TODO: Split up this entire file - it has way WAY too much stuff for its own good.
+// (Also happens to be positively spaghetti, but that's besides the point)
 export class AnimConfig {
   public id: number;
   public graphic: string;
@@ -139,8 +143,8 @@ class AnimFrame {
     focus: AnimFocus,
     init?: boolean,
   ) {
-    this.x = !init ? ((x || 0) - 128) * 0.5 : x;
-    this.y = !init ? ((y || 0) - 224) * 0.5 : y;
+    this.x = init ? x : ((x || 0) - 128) * 0.5;
+    this.y = init ? y : ((y || 0) - 224) * 0.5;
     if (zoomX) {
       this.zoomX = zoomX;
     } else if (init) {
@@ -360,7 +364,7 @@ class AnimTimedUpdateBgEvent extends AnimTimedBgEvent {
     if (this.opacity !== undefined) {
       tweenProps["alpha"] = (this.opacity || 0) / 255;
     }
-    if (Object.keys(tweenProps).length) {
+    if (Object.keys(tweenProps).length > 0) {
       globalScene.tweens.add({
         targets: moveAnim.bgSprite,
         duration: getFrameMs(this.duration * 3),
@@ -388,7 +392,7 @@ class AnimTimedAddBgEvent extends AnimTimedBgEvent {
     moveAnim.bgSprite.setAlpha(this.opacity / 255);
     globalScene.field.add(moveAnim.bgSprite);
     const fieldPokemon = globalScene.getEnemyPokemon(false) ?? globalScene.getPlayerPokemon(false);
-    if (!isNullOrUndefined(priority)) {
+    if (priority != null) {
       globalScene.field.moveTo(moveAnim.bgSprite as Phaser.GameObjects.GameObject, priority);
     } else if (fieldPokemon?.isOnField()) {
       globalScene.field.moveBelow(moveAnim.bgSprite as Phaser.GameObjects.GameObject, fieldPokemon);
@@ -524,7 +528,7 @@ export async function initEncounterAnims(encounterAnim: EncounterAnim | Encounte
   const encounterAnimNames = getEnumKeys(EncounterAnim);
   const encounterAnimFetches: Promise<Map<EncounterAnim, AnimConfig>>[] = [];
   for (const anim of anims) {
-    if (encounterAnims.has(anim) && !isNullOrUndefined(encounterAnims.get(anim))) {
+    if (encounterAnims.has(anim) && encounterAnims.get(anim) != null) {
       continue;
     }
     encounterAnimFetches.push(
@@ -625,7 +629,7 @@ function loadAnimAssets(anims: AnimConfig[], startLoad?: boolean): Promise<void>
     const backgrounds = new Set<string>();
     const sounds = new Set<string>();
     for (const a of anims) {
-      if (!a.frames?.length) {
+      if (a.frames?.length === 0) {
         continue;
       }
       const animSounds = a.getSoundResourceNames();
@@ -768,8 +772,8 @@ export abstract class BattleAnim {
     ]);
 
     const isOppAnim = this.isOppAnim();
-    const user = !isOppAnim ? this.user : this.target;
-    const target = !isOppAnim ? this.target : this.user;
+    const user = isOppAnim ? this.target : this.user;
+    const target = isOppAnim ? this.user : this.target;
 
     const targetSubstitute = onSubstitute && user !== target ? target!.getTag(BattlerTagType.SUBSTITUTE) : null;
 
@@ -788,7 +792,7 @@ export abstract class BattleAnim {
     for (const frame of frames) {
       let x = frame.x + 106;
       let y = frame.y + 116;
-      let scaleX = (frame.zoomX / 100) * (!frame.mirror ? 1 : -1);
+      let scaleX = (frame.zoomX / 100) * (frame.mirror ? -1 : 1);
       const scaleY = frame.zoomY / 100;
       switch (frame.focus) {
         case AnimFocus.TARGET:
@@ -816,27 +820,27 @@ export abstract class BattleAnim {
             x = point[0];
             y = point[1];
             if (
-              frame.target === AnimFrameTarget.GRAPHIC &&
-              isReversed(this.srcLine[0], this.srcLine[2], this.dstLine[0], this.dstLine[2])
+              frame.target === AnimFrameTarget.GRAPHIC
+              && isReversed(this.srcLine[0], this.srcLine[2], this.dstLine[0], this.dstLine[2])
             ) {
-              scaleX = scaleX * -1;
+              scaleX *= -1;
             }
           }
           break;
       }
       const angle = -frame.angle;
       const key = frame.target === AnimFrameTarget.GRAPHIC ? g++ : frame.target === AnimFrameTarget.USER ? u++ : t++;
-      ret.get(frame.target)!.set(key, { x: x, y: y, scaleX: scaleX, scaleY: scaleY, angle: angle }); // TODO: is the bang correct?
+      ret.get(frame.target)!.set(key, { x, y, scaleX, scaleY, angle }); // TODO: is the bang correct?
     }
 
     return ret;
   }
 
   // biome-ignore lint/complexity/noBannedTypes: callback is used liberally
-  play(onSubstitute?: boolean, callback?: Function) {
+  play(onSubstitute?: boolean, callback?: () => void) {
     const isOppAnim = this.isOppAnim();
-    const user = !isOppAnim ? this.user! : this.target!; // TODO: are those bangs correct?
-    const target = !isOppAnim ? this.target! : this.user!;
+    const user = isOppAnim ? this.target! : this.user!;
+    const target = isOppAnim ? this.user! : this.target!; // TODO: These bangs are LITERALLY not correct at all
 
     if (!target?.isOnField() && !this.playRegardlessOfIssues) {
       if (callback) {
@@ -863,16 +867,16 @@ export abstract class BattleAnim {
       userSprite.setAlpha(1);
       userSprite.pipelineData["tone"] = [0.0, 0.0, 0.0, 0.0];
       userSprite.setAngle(0);
-      if (!targetSubstitute) {
-        targetSprite.setPosition(0, 0);
-        targetSprite.setScale(1);
-        targetSprite.setAlpha(1);
-      } else {
+      if (targetSubstitute) {
         targetSprite.setPosition(
           target.x - target.getSubstituteOffset()[0],
           target.y - target.getSubstituteOffset()[1],
         );
         targetSprite.setScale(target.getSpriteScale() * (target.isPlayer() ? 0.5 : 1));
+        targetSprite.setAlpha(1);
+      } else {
+        targetSprite.setPosition(0, 0);
+        targetSprite.setScale(1);
         targetSprite.setAlpha(1);
       }
       targetSprite.pipelineData["tone"] = [0.0, 0.0, 0.0, 0.0];
@@ -888,8 +892,8 @@ export abstract class BattleAnim {
        * and `this.target` prevent the target's Substitute doll from disappearing
        * after being the target of an animation.
        */
-      const userSpriteToShow = !isOppAnim ? userSprite : targetSprite;
-      const targetSpriteToShow = !isOppAnim ? targetSprite : userSprite;
+      const userSpriteToShow = isOppAnim ? targetSprite : userSprite;
+      const targetSpriteToShow = isOppAnim ? userSprite : targetSprite;
       if (!this.isHideUser() && userSpriteToShow) {
         userSpriteToShow.setVisible(true);
       }
@@ -1142,18 +1146,18 @@ export abstract class BattleAnim {
 
     for (const frame of frames) {
       let { x, y } = frame;
-      const scaleX = (frame.zoomX / 100) * (!frame.mirror ? 1 : -1);
+      const scaleX = (frame.zoomX / 100) * (frame.mirror ? -1 : 1);
       const scaleY = frame.zoomY / 100;
       x += targetInitialX;
       y += targetInitialY;
       const angle = -frame.angle;
       const key = frame.target === AnimFrameTarget.GRAPHIC ? g++ : frame.target === AnimFrameTarget.USER ? u++ : t++;
       ret.get(frame.target)?.set(key, {
-        x: x,
-        y: y,
-        scaleX: scaleX,
-        scaleY: scaleY,
-        angle: angle,
+        x,
+        y,
+        scaleX,
+        scaleY,
+        angle,
       });
     }
 
@@ -1177,7 +1181,7 @@ export abstract class BattleAnim {
     frameTimeMult: number,
     frameTimedEventPriority?: 0 | 1 | 3 | 5,
     // biome-ignore lint/complexity/noBannedTypes: callback is used liberally
-    callback?: Function,
+    callback?: () => void,
   ) {
     const spriteCache: SpriteCache = {
       [AnimFrameTarget.GRAPHIC]: [],
@@ -1240,7 +1244,7 @@ export abstract class BattleAnim {
 
           const graphicIndex = graphicFrameCount++;
           const moveSprite = sprites[graphicIndex];
-          if (!isNullOrUndefined(frame.priority)) {
+          if (frame.priority != null) {
             const setSpritePriority = (priority: number) => {
               if (existingFieldSprites.length > priority) {
                 // Move to specified priority index

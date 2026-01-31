@@ -3,8 +3,8 @@ import { EggTier } from "#enums/egg-type";
 import { ModifierTier } from "#enums/modifier-tier";
 import { TextStyle } from "#enums/text-style";
 import { UiTheme } from "#enums/ui-theme";
-import i18next from "#plugins/i18n";
 import type { TextStyleOptions } from "#types/ui";
+import i18next from "i18next";
 import type Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 import type InputText from "phaser3-rex-plugins/plugins/inputtext";
@@ -340,8 +340,8 @@ export function getTextStyleOptions(
           styleOptions.fontSize = defaultFontSize - 38;
           styleOptions.padding = { top: 4, left: 6 };
           break;
-        case "zh-CN":
-        case "zh-TW":
+        case "zh-Hans":
+        case "zh-Hant":
           styleOptions.fontSize = defaultFontSize - 42;
           styleOptions.padding = { top: 5, left: 14 };
           break;
@@ -457,8 +457,8 @@ export function getTextStyleOptions(
   if (extraStyleOptions) {
     if (extraStyleOptions.fontSize) {
       const sizeRatio =
-        Number.parseInt(extraStyleOptions.fontSize.toString().slice(0, -2)) /
-        Number.parseInt(styleOptions.fontSize?.toString().slice(0, -2) ?? "1");
+        Number.parseInt(extraStyleOptions.fontSize.toString().slice(0, -2))
+        / Number.parseInt(styleOptions.fontSize?.toString().slice(0, -2) ?? "1");
       shadowXpos *= sizeRatio;
     }
     styleOptions = Object.assign(styleOptions, extraStyleOptions);
@@ -515,7 +515,7 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean): string {
   const isLegacyTheme = globalScene.uiTheme === UiTheme.LEGACY;
   switch (textStyle) {
     case TextStyle.MESSAGE:
-      return !shadow ? "#f8f8f8" : "#6b5a73";
+      return shadow ? "#6b5a73" : "#f8f8f8";
     case TextStyle.WINDOW:
     case TextStyle.WINDOW_BATTLE_COMMAND:
     case TextStyle.MOVE_INFO_CONTENT:
@@ -527,38 +527,38 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean): string {
     case TextStyle.STARTER_VALUE_LIMIT:
     case TextStyle.SETTINGS_VALUE:
       if (isLegacyTheme) {
-        return !shadow ? "#484848" : "#d0d0c8";
+        return shadow ? "#d0d0c8" : "#484848";
       }
-      return !shadow ? "#f8f8f8" : "#6b5a73";
+      return shadow ? "#6b5a73" : "#f8f8f8";
     case TextStyle.MOVE_PP_HALF_FULL:
       if (isLegacyTheme) {
-        return !shadow ? "#a68e17" : "#ebd773";
+        return shadow ? "#ebd773" : "#a68e17";
       }
-      return !shadow ? "#ccbe00" : "#6e672c";
+      return shadow ? "#6e672c" : "#ccbe00";
     case TextStyle.MOVE_PP_NEAR_EMPTY:
       if (isLegacyTheme) {
-        return !shadow ? "#d64b00" : "#f7b18b";
+        return shadow ? "#f7b18b" : "#d64b00";
       }
-      return !shadow ? "#d64b00" : "#69402a";
+      return shadow ? "#69402a" : "#d64b00";
     case TextStyle.MOVE_PP_EMPTY:
       if (isLegacyTheme) {
-        return !shadow ? "#e13d3d" : "#fca2a2";
+        return shadow ? "#fca2a2" : "#e13d3d";
       }
-      return !shadow ? "#e13d3d" : "#632929";
+      return shadow ? "#632929" : "#e13d3d";
     case TextStyle.WINDOW_ALT:
-      return !shadow ? "#484848" : "#d0d0c8";
+      return shadow ? "#d0d0c8" : "#484848";
     case TextStyle.BATTLE_INFO:
       if (isLegacyTheme) {
-        return !shadow ? "#404040" : "#ded6b5";
+        return shadow ? "#ded6b5" : "#404040";
       }
-      return !shadow ? "#f8f8f8" : "#6b5a73";
+      return shadow ? "#6b5a73" : "#f8f8f8";
     case TextStyle.PARTY:
     case TextStyle.PARTY_CANCEL_BUTTON:
     case TextStyle.INSTRUCTIONS_TEXT:
     case TextStyle.MOVE_LABEL:
-      return !shadow ? "#f8f8f8" : "#707070";
+      return shadow ? "#707070" : "#f8f8f8";
     case TextStyle.PARTY_RED:
-      return !shadow ? "#f89890" : "#984038";
+      return shadow ? "#984038" : "#f89890";
     case TextStyle.SUMMARY:
     case TextStyle.SUMMARY_DEX_NUM:
     case TextStyle.SUMMARY_HEADER:
@@ -566,68 +566,68 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean): string {
     case TextStyle.EGG_SUMMARY_NAME:
     case TextStyle.EGG_SUMMARY_DEX:
     case TextStyle.LUCK_VALUE:
-      return !shadow ? "#f8f8f8" : "#636363";
+      return shadow ? "#636363" : "#f8f8f8";
     case TextStyle.SUMMARY_ALT:
     case TextStyle.GROWTH_RATE_TYPE:
       if (isLegacyTheme) {
-        return !shadow ? "#f8f8f8" : "#636363";
+        return shadow ? "#636363" : "#f8f8f8";
       }
-      return !shadow ? "#484848" : "#d0d0c8";
+      return shadow ? "#d0d0c8" : "#484848";
     case TextStyle.SUMMARY_RED:
     case TextStyle.TOOLTIP_TITLE:
-      return !shadow ? "#e70808" : "#ffbd73";
+      return shadow ? "#ffbd73" : "#e70808";
     case TextStyle.SUMMARY_BLUE:
     case TextStyle.SUMMARY_STATS_BLUE:
-      return !shadow ? "#40c8f8" : "#006090";
+      return shadow ? "#006090" : "#40c8f8";
     case TextStyle.SUMMARY_PINK:
     case TextStyle.SUMMARY_STATS_PINK:
-      return !shadow ? "#f89890" : "#984038";
+      return shadow ? "#984038" : "#f89890";
     case TextStyle.SUMMARY_GOLD:
     case TextStyle.SUMMARY_DEX_NUM_GOLD:
     case TextStyle.SUMMARY_STATS_GOLD:
     case TextStyle.MONEY:
-      return !shadow ? "#e8e8a8" : "#a0a060"; // Pale Yellow/Gold
+      return shadow ? "#a0a060" : "#e8e8a8"; // Pale Gold/Yellow
     case TextStyle.MONEY_WINDOW:
       if (isLegacyTheme) {
-        return !shadow ? "#f8b050" : "#c07800"; // Gold
+        return shadow ? "#c07800" : "#f8b050"; // Gold
       }
-      return !shadow ? "#e8e8a8" : "#a0a060"; // Pale Yellow/Gold
+      return shadow ? "#a0a060" : "#e8e8a8"; // Pale Gold/Yellow
     case TextStyle.SETTINGS_LOCKED:
     case TextStyle.SUMMARY_GRAY:
-      return !shadow ? "#a0a0a0" : "#636363";
+      return shadow ? "#636363" : "#a0a0a0";
     case TextStyle.STATS_LABEL:
-      return !shadow ? "#f8b050" : "#c07800";
+      return shadow ? "#c07800" : "#f8b050";
     case TextStyle.STATS_VALUE:
       if (isLegacyTheme) {
-        return !shadow ? "#484848" : "#d0d0c8";
+        return shadow ? "#d0d0c8" : "#484848";
       }
-      return !shadow ? "#f8f8f8" : "#6b5a73";
+      return shadow ? "#6b5a73" : "#f8f8f8";
     case TextStyle.SUMMARY_GREEN:
-      return !shadow ? "#78c850" : "#306850";
+      return shadow ? "#306850" : "#78c850";
     case TextStyle.SETTINGS_LABEL:
     case TextStyle.SETTINGS_LABEL_NAVBAR:
     case TextStyle.HEADER_LABEL:
     case TextStyle.PERFECT_IV:
-      return !shadow ? "#f8b050" : "#c07800";
+      return shadow ? "#c07800" : "#f8b050";
     case TextStyle.SETTINGS_SELECTED:
-      return !shadow ? "#f88880" : "#f83018";
+      return shadow ? "#f83018" : "#f88880";
     case TextStyle.SMALLER_WINDOW_ALT:
-      return !shadow ? "#484848" : "#d0d0c8";
+      return shadow ? "#d0d0c8" : "#484848";
     case TextStyle.BGM_BAR:
-      return !shadow ? "#f8f8f8" : "#6b5a73";
+      return shadow ? "#6b5a73" : "#f8f8f8";
     case TextStyle.ME_OPTION_DEFAULT:
-      return !shadow ? "#f8f8f8" : "#6b5a73"; // White
+      return shadow ? "#6b5a73" : "#f8f8f8"; // White
     case TextStyle.ME_OPTION_SPECIAL:
       if (isLegacyTheme) {
-        return !shadow ? "#f8b050" : "#c07800"; // Gold
+        return shadow ? "#c07800" : "#f8b050"; // Gold
       }
-      return !shadow ? "#78c850" : "#306850"; // Green
+      return shadow ? "#306850" : "#78c850"; // Green
     // Leaving the logic in place, in case someone wants to pick an even darker hue for the shadow down the line
     case TextStyle.SHADOW_TEXT:
       if (isLegacyTheme) {
-        return !shadow ? "#d0d0c8" : "#d0d0c8";
+        return shadow ? "#d0d0c8" : "#d0d0c8";
       }
-      return !shadow ? "#6b5a73" : "#6b5a73";
+      return shadow ? "#6b5a73" : "#6b5a73";
   }
 }
 

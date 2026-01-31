@@ -1,11 +1,11 @@
-import { pokemonEvolutions, SpeciesFormEvolution, SpeciesWildEvolutionDelay } from "#balance/pokemon-evolutions";
+import { pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import * as Utils from "#utils/common";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Evolution", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +15,6 @@ describe("Evolution", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -32,7 +28,7 @@ describe("Evolution", () => {
   });
 
   it("should keep hidden ability after evolving", async () => {
-    await game.classicMode.runToSummon([SpeciesId.EEVEE, SpeciesId.TRAPINCH]);
+    await game.classicMode.runToSummon(SpeciesId.EEVEE, SpeciesId.TRAPINCH);
 
     const [eevee, trapinch] = game.scene.getPlayerParty();
     eevee.abilityIndex = 2;
@@ -46,7 +42,7 @@ describe("Evolution", () => {
   });
 
   it("should keep same ability slot after evolving", async () => {
-    await game.classicMode.runToSummon([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER]);
+    await game.classicMode.runToSummon(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER);
 
     const [bulbasaur, charmander] = game.scene.getPlayerParty();
     bulbasaur.abilityIndex = 0;
@@ -60,7 +56,7 @@ describe("Evolution", () => {
   });
 
   it("should handle illegal abilityIndex values", async () => {
-    await game.classicMode.runToSummon([SpeciesId.SQUIRTLE]);
+    await game.classicMode.runToSummon(SpeciesId.SQUIRTLE);
 
     const squirtle = game.field.getPlayerPokemon();
     squirtle.abilityIndex = 5;
@@ -70,7 +66,7 @@ describe("Evolution", () => {
   });
 
   it("should handle nincada's unique evolution", async () => {
-    await game.classicMode.runToSummon([SpeciesId.NINCADA]);
+    await game.classicMode.runToSummon(SpeciesId.NINCADA);
 
     const nincada = game.field.getPlayerPokemon();
     nincada.abilityIndex = 2;
@@ -87,12 +83,6 @@ describe("Evolution", () => {
     expect(shedinja.metBiome).toBe(-1);
   });
 
-  it("should set wild delay to NONE by default", () => {
-    const speciesFormEvo = new SpeciesFormEvolution(SpeciesId.ABRA, null, null, 1000, null, null);
-
-    expect(speciesFormEvo.wildDelay).toBe(SpeciesWildEvolutionDelay.NONE);
-  });
-
   it("should increase both HP and max HP when evolving", async () => {
     game.override
       .moveset([MoveId.SURF])
@@ -102,7 +92,7 @@ describe("Evolution", () => {
       .startingLevel(16)
       .enemyLevel(50);
 
-    await game.classicMode.startBattle([SpeciesId.TOTODILE]);
+    await game.classicMode.startBattle(SpeciesId.TOTODILE);
 
     const totodile = game.field.getPlayerPokemon();
     const hpBefore = totodile.hp;
@@ -130,7 +120,7 @@ describe("Evolution", () => {
       .startingLevel(13)
       .enemyLevel(30);
 
-    await game.classicMode.startBattle([SpeciesId.CYNDAQUIL]);
+    await game.classicMode.startBattle(SpeciesId.CYNDAQUIL);
 
     const cyndaquil = game.field.getPlayerPokemon();
     cyndaquil.hp = Math.floor(cyndaquil.getMaxHp() / 2);
@@ -163,7 +153,7 @@ describe("Evolution", () => {
      * If the value is 0, it's a 3 family maushold, whereas if the value is
      * 1, 2 or 3, it's a 4 family maushold
      */
-    await game.classicMode.startBattle([SpeciesId.TANDEMAUS]); // starts us off with a tandemaus
+    await game.classicMode.startBattle(SpeciesId.TANDEMAUS); // starts us off with a tandemaus
     const playerPokemon = game.field.getPlayerPokemon();
     playerPokemon.level = 25; // tandemaus evolves at level 25
     vi.spyOn(Utils, "randSeedInt").mockReturnValue(0); // setting the random generator to be 0 to force a three family maushold
@@ -185,7 +175,7 @@ describe("Evolution", () => {
       .startingLevel(19)
       .enemyLevel(30);
 
-    await game.classicMode.startBattle([SpeciesId.TYROGUE]);
+    await game.classicMode.startBattle(SpeciesId.TYROGUE);
 
     const tyrogue = game.field.getPlayerPokemon();
 

@@ -4,7 +4,7 @@ import { SpeciesId } from "#enums/species-id";
 import type { Move } from "#moves/move";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Retaliate", () => {
   let phaserGame: Phaser.Game;
@@ -16,10 +16,6 @@ describe("Moves - Retaliate", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -37,7 +33,7 @@ describe("Moves - Retaliate", () => {
 
   it("increases power if ally died previous turn", async () => {
     vi.spyOn(retaliate, "calculateBattlePower");
-    await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.COBALION]);
+    await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.COBALION);
     game.move.select(MoveId.RETALIATE);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(retaliate.calculateBattlePower).toHaveLastReturnedWith(70);

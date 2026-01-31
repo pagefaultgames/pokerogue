@@ -1,8 +1,8 @@
 import { MoveId } from "#enums/move-id";
 import { PokemonMove } from "#moves/pokemon-move";
-import type { SessionSaveData } from "#system/game-data";
 import type { PokemonData } from "#system/pokemon-data";
-import type { SessionSaveMigrator } from "#types/session-save-migrator";
+import type { SessionSaveData } from "#types/save-data";
+import type { SessionSaveMigrator } from "#types/save-migrators";
 
 /**
  * Migrate all lingering rage fist data inside `CustomPokemonData`,
@@ -22,9 +22,9 @@ const migratePartyData: SessionSaveMigrator = {
       pkmnData.summonData.moveset &&= pkmnData.summonData.moveset.filter(m => !!m).map(m => PokemonMove.loadMove(m));
 
       if (
-        pkmnData.customPokemonData &&
-        "hitsRecCount" in pkmnData.customPokemonData &&
-        typeof pkmnData.customPokemonData["hitsRecCount"] === "number"
+        pkmnData.customPokemonData
+        && "hitsRecCount" in pkmnData.customPokemonData
+        && typeof pkmnData.customPokemonData["hitsRecCount"] === "number"
       ) {
         // transfer old hit count stat to battleData.
         pkmnData.battleData.hitCount = pkmnData.customPokemonData["hitsRecCount"];

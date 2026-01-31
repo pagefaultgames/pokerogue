@@ -17,7 +17,7 @@ import {
 import { GameManager } from "#test/test-utils/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/weirdDream";
 const defaultParty = [SpeciesId.MAGBY, SpeciesId.HAUNTER, SpeciesId.ABRA];
@@ -48,10 +48,6 @@ describe("Weird Dream - Mystery Encounter", () => {
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<BiomeId, MysteryEncounterType[]>([[BiomeId.CAVE, [MysteryEncounterType.WEIRD_DREAM]]]),
     );
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   it("should have the correct properties", async () => {
@@ -204,28 +200,28 @@ describe("Weird Dream - Mystery Encounter", () => {
       ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(6);
       expect(
-        modifierSelectHandler.options[0].modifierTypeOption.type.tier -
-          modifierSelectHandler.options[0].modifierTypeOption.upgradeCount,
+        modifierSelectHandler.options[0].modifierTypeOption.type.tier
+          - modifierSelectHandler.options[0].modifierTypeOption.upgradeCount,
       ).toEqual(ModifierTier.ROGUE);
       expect(
-        modifierSelectHandler.options[1].modifierTypeOption.type.tier -
-          modifierSelectHandler.options[1].modifierTypeOption.upgradeCount,
+        modifierSelectHandler.options[1].modifierTypeOption.type.tier
+          - modifierSelectHandler.options[1].modifierTypeOption.upgradeCount,
       ).toEqual(ModifierTier.ROGUE);
       expect(
-        modifierSelectHandler.options[2].modifierTypeOption.type.tier -
-          modifierSelectHandler.options[2].modifierTypeOption.upgradeCount,
+        modifierSelectHandler.options[2].modifierTypeOption.type.tier
+          - modifierSelectHandler.options[2].modifierTypeOption.upgradeCount,
       ).toEqual(ModifierTier.ULTRA);
       expect(
-        modifierSelectHandler.options[3].modifierTypeOption.type.tier -
-          modifierSelectHandler.options[3].modifierTypeOption.upgradeCount,
+        modifierSelectHandler.options[3].modifierTypeOption.type.tier
+          - modifierSelectHandler.options[3].modifierTypeOption.upgradeCount,
       ).toEqual(ModifierTier.ULTRA);
       expect(
-        modifierSelectHandler.options[4].modifierTypeOption.type.tier -
-          modifierSelectHandler.options[4].modifierTypeOption.upgradeCount,
+        modifierSelectHandler.options[4].modifierTypeOption.type.tier
+          - modifierSelectHandler.options[4].modifierTypeOption.upgradeCount,
       ).toEqual(ModifierTier.GREAT);
       expect(
-        modifierSelectHandler.options[5].modifierTypeOption.type.tier -
-          modifierSelectHandler.options[5].modifierTypeOption.upgradeCount,
+        modifierSelectHandler.options[5].modifierTypeOption.type.tier
+          - modifierSelectHandler.options[5].modifierTypeOption.upgradeCount,
       ).toEqual(ModifierTier.GREAT);
     });
   });

@@ -12,11 +12,12 @@ export enum ClassicFixedBossWaves {
   EVIL_ADMIN_2 = 114,
   EVIL_BOSS_1 = 115,
   RIVAL_5 = 145,
+  EVIL_ADMIN_3 = 164,
   EVIL_BOSS_2 = 165,
   ELITE_FOUR_1 = 182,
   ELITE_FOUR_2 = 184,
   ELITE_FOUR_3 = 186,
   ELITE_FOUR_4 = 188,
   CHAMPION = 190,
-  RIVAL_6 = 195
+  RIVAL_6 = 195,
 }

@@ -1,3 +1,4 @@
+import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { speciesStarterCosts } from "#balance/starters";
@@ -21,7 +22,6 @@ import { SpeciesId } from "#enums/species-id";
 import type { PermanentStat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { UiMode } from "#enums/ui-mode";
-import { addPokeballCaptureStars, addPokeballOpenParticles } from "#field/anims";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { PokemonHeldItemModifier } from "#modifiers/modifier";
 import type { PokemonHeldItemModifierType } from "#modifiers/modifier-type";
@@ -35,7 +35,7 @@ import type { PartyOption } from "#ui/party-ui-handler";
 import { PartyUiMode } from "#ui/party-ui-handler";
 import { SummaryUiMode } from "#ui/summary-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
-import { BooleanHolder, isNullOrUndefined, randSeedInt } from "#utils/common";
+import { BooleanHolder, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
@@ -265,18 +265,18 @@ export function getRandomSpeciesByStarterCost(
     .filter(s => {
       const pokemonSpecies = getPokemonSpecies(s[0]);
       return (
-        pokemonSpecies &&
-        (!excludedSpecies || !excludedSpecies.includes(s[0])) &&
-        (allowSubLegendary || !pokemonSpecies.subLegendary) &&
-        (allowLegendary || !pokemonSpecies.legendary) &&
-        (allowMythical || !pokemonSpecies.mythical)
+        pokemonSpecies
+        && (!excludedSpecies || !excludedSpecies.includes(s[0]))
+        && (allowSubLegendary || !pokemonSpecies.subLegendary)
+        && (allowLegendary || !pokemonSpecies.legendary)
+        && (allowMythical || !pokemonSpecies.mythical)
       );
     })
     .map(s => [getPokemonSpecies(s[0]), s[1]]);
 
   if (types && types.length > 0) {
     filteredSpecies = filteredSpecies.filter(
-      s => types.includes(s[0].type1) || (!isNullOrUndefined(s[0].type2) && types.includes(s[0].type2)),
+      s => types.includes(s[0].type1) || (s[0].type2 != null && types.includes(s[0].type2)),
     );
   }
 
@@ -409,10 +409,10 @@ export async function applyModifierTypeToPlayerPokemon(
   const modifier = modType.newModifier(pokemon);
   const existing = globalScene.findModifier(
     (m): m is PokemonHeldItemModifier =>
-      m instanceof PokemonHeldItemModifier &&
-      m.type.id === modType.id &&
-      m.pokemonId === pokemon.id &&
-      m.matchType(modifier),
+      m instanceof PokemonHeldItemModifier
+      && m.type.id === modType.id
+      && m.pokemonId === pokemon.id
+      && m.matchType(modifier),
   ) as PokemonHeldItemModifier | undefined;
 
   // At max stacks
@@ -452,7 +452,8 @@ export function trainerThrowPokeball(
     const catchRate = pokemon.species.catchRate;
     const pokeballMultiplier = getPokeballCatchMultiplier(pokeballType);
     const statusMultiplier = pokemon.status ? getStatusEffectCatchRateMultiplier(pokemon.status.effect) : 1;
-    const x = Math.round((((_3m - _2h) * catchRate * pokeballMultiplier) / _3m) * statusMultiplier);
+    const shinyMultiplier = pokemon.isShiny() ? timedEventManager.getShinyCatchMultiplier() : 1;
+    const x = Math.round((((_3m - _2h) * catchRate * pokeballMultiplier) / _3m) * statusMultiplier * shinyMultiplier);
     ballTwitchRate = Math.round(65536 / Math.sqrt(Math.sqrt(255 / x)));
   }
 
@@ -496,7 +497,7 @@ export function trainerThrowPokeball(
           globalScene.playSound("se/pb_rel");
           pokemon.tint(getPokeballTintColor(pokeballType));
 
-          addPokeballOpenParticles(pokeball.x, pokeball.y, pokeballType);
+          globalScene.animations.addPokeballOpenParticles(pokeball.x, pokeball.y, pokeballType);
 
           globalScene.tweens.add({
             targets: pokemon,
@@ -542,7 +543,7 @@ export function trainerThrowPokeball(
                       }
                     } else {
                       globalScene.playSound("se/pb_lock");
-                      addPokeballCaptureStars(pokeball);
+                      globalScene.animations.addPokeballCaptureStars(pokeball);
 
                       const pbTint = globalScene.add.sprite(pokeball.x, pokeball.y, "pb", "pb");
                       pbTint.setOrigin(pokeball.originX, pokeball.originY);
@@ -647,11 +648,11 @@ export async function catchPokemon(
   showCatchObtainMessage = true,
   isObtain = false,
 ): Promise<void> {
-  const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
+  const speciesForm = pokemon.fusionSpecies ? pokemon.getFusionSpeciesForm() : pokemon.getSpeciesForm();
 
   if (
-    speciesForm.abilityHidden &&
-    (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex) === speciesForm.getAbilityCount() - 1
+    speciesForm.abilityHidden
+    && (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex) === speciesForm.getAbilityCount() - 1
   ) {
     globalScene.validateAchv(achvs.HIDDEN_ABILITY);
   }
@@ -963,7 +964,7 @@ export function getGoldenBugNetSpecies(level: number): PokemonSpecies {
     w += speciesWeightPair[1];
     if (roll < w) {
       const initialSpecies = getPokemonSpecies(speciesWeightPair[0]);
-      return getPokemonSpecies(initialSpecies.getSpeciesForLevel(level, true));
+      return getPokemonSpecies(initialSpecies.getWildSpeciesForLevel(level, true, false, globalScene.gameMode));
     }
   }
 
@@ -985,11 +986,11 @@ export function getEncounterPokemonLevelForWave(levelAdditiveModifier = 0) {
 }
 
 export async function addPokemonDataToDexAndValidateAchievements(pokemon: PlayerPokemon) {
-  const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
+  const speciesForm = pokemon.fusionSpecies ? pokemon.getFusionSpeciesForm() : pokemon.getSpeciesForm();
 
   if (
-    speciesForm.abilityHidden &&
-    (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex) === speciesForm.getAbilityCount() - 1
+    speciesForm.abilityHidden
+    && (pokemon.fusionSpecies ? pokemon.fusionAbilityIndex : pokemon.abilityIndex) === speciesForm.getAbilityCount() - 1
   ) {
     globalScene.validateAchv(achvs.HIDDEN_ABILITY);
   }

@@ -5,13 +5,12 @@ import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { SpeciesId } from "#enums/species-id";
-import type { EffectiveStat } from "#enums/stat";
-import { Stat } from "#enums/stat";
+import { EFFECTIVE_STATS } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Commander", () => {
   let phaserGame: Phaser.Game;
@@ -21,10 +20,6 @@ describe("Abilities - Commander", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -44,35 +39,36 @@ describe("Abilities - Commander", () => {
   });
 
   it("causes the source to jump into Dondozo's mouth, granting a stat boost and hiding the source", async () => {
-    await game.classicMode.startBattle([SpeciesId.TATSUGIRI, SpeciesId.DONDOZO]);
+    await game.classicMode.startBattle(SpeciesId.TATSUGIRI, SpeciesId.DONDOZO);
 
     const [tatsugiri, dondozo] = game.scene.getPlayerField();
 
-    const affectedStats: EffectiveStat[] = [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD];
-
     expect(game.scene.triggerPokemonBattleAnim).toHaveBeenLastCalledWith(tatsugiri, PokemonAnimType.COMMANDER_APPLY);
-    expect(dondozo.getTag(BattlerTagType.COMMANDED)).toBeDefined();
-    affectedStats.forEach(stat => expect(dondozo.getStatStage(stat)).toBe(2));
+    expect(dondozo).toHaveBattlerTag(BattlerTagType.COMMANDED);
+    EFFECTIVE_STATS.forEach(stat => {
+      expect(dondozo).toHaveStatStage(stat, 2);
+    });
 
-    game.move.select(MoveId.SPLASH, 1);
-
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     expect(game.scene.currentBattle.turnCommands[0]?.skip).toBeTruthy();
 
     // Force both enemies to target the Tatsugiri
-    await game.move.selectEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER);
-    await game.move.selectEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER);
+    await game.move.forceEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER);
+    await game.move.forceEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER);
 
-    await game.phaseInterceptor.to("BerryPhase", false);
-    game.scene.getEnemyField().forEach(enemy => expect(enemy.getLastXMoves(1)[0].result).toBe(MoveResult.MISS));
-    expect(tatsugiri.isFullHp()).toBeTruthy();
+    await game.toEndOfTurn();
+    const [enemy1, enemy2] = game.scene.getEnemyField();
+    expect(enemy1).toHaveUsedMove({ move: MoveId.TACKLE, result: MoveResult.MISS });
+    expect(enemy2).toHaveUsedMove({ move: MoveId.TACKLE, result: MoveResult.MISS });
+    expect(tatsugiri).toHaveFullHp();
   });
 
   it("should activate when a Dondozo switches in and cancel the source's move", async () => {
     game.override.enemyMoveset(MoveId.SPLASH);
 
-    await game.classicMode.startBattle([SpeciesId.TATSUGIRI, SpeciesId.MAGIKARP, SpeciesId.DONDOZO]);
+    await game.classicMode.startBattle(SpeciesId.TATSUGIRI, SpeciesId.MAGIKARP, SpeciesId.DONDOZO);
 
-    const tatsugiri = game.scene.getPlayerField()[0];
+    const [tatsugiri, _, dondozo] = game.scene.getPlayerParty();
 
     game.move.select(MoveId.LIQUIDATION, 0, BattlerIndex.ENEMY);
     game.doSwitchPokemon(2);
@@ -80,16 +76,15 @@ describe("Abilities - Commander", () => {
     await game.phaseInterceptor.to("MovePhase", false);
     expect(game.scene.triggerPokemonBattleAnim).toHaveBeenCalledWith(tatsugiri, PokemonAnimType.COMMANDER_APPLY);
 
-    const dondozo = game.scene.getPlayerField()[1];
     expect(dondozo.getTag(BattlerTagType.COMMANDED)).toBeDefined();
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(tatsugiri.getMoveHistory()).toHaveLength(0);
-    expect(game.scene.getEnemyField()[0].isFullHp()).toBeTruthy();
+    expect(game.field.getEnemyPokemon()).toHaveFullHp();
   });
 
   it("source should reenter the field when Dondozo faints", async () => {
-    await game.classicMode.startBattle([SpeciesId.TATSUGIRI, SpeciesId.DONDOZO]);
+    await game.classicMode.startBattle(SpeciesId.TATSUGIRI, SpeciesId.DONDOZO);
 
     const [tatsugiri, dondozo] = game.scene.getPlayerField();
 
@@ -116,7 +111,7 @@ describe("Abilities - Commander", () => {
   it("source should still take damage from Poison while hidden", async () => {
     game.override.statusEffect(StatusEffect.POISON).enemyMoveset(MoveId.SPLASH);
 
-    await game.classicMode.startBattle([SpeciesId.TATSUGIRI, SpeciesId.DONDOZO]);
+    await game.classicMode.startBattle(SpeciesId.TATSUGIRI, SpeciesId.DONDOZO);
 
     const [tatsugiri, dondozo] = game.scene.getPlayerField();
 
@@ -134,7 +129,7 @@ describe("Abilities - Commander", () => {
   it("source should still take damage from Salt Cure while hidden", async () => {
     game.override.enemyMoveset(MoveId.SPLASH);
 
-    await game.classicMode.startBattle([SpeciesId.TATSUGIRI, SpeciesId.DONDOZO]);
+    await game.classicMode.startBattle(SpeciesId.TATSUGIRI, SpeciesId.DONDOZO);
 
     const [tatsugiri, dondozo] = game.scene.getPlayerField();
 
@@ -154,7 +149,7 @@ describe("Abilities - Commander", () => {
   it("source should still take damage from Sandstorm while hidden", async () => {
     game.override.weather(WeatherType.SANDSTORM).enemyMoveset(MoveId.SPLASH);
 
-    await game.classicMode.startBattle([SpeciesId.TATSUGIRI, SpeciesId.DONDOZO]);
+    await game.classicMode.startBattle(SpeciesId.TATSUGIRI, SpeciesId.DONDOZO);
 
     const [tatsugiri, dondozo] = game.scene.getPlayerField();
 
@@ -172,7 +167,7 @@ describe("Abilities - Commander", () => {
   it("should make Dondozo immune to being forced out", async () => {
     game.override.enemyMoveset([MoveId.SPLASH, MoveId.WHIRLWIND]);
 
-    await game.classicMode.startBattle([SpeciesId.TATSUGIRI, SpeciesId.DONDOZO]);
+    await game.classicMode.startBattle(SpeciesId.TATSUGIRI, SpeciesId.DONDOZO);
 
     const [tatsugiri, dondozo] = game.scene.getPlayerField();
 
@@ -192,26 +187,26 @@ describe("Abilities - Commander", () => {
   });
 
   it("should interrupt the source's semi-invulnerability", async () => {
-    game.override.moveset([MoveId.SPLASH, MoveId.DIVE]).enemyMoveset(MoveId.SPLASH);
+    await game.classicMode.startBattle(SpeciesId.TATSUGIRI, SpeciesId.MAGIKARP, SpeciesId.DONDOZO);
 
-    await game.classicMode.startBattle([SpeciesId.TATSUGIRI, SpeciesId.MAGIKARP, SpeciesId.DONDOZO]);
+    const [tatsugiri, , dondozo] = game.scene.getPlayerParty();
 
-    const tatsugiri = game.scene.getPlayerField()[0];
-
-    game.move.select(MoveId.DIVE, 0, BattlerIndex.ENEMY);
-    game.move.select(MoveId.SPLASH, 1);
+    game.move.use(MoveId.DIVE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    await game.move.forceEnemyMove(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(tatsugiri.getTag(BattlerTagType.UNDERWATER)).toBeDefined();
+    expect(tatsugiri).toHaveBattlerTag(BattlerTagType.UNDERWATER);
+
     game.doSwitchPokemon(2);
-
     await game.phaseInterceptor.to("MovePhase", false);
-    const dondozo = game.scene.getPlayerField()[1];
-    expect(tatsugiri.getTag(BattlerTagType.UNDERWATER)).toBeUndefined();
-    expect(dondozo.getTag(BattlerTagType.COMMANDED)).toBeDefined();
 
-    await game.toNextTurn();
-    const enemy = game.scene.getEnemyField()[0];
-    expect(enemy.isFullHp()).toBeTruthy();
+    expect(tatsugiri).not.toHaveBattlerTag(BattlerTagType.UNDERWATER);
+    expect(dondozo).toHaveBattlerTag(BattlerTagType.COMMANDED);
+
+    await game.toEndOfTurn();
+
+    expect(game.field.getEnemyPokemon()).toHaveFullHp();
   });
 });

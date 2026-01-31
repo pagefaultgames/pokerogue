@@ -10,9 +10,9 @@ import { getMoveTargets } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { CommandPhase } from "#phases/command-phase";
 import type { EnemyCommandPhase } from "#phases/enemy-command-phase";
-import { MoveEffectPhase } from "#phases/move-effect-phase";
+import type { MoveEffectPhase } from "#phases/move-effect-phase";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
-import { coerceArray } from "#utils/common";
+import { coerceArray } from "#utils/array";
 import { toTitleCase } from "#utils/strings";
 import type { MockInstance } from "vitest";
 import { expect, vi } from "vitest";
@@ -27,7 +27,7 @@ export class MoveHelper extends GameManagerHelper {
    * @returns A promise that resolves once the next MoveEffectPhase has been reached (not run).
    */
   public async forceHit(): Promise<void> {
-    await this.game.phaseInterceptor.to(MoveEffectPhase, false);
+    await this.game.phaseInterceptor.to("MoveEffectPhase", false);
     const moveEffectPhase = this.game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase;
     vi.spyOn(moveEffectPhase.move, "calculateBattleAccuracy").mockReturnValue(-1);
   }
@@ -39,7 +39,7 @@ export class MoveHelper extends GameManagerHelper {
    * @returns A promise that resolves once the next MoveEffectPhase has been reached (not run).
    */
   public async forceMiss(firstTargetOnly = false): Promise<void> {
-    await this.game.phaseInterceptor.to(MoveEffectPhase, false);
+    await this.game.phaseInterceptor.to("MoveEffectPhase", false);
     const moveEffectPhase = this.game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase;
     const accuracy = vi.spyOn(moveEffectPhase.move, "calculateBattleAccuracy");
 
@@ -67,9 +67,9 @@ export class MoveHelper extends GameManagerHelper {
     const movePosition = this.getMovePosition(pkmIndex, move);
     if (movePosition === -1) {
       expect.fail(
-        `MoveHelper.select called with move '${toTitleCase(MoveId[move])}' not in moveset!` +
-          `\nBattler Index: ${toTitleCase(BattlerIndex[pkmIndex])}` +
-          `\nMoveset: [${this.game.scene
+        `MoveHelper.select called with move '${toTitleCase(MoveId[move])}' not in moveset!`
+          + `\nBattler Index: ${toTitleCase(BattlerIndex[pkmIndex])}`
+          + `\nMoveset: [${this.game.scene
             .getPlayerParty()
             [pkmIndex].getMoveset()
             .map(pm => toTitleCase(MoveId[pm.moveId]))
@@ -97,11 +97,15 @@ export class MoveHelper extends GameManagerHelper {
   }
 
   /**
-   * Select a move _already in the player's moveset_ to be used during the next {@linkcode CommandPhase}, **which will also terastallize on this turn**.
+   * Select a move _already in the player's moveset_ to be used during the next {@linkcode CommandPhase},
+   * **which will also terastallize on this turn**.
+   * Activates all relevant abilities and effects on Terastallizing (equivalent to inputting the command manually)
    * @param move - The {@linkcode MoveId} to use.
    * @param pkmIndex - The {@linkcode BattlerIndex} of the player Pokemon using the move. Relevant for double battles only and defaults to {@linkcode BattlerIndex.PLAYER} if not specified.
    * @param targetIndex - The {@linkcode BattlerIndex} of the Pokemon to target for single-target moves; should be omitted for multi-target moves.
    * If set to `null`, will forgo normal target selection entirely (useful for UI tests)
+   * @remarks
+   * Will fail the current test if the move being selected is not in the user's moveset.
    */
   public selectWithTera(
     move: MoveId,
@@ -111,9 +115,9 @@ export class MoveHelper extends GameManagerHelper {
     const movePosition = this.getMovePosition(pkmIndex, move);
     if (movePosition === -1) {
       expect.fail(
-        `MoveHelper.selectWithTera called with move '${toTitleCase(MoveId[move])}' not in moveset!` +
-          `\nBattler Index: ${toTitleCase(BattlerIndex[pkmIndex])}` +
-          `\nMoveset: [${this.game.scene
+        `MoveHelper.selectWithTera called with move '${toTitleCase(MoveId[move])}' not in moveset!`
+          + `\nBattler Index: ${toTitleCase(BattlerIndex[pkmIndex])}`
+          + `\nMoveset: [${this.game.scene
             .getPlayerParty()
             [pkmIndex].getMoveset()
             .map(pm => toTitleCase(MoveId[pm.moveId]))
@@ -227,11 +231,9 @@ export class MoveHelper extends GameManagerHelper {
         vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([]);
         console.warn("Player moveset override disabled due to use of `game.move.changeMoveset`!");
       }
-    } else {
-      if (coerceArray(Overrides.ENEMY_MOVESET_OVERRIDE).length > 0) {
-        vi.spyOn(Overrides, "ENEMY_MOVESET_OVERRIDE", "get").mockReturnValue([]);
-        console.warn("Enemy moveset override disabled due to use of `game.move.changeMoveset`!");
-      }
+    } else if (coerceArray(Overrides.ENEMY_MOVESET_OVERRIDE).length > 0) {
+      vi.spyOn(Overrides, "ENEMY_MOVESET_OVERRIDE", "get").mockReturnValue([]);
+      console.warn("Enemy moveset override disabled due to use of `game.move.changeMoveset`!");
     }
     moveset = coerceArray(moveset);
     expect(moveset.length, "Cannot assign more than 4 moves to a moveset!").toBeLessThanOrEqual(4);
@@ -249,17 +251,19 @@ export class MoveHelper extends GameManagerHelper {
    * @param moveId - The {@linkcode Move | move ID} the enemy will be forced to use.
    * @param target - The {@linkcode BattlerIndex | target} against which the enemy will use the given move;
    * defaults to normal target selection priorities if omitted or not single-target.
+   * @param tera - (Default `false`) If set to `true`, will also force the enemy to terastallize on their next action
+   * even if a trainer is not present
    * @remarks
    * If you do not need to check for changes in the enemy's moveset as part of the test, it may be
    * best to use {@linkcode forceEnemyMove} instead.
    */
-  public async selectEnemyMove(moveId: MoveId, target?: BattlerIndex) {
+  public async selectEnemyMove(moveId: MoveId, target?: BattlerIndex, tera?: true | undefined) {
     // Wait for the next EnemyCommandPhase to start
     await this.game.phaseInterceptor.to("EnemyCommandPhase", false);
-    const enemy =
-      this.game.scene.getEnemyField()[
-        (this.game.scene.phaseManager.getCurrentPhase() as EnemyCommandPhase).getFieldIndex()
-      ];
+
+    const phase = this.game.scene.phaseManager.getCurrentPhase() as EnemyCommandPhase;
+    const enemy = this.game.scene.getEnemyField()[phase.getFieldIndex()];
+
     const legalTargets = getMoveTargets(enemy, moveId);
 
     vi.spyOn(enemy, "getNextMove").mockReturnValueOnce({
@@ -270,6 +274,10 @@ export class MoveHelper extends GameManagerHelper {
           : enemy.getNextTargets(moveId),
       useMode: MoveUseMode.NORMAL,
     });
+
+    if (tera) {
+      (vi.spyOn(phase as any, "shouldTera") as MockInstance<(typeof phase)["shouldTera"]>).mockReturnValueOnce(true);
+    }
 
     /**
      * Run the EnemyCommandPhase to completion.
@@ -286,21 +294,21 @@ export class MoveHelper extends GameManagerHelper {
    * Does not require the given move to be in the enemy's moveset beforehand,
    * but **overwrites the pokemon's moveset** and **disables any prior moveset overrides**!
    *
-   * @param moveId - The {@linkcode Move | move ID} the enemy will be forced to use.
+   * @param moveId - The {@linkcode MoveId | move ID} the enemy will be forced to use.
    * @param target - The {@linkcode BattlerIndex | target} against which the enemy will use the given move;
    * defaults to normal target selection priorities if omitted or not single-target.
+   * @param tera - (Default `false`) If set to `true`, will also force the enemy to terastallize on their next action,
+   * even if a trainer is not present
    * @remarks
    * If you need to check for changes in the enemy's moveset as part of the test, it may be
    * best to use {@linkcode changeMoveset} and {@linkcode selectEnemyMove} instead.
    */
-  public async forceEnemyMove(moveId: MoveId, target?: BattlerIndex) {
+  public async forceEnemyMove(moveId: MoveId, target?: BattlerIndex, tera?: true | undefined) {
     // Wait for the next EnemyCommandPhase to start
     await this.game.phaseInterceptor.to("EnemyCommandPhase", false);
 
-    const enemy =
-      this.game.scene.getEnemyField()[
-        (this.game.scene.phaseManager.getCurrentPhase() as EnemyCommandPhase).getFieldIndex()
-      ];
+    const phase = this.game.scene.phaseManager.getCurrentPhase() as EnemyCommandPhase;
+    const enemy = this.game.scene.getEnemyField()[phase.getFieldIndex()];
 
     if ([Overrides.ENEMY_MOVESET_OVERRIDE].flat().length > 0) {
       vi.spyOn(Overrides, "ENEMY_MOVESET_OVERRIDE", "get").mockReturnValue([]);
@@ -319,6 +327,10 @@ export class MoveHelper extends GameManagerHelper {
           : enemy.getNextTargets(moveId),
       useMode: MoveUseMode.NORMAL,
     });
+
+    if (tera) {
+      (vi.spyOn(phase as any, "shouldTera") as MockInstance<(typeof phase)["shouldTera"]>).mockReturnValueOnce(true);
+    }
 
     /**
      * Run the EnemyCommandPhase to completion.

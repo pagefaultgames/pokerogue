@@ -6,179 +6,177 @@ import i18next from "i18next";
 
 export enum SettingKeyboard {
   // Default_Layout = "DEFAULT_LAYOUT",
-  Button_Up = "BUTTON_UP",
-  Alt_Button_Up = "ALT_BUTTON_UP",
-  Button_Down = "BUTTON_DOWN",
-  Alt_Button_Down = "ALT_BUTTON_DOWN",
-  Button_Left = "BUTTON_LEFT",
-  Alt_Button_Left = "ALT_BUTTON_LEFT",
-  Button_Right = "BUTTON_RIGHT",
-  Alt_Button_Right = "ALT_BUTTON_RIGHT",
-  Button_Action = "BUTTON_ACTION",
-  Alt_Button_Action = "ALT_BUTTON_ACTION",
-  Button_Cancel = "BUTTON_CANCEL",
-  Alt_Button_Cancel = "ALT_BUTTON_CANCEL",
-  Button_Menu = "BUTTON_MENU",
-  Alt_Button_Menu = "ALT_BUTTON_MENU",
-  Button_Stats = "BUTTON_STATS",
-  Alt_Button_Stats = "ALT_BUTTON_STATS",
-  Button_Cycle_Form = "BUTTON_CYCLE_FORM",
-  Alt_Button_Cycle_Form = "ALT_BUTTON_CYCLE_FORM",
-  Button_Cycle_Shiny = "BUTTON_CYCLE_SHINY",
-  Alt_Button_Cycle_Shiny = "ALT_BUTTON_CYCLE_SHINY",
-  Button_Cycle_Gender = "BUTTON_CYCLE_GENDER",
-  Alt_Button_Cycle_Gender = "ALT_BUTTON_CYCLE_GENDER",
-  Button_Cycle_Ability = "BUTTON_CYCLE_ABILITY",
-  Alt_Button_Cycle_Ability = "ALT_BUTTON_CYCLE_ABILITY",
-  Button_Cycle_Nature = "BUTTON_CYCLE_NATURE",
-  Alt_Button_Cycle_Nature = "ALT_BUTTON_CYCLE_NATURE",
-  Button_Cycle_Tera = "BUTTON_CYCLE_TERA",
-  Alt_Button_Cycle_Tera = "ALT_BUTTON_CYCLE_TERA",
-  Button_Speed_Up = "BUTTON_SPEED_UP",
-  Alt_Button_Speed_Up = "ALT_BUTTON_SPEED_UP",
-  Button_Slow_Down = "BUTTON_SLOW_DOWN",
-  Alt_Button_Slow_Down = "ALT_BUTTON_SLOW_DOWN",
-  Button_Submit = "BUTTON_SUBMIT",
-  Alt_Button_Submit = "ALT_BUTTON_SUBMIT",
+  BUTTON_UP = "BUTTON_UP",
+  ALT_BUTTON_UP = "ALT_BUTTON_UP",
+  BUTTON_DOWN = "BUTTON_DOWN",
+  ALT_BUTTON_DOWN = "ALT_BUTTON_DOWN",
+  BUTTON_LEFT = "BUTTON_LEFT",
+  ALT_BUTTON_LEFT = "ALT_BUTTON_LEFT",
+  BUTTON_RIGHT = "BUTTON_RIGHT",
+  ALT_BUTTON_RIGHT = "ALT_BUTTON_RIGHT",
+  BUTTON_ACTION = "BUTTON_ACTION",
+  ALT_BUTTON_ACTION = "ALT_BUTTON_ACTION",
+  BUTTON_CANCEL = "BUTTON_CANCEL",
+  ALT_BUTTON_CANCEL = "ALT_BUTTON_CANCEL",
+  BUTTON_MENU = "BUTTON_MENU",
+  ALT_BUTTON_MENU = "ALT_BUTTON_MENU",
+  BUTTON_STATS = "BUTTON_STATS",
+  ALT_BUTTON_STATS = "ALT_BUTTON_STATS",
+  BUTTON_CYCLE_FORM = "BUTTON_CYCLE_FORM",
+  ALT_BUTTON_CYCLE_FORM = "ALT_BUTTON_CYCLE_FORM",
+  BUTTON_CYCLE_SHINY = "BUTTON_CYCLE_SHINY",
+  ALT_BUTTON_CYCLE_SHINY = "ALT_BUTTON_CYCLE_SHINY",
+  BUTTON_CYCLE_GENDER = "BUTTON_CYCLE_GENDER",
+  ALT_BUTTON_CYCLE_GENDER = "ALT_BUTTON_CYCLE_GENDER",
+  BUTTON_CYCLE_ABILITY = "BUTTON_CYCLE_ABILITY",
+  ALT_BUTTON_CYCLE_ABILITY = "ALT_BUTTON_CYCLE_ABILITY",
+  BUTTON_CYCLE_NATURE = "BUTTON_CYCLE_NATURE",
+  ALT_BUTTON_CYCLE_NATURE = "ALT_BUTTON_CYCLE_NATURE",
+  BUTTON_CYCLE_TERA = "BUTTON_CYCLE_TERA",
+  ALT_BUTTON_CYCLE_TERA = "ALT_BUTTON_CYCLE_TERA",
+  BUTTON_SPEED_UP = "BUTTON_SPEED_UP",
+  ALT_BUTTON_SPEED_UP = "ALT_BUTTON_SPEED_UP",
+  BUTTON_SLOW_DOWN = "BUTTON_SLOW_DOWN",
+  ALT_BUTTON_SLOW_DOWN = "ALT_BUTTON_SLOW_DOWN",
+  BUTTON_SUBMIT = "BUTTON_SUBMIT",
+  ALT_BUTTON_SUBMIT = "ALT_BUTTON_SUBMIT",
 }
 
 const pressAction = i18next.t("settings:pressToBind");
 
 export const settingKeyboardOptions = {
   // [SettingKeyboard.Default_Layout]: ['Default'],
-  [SettingKeyboard.Button_Up]: [`KEY ${Button.UP.toString()}`, pressAction],
-  [SettingKeyboard.Button_Down]: [`KEY ${Button.DOWN.toString()}`, pressAction],
-  [SettingKeyboard.Alt_Button_Up]: [`KEY ${Button.UP.toString()}`, pressAction],
-  [SettingKeyboard.Button_Left]: [`KEY ${Button.LEFT.toString()}`, pressAction],
-  [SettingKeyboard.Button_Right]: [`KEY ${Button.RIGHT.toString()}`, pressAction],
-  [SettingKeyboard.Button_Action]: [`KEY ${Button.ACTION.toString()}`, pressAction],
-  [SettingKeyboard.Button_Menu]: [`KEY ${Button.MENU.toString()}`, pressAction],
-  [SettingKeyboard.Button_Submit]: [`KEY ${Button.SUBMIT.toString()}`, pressAction],
-  [SettingKeyboard.Alt_Button_Down]: [`KEY ${Button.DOWN.toString()}`, pressAction],
-  [SettingKeyboard.Alt_Button_Left]: [`KEY ${Button.LEFT.toString()}`, pressAction],
-  [SettingKeyboard.Alt_Button_Right]: [`KEY ${Button.RIGHT.toString()}`, pressAction],
-  [SettingKeyboard.Alt_Button_Action]: [`KEY ${Button.ACTION.toString()}`, pressAction],
-  [SettingKeyboard.Button_Cancel]: [`KEY ${Button.CANCEL.toString()}`, pressAction],
-  [SettingKeyboard.Alt_Button_Cancel]: [`KEY ${Button.CANCEL.toString()}`, pressAction],
-  [SettingKeyboard.Alt_Button_Menu]: [`KEY ${Button.MENU.toString()}`, pressAction],
-  [SettingKeyboard.Button_Stats]: [`KEY ${Button.STATS.toString()}`, pressAction],
-  [SettingKeyboard.Alt_Button_Stats]: [`KEY ${Button.STATS.toString()}`, pressAction],
-  [SettingKeyboard.Button_Cycle_Form]: [`KEY ${Button.CYCLE_FORM.toString()}`, pressAction],
-  [SettingKeyboard.Alt_Button_Cycle_Form]: [`KEY ${Button.CYCLE_FORM.toString()}`, pressAction],
-  [SettingKeyboard.Button_Cycle_Shiny]: [`KEY ${Button.CYCLE_SHINY.toString()}`, pressAction],
-  [SettingKeyboard.Alt_Button_Cycle_Shiny]: [`KEY ${Button.CYCLE_SHINY.toString()}`, pressAction],
-  [SettingKeyboard.Button_Cycle_Gender]: [`KEY ${Button.CYCLE_GENDER.toString()}`, pressAction],
-  [SettingKeyboard.Alt_Button_Cycle_Gender]: [`KEY ${Button.CYCLE_GENDER.toString()}`, pressAction],
-  [SettingKeyboard.Button_Cycle_Ability]: [`KEY ${Button.CYCLE_ABILITY.toString()}`, pressAction],
-  [SettingKeyboard.Alt_Button_Cycle_Ability]: [`KEY ${Button.CYCLE_ABILITY.toString()}`, pressAction],
-  [SettingKeyboard.Button_Cycle_Nature]: [`KEY ${Button.CYCLE_NATURE.toString()}`, pressAction],
-  [SettingKeyboard.Alt_Button_Cycle_Nature]: [`KEY ${Button.CYCLE_NATURE.toString()}`, pressAction],
-  [SettingKeyboard.Button_Cycle_Tera]: [`KEY ${Button.CYCLE_TERA.toString()}`, pressAction],
-  [SettingKeyboard.Alt_Button_Cycle_Tera]: [`KEY ${Button.CYCLE_TERA.toString()}`, pressAction],
-  [SettingKeyboard.Button_Speed_Up]: [`KEY ${Button.SPEED_UP.toString()}`, pressAction],
-  [SettingKeyboard.Alt_Button_Speed_Up]: [`KEY ${Button.SPEED_UP.toString()}`, pressAction],
-  [SettingKeyboard.Button_Slow_Down]: [`KEY ${Button.SLOW_DOWN.toString()}`, pressAction],
-  [SettingKeyboard.Alt_Button_Slow_Down]: [`KEY ${Button.SLOW_DOWN.toString()}`, pressAction],
-  [SettingKeyboard.Alt_Button_Submit]: [`KEY ${Button.SUBMIT.toString()}`, pressAction],
+  [SettingKeyboard.BUTTON_UP]: [`KEY ${Button.UP.toString()}`, pressAction],
+  [SettingKeyboard.BUTTON_DOWN]: [`KEY ${Button.DOWN.toString()}`, pressAction],
+  [SettingKeyboard.ALT_BUTTON_UP]: [`KEY ${Button.UP.toString()}`, pressAction],
+  [SettingKeyboard.BUTTON_LEFT]: [`KEY ${Button.LEFT.toString()}`, pressAction],
+  [SettingKeyboard.BUTTON_RIGHT]: [`KEY ${Button.RIGHT.toString()}`, pressAction],
+  [SettingKeyboard.BUTTON_ACTION]: [`KEY ${Button.ACTION.toString()}`, pressAction],
+  [SettingKeyboard.BUTTON_MENU]: [`KEY ${Button.MENU.toString()}`, pressAction],
+  [SettingKeyboard.BUTTON_SUBMIT]: [`KEY ${Button.SUBMIT.toString()}`, pressAction],
+  [SettingKeyboard.ALT_BUTTON_DOWN]: [`KEY ${Button.DOWN.toString()}`, pressAction],
+  [SettingKeyboard.ALT_BUTTON_LEFT]: [`KEY ${Button.LEFT.toString()}`, pressAction],
+  [SettingKeyboard.ALT_BUTTON_RIGHT]: [`KEY ${Button.RIGHT.toString()}`, pressAction],
+  [SettingKeyboard.ALT_BUTTON_ACTION]: [`KEY ${Button.ACTION.toString()}`, pressAction],
+  [SettingKeyboard.BUTTON_CANCEL]: [`KEY ${Button.CANCEL.toString()}`, pressAction],
+  [SettingKeyboard.ALT_BUTTON_CANCEL]: [`KEY ${Button.CANCEL.toString()}`, pressAction],
+  [SettingKeyboard.ALT_BUTTON_MENU]: [`KEY ${Button.MENU.toString()}`, pressAction],
+  [SettingKeyboard.BUTTON_STATS]: [`KEY ${Button.STATS.toString()}`, pressAction],
+  [SettingKeyboard.ALT_BUTTON_STATS]: [`KEY ${Button.STATS.toString()}`, pressAction],
+  [SettingKeyboard.BUTTON_CYCLE_FORM]: [`KEY ${Button.CYCLE_FORM.toString()}`, pressAction],
+  [SettingKeyboard.ALT_BUTTON_CYCLE_FORM]: [`KEY ${Button.CYCLE_FORM.toString()}`, pressAction],
+  [SettingKeyboard.BUTTON_CYCLE_SHINY]: [`KEY ${Button.CYCLE_SHINY.toString()}`, pressAction],
+  [SettingKeyboard.ALT_BUTTON_CYCLE_SHINY]: [`KEY ${Button.CYCLE_SHINY.toString()}`, pressAction],
+  [SettingKeyboard.BUTTON_CYCLE_GENDER]: [`KEY ${Button.CYCLE_GENDER.toString()}`, pressAction],
+  [SettingKeyboard.ALT_BUTTON_CYCLE_GENDER]: [`KEY ${Button.CYCLE_GENDER.toString()}`, pressAction],
+  [SettingKeyboard.BUTTON_CYCLE_ABILITY]: [`KEY ${Button.CYCLE_ABILITY.toString()}`, pressAction],
+  [SettingKeyboard.ALT_BUTTON_CYCLE_ABILITY]: [`KEY ${Button.CYCLE_ABILITY.toString()}`, pressAction],
+  [SettingKeyboard.BUTTON_CYCLE_NATURE]: [`KEY ${Button.CYCLE_NATURE.toString()}`, pressAction],
+  [SettingKeyboard.ALT_BUTTON_CYCLE_NATURE]: [`KEY ${Button.CYCLE_NATURE.toString()}`, pressAction],
+  [SettingKeyboard.BUTTON_CYCLE_TERA]: [`KEY ${Button.CYCLE_TERA.toString()}`, pressAction],
+  [SettingKeyboard.ALT_BUTTON_CYCLE_TERA]: [`KEY ${Button.CYCLE_TERA.toString()}`, pressAction],
+  [SettingKeyboard.BUTTON_SPEED_UP]: [`KEY ${Button.SPEED_UP.toString()}`, pressAction],
+  [SettingKeyboard.ALT_BUTTON_SPEED_UP]: [`KEY ${Button.SPEED_UP.toString()}`, pressAction],
+  [SettingKeyboard.BUTTON_SLOW_DOWN]: [`KEY ${Button.SLOW_DOWN.toString()}`, pressAction],
+  [SettingKeyboard.ALT_BUTTON_SLOW_DOWN]: [`KEY ${Button.SLOW_DOWN.toString()}`, pressAction],
+  [SettingKeyboard.ALT_BUTTON_SUBMIT]: [`KEY ${Button.SUBMIT.toString()}`, pressAction],
 };
 
 export const settingKeyboardDefaults = {
   // [SettingKeyboard.Default_Layout]: 0,
-  [SettingKeyboard.Button_Up]: 0,
-  [SettingKeyboard.Button_Down]: 0,
-  [SettingKeyboard.Button_Left]: 0,
-  [SettingKeyboard.Button_Right]: 0,
-  [SettingKeyboard.Button_Action]: 0,
-  [SettingKeyboard.Button_Menu]: 0,
-  [SettingKeyboard.Button_Submit]: 0,
+  [SettingKeyboard.BUTTON_UP]: 0,
+  [SettingKeyboard.BUTTON_DOWN]: 0,
+  [SettingKeyboard.BUTTON_LEFT]: 0,
+  [SettingKeyboard.BUTTON_RIGHT]: 0,
+  [SettingKeyboard.BUTTON_ACTION]: 0,
+  [SettingKeyboard.BUTTON_MENU]: 0,
+  [SettingKeyboard.BUTTON_SUBMIT]: 0,
 
-  [SettingKeyboard.Alt_Button_Up]: 0,
-  [SettingKeyboard.Alt_Button_Down]: 0,
-  [SettingKeyboard.Alt_Button_Left]: 0,
-  [SettingKeyboard.Alt_Button_Right]: 0,
-  [SettingKeyboard.Alt_Button_Action]: 0,
-  [SettingKeyboard.Button_Cancel]: 0,
-  [SettingKeyboard.Alt_Button_Cancel]: 0,
-  [SettingKeyboard.Alt_Button_Menu]: 0,
-  [SettingKeyboard.Button_Stats]: 0,
-  [SettingKeyboard.Alt_Button_Stats]: 0,
-  [SettingKeyboard.Button_Cycle_Form]: 0,
-  [SettingKeyboard.Alt_Button_Cycle_Form]: 0,
-  [SettingKeyboard.Button_Cycle_Shiny]: 0,
-  [SettingKeyboard.Alt_Button_Cycle_Shiny]: 0,
-  [SettingKeyboard.Button_Cycle_Gender]: 0,
-  [SettingKeyboard.Alt_Button_Cycle_Gender]: 0,
-  [SettingKeyboard.Button_Cycle_Ability]: 0,
-  [SettingKeyboard.Alt_Button_Cycle_Ability]: 0,
-  [SettingKeyboard.Button_Cycle_Nature]: 0,
-  [SettingKeyboard.Alt_Button_Cycle_Nature]: 0,
-  [SettingKeyboard.Button_Cycle_Tera]: 0,
-  [SettingKeyboard.Alt_Button_Cycle_Tera]: 0,
-  [SettingKeyboard.Button_Speed_Up]: 0,
-  [SettingKeyboard.Alt_Button_Speed_Up]: 0,
-  [SettingKeyboard.Button_Slow_Down]: 0,
-  [SettingKeyboard.Alt_Button_Slow_Down]: 0,
-  [SettingKeyboard.Alt_Button_Submit]: 0,
+  [SettingKeyboard.ALT_BUTTON_UP]: 0,
+  [SettingKeyboard.ALT_BUTTON_DOWN]: 0,
+  [SettingKeyboard.ALT_BUTTON_LEFT]: 0,
+  [SettingKeyboard.ALT_BUTTON_RIGHT]: 0,
+  [SettingKeyboard.ALT_BUTTON_ACTION]: 0,
+  [SettingKeyboard.BUTTON_CANCEL]: 0,
+  [SettingKeyboard.ALT_BUTTON_CANCEL]: 0,
+  [SettingKeyboard.ALT_BUTTON_MENU]: 0,
+  [SettingKeyboard.BUTTON_STATS]: 0,
+  [SettingKeyboard.ALT_BUTTON_STATS]: 0,
+  [SettingKeyboard.BUTTON_CYCLE_FORM]: 0,
+  [SettingKeyboard.ALT_BUTTON_CYCLE_FORM]: 0,
+  [SettingKeyboard.BUTTON_CYCLE_SHINY]: 0,
+  [SettingKeyboard.ALT_BUTTON_CYCLE_SHINY]: 0,
+  [SettingKeyboard.BUTTON_CYCLE_GENDER]: 0,
+  [SettingKeyboard.ALT_BUTTON_CYCLE_GENDER]: 0,
+  [SettingKeyboard.BUTTON_CYCLE_ABILITY]: 0,
+  [SettingKeyboard.ALT_BUTTON_CYCLE_ABILITY]: 0,
+  [SettingKeyboard.BUTTON_CYCLE_NATURE]: 0,
+  [SettingKeyboard.ALT_BUTTON_CYCLE_NATURE]: 0,
+  [SettingKeyboard.BUTTON_CYCLE_TERA]: 0,
+  [SettingKeyboard.ALT_BUTTON_CYCLE_TERA]: 0,
+  [SettingKeyboard.BUTTON_SPEED_UP]: 0,
+  [SettingKeyboard.ALT_BUTTON_SPEED_UP]: 0,
+  [SettingKeyboard.BUTTON_SLOW_DOWN]: 0,
+  [SettingKeyboard.ALT_BUTTON_SLOW_DOWN]: 0,
+  [SettingKeyboard.ALT_BUTTON_SUBMIT]: 0,
 };
 
 export const settingKeyboardBlackList = [
-  SettingKeyboard.Button_Submit,
-  SettingKeyboard.Button_Menu,
-  SettingKeyboard.Button_Action,
-  SettingKeyboard.Button_Cancel,
-  SettingKeyboard.Button_Up,
-  SettingKeyboard.Button_Down,
-  SettingKeyboard.Button_Left,
-  SettingKeyboard.Button_Right,
+  SettingKeyboard.BUTTON_SUBMIT,
+  SettingKeyboard.BUTTON_MENU,
+  SettingKeyboard.BUTTON_ACTION,
+  SettingKeyboard.BUTTON_CANCEL,
+  SettingKeyboard.BUTTON_UP,
+  SettingKeyboard.BUTTON_DOWN,
+  SettingKeyboard.BUTTON_LEFT,
+  SettingKeyboard.BUTTON_RIGHT,
 ];
 
 export function setSettingKeyboard(setting: SettingKeyboard, value: number): boolean {
   switch (setting) {
-    case SettingKeyboard.Button_Up:
-    case SettingKeyboard.Button_Down:
-    case SettingKeyboard.Button_Left:
-    case SettingKeyboard.Button_Right:
-    case SettingKeyboard.Button_Action:
-    case SettingKeyboard.Button_Cancel:
-    case SettingKeyboard.Button_Menu:
-    case SettingKeyboard.Button_Stats:
-    case SettingKeyboard.Button_Cycle_Shiny:
-    case SettingKeyboard.Button_Cycle_Form:
-    case SettingKeyboard.Button_Cycle_Gender:
-    case SettingKeyboard.Button_Cycle_Ability:
-    case SettingKeyboard.Button_Cycle_Nature:
-    case SettingKeyboard.Button_Cycle_Tera:
-    case SettingKeyboard.Button_Speed_Up:
-    case SettingKeyboard.Button_Slow_Down:
-    case SettingKeyboard.Alt_Button_Up:
-    case SettingKeyboard.Alt_Button_Down:
-    case SettingKeyboard.Alt_Button_Left:
-    case SettingKeyboard.Alt_Button_Right:
-    case SettingKeyboard.Alt_Button_Action:
-    case SettingKeyboard.Alt_Button_Cancel:
-    case SettingKeyboard.Alt_Button_Menu:
-    case SettingKeyboard.Alt_Button_Stats:
-    case SettingKeyboard.Alt_Button_Cycle_Shiny:
-    case SettingKeyboard.Alt_Button_Cycle_Form:
-    case SettingKeyboard.Alt_Button_Cycle_Gender:
-    case SettingKeyboard.Alt_Button_Cycle_Ability:
-    case SettingKeyboard.Alt_Button_Cycle_Nature:
-    case SettingKeyboard.Alt_Button_Cycle_Tera:
-    case SettingKeyboard.Alt_Button_Speed_Up:
-    case SettingKeyboard.Alt_Button_Slow_Down:
-    case SettingKeyboard.Alt_Button_Submit:
-      if (value) {
-        if (globalScene.ui) {
-          const cancelHandler = (success = false): boolean => {
-            globalScene.ui.revertMode();
-            (globalScene.ui.getHandler() as SettingsKeyboardUiHandler).updateBindings();
-            return success;
-          };
-          globalScene.ui.setOverlayMode(UiMode.KEYBOARD_BINDING, {
-            target: setting,
-            cancelHandler: cancelHandler,
-          });
-        }
+    case SettingKeyboard.BUTTON_UP:
+    case SettingKeyboard.BUTTON_DOWN:
+    case SettingKeyboard.BUTTON_LEFT:
+    case SettingKeyboard.BUTTON_RIGHT:
+    case SettingKeyboard.BUTTON_ACTION:
+    case SettingKeyboard.BUTTON_CANCEL:
+    case SettingKeyboard.BUTTON_MENU:
+    case SettingKeyboard.BUTTON_STATS:
+    case SettingKeyboard.BUTTON_CYCLE_SHINY:
+    case SettingKeyboard.BUTTON_CYCLE_FORM:
+    case SettingKeyboard.BUTTON_CYCLE_GENDER:
+    case SettingKeyboard.BUTTON_CYCLE_ABILITY:
+    case SettingKeyboard.BUTTON_CYCLE_NATURE:
+    case SettingKeyboard.BUTTON_CYCLE_TERA:
+    case SettingKeyboard.BUTTON_SPEED_UP:
+    case SettingKeyboard.BUTTON_SLOW_DOWN:
+    case SettingKeyboard.ALT_BUTTON_UP:
+    case SettingKeyboard.ALT_BUTTON_DOWN:
+    case SettingKeyboard.ALT_BUTTON_LEFT:
+    case SettingKeyboard.ALT_BUTTON_RIGHT:
+    case SettingKeyboard.ALT_BUTTON_ACTION:
+    case SettingKeyboard.ALT_BUTTON_CANCEL:
+    case SettingKeyboard.ALT_BUTTON_MENU:
+    case SettingKeyboard.ALT_BUTTON_STATS:
+    case SettingKeyboard.ALT_BUTTON_CYCLE_SHINY:
+    case SettingKeyboard.ALT_BUTTON_CYCLE_FORM:
+    case SettingKeyboard.ALT_BUTTON_CYCLE_GENDER:
+    case SettingKeyboard.ALT_BUTTON_CYCLE_ABILITY:
+    case SettingKeyboard.ALT_BUTTON_CYCLE_NATURE:
+    case SettingKeyboard.ALT_BUTTON_CYCLE_TERA:
+    case SettingKeyboard.ALT_BUTTON_SPEED_UP:
+    case SettingKeyboard.ALT_BUTTON_SLOW_DOWN:
+    case SettingKeyboard.ALT_BUTTON_SUBMIT:
+      if (value && globalScene.ui) {
+        const cancelHandler = (success = false): boolean => {
+          globalScene.ui.revertMode();
+          (globalScene.ui.getHandler() as SettingsKeyboardUiHandler).updateBindings();
+          return success;
+        };
+        globalScene.ui.setOverlayMode(UiMode.KEYBOARD_BINDING, {
+          target: setting,
+          cancelHandler,
+        });
       }
       break;
   }

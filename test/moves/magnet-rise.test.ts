@@ -2,7 +2,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Magnet Rise", () => {
   let phaserGame: Phaser.Game;
@@ -12,10 +12,6 @@ describe("Moves - Magnet Rise", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -29,7 +25,7 @@ describe("Moves - Magnet Rise", () => {
   });
 
   it("should make the user immune to ground-type moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGNEZONE]);
+    await game.classicMode.startBattle(SpeciesId.MAGNEZONE);
 
     game.move.use(MoveId.MAGNET_RISE);
     await game.toEndOfTurn();
@@ -40,7 +36,7 @@ describe("Moves - Magnet Rise", () => {
   });
 
   it("should be removed by gravity", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGNEZONE]);
+    await game.classicMode.startBattle(SpeciesId.MAGNEZONE);
 
     game.move.use(MoveId.MAGNET_RISE);
     await game.toNextTurn();

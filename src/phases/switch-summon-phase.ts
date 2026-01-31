@@ -5,12 +5,14 @@ import { SubstituteTag } from "#data/battler-tags";
 import { allMoves } from "#data/data-lists";
 import { SpeciesFormChangeActiveTrigger } from "#data/form-change-triggers";
 import { getPokeballTintColor } from "#data/pokeball";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import { Command } from "#enums/command";
 import { SwitchType } from "#enums/switch-type";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type { Pokemon } from "#field/pokemon";
 import { SwitchEffectTransferModifier } from "#modifiers/modifier";
 import { SummonPhase } from "#phases/summon-phase";
+import { inSpeedOrder } from "#utils/speed-order-generator";
 import i18next from "i18next";
 
 export class SwitchSummonPhase extends SummonPhase {
@@ -46,19 +48,19 @@ export class SwitchSummonPhase extends SummonPhase {
       if (this.slotIndex === -1) {
         //@ts-expect-error
         this.slotIndex = globalScene.currentBattle.trainer?.getNextSummonIndex(
-          !this.fieldIndex ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER,
+          this.fieldIndex ? TrainerSlot.TRAINER_PARTNER : TrainerSlot.TRAINER,
         ); // TODO: what would be the default trainer-slot fallback?
       }
       if (this.slotIndex > -1) {
-        this.showEnemyTrainer(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER);
+        this.showEnemyTrainer(this.fieldIndex % 2 ? TrainerSlot.TRAINER_PARTNER : TrainerSlot.TRAINER);
         globalScene.pbTrayEnemy.showPbTray(globalScene.getEnemyParty());
       }
     }
 
     if (
-      !this.doReturn ||
-      (this.slotIndex !== -1 &&
-        !(this.player ? globalScene.getPlayerParty() : globalScene.getEnemyParty())[this.slotIndex])
+      !this.doReturn
+      || (this.slotIndex !== -1
+        && !(this.player ? globalScene.getPlayerParty() : globalScene.getEnemyParty())[this.slotIndex])
     ) {
       if (this.player) {
         this.switchAndSummon();
@@ -69,9 +71,9 @@ export class SwitchSummonPhase extends SummonPhase {
     }
 
     const pokemon = this.getPokemon();
-    (this.player ? globalScene.getEnemyField() : globalScene.getPlayerField()).forEach(enemyPokemon =>
-      enemyPokemon.removeTagsBySourceId(pokemon.id),
-    );
+    for (const enemyPokemon of inSpeedOrder(this.player ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER)) {
+      enemyPokemon.removeTagsBySourceId(pokemon.id);
+    }
 
     if (this.switchType === SwitchType.SWITCH || this.switchType === SwitchType.INITIAL_SWITCH) {
       const substitute = pokemon.getTag(SubstituteTag);
@@ -93,7 +95,7 @@ export class SwitchSummonPhase extends SummonPhase {
           })
         : i18next.t("battle:trainerComeBack", {
             trainerName: globalScene.currentBattle.trainer?.getName(
-              !(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER,
+              this.fieldIndex % 2 ? TrainerSlot.TRAINER_PARTNER : TrainerSlot.TRAINER,
             ),
             pokemonName: pokemon.getNameToRender(),
           }),
@@ -124,6 +126,18 @@ export class SwitchSummonPhase extends SummonPhase {
     switchedInPokemon.resetSummonData();
     switchedInPokemon.loadAssets(true);
 
+    // Even more defensive programming: Some callers will or will not make their users leave the field
+    // before this phase starts.
+    // To account for this (and avoid crashes by leaving the field during move processing),
+    // forcibly ensure the the victim is off of the field if they have not already done so.
+    // TODO: This means the switch out will occur immediately from U-turn's effect if the U-Turn user faints
+    // (instead of happening at end of turn from an empty slot).
+    // That being said, this blemish becomes completely irrelevant
+    // once #6611 burns the entire system to the ground.
+    if (this.lastPokemon.isOnField()) {
+      this.lastPokemon.leaveField(this.switchType === SwitchType.SWITCH);
+    }
+
     applyAbAttrs("PreSummonAbAttr", { pokemon: switchedInPokemon });
     applyAbAttrs("PreSwitchOutAbAttr", { pokemon: this.lastPokemon });
     if (!switchedInPokemon) {
@@ -141,14 +155,14 @@ export class SwitchSummonPhase extends SummonPhase {
       if (
         !globalScene.findModifier(
           m =>
-            m instanceof SwitchEffectTransferModifier &&
-            (m as SwitchEffectTransferModifier).pokemonId === switchedInPokemon.id,
+            m instanceof SwitchEffectTransferModifier
+            && (m as SwitchEffectTransferModifier).pokemonId === switchedInPokemon.id,
         )
       ) {
         const batonPassModifier = globalScene.findModifier(
           m =>
-            m instanceof SwitchEffectTransferModifier &&
-            (m as SwitchEffectTransferModifier).pokemonId === this.lastPokemon.id,
+            m instanceof SwitchEffectTransferModifier
+            && (m as SwitchEffectTransferModifier).pokemonId === this.lastPokemon.id,
         ) as SwitchEffectTransferModifier;
 
         if (batonPassModifier) {
@@ -214,9 +228,9 @@ export class SwitchSummonPhase extends SummonPhase {
     // Compensate for turn spent summoning/forced switch if switched out pokemon is not fainted.
     // Needed as we increment turn counters in `TurnEndPhase`.
     if (
-      currentCommand === Command.POKEMON ||
-      lastPokemonIsForceSwitchedAndNotFainted ||
-      lastPokemonHasForceSwitchAbAttr
+      currentCommand === Command.POKEMON
+      || lastPokemonIsForceSwitchedAndNotFainted
+      || lastPokemonHasForceSwitchAbAttr
     ) {
       pokemon.tempSummonData.turnCount--;
       pokemon.tempSummonData.waveTurnCount--;
@@ -241,11 +255,11 @@ export class SwitchSummonPhase extends SummonPhase {
 
     globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
     // Reverts to weather-based forms when weather suppressors (Cloud Nine/Air Lock) are switched out
-    globalScene.arena.triggerWeatherBasedFormChanges();
+    globalScene.arena.triggerWeatherBasedFormChanges(pokemon);
   }
 
   queuePostSummon(): void {
-    globalScene.phaseManager.startNewDynamicPhase("PostSummonPhase", this.getPokemon().getBattlerIndex());
+    globalScene.phaseManager.unshiftNew("PostSummonPhase", this.getPokemon().getBattlerIndex());
   }
 
   /**
@@ -270,7 +284,7 @@ export class SwitchSummonPhase extends SummonPhase {
     // "Trainer sent out XYZ!"
     return i18next.t("battle:trainerGo", {
       trainerName: globalScene.currentBattle.trainer?.getName(
-        !(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER,
+        this.fieldIndex % 2 ? TrainerSlot.TRAINER_PARTNER : TrainerSlot.TRAINER,
       ),
       pokemonName: this.getPokemon().getNameToRender(),
     });

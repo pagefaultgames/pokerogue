@@ -8,7 +8,7 @@ import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/test-utils/game-manager";
 import type { MockClock } from "#test/test-utils/mocks/mock-clock";
 import type { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Reload", () => {
   let phaserGame: Phaser.Game;
@@ -18,10 +18,6 @@ describe("Reload", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -34,7 +30,7 @@ describe("Reload", () => {
   });
 
   it("should not have RNG inconsistencies in a Classic run", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const preReloadRngState = Phaser.Math.RND.state();
 
@@ -86,7 +82,8 @@ describe("Reload", () => {
       .disableTrainerWaves()
       .moveset([MoveId.SPLASH])
       .enemyMoveset(MoveId.SPLASH);
-    await game.classicMode.startBattle(); // Apparently daily mode would override the biome
+
+    await game.classicMode.startBattle(SpeciesId.FEEBAS); // Apparently daily mode would override the biome
 
     // Transition from Wave 10 to Wave 11 in order to trigger biome switch
     game.move.select(MoveId.SPLASH);

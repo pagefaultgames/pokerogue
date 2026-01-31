@@ -1,6 +1,6 @@
 import { loggedInUser } from "#app/account";
 import { saveKey } from "#app/constants";
-import type { StarterAttributes } from "#system/game-data";
+import type { StarterAttributes } from "#types/save-data";
 import { AES, enc } from "crypto-js";
 
 /**
@@ -28,9 +28,9 @@ export function deepCopy<T extends object>(values: T): T {
 export function deepMergeSpriteData(dest: object, source: object) {
   for (const key of Object.keys(source)) {
     if (
-      !(key in dest) ||
-      typeof source[key] !== typeof dest[key] ||
-      Array.isArray(source[key]) !== Array.isArray(dest[key])
+      !(key in dest)
+      || typeof source[key] !== typeof dest[key]
+      || Array.isArray(source[key]) !== Array.isArray(dest[key])
     ) {
       continue;
     }
@@ -67,6 +67,7 @@ export function isBareObject(obj: any): boolean {
   if (typeof obj !== "object") {
     return false;
   }
+  // biome-ignore lint/suspicious/useGuardForIn: Checking a bare object should include prototype chain
   for (const _ in obj) {
     return false;
   }

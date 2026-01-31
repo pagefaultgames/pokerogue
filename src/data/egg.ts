@@ -100,7 +100,7 @@ export class Egg {
 
   private _overrideHiddenAbility: boolean;
 
-  private _eggDescriptor?: string;
+  private eggDescriptor?: string | undefined;
 
   ////
   // #endregion
@@ -117,10 +117,12 @@ export class Egg {
     return this._tier;
   }
 
+  // TODO: This is exposed solely inside egg data, remove
   get sourceType(): EggSourceType | undefined {
     return this._sourceType;
   }
 
+  // TODO: Just make the property public atp
   get hatchWaves(): number {
     return this._hatchWaves;
   }
@@ -133,14 +135,17 @@ export class Egg {
     return this._timestamp;
   }
 
+  // TODO: This is exposed solely inside egg data, remove
   get species(): SpeciesId {
     return this._species;
   }
 
+  // TODO: This is exposed solely inside egg data, remove
   get isShiny(): boolean {
     return this._isShiny;
   }
 
+  // TODO: This is exposed solely inside egg data, remove
   get variantTier(): VariantTier {
     return this._variantTier;
   }
@@ -149,6 +154,7 @@ export class Egg {
     return this._eggMoveIndex;
   }
 
+  // TODO: This is exposed solely inside egg data, remove
   get overrideHiddenAbility(): boolean {
     return this._overrideHiddenAbility;
   }
@@ -211,7 +217,7 @@ export class Egg {
       seedOverride,
     );
 
-    this._eggDescriptor = eggOptions?.eggDescriptor;
+    this.eggDescriptor = eggOptions?.eggDescriptor;
   }
 
   ////
@@ -220,9 +226,9 @@ export class Egg {
 
   public isManaphyEgg(): boolean {
     return (
-      this._species === SpeciesId.PHIONE ||
-      this._species === SpeciesId.MANAPHY ||
-      (this._tier === EggTier.COMMON && !(this._id % 204) && !this._species)
+      this._species === SpeciesId.PHIONE
+      || this._species === SpeciesId.MANAPHY
+      || (this._tier === EggTier.COMMON && !(this._id % 204) && !this._species)
     );
   }
 
@@ -324,22 +330,22 @@ export class Egg {
     switch (this.sourceType) {
       case EggSourceType.SAME_SPECIES_EGG:
         return (
-          this._eggDescriptor ??
-          i18next.t("egg:sameSpeciesEgg", {
+          this.eggDescriptor
+          ?? i18next.t("egg:sameSpeciesEgg", {
             species: getPokemonSpecies(this._species).getName(),
           })
         );
       case EggSourceType.GACHA_LEGENDARY:
         return (
-          this._eggDescriptor ??
-          `${i18next.t("egg:gachaTypeLegendary")} (${getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(this.timestamp)).getName()})`
+          this.eggDescriptor
+          ?? `${i18next.t("egg:gachaTypeLegendary")} (${getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(this.timestamp)).getName()})`
         );
       case EggSourceType.GACHA_SHINY:
-        return this._eggDescriptor ?? i18next.t("egg:gachaTypeShiny");
+        return this.eggDescriptor ?? i18next.t("egg:gachaTypeShiny");
       case EggSourceType.GACHA_MOVE:
-        return this._eggDescriptor ?? i18next.t("egg:gachaTypeMove");
+        return this.eggDescriptor ?? i18next.t("egg:gachaTypeMove");
       case EggSourceType.EVENT:
-        return this._eggDescriptor ?? i18next.t("egg:eventType");
+        return this.eggDescriptor ?? i18next.t("egg:eventType");
       default:
         console.warn("getEggTypeDescriptor case not defined. Returning default empty string");
         return "";
@@ -419,10 +425,8 @@ export class Egg {
       const rand = randSeedInt(MANAPHY_EGG_MANAPHY_RATE) !== 1;
       return rand ? SpeciesId.PHIONE : SpeciesId.MANAPHY;
     }
-    if (this.tier === EggTier.LEGENDARY && this._sourceType === EggSourceType.GACHA_LEGENDARY) {
-      if (!randSeedInt(2)) {
-        return getLegendaryGachaSpeciesForTimestamp(this.timestamp);
-      }
+    if (this.tier === EggTier.LEGENDARY && this._sourceType === EggSourceType.GACHA_LEGENDARY && !randSeedInt(2)) {
+      return getLegendaryGachaSpeciesForTimestamp(this.timestamp);
     }
 
     let minStarterValue: number;
@@ -454,9 +458,9 @@ export class Egg {
       .map(s => Number.parseInt(s) as SpeciesId)
       .filter(
         s =>
-          !pokemonPrevolutions.hasOwnProperty(s) &&
-          getPokemonSpecies(s).isObtainable() &&
-          ignoredSpecies.indexOf(s) === -1,
+          !pokemonPrevolutions.hasOwnProperty(s)
+          && getPokemonSpecies(s).isObtainable()
+          && ignoredSpecies.indexOf(s) === -1,
       );
 
     // If this is the 10th egg without unlocking something new, attempt to force it.
@@ -464,7 +468,7 @@ export class Egg {
       const lockedPool = speciesPool.filter(
         s => !globalScene.gameData.dexData[s].caughtAttr && !globalScene.gameData.eggs.some(e => e.species === s),
       );
-      if (lockedPool.length) {
+      if (lockedPool.length > 0) {
         // Skip this if everything is unlocked
         speciesPool = lockedPool;
       }
@@ -487,14 +491,14 @@ export class Egg {
      * and being the same each time
      */
     let totalWeight = 0;
-    const speciesWeights: number[] = [];
-    for (const speciesId of speciesPool) {
+    const speciesWeights = new Array<number>(speciesPool.length);
+    for (const [idx, speciesId] of speciesPool.entries()) {
       // Accounts for species that have starter costs outside of the normal range for their EggTier
       const speciesCostClamped = Phaser.Math.Clamp(speciesStarterCosts[speciesId], minStarterValue, maxStarterValue);
       const weight = Math.floor(
         (((maxStarterValue - speciesCostClamped) / (maxStarterValue - minStarterValue + 1)) * 1.5 + 1) * 100,
       );
-      speciesWeights.push(totalWeight + weight);
+      speciesWeights[idx] = totalWeight + weight;
       totalWeight += weight;
     }
 
@@ -510,8 +514,8 @@ export class Egg {
     species = species!; // tell TS compiled it's defined now!
 
     if (
-      globalScene.gameData.dexData[species].caughtAttr ||
-      globalScene.gameData.eggs.some(e => e.species === species)
+      globalScene.gameData.dexData[species].caughtAttr
+      || globalScene.gameData.eggs.some(e => e.species === species)
     ) {
       globalScene.gameData.unlockPity[this.tier] = Math.min(globalScene.gameData.unlockPity[this.tier] + 1, 10);
     } else {
@@ -567,8 +571,8 @@ export class Egg {
     globalScene.gameData.eggPity[EggTier.LEGENDARY] += 1 + tierValueOffset;
     // These numbers are roughly the 80% mark. That is, 80% of the time you'll get an egg before this gets triggered.
     if (
-      globalScene.gameData.eggPity[EggTier.LEGENDARY] >= EGG_PITY_LEGENDARY_THRESHOLD &&
-      this._tier === EggTier.COMMON
+      globalScene.gameData.eggPity[EggTier.LEGENDARY] >= EGG_PITY_LEGENDARY_THRESHOLD
+      && this._tier === EggTier.COMMON
     ) {
       this._tier = EggTier.LEGENDARY;
     } else if (globalScene.gameData.eggPity[EggTier.EPIC] >= EGG_PITY_EPIC_THRESHOLD && this._tier === EggTier.COMMON) {

@@ -5,7 +5,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 // TODO: Condense with lightning rod tests sometime
 describe("Abilities - Storm Drain", () => {
@@ -16,10 +16,6 @@ describe("Abilities - Storm Drain", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -35,11 +31,9 @@ describe("Abilities - Storm Drain", () => {
   });
 
   it("should redirect water type moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MAGIKARP);
 
-    const enemy1 = game.scene.getEnemyField()[0];
-    const enemy2 = game.scene.getEnemyField()[1];
-
+    const [enemy1, enemy2] = game.scene.getEnemyField();
     game.field.mockAbility(enemy2, AbilityId.STORM_DRAIN);
 
     game.move.select(MoveId.WATER_GUN, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
@@ -51,10 +45,9 @@ describe("Abilities - Storm Drain", () => {
 
   it("should not redirect non-water type moves", async () => {
     game.override.moveset([MoveId.SPLASH, MoveId.AERIAL_ACE]);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MAGIKARP);
 
-    const enemy1 = game.scene.getEnemyField()[0];
-    const enemy2 = game.scene.getEnemyField()[1];
+    const [enemy1, enemy2] = game.scene.getEnemyField();
 
     game.field.mockAbility(enemy2, AbilityId.STORM_DRAIN);
 
@@ -66,7 +59,7 @@ describe("Abilities - Storm Drain", () => {
   });
 
   it("should boost the user's spatk without damaging", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MAGIKARP);
 
     const enemy2 = game.scene.getEnemyField()[1];
     game.field.mockAbility(enemy2, AbilityId.STORM_DRAIN);
@@ -81,10 +74,9 @@ describe("Abilities - Storm Drain", () => {
 
   it("should not redirect moves changed from water type via ability", async () => {
     game.override.ability(AbilityId.NORMALIZE);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MAGIKARP);
 
-    const enemy1 = game.scene.getEnemyField()[0];
-    const enemy2 = game.scene.getEnemyField()[1];
+    const [enemy1, enemy2] = game.scene.getEnemyField();
     game.field.mockAbility(enemy2, AbilityId.STORM_DRAIN);
 
     game.move.select(MoveId.WATER_GUN, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
@@ -96,10 +88,9 @@ describe("Abilities - Storm Drain", () => {
 
   it("should redirect moves changed to water type via ability", async () => {
     game.override.ability(AbilityId.LIQUID_VOICE);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    const enemy1 = game.scene.getEnemyField()[0];
-    const enemy2 = game.scene.getEnemyField()[1];
+    const [enemy1, enemy2] = game.scene.getEnemyField();
 
     game.field.mockAbility(enemy2, AbilityId.STORM_DRAIN);
 

@@ -4,7 +4,7 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Nightmare", () => {
   let phaserGame: Phaser.Game;
@@ -14,10 +14,6 @@ describe("Moves - Nightmare", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -34,7 +30,7 @@ describe("Moves - Nightmare", () => {
   });
 
   it("lowers enemy hp by 1/4 each turn while asleep", async () => {
-    await game.classicMode.startBattle([SpeciesId.HYPNO]);
+    await game.classicMode.startBattle(SpeciesId.HYPNO);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     const enemyMaxHP = enemyPokemon.hp;

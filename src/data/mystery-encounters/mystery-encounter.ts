@@ -25,7 +25,8 @@ import {
   StatusEffectRequirement,
   WaveRangeRequirement,
 } from "#mystery-encounters/mystery-encounter-requirements";
-import { coerceArray, isNullOrUndefined, randSeedInt } from "#utils/common";
+import { coerceArray } from "#utils/array";
+import { randSeedInt } from "#utils/common";
 import { capitalizeFirstLetter } from "#utils/strings";
 
 export interface EncounterStartOfBattleEffect {
@@ -65,11 +66,11 @@ export interface IMysteryEncounter {
   skipToFightInput: boolean;
   preventGameStatsUpdates: boolean;
 
-  onInit?: () => boolean;
-  onVisualsStart?: () => boolean;
-  doEncounterExp?: () => boolean;
-  doEncounterRewards?: () => boolean;
-  doContinueEncounter?: () => Promise<void>;
+  onInit?: (() => boolean) | undefined;
+  onVisualsStart?: (() => boolean) | undefined;
+  doEncounterExp?: (() => boolean) | undefined;
+  doEncounterRewards?: (() => boolean) | undefined;
+  doContinueEncounter?: (() => Promise<void>) | undefined;
 
   requirements: EncounterSceneRequirement[];
   primaryPokemonRequirements: EncounterPokemonRequirement[];
@@ -169,24 +170,24 @@ export class MysteryEncounter implements IMysteryEncounter {
   // #region Event callback functions
 
   /** Event when Encounter is first loaded, use it for data conditioning */
-  onInit?: () => boolean;
+  onInit?: (() => boolean) | undefined;
   /** Event when battlefield visuals have finished sliding in and the encounter dialogue begins */
-  onVisualsStart?: () => boolean;
+  onVisualsStart?: (() => boolean) | undefined;
   /** Event triggered prior to {@linkcode CommandPhase}, during {@linkcode TurnInitPhase} */
-  onTurnStart?: () => boolean;
+  onTurnStart?: (() => boolean) | undefined;
   /** Event prior to any rewards logic in {@linkcode MysteryEncounterRewardsPhase} */
-  onRewards?: () => Promise<void>;
+  onRewards?: (() => Promise<void>) | undefined;
   /** Will provide the player party EXP before rewards are displayed for that wave */
-  doEncounterExp?: () => boolean;
+  doEncounterExp?: (() => boolean) | undefined;
   /** Will provide the player a rewards shop for that wave */
-  doEncounterRewards?: () => boolean;
+  doEncounterRewards?: (() => boolean) | undefined;
   /** Will execute callback during VictoryPhase of a continuousEncounter */
-  doContinueEncounter?: () => Promise<void>;
+  doContinueEncounter?: (() => Promise<void>) | undefined;
   /**
    * Can perform special logic when a ME battle is lost, before GameOver/battle retry prompt.
    * Should return `true` if it is treated as "real" Game Over, `false` if not.
    */
-  onGameOver?: () => boolean;
+  onGameOver?: (() => boolean) | undefined;
 
   /**
    * Requirements
@@ -201,8 +202,8 @@ export class MysteryEncounter implements IMysteryEncounter {
    */
   secondaryPokemonRequirements: EncounterPokemonRequirement[];
   excludePrimaryFromSupportRequirements: boolean;
-  primaryPokemon?: PlayerPokemon;
-  secondaryPokemon?: PlayerPokemon[];
+  primaryPokemon: PlayerPokemon | undefined;
+  secondaryPokemon: PlayerPokemon[] | undefined;
 
   // #region Post-construct / Auto-populated params
   localizationKey: string;
@@ -221,7 +222,7 @@ export class MysteryEncounter implements IMysteryEncounter {
    * Otherwise, will be undefined
    * You probably shouldn't do anything directly with this unless you have a very specific need
    */
-  introVisuals?: MysteryEncounterIntroVisuals;
+  introVisuals: MysteryEncounterIntroVisuals | undefined;
 
   // #region Flags
 
@@ -275,7 +276,7 @@ export class MysteryEncounter implements IMysteryEncounter {
   private seedOffset?: any;
 
   constructor(encounter: IMysteryEncounter | null) {
-    if (!isNullOrUndefined(encounter)) {
+    if (encounter != null) {
       Object.assign(this, encounter);
     }
     this.encounterTier = this.encounterTier ?? MysteryEncounterTier.COMMON;
@@ -300,6 +301,8 @@ export class MysteryEncounter implements IMysteryEncounter {
     this.dialogueTokens = {};
     this.enemyPartyConfigs = [];
     this.startOfBattleEffects = [];
+    this.primaryPokemon = undefined;
+    this.secondaryPokemon = undefined;
     this.introVisuals = undefined;
     this.misc = null;
     this.expMultiplier = 1;
@@ -346,7 +349,7 @@ export class MysteryEncounter implements IMysteryEncounter {
       if (activeMon.length > 0) {
         this.primaryPokemon = activeMon[0];
       } else {
-        this.primaryPokemon = globalScene.getPlayerParty().filter(p => p.isAllowedInBattle())[0];
+        this.primaryPokemon = globalScene.getPlayerParty().find(p => p.isAllowedInBattle());
       }
       return true;
     }
@@ -368,10 +371,10 @@ export class MysteryEncounter implements IMysteryEncounter {
       const truePrimaryPool: PlayerPokemon[] = [];
       const overlap: PlayerPokemon[] = [];
       for (const qp of qualified) {
-        if (!this.secondaryPokemon.includes(qp)) {
-          truePrimaryPool.push(qp);
-        } else {
+        if (this.secondaryPokemon.includes(qp)) {
           overlap.push(qp);
+        } else {
+          truePrimaryPool.push(qp);
         }
       }
       if (truePrimaryPool.length > 0) {
@@ -576,10 +579,9 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    */
 
   /**
-   * @static Defines the type of encounter which is used as an identifier, should be tied to a unique MysteryEncounterType
-   * NOTE: if new functions are added to {@linkcode MysteryEncounter} class
+   * Defines the type of encounter which is used as an identifier, should be tied to a unique MysteryEncounterType
    * @param encounterType
-   * @returns this
+   * @returns a new instance of MysteryEncounterBuilder with encounterType set
    */
   static withEncounterType(
     encounterType: MysteryEncounterType,
@@ -658,7 +660,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   withIntroSpriteConfigs(
     spriteConfigs: MysteryEncounterSpriteConfig[],
   ): this & Pick<IMysteryEncounter, "spriteConfigs"> {
-    return Object.assign(this, { spriteConfigs: spriteConfigs });
+    return Object.assign(this, { spriteConfigs });
   }
 
   withIntroDialogue(dialogue: MysteryEncounterDialogue["intro"] = []): this {
@@ -703,7 +705,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @returns
    */
   withEncounterTier(encounterTier: MysteryEncounterTier): this & Pick<IMysteryEncounter, "encounterTier"> {
-    return Object.assign(this, { encounterTier: encounterTier });
+    return Object.assign(this, { encounterTier });
   }
 
   /**
@@ -753,7 +755,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   withContinuousEncounter(
     continuousEncounter: boolean,
   ): this & Required<Pick<IMysteryEncounter, "continuousEncounter">> {
-    return Object.assign(this, { continuousEncounter: continuousEncounter });
+    return Object.assign(this, { continuousEncounter });
   }
 
   /**
@@ -807,7 +809,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   withMaxAllowedEncounters(
     maxAllowedEncounters: number,
   ): this & Required<Pick<IMysteryEncounter, "maxAllowedEncounters">> {
-    return Object.assign(this, { maxAllowedEncounters: maxAllowedEncounters });
+    return Object.assign(this, { maxAllowedEncounters });
   }
 
   /**
@@ -821,7 +823,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
     requirement: EncounterSceneRequirement,
   ): this & Required<Pick<IMysteryEncounter, "requirements">> {
     if (requirement instanceof EncounterPokemonRequirement) {
-      Error("Incorrectly added pokemon requirement as scene requirement.");
+      new Error("Incorrectly added pokemon requirement as scene requirement.");
     }
     this.requirements.push(requirement);
     return this;
@@ -864,7 +866,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
     requirement: EncounterPokemonRequirement,
   ): this & Required<Pick<IMysteryEncounter, "primaryPokemonRequirements">> {
     if (requirement instanceof EncounterSceneRequirement) {
-      Error("Incorrectly added scene requirement as pokemon requirement.");
+      new Error("Incorrectly added scene requirement as pokemon requirement.");
     }
 
     this.primaryPokemonRequirements.push(requirement);
@@ -917,7 +919,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
     excludePrimaryFromSecondaryRequirements = false,
   ): this & Required<Pick<IMysteryEncounter, "secondaryPokemonRequirements">> {
     if (requirement instanceof EncounterSceneRequirement) {
-      Error("Incorrectly added scene requirement as pokemon requirement.");
+      new Error("Incorrectly added scene requirement as pokemon requirement.");
     }
 
     this.secondaryPokemonRequirements.push(requirement);
@@ -939,7 +941,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @returns
    */
   withRewards(doEncounterRewards: () => boolean): this & Required<Pick<IMysteryEncounter, "doEncounterRewards">> {
-    return Object.assign(this, { doEncounterRewards: doEncounterRewards });
+    return Object.assign(this, { doEncounterRewards });
   }
 
   /**
@@ -953,7 +955,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @returns
    */
   withExp(doEncounterExp: () => boolean): this & Required<Pick<IMysteryEncounter, "doEncounterExp">> {
-    return Object.assign(this, { doEncounterExp: doEncounterExp });
+    return Object.assign(this, { doEncounterExp });
   }
 
   /**
@@ -974,7 +976,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @returns
    */
   withOnVisualsStart(onVisualsStart: () => boolean): this & Required<Pick<IMysteryEncounter, "onVisualsStart">> {
-    return Object.assign(this, { onVisualsStart: onVisualsStart });
+    return Object.assign(this, { onVisualsStart });
   }
 
   /**
@@ -984,7 +986,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * @returns
    */
   withCatchAllowed(catchAllowed: boolean): this & Required<Pick<IMysteryEncounter, "catchAllowed">> {
-    return Object.assign(this, { catchAllowed: catchAllowed });
+    return Object.assign(this, { catchAllowed });
   }
 
   /**
@@ -1004,7 +1006,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
     hideBattleIntroMessage: boolean,
   ): this & Required<Pick<IMysteryEncounter, "hideBattleIntroMessage">> {
     return Object.assign(this, {
-      hideBattleIntroMessage: hideBattleIntroMessage,
+      hideBattleIntroMessage,
     });
   }
 
@@ -1015,7 +1017,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   withAutoHideIntroVisuals(
     autoHideIntroVisuals: boolean,
   ): this & Required<Pick<IMysteryEncounter, "autoHideIntroVisuals">> {
-    return Object.assign(this, { autoHideIntroVisuals: autoHideIntroVisuals });
+    return Object.assign(this, { autoHideIntroVisuals });
   }
 
   /**
@@ -1027,7 +1029,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
     enterIntroVisualsFromRight: boolean,
   ): this & Required<Pick<IMysteryEncounter, "enterIntroVisualsFromRight">> {
     return Object.assign(this, {
-      enterIntroVisualsFromRight: enterIntroVisualsFromRight,
+      enterIntroVisualsFromRight,
     });
   }
 

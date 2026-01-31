@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+
+SPDX-License-Identifier: CC-BY-NC-SA-4.0
+-->
+
 # 🎵 Music
 
 ## BGM
@@ -28,6 +34,7 @@
 - Lmz (Custom Ancient Ruins, Jungle, and Lake biome music)
 - Andr06 (Custom Forest, Slum, Sea, and Fairy Cave biome music)
 - Leavannite (Custom Wasteland biome music)
+- “Big” bird_obsession (Custom Snowy Forest biome music)
 - _tresnoir
 - unveiler
 
@@ -470,13 +477,13 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 ### 🇧🇷 Portuguese (pt-BR)
 - Zé Ricardo
 
-### 🇨🇳 Chinese (zh-CN)
+### 🇨🇳 Chinese (zh-Hans)
 - dddsenic
 - mercurius
 - VittorioVeneto
 - Yonmaru
 
-### 🇹🇼 Chinese (zh-TW)
+### 🇹🇼 Chinese (zh-Hant)
 - mercurius
 - Seagull
 
@@ -485,7 +492,7 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - Rafa (es-ES)
 - GINK-SS (ko)
 - prostagma (pt-BR)
-- Ei (zh-TW)
+- Ei (zh-Hant)
 
 ## Wiki Translators
 
@@ -516,7 +523,7 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - Sushi
 - Zé Ricardo
 
-### 🇨🇳 Chinese (zh-CN)
+### 🇨🇳 Chinese (zh-Hans)
 - jw-0-
 
 ### Past contributors
@@ -528,11 +535,11 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - Telor (fr)
 - dorri (ko)
 - Little Moder_eldenring (ko)
-- Andy (zh-CN)
-- Black Feather (zh-CN)
-- itschili (zh-CN)
-- RimKnight (zh-CN)
-- Yubari (zh-CN)
+- Andy (zh-Hans)
+- Black Feather (zh-Hans)
+- itschili (zh-Hans)
+- RimKnight (zh-Hans)
+- Yubari (zh-Hans)
 
 ## 🇺🇸 English Proofreaders
 - Cheyu

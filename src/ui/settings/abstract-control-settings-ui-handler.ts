@@ -1,10 +1,10 @@
 import { globalScene } from "#app/global-scene";
-import type { InterfaceConfig } from "#app/inputs-controller";
 import { Button } from "#enums/buttons";
 import type { Device } from "#enums/devices";
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
 import { getIconWithSettingName } from "#inputs/config-handler";
+import type { CustomInterfaceConfig, InterfaceConfig, MappingSettingName } from "#types/configs/inputs";
 import { NavigationManager, NavigationMenu } from "#ui/navigation-menu";
 import { ScrollBar } from "#ui/scroll-bar";
 import { addTextObject, getTextColor } from "#ui/text";
@@ -24,7 +24,7 @@ export interface LayoutConfig {
   optionValueLabels: Phaser.GameObjects.Text[][];
   optionCursors: number[];
   keys: string[];
-  bindingSettings: Array<string>;
+  bindingSettings: string[];
 }
 /**
  * Abstract class for handling UI elements related to control settings.
@@ -51,13 +51,13 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
   protected inputsIcons: InputsIcons;
   protected navigationIcons: InputsIcons;
   // list all the setting keys used in the selected layout (because dualshock has more buttons than xbox)
-  protected keys: Array<string>;
+  protected keys: string[];
 
   // Store the specific settings related to key bindings for the current gamepad configuration.
-  protected bindingSettings: Array<string>;
+  protected bindingSettings: MappingSettingName[];
 
-  protected setting;
-  protected settingBlacklisted;
+  protected setting: Record<string, MappingSettingName>;
+  protected settingBlacklisted: string[];
   protected settingDeviceDefaults;
   protected settingDeviceOptions;
   protected configs;
@@ -324,7 +324,7 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
    *
    * @returns The active configuration for current device
    */
-  getActiveConfig(): InterfaceConfig {
+  getActiveConfig(): CustomInterfaceConfig | null {
     return globalScene.inputController.getActiveConfig(this.device);
   }
 
@@ -338,7 +338,7 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
     const activeConfig = this.getActiveConfig();
 
     // Set the UI layout for the active configuration. If unsuccessful, exit the function early.
-    if (!this.setLayout(activeConfig)) {
+    if (activeConfig == null || !this.setLayout(activeConfig)) {
       return;
     }
 
@@ -388,12 +388,12 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
         this.navigationIcons[settingName].alpha = 1;
         continue;
       }
-      const icon = globalScene.inputController?.getIconForLatestInputRecorded(settingName);
-      if (icon) {
-        const type = globalScene.inputController?.getLastSourceType();
-        this.navigationIcons[settingName].setTexture(type);
-        this.navigationIcons[settingName].setFrame(icon);
-        this.navigationIcons[settingName].alpha = 1;
+      const inputController = globalScene.inputController;
+      // cast is fine here. If it doesn't match, it will just return undefined
+      const icon = inputController?.getIconForLatestInputRecorded(settingName as MappingSettingName);
+      const type = inputController?.getLastSourceType();
+      if (icon != null && type != null) {
+        this.navigationIcons[settingName].setTexture(type).setFrame(icon).setAlpha(1);
       } else {
         this.navigationIcons[settingName].alpha = 0;
       }
@@ -544,8 +544,13 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
           }
           if (this.settingBlacklisted.includes(setting) || setting.includes("BUTTON_")) {
             success = false;
-          } else if (this.optionCursors[cursor]) {
-            success = this.setOptionCursor(cursor, this.optionCursors[cursor] - 1, true);
+          } else {
+            // Cycle to the rightmost position when at the leftmost, otherwise move left
+            success = this.setOptionCursor(
+              cursor,
+              Phaser.Math.Wrap(this.optionCursors[cursor] - 1, 0, this.optionValueLabels[cursor].length),
+              true,
+            );
           }
           break;
         case Button.RIGHT: // Move selection right within the current option set.
@@ -554,8 +559,13 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
           }
           if (this.settingBlacklisted.includes(setting) || setting.includes("BUTTON_")) {
             success = false;
-          } else if (this.optionCursors[cursor] < this.optionValueLabels[cursor].length - 1) {
-            success = this.setOptionCursor(cursor, this.optionCursors[cursor] + 1, true);
+          } else {
+            // Cycle to the leftmost position when at the rightmost, otherwise move right
+            success = this.setOptionCursor(
+              cursor,
+              Phaser.Math.Wrap(this.optionCursors[cursor] + 1, 0, this.optionValueLabels[cursor].length),
+              true,
+            );
           }
           break;
         case Button.CYCLE_FORM:

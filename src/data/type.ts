@@ -1,8 +1,29 @@
+import { ChallengeType } from "#enums/challenge-type";
 import { PokemonType } from "#enums/pokemon-type";
+import { applyChallenges } from "#utils/challenge-utils";
+import { NumberHolder } from "#utils/common";
 
+// TODO: Expand granularity to account for other multipliers - this can actually go as far as 32x at some callsites
 export type TypeDamageMultiplier = 0 | 0.125 | 0.25 | 0.5 | 1 | 2 | 4 | 8;
 
-export function getTypeDamageMultiplier(attackType: PokemonType, defType: PokemonType): TypeDamageMultiplier {
+export type SingleTypeDamageMultiplier = 0 | 0.5 | 1 | 2;
+
+/**
+ * Get the baseline type effectiveness of one `PokemonType` against another. \
+ * Accounts for Inverse Battle's reversed type effectiveness, but does not apply any other effects.
+ * @param attackType - The {@linkcode PokemonType} of the attacker
+ * @param defType - The {@linkcode PokemonType} of the defender
+ * @returns The type damage multiplier between the two types;
+ * will be either `0`, `0.5`, `1` or `2`.
+ */
+export function getTypeDamageMultiplier(attackType: PokemonType, defType: PokemonType): SingleTypeDamageMultiplier {
+  const multi = new NumberHolder(getTypeChartMultiplier(attackType, defType));
+  applyChallenges(ChallengeType.TYPE_EFFECTIVENESS, multi);
+  return multi.value as SingleTypeDamageMultiplier;
+}
+
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This simulates the Pokemon type chart with nested `switch case`s
+function getTypeChartMultiplier(attackType: PokemonType, defType: PokemonType): SingleTypeDamageMultiplier {
   if (attackType === PokemonType.UNKNOWN || defType === PokemonType.UNKNOWN) {
     return 1;
   }
@@ -263,14 +284,14 @@ export function getTypeDamageMultiplier(attackType: PokemonType, defType: Pokemo
     case PokemonType.STELLAR:
       return 1;
   }
-
-  return 1;
 }
 
 /**
  * Retrieve the color corresponding to a specific damage multiplier
- * @returns A color or undefined if the default color should be used
+ * @returns The color, or `undefined` if the default color should be used
  */
+// TODO: This is literally never called with `defense`; remove that option
+// TODO: Move these colors into a constants file instead of using magic strings
 export function getTypeDamageMultiplierColor(
   multiplier: TypeDamageMultiplier,
   side: "defense" | "offense",
@@ -286,7 +307,7 @@ export function getTypeDamageMultiplierColor(
       case 0.5:
         return "#FE8E00";
       case 1:
-        return undefined;
+        return;
       case 2:
         return "#4AA500";
       case 4:
@@ -295,25 +316,23 @@ export function getTypeDamageMultiplierColor(
         return "#52C200";
     }
   }
-  if (side === "defense") {
-    switch (multiplier) {
-      case 0:
-        return "#B1B100";
-      case 0.125:
-        return "#2DB4FF";
-      case 0.25:
-        return "#00A4FF";
-      case 0.5:
-        return "#0093FF";
-      case 1:
-        return undefined;
-      case 2:
-        return "#FE8E00";
-      case 4:
-        return "#FF7400";
-      case 8:
-        return "#FF5500";
-    }
+  switch (multiplier) {
+    case 0:
+      return "#B1B100";
+    case 0.125:
+      return "#2DB4FF";
+    case 0.25:
+      return "#00A4FF";
+    case 0.5:
+      return "#0093FF";
+    case 1:
+      return;
+    case 2:
+      return "#FE8E00";
+    case 4:
+      return "#FF7400";
+    case 8:
+      return "#FF5500";
   }
 }
 

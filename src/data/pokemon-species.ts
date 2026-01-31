@@ -1,34 +1,37 @@
+import { determineEnemySpecies } from "#app/ai/ai-species-gen";
 import type { AnySound } from "#app/battle-scene";
 import type { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
-import { uncatchableSpecies } from "#balance/biomes";
 import { speciesEggMoves } from "#balance/egg-moves";
 import { starterPassiveAbilities } from "#balance/passives";
-import type { EvolutionLevel } from "#balance/pokemon-evolutions";
-import { pokemonEvolutions, pokemonPrevolutions, SpeciesWildEvolutionDelay } from "#balance/pokemon-evolutions";
-import type { LevelMoves } from "#balance/pokemon-level-moves";
+import { pokemonEvolutions, pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import {
   pokemonFormLevelMoves,
   pokemonFormLevelMoves as pokemonSpeciesFormLevelMoves,
   pokemonSpeciesLevelMoves,
 } from "#balance/pokemon-level-moves";
 import { speciesStarterCosts } from "#balance/starters";
+import { uncatchableSpecies } from "#data/data-lists";
 import type { GrowthRate } from "#data/exp";
 import { Gender } from "#data/gender";
 import { AbilityId } from "#enums/ability-id";
 import { DexAttr } from "#enums/dex-attr";
+import { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import type { PokemonType } from "#enums/pokemon-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import type { Stat } from "#enums/stat";
+import type { Pokemon } from "#field/pokemon";
 import { loadPokemonVariantAssets } from "#sprites/pokemon-sprite";
 import { hasExpSprite } from "#sprites/sprite-utils";
 import type { Variant, VariantSet } from "#sprites/variant";
 import { populateVariantColorCache, variantColorCache, variantData } from "#sprites/variant";
-import type { StarterMoveset } from "#system/game-data";
 import type { Localizable } from "#types/locales";
-import { isNullOrUndefined, randSeedFloat, randSeedGauss, randSeedInt } from "#utils/common";
+import type { LevelMoves } from "#types/pokemon-level-moves";
+import type { StarterMoveset } from "#types/save-data";
+import type { EvolutionLevel, EvolutionLevelWithThreshold } from "#types/species-gen-types";
+import { randSeedFloat, randSeedGauss } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase, toPascalCase } from "#utils/strings";
 import { argbFromRgba, QuantizerCelebi, rgbaFromArgb } from "@material/material-color-utilities";
@@ -197,13 +200,13 @@ export abstract class PokemonSpeciesForm {
    * @returns The id of the ability
    */
   getPassiveAbility(formIndex?: number): AbilityId {
-    if (isNullOrUndefined(formIndex)) {
+    if (formIndex == null) {
       formIndex = this.formIndex;
     }
     let starterSpeciesId = this.speciesId;
     while (
-      !(starterSpeciesId in starterPassiveAbilities) ||
-      !(formIndex in starterPassiveAbilities[starterSpeciesId])
+      !(starterSpeciesId in starterPassiveAbilities)
+      || !(formIndex in starterPassiveAbilities[starterSpeciesId])
     ) {
       if (pokemonPrevolutions.hasOwnProperty(starterSpeciesId)) {
         starterSpeciesId = pokemonPrevolutions[starterSpeciesId];
@@ -221,8 +224,8 @@ export abstract class PokemonSpeciesForm {
 
   getLevelMoves(): LevelMoves {
     if (
-      pokemonSpeciesFormLevelMoves.hasOwnProperty(this.speciesId) &&
-      pokemonSpeciesFormLevelMoves[this.speciesId].hasOwnProperty(this.formIndex)
+      pokemonSpeciesFormLevelMoves.hasOwnProperty(this.speciesId)
+      && pokemonSpeciesFormLevelMoves[this.speciesId].hasOwnProperty(this.formIndex)
     ) {
       return pokemonSpeciesFormLevelMoves[this.speciesId][this.formIndex].slice(0);
     }
@@ -302,9 +305,9 @@ export abstract class PokemonSpeciesForm {
 
     const formSpriteKey = this.getFormSpriteKey(formIndex);
     const showGenderDiffs =
-      this.genderDiffs &&
-      female &&
-      ![SpeciesFormKey.MEGA, SpeciesFormKey.GIGANTAMAX].includes(formSpriteKey as SpeciesFormKey);
+      this.genderDiffs
+      && female
+      && ![SpeciesFormKey.MEGA, SpeciesFormKey.GIGANTAMAX].includes(formSpriteKey as SpeciesFormKey);
 
     return `${showGenderDiffs ? "female__" : ""}${this.speciesId}${formSpriteKey ? `-${formSpriteKey}` : ""}`;
   }
@@ -419,13 +422,13 @@ export abstract class PokemonSpeciesForm {
         case SpeciesId.BLOODMOON_URSALUNA:
           break;
         default:
-          speciesId = speciesId % 2000;
+          speciesId %= 2000;
           break;
       }
     }
     let ret = speciesId.toString();
     const forms = getPokemonSpecies(speciesId).forms;
-    if (forms.length) {
+    if (forms.length > 0) {
       if (formIndex !== undefined && formIndex >= forms.length) {
         console.warn(
           `Attempted accessing form with index ${formIndex} of species ${getPokemonSpecies(speciesId).getName()} with only ${forms.length || 0} forms`,
@@ -437,19 +440,22 @@ export abstract class PokemonSpeciesForm {
         case SpeciesFormKey.MEGA:
         case SpeciesFormKey.MEGA_X:
         case SpeciesFormKey.MEGA_Y:
+        case SpeciesFormKey.PRIMAL:
         case SpeciesFormKey.GIGANTAMAX:
         case SpeciesFormKey.GIGANTAMAX_SINGLE:
         case SpeciesFormKey.GIGANTAMAX_RAPID:
+        case SpeciesFormKey.ETERNAMAX:
         case "white":
         case "black":
         case "therian":
         case "sky":
         case "gorging":
         case "gulping":
+        case "lowkey":
         case "no-ice":
         case "hangry":
         case "crowned":
-        case "eternamax":
+        case "rapid-strike":
         case "four":
         case "droopy":
         case "stretchy":
@@ -473,6 +479,14 @@ export abstract class PokemonSpeciesForm {
           ret += `-${formKey}`;
           break;
       }
+      switch (this.speciesId) {
+        case SpeciesId.INDEEDEE:
+        case SpeciesId.OINKOLOGNE:
+          if (formKey === "female") {
+            ret += `-${formKey}`;
+            break;
+          }
+      }
     }
     return `cry/${ret}`;
   }
@@ -487,8 +501,8 @@ export abstract class PokemonSpeciesForm {
         }
       }
       if (
-        pokemonFormLevelMoves.hasOwnProperty(this.speciesId) &&
-        pokemonFormLevelMoves[this.speciesId].hasOwnProperty(this.formIndex)
+        pokemonFormLevelMoves.hasOwnProperty(this.speciesId)
+        && pokemonFormLevelMoves[this.speciesId].hasOwnProperty(this.formIndex)
       ) {
         if (!pokemonFormLevelMoves[this.speciesId][this.formIndex].find(lm => lm[0] <= 5 && lm[1] === moveId)) {
           return false;
@@ -551,7 +565,7 @@ export abstract class PokemonSpeciesForm {
     const spriteKey = this.getSpriteKey(female, formIndex, shiny, variant, back);
     globalScene.loadPokemonAtlas(spriteKey, this.getSpriteAtlasPath(female, formIndex, shiny, variant, back));
     globalScene.load.audio(this.getCryKey(formIndex), `audio/${this.getCryKey(formIndex)}.m4a`);
-    if (!isNullOrUndefined(variant)) {
+    if (variant != null) {
       await this.loadVariantColors(spriteKey, female, variant, back, formIndex);
     }
     return new Promise<void>(resolve => {
@@ -566,20 +580,20 @@ export abstract class PokemonSpeciesForm {
           end: 400,
         });
         console.warn = originalWarn;
-        if (!globalScene.anims.exists(spriteKey)) {
+        if (globalScene.anims.exists(spriteKey)) {
+          globalScene.anims.get(spriteKey).frameRate = 10;
+        } else {
           globalScene.anims.create({
             key: this.getSpriteKey(female, formIndex, shiny, variant, back),
             frames: frameNames,
             frameRate: 10,
             repeat: -1,
           });
-        } else {
-          globalScene.anims.get(spriteKey).frameRate = 10;
         }
         const spritePath = this.getSpriteAtlasPath(female, formIndex, shiny, variant, back)
           .replace("variant/", "")
           .replace(/_[1-3]$/, "");
-        if (!isNullOrUndefined(variant)) {
+        if (variant != null) {
           loadPokemonVariantAssets(spriteKey, spritePath, variant).then(() => resolve());
         }
       });
@@ -758,9 +772,9 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
   }
 
   getName(formIndex?: number): string {
-    if (formIndex !== undefined && this.forms.length) {
+    if (formIndex !== undefined && this.forms.length > 0) {
       const form = this.forms[formIndex];
-      let key: string | null;
+      let key: string | undefined;
       switch (form.formKey) {
         case SpeciesFormKey.MEGA:
         case SpeciesFormKey.PRIMAL:
@@ -772,15 +786,11 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
         default:
           if (form.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1) {
             key = "gigantamax";
-          } else {
-            key = null;
           }
       }
 
       if (key) {
-        return i18next.t(`battlePokemonForm:${toCamelCase(key)}`, {
-          pokemonName: this.name,
-        });
+        return i18next.t(`battlePokemonForm:${toCamelCase(key)}`, { pokemonName: this.name });
       }
     }
     return this.name;
@@ -791,7 +801,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
    * @returns A randomly rolled gender based on this Species' {@linkcode malePercent}.
    */
   generateGender(): Gender {
-    if (isNullOrUndefined(this.malePercent)) {
+    if (this.malePercent == null) {
       return Gender.GENDERLESS;
     }
 
@@ -846,9 +856,9 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
         ? i18next.t(`battlePokemonForm:${toCamelCase(formKey)}`, { pokemonName: this.name })
         : i18next.t(`pokemonForm:battleForm.${toCamelCase(formKey)}`);
     } else if (
-      region === Region.NORMAL ||
-      (this.speciesId === SpeciesId.GALAR_DARMANITAN && formIndex > 0) ||
-      this.speciesId === SpeciesId.PALDEA_TAUROS
+      region === Region.NORMAL
+      || (this.speciesId === SpeciesId.GALAR_DARMANITAN && formIndex > 0)
+      || this.speciesId === SpeciesId.PALDEA_TAUROS
     ) {
       // More special cases can be added here
       const i18key = `pokemonForm:${speciesName}${formText}`;
@@ -891,182 +901,36 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
       allowEvolving,
       false,
       (isBoss ? PartyMemberStrength.WEAKER : PartyMemberStrength.AVERAGE) + (gameMode?.isEndless ? 1 : 0),
+      isBoss ? EvoLevelThresholdKind.NORMAL : EvoLevelThresholdKind.WILD,
     );
   }
 
+  /**
+   * Determine which species of Pokémon to use for a given level in a trainer battle.
+   *
+   * @see {@linkcode getSpeciesForLevel}
+   */
   getTrainerSpeciesForLevel(
     level: number,
     allowEvolving = false,
-    strength: PartyMemberStrength,
-    currentWave = 0,
+    strength: PartyMemberStrength = PartyMemberStrength.WEAKER,
+    encounterKind: EvoLevelThresholdKind = EvoLevelThresholdKind.NORMAL,
   ): SpeciesId {
-    return this.getSpeciesForLevel(level, allowEvolving, true, strength, currentWave);
+    return this.getSpeciesForLevel(level, allowEvolving, true, strength, encounterKind);
   }
 
   /**
-   * @see {@linkcode getSpeciesForLevel} uses an ease in and ease out sine function:
-   * @see {@link https://easings.net/#easeInSine}
-   * @see {@link https://easings.net/#easeOutSine}
-   * Ease in is similar to an exponential function with slower growth, as in, x is directly related to y, and increase in y is higher for higher x.
-   * Ease out looks more similar to a logarithmic function shifted to the left. It's still a direct relation but it plateaus instead of increasing in growth.
-   *
-   * This function is used to calculate the x given to these functions, which is used for evolution chance.
-   *
-   * First is maxLevelDiff, which is a denominator for evolution chance for mons without wild evolution delay.
-   * This means a lower value of x will lead to a higher evolution chance.
-   *
-   * It's also used for preferredMinLevel, which is used when an evolution delay exists.
-   * The calculation with evolution delay is a weighted average of the easeIn and easeOut functions where preferredMinLevel is the denominator.
-   * This also means a lower value of x will lead to a higher evolution chance.
-   * @param strength {@linkcode PartyMemberStrength} The strength of the party member in question
-   * @returns {@linkcode number} The level difference from expected evolution level tolerated for a mon to be unevolved. Lower value = higher evolution chance.
+   * Determine which species of Pokémon to use for a given level
+   * @see {@linkcode determineEnemySpecies}
    */
-  private getStrengthLevelDiff(strength: PartyMemberStrength): number {
-    switch (Math.min(strength, PartyMemberStrength.STRONGER)) {
-      case PartyMemberStrength.WEAKEST:
-        return 60;
-      case PartyMemberStrength.WEAKER:
-        return 40;
-      case PartyMemberStrength.WEAK:
-        return 20;
-      case PartyMemberStrength.AVERAGE:
-        return 8;
-      case PartyMemberStrength.STRONG:
-        return 4;
-      default:
-        return 0;
-    }
-  }
-
   getSpeciesForLevel(
     level: number,
     allowEvolving = false,
     forTrainer = false,
     strength: PartyMemberStrength = PartyMemberStrength.WEAKER,
-    currentWave = 0,
+    encounterKind: EvoLevelThresholdKind = EvoLevelThresholdKind.NORMAL,
   ): SpeciesId {
-    const prevolutionLevels = this.getPrevolutionLevels();
-
-    if (prevolutionLevels.length) {
-      for (let pl = prevolutionLevels.length - 1; pl >= 0; pl--) {
-        const prevolutionLevel = prevolutionLevels[pl];
-        if (level < prevolutionLevel[1]) {
-          return prevolutionLevel[0];
-        }
-      }
-    }
-
-    if (
-      // If evolutions shouldn't happen, add more cases here :)
-      !allowEvolving ||
-      !pokemonEvolutions.hasOwnProperty(this.speciesId) ||
-      (globalScene.currentBattle?.waveIndex === 20 &&
-        globalScene.gameMode.isClassic &&
-        globalScene.currentBattle.trainer)
-    ) {
-      return this.speciesId;
-    }
-
-    const evolutions = pokemonEvolutions[this.speciesId];
-
-    const easeInFunc = Phaser.Tweens.Builders.GetEaseFunction("Sine.easeIn");
-    const easeOutFunc = Phaser.Tweens.Builders.GetEaseFunction("Sine.easeOut");
-
-    const evolutionPool: Map<number, SpeciesId> = new Map();
-    let totalWeight = 0;
-    let noEvolutionChance = 1;
-
-    for (const ev of evolutions) {
-      if (ev.level > level) {
-        continue;
-      }
-
-      let evolutionChance: number;
-
-      const evolutionSpecies = getPokemonSpecies(ev.speciesId);
-      const isRegionalEvolution = !this.isRegional() && evolutionSpecies.isRegional();
-
-      if (!forTrainer && isRegionalEvolution) {
-        evolutionChance = 0;
-      } else {
-        if (ev.wildDelay === SpeciesWildEvolutionDelay.NONE) {
-          if (strength === PartyMemberStrength.STRONGER) {
-            evolutionChance = 1;
-          } else {
-            const maxLevelDiff = this.getStrengthLevelDiff(strength); //The maximum distance from the evolution level tolerated for the mon to not evolve
-            const minChance: number = 0.875 - 0.125 * strength;
-
-            evolutionChance = Math.min(
-              minChance + easeInFunc(Math.min(level - ev.level, maxLevelDiff) / maxLevelDiff) * (1 - minChance),
-              1,
-            );
-          }
-        } else {
-          const preferredMinLevel = Math.max(ev.level - 1 + ev.wildDelay! * this.getStrengthLevelDiff(strength), 1); // TODO: is the bang correct?
-          let evolutionLevel = Math.max(ev.level > 1 ? ev.level : Math.floor(preferredMinLevel / 2), 1);
-
-          if (ev.level <= 1 && pokemonPrevolutions.hasOwnProperty(this.speciesId)) {
-            const prevolutionLevel = pokemonEvolutions[pokemonPrevolutions[this.speciesId]].find(
-              ev => ev.speciesId === this.speciesId,
-            )!.level; // TODO: is the bang correct?
-            if (prevolutionLevel > 1) {
-              evolutionLevel = prevolutionLevel;
-            }
-          }
-
-          evolutionChance = Math.min(
-            0.65 * easeInFunc(Math.min(Math.max(level - evolutionLevel, 0), preferredMinLevel) / preferredMinLevel) +
-              0.35 *
-                easeOutFunc(
-                  Math.min(Math.max(level - evolutionLevel, 0), preferredMinLevel * 2.5) / (preferredMinLevel * 2.5),
-                ),
-            1,
-          );
-        }
-      }
-
-      //TODO: Adjust templates and delays so we don't have to hardcode it
-      /* TEMPORARY! (Most) Trainers shouldn't be using unevolved Pokemon by the third gym leader / wave 80. Exceptions to this include Breeders, whose large teams are balanced by the use of weaker pokemon */
-      if (currentWave >= 80 && forTrainer && strength > PartyMemberStrength.WEAKER) {
-        evolutionChance = 1;
-        noEvolutionChance = 0;
-      }
-
-      if (evolutionChance > 0) {
-        if (isRegionalEvolution) {
-          evolutionChance /= evolutionSpecies.isRareRegional() ? 16 : 4;
-        }
-
-        totalWeight += evolutionChance;
-
-        evolutionPool.set(totalWeight, ev.speciesId);
-
-        if (1 - evolutionChance < noEvolutionChance) {
-          noEvolutionChance = 1 - evolutionChance;
-        }
-      }
-    }
-
-    if (noEvolutionChance === 1 || randSeedFloat() <= noEvolutionChance) {
-      return this.speciesId;
-    }
-
-    const randValue = evolutionPool.size === 1 ? 0 : randSeedInt(totalWeight);
-
-    for (const weight of evolutionPool.keys()) {
-      if (randValue < weight) {
-        // TODO: this entire function is dumb and should be changed, adding a `!` here for now until then
-        return getPokemonSpecies(evolutionPool.get(weight)!).getSpeciesForLevel(
-          level,
-          true,
-          forTrainer,
-          strength,
-          currentWave,
-        );
-      }
-    }
-
-    return this.speciesId;
+    return determineEnemySpecies(this, level, allowEvolving, forTrainer, strength, encounterKind);
   }
 
   getEvolutionLevels(): EvolutionLevel[] {
@@ -1090,21 +954,39 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
     return evolutionLevels;
   }
 
-  getPrevolutionLevels(): EvolutionLevel[] {
-    const prevolutionLevels: EvolutionLevel[] = [];
+  /**
+   * Get all prevolution levels for this species
+   *
+   * @remarks
+   * `withThresholds` is used to return the evolution level thresholds for the species, to be used
+   * when generating
+   *
+   * @param withThresholds - Whether to include evolution level thresholds in the returned data; default `false`
+   */
+  getPrevolutionLevels(withThresholds: true): EvolutionLevelWithThreshold[];
+  getPrevolutionLevels(withThresholds: false): EvolutionLevel[];
+  getPrevolutionLevels(
+    withThresholds?: boolean,
+  ): typeof withThresholds extends false ? EvolutionLevel[] : EvolutionLevelWithThreshold[];
+  getPrevolutionLevels(withThresholds = false): EvolutionLevelWithThreshold[] | EvolutionLevel[] {
+    const prevolutionLevels: (EvolutionLevel | EvolutionLevelWithThreshold)[] = [];
 
     const allEvolvingPokemon = Object.keys(pokemonEvolutions);
     for (const p of allEvolvingPokemon) {
+      const speciesId = Number.parseInt(p) as SpeciesId;
       for (const e of pokemonEvolutions[p]) {
         if (
-          e.speciesId === this.speciesId &&
-          (!this.forms.length || !e.evoFormKey || e.evoFormKey === this.forms[this.formIndex].formKey) &&
-          prevolutionLevels.every(pe => pe[0] !== Number.parseInt(p))
+          e.speciesId === this.speciesId
+          && (this.forms.length === 0 || !e.evoFormKey || e.evoFormKey === this.forms[this.formIndex].formKey)
+          && prevolutionLevels.every(pe => pe[0] !== speciesId)
         ) {
-          const speciesId = Number.parseInt(p) as SpeciesId;
           const level = e.level;
-          prevolutionLevels.push([speciesId, level]);
-          const subPrevolutionLevels = getPokemonSpecies(speciesId).getPrevolutionLevels();
+          if (withThresholds && e.evoLevelThreshold) {
+            prevolutionLevels.push([speciesId, level, e.evoLevelThreshold]);
+          } else {
+            prevolutionLevels.push([speciesId, level]);
+          }
+          const subPrevolutionLevels = getPokemonSpecies(speciesId).getPrevolutionLevels(withThresholds);
           for (const spl of subPrevolutionLevels) {
             prevolutionLevels.push(spl);
           }
@@ -1135,9 +1017,13 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
           prevolutionLevels[l][0],
           Math.min(
             Math.max(
-              evolution?.level! +
-                Math.round(randSeedGauss(0.5, 1 + levelDiff * 0.2) * Math.max(evolution?.wildDelay!, 0.5) * 5) -
-                1,
+              evolution?.level!
+                + Math.round(
+                  randSeedGauss(0.5, 1 + levelDiff * 0.2)
+                    * Math.max(evolution?.evoLevelThreshold?.[EvoLevelThresholdKind.WILD] ?? 0, 0.5)
+                    * 5,
+                )
+                - 1,
               2,
               evolution?.level!,
             ),
@@ -1146,15 +1032,17 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
         ]); // TODO: are those bangs correct?
       }
       const lastPrevolutionLevel = ret[prevolutionLevels.length - 1][1];
-      const evolution = pokemonEvolutions[prevolutionLevels[prevolutionLevels.length - 1][0]].find(
-        e => e.speciesId === this.speciesId,
-      );
+      const evolution = pokemonEvolutions[prevolutionLevels.at(-1)![0]].find(e => e.speciesId === this.speciesId);
       ret.push([
         this.speciesId,
         Math.min(
           Math.max(
-            lastPrevolutionLevel +
-              Math.round(randSeedGauss(0.5, 1 + levelDiff * 0.2) * Math.max(evolution?.wildDelay!, 0.5) * 5),
+            lastPrevolutionLevel
+              + Math.round(
+                randSeedGauss(0.5, 1 + levelDiff * 0.2)
+                  * Math.max(evolution?.evoLevelThreshold?.[EvoLevelThresholdKind.WILD] ?? 0, 0.5)
+                  * 5,
+              ),
             lastPrevolutionLevel + 1,
             evolution?.level!,
           ),
@@ -1176,16 +1064,16 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
     const mythical = this.mythical;
     return species => {
       return (
-        (subLegendary ||
-          legendary ||
-          mythical ||
-          (pokemonEvolutions.hasOwnProperty(species.speciesId) === hasEvolution &&
-            pokemonPrevolutions.hasOwnProperty(species.speciesId) === hasPrevolution)) &&
-        species.subLegendary === subLegendary &&
-        species.legendary === legendary &&
-        species.mythical === mythical &&
-        (this.isTrainerForbidden() || !species.isTrainerForbidden()) &&
-        species.speciesId !== SpeciesId.DITTO
+        (subLegendary
+          || legendary
+          || mythical
+          || (pokemonEvolutions.hasOwnProperty(species.speciesId) === hasEvolution
+            && pokemonPrevolutions.hasOwnProperty(species.speciesId) === hasPrevolution))
+        && species.subLegendary === subLegendary
+        && species.legendary === legendary
+        && species.mythical === mythical
+        && (this.isTrainerForbidden() || !species.isTrainerForbidden())
+        && species.speciesId !== SpeciesId.DITTO
       );
     };
   }
@@ -1202,19 +1090,19 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
   }
 
   getFormSpriteKey(formIndex?: number) {
-    if (this.forms.length && formIndex !== undefined && formIndex >= this.forms.length) {
+    if (this.forms.length > 0 && formIndex !== undefined && formIndex >= this.forms.length) {
       console.warn(
         `Attempted accessing form with index ${formIndex} of species ${this.getName()} with only ${this.forms.length || 0} forms`,
       );
       formIndex = Math.min(formIndex, this.forms.length - 1);
     }
-    return this.forms?.length ? this.forms[formIndex || 0].getFormSpriteKey() : "";
+    return this.forms?.length > 0 ? this.forms[formIndex || 0].getFormSpriteKey() : "";
   }
 
   /**
-   * Generates a {@linkcode bigint} corresponding to the maximum unlocks possible for this species,
+   * Generates a {@linkcode BigInt} corresponding to the maximum unlocks possible for this species,
    * taking into account if the species has a male/female gender, and which variants are implemented.
-   * @returns {@linkcode bigint} Maximum unlocks, can be compared with {@linkcode DexEntry.caughtAttr}.
+   * @returns The maximum unlocks for the species as a `BigInt`; can be compared with {@linkcode DexEntry.caughtAttr}.
    */
   getFullUnlocksData(): bigint {
     let caughtAttr = 0n;

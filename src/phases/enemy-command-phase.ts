@@ -3,6 +3,7 @@ import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Command } from "#enums/command";
+import type { EnemyPokemon } from "#field/pokemon";
 import { FieldPhase } from "#phases/field-phase";
 
 /**
@@ -38,9 +39,9 @@ export class EnemyCommandPhase extends FieldPhase {
     const trainer = battle.trainer;
 
     if (
-      battle.double &&
-      enemyPokemon.hasAbility(AbilityId.COMMANDER) &&
-      enemyPokemon.getAlly()?.getTag(BattlerTagType.COMMANDED)
+      battle.double
+      && enemyPokemon.hasAbility(AbilityId.COMMANDER)
+      && enemyPokemon.getAlly()?.getTag(BattlerTagType.COMMANDED)
     ) {
       this.skipTurn = true;
     }
@@ -54,13 +55,13 @@ export class EnemyCommandPhase extends FieldPhase {
      * member's matchup score is 3x the active enemy's score (or 2x for "boss" trainers),
      * the enemy will switch to that Pokemon.
      */
-    if (trainer && !enemyPokemon.getMoveQueue().length) {
+    if (trainer && enemyPokemon.getMoveQueue().length === 0) {
       const opponents = enemyPokemon.getOpponents();
 
       if (!enemyPokemon.isTrapped()) {
         const partyMemberScores = trainer.getPartyMemberMatchupScores(enemyPokemon.trainerSlot, true);
 
-        if (partyMemberScores.length) {
+        if (partyMemberScores.length > 0) {
           const matchupScores = opponents.map(opp => enemyPokemon.getMatchupScore(opp));
           const matchupScore = matchupScores.reduce((total, score) => (total += score), 0) / matchupScores.length;
 
@@ -89,7 +90,7 @@ export class EnemyCommandPhase extends FieldPhase {
     /** Select a move to use (and a target to use it against, if applicable) */
     const nextMove = enemyPokemon.getNextMove();
 
-    if (trainer?.shouldTera(enemyPokemon)) {
+    if (this.shouldTera(enemyPokemon)) {
       globalScene.currentBattle.preTurnCommands[this.fieldIndex + BattlerIndex.ENEMY] = { command: Command.TERA };
     }
 
@@ -102,6 +103,10 @@ export class EnemyCommandPhase extends FieldPhase {
     globalScene.currentBattle.enemySwitchCounter = Math.max(globalScene.currentBattle.enemySwitchCounter - 1, 0);
 
     this.end();
+  }
+
+  private shouldTera(pokemon: EnemyPokemon): boolean {
+    return !!globalScene.currentBattle.trainer?.shouldTera(pokemon);
   }
 
   getFieldIndex(): number {

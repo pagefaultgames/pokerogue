@@ -12,7 +12,7 @@ import { CIVILIZATION_ENCOUNTER_BIOMES } from "#mystery-encounters/mystery-encou
 import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
 import { GameManager } from "#test/test-utils/game-manager";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/departmentStoreSale";
 const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
@@ -44,10 +44,6 @@ describe("Department Store Sale - Mystery Encounter", () => {
       biomeMap.set(biome, [MysteryEncounterType.DEPARTMENT_STORE_SALE]);
     });
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(biomeMap);
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   it("should have the correct properties", async () => {
@@ -139,8 +135,8 @@ describe("Department Store Sale - Mystery Encounter", () => {
       expect(modifierSelectHandler.options.length).toEqual(3);
       for (const option of modifierSelectHandler.options) {
         expect(
-          option.modifierTypeOption.type.id.includes("PP_UP") ||
-            option.modifierTypeOption.type.id.includes("BASE_STAT_BOOSTER"),
+          option.modifierTypeOption.type.id.includes("PP_UP")
+            || option.modifierTypeOption.type.id.includes("BASE_STAT_BOOSTER"),
         ).toBeTruthy();
       }
     });
@@ -179,8 +175,8 @@ describe("Department Store Sale - Mystery Encounter", () => {
       expect(modifierSelectHandler.options.length).toEqual(5);
       for (const option of modifierSelectHandler.options) {
         expect(
-          option.modifierTypeOption.type.id.includes("DIRE_HIT") ||
-            option.modifierTypeOption.type.id.includes("TEMP_STAT_STAGE_BOOSTER"),
+          option.modifierTypeOption.type.id.includes("DIRE_HIT")
+            || option.modifierTypeOption.type.id.includes("TEMP_STAT_STAGE_BOOSTER"),
         ).toBeTruthy();
       }
     });

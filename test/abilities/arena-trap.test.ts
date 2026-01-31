@@ -9,7 +9,7 @@ import { GameManager } from "#test/test-utils/game-manager";
 import type { PartyUiHandler } from "#ui/party-ui-handler";
 import i18next from "i18next";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Arena Trap", () => {
   let phaserGame: Phaser.Game;
@@ -19,10 +19,6 @@ describe("Abilities - Arena Trap", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -41,7 +37,7 @@ describe("Abilities - Arena Trap", () => {
   // TODO: Figure out how to wrangle the UI into not timing out
   it.todo("should interrupt player switch attempt and display message", async () => {
     game.override.battleStyle("single");
-    await game.classicMode.startBattle([SpeciesId.DUGTRIO, SpeciesId.GOTHITELLE]);
+    await game.classicMode.startBattle(SpeciesId.DUGTRIO, SpeciesId.GOTHITELLE);
 
     const enemy = game.field.getEnemyPokemon();
 
@@ -57,7 +53,7 @@ describe("Abilities - Arena Trap", () => {
 
     await game.phaseInterceptor.to("CommandPhase");
 
-    expect(game.textInterceptor.logs).toContain(
+    expect(game).toHaveShownMessage(
       i18next.t("abilityTriggers:arenaTrap", {
         pokemonNameWithAffix: getPokemonNameWithAffix(enemy),
         abilityName: allAbilities[AbilityId.ARENA_TRAP].name,
@@ -67,14 +63,14 @@ describe("Abilities - Arena Trap", () => {
 
   it("should guarantee double battle with any one LURE", async () => {
     game.override.startingModifier([{ name: "LURE" }]).startingWave(2);
-    await game.classicMode.startBattle([SpeciesId.DUGTRIO]);
+    await game.classicMode.startBattle(SpeciesId.DUGTRIO);
 
     expect(game.scene.getEnemyField()).toHaveLength(2);
   });
 
   it("should lift if pokemon with this ability leaves the field", async () => {
     game.override.battleStyle("single");
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();

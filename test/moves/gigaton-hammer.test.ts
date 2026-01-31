@@ -3,7 +3,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Gigaton Hammer", () => {
   let phaserGame: Phaser.Game;
@@ -15,16 +15,11 @@ describe("Moves - Gigaton Hammer", () => {
     });
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
       .enemySpecies(SpeciesId.MAGIKARP)
-      .starterSpecies(SpeciesId.FEEBAS)
       .moveset([MoveId.GIGATON_HAMMER])
       .startingLevel(10)
       .enemyLevel(100)
@@ -33,7 +28,7 @@ describe("Moves - Gigaton Hammer", () => {
   });
 
   it("can't be used two turns in a row", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const enemy1 = game.field.getEnemyPokemon();
 
@@ -46,17 +41,17 @@ describe("Moves - Gigaton Hammer", () => {
     await game.doKillOpponents();
     await game.toNextWave();
 
+    // Attempting to use Gigaton Hammer again should result in struggle
     game.move.select(MoveId.GIGATON_HAMMER);
     await game.toNextTurn();
 
-    const enemy2 = game.field.getEnemyPokemon();
-
-    expect(enemy2.hp).toBe(enemy2.getMaxHp());
+    const player = game.field.getPlayerPokemon();
+    expect(player.getLastXMoves()[0]?.move).toBe(MoveId.STRUGGLE);
   });
 
   it("can be used again if recalled and sent back out", async () => {
     game.override.startingWave(4);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const enemy1 = game.field.getEnemyPokemon();
 

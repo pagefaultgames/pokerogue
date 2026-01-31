@@ -6,7 +6,7 @@ import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Shields Down", () => {
   const redMeteorForm = 0;
@@ -22,10 +22,6 @@ describe("Abilities - Shields Down", () => {
     });
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
@@ -35,46 +31,44 @@ describe("Abilities - Shields Down", () => {
       .enemyMoveset(MoveId.SPLASH);
   });
 
-  it.each([0, 1, 2, 3, 4, 5, 6])(
-    "should change from Meteor Form to Core Form on entry/turn end based on HP - form index %i",
-    async meteorIndex => {
-      game.override.starterForms({
-        // Start in meteor form
-        [SpeciesId.MINIOR]: meteorIndex,
-      });
+  it.each([0, 1, 2, 3, 4, 5, 6])(//
+  "should change from Meteor Form to Core Form on entry/turn end based on HP - form index %i", async meteorIndex => {
+    game.override.starterForms({
+      // Start in meteor form
+      [SpeciesId.MINIOR]: meteorIndex,
+    });
 
-      await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MINIOR]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.MINIOR);
 
-      const minior = game.scene.getPlayerParty()[1];
-      expect(minior.formIndex).toBe(meteorIndex);
-      minior.hp *= 0.49;
+    const minior = game.scene.getPlayerParty()[1];
+    expect(minior.formIndex).toBe(meteorIndex);
+    minior.hp *= 0.49;
 
-      // Switch to minior - should change to Core due to being <50% HP
-      game.doSwitchPokemon(1);
-      await game.toNextTurn();
+    // Switch to minior - should change to Core due to being <50% HP
+    game.doSwitchPokemon(1);
+    await game.toNextTurn();
 
-      expect(minior.formIndex).toBe(meteorIndex + 7);
+    expect(minior.formIndex).toBe(meteorIndex + 7);
 
-      // Use roost to regain 50% HP; should transform back into Meteor Form at turn end
-      game.move.use(MoveId.ROOST);
-      await game.toNextTurn();
+    // Use roost to regain 50% HP; should transform back into Meteor Form at turn end
+    game.move.use(MoveId.ROOST);
+    await game.toNextTurn();
 
-      expect(minior.formIndex).toBe(meteorIndex);
-    },
-  );
+    expect(minior.formIndex).toBe(meteorIndex);
+  });
 
   it("should revert to base form on arena reset, even when fainted", async () => {
     game.override.startingWave(4).starterForms({
       [SpeciesId.MINIOR]: redCoreForm,
     });
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MINIOR]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.MINIOR);
 
     const minior = game.scene.getPlayerParty()[1];
     expect(minior.formIndex).toBe(redCoreForm);
 
     minior.hp = 0;
     minior.status = new Status(StatusEffect.FAINT);
-    expect(minior.isFainted()).toBe(true);
+    expect(minior).toHaveFainted();
 
     game.move.use(MoveId.SPLASH);
     await game.doKillOpponents();
@@ -89,7 +83,7 @@ describe("Abilities - Shields Down", () => {
   it("should ignore Mold Breaker", async () => {
     game.override.enemyAbility(AbilityId.MOLD_BREAKER).enemyMoveset([MoveId.SPORE]);
 
-    await game.classicMode.startBattle([SpeciesId.MINIOR]);
+    await game.classicMode.startBattle(SpeciesId.MINIOR);
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.SPORE);
@@ -99,7 +93,7 @@ describe("Abilities - Shields Down", () => {
   });
 
   it("should ignore non-volatile status effects & Yawn in Meteor Form", async () => {
-    await game.classicMode.startBattle([SpeciesId.MINIOR]);
+    await game.classicMode.startBattle(SpeciesId.MINIOR);
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.NUZZLE);
@@ -118,7 +112,7 @@ describe("Abilities - Shields Down", () => {
   });
 
   it("should not ignore non-volatile status effects & Yawn in Core Form", async () => {
-    await game.classicMode.startBattle([SpeciesId.MINIOR]);
+    await game.classicMode.startBattle(SpeciesId.MINIOR);
 
     // Drop minior to below half to prevent reverting to Core Form
     const minior = game.field.getPlayerPokemon();
@@ -144,7 +138,7 @@ describe("Abilities - Shields Down", () => {
 
   // TODO: Gravity does not make a Pokemon be considered as "grounded" for hazards
   it.todo("should be poisoned by toxic spikes when Gravity is active before changing forms", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MINIOR]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.MINIOR);
 
     // Change minior to Core form in a state where it would revert to Meteor form on switch
     const minior = game.scene.getPlayerParty()[1];
@@ -166,7 +160,7 @@ describe("Abilities - Shields Down", () => {
   it("should not ignore volatile status effects", async () => {
     game.override.enemyMoveset([MoveId.CONFUSE_RAY]);
 
-    await game.classicMode.startBattle([SpeciesId.MINIOR]);
+    await game.classicMode.startBattle(SpeciesId.MINIOR);
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.CONFUSE_RAY);
@@ -176,15 +170,15 @@ describe("Abilities - Shields Down", () => {
     expect(game.field.getPlayerPokemon()).toHaveBattlerTag(BattlerTagType.CONFUSED);
   });
 
-  // TODO: The `NoTransformAbilityAbAttr` attribute is not checked anywhere, so this test cannot pass.
-  // TODO: Move this to a transform test
-  it.todo("should not activate when transformed", async () => {
+  it("should not activate when transformed", async () => {
     game.override.enemyAbility(AbilityId.IMPOSTER);
-    await game.classicMode.startBattle([SpeciesId.MINIOR]);
+    await game.classicMode.startBattle(SpeciesId.MINIOR);
 
     game.move.use(MoveId.SPORE);
     await game.toEndOfTurn();
 
-    expect(game.field.getEnemyPokemon()).toHaveStatusEffect(StatusEffect.SLEEP);
+    const karp = game.field.getEnemyPokemon();
+    expect(karp).not.toHaveAbilityApplied(AbilityId.SHIELDS_DOWN);
+    expect(karp).toHaveStatusEffect(StatusEffect.SLEEP);
   });
 });

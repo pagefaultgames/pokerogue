@@ -5,7 +5,7 @@ import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import { isBetween, toDmgValue } from "#utils/common";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Analytic", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +15,6 @@ describe("Abilities - Analytic", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -36,7 +32,7 @@ describe("Abilities - Analytic", () => {
   });
 
   it("should increase damage if the user moves last", async () => {
-    await game.classicMode.startBattle([SpeciesId.ARCEUS]);
+    await game.classicMode.startBattle(SpeciesId.ARCEUS);
 
     const enemy = game.field.getEnemyPokemon();
 
@@ -54,9 +50,9 @@ describe("Abilities - Analytic", () => {
 
   it("should increase damage only if the user moves last in doubles", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.GENGAR, SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.GENGAR, SpeciesId.SHUCKLE);
 
-    const [enemy] = game.scene.getEnemyField();
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.TACKLE, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, 1);
