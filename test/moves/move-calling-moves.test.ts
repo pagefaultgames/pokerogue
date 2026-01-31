@@ -10,9 +10,10 @@ import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
-import { NaturePowerAttr } from "#moves/move";
+import { type CopyMoveAttr, NaturePowerAttr } from "#moves/move";
 import { GameManager } from "#test/test-utils/game-manager";
-import type { CallMoveAttrWithBanlist, MoveAttrString } from "#types/move-types";
+import type { CallMoveAttrWithBanlist, MoveAttrMap } from "#types/move-types";
+import type { InferKeys } from "#types/type-helpers";
 import { getEnumValues } from "#utils/enums";
 import { toTitleCase } from "#utils/strings";
 import i18next from "i18next";
@@ -51,8 +52,9 @@ describe("Moves - Move-calling Moves", () => {
 
     beforeEach(() => {
       spy = vi.spyOn(
-        allMoves[MoveId.NATURE_POWER].getAttrs("NaturePowerAttr")[0] as NaturePowerAttr &
-          Pick<{ getMoveId: NaturePowerAttr["getMoveId"] }, "getMoveId">,
+        allMoves[MoveId.NATURE_POWER].getAttrs("NaturePowerAttr")[0] as NaturePowerAttr & {
+          getMoveId: NaturePowerAttr["getMoveId"];
+        },
         "getMoveId",
       );
     });
@@ -109,10 +111,11 @@ describe("Moves - Move-calling Moves", () => {
     });
   });
 
+  type CallMoveAttrWithBanlistKeys = InferKeys<MoveAttrMap, CallMoveAttrWithBanlist>;
   describe.each<{
     name: string;
     move: MoveId;
-    attrName: MoveAttrString;
+    attrName: CallMoveAttrWithBanlistKeys;
     /** A callback that will ensure the selected move is used. */
     callback: (m: MoveId) => void;
   }>([
@@ -158,15 +161,15 @@ describe("Moves - Move-calling Moves", () => {
         game.scene.currentBattle.lastMove = m;
       },
     },
-  ])("$name", ({ move, attrName, callback }) => {
+  ])("General checks - $name", ({ move, attrName, callback }) => {
     let attr: CallMoveAttrWithBanlist;
     let banlist: ReadonlySet<MoveId>;
     let getMoveSpy: MockInstance<CallMoveAttrWithBanlist["getMove"]>;
 
     beforeEach(() => {
-      attr = allMoves[move].getAttrs(attrName)[0] as CallMoveAttrWithBanlist;
+      attr = allMoves[move].getAttrs(attrName)[0];
       banlist = attr["invalidMoves"];
-      getMoveSpy = vi.spyOn(attr as typeof attr & Pick<{ getMove: (typeof attr)["getMove"] }, "getMove">, "getMove");
+      getMoveSpy = vi.spyOn(attr as typeof attr & { getMove: (typeof attr)["getMove"] }, "getMove");
 
       // Barring other things, ensure Sleep Talk (at least) has that particular move in its moveset
       game.override.moveset(move);
@@ -371,22 +374,22 @@ describe("Moves - Move-calling Moves", () => {
     { name: "Copycat", move: MoveId.COPYCAT },
     { name: "Mirror Move", move: MoveId.MIRROR_MOVE },
   ])("$name", ({ move }) => {
-    let attr: CallMoveAttrWithBanlist;
+    let attr: CopyMoveAttr;
     let banlist: ReadonlySet<MoveId>;
-    let getMoveSpy: MockInstance<CallMoveAttrWithBanlist["getMove"]>;
+    let getMoveSpy: MockInstance<CopyMoveAttr["getMove"]>;
 
     beforeEach(() => {
-      attr = allMoves[move].getAttrs("CopyMoveAttr")[0] as CallMoveAttrWithBanlist;
+      attr = allMoves[move].getAttrs("CopyMoveAttr")[0];
       banlist = attr["invalidMoves"];
-      getMoveSpy = vi.spyOn(attr as typeof attr & Pick<{ getMove: (typeof attr)["getMove"] }, "getMove">, "getMove");
+      getMoveSpy = vi.spyOn(attr as typeof attr & { getMove: CopyMoveAttr["getMove"] }, "getMove");
     });
 
-    it.runIf(move === MoveId.MIRROR_MOVE)("should always target the Mirror Move recipient if possible", async () => {
+    it.runIf(move === MoveId.MIRROR_MOVE)("should copy the last move used by the target against it", async () => {
       game.override.battleStyle("double");
       await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
       const feebas = game.field.getPlayerPokemon();
-      // Mock RNG functions to return high rolls (ie last eligible target)
+      // Mock RNG functions to return high rolls (i.e. last eligible target)
       // This will force the test to fail if MM were to use the same random targeting algorithm
       // as Copycat/etc
       vi.spyOn(feebas, "randBattleSeedInt").mockReturnValue(1);
@@ -404,17 +407,24 @@ describe("Moves - Move-calling Moves", () => {
         targets: [BattlerIndex.ENEMY],
       });
 
-      // 2nd turn: Copy a move that physically cannot target the Mirror Move recipient
+      // 2nd turn: Copy a self-targeted move that cannot target the Mirror Move recipient
       game.move.use(MoveId.MIRROR_MOVE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
-      await game.move.forceEnemyMove(MoveId.TACKLE, BattlerIndex.ENEMY_2);
+      await game.move.forceEnemyMove(MoveId.SWORDS_DANCE);
       await game.move.forceEnemyMove(MoveId.SPLASH);
       await game.setTurnOrder([BattlerIndex.ENEMY_2, BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.toEndOfTurn();
+
+      expect(feebas).toHaveUsedMove({ move: MoveId.MIRROR_MOVE, useMode: MoveUseMode.NORMAL });
+      expect(feebas).toHaveUsedMove({
+        move: MoveId.SWORDS_DANCE,
+        useMode: MoveUseMode.FOLLOW_UP,
+        targets: [BattlerIndex.PLAYER],
+      });
+      expect(feebas).toHaveStatStage(Stat.ATK, 2);
     });
 
     it.runIf(move === MoveId.COPYCAT)(
-      "should not update the lastMove tracker for move failures in sequence 2",
-      {},
+      "should copy the last move successfully used by anyone, skipping ones that failed before sequence 2",
       async () => {
         await game.classicMode.startBattle(SpeciesId.FEEBAS);
 

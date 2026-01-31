@@ -7586,7 +7586,8 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
  * Abstract attribute used for all move-calling moves, containing common functionality
  * for executing called moves.
  *
- * Notably, called moves are _not_ considered as having been executed (for the purposes of most moveset-related effects)
+ * Notably, moves called by this attribute are _not_ considered as having been "executed"
+ * (for the purposes of most moveset-related effects).
  */
 export abstract class CallMoveAttr extends OverrideMoveEffectAttr {
   /**
@@ -7597,6 +7598,7 @@ export abstract class CallMoveAttr extends OverrideMoveEffectAttr {
    * Should never be `true` if the move is set to target the user!
    */
   protected targetEnemy: boolean;
+
   constructor(
     /**
      * Whether to target the called move at the move's selected target if possible; default `false`.
