@@ -239,7 +239,7 @@ describe("Moves - Roost", () => {
 
   // TODO: This interaction is extremely broken due to a lack of granularity with type querying effects
   it.todo("should respect prior type change effects when determining the user's new typing", async () => {
-    await game.classicMode.startBattle([SpeciesId.TORNADUS]);
+    await game.classicMode.startBattle(SpeciesId.TORNADUS);
 
     const tornadus = game.field.getPlayerPokemon();
     tornadus.hp = 1;
@@ -266,7 +266,7 @@ describe("Moves - Roost", () => {
     { name: "Trick-or-Treat", move: MoveId.TRICK_OR_TREAT, type: PokemonType.GHOST },
     { name: "Forest's Curse", move: MoveId.FORESTS_CURSE, type: PokemonType.GRASS },
   ])("should ignore added types from $name when changing Flying to Normal type", async ({ move, type }) => {
-    await game.classicMode.startBattle([SpeciesId.TORNADUS]);
+    await game.classicMode.startBattle(SpeciesId.TORNADUS);
 
     const tornadus = game.field.getPlayerPokemon();
     tornadus.hp = 1;
