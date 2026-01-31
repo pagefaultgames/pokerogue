@@ -89,7 +89,7 @@ you can strike it out with the `~` character to mark them as not applicable.
   - [ ] **I'm using `beta` as my base branch**
   - [ ] **The current branch is not named `beta`, `main` or the name of another long-lived feature branch**
   - [ ] I have provided a clear explanation of the changes within the PR description
-  - [ ] The PR title matches the Conventional Commits format (as described in [CONTRIBUTING.md](../CONTRIBUTING.md#pr-title-format))
+  - [ ] The PR title matches the Conventional Commits format (as described in [CONTRIBUTING.md](https://github.com/pagefaultgames/pokerogue/blob/beta/CONTRIBUTING.md#pr-title-format))
 - [ ] The PR is self-contained and cannot be split into smaller PRs
 - [ ] There is no overlap with another open PR
 - The PR has been confirmed to work correctly:
