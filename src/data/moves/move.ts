@@ -11375,7 +11375,7 @@ export function initMoves() {
     new AttackMove(MoveId.POWER_TRIP, PokemonType.DARK, MoveCategory.PHYSICAL, 20, 100, 10, -1, 0, 7) //
       .attr(PositiveStatStagePowerAttr),
     new AttackMove(MoveId.BURN_UP, PokemonType.FIRE, MoveCategory.SPECIAL, 130, 100, 5, -1, 0, 7)
-      // Pass `true` to `ForDefend` as it should fail if the user is terastallized to a type that is not FIRE
+      // fail if the user is not currently Fire-type (including being Terastallized to Stellar)
       .condition(user => user.isOfType(PokemonType.FIRE, true, true), 2)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
       .attr(AddBattlerTagAttr, BattlerTagType.BURNED_UP, true, false)

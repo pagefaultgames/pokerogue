@@ -1939,139 +1939,94 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Evaluate and return this Pokemon's typing.
    * @param includeTeraType - (Default `true`) Whether to use this Pokemon's tera type if Terastallized; default `true`
-   * @param forDefend - (Default `false`) Whether this Pokemon is currently receiving an attack; default `false`
+   * @param returnOriginalTypesIfStellar - (Default `false`) Whether to treat this Pokemon as its original types if it is currently {@linkcode PokemonType.STELLAR | Tera Stellar}
    * @param ignoreOverride - (Default `false`) Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform} and similar effects; default `false`
    * @param useIllusion - (Default `false`) Whether to consider an active illusion; default `false`
    * @returns A non-empty array of {@linkcode PokemonType}s corresponding to this Pokemon's typing (real or perceived).
    */
   public getTypes(
     includeTeraType = true,
-    forDefend = false,
+    returnOriginalTypesIfStellar = false,
     ignoreOverride = false,
     useIllusion = false,
   ): Mutable<NonEmptyTuple<PokemonType>> {
-    const types: PokemonType[] = [];
     const teraType = this.getTeraType();
     // Stellar tera does nothing defensively (uses original types)
-    const shouldUseTeraStellar = !(forDefend && teraType === PokemonType.STELLAR);
+    const shouldUseTeraStellar = !(returnOriginalTypesIfStellar && teraType === PokemonType.STELLAR);
 
     if (includeTeraType && this.isTerastallized && shouldUseTeraStellar) {
-      // Defensive Teras override everything else
-      if (forDefend) {
-        return [teraType];
-      }
-      types.push(teraType);
-    } else {
-      types.push(...this.getNormalTyping(ignoreOverride, useIllusion));
+      return [teraType];
     }
 
-    // become UNKNOWN if no types are present, or remove it if other types are present
-    // _sighs_... If only there was a clean way to tell TS that this makes `types` always nonempty
-    if (types.length === 0) {
-      types.push(PokemonType.UNKNOWN);
-    } else if (types.length > 1) {
-      const index = types.indexOf(PokemonType.UNKNOWN);
-      if (index !== -1) {
-        types.splice(index, 1);
-      }
+    const types = new Set(this.getBaseTypes(ignoreOverride, useIllusion));
+
+    // become UNKNOWN if no types are present, or remove it if other types are present.
+    // TODO: Move this after the added type checks once Roost is refactored to check removed types correctly
+    if (types.size === 0) {
+      types.add(PokemonType.UNKNOWN);
+    } else if (types.size > 1) {
+      types.delete(PokemonType.UNKNOWN);
     }
 
     // check type added to Pokemon from moves like Forest's Curse or Trick Or Treat.
-    if (!ignoreOverride && this.summonData.addedType && !types.includes(this.summonData.addedType)) {
-      types.push(this.summonData.addedType);
+    if (!ignoreOverride && this.summonData.addedType) {
+      types.add(this.summonData.addedType);
     }
 
-    // If both types are the same (can happen in weird custom typing scenarios), reduce to single type
-    if (types.length > 1 && types[0] === types[1]) {
-      types.splice(0, 1);
-    }
-
-    return types as Mutable<NonEmptyTuple<PokemonType>>;
+    return Array.from(types) as Mutable<NonEmptyTuple<PokemonType>>;
   }
 
   /**
    * Helper to {@linkcode getTypes} that handles computing a Pokemon's normal typing.
    */
-  private getNormalTyping(ignoreOverride = false, useIllusion = false): PokemonType[] {
-    if (!ignoreOverride && this.summonData.types?.length > 0 && (!this.summonData.illusion || !useIllusion)) {
+  private getBaseTypes(ignoreOverride = false, useIllusion = false): PokemonType[] {
+    if (!ignoreOverride && this.summonData.types.length > 0 && (!this.summonData.illusion || !useIllusion)) {
       return this.summonData.types;
     }
 
-    const types: PokemonType[] = [];
-
     const speciesForm = this.getSpeciesForm(ignoreOverride, useIllusion);
     const fusionSpeciesForm = this.getFusionSpeciesForm(ignoreOverride, useIllusion);
-    const hasCustomTypes = this.customPokemonData.types?.length > 0;
 
-    // First type, checking for "permanently changed" types from ME
-    const firstType =
-      hasCustomTypes && this.customPokemonData.types[0] !== PokemonType.UNKNOWN
-        ? this.customPokemonData.types[0]
-        : speciesForm.type1;
-    types.push(firstType);
+    // TODO: This `map` call is only needed due to the fact that these arrays use -1 as defaults
+    const customTypes = this.customPokemonData.types.map(t => (t === PokemonType.UNKNOWN ? undefined : t));
+
+    const firstType = customTypes[0] ?? speciesForm.type1;
+    const secondCustomType = customTypes[1] ?? speciesForm.type2 ?? undefined;
 
     // Second type
-    let secondType: PokemonType = PokemonType.UNKNOWN;
+    let secondType: PokemonType | undefined = secondCustomType;
 
     if (fusionSpeciesForm) {
       // Check if the fusion Pokemon also has permanent changes from ME when determining the fusion types
-      const fusionType1 =
-        this.fusionCustomPokemonData?.types
-        && this.fusionCustomPokemonData.types.length > 0
-        && this.fusionCustomPokemonData.types[0] !== PokemonType.UNKNOWN
-          ? this.fusionCustomPokemonData.types[0]
-          : fusionSpeciesForm.type1;
-      const fusionType2 =
-        this.fusionCustomPokemonData?.types
-        && this.fusionCustomPokemonData.types.length > 1
-        && this.fusionCustomPokemonData.types[1] !== PokemonType.UNKNOWN
-          ? this.fusionCustomPokemonData.types[1]
-          : fusionSpeciesForm.type2;
+      const fusionCustomTypes =
+        this.fusionCustomPokemonData?.types.map(t => (t === PokemonType.UNKNOWN ? undefined : t)) ?? [];
+
+      const fusionType1 = fusionCustomTypes[0] ?? fusionSpeciesForm.type1;
+      const fusionType2 = fusionCustomTypes[1] ?? fusionSpeciesForm.type2;
 
       // Assign second type if the fusion can provide one
-      if (fusionType2 !== null && fusionType2 !== types[0]) {
-        secondType = fusionType2;
-      } else if (fusionType1 !== types[0]) {
-        secondType = fusionType1;
-      }
-
-      if (secondType === PokemonType.UNKNOWN && fusionType2 == null) {
-        // If second pokemon was monotype and shared its primary type
-        secondType =
-          hasCustomTypes
-          && this.customPokemonData.types.length > 1
-          && this.customPokemonData.types[1] !== PokemonType.UNKNOWN
-            ? this.customPokemonData.types[1]
-            : (speciesForm.type2 ?? PokemonType.UNKNOWN);
-      }
-    } else {
-      // If not a fusion, just get the second type from the species, checking for permanent changes from ME
-      secondType =
-        hasCustomTypes
-        && this.customPokemonData.types.length > 1
-        && this.customPokemonData.types[1] !== PokemonType.UNKNOWN
-          ? this.customPokemonData.types[1]
-          : (speciesForm.type2 ?? PokemonType.UNKNOWN);
+      secondType = fusionType1 ?? fusionType2;
     }
 
-    if (secondType !== PokemonType.UNKNOWN) {
-      types.push(secondType);
-    }
-
-    return types;
+    return [firstType, secondType ?? PokemonType.UNKNOWN];
   }
 
   /**
    * Check if this Pokemon's typing includes the specified type.
    * @param type - The {@linkcode PokemonType} to check
    * @param includeTeraType - Whether to use this Pokemon's tera type if Terastallized; default `true`
-   * @param forDefend - Whether this Pokemon is currently receiving an attack; default `false`
+   * @param returnOriginalTypesIfStellar - (Default `false`) Whether to treat this Pokemon as its original types if it is currently {@linkcode PokemonType.STELLAR | Tera Stellar}
    * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform} and similar effects; default `false`
    * @returns Whether this Pokemon is of the specified type.
    */
   // TODO: Make `forDefend` default to `true`
-  public isOfType(type: PokemonType, includeTeraType = true, forDefend = false, ignoreOverride = false): boolean {
-    return this.getTypes(includeTeraType, forDefend, ignoreOverride).includes(type);
+  public isOfType(
+    type: PokemonType,
+    includeTeraType = true,
+    returnOriginalTypesIfStellar = false,
+    ignoreOverride = false,
+  ): boolean {
+    return this.getTypes(includeTeraType, returnOriginalTypesIfStellar, ignoreOverride).includes(type);
   }
 
   /**
