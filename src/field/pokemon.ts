@@ -495,12 +495,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return decodeNickname(this.nickname);
     }
 
-    if (this.isFusion() && !prependFormName) {
-      return getFusedSpeciesName(this.species.getName(), this.fusionSpecies!.getName());
-    }
-
     if (prependFormName) {
       return this.name;
+    }
+    
+    if (this.isFusion()) {
+      return getFusedSpeciesName(this.species.getName(), this.fusionSpecies!.getName());
     }
 
     return this.species.getName();
