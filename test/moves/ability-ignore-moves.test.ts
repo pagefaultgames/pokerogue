@@ -32,28 +32,37 @@ describe("Moves - Ability-Ignoring Moves", () => {
     { name: "Sunsteel Strike", move: MoveId.SUNSTEEL_STRIKE },
     { name: "Moongeist Beam", move: MoveId.MOONGEIST_BEAM },
     { name: "Photon Geyser", move: MoveId.PHOTON_GEYSER },
-  ])("$name should ignore ignorable enemy abilities during move use", async ({ move }) => {
-    await game.classicMode.startBattle(SpeciesId.NECROZMA);
+  ])("$name should ignore all other Pokemon's ignorable abilities during move use", async ({ move }) => {
+    game.override.battleStyle("double");
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    const player = game.field.getPlayerPokemon();
-    const enemy = game.field.getEnemyPokemon();
+    const feebas = game.field.getPlayerPokemon();
+    const [karp1, karp2] = game.scene.getEnemyField();
+    game.field.mockAbility(karp2, AbilityId.FRIEND_GUARD);
 
-    game.move.use(move);
+    game.move.use(move, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(game.scene.arena.ignoreAbilities).toBe(true);
-    expect(game.scene.arena.ignoringEffectSource).toBe(player.getBattlerIndex());
+    expect(game.scene.arena.ignoringEffectSource).toBe(feebas.getBattlerIndex());
 
     await game.toEndOfTurn();
 
     // should bypass sturdy OKHO prevention
     expect(game.scene.arena.ignoreAbilities).toBe(false);
-    expect(enemy).not.toHaveAbilityApplied(AbilityId.STURDY);
-    expect(enemy.isFainted()).toBe(true);
+    expect(karp1).not.toHaveAbilityApplied(AbilityId.STURDY);
+    expect(karp2).not.toHaveAbilityApplied(AbilityId.FRIEND_GUARD);
+    expect(karp1).toHaveFainted();
   });
 
-  it("should not ignore enemy abilities when called by move-calling moves", async () => {
-    await game.classicMode.startBattle(SpeciesId.MILOTIC);
+  // TODO: Move test from flower gift's file over here
+  it.todo("should ignore the abilities of the user's allies");
+
+  it("should not ignore abilities when called by move-calling moves", async () => {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+    const feebas = game.field.getPlayerPokemon();
+    const karp = game.field.getEnemyPokemon();
 
     game.move.use(MoveId.METRONOME);
     game.move.forceMetronomeMove(MoveId.PHOTON_GEYSER, true);
@@ -62,8 +71,13 @@ describe("Moves - Ability-Ignoring Moves", () => {
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    expect(game.field.getPlayerPokemon()).toHaveUsedMove(MoveId.PHOTON_GEYSER);
+    expect(feebas).toHaveUsedMove(MoveId.PHOTON_GEYSER);
     expect(game.scene.arena.ignoreAbilities).toBe(false);
+
+    await game.toEndOfTurn();
+
+    expect(karp).toHaveAbilityApplied(AbilityId.STURDY);
+    expect(karp).not.toHaveFainted();
   });
 
   // TODO: Verify this behavior on cart

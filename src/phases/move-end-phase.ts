@@ -11,10 +11,10 @@ export class MoveEndPhase extends PokemonPhase {
    * Whether the current move was a follow-up attack or not.
    * Used to prevent ticking down Encore and similar effects when copying moves.
    */
-  private wasFollowUp: boolean;
+  private readonly wasFollowUp: boolean;
 
   /** Targets from the preceding MovePhase */
-  private targets: Pokemon[];
+  private readonly targets: Pokemon[];
   constructor(battlerIndex: BattlerIndex, targets: Pokemon[], wasFollowUp = false) {
     super(battlerIndex);
 

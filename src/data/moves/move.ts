@@ -7585,6 +7585,8 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
 /**
  * Abstract attribute used for all move-calling moves, containing common functionality
  * for executing called moves.
+ *
+ * Notably, called moves are _not_ considered as having been executed (for the purposes of most moveset-related effects)
  */
 export abstract class CallMoveAttr extends OverrideMoveEffectAttr {
   /**
@@ -7667,7 +7669,7 @@ export class NaturePowerAttr extends CallMoveAttr {
   }
 
   protected override getMove(user: Pokemon): MoveId {
-    const moveId = this.getMoveIdForTerrain(globalScene.arena.getTerrainType(), globalScene.arena.biomeType);
+    const moveId = this.getMoveId(globalScene.arena.getTerrainType(), globalScene.arena.biomeType);
     globalScene.phaseManager.queueMessage(
       i18next.t("moveTriggers:naturePowerUse", {
         pokemonName: getPokemonNameWithAffix(user),
@@ -7684,9 +7686,9 @@ export class NaturePowerAttr extends CallMoveAttr {
    * Made into a separate function for both brevity and to allow for easier unit testing.
    * @param terrain - The arena's current {@linkcode TerrainType}
    * @param biome - The arena's current {@linkcode BiomeId}
-   * @returns The {@linkcode MoveId} that will be used.
+   * @returns The {@linkcode MoveId} that will be called and used.
    */
-  private getMoveIdForTerrain(terrain: TerrainType, biome: BiomeId): MoveId {
+  private getMoveId(terrain: TerrainType, biome: BiomeId): MoveId {
     switch (terrain) {
       case TerrainType.ELECTRIC:
         return MoveId.THUNDERBOLT;
@@ -7698,7 +7700,8 @@ export class NaturePowerAttr extends CallMoveAttr {
         return MoveId.MOONBLAST;
     }
 
-    // No terrain means check biome
+    terrain satisfies TerrainType.NONE;
+
     switch (biome) {
       case BiomeId.TOWN:
         return MoveId.ROUND;
@@ -7770,14 +7773,12 @@ export class NaturePowerAttr extends CallMoveAttr {
         return MoveId.CHARGE_BEAM;
       case BiomeId.END:
         return MoveId.ETERNABEAM;
-      default:
-        // Fallback for no match
-        biome satisfies never;
-        console.warn(
-          `NaturePowerAttr lacks defined move to use for current biome ${toTitleCase(BiomeId[biome])}!\nConsider adding an appropriate move to the attribute's selection table.`,
-        );
-        return MoveId.TRI_ATTACK;
     }
+    biome satisfies never;
+    console.warn(
+      `NaturePowerAttr lacks defined move to use for current biome ${toTitleCase(BiomeId[biome])}!\nConsider adding an appropriate move to the attribute's selection table.`,
+    );
+    return MoveId.TRI_ATTACK;
   }
 }
 
@@ -7789,7 +7790,8 @@ export class NaturePowerAttr extends CallMoveAttr {
  * subclasses must ensure their `getMove` functions are consistent when called during `getCondition`
  * and `apply`.
  *
- * This restriction will likely be lifted once move-calling moves are pushed earlier in the failure sequence.
+ * This restriction will likely be lifted once move-calling moves are pushed earlier in the failure sequence
+ * (when both can be done in 1 step).
  */
 abstract class CallMoveAttrWithBanlist extends CallMoveAttr {
   /**
@@ -7808,14 +7810,14 @@ abstract class CallMoveAttrWithBanlist extends CallMoveAttr {
   }
 
   /**
-   * Check whether a given move is selectable by this attribute, based on its currnet banlist.
+   * Check whether a given move is selectable by this attribute, based on its current banlist. \
    * `MoveId.NONE` and unimplemented moves are always disallowed, as are ones barred by a challenge.
    * @param move - The {@linkcode MoveId} to check
    * @returns Whether `move` can be called successfully.
    * @sealed
    * @privateRemarks
    * Subclasses' `getMove` functions should return `MoveId.NONE` if they would otherwise be forced
-   * to use a disallowed move.
+   * to use a disallowed move for correct move failure interactions.
    */
   protected isMoveAllowed(move: MoveId): boolean {
     const valid = new BooleanHolder(

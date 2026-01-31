@@ -46,21 +46,21 @@ describe("Moves - Move-calling Moves", () => {
   describe("Nature Power", () => {
     // Note: We have to access the prototype here since `allMoves` isn't initialized yet when we want to
     // determine the test case names
-    const getMoveIdForTerrain = NaturePowerAttr.prototype["getMoveIdForTerrain"];
-    let spy: MockInstance<typeof getMoveIdForTerrain>;
+    const getMoveId = NaturePowerAttr.prototype["getMoveId"];
+    let spy: MockInstance<typeof getMoveId>;
 
     beforeEach(() => {
       spy = vi.spyOn(
         allMoves[MoveId.NATURE_POWER].getAttrs("NaturePowerAttr")[0] as NaturePowerAttr &
-          Pick<{ getMoveIdForTerrain: NaturePowerAttr["getMoveIdForTerrain"] }, "getMoveIdForTerrain">,
-        "getMoveIdForTerrain",
+          Pick<{ getMoveId: NaturePowerAttr["getMoveId"] }, "getMoveId">,
+        "getMoveId",
       );
     });
 
     it.each(
       getEnumValues(BiomeId).map(biome => ({
-        move: getMoveIdForTerrain(TerrainType.NONE, biome),
-        moveName: toTitleCase(MoveId[getMoveIdForTerrain(TerrainType.NONE, biome)]),
+        move: getMoveId(TerrainType.NONE, biome),
+        moveName: toTitleCase(MoveId[getMoveId(TerrainType.NONE, biome)]),
         biome,
         biomeName: BiomeId[biome],
       })),
@@ -85,8 +85,8 @@ describe("Moves - Move-calling Moves", () => {
     // TODO: Add after terrain override is added
     it.todo.each(
       getEnumValues(TerrainType).map(terrain => ({
-        move: getMoveIdForTerrain(terrain, BiomeId.TOWN),
-        moveName: toTitleCase(MoveId[getMoveIdForTerrain(terrain, BiomeId.TOWN)]),
+        move: getMoveId(terrain, BiomeId.TOWN),
+        moveName: toTitleCase(MoveId[getMoveId(terrain, BiomeId.TOWN)]),
         terrain,
         terrainName: TerrainType[terrain],
       })),
@@ -413,29 +413,32 @@ describe("Moves - Move-calling Moves", () => {
     });
 
     it.runIf(move === MoveId.COPYCAT)(
-      "should not update the lastMove tracker for move failures in sequence 2", {}, async () => {
-    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+      "should not update the lastMove tracker for move failures in sequence 2",
+      {},
+      async () => {
+        await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    game.move.use(MoveId.COPYCAT);
-    await game.move.forceEnemyMove(MoveId.DOUBLE_SHOCK);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.toNextTurn();
+        game.move.use(MoveId.COPYCAT);
+        await game.move.forceEnemyMove(MoveId.DOUBLE_SHOCK);
+        await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+        await game.toNextTurn();
 
-    const feebas = game.field.getPlayerPokemon();
-    const karp = game.field.getEnemyPokemon();
+        const feebas = game.field.getPlayerPokemon();
+        const karp = game.field.getEnemyPokemon();
 
-    // move should have shown text and consumed PP, but failed before being tracked by Copycat
-    expect(karp).toHaveUsedMove({ move: MoveId.DOUBLE_SHOCK, result: MoveResult.FAIL });
-    expect(karp).toHaveUsedPP(MoveId.DOUBLE_SHOCK, 1);
-    expect(game).toHaveShownMessage(
-      i18next.t("battle:useMove", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(karp),
-        moveName: allMoves[MoveId.DOUBLE_SHOCK].name,
-      }),
+        // move should have shown text and consumed PP, but failed before being tracked by Copycat
+        expect(karp).toHaveUsedMove({ move: MoveId.DOUBLE_SHOCK, result: MoveResult.FAIL });
+        expect(karp).toHaveUsedPP(MoveId.DOUBLE_SHOCK, 1);
+        expect(game).toHaveShownMessage(
+          i18next.t("battle:useMove", {
+            pokemonNameWithAffix: getPokemonNameWithAffix(karp),
+            moveName: allMoves[MoveId.DOUBLE_SHOCK].name,
+          }),
+        );
+        expect(game.scene.currentBattle.lastMove).toBe(MoveId.NONE);
+        expect(feebas).toHaveUsedMove({ move: MoveId.COPYCAT, result: MoveResult.FAIL });
+      },
     );
-    expect(game.scene.currentBattle.lastMove).toBe(MoveId.NONE);
-    expect(feebas).toHaveUsedMove({ move: MoveId.COPYCAT, result: MoveResult.FAIL });
-  });
 
     it("should fail if no prior moves have been made", async () => {
       await game.classicMode.startBattle(SpeciesId.FEEBAS);
