@@ -34,7 +34,7 @@ describe("Moves - Ability-Ignoring Moves", () => {
     { name: "Moongeist Beam", move: MoveId.MOONGEIST_BEAM },
     { name: "Photon Geyser", move: MoveId.PHOTON_GEYSER },
   ])("$name should ignore enemy abilities during move use", async ({ move }) => {
-    await game.classicMode.startBattle([SpeciesId.NECROZMA]);
+    await game.classicMode.startBattle(SpeciesId.NECROZMA);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
@@ -51,7 +51,7 @@ describe("Moves - Ability-Ignoring Moves", () => {
   });
 
   it("should not ignore enemy abilities when called by Metronome", async () => {
-    await game.classicMode.startBattle([SpeciesId.MILOTIC]);
+    await game.classicMode.startBattle(SpeciesId.MILOTIC);
     game.move.forceMetronomeMove(MoveId.PHOTON_GEYSER, true);
 
     const enemy = game.field.getEnemyPokemon();
@@ -65,7 +65,7 @@ describe("Moves - Ability-Ignoring Moves", () => {
   it("should not ignore enemy abilities when called by Mirror Move", async () => {
     game.override.moveset(MoveId.MIRROR_MOVE).enemyMoveset(MoveId.SUNSTEEL_STRIKE);
 
-    await game.classicMode.startBattle([SpeciesId.MILOTIC]);
+    await game.classicMode.startBattle(SpeciesId.MILOTIC);
 
     const enemy = game.field.getEnemyPokemon();
     game.move.select(MoveId.MIRROR_MOVE);
@@ -79,7 +79,7 @@ describe("Moves - Ability-Ignoring Moves", () => {
   // TODO: Verify this behavior on cart
   it("should ignore enemy abilities when called by Instruct", async () => {
     game.override.moveset([MoveId.SUNSTEEL_STRIKE, MoveId.INSTRUCT]).battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.SOLGALEO, SpeciesId.LUNALA]);
+    await game.classicMode.startBattle(SpeciesId.SOLGALEO, SpeciesId.LUNALA);
 
     const solgaleo = game.field.getPlayerPokemon();
 

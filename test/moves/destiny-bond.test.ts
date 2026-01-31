@@ -15,7 +15,7 @@ describe("Moves - Destiny Bond", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
-  const defaultParty = [SpeciesId.BULBASAUR, SpeciesId.SQUIRTLE];
+  const defaultParty = [SpeciesId.BULBASAUR, SpeciesId.SQUIRTLE] as const;
   const enemyFirst = [BattlerIndex.ENEMY, BattlerIndex.PLAYER];
   const playerFirst = [BattlerIndex.PLAYER, BattlerIndex.ENEMY];
 
@@ -41,7 +41,7 @@ describe("Moves - Destiny Bond", () => {
     const moveToUse = MoveId.TACKLE;
 
     game.override.moveset(moveToUse);
-    await game.classicMode.startBattle(defaultParty);
+    await game.classicMode.startBattle(...defaultParty);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     const playerPokemon = game.field.getPlayerPokemon();
@@ -58,7 +58,7 @@ describe("Moves - Destiny Bond", () => {
     const moveToUse = MoveId.TACKLE;
 
     game.override.moveset([MoveId.SPLASH, moveToUse]);
-    await game.classicMode.startBattle(defaultParty);
+    await game.classicMode.startBattle(...defaultParty);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     const playerPokemon = game.field.getPlayerPokemon();
@@ -84,7 +84,7 @@ describe("Moves - Destiny Bond", () => {
     const moveToUse = MoveId.TACKLE;
 
     game.override.moveset([MoveId.SPLASH, moveToUse]);
-    await game.classicMode.startBattle(defaultParty);
+    await game.classicMode.startBattle(...defaultParty);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     const playerPokemon = game.field.getPlayerPokemon();
@@ -111,7 +111,7 @@ describe("Moves - Destiny Bond", () => {
     const moveToUse = MoveId.FALSE_SWIPE;
 
     game.override.moveset(moveToUse).ability(AbilityId.SAND_STREAM);
-    await game.classicMode.startBattle(defaultParty);
+    await game.classicMode.startBattle(...defaultParty);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     const playerPokemon = game.field.getPlayerPokemon();
@@ -128,7 +128,7 @@ describe("Moves - Destiny Bond", () => {
     const moveToUse = MoveId.TACKLE;
 
     game.override.moveset([MoveId.SPORE, moveToUse]);
-    await game.classicMode.startBattle(defaultParty);
+    await game.classicMode.startBattle(...defaultParty);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     const playerPokemon = game.field.getPlayerPokemon();
@@ -153,7 +153,7 @@ describe("Moves - Destiny Bond", () => {
 
   it("should not KO an ally", async () => {
     game.override.moveset([MoveId.DESTINY_BOND, MoveId.CRUNCH]).battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.SHEDINJA, SpeciesId.BULBASAUR, SpeciesId.SQUIRTLE]);
+    await game.classicMode.startBattle(SpeciesId.SHEDINJA, SpeciesId.BULBASAUR, SpeciesId.SQUIRTLE);
 
     const [playerPokemon0, playerPokemon1, enemyPokemon0, enemyPokemon1] = game.scene.getField();
     // Shedinja uses Destiny Bond, then ally Bulbasaur KO's Shedinja with Crunch
@@ -173,7 +173,7 @@ describe("Moves - Destiny Bond", () => {
     vi.spyOn(allMoves[moveToUse], "accuracy", "get").mockReturnValue(100);
 
     game.override.moveset(moveToUse);
-    await game.classicMode.startBattle(defaultParty);
+    await game.classicMode.startBattle(...defaultParty);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     const playerPokemon = game.field.getPlayerPokemon();
@@ -191,7 +191,7 @@ describe("Moves - Destiny Bond", () => {
 
   it("should not cause a crash if the user is KO'd by Pledge moves", async () => {
     game.override.moveset([MoveId.GRASS_PLEDGE, MoveId.WATER_PLEDGE]).battleStyle("double");
-    await game.classicMode.startBattle(defaultParty);
+    await game.classicMode.startBattle(...defaultParty);
 
     const [playerPokemon0, playerPokemon1, enemyPokemon0, enemyPokemon1] = game.scene.getField();
 
@@ -209,16 +209,16 @@ describe("Moves - Destiny Bond", () => {
     expect(game).toHaveArenaTag(ArenaTagType.GRASS_WATER_PLEDGE, ArenaTagSide.ENEMY);
   });
 
-  /**
+  /*
    * In particular, this should prevent something like
-   * {@link https://github.com/pagefaultgames/pokerogue/issues/4219}
+   * https://github.com/pagefaultgames/pokerogue/issues/4219
    * from occurring with fainting by KO'ing a Destiny Bond user with U-Turn.
    */
   it("should not allow the opponent to revive via Reviver Seed", async () => {
     const moveToUse = MoveId.TACKLE;
 
     game.override.moveset(moveToUse).startingHeldItems([{ name: "REVIVER_SEED" }]);
-    await game.classicMode.startBattle(defaultParty);
+    await game.classicMode.startBattle(...defaultParty);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     const playerPokemon = game.field.getPlayerPokemon();

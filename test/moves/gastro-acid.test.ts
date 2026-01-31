@@ -30,7 +30,7 @@ describe("Moves - Gastro Acid", () => {
 
   it("should suppress the target's ability", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.BIDOOF, SpeciesId.BASCULIN]);
+    await game.classicMode.startBattle(SpeciesId.BIDOOF, SpeciesId.BASCULIN);
 
     game.move.use(MoveId.GASTRO_ACID, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
@@ -52,7 +52,7 @@ describe("Moves - Gastro Acid", () => {
 
   it("should be removed on switch", async () => {
     game.override.battleType(BattleType.TRAINER);
-    await game.classicMode.startBattle([SpeciesId.BIDOOF]);
+    await game.classicMode.startBattle(SpeciesId.BIDOOF);
 
     game.move.use(MoveId.GASTRO_ACID);
     await game.toNextTurn();
@@ -73,7 +73,7 @@ describe("Moves - Gastro Acid", () => {
   });
 
   it("should fail if target's ability is already suppressed", async () => {
-    await game.classicMode.startBattle([SpeciesId.BIDOOF]);
+    await game.classicMode.startBattle(SpeciesId.BIDOOF);
 
     game.move.use(MoveId.CORE_ENFORCER);
     // Force player to be slower to enable Core Enforcer to proc its suppression effect
@@ -88,7 +88,7 @@ describe("Moves - Gastro Acid", () => {
 
   it("should suppress target's passive even if its main ability is unsuppressable", async () => {
     game.override.enemyAbility(AbilityId.COMATOSE).enemyPassiveAbility(AbilityId.WATER_ABSORB);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 

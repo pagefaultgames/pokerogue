@@ -12,7 +12,6 @@ import { Nature } from "#enums/nature";
 import { PlayerGender } from "#enums/player-gender";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerSlot } from "#enums/trainer-slot";
-import { addPokeballOpenParticles } from "#field/anims";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { queueEncounterMessage, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import {
@@ -386,7 +385,7 @@ function summonPlayerPokemonAnimation(pokemon: PlayerPokemon): Promise<void> {
             pokeball.destroy();
             globalScene.add.existing(pokemon);
             globalScene.field.add(pokemon);
-            addPokeballOpenParticles(pokemon.x, pokemon.y - 16, pokemon.pokeball);
+            globalScene.animations.addPokeballOpenParticles(pokemon.x, pokemon.y - 16, pokemon.pokeball);
             globalScene.updateModifiers(true);
             globalScene.updateFieldScale();
             pokemon.showInfo();

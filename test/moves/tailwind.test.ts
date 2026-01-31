@@ -29,7 +29,7 @@ describe("Moves - Tailwind", () => {
   });
 
   it("doubles the Speed stat of the Pokemons on its side", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MEOWTH]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.MEOWTH);
     const [magikarp, meowth] = game.scene.getPlayerField();
 
     const magikarpSpd = magikarp.getStat(Stat.SPD);
@@ -51,7 +51,7 @@ describe("Moves - Tailwind", () => {
   it("lasts for 4 turns", async () => {
     game.override.battleStyle("single");
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     game.move.select(MoveId.TAILWIND);
     await game.toNextTurn();
@@ -74,7 +74,7 @@ describe("Moves - Tailwind", () => {
   it("does not affect the opposing side", async () => {
     game.override.battleStyle("single");
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const ally = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();

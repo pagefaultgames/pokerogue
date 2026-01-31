@@ -58,7 +58,7 @@ export class LoginPhase extends Phase {
       globalScene.phaseManager.unshiftNew("SelectGenderPhase");
     }
 
-    await handleTutorial(Tutorial.Intro);
+    await handleTutorial(Tutorial.INTRO);
     super.end();
   }
 
