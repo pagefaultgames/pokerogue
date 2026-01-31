@@ -4,6 +4,12 @@ import type { LoginRegisterInfoContainerUiHandler } from "#ui/login-register-inf
 import type { SettingsDisplayUiHandler } from "#ui/settings-display-ui-handler";
 import i18next from "i18next";
 
+//#region Interfaces/Types
+
+type Lang = { [name: string]: () => boolean };
+
+//#endregion
+
 const cancelHandler = () => {
   globalScene.ui.revertMode();
   const handler = globalScene.ui.getHandler();
@@ -29,10 +35,8 @@ const changeLocaleHandler = (locale: string): boolean => {
   }
 };
 
-type Lang = { [name: string]: () => boolean };
-const languageEntries: Lang[] = [];
-
 // populating languageEntries
+const languageEntries: Lang[] = [];
 for (const lang in supportedLngs) {
   const label = supportedLngs[lang];
   languageEntries.push({
