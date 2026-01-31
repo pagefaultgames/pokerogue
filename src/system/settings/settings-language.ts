@@ -6,7 +6,7 @@ import i18next from "i18next";
 
 //#region Interfaces/Types
 
-type Lang = { [name: string]: () => boolean };
+type Lang = { label: string; handler: () => boolean };
 
 //#endregion
 
@@ -37,10 +37,10 @@ const changeLocaleHandler = (locale: string): boolean => {
 
 // populating languageEntries
 const languageEntries: Lang[] = [];
-for (const lang in supportedLngs) {
-  const label = supportedLngs[lang];
+for (const lang of supportedLngs) {
+  const t = i18next.getFixedT(lang);
   languageEntries.push({
-    label,
+    label: t("settings:languageLabel"),
     handler: () => changeLocaleHandler(lang),
   });
 }
