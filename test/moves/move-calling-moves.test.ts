@@ -158,7 +158,7 @@ describe("Moves - Move-calling Moves", () => {
         game.scene.currentBattle.lastMove = m;
       },
     },
-  ])("General Checks - $name", ({ move, attrName, callback }) => {
+  ])("$name", ({ move, attrName, callback }) => {
     let attr: CallMoveAttrWithBanlist;
     let banlist: ReadonlySet<MoveId>;
     let getMoveSpy: MockInstance<CallMoveAttrWithBanlist["getMove"]>;
@@ -213,37 +213,6 @@ describe("Moves - Move-calling Moves", () => {
         });
       },
     );
-
-    it.runIf(move === MoveId.MIRROR_MOVE)("should always target the Mirror Move recipient if possible", async () => {
-      game.override.battleStyle("double");
-      await game.classicMode.startBattle(SpeciesId.FEEBAS);
-
-      const feebas = game.field.getPlayerPokemon();
-      // Mock RNG functions to return high rolls (ie last eligible target)
-      // This will force the test to fail if MM were to use the same random targeting algorithm
-      // as Copycat/etc
-      vi.spyOn(feebas, "randBattleSeedInt").mockReturnValue(1);
-
-      game.move.use(MoveId.MIRROR_MOVE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
-      await game.move.forceEnemyMove(MoveId.TACKLE, BattlerIndex.ENEMY_2);
-      await game.move.forceEnemyMove(MoveId.SPLASH);
-      await game.setTurnOrder([BattlerIndex.ENEMY_2, BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-      await game.toNextTurn();
-
-      expect(feebas).toHaveUsedMove({ move: MoveId.MIRROR_MOVE, useMode: MoveUseMode.NORMAL }, 1);
-      expect(feebas).toHaveUsedMove({
-        move: MoveId.TACKLE,
-        useMode: MoveUseMode.FOLLOW_UP,
-        targets: [BattlerIndex.ENEMY],
-      });
-
-      // 2nd turn: Copy a move that physically cannot target the Mirror Move recipient
-      game.move.use(MoveId.MIRROR_MOVE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
-      await game.move.forceEnemyMove(MoveId.TACKLE, BattlerIndex.ENEMY_2);
-      await game.move.forceEnemyMove(MoveId.SPLASH);
-      await game.setTurnOrder([BattlerIndex.ENEMY_2, BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-      await game.toEndOfTurn();
-    });
 
     // testing Metronome here is pointless since we literally mock out its randomness
     it.skipIf(move === MoveId.METRONOME)("should return MoveId.NONE if an invalid move would be picked", async () => {
@@ -412,26 +381,61 @@ describe("Moves - Move-calling Moves", () => {
       getMoveSpy = vi.spyOn(attr as typeof attr & Pick<{ getMove: (typeof attr)["getMove"] }, "getMove">, "getMove");
     });
 
+    it.runIf(move === MoveId.MIRROR_MOVE)("should always target the Mirror Move recipient if possible", async () => {
+      game.override.battleStyle("double");
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+      const feebas = game.field.getPlayerPokemon();
+      // Mock RNG functions to return high rolls (ie last eligible target)
+      // This will force the test to fail if MM were to use the same random targeting algorithm
+      // as Copycat/etc
+      vi.spyOn(feebas, "randBattleSeedInt").mockReturnValue(1);
+
+      game.move.use(MoveId.MIRROR_MOVE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+      await game.move.forceEnemyMove(MoveId.TACKLE, BattlerIndex.ENEMY_2);
+      await game.move.forceEnemyMove(MoveId.SPLASH);
+      await game.setTurnOrder([BattlerIndex.ENEMY_2, BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.toNextTurn();
+
+      expect(feebas).toHaveUsedMove({ move: MoveId.MIRROR_MOVE, useMode: MoveUseMode.NORMAL }, 1);
+      expect(feebas).toHaveUsedMove({
+        move: MoveId.TACKLE,
+        useMode: MoveUseMode.FOLLOW_UP,
+        targets: [BattlerIndex.ENEMY],
+      });
+
+      // 2nd turn: Copy a move that physically cannot target the Mirror Move recipient
+      game.move.use(MoveId.MIRROR_MOVE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+      await game.move.forceEnemyMove(MoveId.TACKLE, BattlerIndex.ENEMY_2);
+      await game.move.forceEnemyMove(MoveId.SPLASH);
+      await game.setTurnOrder([BattlerIndex.ENEMY_2, BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.toEndOfTurn();
+    });
+
     it.runIf(move === MoveId.COPYCAT)(
-      'should update "last move" tracker for moves failing conditions, but not pre-move interrupts',
-      async () => {
-        game.override.enemyStatusEffect(StatusEffect.SLEEP);
-        await game.classicMode.startBattle(SpeciesId.FEEBAS);
+      "should not update the lastMove tracker for move failures in sequence 2", {}, async () => {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-        game.move.use(MoveId.SUCKER_PUNCH);
-        await game.move.forceEnemyMove(MoveId.SPLASH);
-        await game.phaseInterceptor.to("MoveEndPhase");
+    game.move.use(MoveId.COPYCAT);
+    await game.move.forceEnemyMove(MoveId.DOUBLE_SHOCK);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.toNextTurn();
 
-        // Player sucker punch failed conditions, but still updated tracker
-        expect(game.field.getPlayerPokemon()).toHaveUsedMove({ move: MoveId.SUCKER_PUNCH, result: MoveResult.FAIL });
-        expect(game.scene.currentBattle.lastMove).toBe(MoveId.SUCKER_PUNCH);
+    const feebas = game.field.getPlayerPokemon();
+    const karp = game.field.getEnemyPokemon();
 
-        await game.phaseInterceptor.to("MoveEndPhase");
-
-        // Enemy is asleep and should not have updated tracker
-        expect(game.scene.currentBattle.lastMove).toBe(MoveId.SUCKER_PUNCH);
-      },
+    // move should have shown text and consumed PP, but failed before being tracked by Copycat
+    expect(karp).toHaveUsedMove({ move: MoveId.DOUBLE_SHOCK, result: MoveResult.FAIL });
+    expect(karp).toHaveUsedPP(MoveId.DOUBLE_SHOCK, 1);
+    expect(game).toHaveShownMessage(
+      i18next.t("battle:useMove", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(karp),
+        moveName: allMoves[MoveId.DOUBLE_SHOCK].name,
+      }),
     );
+    expect(game.scene.currentBattle.lastMove).toBe(MoveId.NONE);
+    expect(feebas).toHaveUsedMove({ move: MoveId.COPYCAT, result: MoveResult.FAIL });
+  });
 
     it("should fail if no prior moves have been made", async () => {
       await game.classicMode.startBattle(SpeciesId.FEEBAS);

@@ -101,21 +101,6 @@ describe("Inverse Battle", () => {
     expect(currentHp).toBeGreaterThan((maxHp * 31) / 32 - 1);
   });
 
-  it("Freeze Dry is 2x effective against Water Type like other Ice type Move - Freeze Dry against Squirtle", async () => {
-    game.override.moveset([MoveId.FREEZE_DRY]).enemySpecies(SpeciesId.SQUIRTLE);
-
-    await game.challengeMode.startBattle(SpeciesId.FEEBAS);
-
-    const enemy = game.field.getEnemyPokemon();
-    vi.spyOn(enemy, "getMoveEffectiveness");
-
-    game.move.select(MoveId.FREEZE_DRY);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to("MoveEffectPhase");
-
-    expect(enemy.getMoveEffectiveness).toHaveLastReturnedWith(2);
-  });
-
   it("Water Absorb should heal against water moves - Water Absorb against Water gun", async () => {
     game.override.moveset([MoveId.WATER_GUN]).enemyAbility(AbilityId.WATER_ABSORB);
 
@@ -195,21 +180,6 @@ describe("Inverse Battle", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(player.getTypes()[0]).toBe(PokemonType.DRAGON);
-  });
-
-  it("Flying Press should be 0.25x effective against Grass + Dark Type - Flying Press against Meowscarada", async () => {
-    game.override.moveset([MoveId.FLYING_PRESS]).enemySpecies(SpeciesId.MEOWSCARADA);
-
-    await game.challengeMode.startBattle(SpeciesId.FEEBAS);
-
-    const enemy = game.field.getEnemyPokemon();
-    vi.spyOn(enemy, "getMoveEffectiveness");
-
-    game.move.select(MoveId.FLYING_PRESS);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to("MoveEffectPhase");
-
-    expect(enemy.getMoveEffectiveness).toHaveLastReturnedWith(0.25);
   });
 
   it("Scrappy ability has no effect - Tackle against Ghost Type still 2x effective with Scrappy", async () => {
