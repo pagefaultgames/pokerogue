@@ -8899,6 +8899,11 @@ export type MoveTargetSet = {
  * Map of Move attributes to their respective classes. Used for instanceof checks.
  */
 const MoveAttrs = Object.freeze({
+  MoveEffectAttr,
+  MoveHeaderAttr,
+  MessageHeaderAttr,
+  AddBattlerTagAttr,
+  AddBattlerTagHeaderAttr,
   BeakBlastHeaderAttr,
   PreMoveMessageAttr,
   PreUseInterruptAttr,
