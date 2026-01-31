@@ -1276,10 +1276,10 @@ export class BattleScene extends SceneBase {
    */
   public newBattle(fromSession?: SessionSaveData): Battle {
     const props = this.getNewBattleProps(fromSession);
-    const { waveIndex } = props;
-    const resolved: NewBattleInitialProps = { waveIndex, mysteryEncounterType: props.mysteryEncounterType };
+    const { waveIndex, mysteryEncounterType } = props;
+    const resolved: NewBattleInitialProps = { waveIndex, mysteryEncounterType };
 
-    // TODO: Address this during an RNG overhaul
+    // TODO: Address this during an RNG overhaul - this singular function call would make it FAR
     this.resetSeed(waveIndex);
 
     // Set attributes of the `resolved` object based on the type of battle being created.
@@ -1331,10 +1331,11 @@ export class BattleScene extends SceneBase {
   }
 
   /**
-   * Helper function to {@linkcode newBattle} to initialize a {@linkcode NewBattleProps} from session data, using defaults if no session data is provided.
-   * @param fromSession - The session data being used to initialize the battle, or `undefined` if a new battle is being created mid run
+   * Helper function to {@linkcode newBattle} to initialize variables from session data, using defaults if no session data is provided.
+   * @param fromSession - The session data being used to initialize the battle
    * @returns The new battle props
    */
+  // TODO: If or when the `resetSeed` call is (re)moved from `newBattle`, move this inline into `handleSavedBattle`
   private getNewBattleProps(fromSession?: SessionSaveData): NewBattleProps {
     if (fromSession == null) {
       return {
@@ -1347,11 +1348,9 @@ export class BattleScene extends SceneBase {
       };
     }
 
-    const battleType = fromSession.battleType;
+    const { waveIndex, battleType, trainer: trainerData } = fromSession;
     const mysteryEncounterType = fromSession.mysteryEncounterType !== -1 ? fromSession.mysteryEncounterType : undefined;
 
-    const waveIndex = fromSession.waveIndex;
-    const trainerData = fromSession.trainer;
     let fixedDouble: boolean;
     switch (battleType) {
       case BattleType.WILD:
@@ -1370,7 +1369,7 @@ export class BattleScene extends SceneBase {
   }
 
   /**
-   * Sub-method of `newBattle` that handles fixed trainer battles.
+   * Sub-method of {@linkcode newBattle} that handles fixed trainer battles.
    * @param resolved - The object to modify
    */
   private handleFixedBattle(resolved: NewBattleInitialProps): void {
@@ -1380,7 +1379,7 @@ export class BattleScene extends SceneBase {
     resolved.double = battleConfig.double;
     resolved.battleType = battleConfig.battleType;
 
-    let t: Trainer;
+    let t!: Trainer;
     this.executeWithSeedOffset(
       () => {
         t = battleConfig.getTrainer();
@@ -1388,12 +1387,12 @@ export class BattleScene extends SceneBase {
       (battleConfig.seedOffsetWaveIndex || waveIndex) << 8,
     );
     // Tell TS this is defined
-    this.field.add(t!);
-    resolved.trainer = t!;
+    this.field.add(t);
+    resolved.trainer = t;
   }
 
   /**
-   * Sub-method of `newBattle` that handles loading existing saved battles.
+   * Sub-method of {@linkcode newBattle} that handles loading existing saved battles.
    * @param resolved - The object to modify
    * @param props - The {@linkcode NewBattleProps} created from the save data
    */
@@ -1407,7 +1406,7 @@ export class BattleScene extends SceneBase {
   }
 
   /**
-   * Sub-method of `newBattle` that handles creating a new battle from scratch.
+   * Sub-method of {@linkcode newBattle} that handles generating a new battle from scratch.
    * @param resolved - The object to modify properties of
    */
   private handleNonFixedBattle(resolved: NewBattleInitialProps): void {
@@ -1433,8 +1432,7 @@ export class BattleScene extends SceneBase {
       return;
     }
 
-    // Determine the trainer's attributes
-    const trainer = this.generateNewBattleTrainer(resolved.waveIndex);
+    const trainer = this.generateNewBattleTrainer(waveIndex);
     this.field.add(trainer);
     resolved.trainer = trainer;
   }
@@ -1478,7 +1476,7 @@ export class BattleScene extends SceneBase {
    */
   private checkIsDouble({ double, battleType, waveIndex, trainer }: NewBattleConstructedProps): boolean {
     // Disallow using double battle overrides on trainer waves (need `RANDOM_TRAINER_OVERRIDE` instead)
-    // TODO: Rework logic later on to make sense - if wave 1 doubles cause crashes then why do we check it before everything else
+    // TODO: Rework logic later on to make sense - if wave 1 doubles cause crashes then why don't we check it before everything else
     const overriddenDouble = this.doCheckDoubleOverride(waveIndex);
     if (overriddenDouble === true || (battleType !== BattleType.TRAINER && overriddenDouble === false)) {
       return overriddenDouble;

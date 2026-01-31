@@ -12,7 +12,7 @@ import type { BattleType } from "#enums/battle-type";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { Trainer } from "#field/trainer";
 import type { TrainerData } from "#system/trainer-data";
-import type { SetRequired } from "type-fest";
+import type { SetOptional, SetRequired } from "type-fest";
 
 /**
  * Interface representing the base type of a new battle config, used for DRY.
@@ -23,7 +23,7 @@ interface NewBattleBaseProps {
   battleType: BattleType;
   /**
    * The `Trainer` to spawn.
-   * Only present in populated data and will be `undefined` for non-trainer battles.
+   * Only present in processed data and will be `undefined` for non-trainer battles.
    */
   trainer?: Trainer | undefined;
   /**
@@ -42,7 +42,7 @@ interface NewBattleBaseProps {
    * The wave number of the NEW wave to spawn.
    * Will always be `>=1` (barring save data corruption).
    */
-  waveIndex: number | undefined;
+  waveIndex: number;
   /**
    * Whether the battle is a double battle.
    *
@@ -65,15 +65,15 @@ export interface NewBattleProps extends Omit<NewBattleBaseProps, "trainer"> {}
  * The reason all "missing" properties are marked as `Partial` rather than simply being `undefined`
  * is to allow assignment during function calls.
  */
-export interface NewBattleInitialProps extends SetRequired<Partial<NewBattleResolvedProps>, "waveIndex"> {}
+export interface NewBattleInitialProps extends SetOptional<NewBattleBaseProps, "battleType"> {}
 
 /**
- * Interface representing the type of a partially resolved new battle config, used when passing stuff around during double battle generation.
+ * Interface representing the type of a partially resolved new battle config, used during double battle generation.
  * Only contains properties known to be present after all 3 sub-methods finish resolving.
  */
-export interface NewBattleConstructedProps extends SetRequired<NewBattleInitialProps, "battleType"> {}
+export interface NewBattleConstructedProps extends NewBattleBaseProps {}
 
 /**
  * Interface representing the fully resolved type of a new battle config, used to create a new {@linkcode Battle} instance.
  */
-export interface NewBattleResolvedProps extends Omit<NewBattleBaseProps, "trainerData"> {}
+export interface NewBattleResolvedProps extends SetRequired<Omit<NewBattleBaseProps, "trainerData">, "double"> {}

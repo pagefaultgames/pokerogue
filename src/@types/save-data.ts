@@ -62,6 +62,7 @@ export interface SessionSaveData {
   challenges: ChallengeData[];
   // TODO: Change default value to `undefined` to both save space and ease nullishness checks
   mysteryEncounterType: MysteryEncounterType | -1; // Only defined when current wave is ME,
+  // TODO: This can be `undefined` - reflect that in the type signature
   mysteryEncounterSaveData: MysteryEncounterSaveData;
   /**
    * Counts the amount of pokemon fainted in your party during the current arena encounter.
