@@ -27,7 +27,7 @@ describe("Abilities - Simple", () => {
   });
 
   it("should double stat changes when applied", async () => {
-    await game.classicMode.startBattle([SpeciesId.SLOWBRO]);
+    await game.classicMode.startBattle(SpeciesId.SLOWBRO);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 

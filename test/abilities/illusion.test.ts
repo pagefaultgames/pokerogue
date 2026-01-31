@@ -31,7 +31,7 @@ describe.todo("Abilities - Illusion", () => {
   });
 
   it("creates illusion at the start", async () => {
-    await game.classicMode.startBattle([SpeciesId.ZOROARK, SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.ZOROARK, SpeciesId.FEEBAS);
     const zoroark = game.field.getPlayerPokemon();
     const zorua = game.field.getEnemyPokemon();
 
@@ -40,7 +40,7 @@ describe.todo("Abilities - Illusion", () => {
   });
 
   it("break after receiving damaging move", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
     game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -52,7 +52,7 @@ describe.todo("Abilities - Illusion", () => {
   });
 
   it("break after getting ability changed", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
     game.move.select(MoveId.WORRY_SEED);
 
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -64,7 +64,7 @@ describe.todo("Abilities - Illusion", () => {
 
   it("breaks with neutralizing gas", async () => {
     game.override.enemyAbility(AbilityId.NEUTRALIZING_GAS);
-    await game.classicMode.startBattle([SpeciesId.KOFFING]);
+    await game.classicMode.startBattle(SpeciesId.KOFFING);
 
     const zorua = game.field.getEnemyPokemon();
 
@@ -77,7 +77,7 @@ describe.todo("Abilities - Illusion", () => {
       .ability(AbilityId.ILLUSION)
       .moveset(MoveId.SPLASH)
       .enemyMoveset(MoveId.SPLASH);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS, SpeciesId.MAGIKARP);
 
     game.doSwitchPokemon(1);
     await game.toNextTurn();
@@ -85,38 +85,33 @@ describe.todo("Abilities - Illusion", () => {
     expect(game.field.getPlayerPokemon().summonData.illusion).toBeFalsy();
   });
 
+  // TODO: This doesn't actually check that the ai calls the function this way... useless test
   it("causes enemy AI to consider the illusion's type instead of the actual type when considering move effectiveness", async () => {
     game.override.enemyMoveset([MoveId.FLAMETHROWER, MoveId.PSYCHIC, MoveId.TACKLE]);
-    await game.classicMode.startBattle([SpeciesId.ZOROARK, SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.ZOROARK, SpeciesId.FEEBAS);
 
     const enemy = game.field.getEnemyPokemon();
     const zoroark = game.field.getPlayerPokemon();
 
     const flameThrower = enemy.getMoveset()[0]!.getMove();
     const psychic = enemy.getMoveset()[1]!.getMove();
-    const flameThrowerEffectiveness = zoroark.getAttackTypeEffectiveness(
-      flameThrower.type,
-      enemy,
-      undefined,
-      undefined,
-      flameThrower,
-      true,
-    );
-    const psychicEffectiveness = zoroark.getAttackTypeEffectiveness(
-      psychic.type,
-      enemy,
-      undefined,
-      undefined,
-      psychic,
-      true,
-    );
+    const flameThrowerEffectiveness = zoroark.getAttackTypeEffectiveness(flameThrower.type, {
+      source: enemy,
+      move: flameThrower,
+      useIllusion: true,
+    });
+    const psychicEffectiveness = zoroark.getAttackTypeEffectiveness(psychic.type, {
+      source: enemy,
+      move: psychic,
+      useIllusion: true,
+    });
     expect(psychicEffectiveness).above(flameThrowerEffectiveness);
   });
 
   it("should not break from indirect damage from status, weather or recoil", async () => {
     game.override.enemySpecies(SpeciesId.GIGALITH).enemyAbility(AbilityId.SAND_STREAM);
 
-    await game.classicMode.startBattle([SpeciesId.ZOROARK, SpeciesId.AZUMARILL]);
+    await game.classicMode.startBattle(SpeciesId.ZOROARK, SpeciesId.AZUMARILL);
 
     game.move.use(MoveId.FLARE_BLITZ);
     await game.move.forceEnemyMove(MoveId.WILL_O_WISP);
@@ -128,7 +123,7 @@ describe.todo("Abilities - Illusion", () => {
 
   it("copies the the name, nickname, gender, shininess, and pokeball from the illusion source", async () => {
     game.override.enemyMoveset(MoveId.SPLASH);
-    await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.ZOROARK, SpeciesId.AXEW]);
+    await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.ZOROARK, SpeciesId.AXEW);
 
     const axew = game.scene.getPlayerParty().at(2)!;
     axew.shiny = true;
@@ -151,7 +146,7 @@ describe.todo("Abilities - Illusion", () => {
 
   it("breaks when suppressed", async () => {
     game.override.moveset(MoveId.GASTRO_ACID);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
     const zorua = game.field.getEnemyPokemon();
 
     expect(!!zorua.summonData?.illusion).toBe(true);
