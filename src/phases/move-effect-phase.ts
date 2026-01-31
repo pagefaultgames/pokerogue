@@ -16,7 +16,6 @@ import { MoveCategory } from "#enums/move-category";
 import { MoveEffectTrigger } from "#enums/move-effect-trigger";
 import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
-import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import { MoveResult } from "#enums/move-result";
 import { MoveTarget } from "#enums/move-target";
 import { isReflected, MoveUseMode } from "#enums/move-use-mode";
@@ -33,8 +32,7 @@ import {
 } from "#modifiers/modifier";
 import { applyFilteredMoveAttrs, applyMoveAttrs } from "#moves/apply-attrs";
 import type { Move, MoveAttr } from "#moves/move";
-import { getMoveTargets, isFieldTargeted } from "#moves/move-utils";
-import { PokemonMove } from "#moves/pokemon-move";
+import { isFieldTargeted } from "#moves/move-utils";
 import { PokemonPhase } from "#phases/pokemon-phase";
 import { DamageAchv } from "#system/achv";
 import type { nil } from "#types/common";
@@ -312,43 +310,13 @@ export class MoveEffectPhase extends PokemonPhase {
           applyMoveAttrs("MissEffectAttr", user, target, this.move);
           break;
         case HitCheckResult.REFLECTED:
-          this.queueReflectedMove(user, target);
+          globalScene.phaseManager.unshiftNew("MoveReflectPhase", target, user, this.move);
           break;
         case HitCheckResult.PENDING:
         case HitCheckResult.ERROR:
           throw new Error("Unexpected hit check result");
       }
     }
-  }
-
-  /**
-   * Queue the phases that should occur when the target reflects the move back to the user
-   * @param user - The {@linkcode Pokemon} using this phase's invoked move
-   * @param target - The {@linkcode Pokemon} that is reflecting the move
-   * TODO: Rework this to use `onApply` of Magic Coat
-   */
-  private queueReflectedMove(user: Pokemon, target: Pokemon): void {
-    const newTargets = this.move.isMultiTarget()
-      ? getMoveTargets(target, this.move.id).targets
-      : [user.getBattlerIndex()];
-    // TODO: ability displays should be handled by the ability
-    if (!target.getTag(BattlerTagType.MAGIC_COAT)) {
-      globalScene.phaseManager.unshiftNew(
-        "ShowAbilityPhase",
-        target.getBattlerIndex(),
-        target.getPassiveAbility().hasAttr("ReflectStatusMoveAbAttr"),
-      );
-      globalScene.phaseManager.unshiftNew("HideAbilityPhase");
-    }
-
-    globalScene.phaseManager.unshiftNew(
-      "MovePhase",
-      target,
-      newTargets,
-      new PokemonMove(this.move.id),
-      MoveUseMode.REFLECTED,
-      MovePhaseTimingModifier.FIRST,
-    );
   }
 
   /**

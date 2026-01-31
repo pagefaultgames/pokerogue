@@ -1,4 +1,3 @@
-import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type { Pokemon } from "#app/field/pokemon";
 import type { Phase } from "#app/phase";
 import type { MovePhase } from "#app/phases/move-phase";
@@ -110,15 +109,6 @@ export class DynamicQueueManager {
    */
   public setMoveTimingModifier(condition: PhaseConditionFunc<"MovePhase">, modifier: MovePhaseTimingModifier): void {
     this.getMovePhaseQueue().setTimingModifier(condition, modifier);
-  }
-
-  /**
-   * Finds the {@linkcode MovePhase} meeting the condition and changes its move
-   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function
-   * @param move - The {@linkcode PokemonMove | move} to use in replacement
-   */
-  public setMoveForPhase(condition: PhaseConditionFunc<"MovePhase">, move: PokemonMove): void {
-    this.getMovePhaseQueue().setMoveForPhase(condition, move);
   }
 
   /**

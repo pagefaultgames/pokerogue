@@ -42,7 +42,9 @@ import { BerryUsedEvent } from "#events/battle-scene";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#modifiers/modifier";
 import { BerryModifierType } from "#modifiers/modifier-type";
-import type { PokemonMove } from "#moves/pokemon-move";
+import { getMoveTargets } from "#moves/move-utils";
+import { PokemonMove } from "#moves/pokemon-move";
+import type { MoveReflectPhase } from "#phases/move-reflect-phase";
 import type { StatStageChangePhase } from "#phases/stat-stage-change-phase";
 import type {
   AbAttrCondition,
@@ -5216,13 +5218,25 @@ export class InfiltratorAbAttr extends AbAttr {
 
 /**
  * Attribute implementing the effects of {@link https://bulbapedia.bulbagarden.net/wiki/Magic_Bounce_(ability) | Magic Bounce}.
+ *
  * Allows the source to bounce back {@linkcode MoveFlags.REFLECTABLE | Reflectable}
- *  moves as if the user had used {@linkcode MoveId.MAGIC_COAT | Magic Coat}.
- * @sealed
- * @todo Make reflection a part of this ability's effects
+ * moves as if the user had used {@linkcode MoveId.MAGIC_COAT | Magic Coat}.
+ *
+ * The calling {@linkcode MoveEffectPhase} will "skip" targets with a reflection effect active,
+ * showing the flyout and activating this ability during the queued {@linkcode MoveReflectPhase}.
  */
-export class ReflectStatusMoveAbAttr extends AbAttr {
-  private declare readonly _: never;
+export class ReflectStatusMoveAbAttr extends PreDefendAbAttr {
+  override apply({ pokemon, opponent, move }: AugmentMoveInteractionAbAttrParams): void {
+    const newTargets = move.isMultiTarget() ? getMoveTargets(pokemon, move.id).targets : [opponent.getBattlerIndex()];
+    globalScene.phaseManager.unshiftNew(
+      "MovePhase",
+      pokemon,
+      newTargets,
+      new PokemonMove(move.id),
+      MoveUseMode.REFLECTED,
+      MovePhaseTimingModifier.FIRST,
+    );
+  }
 }
 
 // TODO: Make these ability attributes be flags instead of dummy attributes
