@@ -6,8 +6,8 @@ import type { PokemonType } from "#enums/pokemon-type";
 import { Stat } from "#enums/stat";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
-import { sortInSpeedOrder } from "#utils/speed-order";
 import type { MoveHelper } from "#test/test-utils/helpers/move-helper";
+import { sortInSpeedOrder } from "#utils/speed-order";
 import { expect, type MockInstance, vi } from "vitest";
 
 /** Helper to manage pokemon */
