@@ -8,15 +8,15 @@
 // @ts-expect-error: We are overridding these types in a way TS doesn't enjoy
 // (like forbidding `null` from being passed as a listener).
 export interface TypedEventTarget<K extends string, R extends EventMap<K>> extends EventTarget {
-  addEventListener<EvtType extends K>(
+  addEventListener<const T extends this, EvtType extends K>(
     type: EvtType,
-    callback: (evt: R[EvtType]) => void,
+    callback: (this: T, evt: R[EvtType]) => void,
     options?: AddEventListenerOptions | boolean,
   ): void;
   dispatchEvent(event: Event): boolean;
-  removeEventListener<EvtType extends K>(
+  removeEventListener<const T extends this, EvtType extends K>(
     type: EvtType,
-    callback: (evt: R[EvtType]) => void,
+    callback: (this: T, evt: R[EvtType]) => void,
     options?: AddEventListenerOptions | boolean,
   ): void;
 }

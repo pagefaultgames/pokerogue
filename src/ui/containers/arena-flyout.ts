@@ -212,10 +212,10 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
       this.flyoutTextEnemy,
     ]);
 
-    // Subscribe to required events available on game start
+    // NB: We have to use function properties instead of methods to ensure proper `this` scoping
     const { eventTarget } = globalScene;
-    eventTarget.addEventListener(BattleSceneEventType.NEW_ARENA, this.onNewArena);
-    eventTarget.addEventListener(BattleSceneEventType.TURN_END, this.onTurnEnd);
+    eventTarget.addEventListener(BattleSceneEventType.NEW_ARENA, this.#onNewArena);
+    eventTarget.addEventListener(BattleSceneEventType.TURN_END, this.#onTurnEnd);
   }
 
   // #region Setup/Teardown
@@ -223,34 +223,36 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
   /**
    * Initialize listeners upon creating a new arena.
    */
-  private onNewArena(): void {
+  readonly #onNewArena = (): void => {
     this.arenaTags = [];
     const { eventTarget } = globalScene.arena;
 
-    eventTarget.addEventListener(ArenaEventType.WEATHER_CHANGED, this.onWeatherChanged);
-    eventTarget.addEventListener(ArenaEventType.TERRAIN_CHANGED, this.onTerrainChanged);
-    eventTarget.addEventListener(ArenaEventType.ARENA_TAG_ADDED, this.onArenaTagAdded);
-    eventTarget.addEventListener(ArenaEventType.ARENA_TAG_REMOVED, this.onArenaTagRemoved);
-  }
+    eventTarget.addEventListener(ArenaEventType.WEATHER_CHANGED, this.#onWeatherChanged);
+    eventTarget.addEventListener(ArenaEventType.TERRAIN_CHANGED, this.#onTerrainChanged);
+    eventTarget.addEventListener(ArenaEventType.ARENA_TAG_ADDED, this.#onArenaTagAdded);
+    eventTarget.addEventListener(ArenaEventType.ARENA_TAG_REMOVED, this.#onArenaTagRemoved);
+  };
 
   /**
    * Iterate through all currently present tags effects and decrement their durations, removing all tags expiring in this manner..
    */
-  private onTurnEnd(): void {
+  readonly #onTurnEnd = (): void => {
     this.arenaTags = this.arenaTags.filter(info => info.maxDuration === 0 || --info.duration >= 0);
 
     this.updateFieldText();
-  }
+  };
 
   /** Destroy this element and remove all associated listeners. */
-  public destroy(fromScene?: boolean): void {
-    globalScene.eventTarget.removeEventListener(BattleSceneEventType.NEW_ARENA, this.onNewArena);
-    globalScene.eventTarget.removeEventListener(BattleSceneEventType.TURN_END, this.onTurnEnd);
+  public override destroy(fromScene?: boolean): void {
+    const { eventTarget } = globalScene;
+    const { eventTarget: arenaEventTarget } = globalScene.arena;
+    eventTarget.removeEventListener(BattleSceneEventType.NEW_ARENA, this.#onNewArena);
+    eventTarget.removeEventListener(BattleSceneEventType.TURN_END, this.#onTurnEnd);
 
-    globalScene.arena.eventTarget.removeEventListener(ArenaEventType.WEATHER_CHANGED, this.onWeatherChanged);
-    globalScene.arena.eventTarget.removeEventListener(ArenaEventType.TERRAIN_CHANGED, this.onTerrainChanged);
-    globalScene.arena.eventTarget.removeEventListener(ArenaEventType.ARENA_TAG_ADDED, this.onArenaTagAdded);
-    globalScene.arena.eventTarget.removeEventListener(ArenaEventType.ARENA_TAG_REMOVED, this.onArenaTagRemoved);
+    arenaEventTarget.removeEventListener(ArenaEventType.WEATHER_CHANGED, this.#onWeatherChanged);
+    arenaEventTarget.removeEventListener(ArenaEventType.TERRAIN_CHANGED, this.#onTerrainChanged);
+    arenaEventTarget.removeEventListener(ArenaEventType.ARENA_TAG_ADDED, this.#onArenaTagAdded);
+    arenaEventTarget.removeEventListener(ArenaEventType.ARENA_TAG_REMOVED, this.#onArenaTagRemoved);
 
     super.destroy(fromScene);
   }
@@ -263,7 +265,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
    * Add a recently-created {@linkcode ArenaTag} to the flyout.
    * @param event - The {@linkcode ArenaTagAddedEvent} having been emitted
    */
-  private onArenaTagAdded(event: ArenaTagAddedEvent): void {
+  readonly #onArenaTagAdded = (event: ArenaTagAddedEvent) => {
     const { trapLayers, tagType, side, maxDuration, duration } = event;
     const name = this.localizeEffectName(ArenaTagType[tagType]);
     if (trapLayers == null) {
@@ -291,7 +293,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
       });
     }
     this.updateFieldText();
-  }
+  };
 
   /**
    * Update an existing trap tag with an updated layer count whenever one is overlapped.
@@ -309,14 +311,14 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
    * Remove a recently-culled {@linkcode ArenaTag} from the flyout.
    * @param event - The {@linkcode ArenaTagRemovedEvent} having been emitted
    */
-  private onArenaTagRemoved(event: ArenaTagRemovedEvent): void {
+  readonly #onArenaTagRemoved = (event: ArenaTagRemovedEvent): void => {
     const foundIndex = this.arenaTags.findIndex(info => info.tagType === event.tagType && info.side === event.side);
 
     if (foundIndex > -1) {
       this.arenaTags.splice(foundIndex, 1);
       this.updateFieldText();
     }
-  }
+  };
 
   // #endregion ArenaTags
 
@@ -326,7 +328,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
    * Update the current weather text when the weather changes.
    * @param event - The {@linkcode WeatherChangedEvent} having been emitted
    */
-  private onWeatherChanged(event: WeatherChangedEvent): void {
+  readonly #onWeatherChanged = (event: WeatherChangedEvent): void => {
     if (event.weatherType === WeatherType.NONE) {
       this.weatherInfo = undefined;
       this.updateFieldText();
@@ -341,13 +343,13 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     };
 
     this.updateFieldText();
-  }
+  };
 
   /**
    * Update the current terrain text when the terrain changes.
    * @param event - The {@linkcode TerrainChangedEvent} having been emitted
    */
-  private onTerrainChanged(event: TerrainChangedEvent): void {
+  readonly #onTerrainChanged = (event: TerrainChangedEvent): void => {
     if (event.terrainType === TerrainType.NONE) {
       this.terrainInfo = undefined;
       this.updateFieldText();
@@ -362,13 +364,13 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     };
 
     this.updateFieldText();
-  }
+  };
 
   // #endregion Weather/Terrain
 
   // #region Text display functions
   /** Clear out the contents of all arena texts. */
-  private clearText(): void {
+  private clearText(this: ArenaFlyout): void {
     this.flyoutTextPlayer.text = "";
     this.flyoutTextField.text = "";
     this.flyoutTextEnemy.text = "";
@@ -379,7 +381,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
    */
   // TODO: Make this use scrolling text objects per individual effect to allow for longer messages and allow
   // Future Sight and similar to appear on the flyout again
-  private updateFieldText(): void {
+  private updateFieldText(this: ArenaFlyout): void {
     this.clearText();
 
     if (this.weatherInfo) {
