@@ -3304,7 +3304,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.starterMoveset = this.speciesStarterMoves.slice(0, 4) as StarterMoveset;
     }
     this.starterSummary.updateMoveset(this.starterMoveset, this.speciesStarterMoves.length);
-    this.starterSummary.updateEggMoves(starterDataEntry.eggMoves);
+    if (speciesEggMoves.hasOwnProperty(speciesId)) {
+      this.starterSummary.updateEggMoves(starterDataEntry.eggMoves);
+    } else {
+      this.starterSummary.hideEggMoves();
+    }
   }
 
   popStarter(index: number): void {

@@ -848,6 +848,10 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     this.pokemonEggMovesContainer.setVisible(true);
   }
 
+  hideEggMoves() {
+    this.pokemonEggMovesContainer.setVisible(false);
+  }
+
   showIvs() {
     this.showStats();
     this.statsMode = true;
