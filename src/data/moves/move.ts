@@ -8890,11 +8890,6 @@ export class ExposedMoveAttr extends AddBattlerTagAttr {
   }
 }
 
-export type MoveTargetSet = {
-  targets: BattlerIndex[];
-  multiple: boolean;
-};
-
 /**
  * Map of Move attributes to their respective classes. Used for instanceof checks.
  */
