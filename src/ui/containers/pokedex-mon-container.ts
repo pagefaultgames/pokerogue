@@ -1,15 +1,8 @@
 import { globalScene } from "#app/global-scene";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { TextStyle } from "#enums/text-style";
-import type { Variant } from "#sprites/variant";
+import type { SpeciesDetails } from "#ui/starter-select-ui-utils";
 import { addTextObject } from "#ui/text";
-
-interface SpeciesDetails {
-  shiny?: boolean | undefined;
-  formIndex?: number | undefined;
-  female?: boolean | undefined;
-  variant?: Variant | undefined;
-}
 
 export class PokedexMonContainer extends Phaser.GameObjects.Container {
   public species: PokemonSpecies;

@@ -67,6 +67,7 @@ import {
   isPassiveAvailable,
   isSameSpeciesEggAvailable,
   isValueReductionAvailable,
+  type SpeciesDetails,
 } from "../utils/starter-select-ui-utils";
 
 interface LanguageSetting {
@@ -179,13 +180,6 @@ const languageSettings: { [key: string]: LanguageSetting } = {
 
 // Position of UI elements
 const speciesContainerX = 109;
-
-interface SpeciesDetails {
-  shiny?: boolean | undefined;
-  formIndex?: number | undefined;
-  female?: boolean | undefined;
-  variant?: number | undefined;
-}
 
 enum MenuOptions {
   BASE_STATS,
@@ -2396,7 +2390,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
           shiny: props.shiny,
           formIndex: props.formIndex,
           female: props.female,
-          variant: props.variant ?? 0,
+          variant: (props.variant as Variant) ?? 0,
         });
       } else {
         this.pokemonGrowthRateText.setText("");
@@ -2489,7 +2483,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         female = oldProps?.female ?? false;
       }
       if (variant === undefined) {
-        variant = oldProps?.variant ?? 0;
+        variant = (oldProps?.variant as Variant) ?? 0;
       }
       if (formIndex === undefined) {
         formIndex = oldProps?.formIndex ?? 0;
@@ -2519,7 +2513,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
           female = props.female;
         }
         if (variant === undefined || variant !== props.variant) {
-          variant = props.variant;
+          variant = props.variant as Variant;
         }
       }
 

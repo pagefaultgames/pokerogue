@@ -20,7 +20,6 @@ import type { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { UiTheme } from "#enums/ui-theme";
-import type { Variant } from "#sprites/variant";
 import { getVariantIcon, getVariantTint } from "#sprites/variant";
 import type { GameData } from "#system/game-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
@@ -47,6 +46,7 @@ import {
   isPassiveAvailable,
   isSameSpeciesEggAvailable,
   isValueReductionAvailable,
+  type SpeciesDetails,
 } from "../utils/starter-select-ui-utils";
 
 interface LanguageSetting {
@@ -144,15 +144,6 @@ function calcStarterPosition(index: number): { x: number; y: number } {
   const y = yOffset + Math.floor(index / 9) * height;
 
   return { x, y };
-}
-
-interface SpeciesDetails {
-  shiny?: boolean | undefined;
-  formIndex?: number | undefined;
-  female?: boolean | undefined;
-  variant?: Variant | undefined;
-  abilityIndex?: number | undefined;
-  natureIndex?: number | undefined;
 }
 
 export class PokedexUiHandler extends MessageUiHandler {
