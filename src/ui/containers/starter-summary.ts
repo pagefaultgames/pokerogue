@@ -212,8 +212,6 @@ export class StarterSummary extends Phaser.GameObjects.Container {
       this.pokemonEggMovesContainer,
       this.statsContainer,
     ]);
-
-    this.allowTera = globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id);
   }
 
   setupPokemonPreferencesContainer(): GameObjects.Container {
@@ -462,6 +460,9 @@ export class StarterSummary extends Phaser.GameObjects.Container {
   }
 
   setSpecies(species: PokemonSpecies, starterPreferences: StarterPreferences) {
+    // Checking here to ensure achievements are loaded, and updated if unlocked while playing
+    this.allowTera = globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id);
+
     this.speciesId = species.speciesId;
 
     // First, we load from the dex entry to get defaults
