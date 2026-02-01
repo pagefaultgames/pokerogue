@@ -4867,7 +4867,7 @@ export class FriendshipPowerAttr extends VariablePowerAttr {
     // TODO: Can't we just... set the enemy's friendship to its base inside enemy generation?
     let friendship = user.isPlayer() || user.hasTrainer() ? user.friendship : user.species.baseFriendship;
     if (!isBetween(friendship, 0, 255)) {
-      // TODO: Remove this once Zod schemas allow us to validate it during save file loading
+      // TODO: Remove this if or when proper validation is added (or otherwise guaranteed)
       console.warn(
         `Friendship value inside FriendshipPowerAttr power calculation (${friendship}) is out of valid bounds!`,
       );
