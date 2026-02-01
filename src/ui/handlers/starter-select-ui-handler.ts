@@ -190,7 +190,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
   private starters: Starter[] = [];
   public starterSpecies: PokemonSpecies[] = [];
-  private pokerusSpecies: PokemonSpecies[] = [];
+  private pokerusSpecies: StarterSpeciesId[] = [];
   private speciesStarterDexEntry: DexEntry | null;
   private speciesStarterMoves: MoveId[];
   private canCycleShiny: boolean;
@@ -2385,7 +2385,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       passive: !(starterDataEntry.passiveAttr ^ (PassiveAttr.ENABLED | PassiveAttr.UNLOCKED)),
       nature,
       moveset,
-      pokerus: this.pokerusSpecies.includes(species),
+      pokerus: this.pokerusSpecies.includes(species.speciesId as StarterSpeciesId),
       nickname: this.starterPreferences[species.speciesId]?.nickname,
       teraType,
       ivs: dexEntry.ivs,
@@ -2782,10 +2782,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       // Pokerus Filter
       const fitsPokerus = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
         if (misc.val === "POKERUS" && misc.state === DropDownState.ON) {
-          return this.pokerusSpecies.includes(species);
+          return this.pokerusSpecies.includes(starterId);
         }
         if (misc.val === "POKERUS" && misc.state === DropDownState.EXCLUDE) {
-          return !this.pokerusSpecies.includes(species);
+          return !this.pokerusSpecies.includes(starterId);
         }
         if (misc.val === "POKERUS" && misc.state === DropDownState.OFF) {
           return true;
@@ -2893,7 +2893,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           container.icon.setTint(0);
         }
 
-        if (this.pokerusSpecies.includes(container.species)) {
+        if (this.pokerusSpecies.includes(container.species.speciesId as StarterSpeciesId)) {
           this.pokerusCursorObjs[pokerusCursorIndex].setPosition(container.x - 1, container.y + 1).setVisible(true);
           pokerusCursorIndex++;
         }
@@ -3068,7 +3068,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         this.updateSelectedStarterMoveset(starterId);
       }
 
-      if (this.pokerusSpecies.includes(species)) {
+      if (this.pokerusSpecies.includes(starterId)) {
         handleTutorial(Tutorial.POKERUS);
       }
     } else if (dexEntry?.seenAttr) {

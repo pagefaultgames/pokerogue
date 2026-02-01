@@ -2,7 +2,12 @@ import { globalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
 import { speciesEggMoves } from "#balance/egg-moves";
 import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#balance/pokemon-level-moves";
-import { getStarterValueFriendshipCap, POKERUS_STARTER_COUNT, speciesStarterCosts } from "#balance/starters";
+import {
+  getStarterValueFriendshipCap,
+  POKERUS_STARTER_COUNT,
+  type StarterSpeciesId,
+  speciesStarterCosts,
+} from "#balance/starters";
 import { speciesTmMoves } from "#balance/tms";
 import { allAbilities, allMoves, allSpecies, catchableSpecies } from "#data/data-lists";
 import type { PokemonForm, PokemonSpecies } from "#data/pokemon-species";
@@ -170,7 +175,7 @@ export class PokedexUiHandler extends MessageUiHandler {
 
   private lastSpecies: PokemonSpecies;
   private speciesLoaded: Map<SpeciesId, boolean> = new Map<SpeciesId, boolean>();
-  private pokerusSpecies: PokemonSpecies[] = [];
+  private pokerusSpecies: StarterSpeciesId[] = [];
   private speciesStarterDexEntry: DexEntry | null;
 
   private assetLoadCancelled: BooleanHolder | null;
@@ -1634,10 +1639,10 @@ export class PokedexUiHandler extends MessageUiHandler {
       // Pokerus Filter
       const fitsPokerus = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
         if (misc.val === "POKERUS" && misc.state === DropDownState.ON) {
-          return this.pokerusSpecies.includes(species);
+          return this.pokerusSpecies.includes(species.speciesId as StarterSpeciesId);
         }
         if (misc.val === "POKERUS" && misc.state === DropDownState.EXCLUDE) {
-          return !this.pokerusSpecies.includes(species);
+          return !this.pokerusSpecies.includes(species.speciesId as StarterSpeciesId);
         }
         if (misc.val === "POKERUS" && misc.state === DropDownState.OFF) {
           return true;
@@ -1783,7 +1788,7 @@ export class PokedexUiHandler extends MessageUiHandler {
         });
 
         if (this.showDecorations) {
-          if (this.pokerusSpecies.includes(data.species)) {
+          if (this.pokerusSpecies.includes(data.species.speciesId as StarterSpeciesId)) {
             this.pokerusCursorObjs[pokerusCursorIndex].setPosition(container.x - 1, container.y + 1);
             this.pokerusCursorObjs[pokerusCursorIndex].setVisible(true);
             pokerusCursorIndex++;
