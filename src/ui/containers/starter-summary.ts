@@ -410,6 +410,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
 
   updateName(name: string) {
     this.pokemonNameText.setText(name);
+    this.truncateName();
   }
 
   updateCandyCount(count: number) {

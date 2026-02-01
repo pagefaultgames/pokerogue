@@ -1,5 +1,6 @@
 import { VALUE_REDUCTION_MAX } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { pokemonStarters } from "#balance/pokemon-evolutions";
 import {
   getPassiveCandyCount,
   getSameSpeciesEggCandyCounts,
@@ -32,52 +33,64 @@ export interface SpeciesDetails {
   teraType?: PokemonType | undefined;
 }
 
+export function getStarterSpeciesId(speciesId): number {
+  if (speciesStarterCosts.hasOwnProperty(speciesId)) {
+    return speciesId;
+  }
+  return pokemonStarters[speciesId];
+}
+
 /**
  * Determines if a passive upgrade is available for the given species ID
- * @param speciesId The ID of the species to check the passive of
- * @param starterData Optional custom starter data, defaults to the data in globalScene
+ * @param speciesId - The ID of the species to check the passive of
+ * @param gameData - Optional game data, defaults to the data in globalScene
  * @returns true if the user has enough candies and a passive has not been unlocked already
  */
-export function isPassiveAvailable(speciesId: number, starterData?: StarterDataEntry): boolean {
+export function isPassiveAvailable(speciesId: number, gameData?: GameData): boolean {
   // Get this species ID's starter data
-  starterData ??= globalScene.gameData.starterData[speciesId];
+  const starterId = getStarterSpeciesId(speciesId);
+  gameData ??= globalScene.gameData;
+  const starterData = gameData.starterData[starterId];
 
   return (
-    starterData.candyCount >= getPassiveCandyCount(speciesStarterCosts[speciesId])
+    starterData.candyCount >= getPassiveCandyCount(speciesStarterCosts[starterId])
     && !(starterData.passiveAttr & Passive.UNLOCKED)
   );
 }
 
 /**
  * Determines if a value reduction upgrade is available for the given species ID
- * @param speciesId The ID of the species to check the value reduction of
- * @param starterData Optional custom starter data, defaults to the data in globalScene
+ * @param speciesId - The ID of the species to check the value reduction of
+ * @param gameData - Optional game data, defaults to the data in globalScene
  * @returns true if the user has enough candies and all value reductions have not been unlocked already
  */
-export function isValueReductionAvailable(speciesId: number, starterData?: StarterDataEntry): boolean {
+export function isValueReductionAvailable(speciesId: number, gameData?: GameData): boolean {
   // Get this species ID's starter data
-  starterData ??= globalScene.gameData.starterData[speciesId];
+  const starterId = getStarterSpeciesId(speciesId);
+  gameData ??= globalScene.gameData;
+  const starterData = gameData.starterData[starterId];
 
   return (
-    starterData.candyCount >= getValueReductionCandyCounts(speciesStarterCosts[speciesId])[starterData.valueReduction]
+    starterData.candyCount >= getValueReductionCandyCounts(speciesStarterCosts[starterId])[starterData.valueReduction]
     && starterData.valueReduction < VALUE_REDUCTION_MAX
   );
 }
 
 /**
- * Determines if an same species egg can be bought for the given species ID
- * @param speciesId The ID of the species to check the value reduction of
- * @param starterData Optional custom starter data, defaults to the data in globalScene
+ * Determines if an egg for the same starter can be bought for the given species ID
+ * @param speciesId - The ID of the species to check the value reduction of
+ * @param gameData - Optional game data, defaults to the data in globalScene
  * @returns true if the user has enough candies
  */
 export function isSameSpeciesEggAvailable(speciesId: number, gameData?: GameData): boolean {
   // Get this species ID's starter data
   gameData ??= globalScene.gameData;
 
-  const hatchCount = globalScene.gameData.dexData[speciesId].hatchedCount;
+  const starterId = getStarterSpeciesId(speciesId);
+  const hatchCount = globalScene.gameData.dexData[starterId].hatchedCount;
   return (
-    gameData.starterData[speciesId].candyCount
-    >= getSameSpeciesEggCandyCounts(speciesStarterCosts[speciesId], hatchCount)
+    gameData.starterData[starterId].candyCount
+    >= getSameSpeciesEggCandyCounts(speciesStarterCosts[starterId], hatchCount)
   );
 }
 
@@ -252,6 +265,14 @@ export function getStarterSelectTextSettings(): StarterSelectLanguageSetting {
   return textSettings;
 }
 
+/**
+ * Return a copy of the dex data and starter data for a given species,
+ * sanitizing it by applying any challenges that restrict which options should be available.
+ *
+ * @param speciesId - The species id to get data for
+ * @param applyChallenge - Whether the current challenge should be taken into account
+ * @returns StarterPreferences for the species
+ */
 export function getSpeciesData(
   speciesId: SpeciesId,
   applyChallenge = true,
@@ -284,7 +305,7 @@ export function getFriendship(speciesId: number) {
  * Creates a temporary dex attr props that will be used to check whether a pokemon is valid for a challenge
  * and to display the correct shiny, variant, and form based on the AllStarterPreferences
  *
- * @param speciesId the id of the species to get props for
+ * @param speciesId - The id of the species to get props for
  * @returns the dex props
  */
 export function getDexAttrFromPreferences(speciesId: number, starterPreferences: StarterPreferences = {}): bigint {
@@ -336,6 +357,12 @@ export function getDexAttrFromPreferences(speciesId: number, starterPreferences:
   return props;
 }
 
+/**
+ * Convert starter preferences to {@linkcode DexAttrProps | dex props}, which are used as an input by various functions.
+ * If any preferences are undefined, the default value for the species is given, based on its caught data.
+ * @param species - The {@linkcode PokemonSpecies} for which dex props are required.
+ * @param starterPreferences - The {@linkcode StarterPreferences | starter preferences} for the species.
+ */
 export function getSpeciesPropsFromPreferences(
   species: PokemonSpecies,
   starterPreferences: StarterPreferences = {},
@@ -349,8 +376,16 @@ export function getSpeciesPropsFromPreferences(
   };
 }
 
-// TODO: Do we actually need props?
-export function getSpeciesDetailsFromPreferences(species: PokemonSpecies, starterPreferences: StarterPreferences = {}) {
+/**
+ * Convert starter preferences to {@linkcode SpeciesDetails | species details}.
+ * If any preferences are undefined, the default value for the species is given, based on its caught data.
+ * @param species - The {@linkcode PokemonSpecies} for which species details are required.
+ * @param starterPreferences - The {@linkcode StarterPreferences | starter preferences} for the species.
+ */
+export function getSpeciesDetailsFromPreferences(
+  species: PokemonSpecies,
+  starterPreferences: StarterPreferences = {},
+): SpeciesDetails {
   const props = getSpeciesPropsFromPreferences(species, starterPreferences);
   const abilityIndex =
     starterPreferences.abilityIndex ?? globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);

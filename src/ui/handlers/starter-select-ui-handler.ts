@@ -777,12 +777,15 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   /**
-   * Get the starter attributes for the given PokemonSpecies, after sanitizing them.
+   * Return the sanitized starter preferences for the given PokemonSpecies.
    * If somehow a preference is set for a form, variant, gender, ability or nature
    * that wasn't actually unlocked or is invalid it will be cleared here
+   * Any options that are not allowed in the current challenge are also removed, unless the caller specifies otherwise.
    *
-   * @param species The species to get Starter Preferences for
-   * @returns StarterPreferences for the species
+   * @param species - The species to get starter preferences for
+   * @param preferences - The {@linkcode AllStarterPreferences} object to extract the preferences from,
+   * @param ignoreChallenge - Whether the current challenge should be ignored while sanitizing,
+   * @returns {@linkcode StarterPreferences} for the species
    */
   initStarterPrefs(
     species: PokemonSpecies,
@@ -942,8 +945,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
   /**
    * Sets a bounce animation if enabled and the Pokemon has an upgrade
-   * @param icon {@linkcode Phaser.GameObjects.GameObject} to animate
-   * @param species {@linkcode PokemonSpecies} of the icon used to check for upgrades
+   * @param icon - {@linkcode Phaser.GameObjects.GameObject} to animate
+   * @param species - {@linkcode PokemonSpecies} of the icon used to check for upgrades
    * @param startPaused Should this animation be paused after it is added?
    */
   setUpgradeAnimation(icon: Phaser.GameObjects.Sprite, species: PokemonSpecies, startPaused = false): void {
@@ -993,7 +996,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   /**
-   * Sets the visibility of a Candy Upgrade Icon
+   * Sets the visibility of the candy upgrade icon for a given Pokémon
+   * @param starterContainer - The container to update
    */
   setUpgradeIcon(starter: StarterContainer): void {
     const species = starter.species;
@@ -1028,8 +1032,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   /**
-   * Update the display of candy upgrade icons or animations for the given StarterContainer
-   * @param starterContainer the container for the Pokemon to update
+   * Update the display of candy upgrade icons or animations for a given Pokémon
+   * @param starterContainer - The container to update
    */
   updateCandyUpgradeDisplay(starterContainer: StarterContainer) {
     if (isUpgradeIconEnabled()) {
@@ -1042,7 +1046,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
   /**
    * Processes an {@linkcode CandyUpgradeNotificationChangedEvent} sent when the corresponding setting changes
-   * @param event {@linkcode Event} sent by the callback
+   * @param event {@linkcode Event} - The event sent by the callback
    */
   onCandyUpgradeDisplayChanged(event: Event): void {
     const candyUpgradeDisplayEvent = event as CandyUpgradeNotificationChangedEvent;
@@ -1078,6 +1082,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     return numOfRows < ROWS ? cursor : cursor - (numOfRows - ROWS) * COLUMNS;
   }
 
+  /**
+   * Processes inputs while the filters are open.
+   */
   processFilterModeInput(button: Button) {
     let success = false;
 
@@ -1187,6 +1194,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     return success;
   }
 
+  /**
+   * Processes inputs while the cursor is on the start button.
+   */
   processStartCursorInput(button: Button) {
     let success = false;
     let error = false;
@@ -1246,6 +1256,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     return [success, error];
   }
 
+  /**
+   * Processes inputs while the cursor is on the random choice button.
+   */
   processRandomCursorInput(button: Button) {
     let success = false;
     let error = false;
@@ -1346,6 +1359,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     return [success, error];
   }
 
+  /**
+   * Processes inputs while the cursor is on one of the cycle buttons.
+   */
   processCycleButtonsInput(button: Button) {
     let success = false;
 
@@ -1473,6 +1489,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     return success;
   }
 
+  /**
+   * Update the preferences for shiny and variant for a given speciesId.
+   */
   setShinyAndVariant(speciesId: SpeciesId, shiny: boolean, variant: number) {
     (this.starterPreferences[speciesId] ??= {}).shiny = shiny;
     (this.originalStarterPreferences[speciesId] ??= {}).shiny = shiny;
@@ -1480,6 +1499,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     (this.originalStarterPreferences[speciesId] ??= {}).variant = variant;
   }
 
+  /**
+   * Update the preferences for the form index for a given speciesId.
+   */
   setNewFormIndex(speciesId: SpeciesId, formIndex: number) {
     (this.starterPreferences[speciesId] ??= {}).formIndex = formIndex;
     (this.originalStarterPreferences[speciesId] ??= {}).formIndex = formIndex;
@@ -1494,6 +1516,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
   }
 
+  /**
+   * Update the preferences for the gender for a given speciesId.
+   */
   setNewGender(speciesId: SpeciesId, female: boolean) {
     (this.starterPreferences[speciesId] ??= {}).female = female;
     (this.originalStarterPreferences[speciesId] ??= {}).female = female;
@@ -1506,21 +1531,33 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
   }
 
+  /**
+   * Update the preferences for the ability index for a given speciesId.
+   */
   setNewAbilityIndex(speciesId: SpeciesId, abilityIndex: number) {
     (this.starterPreferences[speciesId] ??= {}).abilityIndex = abilityIndex;
     (this.originalStarterPreferences[speciesId] ??= {}).abilityIndex = abilityIndex;
   }
 
+  /**
+   * Update the preferences for the nature for a given speciesId.
+   */
   setNewNature(speciesId: SpeciesId, nature: number) {
     (this.starterPreferences[speciesId] ??= {}).nature = nature;
     (this.originalStarterPreferences[speciesId] ??= {}).nature = nature;
   }
 
+  /**
+   * Update the preferences for the tera type for a given speciesId.
+   */
   setNewTeraType(speciesId: SpeciesId, teraType: PokemonType) {
     (this.starterPreferences[speciesId] ??= {}).tera = teraType;
     (this.originalStarterPreferences[speciesId] ??= {}).tera = teraType;
   }
 
+  /**
+   * Processes inputs while the cursor is on one of the party containers.
+   */
   processPartyIconInput(button: Button) {
     let success = false;
 
@@ -1581,6 +1618,118 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     return success;
   }
 
+  /**
+   * Processes inputs from the arrow keys while the cursor is on one of the containers in the box.
+   */
+  processBoxInput(button: Button) {
+    let success = false;
+
+    const numberOfStarters = this.filteredStarterIds.length;
+    const numOfRows = Math.ceil(numberOfStarters / COLUMNS);
+    const onScreenFirstIndex = this.scrollCursor * COLUMNS; // this is first starter index on the screen
+    const onScreenLastIndex = Math.min(this.filteredStarterIds.length - onScreenFirstIndex - 1, ROWS * COLUMNS - 1); // this is the last starter index on the screen
+    const currentRow = Math.floor((onScreenFirstIndex + this.cursor) / COLUMNS);
+    const onScreenCurrentRow = Math.floor(this.cursor / COLUMNS);
+
+    switch (button) {
+      case Button.UP:
+        if (currentRow > 0) {
+          if (this.scrollCursor > 0 && currentRow - this.scrollCursor === 0) {
+            this.scrollCursor--;
+            this.updateScroll();
+            success = this.setCursor(this.cursor);
+          } else {
+            success = this.setCursor(this.cursor - 9);
+          }
+        } else {
+          this.filterBarCursor = this.filterBar.getNearestFilter(this.starterContainers[this.cursor]);
+          this.setFilterMode(true);
+          success = true;
+        }
+        break;
+      case Button.DOWN:
+        if (currentRow < numOfRows - 1 && this.cursor + 9 < this.filteredStarterIds.length) {
+          // not last row
+          if (currentRow - this.scrollCursor === 8) {
+            // last row of visible starters
+            this.scrollCursor++;
+            this.updateScroll();
+            success = this.setCursor(this.cursor);
+          } else {
+            success = this.setCursor(this.cursor + 9);
+          }
+        } else if (numOfRows > 1) {
+          // DOWN from last row of Pokemon > Wrap around to first row
+          this.scrollCursor = 0;
+          this.updateScroll();
+          success = this.setCursor(this.cursor % 9);
+        } else {
+          // DOWN from single row of Pokemon > Go to filters
+          this.filterBarCursor = this.filterBar.getNearestFilter(this.starterContainers[this.cursor]);
+          this.setFilterMode(true);
+          success = true;
+        }
+        break;
+      case Button.LEFT:
+        if (this.cursor % 9 !== 0) {
+          success = this.setCursor(this.cursor - 1);
+        } else {
+          // LEFT from filtered Pokemon, on the left edge
+          if (onScreenCurrentRow === 0) {
+            // from the first row of starters we go to the random selection
+            this.cursorObj.setVisible(false);
+            this.showRandomCursor();
+          } else if (this.starterSpecies.length === 0) {
+            // no starter in team and not on first row > wrap around to the last column
+            success = this.setCursor(this.cursor + Math.min(8, onScreenLastIndex - this.cursor));
+          } else if (onScreenCurrentRow < 7) {
+            // at least one pokemon in team > for the first 7 rows, go to closest starter
+            this.cursorObj.setVisible(false);
+            this.starterIconsCursorIndex = findClosestStarterIndex(this.cursorObj.y - 1, this.starterSpecies.length);
+            this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+          } else {
+            // at least one pokemon in team > from the bottom 2 rows, go to start run button
+            this.cursorObj.setVisible(false);
+            this.setNoSpecies();
+            this.startCursorObj.setVisible(true);
+          }
+          success = true;
+        }
+        break;
+      case Button.RIGHT:
+        // is not right edge
+        if (this.cursor % 9 < (currentRow < numOfRows - 1 ? 8 : (numberOfStarters - 1) % 9)) {
+          success = this.setCursor(this.cursor + 1);
+        } else {
+          // RIGHT from filtered Pokemon, on the right edge
+          if (onScreenCurrentRow === 0) {
+            // from the first row of starters we go to the random selection
+            this.cursorObj.setVisible(false);
+            this.showRandomCursor();
+          } else if (this.starterSpecies.length === 0) {
+            // no selected starter in team > wrap around to the first column
+            success = this.setCursor(this.cursor - Math.min(8, this.cursor % 9));
+          } else if (onScreenCurrentRow < 7) {
+            // at least one pokemon in team > for the first 7 rows, go to closest starter
+            this.cursorObj.setVisible(false);
+            this.starterIconsCursorIndex = findClosestStarterIndex(this.cursorObj.y - 1, this.starterSpecies.length);
+            this.moveStarterIconsCursor(this.starterIconsCursorIndex);
+          } else {
+            // at least one pokemon in team > from the bottom 2 rows, go to start run button
+            this.cursorObj.setVisible(false);
+            this.setNoSpecies();
+            this.startCursorObj.setVisible(true);
+          }
+          success = true;
+        }
+        break;
+    }
+    return success;
+  }
+
+  /**
+   * Opens the menu and populates its options.
+   */
   openPokemonMenu() {
     const ui = this.getUi();
     let options: any[] = []; // TODO: add proper type
@@ -2116,13 +2265,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       return false;
     }
 
-    const numberOfStarters = this.filteredStarterIds.length;
-    const numOfRows = Math.ceil(numberOfStarters / COLUMNS);
-    const onScreenFirstIndex = this.scrollCursor * COLUMNS; // this is first starter index on the screen
-    const onScreenLastIndex = Math.min(this.filteredStarterIds.length - onScreenFirstIndex - 1, ROWS * COLUMNS - 1); // this is the last starter index on the screen
-    const currentRow = Math.floor((onScreenFirstIndex + this.cursor) / COLUMNS);
-    const onScreenCurrentRow = Math.floor(this.cursor / COLUMNS);
-
     const ui = this.getUi();
 
     let success = false;
@@ -2160,7 +2302,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     } else if (this.starterIconsCursorObj.visible) {
       success = this.processPartyIconInput(button);
     } else if (this.startCursorObj.visible) {
-      // this checks to see if the start button is selected
       [success, error] = this.processStartCursorInput(button);
     } else if (this.randomCursorObj.visible) {
       [success, error] = this.processRandomCursorInput(button);
@@ -2168,117 +2309,22 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       if (!this.speciesStarterDexEntry?.caughtAttr) {
         error = true;
       } else if (this.starterSpecies.length <= 6) {
-        // checks to see if the party has 6 or fewer pokemon
         this.openPokemonMenu();
         success = true;
       }
+    } else if (
+      [
+        Button.CYCLE_SHINY,
+        Button.CYCLE_FORM,
+        Button.CYCLE_GENDER,
+        Button.CYCLE_ABILITY,
+        Button.CYCLE_NATURE,
+        Button.CYCLE_TERA,
+      ].includes(button)
+    ) {
+      success = this.processCycleButtonsInput(button);
     } else {
-      if (
-        [
-          Button.CYCLE_SHINY,
-          Button.CYCLE_FORM,
-          Button.CYCLE_GENDER,
-          Button.CYCLE_ABILITY,
-          Button.CYCLE_NATURE,
-          Button.CYCLE_TERA,
-        ].includes(button)
-      ) {
-        success = this.processCycleButtonsInput(button);
-      }
-
-      switch (button) {
-        case Button.UP:
-          if (currentRow > 0) {
-            if (this.scrollCursor > 0 && currentRow - this.scrollCursor === 0) {
-              this.scrollCursor--;
-              this.updateScroll();
-              success = this.setCursor(this.cursor);
-            } else {
-              success = this.setCursor(this.cursor - 9);
-            }
-          } else {
-            this.filterBarCursor = this.filterBar.getNearestFilter(this.starterContainers[this.cursor]);
-            this.setFilterMode(true);
-            success = true;
-          }
-          break;
-        case Button.DOWN:
-          if (currentRow < numOfRows - 1 && this.cursor + 9 < this.filteredStarterIds.length) {
-            // not last row
-            if (currentRow - this.scrollCursor === 8) {
-              // last row of visible starters
-              this.scrollCursor++;
-              this.updateScroll();
-              success = this.setCursor(this.cursor);
-            } else {
-              success = this.setCursor(this.cursor + 9);
-            }
-          } else if (numOfRows > 1) {
-            // DOWN from last row of Pokemon > Wrap around to first row
-            this.scrollCursor = 0;
-            this.updateScroll();
-            success = this.setCursor(this.cursor % 9);
-          } else {
-            // DOWN from single row of Pokemon > Go to filters
-            this.filterBarCursor = this.filterBar.getNearestFilter(this.starterContainers[this.cursor]);
-            this.setFilterMode(true);
-            success = true;
-          }
-          break;
-        case Button.LEFT:
-          if (this.cursor % 9 !== 0) {
-            success = this.setCursor(this.cursor - 1);
-          } else {
-            // LEFT from filtered Pokemon, on the left edge
-            if (onScreenCurrentRow === 0) {
-              // from the first row of starters we go to the random selection
-              this.cursorObj.setVisible(false);
-              this.showRandomCursor();
-            } else if (this.starterSpecies.length === 0) {
-              // no starter in team and not on first row > wrap around to the last column
-              success = this.setCursor(this.cursor + Math.min(8, onScreenLastIndex - this.cursor));
-            } else if (onScreenCurrentRow < 7) {
-              // at least one pokemon in team > for the first 7 rows, go to closest starter
-              this.cursorObj.setVisible(false);
-              this.starterIconsCursorIndex = findClosestStarterIndex(this.cursorObj.y - 1, this.starterSpecies.length);
-              this.moveStarterIconsCursor(this.starterIconsCursorIndex);
-            } else {
-              // at least one pokemon in team > from the bottom 2 rows, go to start run button
-              this.cursorObj.setVisible(false);
-              this.setNoSpecies();
-              this.startCursorObj.setVisible(true);
-            }
-            success = true;
-          }
-          break;
-        case Button.RIGHT:
-          // is not right edge
-          if (this.cursor % 9 < (currentRow < numOfRows - 1 ? 8 : (numberOfStarters - 1) % 9)) {
-            success = this.setCursor(this.cursor + 1);
-          } else {
-            // RIGHT from filtered Pokemon, on the right edge
-            if (onScreenCurrentRow === 0) {
-              // from the first row of starters we go to the random selection
-              this.cursorObj.setVisible(false);
-              this.showRandomCursor();
-            } else if (this.starterSpecies.length === 0) {
-              // no selected starter in team > wrap around to the first column
-              success = this.setCursor(this.cursor - Math.min(8, this.cursor % 9));
-            } else if (onScreenCurrentRow < 7) {
-              // at least one pokemon in team > for the first 7 rows, go to closest starter
-              this.cursorObj.setVisible(false);
-              this.starterIconsCursorIndex = findClosestStarterIndex(this.cursorObj.y - 1, this.starterSpecies.length);
-              this.moveStarterIconsCursor(this.starterIconsCursorIndex);
-            } else {
-              // at least one pokemon in team > from the bottom 2 rows, go to start run button
-              this.cursorObj.setVisible(false);
-              this.setNoSpecies();
-              this.startCursorObj.setVisible(true);
-            }
-            success = true;
-          }
-          break;
-      }
+      success = this.processBoxInput(button);
     }
 
     if (success) {
@@ -3480,8 +3526,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   /**
-   *  This block checks to see if your party is valid
-   * It checks each pokemon against the challenge - noting that due to monotype challenges it needs to check the pokemon while ignoring their evolutions/form change items
+   * Check that each pokemon in the party is valid for the current challenge.
    */
   isPartyValid(): boolean {
     let canStart = false;
