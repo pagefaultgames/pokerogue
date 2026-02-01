@@ -3,6 +3,7 @@ import { globalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
 import { speciesEggMoves } from "#balance/egg-moves";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
+import type { StarterSpeciesId } from "#balance/starters";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { getEggTierForSpecies } from "#data/egg";
 import { GrowthRate, getGrowthRateColor } from "#data/exp";
@@ -29,7 +30,7 @@ import { addBBCodeTextObject, addTextObject, getTextColor } from "../text";
 import {
   getDexAttrFromPreferences,
   getFriendship,
-  getSpeciesData,
+  getStarterData,
   getStarterSelectTextSettings,
   type SpeciesDetails,
 } from "../utils/starter-select-ui-utils";
@@ -98,7 +99,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
   // Container for everything that's a preference (abilities, nature, form...)
   private pokemonPreferencesContainer: GameObjects.Container;
 
-  private speciesId: SpeciesId;
+  private speciesId: StarterSpeciesId;
 
   constructor(x: number, y: number) {
     super(globalScene, x, y);
@@ -459,14 +460,15 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     this.cleanStarterSprite();
   }
 
-  setSpecies(species: PokemonSpecies, starterPreferences: StarterPreferences) {
+  setStarter(starterId: StarterSpeciesId, starterPreferences: StarterPreferences) {
     // Checking here to ensure achievements are loaded, and updated if unlocked while playing
     this.allowTera = globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id);
 
-    this.speciesId = species.speciesId;
+    this.speciesId = starterId;
+    const species = getPokemonSpecies(starterId);
 
     // First, we load from the dex entry to get defaults
-    const { dexEntry } = getSpeciesData(species.speciesId);
+    const { dexEntry } = getStarterData(starterId);
 
     this.pokemonAbilityText.off("pointerover");
     this.pokemonPassiveText.off("pointerover");
@@ -556,7 +558,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     } else if (dexEntry.seenAttr) {
       this.cleanStarterSprite(species, true);
 
-      const props = globalScene.gameData.getSpeciesDefaultDexAttrProps(species);
+      const props = globalScene.gameData.getSpeciesDefaultDexAttrProps(starterId);
 
       const formIndex = props.formIndex;
       const female = props.female;
@@ -569,7 +571,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     } else {
       this.cleanStarterSprite(species);
 
-      const props = globalScene.gameData.getSpeciesDefaultDexAttrProps(species);
+      const props = globalScene.gameData.getSpeciesDefaultDexAttrProps(starterId);
 
       const formIndex = props.formIndex;
       const female = props.female;
@@ -620,10 +622,12 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     this.pokemonAdditionalMoveCountLabel.setVisible(false);
   }
 
-  setSpeciesDetails(species: PokemonSpecies, options: SpeciesDetails = {}): void {
+  setStarterDetails(starterId: StarterSpeciesId, options: SpeciesDetails = {}): void {
     // Here we pass some options to override everything else
     let { shiny, formIndex, female, variant, abilityIndex, natureIndex, teraType } = options;
     console.log("OPTIONS", options);
+
+    const species = getPokemonSpecies(starterId);
 
     // We will only update the sprite if there is a change to form, shiny/variant
     // or gender for species with gender sprite differences
@@ -704,13 +708,13 @@ export class StarterSummary extends Phaser.GameObjects.Container {
       });
     }
 
-    this.updatePassiveDisplay(species.speciesId, formIndex);
+    this.updatePassiveDisplay(starterId as StarterSpeciesId, formIndex);
 
     // Update nature text
     this.pokemonNatureText.setText(getNatureName(natureIndex as unknown as Nature, true, true, false));
 
     // Update form text
-    const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex!); // TODO: is the bang correct?
+    const speciesForm = getPokemonSpeciesForm(starterId, formIndex!); // TODO: is the bang correct?
     const formText = species.getFormNameToDisplay(formIndex);
     this.pokemonFormText.setText(formText);
 
@@ -724,12 +728,12 @@ export class StarterSummary extends Phaser.GameObjects.Container {
   }
 
   showStats(): void {
-    const { dexEntry } = getSpeciesData(this.speciesId);
+    const { dexEntry } = getStarterData(this.speciesId);
     this.statsContainer.setVisible(true);
     this.statsContainer.updateIvs(dexEntry.ivs);
   }
 
-  updatePassiveDisplay(speciesId: SpeciesId, formIndex = 0) {
+  updatePassiveDisplay(starterId: StarterSpeciesId, formIndex = 0) {
     this.pokemonPassiveLabelText.setVisible(false);
     this.pokemonPassiveText.setVisible(false);
     this.pokemonPassiveDisabledIcon.setVisible(false);
@@ -737,10 +741,10 @@ export class StarterSummary extends Phaser.GameObjects.Container {
 
     const isFreshStartChallenge = globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
 
-    const { starterDataEntry } = getSpeciesData(speciesId);
+    const { starterDataEntry } = getStarterData(starterId);
 
     const passiveAttr = starterDataEntry.passiveAttr;
-    const passiveAbility = allAbilities[getPokemonSpecies(speciesId).getPassiveAbility(formIndex)];
+    const passiveAbility = allAbilities[getPokemonSpecies(starterId).getPassiveAbility(formIndex)];
 
     if (passiveAbility) {
       const isUnlocked = !!(passiveAttr & Passive.UNLOCKED);

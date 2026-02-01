@@ -6,6 +6,7 @@ import {
   getSameSpeciesEggCandyCounts,
   getStarterValueFriendshipCap,
   getValueReductionCandyCounts,
+  type StarterSpeciesId,
   speciesStarterCosts,
 } from "#balance/starters";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -14,13 +15,13 @@ import { DexAttr } from "#enums/dex-attr";
 import { GameModes } from "#enums/game-modes";
 import { Passive } from "#enums/passive";
 import type { PokemonType } from "#enums/pokemon-type";
-import type { SpeciesId } from "#enums/species-id";
 import type { Variant } from "#sprites/variant";
 import type { GameData } from "#system/game-data";
 import type { DexEntry } from "#types/dex-data";
 import type { DexAttrProps, StarterDataEntry, StarterPreferences } from "#types/save-data";
 import { applyChallenges, checkStarterValidForChallenge } from "#utils/challenge-utils";
 import { NumberHolder } from "#utils/common";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 export interface SpeciesDetails {
@@ -33,7 +34,7 @@ export interface SpeciesDetails {
   teraType?: PokemonType | undefined;
 }
 
-export function getStarterSpeciesId(speciesId): number {
+export function getStarterSpeciesId(speciesId: number): number {
   if (speciesStarterCosts.hasOwnProperty(speciesId)) {
     return speciesId;
   }
@@ -65,7 +66,6 @@ export function isPassiveAvailable(speciesId: number, gameData?: GameData): bool
  * @returns true if the user has enough candies and all value reductions have not been unlocked already
  */
 export function isValueReductionAvailable(speciesId: number, gameData?: GameData): boolean {
-  // Get this species ID's starter data
   const starterId = getStarterSpeciesId(speciesId);
   gameData ??= globalScene.gameData;
   const starterData = gameData.starterData[starterId];
@@ -83,7 +83,6 @@ export function isValueReductionAvailable(speciesId: number, gameData?: GameData
  * @returns true if the user has enough candies
  */
 export function isSameSpeciesEggAvailable(speciesId: number, gameData?: GameData): boolean {
-  // Get this species ID's starter data
   gameData ??= globalScene.gameData;
 
   const starterId = getStarterSpeciesId(speciesId);
@@ -94,7 +93,9 @@ export function isSameSpeciesEggAvailable(speciesId: number, gameData?: GameData
   );
 }
 
-export function isStarterValidForChallenge(species: PokemonSpecies) {
+export function isStarterValidForChallenge(starterId: StarterSpeciesId) {
+  const species = getPokemonSpecies(starterId);
+
   let allFormsValid = false;
   if (species.forms?.length > 0) {
     for (let i = 0; i < species.forms.length; i++) {
@@ -273,19 +274,19 @@ export function getStarterSelectTextSettings(): StarterSelectLanguageSetting {
  * @param applyChallenge - Whether the current challenge should be taken into account
  * @returns StarterPreferences for the species
  */
-export function getSpeciesData(
-  speciesId: SpeciesId,
+export function getStarterData(
+  starterId: StarterSpeciesId,
   applyChallenge = true,
 ): { dexEntry: DexEntry; starterDataEntry: StarterDataEntry } {
-  const dexEntry = globalScene.gameData.dexData[speciesId];
-  const starterDataEntry = globalScene.gameData.starterData[speciesId];
+  const dexEntry = globalScene.gameData.dexData[starterId];
+  const starterDataEntry = globalScene.gameData.starterData[starterId];
 
   // Unpacking to make a copy by values, not references
   const copiedDexEntry = { ...dexEntry };
   copiedDexEntry.ivs = [...dexEntry.ivs];
   const copiedStarterDataEntry = { ...starterDataEntry };
   if (applyChallenge) {
-    applyChallenges(ChallengeType.STARTER_SELECT_MODIFY, speciesId, copiedDexEntry, copiedStarterDataEntry);
+    applyChallenges(ChallengeType.STARTER_SELECT_MODIFY, starterId, copiedDexEntry, copiedStarterDataEntry);
   }
   return { dexEntry: { ...copiedDexEntry }, starterDataEntry: { ...copiedStarterDataEntry } };
 }
@@ -310,7 +311,7 @@ export function getFriendship(speciesId: number) {
  */
 export function getDexAttrFromPreferences(speciesId: number, starterPreferences: StarterPreferences = {}): bigint {
   let props = 0n;
-  const { dexEntry } = getSpeciesData(speciesId);
+  const { dexEntry } = getStarterData(speciesId);
   const caughtAttr = dexEntry.caughtAttr;
 
   /*  this checks the gender of the pokemon; this works by checking a) that the starter preferences for the species exist, and if so, is it female. If so, it'll add DexAttr.FEMALE to our temp props
@@ -363,11 +364,11 @@ export function getDexAttrFromPreferences(speciesId: number, starterPreferences:
  * @param species - The {@linkcode PokemonSpecies} for which dex props are required.
  * @param starterPreferences - The {@linkcode StarterPreferences | starter preferences} for the species.
  */
-export function getSpeciesPropsFromPreferences(
-  species: PokemonSpecies,
+export function getStarterDexAttrPropsFromPreferences(
+  starterId: StarterSpeciesId,
   starterPreferences: StarterPreferences = {},
 ): DexAttrProps {
-  const defaults = globalScene.gameData.getSpeciesDefaultDexAttrProps(species);
+  const defaults = globalScene.gameData.getSpeciesDefaultDexAttrProps(starterId);
   return {
     shiny: starterPreferences.shiny != null ? starterPreferences.shiny : defaults.shiny,
     variant: starterPreferences.variant != null ? (starterPreferences.variant as Variant) : defaults.variant,
@@ -382,11 +383,12 @@ export function getSpeciesPropsFromPreferences(
  * @param species - The {@linkcode PokemonSpecies} for which species details are required.
  * @param starterPreferences - The {@linkcode StarterPreferences | starter preferences} for the species.
  */
-export function getSpeciesDetailsFromPreferences(
-  species: PokemonSpecies,
+export function getStarterDetailsFromPreferences(
+  starterId: StarterSpeciesId,
   starterPreferences: StarterPreferences = {},
 ): SpeciesDetails {
-  const props = getSpeciesPropsFromPreferences(species, starterPreferences);
+  const props = getStarterDexAttrPropsFromPreferences(starterId, starterPreferences);
+  const species = getPokemonSpecies(starterId);
   const abilityIndex =
     starterPreferences.abilityIndex ?? globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
   const nature = starterPreferences.nature ?? globalScene.gameData.getSpeciesDefaultNature(species);

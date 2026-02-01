@@ -1,8 +1,10 @@
 import { globalScene } from "#app/global-scene";
 import type { PokemonSpecies } from "#data/pokemon-species";
+import type { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import type { DexAttrProps } from "#types/save-data";
 import { addTextObject } from "#ui/text";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 export class StarterContainer extends Phaser.GameObjects.Container {
   public species: PokemonSpecies;
@@ -17,12 +19,13 @@ export class StarterContainer extends Phaser.GameObjects.Container {
   public candyUpgradeOverlayIcon: Phaser.GameObjects.Image;
   public cost = 0;
 
-  constructor(species: PokemonSpecies) {
+  constructor(speciesId: SpeciesId) {
     super(globalScene, 0, 0);
 
+    const species = getPokemonSpecies(speciesId);
     const defaultDexAttr = globalScene.gameData.getSpeciesDefaultDexAttr(species, false, true);
     const defaultProps = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
-    this.setSpecies(species, defaultProps);
+    this.setSpecies(speciesId, defaultProps);
 
     // starter passive bg
     const starterPassiveBg = globalScene.add.image(2, 5, "passive_bg");
@@ -93,8 +96,8 @@ export class StarterContainer extends Phaser.GameObjects.Container {
     this.candyUpgradeOverlayIcon = candyUpgradeOverlayIcon;
   }
 
-  setSpecies(species: PokemonSpecies, props: DexAttrProps) {
-    this.species = species;
+  setSpecies(speciesId: SpeciesId, props: DexAttrProps) {
+    this.species = getPokemonSpecies(speciesId);
 
     const { shiny, formIndex, female, variant } = props;
 
@@ -105,10 +108,10 @@ export class StarterContainer extends Phaser.GameObjects.Container {
 
     // icon
     this.icon = globalScene.add
-      .sprite(-2, 2, species.getIconAtlasKey(formIndex, shiny, variant))
+      .sprite(-2, 2, this.species.getIconAtlasKey(formIndex, shiny, variant))
       .setScale(0.5)
       .setOrigin(0)
-      .setFrame(species.getIconId(female, formIndex, shiny, variant))
+      .setFrame(this.species.getIconId(female, formIndex, shiny, variant))
       .setTint(0);
     this.checkIconId(female, formIndex, shiny, variant);
     this.add(this.icon);
