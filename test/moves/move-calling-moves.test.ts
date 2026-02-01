@@ -414,7 +414,7 @@ describe("Moves - Move-calling Moves", () => {
       await game.setTurnOrder([BattlerIndex.ENEMY_2, BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.toEndOfTurn();
 
-      expect(feebas).toHaveUsedMove({ move: MoveId.MIRROR_MOVE, useMode: MoveUseMode.NORMAL });
+      expect(feebas).toHaveUsedMove({ move: MoveId.MIRROR_MOVE, useMode: MoveUseMode.NORMAL }, 1);
       expect(feebas).toHaveUsedMove({
         move: MoveId.SWORDS_DANCE,
         useMode: MoveUseMode.FOLLOW_UP,
