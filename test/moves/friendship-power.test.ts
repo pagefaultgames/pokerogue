@@ -6,6 +6,7 @@ import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
+import { toDmgValue } from "#utils/common";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -38,11 +39,12 @@ describe.each([
   });
 
   /**
-   * Helper function to return the raw computed power for Return & co, excluding any rounding.
+   * Helper function to return the raw computed power for Return & company.
+   * Sourced straight from Bulbapedia's formulas.
    */
   function getPowerFromFriendship(friendship: number): number {
     const power = (inverted ? 255 - friendship : friendship) / 2.5;
-    return Math.floor(power);
+    return toDmgValue(power);
   }
 
   it(`should ${inverted ? "decrease" : "increase"} in power based on the user's friendship`, async () => {
