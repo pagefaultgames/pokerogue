@@ -2347,6 +2347,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * @returns the pokemon's current tera {@linkcode PokemonType}
    */
+  // TODO: Make this into a getter
   getTeraType(): PokemonType {
     if (this.hasSpecies(SpeciesId.TERAPAGOS)) {
       return PokemonType.STELLAR;

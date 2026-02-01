@@ -2,12 +2,13 @@ import type { globalScene } from "#app/global-scene";
 import { allAbilities } from "#data/data-lists";
 import type { AbilityId } from "#enums/ability-id";
 import type { BattlerIndex } from "#enums/battler-index";
-import type { PokemonType } from "#enums/pokemon-type";
+import { PokemonType } from "#enums/pokemon-type";
 import { Stat } from "#enums/stat";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
 import type { MoveHelper } from "#test/test-utils/helpers/move-helper";
 import { expect, type MockInstance, vi } from "vitest";
+import { getEnumStr } from "../string-utils";
 
 /** Helper to manage pokemon */
 export class FieldHelper extends GameManagerHelper {
@@ -118,11 +119,21 @@ export class FieldHelper extends GameManagerHelper {
    * defaults to `pokemon`'s primary type if not provided
    * @remarks
    * This function only mocks the Pokemon's tera-related variables.
+   *
    * If activating on-Terastallize effects is desired, use either {@linkcode MoveHelper.use} with `useTera=true`
    * or {@linkcode MoveHelper.selectWithTera} instead.
+   * @throws {Error}
+   * Fails test if `pokemon` cannot have its Tera Type changed
+   * (such as being part of a species with fixed Tera Types).
    */
   public forceTera(pokemon: Pokemon, teraType?: Exclude<PokemonType, PokemonType.UNKNOWN>): void;
   public forceTera(pokemon: Pokemon, teraType: PokemonType = pokemon.getSpeciesForm(true).type1): void {
+    if (pokemon.getTeraType() !== pokemon.teraType) {
+      expect.fail(
+        `Cannot alter the Tera Type of fixed-tera Pokemon ${pokemon.name}!`
+          + `\nTera Type: ${getEnumStr(PokemonType, pokemon.getTeraType())}`,
+      );
+    }
     vi.spyOn(pokemon, "isTerastallized", "get").mockReturnValue(true);
     vi.spyOn(pokemon, "teraType", "get").mockReturnValue(teraType);
   }
