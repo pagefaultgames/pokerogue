@@ -129,6 +129,7 @@ export abstract class Challenge {
   /**
    * Increase the value of the challenge
    * @returns Whether the value changed
+   * @sealed
    */
   increaseValue(): boolean {
     if (this.value < this.maxValue) {
@@ -141,6 +142,7 @@ export abstract class Challenge {
   /**
    * Decrease the value of the challenge
    * @returns Whether the value changed
+   * @sealed
    */
   decreaseValue(): boolean {
     if (this.value > 0) {
@@ -150,7 +152,10 @@ export abstract class Challenge {
     return false;
   }
 
-  /** Whether to allow choosing this challenge's severity. */
+  /**
+   * Whether to allow choosing this challenge's severity.
+   * @sealed
+   */
   hasSeverity(): boolean {
     return this.value !== 0 && this.maxSeverity > 0;
   }
@@ -158,6 +163,7 @@ export abstract class Challenge {
   /**
    * Decrease the severity of the challenge
    * @returns Whether the value changed
+   * @sealed
    */
   decreaseSeverity(): boolean {
     if (this.severity > 0) {
@@ -170,6 +176,7 @@ export abstract class Challenge {
   /**
    * Increase the severity of the challenge
    * @returns Whether the value changed
+   * @sealed
    */
   increaseSeverity(): boolean {
     if (this.severity < this.maxSeverity) {
