@@ -1,3 +1,4 @@
+import type { Ability } from "#abilities/ability";
 import { globalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
 import { speciesEggMoves } from "#balance/egg-moves";
@@ -16,9 +17,8 @@ import { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { getVariantIcon, getVariantTint, type Variant } from "#sprites/variant";
 import { achvs } from "#system/achv";
-import type { Ability } from "#types/ability-types";
 import type { StarterMoveset, StarterPreferences } from "#types/save-data";
-import { BooleanHolder, getLocalizedSpriteKey, padInt, rgbHexToRgba } from "#utils/common";
+import { BooleanHolder, getLocalizedSpriteKey, padInt, rgbHexToRgba, truncateString } from "#utils/common";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
@@ -663,7 +663,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
 
     // Set the gender text
     if (species.malePercent !== null) {
-      const gender = !female ? Gender.MALE : Gender.FEMALE;
+      const gender = female ? Gender.FEMALE : Gender.MALE;
       this.pokemonGenderText
         .setText(getGenderSymbol(gender))
         .setColor(getGenderColor(gender))
@@ -681,10 +681,11 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     }
 
     const isHidden = abilityIndex === (species.ability2 ? 2 : 1);
+    const textStyle = isHidden ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY_ALT;
     this.pokemonAbilityText
       .setText(ability.name)
-      .setColor(getTextColor(!isHidden ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GOLD))
-      .setShadowColor(getTextColor(!isHidden ? TextStyle.SUMMARY_ALT : TextStyle.SUMMARY_GOLD, true));
+      .setColor(getTextColor(textStyle))
+      .setShadowColor(getTextColor(textStyle, true));
 
     if (this.pokemonAbilityText.visible) {
       if (this.activeTooltip === "ABILITY") {
@@ -857,6 +858,13 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     this.statsContainer.setVisible(false);
     this.pokemonSprite.setVisible(caught);
     this.teraIcon.setVisible(this.allowTera);
+  }
+  /**
+   * Truncate the Pokémon name so it won't overlap into the starters.
+   */
+  private truncateName() {
+    const name = this.pokemonNameText.text;
+    this.pokemonNameText.setText(truncateString(name, 15));
   }
 
   clear() {

@@ -1863,19 +1863,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         switch (button) {
           case Button.CYCLE_SHINY:
             if (this.canCycleShiny) {
-              if (!starterPreferences.shiny) {
-                // Change to shiny, we need to get the proper default variant
-                const newVariant = starterPreferences.variant ? (starterPreferences.variant as Variant) : 0;
-                this.setSpeciesDetails(this.species, {
-                  shiny: true,
-                  variant: newVariant,
-                });
-
-                globalScene.playSound("se/sparkle");
-
-                starterPreferences.shiny = true;
-                this.savedStarterPreferences.shiny = starterPreferences.shiny;
-              } else {
+              if (starterPreferences.shiny) {
                 let newVariant = props.variant;
                 do {
                   newVariant = (newVariant + 1) % 3;
@@ -1910,7 +1898,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                 }
               } else {
                 // Change to shiny, we need to get the proper default variant
-                const newVariant = starterAttributes.variant ? (starterAttributes.variant as Variant) : 0;
+                const newVariant = starterPreferences.variant ? (starterPreferences.variant as Variant) : 0;
                 this.setSpeciesDetails(this.species, {
                   shiny: true,
                   variant: newVariant,
@@ -1918,8 +1906,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
                 globalScene.playSound("se/sparkle");
 
-                starterAttributes.shiny = true;
-                this.savedStarterAttributes.shiny = starterAttributes.shiny;
+                starterPreferences.shiny = true;
+                this.savedStarterPreferences.shiny = starterPreferences.shiny;
               }
             }
             break;

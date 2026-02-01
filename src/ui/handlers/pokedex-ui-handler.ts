@@ -26,7 +26,6 @@ import type { GameData } from "#system/game-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
 import type { DexAttrProps, StarterPreferences } from "#types/save-data";
-import type { AnyFn } from "#types/type-helpers";
 import type { OptionSelectConfig } from "#ui/abstract-option-select-ui-handler";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
 import { FilterBar } from "#ui/filter-bar";
@@ -882,10 +881,7 @@ export class PokedexUiHandler extends MessageUiHandler {
    * @returns true if the user has enough candies
    */
   isSameSpeciesEggAvailable(speciesId: number): boolean {
-    return isSameSpeciesEggAvailable(
-      this.getStarterSpeciesId(speciesId),
-      this.gameData.starterData[this.getStarterSpeciesId(speciesId)],
-    );
+    return isSameSpeciesEggAvailable(this.getStarterSpeciesId(speciesId), this.gameData);
   }
 
   /**

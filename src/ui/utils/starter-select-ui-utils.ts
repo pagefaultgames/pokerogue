@@ -15,6 +15,7 @@ import { Passive } from "#enums/passive";
 import type { PokemonType } from "#enums/pokemon-type";
 import type { SpeciesId } from "#enums/species-id";
 import type { Variant } from "#sprites/variant";
+import type { GameData } from "#system/game-data";
 import type { DexEntry } from "#types/dex-data";
 import type { DexAttrProps, StarterDataEntry, StarterPreferences } from "#types/save-data";
 import { applyChallenges, checkStarterValidForChallenge } from "#utils/challenge-utils";
@@ -69,11 +70,15 @@ export function isValueReductionAvailable(speciesId: number, starterData?: Start
  * @param starterData Optional custom starter data, defaults to the data in globalScene
  * @returns true if the user has enough candies
  */
-export function isSameSpeciesEggAvailable(speciesId: number, starterData?: StarterDataEntry): boolean {
+export function isSameSpeciesEggAvailable(speciesId: number, gameData?: GameData): boolean {
   // Get this species ID's starter data
-  starterData ??= globalScene.gameData.starterData[speciesId];
+  gameData ??= globalScene.gameData;
 
-  return starterData.candyCount >= getSameSpeciesEggCandyCounts(speciesStarterCosts[speciesId]);
+  const hatchCount = globalScene.gameData.dexData[speciesId].hatchedCount;
+  return (
+    gameData.starterData[speciesId].candyCount
+    >= getSameSpeciesEggCandyCounts(speciesStarterCosts[speciesId], hatchCount)
+  );
 }
 
 export function isStarterValidForChallenge(species: PokemonSpecies) {

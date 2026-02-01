@@ -71,16 +71,10 @@ import {
   isValueReductionAvailable,
 } from "#ui/utils/starter-select-ui-utils";
 import { checkStarterValidForChallenge } from "#utils/challenge-utils";
-import { 
-  fixedInt,
-  getLocalizedSpriteKey,
-  randIntRange,
-  rgbHexToRgba,
-  truncateString,
-} from "#utils/common";
+import { fixedInt, getLocalizedSpriteKey, randIntRange, rgbHexToRgba } from "#utils/common";
 import type { AllStarterPreferences } from "#utils/data";
 import { deepCopy, loadStarterPreferences, saveStarterPreferences } from "#utils/data";
-import { getPokemonSpecies, getDexNumber, getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
+import { getPokemonSpecies, getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
@@ -1181,10 +1175,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         }
         break;
       case Button.ACTION:
-        if (!this.filterBar.openDropDown) {
-          this.filterBar.toggleDropDown(this.filterBarCursor);
-        } else {
+        if (this.filterBar.openDropDown) {
           this.filterBar.toggleOptionState();
+        } else {
+          this.filterBar.toggleDropDown(this.filterBarCursor);
         }
         success = true;
         break;
@@ -1602,12 +1596,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const originalStarterPreferences = (this.originalStarterPreferences[this.lastSpecies.speciesId] ??= {});
 
     // this gets the correct pokemon cursor depending on whether you're in the starter screen or the party icons
-    if (!this.starterIconsCursorObj.visible) {
-      starterContainer = this.starterContainers[this.cursor];
-    } else {
+    if (this.starterIconsCursorObj.visible) {
       // if species is in filtered starters, get the starter container from the filtered starters, it can be undefined if the species is not in the filtered starters
       starterContainer =
         this.starterContainers[this.starterContainers.findIndex(container => container.species === this.lastSpecies)];
+    } else {
+      starterContainer = this.starterContainers[this.cursor];
     }
 
     const [isDupe, removeIndex]: [boolean, number] = this.isInParty(this.lastSpecies);
@@ -1862,12 +1856,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
     // if container.favorite is false, show the favorite option
     const isFavorite = starterPreferences?.favorite ?? false;
-    if (!isFavorite) {
+    if (isFavorite) {
       options.push({
-        label: i18next.t("starterSelectUiHandler:addToFavorites"),
+        label: i18next.t("starterSelectUiHandler:removeFromFavorites"),
         handler: () => {
-          starterPreferences.favorite = true;
-          originalStarterPreferences.favorite = true;
+          starterPreferences.favorite = false;
+          originalStarterPreferences.favorite = false;
           // if the starter container not exists, it means the species is not in the filtered starters
           if (starterContainer) {
             starterContainer.favoriteIcon.setVisible(starterPreferences.favorite);
@@ -1878,10 +1872,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       });
     } else {
       options.push({
-        label: i18next.t("starterSelectUiHandler:removeFromFavorites"),
+        label: i18next.t("starterSelectUiHandler:addToFavorites"),
         handler: () => {
-          starterPreferences.favorite = false;
-          originalStarterPreferences.favorite = false;
+          starterPreferences.favorite = true;
+          originalStarterPreferences.favorite = true;
           // if the starter container not exists, it means the species is not in the filtered starters
           if (starterContainer) {
             starterContainer.favoriteIcon.setVisible(starterPreferences.favorite);
@@ -2003,7 +1997,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       }
 
       // Same species egg menu option.
-      const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarterCosts[this.lastSpecies.speciesId]);
+      const hatchCount = globalScene.gameData.dexData[this.lastSpecies.speciesId].hatchedCount;
+      const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(
+        speciesStarterCosts[this.lastSpecies.speciesId],
+        hatchCount,
+      );
       options.push({
         label: `×${sameSpeciesEggCost} ${i18next.t("starterSelectUiHandler:sameSpeciesEgg")}`,
         handler: () => {
@@ -3022,7 +3020,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       }
 
       if (this.pokerusSpecies.includes(species)) {
-        handleTutorial(Tutorial.Pokerus);
+        handleTutorial(Tutorial.POKERUS);
       }
     } else if (dexEntry?.seenAttr) {
       this.resetSpeciesDetails();
@@ -3574,12 +3572,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         () => {
           ui.setMode(UiMode.STARTER_SELECT);
           // Non-challenge modes go directly back to title, while challenge modes go to the selection screen.
-          if (!globalScene.gameMode.isChallenge) {
-            globalScene.phaseManager.toTitleScreen();
-          } else {
+          if (globalScene.gameMode.isChallenge) {
             globalScene.phaseManager.clearPhaseQueue();
             globalScene.phaseManager.pushNew("SelectChallengePhase");
             globalScene.phaseManager.pushNew("EncounterPhase");
+          } else {
+            globalScene.phaseManager.toTitleScreen();
           }
           this.clearText();
           globalScene.phaseManager.getCurrentPhase()?.end();
@@ -3650,13 +3648,5 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     /* TODO: Uncomment this once our testing infra supports mocks of `Phaser.GameObject.Group`
     this.instructionElemGroup.destroy(true);
     */
-  }
-
-  /**
-   * Truncate the Pokémon name so it won't overlap into the starters.
-   */
-  private truncateName() {
-    const name = this.pokemonNameText.text;
-    this.pokemonNameText.setText(truncateString(name, 15));
   }
 }
