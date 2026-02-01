@@ -37,7 +37,7 @@ describe("Weather - Strong Winds", () => {
     game.move.select(MoveId.THUNDERBOLT);
 
     await game.phaseInterceptor.to("TurnStartPhase");
-    expect(enemy.getAttackTypeEffectiveness(allMoves[MoveId.THUNDERBOLT].type, pikachu)).toBe(0.5);
+    expect(enemy.getAttackTypeEffectiveness(allMoves[MoveId.THUNDERBOLT].type, { source: pikachu })).toBe(0.5);
   });
 
   it("electric type move is neutral for flying type pokemon", async () => {
@@ -48,7 +48,7 @@ describe("Weather - Strong Winds", () => {
     game.move.select(MoveId.THUNDERBOLT);
 
     await game.phaseInterceptor.to("TurnStartPhase");
-    expect(enemy.getAttackTypeEffectiveness(allMoves[MoveId.THUNDERBOLT].type, pikachu)).toBe(1);
+    expect(enemy.getAttackTypeEffectiveness(allMoves[MoveId.THUNDERBOLT].type, { source: pikachu })).toBe(1);
   });
 
   it("ice type move is neutral for flying type pokemon", async () => {
@@ -59,7 +59,7 @@ describe("Weather - Strong Winds", () => {
     game.move.select(MoveId.ICE_BEAM);
 
     await game.phaseInterceptor.to("TurnStartPhase");
-    expect(enemy.getAttackTypeEffectiveness(allMoves[MoveId.ICE_BEAM].type, pikachu)).toBe(1);
+    expect(enemy.getAttackTypeEffectiveness(allMoves[MoveId.ICE_BEAM].type, { source: pikachu })).toBe(1);
   });
 
   it("rock type move is neutral for flying type pokemon", async () => {
@@ -70,7 +70,7 @@ describe("Weather - Strong Winds", () => {
     game.move.select(MoveId.ROCK_SLIDE);
 
     await game.phaseInterceptor.to("TurnStartPhase");
-    expect(enemy.getAttackTypeEffectiveness(allMoves[MoveId.ROCK_SLIDE].type, pikachu)).toBe(1);
+    expect(enemy.getAttackTypeEffectiveness(allMoves[MoveId.ROCK_SLIDE].type, { source: pikachu })).toBe(1);
   });
 
   it("weather goes away when last trainer pokemon dies to indirect damage", async () => {
