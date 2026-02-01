@@ -478,8 +478,8 @@ export class AttackTypeImmunityAbAttr extends TypeImmunityAbAttr {
   override canApply(params: TypeMultiplierAbAttrParams): boolean {
     const { move } = params;
     return (
-      move.category !== MoveCategory.STATUS
-      && !move.hasAttr("NeutralDamageAgainstFlyingTypeMultiplierAttr")
+      move.category !== MoveCategory.STATUS // TODO: make Thousand Arrows ignore Levitate in a different manner
+      && !move.hasAttr("NeutralDamageAgainstFlyingTypeAttr")
       && super.canApply(params)
     );
   }
@@ -5983,8 +5983,7 @@ export function getWeatherCondition(...weatherTypes: WeatherType[]): AbAttrCondi
     if (globalScene.arena.weather?.isEffectSuppressed()) {
       return false;
     }
-    const weatherType = globalScene.arena.weather?.weatherType;
-    return !!weatherType && weatherTypes.indexOf(weatherType) > -1;
+    return weatherTypes.includes(globalScene.arena.getWeatherType());
   };
 }
 

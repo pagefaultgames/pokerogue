@@ -90,7 +90,13 @@ class DefaultOverrides {
   readonly BATTLE_STYLE_OVERRIDE: BattleStyle | null = null;
   readonly STARTING_WAVE_OVERRIDE: number = 0;
   readonly STARTING_BIOME_OVERRIDE: BiomeId | null = null;
-  readonly ARENA_TINT_OVERRIDE: TimeOfDay | null = null;
+  /**
+   * Overrides the Time of Day for the given biome.
+   * Set to `null` to disable.
+   * @remarks
+   * Will also influence field sprite tint coloration.
+   */
+  readonly TIME_OF_DAY_OVERRIDE: Exclude<TimeOfDay, TimeOfDay.ALL> | null = null;
   /** Multiplies XP gained by this value including 0. Set to null to ignore the override. */
   readonly XP_MULTIPLIER_OVERRIDE: number | null = null;
   /**
