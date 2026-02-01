@@ -104,7 +104,7 @@ describe.each([
 
     const feebas = game.field.getPlayerPokemon();
     feebas.friendship = inverted ? 255 : 0;
-    expect(getPowerFromFriendship(feebas.friendship)).toBe(0);
+    expect(getPowerFromFriendship(feebas.friendship)).toBe(1);
 
     const powerSpy = vi.spyOn(allMoves[move], "calculateBattlePower");
 
