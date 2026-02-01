@@ -1968,6 +1968,7 @@ export class GameData {
     };
   }
 
+  //TODO: remove unused species parameter
   getSpeciesDexAttrProps(_species: PokemonSpecies, dexAttr: bigint): DexAttrProps {
     const shiny = !(dexAttr & DexAttr.NON_SHINY);
     const female = !(dexAttr & DexAttr.MALE);

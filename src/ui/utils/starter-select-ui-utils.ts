@@ -107,7 +107,7 @@ export function isStarterValidForChallenge(starterId: StarterSpeciesId) {
       }
       const tempFormProps = BigInt(Math.pow(2, i)) * DexAttr.DEFAULT_FORM;
       const isValidForChallenge = checkStarterValidForChallenge(
-        species,
+        starterId,
         globalScene.gameData.getSpeciesDexAttrProps(species, tempFormProps),
         true,
       );
@@ -115,7 +115,7 @@ export function isStarterValidForChallenge(starterId: StarterSpeciesId) {
     }
   } else {
     const isValidForChallenge = checkStarterValidForChallenge(
-      species,
+      starterId,
       globalScene.gameData.getSpeciesDexAttrProps(
         species,
         globalScene.gameData.getSpeciesDefaultDexAttr(species, false, true),

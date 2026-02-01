@@ -189,7 +189,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   private lastSpecies: PokemonSpecies;
 
   private starters: Starter[] = [];
-  public starterSpecies: PokemonSpecies[] = [];
+  public starterSpecies: StarterSpeciesId[] = [];
   private pokerusSpecies: StarterSpeciesId[] = [];
   private speciesStarterDexEntry: DexEntry | null;
   private speciesStarterMoves: MoveId[];
@@ -1273,20 +1273,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           error = true;
           break;
         }
-        const currentPartyValue = this.starterSpecies
-          .map(s => s.generation)
-          .reduce(
-            (total: number, _gen: number, i: number) =>
-              total + globalScene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId),
-            0,
-          );
+        const currentPartyValue = this.getPartyValue();
         // Filter valid starters
         const validStarters = this.filteredStarterIds.filter(starterId => {
-          const species = getPokemonSpecies(starterId);
-          const [isDupe] = this.isInParty(species);
-          const starterCost = globalScene.gameData.getSpeciesStarterValue(species.speciesId);
+          const [isDupe] = this.isInParty(starterId);
+          const starterCost = globalScene.gameData.getSpeciesStarterValue(starterId);
           const isValidForChallenge = checkStarterValidForChallenge(
-            species,
+            starterId,
             this.getStarterDexAttrPropsFromPreferences(starterId),
             this.isPartyValid(),
           );
@@ -1299,7 +1292,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         }
         // Select random starter
         const randomStarterId = validStarters[Math.floor(Math.random() * validStarters.length)];
-        const randomSpecies = getPokemonSpecies(randomStarterId);
         // Set species and prepare attributes
         this.setStarter(randomStarterId);
         // TODO: this might not be needed if we change .addToParty
@@ -1314,7 +1306,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         // Load assets and add to party
         speciesForm.loadAssets(props.female, props.formIndex, props.shiny, props.variant, true).then(() => {
           if (this.tryUpdateValue(starterCost, true)) {
-            this.addToParty(randomSpecies, dexAttr, abilityIndex, nature, moveset, teraType);
+            this.addToParty(randomStarterId, dexAttr, abilityIndex, nature, moveset, teraType);
             this.getUi().playSelect();
           }
         });
@@ -1753,22 +1745,16 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       starterContainer = this.starterContainers[this.cursor];
     }
 
-    const [isDupe, removeIndex]: [boolean, number] = this.isInParty(this.lastSpecies);
+    const [isDupe, removeIndex]: [boolean, number] = this.isInParty(this.lastSpecies.speciesId as StarterSpeciesId);
 
     const isPartyValid = this.isPartyValid();
     const isValidForChallenge = checkStarterValidForChallenge(
-      this.lastSpecies,
+      this.lastSpecies.speciesId as StarterSpeciesId,
       this.getStarterDexAttrPropsFromPreferences(this.lastSpecies.speciesId as StarterSpeciesId),
       isPartyValid,
     );
 
-    const currentPartyValue = this.starterSpecies
-      .map(s => s.generation)
-      .reduce(
-        (total: number, _gen: number, i: number) =>
-          (total += globalScene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId)),
-        0,
-      );
+    const currentPartyValue = this.getPartyValue();
     const newCost = globalScene.gameData.getSpeciesStarterValue(this.lastSpecies.speciesId);
     if (
       !isDupe
@@ -1790,7 +1776,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 .setVisible(true)
                 .setPosition(this.cursorObj.x, this.cursorObj.y);
               this.addToParty(
-                this.lastSpecies,
+                this.lastSpecies.speciesId as StarterSpeciesId,
                 this.dexAttrCursor,
                 this.abilityCursor,
                 this.natureCursor as unknown as Nature,
@@ -2336,11 +2322,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     return success || error;
   }
 
-  isInParty(species: PokemonSpecies): [boolean, number] {
+  isInParty(starterId: StarterSpeciesId): [boolean, number] {
     let removeIndex = 0;
     let isDupe = false;
     for (let s = 0; s < this.starterSpecies.length; s++) {
-      if (this.starterSpecies[s] === species) {
+      if (this.starterSpecies[s] === starterId) {
         isDupe = true;
         removeIndex = s;
         break;
@@ -2350,13 +2336,14 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   addToParty(
-    species: PokemonSpecies,
+    starterId: StarterSpeciesId,
     dexAttr: bigint,
     abilityIndex: number,
     nature: Nature,
     moveset: StarterMoveset,
     teraType: PokemonType,
   ) {
+    const species = getPokemonSpecies(starterId);
     const props = globalScene.gameData.getSpeciesDexAttrProps(species, dexAttr);
     this.starterIcons[this.starterSpecies.length].setTexture(
       species.getIconAtlasKey(props.formIndex, props.shiny, props.variant),
@@ -2373,10 +2360,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       props.variant,
     );
 
-    const { dexEntry, starterDataEntry } = getStarterData(species.speciesId as StarterSpeciesId);
+    const { dexEntry, starterDataEntry } = getStarterData(starterId);
 
     const starter = {
-      speciesId: species.speciesId,
+      speciesId: starterId,
       shiny: props.shiny,
       variant: props.variant,
       formIndex: props.formIndex,
@@ -2385,14 +2372,14 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       passive: !(starterDataEntry.passiveAttr ^ (PassiveAttr.ENABLED | PassiveAttr.UNLOCKED)),
       nature,
       moveset,
-      pokerus: this.pokerusSpecies.includes(species.speciesId as StarterSpeciesId),
-      nickname: this.starterPreferences[species.speciesId]?.nickname,
+      pokerus: this.pokerusSpecies.includes(starterId),
+      nickname: this.starterPreferences[starterId]?.nickname,
       teraType,
       ivs: dexEntry.ivs,
     };
 
     this.starters.push(starter);
-    this.starterSpecies.push(species);
+    this.starterSpecies.push(starterId);
     getPokemonSpeciesForm(species.speciesId, props.formIndex).cry();
     this.updateInstructions();
   }
@@ -2421,7 +2408,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       return;
     }
 
-    const speciesId = this.lastSpecies.speciesId;
+    const starterId = this.lastSpecies.speciesId as StarterSpeciesId;
     const existingMoveIndex = starterMoveset.indexOf(newMove);
     starterMoveset[targetIndex] = newMove;
     if (existingMoveIndex !== -1) {
@@ -2429,9 +2416,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
     const updatedMoveset = starterMoveset.slice() as StarterMoveset;
     const formIndex = globalScene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.dexAttrCursor).formIndex;
-    const starterDataEntry = globalScene.gameData.starterData[speciesId];
+    const starterDataEntry = globalScene.gameData.starterData[starterId];
     // species has different forms
-    if (pokemonFormLevelMoves.hasOwnProperty(speciesId)) {
+    if (pokemonFormLevelMoves.hasOwnProperty(starterId)) {
       // Species has forms with different movesets
       if (!starterDataEntry.moveset || Array.isArray(starterDataEntry.moveset)) {
         starterDataEntry.moveset = {};
@@ -2443,7 +2430,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.hasSwappedMoves = true;
     // TODO: we shouldn't need to call setStarterDetails here, since only the moveset is changing
     this.setStarterDetails(this.lastSpecies.speciesId as StarterSpeciesId);
-    this.updateSelectedStarterMoveset(speciesId);
+    this.updateSelectedStarterMoveset(starterId);
   }
 
   /**
@@ -2454,13 +2441,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
    *
    * @param id - The species ID to update the moveset for
    */
-  private updateSelectedStarterMoveset(id: SpeciesId): void {
+  private updateSelectedStarterMoveset(id: StarterSpeciesId): void {
     if (this.starterMoveset === null) {
       return;
     }
 
-    for (const [index, species] of this.starterSpecies.entries()) {
-      if (species.speciesId === id) {
+    for (const [index, starterId] of this.starterSpecies.entries()) {
+      if (starterId === id) {
         this.starters[index].moveset = this.starterMoveset;
       }
     }
@@ -2893,13 +2880,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           container.icon.setTint(0);
         }
 
-        if (this.pokerusSpecies.includes(container.species.speciesId as StarterSpeciesId)) {
+        if (this.pokerusSpecies.includes(starterId)) {
           this.pokerusCursorObjs[pokerusCursorIndex].setPosition(container.x - 1, container.y + 1).setVisible(true);
           pokerusCursorIndex++;
         }
 
-        if (this.starterSpecies.includes(container.species)) {
-          this.starterCursorObjs[this.starterSpecies.indexOf(container.species)]
+        if (this.starterSpecies.includes(starterId)) {
+          this.starterCursorObjs[this.starterSpecies.indexOf(starterId)]
             .setPosition(container.x - 1, container.y + 1)
             .setVisible(true);
         }
@@ -3005,7 +2992,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     );
     if (this.starterSpecies.length > 0) {
       this.starterIconsCursorObj.setVisible(true);
-      this.setStarter(this.starterSpecies[index].speciesId as StarterSpeciesId);
+      this.setStarter(this.starterSpecies[index]);
     } else {
       this.starterIconsCursorObj.setVisible(false);
       this.setNoSpecies();
@@ -3160,12 +3147,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.natureCursor = natureIndex !== undefined ? natureIndex : (natureIndex = oldNatureIndex);
     this.teraCursor = teraType != null ? teraType : (teraType = oldTeraType);
 
-    const [isInParty, partyIndex]: [boolean, number] = this.isInParty(species); // we use this to firstly check if the pokemon is in the party, and if so, to get the party index in order to update the icon image
+    const [isInParty, partyIndex]: [boolean, number] = this.isInParty(starterId); // we use this to firstly check if the pokemon is in the party, and if so, to get the party index in order to update the icon image
     if (isInParty) {
       this.updatePartyIcon(species, partyIndex);
     }
 
-    const starterIndex = this.starterSpecies.indexOf(species);
+    const starterIndex = this.starterSpecies.indexOf(starterId);
 
     if (starterIndex > -1) {
       const starter = this.starters[starterIndex];
@@ -3320,8 +3307,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.starters.splice(index, 1);
 
     for (let s = 0; s < this.starterSpecies.length; s++) {
-      const species = this.starterSpecies[s];
-      const props = this.getStarterDexAttrPropsFromPreferences(species.speciesId as StarterSpeciesId);
+      const starterId = this.starterSpecies[s];
+      const species = getPokemonSpecies(starterId);
+      const props = this.getStarterDexAttrPropsFromPreferences(starterId);
       this.starterIcons[s]
         .setTexture(species.getIconAtlasKey(props.formIndex, props.shiny, props.variant))
         .setFrame(species.getIconId(props.female, props.formIndex, props.shiny, props.variant));
@@ -3365,6 +3353,16 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.tryUpdateValue();
   }
 
+  getPartyValue() {
+    return this.starterSpecies
+      .map(starterId => getPokemonSpecies(starterId).generation)
+      .reduce(
+        (total: number, _gen: number, i: number) =>
+          total + globalScene.gameData.getSpeciesStarterValue(this.starterSpecies[i]),
+        0,
+      );
+  }
+
   updateStarterValueLabel(starter: StarterContainer): void {
     const speciesId = starter.species.speciesId;
     const baseStarterValue = speciesStarterCosts[speciesId];
@@ -3395,13 +3393,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   tryUpdateValue(add?: number, addingToParty?: boolean): boolean {
-    const value = this.starterSpecies
-      .map(s => s.generation)
-      .reduce(
-        (total: number, _gen: number, i: number) =>
-          (total += globalScene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId)),
-        0,
-      );
+    const value = this.getPartyValue();
     const newValue = value + (add || 0);
     const valueLimit = getRunValueLimit();
     const overLimit = newValue > valueLimit;
@@ -3419,10 +3411,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
     let isPartyValid = this.isPartyValid();
     if (addingToParty) {
-      const species = this.starterContainers[this.cursor].species;
+      const starterId = this.starterContainers[this.cursor].species.speciesId as StarterSpeciesId;
       const isNewPokemonValid = checkStarterValidForChallenge(
-        species,
-        this.getStarterDexAttrPropsFromPreferences(species.speciesId as StarterSpeciesId),
+        starterId,
+        this.getStarterDexAttrPropsFromPreferences(starterId),
         false,
       );
       isPartyValid ||= isNewPokemonValid;
@@ -3434,7 +3426,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const remainValue = valueLimit - newValue;
     for (const container of this.starterContainers) {
       const starterId = container.species.speciesId as StarterSpeciesId;
-      const species = getPokemonSpecies(starterId);
 
       /** Cost of pokemon species */
       const speciesStarterValue = globalScene.gameData.getSpeciesStarterValue(starterId);
@@ -3453,14 +3444,14 @@ export class StarterSelectUiHandler extends MessageUiHandler {
        * we change to can AddParty value to true since the user has enough cost to choose this pokemon and this pokemon registered too.
        */
       const isValidForChallenge = checkStarterValidForChallenge(
-        species,
+        starterId,
         this.getStarterDexAttrPropsFromPreferences(starterId),
         isPartyValid,
       );
 
       const canBeChosen = remainValue >= speciesStarterValue && isValidForChallenge;
 
-      const isPokemonInParty = this.isInParty(species)[0]; // this will get the valud of isDupe from isInParty. This will let us see if the pokemon in question is in our party already so we don't grey out the sprites if they're invalid
+      const isPokemonInParty = this.isInParty(starterId)[0]; // this will get the valud of isDupe from isInParty. This will let us see if the pokemon in question is in our party already so we don't grey out the sprites if they're invalid
 
       /* This code does a check to tell whether or not a sprite should be lit up or greyed out. There are 3 ways a pokemon's sprite should be lit up:
        * 1) If it's in your party, it's a valid pokemon (i.e. for challenge) and you have enough points to have it
@@ -3540,10 +3531,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   isPartyValid(): boolean {
     let canStart = false;
     for (let s = 0; s < this.starterSpecies.length; s++) {
-      const species = this.starterSpecies[s];
+      const starterId = this.starterSpecies[s];
       const starter = this.starters[s];
       const isValidForChallenge = checkStarterValidForChallenge(
-        species,
+        starterId,
         {
           formIndex: starter.formIndex,
           shiny: starter.shiny,
