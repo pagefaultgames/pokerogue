@@ -23,13 +23,13 @@ import { NumberHolder } from "#utils/common";
 import i18next from "i18next";
 
 export interface SpeciesDetails {
-  shiny?: boolean;
-  formIndex?: number;
-  female?: boolean;
-  variant?: Variant;
-  abilityIndex?: number;
-  natureIndex?: number;
-  teraType?: PokemonType;
+  shiny?: boolean | undefined;
+  formIndex?: number | undefined;
+  female?: boolean | undefined;
+  variant?: Variant | undefined;
+  abilityIndex?: number | undefined;
+  natureIndex?: number | undefined;
+  teraType?: PokemonType | undefined;
 }
 
 /**
@@ -215,7 +215,31 @@ const languageSettings: { [key: string]: StarterSelectLanguageSetting } = {
     starterInfoYOffset: 0.5,
     starterInfoXPos: 26,
   },
+  uk: {
+    starterInfoTextSize: "46px",
+    instructionTextSize: "38px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 26,
+  },
+  id: {
+    starterInfoTextSize: "48px",
+    instructionTextSize: "42px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 37,
+  },
+  hi: {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "38px",
+  },
   tl: {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "38px",
+  },
+  "nb-NO": {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "38px",
+  },
+  sv: {
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
   },

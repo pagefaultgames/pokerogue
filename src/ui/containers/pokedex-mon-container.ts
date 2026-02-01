@@ -5,10 +5,10 @@ import type { Variant } from "#sprites/variant";
 import { addTextObject } from "#ui/text";
 
 interface SpeciesDetails {
-  shiny?: boolean;
-  formIndex?: number;
-  female?: boolean;
-  variant?: Variant;
+  shiny?: boolean | undefined;
+  formIndex?: number | undefined;
+  female?: boolean | undefined;
+  variant?: Variant | undefined;
 }
 
 export class PokedexMonContainer extends Phaser.GameObjects.Container {
