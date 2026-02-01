@@ -195,11 +195,6 @@ export class MovePhase extends PokemonPhase {
     /** Indicates this is the release turn of the move */
     const releasing = isChargingMove && !charging;
 
-    // Update the battle's "last move" pointer unless we're currently mimicking a move or triggering Dancer.
-    if (!move.hasAttr("CopyMoveAttr") && !isReflected(useMode)) {
-      globalScene.currentBattle.lastMove = move.id;
-    }
-
     // Charging moves consume PP when they begin charging, *not* when they release
     if (!releasing) {
       this.usePP();
@@ -220,6 +215,11 @@ export class MovePhase extends PokemonPhase {
       this.handlePreMoveFailures();
       this.end();
       return;
+    }
+
+    // Update the battle's "last move" pointer unless we're currently mimicking a move or triggering Dancer.
+    if (!move.hasAttr("CopyMoveAttr") && !isReflected(useMode)) {
+      globalScene.currentBattle.lastMove = move.id;
     }
 
     if (!this.resolveFinalPreMoveCancellationChecks()) {
