@@ -11,6 +11,7 @@ import type { StarterPreferences } from "#types/save-data";
 import { FilterTextRow } from "#ui/filter-text";
 import { PokedexPageUiHandler } from "#ui/pokedex-page-ui-handler";
 import { PokedexUiHandler } from "#ui/pokedex-ui-handler";
+import { getStarterSpeciesId } from "#ui/starter-select-ui-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -309,7 +310,7 @@ describe("UI - Pokedex", () => {
     ]);
     expect(
       pokedexHandler["filteredPokemonData"].every(pokemon =>
-        expectedPokemon.has(pokedexHandler.getStarterSpeciesId(pokemon.species.speciesId)),
+        expectedPokemon.has(getStarterSpeciesId(pokemon.species.speciesId)),
       ),
     ).toBe(true);
   });
@@ -324,7 +325,7 @@ describe("UI - Pokedex", () => {
 
     expect(
       pokedexHandler["filteredPokemonData"].every(
-        pokemon => pokedexHandler.getStarterSpeciesId(pokemon.species.speciesId) === SpeciesId.MUDKIP,
+        pokemon => getStarterSpeciesId(pokemon.species.speciesId) === SpeciesId.MUDKIP,
       ),
     ).toBe(true);
   });
@@ -350,7 +351,7 @@ describe("UI - Pokedex", () => {
 
     expect(
       pokedexHandler["filteredPokemonData"].every(pokemon =>
-        expectedPokemon.has(pokedexHandler.getStarterSpeciesId(pokemon.species.speciesId)),
+        expectedPokemon.has(getStarterSpeciesId(pokemon.species.speciesId)),
       ),
     ).toBe(true);
   });
@@ -367,7 +368,7 @@ describe("UI - Pokedex", () => {
 
     expect(
       pokedexHandler["filteredPokemonData"].every(pokemon =>
-        expectedPokemon.has(pokedexHandler.getStarterSpeciesId(pokemon.species.speciesId)),
+        expectedPokemon.has(getStarterSpeciesId(pokemon.species.speciesId)),
       ),
     ).toBe(true);
   });
@@ -385,7 +386,7 @@ describe("UI - Pokedex", () => {
 
     expect(
       pokedexHandler["filteredPokemonData"].every(pokemon =>
-        expectedPokemon.has(pokedexHandler.getStarterSpeciesId(pokemon.species.speciesId)),
+        expectedPokemon.has(getStarterSpeciesId(pokemon.species.speciesId)),
       ),
     ).toBe(true);
   });
@@ -402,7 +403,7 @@ describe("UI - Pokedex", () => {
 
     expect(
       pokedexHandler["filteredPokemonData"].every(
-        pokemon => pokedexHandler.getStarterSpeciesId(pokemon.species.speciesId) === SpeciesId.TREECKO,
+        pokemon => getStarterSpeciesId(pokemon.species.speciesId) === SpeciesId.TREECKO,
       ),
     ).toBe(true);
   });
