@@ -4833,23 +4833,30 @@ export class AntiSunlightPowerDecreaseAttr extends VariablePowerAttr {
   }
 }
 
+/**
+ * Attribute used by {@link https://bulbapedia.bulbagarden.net/wiki/Frustration_(move) | Frustration},
+ * {@link https://bulbapedia.bulbagarden.net/wiki/Return_(move) | Return}
+ *
+ */
 export class FriendshipPowerAttr extends VariablePowerAttr {
+  /**
+   * Whether to invert the power scaling (higher friendship reduces power instead of increases)
+   * @defaultValue `false`
+   */
   private readonly invert: boolean;
 
-  constructor(invert?: boolean) {
+  constructor(invert = false) {
     super();
 
-    this.invert = !!invert;
+    this.invert = invert;
   }
 
-  apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
-    const power = args[0] as NumberHolder;
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: [NumberHolder]): boolean {
+    const power = args[0];
 
     const useUserFriendship = user.isPlayer() || user.hasTrainer();
-    const friendshipPower = Math.floor(
-      Math.min(useUserFriendship ? user.friendship : user.species.baseFriendship, 255) / 2.5,
-    );
-    power.value = Math.max(this.invert ? 102 - friendshipPower : friendshipPower, 1);
+    const base = (useUserFriendship ? user.friendship : user.species.baseFriendship) / 2.5;
+    power.value = toDmgValue(this.invert ? 102 - base : base);
 
     return true;
   }
