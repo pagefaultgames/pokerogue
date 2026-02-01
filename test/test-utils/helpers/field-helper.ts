@@ -1,4 +1,3 @@
-import type { Ability } from "#abilities/ability";
 import type { globalScene } from "#app/global-scene";
 import { allAbilities } from "#data/data-lists";
 import type { AbilityId } from "#enums/ability-id";
@@ -8,6 +7,7 @@ import { Stat } from "#enums/stat";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
 import { sortInSpeedOrder } from "#utils/speed-order";
+import type { MoveHelper } from "#test/test-utils/helpers/move-helper";
 import { expect, type MockInstance, vi } from "vitest";
 
 /** Helper to manage pokemon */
@@ -100,17 +100,20 @@ export class FieldHelper extends GameManagerHelper {
    * @see {@linkcode vi.spyOn}
    * @see https://vitest.dev/api/mock#mockreturnvalue
    */
-  public mockAbility(pokemon: Pokemon, ability: AbilityId): MockInstance<(ignoreOverride?: boolean) => Ability> {
+  public mockAbility(pokemon: Pokemon, ability: AbilityId): MockInstance<Pokemon["getAbility"]> {
     return vi.spyOn(pokemon, "getAbility").mockReturnValue(allAbilities[ability]);
   }
 
   /**
-   * Force a given Pokemon to be terastallized to the given type.
+   * Force a given Pokemon to be Terastallized to the given type.
    *
-   * @param pokemon - The pokemon to terastallize.
-   * @param teraType - The {@linkcode PokemonType} to terastallize into; defaults to the pokemon's primary type.
+   * @param pokemon - The pokemon to Terastallize
+   * @param teraType - The {@linkcode PokemonType} to Terastallize into; defaults to `pokemon`'s primary type if not provided
    * @remarks
    * This function only mocks the Pokemon's tera-related variables; it does NOT activate any tera-related abilities.
+   *
+   * If activating on-Terastallize effects is desired, use either {@linkcode MoveHelper.use} with `useTera=true`
+   * or {@linkcode MoveHelper.selectWithTera} instead.
    */
   public forceTera(pokemon: Pokemon, teraType: PokemonType = pokemon.getSpeciesForm(true).type1): void {
     vi.spyOn(pokemon, "isTerastallized", "get").mockReturnValue(true);
