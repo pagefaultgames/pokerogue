@@ -131,7 +131,6 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     this.flyoutParent.add(this.flyoutContainer);
 
     this.flyoutWindow = addWindow(0, 0, FLYOUT_WIDTH, FLYOUT_HEIGHT, false, false, 0, 0, WindowVariant.THIN);
-    this.flyoutContainer.add(this.flyoutWindow);
 
     this.flyoutWindowHeader = addWindow(
       FLYOUT_WIDTH / 2,
@@ -145,8 +144,6 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
       WindowVariant.XTHIN,
     ).setOrigin();
 
-    this.flyoutContainer.add(this.flyoutWindowHeader);
-
     this.flyoutTextHeader = addTextObject(
       FLYOUT_WIDTH / 2,
       0,
@@ -157,65 +154,63 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
       .setAlign("center")
       .setOrigin();
 
-    this.flyoutContainer.add(this.flyoutTextHeader);
-
     this.timeOfDayWidget = new TimeOfDayWidget(FLYOUT_WIDTH / 2 + this.flyoutWindowHeader.displayWidth / 2);
-    this.flyoutContainer.add(this.timeOfDayWidget);
 
-    this.flyoutTextHeaderPlayer = addTextObject(6, 5, i18next.t("arenaFlyout:player"), TextStyle.SUMMARY_BLUE);
-    this.flyoutTextHeaderPlayer.setFontSize(54);
-    this.flyoutTextHeaderPlayer.setAlign("left");
-    this.flyoutTextHeaderPlayer.setOrigin(0, 0);
-
-    this.flyoutContainer.add(this.flyoutTextHeaderPlayer);
+    this.flyoutTextHeaderPlayer = addTextObject(6, 5, i18next.t("arenaFlyout:player"), TextStyle.SUMMARY_BLUE)
+      .setFontSize(54)
+      .setAlign("left")
+      .setOrigin(0, 0);
 
     this.flyoutTextHeaderField = addTextObject(
       FLYOUT_WIDTH / 2,
       5,
       i18next.t("arenaFlyout:field"),
       TextStyle.SUMMARY_GREEN,
-    );
-    this.flyoutTextHeaderField.setFontSize(54);
-    this.flyoutTextHeaderField.setAlign("center");
-    this.flyoutTextHeaderField.setOrigin(0.5, 0);
-
-    this.flyoutContainer.add(this.flyoutTextHeaderField);
+    )
+      .setFontSize(54)
+      .setAlign("center")
+      .setOrigin(0.5, 0);
 
     this.flyoutTextHeaderEnemy = addTextObject(
       FLYOUT_WIDTH - 6,
       5,
       i18next.t("arenaFlyout:enemy"),
       TextStyle.SUMMARY_RED,
-    );
-    this.flyoutTextHeaderEnemy.setFontSize(54);
-    this.flyoutTextHeaderEnemy.setAlign("right");
-    this.flyoutTextHeaderEnemy.setOrigin(1, 0);
+    )
+      .setFontSize(54)
+      .setAlign("right")
+      .setOrigin(1, 0);
 
-    this.flyoutContainer.add(this.flyoutTextHeaderEnemy);
+    this.flyoutTextPlayer = addTextObject(6, 13, "", TextStyle.BATTLE_INFO)
+      .setLineSpacing(-1)
+      .setFontSize(48)
+      .setAlign("left")
+      .setOrigin(0, 0);
 
-    this.flyoutTextPlayer = addTextObject(6, 13, "", TextStyle.BATTLE_INFO);
-    this.flyoutTextPlayer.setLineSpacing(-1);
-    this.flyoutTextPlayer.setFontSize(48);
-    this.flyoutTextPlayer.setAlign("left");
-    this.flyoutTextPlayer.setOrigin(0, 0);
+    this.flyoutTextField = addTextObject(FLYOUT_WIDTH / 2, 13, "", TextStyle.BATTLE_INFO)
+      .setLineSpacing(-1)
+      .setFontSize(48)
+      .setAlign("center")
+      .setOrigin(0.5, 0);
 
-    this.flyoutContainer.add(this.flyoutTextPlayer);
+    this.flyoutTextEnemy = addTextObject(FLYOUT_WIDTH - 6, 13, "", TextStyle.BATTLE_INFO)
+      .setLineSpacing(-1)
+      .setFontSize(48)
+      .setAlign("right")
+      .setOrigin(1, 0);
 
-    this.flyoutTextField = addTextObject(FLYOUT_WIDTH / 2, 13, "", TextStyle.BATTLE_INFO);
-    this.flyoutTextField.setLineSpacing(-1);
-    this.flyoutTextField.setFontSize(48);
-    this.flyoutTextField.setAlign("center");
-    this.flyoutTextField.setOrigin(0.5, 0);
-
-    this.flyoutContainer.add(this.flyoutTextField);
-
-    this.flyoutTextEnemy = addTextObject(FLYOUT_WIDTH - 6, 13, "", TextStyle.BATTLE_INFO);
-    this.flyoutTextEnemy.setLineSpacing(-1);
-    this.flyoutTextEnemy.setFontSize(48);
-    this.flyoutTextEnemy.setAlign("right");
-    this.flyoutTextEnemy.setOrigin(1, 0);
-
-    this.flyoutContainer.add(this.flyoutTextEnemy);
+    this.flyoutContainer.add([
+      this.flyoutWindow,
+      this.flyoutWindowHeader,
+      this.flyoutTextHeader,
+      this.timeOfDayWidget,
+      this.flyoutTextHeaderPlayer,
+      this.flyoutTextHeaderField,
+      this.flyoutTextHeaderEnemy,
+      this.flyoutTextPlayer,
+      this.flyoutTextField,
+      this.flyoutTextEnemy,
+    ]);
 
     // Subscribe to required events available on game start
     const { eventTarget } = globalScene;

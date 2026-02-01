@@ -2,8 +2,7 @@ import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { biomePokemonPools, biomeTrainerPools } from "#balance/biomes";
-import type { ArenaTag, ArenaTagTypeMap } from "#data/arena-tag";
-import { getArenaTag } from "#data/arena-tag";
+import { type ArenaTag, type ArenaTagTypeMap, getArenaTag } from "#data/arena-tag";
 import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import type { PositionalTag } from "#data/positional-tags/positional-tag";
@@ -16,6 +15,7 @@ import {
   Weather,
 } from "#data/weather";
 import { AbilityId } from "#enums/ability-id";
+import type { ArenaEventType } from "#enums/arena-event-type";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import type { ArenaTagType } from "#enums/arena-tag-type";
 import type { BattlerIndex } from "#enums/battler-index";
@@ -71,12 +71,11 @@ export class Arena {
 
   private pokemonPool: PokemonPools;
   private trainerPool: BiomeTierTrainerPools;
-
   /**
-   * Event dispatcher for various `ArenaEvent`s.
+   * Event dispatcher for various {@linkcode ArenaEvent}s.
    * Used primarily to update the arena flyout.
    */
-  public readonly eventTarget = new EventTarget() as TypedEventTarget<ArenaEventMap>;
+  public readonly eventTarget = new EventTarget() as TypedEventTarget<ArenaEventType, ArenaEventMap>;
 
   constructor(biome: BiomeId, playerFaints = 0) {
     this.biomeType = biome;

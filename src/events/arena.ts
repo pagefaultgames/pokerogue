@@ -144,12 +144,12 @@ export class ArenaTagRemovedEvent extends ArenaEvent {
   }
 }
 
-export type ArenaEventMap = {
+export interface ArenaEventMap {
   [ArenaEventType.WEATHER_CHANGED]: WeatherChangedEvent;
   [ArenaEventType.TERRAIN_CHANGED]: TerrainChangedEvent;
   [ArenaEventType.ARENA_TAG_ADDED]: ArenaTagAddedEvent;
   [ArenaEventType.ARENA_TAG_REMOVED]: ArenaTagRemovedEvent;
-};
+}
 
 /**
  * Dummy, type-only declaration to ensure that
