@@ -2013,7 +2013,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       const fusionType2 = fusionCustomTypes[1] ?? fusionSpeciesForm.type2;
 
       // Assign second type if the fusion can provide one
-      secondType = fusionType1 ?? fusionType2;
+      if (fusionType2 !== null && fusionType2 !== firstType) {
+        secondType = fusionType2;
+      } else if (fusionType1 !== firstType) {
+        secondType = fusionType1;
+      }
     }
 
     return [firstType, secondType ?? PokemonType.UNKNOWN];
