@@ -7,7 +7,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Sheer Force", () => {
   let phaserGame: Phaser.Game;
@@ -17,10 +17,6 @@ describe("Abilities - Sheer Force", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -38,7 +34,7 @@ describe("Abilities - Sheer Force", () => {
 
   it("Sheer Force should boost the power of the move but disable secondary effects", async () => {
     game.override.moveset([MoveId.AIR_SLASH]);
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE);
 
     const airSlashMove = allMoves[MoveId.AIR_SLASH];
     vi.spyOn(airSlashMove, "calculateBattlePower");
@@ -57,7 +53,7 @@ describe("Abilities - Sheer Force", () => {
 
   it("Sheer Force does not affect the base damage or secondary effects of binding moves", async () => {
     game.override.moveset([MoveId.BIND]);
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE);
 
     const bindMove = allMoves[MoveId.BIND];
     vi.spyOn(bindMove, "calculateBattlePower");
@@ -73,7 +69,7 @@ describe("Abilities - Sheer Force", () => {
 
   it("Sheer Force does not boost the base damage of moves with no secondary effect", async () => {
     game.override.moveset([MoveId.TACKLE]);
-    await game.classicMode.startBattle([SpeciesId.PIDGEOT]);
+    await game.classicMode.startBattle(SpeciesId.PIDGEOT);
 
     const tackleMove = allMoves[MoveId.TACKLE];
     vi.spyOn(tackleMove, "calculateBattlePower");
@@ -93,8 +89,8 @@ describe("Abilities - Sheer Force", () => {
       .enemyLevel(10)
       .enemyAbility(AbilityId.COLOR_CHANGE);
 
-    await game.classicMode.startBattle([SpeciesId.PIDGEOT]);
-    const enemyPokemon = game.scene.getEnemyPokemon();
+    await game.classicMode.startBattle(SpeciesId.PIDGEOT);
+    const enemyPokemon = game.field.getEnemyPokemon();
     const headbuttMove = allMoves[MoveId.HEADBUTT];
     vi.spyOn(headbuttMove, "calculateBattlePower");
     const headbuttFlinchAttr = headbuttMove.getAttrs("FlinchAttr")[0];
@@ -106,7 +102,7 @@ describe("Abilities - Sheer Force", () => {
     await game.move.forceHit();
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(enemyPokemon?.getTypes()[0]).toBe(PokemonType.WATER);
+    expect(enemyPokemon.getTypes()[0]).toBe(PokemonType.WATER);
     expect(headbuttMove.calculateBattlePower).toHaveLastReturnedWith(headbuttMove.power * SHEER_FORCE_MULT);
     expect(headbuttFlinchAttr.getMoveChance).toHaveLastReturnedWith(0);
   });
@@ -119,7 +115,7 @@ describe("Abilities - Sheer Force", () => {
       .moveset(moveToUse)
       .enemyMoveset(moveToUse);
 
-    await game.classicMode.startBattle([SpeciesId.PIDGEOT]);
+    await game.classicMode.startBattle(SpeciesId.PIDGEOT);
 
     const pidgeot = game.field.getPlayerPokemon();
     const onix = game.field.getEnemyPokemon();
@@ -142,13 +138,13 @@ describe("Abilities - Sheer Force", () => {
       .moveset([MoveId.RELIC_SONG])
       .enemyMoveset([MoveId.SPLASH])
       .enemyLevel(100);
-    await game.classicMode.startBattle([SpeciesId.MELOETTA]);
+    await game.classicMode.startBattle(SpeciesId.MELOETTA);
 
-    const playerPokemon = game.scene.getPlayerPokemon();
-    const formKeyStart = playerPokemon?.getFormKey();
+    const playerPokemon = game.field.getPlayerPokemon();
+    const formKeyStart = playerPokemon.getFormKey();
 
     game.move.select(MoveId.RELIC_SONG);
     await game.phaseInterceptor.to("TurnEndPhase");
-    expect(formKeyStart).toBe(playerPokemon?.getFormKey());
+    expect(formKeyStart).toBe(playerPokemon.getFormKey());
   });
 });

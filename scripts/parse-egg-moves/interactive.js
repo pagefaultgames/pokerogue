@@ -5,8 +5,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 import fs from "fs";
+import { input, select } from "@inquirer/prompts";
 import chalk from "chalk";
-import inquirer from "inquirer";
 import { showHelpText } from "./help-message.js";
 
 /**
@@ -19,20 +19,14 @@ import { showHelpText } from "./help-message.js";
  */
 export async function runInteractive() {
   /** @type {"Console" | "File" | "Help" | "Exit"} */
-  const answer = await inquirer
-    .prompt([
-      {
-        type: "list",
-        name: "type",
-        message: "Select the method to obtain egg moves.",
-        choices: ["Console", "File", "Help", "Exit"],
-      },
-    ])
-    .then(a => a.type);
+  const answer = await select({
+    message: "Select the method to obtain egg moves.",
+    choices: ["Console", "File", "Help", "Exit"],
+  });
 
   if (answer === "Exit") {
     console.log("Exiting...");
-    process.exitCode = 1;
+    process.exitCode = 0;
     return { type: "Exit" };
   }
 
@@ -68,24 +62,18 @@ function promptForValue(type) {
  * @returns {Promise<string>} The file path inputted by the user.
  */
 async function getFilePath() {
-  return await inquirer
-    .prompt([
-      {
-        type: "input",
-        name: "path",
-        message: "Please enter the path to the egg move CSV file.",
-        validate: input => {
-          if (input.trim() === "") {
-            return "File path cannot be empty!";
-          }
-          if (!fs.existsSync(input)) {
-            return "File does not exist!";
-          }
-          return true;
-        },
-      },
-    ])
-    .then(answer => answer.path);
+  return await input({
+    message: "Please enter the path to the egg move CSV file.",
+    validate: filePath => {
+      if (filePath.trim() === "") {
+        return "File path cannot be empty!";
+      }
+      if (!fs.existsSync(filePath)) {
+        return "File does not exist!";
+      }
+      return true;
+    },
+  });
 }
 
 /**
@@ -93,22 +81,16 @@ async function getFilePath() {
  * @returns {Promise<string>} The CSV input from the user.
  */
 async function doPromptConsole() {
-  return await inquirer
-    .prompt([
-      {
-        type: "input",
-        name: "csv",
-        message: "Please enter the egg move CSV text.",
-        validate: input => {
-          if (input.trim() === "") {
-            return "CSV text cannot be empty!";
-          }
-          if (!input.match(/^[^,]+(,[^,]+){4}$/gm)) {
-            return "CSV text malformed - should contain 5 consecutive comma-separated values per line!";
-          }
-          return true;
-        },
-      },
-    ])
-    .then(answer => answer.csv);
+  return await input({
+    message: "Please enter the egg move CSV text.",
+    validate: value => {
+      if (value.trim() === "") {
+        return "CSV text cannot be empty!";
+      }
+      if (!value.match(/^[^,]+(,[^,]+){4}$/gm)) {
+        return "CSV text malformed - should contain 5 consecutive comma-separated values per line!";
+      }
+      return true;
+    },
+  });
 }

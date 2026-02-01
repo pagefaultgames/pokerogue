@@ -4,7 +4,7 @@ import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Test Battle Phase", () => {
   let phaserGame: Phaser.Game;
@@ -14,10 +14,6 @@ describe("Test Battle Phase", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -34,63 +30,63 @@ describe("Test Battle Phase", () => {
   // TODO: Make these into `it.each`es
   it("startBattle 2vs1 boss", async () => {
     game.override.battleStyle("single").startingWave(10);
-    await game.classicMode.startBattle([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.BLASTOISE, SpeciesId.CHARIZARD);
     expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
     expect(game).toBeAtPhase("CommandPhase");
   });
 
   it("startBattle 2vs2 boss", async () => {
     game.override.battleStyle("double").startingWave(10);
-    await game.classicMode.startBattle([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.BLASTOISE, SpeciesId.CHARIZARD);
     expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
     expect(game).toBeAtPhase("CommandPhase");
   });
 
   it("startBattle 2vs2 trainer", async () => {
     game.override.battleStyle("double").startingWave(5);
-    await game.classicMode.startBattle([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.BLASTOISE, SpeciesId.CHARIZARD);
     expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
     expect(game).toBeAtPhase("CommandPhase");
   });
 
   it("startBattle 2vs1 trainer", async () => {
     game.override.battleStyle("single").startingWave(5);
-    await game.classicMode.startBattle([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.BLASTOISE, SpeciesId.CHARIZARD);
     expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
     expect(game).toBeAtPhase("CommandPhase");
   });
 
   it("startBattle 2vs1 rival", async () => {
     game.override.battleStyle("single").startingWave(8);
-    await game.classicMode.startBattle([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.BLASTOISE, SpeciesId.CHARIZARD);
     expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
     expect(game).toBeAtPhase("CommandPhase");
   });
 
   it("startBattle 2vs2 rival", async () => {
     game.override.battleStyle("double").startingWave(8);
-    await game.classicMode.startBattle([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.BLASTOISE, SpeciesId.CHARIZARD);
     expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
     expect(game).toBeAtPhase("CommandPhase");
   });
 
   it("startBattle 1vs1 trainer", async () => {
     game.override.battleStyle("single").startingWave(5);
-    await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
+    await game.classicMode.startBattle(SpeciesId.BLASTOISE);
     expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
     expect(game).toBeAtPhase("CommandPhase");
   });
 
   it("startBattle 2vs2 trainer", async () => {
     game.override.battleStyle("double").startingWave(5);
-    await game.classicMode.startBattle([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.BLASTOISE, SpeciesId.CHARIZARD);
     expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
     expect(game).toBeAtPhase("CommandPhase");
   });
 
   it("startBattle 4vs2 trainer", async () => {
     game.override.battleStyle("double").startingWave(5);
-    await game.classicMode.startBattle([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD, SpeciesId.DARKRAI, SpeciesId.GABITE]);
+    await game.classicMode.startBattle(SpeciesId.BLASTOISE, SpeciesId.CHARIZARD, SpeciesId.DARKRAI, SpeciesId.GABITE);
     expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
     expect(game).toBeAtPhase("CommandPhase");
   });

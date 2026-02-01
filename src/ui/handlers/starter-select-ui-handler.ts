@@ -71,10 +71,16 @@ import {
   isValueReductionAvailable,
 } from "#ui/utils/starter-select-ui-utils";
 import { checkStarterValidForChallenge } from "#utils/challenge-utils";
-import { fixedInt, getLocalizedSpriteKey, randIntRange, rgbHexToRgba } from "#utils/common";
+import { 
+  fixedInt,
+  getLocalizedSpriteKey,
+  randIntRange,
+  rgbHexToRgba,
+  truncateString,
+} from "#utils/common";
 import type { AllStarterPreferences } from "#utils/data";
 import { deepCopy, loadStarterPreferences, saveStarterPreferences } from "#utils/data";
-import { getPokemonSpecies, getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
+import { getPokemonSpecies, getDexNumber, getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
@@ -768,7 +774,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.setCursor(0);
       this.tryUpdateValue(0);
 
-      handleTutorial(Tutorial.Starter_Select);
+      handleTutorial(Tutorial.STARTER_SELECT);
 
       return true;
     }
@@ -915,7 +921,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   showText(
     text: string,
     delay?: number,
-    callback?: Function,
+    callback?: () => void,
     callbackDelay?: number,
     prompt?: boolean,
     promptDelay?: number,
@@ -2422,31 +2428,31 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     iconElement: GameObjects.Sprite,
     controlLabel: GameObjects.Text,
   ): void {
-    let iconPath: string;
+    let iconPath: string | undefined;
     // touch controls cannot be rebound as is, and are just emulating a keyboard event.
     // Additionally, since keyboard controls can be rebound (and will be displayed when they are), we need to have special handling for the touch controls
     if (gamepadType === "touch") {
       gamepadType = "keyboard";
       switch (iconSetting) {
-        case SettingKeyboard.Button_Cycle_Shiny:
+        case SettingKeyboard.BUTTON_CYCLE_SHINY:
           iconPath = "R.png";
           break;
-        case SettingKeyboard.Button_Cycle_Form:
+        case SettingKeyboard.BUTTON_CYCLE_FORM:
           iconPath = "F.png";
           break;
-        case SettingKeyboard.Button_Cycle_Gender:
+        case SettingKeyboard.BUTTON_CYCLE_GENDER:
           iconPath = "G.png";
           break;
-        case SettingKeyboard.Button_Cycle_Ability:
+        case SettingKeyboard.BUTTON_CYCLE_ABILITY:
           iconPath = "E.png";
           break;
-        case SettingKeyboard.Button_Cycle_Nature:
+        case SettingKeyboard.BUTTON_CYCLE_NATURE:
           iconPath = "N.png";
           break;
-        case SettingKeyboard.Button_Cycle_Tera:
+        case SettingKeyboard.BUTTON_CYCLE_TERA:
           iconPath = "V.png";
           break;
-        case SettingKeyboard.Button_Stats:
+        case SettingKeyboard.BUTTON_STATS:
           iconPath = "C.png";
           break;
         default:
@@ -2477,7 +2483,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     iconElement: GameObjects.Sprite,
     controlLabel: GameObjects.Text,
   ): void {
-    let iconPath: string;
+    let iconPath: string | undefined;
     // touch controls cannot be rebound as is, and are just emulating a keyboard event.
     // Additionally, since keyboard controls can be rebound (and will be displayed when they are), we need to have special handling for the touch controls
     if (gamepadType === "touch") {
@@ -2512,7 +2518,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     let gamepadType: string;
     if (globalScene.inputMethod === "gamepad") {
       gamepadType = globalScene.inputController.getConfig(
-        globalScene.inputController.selectedDevice[Device.GAMEPAD],
+        globalScene.inputController.selectedDevice[Device.GAMEPAD]!, // TODO: re-evaluate bang
       ).padType;
     } else {
       gamepadType = globalScene.inputMethod;
@@ -2524,14 +2530,14 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     if (this.speciesStarterDexEntry?.caughtAttr) {
       if (this.canCycleShiny) {
-        this.updateButtonIcon(SettingKeyboard.Button_Cycle_Shiny, gamepadType, this.shinyIconElement, this.shinyLabel);
+        this.updateButtonIcon(SettingKeyboard.BUTTON_CYCLE_SHINY, gamepadType, this.shinyIconElement, this.shinyLabel);
       }
       if (this.canCycleForm) {
-        this.updateButtonIcon(SettingKeyboard.Button_Cycle_Form, gamepadType, this.formIconElement, this.formLabel);
+        this.updateButtonIcon(SettingKeyboard.BUTTON_CYCLE_FORM, gamepadType, this.formIconElement, this.formLabel);
       }
       if (this.canCycleGender) {
         this.updateButtonIcon(
-          SettingKeyboard.Button_Cycle_Gender,
+          SettingKeyboard.BUTTON_CYCLE_GENDER,
           gamepadType,
           this.genderIconElement,
           this.genderLabel,
@@ -2539,7 +2545,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       }
       if (this.canCycleAbility) {
         this.updateButtonIcon(
-          SettingKeyboard.Button_Cycle_Ability,
+          SettingKeyboard.BUTTON_CYCLE_ABILITY,
           gamepadType,
           this.abilityIconElement,
           this.abilityLabel,
@@ -2547,21 +2553,21 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       }
       if (this.canCycleNature) {
         this.updateButtonIcon(
-          SettingKeyboard.Button_Cycle_Nature,
+          SettingKeyboard.BUTTON_CYCLE_NATURE,
           gamepadType,
           this.natureIconElement,
           this.natureLabel,
         );
       }
       if (this.canCycleTera) {
-        this.updateButtonIcon(SettingKeyboard.Button_Cycle_Tera, gamepadType, this.teraIconElement, this.teraLabel);
+        this.updateButtonIcon(SettingKeyboard.BUTTON_CYCLE_TERA, gamepadType, this.teraIconElement, this.teraLabel);
       }
     }
 
     // if filter mode is inactivated and gamepadType is not undefined, update the button icons
     if (!this.filterMode) {
       this.updateFilterButtonIcon(
-        SettingKeyboard.Button_Stats,
+        SettingKeyboard.BUTTON_STATS,
         gamepadType,
         this.goFilterIconElement,
         this.goFilterLabel,
@@ -2692,6 +2698,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         if (misc.val === "WIN" && misc.state === DropDownState.OFF) {
           return true;
         }
+        return false;
       });
 
       // HA Filter
@@ -2708,6 +2715,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         if (misc.val === "HIDDEN_ABILITY" && misc.state === DropDownState.OFF) {
           return true;
         }
+        return false;
       });
 
       // Egg Purchasable Filter
@@ -2722,6 +2730,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         if (misc.val === "EGG" && misc.state === DropDownState.OFF) {
           return true;
         }
+        return false;
       });
 
       // Pokerus Filter
@@ -2735,6 +2744,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         if (misc.val === "POKERUS" && misc.state === DropDownState.OFF) {
           return true;
         }
+        return false;
       });
 
       if (
@@ -3306,6 +3316,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   updateStarterValueLabel(starter: StarterContainer): void {
     const speciesId = starter.species.speciesId;
     const baseStarterValue = speciesStarterCosts[speciesId];
+    if (baseStarterValue == null) {
+      return;
+    }
     const starterValue = globalScene.gameData.getSpeciesStarterValue(speciesId);
     starter.cost = starterValue;
     let valueStr = starterValue.toString();
@@ -3346,8 +3359,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
     this.valueLimitLabel
       .setText(`${newValueStr}/${valueLimit}`)
-      .setColor(getTextColor(!overLimit ? TextStyle.TOOLTIP_CONTENT : TextStyle.SUMMARY_PINK))
-      .setShadowColor(getTextColor(!overLimit ? TextStyle.TOOLTIP_CONTENT : TextStyle.SUMMARY_PINK, true));
+      .setColor(getTextColor(overLimit ? TextStyle.SUMMARY_PINK : TextStyle.TOOLTIP_CONTENT))
+      .setShadowColor(getTextColor(overLimit ? TextStyle.SUMMARY_PINK : TextStyle.TOOLTIP_CONTENT, true));
     if (overLimit) {
       globalScene.time.delayedCall(fixedInt(500), () => this.tryUpdateValue());
       return false;
@@ -3637,5 +3650,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     /* TODO: Uncomment this once our testing infra supports mocks of `Phaser.GameObject.Group`
     this.instructionElemGroup.destroy(true);
     */
+  }
+
+  /**
+   * Truncate the Pokémon name so it won't overlap into the starters.
+   */
+  private truncateName() {
+    const name = this.pokemonNameText.text;
+    this.pokemonNameText.setText(truncateString(name, 15));
   }
 }

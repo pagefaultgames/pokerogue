@@ -2,7 +2,6 @@ import type { ArenaTag, ArenaTagTypeMap } from "#data/arena-tag";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import type { ArenaTagType } from "#enums/arena-tag-type";
 import type { OneOther } from "#test/@types/test-helpers";
-// biome-ignore lint/correctness/noUnusedImports: TSDoc
 import type { GameManager } from "#test/test-utils/game-manager";
 import { getOnelineDiffStr } from "#test/test-utils/string-utils";
 import { isGameManagerInstance, receivedStr } from "#test/test-utils/test-utils";
@@ -10,32 +9,50 @@ import type { ArenaTagDataMap, SerializableArenaTagType } from "#types/arena-tag
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
- * Options type for {@linkcode toHaveArenaTag}.
+ * Helper type for a partially filled serializable {@linkcode ArenaTag}.
+ * Allows for caching to avoid repeated instantiation and speed up typechecking.
+ * @typeParam A - The {@linkcode ArenaTagType} being checked
+ * @internal
+ * @sealed
+ */
+type PartiallyFilledSerializableArenaTag<A extends SerializableArenaTagType> = //
+  OneOther<ArenaTagDataMap[A], "tagType" | "side"> & { tagType: A };
+
+/**
+ * Helper type for a partially filled non-serializable {@linkcode ArenaTag}.
+ * Allows for caching to avoid repeated instantiation and speed up typechecking.
+ * @typeParam A - The {@linkcode ArenaTagType} being checked
+ * @internal
+ * @sealed
+ */
+type PartiallyFilledNonSerializableArenaTag<A extends ArenaTagType> = //
+  OneOther<ArenaTagTypeMap[A], "tagType" | "side"> & { tagType: A };
+
+/**
+ * Parameter type for {@linkcode toHaveArenaTag}, accepting a partially filled {@linkcode ArenaTag} of the given type.
  * @typeParam A - The {@linkcode ArenaTagType} being checked
  * @remarks
- * If A corresponds to a serializable `ArenaTag`, only properties allowed to be serialized
+ * If `A` corresponds to a {@linkcode SerializableArenaTagType | serializable ArenaTag}, only properties allowed to be serialized
  * (i.e. can change across instances) will be present and able to be checked.
+ * @sealed
  */
-export type toHaveArenaTagOptions<A extends ArenaTagType> = OneOther<
-  A extends SerializableArenaTagType ? ArenaTagDataMap[A] : ArenaTagTypeMap[A],
-  "tagType" | "side"
-> & {
-  tagType: A;
-};
+export type PartiallyFilledArenaTag<A extends ArenaTagType> = [A] extends [SerializableArenaTagType]
+  ? PartiallyFilledSerializableArenaTag<A>
+  : PartiallyFilledNonSerializableArenaTag<A>;
 
 /**
  * Matcher to check if the {@linkcode Arena} has a given {@linkcode ArenaTag} active.
- * @param received - The object to check. Should be the current {@linkcode GameManager}.
- * @param expectedTag - The `ArenaTagType` of the desired tag, or a partially-filled object
+ * @param received - The object to check. Should be the current {@linkcode GameManager}
+ * @param expectedTag - The `ArenaTagType` of the desired tag, or a partially filled object
  * containing the desired properties
- * @param side - The {@linkcode ArenaTagSide | side of the field} the tag should affect, or
+ * @param side - (Default {@linkcode ArenaTagSide.BOTH}) The {@linkcode ArenaTagSide | side of the field} the tag should affect, or
  * {@linkcode ArenaTagSide.BOTH} to check both sides
  * @returns The result of the matching
  */
 export function toHaveArenaTag<A extends ArenaTagType>(
-  this: MatcherState,
+  this: Readonly<MatcherState>,
   received: unknown,
-  expectedTag: A | toHaveArenaTagOptions<A>,
+  expectedTag: A | PartiallyFilledArenaTag<A>,
   side: ArenaTagSide = ArenaTagSide.BOTH,
 ): SyncExpectationResult {
   if (!isGameManagerInstance(received)) {
@@ -53,10 +70,7 @@ export function toHaveArenaTag<A extends ArenaTagType>(
   }
 
   // Coerce lone `tagType`s into objects
-  // Bangs are ok as we enforce safety via overloads
-  // @ts-expect-error - Typescript is being stupid as tag type and side will always exist
-  const etag: Partial<ArenaTag> & { tagType: T; side: ArenaTagSide } =
-    typeof expectedTag === "object" ? expectedTag : { tagType: expectedTag, side };
+  const etag = typeof expectedTag === "object" ? expectedTag : { tagType: expectedTag, side };
 
   // If checking only tag type/side OR no tags were found, break out early.
   // We need to get all tags for the case of checking properties of a tag present on both sides of the arena

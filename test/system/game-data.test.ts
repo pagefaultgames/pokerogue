@@ -6,7 +6,7 @@ import { MoveId } from "#enums/move-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import type { SessionSaveData } from "#types/save-data";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("System - Game Data", () => {
   let phaserGame: Phaser.Game;
@@ -25,10 +25,6 @@ describe("System - Game Data", () => {
       .battleStyle("single")
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   describe("tryClearSession", () => {

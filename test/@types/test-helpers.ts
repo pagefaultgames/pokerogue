@@ -1,4 +1,4 @@
-import type { AtLeastOne, NonFunctionPropertiesRecursive as nonFunc } from "#types/type-helpers";
+import type { AtLeastOne, NonFunctionProperties } from "#types/type-helpers";
 
 /**
  * Helper type to admit an object containing the given properties
@@ -20,8 +20,8 @@ import type { AtLeastOne, NonFunctionPropertiesRecursive as nonFunc } from "#typ
  * const bad2: quxAndSomethingElse = {qux: 1} // Errors because at least 1 thing _other_ than `qux` is required
  * ```
  * @typeParam O - The object to source keys from
- * @typeParam K - One or more of O's keys to render mandatory
+ * @typeParam K - One or more of O's properties to render mandatory
  */
-export type OneOther<O extends object, K extends keyof O> = AtLeastOne<Omit<nonFunc<O>, K>> & {
-  [key in K]: O[K];
-};
+// NB: no need to recursively exclude non function properties
+// TODO: Figure out how to force K to not be a method property without breaking existing types
+export type OneOther<O extends object, K extends keyof O> = Pick<O, K> & AtLeastOne<Omit<NonFunctionProperties<O>, K>>;

@@ -7,7 +7,7 @@ import { Stat } from "#enums/stat";
 import type { MovePhase } from "#phases/move-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Dancer", () => {
   let phaserGame: Phaser.Game;
@@ -19,10 +19,6 @@ describe("Abilities - Dancer", () => {
     });
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("double").enemyAbility(AbilityId.BALL_FETCH);
@@ -32,7 +28,7 @@ describe("Abilities - Dancer", () => {
 
   it("triggers when dance moves are used, doesn't consume extra PP", async () => {
     game.override.enemyAbility(AbilityId.DANCER).enemySpecies(SpeciesId.MAGIKARP).enemyMoveset(MoveId.VICTORY_DANCE);
-    await game.classicMode.startBattle([SpeciesId.ORICORIO, SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.ORICORIO, SpeciesId.FEEBAS);
 
     const [oricorio, feebas, magikarp1] = game.scene.getField();
     game.move.changeMoveset(oricorio, [MoveId.SWORDS_DANCE, MoveId.VICTORY_DANCE, MoveId.SPLASH]);
@@ -73,7 +69,7 @@ describe("Abilities - Dancer", () => {
       .enemyMoveset([MoveId.INSTRUCT, MoveId.MIRROR_MOVE, MoveId.SPLASH])
       .enemySpecies(SpeciesId.SHUCKLE)
       .enemyLevel(10);
-    await game.classicMode.startBattle([SpeciesId.ORICORIO, SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.ORICORIO, SpeciesId.FEEBAS);
 
     const oricorio = game.field.getPlayerPokemon();
     const shuckle2 = game.scene.getEnemyField()[1];
@@ -105,7 +101,7 @@ describe("Abilities - Dancer", () => {
 
   it("should not break subsequent last hit only moves", async () => {
     game.override.battleStyle("single");
-    await game.classicMode.startBattle([SpeciesId.ORICORIO, SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.ORICORIO, SpeciesId.FEEBAS);
 
     const [oricorio, feebas] = game.scene.getPlayerParty();
 
@@ -124,7 +120,7 @@ describe("Abilities - Dancer", () => {
 
   it("should not trigger while flinched", async () => {
     game.override.battleStyle("double").moveset(MoveId.SPLASH).enemyMoveset([MoveId.SWORDS_DANCE, MoveId.FAKE_OUT]);
-    await game.classicMode.startBattle([SpeciesId.ORICORIO]);
+    await game.classicMode.startBattle(SpeciesId.ORICORIO);
 
     const oricorio = game.field.getPlayerPokemon();
     expect(oricorio).toBeDefined();

@@ -4,7 +4,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Items - Mystical Rock", () => {
   let phaserGame: Phaser.Game;
@@ -14,10 +14,6 @@ describe("Items - Mystical Rock", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -33,7 +29,7 @@ describe("Items - Mystical Rock", () => {
   });
 
   it("should increase weather duration by +2 turns per stack", async () => {
-    await game.classicMode.startBattle([SpeciesId.GASTLY]);
+    await game.classicMode.startBattle(SpeciesId.GASTLY);
 
     game.move.select(MoveId.SUNNY_DAY);
 
@@ -46,7 +42,7 @@ describe("Items - Mystical Rock", () => {
   });
 
   it("should increase terrain duration by +2 turns per stack", async () => {
-    await game.classicMode.startBattle([SpeciesId.GASTLY]);
+    await game.classicMode.startBattle(SpeciesId.GASTLY);
 
     game.move.select(MoveId.GRASSY_TERRAIN);
 

@@ -8,7 +8,7 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Lunar Dance and Healing Wish", () => {
   let phaserGame: Phaser.Game;
@@ -18,10 +18,6 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -34,7 +30,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
     { moveName: "Lunar Dance", moveId: MoveId.LUNAR_DANCE },
   ])("$moveName", ({ moveId }) => {
     it("should sacrifice the user to restore the switched in Pokemon's HP", async () => {
-      await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
+      await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE);
 
       const [bulbasaur, charmander, squirtle] = game.scene.getPlayerParty();
       squirtle.hp = 1;
@@ -53,7 +49,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
     it("should sacrifice the user to cure the switched in Pokemon's status", async () => {
       game.override.statusEffect(StatusEffect.BURN);
 
-      await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
+      await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE);
       const [bulbasaur, charmander, squirtle] = game.scene.getPlayerParty();
 
       game.move.use(MoveId.SPLASH, 0);
@@ -70,7 +66,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
     it("should fail if the user has no non-fainted allies in their party", async () => {
       game.override.battleStyle("single");
 
-      await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER]);
+      await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER);
       const [bulbasaur, charmander] = game.scene.getPlayerParty();
 
       game.move.use(MoveId.MEMENTO);
@@ -93,7 +89,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
       game.override.battleStyle("single");
       // Mono normal challenge
       game.challengeMode.addChallenge(Challenges.SINGLE_TYPE, PokemonType.NORMAL + 1, 0);
-      await game.challengeMode.startBattle([SpeciesId.RATICATE, SpeciesId.ODDISH]);
+      await game.challengeMode.startBattle(SpeciesId.RATICATE, SpeciesId.ODDISH);
 
       const raticate = game.field.getPlayerPokemon();
 
@@ -107,7 +103,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
     it("should store its effect if the switched-in Pokemon would be unaffected", async () => {
       game.override.battleStyle("single");
 
-      await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
+      await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE);
 
       const [bulbasaur, charmander, squirtle] = game.scene.getPlayerParty();
       squirtle.hp = 1;
@@ -142,12 +138,12 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
     it("should only store one charge of the effect at a time", async () => {
       game.override.battleStyle("single");
 
-      await game.classicMode.startBattle([
+      await game.classicMode.startBattle(
         SpeciesId.BULBASAUR,
         SpeciesId.CHARMANDER,
         SpeciesId.SQUIRTLE,
         SpeciesId.PIKACHU,
-      ]);
+      );
 
       const [bulbasaur, charmander, squirtle, pikachu] = game.scene.getPlayerParty();
       [squirtle, pikachu].forEach(p => (p.hp = 1));
@@ -182,7 +178,7 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
   it("Lunar Dance should sacrifice the user to restore the switched in Pokemon's PP", async () => {
     game.override.battleStyle("single");
 
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER);
 
     const [bulbasaur, charmander] = game.scene.getPlayerParty();
 
@@ -203,12 +199,12 @@ describe("Moves - Lunar Dance and Healing Wish", () => {
   it("should stack with each other", async () => {
     game.override.battleStyle("single");
 
-    await game.classicMode.startBattle([
+    await game.classicMode.startBattle(
       SpeciesId.BULBASAUR,
       SpeciesId.CHARMANDER,
       SpeciesId.SQUIRTLE,
       SpeciesId.PIKACHU,
-    ]);
+    );
 
     const [bulbasaur, charmander, squirtle, pikachu] = game.scene.getPlayerParty();
     [squirtle, pikachu].forEach(p => {

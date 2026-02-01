@@ -44,11 +44,8 @@
  * @module
  */
 
-// biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports
-import type { BattlerTag } from "#app/data/battler-tags";
-// biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports
-
 import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
+import type { BattlerTag } from "#app/data/battler-tags";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { CommonBattleAnim } from "#data/battle-anims";
@@ -153,7 +150,14 @@ export abstract class ArenaTag implements BaseArenaTag {
   constructor(turnCount: number, sourceMove?: MoveId, sourceId?: number, side: ArenaTagSide = ArenaTagSide.BOTH) {
     this.turnCount = turnCount;
     this.maxDuration = turnCount;
-    this.sourceMove = sourceMove;
+    // TODO: Rework tags passing `MoveId.NONE` to instead pass `undefined` for consistency
+    // TODO: Enforce that all arena tags explicitly declare any used properties to ensure only required properties are serialized
+    if (sourceMove) {
+      this.sourceMove = sourceMove;
+    }
+    if (sourceId !== undefined) {
+      this.sourceId = sourceId;
+    }
     this.sourceId = sourceId;
     this.side = side;
   }
@@ -230,11 +234,16 @@ export abstract class ArenaTag implements BaseArenaTag {
    * @param source - The arena tag being loaded
    */
   loadTag<const T extends this>(source: BaseArenaTag & Pick<T, "tagType">): void {
-    this.turnCount = source.turnCount;
-    this.maxDuration = source.maxDuration;
-    this.sourceMove = source.sourceMove;
-    this.sourceId = source.sourceId;
-    this.side = source.side;
+    const { sourceMove, turnCount, sourceId, maxDuration, side } = source;
+    this.turnCount = turnCount;
+    this.maxDuration = maxDuration;
+    if (sourceMove) {
+      this.sourceMove = sourceMove;
+    }
+    if (sourceId !== undefined) {
+      this.sourceId = sourceId;
+    }
+    this.side = side;
   }
 
   /**
@@ -319,7 +328,11 @@ export class MistTag extends SerializableArenaTag {
     cancelled.value = true;
 
     if (!simulated) {
-      globalScene.phaseManager.queueMessage(i18next.t("arenaTag:mistApply"));
+      globalScene.phaseManager.queueMessage(
+        i18next.t("arenaTag:mistApply", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(this.getSourcePokemon()),
+        }),
+      );
     }
 
     return true;
@@ -944,7 +957,7 @@ class StealthRockTag extends DamagingTrapTag {
   }
 
   protected override getDamageHpRatio(pokemon: Pokemon): number {
-    const effectiveness = pokemon.getAttackTypeEffectiveness(PokemonType.ROCK, undefined, true);
+    const effectiveness = pokemon.getAttackTypeEffectiveness(PokemonType.ROCK, { ignoreStrongWinds: true });
     return 0.125 * effectiveness;
   }
 
@@ -991,7 +1004,7 @@ class ToxicSpikesTag extends EntryHazardTag {
 
     // Attempt to poison the target, suppressing any status effect messages
     const effect = this.layers === 1 ? StatusEffect.POISON : StatusEffect.TOXIC;
-    return pokemon.trySetStatus(effect, null, 0, this.getMoveName(), false, true);
+    return pokemon.trySetStatus(effect, undefined, 0, this.getMoveName(), false, true);
   }
 
   getMatchupScoreMultiplier(pokemon: Pokemon): number {
@@ -1531,7 +1544,12 @@ export class SuppressAbilitiesTag extends SerializableArenaTag {
       // Could have a custom message that plays when a specific pokemon's NG ends? This entire thing exists due to passives after all
       const setter = globalScene
         .getField(true)
-        .filter(p => p.hasAbilityWithAttr("PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr", false))[0];
+        .find(p => p.hasAbilityWithAttr("PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr", false));
+      // Setter may not exist if both NG Pokemon faint simultaneously
+      if (setter == null) {
+        return;
+      }
+
       applyOnGainAbAttrs({
         pokemon: setter,
         passive: setter.getAbility().hasAttr("PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr"),
@@ -1679,7 +1697,7 @@ export class PendingHealTag extends SerializableArenaTag {
 
     targetEffects.splice(targetEffects.indexOf(healEffect), 1);
 
-    return healEffect != null;
+    return true;
   }
 
   /**

@@ -6,7 +6,7 @@ import { Pokemon } from "#field/pokemon";
 import type { Move } from "#moves/move";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
 
 describe("Abilities - Shell Armor", () => {
   let phaserGame: Phaser.Game;
@@ -17,10 +17,6 @@ describe("Abilities - Shell Armor", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -37,7 +33,7 @@ describe("Abilities - Shell Armor", () => {
 
   it("should prevent natural crit rolls from suceeding", async () => {
     game.override.criticalHits(true); // force random crit rolls to always succeed
-    await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
+    await game.classicMode.startBattle(SpeciesId.ABOMASNOW);
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.TACKLE);
@@ -47,7 +43,7 @@ describe("Abilities - Shell Armor", () => {
   });
 
   it("should prevent guaranteed-crit moves from critting", async () => {
-    await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
+    await game.classicMode.startBattle(SpeciesId.ABOMASNOW);
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.FLOWER_TRICK);
@@ -58,7 +54,7 @@ describe("Abilities - Shell Armor", () => {
 
   it("should block Merciless guaranteed crits", async () => {
     game.override.enemyAbility(AbilityId.MERCILESS);
-    await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
+    await game.classicMode.startBattle(SpeciesId.ABOMASNOW);
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.TACKLE);

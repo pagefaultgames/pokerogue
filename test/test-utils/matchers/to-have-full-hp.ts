@@ -1,5 +1,4 @@
 import { getPokemonNameWithAffix } from "#app/messages";
-// biome-ignore lint/correctness/noUnusedImports: TSDoc
 import type { Pokemon } from "#field/pokemon";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
@@ -9,7 +8,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @param received - The object to check. Should be a {@linkcode Pokemon}.
  * @returns Whether the matcher passed
  */
-export function toHaveFullHp(this: MatcherState, received: unknown): SyncExpectationResult {
+export function toHaveFullHp(this: Readonly<MatcherState>, received: unknown): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
     return {
       pass: this.isNot,

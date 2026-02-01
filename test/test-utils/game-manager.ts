@@ -6,30 +6,20 @@ import overrides from "#app/overrides";
 import { modifierTypes } from "#data/data-lists";
 import { BattlerIndex } from "#enums/battler-index";
 import { Button } from "#enums/buttons";
-import { ExpGainsSpeed } from "#enums/exp-gains-speed";
-import { ExpNotification } from "#enums/exp-notification";
 import { GameModes } from "#enums/game-modes";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { PlayerGender } from "#enums/player-gender";
 import type { PokeballType } from "#enums/pokeball";
 import type { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import type { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
 import { Trainer } from "#field/trainer";
 import { ModifierTypeOption } from "#modifiers/modifier-type";
-import { CheckSwitchPhase } from "#phases/check-switch-phase";
 import { CommandPhase } from "#phases/command-phase";
 import { EncounterPhase } from "#phases/encounter-phase";
-import { MovePhase } from "#phases/move-phase";
-import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
-import { NewBattlePhase } from "#phases/new-battle-phase";
 import { SelectStarterPhase } from "#phases/select-starter-phase";
 import type { SelectTargetPhase } from "#phases/select-target-phase";
 import { TurnEndPhase } from "#phases/turn-end-phase";
-import { TurnInitPhase } from "#phases/turn-init-phase";
-import { TurnStartPhase } from "#phases/turn-start-phase";
 import { GameData } from "#system/game-data";
-import { ErrorInterceptor } from "#test/test-utils/error-interceptor";
 import { generateStarters } from "#test/test-utils/game-manager-utils";
 import { GameWrapper } from "#test/test-utils/game-wrapper";
 import { ChallengeModeHelper } from "#test/test-utils/helpers/challenge-mode-helper";
@@ -39,22 +29,26 @@ import { FieldHelper } from "#test/test-utils/helpers/field-helper";
 import { ModifierHelper } from "#test/test-utils/helpers/modifiers-helper";
 import { MoveHelper } from "#test/test-utils/helpers/move-helper";
 import { OverridesHelper } from "#test/test-utils/helpers/overrides-helper";
+import { PromptHandler } from "#test/test-utils/helpers/prompt-handler";
 import { ReloadHelper } from "#test/test-utils/helpers/reload-helper";
+import { RngHelper } from "#test/test-utils/helpers/rng-helper";
 import { SettingsHelper } from "#test/test-utils/helpers/settings-helper";
 import type { InputsHandler } from "#test/test-utils/inputs-handler";
 import { MockFetch } from "#test/test-utils/mocks/mock-fetch";
 import { PhaseInterceptor } from "#test/test-utils/phase-interceptor";
 import { TextInterceptor } from "#test/test-utils/text-interceptor";
-import type { PhaseClass, PhaseString } from "#types/phase-types";
+import type { PhaseString } from "#types/phase-types";
 import type { BallUiHandler } from "#ui/ball-ui-handler";
 import type { BattleMessageUiHandler } from "#ui/battle-message-ui-handler";
 import type { CommandUiHandler } from "#ui/command-ui-handler";
+import type { AwaitableUiHandler } from "#ui/handlers/awaitable-ui-handler";
 import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import type { PartyUiHandler } from "#ui/party-ui-handler";
 import type { StarterSelectUiHandler } from "#ui/starter-select-ui-handler";
 import type { TargetSelectUiHandler } from "#ui/target-select-ui-handler";
 import fs from "node:fs";
 import { AES, enc } from "crypto-js";
+import type { NonEmptyTuple } from "type-fest";
 import { expect, vi } from "vitest";
 
 /**
@@ -66,6 +60,7 @@ export class GameManager {
   public phaseInterceptor: PhaseInterceptor;
   public textInterceptor: TextInterceptor;
   public inputsHandler: InputsHandler;
+  public readonly promptHandler: PromptHandler;
   public readonly override: OverridesHelper;
   public readonly move: MoveHelper;
   public readonly classicMode: ClassicModeHelper;
@@ -75,6 +70,7 @@ export class GameManager {
   public readonly reload: ReloadHelper;
   public readonly modifiers: ModifierHelper;
   public readonly field: FieldHelper;
+  public readonly rng: RngHelper;
 
   /**
    * Creates an instance of GameManager.
@@ -83,7 +79,6 @@ export class GameManager {
    */
   constructor(phaserGame: Phaser.Game, bypassLogin = true) {
     localStorage.clear();
-    ErrorInterceptor.getInstance().clear();
     // Simulate max rolls on RNG functions
     // TODO: Create helpers for disabling/enabling battle RNG
     BattleScene.prototype.randBattleSeedInt = (range, min = 0) => min + range - 1;
@@ -103,6 +98,7 @@ export class GameManager {
     }
 
     this.textInterceptor = new TextInterceptor(this.scene);
+    this.promptHandler = new PromptHandler(this);
     this.override = new OverridesHelper(this);
     this.move = new MoveHelper(this);
     this.classicMode = new ClassicModeHelper(this);
@@ -112,6 +108,7 @@ export class GameManager {
     this.reload = new ReloadHelper(this);
     this.modifiers = new ModifierHelper(this);
     this.field = new FieldHelper(this);
+    this.rng = new RngHelper(this);
 
     this.initDefaultOverrides();
 
@@ -119,8 +116,14 @@ export class GameManager {
     global.fetch = vi.fn(MockFetch) as any;
   }
 
-  /** Reset a prior `BattleScene` instance to the proper initial state. */
+  /**
+   * Reset a prior `BattleScene` instance to the proper initial state.
+   * @todo Review why our UI doesn't reset between runs and why we need to do it manually
+   */
   private resetScene(): void {
+    // NB: We can't pass `clearScene=true` to `reset` as it will only launch the battle after a fadeout tween
+    // (along with initializing a bunch of sprites we don't really care about)
+
     this.scene.reset(false, true);
     (this.scene.ui.handlers[UiMode.STARTER_SELECT] as StarterSelectUiHandler).clearStarterPreferences();
 
@@ -133,7 +136,7 @@ export class GameManager {
   /**
    * Initialize various default overrides for starting tests, typically to alleviate randomness.
    */
-  // TODO: This should not be here
+  // TODO: Move this to overrides-helper.ts
   private initDefaultOverrides(): void {
     // Disables Mystery Encounters on all tests (can be overridden at test level)
     this.override.mysteryEncounterChance(0);
@@ -158,7 +161,8 @@ export class GameManager {
   }
 
   /**
-   * End the currently running phase immediately.
+   * End the current phase immediately.
+   * @see {@linkcode PhaseInterceptor.shiftPhase} Function to skip the next upcoming phase
    */
   endPhase() {
     this.scene.phaseManager.getCurrentPhase().end();
@@ -171,15 +175,18 @@ export class GameManager {
    * @param mode - The mode to wait for.
    * @param callback - The callback function to execute on next prompt.
    * @param expireFn - Optional function to determine if the prompt has expired.
+   * @param awaitingActionInput - If true, will prevent the prompt from activating until the current {@linkcode AwaitableUiHandler}
+   * is awaiting input; default `false`
+   * @deprecated Remove in favor of {@linkcode PromptHandler.addToNextPrompt}
    */
   onNextPrompt(
-    phaseTarget: string,
+    phaseTarget: PhaseString,
     mode: UiMode,
     callback: () => void,
-    expireFn?: () => void,
+    expireFn?: () => boolean,
     awaitingActionInput = false,
   ) {
-    this.phaseInterceptor.addToNextPrompt(phaseTarget, mode, callback, expireFn, awaitingActionInput);
+    this.promptHandler.addToNextPrompt(phaseTarget, mode, callback, expireFn, awaitingActionInput);
   }
 
   /**
@@ -189,20 +196,8 @@ export class GameManager {
   async runToTitle(): Promise<void> {
     // Go to login phase and skip past it
     await this.phaseInterceptor.to("LoginPhase", false);
-    this.phaseInterceptor.shiftPhase(true);
+    this.phaseInterceptor.shiftPhase();
     await this.phaseInterceptor.to("TitlePhase");
-
-    // TODO: This should be moved to a separate initialization method
-    this.scene.gameSpeed = 5;
-    this.scene.moveAnimations = false;
-    this.scene.showLevelUpStats = false;
-    this.scene.expGainsSpeed = ExpGainsSpeed.SKIP;
-    this.scene.expParty = ExpNotification.SKIP;
-    this.scene.hpBarSpeed = 3;
-    this.scene.enableTutorials = false;
-    this.scene.gameData.gender = PlayerGender.MALE; // set initial player gender
-    this.scene.battleStyle = this.settings.battleStyle;
-    this.scene.fieldVolume = 0;
   }
 
   /**
@@ -236,10 +231,10 @@ export class GameManager {
   /**
    * Runs the game to a mystery encounter phase.
    * @param encounterType - If specified, will expect encounter to be the given type.
-   * @param species - Optional array of species for party to start with.
+   * @param speciesIds - Optional array of species for party to start with.
    * @returns A Promise that resolves when the EncounterPhase ends.
    */
-  async runToMysteryEncounter(encounterType?: MysteryEncounterType, species?: SpeciesId[]) {
+  async runToMysteryEncounter(encounterType?: MysteryEncounterType, speciesIds?: SpeciesId[]) {
     if (encounterType != null) {
       this.override.disableTrainerWaves();
       this.override.mysteryEncounter(encounterType);
@@ -252,12 +247,12 @@ export class GameManager {
       UiMode.TITLE,
       () => {
         this.scene.gameMode = getGameMode(GameModes.CLASSIC);
-        const starters = generateStarters(this.scene, species);
+        const starters = generateStarters(this.scene, speciesIds);
         const selectStarterPhase = new SelectStarterPhase();
         this.scene.phaseManager.pushPhase(new EncounterPhase(false));
         selectStarterPhase.initBattle(starters);
       },
-      () => this.isCurrentPhase(EncounterPhase),
+      () => this.isCurrentPhase("EncounterPhase"),
     );
 
     this.onNextPrompt(
@@ -267,7 +262,7 @@ export class GameManager {
         const handler = this.scene.ui.getHandler() as BattleMessageUiHandler;
         handler.processInput(Button.ACTION);
       },
-      () => this.isCurrentPhase(MysteryEncounterPhase),
+      () => this.isCurrentPhase("MysteryEncounterPhase"),
       true,
     );
 
@@ -306,10 +301,10 @@ export class GameManager {
         handler.processInput(Button.ACTION);
       },
       () =>
-        this.isCurrentPhase(CommandPhase)
-        || this.isCurrentPhase(MovePhase)
-        || this.isCurrentPhase(TurnStartPhase)
-        || this.isCurrentPhase(TurnEndPhase),
+        this.isCurrentPhase("CommandPhase")
+        || this.isCurrentPhase("MovePhase")
+        || this.isCurrentPhase("TurnStartPhase")
+        || this.isCurrentPhase("TurnEndPhase"),
     );
   }
 
@@ -331,9 +326,9 @@ export class GameManager {
         handler.processInput(Button.CANCEL);
       },
       () =>
-        this.isCurrentPhase(CommandPhase)
-        || this.isCurrentPhase(NewBattlePhase)
-        || this.isCurrentPhase(CheckSwitchPhase),
+        this.isCurrentPhase("CommandPhase")
+        || this.isCurrentPhase("NewBattlePhase")
+        || this.isCurrentPhase("CheckSwitchPhase"),
       true,
     );
 
@@ -345,9 +340,9 @@ export class GameManager {
         handler.processInput(Button.ACTION);
       },
       () =>
-        this.isCurrentPhase(CommandPhase)
-        || this.isCurrentPhase(NewBattlePhase)
-        || this.isCurrentPhase(CheckSwitchPhase),
+        this.isCurrentPhase("CommandPhase")
+        || this.isCurrentPhase("NewBattlePhase")
+        || this.isCurrentPhase("CheckSwitchPhase"),
     );
   }
 
@@ -366,15 +361,19 @@ export class GameManager {
    * Transition to the first {@linkcode CommandPhase} of the next turn.
    * @returns A promise that resolves once the next {@linkcode CommandPhase} has been reached.
    */
-  async toNextTurn() {
+  async toNextTurn(): Promise<void> {
     await this.phaseInterceptor.to("TurnInitPhase");
     await this.phaseInterceptor.to("CommandPhase");
     console.log("==================[New Turn]==================");
   }
 
-  /** Transition to the {@linkcode TurnEndPhase | end of the current turn}. */
-  async toEndOfTurn() {
-    await this.phaseInterceptor.to("TurnEndPhase");
+  /**
+   * Transition to the {@linkcode TurnEndPhase | end of the current turn}.
+   * @param endTurn - Whether to run the `TurnEndPhase` or not; default `true`
+   * @returns A Promise that resolves once the current turn has ended.
+   */
+  async toEndOfTurn(endTurn = true): Promise<void> {
+    await this.phaseInterceptor.to("TurnEndPhase", endTurn);
     console.log("==================[End of Turn]==================");
   }
 
@@ -382,19 +381,8 @@ export class GameManager {
    * Queue up button presses to skip taking an item on the next {@linkcode SelectModifierPhase},
    * and then transition to the next {@linkcode CommandPhase}.
    */
-  async toNextWave() {
+  async toNextWave(): Promise<void> {
     this.doSelectModifier();
-
-    // forcibly end the message box for switching pokemon
-    this.onNextPrompt(
-      "CheckSwitchPhase",
-      UiMode.CONFIRM,
-      () => {
-        this.setMode(UiMode.MESSAGE);
-        this.endPhase();
-      },
-      () => this.isCurrentPhase(TurnInitPhase),
-    );
 
     await this.phaseInterceptor.to("TurnInitPhase");
     await this.phaseInterceptor.to("CommandPhase");
@@ -405,28 +393,28 @@ export class GameManager {
    * Check if the player has won the battle.
    * @returns whether the player has won the battle (all opposing Pokemon have been fainted)
    */
-  isVictory() {
+  isVictory(): boolean {
     return this.scene.currentBattle.enemyParty.every(pokemon => pokemon.isFainted());
   }
 
   /**
    * Checks if the current phase matches the target phase.
-   * @param phaseTarget - The target phase.
-   * @returns Whether the current phase matches the target phase
-   * @todo Remove `phaseClass` from signature
+   * @param phaseTargets - The target phase(s) to check
+   * @returns Whether the current phase matches any of the target phases
+   * @todo Convert existing calls of `game.isCurrentPhase("A") || game.isCurrentPhase("B")` to pass them together in 1 call
    */
-  isCurrentPhase(phaseTarget: PhaseClass | PhaseString) {
-    const targetName = typeof phaseTarget === "string" ? phaseTarget : phaseTarget.name;
-    return this.scene.phaseManager.getCurrentPhase().phaseName === targetName;
+  public isCurrentPhase(...phaseTargets: NonEmptyTuple<PhaseString>): boolean {
+    const phase = this.scene.phaseManager.getCurrentPhase();
+    return phaseTargets.some(p => phase.is(p));
   }
 
   /**
-   * Checks if the current mode matches the target mode.
+   * Check if the current `UiMode` matches the target mode.
    * @param mode - The target {@linkcode UiMode} to check.
    * @returns Whether the current mode matches the target mode.
    */
-  isCurrentMode(mode: UiMode) {
-    return this.scene.ui?.getMode() === mode;
+  isCurrentMode(mode: UiMode): boolean {
+    return this.scene.ui.getMode() === mode;
   }
 
   /**
@@ -435,7 +423,7 @@ export class GameManager {
    */
   exportSaveToTest(): Promise<string> {
     const saveKey = "x0i2O7WRiANTqPmZ";
-    return new Promise(async resolve => {
+    return new Promise(resolve => {
       const sessionSaveData = this.scene.gameData.getSessionSaveData();
       const encryptedSaveData = AES.encrypt(JSON.stringify(sessionSaveData), saveKey).toString();
       resolve(encryptedSaveData);
@@ -444,10 +432,10 @@ export class GameManager {
 
   /**
    * Imports game data from a file.
-   * @param path - The path to the data file.
+   * @param path - The path to the data file
    * @returns A promise that resolves with a tuple containing a boolean indicating success and an integer status code.
    */
-  async importData(path): Promise<[boolean, number]> {
+  async importData(path: string): Promise<[boolean, number]> {
     const saveKey = "x0i2O7WRiANTqPmZ";
     const dataRaw = fs.readFileSync(path, { encoding: "utf8", flag: "r" });
     let dataStr = AES.decrypt(dataRaw, saveKey).toString(enc.Utf8);
@@ -508,7 +496,7 @@ export class GameManager {
    * @param inPhase - Which phase to expect the selection to occur in. Defaults to `SwitchPhase`
    * (which is where the majority of non-command switch operations occur).
    */
-  doSelectPartyPokemon(slot: number, inPhase = "SwitchPhase") {
+  doSelectPartyPokemon(slot: number, inPhase: PhaseString = "SwitchPhase") {
     this.onNextPrompt(inPhase, UiMode.PARTY, () => {
       const partyHandler = this.scene.ui.getHandler() as PartyUiHandler;
 

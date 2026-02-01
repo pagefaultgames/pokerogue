@@ -3,7 +3,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Tackle", () => {
   let phaserGame: Phaser.Game;
@@ -13,10 +13,6 @@ describe("Moves - Tackle", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -36,7 +32,7 @@ describe("Moves - Tackle", () => {
     const moveToUse = MoveId.TACKLE;
     game.override.enemySpecies(SpeciesId.GENGAR);
 
-    await game.classicMode.startBattle([SpeciesId.MIGHTYENA]);
+    await game.classicMode.startBattle(SpeciesId.MIGHTYENA);
     const hpOpponent = game.scene.currentBattle.enemyParty[0].hp;
     game.move.select(moveToUse);
     await game.toEndOfTurn();
@@ -46,7 +42,7 @@ describe("Moves - Tackle", () => {
 
   it("TACKLE against not resistant", async () => {
     const moveToUse = MoveId.TACKLE;
-    await game.classicMode.startBattle([SpeciesId.MIGHTYENA]);
+    await game.classicMode.startBattle(SpeciesId.MIGHTYENA);
     game.scene.currentBattle.enemyParty[0].stats[Stat.DEF] = 50;
     game.field.getPlayerPokemon().stats[Stat.ATK] = 50;
 

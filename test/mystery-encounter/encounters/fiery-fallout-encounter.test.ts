@@ -18,7 +18,6 @@ import { FieryFalloutEncounter } from "#mystery-encounters/fiery-fallout-encount
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { MovePhase } from "#phases/move-phase";
 import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
-import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import {
   runMysteryEncounterToEnd,
   runSelectMysteryEncounterOption,
@@ -28,7 +27,7 @@ import { GameManager } from "#test/test-utils/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/fieryFallout";
 /** Arcanine and Ninetails for 2 Fire types. Lapras, Gengar, Abra for burnable mon. */
@@ -61,10 +60,6 @@ describe("Fiery Fallout - Mystery Encounter", () => {
         [BiomeId.MOUNTAIN, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
       ]),
     );
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   it("should have the correct properties", async () => {
@@ -175,7 +170,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
-      await game.phaseInterceptor.to(SelectModifierPhase, false);
+      await game.phaseInterceptor.to("SelectModifierPhase", false);
       expect(game).toBeAtPhase("SelectModifierPhase");
 
       const leadPokemonId = scene.getPlayerParty()?.[0].id;
@@ -264,7 +259,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
     it("should give attack type boosting item to lead pokemon", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, defaultParty);
       await runMysteryEncounterToEnd(game, 3);
-      await game.phaseInterceptor.to(SelectModifierPhase, false);
+      await game.phaseInterceptor.to("SelectModifierPhase", false);
       expect(game).toBeAtPhase("SelectModifierPhase");
 
       const leadPokemonItems = scene.getPlayerParty()[0].getHeldItems() as PokemonHeldItemModifier[];
@@ -283,7 +278,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
 
     it("should be disabled if not enough FIRE types are in party", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIERY_FALLOUT, [SpeciesId.MAGIKARP]);
-      await game.phaseInterceptor.to(MysteryEncounterPhase, false);
+      await game.phaseInterceptor.to("MysteryEncounterPhase", false);
 
       const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);

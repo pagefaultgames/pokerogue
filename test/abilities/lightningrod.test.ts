@@ -5,7 +5,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Lightningrod", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +15,6 @@ describe("Abilities - Lightningrod", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -34,7 +30,7 @@ describe("Abilities - Lightningrod", () => {
   });
 
   it("should redirect electric type moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MAGIKARP);
 
     const [enemy1, enemy2] = game.scene.getEnemyField();
     game.field.mockAbility(enemy2, AbilityId.LIGHTNING_ROD);
@@ -48,7 +44,7 @@ describe("Abilities - Lightningrod", () => {
 
   it("should not redirect non-electric type moves", async () => {
     game.override.moveset([MoveId.SPLASH, MoveId.AERIAL_ACE]);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MAGIKARP);
 
     const [enemy1, enemy2] = game.scene.getEnemyField();
     game.field.mockAbility(enemy2, AbilityId.LIGHTNING_ROD);
@@ -61,7 +57,7 @@ describe("Abilities - Lightningrod", () => {
   });
 
   it("should boost the user's spatk without damaging", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MAGIKARP);
 
     const enemy2 = game.scene.getEnemyField()[1];
     game.field.mockAbility(enemy2, AbilityId.LIGHTNING_ROD);
@@ -76,7 +72,7 @@ describe("Abilities - Lightningrod", () => {
 
   it("should not redirect moves changed from electric type via ability", async () => {
     game.override.ability(AbilityId.NORMALIZE);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const [enemy1, enemy2] = game.scene.getEnemyField();
     game.field.mockAbility(enemy2, AbilityId.LIGHTNING_ROD);
@@ -89,7 +85,7 @@ describe("Abilities - Lightningrod", () => {
 
   it("should redirect moves changed to electric type via ability", async () => {
     game.override.ability(AbilityId.GALVANIZE);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const [enemy1, enemy2] = game.scene.getEnemyField();
     game.field.mockAbility(enemy2, AbilityId.LIGHTNING_ROD);

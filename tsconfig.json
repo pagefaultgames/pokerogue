@@ -23,13 +23,27 @@
       "ESNext.Iterator",
       "ESNext.Collection"
     ],
-    "skipLibCheck": true, // Safe and almost always beneficial
+    // Skip typechecking `.d.ts` files for a ~20% speed boost
+    // Won't be necessary if https://github.com/microsoft/TypeScript/issues/30511 is ever resolved
+    "skipLibCheck": true,
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "strictNullChecks": true,
     "sourceMap": false,
     "strict": false, // TODO: Enable this eventually
+    "exactOptionalPropertyTypes": true,
+    "strictNullChecks": true,
+    "strictBindCallApply": true,
+    "strictBuiltinIteratorReturn": true,
+    "strictFunctionTypes": true,
+    // TODO: Enable this when possible
+    "strictPropertyInitialization": false,
+    // TODO: Enable this when possible.
+    "noImplicitAny": false,
+    "noImplicitThis": true,
+    // Even with strict mode on, this is not useful as we do not throw non Errors,
+    // and it just makes it more cumbersome to catch errors.
+    "useUnknownInCatchVariables": false,
     "rootDir": ".",
     "outDir": "./build",
     "noEmit": true,
@@ -61,7 +75,7 @@
         "./src/system/*.ts"
       ],
       "#trainers/*": ["./src/data/trainers/*.ts"],
-      "#types/*": ["./src/@types/helpers/*.ts", "./src/@types/*.ts", "./src/typings/phaser/*.ts"],
+      "#types/*": ["./src/@types/*.ts"],
       "#ui/*": [
         "./src/ui/battle-info/*.ts",
         "./src/ui/containers/*.ts",
@@ -77,13 +91,6 @@
     }
   },
   // Exclude checking for script JS files as those are covered by the folder's `jsconfig.json`
-  "include": ["**/*.ts", "**/*.d.ts"],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "vite.config.ts",
-    "vitest.config.ts",
-    "vitest.workspace.ts",
-    "assets/service-worker.js"
-  ]
+  "include": ["**/*.ts", "**/*.d.ts", "**/*.mts"],
+  "exclude": ["dist", "node_modules"]
 }

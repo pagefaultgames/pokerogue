@@ -5,7 +5,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Diamond Storm", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +15,6 @@ describe("Moves - Diamond Storm", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -36,7 +32,7 @@ describe("Moves - Diamond Storm", () => {
     const diamondStorm = allMoves[MoveId.DIAMOND_STORM];
     vi.spyOn(diamondStorm, "chance", "get").mockReturnValue(100);
     vi.spyOn(diamondStorm, "accuracy", "get").mockReturnValue(100);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.DIAMOND_STORM);
     await game.phaseInterceptor.to("BerryPhase");

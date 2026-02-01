@@ -10,7 +10,7 @@ export interface TrainerTypeMessages {
 }
 
 export interface TrainerTypeDialogue {
-  [key: number]: TrainerTypeMessages | Array<TrainerTypeMessages>;
+  [key: number]: TrainerTypeMessages | TrainerTypeMessages[];
 }
 
 export function getTrainerTypeDialogue(): TrainerTypeDialogue {
@@ -387,6 +387,10 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       ],
       victory: ["dialogue:richFemale.victory.1", "dialogue:richFemale.victory.2", "dialogue:richFemale.victory.3"],
     },
+    {
+      encounter: ["dialogue:richDouble.encounter.1", "dialogue:richDouble.encounter.2"],
+      victory: ["dialogue:richDouble.victory.1", "dialogue:richDouble.victory.2"],
+    },
   ],
   [TrainerType.RICH_KID]: [
     {
@@ -410,6 +414,22 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
         "dialogue:richKidFemale.victory.3",
         "dialogue:richKidFemale.victory.4",
       ],
+    },
+  ],
+  [TrainerType.ROUGHNECK]: [
+    {
+      encounter: ["dialogue:roughneck.encounter.1", "dialogue:roughneck.encounter.2", "dialogue:roughneck.encounter.3"],
+      victory: ["dialogue:roughneck.victory.1", "dialogue:roughneck.victory.2", "dialogue:roughneck.victory.3"],
+    },
+  ],
+  [TrainerType.VETERAN]: [
+    {
+      encounter: ["dialogue:veteran.encounter.1", "dialogue:veteran.encounter.2"],
+      victory: ["dialogue:veteran.victory.1", "dialogue:veteran.victory.2"],
+    },
+    {
+      encounter: ["dialogue:veteranFemale.encounter.1", "dialogue:veteranFemale.encounter.2"],
+      victory: ["dialogue:veteranFemale.victory.1", "dialogue:veteranFemale.victory.2"],
     },
   ],
   [TrainerType.ROCKET_GRUNT]: [

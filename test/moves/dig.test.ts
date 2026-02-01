@@ -7,7 +7,7 @@ import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Dig", () => {
   let phaserGame: Phaser.Game;
@@ -17,10 +17,6 @@ describe("Moves - Dig", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -36,7 +32,7 @@ describe("Moves - Dig", () => {
   });
 
   it("should make the user semi-invulnerable, then attack over 2 turns", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
@@ -60,7 +56,7 @@ describe("Moves - Dig", () => {
   // TODO: Verify this on cartridge double battles
   it.todo("should deduct PP only on the 2nd turn of the move", async () => {
     game.override.moveset([]);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const playerPokemon = game.field.getPlayerPokemon();
     game.move.changeMoveset(playerPokemon, MoveId.DIG);
@@ -78,7 +74,7 @@ describe("Moves - Dig", () => {
   it("should not allow the user to evade attacks from Pokemon with No Guard", async () => {
     game.override.enemyAbility(AbilityId.NO_GUARD);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
@@ -93,7 +89,7 @@ describe("Moves - Dig", () => {
   it("should expend PP when the attack phase is cancelled by sleep", async () => {
     game.override.enemyAbility(AbilityId.NO_GUARD).enemyMoveset(MoveId.SPORE);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const playerPokemon = game.field.getPlayerPokemon();
 
@@ -108,7 +104,7 @@ describe("Moves - Dig", () => {
   });
 
   it("should cause the user to take double damage from Earthquake", async () => {
-    await game.classicMode.startBattle([SpeciesId.DONDOZO]);
+    await game.classicMode.startBattle(SpeciesId.DONDOZO);
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
@@ -130,5 +126,27 @@ describe("Moves - Dig", () => {
     // these hopefully get avoid rounding errors :shrug:
     expect(postDigEarthquakeDmg).toBeGreaterThanOrEqual(2 * preDigEarthquakeDmg);
     expect(postDigEarthquakeDmg).toBeLessThan(2 * (preDigEarthquakeDmg + 1));
+  });
+
+  it("should not softlock when used against a dying enemy 2 in Doubles", async () => {
+    game.override.battleStyle("double");
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+    const feebas = game.field.getPlayerPokemon();
+    const enemy2 = game.scene.getEnemyField()[1];
+
+    // use dig and make the targeted enemy faint post charge
+    game.move.use(MoveId.DIG, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2);
+    await game.toEndOfTurn();
+    await game.killPokemon(enemy2);
+    await game.phaseInterceptor.to("CommandPhase");
+
+    expect(feebas.getMoveQueue()[0]?.targets).toEqual([BattlerIndex.ENEMY_2]);
+    expect(enemy2).toHaveFainted();
+
+    await game.toEndOfTurn();
+
+    // TODO: Does this redirect to the other enemy?
+    expect(feebas.getMoveQueue()).toHaveLength(0);
   });
 });

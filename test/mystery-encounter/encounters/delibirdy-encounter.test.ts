@@ -27,7 +27,7 @@ import {
   runSelectMysteryEncounterOption,
 } from "#test/mystery-encounter/encounter-test-utils";
 import { GameManager } from "#test/test-utils/game-manager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/delibirdy";
 const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
@@ -55,10 +55,6 @@ describe("Delibird-y - Mystery Encounter", () => {
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<BiomeId, MysteryEncounterType[]>([[BiomeId.CAVE, [MysteryEncounterType.DELIBIRDY]]]),
     );
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   it("should have the correct properties", async () => {
@@ -150,7 +146,7 @@ describe("Delibird-y - Mystery Encounter", () => {
     it("should be disabled if player does not have enough money", async () => {
       scene.money = 0;
       await game.runToMysteryEncounter(MysteryEncounterType.DELIBIRDY, defaultParty);
-      await game.phaseInterceptor.to(MysteryEncounterPhase, false);
+      await game.phaseInterceptor.to("MysteryEncounterPhase", false);
 
       const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
@@ -305,7 +301,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
 
-      await game.phaseInterceptor.to(MysteryEncounterPhase, false);
+      await game.phaseInterceptor.to("MysteryEncounterPhase", false);
 
       const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
@@ -438,7 +434,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       scene.addModifier(modifier, true, false, false, true);
       await scene.updateModifiers(true);
 
-      await game.phaseInterceptor.to(MysteryEncounterPhase, false);
+      await game.phaseInterceptor.to("MysteryEncounterPhase", false);
 
       const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);

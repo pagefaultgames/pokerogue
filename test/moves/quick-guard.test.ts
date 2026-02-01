@@ -5,7 +5,7 @@ import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Quick Guard", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +15,6 @@ describe("Moves - Quick Guard", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -35,7 +31,7 @@ describe("Moves - Quick Guard", () => {
   });
 
   it("should protect the user and allies from priority moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD, SpeciesId.BLASTOISE);
 
     const [charizard, blastoise] = game.scene.getPlayerField();
 
@@ -54,7 +50,7 @@ describe("Moves - Quick Guard", () => {
     { name: "Gale Wings", move: MoveId.BRAVE_BIRD, ability: AbilityId.GALE_WINGS },
   ])("should protect the user and allies from $name-boosted moves", async ({ move, ability }) => {
     game.override.enemyMoveset(move).enemyAbility(ability);
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD, SpeciesId.BLASTOISE);
 
     const [charizard, blastoise] = game.scene.getPlayerField();
 
@@ -72,9 +68,9 @@ describe("Moves - Quick Guard", () => {
 
   it("should increment (but not respect) other protection moves' fail counters", async () => {
     game.override.battleStyle("single");
-    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
-    const charizard = game.scene.getPlayerPokemon()!;
+    const charizard = game.field.getPlayerPokemon();
     // force protect to fail on anything >0 uses
     vi.spyOn(charizard, "randBattleSeedInt").mockReturnValue(1);
 

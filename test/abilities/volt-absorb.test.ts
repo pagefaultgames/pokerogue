@@ -4,10 +4,9 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 // See also: TypeImmunityAbAttr
 describe("Abilities - Volt Absorb", () => {
@@ -18,10 +17,6 @@ describe("Abilities - Volt Absorb", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -40,13 +35,13 @@ describe("Abilities - Volt Absorb", () => {
       .enemySpecies(SpeciesId.DUSKULL)
       .enemyAbility(AbilityId.BALL_FETCH);
 
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const playerPokemon = game.field.getPlayerPokemon();
 
     game.move.select(moveToUse);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(playerPokemon.getStatStage(Stat.SPDEF)).toBe(1);
     expect(playerPokemon.getTag(BattlerTagType.CHARGED)).toBeDefined();
@@ -60,12 +55,12 @@ describe("Abilities - Volt Absorb", () => {
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.VOLT_ABSORB);
 
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.THUNDERBOLT);
-    enemyPokemon.hp = enemyPokemon.hp - 1;
+    enemyPokemon.hp -= 1;
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
@@ -81,12 +76,12 @@ describe("Abilities - Volt Absorb", () => {
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.VOLT_ABSORB);
 
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.THUNDERBOLT);
-    enemyPokemon.hp = enemyPokemon.hp - 1;
+    enemyPokemon.hp -= 1;
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("BerryPhase", false);

@@ -1,8 +1,5 @@
-/** biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports */
-import type { GameManager } from "#test/test-utils/game-manager";
-/** biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports */
-
 import { TerrainType } from "#app/data/terrain";
+import type { GameManager } from "#test/test-utils/game-manager";
 import { getEnumStr } from "#test/test-utils/string-utils";
 import { isGameManagerInstance, receivedStr } from "#test/test-utils/test-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
@@ -14,7 +11,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @returns Whether the matcher passed
  */
 export function toHaveTerrain(
-  this: MatcherState,
+  this: Readonly<MatcherState>,
   received: unknown,
   expectedTerrainType: TerrainType,
 ): SyncExpectationResult {

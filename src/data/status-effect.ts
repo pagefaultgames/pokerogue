@@ -7,8 +7,9 @@ export class Status {
   public effect: StatusEffect;
   /** Toxic damage is `1/16 max HP * toxicTurnCount` */
   public toxicTurnCount = 0;
-  public sleepTurnsRemaining?: number;
+  public sleepTurnsRemaining?: number | undefined;
 
+  // TODO: Make this take an object?
   constructor(effect: StatusEffect, toxicTurnCount = 0, sleepTurnsRemaining?: number) {
     this.effect = effect;
     this.toxicTurnCount = toxicTurnCount;
@@ -158,7 +159,7 @@ export function getRandomStatus(statusA: Status | null, statusB: Status | null):
  * Gets all non volatile status effects
  * @returns A list containing all non volatile status effects
  */
-export function getNonVolatileStatusEffects(): Array<StatusEffect> {
+export function getNonVolatileStatusEffects(): StatusEffect[] {
   return [
     StatusEffect.POISON,
     StatusEffect.TOXIC,

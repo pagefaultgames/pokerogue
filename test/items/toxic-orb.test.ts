@@ -2,10 +2,10 @@ import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import i18next from "#plugins/i18n";
 import { GameManager } from "#test/test-utils/game-manager";
+import i18next from "i18next";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Items - Toxic orb", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +15,6 @@ describe("Items - Toxic orb", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -40,7 +36,7 @@ describe("Items - Toxic orb", () => {
   });
 
   it("should badly poison the holder", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();
     expect(player.getHeldItems()[0].type.id).toBe("TOXIC_ORB");

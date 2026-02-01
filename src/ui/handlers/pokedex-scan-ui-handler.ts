@@ -157,15 +157,15 @@ export class PokedexScanUiHandler extends FormModalUiHandler {
 
       const inputWidth = label.width < 420 ? 200 : 200 - (label.width - 420) / 5.75;
       this.inputs[0].resize(inputWidth * 5.75, 116);
-      // @ts-expect-error: TODO Resolve
       // TODO: Figure out what the type of `this.inputContainers.list` is
-      this.inputContainers[0].list[0].width = inputWidth;
+      this.inputContainers[0].list[0]["width"] = inputWidth;
+      // TODO: shouldn't this be `const playerPokemon: PlayerPokemon | undefined = args[1];` and `if (playerPokemon)`?
       if (args[1] && typeof (args[1] as PlayerPokemon).getNameToRender === "function") {
         this.inputs[0].text = (args[1] as PlayerPokemon).getNameToRender();
       } else {
         this.inputs[0].text = args[1];
       }
-      this.submitAction = _ => {
+      this.submitAction = () => {
         if (ui.getMode() === UiMode.POKEDEX_SCAN) {
           this.sanitizeInputs();
           const outputName = this.reducedKeys.includes(this.inputs[0].text) ? this.inputs[0].text : "";

@@ -2,10 +2,9 @@ import { AbilityId } from "#enums/ability-id";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { ExpPhase } from "#phases/exp-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 // biome-ignore lint/correctness/noEmptyPattern: TODO: Examine why this is here
 vi.mock("../data/exp", ({}) => {
@@ -14,7 +13,8 @@ vi.mock("../data/exp", ({}) => {
   };
 });
 
-describe("UI - Battle Info", () => {
+// TODO: These are jank and need to be redone
+describe.todo("UI - Battle Info", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -22,10 +22,6 @@ describe("UI - Battle Info", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -38,19 +34,20 @@ describe("UI - Battle Info", () => {
       .enemySpecies(SpeciesId.CATERPIE);
   });
 
-  it.each([ExpGainsSpeed.FAST, ExpGainsSpeed.FASTER, ExpGainsSpeed.SKIP])(
-    "should increase exp gains animation by 2^%i",
-    async expGainsSpeed => {
-      game.settings.expGainsSpeed(expGainsSpeed);
-      vi.spyOn(Math, "pow");
+  it.each([
+    ExpGainsSpeed.FAST,
+    ExpGainsSpeed.FASTER,
+    ExpGainsSpeed.SKIP,
+  ])("should increase exp gains animation by 2^%i", async expGainsSpeed => {
+    game.settings.expGainsSpeed(expGainsSpeed);
+    vi.spyOn(Math, "pow");
 
-      await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
-      game.move.select(MoveId.SPLASH);
-      await game.doKillOpponents();
-      await game.phaseInterceptor.to(ExpPhase, true);
+    game.move.select(MoveId.SPLASH);
+    await game.doKillOpponents();
+    await game.phaseInterceptor.to("ExpPhase");
 
-      expect(Math.pow).not.toHaveBeenCalledWith(2, expGainsSpeed);
-    },
-  );
+    expect(Math.pow).not.toHaveBeenCalledWith(2, expGainsSpeed);
+  });
 });

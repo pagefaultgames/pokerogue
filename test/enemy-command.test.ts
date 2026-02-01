@@ -9,7 +9,7 @@ import type { EnemyPokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
 import { randSeedInt } from "#utils/common";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 let globalScene: BattleScene;
 const NUM_TRIALS = 300;
@@ -41,10 +41,6 @@ describe("Enemy Commands - Move Selection", () => {
     });
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   beforeEach(() => {
     game = new GameManager(phaserGame);
     globalScene = game.scene;
@@ -59,7 +55,7 @@ describe("Enemy Commands - Move Selection", () => {
       .startingLevel(1)
       .enemyLevel(100);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     enemyPokemon.aiType = AiType.SMART_RANDOM;
@@ -83,7 +79,7 @@ describe("Enemy Commands - Move Selection", () => {
       .startingLevel(1)
       .enemyLevel(100);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     enemyPokemon.aiType = AiType.SMART_RANDOM;

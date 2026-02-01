@@ -13,7 +13,7 @@ import { GameManager } from "#test/test-utils/game-manager";
 import { NumberHolder } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { afterEach } from "node:test";
-import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 
 /**
  * Parameters for {@linkcode createTestablePokemon}
@@ -161,7 +161,6 @@ describe("Unit Tests - ai-moveset-gen.ts", () => {
   describe("", () => {
     //#region boilerplate
     let phaserGame: Phaser.Game;
-    let game: GameManager;
     /**A pokemon object that will be cleaned up after every test */
     let pokemon: EnemyPokemon | null = null;
 
@@ -171,16 +170,15 @@ describe("Unit Tests - ai-moveset-gen.ts", () => {
       });
       // Game manager can be reused between tests as we are not really modifying the global state
       // So there is no need to put this in a beforeEach with cleanup in afterEach.
-      game = new GameManager(phaserGame);
+      // TODO: Remove once we actually start games properly; this is only required to stub out properties on
+      // `phaserGame` that are never actually initialized properly (or at all)
+      new GameManager(phaserGame);
     });
 
     afterEach(() => {
       pokemon?.destroy();
     });
-    // Sanitize the interceptor after running the suite to ensure other tests are not affected
-    afterAll(() => {
-      game.phaseInterceptor.restoreOg();
-    });
+
     //#endregion boilerplate
 
     function createCharmander(_ = pokemon): asserts _ is EnemyPokemon {
@@ -212,8 +210,8 @@ describe("Unit Tests - ai-moveset-gen.ts", () => {
         ]);
         vi.spyOn(allMoves[MoveId.TACKLE], "name", "get").mockReturnValue("Tackle (N)");
         const result = getAndWeightLevelMoves(pokemon);
-        expect(result.has(MoveId.TACKLE)).toBe(false);
-        expect(result.has(MoveId.GROWL)).toBe(true);
+        expect(result).not.toHaveKey(MoveId.TACKLE);
+        expect(result).toHaveKey(MoveId.GROWL);
       });
 
       it("skips moves already in the pool", () => {
@@ -224,7 +222,7 @@ describe("Unit Tests - ai-moveset-gen.ts", () => {
         ]);
 
         const result = getAndWeightLevelMoves(pokemon);
-        expect(result.get(MoveId.TACKLE)).toBe(21);
+        expect(result).toHaveKey(MoveId.TACKLE, 21);
       });
 
       it("weights moves based on level", () => {
@@ -236,9 +234,9 @@ describe("Unit Tests - ai-moveset-gen.ts", () => {
         ]);
 
         const result = getAndWeightLevelMoves(pokemon);
-        expect(result.get(MoveId.TACKLE)).toBe(21);
-        expect(result.get(MoveId.GROWL)).toBe(25);
-        expect(result.get(MoveId.EMBER)).toBe(29);
+        expect(result).toHaveKey(MoveId.TACKLE, 21);
+        expect(result).toHaveKey(MoveId.GROWL, 25);
+        expect(result).toHaveKey(MoveId.EMBER, 29);
       });
     });
   });
@@ -255,18 +253,17 @@ describe("Regression Tests - ai-moveset-gen.ts", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-    // Game manager can be reused between tests as we are not really modifying the global state
-    // So there is no need to put this in a beforeEach with cleanup in afterEach.
+
     game = new GameManager(phaserGame);
+
+    // Need to be in a wave for moveset generation to not actually break
+    await game.classicMode.runToSummon(SpeciesId.PIKACHU);
   });
 
   afterEach(() => {
     pokemon?.destroy();
   });
 
-  afterAll(() => {
-    game.phaseInterceptor.restoreOg();
-  });
   //#endregion boilerplate
 
   describe("getTmPoolForSpecies", () => {
@@ -286,9 +283,6 @@ describe("Regression Tests - ai-moveset-gen.ts", () => {
 
   describe("generateMoveset", () => {
     it("should spawn with 4 moves if possible", async () => {
-      // Need to be in a wave for moveset generation to not actually break
-      await game.classicMode.startBattle([SpeciesId.PIKACHU]);
-
       // Create a pokemon that can learn at least 4 moves
       pokemon = createTestablePokemon(SpeciesId.ROCKRUFF, { level: 15 });
       vi.spyOn(pokemon, "getLevelMoves").mockReturnValue([
@@ -302,9 +296,6 @@ describe("Regression Tests - ai-moveset-gen.ts", () => {
       // Generate the moveset
       generateMoveset(pokemon);
       expect(pokemon.moveset).toHaveLength(4);
-      // Unlike other test suites, phase interceptor is not automatically restored after the tests here,
-      // since most tests in this suite do not need the phase
-      game.phaseInterceptor.restoreOg();
     });
   });
 });

@@ -193,7 +193,7 @@ export class RunInfoUiHandler extends UiHandler {
           0,
           2,
           gamepadType,
-          globalScene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.Button_Cycle_Ability),
+          globalScene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.BUTTON_CYCLE_ABILITY),
         );
       }
       abilityButtonContainer.add([abilityButtonText, abilityButtonElement]);
@@ -257,14 +257,14 @@ export class RunInfoUiHandler extends UiHandler {
           0,
           4,
           gamepadType,
-          globalScene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.Button_Cycle_Shiny),
+          globalScene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.BUTTON_CYCLE_SHINY),
         );
         formButtonElement = new Phaser.GameObjects.Sprite(
           globalScene,
           0,
           16,
           gamepadType,
-          globalScene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.Button_Cycle_Form),
+          globalScene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.BUTTON_CYCLE_FORM),
         );
       }
       hallofFameInstructionContainer.add([shinyButtonText, shinyButtonElement]);
@@ -774,7 +774,7 @@ export class RunInfoUiHandler extends UiHandler {
         abilityLabel = abilityLabel.charAt(0);
       }
       const pPassiveInfo = pokemon.passive ? passiveLabel + ": " + pokemon.getPassiveAbility().name : "";
-      const pAbilityInfo = abilityLabel + ": " + pokemon.getAbility().name;
+      const pAbilityInfo = abilityLabel + ": " + pokemon.getAbility(true).name;
       // Japanese is set to a greater line spacing of 35px in addBBCodeTextObject() if lineSpacing < 12.
       const lineSpacing = i18next.resolvedLanguage === "ja" ? 3 : 3;
       const pokeInfoText = addBBCodeTextObject(0, 0, pName, TextStyle.SUMMARY, {
@@ -843,7 +843,7 @@ export class RunInfoUiHandler extends UiHandler {
         shinyStar.setOrigin(0, 0);
         shinyStar.setScale(0.65);
         shinyStar.setPositionRelative(pokeInfoTextContainer, 28, 0);
-        shinyStar.setTint(getVariantTint(!doubleShiny ? pokemon.getVariant() : pokemon.variant));
+        shinyStar.setTint(getVariantTint(doubleShiny ? pokemon.variant : pokemon.getVariant()));
         marksContainer.add(shinyStar);
         this.getUi().bringToTop(shinyStar);
         if (doubleShiny) {
@@ -859,7 +859,7 @@ export class RunInfoUiHandler extends UiHandler {
 
       // Pokemon Moveset
       // Need to check if dynamically typed moves
-      const pokemonMoveset = pokemon.getMoveset();
+      const pokemonMoveset = pokemon.getMoveset(true);
       const movesetContainer = globalScene.add.container(70, -29);
       const pokemonMoveBgs: Phaser.GameObjects.NineSlice[] = [];
       const pokemonMoveLabels: Phaser.GameObjects.Text[] = [];
@@ -956,7 +956,7 @@ export class RunInfoUiHandler extends UiHandler {
    * False -> Shows the Pokemon's held items and hides default information
    */
   private showParty(partyVisible: boolean): void {
-    const allContainers = this.partyContainer.getAll("name", "PkmnInfo");
+    const allContainers = this.partyContainer.getAll<Phaser.GameObjects.Container>("name", "PkmnInfo");
     allContainers.forEach((c: Phaser.GameObjects.Container) => {
       c.getByName<Phaser.GameObjects.Container>("PkmnMoves").setVisible(partyVisible);
       c.getByName<Phaser.GameObjects.Container>("PkmnInfoText").setVisible(partyVisible);
@@ -1140,12 +1140,12 @@ export class RunInfoUiHandler extends UiHandler {
         break;
       case Button.CYCLE_SHINY:
         if (this.isVictory && this.pageMode !== RunInfoUiMode.ENDING_ART) {
-          if (!this.hallofFameContainer.visible) {
-            this.hallofFameContainer.setVisible(true);
-            this.pageMode = RunInfoUiMode.HALL_OF_FAME;
-          } else {
+          if (this.hallofFameContainer.visible) {
             this.hallofFameContainer.setVisible(false);
             this.pageMode = RunInfoUiMode.MAIN;
+          } else {
+            this.hallofFameContainer.setVisible(true);
+            this.pageMode = RunInfoUiMode.HALL_OF_FAME;
           }
         }
         break;

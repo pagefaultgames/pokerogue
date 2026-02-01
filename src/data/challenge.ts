@@ -2,7 +2,7 @@ import type { FixedBattleConfig } from "#app/battle";
 import { getRandomTrainerFunc } from "#app/battle";
 import { globalScene } from "#app/global-scene";
 import { defaultStarterSpeciesAndEvolutions } from "#balance/pokemon-evolutions";
-import { speciesStarterCosts } from "#balance/starters";
+import { type StarterSpeciesId, speciesStarterCosts } from "#balance/starters";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { AbilityAttr } from "#enums/ability-attr";
 import { BattleType } from "#enums/battle-type";
@@ -749,7 +749,7 @@ export class SingleGenerationChallenge extends Challenge {
   }
 }
 
-interface monotypeOverride {
+interface MonotypeOverride {
   /** The species to override */
   species: SpeciesId;
   /** The type to count as */
@@ -768,7 +768,7 @@ export class SingleTypeChallenge extends Challenge {
     // and we shift it by 1 for the specific type.
     return this.value ? ((RibbonData.MONO_NORMAL << (BigInt(this.value) - 1n)) as RibbonFlag) : 0n;
   }
-  private static TYPE_OVERRIDES: monotypeOverride[] = [
+  private static TYPE_OVERRIDES: MonotypeOverride[] = [
     { species: SpeciesId.CASTFORM, type: PokemonType.NORMAL, fusion: false },
   ];
   // TODO: Find a solution for all Pokemon with this ssui issue, including Basculin and Burmy
@@ -790,22 +790,14 @@ export class SingleTypeChallenge extends Challenge {
   applyStarterSelectModify(speciesId: SpeciesId, dexEntry: DexEntry, _starterDataEntry: StarterDataEntry): boolean {
     const type = this.value - 1;
 
-    if (speciesId === SpeciesId.RALTS) {
-      if (type === PokemonType.FIGHTING) {
-        dexEntry.caughtAttr &= ~DexAttr.FEMALE;
-      }
-      if (type === PokemonType.FAIRY) {
-        dexEntry.caughtAttr &= ~DexAttr.MALE;
-      }
-    }
-    if (speciesId === SpeciesId.SNORUNT && type === PokemonType.GHOST) {
+    if (speciesId === SpeciesId.RALTS && type === PokemonType.FIGHTING) {
+      dexEntry.caughtAttr &= ~DexAttr.FEMALE;
+    } else if (speciesId === SpeciesId.SNORUNT && type === PokemonType.GHOST) {
       dexEntry.caughtAttr &= ~DexAttr.MALE;
-    }
-    if (speciesId === SpeciesId.BURMY) {
+    } else if (speciesId === SpeciesId.BURMY) {
       if (type === PokemonType.FLYING) {
         dexEntry.caughtAttr &= ~DexAttr.FEMALE;
-      }
-      if ([PokemonType.GRASS, PokemonType.GROUND, PokemonType.STEEL].includes(type)) {
+      } else if ([PokemonType.GRASS, PokemonType.GROUND, PokemonType.STEEL].includes(type)) {
         dexEntry.caughtAttr &= ~DexAttr.MALE;
       }
     }
@@ -875,7 +867,7 @@ export class FreshStartChallenge extends Challenge {
     return false;
   }
 
-  applyStarterCost(species: SpeciesId, cost: NumberHolder): boolean {
+  applyStarterCost(species: StarterSpeciesId, cost: NumberHolder): boolean {
     cost.value = speciesStarterCosts[species];
     return true;
   }
@@ -933,7 +925,7 @@ export class FreshStartChallenge extends Challenge {
   }
 
   applyStarterModify(pokemon: Pokemon): boolean {
-    pokemon.abilityIndex = pokemon.abilityIndex % 2; // Always base ability, if you set it to hidden it wraps to first ability
+    pokemon.abilityIndex %= 2; // Always base ability, if you set it to hidden it wraps to first ability
     pokemon.passive = false; // Passive isn't unlocked
     let validMoves = pokemon.species
       .getLevelMoves()

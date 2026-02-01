@@ -5,7 +5,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Hustle", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +15,6 @@ describe("Abilities - Hustle", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -34,7 +30,7 @@ describe("Abilities - Hustle", () => {
   });
 
   it("increases the user's Attack stat by 50%", async () => {
-    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
     const pikachu = game.field.getPlayerPokemon();
     const atk = pikachu.stats[Stat.ATK];
 
@@ -48,7 +44,7 @@ describe("Abilities - Hustle", () => {
   });
 
   it("lowers the accuracy of the user's physical moves by 20%", async () => {
-    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
     const pikachu = game.field.getPlayerPokemon();
 
     vi.spyOn(pikachu, "getAccuracyMultiplier");
@@ -60,7 +56,7 @@ describe("Abilities - Hustle", () => {
   });
 
   it("does not affect non-physical moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
     const pikachu = game.field.getPlayerPokemon();
     const spatk = pikachu.stats[Stat.SPATK];
 
@@ -77,7 +73,7 @@ describe("Abilities - Hustle", () => {
   it("does not affect OHKO moves", async () => {
     game.override.startingLevel(100).enemyLevel(30);
 
-    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
     const pikachu = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
 

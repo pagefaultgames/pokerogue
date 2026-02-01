@@ -1,8 +1,5 @@
-/** biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports */
-import type { Pokemon } from "#field/pokemon";
-/** biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports */
-
 import { getPokemonNameWithAffix } from "#app/messages";
+import type { Pokemon } from "#field/pokemon";
 import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
 import { toDmgValue } from "#utils/common";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
@@ -17,7 +14,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @returns Whether the matcher passed
  */
 export function toHaveTakenDamage(
-  this: MatcherState,
+  this: Readonly<MatcherState>,
   received: unknown,
   expectedDamageTaken: number,
   roundDown = true,

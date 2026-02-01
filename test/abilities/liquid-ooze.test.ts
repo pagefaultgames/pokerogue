@@ -3,7 +3,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Ability - Liquid Ooze", () => {
   let phaserGame: Phaser.Game;
@@ -13,10 +13,6 @@ describe("Ability - Liquid Ooze", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -31,7 +27,7 @@ describe("Ability - Liquid Ooze", () => {
   });
 
   it("should reverse the effect of HP-draining moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.GIGA_DRAIN);
     await game.toEndOfTurn();
@@ -45,7 +41,7 @@ describe("Ability - Liquid Ooze", () => {
 
   it("should not drain the attacker's HP if it ignores indirect damage", async () => {
     game.override.ability(AbilityId.MAGIC_GUARD);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.GIGA_DRAIN);
     await game.toEndOfTurn();
@@ -56,7 +52,7 @@ describe("Ability - Liquid Ooze", () => {
   // Regression test
   it("should not apply if suppressed", async () => {
     game.override.ability(AbilityId.NEUTRALIZING_GAS);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.GIGA_DRAIN);
     await game.toEndOfTurn();

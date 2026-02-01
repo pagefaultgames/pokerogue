@@ -1,7 +1,3 @@
-// biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports
-import type { PositionalTag } from "#data/positional-tags/positional-tag";
-// biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports
-
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
@@ -10,6 +6,7 @@ import type { ArenaTag, ArenaTagTypeMap } from "#data/arena-tag";
 import { EntryHazardTag, getArenaTag } from "#data/arena-tag";
 import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
 import type { PokemonSpecies } from "#data/pokemon-species";
+import type { PositionalTag } from "#data/positional-tags/positional-tag";
 import { PositionalTagManager } from "#data/positional-tags/positional-tag-manager";
 import { getTerrainClearMessage, getTerrainStartMessage, Terrain, TerrainType } from "#data/terrain";
 import {
@@ -37,10 +34,13 @@ import { FieldEffectModifier } from "#modifiers/modifier";
 import type { Move } from "#moves/move";
 import type { BiomeTierTrainerPools, PokemonPools } from "#types/biomes";
 import type { Constructor } from "#types/common";
+import type { RGBArray } from "#types/sprite-types";
 import type { AbstractConstructor } from "#types/type-helpers";
+import { coerceArray } from "#utils/array";
 import { NumberHolder, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
+import type { NonEmptyTuple } from "type-fest";
 
 export class Arena {
   public biomeType: BiomeId;
@@ -52,7 +52,7 @@ export class Arena {
    * All currently-active {@linkcode PositionalTag}s on both sides of the field,
    * sorted by tag type.
    */
-  public positionalTagManager: PositionalTagManager = new PositionalTagManager();
+  public readonly positionalTagManager: PositionalTagManager = new PositionalTagManager();
 
   public bgm: string;
   public ignoreAbilities: boolean;
@@ -131,8 +131,15 @@ export class Arena {
       luckModifier = luckValue * (isBossSpecies ? 0.5 : 2);
     }
     const tierValue = randSeedInt(randVal - luckModifier);
-    let tier = !isBossSpecies
-      ? tierValue >= 156
+    let tier = isBossSpecies
+      ? tierValue >= 20
+        ? BiomePoolTier.BOSS
+        : tierValue >= 6
+          ? BiomePoolTier.BOSS_RARE
+          : tierValue >= 1
+            ? BiomePoolTier.BOSS_SUPER_RARE
+            : BiomePoolTier.BOSS_ULTRA_RARE
+      : tierValue >= 156
         ? BiomePoolTier.COMMON
         : tierValue >= 32
           ? BiomePoolTier.UNCOMMON
@@ -140,14 +147,7 @@ export class Arena {
             ? BiomePoolTier.RARE
             : tierValue >= 1
               ? BiomePoolTier.SUPER_RARE
-              : BiomePoolTier.ULTRA_RARE
-      : tierValue >= 20
-        ? BiomePoolTier.BOSS
-        : tierValue >= 6
-          ? BiomePoolTier.BOSS_RARE
-          : tierValue >= 1
-            ? BiomePoolTier.BOSS_SUPER_RARE
-            : BiomePoolTier.BOSS_ULTRA_RARE;
+              : BiomePoolTier.ULTRA_RARE;
     console.log(BiomePoolTier[tier]);
     while (this.pokemonPool[tier]?.length === 0) {
       console.log(`Downgraded rarity tier from ${BiomePoolTier[tier]} to ${BiomePoolTier[tier - 1]}`);
@@ -184,7 +184,7 @@ export class Arena {
       ret = getPokemonSpecies(species!);
 
       if (ret.subLegendary || ret.legendary || ret.mythical) {
-        const waveDifficulty = globalScene.gameMode.getWaveForDifficulty(waveIndex);
+        const waveDifficulty = globalScene.gameMode.getWaveForDifficulty(waveIndex, true);
         if (ret.baseTotal >= 660) {
           regen = waveDifficulty < 80; // Wave 50+ in daily (however, max Daily wave is 50 currently so not possible)
         } else {
@@ -211,9 +211,16 @@ export class Arena {
       this.trainerPool[BiomePoolTier.BOSS].length > 0
       && (globalScene.gameMode.isTrainerBoss(waveIndex, this.biomeType, globalScene.offsetGym) || isBoss);
     console.log(isBoss, this.trainerPool);
-    const tierValue = randSeedInt(!isTrainerBoss ? 512 : 64);
-    let tier = !isTrainerBoss
-      ? tierValue >= 156
+    const tierValue = randSeedInt(isTrainerBoss ? 64 : 512);
+    let tier = isTrainerBoss
+      ? tierValue >= 20
+        ? BiomePoolTier.BOSS
+        : tierValue >= 6
+          ? BiomePoolTier.BOSS_RARE
+          : tierValue >= 1
+            ? BiomePoolTier.BOSS_SUPER_RARE
+            : BiomePoolTier.BOSS_ULTRA_RARE
+      : tierValue >= 156
         ? BiomePoolTier.COMMON
         : tierValue >= 32
           ? BiomePoolTier.UNCOMMON
@@ -221,14 +228,7 @@ export class Arena {
             ? BiomePoolTier.RARE
             : tierValue >= 1
               ? BiomePoolTier.SUPER_RARE
-              : BiomePoolTier.ULTRA_RARE
-      : tierValue >= 20
-        ? BiomePoolTier.BOSS
-        : tierValue >= 6
-          ? BiomePoolTier.BOSS_RARE
-          : tierValue >= 1
-            ? BiomePoolTier.BOSS_SUPER_RARE
-            : BiomePoolTier.BOSS_ULTRA_RARE;
+              : BiomePoolTier.ULTRA_RARE;
     console.log(BiomePoolTier[tier]);
     while (tier && this.trainerPool[tier].length === 0) {
       console.log(`Downgraded trainer rarity tier from ${BiomePoolTier[tier]} to ${BiomePoolTier[tier - 1]}`);
@@ -236,35 +236,6 @@ export class Arena {
     }
     const tierPool = this.trainerPool[tier] || [];
     return tierPool.length === 0 ? TrainerType.BREEDER : tierPool[randSeedInt(tierPool.length)];
-  }
-
-  getSpeciesFormIndex(species: PokemonSpecies): number {
-    switch (species.speciesId) {
-      case SpeciesId.BURMY:
-      case SpeciesId.WORMADAM:
-        switch (this.biomeType) {
-          case BiomeId.BEACH:
-            return 1;
-          case BiomeId.SLUM:
-            return 2;
-        }
-        break;
-      case SpeciesId.LYCANROC: {
-        const timeOfDay = this.getTimeOfDay();
-        switch (timeOfDay) {
-          case TimeOfDay.DAY:
-          case TimeOfDay.DAWN:
-            return 0;
-          case TimeOfDay.DUSK:
-            return 2;
-          case TimeOfDay.NIGHT:
-            return 1;
-        }
-        break;
-      }
-    }
-
-    return 0;
   }
 
   getBgTerrainColorRatioForBiome(): number {
@@ -279,20 +250,18 @@ export class Arena {
   }
 
   /**
-   * Sets weather to the override specified in overrides.ts
-   * @param weather new {@linkcode WeatherType} to set
-   * @returns true to force trySetWeather to return true
+   * Sets weather to the override specified in `overrides.ts`
    */
-  trySetWeatherOverride(weather: WeatherType): boolean {
+  private overrideWeather(): void {
+    const weather = Overrides.WEATHER_OVERRIDE;
     this.weather = new Weather(weather, 0);
     globalScene.phaseManager.unshiftNew("CommonAnimPhase", undefined, undefined, CommonAnim.SUNNY + (weather - 1));
     globalScene.phaseManager.queueMessage(getWeatherStartMessage(weather)!); // TODO: is this bang correct?
-    return true;
   }
 
   /** Returns weather or not the weather can be changed to {@linkcode weather} */
   canSetWeather(weather: WeatherType): boolean {
-    return !(this.weather?.weatherType === (weather || undefined));
+    return this.getWeatherType() !== weather;
   }
 
   /**
@@ -303,14 +272,15 @@ export class Arena {
    */
   trySetWeather(weather: WeatherType, user?: Pokemon): boolean {
     if (Overrides.WEATHER_OVERRIDE) {
-      return this.trySetWeatherOverride(Overrides.WEATHER_OVERRIDE);
+      this.overrideWeather();
+      return true;
     }
 
     if (!this.canSetWeather(weather)) {
       return false;
     }
 
-    const oldWeatherType = this.weather?.weatherType || WeatherType.NONE;
+    const oldWeatherType = this.getWeatherType();
 
     if (
       this.weather?.isImmutable()
@@ -391,25 +361,24 @@ export class Arena {
     }
   }
 
-  /** Returns whether or not the terrain can be set to {@linkcode terrain} */
+  /** Return whether or not the terrain can be set to {@linkcode terrain} */
   canSetTerrain(terrain: TerrainType): boolean {
-    return !(this.terrain?.terrainType === (terrain || undefined));
+    return this.getTerrainType() !== terrain;
   }
 
   /**
-   * Attempts to set a new terrain effect to the battle
-   * @param terrain {@linkcode TerrainType} new {@linkcode TerrainType} to set
-   * @param ignoreAnim boolean if the terrain animation should be ignored
-   * @param user {@linkcode Pokemon} that caused the terrain effect
-   * @returns true if new terrain set, false if no terrain provided or attempting to set the same terrain as currently in use
+   * Attempt to set the current terrain to the specified type.
+   * @param terrain - The {@linkcode TerrainType} to try and set.
+   * @param ignoreAnim - Whether to prevent showing an the animation; default `false`
+   * @param user - The {@linkcode Pokemon} creating the terrain (if any)
+   * @returns Whether the terrain was successfully set.
    */
   trySetTerrain(terrain: TerrainType, ignoreAnim = false, user?: Pokemon): boolean {
     if (!this.canSetTerrain(terrain)) {
       return false;
     }
 
-    const oldTerrainType = this.terrain?.terrainType || TerrainType.NONE;
-
+    const oldTerrainType = this.getTerrainType();
     const terrainDuration = new NumberHolder(0);
 
     if (user != null) {
@@ -446,6 +415,27 @@ export class Arena {
     }
 
     return true;
+  }
+
+  /** Attempt to override the terrain to the value set inside {@linkcode Overrides.STARTING_TERRAIN_OVERRIDE}. */
+  tryOverrideTerrain(): void {
+    const terrain = Overrides.STARTING_TERRAIN_OVERRIDE;
+    if (terrain === TerrainType.NONE) {
+      return;
+    }
+
+    // TODO: Add a flag for permanent terrains
+    this.terrain = new Terrain(terrain, 0);
+    this.eventTarget.dispatchEvent(
+      new TerrainChangedEvent(TerrainType.NONE, this.terrain.terrainType, this.terrain.turnsLeft),
+    );
+    globalScene.phaseManager.unshiftNew(
+      "CommonAnimPhase",
+      undefined,
+      undefined,
+      CommonAnim.MISTY_TERRAIN + (terrain - 1),
+    );
+    globalScene.phaseManager.queueMessage(getTerrainStartMessage(terrain) ?? ""); // TODO: Remove `?? ""` when terrain-fail-msg branch removes `null` from these signatures
   }
 
   public isMoveWeatherCancelled(user: Pokemon, move: Move): boolean {
@@ -526,22 +516,24 @@ export class Arena {
     }
   }
 
-  getTimeOfDay(): TimeOfDay {
+  public getTimeOfDay(): TimeOfDay {
     switch (this.biomeType) {
       case BiomeId.ABYSS:
         return TimeOfDay.NIGHT;
     }
 
-    const waveCycle = ((globalScene.currentBattle?.waveIndex || 0) + globalScene.waveCycleOffset) % 40;
+    if (Overrides.TIME_OF_DAY_OVERRIDE !== null) {
+      return Overrides.TIME_OF_DAY_OVERRIDE;
+    }
+
+    const waveCycle = ((globalScene.currentBattle?.waveIndex ?? 0) + globalScene.waveCycleOffset) % 40;
 
     if (waveCycle < 15) {
       return TimeOfDay.DAY;
     }
-
     if (waveCycle < 20) {
       return TimeOfDay.DUSK;
     }
-
     if (waveCycle < 35) {
       return TimeOfDay.NIGHT;
     }
@@ -549,6 +541,10 @@ export class Arena {
     return TimeOfDay.DAWN;
   }
 
+  /**
+   * @returns Whether the current biome takes place "outdoors"
+   * (for the purposes of time of day tints)
+   */
   isOutside(): boolean {
     switch (this.biomeType) {
       case BiomeId.SEABED:
@@ -567,23 +563,7 @@ export class Arena {
     }
   }
 
-  overrideTint(): [number, number, number] {
-    switch (Overrides.ARENA_TINT_OVERRIDE) {
-      case TimeOfDay.DUSK:
-        return [113, 88, 101];
-      case TimeOfDay.NIGHT:
-        return [64, 64, 64];
-      case TimeOfDay.DAWN:
-      case TimeOfDay.DAY:
-      default:
-        return [128, 128, 128];
-    }
-  }
-
-  getDayTint(): [number, number, number] {
-    if (Overrides.ARENA_TINT_OVERRIDE !== null) {
-      return this.overrideTint();
-    }
+  getDayTint(): RGBArray {
     switch (this.biomeType) {
       case BiomeId.ABYSS:
         return [64, 64, 64];
@@ -592,24 +572,15 @@ export class Arena {
     }
   }
 
-  getDuskTint(): [number, number, number] {
-    if (Overrides.ARENA_TINT_OVERRIDE) {
-      return this.overrideTint();
-    }
+  getDuskTint(): RGBArray {
     if (!this.isOutside()) {
       return [0, 0, 0];
     }
 
-    switch (this.biomeType) {
-      default:
-        return [98, 48, 73].map(c => Math.round((c + 128) / 2)) as [number, number, number];
-    }
+    return [113, 88, 101];
   }
 
-  getNightTint(): [number, number, number] {
-    if (Overrides.ARENA_TINT_OVERRIDE) {
-      return this.overrideTint();
-    }
+  getNightTint(): RGBArray {
     switch (this.biomeType) {
       case BiomeId.ABYSS:
       case BiomeId.SPACE:
@@ -621,10 +592,7 @@ export class Arena {
       return [64, 64, 64];
     }
 
-    switch (this.biomeType) {
-      default:
-        return [48, 48, 98];
-    }
+    return [48, 48, 98];
   }
 
   setIgnoreAbilities(ignoreAbilities: boolean, ignoringEffectSource: BattlerIndex | null = null): void {
@@ -707,8 +675,8 @@ export class Arena {
    * @param side - The {@linkcode ArenaTagSide}(s) to which the tag should apply; default `ArenaTagSide.BOTH`.
    * @param quiet - Whether to suppress messages produced by tag addition; default `false`.
    * @returns `true` if the tag was successfully added without overlapping.
-  // TODO: Do we need the return value here? literally nothing uses it
    */
+  // TODO: Do we need the return value here? literally nothing uses it
   addTag(
     tagType: ArenaTagType,
     turnCount: number,
@@ -761,8 +729,14 @@ export class Arena {
     return this.getTagOnSide(tagType, ArenaTagSide.BOTH);
   }
 
-  hasTag(tagType: ArenaTagType): boolean {
-    return !!this.getTag(tagType);
+  /**
+   * Check whether the Arena has any of the given tags.
+   * @param tagTypes - One or more tag types to check
+   * @returns Whether a tag exists on either side of the field with any of the given type(s).
+   */
+  hasTag(tagTypes: ArenaTagType | NonEmptyTuple<ArenaTagType>): boolean {
+    tagTypes = coerceArray(tagTypes);
+    return this.tags.some(tag => tagTypes.includes(tag.tagType));
   }
 
   /**
@@ -850,7 +824,7 @@ export class Arena {
    * @param side - The {@linkcode ArenaTagSide} to remove the tags from (for side-based tags), or {@linkcode ArenaTagSide.BOTH}
    * to clear all tags on either side of the field
    * @param quiet - Whether to suppress removal messages from currently-present tags; default `false`
-   * @todo Review the other tag manipulation functions to see if they can be migrated towards using this (more efficient)
+   * @todo Review the other tag manipulation functions to see if they can be migrated towards using this (more efficient + foolproof)
    */
   public removeTagsOnSide(tagTypes: ArenaTagType[] | readonly ArenaTagType[], side: ArenaTagSide, quiet = false): void {
     const leftoverTags: ArenaTag[] = [];
@@ -865,6 +839,7 @@ export class Arena {
       }
 
       tag.onRemove(quiet);
+      this.eventTarget.dispatchEvent(new TagRemovedEvent(tag.tagType, tag.side, tag.turnCount));
     }
 
     this.tags = leftoverTags;

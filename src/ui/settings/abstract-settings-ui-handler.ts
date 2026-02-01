@@ -4,7 +4,7 @@ import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { SettingType } from "#system/settings";
 import { Setting, SettingKeys } from "#system/settings";
-import type { AnyFn } from "#types/type-helpers";
+import type { MappingSettingName } from "#types/configs/inputs";
 import type { InputsIcons } from "#ui/abstract-control-settings-ui-handler";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { NavigationManager, NavigationMenu } from "#ui/navigation-menu";
@@ -40,7 +40,7 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
 
   protected rowsToDisplay: number;
   protected title: string;
-  protected settings: Array<Setting>;
+  protected settings: Setting[];
   protected localStorageKey: string;
 
   constructor(type: SettingType, mode: UiMode | null = null) {
@@ -207,10 +207,11 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
         this.navigationIcons[settingName].setTexture("keyboard").setFrame("HOME.png").alpha = 1;
         continue;
       }
-      const icon = globalScene.inputController?.getIconForLatestInputRecorded(settingName);
-      if (icon) {
-        const type = globalScene.inputController?.getLastSourceType();
-        this.navigationIcons[settingName].setTexture(type).setFrame(icon).alpha = 1;
+      const inputController = globalScene.inputController;
+      const icon = inputController?.getIconForLatestInputRecorded(settingName as MappingSettingName);
+      const type = inputController?.getLastSourceType();
+      if (icon && type != null) {
+        this.navigationIcons[settingName].setTexture(type).setFrame(icon).setAlpha(1);
       } else {
         this.navigationIcons[settingName].alpha = 0;
       }
@@ -518,7 +519,7 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
   override showText(
     text: string,
     delay?: number,
-    callback?: AnyFn,
+    callback?: () => void,
     callbackDelay?: number,
     prompt?: boolean,
     promptDelay?: number,

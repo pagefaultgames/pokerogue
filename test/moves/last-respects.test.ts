@@ -4,10 +4,9 @@ import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import type { Move } from "#moves/move";
-import { MoveEffectPhase } from "#phases/move-effect-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Last Respects", () => {
   let phaserGame: Phaser.Game;
@@ -20,10 +19,6 @@ describe("Moves - Last Respects", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -45,7 +40,7 @@ describe("Moves - Last Respects", () => {
   });
 
   it("should have 150 power if 2 allies faint before using move", async () => {
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE);
 
     /**
      * Bulbasur faints once
@@ -65,13 +60,13 @@ describe("Moves - Last Respects", () => {
 
     game.move.select(MoveId.LAST_RESPECTS);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(move.calculateBattlePower).toHaveReturnedWith(basePower + 2 * 50);
   });
 
   it("should have 200 power if an ally fainted twice and another one once", async () => {
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE);
 
     /**
      * Bulbasur faints once
@@ -100,7 +95,7 @@ describe("Moves - Last Respects", () => {
 
     game.move.select(MoveId.LAST_RESPECTS);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(move.calculateBattlePower).toHaveReturnedWith(basePower + 3 * 50);
   });
@@ -113,7 +108,7 @@ describe("Moves - Last Respects", () => {
       .startingLevel(100)
       .enemyMoveset(MoveId.SPLASH);
 
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE);
 
     /**
      * The first Pokemon faints and another Pokemon in the party is selected.
@@ -146,7 +141,7 @@ describe("Moves - Last Respects", () => {
       .enemyMoveset(MoveId.LAST_RESPECTS)
       .moveset([MoveId.LUNAR_DANCE, MoveId.LAST_RESPECTS, MoveId.SPLASH]);
 
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE);
 
     /**
      * The first Pokemon faints and another Pokemon in the party is selected.
@@ -176,7 +171,7 @@ describe("Moves - Last Respects", () => {
   it("should reset playerFaints count if we enter new trainer battle", async () => {
     game.override.enemySpecies(SpeciesId.MAGIKARP).startingWave(4).enemyLevel(1).startingLevel(100);
 
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE);
 
     game.move.select(MoveId.LUNAR_DANCE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -197,7 +192,7 @@ describe("Moves - Last Respects", () => {
   it("should reset playerFaints count if we enter new biome", async () => {
     game.override.enemySpecies(SpeciesId.MAGIKARP).startingWave(10).enemyLevel(1).startingLevel(100);
 
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE);
 
     game.move.select(MoveId.LUNAR_DANCE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);

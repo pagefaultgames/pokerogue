@@ -4,7 +4,7 @@ import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Chloroblast", () => {
   let phaserGame: Phaser.Game;
@@ -14,10 +14,6 @@ describe("Moves - Chloroblast", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -31,7 +27,7 @@ describe("Moves - Chloroblast", () => {
   });
 
   it("should not deal recoil damage if the opponent uses protect", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.CHLOROBLAST);
     await game.move.forceEnemyMove(MoveId.PROTECT);

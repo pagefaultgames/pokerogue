@@ -5,7 +5,7 @@ import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Metal Burst", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +15,6 @@ describe("Moves - Metal Burst", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -35,7 +31,7 @@ describe("Moves - Metal Burst", () => {
   });
 
   it("should redirect target if intended target faints", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.FEEBAS);
 
     const [, enemy2] = game.scene.getEnemyField();
 
@@ -56,7 +52,7 @@ describe("Moves - Metal Burst", () => {
   });
 
   it("should not crash if both opponents faint before the move is used", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.ARCEUS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.ARCEUS);
 
     const [enemy1, enemy2] = game.scene.getEnemyField();
 
@@ -75,6 +71,6 @@ describe("Moves - Metal Burst", () => {
 
     expect(enemy1.isFainted()).toBe(true);
     expect(enemy2.isFainted()).toBe(true);
-    expect(game.scene.getPlayerField()[0].getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
+    expect(game.field.getPlayerPokemon().getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
   });
 });

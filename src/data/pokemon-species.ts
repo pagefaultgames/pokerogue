@@ -22,6 +22,7 @@ import type { PokemonType } from "#enums/pokemon-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import type { Stat } from "#enums/stat";
+import type { Pokemon } from "#field/pokemon";
 import { loadPokemonVariantAssets } from "#sprites/pokemon-sprite";
 import { hasExpSprite } from "#sprites/sprite-utils";
 import type { Variant, VariantSet } from "#sprites/variant";
@@ -421,7 +422,7 @@ export abstract class PokemonSpeciesForm {
         case SpeciesId.BLOODMOON_URSALUNA:
           break;
         default:
-          speciesId = speciesId % 2000;
+          speciesId %= 2000;
           break;
       }
     }
@@ -439,19 +440,22 @@ export abstract class PokemonSpeciesForm {
         case SpeciesFormKey.MEGA:
         case SpeciesFormKey.MEGA_X:
         case SpeciesFormKey.MEGA_Y:
+        case SpeciesFormKey.PRIMAL:
         case SpeciesFormKey.GIGANTAMAX:
         case SpeciesFormKey.GIGANTAMAX_SINGLE:
         case SpeciesFormKey.GIGANTAMAX_RAPID:
+        case SpeciesFormKey.ETERNAMAX:
         case "white":
         case "black":
         case "therian":
         case "sky":
         case "gorging":
         case "gulping":
+        case "lowkey":
         case "no-ice":
         case "hangry":
         case "crowned":
-        case "eternamax":
+        case "rapid-strike":
         case "four":
         case "droopy":
         case "stretchy":
@@ -474,6 +478,14 @@ export abstract class PokemonSpeciesForm {
         case "ultra":
           ret += `-${formKey}`;
           break;
+      }
+      switch (this.speciesId) {
+        case SpeciesId.INDEEDEE:
+        case SpeciesId.OINKOLOGNE:
+          if (formKey === "female") {
+            ret += `-${formKey}`;
+            break;
+          }
       }
     }
     return `cry/${ret}`;
@@ -568,15 +580,15 @@ export abstract class PokemonSpeciesForm {
           end: 400,
         });
         console.warn = originalWarn;
-        if (!globalScene.anims.exists(spriteKey)) {
+        if (globalScene.anims.exists(spriteKey)) {
+          globalScene.anims.get(spriteKey).frameRate = 10;
+        } else {
           globalScene.anims.create({
             key: this.getSpriteKey(female, formIndex, shiny, variant, back),
             frames: frameNames,
             frameRate: 10,
             repeat: -1,
           });
-        } else {
-          globalScene.anims.get(spriteKey).frameRate = 10;
         }
         const spritePath = this.getSpriteAtlasPath(female, formIndex, shiny, variant, back)
           .replace("variant/", "")
@@ -762,7 +774,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
   getName(formIndex?: number): string {
     if (formIndex !== undefined && this.forms.length > 0) {
       const form = this.forms[formIndex];
-      let key: string | null;
+      let key: string | undefined;
       switch (form.formKey) {
         case SpeciesFormKey.MEGA:
         case SpeciesFormKey.PRIMAL:
@@ -774,15 +786,11 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
         default:
           if (form.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1) {
             key = "gigantamax";
-          } else {
-            key = null;
           }
       }
 
       if (key) {
-        return i18next.t(`battlePokemonForm:${toCamelCase(key)}`, {
-          pokemonName: this.name,
-        });
+        return i18next.t(`battlePokemonForm:${toCamelCase(key)}`, { pokemonName: this.name });
       }
     }
     return this.name;

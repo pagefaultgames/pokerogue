@@ -5,7 +5,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Relic Song", () => {
   let phaserGame: Phaser.Game;
@@ -14,10 +14,6 @@ describe("Moves - Relic Song", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -32,7 +28,7 @@ describe("Moves - Relic Song", () => {
   });
 
   it("swaps Meloetta's form between Aria and Pirouette", async () => {
-    await game.classicMode.startBattle([SpeciesId.MELOETTA]);
+    await game.classicMode.startBattle(SpeciesId.MELOETTA);
 
     const meloetta = game.field.getPlayerPokemon();
 
@@ -49,7 +45,7 @@ describe("Moves - Relic Song", () => {
 
   it("doesn't swap Meloetta's form during a mono-type challenge", async () => {
     game.challengeMode.addChallenge(Challenges.SINGLE_TYPE, PokemonType.PSYCHIC + 1, 0);
-    await game.challengeMode.startBattle([SpeciesId.MELOETTA]);
+    await game.challengeMode.startBattle(SpeciesId.MELOETTA);
 
     const meloetta = game.field.getPlayerPokemon();
 
@@ -64,7 +60,7 @@ describe("Moves - Relic Song", () => {
 
   it("doesn't swap Meloetta's form during biome change (arena reset)", async () => {
     game.override.starterForms({ [SpeciesId.MELOETTA]: 1 }).startingWave(10);
-    await game.classicMode.startBattle([SpeciesId.MELOETTA]);
+    await game.classicMode.startBattle(SpeciesId.MELOETTA);
 
     const meloetta = game.field.getPlayerPokemon();
 

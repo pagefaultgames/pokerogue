@@ -1,3 +1,4 @@
+import type { PostAttackContactApplyStatusEffectAbAttr } from "#abilities/ab-attrs";
 import { allAbilities } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
@@ -5,9 +6,8 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { ObtainStatusEffectPhase } from "#phases/obtain-status-effect-phase";
 import { GameManager } from "#test/test-utils/game-manager";
-import type { PostAttackContactApplyStatusEffectAbAttr } from "#types/ability-types";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("Status Effects - General", () => {
   let phaserGame: Phaser.Game;
@@ -17,10 +17,6 @@ describe("Status Effects - General", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -36,7 +32,7 @@ describe("Status Effects - General", () => {
 
   test("multiple status effects from the same interaction should not overwrite each other", async () => {
     game.override.ability(AbilityId.POISON_TOUCH).moveset([MoveId.NUZZLE]);
-    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
 
     // Force poison touch to always apply
     vi.spyOn(

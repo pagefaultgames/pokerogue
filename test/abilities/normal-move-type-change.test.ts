@@ -8,9 +8,9 @@ import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import { toDmgValue } from "#utils/common";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-/**
+/*
  * Tests for abilities that change the type of normal moves to
  * a different type and boost their power
  *
@@ -36,10 +36,6 @@ describe.each([
     });
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
@@ -55,7 +51,7 @@ describe.each([
   });
 
   it(`should change Normal-type attacks to ${tyName} type and boost their power`, async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const playerPokemon = game.field.getPlayerPokemon();
     const typeSpy = vi.spyOn(playerPokemon, "getMoveType");
@@ -75,7 +71,7 @@ describe.each([
   });
 
   it("should not affect moves that are not Normal type", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     const typeSpy = vi.spyOn(feebas, "getMoveType");
@@ -94,7 +90,7 @@ describe.each([
 
   // Regression test to ensure proper ordering of effects
   it("should still boost variable-power moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const playerPokemon = game.field.getPlayerPokemon();
     const typeSpy = vi.spyOn(playerPokemon, "getMoveType");
@@ -118,7 +114,7 @@ describe.each([
     it("should cause Normal-type attacks to activate Volt Absorb", async () => {
       game.override.enemyAbility(AbilityId.VOLT_ABSORB);
 
-      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
       const playerPokemon = game.field.getPlayerPokemon();
       const tySpy = vi.spyOn(playerPokemon, "getMoveType");
@@ -146,25 +142,23 @@ describe.each([
     { moveName: "Multi Attack", move: MoveId.MULTI_ATTACK, expected_ty: PokemonType.NORMAL },
     { moveName: "Techno Blast", move: MoveId.TECHNO_BLAST, expected_ty: PokemonType.NORMAL },
   ])("should not change the type of $moveName", async ({ move, expected_ty: expectedTy }) => {
-    game.override
+    game.override //
       .enemySpecies(SpeciesId.MAGIKARP)
-      .enemyAbility(AbilityId.BALL_FETCH)
-      .moveset([move])
-      .starterSpecies(SpeciesId.MAGIKARP);
+      .enemyAbility(AbilityId.BALL_FETCH);
 
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const playerPokemon = game.field.getPlayerPokemon();
     const tySpy = vi.spyOn(playerPokemon, "getMoveType");
 
-    game.move.select(move);
+    game.move.use(move);
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(tySpy).toHaveLastReturnedWith(expectedTy);
   });
 
   it("should affect all hits of a Normal-type multi-hit move", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const playerPokemon = game.field.getPlayerPokemon();
     const tySpy = vi.spyOn(playerPokemon, "getMoveType");
@@ -190,14 +184,12 @@ describe.each([
 
   it("should not be affected by silk scarf after changing the move's type", async () => {
     game.override.startingHeldItems([{ name: "ATTACK_TYPE_BOOSTER", count: 1, type: PokemonType.NORMAL }]);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const testMoveInstance = allMoves[MoveId.TACKLE];
 
     // get the power boost from the ability so we can compare it to the item
-    // @ts-expect-error power multiplier is private
-    const boost = allAbilities[ab]?.getAttrs("MoveTypeChangeAbAttr")[0]?.powerMultiplier;
-    expect(boost, "power boost should be defined").toBeDefined();
+    const boost = allAbilities[ab].getAttrs("MovePowerBoostAbAttr")[0]["powerMultiplier"];
 
     const powerSpy = vi.spyOn(testMoveInstance, "calculateBattlePower");
     const typeSpy = vi.spyOn(game.field.getPlayerPokemon(), "getMoveType");
@@ -209,12 +201,10 @@ describe.each([
 
   it("should be affected by the type boosting item after changing the move's type", async () => {
     game.override.startingHeldItems([{ name: "ATTACK_TYPE_BOOSTER", count: 1, type: ty }]);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     // get the power boost from the ability so we can compare it to the item
-    // @ts-expect-error power multiplier is private
-    const boost = allAbilities[ab]?.getAttrs("MoveTypeChangeAbAttr")[0]?.powerMultiplier;
-    expect(boost, "power boost should be defined").toBeDefined();
+    const boost = allAbilities[ab].getAttrs("MovePowerBoostAbAttr")[0]["powerMultiplier"];
 
     const tackle = allMoves[MoveId.TACKLE];
 

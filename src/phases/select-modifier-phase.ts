@@ -35,8 +35,8 @@ export type ModifierSelectCallback = (rowCursor: number, cursor: number) => bool
 export class SelectModifierPhase extends BattlePhase {
   public readonly phaseName = "SelectModifierPhase";
   private rerollCount: number;
-  private modifierTiers?: ModifierTier[];
-  private customModifierSettings?: CustomModifierSettings;
+  private modifierTiers?: ModifierTier[] | undefined;
+  private customModifierSettings?: CustomModifierSettings | undefined;
   private isCopy: boolean;
 
   private typeOptions: ModifierTypeOption[];
@@ -351,11 +351,11 @@ export class SelectModifierPhase extends BattlePhase {
       (slotIndex: number, option: PartyOption) => {
         if (slotIndex < 6) {
           globalScene.ui.setMode(UiMode.MODIFIER_SELECT, this.isPlayer()).then(() => {
-            const modifier = !isMoveModifier
-              ? !isRememberMoveModifier
-                ? modifierType.newModifier(party[slotIndex])
-                : modifierType.newModifier(party[slotIndex], option as number)
-              : modifierType.newModifier(party[slotIndex], option - PartyOption.MOVE_1);
+            const modifier = isMoveModifier
+              ? modifierType.newModifier(party[slotIndex], option - PartyOption.MOVE_1)
+              : isRememberMoveModifier
+                ? modifierType.newModifier(party[slotIndex], option as number)
+                : modifierType.newModifier(party[slotIndex]);
             this.applyModifier(modifier!, cost, true); // TODO: is the bang correct?
           });
         } else {

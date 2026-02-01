@@ -1,4 +1,3 @@
-// biome-ignore lint/correctness/noUnusedImports: Used in a TSDoc comment
 import type { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -171,7 +170,7 @@ export const upperHandCondition = new MoveCondition((_user, target) => {
  * Condition used by the move {@link https://bulbapedia.bulbagarden.net/wiki/Last_Resort_(move) | Last Resort}
  *
  * @remarks
- * Last resort fails if
+ * Last resort fails if:
  * - It is not in the user's moveset
  * - The user does not know at least one other move
  * - The user has not directly used each other move in its moveset since it was sent into battle
@@ -220,12 +219,24 @@ export const counterAttackConditionBoth = new CounterAttackConditon();
  * A restriction that prevents a move from being selected
  *
  * @remarks
- * Only checked when the move is selected, but not when it is attempted to be invoked. To prevent a move from being used,
- * use a {@linkcode MoveCondition} instead.
+ * Restrictions will only prevent the move from being **selected**,
+ * and have no bearing on the actual success or failure thereof. \
+ * @see {@linkcode MoveCondition} Similar class handling move failures instead
  */
 export class MoveRestriction {
+  /**
+   * An arbitrary lambda function checked when this move is selected. \
+   * Should return `false` if the move is to be rendered unselectable.
+   */
   public readonly func: UserMoveConditionFunc;
+  /**
+   * The `i18n` locales key shown when preventing the player from selecting the move. \
+   * Within the text, `{{pokemonNameWithAffix}}` and `{{moveName}}` will be populated with
+   * the name of the Pokemon using the move and the name of the move being selected, respectively.
+   * @defaultValue `"battle:moveRestricted"`
+   */
   public readonly i18nkey: string;
+
   constructor(func: UserMoveConditionFunc, i18nkey = "battle:moveRestricted") {
     this.func = func;
     this.i18nkey = i18nkey;
