@@ -128,7 +128,7 @@ export abstract class Challenge {
 
   /**
    * Increase the value of the challenge
-   * @returns `true` if the value changed
+   * @returns Whether the value changed
    */
   increaseValue(): boolean {
     if (this.value < this.maxValue) {
@@ -140,7 +140,7 @@ export abstract class Challenge {
 
   /**
    * Decrease the value of the challenge
-   * @returns `true` if the value changed
+   * @returns Whether the value changed
    */
   decreaseValue(): boolean {
     if (this.value > 0) {
@@ -157,7 +157,7 @@ export abstract class Challenge {
 
   /**
    * Decrease the severity of the challenge
-   * @returns `true` if the value changed
+   * @returns Whether the value changed
    */
   decreaseSeverity(): boolean {
     if (this.severity > 0) {
@@ -169,7 +169,7 @@ export abstract class Challenge {
 
   /**
    * Increase the severity of the challenge
-   * @returns `true` if the value changed
+   * @returns Whether the value changed
    */
   increaseSeverity(): boolean {
     if (this.severity < this.maxSeverity) {
@@ -189,6 +189,7 @@ export abstract class Challenge {
     return 0;
   }
 
+  // TODO: Refactor the class hierarchy to remove the need for having all these methods on every class
   // biome-ignore-start lint/correctness/noUnusedFunctionParameters: pseudo-abstract methods
 
   /**
