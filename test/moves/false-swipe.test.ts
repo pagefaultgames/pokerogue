@@ -30,7 +30,7 @@ describe("Moves - False Swipe", () => {
   });
 
   it("should reduce the target to 1 HP", async () => {
-    await game.classicMode.startBattle([SpeciesId.MILOTIC]);
+    await game.classicMode.startBattle(SpeciesId.MILOTIC);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();

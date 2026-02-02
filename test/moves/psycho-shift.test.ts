@@ -31,7 +31,7 @@ describe("Moves - Psycho Shift", () => {
   });
 
   it("If Psycho Shift is used on a Pokémon with Synchronize, the user of Psycho Shift will already be afflicted with a status condition when Synchronize activates", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();

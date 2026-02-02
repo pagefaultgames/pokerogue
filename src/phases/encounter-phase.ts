@@ -113,7 +113,7 @@ export class EncounterPhase extends BattlePhase {
           if (
             globalScene.findModifier(m => m instanceof BoostBugSpawnModifier)
             && !globalScene.gameMode.isBoss(battle.waveIndex)
-            && globalScene.arena.biomeType !== BiomeId.END
+            && globalScene.arena.biomeId !== BiomeId.END
             && randSeedInt(10) === 0
           ) {
             enemySpecies = getGoldenBugNetSpecies(level);
@@ -662,6 +662,7 @@ export class EncounterPhase extends BattlePhase {
   trySetWeatherIfNewBiome(): void {
     if (!this.loaded) {
       globalScene.arena.trySetWeather(getRandomWeatherType(globalScene.arena));
+      globalScene.arena.tryOverrideTerrain();
     }
   }
 }

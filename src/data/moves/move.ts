@@ -1,7 +1,6 @@
-import type { AbAttrParamsWithCancel, PreAttackModifyPowerAbAttrParams } from "#abilities/ability";
+import type { AbAttrParamsWithCancel, PreAttackModifyPowerAbAttrParams } from "#abilities/ab-attrs";
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { loggedInUser } from "#app/account";
-import type { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { EntryHazardTag, PendingHealTag } from "#data/arena-tag";
@@ -116,6 +115,10 @@ import { inSpeedOrder } from "#utils/speed-order-generator";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 
+// TODO: Make these (and all condition functions actually)
+// take interfaces instead of plain parameters
+// to aid in assignability constraints
+
 // TODO: fix properly https://github.com/Despair-Games/poketernity/pull/170
 type GetRemoveArenaTagSideFunc = (user: Pokemon, target: Pokemon) => ArenaTagSide;
 
@@ -168,7 +171,7 @@ export abstract class Move implements Localizable {
    *   - Counter / Mirror Coat / Metal Burst with no damage taken from enemies this turn
    *   - Last resort's bespoke failure conditions
    *   - Snore while not asleep
-   *   - Sucker punch failling due to the target having already used their selected move or not having selected a damaging move
+   *   - Sucker punch failing due to the target having already used their selected move or not having selected a damaging move
    *   - Magic Coat failing due to being used as the last move in the turn
    *   - Protect-like moves failing due to consecutive use or being the last move in the turn
    *   - First turn moves (e.g. mat block, fake out) failing due to not being used on first turn
@@ -185,7 +188,7 @@ export abstract class Move implements Localizable {
    *   - Poltergeist against a target with no item
    *   - Shell Trap failing due to not being hit by a physical move
    *   - Aurora veil failing due to no hail
-   *   - Clangorous soul and Fillet Awayfailing due to insufficient HP
+   *   - Clangorous soul and Fillet Away failing due to insufficient HP
    *   - Upper hand failing due to the target not selecting a priority move
    *   - (Various moves that fail when used against titans / raid bosses, not listed as pokerogue does not yet implement each)
    *
@@ -472,11 +475,19 @@ export abstract class Move implements Localizable {
    * @param condition - The {@linkcode MoveCondition} or {@linkcode MoveConditionFunc} to add to the conditions array.
    * @param checkSequence - The sequence number where the failure check occurs
    * @returns `this` for method chaining
-   * @param checkSequence - The sequence number where the failure check occurs
-   * @returns `this` for method chaining
    */
   condition(condition: MoveCondition | MoveConditionFunc, checkSequence: 2 | 3 | 4 = 4): this {
-    const conditionsArray = checkSequence === 2 ? this.conditionsSeq2 : this.conditions;
+    let conditionsArray: MoveCondition[];
+    switch (checkSequence) {
+      case 2:
+        conditionsArray = this.conditionsSeq2;
+        break;
+      case 3:
+        conditionsArray = this.conditionsSeq3;
+        break;
+      default:
+        conditionsArray = this.conditions;
+    }
     if (typeof condition === "function") {
       condition = new MoveCondition(condition);
     }
@@ -848,8 +859,8 @@ export abstract class Move implements Localizable {
   }: {
     flag: MoveFlags;
     user: Pokemon;
-    target?: Pokemon;
-    isFollowUp?: boolean;
+    target?: Pokemon | undefined;
+    isFollowUp?: boolean | undefined;
   }): boolean {
     // special cases below, eg: if the move flag is MAKES_CONTACT, and the user pokemon has an ability that ignores contact (like "Long Reach"), then overrides and move does not make contact
     switch (flag) {
@@ -1292,7 +1303,7 @@ export class AttackMove extends Move {
     const ret = super.getTargetBenefitScore(user, target, move);
     let attackScore = 0;
 
-    const effectiveness = target.getAttackTypeEffectiveness(this.type, user, undefined, undefined, this);
+    const effectiveness = target.getAttackTypeEffectiveness(this.type, { source: user, move: this });
     attackScore = Math.pow(effectiveness - 1, 2) * (effectiveness < 1 ? -2 : 2);
     const [thisStat, offStat]: EffectiveStat[] =
       this.category === MoveCategory.PHYSICAL ? [Stat.ATK, Stat.SPATK] : [Stat.SPATK, Stat.ATK];
@@ -1549,7 +1560,7 @@ export class MoveEffectAttr extends MoveAttr {
    * A container for this attribute's optional parameters
    * @see {@linkcode MoveEffectAttrOptions} for supported params.
    */
-  protected options?: MoveEffectAttrOptions;
+  protected options?: MoveEffectAttrOptions | undefined;
 
   constructor(selfTarget?: boolean, options?: MoveEffectAttrOptions) {
     super(selfTarget);
@@ -1942,7 +1953,7 @@ export class MatchHpAttr extends FixedDamageAttr {
 
 export class CounterDamageAttr extends FixedDamageAttr {
   /** The damage category of counter attacks to process, or `undefined` for either */
-  private readonly moveFilter?: MoveDamageCategory;
+  private readonly moveFilter?: MoveDamageCategory | undefined;
   private readonly multiplier: number;
 
   /**
@@ -1951,8 +1962,8 @@ export class CounterDamageAttr extends FixedDamageAttr {
    */
   constructor(multiplier: number, moveFilter?: MoveDamageCategory) {
     super(0);
-    this.moveFilter = moveFilter;
     this.multiplier = multiplier;
+    this.moveFilter = moveFilter;
   }
 
   apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
@@ -2163,7 +2174,9 @@ export class SacrificialAttr extends MoveEffectAttr {
     if (user.isBoss()) {
       return -20;
     }
-    return Math.ceil(((1 - user.getHpRatio()) * 10 - 10) * (target.getAttackTypeEffectiveness(move.type, user) - 0.5));
+    return Math.ceil(
+      ((1 - user.getHpRatio()) * 10 - 10) * (target.getAttackTypeEffectiveness(move.type, { source: user }) - 0.5),
+    );
   }
 }
 
@@ -2199,7 +2212,9 @@ export class SacrificialAttrOnHit extends MoveEffectAttr {
     if (user.isBoss()) {
       return -20;
     }
-    return Math.ceil(((1 - user.getHpRatio()) * 10 - 10) * (target.getAttackTypeEffectiveness(move.type, user) - 0.5));
+    return Math.ceil(
+      ((1 - user.getHpRatio()) * 10 - 10) * (target.getAttackTypeEffectiveness(move.type, { source: user }) - 0.5),
+    );
   }
 }
 
@@ -2242,7 +2257,7 @@ export class HalfSacrificialAttr extends MoveEffectAttr {
       return -10;
     }
     return Math.ceil(
-      ((1 - user.getHpRatio() / 2) * 10 - 10) * (target.getAttackTypeEffectiveness(move.type, user) - 0.5),
+      ((1 - user.getHpRatio() / 2) * 10 - 10) * (target.getAttackTypeEffectiveness(move.type, { source: user }) - 0.5),
     );
   }
 }
@@ -2656,7 +2671,7 @@ export class BoostHealAttr extends HealAttr {
   /** Healing received when {@linkcode condition} is true */
   private readonly boostedHealRatio: number;
   /** The lambda expression to check against when boosting the healing value */
-  private readonly condition?: MoveConditionFunc;
+  private readonly condition?: MoveConditionFunc | undefined;
 
   constructor(
     normalHealRatio = 0.5,
@@ -3808,7 +3823,7 @@ export class StatStageChangeAttr extends MoveEffectAttr {
    * Container for optional parameters to this attribute.
    * @see {@linkcode StatStageChangeAttrOptions} for available optional params
    */
-  protected override options?: StatStageChangeAttrOptions;
+  protected override options?: StatStageChangeAttrOptions | undefined;
 
   constructor(stats: BattleStat[], stages: number, selfTarget?: boolean, options?: StatStageChangeAttrOptions) {
     super(selfTarget, options);
@@ -3939,11 +3954,11 @@ export class SecretPowerAttr extends MoveEffectAttr {
       return false;
     }
     let secondaryEffect: MoveEffectAttr;
-    const terrain = globalScene.arena.getTerrainType();
+    const terrain = globalScene.arena.terrainType;
     if (terrain !== TerrainType.NONE) {
       secondaryEffect = this.determineTerrainEffect(terrain);
     } else {
-      const biome = globalScene.arena.biomeType;
+      const biome = globalScene.arena.biomeId;
       secondaryEffect = this.determineBiomeEffect(biome);
     }
     return secondaryEffect.apply(user, target, move, []);
@@ -4065,7 +4080,7 @@ export class SecretPowerAttr extends MoveEffectAttr {
 export class PostVictoryStatStageChangeAttr extends MoveAttr {
   private readonly stats: BattleStat[];
   private readonly stages: number;
-  private readonly condition?: MoveConditionFunc;
+  private readonly condition?: MoveConditionFunc | undefined;
   private readonly showMessage: boolean;
 
   constructor(
@@ -5787,7 +5802,7 @@ export class TerrainPulseTypeAttr extends VariableMoveTypeAttr {
       return false;
     }
 
-    const currentTerrain = globalScene.arena.getTerrainType();
+    const currentTerrain = globalScene.arena.terrainType;
     switch (currentTerrain) {
       case TerrainType.MISTY:
         moveType.value = PokemonType.FAIRY;
@@ -5998,82 +6013,138 @@ export class CombinedPledgeTypeAttr extends VariableMoveTypeAttr {
   }
 }
 
-export class VariableMoveTypeMultiplierAttr extends MoveAttr {
-  apply(_user: Pokemon, _target: Pokemon, _move: Move, _args: any[]): boolean {
-    return false;
-  }
-}
-
-export class NeutralDamageAgainstFlyingTypeMultiplierAttr extends VariableMoveTypeMultiplierAttr {
-  apply(_user: Pokemon, target: Pokemon, _move: Move, args: any[]): boolean {
-    if (!target.getTag(BattlerTagType.IGNORE_FLYING)) {
-      const multiplier = args[0] as NumberHolder;
-      //When a flying type is hit, the first hit is always 1x multiplier.
-      if (target.isOfType(PokemonType.FLYING)) {
-        multiplier.value = 1;
-      }
-      return true;
-    }
-
-    return false;
-  }
-}
-
-export class IceNoEffectTypeAttr extends VariableMoveTypeMultiplierAttr {
+/**
+ * Attribute for moves which have a custom type chart interaction.
+ */
+abstract class MoveTypeChartOverrideAttr extends MoveAttr {
   /**
-   * Checks to see if the Target is Ice-Type or not. If so, the move will have no effect.
-   * @param user n/a
-   * @param target The {@linkcode Pokemon} targeted by the move
-   * @param move n/a
-   * @param args `[0]` a {@linkcode NumberHolder | NumberHolder} containing a type effectiveness multiplier
-   * @returns `true` if this Ice-type immunity applies; `false` otherwise
+   * Apply the attribute to change the move's type effectiveness multiplier.
+   * @param user - The {@linkcode Pokemon} using the move
+   * @param target - The {@linkcode Pokemon} targeted by the move
+   * @param move - The {@linkcode Move} with this attribute
+   * @param args -
+   * - `[0]`: A {@linkcode NumberHolder} holding the current type effectiveness
+   * - `[1]`: The target's current typing
+   * - `[2]`: The current {@linkcode PokemonType} of the move
+   * @returns Whether application of the attribute succeeds
    */
-  apply(_user: Pokemon, target: Pokemon, _move: Move, args: any[]): boolean {
-    const multiplier = args[0] as NumberHolder;
-    if (target.isOfType(PokemonType.ICE)) {
-      multiplier.value = 0;
-      return true;
-    }
-    return false;
-  }
+  public abstract override apply(
+    user: Pokemon,
+    target: Pokemon,
+    move: Move,
+    args: [multiplier: NumberHolder, types: readonly PokemonType[], moveType: PokemonType],
+  ): boolean;
 }
 
-export class FlyingTypeMultiplierAttr extends VariableMoveTypeMultiplierAttr {
-  apply(user: Pokemon, target: Pokemon, _move: Move, args: any[]): boolean {
-    const multiplier = args[0] as NumberHolder;
-    multiplier.value *= target.getAttackTypeEffectiveness(PokemonType.FLYING, user);
+export type { MoveTypeChartOverrideAttr };
+
+/**
+ * Attribute to implement {@link https://bulbapedia.bulbagarden.net/wiki/Freeze-Dry_(move) | Freeze Dry}'s
+ * guaranteed Water-type super effectiveness.
+ */
+export class FreezeDryAttr extends MoveTypeChartOverrideAttr {
+  public override apply(
+    _user: Pokemon,
+    _target: Pokemon,
+    _move: Move,
+    args: [multiplier: NumberHolder, types: readonly PokemonType[], moveType: PokemonType],
+  ): boolean {
+    const [multiplier, types, moveType] = args;
+    if (!types.includes(PokemonType.WATER)) {
+      return false;
+    }
+
+    // Replace whatever the prior "normal" water effectiveness was with a guaranteed 2x multi
+    const normalEff = getTypeDamageMultiplier(moveType, PokemonType.WATER);
+    multiplier.value *= 2 / normalEff;
     return true;
   }
 }
 
 /**
- * Attribute for moves which have a custom type chart interaction.
+ * Attribute used by {@link https://bulbapedia.bulbagarden.net/wiki/Thousand_Arrows_(move) | Thousand Arrows}
+ * to cause it to deal a fixed 1x damage against all ungrounded flying types.
  */
-export class VariableMoveTypeChartAttr extends MoveAttr {
-  /**
-   * @param user {@linkcode Pokemon} using the move
-   * @param target {@linkcode Pokemon} target of the move
-   * @param move {@linkcode Move} with this attribute
-   * @param args [0] {@linkcode NumberHolder} holding the type effectiveness
-   * @param args [1] A single defensive type of the target
-   *
-   * @returns true if application of the attribute succeeds
-   */
-  apply(_user: Pokemon, _target: Pokemon, _move: Move, _args: any[]): boolean {
-    return false;
+// TODO: Add mention in #5950 about this disabling groundedness-based immunities (once implemented)
+export class NeutralDamageAgainstFlyingTypeAttr extends MoveTypeChartOverrideAttr {
+  public override apply(
+    _user: Pokemon,
+    target: Pokemon,
+    _move: Move,
+    args: [multiplier: NumberHolder, types: readonly PokemonType[], moveType: PokemonType],
+  ): boolean {
+    const [multiplier, types] = args;
+    if (target.isGrounded() || !types.includes(PokemonType.FLYING)) {
+      return false;
+    }
+    multiplier.value = 1;
+    return true;
   }
 }
 
 /**
- * This class forces Freeze-Dry to be super effective against Water Type.
+ * Attribute implementing the effect of {@link https://bulbapedia.bulbagarden.net/wiki/Synchronoise_(move) | Synchronoise},
+ * rendering the move ineffective against all targets that do not share at least 1 type with the user.
  */
-export class FreezeDryAttr extends VariableMoveTypeChartAttr {
-  apply(_user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
-    const multiplier = args[0] as NumberHolder;
-    const defType = args[1] as PokemonType;
+export class HitsSameTypeAttr extends MoveTypeChartOverrideAttr {
+  public override apply(
+    user: Pokemon,
+    _target: Pokemon,
+    _move: Move,
+    args: [multiplier: NumberHolder, types: readonly PokemonType[], moveType: PokemonType],
+  ): boolean {
+    const [multiplier, oppTypes] = args;
+    const userTypes = user.getTypes(true);
+    // Synchronoise is never effective if the user is typeless
+    if (userTypes.includes(PokemonType.UNKNOWN)) {
+      multiplier.value = 0;
+      return true;
+    }
 
-    if (defType === PokemonType.WATER) {
-      multiplier.value = 2;
+    const sharesType = userTypes.some(type => oppTypes.includes(type));
+    if (sharesType) {
+      return false;
+    }
+
+    multiplier.value = 0;
+    return true;
+  }
+}
+
+/**
+ * Attribute used by {@link https://bulbapedia.bulbagarden.net/wiki/Flying_Press_(move) | Flying Press}
+ * to add the Flying type to its type effectiveness multiplier.
+ */
+export class FlyingTypeMultiplierAttr extends MoveTypeChartOverrideAttr {
+  apply(
+    user: Pokemon,
+    target: Pokemon,
+    _move: Move,
+    args: [multiplier: NumberHolder, types: readonly PokemonType[], moveType: PokemonType],
+  ): boolean {
+    const [multiplier] = args;
+    // Intentionally exclude `move` to not re-trigger the effects of this attribute again
+    // (thus leading to an infinite loop)
+    // TODO: We may need to propagate `useIllusion` here for correct AI interactions
+    multiplier.value *= target.getAttackTypeEffectiveness(PokemonType.FLYING, { source: user });
+    return true;
+  }
+}
+
+/**
+ * Attribute used by {@link https://bulbapedia.bulbagarden.net/wiki/Sheer_Cold_(move) | Sheer Cold}
+ * to implement its Gen VII+ ice ineffectiveness.
+ */
+export class IceNoEffectTypeAttr extends MoveTypeChartOverrideAttr {
+  apply(
+    _user: Pokemon,
+    _target: Pokemon,
+    _move: Move,
+    args: [multiplier: NumberHolder, types: PokemonType[], moveType: PokemonType],
+  ): boolean {
+    const [multiplier, types] = args;
+    if (types.includes(PokemonType.ICE)) {
+      multiplier.value = 0;
       return true;
     }
     return false;
@@ -6552,7 +6623,7 @@ export class ProtectAttr extends AddBattlerTagAttr {
     return (user, _target, _move): boolean => {
       let timesUsed = 0;
 
-      for (const turnMove of user.getLastXMoves(-1).slice()) {
+      for (const turnMove of user.getLastXMoves(-1)) {
         if (
           // Quick & Wide guard increment the Protect counter without using it for fail chance
           !(
@@ -7317,12 +7388,12 @@ export class CopyBiomeTypeAttr extends MoveEffectAttr {
       return false;
     }
 
-    const terrainType = globalScene.arena.getTerrainType();
+    const terrainType = globalScene.arena.terrainType;
     let typeChange: PokemonType;
     if (terrainType !== TerrainType.NONE) {
-      typeChange = this.getTypeForTerrain(globalScene.arena.getTerrainType());
+      typeChange = this.getTypeForTerrain(globalScene.arena.terrainType);
     } else {
-      typeChange = this.getTypeForBiome(globalScene.arena.biomeType);
+      typeChange = this.getTypeForBiome(globalScene.arena.biomeId);
     }
 
     user.summonData.types = [typeChange];
@@ -7649,10 +7720,10 @@ export class RandomMovesetMoveAttr extends CallMoveAttr {
 export class NaturePowerAttr extends OverrideMoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
     let moveId = MoveId.NONE;
-    switch (globalScene.arena.getTerrainType()) {
+    switch (globalScene.arena.terrainType) {
       // this allows terrains to 'override' the biome move
       case TerrainType.NONE:
-        switch (globalScene.arena.biomeType) {
+        switch (globalScene.arena.biomeId) {
           case BiomeId.TOWN:
             moveId = MoveId.ROUND;
             break;
@@ -8704,26 +8775,11 @@ const attackedByItemMessageFunc = (_user: Pokemon, target: Pokemon, _move: Move)
   return message;
 };
 
-export class HitsSameTypeAttr extends VariableMoveTypeMultiplierAttr {
-  apply(user: Pokemon, target: Pokemon, _move: Move, args: any[]): boolean {
-    const multiplier = args[0] as NumberHolder;
-    if (!user.getTypes(true).some(type => target.getTypes(true).includes(type))) {
-      multiplier.value = 0;
-      return true;
-    }
-    return false;
-  }
-}
-
 /**
  * Attribute used for Conversion 2, to convert the user's type to a random type that resists the target's last used move.
- * Fails if the user already has ALL types that resist the target's last used move.
- * Fails if the opponent has not used a move yet
- * Fails if the type is unknown or stellar
- *
- * TODO:
- * If a move has its type changed (e.g. {@linkcode MoveId.HIDDEN_POWER}), it will check the new type.
  */
+// TODO: If a move has its type changed (e.g. Hidden Power), it should check the new type.
+// TODO: Does not fail when it should
 export class ResistLastMoveTypeAttr extends MoveEffectAttr {
   constructor() {
     super(true);
@@ -8752,8 +8808,7 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
     if (moveData.type === PokemonType.STELLAR || moveData.type === PokemonType.UNKNOWN) {
       return false;
     }
-    const userTypes = user.getTypes();
-    const validTypes = this.getTypeResistances(globalScene.gameMode, moveData.type).filter(t => !userTypes.includes(t)); // valid types are ones that are not already the user's types
+    const validTypes = this.getTypeResistances(user, moveData.type);
     if (validTypes.length === 0) {
       return false;
     }
@@ -8772,21 +8827,25 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
 
   /**
    * Retrieve the types resisting a given type. Used by Conversion 2
-   * @returns An array populated with Types, or an empty array if no resistances exist (Unknown or Stellar type)
+   * @param moveType - The type of the move having been used
+   * @returns An array containing all types that resist the given move's type
+   * and are not currently shared by the user
    */
-  getTypeResistances(_gameMode: GameMode, type: number): PokemonType[] {
-    const typeResistances: PokemonType[] = [];
+  private getTypeResistances(user: Pokemon, moveType: PokemonType): PokemonType[] {
+    const resistances: PokemonType[] = [];
+    const userTypes = user.getTypes(true, true);
 
-    for (let i = 0; i < Object.keys(PokemonType).length; i++) {
-      const multiplier = new NumberHolder(1);
-      multiplier.value = getTypeDamageMultiplier(type, i);
-      applyChallenges(ChallengeType.TYPE_EFFECTIVENESS, multiplier);
-      if (multiplier.value < 1) {
-        typeResistances.push(i);
+    for (const type of getEnumValues(PokemonType)) {
+      if (userTypes.includes(type)) {
+        continue;
+      }
+      const multiplier = getTypeDamageMultiplier(moveType, type);
+      if (multiplier < 1) {
+        resistances.push(type);
       }
     }
 
-    return typeResistances;
+    return resistances;
   }
 
   getCondition(): MoveConditionFunc {
@@ -8830,14 +8889,6 @@ export class ExposedMoveAttr extends AddBattlerTagAttr {
     return true;
   }
 }
-
-const unknownTypeCondition: MoveConditionFunc = (user, _target, _move) =>
-  !user.getTypes().includes(PokemonType.UNKNOWN);
-
-export type MoveTargetSet = {
-  targets: BattlerIndex[];
-  multiple: boolean;
-};
 
 /**
  * Map of Move attributes to their respective classes. Used for instanceof checks.
@@ -8981,13 +9032,13 @@ const MoveAttrs = Object.freeze({
   TeraStarstormTypeAttr,
   MatchUserTypeAttr,
   CombinedPledgeTypeAttr,
-  VariableMoveTypeMultiplierAttr,
-  NeutralDamageAgainstFlyingTypeMultiplierAttr,
+  NeutralDamageAgainstFlyingTypeAttr,
   IceNoEffectTypeAttr,
   FlyingTypeMultiplierAttr,
-  VariableMoveTypeChartAttr,
+  MoveTypeChartOverrideAttr,
   FreezeDryAttr,
   OneHitKOAccuracyAttr,
+  HitsSameTypeAttr,
   SheerColdAccuracyAttr,
   MissEffectAttr,
   NoEffectAttr,
@@ -9053,7 +9104,6 @@ const MoveAttrs = Object.freeze({
   VariableTargetAttr,
   AfterYouAttr,
   ForceLastAttr,
-  HitsSameTypeAttr,
   ResistLastMoveTypeAttr,
   ExposedMoveAttr,
 });
@@ -9322,7 +9372,7 @@ export function initMoves() {
     new AttackMove(MoveId.EARTHQUAKE, PokemonType.GROUND, MoveCategory.PHYSICAL, 100, 100, 10, -1, 0, 1)
       .attr(HitsTagForDoubleDamageAttr, BattlerTagType.UNDERGROUND)
       .attr(MovePowerMultiplierAttr, (_user, target, _move) =>
-        globalScene.arena.getTerrainType() === TerrainType.GRASSY && target.isGrounded() ? 0.5 : 1,
+        globalScene.arena.terrainType === TerrainType.GRASSY && target.isGrounded() ? 0.5 : 1,
       )
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_OTHERS),
@@ -9657,11 +9707,10 @@ export function initMoves() {
       .ignoresProtect()
       .attr(DestinyBondAttr)
       .condition(failAgainstFinalBossCondition, 2)
+      // Destiny Bond fails if it was successfully used last turn
       .condition((user, _target, move) => {
-        const lastTurnMove = user.getLastXMoves(1);
-        return (
-          lastTurnMove.length === 0 || lastTurnMove[0].move !== move.id || lastTurnMove[0].result !== MoveResult.SUCCESS
-        );
+        const lastTurnMove = user.getLastXMoves(1).at(0);
+        return !(lastTurnMove?.move === move.id && lastTurnMove.result === MoveResult.SUCCESS);
       }),
     new StatusMove(MoveId.PERISH_SONG, PokemonType.NORMAL, -1, 5, -1, 0, 2)
       .attr(AddBattlerTagAttr, BattlerTagType.PERISH_SONG, false, true, 4)
@@ -9765,7 +9814,7 @@ export function initMoves() {
       .attr(PreMoveMessageAttr, magnitudeMessageFunc)
       .attr(MagnitudePowerAttr)
       .attr(MovePowerMultiplierAttr, (_user, target, _move) =>
-        globalScene.arena.getTerrainType() === TerrainType.GRASSY && target.isGrounded() ? 0.5 : 1,
+        globalScene.arena.terrainType === TerrainType.GRASSY && target.isGrounded() ? 0.5 : 1,
       )
       .attr(HitsTagForDoubleDamageAttr, BattlerTagType.UNDERGROUND)
       .makesContact(false)
@@ -10689,9 +10738,8 @@ export function initMoves() {
       .attr(CompareWeightPowerAttr)
       .attr(HitsTagForDoubleDamageAttr, BattlerTagType.MINIMIZED),
     new AttackMove(MoveId.SYNCHRONOISE, PokemonType.PSYCHIC, MoveCategory.SPECIAL, 120, 100, 10, -1, 0, 5)
-      .target(MoveTarget.ALL_NEAR_OTHERS)
-      .condition(unknownTypeCondition)
-      .attr(HitsSameTypeAttr),
+      .attr(HitsSameTypeAttr)
+      .target(MoveTarget.ALL_NEAR_OTHERS),
     new AttackMove(MoveId.ELECTRO_BALL, PokemonType.ELECTRIC, MoveCategory.SPECIAL, -1, 100, 10, -1, 0, 5)
       .attr(ElectroBallPowerAttr)
       .ballBombMove(),
@@ -10854,7 +10902,7 @@ export function initMoves() {
     new AttackMove(MoveId.BULLDOZE, PokemonType.GROUND, MoveCategory.PHYSICAL, 60, 100, 20, 100, 0, 5)
       .attr(StatStageChangeAttr, [Stat.SPD], -1)
       .attr(MovePowerMultiplierAttr, (_user, target, _move) =>
-        globalScene.arena.getTerrainType() === TerrainType.GRASSY && target.isGrounded() ? 0.5 : 1,
+        globalScene.arena.terrainType === TerrainType.GRASSY && target.isGrounded() ? 0.5 : 1,
       )
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_OTHERS),
@@ -11161,7 +11209,7 @@ export function initMoves() {
       .attr(HitHealAttr, 0.75)
       .triageMove(),
     new AttackMove(MoveId.THOUSAND_ARROWS, PokemonType.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 6)
-      .attr(NeutralDamageAgainstFlyingTypeMultiplierAttr)
+      .attr(NeutralDamageAgainstFlyingTypeAttr)
       .attr(FallDownAttr)
       .attr(HitsTagAttr, BattlerTagType.FLYING)
       .attr(HitsTagAttr, BattlerTagType.FLOATING)
@@ -11349,6 +11397,7 @@ export function initMoves() {
       .attr(HealOnAllyAttr, 0.5, true, false)
       .ballBombMove()
       // Fail if used against an ally that is affected by heal block, during the second failure check
+      // TODO: Make into a target-based move restriction
       .condition(
         (user, target) => target == null || target.isOpponent(user) || !target.getTag(BattlerTagType.HEAL_BLOCK),
         2,
@@ -11785,10 +11834,10 @@ export function initMoves() {
       .attr(HalfSacrificialAttr),
     new AttackMove(MoveId.EXPANDING_FORCE, PokemonType.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 8)
       .attr(MovePowerMultiplierAttr, (user, _target, _move) =>
-        globalScene.arena.getTerrainType() === TerrainType.PSYCHIC && user.isGrounded() ? 1.5 : 1,
+        globalScene.arena.terrainType === TerrainType.PSYCHIC && user.isGrounded() ? 1.5 : 1,
       )
       .attr(VariableTargetAttr, (user, _target, _move) =>
-        globalScene.arena.getTerrainType() === TerrainType.PSYCHIC && user.isGrounded()
+        globalScene.arena.terrainType === TerrainType.PSYCHIC && user.isGrounded()
           ? MoveTarget.ALL_NEAR_ENEMIES
           : MoveTarget.NEAR_OTHER,
       ),
@@ -11811,23 +11860,23 @@ export function initMoves() {
       .attr(SacrificialAttr)
       .target(MoveTarget.ALL_NEAR_OTHERS)
       .attr(MovePowerMultiplierAttr, (user, _target, _move) =>
-        globalScene.arena.getTerrainType() === TerrainType.MISTY && user.isGrounded() ? 1.5 : 1,
+        globalScene.arena.terrainType === TerrainType.MISTY && user.isGrounded() ? 1.5 : 1,
       )
       .condition(failIfDampCondition, 3)
       .makesContact(false),
     new AttackMove(MoveId.GRASSY_GLIDE, PokemonType.GRASS, MoveCategory.PHYSICAL, 55, 100, 20, -1, 0, 8) //
       .attr(
         IncrementMovePriorityAttr,
-        (user, _target, _move) => globalScene.arena.getTerrainType() === TerrainType.GRASSY && user.isGrounded(),
+        (user, _target, _move) => globalScene.arena.terrainType === TerrainType.GRASSY && user.isGrounded(),
       ),
     new AttackMove(MoveId.RISING_VOLTAGE, PokemonType.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 20, -1, 0, 8) //
       .attr(MovePowerMultiplierAttr, (_user, target, _move) =>
-        globalScene.arena.getTerrainType() === TerrainType.ELECTRIC && target.isGrounded() ? 2 : 1,
+        globalScene.arena.terrainType === TerrainType.ELECTRIC && target.isGrounded() ? 2 : 1,
       ),
     new AttackMove(MoveId.TERRAIN_PULSE, PokemonType.NORMAL, MoveCategory.SPECIAL, 50, 100, 10, -1, 0, 8)
       .attr(TerrainPulseTypeAttr)
       .attr(MovePowerMultiplierAttr, (user, _target, _move) =>
-        globalScene.arena.getTerrainType() !== TerrainType.NONE && user.isGrounded() ? 2 : 1,
+        globalScene.arena.terrainType !== TerrainType.NONE && user.isGrounded() ? 2 : 1,
       )
       .pulseMove(),
     new AttackMove(MoveId.SKITTER_SMACK, PokemonType.BUG, MoveCategory.PHYSICAL, 70, 90, 10, 100, 0, 8) //
@@ -12183,7 +12232,7 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(MoveId.PSYBLADE, PokemonType.PSYCHIC, MoveCategory.PHYSICAL, 80, 100, 15, -1, 0, 9)
       .attr(MovePowerMultiplierAttr, (user, _target, _move) =>
-        globalScene.arena.getTerrainType() === TerrainType.ELECTRIC && user.isGrounded() ? 1.5 : 1,
+        globalScene.arena.terrainType === TerrainType.ELECTRIC && user.isGrounded() ? 1.5 : 1,
       )
       .slicingMove(),
     new AttackMove(MoveId.HYDRO_STEAM, PokemonType.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, 0, 9)
@@ -12201,11 +12250,11 @@ export function initMoves() {
       .attr(TargetHalfHpDamageAttr),
     new AttackMove(MoveId.COLLISION_COURSE, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 9) //
       .attr(MovePowerMultiplierAttr, (user, target, move) =>
-        target.getAttackTypeEffectiveness(move.type, user) >= 2 ? 4 / 3 : 1,
+        target.getAttackTypeEffectiveness(move.type, { source: user }) >= 2 ? 4 / 3 : 1,
       ),
-    new AttackMove(MoveId.ELECTRO_DRIFT, PokemonType.ELECTRIC, MoveCategory.SPECIAL, 100, 100, 5, -1, 0, 9)
+    new AttackMove(MoveId.ELECTRO_DRIFT, PokemonType.ELECTRIC, MoveCategory.SPECIAL, 100, 100, 5, -1, 0, 9) //
       .attr(MovePowerMultiplierAttr, (user, target, move) =>
-        target.getAttackTypeEffectiveness(move.type, user) >= 2 ? 4 / 3 : 1,
+        target.getAttackTypeEffectiveness(move.type, { source: user }) >= 2 ? 4 / 3 : 1,
       )
       .makesContact(),
     new SelfStatusMove(MoveId.SHED_TAIL, PokemonType.NORMAL, -1, 10, -1, 0, 9)

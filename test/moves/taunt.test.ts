@@ -27,7 +27,7 @@ describe("Moves - Taunt", () => {
   });
 
   it("Pokemon should not be able to use Status Moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
+    await game.classicMode.startBattle(SpeciesId.REGIELEKI);
 
     const playerPokemon = game.field.getPlayerPokemon();
 

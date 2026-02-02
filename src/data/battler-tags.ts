@@ -76,8 +76,7 @@ import { type BattleStat, EFFECTIVE_STATS, type EffectiveStat, getStatKey, Stat 
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
-import { applyMoveAttrs } from "#moves/apply-attrs";
-import { invalidEncoreMoves } from "#moves/invalid-moves";
+import { healBlockedMoves, invalidEncoreMoves } from "#moves/invalid-moves";
 import type { Move } from "#moves/move";
 import type { MoveEffectPhase } from "#phases/move-effect-phase";
 import type { MovePhase } from "#phases/move-phase";
@@ -100,7 +99,7 @@ import type {
 } from "#types/battler-tags";
 import type { Mutable } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
-import { BooleanHolder, getFrameMs, NumberHolder, toDmgValue } from "#utils/common";
+import { BooleanHolder, getFrameMs, toDmgValue } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
@@ -161,7 +160,9 @@ export class BattlerTag implements BaseBattlerTag {
     if (sourceMove) {
       this.sourceMove = sourceMove;
     }
-    this.sourceId = sourceId;
+    if (sourceId !== undefined) {
+      this.sourceId = sourceId;
+    }
     this.#isBatonPassable = isBatonPassable;
   }
 
@@ -212,9 +213,14 @@ export class BattlerTag implements BaseBattlerTag {
    * @param source - An object containing the fields needed to reconstruct this tag
    */
   public loadTag<const T extends this>(source: BaseBattlerTag & Pick<T, "tagType">): void {
-    this.turnCount = source.turnCount;
-    this.sourceMove = source.sourceMove;
-    this.sourceId = source.sourceId;
+    const { sourceMove, turnCount, sourceId } = source;
+    this.turnCount = turnCount;
+    if (sourceMove) {
+      this.sourceMove = sourceMove;
+    }
+    if (sourceId !== undefined) {
+      this.sourceId = sourceId;
+    }
   }
 
   /**
@@ -307,6 +313,7 @@ export abstract class MoveRestrictionBattlerTag extends SerializableBattlerTag {
    * @param move - The {@linkcode MoveId | ID} of the Move that is having its selection denied
    * @returns The text to display when the player attempts to select the restricted move
    */
+  // TODO: Make this return an i18next key rather than the full text
   abstract selectionDeniedText(pokemon: Pokemon, move: MoveId): string;
 
   /**
@@ -414,7 +421,7 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
     super.onRemove(pokemon);
 
     globalScene.phaseManager.queueMessage(
-      i18next.t("battlerTags:disabledLapse", {
+      i18next.t("battlerTags:disabledOnRemove", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
         moveName: allMoves[this.moveId].name,
       }),
@@ -794,11 +801,17 @@ export class ConfusedTag extends SerializableBattlerTag {
 
   canAdd(pokemon: Pokemon): boolean {
     const blockedByTerrain = pokemon.isGrounded() && globalScene.arena.terrain?.terrainType === TerrainType.MISTY;
-    if (blockedByTerrain) {
-      pokemon.queueStatusImmuneMessage(false, TerrainType.MISTY);
-      return false;
+    if (!blockedByTerrain) {
+      return true;
     }
-    return true;
+
+    // avoid showing cancellation messages for attack moves
+    const phaseData = getMoveEffectPhaseData(pokemon);
+    if (phaseData?.move?.category === MoveCategory.STATUS) {
+      pokemon.queueStatusImmuneMessage(false, TerrainType.MISTY);
+    }
+
+    return false;
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -1450,6 +1463,7 @@ export class OctolockTag extends TrappedTag {
   }
 }
 
+// TODO: Merge with `IngrainTag`
 export class AquaRingTag extends SerializableBattlerTag {
   public override readonly tagType = BattlerTagType.AQUA_RING;
   constructor() {
@@ -2071,7 +2085,7 @@ export class TruantTag extends AbilityBattlerTag {
       return super.lapse(pokemon, lapseType);
     }
 
-    const lastMove = pokemon.getLastXMoves()[0];
+    const lastMove = pokemon.getLastXMoves(1).at(0);
 
     if (!lastMove || lastMove.move === MoveId.NONE) {
       // Don't interrupt move if last move was `MoveId.NONE` OR no prior move was found
@@ -2883,78 +2897,72 @@ export class ExposedTag extends SerializableBattlerTag {
 }
 
 /**
- * Tag that prevents HP recovery from held items and move effects. It also blocks the usage of recovery moves.
- * Applied by moves:  {@linkcode MoveId.HEAL_BLOCK | Heal Block (5 turns)}, {@linkcode MoveId.PSYCHIC_NOISE | Psychic Noise (2 turns)}
+ * Tag that prevents HP recovery from held items and move effects. It also blocks the usage of recovery moves. \
+ * Applied by moves:
+ * - {@linkcode MoveId.HEAL_BLOCK} (5 turns)
+ * - {@linkcode MoveId.PSYCHIC_NOISE} (2 turns)
  */
 export class HealBlockTag extends MoveRestrictionBattlerTag {
   public override readonly tagType = BattlerTagType.HEAL_BLOCK;
-  constructor(turnCount: number, sourceMove: MoveId) {
-    super(BattlerTagType.HEAL_BLOCK, BattlerTagLapseType.TURN_END, turnCount, sourceMove);
+  constructor(turnCount: number) {
+    super(BattlerTagType.HEAL_BLOCK, BattlerTagLapseType.TURN_END, turnCount);
   }
 
-  onActivation(pokemon: Pokemon): string {
-    return i18next.t("battle:battlerTagsHealBlock", {
+  /**
+   * @returns The message to be displayed when Heal Block blocks healing.
+   */
+  // TODO: This is an extremely poor way to display the heal block message
+  public onActivation(pokemon: Pokemon): string {
+    return i18next.t("battlerTags:healBlockCannotHeal", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
     });
   }
 
-  /**
-   * Checks if a move is disabled under Heal Block
-   * @param move - {@linkcode MoveId | ID} of the move being used
-   * @returns `true` if the move has a TRIAGE_MOVE flag and is a status move
-   */
   override isMoveRestricted(move: MoveId): boolean {
-    return allMoves[move].hasFlag(MoveFlags.TRIAGE_MOVE) && allMoves[move].category === MoveCategory.STATUS;
+    return healBlockedMoves.has(move);
   }
 
   /**
    * Checks if a move is disabled under Heal Block because of its choice of target
-   * Implemented b/c of Pollen Puff
+   * Used solely to prevent pokemon from targeting Heal Blocked allies with Pollen Puff.
    * @param move - {@linkcode MoveId | ID} of the move being used
    * @param user - The pokemon using the move
    * @param target - The target of the move
-   * @returns `true` if the move cannot be used because the target is an ally
+   * @returns Whether the move cannot be used against `target` specifically
    */
+  // TODO: Move this to a restriction on Pollen Puff itself
   override isMoveTargetRestricted(move: MoveId, user: Pokemon, target: Pokemon) {
-    const moveCategory = new NumberHolder(allMoves[move].category);
-    applyMoveAttrs("StatusCategoryOnAllyAttr", user, target, allMoves[move], moveCategory);
-    return allMoves[move].hasAttr("HealOnAllyAttr") && moveCategory.value === MoveCategory.STATUS;
+    return move === MoveId.POLLEN_PUFF && !user.isOpponent(target);
   }
 
-  /**
-   * Uses its own unique selectionDeniedText() message
-   */
   override selectionDeniedText(pokemon: Pokemon, move: MoveId): string {
     return i18next.t("battle:moveDisabledHealBlock", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       moveName: allMoves[move].name,
-      healBlockName: allMoves[MoveId.HEAL_BLOCK].name,
     });
   }
 
-  /**
-   * @param pokemon - {@linkcode Pokemon} attempting to use the restricted move
-   * @param move - {@linkcode MoveId | ID} of the move being interrupted
-   * @returns Text to display when the move is interrupted
-   */
   override interruptedText(pokemon: Pokemon, move: MoveId): string {
-    return i18next.t("battle:moveDisabledHealBlock", {
-      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      moveName: allMoves[move].name,
-      healBlockName: allMoves[MoveId.HEAL_BLOCK].name,
-    });
+    return this.selectionDeniedText(pokemon, move);
+  }
+
+  override onAdd(pokemon: Pokemon): void {
+    super.onAdd(pokemon);
+
+    globalScene.phaseManager.queueMessage(
+      i18next.t("battlerTags:healBlockOnAdd", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+      }),
+    );
   }
 
   override onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
 
     globalScene.phaseManager.queueMessage(
-      i18next.t("battle:battlerTagsHealBlockOnRemove", {
+      i18next.t("battlerTags:healBlockOnRemove", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       }),
-      null,
-      false,
-      null,
     );
   }
 }
@@ -3267,6 +3275,7 @@ export class TormentTag extends MoveRestrictionBattlerTag {
    * @param move - The move under investigation
    * @returns `true` if there is valid consecutive usage | `false` if the moves are different from each other
    */
+  // TODO: Verify how this interacts with move calling moves
   public override isMoveRestricted(move: MoveId, user: Pokemon): boolean {
     if (!user) {
       return false;
@@ -3868,7 +3877,7 @@ export function getBattlerTag(
     case BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON:
       return new MysteryEncounterPostSummonTag();
     case BattlerTagType.HEAL_BLOCK:
-      return new HealBlockTag(turnCount, sourceMove);
+      return new HealBlockTag(turnCount);
     case BattlerTagType.TORMENT:
       return new TormentTag(sourceId);
     case BattlerTagType.TAUNT:

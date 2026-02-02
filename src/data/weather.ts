@@ -1,4 +1,4 @@
-import type { SuppressWeatherEffectAbAttr } from "#abilities/ability";
+import type { SuppressWeatherEffectAbAttr } from "#abilities/ab-attrs";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -17,6 +17,7 @@ export interface SerializedWeather {
 }
 
 export class Weather {
+  // TODO: Exclude `WeatherType.NONE` from this (which indicates a lack of weather)
   public weatherType: WeatherType;
   public turnsLeft: number;
   public maxDuration: number;
@@ -27,10 +28,15 @@ export class Weather {
     this.maxDuration = this.isImmutable() ? 0 : maxDuration;
   }
 
+  /**
+   * Tick down this weather's duration.
+   * @returns Whether the current weather should remain active (`turnsLeft > 0`)
+   */
   lapse(): boolean {
     if (this.isImmutable()) {
       return true;
     }
+    // TODO: Add a flag for infinite duration weathers separate from "0 turn count"
     if (this.turnsLeft) {
       return !!--this.turnsLeft;
     }
@@ -129,6 +135,8 @@ export class Weather {
   }
 }
 
+// TODO: These functions should not be able to accept `WeatherType.NONE`
+// and should have `null` removed from the signature
 export function getWeatherStartMessage(weatherType: WeatherType): string | null {
   switch (weatherType) {
     case WeatherType.SUNNY:
@@ -249,7 +257,7 @@ export interface WeatherPoolEntry {
 export function getRandomWeatherType(arena: Arena): WeatherType {
   let weatherPool: WeatherPoolEntry[] = [];
   const hasSun = arena.getTimeOfDay() < 2;
-  switch (arena.biomeType) {
+  switch (arena.biomeId) {
     case BiomeId.GRASS:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 8 },
@@ -378,7 +386,7 @@ export function getRandomWeatherType(arena: Arena): WeatherType {
       break;
   }
 
-  if (arena.biomeType === BiomeId.TOWN && timedEventManager.isEventActive()) {
+  if (arena.biomeId === BiomeId.TOWN && timedEventManager.isEventActive()) {
     timedEventManager.getWeather()?.map(w => weatherPool.push(w));
   }
 

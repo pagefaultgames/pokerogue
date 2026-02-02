@@ -32,7 +32,7 @@ describe("Moves - Dive", () => {
   });
 
   it("should make the user semi-invulnerable, then attack over 2 turns", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
@@ -58,7 +58,7 @@ describe("Moves - Dive", () => {
   it("should not allow the user to evade attacks from Pokemon with No Guard", async () => {
     game.override.enemyAbility(AbilityId.NO_GUARD);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
@@ -73,7 +73,7 @@ describe("Moves - Dive", () => {
   it("should expend PP when the attack phase is cancelled by sleep", async () => {
     game.override.enemyAbility(AbilityId.NO_GUARD).enemyMoveset(MoveId.SPORE);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const playerPokemon = game.field.getPlayerPokemon();
 
@@ -90,7 +90,7 @@ describe("Moves - Dive", () => {
   it("should trigger on-contact post-defend ability effects", async () => {
     game.override.enemyAbility(AbilityId.ROUGH_SKIN).enemyMoveset(MoveId.SPLASH);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
@@ -107,7 +107,7 @@ describe("Moves - Dive", () => {
   it("should cancel attack after Harsh Sunlight is set", async () => {
     game.override.enemyMoveset(MoveId.SPLASH);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
