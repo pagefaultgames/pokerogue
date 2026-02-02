@@ -275,7 +275,7 @@ describe("Daily Mode", () => {
         vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue('{"biome":40,"seed":"test"}');
         await game.dailyMode.startBattle();
 
-        expect(game.scene.arena.biomeType).toBe(BiomeId.ISLAND);
+        expect(game.scene.arena.biomeId).toBe(BiomeId.ISLAND);
       });
 
       it("should support custom starting money", async () => {
