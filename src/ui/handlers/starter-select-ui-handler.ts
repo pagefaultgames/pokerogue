@@ -32,7 +32,6 @@ import type { MoveId } from "#enums/move-id";
 import type { Nature } from "#enums/nature";
 import { Passive as PassiveAttr } from "#enums/passive";
 import { PokemonType } from "#enums/pokemon-type";
-import type { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { UiTheme } from "#enums/ui-theme";
@@ -1480,7 +1479,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   /**
    * Update the preferences for shiny and variant for a given speciesId.
    */
-  setShinyAndVariant(speciesId: SpeciesId, shiny: boolean, variant: number) {
+  setShinyAndVariant(speciesId: StarterSpeciesId, shiny: boolean, variant: number) {
     (this.starterPreferences[speciesId] ??= {}).shiny = shiny;
     (this.originalStarterPreferences[speciesId] ??= {}).shiny = shiny;
     (this.starterPreferences[speciesId] ??= {}).variant = variant;
@@ -1490,7 +1489,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   /**
    * Update the preferences for the form index for a given speciesId.
    */
-  setNewFormIndex(speciesId: SpeciesId, formIndex: number) {
+  setNewFormIndex(speciesId: StarterSpeciesId, formIndex: number) {
     (this.starterPreferences[speciesId] ??= {}).formIndex = formIndex;
     (this.originalStarterPreferences[speciesId] ??= {}).formIndex = formIndex;
     // Updating tera type for new form
@@ -1507,7 +1506,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   /**
    * Update the preferences for the gender for a given speciesId.
    */
-  setNewGender(speciesId: SpeciesId, female: boolean) {
+  setNewGender(speciesId: StarterSpeciesId, female: boolean) {
     (this.starterPreferences[speciesId] ??= {}).female = female;
     (this.originalStarterPreferences[speciesId] ??= {}).female = female;
     // Updating form for gendered forms
@@ -1522,7 +1521,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   /**
    * Update the preferences for the ability index for a given speciesId.
    */
-  setNewAbilityIndex(speciesId: SpeciesId, abilityIndex: number) {
+  setNewAbilityIndex(speciesId: StarterSpeciesId, abilityIndex: number) {
     (this.starterPreferences[speciesId] ??= {}).abilityIndex = abilityIndex;
     (this.originalStarterPreferences[speciesId] ??= {}).abilityIndex = abilityIndex;
   }
@@ -1530,7 +1529,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   /**
    * Update the preferences for the nature for a given speciesId.
    */
-  setNewNature(speciesId: SpeciesId, nature: number) {
+  setNewNature(speciesId: StarterSpeciesId, nature: number) {
     (this.starterPreferences[speciesId] ??= {}).nature = nature;
     (this.originalStarterPreferences[speciesId] ??= {}).nature = nature;
   }
@@ -1538,7 +1537,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   /**
    * Update the preferences for the tera type for a given speciesId.
    */
-  setNewTeraType(speciesId: SpeciesId, teraType: PokemonType) {
+  setNewTeraType(speciesId: StarterSpeciesId, teraType: PokemonType) {
     (this.starterPreferences[speciesId] ??= {}).tera = teraType;
     (this.originalStarterPreferences[speciesId] ??= {}).tera = teraType;
   }
@@ -2416,7 +2415,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const starterDataEntry = globalScene.gameData.starterData[starterId];
     // species has different forms
     if (pokemonFormLevelMoves.hasOwnProperty(starterId)) {
-      // Species has forms with different movesets
+      // species has forms with different movesets
       if (!starterDataEntry.moveset || Array.isArray(starterDataEntry.moveset)) {
         starterDataEntry.moveset = {};
       }
