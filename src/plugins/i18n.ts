@@ -156,7 +156,7 @@ const nsEn: string[] = [];
  * Q: How do I add a new language?
  * A: To add a new language, create a new folder in the locales directory with the language code.
  *    Each language folder should contain a file for each namespace (ex. menu.ts) with the translations.
- *    Don't forget to declare new language in `supportedLngs` i18next initializer
+ *    When translations are verified, add it to `supported-languages.json` inside the locales directory.
  *
  * Q: How do I add a new namespace?
  * A: To add a new namespace, create a new file .json in each language folder with the translations.
@@ -169,31 +169,8 @@ const nsEn: string[] = [];
  * A: In src/system/settings.ts, add a new case to the Setting.Language switch statement.
  */
 
-// supportedLanguages
-export const supportedLngs = [
-  "en",
-  "es-ES",
-  "es-419",
-  "de",
-  "fr",
-  "it",
-  "pt-BR",
-  "ko",
-  "ja",
-  "zh-Hans",
-  "zh-Hant",
-  "ca",
-  "tr",
-  "ru",
-  "uk",
-  "id",
-  "hi",
-  "da",
-  "nb-NO",
-  "sv",
-  "ro",
-  "tl",
-];
+// assigned during post-processing in #app/plugins/vite/namespaces-i18n-plugin.ts
+export const supportedLngs: string[] = [];
 
 await i18next
   .use(HttpBackend)
@@ -231,6 +208,7 @@ await i18next
         escapeValue: false,
       },
       postProcess: ["korean-postposition"],
+      preload: supportedLngs, // preload languages views for languageEntries (labels) in settings-language.ts
     },
     async () => {
       i18next.services.formatter?.add("money", i18nMoneyFormatter);

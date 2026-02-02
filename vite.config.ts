@@ -22,6 +22,7 @@ export const sharedConfig: UserConfigFnPromise = async ({ mode }) =>
             true,
           ),
           (await import("./src/plugins/vite/namespaces-i18n-plugin")).LocaleNamespace(),
+          (await import("./src/plugins/vite/namespaces-i18n-plugin")).SupportedLangsPlugin(),
         ],
     clearScreen: false,
     appType: "mpa",

@@ -101,3 +101,69 @@ export function LocaleNamespace(): VitePlugin {
     },
   };
 }
+
+/**
+ * inspired by LocaleNamespace VitePlugin by Madmadness65
+ * @returns SupportedLanguagesPlugin
+ */
+export function SupportedLangsPlugin(): VitePlugin {
+  const relativePath = "./locales/supported-languages.json";
+  const absolutePath = path.resolve(process.cwd(), relativePath);
+  let supportedLanguages = getSupportedLngs(absolutePath);
+
+  return {
+    name: "supported-languages-i18next",
+    buildStart() {
+      if (process.env.NODE_ENV === "production") {
+        console.log("Collecting supportedLanguages for i18next");
+      }
+    },
+    configureServer(server) {
+      const restartHandler = async (file: string, action: string) => {
+        /*
+         * If the JSON file is created/modified..
+         * refresh the page to update the supportedLngs of i18next
+         */
+        if (isFileInsideDir(file, absolutePath) && file.endsWith(".json")) {
+          const timestamp = new Date().toLocaleTimeString();
+          const filePath = relativePath.replace(/^\.\/(?=.*)/, "") + normalizePath(file.replace(absolutePath, ""));
+          console.info(
+            `${timestamp} \x1b[36m\x1b[1m[supported-languages-ns-plugin]\x1b[0m reloading page, \x1b[32m${filePath}\x1b[0m ${action}...`,
+          );
+
+          supportedLanguages = getSupportedLngs(absolutePath);
+          server.moduleGraph.invalidateAll();
+          server.ws.send({
+            type: "full-reload",
+          });
+        }
+      };
+
+      server.watcher
+        .on("change", file => restartHandler(file, "updated"))
+        .on("add", file => restartHandler(file, "added"))
+        .on("unlink", file => restartHandler(file, "removed"));
+    },
+    transform: {
+      handler(code, id) {
+        if (id.endsWith("i18n.ts")) {
+          return code.replace(
+            "const supportedLngs = [];",
+            `const supportedLngs = ${JSON.stringify(supportedLanguages)};`,
+          );
+        }
+        return code;
+      },
+    },
+  };
+}
+
+/**
+ *
+ * @returns the array of the supportedLanguages by i18next
+ */
+function getSupportedLngs(path: string): string[] {
+  const file = fs.readFileSync(path, "utf-8");
+  const data = JSON.parse(file);
+  return data?.supportedLngs;
+}
