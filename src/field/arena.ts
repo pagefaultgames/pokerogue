@@ -557,14 +557,23 @@ export class Arena {
     side: ArenaTagSide,
     ...args: Parameters<T["apply"]>
   ): void {
-    let tags =
-      typeof tagType === "string"
-        ? this.tags.filter(t => t.tagType === tagType)
-        : this.tags.filter(t => t instanceof tagType);
-    if (side !== ArenaTagSide.BOTH) {
-      tags = tags.filter(t => t.side === side);
+    /** A lambda function to filter out incompatible tag types. */
+    const sameTagType: (tag: ArenaTag) => tag is T =
+      typeof tagType === "string" // formatting
+        ? (t): t is T => t.tagType === tagType
+        : (t): t is T => t instanceof tagType;
+
+    for (const tag of this.tags) {
+      if (!sameTagType(tag)) {
+        continue;
+      }
+
+      if (side !== ArenaTagSide.BOTH && tag.side !== ArenaTagSide.BOTH && side !== tag.side) {
+        continue;
+      }
+
+      tag.apply(...args);
     }
-    tags.forEach(t => t.apply(...args));
   }
 
   /**
