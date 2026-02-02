@@ -423,7 +423,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
       this.friendship = species.baseFriendship;
       this.metLevel = level;
-      this.metBiome = globalScene.currentBattle ? globalScene.arena.biomeType : -1;
+      this.metBiome = globalScene.currentBattle ? globalScene.arena.biomeId : -1;
       this.metSpecies = species.speciesId;
       this.metWave = globalScene.currentBattle ? globalScene.currentBattle.waveIndex : -1;
       this.pokerus = false;
@@ -497,6 +497,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     if (prependFormName) {
       return this.name;
+    }
+
+    if (this.isFusion()) {
+      return getFusedSpeciesName(this.species.getName(), this.fusionSpecies!.getName());
     }
 
     return this.species.getName();
@@ -2601,7 +2605,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     // Handle strong winds lowering effectiveness of types super effective against pure flying
     if (
       !ignoreStrongWinds
-      && arena.getWeatherType() === WeatherType.STRONG_WINDS
+      && arena.weatherType === WeatherType.STRONG_WINDS
       && !arena.weather?.isEffectSuppressed()
       && this.isOfType(PokemonType.FLYING)
       && getTypeDamageMultiplier(moveType, PokemonType.FLYING) === 2
@@ -2971,7 +2975,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   trySetShiny(thresholdOverride?: number): boolean {
     // Shiny Pokemon should not spawn in the end biome in endless
-    if (globalScene.gameMode.isEndless && globalScene.arena.biomeType === BiomeId.END) {
+    if (globalScene.gameMode.isEndless && globalScene.arena.biomeId === BiomeId.END) {
       return false;
     }
 
@@ -4208,6 +4212,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       : this.summonData.tags.find(t => t.tagType === tagType);
   }
 
+  findTag<T extends BattlerTag>(tagFilter: (tag: BattlerTag) => tag is T): T | undefined;
+  findTag(tagFilter: (tag: BattlerTag) => boolean): BattlerTag | undefined;
   /**
    * Find the first `BattlerTag` matching the specified predicate
    * @remarks
@@ -4402,22 +4408,32 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   // TODO: Move this behavior into a matcher and expunge it from the codebase - we only use it for tests
   public hasRestrictingTag(moveId: MoveId): boolean {
-    return this.getRestrictingTag(moveId) !== null;
+    return this.getRestrictingTag(moveId) != null;
   }
 
   /**
-   * Determine whether the given move is selectable by this Pokemon and the message to display if it is not.
+   * Get the {@linkcode MoveRestrictionBattlerTag} that is restricting this Pokemon's move usage, if one exists.
    *
+   * @param moveId - The ID of the move to check
+   * @returns The first tag on this Pokemon that restricts the move, or `undefined` if the move is not restricted.
    * @remarks
-   * Checks both the move's own restrictions and any restrictions imposed by battler tags like disable or throat chop.
-   *
-   * @param moveId - The `MoveId` to check
-   * @param target - If provided, will also check any `TargetRestriction`s based on the target
-   * @returns A tuple containing a boolean indicating whether the move can be selected, and a string with the reason if it cannot
+   * Does not consider target-based restrictions from Heal Block, which is done by {@linkcode getTargetRestrictingTag}.
    */
-  // TODO: This never has `target` passed to it. Remove it
-  public isMoveSelectable(moveId: MoveId, target?: Pokemon): [selectable: boolean, msg: string] {
-    const restrictedTag = this.getRestrictingTag(moveId, target);
+  private getRestrictingTag(moveId: MoveId): MoveRestrictionBattlerTag | undefined {
+    return this.findTag(t => t instanceof MoveRestrictionBattlerTag && t.isMoveRestricted(moveId, this)) as
+      | MoveRestrictionBattlerTag
+      | undefined;
+  }
+
+  /**
+   * Determine whether the given move is selectable by this Pokemon.
+   * @param moveId - The `MoveId` to check
+   * @returns A tuple containing whether the move can be selected and the text to display if it cannot
+   * @remarks
+   * Checks both the move's own restrictions and any `BattlerTag`-imposed restrictions.
+   */
+  public isMoveSelectable(moveId: MoveId): [selectable: boolean, msg: string] {
+    const restrictedTag = this.getRestrictingTag(moveId);
     if (restrictedTag) {
       return [false, restrictedTag.selectionDeniedText(this, moveId)];
     }
@@ -4455,27 +4471,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       (tag): tag is MoveRestrictionBattlerTag =>
         tag instanceof MoveRestrictionBattlerTag && tag.isMoveTargetRestricted(moveId, this, target),
     );
-  }
-
-  /**
-   * Get the {@link MoveRestrictionBattlerTag} that is restricting this Pokemon's move usage, if one exists.
-   *
-   * @param moveId - The ID of the move to check
-   * @param target - The target of the move; optional, and used when the target is a factor in the move's restricted status
-   * @returns The first tag on this Pokemon that restricts the move, or `null` if the move is not restricted.
-   */
-  // TODO: swap null with undefined
-  getRestrictingTag(moveId: MoveId, target?: Pokemon): MoveRestrictionBattlerTag | null {
-    for (const tag of this.findTags(t => t instanceof MoveRestrictionBattlerTag)) {
-      if (tag.isMoveRestricted(moveId, this)) {
-        return tag;
-      }
-    }
-
-    if (!target) {
-      return null;
-    }
-    return this.getTargetRestrictingTag(moveId, target) ?? null;
   }
 
   /**
@@ -4935,11 +4930,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         isImmune = this.isOfType(PokemonType.ELECTRIC);
         break;
       case StatusEffect.SLEEP:
-        isImmune = this.isGrounded() && globalScene.arena.getTerrainType() === TerrainType.ELECTRIC;
+        isImmune = this.isGrounded() && globalScene.arena.terrainType === TerrainType.ELECTRIC;
         reason = TerrainType.ELECTRIC;
         break;
       case StatusEffect.FREEZE: {
-        const weatherType = globalScene.arena.getWeatherType();
+        const weatherType = globalScene.arena.weatherType;
         isImmune =
           this.isOfType(PokemonType.ICE)
           || (!ignoreField && (weatherType === WeatherType.SUNNY || weatherType === WeatherType.HARSH_SUN));
@@ -7121,7 +7116,7 @@ export class EnemyPokemon extends Pokemon {
     if (party.length < PLAYER_PARTY_MAX_SIZE) {
       this.pokeball = pokeballType;
       this.metLevel = this.level;
-      this.metBiome = globalScene.arena.biomeType;
+      this.metBiome = globalScene.arena.biomeId;
       this.metWave = globalScene.currentBattle.waveIndex;
       this.metSpecies = this.species.speciesId;
       const newPokemon = globalScene.addPlayerPokemon(
