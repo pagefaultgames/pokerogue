@@ -27,7 +27,7 @@ describe("Items - Quick Powder", () => {
   it("QUICK_POWDER activates in battle correctly", async () => {
     game.override.startingHeldItems([{ name: "RARE_SPECIES_STAT_BOOSTER", type: "QUICK_POWDER" }]);
     const consoleSpy = vi.spyOn(console, "log");
-    await game.classicMode.startBattle([SpeciesId.DITTO]);
+    await game.classicMode.startBattle(SpeciesId.DITTO);
 
     const partyMember = game.field.getPlayerPokemon();
 
@@ -78,7 +78,7 @@ describe("Items - Quick Powder", () => {
   });
 
   it("QUICK_POWDER held by DITTO", async () => {
-    await game.classicMode.startBattle([SpeciesId.DITTO]);
+    await game.classicMode.startBattle(SpeciesId.DITTO);
 
     const partyMember = game.field.getPlayerPokemon();
 
@@ -101,7 +101,7 @@ describe("Items - Quick Powder", () => {
   });
 
   it("QUICK_POWDER held by fused DITTO (base)", async () => {
-    await game.classicMode.startBattle([SpeciesId.DITTO, SpeciesId.MAROWAK]);
+    await game.classicMode.startBattle(SpeciesId.DITTO, SpeciesId.MAROWAK);
 
     const [partyMember, ally] = game.scene.getPlayerParty();
 
@@ -133,7 +133,7 @@ describe("Items - Quick Powder", () => {
   });
 
   it("QUICK_POWDER held by fused DITTO (part)", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAROWAK, SpeciesId.DITTO]);
+    await game.classicMode.startBattle(SpeciesId.MAROWAK, SpeciesId.DITTO);
 
     const [partyMember, ally] = game.scene.getPlayerParty();
 
@@ -165,7 +165,7 @@ describe("Items - Quick Powder", () => {
   });
 
   it("QUICK_POWDER not held by DITTO", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAROWAK]);
+    await game.classicMode.startBattle(SpeciesId.MAROWAK);
 
     const partyMember = game.field.getPlayerPokemon();
 

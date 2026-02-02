@@ -14,11 +14,11 @@ import type { StarterMoveset } from "./save-data";
  */
 export interface DailySeedStarter {
   speciesId: SpeciesId;
-  formIndex?: number;
-  variant?: Variant;
-  moveset?: StarterMoveset;
-  nature?: Nature;
-  abilityIndex?: number;
+  formIndex?: number | undefined;
+  variant?: Variant | undefined;
+  moveset?: StarterMoveset | undefined;
+  nature?: Nature | undefined;
+  abilityIndex?: number | undefined;
 }
 
 type DailySeedStarterTuple = TupleOf<3, DailySeedStarter>;
@@ -31,12 +31,12 @@ type DailySeedStarterTuple = TupleOf<3, DailySeedStarter>;
  */
 export interface DailySeedBoss {
   speciesId: SpeciesId;
-  formIndex?: number;
-  variant?: Variant;
-  moveset?: StarterMoveset;
-  nature?: Nature;
-  ability?: AbilityId;
-  passive?: AbilityId;
+  formIndex?: number | undefined;
+  variant?: Variant | undefined;
+  moveset?: StarterMoveset | undefined;
+  nature?: Nature | undefined;
+  ability?: AbilityId | undefined;
+  passive?: AbilityId | undefined;
 }
 
 /**
@@ -59,7 +59,7 @@ export interface CustomDailyRunConfig {
  * The daily run config as it is serialized in the save data.
  */
 export interface SerializedDailyRunConfig {
-  boss?: DailySeedBoss;
-  luck?: number;
+  boss?: DailySeedBoss | undefined;
+  luck?: number | undefined;
   seed: string;
 }

@@ -31,7 +31,7 @@ describe("Moves - Chilly Reception", () => {
   });
 
   it("should display message before use, switch the user out and change the weather to snow", async () => {
-    await game.classicMode.startBattle([SpeciesId.SLOWKING, SpeciesId.MEOWTH]);
+    await game.classicMode.startBattle(SpeciesId.SLOWKING, SpeciesId.MEOWTH);
 
     const [slowking, meowth] = game.scene.getPlayerParty();
 
@@ -49,7 +49,7 @@ describe("Moves - Chilly Reception", () => {
   });
 
   it("should still change weather if user can't switch out", async () => {
-    await game.classicMode.startBattle([SpeciesId.SLOWKING]);
+    await game.classicMode.startBattle(SpeciesId.SLOWKING);
 
     game.move.select(MoveId.CHILLY_RECEPTION);
     await game.toEndOfTurn();
@@ -60,7 +60,7 @@ describe("Moves - Chilly Reception", () => {
   });
 
   it("should still switch out even if weather cannot be changed", async () => {
-    await game.classicMode.startBattle([SpeciesId.SLOWKING, SpeciesId.MEOWTH]);
+    await game.classicMode.startBattle(SpeciesId.SLOWKING, SpeciesId.MEOWTH);
 
     expect(game.scene.arena.weather?.weatherType).not.toBe(WeatherType.SNOW);
 
@@ -87,7 +87,7 @@ describe("Moves - Chilly Reception", () => {
 
   // Source: https://replay.pokemonshowdown.com/gen9ou-2367532550
   it("should fail (while still displaying message) if neither weather change nor switch out succeeds", async () => {
-    await game.classicMode.startBattle([SpeciesId.SLOWKING]);
+    await game.classicMode.startBattle(SpeciesId.SLOWKING);
 
     expect(game.scene.arena.weather?.weatherType).not.toBe(WeatherType.SNOW);
 
@@ -113,7 +113,7 @@ describe("Moves - Chilly Reception", () => {
 
   it("should succeed without message if called indirectly", async () => {
     vi.spyOn(RandomMoveAttr.prototype, "getMoveOverride").mockReturnValue(MoveId.CHILLY_RECEPTION);
-    await game.classicMode.startBattle([SpeciesId.SLOWKING, SpeciesId.MEOWTH]);
+    await game.classicMode.startBattle(SpeciesId.SLOWKING, SpeciesId.MEOWTH);
 
     const [slowking, meowth] = game.scene.getPlayerParty();
 
@@ -133,7 +133,7 @@ describe("Moves - Chilly Reception", () => {
   // Bugcheck test for enemy AI bug
   it("check case - enemy not selecting chilly reception doesn't change weather", async () => {
     game.override.enemyMoveset([MoveId.CHILLY_RECEPTION, MoveId.TACKLE]);
-    await game.classicMode.startBattle([SpeciesId.SLOWKING, SpeciesId.MEOWTH]);
+    await game.classicMode.startBattle(SpeciesId.SLOWKING, SpeciesId.MEOWTH);
 
     game.move.select(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.TACKLE);

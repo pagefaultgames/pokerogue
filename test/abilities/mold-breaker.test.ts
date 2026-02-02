@@ -27,7 +27,7 @@ describe("Abilities - Mold Breaker", () => {
   });
 
   it("should turn off the ignore abilities arena variable after the user's move", async () => {
-    await game.classicMode.startBattle([SpeciesId.PINSIR]);
+    await game.classicMode.startBattle(SpeciesId.PINSIR);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();

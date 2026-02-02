@@ -44,7 +44,7 @@ describe("Moves - Recoil Moves", () => {
     { moveName: "Wild Charge", moveId: MoveId.WILD_CHARGE },
     { moveName: "Wood Hammer", moveId: MoveId.WOOD_HAMMER },
   ])("$moveName causes recoil damage when hitting a substitute", async ({ moveId }) => {
-    await game.classicMode.startBattle([SpeciesId.TOGEPI]);
+    await game.classicMode.startBattle(SpeciesId.TOGEPI);
 
     game.move.use(moveId);
     await game.phaseInterceptor.to("MoveEndPhase"); // Pidove substitute
@@ -65,7 +65,7 @@ describe("Moves - Recoil Moves", () => {
   it("causes recoil damage when hitting a substitute in a double battle", async () => {
     game.override.battleStyle("double");
 
-    await game.classicMode.startBattle([SpeciesId.TOGEPI, SpeciesId.TOGEPI]);
+    await game.classicMode.startBattle(SpeciesId.TOGEPI, SpeciesId.TOGEPI);
 
     const [playerPokemon1, playerPokemon2] = game.scene.getPlayerField();
 

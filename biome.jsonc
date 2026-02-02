@@ -27,6 +27,7 @@
       "**",
       "!.github/**/*.*", // workaround due to bug/design limitation, should be `"!.github"`
       ".github/**/*.ts",
+      ".github/**/*.mts",
       "!!assets",
       "!!coverage",
       "!!dist",
@@ -184,7 +185,51 @@
         },
         "useGroupedAccessorPairs": "error",
         "useObjectSpread": "error",
-        "useNumericSeparators": "off" // TODO: Consider enabling?
+        "useNumericSeparators": "off", // TODO: Consider enabling?
+        "useNamingConvention": {
+          "level": "error",
+          "options": {
+            "requireAscii": true,
+            "strictCase": false,
+            // evaluated in order from top to bottom
+            "conventions": [
+              {
+                "selector": {
+                  "kind": "interface"
+                },
+                "formats": ["PascalCase"]
+              },
+              {
+                "selector": {
+                  "kind": "typeAlias"
+                },
+                "formats": ["PascalCase"]
+              },
+              {
+                "selector": {
+                  "kind": "class"
+                },
+                "formats": ["PascalCase"]
+              },
+              {
+                "selector": {
+                  "kind": "enum"
+                },
+                "formats": ["PascalCase"]
+              },
+              {
+                "selector": {
+                  "kind": "enumMember"
+                },
+                "formats": ["CONSTANT_CASE"]
+              },
+              // having this section last disables the built-in conventions
+              {
+                "match": ".*"
+              }
+            ]
+          }
+        }
       },
       "suspicious": {
         "noExtraNonNullAssertion": "error",

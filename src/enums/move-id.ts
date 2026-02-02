@@ -1,3 +1,4 @@
+// biome-ignore-all lint/style/useNamingConvention: Z moves are weird
 export enum MoveId {
   /** A marker for "no move", typically used to signify status or ability-based interruptions. */
   NONE,

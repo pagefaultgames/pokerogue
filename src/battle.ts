@@ -6,7 +6,7 @@ import { BattleType } from "#enums/battle-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { BiomeId } from "#enums/biome-id";
 import type { Command } from "#enums/command";
-import type { MoveId } from "#enums/move-id";
+import { MoveId } from "#enums/move-id";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { PokeballType } from "#enums/pokeball";
@@ -38,7 +38,7 @@ import i18next from "i18next";
 
 export interface TurnCommand {
   command: Command;
-  cursor?: number;
+  cursor?: number | undefined;
   move?: TurnMove;
   targets?: BattlerIndex[];
   skip?: boolean;
@@ -73,7 +73,10 @@ export class Battle {
   public battleScore = 0;
   public postBattleLoot: PokemonHeldItemModifier[] = [];
   public escapeAttempts = 0;
-  public lastMove: MoveId;
+  /**
+   * A tracker of the last {@linkcode MoveId} successfully used this battle.
+   */
+  public lastMove: MoveId = MoveId.NONE;
   public battleSeed: string = randomString(16, true);
   private battleSeedState: string | null = null;
   public moneyScattered = 0;
@@ -90,9 +93,9 @@ export class Battle {
   public playerFaintsHistory: FaintLogEntry[] = [];
   public enemyFaintsHistory: FaintLogEntry[] = [];
 
-  public mysteryEncounterType?: MysteryEncounterType;
+  public mysteryEncounterType?: MysteryEncounterType | undefined;
   /** If the current battle is a Mystery Encounter, this will always be defined */
-  public mysteryEncounter?: MysteryEncounter;
+  public mysteryEncounter?: MysteryEncounter | undefined;
 
   /**
    * Tracker for whether the last run attempt failed.
