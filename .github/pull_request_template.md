@@ -29,7 +29,7 @@ If you need to provide additional details, you can do so below the cutoff.
 PRs with no user-facing changes should leave this blank or write "N/A" to be omitted from auto-generated changelogs.
 -->
 
-## <!-- Changelog cutoff (DO NOT REMOVE) -->
+<!-- ## Changelog cutoff (DO NOT REMOVE/EDIT) -->
 
 ## Why am I making these changes?
 <!--

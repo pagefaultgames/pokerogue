@@ -86,6 +86,9 @@ function sanitizeBody(body) {
   // remove any comments (<!-- -->)
   let result = body.replace(/<!--[\s\S]*?-->/g, "");
 
+  // remove `<!--` of the changelog cutoff (if present)
+  result = result.replace(/<!--\s*$/, "");
+
   // remove section header
   result = result.replace(CONFIG.CHANGELOG_SECTION, "");
 
