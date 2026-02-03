@@ -244,6 +244,7 @@ export class BattleScene extends SceneBase {
   public disableMenu = false;
 
   public gameData: GameData;
+  /** The numeric slot number of the current save slot being played. */
   public sessionSlotId: number;
 
   /** Manager for the phases active in the battle scene */
