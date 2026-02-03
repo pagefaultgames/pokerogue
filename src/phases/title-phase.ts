@@ -200,6 +200,7 @@ export class TitlePhase extends Phase {
     // TODO: Do we need to `await` this?
     globalScene.ui.setMode(UiMode.MESSAGE);
     globalScene.ui.resetModeChain();
+    globalScene.sessionSlotId = slotId;
     try {
       const success = await globalScene.gameData.loadSession(slotId);
       if (success) {
