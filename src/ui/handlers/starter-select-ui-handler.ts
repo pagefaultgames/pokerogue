@@ -3101,9 +3101,14 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.updateInstructions();
   }
 
+  /**
+   * Updates all information for the current starter. This should be called every time that preferences are updated.
+   * Among other things, it updates the moveset and updates the party information to match the current preferences.
+   *
+   * @param starterId - the id of the new starter
+   * @param save - whether the new details should be saved to local storage.
+   */
   setStarterDetails(starterId: StarterSpeciesId, save = true): void {
-    // Here we pass some options to override everything else
-
     const species = getPokemonSpecies(starterId);
     const starterDetails = getStarterDetailsFromPreferences(starterId, this.starterPreferences[starterId]);
     const { shiny, variant, female, formIndex, abilityIndex, natureIndex, teraType } = starterDetails;
@@ -3115,8 +3120,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.updatePartyIcon(species, partyIndex);
     }
 
+    // If the starter is in the party, update the information in the party
     const starterIndex = this.starterSpecies.indexOf(starterId);
-
     if (starterIndex > -1) {
       const starter = this.starters[starterIndex];
       starter.shiny = shiny;
@@ -3139,14 +3144,19 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       currentContainer.checkIconId(female, formIndex, shiny, variant);
     }
 
+    // Update which options can be cycled
     this.updateCanCycle(starterId, formIndex);
 
+    // Update the moveset
     this.updateStarterMoves(starterId, formIndex);
 
+    // If the starter is in the party, update its moveset
     this.updateSelectedStarterMoveset(starterId);
 
+    //TODO: What does this do?
     this.tryUpdateValue();
 
+    // Update the buttons
     this.updateInstructions();
 
     if (save) {
