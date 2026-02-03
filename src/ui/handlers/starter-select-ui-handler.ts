@@ -394,7 +394,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       { length: 9 },
       (_, i) => new DropDownOption(i + 1, new DropDownLabel(i18next.t(`starterSelectUiHandler:gen${i + 1}`))),
     );
-    const genDropDown: DropDown = new DropDown(0, 0, genOptions, this.updateStarters, DropDownType.HYBRID);
+    const genDropDown: DropDown = new DropDown(0, 0, genOptions, () => this.updateStarters(), DropDownType.HYBRID);
     filterBar.addFilter(DropDownColumn.GEN, i18next.t("filterBar:genFilter"), genDropDown);
 
     // type filter
@@ -412,7 +412,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     filterBar.addFilter(
       DropDownColumn.TYPES,
       i18next.t("filterBar:typeFilter"),
-      new DropDown(0, 0, typeOptions, this.updateStarters, DropDownType.HYBRID, 0.5),
+      new DropDown(0, 0, typeOptions, () => this.updateStarters(), DropDownType.HYBRID, 0.5),
     );
 
     // caught filter
@@ -446,7 +446,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     filterBar.addFilter(
       DropDownColumn.CAUGHT,
       i18next.t("filterBar:caughtFilter"),
-      new DropDown(0, 0, caughtOptions, this.updateStarters, DropDownType.HYBRID),
+      new DropDown(0, 0, caughtOptions, () => this.updateStarters(), DropDownType.HYBRID),
     );
 
     // unlocks filter
@@ -474,7 +474,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     filterBar.addFilter(
       DropDownColumn.UNLOCKS,
       i18next.t("filterBar:unlocksFilter"),
-      new DropDown(0, 0, unlocksOptions, this.updateStarters, DropDownType.RADIAL),
+      new DropDown(0, 0, unlocksOptions, () => this.updateStarters(), DropDownType.RADIAL),
     );
 
     // misc filter
@@ -511,7 +511,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     filterBar.addFilter(
       DropDownColumn.MISC,
       i18next.t("filterBar:miscFilter"),
-      new DropDown(0, 0, miscOptions, this.updateStarters, DropDownType.RADIAL),
+      new DropDown(0, 0, miscOptions, () => this.updateStarters(), DropDownType.RADIAL),
     );
 
     // sort filter
@@ -530,7 +530,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     filterBar.addFilter(
       DropDownColumn.SORT,
       i18next.t("filterBar:sortFilter"),
-      new DropDown(0, 0, sortOptions, this.updateStarters, DropDownType.SINGLE),
+      new DropDown(0, 0, sortOptions, () => this.updateStarters(), DropDownType.SINGLE),
     );
 
     // Offset the generation filter dropdown to avoid covering the filtered pokemon
@@ -1624,7 +1624,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           if (this.scrollCursor > 0 && currentRow - this.scrollCursor === 0) {
             this.scrollCursor--;
             this.updateScroll();
-            success = this.setCursor(this.cursor);
+            this.setCursor(this.cursor);
+            success = true;
           } else {
             success = this.setCursor(this.cursor - 9);
           }
@@ -1641,7 +1642,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             // last row of visible starters
             this.scrollCursor++;
             this.updateScroll();
-            success = this.setCursor(this.cursor);
+            this.setCursor(this.cursor);
+            success = true;
           } else {
             success = this.setCursor(this.cursor + 9);
           }
@@ -2599,12 +2601,23 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
   }
 
-  updateStarters = () => {
+  updateStarters(): void {
     this.scrollCursor = 0;
 
     this.filterBar.updateFilterLabels();
 
-    // filter
+    this.filterStarters();
+
+    this.starterSelectScrollBar.setTotalRows(Math.max(Math.ceil(this.filteredStarterIds.length / 9), 1));
+    this.starterSelectScrollBar.setScrollCursor(0);
+
+    this.sortFilteredStarters();
+
+    this.updateScroll();
+    this.tryUpdateValue();
+  }
+
+  filterStarters(): void {
     this.filteredStarterIds = this.allStarterSpeciesIds.filter(starterId => {
       // Exclude starters which are not valid for the challenge
       if (globalScene.gameMode.modeId === GameModes.CHALLENGE && !isStarterValidForChallenge(starterId)) {
@@ -2786,11 +2799,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         return true;
       }
     });
+  }
 
-    this.starterSelectScrollBar.setTotalRows(Math.max(Math.ceil(this.filteredStarterIds.length / 9), 1));
-    this.starterSelectScrollBar.setScrollCursor(0);
-
-    // sort
+  sortFilteredStarters(): void {
     const sort = this.filterBar.getVals(DropDownColumn.SORT)[0];
     this.filteredStarterIds.sort((a, b) => {
       switch (sort.val) {
@@ -2826,12 +2837,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       }
       return 0;
     });
+  }
 
-    this.updateScroll();
-    this.tryUpdateValue();
-  };
-
-  updateScroll = () => {
+  updateScroll(): void {
     const onScreenFirstIndex = this.scrollCursor * COLUMNS;
 
     this.starterSelectScrollBar.setScrollCursor(this.scrollCursor);
@@ -2926,7 +2934,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         }
       }
     });
-  };
+  }
 
   setCursor(cursor: number): boolean {
     let changed = false;
