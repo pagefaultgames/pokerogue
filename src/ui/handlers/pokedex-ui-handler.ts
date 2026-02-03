@@ -1331,7 +1331,7 @@ export class PokedexUiHandler extends MessageUiHandler {
       const starterId = getStarterSpeciesId(species.speciesId);
 
       const currentDexAttr = this.getCurrentDexProps(species.speciesId);
-      const props = this.getSanitizedProps(this.gameData.getSpeciesDexAttrProps(species, currentDexAttr));
+      const props = this.getSanitizedProps(this.gameData.getDexAttrProps(currentDexAttr));
 
       const data: ContainerData = {
         species,
@@ -1948,7 +1948,7 @@ export class PokedexUiHandler extends MessageUiHandler {
 
     const dexEntry = this.gameData.dexData[species.speciesId];
     const dexAttr = this.getCurrentDexProps(species.speciesId);
-    const props = this.getSanitizedProps(this.gameData.getSpeciesDexAttrProps(this.lastSpecies, dexAttr));
+    const props = this.getSanitizedProps(this.gameData.getDexAttrProps(dexAttr));
 
     this.trayContainers = [];
     const isFormSeen = this.isSeen(species, dexEntry);
@@ -2051,7 +2051,7 @@ export class PokedexUiHandler extends MessageUiHandler {
     if (container) {
       const lastSpeciesIcon = container.icon;
       const dexAttr = this.getCurrentDexProps(container.species.speciesId);
-      const props = this.getSanitizedProps(this.gameData.getSpeciesDexAttrProps(container.species, dexAttr));
+      const props = this.getSanitizedProps(this.gameData.getDexAttrProps(dexAttr));
       this.checkIconId(lastSpeciesIcon, container.species, props.female, props.formIndex, props.shiny, props.variant);
       this.iconAnimHandler.addOrUpdate(lastSpeciesIcon, PokemonIconAnimMode.NONE);
       // Resume the animation for the previously selected species
@@ -2148,9 +2148,7 @@ export class PokedexUiHandler extends MessageUiHandler {
         & species.getFullUnlocksData();
 
       if (caughtAttr) {
-        const props = this.getSanitizedProps(
-          this.gameData.getSpeciesDexAttrProps(species, this.getCurrentDexProps(species.speciesId)),
-        );
+        const props = this.getSanitizedProps(this.gameData.getDexAttrProps(this.getCurrentDexProps(species.speciesId)));
 
         if (shiny === undefined) {
           shiny = props.shiny;

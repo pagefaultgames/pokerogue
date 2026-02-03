@@ -24,7 +24,7 @@ export class StarterContainer extends Phaser.GameObjects.Container {
 
     const species = getPokemonSpecies(speciesId);
     const defaultDexAttr = globalScene.gameData.getSpeciesDefaultDexAttr(species, false, true);
-    const defaultProps = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+    const defaultProps = globalScene.gameData.getDexAttrProps(defaultDexAttr);
     this.setSpecies(speciesId, defaultProps);
 
     // starter passive bg

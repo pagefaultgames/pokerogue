@@ -2337,7 +2337,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     teraType: PokemonType,
   ) {
     const species = getPokemonSpecies(starterId);
-    const props = globalScene.gameData.getSpeciesDexAttrProps(species, dexAttr);
+    const props = globalScene.gameData.getDexAttrProps(dexAttr);
     this.starterIcons[this.starterSpecies.length].setTexture(
       species.getIconAtlasKey(props.formIndex, props.shiny, props.variant),
     );
@@ -2408,10 +2408,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       starterMoveset[existingMoveIndex] = previousMove;
     }
     const updatedMoveset = starterMoveset.slice() as StarterMoveset;
-    const formIndex = globalScene.gameData.getSpeciesDexAttrProps(
-      getPokemonSpecies(this.lastStarterId),
-      this.dexAttrCursor,
-    ).formIndex;
+    const formIndex = globalScene.gameData.getDexAttrProps(this.dexAttrCursor).formIndex;
     const starterDataEntry = globalScene.gameData.starterData[starterId];
     // species has different forms
     if (pokemonFormLevelMoves.hasOwnProperty(starterId)) {
@@ -3109,7 +3106,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSummary.setStarterDetails(starterId, speciesDetails);
 
     // Storing old cursor values...
-    const oldProps = globalScene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor);
+    const oldProps = globalScene.gameData.getDexAttrProps(this.dexAttrCursor);
     const oldAbilityIndex =
       this.abilityCursor > -1 ? this.abilityCursor : globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
     let oldNatureIndex = -1;
@@ -3152,7 +3149,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     if (starterIndex > -1) {
       const starter = this.starters[starterIndex];
-      const props = globalScene.gameData.getSpeciesDexAttrProps(species, this.dexAttrCursor);
+      const props = globalScene.gameData.getDexAttrProps(this.dexAttrCursor);
       starter.shiny = props.shiny;
       starter.variant = props.variant;
       starter.female = props.female;

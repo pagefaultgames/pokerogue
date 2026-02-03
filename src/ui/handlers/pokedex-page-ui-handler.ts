@@ -1850,10 +1850,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
             break;
         }
       } else {
-        const props = globalScene.gameData.getSpeciesDexAttrProps(
-          this.species,
-          this.getCurrentDexProps(this.species.speciesId),
-        );
+        const props = globalScene.gameData.getDexAttrProps(this.getCurrentDexProps(this.species.speciesId));
         switch (button) {
           case Button.CYCLE_SHINY:
             if (this.canCycleShiny) {
@@ -2379,7 +2376,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       if (this.isCaught()) {
         const defaultDexAttr = this.getCurrentDexProps(species.speciesId);
         // Set default attributes if for some reason starterPreferences does not exist or attributes missing
-        const props: StarterPreferences = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+        const props: StarterPreferences = globalScene.gameData.getDexAttrProps(defaultDexAttr);
         if (starterPreferences?.variant && !Number.isNaN(starterPreferences.variant) && props.shiny) {
           props.variant = starterPreferences.variant as Variant;
         }
@@ -2409,7 +2406,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonCategoryText.setVisible(false);
 
         const defaultDexAttr = globalScene.gameData.getSpeciesDefaultDexAttr(species, true, true);
-        const props = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+        const props = globalScene.gameData.getDexAttrProps(defaultDexAttr);
 
         this.setSpeciesDetails(species, {
           shiny: props.shiny,
@@ -2652,7 +2649,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonHatchedCountText.setText(`${this.speciesStarterDexEntry?.hatchedCount}`);
 
         const defaultDexAttr = this.getCurrentDexProps(species.speciesId);
-        const defaultProps = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+        const defaultProps = globalScene.gameData.getDexAttrProps(defaultDexAttr);
 
         const variant = defaultProps.variant;
         for (let v = 0; v < 3; v++) {
