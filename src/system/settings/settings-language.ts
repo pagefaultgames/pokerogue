@@ -39,8 +39,6 @@ const changeLocaleHandler = (locale: string): boolean => {
 const languageEntries: Lang[] = [];
 for (const lang of supportedLngs) {
   const t = i18next.getFixedT(lang);
-  console.log("lang: %s", lang);
-  console.log("languageLabel: %s", t("settings:languageLabel"));
   languageEntries.push({
     label: t("settings:languageLabel"),
     handler: () => changeLocaleHandler(lang),
