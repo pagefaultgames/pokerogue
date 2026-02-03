@@ -37,7 +37,7 @@ export class ArenaData {
     this.playerTerasUsed = source.playerTerasUsed ?? 0;
 
     if (source instanceof Arena) {
-      this.biome = source.biomeType;
+      this.biome = source.biomeId;
       this.weather = source.weather;
       this.terrain = source.terrain;
       // The assertion here is ok - we ensure that all tags are inside the `posTagConstructorMap` map,

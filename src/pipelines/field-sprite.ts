@@ -61,7 +61,7 @@ export class FieldSpritePipeline extends Phaser.Renderer.WebGL.Pipelines.MultiPi
       )
       .set3fv(
         "terrainColor",
-        getTerrainColor(globalScene.arena.getTerrainType()).map(c => c / 255),
+        getTerrainColor(globalScene.arena.terrainType).map(c => c / 255),
       )
       .set1f("terrainColorRatio", terrainColorRatio);
   }
