@@ -1074,7 +1074,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
   showRandomCursor() {
     this.randomCursorObj.setVisible(true);
-    this.setNoSpecies();
+    this.setNoStarter();
   }
 
   toBoxCursor(cursor: number) {
@@ -1225,7 +1225,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           // TODO: how can we get here if start button can't be selected? this appears to be redundant
           this.startCursorObj.setVisible(false);
           this.showRandomCursor();
-          this.setNoSpecies();
+          this.setNoStarter();
         }
         success = true;
         break;
@@ -1569,7 +1569,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           this.moveStarterIconsCursor(this.starterIconsCursorIndex);
         } else {
           this.starterIconsCursorObj.setVisible(false);
-          this.setNoSpecies();
+          this.setNoStarter();
           this.startCursorObj.setVisible(true);
         }
         success = true;
@@ -1679,7 +1679,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           } else {
             // at least one pokemon in team > from the bottom 2 rows, go to start run button
             this.cursorObj.setVisible(false);
-            this.setNoSpecies();
+            this.setNoStarter();
             this.startCursorObj.setVisible(true);
           }
           success = true;
@@ -1706,7 +1706,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           } else {
             // at least one pokemon in team > from the bottom 2 rows, go to start run button
             this.cursorObj.setVisible(false);
-            this.setNoSpecies();
+            this.setNoStarter();
             this.startCursorObj.setVisible(true);
           }
           success = true;
@@ -2958,7 +2958,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         this.setStarter(species.speciesId as StarterSpeciesId);
         this.updateInstructions();
       } else {
-        this.setNoSpecies();
+        this.setNoStarter();
       }
     }
 
@@ -2973,7 +2973,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.filterMode = filterMode;
       this.setCursor(filterMode ? this.filterBarCursor : this.cursor);
       if (filterMode) {
-        this.setNoSpecies(); //TODO: this probably needs to go somewhere else
+        this.setNoStarter(); //TODO: this probably needs to go somewhere else
         this.updateInstructions();
       }
 
@@ -2994,11 +2994,15 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.setStarter(this.starterSpecies[index]);
     } else {
       this.starterIconsCursorObj.setVisible(false);
-      this.setNoSpecies();
+      this.setNoStarter();
     }
   }
 
-  setNoSpecies() {
+  /**
+   * Remove the current starter, resetting all cursors and stopping the icon animation.
+   */
+  //TODO: should call `resetStarterDetails` instead
+  setNoStarter() {
     this.speciesStarterDexEntry = null;
     this.dexAttrCursor = 0n;
     this.abilityCursor = 0;
@@ -3009,31 +3013,33 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.stopIconAnimation(this.oldCursor);
     }
 
-    this.starterSummary.setNoSpecies();
+    this.starterSummary.setNoStarter();
   }
 
+  /**
+   * Changes the current starter. This updates all cursors, stops the animation of the previous starter
+   * and starts the animation of the new starter, calls other methods which set details for the starter.
+   * If setting no starter, call {@linkcode this.setNoStarter} instead.
+   *
+   * @param starterId - the id of the new starter
+   */
   setStarter(starterId: StarterSpeciesId) {
     const species = getPokemonSpecies(starterId);
     const { dexEntry } = getStarterData(starterId);
-    // This stuff is probably redundant.
+
     this.speciesStarterDexEntry = dexEntry;
     this.dexAttrCursor = getDexAttrFromPreferences(starterId, this.starterPreferences[starterId]);
-    this.abilityCursor = globalScene.gameData.getStarterDefaultAbilityIndex(starterId);
-    this.natureCursor = globalScene.gameData.getSpeciesDefaultNature(starterId);
-    this.teraCursor = species.type1;
 
-    // Then, we override with preferences, if they exist
+    // Set the cursors, using preferences if possible, default options otherwise
     const starterPreferences = this.starterPreferences[starterId];
-    if (starterPreferences?.nature) {
-      this.natureCursor = starterPreferences.nature;
-    }
+    this.natureCursor = starterPreferences?.nature ?? globalScene.gameData.getSpeciesDefaultNature(starterId);
+    this.abilityCursor = globalScene.gameData.getStarterDefaultAbilityIndex(starterId);
     if (starterPreferences?.abilityIndex && !Number.isNaN(starterPreferences.abilityIndex)) {
       this.abilityCursor = starterPreferences.abilityIndex;
     }
-    if (starterPreferences?.tera) {
-      this.teraCursor = starterPreferences.tera;
-    }
+    this.teraCursor = starterPreferences?.tera ?? species.type1;
 
+    // Stop animation for the previously selected starter
     if (getPokemonSpecies(this.lastStarterId)) {
       this.stopIconAnimation(this.oldCursor);
     }
@@ -3043,22 +3049,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSummary.setStarter(starterId, starterPreferences ?? {});
 
     if (dexEntry?.caughtAttr) {
-      this.startIconAnimation(this.cursor);
-
-      const props = this.getStarterDexAttrPropsFromPreferences(starterId);
-
       this.setStarterDetails(starterId, false);
 
-      if (props.formIndex != null) {
-        // If switching forms while the pokemon is in the team, update its moveset
-        this.updateSelectedStarterMoveset(starterId);
-      }
+      this.startIconAnimation(this.cursor);
 
       if (this.pokerusSpecies.includes(starterId)) {
         handleTutorial(Tutorial.POKERUS);
       }
-    } else if (dexEntry?.seenAttr) {
-      this.resetStarterDetails();
     } else {
       this.resetStarterDetails();
     }
@@ -3107,43 +3104,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     const species = getPokemonSpecies(starterId);
     const starterDetails = getStarterDetailsFromPreferences(starterId, this.starterPreferences[starterId]);
-    let { shiny, formIndex, female, variant, abilityIndex, natureIndex, teraType } = starterDetails;
+    let { shiny, formIndex, female, variant } = starterDetails;
 
     this.starterSummary.setStarterDetails(starterId, starterDetails);
 
-    // Storing old cursor values...
-    const oldProps = globalScene.gameData.getDexAttrProps(this.dexAttrCursor);
-    const oldAbilityIndex =
-      this.abilityCursor > -1 ? this.abilityCursor : globalScene.gameData.getStarterDefaultAbilityIndex(starterId);
-    let oldNatureIndex = -1;
-    oldNatureIndex =
-      this.natureCursor > -1 ? this.natureCursor : globalScene.gameData.getSpeciesDefaultNature(starterId);
-    const oldTeraType = this.teraCursor > -1 ? this.teraCursor : species.type1;
-
-    // Before we reset them to null values
-    this.dexAttrCursor = 0n;
-    this.abilityCursor = -1;
-    this.natureCursor = -1;
-    this.teraCursor = PokemonType.UNKNOWN;
-
-    // Update cursors
-    this.dexAttrCursor |= (shiny !== undefined ? !shiny : !(shiny = oldProps?.shiny))
-      ? DexAttr.NON_SHINY
-      : DexAttr.SHINY;
-    this.dexAttrCursor |= (female !== undefined ? !female : !(female = oldProps?.female))
-      ? DexAttr.MALE
-      : DexAttr.FEMALE;
-    this.dexAttrCursor |= (variant !== undefined ? !variant : !(variant = oldProps?.variant))
-      ? DexAttr.DEFAULT_VARIANT
-      : variant === 1
-        ? DexAttr.VARIANT_2
-        : DexAttr.VARIANT_3;
-    this.dexAttrCursor |= globalScene.gameData.getFormAttr(
-      formIndex !== undefined ? formIndex : (formIndex = oldProps!.formIndex),
-    ); // TODO: is this bang correct?
-    this.abilityCursor = abilityIndex !== undefined ? abilityIndex : (abilityIndex = oldAbilityIndex);
-    this.natureCursor = natureIndex !== undefined ? natureIndex : (natureIndex = oldNatureIndex);
-    this.teraCursor = teraType != null ? teraType : (teraType = oldTeraType);
+    this.updateCursorsFromPreferences(starterId);
 
     const [isInParty, partyIndex]: [boolean, number] = this.isInParty(starterId); // we use this to firstly check if the pokemon is in the party, and if so, to get the party index in order to update the icon image
     if (isInParty) {
@@ -3181,6 +3146,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     this.updateStarterMoves(starterId, formIndex);
 
+    this.updateSelectedStarterMoveset(starterId);
+
     this.tryUpdateValue();
 
     this.updateInstructions();
@@ -3188,6 +3155,47 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     if (save) {
       saveStarterPreferences(this.originalStarterPreferences);
     }
+  }
+
+  //TODO: Are cursors even necessary anymore?
+  updateCursorsFromPreferences(starterId: StarterSpeciesId) {
+    const species = getPokemonSpecies(starterId);
+    const starterDetails = getStarterDetailsFromPreferences(starterId, this.starterPreferences[starterId]);
+    let { shiny, formIndex, female, variant, abilityIndex, natureIndex, teraType } = starterDetails;
+
+    // Storing old cursor values...
+    const oldProps = globalScene.gameData.getDexAttrProps(this.dexAttrCursor);
+    const oldAbilityIndex =
+      this.abilityCursor > -1 ? this.abilityCursor : globalScene.gameData.getStarterDefaultAbilityIndex(starterId);
+    let oldNatureIndex = -1;
+    oldNatureIndex =
+      this.natureCursor > -1 ? this.natureCursor : globalScene.gameData.getSpeciesDefaultNature(starterId);
+    const oldTeraType = this.teraCursor > -1 ? this.teraCursor : species.type1;
+
+    // Before we reset them to null values
+    this.dexAttrCursor = 0n;
+    this.abilityCursor = -1;
+    this.natureCursor = -1;
+    this.teraCursor = PokemonType.UNKNOWN;
+
+    // Update cursors
+    this.dexAttrCursor |= (shiny !== undefined ? !shiny : !(shiny = oldProps?.shiny))
+      ? DexAttr.NON_SHINY
+      : DexAttr.SHINY;
+    this.dexAttrCursor |= (female !== undefined ? !female : !(female = oldProps?.female))
+      ? DexAttr.MALE
+      : DexAttr.FEMALE;
+    this.dexAttrCursor |= (variant !== undefined ? !variant : !(variant = oldProps?.variant))
+      ? DexAttr.DEFAULT_VARIANT
+      : variant === 1
+        ? DexAttr.VARIANT_2
+        : DexAttr.VARIANT_3;
+    this.dexAttrCursor |= globalScene.gameData.getFormAttr(
+      formIndex !== undefined ? formIndex : (formIndex = oldProps!.formIndex),
+    ); // TODO: is this bang correct?
+    this.abilityCursor = abilityIndex !== undefined ? abilityIndex : (abilityIndex = oldAbilityIndex);
+    this.natureCursor = natureIndex !== undefined ? natureIndex : (natureIndex = oldNatureIndex);
+    this.teraCursor = teraType != null ? teraType : (teraType = oldTeraType);
   }
 
   updateCanCycle(starterId: StarterSpeciesId, formIndex = 0) {
@@ -3328,7 +3336,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         } else {
           // No more Pokemon selected, go back to filters
           this.starterIconsCursorObj.setVisible(false);
-          this.setNoSpecies();
+          this.setNoStarter();
           this.filterBarCursor = Math.max(1, this.filterBar.numFilters - 1);
           this.setFilterMode(true);
         }

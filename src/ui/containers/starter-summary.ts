@@ -445,7 +445,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     this.pokemonShinyIcon.setFrame(getVariantIcon(variant)).setTint(tint).setVisible(shiny);
   }
 
-  setNoSpecies() {
+  setNoStarter() {
     if (globalScene.ui.getTooltip().visible) {
       globalScene.ui.hideTooltip();
     }

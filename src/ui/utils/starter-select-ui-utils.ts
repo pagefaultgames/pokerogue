@@ -386,9 +386,10 @@ export function getStarterDetailsFromPreferences(
 ): SpeciesDetails {
   const props = getStarterDexAttrPropsFromPreferences(starterId, starterPreferences);
   const species = getPokemonSpecies(starterId);
-  const abilityIndex = starterPreferences.abilityIndex ?? globalScene.gameData.getStarterDefaultAbilityIndex(starterId);
-  const nature = starterPreferences.nature ?? globalScene.gameData.getSpeciesDefaultNature(starterId);
-  const teraType = starterPreferences.tera ?? species.type1;
+  const abilityIndex =
+    starterPreferences?.abilityIndex ?? globalScene.gameData.getStarterDefaultAbilityIndex(starterId);
+  const nature = starterPreferences?.nature ?? globalScene.gameData.getSpeciesDefaultNature(starterId);
+  const teraType = starterPreferences?.tera ?? species.type1;
   return {
     shiny: props.shiny,
     formIndex: props.formIndex,
