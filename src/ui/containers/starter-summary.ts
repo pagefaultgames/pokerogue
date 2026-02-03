@@ -517,7 +517,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
       }
       this.pokemonHatchedCountText.setText(`${dexEntry.hatchedCount}`);
 
-      const defaultDexAttr = getDexAttrFromPreferences(species.speciesId, starterPreferences);
+      const defaultDexAttr = getDexAttrFromPreferences(starterId, starterPreferences);
 
       if (pokemonPrevolutions.hasOwnProperty(species.speciesId)) {
         this.pokemonCaughtHatchedContainer.setVisible(false);

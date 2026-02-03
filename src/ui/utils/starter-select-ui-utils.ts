@@ -306,7 +306,10 @@ export function getFriendship(speciesId: number) {
  * @param speciesId - The id of the species to get props for
  * @returns the dex props
  */
-export function getDexAttrFromPreferences(speciesId: number, starterPreferences: StarterPreferences = {}): bigint {
+export function getDexAttrFromPreferences(
+  speciesId: StarterSpeciesId,
+  starterPreferences: StarterPreferences = {},
+): bigint {
   let props = 0n;
   const { dexEntry } = getStarterData(speciesId);
   const caughtAttr = dexEntry.caughtAttr;
@@ -383,7 +386,7 @@ export function getStarterDexAttrPropsFromPreferences(
 export function getStarterDetailsFromPreferences(
   starterId: StarterSpeciesId,
   starterPreferences: StarterPreferences = {},
-): SpeciesDetails {
+) {
   const props = getStarterDexAttrPropsFromPreferences(starterId, starterPreferences);
   const species = getPokemonSpecies(starterId);
   const abilityIndex =

@@ -176,10 +176,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   private statsMode: boolean;
   private starterIconsCursorIndex: number;
   private filterMode: boolean;
-  private dexAttrCursor = 0n;
-  private abilityCursor = -1;
-  private natureCursor = -1;
-  private teraCursor: PokemonType = PokemonType.UNKNOWN;
   private filterBarCursor = 0;
   private starterMoveset: StarterMoveset | null;
   private scrollCursor: number;
@@ -1296,16 +1292,17 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         // TODO: this might not be needed if we change .addToParty
         const dexAttr = getDexAttrFromPreferences(randomStarterId, this.starterPreferences[randomStarterId]);
         const props = this.getStarterDexAttrPropsFromPreferences(randomStarterId);
-        const abilityIndex = this.abilityCursor;
-        const nature = this.natureCursor as unknown as Nature;
-        const teraType = this.teraCursor;
+        const { abilityIndex, natureIndex, teraType } = getStarterDetailsFromPreferences(
+          randomStarterId,
+          this.starterPreferences[randomStarterId],
+        );
         const moveset = this.starterMoveset?.slice(0) as StarterMoveset;
         const starterCost = globalScene.gameData.getSpeciesStarterValue(randomStarterId);
         const speciesForm = getPokemonSpeciesForm(randomStarterId, props.formIndex);
         // Load assets and add to party
         speciesForm.loadAssets(props.female, props.formIndex, props.shiny, props.variant, true).then(() => {
           if (this.tryUpdateValue(starterCost, true)) {
-            this.addToParty(randomStarterId, dexAttr, abilityIndex, nature, moveset, teraType);
+            this.addToParty(randomStarterId, dexAttr, abilityIndex, natureIndex, moveset, teraType);
             this.getUi().playSelect();
           }
         });
@@ -1429,7 +1426,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           const abilityCount = lastStarter.getAbilityCount();
           const abilityAttr = getStarterData(this.lastStarterId).starterDataEntry.abilityAttr;
           const hasAbility1 = abilityAttr & AbilityAttr.ABILITY_1;
-          let newAbilityIndex = this.abilityCursor;
+          const { abilityIndex } = getStarterDetailsFromPreferences(
+            this.lastStarterId,
+            this.starterPreferences[this.lastStarterId],
+          );
+          let newAbilityIndex = abilityIndex;
           do {
             newAbilityIndex = (newAbilityIndex + 1) % abilityCount;
             if (newAbilityIndex === 0) {
@@ -1445,7 +1446,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             } else if (abilityAttr & AbilityAttr.ABILITY_HIDDEN) {
               break;
             }
-          } while (newAbilityIndex !== this.abilityCursor);
+          } while (newAbilityIndex !== abilityIndex);
           this.setNewAbilityIndex(this.lastStarterId, newAbilityIndex);
           success = true;
         }
@@ -1453,7 +1454,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       case Button.CYCLE_NATURE:
         if (this.canCycleNature) {
           const natures = globalScene.gameData.getNaturesForAttr(this.speciesStarterDexEntry?.natureAttr);
-          const natureIndex = natures.indexOf(this.natureCursor);
+          const { natureIndex } = getStarterDetailsFromPreferences(
+            this.lastStarterId,
+            this.starterPreferences[this.lastStarterId],
+          );
           const newNature = natures[natureIndex < natures.length - 1 ? natureIndex + 1 : 0];
           // store cycled nature as default
           this.setNewNature(this.lastStarterId, newNature);
@@ -1463,8 +1467,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       case Button.CYCLE_TERA:
         if (this.canCycleTera) {
           const speciesForm = getPokemonSpeciesForm(this.lastStarterId, starterPreferences.formIndex ?? 0);
+          const { teraType } = getStarterDetailsFromPreferences(
+            this.lastStarterId,
+            this.starterPreferences[this.lastStarterId],
+          );
           const newTera =
-            speciesForm.type1 === this.teraCursor && speciesForm.type2 != null ? speciesForm.type2 : speciesForm.type1;
+            speciesForm.type1 === teraType && speciesForm.type2 != null ? speciesForm.type2 : speciesForm.type1;
           this.setNewTeraType(this.lastStarterId, newTera);
           success = true;
         }
@@ -1774,13 +1782,21 @@ export class StarterSelectUiHandler extends MessageUiHandler {
               this.starterCursorObjs[this.starterSpecies.length]
                 .setVisible(true)
                 .setPosition(this.cursorObj.x, this.cursorObj.y);
+              const dexAttr = getDexAttrFromPreferences(
+                this.lastStarterId,
+                this.starterPreferences[this.lastStarterId],
+              );
+              const { teraType, abilityIndex, natureIndex } = getStarterDetailsFromPreferences(
+                this.lastStarterId,
+                this.starterPreferences[this.lastStarterId],
+              );
               this.addToParty(
                 this.lastStarterId,
-                this.dexAttrCursor,
-                this.abilityCursor,
-                this.natureCursor as unknown as Nature,
+                dexAttr,
+                abilityIndex,
+                natureIndex,
                 this.starterMoveset?.slice(0) as StarterMoveset,
-                this.teraCursor,
+                teraType,
               );
               ui.playSelect();
             } else {
@@ -2410,7 +2426,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       starterMoveset[existingMoveIndex] = previousMove;
     }
     const updatedMoveset = starterMoveset.slice() as StarterMoveset;
-    const formIndex = globalScene.gameData.getDexAttrProps(this.dexAttrCursor).formIndex;
+    const { formIndex } = getStarterDexAttrPropsFromPreferences(
+      this.lastStarterId,
+      this.starterPreferences[this.lastStarterId],
+    );
     const starterDataEntry = globalScene.gameData.starterData[starterId];
     // species has different forms
     if (pokemonFormLevelMoves.hasOwnProperty(starterId)) {
@@ -3004,10 +3023,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   //TODO: should call `resetStarterDetails` instead
   setNoStarter() {
     this.speciesStarterDexEntry = null;
-    this.dexAttrCursor = 0n;
-    this.abilityCursor = 0;
-    this.natureCursor = 0;
-    this.teraCursor = PokemonType.UNKNOWN;
 
     if (getPokemonSpecies(this.lastStarterId)) {
       this.stopIconAnimation(this.oldCursor);
@@ -3024,20 +3039,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
    * @param starterId - the id of the new starter
    */
   setStarter(starterId: StarterSpeciesId) {
-    const species = getPokemonSpecies(starterId);
     const { dexEntry } = getStarterData(starterId);
 
     this.speciesStarterDexEntry = dexEntry;
-    this.dexAttrCursor = getDexAttrFromPreferences(starterId, this.starterPreferences[starterId]);
 
     // Set the cursors, using preferences if possible, default options otherwise
     const starterPreferences = this.starterPreferences[starterId];
-    this.natureCursor = starterPreferences?.nature ?? globalScene.gameData.getSpeciesDefaultNature(starterId);
-    this.abilityCursor = globalScene.gameData.getStarterDefaultAbilityIndex(starterId);
-    if (starterPreferences?.abilityIndex && !Number.isNaN(starterPreferences.abilityIndex)) {
-      this.abilityCursor = starterPreferences.abilityIndex;
-    }
-    this.teraCursor = starterPreferences?.tera ?? species.type1;
 
     // Stop animation for the previously selected starter
     if (getPokemonSpecies(this.lastStarterId)) {
@@ -3087,11 +3094,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   resetStarterDetails() {
-    this.dexAttrCursor = 0n;
-    this.abilityCursor = -1;
-    this.natureCursor = -1;
-    this.teraCursor = PokemonType.UNKNOWN;
-
     this.starterMoveset = null;
     this.speciesStarterMoves = [];
 
@@ -3104,11 +3106,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     const species = getPokemonSpecies(starterId);
     const starterDetails = getStarterDetailsFromPreferences(starterId, this.starterPreferences[starterId]);
-    let { shiny, formIndex, female, variant } = starterDetails;
+    const { shiny, variant, female, formIndex, abilityIndex, natureIndex, teraType } = starterDetails;
 
     this.starterSummary.setStarterDetails(starterId, starterDetails);
-
-    this.updateCursorsFromPreferences(starterId);
 
     const [isInParty, partyIndex]: [boolean, number] = this.isInParty(starterId); // we use this to firstly check if the pokemon is in the party, and if so, to get the party index in order to update the icon image
     if (isInParty) {
@@ -3119,17 +3119,14 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     if (starterIndex > -1) {
       const starter = this.starters[starterIndex];
-      const props = globalScene.gameData.getDexAttrProps(this.dexAttrCursor);
-      starter.shiny = props.shiny;
-      starter.variant = props.variant;
-      starter.female = props.female;
-      starter.formIndex = props.formIndex;
-      starter.abilityIndex = this.abilityCursor;
-      starter.nature = this.natureCursor;
-      starter.teraType = this.teraCursor;
+      starter.shiny = shiny;
+      starter.variant = variant;
+      starter.female = female;
+      starter.formIndex = formIndex;
+      starter.abilityIndex = abilityIndex;
+      starter.nature = natureIndex;
+      starter.teraType = teraType;
     }
-
-    female ??= false;
 
     // Update the starter container
     const currentContainer = this.starterContainers.find(p => p.species.speciesId === starterId);
@@ -3155,47 +3152,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     if (save) {
       saveStarterPreferences(this.originalStarterPreferences);
     }
-  }
-
-  //TODO: Are cursors even necessary anymore?
-  updateCursorsFromPreferences(starterId: StarterSpeciesId) {
-    const species = getPokemonSpecies(starterId);
-    const starterDetails = getStarterDetailsFromPreferences(starterId, this.starterPreferences[starterId]);
-    let { shiny, formIndex, female, variant, abilityIndex, natureIndex, teraType } = starterDetails;
-
-    // Storing old cursor values...
-    const oldProps = globalScene.gameData.getDexAttrProps(this.dexAttrCursor);
-    const oldAbilityIndex =
-      this.abilityCursor > -1 ? this.abilityCursor : globalScene.gameData.getStarterDefaultAbilityIndex(starterId);
-    let oldNatureIndex = -1;
-    oldNatureIndex =
-      this.natureCursor > -1 ? this.natureCursor : globalScene.gameData.getSpeciesDefaultNature(starterId);
-    const oldTeraType = this.teraCursor > -1 ? this.teraCursor : species.type1;
-
-    // Before we reset them to null values
-    this.dexAttrCursor = 0n;
-    this.abilityCursor = -1;
-    this.natureCursor = -1;
-    this.teraCursor = PokemonType.UNKNOWN;
-
-    // Update cursors
-    this.dexAttrCursor |= (shiny !== undefined ? !shiny : !(shiny = oldProps?.shiny))
-      ? DexAttr.NON_SHINY
-      : DexAttr.SHINY;
-    this.dexAttrCursor |= (female !== undefined ? !female : !(female = oldProps?.female))
-      ? DexAttr.MALE
-      : DexAttr.FEMALE;
-    this.dexAttrCursor |= (variant !== undefined ? !variant : !(variant = oldProps?.variant))
-      ? DexAttr.DEFAULT_VARIANT
-      : variant === 1
-        ? DexAttr.VARIANT_2
-        : DexAttr.VARIANT_3;
-    this.dexAttrCursor |= globalScene.gameData.getFormAttr(
-      formIndex !== undefined ? formIndex : (formIndex = oldProps!.formIndex),
-    ); // TODO: is this bang correct?
-    this.abilityCursor = abilityIndex !== undefined ? abilityIndex : (abilityIndex = oldAbilityIndex);
-    this.natureCursor = natureIndex !== undefined ? natureIndex : (natureIndex = oldNatureIndex);
-    this.teraCursor = teraType != null ? teraType : (teraType = oldTeraType);
   }
 
   updateCanCycle(starterId: StarterSpeciesId, formIndex = 0) {
