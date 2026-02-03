@@ -625,7 +625,6 @@ export class StarterSummary extends Phaser.GameObjects.Container {
   setStarterDetails(starterId: StarterSpeciesId, options: SpeciesDetails = {}): void {
     // Here we pass some options to override everything else
     let { shiny, formIndex, female, variant, abilityIndex, natureIndex, teraType } = options;
-    console.log("OPTIONS", options);
 
     const species = getPokemonSpecies(starterId);
 
