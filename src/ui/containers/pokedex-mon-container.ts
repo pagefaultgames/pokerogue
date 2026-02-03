@@ -166,7 +166,7 @@ export class PokedexMonContainer extends Phaser.GameObjects.Container {
 
     const { shiny, formIndex, female, variant } = options;
 
-    const defaultDexAttr = globalScene.gameData.getSpeciesDefaultDexAttr(species, false, true);
+    const defaultDexAttr = globalScene.gameData.getSpeciesDefaultDexAttr(species.speciesId, false, true);
     const defaultProps = globalScene.gameData.getDexAttrProps(defaultDexAttr);
 
     if (formIndex != null) {

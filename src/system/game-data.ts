@@ -7,7 +7,7 @@ import Overrides from "#app/overrides";
 import { Tutorial } from "#app/tutorial";
 import { speciesEggMoves } from "#balance/egg-moves";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
-import { speciesStarterCosts } from "#balance/starters";
+import { type StarterSpeciesId, speciesStarterCosts } from "#balance/starters";
 import { bypassLogin, isBeta, isDev } from "#constants/app-constants";
 import { EntryHazardTag } from "#data/arena-tag";
 import { getSerializedDailyRunConfig, parseDailySeed } from "#data/daily-seed/daily-seed-utils";
@@ -1907,9 +1907,10 @@ export class GameData {
     return starterCount;
   }
 
-  getSpeciesDefaultDexAttr(species: PokemonSpecies, _forSeen = false, optimistic = false): bigint {
+  // TODO: Review usage of these functions, including "optimistic" and confusion with the next function.
+  getSpeciesDefaultDexAttr(speciesId: SpeciesId, _forSeen = false, optimistic = false): bigint {
     let ret = 0n;
-    const dexEntry = this.dexData[species.speciesId];
+    const dexEntry = this.dexData[speciesId];
     const attr = dexEntry.caughtAttr;
     if (optimistic) {
       if (attr & DexAttr.SHINY) {
@@ -1968,8 +1969,13 @@ export class GameData {
     };
   }
 
-  //TODO: remove unused species parameter
-  getSpeciesDexAttrProps(_species: PokemonSpecies, dexAttr: bigint): DexAttrProps {
+  /**
+   * Converts Pokédex attributes from {@linkcode bigint} to a readable {@linkcode DexAttrProps} interface.
+   *
+   * @param dexAttr - The Pokédex attribute to convert
+   * @returns the attributes in {@linkcode DexAttrProps} format
+   */
+  getDexAttrProps(dexAttr: bigint): DexAttrProps {
     const shiny = !(dexAttr & DexAttr.NON_SHINY);
     const female = !(dexAttr & DexAttr.MALE);
     let variant: Variant = 0;
@@ -1990,13 +1996,14 @@ export class GameData {
     };
   }
 
-  getStarterSpeciesDefaultAbilityIndex(species: PokemonSpecies, abilityAttr?: number): number {
-    abilityAttr ??= this.starterData[species.speciesId].abilityAttr;
+  getStarterDefaultAbilityIndex(starterId: StarterSpeciesId, abilityAttr?: number): number {
+    abilityAttr ??= this.starterData[starterId].abilityAttr;
+    const species = getPokemonSpecies(starterId);
     return abilityAttr & AbilityAttr.ABILITY_1 ? 0 : !species.ability2 || abilityAttr & AbilityAttr.ABILITY_2 ? 1 : 2;
   }
 
-  getSpeciesDefaultNature(species: PokemonSpecies, dexEntry?: DexEntry): Nature {
-    dexEntry ??= this.dexData[species.speciesId];
+  getSpeciesDefaultNature(speciesId: SpeciesId): Nature {
+    const dexEntry = this.dexData[speciesId];
     for (let n = 0; n < 25; n++) {
       if (dexEntry.natureAttr & (1 << (n + 1))) {
         return n as Nature;
@@ -2005,8 +2012,8 @@ export class GameData {
     return 0 as Nature;
   }
 
-  getSpeciesDefaultNatureAttr(species: PokemonSpecies): number {
-    return 1 << this.getSpeciesDefaultNature(species);
+  getSpeciesDefaultNatureAttr(speciesId: SpeciesId): number {
+    return 1 << this.getSpeciesDefaultNature(speciesId);
   }
 
   getDexAttrLuck(dexAttr: bigint): number {

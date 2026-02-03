@@ -2405,7 +2405,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonFormText.setVisible(false);
         this.pokemonCategoryText.setVisible(false);
 
-        const defaultDexAttr = globalScene.gameData.getSpeciesDefaultDexAttr(species, true, true);
+        const defaultDexAttr = globalScene.gameData.getSpeciesDefaultDexAttr(species.speciesId, true, true);
         const props = globalScene.gameData.getDexAttrProps(defaultDexAttr);
 
         this.setSpeciesDetails(species, {

@@ -373,7 +373,7 @@ export function checkStarterValidForChallenge(starterId: StarterSpeciesId, props
   while (speciesToCheck.length > 0) {
     const checking = speciesToCheck.pop();
     // Linter complains if we don't handle this
-    if (!checking) {
+    if (checking == null) {
       return false;
     }
     const checkingSpecies = getPokemonSpecies(checking);

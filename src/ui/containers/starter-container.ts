@@ -22,8 +22,7 @@ export class StarterContainer extends Phaser.GameObjects.Container {
   constructor(speciesId: SpeciesId) {
     super(globalScene, 0, 0);
 
-    const species = getPokemonSpecies(speciesId);
-    const defaultDexAttr = globalScene.gameData.getSpeciesDefaultDexAttr(species, false, true);
+    const defaultDexAttr = globalScene.gameData.getSpeciesDefaultDexAttr(speciesId, false, true);
     const defaultProps = globalScene.gameData.getDexAttrProps(defaultDexAttr);
     this.setSpecies(speciesId, defaultProps);
 

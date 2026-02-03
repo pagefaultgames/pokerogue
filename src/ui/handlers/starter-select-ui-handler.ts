@@ -2604,13 +2604,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     this.filterBar.updateFilterLabels();
 
-    this.filteredStarterIds = [];
-
     // filter
-    this.allStarterSpeciesIds.forEach(starterId => {
+    this.filteredStarterIds = this.allStarterSpeciesIds.filter(starterId => {
       // Exclude starters which are not valid for the challenge
       if (globalScene.gameMode.modeId === GameModes.CHALLENGE && !isStarterValidForChallenge(starterId)) {
-        // TODO: figure out what to put here
+        return false;
       }
 
       const species = getPokemonSpecies(starterId);
@@ -2785,7 +2783,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         && fitsEgg
         && fitsPokerus
       ) {
-        this.filteredStarterIds.push(starterId);
+        return true;
       }
     });
 
@@ -3012,8 +3010,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     // This stuff is probably redundant.
     this.speciesStarterDexEntry = dexEntry;
     this.dexAttrCursor = getDexAttrFromPreferences(starterId, this.starterPreferences[starterId]);
-    this.abilityCursor = globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
-    this.natureCursor = globalScene.gameData.getSpeciesDefaultNature(species, dexEntry);
+    this.abilityCursor = globalScene.gameData.getStarterDefaultAbilityIndex(starterId);
+    this.natureCursor = globalScene.gameData.getSpeciesDefaultNature(starterId);
     this.teraCursor = species.type1;
 
     // Then, we override with preferences, if they exist
@@ -3100,19 +3098,18 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     // Here we pass some options to override everything else
 
     const species = getPokemonSpecies(starterId);
-    const speciesDetails = getStarterDetailsFromPreferences(starterId, this.starterPreferences[starterId]);
-    let { shiny, formIndex, female, variant, abilityIndex, natureIndex, teraType } = speciesDetails;
+    const starterDetails = getStarterDetailsFromPreferences(starterId, this.starterPreferences[starterId]);
+    let { shiny, formIndex, female, variant, abilityIndex, natureIndex, teraType } = starterDetails;
 
-    this.starterSummary.setStarterDetails(starterId, speciesDetails);
+    this.starterSummary.setStarterDetails(starterId, starterDetails);
 
     // Storing old cursor values...
     const oldProps = globalScene.gameData.getDexAttrProps(this.dexAttrCursor);
     const oldAbilityIndex =
-      this.abilityCursor > -1 ? this.abilityCursor : globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
+      this.abilityCursor > -1 ? this.abilityCursor : globalScene.gameData.getStarterDefaultAbilityIndex(starterId);
     let oldNatureIndex = -1;
-    const { dexEntry } = getStarterData(starterId);
     oldNatureIndex =
-      this.natureCursor > -1 ? this.natureCursor : globalScene.gameData.getSpeciesDefaultNature(species, dexEntry);
+      this.natureCursor > -1 ? this.natureCursor : globalScene.gameData.getSpeciesDefaultNature(starterId);
     const oldTeraType = this.teraCursor > -1 ? this.teraCursor : species.type1;
 
     // Before we reset them to null values
@@ -3161,7 +3158,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     female ??= false;
 
-    // Update the starter container (is this it?)
+    // Update the starter container
     const currentContainer = this.starterContainers.find(p => p.species.speciesId === starterId);
     if (currentContainer) {
       const starterSprite = currentContainer.icon as Phaser.GameObjects.Sprite;

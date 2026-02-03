@@ -116,7 +116,7 @@ export function isStarterValidForChallenge(starterId: StarterSpeciesId) {
   } else {
     const isValidForChallenge = checkStarterValidForChallenge(
       starterId,
-      globalScene.gameData.getDexAttrProps(globalScene.gameData.getSpeciesDefaultDexAttr(species, false, true)),
+      globalScene.gameData.getDexAttrProps(globalScene.gameData.getSpeciesDefaultDexAttr(starterId, false, true)),
       true,
     );
     allFormsValid = isValidForChallenge;
@@ -386,9 +386,8 @@ export function getStarterDetailsFromPreferences(
 ): SpeciesDetails {
   const props = getStarterDexAttrPropsFromPreferences(starterId, starterPreferences);
   const species = getPokemonSpecies(starterId);
-  const abilityIndex =
-    starterPreferences.abilityIndex ?? globalScene.gameData.getStarterSpeciesDefaultAbilityIndex(species);
-  const nature = starterPreferences.nature ?? globalScene.gameData.getSpeciesDefaultNature(species);
+  const abilityIndex = starterPreferences.abilityIndex ?? globalScene.gameData.getStarterDefaultAbilityIndex(starterId);
+  const nature = starterPreferences.nature ?? globalScene.gameData.getSpeciesDefaultNature(starterId);
   const teraType = starterPreferences.tera ?? species.type1;
   return {
     shiny: props.shiny,
