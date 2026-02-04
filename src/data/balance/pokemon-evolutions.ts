@@ -1862,9 +1862,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ]
 };
 
-interface PokemonPrevolutions {
-  [key: string]: SpeciesId
-}
+interface PokemonPrevolutions extends Partial<Record<SpeciesId, SpeciesId>> {}
 
 export const pokemonPrevolutions: PokemonPrevolutions = {};
 
