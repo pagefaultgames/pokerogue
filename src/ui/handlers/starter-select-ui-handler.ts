@@ -312,7 +312,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.starterSelectMessageBoxContainer,
       this.moveInfoOverlay,
       // Filter bar sits above everything, except the tutorial overlay and message box.
-      // Do not put anything below this unless it must appear below the filter bar.
+      // Do not put anything below this unless it must appear on top of the filter bar.
       this.filterBar,
     ]);
 
@@ -937,10 +937,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           this.updateStarters();
           success = true;
         } else if (this.showIvsMode) {
-          this.toggleStatsMode(false);
+          this.toggleShowIvsMode(false);
           success = true;
         } else if (this.partyStarterIds.length > 0) {
-          this.popStarter(this.partyStarterIds.length - 1);
+          this.popPartyStarter(this.partyStarterIds.length - 1);
           success = true;
           this.updateInstructions();
         } else {
@@ -1050,7 +1050,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         this.startCursorObj.setVisible(false);
         if (this.partyStarterIds.length > 0) {
           this.partyIconsCursorIndex = this.partyStarterIds.length - 1;
-          this.moveStarterIconsCursor(this.partyIconsCursorIndex);
+          this.movePartyIconsCursor(this.partyIconsCursorIndex);
         } else {
           // TODO: how can we get here if start button can't be selected? this appears to be redundant
           this.startCursorObj.setVisible(false);
@@ -1152,7 +1152,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         this.randomCursorObj.setVisible(false);
         if (this.partyStarterIds.length > 0) {
           this.partyIconsCursorIndex = 0;
-          this.moveStarterIconsCursor(this.partyIconsCursorIndex);
+          this.movePartyIconsCursor(this.partyIconsCursorIndex);
         } else {
           this.filterBarCursor = this.filterBar.numFilters - 1;
           this.setFilterMode(true);
@@ -1181,7 +1181,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   /**
-   * Processes inputs while the cursor is on one of the cycle buttons.
+   * Processes inputs when pressing one of the cycle buttons.
    */
   processCycleButtonsInput(button: Button) {
     let success = false;
@@ -1382,7 +1382,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   /**
-   * Processes inputs while the cursor is on one of the party containers.
+   * Processes inputs while the cursor is on one of the party icons.
    */
   processPartyIconInput(button: Button) {
     let success = false;
@@ -1398,14 +1398,14 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           this.showRandomCursor();
         } else {
           this.partyIconsCursorIndex--;
-          this.moveStarterIconsCursor(this.partyIconsCursorIndex);
+          this.movePartyIconsCursor(this.partyIconsCursorIndex);
         }
         success = true;
         break;
       case Button.DOWN:
         if (this.partyIconsCursorIndex <= this.partyStarterIds.length - 2) {
           this.partyIconsCursorIndex++;
-          this.moveStarterIconsCursor(this.partyIconsCursorIndex);
+          this.movePartyIconsCursor(this.partyIconsCursorIndex);
         } else {
           this.partyCursorObj.setVisible(false);
           this.setNoStarter();
@@ -1514,7 +1514,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             // at least one pokemon in team > for the first 7 rows, go to closest starter
             this.cursorObj.setVisible(false);
             this.partyIconsCursorIndex = findClosestStarterIndex(this.cursorObj.y - 1, this.partyStarterIds.length);
-            this.moveStarterIconsCursor(this.partyIconsCursorIndex);
+            this.movePartyIconsCursor(this.partyIconsCursorIndex);
           } else {
             // at least one pokemon in team > from the bottom 2 rows, go to start run button
             this.cursorObj.setVisible(false);
@@ -1541,7 +1541,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             // at least one pokemon in team > for the first 7 rows, go to closest starter
             this.cursorObj.setVisible(false);
             this.partyIconsCursorIndex = findClosestStarterIndex(this.cursorObj.y - 1, this.partyStarterIds.length);
-            this.moveStarterIconsCursor(this.partyIconsCursorIndex);
+            this.movePartyIconsCursor(this.partyIconsCursorIndex);
           } else {
             // at least one pokemon in team > from the bottom 2 rows, go to start run button
             this.cursorObj.setVisible(false);
@@ -1644,7 +1644,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         {
           label: i18next.t("starterSelectUiHandler:removeFromParty"),
           handler: () => {
-            this.popStarter(removeIndex);
+            this.popPartyStarter(removeIndex);
             ui.setMode(UiMode.STARTER_SELECT);
             return true;
           },
@@ -1657,7 +1657,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       {
         label: i18next.t("starterSelectUiHandler:toggleIVs"),
         handler: () => {
-          this.toggleStatsMode();
+          this.toggleShowIvsMode();
           ui.setMode(UiMode.STARTER_SELECT);
           return true;
         },
@@ -2112,10 +2112,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       success = this.processFilterModeInput(button);
     } else if (button === Button.CANCEL) {
       if (this.showIvsMode) {
-        this.toggleStatsMode(false);
+        this.toggleShowIvsMode(false);
         success = true;
       } else if (this.partyStarterIds.length > 0) {
-        this.popStarter(this.partyStarterIds.length - 1);
+        this.popPartyStarter(this.partyStarterIds.length - 1);
         success = true;
         this.updateInstructions();
       } else {
@@ -2169,6 +2169,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     return success || error;
   }
 
+  /**
+   * Checks whether a given starter is already in the party.
+   *
+   * @param starterId - The starter to check
+   * @returns
+   */
   isInParty(starterId: StarterSpeciesId): [boolean, number] {
     let removeIndex = 0;
     let isDupe = false;
@@ -2621,7 +2627,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       const pos = calcStarterContainerPosition(cursor);
       this.cursorObj.setPosition(pos.x - 1, pos.y + 1);
 
-      const species = this.starterContainers[cursor]?.species; // TODO: why is there a "?"
+      const species = this.starterContainers[cursor].species;
 
       if (species) {
         this.setStarter(species.speciesId as StarterSpeciesId);
@@ -2651,7 +2657,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     return false;
   }
 
-  moveStarterIconsCursor(index: number): void {
+  movePartyIconsCursor(index: number): void {
     this.partyCursorObj.setPositionRelative(
       this.partyIcons[index],
       STARTER_ICONS_CURSOR_X_OFFSET,
@@ -2712,6 +2718,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
   }
 
+  /**
+   * Starts the icon animation of the container at the given cursor.
+   *
+   * @param cursor - the index of the container, ranging from 1 to 81.
+   */
   startIconAnimation(cursor: number) {
     const container = this.starterContainers[cursor];
     const icon = container.icon;
@@ -2725,6 +2736,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.PASSIVE);
   }
 
+  /**
+   * Stops the icon animation of the container at the given cursor.
+   *
+   * @param cursor - the index of the container, ranging from 1 to 81.
+   */
+
   stopIconAnimation(cursor: number) {
     const container = this.starterContainers[cursor];
     if (container) {
@@ -2737,6 +2754,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
   }
 
+  // TODO: check whether this is still necessary
   resetStarterDetails() {
     this.starterMoveset = null;
 
@@ -2807,6 +2825,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
   }
 
+  /**
+   * Update {@linkcode this.canCycle}, which determines whether buttons to cycle abilty, nature etc. should be visibile.
+   *
+   * @param starterId - the id of the current selected starter.
+   * @param formIndex - the form index of the current starter.
+   */
   updateCanCycle(starterId: StarterSpeciesId, formIndex = 0) {
     const { dexEntry, starterDataEntry } = getStarterData(starterId);
     const caughtAttr = dexEntry.caughtAttr || BigInt(0);
@@ -2853,6 +2877,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
   }
 
+  /**
+   * Function called when a new starter is selected, used to populate its moveset.
+   *
+   * @param starterId - the id of the current selected starter.
+   * @param formIndex - the form index of the current starter.
+   */
   populateStarterMoveset(starterId: StarterSpeciesId, formIndex = 0) {
     const { starterDataEntry } = getStarterData(starterId);
 
@@ -2898,7 +2928,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
   }
 
-  popStarter(index: number): void {
+  /**
+   * Removes a starter from the party.
+   *
+   * @param index - the index of the starter to remove in the party.
+   */
+  popPartyStarter(index: number): void {
     this.partyStarterIds.splice(index, 1);
     this.partyStarters.splice(index, 1);
 
@@ -2931,7 +2966,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           this.setFilterMode(true);
         }
       }
-      this.moveStarterIconsCursor(this.partyIconsCursorIndex);
+      this.movePartyIconsCursor(this.partyIconsCursorIndex);
     } else if (this.startCursorObj.visible && this.partyStarterIds.length === 0) {
       // On the start button and no more Pokemon in party
       this.startCursorObj.setVisible(false);
@@ -3006,8 +3041,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       isPartyValid ||= isNewPokemonValid;
     }
 
+    // TODO: extract this logic and unify it with the one applied after filtering or scrolling
     /**
-     * this loop is used to set the Sprite's alpha value and check if the user can select other pokemon more.
+     * this loop is used to set each container's alpha value and check if the user can select other pokemon.
      */
     const remainValue = valueLimit - newValue;
     for (const container of this.starterContainers) {
@@ -3037,7 +3073,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
       const canBeChosen = remainValue >= speciesStarterValue && isValidForChallenge;
 
-      const isPokemonInParty = this.isInParty(starterId)[0]; // this will get the valud of isDupe from isInParty. This will let us see if the pokemon in question is in our party already so we don't grey out the sprites if they're invalid
+      const isPokemonInParty = this.isInParty(starterId)[0]; // this will get the value of isDupe from isInParty. This will let us see if the pokemon in question is in our party already so we don't grey out the sprites if they're invalid
 
       /* This code does a check to tell whether or not a sprite should be lit up or greyed out. There are 3 ways a pokemon's sprite should be lit up:
        * 1) If it's in your party, it's a valid pokemon (i.e. for challenge) and you have enough points to have it
@@ -3070,7 +3106,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const cancel = () => {
       ui.setMode(UiMode.STARTER_SELECT);
       if (!manualTrigger) {
-        this.popStarter(this.partyStarterIds.length - 1);
+        this.popPartyStarter(this.partyStarterIds.length - 1);
       }
       this.clearText();
     };
@@ -3134,7 +3170,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     return canStart;
   }
 
-  toggleStatsMode(on?: boolean): void {
+  toggleShowIvsMode(on?: boolean): void {
     if (on === undefined) {
       on = !this.showIvsMode;
     }
@@ -3219,11 +3255,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.blockInput = false;
 
     while (this.partyStarterIds.length > 0) {
-      this.popStarter(this.partyStarterIds.length - 1);
+      this.popPartyStarter(this.partyStarterIds.length - 1);
     }
 
     if (this.showIvsMode) {
-      this.toggleStatsMode(false);
+      this.toggleShowIvsMode(false);
     }
   }
 
