@@ -23,7 +23,6 @@ import { AbilityAttr } from "#enums/ability-attr";
 import { AbilityId } from "#enums/ability-id";
 import { Button } from "#enums/buttons";
 import { Challenges } from "#enums/challenges";
-import { Device } from "#enums/devices";
 import { DexAttr } from "#enums/dex-attr";
 import { DropDownColumn } from "#enums/drop-down-column";
 import { EggSourceType } from "#enums/egg-source-types";
@@ -41,7 +40,6 @@ import type { Variant } from "#sprites/variant";
 import { getVariantIcon, getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
 import { RibbonData } from "#system/ribbons/ribbon-data";
-import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
 import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { DexAttrProps, Starter, StarterMoveset, StarterPreferences } from "#types/save-data";
@@ -53,16 +51,17 @@ import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-helper";
 import { ScrollBar } from "#ui/scroll-bar";
 import { StarterContainer } from "#ui/starter-container";
+import { StarterSelectInstructionsContainer } from "#ui/starter-select-instructions";
 import { StarterSummary } from "#ui/starter-summary";
 import { addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import {
+  type CanCycle,
   getDexAttrFromPreferences,
   getRunValueLimit,
   getStarterData,
   getStarterDetailsFromPreferences,
   getStarterDexAttrPropsFromPreferences,
-  getStarterSelectTextSettings,
   isPassiveAvailable,
   isSameSpeciesEggAvailable,
   isStarterValidForChallenge,
@@ -142,32 +141,23 @@ function findClosestStarterIndex(y: number, teamSize = 6): number {
 export class StarterSelectUiHandler extends MessageUiHandler {
   private starterSelectContainer: Phaser.GameObjects.Container;
   private starterSelectScrollBar: ScrollBar;
+  private partyColumn: GameObjects.Container;
+  private starterSummary: StarterSummary;
   private filterBar: FilterBar;
   private starterContainers: StarterContainer[] = [];
-  private filteredStarterIds: StarterSpeciesId[] = [];
 
-  private starterSummary: StarterSummary;
+  private instructionsContainer: StarterSelectInstructionsContainer;
 
-  private instructionsContainer: Phaser.GameObjects.Container;
-  private filterInstructionsContainer: Phaser.GameObjects.Container;
-  private shinyIconElement: Phaser.GameObjects.Sprite;
-  private formIconElement: Phaser.GameObjects.Sprite;
-  private abilityIconElement: Phaser.GameObjects.Sprite;
-  private genderIconElement: Phaser.GameObjects.Sprite;
-  private natureIconElement: Phaser.GameObjects.Sprite;
-  private teraIconElement: Phaser.GameObjects.Sprite;
-  private goFilterIconElement: Phaser.GameObjects.Sprite;
-  private shinyLabel: Phaser.GameObjects.Text;
-  private formLabel: Phaser.GameObjects.Text;
-  private genderLabel: Phaser.GameObjects.Text;
-  private abilityLabel: Phaser.GameObjects.Text;
-  private natureLabel: Phaser.GameObjects.Text;
-  private teraLabel: Phaser.GameObjects.Text;
-  private goFilterLabel: Phaser.GameObjects.Text;
-  /** Group holding the UI elements appearing in the instructionsContainer */
-  /* TODO: Uncomment this once our testing infra supports mocks of `Phaser.GameObject.Group`
-  private instructionElemGroup: Phaser.GameObjects.Group;
-  */
+  public cursorObj: Phaser.GameObjects.Image;
+  private starterCursorObjs: Phaser.GameObjects.Image[];
+  private pokerusCursorObjs: Phaser.GameObjects.Image[];
+  private starterIcons: Phaser.GameObjects.Sprite[];
+  private starterIconsCursorObj: Phaser.GameObjects.Image;
+  private valueLimitLabel: Phaser.GameObjects.Text;
+  private startCursorObj: Phaser.GameObjects.NineSlice;
+  private randomCursorObj: Phaser.GameObjects.NineSlice;
+
+  private iconAnimHandler: PokemonIconAnimHelper;
 
   private starterSelectMessageBox: Phaser.GameObjects.NineSlice;
   private starterSelectMessageBoxContainer: Phaser.GameObjects.Container;
@@ -181,6 +171,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   private scrollCursor: number;
 
   private allStarterSpeciesIds: StarterSpeciesId[] = [];
+  private filteredStarterIds: StarterSpeciesId[] = [];
   private lastStarterId: StarterSpeciesId;
 
   private starters: Starter[] = [];
@@ -188,30 +179,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   private pokerusSpecies: StarterSpeciesId[] = [];
   private speciesStarterDexEntry: DexEntry | null;
   private speciesStarterMoves: MoveId[];
-  private canCycleShiny: boolean;
-  private canCycleForm: boolean;
-  private canCycleGender: boolean;
-  private canCycleAbility: boolean;
-  private canCycleNature: boolean;
-  private canCycleTera: boolean;
-
-  public cursorObj: Phaser.GameObjects.Image;
-  private starterCursorObjs: Phaser.GameObjects.Image[];
-  private pokerusCursorObjs: Phaser.GameObjects.Image[];
-  private starterIcons: Phaser.GameObjects.Sprite[];
-  private starterIconsCursorObj: Phaser.GameObjects.Image;
-  private valueLimitLabel: Phaser.GameObjects.Text;
-  private startCursorObj: Phaser.GameObjects.NineSlice;
-  private randomCursorObj: Phaser.GameObjects.NineSlice;
-
-  private iconAnimHandler: PokemonIconAnimHelper;
+  private canCycle: CanCycle = {};
 
   //variables to keep track of the dynamically rendered list of instruction prompts for starter select
-  private instructionRowX = 0;
-  private instructionRowY = 0;
-  private instructionRowTextOffset = 9;
-  private filterInstructionRowX = 0;
-  private filterInstructionRowY = 0;
 
   private starterSelectCallback: StarterSelectCallback | null;
 
@@ -226,7 +196,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
   protected blockInput = false;
   private allowTera: boolean;
-  private partyColumn: GameObjects.Container;
   private oldCursor = -1;
 
   constructor() {
@@ -310,32 +279,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     this.starterSummary = new StarterSummary(0, 0);
 
-    this.setupInstructionButtons();
-    this.instructionsContainer = globalScene.add.container(4, 156).setVisible(true);
-
-    /** TODO: Uncomment this and update `this.hideInstructions` once our testing infra supports mocks of `Phaser.GameObject.Group` */
-    /*
-    this.instructionElemGroup = globalScene.add.group([
-      this.shinyIconElement,
-      this.shinyLabel,
-      this.formIconElement,
-      this.formLabel,
-      this.genderIconElement,
-      this.genderLabel,
-      this.abilityIconElement,
-      this.abilityLabel,
-      this.natureIconElement,
-      this.natureLabel,
-      this.teraIconElement,
-      this.teraLabel,
-      this.goFilterIconElement,
-      this.goFilterLabel,
-    ]);
-    */
-
-    this.hideInstructions();
-
-    this.filterInstructionsContainer = globalScene.add.container(50, 5).setVisible(true);
+    this.instructionsContainer = new StarterSelectInstructionsContainer(0, 0);
 
     this.starterSelectMessageBoxContainer = globalScene.add.container(0, sHeight).setVisible(false);
 
@@ -364,7 +308,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       starterBoxContainer,
       this.starterSummary,
       this.instructionsContainer,
-      this.filterInstructionsContainer,
       this.starterSelectMessageBoxContainer,
       this.moveInfoOverlay,
       // Filter bar sits above everything, except the tutorial overlay and message box.
@@ -378,8 +321,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     globalScene.eventTarget.addEventListener(BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED, e =>
       this.onCandyUpgradeDisplayChanged(e),
     );
-
-    this.updateInstructions();
   }
 
   setupFilterBar(): FilterBar {
@@ -611,114 +552,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     ]);
 
     return partyColumn;
-  }
-
-  setupInstructionButtons(): void {
-    // The font size should be set per language
-    const textSettings = getStarterSelectTextSettings();
-    const instructionTextSize = textSettings.instructionTextSize;
-
-    const iRowX = this.instructionRowX;
-    const iRowY = this.instructionRowY;
-    const iRowTextX = iRowX + this.instructionRowTextOffset;
-
-    // instruction rows that will be pushed into the container dynamically based on need
-    // creating new sprites since they will be added to the scene later
-    this.shinyIconElement = new Phaser.GameObjects.Sprite(globalScene, iRowX, iRowY, "keyboard", "R.png")
-      .setName("sprite-shiny-icon-element")
-      .setScale(0.675)
-      .setOrigin(0);
-    this.shinyLabel = addTextObject(
-      iRowTextX,
-      iRowY,
-      i18next.t("starterSelectUiHandler:cycleShiny"),
-      TextStyle.INSTRUCTIONS_TEXT,
-      {
-        fontSize: instructionTextSize,
-      },
-    ).setName("text-shiny-label");
-
-    this.formIconElement = new Phaser.GameObjects.Sprite(globalScene, iRowX, iRowY, "keyboard", "F.png")
-      .setName("sprite-form-icon-element")
-      .setScale(0.675)
-      .setOrigin(0);
-    this.formLabel = addTextObject(
-      iRowTextX,
-      iRowY,
-      i18next.t("starterSelectUiHandler:cycleForm"),
-      TextStyle.INSTRUCTIONS_TEXT,
-      {
-        fontSize: instructionTextSize,
-      },
-    ).setName("text-form-label");
-
-    this.genderIconElement = new Phaser.GameObjects.Sprite(globalScene, iRowX, iRowY, "keyboard", "G.png")
-      .setName("sprite-gender-icon-element")
-      .setScale(0.675)
-      .setOrigin(0);
-    this.genderLabel = addTextObject(
-      iRowTextX,
-      iRowY,
-      i18next.t("starterSelectUiHandler:cycleGender"),
-      TextStyle.INSTRUCTIONS_TEXT,
-      { fontSize: instructionTextSize },
-    ).setName("text-gender-label");
-
-    this.abilityIconElement = new Phaser.GameObjects.Sprite(globalScene, iRowX, iRowY, "keyboard", "E.png")
-      .setName("sprite-ability-icon-element")
-      .setScale(0.675)
-      .setOrigin(0);
-    this.abilityLabel = addTextObject(
-      iRowTextX,
-      iRowY,
-      i18next.t("starterSelectUiHandler:cycleAbility"),
-      TextStyle.INSTRUCTIONS_TEXT,
-      { fontSize: instructionTextSize },
-    ).setName("text-ability-label");
-
-    this.natureIconElement = new Phaser.GameObjects.Sprite(globalScene, iRowX, iRowY, "keyboard", "N.png")
-      .setName("sprite-nature-icon-element")
-      .setScale(0.675)
-      .setOrigin(0);
-    this.natureLabel = addTextObject(
-      iRowTextX,
-      iRowY,
-      i18next.t("starterSelectUiHandler:cycleNature"),
-      TextStyle.INSTRUCTIONS_TEXT,
-      { fontSize: instructionTextSize },
-    ).setName("text-nature-label");
-
-    this.teraIconElement = new Phaser.GameObjects.Sprite(globalScene, iRowX, iRowY, "keyboard", "V.png")
-      .setName("sprite-tera-icon-element")
-      .setScale(0.675)
-      .setOrigin(0);
-    this.teraLabel = addTextObject(
-      iRowTextX,
-      iRowY,
-      i18next.t("starterSelectUiHandler:cycleTera"),
-      TextStyle.INSTRUCTIONS_TEXT,
-      {
-        fontSize: instructionTextSize,
-      },
-    ).setName("text-tera-label");
-
-    this.goFilterIconElement = new Phaser.GameObjects.Sprite(
-      globalScene,
-      this.filterInstructionRowX,
-      this.filterInstructionRowY,
-      "keyboard",
-      "C.png",
-    )
-      .setName("sprite-goFilter-icon-element")
-      .setScale(0.675)
-      .setOrigin(0);
-    this.goFilterLabel = addTextObject(
-      this.filterInstructionRowX + this.instructionRowTextOffset,
-      this.filterInstructionRowY,
-      i18next.t("starterSelectUiHandler:goFilter"),
-      TextStyle.INSTRUCTIONS_TEXT,
-      { fontSize: instructionTextSize },
-    ).setName("text-goFilter-label");
   }
 
   show(args: any[]): boolean {
@@ -1357,7 +1190,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     switch (button) {
       case Button.CYCLE_SHINY:
-        if (this.canCycleShiny) {
+        if (this.canCycle.shiny) {
           console.log(starterPreferences);
           if (starterPreferences.shiny === false) {
             // If not shiny, we change to shiny and get the proper default variant
@@ -1398,7 +1231,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         }
         break;
       case Button.CYCLE_FORM:
-        if (this.canCycleForm) {
+        if (this.canCycle.form) {
           const formCount = lastStarter.forms.length;
           let newFormIndex = props.formIndex;
           do {
@@ -1416,13 +1249,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         }
         break;
       case Button.CYCLE_GENDER:
-        if (this.canCycleGender) {
+        if (this.canCycle.gender) {
           this.setNewGender(this.lastStarterId, !starterPreferences.female);
           success = true;
         }
         break;
       case Button.CYCLE_ABILITY:
-        if (this.canCycleAbility) {
+        if (this.canCycle.ability) {
           const abilityCount = lastStarter.getAbilityCount();
           const abilityAttr = getStarterData(this.lastStarterId).starterDataEntry.abilityAttr;
           const hasAbility1 = abilityAttr & AbilityAttr.ABILITY_1;
@@ -1452,7 +1285,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         }
         break;
       case Button.CYCLE_NATURE:
-        if (this.canCycleNature) {
+        if (this.canCycle.nature) {
           const natures = globalScene.gameData.getNaturesForAttr(this.speciesStarterDexEntry?.natureAttr);
           const { natureIndex } = getStarterDetailsFromPreferences(
             this.lastStarterId,
@@ -1465,7 +1298,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         }
         break;
       case Button.CYCLE_TERA:
-        if (this.canCycleTera) {
+        if (this.canCycle.tera) {
           const speciesForm = getPokemonSpeciesForm(this.lastStarterId, starterPreferences.formIndex ?? 0);
           const { teraType } = getStarterDetailsFromPreferences(
             this.lastStarterId,
@@ -1936,7 +1769,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         },
       });
     }
-    if (this.canCycleNature) {
+    if (this.canCycle.nature) {
       // if we could cycle natures, enable the improved nature menu
       const showNatureOptions = () => {
         this.blockInput = true;
@@ -2467,157 +2300,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
   }
 
-  updateButtonIcon(
-    iconSetting: SettingKeyboard,
-    gamepadType: string,
-    iconElement: GameObjects.Sprite,
-    controlLabel: GameObjects.Text,
-  ): void {
-    let iconPath: string | undefined;
-    // touch controls cannot be rebound as is, and are just emulating a keyboard event.
-    // Additionally, since keyboard controls can be rebound (and will be displayed when they are), we need to have special handling for the touch controls
-    if (gamepadType === "touch") {
-      gamepadType = "keyboard";
-      switch (iconSetting) {
-        case SettingKeyboard.BUTTON_CYCLE_SHINY:
-          iconPath = "R.png";
-          break;
-        case SettingKeyboard.BUTTON_CYCLE_FORM:
-          iconPath = "F.png";
-          break;
-        case SettingKeyboard.BUTTON_CYCLE_GENDER:
-          iconPath = "G.png";
-          break;
-        case SettingKeyboard.BUTTON_CYCLE_ABILITY:
-          iconPath = "E.png";
-          break;
-        case SettingKeyboard.BUTTON_CYCLE_NATURE:
-          iconPath = "N.png";
-          break;
-        case SettingKeyboard.BUTTON_CYCLE_TERA:
-          iconPath = "V.png";
-          break;
-        case SettingKeyboard.BUTTON_STATS:
-          iconPath = "C.png";
-          break;
-        default:
-          break;
-      }
-    } else {
-      iconPath = globalScene.inputController?.getIconForLatestInputRecorded(iconSetting);
-    }
-    // The bang for iconPath is correct as long the cases in the above switch statement handle all `SettingKeyboard` values enabled in touch mode
-    iconElement
-      .setTexture(gamepadType, iconPath!)
-      .setPosition(this.instructionRowX, this.instructionRowY)
-      .setVisible(true);
-    controlLabel
-      .setPosition(this.instructionRowX + this.instructionRowTextOffset, this.instructionRowY)
-      .setVisible(true);
-    this.instructionsContainer.add([iconElement, controlLabel]);
-    this.instructionRowY += 8;
-    if (this.instructionRowY >= 24) {
-      this.instructionRowY = 0;
-      this.instructionRowX += 50;
-    }
-  }
-
-  updateFilterButtonIcon(
-    iconSetting: SettingKeyboard,
-    gamepadType: string,
-    iconElement: GameObjects.Sprite,
-    controlLabel: GameObjects.Text,
-  ): void {
-    let iconPath: string | undefined;
-    // touch controls cannot be rebound as is, and are just emulating a keyboard event.
-    // Additionally, since keyboard controls can be rebound (and will be displayed when they are), we need to have special handling for the touch controls
-    if (gamepadType === "touch") {
-      gamepadType = "keyboard";
-      iconPath = "C.png";
-    } else {
-      iconPath = globalScene.inputController?.getIconForLatestInputRecorded(iconSetting);
-    }
-    iconElement
-      .setTexture(gamepadType, iconPath)
-      .setPosition(this.filterInstructionRowX, this.filterInstructionRowY)
-      .setVisible(true);
-    controlLabel
-      .setPosition(this.filterInstructionRowX + this.instructionRowTextOffset, this.filterInstructionRowY)
-      .setVisible(true);
-    this.filterInstructionsContainer.add([iconElement, controlLabel]);
-    this.filterInstructionRowY += 8;
-    if (this.filterInstructionRowY >= 24) {
-      this.filterInstructionRowY = 0;
-      this.filterInstructionRowX += 50;
-    }
-  }
-
   updateInstructions(): void {
-    this.instructionRowX = 0;
-    this.instructionRowY = 0;
-    this.filterInstructionRowX = 0;
-    this.filterInstructionRowY = 0;
-    this.hideInstructions();
-    this.instructionsContainer.removeAll();
-    this.filterInstructionsContainer.removeAll();
-    let gamepadType: string;
-    if (globalScene.inputMethod === "gamepad") {
-      gamepadType = globalScene.inputController.getConfig(
-        globalScene.inputController.selectedDevice[Device.GAMEPAD]!, // TODO: re-evaluate bang
-      ).padType;
-    } else {
-      gamepadType = globalScene.inputMethod;
-    }
-
-    if (!gamepadType) {
-      return;
-    }
-
-    if (this.speciesStarterDexEntry?.caughtAttr) {
-      if (this.canCycleShiny) {
-        this.updateButtonIcon(SettingKeyboard.BUTTON_CYCLE_SHINY, gamepadType, this.shinyIconElement, this.shinyLabel);
-      }
-      if (this.canCycleForm) {
-        this.updateButtonIcon(SettingKeyboard.BUTTON_CYCLE_FORM, gamepadType, this.formIconElement, this.formLabel);
-      }
-      if (this.canCycleGender) {
-        this.updateButtonIcon(
-          SettingKeyboard.BUTTON_CYCLE_GENDER,
-          gamepadType,
-          this.genderIconElement,
-          this.genderLabel,
-        );
-      }
-      if (this.canCycleAbility) {
-        this.updateButtonIcon(
-          SettingKeyboard.BUTTON_CYCLE_ABILITY,
-          gamepadType,
-          this.abilityIconElement,
-          this.abilityLabel,
-        );
-      }
-      if (this.canCycleNature) {
-        this.updateButtonIcon(
-          SettingKeyboard.BUTTON_CYCLE_NATURE,
-          gamepadType,
-          this.natureIconElement,
-          this.natureLabel,
-        );
-      }
-      if (this.canCycleTera) {
-        this.updateButtonIcon(SettingKeyboard.BUTTON_CYCLE_TERA, gamepadType, this.teraIconElement, this.teraLabel);
-      }
-    }
-
-    // if filter mode is inactivated and gamepadType is not undefined, update the button icons
-    if (!this.filterMode) {
-      this.updateFilterButtonIcon(
-        SettingKeyboard.BUTTON_STATS,
-        gamepadType,
-        this.goFilterIconElement,
-        this.goFilterLabel,
-      );
-    }
+    this.instructionsContainer.updateInstructions(
+      this.canCycle,
+      !!this.speciesStarterDexEntry?.caughtAttr,
+      this.filterMode,
+    );
   }
 
   updateStarters(): void {
@@ -3174,11 +2862,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const isShinyCaught = !!(caughtAttr & DexAttr.SHINY);
 
     const caughtVariants = [DexAttr.DEFAULT_VARIANT, DexAttr.VARIANT_2, DexAttr.VARIANT_3].filter(v => caughtAttr & v);
-    this.canCycleShiny = (isNonShinyCaught && isShinyCaught) || (isShinyCaught && caughtVariants.length > 1);
+    this.canCycle.shiny = (isNonShinyCaught && isShinyCaught) || (isShinyCaught && caughtVariants.length > 1);
 
     const isMaleCaught = !!(caughtAttr & DexAttr.MALE);
     const isFemaleCaught = !!(caughtAttr & DexAttr.FEMALE);
-    this.canCycleGender = isMaleCaught && isFemaleCaught;
+    this.canCycle.gender = isMaleCaught && isFemaleCaught;
 
     const hasAbility1 = abilityAttr & AbilityAttr.ABILITY_1;
     let hasAbility2 = abilityAttr & AbilityAttr.ABILITY_2;
@@ -3193,17 +2881,17 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       hasAbility2 = 0;
     }
 
-    this.canCycleAbility = [hasAbility1, hasAbility2, hasHiddenAbility].filter(a => a).length > 1;
+    this.canCycle.ability = [hasAbility1, hasAbility2, hasHiddenAbility].filter(a => a).length > 1;
 
-    this.canCycleForm =
+    this.canCycle.form =
       species.forms
         .filter(f => f.isStarterSelectable || !pokemonFormChanges[species.speciesId]?.find(fc => fc.formKey))
         .map((_, f) => dexEntry.caughtAttr & globalScene.gameData.getFormAttr(f))
         .filter(f => f).length > 1;
 
-    this.canCycleNature = globalScene.gameData.getNaturesForAttr(dexEntry.natureAttr).length > 1;
+    this.canCycle.nature = globalScene.gameData.getNaturesForAttr(dexEntry.natureAttr).length > 1;
 
-    this.canCycleTera =
+    this.canCycle.tera =
       !this.statsMode
       && this.allowTera
       && getPokemonSpeciesForm(species.speciesId, formIndex).type2 != null
@@ -3527,14 +3215,14 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     if (on) {
       this.statsMode = true;
       this.starterSummary.showIvs();
-      this.canCycleTera = false;
+      this.canCycle.tera = false;
       this.updateInstructions();
     } else {
       this.statsMode = false;
       this.starterSummary.hideIvs(!!this.speciesStarterDexEntry?.caughtAttr);
       const props = this.getStarterDexAttrPropsFromPreferences(this.lastStarterId);
       const formIndex = props.formIndex;
-      this.canCycleTera =
+      this.canCycle.tera =
         !this.statsMode
         && this.allowTera
         && getPokemonSpeciesForm(this.lastStarterId, formIndex ?? 0).type2 != null
@@ -3550,25 +3238,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   clearText() {
     this.starterSelectMessageBoxContainer.setVisible(false);
     super.clearText();
-  }
-
-  hideInstructions(): void {
-    // TODO: uncomment this and delete the rest of the method once our testing infra supports mocks of `Phaser.GameObject.Group`
-    // this.instructionElemGroup.setVisible(false);
-    this.shinyIconElement.setVisible(false);
-    this.shinyLabel.setVisible(false);
-    this.formIconElement.setVisible(false);
-    this.formLabel.setVisible(false);
-    this.genderIconElement.setVisible(false);
-    this.genderLabel.setVisible(false);
-    this.abilityIconElement.setVisible(false);
-    this.abilityLabel.setVisible(false);
-    this.natureIconElement.setVisible(false);
-    this.natureLabel.setVisible(false);
-    this.teraIconElement.setVisible(false);
-    this.teraLabel.setVisible(false);
-    this.goFilterIconElement.setVisible(false);
-    this.goFilterLabel.setVisible(false);
   }
 
   /**
@@ -3615,7 +3284,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.clearStarterPreferences();
     this.cursor = -1;
     this.oldCursor = -1;
-    this.hideInstructions();
+    this.instructionsContainer.hideInstructions();
 
     this.starterSummary.clear();
 

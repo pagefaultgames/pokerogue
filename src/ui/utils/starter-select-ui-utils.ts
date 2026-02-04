@@ -34,6 +34,15 @@ export interface SpeciesDetails {
   teraType?: PokemonType | undefined;
 }
 
+export interface CanCycle {
+  ability?: boolean | undefined;
+  form?: boolean | undefined;
+  gender?: boolean | undefined;
+  shiny?: boolean | undefined;
+  nature?: boolean | undefined;
+  tera?: boolean | undefined;
+}
+
 export function getStarterSpeciesId(speciesId: number): number {
   if (speciesStarterCosts.hasOwnProperty(speciesId)) {
     return speciesId;
