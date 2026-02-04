@@ -1,6 +1,8 @@
 import { VALUE_REDUCTION_MAX } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { speciesEggMoves } from "#balance/egg-moves";
 import { pokemonStarters } from "#balance/pokemon-evolutions";
+import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#balance/pokemon-level-moves";
 import {
   getPassiveCandyCount,
   getSameSpeciesEggCandyCounts,
@@ -13,12 +15,16 @@ import type { PokemonSpecies } from "#data/pokemon-species";
 import { ChallengeType } from "#enums/challenge-type";
 import { DexAttr } from "#enums/dex-attr";
 import { GameModes } from "#enums/game-modes";
+import type { MoveId } from "#enums/move-id";
 import { Passive } from "#enums/passive";
 import type { PokemonType } from "#enums/pokemon-type";
+import type { SpeciesId } from "#enums/species-id";
 import type { Variant } from "#sprites/variant";
 import type { GameData } from "#system/game-data";
 import type { DexEntry } from "#types/dex-data";
+import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { DexAttrProps, StarterDataEntry, StarterPreferences } from "#types/save-data";
+import { SortCriteria, type SortDirection } from "#ui/dropdown";
 import { applyChallenges, checkStarterValidForChallenge } from "#utils/challenge-utils";
 import { NumberHolder } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
@@ -427,4 +433,67 @@ export function getRunValueLimit(): number {
   applyChallenges(ChallengeType.STARTER_POINTS, valueLimit);
 
   return valueLimit.value;
+}
+
+export function getPartyValue(party: StarterSpeciesId[]) {
+  return party.reduce(
+    (total: number, starterId: StarterSpeciesId) => total + globalScene.gameData.getSpeciesStarterValue(starterId),
+    0,
+  );
+}
+
+export function sortSpecies(speciesIds: SpeciesId[], sort: SortCriteria, dir: SortDirection): void {
+  speciesIds.sort((a, b) => {
+    switch (sort) {
+      case SortCriteria.NUMBER:
+        return (a - b) * -dir;
+      case SortCriteria.COST:
+        return (globalScene.gameData.getSpeciesStarterValue(a) - globalScene.gameData.getSpeciesStarterValue(b)) * -dir;
+      case SortCriteria.CANDY: {
+        const candyCountA = globalScene.gameData.starterData[a].candyCount;
+        const candyCountB = globalScene.gameData.starterData[b].candyCount;
+        return (candyCountA - candyCountB) * -dir;
+      }
+      case SortCriteria.IV: {
+        const avgIVsA =
+          globalScene.gameData.dexData[a].ivs.reduce((a, b) => a + b, 0) / globalScene.gameData.dexData[a].ivs.length;
+        const avgIVsB =
+          globalScene.gameData.dexData[b].ivs.reduce((a, b) => a + b, 0) / globalScene.gameData.dexData[b].ivs.length;
+        return (avgIVsA - avgIVsB) * -dir;
+      }
+      case SortCriteria.NAME:
+        return getPokemonSpecies(a).name.localeCompare(getPokemonSpecies(b).name) * -dir;
+      case SortCriteria.CAUGHT:
+        return (globalScene.gameData.dexData[a].caughtCount - globalScene.gameData.dexData[b].caughtCount) * -dir;
+      case SortCriteria.HATCHED:
+        return (globalScene.gameData.dexData[a].hatchedCount - globalScene.gameData.dexData[b].hatchedCount) * -dir;
+    }
+    return 0;
+  });
+}
+
+export function getStarterMoves(starterId: StarterSpeciesId, formIndex: number) {
+  const starterMoves: MoveId[] = [];
+  const { starterDataEntry } = getStarterData(starterId);
+
+  let levelMoves: LevelMoves;
+  if (
+    pokemonFormLevelMoves.hasOwnProperty(starterId)
+    && formIndex
+    && pokemonFormLevelMoves[starterId].hasOwnProperty(formIndex)
+  ) {
+    levelMoves = pokemonFormLevelMoves[starterId][formIndex];
+  } else {
+    levelMoves = pokemonSpeciesLevelMoves[starterId];
+  }
+  starterMoves.push(...levelMoves.filter(lm => lm[0] > 0 && lm[0] <= 5).map(lm => lm[1]));
+  if (speciesEggMoves.hasOwnProperty(starterId)) {
+    for (let em = 0; em < 4; em++) {
+      if (starterDataEntry.eggMoves & (1 << em)) {
+        starterMoves.push(speciesEggMoves[starterId][em]);
+      }
+    }
+  }
+
+  return starterMoves;
 }
