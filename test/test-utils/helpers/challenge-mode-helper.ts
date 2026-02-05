@@ -10,6 +10,8 @@ import { generateStarters } from "#test/test-utils/game-manager-utils";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
 import type { IntClosedRange, TupleOf } from "type-fest";
 
+type ChallengeStub = { id: Challenges; value: number; severity: number };
+
 /**
  * Helper to handle Challenge mode specifics
  */
@@ -35,6 +37,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
    * {@linkcode startBattle} is the preferred way to start a battle; this should only be used for tests
    * that need to stop and do something before the `CommandPhase` starts.
    */
+  // TODO: This duplicates all but 1 line of code from the classic mode variant...
   async runToSummon(...speciesIds: TupleOf<IntClosedRange<1, 6>, SpeciesId>) {
     await this.game.runToTitle();
 
@@ -61,6 +64,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
    * @param speciesIds - The {@linkcode SpeciesId}s with which to start the battle; must be between 1-6
    * @returns A Promise that resolves when the battle is started.
    */
+  // TODO: This duplicates all its code with the classic mode variant...
   async startBattle(...speciesIds: TupleOf<IntClosedRange<1, 6>, SpeciesId>) {
     await this.runToSummon(...speciesIds);
 
@@ -88,5 +92,27 @@ export class ChallengeModeHelper extends GameManagerHelper {
 
     await this.game.phaseInterceptor.to("CommandPhase");
     console.log("==================[New Turn]==================");
+  }
+
+  /**
+   * Override an already-started game with the given challenges.
+   * @param id - The challenge id
+   * @param value - The challenge value
+   * @param severity - The challenge severity
+   */
+  // TODO: Make severity optional for challenges that do not require it
+  public overrideGameWithChallenges(id: Challenges, value: number, severity: number): void;
+  /**
+   * Override an already-started game with the given challenges.
+   * @param challenges - One or more challenges to set.
+   */
+  public overrideGameWithChallenges(challenges: ChallengeStub[]): void;
+  public overrideGameWithChallenges(challenges: ChallengeStub[] | Challenges, value?: number, severity?: number): void {
+    if (typeof challenges !== "object") {
+      challenges = [{ id: challenges, value: value!, severity: severity! }];
+    }
+    for (const challenge of challenges) {
+      this.game.scene.gameMode.setChallengeValue(challenge.id, challenge.value, challenge.severity);
+    }
   }
 }

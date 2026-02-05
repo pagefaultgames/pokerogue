@@ -20,14 +20,16 @@ fix(move): Future Sight no longer crashes
 |_____________ Prefix
 -->
 
-
 ## What are the changes the user will see?
 <!--
 Summarize the changes from a user perspective on the application.
 Try to keep this section (relatively) brief as it is used to generate changelogs.
+If you need to provide additional details, you can do so below the cutoff.
 
 PRs with no user-facing changes should leave this blank or write "N/A" to be omitted from auto-generated changelogs.
 -->
+
+<!-- ## Changelog cutoff (DO NOT REMOVE/EDIT) -->
 
 ## Why am I making these changes?
 <!--
@@ -89,7 +91,7 @@ you can strike it out with the `~` character to mark them as not applicable.
   - [ ] **I'm using `beta` as my base branch**
   - [ ] **The current branch is not named `beta`, `main` or the name of another long-lived feature branch**
   - [ ] I have provided a clear explanation of the changes within the PR description
-  - [ ] The PR title matches the Conventional Commits format (as described in [CONTRIBUTING.md](../CONTRIBUTING.md#pr-title-format))
+  - [ ] The PR title matches the Conventional Commits format (as described in [CONTRIBUTING.md](https://github.com/pagefaultgames/pokerogue/blob/beta/CONTRIBUTING.md#pr-title-format))
 - [ ] The PR is self-contained and cannot be split into smaller PRs
 - [ ] There is no overlap with another open PR
 - The PR has been confirmed to work correctly:
