@@ -151,7 +151,7 @@ export class Arena {
       this.trySetTerrain(TerrainType.NONE);
     }
   }
-  
+
   /** Clears weather, terrain and arena tags when entering new biome or trainer battle. */
   public resetArenaEffects(): void {
     // Don't reset weather if a Biome's permanent weather is active
