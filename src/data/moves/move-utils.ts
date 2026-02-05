@@ -7,7 +7,8 @@ import { MoveTarget } from "#enums/move-target";
 import { PokemonType } from "#enums/pokemon-type";
 import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
-import type { Move, MoveTargetSet, UserMoveConditionFunc } from "#moves/move";
+import type { Move, UserMoveConditionFunc } from "#moves/move";
+import type { MoveTargetSet } from "#types/move-target-set";
 import { NumberHolder } from "#utils/common";
 import { areAllies } from "#utils/pokemon-utils";
 
