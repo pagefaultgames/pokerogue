@@ -323,7 +323,7 @@ export class BattleScene extends SceneBase {
   /**
    * Allows subscribers to listen for events.
    */
-  public readonly eventTarget = new EventTarget() as TypedEventTarget<BattleSceneEventMap>;
+  public readonly eventTarget = new EventTarget() as TypedEventTarget<keyof BattleSceneEventMap, BattleSceneEventMap>;
 
   /** A helper class containing several animation-related functions. */
   public readonly animations: Animation = new Animation();

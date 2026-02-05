@@ -1,19 +1,22 @@
 /**
- * Interface restricting the events emitted by an {@linkcode EventTarget} to a certain kind of {@linkcode Event}.
- * @typeParam T - An object type matching events to their event types
+ * Interface restricting the events emitted by an {@linkcode EventTarget} to a certain kind of {@linkcode Event},
+ * discriminated by their `type` properties.
+ * @typeParam K - A union of string literal types representing the allowed event names.
+ * @typeParam R - An object type matching event names in `K` to their corresponding `Event` subclasses.
  */
 // TODO: Should we rework this to use `CustomEvent`s instead of separate subclasses?
 // @ts-expect-error: We are overridding these types in a way TS doesn't enjoy
-export interface TypedEventTarget<R extends EventMap<string>> extends EventTarget {
-  addEventListener<EvtType extends keyof R>(
+// (like forbidding `null` from being passed as a listener).
+export interface TypedEventTarget<K extends string, R extends EventMap<K>> extends EventTarget {
+  addEventListener<const T extends this, EvtType extends K>(
     type: EvtType,
-    callback: (evt: R[EvtType]) => void,
+    callback: (this: T, evt: R[EvtType]) => void,
     options?: AddEventListenerOptions | boolean,
   ): void;
   dispatchEvent(event: Event): boolean;
-  removeEventListener<EvtType extends keyof R>(
+  removeEventListener<const T extends this, EvtType extends K>(
     type: EvtType,
-    callback: (evt: R[EvtType]) => void,
+    callback: (this: T, evt: R[EvtType]) => void,
     options?: AddEventListenerOptions | boolean,
   ): void;
 }

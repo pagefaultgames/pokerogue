@@ -44,10 +44,10 @@ export enum BattleSceneEventType {
 /**
  * Abstract container class for all {@linkcode BattleSceneEventType} events.
  */
-abstract class BattleSceneEvent extends Event {
-  public declare abstract readonly type: BattleSceneEventType;
+abstract class BattleSceneEvent<T extends BattleSceneEventType> extends Event {
+  public declare readonly type: T;
   // biome-ignore lint/complexity/noUselessConstructor: Restricts the type of the type field
-  constructor(type: BattleSceneEventType) {
+  constructor(type: T) {
     super(type);
   }
 }
@@ -57,8 +57,7 @@ export type { BattleSceneEvent };
 /**
  * Container class for {@linkcode BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED} events
  */
-export class CandyUpgradeNotificationChangedEvent extends BattleSceneEvent {
-  declare type: BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED;
+export class CandyUpgradeNotificationChangedEvent extends BattleSceneEvent<BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED> {
   /** The new value the setting was changed to */
   public readonly newValue: number;
   constructor(newValue: number) {
@@ -72,9 +71,7 @@ export class CandyUpgradeNotificationChangedEvent extends BattleSceneEvent {
  * Container class for {@linkcode BattleSceneEventType.MOVESET_CHANGED} events. \
  * Emitted whenever the moveset of any {@linkcode Pokemon} is changed, or a move's PP is increased or decreased.
  */
-export class MovesetChangedEvent extends BattleSceneEvent {
-  declare type: BattleSceneEventType.MOVESET_CHANGED;
-
+export class MovesetChangedEvent extends BattleSceneEvent<BattleSceneEventType.MOVESET_CHANGED> {
   /** The {@linkcode Pokemon.ID | ID} of the {@linkcode Pokemon} whose moveset has changed. */
   public readonly pokemonId: number;
   /**
@@ -96,9 +93,7 @@ export class MovesetChangedEvent extends BattleSceneEvent {
  * Emitted whenever the {@linkcode PokemonSummonData} of any {@linkcode Pokemon} is reset to its initial state
  * (such as immediately before a switch-out).
  */
-export class SummonDataResetEvent extends BattleSceneEvent {
-  declare type: BattleSceneEventType.SUMMON_DATA_RESET;
-
+export class SummonDataResetEvent extends BattleSceneEvent<BattleSceneEventType.SUMMON_DATA_RESET> {
   /** The {@linkcode Pokemon.ID | ID} of the {@linkcode Pokemon} whose data has been reset. */
   public readonly pokemonId: number;
 
@@ -112,8 +107,7 @@ export class SummonDataResetEvent extends BattleSceneEvent {
 /**
  * Container class for {@linkcode BattleSceneEventType.ENCOUNTER_PHASE} events.
  */
-export class EncounterPhaseEvent extends BattleSceneEvent {
-  declare type: BattleSceneEventType.ENCOUNTER_PHASE;
+export class EncounterPhaseEvent extends BattleSceneEvent<BattleSceneEventType.ENCOUNTER_PHASE> {
   constructor() {
     super(BattleSceneEventType.ENCOUNTER_PHASE);
   }
@@ -122,8 +116,7 @@ export class EncounterPhaseEvent extends BattleSceneEvent {
 /**
  * Container class for {@linkcode BattleSceneEventType.TURN_END} events
  */
-export class TurnEndEvent extends BattleSceneEvent {
-  declare type: BattleSceneEventType.TURN_END;
+export class TurnEndEvent extends BattleSceneEvent<BattleSceneEventType.TURN_END> {
   constructor() {
     super(BattleSceneEventType.TURN_END);
   }
@@ -131,8 +124,7 @@ export class TurnEndEvent extends BattleSceneEvent {
 /**
  * Container class for {@linkcode BattleSceneEventType.NEW_ARENA} events
  */
-export class NewArenaEvent extends BattleSceneEvent {
-  declare type: BattleSceneEventType.NEW_ARENA;
+export class NewArenaEvent extends BattleSceneEvent<BattleSceneEventType.NEW_ARENA> {
   constructor() {
     super(BattleSceneEventType.NEW_ARENA);
   }
