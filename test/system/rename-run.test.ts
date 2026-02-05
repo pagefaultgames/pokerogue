@@ -29,11 +29,11 @@ describe("System - Rename Run", () => {
 
   describe("renameSession", () => {
     beforeEach(() => {
-      vi.spyOn(appConstants, "bypassLogin", "get").mockReturnValue(false);
+      vi.spyOn(appConstants, "BYPASS_LOGIN", "get").mockReturnValue(false);
       vi.spyOn(account, "updateUserInfo").mockImplementation(async () => [true, 1]);
     });
 
-    it("should return false if slotId < 0", async () => {
+    it("should return `false` if `slotId < 0`", async () => {
       const result = await game.scene.gameData.renameSession(-1, "Named Run");
 
       expect(result).toEqual(false);
@@ -47,8 +47,8 @@ describe("System - Rename Run", () => {
       expect(result).toEqual(false);
     });
 
-    it("should return true if bypassLogin is true", async () => {
-      vi.spyOn(appConstants, "bypassLogin", "get").mockReturnValue(true);
+    it("should return `true` if `BYPASS_LOGIN` is true", async () => {
+      vi.spyOn(appConstants, "BYPASS_LOGIN", "get").mockReturnValue(true);
       vi.spyOn(game.scene.gameData, "getSession").mockResolvedValue({} as SessionSaveData);
 
       const result = await game.scene.gameData.renameSession(0, "Named Run");
@@ -56,7 +56,7 @@ describe("System - Rename Run", () => {
       expect(result).toEqual(true);
     });
 
-    it("should return false if api returns error", async () => {
+    it("should return `false` if api returns error", async () => {
       vi.spyOn(game.scene.gameData, "getSession").mockResolvedValue({} as SessionSaveData);
       vi.spyOn(pokerogueApi.savedata.session, "update").mockResolvedValue("Unknown Error!");
 
@@ -65,7 +65,7 @@ describe("System - Rename Run", () => {
       expect(result).toEqual(false);
     });
 
-    it("should return true if api is succesfull", async () => {
+    it("should return `true` if api is successful", async () => {
       vi.spyOn(game.scene.gameData, "getSession").mockResolvedValue({} as SessionSaveData);
       vi.spyOn(pokerogueApi.savedata.session, "update").mockResolvedValue("");
 

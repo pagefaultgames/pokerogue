@@ -1,5 +1,6 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { Log } from "#app/logging";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { NON_LEGEND_PARADOX_POKEMON } from "#balance/special-species-groups";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -288,7 +289,7 @@ async function summonSafariPokemon() {
   let pokemon: any;
   globalScene.executeWithSeedOffset(
     () => {
-      console.log("Event chance %d", eventChance.value);
+      Log.mysteryEncounter("Event chance %d", eventChance.value);
       const fromEvent = new BooleanHolder(false);
       pokemon = getRandomEncounterPokemon({
         level: globalScene.currentBattle.getLevelForWave(),
@@ -308,11 +309,11 @@ async function summonSafariPokemon() {
 
       // Increase chance of event encounter by 25% until one spawns
       if (fromEvent.value) {
-        console.log("Safari zone encounter is from event");
+        Log.mysteryEncounter("Safari zone encounter is from event");
         eventEncs.value++;
         eventChance.value = 50;
       } else if (eventEncs.value === 0) {
-        console.log("Safari zone encounter is not from event");
+        Log.mysteryEncounter("Safari zone encounter is not from event");
         eventChance.value += 25;
       }
 
@@ -510,9 +511,9 @@ function isPokemonFlee(pokemon: EnemyPokemon, fleeStage: number): boolean {
   const speciesCatchRate = pokemon.species.catchRate;
   const fleeModifier = (2 + Math.min(Math.max(fleeStage, 0), 6)) / (2 - Math.max(Math.min(fleeStage, 0), -6));
   const fleeRate = ((255 * 255 - speciesCatchRate * speciesCatchRate) / 255 / 2) * fleeModifier;
-  console.log("Flee rate: " + fleeRate);
+  Log.mysteryEncounter("Flee rate: " + fleeRate);
   const roll = randSeedInt(256);
-  console.log("Roll: " + roll);
+  Log.mysteryEncounter("Roll: " + roll);
   return roll < fleeRate;
 }
 

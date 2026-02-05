@@ -1,6 +1,7 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { MOVE_COLOR } from "#app/constants/colors";
 import { globalScene } from "#app/global-scene";
+import { Log } from "#app/logging";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
@@ -128,7 +129,7 @@ export class MovePhase extends PokemonPhase {
     const ignoreStatus = isIgnoreStatus(useMode);
     const isFollowUp = useMode === MoveUseMode.FOLLOW_UP;
 
-    console.log(
+    Log.battle(
       `%cUser: ${user.name}`
         + `\nMove: ${MoveId[this.move.moveId]}`
         + `\nUse Mode: ${enumValueToKey(MoveUseMode, this.useMode)}`,

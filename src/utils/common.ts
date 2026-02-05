@@ -1,5 +1,6 @@
 import { pokerogueApi } from "#api/pokerogue-api";
-import { bypassLogin, isDev } from "#constants/app-constants";
+import { Log } from "#app/logging";
+import { BYPASS_LOGIN, IS_DEV } from "#constants/app-constants";
 import { BiomeId } from "#enums/biome-id";
 import { MoneyFormat } from "#enums/money-format";
 import type { Variant } from "#sprites/variant";
@@ -278,19 +279,20 @@ export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>):
 
 export const sessionIdKey = "pokerogue_sessionId";
 
-/** Used to disable api calls when `isDev` is true and a server is not found */
-export let isLocalServerConnected = !bypassLogin;
+/** Used to disable api calls when `IS_DEV` is true and a server is not found */
+export let isLocalServerConnected = !BYPASS_LOGIN;
 
 /**
  * When locally running the game, "pings" the local server
  * with a GET request to verify if a server is running,
- * sets isLocalServerConnected based on results
+ * setting `isLocalServerConnected` based on results
  */
+// TODO: this causes spurious errors in the console, cf https://github.com/Despair-Games/poketernity/pull/1108
 export async function localPing(): Promise<void> {
-  if (isDev) {
+  if (IS_DEV) {
     const titleStats = await pokerogueApi.getGameTitleStats();
     isLocalServerConnected = !!titleStats;
-    console.log("isLocalServerConnected:", isLocalServerConnected);
+    Log.api("isLocalServerConnected:", isLocalServerConnected);
   }
 }
 
@@ -435,7 +437,7 @@ export function hasAllLocalizedSprites(lang?: string): boolean {
 
 /**
  * Prints the type and name of all game objects in a container for debugging purposes
- * @param container container with game objects inside it
+ * @param container - The {@linkcode Phaser.GameObjects.Container | container} with game objects inside it
  */
 export function printContainerList(container: Phaser.GameObjects.Container): void {
   console.log(

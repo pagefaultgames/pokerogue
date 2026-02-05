@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { Log } from "#app/logging";
 import type { BattlerIndex } from "#enums/battler-index";
 import type { Challenges } from "#enums/challenges";
 import type { EncounterAnim } from "#enums/encounter-anims";
@@ -390,7 +391,7 @@ export class MysteryEncounter implements IMysteryEncounter {
         this.secondaryPokemon = this.secondaryPokemon.filter(supp => supp !== this.primaryPokemon);
         return true;
       }
-      console.log(
+      Log.mysteryEncounter(
         "Mystery Encounter Edge Case: Requirement not met due to primary pokemon overlapping with secondary pokemon. There's no valid primary pokemon left.",
       );
       return false;

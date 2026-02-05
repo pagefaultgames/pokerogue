@@ -1,6 +1,7 @@
 import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
+import { Log } from "#app/logging";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { EvolutionItem, pokemonEvolutions } from "#balance/pokemon-evolutions";
@@ -1622,7 +1623,7 @@ export class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
                 let foundN_LUNA = false;
                 let foundN_SOLAR = false;
                 formChangeItemTriggers.forEach((fc, _i) => {
-                  console.log("Checking ", fc.item);
+                  Log.item("Checking Necrozma form change item:", fc.item);
                   switch (fc.item) {
                     case FormChangeItem.ULTRANECROZIUM_Z:
                       foundULTRA_Z = true;
@@ -1641,7 +1642,7 @@ export class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
                     fc => fc.item !== FormChangeItem.ULTRANECROZIUM_Z,
                   );
                 } else {
-                  console.log("DID NOT FIND ");
+                  Log.item("Necrozma form change item not found.");
                 }
               }
               return formChangeItemTriggers;
@@ -2861,20 +2862,20 @@ function getNewModifierTypeOption(
   }
 
   if (player) {
-    console.log(index, ignoredPoolIndexes[tier].filter(i => i <= index).length, ignoredPoolIndexes[tier]);
+    Log.item(index, ignoredPoolIndexes[tier].filter(i => i <= index).length, ignoredPoolIndexes[tier]);
   }
   let modifierType: ModifierType | null = pool[tier][index].modifierType;
   if (modifierType instanceof ModifierTypeGenerator) {
     modifierType = (modifierType as ModifierTypeGenerator).generateType(party);
     if (modifierType === null) {
       if (player) {
-        console.log(ModifierTier[tier], upgradeCount);
+        Log.item(ModifierTier[tier], upgradeCount);
       }
       return getNewModifierTypeOption(party, poolType, tier, upgradeCount, ++retryCount);
     }
   }
 
-  console.log(modifierType, player ? "" : "(enemy)");
+  Log.item(modifierType, player ? "" : "(enemy)");
 
   return new ModifierTypeOption(modifierType as ModifierType, upgradeCount!); // TODO: is this bang correct?
 }

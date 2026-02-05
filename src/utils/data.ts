@@ -74,10 +74,11 @@ export function isBareObject(obj: any): boolean {
   return true;
 }
 
-// the latest data saved/loaded for the Starter Preferences. Required to reduce read/writes. Initialize as "{}", since this is the default value and no data needs to be stored if present.
+// the latest data saved/loaded for the Starter Preferences. Required to reduce read/writes.
+// Initialize as "{}", since this is the default value and no data needs to be stored if present.
 // if they ever add private static variables, move this into StarterPrefs
-const StarterPrefers_DEFAULT: string = "{}";
-let StarterPrefers_private_latest: string = StarterPrefers_DEFAULT;
+const STARTER_PREFS_DEFAULT = "{}";
+let currentStarterPrefs: string = STARTER_PREFS_DEFAULT;
 
 export interface StarterPreferences {
   [key: number]: StarterAttributes | undefined;
@@ -85,10 +86,8 @@ export interface StarterPreferences {
 // called on starter selection show once
 
 export function loadStarterPreferences(): StarterPreferences {
-  return JSON.parse(
-    (StarterPrefers_private_latest =
-      localStorage.getItem(`starterPrefs_${loggedInUser?.username}`) || StarterPrefers_DEFAULT),
-  );
+  currentStarterPrefs = localStorage.getItem(`starterPrefs_${loggedInUser?.username}`) || STARTER_PREFS_DEFAULT;
+  return JSON.parse(currentStarterPrefs);
 }
 
 export function saveStarterPreferences(prefs: StarterPreferences): void {
@@ -99,11 +98,9 @@ export function saveStarterPreferences(prefs: StarterPreferences): void {
   }
   // no reason to store `{}` (for starters not customized)
   const pStr: string = JSON.stringify(prefs, (_, value) => (isBareObject(value) ? undefined : value));
-  if (pStr !== StarterPrefers_private_latest) {
+  if (pStr !== currentStarterPrefs) {
     console.log("%cSaving starter preferences", "color: blue");
-    // something changed, store the update
     localStorage.setItem(`starterPrefs_${loggedInUser?.username}`, pStr);
-    // update the latest prefs
-    StarterPrefers_private_latest = pStr;
+    currentStarterPrefs = pStr;
   }
 }

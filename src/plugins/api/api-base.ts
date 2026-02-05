@@ -1,4 +1,6 @@
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
+import { Log } from "#app/logging";
+import { IS_DEV } from "#constants/app-constants";
 import { getCookie } from "#utils/cookies";
 import type { SetRequired, UndefinedOnPartialDeep } from "type-fest";
 
@@ -90,9 +92,8 @@ export abstract class ApiBase {
       "Content-Type": config.headers?.["Content-Type"] ?? "application/json",
     };
 
-    // can't import `isLocal` due to circular import issues
-    if (import.meta.env.MODE === "development") {
-      console.log(`Sending ${config.method} request to: `, this.base + path, config);
+    if (IS_DEV) {
+      Log.api(`Sending ${config.method} request to:`, this.base + path, config);
     }
 
     // TODO: need some sort of error handling here?

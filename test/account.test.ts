@@ -5,8 +5,8 @@ import { describe, expect, it, vi } from "vitest";
 
 describe("account", () => {
   describe("updateUserInfo", () => {
-    it("should set loggedInUser! to Guest if bypassLogin is true", async () => {
-      vi.spyOn(appConstants, "bypassLogin", "get").mockReturnValue(true);
+    it("should set `loggedInUser` to Guest if `BYPASS_LOGIN` is true", async () => {
+      vi.spyOn(appConstants, "BYPASS_LOGIN", "get").mockReturnValue(true);
 
       const [success, status] = await updateUserInfo();
 
@@ -16,8 +16,8 @@ describe("account", () => {
       expect(loggedInUser!.lastSessionSlot).toBe(-1);
     });
 
-    it("should fetch user info from the API if bypassLogin is false", async () => {
-      vi.spyOn(appConstants, "bypassLogin", "get").mockReturnValue(false);
+    it("should fetch user info from the API if `BYPASS_LOGIN` is false", async () => {
+      vi.spyOn(appConstants, "BYPASS_LOGIN", "get").mockReturnValue(false);
       vi.spyOn(pokerogueApi.account, "getInfo").mockResolvedValue([
         {
           username: "test",
@@ -38,7 +38,7 @@ describe("account", () => {
     });
 
     it("should handle resolved API errors", async () => {
-      vi.spyOn(appConstants, "bypassLogin", "get").mockReturnValue(false);
+      vi.spyOn(appConstants, "BYPASS_LOGIN", "get").mockReturnValue(false);
       vi.spyOn(pokerogueApi.account, "getInfo").mockResolvedValue([null, 401]);
 
       const [success, status] = await updateUserInfo();
@@ -48,7 +48,7 @@ describe("account", () => {
     });
 
     it("should handle 500 API errors", async () => {
-      vi.spyOn(appConstants, "bypassLogin", "get").mockReturnValue(false);
+      vi.spyOn(appConstants, "BYPASS_LOGIN", "get").mockReturnValue(false);
       vi.spyOn(pokerogueApi.account, "getInfo").mockResolvedValue([null, 500]);
 
       const [success, status] = await updateUserInfo();

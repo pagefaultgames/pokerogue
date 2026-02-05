@@ -2,7 +2,7 @@ import { pokerogueApi } from "#api/pokerogue-api";
 import { clientSessionId } from "#app/account";
 import { globalScene } from "#app/global-scene";
 import { pokemonEvolutions } from "#balance/pokemon-evolutions";
-import { bypassLogin } from "#constants/app-constants";
+import { BYPASS_LOGIN } from "#constants/app-constants";
 import { modifierTypes } from "#data/data-lists";
 import { getCharVariantFromDialogue } from "#data/dialogue";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -257,7 +257,7 @@ export class GameOverPhase extends BattlePhase {
 
     // If Online, execute apiFetch as intended
     // If Offline, execute offlineNewClear() only for victory, a localStorage implementation of newClear daily run checks
-    if (!bypassLogin || isLocalServerConnected) {
+    if (!BYPASS_LOGIN || isLocalServerConnected) {
       pokerogueApi.savedata.session
         .newclear({
           slot: globalScene.sessionSlotId,

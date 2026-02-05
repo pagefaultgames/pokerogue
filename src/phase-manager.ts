@@ -10,6 +10,7 @@
 import { PHASE_START_COLOR } from "#app/constants/colors";
 import { DynamicQueueManager } from "#app/dynamic-queue-manager";
 import { globalScene } from "#app/global-scene";
+import { Log } from "#app/logging";
 import type { Phase } from "#app/phase";
 import { PhaseTree } from "#app/phase-tree";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
@@ -369,7 +370,11 @@ export class PhaseManager {
    * As such, **do not remove or split this method** as it will break integration tests.
    */
   private startCurrentPhase(): void {
-    console.log(`%cStart Phase ${this.currentPhase.phaseName}`, `color:${PHASE_START_COLOR};`);
+    Log.phase(
+      `%cStart Phase ${this.currentPhase.phaseName}`
+        + `${this.currentPhase.is("PostSummonPhase") ? ` (${this.currentPhase.getPokemon().name})` : ""}`,
+      `color:${PHASE_START_COLOR};`,
+    );
     this.currentPhase.start();
   }
 

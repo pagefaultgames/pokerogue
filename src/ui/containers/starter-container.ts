@@ -108,6 +108,7 @@ export class StarterContainer extends Phaser.GameObjects.Container {
     this.candyUpgradeOverlayIcon = candyUpgradeOverlayIcon;
   }
 
+  // TODO: this is duplicated many times, consolidate these
   checkIconId(female, formIndex, shiny, variant) {
     if (this.icon.frame.name !== this.species.getIconId(female, formIndex, shiny, variant)) {
       console.log(`${this.species.name}'s variant icon does not exist. Replacing with default.`);

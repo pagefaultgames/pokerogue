@@ -33,7 +33,7 @@ export class GameWrapper {
     Phaser.Math.RND.sow(["test"]);
     // vi.spyOn(Utils, "apiFetch", "get").mockReturnValue(fetch);
     if (bypassLogin) {
-      vi.spyOn(appConstants, "bypassLogin", "get").mockReturnValue(true);
+      vi.spyOn(appConstants, "BYPASS_LOGIN", "get").mockReturnValue(true);
     }
     this.game = phaserGame;
     // TODO: Move these mocks elsewhere

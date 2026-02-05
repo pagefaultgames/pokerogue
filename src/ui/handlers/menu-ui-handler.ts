@@ -2,7 +2,7 @@ import { pokerogueApi } from "#api/pokerogue-api";
 import { loggedInUser, updateUserInfo } from "#app/account";
 import { globalScene } from "#app/global-scene";
 import { handleTutorial, Tutorial } from "#app/tutorial";
-import { bypassLogin, isApp, isBeta, isDev } from "#constants/app-constants";
+import { BYPASS_LOGIN, IS_APP, IS_BETA, IS_DEV } from "#constants/app-constants";
 import { AdminMode, getAdminModeName } from "#enums/admin-mode";
 import { Button } from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
@@ -75,7 +75,7 @@ export class MenuUiHandler extends MessageUiHandler {
         condition: [UiMode.COMMAND, UiMode.TITLE].includes(mode ?? UiMode.TITLE),
         options: [MenuOptions.EGG_GACHA, MenuOptions.EGG_LIST],
       },
-      { condition: bypassLogin, options: [MenuOptions.LOG_OUT] },
+      { condition: BYPASS_LOGIN, options: [MenuOptions.LOG_OUT] },
     ];
 
     this.menuOptions = getEnumValues(MenuOptions).filter(m => {
@@ -128,7 +128,7 @@ export class MenuUiHandler extends MessageUiHandler {
         condition: globalScene.phaseManager.getCurrentPhase().is("SelectModifierPhase"),
         options: [MenuOptions.EGG_GACHA],
       },
-      { condition: bypassLogin, options: [MenuOptions.LOG_OUT] },
+      { condition: BYPASS_LOGIN, options: [MenuOptions.LOG_OUT] },
       { condition: !globalScene.currentBattle, options: [MenuOptions.SAVE_AND_QUIT] },
     ];
 
@@ -238,7 +238,7 @@ export class MenuUiHandler extends MessageUiHandler {
       });
     };
 
-    if (isBeta || isDev || isApp) {
+    if (IS_BETA || IS_DEV || IS_APP) {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importSession"),
         handler: () => {
@@ -293,7 +293,7 @@ export class MenuUiHandler extends MessageUiHandler {
       },
       keepOpen: true,
     });
-    if (isBeta || isDev || isApp) {
+    if (IS_BETA || IS_DEV || IS_APP) {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importData"),
         handler: () => {
@@ -340,7 +340,7 @@ export class MenuUiHandler extends MessageUiHandler {
         keepOpen: true,
       },
     );
-    if (isBeta || isDev) {
+    if (IS_BETA || IS_DEV) {
       manageDataOptions.push({
         label: "Test Dialogue",
         handler: () => {
@@ -452,7 +452,7 @@ export class MenuUiHandler extends MessageUiHandler {
         keepOpen: true,
       },
     ];
-    if (bypassLogin || loggedInUser?.hasAdminRole) {
+    if (BYPASS_LOGIN || loggedInUser?.hasAdminRole) {
       communityOptions.push({
         label: "Admin",
         handler: () => {
@@ -599,7 +599,7 @@ export class MenuUiHandler extends MessageUiHandler {
           break;
         case MenuOptions.MANAGE_DATA:
           if (
-            !bypassLogin
+            !BYPASS_LOGIN
             && !this.manageDataConfig.options.some(
               o =>
                 o.label === i18next.t("menuUiHandler:linkDiscord")

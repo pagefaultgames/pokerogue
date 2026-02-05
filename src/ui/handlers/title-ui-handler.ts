@@ -3,7 +3,7 @@ import { loggedInUser } from "#app/account";
 import { FAKE_TITLE_LOGO_CHANCE } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { isBeta, isDev } from "#constants/app-constants";
+import { IS_BETA, IS_DEV } from "#constants/app-constants";
 import { getSplashMessages } from "#data/splash-messages";
 import { PlayerGender } from "#enums/player-gender";
 import type { SpeciesId } from "#enums/species-id";
@@ -130,7 +130,7 @@ export class TitleUiHandler extends OptionSelectUiHandler {
         }
       })
       .catch(err => {
-        if (!isDev) {
+        if (!IS_DEV) {
           console.error("Failed to fetch title stats:\n", err);
         }
       });
@@ -193,7 +193,7 @@ export class TitleUiHandler extends OptionSelectUiHandler {
       }),
     );
 
-    const betaText = isBeta || isDev ? " (Beta)" : "";
+    const betaText = IS_BETA || IS_DEV ? " (Beta)" : "";
     this.appVersionText.setText("v" + version + betaText);
 
     const ui = this.getUi();

@@ -1,5 +1,6 @@
 import type { TurnCommand } from "#app/battle";
 import { globalScene } from "#app/global-scene";
+import { Log } from "#app/logging";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { speciesStarterCosts } from "#balance/starters";
 import { TrappedTag } from "#data/battler-tags";
@@ -288,13 +289,13 @@ export class CommandPhase extends FieldPhase {
       turnCommand.targets = [this.fieldIndex];
     }
 
-    console.log(
+    Log.battle(
       "Move:",
       MoveId[moveId],
-      "Move targets:",
+      "| Move targets:",
       moveTargets,
-      "\nPlayer Pokemon:",
-      getPokemonNameWithAffix(playerPokemon),
+      "| Player Pokemon:",
+      playerPokemon.species.name,
     );
 
     if (moveTargets.targets.length > 1 && moveTargets.multiple) {
