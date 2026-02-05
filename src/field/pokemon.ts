@@ -2580,34 +2580,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const types = this.getTypes(true, true, undefined, useIllusion);
     const { arena } = globalScene;
 
-    // Ground type moves cannot affect Pokemon forcibly sent airborne by a move effect or ability,
-    // unless Thousand Arrows is being used.
-    // We explicitly avoid calling `isGrounded` as that checks extra things we do not want to handle here;
-    // semi-invulnerability is ignored for the purposes of Ground type matchups and
-    // Flying-types will lose their Ground immunity in Inverse Battles.
-    const forciblyGrounded = this.isForciblyGrounded();
-    // TODO: I still dislike the explicit check for `NeutralDamageAgainstFlyingTypeMultiplierAttr`, but it's kinda w/e??
-    if (
-      moveType === PokemonType.GROUND
-      && forciblyGrounded === false
-      && !move?.hasAttr("NeutralDamageAgainstFlyingTypeMultiplierAttr")
-    ) {
-      return 0;
-    }
-
     let multiplier = types
       .map(defenderType => {
         const multiplier = new NumberHolder(getTypeDamageMultiplier(moveType, defenderType));
         applyChallenges(ChallengeType.TYPE_EFFECTIVENESS, multiplier);
-        // Ignore flying immunity of forcibly grounded flying-types
-        if (
-          multiplier.value === 0
-          && defenderType === PokemonType.FLYING
-          && moveType === PokemonType.GROUND
-          && forciblyGrounded === true
-        ) {
-          multiplier.value = 1;
-        }
 
         if (move) {
           applyMoveAttrs("VariableMoveTypeChartAttr", null, this, move, multiplier, defenderType);

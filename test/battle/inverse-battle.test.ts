@@ -256,7 +256,7 @@ describe("Inverse Battle", () => {
 
     enemy.summonData.types = [PokemonType.FLYING];
     enemy.addTag(BattlerTagType.IGNORE_FLYING);
-    expect(enemy.isGrounded()).toBe(false);
+    expect(enemy.isGrounded()).toBe(true);
 
     game.move.use(MoveId.MUD_SLAP);
     await game.toEndOfTurn();
