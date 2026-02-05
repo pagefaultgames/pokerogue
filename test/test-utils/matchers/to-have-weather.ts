@@ -29,7 +29,7 @@ export function toHaveWeather(
     };
   }
 
-  const actual = received.scene.arena.getWeatherType();
+  const actual = received.scene.arena.weatherType;
   const pass = actual === expectedWeatherType;
   const actualStr = toWeatherStr(actual);
   const expectedStr = toWeatherStr(expectedWeatherType);

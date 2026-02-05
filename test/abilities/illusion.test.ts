@@ -85,6 +85,7 @@ describe.todo("Abilities - Illusion", () => {
     expect(game.field.getPlayerPokemon().summonData.illusion).toBeFalsy();
   });
 
+  // TODO: This doesn't actually check that the ai calls the function this way... useless test
   it("causes enemy AI to consider the illusion's type instead of the actual type when considering move effectiveness", async () => {
     game.override.enemyMoveset([MoveId.FLAMETHROWER, MoveId.PSYCHIC, MoveId.TACKLE]);
     await game.classicMode.startBattle(SpeciesId.ZOROARK, SpeciesId.FEEBAS);
@@ -94,22 +95,16 @@ describe.todo("Abilities - Illusion", () => {
 
     const flameThrower = enemy.getMoveset()[0]!.getMove();
     const psychic = enemy.getMoveset()[1]!.getMove();
-    const flameThrowerEffectiveness = zoroark.getAttackTypeEffectiveness(
-      flameThrower.type,
-      enemy,
-      undefined,
-      undefined,
-      flameThrower,
-      true,
-    );
-    const psychicEffectiveness = zoroark.getAttackTypeEffectiveness(
-      psychic.type,
-      enemy,
-      undefined,
-      undefined,
-      psychic,
-      true,
-    );
+    const flameThrowerEffectiveness = zoroark.getAttackTypeEffectiveness(flameThrower.type, {
+      source: enemy,
+      move: flameThrower,
+      useIllusion: true,
+    });
+    const psychicEffectiveness = zoroark.getAttackTypeEffectiveness(psychic.type, {
+      source: enemy,
+      move: psychic,
+      useIllusion: true,
+    });
     expect(psychicEffectiveness).above(flameThrowerEffectiveness);
   });
 
