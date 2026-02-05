@@ -28,7 +28,7 @@ describe("Move - Magnet Rise", () => {
   });
 
   it("should make the user ungrounded when used", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGNEZONE]);
+    await game.classicMode.startBattle(SpeciesId.MAGNEZONE);
 
     game.move.use(MoveId.MAGNET_RISE);
     await game.move.forceEnemyMove(MoveId.EARTHQUAKE);

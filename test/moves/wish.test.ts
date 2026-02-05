@@ -36,7 +36,7 @@ describe("Move - Wish", () => {
   });
 
   it("should heal the Pokemon in the current slot for 50% of the user's maximum HP", async () => {
-    await game.classicMode.startBattle([SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY]);
+    await game.classicMode.startBattle(SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY);
 
     const [alomomola, blissey] = game.scene.getPlayerParty();
     alomomola.hp = 1;
@@ -50,7 +50,7 @@ describe("Move - Wish", () => {
     game.doSwitchPokemon(1);
     await game.toEndOfTurn();
 
-    expect(game).toHavePositionalTag(PositionalTagType.WISH, 0);
+    expect(game).not.toHavePositionalTag(PositionalTagType.WISH);
     expect(game).toHaveShownMessage(
       i18next.t("arenaTag:wishTagOnAdd", {
         pokemonNameWithAffix: getPokemonNameWithAffix(alomomola),
@@ -61,7 +61,7 @@ describe("Move - Wish", () => {
   });
 
   it("should work if the user has full HP, but not if it already has an active Wish", async () => {
-    await game.classicMode.startBattle([SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY]);
+    await game.classicMode.startBattle(SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY);
 
     const alomomola = game.field.getPlayerPokemon();
     alomomola.hp = 1;
@@ -79,7 +79,7 @@ describe("Move - Wish", () => {
   });
 
   it("should function independently of Future Sight", async () => {
-    await game.classicMode.startBattle([SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY]);
+    await game.classicMode.startBattle(SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY);
 
     const [alomomola, blissey] = game.scene.getPlayerParty();
     alomomola.hp = 1;
@@ -96,7 +96,7 @@ describe("Move - Wish", () => {
 
   it("should work in double battles and trigger in order of creation", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY]);
+    await game.classicMode.startBattle(SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY);
 
     const [alomomola, blissey, karp1, karp2] = game.scene.getField();
     alomomola.hp = 1;
@@ -129,7 +129,7 @@ describe("Move - Wish", () => {
     await game.phaseInterceptor.to("PositionalTagPhase");
 
     // all wishes have activated and added healing phases
-    expect(game).toHavePositionalTag(PositionalTagType.WISH, 0);
+    expect(game).not.toHavePositionalTag(PositionalTagType.WISH);
 
     const healPhases = game.scene.phaseManager["phaseQueue"].findAll("PokemonHealPhase");
     expect(healPhases).toHaveLength(4);
@@ -143,7 +143,7 @@ describe("Move - Wish", () => {
 
   it("should vanish and not play message if slot is empty", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY]);
+    await game.classicMode.startBattle(SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY);
 
     const [alomomola, blissey] = game.scene.getPlayerParty();
     alomomola.hp = 1;
@@ -160,7 +160,7 @@ describe("Move - Wish", () => {
     await game.toEndOfTurn();
 
     // Wish went away without doing anything
-    expect(game).toHavePositionalTag(PositionalTagType.WISH, 0);
+    expect(game).not.toHavePositionalTag(PositionalTagType.WISH);
     expect(game).not.toHaveShownMessage(
       i18next.t("arenaTag:wishTagOnAdd", {
         pokemonNameWithAffix: getPokemonNameWithAffix(blissey),

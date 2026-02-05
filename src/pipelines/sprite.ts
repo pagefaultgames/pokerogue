@@ -9,8 +9,6 @@ import spriteFragShader from "./glsl/sprite-frag-shader.frag?raw";
 import spriteVertShader from "./glsl/sprite-shader.vert?raw";
 
 export class SpritePipeline extends FieldSpritePipeline {
-  private _tone: number[];
-
   constructor(game: Phaser.Game) {
     super(game, {
       game,
@@ -18,24 +16,22 @@ export class SpritePipeline extends FieldSpritePipeline {
       fragShader: spriteFragShader,
       vertShader: spriteVertShader,
     });
-
-    this._tone = [0, 0, 0, 0];
   }
 
   onPreRender(): void {
     super.onPreRender();
 
-    this.set1f("teraTime", 0);
-    this.set3fv("teraColor", [0, 0, 0]);
-    this.set1i("hasShadow", 0);
-    this.set1i("yCenter", 0);
-    this.set2f("relPosition", 0, 0);
-    this.set2f("texFrameUv", 0, 0);
-    this.set2f("size", 0, 0);
-    this.set2f("texSize", 0, 0);
-    this.set1f("yOffset", 0);
-    this.set1f("yShadowOffset", 0);
-    this.set4fv("tone", this._tone);
+    this.set1f("teraTime", 0)
+      .set3fv("teraColor", [0, 0, 0])
+      .setBoolean("hasShadow", false)
+      .setBoolean("yCenter", false)
+      .set2f("relPosition", 0, 0)
+      .set2f("texFrameUv", 0, 0)
+      .set2f("size", 0, 0)
+      .set2f("texSize", 0, 0)
+      .set1f("yOffset", 0)
+      .set1f("yShadowOffset", 0)
+      .set4fv("tone", [0, 0, 0, 0]);
   }
 
   onBind(gameObject: Phaser.GameObjects.GameObject): void {
@@ -43,6 +39,7 @@ export class SpritePipeline extends FieldSpritePipeline {
 
     const sprite = gameObject as Phaser.GameObjects.Sprite;
 
+    // TODO: Add strong typing on this stuff
     const data = sprite.pipelineData;
     const tone = data["tone"] as number[];
     const teraColor = (data["isTerastallized"] as boolean) ? ((data["teraColor"] as number[]) ?? [0, 0, 0]) : [0, 0, 0];
@@ -68,25 +65,25 @@ export class SpritePipeline extends FieldSpritePipeline {
         (sprite.height / 2) * ((isEntityObj ? sprite.parentContainer : sprite).scale - 1)
         + (ignoreFieldPos ? 0 : sprite.y - field.y);
     }
-    this.set1f("teraTime", (this.game.getTime() % 500000) / 500000);
-    this.set3fv(
-      "teraColor",
-      teraColor.map(c => c / 255),
-    );
-    this.set1i("hasShadow", hasShadow ? 1 : 0);
-    this.set1i("yCenter", sprite.originY === 0.5 ? 1 : 0);
-    this.set1f("fieldScale", field?.scale || 1);
-    this.set2f("relPosition", position[0], position[1]);
-    this.set2f("texFrameUv", sprite.frame.u0, sprite.frame.v0);
-    this.set2f("size", sprite.frame.width, sprite.height);
-    this.set2f("texSize", sprite.texture.source[0].width, sprite.texture.source[0].height);
-    this.set1f(
-      "yOffset",
-      sprite.height - sprite.frame.height * (isEntityObj ? sprite.parentContainer.scale : sprite.scale),
-    );
-    this.set1f("yShadowOffset", yShadowOffset ?? 0);
-    this.set4fv("tone", tone);
-    this.bindTexture(this.game.textures.get("tera").source[0].glTexture!, 1); // TODO: is this bang correct?
+    this.set1f("teraTime", (this.game.getTime() % 500000) / 500000)
+      .set3fv(
+        "teraColor",
+        teraColor.map(c => c / 255),
+      )
+      .setBoolean("hasShadow", hasShadow)
+      .setBoolean("yCenter", sprite.originY === 0.5)
+      .set1f("fieldScale", field?.scale || 1)
+      .set2f("relPosition", position[0], position[1])
+      .set2f("texFrameUv", sprite.frame.u0, sprite.frame.v0)
+      .set2f("size", sprite.frame.width, sprite.height)
+      .set2f("texSize", sprite.texture.source[0].width, sprite.texture.source[0].height)
+      .set1f(
+        "yOffset",
+        sprite.height - sprite.frame.height * (isEntityObj ? sprite.parentContainer.scale : sprite.scale),
+      )
+      .set1f("yShadowOffset", yShadowOffset ?? 0)
+      .set4fv("tone", tone)
+      .bindTexture(this.game.textures.get("tera").source[0].glTexture!, 1); // TODO: is this bang correct?
 
     if (globalScene.fusionPaletteSwaps) {
       const spriteColors = ((ignoreOverride && data["spriteColorsBase"]) || data["spriteColors"] || []) as number[][];
@@ -110,12 +107,12 @@ export class SpritePipeline extends FieldSpritePipeline {
         );
       }
 
-      this.set4fv("spriteColors", flatSpriteColors.flat());
-      this.set4iv("fusionSpriteColors", flatFusionSpriteColors.flat());
+      this.set4fv("spriteColors", flatSpriteColors.flat()) //
+        .set4iv("fusionSpriteColors", flatFusionSpriteColors.flat());
     }
   }
 
-  onBatch(gameObject: Phaser.GameObjects.GameObject): void {
+  override onBatch(gameObject: Phaser.GameObjects.GameObject): void {
     if (gameObject) {
       const sprite = gameObject as Phaser.GameObjects.Sprite;
       const data = sprite.pipelineData;
@@ -160,14 +157,15 @@ export class SpritePipeline extends FieldSpritePipeline {
         }
       }
 
-      this.set4fv("baseVariantColors", flatBaseColors.flat());
-      this.set4fv("variantColors", flatVariantColors.flat());
+      this.set4fv("baseVariantColors", flatBaseColors.flat()) //
+        .set4fv("variantColors", flatVariantColors.flat());
     }
 
     super.onBatch(gameObject);
   }
 
-  batchQuad(
+  // biome-ignore lint/nursery/useMaxParams: Not our fault Phaser gives this 20 params
+  override batchQuad(
     gameObject: Phaser.GameObjects.GameObject,
     x0: number,
     y0: number,
@@ -205,7 +203,8 @@ export class SpritePipeline extends FieldSpritePipeline {
       const baseY = ((isEntityObj ? sprite.parentContainer.y : sprite.y + sprite.height) * 6) / fieldScaleRatio;
       const bottomPadding = (Math.ceil(sprite.height * 0.05 + Math.max(yShadowOffset, 0)) * 6) / fieldScaleRatio;
       const yDelta = (baseY - y1) / field.scale;
-      y2 = y1 = baseY + bottomPadding;
+      y1 = baseY + bottomPadding;
+      y2 = y1;
       const pixelHeight =
         (v1 - v0) / (sprite.frame.height * (isEntityObj ? sprite.parentContainer.scale : sprite.scale));
       v1 += (yDelta + bottomPadding / field.scale) * pixelHeight;
@@ -233,13 +232,5 @@ export class SpritePipeline extends FieldSpritePipeline {
       texture,
       unit,
     );
-  }
-
-  get tone(): number[] {
-    return this._tone;
-  }
-
-  set tone(value: number[]) {
-    this._tone = value;
   }
 }

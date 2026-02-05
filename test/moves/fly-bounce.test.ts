@@ -35,7 +35,7 @@ describe("Moves - Fly and Bounce", () => {
     { name: "Fly", move: MoveId.FLY },
     { name: "Bounce", move: MoveId.BOUNCE },
   ])("should make the user semi-invulnerable, then attack over 2 turns", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     game.move.use(MoveId.FLY);
     await game.toEndOfTurn();
@@ -62,7 +62,7 @@ describe("Moves - Fly and Bounce", () => {
   it("should not allow the user to evade attacks from Pokemon with No Guard", async () => {
     game.override.enemyAbility(AbilityId.NO_GUARD);
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
@@ -81,7 +81,7 @@ describe("Moves - Fly and Bounce", () => {
     { name: "Thousand Arrows", move: MoveId.THOUSAND_ARROWS },
     { name: "Gravity", move: MoveId.GRAVITY },
   ])("should be cancelled immediately when $name is used", async ({ move }) => {
-    await game.classicMode.startBattle([SpeciesId.AZURILL]);
+    await game.classicMode.startBattle(SpeciesId.AZURILL);
 
     game.move.use(MoveId.BOUNCE);
     await game.move.forceEnemyMove(MoveId.SPLASH);

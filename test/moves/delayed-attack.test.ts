@@ -68,7 +68,7 @@ describe("Moves - Delayed Attacks", () => {
     { name: "Doom Desire", move: MoveId.DOOM_DESIRE },
   ])("$name should show message and strike 2 turns after use, ignoring player/enemy switches", async ({ move }) => {
     game.override.battleType(BattleType.TRAINER);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
 
     game.move.use(move);
     await game.toNextTurn();
@@ -98,7 +98,7 @@ describe("Moves - Delayed Attacks", () => {
   });
 
   it("should fail (preserving prior instances) when used against the same target", async () => {
-    await game.classicMode.startBattle([SpeciesId.BRONZONG]);
+    await game.classicMode.startBattle(SpeciesId.BRONZONG);
 
     game.move.use(MoveId.FUTURE_SIGHT);
     await game.toNextTurn();
@@ -115,7 +115,7 @@ describe("Moves - Delayed Attacks", () => {
   });
 
   it("should still be delayed when called by other moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.BRONZONG]);
+    await game.classicMode.startBattle(SpeciesId.BRONZONG);
 
     game.move.use(MoveId.METRONOME);
     game.move.forceMetronomeMove(MoveId.FUTURE_SIGHT);
@@ -133,7 +133,7 @@ describe("Moves - Delayed Attacks", () => {
 
   it("should work when used against different targets in doubles", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS);
 
     const [karp, feebas, enemy1, enemy2] = game.scene.getField();
 
@@ -156,7 +156,7 @@ describe("Moves - Delayed Attacks", () => {
 
   it("should trigger multiple pending attacks in order of creation, even if that order changes later on", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS);
 
     const [alomomola, blissey] = game.scene.getField();
 
@@ -191,7 +191,7 @@ describe("Moves - Delayed Attacks", () => {
 
   it("should vanish silently if it would otherwise hit the user", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS, SpeciesId.MILOTIC);
 
     const [karp, feebas, milotic] = game.scene.getPlayerParty();
 
@@ -199,7 +199,7 @@ describe("Moves - Delayed Attacks", () => {
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.toNextTurn();
 
-    expect(game).toHavePositionalTag(PositionalTagType.DELAYED_ATTACK, 1);
+    expect(game).toHavePositionalTag(PositionalTagType.DELAYED_ATTACK);
 
     // Milotic / Feebas // Karp
     game.doSwitchPokemon(2);
@@ -228,7 +228,7 @@ describe("Moves - Delayed Attacks", () => {
 
   it("should redirect normally if target is fainted when move is used", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const [enemy1, enemy2] = game.scene.getEnemyField();
 
@@ -257,14 +257,14 @@ describe("Moves - Delayed Attacks", () => {
 
   it("should vanish silently if slot is vacant when attack lands", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const [enemy1, enemy2] = game.scene.getEnemyField();
 
     game.move.use(MoveId.FUTURE_SIGHT, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2);
     await game.toNextTurn();
 
-    expect(game).toHavePositionalTag(PositionalTagType.DELAYED_ATTACK, 1);
+    expect(game).toHavePositionalTag(PositionalTagType.DELAYED_ATTACK);
 
     game.move.use(MoveId.SPLASH);
     await game.killPokemon(enemy2);
@@ -285,7 +285,7 @@ describe("Moves - Delayed Attacks", () => {
 
   it("should consider type changes at moment of execution while ignoring redirection", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     // fake left enemy having lightning rod
     const [enemy1, enemy2] = game.scene.getEnemyField();
@@ -294,7 +294,7 @@ describe("Moves - Delayed Attacks", () => {
     game.move.use(MoveId.FUTURE_SIGHT, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2);
     await game.toNextTurn();
 
-    expect(game).toHavePositionalTag(PositionalTagType.DELAYED_ATTACK, 1);
+    expect(game).toHavePositionalTag(PositionalTagType.DELAYED_ATTACK);
 
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
     await game.toNextTurn();
@@ -327,7 +327,7 @@ describe("Moves - Delayed Attacks", () => {
   // TODO: Enable once code is added to MEP to do this
   it.todo("should not apply the user's abilities when dealing damage if the user is inactive", async () => {
     game.override.ability(AbilityId.NORMALIZE).enemySpecies(SpeciesId.LUNALA);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
 
     game.move.use(MoveId.DOOM_DESIRE);
     await game.toNextTurn();
@@ -357,7 +357,7 @@ describe("Moves - Delayed Attacks", () => {
 
   it.todo("should not apply the user's held items when dealing damage if the user is inactive", async () => {
     game.override.startingHeldItems([{ name: "ATTACK_TYPE_BOOSTER", count: 99, type: PokemonType.PSYCHIC }]);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
 
     game.move.use(MoveId.FUTURE_SIGHT);
     await game.toNextTurn();
@@ -379,20 +379,20 @@ describe("Moves - Delayed Attacks", () => {
 
   it("should not crash when catching & releasing a Pokemon on the same turn its delayed attack expires", async () => {
     game.override.startingModifier([{ name: "MASTER_BALL", count: 1 }]);
-    await game.classicMode.startBattle([
+    await game.classicMode.startBattle(
       SpeciesId.FEEBAS,
       SpeciesId.FEEBAS,
       SpeciesId.FEEBAS,
       SpeciesId.FEEBAS,
       SpeciesId.FEEBAS,
       SpeciesId.FEEBAS,
-    ]);
+    );
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.FUTURE_SIGHT);
     await game.toNextTurn();
 
-    expect(game).toHavePositionalTag(PositionalTagType.DELAYED_ATTACK, 1);
+    expect(game).toHavePositionalTag(PositionalTagType.DELAYED_ATTACK);
 
     await passTurns(1);
 

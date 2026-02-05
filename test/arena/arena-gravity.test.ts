@@ -32,7 +32,7 @@ describe("Arena - Gravity", () => {
 
   it("should multiply all non-OHKO move accuracy by 1.67x for the duration", async () => {
     const accSpy = vi.spyOn(allMoves[MoveId.TACKLE], "calculateBattleAccuracy");
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.GRAVITY);
     await game.move.forceEnemyMove(MoveId.TACKLE);
@@ -45,7 +45,7 @@ describe("Arena - Gravity", () => {
 
   it("should not affect OHKO move accuracy", async () => {
     const accSpy = vi.spyOn(allMoves[MoveId.FISSURE], "calculateBattleAccuracy");
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.GRAVITY);
     await game.move.forceEnemyMove(MoveId.FISSURE);
@@ -57,7 +57,7 @@ describe("Arena - Gravity", () => {
   });
 
   it("should forcibly ground all Pokemon for the duration of the effect", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     const fletchling = game.field.getEnemyPokemon();

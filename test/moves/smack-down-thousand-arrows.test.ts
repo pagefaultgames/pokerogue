@@ -38,7 +38,7 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
     { name: "Thousand Arrows", move: MoveId.THOUSAND_ARROWS },
   ])("$name should hit and ground ungrounded targets", async ({ move }) => {
     game.override.enemySpecies(SpeciesId.ROOKIDEE);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const rookidee = game.field.getEnemyPokemon();
     expect(rookidee.isGrounded()).toBe(false);
@@ -52,7 +52,7 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
 
   it("should affect targets with Levitate", async () => {
     game.override.enemyPassiveAbility(AbilityId.LEVITATE);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const karp = game.field.getEnemyPokemon();
     expect(karp.isGrounded()).toBe(false);
@@ -69,7 +69,7 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
     { name: "TELEKINESIS", tag: BattlerTagType.TELEKINESIS },
     { name: "FLOATING", tag: BattlerTagType.FLOATING },
   ])("should cancel the effects of BattlerTagType.$name", async ({ tag }) => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const karp = game.field.getEnemyPokemon();
     karp.addTag(tag);
@@ -84,7 +84,7 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
   });
 
   it("should not affect already-grounded targets", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const karp = game.field.getEnemyPokemon();
     expect(karp.isGrounded()).toBe(true);
@@ -100,7 +100,7 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
   // by most* things
   it("should not consider semi-invulnerability as a valid source of ungroundedness", async () => {
     game.override.ability(AbilityId.NO_GUARD);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.THOUSAND_ARROWS);
     await game.move.forceEnemyMove(MoveId.DIG);
@@ -132,7 +132,7 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
     });
 
     it("should have a fixed 1x type effectiveness when hitting airborne Flying-types", async () => {
-      await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+      await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
       const archeops = game.field.getEnemyPokemon();
 
@@ -152,7 +152,7 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
     });
 
     it("should consider other sources of groundedness for its effect", async () => {
-      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
       game.scene.arena.addTag(ArenaTagType.GRAVITY, 0, 0, 0);
 
@@ -169,7 +169,7 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
     it("should deal 2x damage to flying-types in Inverse Battles on both hits", async () => {
       game.challengeMode.addChallenge(Challenges.INVERSE_BATTLE, 1, 1);
 
-      await game.challengeMode.startBattle([SpeciesId.FEEBAS]);
+      await game.challengeMode.startBattle(SpeciesId.FEEBAS);
 
       const archeops = game.field.getEnemyPokemon();
       const spy = vi.spyOn(archeops, "getMoveEffectiveness");

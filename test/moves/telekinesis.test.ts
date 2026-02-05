@@ -33,7 +33,7 @@ describe("Move - Telekinesis", () => {
   });
 
   it("should cause opposing non-OHKO moves to always hit the target", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
@@ -60,7 +60,7 @@ describe("Move - Telekinesis", () => {
   });
 
   it("should forcibly unground the target", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const enemy = game.field.getEnemyPokemon();
     expect(enemy.isGrounded()).toBe(true);
@@ -72,7 +72,7 @@ describe("Move - Telekinesis", () => {
   });
 
   it("should coexist with Magnet Rise", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const enemy = game.field.getEnemyPokemon();
 
@@ -87,7 +87,7 @@ describe("Move - Telekinesis", () => {
   });
 
   it("should last 3 turns, including the turn it is used", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.TELEKINESIS);
     await game.toEndOfTurn(false);
@@ -116,7 +116,7 @@ describe("Move - Telekinesis", () => {
     name: getEnumStr(BattlerTagType, t),
   }));
   it.each(cases)("should fail if the target already has BattlerTagType.$name", async ({ tagType }) => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const enemy = game.field.getEnemyPokemon();
     enemy.addTag(tagType);
@@ -135,7 +135,7 @@ describe("Move - Telekinesis", () => {
   it.each(invalidSpecies)("should fail if used on $name, but can still be Baton Passed onto one", async ({
     species,
   }) => {
-    await game.classicMode.startBattle([species, SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(species, SpeciesId.FEEBAS);
 
     const [invalidMon, feebas] = game.scene.getPlayerParty();
     expect(invalidTelekinesisSpecies).toContain(invalidMon.species.speciesId);
@@ -168,7 +168,7 @@ describe("Move - Telekinesis", () => {
 
   it("should still affect enemies transformed into invalid Pokemon", async () => {
     game.override.enemyAbility(AbilityId.IMPOSTER);
-    await game.classicMode.startBattle([SpeciesId.DIGLETT]);
+    await game.classicMode.startBattle(SpeciesId.DIGLETT);
 
     const enemy = game.field.getEnemyPokemon();
     expect(enemy.summonData.speciesForm?.speciesId).toBe(SpeciesId.DIGLETT);
@@ -185,7 +185,7 @@ describe("Move - Telekinesis", () => {
 
   // TODO: Move to ingrain's test file
   it("should become grounded when Ingrain is used, but not remove the guaranteed hit effect", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
@@ -210,7 +210,7 @@ describe("Move - Telekinesis", () => {
 
   it("should fail if used against a Mega Gengar, and cannot be Baton Passed onto one", async () => {
     game.override.starterForms({ [SpeciesId.GENGAR]: 1 });
-    await game.classicMode.startBattle([SpeciesId.GENGAR, SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.GENGAR, SpeciesId.FEEBAS);
 
     const [gengar, feebas] = game.scene.getPlayerParty();
 

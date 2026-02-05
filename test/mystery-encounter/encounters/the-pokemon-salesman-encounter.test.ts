@@ -167,7 +167,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
     it("should be disabled if player does not have enough money", async () => {
       scene.money = 0;
       await game.runToMysteryEncounter(MysteryEncounterType.THE_POKEMON_SALESMAN, defaultParty);
-      await game.phaseInterceptor.to(MysteryEncounterPhase, false);
+      await game.phaseInterceptor.to("MysteryEncounterPhase", false);
 
       const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
@@ -191,7 +191,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
       vi.spyOn(Phaser.Math.RND, "realInRange").mockImplementation((min: number, max: number) => {
         return rngSweepProgress * (max - min) + min;
       });
-      vi.spyOn(Phaser.Math.RND, "shuffle").mockImplementation((arr: any[]) => arr);
+      vi.spyOn(Phaser.Math.RND, "shuffle").mockImplementation(<T>(arr: T[] | undefined): T[] => arr!);
 
       for (let i = 0; i < NUM_ROLLS; i++) {
         rngSweepProgress = (2 * i + 1) / (2 * NUM_ROLLS);
