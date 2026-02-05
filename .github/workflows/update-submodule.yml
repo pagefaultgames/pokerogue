@@ -1,0 +1,107 @@
+name: Update Submodule
+
+on:
+  pull_request:
+    branches:
+      - main
+      - beta
+      - release
+      - "hotfix*"
+    types: [labeled]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-submodule-assets:
+    if: github.event.label.name == 'Update Assets'
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          sparse-checkout: |
+            assets
+            .gitmodules
+          sparse-checkout-cone-mode: false
+
+      - name: Update assets submodule
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git submodule update --progress --init --recursive --force --depth 1 --remote assets
+
+      - name: Commit and push changes
+        run: |
+          git add assets
+          git commit -m "Update assets submodule" || echo "No changes to commit"
+          git push
+
+      - name: Remove label
+        run: gh pr edit ${{ github.event.pull_request.number }} --remove-label "Update Assets"
+
+  update-submodule-locales:
+    if: github.event.label.name == 'Update Locales'
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          sparse-checkout: |
+            locales
+            .gitmodules
+          sparse-checkout-cone-mode: false
+
+      - name: Update locales submodule
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git submodule update --progress --init --recursive --force --depth 1 --remote locales
+
+      - name: Commit and push changes
+        run: |
+          git add locales
+          git commit -m "Update locales submodule" || echo "No changes to commit"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
+
+      - name: Remove label
+        run: |
+          gh pr edit ${{ github.event.pull_request.number }} --remove-label "Update Locales"
+          gh pr edit ${{ github.event.pull_request.number }} --remove-label "Awaiting Locales"
+          
+          REVIEW_ID=$(gh api repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews \
+            --jq '.[] | select(.user.login == "github-actions[bot]" and .state == "CHANGES_REQUESTED") | .id' | head -n 1)
+          if [ -n "$REVIEW_ID" ]; then
+            gh api --method PUT repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/reviews/$REVIEW_ID/dismissals \
+              -f message="Locales updated, unblocking PR."
+          fi
+
+  block-pull-request:
+    if: github.event.label.name == 'Awaiting Locales'
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          sparse-checkout: |
+            .nvmrc
+          sparse-checkout-cone-mode: false
+
+      - name: Block pull request
+        run: |
+          gh pr review ${{ github.event.pull_request.number }} --request-changes --body "This pull request is blocked until the associated locales PR is merged.
+          To unblock and update the locales submodule, add the \`Update Locales\` label."
