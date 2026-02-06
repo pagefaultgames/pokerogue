@@ -2456,6 +2456,7 @@ export class PokedexUiHandler extends MessageUiHandler {
     }
   }
 
+  // TODO: this is duplicated many times, consolidate these
   checkIconId(
     icon: Phaser.GameObjects.Sprite,
     species: PokemonSpecies,
@@ -2466,7 +2467,7 @@ export class PokedexUiHandler extends MessageUiHandler {
   ) {
     if (icon.frame.name !== species.getIconId(female, formIndex, shiny, variant)) {
       console.log(
-        `${species.name}'s icon ${icon.frame.name} does not match getIconId with female: ${female}, formIndex: ${formIndex}, shiny: ${shiny}, variant: ${variant}`,
+        `${species.name}'s icon "${icon.frame.name}" does not match \`getIconId\` with female: ${female}, formIndex: ${formIndex}, shiny: ${shiny}, variant: ${variant}`,
       );
       icon.setTexture(species.getIconAtlasKey(formIndex, false, variant));
       icon.setFrame(species.getIconId(female, formIndex, false, variant));

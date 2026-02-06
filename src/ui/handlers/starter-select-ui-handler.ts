@@ -4682,6 +4682,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
   }
 
+  // TODO: this is duplicated many times, consolidate these
   checkIconId(
     icon: Phaser.GameObjects.Sprite,
     species: PokemonSpecies,
@@ -4692,7 +4693,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   ) {
     if (icon.frame.name !== species.getIconId(female, formIndex, shiny, variant)) {
       console.log(
-        `${species.name}'s icon ${icon.frame.name} does not match getIconId with female: ${female}, formIndex: ${formIndex}, shiny: ${shiny}, variant: ${variant}`,
+        `${species.name}'s icon "${icon.frame.name}" does not match \`getIconId\` with female: ${female}, formIndex: ${formIndex}, shiny: ${shiny}, variant: ${variant}`,
       );
       icon
         .setTexture(species.getIconAtlasKey(formIndex, false, variant))
@@ -4702,7 +4703,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
   /**
    * Clears this UI's starter preferences.
-   *
+   * @remarks
    * Designed to be used for unit tests that utilize this UI.
    */
   clearStarterPreferences() {
@@ -4710,9 +4711,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.originalStarterPreferences = {};
   }
 
-  /**
-   * Truncate the Pokémon name so it won't overlap into the starters.
-   */
+  /** Truncate the Pokémon name so it won't overlap into the starters. */
   private truncateName() {
     const name = this.pokemonNameText.text;
     this.pokemonNameText.setText(truncateString(name, 15));

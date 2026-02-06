@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { isBeta, isDev } from "#constants/app-constants";
+import { IS_BETA, IS_DEV } from "#constants/app-constants";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { getTypeDamageMultiplier } from "#data/type";
 import { AbilityId } from "#enums/ability-id";
@@ -278,7 +278,7 @@ export function getRandomRivalPartyMemberFunc(
 ): (level: number, strength: PartyMemberStrength) => EnemyPokemon {
   // Protect against out of range slots.
   // Only care about this in dev to be caught during development; it will be excluded in production builds.
-  if ((isBeta || isDev) && slot > config.length) {
+  if ((IS_BETA || IS_DEV) && slot > config.length) {
     throw new Error(`Slot ${slot} is out of range for the provided config of length ${config.length}`);
   }
   return (level: number, _strength: PartyMemberStrength) => {

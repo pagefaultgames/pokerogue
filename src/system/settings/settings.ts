@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { hasTouchscreen } from "#app/touch-controls";
-import { isDev } from "#constants/app-constants";
+import { IS_DEV } from "#constants/app-constants";
 import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
@@ -724,7 +724,7 @@ export const Setting: Setting[] = [
   },
 ];
 
-if (isDev) {
+if (IS_DEV) {
   Setting.push({
     key: SettingKeys.Dex_For_Devs,
     label: i18next.t("settings:dexForDevs"),

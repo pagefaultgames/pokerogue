@@ -67,7 +67,6 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
   ])
   .withOnInit(() => {
     const encounter = globalScene.currentBattle.mysteryEncounter!;
-    console.log(encounter);
 
     // Calculate boss mon
     const bossSpecies = getPokemonSpecies(SpeciesId.SNORLAX);

@@ -1,6 +1,6 @@
 import { pokerogueApi } from "#api/pokerogue-api";
 import { globalScene } from "#app/global-scene";
-import { bypassLogin } from "#constants/app-constants";
+import { BYPASS_LOGIN } from "#constants/app-constants";
 import { AdminMode } from "#enums/admin-mode";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
@@ -281,7 +281,7 @@ export class AdminUiHandler extends FormModalUiHandler {
         }
         break;
       case AdminMode.SEARCH:
-        if (!this.inputs[0].text && !bypassLogin) {
+        if (!this.inputs[0].text && !BYPASS_LOGIN) {
           // username missing from search panel, skip check for local testing
           return {
             error: true,
@@ -325,7 +325,7 @@ export class AdminUiHandler extends FormModalUiHandler {
   private async adminSearch(adminSearchResult: SearchAccountResponse) {
     this.tempGameData = null;
     // Mocking response, solely for local testing
-    if (bypassLogin) {
+    if (BYPASS_LOGIN) {
       const fakeResponse: SearchAccountResponse = {
         username: adminSearchResult.username,
         discordId: "",

@@ -1,5 +1,5 @@
 import { pokerogueApi } from "#api/pokerogue-api";
-import { bypassLogin } from "#constants/app-constants";
+import { BYPASS_LOGIN } from "#constants/app-constants";
 import type { UserInfo } from "#types/api";
 import { randomString } from "#utils/common";
 
@@ -8,7 +8,7 @@ export let loggedInUser: UserInfo | null = null;
 export const clientSessionId = randomString(32);
 
 export async function updateUserInfo(): Promise<[success: boolean, status: number]> {
-  if (!bypassLogin) {
+  if (!BYPASS_LOGIN) {
     const [accountInfo, status] = await pokerogueApi.account.getInfo();
     if (!accountInfo) {
       return [false, status];

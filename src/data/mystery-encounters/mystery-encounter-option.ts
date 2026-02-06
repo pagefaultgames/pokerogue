@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { Log } from "#app/logging";
 import type { MoveId } from "#enums/move-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import type { PokemonType } from "#enums/pokemon-type";
@@ -157,7 +158,7 @@ export class MysteryEncounterOption implements IMysteryEncounterOption {
         this.secondaryPokemon = this.secondaryPokemon.filter(supp => supp !== this.primaryPokemon);
         return true;
       }
-      console.log(
+      Log.mysteryEncounter(
         "Mystery Encounter Edge Case: Requirement not met due to primary pokemon overlapping with support pokemon. There's no valid primary pokemon left.",
       );
       return false;

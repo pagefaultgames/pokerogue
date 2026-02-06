@@ -14,7 +14,7 @@ export class PostSummonPhase extends PokemonPhase {
     super.start();
 
     const pokemon = this.getPokemon();
-    console.log("Ran PSP for:", pokemon.name);
+
     if (pokemon.status?.effect === StatusEffect.TOXIC) {
       pokemon.status.toxicTurnCount = 0;
     }
@@ -23,7 +23,6 @@ export class PostSummonPhase extends PokemonPhase {
 
     globalScene.arena.applyTags(EntryHazardTag, false, pokemon);
 
-    // If this is mystery encounter and has post summon phase tag, apply post summon effects
     if (
       globalScene.currentBattle.isBattleMysteryEncounter()
       && pokemon.findTags(t => t instanceof MysteryEncounterPostSummonTag).length > 0

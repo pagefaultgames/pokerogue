@@ -7,6 +7,7 @@ import type { AnySound, BattleScene } from "#app/battle-scene";
 import { EVOLVE_MOVE, PLAYER_PARTY_MAX_SIZE, RARE_CANDY_FRIENDSHIP_CAP, RELEARN_MOVE } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
+import { Log } from "#app/logging";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { speciesEggMoves } from "#balance/egg-moves";
@@ -192,13 +193,13 @@ import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * This pokemon's {@link https://bulbapedia.bulbagarden.net/wiki/Personality_value | Personality value/PID},
-   * used to determine various parameters of this Pokemon.
+   * used to determine various parameters of this Pokemon. \
    * Represented as a random 32-bit unsigned integer.
-   * TODO: Stop treating this like a unique ID and stop treating 0 as no pokemon
    */
+  // TODO: split into PV and ID, cf https://github.com/Despair-Games/poketernity/pull/1314
   public id: number;
   /**
-   * The Pokemon's current nickname, or `undefined` if it currently lacks one.
+   * The Pokemon's current nickname, or `undefined` if it currently lacks one. \
    * If omitted, references to this should refer to the default name for this Pokemon's species.
    */
   public nickname?: string | undefined;
@@ -212,6 +213,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   protected battleInfo: BattleInfo;
   public level: number;
   public exp: number;
+  // TODO: replace this with a getter, cf part of https://github.com/Despair-Games/poketernity/pull/1396
   public levelExp: number;
   public gender: Gender;
   public hp: number;
@@ -222,8 +224,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * This Pokemon's current {@link https://m.bulbapedia.bulbagarden.net/wiki/Status_condition#Non-volatile_status | non-volatile status condition},
    * or `null` if none exist.
-   * @todo Make private
    */
+  // TODO: make `private`
   public status: Status | null;
   /**
    * The Pokémon's current friendship value, ranging from 0 to 255.
@@ -233,7 +235,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * The level at which this Pokémon was met
    * @remarks
-   * Primarily used for displaying in the summary screen
+   * Primarily used for display in the summary screen
    */
   public metLevel: number;
   /**
@@ -242,7 +244,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Primarily used for display in the summary screen.
    */
   public metBiome: BiomeId | -1;
-  // TODO: figure out why this is used and document it (seems only to be read for getting the Pokémon's egg moves)
+  // TODO: figure out why this is used and document it (seems to only be read for getting the Pokémon's egg moves)
   public metSpecies: SpeciesId;
   /** The wave index at which this Pokémon was met/encountered */
   public metWave: number;
@@ -1421,8 +1423,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Calculate the critical-hit stage of a move used **against** this pokemon by
-   * the given source.
+   * Calculate the critical-hit stage of a move used **against** this pokemon by the given source.
    *
    * @param source - The {@linkcode Pokemon} using the move
    * @param move - The {@linkcode Move} being used
@@ -1440,13 +1441,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       critStage.value += critBoostTag.critStages;
     }
 
-    console.log(`crit stage: +${critStage.value}`);
+    Log.battle(`Crit stage: +${critStage.value}`);
     return critStage.value;
   }
 
   /**
-   * Calculates the category of a move when used by this pokemon after
-   * category-changing move effects are applied.
+   * Calculates the category of a move when used by this pokemon
+   * after category-changing move effects are applied.
    * @param target - The {@linkcode Pokemon} using the move
    * @param move - The {@linkcode Move} being used
    * @returns The given move's final category
@@ -1458,19 +1459,17 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Calculates and retrieves the final value of a stat considering any held
-   * items, move effects, opponent abilities, and whether there was a critical
-   * hit.
+   * Calculates and retrieves the final value of a stat considering any held items,
+   * move effects, opponent abilities, and whether there was a critical hit.
    * @param stat - The desired {@linkcode EffectiveStat | Stat} to check.
-   * @param opponent - The {@linkcode Pokemon} being targeted, if applicable.
-   * @param move - The {@linkcode Move} being used, if any. Used to check ability ignoring effects and similar.
-   * @param ignoreAbility - Whether to ignore ability effects of the user; default `false`.
-   * @param ignoreOppAbility - Whether to ignore ability effects of the target; default `false`.
-   * @param ignoreAllyAbility - Whether to ignore ability effects of the user's allies; default `false`.
-   * @param isCritical - Whether a critical hit has occurred or not; default `false`.
-   * If `true`, will nullify offensive stat drops or defensive stat boosts.
-   * @param simulated - Whether to nullify any effects that produce changes to game state during calculations; default `true`
-   * @param ignoreHeldItems - Whether to ignore the user's held items during stat calculation; default `false`.
+   * @param opponent - (Optional) The {@linkcode Pokemon} being targeted.
+   * @param move - (Optional) The {@linkcode Move} being used. Used to check ability ignoring effects and similar.
+   * @param ignoreAbility - (Default `false`) Whether to ignore ability effects of the user
+   * @param ignoreOppAbility - (Default `false`) Whether to ignore ability effects of the target
+   * @param ignoreAllyAbility - (Default `false`) Whether to ignore ability effects of the user's allies
+   * @param isCritical - (Default `false`) Whether a critical hit has occurred or not
+   * @param simulated - (Default `false`) Whether to nullify any effects that produce changes to game state during calculations
+   * @param ignoreHeldItems - (Default `false`) Whether to ignore the user's held items during stat calculation
    * @returns The final in-battle value for the given stat.
    */
   // TODO: Replace the optional parameters with an object to make calling this method less cumbersome
@@ -3341,11 +3340,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     while (this.level < maxExpLevel && this.exp >= getLevelTotalExp(this.level + 1, this.species.growthRate)) {
       this.level++;
     }
+    const levelTotalExp = getLevelTotalExp(this.level, this.species.growthRate);
     if (this.level >= maxExpLevel) {
-      console.log(initialExp, this.exp, getLevelTotalExp(this.level, this.species.growthRate));
-      this.exp = Math.max(getLevelTotalExp(this.level, this.species.growthRate), initialExp);
+      this.exp = Math.max(levelTotalExp, initialExp);
     }
-    this.levelExp = this.exp - getLevelTotalExp(this.level, this.species.growthRate);
+    this.levelExp = this.exp - levelTotalExp;
   }
 
   /**
@@ -3607,14 +3606,17 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     applyMoveAttrs("VariableDefAttr", source, this, move, targetDef);
 
     /**
-     * The attack's base damage, as determined by the source's level, move power
+     * The attack's base damage as determined by the source's level, move power
      * and Attack stat as well as this Pokemon's Defense stat
      */
     const baseDamage = (levelMultiplier * power * sourceAtk.value) / targetDef.value / 50 + 2;
 
-    /** Debug message for non-simulated calls (i.e. when damage is actually dealt) */
     if (!simulated) {
-      console.log("base damage", baseDamage, move.name, power, sourceAtk.value, targetDef.value);
+      Log.battle(
+        `Move: ${move.name},`,
+        `Base damage: ${baseDamage}`,
+        `(Power: ${power}, Attack: ${sourceAtk.value}, Defense: ${targetDef.value})`,
+      );
     }
 
     return baseDamage;
@@ -3922,9 +3924,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       applyAbAttrs("PreDefendFullHpEndureAbAttr", abAttrParams);
     }
 
-    // debug message for when damage is applied (i.e. not simulated)
     if (!simulated) {
-      console.log("damage", damage.value, move.name);
+      Log.battle(`Move: ${move.name}, Final damage: ${damage.value}`);
     }
 
     let hitResult: HitResult;
@@ -6829,12 +6830,16 @@ export class EnemyPokemon extends Pokemon {
 
           const chosenMove = sortedMovePool[chosenMoveIndex];
 
-          // biome-ignore format: For some reason this gets broken into multiple lines
-          console.log("Move Pool:", movePool.map((m) => m.getName()));
-          console.log("Move Scores:", moveScores);
-          // biome-ignore format: For some reason this gets broken into multiple lines
-          console.log("Sorted Move Pool:", sortedMovePool.map((m) => m.getName()));
-          console.log("Chosen Move:", chosenMove.getName());
+          // biome-ignore format: manually formatted
+          Log.ai(
+            "Move Pool:", movePool.map((m) => m.getName()),
+            "\n",
+            "Move Scores:", moveScores,
+            "\n",
+            "Sorted Move Pool:", sortedMovePool.map((m) => m.getName()),
+            "\n",
+            "Chosen Move:", chosenMove.getName()
+          );
 
           return {
             move: chosenMove.moveId,

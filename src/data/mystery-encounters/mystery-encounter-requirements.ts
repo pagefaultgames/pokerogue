@@ -712,9 +712,7 @@ export class StatusEffectRequirement extends EncounterPokemonRequirement {
     if (partyPokemon == null || this.requiredStatusEffect?.length < 0) {
       return false;
     }
-    const x = this.queryParty(partyPokemon).length >= this.minNumberOfPokemon;
-    console.log(x);
-    return x;
+    return this.queryParty(partyPokemon).length >= this.minNumberOfPokemon;
   }
 
   override queryParty(partyPokemon: readonly PlayerPokemon[]): PlayerPokemon[] {

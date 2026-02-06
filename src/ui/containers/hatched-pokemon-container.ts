@@ -125,6 +125,7 @@ export class HatchedPokemonContainer extends Phaser.GameObjects.Container {
    * @param shiny whether the Pokemon is shiny
    * @param variant the shiny variant
    */
+  // TODO: this is duplicated many times, consolidate these
   private checkIconId(female: boolean, formIndex: number, shiny: boolean, variant: number) {
     if (this.icon.frame.name !== this.species.getIconId(female, formIndex, shiny, variant)) {
       console.log(`${this.species.name}'s variant icon does not exist. Replacing with default.`);

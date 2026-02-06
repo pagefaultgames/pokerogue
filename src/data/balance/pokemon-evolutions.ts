@@ -154,7 +154,6 @@ export class SpeciesEvolutionCondition {
   }
 
   public conditionsFulfilled(pokemon: Pokemon, forFusion = false): boolean {
-    console.log(this.data);
     return this.data.every(cond => {
       switch (cond.key) {
         case EvoCondKey.FRIENDSHIP:

@@ -32,7 +32,6 @@ import { TrainingSessionEncounter } from "#mystery-encounters/training-session-e
 import { TrashToTreasureEncounter } from "#mystery-encounters/trash-to-treasure-encounter";
 import { UncommonBreedEncounter } from "#mystery-encounters/uncommon-breed-encounter";
 import { WeirdDreamEncounter } from "#mystery-encounters/weird-dream-encounter";
-import { getBiomeName } from "#utils/common";
 
 export const EXTREME_ENCOUNTER_BIOMES = [
   BiomeId.SEA,
@@ -296,19 +295,19 @@ export function initMysteryEncounters() {
   });
 
   // Add ANY biome encounters to biome map
-  let _encounterBiomeTableLog = "";
-  mysteryEncountersByBiome.forEach((biomeEncounters, biome) => {
+  // let encounterBiomeTableLog = "";
+  mysteryEncountersByBiome.forEach((biomeEncounters, _biome) => {
     anyBiomeEncounters.forEach(encounter => {
       if (!biomeEncounters.includes(encounter)) {
         biomeEncounters.push(encounter);
       }
     });
 
-    _encounterBiomeTableLog += `${getBiomeName(biome).toUpperCase()}: [${biomeEncounters
-      .map(type => MysteryEncounterType[type].toString().toLowerCase())
-      .sort()
-      .join(", ")}]\n`;
+    // encounterBiomeTableLog += `${getBiomeName(biome).toUpperCase()}: [${biomeEncounters
+    //   .map(type => MysteryEncounterType[type].toString().toLowerCase())
+    //   .sort()
+    //   .join(", ")}]\n`;
   });
 
-  //console.debug("All Mystery Encounters by Biome:\n" + encounterBiomeTableLog);
+  // console.debug("All Mystery Encounters by Biome:\n", encounterBiomeTableLog);
 }

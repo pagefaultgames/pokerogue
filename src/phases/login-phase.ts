@@ -2,7 +2,7 @@ import { updateUserInfo } from "#app/account";
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 import { handleTutorial, Tutorial } from "#app/tutorial";
-import { bypassLogin } from "#constants/app-constants";
+import { BYPASS_LOGIN } from "#constants/app-constants";
 import { UiMode } from "#enums/ui-mode";
 import { executeIf, sessionIdKey } from "#utils/common";
 import { getCookie, removeCookie } from "#utils/cookies";
@@ -33,7 +33,7 @@ export class LoginPhase extends Phase {
 
     ui.setMode(UiMode.LOADING, { buttonActions: [] });
 
-    const response = await executeIf(bypassLogin || hasSession, updateUserInfo);
+    const response = await executeIf(BYPASS_LOGIN || hasSession, updateUserInfo);
     const success = response?.[0] ?? false;
     const statusCode = response ? response[1] : null;
 
@@ -43,7 +43,7 @@ export class LoginPhase extends Phase {
     }
 
     await gameData.loadSystem();
-    if (success || bypassLogin) {
+    if (success || BYPASS_LOGIN) {
       await this.end();
       return;
     }

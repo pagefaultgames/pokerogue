@@ -40,7 +40,20 @@ export const sharedConfig: UserConfigFnPromise = async ({ mode }) =>
       },
     },
     esbuild: {
-      pure: mode === "production" ? ["console.log"] : [],
+      pure:
+        mode === "production"
+          ? [
+              "console.log",
+              "Log.ai",
+              "Log.api",
+              "Log.battle",
+              "Log.encounter",
+              "Log.item",
+              "Log.mysteryEncounter",
+              "Log.phase",
+              "Log.trainer",
+            ]
+          : [],
       keepNames: true,
     },
   }) satisfies UserConfig;

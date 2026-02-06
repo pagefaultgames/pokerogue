@@ -2,6 +2,7 @@ import type { Battle } from "#app/battle";
 import { AVERAGE_ENCOUNTERS_PER_RUN_TARGET, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
+import { Log } from "#app/logging";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { biomeLinks } from "#balance/biomes";
 import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE } from "#balance/rates";
@@ -396,6 +397,8 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
 
     loadEnemyAssets.push(enemyPokemon.loadAssets());
 
+    // #region Battle Logging
+
     const stats: string[] = [
       `HP: ${enemyPokemon.stats[0]} (${enemyPokemon.ivs[0]})`,
       ` Atk: ${enemyPokemon.stats[1]} (${enemyPokemon.ivs[1]})`,
@@ -404,25 +407,30 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
       ` Spdef: ${enemyPokemon.stats[4]} (${enemyPokemon.ivs[4]})`,
       ` Spd: ${enemyPokemon.stats[5]} (${enemyPokemon.ivs[5]})`,
     ];
-    const moveset: string[] = [];
-    enemyPokemon.getMoveset().forEach(move => {
-      moveset.push(move!.getName()); // TODO: remove `!` after moveset-null removal PR
-    });
 
-    console.log(
+    const moveset: string[] = [];
+    for (const move of enemyPokemon.getMoveset()) {
+      moveset.push(move.getName());
+    }
+
+    Log.encounter(
       `Pokemon: ${getPokemonNameWithAffix(enemyPokemon)}`,
       `| Species ID: ${enemyPokemon.species.speciesId}`,
       `| Level: ${enemyPokemon.level}`,
       `| Nature: ${getNatureName(enemyPokemon.nature, true, true, true)}`,
       `| Friendship: ${enemyPokemon.friendship}`,
-    );
-    console.log(`Stats (IVs): ${stats}`);
-    console.log(
+      "\n",
+      `Stats (IVs): ${stats}`,
+      "\n",
       `Ability: ${enemyPokemon.getAbility().name}`,
       `| Passive Ability${enemyPokemon.hasPassive() ? "" : " (inactive)"}: ${enemyPokemon.getPassiveAbility().name}`,
       `${enemyPokemon.isBoss() ? `| Boss Bars: ${enemyPokemon.bossSegments}` : ""}`,
+      "\n",
+      "Moveset:",
+      moveset,
     );
-    console.log("Moveset:", moveset);
+
+    // #endregion Logging
   });
 
   globalScene.phaseManager.pushNew("MysteryEncounterBattlePhase", partyConfig.disableSwitch);
@@ -1241,17 +1249,31 @@ export function calculateMEAggregateStats(baseSpawnWeight: number): void {
     meanMEFloorsPerRunPerBiome.set(key, value / n);
   });
 
-  let stats = `Starting weight: ${baseSpawnWeight}\nAverage MEs per run: ${totalMean}\nStandard Deviation: ${totalStd}\nAvg Commons: ${commonMean}\nAvg Greats: ${uncommonMean}\nAvg Ultras: ${rareMean}\nAvg Rogues: ${superRareMean}\n`;
+  let stats =
+    `Starting weight: ${baseSpawnWeight}`
+    + "\n"
+    + `Average MEs per run: ${totalMean}`
+    + "\n"
+    + `Standard Deviation: ${totalStd}`
+    + "\n"
+    + `Avg Commons: ${commonMean}`
+    + "\n"
+    + `Avg Greats: ${uncommonMean}`
+    + "\n"
+    + `Avg Ultras: ${rareMean}`
+    + "\n"
+    + `Avg Rogues: ${superRareMean}`
+    + "\n";
 
   const meanEncountersPerRunPerBiomeSorted = [...meanEncountersPerRunPerBiome.entries()].sort(
     (e1, e2) => e2[1] - e1[1],
   );
 
   for (const value of meanEncountersPerRunPerBiomeSorted) {
-    stats += value[0] + "avg valid floors " + meanMEFloorsPerRunPerBiome.get(value[0]) + `, avg MEs ${value[1]},\n`;
+    stats += `${value[0]} avg valid floors: ${meanMEFloorsPerRunPerBiome.get(value[0])}, avg MEs: ${value[1]}\n`;
   }
 
-  console.log(stats);
+  Log.mysteryEncounter(stats);
 }
 
 /**
@@ -1325,5 +1347,5 @@ export function calculateRareSpawnAggregateStats(luckValue: number): void {
 
   const stats = `Avg Commons: ${commonMean}\nAvg Rare: ${rareMean}\nAvg Super Rare: ${superRareMean}\nAvg Ultra Rare: ${ultraRareMean}\n`;
 
-  console.log(stats);
+  Log.mysteryEncounter(stats);
 }

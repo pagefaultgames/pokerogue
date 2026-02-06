@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { isBeta, isDev } from "#constants/app-constants";
+import { IS_BETA, IS_DEV } from "#constants/app-constants";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
@@ -42,13 +42,13 @@ export function parseDailySeed(seed: string): CustomDailyRunConfig | undefined {
     const config = JSON.parse(seed) as CustomDailyRunConfig;
 
     if (!validate(config)) {
-      if (isBeta || isDev) {
+      if (IS_BETA || IS_DEV) {
         console.warn("Invalid custom daily run config:", validate.errors);
       }
       return;
     }
 
-    if (isDev) {
+    if (IS_DEV) {
       console.log("Using a custom config for the daily run:", config);
     }
     return config;

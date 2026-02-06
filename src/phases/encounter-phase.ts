@@ -1,6 +1,7 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { PLAYER_PARTY_MAX_SIZE, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { Log } from "#app/logging";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { handleTutorial, Tutorial } from "#app/tutorial";
@@ -171,6 +172,8 @@ export class EncounterPhase extends BattlePhase {
 
       loadEnemyAssets.push(enemyPokemon.loadAssets());
 
+      // #region Battle Logging
+
       const stats: string[] = [
         `HP: ${enemyPokemon.stats[0]} (${enemyPokemon.ivs[0]})`,
         ` Atk: ${enemyPokemon.stats[1]} (${enemyPokemon.ivs[1]})`,
@@ -179,24 +182,31 @@ export class EncounterPhase extends BattlePhase {
         ` Spdef: ${enemyPokemon.stats[4]} (${enemyPokemon.ivs[4]})`,
         ` Spd: ${enemyPokemon.stats[5]} (${enemyPokemon.ivs[5]})`,
       ];
+
       const moveset: string[] = [];
       for (const move of enemyPokemon.getMoveset()) {
         moveset.push(move.getName());
       }
 
-      console.log(
+      Log.encounter(
         `Pokemon: ${getPokemonNameWithAffix(enemyPokemon)}`,
         `| Species ID: ${enemyPokemon.species.speciesId}`,
         `| Level: ${enemyPokemon.level}`,
         `| Nature: ${getNatureName(enemyPokemon.nature, true, true, true)}`,
-      );
-      console.log(`Stats (IVs): ${stats}`);
-      console.log(
+        `| Friendship: ${enemyPokemon.friendship}`,
+        "\n",
+        `Stats (IVs): ${stats}`,
+        "\n",
         `Ability: ${enemyPokemon.getAbility().name}`,
         `| Passive Ability${enemyPokemon.hasPassive() ? "" : " (inactive)"}: ${enemyPokemon.getPassiveAbility().name}`,
         `${enemyPokemon.isBoss() ? `| Boss Bars: ${enemyPokemon.bossSegments}` : ""}`,
+        "\n",
+        "Moveset:",
+        moveset,
       );
-      console.log("Moveset:", moveset);
+
+      // #endregion
+
       return true;
     });
 
@@ -619,7 +629,6 @@ export class EncounterPhase extends BattlePhase {
               this.doEncounterCommon(false);
             } else {
               const count = 5643853 + globalScene.gameData.gameStats.classicSessionsPlayed;
-              // The line below checks if an English ordinal is necessary or not based on whether an entry for encounterLocalizationKey exists in the language or not.
               const ordinalUsed =
                 !i18next.exists(localizationKey, { fallbackLng: [] }) || i18next.resolvedLanguage === "en"
                   ? i18next.t("battleSpecDialogue:key", {

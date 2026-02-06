@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { Log } from "#app/logging";
 import { allSpecies, modifierTypes } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -423,7 +424,7 @@ function getTeamTransformations(): PokemonTransformation[] {
     }
 
     pokemonTransformations[index].newSpecies = newSpecies;
-    console.log("New species: " + JSON.stringify(newSpecies));
+    Log.mysteryEncounter("Old species:", removed.species.name, "| New species: ", newSpecies.name);
     alreadyUsedSpecies.push(newSpecies);
   }
 

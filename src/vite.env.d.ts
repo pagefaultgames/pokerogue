@@ -10,6 +10,14 @@ interface ImportMetaEnv {
   readonly VITE_GOOGLE_CLIENT_ID?: string;
   readonly VITE_I18N_DEBUG?: string;
   readonly NODE_ENV?: string;
+  readonly VITE_LOG_AI?: "0" | "1";
+  readonly VITE_LOG_API?: "0" | "1";
+  readonly VITE_LOG_BATTLE?: "0" | "1";
+  readonly VITE_LOG_ENCOUNTER?: "0" | "1";
+  readonly VITE_LOG_ITEM?: "0" | "1";
+  readonly VITE_LOG_MYSTERY_ENCOUNTER?: "0" | "1";
+  readonly VITE_LOG_PHASE?: "0" | "1";
+  readonly VITE_LOG_TRAINER?: "0" | "1";
 }
 
 interface ViteTypeOptions {
