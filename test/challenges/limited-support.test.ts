@@ -32,7 +32,7 @@ describe("Challenges - Limited Support", () => {
   it('should disable the shop in "No Shop"', async () => {
     game.override.startingWave(181);
     game.challengeMode.addChallenge(Challenges.LIMITED_SUPPORT, 2, 1);
-    await game.challengeMode.startBattle([SpeciesId.NUZLEAF]);
+    await game.challengeMode.startBattle(SpeciesId.NUZLEAF);
 
     game.move.use(MoveId.SPLASH);
     await game.doKillOpponents();
@@ -48,7 +48,7 @@ describe("Challenges - Limited Support", () => {
   it('should disable the automatic party heal in "No Heal"', async () => {
     game.override.startingWave(10);
     game.challengeMode.addChallenge(Challenges.LIMITED_SUPPORT, 1, 1);
-    await game.challengeMode.startBattle([SpeciesId.NUZLEAF]);
+    await game.challengeMode.startBattle(SpeciesId.NUZLEAF);
 
     const playerPokemon = game.field.getPlayerPokemon();
     playerPokemon.hp /= 2;
@@ -63,7 +63,7 @@ describe("Challenges - Limited Support", () => {
   it('should disable both automatic party healing and shop in "Both"', async () => {
     game.override.startingWave(10);
     game.challengeMode.addChallenge(Challenges.LIMITED_SUPPORT, 3, 1);
-    await game.challengeMode.startBattle([SpeciesId.NUZLEAF]);
+    await game.challengeMode.startBattle(SpeciesId.NUZLEAF);
 
     const playerPokemon = game.field.getPlayerPokemon();
     playerPokemon.hp /= 2;

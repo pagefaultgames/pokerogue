@@ -104,7 +104,7 @@ describe("Safari Zone - Mystery Encounter", () => {
     it("should NOT be selectable if the player doesn't have enough money", async () => {
       game.scene.money = 0;
       await game.runToMysteryEncounter(MysteryEncounterType.SAFARI_ZONE, defaultParty);
-      await game.phaseInterceptor.to(MysteryEncounterPhase, false);
+      await game.phaseInterceptor.to("MysteryEncounterPhase", false);
 
       const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);

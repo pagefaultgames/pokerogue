@@ -34,7 +34,7 @@ describe("Abilities - Gorilla Tactics", () => {
   });
 
   it("boosts the Pokémon's Attack by 50%, but limits the Pokémon to using only one move", async () => {
-    await game.classicMode.startBattle([SpeciesId.GALAR_DARMANITAN]);
+    await game.classicMode.startBattle(SpeciesId.GALAR_DARMANITAN);
 
     const darmanitan = game.field.getPlayerPokemon();
     const initialAtkStat = darmanitan.getStat(Stat.ATK);
@@ -49,7 +49,7 @@ describe("Abilities - Gorilla Tactics", () => {
   });
 
   it("should struggle if the only usable move is disabled", async () => {
-    await game.classicMode.startBattle([SpeciesId.GALAR_DARMANITAN]);
+    await game.classicMode.startBattle(SpeciesId.GALAR_DARMANITAN);
 
     const darmanitan = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
@@ -80,7 +80,7 @@ describe("Abilities - Gorilla Tactics", () => {
 
   it("should lock into calling moves, even if also in moveset", async () => {
     vi.spyOn(RandomMoveAttr.prototype, "getMoveOverride").mockReturnValue(MoveId.TACKLE);
-    await game.classicMode.startBattle([SpeciesId.GALAR_DARMANITAN]);
+    await game.classicMode.startBattle(SpeciesId.GALAR_DARMANITAN);
 
     const darmanitan = game.field.getPlayerPokemon();
 
@@ -97,7 +97,7 @@ describe("Abilities - Gorilla Tactics", () => {
   });
 
   it("should activate when the opponenet protects", async () => {
-    await game.classicMode.startBattle([SpeciesId.GALAR_DARMANITAN]);
+    await game.classicMode.startBattle(SpeciesId.GALAR_DARMANITAN);
 
     const darmanitan = game.field.getPlayerPokemon();
 
@@ -112,7 +112,7 @@ describe("Abilities - Gorilla Tactics", () => {
   });
 
   it("should activate when a move is succesfully executed but misses", async () => {
-    await game.classicMode.startBattle([SpeciesId.GALAR_DARMANITAN]);
+    await game.classicMode.startBattle(SpeciesId.GALAR_DARMANITAN);
 
     const darmanitan = game.field.getPlayerPokemon();
 

@@ -73,7 +73,7 @@ export interface PadConfig<T extends DeviceMapping = DeviceMapping> {
   /** List of keys that cannot be remapped */
   blacklist?: InterfaceButtonName[];
   /** Custom bindings for each button */
-  custom?: Record<keyof T, SettingGamepad | -1>;
+  custom?: Record<keyof T, SettingGamepad | -1> | undefined;
 }
 export type CustomPadConfig<T extends DeviceMapping = DeviceMapping> = Omit<PadConfig<T>, "custom"> &
   Required<Pick<PadConfig<T>, "custom">>;
@@ -94,7 +94,7 @@ export interface KeyboardConfig {
   /** List of keys that cannot be remapped */
   blacklist?: InterfaceButtonName[];
   /** User-configured custom bindings for each key */
-  custom?: Record<keyof KeyboardMapping, SettingKeyboard | -1>;
+  custom?: Record<keyof KeyboardMapping, SettingKeyboard | -1> | undefined;
 }
 
 /**

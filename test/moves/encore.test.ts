@@ -33,7 +33,7 @@ describe("Moves - Encore", () => {
   });
 
   it("should prevent the target from using any move except the last used move", async () => {
-    await game.classicMode.startBattle([SpeciesId.SNORLAX]);
+    await game.classicMode.startBattle(SpeciesId.SNORLAX);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 
@@ -61,7 +61,7 @@ describe("Moves - Encore", () => {
     ])("$name", async ({ moveId, delay }) => {
       game.override.enemyMoveset(moveId);
 
-      await game.classicMode.startBattle([SpeciesId.SNORLAX]);
+      await game.classicMode.startBattle(SpeciesId.SNORLAX);
 
       const playerPokemon = game.field.getPlayerPokemon();
       const enemyPokemon = game.field.getEnemyPokemon();
@@ -86,7 +86,7 @@ describe("Moves - Encore", () => {
   it("Pokemon under both Encore and Torment should alternate between Struggle and restricted move", async () => {
     const turnOrder = [BattlerIndex.ENEMY, BattlerIndex.PLAYER];
     game.override.moveset([MoveId.ENCORE, MoveId.TORMENT, MoveId.SPLASH]);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     game.move.select(MoveId.ENCORE);

@@ -31,7 +31,7 @@ describe("Move - Focus Energy", () => {
   });
 
   it("should increase the user's crit ratio by 2 stages", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.FOCUS_ENERGY);
     await game.toNextTurn();
@@ -52,7 +52,7 @@ describe("Move - Focus Energy", () => {
     { name: "Focus Energy", tagType: BattlerTagType.CRIT_BOOST },
     { name: "Dragon Cheer", tagType: BattlerTagType.DRAGON_CHEER },
   ])("should fail if $name is already present", async ({ tagType }) => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     feebas.addTag(tagType);

@@ -160,7 +160,9 @@ export class BattlerTag implements BaseBattlerTag {
     if (sourceMove) {
       this.sourceMove = sourceMove;
     }
-    this.sourceId = sourceId;
+    if (sourceId !== undefined) {
+      this.sourceId = sourceId;
+    }
     this.#isBatonPassable = isBatonPassable;
   }
 
@@ -211,9 +213,14 @@ export class BattlerTag implements BaseBattlerTag {
    * @param source - An object containing the fields needed to reconstruct this tag
    */
   public loadTag<const T extends this>(source: BaseBattlerTag & Pick<T, "tagType">): void {
-    this.turnCount = source.turnCount;
-    this.sourceMove = source.sourceMove;
-    this.sourceId = source.sourceId;
+    const { sourceMove, turnCount, sourceId } = source;
+    this.turnCount = turnCount;
+    if (sourceMove) {
+      this.sourceMove = sourceMove;
+    }
+    if (sourceId !== undefined) {
+      this.sourceId = sourceId;
+    }
   }
 
   /**
@@ -794,11 +801,17 @@ export class ConfusedTag extends SerializableBattlerTag {
 
   canAdd(pokemon: Pokemon): boolean {
     const blockedByTerrain = pokemon.isGrounded() && globalScene.arena.terrain?.terrainType === TerrainType.MISTY;
-    if (blockedByTerrain) {
-      pokemon.queueStatusImmuneMessage(false, TerrainType.MISTY);
-      return false;
+    if (!blockedByTerrain) {
+      return true;
     }
-    return true;
+
+    // avoid showing cancellation messages for attack moves
+    const phaseData = getMoveEffectPhaseData(pokemon);
+    if (phaseData?.move?.category === MoveCategory.STATUS) {
+      pokemon.queueStatusImmuneMessage(false, TerrainType.MISTY);
+    }
+
+    return false;
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -2072,7 +2085,7 @@ export class TruantTag extends AbilityBattlerTag {
       return super.lapse(pokemon, lapseType);
     }
 
-    const lastMove = pokemon.getLastXMoves()[0];
+    const lastMove = pokemon.getLastXMoves(1).at(0);
 
     if (!lastMove || lastMove.move === MoveId.NONE) {
       // Don't interrupt move if last move was `MoveId.NONE` OR no prior move was found
@@ -3262,6 +3275,7 @@ export class TormentTag extends MoveRestrictionBattlerTag {
    * @param move - The move under investigation
    * @returns `true` if there is valid consecutive usage | `false` if the moves are different from each other
    */
+  // TODO: Verify how this interacts with move calling moves
   public override isMoveRestricted(move: MoveId, user: Pokemon): boolean {
     if (!user) {
       return false;

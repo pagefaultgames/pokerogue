@@ -42,7 +42,7 @@ describe("Moves - Flame Burst", () => {
   });
 
   it("inflicts damage to the target's ally equal to 1/16 of its max HP", async () => {
-    await game.classicMode.startBattle([SpeciesId.PIKACHU, SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU, SpeciesId.PIKACHU);
     const [leftEnemy, rightEnemy] = game.scene.getEnemyField();
 
     game.move.use(MoveId.FLAME_BURST, 0, leftEnemy.getBattlerIndex());
@@ -56,7 +56,7 @@ describe("Moves - Flame Burst", () => {
   it("does not inflict damage to the target's ally if the target was not affected by Flame Burst", async () => {
     game.override.enemyAbility(AbilityId.FLASH_FIRE);
 
-    await game.classicMode.startBattle([SpeciesId.PIKACHU, SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU, SpeciesId.PIKACHU);
     const [leftEnemy, rightEnemy] = game.scene.getEnemyField();
 
     game.move.use(MoveId.FLAME_BURST, 0, leftEnemy.getBattlerIndex());
@@ -68,7 +68,7 @@ describe("Moves - Flame Burst", () => {
   });
 
   it("does not interact with the target ally's abilities", async () => {
-    await game.classicMode.startBattle([SpeciesId.PIKACHU, SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU, SpeciesId.PIKACHU);
     const [leftEnemy, rightEnemy] = game.scene.getEnemyField();
 
     vi.spyOn(rightEnemy, "getAbility").mockReturnValue(allAbilities[AbilityId.FLASH_FIRE]);
@@ -82,7 +82,7 @@ describe("Moves - Flame Burst", () => {
   });
 
   it("effect damage is prevented by Magic Guard", async () => {
-    await game.classicMode.startBattle([SpeciesId.PIKACHU, SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU, SpeciesId.PIKACHU);
     const [leftEnemy, rightEnemy] = game.scene.getEnemyField();
 
     vi.spyOn(rightEnemy, "getAbility").mockReturnValue(allAbilities[AbilityId.MAGIC_GUARD]);
@@ -96,7 +96,7 @@ describe("Moves - Flame Burst", () => {
   });
 
   it("ignores protection moves and Endure from the non-target pokemon", async () => {
-    await game.classicMode.startBattle([SpeciesId.MILOTIC]);
+    await game.classicMode.startBattle(SpeciesId.MILOTIC);
 
     const [enemy1, enemy2] = game.scene.getEnemyField();
 

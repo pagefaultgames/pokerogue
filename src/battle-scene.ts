@@ -67,7 +67,8 @@ import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import { UiTheme } from "#enums/ui-theme";
 import { NewArenaEvent } from "#events/battle-scene";
-import { Arena, ArenaBase } from "#field/arena";
+import { Arena, getArenaBgmLoopPoint, getBgTerrainColorRatioForBiome } from "#field/arena";
+import { ArenaBase } from "#field/arena-base";
 import { DamageNumberHandler } from "#field/damage-number-handler";
 import type { Pokemon } from "#field/pokemon";
 import { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
@@ -243,6 +244,7 @@ export class BattleScene extends SceneBase {
   public disableMenu = false;
 
   public gameData: GameData;
+  /** The numeric slot number of the current save slot being played. */
   public sessionSlotId: number;
 
   /** Manager for the phases active in the battle scene */
@@ -275,7 +277,7 @@ export class BattleScene extends SceneBase {
   /** Session save data that pertains to Mystery Encounters */
   public mysteryEncounterSaveData: MysteryEncounterSaveData = new MysteryEncounterSaveData();
   /** If the previous wave was a MysteryEncounter, tracks the object with this variable. Mostly used for visual object cleanup */
-  public lastMysteryEncounter?: MysteryEncounter;
+  public lastMysteryEncounter?: MysteryEncounter | undefined;
   /** Combined Biome and Wave count text */
   private biomeWaveText: Phaser.GameObjects.Text;
   private moneyText: Phaser.GameObjects.Text;
@@ -299,7 +301,11 @@ export class BattleScene extends SceneBase {
   public seed: string;
   public waveSeed: string;
   public waveCycleOffset: number;
-  public offsetGym: boolean;
+  /**
+   * Whether to offset Gym Leader waves by 10 (30, 50, 70 instead of 20, 40, 60).
+   * Determined at the start of the run, and is unused for non-Classic game modes.
+   */
+  public offsetGym = false;
 
   public damageNumberHandler: DamageNumberHandler;
   private spriteSparkleHandler: PokemonSpriteSparkleHandler;
@@ -1488,7 +1494,7 @@ export class BattleScene extends SceneBase {
     this.eventTarget.dispatchEvent(new NewArenaEvent());
 
     this.arenaBg.pipelineData = {
-      terrainColorRatio: this.arena.getBgTerrainColorRatioForBiome(),
+      terrainColorRatio: getBgTerrainColorRatioForBiome(this.arena.biomeId),
     };
 
     return this.arena;
@@ -1699,7 +1705,7 @@ export class BattleScene extends SceneBase {
         if (ignoreArena) {
           return randSeedInt(species.forms.length);
         }
-        switch (this.arena.biomeType) {
+        switch (this.arena.biomeId) {
           case BiomeId.BEACH:
             return 1;
           case BiomeId.SLUM:
@@ -1959,7 +1965,7 @@ export class BattleScene extends SceneBase {
 
   updateBiomeWaveText(): void {
     const isBoss = !(this.currentBattle.waveIndex % 10);
-    const biomeString: string = getBiomeName(this.arena.biomeType);
+    const biomeString: string = getBiomeName(this.arena.biomeId);
     this.fieldUI.moveAbove(this.biomeWaveText, this.luckText);
     this.biomeWaveText
       .setText(biomeString + " - " + this.currentBattle.waveIndex.toString())
@@ -2189,7 +2195,7 @@ export class BattleScene extends SceneBase {
     this.bgmCache.add(bgmName);
     this.loadBgm(bgmName);
     let loopPoint = 0;
-    loopPoint = bgmName === this.arena.bgm ? this.arena.getBgmLoopPoint() : this.getBgmLoopPoint(bgmName);
+    loopPoint = bgmName === this.arena.bgm ? getArenaBgmLoopPoint(this.arena.biomeId) : this.getBgmLoopPoint(bgmName);
     let loaded = false;
     const playNewBgm = () => {
       this.ui.bgmBar.setBgmToBgmBar(bgmName);
@@ -3288,7 +3294,7 @@ export class BattleScene extends SceneBase {
     const gameInfo = {
       playTime: this.sessionPlayTime ?? 0,
       gameMode: this.currentBattle ? this.gameMode.getName() : "Title",
-      biome: this.currentBattle ? getBiomeName(this.arena.biomeType) : "",
+      biome: this.currentBattle ? getBiomeName(this.arena.biomeId) : "",
       wave: this.currentBattle?.waveIndex ?? 0,
       party:
         this.party?.map(p => ({
@@ -3373,16 +3379,17 @@ export class BattleScene extends SceneBase {
    * Updates Exp and level values for Player's party, adding new level up phases as required
    * @param expValue raw value of exp to split among participants, OR the base multiplier to use with waveIndex
    * @param pokemonDefeated If true, will increment Macho Brace stacks and give the party Pokemon friendship increases
-   * @param useWaveIndexMultiplier Default false. If true, will multiply expValue by a scaling waveIndex multiplier. Not needed if expValue is already scaled by level/wave
-   * @param pokemonParticipantIds Participants. If none are defined, no exp will be given. To spread evenly among the party, should pass all ids of party members.
+   * @param useWaveIndexMultiplier Default `false`. If true, will multiply expValue by a scaling waveIndex multiplier. Not needed if expValue is already scaled by level/wave
+   * @param participantIds - A `Set` containing the IDs of all Pokemon that will share the EXP earned.
+   * If omitted, will default to the current battle's participants.
    */
   applyPartyExp(
     expValue: number,
     pokemonDefeated: boolean,
-    useWaveIndexMultiplier?: boolean,
-    pokemonParticipantIds?: Set<number>,
+    useWaveIndexMultiplier = false,
+    participantIds = this.currentBattle.playerParticipantIds,
   ): void {
-    const participantIds = pokemonParticipantIds ?? this.currentBattle.playerParticipantIds;
+    // TODO: make this code actually not insane
     const party = this.getPlayerParty();
     const expShareModifier = this.findModifier(m => m instanceof ExpShareModifier) as ExpShareModifier;
     const expBalanceModifier = this.findModifier(m => m instanceof ExpBalanceModifier) as ExpBalanceModifier;
@@ -3639,7 +3646,7 @@ export class BattleScene extends SceneBase {
     const previousEncounter = this.mysteryEncounterSaveData.encounteredEvents.at(-1)?.type ?? null; // TODO: This being `null` is a bit weird
     const disabledEncounters = timedEventManager.getEventMysteryEncountersDisabled();
     const biomeMysteryEncounters =
-      mysteryEncountersByBiome.get(this.arena.biomeType)?.filter(enc => !disabledEncounters.includes(enc)) ?? [];
+      mysteryEncountersByBiome.get(this.arena.biomeId)?.filter(enc => !disabledEncounters.includes(enc)) ?? [];
     // If no valid encounters exist at tier, checks next tier down, continuing until there are some encounters available
     while (availableEncounters.length === 0 && tier !== null) {
       availableEncounters = biomeMysteryEncounters

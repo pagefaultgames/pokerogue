@@ -36,7 +36,7 @@ describe("Move - Wish", () => {
   });
 
   it("should heal the Pokemon in the current slot for 50% of the user's maximum HP", async () => {
-    await game.classicMode.startBattle([SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY]);
+    await game.classicMode.startBattle(SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY);
 
     const [alomomola, blissey] = game.scene.getPlayerParty();
     alomomola.hp = 1;
@@ -61,7 +61,7 @@ describe("Move - Wish", () => {
   });
 
   it("should work if the user has full HP, but not if it already has an active Wish", async () => {
-    await game.classicMode.startBattle([SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY]);
+    await game.classicMode.startBattle(SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY);
 
     const alomomola = game.field.getPlayerPokemon();
     alomomola.hp = 1;
@@ -79,7 +79,7 @@ describe("Move - Wish", () => {
   });
 
   it("should function independently of Future Sight", async () => {
-    await game.classicMode.startBattle([SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY]);
+    await game.classicMode.startBattle(SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY);
 
     const [alomomola, blissey] = game.scene.getPlayerParty();
     alomomola.hp = 1;
@@ -96,7 +96,7 @@ describe("Move - Wish", () => {
 
   it("should work in double battles and trigger in order of creation", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY]);
+    await game.classicMode.startBattle(SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY);
 
     const [alomomola, blissey, karp1, karp2] = game.scene.getField();
     alomomola.hp = 1;
@@ -143,7 +143,7 @@ describe("Move - Wish", () => {
 
   it("should vanish and not play message if slot is empty", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY]);
+    await game.classicMode.startBattle(SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY);
 
     const [alomomola, blissey] = game.scene.getPlayerParty();
     alomomola.hp = 1;
