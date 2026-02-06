@@ -7,6 +7,7 @@ import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 
 describe("Arena - Gravity", () => {
   let phaserGame: Phaser.Game;
@@ -39,7 +40,7 @@ describe("Arena - Gravity", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
-    expect(game).toHaveArenaTag({ tagType: ArenaTagType.GRAVITY, turnCount: 5 });
+    expect(game).toHaveArenaTag({ tagType: ArenaTagType.GRAVITY, side: ArenaTagSide.BOTH, turnCount: 4 });
     expect(accSpy).toHaveLastReturnedWith(allMoves[MoveId.TACKLE].accuracy * 1.67);
   });
 
@@ -52,7 +53,7 @@ describe("Arena - Gravity", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
-    expect(game).toHaveArenaTag({ tagType: ArenaTagType.GRAVITY, turnCount: 5 });
+    expect(game).toHaveArenaTag({ tagType: ArenaTagType.GRAVITY, side: ArenaTagSide.BOTH, turnCount: 5 });
     expect(accSpy).toHaveLastReturnedWith(allMoves[MoveId.FISSURE].accuracy);
   });
 

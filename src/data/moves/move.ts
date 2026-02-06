@@ -430,25 +430,25 @@ export abstract class Move implements Localizable {
    * @param user - The {@linkcode Pokemon} using this move
    * @param target - The {@linkcode Pokemon} targeted by this move
    * @param type - The {@linkcode PokemonType} of the oppoennt that is being checked
+   * @param forciblyGrounded - Whether the target is {@linkcode Pokemon.isForciblyGrounded | forcibly grounded}
    * @returns Whether the move is blocked due to the target's typing.
    * Self-targeted moves will return `false` regardless of circumstances.
    */
-  isTypeImmune(user: Pokemon, target: Pokemon, type: PokemonType): boolean {
+  // TODO: Move this to a private method of the `Pokemon` class so it can access the private `isForciblyGrounded` method;
+  // this is used there and nowhere else
+  isTypeImmune(user: Pokemon, target: Pokemon, type: PokemonType, forciblyGrounded: boolean | undefined): boolean {
     if (this.moveTarget === MoveTarget.USER) {
       return false;
     }
 
     switch (type) {
       case PokemonType.GRASS:
-        if (this.hasFlag(MoveFlags.POWDER_MOVE)) {
-          return true;
-        }
-        break;
+        return this.hasFlag(MoveFlags.POWDER_MOVE);
       case PokemonType.DARK:
-        if (user.hasAbility(AbilityId.PRANKSTER) && this.category === MoveCategory.STATUS && user.isOpponent(target)) {
-          return true;
-        }
-        break;
+        return user.hasAbility(AbilityId.PRANKSTER) && this.category === MoveCategory.STATUS && user.isOpponent(target);
+      case PokemonType.GROUND:
+        // TODO: This manual check is not very clean
+        return forciblyGrounded === false && !this.hasAttr("NeutralDamageAgainstFlyingTypeAttr");
     }
     return false;
   }
@@ -6070,7 +6070,7 @@ export class FreezeDryAttr extends MoveTypeChartOverrideAttr {
 
 /**
  * Attribute used by {@link https://bulbapedia.bulbagarden.net/wiki/Thousand_Arrows_(move) | Thousand Arrows}
- * to cause it to deal a fixed 1x damage against all ungrounded flying types.
+ * to cause it to deal a fixed 1x damage against all ungrounded flying types that would be immune to it.
  */
 export class NeutralDamageAgainstFlyingTypeAttr extends MoveTypeChartOverrideAttr {
   public override apply(
@@ -6080,7 +6080,7 @@ export class NeutralDamageAgainstFlyingTypeAttr extends MoveTypeChartOverrideAtt
     args: [multiplier: NumberHolder, types: readonly PokemonType[], moveType: PokemonType],
   ): boolean {
     const [multiplier, types] = args;
-    if (target.isGrounded() || !types.includes(PokemonType.FLYING)) {
+    if (target.isGrounded(true) || !types.includes(PokemonType.FLYING) || multiplier.value > 0) {
       return false;
     }
     multiplier.value = 1;
@@ -9053,7 +9053,7 @@ const MoveAttrs = Object.freeze({
   TeraStarstormTypeAttr,
   MatchUserTypeAttr,
   CombinedPledgeTypeAttr,
-  GroundednessMultiplierAttr,
+  NeutralDamageAgainstFlyingTypeAttr,
   IceNoEffectTypeAttr,
   FlyingTypeMultiplierAttr,
   MoveTypeChartOverrideAttr,

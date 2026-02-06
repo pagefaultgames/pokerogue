@@ -2538,7 +2538,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         : 1,
     );
 
-    if (this.getTypes(true, true).find(t => move.isTypeImmune(source, this, t))) {
+    // TODO: Move this to a private method of the `Pokemon` class so it can access the private `isForciblyGrounded` method
+    if (this.getTypes(true, true).find(t => move.isTypeImmune(source, this, t, this.isForciblyGrounded()))) {
       typeMultiplier.value = 0;
     }
 

@@ -6149,6 +6149,7 @@ export const AbilityAttrs = Object.freeze({
   VariableMovePowerAbAttr,
   VariableMovePowerBoostAbAttr,
   WeightMultiplierAbAttr,
+  UngroundedAbAttr,
   WonderSkinAbAttr,
 });
 
