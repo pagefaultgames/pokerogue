@@ -1,3 +1,5 @@
+/// <reference types="vite/client" />
+
 // biome-ignore lint/style/useNamingConvention: HTTP and URL are fullcaps acronyms
 type HTTP_URL = `http${"" | "s"}://${string}`;
 
