@@ -151,7 +151,7 @@ describe("Items - Thick Club", () => {
     const species = [SpeciesId.CUBONE, SpeciesId.MAROWAK, SpeciesId.ALOLA_MAROWAK];
     const randSpecies = randInt(species.length);
 
-    await game.classicMode.startBattle(species[randSpecies, SpeciesId.PIKACHU);
+    await game.classicMode.startBattle(species[randSpecies], SpeciesId.PIKACHU);
 
     const [partyMember, ally] = game.scene.getPlayerParty();
 
@@ -187,7 +187,7 @@ describe("Items - Thick Club", () => {
     const species = [SpeciesId.CUBONE, SpeciesId.MAROWAK, SpeciesId.ALOLA_MAROWAK];
     const randSpecies = randInt(species.length);
 
-    await game.classicMode.startBattle(SpeciesId.PIKACHU, species[randSpecies);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU, species[randSpecies]);
 
     const [partyMember, ally] = game.scene.getPlayerParty();
 

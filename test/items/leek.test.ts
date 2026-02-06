@@ -72,7 +72,7 @@ describe("Items - Leek", () => {
     // Randomly choose from the Farfetch'd line
     const species = [SpeciesId.FARFETCHD, SpeciesId.GALAR_FARFETCHD, SpeciesId.SIRFETCHD];
 
-    await game.classicMode.startBattle(species[randInt(species.length), SpeciesId.PIKACHU);
+    await game.classicMode.startBattle(species[randInt(species.length)], SpeciesId.PIKACHU);
 
     const [partyMember, ally] = game.scene.getPlayerParty();
 
@@ -100,7 +100,7 @@ describe("Items - Leek", () => {
     // Randomly choose from the Farfetch'd line
     const species = [SpeciesId.FARFETCHD, SpeciesId.GALAR_FARFETCHD, SpeciesId.SIRFETCHD];
 
-    await game.classicMode.startBattle(SpeciesId.PIKACHU, species[randInt(species.length));
+    await game.classicMode.startBattle(SpeciesId.PIKACHU, species[randInt(species.length)]);
 
     const [partyMember, ally] = game.scene.getPlayerParty();
 
