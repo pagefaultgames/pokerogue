@@ -6086,6 +6086,35 @@ export class FreezeDryAttr extends MoveTypeChartOverrideAttr {
 }
 
 /**
+ * Attribute to implement {@link https://bulbapedia.bulbagarden.net/wiki/Nihil_Light_(move) | Nihil Light}'s
+ * neutral effectiveness against Fairy types.
+ */
+export class NihilLightAttr extends MoveTypeChartOverrideAttr {
+  public override apply(
+    _user: Pokemon,
+    _target: Pokemon,
+    _move: Move,
+    args: [multiplier: NumberHolder, types: readonly PokemonType[], moveType: PokemonType],
+  ): boolean {
+    const [multiplier, types, moveType] = args;
+    if (moveType !== PokemonType.DRAGON || !types.includes(PokemonType.FAIRY)) {
+      return false;
+    }
+
+    let eff = 1;
+    for (const type of types) {
+      if (type === PokemonType.FAIRY) {
+        eff *= 1;
+      } else {
+        eff *= getTypeDamageMultiplier(moveType, type);
+      }
+    }
+    multiplier.value = eff;
+    return true;
+  }
+}
+
+/**
  * Attribute used by {@link https://bulbapedia.bulbagarden.net/wiki/Thousand_Arrows_(move) | Thousand Arrows}
  * to cause it to deal a fixed 1x damage against all ungrounded flying types.
  */
@@ -6169,22 +6198,6 @@ export class IceNoEffectTypeAttr extends MoveTypeChartOverrideAttr {
     const [multiplier, types] = args;
     if (types.includes(PokemonType.ICE)) {
       multiplier.value = 0;
-      return true;
-    }
-    return false;
-  }
-}
-
-/**
- * Attribute that forces Nihil Light to be neutral effectiveness against Fairy types.
- */
-export class NihilLightAttr extends VariableMoveTypeChartAttr {
-  apply(_user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
-    const multiplier = args[0] as NumberHolder;
-    const defType = args[1] as PokemonType;
-
-    if (defType === PokemonType.FAIRY) {
-      multiplier.value = 1;
       return true;
     }
     return false;
