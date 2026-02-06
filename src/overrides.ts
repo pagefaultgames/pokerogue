@@ -1,6 +1,7 @@
 import type { PokeballCounts } from "#app/battle-scene";
 import { EvolutionItem } from "#balance/pokemon-evolutions";
 import { Gender } from "#data/gender";
+import { TerrainType } from "#data/terrain";
 import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
 import { BerryType } from "#enums/berry-type";
@@ -70,6 +71,12 @@ class DefaultOverrides {
   readonly DAILY_RUN_SEED_OVERRIDE: CustomDailyRunConfig | string | null = null;
   readonly WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
   /**
+   * If set, will override the in-game terrain at the start of each biome transition.
+   *
+   * Lasts until cleared or replaced by another effect, and is refreshed at the start of each new biome.
+   */
+  readonly STARTING_TERRAIN_OVERRIDE: TerrainType = TerrainType.NONE;
+  /**
    * If `null`, ignore this override.
    *
    * If `"single"`, set every non-trainer battle to be a single battle.
@@ -83,7 +90,13 @@ class DefaultOverrides {
   readonly BATTLE_STYLE_OVERRIDE: BattleStyle | null = null;
   readonly STARTING_WAVE_OVERRIDE: number = 0;
   readonly STARTING_BIOME_OVERRIDE: BiomeId | null = null;
-  readonly ARENA_TINT_OVERRIDE: TimeOfDay | null = null;
+  /**
+   * Overrides the Time of Day for the given biome.
+   * Set to `null` to disable.
+   * @remarks
+   * Will also influence field sprite tint coloration.
+   */
+  readonly TIME_OF_DAY_OVERRIDE: Exclude<TimeOfDay, TimeOfDay.ALL> | null = null;
   /** Multiplies XP gained by this value including 0. Set to null to ignore the override. */
   readonly XP_MULTIPLIER_OVERRIDE: number | null = null;
   /**

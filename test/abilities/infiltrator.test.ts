@@ -52,7 +52,7 @@ describe("Abilities - Infiltrator", () => {
       move: MoveId.TACKLE,
     },
   ])("should bypass the target's $effectName", async ({ tagType, move }) => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
@@ -68,7 +68,7 @@ describe("Abilities - Infiltrator", () => {
   });
 
   it("should bypass the target's Safeguard", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
@@ -84,7 +84,7 @@ describe("Abilities - Infiltrator", () => {
 
   // TODO: fix this interaction to pass this test
   it.todo("should bypass the target's Mist", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
@@ -99,7 +99,7 @@ describe("Abilities - Infiltrator", () => {
   });
 
   it("should bypass the target's Substitute", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();

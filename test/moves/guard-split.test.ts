@@ -2,7 +2,6 @@ import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -30,7 +29,7 @@ describe("Moves - Guard Split", () => {
 
   it("should average the user's DEF and SPDEF stats with those of the target", async () => {
     game.override.enemyMoveset(MoveId.SPLASH);
-    await game.classicMode.startBattle([SpeciesId.INDEEDEE]);
+    await game.classicMode.startBattle(SpeciesId.INDEEDEE);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
@@ -39,7 +38,7 @@ describe("Moves - Guard Split", () => {
     const avgSpDef = Math.floor((player.getStat(Stat.SPDEF, false) + enemy.getStat(Stat.SPDEF, false)) / 2);
 
     game.move.select(MoveId.GUARD_SPLIT);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(player.getStat(Stat.DEF, false)).toBe(avgDef);
     expect(enemy.getStat(Stat.DEF, false)).toBe(avgDef);
@@ -50,7 +49,7 @@ describe("Moves - Guard Split", () => {
 
   it("should be idempotent", async () => {
     game.override.enemyMoveset([MoveId.GUARD_SPLIT]);
-    await game.classicMode.startBattle([SpeciesId.INDEEDEE]);
+    await game.classicMode.startBattle(SpeciesId.INDEEDEE);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
@@ -59,10 +58,10 @@ describe("Moves - Guard Split", () => {
     const avgSpDef = Math.floor((player.getStat(Stat.SPDEF, false) + enemy.getStat(Stat.SPDEF, false)) / 2);
 
     game.move.select(MoveId.GUARD_SPLIT);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     game.move.select(MoveId.GUARD_SPLIT);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(player.getStat(Stat.DEF, false)).toBe(avgDef);
     expect(enemy.getStat(Stat.DEF, false)).toBe(avgDef);

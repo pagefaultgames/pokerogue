@@ -32,7 +32,7 @@ describe("Status Effects - General", () => {
 
   test("multiple status effects from the same interaction should not overwrite each other", async () => {
     game.override.ability(AbilityId.POISON_TOUCH).moveset([MoveId.NUZZLE]);
-    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
 
     // Force poison touch to always apply
     vi.spyOn(

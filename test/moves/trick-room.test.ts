@@ -32,7 +32,7 @@ describe("Move - Trick Room", () => {
   });
 
   it("should reverse the speed order of combatants while active", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     const karp = game.field.getEnemyPokemon();
@@ -56,11 +56,11 @@ describe("Move - Trick Room", () => {
     await game.move.forceEnemyMove(MoveId.RAIN_DANCE);
     await game.toEndOfTurn();
 
-    expect(game.scene.arena.getWeatherType()).toBe(WeatherType.SUNNY);
+    expect(game).toHaveWeather(WeatherType.SUNNY);
   });
 
   it("should be removed when overlapped", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
 

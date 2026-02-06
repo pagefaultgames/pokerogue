@@ -275,7 +275,7 @@ describe("Daily Mode", () => {
         vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue('{"biome":40,"seed":"test"}');
         await game.dailyMode.startBattle();
 
-        expect(game.scene.arena.biomeType).toBe(BiomeId.ISLAND);
+        expect(game.scene.arena.biomeId).toBe(BiomeId.ISLAND);
       });
 
       it("should support custom starting money", async () => {
@@ -324,7 +324,7 @@ describe("Shop modifications", async () => {
   });
 
   it("should not have Eviolite and Mini Black Hole available in Classic if not unlocked", async () => {
-    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR);
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.phaseInterceptor.to("BattleEndPhase");

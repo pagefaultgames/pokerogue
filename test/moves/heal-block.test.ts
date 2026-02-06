@@ -35,13 +35,13 @@ describe("Move - Heal Block", () => {
       .criticalHits(false);
   });
 
-  const blockTestCases = Array.from(healBlockedMoves).map(m => ({
-    move: m,
-    name: toTitleCase(MoveId[m]),
+  const blockTestCases = Array.from(healBlockedMoves).map(move => ({
+    move,
+    name: toTitleCase(MoveId[move]),
   }));
 
   it.each(blockTestCases)("should cause $name to become unselectable by the user", async ({ move }) => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     feebas.addTag(BattlerTagType.HEAL_BLOCK);
@@ -56,7 +56,7 @@ describe("Move - Heal Block", () => {
   });
 
   it("should prevent the target from receiving healing via normal means", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     feebas.hp = 1;
@@ -72,7 +72,7 @@ describe("Move - Heal Block", () => {
 
   it("should prevent Pollen Puff from targeting Heal Blocked allies, but should still work against Heal Blocked enemies", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.BLISSEY, SpeciesId.SNORLAX]);
+    await game.classicMode.startBattle(SpeciesId.BLISSEY, SpeciesId.SNORLAX);
 
     const [blissey, snorlax, chansey] = game.scene.getField();
     snorlax.hp = 1;
@@ -125,7 +125,7 @@ describe("Move - Heal Block", () => {
   });
 
   it("shouldn't stop Leech Seed from dealing damage, but should nullify healing", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     feebas.hp = 1;
@@ -140,7 +140,7 @@ describe("Move - Heal Block", () => {
 
   it("shouldn't prevent Leech Seed from damaging the user with Liquid Ooze", async () => {
     game.override.enemyAbility(AbilityId.LIQUID_OOZE);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
 
@@ -151,7 +151,7 @@ describe("Move - Heal Block", () => {
   });
 
   it("should prevent pending Wishes from restoring HP", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();
     player.hp = 1;
@@ -176,7 +176,7 @@ describe("Move - Heal Block", () => {
     { name: "Aqua Ring", move: MoveId.AQUA_RING, tagType: BattlerTagType.AQUA_RING },
     { name: "Ingrain", move: MoveId.INGRAIN, tagType: BattlerTagType.INGRAIN },
   ])("should not cause $name to fail, but should still prevent healing", async ({ move, tagType }) => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     feebas.hp = 1;

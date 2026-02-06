@@ -9,7 +9,6 @@ import { UiMode } from "#enums/ui-mode";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import { FieldTripEncounter } from "#mystery-encounters/field-trip-encounter";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
-import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
 import { GameManager } from "#test/test-utils/game-manager";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
@@ -81,7 +80,7 @@ describe("Field Trip - Mystery Encounter", () => {
     it("Should give no reward on incorrect option", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIELD_TRIP, defaultParty);
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1, optionNo: 2 });
-      await game.phaseInterceptor.to(SelectModifierPhase);
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
@@ -93,7 +92,7 @@ describe("Field Trip - Mystery Encounter", () => {
     it("Should give proper rewards on correct Physical move option", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIELD_TRIP, defaultParty);
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1, optionNo: 1 });
-      await game.phaseInterceptor.to(SelectModifierPhase);
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
@@ -142,7 +141,7 @@ describe("Field Trip - Mystery Encounter", () => {
     it("Should give no reward on incorrect option", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIELD_TRIP, defaultParty);
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1, optionNo: 1 });
-      await game.phaseInterceptor.to(SelectModifierPhase);
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
@@ -154,7 +153,7 @@ describe("Field Trip - Mystery Encounter", () => {
     it("Should give proper rewards on correct Special move option", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIELD_TRIP, defaultParty);
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1, optionNo: 2 });
-      await game.phaseInterceptor.to(SelectModifierPhase);
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
@@ -203,7 +202,7 @@ describe("Field Trip - Mystery Encounter", () => {
     it("Should give no reward on incorrect option", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIELD_TRIP, defaultParty);
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
-      await game.phaseInterceptor.to(SelectModifierPhase);
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
@@ -216,7 +215,7 @@ describe("Field Trip - Mystery Encounter", () => {
       vi.spyOn(i18next, "t");
       await game.runToMysteryEncounter(MysteryEncounterType.FIELD_TRIP, defaultParty);
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 3 });
-      await game.phaseInterceptor.to(SelectModifierPhase);
+      await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
