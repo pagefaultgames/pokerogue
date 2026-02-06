@@ -61,7 +61,7 @@ export function LocaleNamespace(): VitePlugin {
   return {
     name: "namespaces-i18next",
     buildStart() {
-      if (import.meta.env.MODE === "production") {
+      if (process.env.NODE_ENV === "production") {
         console.log("Collect namespaces");
       }
     },
