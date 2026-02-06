@@ -1582,7 +1582,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       ret *= highestStatBoost.multiplier;
     }
 
-    return Math.floor(ret);
+    return Math.max(Math.floor(ret), 1);
   }
 
   calculateStats(): void {
