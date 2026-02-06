@@ -11,7 +11,6 @@ import type { Nature } from "#enums/nature";
 import type { PokemonType } from "#enums/pokemon-type";
 import type { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-// biome-ignore lint/correctness/noUnusedImports: TSDoc
 import type { Pokemon } from "#field/pokemon";
 import type { AttackMoveResult } from "#types/attack-move-result";
 import type { IllusionData } from "#types/illusion-data";
@@ -322,6 +321,15 @@ export class PokemonTurnData {
   public summonedThisTurn = false;
   public failedRunAway = false;
   public joinedRound = false;
+
+  // TODO: This effectively only exists for castform/cherrim and is really ugly;
+  // revisit after form change rework
+  /**
+   * Tracker for what abilities have been applied due to form changes during this turn. \
+   * Used to prevent infinite loops from form change abilities triggering their own transformation conditions.
+   */
+  public formChangeAbilitiesApplied = new Set<AbilityId>();
+
   /**
    * Tracker for a pending status effect.
    *

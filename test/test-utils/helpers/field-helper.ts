@@ -99,16 +99,33 @@ export class FieldHelper extends GameManagerHelper {
   }
 
   /**
-   * Mocks a pokemon's ability, overriding its existing ability (takes precedence over global overrides).
-   * Useful for giving exactly 1 Pokemon in a double battle a certain ability (rather than all pokemon).
-   * @param pokemon - The pokemon to mock the ability of
-   * @param ability - The ability to be mocked
-   * @returns A {@linkcode MockInstance} object
-   * @see {@linkcode vi.spyOn}
-   * @see https://vitest.dev/api/mock#mockreturnvalue
+   * Forcibly set a given {@linkcode Pokemon}'s ability to the given value, overridding all other effects.
+   * @param pokemon - The Pokemon whose ability will be changed
+   * @param ability - The {@linkcode AbilityId} to set, either as a static value or a function returning one
+   * @param passive - (Default `false`) Whether to mock the Pokemon's passive ability instead of its regular ability
+   * @returns The newly created {@linkcode MockInstance} object.
+   * @see {@link https://vitest.dev/api/mock#mockreturnvalue}
    */
-  public mockAbility(pokemon: Pokemon, ability: AbilityId): MockInstance<Pokemon["getAbility"]> {
-    return vi.spyOn(pokemon, "getAbility").mockReturnValue(allAbilities[ability]);
+  public mockAbility(
+    pokemon: Pokemon,
+    ability: AbilityId | ((p: Pokemon) => AbilityId),
+    passive: true,
+  ): MockInstance<Pokemon["getPassiveAbility"]>;
+  public mockAbility(
+    pokemon: Pokemon,
+    ability: AbilityId | ((p: Pokemon) => AbilityId),
+    passive?: false,
+  ): MockInstance<Pokemon["getAbility"]>;
+  public mockAbility(
+    pokemon: Pokemon,
+    ability: AbilityId | ((p: Pokemon) => AbilityId),
+    passive = false,
+  ): MockInstance<Pokemon["getAbility"]> | MockInstance<Pokemon["getPassiveAbility"]> {
+    const abStr = passive ? "getPassiveAbility" : "getAbility";
+    if (typeof ability === "function") {
+      return vi.spyOn(pokemon, abStr).mockImplementation(() => allAbilities[ability(pokemon)]);
+    }
+    return vi.spyOn(pokemon, abStr).mockReturnValue(allAbilities[ability]);
   }
 
   /**
