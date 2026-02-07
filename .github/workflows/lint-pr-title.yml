@@ -6,7 +6,7 @@ on:
       - beta
       - release
       - "hotfix*"
-      - "workflow-test"
+      - workflow-test
     types: [opened, edited, reopened, synchronize]
 
 concurrency:
