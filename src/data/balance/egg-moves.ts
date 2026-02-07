@@ -455,7 +455,7 @@ export const speciesEggMoves = {
   [SpeciesId.SOBBLE]: [ MoveId.AEROBLAST, MoveId.FROST_BREATH, MoveId.ENERGY_BALL, MoveId.NASTY_PLOT ],
   [SpeciesId.SKWOVET]: [ MoveId.SUCKER_PUNCH, MoveId.SLACK_OFF, MoveId.COIL, MoveId.POPULATION_BOMB ],
   [SpeciesId.ROOKIDEE]: [ MoveId.ROOST, MoveId.BODY_PRESS, MoveId.KINGS_SHIELD, MoveId.BEHEMOTH_BASH ],
-  [SpeciesId.BLIPBUG]: [ MoveId.RECOVER, MoveId.LUSTER_PURGE, MoveId.COSMIC, MoveId.TAIL_GLOW ],
+  [SpeciesId.BLIPBUG]: [ MoveId.RECOVER, MoveId.LUSTER_PURGE, MoveId.COSMIC_POWER, MoveId.TAIL_GLOW ],
   [SpeciesId.NICKIT]: [ MoveId.BADDY_BAD, MoveId.MYSTICAL_FIRE, MoveId.SPARKLY_SWIRL, MoveId.MAKE_IT_RAIN ],
   [SpeciesId.GOSSIFLEUR]: [ MoveId.BATON_PASS, MoveId.TAILWIND, MoveId.SAPPY_SEED, MoveId.SPORE ],
   [SpeciesId.WOOLOO]: [ MoveId.NUZZLE, MoveId.MILK_DRINK, MoveId.BODY_PRESS, MoveId.MULTI_ATTACK ],
