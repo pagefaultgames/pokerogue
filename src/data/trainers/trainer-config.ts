@@ -290,6 +290,9 @@ export class TrainerConfig {
       case TrainerType.MARNIE_ELITE:
         trainerType = TrainerType.MARNIE;
         break;
+      case TrainerType.BEDE_ELITE:
+        trainerType = TrainerType.BEDE;
+        break;
       case TrainerType.NESSA_ELITE:
         trainerType = TrainerType.NESSA;
         break;
@@ -3701,6 +3704,45 @@ export const trainerConfigs: TrainerConfigs = {
       5,
       getRandomPartyMemberFunc([SpeciesId.GRIMMSNARL], TrainerSlot.TRAINER, true, p => {
         p.setBoss(true, 2);
+        p.generateAndPopulateMoveset();
+      }),
+    ),
+  [TrainerType.BEDE_ELITE]: new TrainerConfig(++t)
+    .setName("Bede")
+    .initForEliteFour(signatureSpecies["BEDE_ELITE"], true, PokemonType.FAIRY, 1)
+    .setMixedBattleBgm("battle_galar_elite")
+    .setPartyMemberFunc(
+      0,
+      getRandomPartyMemberFunc([SpeciesId.MAWILE], TrainerSlot.TRAINER, true, p => {
+        p.abilityIndex = 1; // Intimidate
+        p.generateAndPopulateMoveset();
+      }),
+    )
+    .setPartyMemberFunc(
+      1,
+      getRandomPartyMemberFunc([SpeciesId.REUNICLUS, SpeciesId.GOTHITELLE], TrainerSlot.TRAINER, true, p => {
+        // Tera Fairy Reuniclus, Gothitelle
+        p.abilityIndex = 1; // Magic Guard, Competitive
+        p.generateAndPopulateMoveset();
+        if (!p.moveset.some(move => move != null && move.moveId === MoveId.TERA_BLAST)) {
+          // Check if Tera Blast is in the moveset, if not, replace the third move with Tera Blast.
+          p.moveset[2] = new PokemonMove(MoveId.TERA_BLAST);
+        }
+      }),
+    )
+    .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.SYLVEON]))
+    .setPartyMemberFunc(
+      3,
+      getRandomPartyMemberFunc([SpeciesId.GALAR_RAPIDASH], TrainerSlot.TRAINER, true, p => {
+        p.abilityIndex = 1; // Pastel Veil
+        p.generateAndPopulateMoveset();
+      }),
+    )
+    .setPartyMemberFunc(
+      4,
+      getRandomPartyMemberFunc([SpeciesId.HATTERENE], TrainerSlot.TRAINER, true, p => {
+        p.setBoss(true, 2);
+        p.abilityIndex = 1; // Magic Bounce
         p.generateAndPopulateMoveset();
       }),
     ),
