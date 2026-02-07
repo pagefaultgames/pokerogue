@@ -3807,7 +3807,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setMixedBattleBgm("battle_galar_elite")
     .setPartyMemberFunc(
       0,
-      getRandomPartyMemberFunc([SpeciesId.LIEPARD], TrainerSlot.TRAINER, true, p => {
+      getRandomPartyMemberFunc([SpeciesId.LIEPARD, SpeciesId.THIEVUL], TrainerSlot.TRAINER, true, p => {
         p.abilityIndex = 1; // Unburden
         p.generateAndPopulateMoveset();
       }),
@@ -3823,7 +3823,7 @@ export const trainerConfigs: TrainerConfigs = {
         }
       }),
     )
-    .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.SCRAFTY, SpeciesId.PANGORO]))
+    .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.SCRAFTY]))
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.MORPEKO]))
     .setPartyMemberFunc(
       4,
@@ -3874,46 +3874,44 @@ export const trainerConfigs: TrainerConfigs = {
     ),
   [TrainerType.NESSA_ELITE]: new TrainerConfig(++t)
     .setName("Nessa")
-    .initForEliteFour(signatureSpecies["NESSA_ELITE"], false, PokemonType.WATER, 1)
+    .initForEliteFour(signatureSpecies["NESSA_ELITE"], false, PokemonType.WATER, 4)
     .setMixedBattleBgm("battle_galar_elite")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([SpeciesId.GOLISOPOD]))
     .setPartyMemberFunc(
       1,
-      getRandomPartyMemberFunc([SpeciesId.EISCUE], TrainerSlot.TRAINER, true, p => {
-        // Tera Water Eiscue
-        p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.LIQUIDATION)) {
-          // Check if Liquidation is in the moveset, if not, replace the third move with Liquidation.
-          p.moveset[2] = new PokemonMove(MoveId.LIQUIDATION);
-        }
-      }),
-    )
-    .setPartyMemberFunc(
-      2,
       getRandomPartyMemberFunc([SpeciesId.PELIPPER], TrainerSlot.TRAINER, true, p => {
         p.abilityIndex = 1; // Drizzle
         p.generateAndPopulateMoveset();
       }),
     )
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.TOXAPEX]))
+    .setPartyMemberFunc(
+      2,
+      getRandomPartyMemberFunc([SpeciesId.QUAGSIRE, SpeciesId.TOXAPEX], TrainerSlot.TRAINER, true, p => {
+        p.abilityIndex = p.species.speciesId === SpeciesId.QUAGSIRE ? 1 : 0; // Water Absorb Quagsire, Merciless Toxapex
+        p.generateAndPopulateMoveset();
+      }),
+    )
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.BARRASKEWDA]))
     .setPartyMemberFunc(
       4,
       getRandomPartyMemberFunc([SpeciesId.DREDNAW], TrainerSlot.TRAINER, true, p => {
+        // Tera Water Drednaw
         p.setBoss(true, 2);
         p.generateAndPopulateMoveset();
       }),
     ),
   [TrainerType.BEA_ELITE]: new TrainerConfig(++t)
     .setName("Bea")
-    .initForEliteFour(signatureSpecies["BEA_ELITE"], false, PokemonType.FIGHTING, 1)
+    .initForEliteFour(signatureSpecies["BEA_ELITE"], false, PokemonType.FIGHTING, 4)
     .setMixedBattleBgm("battle_galar_elite")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([SpeciesId.HAWLUCHA]))
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.SIRFETCHD])) // Tera Fighting Sirfetch'd
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.SIRFETCHD]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.GRAPPLOCT, SpeciesId.FALINKS]))
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.HITMONTOP]))
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.PANGORO]))
     .setPartyMemberFunc(
       4,
       getRandomPartyMemberFunc([SpeciesId.MACHAMP], TrainerSlot.TRAINER, true, p => {
+        // Tera Fighting Machamp
         p.setBoss(true, 2);
         p.abilityIndex = 1; // No Guard
         p.generateAndPopulateMoveset();
@@ -3921,10 +3919,10 @@ export const trainerConfigs: TrainerConfigs = {
     ),
   [TrainerType.ALLISTER_ELITE]: new TrainerConfig(++t)
     .setName("Allister")
-    .initForEliteFour(signatureSpecies["ALLISTER_ELITE"], true, PokemonType.GHOST, 1)
+    .initForEliteFour(signatureSpecies["ALLISTER_ELITE"], true, PokemonType.GHOST, 4)
     .setMixedBattleBgm("battle_galar_elite")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([SpeciesId.DUSKNOIR]))
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.RUNERIGUS])) // Tera Ghost Runerigus
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.RUNERIGUS]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.POLTEAGEIST, SpeciesId.SINISTCHA]))
     .setPartyMemberFunc(
       3,
@@ -3936,6 +3934,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       4,
       getRandomPartyMemberFunc([SpeciesId.GENGAR], TrainerSlot.TRAINER, true, p => {
+        // Tera Ghost Gengar
         p.setBoss(true, 2);
         p.generateAndPopulateMoveset();
       }),
@@ -4908,11 +4907,17 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.KIERAN]: new TrainerConfig(++t)
     .initForChampion(true)
     .setMixedBattleBgm("battle_champion_kieran")
-    .setPartyMemberFunc(0, getRandomPartyMemberFunc([SpeciesId.POLIWRATH, SpeciesId.POLITOED]))
     .setPartyMemberFunc(
-      1,
+      0,
       getRandomPartyMemberFunc([SpeciesId.INCINEROAR, SpeciesId.GRIMMSNARL], TrainerSlot.TRAINER, true, p => {
         p.abilityIndex = p.species.speciesId === SpeciesId.INCINEROAR ? 2 : 0; // Intimidate Incineroar, Prankster Grimmsnarl
+        p.generateAndPopulateMoveset();
+      }),
+    )
+    .setPartyMemberFunc(
+      1,
+      getRandomPartyMemberFunc([SpeciesId.POLIWRATH, SpeciesId.POLITOED], TrainerSlot.TRAINER, true, p => {
+        p.abilityIndex = p.species.speciesId === SpeciesId.POLIWRATH ? 0 : 2; // Water Absorb Poliwrath, Drizzle Politoed
         p.generateAndPopulateMoveset();
       }),
     )
