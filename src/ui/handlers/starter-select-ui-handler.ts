@@ -1184,7 +1184,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
    * Processes inputs when pressing one of the cycle buttons.
    */
   processCycleButtonsInput(button: Button) {
-    let success = false;
+    let cycled = false;
     const props = this.getStarterDexAttrPropsFromPreferences(this.lastStarterId);
     const starterPreferences = (this.starterPreferences[this.lastStarterId] ??= {});
     const lastStarter = getPokemonSpecies(this.lastStarterId);
@@ -1220,10 +1220,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             if (dexEntry.caughtAttr & DexAttr.NON_SHINY && newVariant <= props.variant) {
               // If we have run out of variants, go back to non shiny
               this.setShinyAndVariant(this.lastStarterId, false, newVariant);
-              success = true;
+              cycled = true;
             } else {
               // If going to a higher variant, or only shiny forms are caught, go to next variant
-              success = true;
+              cycled = true;
             }
           }
           console.log("AFTER", starterPreferences);
@@ -1243,13 +1243,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             }
           } while (newFormIndex !== props.formIndex);
           this.setNewFormIndex(this.lastStarterId, newFormIndex);
-          success = true;
+          cycled = true;
         }
         break;
       case Button.CYCLE_GENDER:
         if (this.canCycle.gender) {
           this.setNewGender(this.lastStarterId, !starterPreferences.female);
-          success = true;
+          cycled = true;
         }
         break;
       case Button.CYCLE_ABILITY:
@@ -1279,7 +1279,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             }
           } while (newAbilityIndex !== abilityIndex);
           this.setNewAbilityIndex(this.lastStarterId, newAbilityIndex);
-          success = true;
+          cycled = true;
         }
         break;
       case Button.CYCLE_NATURE:
@@ -1292,7 +1292,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           const newNature = natures[natureIndex < natures.length - 1 ? natureIndex + 1 : 0];
           // store cycled nature as default
           this.setNewNature(this.lastStarterId, newNature);
-          success = true;
+          cycled = true;
         }
         break;
       case Button.CYCLE_TERA:
@@ -1305,14 +1305,16 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           const newTera =
             speciesForm.type1 === teraType && speciesForm.type2 != null ? speciesForm.type2 : speciesForm.type1;
           this.setNewTeraType(this.lastStarterId, newTera);
-          success = true;
+          cycled = true;
         }
         break;
     }
 
-    this.setStarterDetails(this.lastStarterId);
+    if (cycled) {
+      this.setStarterDetails(this.lastStarterId);
+    }
 
-    return success;
+    return cycled;
   }
 
   /**
