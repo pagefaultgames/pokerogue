@@ -12,6 +12,6 @@ interface ImportMetaEnv {
   readonly NODE_ENV?: string;
 }
 
-declare interface ImportMeta {
-  readonly env: ImportMetaEnv;
+interface ViteTypeOptions {
+  strictImportMetaEnv: unknown;
 }
