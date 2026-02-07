@@ -114,10 +114,9 @@ export class StarterContainer extends Phaser.GameObjects.Container {
       .setTint(0);
     this.checkIconId(female, formIndex, shiny, variant);
     this.add(this.icon);
-    // we must add icon first before we can call setBelow
-    this.icon.setBelow(this.label);
 
     [
+      this.label,
       this.hiddenAbilityIcon,
       this.favoriteIcon,
       this.classicWinIcon,
