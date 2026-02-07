@@ -13,6 +13,7 @@ import {
 } from "#balance/starters";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { ChallengeType } from "#enums/challenge-type";
+import { Challenges } from "#enums/challenges";
 import { DexAttr } from "#enums/dex-attr";
 import { GameModes } from "#enums/game-modes";
 import type { MoveId } from "#enums/move-id";
@@ -131,7 +132,7 @@ export function isStarterValidForChallenge(starterId: StarterSpeciesId) {
   } else {
     const isValidForChallenge = checkStarterValidForChallenge(
       starterId,
-      globalScene.gameData.getDexAttrProps(globalScene.gameData.getSpeciesDefaultDexAttr(starterId, false, true)),
+      globalScene.gameData.getSpeciesDefaultDexAttrProps(species.speciesId),
       true,
     );
     allFormsValid = isValidForChallenge;
@@ -383,7 +384,9 @@ export function getStarterDexAttrPropsFromPreferences(
   starterId: StarterSpeciesId,
   starterPreferences: StarterPreferences = {},
 ): DexAttrProps {
-  const defaults = globalScene.gameData.getSpeciesDefaultDexAttrProps(starterId);
+  // Shiny is always default, except in fresh start
+  const shinyIsDefault = !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
+  const defaults = globalScene.gameData.getSpeciesDefaultDexAttrProps(starterId, shinyIsDefault);
   return {
     shiny: starterPreferences.shiny != null ? starterPreferences.shiny : defaults.shiny,
     variant: starterPreferences.variant != null ? (starterPreferences.variant as Variant) : defaults.variant,

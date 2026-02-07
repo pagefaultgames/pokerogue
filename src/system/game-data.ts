@@ -1907,59 +1907,24 @@ export class GameData {
     return starterCount;
   }
 
-  // TODO: Review usage of these functions, including "optimistic" and confusion with the next function.
-  getSpeciesDefaultDexAttr(speciesId: SpeciesId, _forSeen = false, optimistic = false): bigint {
-    let ret = 0n;
-    const dexEntry = this.dexData[speciesId];
-    const attr = dexEntry.caughtAttr;
-    if (optimistic) {
-      if (attr & DexAttr.SHINY) {
-        ret |= DexAttr.SHINY;
-
-        if (attr & DexAttr.VARIANT_3) {
-          ret |= DexAttr.VARIANT_3;
-        } else if (attr & DexAttr.VARIANT_2) {
-          ret |= DexAttr.VARIANT_2;
-        } else {
-          ret |= DexAttr.DEFAULT_VARIANT;
-        }
-      } else {
-        ret |= DexAttr.NON_SHINY;
-        ret |= DexAttr.DEFAULT_VARIANT;
-      }
-    } else {
-      // Default to non shiny. Fallback to shiny if it's the only thing that's unlocked
-      ret |= attr & DexAttr.NON_SHINY || !(attr & DexAttr.SHINY) ? DexAttr.NON_SHINY : DexAttr.SHINY;
-
-      if (attr & DexAttr.DEFAULT_VARIANT) {
-        ret |= DexAttr.DEFAULT_VARIANT;
-      } else if (attr & DexAttr.VARIANT_2) {
-        ret |= DexAttr.VARIANT_2;
-      } else if (attr & DexAttr.VARIANT_3) {
-        ret |= DexAttr.VARIANT_3;
-      } else {
-        ret |= DexAttr.DEFAULT_VARIANT;
-      }
-    }
-    ret |= attr & DexAttr.MALE || !(attr & DexAttr.FEMALE) ? DexAttr.MALE : DexAttr.FEMALE;
-    ret |= this.getFormAttr(this.getFormIndex(attr));
-    return ret;
-  }
-
-  getSpeciesDefaultDexAttrProps(speciesId: SpeciesId): DexAttrProps {
+  getSpeciesDefaultDexAttrProps(speciesId: SpeciesId, defaultIsShiny = true): DexAttrProps {
     const dexAttr = this.dexData[speciesId].caughtAttr;
-    // Default shiny is true if caught
-    const shiny = !!(dexAttr & DexAttr.SHINY);
     // Default is female only for species where malePercent is not null but 0
     const female = getPokemonSpecies(speciesId).malePercent === 0;
-    // Default is the highest variant
-    let variant: Variant = 0;
-    if (dexAttr & DexAttr.VARIANT_3) {
-      variant = 2;
-    } else if (dexAttr & DexAttr.VARIANT_2) {
-      variant = 1;
-    }
     const formIndex = 0;
+    let variant: Variant = 0;
+    let shiny = false;
+    // Set shiny to true if requested, OR if non-shiny version is uncaught
+    if (defaultIsShiny || !(dexAttr & DexAttr.NON_SHINY)) {
+      // Default shiny is true if caught
+      shiny = !!(dexAttr & DexAttr.SHINY);
+      // Default is the highest variant
+      if (dexAttr & DexAttr.VARIANT_3) {
+        variant = 2;
+      } else if (dexAttr & DexAttr.VARIANT_2) {
+        variant = 1;
+      }
+    }
 
     return {
       shiny,

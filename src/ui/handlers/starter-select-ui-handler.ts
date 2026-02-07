@@ -31,6 +31,7 @@ import type { MoveId } from "#enums/move-id";
 import type { Nature } from "#enums/nature";
 import { Passive as PassiveAttr } from "#enums/passive";
 import { PokemonType } from "#enums/pokemon-type";
+import { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { UiTheme } from "#enums/ui-theme";
@@ -579,6 +580,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           this.originalStarterPreferences,
           true,
         );
+        if (starterId === SpeciesId.CHARMANDER) {
+          console.log(this.starterPreferences[starterId], this.originalStarterPreferences[starterId]);
+        }
       });
 
       this.starterContainers.forEach(container => {
@@ -1199,6 +1203,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             const newVariant = (starterPreferences.variant as Variant) ?? props.variant;
             this.setShinyAndVariant(this.lastStarterId, true, newVariant);
             globalScene.playSound("se/sparkle");
+            cycled = true;
           } else {
             // If shiny, we update the variant
             let newVariant = starterPreferences.variant ?? props.variant;
@@ -1226,7 +1231,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
               cycled = true;
             }
           }
-          console.log("AFTER", starterPreferences);
         }
         break;
       case Button.CYCLE_FORM:
