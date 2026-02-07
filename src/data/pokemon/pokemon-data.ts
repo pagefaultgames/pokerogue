@@ -11,7 +11,6 @@ import type { Nature } from "#enums/nature";
 import type { PokemonType } from "#enums/pokemon-type";
 import type { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-// biome-ignore lint/correctness/noUnusedImports: TSDoc
 import type { Pokemon } from "#field/pokemon";
 import type { AttackMoveResult } from "#types/attack-move-result";
 import type { IllusionData } from "#types/illusion-data";
@@ -80,6 +79,7 @@ interface SerializedPokemonSummonData {
   moveQueue: TurnMove[];
   tags: BattlerTag[];
   abilitySuppressed: boolean;
+  abilitiesApplied: AbilityId[];
   speciesForm?: SerializedSpeciesForm | undefined;
   fusionSpeciesForm?: SerializedSpeciesForm | undefined;
   ability?: AbilityId | undefined;
@@ -106,13 +106,15 @@ export class PokemonSummonData {
   public statStages: number[] = [0, 0, 0, 0, 0, 0, 0];
   /**
    * A queue of moves yet to be executed, used by charging, recharging and frenzy moves.
-   * So long as this array is nonempty, this Pokemon's corresponding `CommandPhase` will be skipped over entirely
-   * in favor of using the queued move.
-   * TODO: Clean up a lot of the code surrounding the move queue.
+   * @remarks
+   * So long as this array is non-empty, this Pokemon's corresponding `CommandPhase`
+   * will be skipped over entirely in favor of using the queued move.
    */
+  // TODO: Clean up a lot of the code surrounding the move queue.
   public moveQueue: TurnMove[] = [];
   public tags: BattlerTag[] = [];
   public abilitySuppressed = false;
+  public abilitiesApplied: Set<AbilityId> = new Set();
 
   // Overrides for transform and company.
   // TODO: Move these into a separate class & add rage fist hit count
@@ -189,6 +191,14 @@ export class PokemonSummonData {
           .filter((t): t is SerializableBattlerTag => t instanceof SerializableBattlerTag);
         continue;
       }
+
+      if (key === "abilitiesApplied") {
+        for (const a of value) {
+          this.abilitiesApplied.add(a);
+        }
+        continue;
+      }
+
       this[key] = value;
     }
   }
@@ -226,6 +236,7 @@ export class PokemonSummonData {
               ...(this.illusion as Omit<typeof illusion, "fusionSpecies">),
               fusionSpecies: illusionSpeciesForm?.speciesId,
             },
+      abilitiesApplied: [...this.abilitiesApplied.values()],
     };
     // Replace `null` with `undefined`, as `undefined` never gets serialized
     for (const [key, value] of Object.entries(t)) {

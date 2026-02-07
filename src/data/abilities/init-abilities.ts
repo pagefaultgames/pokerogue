@@ -1374,9 +1374,27 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.BATTLE_BOND, 7) //
-      .attr(PostVictoryFormChangeAbAttr, () => 2)
-      .attr(PostBattleInitFormChangeAbAttr, () => 1)
-      .attr(PostFaintFormChangeAbAttr, () => 1)
+      .conditionalAttr(
+        p => p.species.speciesId === SpeciesId.GRENINJA,
+        PostVictoryFormChangeAbAttr,
+        () => 2,
+      )
+      .conditionalAttr(
+        p => p.species.speciesId === SpeciesId.GRENINJA,
+        PostBattleInitFormChangeAbAttr,
+        () => 1,
+      )
+      .conditionalAttr(
+        p => p.species.speciesId === SpeciesId.GRENINJA,
+        PostFaintFormChangeAbAttr,
+        () => 1,
+      )
+      .conditionalAttr(
+        p => p.species.speciesId !== SpeciesId.GRENINJA && !p.summonData.abilitiesApplied.has(AbilityId.BATTLE_BOND),
+        PostVictoryStatStageChangeAbAttr,
+        [Stat.ATK, Stat.SPATK, Stat.SPD],
+        1,
+      )
       .attr(NoFusionAbilityAbAttr)
       .uncopiable()
       .unreplaceable()
