@@ -222,6 +222,7 @@ export enum TrainerType {
   ACEROLA,
   KAHILI,
   MARNIE_ELITE,
+  BEDE_ELITE,
   NESSA_ELITE,
   BEA_ELITE,
   ALLISTER_ELITE,
