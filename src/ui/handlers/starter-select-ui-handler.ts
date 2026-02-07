@@ -31,7 +31,6 @@ import type { MoveId } from "#enums/move-id";
 import type { Nature } from "#enums/nature";
 import { Passive as PassiveAttr } from "#enums/passive";
 import { PokemonType } from "#enums/pokemon-type";
-import { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { UiTheme } from "#enums/ui-theme";
@@ -580,9 +579,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           this.originalStarterPreferences,
           true,
         );
-        if (starterId === SpeciesId.CHARMANDER) {
-          console.log(this.starterPreferences[starterId], this.originalStarterPreferences[starterId]);
-        }
       });
 
       this.starterContainers.forEach(container => {
@@ -1197,7 +1193,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     switch (button) {
       case Button.CYCLE_SHINY:
         if (this.canCycle.shiny) {
-          console.log(starterPreferences);
           if (starterPreferences.shiny === false) {
             // If not shiny, we change to shiny and get the proper default variant
             const newVariant = (starterPreferences.variant as Variant) ?? props.variant;
