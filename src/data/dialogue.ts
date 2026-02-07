@@ -1641,9 +1641,9 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
     defeat: ["dialogue:marnieElite.defeat.1", "dialogue:marnieElite.defeat.2"],
   },
   [TrainerType.BEDE_ELITE]: {
-    encounter: ["dialogue:bede_elite.encounter.1"],
-    victory: ["dialogue:bede_elite.victory.1"],
-    defeat: ["dialogue:bede_elite.defeat.1"],
+    encounter: ["dialogue:bedeElite.encounter.1", "dialogue:bedeElite.encounter.2"],
+    victory: ["dialogue:bedeElite.victory.1", "dialogue:bedeElite.victory.2"],
+    defeat: ["dialogue:bedeElite.defeat.1"],
   },
   [TrainerType.NESSA_ELITE]: {
     encounter: ["dialogue:nessaElite.encounter.1", "dialogue:nessaElite.encounter.2"],
