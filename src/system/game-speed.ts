@@ -12,14 +12,12 @@ const PROPERTIES = ["delay", "completeDelay", "loopDelay", "duration", "repeatDe
 
 type FadeInType = typeof FadeIn;
 type FadeOutType = typeof FadeOut;
-export function initGameSpeed() {
-  const thisArg = this as BattleScene;
-
+export function initGameSpeed(this: BattleScene) {
   const transformValue = (value: number | FixedInt): number => {
     if (value instanceof FixedInt) {
       return (value as FixedInt).value;
     }
-    return thisArg.gameSpeed === 1 ? value : Math.ceil((value /= thisArg.gameSpeed));
+    return Math.ceil(value / this.gameSpeed);
   };
 
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complexity is necessary here
@@ -61,6 +59,7 @@ export function initGameSpeed() {
   const originalTweensAdd: TweenManager["add"] = this.tweens.add;
 
   this.tweens.add = function (
+    this: BattleScene,
     config:
       | Phaser.Types.Tweens.TweenBuilderConfig
       | Phaser.Types.Tweens.TweenChainBuilderConfig
@@ -72,25 +71,28 @@ export function initGameSpeed() {
   } as typeof originalTweensAdd;
 
   const originalTweensChain: TweenManager["chain"] = this.tweens.chain;
-  this.tweens.chain = function (config: Phaser.Types.Tweens.TweenChainBuilderConfig): Phaser.Tweens.TweenChain {
+  this.tweens.chain = function (
+    this: BattleScene,
+    config: Phaser.Types.Tweens.TweenChainBuilderConfig,
+  ): Phaser.Tweens.TweenChain {
     mutateProperties(config);
     return originalTweensChain.apply(this, [config]);
   } as typeof originalTweensChain;
   const originalAddCounter: TweenManager["addCounter"] = this.tweens.addCounter;
 
-  this.tweens.addCounter = function (config: Phaser.Types.Tweens.NumberTweenBuilderConfig) {
+  this.tweens.addCounter = function (this: BattleScene, config: Phaser.Types.Tweens.NumberTweenBuilderConfig) {
     mutateProperties(config);
     return originalAddCounter.apply(this, [config]);
   } as typeof originalAddCounter;
 
   const originalCreate: TweenManager["create"] = this.tweens.create;
-  this.tweens.create = function (config: Phaser.Types.Tweens.TweenBuilderConfig) {
+  this.tweens.create = function (this: BattleScene, config: Phaser.Types.Tweens.TweenBuilderConfig) {
     mutateProperties(config, true);
     return originalCreate.apply(this, [config]);
   } as typeof originalCreate;
 
   const originalAddMultiple: TweenManager["addMultiple"] = this.tweens.addMultiple;
-  this.tweens.addMultiple = function (config: Phaser.Types.Tweens.TweenBuilderConfig[]) {
+  this.tweens.addMultiple = function (this: BattleScene, config: Phaser.Types.Tweens.TweenBuilderConfig[]) {
     mutateProperties(config, true);
     return originalAddMultiple.apply(this, [config]);
   } as typeof originalAddMultiple;

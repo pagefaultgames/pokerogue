@@ -90,7 +90,7 @@ export class DynamicQueueManager {
    * @returns Whether a matching phase exists
    */
   public exists<T extends PhaseString>(name: T, condition: PhaseConditionFunc<T> = () => true): boolean {
-    return !!this.dynamicPhaseMap.get(name)?.has(condition);
+    return !!this.dynamicPhaseMap.get(name)?.has(condition as (phase: Phase) => boolean);
   }
 
   /**
@@ -100,7 +100,7 @@ export class DynamicQueueManager {
    * @returns Whether a removal occurred
    */
   public removePhase<T extends PhaseString>(name: T, condition: PhaseConditionFunc<T> = () => true): boolean {
-    return !!this.dynamicPhaseMap.get(name)?.remove(condition);
+    return !!this.dynamicPhaseMap.get(name)?.remove(condition as (phase: Phase) => boolean);
   }
 
   /**

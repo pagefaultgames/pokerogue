@@ -22,6 +22,7 @@ const PREFIXES = [
   "misc", // A change that doesn't fit any other prefix
   "perf", // A refactor aimed at improving performance
   "refactor", // A change that doesn't impact functionality or fix any bugs (except incidentally)
+  "revert", // Reverting a bad commit
   "test", // Primarily adding/updating tests or modifying the test framework
 ] as const;
 
@@ -56,6 +57,7 @@ const PREFIX_SCOPE_MAP = {
   misc: [],
   perf: [],
   refactor: ALL_SCOPES,
+  revert: [],
   test: ALL_SCOPES,
 } as const satisfies Record<Prefixes, readonly AllScopes[]>;
 
@@ -80,7 +82,9 @@ async function run(): Promise<void> {
     });
 
     const { title } = pullRequest;
-    core.info("Info on PR title formatting: https://github.com/pagefaultgames/pokerogue/blob/beta/CONTRIBUTING.md#-submitting-a-pull-request");
+    core.info(
+      "Info on PR title formatting: https://github.com/pagefaultgames/pokerogue/blob/beta/CONTRIBUTING.md#-submitting-a-pull-request",
+    );
     core.info(`Pull Request title: "${title}"`);
 
     // if (title.length > 72) {

@@ -515,7 +515,7 @@ export class TrainerConfig {
    * @returns this
    */
   setRandomTeraModifiers(count: () => number, slot?: number): TrainerConfig {
-    this.genAIFuncs.push((party: EnemyPokemon[]) => {
+    this.genAIFuncs.push((party: readonly EnemyPokemon[]) => {
       const shedinjaCanTera = !this.hasSpecialtyType() || this.specialtyType === PokemonType.BUG; // Better to check one time than 6
       const partyMemberIndexes = new Array(party.length)
         .fill(null)

@@ -27,14 +27,13 @@ describe("Moves - Lash Out", () => {
       .enemyMoveset([MoveId.GROWL])
       .startingLevel(10)
       .enemyLevel(10)
-      .starterSpecies(SpeciesId.FEEBAS)
       .ability(AbilityId.BALL_FETCH)
       .moveset([MoveId.LASH_OUT]);
   });
 
   it("should deal double damage if the user's stat stages were lowered this turn", async () => {
     vi.spyOn(allMoves[MoveId.LASH_OUT], "calculateBattlePower");
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.LASH_OUT);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);

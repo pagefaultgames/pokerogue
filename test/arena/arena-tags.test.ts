@@ -34,7 +34,7 @@ describe("Arena Tags", () => {
       .enemyMoveset(MoveId.SPLASH)
       .battleType(BattleType.TRAINER);
 
-    await game.classicMode.startBattle([SpeciesId.MORELULL]);
+    await game.classicMode.startBattle(SpeciesId.MORELULL);
 
     playerId = game.field.getPlayerPokemon().id;
   });
@@ -61,7 +61,7 @@ describe("Arena Tags", () => {
       })),
     );
 
-  // biome-ignore format: prefer pre-2.3.6 formatting
+  // biome-ignore format: prefer pre-2.3.6 formatting with literal preservation
   it.each(arenaTags)(
     "$name should display a message on addition, and a separate one on removal - $sideName",
     ({ tagType, side }) => {

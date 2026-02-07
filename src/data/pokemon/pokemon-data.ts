@@ -11,6 +11,7 @@ import type { Nature } from "#enums/nature";
 import type { PokemonType } from "#enums/pokemon-type";
 import type { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
+import type { Pokemon } from "#field/pokemon";
 import type { AttackMoveResult } from "#types/attack-move-result";
 import type { IllusionData } from "#types/illusion-data";
 import type { SerializedSpeciesForm } from "#types/pokemon-common";
@@ -70,7 +71,7 @@ function deserializePokemonSpeciesForm(value: SerializedSpeciesForm | PokemonSpe
 
 interface SerializedIllusionData extends Omit<IllusionData, "fusionSpecies"> {
   /** The id of the illusioned fusion species, or `undefined` if not a fusion */
-  fusionSpecies?: SpeciesId;
+  fusionSpecies?: SpeciesId | undefined;
 }
 
 interface SerializedPokemonSummonData {
@@ -78,17 +79,18 @@ interface SerializedPokemonSummonData {
   moveQueue: TurnMove[];
   tags: BattlerTag[];
   abilitySuppressed: boolean;
-  speciesForm?: SerializedSpeciesForm;
-  fusionSpeciesForm?: SerializedSpeciesForm;
-  ability?: AbilityId;
-  passiveAbility?: AbilityId;
-  gender?: Gender;
-  fusionGender?: Gender;
+  abilitiesApplied: AbilityId[];
+  speciesForm?: SerializedSpeciesForm | undefined;
+  fusionSpeciesForm?: SerializedSpeciesForm | undefined;
+  ability?: AbilityId | undefined;
+  passiveAbility?: AbilityId | undefined;
+  gender?: Gender | undefined;
+  fusionGender?: Gender | undefined;
   stats: number[];
-  moveset?: PokemonMove[];
+  moveset?: PokemonMove[] | undefined;
   types: PokemonType[];
-  addedType?: PokemonType;
-  illusion?: SerializedIllusionData;
+  addedType?: PokemonType | undefined;
+  illusion?: SerializedIllusionData | undefined;
   berriesEatenLast: BerryType[];
   moveHistory: TurnMove[];
 }
@@ -104,13 +106,15 @@ export class PokemonSummonData {
   public statStages: number[] = [0, 0, 0, 0, 0, 0, 0];
   /**
    * A queue of moves yet to be executed, used by charging, recharging and frenzy moves.
-   * So long as this array is nonempty, this Pokemon's corresponding `CommandPhase` will be skipped over entirely
-   * in favor of using the queued move.
-   * TODO: Clean up a lot of the code surrounding the move queue.
+   * @remarks
+   * So long as this array is non-empty, this Pokemon's corresponding `CommandPhase`
+   * will be skipped over entirely in favor of using the queued move.
    */
+  // TODO: Clean up a lot of the code surrounding the move queue.
   public moveQueue: TurnMove[] = [];
   public tags: BattlerTag[] = [];
   public abilitySuppressed = false;
+  public abilitiesApplied: Set<AbilityId> = new Set();
 
   // Overrides for transform and company.
   // TODO: Move these into a separate class & add rage fist hit count
@@ -187,6 +191,14 @@ export class PokemonSummonData {
           .filter((t): t is SerializableBattlerTag => t instanceof SerializableBattlerTag);
         continue;
       }
+
+      if (key === "abilitiesApplied") {
+        for (const a of value) {
+          this.abilitiesApplied.add(a);
+        }
+        continue;
+      }
+
       this[key] = value;
     }
   }
@@ -224,6 +236,7 @@ export class PokemonSummonData {
               ...(this.illusion as Omit<typeof illusion, "fusionSpecies">),
               fusionSpecies: illusionSpeciesForm?.speciesId,
             },
+      abilitiesApplied: [...this.abilitiesApplied.values()],
     };
     // Replace `null` with `undefined`, as `undefined` never gets serialized
     for (const [key, value] of Object.entries(t)) {
@@ -287,6 +300,7 @@ export class PokemonWaveData {
    */
   public abilitiesApplied: Set<AbilityId> = new Set<AbilityId>();
   /** Whether the pokemon's ability has been revealed or not */
+  // TODO: this doesn't account for passives
   public abilityRevealed = false;
 }
 
