@@ -6,12 +6,12 @@ import { describe, expect, it } from "vitest";
 describe("Utils - Strings", () => {
   describe("Casing", () => {
     describe("splitWords", () => {
-      interface testCase {
+      interface TestCase {
         input: string;
         words: string[];
       }
 
-      const testCases: testCase[] = [
+      const testCases: TestCase[] = [
         {
           input: "Lorem ipsum dolor sit amet",
           words: ["Lorem", "ipsum", "dolor", "sit", "amet"],
@@ -51,14 +51,14 @@ describe("Utils - Strings", () => {
 
   describe("Test Enum Utils", () => {
     //#region boilerplate
-    enum testEnumNum {
-      testN1 = 1,
-      testN2 = 2,
+    enum TestEnumNum {
+      TEST_N1 = 1,
+      TEST_N2 = 2,
     }
 
-    enum testEnumString {
-      testS1 = "apple",
-      testS2 = "banana",
+    enum TestEnumString {
+      TEST_S1 = "apple",
+      TEST_S2 = "banana",
     }
 
     const testObjNum = { testON1: 3, testON2: 4 } as const;
@@ -76,15 +76,15 @@ describe("Utils - Strings", () => {
     describe("stringifyEnumArray", () => {
       const cases = [
         {
-          obj: testEnumNum,
-          values: [testEnumNum.testN1, testEnumNum.testN2],
-          output: "[testN1, testN2] (=[1, 2])",
+          obj: TestEnumNum,
+          values: [TestEnumNum.TEST_N1, TestEnumNum.TEST_N2],
+          output: "[TEST_N1, TEST_N2] (=[1, 2])",
           type: "numeric enum",
         },
         {
-          obj: testEnumString,
-          values: [testEnumString.testS1, testEnumString.testS2],
-          output: "[testS1, testS2] (=[apple, banana])",
+          obj: TestEnumString,
+          values: [TestEnumString.TEST_S1, TestEnumString.TEST_S2],
+          output: "[TEST_S1, TEST_S2] (=[apple, banana])",
           type: "string enum",
         },
         {
@@ -106,16 +106,18 @@ describe("Utils - Strings", () => {
       });
 
       it("should work if no values provided", () => {
-        const ret = stringifyEnumArray(testEnumNum, []);
+        const ret = stringifyEnumArray(TestEnumNum, []);
         expect(ret).toEqual("[]");
       });
 
       it("should allow excluding values from result, defaulting to doing so for string enums", () => {
-        const num = stringifyEnumArray(testEnumNum, [testEnumNum.testN1, testEnumNum.testN2], { excludeValues: true });
-        expect(num).toEqual("[testN1, testN2]");
+        const num = stringifyEnumArray(TestEnumNum, [TestEnumNum.TEST_N1, TestEnumNum.TEST_N2], {
+          excludeValues: true,
+        });
+        expect(num).toEqual("[TEST_N1, TEST_N2]");
 
-        const str = stringifyEnumArray(testEnumString, [testEnumString.testS1, testEnumString.testS2]);
-        expect(str).toEqual("[testS1, testS2]");
+        const str = stringifyEnumArray(TestEnumString, [TestEnumString.TEST_S1, TestEnumString.TEST_S2]);
+        expect(str).toEqual("[TEST_S1, TEST_S2]");
       });
 
       it("should support custon formatting args", () => {
@@ -133,15 +135,15 @@ describe("Utils - Strings", () => {
 
       it("should type correctly", () => {
         // @ts-expect-error - value props should not be providable if values aren't being included
-        stringifyEnumArray(testEnumNum, [testEnumNum.testN1], { excludeValues: true, base: 10 });
-        stringifyEnumArray(testEnumNum, [testEnumNum.testN1], { base: 10 });
-        stringifyEnumArray(testEnumNum, [testEnumNum.testN1], { excludeValues: true, prefix: "12" });
+        stringifyEnumArray(TestEnumNum, [TestEnumNum.TEST_N1], { excludeValues: true, base: 10 });
+        stringifyEnumArray(TestEnumNum, [TestEnumNum.TEST_N1], { base: 10 });
+        stringifyEnumArray(TestEnumNum, [TestEnumNum.TEST_N1], { excludeValues: true, prefix: "12" });
 
         // @ts-expect-error - value props should not be providable if values aren't being included
-        stringifyEnumArray(testEnumString, [testEnumString.testS1], { excludeValues: true, base: 10 });
+        stringifyEnumArray(TestEnumString, [TestEnumString.TEST_S1], { excludeValues: true, base: 10 });
         // @ts-expect-error - should not be able to specify numeric base on string enum
-        stringifyEnumArray(testEnumString, [testEnumString.testS1], { excludeValues: false, base: 16 });
-        stringifyEnumArray(testEnumString, [testEnumString.testS1], { excludeValues: true, suffix: "23" });
+        stringifyEnumArray(TestEnumString, [TestEnumString.TEST_S1], { excludeValues: false, base: 16 });
+        stringifyEnumArray(TestEnumString, [TestEnumString.TEST_S1], { excludeValues: true, suffix: "23" });
 
         // Needed due to us "lacking" assertions
         expect(true).toBeTruthy();

@@ -100,7 +100,7 @@ export class Egg {
 
   private _overrideHiddenAbility: boolean;
 
-  private _eggDescriptor?: string;
+  private eggDescriptor?: string | undefined;
 
   ////
   // #endregion
@@ -117,10 +117,12 @@ export class Egg {
     return this._tier;
   }
 
+  // TODO: This is exposed solely inside egg data, remove
   get sourceType(): EggSourceType | undefined {
     return this._sourceType;
   }
 
+  // TODO: Just make the property public atp
   get hatchWaves(): number {
     return this._hatchWaves;
   }
@@ -133,14 +135,17 @@ export class Egg {
     return this._timestamp;
   }
 
+  // TODO: This is exposed solely inside egg data, remove
   get species(): SpeciesId {
     return this._species;
   }
 
+  // TODO: This is exposed solely inside egg data, remove
   get isShiny(): boolean {
     return this._isShiny;
   }
 
+  // TODO: This is exposed solely inside egg data, remove
   get variantTier(): VariantTier {
     return this._variantTier;
   }
@@ -149,6 +154,7 @@ export class Egg {
     return this._eggMoveIndex;
   }
 
+  // TODO: This is exposed solely inside egg data, remove
   get overrideHiddenAbility(): boolean {
     return this._overrideHiddenAbility;
   }
@@ -211,7 +217,7 @@ export class Egg {
       seedOverride,
     );
 
-    this._eggDescriptor = eggOptions?.eggDescriptor;
+    this.eggDescriptor = eggOptions?.eggDescriptor;
   }
 
   ////
@@ -324,22 +330,22 @@ export class Egg {
     switch (this.sourceType) {
       case EggSourceType.SAME_SPECIES_EGG:
         return (
-          this._eggDescriptor
+          this.eggDescriptor
           ?? i18next.t("egg:sameSpeciesEgg", {
             species: getPokemonSpecies(this._species).getName(),
           })
         );
       case EggSourceType.GACHA_LEGENDARY:
         return (
-          this._eggDescriptor
+          this.eggDescriptor
           ?? `${i18next.t("egg:gachaTypeLegendary")} (${getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(this.timestamp)).getName()})`
         );
       case EggSourceType.GACHA_SHINY:
-        return this._eggDescriptor ?? i18next.t("egg:gachaTypeShiny");
+        return this.eggDescriptor ?? i18next.t("egg:gachaTypeShiny");
       case EggSourceType.GACHA_MOVE:
-        return this._eggDescriptor ?? i18next.t("egg:gachaTypeMove");
+        return this.eggDescriptor ?? i18next.t("egg:gachaTypeMove");
       case EggSourceType.EVENT:
-        return this._eggDescriptor ?? i18next.t("egg:eventType");
+        return this.eggDescriptor ?? i18next.t("egg:eventType");
       default:
         console.warn("getEggTypeDescriptor case not defined. Returning default empty string");
         return "";

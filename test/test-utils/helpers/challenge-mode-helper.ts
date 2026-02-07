@@ -5,12 +5,12 @@ import { BattleStyle } from "#enums/battle-style";
 import type { Challenges } from "#enums/challenges";
 import type { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import { CommandPhase } from "#phases/command-phase";
-import { EncounterPhase } from "#phases/encounter-phase";
 import { SelectStarterPhase } from "#phases/select-starter-phase";
-import { TurnInitPhase } from "#phases/turn-init-phase";
 import { generateStarters } from "#test/test-utils/game-manager-utils";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
+import type { IntClosedRange, TupleOf } from "type-fest";
+
+type ChallengeStub = { id: Challenges; value: number; severity: number };
 
 /**
  * Helper to handle Challenge mode specifics
@@ -30,11 +30,15 @@ export class ChallengeModeHelper extends GameManagerHelper {
   }
 
   /**
-   * Runs the Challenge game to the summon phase.
-   * @param gameMode - Optional game mode to set.
+   * Transition from the title screen to the summon phase of a new Challenge game.
+   * @param speciesIds - The {@linkcode SpeciesId}s to summon; must be between 1-6
    * @returns A promise that resolves when the summon phase is reached.
+   * @privateRemarks
+   * {@linkcode startBattle} is the preferred way to start a battle; this should only be used for tests
+   * that need to stop and do something before the `CommandPhase` starts.
    */
-  async runToSummon(speciesIds?: SpeciesId[]) {
+  // TODO: This duplicates all but 1 line of code from the classic mode variant...
+  async runToSummon(...speciesIds: TupleOf<IntClosedRange<1, 6>, SpeciesId>) {
     await this.game.runToTitle();
 
     if (this.game.override.disableShinies) {
@@ -45,7 +49,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
       this.game.scene.gameMode.challenges = this.challenges;
       const starters = generateStarters(this.game.scene, speciesIds);
       const selectStarterPhase = new SelectStarterPhase();
-      this.game.scene.phaseManager.pushPhase(new EncounterPhase(false));
+      this.game.scene.phaseManager.pushNew("EncounterPhase", false);
       selectStarterPhase.initBattle(starters);
     });
 
@@ -56,12 +60,13 @@ export class ChallengeModeHelper extends GameManagerHelper {
   }
 
   /**
-   * Transitions to the start of a battle.
-   * @param species - Optional array of species to start the battle with.
-   * @returns A promise that resolves when the battle is started.
+   * Transition from the title screen to the start of a new Challenge Mode battle.
+   * @param speciesIds - The {@linkcode SpeciesId}s with which to start the battle; must be between 1-6
+   * @returns A Promise that resolves when the battle is started.
    */
-  async startBattle(species?: SpeciesId[]) {
-    await this.runToSummon(species);
+  // TODO: This duplicates all its code with the classic mode variant...
+  async startBattle(...speciesIds: TupleOf<IntClosedRange<1, 6>, SpeciesId>) {
+    await this.runToSummon(...speciesIds);
 
     if (this.game.scene.battleStyle === BattleStyle.SWITCH) {
       this.game.onNextPrompt(
@@ -71,7 +76,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
           this.game.setMode(UiMode.MESSAGE);
           this.game.endPhase();
         },
-        () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase),
+        () => this.game.isCurrentPhase("CommandPhase") || this.game.isCurrentPhase("TurnInitPhase"),
       );
 
       this.game.onNextPrompt(
@@ -81,11 +86,33 @@ export class ChallengeModeHelper extends GameManagerHelper {
           this.game.setMode(UiMode.MESSAGE);
           this.game.endPhase();
         },
-        () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase),
+        () => this.game.isCurrentPhase("CommandPhase") || this.game.isCurrentPhase("TurnInitPhase"),
       );
     }
 
-    await this.game.phaseInterceptor.to(CommandPhase);
+    await this.game.phaseInterceptor.to("CommandPhase");
     console.log("==================[New Turn]==================");
+  }
+
+  /**
+   * Override an already-started game with the given challenges.
+   * @param id - The challenge id
+   * @param value - The challenge value
+   * @param severity - The challenge severity
+   */
+  // TODO: Make severity optional for challenges that do not require it
+  public overrideGameWithChallenges(id: Challenges, value: number, severity: number): void;
+  /**
+   * Override an already-started game with the given challenges.
+   * @param challenges - One or more challenges to set.
+   */
+  public overrideGameWithChallenges(challenges: ChallengeStub[]): void;
+  public overrideGameWithChallenges(challenges: ChallengeStub[] | Challenges, value?: number, severity?: number): void {
+    if (typeof challenges !== "object") {
+      challenges = [{ id: challenges, value: value!, severity: severity! }];
+    }
+    for (const challenge of challenges) {
+      this.game.scene.gameMode.setChallengeValue(challenge.id, challenge.value, challenge.severity);
+    }
   }
 }

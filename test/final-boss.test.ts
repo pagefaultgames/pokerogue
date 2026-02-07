@@ -36,7 +36,7 @@ describe("Final Boss", () => {
     await game.runToFinalBossEncounter([SpeciesId.BIDOOF], GameModes.CLASSIC);
 
     expect(game.scene.currentBattle.waveIndex).toBe(FinalWave.Classic);
-    expect(game.scene.arena.biomeType).toBe(BiomeId.END);
+    expect(game.scene.arena.biomeId).toBe(BiomeId.END);
     expect(game.field.getEnemyPokemon().species.speciesId).toBe(SpeciesId.ETERNATUS);
   });
 
@@ -45,7 +45,7 @@ describe("Final Boss", () => {
     await game.runToFinalBossEncounter([SpeciesId.BIDOOF], GameModes.CLASSIC);
 
     expect(game.scene.currentBattle.waveIndex).not.toBe(FinalWave.Classic);
-    expect(game.scene.arena.biomeType).toBe(BiomeId.END);
+    expect(game.scene.arena.biomeId).toBe(BiomeId.END);
     expect(game.field.getEnemyPokemon().species.speciesId).not.toBe(SpeciesId.ETERNATUS);
   });
 
@@ -54,7 +54,7 @@ describe("Final Boss", () => {
     await game.runToFinalBossEncounter([SpeciesId.BIDOOF], GameModes.CLASSIC);
 
     expect(game.scene.currentBattle.waveIndex).toBe(FinalWave.Classic);
-    expect(game.scene.arena.biomeType).not.toBe(BiomeId.END);
+    expect(game.scene.arena.biomeId).not.toBe(BiomeId.END);
     expect(game.field.getEnemyPokemon().species.speciesId).not.toBe(SpeciesId.ETERNATUS);
   });
 

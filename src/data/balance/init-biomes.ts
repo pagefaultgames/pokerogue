@@ -775,10 +775,12 @@ export function initBiomes() {
     ]
     ],
     [SpeciesId.ZAPDOS, PokemonType.ELECTRIC, PokemonType.FLYING, [
+      [BiomeId.POWER_PLANT, BiomePoolTier.ULTRA_RARE],
       [BiomeId.POWER_PLANT, BiomePoolTier.BOSS_SUPER_RARE]
     ]
     ],
     [SpeciesId.MOLTRES, PokemonType.FIRE, PokemonType.FLYING, [
+      [BiomeId.VOLCANO, BiomePoolTier.ULTRA_RARE],
       [BiomeId.VOLCANO, BiomePoolTier.BOSS_SUPER_RARE]
     ]
     ],
@@ -1249,13 +1251,13 @@ export function initBiomes() {
     ]
     ],
     [SpeciesId.RAIKOU, PokemonType.ELECTRIC, -1, [
-      [BiomeId.POWER_PLANT, BiomePoolTier.ULTRA_RARE],
-      [BiomeId.POWER_PLANT, BiomePoolTier.BOSS_SUPER_RARE]
+      [BiomeId.TALL_GRASS, BiomePoolTier.ULTRA_RARE],
+      [BiomeId.TALL_GRASS, BiomePoolTier.BOSS_SUPER_RARE]
     ]
     ],
     [SpeciesId.ENTEI, PokemonType.FIRE, -1, [
-      [BiomeId.VOLCANO, BiomePoolTier.ULTRA_RARE],
-      [BiomeId.VOLCANO, BiomePoolTier.BOSS_SUPER_RARE]
+      [BiomeId.TALL_GRASS, BiomePoolTier.ULTRA_RARE],
+      [BiomeId.TALL_GRASS, BiomePoolTier.BOSS_SUPER_RARE]
     ]
     ],
     [SpeciesId.SUICUNE, PokemonType.WATER, -1, [
@@ -2466,7 +2468,8 @@ export function initBiomes() {
     ]
     ],
     [SpeciesId.SHAYMIN, PokemonType.GRASS, -1, [
-      [BiomeId.MEADOW, BiomePoolTier.BOSS_ULTRA_RARE]
+      [BiomeId.MEADOW, BiomePoolTier.ULTRA_RARE],
+      [BiomeId.MEADOW, BiomePoolTier.BOSS_SUPER_RARE]
     ]
     ],
     [SpeciesId.ARCEUS, PokemonType.NORMAL, -1, []
@@ -5865,9 +5868,9 @@ export function initBiomes() {
       uncatchableSpecies.push(speciesId);
     }
 
-    type mutableSpecies = Mutable<typeof catchableSpecies[SpeciesId]>;
+    type MutableSpecies = Mutable<typeof catchableSpecies[SpeciesId]>;
     // array of biome options for the current species
-    (catchableSpecies[speciesId] as mutableSpecies) = [];
+    (catchableSpecies[speciesId] as MutableSpecies) = [];
 
     for (const b of biomeEntries) {
       const biome = b[0];
@@ -5878,7 +5881,7 @@ export function initBiomes() {
           : [b[2]]
         : [TimeOfDay.ALL];
 
-      (catchableSpecies[speciesId] as mutableSpecies).push({
+      (catchableSpecies[speciesId] as MutableSpecies).push({
         biome: biome as BiomeId,
         tier: tier as BiomePoolTier,
         tod: timesOfDay as TimeOfDay[]

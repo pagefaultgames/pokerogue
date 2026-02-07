@@ -30,7 +30,7 @@ describe("Moves - Tera Starstorm", () => {
 
   it("changes type to Stellar when used by Terapagos in its Stellar Form", async () => {
     game.override.battleStyle("single");
-    await game.classicMode.startBattle([SpeciesId.TERAPAGOS]);
+    await game.classicMode.startBattle(SpeciesId.TERAPAGOS);
 
     const terapagos = game.field.getPlayerPokemon();
     terapagos.isTerastallized = true;
@@ -44,7 +44,7 @@ describe("Moves - Tera Starstorm", () => {
   });
 
   it("targets both opponents in a double battle when used by Terapagos in its Stellar Form", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.TERAPAGOS]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.TERAPAGOS);
 
     const terapagos = game.scene.getPlayerParty()[1];
     terapagos.isTerastallized = true;
@@ -66,7 +66,7 @@ describe("Moves - Tera Starstorm", () => {
   });
 
   it("targets both opponents in a double battle when used by Terapagos immediately after terastallizing", async () => {
-    await game.classicMode.startBattle([SpeciesId.TERAPAGOS]);
+    await game.classicMode.startBattle(SpeciesId.TERAPAGOS);
 
     const terapagos = game.field.getPlayerPokemon();
     terapagos.isTerastallized = false;
@@ -83,7 +83,7 @@ describe("Moves - Tera Starstorm", () => {
   });
 
   it("targets only one opponent in a double battle when used by Terapagos without terastallizing", async () => {
-    await game.classicMode.startBattle([SpeciesId.TERAPAGOS]);
+    await game.classicMode.startBattle(SpeciesId.TERAPAGOS);
 
     const terapagos = game.field.getPlayerPokemon();
     terapagos.isTerastallized = false;
@@ -100,7 +100,7 @@ describe("Moves - Tera Starstorm", () => {
   });
 
   it("applies the effects when Terapagos in Stellar Form is fused with another Pokemon", async () => {
-    await game.classicMode.startBattle([SpeciesId.TERAPAGOS, SpeciesId.CHARMANDER, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.TERAPAGOS, SpeciesId.CHARMANDER, SpeciesId.MAGIKARP);
 
     const [fusionedMon, , magikarp] = game.scene.getPlayerParty();
 

@@ -11,7 +11,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @returns Whether the matcher passed
  */
 export function toHaveTerrain(
-  this: MatcherState,
+  this: Readonly<MatcherState>,
   received: unknown,
   expectedTerrainType: TerrainType,
 ): SyncExpectationResult {
@@ -29,7 +29,7 @@ export function toHaveTerrain(
     };
   }
 
-  const actual = received.scene.arena.getTerrainType();
+  const actual = received.scene.arena.terrainType;
   const pass = actual === expectedTerrainType;
   const actualStr = toTerrainStr(actual);
   const expectedStr = toTerrainStr(expectedTerrainType);

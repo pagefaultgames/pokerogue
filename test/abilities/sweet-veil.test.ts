@@ -36,7 +36,7 @@ describe("Abilities - Sweet Veil", () => {
   }
 
   it("should prevent the user and its allies from falling asleep", async () => {
-    await game.classicMode.startBattle([SpeciesId.SWIRLIX, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.SWIRLIX, SpeciesId.MAGIKARP);
 
     game.field.mockAbility(game.field.getPlayerPokemon(), AbilityId.SWEET_VEIL);
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
@@ -49,7 +49,7 @@ describe("Abilities - Sweet Veil", () => {
   });
 
   it("should cause Rest to fail when used by the user or its allies", async () => {
-    await game.classicMode.startBattle([SpeciesId.SWIRLIX, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.SWIRLIX, SpeciesId.MAGIKARP);
 
     const [swirlix, magikarp] = game.scene.getPlayerField();
     game.field.mockAbility(swirlix, AbilityId.SWEET_VEIL);
@@ -66,7 +66,7 @@ describe("Abilities - Sweet Veil", () => {
   });
 
   it("should cause Yawn to fail if used on the user or its allies", async () => {
-    await game.classicMode.startBattle([SpeciesId.SWIRLIX, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.SWIRLIX, SpeciesId.MAGIKARP);
 
     const [shuckle, swirlix] = game.scene.getPlayerField();
     game.field.mockAbility(swirlix, AbilityId.SWEET_VEIL);
@@ -88,7 +88,7 @@ describe("Abilities - Sweet Veil", () => {
   });
 
   it("should NOT cure allies' sleep status if user is sent out into battle", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS, SpeciesId.SWIRLIX]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS, SpeciesId.SWIRLIX);
 
     const [magikarp, , swirlix] = game.scene.getPlayerParty();
     game.field.mockAbility(swirlix, AbilityId.PASTEL_VEIL);
@@ -107,7 +107,7 @@ describe("Abilities - Sweet Veil", () => {
   });
 
   it("should prevent an already-drowsy user or ally from falling asleep", async () => {
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE, SpeciesId.SWIRLIX]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE, SpeciesId.SWIRLIX);
 
     // Add yawn before granting ability
     const [shuckle, swirlix] = game.scene.getPlayerField();

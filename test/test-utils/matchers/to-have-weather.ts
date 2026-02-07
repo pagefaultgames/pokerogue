@@ -11,7 +11,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @returns Whether the matcher passed
  */
 export function toHaveWeather(
-  this: MatcherState,
+  this: Readonly<MatcherState>,
   received: unknown,
   expectedWeatherType: WeatherType,
 ): SyncExpectationResult {
@@ -29,7 +29,7 @@ export function toHaveWeather(
     };
   }
 
-  const actual = received.scene.arena.getWeatherType();
+  const actual = received.scene.arena.weatherType;
   const pass = actual === expectedWeatherType;
   const actualStr = toWeatherStr(actual);
   const expectedStr = toWeatherStr(expectedWeatherType);

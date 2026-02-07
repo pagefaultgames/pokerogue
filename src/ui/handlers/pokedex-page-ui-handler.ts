@@ -147,6 +147,12 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoYOffset: 0.5,
     starterInfoXPos: 26,
   },
+  uk: {
+    starterInfoTextSize: "46px",
+    instructionTextSize: "38px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 26,
+  },
   id: {
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
@@ -159,6 +165,10 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
   },
+  sv: {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "38px",
+  },
 };
 
 const valueReductionMax = 2;
@@ -167,10 +177,10 @@ const valueReductionMax = 2;
 const speciesContainerX = 109;
 
 interface SpeciesDetails {
-  shiny?: boolean;
-  formIndex?: number;
-  female?: boolean;
-  variant?: number;
+  shiny?: boolean | undefined;
+  formIndex?: number | undefined;
+  female?: boolean | undefined;
+  variant?: number | undefined;
 }
 
 enum MenuOptions {
@@ -2212,19 +2222,19 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     if (gamepadType === "touch") {
       gamepadType = "keyboard";
       switch (iconSetting) {
-        case SettingKeyboard.Button_Cycle_Shiny:
+        case SettingKeyboard.BUTTON_CYCLE_SHINY:
           iconPath = "R.png";
           break;
-        case SettingKeyboard.Button_Cycle_Form:
+        case SettingKeyboard.BUTTON_CYCLE_FORM:
           iconPath = "F.png";
           break;
-        case SettingKeyboard.Button_Cycle_Gender:
+        case SettingKeyboard.BUTTON_CYCLE_GENDER:
           iconPath = "G.png";
           break;
-        case SettingKeyboard.Button_Cycle_Ability:
+        case SettingKeyboard.BUTTON_CYCLE_ABILITY:
           iconPath = "E.png";
           break;
-        case SettingKeyboard.Button_Cycle_Tera:
+        case SettingKeyboard.BUTTON_CYCLE_TERA:
           iconPath = "V.png";
           break;
         default:
@@ -2253,11 +2263,11 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     this.instructionsContainer.removeAll();
     this.filterInstructionsContainer.removeAll();
 
-    // biome-ignore lint/suspicious/noImplicitAnyLet: TODO
-    let gamepadType;
+    let gamepadType: string;
     if (globalScene.inputMethod === "gamepad") {
       gamepadType = globalScene.inputController.getConfig(
-        globalScene.inputController.selectedDevice[Device.GAMEPAD],
+        // TODO: is this bang safe?
+        globalScene.inputController.selectedDevice[Device.GAMEPAD]!,
       ).padType;
     } else {
       gamepadType = globalScene.inputMethod;
@@ -2273,7 +2283,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       if (isFormCaught) {
         if (this.canUseCandies) {
           this.updateButtonIcon(
-            SettingKeyboard.Button_Stats,
+            SettingKeyboard.BUTTON_STATS,
             gamepadType,
             this.candyUpgradeIconElement,
             this.candyUpgradeLabel,
@@ -2281,7 +2291,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         }
         if (this.canCycleShiny) {
           this.updateButtonIcon(
-            SettingKeyboard.Button_Cycle_Shiny,
+            SettingKeyboard.BUTTON_CYCLE_SHINY,
             gamepadType,
             this.shinyIconElement,
             this.shinyLabel,
@@ -2289,7 +2299,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         }
         if (this.canCycleGender) {
           this.updateButtonIcon(
-            SettingKeyboard.Button_Cycle_Gender,
+            SettingKeyboard.BUTTON_CYCLE_GENDER,
             gamepadType,
             this.genderIconElement,
             this.genderLabel,
@@ -2300,9 +2310,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         this.instructionRowY += 8;
       }
       if (this.canCycleForm) {
-        this.updateButtonIcon(SettingKeyboard.Button_Cycle_Form, gamepadType, this.formIconElement, this.formLabel);
+        this.updateButtonIcon(SettingKeyboard.BUTTON_CYCLE_FORM, gamepadType, this.formIconElement, this.formLabel);
       }
-      this.updateButtonIcon(SettingKeyboard.Button_Cycle_Tera, gamepadType, this.ivIconElement, this.ivLabel);
+      this.updateButtonIcon(SettingKeyboard.BUTTON_CYCLE_TERA, gamepadType, this.ivIconElement, this.ivLabel);
     }
   }
 
@@ -2310,13 +2320,13 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     const ret = super.setCursor(cursor);
 
     if (!this.cursorObj) {
-      this.cursorObj = globalScene.add.image(0, 0, "cursor");
-      this.cursorObj.setOrigin(0, 0);
+      this.cursorObj = globalScene.add.image(0, 0, "cursor").setOrigin(0);
       this.menuContainer.add(this.cursorObj);
     }
 
-    this.cursorObj.setScale(this.scale * 6);
-    this.cursorObj.setPositionRelative(this.menuBg, 7, 6 + (18 + this.cursor * 96) * this.scale);
+    this.cursorObj
+      .setScale(this.scale * 6)
+      .setPositionRelative(this.menuBg, 7, 6 + (18 + this.cursor * 96) * this.scale);
 
     const ui = this.getUi();
 
