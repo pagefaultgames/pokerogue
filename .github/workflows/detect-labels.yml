@@ -1,0 +1,29 @@
+name: Upload data
+
+on:
+    pull_request:
+        types: [labeled]
+        branches:
+            - main
+            - beta
+            - release
+            - "hotfix*"
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: false
+
+jobs:
+    upload-label-data:
+        if: github.event.label.name == 'Awaiting Locales' || github.event.label.name == 'Update Locales' || github.event.label.name == 'Update Assets' 
+        runs-on: ubuntu-latest
+        steps:
+            - name: Save the Label and PR number
+              run: |
+                  mkdir -p ./pr
+                  echo ${{ github.event.number }} > ./pr/NR
+                  echo ${{ github.event.label.name }} > ./pr/LABEL
+            - uses: actions/upload-artifact@v4
+              with:
+                  name: pr
+                  path: pr/
