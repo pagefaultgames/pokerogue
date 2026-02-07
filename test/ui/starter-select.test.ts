@@ -566,8 +566,8 @@ describe.todo("UI - Starter select", () => {
       });
     });
 
-    expect(starterSelectUiHandler?.starterSpecies.length).toBe(1);
-    const starterId = starterSelectUiHandler?.starterSpecies[0];
+    expect(starterSelectUiHandler?.partyStarterIds.length).toBe(1);
+    const starterId = starterSelectUiHandler?.partyStarterIds[0];
     const starterSpecies = getPokemonSpecies(starterId!);
     expect(starterSpecies.generation).toBe(1);
     expect(starterSpecies.speciesId).toBe(32);
