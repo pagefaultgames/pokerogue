@@ -426,17 +426,13 @@ export abstract class Move implements Localizable {
    * Currently looks at cases of:
    * - Grass types with powder moves
    * - Dark types with moves affected by Prankster
-   * - Ground type moves against Pokemon currently in the air
    * @param user - The {@linkcode Pokemon} using this move
    * @param target - The {@linkcode Pokemon} targeted by this move
    * @param type - The {@linkcode PokemonType} of the oppoennt that is being checked
-   * @param forciblyGrounded - Whether the target is {@linkcode Pokemon.isForciblyGrounded | forcibly grounded}
    * @returns Whether the move is blocked due to the target's typing.
    * Self-targeted moves will return `false` regardless of circumstances.
    */
-  // TODO: Move this to a private method of the `Pokemon` class so it can access the private `isForciblyGrounded` method;
-  // this is used there and nowhere else
-  isTypeImmune(user: Pokemon, target: Pokemon, type: PokemonType, forciblyGrounded: boolean | undefined): boolean {
+  isTypeImmune(user: Pokemon, target: Pokemon, type: PokemonType): boolean {
     if (this.moveTarget === MoveTarget.USER) {
       return false;
     }
@@ -446,9 +442,6 @@ export abstract class Move implements Localizable {
         return this.hasFlag(MoveFlags.POWDER_MOVE);
       case PokemonType.DARK:
         return user.hasAbility(AbilityId.PRANKSTER) && this.category === MoveCategory.STATUS && user.isOpponent(target);
-      case PokemonType.GROUND:
-        // TODO: This manual check is not very clean
-        return forciblyGrounded === false && !this.hasAttr("NeutralDamageAgainstFlyingTypeAttr");
     }
     return false;
   }
@@ -6070,7 +6063,7 @@ export class FreezeDryAttr extends MoveTypeChartOverrideAttr {
 
 /**
  * Attribute used by {@link https://bulbapedia.bulbagarden.net/wiki/Thousand_Arrows_(move) | Thousand Arrows}
- * to cause it to deal a fixed 1x damage against all ungrounded flying types that would be immune to it.
+ * to cause it to deal a fixed 1x damage against airborne flying types that would otherwise be immune to the move.
  */
 export class NeutralDamageAgainstFlyingTypeAttr extends MoveTypeChartOverrideAttr {
   public override apply(

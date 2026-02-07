@@ -1,11 +1,13 @@
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Challenges } from "#enums/challenges";
 import { MoveId } from "#enums/move-id";
+import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
-import { MoveEffectPhase } from "#phases/move-effect-phase";
+import { Pokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
@@ -110,8 +112,8 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
     // Magikarp should be grounded solely due to using Dig
     const karp = game.field.getEnemyPokemon();
     expect(karp).toHaveBattlerTag(BattlerTagType.UNDERGROUND);
-    expect(karp.isGrounded()).toBe(true);
-    expect(karp.isGrounded(true)).toBe(false);
+    expect(karp.isGrounded()).toBe(false);
+    expect(karp.isGrounded(true)).toBe(true);
     await game.toEndOfTurn();
 
     // Magikarp took damage but was not forcibly grounded
@@ -124,11 +126,11 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
   it.todo("should hit midair targets from Sky Drop without interrupting");
 
   describe("Thousand Arrows", () => {
-    let hitSpy: MockInstance<MoveEffectPhase["hitCheck"]>;
+    let hitSpy: MockInstance<Pokemon["getAttackTypeEffectiveness"]>;
 
     beforeEach(() => {
       game.override.enemySpecies(SpeciesId.ARCHEOPS);
-      hitSpy = vi.spyOn(MoveEffectPhase.prototype, "hitCheck");
+      hitSpy = vi.spyOn(Pokemon.prototype, "getAttackTypeEffectiveness");
     });
 
     it("should have a fixed 1x type effectiveness when hitting airborne Flying-types", async () => {
@@ -138,20 +140,35 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
 
       // first turn: 1x
       game.move.use(MoveId.THOUSAND_ARROWS);
-      await game.toEndOfTurn();
+      await game.toNextTurn();
 
       expect(archeops).not.toHaveFullHp();
       expect(archeops.isGrounded()).toBe(true);
-      expect(hitSpy).toHaveLastReturnedWith([expect.anything(), 1]);
+      expect(hitSpy).toHaveLastReturnedWith([1]);
 
-      // 2nd turn: 2x (normal)
+      // hit while already grounded: 2x
+      game.move.use(MoveId.THOUSAND_ARROWS);
+      await game.toNextTurn();
+
+      expect(hitSpy).toHaveLastReturnedWith([2]);
+
+      // repeat turns 1/2, but with a resistance instead of a weakness
+      archeops.resetSummonData();
+      archeops.hp = archeops.getMaxHp();
+      archeops.summonData.types = [PokemonType.GRASS, PokemonType.FLYING];
+
+      game.move.use(MoveId.THOUSAND_ARROWS);
+      await game.toNextTurn();
+
+      expect(hitSpy).toHaveLastReturnedWith([1]);
+
       game.move.use(MoveId.THOUSAND_ARROWS);
       await game.toEndOfTurn();
 
-      expect(hitSpy).toHaveLastReturnedWith([expect.anything(), 2]);
+      expect(hitSpy).toHaveLastReturnedWith([0.5]);
     });
 
-    it("should consider other sources of groundedness for its effect", async () => {
+    it("should consider other sources of groundedness", async () => {
       await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
       game.scene.arena.addTag(ArenaTagType.GRAVITY, 0, 0, 0);
@@ -162,31 +179,23 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
       game.move.use(MoveId.THOUSAND_ARROWS);
       await game.phaseInterceptor.to("MoveEndPhase");
 
-      expect(hitSpy).toHaveLastReturnedWith([expect.anything(), 2]);
+      expect(hitSpy).toHaveLastReturnedWith([2]);
     });
 
     // Source: https://replay.pokemonshowdown.com/gen9nationaldex-2533601259-bxnwtg9v01t95ujly828ud22jjxuaihpw
-    it("should deal 2x damage to flying-types in Inverse Battles on both hits", async () => {
+    it("should deal 2x damage to Flying-types in Inverse Battles, even if already grounded", async () => {
       game.challengeMode.addChallenge(Challenges.INVERSE_BATTLE, 1, 1);
-
       await game.challengeMode.startBattle(SpeciesId.FEEBAS);
 
+      const feebas = game.field.getPlayerPokemon();
       const archeops = game.field.getEnemyPokemon();
-      const spy = vi.spyOn(archeops, "getMoveEffectiveness");
+      const move = allMoves[MoveId.THOUSAND_ARROWS];
 
-      // 1st hit
-      game.move.use(MoveId.THOUSAND_ARROWS);
-      await game.toEndOfTurn();
+      expect(archeops.getAttackTypeEffectiveness(move.type, { source: feebas, move })).toBe(2);
 
-      expect(spy).toHaveBeenCalledWith(MoveId.THOUSAND_ARROWS, expect.anything());
-      expect(spy).toHaveLastReturnedWith(2);
-
-      // 2nd hit
-      game.move.use(MoveId.THOUSAND_ARROWS);
-      await game.toEndOfTurn();
-
-      expect(spy).toHaveBeenCalledWith(MoveId.THOUSAND_ARROWS, expect.anything());
-      expect(spy).toHaveLastReturnedWith(2);
+      archeops.addTag(BattlerTagType.IGNORE_FLYING, 0, 0);
+      expect(archeops.isGrounded()).toBe(true);
+      expect(archeops.getAttackTypeEffectiveness(move.type, { source: feebas, move })).toBe(2);
     });
   });
 });

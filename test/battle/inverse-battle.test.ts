@@ -1,7 +1,6 @@
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerIndex } from "#enums/battler-index";
-import { BattlerTagType } from "#enums/battler-tag-type";
 import { Challenges } from "#enums/challenges";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
@@ -217,19 +216,19 @@ describe("Inverse Battle", () => {
     expect(enemy.getMoveEffectiveness).toHaveLastReturnedWith(2);
   });
 
-  it("Grounded Flying-types should take 2x dmg from Ground-type moves", async () => {
+  it("should nullify the Ground immunity of Flying types, but preserve immunities from other effects", async () => {
     await game.challengeMode.startBattle(SpeciesId.FEEBAS);
 
     const enemy = game.field.getEnemyPokemon();
-    const spy = vi.spyOn(enemy, "getMoveEffectiveness");
 
     enemy.summonData.types = [PokemonType.FLYING];
-    enemy.addTag(BattlerTagType.IGNORE_FLYING);
-    expect(enemy.isGrounded()).toBe(true);
+    expect(enemy.isGrounded()).toBe(false);
+    expect(enemy["isForciblyGrounded"]()).toBe(undefined);
+    expect(enemy.getAttackTypeEffectiveness(PokemonType.GROUND)).toBe(2);
 
-    game.move.use(MoveId.MUD_SLAP);
-    await game.toEndOfTurn();
+    game.field.mockAbility(enemy, AbilityId.LEVITATE);
 
-    expect(spy).toHaveLastReturnedWith(2);
+    expect(enemy["isForciblyGrounded"]()).toBe(false);
+    expect(enemy.getAttackTypeEffectiveness(PokemonType.GROUND)).toBe(0);
   });
 });

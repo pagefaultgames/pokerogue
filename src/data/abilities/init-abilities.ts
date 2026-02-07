@@ -173,17 +173,16 @@ import {
   TypeImmunityAddBattlerTagAbAttr,
   TypeImmunityHealAbAttr,
   TypeImmunityStatStageChangeAbAttr,
+  UngroundedAbAttr,
   UserFieldBattlerTagImmunityAbAttr,
   UserFieldMoveTypePowerBoostAbAttr,
   UserFieldStatusEffectImmunityAbAttr,
-  UngroundedAbAttr,
   WeightMultiplierAbAttr,
   WonderSkinAbAttr,
 } from "#abilities/ab-attrs";
 import { AbBuilder, type Ability } from "#abilities/ability";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { GroundedTag } from "#data/battler-tags";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { Gender } from "#data/gender";
 import { getNonVolatileStatusEffects } from "#data/status-effect";

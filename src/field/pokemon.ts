@@ -2416,8 +2416,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    *
    * @see {@linkcode isGrounded} - Main function that uses this
    * @privateRemarks
-   * This method does not account for typing or semi-invulnerability as it is also used to determine
-   * whether Ground-type moves should be nullified against airborne defenders.
+   * This method does not account for typing or semi-invulnerability as it is used to determine
+   * whether Ground-type moves should be nullified against airborne defenders (both of which are ignored by the latter).
    */
   private isForciblyGrounded(): boolean | undefined {
     if (this.getTag(BattlerTagType.IGNORE_FLYING) || globalScene.arena.hasTag(ArenaTagType.GRAVITY)) {
@@ -2428,11 +2428,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return false;
     }
 
-    const forcedAirborne = new BooleanHolder(false);
-    applyAbAttrs("UngroundedAbAttr", { pokemon: this, cancelled: forcedAirborne });
-    if (forcedAirborne.value) {
-      return false;
-    }
+    const levitateHolder = new BooleanHolder(false);
+    applyAbAttrs("UngroundedAbAttr", { pokemon: this, cancelled: levitateHolder });
+    return levitateHolder.value ? false : undefined;
   }
 
   /**
@@ -2530,6 +2528,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (move.hasAttr("TypelessAttr")) {
       return 1;
     }
+    //
     const moveType = source.getMoveType(move);
 
     const typeMultiplier = new NumberHolder(
@@ -2538,8 +2537,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         : 1,
     );
 
-    // TODO: Move this to a private method of the `Pokemon` class so it can access the private `isForciblyGrounded` method
-    if (this.getTypes(true, true).find(t => move.isTypeImmune(source, this, t, this.isForciblyGrounded()))) {
+    // TODO: Move to a private method of the `Pokemon` class (since it is only used here)
+    if (this.getTypes(true, true).find(t => move.isTypeImmune(source, this, t))) {
       typeMultiplier.value = 0;
     }
 
@@ -2614,6 +2613,18 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const types = this.getTypes(true, true, false, useIllusion);
     const { arena } = globalScene;
+
+    // All Ground-type moves (other than Thousand Arrows) are rendered ineffective against opponents
+    // rendered airborne by something other than their typing/semi-invuln (e.g. Levitate, Magnet Rise & Telekinesis).
+    // Flying-types are ignored by this check as they lose their immunity in Inverse Battles.
+    const forciblyGrounded = this.isForciblyGrounded();
+    if (
+      forciblyGrounded === false
+      && moveType === PokemonType.GROUND
+      && !move?.hasAttr("NeutralDamageAgainstFlyingTypeAttr")
+    ) {
+      return 0;
+    }
 
     const multi = new NumberHolder(1);
     for (const defenderType of types) {
