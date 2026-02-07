@@ -3203,7 +3203,7 @@ export const trainerConfigs: TrainerConfigs = {
     ),
   [TrainerType.LANCE]: new TrainerConfig(++t)
     .setName("Lance")
-    .initForEliteFour(signatureSpecies["LANCE"], true, PokemonType.DRAGON, 2)
+    .initForEliteFour(signatureSpecies["LANCE"], true, PokemonType.DRAGON, 1)
     .setBattleBgm("battle_kanto_gym")
     .setMixedBattleBgm("battle_kanto_gym")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([SpeciesId.KINGDRA]))
@@ -3497,7 +3497,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setBattleBgm("battle_sinnoh_gym")
     .setMixedBattleBgm("battle_sinnoh_gym")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([SpeciesId.BRONZONG]))
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.ALAKAZAM])) // Tera Psychic Farigiraf
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.ALAKAZAM])) // Tera Psychic Alakazam
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.FARIGIRAF]))
     .setPartyMemberFunc(
       3,
@@ -3521,10 +3521,11 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       1,
       getRandomPartyMemberFunc([SpeciesId.GOLURK], TrainerSlot.TRAINER, true, p => {
+        // Tera Ghost Golurk
         p.abilityIndex = 0; // Iron Fist
         p.generateAndPopulateMoveset();
       }),
-    ) // Tera Ghost Golurk
+    )
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.JELLICENT]))
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.MISMAGIUS, SpeciesId.FROSLASS]))
     .setPartyMemberFunc(
@@ -3551,7 +3552,13 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.GRIMSLEY]: new TrainerConfig(++t)
     .initForEliteFour(signatureSpecies["GRIMSLEY"], true, PokemonType.DARK, 1)
     .setMixedBattleBgm("battle_unova_elite")
-    .setPartyMemberFunc(0, getRandomPartyMemberFunc([SpeciesId.LIEPARD]))
+    .setPartyMemberFunc(
+      0,
+      getRandomPartyMemberFunc([SpeciesId.LIEPARD], TrainerSlot.TRAINER, true, p => {
+        p.abilityIndex = 1; // Unburden
+        p.generateAndPopulateMoveset();
+      }),
+    )
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.KROOKODILE])) // Tera Dark Krookodile
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.SCRAFTY]))
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.ZOROARK, SpeciesId.HISUI_SAMUROTT]))
@@ -3592,7 +3599,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.gender = Gender.FEMALE;
       }),
     )
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.DELPHOX])) // Tera Fire Houndoom
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.DELPHOX])) // Tera Fire Delphox
     .setPartyMemberFunc(
       2,
       getRandomPartyMemberFunc([SpeciesId.TORKOAL], TrainerSlot.TRAINER, true, p => {
@@ -3612,9 +3619,9 @@ export const trainerConfigs: TrainerConfigs = {
     .initForEliteFour(signatureSpecies["SIEBOLD"], true, PokemonType.WATER, 1)
     .setMixedBattleBgm("battle_kalos_elite")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([SpeciesId.CLAWITZER]))
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.GRENINJA])) // Tera Water Gyarados
+    .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.GRENINJA])) // Tera Water Greninja
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.STARMIE]))
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.BLASTOISE, SpeciesId.DONDOZO]))
+    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.GYARADOS, SpeciesId.DONDOZO]))
     .setPartyMemberFunc(
       4,
       getRandomPartyMemberFunc([SpeciesId.BARBARACLE], TrainerSlot.TRAINER, true, p => {
@@ -3679,22 +3686,13 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([SpeciesId.HARIYAMA]))
     .setPartyMemberFunc(
       1,
-      getRandomPartyMemberFunc([SpeciesId.ANNIHILAPE], TrainerSlot.TRAINER, true, p => {
-        // Tera Fighting Incineroar
-        p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.CROSS_CHOP)) {
-          // Check if Cross Chop is in the moveset, if not, replace the third move with Cross Chop.
-          p.moveset[2] = new PokemonMove(MoveId.CROSS_CHOP);
-        }
-      }),
-    )
-    .setPartyMemberFunc(
-      2,
       getRandomPartyMemberFunc([SpeciesId.BEWEAR], TrainerSlot.TRAINER, true, p => {
+        // Tera Fighting Bewear
         p.abilityIndex = 0; // Fluffy
         p.generateAndPopulateMoveset();
       }),
     )
+    .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.ANNIHILAPE]))
     .setPartyMemberFunc(
       3,
       getRandomPartyMemberFunc([SpeciesId.POLIWRATH, SpeciesId.MACHAMP], TrainerSlot.TRAINER, true, p => {
@@ -3720,6 +3718,7 @@ export const trainerConfigs: TrainerConfigs = {
       4,
       getRandomPartyMemberFunc([SpeciesId.ALOLA_DUGTRIO], TrainerSlot.TRAINER, true, p => {
         p.setBoss(true, 2);
+        p.abilityIndex = 1; // Tangling Hair
         p.generateAndPopulateMoveset();
       }),
     ),
@@ -3898,7 +3897,7 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.TOXAPEX]))
     .setPartyMemberFunc(
-      5,
+      4,
       getRandomPartyMemberFunc([SpeciesId.DREDNAW], TrainerSlot.TRAINER, true, p => {
         p.setBoss(true, 2);
         p.generateAndPopulateMoveset();
