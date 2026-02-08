@@ -148,6 +148,7 @@ jobs:
         with:
           app-id: ${{ secrets.PAGEFAULT_APP_ID }}
           private-key: ${{ secrets.PAGEFAULT_APP_PRIVATE_KEY }}
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
