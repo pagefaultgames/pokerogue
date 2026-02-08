@@ -526,7 +526,18 @@ export const achvs = {
       )
       && !globalScene.gameMode.challenges.some(c => c.id === Challenges.PASSIVES && c.value === 2),
   ),
-  NUZLOCKE: new ChallengeAchv("nuzlocke", "nuzlocke.description", "leaf_stone", 100, isNuzlockeChallenge),
+  NUZLOCKE: new ChallengeAchv(
+    "nuzlocke",
+    "nuzlocke.description",
+    "leaf_stone",
+    100,
+    _ =>
+      isNuzlockeChallenge()
+      && !globalScene.gameMode.challenges.some(
+        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+      )
+      && !globalScene.gameMode.challenges.some(c => c.id === Challenges.PASSIVES && c.value === 2),
+  ),
   INVERSE_BATTLE: new ChallengeAchv(
     "inverseBattle",
     "inverseBattle.description",
