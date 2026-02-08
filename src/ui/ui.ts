@@ -118,8 +118,14 @@ const noTransitionModes = [
   UiMode.CHANGE_PASSWORD_FORM,
 ];
 
-function isTransitionMode(mode: UiMode): boolean {
-  return transitionModes.indexOf(mode) > -1 && noTransitionModes.indexOf(mode) === -1;
+/** Check whether this mode requires a fading transition, if possible */
+function requiresTransition(mode: UiMode): boolean {
+  return transitionModes.indexOf(mode) > -1;
+}
+
+/** Check whether this mode allows a fading transition */
+function allowsTransition(mode: UiMode): boolean {
+  return noTransitionModes.indexOf(mode) === -1;
 }
 
 // biome-ignore lint/style/useNamingConvention: a unique case (only 2 letters)
@@ -565,8 +571,11 @@ export class UI extends Phaser.GameObjects.Container {
        If `chainMode` is `true`, require the new mode to be a transition mode.
        If `chainMode` is `false`, either mode can be a transition mode. */
       if (
-        (!chainMode && (isTransitionMode(this.mode) || isTransitionMode(mode)))
-        || (chainMode && isTransitionMode(mode))
+        (!chainMode
+          && (requiresTransition(this.mode) || requiresTransition(mode))
+          && allowsTransition(this.mode)
+          && allowsTransition(mode))
+        || (chainMode && allowsTransition(mode))
       ) {
         this.fadeOut(250).then(() => {
           globalScene.time.delayedCall(100, () => {
@@ -635,7 +644,7 @@ export class UI extends Phaser.GameObjects.Container {
         resolve(true);
       };
 
-      if (isTransitionMode(lastMode)) {
+      if (allowsTransition(lastMode)) {
         this.fadeOut(250).then(() => {
           globalScene.time.delayedCall(100, () => {
             doRevertMode();
