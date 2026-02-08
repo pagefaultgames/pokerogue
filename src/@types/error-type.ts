@@ -57,7 +57,7 @@ type PrintTypeInternal<T> =
     : IsNever<T> extends true
       ? "never"
       : IsAny<T> extends true
-        ? never
+        ? "any"
         : // special case boolean
           boolean extends T
           ? "boolean"
