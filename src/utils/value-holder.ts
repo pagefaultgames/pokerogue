@@ -64,10 +64,10 @@ export class ValueHolder<Value, Base extends Primitive = Primitive> {
  * @deprecated
  * New code should prefer using `ValueHolder` instead - this is kept for compatibility reasons
  */
-export class NumberHolder<T> extends ValueHolder<T, number> {}
+export class NumberHolder<T = number> extends ValueHolder<T, number> {}
 /**
  * An alias for a boolean-only {@linkcode ValueHolder}.
  * @deprecated
  * New code should prefer using `ValueHolder` instead - this is kept for compatibility
  */
-export class BooleanHolder<T> extends ValueHolder<T, boolean> {}
+export class BooleanHolder<T = boolean> extends ValueHolder<T, boolean> {}

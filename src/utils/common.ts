@@ -8,7 +8,7 @@ import i18next from "i18next";
 
 // Re-export the value holder classes for compatibility with existing imports looking over here
 // biome-ignore lint/performance/noBarrelFile: stopgap to avoid massive merge conflicts
-export { NumberHolder, ValueHolder } from "#utils/value-holder";
+export { BooleanHolder, NumberHolder } from "#utils/value-holder";
 
 export const MissingTextureKey = "__MISSING";
 
