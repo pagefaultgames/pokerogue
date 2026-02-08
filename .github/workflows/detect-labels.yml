@@ -18,12 +18,13 @@ jobs:
         if: github.event.label.name == 'Awaiting Locales' || github.event.label.name == 'Update Locales' || github.event.label.name == 'Update Assets'
         runs-on: ubuntu-latest
         steps:
-            - name: Save PR number
+            - name: Save PR info
               run: |
                   mkdir -p ./pr
                   echo ${{ github.event.number }} > ./pr/NR
                   echo ${{ github.event.label.name }} > ./pr/LABEL
                   echo ${{ github.event.pull_request.head.ref }} > ./pr/REF
+                  echo ${{ github.event.pull_request.head.repo.full_name }} > ./pr/REPO
             - uses: actions/upload-artifact@v4
               with:
                   name: pr-data
