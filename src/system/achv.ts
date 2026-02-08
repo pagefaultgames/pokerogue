@@ -555,7 +555,7 @@ export const achvs = {
   PASSIVES_CHALL: new ChallengeAchv(
     "passives",
     "passives.description",
-    "ability_charm",
+    "ability_capsule",
     100,
     c =>
       c instanceof PassivesChallenge
