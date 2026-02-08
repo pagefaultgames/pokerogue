@@ -1275,8 +1275,8 @@ export function initChallenges() {
     new LimitedSupportChallenge(),
     new SingleGenerationChallenge(),
     new SingleTypeChallenge(),
+    new PassivesChallenge(),
     new InverseBattleChallenge(),
     new FlipStatChallenge(),
-    new PassivesChallenge(),
   );
 }
