@@ -75,9 +75,8 @@ export class GameOverPhase extends BattlePhase {
       this.handleGameOver();
     } else {
       globalScene.ui.showText(i18next.t("battle:retryBattle"), null, () => {
-        globalScene.ui.setMode(
-          UiMode.CONFIRM,
-          () => {
+        globalScene.ui.setMode(UiMode.CONFIRM, {
+          onYes: () => {
             globalScene.ui.fadeOut(1250).then(() => {
               globalScene.reset();
               globalScene.phaseManager.clearPhaseQueue();
@@ -105,12 +104,10 @@ export class GameOverPhase extends BattlePhase {
               });
             });
           },
-          () => this.handleGameOver(),
-          false,
-          0,
-          0,
-          1000,
-        );
+          onNo: () => this.handleGameOver(),
+          switchCheck: false,
+          delay: 1000,
+        });
       });
     }
   }

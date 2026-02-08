@@ -26,6 +26,12 @@ import { getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
 import { addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
+import type {
+  SummaryUiHandlerParams,
+  SummaryUiHandlerParamsDefault,
+  SummaryUiHandlerParamsLearnMove,
+} from "#ui/ui-handler-params";
+import { SummaryPage, SummaryUiMode } from "#ui/ui-types";
 import {
   fixedInt,
   formatStat,
@@ -40,17 +46,6 @@ import { getDexNumber } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
-
-enum Page {
-  PROFILE,
-  STATS,
-  MOVES,
-}
-
-export enum SummaryUiMode {
-  DEFAULT,
-  LEARN_MOVE,
-}
 
 /** Holds all objects related to an ability for each iteration */
 interface AbilityContainer {
@@ -333,48 +328,22 @@ export class SummaryUiHandler extends UiHandler {
     if (page === undefined) {
       page = this.cursor;
     }
-    return `summary_${Page[page].toLowerCase()}`;
+    return `summary_${SummaryPage[page].toLowerCase()}`;
   }
 
-  show(
-    args: [
-      pokemon: PlayerPokemon,
-      uiMode?: SummaryUiMode.DEFAULT,
-      startPage?: Page,
-      selectCallback?: (cursor: number) => void,
-      player?: boolean,
-    ],
-  ): boolean;
-  show(
-    args: [
-      pokemon: PlayerPokemon,
-      uiMode: SummaryUiMode.LEARN_MOVE,
-      move?: Move,
-      moveSelectCallback?: (cursor: number) => void,
-      player?: boolean,
-    ],
-  ): boolean;
-  show(
-    args: [
-      pokemon: PlayerPokemon,
-      uiMode?: SummaryUiMode,
-      startPage?: Page | Move,
-      callback?: (cursor: number) => void,
-      player?: boolean,
-    ],
-  ): boolean {
+  show(args: SummaryUiHandlerParams): boolean {
     super.show(args);
 
     /* args[] information
      * args[0] : the Pokemon displayed in the Summary-UI
      * args[1] : the summaryUiMode (defaults to 0)
-     * args[2] : the start page (defaults to Page.PROFILE), or the move being selected
+     * args[2] : the start page (defaults to SummaryPage.PROFILE), or the move being selected
      * args[3] : contains the function executed when the user exits out of Summary UI
      * args[4] : optional boolean used to determine if the Pokemon is part of the player's party or not (defaults to true, necessary for PR #2921 to display all relevant information)
      */
-    this.pokemon = args[0] as PlayerPokemon;
-    this.summaryUiMode = (args[1] as SummaryUiMode) ?? SummaryUiMode.DEFAULT;
-    this.playerParty = args[4] ?? true;
+    this.pokemon = args.pokemon;
+    this.summaryUiMode = args.uiMode;
+    this.playerParty = args.player ?? true;
     globalScene.ui.bringToTop(this.summaryContainer);
 
     this.summaryContainer.setVisible(true);
@@ -513,23 +482,22 @@ export class SummaryUiHandler extends UiHandler {
 
     switch (this.summaryUiMode) {
       case SummaryUiMode.DEFAULT: {
-        const page = (args[2] as Page) ?? Page.PROFILE;
+        const page = (args as SummaryUiHandlerParamsDefault).startPage ?? SummaryPage.PROFILE;
         this.hideMoveEffect(true);
         this.setCursor(page);
-        this.selectCallback = args[3] ?? null;
+        this.selectCallback = args.selectCallback ?? null;
         break;
       }
       case SummaryUiMode.LEARN_MOVE:
-        this.newMove = args[2] as Move;
-        this.moveSelectFunction = args[3] ?? null;
-
+        this.newMove = (args as SummaryUiHandlerParamsLearnMove).move;
+        this.moveSelectFunction = args.selectCallback ?? null;
         this.showMoveEffect(true);
-        this.setCursor(Page.MOVES);
+        this.setCursor(SummaryPage.MOVES);
         this.showMoveSelect();
         break;
     }
 
-    const fromSummary = args.length >= 2;
+    const fromSummary = args.fromSummary;
 
     if (this.pokemon.status || this.pokemon.pokerus) {
       this.showStatus(!fromSummary);
@@ -547,7 +515,7 @@ export class SummaryUiHandler extends UiHandler {
     }
 
     const ui = this.getUi();
-    const fromPartyMode = ui.handlers[UiMode.PARTY].active;
+    const fromPartyMode = ui.handlers[UiMode.PARTY]?.active;
     let success = false;
     let error = false;
 
@@ -602,7 +570,7 @@ export class SummaryUiHandler extends UiHandler {
             break;
           case Button.LEFT:
             this.moveSelect = false;
-            this.setCursor(Page.STATS);
+            this.setCursor(SummaryPage.STATS);
             if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE) {
               this.hideMoveEffect();
               this.destroyBlinkCursor();
@@ -615,10 +583,10 @@ export class SummaryUiHandler extends UiHandler {
         }
       }
     } else if (button === Button.ACTION) {
-      if (this.cursor === Page.MOVES) {
+      if (this.cursor === SummaryPage.MOVES) {
         this.showMoveSelect();
         success = true;
-      } else if (this.cursor === Page.PROFILE && this.pokemon?.hasPassive()) {
+      } else if (this.cursor === SummaryPage.PROFILE && this.pokemon?.hasPassive()) {
         // if we're on the PROFILE page and this pokemon has a passive unlocked..
         // Since abilities are displayed by default, all we need to do is toggle visibility on all elements to show passives
         this.abilityContainer.nameText?.setVisible(!this.abilityContainer.descriptionText?.visible);
@@ -628,7 +596,7 @@ export class SummaryUiHandler extends UiHandler {
         this.passiveContainer.nameText?.setVisible(!this.passiveContainer.descriptionText?.visible);
         this.passiveContainer.descriptionText?.setVisible(!this.passiveContainer.descriptionText.visible);
         this.passiveContainer.labelImage.setVisible(!this.passiveContainer.labelImage.visible);
-      } else if (this.cursor === Page.STATS) {
+      } else if (this.cursor === SummaryPage.STATS) {
         //Show IVs
         this.permStatsContainer.setVisible(!this.permStatsContainer.visible);
         this.ivContainer.setVisible(!this.ivContainer.visible);
@@ -644,14 +612,14 @@ export class SummaryUiHandler extends UiHandler {
         }
 
         if (fromPartyMode) {
-          ui.setMode(UiMode.PARTY);
+          ui.setMode(UiMode.PARTY, {});
         } else {
           ui.setMode(UiMode.MESSAGE);
         }
       }
       success = true;
     } else {
-      const pages = getEnumValues(Page);
+      const pages = getEnumValues(SummaryPage);
       switch (button) {
         case Button.UP:
         case Button.DOWN: {
@@ -667,7 +635,12 @@ export class SummaryUiHandler extends UiHandler {
           if ((isDown && partyMemberIndex < party.length - 1) || (!isDown && partyMemberIndex)) {
             const page = this.cursor;
             this.clear();
-            this.show([party[partyMemberIndex + (isDown ? 1 : -1)], this.summaryUiMode, page]);
+            this.show({
+              pokemon: party[partyMemberIndex + (isDown ? 1 : -1)],
+              uiMode: this.summaryUiMode,
+              startPage: page,
+              fromSummary: true,
+            });
           }
           break;
         }
@@ -679,7 +652,7 @@ export class SummaryUiHandler extends UiHandler {
         case Button.RIGHT:
           if (this.cursor < pages.length - 1) {
             success = this.setCursor(this.cursor + 1);
-            if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE && this.cursor === Page.MOVES) {
+            if (this.summaryUiMode === SummaryUiMode.LEARN_MOVE && this.cursor === SummaryPage.MOVES) {
               this.moveSelect = true;
             }
           }
@@ -793,7 +766,7 @@ export class SummaryUiHandler extends UiHandler {
             onComplete: () => {
               if (forward) {
                 this.populatePageContainer(this.summaryPageContainer);
-                if (this.cursor === Page.MOVES) {
+                if (this.cursor === SummaryPage.MOVES) {
                   this.moveCursorObj = null;
                   this.showMoveSelect();
                   this.showMoveEffect();
@@ -816,7 +789,7 @@ export class SummaryUiHandler extends UiHandler {
     return changed;
   }
 
-  populatePageContainer(pageContainer: Phaser.GameObjects.Container, page?: Page) {
+  populatePageContainer(pageContainer: Phaser.GameObjects.Container, page?: SummaryPage) {
     if (page === undefined) {
       page = this.cursor;
     }
@@ -838,7 +811,7 @@ export class SummaryUiHandler extends UiHandler {
     }
 
     switch (page) {
-      case Page.PROFILE: {
+      case SummaryPage.PROFILE: {
         const profileContainer = globalScene.add.container(0, -pageBg.height);
         pageContainer.add(profileContainer);
         const otColor =
@@ -1032,7 +1005,7 @@ export class SummaryUiHandler extends UiHandler {
         profileContainer.add(memoText);
         break;
       }
-      case Page.STATS: {
+      case SummaryPage.STATS: {
         this.statsContainer = globalScene.add.container(0, -pageBg.height);
         pageContainer.add(this.statsContainer);
         this.permStatsContainer = globalScene.add.container(27, 56);
@@ -1176,7 +1149,7 @@ export class SummaryUiHandler extends UiHandler {
         this.statsContainer.add(this.abilityPrompt);
         break;
       }
-      case Page.MOVES: {
+      case SummaryPage.MOVES: {
         this.movesContainer = globalScene.add.container(5, -pageBg.height + 26);
         pageContainer.add(this.movesContainer);
 
@@ -1316,7 +1289,7 @@ export class SummaryUiHandler extends UiHandler {
   }
 
   getSelectedMove(): Move | null {
-    if (this.cursor !== Page.MOVES) {
+    if (this.cursor !== SummaryPage.MOVES) {
       return null;
     }
 

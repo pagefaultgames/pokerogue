@@ -1,11 +1,10 @@
 import { allAbilities, allMoves, allSpecies } from "#data/data-lists";
 import { UiMode } from "#enums/ui-mode";
-import type { PlayerPokemon } from "#field/pokemon";
-import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { FilterTextRow } from "#ui/filter-text";
 import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
-import type { ModalConfig } from "#ui/modal-ui-handler";
+import type { PokedexScanUiHandlerParams } from "#ui/ui-handler-params";
+import type { ModalConfig, OptionSelectItem } from "#ui/ui-types";
 import i18next from "i18next";
 
 export class PokedexScanUiHandler extends FormModalUiHandler {
@@ -94,8 +93,8 @@ export class PokedexScanUiHandler extends FormModalUiHandler {
   }
 
   // args[2] is an index of FilterTextRow
-  show(args: any[]): boolean {
-    this.row = args[2];
+  show(args: PokedexScanUiHandlerParams): boolean {
+    this.row = args.row;
     const ui = this.getUi();
     const hasTitle = !!this.getModalTitle();
     this.updateFields(this.getInputFieldConfigs(), hasTitle);
@@ -152,7 +151,7 @@ export class PokedexScanUiHandler extends FormModalUiHandler {
     });
 
     if (super.show(args)) {
-      const config = args[0] as ModalConfig;
+      const config = { buttonActions: args.buttonActions };
       const label = this.formLabels[0];
 
       const inputWidth = label.width < 420 ? 200 : 200 - (label.width - 420) / 5.75;
@@ -160,10 +159,10 @@ export class PokedexScanUiHandler extends FormModalUiHandler {
       // TODO: Figure out what the type of `this.inputContainers.list` is
       this.inputContainers[0].list[0]["width"] = inputWidth;
       // TODO: shouldn't this be `const playerPokemon: PlayerPokemon | undefined = args[1];` and `if (playerPokemon)`?
-      if (args[1] && typeof (args[1] as PlayerPokemon).getNameToRender === "function") {
-        this.inputs[0].text = (args[1] as PlayerPokemon).getNameToRender();
+      if (args.pokemon) {
+        this.inputs[0].text = args.pokemon.getNameToRender();
       } else {
-        this.inputs[0].text = args[1];
+        this.inputs[0].text = args.text ?? "";
       }
       this.submitAction = () => {
         if (ui.getMode() === UiMode.POKEDEX_SCAN) {

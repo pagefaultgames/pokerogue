@@ -9,10 +9,11 @@ import { getEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { OptionSelectSettings } from "#mystery-encounters/encounter-phase-utils";
 import type { MysteryEncounterOption } from "#mystery-encounters/mystery-encounter-option";
 import type { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
-import { PartyUiMode } from "#ui/party-ui-handler";
 import { addBBCodeTextObject, getBBCodeFrag } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
+import type { MysteryEncounterUiHandlerParams } from "#ui/ui-handler-params";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
+import { PartyUiMode } from "#ui/ui-types";
 import { fixedInt } from "#utils/common";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
@@ -91,10 +92,10 @@ export class MysteryEncounterUiHandler extends UiHandler {
     this.dexProgressContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, 24, 28), Phaser.Geom.Rectangle.Contains);
   }
 
-  override show(args: any[]): boolean {
+  override show(args: MysteryEncounterUiHandlerParams): boolean {
     super.show(args);
 
-    this.overrideSettings = (args[0] as OptionSelectSettings) ?? {};
+    this.overrideSettings = args.settings ?? {};
     const showDescriptionContainer =
       this.overrideSettings?.hideDescription == null ? true : !this.overrideSettings.hideDescription;
     const slideInDescription =
@@ -140,12 +141,16 @@ export class MysteryEncounterUiHandler extends UiHandler {
             ...this.overrideSettings,
             slideInDescription: false,
           };
-          globalScene.ui.setMode(UiMode.PARTY, PartyUiMode.CHECK, -1, () => {
-            globalScene.ui.setMode(UiMode.MYSTERY_ENCOUNTER, overrideSettings);
-            setTimeout(() => {
-              this.setCursor(this.viewPartyIndex);
-              this.unblockInput();
-            }, 300);
+          globalScene.ui.setMode(UiMode.PARTY, {
+            partyUiMode: PartyUiMode.CHECK,
+            fieldIndex: -1,
+            selectCallback: () => {
+              globalScene.ui.setMode(UiMode.MYSTERY_ENCOUNTER, { settings: overrideSettings });
+              setTimeout(() => {
+                this.setCursor(this.viewPartyIndex);
+                this.unblockInput();
+              }, 300);
+            },
           });
         } else if (
           this.blockInput

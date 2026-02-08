@@ -9,8 +9,9 @@ import { GameData } from "#system/game-data";
 import type { AdminUiHandlerService, AdminUiHandlerServiceMode, SearchAccountResponse } from "#types/api";
 import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
-import type { ModalConfig } from "#ui/modal-ui-handler";
 import { getTextColor } from "#ui/text";
+import type { AdminUiHandlerParams } from "#ui/ui-handler-params";
+import type { ModalConfig } from "#ui/ui-types";
 import { toTitleCase } from "#utils/strings";
 
 export class AdminUiHandler extends FormModalUiHandler {
@@ -98,17 +99,17 @@ export class AdminUiHandler extends FormModalUiHandler {
     return false;
   }
 
-  show(args: any[]): boolean {
-    this.config = args[0] as ModalConfig; // config
-    this.adminMode = args[1] as AdminMode; // admin mode
-    this.adminResult = args[2] ?? {
+  show(args: AdminUiHandlerParams): boolean {
+    this.config = { buttonActions: args.buttonActions }; // config
+    this.adminMode = args.adminMode; // admin mode
+    this.adminResult = args.adminResult ?? {
       username: "",
       discordId: "",
       googleId: "",
       lastLoggedIn: "",
       registered: "",
     }; // admin result, if any
-    const isMessageError = args[3]; // is the message shown a success or error
+    const isMessageError = !!args.isMessageError; // is the message shown a success or error
 
     const fields = this.getInputFieldConfigs();
     const hasTitle = !!this.getModalTitle();
@@ -173,13 +174,13 @@ export class AdminUiHandler extends FormModalUiHandler {
   }
 
   showMessage(message: string, adminResult: SearchAccountResponse, isError: boolean) {
-    globalScene.ui.setMode(
-      UiMode.ADMIN,
-      Object.assign(this.config, { errorMessage: message?.trim() }),
-      this.adminMode,
+    globalScene.ui.setMode(UiMode.ADMIN, {
+      buttonActions: this.config.buttonActions,
+      errorMessage: message?.trim(),
+      adminMode: this.adminMode,
       adminResult,
-      isError,
-    );
+      isMessageError: isError,
+    });
     if (isError) {
       globalScene.ui.playError();
     } else {
@@ -379,45 +380,44 @@ export class AdminUiHandler extends FormModalUiHandler {
 
   private updateAdminPanelInfo(adminSearchResult: SearchAccountResponse, mode?: AdminMode) {
     mode = mode ?? AdminMode.ADMIN;
-    globalScene.ui.setMode(
-      UiMode.ADMIN,
-      {
-        buttonActions: [
-          // we double revert here and below to go back 2 layers of menus
-          () => {
-            globalScene.ui.revertMode();
-            globalScene.ui.revertMode();
-          },
-          () => {
-            globalScene.ui.revertMode();
-            globalScene.ui.revertMode();
-          },
-          () => {
-            if (this.tempGameData == null) {
-              globalScene.ui.playError();
-              return;
-            }
-            this.hide();
-            globalScene.ui.setOverlayMode(
-              UiMode.GAME_STATS,
-              adminSearchResult.username,
-              this.tempGameData,
-              this.unhide.bind(this),
-            );
-          },
-          () => {
-            if (this.tempGameData == null) {
-              globalScene.ui.playError();
-              return;
-            }
-            this.hide();
-            globalScene.ui.setOverlayMode(UiMode.POKEDEX, this.tempGameData, this.unhide.bind(this));
-          },
-        ],
-      },
-      mode,
-      adminSearchResult,
-    );
+    globalScene.ui.setMode(UiMode.ADMIN, {
+      buttonActions: [
+        // we double revert here and below to go back 2 layers of menus
+        () => {
+          globalScene.ui.revertMode();
+          globalScene.ui.revertMode();
+        },
+        () => {
+          globalScene.ui.revertMode();
+          globalScene.ui.revertMode();
+        },
+        () => {
+          if (this.tempGameData == null) {
+            globalScene.ui.playError();
+            return;
+          }
+          this.hide();
+          globalScene.ui.setOverlayMode(UiMode.GAME_STATS, {
+            username: adminSearchResult.username,
+            data: this.tempGameData,
+            callback: this.unhide.bind(this),
+          });
+        },
+        () => {
+          if (this.tempGameData == null) {
+            globalScene.ui.playError();
+            return;
+          }
+          this.hide();
+          globalScene.ui.setOverlayMode(UiMode.POKEDEX, {
+            gameData: this.tempGameData,
+            exitCallback: this.unhide.bind(this),
+          });
+        },
+      ],
+      adminMode: mode,
+      adminResult: adminSearchResult,
+    });
   }
 
   clear(): void {

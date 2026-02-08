@@ -4,11 +4,9 @@ import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
+import type { ModalUiHandlerParams } from "#ui/ui-handler-params";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
-
-export interface ModalConfig {
-  buttonActions: ((...args: any[]) => any)[];
-}
+import type { ModalConfig } from "#ui/ui-types";
 
 export abstract class ModalUiHandler extends UiHandler {
   protected modalContainer: Phaser.GameObjects.Container;
@@ -96,57 +94,53 @@ export abstract class ModalUiHandler extends UiHandler {
     this.modalContainer.add(buttonContainer);
   }
 
-  show(args: any[]): boolean {
-    if (args.length > 0 && "buttonActions" in args[0]) {
-      super.show(args);
-      if (args[0].hasOwnProperty("fadeOut") && typeof args[0].fadeOut === "function") {
-        const [marginTop, marginRight, marginBottom, marginLeft] = this.getMargin();
+  show(args: ModalUiHandlerParams): boolean {
+    super.show(args);
+    if (args.fadeOut) {
+      const [marginTop, marginRight, marginBottom, marginLeft] = this.getMargin();
 
-        const overlay = globalScene.add.rectangle(
-          (this.getWidth() + marginLeft + marginRight) / 2,
-          (this.getHeight() + marginTop + marginBottom) / 2,
-          globalScene.scaledCanvas.width,
-          globalScene.scaledCanvas.height,
-          0,
-        );
-        overlay.setOrigin(0.5, 0.5);
-        overlay.setName("rect-ui-overlay-modal");
-        overlay.setAlpha(0);
+      const overlay = globalScene.add.rectangle(
+        (this.getWidth() + marginLeft + marginRight) / 2,
+        (this.getHeight() + marginTop + marginBottom) / 2,
+        globalScene.scaledCanvas.width,
+        globalScene.scaledCanvas.height,
+        0,
+      );
+      overlay.setOrigin(0.5, 0.5);
+      overlay.setName("rect-ui-overlay-modal");
+      overlay.setAlpha(0);
 
-        this.modalContainer.add(overlay);
-        this.modalContainer.moveTo(overlay, 0);
+      this.modalContainer.add(overlay);
+      this.modalContainer.moveTo(overlay, 0);
 
-        globalScene.tweens.add({
-          targets: overlay,
-          alpha: 1,
-          duration: 250,
-          ease: "Sine.easeOut",
-          onComplete: args[0].fadeOut,
-        });
-      }
-
-      const config = args[0] as ModalConfig;
-
-      this.updateContainer(config);
-
-      this.modalContainer.setVisible(true);
-
-      this.getUi().moveTo(this.modalContainer, this.getUi().length - 1);
-
-      for (let a = 0; a < this.buttonBgs.length; a++) {
-        if (a < this.buttonBgs.length) {
-          this.buttonBgs[a].on("pointerdown", _ => {
-            if (globalScene.tweens.getTweensOf(this.modalContainer).length === 0) {
-              config.buttonActions[a]();
-            }
-          });
-        }
-      }
-
-      return true;
+      globalScene.tweens.add({
+        targets: overlay,
+        alpha: 1,
+        duration: 250,
+        ease: "Sine.easeOut",
+        onComplete: args.fadeOut,
+      });
     }
 
-    return false;
+    const config = { buttonActions: args.buttonActions };
+
+    this.updateContainer(config);
+
+    this.modalContainer.setVisible(true);
+
+    this.getUi().moveTo(this.modalContainer, this.getUi().length - 1);
+
+    for (let a = 0; a < this.buttonBgs.length; a++) {
+      if (a < this.buttonBgs.length) {
+        this.buttonBgs[a].on("pointerdown", _ => {
+          if (globalScene.tweens.getTweensOf(this.modalContainer).length === 0) {
+            config.buttonActions[a]();
+          }
+        });
+      }
+    }
+
+    return true;
   }
 
   updateContainer(config?: ModalConfig): void {

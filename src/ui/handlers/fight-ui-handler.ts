@@ -15,6 +15,7 @@ import type { CommandPhase } from "#phases/command-phase";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { addTextObject, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
+import type { FightUiHandlerParams } from "#ui/ui-handler-params";
 import { fixedInt, getLocalizedSpriteKey, padInt } from "#utils/common";
 import i18next from "i18next";
 
@@ -120,11 +121,11 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
     globalScene.addInfoToggle(this.moveInfoOverlay, this);
   }
 
-  override show(args: [number?, Command?]): boolean {
+  override show(args: FightUiHandlerParams): boolean {
     super.show(args);
 
-    this.fieldIndex = args[0] ?? 0;
-    this.fromCommand = args[1] ?? Command.FIGHT;
+    this.fieldIndex = args.fieldIndex ?? 0;
+    this.fromCommand = args.command ?? Command.FIGHT;
 
     const messageHandler = this.getUi().getMessageHandler();
     messageHandler.bg.setVisible(false);
@@ -170,7 +171,7 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
         // Cannot back out of fight menu if skipToFightInput is enabled
         const { battleType, mysteryEncounter } = globalScene.currentBattle;
         if (battleType !== BattleType.MYSTERY_ENCOUNTER || !mysteryEncounter?.skipToFightInput) {
-          ui.setMode(UiMode.COMMAND, this.fieldIndex);
+          ui.setMode(UiMode.COMMAND, { fieldIndex: this.fieldIndex });
           success = true;
         }
         break;

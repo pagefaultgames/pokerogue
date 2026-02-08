@@ -155,7 +155,7 @@ export class CommandPhase extends FieldPhase {
     }
     const moveIndex = playerPokemon.getMoveset().findIndex(m => m.moveId === queuedMove.move);
     if (!isVirtual(queuedMove.useMode) && moveIndex === -1) {
-      globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
+      globalScene.ui.setMode(UiMode.COMMAND, { fieldIndex: this.fieldIndex });
     } else {
       this.handleCommand(Command.FIGHT, moveIndex, queuedMove.useMode, queuedMove);
     }
@@ -194,9 +194,9 @@ export class CommandPhase extends FieldPhase {
       && globalScene.currentBattle.mysteryEncounter?.skipToFightInput
     ) {
       globalScene.ui.clearText();
-      globalScene.ui.setMode(UiMode.FIGHT, this.fieldIndex);
+      globalScene.ui.setMode(UiMode.FIGHT, { fieldIndex: this.fieldIndex });
     } else {
-      globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
+      globalScene.ui.setMode(UiMode.COMMAND, { fieldIndex: this.fieldIndex });
     }
   }
 
@@ -212,7 +212,7 @@ export class CommandPhase extends FieldPhase {
       null,
       () => {
         ui.clearText();
-        ui.setMode(UiMode.FIGHT, this.fieldIndex);
+        ui.setMode(UiMode.FIGHT, { fieldIndex: this.fieldIndex });
       },
       null,
       true,
@@ -325,7 +325,7 @@ export class CommandPhase extends FieldPhase {
    * @param key - The i18next key for the text to show
    */
   private queueShowText(key: string): void {
-    globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
+    globalScene.ui.setMode(UiMode.COMMAND, { fieldIndex: this.fieldIndex });
     globalScene.ui.setMode(UiMode.MESSAGE);
 
     globalScene.ui.showText(
@@ -333,7 +333,7 @@ export class CommandPhase extends FieldPhase {
       null,
       () => {
         globalScene.ui.showText("", 0);
-        globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
+        globalScene.ui.setMode(UiMode.COMMAND, { fieldIndex: this.fieldIndex });
       },
       null,
       true,
@@ -485,7 +485,7 @@ export class CommandPhase extends FieldPhase {
             () => {
               globalScene.ui.showText("", 0);
               if (isSwitch) {
-                globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
+                globalScene.ui.setMode(UiMode.COMMAND, { fieldIndex: this.fieldIndex });
               }
             },
             null,
@@ -498,7 +498,7 @@ export class CommandPhase extends FieldPhase {
       const fairyLockTag = globalScene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.PLAYER);
 
       if (!isSwitch) {
-        globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
+        globalScene.ui.setMode(UiMode.COMMAND, { fieldIndex: this.fieldIndex });
         globalScene.ui.setMode(UiMode.MESSAGE);
       }
       if (trapTag) {
@@ -590,7 +590,7 @@ export class CommandPhase extends FieldPhase {
       () => {
         globalScene.ui.showText("", 0);
         if (!isSwitch) {
-          globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
+          globalScene.ui.setMode(UiMode.COMMAND, { fieldIndex: this.fieldIndex });
         }
       },
       null,

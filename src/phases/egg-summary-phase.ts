@@ -23,9 +23,11 @@ export class EggSummaryPhase extends Phase {
     // updates next pokemon once the current update has been completed
     const updateNextPokemon = (i: number) => {
       if (i >= this.eggHatchData.length) {
-        globalScene.ui.setModeForceTransition(UiMode.EGG_HATCH_SUMMARY, this.eggHatchData).then(() => {
-          globalScene.fadeOutBgm(undefined, false);
-        });
+        globalScene.ui
+          .setModeForceTransition(UiMode.EGG_HATCH_SUMMARY, { eggHatchData: this.eggHatchData })
+          .then(() => {
+            globalScene.fadeOutBgm(undefined, false);
+          });
       } else {
         this.eggHatchData[i].setDex();
         this.eggHatchData[i].updatePokemon().then(() => {

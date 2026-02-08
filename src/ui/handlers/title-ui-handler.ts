@@ -13,6 +13,7 @@ import { version } from "#package.json";
 import { TimedEventDisplay } from "#ui/event-display";
 import { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
 import { addTextObject } from "#ui/text";
+import type { OptionSelectUiHandlerParams } from "#ui/ui-handler-params";
 import { fixedInt, randInt, randItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
@@ -161,7 +162,7 @@ export class TitleUiHandler extends OptionSelectUiHandler {
     }
   }
 
-  show(args: any[]): boolean {
+  show(args: OptionSelectUiHandlerParams): boolean {
     const ret = super.show(args);
 
     if (!ret) {

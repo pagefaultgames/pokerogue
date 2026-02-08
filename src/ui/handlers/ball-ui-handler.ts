@@ -61,7 +61,7 @@ export class BallUiHandler extends UiHandler {
     this.setCursor(0);
   }
 
-  show(args: any[]): boolean {
+  show(args: any): boolean {
     super.show(args);
 
     this.updateCounts();
@@ -84,7 +84,7 @@ export class BallUiHandler extends UiHandler {
       if (button === Button.ACTION && this.cursor < pokeballTypeCount) {
         if (globalScene.pokeballCounts[this.cursor]) {
           if (commandPhase.handleCommand(Command.BALL, this.cursor)) {
-            globalScene.ui.setMode(UiMode.COMMAND, commandPhase.getFieldIndex());
+            globalScene.ui.setMode(UiMode.COMMAND, { fieldIndex: commandPhase.getFieldIndex() });
             globalScene.ui.setMode(UiMode.MESSAGE);
             success = true;
           }
@@ -92,7 +92,7 @@ export class BallUiHandler extends UiHandler {
           ui.playError();
         }
       } else {
-        ui.setMode(UiMode.COMMAND, commandPhase.getFieldIndex());
+        ui.setMode(UiMode.COMMAND, { fieldIndex: commandPhase.getFieldIndex() });
         success = true;
       }
     } else {

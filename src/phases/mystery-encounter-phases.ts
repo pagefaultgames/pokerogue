@@ -63,7 +63,7 @@ export class MysteryEncounterPhase extends Phase {
     }
 
     // Initiates encounter dialogue window and option select
-    globalScene.ui.setMode(UiMode.MYSTERY_ENCOUNTER, this.optionSelectSettings);
+    globalScene.ui.setMode(UiMode.MYSTERY_ENCOUNTER, { settings: this.optionSelectSettings });
   }
 
   /**

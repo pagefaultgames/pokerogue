@@ -39,7 +39,7 @@ describe("Challenges - Limited Support", () => {
     await game.phaseInterceptor.to("SelectModifierPhase");
 
     expect(game.scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
-    const modifierSelectHandler = game.scene.ui.handlers.find(
+    const modifierSelectHandler = Object.values(game.scene.ui.handlers).find(
       h => h instanceof ModifierSelectUiHandler,
     ) as ModifierSelectUiHandler;
     expect(modifierSelectHandler.shopOptionsRows).toHaveLength(0);
@@ -80,7 +80,7 @@ describe("Challenges - Limited Support", () => {
     await game.phaseInterceptor.to("SelectModifierPhase");
 
     expect(game.scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
-    const modifierSelectHandler = game.scene.ui.handlers.find(
+    const modifierSelectHandler = Object.values(game.scene.ui.handlers).find(
       h => h instanceof ModifierSelectUiHandler,
     ) as ModifierSelectUiHandler;
     expect(modifierSelectHandler.shopOptionsRows).toHaveLength(0);

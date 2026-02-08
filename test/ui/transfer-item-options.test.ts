@@ -4,8 +4,9 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/test-utils/game-manager";
-import { type PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
+import type { PartyUiHandler } from "#ui/party-ui-handler";
 import type { RenameFormUiHandler } from "#ui/rename-form-ui-handler";
+import { PartyUiMode } from "#ui/ui-types";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -38,7 +39,7 @@ describe("UI - Transfer Item Options", () => {
     game.move.use(MoveId.DRAGON_CLAW);
 
     await game.phaseInterceptor.to("SelectModifierPhase");
-    await game.scene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.MODIFIER_TRANSFER);
+    await game.scene.ui.setModeWithoutClear(UiMode.PARTY, { partyUiMode: PartyUiMode.MODIFIER_TRANSFER });
   });
 
   it.todo("should open the summary screen while transfering an item", async () => {

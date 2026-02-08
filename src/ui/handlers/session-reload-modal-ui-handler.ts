@@ -1,8 +1,8 @@
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
-import type { ModalConfig } from "#ui/modal-ui-handler";
 import { ModalUiHandler } from "#ui/modal-ui-handler";
 import { addTextObject } from "#ui/text";
+import type { ModalUiHandlerParams } from "#ui/ui-handler-params";
 
 export class SessionReloadModalUiHandler extends ModalUiHandler {
   constructor(mode: UiMode | null = null) {
@@ -44,11 +44,9 @@ export class SessionReloadModalUiHandler extends ModalUiHandler {
     this.modalContainer.add(label);
   }
 
-  show(_args: any[]): boolean {
-    const config: ModalConfig = {
+  show(_args: ModalUiHandlerParams): boolean {
+    return super.show({
       buttonActions: [],
-    };
-
-    return super.show([config]);
+    });
   }
 }

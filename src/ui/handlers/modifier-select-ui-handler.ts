@@ -15,6 +15,7 @@ import type { ModifierSelectCallback } from "#phases/select-modifier-phase";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { addTextObject, getModifierTierTextTint, getTextColor, getTextStyleOptions } from "#ui/text";
+import type { ModifierSelectUiHandlerParams } from "#ui/ui-handler-params";
 import { formatMoney, NumberHolder } from "#utils/common";
 import i18next from "i18next";
 import Phaser from "phaser";
@@ -158,19 +159,19 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     globalScene.addInfoToggle(this.moveInfoOverlay);
   }
 
-  show(args: any[]): boolean {
+  show(args: ModifierSelectUiHandlerParams): boolean {
     globalScene.disableMenu = false;
 
     if (this.active) {
-      if (args.length >= 3) {
+      if (args.onActionInput) {
         this.awaitingActionInput = true;
-        this.onActionInput = args[2];
+        this.onActionInput = args.onActionInput;
       }
       this.moveInfoOverlay.active = this.moveInfoOverlayActive;
       return false;
     }
 
-    if (args.length !== 4 || !Array.isArray(args[1]) || !(args[2] instanceof Function)) {
+    if (args.rerollCost == null || args.onActionInput == null) {
       return false;
     }
 
@@ -178,7 +179,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     this.getUi().clearText();
 
-    this.player = args[0];
+    this.player = !!args.player;
 
     const partyHasHeldItem =
       this.player
@@ -202,11 +203,11 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     this.rerollButtonContainer.setPositionRelative(this.lockRarityButtonContainer, 0, canLockRarities ? -12 : 0);
 
-    this.rerollCost = args[3] as number;
+    this.rerollCost = args.rerollCost;
 
     this.updateRerollCostText();
 
-    const typeOptions = args[1] as ModifierTypeOption[];
+    const typeOptions = args.typeOptions ?? [];
     const hasShop = globalScene.gameMode.getShopStatus();
     const baseShopCost = new NumberHolder(globalScene.getWaveMoneyAmount(1));
     globalScene.applyModifier(HealShopCostModifier, true, baseShopCost);

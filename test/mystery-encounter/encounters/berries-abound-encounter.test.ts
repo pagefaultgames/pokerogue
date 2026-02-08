@@ -144,7 +144,7 @@ describe("Berries Abound - Mystery Encounter", () => {
       await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
+      const modifierSelectHandler = Object.values(scene.ui.handlers).find(
         h => h instanceof ModifierSelectUiHandler,
       ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(5);
@@ -227,7 +227,7 @@ describe("Berries Abound - Mystery Encounter", () => {
       await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
+      const modifierSelectHandler = Object.values(scene.ui.handlers).find(
         h => h instanceof ModifierSelectUiHandler,
       ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(5);

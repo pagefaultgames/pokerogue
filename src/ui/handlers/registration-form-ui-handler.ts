@@ -4,8 +4,8 @@ import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { LoginPhase } from "#phases/login-phase";
 import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
-import type { ModalConfig } from "#ui/modal-ui-handler";
 import { addTextObject } from "#ui/text";
+import type { FormModalUiHandlerParams } from "#ui/ui-handler-params";
 import { fixedInt } from "#utils/common";
 import i18next from "i18next";
 import { LoginRegisterInfoContainerUiHandler } from "./login-register-info-container-ui-handler";
@@ -73,7 +73,7 @@ export class RegistrationFormUiHandler extends LoginRegisterInfoContainerUiHandl
     this.modalContainer.add(label);
   }
 
-  public override show(args: [ModalConfig, ...any[]]): boolean {
+  public override show(args: FormModalUiHandlerParams): boolean {
     if (!super.show(args)) {
       return false;
     }

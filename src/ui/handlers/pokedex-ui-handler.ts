@@ -34,7 +34,6 @@ import type { GameData } from "#system/game-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
 import type { DexAttrProps, StarterAttributes } from "#types/save-data";
-import type { OptionSelectConfig } from "#ui/abstract-option-select-ui-handler";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
 import { FilterBar } from "#ui/filter-bar";
 import { FilterText, FilterTextRow } from "#ui/filter-text";
@@ -43,7 +42,9 @@ import { PokedexMonContainer } from "#ui/pokedex-mon-container";
 import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-helper";
 import { ScrollBar } from "#ui/scroll-bar";
 import { addTextObject, getTextColor } from "#ui/text";
+import type { PokedexUiHandlerParams } from "#ui/ui-handler-params";
 import { addWindow } from "#ui/ui-theme";
+import type { OptionSelectConfig } from "#ui/ui-types";
 import { BooleanHolder, fixedInt, getLocalizedSpriteKey, padInt, randIntRange, rgbHexToRgba } from "#utils/common";
 import type { StarterPreferences } from "#utils/data";
 import { loadStarterPreferences } from "#utils/data";
@@ -638,7 +639,7 @@ export class PokedexUiHandler extends MessageUiHandler {
     this.starterSelectContainer.bringToTop(this.pokemonFormText);
   }
 
-  show(args: any[]): boolean {
+  show(args: PokedexUiHandlerParams): boolean {
     if (!this.starterPreferences) {
       this.starterPreferences = loadStarterPreferences();
     }
@@ -646,11 +647,12 @@ export class PokedexUiHandler extends MessageUiHandler {
     this.pokerusSpecies = getPokerusStarters();
 
     // When calling with "refresh", we do not reset the cursor and filters
-    if (args.length > 0) {
-      if (args[0] === "refresh") {
-        return false;
-      }
-      [this.gameData, this.exitCallback] = args;
+    if (args.refresh) {
+      return false;
+    }
+    if (args.gameData) {
+      this.gameData = args.gameData;
+      this.exitCallback = args.exitCallback;
       this.blockOpenPage = true;
     } else {
       this.gameData = globalScene.gameData;
@@ -1176,7 +1178,11 @@ export class PokedexUiHandler extends MessageUiHandler {
           success = false;
           error = true;
         } else {
-          ui.setOverlayMode(UiMode.POKEDEX_PAGE, this.lastSpecies, { form: formIndex }, this.filteredIndices);
+          ui.setOverlayMode(UiMode.POKEDEX_PAGE, {
+            species: this.lastSpecies,
+            savedStarterAttributes: { form: formIndex },
+            filteredIndices: this.filteredIndices,
+          });
           success = true;
         }
       } else {
@@ -1229,7 +1235,7 @@ export class PokedexUiHandler extends MessageUiHandler {
         success = false;
         error = true;
       } else {
-        ui.setOverlayMode(UiMode.POKEDEX_PAGE, this.lastSpecies, null, this.filteredIndices);
+        ui.setOverlayMode(UiMode.POKEDEX_PAGE, { species: this.lastSpecies, filteredIndices: this.filteredIndices });
         success = true;
       }
     } else {
@@ -2343,24 +2349,21 @@ export class PokedexUiHandler extends MessageUiHandler {
     const ui = this.getUi();
 
     const cancel = () => {
-      ui.setMode(UiMode.POKEDEX, "refresh");
+      ui.setMode(UiMode.POKEDEX, { refresh: true });
       this.clearText();
       this.blockInput = false;
     };
     ui.showText(i18next.t("pokedexUiHandler:confirmExit"), null, () => {
-      ui.setModeWithoutClear(
-        UiMode.CONFIRM,
-        () => {
-          ui.setMode(UiMode.POKEDEX, "refresh");
+      ui.setModeWithoutClear(UiMode.CONFIRM, {
+        onYes: () => {
+          ui.setMode(UiMode.POKEDEX, { refresh: true });
           this.clearText();
           this.clear();
           ui.revertMode();
         },
-        cancel,
-        null,
-        null,
-        19,
-      );
+        onNo: cancel,
+        yOffset: 19,
+      });
     });
 
     return true;

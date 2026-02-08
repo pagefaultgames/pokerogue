@@ -19,7 +19,7 @@ export abstract class UiHandler {
 
   abstract setup(): void;
 
-  show(_args: any[]): boolean {
+  show(_args: any): boolean {
     this.active = true;
 
     return true;

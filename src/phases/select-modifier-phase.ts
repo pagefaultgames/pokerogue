@@ -26,7 +26,8 @@ import {
 import { BattlePhase } from "#phases/battle-phase";
 import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { SHOP_OPTIONS_ROW_LIMIT } from "#ui/modifier-select-ui-handler";
-import { PartyOption, PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
+import { PartyUiHandler } from "#ui/party-ui-handler";
+import { PartyOption, PartyUiMode } from "#ui/ui-types";
 import { NumberHolder } from "#utils/common";
 import i18next from "i18next";
 
@@ -79,15 +80,14 @@ export class SelectModifierPhase extends BattlePhase {
     const modifierSelectCallback = (rowCursor: number, cursor: number) => {
       if (rowCursor < 0 || cursor < 0) {
         globalScene.ui.showText(i18next.t("battle:skipItemQuestion"), null, () => {
-          globalScene.ui.setOverlayMode(
-            UiMode.CONFIRM,
-            () => {
+          globalScene.ui.setOverlayMode(UiMode.CONFIRM, {
+            onYes: () => {
               globalScene.ui.revertMode();
               globalScene.ui.setMode(UiMode.MESSAGE);
               super.end();
             },
-            () => this.resetModifierSelect(modifierSelectCallback),
-          );
+            onNo: () => this.resetModifierSelect(modifierSelectCallback),
+          });
         });
         return false;
       }
@@ -102,8 +102,12 @@ export class SelectModifierPhase extends BattlePhase {
               return this.openModifierTransferScreen(modifierSelectCallback);
             // Check the party, pass a callback to restore the modifier select screen.
             case 2:
-              globalScene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.CHECK, -1, () => {
-                this.resetModifierSelect(modifierSelectCallback);
+              globalScene.ui.setModeWithoutClear(UiMode.PARTY, {
+                partyUiMode: PartyUiMode.CHECK,
+                fieldIndex: -1,
+                selectCallback: () => {
+                  this.resetModifierSelect(modifierSelectCallback);
+                },
               });
               return true;
             case 3:
@@ -209,11 +213,10 @@ export class SelectModifierPhase extends BattlePhase {
   // Transfer modifiers among party pokemon
   private openModifierTransferScreen(modifierSelectCallback: ModifierSelectCallback) {
     const party = globalScene.getPlayerParty();
-    globalScene.ui.setModeWithoutClear(
-      UiMode.PARTY,
-      PartyUiMode.MODIFIER_TRANSFER,
-      -1,
-      (fromSlotIndex: number, itemIndex: number, itemQuantity: number, toSlotIndex: number) => {
+    globalScene.ui.setModeWithoutClear(UiMode.PARTY, {
+      partyUiMode: PartyUiMode.MODIFIER_TRANSFER,
+      fieldIndex: -1,
+      itemSelectCallback: (fromSlotIndex: number, itemIndex: number, itemQuantity?: number, toSlotIndex?: number) => {
         if (
           toSlotIndex !== undefined
           && fromSlotIndex < 6
@@ -238,8 +241,8 @@ export class SelectModifierPhase extends BattlePhase {
           this.resetModifierSelect(modifierSelectCallback);
         }
       },
-      PartyUiHandler.FilterItemMaxStacks,
-    );
+      itemSelectFilter: PartyUiHandler.FilterItemMaxStacks,
+    });
     return true;
   }
 
@@ -300,18 +303,17 @@ export class SelectModifierPhase extends BattlePhase {
     modifierSelectCallback: ModifierSelectCallback,
   ): void {
     const party = globalScene.getPlayerParty();
-    globalScene.ui.setModeWithoutClear(
-      UiMode.PARTY,
-      PartyUiMode.SPLICE,
-      -1,
-      (fromSlotIndex: number, spliceSlotIndex: number) => {
+    globalScene.ui.setModeWithoutClear(UiMode.PARTY, {
+      partyUiMode: PartyUiMode.SPLICE,
+      fieldIndex: -1,
+      selectCallback: (fromSlotIndex: number, spliceSlotIndex: number) => {
         if (
           spliceSlotIndex !== undefined
           && fromSlotIndex < 6
           && spliceSlotIndex < 6
           && fromSlotIndex !== spliceSlotIndex
         ) {
-          globalScene.ui.setMode(UiMode.MODIFIER_SELECT, this.isPlayer()).then(() => {
+          globalScene.ui.setMode(UiMode.MODIFIER_SELECT, { player: this.isPlayer() }).then(() => {
             const modifier = modifierType.newModifier(party[fromSlotIndex], party[spliceSlotIndex])!; //TODO: is the bang correct?
             this.applyModifier(modifier, cost, true);
           });
@@ -319,8 +321,8 @@ export class SelectModifierPhase extends BattlePhase {
           this.resetModifierSelect(modifierSelectCallback);
         }
       },
-      modifierType.selectFilter,
-    );
+      selectFilter: modifierType.selectFilter,
+    });
   }
 
   // Opens the party menu to apply one of various modifiers
@@ -344,13 +346,12 @@ export class SelectModifierPhase extends BattlePhase {
           ? PartyUiMode.REMEMBER_MOVE_MODIFIER
           : PartyUiMode.MODIFIER;
     const tmMoveId = isTmModifier ? (modifierType as TmModifierType).moveId : undefined;
-    globalScene.ui.setModeWithoutClear(
-      UiMode.PARTY,
+    globalScene.ui.setModeWithoutClear(UiMode.PARTY, {
       partyUiMode,
-      -1,
-      (slotIndex: number, option: PartyOption) => {
+      fieldIndex: -1,
+      itemSelectCallback: (slotIndex: number, option: PartyOption) => {
         if (slotIndex < 6) {
-          globalScene.ui.setMode(UiMode.MODIFIER_SELECT, this.isPlayer()).then(() => {
+          globalScene.ui.setMode(UiMode.MODIFIER_SELECT, { player: this.isPlayer() }).then(() => {
             const modifier = isMoveModifier
               ? modifierType.newModifier(party[slotIndex], option - PartyOption.MOVE_1)
               : isRememberMoveModifier
@@ -362,13 +363,14 @@ export class SelectModifierPhase extends BattlePhase {
           this.resetModifierSelect(modifierSelectCallback);
         }
       },
-      pokemonModifierType.selectFilter,
-      modifierType instanceof PokemonMoveModifierType
-        ? (modifierType as PokemonMoveModifierType).moveSelectFilter
-        : undefined,
+      itemSelectFilter: pokemonModifierType.selectFilter,
+      moveSelectFilter:
+        modifierType instanceof PokemonMoveModifierType
+          ? (modifierType as PokemonMoveModifierType).moveSelectFilter
+          : undefined,
       tmMoveId,
-      isPpRestoreModifier,
-    );
+      showMovePp: isPpRestoreModifier,
+    });
   }
 
   // Function that determines how many reward slots are available
@@ -397,13 +399,12 @@ export class SelectModifierPhase extends BattlePhase {
   // Function that resets the reward selection screen,
   // e.g. after pressing cancel in the party ui or while learning a move
   private resetModifierSelect(modifierSelectCallback: ModifierSelectCallback) {
-    globalScene.ui.setMode(
-      UiMode.MODIFIER_SELECT,
-      this.isPlayer(),
-      this.typeOptions,
-      modifierSelectCallback,
-      this.getRerollCost(globalScene.lockModifierTiers),
-    );
+    globalScene.ui.setMode(UiMode.MODIFIER_SELECT, {
+      player: this.isPlayer(),
+      typeOptions: this.typeOptions,
+      onActionInput: modifierSelectCallback,
+      rerollCost: this.getRerollCost(globalScene.lockModifierTiers),
+    });
   }
 
   updateSeed(): void {

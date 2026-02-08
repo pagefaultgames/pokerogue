@@ -293,7 +293,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
       await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
+      const modifierSelectHandler = Object.values(scene.ui.handlers).find(
         h => h instanceof ModifierSelectUiHandler,
       ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(1);
@@ -335,7 +335,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
       await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
+      const modifierSelectHandler = Object.values(scene.ui.handlers).find(
         h => h instanceof ModifierSelectUiHandler,
       ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(1);
@@ -352,7 +352,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
 async function skipBattleToNextBattle(game: GameManager, isFinalBattle = false) {
   game.scene.phaseManager.clearPhaseQueue();
   const commandUiHandler = game.scene.ui.handlers[UiMode.COMMAND];
-  commandUiHandler.clear();
+  commandUiHandler!.clear();
   game.scene.getEnemyParty().forEach(p => {
     p.hp = 0;
     p.status = new Status(StatusEffect.FAINT);

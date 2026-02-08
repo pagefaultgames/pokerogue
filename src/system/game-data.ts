@@ -1435,9 +1435,8 @@ export class GameData {
           }
 
           globalScene.ui.showText(i18next.t("menuUiHandler:confirmImport", { dataName }), null, () => {
-            globalScene.ui.setOverlayMode(
-              UiMode.CONFIRM,
-              () => {
+            globalScene.ui.setOverlayMode(UiMode.CONFIRM, {
+              onYes: () => {
                 localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
 
                 if (!bypassLogin && dataType < GameDataType.SETTINGS) {
@@ -1475,13 +1474,13 @@ export class GameData {
                   window.location.reload();
                 }
               },
-              () => {
+              onNo: () => {
                 globalScene.ui.revertMode();
                 globalScene.ui.showText("", 0);
               },
-              false,
-              -98,
-            );
+              switchCheck: false,
+              xOffset: -98,
+            });
           });
         };
       })((e.target as any).files[0]);

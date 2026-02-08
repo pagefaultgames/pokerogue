@@ -8,12 +8,12 @@ import { Button } from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
-import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import type { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { BgmBar } from "#ui/bgm-bar";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { addTextObject, getTextStyleOptions } from "#ui/text";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
+import type { OptionSelectConfig, OptionSelectItem } from "#ui/ui-types";
 import { fixedInt, sessionIdKey } from "#utils/common";
 import { getCookie } from "#utils/cookies";
 import { getEnumValues } from "#utils/enums";
@@ -346,8 +346,7 @@ export class MenuUiHandler extends MessageUiHandler {
         handler: () => {
           ui.playSelect();
           const prefilledText = "";
-          const buttonAction: any = {};
-          buttonAction["buttonActions"] = [
+          const buttonActions = [
             (sanitizedName: string) => {
               ui.revertMode();
               ui.playSelect();
@@ -388,7 +387,7 @@ export class MenuUiHandler extends MessageUiHandler {
               ui.revertMode();
             },
           ];
-          ui.setMode(UiMode.TEST_DIALOGUE, buttonAction, prefilledText);
+          ui.setMode(UiMode.TEST_DIALOGUE, { buttonActions, text: prefilledText });
           return true;
         },
         keepOpen: true,
@@ -466,23 +465,20 @@ export class MenuUiHandler extends MessageUiHandler {
                 label: getAdminModeName(mode as AdminMode),
                 handler: () => {
                   ui.playSelect();
-                  ui.setOverlayMode(
-                    UiMode.ADMIN,
-                    {
-                      buttonActions: [
-                        // we double revert here and below to go back 2 layers of menus
-                        () => {
-                          ui.revertMode();
-                          ui.revertMode();
-                        },
-                        () => {
-                          ui.revertMode();
-                          ui.revertMode();
-                        },
-                      ],
-                    },
-                    mode,
-                  ); // mode is our AdminMode enum
+                  ui.setOverlayMode(UiMode.ADMIN, {
+                    buttonActions: [
+                      // we double revert here and below to go back 2 layers of menus
+                      () => {
+                        ui.revertMode();
+                        ui.revertMode();
+                      },
+                      () => {
+                        ui.revertMode();
+                        ui.revertMode();
+                      },
+                    ],
+                    adminMode: mode,
+                  }); // mode is our AdminMode enum
                   return true;
                 },
               });
@@ -574,7 +570,7 @@ export class MenuUiHandler extends MessageUiHandler {
           success = true;
           break;
         case MenuOptions.STATS:
-          ui.setOverlayMode(UiMode.GAME_STATS);
+          ui.setOverlayMode(UiMode.GAME_STATS, {});
           success = true;
           break;
         case MenuOptions.EGG_LIST:
@@ -594,7 +590,7 @@ export class MenuUiHandler extends MessageUiHandler {
           break;
         case MenuOptions.POKEDEX:
           ui.revertMode();
-          ui.setOverlayMode(UiMode.POKEDEX);
+          ui.setOverlayMode(UiMode.POKEDEX, {});
           success = true;
           break;
         case MenuOptions.MANAGE_DATA:
@@ -675,16 +671,15 @@ export class MenuUiHandler extends MessageUiHandler {
                 this.showText("", 0);
                 return;
               }
-              ui.setOverlayMode(
-                UiMode.CONFIRM,
-                doSaveQuit,
-                () => {
+              ui.setOverlayMode(UiMode.CONFIRM, {
+                onYes: doSaveQuit,
+                onNo: () => {
                   ui.revertMode();
                   this.showText("", 0);
                 },
-                false,
-                -98,
-              );
+                switchCheck: false,
+                xOffset: -98,
+              });
             });
           } else {
             doSaveQuit();
@@ -708,16 +703,15 @@ export class MenuUiHandler extends MessageUiHandler {
                 this.showText("", 0);
                 return;
               }
-              ui.setOverlayMode(
-                UiMode.CONFIRM,
-                doLogout,
-                () => {
+              ui.setOverlayMode(UiMode.CONFIRM, {
+                onYes: doLogout,
+                onNo: () => {
                   ui.revertMode();
                   this.showText("", 0);
                 },
-                false,
-                -98,
-              );
+                switchCheck: false,
+                xOffset: -98,
+              });
             });
           } else {
             doLogout();

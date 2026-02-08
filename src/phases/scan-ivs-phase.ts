@@ -51,9 +51,8 @@ export class ScanIvsPhase extends PokemonPhase {
       }),
       null,
       () => {
-        globalScene.ui.setMode(
-          UiMode.CONFIRM,
-          () => {
+        globalScene.ui.setMode(UiMode.CONFIRM, {
+          onYes: () => {
             globalScene.ui.setMode(UiMode.MESSAGE);
             globalScene.ui.clearText();
             globalScene.ui
@@ -61,12 +60,12 @@ export class ScanIvsPhase extends PokemonPhase {
               .promptIvs(pokemon.id, pokemon.ivs)
               .then(() => this.end());
           },
-          () => {
+          onNo: () => {
             globalScene.ui.setMode(UiMode.MESSAGE);
             globalScene.ui.clearText();
             this.end();
           },
-        );
+        });
       },
     );
   }

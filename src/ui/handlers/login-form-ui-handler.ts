@@ -2,8 +2,9 @@ import { pokerogueApi } from "#api/pokerogue-api";
 import { globalScene } from "#app/global-scene";
 import { UiMode } from "#enums/ui-mode";
 import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
-import type { ModalConfig } from "#ui/modal-ui-handler";
 import { OAuthProvidersUiHandler } from "#ui/oauth-providers-ui-handler";
+import type { ModalUiHandlerParams } from "#ui/ui-handler-params";
+import type { ModalConfig } from "#ui/ui-types";
 import i18next from "i18next";
 
 const ERR_USERNAME: string = "invalid username";
@@ -66,7 +67,7 @@ export class LoginFormUiHandler extends OAuthProvidersUiHandler {
     return inputFieldConfigs;
   }
 
-  public override show(args: any[]): boolean {
+  public override show(args: ModalUiHandlerParams): boolean {
     if (!super.show(args)) {
       return false;
     }

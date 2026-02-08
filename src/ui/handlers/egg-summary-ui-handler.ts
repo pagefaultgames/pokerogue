@@ -9,6 +9,7 @@ import { PokemonHatchInfoContainer } from "#ui/pokemon-hatch-info-container";
 import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-helper";
 import { ScrollBar } from "#ui/scroll-bar";
 import { ScrollableGridHelper } from "#ui/scrollable-grid-helper";
+import type { EggSummaryUiHandlerParams } from "#ui/ui-handler-params";
 
 const iconContainerX = 112;
 const iconContainerY = 9;
@@ -138,32 +139,26 @@ export class EggSummaryUiHandler extends MessageUiHandler {
     this.iconAnimHandler.removeAll();
   }
 
-  /**
-   * @param args EggHatchData[][]
-   * args[0]: list of EggHatchData for each egg/pokemon hatched
-   */
-  show(args: EggHatchData[][]): boolean {
+  show(args: EggSummaryUiHandlerParams): boolean {
     super.show(args);
-    if (args.length > 0) {
-      // sort the egg hatch data by egg tier then by species number (then by order hatched)
-      this.eggHatchData = args[0].sort(function sortHatchData(a: EggHatchData, b: EggHatchData) {
-        const speciesA = a.pokemon.species;
-        const speciesB = b.pokemon.species;
-        if (getEggTierForSpecies(speciesA) < getEggTierForSpecies(speciesB)) {
-          return -1;
-        }
-        if (getEggTierForSpecies(speciesA) > getEggTierForSpecies(speciesB)) {
-          return 1;
-        }
-        if (speciesA.speciesId < speciesB.speciesId) {
-          return -1;
-        }
-        if (speciesA.speciesId > speciesB.speciesId) {
-          return 1;
-        }
-        return 0;
-      });
-    }
+    // sort the egg hatch data by egg tier then by species number (then by order hatched)
+    this.eggHatchData = args.eggHatchData.sort(function sortHatchData(a: EggHatchData, b: EggHatchData) {
+      const speciesA = a.pokemon.species;
+      const speciesB = b.pokemon.species;
+      if (getEggTierForSpecies(speciesA) < getEggTierForSpecies(speciesB)) {
+        return -1;
+      }
+      if (getEggTierForSpecies(speciesA) > getEggTierForSpecies(speciesB)) {
+        return 1;
+      }
+      if (speciesA.speciesId < speciesB.speciesId) {
+        return -1;
+      }
+      if (speciesA.speciesId > speciesB.speciesId) {
+        return 1;
+      }
+      return 0;
+    });
 
     this.getUi().bringToTop(this.summaryContainer);
     this.summaryContainer.setVisible(true);

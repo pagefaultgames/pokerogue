@@ -130,8 +130,7 @@ export class FilterText extends Phaser.GameObjects.Container {
   startSearch(index: number, ui: UI): void {
     ui.playSelect();
     const prefilledText = "";
-    const buttonAction: any = {};
-    buttonAction["buttonActions"] = [
+    const buttonActions = [
       (sanitizedName: string) => {
         ui.playSelect();
         const dialogueTestName = sanitizedName;
@@ -149,7 +148,7 @@ export class FilterText extends Phaser.GameObjects.Container {
         this.onChange;
       },
     ];
-    ui.setOverlayMode(UiMode.POKEDEX_SCAN, buttonAction, prefilledText, index);
+    ui.setOverlayMode(UiMode.POKEDEX_SCAN, { buttonActions, text: prefilledText, row: index });
   }
 
   setCursor(cursor: number): void {

@@ -9,6 +9,7 @@ import { UiTheme } from "#enums/ui-theme";
 import type { GameData } from "#system/game-data";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
+import type { GameStatsUiHandlerParams } from "#ui/ui-handler-params";
 import { addWindow } from "#ui/ui-theme";
 import { formatFancyLargeNumber, getPlayTimeString } from "#utils/common";
 import { toTitleCase } from "#utils/strings";
@@ -401,13 +402,13 @@ export class GameStatsUiHandler extends UiHandler {
     this.gameStatsContainer.setVisible(false);
   }
 
-  show([username, data, callback]: [] | [username: string, data: GameData, callback?: () => void]): boolean {
+  show(args: GameStatsUiHandlerParams): boolean {
     super.show([]);
 
-    if (username != null && data != null) {
-      this.gameData = data;
-      this.exitCallback = callback;
-      this.headerText.setText(username);
+    if (args.username != null && args.data != null) {
+      this.gameData = args.data;
+      this.exitCallback = args.callback;
+      this.headerText.setText(args.username);
     } else {
       this.gameData = globalScene.gameData;
       this.exitCallback = undefined;

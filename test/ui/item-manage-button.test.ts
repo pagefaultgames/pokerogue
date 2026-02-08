@@ -6,7 +6,8 @@ import { UiMode } from "#enums/ui-mode";
 import type { Pokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
 import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
-import { type PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
+import type { PartyUiHandler } from "#ui/party-ui-handler";
+import { PartyUiMode } from "#ui/ui-types";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 

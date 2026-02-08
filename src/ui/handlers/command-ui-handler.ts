@@ -7,11 +7,13 @@ import { PokemonType } from "#enums/pokemon-type";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { CommandPhase } from "#phases/command-phase";
-import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
+import type { CommandUiHandlerParams } from "#ui/ui-handler-params";
+import { PartyUiMode } from "#ui/ui-types";
 import { canTerastallize } from "#utils/pokemon-utils";
 import i18next from "i18next";
+import { PartyUiHandler } from "./party-ui-handler";
 
 export class CommandUiHandler extends UiHandler {
   private commandsContainer: Phaser.GameObjects.Container;
@@ -64,10 +66,10 @@ export class CommandUiHandler extends UiHandler {
     }
   }
 
-  show(args: any[]): boolean {
+  show(args: CommandUiHandlerParams): boolean {
     super.show(args);
 
-    this.fieldIndex = args.length > 0 ? (args[0] as number) : 0;
+    this.fieldIndex = args.fieldIndex ?? 0;
 
     this.commandsContainer.setVisible(true);
 
@@ -119,7 +121,9 @@ export class CommandUiHandler extends UiHandler {
         switch (cursor) {
           // Fight
           case Command.FIGHT:
-            ui.setMode(UiMode.FIGHT, (globalScene.phaseManager.getCurrentPhase() as CommandPhase).getFieldIndex());
+            ui.setMode(UiMode.FIGHT, {
+              fieldIndex: (globalScene.phaseManager.getCurrentPhase() as CommandPhase).getFieldIndex(),
+            });
             success = true;
             break;
           // Ball
@@ -129,13 +133,11 @@ export class CommandUiHandler extends UiHandler {
             break;
           // Pokemon
           case Command.POKEMON:
-            ui.setMode(
-              UiMode.PARTY,
-              PartyUiMode.SWITCH,
-              (globalScene.phaseManager.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex(),
-              null,
-              PartyUiHandler.FilterNonFainted,
-            );
+            ui.setMode(UiMode.PARTY, {
+              partyUiMode: PartyUiMode.SWITCH,
+              fieldIndex: (globalScene.phaseManager.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex(),
+              selectFilter: PartyUiHandler.FilterNonFainted,
+            });
             success = true;
             break;
           // Run
@@ -144,11 +146,10 @@ export class CommandUiHandler extends UiHandler {
             success = true;
             break;
           case Command.TERA:
-            ui.setMode(
-              UiMode.FIGHT,
-              (globalScene.phaseManager.getCurrentPhase() as CommandPhase).getFieldIndex(),
-              Command.TERA,
-            );
+            ui.setMode(UiMode.FIGHT, {
+              fieldIndex: (globalScene.phaseManager.getCurrentPhase() as CommandPhase).getFieldIndex(),
+              command: Command.TERA,
+            });
             success = true;
             break;
         }

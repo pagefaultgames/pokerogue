@@ -5,7 +5,8 @@ import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/test-utils/game-manager";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
-import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
+import { PartyUiHandler } from "#ui/party-ui-handler";
+import { PartyUiMode } from "#ui/ui-types";
 import Phaser from "phaser";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -46,7 +47,7 @@ describe("UI - Transfer Items", () => {
       handler.setCursor(1);
       handler.processInput(Button.ACTION);
 
-      void game.scene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.MODIFIER_TRANSFER);
+      void game.scene.ui.setModeWithoutClear(UiMode.PARTY, { partyUiMode: PartyUiMode.MODIFIER_TRANSFER });
     });
 
     await game.phaseInterceptor.to("BattleEndPhase");

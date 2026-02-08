@@ -50,7 +50,6 @@ import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
 import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { Starter, StarterAttributes, StarterDataEntry, StarterMoveset } from "#types/save-data";
-import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
 import { FilterBar } from "#ui/filter-bar";
 import { MessageUiHandler } from "#ui/message-ui-handler";
@@ -60,7 +59,9 @@ import { ScrollBar } from "#ui/scroll-bar";
 import { StarterContainer } from "#ui/starter-container";
 import { StatsContainer } from "#ui/stats-container";
 import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
+import type { StarterSelectUiHandlerParams } from "#ui/ui-handler-params";
 import { addWindow } from "#ui/ui-theme";
+import type { OptionSelectItem, StarterSelectCallback } from "#ui/ui-types";
 import { applyChallenges, checkStarterValidForChallenge } from "#utils/challenge-utils";
 import {
   BooleanHolder,
@@ -80,8 +81,6 @@ import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-
-export type StarterSelectCallback = (starters: Starter[]) => void;
 
 interface LanguageSetting {
   starterInfoTextSize: string;
@@ -1155,15 +1154,15 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.updateInstructions();
   }
 
-  show(args: any[]): boolean {
+  show(args: StarterSelectUiHandlerParams): boolean {
     this.moveInfoOverlay.clear(); // clear this when removing a menu; the cancel button doesn't seem to trigger this automatically on controllers
     this.pokerusSpecies = getPokerusStarters();
 
     this.allowTera = globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id);
 
-    if (args.length > 0 && args[0] instanceof Function) {
+    if (args.starterSelectCallback) {
       super.show(args);
-      this.starterSelectCallback = args[0] as StarterSelectCallback;
+      this.starterSelectCallback = args.starterSelectCallback;
 
       this.starterSelectContainer.setVisible(true);
 
@@ -1916,7 +1915,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
               {
                 label: i18next.t("starterSelectUiHandler:addToParty"),
                 handler: () => {
-                  ui.setMode(UiMode.STARTER_SELECT);
+                  ui.setMode(UiMode.STARTER_SELECT, {});
                   const isOverValueLimit = this.tryUpdateValue(
                     globalScene.gameData.getSpeciesStarterValue(this.lastSpecies.speciesId),
                     true,
@@ -1949,7 +1948,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 label: i18next.t("starterSelectUiHandler:removeFromParty"),
                 handler: () => {
                   this.popStarter(removeIndex);
-                  ui.setMode(UiMode.STARTER_SELECT);
+                  ui.setMode(UiMode.STARTER_SELECT, {});
                   return true;
                 },
               },
@@ -1962,7 +1961,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
               label: i18next.t("starterSelectUiHandler:toggleIVs"),
               handler: () => {
                 this.toggleStatsMode();
-                ui.setMode(UiMode.STARTER_SELECT);
+                ui.setMode(UiMode.STARTER_SELECT, {});
                 return true;
               },
             },
@@ -1972,7 +1971,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             const showSwapOptions = (moveset: StarterMoveset) => {
               this.blockInput = true;
 
-              ui.setMode(UiMode.STARTER_SELECT).then(() => {
+              ui.setMode(UiMode.STARTER_SELECT, {}).then(() => {
                 ui.showText(i18next.t("starterSelectUiHandler:selectMoveSwapOut"), null, () => {
                   this.moveInfoOverlay.show(allMoves[moveset[0]]);
 
@@ -1983,7 +1982,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                           label: allMoves[m].name,
                           handler: () => {
                             this.blockInput = true;
-                            ui.setMode(UiMode.STARTER_SELECT).then(() => {
+                            ui.setMode(UiMode.STARTER_SELECT, {}).then(() => {
                               ui.showText(
                                 `${i18next.t("starterSelectUiHandler:selectMoveSwapWith")} ${allMoves[m].name}.`,
                                 null,
@@ -2047,7 +2046,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                               }
                             });
                           }
-                          ui.setMode(UiMode.STARTER_SELECT);
+                          ui.setMode(UiMode.STARTER_SELECT, {});
                           return true;
                         },
                         onHover: () => {
@@ -2076,7 +2075,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             const showNatureOptions = () => {
               this.blockInput = true;
 
-              ui.setMode(UiMode.STARTER_SELECT).then(() => {
+              ui.setMode(UiMode.STARTER_SELECT, {}).then(() => {
                 ui.showText(i18next.t("starterSelectUiHandler:selectNature"), null, () => {
                   const natures = globalScene.gameData.getNaturesForAttr(this.speciesStarterDexEntry?.natureAttr);
                   ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
@@ -2088,7 +2087,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                             starterAttributes.nature = n;
                             originalStarterAttributes.nature = starterAttributes.nature;
                             this.clearText();
-                            ui.setMode(UiMode.STARTER_SELECT);
+                            ui.setMode(UiMode.STARTER_SELECT, {});
                             // set nature for starter
                             this.setSpeciesDetails(this.lastSpecies, {
                               natureIndex: n,
@@ -2103,7 +2102,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                         label: i18next.t("menu:cancel"),
                         handler: () => {
                           this.clearText();
-                          ui.setMode(UiMode.STARTER_SELECT);
+                          ui.setMode(UiMode.STARTER_SELECT, {});
                           this.blockInput = false;
                           return true;
                         },
@@ -2136,7 +2135,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
               handler: () => {
                 starterData.passiveAttr ^= PassiveAttr.ENABLED;
                 persistentStarterData.passiveAttr ^= PassiveAttr.ENABLED;
-                ui.setMode(UiMode.STARTER_SELECT);
+                ui.setMode(UiMode.STARTER_SELECT, {});
                 this.setSpeciesDetails(this.lastSpecies);
                 return true;
               },
@@ -2154,7 +2153,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 if (starterContainer) {
                   starterContainer.favoriteIcon.setVisible(starterAttributes.favorite);
                 }
-                ui.setMode(UiMode.STARTER_SELECT);
+                ui.setMode(UiMode.STARTER_SELECT, {});
                 return true;
               },
             });
@@ -2168,7 +2167,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 if (starterContainer) {
                   starterContainer.favoriteIcon.setVisible(starterAttributes.favorite);
                 }
-                ui.setMode(UiMode.STARTER_SELECT);
+                ui.setMode(UiMode.STARTER_SELECT, {});
                 return true;
               },
             });
@@ -2179,30 +2178,27 @@ export class StarterSelectUiHandler extends MessageUiHandler {
               ui.playSelect();
               let nickname = starterAttributes.nickname ? String(starterAttributes.nickname) : "";
               nickname = decodeURIComponent(escape(atob(nickname)));
-              ui.setModeWithoutClear(
-                UiMode.RENAME_POKEMON,
-                {
-                  buttonActions: [
-                    (sanitizedName: string) => {
-                      ui.playSelect();
-                      starterAttributes.nickname = sanitizedName;
-                      originalStarterAttributes.nickname = sanitizedName;
-                      const name = decodeURIComponent(escape(atob(starterAttributes.nickname)));
-                      if (name.length > 0) {
-                        this.pokemonNameText.setText(name);
-                      } else {
-                        this.pokemonNameText.setText(this.lastSpecies.name);
-                      }
-                      this.truncateName();
-                      ui.setMode(UiMode.STARTER_SELECT);
-                    },
-                    () => {
-                      ui.setMode(UiMode.STARTER_SELECT);
-                    },
-                  ],
-                },
-                nickname,
-              );
+              ui.setModeWithoutClear(UiMode.RENAME_POKEMON, {
+                buttonActions: [
+                  (sanitizedName: string) => {
+                    ui.playSelect();
+                    starterAttributes.nickname = sanitizedName;
+                    originalStarterAttributes.nickname = sanitizedName;
+                    const name = decodeURIComponent(escape(atob(starterAttributes.nickname)));
+                    if (name.length > 0) {
+                      this.pokemonNameText.setText(name);
+                    } else {
+                      this.pokemonNameText.setText(this.lastSpecies.name);
+                    }
+                    this.truncateName();
+                    ui.setMode(UiMode.STARTER_SELECT, {});
+                  },
+                  () => {
+                    ui.setMode(UiMode.STARTER_SELECT, {});
+                  },
+                ],
+                text: nickname,
+              });
               return true;
             },
           });
@@ -2231,7 +2227,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                         return globalScene.reset(true);
                       }
                     });
-                    ui.setMode(UiMode.STARTER_SELECT);
+                    ui.setMode(UiMode.STARTER_SELECT, {});
                     this.setSpeciesDetails(this.lastSpecies);
                     globalScene.playSound("se/buy");
 
@@ -2272,7 +2268,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                       }
                     });
                     this.tryUpdateValue(0);
-                    ui.setMode(UiMode.STARTER_SELECT);
+                    ui.setMode(UiMode.STARTER_SELECT, {});
                     globalScene.playSound("se/buy");
 
                     // update the value label and icon/animation for available upgrade
@@ -2327,7 +2323,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                       return globalScene.reset(true);
                     }
                   });
-                  ui.setMode(UiMode.STARTER_SELECT);
+                  ui.setMode(UiMode.STARTER_SELECT, {});
                   globalScene.playSound("se/buy");
 
                   // update the icon/animation for available upgrade
@@ -2345,7 +2341,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             options.push({
               label: i18next.t("menu:cancel"),
               handler: () => {
-                ui.setMode(UiMode.STARTER_SELECT);
+                ui.setMode(UiMode.STARTER_SELECT, {});
                 return true;
               },
             });
@@ -2357,24 +2353,29 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           options.push({
             label: i18next.t("menuUiHandler:pokedex"),
             handler: () => {
-              ui.setMode(UiMode.STARTER_SELECT).then(() => {
+              ui.setMode(UiMode.STARTER_SELECT, {}).then(() => {
                 const attributes = {
                   shiny: starterAttributes.shiny,
                   variant: starterAttributes.variant,
                   form: starterAttributes.form,
                   female: starterAttributes.female,
                 };
-                ui.setOverlayMode(UiMode.POKEDEX_PAGE, this.lastSpecies, attributes, null, null, () => {
-                  if (this.lastSpecies) {
-                    starterContainer = this.filteredStarterContainers[this.cursor];
-                    const persistentStarterData = globalScene.gameData.starterData[this.lastSpecies.speciesId];
-                    this.updateCandyUpgradeDisplay(starterContainer);
-                    this.updateStarterValueLabel(starterContainer);
-                    starterContainer.starterPassiveBgs.setVisible(
-                      !!persistentStarterData.passiveAttr && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START),
-                    );
-                    this.setSpecies(this.lastSpecies);
-                  }
+                ui.setOverlayMode(UiMode.POKEDEX_PAGE, {
+                  species: this.lastSpecies,
+                  savedStarterAttributes: attributes,
+                  exitCallback: () => {
+                    if (this.lastSpecies) {
+                      starterContainer = this.filteredStarterContainers[this.cursor];
+                      const persistentStarterData = globalScene.gameData.starterData[this.lastSpecies.speciesId];
+                      this.updateCandyUpgradeDisplay(starterContainer);
+                      this.updateStarterValueLabel(starterContainer);
+                      starterContainer.starterPassiveBgs.setVisible(
+                        !!persistentStarterData.passiveAttr
+                          && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START),
+                      );
+                      this.setSpecies(this.lastSpecies);
+                    }
+                  },
                 });
               });
               return true;
@@ -2384,7 +2385,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             options.push({
               label: i18next.t("starterSelectUiHandler:useCandies"),
               handler: () => {
-                ui.setMode(UiMode.STARTER_SELECT).then(() => showUseCandies());
+                ui.setMode(UiMode.STARTER_SELECT, {}).then(() => showUseCandies());
                 return true;
               },
             });
@@ -2392,7 +2393,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           options.push({
             label: i18next.t("menu:cancel"),
             handler: () => {
-              ui.setMode(UiMode.STARTER_SELECT);
+              ui.setMode(UiMode.STARTER_SELECT, {});
               return true;
             },
           });
@@ -4431,15 +4432,14 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const ui = this.getUi();
 
     const cancel = () => {
-      ui.setMode(UiMode.STARTER_SELECT);
+      ui.setMode(UiMode.STARTER_SELECT, {});
       this.clearText();
       this.blockInput = false;
     };
     ui.showText(i18next.t("starterSelectUiHandler:confirmExit"), null, () => {
-      ui.setModeWithoutClear(
-        UiMode.CONFIRM,
-        () => {
-          ui.setMode(UiMode.STARTER_SELECT);
+      ui.setModeWithoutClear(UiMode.CONFIRM, {
+        onYes: () => {
+          ui.setMode(UiMode.STARTER_SELECT, {});
           // Non-challenge modes go directly back to title, while challenge modes go to the selection screen.
           if (globalScene.gameMode.isChallenge) {
             globalScene.phaseManager.clearPhaseQueue();
@@ -4451,11 +4451,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           this.clearText();
           globalScene.phaseManager.getCurrentPhase().end();
         },
-        cancel,
-        null,
-        null,
-        19,
-      );
+        onNo: cancel,
+        xOffset: 19,
+      });
     });
   }
 
@@ -4467,7 +4465,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const ui = this.getUi();
 
     const cancel = () => {
-      ui.setMode(UiMode.STARTER_SELECT);
+      ui.setMode(UiMode.STARTER_SELECT, {});
       if (!manualTrigger) {
         this.popStarter(this.starterSpecies.length - 1);
       }
@@ -4478,24 +4476,21 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     if (canStart) {
       ui.showText(i18next.t("starterSelectUiHandler:confirmStartTeam"), null, () => {
-        ui.setModeWithoutClear(
-          UiMode.CONFIRM,
-          () => {
+        ui.setModeWithoutClear(UiMode.CONFIRM, {
+          onYes: () => {
             const startRun = () => {
               globalScene.money = globalScene.gameMode.getStartingMoney();
               const starters = this.starters.slice(0);
-              ui.setMode(UiMode.STARTER_SELECT);
+              ui.setMode(UiMode.STARTER_SELECT, {});
               const originalStarterSelectCallback = this.starterSelectCallback;
               this.starterSelectCallback = null;
               originalStarterSelectCallback?.(starters);
             };
             startRun();
           },
-          cancel,
-          null,
-          null,
-          19,
-        );
+          onNo: cancel,
+          xOffset: 19,
+        });
       });
     } else {
       this.tutorialActive = true;

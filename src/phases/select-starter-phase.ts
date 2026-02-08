@@ -7,7 +7,7 @@ import { ChallengeType } from "#enums/challenge-type";
 import { UiMode } from "#enums/ui-mode";
 import { overrideHeldItems, overrideModifiers } from "#modifiers/modifier";
 import type { Starter } from "#types/save-data";
-import { SaveSlotUiMode } from "#ui/handlers/save-slot-select-ui-handler";
+import { SaveSlotUiMode } from "#ui/ui-types";
 import { applyChallenges } from "#utils/challenge-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
@@ -19,18 +19,23 @@ export class SelectStarterPhase extends Phase {
 
     globalScene.playBgm("menu");
 
-    globalScene.ui.setMode(UiMode.STARTER_SELECT, (starters: Starter[]) => {
-      globalScene.ui.clearText();
-      globalScene.ui.setMode(UiMode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: number) => {
-        // If clicking cancel, back out to title screen
-        if (slotId === -1) {
-          globalScene.phaseManager.toTitleScreen();
-          this.end();
-          return;
-        }
-        globalScene.sessionSlotId = slotId;
-        this.initBattle(starters);
-      });
+    globalScene.ui.setMode(UiMode.STARTER_SELECT, {
+      starterSelectCallback: (starters: Starter[]) => {
+        globalScene.ui.clearText();
+        globalScene.ui.setMode(UiMode.SAVE_SLOT, {
+          uiMode: SaveSlotUiMode.SAVE,
+          saveSlotSelectCallback: (slotId: number) => {
+            // If clicking cancel, back out to title screen
+            if (slotId === -1) {
+              globalScene.phaseManager.toTitleScreen();
+              this.end();
+              return;
+            }
+            globalScene.sessionSlotId = slotId;
+            this.initBattle(starters);
+          },
+        });
+      },
     });
   }
 

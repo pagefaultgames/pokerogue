@@ -1,7 +1,7 @@
-import type { PlayerPokemon } from "#field/pokemon";
 import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
-import type { ModalConfig } from "#ui/modal-ui-handler";
+import type { TestDialogueUiHandlerParams } from "#ui/ui-handler-params";
+import type { ModalConfig } from "#ui/ui-types";
 import i18next from "i18next";
 
 export class RenameFormUiHandler extends FormModalUiHandler {
@@ -34,14 +34,14 @@ export class RenameFormUiHandler extends FormModalUiHandler {
     return [{ label: i18next.t("menu:nickname") }];
   }
 
-  show(args: any[]): boolean {
+  show(args: TestDialogueUiHandlerParams): boolean {
     if (super.show(args)) {
       const config = args[0] as ModalConfig;
       // TODO: shouldn't this be `const playerPokemon: PlayerPokemon | undefined = args[1];` and `if (playerPokemon)`?
-      if (args[1] && typeof (args[1] as PlayerPokemon).getNameToRender === "function") {
-        this.inputs[0].text = (args[1] as PlayerPokemon).getNameToRender({ useIllusion: false });
+      if (args.pokemon) {
+        this.inputs[0].text = args.pokemon.getNameToRender({ useIllusion: false });
       } else {
-        this.inputs[0].text = args[1];
+        this.inputs[0].text = args.text ?? "";
       }
       this.submitAction = () => {
         this.sanitizeInputs();

@@ -8,9 +8,9 @@ import type { Pokemon } from "#field/pokemon";
 import type { ModifierBar } from "#modifiers/modifier";
 import { getMoveTargets } from "#moves/move-utils";
 import { UiHandler } from "#ui/ui-handler";
+import type { TargetSelectUiHandlerParams } from "#ui/ui-handler-params";
+import type { TargetSelectCallback } from "#ui/ui-types";
 import { fixedInt } from "#utils/common";
-
-export type TargetSelectCallback = (targets: BattlerIndex[]) => void;
 
 export class TargetSelectUiHandler extends UiHandler {
   private fieldIndex: number;
@@ -34,16 +34,12 @@ export class TargetSelectUiHandler extends UiHandler {
 
   setup(): void {}
 
-  show(
-    args: [fieldIndex: number, moveId: MoveId, callback: TargetSelectCallback, defaultTargets?: BattlerIndex[]],
-  ): boolean {
-    if (args.length < 3) {
-      return false;
-    }
-
+  show(args: TargetSelectUiHandlerParams): boolean {
     super.show(args);
 
-    [this.fieldIndex, this.move, this.targetSelectCallback] = args;
+    this.fieldIndex = args.fieldIndex;
+    this.move = args.moveId;
+    this.targetSelectCallback = args.targetSelectCallback;
     const user = globalScene.getPlayerField()[this.fieldIndex];
 
     const moveTargets = getMoveTargets(user, this.move);
@@ -58,7 +54,7 @@ export class TargetSelectUiHandler extends UiHandler {
 
     // If default targets are specified, use them instead
     // TODO: This logic should emphatically _not_ be done inside a UI handler
-    const defaultTargets = args[3];
+    const defaultTargets = args.defaultTargets;
     if (defaultTargets && defaultTargets.length > 0 && this.targets.includes(defaultTargets[0])) {
       this.setCursor(defaultTargets[0]);
       return true;

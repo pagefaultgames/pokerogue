@@ -39,22 +39,18 @@ export class EggLapsePhase extends Phase {
               }),
               0,
             );
-            globalScene.ui.setModeWithoutClear(
-              UiMode.CONFIRM,
-              () => {
+            globalScene.ui.setModeWithoutClear(UiMode.CONFIRM, {
+              onYes: () => {
                 this.hatchEggsSkipped(eggsToHatch);
                 this.showSummary();
               },
-              () => {
+              onNo: () => {
                 this.hatchEggsRegular(eggsToHatch);
                 this.end();
               },
-              null,
-              null,
-              null,
-              1000,
-              true,
-            );
+              delay: 1000,
+              noCancel: true,
+            });
           },
           100,
           true,

@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { LoginRegisterInfoContainerUiHandler } from "#ui/login-register-info-container-ui-handler";
-import type { ModalConfig } from "#ui/modal-ui-handler";
+import type { FormModalUiHandlerParams } from "#ui/ui-handler-params";
 import i18next from "i18next";
 import type Phaser from "phaser";
 
@@ -44,7 +44,7 @@ export class LoginOrRegisterUiHandler extends LoginRegisterInfoContainerUiHandle
     this.modalContainer.add(this.logo);
   }
 
-  public override show(args: [ModalConfig, ...any[]]): boolean {
+  public override show(args: FormModalUiHandlerParams): boolean {
     this.logo //
       .setVisible(true)
       .setActive(true);

@@ -49,9 +49,8 @@ import type { TrainerConfig } from "#trainers/trainer-config";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import type { RandomEncounterParams } from "#types/pokemon-common";
-import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
-import type { PartyOption, PokemonSelectFilter } from "#ui/party-ui-handler";
-import { PartyUiMode } from "#ui/party-ui-handler";
+import type { OptionSelectConfig, OptionSelectItem, PokemonSelectFilter } from "#ui/ui-types";
+import { type PartyOption, PartyUiMode } from "#ui/ui-types";
 import { coerceArray } from "#utils/array";
 import { BooleanHolder, randomString, randSeedInt, randSeedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
@@ -552,11 +551,10 @@ export function selectPokemonForOption(
     const modeToSetOnExit = globalScene.ui.getMode();
 
     // Open party screen to choose pokemon
-    globalScene.ui.setMode(
-      UiMode.PARTY,
-      PartyUiMode.SELECT,
-      -1,
-      async (slotIndex: number, _option: PartyOption) => {
+    globalScene.ui.setMode(UiMode.PARTY, {
+      partyUiMode: PartyUiMode.SELECT,
+      fieldIndex: -1,
+      selectCallback: async (slotIndex: number, _option: PartyOption) => {
         await globalScene.ui.setMode(modeToSetOnExit);
         if (slotIndex >= globalScene.getPlayerParty().length) {
           onPokemonNotSelected?.();
@@ -616,7 +614,7 @@ export function selectPokemonForOption(
           if (fullOptions[0]?.onHover) {
             fullOptions[0].onHover();
           }
-          globalScene.ui.setModeWithoutClear(UiMode.OPTION_SELECT, config, null, true);
+          globalScene.ui.setModeWithoutClear(UiMode.OPTION_SELECT, config);
         };
 
         const textPromptKey = globalScene.currentBattle.mysteryEncounter?.selectedOption?.dialogue?.secondOptionPrompt;
@@ -625,8 +623,8 @@ export function selectPokemonForOption(
         }
         displayOptions();
       },
-      selectablePokemonFilter,
-    );
+      selectFilter: selectablePokemonFilter,
+    });
   });
 }
 
@@ -667,11 +665,10 @@ export function selectOptionThenPokemon(
 
     const selectPokemonAfterOption = (selectedOptionIndex: number) => {
       // Open party screen to choose a Pokemon
-      globalScene.ui.setMode(
-        UiMode.PARTY,
-        PartyUiMode.SELECT,
-        -1,
-        (slotIndex: number, _option: PartyOption) => {
+      globalScene.ui.setMode(UiMode.PARTY, {
+        partyUiMode: PartyUiMode.SELECT,
+        fieldIndex: -1,
+        selectCallback: (slotIndex: number, _option: PartyOption) => {
           if (slotIndex < globalScene.getPlayerParty().length) {
             // Pokemon and option selected
             globalScene.ui.setMode(modeToSetOnExit).then(() => {
@@ -686,8 +683,8 @@ export function selectOptionThenPokemon(
             displayOptions(config);
           }
         },
-        selectablePokemonFilter,
-      );
+        selectFilter: selectablePokemonFilter,
+      });
     };
 
     // Always appends a cancel option to bottom of options

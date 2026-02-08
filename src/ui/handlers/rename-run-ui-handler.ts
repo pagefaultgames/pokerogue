@@ -1,6 +1,7 @@
+import type { FormModalUiHandlerParams } from "#ui/ui-handler-params";
+import type { ModalConfig } from "#ui/ui-types";
 import i18next from "i18next";
 import { FormModalUiHandler, type InputFieldConfig } from "./form-modal-ui-handler";
-import type { ModalConfig } from "./modal-ui-handler";
 
 export class RenameRunFormUiHandler extends FormModalUiHandler {
   getModalTitle(_config?: ModalConfig): string {
@@ -32,7 +33,7 @@ export class RenameRunFormUiHandler extends FormModalUiHandler {
     return [{ label: i18next.t("menu:runName") }];
   }
 
-  show(args: any[]): boolean {
+  show(args: FormModalUiHandlerParams): boolean {
     if (!super.show(args)) {
       return false;
     }

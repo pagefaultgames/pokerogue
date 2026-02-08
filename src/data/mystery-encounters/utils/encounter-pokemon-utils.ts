@@ -31,9 +31,7 @@ import {
   showEncounterText,
 } from "#mystery-encounters/encounter-dialogue-utils";
 import { achvs } from "#system/achv";
-import type { PartyOption } from "#ui/party-ui-handler";
-import { PartyUiMode } from "#ui/party-ui-handler";
-import { SummaryUiMode } from "#ui/summary-ui-handler";
+import { type PartyOption, PartyUiMode, SummaryUiMode } from "#ui/ui-types";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
@@ -725,9 +723,8 @@ export async function catchPokemon(
               null,
               () => {
                 globalScene.pokemonInfoContainer.makeRoomForConfirmUi(1, true);
-                globalScene.ui.setMode(
-                  UiMode.CONFIRM,
-                  () => {
+                globalScene.ui.setMode(UiMode.CONFIRM, {
+                  onSummary: () => {
                     const newPokemon = globalScene.addPlayerPokemon(
                       pokemon.species,
                       pokemon.level,
@@ -740,45 +737,41 @@ export async function catchPokemon(
                       pokemon.nature,
                       pokemon,
                     );
-                    globalScene.ui.setMode(
-                      UiMode.SUMMARY,
-                      newPokemon,
-                      0,
-                      SummaryUiMode.DEFAULT,
-                      () => {
+                    globalScene.ui.setMode(UiMode.SUMMARY, {
+                      pokemon: newPokemon,
+                      startPage: 0,
+                      uiMode: SummaryUiMode.DEFAULT,
+                      selectCallback: () => {
                         globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
                           promptRelease();
                         });
                       },
-                      false,
-                    );
+                      player: false,
+                    });
                   },
-                  () => {
+                  onPokedex: () => {
                     const attributes = {
                       shiny: pokemon.shiny,
                       variant: pokemon.variant,
                       form: pokemon.formIndex,
                       female: pokemon.gender === Gender.FEMALE,
                     };
-                    globalScene.ui.setOverlayMode(
-                      UiMode.POKEDEX_PAGE,
-                      pokemon.species,
-                      pokemon.formIndex,
-                      [attributes],
-                      null,
-                      () => {
+                    globalScene.ui.setOverlayMode(UiMode.POKEDEX_PAGE, {
+                      species: pokemon.species,
+                      savedStarterAttributes: attributes,
+                      exitCallback: () => {
                         globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
                           promptRelease();
                         });
                       },
-                    );
+                    });
                   },
-                  () => {
-                    globalScene.ui.setMode(
-                      UiMode.PARTY,
-                      PartyUiMode.RELEASE,
-                      0,
-                      (slotIndex: number, _option: PartyOption) => {
+                  //TODO: are these options wrong?
+                  onYes: () => {
+                    globalScene.ui.setMode(UiMode.PARTY, {
+                      partyUiMode: PartyUiMode.RELEASE,
+                      fieldIndex: 0,
+                      selectCallback: (slotIndex: number, _option: PartyOption) => {
                         globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
                           if (slotIndex < 6) {
                             addToParty(slotIndex);
@@ -787,16 +780,15 @@ export async function catchPokemon(
                           }
                         });
                       },
-                    );
+                    });
                   },
-                  () => {
+                  onNo: () => {
                     globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
                       removePokemon();
                       end();
                     });
                   },
-                  "fullParty",
-                );
+                });
               },
             );
           };

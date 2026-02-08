@@ -159,9 +159,9 @@ import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { TurnMove } from "#types/turn-move";
 import { BattleInfo } from "#ui/battle-info";
 import { EnemyBattleInfo } from "#ui/enemy-battle-info";
-import type { PartyOption } from "#ui/party-ui-handler";
-import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
+import { PartyUiHandler } from "#ui/party-ui-handler";
 import { PlayerBattleInfo } from "#ui/player-battle-info";
+import { type PartyOption, PartyUiMode } from "#ui/ui-types";
 import { coerceArray } from "#utils/array";
 import { applyChallenges } from "#utils/challenge-utils";
 import {
@@ -6002,11 +6002,10 @@ export class PlayerPokemon extends Pokemon {
     return new Promise(resolve => {
       this.leaveField(switchType === SwitchType.SWITCH);
 
-      globalScene.ui.setMode(
-        UiMode.PARTY,
-        PartyUiMode.FAINT_SWITCH,
-        this.getFieldIndex(),
-        (slotIndex: number, _option: PartyOption) => {
+      globalScene.ui.setMode(UiMode.PARTY, {
+        partyUiMode: PartyUiMode.FAINT_SWITCH,
+        fieldIndex: this.getFieldIndex(),
+        selectCallback: (slotIndex: number, _option: PartyOption) => {
           if (slotIndex >= globalScene.currentBattle.getBattlerCount() && slotIndex < 6) {
             globalScene.phaseManager.queueDeferred(
               "SwitchSummonPhase",
@@ -6018,8 +6017,8 @@ export class PlayerPokemon extends Pokemon {
           }
           globalScene.ui.setMode(UiMode.MESSAGE).then(resolve);
         },
-        PartyUiHandler.FilterNonFainted,
-      );
+        selectFilter: PartyUiHandler.FilterNonFainted,
+      });
     });
   }
   /**

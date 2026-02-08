@@ -1,17 +1,14 @@
 import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
-import type { ModalConfig } from "#ui/modal-ui-handler";
 import { ModalUiHandler } from "#ui/modal-ui-handler";
 import { addTextInputObject, addTextObject, getTextColor } from "#ui/text";
+import type { FormModalUiHandlerParams } from "#ui/ui-handler-params";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
+import type { FormModalConfig, ModalConfig } from "#ui/ui-types";
 import { fixedInt, truncateString } from "#utils/common";
 import type Phaser from "phaser";
 import type InputText from "phaser3-rex-plugins/plugins/inputtext";
-
-export interface FormModalConfig extends ModalConfig {
-  errorMessage?: string;
-}
 
 export abstract class FormModalUiHandler extends ModalUiHandler {
   protected editing = false;
@@ -112,7 +109,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
     }
   }
 
-  public override show(args: any[]): boolean {
+  public override show(args: FormModalUiHandlerParams): boolean {
     if (super.show(args)) {
       for (const ic of this.inputContainers) {
         ic.setActive(true).setVisible(true);

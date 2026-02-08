@@ -1,9 +1,8 @@
 import { UiMode } from "#enums/ui-mode";
-import type { PlayerPokemon } from "#field/pokemon";
-import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
-import type { ModalConfig } from "#ui/modal-ui-handler";
+import type { TestDialogueUiHandlerParams } from "#ui/ui-handler-params";
+import type { ModalConfig, OptionSelectItem } from "#ui/ui-types";
 import i18next from "i18next";
 
 export class TestDialogueUiHandler extends FormModalUiHandler {
@@ -72,11 +71,11 @@ export class TestDialogueUiHandler extends FormModalUiHandler {
     return [{ label: "Dialogue" }];
   }
 
-  show(args: any[]): boolean {
+  show(args: TestDialogueUiHandlerParams): boolean {
     const ui = this.getUi();
     const hasTitle = !!this.getModalTitle();
     this.updateFields(this.getInputFieldConfigs(), hasTitle);
-    this.updateContainer(args[0] as ModalConfig);
+    this.updateContainer({ buttonActions: args.buttonActions });
     const input = this.inputs[0];
     input.setMaxLength(255);
 
@@ -131,15 +130,15 @@ export class TestDialogueUiHandler extends FormModalUiHandler {
     });
 
     if (super.show(args)) {
-      const config = args[0] as ModalConfig;
+      const config = { buttonActions: args.buttonActions };
       this.inputs[0].resize(1150, 116);
       // TODO: Figure out what the type of `this.inputContainers.list` is
       this.inputContainers[0].list[0]["width"] = 200;
       // TODO: shouldn't this be `const playerPokemon: PlayerPokemon | undefined = args[1];` and `if (playerPokemon)`?
-      if (args[1] && typeof (args[1] as PlayerPokemon).getNameToRender === "function") {
-        this.inputs[0].text = (args[1] as PlayerPokemon).getNameToRender();
+      if (args.pokemon) {
+        this.inputs[0].text = args.pokemon.getNameToRender();
       } else {
-        this.inputs[0].text = args[1];
+        this.inputs[0].text = args.text ?? "";
       }
       this.submitAction = () => {
         if (ui.getMode() === UiMode.TEST_DIALOGUE) {
