@@ -3244,7 +3244,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       3,
       getRandomPartyMemberFunc([SpeciesId.WYRDEER, SpeciesId.FARIGIRAF], TrainerSlot.TRAINER, true, p => {
-        p.abilityIndex = p.species.speciesId === SpeciesId.POLIWRATH ? 0 : 1; // Water Absorb, Guts
+        p.abilityIndex = p.species.speciesId === SpeciesId.WYRDEER ? 0 : 1; // Intimidate, Armor Tail
         p.generateAndPopulateMoveset();
       }),
     )
