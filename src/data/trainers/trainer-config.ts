@@ -1967,7 +1967,6 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.SANDSHREW,
         SpeciesId.GEODUDE,
         SpeciesId.ONIX,
-        SpeciesId.UNOWN,
         SpeciesId.NATU,
         SpeciesId.NOSEPASS,
         SpeciesId.BALTOY,
@@ -2001,7 +2000,7 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.AMAURA,
         SpeciesId.GALAR_YAMASK,
       ],
-      [TrainerPoolTier.SUPER_RARE]: [SpeciesId.SPIRITOMB, SpeciesId.LARVESTA, SpeciesId.GIMMIGHOUL],
+      [TrainerPoolTier.SUPER_RARE]: [SpeciesId.UNOWN, SpeciesId.SPIRITOMB, SpeciesId.LARVESTA, SpeciesId.GIMMIGHOUL],
       [TrainerPoolTier.ULTRA_RARE]: [SpeciesId.WO_CHIEN, SpeciesId.TING_LU],
     }),
   [TrainerType.SAILOR]: new TrainerConfig(++t)
