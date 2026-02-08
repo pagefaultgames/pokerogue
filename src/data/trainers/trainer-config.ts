@@ -1415,7 +1415,7 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setSpeciesFilter(
       s => s.isOfType(PokemonType.NORMAL) || s.isOfType(PokemonType.GROUND) || s.isOfType(PokemonType.BUG),
-    )
+    ),
   [TrainerType.CLERK]: new TrainerConfig(++t)
     .setHasGenders("Clerk Female")
     .setHasDouble("Colleagues")
