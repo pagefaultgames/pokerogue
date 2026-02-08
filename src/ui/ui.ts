@@ -63,6 +63,15 @@ import i18next from "i18next";
 import { AdminUiHandler } from "./handlers/admin-ui-handler";
 import { RenameRunFormUiHandler } from "./handlers/rename-run-ui-handler";
 
+interface SetModeParams {
+  /** If `true`, calls the current handler's `clear` method before setting the new mode */
+  clear: boolean;
+  /** If `true`, forces a transition even when the new mode is the same as the current one */
+  forceTransition: boolean;
+  /** If `true`, append the new mode to the mode chain */
+  chainMode: boolean;
+}
+
 const transitionModes = [
   UiMode.SAVE_SLOT,
   UiMode.PARTY,
@@ -109,11 +118,15 @@ const noTransitionModes = [
   UiMode.CHANGE_PASSWORD_FORM,
 ];
 
+function isTransitionMode(mode: UiMode): boolean {
+  return transitionModes.indexOf(mode) > -1 && noTransitionModes.indexOf(mode) === -1;
+}
+
 // biome-ignore lint/style/useNamingConvention: a unique case (only 2 letters)
 export class UI extends Phaser.GameObjects.Container {
   private mode: UiMode;
-  private modeChain: UiMode[];
-  public handlers: UiHandler[];
+  private modeChain: UiMode[] = [];
+  public handlers: UiHandler[] = [];
   private overlay: Phaser.GameObjects.Rectangle;
   public achvBar: AchvBar;
   public bgmBar: BgmBar;
@@ -522,14 +535,8 @@ export class UI extends Phaser.GameObjects.Container {
     });
   }
 
-  private setModeInternal(
-    this: UI,
-    mode: UiMode,
-    clear: boolean,
-    forceTransition: boolean,
-    chainMode: boolean,
-    args: any[],
-  ): Promise<void> {
+  private setModeInternal(this: UI, mode: UiMode, params: SetModeParams, args: any[]): Promise<void> {
+    const { clear, forceTransition, chainMode } = params;
     return new Promise(resolve => {
       if (this.mode === mode && !forceTransition) {
         resolve();
@@ -540,6 +547,7 @@ export class UI extends Phaser.GameObjects.Container {
           if (clear) {
             this.getHandler().clear();
           }
+          // Don't chain if previous mode is cleared; this set of options should never be passed.
           if (chainMode && this.mode && !clear) {
             this.modeChain.push(this.mode);
             globalScene.updateGameInfo();
@@ -553,12 +561,12 @@ export class UI extends Phaser.GameObjects.Container {
         }
         resolve();
       };
+      /** Determine whether the mode transition should use fading.
+       If `chainMode` is `true`, require the new mode to be a transition mode.
+       If `chainMode` is `false`, either mode can be a transition mode. */
       if (
-        (!chainMode
-          && (transitionModes.indexOf(this.mode) > -1 || transitionModes.indexOf(mode) > -1)
-          && noTransitionModes.indexOf(this.mode) === -1
-          && noTransitionModes.indexOf(mode) === -1)
-        || (chainMode && noTransitionModes.indexOf(mode) === -1)
+        (!chainMode && (isTransitionMode(this.mode) || isTransitionMode(mode)))
+        || (chainMode && isTransitionMode(mode))
       ) {
         this.fadeOut(250).then(() => {
           globalScene.time.delayedCall(100, () => {
@@ -576,30 +584,41 @@ export class UI extends Phaser.GameObjects.Container {
     return this.mode;
   }
 
+  /** Default for setting a new mode, clearing the previous mode. Fails if trying to set the current mode. */
   setMode(mode: UiMode, ...args: any[]): Promise<void> {
-    return this.setModeInternal(mode, true, false, false, args);
+    return this.setModeInternal(mode, { clear: true, forceTransition: false, chainMode: false }, args);
   }
 
+  /** Used to essentially reset the current mode with new args. */
   setModeForceTransition(mode: UiMode, ...args: any[]): Promise<void> {
-    return this.setModeInternal(mode, true, true, false, args);
+    return this.setModeInternal(mode, { clear: true, forceTransition: true, chainMode: false }, args);
   }
 
+  /** Used to set a new mode without clearing the previous one. */
   setModeWithoutClear(mode: UiMode, ...args: any[]): Promise<void> {
-    return this.setModeInternal(mode, false, false, false, args);
+    return this.setModeInternal(mode, { clear: false, forceTransition: false, chainMode: false }, args);
   }
 
+  /** Appends new mode to the chain, without clearing the previous one. */
   setOverlayMode(mode: UiMode, ...args: any[]): Promise<void> {
-    return this.setModeInternal(mode, false, false, true, args);
+    return this.setModeInternal(mode, { clear: false, forceTransition: false, chainMode: true }, args);
   }
 
+  // TODO: shouldn't this call `UiHandler().clear()` for the modes in the chain?
   resetModeChain(): void {
     this.modeChain = [];
     globalScene.updateGameInfo();
   }
 
+  /**
+   * Reverts the current mode, calling its handler's `clear` method, then
+   * setting the current mode to the most recent one in the mode chain.
+   * Note that modes are never cleared while adding them to the chain.
+   * Fails if the mode chain is empty.
+   */
   revertMode(): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      if (this?.modeChain?.length === 0) {
+      if (this.modeChain.length === 0) {
         return resolve(false);
       }
 
@@ -607,7 +626,7 @@ export class UI extends Phaser.GameObjects.Container {
 
       const doRevertMode = () => {
         this.getHandler().clear();
-        this.mode = this.modeChain.pop()!; // TODO: is this bang correct?
+        this.mode = this.modeChain.pop()!;
         globalScene.updateGameInfo();
         const touchControls = document.getElementById("touchControls");
         if (touchControls) {
@@ -616,7 +635,7 @@ export class UI extends Phaser.GameObjects.Container {
         resolve(true);
       };
 
-      if (noTransitionModes.indexOf(lastMode) === -1) {
+      if (isTransitionMode(lastMode)) {
         this.fadeOut(250).then(() => {
           globalScene.time.delayedCall(100, () => {
             doRevertMode();
@@ -629,6 +648,9 @@ export class UI extends Phaser.GameObjects.Container {
     });
   }
 
+  /**
+   * Reverts modes one by one until the chain is empty
+   */
   revertModes(): Promise<void> {
     return new Promise<void>(resolve => {
       if (this?.modeChain?.length === 0) {
