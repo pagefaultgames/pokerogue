@@ -19,6 +19,8 @@ declare global {
 // TODO: This should be provided by the extensions in question, so why isn't TypeScript picking it up?
 declare module "typedoc" {
   export interface TypeDocOptionMap {
+    // typedoc-plugin-coverage
+    coverageLabel: string;
     coverageColor: string;
     coverageOutputPath: string;
     coverageOutputType: "svg" | "json" | "all";
