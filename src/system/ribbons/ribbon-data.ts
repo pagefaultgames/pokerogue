@@ -101,11 +101,14 @@ export class RibbonData {
   /** Ribbon for winning the limited support challenge set to no heal */
   public static readonly NO_HEAL        = 0x0800000000n as RibbonFlag;
   // biome-ignore format: manual
-  /** Ribbon for winning the limited uspport challenge set to no shop */
+  /** Ribbon for winning the limited support challenge set to no shop */
   public static readonly NO_SHOP        = 0x1000000000n as RibbonFlag;
   // biome-ignore format: manual
   /** Ribbon for winning the limited support challenge set to both*/
   public static readonly NO_SUPPORT     = 0x2000000000n as RibbonFlag;
+  // biome-ignore format: manual
+  /** Ribbon for winning the passive ability challenge */
+  public static readonly PASSIVE_ABILITY  = 0x4000000000n as RibbonFlag;
 
   // NOTE: max possible ribbon flag is 0x20000000000000 (53 total ribbons)
   // Once this is exceeded, bitfield needs to be changed to a bigint or even a uint array

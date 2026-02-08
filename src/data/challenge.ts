@@ -1205,6 +1205,34 @@ export class HardcoreChallenge extends Challenge {
   }
 }
 
+export class PassivesChallenge extends Challenge {
+  public override get ribbonAwarded(): RibbonFlag {
+    return this.value ? RibbonData.PASSIVE_ABILITY : 0n;
+  }
+
+  constructor() {
+    super(Challenges.PASSIVES, 2);
+  }
+
+  override applyPassiveAccess(pokemon: Pokemon, hasPassive: BooleanHolder): boolean {
+    const isTrainer = pokemon.hasTrainer() && pokemon.isEnemy();
+    const isFinalBoss = pokemon.isBoss() && globalScene.gameMode.isWaveFinal(globalScene.currentBattle?.waveIndex);
+    if (!isTrainer && this.value === 1 && !isFinalBoss) {
+      hasPassive.value = false;
+      return true;
+    }
+    hasPassive.value = true;
+    return true;
+  }
+
+  static override loadChallenge(source: PassivesChallenge | any): PassivesChallenge {
+    const newChallenge = new PassivesChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
+}
+
 /**
  * @param source - A challenge to copy, or an object of a challenge's properties. Missing values are treated as defaults.
  * @returns The challenge in question.
@@ -1231,6 +1259,8 @@ export function copyChallenge(source: Challenge | any): Challenge {
       return LimitedSupportChallenge.loadChallenge(source);
     case Challenges.HARDCORE:
       return HardcoreChallenge.loadChallenge(source);
+    case Challenges.PASSIVES:
+      return PassivesChallenge.loadChallenge(source);
   }
   throw new Error("Unknown challenge copied");
 }
@@ -1247,5 +1277,6 @@ export function initChallenges() {
     new SingleTypeChallenge(),
     new InverseBattleChallenge(),
     new FlipStatChallenge(),
+    new PassivesChallenge(),
   );
 }
