@@ -26,6 +26,7 @@ import {
   GREAT_TM_MOVESET_WEIGHT,
   getMaxEggMoveCount,
   getMaxTmCount,
+  LEVEL_BASED_DENYLIST_THRESHOLD,
   RARE_EGG_MOVE_LEVEL_REQUIREMENT,
   RELEARN_MOVE_WEIGHT,
   STAB_BLACKLIST,
@@ -341,42 +342,21 @@ function filterSupercededMoves(pool: Map<MoveId, number>, ...otherPools: Map<Mov
  * @param pool - The move pool to filter
  * @param isBoss - Whether the Pokémon is a boss
  * @param hasTrainer - Whether the Pokémon has a trainer
+ * @param level - The level of the Pokémon
  */
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Intentionally a series of if checks.
-function filterMovePool(pool: Map<MoveId, number>, isBoss: boolean, hasTrainer: boolean): void {
+function filterMovePool(pool: Map<MoveId, number>, isBoss: boolean, hasTrainer: boolean, level: number): void {
   const isSingles = !globalScene.currentBattle?.double;
   for (const [moveId, weight] of pool) {
-    if (weight <= 0) {
-      pool.delete(moveId);
-      continue;
-    }
     const move = allMoves[moveId];
-    // Forbid unimplemented moves
-    if (move.name.endsWith(" (N)")) {
-      pool.delete(moveId);
-      continue;
-    }
-    // Bosses never get self ko moves or Pain Split
-    if (isBoss && (move.hasAttr("SacrificialAttr") || move.hasAttr("HpSplitAttr"))) {
-      pool.delete(moveId);
-    }
-
-    // No one gets Memento or Final Gambit
-    if (move.hasAttr("SacrificialAttrOnHit")) {
-      pool.delete(moveId);
-      continue;
-    }
-
-    // Trainers never get OHKO moves
-    if (hasTrainer && move.hasAttr("OneHitKOAttr")) {
-      pool.delete(moveId);
-    }
-
-    // Trainers and boss pokemon don't get doubles-only moves in singles battles
     if (
-      isSingles
-      && (isBoss || hasTrainer)
-      && (FORBIDDEN_SINGLES_MOVES.has(moveId) || LEVEL_BASED_DENYLIST.has(moveId))
+      weight <= 0
+      || move.name.endsWith(" (N)") // Forbid unimplemented moves
+      || move.hasAttr("SacrificialAttrOnHit") // No one gets Memento or Final Gambit
+      || (isBoss && (move.hasAttr("SacrificialAttr") || move.hasAttr("HpSplitAttr"))) // Bosses never get self ko moves or Pain Split
+      || (hasTrainer && move.hasAttr("OneHitKOAttr")) // trainers never get OHKO moves
+      || ((isBoss || hasTrainer) // For only trainers / bosses...
+        && ((isSingles && FORBIDDEN_SINGLES_MOVES.has(moveId)) // forbid doubles only moves in singles
+          || (level >= LEVEL_BASED_DENYLIST_THRESHOLD && LEVEL_BASED_DENYLIST.has(moveId)))) // forbid level based denylist moves
     ) {
       pool.delete(moveId);
     }
@@ -867,7 +847,7 @@ export function generateMoveset(pokemon: Pokemon): void {
   const movePool = new Map<MoveId, number>([...tmPool.entries(), ...eggMovePool.entries(), ...learnPool.entries()]);
 
   // Step 2: Filter out forbidden moves
-  filterMovePool(movePool, isBoss, hasTrainer);
+  filterMovePool(movePool, isBoss, hasTrainer, pokemon.level);
 
   // Step 3: Adjust weights for trainers
   if (hasTrainer) {
