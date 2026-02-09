@@ -1869,15 +1869,15 @@ interface PokemonPrevolutions {
 
 export const pokemonPrevolutions: PokemonPrevolutions = {};
 
-const megaFormKeys: string[] = [SpeciesFormKey.MEGA, SpeciesFormKey.MEGA_X, SpeciesFormKey.MEGA_Y];
-
 export function initPokemonPrevolutions(): void {
+  const megaFormKeys: string[] = [SpeciesFormKey.MEGA, SpeciesFormKey.MEGA_X, SpeciesFormKey.MEGA_Y];
+
   for (const [pk, evolutions] of Object.entries(pokemonEvolutions)) {
     for (const ev of evolutions) {
       if (ev.evoFormKey && megaFormKeys.includes(ev.evoFormKey)) {
         continue;
       }
-      // TODO: Remove type assertion once `pokemonEvolutions` is typed correctly with `SpeciesId` instead of `string`
+      // TODO: Remove type assertion once `pokemonEvolutions` is typed correctly with `SpeciesId` indices instead of `string`
       pokemonPrevolutions[ev.speciesId] = Number.parseInt(pk) as SpeciesId;
     }
   }
