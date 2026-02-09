@@ -310,6 +310,22 @@
   },
   "overrides": [
     {
+      "includes": ["**/src/ai/**/*.ts"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noExcessiveCognitiveComplexity": {
+              "level": "info",
+              "options": {
+                // Code for AI behavior can have a slightly higher complexity due to the nature of decision trees and such
+                "maxAllowedComplexity": 20
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "includes": ["**/scripts/**/*.js"],
       "linter": {
         "rules": {
