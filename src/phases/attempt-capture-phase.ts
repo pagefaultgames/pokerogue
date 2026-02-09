@@ -1,7 +1,7 @@
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { isBeta, isDev } from "#constants/app-constants";
+import { IS_TEST, isBeta, isDev } from "#constants/app-constants";
 import { SubstituteTag } from "#data/battler-tags";
 import { Gender } from "#data/gender";
 import {
@@ -71,7 +71,7 @@ export class AttemptCapturePhase extends PokemonPhase {
     const shakeProbability = Math.round(65536 / Math.pow(255 / modifiedCatchRate, 0.1875)); // Formula taken from gen 6
     const criticalCaptureChance = getCriticalCaptureChance(modifiedCatchRate);
 
-    if ((isBeta || isDev) && import.meta.env.NODE_ENV !== "test") {
+    if ((isBeta || isDev) && !IS_TEST) {
       console.log(
         "Base Catch Rate: %d\nBall Mult: %d\nStatus Mult: %d\nShiny Bonus: %d\nModified Catch Rate: %d\nShake Probability: %d\nCritical Catch Chance: %d",
         catchRate,

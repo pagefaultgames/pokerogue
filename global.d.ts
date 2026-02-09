@@ -2,11 +2,10 @@ import type { SetupServerApi } from "msw/node";
 
 declare global {
   /**
-   * Only used in testing.
-   * Can technically be undefined/null but for ease of use we are going to assume it is always defined.
-   * Used to load i18n files exclusively.
+   * An MSW HTTP server, used to load i18n locale files during normal tests and serve mock
+   * HTTP requests during API tests.
    *
-   * To set up your own server in a test see `game-data.test.ts`
+   * ⚠️ Should not be used in production code, as it is only populated during test runs!
    */
   var server: SetupServerApi;
 }
