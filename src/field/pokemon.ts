@@ -6026,22 +6026,24 @@ export class PlayerPokemon extends Pokemon {
    * Add friendship to this Pokemon
    *
    * @remarks
-   * This adds friendship to the pokemon's friendship stat (used for evolution, return, etc.) and candy progress.
+   * This adds friendship to the pokemon's friendship stat (used for evolution, return, etc.) and candy progress. \
    * For fusions, candy progress for each species in the fusion is halved.
    *
    * @param friendship - The amount of friendship to add. Negative values will reduce friendship, though not below 0.
-   * @param capped - If true, don't allow the friendship gain to exceed {@linkcode RARE_CANDY_FRIENDSHIP_CAP}. Used to cap friendship gains from rare candies.
+   * @param capped - (Default `false`) Whether the friendship gain should respect {@linkcode RARE_CANDY_FRIENDSHIP_CAP}.
    */
-  addFriendship(friendship: number, capped = false): void {
+  public addFriendship(friendship: number, capped = false): void {
     // Short-circuit friendship loss, which doesn't impact candy friendship
     if (friendship <= 0) {
       this.friendship = Math.max(this.friendship + friendship, 0);
       return;
     }
 
+    const { gameData, gameMode } = globalScene;
+
     const starterSpeciesId = this.species.getRootSpeciesId();
     const fusionStarterSpeciesId = this.isFusion() && this.fusionSpecies ? this.fusionSpecies.getRootSpeciesId() : 0;
-    const starterGameData = globalScene.gameData.starterData;
+    const starterGameData = gameData.starterData;
     const starterData: [StarterDataEntry, SpeciesId][] = [[starterGameData[starterSpeciesId], starterSpeciesId]];
     if (fusionStarterSpeciesId) {
       starterData.push([starterGameData[fusionStarterSpeciesId], fusionStarterSpeciesId]);
@@ -6063,9 +6065,7 @@ export class PlayerPokemon extends Pokemon {
       awardRibbonsToSpeciesLine(this.species.speciesId, RibbonData.FRIENDSHIP);
     }
 
-    let candyFriendshipMultiplier = globalScene.gameMode.isClassic
-      ? timedEventManager.getClassicFriendshipMultiplier()
-      : 1;
+    let candyFriendshipMultiplier = gameMode.isClassic ? timedEventManager.getClassicFriendshipMultiplier() : 1;
     if (fusionStarterSpeciesId) {
       candyFriendshipMultiplier /= timedEventManager.areFusionsBoosted() ? 1.5 : 2;
     }
@@ -6075,8 +6075,12 @@ export class PlayerPokemon extends Pokemon {
       sd.friendship = (sd.friendship || 0) + candyFriendshipAmount;
       const friendshipCap = getStarterValueFriendshipCap(speciesStarterCosts[id]);
       if (sd.friendship >= friendshipCap) {
-        globalScene.gameData.addStarterCandy(getPokemonSpecies(id), Math.floor(sd.friendship / friendshipCap));
-        sd.friendship %= friendshipCap;
+        const wasCandyIncremeted = gameData.addStarterCandy(id, Math.floor(sd.friendship / friendshipCap));
+        if (wasCandyIncremeted) {
+          sd.friendship %= friendshipCap;
+        } else {
+          sd.friendship = friendshipCap - 1;
+        }
       }
     });
   }
