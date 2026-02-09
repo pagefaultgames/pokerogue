@@ -7,6 +7,7 @@ import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 // Re-export the value holder classes for compatibility with existing imports looking over here
+// TODO: Remove these re-exports and update associated imports
 // biome-ignore lint/performance/noBarrelFile: stopgap to avoid massive merge conflicts
 export { BooleanHolder, NumberHolder } from "#utils/value-holder";
 
