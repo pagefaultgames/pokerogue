@@ -1,10 +1,9 @@
 /*
- * SPDX-Copyright-Text: 2026 Pagefault Games
+ * SPDX-FileCopyrightText: 2026 Pagefault Games
  * SPDX-FileContributor: SirzBenjie
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-
 import { EGG_MOVE_LEVEL_REQUIREMENT } from "#balance/moves/moveset-generation";
 import { SpeciesId } from "#enums/species-id";
 import { spawn } from "node:child_process";
