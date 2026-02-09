@@ -1716,7 +1716,7 @@ export class GameData {
       );
     };
 
-    if (!newCatch || !speciesStarterCosts.hasOwnProperty(species.speciesId)) {
+    if (!newCatch || !Object.hasOwn(speciesStarterCosts, species.speciesId)) {
       return await checkPrevolution(false);
     }
     if (!showMessage) {
