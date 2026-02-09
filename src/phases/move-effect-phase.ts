@@ -924,9 +924,8 @@ export class MoveEffectPhase extends PokemonPhase {
       if (
         pokemon === user
         || !pokemon.hasAbilityWithAttr("PostDancingMoveAbAttr")
-        || pokemon.getTag(SemiInvulnerableTag) // Avoid creating unneeded phases since Dancer is (currently) the only ability to use its attribute.
-        || // If other abilities with different conditions are added, this check can be moved ability-side with little issue.
-        !move.hasFlag(MoveFlags.DANCE_MOVE)
+        || pokemon.getTag(SemiInvulnerableTag) // Avoid creating unneeded phases since Dancer is (currently) the only ability to use its attribute. // If other abilities with different conditions are added, this check can be moved ability-side with little issue.
+        || !move.hasFlag(MoveFlags.DANCE_MOVE)
       ) {
         continue;
       }

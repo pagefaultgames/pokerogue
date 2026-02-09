@@ -199,7 +199,7 @@ describe("Abilities - Dancer", () => {
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.toEndOfTurn();
 
-    const expectedOrder = [feebas.name, shuckle1.name, shuckle2.name] as const;
+    const expectedOrder = [shuckle1.name, shuckle2.name, feebas.name] as const;
 
     const abOrder = dancerSpy.mock.calls.map(([{ pokemon }]) => pokemon.name);
     expect(abOrder).toEqual(expectedOrder);
@@ -264,23 +264,23 @@ describe("Abilities - Dancer", () => {
   });
 
   it("should trigger confusion self-damage, even through Protect", async () => {
-    game.override.confusionActivation(false); // disable confusion unless forced by mocks
+    game.override.confusionActivation(false);
     await game.classicMode.startBattle(SpeciesId.ORICORIO);
 
     const oricorio = game.field.getPlayerPokemon();
-    oricorio.addTag(BattlerTagType.CONFUSED, 0, MoveId.CONFUSE_RAY, game.field.getEnemyPokemon().id);
 
-    // Protect, then copy swords dance and hit self
+    // Protect, then copy swords dance and hit self while doing so
     game.move.use(MoveId.PROTECT);
     await game.move.forceEnemyMove(MoveId.SWORDS_DANCE);
 
-    await game.phaseInterceptor.to("MovePhase"); // protect
-    await game.phaseInterceptor.to("MoveEndPhase"); // Swords dance
-    await game.move.forceConfusionActivation(true); // force confusion proc during swords dance copy
+    await game.phaseInterceptor.to("MoveEndPhase");
+    oricorio.addTag(BattlerTagType.CONFUSED, 0, MoveId.CONFUSE_RAY, game.field.getEnemyPokemon().id);
+    await game.move.forceConfusionActivation(true);
     await game.toEndOfTurn();
 
-    // took damage from confusion instead of using move; player remains confused
+    // took damage from confusion instead of using SD; player remains confused
     expect(oricorio).not.toHaveFullHp();
+    expect(oricorio).toHaveStatStage(Stat.ATK, 0);
     expect(oricorio).toHaveBattlerTag(BattlerTagType.CONFUSED);
   });
 
