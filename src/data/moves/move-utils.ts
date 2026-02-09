@@ -158,3 +158,21 @@ export function getCounterAttackTarget(user: Pokemon, damageCategory?: MoveDamag
   }
   return null;
 }
+
+/**
+ * Determine whether the move's {@linkcode Move#moveTarget | target} can target an opponent
+ * @param move The move to check
+ * @returns Whether the move can target an opponent
+ */
+export function mayTargetOpponent(move: Move): boolean {
+  switch (move.moveTarget) {
+    case MoveTarget.NEAR_ENEMY:
+    case MoveTarget.ALL_NEAR_ENEMIES:
+    case MoveTarget.ALL_ENEMIES:
+    case MoveTarget.ENEMY_SIDE:
+    case MoveTarget.RANDOM_NEAR_ENEMY:
+    case MoveTarget.ATTACKER:
+      return true;
+  }
+  return false;
+}

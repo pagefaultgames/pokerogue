@@ -4,6 +4,7 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { TrappedTag } from "#data/battler-tags";
 import { allMoves } from "#data/data-lists";
+import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Command } from "#enums/command";
@@ -11,6 +12,7 @@ import { MoveCategory, type MoveDamageCategory } from "#enums/move-category";
 import type { MoveId } from "#enums/move-id";
 import { isVirtual } from "#enums/move-use-mode";
 import { PokemonType } from "#enums/pokemon-type";
+import { StatusEffect } from "#enums/status-effect";
 import type { Pokemon } from "#field/pokemon";
 import type { Move, MoveConditionFunc, UserMoveConditionFunc } from "#moves/move";
 import { getCounterAttackTarget } from "#moves/move-utils";
@@ -293,4 +295,12 @@ export const consecutiveUseRestriction = new MoveRestriction(
 export const gravityUseRestriction = new MoveRestriction(
   () => globalScene.arena.hasTag(ArenaTagType.GRAVITY),
   "battle:moveDisabledGravity",
+);
+
+export const targetSleptOrComatoseCondition = new MoveCondition(
+  (_user: Pokemon, target: Pokemon, _move: Move) =>
+    target.status?.effect === StatusEffect.SLEEP || target.hasAbility(AbilityId.COMATOSE),
+);
+export const userSleptOrComatoseCondition = new MoveCondition(
+  user => user.status?.effect === StatusEffect.SLEEP || user.hasAbility(AbilityId.COMATOSE),
 );

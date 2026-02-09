@@ -60,8 +60,8 @@ export const EGG_MOVE_LEVEL_REQUIREMENT = 80;
 /** Below this level, Pokémon will be unable to generate with rare egg moves */
 export const RARE_EGG_MOVE_LEVEL_REQUIREMENT = 170;
 
-/**The rate, out of 100, for {@link FORCED_SIGNATURE_MOVES | forced signature moves} to be generated. */
-export const FORCED_SIGNATURE_MOVE_CHANCE = 60 satisfies IntRange<1, 100>; // 1 in X chance
+/** The rate, out of 100, for {@link FORCED_SIGNATURE_MOVES | forced signature moves} to be generated. */
+export const FORCED_SIGNATURE_MOVE_CHANCE = 60 satisfies IntRange<1, 100>; // X in 100 chance
 
 /** The level threshold above which moves in the {@linkcode LEVEL_BASED_DENYLIST} are prevented from spawning */
 export const LEVEL_BASED_DENYLIST_THRESHOLD = 70;
