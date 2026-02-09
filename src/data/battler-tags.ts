@@ -2499,6 +2499,9 @@ export class CursedTag extends SerializableBattlerTag {
 /**
  * Battler tag for attacks that remove a type post use.
  */
+// TODO: Remove this "tag" - it is solely used to communicate type changes from Burn Up/Double Shock to Roost.
+// This is a hacky way to add the bare minimum amount of granularity
+// when a more comprehensive system would likely be preferred.
 export class RemovedTypeTag extends SerializableBattlerTag {
   public declare readonly tagType: RemovedTypeTagType;
   constructor(tagType: RemovedTypeTagType, lapseType: BattlerTagLapseType, sourceMove: MoveId) {
@@ -2514,13 +2517,28 @@ export class GroundedTag extends SerializableBattlerTag {
   }
 }
 
-/** Removes flying type from a pokemon for a single turn */
+/**
+ * Tag to implement the temporary grounding effect of {@linkcode MoveId.ROOST | Roost}.
+ * Roost removes the user's Flying type (if they have one) for the remainder of the current turn.
+ */
 export class RoostedTag extends BattlerTag {
-  private isBaseFlying: boolean;
-  private isBasePureFlying: boolean;
+  /**
+   * Whether the Pokemon was purely Flying-type prior to using Roost, barring any added types.
+   * Pure flying-types will have their Flying-type changed to Normal instead of being removed.
+   */
+  // TODO: The determination of this parameter's value is flat-out wrong in a myriad of ways -
+  // most notably, it ignores all type changes that occurred before the user used Roost.
+  // This breaks Soak -> Roost and similar interactions.
+  // Instead, a much easier approach would be to cache the original types in their entirety.
+  private isBasePureFlying = false;
 
   constructor() {
     super(BattlerTagType.ROOSTED, BattlerTagLapseType.TURN_END, 1, MoveId.ROOST);
+  }
+
+  // TODO: This will need adjustment to not fail the current move if/when these checks are propagated upwards to calling moves
+  override canAdd(pokemon: Pokemon): boolean {
+    return pokemon.isOfType(PokemonType.FLYING) && !pokemon.isTerastallized;
   }
 
   onRemove(pokemon: Pokemon): void {
@@ -2532,22 +2550,20 @@ export class RoostedTag extends BattlerTag {
     const trickOrTreatApplied: boolean =
       currentTypes.includes(PokemonType.GHOST) && !baseTypes.includes(PokemonType.GHOST);
 
-    if (this.isBaseFlying) {
-      let modifiedTypes: PokemonType[] = [];
-      if (this.isBasePureFlying) {
-        if (forestsCurseApplied || trickOrTreatApplied) {
-          modifiedTypes = currentTypes.filter(type => type !== PokemonType.NORMAL);
-          modifiedTypes.push(PokemonType.FLYING);
-        } else {
-          modifiedTypes = [PokemonType.FLYING];
-        }
-      } else {
-        modifiedTypes = [...currentTypes];
+    let modifiedTypes: PokemonType[] = [];
+    if (this.isBasePureFlying) {
+      if (forestsCurseApplied || trickOrTreatApplied) {
+        modifiedTypes = currentTypes.filter(type => type !== PokemonType.NORMAL);
         modifiedTypes.push(PokemonType.FLYING);
+      } else {
+        modifiedTypes = [PokemonType.FLYING];
       }
-      pokemon.summonData.types = modifiedTypes;
-      pokemon.updateInfo();
+    } else {
+      modifiedTypes = [...currentTypes];
+      modifiedTypes.push(PokemonType.FLYING);
     }
+    pokemon.summonData.types = modifiedTypes;
+    pokemon.updateInfo();
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -2556,21 +2572,18 @@ export class RoostedTag extends BattlerTag {
 
     const isOriginallyDualType = baseTypes.length === 2;
     const isCurrentlyDualType = currentTypes.length === 2;
-    this.isBaseFlying = baseTypes.includes(PokemonType.FLYING);
     this.isBasePureFlying = baseTypes[0] === PokemonType.FLYING && baseTypes.length === 1;
 
-    if (this.isBaseFlying) {
-      let modifiedTypes: PokemonType[];
-      if (this.isBasePureFlying && !isCurrentlyDualType) {
-        modifiedTypes = [PokemonType.NORMAL];
-      } else if (!!pokemon.getTag(RemovedTypeTag) && isOriginallyDualType && !isCurrentlyDualType) {
-        modifiedTypes = [PokemonType.UNKNOWN];
-      } else {
-        modifiedTypes = currentTypes.filter(type => type !== PokemonType.FLYING);
-      }
-      pokemon.summonData.types = modifiedTypes;
-      pokemon.updateInfo();
+    let modifiedTypes: PokemonType[];
+    if (this.isBasePureFlying && !isCurrentlyDualType) {
+      modifiedTypes = [PokemonType.NORMAL];
+    } else if (!!pokemon.getTag(RemovedTypeTag) && isOriginallyDualType && !isCurrentlyDualType) {
+      modifiedTypes = [PokemonType.UNKNOWN];
+    } else {
+      modifiedTypes = currentTypes.filter(type => type !== PokemonType.FLYING);
     }
+    pokemon.summonData.types = modifiedTypes;
+    pokemon.updateInfo();
   }
 }
 
