@@ -32,7 +32,6 @@ export class ArenaData {
     // Exclude any unserializable tags from the serialized data (such as ones only lasting 1 turn).
     // NOTE: The filter has to be done _after_ map, data loaded from `ArenaTagTypeData`
     // is not yet an instance of `ArenaTag`
-    // TODO: Move this to a migrate script
     this.tags =
       source.tags
         ?.map((t: ArenaTag | ArenaTagData) => loadArenaTag(t))
