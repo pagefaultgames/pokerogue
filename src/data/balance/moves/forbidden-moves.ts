@@ -54,7 +54,6 @@ export const FORBIDDEN_TM_MOVES: ReadonlySet<MoveId> = new Set([
   MoveId.VENOM_DRENCH,
 ]);
 
-
 /**
  * Moves that are prevented from spawning if the mon is at a higher level than {@linkcode LEVEL_BASED_DENYLIST_THRESHOLD}
  */
