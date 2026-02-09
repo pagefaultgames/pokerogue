@@ -163,7 +163,7 @@ export abstract class AbAttr {
    * @param _params - The parameters passed to this attribute's {@linkcode apply} function; must match type exactly
    * @privateRemarks
    * If more fields are provided than needed, any excess can be discarded using destructuring.
-   */ StatMultiplierAbAttr;
+   */
   canApply(_params: Exact<Parameters<this["apply"]>[0]>): boolean {
     return true;
   }
@@ -5865,9 +5865,7 @@ export class AiMovegenMoveStatsAbAttr extends AbAttr {
   }
 }
 
-/**
- * Used for NoGuard.
- */
+/** Used for No Guard. */
 export class AlwaysHitAbAttr extends AiMovegenMoveStatsAbAttr {
   constructor() {
     super(({ accMult }: AiMovegenMoveStatsAbAttrParams) => {
@@ -5881,7 +5879,6 @@ export class AlwaysHitAbAttr extends AiMovegenMoveStatsAbAttr {
  */
 export class SummonTerrainAiMovegenMoveStatsAbAttr extends AiMovegenMoveStatsAbAttr {
   /**
-   *
    * @param moveType - Moves with this type will have power boosted during moveset gen
    * @param boostedMove - A tuple containing the move ID and a multiplier for its power
    */

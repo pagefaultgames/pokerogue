@@ -564,7 +564,7 @@ export function initAbilities() {
     new AbBuilder(AbilityId.DROUGHT, 3) //
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SUNNY)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SUNNY)
-      .attr(AiMovegenMoveStatsAbAttr, draughtAiMovegenEffect)
+      .attr(AiMovegenMoveStatsAbAttr, droughtAiMovegenEffect)
       .build(),
     new AbBuilder(AbilityId.ARENA_TRAP, 3) //
       .attr(ArenaTrapAbAttr, (_user, target) => target.isGrounded())
@@ -1304,7 +1304,7 @@ export function initAbilities() {
         if (params.move.type === PokemonType.WATER) {
           params.powerMult.value *= 0;
         } else {
-          draughtAiMovegenEffect(params);
+          droughtAiMovegenEffect(params);
         }
       })
       .bypassFaint()
@@ -2072,7 +2072,7 @@ export function initAbilities() {
         4 / 3,
       )
       .attr(AiMovegenMoveStatsAbAttr, params => {
-        draughtAiMovegenEffect(params);
+        droughtAiMovegenEffect(params);
         if (params.move.category === MoveCategory.PHYSICAL) {
           params.powerMult.value *= 4 / 3;
         }
@@ -2322,7 +2322,7 @@ const sheerForceHitDisableAbCondition: AbAttrCondition = (pokemon: Pokemon): boo
 };
 
 /**
- * DRY implementation for the AIMovegenMoveStatsAbAttr effect of harsh-sunlight summoning abilities.
+ * DRY implementation for the `AIMovegenMoveStatsAbAttr` effect of harsh-sunlight summoning abilities.
  * @param __namedParameters.move - Needed for proper typedoc rendering
  */
 function drizzleAiMovegenEffect({ move, powerMult, accMult }: AiMovegenMoveStatsAbAttrParams) {
@@ -2348,10 +2348,10 @@ function drizzleAiMovegenEffect({ move, powerMult, accMult }: AiMovegenMoveStats
 }
 
 /**
- * DRY implementation for the AIMovegenMoveStatsAbAttr effect of harsh-sunlight summoning abilities
+ * DRY implementation for the `AIMovegenMoveStatsAbAttr` effect of harsh-sunlight summoning abilities
  * @param __namedParameters.move - Needed for proper typedoc rendering
  */
-function draughtAiMovegenEffect({ move, powerMult, accMult, instantCharge }: AiMovegenMoveStatsAbAttrParams) {
+function droughtAiMovegenEffect({ move, powerMult, accMult, instantCharge }: AiMovegenMoveStatsAbAttrParams) {
   if (move.id === MoveId.WEATHER_BALL) {
     // double power in addition to weather boost
     powerMult.value *= 3;
