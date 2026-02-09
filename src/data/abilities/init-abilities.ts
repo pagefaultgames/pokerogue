@@ -1457,7 +1457,7 @@ export function initAbilities() {
       /*
        * Incorrect interations with:
        * - Petal Dance (should not lock in or count down timer; currently does both)
-       * - Status moves that fail to propagate condition checks
+       * - Status moves that incorrectly fail to propagate condition checks
        *   (includes stat stage moves as well as Teeter Dance and co.) due to moves being still considered "successful"
        */
       .edgeCase()

@@ -2,7 +2,7 @@ import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { EntryHazardTag, SuppressAbilitiesTag } from "#data/arena-tag";
-import { type BattlerTag, CritBoostTag, SemiInvulnerableTag } from "#data/battler-tags";
+import { type BattlerTag, CritBoostTag } from "#data/battler-tags";
 import { getBerryEffectFunc } from "#data/berry";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { SpeciesFormChangeAbilityTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
@@ -22,7 +22,6 @@ import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import type { BerryType } from "#enums/berry-type";
 import { Command } from "#enums/command";
-import { HitCheckResult } from "#enums/hit-check-result";
 import { HitResult } from "#enums/hit-result";
 import { CommonAnim } from "#enums/move-anims-common";
 import { MoveCategory } from "#enums/move-category";
@@ -45,7 +44,7 @@ import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#modifiers/modifier";
 import { BerryModifierType } from "#modifiers/modifier-type";
 import { PokemonMove } from "#moves/pokemon-move";
-import type { HitCheckEntry } from "#phases/move-effect-phase";
+import type { HitCheckEntry, MoveEffectPhase } from "#phases/move-effect-phase";
 import type { StatStageChangePhase } from "#phases/stat-stage-change-phase";
 import type {
   AbAttrCondition,
@@ -4478,28 +4477,24 @@ export interface PostMoveUsedAbAttrParams extends AbAttrBaseParams {
 
 /**
  * Attribute to trigger effects after a move is used by either side of the field.
+ * @remarks
+ * This will only trigger on successful, non-reflected move uses, the checks for which are
+ * consolidated inside the {@linkcode MoveEffectPhase}.
  */
 abstract class PostMoveUsedAbAttr extends AbAttr {
-  public override canApply({ pokemon, source, targets, hitChecks }: Closed<PostMoveUsedAbAttrParams>): boolean {
-    return (
-      !pokemon.getTag(SemiInvulnerableTag)
-      && source !== pokemon
-      && targets.length > 0
-      && hitChecks.some(hr => hr[0] === HitCheckResult.HIT)
-    );
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: psuedo-abstract method
+  public override canApply(params: Closed<PostMoveUsedAbAttrParams>): boolean {
+    return true;
   }
 
   public abstract override apply(params: Closed<PostMoveUsedAbAttrParams>): void;
 }
 
 /**
- * Triggers after a dance move is used either by the opponent or the player.
+ * Ability attribute to implement the effect of {@link https://bulbapedia.bulbagarden.net/wiki/Dancer_(Ability) | Dancer}. \
+ * Dancer triggers whenever another Pokemon uses a dance move, copying it against either the original user or the move's original target as applicable.
  */
 export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
-  public override canApply(params: Closed<PostMoveUsedAbAttrParams>): boolean {
-    return super.canApply(params) && params.move.hasFlag(MoveFlags.DANCE_MOVE);
-  }
-
   public override apply(params: Closed<PostMoveUsedAbAttrParams>): void {
     const { pokemon, move } = params;
     globalScene.phaseManager.unshiftNew(
@@ -4518,6 +4513,7 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
    * @param source - The {@linkcode Pokemon} that originally used the dancing move
    * @param move - The {@linkcode Move} that was originally used
    * @param targets - The original targets of the move
+   * @returns The modified set of targets to use
    */
   private getMoveTargets({
     pokemon,

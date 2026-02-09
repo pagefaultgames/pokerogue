@@ -30,7 +30,7 @@ vi.mock(import("#app/overrides"), async importOriginal => {
  */
 vi.mock(import("i18next"), async importOriginal => {
   // NB: We have to use raw ANSI escapes here since chalk isn't initialized yet.
-  // (For those wondering, this corresponds to the same rgb(223, 184, 216) color used in the chalk calls below, just in RGB)
+  // (For those wondering, this corresponds to the same #dfb8d8 color used in the chalk calls below, just in RGB)
   console.log("\x1b[38;2;223;184;216mMocking i18next...\x1b[0m");
   const { setupServer } = await import("msw/node");
   const { http, HttpResponse } = await import("msw");

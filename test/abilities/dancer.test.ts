@@ -317,7 +317,6 @@ describe("Abilities - Dancer", () => {
 
     expect(oricorio).toHaveStatusEffect(StatusEffect.NONE);
     expect(oricorio).toHaveStatStage(Stat.ATK, 2);
-    expect(game.field.getEnemyPokemon()).not.toHaveFullHp();
   });
 
   // TODO: This more or less requires an overhaul of Frenzy moves

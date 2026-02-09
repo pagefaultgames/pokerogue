@@ -26,6 +26,7 @@ import { CheckSwitchPhase } from "#phases/check-switch-phase";
 import { CommandPhase } from "#phases/command-phase";
 import { CommonAnimPhase } from "#phases/common-anim-phase";
 import { DamageAnimPhase } from "#phases/damage-anim-phase";
+import { DancerPhase } from "#phases/dancer-phase";
 import { DynamicPhaseMarker } from "#phases/dynamic-phase-marker";
 import { EggHatchPhase } from "#phases/egg-hatch-phase";
 import { EggLapsePhase } from "#phases/egg-lapse-phase";
@@ -134,6 +135,7 @@ const PHASES = Object.freeze({
   CheckSwitchPhase,
   CommandPhase,
   CommonAnimPhase,
+  DancerPhase,
   DamageAnimPhase,
   DynamicPhaseMarker,
   EggHatchPhase,
