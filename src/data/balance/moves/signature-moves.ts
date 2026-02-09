@@ -13,7 +13,7 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
   [SpeciesId.ORICORIO]: MoveId.REVELATION_DANCE,
   [SpeciesId.PALDEA_TAUROS]: MoveId.RAGING_BULL,
   [SpeciesId.VOLCARONA]: MoveId.FIERY_DANCE,
-  [SpeciesId.ARCEUS]: [MoveId.JUDGMENT],
+  [SpeciesId.ARCEUS]: MoveId.JUDGMENT,
   [SpeciesId.SILVALLY]: MoveId.MULTI_ATTACK,
   [SpeciesId.HEATMOR]: MoveId.FIRE_LASH,
   [SpeciesId.CRAMORANT]: [MoveId.SURF, MoveId.DIVE],
@@ -23,8 +23,8 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
   [SpeciesId.HISUI_ARCANINE]: MoveId.HEAD_SMASH,
   [SpeciesId.QUAQUAVAL]: MoveId.AQUA_STEP,
   [SpeciesId.CINDERACE]: MoveId.PYRO_BALL,
-  [SpeciesId.SHAYMIN]: [MoveId.SEED_FLARE],
-  [SpeciesId.OGERPON]: [MoveId.IVY_CUDGEL],
+  [SpeciesId.SHAYMIN]: MoveId.SEED_FLARE,
+  [SpeciesId.OGERPON]: MoveId.IVY_CUDGEL,
   [SpeciesId.DECIDUEYE]: MoveId.SPIRIT_SHACKLE,
   [SpeciesId.HISUI_DECIDUEYE]: MoveId.TRIPLE_ARROWS,
   [SpeciesId.TERAPAGOS]: MoveId.TERA_STARSTORM,
@@ -58,7 +58,14 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
   [SpeciesId.KARTANA]: [MoveId.LEAF_BLADE, MoveId.SMART_STRIKE],
   [SpeciesId.IRON_LEAVES]: MoveId.PSYBLADE,
   [SpeciesId.VAROOM]: MoveId.SPIN_OUT,
-  [SpeciesId.REVAVROOM]: [MoveId.SPIN_OUT, MoveId.COMBAT_TORQUE, MoveId.MAGICAL_TORQUE, MoveId.NOXIOUS_TORQUE, MoveId.WICKED_TORQUE, MoveId.BLAZING_TORQUE],
+  [SpeciesId.REVAVROOM]: [
+    MoveId.SPIN_OUT,
+    MoveId.COMBAT_TORQUE,
+    MoveId.MAGICAL_TORQUE,
+    MoveId.NOXIOUS_TORQUE,
+    MoveId.WICKED_TORQUE,
+    MoveId.BLAZING_TORQUE,
+  ],
   [SpeciesId.PALAFIN]: MoveId.JET_PUNCH,
   [SpeciesId.MEOWSCARADA]: MoveId.FLOWER_TRICK,
   [SpeciesId.SNEASLER]: MoveId.DIRE_CLAW,
@@ -101,7 +108,17 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
   [SpeciesId.ZYGARDE]: [MoveId.THOUSAND_ARROWS, MoveId.THOUSAND_WAVES],
   [SpeciesId.NIHILEGO]: MoveId.POWER_GEM, // Avoids Head Smash
   [SpeciesId.MELMETAL]: MoveId.DOUBLE_IRON_BASH,
-  [SpeciesId.EEVEE]: [MoveId.BOUNCY_BUBBLE, MoveId.BUZZY_BUZZ, MoveId.SIZZLY_SLIDE, MoveId.BADDY_BAD, MoveId.GLITZY_GLOW, MoveId.FREEZY_FROST, MoveId.SAPPY_SEED, MoveId.SPARKLY_SWIRL], // Partner Moves
+  // Partner Moves
+  [SpeciesId.EEVEE]: [
+    MoveId.BOUNCY_BUBBLE,
+    MoveId.BUZZY_BUZZ,
+    MoveId.SIZZLY_SLIDE,
+    MoveId.BADDY_BAD,
+    MoveId.GLITZY_GLOW,
+    MoveId.FREEZY_FROST,
+    MoveId.SAPPY_SEED,
+    MoveId.SPARKLY_SWIRL,
+  ],
   [SpeciesId.ALOLA_RAICHU]: MoveId.THUNDERBOLT, // Avoids Zippy Zap
   [SpeciesId.HISUI_SAMUROTT]: [MoveId.RAZOR_SHELL, MoveId.CEASELESS_EDGE],
   [SpeciesId.ARCTOVISH]: MoveId.FISHIOUS_REND, // Benjie prefers this be addressed outside of signature moves
@@ -151,7 +168,15 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
   [SpeciesId.DRAGAPULT]: MoveId.DRAGON_DARTS,
   [SpeciesId.DUNSPARCE]: MoveId.HYPER_DRILL,
   [SpeciesId.DUDUNSPARCE]: MoveId.HYPER_DRILL,
-  [SpeciesId.PIKACHU]: [MoveId.VOLT_TACKLE, MoveId.ZIPPY_ZAP, MoveId.SPLISHY_SPLASH, MoveId.FLOATY_FALL, MoveId.METEOR_MASH, MoveId.ICICLE_CRASH, MoveId.FLYING_PRESS],
+  [SpeciesId.PIKACHU]: [
+    MoveId.VOLT_TACKLE,
+    MoveId.ZIPPY_ZAP,
+    MoveId.SPLISHY_SPLASH,
+    MoveId.FLOATY_FALL,
+    MoveId.METEOR_MASH,
+    MoveId.ICICLE_CRASH,
+    MoveId.FLYING_PRESS,
+  ],
   [SpeciesId.RAMPARDOS]: MoveId.HEAD_SMASH,
   [SpeciesId.AEGISLASH]: MoveId.KINGS_SHIELD,
   [SpeciesId.GENESECT]: MoveId.TECHNO_BLAST,
@@ -170,7 +195,6 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
   // Avoids dazzling gleam possibility
   [SpeciesId.GRANBULL]: MoveId.PLAY_ROUGH,
 };
-
 
 export const FORCED_RIVAL_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]>> = {
   [SpeciesId.UNFEZANT]: MoveId.SLASH,
