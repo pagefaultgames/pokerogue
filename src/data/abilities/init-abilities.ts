@@ -1456,9 +1456,9 @@ export function initAbilities() {
       .attr(PostDancingMoveAbAttr)
       /*
        * Incorrect interations with:
-       * Petal Dance (should not lock in or count down timer; currently does both)
-       * Flinches (due to tag being removed earlier)
-       * Failed/protected moves (should not trigger if original move is protected against)
+       * - Petal Dance (should not lock in or count down timer; currently does both)
+       * - Status moves that fail to propagate condition checks
+       *   (includes stat stage moves as well as Teeter Dance and co.) due to moves being still considered "successful"
        */
       .edgeCase()
       .build(),

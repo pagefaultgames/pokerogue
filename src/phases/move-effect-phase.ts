@@ -1,3 +1,4 @@
+import type { PostMoveUsedAbAttrParams } from "#abilities/ab-attrs";
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -19,7 +20,7 @@ import { MoveId } from "#enums/move-id";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import { MoveResult } from "#enums/move-result";
 import { MoveTarget } from "#enums/move-target";
-import { isReflected, MoveUseMode } from "#enums/move-use-mode";
+import { isDancerCopiable, isReflected, MoveUseMode } from "#enums/move-use-mode";
 import { PokemonType } from "#enums/pokemon-type";
 import type { Pokemon } from "#field/pokemon";
 import {
@@ -899,7 +900,25 @@ export class MoveEffectPhase extends PokemonPhase {
     this.getTargets().forEach(target => {
       target.turnData.moveEffectiveness = null;
     });
+
+    if (isDancerCopiable(this.useMode)) {
+      this.queueDancerResponses();
+    }
     super.end();
+  }
+
+  private queueDancerResponses(): void {
+    const user = this.getUserPokemon();
+    const { hitChecks, move, targets } = this;
+    const params: Omit<PostMoveUsedAbAttrParams, "pokemon"> = {
+      hitChecks,
+      move,
+      source: user,
+      targets,
+    };
+    for (const pokemon of globalScene.getField(true)) {
+      applyAbAttrs("PostMoveUsedAbAttr", { pokemon, ...params } satisfies PostMoveUsedAbAttrParams);
+    }
   }
 
   // #region Helpers

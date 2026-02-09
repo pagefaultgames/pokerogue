@@ -3357,6 +3357,15 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.isPlayer() !== target.isPlayer();
   }
 
+  /**
+   * Check whether the specified Pokémon is an ally
+   * @param target - The {@linkcode Pokemon} to compare against
+   * @returns Whether the 2 Pokemon are on the same party
+   */
+  public isAlly(target: Pokemon): boolean {
+    return this.isPlayer() === target.isPlayer();
+  }
+
   getOpponent(targetIndex: number): Pokemon | null {
     const ret = this.getOpponents()[targetIndex];
     // TODO: why does this check for summonData and can we remove it?

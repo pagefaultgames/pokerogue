@@ -42,7 +42,6 @@ export class MoveEndPhase extends PokemonPhase {
       }
     }
 
-    // TODO: Unshift a phase to trigger dancer for all active pokemon if at least 1 has the ability.
     this.end();
   }
 }
