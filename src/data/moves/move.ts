@@ -100,7 +100,9 @@ import {
   lastResortCondition,
   MoveCondition,
   MoveRestriction,
+  targetSleptOrComatoseCondition,
   upperHandCondition,
+  userSleptOrComatoseCondition,
 } from "#moves/move-condition";
 import { frenzyMissFunc, getCounterAttackTarget, getMoveTargets } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
@@ -8922,12 +8924,6 @@ const failOnBossCondition: MoveConditionFunc = (_user, target, _move) => !target
 
 const failIfSingleBattle: MoveConditionFunc = (_user, _target, _move) => globalScene.currentBattle.double;
 
-const userSleptOrComatoseCondition: MoveConditionFunc = user =>
-  user.status?.effect === StatusEffect.SLEEP || user.hasAbility(AbilityId.COMATOSE);
-
-const targetSleptOrComatoseCondition: MoveConditionFunc = (_user: Pokemon, target: Pokemon, _move: Move) =>
-  target.status?.effect === StatusEffect.SLEEP || target.hasAbility(AbilityId.COMATOSE);
-
 const failIfLastCondition: MoveConditionFunc = () => globalScene.phaseManager.hasPhaseOfType("MovePhase");
 
 const failIfLastInPartyCondition: MoveConditionFunc = (user: Pokemon, _target: Pokemon, _move: Move) => {
@@ -10502,7 +10498,7 @@ export function initMoves() {
       .reflectable(),
     new AttackMove(MoveId.WAKE_UP_SLAP, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 70, 100, 10, -1, 0, 4)
       .attr(MovePowerMultiplierAttr, (user, target, move) =>
-        targetSleptOrComatoseCondition(user, target, move) ? 2 : 1,
+        targetSleptOrComatoseCondition.apply(user, target, move) ? 2 : 1,
       )
       .attr(HealStatusEffectAttr, false, StatusEffect.SLEEP),
     new AttackMove(MoveId.HAMMER_ARM, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 100, 90, 10, -1, 0, 4)

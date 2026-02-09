@@ -163,7 +163,7 @@ export abstract class AbAttr {
    * @param _params - The parameters passed to this attribute's {@linkcode apply} function; must match type exactly
    * @privateRemarks
    * If more fields are provided than needed, any excess can be discarded using destructuring.
-   */
+   */ StatMultiplierAbAttr;
   canApply(_params: Exact<Parameters<this["apply"]>[0]>): boolean {
     return true;
   }
@@ -1695,8 +1695,8 @@ export interface StatMultiplierAbAttrParams extends AbAttrBaseParams {
 
 export class StatMultiplierAbAttr extends AbAttr {
   private declare readonly _: never;
-  private readonly stat: BattleStat;
-  private readonly multiplier: number;
+  public readonly stat: BattleStat;
+  public readonly multiplier: number;
   /**
    * Function determining if the stat multiplier is able to be applied to the move.
    *
@@ -5190,7 +5190,6 @@ export class MoveAbilityBypassAbAttr extends AbAttr {
   }
 }
 
-
 /** Attribute for abilities that allow moves that make contact to ignore protection (i.e. Unseen Fist) */
 export class IgnoreProtectOnContactAbAttr extends AbAttr {
   private declare readonly _: never;
@@ -5813,7 +5812,6 @@ class ForceSwitchOutHelper {
       : null;
   }
 }
-
 
 /**
  * Parameters for ability attributes that modify move stats during AI move generation.

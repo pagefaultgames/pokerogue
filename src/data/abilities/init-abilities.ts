@@ -168,6 +168,7 @@ import {
   StatStageChangeCopyAbAttr,
   StatStageChangeMultiplierAbAttr,
   StatusEffectImmunityAbAttr,
+  SummonTerrainAiMovegenMoveStatsAbAttr,
   SuppressWeatherEffectAbAttr,
   SyncEncounterNatureAbAttr,
   SynchronizeStatusAbAttr,
@@ -388,6 +389,11 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.HUGE_POWER, 3) //
       .attr(StatMultiplierAbAttr, Stat.ATK, 2)
+      .attr(AiMovegenMoveStatsAbAttr, ({ move, powerMult }) => {
+        if (move.category === MoveCategory.PHYSICAL) {
+          powerMult.value *= 2;
+        }
+      })
       .build(),
     new AbBuilder(AbilityId.POISON_POINT, 3) //
       .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.POISON)
@@ -469,6 +475,12 @@ export function initAbilities() {
     new AbBuilder(AbilityId.HUSTLE, 3) //
       .attr(StatMultiplierAbAttr, Stat.ATK, 1.5)
       .attr(StatMultiplierAbAttr, Stat.ACC, 0.8, (_user, _target, move) => move.category === MoveCategory.PHYSICAL)
+      .attr(AiMovegenMoveStatsAbAttr, ({ move, accMult, powerMult }: AiMovegenMoveStatsAbAttrParams) => {
+        if (move.category === MoveCategory.PHYSICAL) {
+          accMult.value *= 0.8;
+          powerMult.value *= 1.5;
+        }
+      })
       .build(),
     new AbBuilder(AbilityId.CUTE_CHARM, 3) //
       .attr(PostDefendContactApplyTagChanceAbAttr, 30, BattlerTagType.INFATUATED)
@@ -570,6 +582,11 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.PURE_POWER, 3) //
       .attr(StatMultiplierAbAttr, Stat.ATK, 2)
+      .attr(AiMovegenMoveStatsAbAttr, ({ move, powerMult }) => {
+        if (move.category === MoveCategory.PHYSICAL) {
+          powerMult.value *= 2;
+        }
+      })
       .build(),
     new AbBuilder(AbilityId.SHELL_ARMOR, 3) //
       .attr(BlockCritAbAttr)
@@ -689,6 +706,11 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.SNIPER, 4) //
       .attr(MultCritAbAttr, 1.5)
+      .attr(AiMovegenMoveStatsAbAttr, ({ move, powerMult }: AiMovegenMoveStatsAbAttrParams) => {
+        if (move.hasAttr("CritOnlyAttr")) {
+          powerMult.value *= 1.5;
+        }
+      })
       .build(),
     new AbBuilder(AbilityId.MAGIC_GUARD, 4) //
       .attr(BlockNonDirectDamageAbAttr)
@@ -990,6 +1012,11 @@ export function initAbilities() {
           !globalScene.phaseManager.hasPhaseOfType("MovePhase", phase => phase.pokemon.id !== user.id),
         1.3,
       )
+      .attr(AiMovegenMoveStatsAbAttr, ({ move, powerMult }) => {
+        if (move.priority < 0) {
+          powerMult.value *= 1.3;
+        }
+      })
       .build(),
     new AbBuilder(AbilityId.ILLUSION, 5) //
       // // The Pokemon generate an illusion if it's available
@@ -1626,9 +1653,19 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.INTREPID_SWORD, 8) //
       .attr(PostSummonStatStageChangeAbAttr, [Stat.ATK], 1, true)
+      .attr(AiMovegenMoveStatsAbAttr, ({ move, powerMult }) => {
+        if (move.category === MoveCategory.PHYSICAL && !move.hasAttr("DefAtkAttr")) {
+          powerMult.value *= 1.5;
+        }
+      })
       .build(),
     new AbBuilder(AbilityId.DAUNTLESS_SHIELD, 8) //
       .attr(PostSummonStatStageChangeAbAttr, [Stat.DEF], 1, true)
+      .attr(AiMovegenMoveStatsAbAttr, ({ move, powerMult }) => {
+        if (move.hasAttr("DefAtkAttr")) {
+          powerMult.value *= 1.5;
+        }
+      })
       .build(),
     new AbBuilder(AbilityId.LIBERO, 8) //
       .attr(PokemonTypeChangeAbAttr)
@@ -1768,6 +1805,11 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.GORILLA_TACTICS, 8) //
       .attr(GorillaTacticsAbAttr)
+      .attr(AiMovegenMoveStatsAbAttr, ({ move, powerMult }) => {
+        if (move.category === MoveCategory.PHYSICAL) {
+          powerMult.value *= 1.5;
+        }
+      })
       // TODO: Verify whether Gorilla Tactics increases struggle's power or not
       .edgeCase()
       .build(),
@@ -1984,6 +2026,11 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.SWORD_OF_RUIN, 9) //
       .attr(FieldMultiplyStatAbAttr, Stat.DEF, 0.75)
+      .attr(AiMovegenMoveStatsAbAttr, ({ move, powerMult }) => {
+        if (move.category === MoveCategory.PHYSICAL) {
+          powerMult.value *= 1.25;
+        }
+      })
       .attr(PostSummonMessageAbAttr, user =>
         i18next.t("abilityTriggers:postSummonSwordOfRuin", {
           pokemonNameWithAffix: getPokemonNameWithAffix(user),
@@ -2003,6 +2050,11 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.BEADS_OF_RUIN, 9) //
       .attr(FieldMultiplyStatAbAttr, Stat.SPDEF, 0.75)
+      .attr(AiMovegenMoveStatsAbAttr, ({ move, powerMult }) => {
+        if (move.category === MoveCategory.SPECIAL) {
+          powerMult.value *= 1.25;
+        }
+      })
       .attr(PostSummonMessageAbAttr, user =>
         i18next.t("abilityTriggers:postSummonBeadsOfRuin", {
           pokemonNameWithAffix: getPokemonNameWithAffix(user),
@@ -2019,10 +2071,21 @@ export function initAbilities() {
         Stat.ATK,
         4 / 3,
       )
+      .attr(AiMovegenMoveStatsAbAttr, params => {
+        draughtAiMovegenEffect(params);
+        if (params.move.category === MoveCategory.PHYSICAL) {
+          params.powerMult.value *= 4 / 3;
+        }
+      })
       .build(),
     new AbBuilder(AbilityId.HADRON_ENGINE, 9) //
       .attr(PostSummonTerrainChangeAbAttr, TerrainType.ELECTRIC)
       .attr(PostBiomeChangeTerrainChangeAbAttr, TerrainType.ELECTRIC)
+      .attr(AiMovegenMoveStatsAbAttr, ({ move, powerMult }) => {
+        if (move.category === MoveCategory.SPECIAL) {
+          powerMult.value *= 4 / 3;
+        }
+      })
       .conditionalAttr(getTerrainCondition(TerrainType.ELECTRIC), StatMultiplierAbAttr, Stat.SPATK, 4 / 3)
       .build(),
     new AbBuilder(AbilityId.OPPORTUNIST, 9) //
