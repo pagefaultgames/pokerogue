@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { input, number, search, select } from "@inquirer/prompts";
+import { confirm, input, number, search, select } from "@inquirer/prompts";
 import { Ajv } from "ajv";
 import chalk from "chalk";
 import customDailyRunSchema from "../../../src/data/daily-seed/schema.json" with { type: "json" };
@@ -18,9 +18,11 @@ import { promptSpeciesId } from "./pokemon.js";
  * @typedef {{
  *   waveIndex: number,
  *   speciesId: number,
+ *   hiddenAbility?: boolean,
  * } | {
  *   waveIndex: number,
  *   tier: number,
+ *   hiddenAbility?: boolean,
  * }} ForcedWaveConfig
  */
 
@@ -154,6 +156,12 @@ export async function promptForcedWaves() {
     if (!waveIndex) {
       return;
     }
+
+    const hiddenAbility = await confirm({
+      message: "Should the forced wave have the hidden ability?",
+      default: false,
+    });
+
     /** @type {"Species" | "Tier"} */
     const type = await select({
       message: "Please select the type of wave to force.",
@@ -162,7 +170,7 @@ export async function promptForcedWaves() {
     switch (type) {
       case "Species": {
         const speciesId = await promptSpeciesId();
-        forcedWaves.push({ waveIndex, speciesId });
+        forcedWaves.push({ waveIndex, speciesId, hiddenAbility: hiddenAbility ? true : undefined });
         break;
       }
       case "Tier": {
@@ -174,6 +182,7 @@ export async function promptForcedWaves() {
         forcedWaves.push({
           waveIndex,
           tier: BIOME_POOL_TIERS[/** @type {keyof typeof BIOME_POOL_TIERS} */ (toUpperSnakeCase(poolTier))],
+          hiddenAbility: hiddenAbility ? true : undefined,
         });
         break;
       }
