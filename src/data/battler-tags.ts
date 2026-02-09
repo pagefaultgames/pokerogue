@@ -75,6 +75,7 @@ import { SpeciesId } from "#enums/species-id";
 import { type BattleStat, EFFECTIVE_STATS, type EffectiveStat, getStatKey, Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
+import { MoveUsedEvent } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
 import { healBlockedMoves, invalidEncoreMoves } from "#moves/invalid-moves";
 import type { Move } from "#moves/move";
@@ -97,7 +98,8 @@ import type {
   TrappingBattlerTagType,
   TypeBoostTagType,
 } from "#types/battler-tags";
-import type { Mutable } from "#types/type-helpers";
+import type { Constructor } from "#types/common";
+import type { AbstractConstructor, Mutable } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
 import { BooleanHolder, getFrameMs, toDmgValue } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
@@ -3563,12 +3565,12 @@ export class PowerTrickTag extends SerializableBattlerTag {
 /**
  * Tag associated with the move Grudge.
  * If this tag is active when the bearer faints from an opponent's move, the tag reduces that move's PP to 0.
- * Otherwise, it lapses when the bearer makes another move.
+ * Otherwise, it is removed when the bearer makes another move.
  */
 export class GrudgeTag extends SerializableBattlerTag {
   public override readonly tagType = BattlerTagType.GRUDGE;
   constructor() {
-    super(BattlerTagType.GRUDGE, BattlerTagLapseType.PRE_MOVE, 1, MoveId.GRUDGE);
+    super(BattlerTagType.GRUDGE, BattlerTagLapseType.PRE_MOVE, 1);
   }
 
   onAdd(pokemon: Pokemon) {
@@ -3580,31 +3582,37 @@ export class GrudgeTag extends SerializableBattlerTag {
     );
   }
 
-  /**
-   * Activates Grudge's special effect on the attacking Pokemon and lapses the tag.
-   * @param pokemon
-   * @param lapseType
-   * @param sourcePokemon - The source of the move that fainted the tag's bearer
-   * @returns `false` if Grudge activates its effect or lapses
-   */
-  // TODO: Confirm whether this should interact with copying moves
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType, sourcePokemon?: Pokemon): boolean {
-    if (!sourcePokemon || lapseType !== BattlerTagLapseType.CUSTOM) {
-      return super.lapse(pokemon, lapseType);
+    if (lapseType !== BattlerTagLapseType.CUSTOM) {
+      return false;
     }
-    if (sourcePokemon.isActive() && pokemon.isOpponent(sourcePokemon)) {
-      const lastMove = pokemon.turnData.attacksReceived[0];
-      const lastMoveData = sourcePokemon.getMoveset().find(m => m.moveId === lastMove.move);
-      if (lastMoveData && lastMove.move !== MoveId.STRUGGLE) {
-        lastMoveData.ppUsed = lastMoveData.getMovePp();
-        globalScene.phaseManager.queueMessage(
-          i18next.t("battlerTags:grudgeLapse", {
-            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-            moveName: lastMoveData.getName(),
-          }),
-        );
-      }
+
+    if (!sourcePokemon?.isActive() || !pokemon.isOpponent(sourcePokemon)) {
+      return false;
     }
+
+    // TODO: This should ideally retrieve the original PokemonMove from a move-in-flight object rather than querying move history
+    const lastMove = sourcePokemon.getLastNonVirtualMove();
+    if (!lastMove || lastMove.move === MoveId.STRUGGLE) {
+      return false;
+    }
+
+    const movesetMove = sourcePokemon.getMoveset().find(m => m.moveId === lastMove.move);
+    if (!movesetMove) {
+      return false;
+    }
+
+    const remaining = movesetMove.getMovePp() - movesetMove.ppUsed;
+    movesetMove.usePp(remaining);
+    // TODO: adjust in PR that reworks battler flyout
+    globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(sourcePokemon.id, movesetMove.getMove(), remaining));
+    globalScene.phaseManager.queueMessage(
+      i18next.t("battlerTags:grudgeLapse", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(sourcePokemon),
+        moveName: movesetMove.getName(),
+      }),
+    );
+
     return false;
   }
 }
@@ -4049,3 +4057,14 @@ export type BattlerTagTypeMap = {
   [BattlerTagType.SUPREME_OVERLORD]: SupremeOverlordTag;
   [BattlerTagType.BYPASS_SPEED]: BypassSpeedTag;
 };
+
+/**
+ * Helper type to convert a `BattlerTagType` or `BattlerTag` constructor to its corresponding BattlerTag class instance.
+ * Declared as a separate type literal to allow caching by TypeScript.
+ */
+export type BattlerTagFromType<T extends BattlerTagType | Constructor<BattlerTag> | AbstractConstructor<BattlerTag>> =
+  T extends BattlerTagType
+    ? BattlerTagTypeMap[T]
+    : T extends Constructor<infer U> | AbstractConstructor<infer U>
+      ? U
+      : never;
