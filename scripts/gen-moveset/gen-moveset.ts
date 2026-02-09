@@ -48,7 +48,7 @@ interface MockPokemonParams {
   formIndex?: number | undefined;
 }
 
-function genPokemonConfig(pokemon: Pokemon): string {
+function genPokemonConfig(pokemon: Pokemon, forRival?: boolean): string {
   const formName = (pokemon.getSpeciesForm() as PokemonForm)?.formName;
   return JSON.stringify(
     {
@@ -57,6 +57,7 @@ function genPokemonConfig(pokemon: Pokemon): string {
       passive: pokemon.hasPassive() ? pokemon.getPassiveAbility().name : "None",
       level: pokemon.level,
       hasTrainer: pokemon.hasTrainer(),
+      forRival,
       boss: pokemon.isBoss(),
     },
     undefined,
@@ -137,7 +138,6 @@ describe("gen-moveset", () => {
     const orig = console.log;
 
     let trials = "";
-    // Intercept
     if (payload.printWeights) {
       vi.spyOn(console, "log").mockImplementation((...args: any[]) => {
         if (__INTERNAL_TEST_EXPORTS.forceLogging && args[2] === "Pre STAB Move") {
@@ -169,12 +169,12 @@ describe("gen-moveset", () => {
       );
     }
 
-    trials += `\nConfig: ${genPokemonConfig(pokemon)}\n`;
+    trials += `\nConfig: ${genPokemonConfig(pokemon, payload.forRival)}\n`;
     for (let i = 0; i < payload.trials; ++i) {
       if (payload.printWeights && i === 0) {
         __INTERNAL_TEST_EXPORTS.forceLogging = true;
       }
-      generateMoveset(pokemon);
+      generateMoveset(pokemon, payload.forRival);
       __INTERNAL_TEST_EXPORTS.forceLogging = false;
 
       trials += `\n[${pokemon.moveset.map(m => m.getName()).join(", ")}]`;

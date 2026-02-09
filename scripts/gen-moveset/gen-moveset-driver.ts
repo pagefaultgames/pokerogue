@@ -93,6 +93,13 @@ async function promptInputs(): Promise<SamplerPayload> {
     message: "Generate as for a trainer (default yes)?",
     default: true,
   });
+  let forRival = false;
+  if (forTrainer) {
+    forRival = await confirm({
+      message: "Generate as a Rival's Pokémon (default no)?",
+      default: false,
+    });
+  }
 
   const level = await promptNumber({
     message: "Enter the level of the Pokémon (default 100):",
@@ -145,6 +152,7 @@ async function promptInputs(): Promise<SamplerPayload> {
     abilityIndex,
     allowEggMoves,
     formIndex,
+    forRival,
   };
 }
 

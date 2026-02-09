@@ -171,7 +171,8 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
   [SpeciesId.GRANBULL]: MoveId.PLAY_ROUGH,
 };
 
-export const RIVAL_SPECIFIC_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]>> = {
+
+export const FORCED_RIVAL_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]>> = {
   [SpeciesId.UNFEZANT]: MoveId.SLASH,
   [SpeciesId.SWELLOW]: MoveId.BOOMBURST,
   [SpeciesId.STARAPTOR]: MoveId.HEAD_CHARGE,

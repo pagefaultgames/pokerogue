@@ -16,4 +16,5 @@ export interface SamplerPayload {
   abilityIndex?: number | undefined;
   allowEggMoves?: boolean | undefined;
   formIndex?: number | undefined;
+  forRival?: boolean | undefined;
 }
