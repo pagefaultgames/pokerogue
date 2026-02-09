@@ -1787,21 +1787,25 @@ export class GameData {
   }
 
   /**
-   * Adds a candy to the player's game data for a given {@linkcode PokemonSpecies}.
-   * @param species
-   * @param count
+   * Adds candy to the player's game data for a given {@linkcode PokemonSpecies}.
+   * @remarks
+   * Will not increase the candy count past `9999`.
    */
-  addStarterCandy(species: PokemonSpecies, count: number): void {
-    globalScene.candyBar.showStarterSpeciesCandy(species.speciesId, count);
-    this.starterData[species.speciesId].candyCount += count;
+  public addStarterCandy(species: PokemonSpecies, count: number): void {
+    const { speciesId } = species;
+    const { candyCount } = this.starterData[speciesId];
+
+    if (candyCount >= 9999) {
+      return;
+    }
+
+    globalScene.candyBar.showStarterSpeciesCandy(speciesId, count);
+    this.starterData[speciesId].candyCount = Math.min(candyCount + count, 9999);
   }
 
   /**
-   *
-   * @param species
-   * @param eggMoveIndex
-   * @param showMessage Default true. If true, will display message for unlocked egg move
-   * @param prependSpeciesToMessage Default false. If true, will change message from "X Egg Move Unlocked!" to "Bulbasaur X Egg Move Unlocked!"
+   * @param showMessage - (Default `true`) Whether to display a message for the unlocked egg move
+   * @param prependSpeciesToMessage - (Default `false`) Whether to change the message from "X Egg Move Unlocked!" to "Bulbasaur X Egg Move Unlocked!"
    */
   setEggMoveUnlocked(
     species: PokemonSpecies,
