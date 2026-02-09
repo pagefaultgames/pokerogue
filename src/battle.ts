@@ -98,7 +98,7 @@ export class Battle {
    * Used for Retaliate's "double power" condition.
    * @defaultValue `false`
    * @see {@linkcode Arena.playerFaintedLastTurn} \
-   * The corresponding (non-serialized) tracker for player Pokemon (persists between waves)
+   * The corresponding (serialized) tracker for player Pokemon (persists between waves)
    */
   public enemyFaintedLastTurn = false;
   /**
