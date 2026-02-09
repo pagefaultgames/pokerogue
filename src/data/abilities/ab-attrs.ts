@@ -715,7 +715,7 @@ export class MoveImmunityStatStageChangeAbAttr extends MoveImmunityAbAttr {
 export interface PostMoveInteractionAbAttrParams extends AugmentMoveInteractionAbAttrParams {
   /** Stores the hit result of the move used in the interaction */
   readonly hitResult: HitResult;
-  /** The amount of damage by in the interaction. */
+  /** The amount of damage dealt in the interaction. */
   readonly damage: number;
 }
 
