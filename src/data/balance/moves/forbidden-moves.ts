@@ -30,6 +30,7 @@ export const FORBIDDEN_SINGLES_MOVES: ReadonlySet<MoveId> = new Set([
   MoveId.MAT_BLOCK,
   MoveId.QUICK_GUARD,
   MoveId.WIDE_GUARD,
+  MoveId.HEAL_PULSE,
 ]);
 
 export const FORBIDDEN_TM_MOVES: ReadonlySet<MoveId> = new Set([
@@ -50,6 +51,7 @@ export const FORBIDDEN_TM_MOVES: ReadonlySet<MoveId> = new Set([
   MoveId.FOCUS_PUNCH,
   MoveId.UPPER_HAND,
   MoveId.SCARY_FACE,
+  MoveId.TAKE_DOWN,
 ]);
 
 
@@ -116,5 +118,11 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.WATER_SPORT,
   // Long discussion with balance team about this one
   MoveId.METAL_CLAW,
+  // Blitzy recommended
+  MoveId.TELEPORT,
+  MoveId.GEAR_UP,
+  MoveId.IMPRISON,
+  MoveId.SPARK,
+  MoveId.DREAM_EATER,
+  MoveId.NIGHTMARE,
 ]);
-
