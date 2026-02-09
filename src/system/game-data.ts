@@ -820,7 +820,7 @@ export class GameData {
       return;
     }
 
-    console.log("Getting Slot id: %d", slotId);
+    console.log("Getting Session Slot id: %d", slotId);
 
     // Check local storage for the cached session data
     if (bypassLogin || localStorage.getItem(getSessionDataLocalStorageKey(slotId))) {
