@@ -718,7 +718,7 @@ export function initAbilities() {
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.ANTICIPATION, 4) //
-      .conditionalAttr(getAnticipationCondition(), PostSummonMessageAbAttr, (pokemon: Pokemon) =>
+      .conditionalAttr(anticipationCondition, PostSummonMessageAbAttr, (pokemon: Pokemon) =>
         i18next.t("abilityTriggers:postSummonAnticipation", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }),
       )
       .build(),
@@ -1374,9 +1374,27 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.BATTLE_BOND, 7) //
-      .attr(PostVictoryFormChangeAbAttr, () => 2)
-      .attr(PostBattleInitFormChangeAbAttr, () => 1)
-      .attr(PostFaintFormChangeAbAttr, () => 1)
+      .conditionalAttr(
+        p => p.species.speciesId === SpeciesId.GRENINJA,
+        PostVictoryFormChangeAbAttr,
+        () => 2,
+      )
+      .conditionalAttr(
+        p => p.species.speciesId === SpeciesId.GRENINJA,
+        PostBattleInitFormChangeAbAttr,
+        () => 1,
+      )
+      .conditionalAttr(
+        p => p.species.speciesId === SpeciesId.GRENINJA,
+        PostFaintFormChangeAbAttr,
+        () => 1,
+      )
+      .conditionalAttr(
+        p => p.species.speciesId !== SpeciesId.GRENINJA && !p.summonData.abilitiesApplied.has(AbilityId.BATTLE_BOND),
+        PostVictoryStatStageChangeAbAttr,
+        [Stat.ATK, Stat.SPATK, Stat.SPD],
+        1,
+      )
       .attr(NoFusionAbilityAbAttr)
       .uncopiable()
       .unreplaceable()
@@ -2075,66 +2093,37 @@ function getTerrainCondition(...terrainTypes: TerrainType[]): AbAttrCondition {
   };
 }
 
-function getAnticipationCondition(): AbAttrCondition {
-  return (pokemon: Pokemon) => {
-    for (const opponent of pokemon.getOpponents()) {
-      for (const move of opponent.moveset) {
-        // ignore null/undefined moves
-        if (!move) {
-          continue;
-        }
-        // the move's base type (not accounting for variable type changes) is super effective
-        if (
-          move.getMove().is("AttackMove")
-          && pokemon.getAttackTypeEffectiveness(move.getMove().type, opponent, true, undefined, move.getMove()) >= 2
-        ) {
-          return true;
-        }
-        // move is a OHKO
-        if (move.getMove().hasAttr("OneHitKOAttr")) {
-          return true;
-        }
-        // edge case for hidden power, type is computed
-        if (move.getMove().id === MoveId.HIDDEN_POWER) {
-          const iv_val = Math.floor(
-            (((opponent.ivs[Stat.HP] & 1)
-              + (opponent.ivs[Stat.ATK] & 1) * 2
-              + (opponent.ivs[Stat.DEF] & 1) * 4
-              + (opponent.ivs[Stat.SPD] & 1) * 8
-              + (opponent.ivs[Stat.SPATK] & 1) * 16
-              + (opponent.ivs[Stat.SPDEF] & 1) * 32)
-              * 15)
-              / 63,
-          );
-
-          const type = [
-            PokemonType.FIGHTING,
-            PokemonType.FLYING,
-            PokemonType.POISON,
-            PokemonType.GROUND,
-            PokemonType.ROCK,
-            PokemonType.BUG,
-            PokemonType.GHOST,
-            PokemonType.STEEL,
-            PokemonType.FIRE,
-            PokemonType.WATER,
-            PokemonType.GRASS,
-            PokemonType.ELECTRIC,
-            PokemonType.PSYCHIC,
-            PokemonType.ICE,
-            PokemonType.DRAGON,
-            PokemonType.DARK,
-          ][iv_val];
-
-          if (pokemon.getAttackTypeEffectiveness(type, opponent) >= 2) {
-            return true;
-          }
-        }
+/**
+ * Condition used by {@link https://bulbapedia.bulbagarden.net/wiki/Anticipation_(Ability) | Anticipation}
+ * to show a message if any opponent knows a "dangerous" move.
+ * @param pokemon - The {@linkcode Pokemon} with this ability
+ * @returns Whether the message should be shown
+ */
+const anticipationCondition: AbAttrCondition = (pokemon: Pokemon) =>
+  pokemon.getOpponents().some(opponent =>
+    opponent.moveset.some(movesetMove => {
+      const move = movesetMove.getMove();
+      if (!move.is("AttackMove")) {
+        return false;
       }
-    }
-    return false;
-  };
-}
+
+      if (move.hasAttr("OneHitKOAttr")) {
+        return true;
+      }
+
+      // Check whether the move's base type (not accounting for variable type changes) is super effective
+      // Edge case for hidden power, type is computed
+      const typeHolder = new NumberHolder(move.type);
+      applyMoveAttrs("HiddenPowerTypeAttr", opponent, pokemon, move, typeHolder);
+
+      const eff = pokemon.getAttackTypeEffectiveness(typeHolder.value, {
+        source: opponent,
+        ignoreStrongWinds: true,
+        move,
+      });
+      return eff >= 2;
+    }),
+  );
 
 /**
  * Condition function checking whether a move can have its type changed by an ability.
