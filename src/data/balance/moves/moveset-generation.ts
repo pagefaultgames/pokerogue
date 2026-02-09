@@ -37,7 +37,6 @@ import type { FORCED_SIGNATURE_MOVES } from "#balance/moves/signature-moves";
 import { MoveId } from "#enums/move-id";
 import type { IntRange } from "type-fest";
 
-
 //#region Constants
 /**
  * The minimum level for a Pokémon to generate with a move it can only learn
@@ -66,7 +65,6 @@ export const FORCED_SIGNATURE_MOVE_CHANCE = 60 satisfies IntRange<1, 100>; // X 
 /** The level threshold above which moves in the {@linkcode LEVEL_BASED_DENYLIST} are prevented from spawning */
 export const LEVEL_BASED_DENYLIST_THRESHOLD = 70;
 
-
 // Note: Not exported, only for use with `getMaxTmCount
 /** Below this level, Pokémon will be unable to generate with any TMs */
 const ONE_TM_THRESHOLD = 25;
@@ -85,7 +83,6 @@ const TWO_EGG_MOVE_THRESHOLD = 121;
 const THREE_EGG_MOVE_THRESHOLD = 161;
 /** Below this level, Pokémon will generate with at most 3 egg moves */
 const FOUR_EGG_MOVE_THRESHOLD = 201;
-
 
 /** The weight given to TMs in the common tier during moveset generation */
 export const COMMON_TM_MOVESET_WEIGHT = 12;
@@ -152,8 +149,6 @@ export const BASE_WEIGHT_MULTIPLIER = 1.6;
 
 /** The additional weight added onto {@linkcode BASE_WEIGHT_MULTIPLIER} for boss Pokémon */
 export const BOSS_EXTRA_WEIGHT_MULTIPLIER = 0.4;
-
-
 
 /**
  * Set of moves that should be excluded from the forced STAB during moveset generation
@@ -236,7 +231,6 @@ export function getMaxTmCount(level: number) {
   return 4;
 }
 
-
 export function getMaxEggMoveCount(level: number): number {
   if (level < ONE_EGG_MOVE_THRESHOLD) {
     return 0;
@@ -252,6 +246,3 @@ export function getMaxEggMoveCount(level: number): number {
   }
   return 4;
 }
-
-
-
