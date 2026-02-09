@@ -404,7 +404,7 @@ export class GameData {
 
       if (isBeta || isDev) {
         try {
-          // TODO: Shouldn't we just log the actual string we started with rather than round-tripping?
+          // Shallowly clone system data during logging to avoid memory leaks
           console.debug(
             GameData.parseSystemData(
               JSON.stringify(systemData, (_, v: any) => (typeof v === "bigint" ? v.toString() : v)),
