@@ -1845,7 +1845,8 @@ export class GameData {
     let { speciesId } = species;
     do {
       this.dexData[speciesId].natureAttr |= 1 << (nature + 1);
-    } while ((speciesId = pokemonPrevolutions[speciesId]!) != null);
+      speciesId = pokemonPrevolutions[speciesId];
+    } while (speciesId != null);
   }
 
   updateSpeciesDexIvs(speciesId: SpeciesId, ivs: number[]): void {
