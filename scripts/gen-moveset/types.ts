@@ -1,5 +1,5 @@
 /*
- * SPDX-Copyright-Text: 2026 Pagefault Games
+ * SPDX-FileCopyrightText: 2026 Pagefault Games
  * SPDX-FileContributor: SirzBenjie
  *
  * SPDX-License-Identifier: AGPL-3.0-only
@@ -13,7 +13,7 @@ export interface SamplerPayload {
   trials: number;
   forTrainer: boolean;
   printWeights: boolean;
-  abilityIndex?: number;
-  allowEggMoves?: boolean;
-  formIndex?: number;
+  abilityIndex?: number | undefined;
+  allowEggMoves?: boolean | undefined;
+  formIndex?: number | undefined;
 }

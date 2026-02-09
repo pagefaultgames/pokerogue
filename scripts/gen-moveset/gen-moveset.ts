@@ -34,18 +34,18 @@ interface MockPokemonParams {
    * Whether the pokemon is a boss or not.
    * @defaultValue `false`
    */
-  boss?: boolean;
+  boss?: boolean | undefined;
   /**
    * The trainer slot to assign to the pokemon, if any.
    * @defaultValue `TrainerSlot.NONE`
    */
-  trainerSlot?: TrainerSlot;
+  trainerSlot?: TrainerSlot | undefined;
   /**
    * The form index to assign to the pokemon, if any.
    * This *must* be one of the valid form indices for the species, or the test will break.
    * @defaultValue `0`
    */
-  formIndex?: number;
+  formIndex?: number | undefined;
 }
 
 function genPokemonConfig(pokemon: Pokemon): string {
@@ -116,7 +116,7 @@ describe("gen-moveset", () => {
     }
 
     // Need to be in a wave for moveset generation to not actually break
-    await game.classicMode.runToSummon([SpeciesId.PIKACHU]);
+    await game.classicMode.runToSummon(SpeciesId.PIKACHU);
 
     consoleLog.mockRestore();
   });

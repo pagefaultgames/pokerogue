@@ -349,7 +349,6 @@ function filterSupercededMoves(pool: Map<MoveId, number>, ...otherPools: Map<Mov
  * @param hasTrainer - Whether the Pokémon has a trainer
  * @param level - The level of the Pokémon
  */
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: The entire logic is checking conditions
 function filterMovePool(pool: Map<MoveId, number>, isBoss: boolean, hasTrainer: boolean, pokemon: Pokemon): void {
   const isSingles = !globalScene.currentBattle?.double;
   const level = pokemon.level;
@@ -411,7 +410,6 @@ function adjustWeightsForTrainer(pool: Map<MoveId, number>): void {
  * Caps max power at 90 to avoid something like hyper beam ruining the stats.
  * pokemon is a pretty soft weighting factor, although it is scaled with the weight multiplier.
  */
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: It's a math function
 function adjustDamageMoveWeights(pool: Map<MoveId, number>, pokemon: Pokemon, willTera = false): void {
   // begin max power at 40 to avoid inflating weights too much when there are only low power moves
   let maxPower = 40;
@@ -903,7 +901,6 @@ function hasSleepInducingMove(pokemon: Pokemon, targetSelf = false): boolean {
  * @param willTera - Whether the Pokémon is guaranteed to Tera
  * @returns Whether any moves were removed from the moveset
  */
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complexity increases for each new condition, but that's the entire method.
 export function filterUselessMoves(pokemon: Pokemon, willTera: boolean): boolean {
   let numWeatherMoves = 0;
   const moveset = pokemon.moveset;
