@@ -48,7 +48,10 @@ type StringifyTuple<Arr extends unknown[], Delim extends string, Acc extends str
 type AddPrefix<Str extends string> = `${Str extends `${"a" | "e" | "i" | "o" | "u"}${infer _}` ? "an" : "a"} ${Str}`;
 
 /**
- * Internal type helper to convert a stringable value into a more descriptive string.
+ * Internal type helper to convert a single type into a more descriptive string
+ * suitable for consumption by humans.
+ * @privateRemarks
+ * Should not be used on unions!
  * @internal
  */
 type PrintTypeInternal<T> =
