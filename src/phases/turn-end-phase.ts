@@ -67,7 +67,7 @@ export class TurnEndPhase extends FieldPhase {
 
       globalScene.arena.lapseTags();
     }
-    
+
     globalScene.arena.performTurnEndEffects();
     this.end();
   }
