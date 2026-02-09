@@ -1,3 +1,4 @@
+import { getPokemonNameWithAffix } from "#app/messages";
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
@@ -9,6 +10,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import type { PlayerPokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
+import i18next from "i18next";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -43,12 +45,11 @@ describe("Abilities - Protean/Libero", () => {
    */
   function expectTypeChange(pokemon: PlayerPokemon) {
     expect(pokemon.waveData.abilitiesApplied).toContainEqual(expect.toBeOneOf([AbilityId.PROTEAN, AbilityId.LIBERO]));
+    pokemon.waveData.abilitiesApplied.clear();
+
     const lastMove = allMoves[pokemon.getLastXMoves()[0].move]!;
 
-    const pokemonTypes = pokemon.getTypes().map(pt => PokemonType[pt]);
-    const moveType = PokemonType[pokemon.getMoveType(lastMove)];
-    expect(pokemonTypes).toEqual([moveType]);
-    pokemon.waveData.abilitiesApplied.clear();
+    expect(pokemon).toHaveTypes([pokemon.getMoveType(lastMove)]);
   }
 
   /**
@@ -63,12 +64,10 @@ describe("Abilities - Protean/Libero", () => {
     expect(pokemon.waveData.abilitiesApplied).not.toContainEqual(
       expect.toBeOneOf([AbilityId.PROTEAN, AbilityId.LIBERO]),
     );
-    const lastMove = allMoves[pokemon.getLastXMoves()[0].move]!;
-
-    const pokemonTypes = pokemon.getTypes().map(pt => PokemonType[pt]);
-    const moveType = PokemonType[pokemon.getMoveType(lastMove, true)];
-    expect(pokemonTypes).not.toEqual([moveType]);
     pokemon.waveData.abilitiesApplied.clear();
+
+    const lastMove = allMoves[pokemon.getLastXMoves()[0].move]!;
+    expect(pokemon).not.toHaveTypes([pokemon.getMoveType(lastMove)]);
   }
 
   it.each([
@@ -237,17 +236,24 @@ describe("Abilities - Protean/Libero", () => {
   });
 
   it("should cause the user to cast Ghost-type Curse on itself", async () => {
-    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    const karp = game.field.getPlayerPokemon();
-    expect(karp.isOfType(PokemonType.GHOST)).toBe(false);
+    const feebas = game.field.getPlayerPokemon();
+    expect(feebas).not.toHaveTypes([PokemonType.GHOST]);
 
     game.move.select(MoveId.CURSE);
     await game.toEndOfTurn();
 
-    expectTypeChange(karp);
-    expect(karp.getHpRatio(true)).toBeCloseTo(0.25);
-    expect(karp.getTag(BattlerTagType.CURSED)).toBeDefined();
+    expectTypeChange(feebas);
+    expect(feebas.getHpRatio(true)).toBeCloseTo(0.25); // 50%
+    expect(game).toHaveShownMessage(
+      i18next.t("battlerTags:cursedOnAdd", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(feebas),
+        pokemonName: getPokemonNameWithAffix(feebas),
+      }),
+    );
+
+    expect(feebas).toHaveBattlerTag(BattlerTagType.CURSED);
   });
 
   it("should not trigger during Focus Punch's start-of-turn message or being interrupted", async () => {

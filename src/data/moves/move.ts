@@ -1501,6 +1501,8 @@ export abstract class MoveAttr {
    * @param args Set of unique arguments needed by this attribute
    * @returns true if application of the ability succeeds
    */
+  // TODO: Add strong typing on `args` in a similar manner to ability attributes
+  // TODO: Remove boolean return value
   apply(_user: Pokemon | null, _target: Pokemon | null, _move: Move, _args: any[]): boolean {
     return true;
   }
@@ -1510,6 +1512,7 @@ export abstract class MoveAttr {
    * The specified condition will be added to all {@linkcode Move}s with this attribute,
    * and moves **will fail upon use** if _at least 1_ of their attached conditions returns `false`.
    */
+  // TODO: Remove MoveCondition from this signature - it causes issues when tacking on conditions to a superclass
   getCondition(): MoveCondition | MoveConditionFunc | null {
     return null;
   }
@@ -6521,6 +6524,7 @@ export class GulpMissileTagAttr extends MoveEffectAttr {
 /**
  * Attribute to implement Jaw Lock's linked trapping effect between the user and target
  */
+// TODO: This should not be chance based
 export class JawLockAttr extends AddBattlerTagAttr {
   constructor() {
     super(BattlerTagType.TRAPPED);
@@ -6538,9 +6542,10 @@ export class JawLockAttr extends AddBattlerTagAttr {
 
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget);
     if (moveChance < 0 || moveChance === 100 || user.randBattleSeedInt(100) < moveChance) {
-      /**
+      /*
        * Add the tag to both the user and the target.
        * The target's tag source is considered to be the user and vice versa
+       * so that both are removed if either one is forcibly removed from the field
        */
       return (
         target.addTag(BattlerTagType.TRAPPED, 1, move.id, user.id)
@@ -6552,28 +6557,67 @@ export class JawLockAttr extends AddBattlerTagAttr {
   }
 }
 
+/**
+ * Move attribute used by Curse to dynamically apply the effects of either its ghost-type or non-ghost type attribute.
+ */
 export class CurseAttr extends MoveEffectAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, _args: any[]): boolean {
-    if (user.getTypes(true).includes(PokemonType.GHOST)) {
-      if (target.getTag(BattlerTagType.CURSED)) {
-        globalScene.phaseManager.queueMessage(i18next.t("battle:attackFailed"));
-        return false;
-      }
-      const curseRecoilDamage = Math.max(1, Math.floor(user.getMaxHp() / 2));
-      user.damageAndUpdate(curseRecoilDamage, { result: HitResult.INDIRECT, ignoreSegments: true });
-      globalScene.phaseManager.queueMessage(
-        i18next.t("battlerTags:cursedOnAdd", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(user),
-          pokemonName: getPokemonNameWithAffix(target),
-        }),
-      );
+  private readonly ghostAttr = new CurseGhostAttr();
+  private readonly nonGhostAttr = new CurseNonGhostAttr();
 
-      target.addTag(BattlerTagType.CURSED, 0, move.id, user.id);
-      return true;
+  private getAttr(pokemon: Pokemon): CurseGhostAttr | CurseNonGhostAttr {
+    return pokemon.isOfType(PokemonType.GHOST, true, true) ? this.ghostAttr : this.nonGhostAttr;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, _args: any[]): boolean {
+    return this.getAttr(user).apply(user, target, move, _args);
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => this.getAttr(user).getCondition()?.(user, target, move) ?? true;
+  }
+}
+
+/**
+ * Attribute used by Ghost-type Curse to add its battler tag to the target.
+ */
+class CurseGhostAttr extends AddBattlerTagAttr {
+  constructor() {
+    super(BattlerTagType.CURSED, false, true);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, _args: any[]): boolean {
+    if (!super.apply(user, target, move, _args)) {
+      return false;
     }
+
+    const curseRecoilDamage = toDmgValue(user.getMaxHp() / 2);
+    user.damageAndUpdate(curseRecoilDamage, { result: HitResult.INDIRECT, ignoreSegments: true });
+    globalScene.phaseManager.queueMessage(
+      i18next.t("battlerTags:cursedOnAdd", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(user),
+        pokemonName: getPokemonNameWithAffix(target),
+      }),
+    );
+
+    return true;
+  }
+}
+
+// TODO: This should extend from `StatStageChangeAttr` once the former allows for multiple stat changes with variable amounts
+class CurseNonGhostAttr extends MoveEffectAttr {
+  constructor() {
+    super(false);
+  }
+
+  apply(user: Pokemon): boolean {
     globalScene.phaseManager.unshiftNew("StatStageChangePhase", user.getBattlerIndex(), true, [Stat.ATK, Stat.DEF], 1);
     globalScene.phaseManager.unshiftNew("StatStageChangePhase", user.getBattlerIndex(), true, [Stat.SPD], -1);
     return true;
+  }
+
+  // needed to show TS that this is null by default
+  override getCondition(): null {
+    return null;
   }
 }
 
@@ -8678,6 +8722,8 @@ export class StatusIfBoostedAttr extends MoveEffectAttr {
   }
 }
 
+// TODO: These should not take target based parameters - they are wholly unused
+// and it doesn't even make SENSE anyhow
 export class VariableTargetAttr extends MoveAttr {
   private readonly targetChangeFunc: (user: Pokemon, target: Pokemon, move: Move) => number;
 
@@ -9649,7 +9695,7 @@ export function initMoves() {
         }),
       ),
     new StatusMove(MoveId.NIGHTMARE, PokemonType.GHOST, 100, 15, -1, 0, 2)
-      .attr(AddBattlerTagAttr, BattlerTagType.NIGHTMARE)
+      .attr(AddBattlerTagAttr, BattlerTagType.NIGHTMARE, false, true)
       .condition(targetSleptOrComatoseCondition),
     new AttackMove(MoveId.FLAME_WHEEL, PokemonType.FIRE, MoveCategory.PHYSICAL, 60, 100, 25, 10, 0, 2)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
