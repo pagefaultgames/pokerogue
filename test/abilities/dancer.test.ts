@@ -264,7 +264,6 @@ describe("Abilities - Dancer", () => {
   });
 
   it("should trigger confusion self-damage, even through Protect", async () => {
-    game.override.confusionActivation(false);
     await game.classicMode.startBattle(SpeciesId.ORICORIO);
 
     const oricorio = game.field.getPlayerPokemon();
@@ -274,7 +273,7 @@ describe("Abilities - Dancer", () => {
     await game.move.forceEnemyMove(MoveId.SWORDS_DANCE);
 
     await game.phaseInterceptor.to("MoveEndPhase");
-    oricorio.addTag(BattlerTagType.CONFUSED, 0, MoveId.CONFUSE_RAY, game.field.getEnemyPokemon().id);
+    oricorio.addTag(BattlerTagType.CONFUSED, 5, MoveId.CONFUSE_RAY, game.field.getEnemyPokemon().id);
     await game.move.forceConfusionActivation(true);
     await game.toEndOfTurn();
 
