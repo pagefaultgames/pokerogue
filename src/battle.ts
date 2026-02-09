@@ -1,7 +1,4 @@
-// biome-ignore-start lint/correctness/noUnusedImports: TSDoc imports
 import type { Arena } from "#field/arena";
-
-// biome-ignore-end lint/correctness/noUnusedImports: TSDoc imports
 
 import type { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
