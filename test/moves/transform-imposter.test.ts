@@ -69,7 +69,7 @@ describe("Transforming Effects", () => {
 
       expect(ditto.getMoveset().map(m => m.moveId)).toEqual(ditto.getMoveset().map(m => m.moveId));
 
-      expect(ditto.getTypes()).toEqual(mew.getTypes());
+      expect(ditto).toHaveTypes(mew.getTypes(), { mode: "ordered" });
     });
 
     // TODO: This is not implemented
@@ -85,8 +85,8 @@ describe("Transforming Effects", () => {
       await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.toEndOfTurn();
 
-      expect(magmar.getTypes()).toEqual([PokemonType.UNKNOWN]);
-      expect(ditto.getTypes()).toEqual([PokemonType.FIRE]);
+      expect(magmar).toHaveTypes(PokemonType.UNKNOWN);
+      expect(ditto).toHaveTypes(PokemonType.FIRE);
     });
 
     it("should not consider the target's Tera Type when copying types", async () => {
@@ -96,12 +96,12 @@ describe("Transforming Effects", () => {
       const ditto = game.field.getPlayerPokemon();
       const magmar = game.field.getEnemyPokemon();
       magmar.isTerastallized = true;
-      magmar.teraType = PokemonType.DARK;
+      magmar.teraType = PokemonType.STELLAR;
 
       game.move.use(MoveId.TRANSFORM);
       await game.toEndOfTurn();
 
-      expect(ditto.getTypes(true)).toEqual([PokemonType.FIRE]);
+      expect(ditto).toHaveTypes(PokemonType.FIRE);
     });
 
     // TODO: This is not currently implemented

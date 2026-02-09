@@ -82,6 +82,7 @@ export abstract class PokemonSpeciesForm {
   public speciesId: SpeciesId;
   protected _formIndex: number;
   protected _generation: number;
+  // TODO: Make these not accept UNKNOWN or STELLAR
   readonly type1: PokemonType;
   readonly type2: PokemonType | null;
   readonly height: number;

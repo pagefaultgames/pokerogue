@@ -34,12 +34,12 @@ describe("Abilities - Mimicry", () => {
     const [playerPokemon1, playerPokemon2] = game.scene.getPlayerParty();
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
-    expect(playerPokemon1.getTypes().includes(PokemonType.FAIRY)).toBe(true);
+    expect(playerPokemon1).toHaveTypes(PokemonType.FAIRY);
 
     game.doSwitchPokemon(1);
     await game.toNextTurn();
 
-    expect(playerPokemon2.getTypes().includes(PokemonType.FAIRY)).toBe(true);
+    expect(playerPokemon2).toHaveTypes(PokemonType.FAIRY);
   });
 
   it("Pokemon should revert back to its original, root type once terrain ends", async () => {
@@ -52,7 +52,7 @@ describe("Abilities - Mimicry", () => {
     await game.move.forceEnemyMove(MoveId.PSYCHIC_TERRAIN);
     await game.toNextTurn();
 
-    expect(playerPokemon.getTypes()).toEqual([PokemonType.PSYCHIC]);
+    expect(playerPokemon).toHaveTypes(PokemonType.PSYCHIC);
 
     game.scene.arena.terrain!.turnsLeft = 1;
 
@@ -60,7 +60,7 @@ describe("Abilities - Mimicry", () => {
     await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(playerPokemon.getTypes()).toEqual([PokemonType.ELECTRIC]);
+    expect(playerPokemon).toHaveTypes(PokemonType.ELECTRIC);
   });
 
   it("If the Pokemon is under the effect of a type-adding move and an equivalent terrain activates, the move's effect disappears", async () => {
@@ -79,6 +79,6 @@ describe("Abilities - Mimicry", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(playerPokemon.summonData.addedType).toBeNull();
-    expect(playerPokemon.getTypes()).toEqual([PokemonType.GRASS]);
+    expect(playerPokemon).toHaveTypes(PokemonType.GRASS);
   });
 });

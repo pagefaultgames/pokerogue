@@ -22,30 +22,31 @@ describe("Moves - Reflect Type", () => {
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .criticalHits(false)
-      .enemyAbility(AbilityId.BALL_FETCH);
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .startingLevel(60)
+      .enemySpecies(SpeciesId.CHARMANDER);
   });
 
   it("will make the user Normal/Grass if targetting a typeless Pokemon affected by Forest's Curse", async () => {
-    game.override.startingLevel(60).enemySpecies(SpeciesId.CHARMANDER);
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    const playerPokemon = game.field.getPlayerPokemon();
-    const enemyPokemon = game.field.getEnemyPokemon();
+    const feebas = game.field.getPlayerPokemon();
+    const charmander = game.field.getEnemyPokemon();
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.BURN_UP);
     await game.toNextTurn();
 
+    expect(charmander).toHaveTypes(PokemonType.UNKNOWN);
     game.move.use(MoveId.FORESTS_CURSE);
     await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
-    expect(enemyPokemon.getTypes().includes(PokemonType.UNKNOWN)).toBe(true);
-    expect(enemyPokemon.getTypes().includes(PokemonType.GRASS)).toBe(true);
+
+    expect(charmander).toHaveTypes([PokemonType.UNKNOWN, PokemonType.GRASS]);
 
     game.move.use(MoveId.REFLECT_TYPE);
-    await game.move.forceEnemyMove(MoveId.SPLASH);
-    await game.phaseInterceptor.to("TurnEndPhase");
-    expect(playerPokemon.getTypes()[0]).toBe(PokemonType.NORMAL);
-    expect(playerPokemon.getTypes().includes(PokemonType.GRASS)).toBe(true);
+    await game.toEndOfTurn();
+
+    expect(feebas).toHaveTypes([PokemonType.NORMAL, PokemonType.GRASS]);
   });
 });

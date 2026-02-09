@@ -195,12 +195,14 @@ interface ArenaMatchersNegative {
 interface PokemonMatchers {
   /**
    * Check whether a {@linkcode Pokemon}'s current typing includes the given types.
-   * @param expectedTypes - The expected {@linkcode PokemonType}s to check against; must have length `>0`
+   * @param expectedTypes - The expected {@linkcode PokemonType}(s) to check against (single or array); must be non-empty
    * @param options - The {@linkcode ToHaveTypesOptions | options} passed to the matcher
    */
-  // TODO: Update typing to a non empty tuple once pokemon-related typing funcs are updated to return non-empty tuples.
-  // The actual functions guarantee that the end result will never be empty at runtime, but the types do not reflect that at compile-time.
-  toHaveTypes(expectedTypes: readonly PokemonType[], options?: ToHaveTypesOptions): void;
+  // TODO: Ban passing a literal single-element array to the matcher for consistency
+  toHaveTypes(
+    expectedTypes: PokemonType | readonly [PokemonType, ...PokemonType[]],
+    options?: ToHaveTypesOptions,
+  ): void;
 
   /**
    * Check whether a {@linkcode Pokemon} has used a move matching the given criteria.
