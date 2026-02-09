@@ -1860,7 +1860,8 @@ export class GameData {
       if (dexIvs.every(iv => iv === 31)) {
         globalScene.validateAchv(achvs.PERFECT_IVS);
       }
-    } while ((speciesId = pokemonPrevolutions[speciesId]!) != null);
+      speciesId = pokemonPrevolutions[speciesId];
+    } while (speciesId != null);
   }
 
   getSpeciesCount(dexEntryPredicate: (entry: DexEntry) => boolean): number {
