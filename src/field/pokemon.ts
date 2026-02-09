@@ -2345,7 +2345,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * @returns the pokemon's current tera {@linkcode PokemonType}
+   * @returns This Pokemon's current Tera {@linkcode PokemonType | type}, accounting for species-based restrictions
    */
   getTeraType(): PokemonType {
     if (this.hasSpecies(SpeciesId.TERAPAGOS)) {
