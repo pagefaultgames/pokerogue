@@ -3227,8 +3227,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /** Generate a semi-random moveset for this Pokémon */
-  public generateAndPopulateMoveset(): void {
-    generateMoveset(this);
+  public generateAndPopulateMoveset(forRival = false): void {
+    generateMoveset(this, forRival);
 
     // Trigger FormChange, except for enemy Pokemon during Mystery Encounters, to avoid crashes
     if (
@@ -6459,6 +6459,7 @@ export class EnemyPokemon extends Pokemon {
     boss: boolean,
     shinyLock = false,
     dataSource?: PokemonData,
+    forRival = false,
   ) {
     super(
       236,
@@ -6501,7 +6502,7 @@ export class EnemyPokemon extends Pokemon {
     }
 
     if (!dataSource) {
-      this.generateAndPopulateMoveset();
+      this.generateAndPopulateMoveset(forRival);
       if (shinyLock || Overrides.ENEMY_SHINY_OVERRIDE === false) {
         this.shiny = false;
       } else {
@@ -6614,7 +6615,7 @@ export class EnemyPokemon extends Pokemon {
     }
   }
 
-  generateAndPopulateMoveset(formIndex?: number): void {
+  override generateAndPopulateMoveset(forRival = false, formIndex?: number): void {
     switch (true) {
       case this.species.speciesId === SpeciesId.SMEARGLE:
         this.moveset = [
@@ -6643,7 +6644,7 @@ export class EnemyPokemon extends Pokemon {
         }
         break;
       default:
-        super.generateAndPopulateMoveset();
+        super.generateAndPopulateMoveset(forRival);
         break;
     }
   }

@@ -33,7 +33,7 @@ import {
   ULTRA_TIER_TM_LEVEL_REQUIREMENT,
   ULTRA_TM_MOVESET_WEIGHT,
 } from "#balance/moves/moveset-generation";
-import { FORCED_SIGNATURE_MOVES } from "#balance/moves/signature-moves";
+import { FORCED_RIVAL_SIGNATURE_MOVES, FORCED_SIGNATURE_MOVES } from "#balance/moves/signature-moves";
 import { SUPERCEDED_MOVES } from "#balance/moves/superceded-moves";
 import { speciesTmMoves, tmPoolTiers } from "#balance/tms";
 import { IS_TEST, isBeta, isDev } from "#constants/app-constants";
@@ -343,11 +343,11 @@ function filterSupercededMoves(pool: Map<MoveId, number>, ...otherPools: Map<Mov
 }
 
 /**
- * Filter a move pool, removing moves that are not allowed based on conditions
+ * Filter a move pool, removing moves that are not allowed based on specific conditions
  * @param pool - The move pool to filter
  * @param isBoss - Whether the Pokémon is a boss
  * @param hasTrainer - Whether the Pokémon has a trainer
- * @param level - The level of the Pokémon
+ * @param pokemon - The Pokémon having its moveset generated
  */
 function filterMovePool(pool: Map<MoveId, number>, isBoss: boolean, hasTrainer: boolean, pokemon: Pokemon): void {
   const isSingles = !globalScene.currentBattle?.double;
@@ -561,6 +561,7 @@ function addToMoveset(
  * @param eggMovePool - The egg move pool
  * @param tmCount - A holder for the count of moves that have been added to the moveset from TMs
  * @param eggMoveCount - A holder for the count of moves that have been added to the moveset from egg moves
+ * @param forRival - Whether to consider the rival-specific signature moves
  * @returns The move that was added, or `undefined` if no move was added
  *
  * @privateRemarks
@@ -574,8 +575,12 @@ function forceSignatureMove(
   eggPool: Map<MoveId, number>,
   tmCount: NumberHolder,
   eggMoveCount: NumberHolder,
+  forRival: boolean,
 ): undefined | Move {
-  let forcedSignature = FORCED_SIGNATURE_MOVES[pokemon.species.speciesId];
+  const speciesId = pokemon.species.speciesId;
+  let forcedSignature = forRival
+    ? (FORCED_RIVAL_SIGNATURE_MOVES[speciesId] ?? FORCED_SIGNATURE_MOVES[speciesId])
+    : FORCED_SIGNATURE_MOVES[speciesId];
   if (forcedSignature == null) {
     return;
   }
@@ -1074,9 +1079,10 @@ function debugMoveWeights(pokemon: Pokemon, pool: Map<MoveId, number>, note: str
 /**
  * Generate a moveset for a given Pokémon based on its level, types, stats, and whether it is wild or a trainer's Pokémon.
  * @param pokemon - The Pokémon to generate a moveset for
+ * @param forRival - Whether the moveset is being generated for the rival's Pokémon
  * @returns A reference to the Pokémon's moveset array
  */
-export function generateMoveset(pokemon: Pokemon): void {
+export function generateMoveset(pokemon: Pokemon, forRival = false): void {
   globalScene.movesetGenInProgress = true;
   pokemon.moveset = [];
   const isBoss = pokemon.isBoss();
@@ -1142,7 +1148,15 @@ export function generateMoveset(pokemon: Pokemon): void {
   debugMoveWeights(pokemon, baseWeights, "Pre STAB Move");
 
   // Step 4: Attempt to force a signature move
-  const forcedSignature = forceSignatureMove(pokemon, baseWeights, tmPool, eggMovePool, tmCount, eggMoveCount);
+  const forcedSignature = forceSignatureMove(
+    pokemon,
+    baseWeights,
+    tmPool,
+    eggMovePool,
+    tmCount,
+    eggMoveCount,
+    forRival,
+  );
 
   // Step 5: Force a STAB move if no signature was generated or was not a damaging STAB move
   if (
