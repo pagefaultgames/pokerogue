@@ -23,7 +23,6 @@ export class TurnEndPhase extends FieldPhase {
     super.start();
 
     globalScene.currentBattle.incrementTurn();
-    globalScene.arena.performTurnEndEffects();
 
     globalScene.eventTarget.dispatchEvent(new TurnEndEvent(globalScene.currentBattle.turn));
     globalScene.phaseManager.dynamicQueueManager.clearLastTurnOrder();
@@ -68,7 +67,8 @@ export class TurnEndPhase extends FieldPhase {
 
       globalScene.arena.lapseTags();
     }
-
+    
+    globalScene.arena.performTurnEndEffects();
     this.end();
   }
 }
