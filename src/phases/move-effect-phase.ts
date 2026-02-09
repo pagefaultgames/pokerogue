@@ -909,7 +909,7 @@ export class MoveEffectPhase extends PokemonPhase {
     const { hitChecks, move, targets, useMode } = this;
     // NB: Protected targets _do_ prematurely remove themselves from the `targets` array, but this is benign as
     // spread moves will have their target set re-computed anyways (and single target moves will fail and thus be ineligible for copying)
-    if (isDancerCopiable(useMode) || targets.length === 0 || !hitChecks.some(hr => hr[0] === HitCheckResult.HIT)) {
+    if (!isDancerCopiable(useMode) || targets.length === 0 || !hitChecks.some(hr => hr[0] === HitCheckResult.HIT)) {
       return;
     }
 
@@ -924,9 +924,8 @@ export class MoveEffectPhase extends PokemonPhase {
       if (
         pokemon === user
         || !pokemon.hasAbilityWithAttr("PostDancingMoveAbAttr")
-        || pokemon.getTag(SemiInvulnerableTag)
-        || // Avoid creating unneeded phases since Dancer is (currently) the only ability to use its attribute.
-        // If other abilities with different conditions are added, this check can be moved ability-side with little issue.
+        || pokemon.getTag(SemiInvulnerableTag) // Avoid creating unneeded phases since Dancer is (currently) the only ability to use its attribute.
+        || // If other abilities with different conditions are added, this check can be moved ability-side with little issue.
         !move.hasFlag(MoveFlags.DANCE_MOVE)
       ) {
         continue;
