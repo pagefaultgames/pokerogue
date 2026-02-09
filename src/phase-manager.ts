@@ -301,7 +301,8 @@ export class PhaseManager {
   public unshiftPhase(...phases: NonEmptyTuple<Phase>): void {
     for (const phase of phases) {
       const toAdd = this.checkDynamic(phase);
-      if (phase.is("MovePhase")) {
+      // TODO: Remove the dancer phase check once a move in flight allows `MoveEndPhase` to handle dancer interactions itself
+      if (phase.is("MovePhase") || phase.is("DancerPhase")) {
         this.phaseQueue.addAfter(toAdd, "MoveEndPhase");
       } else {
         this.phaseQueue.addPhase(toAdd);

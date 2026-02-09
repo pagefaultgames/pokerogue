@@ -301,6 +301,35 @@ describe("Abilities - Dancer", () => {
     expect(oricorio).toHaveStatStage(Stat.ATK, 0);
   });
 
+  it("should not inherit ability ignore status from the original move", async () => {
+    game.override.enemyAbility(AbilityId.MOLD_BREAKER).enemyPassiveAbility(AbilityId.WONDER_GUARD);
+    await game.classicMode.startBattle(SpeciesId.ORICORIO);
+
+    game.move.use(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.REVELATION_DANCE);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.phaseInterceptor.to("MovePhase");
+
+    expect(game.scene.arena.ignoreAbilities).toBe(true);
+
+    await game.phaseInterceptor.to("MovePhase");
+
+    // flag was cleared before copying took place
+    expect(game.scene.arena.ignoreAbilities).toBe(false);
+
+    await game.toEndOfTurn();
+
+    const oricorio = game.field.getPlayerPokemon();
+    expect(oricorio).toHaveUsedMove(
+      {
+        move: MoveId.REVELATION_DANCE,
+        useMode: MoveUseMode.INDIRECT,
+        result: MoveResult.MISS,
+      },
+      1,
+    );
+  });
+
   it.each<{ name: string; status: StatusEffect }>([
     { name: "Sleep", status: StatusEffect.SLEEP },
     { name: "Freeze", status: StatusEffect.FREEZE },
@@ -308,15 +337,14 @@ describe("Abilities - Dancer", () => {
     game.override.statusEffect(status).statusActivation(true);
     await game.classicMode.startBattle(SpeciesId.ORICORIO);
 
-    const oricorio = game.field.getPlayerPokemon();
-
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.SWORDS_DANCE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toEndOfTurn();
 
-    expect(oricorio).toHaveStatusEffect(StatusEffect.NONE);
+    const oricorio = game.field.getPlayerPokemon();
     expect(oricorio).toHaveStatStage(Stat.ATK, 2);
+    expect(oricorio).toHaveStatusEffect(StatusEffect.NONE);
   });
 
   // TODO: This more or less requires an overhaul of Frenzy moves
