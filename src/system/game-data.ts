@@ -1139,7 +1139,7 @@ export class GameData {
 
     if (!jsonResponse.error) {
       localStorage.removeItem(getSessionDataLocalStorageKey(slotId));
-      return [true, !!jsonResponse?.success];
+      return [true, !!jsonResponse.success];
     }
 
     if (jsonResponse.error.startsWith("session out of date")) {
