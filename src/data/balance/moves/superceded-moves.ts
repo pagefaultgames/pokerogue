@@ -138,12 +138,9 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
   [MoveId.FLAME_WHEEL]: [MoveId.FLAMETHROWER, MoveId.LAVA_PLUME, MoveId.FLAME_BURST, MoveId.INCINERATE, MoveId.SEARING_SHOT, MoveId.MYSTICAL_FIRE, MoveId.BURNING_JEALOUSY, MoveId.TORCH_SONG],
   // Replacements are rare
   // [MoveId.FLY]: [MoveId.SKY_ATTACK,],
-  // [MoveId.FORCE_PALM]: [],
   [MoveId.FURY_ATTACK]: [MoveId.COMET_PUNCH, MoveId.MEGA_PUNCH, MoveId.BODY_SLAM, MoveId.STRENGTH, MoveId.SPIKE_CANNON, MoveId.FURY_SWIPES, MoveId.HYPER_FANG, MoveId.EXTREME_SPEED, MoveId.CRUSH_CLAW, MoveId.ROCK_CLIMB, MoveId.TAIL_SLAP],
   [MoveId.FURY_SWIPES]: [MoveId.COMET_PUNCH, MoveId.MEGA_PUNCH, MoveId.BODY_SLAM, MoveId.STRENGTH, MoveId.SPIKE_CANNON, MoveId.HYPER_FANG, MoveId.EXTREME_SPEED, MoveId.CRUSH_CLAW, MoveId.ROCK_CLIMB, MoveId.TAIL_SLAP],
   [MoveId.FURY_CUTTER]: [MoveId.LEECH_LIFE, MoveId.X_SCISSOR, MoveId.BUG_BITE, MoveId.STEAMROLLER, MoveId.FELL_STINGER, MoveId.LUNGE, MoveId.SKITTER_SMACK, MoveId.POUNCE],
-  // Base move is rare
-  // []: [MoveId.SUNSTEEL_STRIKE, MoveId.DOUBLE_IRON_BASH, MoveId.BEHEMOTH_BLADE, MoveId.BEHEMOTH_BASH],
   [MoveId.GUST]: [ MoveId.AIR_CUTTER, MoveId.AIR_SLASH,],
   // Base move too rare
   // [MoveId.HEART_STAMP]: [MoveId.PSYCHO_CUT, MoveId.PSYCHIC_FANGS, ],
@@ -161,7 +158,6 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
   // Base move too rare
   // [MoveId.MAGNET_BOMB]: [MoveId.IRON_HEAD,MoveId.ANCHOR_SHOT,MoveId.SMART_STRIKE,MoveId.SUNSTEEL_STRIKE,MoveId.BEHEMOTH_BLADE,MoveId.BEHEMOTH_BASH	],
   [MoveId.MEGA_DRAIN]: [MoveId.GIGA_DRAIN],
-  // Flash cannon because metal claw is just that bad and is often the only steel move available
   [MoveId.METAL_CLAW]: [MoveId.METEOR_MASH, MoveId.IRON_HEAD, MoveId.SUNSTEEL_STRIKE, MoveId.BEHEMOTH_BASH, MoveId.BEHEMOTH_BLADE, MoveId.ANCHOR_SHOT, MoveId.SMART_STRIKE],
   [MoveId.NEEDLE_ARM]: [MoveId.LEAF_BLADE, MoveId.SEED_BOMB, MoveId.HORN_LEECH, MoveId.PETAL_BLIZZARD, MoveId.GRAV_APPLE, MoveId.IVY_CUDGEL],
   [MoveId.PAY_DAY]: [MoveId.VISE_GRIP, MoveId.CUT, MoveId.STOMP, MoveId.HEADBUTT, MoveId.HORN_ATTACK, MoveId.BODY_SLAM, MoveId.STRENGTH, MoveId.QUICK_ATTACK, MoveId.DIZZY_PUNCH, MoveId.SLASH, MoveId.RAPID_SPIN, MoveId.EXTREME_SPEED, MoveId.FACADE, MoveId.SMELLING_SALTS, MoveId.CRUSH_CLAW, MoveId.COVET, MoveId.CHIP_AWAY, MoveId.RETALIATE	],
@@ -220,7 +216,7 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
   [MoveId.WRAP]: [MoveId.BIND],
 
   // Status moves
-  // technically, defense curl is better than harden because it boosts rollout and ice ball.
+  // technically, defense curl is better than harden because it boosts rollout and ice ball, though not added here
   [MoveId.HARDEN]: SINGLE_STAGE_DEF_BOOST_REPLACEMENTS,
   [MoveId.WITHDRAW]: SINGLE_STAGE_DEF_BOOST_REPLACEMENTS,
   [MoveId.DEFENSE_CURL]: SINGLE_STAGE_DEF_BOOST_REPLACEMENTS,
@@ -234,5 +230,5 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
   [MoveId.METAL_SOUND]: [MoveId.FAKE_TEARS],
   [MoveId.PROTECT]: [MoveId.BANEFUL_BUNKER, MoveId.KINGS_SHIELD, MoveId.SPIKY_SHIELD],
   [MoveId.DETECT]: [MoveId.BANEFUL_BUNKER, MoveId.KINGS_SHIELD, MoveId.SPIKY_SHIELD],
-  [MoveId.REST]: [MoveId.REST, MoveId.MORNING_SUN, MoveId.SYNTHESIS, MoveId.MOONLIGHT, MoveId.HEAL_ORDER, MoveId.SHORE_UP, MoveId.MILK_DRINK, MoveId.SLACK_OFF, MoveId.SOFT_BOILED, MoveId.STRENGTH_SAP],
+  [MoveId.REST]: [MoveId.MORNING_SUN, MoveId.SYNTHESIS, MoveId.MOONLIGHT, MoveId.HEAL_ORDER, MoveId.SHORE_UP, MoveId.MILK_DRINK, MoveId.SLACK_OFF, MoveId.SOFT_BOILED, MoveId.STRENGTH_SAP],
 };
