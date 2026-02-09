@@ -407,5 +407,5 @@ describe("Moves - Delayed Attacks", () => {
   });
 
   // TODO: Implement and move to a power spot's test file
-  it.todo("Should activate ally's power spot when switched in during single battles");
+  it.todo("should activate ally's power spot when switched in during single battles");
 });

@@ -7,8 +7,6 @@ import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-// TODO: When Magic Bounce is implemented, make a test for its interaction with mirror guard, use screech
-
 describe("Ability - Mirror Armor", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;

@@ -896,22 +896,9 @@ export abstract class Move implements Localizable {
           return true;
         }
         break;
-      case MoveFlags.REFLECTABLE:
-        // If the target is not semi-invulnerable and either has magic coat active or an unignored magic bounce ability
-        if (
-          target?.getTag(SemiInvulnerableTag)
-          || !(
-            target?.getTag(BattlerTagType.MAGIC_COAT)
-            || (!this.doesFlagEffectApply({ flag: MoveFlags.IGNORE_ABILITIES, user, target })
-              && target?.hasAbilityWithAttr("ReflectStatusMoveAbAttr"))
-          )
-        ) {
-          return false;
-        }
-        break;
     }
 
-    return !!(this.flags & flag);
+    return this.hasFlag(flag);
   }
 
   /**
@@ -9855,11 +9842,10 @@ export function initMoves() {
       .hidesUser(),
     new StatusMove(MoveId.ENCORE, PokemonType.NORMAL, 100, 5, -1, 0, 2)
       .attr(AddBattlerTagAttr, BattlerTagType.ENCORE, false, true)
+      .condition((user, target) => new EncoreTag(user.id).canAdd(target))
       .ignoresSubstitute()
-      .condition((user, target, _move) => new EncoreTag(user.id).canAdd(target))
       .reflectable()
-      // Can lock infinitely into struggle; has incorrect interactions with Blood Moon/Gigaton Hammer
-      // Also may or may not incorrectly select targets for replacement move (needs verification)
+      // TODO: Verify if Encore's duration decreases during status based move failures
       .edgeCase(),
     new AttackMove(MoveId.PURSUIT, PokemonType.DARK, MoveCategory.PHYSICAL, 40, 100, 20, -1, 0, 2) //
       .partial(), // No effect implemented
@@ -10059,9 +10045,7 @@ export function initMoves() {
     new SelfStatusMove(MoveId.MAGIC_COAT, PokemonType.PSYCHIC, -1, 15, -1, 4, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.MAGIC_COAT, true, true, 0)
       .condition(failIfLastCondition, 3)
-      // Interactions with stomping tantrum, instruct, and other moves that
-      // rely on move history
-      // Also will not reflect roar / whirlwind if the target has ForceSwitchOutImmunityAbAttr
+      // Should reflect moves that would otherwise fail
       .edgeCase(),
     new SelfStatusMove(MoveId.RECYCLE, PokemonType.NORMAL, -1, 10, -1, 0, 3) //
       .unimplemented(),
@@ -10072,7 +10056,10 @@ export function initMoves() {
     new StatusMove(MoveId.YAWN, PokemonType.NORMAL, -1, 10, -1, 0, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.DROWSY, false, true)
       .condition((user, target, _move) => !target.status && !target.isSafeguarded(user))
-      .reflectable(),
+      .reflectable()
+      // Does not count as failed for terrain-based failures;
+      // should not check Safeguard when triggering drowsiness
+      .edgeCase(),
     new AttackMove(MoveId.KNOCK_OFF, PokemonType.DARK, MoveCategory.PHYSICAL, 65, 100, 20, -1, 0, 3)
       .attr(MovePowerMultiplierAttr, (_user, target, _move) =>
         target.getHeldItems().filter(i => i.isTransferable).length > 0 ? 1.5 : 1,
@@ -11475,11 +11462,11 @@ export function initMoves() {
     new AttackMove(MoveId.TROP_KICK, PokemonType.GRASS, MoveCategory.PHYSICAL, 70, 100, 15, 100, 0, 7) //
       .attr(StatStageChangeAttr, [Stat.ATK], -1),
     new StatusMove(MoveId.INSTRUCT, PokemonType.PSYCHIC, -1, 15, -1, 0, 7)
-      .ignoresSubstitute()
       .attr(RepeatMoveAttr)
+      .ignoresSubstitute()
       /*
+       * TODO: Re-check gigaton interactions
        * Incorrect interactions with Gigaton Hammer, Blood Moon & Torment due to them _failing on use_, not merely being unselectable.
-       * Incorrectly ticks down Encore's fail counter
        * TODO: Verify whether Instruct can repeat Struggle
        * TODO: Verify whether Instruct can fail when using a copied move also in one's own moveset
        */

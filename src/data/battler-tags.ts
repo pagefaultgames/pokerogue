@@ -67,7 +67,9 @@ import { ChargeAnim, CommonAnim } from "#enums/move-anims-common";
 import { MoveCategory } from "#enums/move-category";
 import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
+import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import { MoveResult } from "#enums/move-result";
+import { MoveTarget } from "#enums/move-target";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { PokemonType } from "#enums/pokemon-type";
@@ -78,6 +80,8 @@ import { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
 import { healBlockedMoves, invalidEncoreMoves } from "#moves/invalid-moves";
 import type { Move } from "#moves/move";
+import { getMoveTargets } from "#moves/move-utils";
+import { PokemonMove } from "#moves/pokemon-move";
 import type { MoveEffectPhase } from "#phases/move-effect-phase";
 import type { MovePhase } from "#phases/move-phase";
 import type { StatStageChangeCallback } from "#phases/stat-stage-change-phase";
@@ -199,6 +203,7 @@ export class BattlerTag implements BaseBattlerTag {
     return "";
   }
 
+  // TODO: Make this a getter
   isSourceLinked(): boolean {
     return false;
   }
@@ -1289,29 +1294,40 @@ export class FrenzyTag extends SerializableBattlerTag {
  */
 export class EncoreTag extends MoveRestrictionBattlerTag {
   public override readonly tagType = BattlerTagType.ENCORE;
-  /** The ID of the move the user is locked into using */
-  public moveId: MoveId;
+  /**
+   * Internal tracker for whether this Tag was added this turn, used to override the attached Pokemon's pending move. \
+   * Removed from serialization as this is set to `false` at or before turn end.
+   */
+  #addedThisTurn = true;
+
+  /** The {@linkcode MoveId} the tag holder is locked into using. */
+  public readonly moveId: MoveId;
 
   constructor(sourceId: number) {
-    super(BattlerTagType.ENCORE, BattlerTagLapseType.AFTER_MOVE, 3, MoveId.ENCORE, sourceId);
+    // Encore ends at the end of the 3rd turn during which it procs.
+    // If used on turn X when faster, it ends at the end of turn X+2.
+    // If used on turn X when slower, it ends at the end of turn X+3.
+    // NB: The reason we don't tick down the duration in an `AFTER_MOVE` trigger is to ensure proper Instruct timings
+    super(BattlerTagType.ENCORE, [BattlerTagLapseType.TURN_END], 4, MoveId.ENCORE, sourceId);
   }
 
   public override loadTag(source: BaseBattlerTag & Pick<EncoreTag, "tagType" | "moveId">): void {
     super.loadTag(source);
-    this.moveId = source.moveId;
+    (this as Mutable<this>).moveId = source.moveId;
   }
 
   override canAdd(pokemon: Pokemon): boolean {
     const lastMove = pokemon.getLastNonVirtualMove();
-    if (!lastMove) {
+    if (
+      !lastMove
+      || invalidEncoreMoves.has(lastMove.move)
+      || !pokemon.getMoveset().some(m => m.moveId === lastMove.move && !m.isOutOfPp())
+      || pokemon.getTag(BattlerTagType.SHELL_TRAP)
+    ) {
       return false;
     }
 
-    if (invalidEncoreMoves.has(lastMove.move)) {
-      return false;
-    }
-
-    this.moveId = lastMove.move;
+    (this as Mutable<this>).moveId = lastMove.move;
 
     return true;
   }
@@ -1322,32 +1338,54 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       }),
     );
-
-    const movesetMove = pokemon.getMoveset().find(m => m.moveId === this.moveId);
-    if (movesetMove) {
-      globalScene.phaseManager.changePhaseMove((phase: MovePhase) => phase.pokemon === pokemon, movesetMove);
-    }
   }
 
   /**
-   * If the encored move has run out of PP, Encore ends early. Otherwise, Encore lapses based on the AFTER_MOVE battler tag lapse type.
-   * @returns `true` to persist | `false` to end and be removed
+   * Override the target's pending move if Encore was used prior to their move this turn.
+   * Should only be called during the `MovePhase`
+   * @param pokemon - The {@linkcode Pokemon} to whom this Tag is attached
+   * @returns A tuple containing the updated move and targets, or `undefined`
+   * if the attempted override failed.
    */
+  public tryOverrideMove(pokemon: Pokemon): [move: PokemonMove, targets: BattlerIndex[]] | undefined {
+    if (!this.#addedThisTurn) {
+      return;
+    }
+
+    const movesetMove = pokemon.getMoveset().find(m => m.moveId === this.moveId && !m.isOutOfPp());
+    if (!movesetMove) {
+      return;
+    }
+
+    // Tick down Encore's duration when overridding pending move
+    this.turnCount--;
+    this.#addedThisTurn = false;
+    return [movesetMove, this.getTargets(pokemon)];
+  }
+
+  private getTargets(pokemon: Pokemon): BattlerIndex[] {
+    // Edge case for Acupressure - always targets self
+    if (allMoves[this.moveId].moveTarget === MoveTarget.USER_OR_NEAR_ALLY) {
+      return [pokemon.getBattlerIndex()];
+    }
+
+    const moveTargets = getMoveTargets(pokemon, this.moveId);
+    // Spread moves and ones with only 1 valid target will use their normal targeting.
+    // If not, target a random enemy in our target list
+    // TODO: Consolidate this _somewhere_ as move calling moves also duplicate this code
+    return moveTargets.multiple || moveTargets.targets.length === 1
+      ? moveTargets.targets
+      : [moveTargets.targets[pokemon.randBattleSeedInt(moveTargets.targets.length)]];
+  }
+
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    if (lapseType === BattlerTagLapseType.CUSTOM) {
-      const encoredMove = pokemon.getMoveset().find(m => m.moveId === this.moveId);
-      return encoredMove != null && encoredMove.getPpRatio() > 0;
-    }
-    return super.lapse(pokemon, lapseType);
+    this.#addedThisTurn = false;
+
+    const hasEncoredMove = pokemon.getMoveset().some(m => m.moveId === this.moveId && !m.isOutOfPp());
+    return hasEncoredMove && super.lapse(pokemon, lapseType);
   }
 
-  /**
-   * Checks if the move matches the moveId stored within the tag and returns a boolean value
-   * @param move - The ID of the move selected
-   * @param user N/A
-   * @returns `true` if the move does not match with the moveId stored and as a result, restricted
-   */
-  override isMoveRestricted(move: MoveId, _user?: Pokemon): boolean {
+  public override isMoveRestricted(move: MoveId): boolean {
     return move !== this.moveId;
   }
 
@@ -1542,6 +1580,7 @@ export class DrowsyTag extends SerializableBattlerTag {
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (!super.lapse(pokemon, lapseType)) {
+      // TODO: Safeguard should not prevent yawn from setting sleep after tag use
       pokemon.trySetStatus(StatusEffect.SLEEP);
       return false;
     }
@@ -3659,6 +3698,24 @@ export class MagicCoatTag extends BattlerTag {
       i18next.t("battlerTags:magicCoatOnAdd", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       }),
+    );
+  }
+
+  /**
+   * Apply the tag to reflect a move.
+   * @param pokemon - The {@linkcode Pokemon} to whom this tag belongs
+   * @param opponent - The {@linkcode Pokemon} having originally used the move
+   * @param move - The {@linkcode Move} being used
+   */
+  public apply(pokemon: Pokemon, opponent: Pokemon, move: Move): void {
+    const newTargets = move.isMultiTarget() ? getMoveTargets(pokemon, move.id).targets : [opponent.getBattlerIndex()];
+    globalScene.phaseManager.unshiftNew(
+      "MovePhase",
+      pokemon,
+      newTargets,
+      new PokemonMove(move.id),
+      MoveUseMode.REFLECTED,
+      MovePhaseTimingModifier.FIRST,
     );
   }
 }
