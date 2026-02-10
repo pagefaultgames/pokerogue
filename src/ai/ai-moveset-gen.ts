@@ -368,7 +368,7 @@ function filterMovePool(pool: Map<MoveId, number>, isBoss: boolean, hasTrainer: 
       || (hasTrainer && move.hasAttr("OneHitKOAttr")) // trainers never get OHKO moves
       || ((isBoss || hasTrainer) // Following conditions do not apply to normal wild pokemon
         && ((isSingles && FORBIDDEN_SINGLES_MOVES.has(moveId)) // forbid doubles only moves in singles
-          || (level >= LEVEL_BASED_DENYLIST_THRESHOLD && LEVEL_BASED_DENYLIST.has(moveId)) // forbid level based denylist moves // Forbid weather based moves if the pokemon has a weather summoning ability
+          || (level >= LEVEL_BASED_DENYLIST_THRESHOLD && LEVEL_BASED_DENYLIST.has(moveId)) // forbid level based denylist moves
           || (move.hasAttr("WeatherChangeAttr") && blockWeatherMoves) // Forbid Weather moves if the pokemon has a weather summoning or suppressing ability
           || (move.hasAttr("TerrainChangeAttr") && blockTerrainMoves) // Forbid terrain moves if the pokemon has a terrain summoning ability
           || (hasGorillaTactics && move.category === MoveCategory.STATUS))) // Forbid status moves if pokemon has Gorilla Tactics
