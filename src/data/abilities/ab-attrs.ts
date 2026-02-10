@@ -2,10 +2,11 @@ import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { EntryHazardTag, SuppressAbilitiesTag } from "#data/arena-tag";
-import { type BattlerTag, CritBoostTag } from "#data/battler-tags";
+import { type BattlerTag, CritBoostTag, SemiInvulnerableTag } from "#data/battler-tags";
 import { getBerryEffectFunc } from "#data/berry";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { SpeciesFormChangeAbilityTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
+import { getMoveTargets } from "#data/moves/move-utils";
 import { getPokeballName } from "#data/pokeball";
 import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -42,7 +43,8 @@ import { BerryUsedEvent } from "#events/battle-scene";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#modifiers/modifier";
 import { BerryModifierType } from "#modifiers/modifier-type";
-import type { PokemonMove } from "#moves/pokemon-move";
+import { PokemonMove } from "#moves/pokemon-move";
+import type { HitCheckEntry, MoveEffectPhase } from "#phases/move-effect-phase";
 import type { StatStageChangePhase } from "#phases/stat-stage-change-phase";
 import type {
   AbAttrCondition,
@@ -4461,80 +4463,96 @@ export class PostBiomeChangeTerrainChangeAbAttr extends PostBiomeChangeAbAttr {
   }
 }
 
+// TODO: Rework into taking a partial copy of a move in flight
 export interface PostMoveUsedAbAttrParams extends AbAttrBaseParams {
-  /** The move that was used */
-  move: PokemonMove;
-  /** The source of the move */
-  source: Pokemon;
-  /** The targets of the move */
-  targets: BattlerIndex[];
+  /** The move that was used. */
+  readonly move: Move;
+  /** The Pokemon that initially used the move. */
+  readonly source: Pokemon;
+  /** The inital targets of the move */
+  readonly targets: readonly BattlerIndex[];
+  /** The hit check results for each target */
+  readonly hitChecks: readonly HitCheckEntry[];
 }
 
-/** Triggers just after a move is used either by the opponent or the player */
-export class PostMoveUsedAbAttr extends AbAttr {
-  canApply(_params: Closed<PostMoveUsedAbAttrParams>): boolean {
+/**
+ * Attribute to trigger effects after a move is used by a different Pokémon on the field.
+ * @remarks
+ * This will only trigger on successful, non-Dancer induced and non-reflected move uses, the checks for which are
+ * performed inside the {@linkcode MoveEffectPhase}.
+ */
+abstract class PostMoveUsedAbAttr extends AbAttr {
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: psuedo-abstract method
+  public override canApply(params: Closed<PostMoveUsedAbAttrParams>): boolean {
     return true;
   }
 
-  apply(_params: Closed<PostMoveUsedAbAttrParams>): void {}
+  public abstract override apply(params: Closed<PostMoveUsedAbAttrParams>): void;
 }
 
-/** Triggers after a dance move is used either by the opponent or the player */
+/**
+ * Ability attribute to implement the effect of {@link https://bulbapedia.bulbagarden.net/wiki/Dancer_(Ability) | Dancer}. \
+ * Dancer triggers whenever another Pokemon uses a dance move, copying it against either the original user or the move's original target as applicable.
+ */
 export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
-  override canApply({ source, pokemon }: PostMoveUsedAbAttrParams): boolean {
-    /** Tags that prevent Dancer from replicating the move */
-    const forbiddenTags = [
-      BattlerTagType.FLYING,
-      BattlerTagType.UNDERWATER,
-      BattlerTagType.UNDERGROUND,
-      BattlerTagType.HIDDEN,
-    ];
-    // The move to replicate cannot come from the Dancer
-    return (
-      source.getBattlerIndex() !== pokemon.getBattlerIndex()
-      && !pokemon.summonData.tags.some(tag => forbiddenTags.includes(tag.tagType))
+  public override canApply({ move, pokemon }: PostMoveUsedAbAttrParams): boolean {
+    return move.hasFlag(MoveFlags.DANCE_MOVE) && !pokemon.getTag(SemiInvulnerableTag);
+  }
+  public override apply(params: PostMoveUsedAbAttrParams): void {
+    const { pokemon, move } = params;
+    globalScene.phaseManager.unshiftNew(
+      "MovePhase",
+      pokemon,
+      this.getMoveTargets(params),
+      new PokemonMove(move.id),
+      MoveUseMode.INDIRECT,
+      MovePhaseTimingModifier.FIRST,
     );
   }
 
-  override apply({ source, pokemon, move, targets, simulated }: PostMoveUsedAbAttrParams): void {
-    if (!simulated) {
-      // If the move is an AttackMove or a StatusMove the Dancer must replicate the move on the source of the Dance
-      if (move.getMove().is("AttackMove") || move.getMove().is("StatusMove")) {
-        const target = this.getTarget(pokemon, source, targets);
-        globalScene.phaseManager.unshiftNew(
-          "MovePhase",
-          pokemon,
-          target,
-          move,
-          MoveUseMode.INDIRECT,
-          MovePhaseTimingModifier.FIRST,
-        );
-      } else if (move.getMove().is("SelfStatusMove")) {
-        // If the move is a SelfStatusMove (ie. Swords Dance) the Dancer should replicate it on itself
-        globalScene.phaseManager.unshiftNew(
-          "MovePhase",
-          pokemon,
-          [pokemon.getBattlerIndex()],
-          move,
-          MoveUseMode.INDIRECT,
-          MovePhaseTimingModifier.FIRST,
-        );
-      }
-    }
-  }
-
   /**
-   * Get the correct targets of Dancer ability
-   *
-   * @param dancer - Pokémon with Dancer ability
-   * @param source - The user of the dancing move
-   * @param targets - Targets of the dancing move
+   * Helper function to compute the correct targets of Dancer's copied move use.
+   * @param dancer - The {@linkcode Pokemon} with Dancer that will copy the move
+   * @param source - The {@linkcode Pokemon} that originally used the dancing move
+   * @param move - The {@linkcode Move} that was originally used
+   * @param targets - The original targets of the move
+   * @returns The modified set of targets to use
    */
-  private getTarget(dancer: Pokemon, source: Pokemon, targets: BattlerIndex[]): BattlerIndex[] {
-    if (dancer.isPlayer()) {
-      return source.isPlayer() ? targets : [source.getBattlerIndex()];
+  private getMoveTargets({
+    pokemon,
+    source,
+    move,
+    targets,
+  }: Pick<PostMoveUsedAbAttrParams, "pokemon" | "source" | "move" | "targets">): BattlerIndex[] {
+    if (move.isMultiTarget()) {
+      return getMoveTargets(pokemon, move.id).targets;
     }
-    return source.isPlayer() ? [source.getBattlerIndex()] : targets;
+
+    // Self-targeted status moves (Swords Dance & co.) are always replicated on the user.
+    if (move.is("SelfStatusMove")) {
+      return [pokemon.getBattlerIndex()];
+    }
+
+    // Attack moves are unleashed on the source of the dance UNLESS they are an ally attacking an enemy
+    // (in which case we retain the prior move's targeting)
+    if (!(pokemon.isAlly(source) && !targets.includes(pokemon.getBattlerIndex()))) {
+      targets = [source.getBattlerIndex()];
+    }
+
+    // Attempt to redirect to the prior target's partner if fainted and not our own ally.
+    // TODO: There should _really_ be a helper for this...
+    const firstTarget = globalScene.getField()[targets[0]];
+    const ally = firstTarget.getAlly();
+    if (
+      globalScene.currentBattle.double
+      && firstTarget.isFainted()
+      && firstTarget.isOpponent(pokemon)
+      && ally?.isActive()
+    ) {
+      return [ally.getBattlerIndex()];
+    }
+
+    return targets.slice();
   }
 }
 

@@ -1,3 +1,4 @@
+import type { PostDancingMoveAbAttr } from "#abilities/ab-attrs";
 import type { ObjectValues } from "#types/type-helpers";
 
 /**
@@ -56,7 +57,7 @@ export const MoveUseMode = {
 
    * Reflected moves ignore all the same cancellation checks as {@linkcode MoveUseMode.INDIRECT}
    * and retain the same copy prevention as {@linkcode MoveUseMode.FOLLOW_UP}, but additionally
-   * **cannot be reflected by other reflecting effects**.
+   * **cannot be copied by other reflecting effects or Dancer**.
    */
   REFLECTED: 5,
 
@@ -160,4 +161,26 @@ export function isIgnorePP(useMode: MoveUseMode): boolean {
  */
 export function isReflected(useMode: MoveUseMode): boolean {
   return useMode === MoveUseMode.REFLECTED;
+}
+
+/**
+ * Check if a given {@linkcode MoveUseMode} is capable of being copied by {@linkcode PostDancingMoveAbAttr | Dancer}.
+ * @param useMode - The {@linkcode MoveUseMode} to check
+ * @returns Whether {@linkcode useMode} is copiable by Dancer.
+ * @remarks
+ * This function is equivalent to the following truth table:
+ *
+ * | Use Type                                | Returns |
+ * |-----------------------------------------|---------|
+ * | {@linkcode MoveUseMode.NORMAL}          | `true`  |
+ * | {@linkcode MoveUseMode.IGNORE_PP}       | `true`  |
+ * | {@linkcode MoveUseMode.INDIRECT}        | `false` |
+ * | {@linkcode MoveUseMode.FOLLOW_UP}       | `true`  |
+ * | {@linkcode MoveUseMode.REFLECTED}       | `false` |
+ * | {@linkcode MoveUseMode.DELAYED_ATTACK}  | `false` |
+ */
+export function isDancerCopiable(useMode: MoveUseMode): boolean {
+  return (
+    useMode !== MoveUseMode.INDIRECT && useMode !== MoveUseMode.REFLECTED && useMode !== MoveUseMode.DELAYED_ATTACK
+  );
 }

@@ -1,3 +1,4 @@
+import type { PostMoveUsedAbAttrParams } from "#abilities/ab-attrs";
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -19,7 +20,7 @@ import { MoveId } from "#enums/move-id";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import { MoveResult } from "#enums/move-result";
 import { MoveTarget } from "#enums/move-target";
-import { isReflected, MoveUseMode } from "#enums/move-use-mode";
+import { isDancerCopiable, isReflected, MoveUseMode } from "#enums/move-use-mode";
 import { PokemonType } from "#enums/pokemon-type";
 import type { Pokemon } from "#field/pokemon";
 import {
@@ -899,7 +900,40 @@ export class MoveEffectPhase extends PokemonPhase {
     this.getTargets().forEach(target => {
       target.turnData.moveEffectiveness = null;
     });
+
+    this.queueDancerResponses();
     super.end();
+  }
+
+  private queueDancerResponses(): void {
+    const { hitChecks, move, targets, useMode } = this;
+    // NB: Protected targets _do_ prematurely remove themselves from the `targets` array, but this is benign as
+    // spread moves will have their target set re-computed anyways (and single target moves will fail and thus be ineligible for copying)
+    if (!isDancerCopiable(useMode) || targets.length === 0 || !hitChecks.some(([hr]) => hr === HitCheckResult.HIT)) {
+      return;
+    }
+
+    const user = this.getUserPokemon();
+    const params: Omit<PostMoveUsedAbAttrParams, "pokemon"> = {
+      hitChecks,
+      move,
+      source: user,
+      targets,
+    };
+    for (const pokemon of globalScene.getField(true)) {
+      if (pokemon === user) {
+        continue;
+      }
+
+      // Avoid creating unneeded phases if the ability in question cannot apply.
+      // This does duplicate the relevant checks slightly, but the overhead is likely minimal
+      const newParams: PostMoveUsedAbAttrParams = { ...params, pokemon };
+      const attrs = pokemon.getAbilityAttrs("PostMoveUsedAbAttr");
+      if (attrs.length === 0 || !attrs.some(attr => attr.canApply(newParams))) {
+        continue;
+      }
+      globalScene.phaseManager.unshiftNew("DancerPhase", newParams);
+    }
   }
 
   // #region Helpers

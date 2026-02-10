@@ -103,6 +103,8 @@ export class PhaseInterceptor {
         await this.run(currentPhase);
         return false;
       },
+      // TODO: See how increased timeouts interact with Vitest's `testTimeout` setting -
+      // this has a habit of timing out inside debug sessions
       { interval: 0, timeout: 20_000 },
     );
 
