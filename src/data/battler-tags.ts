@@ -2303,9 +2303,11 @@ export class FloatingTag extends TypeImmuneTag {
 }
 
 /**
- * Tag used by {@linkcode MoveId.TELEKINESIS} to provide its ungrounding and guaranteed hit effects.
- * The effects of Telekinesis can be Baton Passed to a teammate, including ones unaffected by the original move.
+ * Tag used by Telekinesis to provide its ungrounding and guaranteed hit effects.
+ *
+ * The effects of Telekinesis can be Baton Passed to a teammate, including ones unaffected by the original move. \
  * A notable exception is Mega Gengar, which cannot receive either effect via Baton Pass.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move)}
  */
 export class TelekinesisTag extends SerializableBattlerTag {
   public override readonly tagType = BattlerTagType.TELEKINESIS;
