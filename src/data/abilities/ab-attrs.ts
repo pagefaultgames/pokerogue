@@ -478,8 +478,8 @@ export class AttackTypeImmunityAbAttr extends TypeImmunityAbAttr {
   override canApply(params: TypeMultiplierAbAttrParams): boolean {
     const { move } = params;
     return (
-      move.category !== MoveCategory.STATUS
-      && !move.hasAttr("NeutralDamageAgainstFlyingTypeMultiplierAttr")
+      move.category !== MoveCategory.STATUS // TODO: make Thousand Arrows ignore Levitate in a different manner
+      && !move.hasAttr("NeutralDamageAgainstFlyingTypeAttr")
       && super.canApply(params)
     );
   }
@@ -2081,22 +2081,27 @@ export class PostVictoryAbAttr extends AbAttr {
   apply(_params: Closed<AbAttrBaseParams>): void {}
 }
 
+type StatOrStatArray = BattleStat | NonEmptyTuple<BattleStat>;
+type PostVictoryStatStageChangeStats = StatOrStatArray | ((p: Pokemon) => StatOrStatArray);
+
 export class PostVictoryStatStageChangeAbAttr extends PostVictoryAbAttr {
-  private readonly stat: BattleStat | ((p: Pokemon) => BattleStat);
+  private readonly stats: PostVictoryStatStageChangeStats;
   private readonly stages: number;
 
-  constructor(stat: BattleStat | ((p: Pokemon) => BattleStat), stages: number) {
+  constructor(stats: PostVictoryStatStageChangeStats, stages: number) {
     super();
 
-    this.stat = stat;
+    this.stats = stats;
     this.stages = stages;
   }
 
   override apply({ pokemon, simulated }: AbAttrBaseParams): void {
-    const stat = typeof this.stat === "function" ? this.stat(pokemon) : this.stat;
-    if (!simulated) {
-      globalScene.phaseManager.unshiftNew("StatStageChangePhase", pokemon.getBattlerIndex(), true, [stat], this.stages);
+    if (simulated) {
+      return;
     }
+
+    const stats = coerceArray(typeof this.stats === "function" ? this.stats(pokemon) : this.stats);
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", pokemon.getBattlerIndex(), true, stats, this.stages);
   }
 }
 
@@ -3024,7 +3029,7 @@ export class PreLeaveFieldClearWeatherAbAttr extends PreLeaveFieldAbAttr {
   }
 
   override canApply({ pokemon }: AbAttrBaseParams): boolean {
-    const weatherType = globalScene.arena.getWeatherType();
+    const weatherType = globalScene.arena.weatherType;
     if (weatherType !== this.weatherType) {
       return false;
     }
@@ -5591,7 +5596,7 @@ export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
   }
 
   override apply({ pokemon }: AbAttrBaseParams): void {
-    const currentTerrain = globalScene.arena.getTerrainType();
+    const currentTerrain = globalScene.arena.terrainType;
     const typeChange: PokemonType[] = this.determineTypeChange(pokemon, currentTerrain);
     if (typeChange.length > 0) {
       if (pokemon.summonData.addedType && typeChange.includes(pokemon.summonData.addedType)) {
@@ -5630,7 +5635,7 @@ export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
   }
 
   override getTriggerMessage({ pokemon }: AbAttrBaseParams, _abilityName: string) {
-    const currentTerrain = globalScene.arena.getTerrainType();
+    const currentTerrain = globalScene.arena.terrainType;
     const pokemonNameWithAffix = getPokemonNameWithAffix(pokemon);
     if (currentTerrain === TerrainType.NONE) {
       return i18next.t("abilityTriggers:pokemonTypeChangeRevert", { pokemonNameWithAffix });
@@ -5935,8 +5940,7 @@ export function getWeatherCondition(...weatherTypes: WeatherType[]): AbAttrCondi
     if (globalScene.arena.weather?.isEffectSuppressed()) {
       return false;
     }
-    const weatherType = globalScene.arena.weather?.weatherType;
-    return !!weatherType && weatherTypes.indexOf(weatherType) > -1;
+    return weatherTypes.includes(globalScene.arena.weatherType);
   };
 }
 

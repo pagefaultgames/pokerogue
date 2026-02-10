@@ -39,8 +39,7 @@ describe("Moves - Reflect Type", () => {
     game.move.use(MoveId.FORESTS_CURSE);
     await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
-    expect(enemyPokemon.getTypes().includes(PokemonType.UNKNOWN)).toBe(true);
-    expect(enemyPokemon.getTypes().includes(PokemonType.GRASS)).toBe(true);
+    expect(enemyPokemon).toHaveTypes([PokemonType.UNKNOWN, PokemonType.GRASS]);
 
     game.move.use(MoveId.REFLECT_TYPE);
     await game.move.forceEnemyMove(MoveId.SPLASH);

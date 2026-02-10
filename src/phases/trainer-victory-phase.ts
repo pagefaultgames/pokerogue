@@ -53,7 +53,7 @@ export class TrainerVictoryPhase extends BattlePhase {
     }
     // Breeders in Space achievement
     if (
-      globalScene.arena.biomeType === BiomeId.SPACE
+      globalScene.arena.biomeId === BiomeId.SPACE
       && (trainerType === TrainerType.BREEDER || trainerType === TrainerType.EXPERT_POKEMON_BREEDER)
     ) {
       globalScene.validateAchv(achvs.BREEDERS_IN_SPACE);

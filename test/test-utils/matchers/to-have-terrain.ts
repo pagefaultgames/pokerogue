@@ -29,7 +29,7 @@ export function toHaveTerrain(
     };
   }
 
-  const actual = received.scene.arena.getTerrainType();
+  const actual = received.scene.arena.terrainType;
   const pass = actual === expectedTerrainType;
   const actualStr = toTerrainStr(actual);
   const expectedStr = toTerrainStr(expectedTerrainType);

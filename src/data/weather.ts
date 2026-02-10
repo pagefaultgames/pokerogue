@@ -257,7 +257,7 @@ export interface WeatherPoolEntry {
 export function getRandomWeatherType(arena: Arena): WeatherType {
   let weatherPool: WeatherPoolEntry[] = [];
   const hasSun = arena.getTimeOfDay() < 2;
-  switch (arena.biomeType) {
+  switch (arena.biomeId) {
     case BiomeId.GRASS:
       weatherPool = [
         { weatherType: WeatherType.NONE, weight: 8 },
@@ -386,7 +386,7 @@ export function getRandomWeatherType(arena: Arena): WeatherType {
       break;
   }
 
-  if (arena.biomeType === BiomeId.TOWN && timedEventManager.isEventActive()) {
+  if (arena.biomeId === BiomeId.TOWN && timedEventManager.isEventActive()) {
     timedEventManager.getWeather()?.map(w => weatherPool.push(w));
   }
 
