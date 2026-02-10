@@ -1620,7 +1620,6 @@ export function initAbilities() {
       .bypassFaint()
       .ignorable()
       .build(),
-
     new AbBuilder(AbilityId.POWER_SPOT, 8) //
       .attr(AllyMoveCategoryPowerBoostAbAttr, [MoveCategory.SPECIAL, MoveCategory.PHYSICAL], 1.3)
       .build(),
