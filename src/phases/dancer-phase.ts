@@ -5,8 +5,8 @@ import type { Pokemon } from "#field/pokemon";
 import type { DynamicPhase } from "#types/phase-types";
 
 /**
- * The phase where on-field Pokemon trigger Dancer-like effects.
- * Made into a separate phase to ensure proper ability flyout timings.
+ * The Phase where on-field Pokemon trigger Dancer and Dancer-like effects. \
+ * Made into a separate phase solely to ensure proper ability flyout timings.
  */
 export class DancerPhase extends Phase implements DynamicPhase {
   public override readonly phaseName = "DancerPhase";

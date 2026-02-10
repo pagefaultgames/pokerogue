@@ -2,7 +2,7 @@ import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { EntryHazardTag, SuppressAbilitiesTag } from "#data/arena-tag";
-import { type BattlerTag, CritBoostTag } from "#data/battler-tags";
+import { type BattlerTag, CritBoostTag, SemiInvulnerableTag } from "#data/battler-tags";
 import { getBerryEffectFunc } from "#data/berry";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { SpeciesFormChangeAbilityTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
@@ -4466,20 +4466,20 @@ export class PostBiomeChangeTerrainChangeAbAttr extends PostBiomeChangeAbAttr {
 // TODO: Rework into taking a partial copy of a move in flight
 export interface PostMoveUsedAbAttrParams extends AbAttrBaseParams {
   /** The move that was used. */
-  move: Move;
+  readonly move: Move;
   /** The Pokemon that initially used the move. */
-  source: Pokemon;
+  readonly source: Pokemon;
   /** The inital targets of the move */
-  targets: readonly BattlerIndex[];
+  readonly targets: readonly BattlerIndex[];
   /** The hit check results for each target */
-  hitChecks: readonly HitCheckEntry[];
+  readonly hitChecks: readonly HitCheckEntry[];
 }
 
 /**
- * Attribute to trigger effects after a move is used by either side of the field.
+ * Attribute to trigger effects after a move is used by a different Pokémon on the field.
  * @remarks
- * This will only trigger on successful, non-reflected move uses, the checks for which are
- * consolidated inside the {@linkcode MoveEffectPhase}.
+ * This will only trigger on successful, non-Dancer induced and non-reflected move uses, the checks for which are
+ * performed inside the {@linkcode MoveEffectPhase}.
  */
 abstract class PostMoveUsedAbAttr extends AbAttr {
   // biome-ignore lint/correctness/noUnusedFunctionParameters: psuedo-abstract method
@@ -4495,7 +4495,10 @@ abstract class PostMoveUsedAbAttr extends AbAttr {
  * Dancer triggers whenever another Pokemon uses a dance move, copying it against either the original user or the move's original target as applicable.
  */
 export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
-  public override apply(params: Closed<PostMoveUsedAbAttrParams>): void {
+  public override canApply({ move, pokemon }: PostMoveUsedAbAttrParams): boolean {
+    return move.hasFlag(MoveFlags.DANCE_MOVE) && !pokemon.getTag(SemiInvulnerableTag);
+  }
+  public override apply(params: PostMoveUsedAbAttrParams): void {
     const { pokemon, move } = params;
     globalScene.phaseManager.unshiftNew(
       "MovePhase",

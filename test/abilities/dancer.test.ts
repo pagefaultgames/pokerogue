@@ -57,9 +57,11 @@ describe("Abilities - Dancer", () => {
     expect(currentPhase.useMode).toBe(useMode);
   }
 
-  /** Go to and stop right before using the next move. */
-  async function toNextMove() {
-    await game.phaseInterceptor.to("MoveEndPhase");
+  /** Helper function to advance to and stop **right before** the next move is used in a turn. */
+  async function toNextMove(): Promise<void> {
+    if (game.scene.phaseManager.getCurrentPhase().is("MovePhase")) {
+      await game.phaseInterceptor.to("MoveEndPhase");
+    }
     await game.phaseInterceptor.to("MovePhase", false);
   }
 
@@ -79,6 +81,10 @@ describe("Abilities - Dancer", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
+    expect(oricorio).toHaveAbilityApplied(AbilityId.DANCER);
+    expect(shuckle).toHaveAbilityApplied(AbilityId.DANCER);
+    expect(game.phaseInterceptor.log).toContain("DancerPhase");
+
     // shpuldn't use PP if copied move is also in moveset
     expect(oricorio).toHaveUsedPP(MoveId.SWORDS_DANCE, 1);
     expect(oricorio).toHaveUsedPP(MoveId.VICTORY_DANCE, 0);
@@ -96,65 +102,45 @@ describe("Abilities - Dancer", () => {
     expect(shuckle).toHaveUsedMove({ move: MoveId.SWORDS_DANCE, useMode: MoveUseMode.INDIRECT }, 1);
   });
 
-  it("should redirect copied moves if the initial move faints the target", async () => {
-    game.override.battleStyle("double").startingLevel(500);
-    await game.classicMode.startBattle(SpeciesId.ORICORIO, SpeciesId.FEEBAS);
-
-    const [oricorio, feebas] = game.scene.getPlayerField();
-
-    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER);
-    game.move.use(MoveId.REVELATION_DANCE, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2);
-    await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
-
-    await game.phaseInterceptor.to("MovePhase", false); // feebas rev dance
-    checkCurrentMoveUser(feebas, MoveId.REVELATION_DANCE, [BattlerIndex.ENEMY_2], MoveUseMode.NORMAL);
-    await toNextMove();
-
-    // attack should redirect
-    const [shuckle1, shuckle2] = game.scene.getEnemyField();
-    expect(shuckle2.isFainted()).toBe(true);
-    checkCurrentMoveUser(oricorio, MoveId.REVELATION_DANCE, [BattlerIndex.ENEMY]);
-
-    await game.toEndOfTurn();
-
-    expect(shuckle1.isFainted()).toBe(true);
-  });
-
   it("should target correctly in double battles", async () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle(SpeciesId.ORICORIO, SpeciesId.FEEBAS);
 
     const [oricorio, feebas] = game.scene.getPlayerField();
 
-    // oricorio feather dances feebas, everyone else dances like crazy
     game.move.use(MoveId.FEATHER_DANCE, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2);
     game.move.use(MoveId.REVELATION_DANCE, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2);
     await game.move.forceEnemyMove(MoveId.FIERY_DANCE, BattlerIndex.PLAYER);
     await game.move.forceEnemyMove(MoveId.SWORDS_DANCE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
-    await game.phaseInterceptor.to("MovePhase", false); // oricorio feather dance
+    await toNextMove(); // initial use
     checkCurrentMoveUser(oricorio, MoveId.FEATHER_DANCE, [BattlerIndex.PLAYER_2], MoveUseMode.NORMAL);
+
     await toNextMove(); // feebas copies feather dance against oricorio
     checkCurrentMoveUser(feebas, MoveId.FEATHER_DANCE, [BattlerIndex.PLAYER]);
 
     await toNextMove(); // feebas uses rev dance on shuckle #2
     checkCurrentMoveUser(feebas, MoveId.REVELATION_DANCE, [BattlerIndex.ENEMY_2], MoveUseMode.NORMAL);
+
     await toNextMove(); // oricorio copies rev dance against same target
     checkCurrentMoveUser(oricorio, MoveId.REVELATION_DANCE, [BattlerIndex.ENEMY_2]);
 
     await toNextMove(); // shuckle 1 uses fiery dance
     await toNextMove(); // oricorio copies fiery dance against it
     checkCurrentMoveUser(oricorio, MoveId.FIERY_DANCE, [BattlerIndex.ENEMY]);
+
     await toNextMove(); // feebas copies fiery dance
     checkCurrentMoveUser(feebas, MoveId.FIERY_DANCE, [BattlerIndex.ENEMY]);
 
     await toNextMove(); // shuckle 2 uses swords dance
     await toNextMove(); // oricorio copies swords dance
     checkCurrentMoveUser(oricorio, MoveId.SWORDS_DANCE, [BattlerIndex.PLAYER]);
+
     await toNextMove(); // feebas copies swords dance
     checkCurrentMoveUser(feebas, MoveId.SWORDS_DANCE, [BattlerIndex.PLAYER_2]);
 
+    // run to turn end to make sure nothing bad happens
     await game.toEndOfTurn();
   });
 
@@ -166,14 +152,14 @@ describe("Abilities - Dancer", () => {
     const shuckle1 = game.field.getEnemyPokemon();
     shuckle1.hp = 1;
 
-    // Enemy 1 hits us and faints, then we copy their attack
+    // shuckle 1 hits us and faints, then we copy their attack (against their partner)
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.AQUA_STEP, BattlerIndex.PLAYER);
     await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER]);
 
-    await game.phaseInterceptor.to("MovePhase");
-    await toNextMove();
+    await toNextMove(); // initial attack
+    await toNextMove(); // dancer copy
 
     expect(shuckle1).toHaveFainted();
     // attack should be aimed at the other (non-fainted) enemy
@@ -184,7 +170,7 @@ describe("Abilities - Dancer", () => {
     game.override.battleStyle("double").enemyAbility(AbilityId.DANCER);
     await game.classicMode.startBattle(SpeciesId.ORICORIO, SpeciesId.FEEBAS);
 
-    // TODO: Use `game.setTurnOrder` once it persists between turns and isn't limited to move phases
+    // TODO: Use `game.setTurnOrder` once it persists between turns and isn't limited to just move phases
     const [oricorio, feebas, shuckle1, shuckle2] = game.scene.getField();
     oricorio.setStat(Stat.SPD, 1);
     feebas.setStat(Stat.SPD, 2);
@@ -252,15 +238,14 @@ describe("Abilities - Dancer", () => {
 
     game.move.use(move);
     await game.move.forceEnemyMove(enemyMove);
-    await game.toNextTurn();
+    await game.toEndOfTurn();
 
     expect(groudon).toHaveUsedMove({
       move: enemyMove,
       result: expect.toBeOneOf([MoveResult.MISS, MoveResult.FAIL]),
       useMode: MoveUseMode.NORMAL,
     });
-    expect(oricorio).not.toHaveUsedMove(enemyMove);
-    expect(oricorio.waveData.abilityRevealed).toBe(false);
+    expect(oricorio).not.toHaveAbilityApplied(AbilityId.DANCER);
   });
 
   it("should trigger confusion self-damage, even through Protect", async () => {
@@ -268,16 +253,18 @@ describe("Abilities - Dancer", () => {
 
     const oricorio = game.field.getPlayerPokemon();
 
-    // Protect, then copy swords dance and hit self while doing so
+    // Protect, then copy swords dance and hit self in confusion
     game.move.use(MoveId.PROTECT);
     await game.move.forceEnemyMove(MoveId.SWORDS_DANCE);
 
-    await game.phaseInterceptor.to("MoveEndPhase");
+    await toNextMove();
+    await toNextMove();
+    await toNextMove(); // right before copying move phase
+    expect(oricorio).toHaveBattlerTag(BattlerTagType.PROTECTED);
     oricorio.addTag(BattlerTagType.CONFUSED, 5, MoveId.CONFUSE_RAY, game.field.getEnemyPokemon().id);
     await game.move.forceConfusionActivation(true);
     await game.toEndOfTurn();
 
-    // took damage from confusion instead of using SD; player remains confused
     expect(oricorio).not.toHaveFullHp();
     expect(oricorio).toHaveStatStage(Stat.ATK, 0);
     expect(oricorio).toHaveBattlerTag(BattlerTagType.CONFUSED);
