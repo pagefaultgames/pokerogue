@@ -400,6 +400,7 @@ export class Arena {
       case BiomeId.FAIRY_CAVE:
       case BiomeId.ISLAND:
         return 12;
+      case BiomeId.SEABED:
       case BiomeId.ABYSS:
       case BiomeId.SPACE:
       case BiomeId.TEMPLE:
