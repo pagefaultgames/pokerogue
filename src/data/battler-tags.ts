@@ -2302,6 +2302,34 @@ export class FloatingTag extends TypeImmuneTag {
   }
 }
 
+/**
+ * Tag used by {@linkcode MoveId.TELEKINESIS} to provide its ungrounding and guaranteed hit effects.
+ * The effects of Telekinesis can be Baton Passed to a teammate, including ones unaffected by the original move.
+ * A notable exception is Mega Gengar, which cannot receive either effect via Baton Pass.
+ */
+export class TelekinesisTag extends SerializableBattlerTag {
+  public override readonly tagType = BattlerTagType.TELEKINESIS;
+  constructor() {
+    super(BattlerTagType.TELEKINESIS, BattlerTagLapseType.TURN_END, 3);
+  }
+
+  override onAdd(pokemon: Pokemon) {
+    globalScene.phaseManager.queueMessage(
+      i18next.t("battlerTags:telekinesisOnAdd", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+      }),
+    );
+  }
+
+  override onRemove(pokemon: Pokemon) {
+    globalScene.phaseManager.queueMessage(
+      i18next.t("battlerTags:telekinesisOnRemove", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+      }),
+    );
+  }
+}
+
 export class TypeBoostTag extends SerializableBattlerTag {
   public declare readonly tagType: TypeBoostTagType;
   #boostedType: PokemonType;
@@ -3489,34 +3517,6 @@ export class SyrupBombTag extends SerializableBattlerTag {
 }
 
 /**
- * Telekinesis raises the target into the air for three turns and causes all moves used against the target (aside from OHKO moves) to hit the target unless the target is in a semi-invulnerable state from Fly/Dig.
- * The first effect is provided by {@linkcode FloatingTag}, the accuracy-bypass effect is provided by TelekinesisTag
- * The effects of Telekinesis can be baton passed to a teammate.
- * @see {@link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move) | MoveId.TELEKINESIS}
- */
-export class TelekinesisTag extends SerializableBattlerTag {
-  public override readonly tagType = BattlerTagType.TELEKINESIS;
-  constructor(sourceMove: MoveId) {
-    super(
-      BattlerTagType.TELEKINESIS,
-      [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.AFTER_MOVE],
-      3,
-      sourceMove,
-      undefined,
-      true,
-    );
-  }
-
-  override onAdd(pokemon: Pokemon) {
-    globalScene.phaseManager.queueMessage(
-      i18next.t("battlerTags:telekinesisOnAdd", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      }),
-    );
-  }
-}
-
-/**
  * Tag that swaps the user's base ATK stat with its base DEF stat.
  */
 export class PowerTrickTag extends SerializableBattlerTag {
@@ -3908,7 +3908,7 @@ export function getBattlerTag(
     case BattlerTagType.SYRUP_BOMB:
       return new SyrupBombTag(sourceId);
     case BattlerTagType.TELEKINESIS:
-      return new TelekinesisTag(sourceMove);
+      return new TelekinesisTag();
     case BattlerTagType.POWER_TRICK:
       return new PowerTrickTag(sourceMove, sourceId);
     case BattlerTagType.GRUDGE:
@@ -4020,7 +4020,8 @@ export type BattlerTagTypeMap = {
   [BattlerTagType.BURNED_UP]: RemovedTypeTag;
   [BattlerTagType.DOUBLE_SHOCKED]: RemovedTypeTag;
   [BattlerTagType.SALT_CURED]: SaltCuredTag;
-  [BattlerTagType.CURSED]: CursedTag;
+  [BattlerTagType.CURSED]: Cu;
+  rsedTag;
   [BattlerTagType.CHARGED]: TypeBoostTag;
   [BattlerTagType.FLOATING]: FloatingTag;
   [BattlerTagType.MINIMIZED]: MinimizeTag;
