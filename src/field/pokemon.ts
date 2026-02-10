@@ -31,10 +31,10 @@ import { NoCritTag, WeakenMoveScreenTag } from "#data/arena-tag";
 import {
   AutotomizedTag,
   BattlerTag,
+  type BattlerTagFromType,
   CritBoostTag,
   EncoreTag,
   ExposedTag,
-  type GrudgeTag,
   getBattlerTag,
   HighestStatBoostTag,
   MoveRestrictionBattlerTag,
@@ -155,6 +155,7 @@ import type { DamageCalculationResult, DamageResult } from "#types/damage-result
 import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { TurnMove } from "#types/turn-move";
+import type { AbstractConstructor } from "#types/type-helpers";
 import { BattleInfo } from "#ui/battle-info";
 import { EnemyBattleInfo } from "#ui/enemy-battle-info";
 import type { PartyOption } from "#ui/party-ui-handler";
@@ -1580,7 +1581,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       ret *= highestStatBoost.multiplier;
     }
 
-    return Math.floor(ret);
+    return Math.max(Math.floor(ret), 1);
   }
 
   calculateStats(): void {
@@ -2350,7 +2351,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * @returns the pokemon's current tera {@linkcode PokemonType}
+   * @returns This Pokemon's current Tera {@linkcode PokemonType | type}, accounting for species-based restrictions
    */
   getTeraType(): PokemonType {
     if (this.hasSpecies(SpeciesId.TERAPAGOS)) {
@@ -4246,12 +4247,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return false;
   }
 
-  // TODO: Utilize a type map for these so we can avoid overloads
-  public getTag(tagType: BattlerTagType.GRUDGE): GrudgeTag | undefined;
-  public getTag(tagType: BattlerTagType.SUBSTITUTE): SubstituteTag | undefined;
-  public getTag(tagType: BattlerTagType): BattlerTag | undefined;
-  public getTag<T extends BattlerTag>(tagType: Constructor<T>): T | undefined;
-  public getTag(tagType: BattlerTagType | typeof BattlerTag): BattlerTag | undefined {
+  public getTag<T extends BattlerTagType | AbstractConstructor<BattlerTag> | Constructor<BattlerTag>>(
+    tagType: T,
+  ): BattlerTagFromType<T> | undefined;
+  public getTag(tagType: BattlerTagType | Constructor<BattlerTag>): BattlerTag | undefined {
     return typeof tagType === "function"
       ? this.summonData.tags.find(t => t instanceof tagType)
       : this.summonData.tags.find(t => t.tagType === tagType);
@@ -4305,17 +4304,21 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @remarks
    * Also responsible for removing the tag when the lapse method returns `false`.
    *
-   *
    * ⚠️ Lapse types other than `CUSTOM` are generally lapsed automatically. However, some tags
    * support manually lapsing
    *
    * @param tagType - The {@linkcode BattlerTagType} to search for
    * @param lapseType - The lapse type to use for the lapse method; defaults to {@linkcode BattlerTagLapseType.CUSTOM}
+   * @param args - Any optional arguments required to lapse the given tag
    * @returns Whether a tag matching the given type was found
    * @see {@linkcode BattlerTag.lapse}
    */
-  public lapseTag(tagType: BattlerTagType, lapseType = BattlerTagLapseType.CUSTOM): boolean {
-    const tags = this.summonData.tags;
+  public lapseTag(
+    tagType: BattlerTagType,
+    // TODO: Enforce that this is an acceptable lapse type for the tag being triggered
+    lapseType: BattlerTagLapseType = BattlerTagLapseType.CUSTOM,
+  ): boolean {
+    const { tags } = this.summonData;
     const tag = tags.find(t => t.tagType === tagType);
     if (!tag) {
       return false;
@@ -6068,22 +6071,24 @@ export class PlayerPokemon extends Pokemon {
    * Add friendship to this Pokemon
    *
    * @remarks
-   * This adds friendship to the pokemon's friendship stat (used for evolution, return, etc.) and candy progress.
+   * This adds friendship to the pokemon's friendship stat (used for evolution, return, etc.) and candy progress. \
    * For fusions, candy progress for each species in the fusion is halved.
    *
    * @param friendship - The amount of friendship to add. Negative values will reduce friendship, though not below 0.
-   * @param capped - If true, don't allow the friendship gain to exceed {@linkcode RARE_CANDY_FRIENDSHIP_CAP}. Used to cap friendship gains from rare candies.
+   * @param capped - (Default `false`) Whether the friendship gain should respect {@linkcode RARE_CANDY_FRIENDSHIP_CAP}.
    */
-  addFriendship(friendship: number, capped = false): void {
+  public addFriendship(friendship: number, capped = false): void {
     // Short-circuit friendship loss, which doesn't impact candy friendship
     if (friendship <= 0) {
       this.friendship = Math.max(this.friendship + friendship, 0);
       return;
     }
 
+    const { gameData, gameMode } = globalScene;
+
     const starterSpeciesId = this.species.getRootSpeciesId();
     const fusionStarterSpeciesId = this.isFusion() && this.fusionSpecies ? this.fusionSpecies.getRootSpeciesId() : 0;
-    const starterGameData = globalScene.gameData.starterData;
+    const starterGameData = gameData.starterData;
     const starterData: [StarterDataEntry, SpeciesId][] = [[starterGameData[starterSpeciesId], starterSpeciesId]];
     if (fusionStarterSpeciesId) {
       starterData.push([starterGameData[fusionStarterSpeciesId], fusionStarterSpeciesId]);
@@ -6105,9 +6110,7 @@ export class PlayerPokemon extends Pokemon {
       awardRibbonsToSpeciesLine(this.species.speciesId, RibbonData.FRIENDSHIP);
     }
 
-    let candyFriendshipMultiplier = globalScene.gameMode.isClassic
-      ? timedEventManager.getClassicFriendshipMultiplier()
-      : 1;
+    let candyFriendshipMultiplier = gameMode.isClassic ? timedEventManager.getClassicFriendshipMultiplier() : 1;
     if (fusionStarterSpeciesId) {
       candyFriendshipMultiplier /= timedEventManager.areFusionsBoosted() ? 1.5 : 2;
     }
@@ -6117,8 +6120,12 @@ export class PlayerPokemon extends Pokemon {
       sd.friendship = (sd.friendship || 0) + candyFriendshipAmount;
       const friendshipCap = getStarterValueFriendshipCap(speciesStarterCosts[id]);
       if (sd.friendship >= friendshipCap) {
-        globalScene.gameData.addStarterCandy(getPokemonSpecies(id), Math.floor(sd.friendship / friendshipCap));
-        sd.friendship %= friendshipCap;
+        const wasCandyIncremeted = gameData.addStarterCandy(id, Math.floor(sd.friendship / friendshipCap));
+        if (wasCandyIncremeted) {
+          sd.friendship %= friendshipCap;
+        } else {
+          sd.friendship = friendshipCap - 1;
+        }
       }
     });
   }

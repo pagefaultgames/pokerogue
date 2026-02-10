@@ -52,6 +52,7 @@ function applySingleAbAttrs<T extends AbAttrString>(
 
     if (!simulated) {
       pokemon.waveData.abilitiesApplied.add(ability.id);
+      pokemon.summonData.abilitiesApplied.add(ability.id);
     }
   }
 }

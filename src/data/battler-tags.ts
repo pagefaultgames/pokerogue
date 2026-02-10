@@ -76,6 +76,7 @@ import { SpeciesId } from "#enums/species-id";
 import { type BattleStat, EFFECTIVE_STATS, type EffectiveStat, getStatKey, Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
+import { MoveUsedEvent } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
 import { healBlockedMoves, invalidEncoreMoves } from "#moves/invalid-moves";
 import type { Move } from "#moves/move";
@@ -98,7 +99,8 @@ import type {
   TrappingBattlerTagType,
   TypeBoostTagType,
 } from "#types/battler-tags";
-import type { Mutable } from "#types/type-helpers";
+import type { Constructor } from "#types/common";
+import type { AbstractConstructor, Mutable } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
 import { BooleanHolder, getFrameMs, toDmgValue } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
@@ -2541,6 +2543,9 @@ export class CursedTag extends SerializableBattlerTag {
 /**
  * Battler tag for attacks that remove a type post use.
  */
+// TODO: Remove this "tag" - it is solely used to communicate type changes from Burn Up/Double Shock to Roost.
+// This is a hacky way to add the bare minimum amount of granularity
+// when a more comprehensive system would likely be preferred.
 export class RemovedTypeTag extends SerializableBattlerTag {
   public declare readonly tagType: RemovedTypeTagType;
   constructor(tagType: RemovedTypeTagType, lapseType: BattlerTagLapseType, sourceMove: MoveId) {
@@ -2556,13 +2561,28 @@ export class GroundedTag extends SerializableBattlerTag {
   }
 }
 
-/** Removes flying type from a pokemon for a single turn */
+/**
+ * Tag to implement the temporary grounding effect of {@linkcode MoveId.ROOST | Roost}.
+ * Roost removes the user's Flying type (if they have one) for the remainder of the current turn.
+ */
 export class RoostedTag extends BattlerTag {
-  private isBaseFlying: boolean;
-  private isBasePureFlying: boolean;
+  /**
+   * Whether the Pokemon was purely Flying-type prior to using Roost, barring any added types.
+   * Pure flying-types will have their Flying-type changed to Normal instead of being removed.
+   */
+  // TODO: The determination of this parameter's value is flat-out wrong in a myriad of ways -
+  // most notably, it ignores all type changes that occurred before the user used Roost.
+  // This breaks Soak -> Roost and similar interactions.
+  // Instead, a much easier approach would be to cache the original types in their entirety.
+  private isBasePureFlying = false;
 
   constructor() {
     super(BattlerTagType.ROOSTED, BattlerTagLapseType.TURN_END, 1, MoveId.ROOST);
+  }
+
+  // TODO: This will need adjustment to not fail the current move if/when these checks are propagated upwards to calling moves
+  override canAdd(pokemon: Pokemon): boolean {
+    return pokemon.isOfType(PokemonType.FLYING) && !pokemon.isTerastallized;
   }
 
   onRemove(pokemon: Pokemon): void {
@@ -2574,22 +2594,20 @@ export class RoostedTag extends BattlerTag {
     const trickOrTreatApplied: boolean =
       currentTypes.includes(PokemonType.GHOST) && !baseTypes.includes(PokemonType.GHOST);
 
-    if (this.isBaseFlying) {
-      let modifiedTypes: PokemonType[] = [];
-      if (this.isBasePureFlying) {
-        if (forestsCurseApplied || trickOrTreatApplied) {
-          modifiedTypes = currentTypes.filter(type => type !== PokemonType.NORMAL);
-          modifiedTypes.push(PokemonType.FLYING);
-        } else {
-          modifiedTypes = [PokemonType.FLYING];
-        }
-      } else {
-        modifiedTypes = [...currentTypes];
+    let modifiedTypes: PokemonType[] = [];
+    if (this.isBasePureFlying) {
+      if (forestsCurseApplied || trickOrTreatApplied) {
+        modifiedTypes = currentTypes.filter(type => type !== PokemonType.NORMAL);
         modifiedTypes.push(PokemonType.FLYING);
+      } else {
+        modifiedTypes = [PokemonType.FLYING];
       }
-      pokemon.summonData.types = modifiedTypes;
-      pokemon.updateInfo();
+    } else {
+      modifiedTypes = [...currentTypes];
+      modifiedTypes.push(PokemonType.FLYING);
     }
+    pokemon.summonData.types = modifiedTypes;
+    pokemon.updateInfo();
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -2598,21 +2616,18 @@ export class RoostedTag extends BattlerTag {
 
     const isOriginallyDualType = baseTypes.length === 2;
     const isCurrentlyDualType = currentTypes.length === 2;
-    this.isBaseFlying = baseTypes.includes(PokemonType.FLYING);
     this.isBasePureFlying = baseTypes[0] === PokemonType.FLYING && baseTypes.length === 1;
 
-    if (this.isBaseFlying) {
-      let modifiedTypes: PokemonType[];
-      if (this.isBasePureFlying && !isCurrentlyDualType) {
-        modifiedTypes = [PokemonType.NORMAL];
-      } else if (!!pokemon.getTag(RemovedTypeTag) && isOriginallyDualType && !isCurrentlyDualType) {
-        modifiedTypes = [PokemonType.UNKNOWN];
-      } else {
-        modifiedTypes = currentTypes.filter(type => type !== PokemonType.FLYING);
-      }
-      pokemon.summonData.types = modifiedTypes;
-      pokemon.updateInfo();
+    let modifiedTypes: PokemonType[];
+    if (this.isBasePureFlying && !isCurrentlyDualType) {
+      modifiedTypes = [PokemonType.NORMAL];
+    } else if (!!pokemon.getTag(RemovedTypeTag) && isOriginallyDualType && !isCurrentlyDualType) {
+      modifiedTypes = [PokemonType.UNKNOWN];
+    } else {
+      modifiedTypes = currentTypes.filter(type => type !== PokemonType.FLYING);
     }
+    pokemon.summonData.types = modifiedTypes;
+    pokemon.updateInfo();
   }
 }
 
@@ -3564,12 +3579,12 @@ export class PowerTrickTag extends SerializableBattlerTag {
 /**
  * Tag associated with the move Grudge.
  * If this tag is active when the bearer faints from an opponent's move, the tag reduces that move's PP to 0.
- * Otherwise, it lapses when the bearer makes another move.
+ * Otherwise, it is removed when the bearer makes another move.
  */
 export class GrudgeTag extends SerializableBattlerTag {
   public override readonly tagType = BattlerTagType.GRUDGE;
   constructor() {
-    super(BattlerTagType.GRUDGE, BattlerTagLapseType.PRE_MOVE, 1, MoveId.GRUDGE);
+    super(BattlerTagType.GRUDGE, BattlerTagLapseType.PRE_MOVE, 1);
   }
 
   onAdd(pokemon: Pokemon) {
@@ -3581,31 +3596,37 @@ export class GrudgeTag extends SerializableBattlerTag {
     );
   }
 
-  /**
-   * Activates Grudge's special effect on the attacking Pokemon and lapses the tag.
-   * @param pokemon
-   * @param lapseType
-   * @param sourcePokemon - The source of the move that fainted the tag's bearer
-   * @returns `false` if Grudge activates its effect or lapses
-   */
-  // TODO: Confirm whether this should interact with copying moves
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType, sourcePokemon?: Pokemon): boolean {
-    if (!sourcePokemon || lapseType !== BattlerTagLapseType.CUSTOM) {
-      return super.lapse(pokemon, lapseType);
+    if (lapseType !== BattlerTagLapseType.CUSTOM) {
+      return false;
     }
-    if (sourcePokemon.isActive() && pokemon.isOpponent(sourcePokemon)) {
-      const lastMove = pokemon.turnData.attacksReceived[0];
-      const lastMoveData = sourcePokemon.getMoveset().find(m => m.moveId === lastMove.move);
-      if (lastMoveData && lastMove.move !== MoveId.STRUGGLE) {
-        lastMoveData.ppUsed = lastMoveData.getMovePp();
-        globalScene.phaseManager.queueMessage(
-          i18next.t("battlerTags:grudgeLapse", {
-            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-            moveName: lastMoveData.getName(),
-          }),
-        );
-      }
+
+    if (!sourcePokemon?.isActive() || !pokemon.isOpponent(sourcePokemon)) {
+      return false;
     }
+
+    // TODO: This should ideally retrieve the original PokemonMove from a move-in-flight object rather than querying move history
+    const lastMove = sourcePokemon.getLastNonVirtualMove();
+    if (!lastMove || lastMove.move === MoveId.STRUGGLE) {
+      return false;
+    }
+
+    const movesetMove = sourcePokemon.getMoveset().find(m => m.moveId === lastMove.move);
+    if (!movesetMove) {
+      return false;
+    }
+
+    const remaining = movesetMove.getMovePp() - movesetMove.ppUsed;
+    movesetMove.usePp(remaining);
+    // TODO: adjust in PR that reworks battler flyout
+    globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(sourcePokemon.id, movesetMove.getMove(), remaining));
+    globalScene.phaseManager.queueMessage(
+      i18next.t("battlerTags:grudgeLapse", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(sourcePokemon),
+        moveName: movesetMove.getName(),
+      }),
+    );
+
     return false;
   }
 }
@@ -4050,3 +4071,14 @@ export type BattlerTagTypeMap = {
   [BattlerTagType.SUPREME_OVERLORD]: SupremeOverlordTag;
   [BattlerTagType.BYPASS_SPEED]: BypassSpeedTag;
 };
+
+/**
+ * Helper type to convert a `BattlerTagType` or `BattlerTag` constructor to its corresponding BattlerTag class instance.
+ * Declared as a separate type literal to allow caching by TypeScript.
+ */
+export type BattlerTagFromType<T extends BattlerTagType | Constructor<BattlerTag> | AbstractConstructor<BattlerTag>> =
+  T extends BattlerTagType
+    ? BattlerTagTypeMap[T]
+    : T extends Constructor<infer U> | AbstractConstructor<infer U>
+      ? U
+      : never;

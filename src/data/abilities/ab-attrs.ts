@@ -2074,22 +2074,27 @@ export class PostVictoryAbAttr extends AbAttr {
   apply(_params: Closed<AbAttrBaseParams>): void {}
 }
 
+type StatOrStatArray = BattleStat | NonEmptyTuple<BattleStat>;
+type PostVictoryStatStageChangeStats = StatOrStatArray | ((p: Pokemon) => StatOrStatArray);
+
 export class PostVictoryStatStageChangeAbAttr extends PostVictoryAbAttr {
-  private readonly stat: BattleStat | ((p: Pokemon) => BattleStat);
+  private readonly stats: PostVictoryStatStageChangeStats;
   private readonly stages: number;
 
-  constructor(stat: BattleStat | ((p: Pokemon) => BattleStat), stages: number) {
+  constructor(stats: PostVictoryStatStageChangeStats, stages: number) {
     super();
 
-    this.stat = stat;
+    this.stats = stats;
     this.stages = stages;
   }
 
   override apply({ pokemon, simulated }: AbAttrBaseParams): void {
-    const stat = typeof this.stat === "function" ? this.stat(pokemon) : this.stat;
-    if (!simulated) {
-      globalScene.phaseManager.unshiftNew("StatStageChangePhase", pokemon.getBattlerIndex(), true, [stat], this.stages);
+    if (simulated) {
+      return;
     }
+
+    const stats = coerceArray(typeof this.stats === "function" ? this.stats(pokemon) : this.stats);
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", pokemon.getBattlerIndex(), true, stats, this.stages);
   }
 }
 
