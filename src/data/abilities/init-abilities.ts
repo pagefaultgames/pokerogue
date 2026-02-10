@@ -1293,14 +1293,10 @@ export function initAbilities() {
       .attr(MoveTypePowerBoostAbAttr, PokemonType.STEEL)
       .build(),
     new AbBuilder(AbilityId.BERSERK, 7) //
-      .attr(
-        PostDefendHpGatedStatStageChangeAbAttr,
-        (_target, _user, move) => move.category !== MoveCategory.STATUS,
-        0.5,
-        [Stat.SPATK],
-        1,
-      )
+      .attr(PostDefendHpGatedStatStageChangeAbAttr, 0.5, [Stat.SPATK], 1)
       .condition(sheerForceHitDisableAbCondition)
+      // Should trigger after the last strike of multi-strike moves, not in the middle
+      .edgeCase()
       .build(),
     new AbBuilder(AbilityId.SLUSH_RUSH, 7) //
       .attr(StatMultiplierAbAttr, Stat.SPD, 2)
@@ -1783,21 +1779,11 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.ANGER_SHELL, 9) //
-      .attr(
-        PostDefendHpGatedStatStageChangeAbAttr,
-        (_target, _user, move) => move.category !== MoveCategory.STATUS,
-        0.5,
-        [Stat.ATK, Stat.SPATK, Stat.SPD],
-        1,
-      )
-      .attr(
-        PostDefendHpGatedStatStageChangeAbAttr,
-        (_target, _user, move) => move.category !== MoveCategory.STATUS,
-        0.5,
-        [Stat.DEF, Stat.SPDEF],
-        -1,
-      )
+      .attr(PostDefendHpGatedStatStageChangeAbAttr, 0.5, [Stat.ATK, Stat.SPATK, Stat.SPD], 1)
+      .attr(PostDefendHpGatedStatStageChangeAbAttr, 0.5, [Stat.DEF, Stat.SPDEF], -1)
       .condition(sheerForceHitDisableAbCondition)
+      // Should trigger after the last strike of multi-strike moves, not in the middle
+      .edgeCase()
       .build(),
     new AbBuilder(AbilityId.PURIFYING_SALT, 9) //
       .attr(StatusEffectImmunityAbAttr)

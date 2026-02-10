@@ -316,7 +316,9 @@ export class PokemonWaveData {
  * Resets at the start of a new turn, as well as on switch.
  */
 export class PokemonTurnData {
-  public acted = false;
+  // #region Move usage-related properties
+  // All of these properties can likely go inside a "move-in-flight" object later
+
   /** How many times the current move should hit the target(s) */
   public hitCount = 0;
   /**
@@ -329,17 +331,25 @@ export class PokemonTurnData {
   public totalDamageDealt = 0;
   public singleHitDamageDealt = 0;
   public damageTaken = 0;
+  /**
+   * An array containing data about attacks received this turn, in FIFO order.
+   */
   public attacksReceived: AttackMoveResult[] = [];
-  public order: number;
   public statStagesIncreased = false;
   public statStagesDecreased = false;
   public moveEffectiveness: TypeDamageMultiplier | null = null;
   public combiningPledge?: MoveId;
+  public failedRunAway = false;
+  public joinedRound = false;
+
+  // #endregion Move usage-related properties
+
+  public acted = false;
+  public order: number;
   /** The Pokemon was brought in this turn by a switch action (not an intial encounter/summon) */
   public switchedInThisTurn = false;
   public summonedThisTurn = false;
-  public failedRunAway = false;
-  public joinedRound = false;
+
   /**
    * Tracker for a pending status effect.
    *
