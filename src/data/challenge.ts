@@ -1218,7 +1218,7 @@ export class PassivesChallenge extends Challenge {
     const isTrainer = pokemon.hasTrainer() && pokemon.isEnemy();
     const isFinalBoss = pokemon.isBoss() && globalScene.gameMode.isWaveFinal(globalScene.currentBattle?.waveIndex);
     if (!isTrainer && this.value === 1 && !isFinalBoss) {
-      return true;
+      return false;
     }
     hasPassive.value = true;
     return true;
