@@ -949,7 +949,15 @@ export class TrainerConfig {
     return clone;
   }
 }
-
+// Checks if the Pokemon generates a specific move, and has it replaced with another move that is specified
+function replaceIfPresent(moveset: PokemonMove[], target: MoveId, replacement: MoveId): void {
+  for (const [idx, move] of moveset.entries()) {
+    if (move.moveId === target) {
+      moveset[idx] = new PokemonMove(replacement);
+      return;
+    }
+  }
+}
 /**
  * Randomly selects one of the `Species` from `speciesPool`, determines its evolution, level, and strength.
  * Then adds Pokemon to globalScene.
@@ -4380,6 +4388,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.MASTER_BALL;
         p.abilityIndex = 2; // Regenerator
+        replaceIfPresent(p.moveset, MoveId.SKY_ATTACK, MoveId.BRAVE_BIRD); // Brave Bird not in set, Sky Attack ends up being too punishing on it
       }),
     )
     .setPartyMemberFunc(
@@ -4441,6 +4450,9 @@ export const trainerConfigs: TrainerConfigs = {
           p.generateAndPopulateMoveset();
           p.generateName();
           p.gender = Gender.MALE;
+          if (p.species.speciesId === SpeciesId.BLASTOISE) {
+            replaceIfPresent(p.moveset, MoveId.HYDRO_PUMP, MoveId.WATER_PULSE); // Mega Launcher Boosted
+          }
         },
       ),
     )
@@ -5299,6 +5311,14 @@ export const trainerConfigs: TrainerConfigs = {
           p.abilityIndex = 2; // Snow Cloak Articuno, Static Zapdos, Flame Body Moltres
           p.generateAndPopulateMoveset();
           p.pokeball = PokeballType.ULTRA_BALL;
+          if (p.species.speciesId === SpeciesId.ARTICUNO) {
+            // They set up their own weather, avoids inaccurate Hurricanes or Sky Attack Moltres
+            replaceIfPresent(p.moveset, MoveId.HURRICANE, MoveId.AIR_SLASH);
+          } else if (p.species.speciesId === SpeciesId.ZAPDOS) {
+            replaceIfPresent(p.moveset, MoveId.DRILL_PECK, MoveId.HURRICANE);
+          } else if (p.species.speciesId === SpeciesId.MOLTRES) {
+            replaceIfPresent(p.moveset, MoveId.SKY_ATTACK, MoveId.AIR_SLASH);
+          }
         },
       ),
     )
@@ -5572,6 +5592,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
         p.gender = Gender.MALE;
+        replaceIfPresent(p.moveset, MoveId.OUTRAGE, MoveId.DRAGON_PULSE);
       }),
     ),
   [TrainerType.GHETSIS_2]: new TrainerConfig(++t)
@@ -5613,6 +5634,7 @@ export const trainerConfigs: TrainerConfigs = {
         } else if (p.species.speciesId === SpeciesId.IRON_JUGULIS) {
           p.gender = Gender.GENDERLESS;
         }
+        replaceIfPresent(p.moveset, MoveId.OUTRAGE, MoveId.DRAGON_PULSE);
       }),
     )
     .setPartyMemberFunc(
@@ -5714,6 +5736,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ROGUE_BALL;
+        replaceIfPresent(p.moveset, MoveId.HEAD_SMASH, MoveId.POWER_GEM);
       }),
     ),
   [TrainerType.LUSAMINE_2]: new TrainerConfig(++t)
@@ -5755,6 +5778,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ROGUE_BALL;
+        replaceIfPresent(p.moveset, MoveId.HEAD_SMASH, MoveId.POWER_GEM);
       }),
     )
     .setPartyMemberFunc(
@@ -6077,23 +6101,23 @@ export const trainerConfigs: TrainerConfigs = {
         switch (p.formIndex) {
           case 1:
             p.moveset[2] = new PokemonMove(MoveId.WICKED_TORQUE);
-            p.moveset[3] = new PokemonMove(randSeedItem([MoveId.SNARL, MoveId.FLAME_CHARGE, MoveId.U_TURN]));
+            p.moveset[3] = new PokemonMove(randSeedItem([MoveId.SNARL, MoveId.SHIFT_GEAR, MoveId.U_TURN]));
             break;
           case 2:
             p.moveset[2] = new PokemonMove(MoveId.BLAZING_TORQUE);
-            p.moveset[3] = new PokemonMove(randSeedItem([MoveId.OVERHEAT, MoveId.SCREECH, MoveId.U_TURN]));
+            p.moveset[3] = new PokemonMove(randSeedItem([MoveId.OVERHEAT, MoveId.SCREECH, MoveId.U_TURN])); // Already has Speed Boost
             break;
           case 3:
             p.moveset[2] = new PokemonMove(MoveId.NOXIOUS_TORQUE);
-            p.moveset[3] = new PokemonMove(randSeedItem([MoveId.VENOSHOCK, MoveId.FLAME_CHARGE, MoveId.U_TURN]));
+            p.moveset[3] = new PokemonMove(randSeedItem([MoveId.VENOSHOCK, MoveId.SHIFT_GEAR, MoveId.U_TURN]));
             break;
           case 4:
             p.moveset[2] = new PokemonMove(MoveId.MAGICAL_TORQUE);
-            p.moveset[3] = new PokemonMove(randSeedItem([MoveId.STEEL_ROLLER, MoveId.FLAME_CHARGE, MoveId.U_TURN]));
+            p.moveset[3] = new PokemonMove(randSeedItem([MoveId.STEEL_ROLLER, MoveId.SHIFT_GEAR, MoveId.U_TURN]));
             break;
           case 5:
             p.moveset[2] = new PokemonMove(MoveId.COMBAT_TORQUE);
-            p.moveset[3] = new PokemonMove(randSeedItem([MoveId.LASH_OUT, MoveId.FLAME_CHARGE, MoveId.U_TURN]));
+            p.moveset[3] = new PokemonMove(randSeedItem([MoveId.LASH_OUT, MoveId.SHIFT_GEAR, MoveId.U_TURN]));
             break;
         }
       }),
