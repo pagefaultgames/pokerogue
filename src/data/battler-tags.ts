@@ -135,18 +135,19 @@ export class BattlerTag implements BaseBattlerTag {
   /**
    * Whether this Tag can be transferred via {@linkcode MoveId.BATON_PASS}.
    * @defaultValue `false`
-   * @todo Make this an overriddable getter on subclasses rather than a value defined in the constructor
    */
+  // TODO: Remove this and make baton-passable subclasses override `isBatonPassable` below
   readonly #isBatonPassable: boolean;
 
   /**
    * Check whether this Tag can be transferred to another Pokemon via Baton Pass.
-   * @param recipient - The {@linkcode Pokemon} receiving this Tag.
+   * @param recipient - The {@linkcode Pokemon} receiving this Tag (i.e. the one switching in)
    * Unused by default but exposed to allow for subclasses to perform custom logic.
    * @returns Whether this Tag can be transferred via {@linkcode MoveId.BATON_PASS}.
    * Defaults to returning the value set in the class constructor.
    */
-  public isBatonPassable(_recipient: Pokemon): boolean {
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: default impl of function
+  public isBatonPassable(recipient: Pokemon): boolean {
     return this.#isBatonPassable;
   }
 
@@ -2338,9 +2339,7 @@ export class TelekinesisTag extends SerializableBattlerTag {
   }
 
   public override isBatonPassable(recipient: Pokemon): boolean {
-    const isMegaGengar =
-      recipient.species.speciesId === SpeciesId.GENGAR && recipient.getFormKey() === SpeciesFormKey.MEGA;
-    return super.isBatonPassable(recipient) && !isMegaGengar;
+    return !(recipient.species.speciesId === SpeciesId.GENGAR && recipient.getFormKey() === SpeciesFormKey.MEGA);
   }
 }
 

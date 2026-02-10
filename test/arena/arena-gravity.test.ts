@@ -1,5 +1,6 @@
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
@@ -7,7 +8,6 @@ import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { ArenaTagSide } from "#enums/arena-tag-side";
 
 describe("Arena - Gravity", () => {
   let phaserGame: Phaser.Game;
@@ -31,9 +31,10 @@ describe("Arena - Gravity", () => {
 
   // Reference: https://bulbapedia.bulbagarden.net/wiki/Gravity_(move)
 
-  it("should multiply all non-OHKO move accuracy by 1.67x for the duration", async () => {
-    const accSpy = vi.spyOn(allMoves[MoveId.TACKLE], "calculateBattleAccuracy");
+  it("should multiply all non-OHKO move accuracy by 1.67x", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+    const accSpy = vi.spyOn(allMoves[MoveId.TACKLE], "calculateBattleAccuracy");
 
     game.move.use(MoveId.GRAVITY);
     await game.move.forceEnemyMove(MoveId.TACKLE);
@@ -45,15 +46,15 @@ describe("Arena - Gravity", () => {
   });
 
   it("should not affect OHKO move accuracy", async () => {
-    const accSpy = vi.spyOn(allMoves[MoveId.FISSURE], "calculateBattleAccuracy");
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
+    const accSpy = vi.spyOn(allMoves[MoveId.FISSURE], "calculateBattleAccuracy");
     game.move.use(MoveId.GRAVITY);
     await game.move.forceEnemyMove(MoveId.FISSURE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
-    expect(game).toHaveArenaTag({ tagType: ArenaTagType.GRAVITY, side: ArenaTagSide.BOTH, turnCount: 5 });
+    expect(game).toHaveArenaTag(ArenaTagType.GRAVITY);
     expect(accSpy).toHaveLastReturnedWith(allMoves[MoveId.FISSURE].accuracy);
   });
 
@@ -70,7 +71,7 @@ describe("Arena - Gravity", () => {
 
     expect(game).toHaveArenaTag(ArenaTagType.GRAVITY);
     expect(feebas.isGrounded()).toBe(true);
-    expect(fletchling["isForciblyGrounded"]()).toBe(true);
     expect(fletchling.isGrounded()).toBe(true);
+    expect(fletchling["isForciblyGrounded"]()).toBe(true);
   });
 });

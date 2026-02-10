@@ -2529,7 +2529,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (move.hasAttr("TypelessAttr")) {
       return 1;
     }
-    //
+
     const moveType = source.getMoveType(move);
 
     const typeMultiplier = new NumberHolder(

@@ -183,12 +183,13 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
     });
 
     // Source: https://replay.pokemonshowdown.com/gen9nationaldex-2533601259-bxnwtg9v01t95ujly828ud22jjxuaihpw
-    it("should deal 2x damage to Flying-types in Inverse Battles, even if already grounded", async () => {
+    it("should deal super-effective damage to Flying-types in Inverse Battles, even if already grounded", async () => {
       game.challengeMode.addChallenge(Challenges.INVERSE_BATTLE, 1, 1);
       await game.challengeMode.startBattle(SpeciesId.FEEBAS);
 
       const feebas = game.field.getPlayerPokemon();
       const archeops = game.field.getEnemyPokemon();
+
       const move = allMoves[MoveId.THOUSAND_ARROWS];
 
       expect(archeops.getAttackTypeEffectiveness(move.type, { source: feebas, move })).toBe(2);

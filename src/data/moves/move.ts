@@ -436,7 +436,7 @@ export abstract class Move implements Localizable {
    * - Dark types with moves affected by Prankster
    * @param user - The {@linkcode Pokemon} using this move
    * @param target - The {@linkcode Pokemon} targeted by this move
-   * @param type - The {@linkcode PokemonType} of the oppoennt that is being checked
+   * @param type - The {@linkcode PokemonType} of the opponent that is being checked
    * @returns Whether the move is blocked due to the target's typing.
    * Self-targeted moves will return `false` regardless of circumstances.
    */
@@ -4792,7 +4792,6 @@ const magnitudeMessageFunc = (): string => {
   return message;
 };
 
-// TODO: Rework to be more unit testable
 export class MagnitudePowerAttr extends VariablePowerAttr {
   apply(_user: Pokemon, _target: Pokemon, _move: Move, args: [NumberHolder, ...any[]]): boolean {
     const power = args[0];
@@ -6097,6 +6096,8 @@ export class NeutralDamageAgainstFlyingTypeAttr extends MoveTypeChartOverrideAtt
     args: [multiplier: NumberHolder, types: readonly PokemonType[], moveType: PokemonType],
   ): boolean {
     const [multiplier, types] = args;
+    // Thousand Arrows deals super-effective damage to flying types in Inverse Battles
+    // https://replay.pokemonshowdown.com/gen9nationaldex-2536869784-17h3xwyxhlb6uaj6n30acyyligy93s6pw
     if (target.isGrounded(true) || !types.includes(PokemonType.FLYING) || multiplier.value > 0) {
       return false;
     }
@@ -11229,8 +11230,6 @@ export function initMoves() {
       .attr(NeutralDamageAgainstFlyingTypeAttr)
       .attr(FallDownAttr)
       .attr(HitsTagAttr, BattlerTagType.FLYING)
-      .attr(HitsTagAttr, BattlerTagType.FLOATING)
-      .attr(HitsTagAttr, BattlerTagType.TELEKINESIS)
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(MoveId.THOUSAND_WAVES, PokemonType.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, 100, 0, 6)
