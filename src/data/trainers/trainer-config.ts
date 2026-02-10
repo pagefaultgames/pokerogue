@@ -4962,14 +4962,14 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
         if (p.formIndex === 2) {
           p.moveset[0] = new PokemonMove(MoveId.WICKED_BLOW);
-          p.moveset[1] = new PokemonMove(MoveId.BRICK_BREAK);
+          p.moveset[1] = new PokemonMove(randSeedItem([MoveId.BRICK_BREAK, MoveId.CLOSE_COMBAT]));
           p.moveset[2] = new PokemonMove(randSeedItem([MoveId.FIRE_PUNCH, MoveId.THUNDER_PUNCH, MoveId.ICE_PUNCH]));
-          p.moveset[3] = new PokemonMove(MoveId.FOCUS_ENERGY);
+          p.moveset[3] = new PokemonMove(randSeedItem([MoveId.IRON_HEAD, MoveId.POISON_JAB, MoveId.STONE_EDGE]));
         } else if (p.formIndex === 3) {
           p.moveset[0] = new PokemonMove(MoveId.SURGING_STRIKES);
-          p.moveset[1] = new PokemonMove(MoveId.BRICK_BREAK);
+          p.moveset[1] = new PokemonMove(randSeedItem([MoveId.BRICK_BREAK, MoveId.CLOSE_COMBAT]));
           p.moveset[2] = new PokemonMove(randSeedItem([MoveId.FIRE_PUNCH, MoveId.THUNDER_PUNCH, MoveId.ICE_PUNCH]));
-          p.moveset[3] = new PokemonMove(MoveId.FOCUS_ENERGY);
+          p.moveset[3] = new PokemonMove(randSeedItem([MoveId.IRON_HEAD, MoveId.POISON_JAB, MoveId.STONE_EDGE]));
         }
       }),
     )
@@ -6071,8 +6071,31 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
         p.formIndex = randSeedInt(5, 1); // Random Starmobile form
         p.gender = Gender.GENDERLESS;
-        p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ROGUE_BALL;
+        p.moveset[0] = new PokemonMove(randSeedItem([MoveId.SPIN_OUT, MoveId.IRON_HEAD])); // Force Moveset to avoid Egg Move bloat from Revavroom / Balancing purposes
+        p.moveset[1] = new PokemonMove(MoveId.HIGH_HORSEPOWER);
+        switch (p.formIndex) {
+          case 1:
+            p.moveset[2] = new PokemonMove(MoveId.WICKED_TORQUE);
+            p.moveset[3] = new PokemonMove(randSeedItem([MoveId.SNARL, MoveId.FLAME_CHARGE, MoveId.U_TURN]));
+            break;
+          case 2:
+            p.moveset[2] = new PokemonMove(MoveId.BLAZING_TORQUE);
+            p.moveset[3] = new PokemonMove(randSeedItem([MoveId.OVERHEAT, MoveId.SCREECH, MoveId.U_TURN]));
+            break;
+          case 3:
+            p.moveset[2] = new PokemonMove(MoveId.NOXIOUS_TORQUE);
+            p.moveset[3] = new PokemonMove(randSeedItem([MoveId.VENOSHOCK, MoveId.FLAME_CHARGE, MoveId.U_TURN]));
+            break;
+          case 4:
+            p.moveset[2] = new PokemonMove(MoveId.MAGICAL_TORQUE);
+            p.moveset[3] = new PokemonMove(randSeedItem([MoveId.STEEL_ROLLER, MoveId.FLAME_CHARGE, MoveId.U_TURN]));
+            break;
+          case 5:
+            p.moveset[2] = new PokemonMove(MoveId.COMBAT_TORQUE);
+            p.moveset[3] = new PokemonMove(randSeedItem([MoveId.LASH_OUT, MoveId.FLAME_CHARGE, MoveId.U_TURN]));
+            break;
+        }
       }),
     )
     .setPartyMemberFunc(
