@@ -2301,7 +2301,7 @@ export class FloatingTag extends SerializableBattlerTag {
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
     if (this.sourceMove === MoveId.MAGNET_RISE) {
-      // TODO: This should not play if removed via Gravity
+      // TODO: This should not play if removed via Gravity.
       globalScene.phaseManager.queueMessage(
         i18next.t("battlerTags:magnetRisenOnRemove", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),

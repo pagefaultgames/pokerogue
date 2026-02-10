@@ -23,55 +23,52 @@ describe("Moves - Fly and Bounce", () => {
     game.override
       .battleStyle("single")
       .ability(AbilityId.COMPOUND_EYES)
-      .enemySpecies(SpeciesId.SNORLAX)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .startingLevel(100)
       .enemyLevel(100)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.TACKLE);
   });
 
-  // TODO: Move to a global "charging moves" test file
+  // TODO: Move to a global "semi-invuln charging moves" test file
   it.each([
     { name: "Fly", move: MoveId.FLY },
     { name: "Bounce", move: MoveId.BOUNCE },
   ])("should make the user semi-invulnerable, then attack over 2 turns", async () => {
-    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.FLY);
     await game.toEndOfTurn();
 
-    const player = game.field.getPlayerPokemon();
-    const enemy = game.field.getEnemyPokemon();
+    const feebas = game.field.getPlayerPokemon();
+    const karp = game.field.getEnemyPokemon();
 
-    expect(player).toHaveBattlerTag(BattlerTagType.FLYING);
-    expect(enemy.getLastXMoves(1)[0].result).toBe(MoveResult.MISS);
-    expect(player.hp).toBe(player.getMaxHp());
-    expect(enemy.hp).toBe(enemy.getMaxHp());
-    expect(player.getMoveQueue()[0].move).toBe(MoveId.FLY);
+    expect(feebas).toHaveBattlerTag(BattlerTagType.FLYING);
+    expect(karp).toHaveUsedMove({ move: MoveId.TACKLE, result: MoveResult.MISS });
+    expect(karp).toHaveFullHp();
+    expect(feebas.getMoveQueue()[0]?.move).toBe(MoveId.FLY);
 
     await game.toEndOfTurn();
-    expect(player).not.toHaveBattlerTag(BattlerTagType.FLYING);
-    expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
-    expect(player.getMoveHistory()).toHaveLength(2);
+    expect(feebas).not.toHaveBattlerTag(BattlerTagType.FLYING);
+    expect(karp).not.toHaveFullHp();
+    expect(feebas.getMoveHistory()).toHaveLength(2);
 
-    const playerFly = player.getMoveset().find(mv => mv && mv.moveId === MoveId.FLY);
-    expect(playerFly?.ppUsed).toBe(1);
+    expect(feebas).toHaveUsedPP(MoveId.FLY, 1);
   });
 
   // TODO: Move to a No Guard test file
   it("should not allow the user to evade attacks from Pokemon with No Guard", async () => {
     game.override.enemyAbility(AbilityId.NO_GUARD);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
-
-    const playerPokemon = game.field.getPlayerPokemon();
-    const enemyPokemon = game.field.getEnemyPokemon();
+    const feebas = game.field.getPlayerPokemon();
+    const karp = game.field.getEnemyPokemon();
 
     game.move.use(MoveId.FLY);
-
     await game.toEndOfTurn();
-    expect(playerPokemon.hp).toBeLessThan(playerPokemon.getMaxHp());
-    expect(enemyPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
+
+    expect(feebas).not.toHaveFullHp();
+    expect(karp).toHaveUsedMove({ move: MoveId.TACKLE, result: MoveResult.SUCCESS });
   });
 
   // TODO: We currently cancel Fly/Bounce in a really scuffed way.
@@ -81,7 +78,7 @@ describe("Moves - Fly and Bounce", () => {
     { name: "Thousand Arrows", move: MoveId.THOUSAND_ARROWS },
     { name: "Gravity", move: MoveId.GRAVITY },
   ])("should be cancelled immediately when $name is used", async ({ move }) => {
-    await game.classicMode.startBattle(SpeciesId.AZURILL);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.BOUNCE);
     await game.move.forceEnemyMove(MoveId.SPLASH);
@@ -89,26 +86,26 @@ describe("Moves - Fly and Bounce", () => {
     await game.toNextTurn();
 
     // Bounce should've worked
-    const azurill = game.field.getPlayerPokemon();
-    expect(azurill).toHaveBattlerTag(BattlerTagType.FLYING);
+    const feebas = game.field.getPlayerPokemon();
+    expect(feebas).toHaveBattlerTag(BattlerTagType.FLYING);
 
     await game.move.forceEnemyMove(move);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(azurill).not.toHaveBattlerTag(BattlerTagType.FLYING);
-    expect(azurill).not.toHaveBattlerTag(BattlerTagType.CHARGING);
-    expect(azurill.getMoveQueue()).toHaveLength(0);
-    expect(azurill.visible).toBe(true);
+    expect(feebas).not.toHaveBattlerTag(BattlerTagType.FLYING);
+    expect(feebas).not.toHaveBattlerTag(BattlerTagType.CHARGING);
+    expect(feebas.getMoveQueue()).toHaveLength(0);
+    expect(feebas.visible).toBe(true);
     // check for tag addition for smack down/thousand arrows
     if (move !== MoveId.GRAVITY) {
-      expect(azurill).not.toHaveFullHp();
-      expect(azurill).toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
+      expect(feebas).not.toHaveFullHp();
+      expect(feebas).toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
     }
 
     await game.toEndOfTurn();
 
-    const snorlax = game.field.getEnemyPokemon();
-    expect(snorlax).toHaveFullHp();
+    const karp = game.field.getEnemyPokemon();
+    expect(karp).toHaveFullHp();
   });
 });

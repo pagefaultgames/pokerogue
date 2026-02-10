@@ -5,12 +5,12 @@ import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Challenges } from "#enums/challenges";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
-import { Pokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { beforeAll, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Smack Down and Thousand Arrows", () => {
   let phaserGame: Phaser.Game;
@@ -46,25 +46,16 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
     expect(rookidee.isGrounded()).toBe(false);
 
     game.move.use(move);
-    await game.toEndOfTurn();
+    await game.toNextTurn();
 
     expect(rookidee).toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
     expect(rookidee.isGrounded()).toBe(true);
-  });
 
-  it("should affect targets with Levitate", async () => {
-    game.override.enemyPassiveAbility(AbilityId.LEVITATE);
-    await game.classicMode.startBattle(SpeciesId.FEEBAS);
-
-    const karp = game.field.getEnemyPokemon();
-    expect(karp.isGrounded()).toBe(false);
-
-    game.move.use(MoveId.THOUSAND_ARROWS);
+    game.move.use(MoveId.MUD_SLAP);
     await game.toEndOfTurn();
 
-    expect(karp).toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
-    expect(karp).not.toHaveFullHp();
-    expect(karp.isGrounded()).toBe(true);
+    const feebas = game.field.getPlayerPokemon();
+    expect(feebas).toHaveUsedMove({ move: MoveId.MUD_SLAP, result: MoveResult.SUCCESS });
   });
 
   it.each([
@@ -123,34 +114,45 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
   });
 
   // TODO: Sky drop is currently partially implemented
-  it.todo("should hit midair targets from Sky Drop without interrupting");
+  it.todo("should hit midair targets from Sky Drop without grounding them or interrupting the attack");
 
   describe("Thousand Arrows", () => {
-    let hitSpy: MockInstance<Pokemon["getAttackTypeEffectiveness"]>;
-
     beforeEach(() => {
-      game.override.enemySpecies(SpeciesId.ARCHEOPS);
-      hitSpy = vi.spyOn(Pokemon.prototype, "getAttackTypeEffectiveness");
+      game.override.enemySpecies(SpeciesId.ARCHEOPS).enemyLevel(500);
+    });
+
+    it("should ignore airborne Pokemon's Ground immunities", async () => {
+      game.override.enemyPassiveAbility(AbilityId.LEVITATE);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+      const karp = game.field.getEnemyPokemon();
+      expect(karp.isGrounded()).toBe(false);
+
+      game.move.use(MoveId.THOUSAND_ARROWS);
+      await game.toEndOfTurn();
+
+      expect(karp).not.toHaveFullHp();
+      expect(karp).toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
+      expect(karp.isGrounded()).toBe(true);
     });
 
     it("should have a fixed 1x type effectiveness when hitting airborne Flying-types", async () => {
-      await game.classicMode.startBattle(SpeciesId.MAGIKARP);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
       const archeops = game.field.getEnemyPokemon();
+      const hitSpy = vi.spyOn(archeops, "getAttackTypeEffectiveness");
 
-      // first turn: 1x
       game.move.use(MoveId.THOUSAND_ARROWS);
       await game.toNextTurn();
 
-      expect(archeops).not.toHaveFullHp();
+      expect(hitSpy).toHaveLastReturnedWith(1);
       expect(archeops.isGrounded()).toBe(true);
-      expect(hitSpy).toHaveLastReturnedWith([1]);
 
       // hit while already grounded: 2x
       game.move.use(MoveId.THOUSAND_ARROWS);
       await game.toNextTurn();
 
-      expect(hitSpy).toHaveLastReturnedWith([2]);
+      expect(hitSpy).toHaveLastReturnedWith(2);
 
       // repeat turns 1/2, but with a resistance instead of a weakness
       archeops.resetSummonData();
@@ -160,43 +162,55 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
       game.move.use(MoveId.THOUSAND_ARROWS);
       await game.toNextTurn();
 
-      expect(hitSpy).toHaveLastReturnedWith([1]);
+      expect(hitSpy).toHaveLastReturnedWith(1);
 
       game.move.use(MoveId.THOUSAND_ARROWS);
       await game.toEndOfTurn();
 
-      expect(hitSpy).toHaveLastReturnedWith([0.5]);
+      expect(hitSpy).toHaveLastReturnedWith(0.5);
     });
 
-    it("should consider other sources of groundedness", async () => {
+    it("should not change effectiveness if grounded by another effect", async () => {
       await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
       game.scene.arena.addTag(ArenaTagType.GRAVITY, 0, 0, 0);
 
       const archeops = game.field.getEnemyPokemon();
-      expect(archeops.isGrounded()).toBe(true);
+      expect(archeops["isForciblyGrounded"]()).toBe(true);
 
-      game.move.use(MoveId.THOUSAND_ARROWS);
-      await game.phaseInterceptor.to("MoveEndPhase");
-
-      expect(hitSpy).toHaveLastReturnedWith([2]);
+      const move = allMoves[MoveId.THOUSAND_ARROWS];
+      expect(archeops.getAttackTypeEffectiveness(move.type, { source: game.field.getPlayerPokemon(), move })).toBe(2);
     });
 
     // Source: https://replay.pokemonshowdown.com/gen9nationaldex-2533601259-bxnwtg9v01t95ujly828ud22jjxuaihpw
-    it("should deal super-effective damage to Flying-types in Inverse Battles, even if already grounded", async () => {
+    it("should not alter its type effectiveness in Inverse Battles", async () => {
+      game.override.enemySpecies(SpeciesId.BUTTERFREE);
       game.challengeMode.addChallenge(Challenges.INVERSE_BATTLE, 1, 1);
       await game.challengeMode.startBattle(SpeciesId.FEEBAS);
 
       const feebas = game.field.getPlayerPokemon();
-      const archeops = game.field.getEnemyPokemon();
+      const butterfree = game.field.getEnemyPokemon();
 
-      const move = allMoves[MoveId.THOUSAND_ARROWS];
+      const normalMult = butterfree.getAttackTypeEffectiveness(PokemonType.GROUND, { source: feebas });
+      // Bug and Flying respectively resist and are immune to Ground, which Inverse Battles turn into a 4x weakness
+      expect(normalMult).toBe(4);
+      expect(
+        butterfree.getAttackTypeEffectiveness(PokemonType.GROUND, {
+          source: feebas,
+          move: allMoves[MoveId.THOUSAND_ARROWS],
+        }),
+      ).toBe(4);
 
-      expect(archeops.getAttackTypeEffectiveness(move.type, { source: feebas, move })).toBe(2);
+      // should remain the same even after forcibly being grounded
+      butterfree.addTag(BattlerTagType.IGNORE_FLYING, 0, 0);
 
-      archeops.addTag(BattlerTagType.IGNORE_FLYING, 0, 0);
-      expect(archeops.isGrounded()).toBe(true);
-      expect(archeops.getAttackTypeEffectiveness(move.type, { source: feebas, move })).toBe(2);
+      expect(butterfree.isGrounded()).toBe(true);
+      expect(
+        butterfree.getAttackTypeEffectiveness(PokemonType.GROUND, {
+          source: feebas,
+          move: allMoves[MoveId.THOUSAND_ARROWS],
+        }),
+      ).toBe(4);
     });
   });
 });

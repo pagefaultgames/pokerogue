@@ -2616,7 +2616,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const { arena } = globalScene;
 
     // All Ground-type moves (other than Thousand Arrows) are rendered ineffective against opponents
-    // rendered airborne by something other than their typing/semi-invuln (e.g. Levitate, Magnet Rise & Telekinesis).
+    // rendered airborne by something other than their typing/semi-invuln (e.g. Levitate, Magnet Rise, Telekinesis).
     // Flying-types are ignored by this check as they lose their immunity in Inverse Battles.
     const forciblyGrounded = this.isForciblyGrounded();
     if (
@@ -2635,7 +2635,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       if (
         source?.isActive(true)
         && typeMulti === 0
-        && this.checkIgnoreTypeImmunity({ source, simulated, moveType, defenderType })
+        && this.checkIgnoreTypeImmunity({ source, simulated, moveType, defenderType, forciblyGrounded })
       ) {
         continue;
       }
@@ -2669,6 +2669,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param simulated - Whether to prevent changes to game state during calculations
    * @param moveType - The {@linkcode PokemonType} of the move being used
    * @param defenderType - The {@linkcode PokemonType} of the defender
+   * @param forciblyGrounded - Whether the user is forcibly grounded
    * @returns Whether the type immunity was bypassed
    */
   private checkIgnoreTypeImmunity({
@@ -2676,12 +2677,19 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     simulated,
     moveType,
     defenderType,
+    forciblyGrounded,
   }: {
     source: Pokemon;
     simulated: boolean;
     moveType: PokemonType;
     defenderType: PokemonType;
+    forciblyGrounded: boolean | undefined;
   }): boolean {
+    // Flying-types knocked to the ground lose any Flying immunities they may have had
+    if (moveType === PokemonType.GROUND && defenderType === PokemonType.FLYING && forciblyGrounded === true) {
+      return true;
+    }
+
     // TODO: remove type assertion once method is properly typed
     const hasExposed = !!this.findTag(
       tag =>
