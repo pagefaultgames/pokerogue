@@ -34,25 +34,26 @@ describe("Moves - Fly and Bounce", () => {
   it.each([
     { name: "Fly", move: MoveId.FLY },
     { name: "Bounce", move: MoveId.BOUNCE },
-  ])("should make the user semi-invulnerable, then attack over 2 turns", async () => {
+  ])("$name should make the user semi-invulnerable, then attack over 2 turns", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.FLY);
-    await game.toEndOfTurn();
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.toNextTurn();
 
     const feebas = game.field.getPlayerPokemon();
     const karp = game.field.getEnemyPokemon();
 
+    expect(feebas).toHaveUsedMove({ move: MoveId.FLY, result: MoveResult.OTHER });
     expect(feebas).toHaveBattlerTag(BattlerTagType.FLYING);
     expect(karp).toHaveUsedMove({ move: MoveId.TACKLE, result: MoveResult.MISS });
     expect(karp).toHaveFullHp();
     expect(feebas.getMoveQueue()[0]?.move).toBe(MoveId.FLY);
 
-    await game.toEndOfTurn();
-    expect(feebas).not.toHaveBattlerTag(BattlerTagType.FLYING);
-    expect(karp).not.toHaveFullHp();
-    expect(feebas.getMoveHistory()).toHaveLength(2);
+    await game.toNextTurn();
 
+    expect(feebas).toHaveUsedMove({ move: MoveId.FLY, result: MoveResult.SUCCESS });
+    expect(feebas).not.toHaveBattlerTag(BattlerTagType.FLYING);
     expect(feebas).toHaveUsedPP(MoveId.FLY, 1);
   });
 
