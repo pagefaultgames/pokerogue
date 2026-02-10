@@ -4,6 +4,7 @@ import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
+import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import { invalidTelekinesisSpecies } from "#moves/invalid-moves";
 import { GameManager } from "#test/test-utils/game-manager";
@@ -166,6 +167,7 @@ describe("Move - Telekinesis", () => {
 
     const karp = game.field.getEnemyPokemon();
     expect(karp.summonData.speciesForm?.speciesId).toBe(SpeciesId.DIGLETT);
+    expect(invalidTelekinesisSpecies).toContain(SpeciesId.DIGLETT);
 
     game.move.use(MoveId.TELEKINESIS);
     await game.move.forceEnemyMove(MoveId.SPLASH);
@@ -176,11 +178,18 @@ describe("Move - Telekinesis", () => {
     expect(karp).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
   });
 
-  it("should fail if used against a Mega Gengar, and cannot be Baton Passed onto one", async () => {
-    game.override.starterForms({ [SpeciesId.GENGAR]: 1 });
+  it.each([
+    { name: "Mega", formKey: SpeciesFormKey.MEGA, formIndex: 1 },
+    { name: "G-Max", formKey: SpeciesFormKey.GIGANTAMAX, formIndex: 2 },
+  ])("should fail if used against a $name Gengar, and cannot be Baton Passed onto one", async ({
+    formKey,
+    formIndex,
+  }) => {
+    game.override.starterForms({ [SpeciesId.GENGAR]: formIndex });
     await game.classicMode.startBattle(SpeciesId.GENGAR, SpeciesId.FEEBAS);
 
     const [gengar, feebas] = game.scene.getPlayerParty();
+    expect(gengar.getFormKey()).toBe(formKey);
 
     game.move.use(MoveId.TELEPORT);
     game.doSelectPartyPokemon(1);

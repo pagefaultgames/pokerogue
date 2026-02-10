@@ -10723,13 +10723,19 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.CENTER_OF_ATTENTION, true),
     new StatusMove(MoveId.TELEKINESIS, PokemonType.PSYCHIC, -1, 15, -1, 0, 5)
       .attr(AddBattlerTagAttr, BattlerTagType.TELEKINESIS, false, true, 3)
-      .condition(
-        (_user, target) =>
-          !(
-            invalidTelekinesisSpecies.has(target.species.speciesId)
-            || (target.species.speciesId === SpeciesId.GENGAR && target.getFormKey() === SpeciesFormKey.MEGA)
-          ),
-      )
+      .condition((_user, target) => {
+        // NB: Telekinesis ignores Transform-based overrides
+        const { speciesId } = target.species;
+        if (invalidTelekinesisSpecies.has(speciesId)) {
+          return false;
+        }
+        if (speciesId !== SpeciesId.GENGAR) {
+          return true;
+        }
+        // Gengar is only forbidden in its Mega or (PKR-exclusive) GMax forms
+        const formKey = target.getFormKey();
+        return !(formKey === SpeciesFormKey.MEGA || formKey === SpeciesFormKey.GIGANTAMAX);
+      })
       .condition(failOnGroundedCondition)
       .affectedByGravity()
       .reflectable(),

@@ -2312,12 +2312,16 @@ export class FloatingTag extends SerializableBattlerTag {
 }
 
 /**
- * Tag used by {@linkcode MoveId.TELEKINESIS} to provide its ungrounding and guaranteed hit effects.
- * The effects of Telekinesis can be Baton Passed to a teammate, including ones unaffected by the original move.
- * A notable exception is Mega Gengar, which cannot receive either effect via Baton Pass.
+ * Tag used by {@link @link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move) | Telekinesis}
+ * to forcibly unground the user and guarantee that opposing moves will hit them.
+ *
+ * The effects of Telekinesis can be Baton Passed to a teammate, including ones unaffected by the original move. \
+ * A notable exception is Mega Gengar (and, exclusive to PokéRogue, G-Max Gengar),
+ * which cannot receive either effect via Baton Pass.
  */
 export class TelekinesisTag extends SerializableBattlerTag {
   public override readonly tagType = BattlerTagType.TELEKINESIS;
+
   constructor() {
     super(BattlerTagType.TELEKINESIS, BattlerTagLapseType.TURN_END, 3);
   }
@@ -2339,7 +2343,13 @@ export class TelekinesisTag extends SerializableBattlerTag {
   }
 
   public override isBatonPassable(recipient: Pokemon): boolean {
-    return !(recipient.species.speciesId === SpeciesId.GENGAR && recipient.getFormKey() === SpeciesFormKey.MEGA);
+    if (recipient.species.speciesId !== SpeciesId.GENGAR) {
+      return true;
+    }
+
+    // Gengar is only forbidden in its Mega or (PKR-exclusive) GMax forms
+    const formKey = recipient.getFormKey();
+    return !(formKey === SpeciesFormKey.MEGA || formKey === SpeciesFormKey.GIGANTAMAX);
   }
 }
 
