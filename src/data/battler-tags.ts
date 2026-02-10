@@ -4020,8 +4020,7 @@ export type BattlerTagTypeMap = {
   [BattlerTagType.BURNED_UP]: RemovedTypeTag;
   [BattlerTagType.DOUBLE_SHOCKED]: RemovedTypeTag;
   [BattlerTagType.SALT_CURED]: SaltCuredTag;
-  [BattlerTagType.CURSED]: Cu;
-  rsedTag;
+  [BattlerTagType.CURSED]: CursedTag;
   [BattlerTagType.CHARGED]: TypeBoostTag;
   [BattlerTagType.FLOATING]: FloatingTag;
   [BattlerTagType.MINIMIZED]: MinimizeTag;
