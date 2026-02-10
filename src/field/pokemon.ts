@@ -4567,7 +4567,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const abilityCount = this.getSpeciesForm().getAbilityCount();
     if (this.abilityIndex >= abilityCount) {
       console.warn(
-        // biome-ignore lint/complexity/noUselessStringConcat: spurious and fixed in biome v2.3.2
         "Pokemon ability index out of bounds!"
           + `Name: ${this.name}`
           + `Old Ability Index: ${this.abilityIndex}`
