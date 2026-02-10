@@ -581,7 +581,6 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
     MoveId.MIGHTY_CLEAVE,
   ],
   [MoveId.ROUND]: [
-    MoveId.MORNING_SUN,
     MoveId.TRI_ATTACK,
     MoveId.UPROAR,
     MoveId.HYPER_VOICE,
@@ -734,7 +733,6 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
   [MoveId.WATER_GUN]: [
     MoveId.SURF,
     MoveId.BUBBLE_BEAM,
-    MoveId.BUBBLE,
     MoveId.WATER_PULSE,
     MoveId.BRINE,
     MoveId.SCALD,
