@@ -675,9 +675,9 @@ function getMoveType(move: MoveId | Move, pokemon: Pokemon, willTera: boolean): 
   }
 
   if (move.category !== MoveCategory.STATUS) {
-    const VariableMoveAttr = move.getAttrs("VariableMoveTypeAttr").at(-1);
-    if (VariableMoveAttr != null) {
-      return VariableMoveAttr.getTypeForMovegen(pokemon, move, willTera);
+    const VariableMoveTypeAttr = move.getAttrs("VariableMoveTypeAttr").at(-1);
+    if (VariableMoveTypeAttr != null) {
+      return VariableMoveTypeAttr.getTypeForMovegen(pokemon, move, willTera);
     }
   }
 
