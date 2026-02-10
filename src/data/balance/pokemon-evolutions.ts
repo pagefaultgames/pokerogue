@@ -177,9 +177,9 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.SHEDINJA: // Shedinja cannot be evolved into directly
           return false;
         case EvoCondKey.BIOME:
-          return cond.biome.includes(globalScene.arena.biomeType);
+          return cond.biome.includes(globalScene.arena.biomeId);
         case EvoCondKey.WEATHER:
-          return cond.weather.includes(globalScene.arena.getWeatherType());
+          return cond.weather.includes(globalScene.arena.weatherType);
         case EvoCondKey.TYROGUE:
           return (
             pokemon.getMoveset(true).find(m => (tyrogueMoves as readonly MoveId[]).includes(m.moveId))?.moveId

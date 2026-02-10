@@ -195,11 +195,6 @@ export class MovePhase extends PokemonPhase {
     /** Indicates this is the release turn of the move */
     const releasing = isChargingMove && !charging;
 
-    // Update the battle's "last move" pointer unless we're currently mimicking a move or triggering Dancer.
-    if (!move.hasAttr("CopyMoveAttr") && !isReflected(useMode)) {
-      globalScene.currentBattle.lastMove = move.id;
-    }
-
     // Charging moves consume PP when they begin charging, *not* when they release
     if (!releasing) {
       this.usePP();
@@ -220,6 +215,11 @@ export class MovePhase extends PokemonPhase {
       this.handlePreMoveFailures();
       this.end();
       return;
+    }
+
+    // Update the battle's "last move" pointer unless we're currently mimicking a move or triggering Dancer.
+    if (!move.hasAttr("CopyMoveAttr") && !isReflected(useMode)) {
+      globalScene.currentBattle.lastMove = move.id;
     }
 
     if (!this.resolveFinalPreMoveCancellationChecks()) {
@@ -724,7 +724,7 @@ export class MovePhase extends PokemonPhase {
       // TODO: Make pollen puff failing from heal block use its own message
       this.failed = true;
     } else if (arena.isMoveWeatherCancelled(user, move)) {
-      failedText = getWeatherBlockMessage(globalScene.arena.getWeatherType());
+      failedText = getWeatherBlockMessage(globalScene.arena.weatherType);
       this.failed = true;
     } else {
       // Powder *always* happens last
@@ -1038,7 +1038,7 @@ export class MovePhase extends PokemonPhase {
     const failureMessage =
       move.getFailedText(pokemon, targets[0], move)
       || (failedDueToTerrain
-        ? getTerrainBlockMessage(targets[0], globalScene.arena.getTerrainType())
+        ? getTerrainBlockMessage(targets[0], globalScene.arena.terrainType)
         : i18next.t("battle:attackFailed"));
 
     this.showFailedText(failureMessage);

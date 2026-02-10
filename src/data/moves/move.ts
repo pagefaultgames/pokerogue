@@ -108,7 +108,15 @@ import type { TurnMove } from "#types/turn-move";
 import type { AbstractConstructor } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
 import { applyChallenges } from "#utils/challenge-utils";
-import { BooleanHolder, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
+import {
+  BooleanHolder,
+  isBetween,
+  NumberHolder,
+  randSeedFloat,
+  randSeedInt,
+  randSeedItem,
+  toDmgValue,
+} from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { areAllies, canSpeciesTera, willTerastallize } from "#utils/pokemon-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
@@ -171,7 +179,7 @@ export abstract class Move implements Localizable {
    *   - Counter / Mirror Coat / Metal Burst with no damage taken from enemies this turn
    *   - Last resort's bespoke failure conditions
    *   - Snore while not asleep
-   *   - Sucker punch failling due to the target having already used their selected move or not having selected a damaging move
+   *   - Sucker punch failing due to the target having already used their selected move or not having selected a damaging move
    *   - Magic Coat failing due to being used as the last move in the turn
    *   - Protect-like moves failing due to consecutive use or being the last move in the turn
    *   - First turn moves (e.g. mat block, fake out) failing due to not being used on first turn
@@ -188,7 +196,7 @@ export abstract class Move implements Localizable {
    *   - Poltergeist against a target with no item
    *   - Shell Trap failing due to not being hit by a physical move
    *   - Aurora veil failing due to no hail
-   *   - Clangorous soul and Fillet Awayfailing due to insufficient HP
+   *   - Clangorous soul and Fillet Away failing due to insufficient HP
    *   - Upper hand failing due to the target not selecting a priority move
    *   - (Various moves that fail when used against titans / raid bosses, not listed as pokerogue does not yet implement each)
    *
@@ -475,11 +483,19 @@ export abstract class Move implements Localizable {
    * @param condition - The {@linkcode MoveCondition} or {@linkcode MoveConditionFunc} to add to the conditions array.
    * @param checkSequence - The sequence number where the failure check occurs
    * @returns `this` for method chaining
-   * @param checkSequence - The sequence number where the failure check occurs
-   * @returns `this` for method chaining
    */
   condition(condition: MoveCondition | MoveConditionFunc, checkSequence: 2 | 3 | 4 = 4): this {
-    const conditionsArray = checkSequence === 2 ? this.conditionsSeq2 : this.conditions;
+    let conditionsArray: MoveCondition[];
+    switch (checkSequence) {
+      case 2:
+        conditionsArray = this.conditionsSeq2;
+        break;
+      case 3:
+        conditionsArray = this.conditionsSeq3;
+        break;
+      default:
+        conditionsArray = this.conditions;
+    }
     if (typeof condition === "function") {
       condition = new MoveCondition(condition);
     }
@@ -3946,11 +3962,11 @@ export class SecretPowerAttr extends MoveEffectAttr {
       return false;
     }
     let secondaryEffect: MoveEffectAttr;
-    const terrain = globalScene.arena.getTerrainType();
+    const terrain = globalScene.arena.terrainType;
     if (terrain !== TerrainType.NONE) {
       secondaryEffect = this.determineTerrainEffect(terrain);
     } else {
-      const biome = globalScene.arena.biomeType;
+      const biome = globalScene.arena.biomeId;
       secondaryEffect = this.determineBiomeEffect(biome);
     }
     return secondaryEffect.apply(user, target, move, []);
@@ -4825,23 +4841,39 @@ export class AntiSunlightPowerDecreaseAttr extends VariablePowerAttr {
   }
 }
 
+/**
+ * Attribute used by {@link https://bulbapedia.bulbagarden.net/wiki/Frustration_(move) | Frustration},
+ * {@link https://bulbapedia.bulbagarden.net/wiki/Return_(move) | Return} and their respective variants.
+ *
+ * Linearly scales the move's base power from 1 to 102 based on the user's current friendship (or base friendship for wild Pokemon).
+ */
 export class FriendshipPowerAttr extends VariablePowerAttr {
+  /**
+   * Whether to invert the power scaling (causing higher friendship values to reduce move power instead of increasing it).
+   * @defaultValue `false`
+   */
   private readonly invert: boolean;
 
-  constructor(invert?: boolean) {
+  constructor(invert = false) {
     super();
 
-    this.invert = !!invert;
+    this.invert = invert;
   }
 
-  apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
-    const power = args[0] as NumberHolder;
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: [NumberHolder]): boolean {
+    const power = args[0];
 
-    const useUserFriendship = user.isPlayer() || user.hasTrainer();
-    const friendshipPower = Math.floor(
-      Math.min(useUserFriendship ? user.friendship : user.species.baseFriendship, 255) / 2.5,
-    );
-    power.value = Math.max(this.invert ? 102 - friendshipPower : friendshipPower, 1);
+    // wild mons use their base friendship
+    // TODO: Can't we just... set the enemy's friendship to its base inside enemy generation?
+    let friendship = user.isPlayer() || user.hasTrainer() ? user.friendship : user.species.baseFriendship;
+    if (!isBetween(friendship, 0, 255)) {
+      // TODO: Remove this if or when proper validation is added (or otherwise guaranteed)
+      console.warn(
+        `Friendship value inside FriendshipPowerAttr power calculation (${friendship}) is out of valid bounds!`,
+      );
+      friendship = Phaser.Math.Clamp(friendship, 0, 255);
+    }
+    power.value = toDmgValue((this.invert ? 255 - friendship : friendship) / 2.5);
 
     return true;
   }
@@ -5794,7 +5826,7 @@ export class TerrainPulseTypeAttr extends VariableMoveTypeAttr {
       return false;
     }
 
-    const currentTerrain = globalScene.arena.getTerrainType();
+    const currentTerrain = globalScene.arena.terrainType;
     switch (currentTerrain) {
       case TerrainType.MISTY:
         moveType.value = PokemonType.FAIRY;
@@ -7380,12 +7412,12 @@ export class CopyBiomeTypeAttr extends MoveEffectAttr {
       return false;
     }
 
-    const terrainType = globalScene.arena.getTerrainType();
+    const terrainType = globalScene.arena.terrainType;
     let typeChange: PokemonType;
     if (terrainType !== TerrainType.NONE) {
-      typeChange = this.getTypeForTerrain(globalScene.arena.getTerrainType());
+      typeChange = this.getTypeForTerrain(globalScene.arena.terrainType);
     } else {
-      typeChange = this.getTypeForBiome(globalScene.arena.biomeType);
+      typeChange = this.getTypeForBiome(globalScene.arena.biomeId);
     }
 
     user.summonData.types = [typeChange];
@@ -7712,10 +7744,10 @@ export class RandomMovesetMoveAttr extends CallMoveAttr {
 export class NaturePowerAttr extends OverrideMoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
     let moveId = MoveId.NONE;
-    switch (globalScene.arena.getTerrainType()) {
+    switch (globalScene.arena.terrainType) {
       // this allows terrains to 'override' the biome move
       case TerrainType.NONE:
-        switch (globalScene.arena.biomeType) {
+        switch (globalScene.arena.biomeId) {
           case BiomeId.TOWN:
             moveId = MoveId.ROUND;
             break;
@@ -8882,11 +8914,6 @@ export class ExposedMoveAttr extends AddBattlerTagAttr {
   }
 }
 
-export type MoveTargetSet = {
-  targets: BattlerIndex[];
-  multiple: boolean;
-};
-
 /**
  * Map of Move attributes to their respective classes. Used for instanceof checks.
  */
@@ -9369,7 +9396,7 @@ export function initMoves() {
     new AttackMove(MoveId.EARTHQUAKE, PokemonType.GROUND, MoveCategory.PHYSICAL, 100, 100, 10, -1, 0, 1)
       .attr(HitsTagForDoubleDamageAttr, BattlerTagType.UNDERGROUND)
       .attr(MovePowerMultiplierAttr, (_user, target, _move) =>
-        globalScene.arena.getTerrainType() === TerrainType.GRASSY && target.isGrounded() ? 0.5 : 1,
+        globalScene.arena.terrainType === TerrainType.GRASSY && target.isGrounded() ? 0.5 : 1,
       )
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_OTHERS),
@@ -9811,7 +9838,7 @@ export function initMoves() {
       .attr(PreMoveMessageAttr, magnitudeMessageFunc)
       .attr(MagnitudePowerAttr)
       .attr(MovePowerMultiplierAttr, (_user, target, _move) =>
-        globalScene.arena.getTerrainType() === TerrainType.GRASSY && target.isGrounded() ? 0.5 : 1,
+        globalScene.arena.terrainType === TerrainType.GRASSY && target.isGrounded() ? 0.5 : 1,
       )
       .attr(HitsTagForDoubleDamageAttr, BattlerTagType.UNDERGROUND)
       .makesContact(false)
@@ -10085,7 +10112,8 @@ export function initMoves() {
             || user.status.effect === StatusEffect.BURN),
       ),
     new SelfStatusMove(MoveId.GRUDGE, PokemonType.GHOST, -1, 5, -1, 0, 3) //
-      .attr(AddBattlerTagAttr, BattlerTagType.GRUDGE, true, undefined, 1),
+      // NB: failing on overlap is meaningless since Grudge wears off before the user's next move
+      .attr(AddBattlerTagAttr, BattlerTagType.GRUDGE, true, false, 1),
     new SelfStatusMove(MoveId.SNATCH, PokemonType.DARK, -1, 10, -1, 4, 3) //
       .unimplemented(),
     new AttackMove(MoveId.SECRET_POWER, PokemonType.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, 30, 0, 3)
@@ -10899,7 +10927,7 @@ export function initMoves() {
     new AttackMove(MoveId.BULLDOZE, PokemonType.GROUND, MoveCategory.PHYSICAL, 60, 100, 20, 100, 0, 5)
       .attr(StatStageChangeAttr, [Stat.SPD], -1)
       .attr(MovePowerMultiplierAttr, (_user, target, _move) =>
-        globalScene.arena.getTerrainType() === TerrainType.GRASSY && target.isGrounded() ? 0.5 : 1,
+        globalScene.arena.terrainType === TerrainType.GRASSY && target.isGrounded() ? 0.5 : 1,
       )
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_OTHERS),
@@ -11831,10 +11859,10 @@ export function initMoves() {
       .attr(HalfSacrificialAttr),
     new AttackMove(MoveId.EXPANDING_FORCE, PokemonType.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 8)
       .attr(MovePowerMultiplierAttr, (user, _target, _move) =>
-        globalScene.arena.getTerrainType() === TerrainType.PSYCHIC && user.isGrounded() ? 1.5 : 1,
+        globalScene.arena.terrainType === TerrainType.PSYCHIC && user.isGrounded() ? 1.5 : 1,
       )
       .attr(VariableTargetAttr, (user, _target, _move) =>
-        globalScene.arena.getTerrainType() === TerrainType.PSYCHIC && user.isGrounded()
+        globalScene.arena.terrainType === TerrainType.PSYCHIC && user.isGrounded()
           ? MoveTarget.ALL_NEAR_ENEMIES
           : MoveTarget.NEAR_OTHER,
       ),
@@ -11857,23 +11885,23 @@ export function initMoves() {
       .attr(SacrificialAttr)
       .target(MoveTarget.ALL_NEAR_OTHERS)
       .attr(MovePowerMultiplierAttr, (user, _target, _move) =>
-        globalScene.arena.getTerrainType() === TerrainType.MISTY && user.isGrounded() ? 1.5 : 1,
+        globalScene.arena.terrainType === TerrainType.MISTY && user.isGrounded() ? 1.5 : 1,
       )
       .condition(failIfDampCondition, 3)
       .makesContact(false),
     new AttackMove(MoveId.GRASSY_GLIDE, PokemonType.GRASS, MoveCategory.PHYSICAL, 55, 100, 20, -1, 0, 8) //
       .attr(
         IncrementMovePriorityAttr,
-        (user, _target, _move) => globalScene.arena.getTerrainType() === TerrainType.GRASSY && user.isGrounded(),
+        (user, _target, _move) => globalScene.arena.terrainType === TerrainType.GRASSY && user.isGrounded(),
       ),
     new AttackMove(MoveId.RISING_VOLTAGE, PokemonType.ELECTRIC, MoveCategory.SPECIAL, 70, 100, 20, -1, 0, 8) //
       .attr(MovePowerMultiplierAttr, (_user, target, _move) =>
-        globalScene.arena.getTerrainType() === TerrainType.ELECTRIC && target.isGrounded() ? 2 : 1,
+        globalScene.arena.terrainType === TerrainType.ELECTRIC && target.isGrounded() ? 2 : 1,
       ),
     new AttackMove(MoveId.TERRAIN_PULSE, PokemonType.NORMAL, MoveCategory.SPECIAL, 50, 100, 10, -1, 0, 8)
       .attr(TerrainPulseTypeAttr)
       .attr(MovePowerMultiplierAttr, (user, _target, _move) =>
-        globalScene.arena.getTerrainType() !== TerrainType.NONE && user.isGrounded() ? 2 : 1,
+        globalScene.arena.terrainType !== TerrainType.NONE && user.isGrounded() ? 2 : 1,
       )
       .pulseMove(),
     new AttackMove(MoveId.SKITTER_SMACK, PokemonType.BUG, MoveCategory.PHYSICAL, 70, 90, 10, 100, 0, 8) //
@@ -12229,7 +12257,7 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(MoveId.PSYBLADE, PokemonType.PSYCHIC, MoveCategory.PHYSICAL, 80, 100, 15, -1, 0, 9)
       .attr(MovePowerMultiplierAttr, (user, _target, _move) =>
-        globalScene.arena.getTerrainType() === TerrainType.ELECTRIC && user.isGrounded() ? 1.5 : 1,
+        globalScene.arena.terrainType === TerrainType.ELECTRIC && user.isGrounded() ? 1.5 : 1,
       )
       .slicingMove(),
     new AttackMove(MoveId.HYDRO_STEAM, PokemonType.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, 0, 9)
