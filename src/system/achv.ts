@@ -471,7 +471,7 @@ export const achvs = {
     "classicVictory.description",
     "classic_ribbon_default",
     250,
-    _ => globalScene.gameData.gameStats.sessionsWon === 0,
+    () => globalScene.gameData.gameStats.sessionsWon === 0,
   ),
   _10_RIBBONS: new RibbonAchv("10Ribbons", 10, "common_ribbon", 50),
   _25_RIBBONS: new RibbonAchv("25Ribbons", 25, "great_ribbon", 75),
@@ -540,7 +540,7 @@ export const achvs = {
     "nuzlocke.description",
     "leaf_stone",
     100,
-    _ => isNuzlockeChallenge() && !inverseAndFlipStatAchievementsBlock() && !passivesChallengeAchievementsBlock(),
+    () => isNuzlockeChallenge() && !inverseAndFlipStatAchievementsBlock() && !passivesChallengeAchievementsBlock(),
   ),
   INVERSE_BATTLE: new ChallengeAchv(
     "inverseBattle",
@@ -865,7 +865,7 @@ export const achvs = {
     "unevolvedClassicVictory.description",
     "eviolite",
     50,
-    _ => globalScene.getPlayerParty().some(p => p.getSpeciesForm(true).speciesId in pokemonEvolutions),
+    () => globalScene.getPlayerParty().some(p => p.getSpeciesForm(true).speciesId in pokemonEvolutions),
   ),
   FLIP_INVERSE: new ChallengeAchv(
     "flipInverse",
