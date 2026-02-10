@@ -525,7 +525,8 @@ function doSignatureCoinFlip() {
 }
 
 /**
- * Helper method that adds the move to the Pokémon's moveset and removes it from the provided pools
+ * Helper method that adds the move to the Pokémon's moveset and removes it from the provided pools.
+ *
  * The parameters are the exact same as those for {@linkcode forceSignatureMove}
  */
 function addToMoveset(
@@ -688,7 +689,7 @@ function getMoveType(move: MoveId | Move, pokemon: Pokemon, willTera: boolean): 
  *
  * @privateRemarks
  * - Damage moves only; status moves are ignored
- * - Moves with FixedDamageAttr are ignored
+ * - Moves with `FixedDamageAttr` are ignored
  * - Types are via {@linkcode getMoveType} to account for variable type moves
  * @param pokemon - The pokemon to get move types for
  * @param willTera - Whether the pokemon is guaranteed to Tera
@@ -708,7 +709,7 @@ function getExistingDamageMoveTypes(pokemon: Pokemon, willTera: boolean): Set<Po
 /**
  * Determine whether there is a move in the moveset that benefits from boosting the specified offensive stat.
  * @param moveset - The moveset to check against
- * @param attr - The sole StatStageChangeAttr from the move being considered
+ * @param attr - The sole `StatStageChangeAttr` from the move being considered
  * @returns Whether no moves in the moveset would benefit from the stat stage change described by `attr`
  */
 export function removeSelfStatBoost(pokemon: Pokemon, attr: StatStageChangeAttr | undefined): boolean {
@@ -730,7 +731,7 @@ export function removeSelfStatBoost(pokemon: Pokemon, attr: StatStageChangeAttr 
     const move = pokemonMove.getMove();
     if (
       move.category === category
-      && !move.hasAttr("FixedDamageAttr") // Fixed damage moves don't benefit from offensive boosts // asd
+      && !move.hasAttr("FixedDamageAttr") // Fixed damage moves don't benefit from offensive boosts
       && !move.hasAttr("DefAtkAttr") // Body press doesn't benefit from offensive boosts
       && !move.hasAttr("PhotonGeyserCategoryAttr") // Photon Geyser benefits from either offesive boost
       && !move.hasAttr("ShellSideArmCategoryAttr") // Shell Side Arm benefits from either offensive boost
@@ -879,7 +880,7 @@ export function shouldRemoveSandstorm(pokemon: Pokemon, willTera: boolean): bool
  * Check if the Pokémon has a move that induces sleep or a drowsy state.
  * @param pokemon - The Pokémon under examination
  * @param targetSelf - (default `false`) If `true`, check for self status moves instead of forbidding them
- * @returns Whether the if the Pokémon has a sleep-inducing move in its moveset
+ * @returns Whether the Pokémon has a sleep-inducing move in its moveset
  */
 function hasSleepInducingMove(pokemon: Pokemon, targetSelf = false): boolean {
   for (const pokemonMove of pokemon.moveset) {
@@ -936,7 +937,7 @@ export function filterUselessMoves(pokemon: Pokemon, willTera: boolean): boolean
     }
   }
 
-  // After removing moves based on conditions, remove weather moves if there are
+  // After removing moves based on conditions, remove weather setting moves if there are
   // two or more in the moveset. Done after the previous loop to avoid removing
   // a weather move that meets its conditions instead of one that does not.
   if (numWeatherMoves >= 2) {
@@ -1065,7 +1066,7 @@ function fillInRemainingMovesetSlots(
  * @param note - Short note to include in the log for context
  */
 function debugMoveWeights(pokemon: Pokemon, pool: Map<MoveId, number>, note: string): void {
-  if (isBeta || isDev || (import.meta.env.MODE === "test" && __INTERNAL_TEST_EXPORTS.forceLogging)) {
+  if (isBeta || isDev || (IS_TEST && __INTERNAL_TEST_EXPORTS.forceLogging)) {
     const moveNameToWeightMap = new Map<string, number>();
     const sortedByValue = Array.from(pool.entries()).sort((a, b) => b[1] - a[1]);
     for (const [moveId, weight] of sortedByValue) {
@@ -1167,7 +1168,7 @@ export function generateMoveset(pokemon: Pokemon, forRival = false): void {
     forceStabMove(baseWeights, tmPool, eggMovePool, pokemon, tmCount, eggMoveCount, willTera);
   }
 
-  // Note: To force a secondary stab, call this a second time, and pass `false` for the last parameter
+  // Note: To force a secondary stab, call `forceStabMove` a second time, and pass `false` for the last parameter
   // Should also tweak the function to skip the signature move forcing step
 
   // Step 5: Fill in remaining slots

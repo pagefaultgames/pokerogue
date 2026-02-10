@@ -5680,12 +5680,13 @@ export class VariableMoveTypeAttr extends MoveAttr {
 
   /**
    * Get the type of the move for the purpose of AI move generation (e.g., Tera Type changes)
-   * @param _user - The user the move is being generated for
-   * @param _move - The move in question
-   * @param _willTera - Whether the user will terastallize
+   * @param user - The user the move is being generated for
+   * @param move - The move in question
+   * @param willTera - Whether the user will Terastallize
    * @returns The type the move should be counted as for moveset generation
    */
-  public getTypeForMovegen(_user: Pokemon, move: Move, _willTera: boolean): PokemonType {
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: params made available for subclasses
+  public getTypeForMovegen(user: Pokemon, move: Move, willTera: boolean): PokemonType {
     return move.type;
   }
 }

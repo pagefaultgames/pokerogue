@@ -161,7 +161,7 @@ export function getCounterAttackTarget(user: Pokemon, damageCategory?: MoveDamag
 
 /**
  * Determine whether the move's {@linkcode Move#moveTarget | target} can target an opponent
- * @param move The move to check
+ * @param move - The move to check
  * @returns Whether the move can target an opponent
  */
 export function mayTargetOpponent(move: Move): boolean {
