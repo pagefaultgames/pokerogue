@@ -2309,6 +2309,7 @@ export class FloatingTag extends TypeImmuneTag {
  */
 export class TelekinesisTag extends SerializableBattlerTag {
   public override readonly tagType = BattlerTagType.TELEKINESIS;
+
   constructor() {
     super(BattlerTagType.TELEKINESIS, BattlerTagLapseType.TURN_END, 3);
   }
