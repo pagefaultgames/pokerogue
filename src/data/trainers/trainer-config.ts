@@ -19,7 +19,7 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import type { EnemyPokemon } from "#field/pokemon";
-import type { SpeciesStatBoosterModifier } from "#modifiers/modifier";
+import type { PokemonHeldItemModifier, SpeciesStatBoosterModifier } from "#modifiers/modifier";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { EvilTeam } from "#trainers/evil-admin-trainer-pools";
 import { evilAdminTrainerPools } from "#trainers/evil-admin-trainer-pools";
@@ -5122,6 +5122,15 @@ export const trainerConfigs: TrainerConfigs = {
         p.gender = Gender.MALE;
       }),
     )
+    .setGenModifiersFunc(party => {
+      const ursaluna = party[2];
+      const modifiers: PokemonHeldItemModifier[] = [];
+      if (ursaluna?.hasAbility(AbilityId.GUTS, false, true)) {
+        // If ursaluna spawned with guts, give it flame orb
+        modifiers.push(modifierTypes.FLAME_ORB().newModifier(ursaluna));
+      }
+      return modifiers;
+    })
     .setInstantTera(5), // Tera Fighting Hydrapple
 
   [TrainerType.RIVAL]: new TrainerConfig((t = TrainerType.RIVAL))
@@ -5207,6 +5216,17 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(3, getRandomRivalPartyMemberFunc(RIVAL_5_POOL, 3))
     .setPartyMemberFunc(4, getRandomRivalPartyMemberFunc(RIVAL_5_POOL, 4))
     .setPartyMemberFunc(5, getRandomRivalPartyMemberFunc(RIVAL_5_POOL, 5))
+    .setGenModifiersFunc(party => {
+      const modifiers: PokemonHeldItemModifier[] = [];
+      const bird = party[1]; // Rival's second Pokemon is always a bird Pokemon
+      switch (bird.species.speciesId) {
+        case SpeciesId.SWELLOW:
+          if (bird.hasAbility(AbilityId.GUTS, false, true)) {
+            modifiers.push(modifierTypes.FLAME_ORB().newModifier(bird));
+          }
+      }
+      return modifiers;
+    })
     .setInstantTera(0), // Tera starter to primary type
   [TrainerType.RIVAL_6]: new TrainerConfig(++t)
     .setName("Finn")
@@ -5226,6 +5246,17 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(3, getRandomRivalPartyMemberFunc(RIVAL_6_POOL, 3))
     .setPartyMemberFunc(4, getRandomRivalPartyMemberFunc(RIVAL_6_POOL, 4))
     .setPartyMemberFunc(5, getRandomRivalPartyMemberFunc(RIVAL_6_POOL, 5))
+    .setGenModifiersFunc(party => {
+      const modifiers: PokemonHeldItemModifier[] = [];
+      const bird = party[1]; // Rival's second Pokemon is always a bird Pokemon
+      switch (bird.species.speciesId) {
+        case SpeciesId.SWELLOW:
+          if (bird.hasAbility(AbilityId.GUTS, false, true)) {
+            modifiers.push(modifierTypes.FLAME_ORB().newModifier(bird));
+          }
+      }
+      return modifiers;
+    })
     .setInstantTera(0), // Tera starter to primary type
   [TrainerType.ROCKET_BOSS_GIOVANNI_1]: new TrainerConfig((t = TrainerType.ROCKET_BOSS_GIOVANNI_1))
     .setName("Giovanni")
