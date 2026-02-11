@@ -3,7 +3,6 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { TerrainType } from "#data/terrain";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
-import { WeatherType } from "#enums/weather-type";
 import { TurnEndEvent } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
 import {
@@ -24,6 +23,7 @@ export class TurnEndPhase extends FieldPhase {
     super.start();
 
     globalScene.currentBattle.incrementTurn();
+
     globalScene.eventTarget.dispatchEvent(new TurnEndEvent(globalScene.currentBattle.turn));
     globalScene.phaseManager.dynamicQueueManager.clearLastTurnOrder();
 
@@ -68,15 +68,7 @@ export class TurnEndPhase extends FieldPhase {
       globalScene.arena.lapseTags();
     }
 
-    if (globalScene.arena.weather && !globalScene.arena.weather.lapse()) {
-      globalScene.arena.trySetWeather(WeatherType.NONE);
-      globalScene.arena.triggerWeatherBasedFormChangesToNormal();
-    }
-
-    if (globalScene.arena.terrain && !globalScene.arena.terrain.lapse()) {
-      globalScene.arena.trySetTerrain(TerrainType.NONE);
-    }
-
+    globalScene.arena.performTurnEndEffects();
     this.end();
   }
 }

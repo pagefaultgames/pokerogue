@@ -64,6 +64,8 @@ export interface SessionSaveData {
   /**
    * Counts the amount of pokemon fainted in your party during the current arena encounter.
    */
+  // TODO: This should be inside `ArenaData`
+  // TODO: Make this default to `undefined` to avoid storing `0`s everywhere
   playerFaints: number;
 }
 

@@ -10877,14 +10877,11 @@ export function initMoves() {
       .ignoresSubstitute()
       .attr(CopyTypeAttr),
     new AttackMove(MoveId.RETALIATE, PokemonType.NORMAL, MoveCategory.PHYSICAL, 70, 100, 5, -1, 0, 5) //
-      .attr(MovePowerMultiplierAttr, (user, _target, _move) => {
-        const turn = globalScene.currentBattle.turn;
-        const lastPlayerFaint = globalScene.currentBattle.playerFaintsHistory.at(-1);
-        const lastEnemyFaint = globalScene.currentBattle.enemyFaintsHistory.at(-1);
-        return (lastPlayerFaint !== undefined && turn - lastPlayerFaint.turn === 1 && user.isPlayer())
-          || (lastEnemyFaint !== undefined && turn - lastEnemyFaint.turn === 1 && user.isEnemy())
-          ? 2
-          : 1;
+      .attr(MovePowerMultiplierAttr, user => {
+        const { playerFaintedLastTurn } = globalScene.arena;
+        const { enemyFaintedLastTurn } = globalScene.currentBattle;
+        const allyFaintedLastTurn = user.isPlayer() ? playerFaintedLastTurn : enemyFaintedLastTurn;
+        return allyFaintedLastTurn ? 2 : 1;
       }),
     new AttackMove(MoveId.FINAL_GAMBIT, PokemonType.FIGHTING, MoveCategory.SPECIAL, -1, 100, 5, -1, 0, 5)
       .attr(UserHpDamageAttr)
