@@ -46,8 +46,8 @@ import {
   TrappedTag,
   TypeImmuneTag,
 } from "#data/battler-tags";
-import { getDailyEventSeedBoss } from "#data/daily-seed/daily-run";
-import { isDailyFinalBoss } from "#data/daily-seed/daily-seed-utils";
+import { getDailyEventSeedBoss, isDailyForcedWaveHiddenAbility } from "#data/daily-seed/daily-run";
+import { isDailyEventSeed, isDailyFinalBoss } from "#data/daily-seed/daily-seed-utils";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import {
@@ -6504,6 +6504,7 @@ export class EnemyPokemon extends Pokemon {
 
       this.luck = (this.shiny ? this.variant + 1 : 0) + (this.fusionShiny ? this.fusionVariant + 1 : 0);
 
+      this.applyCustomDailyConfig();
       this.applyCustomDailyBossConfig();
 
       if (this.hasTrainer() && globalScene.currentBattle) {
@@ -6552,6 +6553,19 @@ export class EnemyPokemon extends Pokemon {
       bossSegments
       ?? globalScene.getEncounterBossSegments(globalScene.currentBattle.waveIndex, this.level, this.species, true);
     this.bossSegmentIndex = this.bossSegments - 1;
+  }
+
+  /**
+   * Helper method to apply the custom daily config to this pokemon.
+   */
+  private applyCustomDailyConfig(): void {
+    if (!isDailyEventSeed()) {
+      return;
+    }
+
+    if (isDailyForcedWaveHiddenAbility() && this.species.abilityHidden) {
+      this.abilityIndex = 2;
+    }
   }
 
   /**
