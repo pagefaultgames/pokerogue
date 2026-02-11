@@ -8,7 +8,7 @@ import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { SpeciesId } from "#enums/species-id";
 import type { ModifierTypeKeys } from "#modifiers/modifier-type";
 import type { EventEncounter, EventMysteryEncounterTier, TimedEvent } from "#types/events";
-import { IncludeSpecialSpeciesParams } from "#types/pokemon-common";
+import type { IncludeSpecialSpeciesParams } from "#types/pokemon-common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { timedEvents } from "./data/balance/timed-events";
 
