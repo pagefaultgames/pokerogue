@@ -350,6 +350,14 @@ export class PokemonTurnData {
   public switchedInThisTurn = false;
   public summonedThisTurn = false;
 
+  // TODO: This effectively only exists for castform/cherrim and is really ugly;
+  // revisit after form change rework
+  /**
+   * Tracker for what abilities have been applied due to form changes during this turn. \
+   * Used to prevent infinite loops from form change abilities triggering their own transformation conditions.
+   */
+  public formChangeAbilitiesApplied = new Set<AbilityId>();
+
   /**
    * Tracker for a pending status effect.
    *
