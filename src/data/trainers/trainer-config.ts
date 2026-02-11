@@ -5143,7 +5143,13 @@ export const trainerConfigs: TrainerConfigs = {
       const modifiers: PokemonHeldItemModifier[] = [];
       if (ursaluna?.hasAbility(AbilityId.GUTS, false, true)) {
         // If ursaluna spawned with guts, give it flame orb
-        modifiers.push(modifierTypes.FLAME_ORB().newModifier(ursaluna));
+        const modifier = modifierTypes
+          .FLAME_ORB()
+          .withIdFromFunc(modifierTypes.FLAME_ORB)
+          .newModifier(ursaluna) as PokemonHeldItemModifier;
+        if (modifier) {
+          modifiers.push(modifier);
+        }
       }
       return modifiers;
     })
@@ -5238,7 +5244,13 @@ export const trainerConfigs: TrainerConfigs = {
       switch (bird.species.speciesId) {
         case SpeciesId.SWELLOW:
           if (bird.hasAbility(AbilityId.GUTS, false, true)) {
-            modifiers.push(modifierTypes.FLAME_ORB().newModifier(bird));
+            const modifier = modifierTypes
+              .FLAME_ORB()
+              .withIdFromFunc(modifierTypes.FLAME_ORB)
+              .newModifier(bird) as PokemonHeldItemModifier;
+            if (modifier) {
+              modifiers.push(modifier);
+            }
           }
       }
       return modifiers;
@@ -5268,7 +5280,13 @@ export const trainerConfigs: TrainerConfigs = {
       switch (bird.species.speciesId) {
         case SpeciesId.SWELLOW:
           if (bird.hasAbility(AbilityId.GUTS, false, true)) {
-            modifiers.push(modifierTypes.FLAME_ORB().newModifier(bird));
+            const modifier = modifierTypes
+              .FLAME_ORB()
+              .withIdFromFunc(modifierTypes.FLAME_ORB)
+              .newModifier(bird) as PokemonHeldItemModifier;
+            if (modifier) {
+              modifiers.push(modifier);
+            }
           }
       }
       return modifiers;
