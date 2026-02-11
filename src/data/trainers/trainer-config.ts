@@ -4560,6 +4560,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.formIndex = 1; // Mega Metagross
         p.generateAndPopulateMoveset();
         p.generateName();
+        replaceIfPresent(p.moveset, MoveId.PSYCHIC, MoveId.ZEN_HEADBUTT); // Avoids Psychic level up
       }),
     )
     .setInstantTera(4) // Tera Rock Regirock / Ice Regice / Steel Registeel
