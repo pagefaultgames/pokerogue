@@ -124,13 +124,6 @@ function setDailyRunEventStarterMovesets(starters: StarterTuple): void {
     return;
   }
 
-  if (!isBetween(movesets.length, 1, 3)) {
-    console.error(
-      `Invalid number of custom daily run starter movesets specified (${movesets.length})!\nMovesets: ${movesets}`,
-    );
-    return;
-  }
-
   const moveIds = getEnumValues(MoveId);
   for (const [index, moveset] of movesets.entries()) {
     if (moveset == null) {
