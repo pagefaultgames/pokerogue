@@ -5094,6 +5094,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       3,
       getRandomPartyMemberFunc([SpeciesId.URSALUNA, SpeciesId.BLOODMOON_URSALUNA], TrainerSlot.TRAINER, true, p => {
+        p.abilityIndex = 0; // Guts, Mind's Eye
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
       }),
