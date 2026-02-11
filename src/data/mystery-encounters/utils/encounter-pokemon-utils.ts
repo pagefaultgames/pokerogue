@@ -31,6 +31,7 @@ import {
   showEncounterText,
 } from "#mystery-encounters/encounter-dialogue-utils";
 import { achvs } from "#system/achv";
+import type { IncludeSpecialSpeciesParams } from "#types/pokemon-common";
 import type { PartyOption } from "#ui/party-ui-handler";
 import { PartyUiMode } from "#ui/party-ui-handler";
 import { SummaryUiMode } from "#ui/summary-ui-handler";
@@ -247,15 +248,14 @@ export function getHighestStatTotalPlayerPokemon(isAllowed = false, isFainted = 
  * @param allowSubLegendary
  * @param allowLegendary
  * @param allowMythical
+ * @param allowParadox
  * @returns
  */
 export function getRandomSpeciesByStarterCost(
   starterTiers: number | [number, number],
   excludedSpecies?: SpeciesId[],
   types?: PokemonType[],
-  allowSubLegendary = true,
-  allowLegendary = true,
-  allowMythical = true,
+  includeSpeciesGroups: IncludeSpecialSpeciesParams = {},
 ): SpeciesId {
   let min = Array.isArray(starterTiers) ? starterTiers[0] : starterTiers;
   let max = Array.isArray(starterTiers) ? starterTiers[1] : starterTiers;
@@ -263,13 +263,11 @@ export function getRandomSpeciesByStarterCost(
   let filteredSpecies: [PokemonSpecies, number][] = Object.keys(speciesStarterCosts)
     .map(s => [Number.parseInt(s) as SpeciesId, speciesStarterCosts[s] as number])
     .filter(s => {
-      const pokemonSpecies = getPokemonSpecies(s[0]);
+      const species = getPokemonSpecies(s[0]);
       return (
-        pokemonSpecies
+        species
         && (!excludedSpecies || !excludedSpecies.includes(s[0]))
-        && (allowSubLegendary || !pokemonSpecies.subLegendary)
-        && (allowLegendary || !pokemonSpecies.legendary)
-        && (allowMythical || !pokemonSpecies.mythical)
+        && species.isIncludedSpeciesGroup(includeSpeciesGroups)
       );
     })
     .map(s => [getPokemonSpecies(s[0]), s[1]]);

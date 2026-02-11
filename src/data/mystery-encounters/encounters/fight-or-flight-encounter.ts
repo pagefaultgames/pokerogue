@@ -61,6 +61,13 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder.
     const bossPokemon = getRandomEncounterPokemon({
       level,
       isBoss: true,
+      includeSpeciesGroups: {
+        subLegendary: true,
+        legendary: true,
+        mythical: true,
+        paradox: true,
+        ultraBeast: true,
+      },
       eventShinyRerolls: 2,
       eventHiddenRerolls: 1,
     });

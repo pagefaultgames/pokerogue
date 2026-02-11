@@ -28,11 +28,12 @@ import { hasExpSprite } from "#sprites/sprite-utils";
 import type { Variant, VariantSet } from "#sprites/variant";
 import { populateVariantColorCache, variantColorCache, variantData } from "#sprites/variant";
 import type { Localizable } from "#types/locales";
+import type { IncludeSpecialSpeciesParams } from "#types/pokemon-common";
 import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { StarterMoveset } from "#types/save-data";
 import type { EvolutionLevel, EvolutionLevelWithThreshold } from "#types/species-gen-types";
 import { randSeedFloat, randSeedGauss } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { getPokemonSpecies, isSpeciesParadox, isSpeciesUltraBeast } from "#utils/pokemon-utils";
 import { toCamelCase, toPascalCase } from "#utils/strings";
 import { argbFromRgba, QuantizerCelebi, rgbaFromArgb } from "@material/material-color-utilities";
 import i18next from "i18next";
@@ -770,6 +771,38 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
       form.formIndex = f;
       form.generation = generation;
     });
+  }
+
+  /**
+   * Finds whether this species is a Paradox mon, including the Legendary Koraidon and Miraidon
+   * @returns Whether a species is a Paradox mon
+   */
+  isParadox(): boolean {
+    return isSpeciesParadox(this.speciesId);
+  }
+
+  /**
+   * Finds whether this species is an Ultra Beast.
+   * The Cosmog line and Necrozma aren't considered UBs but share similarities and are sometimes lumped in with them.
+   * @param includeLightTrio Whether to include the Cosmog line and Necrozma because someone might want to include them
+   * @returns Whether the species is an Ultra Beast
+   */
+  isUltraBeast(includeLightTrio = false): boolean {
+    return isSpeciesUltraBeast(this.speciesId, includeLightTrio);
+  }
+
+  isLegendLike(): boolean {
+    return this.mythical || this.subLegendary || this.legendary || this.isParadox() || this.isUltraBeast();
+  }
+
+  isIncludedSpeciesGroup(includeSpeciesGroups: IncludeSpecialSpeciesParams = {}): boolean {
+    return (
+      (includeSpeciesGroups.subLegendary || !this.subLegendary)
+      && (includeSpeciesGroups.legendary || !this.legendary)
+      && (includeSpeciesGroups.mythical || !this.mythical)
+      && (includeSpeciesGroups.paradox || !this.isParadox())
+      && (includeSpeciesGroups.ultraBeast || !this.isUltraBeast())
+    );
   }
 
   getName(formIndex?: number): string {

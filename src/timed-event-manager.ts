@@ -8,6 +8,7 @@ import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { SpeciesId } from "#enums/species-id";
 import type { ModifierTypeKeys } from "#modifiers/modifier-type";
 import type { EventEncounter, EventMysteryEncounterTier, TimedEvent } from "#types/events";
+import type { IncludeSpecialSpeciesParams } from "#types/pokemon-common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { timedEvents } from "./data/balance/timed-events";
 
@@ -79,19 +80,12 @@ export class TimedEventManager {
   }
 
   getAllValidEventEncounters(
-    allowSubLegendary = true,
-    allowLegendary = true,
-    allowMythical = true,
-    speciesFilter: PokemonSpeciesFilter,
+    includeSpeciesGroups: IncludeSpecialSpeciesParams = {},
+    speciesFilter: PokemonSpeciesFilter = () => true,
   ): EventEncounter[] {
     return this.getEventEncounters().filter(enc => {
       const species = getPokemonSpecies(enc.species);
-      return (
-        (allowSubLegendary || !species.subLegendary)
-        && (allowLegendary || !species.legendary)
-        && (allowMythical || !species.mythical)
-        && speciesFilter(species)
-      );
+      return species.isIncludedSpeciesGroup(includeSpeciesGroups) && speciesFilter(species);
     });
   }
 

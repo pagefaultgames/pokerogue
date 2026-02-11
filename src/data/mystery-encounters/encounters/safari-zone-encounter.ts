@@ -1,7 +1,6 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { NON_LEGEND_PARADOX_POKEMON } from "#balance/special-species-groups";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { BattlerIndex } from "#enums/battler-index";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -292,9 +291,13 @@ async function summonSafariPokemon() {
       const fromEvent = new BooleanHolder(false);
       pokemon = getRandomEncounterPokemon({
         level: globalScene.currentBattle.getLevelForWave(),
-        includeLegendary: false,
-        includeSubLegendary: false,
-        includeMythical: false,
+        includeSpeciesGroups: {
+          subLegendary: false,
+          legendary: false,
+          mythical: false,
+          paradox: false,
+          ultraBeast: false,
+        },
         speciesFunction: getSafariSpeciesSpawn,
         shinyRerolls: 1,
         eventShinyRerolls: 1,
@@ -579,6 +582,12 @@ async function doEndTurn(cursorIndex: number) {
  */
 export function getSafariSpeciesSpawn(): PokemonSpecies {
   return getPokemonSpecies(
-    getRandomSpeciesByStarterCost([0, 5], NON_LEGEND_PARADOX_POKEMON, undefined, false, false, false),
+    getRandomSpeciesByStarterCost([0, 5], undefined, undefined, {
+      subLegendary: false,
+      legendary: false,
+      mythical: false,
+      paradox: false,
+      ultraBeast: false,
+    }),
   );
 }

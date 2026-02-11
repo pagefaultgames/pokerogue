@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { NON_LEGEND_PARADOX_POKEMON, NON_LEGEND_ULTRA_BEASTS } from "#balance/special-species-groups";
 import { allSpecies, modifierTypes } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -47,43 +48,12 @@ import i18next from "i18next";
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounters/weirdDream";
 
-/** Exclude Ultra Beasts, Paradox, Eternatus, and all legendary/mythical/trio pokemon that are below 570 BST */
+/** Exclude Ultra Beasts, Paradox, Arceus, Eternatus, and all legendary/mythical/trio pokemon that are below 570 BST */
 const EXCLUDED_TRANSFORMATION_SPECIES = [
+  ...NON_LEGEND_ULTRA_BEASTS,
+  ...NON_LEGEND_PARADOX_POKEMON,
   SpeciesId.ARCEUS,
   SpeciesId.ETERNATUS,
-  /** UBs */
-  SpeciesId.NIHILEGO,
-  SpeciesId.BUZZWOLE,
-  SpeciesId.PHEROMOSA,
-  SpeciesId.XURKITREE,
-  SpeciesId.CELESTEELA,
-  SpeciesId.KARTANA,
-  SpeciesId.GUZZLORD,
-  SpeciesId.POIPOLE,
-  SpeciesId.NAGANADEL,
-  SpeciesId.STAKATAKA,
-  SpeciesId.BLACEPHALON,
-  /** Paradox */
-  SpeciesId.GREAT_TUSK,
-  SpeciesId.SCREAM_TAIL,
-  SpeciesId.BRUTE_BONNET,
-  SpeciesId.FLUTTER_MANE,
-  SpeciesId.SLITHER_WING,
-  SpeciesId.SANDY_SHOCKS,
-  SpeciesId.ROARING_MOON,
-  SpeciesId.WALKING_WAKE,
-  SpeciesId.GOUGING_FIRE,
-  SpeciesId.RAGING_BOLT,
-  SpeciesId.IRON_TREADS,
-  SpeciesId.IRON_BUNDLE,
-  SpeciesId.IRON_HANDS,
-  SpeciesId.IRON_JUGULIS,
-  SpeciesId.IRON_MOTH,
-  SpeciesId.IRON_THORNS,
-  SpeciesId.IRON_VALIANT,
-  SpeciesId.IRON_LEAVES,
-  SpeciesId.IRON_BOULDER,
-  SpeciesId.IRON_CROWN,
   /** These are banned so they don't appear in the < 570 BST pool */
   SpeciesId.PHIONE,
   SpeciesId.TYPE_NULL,
