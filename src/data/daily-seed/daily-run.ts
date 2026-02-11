@@ -227,11 +227,7 @@ export function getDailyForcedWaveSpecies(waveIndex: number): PokemonSpecies | n
   }
 
   const forcedWave = globalScene.gameMode.dailyConfig?.forcedWaves?.find(w => w.waveIndex === waveIndex);
-  if (forcedWave == null) {
-    return null;
-  }
-
-  if (forcedWave.speciesId == null) {
+  if (forcedWave?.speciesId == null) {
     return null;
   }
 
@@ -249,11 +245,7 @@ export function getDailyForcedWaveBiomePoolTier(waveIndex: number): BiomePoolTie
   }
 
   const forcedWave = globalScene.gameMode.dailyConfig?.forcedWaves?.find(w => w.waveIndex === waveIndex);
-  if (forcedWave == null) {
-    return null;
-  }
-
-  if (forcedWave.tier == null) {
+  if (forcedWave?.tier == null) {
     return null;
   }
 
