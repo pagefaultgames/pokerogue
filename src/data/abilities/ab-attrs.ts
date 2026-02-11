@@ -711,10 +711,11 @@ export class MoveImmunityStatStageChangeAbAttr extends MoveImmunityAbAttr {
 /**
  * Shared parameters for ability attributes that apply an effect after move was used by or against the the user.
  */
+// TODO: Have this take a reference to whatever move-in-flight object is passed around
 export interface PostMoveInteractionAbAttrParams extends AugmentMoveInteractionAbAttrParams {
   /** Stores the hit result of the move used in the interaction */
   readonly hitResult: HitResult;
-  /** The amount of damage dealt in the interaction */
+  /** The amount of damage dealt in the interaction. */
   readonly damage: number;
 }
 
@@ -760,7 +761,9 @@ export class ReverseDrainAbAttr extends PostDefendAbAttr {
   }
 }
 
+// TODO: Move `allOthers` to its own attribute class
 export class PostDefendStatStageChangeAbAttr extends PostDefendAbAttr {
+  // TODO: Review what conditions are actually used and whether they can be consolidated into the main class
   private readonly condition: PokemonDefendCondition;
   private readonly stat: BattleStat;
   private readonly stages: number;
@@ -817,35 +820,30 @@ export class PostDefendStatStageChangeAbAttr extends PostDefendAbAttr {
 }
 
 export class PostDefendHpGatedStatStageChangeAbAttr extends PostDefendAbAttr {
-  private readonly condition: PokemonDefendCondition;
   private readonly hpGate: number;
   private readonly stats: readonly BattleStat[];
   private readonly stages: number;
   private readonly selfTarget: boolean;
 
-  constructor(
-    condition: PokemonDefendCondition,
-    hpGate: number,
-    stats: BattleStat[],
-    stages: number,
-    selfTarget = true,
-  ) {
+  constructor(hpGate: number, stats: BattleStat[], stages: number, selfTarget = true) {
     super(true);
 
-    this.condition = condition;
     this.hpGate = hpGate;
     this.stats = stats;
     this.stages = stages;
     this.selfTarget = selfTarget;
   }
 
-  override canApply({ pokemon, opponent: attacker, move }: PostMoveInteractionAbAttrParams): boolean {
-    const hpGateFlat: number = Math.ceil(pokemon.getMaxHp() * this.hpGate);
-    const lastAttackReceived = pokemon.turnData.attacksReceived.at(-1);
-    const damageReceived = lastAttackReceived?.damage ?? 0;
-    return (
-      this.condition(pokemon, attacker, move) && pokemon.hp <= hpGateFlat && pokemon.hp + damageReceived > hpGateFlat
-    );
+  // TODO: This should trigger after the final hit of multi-strike moves, which requires an aggregated damage total
+  // across all strikes (similar to Wimp Out).
+  // The structure used for the former can likely be re-used for the latter.
+  override canApply({ pokemon, move, damage }: PostMoveInteractionAbAttrParams): boolean {
+    if (move.category === MoveCategory.STATUS) {
+      return false;
+    }
+
+    const threshold = toDmgValue(pokemon.getMaxHp() * this.hpGate);
+    return pokemon.hp <= threshold && pokemon.hp + damage > threshold;
   }
 
   override apply({ simulated, pokemon, opponent }: PostMoveInteractionAbAttrParams): void {
