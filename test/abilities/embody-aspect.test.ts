@@ -34,7 +34,8 @@ describe.each<{ name: string; ability: AbilityId; stat: BattleStat }>([
 
   const statName = toTitleCase(Stat[stat]);
 
-  // NB: Our impl of Embody Aspect is a simple "on summon" ability w/o any fancy shenanigans
+  // NB: We have a custom implementation of Embody Aspect as a simple "on summon" ability.
+  // "On summon" abilities also trigger on a Pokémon changing forms (tested elsewhere).
   it(`should raise the user's ${statName} by 1 stage on summon`, async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
