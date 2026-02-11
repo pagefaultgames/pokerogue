@@ -107,7 +107,7 @@ export class RibbonData {
   /** Ribbon for winning the limited support challenge set to both*/
   public static readonly NO_SUPPORT     = 0x2000000000n as RibbonFlag;
   /** Ribbon for winning the passive ability challenge */
-  public static readonly PASSIVE_ABILITY = 0x4000000000n as RibbonFlag;
+  public static readonly PASSIVE_CHALLENGE = 0x4000000000n as RibbonFlag;
 
   // NOTE: max possible ribbon flag is 0x20000000000000 (53 total ribbons)
   // Once this is exceeded, bitfield needs to be changed to a bigint or even a uint array

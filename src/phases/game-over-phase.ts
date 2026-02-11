@@ -133,7 +133,7 @@ export class GameOverPhase extends BattlePhase {
     // Block other ribbons if flip stats or inverse is active
     const flip_or_inverse = ribbonFlags & (RibbonData.FLIP_STATS | RibbonData.INVERSE);
     // Block other ribbons if passives on `all` is active
-    const passives = ribbonFlags & RibbonData.PASSIVE_ABILITY;
+    const passives = ribbonFlags & RibbonData.PASSIVE_CHALLENGE;
     if (flip_or_inverse) {
       ribbonFlags = flip_or_inverse;
     } else if (globalScene.gameMode.challenges.some(c => c.id === Challenges.PASSIVES && c.value === 2)) {

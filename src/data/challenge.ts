@@ -1207,7 +1207,7 @@ export class HardcoreChallenge extends Challenge {
 
 export class PassivesChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
-    return this.value ? RibbonData.PASSIVE_ABILITY : 0n;
+    return this.value ? RibbonData.PASSIVE_CHALLENGE : 0n;
   }
 
   constructor() {
