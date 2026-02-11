@@ -4,6 +4,7 @@ import Overrides from "#app/overrides";
 import { biomePokemonPools, biomeTrainerPools } from "#balance/biomes";
 import type { ArenaTag, ArenaTagTypeMap } from "#data/arena-tag";
 import { EntryHazardTag, getArenaTag } from "#data/arena-tag";
+import { getDailyForcedWaveBiomePoolTier } from "#data/daily-seed/daily-run";
 import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import type { PositionalTag } from "#data/positional-tags/positional-tag";
@@ -194,6 +195,7 @@ export class Arena {
     }
 
     for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
+      // TODO: Specify the type of tags which are being removed here
       pokemon.findAndRemoveTags(
         tag => "weatherTypes" in tag && !(tag.weatherTypes as WeatherType[]).find(t => t === weather),
       );
@@ -450,23 +452,26 @@ export class Arena {
       luckModifier = luckValue * (isBossSpecies ? 0.5 : 2);
     }
     const tierValue = randSeedInt(randVal - luckModifier);
-    let tier = isBossSpecies
-      ? tierValue >= 20
-        ? BiomePoolTier.BOSS
-        : tierValue >= 6
-          ? BiomePoolTier.BOSS_RARE
-          : tierValue >= 1
-            ? BiomePoolTier.BOSS_SUPER_RARE
-            : BiomePoolTier.BOSS_ULTRA_RARE
-      : tierValue >= 156
-        ? BiomePoolTier.COMMON
-        : tierValue >= 32
-          ? BiomePoolTier.UNCOMMON
+    let tier =
+      getDailyForcedWaveBiomePoolTier(waveIndex)
+      ?? (isBossSpecies
+        ? tierValue >= 20
+          ? BiomePoolTier.BOSS
           : tierValue >= 6
-            ? BiomePoolTier.RARE
+            ? BiomePoolTier.BOSS_RARE
             : tierValue >= 1
-              ? BiomePoolTier.SUPER_RARE
-              : BiomePoolTier.ULTRA_RARE;
+              ? BiomePoolTier.BOSS_SUPER_RARE
+              : BiomePoolTier.BOSS_ULTRA_RARE
+        : tierValue >= 156
+          ? BiomePoolTier.COMMON
+          : tierValue >= 32
+            ? BiomePoolTier.UNCOMMON
+            : tierValue >= 6
+              ? BiomePoolTier.RARE
+              : tierValue >= 1
+                ? BiomePoolTier.SUPER_RARE
+                : BiomePoolTier.ULTRA_RARE);
+
     console.log(BiomePoolTier[tier]);
     while (this.pokemonPool[tier]?.length === 0) {
       console.log(`Downgraded rarity tier from ${BiomePoolTier[tier]} to ${BiomePoolTier[tier - 1]}`);

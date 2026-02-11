@@ -301,7 +301,7 @@ export const classicFixedBattles: FixedBattleConfigs = {
         TrainerType.SHAUNTAL,
         TrainerType.MALVA,
         [TrainerType.HALA, TrainerType.MOLAYNE],
-        TrainerType.MARNIE_ELITE,
+        [TrainerType.MARNIE_ELITE, TrainerType.BEDE_ELITE],
         TrainerType.RIKA,
         TrainerType.CRISPIN,
       ]),
