@@ -4405,6 +4405,10 @@ export const trainerConfigs: TrainerConfigs = {
         p.generateAndPopulateMoveset();
         p.generateName();
         p.gender = Gender.MALE;
+        if (!p.moveset.some(move => move != null && move.moveId === MoveId.HURRICANE)) {
+          // Check if Hurricane is in the moveset, if not, replace the first move with Hurricane.
+          p.moveset[0] = new PokemonMove(MoveId.HURRICANE);
+        }
       }),
     )
     .setInstantTera(1), // Tera Fire Arcanine, Tera Grass Exeggutor, Tera Water Gyarados
@@ -4456,8 +4460,12 @@ export const trainerConfigs: TrainerConfigs = {
           p.generateAndPopulateMoveset();
           p.generateName();
           p.gender = Gender.MALE;
-          if (p.species.speciesId === SpeciesId.BLASTOISE) {
-            replaceInMoveset(p.moveset, MoveId.HYDRO_PUMP, MoveId.WATER_PULSE); // Mega Launcher Boosted
+          if (
+            p.species.speciesId === SpeciesId.BLASTOISE
+            && !p.moveset.some(move => move != null && move.moveId === MoveId.WATER_PULSE)
+          ) {
+            // Check if Water Pulse is in the moveset, if not, replace the first move with Water Pulse.
+            p.moveset[0] = new PokemonMove(MoveId.WATER_PULSE);
           }
         },
       ),
@@ -5351,12 +5359,16 @@ export const trainerConfigs: TrainerConfigs = {
           p.generateAndPopulateMoveset();
           p.pokeball = PokeballType.ULTRA_BALL;
           if (p.species.speciesId === SpeciesId.ARTICUNO) {
-            // They set up their own weather, avoids inaccurate Hurricanes or Sky Attack Moltres
+            // They set up their own weather, this covers their level up to prevent inaccurate Hurricanes or certain Physical Attacks
             replaceInMoveset(p.moveset, MoveId.HURRICANE, MoveId.AIR_SLASH);
+            replaceInMoveset(p.moveset, MoveId.SKY_ATTACK, MoveId.AIR_SLASH);
           } else if (p.species.speciesId === SpeciesId.ZAPDOS) {
             replaceInMoveset(p.moveset, MoveId.DRILL_PECK, MoveId.HURRICANE);
+            replaceInMoveset(p.moveset, MoveId.SKY_ATTACK, MoveId.HURRICANE);
           } else if (p.species.speciesId === SpeciesId.MOLTRES) {
+            replaceInMoveset(p.moveset, MoveId.HURRICANE, MoveId.AIR_SLASH);
             replaceInMoveset(p.moveset, MoveId.SKY_ATTACK, MoveId.AIR_SLASH);
+            replaceInMoveset(p.moveset, MoveId.WING_ATTACK, MoveId.AIR_SLASH);
           }
         },
       ),
