@@ -2228,6 +2228,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const waveIndex = currentBattle?.waveIndex;
     if (
       this.isEnemy()
+      && !gameMode.hasChallenge(Challenges.PASSIVES)
       && (currentBattle?.battleSpec === BattleSpec.FINAL_BOSS
         || gameMode.isEndlessMinorBoss(waveIndex)
         || gameMode.isEndlessMajorBoss(waveIndex))
@@ -2235,7 +2236,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return false;
     }
 
-    return this.passive || this.isBoss();
+    const hasPassive = new BooleanHolder(this.passive);
+    applyChallenges(ChallengeType.PASSIVE_ACCESS, this, hasPassive);
+
+    return hasPassive.value || this.isBoss();
   }
 
   /**
