@@ -154,6 +154,8 @@ export const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
   MoveId.BEAT_UP,
   MoveId.BELCH,
   MoveId.BIDE,
+  MoveId.BIND,
+  MoveId.CLAMP,
   MoveId.CIRCLE_THROW,
   MoveId.COMEUPPANCE,
   MoveId.COUNTER,
@@ -164,6 +166,7 @@ export const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
   MoveId.ENDEAVOR,
   MoveId.EXPLOSION,
   MoveId.FAKE_OUT,
+  MoveId.FIRE_SPIN,
   MoveId.FIRST_IMPRESSION,
   MoveId.FISSURE,
   MoveId.FLING,
@@ -172,6 +175,7 @@ export const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
   MoveId.GUILLOTINE,
   MoveId.HOLD_BACK,
   MoveId.HORN_DRILL,
+  MoveId.INFESTATION,
   MoveId.LAST_RESORT,
   MoveId.METAL_BURST,
   MoveId.MIRROR_COAT,
@@ -182,6 +186,7 @@ export const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
   MoveId.POWER_TRIP,
   MoveId.PSYWAVE,
   MoveId.RUINATION,
+  MoveId.SAND_TOMB,
   MoveId.SELF_DESTRUCT,
   MoveId.SHEER_COLD,
   MoveId.SHELL_TRAP,
@@ -195,6 +200,8 @@ export const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
   MoveId.SUPER_FANG,
   MoveId.SYNCHRONOISE,
   MoveId.UPPER_HAND,
+  MoveId.WHIRLPOOL,
+  MoveId.WRAP,
 ]);
 
 //#endregion Constants
