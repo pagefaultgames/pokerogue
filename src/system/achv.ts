@@ -556,13 +556,6 @@ export const achvs = {
     100,
     c => c instanceof FlipStatChallenge && c.value > 0,
   ),
-  PASSIVES_CHALLENGE: new ChallengeAchv(
-    "passives",
-    "passives.description",
-    "ability_capsule",
-    100,
-    c => c instanceof PassivesChallenge && c.value > 0 && !inverseAndFlipStatAchievementsBlock(),
-  ),
   MONO_GEN_ONE_VICTORY: new ChallengeAchv(
     "monoGenOne",
     "monoGenOne.description",
@@ -859,6 +852,13 @@ export const achvs = {
       && c.value === 18
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock(),
+  ),
+  PASSIVES_CHALLENGE: new ChallengeAchv(
+    "passives",
+    "passives.description",
+    "ability_capsule",
+    100,
+    c => c instanceof PassivesChallenge && c.value > 0 && !inverseAndFlipStatAchievementsBlock(),
   ),
   UNEVOLVED_CLASSIC_VICTORY: new Achv(
     "unevolvedClassicVictory",
