@@ -5125,7 +5125,7 @@ export const trainerConfigs: TrainerConfigs = {
       }),
     )
     .setGenModifiersFunc(party => {
-      const ursaluna = party[2];
+      const ursaluna = party[3];
       const modifiers: PokemonHeldItemModifier[] = [];
       if (ursaluna?.hasAbility(AbilityId.GUTS, false, true)) {
         // If ursaluna spawned with guts, give it flame orb
