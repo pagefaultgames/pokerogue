@@ -4,7 +4,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Contrary", () => {
   let phaserGame: Phaser.Game;
@@ -14,10 +14,6 @@ describe("Abilities - Contrary", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -31,7 +27,7 @@ describe("Abilities - Contrary", () => {
   });
 
   it("should invert stat changes when applied", async () => {
-    await game.classicMode.startBattle([SpeciesId.SLOWBRO]);
+    await game.classicMode.startBattle(SpeciesId.SLOWBRO);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 
@@ -41,7 +37,7 @@ describe("Abilities - Contrary", () => {
   describe("With Clear Body", () => {
     it("should apply positive effects", async () => {
       game.override.enemyPassiveAbility(AbilityId.CLEAR_BODY).moveset([MoveId.TAIL_WHIP]);
-      await game.classicMode.startBattle([SpeciesId.SLOWBRO]);
+      await game.classicMode.startBattle(SpeciesId.SLOWBRO);
 
       const enemyPokemon = game.field.getEnemyPokemon();
 
@@ -55,7 +51,7 @@ describe("Abilities - Contrary", () => {
 
     it("should block negative effects", async () => {
       game.override.enemyPassiveAbility(AbilityId.CLEAR_BODY).enemyMoveset(MoveId.HOWL).moveset([MoveId.SPLASH]);
-      await game.classicMode.startBattle([SpeciesId.SLOWBRO]);
+      await game.classicMode.startBattle(SpeciesId.SLOWBRO);
 
       const enemyPokemon = game.field.getEnemyPokemon();
 

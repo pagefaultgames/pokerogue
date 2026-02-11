@@ -7,7 +7,7 @@ import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Telekinesis", () => {
   let phaserGame: Phaser.Game;
@@ -17,10 +17,6 @@ describe("Moves - Telekinesis", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -35,7 +31,7 @@ describe("Moves - Telekinesis", () => {
   });
 
   it("Telekinesis makes the affected vulnerable to most attacking moves regardless of accuracy", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const enemyOpponent = game.field.getEnemyPokemon();
 
@@ -52,7 +48,7 @@ describe("Moves - Telekinesis", () => {
   });
 
   it("Telekinesis makes the affected airborne and immune to most Ground-moves", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const enemyOpponent = game.field.getEnemyPokemon();
 
@@ -70,7 +66,7 @@ describe("Moves - Telekinesis", () => {
 
   it("Telekinesis can still affect Pokemon that have been transformed into invalid Pokemon", async () => {
     game.override.enemyMoveset(MoveId.TRANSFORM);
-    await game.classicMode.startBattle([SpeciesId.DIGLETT]);
+    await game.classicMode.startBattle(SpeciesId.DIGLETT);
 
     const enemyOpponent = game.field.getEnemyPokemon();
 
@@ -82,7 +78,7 @@ describe("Moves - Telekinesis", () => {
   });
 
   it("Moves like Smack Down and 1000 Arrows remove all effects of Telekinesis from the target Pokemon", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const enemyOpponent = game.field.getEnemyPokemon();
 
@@ -100,7 +96,7 @@ describe("Moves - Telekinesis", () => {
 
   it("Ingrain will remove the floating effect of Telekinesis, but not the 100% hit", async () => {
     game.override.enemyMoveset([MoveId.SPLASH, MoveId.INGRAIN]);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyOpponent = game.field.getEnemyPokemon();
@@ -129,7 +125,7 @@ describe("Moves - Telekinesis", () => {
       .enemyMoveset([MoveId.TELEKINESIS])
       .starterForms({ [SpeciesId.GENGAR]: 1 });
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.GENGAR]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.GENGAR);
     game.move.select(MoveId.BATON_PASS);
     game.doSelectPartyPokemon(1);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);

@@ -4,7 +4,7 @@ import { SpeciesId } from "#enums/species-id";
 import { WeatherType } from "#enums/weather-type";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Sand Spit", () => {
   let phaserGame: Phaser.Game;
@@ -16,10 +16,6 @@ describe("Abilities - Sand Spit", () => {
     });
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
@@ -27,14 +23,13 @@ describe("Abilities - Sand Spit", () => {
       .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .starterSpecies(SpeciesId.SILICOBRA)
       .ability(AbilityId.SAND_SPIT)
       .moveset([MoveId.SPLASH, MoveId.COIL]);
   });
 
   it("should trigger when hit with damaging move", async () => {
     game.override.enemyMoveset([MoveId.TACKLE]);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.SILICOBRA);
 
     game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
@@ -44,7 +39,7 @@ describe("Abilities - Sand Spit", () => {
 
   it("should trigger even when fainting", async () => {
     game.override.enemyMoveset([MoveId.TACKLE]).enemyLevel(100).startingLevel(1);
-    await game.classicMode.startBattle([SpeciesId.SILICOBRA, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.SILICOBRA, SpeciesId.MAGIKARP);
 
     game.move.select(MoveId.SPLASH);
     game.doSelectPartyPokemon(1);
@@ -55,7 +50,7 @@ describe("Abilities - Sand Spit", () => {
 
   it("should not trigger when targetted with status moves", async () => {
     game.override.enemyMoveset([MoveId.GROWL]);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.SILICOBRA);
 
     game.move.select(MoveId.COIL);
     await game.toNextTurn();

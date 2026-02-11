@@ -7,7 +7,7 @@ import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Sleep Talk", () => {
   let phaserGame: Phaser.Game;
@@ -17,10 +17,6 @@ describe("Moves - Sleep Talk", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -39,7 +35,7 @@ describe("Moves - Sleep Talk", () => {
 
   it("should call a random valid move if the user is asleep", async () => {
     game.override.moveset([MoveId.SLEEP_TALK, MoveId.DIG, MoveId.FLY, MoveId.SWORDS_DANCE]); // Dig and Fly are invalid moves, Swords Dance should always be called
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.SLEEP_TALK);
     await game.toNextTurn();
@@ -62,7 +58,7 @@ describe("Moves - Sleep Talk", () => {
 
   it("should fail if the user is not asleep", async () => {
     game.override.statusEffect(StatusEffect.POISON);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.SLEEP_TALK);
     await game.toNextTurn();
@@ -70,7 +66,7 @@ describe("Moves - Sleep Talk", () => {
   });
 
   it("should fail the turn the user wakes up from Sleep", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     expect(feebas.status?.effect).toBe(StatusEffect.SLEEP);
@@ -84,7 +80,7 @@ describe("Moves - Sleep Talk", () => {
 
   it("should fail if the user has no valid moves", async () => {
     game.override.moveset([MoveId.SLEEP_TALK, MoveId.DIG, MoveId.METRONOME, MoveId.SOLAR_BEAM]);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.SLEEP_TALK);
     await game.toNextTurn();
@@ -93,7 +89,7 @@ describe("Moves - Sleep Talk", () => {
 
   it("should apply secondary effects of the called move", async () => {
     game.override.moveset([MoveId.SLEEP_TALK, MoveId.SCALE_SHOT]);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.SLEEP_TALK);
     await game.toNextTurn();
@@ -102,7 +98,7 @@ describe("Moves - Sleep Talk", () => {
 
   it("should apply secondary effects of a move", async () => {
     game.override.moveset([MoveId.SLEEP_TALK, MoveId.DIG, MoveId.FLY, MoveId.WOOD_HAMMER]); // Dig and Fly are invalid moves, Wood Hammer should always be called
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.SLEEP_TALK);
     await game.toNextTurn();

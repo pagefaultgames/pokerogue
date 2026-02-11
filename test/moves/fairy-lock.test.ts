@@ -5,7 +5,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Fairy Lock", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +15,6 @@ describe("Moves - Fairy Lock", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -34,7 +30,7 @@ describe("Moves - Fairy Lock", () => {
   });
 
   it("Applies Fairy Lock tag for two turns", async () => {
-    await game.classicMode.startBattle([SpeciesId.KLEFKI, SpeciesId.TYRUNT]);
+    await game.classicMode.startBattle(SpeciesId.KLEFKI, SpeciesId.TYRUNT);
     const playerPokemon = game.scene.getPlayerField();
     const enemyField = game.scene.getEnemyField();
 
@@ -66,7 +62,7 @@ describe("Moves - Fairy Lock", () => {
   });
 
   it("Ghost types can escape Fairy Lock", async () => {
-    await game.classicMode.startBattle([SpeciesId.DUSKNOIR, SpeciesId.GENGAR, SpeciesId.TYRUNT]);
+    await game.classicMode.startBattle(SpeciesId.DUSKNOIR, SpeciesId.GENGAR, SpeciesId.TYRUNT);
 
     game.move.select(MoveId.FAIRY_LOCK);
     game.move.select(MoveId.SPLASH, 1);
@@ -95,7 +91,7 @@ describe("Moves - Fairy Lock", () => {
 
   it("Phasing moves will still switch out", async () => {
     game.override.enemyMoveset([MoveId.SPLASH, MoveId.WHIRLWIND]);
-    await game.classicMode.startBattle([SpeciesId.KLEFKI, SpeciesId.TYRUNT, SpeciesId.ZYGARDE]);
+    await game.classicMode.startBattle(SpeciesId.KLEFKI, SpeciesId.TYRUNT, SpeciesId.ZYGARDE);
 
     game.move.select(MoveId.FAIRY_LOCK);
     game.move.select(MoveId.SPLASH, 1);
@@ -123,7 +119,7 @@ describe("Moves - Fairy Lock", () => {
 
   it("If a Pokemon faints and is replaced the replacement is also trapped", async () => {
     game.override.moveset([MoveId.FAIRY_LOCK, MoveId.SPLASH, MoveId.MEMENTO]);
-    await game.classicMode.startBattle([SpeciesId.KLEFKI, SpeciesId.GUZZLORD, SpeciesId.TYRUNT, SpeciesId.ZYGARDE]);
+    await game.classicMode.startBattle(SpeciesId.KLEFKI, SpeciesId.GUZZLORD, SpeciesId.TYRUNT, SpeciesId.ZYGARDE);
 
     game.move.select(MoveId.FAIRY_LOCK);
     game.move.select(MoveId.MEMENTO, 1);

@@ -15,4 +15,7 @@ export const isBeta = import.meta.env.MODE === "beta";
 /** `true` if running via "app" mode (`pnpm build:app` which runs `vite build --mode app`) */
 export const isApp = import.meta.env.MODE === "app";
 
+/** `true` if running automated tests via Vitest. */
+export const IS_TEST = import.meta.env.MODE === "test";
+
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";

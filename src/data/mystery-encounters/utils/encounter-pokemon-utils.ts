@@ -22,7 +22,6 @@ import { SpeciesId } from "#enums/species-id";
 import type { PermanentStat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { UiMode } from "#enums/ui-mode";
-import { addPokeballCaptureStars, addPokeballOpenParticles } from "#field/anims";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { PokemonHeldItemModifier } from "#modifiers/modifier";
 import type { PokemonHeldItemModifierType } from "#modifiers/modifier-type";
@@ -496,7 +495,7 @@ export function trainerThrowPokeball(
           globalScene.playSound("se/pb_rel");
           pokemon.tint(getPokeballTintColor(pokeballType));
 
-          addPokeballOpenParticles(pokeball.x, pokeball.y, pokeballType);
+          globalScene.animations.addPokeballOpenParticles(pokeball.x, pokeball.y, pokeballType);
 
           globalScene.tweens.add({
             targets: pokemon,
@@ -542,7 +541,7 @@ export function trainerThrowPokeball(
                       }
                     } else {
                       globalScene.playSound("se/pb_lock");
-                      addPokeballCaptureStars(pokeball);
+                      globalScene.animations.addPokeballCaptureStars(pokeball);
 
                       const pbTint = globalScene.add.sprite(pokeball.x, pokeball.y, "pb", "pb");
                       pbTint.setOrigin(pokeball.originX, pokeball.originY);
@@ -647,7 +646,7 @@ export async function catchPokemon(
   showCatchObtainMessage = true,
   isObtain = false,
 ): Promise<void> {
-  const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
+  const speciesForm = pokemon.fusionSpecies ? pokemon.getFusionSpeciesForm() : pokemon.getSpeciesForm();
 
   if (
     speciesForm.abilityHidden
@@ -985,7 +984,7 @@ export function getEncounterPokemonLevelForWave(levelAdditiveModifier = 0) {
 }
 
 export async function addPokemonDataToDexAndValidateAchievements(pokemon: PlayerPokemon) {
-  const speciesForm = !pokemon.fusionSpecies ? pokemon.getSpeciesForm() : pokemon.getFusionSpeciesForm();
+  const speciesForm = pokemon.fusionSpecies ? pokemon.getFusionSpeciesForm() : pokemon.getSpeciesForm();
 
   if (
     speciesForm.abilityHidden

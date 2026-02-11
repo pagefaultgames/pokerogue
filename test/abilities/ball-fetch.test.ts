@@ -13,7 +13,7 @@ import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import i18next from "i18next";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 // NB: These tests pass when done locally, but we currently have no mechanism to make catches fail
 // due to battle scene RNG overrides making ball shake checks always succeed.
@@ -29,10 +29,6 @@ describe.todo("Ability - Ball Fetch", () => {
     });
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
@@ -46,7 +42,7 @@ describe.todo("Ability - Ball Fetch", () => {
   });
 
   it("should restore the user's first failed ball throw at end of turn", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     const karp = game.field.getEnemyPokemon();
@@ -72,7 +68,7 @@ describe.todo("Ability - Ball Fetch", () => {
 
   it("should not work on enemies", async () => {
     game.override.ability(AbilityId.AIR_LOCK).enemyAbility(AbilityId.BALL_FETCH);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const karp = game.field.getEnemyPokemon();
 

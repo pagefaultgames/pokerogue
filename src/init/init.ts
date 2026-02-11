@@ -1,6 +1,6 @@
 import "#app/extensions"; // Setup Phaser extension methods/etc
 
-import { initAbilities } from "#abilities/ability";
+import { initAbilities } from "#abilities/init-abilities";
 import { initBiomes } from "#balance/init-biomes";
 import { initPokemonPrevolutions, initPokemonStarters } from "#balance/pokemon-evolutions";
 import { initSpecies } from "#balance/pokemon-species";

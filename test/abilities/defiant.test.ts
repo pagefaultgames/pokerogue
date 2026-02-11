@@ -2,10 +2,9 @@ import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { TurnInitPhase } from "#phases/turn-init-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Defiant", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +14,6 @@ describe("Abilities - Defiant", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -34,11 +29,11 @@ describe("Abilities - Defiant", () => {
   });
 
   it("lower atk and def by 1 via tickle, then increase atk by 4 via defiant", async () => {
-    await game.classicMode.startBattle([SpeciesId.FLYGON]);
+    await game.classicMode.startBattle(SpeciesId.FLYGON);
 
     const playerPokemon = game.field.getPlayerPokemon();
     game.move.select(MoveId.SPLASH);
-    await game.phaseInterceptor.to(TurnInitPhase);
+    await game.phaseInterceptor.to("TurnInitPhase");
 
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(3);
     expect(playerPokemon.getStatStage(Stat.DEF)).toBe(-1);
@@ -46,11 +41,11 @@ describe("Abilities - Defiant", () => {
 
   it("lowering your own stats should not trigger defiant", async () => {
     game.override.enemyMoveset(MoveId.SPLASH);
-    await game.classicMode.startBattle([SpeciesId.FLYGON]);
+    await game.classicMode.startBattle(SpeciesId.FLYGON);
 
     const playerPokemon = game.field.getPlayerPokemon();
     game.move.select(MoveId.CLOSE_COMBAT);
-    await game.phaseInterceptor.to(TurnInitPhase);
+    await game.phaseInterceptor.to("TurnInitPhase");
 
     expect(playerPokemon.getStatStage(Stat.SPDEF)).toBe(-1);
     expect(playerPokemon.getStatStage(Stat.DEF)).toBe(-1);
@@ -59,11 +54,11 @@ describe("Abilities - Defiant", () => {
 
   it("white herb should remove only the negative effects", async () => {
     game.override.startingHeldItems([{ name: "WHITE_HERB" }]);
-    await game.classicMode.startBattle([SpeciesId.FLYGON]);
+    await game.classicMode.startBattle(SpeciesId.FLYGON);
 
     const playerPokemon = game.field.getPlayerPokemon();
     game.move.select(MoveId.SPLASH);
-    await game.phaseInterceptor.to(TurnInitPhase);
+    await game.phaseInterceptor.to("TurnInitPhase");
 
     expect(playerPokemon.getStatStage(Stat.DEF)).toBe(0);
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(3);

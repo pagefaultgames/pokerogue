@@ -8,7 +8,6 @@ import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils"
 import { LostAtSeaEncounter } from "#mystery-encounters/lost-at-sea-encounter";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
-import { PartyExpPhase } from "#phases/party-exp-phase";
 import {
   runMysteryEncounterToEnd,
   runSelectMysteryEncounterOption,
@@ -17,7 +16,7 @@ import { GameManager } from "#test/test-utils/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/lostAtSea";
 /** Blastoise for surf. Pidgeot for fly. Abra for none. */
@@ -49,10 +48,6 @@ describe("Lost at Sea - Mystery Encounter", () => {
         [BiomeId.MOUNTAIN, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
       ]),
     );
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   it("should have the correct properties", async () => {
@@ -119,7 +114,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
       const expBefore = blastoise!.exp;
 
       await runMysteryEncounterToEnd(game, 1);
-      await game.phaseInterceptor.to(PartyExpPhase);
+      await game.phaseInterceptor.to("ShowPartyExpBarPhase");
 
       expect(blastoise?.exp).toBe(expBefore + Math.floor((laprasSpecies.baseExp * defaultWave) / 5 + 1));
     });
@@ -136,7 +131,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
 
     it("should be disabled if no surfable PKM is in party", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, [SpeciesId.ARCANINE]);
-      await game.phaseInterceptor.to(MysteryEncounterPhase, false);
+      await game.phaseInterceptor.to("MysteryEncounterPhase", false);
 
       const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
@@ -184,7 +179,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
       const expBefore = pidgeot!.exp;
 
       await runMysteryEncounterToEnd(game, 2);
-      await game.phaseInterceptor.to(PartyExpPhase);
+      await game.phaseInterceptor.to("ShowPartyExpBarPhase");
 
       expect(pidgeot!.exp).toBe(expBefore + Math.floor((laprasBaseExp * defaultWave) / 5 + 1));
     });
@@ -201,7 +196,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
 
     it("should be disabled if no flyable PKM is in party", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, [SpeciesId.ARCANINE]);
-      await game.phaseInterceptor.to(MysteryEncounterPhase, false);
+      await game.phaseInterceptor.to("MysteryEncounterPhase", false);
 
       const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);

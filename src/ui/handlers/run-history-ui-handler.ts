@@ -66,12 +66,13 @@ export class RunHistoryUiHandler extends MessageUiHandler {
 
     this.runs = [];
 
-    globalScene.loadImage("hall_of_fame_red", "ui");
-    globalScene.loadImage("hall_of_fame_blue", "ui");
-    // For some reason, the game deletes/unloads the rival sprites. As a result, Run Info cannot access the rival sprites.
-    // The rivals are loaded here to have some way of accessing those sprites.
-    globalScene.loadAtlas("rival_f", "trainer");
-    globalScene.loadAtlas("rival_m", "trainer");
+    globalScene
+      .loadImage("hall_of_fame_red", "ui")
+      .loadImage("hall_of_fame_blue", "ui")
+      // For some reason, the game deletes/unloads the rival sprites. As a result, Run Info cannot access the rival sprites.
+      // The rivals are loaded here to have some way of accessing those sprites.
+      .loadAtlas("rival_f", "trainer")
+      .loadAtlas("rival_m", "trainer");
   }
 
   override show(args: any[]): boolean {
@@ -299,8 +300,9 @@ class RunEntryContainer extends Phaser.GameObjects.Container {
           TextStyle.WINDOW,
         );
         enemyContainer.add(gameOutcomeLabel);
+        const textWidth = gameOutcomeLabel.displayWidth;
         data.enemyParty.forEach((enemyData, e) => {
-          const enemyIconContainer = globalScene.add.container(65 + e * 25, -8);
+          const enemyIconContainer = globalScene.add.container(textWidth + e * 25, -8);
           enemyIconContainer.setScale(0.75);
           enemyData.boss = false;
           enemyData["player"] = true;

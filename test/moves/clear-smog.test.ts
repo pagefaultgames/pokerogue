@@ -4,7 +4,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Clear Smog", () => {
   let phaserGame: Phaser.Game;
@@ -12,10 +12,6 @@ describe("Moves - Clear Smog", () => {
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({ type: Phaser.HEADLESS });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -32,7 +28,7 @@ describe("Moves - Clear Smog", () => {
   });
 
   it("should clear stat changes of target", async () => {
-    await game.classicMode.startBattle([SpeciesId.RATTATA]);
+    await game.classicMode.startBattle(SpeciesId.RATTATA);
     const enemy = game.field.getEnemyPokemon();
 
     expect(enemy).toHaveStatStage(Stat.ATK, 0);

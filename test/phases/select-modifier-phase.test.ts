@@ -16,7 +16,7 @@ import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { shiftCharCodes } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("SelectModifierPhase", () => {
   let phaserGame: Phaser.Game;
@@ -40,21 +40,17 @@ describe("SelectModifierPhase", () => {
       .enemySpecies(SpeciesId.MAGIKARP);
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   it("should start a select modifier phase", async () => {
     initSceneWithoutEncounterPhase(scene, [SpeciesId.ABRA, SpeciesId.VOLCARONA]);
     const selectModifierPhase = new SelectModifierPhase();
     scene.phaseManager.unshiftPhase(selectModifierPhase);
-    await game.phaseInterceptor.to(SelectModifierPhase);
+    await game.phaseInterceptor.to("SelectModifierPhase");
 
     expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
   });
 
   it("should generate random modifiers", async () => {
-    await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
+    await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     game.move.select(MoveId.FISSURE);
     await game.phaseInterceptor.to("SelectModifierPhase");
 
@@ -87,7 +83,7 @@ describe("SelectModifierPhase", () => {
   });
 
   it.todo("should generate random modifiers from reroll", async () => {
-    await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
+    await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     scene.money = 1000000;
     scene.shopCursorTarget = 0;
 
@@ -111,7 +107,7 @@ describe("SelectModifierPhase", () => {
 
   it.todo("should generate random modifiers of same tier for reroll with reroll lock", async () => {
     game.override.startingModifier([{ name: "LOCK_CAPSULE" }]);
-    await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
+    await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     scene.money = 1000000;
     // Just use fully random seed for this test
     vi.spyOn(scene, "resetSeed").mockImplementation(() => {
@@ -150,7 +146,7 @@ describe("SelectModifierPhase", () => {
   });
 
   it("should generate custom modifiers", async () => {
-    await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
+    await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     scene.money = 1000000;
     const customModifiers: CustomModifierSettings = {
       guaranteedModifierTypeFuncs: [
@@ -179,7 +175,7 @@ describe("SelectModifierPhase", () => {
   });
 
   it("should generate custom modifier tiers that can upgrade from luck", async () => {
-    await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
+    await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     scene.money = 1000000;
     const customModifiers: CustomModifierSettings = {
       guaranteedModifierTiers: [
@@ -231,7 +227,7 @@ describe("SelectModifierPhase", () => {
   });
 
   it("should generate custom modifiers and modifier tiers together", async () => {
-    await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
+    await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     scene.money = 1000000;
     const customModifiers: CustomModifierSettings = {
       guaranteedModifierTypeFuncs: [modifierTypes.MEMORY_MUSHROOM, modifierTypes.TM_COMMON],
@@ -254,7 +250,7 @@ describe("SelectModifierPhase", () => {
   });
 
   it("should fill remaining modifiers if fillRemaining is true with custom modifiers", async () => {
-    await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.VOLCARONA]);
+    await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     scene.money = 1000000;
     const customModifiers: CustomModifierSettings = {
       guaranteedModifierTypeFuncs: [modifierTypes.MEMORY_MUSHROOM],

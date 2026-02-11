@@ -1,14 +1,21 @@
+import { IS_TEST } from "#constants/app-constants";
 import { SpeciesId } from "#enums/species-id";
 
 export const POKERUS_STARTER_COUNT = 5;
 
 // #region Friendship constants
+/** The multiplier applied to candy friendship gain in classic mode. */
 export const CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER = 3;
+/** The base amount of friendship gained from a single battle. */
 export const FRIENDSHIP_GAIN_FROM_BATTLE = 3;
+/** The base amount of friendship gained from using a Rare Candy. */
 export const FRIENDSHIP_GAIN_FROM_RARE_CANDY = 6;
+/** The amount of friendship lost upon fainting. */
 export const FRIENDSHIP_LOSS_FROM_FAINT = 5;
-export const TRAINER_MAX_FRIENDSHIP_WAVE = 145;
+/** The minimum friendship value for enemy trainers at wave 1. */
 export const TRAINER_MIN_FRIENDSHIP = 50;
+/** The wave at which enemy trainers reach the maximum friendship value of 255. */
+export const TRAINER_MAX_FRIENDSHIP_WAVE = 145;
 // #endregion
 
 /**
@@ -238,7 +245,7 @@ export const speciesStarterCosts = {
   [SpeciesId.GROUDON]: 9,
   [SpeciesId.RAYQUAZA]: 9,
   [SpeciesId.JIRACHI]: 6,
-  [SpeciesId.DEOXYS]: 7,
+  [SpeciesId.DEOXYS]: 6,
 
   [SpeciesId.TURTWIG]: 3,
   [SpeciesId.CHIMCHAR]: 3,
@@ -340,7 +347,7 @@ export const speciesStarterCosts = {
   [SpeciesId.KARRABLAST]: 3,
   [SpeciesId.FOONGUS]: 3,
   [SpeciesId.FRILLISH]: 3,
-  [SpeciesId.ALOMOMOLA]: 4,
+  [SpeciesId.ALOMOMOLA]: 3,
   [SpeciesId.JOLTIK]: 3,
   [SpeciesId.FERROSEED]: 3,
   [SpeciesId.KLINK]: 3,
@@ -364,9 +371,9 @@ export const speciesStarterCosts = {
   [SpeciesId.DEINO]: 4,
   [SpeciesId.LARVESTA]: 4,
   [SpeciesId.COBALION]: 6,
-  [SpeciesId.TERRAKION]: 6,
+  [SpeciesId.TERRAKION]: 7,
   [SpeciesId.VIRIZION]: 6,
-  [SpeciesId.TORNADUS]: 7,
+  [SpeciesId.TORNADUS]: 6,
   [SpeciesId.THUNDURUS]: 7,
   [SpeciesId.RESHIRAM]: 8,
   [SpeciesId.ZEKROM]: 8,
@@ -465,7 +472,7 @@ export const speciesStarterCosts = {
   [SpeciesId.NECROZMA]: 8,
   [SpeciesId.MAGEARNA]: 7,
   [SpeciesId.MARSHADOW]: 8,
-  [SpeciesId.POIPOLE]: 8,
+  [SpeciesId.POIPOLE]: 7,
   [SpeciesId.STAKATAKA]: 6,
   [SpeciesId.BLACEPHALON]: 7,
   [SpeciesId.ZERAORA]: 6,
@@ -525,7 +532,7 @@ export const speciesStarterCosts = {
   [SpeciesId.GLASTRIER]: 6,
   [SpeciesId.SPECTRIER]: 8,
   [SpeciesId.CALYREX]: 8,
-  [SpeciesId.ENAMORUS]: 7,
+  [SpeciesId.ENAMORUS]: 6,
   [SpeciesId.GALAR_MEOWTH]: 3,
   [SpeciesId.GALAR_PONYTA]: 2,
   [SpeciesId.GALAR_SLOWPOKE]: 3,
@@ -615,11 +622,16 @@ export const speciesStarterCosts = {
   [SpeciesId.IRON_BOULDER]: 7,
   [SpeciesId.IRON_CROWN]: 7,
   [SpeciesId.TERAPAGOS]: 9,
-  [SpeciesId.PECHARUNT]: 6,
+  [SpeciesId.PECHARUNT]: 5,
   [SpeciesId.PALDEA_TAUROS]: 5,
   [SpeciesId.PALDEA_WOOPER]: 3,
   [SpeciesId.BLOODMOON_URSALUNA]: 5,
 };
+
+/**
+ * Type for the valid species ids that can be used as starters, based on the keys of {@linkcode speciesStarterCosts}
+ */
+export type StarterSpeciesId = keyof typeof speciesStarterCosts;
 
 interface StarterCandyCosts {
   /** The candy cost to unlock the starter's passive ability */
@@ -684,7 +696,7 @@ export function getSameSpeciesEggCandyCounts(starterCost: number, hatchCount: nu
  */
 export const __TEST_allStarterCandyCosts: readonly StarterCandyCosts[] = [];
 
-if (import.meta.env.NODE_ENV === "test") {
+if (IS_TEST) {
   for (const starterCandyCosts of allStarterCandyCosts) {
     // @ts-expect-error: done this way to keep it `readonly`
     __TEST_allStarterCandyCosts.push(starterCandyCosts);

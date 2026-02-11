@@ -6,7 +6,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Camouflage", () => {
   let phaserGame: Phaser.Game;
@@ -16,10 +16,6 @@ describe("Moves - Camouflage", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -35,14 +31,14 @@ describe("Moves - Camouflage", () => {
   });
 
   it("Camouflage should look at terrain first when selecting a type to change into", async () => {
-    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.SHUCKLE);
 
     const playerPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.CAMOUFLAGE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(game.scene.arena.getTerrainType()).toBe(TerrainType.PSYCHIC);
+    expect(game).toHaveTerrain(TerrainType.PSYCHIC);
     const pokemonType = playerPokemon.getTypes()[0];
     expect(pokemonType).toBe(PokemonType.PSYCHIC);
   });

@@ -29,9 +29,10 @@ export class FaintPhase extends PokemonPhase {
   private preventInstantRevive: boolean;
 
   /**
-   * The source Pokemon that dealt fatal damage
+   * The source Pokemon that dealt fatal damage; only present for faints triggered by a move.
    */
-  private source?: Pokemon;
+  // TODO: This should be handled by a move in flight object/similar
+  private source?: Pokemon | undefined;
 
   constructor(battlerIndex: BattlerIndex, preventInstantRevive = false, source?: Pokemon) {
     super(battlerIndex);
@@ -121,7 +122,6 @@ export class FaintPhase extends PokemonPhase {
         attacker: globalScene.getPokemonById(lastAttack.sourceId) ?? undefined,
         // TODO: improve the way that we provide the move that knocked out the pokemon...
         move: new PokemonMove(lastAttack.move).getMove(),
-        hitResult: lastAttack.result,
       }); // TODO: is this bang correct?
     } else {
       //If killed by indirect damage, apply post-faint abilities without providing a last move

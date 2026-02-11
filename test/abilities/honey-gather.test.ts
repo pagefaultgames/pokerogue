@@ -6,7 +6,7 @@ import { SpeciesId } from "#enums/species-id";
 import type { CommandPhase } from "#phases/command-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Honey Gather", () => {
   let phaserGame: Phaser.Game;
@@ -16,10 +16,6 @@ describe("Abilities - Honey Gather", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -37,7 +33,7 @@ describe("Abilities - Honey Gather", () => {
   });
 
   it("should give money when winning a battle", async () => {
-    await game.classicMode.startBattle([SpeciesId.MILOTIC]);
+    await game.classicMode.startBattle(SpeciesId.MILOTIC);
     game.scene.money = 1000;
 
     game.move.select(MoveId.THUNDERBOLT);
@@ -47,7 +43,7 @@ describe("Abilities - Honey Gather", () => {
   });
 
   it("should not give money when the enemy pokemon flees", async () => {
-    await game.classicMode.startBattle([SpeciesId.MILOTIC]);
+    await game.classicMode.startBattle(SpeciesId.MILOTIC);
     game.scene.money = 1000;
 
     game.move.select(MoveId.ROAR);
@@ -58,7 +54,7 @@ describe("Abilities - Honey Gather", () => {
   });
 
   it("should not give money when the player flees", async () => {
-    await game.classicMode.startBattle([SpeciesId.MILOTIC]);
+    await game.classicMode.startBattle(SpeciesId.MILOTIC);
     game.scene.money = 1000;
 
     // something weird is going on with the test framework, so this is required to prevent a crash

@@ -4,7 +4,7 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Spec - Pokemon Functions", () => {
   let phaserGame: Phaser.Game;
@@ -14,10 +14,6 @@ describe("Spec - Pokemon Functions", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -34,7 +30,7 @@ describe("Spec - Pokemon Functions", () => {
 
   describe("doSetStatus", () => {
     it("should change the Pokemon's status, ignoring feasibility checks", async () => {
-      await game.classicMode.startBattle([SpeciesId.ACCELGOR]);
+      await game.classicMode.startBattle(SpeciesId.ACCELGOR);
 
       const player = game.field.getPlayerPokemon();
 

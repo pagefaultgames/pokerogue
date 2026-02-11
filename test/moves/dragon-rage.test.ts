@@ -5,10 +5,9 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import type { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Dragon Rage", () => {
   let phaserGame: Phaser.Game;
@@ -24,16 +23,11 @@ describe("Moves - Dragon Rage", () => {
     });
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   beforeEach(async () => {
     game = new GameManager(phaserGame);
 
     game.override
       .battleStyle("single")
-      .starterSpecies(SpeciesId.SNORLAX)
       .moveset([MoveId.DRAGON_RAGE])
       .ability(AbilityId.BALL_FETCH)
       .passiveAbility(AbilityId.BALL_FETCH)
@@ -44,7 +38,7 @@ describe("Moves - Dragon Rage", () => {
       .enemyPassiveAbility(AbilityId.BALL_FETCH)
       .enemyLevel(100);
 
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.SNORLAX);
 
     partyPokemon = game.field.getPlayerPokemon();
     enemyPokemon = game.field.getEnemyPokemon();
@@ -55,7 +49,7 @@ describe("Moves - Dragon Rage", () => {
     vi.spyOn(enemyPokemon, "getTypes").mockReturnValue([PokemonType.DRAGON]);
 
     game.move.select(MoveId.DRAGON_RAGE);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(enemyPokemon.getInverseHp()).toBe(dragonRageDamage);
   });
@@ -65,7 +59,7 @@ describe("Moves - Dragon Rage", () => {
     vi.spyOn(enemyPokemon, "getTypes").mockReturnValue([PokemonType.STEEL]);
 
     game.move.select(MoveId.DRAGON_RAGE);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(enemyPokemon.getInverseHp()).toBe(dragonRageDamage);
   });
@@ -75,7 +69,7 @@ describe("Moves - Dragon Rage", () => {
     partyPokemon.setStatStage(Stat.SPATK, 2);
 
     game.move.select(MoveId.DRAGON_RAGE);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(enemyPokemon.getInverseHp()).toBe(dragonRageDamage);
   });
@@ -85,7 +79,7 @@ describe("Moves - Dragon Rage", () => {
     vi.spyOn(partyPokemon, "getTypes").mockReturnValue([PokemonType.DRAGON]);
 
     game.move.select(MoveId.DRAGON_RAGE);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(enemyPokemon.getInverseHp()).toBe(dragonRageDamage);
   });
@@ -94,7 +88,7 @@ describe("Moves - Dragon Rage", () => {
     partyPokemon.addTag(BattlerTagType.ALWAYS_CRIT, 99);
 
     game.move.select(MoveId.DRAGON_RAGE);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(enemyPokemon.getInverseHp()).toBe(dragonRageDamage);
   });
@@ -103,7 +97,7 @@ describe("Moves - Dragon Rage", () => {
     game.override.criticalHits(false).enemyAbility(AbilityId.ICE_SCALES);
 
     game.move.select(MoveId.DRAGON_RAGE);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(enemyPokemon.getInverseHp()).toBe(dragonRageDamage);
   });

@@ -3,10 +3,9 @@ import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { BerryPhase } from "#phases/berry-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Alluring Voice", () => {
   let phaserGame: Phaser.Game;
@@ -16,10 +15,6 @@ describe("Moves - Alluring Voice", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -36,13 +31,13 @@ describe("Moves - Alluring Voice", () => {
   });
 
   it("should confuse the opponent if their stat stages were raised", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const enemy = game.field.getEnemyPokemon();
 
     game.move.use(MoveId.ALLURING_VOICE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.phaseInterceptor.to(BerryPhase);
+    await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy.getTag(BattlerTagType.CONFUSED)?.tagType).toBe("CONFUSED");
   });

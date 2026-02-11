@@ -8,7 +8,7 @@ import { StatusEffectAttr } from "#moves/move";
 import { GameManager } from "#test/test-utils/game-manager";
 import { toTitleCase } from "#utils/strings";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe.each<{ name: string; ability: AbilityId; status: StatusEffect }>([
   { name: "Vital Spirit", ability: AbilityId.VITAL_SPIRIT, status: StatusEffect.SLEEP },
@@ -29,10 +29,6 @@ describe.each<{ name: string; ability: AbilityId; status: StatusEffect }>([
     });
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
@@ -51,7 +47,7 @@ describe.each<{ name: string; ability: AbilityId; status: StatusEffect }>([
   const statusStr = toTitleCase(StatusEffect[status]);
 
   it(`should prevent application of ${statusStr} without failing damaging moves`, async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const karp = game.field.getEnemyPokemon();
     expect(karp.status?.effect).toBeUndefined();
@@ -65,7 +61,7 @@ describe.each<{ name: string; ability: AbilityId; status: StatusEffect }>([
   });
 
   it(`should cure ${statusStr} upon being gained`, async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     feebas.doSetStatus(status);
@@ -80,7 +76,7 @@ describe.each<{ name: string; ability: AbilityId; status: StatusEffect }>([
 
   // TODO: This does not propagate failures currently
   it.todo(`should cause status moves inflicting ${statusStr} to count as failed if no other effects can be applied`, async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.SPORE);
     await game.toEndOfTurn();

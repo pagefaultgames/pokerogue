@@ -31,7 +31,7 @@ import i18next from "i18next";
 export class MysteryEncounterPhase extends Phase {
   public readonly phaseName = "MysteryEncounterPhase";
   private readonly FIRST_DIALOGUE_PROMPT_DELAY = 300;
-  optionSelectSettings?: OptionSelectSettings;
+  optionSelectSettings?: OptionSelectSettings | undefined;
 
   /**
    * Mostly useful for having repeated queries during a single encounter, where the queries and options may differ each time
@@ -338,10 +338,10 @@ export class MysteryEncounterBattlePhase extends Phase {
         globalScene.phaseManager.unshiftNew("SummonPhase", 1, false);
       }
 
-      if (!globalScene.currentBattle.mysteryEncounter?.hideBattleIntroMessage) {
-        globalScene.ui.showText(this.getBattleMessage(), null, () => this.endBattleSetup(), 0);
-      } else {
+      if (globalScene.currentBattle.mysteryEncounter?.hideBattleIntroMessage) {
         this.endBattleSetup();
+      } else {
+        globalScene.ui.showText(this.getBattleMessage(), null, () => this.endBattleSetup(), 0);
       }
     } else if (encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
       this.showEnemyTrainer();
@@ -359,10 +359,10 @@ export class MysteryEncounterBattlePhase extends Phase {
           }
           this.endBattleSetup();
         };
-        if (!globalScene.currentBattle.mysteryEncounter?.hideBattleIntroMessage) {
-          globalScene.ui.showText(this.getBattleMessage(), null, doTrainerSummon, 1000, true);
-        } else {
+        if (globalScene.currentBattle.mysteryEncounter?.hideBattleIntroMessage) {
           doTrainerSummon();
+        } else {
+          globalScene.ui.showText(this.getBattleMessage(), null, doTrainerSummon, 1000, true);
         }
       };
 
@@ -568,7 +568,7 @@ export class MysteryEncounterRewardsPhase extends Phase {
 export class PostMysteryEncounterPhase extends Phase {
   public readonly phaseName = "PostMysteryEncounterPhase";
   private readonly FIRST_DIALOGUE_PROMPT_DELAY = 750;
-  onPostOptionSelect?: OptionPhaseCallback;
+  onPostOptionSelect?: OptionPhaseCallback | undefined;
 
   constructor() {
     super();

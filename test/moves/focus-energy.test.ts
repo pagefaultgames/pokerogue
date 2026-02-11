@@ -5,7 +5,7 @@ import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Move - Focus Energy", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +15,6 @@ describe("Move - Focus Energy", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -35,7 +31,7 @@ describe("Move - Focus Energy", () => {
   });
 
   it("should increase the user's crit ratio by 2 stages", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.FOCUS_ENERGY);
     await game.toNextTurn();
@@ -56,7 +52,7 @@ describe("Move - Focus Energy", () => {
     { name: "Focus Energy", tagType: BattlerTagType.CRIT_BOOST },
     { name: "Dragon Cheer", tagType: BattlerTagType.DRAGON_CHEER },
   ])("should fail if $name is already present", async ({ tagType }) => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     feebas.addTag(tagType);

@@ -9,7 +9,9 @@ import { speciesEggMoves } from "#balance/egg-moves";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { speciesStarterCosts } from "#balance/starters";
 import { bypassLogin, isBeta, isDev } from "#constants/app-constants";
+import { MAX_STARTER_CANDY_COUNT } from "#constants/game-constants";
 import { EntryHazardTag } from "#data/arena-tag";
+import { getSerializedDailyRunConfig, parseDailySeed } from "#data/daily-seed/daily-seed-utils";
 import { allMoves, allSpecies } from "#data/data-lists";
 import type { Egg } from "#data/egg";
 import { pokemonFormChanges } from "#data/pokemon-forms";
@@ -229,7 +231,11 @@ export class GameData {
 
       localStorage.setItem(`data_${loggedInUser?.username}`, encrypt(systemData, bypassLogin));
 
-      if (!bypassLogin) {
+      if (bypassLogin) {
+        globalScene.ui.savingIcon.hide();
+
+        resolve(true);
+      } else {
         pokerogueApi.savedata.system.update({ clientSessionId }, systemData).then(error => {
           globalScene.ui.savingIcon.hide();
           if (error) {
@@ -242,10 +248,6 @@ export class GameData {
           }
           resolve(true);
         });
-      } else {
-        globalScene.ui.savingIcon.hide();
-
-        resolve(true);
       }
     });
   }
@@ -258,7 +260,9 @@ export class GameData {
         return resolve(false);
       }
 
-      if (!bypassLogin) {
+      if (bypassLogin) {
+        this.initSystem(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`)!, bypassLogin)).then(resolve); // TODO: is this bang correct?
+      } else {
         pokerogueApi.savedata.system.get({ clientSessionId }).then(saveDataOrErr => {
           if (
             typeof saveDataOrErr === "number"
@@ -291,8 +295,6 @@ export class GameData {
             cachedSystem ? AES.decrypt(cachedSystem, saveKey).toString(enc.Utf8) : undefined,
           ).then(resolve);
         });
-      } else {
-        this.initSystem(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`)!, bypassLogin)).then(resolve); // TODO: is this bang correct?
       }
     });
   }
@@ -804,6 +806,7 @@ export class GameData {
       seed: globalScene.seed,
       playTime: globalScene.sessionPlayTime,
       gameMode: globalScene.gameMode.modeId,
+      dailyConfig: getSerializedDailyRunConfig(),
       party: globalScene.getPlayerParty().map(p => new PokemonData(p)),
       enemyParty: globalScene.getEnemyParty().map(p => new PokemonData(p)),
       modifiers: globalScene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
@@ -933,6 +936,8 @@ export class GameData {
     globalScene.resetSeed();
 
     console.log("Seed:", globalScene.seed);
+
+    globalScene.gameMode.trySetCustomDailyConfig(JSON.stringify(fromSession.dailyConfig));
 
     globalScene.sessionPlayTime = fromSession.playTime || 0;
     globalScene.lastSavePlayTime = 0;
@@ -1148,13 +1153,7 @@ export class GameData {
         sessionData,
       );
 
-      if (!jsonResponse?.error) {
-        result = [true, jsonResponse?.success ?? false];
-        if (loggedInUser) {
-          loggedInUser!.lastSessionSlot = -1;
-        }
-        localStorage.removeItem(getSaveDataLocalStorageKey(slotId));
-      } else {
+      if (jsonResponse?.error) {
         if (jsonResponse?.error?.startsWith("session out of date")) {
           globalScene.phaseManager.clearPhaseQueue();
           globalScene.phaseManager.unshiftNew("ReloadSessionPhase");
@@ -1162,6 +1161,12 @@ export class GameData {
 
         console.error(jsonResponse);
         result = [false, false];
+      } else {
+        result = [true, jsonResponse?.success ?? false];
+        if (loggedInUser) {
+          loggedInUser!.lastSessionSlot = -1;
+        }
+        localStorage.removeItem(getSaveDataLocalStorageKey(slotId));
       }
     }
 
@@ -1230,6 +1235,10 @@ export class GameData {
         case "mysteryEncounterSaveData":
           return new MysteryEncounterSaveData(v);
 
+        case "dailyConfig":
+          // make sure the config is valid
+          return parseDailySeed(JSON.stringify(v));
+
         default:
           return v;
       }
@@ -1243,7 +1252,7 @@ export class GameData {
   saveAll(skipVerification = false, sync = false, useCachedSession = false, useCachedSystem = false): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       executeIf(!skipVerification, updateUserInfo).then(success => {
-        if (success !== null && !success) {
+        if (success != null && !success) {
           return resolve(false);
         }
         if (sync) {
@@ -1670,20 +1679,7 @@ export class GameData {
       const hasNewAttr = (caughtAttr & dexAttr) !== dexAttr;
 
       if (incrementCount) {
-        if (!fromEgg) {
-          dexEntry.caughtCount++;
-          this.gameStats.pokemonCaught++;
-          if (pokemon.species.subLegendary) {
-            this.gameStats.subLegendaryPokemonCaught++;
-          } else if (pokemon.species.legendary) {
-            this.gameStats.legendaryPokemonCaught++;
-          } else if (pokemon.species.mythical) {
-            this.gameStats.mythicalPokemonCaught++;
-          }
-          if (pokemon.isShiny()) {
-            this.gameStats.shinyPokemonCaught++;
-          }
-        } else {
+        if (fromEgg) {
           dexEntry.hatchedCount++;
           this.gameStats.pokemonHatched++;
           if (pokemon.species.subLegendary) {
@@ -1696,13 +1692,27 @@ export class GameData {
           if (pokemon.isShiny()) {
             this.gameStats.shinyPokemonHatched++;
           }
+        } else {
+          dexEntry.caughtCount++;
+          this.gameStats.pokemonCaught++;
+          if (pokemon.species.subLegendary) {
+            this.gameStats.subLegendaryPokemonCaught++;
+          } else if (pokemon.species.legendary) {
+            this.gameStats.legendaryPokemonCaught++;
+          } else if (pokemon.species.mythical) {
+            this.gameStats.mythicalPokemonCaught++;
+          }
+          if (pokemon.isShiny()) {
+            this.gameStats.shinyPokemonCaught++;
+          }
         }
 
         if (!hasPrevolution && (!globalScene.gameMode.isDaily || hasNewAttr || fromEgg)) {
-          this.addStarterCandy(
-            species,
-            1 * (pokemon.isShiny() ? 5 * (1 << (pokemon.variant ?? 0)) : 1) * (fromEgg || pokemon.isBoss() ? 2 : 1),
-          );
+          // TODO: remove `?? 0`, `pokemon.variant` shouldn't be able to be nullish
+          const variantBonus = 2 ** (pokemon.variant ?? 0);
+          const shinyBonus = pokemon.isShiny() ? 5 * variantBonus : 1;
+          const eggOrBossBonus = fromEgg || pokemon.isBoss() ? 2 : 1;
+          this.addStarterCandy(species.speciesId, 1 * shinyBonus * eggOrBossBonus);
         }
       }
 
@@ -1779,21 +1789,27 @@ export class GameData {
   }
 
   /**
-   * Adds a candy to the player's game data for a given {@linkcode PokemonSpecies}.
-   * @param species
-   * @param count
+   * Adds candy to the player's game data for a given {@linkcode PokemonSpecies}.
+   * @remarks
+   * Will not increase the candy count past {@linkcode MAX_STARTER_CANDY_COUNT}.
+   * @returns Whether the candy count was incremented
    */
-  addStarterCandy(species: PokemonSpecies, count: number): void {
-    globalScene.candyBar.showStarterSpeciesCandy(species.speciesId, count);
-    this.starterData[species.speciesId].candyCount += count;
+  public addStarterCandy(speciesId: SpeciesId, count: number): boolean {
+    const { candyCount } = this.starterData[speciesId];
+
+    if (candyCount >= MAX_STARTER_CANDY_COUNT) {
+      return false;
+    }
+
+    globalScene.candyBar.showStarterSpeciesCandy(speciesId, count);
+    this.starterData[speciesId].candyCount = Math.min(candyCount + count, MAX_STARTER_CANDY_COUNT);
+
+    return true;
   }
 
   /**
-   *
-   * @param species
-   * @param eggMoveIndex
-   * @param showMessage Default true. If true, will display message for unlocked egg move
-   * @param prependSpeciesToMessage Default false. If true, will change message from "X Egg Move Unlocked!" to "Bulbasaur X Egg Move Unlocked!"
+   * @param showMessage - (Default `true`) Whether to display a message for the unlocked egg move
+   * @param prependSpeciesToMessage - (Default `false`) Whether to change the message from "X Egg Move Unlocked!" to "Bulbasaur X Egg Move Unlocked!"
    */
   setEggMoveUnlocked(
     species: PokemonSpecies,
@@ -1992,7 +2008,8 @@ export class GameData {
   }
 
   getSpeciesStarterValue(speciesId: SpeciesId): number {
-    const baseValue = speciesStarterCosts[speciesId];
+    // TODO: is this bang correct?
+    const baseValue = speciesStarterCosts[speciesId]!;
     let value = baseValue;
 
     const decrementValue = (value: number) => {

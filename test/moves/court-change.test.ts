@@ -7,7 +7,7 @@ import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Move - Court Change", () => {
   let phaserGame: Phaser.Game;
@@ -17,10 +17,6 @@ describe("Move - Court Change", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -37,7 +33,7 @@ describe("Move - Court Change", () => {
 
   it("should swap combined Pledge effects to the opposite side", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.REGIELEKI, SpeciesId.SHUCKLE]);
+    await game.classicMode.startBattle(SpeciesId.REGIELEKI, SpeciesId.SHUCKLE);
 
     const regieleki = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
@@ -62,7 +58,7 @@ describe("Move - Court Change", () => {
 
   it("should swap safeguard to the enemy side ", async () => {
     game.override.enemyMoveset(MoveId.TOXIC_THREAD);
-    await game.classicMode.startBattle([SpeciesId.NINJASK]);
+    await game.classicMode.startBattle(SpeciesId.NINJASK);
 
     const ninjask = game.field.getPlayerPokemon();
 

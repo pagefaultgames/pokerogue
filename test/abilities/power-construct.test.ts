@@ -3,10 +3,8 @@ import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import { QuietFormChangePhase } from "#phases/quiet-form-change-phase";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
-import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe("Abilities - POWER CONSTRUCT", () => {
   let phaserGame: Phaser.Game;
@@ -16,10 +14,6 @@ describe("Abilities - POWER CONSTRUCT", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -39,7 +33,7 @@ describe("Abilities - POWER CONSTRUCT", () => {
       [SpeciesId.ZYGARDE]: completeForm,
     });
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.ZYGARDE]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.ZYGARDE);
 
     const zygarde = game.scene.getPlayerParty().find(p => p.species.speciesId === SpeciesId.ZYGARDE);
     expect(zygarde).not.toBe(undefined);
@@ -51,9 +45,9 @@ describe("Abilities - POWER CONSTRUCT", () => {
 
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     game.doSelectModifier();
-    await game.phaseInterceptor.to(QuietFormChangePhase);
+    await game.phaseInterceptor.to("QuietFormChangePhase");
 
     expect(zygarde!.formIndex).toBe(baseForm);
   });
@@ -65,7 +59,7 @@ describe("Abilities - POWER CONSTRUCT", () => {
       [SpeciesId.ZYGARDE]: completeForm,
     });
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.ZYGARDE]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.ZYGARDE);
 
     const zygarde = game.scene.getPlayerParty().find(p => p.species.speciesId === SpeciesId.ZYGARDE);
     expect(zygarde).not.toBe(undefined);
@@ -77,9 +71,9 @@ describe("Abilities - POWER CONSTRUCT", () => {
 
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
     game.doSelectModifier();
-    await game.phaseInterceptor.to(QuietFormChangePhase);
+    await game.phaseInterceptor.to("QuietFormChangePhase");
 
     expect(zygarde!.formIndex).toBe(baseForm);
   });

@@ -8,11 +8,10 @@
 import { GameManager } from "#test/test-utils/game-manager";
 import { randSeedUniqueItem } from "#utils/random";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Utils - Random", () => {
   let phaserGame: Phaser.Game;
-  let game: GameManager;
 
   describe("randSeedUniqueItem", () => {
     // TODO: Remove `initialization of game` once `randSeedUniqueItem` stops using `executeWithSeedOffset`
@@ -22,12 +21,8 @@ describe("Utils - Random", () => {
       });
     });
 
-    afterEach(() => {
-      game.phaseInterceptor.restoreOg();
-    });
-
     beforeEach(() => {
-      game = new GameManager(phaserGame);
+      new GameManager(phaserGame);
     });
 
     it("should prevent duplicates when provided with different offsets", async () => {

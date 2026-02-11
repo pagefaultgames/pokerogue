@@ -14,20 +14,10 @@ export class PokeballTray extends Phaser.GameObjects.Container {
     this.player = player;
   }
 
-  setup(): void {
-    this.bg = globalScene.add.nineslice(
-      0,
-      0,
-      `pb_tray_overlay_${this.player ? "player" : "enemy"}`,
-      undefined,
-      104,
-      4,
-      48,
-      8,
-      0,
-      0,
-    );
-    this.bg.setOrigin(this.player ? 1 : 0, 0);
+  setup(): this {
+    this.bg = globalScene.add
+      .nineslice(0, 0, `pb_tray_overlay_${this.player ? "player" : "enemy"}`, undefined, 104, 4, 48, 8, 0, 0)
+      .setOrigin(this.player ? 1 : 0, 0);
 
     this.add(this.bg);
 
@@ -51,6 +41,8 @@ export class PokeballTray extends Phaser.GameObjects.Container {
 
     this.setVisible(false);
     this.shown = false;
+
+    return this;
   }
 
   showPbTray(party: Pokemon[]): Promise<void> {

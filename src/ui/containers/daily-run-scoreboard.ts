@@ -220,7 +220,8 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
     this.loadingLabel.setVisible(true);
 
     if (category !== this.category) {
-      this.page = page = 1;
+      page = 1;
+      this.page = page;
     }
 
     executeIf(category !== this.category || this.pageCount === undefined, () =>

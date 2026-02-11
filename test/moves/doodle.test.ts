@@ -5,7 +5,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Doodle", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +15,6 @@ describe("Moves - Doodle", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -34,7 +30,7 @@ describe("Moves - Doodle", () => {
   });
 
   it("should copy the opponent's ability in singles", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.DOODLE);
     await game.phaseInterceptor.to("BerryPhase");
@@ -44,7 +40,7 @@ describe("Moves - Doodle", () => {
 
   it("should copy the opponent's ability to itself and its ally in doubles", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MAGIKARP);
 
     game.move.select(MoveId.DOODLE, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, 1);
@@ -58,7 +54,7 @@ describe("Moves - Doodle", () => {
   it("should activate post-summon abilities", async () => {
     game.override.battleStyle("double").enemyAbility(AbilityId.INTIMIDATE);
 
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MAGIKARP);
 
     game.move.select(MoveId.DOODLE, 0, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, 1);

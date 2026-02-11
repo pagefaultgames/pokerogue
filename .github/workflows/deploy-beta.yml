@@ -9,6 +9,10 @@ on:
     types: completed
     workflows: ["Post Release Deleted"]
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   deploy:
     if: github.repository == 'pagefaultgames/pokerogue' && github.ref_name == (vars.BETA_DEPLOY_BRANCH || 'beta')

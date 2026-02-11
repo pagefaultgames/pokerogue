@@ -5,7 +5,7 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - ZEN MODE", () => {
   let phaserGame: Phaser.Game;
@@ -17,10 +17,6 @@ describe("Abilities - ZEN MODE", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -37,7 +33,7 @@ describe("Abilities - ZEN MODE", () => {
   });
 
   it("shouldn't change form when taking damage if not dropping below 50% HP", async () => {
-    await game.classicMode.startBattle([SpeciesId.DARMANITAN]);
+    await game.classicMode.startBattle(SpeciesId.DARMANITAN);
     const darmanitan = game.field.getPlayerPokemon();
     expect(darmanitan.formIndex).toBe(baseForm);
 
@@ -50,7 +46,7 @@ describe("Abilities - ZEN MODE", () => {
   });
 
   it("should change form when falling below 50% HP", async () => {
-    await game.classicMode.startBattle([SpeciesId.DARMANITAN]);
+    await game.classicMode.startBattle(SpeciesId.DARMANITAN);
 
     const darmanitan = game.field.getPlayerPokemon();
     darmanitan.hp = darmanitan.getMaxHp() / 2 + 1;
@@ -64,7 +60,7 @@ describe("Abilities - ZEN MODE", () => {
   });
 
   it("should stay zen mode when fainted", async () => {
-    await game.classicMode.startBattle([SpeciesId.DARMANITAN, SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.DARMANITAN, SpeciesId.CHARIZARD);
     const darmanitan = game.field.getPlayerPokemon();
     darmanitan.hp = darmanitan.getMaxHp() / 2 + 1;
     expect(darmanitan.formIndex).toBe(baseForm);
@@ -89,7 +85,7 @@ describe("Abilities - ZEN MODE", () => {
       [SpeciesId.DARMANITAN]: zenForm,
     });
 
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.DARMANITAN]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.DARMANITAN);
 
     const darmanitan = game.scene.getPlayerParty()[1];
     darmanitan.hp = 1;

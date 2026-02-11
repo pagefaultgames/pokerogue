@@ -5,7 +5,7 @@ import { SpeciesId } from "#enums/species-id";
 import { WeatherType } from "#enums/weather-type";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Check Biome End Phase", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +15,6 @@ describe("Check Biome End Phase", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -37,7 +33,7 @@ describe("Check Biome End Phase", () => {
       .startingWave(10)
       .weather(WeatherType.SANDSTORM)
       .startingHeldItems([{ name: "BERRY", type: BerryType.SITRUS }]);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();
 
@@ -51,7 +47,7 @@ describe("Check Biome End Phase", () => {
 
   it("should not prevent end of turn effects when transitioning waves within a biome", async () => {
     game.override.weather(WeatherType.SANDSTORM);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();
 

@@ -6,7 +6,7 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Frenzy Move Reset", () => {
   let phaserGame: Phaser.Game;
@@ -18,16 +18,11 @@ describe("Frenzy Move Reset", () => {
     });
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
       .criticalHits(false)
-      .starterSpecies(SpeciesId.MAGIKARP)
       .moveset(MoveId.THRASH)
       .statusEffect(StatusEffect.PARALYSIS)
       .enemyMoveset(MoveId.SPLASH)
@@ -50,7 +45,7 @@ describe("Frenzy Move Reset", () => {
    *
    */
   it("should cancel frenzy move if move fails turn 2", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const playerPokemon = game.field.getPlayerPokemon();
 

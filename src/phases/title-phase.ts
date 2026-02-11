@@ -6,7 +6,7 @@ import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { Phase } from "#app/phase";
 import { bypassLogin } from "#constants/app-constants";
-import { getDailyRunStarters } from "#data/daily-run";
+import { getDailyRunStarters } from "#data/daily-seed/daily-run";
 import { modifierTypes } from "#data/data-lists";
 import { Gender } from "#data/gender";
 import { BattleType } from "#enums/battle-type";
@@ -200,6 +200,7 @@ export class TitlePhase extends Phase {
     // TODO: Do we need to `await` this?
     globalScene.ui.setMode(UiMode.MESSAGE);
     globalScene.ui.resetModeChain();
+    globalScene.sessionSlotId = slotId;
     try {
       const success = await globalScene.gameData.loadSession(slotId);
       if (success) {
@@ -230,12 +231,14 @@ export class TitlePhase extends Phase {
         // Daily runs don't support all challenges yet (starter select restrictions aren't considered)
         timedEventManager.startEventChallenges();
 
+        seed = globalScene.gameMode.trySetCustomDailyConfig(seed);
+
         globalScene.setSeed(seed);
         globalScene.resetSeed();
 
         globalScene.money = globalScene.gameMode.getStartingMoney();
 
-        const starters = getDailyRunStarters(seed);
+        const starters = getDailyRunStarters();
         const startingLevel = globalScene.gameMode.getStartingLevel();
 
         // TODO: Dedupe this
@@ -327,7 +330,10 @@ export class TitlePhase extends Phase {
         // Grab first 10 chars of ISO date format (YYYY-MM-DD) and convert to base64
         let seed: string = btoa(new Date().toISOString().substring(0, 10));
         if (Overrides.DAILY_RUN_SEED_OVERRIDE != null) {
-          seed = Overrides.DAILY_RUN_SEED_OVERRIDE;
+          seed =
+            typeof Overrides.DAILY_RUN_SEED_OVERRIDE === "string"
+              ? Overrides.DAILY_RUN_SEED_OVERRIDE
+              : JSON.stringify(Overrides.DAILY_RUN_SEED_OVERRIDE);
         }
         generateDaily(seed);
       }
@@ -337,7 +343,7 @@ export class TitlePhase extends Phase {
   // TODO: Refactor this
   end(): void {
     if (!this.loaded && !globalScene.gameMode.isDaily) {
-      globalScene.arena.preloadBgm();
+      globalScene.loadBgm(globalScene.arena.bgm);
       globalScene.gameMode = getGameMode(this.gameMode);
       if (this.gameMode === GameModes.CHALLENGE) {
         globalScene.phaseManager.pushNew("SelectChallengePhase");

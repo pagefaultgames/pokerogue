@@ -4,7 +4,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import { sortInSpeedOrder } from "#utils/speed-order";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Utils - Speed Order", () => {
   let phaserGame: Phaser.Game;
@@ -14,10 +14,6 @@ describe("Utils - Speed Order", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -33,7 +29,7 @@ describe("Utils - Speed Order", () => {
   });
 
   it("Sorts correctly in the basic case", async () => {
-    await game.classicMode.startBattle([SpeciesId.SLOWPOKE, SpeciesId.MEW]);
+    await game.classicMode.startBattle(SpeciesId.SLOWPOKE, SpeciesId.MEW);
     const [slowpoke, mew] = game.field.getPlayerParty();
     const regieleki = game.field.getEnemyPokemon();
     const pkmnList = [slowpoke, regieleki, mew];
@@ -42,7 +38,7 @@ describe("Utils - Speed Order", () => {
   });
 
   it("Correctly sorts grouped pokemon", async () => {
-    await game.classicMode.startBattle([SpeciesId.SLOWPOKE, SpeciesId.MEW, SpeciesId.DITTO]);
+    await game.classicMode.startBattle(SpeciesId.SLOWPOKE, SpeciesId.MEW, SpeciesId.DITTO);
     const [slowpoke, mew, ditto] = game.field.getPlayerParty();
     const regieleki = game.field.getEnemyPokemon();
     ditto.stats[Stat.SPD] = slowpoke.getStat(Stat.SPD);
