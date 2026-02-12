@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { ExpNotification } from "#enums/exp-notification";
+import { LearnMoveType } from "#enums/learn-move-type";
 import type { PlayerPokemon } from "#field/pokemon";
 import { PlayerPartyMemberPokemonPhase } from "#phases/player-party-member-pokemon-phase";
 import { LevelAchv } from "#system/achv";
@@ -64,7 +65,7 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
       // this feels like an unnecessary optimization
       const levelMoves = this.getPokemon().getLevelMoves(this.lastLevel + 1);
       for (const lm of levelMoves) {
-        globalScene.phaseManager.unshiftNew("LearnMovePhase", this.partyMemberIndex, lm[1]);
+        globalScene.phaseManager.unshiftNew("LearnMovePhase", this.partyMemberIndex, lm[1], LearnMoveType.LEVEL_MOVE);
       }
     }
     if (!this.pokemon.pauseEvolutions) {
