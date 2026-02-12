@@ -428,7 +428,7 @@ export class PartyUiHandler extends MessageUiHandler {
     ui.playSelect();
     pokemon.pauseMoves = !pokemon.pauseMoves;
     this.showText(
-      i18next.t(pokemon.pauseEvolutions ? "partyUiHandler:pausedMoves" : "partyUiHandler:unpausedMoves", {
+      i18next.t(pokemon.pauseMoves ? "partyUiHandler:pausedMoves" : "partyUiHandler:unpausedMoves", {
         pokemonName: getPokemonNameWithAffix(pokemon, false),
       }),
       undefined,
