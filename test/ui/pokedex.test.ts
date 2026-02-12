@@ -7,10 +7,11 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/test-utils/game-manager";
-import type { StarterAttributes } from "#types/save-data";
+import type { StarterPreferences } from "#types/save-data";
 import { FilterTextRow } from "#ui/filter-text";
 import { PokedexPageUiHandler } from "#ui/pokedex-page-ui-handler";
 import { PokedexUiHandler } from "#ui/pokedex-ui-handler";
+import { getStarterSpeciesId } from "#ui/starter-select-ui-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -82,12 +83,12 @@ describe("UI - Pokedex", () => {
    */
   async function runToPokedexPage(
     species: PokemonSpecies,
-    starterAttributes: StarterAttributes = {},
+    starterPreferences: StarterPreferences = {},
   ): Promise<PokedexPageUiHandler> {
     // Open the pokedex UI.
     await game.runToTitle();
 
-    await game.scene.ui.setOverlayMode(UiMode.POKEDEX_PAGE, species, starterAttributes);
+    await game.scene.ui.setOverlayMode(UiMode.POKEDEX_PAGE, species, starterPreferences);
 
     // Get the handler for the current UI.
     const handler = game.scene.ui.getHandler();
@@ -309,7 +310,7 @@ describe("UI - Pokedex", () => {
     ]);
     expect(
       pokedexHandler["filteredPokemonData"].every(pokemon =>
-        expectedPokemon.has(pokedexHandler.getStarterSpeciesId(pokemon.species.speciesId)),
+        expectedPokemon.has(getStarterSpeciesId(pokemon.species.speciesId)),
       ),
     ).toBe(true);
   });
@@ -324,7 +325,7 @@ describe("UI - Pokedex", () => {
 
     expect(
       pokedexHandler["filteredPokemonData"].every(
-        pokemon => pokedexHandler.getStarterSpeciesId(pokemon.species.speciesId) === SpeciesId.MUDKIP,
+        pokemon => getStarterSpeciesId(pokemon.species.speciesId) === SpeciesId.MUDKIP,
       ),
     ).toBe(true);
   });
@@ -350,7 +351,7 @@ describe("UI - Pokedex", () => {
 
     expect(
       pokedexHandler["filteredPokemonData"].every(pokemon =>
-        expectedPokemon.has(pokedexHandler.getStarterSpeciesId(pokemon.species.speciesId)),
+        expectedPokemon.has(getStarterSpeciesId(pokemon.species.speciesId)),
       ),
     ).toBe(true);
   });
@@ -367,7 +368,7 @@ describe("UI - Pokedex", () => {
 
     expect(
       pokedexHandler["filteredPokemonData"].every(pokemon =>
-        expectedPokemon.has(pokedexHandler.getStarterSpeciesId(pokemon.species.speciesId)),
+        expectedPokemon.has(getStarterSpeciesId(pokemon.species.speciesId)),
       ),
     ).toBe(true);
   });
@@ -385,7 +386,7 @@ describe("UI - Pokedex", () => {
 
     expect(
       pokedexHandler["filteredPokemonData"].every(pokemon =>
-        expectedPokemon.has(pokedexHandler.getStarterSpeciesId(pokemon.species.speciesId)),
+        expectedPokemon.has(getStarterSpeciesId(pokemon.species.speciesId)),
       ),
     ).toBe(true);
   });
@@ -402,7 +403,7 @@ describe("UI - Pokedex", () => {
 
     expect(
       pokedexHandler["filteredPokemonData"].every(
-        pokemon => pokedexHandler.getStarterSpeciesId(pokemon.species.speciesId) === SpeciesId.TREECKO,
+        pokemon => getStarterSpeciesId(pokemon.species.speciesId) === SpeciesId.TREECKO,
       ),
     ).toBe(true);
   });
@@ -475,7 +476,7 @@ describe("UI - Pokedex", () => {
 
   it("should show caught battle form as caught", async () => {
     await game.importData("./test/test-utils/saves/data_pokedex_tests_v2.prsv");
-    const pageHandler = await runToPokedexPage(getPokemonSpecies(SpeciesId.VENUSAUR), { form: 1 });
+    const pageHandler = await runToPokedexPage(getPokemonSpecies(SpeciesId.VENUSAUR), { formIndex: 1 });
 
     expect(pageHandler["species"].speciesId).toEqual(SpeciesId.VENUSAUR);
 
@@ -488,7 +489,7 @@ describe("UI - Pokedex", () => {
   // TODO: check tint of the sprite
   it("should show uncaught battle form as seen", async () => {
     await game.importData("./test/test-utils/saves/data_pokedex_tests_v2.prsv");
-    const pageHandler = await runToPokedexPage(getPokemonSpecies(SpeciesId.VENUSAUR), { form: 2 });
+    const pageHandler = await runToPokedexPage(getPokemonSpecies(SpeciesId.VENUSAUR), { formIndex: 2 });
 
     expect(pageHandler["species"].speciesId).toEqual(SpeciesId.VENUSAUR);
 

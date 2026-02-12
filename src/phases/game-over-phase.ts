@@ -150,13 +150,7 @@ export class GameOverPhase extends BattlePhase {
     // for the current game mode and challenges.
     for (const pokemon of globalScene.getPlayerParty()) {
       const species = pokemon.species;
-      if (
-        checkSpeciesValidForChallenge(
-          species,
-          globalScene.gameData.getSpeciesDexAttrProps(species, pokemon.getDexAttr()),
-          false,
-        )
-      ) {
+      if (checkSpeciesValidForChallenge(species, globalScene.gameData.getDexAttrProps(pokemon.getDexAttr()), false)) {
         awardRibbonsToSpeciesLine(species.speciesId, ribbonFlags as RibbonFlag);
       }
     }

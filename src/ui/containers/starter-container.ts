@@ -1,7 +1,10 @@
 import { globalScene } from "#app/global-scene";
 import type { PokemonSpecies } from "#data/pokemon-species";
+import type { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
+import type { DexAttrProps } from "#types/save-data";
 import { addTextObject } from "#ui/text";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 export class StarterContainer extends Phaser.GameObjects.Container {
   public species: PokemonSpecies;
@@ -16,13 +19,12 @@ export class StarterContainer extends Phaser.GameObjects.Container {
   public candyUpgradeOverlayIcon: Phaser.GameObjects.Image;
   public cost = 0;
 
-  constructor(species: PokemonSpecies) {
+  constructor(speciesId: SpeciesId) {
     super(globalScene, 0, 0);
 
-    this.species = species;
+    const defaultProps = globalScene.gameData.getSpeciesDefaultDexAttrProps(speciesId);
 
-    const defaultDexAttr = globalScene.gameData.getSpeciesDefaultDexAttr(species, false, true);
-    const defaultProps = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+    this.setSpecies(speciesId, defaultProps);
 
     // starter passive bg
     const starterPassiveBg = globalScene.add.image(2, 5, "passive_bg");
@@ -31,21 +33,6 @@ export class StarterContainer extends Phaser.GameObjects.Container {
     starterPassiveBg.setVisible(false);
     this.add(starterPassiveBg);
     this.starterPassiveBgs = starterPassiveBg;
-
-    // icon
-    this.icon = globalScene.add.sprite(
-      -2,
-      2,
-      species.getIconAtlasKey(defaultProps.formIndex, defaultProps.shiny, defaultProps.variant),
-    );
-    this.icon.setScale(0.5);
-    this.icon.setOrigin(0, 0);
-    this.icon.setFrame(
-      species.getIconId(defaultProps.female, defaultProps.formIndex, defaultProps.shiny, defaultProps.variant),
-    );
-    this.checkIconId(defaultProps.female, defaultProps.formIndex, defaultProps.shiny, defaultProps.variant);
-    this.icon.setTint(0);
-    this.add(this.icon);
 
     // shiny icons
     for (let i = 0; i < 3; i++) {
@@ -106,6 +93,40 @@ export class StarterContainer extends Phaser.GameObjects.Container {
     candyUpgradeOverlayIcon.setVisible(false);
     this.add(candyUpgradeOverlayIcon);
     this.candyUpgradeOverlayIcon = candyUpgradeOverlayIcon;
+  }
+
+  setSpecies(speciesId: SpeciesId, props: DexAttrProps) {
+    this.species = getPokemonSpecies(speciesId);
+
+    const { shiny, formIndex, female, variant } = props;
+
+    if (this.icon) {
+      this.remove(this.icon);
+      this.icon.destroy();
+    }
+
+    // icon
+    this.icon = globalScene.add
+      .sprite(-2, 2, this.species.getIconAtlasKey(formIndex, shiny, variant))
+      .setScale(0.5)
+      .setOrigin(0)
+      .setFrame(this.species.getIconId(female, formIndex, shiny, variant))
+      .setTint(0);
+    this.checkIconId(female, formIndex, shiny, variant);
+    this.add(this.icon);
+
+    [
+      this.label,
+      this.hiddenAbilityIcon,
+      this.favoriteIcon,
+      this.classicWinIcon,
+      this.candyUpgradeIcon,
+      this.candyUpgradeOverlayIcon,
+    ].forEach(icon => {
+      if (icon) {
+        this.bringToTop(icon);
+      }
+    });
   }
 
   checkIconId(female, formIndex, shiny, variant) {

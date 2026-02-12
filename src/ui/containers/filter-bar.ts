@@ -7,6 +7,7 @@ import { DropDownType } from "#ui/dropdown";
 import type { StarterContainer } from "#ui/starter-container";
 import { addTextObject, getTextColor } from "#ui/text";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
+import type { PokedexMonContainer } from "./pokedex-mon-container";
 
 export class FilterBar extends Phaser.GameObjects.Container {
   private window: Phaser.GameObjects.NineSlice;
@@ -203,7 +204,7 @@ export class FilterBar extends Phaser.GameObjects.Container {
    * @param container the StarterContainer to compare position against
    * @returns the index of the closest filter
    */
-  getNearestFilter(container: StarterContainer): number {
+  getNearestFilter(container: StarterContainer | PokedexMonContainer): number {
     const midx = container.x + container.icon.displayWidth / 2;
     let nearest = 0;
     let nearestDist = 1000;

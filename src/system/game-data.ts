@@ -7,7 +7,7 @@ import Overrides from "#app/overrides";
 import { Tutorial } from "#app/tutorial";
 import { speciesEggMoves } from "#balance/egg-moves";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
-import { speciesStarterCosts } from "#balance/starters";
+import { type StarterSpeciesId, speciesStarterCosts } from "#balance/starters";
 import { bypassLogin, isBeta, isDev } from "#constants/app-constants";
 import { MAX_STARTER_CANDY_COUNT } from "#constants/game-constants";
 import { EntryHazardTag } from "#data/arena-tag";
@@ -1915,45 +1915,40 @@ export class GameData {
     return starterCount;
   }
 
-  getSpeciesDefaultDexAttr(species: PokemonSpecies, _forSeen = false, optimistic = false): bigint {
-    let ret = 0n;
-    const dexEntry = this.dexData[species.speciesId];
-    const attr = dexEntry.caughtAttr;
-    if (optimistic) {
-      if (attr & DexAttr.SHINY) {
-        ret |= DexAttr.SHINY;
-
-        if (attr & DexAttr.VARIANT_3) {
-          ret |= DexAttr.VARIANT_3;
-        } else if (attr & DexAttr.VARIANT_2) {
-          ret |= DexAttr.VARIANT_2;
-        } else {
-          ret |= DexAttr.DEFAULT_VARIANT;
-        }
-      } else {
-        ret |= DexAttr.NON_SHINY;
-        ret |= DexAttr.DEFAULT_VARIANT;
-      }
-    } else {
-      // Default to non shiny. Fallback to shiny if it's the only thing that's unlocked
-      ret |= attr & DexAttr.NON_SHINY || !(attr & DexAttr.SHINY) ? DexAttr.NON_SHINY : DexAttr.SHINY;
-
-      if (attr & DexAttr.DEFAULT_VARIANT) {
-        ret |= DexAttr.DEFAULT_VARIANT;
-      } else if (attr & DexAttr.VARIANT_2) {
-        ret |= DexAttr.VARIANT_2;
-      } else if (attr & DexAttr.VARIANT_3) {
-        ret |= DexAttr.VARIANT_3;
-      } else {
-        ret |= DexAttr.DEFAULT_VARIANT;
+  getSpeciesDefaultDexAttrProps(speciesId: SpeciesId, defaultIsShiny = true): DexAttrProps {
+    const dexAttr = this.dexData[speciesId].caughtAttr;
+    // Default is female only for species where malePercent is not null but 0
+    const female = getPokemonSpecies(speciesId).malePercent === 0;
+    const formIndex = 0;
+    let variant: Variant = 0;
+    let shiny = false;
+    // Set shiny to true if requested, OR if non-shiny version is uncaught
+    if (defaultIsShiny || !(dexAttr & DexAttr.NON_SHINY)) {
+      // Default shiny is true if caught
+      shiny = !!(dexAttr & DexAttr.SHINY);
+      // Default is the highest variant
+      if (dexAttr & DexAttr.VARIANT_3) {
+        variant = 2;
+      } else if (dexAttr & DexAttr.VARIANT_2) {
+        variant = 1;
       }
     }
-    ret |= attr & DexAttr.MALE || !(attr & DexAttr.FEMALE) ? DexAttr.MALE : DexAttr.FEMALE;
-    ret |= this.getFormAttr(this.getFormIndex(attr));
-    return ret;
+
+    return {
+      shiny,
+      female,
+      variant,
+      formIndex,
+    };
   }
 
-  getSpeciesDexAttrProps(_species: PokemonSpecies, dexAttr: bigint): DexAttrProps {
+  /**
+   * Converts Pokédex attributes from {@linkcode bigint} to a readable {@linkcode DexAttrProps} interface.
+   *
+   * @param dexAttr - The Pokédex attribute to convert
+   * @returns the attributes in {@linkcode DexAttrProps} format
+   */
+  getDexAttrProps(dexAttr: bigint): DexAttrProps {
     const shiny = !(dexAttr & DexAttr.NON_SHINY);
     const female = !(dexAttr & DexAttr.MALE);
     let variant: Variant = 0;
@@ -1974,13 +1969,14 @@ export class GameData {
     };
   }
 
-  getStarterSpeciesDefaultAbilityIndex(species: PokemonSpecies, abilityAttr?: number): number {
-    abilityAttr ??= this.starterData[species.speciesId].abilityAttr;
+  getStarterDefaultAbilityIndex(starterId: StarterSpeciesId, abilityAttr?: number): number {
+    abilityAttr ??= this.starterData[starterId].abilityAttr;
+    const species = getPokemonSpecies(starterId);
     return abilityAttr & AbilityAttr.ABILITY_1 ? 0 : !species.ability2 || abilityAttr & AbilityAttr.ABILITY_2 ? 1 : 2;
   }
 
-  getSpeciesDefaultNature(species: PokemonSpecies, dexEntry?: DexEntry): Nature {
-    dexEntry ??= this.dexData[species.speciesId];
+  getSpeciesDefaultNature(speciesId: SpeciesId): Nature {
+    const dexEntry = this.dexData[speciesId];
     for (let n = 0; n < 25; n++) {
       if (dexEntry.natureAttr & (1 << (n + 1))) {
         return n as Nature;
@@ -1989,8 +1985,8 @@ export class GameData {
     return 0 as Nature;
   }
 
-  getSpeciesDefaultNatureAttr(species: PokemonSpecies): number {
-    return 1 << this.getSpeciesDefaultNature(species);
+  getSpeciesDefaultNatureAttr(speciesId: SpeciesId): number {
+    return 1 << this.getSpeciesDefaultNature(speciesId);
   }
 
   getDexAttrLuck(dexAttr: bigint): number {

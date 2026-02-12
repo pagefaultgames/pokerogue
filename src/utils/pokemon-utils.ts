@@ -1,6 +1,6 @@
 import { MAX_TERAS_PER_ARENA } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { POKERUS_STARTER_COUNT, speciesStarterCosts } from "#balance/starters";
+import { POKERUS_STARTER_COUNT, type StarterSpeciesId, speciesStarterCosts } from "#balance/starters";
 import { allSpecies } from "#data/data-lists";
 import type { PokemonSpecies, PokemonSpeciesForm } from "#data/pokemon-species";
 import { BattlerIndex } from "#enums/battler-index";
@@ -40,17 +40,16 @@ export function getDexNumber(speciesId: SpeciesId): SpeciesId {
  * Method to get the daily list of starters with Pokerus.
  * @returns A list of starters with Pokerus
  */
-export function getPokerusStarters(): PokemonSpecies[] {
-  const pokerusStarters: PokemonSpecies[] = [];
+export function getPokerusStarters(): StarterSpeciesId[] {
+  const pokerusStarters: StarterSpeciesId[] = [];
   const date = new Date();
   date.setUTCHours(0, 0, 0, 0);
   globalScene.executeWithSeedOffset(
     () => {
       while (pokerusStarters.length < POKERUS_STARTER_COUNT) {
-        const randomSpeciesId = Number.parseInt(randSeedItem(Object.keys(speciesStarterCosts)), 10);
-        const species = getPokemonSpecies(randomSpeciesId);
-        if (!pokerusStarters.includes(species)) {
-          pokerusStarters.push(species);
+        const randomSpeciesId = Number.parseInt(randSeedItem(Object.keys(speciesStarterCosts)), 10) as StarterSpeciesId;
+        if (!pokerusStarters.includes(randomSpeciesId)) {
+          pokerusStarters.push(randomSpeciesId);
         }
       }
     },

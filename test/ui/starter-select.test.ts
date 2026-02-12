@@ -12,6 +12,7 @@ import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import type { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
 import type { SaveSlotSelectUiHandler } from "#ui/save-slot-select-ui-handler";
 import type { StarterSelectUiHandler } from "#ui/starter-select-ui-handler";
+import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -565,9 +566,11 @@ describe.todo("UI - Starter select", () => {
       });
     });
 
-    expect(starterSelectUiHandler?.starterSpecies.length).toBe(1);
-    expect(starterSelectUiHandler?.starterSpecies[0].generation).toBe(1);
-    expect(starterSelectUiHandler?.starterSpecies[0].speciesId).toBe(32);
+    expect(starterSelectUiHandler?.partyStarterIds.length).toBe(1);
+    const starterId = starterSelectUiHandler?.partyStarterIds[0];
+    const starterSpecies = getPokemonSpecies(starterId!);
+    expect(starterSpecies.generation).toBe(1);
+    expect(starterSpecies.speciesId).toBe(32);
     expect(starterSelectUiHandler?.cursorObj.x).toBe(53);
     expect(starterSelectUiHandler?.cursorObj.y).toBe(31);
 

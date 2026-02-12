@@ -1,15 +1,8 @@
 import { globalScene } from "#app/global-scene";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { TextStyle } from "#enums/text-style";
-import type { Variant } from "#sprites/variant";
+import type { SpeciesDetails } from "#ui/starter-select-ui-utils";
 import { addTextObject } from "#ui/text";
-
-interface SpeciesDetails {
-  shiny?: boolean;
-  formIndex?: number;
-  female?: boolean;
-  variant?: Variant;
-}
 
 export class PokedexMonContainer extends Phaser.GameObjects.Container {
   public species: PokemonSpecies;
@@ -173,8 +166,7 @@ export class PokedexMonContainer extends Phaser.GameObjects.Container {
 
     const { shiny, formIndex, female, variant } = options;
 
-    const defaultDexAttr = globalScene.gameData.getSpeciesDefaultDexAttr(species, false, true);
-    const defaultProps = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
+    const defaultProps = globalScene.gameData.getSpeciesDefaultDexAttrProps(species.speciesId);
 
     if (formIndex != null) {
       defaultProps.formIndex = formIndex;

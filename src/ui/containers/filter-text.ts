@@ -8,6 +8,7 @@ import { addTextObject, getTextColor } from "#ui/text";
 import type { UI } from "#ui/ui";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import i18next from "i18next";
+import type { PokedexMonContainer } from "./pokedex-mon-container";
 
 export enum FilterTextRow {
   NAME,
@@ -214,7 +215,7 @@ export class FilterText extends Phaser.GameObjects.Container {
    * @param container the StarterContainer to compare position against
    * @returns the index of the closest filter
    */
-  getNearestFilter(container: StarterContainer): number {
+  getNearestFilter(container: StarterContainer | PokedexMonContainer): number {
     const midy = container.y + container.icon.displayHeight / 2;
     let nearest = 0;
     let nearestDist = 1000;

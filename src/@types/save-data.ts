@@ -93,11 +93,14 @@ export interface StarterMoveData {
   [key: number]: StarterMoveset | StarterFormMoveData;
 }
 
-export interface StarterAttributes {
+/**
+ * Stores a player's preferences for which information to show in the starter select screen by default.
+ */
+export interface StarterPreferences {
   nature?: number | undefined;
-  ability?: number | undefined;
+  abilityIndex?: number | undefined;
   variant?: number | undefined;
-  form?: number | undefined;
+  formIndex?: number | undefined;
   female?: boolean | undefined;
   shiny?: boolean | undefined;
   favorite?: boolean | undefined;
