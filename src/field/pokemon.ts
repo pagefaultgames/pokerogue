@@ -249,6 +249,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   public metWave: number;
   public luck: number;
   public pauseEvolutions: boolean;
+  public pauseMoves: boolean;
   public pokerus: boolean;
   /**
    * Indicates whether this Pokémon has left or is about to leave the field
@@ -376,6 +377,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         dataSource.metSpecies ?? (this.metBiome !== -1 ? this.species.speciesId : this.species.getRootSpeciesId(true));
       this.metWave = dataSource.metWave ?? (this.metBiome === -1 ? -1 : 0);
       this.pauseEvolutions = dataSource.pauseEvolutions;
+      this.pauseMoves = dataSource.pauseMoves;
       this.pokerus = !!dataSource.pokerus;
       this.fusionSpecies =
         dataSource.fusionSpecies instanceof PokemonSpecies
@@ -6365,6 +6367,9 @@ export class PlayerPokemon extends Pokemon {
     this.fusionCustomPokemonData = pokemon.customPokemonData;
     if (pokemon.pauseEvolutions || this.pauseEvolutions) {
       this.pauseEvolutions = true;
+    }
+    if (pokemon.pauseMoves || this.pauseMoves) {
+      this.pauseMoves = true;
     }
 
     globalScene.validateAchv(achvs.SPLICE);
