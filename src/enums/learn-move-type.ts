@@ -1,5 +1,7 @@
 export enum LearnMoveType {
-  /** For learning a move via level-up, evolution, or other non-item-based event */
+  /** For learning a move via level-up */
+  LEVEL_MOVE,
+  /** For learning a move via evolution, or other non-item-based event */
   LEARN_MOVE,
   /** For learning a move via Memory Mushroom */
   MEMORY,
