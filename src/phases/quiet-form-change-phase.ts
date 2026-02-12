@@ -17,6 +17,7 @@ import { playTween } from "#utils/anim-utils";
 // TODO: Rename as the term "quiet" can be confusing
 export class QuietFormChangePhase extends BattlePhase {
   public readonly phaseName = "QuietFormChangePhase";
+
   public readonly pokemon: Pokemon;
   protected readonly formChange: SpeciesFormChange;
   /** The Pokemon's prior name before changing forms. */
@@ -24,6 +25,7 @@ export class QuietFormChangePhase extends BattlePhase {
 
   constructor(pokemon: Pokemon, formChange: SpeciesFormChange) {
     super();
+
     this.pokemon = pokemon;
     this.formChange = formChange;
   }
@@ -52,13 +54,15 @@ export class QuietFormChangePhase extends BattlePhase {
     }
   }
 
+  /**
+   * Helper function to show text upon changing forms and end the phase.
+   * @remarks
+   * Does not actually change the user's form.
+   */
   private showFormChangeTextAndEnd(): void {
-    globalScene.ui.showText(
-      getSpeciesFormChangeMessage(this.pokemon, this.formChange, this.preName),
-      null,
-      () => this.end(),
-      1500,
-    );
+    const { pokemon, formChange, preName } = this;
+    const { ui } = globalScene;
+    ui.showText(getSpeciesFormChangeMessage(pokemon, formChange, preName), null, () => this.end(), 1500);
   }
 
   /**
@@ -159,12 +163,8 @@ export class QuietFormChangePhase extends BattlePhase {
       duration: 1000,
     });
     pokemonTintSprite.setVisible(false);
-    globalScene.ui.showText(
-      getSpeciesFormChangeMessage(this.pokemon, this.formChange, this.preName),
-      null,
-      () => this.end(),
-      1500,
-    );
+
+    this.showFormChangeTextAndEnd();
   }
 
   private getPokemonSprite(): Phaser.GameObjects.Sprite {
