@@ -46,7 +46,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
       return this.end();
     }
 
-    if (pokemon.pauseMoves && currentMoveset.length >= 4) { 
+    if (pokemon.pauseMoves && currentMoveset.length >= 4) {
       // End the phase if moves are paused, and the moves known are 4 or more. Setting to >= just in case for some weird reason a mon has 5 or more moves
       return this.end();
     }
