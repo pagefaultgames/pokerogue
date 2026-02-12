@@ -39,31 +39,41 @@ export class QuietFormChangePhase extends BattlePhase {
       return;
     }
 
-    if (!this.pokemon.visible && (await this.checkInactive())) {
+    if (!this.pokemon.visible) {
+      await this.checkInactive();
       return;
     }
 
-    await this.playFormChangeTween();
+    if (this.pokemon.isActive(true)) {
+      await this.playFormChangeTween();
+    } else {
+      await this.doChangeForm();
+      this.showFormChangeTextAndEnd();
+    }
   }
 
-  /**
-   * Handle queueing messages for form changing a currently invisible player Pokemon.
-   */
-  private async checkInactive(): Promise<boolean> {
-    // End immediately for off-field enemy pokemon
-    // TODO: This avoids actually doing the form change, is this intended?
-    if (!this.pokemon.isPlayer() && !this.pokemon.isActive(true)) {
-      return false;
-    }
-
-    await this.doChangeForm();
+  private showFormChangeTextAndEnd(): void {
     globalScene.ui.showText(
       getSpeciesFormChangeMessage(this.pokemon, this.formChange, this.preName),
       null,
       () => this.end(),
       1500,
     );
-    return true;
+  }
+
+  /**
+   * Handle queueing messages for form changing a currently invisible player Pokemon.
+   */
+  private async checkInactive(): Promise<void> {
+    // End immediately for off-field enemy pokemon
+    // TODO: This avoids actually doing the form change, is this intended?
+    if (!this.pokemon.isPlayer() && !this.pokemon.isActive(true)) {
+      super.end();
+      return;
+    }
+
+    await this.doChangeForm();
+    this.showFormChangeTextAndEnd();
   }
 
   /**
@@ -178,7 +188,7 @@ export class QuietFormChangePhase extends BattlePhase {
       teraColor: getTypeRgb(this.pokemon.getTeraType()),
       isTerastallized: this.pokemon.isTerastallized,
     });
-    ["spriteColors", "fusionSpriteColors"].map(k => {
+    ["spriteColors", "fusionSpriteColors"].forEach(k => {
       if (this.pokemon.summonData.speciesForm) {
         k += "Base";
       }
