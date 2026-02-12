@@ -2228,6 +2228,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const waveIndex = currentBattle?.waveIndex;
     if (
       this.isEnemy()
+      && !gameMode.hasChallenge(Challenges.PASSIVES)
       && (currentBattle?.battleSpec === BattleSpec.FINAL_BOSS
         || gameMode.isEndlessMinorBoss(waveIndex)
         || gameMode.isEndlessMajorBoss(waveIndex))
@@ -2235,7 +2236,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return false;
     }
 
-    return this.passive || this.isBoss();
+    const hasPassive = new BooleanHolder(this.passive);
+    applyChallenges(ChallengeType.PASSIVE_ACCESS, this, hasPassive);
+
+    return hasPassive.value || this.isBoss();
   }
 
   /**
@@ -2318,7 +2322,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Return the ability priorities of the pokemon's ability and, if enabled, its passive ability
    * @returns A tuple containing the ability priorities of the pokemon
    */
-  public getAbilityPriorities(): [number] | [activePriority: number, passivePriority: number] {
+  public getAbilityPriorities(): [activePriority: number] | [activePriority: number, passivePriority: number] {
     const abilityPriority = this.getAbility().postSummonPriority;
     if (this.hasPassive()) {
       return [abilityPriority, this.getPassiveAbility().postSummonPriority];
@@ -2348,6 +2352,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * @returns This Pokemon's current Tera {@linkcode PokemonType | type}, accounting for species-based restrictions
    */
+  // TODO: Make this into a getter
   getTeraType(): PokemonType {
     if (this.hasSpecies(SpeciesId.TERAPAGOS)) {
       return PokemonType.STELLAR;
@@ -4560,25 +4565,31 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns A Promise that resolves once the form change has completed.
    */
   public async changeForm(formChange: SpeciesFormChange): Promise<void> {
-    return new Promise(resolve => {
-      this.formIndex = Math.max(
-        this.species.forms.findIndex(f => f.formKey === formChange.formKey),
-        0,
+    this.formIndex = Math.max(
+      this.species.forms.findIndex(f => f.formKey === formChange.formKey),
+      0,
+    );
+    this.generateName();
+
+    const abilityCount = this.getSpeciesForm().getAbilityCount();
+    if (this.abilityIndex >= abilityCount) {
+      console.warn(
+        "Pokemon ability index out of bounds!"
+          + `Name: ${this.name}`
+          + `Old Ability Index: ${this.abilityIndex}`
+          + `Ability Count: ${abilityCount}`
+          + `Form Key: ${formChange.formKey}`,
       );
-      this.generateName();
-      const abilityCount = this.getSpeciesForm().getAbilityCount();
-      if (this.abilityIndex >= abilityCount) {
-        // Shouldn't happen
-        this.abilityIndex = abilityCount - 1;
-      }
-      globalScene.gameData.setPokemonSeen(this, false);
-      this.setScale(this.getSpriteScale());
-      this.loadAssets().then(() => {
-        this.calculateStats();
-        globalScene.updateModifiers(this.isPlayer(), true);
-        Promise.all([this.updateInfo(), globalScene.updateFieldScale()]).then(() => resolve());
-      });
-    });
+      this.abilityIndex = abilityCount - 1;
+    }
+
+    globalScene.gameData.setPokemonSeen(this, false);
+    this.setScale(this.getSpriteScale());
+
+    await this.loadAssets();
+    this.calculateStats();
+    globalScene.updateModifiers(this.isPlayer(), true);
+    await Promise.all([this.updateInfo(), globalScene.updateFieldScale()]);
   }
 
   /**
@@ -5810,7 +5821,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param abilityIndex - The ability index to check
    * @returns Whether the Pokemon's root form has the same ability
    */
-  hasSameAbilityInRootForm(abilityIndex: number): boolean {
+  private hasSameAbilityInRootForm(abilityIndex: number): boolean {
     const currentAbilityIndex = this.abilityIndex;
     const rootForm = getPokemonSpecies(this.species.getRootSpeciesId());
     return rootForm.getAbility(abilityIndex) === rootForm.getAbility(currentAbilityIndex);

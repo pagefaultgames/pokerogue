@@ -19,7 +19,7 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import type { EnemyPokemon } from "#field/pokemon";
-import type { SpeciesStatBoosterModifier } from "#modifiers/modifier";
+import type { PokemonHeldItemModifier, SpeciesStatBoosterModifier } from "#modifiers/modifier";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { EvilTeam } from "#trainers/evil-admin-trainer-pools";
 import { evilAdminTrainerPools } from "#trainers/evil-admin-trainer-pools";
@@ -953,6 +953,20 @@ export class TrainerConfig {
   }
 }
 
+/**
+ * Iterate through the moveset and replace the first instance of the target move with the replacement move.
+ * @param moveset - The moveset to modify
+ * @param target - The id of the move that should be replaced
+ * @param replacement - The move that replaces `target`
+ */
+function replaceInMoveset(moveset: PokemonMove[], target: MoveId, replacement: MoveId): void {
+  for (const [idx, move] of moveset.entries()) {
+    if (move.moveId === target) {
+      moveset[idx] = new PokemonMove(replacement);
+      return;
+    }
+  }
+}
 /**
  * Randomly selects one of the `Species` from `speciesPool`, determines its evolution, level, and strength.
  * Then adds Pokemon to globalScene.
@@ -3503,7 +3517,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.SLOWBRO, SpeciesId.GALAR_SLOWBRO], TrainerSlot.TRAINER, true, p => {
         // Tera Ice Slowbro/G-Slowbro
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.ICE_BEAM)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.ICE_BEAM)) {
           // Check if Ice Beam is in the moveset, if not, replace the third move with Ice Beam.
           p.moveset[2] = new PokemonMove(MoveId.ICE_BEAM);
         }
@@ -3535,7 +3549,7 @@ export const trainerConfigs: TrainerConfigs = {
         // Tera Fighting Steelix
         p.abilityIndex = 1; // Sturdy
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.BODY_PRESS)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.BODY_PRESS)) {
           // Check if Body Press is in the moveset, if not, replace the third move with Body Press.
           p.moveset[2] = new PokemonMove(MoveId.BODY_PRESS);
         }
@@ -3566,7 +3580,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.ARBOK, SpeciesId.WEEZING], TrainerSlot.TRAINER, true, p => {
         // Tera Ghost Arbok/Weezing
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.TERA_BLAST)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.TERA_BLAST)) {
           // Check if Tera Blast is in the moveset, if not, replace the third move with Tera Blast.
           p.moveset[2] = new PokemonMove(MoveId.TERA_BLAST);
         }
@@ -3592,7 +3606,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.GYARADOS, SpeciesId.AERODACTYL], TrainerSlot.TRAINER, true, p => {
         // Tera Dragon Gyarados/Aerodactyl
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.TERA_BLAST)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.TERA_BLAST)) {
           // Check if Tera Blast is in the moveset, if not, replace the third move with Tera Blast.
           p.moveset[2] = new PokemonMove(MoveId.TERA_BLAST);
         }
@@ -3666,7 +3680,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.GENGAR], TrainerSlot.TRAINER, true, p => {
         // Tera Dark Gengar
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.DARK_PULSE)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.DARK_PULSE)) {
           // Check if Dark Pulse is in the moveset, if not, replace the third move with Dark Pulse.
           p.moveset[2] = new PokemonMove(MoveId.DARK_PULSE);
         }
@@ -3770,7 +3784,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.DHELMISE], TrainerSlot.TRAINER, true, p => {
         // Tera Dragon Dhelmise
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.TERA_BLAST)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.TERA_BLAST)) {
           // Check if Tera Blast is in the moveset, if not, replace the third move with Tera Blast.
           p.moveset[2] = new PokemonMove(MoveId.TERA_BLAST);
         }
@@ -3812,7 +3826,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
         p.abilityIndex = 1; // Sniper
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.X_SCISSOR)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.X_SCISSOR)) {
           // Check if X-Scissor is in the moveset, if not, replace the third move with X-Scissor.
           p.moveset[2] = new PokemonMove(MoveId.X_SCISSOR);
         }
@@ -3857,7 +3871,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.STEELIX, SpeciesId.LOPUNNY], TrainerSlot.TRAINER, true, p => {
         // Tera Fire Steelix/Lopunny
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.TERA_BLAST)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.TERA_BLAST)) {
           // Check if Tera Blast is in the moveset, if not, replace the third move with Tera Blast.
           p.moveset[2] = new PokemonMove(MoveId.TERA_BLAST);
         }
@@ -4019,7 +4033,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.CHESNAUGHT], TrainerSlot.TRAINER, true, p => {
         // Tera Steel Chesnaught
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.IRON_HEAD)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.IRON_HEAD)) {
           // Check if Iron Head is in the moveset, if not, replace the third move with Iron Head.
           p.moveset[2] = new PokemonMove(MoveId.IRON_HEAD);
         }
@@ -4159,7 +4173,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.MINIOR], TrainerSlot.TRAINER, true, p => {
         // Tera Flying Minior
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.TERA_BLAST)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.TERA_BLAST)) {
           // Check if Tera Blast is in the moveset, if not, replace the third move with Tera Blast.
           p.moveset[2] = new PokemonMove(MoveId.TERA_BLAST);
         }
@@ -4197,7 +4211,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.TOXICROAK], TrainerSlot.TRAINER, true, p => {
         // Tera Dark Toxicroak
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.SUCKER_PUNCH)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.SUCKER_PUNCH)) {
           // Check if Sucker Punch is in the moveset, if not, replace the third move with Sucker Punch.
           p.moveset[2] = new PokemonMove(MoveId.SUCKER_PUNCH);
         }
@@ -4230,7 +4244,7 @@ export const trainerConfigs: TrainerConfigs = {
         // Tera Fairy Reuniclus, Gothitelle
         p.abilityIndex = 1; // Magic Guard, Competitive
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.TERA_BLAST)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.TERA_BLAST)) {
           // Check if Tera Blast is in the moveset, if not, replace the third move with Tera Blast.
           p.moveset[2] = new PokemonMove(MoveId.TERA_BLAST);
         }
@@ -4330,7 +4344,7 @@ export const trainerConfigs: TrainerConfigs = {
         // Tera Dragon Torkoal
         p.abilityIndex = p.species.speciesId === SpeciesId.TORKOAL ? 1 : 0; // Drought, Sand Spit
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.TERA_BLAST)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.TERA_BLAST)) {
           // Check if Tera Blast is in the moveset, if not, replace the third move with Tera Blast.
           p.moveset[2] = new PokemonMove(MoveId.TERA_BLAST);
         }
@@ -4455,7 +4469,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.EXEGGUTOR], TrainerSlot.TRAINER, true, p => {
         // Tera Fire Exeggutor
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.TERA_BLAST)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.TERA_BLAST)) {
           // Check if Tera Blast is in the moveset, if not, replace the third move with Tera Blast.
           p.moveset[2] = new PokemonMove(MoveId.TERA_BLAST);
         }
@@ -4491,7 +4505,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.REUNICLUS], TrainerSlot.TRAINER, true, p => {
         // Tera Steel Reuniclus
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.FLASH_CANNON)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.FLASH_CANNON)) {
           // Check if Flash Cannon is in the moveset, if not, replace the third move with Flash Cannon.
           p.moveset[2] = new PokemonMove(MoveId.FLASH_CANNON);
         }
@@ -4537,7 +4551,7 @@ export const trainerConfigs: TrainerConfigs = {
         // Tera Fairy Excadrill
         p.setBoss(true, 2);
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.TERA_BLAST)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.TERA_BLAST)) {
           // Check if Tera Blast is in the moveset, if not, replace the third move with Tera Blast.
           p.moveset[2] = new PokemonMove(MoveId.TERA_BLAST);
         }
@@ -4552,7 +4566,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.SCEPTILE], TrainerSlot.TRAINER, true, p => {
         // Tera Dragon Sceptile
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.DUAL_CHOP)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.DUAL_CHOP)) {
           // Check if Dual Chop is in the moveset, if not, replace the third move with Dual Chop.
           p.moveset[2] = new PokemonMove(MoveId.DUAL_CHOP);
         }
@@ -4603,6 +4617,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.MASTER_BALL;
         p.abilityIndex = 2; // Regenerator
+        replaceInMoveset(p.moveset, MoveId.SKY_ATTACK, MoveId.BRAVE_BIRD); // Brave Bird not in set, Sky Attack ends up being too punishing on it
       }),
     )
     .setPartyMemberFunc(
@@ -4613,6 +4628,10 @@ export const trainerConfigs: TrainerConfigs = {
         p.generateAndPopulateMoveset();
         p.generateName();
         p.gender = Gender.MALE;
+        if (!p.moveset.some(move => move.moveId === MoveId.HURRICANE)) {
+          // Check if Hurricane is in the moveset, if not, replace the first move with Hurricane.
+          p.moveset[0] = new PokemonMove(MoveId.HURRICANE);
+        }
       }),
     )
     .setInstantTera(1), // Tera Fire Arcanine, Tera Grass Exeggutor, Tera Water Gyarados
@@ -4629,7 +4648,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.formIndex = 1; // Partner Pikachu
         p.gender = Gender.MALE;
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.VOLT_TACKLE)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.VOLT_TACKLE)) {
           // Check if Volt Tackle is in the moveset, if not, replace the first move with Volt Tackle.
           p.moveset[0] = new PokemonMove(MoveId.VOLT_TACKLE);
         }
@@ -4664,6 +4683,13 @@ export const trainerConfigs: TrainerConfigs = {
           p.generateAndPopulateMoveset();
           p.generateName();
           p.gender = Gender.MALE;
+          if (
+            p.species.speciesId === SpeciesId.BLASTOISE
+            && !p.moveset.some(move => move.moveId === MoveId.WATER_PULSE)
+          ) {
+            // Check if Water Pulse is in the moveset, if not, replace the first move with Water Pulse.
+            p.moveset[0] = new PokemonMove(MoveId.WATER_PULSE);
+          }
         },
       ),
     )
@@ -4771,6 +4797,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.formIndex = 1; // Mega Metagross
         p.generateAndPopulateMoveset();
         p.generateName();
+        replaceInMoveset(p.moveset, MoveId.PSYCHIC, MoveId.PSYCHIC_FANGS); // Avoids Psychic level up
       }),
     )
     .setInstantTera(4) // Tera Rock Regirock / Ice Regice / Steel Registeel
@@ -4868,7 +4895,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.generateName();
         p.gender = Gender.FEMALE;
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.SANDSTORM)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.SANDSTORM)) {
           // Check if Sandstorm is in the moveset, if not, replace the fourth move with Sandstorm.
           p.moveset[3] = new PokemonMove(MoveId.SANDSTORM);
         }
@@ -4905,7 +4932,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.KELDEO], TrainerSlot.TRAINER, true, p => {
         p.formIndex = 1; // Resolute Form
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.SECRET_SWORD)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.SECRET_SWORD)) {
           // Check if Secret Sword is in the moveset, if not, replace the third move with Secret Sword.
           p.moveset[2] = new PokemonMove(MoveId.SECRET_SWORD);
         }
@@ -5185,14 +5212,14 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
         if (p.formIndex === 2) {
           p.moveset[0] = new PokemonMove(MoveId.WICKED_BLOW);
-          p.moveset[1] = new PokemonMove(MoveId.BRICK_BREAK);
+          p.moveset[1] = new PokemonMove(randSeedItem([MoveId.BRICK_BREAK, MoveId.CLOSE_COMBAT]));
           p.moveset[2] = new PokemonMove(randSeedItem([MoveId.FIRE_PUNCH, MoveId.THUNDER_PUNCH, MoveId.ICE_PUNCH]));
-          p.moveset[3] = new PokemonMove(MoveId.FOCUS_ENERGY);
+          p.moveset[3] = new PokemonMove(randSeedItem([MoveId.IRON_HEAD, MoveId.POISON_JAB, MoveId.STONE_EDGE]));
         } else if (p.formIndex === 3) {
           p.moveset[0] = new PokemonMove(MoveId.SURGING_STRIKES);
-          p.moveset[1] = new PokemonMove(MoveId.BRICK_BREAK);
+          p.moveset[1] = new PokemonMove(randSeedItem([MoveId.BRICK_BREAK, MoveId.CLOSE_COMBAT]));
           p.moveset[2] = new PokemonMove(randSeedItem([MoveId.FIRE_PUNCH, MoveId.THUNDER_PUNCH, MoveId.ICE_PUNCH]));
-          p.moveset[3] = new PokemonMove(MoveId.FOCUS_ENERGY);
+          p.moveset[3] = new PokemonMove(randSeedItem([MoveId.IRON_HEAD, MoveId.POISON_JAB, MoveId.STONE_EDGE]));
         }
       }),
     )
@@ -5230,7 +5257,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.abilityIndex = 1; // Supreme Overlord
         p.teraType = PokemonType.FLYING;
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.TERA_BLAST)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.TERA_BLAST)) {
           // Check if Tera Blast is in the moveset, if not, replace the third move with Tera Blast.
           p.moveset[2] = new PokemonMove(MoveId.TERA_BLAST);
         }
@@ -5311,6 +5338,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       3,
       getRandomPartyMemberFunc([SpeciesId.URSALUNA, SpeciesId.BLOODMOON_URSALUNA], TrainerSlot.TRAINER, true, p => {
+        p.abilityIndex = 0; // Guts, Mind's Eye
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
       }),
@@ -5319,7 +5347,7 @@ export const trainerConfigs: TrainerConfigs = {
       4,
       getRandomPartyMemberFunc([SpeciesId.TERAPAGOS], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.TERA_STARSTORM)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.TERA_STARSTORM)) {
           // Check if Tera Starstorm is in the moveset, if not, replace the first move with Tera Starstorm.
           p.moveset[0] = new PokemonMove(MoveId.TERA_STARSTORM);
         }
@@ -5332,13 +5360,28 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
         p.teraType = PokemonType.FIGHTING;
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.TERA_BLAST)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.TERA_BLAST)) {
           // Check if Tera Blast is in the moveset, if not, replace the third move with Tera Blast.
           p.moveset[2] = new PokemonMove(MoveId.TERA_BLAST);
         }
         p.gender = Gender.MALE;
       }),
     )
+    .setGenModifiersFunc(party => {
+      const ursaluna = party[3];
+      const modifiers: PokemonHeldItemModifier[] = [];
+      if (ursaluna?.hasAbility(AbilityId.GUTS, false, true)) {
+        // If ursaluna spawned with guts, give it flame orb
+        const modifier = modifierTypes
+          .FLAME_ORB()
+          .withIdFromFunc(modifierTypes.FLAME_ORB)
+          .newModifier(ursaluna) as PokemonHeldItemModifier;
+        if (modifier) {
+          modifiers.push(modifier);
+        }
+      }
+      return modifiers;
+    })
     .setInstantTera(5), // Tera Fighting Hydrapple
 
   [TrainerType.RIVAL]: new TrainerConfig((t = TrainerType.RIVAL))
@@ -5424,6 +5467,23 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(3, getRandomRivalPartyMemberFunc(RIVAL_5_POOL, 3))
     .setPartyMemberFunc(4, getRandomRivalPartyMemberFunc(RIVAL_5_POOL, 4))
     .setPartyMemberFunc(5, getRandomRivalPartyMemberFunc(RIVAL_5_POOL, 5))
+    .setGenModifiersFunc(party => {
+      const modifiers: PokemonHeldItemModifier[] = [];
+      const bird = party[1]; // Rival's second Pokemon is always a bird Pokemon
+      switch (bird.species.speciesId) {
+        case SpeciesId.SWELLOW:
+          if (bird.hasAbility(AbilityId.GUTS, false, true)) {
+            const modifier = modifierTypes
+              .FLAME_ORB()
+              .withIdFromFunc(modifierTypes.FLAME_ORB)
+              .newModifier(bird) as PokemonHeldItemModifier;
+            if (modifier) {
+              modifiers.push(modifier);
+            }
+          }
+      }
+      return modifiers;
+    })
     .setInstantTera(0), // Tera starter to primary type
   [TrainerType.RIVAL_6]: new TrainerConfig(++t)
     .setName("Finn")
@@ -5443,6 +5503,23 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(3, getRandomRivalPartyMemberFunc(RIVAL_6_POOL, 3))
     .setPartyMemberFunc(4, getRandomRivalPartyMemberFunc(RIVAL_6_POOL, 4))
     .setPartyMemberFunc(5, getRandomRivalPartyMemberFunc(RIVAL_6_POOL, 5))
+    .setGenModifiersFunc(party => {
+      const modifiers: PokemonHeldItemModifier[] = [];
+      const bird = party[1]; // Rival's second Pokemon is always a bird Pokemon
+      switch (bird.species.speciesId) {
+        case SpeciesId.SWELLOW:
+          if (bird.hasAbility(AbilityId.GUTS, false, true)) {
+            const modifier = modifierTypes
+              .FLAME_ORB()
+              .withIdFromFunc(modifierTypes.FLAME_ORB)
+              .newModifier(bird) as PokemonHeldItemModifier;
+            if (modifier) {
+              modifiers.push(modifier);
+            }
+          }
+      }
+      return modifiers;
+    })
     .setInstantTera(0), // Tera starter to primary type
   [TrainerType.ROCKET_BOSS_GIOVANNI_1]: new TrainerConfig((t = TrainerType.ROCKET_BOSS_GIOVANNI_1))
     .setName("Giovanni")
@@ -5502,7 +5579,7 @@ export const trainerConfigs: TrainerConfigs = {
       2,
       getRandomPartyMemberFunc([SpeciesId.HONCHKROW], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.SUCKER_PUNCH)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.SUCKER_PUNCH)) {
           // Check if Sucker Punch is in the moveset, if not, replace the third move with Sucker Punch.
           p.moveset[2] = new PokemonMove(MoveId.SUCKER_PUNCH);
         }
@@ -5528,6 +5605,18 @@ export const trainerConfigs: TrainerConfigs = {
           p.abilityIndex = 2; // Snow Cloak Articuno, Static Zapdos, Flame Body Moltres
           p.generateAndPopulateMoveset();
           p.pokeball = PokeballType.ULTRA_BALL;
+          if (p.species.speciesId === SpeciesId.ARTICUNO) {
+            // They set up their own weather, this covers their level up to prevent inaccurate Hurricanes or certain Physical Attacks
+            replaceInMoveset(p.moveset, MoveId.HURRICANE, MoveId.AIR_SLASH);
+            replaceInMoveset(p.moveset, MoveId.SKY_ATTACK, MoveId.AIR_SLASH);
+          } else if (p.species.speciesId === SpeciesId.ZAPDOS) {
+            replaceInMoveset(p.moveset, MoveId.DRILL_PECK, MoveId.HURRICANE);
+            replaceInMoveset(p.moveset, MoveId.SKY_ATTACK, MoveId.HURRICANE);
+          } else if (p.species.speciesId === SpeciesId.MOLTRES) {
+            replaceInMoveset(p.moveset, MoveId.HURRICANE, MoveId.AIR_SLASH);
+            replaceInMoveset(p.moveset, MoveId.SKY_ATTACK, MoveId.AIR_SLASH);
+            replaceInMoveset(p.moveset, MoveId.WING_ATTACK, MoveId.AIR_SLASH);
+          }
         },
       ),
     )
@@ -5801,6 +5890,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
         p.gender = Gender.MALE;
+        replaceInMoveset(p.moveset, MoveId.OUTRAGE, MoveId.DRAGON_PULSE);
       }),
     ),
   [TrainerType.GHETSIS_2]: new TrainerConfig(++t)
@@ -5842,6 +5932,7 @@ export const trainerConfigs: TrainerConfigs = {
         } else if (p.species.speciesId === SpeciesId.IRON_JUGULIS) {
           p.gender = Gender.GENDERLESS;
         }
+        replaceInMoveset(p.moveset, MoveId.OUTRAGE, MoveId.DRAGON_PULSE);
       }),
     )
     .setPartyMemberFunc(
@@ -5943,6 +6034,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ROGUE_BALL;
+        replaceInMoveset(p.moveset, MoveId.HEAD_SMASH, MoveId.POWER_GEM);
       }),
     ),
   [TrainerType.LUSAMINE_2]: new TrainerConfig(++t)
@@ -5965,7 +6057,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.formIndex = randSeedInt(18); // Random Silvally Form
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ROGUE_BALL;
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.MULTI_ATTACK)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.MULTI_ATTACK)) {
           // Check if Multi Attack is in the moveset, if not, replace the first move with Multi Attack.
           p.moveset[0] = new PokemonMove(MoveId.MULTI_ATTACK);
         }
@@ -5984,6 +6076,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ROGUE_BALL;
+        replaceInMoveset(p.moveset, MoveId.HEAD_SMASH, MoveId.POWER_GEM);
       }),
     )
     .setPartyMemberFunc(
@@ -5992,7 +6085,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
         p.pokeball = PokeballType.MASTER_BALL;
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.PHOTON_GEYSER)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.PHOTON_GEYSER)) {
           // Check if Photon Geyser is in the moveset, if not, replace the first move with Photon Geyser.
           p.moveset[0] = new PokemonMove(MoveId.PHOTON_GEYSER);
         }
@@ -6040,7 +6133,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
         p.gender = Gender.MALE;
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.FIRST_IMPRESSION)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.FIRST_IMPRESSION)) {
           // Check if First Impression is in the moveset, if not, replace the third move with First Impression.
           p.moveset[2] = new PokemonMove(MoveId.FIRST_IMPRESSION);
         }
@@ -6058,7 +6151,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.abilityIndex = 2; // Anticipation
         p.gender = Gender.MALE;
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.FIRST_IMPRESSION)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.FIRST_IMPRESSION)) {
           // Check if First Impression is in the moveset, if not, replace the third move with First Impression.
           p.moveset[2] = new PokemonMove(MoveId.FIRST_IMPRESSION);
         }
@@ -6081,7 +6174,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.abilityIndex = 2; // Adaptability Crawdaunt, Sharpness Samurott
         p.pokeball = PokeballType.ULTRA_BALL;
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.AQUA_JET)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.AQUA_JET)) {
           // Check if Aqua Jet is in the moveset, if not, replace the third move with Aqua Jet.
           p.moveset[2] = new PokemonMove(MoveId.AQUA_JET);
         }
@@ -6232,7 +6325,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
         p.abilityIndex = 2; // Pixilate
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.HYPER_VOICE)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.HYPER_VOICE)) {
           // Check if Hyper Voice is in the moveset, if not, replace the second move with Hyper Voice.
           p.moveset[1] = new PokemonMove(MoveId.HYPER_VOICE);
           p.gender = Gender.FEMALE;
@@ -6261,7 +6354,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
         p.abilityIndex = 2; // Pixilate
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => move != null && move.moveId === MoveId.HYPER_VOICE)) {
+        if (!p.moveset.some(move => move.moveId === MoveId.HYPER_VOICE)) {
           // Check if Hyper Voice is in the moveset, if not, replace the second move with Hyper Voice.
           p.moveset[1] = new PokemonMove(MoveId.HYPER_VOICE);
           p.gender = Gender.FEMALE;
@@ -6300,8 +6393,31 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
         p.formIndex = randSeedInt(5, 1); // Random Starmobile form
         p.gender = Gender.GENDERLESS;
-        p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ROGUE_BALL;
+        p.moveset[0] = new PokemonMove(randSeedItem([MoveId.SPIN_OUT, MoveId.IRON_HEAD])); // Force Moveset to avoid Egg Move bloat from Revavroom / Balancing purposes
+        p.moveset[1] = new PokemonMove(MoveId.HIGH_HORSEPOWER);
+        switch (p.formIndex) {
+          case 1:
+            p.moveset[2] = new PokemonMove(MoveId.WICKED_TORQUE);
+            p.moveset[3] = new PokemonMove(randSeedItem([MoveId.SNARL, MoveId.SHIFT_GEAR, MoveId.U_TURN]));
+            break;
+          case 2:
+            p.moveset[2] = new PokemonMove(MoveId.BLAZING_TORQUE);
+            p.moveset[3] = new PokemonMove(randSeedItem([MoveId.OVERHEAT, MoveId.SCREECH, MoveId.U_TURN])); // Already has Speed Boost
+            break;
+          case 3:
+            p.moveset[2] = new PokemonMove(MoveId.NOXIOUS_TORQUE);
+            p.moveset[3] = new PokemonMove(randSeedItem([MoveId.VENOSHOCK, MoveId.SHIFT_GEAR, MoveId.U_TURN]));
+            break;
+          case 4:
+            p.moveset[2] = new PokemonMove(MoveId.MAGICAL_TORQUE);
+            p.moveset[3] = new PokemonMove(randSeedItem([MoveId.STEEL_ROLLER, MoveId.SHIFT_GEAR, MoveId.U_TURN]));
+            break;
+          case 5:
+            p.moveset[2] = new PokemonMove(MoveId.COMBAT_TORQUE);
+            p.moveset[3] = new PokemonMove(randSeedItem([MoveId.LASH_OUT, MoveId.SHIFT_GEAR, MoveId.U_TURN]));
+            break;
+        }
       }),
     )
     .setPartyMemberFunc(
