@@ -645,7 +645,7 @@ export function updateCandyCountTextStyle(
   text: Phaser.GameObjects.Text | BBCodeText,
   candyCount: number,
   defaultStyle: TextStyle = TextStyle.WINDOW_ALT,
-  maxStyle: TextStyle = TextStyle.WINDOW,
+  maxStyle: TextStyle = TextStyle.SUMMARY_GOLD,
 ) {
   if (candyCount >= MAX_STARTER_CANDY_COUNT) {
     text.setColor(getTextColor(maxStyle));
