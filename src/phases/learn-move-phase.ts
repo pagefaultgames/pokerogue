@@ -46,7 +46,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
       return this.end();
     }
 
-    if (pokemon.pauseMoves) {
+    if (pokemon.pauseMoves && currentMoveset.length == 4) {
       return this.end();
     }
 
