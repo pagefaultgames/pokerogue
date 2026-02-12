@@ -127,6 +127,7 @@ export enum PartyOption {
   SUMMARY,
   POKEDEX,
   UNPAUSE_EVOLUTION,
+  UNPAUSE_MOVES,
   SPLICE,
   UNSPLICE,
   RELEASE,
@@ -410,6 +411,23 @@ export class PartyUiHandler extends MessageUiHandler {
     pokemon.pauseEvolutions = !pokemon.pauseEvolutions;
     this.showText(
       i18next.t(pokemon.pauseEvolutions ? "partyUiHandler:pausedEvolutions" : "partyUiHandler:unpausedEvolutions", {
+        pokemonName: getPokemonNameWithAffix(pokemon, false),
+      }),
+      undefined,
+      () => this.showText("", 0),
+      null,
+      true,
+    );
+    return true;
+  }
+
+  private processUnpauseMoveOption(pokemon: Pokemon): boolean {
+    const ui = this.getUi();
+    this.clearOptions();
+    ui.playSelect();
+    pokemon.pauseMoves = !pokemon.pauseMoves;
+    this.showText(
+      i18next.t(pokemon.pauseEvolutions ? "partyUiHandler:pausedMoves" : "partyUiHandler:unpausedMoves", {
         pokemonName: getPokemonNameWithAffix(pokemon, false),
       }),
       undefined,
@@ -1649,6 +1667,8 @@ export class PartyUiHandler extends MessageUiHandler {
               optionName = `${modifier.active ? i18next.t("partyUiHandler:deactivate") : i18next.t("partyUiHandler:activate")} ${modifier.type.name}`;
             } else if (option === PartyOption.UNPAUSE_EVOLUTION) {
               optionName = `${pokemon.pauseEvolutions ? i18next.t("partyUiHandler:unpauseEvolution") : i18next.t("partyUiHandler:pauseEvolution")}`;
+            } else if (option === PartyOption.UNPAUSE_MOVES) {
+              optionName = `${pokemon.pauseEvolutions ? i18next.t("partyUiHandler:unpauseMoves") : i18next.t("partyUiHandler:pauseMoves")}`;
             } else if (this.localizedOptions.includes(option)) {
               optionName = i18next.t(`partyUiHandler:${toCamelCase(PartyOption[option])}`);
             } else {
