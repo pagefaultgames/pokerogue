@@ -24,6 +24,7 @@ import type { PokemonMove } from "#moves/pokemon-move";
 import type { Variant } from "#sprites/variant";
 import { getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
+import { ScrollingText } from "#ui/scrolling-text";
 import { addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import {
@@ -61,7 +62,7 @@ interface AbilityContainer {
   /** The text object displaying the name of the ability */
   nameText: Phaser.GameObjects.Text | null;
   /** The text object displaying the description of the ability */
-  descriptionText: Phaser.GameObjects.Text | null;
+  description: ScrollingText | null;
 }
 
 export class SummaryUiHandler extends UiHandler {
@@ -97,7 +98,7 @@ export class SummaryUiHandler extends UiHandler {
   private movesContainer: Phaser.GameObjects.Container;
   private movesContainerMovesTitle: Phaser.GameObjects.Image;
   private movesContainerDescriptionsTitle: Phaser.GameObjects.Image;
-  private moveDescriptionText: Phaser.GameObjects.Text;
+  private moveDescription: ScrollingText;
   private moveCursorObj: Phaser.GameObjects.Sprite | null;
   private selectedMoveCursorObj: Phaser.GameObjects.Sprite | null;
   private moveRowsContainer: Phaser.GameObjects.Container;
@@ -621,12 +622,12 @@ export class SummaryUiHandler extends UiHandler {
       } else if (this.cursor === Page.PROFILE && this.pokemon?.hasPassive()) {
         // if we're on the PROFILE page and this pokemon has a passive unlocked..
         // Since abilities are displayed by default, all we need to do is toggle visibility on all elements to show passives
-        this.abilityContainer.nameText?.setVisible(!this.abilityContainer.descriptionText?.visible);
-        this.abilityContainer.descriptionText?.setVisible(!this.abilityContainer.descriptionText.visible);
+        this.abilityContainer.nameText?.setVisible(!this.abilityContainer.description?.visible);
+        this.abilityContainer.description?.setVisible(!this.abilityContainer.description.visible);
         this.abilityContainer.labelImage.setVisible(!this.abilityContainer.labelImage.visible);
 
-        this.passiveContainer.nameText?.setVisible(!this.passiveContainer.descriptionText?.visible);
-        this.passiveContainer.descriptionText?.setVisible(!this.passiveContainer.descriptionText.visible);
+        this.passiveContainer.nameText?.setVisible(!this.passiveContainer.description?.visible);
+        this.passiveContainer.description?.setVisible(!this.passiveContainer.description.visible);
         this.passiveContainer.labelImage.setVisible(!this.passiveContainer.labelImage.visible);
       } else if (this.cursor === Page.STATS) {
         //Show IVs
@@ -705,7 +706,6 @@ export class SummaryUiHandler extends UiHandler {
       const selectedMove = this.getSelectedMove();
 
       if (selectedMove) {
-        this.moveDescriptionText.setY(84);
         this.movePowerText.setText(selectedMove.power >= 0 ? selectedMove.power.toString() : "---");
         this.moveAccuracyText.setText(selectedMove.accuracy >= 0 ? selectedMove.accuracy.toString() : "---");
         this.moveCategoryIcon.setFrame(MoveCategory[selectedMove.category].toLowerCase());
@@ -714,24 +714,9 @@ export class SummaryUiHandler extends UiHandler {
         this.hideMoveEffect();
       }
 
-      this.moveDescriptionText.setText(selectedMove?.effect || "");
-      const moveDescriptionLineCount = Math.floor(this.moveDescriptionText.displayHeight / 14.83);
+      this.moveDescription.text.setText(selectedMove?.effect || "");
 
-      if (this.descriptionScrollTween) {
-        this.descriptionScrollTween.remove();
-        this.descriptionScrollTween = null;
-      }
-
-      if (moveDescriptionLineCount > 3) {
-        this.descriptionScrollTween = globalScene.tweens.add({
-          targets: this.moveDescriptionText,
-          delay: fixedInt(2000),
-          loop: -1,
-          hold: fixedInt(2000),
-          duration: fixedInt((moveDescriptionLineCount - 3) * 2000),
-          y: `-=${14.83 * (moveDescriptionLineCount - 3)}`,
-        });
-      }
+      this.moveDescription.activate();
 
       if (!this.moveCursorObj) {
         this.moveCursorObj = globalScene.add.sprite(-2, 0, "summary_moves_cursor", "highlight");
@@ -930,7 +915,7 @@ export class SummaryUiHandler extends UiHandler {
           labelImage: globalScene.add.image(0, 0, getLocalizedSpriteKey("summary_profile_ability")), // Pixel text 'ABILITY'
           ability: this.pokemon?.getAbility(true)!, // TODO: is this bang correct?
           nameText: null,
-          descriptionText: null,
+          description: null,
         };
 
         const allAbilityInfo = [this.abilityContainer]; // Creates an array to iterate through
@@ -940,7 +925,7 @@ export class SummaryUiHandler extends UiHandler {
             labelImage: globalScene.add.image(0, 0, getLocalizedSpriteKey("summary_profile_passive")), // Pixel text 'PASSIVE'
             ability: this.pokemon.getPassiveAbility(),
             nameText: null,
-            descriptionText: null,
+            description: null,
           };
           allAbilityInfo.push(this.passiveContainer);
 
@@ -966,42 +951,26 @@ export class SummaryUiHandler extends UiHandler {
           abilityInfo.nameText.setOrigin(0, 1);
           profileContainer.add(abilityInfo.nameText);
 
-          abilityInfo.descriptionText = addTextObject(7, 71, abilityInfo.ability?.description!, TextStyle.WINDOW_ALT, {
-            wordWrap: { width: 1224 },
-          }); // TODO: is this bang correct?
-          abilityInfo.descriptionText.setOrigin(0, 0);
-          profileContainer.add(abilityInfo.descriptionText);
+          abilityInfo.description = new ScrollingText(
+            globalScene,
+            7,
+            71,
+            206,
+            31,
+            2, // maxLineCount
+            abilityInfo.ability?.description!, // initial content
+            TextStyle.WINDOW_ALT,
+          );
+          abilityInfo.description.createMask(globalScene, 110, 90.5);
+          profileContainer.add(abilityInfo.description);
 
-          // Sets up the mask that hides the description text to give an illusion of scrolling
-          const descriptionTextMaskRect = globalScene.make.graphics({});
-          descriptionTextMaskRect.setScale(6);
-          descriptionTextMaskRect.fillStyle(0xffffff);
-          descriptionTextMaskRect.beginPath();
-          descriptionTextMaskRect.fillRect(110, 90.5, 206, 31);
-
-          const abilityDescriptionTextMask = descriptionTextMaskRect.createGeometryMask();
-
-          abilityInfo.descriptionText.setMask(abilityDescriptionTextMask);
-
-          const abilityDescriptionLineCount = Math.floor(abilityInfo.descriptionText.displayHeight / 14.83);
-
-          // Animates the description text moving upwards
-          if (abilityDescriptionLineCount > 2) {
-            abilityInfo.descriptionText.setY(69);
-            this.descriptionScrollTween = globalScene.tweens.add({
-              targets: abilityInfo.descriptionText,
-              delay: fixedInt(2000),
-              loop: -1,
-              hold: fixedInt(2000),
-              duration: fixedInt((abilityDescriptionLineCount - 2) * 2000),
-              y: `-=${14.83 * (abilityDescriptionLineCount - 2)}`,
-            });
-          }
+          abilityInfo.description.activate();
         });
+
         // Turn off visibility of passive info by default
         this.passiveContainer?.labelImage.setVisible(false);
         this.passiveContainer?.nameText?.setVisible(false);
-        this.passiveContainer?.descriptionText?.setVisible(false);
+        this.passiveContainer?.description?.setVisible(false);
 
         const closeFragment = getBBCodeFrag("", TextStyle.WINDOW_ALT);
         const rawNature = toCamelCase(Nature[this.pokemon?.getNature()!]); // TODO: is this bang correct?
@@ -1272,18 +1241,18 @@ export class SummaryUiHandler extends UiHandler {
           moveRowContainer.add(ppText);
         }
 
-        this.moveDescriptionText = addTextObject(2, 84, "", TextStyle.WINDOW_ALT, { wordWrap: { width: 1212 } });
-        this.movesContainer.add(this.moveDescriptionText);
-
-        const moveDescriptionTextMaskRect = globalScene.make.graphics({});
-        moveDescriptionTextMaskRect.setScale(6);
-        moveDescriptionTextMaskRect.fillStyle(0xffffff);
-        moveDescriptionTextMaskRect.beginPath();
-        moveDescriptionTextMaskRect.fillRect(112, 130, 202, 46);
-
-        const moveDescriptionTextMask = moveDescriptionTextMaskRect.createGeometryMask();
-
-        this.moveDescriptionText.setMask(moveDescriptionTextMask);
+        this.moveDescription = new ScrollingText(
+          globalScene,
+          2,
+          84,
+          202,
+          46,
+          3, // maxLineCount
+          "", // initial content
+          TextStyle.WINDOW_ALT,
+        );
+        this.moveDescription.createMask(globalScene, 112, 130);
+        this.movesContainer.add(this.moveDescription);
         break;
       }
     }
@@ -1345,7 +1314,7 @@ export class SummaryUiHandler extends UiHandler {
 
     this.moveSelect = false;
     this.extraMoveRowContainer.setVisible(false);
-    this.moveDescriptionText.setText("");
+    this.moveDescription.text.setText("");
 
     this.destroyBlinkCursor();
     this.hideMoveEffect();
