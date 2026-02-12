@@ -40,6 +40,12 @@ export function formatChangelog(changelog) {
       continue;
     }
 
+    // have to filter here so the beta label has priority
+    if (pr.labels.includes("Beta")) {
+      categories.set("Beta", [...(categories.get("Beta") || []), `- #${pr.number}\n`]);
+      continue;
+    }
+
     // Group PRs by category based on labels
     const category = getCategoryFromLabels(pr.labels);
     categories.set(category, [...(categories.get(category) || []), formattedBody]);
