@@ -43,6 +43,7 @@ export class PokemonData {
   public metWave: number; // 0 for unknown (previous saves), -1 for starters
   public luck: number;
   public pauseEvolutions: boolean;
+  public pauseMoves: boolean;
   public pokerus: boolean;
   public usedTMs: MoveId[];
   public teraType: PokemonType;
@@ -115,6 +116,7 @@ export class PokemonData {
     this.metWave = source.metWave ?? (this.metBiome === -1 ? -1 : 0);
     this.luck = source.luck ?? (source.shiny ? source.variant + 1 : 0);
     this.pauseEvolutions = !!source.pauseEvolutions;
+    this.pauseMoves = !!source.pauseMoves;
     this.pokerus = !!source.pokerus;
     this.usedTMs = source.usedTMs ?? [];
     this.teraType = source.teraType as PokemonType;
