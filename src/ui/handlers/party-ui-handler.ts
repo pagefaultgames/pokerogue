@@ -263,6 +263,7 @@ export class PartyUiHandler extends MessageUiHandler {
     PartyOption.REVIVE,
     PartyOption.TRANSFER,
     PartyOption.UNPAUSE_EVOLUTION,
+    PartyOption.UNPAUSE_MOVES,
     PartyOption.PASS_BATON,
     PartyOption.RENAME,
     PartyOption.SELECT,
@@ -670,6 +671,10 @@ export class PartyUiHandler extends MessageUiHandler {
     if (option === PartyOption.UNPAUSE_EVOLUTION) {
       return this.processUnpauseEvolutionOption(pokemon);
     }
+    if (option === PartyOption.UNPAUSE_MOVES) {
+      return this.processUnpauseMoveOption(pokemon);
+    }
+
     if (option === PartyOption.RENAME) {
       return this.processRenameOption(pokemon);
     }
@@ -868,6 +873,9 @@ export class PartyUiHandler extends MessageUiHandler {
     }
     if (option === PartyOption.UNPAUSE_EVOLUTION) {
       return this.processUnpauseEvolutionOption(pokemon);
+    }
+    if (option === PartyOption.UNPAUSE_MOVES) {
+      return this.processUnpauseMoveOption(pokemon);
     }
     if (option === PartyOption.UNSPLICE) {
       return this.processUnspliceOption(pokemon);
@@ -1450,6 +1458,7 @@ export class PartyUiHandler extends MessageUiHandler {
     ) {
       this.options.push(PartyOption.UNPAUSE_EVOLUTION);
     }
+    this.options.push(PartyOption.UNPAUSE_MOVES);
   }
 
   private addCancelAndScrollOptions(): void {
@@ -1668,7 +1677,7 @@ export class PartyUiHandler extends MessageUiHandler {
             } else if (option === PartyOption.UNPAUSE_EVOLUTION) {
               optionName = `${pokemon.pauseEvolutions ? i18next.t("partyUiHandler:unpauseEvolution") : i18next.t("partyUiHandler:pauseEvolution")}`;
             } else if (option === PartyOption.UNPAUSE_MOVES) {
-              optionName = `${pokemon.pauseEvolutions ? i18next.t("partyUiHandler:unpauseMoves") : i18next.t("partyUiHandler:pauseMoves")}`;
+              optionName = `${pokemon.pauseMoves ? i18next.t("partyUiHandler:unpauseMoves") : i18next.t("partyUiHandler:pauseMoves")}`;
             } else if (this.localizedOptions.includes(option)) {
               optionName = i18next.t(`partyUiHandler:${toCamelCase(PartyOption[option])}`);
             } else {
