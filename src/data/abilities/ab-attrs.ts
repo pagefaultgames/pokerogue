@@ -43,7 +43,6 @@ import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#modifiers/modifier";
 import { BerryModifierType } from "#modifiers/modifier-type";
 import type { PokemonMove } from "#moves/pokemon-move";
-import type { StatStageChangePhase } from "#phases/stat-stage-change-phase";
 import type {
   AbAttrCondition,
   AbAttrMap,
@@ -257,62 +256,6 @@ export class PostBattleInitFormChangeAbAttr extends PostBattleInitAbAttr {
 
   override apply({ pokemon }: AbAttrBaseParams): void {
     globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger, false);
-  }
-}
-
-export class PostTeraFormChangeStatChangeAbAttr extends AbAttr {
-  private readonly stats: readonly BattleStat[];
-  private readonly stages: number;
-
-  constructor(stats: BattleStat[], stages: number) {
-    super();
-
-    this.stats = stats;
-    this.stages = stages;
-  }
-
-  override apply({ pokemon, simulated }: AbAttrBaseParams): void {
-    const statStageChangePhases: StatStageChangePhase[] = [];
-
-    if (!simulated) {
-      const phaseManager = globalScene.phaseManager;
-      statStageChangePhases.push(
-        phaseManager.create("StatStageChangePhase", pokemon.getBattlerIndex(), true, this.stats, this.stages),
-      );
-
-      for (const statStageChangePhase of statStageChangePhases) {
-        phaseManager.unshiftPhase(statStageChangePhase);
-      }
-    }
-  }
-}
-
-/** Clears all weather whenever this attribute is applied */
-export class ClearWeatherAbAttr extends AbAttr {
-  /**
-   * @param _params - No parameters are used for this attribute.
-   */
-  override canApply(_params: AbAttrBaseParams): boolean {
-    return globalScene.arena.canSetWeather(WeatherType.NONE);
-  }
-
-  override apply({ pokemon, simulated }: AbAttrBaseParams): void {
-    if (!simulated) {
-      globalScene.arena.trySetWeather(WeatherType.NONE, pokemon);
-    }
-  }
-}
-
-/** Clears all terrain whenever this attribute is called. */
-export class ClearTerrainAbAttr extends AbAttr {
-  override canApply(_: AbAttrBaseParams): boolean {
-    return globalScene.arena.canSetTerrain(TerrainType.NONE);
-  }
-
-  public override apply({ pokemon, simulated }: AbAttrBaseParams): void {
-    if (!simulated) {
-      globalScene.arena.trySetTerrain(TerrainType.NONE, true, pokemon);
-    }
   }
 }
 
@@ -2249,7 +2192,13 @@ export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
 
 /** Base class for ability attributes that active after a Pokemon is summoned */
 export abstract class PostSummonAbAttr extends AbAttr {
-  /** Should the ability activate when gained in battle? This will almost always be true */
+  /**
+   * Whether to activate the ability when gained in battle
+   * @defaultValue `true`
+   * @remarks
+   * Used exclusively by Imposter.
+   */
+  // TODO: Make this a publicly accessible getter
   private readonly activateOnGain: boolean;
 
   constructor(showAbility = true, activateOnGain = true) {
@@ -2573,6 +2522,7 @@ export class PostSummonWeatherChangeAbAttr extends PostSummonAbAttr {
       this.weatherType === WeatherType.HEAVY_RAIN
       || this.weatherType === WeatherType.HARSH_SUN
       || this.weatherType === WeatherType.STRONG_WINDS
+      || this.weatherType === WeatherType.NONE
       || !globalScene.arena.weather?.isImmutable();
     return weatherReplaceable && globalScene.arena.canSetWeather(this.weatherType);
   }
@@ -3868,6 +3818,30 @@ export class PostWeatherChangeFormChangeAbAttr extends PostWeatherChangeAbAttr {
     } else {
       globalScene.arena.triggerWeatherBasedFormChanges();
     }
+  }
+}
+
+/**
+ * Ability attribute to change Eiscue to Ice form if snowing or hailing.
+ */
+// TODO: This is only required due to how tightly `PostWeatherChangeFormChangeAbAttr` is tied to its related abilities
+export class IceFaceFormChangeAbAttr extends PostWeatherChangeAbAttr {
+  private readonly formIndex: number;
+
+  constructor(formIndex: number) {
+    super();
+    this.formIndex = formIndex;
+  }
+
+  override canApply({ pokemon, weather }: PostWeatherChangeAbAttrParams): boolean {
+    return pokemon.formIndex === this.formIndex && (weather === WeatherType.HAIL || weather === WeatherType.SNOW);
+  }
+
+  override apply({ simulated, pokemon }: PostWeatherChangeAbAttrParams): void {
+    if (simulated) {
+      return;
+    }
+    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
   }
 }
 
@@ -5337,66 +5311,73 @@ export class PostSummonStatStageChangeOnArenaAbAttr extends PostSummonStatStageC
 }
 
 /**
- * Takes no damage from the first hit of a damaging move.
+ * Ability attribute to nullify damage from moves used against the user depending on their form.
  * This is used in the Disguise and Ice Face abilities.
  *
  * Does not apply to a user's substitute
  * @sealed
  */
+// TODO: This assumes the pokemon's base form has the damage immunity and its 1st form doesn't;
+// this should be reworked to not hardcode these assumptions
 export class FormBlockDamageAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
-  private readonly multiplier: number;
-  private readonly tagType: BattlerTagType;
-  private readonly recoilDamageFunc?: (pokemon: Pokemon) => number;
-  private readonly triggerMessageFunc: (pokemon: Pokemon, abilityName: string) => string;
+  private readonly formIndex: number;
+  /** The percentage of maximum HP to deal in recoil, or `0` to deal none. */
+  private readonly recoil: number;
+  /**
+   * The `i18n` locales key to show upon triggering.
+   * Within it, the following variables will be populated:
+   * - `pokemonNameWithAffix`: The name of the Pokémon with the ability
+   * - `abilityName`: The name of the ability being triggered
+   */
+  // TODO: Remove `abilityName` from contexts for greater translator freedoms & such
+  private readonly i18nKey: string;
 
   constructor(
-    condition: PokemonDefendCondition,
-    multiplier: number,
-    tagType: BattlerTagType,
-    triggerMessageFunc: (pokemon: Pokemon, abilityName: string) => string,
-    recoilDamageFunc?: (pokemon: Pokemon) => number,
+    formIndex: number,
+    i18nKey: string,
+    recoil: number,
+    // TODO: Since only Ice Face uses this, should this simply take the move and nothing else?
+    condition: PokemonDefendCondition = () => true,
   ) {
-    super(condition, multiplier);
+    super(condition, 0);
 
-    this.multiplier = multiplier;
-    this.tagType = tagType;
-    this.triggerMessageFunc = triggerMessageFunc;
-    if (recoilDamageFunc != null) {
-      this.recoilDamageFunc = recoilDamageFunc;
-    }
+    this.formIndex = formIndex;
+    this.i18nKey = i18nKey;
+    this.recoil = recoil;
   }
 
-  override canApply({ pokemon, opponent, move }: PreDefendModifyDamageAbAttrParams): boolean {
+  override canApply({ pokemon, opponent, move, damage }: PreDefendModifyDamageAbAttrParams): boolean {
     // TODO: Investigate whether the substitute check can be removed, as it should be accounted for in the move effect phase
-    return this.condition(pokemon, opponent, move) && !move.hitsSubstitute(opponent, pokemon);
+    return (
+      damage.value > 0
+      && pokemon.formIndex === this.formIndex
+      && this.condition(pokemon, opponent, move)
+      && !move.hitsSubstitute(opponent, pokemon)
+    );
   }
 
-  /**
-   * Applies the pre-defense ability to the Pokémon.
-   * Removes the appropriate `BattlerTagType` when hit by an attack and is in its defense form.
-   */
   override apply({ pokemon, simulated, damage }: PreDefendModifyDamageAbAttrParams): void {
-    if (!simulated) {
-      damage.value = this.multiplier;
-      pokemon.removeTag(this.tagType);
-      if (this.recoilDamageFunc) {
-        pokemon.damageAndUpdate(this.recoilDamageFunc(pokemon), {
-          result: HitResult.INDIRECT,
-          ignoreSegments: true,
-          ignoreFaintPhase: true,
-        });
-      }
+    if (simulated) {
+      return;
     }
+
+    damage.value = 0;
+    if (this.recoil > 0) {
+      pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() * this.recoil), {
+        result: HitResult.INDIRECT,
+        ignoreSegments: true,
+        ignoreFaintPhase: true,
+      });
+    }
+
+    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
   }
 
-  /**
-   * Gets the message triggered when the Pokémon avoids damage using the form-changing ability.
-   * @returns The trigger message.
-   */
   override getTriggerMessage({ pokemon }: PreDefendModifyDamageAbAttrParams, abilityName: string): string {
-    return this.triggerMessageFunc(pokemon, abilityName);
+    return i18next.t(this.i18nKey, { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName });
   }
 }
+
 /**
  * Base class for defining {@linkcode Ability} attributes before summon
  * (should use {@linkcode PostSummonAbAttr} for most ability)
@@ -5925,9 +5906,6 @@ function getPokemonWithWeatherBasedForms() {
 
 export function getWeatherCondition(...weatherTypes: WeatherType[]): AbAttrCondition {
   return () => {
-    if (!globalScene?.arena) {
-      return false;
-    }
     if (globalScene.arena.weather?.isEffectSuppressed()) {
       return false;
     }
@@ -5957,8 +5935,6 @@ export const AbilityAttrs = Object.freeze({
   ChangeMovePriorityAbAttr,
   ChangeMovePriorityInBracketAbAttr,
   CheckTrappedAbAttr,
-  ClearTerrainAbAttr,
-  ClearWeatherAbAttr,
   CommanderAbAttr,
   ConditionalCritAbAttr,
   ConditionalUserFieldBattlerTagImmunityAbAttr,
@@ -6085,7 +6061,6 @@ export const AbilityAttrs = Object.freeze({
   PostSummonUserFieldRemoveStatusEffectAbAttr,
   PostSummonWeatherChangeAbAttr,
   PostSummonWeatherSuppressedFormChangeAbAttr,
-  PostTeraFormChangeStatChangeAbAttr,
   PostTerrainChangeAbAttr,
   PostTurnAbAttr,
   PostTurnFormChangeAbAttr,
@@ -6098,6 +6073,7 @@ export const AbilityAttrs = Object.freeze({
   PostVictoryFormChangeAbAttr,
   PostWeatherChangeAbAttr,
   PostWeatherChangeFormChangeAbAttr,
+  IceFaceFormChangeAbAttr,
   PostWeatherLapseAbAttr,
   PostWeatherLapseDamageAbAttr,
   PostWeatherLapseHealAbAttr,

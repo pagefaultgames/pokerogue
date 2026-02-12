@@ -2316,7 +2316,7 @@ export class FloatingTag extends SerializableBattlerTag {
  * to forcibly unground the user and guarantee that opposing moves will hit them.
  *
  * The effects of Telekinesis can be Baton Passed to a teammate, including ones unaffected by the original move. \
- * A notable exception is Mega Gengar (and, exclusive to PokéRogue, G-Max Gengar),
+ * A notable exception to this is Mega Gengar (and, exclusive to PokéRogue, G-Max Gengar),
  * which cannot receive either effect via Baton Pass.
  */
 export class TelekinesisTag extends SerializableBattlerTag {
@@ -2637,63 +2637,6 @@ export class RoostedTag extends BattlerTag {
     }
     pokemon.summonData.types = modifiedTypes;
     pokemon.updateInfo();
-  }
-}
-
-/** Common attributes of form change abilities that block damage */
-export class FormBlockDamageTag extends SerializableBattlerTag {
-  public declare readonly tagType: BattlerTagType.ICE_FACE | BattlerTagType.DISGUISE;
-  constructor(tagType: BattlerTagType.ICE_FACE | BattlerTagType.DISGUISE) {
-    super(tagType, BattlerTagLapseType.CUSTOM, 1);
-  }
-
-  /**
-   * Determines if the tag can be added to the Pokémon.
-   * @param pokemon - The Pokémon to which the tag might be added.
-   * @returns `true` if the tag can be added, `false` otherwise.
-   */
-  canAdd(pokemon: Pokemon): boolean {
-    return pokemon.formIndex === 0;
-  }
-
-  /**
-   * Applies the tag to the Pokémon.
-   * Triggers a form change if the Pokémon is not in its defense form.
-   * @param pokemon The Pokémon to which the tag is added.
-   */
-  onAdd(pokemon: Pokemon): void {
-    super.onAdd(pokemon);
-
-    if (pokemon.formIndex !== 0) {
-      globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
-    }
-  }
-
-  /**
-   * Removes the tag from the Pokémon.
-   * Triggers a form change when the tag is removed.
-   * @param pokemon - The Pokémon from which the tag is removed.
-   */
-  onRemove(pokemon: Pokemon): void {
-    super.onRemove(pokemon);
-
-    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
-  }
-}
-
-/** Provides the additional weather-based effects of the Ice Face ability */
-export class IceFaceBlockDamageTag extends FormBlockDamageTag {
-  public override readonly tagType = BattlerTagType.ICE_FACE;
-  /**
-   * Determines if the tag can be added to the Pokémon.
-   * @param pokemon - The Pokémon to which the tag might be added.
-   * @returns `true` if the tag can be added, `false` otherwise.
-   */
-  canAdd(pokemon: Pokemon): boolean {
-    const weatherType = globalScene.arena.weather?.weatherType;
-    const isWeatherSnowOrHail = weatherType === WeatherType.HAIL || weatherType === WeatherType.SNOW;
-
-    return super.canAdd(pokemon) || isWeatherSnowOrHail;
   }
 }
 
@@ -3885,10 +3828,6 @@ export function getBattlerTag(
       return new MinimizeTag();
     case BattlerTagType.DESTINY_BOND:
       return new DestinyBondTag(sourceMove, sourceId);
-    case BattlerTagType.ICE_FACE:
-      return new IceFaceBlockDamageTag(tagType);
-    case BattlerTagType.DISGUISE:
-      return new FormBlockDamageTag(tagType);
     case BattlerTagType.COMMANDED:
       return new CommandedTag(sourceId);
     case BattlerTagType.STOCKPILING:
@@ -4048,8 +3987,6 @@ export type BattlerTagTypeMap = {
   [BattlerTagType.FLOATING]: FloatingTag;
   [BattlerTagType.MINIMIZED]: MinimizeTag;
   [BattlerTagType.DESTINY_BOND]: DestinyBondTag;
-  [BattlerTagType.ICE_FACE]: IceFaceBlockDamageTag;
-  [BattlerTagType.DISGUISE]: FormBlockDamageTag;
   [BattlerTagType.COMMANDED]: CommandedTag;
   [BattlerTagType.STOCKPILING]: StockpilingTag;
   [BattlerTagType.OCTOLOCK]: OctolockTag;
