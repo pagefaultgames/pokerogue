@@ -10,7 +10,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Commander", () => {
   let phaserGame: Phaser.Game;
@@ -20,10 +20,6 @@ describe("Abilities - Commander", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -43,7 +39,7 @@ describe("Abilities - Commander", () => {
   });
 
   it("causes the source to jump into Dondozo's mouth, granting a stat boost and hiding the source", async () => {
-    await game.classicMode.startBattle([SpeciesId.TATSUGIRI, SpeciesId.DONDOZO]);
+    await game.classicMode.startBattle(SpeciesId.TATSUGIRI, SpeciesId.DONDOZO);
 
     const [tatsugiri, dondozo] = game.scene.getPlayerField();
 
@@ -70,7 +66,7 @@ describe("Abilities - Commander", () => {
   it("should activate when a Dondozo switches in and cancel the source's move", async () => {
     game.override.enemyMoveset(MoveId.SPLASH);
 
-    await game.classicMode.startBattle([SpeciesId.TATSUGIRI, SpeciesId.MAGIKARP, SpeciesId.DONDOZO]);
+    await game.classicMode.startBattle(SpeciesId.TATSUGIRI, SpeciesId.MAGIKARP, SpeciesId.DONDOZO);
 
     const [tatsugiri, _, dondozo] = game.scene.getPlayerParty();
 
@@ -88,7 +84,7 @@ describe("Abilities - Commander", () => {
   });
 
   it("source should reenter the field when Dondozo faints", async () => {
-    await game.classicMode.startBattle([SpeciesId.TATSUGIRI, SpeciesId.DONDOZO]);
+    await game.classicMode.startBattle(SpeciesId.TATSUGIRI, SpeciesId.DONDOZO);
 
     const [tatsugiri, dondozo] = game.scene.getPlayerField();
 
@@ -115,7 +111,7 @@ describe("Abilities - Commander", () => {
   it("source should still take damage from Poison while hidden", async () => {
     game.override.statusEffect(StatusEffect.POISON).enemyMoveset(MoveId.SPLASH);
 
-    await game.classicMode.startBattle([SpeciesId.TATSUGIRI, SpeciesId.DONDOZO]);
+    await game.classicMode.startBattle(SpeciesId.TATSUGIRI, SpeciesId.DONDOZO);
 
     const [tatsugiri, dondozo] = game.scene.getPlayerField();
 
@@ -133,7 +129,7 @@ describe("Abilities - Commander", () => {
   it("source should still take damage from Salt Cure while hidden", async () => {
     game.override.enemyMoveset(MoveId.SPLASH);
 
-    await game.classicMode.startBattle([SpeciesId.TATSUGIRI, SpeciesId.DONDOZO]);
+    await game.classicMode.startBattle(SpeciesId.TATSUGIRI, SpeciesId.DONDOZO);
 
     const [tatsugiri, dondozo] = game.scene.getPlayerField();
 
@@ -153,7 +149,7 @@ describe("Abilities - Commander", () => {
   it("source should still take damage from Sandstorm while hidden", async () => {
     game.override.weather(WeatherType.SANDSTORM).enemyMoveset(MoveId.SPLASH);
 
-    await game.classicMode.startBattle([SpeciesId.TATSUGIRI, SpeciesId.DONDOZO]);
+    await game.classicMode.startBattle(SpeciesId.TATSUGIRI, SpeciesId.DONDOZO);
 
     const [tatsugiri, dondozo] = game.scene.getPlayerField();
 
@@ -171,7 +167,7 @@ describe("Abilities - Commander", () => {
   it("should make Dondozo immune to being forced out", async () => {
     game.override.enemyMoveset([MoveId.SPLASH, MoveId.WHIRLWIND]);
 
-    await game.classicMode.startBattle([SpeciesId.TATSUGIRI, SpeciesId.DONDOZO]);
+    await game.classicMode.startBattle(SpeciesId.TATSUGIRI, SpeciesId.DONDOZO);
 
     const [tatsugiri, dondozo] = game.scene.getPlayerField();
 
@@ -191,7 +187,7 @@ describe("Abilities - Commander", () => {
   });
 
   it("should interrupt the source's semi-invulnerability", async () => {
-    await game.classicMode.startBattle([SpeciesId.TATSUGIRI, SpeciesId.MAGIKARP, SpeciesId.DONDOZO]);
+    await game.classicMode.startBattle(SpeciesId.TATSUGIRI, SpeciesId.MAGIKARP, SpeciesId.DONDOZO);
 
     const [tatsugiri, , dondozo] = game.scene.getPlayerParty();
 

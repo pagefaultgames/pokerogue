@@ -9,7 +9,7 @@ import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
 import type { EntryHazardTagType } from "#types/arena-tags";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Tidy Up", () => {
   let phaserGame: Phaser.Game;
@@ -19,10 +19,6 @@ describe("Moves - Tidy Up", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -41,7 +37,7 @@ describe("Moves - Tidy Up", () => {
     { name: "Stealth Rock", tagType: ArenaTagType.STEALTH_ROCK },
     { name: "Sticky Web", tagType: ArenaTagType.STICKY_WEB },
   ])("should remove $name from both sides of the field", async ({ tagType }) => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     // Add tag to both sides of the field
     game.scene.arena.addTag(tagType, 1, undefined, game.field.getPlayerPokemon().id, ArenaTagSide.PLAYER);
@@ -57,7 +53,7 @@ describe("Moves - Tidy Up", () => {
 
   it("should clear substitutes from all pokemon", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.CINCCINO, SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.CINCCINO, SpeciesId.FEEBAS);
 
     game.move.use(MoveId.SUBSTITUTE, BattlerIndex.PLAYER);
     game.move.use(MoveId.SUBSTITUTE, BattlerIndex.PLAYER_2);
@@ -81,7 +77,7 @@ describe("Moves - Tidy Up", () => {
   });
 
   it("should raise the user's stats even if a tag cannot be removed", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     expect(feebas).toHaveStatStage(Stat.ATK, 0);

@@ -1,6 +1,5 @@
 import { MAX_TERAS_PER_ARENA } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import { getTypeRgb } from "#data/type";
 import { Button } from "#enums/buttons";
 import { Command } from "#enums/command";
@@ -91,17 +90,14 @@ export class CommandUiHandler extends UiHandler {
     }
     this.toggleTeraButton();
 
+    const pokemonName = commandPhase.getPokemon().getNameToRender({ prependFormName: false });
     const messageHandler = this.getUi().getMessageHandler();
     messageHandler.bg.setVisible(true);
     messageHandler.commandWindow.setVisible(true);
     messageHandler.movesWindowContainer.setVisible(false);
     messageHandler.message.setWordWrapWidth(this.canTera() ? 910 : 1110);
-    messageHandler.showText(
-      i18next.t("commandUiHandler:actionMessage", {
-        pokemonName: getPokemonNameWithAffix(commandPhase.getPokemon()),
-      }),
-      0,
-    );
+    messageHandler.showText(i18next.t("commandUiHandler:actionMessage", { pokemonName }), 0);
+
     if (this.getCursor() === Command.POKEMON) {
       this.setCursor(Command.FIGHT);
     } else {
@@ -217,16 +213,16 @@ export class CommandUiHandler extends UiHandler {
   }
 
   getCursor(): number {
-    return !this.fieldIndex ? this.cursor : this.cursor2;
+    return this.fieldIndex ? this.cursor2 : this.cursor;
   }
 
   setCursor(cursor: number): boolean {
     const changed = this.getCursor() !== cursor;
     if (changed) {
-      if (!this.fieldIndex) {
-        this.cursor = cursor;
-      } else {
+      if (this.fieldIndex) {
         this.cursor2 = cursor;
+      } else {
+        this.cursor = cursor;
       }
     }
 

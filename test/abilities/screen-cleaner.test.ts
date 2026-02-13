@@ -5,7 +5,7 @@ import { SpeciesId } from "#enums/species-id";
 import { WeatherType } from "#enums/weather-type";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Screen Cleaner", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +15,6 @@ describe("Abilities - Screen Cleaner", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -40,7 +36,7 @@ describe("Abilities - Screen Cleaner", () => {
     game.scene.arena.addTag(tagType, 0, 0, 0, ArenaTagSide.BOTH);
     expect(game).toHaveArenaTag(tagType);
 
-    await game.classicMode.startBattle([SpeciesId.SLOWKING]);
+    await game.classicMode.startBattle(SpeciesId.SLOWKING);
 
     const slowking = game.field.getPlayerPokemon();
     expect(slowking).toHaveAbilityApplied(AbilityId.SCREEN_CLEANER);
@@ -55,7 +51,7 @@ describe("Abilities - Screen Cleaner", () => {
     expect(game).toHaveArenaTag(ArenaTagType.LIGHT_SCREEN);
     expect(game).toHaveArenaTag(ArenaTagType.AURORA_VEIL);
 
-    await game.classicMode.startBattle([SpeciesId.SLOWKING]);
+    await game.classicMode.startBattle(SpeciesId.SLOWKING);
 
     const slowking = game.field.getPlayerPokemon();
     expect(slowking).toHaveAbilityApplied(AbilityId.SCREEN_CLEANER);

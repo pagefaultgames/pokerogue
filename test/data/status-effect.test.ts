@@ -13,7 +13,7 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
 import { mockI18next } from "#test/test-utils/test-utils";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 const pokemonName = "PKM";
 const sourceText = "SOURCE";
@@ -308,10 +308,6 @@ describe("Status Effects", () => {
       });
     });
 
-    afterEach(() => {
-      game.phaseInterceptor.restoreOg();
-    });
-
     beforeEach(() => {
       game = new GameManager(phaserGame);
 
@@ -325,7 +321,7 @@ describe("Status Effects", () => {
     });
 
     it("causes the pokemon's move to fail when activated", async () => {
-      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
       game.move.select(MoveId.QUICK_ATTACK);
       await game.move.forceStatusActivation(true);
@@ -346,10 +342,6 @@ describe("Status Effects", () => {
       });
     });
 
-    afterEach(() => {
-      game.phaseInterceptor.restoreOg();
-    });
-
     beforeEach(() => {
       game = new GameManager(phaserGame);
       game.override
@@ -363,7 +355,7 @@ describe("Status Effects", () => {
     });
 
     it("should last the appropriate number of turns", async () => {
-      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
       const player = game.field.getPlayerPokemon();
       player.status = new Status(StatusEffect.SLEEP, 0, 4);
@@ -402,10 +394,6 @@ describe("Status Effects", () => {
       });
     });
 
-    afterEach(() => {
-      game.phaseInterceptor.restoreOg();
-    });
-
     beforeEach(() => {
       game = new GameManager(phaserGame);
       game.override
@@ -420,7 +408,7 @@ describe("Status Effects", () => {
     });
 
     it("should not inflict a 0 HP mon with a status", async () => {
-      await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
 
       const player = game.field.getPlayerPokemon();
       player.hp = 0;

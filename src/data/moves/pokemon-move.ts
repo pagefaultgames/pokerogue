@@ -29,7 +29,7 @@ export class PokemonMove {
    * If defined and nonzero, overrides the maximum PP of the move (e.g., due to move being copied by Transform).
    * This also nullifies all effects of `ppUp`.
    */
-  public maxPpOverride?: number;
+  public maxPpOverride?: number | undefined;
 
   constructor(moveId: MoveId, ppUsed = 0, ppUp = 0, maxPpOverride?: number) {
     this.moveId = moveId;
@@ -41,8 +41,6 @@ export class PokemonMove {
   /**
    * Checks whether this move can be performed by a Pokemon, without consideration for the move's targets.
    * The move is unusable if it is out of PP, restricted by an effect, or unimplemented.
-   *
-   * Should not be confused with {@linkcode isSelectable}, which only checks if the move can be selected by a Pokemon.
    *
    * @param pokemon - The {@linkcode Pokemon} attempting to use this move
    * @param ignorePp - Whether to ignore checking if the move is out of PP; default `false`
@@ -58,7 +56,7 @@ export class PokemonMove {
       return [false, i18next.t("battle:moveNotImplemented", { moveName: moveName.replace(" (N)", "") })];
     }
 
-    if (!ignorePp && move.pp !== -1 && this.ppUsed >= this.getMovePp()) {
+    if (!ignorePp && this.isOutOfPp()) {
       return [false, i18next.t("battle:moveNoPp", { moveName: move.name })];
     }
 
@@ -82,30 +80,28 @@ export class PokemonMove {
   }
 
   /**
-   * Determine whether the move can be selected by the pokemon based on its own requirements
-   * @remarks
-   * Does not check for PP, moves blocked by challenges, or unimplemented moves, all of which are handled by {@linkcode isUsable}
-   * @param pokemon - The Pokemon under consideration
-   * @returns An tuple containing a boolean indicating whether the move can be selected, and a string with the reason if it cannot
+   * Consume up to `count` PP from this move (up to its maximum PP).
+   * @param count - (Default `1`) The amount of PP to use
    */
-  public isSelectable(pokemon: Pokemon): [selectable: boolean, preventionText: string] {
-    return pokemon.isMoveSelectable(this.moveId);
-  }
-
-  /**
-   * Sets {@link ppUsed} for this move and ensures the value does not exceed {@link getMovePp}
-   * @param count Amount of PP to use
-   */
-  usePp(count = 1) {
+  public usePp(count = 1): void {
     this.ppUsed = Math.min(this.ppUsed + count, this.getMovePp());
   }
 
+  // TODO: Rename to `getMaxPP`; the current name is obscure and frankly stupid
   getMovePp(): number {
     return this.maxPpOverride || this.getMove().pp + this.ppUp * toDmgValue(this.getMove().pp / 5);
   }
 
   getPpRatio(): number {
     return 1 - this.ppUsed / this.getMovePp();
+  }
+
+  /**
+   * @returns Whether this move is out of PP.
+   */
+  // TODO: Replace checks comparing `getPpRatio` with 0 to use this instead
+  public isOutOfPp(): boolean {
+    return this.getMovePp() !== -1 && this.ppUsed >= this.getMovePp();
   }
 
   getName(): string {

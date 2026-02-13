@@ -1,0 +1,49 @@
+name: PR Title Validation
+on:
+  pull_request:
+    branches:
+      - main
+      - beta
+      - release
+      - "hotfix*"
+    types: [opened, edited, reopened, synchronize]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  lint-pr:
+    name: Lint PR title
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          sparse-checkout: |
+            pnpm-lock.yaml
+            .nvmrc
+            .github/scripts/pr-title.mts
+          sparse-checkout-cone-mode: false
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Install Node.js dependencies
+        run: pnpm add @actions/core @actions/github
+
+      - name: Lint PR title
+        run: node ./.github/scripts/pr-title.mts
+        env:
+          INPUT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

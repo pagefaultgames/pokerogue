@@ -5,7 +5,7 @@ import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import { toDmgValue } from "#utils/common";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Multi-target damage reduction", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +15,6 @@ describe("Multi-target damage reduction", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -36,7 +32,7 @@ describe("Multi-target damage reduction", () => {
   });
 
   it("should reduce d.gleam damage when multiple enemies but not tackle", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS);
 
     const [enemy1, enemy2] = game.scene.getEnemyField();
 
@@ -76,7 +72,7 @@ describe("Multi-target damage reduction", () => {
   });
 
   it("should reduce earthquake when more than one pokemon other than user is not fainted", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS);
 
     const player2 = game.scene.getPlayerParty()[1];
     const [enemy1, enemy2] = game.scene.getEnemyField();

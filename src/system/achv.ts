@@ -5,6 +5,7 @@ import {
   FlipStatChallenge,
   FreshStartChallenge,
   InverseBattleChallenge,
+  PassivesChallenge,
   SingleGenerationChallenge,
   SingleTypeChallenge,
 } from "#data/challenge";
@@ -39,7 +40,7 @@ export class Achv {
   public hasParent: boolean;
   public parentId: string;
 
-  private conditionFunc: ConditionFn | undefined;
+  protected conditionFunc?: ConditionFn;
 
   constructor(
     localizationKey: string,
@@ -51,7 +52,9 @@ export class Achv {
     this.description = description;
     this.iconImage = iconImage;
     this.score = score;
-    this.conditionFunc = conditionFunc;
+    if (conditionFunc != null) {
+      this.conditionFunc = conditionFunc;
+    }
     this.localizationKey = localizationKey;
   }
 
@@ -107,7 +110,7 @@ export class MoneyAchv extends Achv {
   moneyAmount: number;
 
   constructor(localizationKey: string, moneyAmount: number, iconImage: string, score: number) {
-    super(localizationKey, "", iconImage, score, (_args: any[]) => globalScene.money >= this.moneyAmount);
+    super(localizationKey, "", iconImage, score, () => globalScene.money >= this.moneyAmount);
     this.moneyAmount = moneyAmount;
   }
 }
@@ -121,7 +124,7 @@ export class RibbonAchv extends Achv {
       "",
       iconImage,
       score,
-      (_args: any[]) => globalScene.gameData.gameStats.ribbonsOwned >= this.ribbonAmount,
+      () => globalScene.gameData.gameStats.ribbonsOwned >= this.ribbonAmount,
     );
     this.ribbonAmount = ribbonAmount;
   }
@@ -129,30 +132,25 @@ export class RibbonAchv extends Achv {
 
 export class DamageAchv extends Achv {
   damageAmount: number;
+  // intentionally overwriting base property
+  protected declare readonly conditionFunc: ConditionFn<[number | NumberHolder]>;
 
   constructor(localizationKey: string, damageAmount: number, iconImage: string, score: number) {
-    super(
-      localizationKey,
-      "",
-      iconImage,
-      score,
-      (args: any[]) => (args[0] instanceof NumberHolder ? args[0].value : args[0]) >= this.damageAmount,
-    );
+    super(localizationKey, "", iconImage, score);
+    this.conditionFunc = (args: [NumberHolder | number]) =>
+      (args[0] instanceof NumberHolder ? args[0].value : args[0]) >= this.damageAmount;
     this.damageAmount = damageAmount;
   }
 }
 
 export class HealAchv extends Achv {
   healAmount: number;
+  protected declare readonly conditionFunc: ConditionFn<[number | NumberHolder]>;
 
   constructor(localizationKey: string, healAmount: number, iconImage: string, score: number) {
-    super(
-      localizationKey,
-      "",
-      iconImage,
-      score,
-      (args: any[]) => (args[0] instanceof NumberHolder ? args[0].value : args[0]) >= this.healAmount,
-    );
+    super(localizationKey, "", iconImage, score);
+    this.conditionFunc = (args: [number | NumberHolder]) =>
+      (args[0] instanceof NumberHolder ? args[0].value : args[0]) >= this.healAmount;
     this.healAmount = healAmount;
   }
 }
@@ -449,10 +447,23 @@ export function getAchievementDescription(localizationKey: string): string {
       });
     case "dailyVictory":
       return i18next.t("achv:dailyVictory.description", { context: genderStr });
+    case "passives":
+      return i18next.t("achv:passives.description", { context: genderStr });
     default:
       return "";
   }
 }
+
+// TODO: Find a better way to block achievements for certain challenges
+/** Returns `true` if the inverse or flip stat challenges are active */
+const inverseAndFlipStatAchievementsBlock = () =>
+  globalScene.gameMode.challenges.some(
+    c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
+  );
+
+/** Returns `true` if the passives challenge on `all` is active */
+const passivesChallengeAchievementsBlock = () =>
+  globalScene.gameMode.challenges.some(c => c.id === Challenges.PASSIVES && c.value === 2);
 
 export const achvs = {
   CLASSIC_VICTORY: new Achv(
@@ -460,7 +471,7 @@ export const achvs = {
     "classicVictory.description",
     "classic_ribbon_default",
     250,
-    _ => globalScene.gameData.gameStats.sessionsWon === 0,
+    () => globalScene.gameData.gameStats.sessionsWon === 0,
   ),
   _10_RIBBONS: new RibbonAchv("10Ribbons", 10, "common_ribbon", 50),
   _25_RIBBONS: new RibbonAchv("25Ribbons", 25, "great_ribbon", 75),
@@ -521,11 +532,16 @@ export const achvs = {
     c =>
       c instanceof FreshStartChallenge
       && c.value === 1
-      && !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
-      ),
+      && !inverseAndFlipStatAchievementsBlock()
+      && !passivesChallengeAchievementsBlock(),
   ),
-  NUZLOCKE: new ChallengeAchv("nuzlocke", "nuzlocke.description", "leaf_stone", 100, isNuzlockeChallenge),
+  NUZLOCKE: new ChallengeAchv(
+    "nuzlocke",
+    "nuzlocke.description",
+    "leaf_stone",
+    100,
+    () => isNuzlockeChallenge() && !inverseAndFlipStatAchievementsBlock() && !passivesChallengeAchievementsBlock(),
+  ),
   INVERSE_BATTLE: new ChallengeAchv(
     "inverseBattle",
     "inverseBattle.description",
@@ -548,9 +564,8 @@ export const achvs = {
     c =>
       c instanceof SingleGenerationChallenge
       && c.value === 1
-      && !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
-      ),
+      && !inverseAndFlipStatAchievementsBlock()
+      && !passivesChallengeAchievementsBlock(),
   ),
   MONO_GEN_TWO_VICTORY: new ChallengeAchv(
     "monoGenTwo",
@@ -560,9 +575,8 @@ export const achvs = {
     c =>
       c instanceof SingleGenerationChallenge
       && c.value === 2
-      && !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
-      ),
+      && !inverseAndFlipStatAchievementsBlock()
+      && !passivesChallengeAchievementsBlock(),
   ),
   MONO_GEN_THREE_VICTORY: new ChallengeAchv(
     "monoGenThree",
@@ -572,9 +586,8 @@ export const achvs = {
     c =>
       c instanceof SingleGenerationChallenge
       && c.value === 3
-      && !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
-      ),
+      && !inverseAndFlipStatAchievementsBlock()
+      && !passivesChallengeAchievementsBlock(),
   ),
   MONO_GEN_FOUR_VICTORY: new ChallengeAchv(
     "monoGenFour",
@@ -584,9 +597,8 @@ export const achvs = {
     c =>
       c instanceof SingleGenerationChallenge
       && c.value === 4
-      && !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
-      ),
+      && !inverseAndFlipStatAchievementsBlock()
+      && !passivesChallengeAchievementsBlock(),
   ),
   MONO_GEN_FIVE_VICTORY: new ChallengeAchv(
     "monoGenFive",
@@ -596,9 +608,8 @@ export const achvs = {
     c =>
       c instanceof SingleGenerationChallenge
       && c.value === 5
-      && !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
-      ),
+      && !inverseAndFlipStatAchievementsBlock()
+      && !passivesChallengeAchievementsBlock(),
   ),
   MONO_GEN_SIX_VICTORY: new ChallengeAchv(
     "monoGenSix",
@@ -608,9 +619,8 @@ export const achvs = {
     c =>
       c instanceof SingleGenerationChallenge
       && c.value === 6
-      && !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
-      ),
+      && !inverseAndFlipStatAchievementsBlock()
+      && !passivesChallengeAchievementsBlock(),
   ),
   MONO_GEN_SEVEN_VICTORY: new ChallengeAchv(
     "monoGenSeven",
@@ -620,9 +630,8 @@ export const achvs = {
     c =>
       c instanceof SingleGenerationChallenge
       && c.value === 7
-      && !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
-      ),
+      && !inverseAndFlipStatAchievementsBlock()
+      && !passivesChallengeAchievementsBlock(),
   ),
   MONO_GEN_EIGHT_VICTORY: new ChallengeAchv(
     "monoGenEight",
@@ -632,9 +641,8 @@ export const achvs = {
     c =>
       c instanceof SingleGenerationChallenge
       && c.value === 8
-      && !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
-      ),
+      && !inverseAndFlipStatAchievementsBlock()
+      && !passivesChallengeAchievementsBlock(),
   ),
   MONO_GEN_NINE_VICTORY: new ChallengeAchv(
     "monoGenNine",
@@ -644,9 +652,8 @@ export const achvs = {
     c =>
       c instanceof SingleGenerationChallenge
       && c.value === 9
-      && !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
-      ),
+      && !inverseAndFlipStatAchievementsBlock()
+      && !passivesChallengeAchievementsBlock(),
   ),
   MONO_NORMAL: new ChallengeAchv(
     "monoNormal",
@@ -656,9 +663,8 @@ export const achvs = {
     c =>
       c instanceof SingleTypeChallenge
       && c.value === 1
-      && !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
-      ),
+      && !inverseAndFlipStatAchievementsBlock()
+      && !passivesChallengeAchievementsBlock(),
   ),
   MONO_FIGHTING: new ChallengeAchv(
     "monoFighting",
@@ -668,9 +674,8 @@ export const achvs = {
     c =>
       c instanceof SingleTypeChallenge
       && c.value === 2
-      && !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
-      ),
+      && !inverseAndFlipStatAchievementsBlock()
+      && !passivesChallengeAchievementsBlock(),
   ),
   MONO_FLYING: new ChallengeAchv(
     "monoFlying",
@@ -680,9 +685,8 @@ export const achvs = {
     c =>
       c instanceof SingleTypeChallenge
       && c.value === 3
-      && !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
-      ),
+      && !inverseAndFlipStatAchievementsBlock()
+      && !passivesChallengeAchievementsBlock(),
   ),
   MONO_POISON: new ChallengeAchv(
     "monoPoison",
@@ -692,9 +696,8 @@ export const achvs = {
     c =>
       c instanceof SingleTypeChallenge
       && c.value === 4
-      && !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
-      ),
+      && !inverseAndFlipStatAchievementsBlock()
+      && !passivesChallengeAchievementsBlock(),
   ),
   MONO_GROUND: new ChallengeAchv(
     "monoGround",
@@ -704,9 +707,8 @@ export const achvs = {
     c =>
       c instanceof SingleTypeChallenge
       && c.value === 5
-      && !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
-      ),
+      && !inverseAndFlipStatAchievementsBlock()
+      && !passivesChallengeAchievementsBlock(),
   ),
   MONO_ROCK: new ChallengeAchv(
     "monoRock",
@@ -716,9 +718,8 @@ export const achvs = {
     c =>
       c instanceof SingleTypeChallenge
       && c.value === 6
-      && !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
-      ),
+      && !inverseAndFlipStatAchievementsBlock()
+      && !passivesChallengeAchievementsBlock(),
   ),
   MONO_BUG: new ChallengeAchv(
     "monoBug",
@@ -728,9 +729,8 @@ export const achvs = {
     c =>
       c instanceof SingleTypeChallenge
       && c.value === 7
-      && !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
-      ),
+      && !inverseAndFlipStatAchievementsBlock()
+      && !passivesChallengeAchievementsBlock(),
   ),
   MONO_GHOST: new ChallengeAchv(
     "monoGhost",
@@ -740,9 +740,8 @@ export const achvs = {
     c =>
       c instanceof SingleTypeChallenge
       && c.value === 8
-      && !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
-      ),
+      && !inverseAndFlipStatAchievementsBlock()
+      && !passivesChallengeAchievementsBlock(),
   ),
   MONO_STEEL: new ChallengeAchv(
     "monoSteel",
@@ -752,9 +751,8 @@ export const achvs = {
     c =>
       c instanceof SingleTypeChallenge
       && c.value === 9
-      && !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
-      ),
+      && !inverseAndFlipStatAchievementsBlock()
+      && !passivesChallengeAchievementsBlock(),
   ),
   MONO_FIRE: new ChallengeAchv(
     "monoFire",
@@ -764,9 +762,8 @@ export const achvs = {
     c =>
       c instanceof SingleTypeChallenge
       && c.value === 10
-      && !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
-      ),
+      && !inverseAndFlipStatAchievementsBlock()
+      && !passivesChallengeAchievementsBlock(),
   ),
   MONO_WATER: new ChallengeAchv(
     "monoWater",
@@ -776,9 +773,8 @@ export const achvs = {
     c =>
       c instanceof SingleTypeChallenge
       && c.value === 11
-      && !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
-      ),
+      && !inverseAndFlipStatAchievementsBlock()
+      && !passivesChallengeAchievementsBlock(),
   ),
   MONO_GRASS: new ChallengeAchv(
     "monoGrass",
@@ -788,9 +784,8 @@ export const achvs = {
     c =>
       c instanceof SingleTypeChallenge
       && c.value === 12
-      && !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
-      ),
+      && !inverseAndFlipStatAchievementsBlock()
+      && !passivesChallengeAchievementsBlock(),
   ),
   MONO_ELECTRIC: new ChallengeAchv(
     "monoElectric",
@@ -800,9 +795,8 @@ export const achvs = {
     c =>
       c instanceof SingleTypeChallenge
       && c.value === 13
-      && !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
-      ),
+      && !inverseAndFlipStatAchievementsBlock()
+      && !passivesChallengeAchievementsBlock(),
   ),
   MONO_PSYCHIC: new ChallengeAchv(
     "monoPsychic",
@@ -812,9 +806,8 @@ export const achvs = {
     c =>
       c instanceof SingleTypeChallenge
       && c.value === 14
-      && !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
-      ),
+      && !inverseAndFlipStatAchievementsBlock()
+      && !passivesChallengeAchievementsBlock(),
   ),
   MONO_ICE: new ChallengeAchv(
     "monoIce",
@@ -824,9 +817,8 @@ export const achvs = {
     c =>
       c instanceof SingleTypeChallenge
       && c.value === 15
-      && !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
-      ),
+      && !inverseAndFlipStatAchievementsBlock()
+      && !passivesChallengeAchievementsBlock(),
   ),
   MONO_DRAGON: new ChallengeAchv(
     "monoDragon",
@@ -836,9 +828,8 @@ export const achvs = {
     c =>
       c instanceof SingleTypeChallenge
       && c.value === 16
-      && !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
-      ),
+      && !inverseAndFlipStatAchievementsBlock()
+      && !passivesChallengeAchievementsBlock(),
   ),
   MONO_DARK: new ChallengeAchv(
     "monoDark",
@@ -848,9 +839,8 @@ export const achvs = {
     c =>
       c instanceof SingleTypeChallenge
       && c.value === 17
-      && !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
-      ),
+      && !inverseAndFlipStatAchievementsBlock()
+      && !passivesChallengeAchievementsBlock(),
   ),
   MONO_FAIRY: new ChallengeAchv(
     "monoFairy",
@@ -860,16 +850,22 @@ export const achvs = {
     c =>
       c instanceof SingleTypeChallenge
       && c.value === 18
-      && !globalScene.gameMode.challenges.some(
-        c => [Challenges.INVERSE_BATTLE, Challenges.FLIP_STAT].includes(c.id) && c.value > 0,
-      ),
+      && !inverseAndFlipStatAchievementsBlock()
+      && !passivesChallengeAchievementsBlock(),
+  ),
+  PASSIVES_CHALLENGE: new ChallengeAchv(
+    "passives",
+    "passives.description",
+    "ability_capsule",
+    100,
+    c => c instanceof PassivesChallenge && c.value > 0 && !inverseAndFlipStatAchievementsBlock(),
   ),
   UNEVOLVED_CLASSIC_VICTORY: new Achv(
     "unevolvedClassicVictory",
     "unevolvedClassicVictory.description",
     "eviolite",
     50,
-    _ => globalScene.getPlayerParty().some(p => p.getSpeciesForm(true).speciesId in pokemonEvolutions),
+    () => globalScene.getPlayerParty().some(p => p.getSpeciesForm(true).speciesId in pokemonEvolutions),
   ),
   FLIP_INVERSE: new ChallengeAchv(
     "flipInverse",
@@ -885,8 +881,8 @@ export const achvs = {
 };
 
 export function initAchievements() {
-  const achvKeys = Object.keys(achvs);
-  achvKeys.forEach((a: string, i: number) => {
+  const achvKeys = Object.keys(achvs) as (keyof typeof achvs)[];
+  achvKeys.forEach((a: keyof typeof achvs, i: number) => {
     achvs[a].id = a;
     if (achvs[a].hasParent) {
       achvs[a].parentId = achvKeys[i - 1];

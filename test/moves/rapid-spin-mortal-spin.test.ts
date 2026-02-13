@@ -14,7 +14,7 @@ import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe.each<{ moveId: MoveId; moveName: string }>([
   { moveId: MoveId.RAPID_SPIN, moveName: "Rapid Spin" },
@@ -29,10 +29,6 @@ describe.each<{ moveId: MoveId; moveName: string }>([
     });
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     game.override
@@ -45,7 +41,7 @@ describe.each<{ moveId: MoveId; moveName: string }>([
       .startingLevel(100)
       .enemyLevel(100);
 
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
   });
 
   it.each<{ tagType: ArenaTagType; tagName: string }>([
@@ -60,8 +56,8 @@ describe.each<{ moveId: MoveId; moveName: string }>([
     game.move.use(moveId);
     await game.toEndOfTurn();
 
-    expect(game).not.toHaveArenaTag({ tagType, side: ArenaTagSide.PLAYER });
-    expect(game).toHaveArenaTag({ tagType, side: ArenaTagSide.ENEMY });
+    expect(game).not.toHaveArenaTag(tagType, ArenaTagSide.PLAYER);
+    expect(game).toHaveArenaTag(tagType, ArenaTagSide.ENEMY);
   });
 
   it.each<{ tagType: BattlerTagType; tagName: string }>([

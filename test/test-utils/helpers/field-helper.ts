@@ -1,13 +1,14 @@
-import type { Ability } from "#abilities/ability";
 import type { globalScene } from "#app/global-scene";
 import { allAbilities } from "#data/data-lists";
 import type { AbilityId } from "#enums/ability-id";
 import type { BattlerIndex } from "#enums/battler-index";
-import type { PokemonType } from "#enums/pokemon-type";
+import { PokemonType } from "#enums/pokemon-type";
 import { Stat } from "#enums/stat";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
+import type { MoveHelper } from "#test/test-utils/helpers/move-helper";
 import { expect, type MockInstance, vi } from "vitest";
+import { getEnumStr } from "../string-utils";
 
 /** Helper to manage pokemon */
 export class FieldHelper extends GameManagerHelper {
@@ -98,27 +99,58 @@ export class FieldHelper extends GameManagerHelper {
   }
 
   /**
-   * Mocks a pokemon's ability, overriding its existing ability (takes precedence over global overrides).
-   * Useful for giving exactly 1 Pokemon in a double battle a certain ability (rather than all pokemon).
-   * @param pokemon - The pokemon to mock the ability of
-   * @param ability - The ability to be mocked
-   * @returns A {@linkcode MockInstance} object
-   * @see {@linkcode vi.spyOn}
-   * @see https://vitest.dev/api/mock#mockreturnvalue
+   * Forcibly set a given {@linkcode Pokemon}'s ability to the given value, overridding all other effects.
+   * @param pokemon - The Pokemon whose ability will be changed
+   * @param ability - The {@linkcode AbilityId} to set, either as a static value or a function returning one
+   * @param passive - (Default `false`) Whether to mock the Pokemon's passive ability instead of its regular ability
+   * @returns The newly created {@linkcode MockInstance} object.
+   * @see {@link https://vitest.dev/api/mock#mockreturnvalue}
    */
-  public mockAbility(pokemon: Pokemon, ability: AbilityId): MockInstance<(ignoreOverride?: boolean) => Ability> {
-    return vi.spyOn(pokemon, "getAbility").mockReturnValue(allAbilities[ability]);
+  public mockAbility(
+    pokemon: Pokemon,
+    ability: AbilityId | ((p: Pokemon) => AbilityId),
+    passive: true,
+  ): MockInstance<Pokemon["getPassiveAbility"]>;
+  public mockAbility(
+    pokemon: Pokemon,
+    ability: AbilityId | ((p: Pokemon) => AbilityId),
+    passive?: false,
+  ): MockInstance<Pokemon["getAbility"]>;
+  public mockAbility(
+    pokemon: Pokemon,
+    ability: AbilityId | ((p: Pokemon) => AbilityId),
+    passive = false,
+  ): MockInstance<Pokemon["getAbility"]> | MockInstance<Pokemon["getPassiveAbility"]> {
+    const abStr = passive ? "getPassiveAbility" : "getAbility";
+    if (typeof ability === "function") {
+      return vi.spyOn(pokemon, abStr).mockImplementation(() => allAbilities[ability(pokemon)]);
+    }
+    return vi.spyOn(pokemon, abStr).mockReturnValue(allAbilities[ability]);
   }
 
   /**
-   * Force a given Pokemon to be terastallized to the given type.
+   * Force a given Pokemon to Terastallize to the given type.
    *
-   * @param pokemon - The pokemon to terastallize.
-   * @param teraType - The {@linkcode PokemonType} to terastallize into; defaults to the pokemon's primary type.
+   * @param pokemon - The pokemon to Terastallize
+   * @param teraType - The {@linkcode PokemonType} to Terastallize into;
+   * defaults to `pokemon`'s primary type if not provided
    * @remarks
-   * This function only mocks the Pokemon's tera-related variables; it does NOT activate any tera-related abilities.
+   * This function only mocks the Pokemon's tera-related variables.
+   *
+   * If activating on-Terastallize effects is desired, use either {@linkcode MoveHelper.use} with `useTera=true`
+   * or {@linkcode MoveHelper.selectWithTera} instead.
+   * @throws {Error}
+   * Fails test if `pokemon` cannot have its Tera Type changed
+   * (such as being part of a species with fixed Tera Types).
    */
+  public forceTera(pokemon: Pokemon, teraType?: Exclude<PokemonType, PokemonType.UNKNOWN>): void;
   public forceTera(pokemon: Pokemon, teraType: PokemonType = pokemon.getSpeciesForm(true).type1): void {
+    if (pokemon.getTeraType() !== pokemon.teraType) {
+      expect.fail(
+        `Cannot alter the Tera Type of fixed-tera Pokemon ${pokemon.name}!`
+          + `\nTera Type: ${getEnumStr(PokemonType, pokemon.getTeraType())}`,
+      );
+    }
     vi.spyOn(pokemon, "isTerastallized", "get").mockReturnValue(true);
     vi.spyOn(pokemon, "teraType", "get").mockReturnValue(teraType);
   }

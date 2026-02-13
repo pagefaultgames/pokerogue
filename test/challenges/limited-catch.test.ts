@@ -7,7 +7,7 @@ import { SpeciesId } from "#enums/species-id";
 import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Challenges - Limited Catch", () => {
   let phaserGame: Phaser.Game;
@@ -17,10 +17,6 @@ describe("Challenges - Limited Catch", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -37,7 +33,7 @@ describe("Challenges - Limited Catch", () => {
 
   it("should allow wild Pokémon to be caught on X1 waves", async () => {
     game.override.startingWave(31);
-    await game.challengeMode.startBattle([SpeciesId.NUZLEAF]);
+    await game.challengeMode.startBattle(SpeciesId.NUZLEAF);
 
     game.doThrowPokeball(PokeballType.MASTER_BALL);
     await game.toEndOfTurn();
@@ -47,7 +43,7 @@ describe("Challenges - Limited Catch", () => {
 
   it("should prevent Pokémon from being caught on non-X1 waves", async () => {
     game.override.startingWave(53);
-    await game.challengeMode.startBattle([SpeciesId.NUZLEAF]);
+    await game.challengeMode.startBattle(SpeciesId.NUZLEAF);
 
     game.doThrowPokeball(PokeballType.MASTER_BALL);
     await game.toEndOfTurn();
@@ -62,7 +58,7 @@ describe("Challenges - Limited Catch", () => {
       .startingWave(12);
     game.scene.money = 20000;
 
-    await game.challengeMode.runToSummon([SpeciesId.NUZLEAF]);
+    await game.challengeMode.runToSummon(SpeciesId.NUZLEAF);
 
     await runMysteryEncounterToEnd(game, 1);
 

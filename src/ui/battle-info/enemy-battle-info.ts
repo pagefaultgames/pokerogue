@@ -24,7 +24,7 @@ export class EnemyBattleInfo extends BattleInfo {
   protected effectivenessContainer: Phaser.GameObjects.Container;
   protected effectivenessWindow: Phaser.GameObjects.NineSlice;
   protected effectivenessText: Phaser.GameObjects.Text;
-  protected currentEffectiveness?: string;
+  protected currentEffectiveness?: string | undefined;
   // #endregion
 
   override get statOrder(): Stat[] {

@@ -24,7 +24,7 @@ import type { PokemonMove } from "#moves/pokemon-move";
 import type { Variant } from "#sprites/variant";
 import { getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
-import { addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor } from "#ui/text";
+import { addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor, updateCandyCountTextStyle } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import {
   fixedInt,
@@ -36,6 +36,7 @@ import {
   rgbHexToRgba,
 } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
+import { getDexNumber } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
@@ -52,7 +53,7 @@ export enum SummaryUiMode {
 }
 
 /** Holds all objects related to an ability for each iteration */
-interface abilityContainer {
+interface AbilityContainer {
   /** An image displaying the summary label */
   labelImage: Phaser.GameObjects.Image;
   /** The ability object */
@@ -89,9 +90,9 @@ export class SummaryUiHandler extends UiHandler {
   /** The pixel button prompt indicating a passive is unlocked */
   private abilityPrompt: Phaser.GameObjects.Image;
   /** Object holding everything needed to display an ability */
-  private abilityContainer: abilityContainer;
+  private abilityContainer: AbilityContainer;
   /** Object holding everything needed to display a passive */
-  private passiveContainer: abilityContainer;
+  private passiveContainer: AbilityContainer;
   private summaryPageContainer: Phaser.GameObjects.Container;
   private movesContainer: Phaser.GameObjects.Container;
   private movesContainerMovesTitle: Phaser.GameObjects.Image;
@@ -385,10 +386,10 @@ export class SummaryUiHandler extends UiHandler {
     this.candyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
     this.candyOverlay.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
 
-    this.numberText.setText(padInt(this.pokemon.species.speciesId, 4));
-    this.numberText.setColor(getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD));
+    this.numberText.setText(padInt(getDexNumber(this.pokemon.species.speciesId), 4));
+    this.numberText.setColor(getTextColor(this.pokemon.isShiny() ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY));
     this.numberText.setShadowColor(
-      getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD, true),
+      getTextColor(this.pokemon.isShiny() ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY, true),
     );
     const spriteKey = this.pokemon.getSpriteKey(true);
     try {
@@ -403,7 +404,7 @@ export class SummaryUiHandler extends UiHandler {
       .setPipelineData("spriteKey", this.pokemon.getSpriteKey())
       .setPipelineData("shiny", this.pokemon.shiny)
       .setPipelineData("variant", this.pokemon.variant);
-    ["spriteColors", "fusionSpriteColors"].map(k => {
+    ["spriteColors", "fusionSpriteColors"].forEach(k => {
       delete this.pokemonSprite.pipelineData[`${k}Base`];
       if (this.pokemon?.summonData.speciesForm) {
         k += "Base";
@@ -412,7 +413,7 @@ export class SummaryUiHandler extends UiHandler {
     });
     this.pokemon.cry();
 
-    this.nameText.setText(this.pokemon.getNameToRender(false));
+    this.nameText.setText(this.pokemon.getNameToRender({ useIllusion: false }));
 
     const isFusion = this.pokemon.isFusion();
 
@@ -453,9 +454,9 @@ export class SummaryUiHandler extends UiHandler {
       this.candyShadow.on("pointerout", () => globalScene.ui.hideTooltip());
     }
 
-    this.candyCountText.setText(
-      `×${globalScene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].candyCount}`,
-    );
+    const candyCount = globalScene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].candyCount;
+    this.candyCountText.setText(`×${candyCount}`);
+    updateCandyCountTextStyle(this.candyCountText, candyCount);
 
     this.candyShadow.setCrop(0, 0, 16, candyCropY);
 
@@ -642,10 +643,10 @@ export class SummaryUiHandler extends UiHandler {
           selectCallback(-1);
         }
 
-        if (!fromPartyMode) {
-          ui.setMode(UiMode.MESSAGE);
-        } else {
+        if (fromPartyMode) {
           ui.setMode(UiMode.PARTY);
+        } else {
+          ui.setMode(UiMode.MESSAGE);
         }
       }
       success = true;
@@ -860,9 +861,9 @@ export class SummaryUiHandler extends UiHandler {
           7,
           12,
           `${i18next.t("pokemonSummary:ot")}/${getBBCodeFrag(
-            !globalScene.hideUsername
-              ? loggedInUser?.username || i18next.t("pokemonSummary:unknown")
-              : usernameReplacement,
+            globalScene.hideUsername
+              ? usernameReplacement
+              : loggedInUser?.username || i18next.t("pokemonSummary:unknown"),
             otColor,
           )}`,
           TextStyle.SUMMARY_ALT,
@@ -884,9 +885,9 @@ export class SummaryUiHandler extends UiHandler {
 
         const getTypeIcon = (index: number, type: PokemonType, tera = false) => {
           const xCoord = typeLabel.width * typeLabel.scale + 9 + 34 * index;
-          const typeIcon = !tera
-            ? globalScene.add.sprite(xCoord, 42, getLocalizedSpriteKey("types"), PokemonType[type].toLowerCase())
-            : globalScene.add.sprite(xCoord, 42, "type_tera");
+          const typeIcon = tera
+            ? globalScene.add.sprite(xCoord, 42, "type_tera")
+            : globalScene.add.sprite(xCoord, 42, getLocalizedSpriteKey("types"), PokemonType[type].toLowerCase());
           if (tera) {
             typeIcon.setScale(0.5);
             const typeRgb = getTypeRgb(type);
@@ -947,7 +948,7 @@ export class SummaryUiHandler extends UiHandler {
           this.abilityPrompt = globalScene.add.image(
             0,
             0,
-            !globalScene.inputController?.gamepadSupport ? "summary_profile_prompt_z" : "summary_profile_prompt_a",
+            globalScene.inputController?.gamepadSupport ? "summary_profile_prompt_a" : "summary_profile_prompt_z",
           );
           this.abilityPrompt.setPosition(8, 43);
           this.abilityPrompt.setVisible(true);
@@ -1167,7 +1168,7 @@ export class SummaryUiHandler extends UiHandler {
         this.abilityPrompt = globalScene.add.image(
           0,
           0,
-          !globalScene.inputController?.gamepadSupport ? "summary_profile_prompt_z" : "summary_profile_prompt_a",
+          globalScene.inputController?.gamepadSupport ? "summary_profile_prompt_a" : "summary_profile_prompt_z",
         );
         this.abilityPrompt.setPosition(8, 47);
         this.abilityPrompt.setVisible(true);

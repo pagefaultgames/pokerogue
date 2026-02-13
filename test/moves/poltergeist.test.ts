@@ -5,7 +5,7 @@ import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Move - Poltergeist", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +15,6 @@ describe("Move - Poltergeist", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -36,7 +32,7 @@ describe("Move - Poltergeist", () => {
 
   it("should not crash when used after both opponents have fainted", async () => {
     game.override.battleStyle("double").enemyLevel(5);
-    await game.classicMode.startBattle([SpeciesId.STARYU, SpeciesId.SLOWPOKE]);
+    await game.classicMode.startBattle(SpeciesId.STARYU, SpeciesId.SLOWPOKE);
 
     game.move.use(MoveId.DAZZLING_GLEAM);
     game.move.use(MoveId.POLTERGEIST, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY);

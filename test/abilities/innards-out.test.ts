@@ -3,7 +3,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Innards Out", () => {
   let phaserGame: Phaser.Game;
@@ -13,10 +13,6 @@ describe("Abilities - Innards Out", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -32,7 +28,7 @@ describe("Abilities - Innards Out", () => {
   });
 
   it("should damage opppnents that faint the ability holder for equal damage", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const magikarp = game.field.getEnemyPokemon();
     magikarp.hp = 20;
@@ -46,7 +42,7 @@ describe("Abilities - Innards Out", () => {
 
   it("should not damage an ally in Double Battles", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const [magikarp1, magikarp2] = game.scene.getEnemyField();
     magikarp1.hp = 1;

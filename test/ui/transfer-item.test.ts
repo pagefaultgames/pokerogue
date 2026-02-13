@@ -8,7 +8,7 @@ import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import Phaser from "phaser";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("UI - Transfer Items", () => {
   let phaserGame: Phaser.Game;
@@ -18,10 +18,6 @@ describe("UI - Transfer Items", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(async () => {
@@ -39,7 +35,7 @@ describe("UI - Transfer Items", () => {
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyMoveset([MoveId.SPLASH]);
 
-    await game.classicMode.startBattle([SpeciesId.RAYQUAZA, SpeciesId.RAYQUAZA, SpeciesId.RAYQUAZA]);
+    await game.classicMode.startBattle(SpeciesId.RAYQUAZA, SpeciesId.RAYQUAZA, SpeciesId.RAYQUAZA);
 
     game.move.select(MoveId.DRAGON_CLAW);
 

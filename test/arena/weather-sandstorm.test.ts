@@ -5,7 +5,7 @@ import { Stat } from "#enums/stat";
 import { WeatherType } from "#enums/weather-type";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Weather - Sandstorm", () => {
   let phaserGame: Phaser.Game;
@@ -15,10 +15,6 @@ describe("Weather - Sandstorm", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -32,7 +28,7 @@ describe("Weather - Sandstorm", () => {
   });
 
   it("inflicts damage equal to 1/16 of Pokemon's max HP at turn end", async () => {
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     game.move.select(MoveId.SPLASH);
 
@@ -45,7 +41,7 @@ describe("Weather - Sandstorm", () => {
 
   it("does not inflict damage to a Pokemon that is underwater (Dive) or underground (Dig)", async () => {
     game.override.moveset([MoveId.DIVE]);
-    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
     game.move.select(MoveId.DIVE);
 
@@ -65,7 +61,7 @@ describe("Weather - Sandstorm", () => {
       .ability(AbilityId.BALL_FETCH)
       .enemyAbility(AbilityId.BALL_FETCH);
 
-    await game.classicMode.startBattle([SpeciesId.ROCKRUFF, SpeciesId.KLINK]);
+    await game.classicMode.startBattle(SpeciesId.ROCKRUFF, SpeciesId.KLINK);
 
     game.move.select(MoveId.SPLASH, 0);
     game.move.select(MoveId.SPLASH, 1);
@@ -78,7 +74,7 @@ describe("Weather - Sandstorm", () => {
   });
 
   it("increases Rock type Pokemon Sp.Def by 50%", async () => {
-    await game.classicMode.startBattle([SpeciesId.ROCKRUFF]);
+    await game.classicMode.startBattle(SpeciesId.ROCKRUFF);
 
     const playerPokemon = game.field.getPlayerPokemon();
     const playerSpdef = playerPokemon.getStat(Stat.SPDEF);

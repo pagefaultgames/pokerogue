@@ -1,3 +1,4 @@
+import { getPokemonNameWithAffix } from "#app/messages";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -5,8 +6,9 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { WeatherType } from "#enums/weather-type";
 import { GameManager } from "#test/test-utils/game-manager";
+import i18next from "i18next";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Grudge", () => {
   let phaserGame: Phaser.Game;
@@ -16,10 +18,6 @@ describe("Moves - Grudge", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -34,7 +32,7 @@ describe("Moves - Grudge", () => {
   });
 
   it("should reduce the PP of an attack that faints the user to 0", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     const ratatta = game.field.getEnemyPokemon();
@@ -47,17 +45,44 @@ describe("Moves - Grudge", () => {
     // Ratatta should have fainted and consumed all of Guillotine's PP
     expect(ratatta).toHaveFainted();
     expect(feebas).toHaveUsedPP(MoveId.GUILLOTINE, "all");
+
+    await game.toEndOfTurn();
+
+    expect(game).toHaveShownMessage(
+      i18next.t("battlerTags:grudgeLapse", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(feebas),
+        moveName: feebas.moveset[0].getName(),
+      }),
+    );
+  });
+
+  it("should drain PP of the original move used for move-calling moves", async () => {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+    const feebas = game.field.getPlayerPokemon();
+    const ratatta = game.field.getEnemyPokemon();
+    game.move.changeMoveset(feebas, [MoveId.METRONOME, MoveId.GUILLOTINE]);
+    game.move.forceMetronomeMove(MoveId.GUILLOTINE, true);
+
+    game.move.select(MoveId.METRONOME);
+    await game.move.forceEnemyMove(MoveId.GRUDGE);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.phaseInterceptor.to("FaintPhase");
+
+    expect(ratatta).toHaveFainted();
+    expect(feebas).toHaveUsedPP(MoveId.METRONOME, "all");
+    expect(feebas).not.toHaveUsedPP(MoveId.GUILLOTINE, "all");
   });
 
   it("should remain in effect until the user's next move", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     const ratatta = game.field.getEnemyPokemon();
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.GRUDGE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     expect(ratatta).toHaveBattlerTag(BattlerTagType.GRUDGE);
@@ -74,7 +99,7 @@ describe("Moves - Grudge", () => {
   it("should not reduce PP if the user dies to weather/indirect damage", async () => {
     // Opponent will be reduced to 1 HP by False Swipe, then faint to Sandstorm
     game.override.weather(WeatherType.SANDSTORM);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     const ratatta = game.field.getEnemyPokemon();

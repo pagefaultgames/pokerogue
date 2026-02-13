@@ -21,7 +21,7 @@ import { getVariantTint } from "#sprites/variant";
 import type { PokemonData } from "#system/pokemon-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { SessionSaveData } from "#types/save-data";
-import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
+import { addBBCodeTextObject, addTextObject, getTextColor, RAINBOW_TINT } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { formatFancyLargeNumber, formatLargeNumber, formatMoney, getBiomeName, getPlayTimeString } from "#utils/common";
@@ -193,7 +193,7 @@ export class RunInfoUiHandler extends UiHandler {
           0,
           2,
           gamepadType,
-          globalScene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.Button_Cycle_Ability),
+          globalScene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.BUTTON_CYCLE_ABILITY),
         );
       }
       abilityButtonContainer.add([abilityButtonText, abilityButtonElement]);
@@ -257,14 +257,14 @@ export class RunInfoUiHandler extends UiHandler {
           0,
           4,
           gamepadType,
-          globalScene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.Button_Cycle_Shiny),
+          globalScene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.BUTTON_CYCLE_SHINY),
         );
         formButtonElement = new Phaser.GameObjects.Sprite(
           globalScene,
           0,
           16,
           gamepadType,
-          globalScene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.Button_Cycle_Form),
+          globalScene.inputController?.getIconForLatestInputRecorded(SettingKeyboard.BUTTON_CYCLE_FORM),
         );
       }
       hallofFameInstructionContainer.add([shinyButtonText, shinyButtonElement]);
@@ -603,7 +603,7 @@ export class RunInfoUiHandler extends UiHandler {
       && this.runInfo.waveIndex === globalScene.gameData.gameStats.highestEndlessWave
     ) {
       modeText.appendText(` [${i18next.t("runHistory:personalBest")}]`);
-      modeText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
+      modeText.setTint(...RAINBOW_TINT);
     }
 
     // Duration + Money
@@ -639,7 +639,7 @@ export class RunInfoUiHandler extends UiHandler {
     if (luckValue < 14) {
       luckInfo = "[color=#" + getLuckTextTint(luckValue).toString(16) + "]" + luckInfo + "[/color]";
     } else {
-      luckText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
+      luckText.setTint(...RAINBOW_TINT);
     }
     luckText.appendText("[align=right]" + luckInfo + "[/align]", false);
     luckText.setPosition(windowX - luckText.displayWidth - 5, windowY - 13);
@@ -843,7 +843,7 @@ export class RunInfoUiHandler extends UiHandler {
         shinyStar.setOrigin(0, 0);
         shinyStar.setScale(0.65);
         shinyStar.setPositionRelative(pokeInfoTextContainer, 28, 0);
-        shinyStar.setTint(getVariantTint(!doubleShiny ? pokemon.getVariant() : pokemon.variant));
+        shinyStar.setTint(getVariantTint(doubleShiny ? pokemon.variant : pokemon.getVariant()));
         marksContainer.add(shinyStar);
         this.getUi().bringToTop(shinyStar);
         if (doubleShiny) {
@@ -956,7 +956,7 @@ export class RunInfoUiHandler extends UiHandler {
    * False -> Shows the Pokemon's held items and hides default information
    */
   private showParty(partyVisible: boolean): void {
-    const allContainers = this.partyContainer.getAll("name", "PkmnInfo");
+    const allContainers = this.partyContainer.getAll<Phaser.GameObjects.Container>("name", "PkmnInfo");
     allContainers.forEach((c: Phaser.GameObjects.Container) => {
       c.getByName<Phaser.GameObjects.Container>("PkmnMoves").setVisible(partyVisible);
       c.getByName<Phaser.GameObjects.Container>("PkmnInfoText").setVisible(partyVisible);
@@ -1140,12 +1140,12 @@ export class RunInfoUiHandler extends UiHandler {
         break;
       case Button.CYCLE_SHINY:
         if (this.isVictory && this.pageMode !== RunInfoUiMode.ENDING_ART) {
-          if (!this.hallofFameContainer.visible) {
-            this.hallofFameContainer.setVisible(true);
-            this.pageMode = RunInfoUiMode.HALL_OF_FAME;
-          } else {
+          if (this.hallofFameContainer.visible) {
             this.hallofFameContainer.setVisible(false);
             this.pageMode = RunInfoUiMode.MAIN;
+          } else {
+            this.hallofFameContainer.setVisible(true);
+            this.pageMode = RunInfoUiMode.HALL_OF_FAME;
           }
         }
         break;

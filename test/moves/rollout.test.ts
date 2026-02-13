@@ -4,7 +4,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Rollout", () => {
   let phaserGame: Phaser.Game;
@@ -16,16 +16,11 @@ describe("Moves - Rollout", () => {
     });
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
       .criticalHits(false)
       .battleStyle("single")
-      .starterSpecies(SpeciesId.RATTATA)
       .ability(AbilityId.BALL_FETCH)
       .enemySpecies(SpeciesId.BIDOOF)
       .enemyAbility(AbilityId.BALL_FETCH)
@@ -42,7 +37,7 @@ describe("Moves - Rollout", () => {
     const turns = 6;
     const dmgHistory: number[] = [];
 
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.RATTATA);
 
     const playerPkm = game.field.getPlayerPokemon();
     vi.spyOn(playerPkm, "stats", "get").mockReturnValue([500000, 1, 1, 1, 1, 1]); // HP, ATK, DEF, SPATK, SPDEF, SPD

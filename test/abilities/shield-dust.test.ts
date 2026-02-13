@@ -4,11 +4,11 @@ import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { MoveEffectPhase } from "#phases/move-effect-phase";
+import type { MoveEffectPhase } from "#phases/move-effect-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import { NumberHolder } from "#utils/common";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Shield Dust", () => {
   let phaserGame: Phaser.Game;
@@ -18,10 +18,6 @@ describe("Abilities - Shield Dust", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -36,7 +32,7 @@ describe("Abilities - Shield Dust", () => {
   });
 
   it("Shield Dust", async () => {
-    await game.classicMode.startBattle([SpeciesId.PIDGEOT]);
+    await game.classicMode.startBattle(SpeciesId.PIDGEOT);
 
     game.field.getEnemyPokemon().stats[Stat.SPDEF] = 10000;
     expect(game.field.getPlayerPokemon().formIndex).toBe(0);
@@ -44,7 +40,7 @@ describe("Abilities - Shield Dust", () => {
     game.move.select(MoveId.AIR_SLASH);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to(MoveEffectPhase, false);
+    await game.phaseInterceptor.to("MoveEffectPhase", false);
 
     // Shield Dust negates secondary effect
     const phase = game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase;

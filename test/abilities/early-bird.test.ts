@@ -6,7 +6,7 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Early Bird", () => {
   let phaserGame: Phaser.Game;
@@ -16,10 +16,6 @@ describe("Abilities - Early Bird", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -35,7 +31,7 @@ describe("Abilities - Early Bird", () => {
   });
 
   it("reduces Rest's sleep time to 1 turn", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();
 
@@ -60,7 +56,7 @@ describe("Abilities - Early Bird", () => {
   });
 
   it("reduces 3-turn sleep to 1 turn", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();
     player.status = new Status(StatusEffect.SLEEP, 0, 4);
@@ -79,7 +75,7 @@ describe("Abilities - Early Bird", () => {
   });
 
   it("reduces 1-turn sleep to 0 turns", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();
     player.status = new Status(StatusEffect.SLEEP, 0, 2);

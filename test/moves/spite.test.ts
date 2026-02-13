@@ -6,7 +6,7 @@ import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Spite", () => {
   let phaserGame: Phaser.Game;
@@ -16,10 +16,6 @@ describe("Moves - Spite", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -35,7 +31,7 @@ describe("Moves - Spite", () => {
   });
 
   it("should reduce the PP of the target's last used move by 4", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const karp = game.field.getEnemyPokemon();
     game.move.changeMoveset(karp, [MoveId.SPLASH, MoveId.TACKLE]);
@@ -56,7 +52,7 @@ describe("Moves - Spite", () => {
   });
 
   it("should fail if the target has not used a move", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const karp = game.field.getEnemyPokemon();
     game.move.changeMoveset(karp, [MoveId.SPLASH, MoveId.TACKLE]);
@@ -71,7 +67,7 @@ describe("Moves - Spite", () => {
   });
 
   it("should fail if the target's last used move is out of PP", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const karp = game.field.getEnemyPokemon();
     game.move.changeMoveset(karp, [MoveId.TACKLE]);
@@ -87,7 +83,7 @@ describe("Moves - Spite", () => {
   });
 
   it("should fail if the target's last used move is not in their moveset", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const karp = game.field.getEnemyPokemon();
     game.move.changeMoveset(karp, [MoveId.TACKLE]);
@@ -106,7 +102,7 @@ describe("Moves - Spite", () => {
   it("should ignore virtual and Dancer-induced moves", async () => {
     game.override.battleStyle("double").enemyAbility(AbilityId.DANCER);
     game.move.forceMetronomeMove(MoveId.SPLASH);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const [karp1, karp2] = game.scene.getEnemyField();
     game.move.changeMoveset(karp1, [MoveId.SPLASH, MoveId.METRONOME, MoveId.SWORDS_DANCE]);

@@ -15,7 +15,7 @@ import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Move - Feint", () => {
   let phaserGame: Phaser.Game;
@@ -25,10 +25,6 @@ describe("Move - Feint", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(async () => {
@@ -50,13 +46,13 @@ describe("Move - Feint", () => {
     { moveId: MoveId.MAT_BLOCK, tagType: ArenaTagType.MAT_BLOCK, moveName: "Mat Block" },
     { moveId: MoveId.CRAFTY_SHIELD, tagType: ArenaTagType.CRAFTY_SHIELD, moveName: "Crafty Shield" },
   ])("should bypass and remove $moveName from opposing pokemon", async ({ moveId, tagType }) => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.FEINT);
     await game.move.forceEnemyMove(moveId);
     await game.toEndOfTurn();
 
-    expect(game).not.toHaveArenaTag({ tagType, side: ArenaTagSide.ENEMY });
+    expect(game).not.toHaveArenaTag(tagType, ArenaTagSide.ENEMY);
     expect(game.field.getEnemyPokemon()).not.toHaveFullHp();
   });
 
@@ -67,13 +63,13 @@ describe("Move - Feint", () => {
     { moveId: MoveId.CRAFTY_SHIELD, tagType: ArenaTagType.CRAFTY_SHIELD, moveName: "Crafty Shield" },
   ])("should bypass and remove $moveName from target side even if target is an ally", async ({ moveId, tagType }) => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
 
     game.move.use(MoveId.FEINT, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2);
     game.move.use(moveId, BattlerIndex.PLAYER_2);
     await game.toEndOfTurn();
 
-    expect(game).not.toHaveArenaTag({ tagType, side: ArenaTagSide.PLAYER });
+    expect(game).not.toHaveArenaTag(tagType, ArenaTagSide.PLAYER);
     expect(game.field.getPlayerParty()[1]).not.toHaveFullHp();
   });
 
@@ -86,7 +82,7 @@ describe("Move - Feint", () => {
     { moveId: MoveId.BURNING_BULWARK, moveName: "Burning Bulwark" },
     { moveId: MoveId.BANEFUL_BUNKER, moveName: "Baneful Bunker" },
   ])("should ignore and remove the effects of $moveName from opposing pokemon", async ({ moveId }) => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
@@ -126,7 +122,7 @@ describe("Move - Feint", () => {
     { moveId: MoveId.BANEFUL_BUNKER, moveName: "Baneful Bunker" },
   ])("should ignore and remove the effects of $moveName from target even if target is an ally", async ({ moveId }) => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
 
     const [player, player2] = game.field.getPlayerParty();
 

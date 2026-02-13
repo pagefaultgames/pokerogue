@@ -5,7 +5,6 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-// @ts-check
 /// <reference path="./global.d.ts" />
 
 import { globSync } from "node:fs";
@@ -23,8 +22,11 @@ const config = {
     "src/extensions.ts",
     "src/vite.env.d.ts",
     "**/*+.test.ts",
+    "**/*+.test-d.ts",
     "test/test-utils/setup",
     "test/test-utils/reporters",
+    "test/@types/matcher-helpers.ts",
+    "test/@types/vitest.d.ts",
   ],
   excludePrivate: false, // Private members are useful in the docs for contributors
   excludeReferences: true, // prevent documenting re-exports
@@ -45,6 +47,7 @@ const config = {
     "typedoc-github-theme",
     "typedoc-plugin-coverage",
     "typedoc-plugin-mdn-links",
+    "typedoc-plugin-missing-exports",
     ...globSync("./typedoc-plugins/**/*.js").map(plugin => "./" + plugin),
   ],
   // Avoid emitting docs for branches other than main/beta
@@ -62,6 +65,8 @@ const config = {
   navigationLinks: {
     GitHub: "https://github.com/pagefaultgames/pokerogue",
   },
+  includeDocCommentReferences: true,
+  placeInternalsInOwningModule: true,
 };
 
 // If generating docs for main/beta, check the ref name and add an appropriate navigation header

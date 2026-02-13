@@ -387,6 +387,10 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       ],
       victory: ["dialogue:richFemale.victory.1", "dialogue:richFemale.victory.2", "dialogue:richFemale.victory.3"],
     },
+    {
+      encounter: ["dialogue:richDouble.encounter.1", "dialogue:richDouble.encounter.2"],
+      victory: ["dialogue:richDouble.victory.1", "dialogue:richDouble.victory.2"],
+    },
   ],
   [TrainerType.RICH_KID]: [
     {
@@ -410,6 +414,184 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
         "dialogue:richKidFemale.victory.3",
         "dialogue:richKidFemale.victory.4",
       ],
+    },
+  ],
+  [TrainerType.ROUGHNECK]: [
+    {
+      encounter: ["dialogue:roughneck.encounter.1", "dialogue:roughneck.encounter.2", "dialogue:roughneck.encounter.3"],
+      victory: ["dialogue:roughneck.victory.1", "dialogue:roughneck.victory.2", "dialogue:roughneck.victory.3"],
+    },
+  ],
+  [TrainerType.VETERAN]: [
+    {
+      encounter: ["dialogue:veteran.encounter.1", "dialogue:veteran.encounter.2"],
+      victory: ["dialogue:veteran.victory.1", "dialogue:veteran.victory.2"],
+    },
+    {
+      encounter: ["dialogue:veteranFemale.encounter.1", "dialogue:veteranFemale.encounter.2"],
+      victory: ["dialogue:veteranFemale.victory.1", "dialogue:veteranFemale.victory.2"],
+    },
+  ],
+  [TrainerType.AROMA_LADY]: [
+    {
+      encounter: ["dialogue:aromaLady.encounter.1", "dialogue:aromaLady.encounter.2", "dialogue:aromaLady.encounter.3"],
+      victory: ["dialogue:aromaLady.victory.1", "dialogue:aromaLady.victory.2", "dialogue:aromaLady.victory.3"],
+    },
+  ],
+  [TrainerType.BIRD_KEEPER]: [
+    {
+      encounter: [
+        "dialogue:birdKeeper.encounter.1",
+        "dialogue:birdKeeper.encounter.2",
+        "dialogue:birdKeeper.encounter.3",
+      ],
+      victory: ["dialogue:birdKeeper.victory.1", "dialogue:birdKeeper.victory.2", "dialogue:birdKeeper.victory.3"],
+    },
+    {
+      encounter: [
+        "dialogue:birdKeeperFemale.encounter.1",
+        "dialogue:birdKeeperFemale.encounter.2",
+        "dialogue:birdKeeperFemale.encounter.3",
+      ],
+      victory: [
+        "dialogue:birdKeeperFemale.victory.1",
+        "dialogue:birdKeeperFemale.victory.2",
+        "dialogue:birdKeeperFemale.victory.3",
+      ],
+    },
+  ],
+  [TrainerType.BUG_CATCHER]: [
+    {
+      encounter: [
+        "dialogue:bugCatcher.encounter.1",
+        "dialogue:bugCatcher.encounter.2",
+        "dialogue:bugCatcher.encounter.3",
+      ],
+      victory: ["dialogue:bugCatcher.victory.1", "dialogue:bugCatcher.victory.2", "dialogue:bugCatcher.victory.3"],
+    },
+  ],
+  [TrainerType.CAMPER]: [
+    {
+      encounter: ["dialogue:camper.encounter.1", "dialogue:camper.encounter.2", "dialogue:camper.encounter.3"],
+      victory: ["dialogue:camper.victory.1", "dialogue:camper.victory.2", "dialogue:camper.victory.3"],
+    },
+    {
+      encounter: [
+        "dialogue:camperFemale.encounter.1",
+        "dialogue:camperFemale.encounter.2",
+        "dialogue:camperFemale.encounter.3",
+      ],
+      victory: [
+        "dialogue:camperFemale.victory.1",
+        "dialogue:camperFemale.victory.2",
+        "dialogue:camperFemale.victory.3",
+      ],
+    },
+  ],
+  [TrainerType.COLLECTOR]: [
+    {
+      encounter: ["dialogue:collector.encounter.1", "dialogue:collector.encounter.2", "dialogue:collector.encounter.3"],
+      victory: ["dialogue:collector.victory.1", "dialogue:collector.victory.2", "dialogue:collector.victory.3"],
+    },
+  ],
+  [TrainerType.DRAGON_TAMER]: [
+    {
+      encounter: [
+        "dialogue:dragonTamer.encounter.1",
+        "dialogue:dragonTamer.encounter.2",
+        "dialogue:dragonTamer.encounter.3",
+      ],
+      victory: ["dialogue:dragonTamer.victory.1", "dialogue:dragonTamer.victory.2", "dialogue:dragonTamer.victory.3"],
+    },
+  ],
+  [TrainerType.FAIRY_TALE_GIRL]: [
+    {
+      encounter: [
+        "dialogue:fairyTaleGirl.encounter.1",
+        "dialogue:fairyTaleGirl.encounter.2",
+        "dialogue:fairyTaleGirl.encounter.3",
+      ],
+      victory: [
+        "dialogue:fairyTaleGirl.victory.1",
+        "dialogue:fairyTaleGirl.victory.2",
+        "dialogue:fairyTaleGirl.victory.3",
+      ],
+    },
+  ],
+  [TrainerType.INTERVIEWERS]: [
+    {
+      encounter: ["dialogue:interviewers.encounter.1", "dialogue:interviewers.encounter.2"],
+      victory: ["dialogue:interviewers.victory.1", "dialogue:interviewers.victory.2"],
+    },
+  ],
+  [TrainerType.MYSTERIOUS_SISTERS]: [
+    {
+      encounter: ["dialogue:mysteriousSisters.encounter.1", "dialogue:mysteriousSisters.encounter.2"],
+      victory: ["dialogue:mysteriousSisters.victory.1", "dialogue:mysteriousSisters.victory.2"],
+    },
+  ],
+  [TrainerType.RUIN_MANIAC]: [
+    {
+      encounter: [
+        "dialogue:ruinManiac.encounter.1",
+        "dialogue:ruinManiac.encounter.2",
+        "dialogue:ruinManiac.encounter.3",
+      ],
+      victory: ["dialogue:ruinManiac.victory.1", "dialogue:ruinManiac.victory.2", "dialogue:ruinManiac.victory.3"],
+    },
+  ],
+  [TrainerType.SCUBA_DIVER]: [
+    {
+      encounter: [
+        "dialogue:scubaDiver.encounter.1",
+        "dialogue:scubaDiver.encounter.2",
+        "dialogue:scubaDiver.encounter.3",
+      ],
+      victory: ["dialogue:scubaDiver.victory.1", "dialogue:scubaDiver.victory.2", "dialogue:scubaDiver.victory.3"],
+    },
+    {
+      encounter: [
+        "dialogue:scubaDiverFemale.encounter.1",
+        "dialogue:scubaDiverFemale.encounter.2",
+        "dialogue:scubaDiverFemale.encounter.3",
+      ],
+      victory: [
+        "dialogue:scubaDiverFemale.victory.1",
+        "dialogue:scubaDiverFemale.victory.2",
+        "dialogue:scubaDiverFemale.victory.3",
+      ],
+    },
+  ],
+  [TrainerType.SNOW_ACE_TRAINER]: [
+    {
+      encounter: [
+        "dialogue:snowAceTrainer.encounter.1",
+        "dialogue:snowAceTrainer.encounter.2",
+        "dialogue:snowAceTrainer.encounter.3",
+      ],
+      victory: [
+        "dialogue:snowAceTrainer.victory.1",
+        "dialogue:snowAceTrainer.victory.2",
+        "dialogue:snowAceTrainer.victory.3",
+      ],
+    },
+    {
+      encounter: [
+        "dialogue:snowAceTrainerFemale.encounter.1",
+        "dialogue:snowAceTrainerFemale.encounter.2",
+        "dialogue:snowAceTrainerFemale.encounter.3",
+      ],
+      victory: [
+        "dialogue:snowAceTrainerFemale.victory.1",
+        "dialogue:snowAceTrainerFemale.victory.2",
+        "dialogue:snowAceTrainerFemale.victory.3",
+      ],
+    },
+  ],
+  [TrainerType.YOUNG_COUPLE]: [
+    {
+      encounter: ["dialogue:youngCouple.encounter.1", "dialogue:youngCouple.encounter.2"],
+      victory: ["dialogue:youngCouple.victory.1", "dialogue:youngCouple.victory.2"],
     },
   ],
   [TrainerType.ROCKET_GRUNT]: [
@@ -1619,6 +1801,11 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
     encounter: ["dialogue:marnieElite.encounter.1", "dialogue:marnieElite.encounter.2"],
     victory: ["dialogue:marnieElite.victory.1", "dialogue:marnieElite.victory.2"],
     defeat: ["dialogue:marnieElite.defeat.1", "dialogue:marnieElite.defeat.2"],
+  },
+  [TrainerType.BEDE_ELITE]: {
+    encounter: ["dialogue:bedeElite.encounter.1", "dialogue:bedeElite.encounter.2"],
+    victory: ["dialogue:bedeElite.victory.1", "dialogue:bedeElite.victory.2"],
+    defeat: ["dialogue:bedeElite.defeat.1"],
   },
   [TrainerType.NESSA_ELITE]: {
     encounter: ["dialogue:nessaElite.encounter.1", "dialogue:nessaElite.encounter.2"],

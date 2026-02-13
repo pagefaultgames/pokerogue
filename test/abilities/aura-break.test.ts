@@ -4,7 +4,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Aura Break", () => {
   let phaserGame: Phaser.Game;
@@ -16,10 +16,6 @@ describe("Abilities - Aura Break", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -39,7 +35,7 @@ describe("Abilities - Aura Break", () => {
     game.override.ability(AbilityId.FAIRY_AURA);
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
     game.move.select(MoveId.MOONBLAST);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
@@ -53,7 +49,7 @@ describe("Abilities - Aura Break", () => {
     game.override.ability(AbilityId.DARK_AURA);
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
     game.move.select(MoveId.DARK_PULSE);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
@@ -67,7 +63,7 @@ describe("Abilities - Aura Break", () => {
     game.override.ability(AbilityId.BALL_FETCH);
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+    await game.classicMode.startBattle(SpeciesId.PIKACHU);
     game.move.select(MoveId.MOONBLAST);
     await game.phaseInterceptor.to("MoveEffectPhase");
 

@@ -4,7 +4,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Reflect Type", () => {
   let phaserGame: Phaser.Game;
@@ -14,10 +14,6 @@ describe("Moves - Reflect Type", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -31,7 +27,7 @@ describe("Moves - Reflect Type", () => {
 
   it("will make the user Normal/Grass if targetting a typeless Pokemon affected by Forest's Curse", async () => {
     game.override.startingLevel(60).enemySpecies(SpeciesId.CHARMANDER);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.field.getEnemyPokemon();
@@ -43,8 +39,7 @@ describe("Moves - Reflect Type", () => {
     game.move.use(MoveId.FORESTS_CURSE);
     await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
-    expect(enemyPokemon.getTypes().includes(PokemonType.UNKNOWN)).toBe(true);
-    expect(enemyPokemon.getTypes().includes(PokemonType.GRASS)).toBe(true);
+    expect(enemyPokemon).toHaveTypes([PokemonType.UNKNOWN, PokemonType.GRASS]);
 
     game.move.use(MoveId.REFLECT_TYPE);
     await game.move.forceEnemyMove(MoveId.SPLASH);

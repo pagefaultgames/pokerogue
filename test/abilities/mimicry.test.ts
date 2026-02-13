@@ -4,7 +4,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Mimicry", () => {
   let phaserGame: Phaser.Game;
@@ -14,10 +14,6 @@ describe("Abilities - Mimicry", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-  });
-
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
   });
 
   beforeEach(() => {
@@ -33,7 +29,7 @@ describe("Abilities - Mimicry", () => {
 
   it("Mimicry activates after the Pokémon with Mimicry is switched in while terrain is present, or whenever there is a change in terrain", async () => {
     game.override.enemyAbility(AbilityId.MISTY_SURGE);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.ABRA]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.ABRA);
 
     const [playerPokemon1, playerPokemon2] = game.scene.getPlayerParty();
     game.move.select(MoveId.SPLASH);
@@ -48,7 +44,7 @@ describe("Abilities - Mimicry", () => {
 
   it("Pokemon should revert back to its original, root type once terrain ends", async () => {
     game.override.enemyAbility(AbilityId.MIMICRY);
-    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
+    await game.classicMode.startBattle(SpeciesId.REGIELEKI);
 
     const playerPokemon = game.field.getPlayerPokemon();
 
@@ -58,9 +54,7 @@ describe("Abilities - Mimicry", () => {
 
     expect(playerPokemon.getTypes()).toEqual([PokemonType.PSYCHIC]);
 
-    if (game.scene.arena.terrain) {
-      game.scene.arena.terrain.turnsLeft = 1;
-    }
+    game.scene.arena.terrain!.turnsLeft = 1;
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.SPLASH);
@@ -71,7 +65,7 @@ describe("Abilities - Mimicry", () => {
 
   it("If the Pokemon is under the effect of a type-adding move and an equivalent terrain activates, the move's effect disappears", async () => {
     game.override.enemyMoveset([MoveId.FORESTS_CURSE, MoveId.GRASSY_TERRAIN]);
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const playerPokemon = game.field.getPlayerPokemon();
     game.move.select(MoveId.SPLASH);

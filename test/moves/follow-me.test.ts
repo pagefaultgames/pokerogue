@@ -3,10 +3,9 @@ import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { TurnEndPhase } from "#phases/turn-end-phase";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { beforeAll, beforeEach, describe, expect, test } from "vitest";
 
 describe("Moves - Follow Me", () => {
   let phaserGame: Phaser.Game;
@@ -18,15 +17,10 @@ describe("Moves - Follow Me", () => {
     });
   });
 
-  afterEach(() => {
-    game.phaseInterceptor.restoreOg();
-  });
-
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("double")
-      .starterSpecies(SpeciesId.AMOONGUSS)
       .ability(AbilityId.BALL_FETCH)
       .enemySpecies(SpeciesId.SNORLAX)
       .startingLevel(100)
@@ -36,7 +30,7 @@ describe("Moves - Follow Me", () => {
   });
 
   test("move should redirect enemy attacks to the user", async () => {
-    await game.classicMode.startBattle([SpeciesId.AMOONGUSS, SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.AMOONGUSS, SpeciesId.CHARIZARD);
 
     const playerPokemon = game.scene.getPlayerField();
 
@@ -47,14 +41,14 @@ describe("Moves - Follow Me", () => {
     await game.move.selectEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER_2);
     await game.move.selectEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER_2);
 
-    await game.phaseInterceptor.to(TurnEndPhase, false);
+    await game.phaseInterceptor.to("TurnEndPhase", false);
 
     expect(playerPokemon[0].hp).toBeLessThan(playerPokemon[0].getMaxHp());
     expect(playerPokemon[1].hp).toBe(playerPokemon[1].getMaxHp());
   });
 
   test("move should redirect enemy attacks to the first ally that uses it", async () => {
-    await game.classicMode.startBattle([SpeciesId.AMOONGUSS, SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.AMOONGUSS, SpeciesId.CHARIZARD);
 
     const playerPokemon = game.scene.getPlayerField();
 
@@ -65,7 +59,7 @@ describe("Moves - Follow Me", () => {
     await game.move.selectEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER);
     await game.move.selectEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER_2);
 
-    await game.phaseInterceptor.to(TurnEndPhase, false);
+    await game.phaseInterceptor.to("TurnEndPhase", false);
 
     playerPokemon.sort((a, b) => a.getEffectiveStat(Stat.SPD) - b.getEffectiveStat(Stat.SPD));
 
@@ -76,7 +70,7 @@ describe("Moves - Follow Me", () => {
   test("move effect should be bypassed by Stalwart", async () => {
     game.override.ability(AbilityId.STALWART).moveset([MoveId.QUICK_ATTACK]);
 
-    await game.classicMode.startBattle([SpeciesId.AMOONGUSS, SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.AMOONGUSS, SpeciesId.CHARIZARD);
 
     const enemyPokemon = game.scene.getEnemyField();
 
@@ -87,7 +81,7 @@ describe("Moves - Follow Me", () => {
     await game.move.selectEnemyMove(MoveId.FOLLOW_ME);
     await game.move.selectEnemyMove(MoveId.SPLASH);
 
-    await game.phaseInterceptor.to(TurnEndPhase, false);
+    await game.phaseInterceptor.to("TurnEndPhase", false);
 
     // If redirection was bypassed, both enemies should be damaged
     expect(enemyPokemon[0].hp).toBeLessThan(enemyPokemon[0].getMaxHp());
@@ -97,7 +91,7 @@ describe("Moves - Follow Me", () => {
   test("move effect should be bypassed by Snipe Shot", async () => {
     game.override.moveset([MoveId.SNIPE_SHOT]);
 
-    await game.classicMode.startBattle([SpeciesId.AMOONGUSS, SpeciesId.CHARIZARD]);
+    await game.classicMode.startBattle(SpeciesId.AMOONGUSS, SpeciesId.CHARIZARD);
 
     const enemyPokemon = game.scene.getEnemyField();
 
@@ -107,7 +101,7 @@ describe("Moves - Follow Me", () => {
     await game.move.selectEnemyMove(MoveId.FOLLOW_ME);
     await game.move.selectEnemyMove(MoveId.SPLASH);
 
-    await game.phaseInterceptor.to(TurnEndPhase, false);
+    await game.phaseInterceptor.to("TurnEndPhase", false);
 
     // If redirection was bypassed, both enemies should be damaged
     expect(enemyPokemon[0].hp).toBeLessThan(enemyPokemon[0].getMaxHp());
