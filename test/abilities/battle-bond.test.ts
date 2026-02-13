@@ -91,7 +91,7 @@ describe("Abilities - Battle Bond", () => {
     });
   });
 
-  describe("Non-Greninja", () => {
+  describe("Non-Greninja and Fusions", () => {
     beforeEach(() => {
       game = new GameManager(phaserGame);
       game.override
@@ -137,6 +137,26 @@ describe("Abilities - Battle Bond", () => {
       game.move.use(MoveId.THUNDERBOLT);
       await game.toEndOfTurn();
 
+      expect(player).toHaveStatStage(Stat.ATK, 1);
+      expect(player).toHaveStatStage(Stat.SPATK, 1);
+      expect(player).toHaveStatStage(Stat.SPD, 1);
+    });
+
+    it.each([
+      { baseSpecies: SpeciesId.GRENINJA, fusionSpecies: SpeciesId.MILOTIC, slot: "Base" },
+      { baseSpecies: SpeciesId.MILOTIC, fusionSpecies: SpeciesId.GRENINJA, slot: "Fusion" },
+    ])("should increase Attack, Special Attack, and Speed stages by 1 for fusions even if the $slot species of the fusion is Greninja", async ({
+      baseSpecies,
+      fusionSpecies,
+    }) => {
+      game.override.starterFusionSpecies(fusionSpecies).enableStarterFusion();
+      await game.classicMode.startBattle(baseSpecies);
+
+      game.move.use(MoveId.THUNDERBOLT);
+      await game.toEndOfTurn();
+
+      const player = game.field.getPlayerPokemon();
+      expect(player.isFusion()).toBe(true);
       expect(player).toHaveStatStage(Stat.ATK, 1);
       expect(player).toHaveStatStage(Stat.SPATK, 1);
       expect(player).toHaveStatStage(Stat.SPD, 1);
