@@ -91,7 +91,7 @@ describe("Abilities - Battle Bond", () => {
     });
   });
 
-  describe("Non-Greninja and Fusions", () => {
+  describe("Non-Greninja", () => {
     beforeEach(() => {
       game = new GameManager(phaserGame);
       game.override
@@ -142,15 +142,9 @@ describe("Abilities - Battle Bond", () => {
       expect(player).toHaveStatStage(Stat.SPD, 1);
     });
 
-    it.each([
-      { baseSpecies: SpeciesId.GRENINJA, fusionSpecies: SpeciesId.MILOTIC, slot: "Base" },
-      { baseSpecies: SpeciesId.MILOTIC, fusionSpecies: SpeciesId.GRENINJA, slot: "Fusion" },
-    ])("should increase Attack, Special Attack, and Speed stages by 1 for fusions even if the $slot species of the fusion is Greninja", async ({
-      baseSpecies,
-      fusionSpecies,
-    }) => {
-      game.override.starterFusionSpecies(fusionSpecies).enableStarterFusion();
-      await game.classicMode.startBattle(baseSpecies);
+    it("should increase Attack, Special Attack, and Speed stages by 1 for fusions without Greninja", async () => {
+      game.override.starterFusionSpecies(SpeciesId.ALAKAZAM).enableStarterFusion();
+      await game.classicMode.startBattle(SpeciesId.MILOTIC);
 
       game.move.use(MoveId.THUNDERBOLT);
       await game.toEndOfTurn();
@@ -160,6 +154,23 @@ describe("Abilities - Battle Bond", () => {
       expect(player).toHaveStatStage(Stat.ATK, 1);
       expect(player).toHaveStatStage(Stat.SPATK, 1);
       expect(player).toHaveStatStage(Stat.SPD, 1);
+    });
+
+    it.each([
+      { baseSpecies: SpeciesId.GRENINJA, fusionSpecies: SpeciesId.MILOTIC, slot: "Base" },
+      { baseSpecies: SpeciesId.MILOTIC, fusionSpecies: SpeciesId.GRENINJA, slot: "Extra" },
+    ])("should not activate for fusions if Greninja is the $slot species", async ({ baseSpecies, fusionSpecies }) => {
+      game.override.starterFusionSpecies(baseSpecies).enableStarterFusion();
+      await game.classicMode.startBattle(fusionSpecies);
+
+      game.move.use(MoveId.THUNDERBOLT);
+      await game.toEndOfTurn();
+
+      const player = game.field.getPlayerPokemon();
+      expect(player.isFusion()).toBe(true);
+      expect(player).toHaveStatStage(Stat.ATK, 0);
+      expect(player).toHaveStatStage(Stat.SPATK, 0);
+      expect(player).toHaveStatStage(Stat.SPD, 0);
     });
   });
 });
