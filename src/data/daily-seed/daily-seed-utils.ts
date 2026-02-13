@@ -1,5 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { isBeta, isDev } from "#constants/app-constants";
+import { Gender } from "#data/gender";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
@@ -211,6 +212,7 @@ export function getDailyRunStarter(species: PokemonSpecies, config?: DailySeedSt
     passive: false,
     nature: pokemon.getNature(),
     pokerus: pokemon.pokerus,
+    female: pokemon.gender === Gender.FEMALE,
   };
   pokemon.destroy();
   return starter;
