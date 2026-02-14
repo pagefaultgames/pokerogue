@@ -1167,7 +1167,6 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyTemplates(
       trainerPartyTemplates.TWO_AVG_SAME_ONE_AVG,
       trainerPartyTemplates.TWO_AVG_SAME_ONE_STRONG,
-      trainerPartyTemplates.THREE_AVG_SAME,
       trainerPartyTemplates.THREE_AVG,
       trainerPartyTemplates.FOUR_WEAK,
       trainerPartyTemplates.ONE_STRONG,
@@ -1415,9 +1414,10 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.YOUNGSTER)
     .setPartyTemplates(
       trainerPartyTemplates.THREE_WEAK,
-      trainerPartyTemplates.THREE_WEAK_SAME,
-      trainerPartyTemplates.THREE_AVG,
-      trainerPartyTemplates.THREE_AVG_SAME,
+      trainerPartyTemplates.TWO_WEAK_SAME_ONE_AVG,
+      trainerPartyTemplates.TWO_WEAK_ONE_AVG,
+      trainerPartyTemplates.TWO_AVG,
+      trainerPartyTemplates.FOUR_WEAK,
     )
     .setSpeciesFilter(s => s.isOfType(PokemonType.BUG)),
   [TrainerType.CAMPER]: new TrainerConfig(++t)
@@ -1542,6 +1542,7 @@ export const trainerConfigs: TrainerConfigs = {
       trainerPartyTemplates.TWO_STRONG,
       trainerPartyTemplates.TWO_AVG_ONE_STRONG,
       trainerPartyTemplates.TWO_AVG_SAME_ONE_STRONG,
+      trainerPartyTemplates.FOUR_WEAK,
     )
     .setSpeciesFilter(s => s.isOfType(PokemonType.DRAGON)),
   [TrainerType.FAIRY_TALE_GIRL]: new TrainerConfig(++t)
@@ -1553,6 +1554,7 @@ export const trainerConfigs: TrainerConfigs = {
       trainerPartyTemplates.TWO_AVG_SAME_ONE_AVG,
       trainerPartyTemplates.THREE_AVG,
       trainerPartyTemplates.TWO_STRONG,
+      trainerPartyTemplates.FOUR_WEAK,
     )
     .setSpeciesFilter(s => s.isOfType(PokemonType.FAIRY)),
   [TrainerType.FIREBREATHER]: new TrainerConfig(++t)
@@ -1566,8 +1568,9 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyTemplates(
       trainerPartyTemplates.TWO_WEAK_SAME_ONE_AVG,
       trainerPartyTemplates.ONE_AVG,
-      trainerPartyTemplates.THREE_WEAK_SAME,
+      trainerPartyTemplates.TWO_AVG,
       trainerPartyTemplates.ONE_STRONG,
+      trainerPartyTemplates.FOUR_WEAK,
     )
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [
@@ -1621,7 +1624,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyTemplates(
       trainerPartyTemplates.TWO_AVG,
       trainerPartyTemplates.ONE_AVG_ONE_STRONG,
-      trainerPartyTemplates.TWO_AVG_SAME_ONE_AVG,
+      trainerPartyTemplates.TWO_AVG_SAME_ONE_STRONG,
       trainerPartyTemplates.THREE_AVG,
       trainerPartyTemplates.TWO_STRONG,
     )
@@ -1835,7 +1838,6 @@ export const trainerConfigs: TrainerConfigs = {
       trainerPartyTemplates.TWO_WEAK,
       trainerPartyTemplates.TWO_AVG,
       trainerPartyTemplates.TWO_WEAK_SAME_ONE_AVG,
-      trainerPartyTemplates.TWO_WEAK_SAME_TWO_WEAK_SAME,
       trainerPartyTemplates.ONE_STRONGER,
     )
     .setSpeciesPools({
@@ -1963,7 +1965,11 @@ export const trainerConfigs: TrainerConfigs = {
     .setHasGenders("Lady")
     .setHasDouble("Rich Kids")
     .setEncounterBgm(TrainerType.RICH)
-    .setPartyTemplates(trainerPartyTemplates.THREE_WEAK_SAME, trainerPartyTemplates.TWO_WEAK_SAME_ONE_AVG)
+    .setPartyTemplates(
+      trainerPartyTemplates.THREE_WEAK,
+      trainerPartyTemplates.TWO_AVG,
+      trainerPartyTemplates.TWO_WEAK_ONE_AVG,
+    )
     .setSpeciesFilter(s => s.baseTotal <= 460),
   [TrainerType.ROUGHNECK]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.4)
@@ -2781,32 +2787,37 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [
+        SpeciesId.ZUBAT,
+        SpeciesId.POOCHYENA,
         SpeciesId.GULPIN,
-        SpeciesId.SKORUPI,
         SpeciesId.CROAGUNK,
         SpeciesId.PURRLOIN,
+        SpeciesId.FOONGUS,
         SpeciesId.SCRAGGY,
         SpeciesId.BUNNELBY,
         SpeciesId.FLETCHLING,
         SpeciesId.SCATTERBUG,
-        SpeciesId.LITLEO,
+        SpeciesId.PANCHAM,
         SpeciesId.ESPURR,
         SpeciesId.HELIOPTILE,
         SpeciesId.INKAY,
       ],
       [TrainerPoolTier.UNCOMMON]: [
         SpeciesId.HOUNDOUR,
-        SpeciesId.POOCHYENA,
         SpeciesId.ELECTRIKE,
-        SpeciesId.FOONGUS,
-        SpeciesId.PANCHAM,
+        SpeciesId.SABLEYE,
+        SpeciesId.SKORUPI,
+        SpeciesId.VENIPEDE,
+        SpeciesId.LITLEO,
         SpeciesId.BINACLE,
         SpeciesId.SKRELP,
         SpeciesId.CLAUNCHER,
         SpeciesId.PHANTUMP,
         SpeciesId.PUMPKABOO,
+        SpeciesId.NICKIT,
+        SpeciesId.ALOLA_MEOWTH,
       ],
-      [TrainerPoolTier.RARE]: [SpeciesId.LITWICK, SpeciesId.BERGMITE, SpeciesId.NOIBAT],
+      [TrainerPoolTier.RARE]: [SpeciesId.ABSOL, SpeciesId.LITWICK, SpeciesId.BERGMITE, SpeciesId.NOIBAT],
       [TrainerPoolTier.SUPER_RARE]: [SpeciesId.GOOMY, SpeciesId.HONEDGE],
     }),
   [TrainerType.BRYONY]: new TrainerConfig(++t)
