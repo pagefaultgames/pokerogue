@@ -1715,15 +1715,49 @@ export const trainerConfigs: TrainerConfigs = {
   [TrainerType.MYSTERIOUS_SISTERS]: new TrainerConfig(++t)
     .setDoubleOnly()
     .setMoneyMultiplier(1.6)
-    .setEncounterBgm(TrainerType.ROUGHNECK)
+    .setEncounterBgm(TrainerType.PSYCHIC)
     .setPartyTemplateFunc(() =>
       getWavePartyTemplate(
         trainerPartyTemplates.TWO_WEAK,
         trainerPartyTemplates.TWO_AVG,
-        trainerPartyTemplates.ONE_AVG_ONE_STRONG,
+        trainerPartyTemplates.TWO_STRONG,
       ),
     )
-    .setSpeciesFilter(s => s.isOfType(PokemonType.GHOST) || s.isOfType(PokemonType.FAIRY)),
+    .setPartyMemberFunc(
+      0,
+      getRandomPartyMemberFunc([
+        SpeciesId.GASTLY,
+        SpeciesId.MISDREAVUS,
+        SpeciesId.DRIFLOON,
+        SpeciesId.SABLEYE,
+        SpeciesId.BANETTE,
+        SpeciesId.ESPURR,
+        SpeciesId.PUMPKABOO,
+        SpeciesId.HATENNA,
+        SpeciesId.SINISTEA,
+        SpeciesId.GREAVARD,
+        SpeciesId.ALOLA_MAROWAK,
+      ]),
+    )
+    .setPartyMemberFunc(
+      1,
+      getRandomPartyMemberFunc(
+        [
+          SpeciesId.CLEFFA,
+          SpeciesId.AZURILL,
+          SpeciesId.TOGEPI,
+          SpeciesId.MAWILE,
+          SpeciesId.MIMIKYU,
+          SpeciesId.ESPURR,
+          SpeciesId.SWIRLIX,
+          SpeciesId.IMPIDIMP,
+          SpeciesId.MILCERY,
+          SpeciesId.SNUBBULL,
+          SpeciesId.ALOLA_VULPIX,
+        ],
+        TrainerSlot.TRAINER_PARTNER,
+      ),
+    ),
   [TrainerType.NURSERY_AIDE]: new TrainerConfig(++t).setMoneyMultiplier(1.3).setEncounterBgm("lass"),
   [TrainerType.OFFICER]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.55)
