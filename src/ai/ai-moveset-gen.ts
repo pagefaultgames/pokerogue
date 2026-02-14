@@ -352,10 +352,10 @@ function filterSupercededMoves(pool: Map<MoveId, number>, ...otherPools: Map<Mov
 function filterMovePool(pool: Map<MoveId, number>, isBoss: boolean, hasTrainer: boolean, pokemon: Pokemon): void {
   const isSingles = !globalScene.currentBattle?.double;
   const level = pokemon.level;
-  const blockWeatherMoves =
+  const blockWeatherSettingMoves =
     pokemon.hasAbilityWithAttr("PostSummonWeatherChangeAbAttr")
     || pokemon.hasAbilityWithAttr("SuppressWeatherEffectAbAttr");
-  const blockTerrainMoves = pokemon.hasAbilityWithAttr("PostSummonTerrainChangeAbAttr");
+  const blockTerrainSettingMoves = pokemon.hasAbilityWithAttr("PostSummonTerrainChangeAbAttr");
   // Block status moves if pokemon has Gorilla Tactics
   const hasGorillaTactics = pokemon.hasAbilityWithAttr("GorillaTacticsAbAttr");
   for (const [moveId, weight] of pool) {
@@ -369,8 +369,8 @@ function filterMovePool(pool: Map<MoveId, number>, isBoss: boolean, hasTrainer: 
       || ((isBoss || hasTrainer) // Following conditions do not apply to normal wild pokemon
         && ((isSingles && FORBIDDEN_SINGLES_MOVES.has(moveId)) // forbid doubles only moves in singles
           || (level >= LEVEL_BASED_DENYLIST_THRESHOLD && LEVEL_BASED_DENYLIST.has(moveId)) // forbid level based denylist moves
-          || (move.hasAttr("WeatherChangeAttr") && blockWeatherMoves) // Forbid Weather moves if the pokemon has a weather summoning or suppressing ability
-          || (move.hasAttr("TerrainChangeAttr") && blockTerrainMoves) // Forbid terrain moves if the pokemon has a terrain summoning ability
+          || (move.hasAttr("WeatherChangeAttr") && blockWeatherSettingMoves) // Forbid weather setting moves if the pokemon has a weather summoning or suppressing ability
+          || (move.hasAttr("TerrainChangeAttr") && blockTerrainSettingMoves) // Forbid terrain setting moves if the pokemon has a terrain summoning ability
           || (hasGorillaTactics && move.category === MoveCategory.STATUS))) // Forbid status moves if pokemon has Gorilla Tactics
     ) {
       pool.delete(moveId);
