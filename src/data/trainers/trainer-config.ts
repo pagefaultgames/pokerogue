@@ -2840,6 +2840,52 @@ export const trainerConfigs: TrainerConfigs = {
         p.pokeball = PokeballType.ULTRA_BALL;
       }),
     ),
+  [TrainerType.ALIANA]: new TrainerConfig(++t)
+    .initForEvilTeamAdmin("flare_admin_female", "flare")
+    .setEncounterBgm(TrainerType.PLASMA_GRUNT)
+    .setBattleBgm("battle_plasma_grunt")
+    .setMixedBattleBgm("battle_flare_grunt")
+    .setVictoryBgm("victory_team_plasma")
+    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.MIGHTYENA]))
+    .setPartyMemberFunc(
+      5,
+      getRandomPartyMemberFunc([SpeciesId.DRUDDIGON], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
+      }),
+    ),
+  [TrainerType.CELOSIA]: new TrainerConfig(++t)
+    .initForEvilTeamAdmin("flare_admin_female", "flare")
+    .setEncounterBgm(TrainerType.PLASMA_GRUNT)
+    .setBattleBgm("battle_plasma_grunt")
+    .setMixedBattleBgm("battle_flare_grunt")
+    .setVictoryBgm("victory_team_plasma")
+    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.MANECTRIC]))
+    .setPartyMemberFunc(
+      5,
+      getRandomPartyMemberFunc([SpeciesId.DRAPION], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
+      }),
+    ),
+  [TrainerType.MABLE]: new TrainerConfig(++t)
+    .initForEvilTeamAdmin("flare_admin_female", "flare")
+    .setEncounterBgm(TrainerType.PLASMA_GRUNT)
+    .setBattleBgm("battle_plasma_grunt")
+    .setMixedBattleBgm("battle_flare_grunt")
+    .setVictoryBgm("victory_team_plasma")
+    .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.HOUNDOOM]))
+    .setPartyMemberFunc(
+      5,
+      getRandomPartyMemberFunc([SpeciesId.WEAVILE], TrainerSlot.TRAINER, true, p => {
+        p.abilityIndex = 0; // Pressure
+        p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
+      }),
+    ),
   [TrainerType.AETHER_GRUNT]: new TrainerConfig(++t)
     .setHasGenders("Aether Grunt Female")
     .setHasDouble("Aether Grunts")
