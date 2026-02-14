@@ -98,12 +98,13 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
     );
 
     let pokemon: PlayerPokemon;
-    /**
+    /*
      * Mon is determined as follows:
-     * If you roll the 1% for Shiny Magikarp, you get Magikarp with a random variant
-     * If an event with more than 1 valid event encounter species is active, you have 20% chance to get one of those
-     * If the rolled species has no HA, and there are valid event encounters, you will get one of those
-     * If the rolled species has no HA and there are no valid event encounters, you will get Shiny Magikarp
+     * - If you roll the 1% for Shiny Magikarp, you get Magikarp with a random variant
+     * - If an event with more than 1 valid event encounter species is active, you have 20% chance to get one of those
+     * - If the rolled species has no HA, and there are valid event encounters, you will get one of those
+     * - If the rolled species has no HA and there are no valid event encounters, you will get Shiny Magikarp
+     *
      * Mons rolled from the event encounter pool get 3 extra shiny rolls
      */
     if (
