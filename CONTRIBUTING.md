@@ -226,3 +226,6 @@ Try to keep the title under 72 characters, as GitHub cuts off commit titles long
 > All scopes are valid when using the "docs", "feat", "fix", "refactor" and "test" prefixes. \
 > All scopes except "audio", "battle", "graphics", and "ui" are valid when using the "balance" prefix. \
 > No other prefixes have valid scopes.
+>
+> There is a special "beta" scope for the "fix" prefix,
+> for fixing bugs that only existed on the `beta` branch that never made it onto `main`.
