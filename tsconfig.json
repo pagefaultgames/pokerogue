@@ -5,18 +5,21 @@
  */
 {
   "compilerOptions": {
-    "target": "ES2023",
+    "target": "ES2022",
     "module": "ES2022",
     // Modifying this option requires all values to be set manually because the defaults get overridden
     // Values other than "ES2024.Promise" taken from https://github.com/microsoft/TypeScript/blob/main/src/lib/es2023.full.d.ts
     "lib": [
-      "ES2023",
-      "ES2024.Promise",
+      // ES2022 stdlibs
+      "ES2022",
       "DOM",
       "DOM.AsyncIterable",
       "DOM.Iterable",
       "ScriptHost",
       "WebWorker.ImportScripts",
+      // future libs
+      "ES2023.Array",
+      "ES2024.Promise",
       "ES2024.Object",
       // NOTE: Be *very* mindful of these when updating typescript versions,
       // as their definitions may change in breaking ways
