@@ -463,36 +463,28 @@ export async function loadCustomMovesForEncounter(moves: MoveId | MoveId[]): Pro
 }
 
 /**
- * Will update player money, and animate change (sound optional)
- * @param changeValue
- * @param playSound
- * @param showMessage
+ * @param moneyAmount - The amount of money being added; negative values remove money
+ * @param playSound - (Default `true`) Whether to play a sound afterward
+ * @param showMessage - (Default `true`) Whether to show a message afterward
  */
-export function updatePlayerMoney(changeValue: number, playSound = true, showMessage = true): void {
-  globalScene.money = Math.min(Math.max(globalScene.money + changeValue, 0), Number.MAX_SAFE_INTEGER);
+export function updatePlayerMoney(moneyAmount: number, playSound = true, showMessage = true): void {
+  globalScene.money = Phaser.Math.Clamp(globalScene.money + moneyAmount, 0, Number.MAX_SAFE_INTEGER);
   globalScene.updateMoneyText();
-  globalScene.animateMoneyChanged(false);
+  const isIncrease = moneyAmount >= 0;
+  globalScene.animateMoneyChanged(isIncrease);
+
   if (playSound) {
     globalScene.playSound("se/buy");
   }
+
   if (showMessage) {
-    if (changeValue < 0) {
-      globalScene.phaseManager.queueMessage(
-        i18next.t("mysteryEncounterMessages:paidMoney", {
-          amount: -changeValue,
-        }),
-        null,
-        true,
-      );
-    } else {
-      globalScene.phaseManager.queueMessage(
-        i18next.t("mysteryEncounterMessages:receiveMoney", {
-          amount: changeValue,
-        }),
-        null,
-        true,
-      );
-    }
+    const i18nKey = isIncrease ? "receive" : "paid";
+    const amount = isIncrease ? moneyAmount : -moneyAmount;
+    globalScene.phaseManager.queueMessage(
+      i18next.t(`mysteryEncounterMessages:${i18nKey}Money`, { amount }),
+      null,
+      true,
+    );
   }
 }
 

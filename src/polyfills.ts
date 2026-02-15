@@ -24,3 +24,12 @@ import "core-js/stable/set";
 import "core-js/stable/iterator";
 import "core-js/stable/map/group-by";
 import "core-js/stable/object/group-by";
+
+// https://github.com/microsoft/TypeScript/blob/main/src/lib/es2023.array.d.ts
+
+import "core-js/stable/array/find-last";
+import "core-js/stable/array/find-last-index";
+import "core-js/stable/array/to-reversed";
+import "core-js/stable/array/to-sorted";
+import "core-js/stable/array/to-spliced";
+import "core-js/stable/array/with";
