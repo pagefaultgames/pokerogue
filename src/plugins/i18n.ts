@@ -193,6 +193,7 @@ await i18next
         "ja",
         "ca",
         "da",
+        "th",
         "tr",
         "ro",
         "ru",

@@ -74,6 +74,10 @@ export const languageOptions = [
     handler: () => changeLocaleHandler("zh-Hant"),
   },
   {
+    label: "ไทย",
+    handler: () => changeLocaleHandler("th"),
+  },
+  {
     label: "Català (Needs Help)",
     handler: () => changeLocaleHandler("ca"),
   },
