@@ -1958,7 +1958,7 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.SUPERSWEET_SYRUP, 9) //
-      .attr(PostSummonStatStageChangeAbAttr, [Stat.EVA], -1)
+      .attr(PostSummonStatStageChangeAbAttr, [Stat.EVA], -1, false, false)
       .build(),
     new AbBuilder(AbilityId.HOSPITALITY, 9, -2) //
       .attr(PostSummonAllyHealAbAttr, 4, true)
