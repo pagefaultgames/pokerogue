@@ -1,5 +1,3 @@
-// @ts-nocheck - TODO: remove this
-
 import { BattleScene } from "#app/battle-scene";
 import { timedEventManager } from "#app/global-event-manager";
 // biome-ignore lint/performance/noNamespaceImport: Necessary in order to mock the var
@@ -37,9 +35,7 @@ export class GameWrapper {
     }
     this.game = phaserGame;
     // TODO: Move these mocks elsewhere
-    MoveAnim.prototype.getAnim = () => ({
-      frames: {},
-    });
+    MoveAnim.prototype.getAnim = () => ({ frames: {} }) as any;
     Pokemon.prototype.enableMask = () => null;
     Pokemon.prototype.updateFusionPalette = () => null;
     Pokemon.prototype.cry = () => null;
@@ -52,6 +48,7 @@ export class GameWrapper {
 
     // Pokedex container is not actually mocking container, but the sprites they contain are mocked.
     // We need to mock the remove function to not throw an error when removing a sprite.
+    // @ts-expect-error
     PokedexMonContainer.prototype.remove = MockContainer.prototype.remove;
   }
 
@@ -77,6 +74,7 @@ export class GameWrapper {
    * infeasible, and must be revisited before a multi-scene breakup can be considered.
    */
   private injectMandatory(): void {
+    // @ts-expect-error: `config` is `readonly`
     this.game.config = {
       seed: ["test"],
       gameVersion: version,
@@ -84,61 +82,63 @@ export class GameWrapper {
     this.scene.game = this.game;
     this.game.renderer = {
       maxTextures: -1,
-      gl: {},
-      deleteTexture: () => null,
-      canvasToTexture: () => ({}),
-      createCanvasTexture: () => ({}),
-      pipelines: {
-        add: () => null,
-      },
-    };
-    this.scene.renderer = this.game.renderer;
-    this.scene.children = {
-      removeAll: () => null,
-    };
+      gl: {} as any,
+      deleteTexture: () => null!,
+      canvasToTexture: () => ({}) as any,
+      createCanvasTexture: () => ({}) as any,
+      pipelines: { add: () => null! } as any,
+    } as any;
+    this.scene.renderer = this.game.renderer as any;
+    this.scene.children = { removeAll: () => null! } as any;
 
     // TODO: Can't we just turn on `noAudio` in audio config?
     this.scene.sound = {
-      play: () => null,
-      pause: () => null,
-      setRate: () => null,
-      add: () => this.scene.sound,
-      get: () => ({ ...this.scene.sound, totalDuration: 0 }),
+      play: () => false,
+      // @ts-expect-error: not sure why we're mocking this when it doesn't seem to exist normally? or maybe typescript is confused?
+      pause: () => false,
+      setRate: () => null!,
+      add: () => this.scene.sound as any,
+      get: () => ({ ...this.scene.sound, totalDuration: 0 }) as any,
       getAllPlaying: () => [],
-      manager: {
-        game: this.game,
-      },
+      manager: { game: this.game },
       destroy: () => null,
       setVolume: () => null,
       stop: () => null,
-      stopByKey: () => null,
+      stopByKey: () => 0,
       on: (_evt, callback) => callback(),
       key: "",
     };
 
     this.scene.cameras = {
       main: {
-        setPostPipeline: () => null,
-        removePostPipeline: () => null,
+        setPostPipeline: () => null!,
+        removePostPipeline: () => null!,
       },
-    };
+    } as any;
 
     // TODO: Replace this with a proper mock of phaser's TweenManager.
     this.scene.tweens = {
+      // @ts-expect-error
       add: data => {
         // TODO: our mock of `add` should have the same signature as the real one, which returns the tween
+        // @ts-expect-error
         data.onComplete?.();
       },
       getTweensOf: () => [],
-      killTweensOf: () => [],
-
+      killTweensOf: () => [] as any,
+      // @ts-expect-error
       chain: data => {
         // TODO: our mock of `chain` should have the same signature as the real one, which returns the chain
+        // @ts-expect-error
+        // biome-ignore lint/suspicious/useIterableCallbackReturn: it's a mock
         data?.tweens?.forEach(tween => tween.onComplete?.());
+        // @ts-expect-error
         data.onComplete?.();
       },
+      // @ts-expect-error
       addCounter: data => {
         if (data.onComplete) {
+          // @ts-expect-error: how does this work when the parameters are missing?
           data.onComplete();
         }
       },
@@ -153,15 +153,15 @@ export class GameWrapper {
     this.scene.textures = this.game.textures;
     this.scene.events = this.game.events;
     // TODO: Why is this needed? The `manager` property isn't used anywhere
-    this.scene.manager = new InputManager(this.game, {});
-    this.scene.manager.keyboard = new KeyboardManager(this.scene);
-    this.scene.pluginEvents = new EventEmitter();
+    this.scene["manager"] = new InputManager(this.game, {});
+    this.scene["manager"].keyboard = new KeyboardManager(this.scene as any);
+    this.scene["pluginEvents"] = new EventEmitter();
     this.game.domContainer = {} as HTMLDivElement;
     // TODO: scenes don't have dom containers
-    this.scene.domContainer = {} as HTMLDivElement;
-    this.scene.spritePipeline = {};
-    this.scene.fieldSpritePipeline = {};
-    this.scene.load = new MockLoader(this.scene);
+    this.scene["domContainer"] = {} as HTMLDivElement;
+    this.scene.spritePipeline = {} as any;
+    this.scene.fieldSpritePipeline = {} as any;
+    this.scene.load = new MockLoader(this.scene) as any;
     this.scene.sys = {
       queueDepthSort: () => null,
       anims: this.game.anims,
@@ -170,11 +170,10 @@ export class GameWrapper {
         addCanvas: () => ({
           get: () => ({
             // this.frame in Text.js
-            source: {},
-            setSize: () => null,
-            glTexture: () => ({
-              spectorMetadata: {},
-            }),
+            source: {} as any,
+            setSize: () => null!,
+            // @ts-expect-error
+            glTexture: () => ({ spectorMetadata: {} }),
           }),
         }),
       },
@@ -187,6 +186,7 @@ export class GameWrapper {
       events: new EventEmitter(),
       settings: {
         loader: {
+          // @ts-expect-error: apparently `key` doesn't exist on this object normally? not sure why we're setting it
           key: "battle",
         },
       },
@@ -194,14 +194,15 @@ export class GameWrapper {
     };
     const mockTextureManager = new MockTextureManager(this.scene);
     this.scene.add = mockTextureManager.add;
-    this.scene.textures = mockTextureManager;
+    this.scene.textures = mockTextureManager as any;
+    // @ts-expect-error: `add.displayList` is `protected`
     this.scene.sys.displayList = this.scene.add.displayList;
     this.scene.sys.updateList = new UpdateList(this.scene);
-    this.scene.systems = this.scene.sys;
-    this.scene.input = this.game.input;
-    this.scene.scene = this.scene; // TODO: This seems wacky
-    this.scene.input.keyboard = new KeyboardPlugin(this.scene);
-    this.scene.input.gamepad = new GamepadPlugin(this.scene);
+    this.scene["systems"] = this.scene.sys;
+    this.scene.input = this.game.input as any;
+    this.scene.scene = this.scene as any; // TODO: This seems wacky
+    this.scene.input.keyboard = new KeyboardPlugin(this.scene as any);
+    this.scene.input.gamepad = new GamepadPlugin(this.scene as any);
     this.scene.cachedFetch = async (url, _init): Promise<Response> => {
       // Replace all battle anim fetches solely with the tackle anim to save time.
       // TODO: This effectively bars us from testing battle animation related code ever
@@ -213,9 +214,9 @@ export class GameWrapper {
         return createFetchBadResponse({});
       }
     };
-    this.scene.make = new MockGameObjectCreator(mockTextureManager);
+    this.scene.make = new MockGameObjectCreator(mockTextureManager) as any;
     this.scene.time = new MockClock(this.scene);
-    this.scene.remove = vi.fn(); // TODO: this should be stubbed differently
+    this.scene["remove"] = vi.fn(); // TODO: this should be stubbed differently
     timedEventManager.disable();
   }
 }
@@ -235,7 +236,7 @@ function createFetchResponse(data: unknown): Response {
     headers: new Headers(),
     json: () => Promise.resolve(data),
     text: () => Promise.resolve(JSON.stringify(data)),
-  };
+  } as any;
 }
 // Simulate fetch response
 function createFetchBadResponse(data: unknown): Response {
@@ -245,5 +246,5 @@ function createFetchBadResponse(data: unknown): Response {
     headers: new Headers(),
     json: () => Promise.resolve(data),
     text: () => Promise.resolve(JSON.stringify(data)),
-  };
+  } as any;
 }
