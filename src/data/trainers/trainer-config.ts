@@ -1979,7 +1979,7 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.CHATOT,
         SpeciesId.FURFROU,
         SpeciesId.CARBINK,
-        SpeciesId.POLTEAGEIST,
+        SpeciesId.SINISTEA,
         SpeciesId.INDEEDEE,
       ],
       [TrainerPoolTier.RARE]: [
