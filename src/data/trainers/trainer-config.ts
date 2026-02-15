@@ -5294,6 +5294,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.MIRAIDON], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.MASTER_BALL;
+        replaceInMoveset(p.moveset, MoveId.OUTRAGE, MoveId.DRAGON_PULSE); // Outrage significantly higher in the level compared to Pulse, move weighting jank
       }),
     )
     .setPartyMemberFunc(
