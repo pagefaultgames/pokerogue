@@ -149,7 +149,7 @@ jobs:
       - name: Unblock PR
         run: |
           REVIEW_ID=$(gh api repos/${{ github.repository }}/pulls/${{ needs.read-label-data.outputs.prNumber }}/reviews \
-              --jq '.[] | select(.user.login == "github-actions[bot]" and .state == "CHANGES_REQUESTED") | .id' | head -n 1)
+              --jq '.[] | select(.user.login == "github-actions[bot]" and .state == "CHANGES_REQUESTED" and (.body // "" | contains("Update Locales"))) | .id' | head -n 1)
           if [ -n "$REVIEW_ID" ]; then
               gh api --method PUT repos/${{ github.repository }}/pulls/${{ needs.read-label-data.outputs.prNumber }}/reviews/$REVIEW_ID/dismissals \
               -f message="Locales updated, unblocking PR."
