@@ -552,7 +552,7 @@ export class UI extends Phaser.GameObjects.Container {
 
   private setModeInternal<M extends UiMode>(
     this: UI,
-    mode: UiMode,
+    mode: M,
     params: SetModeParams,
     ...args: [...ShowArgs<M>]
   ): Promise<void> {
@@ -577,7 +577,7 @@ export class UI extends Phaser.GameObjects.Container {
           if (touchControls) {
             touchControls.dataset.uiMode = UiMode[mode];
           }
-          this.getHandler().show(...args);
+          (this.getHandler() as HandlerOf<M>).show(...args);
         }
         resolve();
       };
@@ -610,7 +610,7 @@ export class UI extends Phaser.GameObjects.Container {
   /** Default for setting a new mode, clearing the previous mode. Fails if trying to set the current mode. */
   setMode<M extends UiMode>(mode: M): ShowArgs<M> extends [] ? Promise<void> : never;
   setMode<M extends UiMode>(mode: M, ...args: ShowArgs<M>): ShowArgs<M> extends [] ? never : Promise<void>;
-  setMode<M extends UiMode>(mode: UiMode, ...args: [...ShowArgs<M>]): Promise<void> {
+  setMode<M extends UiMode>(mode: M, ...args: [...ShowArgs<M>]): Promise<void> {
     return this.setModeInternal(mode, { clear: true, forceTransition: false, chainMode: false }, ...args);
   }
 
@@ -620,21 +620,21 @@ export class UI extends Phaser.GameObjects.Container {
     mode: M,
     ...args: ShowArgs<M>
   ): ShowArgs<M> extends [] ? never : Promise<void>;
-  setModeForceTransition<M extends UiMode>(mode: UiMode, ...args: [...ShowArgs<M>]): Promise<void> {
+  setModeForceTransition<M extends UiMode>(mode: M, ...args: [...ShowArgs<M>]): Promise<void> {
     return this.setModeInternal(mode, { clear: true, forceTransition: true, chainMode: false }, ...args);
   }
 
   /** Used to set a new mode without clearing the previous one. */
   setModeWithoutClear<M extends UiMode>(mode: M): ShowArgs<M> extends [] ? Promise<void> : never;
   setModeWithoutClear<M extends UiMode>(mode: M, ...args: ShowArgs<M>): ShowArgs<M> extends [] ? never : Promise<void>;
-  setModeWithoutClear<M extends UiMode>(mode: UiMode, ...args: [...ShowArgs<M>]): Promise<void> {
+  setModeWithoutClear<M extends UiMode>(mode: M, ...args: [...ShowArgs<M>]): Promise<void> {
     return this.setModeInternal(mode, { clear: false, forceTransition: false, chainMode: false }, ...args);
   }
 
   /** Appends new mode to the chain, without clearing the previous one. */
   setOverlayMode<M extends UiMode>(mode: M): ShowArgs<M> extends [] ? Promise<void> : never;
   setOverlayMode<M extends UiMode>(mode: M, ...args: ShowArgs<M>): ShowArgs<M> extends [] ? never : Promise<void>;
-  setOverlayMode<M extends UiMode>(mode: UiMode, ...args: [...ShowArgs<M>]): Promise<void> {
+  setOverlayMode<M extends UiMode>(mode: M, ...args: [...ShowArgs<M>]): Promise<void> {
     return this.setModeInternal(mode, { clear: false, forceTransition: false, chainMode: true }, ...args);
   }
 
