@@ -70,7 +70,7 @@ jobs:
       ref: ${{ steps.read-label-data.outputs.ref }}
       repo: ${{ steps.read-label-data.outputs.repo }}
 
-  block-pr:
+  block-locales-pr:
     needs: read-label-data
     if: needs.read-label-data.outputs.label == 'Awaiting Locales'
     runs-on: ubuntu-latest
@@ -86,6 +86,23 @@ jobs:
         run: |
           gh pr review ${{ needs.read-label-data.outputs.prNumber }} -R ${{ github.repository }} --request-changes --body "This pull request is blocked until the associated locales PR is merged.
           To unblock and update the locales submodule, add the \`Update Locales\` label."
+
+  block-assets-pr:
+    needs: read-label-data
+    if: needs.read-label-data.outputs.label == 'Awaiting Assets'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            .nvmrc
+          sparse-checkout-cone-mode: false
+
+      - name: "Block PR"
+        run: |
+          gh pr review ${{ needs.read-label-data.outputs.prNumber }} -R ${{ github.repository }} --request-changes --body "This pull request is blocked until the associated assets PR is merged.
+          To unblock and update the assets submodule, add the \`Update Assets\` label."
 
   update-locales:
     needs: read-label-data
@@ -178,3 +195,4 @@ jobs:
       - name: Remove label
         run: |
           gh pr edit ${{ needs.read-label-data.outputs.prNumber }} -R ${{ github.repository }} --remove-label "Update Assets"
+          gh pr edit ${{ needs.read-label-data.outputs.prNumber }} -R ${{ github.repository }} --remove-label "Awaiting Assets"
