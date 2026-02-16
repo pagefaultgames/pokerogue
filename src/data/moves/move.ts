@@ -10112,7 +10112,8 @@ export function initMoves() {
             || user.status.effect === StatusEffect.BURN),
       ),
     new SelfStatusMove(MoveId.GRUDGE, PokemonType.GHOST, -1, 5, -1, 0, 3) //
-      .attr(AddBattlerTagAttr, BattlerTagType.GRUDGE, true, undefined, 1),
+      // NB: failing on overlap is meaningless since Grudge wears off before the user's next move
+      .attr(AddBattlerTagAttr, BattlerTagType.GRUDGE, true, false, 1),
     new SelfStatusMove(MoveId.SNATCH, PokemonType.DARK, -1, 10, -1, 4, 3) //
       .unimplemented(),
     new AttackMove(MoveId.SECRET_POWER, PokemonType.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, 30, 0, 3)
