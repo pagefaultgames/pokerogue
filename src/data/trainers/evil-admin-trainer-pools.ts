@@ -222,23 +222,22 @@ const PLASMA_COLRESS: TrainerTierPools = {
 
 const FLARE: TrainerTierPools = {
   [TrainerPoolTier.COMMON]: [
-    SpeciesId.SCRAGGY,
-    SpeciesId.FOONGUS,
-    SpeciesId.BUNNELBY,
+    SpeciesId.ABSOL,
+    SpeciesId.CROAGUNK,
+    SpeciesId.BUDEW,
+    SpeciesId.VENIPEDE,
+    [SpeciesId.SCRAGGY, SpeciesId.PANCHAM],
     SpeciesId.FLETCHLING,
-    SpeciesId.PANCHAM,
     SpeciesId.ESPURR,
-    SpeciesId.SKRELP,
-    SpeciesId.CLAUNCHER,
+    SpeciesId.HELIOPTILE,
+    [SpeciesId.SKRELP, SpeciesId.CLAUNCHER],
     SpeciesId.KLEFKI,
-    SpeciesId.PHANTUMP,
-    SpeciesId.PUMPKABOO,
   ],
   [TrainerPoolTier.UNCOMMON]: [
     SpeciesId.LITWICK,
-    SpeciesId.HEATMOR,
+    SpeciesId.FLABEBE,
+    [SpeciesId.PHANTUMP, SpeciesId.PUMPKABOO],
     SpeciesId.BINACLE,
-    SpeciesId.HELIOPTILE,
     SpeciesId.AVALUGG,
     SpeciesId.CAPSAKID,
   ],
@@ -247,20 +246,21 @@ const FLARE: TrainerTierPools = {
 
 const FLARE_XEROSIC: TrainerTierPools = {
   [TrainerPoolTier.COMMON]: [
-    SpeciesId.EKANS,
+    SpeciesId.SNUBBULL,
     SpeciesId.LITWICK,
     SpeciesId.PANCHAM,
     SpeciesId.BINACLE,
     [SpeciesId.SKRELP, SpeciesId.CLAUNCHER],
     SpeciesId.HELIOPTILE,
     SpeciesId.KLEFKI,
+    SpeciesId.CAPSAKID,
   ],
   [TrainerPoolTier.UNCOMMON]: [
     SpeciesId.ROTOM, // Always Rotom-Heat, Xerosic has their specialty type set to fire
+    SpeciesId.LARVESTA,
+    SpeciesId.FLABEBE,
     [SpeciesId.TYRUNT, SpeciesId.AMAURA],
     SpeciesId.NOIBAT,
-    SpeciesId.SIZZLIPEDE,
-    SpeciesId.CAPSAKID,
   ],
   [TrainerPoolTier.RARE]: [SpeciesId.BELDUM, SpeciesId.HISUI_SLIGGOO, SpeciesId.HISUI_AVALUGG],
 };
