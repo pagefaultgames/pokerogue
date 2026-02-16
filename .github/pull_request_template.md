@@ -20,14 +20,16 @@ fix(move): Future Sight no longer crashes
 |_____________ Prefix
 -->
 
-
 ## What are the changes the user will see?
 <!--
 Summarize the changes from a user perspective on the application.
 Try to keep this section (relatively) brief as it is used to generate changelogs.
+If you need to provide additional details, you can do so below the cutoff.
 
 PRs with no user-facing changes should leave this blank or write "N/A" to be omitted from auto-generated changelogs.
 -->
+
+<!-- ## Changelog cutoff (DO NOT REMOVE/EDIT) -->
 
 ## Why am I making these changes?
 <!--

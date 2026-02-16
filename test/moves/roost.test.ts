@@ -29,6 +29,7 @@ describe("Moves - Roost", () => {
       .enemyMoveset(MoveId.SPLASH);
   });
 
+  // NB: checks concerning Roost's healing effect are covered in test/moves/recovery-moves.test.ts
   it("should remove the user's Flying type until end of turn", async () => {
     await game.classicMode.startBattle(SpeciesId.HAWLUCHA);
 
@@ -50,7 +51,7 @@ describe("Moves - Roost", () => {
     expect(hawlucha.isGrounded()).toBe(false);
   });
 
-  it("should preserve types of non-Flying type Pokemon", async () => {
+  it("should preserve types of non- Flying type Pokemon", async () => {
     await game.classicMode.startBattle(SpeciesId.MEW);
 
     const mew = game.field.getPlayerPokemon();
@@ -121,6 +122,55 @@ describe("Moves - Roost", () => {
 
     // Should go back to being pure flying
     expect(player).toHaveTypes([PokemonType.FLYING]);
+    expect(player.isGrounded()).toBe(false);
+  });
+
+  // TODO: This interaction is extremely broken due to a lack of granularity with type querying effects
+  it.todo("should respect prior type change effects when determining the user's new typing", async () => {
+    await game.classicMode.startBattle(SpeciesId.TORNADUS);
+
+    const tornadus = game.field.getPlayerPokemon();
+    tornadus.hp = 1;
+    // Pretend Tornadus used Reflect Type or similar in a prior turn
+    tornadus.summonData.types = [PokemonType.STEEL, PokemonType.FLYING];
+
+    game.move.use(MoveId.ROOST);
+    await game.move.forceEnemyMove(MoveId.TRICK_OR_TREAT);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.phaseInterceptor.to("MoveEffectPhase"); // Trick or treat
+
+    expect(tornadus).toHaveTypes([PokemonType.STEEL, PokemonType.FLYING, PokemonType.GHOST]);
+
+    await game.phaseInterceptor.to("MoveEffectPhase"); // Roost
+
+    expect(tornadus).toHaveTypes([PokemonType.STEEL, PokemonType.GHOST]);
+
+    await game.toEndOfTurn();
+
+    expect(tornadus).toHaveTypes([PokemonType.STEEL, PokemonType.FLYING, PokemonType.GHOST]);
+  });
+
+  // TODO: this interaction is currently broken
+  it.todo.each<{ name: string; move: MoveId; type: PokemonType }>([
+    { name: "Trick-or-Treat", move: MoveId.TRICK_OR_TREAT, type: PokemonType.GHOST },
+    { name: "Forest's Curse", move: MoveId.FORESTS_CURSE, type: PokemonType.GRASS },
+  ])("should ignore added types from $name when changing Flying to Normal type", async ({ move, type }) => {
+    await game.classicMode.startBattle(SpeciesId.CORVISQUIRE);
+
+    const player = game.field.getPlayerPokemon();
+    player.hp = 1;
+
+    game.move.use(MoveId.ROOST);
+    await game.move.forceEnemyMove(move);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.toEndOfTurn(false);
+
+    expect(player).toHaveTypes([PokemonType.NORMAL, type]);
+    expect(player.isGrounded()).toBe(true);
+
+    await game.toEndOfTurn();
+
+    expect(player).toHaveTypes([PokemonType.FLYING, type]);
     expect(player.isGrounded()).toBe(false);
   });
 });

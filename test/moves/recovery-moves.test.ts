@@ -93,7 +93,7 @@ describe("Moves - Healing Moves", () => {
         const blissey = game.field.getPlayerPokemon();
         blissey.hp = 1;
 
-        game.move.use(MoveId.MOONLIGHT);
+        game.move.use(MoveId.MORNING_SUN);
         await game.toEndOfTurn();
 
         expect(blissey).toHaveHp((blissey.getMaxHp() * 2) / 3 + 1, { rounding: "half up" });
@@ -115,13 +115,13 @@ describe("Moves - Healing Moves", () => {
         const blissey = game.field.getPlayerPokemon();
         blissey.hp = 1;
 
-        game.move.use(MoveId.MOONLIGHT);
+        game.move.use(MoveId.SYNTHESIS);
         await game.toEndOfTurn();
 
         expect(blissey).toHaveHp(blissey.getMaxHp() * 0.25 + 1, { rounding: "half up" });
       });
 
-      it("should heal normal HP amount under strong winds", async () => {
+      it("should heal normal HP amounts under strong winds", async () => {
         game.override.ability(AbilityId.DELTA_STREAM);
         await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
@@ -169,8 +169,6 @@ describe("Moves - Healing Moves", () => {
       },
     ])("$name", ({ move, percent, ability, condText }) => {
       it("should heal 50% of the target's maximum HP, rounded half up", async () => {
-        // NB: These moves round down heal amounts in mainline if their boost conditions are met,
-        // but we keep them the same regardless for consistency
         await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
         const chansey = game.field.getEnemyPokemon();
@@ -204,8 +202,10 @@ describe("Moves - Healing Moves", () => {
         expect(blissey).toHaveUsedMove({ move, result: MoveResult.FAIL });
       });
 
-      it(`should heal ${(percent * 100).toPrecision(2)}% of the target's maximum HP if ${condText}`, async () => {
-        // Give enemy Levitate to prevent them from receiving Grassy Terrain passive heal
+      // NB: These moves round down their heal amounts in mainline if their boost conditions are met,
+      // but we keep them rounding up regardless for consistency's sake
+      it(`should heal ${(percent * 100).toPrecision(2)}% of the target's maximum HP (rounded up) if ${condText}`, async () => {
+        // Give enemy Levitate to prevent them from receiving Grassy Terrain's passive heal.
         game.override.ability(ability).enemyAbility(AbilityId.LEVITATE);
         await game.classicMode.startBattle(SpeciesId.BLISSEY);
 

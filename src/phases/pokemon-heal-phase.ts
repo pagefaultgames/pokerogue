@@ -16,48 +16,49 @@ export class PokemonHealPhase extends CommonAnimPhase {
   public readonly phaseName = "PokemonHealPhase";
 
   /** The base amount of HP to heal. */
-  private hpHealed: number;
+  private readonly hpHealed: number;
   /**
    * The message to display upon healing the target, or `undefined` to show no message.
-   * Will be overridden by the full HP message if {@linkcode showFullHpMessage} is set to `true`
+   * Will be overridden by the full HP message if {@linkcode showFullHpMessage} is set to `true`.
    */
   private message: string | undefined;
   /**
    * Whether to show a failure message upon healing a Pokemon already at full HP.
    * @defaultValue `true`
    */
-  private showFullHpMessage: boolean;
+  private readonly showFullHpMessage: boolean;
   /**
    * Whether to skip showing the healing animation.
    * @defaultValue `false`
    */
-  private skipAnim: boolean;
+  private readonly skipAnim: boolean;
   /**
    * Whether to revive the affected Pokemon in addition to healing.
    * Revives will not be affected by any Healing Charms.
    * @defaultValue `false`
    */
-  // TODO: Remove post modifier rework as revives should not be using phases to heal stuff
-  // (which is exclusively where it is used ATM)
-  private revive: boolean;
+  // TODO: Remove post modifier rework as items should not be using phases to heal statuses
+  // (which is exclusively where it is used at the moment)
+  private readonly revive: boolean;
   /**
    * Whether to heal the affected Pokemon's status condition.
    * @defaultValue `false`
    */
-  // TODO; This should arguably not be the healing phase's job
-  private healStatus: boolean;
+  // TODO: This should debatably not be the job of a phase designed solely to restore HP
+  private readonly healStatus: boolean;
   /**
-   * Whether to prevent fully healing affected Pokemon, leaving them 1 HP below full.
+   * Whether to prevent fully healing affected Pokemon, leaving them 1 HP below full instead.
    * @defaultValue `false`
    */
-  private preventFullHeal: boolean;
+  private readonly preventFullHeal: boolean;
   /**
    * Whether to fully restore PP upon healing.
    * Used solely for Lunar Dance.
    * @defaultValue `false`
    */
-  // TODO; This should arguably not be the healing phase's job
-  private fullRestorePP: boolean;
+  // TODO: This should arguably not be the healing phase's job
+  // (and can be handled fairly easily by the calling code)
+  private readonly fullRestorePP: boolean;
 
   constructor(
     battlerIndex: BattlerIndex,
