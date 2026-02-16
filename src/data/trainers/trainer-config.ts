@@ -1716,6 +1716,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setDoubleOnly()
     .setMoneyMultiplier(1.6)
     .setEncounterBgm(TrainerType.PSYCHIC)
+    .setUseSameSeedForAllMembers()
     .setPartyTemplateFunc(() =>
       getWavePartyTemplate(
         trainerPartyTemplates.TWO_WEAK,
@@ -4714,6 +4715,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.MASTER_BALL;
         p.abilityIndex = 2; // Multiscale
+        replaceInMoveset(p.moveset, MoveId.SKY_ATTACK, MoveId.AEROBLAST); // Sky Attack ends up being too punishing on it, avoids generating with it
       }),
     )
     .setPartyMemberFunc(
