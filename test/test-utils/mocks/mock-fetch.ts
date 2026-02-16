@@ -1,36 +1,21 @@
-export const MockFetch = (input, _init) => {
-  const url = typeof input === "string" ? input : input.url;
+// TODO: Avoid hardcoding these endpoints and move them somewhere shared with the API code
+// TODO: Better yet, use dependency injection to inject a mock API client instead of stubbing out fetch directly
+const handlers = {
+  "account/info": { username: "greenlamp", lastSessionSlot: 0 },
+  "savedata/session": {},
+  "savedata/system": {},
+  "savedata/updateall": "",
+  "daily/rankingpagecount": { data: 0 },
+  "game/titlestats": { playerCount: 0, battleCount: 5 },
+  "daily/rankings": [],
+};
 
-  // biome-ignore lint/suspicious/noImplicitAnyLet: TODO
-  let responseHandler;
-  // biome-ignore lint/suspicious/noImplicitAnyLet: TODO
-  let responseText;
+export const MockFetch: typeof globalThis.fetch = async (
+  input: string | URL | Request,
+  _init?: RequestInit | undefined,
+) => {
+  const url = typeof input === "string" ? input : input instanceof URL ? input.toString() : input.url;
+  const cannedResponse = Object.entries(handlers).find(([key]) => url.includes(key))?.[1];
 
-  const handlers = {
-    "account/info": { username: "greenlamp", lastSessionSlot: 0 },
-    "savedata/session": {},
-    "savedata/system": {},
-    "savedata/updateall": "",
-    "daily/rankingpagecount": { data: 0 },
-    "game/titlestats": { playerCount: 0, battleCount: 5 },
-    "daily/rankings": [],
-  };
-
-  for (const key of Object.keys(handlers)) {
-    if (url.includes(key)) {
-      responseHandler = async () => handlers[key];
-      responseText = async () => (handlers[key] ? JSON.stringify(handlers[key]) : handlers[key]);
-      break;
-    }
-  }
-
-  const response: Partial<Response> = {
-    ok: true,
-    status: 200,
-    json: responseHandler,
-    text: responseText,
-    headers: new Headers({}),
-  };
-
-  return Promise.resolve(response);
+  return Response.json(cannedResponse, { status: 200, statusText: "OK" });
 };

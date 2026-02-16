@@ -158,9 +158,5 @@ export type OnlyRequired<T> = Pick<T, RequiredKeys<T>>;
  * @typeParam Max - The maximum length of the tuple (inclusive)
  * @typeParam T - The type of the elements in the tuple
  */
-export type TupleRange<Min extends number, Max extends number, T> = IntClosedRange<
-  Min,
-  Max
-> extends infer Lengths extends number
-  ? TupleOf<Lengths, T>
-  : never;
+export type TupleRange<Min extends number, Max extends number, T> =
+  IntClosedRange<Min, Max> extends infer Lengths extends number ? TupleOf<Lengths, T> : never;

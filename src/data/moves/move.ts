@@ -1274,7 +1274,7 @@ export class AttackMove extends Move {
    */
   private declare _: never;
 
-  // biome-ignore lint/nursery/useMaxParams: moves have a lot of independent params
+  // biome-ignore lint/complexity/useMaxParams: moves have a lot of independent params
   constructor(
     id: MoveId,
     type: PokemonType,
@@ -11343,15 +11343,15 @@ export function initMoves() {
     new AttackMove(MoveId.CATASTROPIKA, PokemonType.ELECTRIC, MoveCategory.PHYSICAL, 210, -1, 1, -1, 0, 7) //
       .unimplemented(),
     /* End Unused */
-    new SelfStatusMove(MoveId.SHORE_UP, PokemonType.GROUND, -1, 5, -1, 0, 7)
+    new SelfStatusMove(MoveId.SHORE_UP, PokemonType.GROUND, -1, 5, -1, 0, 7) //
       .attr(SandHealAttr)
       .triageMove(),
     new AttackMove(MoveId.FIRST_IMPRESSION, PokemonType.BUG, MoveCategory.PHYSICAL, 90, 100, 10, -1, 2, 7) //
       .condition(new FirstMoveCondition(), 3),
-    new SelfStatusMove(MoveId.BANEFUL_BUNKER, PokemonType.POISON, -1, 10, -1, 4, 7)
+    new SelfStatusMove(MoveId.BANEFUL_BUNKER, PokemonType.POISON, -1, 10, -1, 4, 7) //
       .attr(ProtectAttr, BattlerTagType.BANEFUL_BUNKER)
       .condition(failIfLastCondition, 3),
-    new AttackMove(MoveId.SPIRIT_SHACKLE, PokemonType.GHOST, MoveCategory.PHYSICAL, 80, 100, 10, 100, 0, 7)
+    new AttackMove(MoveId.SPIRIT_SHACKLE, PokemonType.GHOST, MoveCategory.PHYSICAL, 80, 100, 10, 100, 0, 7) //
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1, 1, true)
       .makesContact(false),
     new AttackMove(MoveId.DARKEST_LARIAT, PokemonType.DARK, MoveCategory.PHYSICAL, 85, 100, 10, -1, 0, 7) //

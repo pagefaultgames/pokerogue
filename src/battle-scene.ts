@@ -832,11 +832,11 @@ export class BattleScene extends SceneBase {
    * @returns The `Pokemon` associated with the given ID,
    * or `undefined` if none is found in either team's party.
    * @see {@linkcode Pokemon.id}
-   * @todo `pokemonId` should not allow `undefined`
    */
+  // TODO: Remove `undefined` from signature
   public getPokemonById(pokemonId: number | undefined): Pokemon | undefined {
     if (pokemonId == null) {
-      // biome-ignore lint/nursery/noUselessUndefined: More explicit
+      // biome-ignore lint/complexity/noUselessUndefined: More explicit
       return undefined;
     }
 
