@@ -254,7 +254,6 @@ interface PokemonMatchers {
    * Check whether a {@linkcode Pokemon} has a {@linkcode BattlerTag} with the given properties.
    * @param expectedTag - A partially filled `BattlerTag` containing the desired properties to check
    */
-  // biome-ignore lint/style/useUnifiedTypeSignatures: enable both options for the rule next major version
   toHaveBattlerTag<B extends BattlerTagType>(expectedTag: PartiallyFilledBattlerTag<B>): void;
   /**
    * Check whether a {@linkcode Pokemon} has the given {@linkcode BattlerTag}.
