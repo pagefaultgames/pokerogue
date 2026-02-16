@@ -792,6 +792,24 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       victory: ["dialogue:xerosic.victory.1", "dialogue:xerosic.victory.2", "dialogue:xerosic.victory.3"],
     },
   ],
+  [TrainerType.ALIANA]: [
+    {
+      encounter: ["dialogue:aliana.encounter.1", "dialogue:aliana.encounter.2"],
+      victory: ["dialogue:aliana.victory.1", "dialogue:aliana.victory.2"],
+    },
+  ],
+  [TrainerType.CELOSIA]: [
+    {
+      encounter: ["dialogue:celosia.encounter.1", "dialogue:celosia.encounter.2"],
+      victory: ["dialogue:celosia.victory.1", "dialogue:celosia.victory.2"],
+    },
+  ],
+  [TrainerType.MABLE]: [
+    {
+      encounter: ["dialogue:mable.encounter.1", "dialogue:mable.encounter.2"],
+      victory: ["dialogue:mable.victory.1", "dialogue:mable.victory.2"],
+    },
+  ],
   [TrainerType.AETHER_GRUNT]: [
     {
       encounter: [
