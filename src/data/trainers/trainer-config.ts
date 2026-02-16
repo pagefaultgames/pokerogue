@@ -1717,13 +1717,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setMoneyMultiplier(1.6)
     .setEncounterBgm(TrainerType.PSYCHIC)
     .setUseSameSeedForAllMembers()
-    .setPartyTemplateFunc(() =>
-      getWavePartyTemplate(
-        trainerPartyTemplates.TWO_WEAK,
-        trainerPartyTemplates.TWO_AVG,
-        trainerPartyTemplates.TWO_STRONG,
-      ),
-    )
+    .setPartyTemplateFunc(() => getWavePartyTemplate(trainerPartyTemplates.TWO_AVG, trainerPartyTemplates.TWO_STRONG))
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc([

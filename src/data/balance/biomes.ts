@@ -1714,8 +1714,8 @@ export const biomeTrainerPools: BiomeTrainerPools = {
   },
   [BiomeId.VOLCANO]: {
     [BiomePoolTier.COMMON]: [ TrainerType.FIREBREATHER, TrainerType.HIKER ],
-    [BiomePoolTier.UNCOMMON]: [ TrainerType.DRAGON_TAMER, TrainerType.BREEDER ],
-    [BiomePoolTier.RARE]: [],
+    [BiomePoolTier.UNCOMMON]: [ TrainerType.DRAGON_TAMER ],
+    [BiomePoolTier.RARE]: [ TrainerType.BREEDER ],
     [BiomePoolTier.SUPER_RARE]: [],
     [BiomePoolTier.ULTRA_RARE]: [],
     [BiomePoolTier.BOSS]: [ TrainerType.BLAINE, TrainerType.FLANNERY, TrainerType.KABU ]
