@@ -566,7 +566,7 @@ export class Arena {
    * | Ultra Rare | 0           | 1/512   |
    * ```
    * @param roll - The random roll to check against
-   * @returns the generated BiomePoolTier
+   * @returns The generated `BiomePoolTier`
    */
   private generateNonBossBiomeTier(roll: number): BiomePoolTier {
     if (roll >= 156) {
