@@ -39,6 +39,7 @@ import type { RGBArray } from "#types/sprite-types";
 import type { AbstractConstructor } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
 import { NumberHolder, randSeedInt } from "#utils/common";
+import { enumValueToKey } from "#utils/enums";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import type { NonEmptyTuple } from "type-fest";
@@ -71,7 +72,7 @@ export class Arena {
 
   constructor(biome: BiomeId, playerFaints = 0) {
     this.biomeId = biome;
-    this.bgm = BiomeId[biome].toLowerCase();
+    this.bgm = enumValueToKey(BiomeId, biome).toLowerCase();
     this.trainerPool = biomeTrainerPools[biome];
     this.updatePoolsForTimeOfDay();
     this.playerFaints = playerFaints;
@@ -901,7 +902,7 @@ export class Arena {
 // #region Helper Functions
 
 export function getBiomeKey(biome: BiomeId): string {
-  return BiomeId[biome].toLowerCase();
+  return enumValueToKey(BiomeId, biome).toLowerCase();
 }
 
 export function getBiomeHasProps(biomeType: BiomeId): boolean {
@@ -1024,7 +1025,7 @@ export function getArenaBgmLoopPoint(biomeId: BiomeId): number {
       return 17.153;
     default:
       biomeId satisfies never;
-      console.warn(`missing bgm loop-point for biome "${BiomeId[biomeId]}" (=${biomeId})`);
+      console.warn(`missing bgm loop-point for biome "${enumValueToKey(BiomeId, biomeId)}" (=${biomeId})`);
       return 0;
   }
 }

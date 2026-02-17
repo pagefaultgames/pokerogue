@@ -5888,7 +5888,7 @@ export function initBiomes() {
 
   const traverseBiome = (biome: BiomeId, depth: number) => {
     if (biome === BiomeId.END) {
-      const biomeList = getEnumValues(BiomeId);
+      const biomeList = Object.values(BiomeId);
       biomeList.pop(); // Removes BiomeId.END from the list
       const randIndex = randSeedInt(biomeList.length, 1); // Will never be BiomeId.TOWN
       biome = biomeList[randIndex];
@@ -5911,7 +5911,7 @@ export function initBiomes() {
   traverseBiome(BiomeId.TOWN, 0);
   biomeDepths[BiomeId.END] = [Object.values(biomeDepths).map(d => d[0]).reduce((max: number, value: number) => Math.max(max, value), 0) + 1, 1];
 
-  for (const biome of getEnumValues(BiomeId)) {
+  for (const biome of Object.values(BiomeId)) {
     (biomePokemonPools[biome] as Mutable<typeof biomePokemonPools[number]>) = {};
     (biomeTrainerPools[biome] as Mutable<typeof biomeTrainerPools[number]>) = {};
 
@@ -6049,7 +6049,7 @@ export function initBiomes() {
   //   const pokemonOutput = {};
   //   const trainerOutput = {};
   //   for (const b of Object.keys(biomePokemonPools)) {
-  //     const biome = BiomeId[b];
+  //     const biome = enumValueToKey(BiomeId, b);
   //     pokemonOutput[biome] = {};
   //     trainerOutput[biome] = {};
   //     for (const t of Object.keys(biomePokemonPools[b])) {

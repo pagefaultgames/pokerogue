@@ -62,7 +62,7 @@ import {
 } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { BooleanHolder, getLocalizedSpriteKey, padInt, rgbHexToRgba } from "#utils/common";
-import { getEnumValues } from "#utils/enums";
+import { enumValueToKey, getEnumValues } from "#utils/enums";
 import { getDexNumber, getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
@@ -1553,10 +1553,10 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                 const options: any[] = [];
 
                 ui.showText(i18next.t("pokedexUiHandler:showBiomes"), null, () => {
-                  this.biomes.map(b => {
+                  this.biomes.forEach(b => {
                     options.push({
                       label:
-                        i18next.t(`biome:${toCamelCase(BiomeId[b.biome])}`)
+                        i18next.t(`biome:${toCamelCase(enumValueToKey(BiomeId, b.biome))}`)
                         + " - "
                         + i18next.t(`biome:${toCamelCase(BiomePoolTier[b.tier])}`)
                         + (b.tod.length === 1 && b.tod[0] === -1
@@ -1574,10 +1574,10 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                       skip: true,
                       handler: () => false,
                     });
-                    this.preBiomes.map(b => {
+                    this.preBiomes.forEach(b => {
                       options.push({
                         label:
-                          i18next.t(`biome:${toCamelCase(BiomeId[b.biome])}`)
+                          i18next.t(`biome:${toCamelCase(enumValueToKey(BiomeId, b.biome))}`)
                           + " - "
                           + i18next.t(`biome:${toCamelCase(BiomePoolTier[b.tier])}`)
                           + (b.tod.length === 1 && b.tod[0] === -1

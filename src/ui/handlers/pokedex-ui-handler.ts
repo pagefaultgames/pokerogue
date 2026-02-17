@@ -47,6 +47,7 @@ import { addWindow } from "#ui/ui-theme";
 import { BooleanHolder, fixedInt, getLocalizedSpriteKey, padInt, randIntRange, rgbHexToRgba } from "#utils/common";
 import type { StarterPreferences } from "#utils/data";
 import { loadStarterPreferences } from "#utils/data";
+import { enumValueToKey } from "#utils/enums";
 import { getDexNumber, getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
@@ -326,12 +327,13 @@ export class PokedexUiHandler extends MessageUiHandler {
     );
 
     // biome filter, making an entry in the dropdown for each biome
-    const biomeOptions = Object.values(BiomeId)
-      .filter(value => typeof value === "number") // Filter numeric values from the enum
-      .map(
-        (biomeValue, index) =>
-          new DropDownOption(index, new DropDownLabel(i18next.t(`biome:${toCamelCase(BiomeId[biomeValue])}`))),
-      );
+    const biomeOptions = Object.values(BiomeId).map(
+      (biomeValue, index) =>
+        new DropDownOption(
+          index,
+          new DropDownLabel(i18next.t(`biome:${toCamelCase(enumValueToKey(BiomeId, biomeValue))}`)),
+        ),
+    );
     biomeOptions.push(new DropDownOption(biomeOptions.length, new DropDownLabel(i18next.t("filterBar:uncatchable"))));
     const biomeDropDown: DropDown = new DropDown(0, 0, biomeOptions, this.updateStarters, DropDownType.HYBRID);
     this.filterBar.addFilter(DropDownColumn.BIOME, i18next.t("filterBar:biomeFilter"), biomeDropDown);
@@ -1509,16 +1511,14 @@ export class PokedexUiHandler extends MessageUiHandler {
         .some(type => species.isOfType((type as number) - 1));
 
       // Biome filter
-      const indexToBiome = new Map(
-        Object.values(BiomeId)
-          .map((value, index) => (typeof value === "string" ? [index, value] : undefined))
-          .filter((entry): entry is [number, string] => entry !== undefined),
-      );
+      const indexToBiome = new Map(Object.keys(BiomeId).map((key, idx) => [idx, key]));
       indexToBiome.set(35, "Uncatchable");
 
       // We get biomes for both the mon and its starters to ensure that evolutions get the correct filters.
       // TODO: We might also need to do it the other way around.
-      const biomes = catchableSpecies[species.speciesId].concat(catchableSpecies[starterId]).map(b => BiomeId[b.biome]);
+      const biomes = catchableSpecies[species.speciesId]
+        .concat(catchableSpecies[starterId])
+        .map(b => enumValueToKey(BiomeId, b.biome) as string);
       if (biomes.length === 0) {
         biomes.push("Uncatchable");
       }
