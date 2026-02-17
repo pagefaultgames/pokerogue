@@ -378,7 +378,7 @@ export const Setting: Setting[] = [
     key: SettingKeys.Hide_Move_Skip_Confirm,
     label: i18next.t("settings:hideMoveSkipConfirm"),
     options: OFF_ON,
-    default: 0,
+    default: 1,
     requireReload: true,
     type: SettingType.GENERAL,
   },
@@ -820,7 +820,7 @@ export function setSetting(setting: string, value: number): boolean {
       globalScene.hideIvs = Setting[index].options[value].value === "On";
       break;
     case SettingKeys.Hide_Move_Skip_Confirm:
-      globalScene.hideMoveSkipConfirm = Setting[index].options[value].value === "On";
+      globalScene.hideMoveSkipConfirm = Setting[index].options[value].value === "Off";
       break;
     case SettingKeys.Skip_Seen_Dialogues:
       globalScene.skipSeenDialogues = Setting[index].options[value].value === "On";
