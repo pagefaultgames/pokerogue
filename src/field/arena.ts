@@ -478,7 +478,7 @@ export class Arena {
     }
 
     let tierPool: (SpeciesId | SpeciesTree)[] | undefined = this.pokemonPool[tier];
-    while (tierPool?.length === 0 && tier >= BiomePoolTier.COMMON) {
+    while (tierPool?.length === 0 && tier > BiomePoolTier.COMMON) {
       console.log(
         `Downgrading rarity tier from ${BiomePoolTier[tier]} to ${BiomePoolTier[(tier - 1) as BiomePoolTier]}`,
       );
