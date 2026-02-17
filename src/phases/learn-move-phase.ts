@@ -87,7 +87,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
       () => {
         // No
         globalScene.ui.setMode(this.messageMode);
-        this.rejectMoveAndEnd(move, pokemon);
+        this.rejectMoveAndEnd(move, pokemon, true);
       },
     );
   }
@@ -113,7 +113,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
       move,
       (moveIndex: number) => {
         if (moveIndex === 4) {
-          globalScene.ui.setMode(this.messageMode).then(() => this.rejectMoveAndEnd(move, pokemon));
+          globalScene.ui.setMode(this.messageMode).then(() => this.rejectMoveAndEnd(move, pokemon, false));
           return;
         }
         const forgetSuccessText = i18next.t("battle:learnMoveForgetSuccess", {
@@ -138,8 +138,19 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * @param move The Move to be learned
    * @param Pokemon The Pokemon learning the move
    */
-  async rejectMoveAndEnd(move: Move, pokemon: Pokemon) {
-    if (globalScene.hideMoveSkipConfirm) {
+  async rejectMoveAndEnd(move: Move, pokemon: Pokemon, skippable: boolean) {
+    if (globalScene.hideMoveSkipConfirm && skippable) {
+      globalScene.ui.setMode(this.messageMode);
+      globalScene.ui
+        .showTextPromise(
+          i18next.t("battle:learnMoveNotLearned", {
+            pokemonName: getPokemonNameWithAffix(pokemon),
+            moveName: move.name,
+          }),
+          undefined,
+          true,
+        )
+        .then(() => this.end());
       return;
     }
     await globalScene.ui.showTextPromise(
