@@ -143,6 +143,7 @@ import {
   NumberHolder,
   randomString,
   randSeedInt,
+  randSeedItem,
   shiftCharCodes,
 } from "#utils/common";
 import { deepMergeSpriteData } from "#utils/data";
@@ -1540,6 +1541,7 @@ export class BattleScene extends SceneBase {
     });
   }
 
+  // TODO: This method does way way WAY too much, as evidenced by the checks for egg lapse phases
   public getSpeciesFormIndex(species: PokemonSpecies, gender?: Gender, nature?: Nature, ignoreArena = false): number {
     if (species.forms == null) {
       console.warn(`Form data missing for ${species.name}!\n`, species);
@@ -2115,13 +2117,15 @@ export class BattleScene extends SceneBase {
   randomSpecies(
     waveIndex: number,
     level: number,
-    fromArenaPool?: boolean,
+    fromArenaPool = false,
     speciesFilter?: PokemonSpeciesFilter,
-    filterAllEvolutions?: boolean,
+    filterAllEvolutions = false,
   ): PokemonSpecies {
     if (fromArenaPool) {
-      return this.arena.randomSpecies(waveIndex, level, undefined, getPartyLuckValue(this.party));
+      return this.arena.randomSpecies(waveIndex, level, 0, getPartyLuckValue(this.party));
     }
+
+    // TODO: This is silly
     const filteredSpecies = speciesFilter
       ? [
           ...new Set(
@@ -2139,8 +2143,7 @@ export class BattleScene extends SceneBase {
           ),
         ]
       : allSpecies.filter(s => s.isCatchable());
-    // TODO: should this use `randSeedItem`?
-    return filteredSpecies[randSeedInt(filteredSpecies.length)];
+    return randSeedItem(filteredSpecies);
   }
 
   generateRandomBiome(waveIndex: number): BiomeId {
