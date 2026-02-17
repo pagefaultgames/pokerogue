@@ -376,7 +376,7 @@ export const Setting: Setting[] = [
   },
   {
     key: SettingKeys.Hide_Move_Skip_Confirm,
-    label: i18next.t("settings:hideIvs"),
+    label: i18next.t("settings:hideMoveSkipConfirm"),
     options: OFF_ON,
     default: 1,
     requireReload: true,
