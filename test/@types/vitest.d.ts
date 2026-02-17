@@ -75,8 +75,10 @@ declare module "vitest" {
      * expect(game).not.toHavePositionalTag(PositionalTagType.WISH);
      * ```
      */
-    not: Assertion<T, true>;
+    not: NegativeAssertion<T>;
   }
+
+  type NegativeAssertion<T> = Assertion<T, true>;
 }
 
 // #region Generic Matchers

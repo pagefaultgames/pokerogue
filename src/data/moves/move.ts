@@ -108,7 +108,15 @@ import type { TurnMove } from "#types/turn-move";
 import type { AbstractConstructor } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
 import { applyChallenges } from "#utils/challenge-utils";
-import { BooleanHolder, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
+import {
+  BooleanHolder,
+  isBetween,
+  NumberHolder,
+  randSeedFloat,
+  randSeedInt,
+  randSeedItem,
+  toDmgValue,
+} from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { areAllies, canSpeciesTera, willTerastallize } from "#utils/pokemon-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
@@ -4833,23 +4841,39 @@ export class AntiSunlightPowerDecreaseAttr extends VariablePowerAttr {
   }
 }
 
+/**
+ * Attribute used by {@link https://bulbapedia.bulbagarden.net/wiki/Frustration_(move) | Frustration},
+ * {@link https://bulbapedia.bulbagarden.net/wiki/Return_(move) | Return} and their respective variants.
+ *
+ * Linearly scales the move's base power from 1 to 102 based on the user's current friendship (or base friendship for wild Pokemon).
+ */
 export class FriendshipPowerAttr extends VariablePowerAttr {
+  /**
+   * Whether to invert the power scaling (causing higher friendship values to reduce move power instead of increasing it).
+   * @defaultValue `false`
+   */
   private readonly invert: boolean;
 
-  constructor(invert?: boolean) {
+  constructor(invert = false) {
     super();
 
-    this.invert = !!invert;
+    this.invert = invert;
   }
 
-  apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
-    const power = args[0] as NumberHolder;
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: [NumberHolder]): boolean {
+    const power = args[0];
 
-    const useUserFriendship = user.isPlayer() || user.hasTrainer();
-    const friendshipPower = Math.floor(
-      Math.min(useUserFriendship ? user.friendship : user.species.baseFriendship, 255) / 2.5,
-    );
-    power.value = Math.max(this.invert ? 102 - friendshipPower : friendshipPower, 1);
+    // wild mons use their base friendship
+    // TODO: Can't we just... set the enemy's friendship to its base inside enemy generation?
+    let friendship = user.isPlayer() || user.hasTrainer() ? user.friendship : user.species.baseFriendship;
+    if (!isBetween(friendship, 0, 255)) {
+      // TODO: Remove this if or when proper validation is added (or otherwise guaranteed)
+      console.warn(
+        `Friendship value inside FriendshipPowerAttr power calculation (${friendship}) is out of valid bounds!`,
+      );
+      friendship = Phaser.Math.Clamp(friendship, 0, 255);
+    }
+    power.value = toDmgValue((this.invert ? 255 - friendship : friendship) / 2.5);
 
     return true;
   }
@@ -10088,7 +10112,8 @@ export function initMoves() {
             || user.status.effect === StatusEffect.BURN),
       ),
     new SelfStatusMove(MoveId.GRUDGE, PokemonType.GHOST, -1, 5, -1, 0, 3) //
-      .attr(AddBattlerTagAttr, BattlerTagType.GRUDGE, true, undefined, 1),
+      // NB: failing on overlap is meaningless since Grudge wears off before the user's next move
+      .attr(AddBattlerTagAttr, BattlerTagType.GRUDGE, true, false, 1),
     new SelfStatusMove(MoveId.SNATCH, PokemonType.DARK, -1, 10, -1, 4, 3) //
       .unimplemented(),
     new AttackMove(MoveId.SECRET_POWER, PokemonType.NORMAL, MoveCategory.PHYSICAL, 70, 100, 20, 30, 0, 3)
