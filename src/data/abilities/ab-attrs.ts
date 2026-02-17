@@ -2370,7 +2370,7 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
   private readonly selfTarget: boolean;
   private readonly intimidate: boolean;
 
-  constructor(stats: readonly BattleStat[], stages: number, selfTarget = false, intimidate = true) {
+  constructor(stats: readonly BattleStat[], stages: number, selfTarget = false, intimidate = false) {
     super(true);
 
     this.stats = stats;
