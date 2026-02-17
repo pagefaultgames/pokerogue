@@ -272,6 +272,7 @@ export function formatStat(stat: number, forHp = false): string {
   return formatLargeNumber(stat, forHp ? 100_000 : 1_000_000);
 }
 
+// TODO: Remove in favor of async functions
 export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T | undefined> {
   return condition ? promiseFunc() : Promise.resolve(undefined);
 }

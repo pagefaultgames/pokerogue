@@ -128,6 +128,7 @@ export interface Starter {
   ivs: number[];
 }
 
+// TODO: What type of number does this store?
 export type RunHistoryData = Record<number, RunEntry>;
 
 export interface RunEntry {
