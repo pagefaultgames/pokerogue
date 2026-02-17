@@ -380,7 +380,7 @@ export const Setting: Setting[] = [
     options: [
       {
         value: "Off",
-        label: i18next.t("settings:skip"),,
+        label: i18next.t("settings:skip"),
       },
       {
         value: "On",
