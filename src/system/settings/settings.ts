@@ -148,6 +148,7 @@ export const SettingKeys = {
   Battle_Style: "BATTLE_STYLE",
   Enable_Retries: "ENABLE_RETRIES",
   Hide_IVs: "HIDE_IVS",
+  Hide_Move_Skip_Confirm: "HIDE_MOVE_SKIP_CONFIRM",
   Tutorials: "TUTORIALS",
   Touch_Controls: "TOUCH_CONTROLS",
   Vibration: "VIBRATION",
@@ -371,6 +372,14 @@ export const Setting: Setting[] = [
     label: i18next.t("settings:hideIvs"),
     options: OFF_ON,
     default: 0,
+    type: SettingType.GENERAL,
+  },
+  {
+    key: SettingKeys.Hide_Move_Skip_Confirm,
+    label: i18next.t("settings:hideIvs"),
+    options: OFF_ON,
+    default: 1,
+    requireReload: true,
     type: SettingType.GENERAL,
   },
   {
@@ -809,6 +818,9 @@ export function setSetting(setting: string, value: number): boolean {
       break;
     case SettingKeys.Hide_IVs:
       globalScene.hideIvs = Setting[index].options[value].value === "On";
+      break;
+    case SettingKeys.Hide_Move_Skip_Confirm:
+      globalScene.hideMoveSkipConfirm = Setting[index].options[value].value === "On";
       break;
     case SettingKeys.Skip_Seen_Dialogues:
       globalScene.skipSeenDialogues = Setting[index].options[value].value === "On";
