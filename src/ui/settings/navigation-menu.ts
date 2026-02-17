@@ -7,6 +7,7 @@ import type { InputsIcons } from "#ui/abstract-control-settings-ui-handler";
 import { addTextObject, setTextStyle } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import i18next from "i18next";
+import { specialIconKeys, specialIcons } from "./special-icons";
 
 const LEFT = "LEFT";
 const RIGHT = "RIGHT";
@@ -177,12 +178,8 @@ export class NavigationMenu extends Phaser.GameObjects.Container {
    * Updates the icons in the NavigationMenu based on the latest input recorded.
    */
   updateIcons() {
-    const specialIcons = {
-      BUTTON_HOME: "HOME.png",
-      BUTTON_DELETE: "DEL.png",
-    };
     for (const settingName of Object.keys(this.navigationIcons)) {
-      if (Object.keys(specialIcons).includes(settingName)) {
+      if (specialIconKeys.includes(settingName)) {
         this.navigationIcons[settingName].setTexture("keyboard").setFrame(specialIcons[settingName]).setAlpha(1);
         continue;
       }

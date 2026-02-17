@@ -136,7 +136,7 @@ describe.each<{ name: string; ability: AbilityId; stages: Partial<Record<BattleS
 
     expect(feebas).toHaveAbilityApplied(ability);
     for (const [statStr, stage] of Object.entries(stages)) {
-      const stat = Number(statStr) as BattleStat;
+      const stat = Number(statStr);
       expect(feebas).toHaveStatStage(stat, stage);
     }
   });

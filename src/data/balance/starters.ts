@@ -1,5 +1,6 @@
 import { IS_TEST } from "#constants/app-constants";
 import { SpeciesId } from "#enums/species-id";
+import type { IntClosedRange } from "type-fest";
 
 export const POKERUS_STARTER_COUNT = 5;
 
@@ -18,12 +19,15 @@ export const TRAINER_MIN_FRIENDSHIP = 50;
 export const TRAINER_MAX_FRIENDSHIP_WAVE = 145;
 // #endregion
 
+/** The numeric point cost of a starter. */
+export type StarterCost = IntClosedRange<1, 10>;
+
 /**
  * Function to get the cumulative friendship threshold at which a candy is earned
  * @param starterCost - The cost of the starter, found in {@linkcode speciesStarterCosts}
  * @returns aforementioned threshold
  */
-export function getStarterValueFriendshipCap(starterCost: number): number {
+export function getStarterValueFriendshipCap(starterCost: StarterCost): number {
   switch (starterCost) {
     case 1:
       return 25;
@@ -42,7 +46,8 @@ export function getStarterValueFriendshipCap(starterCost: number): number {
     case 8:
     case 9:
       return 450;
-    default:
+    case 10:
+    default: // fallback for invalid starter costs (should never happen, but just in case)
       return 600;
   }
 }
@@ -626,7 +631,7 @@ export const speciesStarterCosts = {
   [SpeciesId.PALDEA_TAUROS]: 5,
   [SpeciesId.PALDEA_WOOPER]: 3,
   [SpeciesId.BLOODMOON_URSALUNA]: 5,
-};
+} satisfies Partial<Record<SpeciesId, StarterCost>>;
 
 /**
  * Type for the valid species ids that can be used as starters, based on the keys of {@linkcode speciesStarterCosts}

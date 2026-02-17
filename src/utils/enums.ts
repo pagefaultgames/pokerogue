@@ -65,7 +65,7 @@ export function enumValueToKey<T extends EnumOrObject, V extends ObjectValues<T>
   object: NormalEnum<T>,
   val: V,
 ): InferKeys<T, V> {
-  for (const [key, value] of Object.entries(object)) {
+  for (const [key, value] of Object.entries<EnumOrObject>(object)) {
     if (val === value) {
       return key as InferKeys<T, V>;
     }

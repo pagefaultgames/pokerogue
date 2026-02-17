@@ -90,20 +90,19 @@ export class SettingsGamepadUiHandler extends AbstractControlSettingsUiHandler {
 
     // Iterate over the keys in the settingDevice enumeration.
     for (const [index, key] of Object.keys(this.setting).entries()) {
-      const setting = this.setting[key]; // Get the actual setting value using the key.
+      const setting = this.setting[key];
 
       // Check if the current setting corresponds to the controller setting.
       if (setting === this.setting.Controller) {
         // Iterate over all layouts excluding the 'noGamepads' special case.
-        for (const _key of Object.keys(this.layout)) {
-          if (_key === "noGamepads") {
+        for (const layoutKey of this.layout.keys()) {
+          if (layoutKey === "noGamepads") {
             continue;
           } // Skip updating the no gamepad layout.
 
           // Update the text of the first option label under the current setting to the name of the chosen gamepad,
           // truncating the name to 30 characters if necessary.
-          this.layout[_key].optionValueLabels[index][0].setText(
-            // TODO: is this bang correct?
+          this.layout[layoutKey].optionValueLabels[index][0].setText(
             truncateString(globalScene.inputController.selectedDevice[Device.GAMEPAD]!, 20),
           );
         }

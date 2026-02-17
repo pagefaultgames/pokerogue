@@ -114,6 +114,7 @@ export function isVirtual(useMode: MoveUseMode): boolean {
  * | {@linkcode MoveUseMode.FOLLOW_UP}      | `true`  |
  * | {@linkcode MoveUseMode.REFLECTED}      | `true`  |
  * | {@linkcode MoveUseMode.DELAYED_ATTACK} | `true`  |
+ *
  */
 export function isIgnoreStatus(useMode: MoveUseMode): boolean {
   return useMode >= MoveUseMode.FOLLOW_UP;

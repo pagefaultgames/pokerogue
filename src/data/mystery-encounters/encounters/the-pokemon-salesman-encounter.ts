@@ -98,7 +98,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
         !NON_LEGEND_PARADOX_POKEMON.includes(s.speciesId)
         && !NON_LEGEND_ULTRA_BEASTS.includes(s.speciesId)
         && Object.keys(speciesStarterCosts) // The event expects the chosen pokemon to be a valid starter,
-          .map(sId => Number.parseInt(sId)) // and will break if a non-starter is chosen
+          .map<SpeciesId>(sId => Number.parseInt(sId)) // and will break if a non-starter is chosen
           .includes(s.speciesId),
     );
 
