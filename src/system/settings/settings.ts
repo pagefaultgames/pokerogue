@@ -377,7 +377,16 @@ export const Setting: Setting[] = [
   {
     key: SettingKeys.Hide_Move_Skip_Confirm,
     label: i18next.t("settings:hideMoveSkipConfirm"),
-    options: OFF_ON,
+    options: [
+      {
+        value: "Off",
+        label: i18next.t("settings:skip"),,
+      },
+      {
+        value: "On",
+        label: i18next.t("settings:confirm"),
+      },
+    ],
     default: 1,
     requireReload: true,
     type: SettingType.GENERAL,
