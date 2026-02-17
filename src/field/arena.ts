@@ -443,7 +443,7 @@ export class Arena {
    * @param attempt - Internal counter used to track legendary mon rerolls; **should always be 0** when called initially
    * @param luckValue - (Default `0`) The player's luck value, used to decrease the RNG ceiling of higher rarities
    *   (and thus make them more likely)
-   * @param isBoss - Whether the Pokemon is a boss
+   * @param isBoss - (Optional) Whether the Pokemon is a boss
    * @returns a Pokemon species
    */
   // TODO: Remove the `attempt` parameter
