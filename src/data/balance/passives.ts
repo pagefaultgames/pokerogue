@@ -932,7 +932,7 @@ export const starterPassiveAbilities: StarterPassiveAbilities = {
   [SpeciesId.COPPERAJAH]: { 0: AbilityId.EARTH_EATER, 1: AbilityId.EARTH_EATER },
   [SpeciesId.DRACOZOLT]: { 0: AbilityId.NO_GUARD },
   [SpeciesId.ARCTOZOLT]: { 0: AbilityId.WATER_ABSORB },
-  [SpeciesId.DRACOVISH]: { 0: AbilityId.THERMAL_EXCHANGE },
+  [SpeciesId.DRACOVISH]: { 0: AbilityId.MOLD_BREAKER },
   [SpeciesId.ARCTOVISH]: { 0: AbilityId.STRONG_JAW },
   [SpeciesId.DURALUDON]: { 0: AbilityId.FILTER, 1: AbilityId.FILTER },
   [SpeciesId.ARCHALUDON]: { 0: AbilityId.TRANSISTOR },
