@@ -11,7 +11,6 @@ import {
   pokemonSpeciesLevelMoves,
 } from "#balance/pokemon-level-moves";
 import { speciesStarterCosts } from "#balance/starters";
-import { uncatchableSpecies } from "#data/data-lists";
 import type { GrowthRate } from "#data/exp";
 import { Gender } from "#data/gender";
 import { AbilityId } from "#enums/ability-id";
@@ -235,12 +234,43 @@ export abstract class PokemonSpeciesForm {
     return Math.floor(this.speciesId / 2000) as Region;
   }
 
-  isObtainable(): boolean {
-    return this.generation <= 9 || pokemonPrevolutions.hasOwnProperty(this.speciesId);
-  }
-
-  isCatchable(): boolean {
-    return this.isObtainable() && uncatchableSpecies.indexOf(this.speciesId) === -1;
+  // TODO: this is primarily used for preventing certain pokemon from generating on trainers, rename?
+  public isCatchable(): boolean {
+    const blockedSpecies = [
+      SpeciesId.MEW,
+      SpeciesId.CELEBI,
+      SpeciesId.JIRACHI,
+      SpeciesId.DEOXYS,
+      SpeciesId.PHIONE,
+      SpeciesId.MANAPHY,
+      SpeciesId.ARCEUS,
+      SpeciesId.VICTINI,
+      SpeciesId.MELTAN,
+      SpeciesId.MELMETAL,
+      SpeciesId.ETERNATUS,
+      SpeciesId.GREAT_TUSK,
+      SpeciesId.SCREAM_TAIL,
+      SpeciesId.BRUTE_BONNET,
+      SpeciesId.FLUTTER_MANE,
+      SpeciesId.SLITHER_WING,
+      SpeciesId.SANDY_SHOCKS,
+      SpeciesId.IRON_TREADS,
+      SpeciesId.IRON_BUNDLE,
+      SpeciesId.IRON_HANDS,
+      SpeciesId.IRON_JUGULIS,
+      SpeciesId.IRON_MOTH,
+      SpeciesId.IRON_THORNS,
+      SpeciesId.ROARING_MOON,
+      SpeciesId.IRON_VALIANT,
+      SpeciesId.WALKING_WAKE,
+      SpeciesId.IRON_LEAVES,
+      SpeciesId.GOUGING_FIRE,
+      SpeciesId.RAGING_BOLT,
+      SpeciesId.IRON_BOULDER,
+      SpeciesId.IRON_CROWN,
+      SpeciesId.PECHARUNT,
+    ];
+    return !blockedSpecies.includes(this.speciesId);
   }
 
   isRegional(): boolean {

@@ -1518,7 +1518,7 @@ export class PokedexUiHandler extends MessageUiHandler {
       // TODO: We might also need to do it the other way around.
       const biomes = catchableSpecies[species.speciesId]
         .concat(catchableSpecies[starterId])
-        .map(b => enumValueToKey(BiomeId, b.biome) as string);
+        .map(b => enumValueToKey(BiomeId, Number(b.biome) as BiomeId) as string);
       if (biomes.length === 0) {
         biomes.push("Uncatchable");
       }

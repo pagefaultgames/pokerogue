@@ -7,7 +7,6 @@ import { handleTutorial, Tutorial } from "#app/tutorial";
 import { initEncounterAnims, loadEncounterAnimAssets } from "#data/battle-anims";
 import { getCharVariantFromDialogue } from "#data/dialogue";
 import { getNatureName } from "#data/nature";
-import { getRandomWeatherType } from "#data/weather";
 import { BattleSpec } from "#enums/battle-spec";
 import { BattleType } from "#enums/battle-type";
 import { BattlerIndex } from "#enums/battler-index";
@@ -297,7 +296,9 @@ export class EncounterPhase extends BattlePhase {
           this.doEncounter();
           globalScene.resetSeed();
         } else {
-          this.trySetWeatherIfNewBiome(); // Set weather before session gets saved
+          // Set weather and terrain before session gets saved
+          this.trySetWeatherIfNewBiome();
+          this.trySetTerrainIfNewBiome();
           // Game syncs to server on waves X1 and X6 (As of 1.2.0)
           globalScene.gameData
             .saveAll(true, battle.waveIndex % 5 === 1 || (globalScene.lastSavePlayTime ?? 0) >= 300)
@@ -653,16 +654,25 @@ export class EncounterPhase extends BattlePhase {
 
   /**
    * Set biome weather if and only if this encounter is the start of a new biome.
-   *
+   * @remarks
    * By using function overrides, this should happen if and only if this phase
-   * is exactly a NewBiomeEncounterPhase or an EncounterPhase (to account for
-   * Wave 1 of a Daily Run), but NOT NextEncounterPhase (which starts the next
+   * is exactly a `NewBiomeEncounterPhase` or an `EncounterPhase` (to account for
+   * Wave 1 of a Daily Run), but NOT `NextEncounterPhase` (which starts the next
    * wave in the same biome).
    */
-  trySetWeatherIfNewBiome(): void {
-    if (!this.loaded) {
-      globalScene.arena.trySetWeather(getRandomWeatherType(globalScene.arena));
-      globalScene.arena.tryOverrideTerrain();
-    }
+  protected trySetWeatherIfNewBiome(): void {
+    globalScene.arena.setBiomeWeather();
+  }
+
+  /**
+   * Set biome terrain if and only if this encounter is the start of a new biome.
+   * @remarks
+   * By using function overrides, this should happen if and only if this phase
+   * is exactly a `NewBiomeEncounterPhase` or an `EncounterPhase` (to account for
+   * Wave 1 of a Daily Run), but NOT `NextEncounterPhase` (which starts the next
+   * wave in the same biome).
+   */
+  protected trySetTerrainIfNewBiome(): void {
+    globalScene.arena.setBiomeTerrain();
   }
 }

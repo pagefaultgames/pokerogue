@@ -67,7 +67,7 @@ import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import { UiTheme } from "#enums/ui-theme";
 import { NewArenaEvent } from "#events/battle-scene";
-import { Arena, getArenaBgmLoopPoint, getBgTerrainColorRatioForBiome } from "#field/arena";
+import { Arena } from "#field/arena";
 import { ArenaBase } from "#field/arena-base";
 import { DamageNumberHandler } from "#field/damage-number-handler";
 import type { Pokemon } from "#field/pokemon";
@@ -143,6 +143,7 @@ import {
   NumberHolder,
   randomString,
   randSeedInt,
+  randSeedItem,
   shiftCharCodes,
 } from "#utils/common";
 import { deepMergeSpriteData } from "#utils/data";
@@ -1304,7 +1305,7 @@ export class BattleScene extends SceneBase {
         newBattleType =
           Overrides.BATTLE_TYPE_OVERRIDE
           ?? battleType
-          ?? (this.gameMode.isWaveTrainer(newWaveIndex, this.arena) ? BattleType.TRAINER : BattleType.WILD);
+          ?? (this.gameMode.isWaveTrainer(newWaveIndex) ? BattleType.TRAINER : BattleType.WILD);
       }
 
       if (newBattleType === BattleType.TRAINER) {
@@ -1498,7 +1499,7 @@ export class BattleScene extends SceneBase {
     this.eventTarget.dispatchEvent(new NewArenaEvent());
 
     this.arenaBg.pipelineData = {
-      terrainColorRatio: getBgTerrainColorRatioForBiome(this.arena.biomeId),
+      terrainColorRatio: this.arena.bgTerrainColorRatioForBiome,
     };
 
     return this.arena;
@@ -1544,6 +1545,7 @@ export class BattleScene extends SceneBase {
     });
   }
 
+  // TODO: break this up
   public getSpeciesFormIndex(species: PokemonSpecies, gender?: Gender, nature?: Nature, ignoreArena = false): number {
     if (species.forms == null) {
       console.warn(`Form data missing for ${species.name}!\n`, species);
@@ -2119,22 +2121,23 @@ export class BattleScene extends SceneBase {
   randomSpecies(
     waveIndex: number,
     level: number,
-    fromArenaPool?: boolean,
+    fromArenaPool = false,
     speciesFilter?: PokemonSpeciesFilter,
-    filterAllEvolutions?: boolean,
+    filterAllEvolutions = false,
   ): PokemonSpecies {
     if (fromArenaPool) {
-      return this.arena.randomSpecies(waveIndex, level, undefined, getPartyLuckValue(this.party));
+      return this.arena.randomSpecies(waveIndex, level, 0, getPartyLuckValue(this.party));
     }
+
+    // TODO: simplify this?
     const filteredSpecies = speciesFilter
       ? [
           ...new Set(
             allSpecies
-              .filter(s => s.isCatchable())
-              .filter(speciesFilter)
+              .filter(s => s.isCatchable() && speciesFilter(s))
               .map(s => {
                 if (!filterAllEvolutions) {
-                  while (pokemonPrevolutions.hasOwnProperty(s.speciesId)) {
+                  while (Object.hasOwn(pokemonPrevolutions, s.speciesId)) {
                     s = getPokemonSpecies(pokemonPrevolutions[s.speciesId]);
                   }
                 }
@@ -2143,8 +2146,7 @@ export class BattleScene extends SceneBase {
           ),
         ]
       : allSpecies.filter(s => s.isCatchable());
-    // TODO: should this use `randSeedItem`?
-    return filteredSpecies[randSeedInt(filteredSpecies.length)];
+    return randSeedItem(filteredSpecies);
   }
 
   generateRandomBiome(waveIndex: number): BiomeId {
@@ -2169,8 +2171,7 @@ export class BattleScene extends SceneBase {
       }
     }
 
-    // TODO: should this use `randSeedItem`?
-    return biomes[randSeedInt(biomes.length)];
+    return randSeedItem(biomes);
   }
 
   isBgmPlaying(): boolean {
@@ -2198,7 +2199,7 @@ export class BattleScene extends SceneBase {
     this.bgmCache.add(bgmName);
     this.loadBgm(bgmName);
     let loopPoint = 0;
-    loopPoint = bgmName === this.arena.bgm ? getArenaBgmLoopPoint(this.arena.biomeId) : this.getBgmLoopPoint(bgmName);
+    loopPoint = bgmName === this.arena.bgm ? this.arena.bgmLoopPoint : this.getBgmLoopPoint(bgmName);
     let loaded = false;
     const playNewBgm = () => {
       this.ui.bgmBar.setBgmToBgmBar(bgmName);

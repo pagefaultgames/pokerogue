@@ -330,10 +330,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   ) {
     super(globalScene, x, y);
 
-    if (!species.isObtainable() && this.isPlayer()) {
-      throw new Error(`Cannot create a player Pokemon for species "${species.getName(formIndex)}"`);
-    }
-
     this.species = species;
     this.pokeball = dataSource?.pokeball || PokeballType.POKEBALL;
     this.level = level;
@@ -452,10 +448,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     this.battleData = new PokemonBattleData(dataSource?.battleData);
 
     this.generateName();
-
-    if (!species.isObtainable()) {
-      this.shiny = false;
-    }
 
     if (!dataSource) {
       this.calculateStats();

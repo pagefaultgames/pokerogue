@@ -401,7 +401,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     const starterBoxContainer = globalScene.add.container(speciesContainerX + 6, 9); //115
 
     for (const species of allSpecies) {
-      if (!speciesStarterCosts.hasOwnProperty(species.speciesId) || !species.isObtainable()) {
+      if (!Object.hasOwn(speciesStarterCosts, species.speciesId)) {
         continue;
       }
 
@@ -897,6 +897,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
     this.hasAbilities = [hasAbility1, hasAbility2, hasHiddenAbility];
 
+    // TODO: this is jank, relying on extremely jank data structures that have been removed; refactor
     const allBiomes = catchableSpecies[species.speciesId] ?? [];
     this.preBiomes = this.sanitizeBiomes(
       (catchableSpecies[this.starterId] ?? []).filter(
