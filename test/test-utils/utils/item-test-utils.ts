@@ -7,7 +7,7 @@ import { expect } from "vitest";
 
 export function getAllItemSpecs(pokemon: Pokemon): HeldItemSpecs[] {
   const { heldItemManager } = pokemon;
-  return heldItemManager.getHeldItems().map(iid => heldItemManager.getItemSpecs(iid)!);
+  return heldItemManager.getItems().map(iid => heldItemManager.getItemSpecs(iid)!);
 }
 
 /**

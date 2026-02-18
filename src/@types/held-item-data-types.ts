@@ -1,4 +1,4 @@
-import type { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
+import { type HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import type { RarityTier } from "#enums/reward-tier";
 import type { Pokemon } from "#field/pokemon";
 import type { AllHeldItems } from "#items/all-held-items";
@@ -14,7 +14,7 @@ export interface HeldItemData {
    * Whether this item is currently disabled.
    * @defaultValue `false`
    */
-  disabled?: boolean;
+  disabled: boolean;
   /**
    * Whether a form change is active.
    * TODO: This is only temporary to make things work, form change rework should get rid of it.
@@ -30,12 +30,20 @@ export interface HeldItemSpecs extends HeldItemData {
 }
 
 // TODO: Move these getters with the rest of the item getters in a nice big file
-export function isHeldItemSpecs(entry: any): entry is HeldItemSpecs {
-  return typeof entry.id === "number" && "stack" in entry;
+export function isHeldItemSpecs(entry: unknown): entry is HeldItemSpecs {
+  if (typeof entry !== "object" || entry === null) {
+    return false;
+  }
+  return (
+    typeof (entry as HeldItemSpecs).id === "number"
+    && typeof (entry as HeldItemSpecs).stack === "number"
+    && (entry as HeldItemSpecs).id in HeldItemId
+  );
 }
 
 export type HeldItemWeights = Partial<Record<HeldItemId, number>>;
 
+// TODO: Inline this into the sole place it is used
 export type HeldItemWeightFunc = (party: Pokemon[]) => number;
 
 interface HeldItemCategoryEntry extends HeldItemData {
@@ -43,6 +51,8 @@ interface HeldItemCategoryEntry extends HeldItemData {
   customWeights?: HeldItemWeights;
 }
 
+// TODO: These predicate functions should use `unknown` instead of `any`, and should be reviewed to
+// avoid misclassifying types
 export function isHeldItemCategoryEntry(entry: any): entry is HeldItemCategoryEntry {
   return entry?.id && isHeldItemCategoryEntry(entry.id) && "customWeights" in entry;
 }

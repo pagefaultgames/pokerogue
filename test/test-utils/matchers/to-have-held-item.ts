@@ -39,7 +39,7 @@ export function toHaveHeldItem(
 
   // fast track for lacking item at all
   if (!received.heldItemManager.hasItem(id)) {
-    const actualStr = stringifyEnumArray(HeldItemId, received.heldItemManager.getHeldItems(), { base: 16 });
+    const actualStr = stringifyEnumArray(HeldItemId, received.heldItemManager.getItems(), { base: 16 });
     const expectedStr = itemIdToString(id);
 
     return {

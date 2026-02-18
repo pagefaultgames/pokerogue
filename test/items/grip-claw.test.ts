@@ -46,9 +46,9 @@ describe("Items - Grip Claw", () => {
     const enemyPokemon = game.scene.getEnemyField();
     playerPokemon.heldItemManager.setStack(HeldItemId.GRIP_CLAW, 10);
 
-    const playerHeldItemCount = playerPokemon.heldItemManager.getHeldItemCount();
-    const enemy1HeldItemCount = enemyPokemon[0].heldItemManager.getHeldItemCount();
-    const enemy2HeldItemCount = enemyPokemon[1].heldItemManager.getHeldItemCount();
+    const playerHeldItemCount = playerPokemon.heldItemManager.getItemCount();
+    const enemy1HeldItemCount = enemyPokemon[0].heldItemManager.getItemCount();
+    const enemy2HeldItemCount = enemyPokemon[1].heldItemManager.getItemCount();
     expect(enemy2HeldItemCount).toBeGreaterThan(0);
 
     game.move.select(MoveId.TACKLE, 0, BattlerIndex.ENEMY_2);
@@ -56,9 +56,9 @@ describe("Items - Grip Claw", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    const playerHeldItemCountAfter = playerPokemon.heldItemManager.getHeldItemCount();
-    const enemy1HeldItemCountsAfter = enemyPokemon[0].heldItemManager.getHeldItemCount();
-    const enemy2HeldItemCountsAfter = enemyPokemon[1].heldItemManager.getHeldItemCount();
+    const playerHeldItemCountAfter = playerPokemon.heldItemManager.getItemCount();
+    const enemy1HeldItemCountsAfter = enemyPokemon[0].heldItemManager.getItemCount();
+    const enemy2HeldItemCountsAfter = enemyPokemon[1].heldItemManager.getItemCount();
 
     expect(playerHeldItemCountAfter).toBe(playerHeldItemCount + 1);
     expect(enemy1HeldItemCountsAfter).toBe(enemy1HeldItemCount);
@@ -71,9 +71,9 @@ describe("Items - Grip Claw", () => {
     const playerPokemon = game.field.getPlayerPokemon();
     const enemyPokemon = game.scene.getEnemyField();
 
-    const playerHeldItemCount = playerPokemon.heldItemManager.getHeldItemCount();
-    const enemy1HeldItemCount = enemyPokemon[0].heldItemManager.getHeldItemCount();
-    const enemy2HeldItemCount = enemyPokemon[1].heldItemManager.getHeldItemCount();
+    const playerHeldItemCount = playerPokemon.heldItemManager.getItemCount();
+    const enemy1HeldItemCount = enemyPokemon[0].heldItemManager.getItemCount();
+    const enemy2HeldItemCount = enemyPokemon[1].heldItemManager.getItemCount();
     expect(enemy2HeldItemCount).toBeGreaterThan(0);
 
     game.move.select(MoveId.ATTRACT, 0, BattlerIndex.ENEMY_2);
@@ -81,9 +81,9 @@ describe("Items - Grip Claw", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    const playerHeldItemCountAfter = playerPokemon.heldItemManager.getHeldItemCount();
-    const enemy1HeldItemCountsAfter = enemyPokemon[0].heldItemManager.getHeldItemCount();
-    const enemy2HeldItemCountsAfter = enemyPokemon[1].heldItemManager.getHeldItemCount();
+    const playerHeldItemCountAfter = playerPokemon.heldItemManager.getItemCount();
+    const enemy1HeldItemCountsAfter = enemyPokemon[0].heldItemManager.getItemCount();
+    const enemy2HeldItemCountsAfter = enemyPokemon[1].heldItemManager.getItemCount();
 
     expect(playerHeldItemCountAfter).toBe(playerHeldItemCount);
     expect(enemy1HeldItemCountsAfter).toBe(enemy1HeldItemCount);
@@ -100,13 +100,13 @@ describe("Items - Grip Claw", () => {
     const [leftPokemon, rightPokemon] = game.scene.getPlayerField();
     leftPokemon.heldItemManager.setStack(HeldItemId.GRIP_CLAW, 10);
 
-    const heldItemCountBefore = rightPokemon.heldItemManager.getHeldItemCount();
+    const heldItemCountBefore = rightPokemon.heldItemManager.getItemCount();
 
     game.move.select(MoveId.POLLEN_PUFF, 0, BattlerIndex.PLAYER_2);
     game.move.select(MoveId.ENDURE, 1);
 
     await game.toNextTurn();
 
-    expect(rightPokemon.heldItemManager.getHeldItemCount()).toBe(heldItemCountBefore);
+    expect(rightPokemon.heldItemManager.getItemCount()).toBe(heldItemCountBefore);
   });
 });

@@ -1,23 +1,29 @@
-// TODO: move to `src/@types/`
 import type { RarityTier } from "#enums/reward-tier";
-import type { TrainerItemId } from "#enums/trainer-item-id";
+import { TrainerItemId } from "#enums/trainer-item-id";
 
 export interface TrainerItemData {
+  /** The stack count of the item, or its duration for duration-based trainer items. */
   stack: number;
   disabled?: boolean;
   cooldown?: number;
 }
 
-export type TrainerItemDataMap = {
-  [key in TrainerItemId]?: TrainerItemData;
-};
+export type TrainerItemDataMap = Map<TrainerItemId, TrainerItemData>;
 
 export interface TrainerItemSpecs extends TrainerItemData {
   id: TrainerItemId;
 }
 
-export function isTrainerItemSpecs(entry: any): entry is TrainerItemSpecs {
-  return typeof entry.id === "number" && "stack" in entry;
+// TODO: This should emphatically not be in "#types"
+export function isTrainerItemSpecs(entry: unknown): entry is TrainerItemSpecs {
+  if (typeof entry !== "object" || entry === null) {
+    return false;
+  }
+  return (
+    typeof (entry as TrainerItemSpecs).id === "number"
+    && typeof (entry as TrainerItemSpecs).stack === "number"
+    && (entry as TrainerItemSpecs).id in TrainerItemId
+  );
 }
 
 interface TrainerItemPoolEntry {

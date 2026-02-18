@@ -181,7 +181,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 2);
 
-      expect(scene.getPlayerParty()[0].heldItemManager.getHeldItemCount()).toBe(3);
+      expect(scene.getPlayerParty()[0].heldItemManager.getItemCount()).toBe(3);
     });
 
     it("Should return 2 (2/5ths floored) berries if 7 were stolen", { retry: 5 }, async () => {
@@ -198,7 +198,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 2);
 
-      expect(scene.getPlayerParty()[0].heldItemManager.getHeldItemCount()).toBe(2);
+      expect(scene.getPlayerParty()[0].heldItemManager.getItemCount()).toBe(2);
     });
 
     it("should leave encounter without battle", async () => {

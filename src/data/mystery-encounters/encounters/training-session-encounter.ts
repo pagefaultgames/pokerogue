@@ -358,7 +358,7 @@ function getEnemyConfig(playerPokemon: PlayerPokemon, segments: number): EnemyPa
 
   // Passes modifiers by reference
   // TODO: fix various things, like make enemy items untransferable, make sure form change items can come back
-  const config = playerPokemon.heldItemManager.generateHeldItemConfiguration();
+  const config = playerPokemon.heldItemManager.generateItemConfiguration();
 
   const data = new PokemonData(playerPokemon);
   return {

@@ -149,7 +149,7 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
         const removedPokemon = getRandomPlayerPokemon(true, false, true);
 
         // Get all the pokemon's held items
-        const itemConfig = removedPokemon.heldItemManager.generateHeldItemConfiguration();
+        const itemConfig = removedPokemon.heldItemManager.generateItemConfiguration();
         globalScene.removePokemonFromPlayerParty(removedPokemon);
 
         const encounter = globalScene.currentBattle.mysteryEncounter!;

@@ -6,7 +6,7 @@ import type { HeldItemEffectParamMap } from "#types/held-item-parameter";
 
 export function applyHeldItems<T extends HeldItemEffect>(effect: T, params: HeldItemEffectParamMap[T]) {
   const { pokemon } = params;
-  for (const item of pokemon.heldItemManager.getHeldItems()) {
+  for (const item of pokemon.heldItemManager.getItems()) {
     const heldItem = allHeldItems[item];
     if ("effects" in heldItem && heldItem.effects.includes(effect) && heldItem.shouldApply(effect, params)) {
       heldItem.apply(effect, params);

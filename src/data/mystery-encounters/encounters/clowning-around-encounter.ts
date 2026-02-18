@@ -302,7 +302,7 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
 
         // Shuffles Berries (if they have any)
         const oldBerries = mostHeldItemsPokemon.heldItemManager
-          .getHeldItems()
+          .getItems()
           .filter(m => isItemInCategory(m, HeldItemCategoryId.BERRY));
 
         let numBerries = 0;
