@@ -6,7 +6,7 @@
  */
 
 // biome-ignore lint/correctness/noUnusedImports: Biome can't detect unused imports in preceding doc comments
-import type CustomDefaultReporter from "#test/test-utils/reporters/custom-default-reporter";
+import type { CustomDefaultReporter } from "#test/test-utils/reporters/custom-default-reporter";
 import { join, relative } from "path";
 import chalk from "chalk";
 import type { RunnerTask, RunnerTaskResult, RunnerTestCase } from "vitest";
