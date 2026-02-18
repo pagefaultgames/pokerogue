@@ -537,7 +537,7 @@ export class Arena {
    * | Boss SR | 1-5         | 5/64   |
    * | Boss UR | 0           | 1/64   |
    *
-   * @param roll - The random roll to check against; expected to be within the range [0, 63]
+   * @param roll - The random roll to check against; expected to be within the range `[0, 63]`
    * @returns The generated `BiomePoolTier`
    */
   private generateBossBiomeTier(roll: number): BiomePoolTier {
