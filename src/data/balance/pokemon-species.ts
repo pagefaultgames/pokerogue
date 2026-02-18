@@ -1612,8 +1612,8 @@ export function initSpecies() {
     new PokemonSpecies(SpeciesId.BOMBIRDIER, 9, false, false, false, "Item Drop Pokémon", PokemonType.FLYING, PokemonType.DARK, 1.5, 42.9, AbilityId.BIG_PECKS, AbilityId.KEEN_EYE, AbilityId.ROCKY_PAYLOAD, 485, 70, 103, 85, 60, 85, 82, 25, 50, 243, GrowthRate.SLOW, 50, false),
     new PokemonSpecies(SpeciesId.FINIZEN, 9, false, false, false, "Dolphin Pokémon", PokemonType.WATER, null, 1.3, 60.2, AbilityId.WATER_VEIL, AbilityId.NONE, AbilityId.NONE, 315, 70, 45, 40, 45, 40, 75, 200, 50, 63, GrowthRate.SLOW, 50, false),
     new PokemonSpecies(SpeciesId.PALAFIN, 9, false, false, false, "Dolphin Pokémon", PokemonType.WATER, null, 1.3, 60.2, AbilityId.ZERO_TO_HERO, AbilityId.NONE, AbilityId.NONE, 457, 100, 70, 72, 53, 62, 100, 45, 50, 160, GrowthRate.SLOW, 50, false, true,
-      new PokemonForm("Zero Form", "zero", PokemonType.WATER, null, 1.3, 60.2, AbilityId.ZERO_TO_HERO, AbilityId.NONE, AbilityId.ZERO_TO_HERO, 457, 100, 70, 72, 53, 62, 100, 45, 50, 160, false, null, true),
-      new PokemonForm("Hero Form", "hero", PokemonType.WATER, null, 1.8, 97.4, AbilityId.ZERO_TO_HERO, AbilityId.NONE, AbilityId.ZERO_TO_HERO, 650, 100, 160, 97, 106, 87, 100, 45, 50, 160)
+      new PokemonForm("Zero Form", "zero", PokemonType.WATER, null, 1.3, 60.2, AbilityId.ZERO_TO_HERO, AbilityId.NONE, AbilityId.NONE, 457, 100, 70, 72, 53, 62, 100, 45, 50, 160, false, null, true),
+      new PokemonForm("Hero Form", "hero", PokemonType.WATER, null, 1.8, 97.4, AbilityId.ZERO_TO_HERO, AbilityId.NONE, AbilityId.NONE, 650, 100, 160, 97, 106, 87, 100, 45, 50, 160)
     ),
     new PokemonSpecies(SpeciesId.VAROOM, 9, false, false, false, "Single-Cyl Pokémon", PokemonType.STEEL, PokemonType.POISON, 1, 35, AbilityId.OVERCOAT, AbilityId.NONE, AbilityId.SLOW_START, 300, 45, 70, 63, 30, 45, 47, 190, 50, 60, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(SpeciesId.REVAVROOM, 9, false, false, false, "Multi-Cyl Pokémon", PokemonType.STEEL, PokemonType.POISON, 1.8, 120, AbilityId.OVERCOAT, AbilityId.NONE, AbilityId.FILTER, 500, 80, 119, 90, 54, 67, 90, 75, 50, 175, GrowthRate.MEDIUM_FAST, 50, false, false,
