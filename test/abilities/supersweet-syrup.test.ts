@@ -5,16 +5,14 @@
  */
 
 import { AbilityId } from "#enums/ability-id";
-import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
-import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
 import { GameManager } from "#test/test-utils/game-manager";
-import i18next from "i18next";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("{{description}}", () => {
+describe("Ability - Supersweet Syrup", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -27,7 +25,7 @@ describe("{{description}}", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .ability(AbilityId.BALL_FETCH)
+      .ability(AbilityId.SUPERSWEET_SYRUP)
       .battleStyle("single")
       .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
@@ -37,18 +35,15 @@ describe("{{description}}", () => {
       .enemyLevel(100);
   });
 
-  // Find more awesome utility functions inside `#test/test-utils`!
-  it("should do XYZ", async () => {
+  it("should lower the opponent's evasion by 1 stage", async () => {
+    // Guard Dog ability override used for regression test, cf https://github.com/pagefaultgames/pokerogue/pull/7073
+    game.override.enemyAbility(AbilityId.GUARD_DOG);
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    const feebas = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
-    game.move.use(MoveId.SPLASH);
-    await game.move.forceEnemyMove(MoveId.HOLD_HANDS);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.toEndOfTurn();
-
-    expect(feebas).toHaveUsedMove({ move: MoveId.SPLASH, result: MoveResult.SUCCESS });
-    expect(game).toHaveShownMessage(i18next.t("moveTriggers:splash"));
+    expect(enemy).toHaveStatStage(Stat.ATK, 0);
+    expect(enemy).toHaveStatStage(Stat.EVA, -1);
+    expect(enemy).not.toHaveAbilityApplied(AbilityId.GUARD_DOG);
   });
 });

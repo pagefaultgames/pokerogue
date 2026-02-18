@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { MAX_STARTER_CANDY_COUNT } from "#constants/game-constants";
 import { EggTier } from "#enums/egg-type";
 import { ModifierTier } from "#enums/modifier-tier";
 import { TextStyle } from "#enums/text-style";
@@ -628,6 +629,30 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean): string {
         return shadow ? "#d0d0c8" : "#d0d0c8";
       }
       return shadow ? "#6b5a73" : "#6b5a73";
+  }
+}
+
+export const RAINBOW_TINT = [0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969];
+
+/**
+ * Updates the text style of the candy count text based on the candy count.
+ * @param text - The text object to update
+ * @param candyCount - The candy count to update the text style based on
+ * @param defaultStyle - The default text style to use when the candy count is less than the max
+ * @param maxStyle - The text style to use when the candy count is at or above the max
+ */
+export function updateCandyCountTextStyle(
+  text: Phaser.GameObjects.Text | BBCodeText,
+  candyCount: number,
+  defaultStyle: TextStyle = TextStyle.WINDOW_ALT,
+  maxStyle: TextStyle = TextStyle.SUMMARY_GOLD,
+) {
+  if (candyCount >= MAX_STARTER_CANDY_COUNT) {
+    text.setColor(getTextColor(maxStyle));
+    text.setTint(...RAINBOW_TINT);
+  } else {
+    text.setColor(getTextColor(defaultStyle));
+    text.clearTint();
   }
 }
 
