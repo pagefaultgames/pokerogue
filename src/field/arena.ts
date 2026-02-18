@@ -531,7 +531,7 @@ export class Arena {
    * Generate a boss {@linkcode BiomePoolTier} based on the given RNG roll.
    *
    * | Tier    | RNG Rolls   | Chance |
-   * |---------|-------------|--------|
+   * |:-------:|:-----------:|:------:|
    * | Boss    | 20-63       | 44/64  |
    * | Boss R  | 6-19        | 14/64  |
    * | Boss SR | 1-5         | 5/64   |
@@ -556,15 +556,15 @@ export class Arena {
   /**
    * Generate a non-boss {@linkcode BiomePoolTier} based on the given RNG roll.
    *
-   * |            | RNG Rolls   | Chance  |
-   * |------------|-------------|---------|
+   * | Tier       | RNG Rolls   | Chance  |
+   * |:----------:|:-----------:|:-------:|
    * | Common     | 156-511     | 356/512 |
    * | Uncommon   | 32-155      | 124/512 |
    * | Rare       | 6-31        | 26/512  |
    * | Super Rare | 1-5         | 5/512   |
    * | Ultra Rare | 0           | 1/512   |
    *
-   * @param roll - The random roll to check against; expected to be within the range [0, 511]
+   * @param roll - The random roll to check against; expected to be within the range `[0, 511]`
    * @returns The generated `BiomePoolTier`
    */
   private generateNonBossBiomeTier(roll: number): BiomePoolTier {

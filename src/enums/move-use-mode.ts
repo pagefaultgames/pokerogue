@@ -86,7 +86,7 @@ export type MoveUseMode = ObjectValues<typeof MoveUseMode>;
  * This function is equivalent to the following truth table:
  *
  * | Use Type                               | Returns |
- * |----------------------------------------|---------|
+ * |:--------------------------------------:|:-------:|
  * | {@linkcode MoveUseMode.NORMAL}         | `false` |
  * | {@linkcode MoveUseMode.IGNORE_PP}      | `false` |
  * | {@linkcode MoveUseMode.INDIRECT}       | `true`  |
@@ -107,7 +107,7 @@ export function isVirtual(useMode: MoveUseMode): boolean {
  * This function is equivalent to the following truth table:
  *
  * | Use Type                               | Returns |
- * |----------------------------------------|---------|
+ * |:--------------------------------------:|:-------:|
  * | {@linkcode MoveUseMode.NORMAL}         | `false` |
  * | {@linkcode MoveUseMode.IGNORE_PP}      | `false` |
  * | {@linkcode MoveUseMode.INDIRECT}       | `false` |
@@ -128,7 +128,7 @@ export function isIgnoreStatus(useMode: MoveUseMode): boolean {
  * This function is equivalent to the following truth table:
  *
  * | Use Type                               | Returns |
- * |----------------------------------------|---------|
+ * |:--------------------------------------:|:-------:|
  * | {@linkcode MoveUseMode.NORMAL}         | `false` |
  * | {@linkcode MoveUseMode.IGNORE_PP}      | `true`  |
  * | {@linkcode MoveUseMode.INDIRECT}       | `true`  |
@@ -150,7 +150,7 @@ export function isIgnorePP(useMode: MoveUseMode): boolean {
  * This function is equivalent to the following truth table:
  *
  * | Use Type                               | Returns |
- * |----------------------------------------|---------|
+ * |:--------------------------------------:|:-------:|
  * | {@linkcode MoveUseMode.NORMAL}         | `false` |
  * | {@linkcode MoveUseMode.IGNORE_PP}      | `false` |
  * | {@linkcode MoveUseMode.INDIRECT}       | `false` |
