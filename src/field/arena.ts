@@ -477,14 +477,13 @@ export class Arena {
       tier = (isBossSpecies ? this.generateBossBiomeTier : this.generateNonBossBiomeTier)(rngRoll);
     }
 
-    let tierPool: (SpeciesId | SpeciesTree)[] | undefined = this.pokemonPool[tier];
-    while (tierPool?.length === 0 && tier > BiomePoolTier.COMMON) {
+    while (this.pokemonPool[tier]?.length === 0 && tier > BiomePoolTier.COMMON) {
       console.log(
         `Downgrading rarity tier from ${BiomePoolTier[tier]} to ${BiomePoolTier[(tier - 1) as BiomePoolTier]}`,
       );
       tier--;
-      tierPool = this.pokemonPool[tier];
     }
+    const tierPool = this.pokemonPool[tier];
 
     console.log("Final rarity: ", BiomePoolTier[tier]);
 
@@ -529,16 +528,16 @@ export class Arena {
   }
 
   /**
-   * Generate a boss {@linkcode BiomePoolTier} for a given tier value.
-   * ```md
-   * | Tier    | Random Roll | Chance |
+   * Generate a boss {@linkcode BiomePoolTier} based on the given RNG roll.
+   *
+   * | Tier    | RNG Rolls   | Chance |
    * |---------|-------------|--------|
    * | Boss    | 20-63       | 44/64  |
    * | Boss R  | 6-19        | 14/64  |
    * | Boss SR | 1-5         | 5/64   |
    * | Boss UR | 0           | 1/64   |
-   * ```
-   * @param roll - The random roll to check against; expected to be within the range
+   *
+   * @param roll - The random roll to check against; expected to be within the range [0, 63]
    * @returns The generated `BiomePoolTier`
    */
   private generateBossBiomeTier(roll: number): BiomePoolTier {
@@ -555,17 +554,17 @@ export class Arena {
   }
 
   /**
-   * Generate a non-boss {@linkcode BiomePoolTier} for a given tier value
-   * ```
-   * |            | tier values | Chance  |
+   * Generate a non-boss {@linkcode BiomePoolTier} based on the given RNG roll.
+   *
+   * |            | RNG Rolls   | Chance  |
    * |------------|-------------|---------|
    * | Common     | 156-511     | 356/512 |
    * | Uncommon   | 32-155      | 124/512 |
    * | Rare       | 6-31        | 26/512  |
    * | Super Rare | 1-5         | 5/512   |
    * | Ultra Rare | 0           | 1/512   |
-   * ```
-   * @param roll - The random roll to check against
+   *
+   * @param roll - The random roll to check against; expected to be within the range [0, 511]
    * @returns The generated `BiomePoolTier`
    */
   private generateNonBossBiomeTier(roll: number): BiomePoolTier {
