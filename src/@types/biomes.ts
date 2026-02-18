@@ -4,8 +4,6 @@ import type { SpeciesId } from "#enums/species-id";
 import type { TimeOfDay } from "#enums/time-of-day";
 import type { TrainerType } from "#enums/trainer-type";
 
-// TODO: These interfaces should specify what enum key they use instead of simply using `number`
-
 export interface BiomeLinks {
   [key: number]: BiomeId | (BiomeId | [BiomeId, number])[];
 }
@@ -14,16 +12,10 @@ export interface BiomeDepths {
   [key: number]: [number, number];
 }
 
-// TODO: This field is assigned dynamically at runtime inside `BiomePokemonPools`.
-// This is abhorrent.
-export interface SpeciesTree {
-  readonly [level: number]: SpeciesId[];
-}
-
-export interface BiomePokemonPools
-  extends Readonly<
-    Record<BiomeId, Readonly<Record<BiomePoolTier, Readonly<Record<TimeOfDay, (SpeciesId | SpeciesTree)[]>>>>>
-  > {}
+export type PokemonPools = Record<BiomePoolTier, SpeciesId[]>;
+export type BiomePokemonPools = Readonly<
+  Record<BiomeId, Readonly<Record<BiomePoolTier, Readonly<Record<TimeOfDay, SpeciesId[]>>>>>
+>;
 
 export interface BiomeTierTod {
   biome: BiomeId;

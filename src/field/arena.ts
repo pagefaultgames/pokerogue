@@ -33,7 +33,7 @@ import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEven
 import type { Pokemon } from "#field/pokemon";
 import { FieldEffectModifier } from "#modifiers/modifier";
 import type { Move } from "#moves/move";
-import type { BiomeTierTrainerPools, SpeciesTree } from "#types/biomes";
+import type { BiomeTierTrainerPools, PokemonPools } from "#types/biomes";
 import type { Constructor } from "#types/common";
 import type { RGBArray } from "#types/sprite-types";
 import type { AbstractConstructor } from "#types/type-helpers";
@@ -64,7 +64,7 @@ export class Arena {
 
   private lastTimeOfDay: TimeOfDay;
 
-  private pokemonPool: Record<BiomePoolTier, (SpeciesId | SpeciesTree)[]>;
+  private pokemonPool: PokemonPools;
   private readonly trainerPool: BiomeTierTrainerPools;
 
   public readonly eventTarget: EventTarget = new EventTarget();
@@ -423,12 +423,10 @@ export class Arena {
     // TODO: Rework in 1.13 to not clone the entire pokemon pool every few waves
     const biomePool = biomePokemonPools[this.biomeId];
 
-    // TODO: Remove type assertion once `object.Keys` gets properly typed to make `tier` a stringified `BiomePoolTier`
-    this.pokemonPool = (
-      Object.entries(biomePool) as [`${BiomePoolTier}`, Readonly<Record<TimeOfDay, (SpeciesTree | SpeciesId)[]>>][]
-    ).reduce(
+    this.pokemonPool = Object.entries(biomePool).reduce(
       (acc, [tier, tierPool]) => {
-        acc[Number(tier)] = [...tierPool[TimeOfDay.ALL], ...tierPool[timeOfDay]];
+        // TODO: Remove type assertion once `Object.entries` gets properly typed to make `tier` a stringified `BiomePoolTier`
+        acc[tier as `${BiomePoolTier}`] = [...tierPool[TimeOfDay.ALL], ...tierPool[timeOfDay]];
         return acc;
       },
       {} as typeof this.pokemonPool,
@@ -444,7 +442,7 @@ export class Arena {
    * @param luckValue - (Default `0`) The player's luck value, used to decrease the RNG ceiling of higher rarities
    *   (and thus make them more likely)
    * @param isBoss - (Optional) Whether the Pokemon is a boss
-   * @returns a Pokemon species
+   * @returns A Pokemon species.
    */
   // TODO: Remove the `attempt` parameter
   // TODO: The only place that doesn't pass an explicit `luckValue` parameter is Illusion's enemy overrides;
@@ -487,25 +485,9 @@ export class Arena {
 
     console.log("Final rarity: ", BiomePoolTier[tier]);
 
-    const entry = randSeedItem(tierPool);
-    let speciesId: SpeciesId;
-    if (typeof entry === "number") {
-      speciesId = entry;
-    } else {
-      // TODO: This is scuffed
-      const levelThresholds = Object.keys(entry);
-      for (let l = levelThresholds.length - 1; l >= 0; l--) {
-        const levelThreshold = Number.parseInt(levelThresholds[l]);
-        if (level >= levelThreshold) {
-          const speciesIds = entry[levelThreshold];
-          speciesId = randSeedItem(speciesIds);
-          break;
-        }
-      }
-    }
+    const speciesId = randSeedItem(tierPool);
 
-    // TODO: Resolve later
-    const species = getPokemonSpecies(speciesId!);
+    const species = getPokemonSpecies(speciesId);
 
     // Attempt to retry up to 10 times if generating a high BST mon
     // TODO: These should be removed from the pool beforehand
