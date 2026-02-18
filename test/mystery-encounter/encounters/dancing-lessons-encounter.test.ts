@@ -6,6 +6,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
+import { PokemonMove } from "#moves/pokemon-move";
 import { DancingLessonsEncounter } from "#mystery-encounters/dancing-lessons-encounter";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
@@ -168,6 +169,24 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1 });
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();
+    });
+
+    it("should not allow selecting a Pokémon that already knows Revelation Dance", async () => {
+      const selectPokemonSpy = vi.spyOn(EncounterPhaseUtils, "selectPokemonForOption");
+
+      await game.runToMysteryEncounter(MysteryEncounterType.DANCING_LESSONS, defaultParty);
+      scene.getPlayerParty()[0].moveset = [];
+      await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1 });
+
+      const filter = selectPokemonSpy.mock.calls[0][2];
+      expect(filter).toBeDefined();
+
+      const pokemon = scene.getPlayerParty()[0];
+      pokemon.moveset = [new PokemonMove(MoveId.REVELATION_DANCE)];
+      expect(filter!(pokemon)).toBeTypeOf("string");
+
+      pokemon.moveset = [];
+      expect(filter!(pokemon)).toBeNull();
     });
   });
 

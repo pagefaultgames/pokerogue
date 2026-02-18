@@ -258,7 +258,15 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
           danceAnim.play();
         };
 
-        return selectPokemonForOption(onPokemonSelected);
+        // Pokemon that already know Revelation Dance cannot be selected
+        const selectableFilter = (pokemon: Pokemon) => {
+          if (pokemon.moveset.some(m => m.moveId === MoveId.REVELATION_DANCE)) {
+            return getEncounterText(`${namespace}:option.2.alreadyKnowsMove`) ?? null;
+          }
+          return null;
+        };
+
+        return selectPokemonForOption(onPokemonSelected, undefined, selectableFilter);
       })
       .withOptionPhase(async () => {
         // Learn its Dance

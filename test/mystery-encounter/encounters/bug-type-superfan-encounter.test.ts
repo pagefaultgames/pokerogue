@@ -373,6 +373,35 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
       expect(STATUS_TUTOR_MOVES.some(move => new PokemonMove(move).getName() === optionData[2].label)).toBe(true);
       expect(MISC_TUTOR_MOVES.some(move => new PokemonMove(move).getName() === optionData[3].label)).toBe(true);
     });
+
+    it("should pass a Pokemon select filter that rejects Pokemon who already know the move", async () => {
+      const selectOptionSpy = vi.spyOn(encounterPhaseUtils, "selectOptionThenPokemon");
+      await game.runToMysteryEncounter(MysteryEncounterType.BUG_TYPE_SUPERFAN, defaultParty);
+      await runMysteryEncounterToEnd(game, 1, undefined, true);
+      await skipBattleRunMysteryEncounterRewardsPhase(game, false);
+
+      expect(game).toBeAtPhase("MysteryEncounterRewardsPhase");
+      game.phaseInterceptor["prompts"] = [];
+      game.onNextPrompt("MysteryEncounterRewardsPhase", UiMode.OPTION_SELECT, () => {
+        game.endPhase();
+      });
+      await game.phaseInterceptor.to("MysteryEncounterRewardsPhase");
+
+      expect(selectOptionSpy).toHaveBeenCalledTimes(1);
+      const selectablePokemonFilter = selectOptionSpy.mock.calls[0][2];
+      expect(selectablePokemonFilter).toBeDefined();
+
+      // Mock the filter state (selectedMoveId is normally set when a move option is selected)
+      const encounter = scene.currentBattle.mysteryEncounter!;
+      encounter.misc.selectedMoveId = MoveId.BUG_BUZZ;
+
+      const pokemon = scene.getPlayerParty()[0];
+      pokemon.moveset = [new PokemonMove(MoveId.BUG_BUZZ)];
+      expect(selectablePokemonFilter!(pokemon)).toBeTypeOf("string");
+
+      pokemon.moveset = [];
+      expect(selectablePokemonFilter!(pokemon)).toBeNull();
+    });
   });
 
   describe("Option 2 - Show off Bug Types", () => {
