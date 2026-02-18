@@ -7,6 +7,7 @@ import { modifierTypes } from "#data/data-lists";
 import { getCharVariantFromDialogue } from "#data/dialogue";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { BattleType } from "#enums/battle-type";
+import { Challenges } from "#enums/challenges";
 import { PlayerGender } from "#enums/player-gender";
 import { TrainerType } from "#enums/trainer-type";
 import { UiMode } from "#enums/ui-mode";
@@ -124,10 +125,16 @@ export class GameOverPhase extends BattlePhase {
         ribbonFlags |= ribbon;
       }
     }
+
+    // TODO: find a better way to handle blocking ribbons and achievements
     // Block other ribbons if flip stats or inverse is active
     const flip_or_inverse = ribbonFlags & (RibbonData.FLIP_STATS | RibbonData.INVERSE);
+    // Block other ribbons if passives on `all` is active
+    const passives = ribbonFlags & RibbonData.PASSIVE_CHALLENGE;
     if (flip_or_inverse) {
       ribbonFlags = flip_or_inverse;
+    } else if (globalScene.gameMode.challenges.some(c => c.id === Challenges.PASSIVES && c.value === 2)) {
+      ribbonFlags = passives;
     } else {
       if (globalScene.gameMode.isClassic) {
         ribbonFlags |= RibbonData.CLASSIC;

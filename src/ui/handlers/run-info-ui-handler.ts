@@ -21,7 +21,7 @@ import { getVariantTint } from "#sprites/variant";
 import type { PokemonData } from "#system/pokemon-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { SessionSaveData } from "#types/save-data";
-import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
+import { addBBCodeTextObject, addTextObject, getTextColor, RAINBOW_TINT } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import type { RunInfoUiHandlerParams } from "#ui/ui-handler-params";
 import { addWindow } from "#ui/ui-theme";
@@ -600,7 +600,7 @@ export class RunInfoUiHandler extends UiHandler {
       && this.runInfo.waveIndex === globalScene.gameData.gameStats.highestEndlessWave
     ) {
       modeText.appendText(` [${i18next.t("runHistory:personalBest")}]`);
-      modeText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
+      modeText.setTint(...RAINBOW_TINT);
     }
 
     // Duration + Money
@@ -636,7 +636,7 @@ export class RunInfoUiHandler extends UiHandler {
     if (luckValue < 14) {
       luckInfo = "[color=#" + getLuckTextTint(luckValue).toString(16) + "]" + luckInfo + "[/color]";
     } else {
-      luckText.setTint(0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969);
+      luckText.setTint(...RAINBOW_TINT);
     }
     luckText.appendText("[align=right]" + luckInfo + "[/align]", false);
     luckText.setPosition(windowX - luckText.displayWidth - 5, windowY - 13);

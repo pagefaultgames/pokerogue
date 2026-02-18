@@ -24,7 +24,7 @@ import type { PokemonMove } from "#moves/pokemon-move";
 import type { Variant } from "#sprites/variant";
 import { getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
-import { addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor } from "#ui/text";
+import { addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor, updateCandyCountTextStyle } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import type {
   SummaryUiHandlerParams,
@@ -423,9 +423,9 @@ export class SummaryUiHandler extends UiHandler {
       this.candyShadow.on("pointerout", () => globalScene.ui.hideTooltip());
     }
 
-    this.candyCountText.setText(
-      `×${globalScene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].candyCount}`,
-    );
+    const candyCount = globalScene.gameData.starterData[this.pokemon.species.getRootSpeciesId()].candyCount;
+    this.candyCountText.setText(`×${candyCount}`);
+    updateCandyCountTextStyle(this.candyCountText, candyCount);
 
     this.candyShadow.setCrop(0, 0, 16, candyCropY);
 

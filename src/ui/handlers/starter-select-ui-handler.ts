@@ -58,8 +58,12 @@ import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/pokemon-icon-ani
 import { ScrollBar } from "#ui/scroll-bar";
 import { StarterContainer } from "#ui/starter-container";
 import { StatsContainer } from "#ui/stats-container";
+<<<<<<< ui-cleanup
 import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import type { StarterSelectUiHandlerParams } from "#ui/ui-handler-params";
+=======
+import { addBBCodeTextObject, addTextObject, getTextColor, updateCandyCountTextStyle } from "#ui/text";
+>>>>>>> beta
 import { addWindow } from "#ui/ui-theme";
 import type { OptionSelectItem, StarterSelectCallback } from "#ui/ui-types";
 import { applyChallenges, checkStarterValidForChallenge } from "#utils/challenge-utils";
@@ -2222,6 +2226,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                       starterData.candyCount = persistentStarterData.candyCount;
                     }
                     this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
+                    updateCandyCountTextStyle(this.pokemonCandyCountText, starterData.candyCount);
                     globalScene.gameData.saveSystem().then(success => {
                       if (!success) {
                         return globalScene.reset(true);
@@ -2262,6 +2267,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                       starterData.candyCount = persistentStarterData.candyCount;
                     }
                     this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
+                    updateCandyCountTextStyle(this.pokemonCandyCountText, starterData.candyCount);
                     globalScene.gameData.saveSystem().then(success => {
                       if (!success) {
                         return globalScene.reset(true);
@@ -2311,6 +2317,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                     starterData.candyCount = persistentStarterData.candyCount;
                   }
                   this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
+                  updateCandyCountTextStyle(this.pokemonCandyCountText, starterData.candyCount);
 
                   const egg = new Egg({
                     species: this.lastSpecies.speciesId,
@@ -3640,6 +3647,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           this.pokemonCandyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
           this.pokemonCandyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
           this.pokemonCandyCountText.setText(`×${globalScene.gameData.starterData[species.speciesId].candyCount}`);
+          updateCandyCountTextStyle(
+            this.pokemonCandyCountText,
+            globalScene.gameData.starterData[species.speciesId].candyCount,
+          );
           this.pokemonFormText.setY(42);
           this.pokemonHatchedIcon.setVisible(true);
           this.pokemonHatchedCountText.setVisible(true);

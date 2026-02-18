@@ -52,8 +52,18 @@ import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { PokedexInfoOverlay } from "#ui/pokedex-info-overlay";
 import { RibbonTray } from "#ui/ribbon-tray-container";
 import { StatsContainer } from "#ui/stats-container";
+<<<<<<< ui-cleanup
 import { addBBCodeTextObject, addTextObject, getTextColor, getTextStyleOptions } from "#ui/text";
 import type { PokedexPageUiHandlerParams } from "#ui/ui-handler-params";
+=======
+import {
+  addBBCodeTextObject,
+  addTextObject,
+  getTextColor,
+  getTextStyleOptions,
+  updateCandyCountTextStyle,
+} from "#ui/text";
+>>>>>>> beta
 import { addWindow } from "#ui/ui-theme";
 import type { OptionSelectItem } from "#ui/ui-types";
 import { BooleanHolder, getLocalizedSpriteKey, padInt, rgbHexToRgba } from "#utils/common";
@@ -1994,6 +2004,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                         starterData.candyCount -= passiveCost;
                       }
                       this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
+                      updateCandyCountTextStyle(this.pokemonCandyCountText, starterData.candyCount);
                       globalScene.gameData.saveSystem().then(success => {
                         if (!success) {
                           return globalScene.reset(true);
@@ -2026,6 +2037,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                         starterData.candyCount -= reductionCost;
                       }
                       this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
+                      updateCandyCountTextStyle(this.pokemonCandyCountText, starterData.candyCount);
                       globalScene.gameData.saveSystem().then(success => {
                         if (!success) {
                           return globalScene.reset(true);
@@ -2068,6 +2080,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                       starterData.candyCount -= sameSpeciesEggCost;
                     }
                     this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
+                    updateCandyCountTextStyle(this.pokemonCandyCountText, starterData.candyCount);
 
                     const egg = new Egg({
                       scene: globalScene,
@@ -2720,6 +2733,10 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonCandyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
         this.pokemonCandyCountText.setText(
           `×${species.speciesId === SpeciesId.PIKACHU ? 0 : globalScene.gameData.starterData[this.starterId].candyCount}`,
+        );
+        updateCandyCountTextStyle(
+          this.pokemonCandyCountText,
+          species.speciesId === SpeciesId.PIKACHU ? 0 : globalScene.gameData.starterData[this.starterId].candyCount,
         );
         this.pokemonCandyContainer.setVisible(true);
 

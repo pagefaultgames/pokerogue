@@ -5263,6 +5263,12 @@ export function initBiomes() {
       [BiomeId.TEMPLE, BiomePoolTier.UNCOMMON]
     ]
     ],
+    [TrainerType.AROMA_LADY, [
+      [BiomeId.GRASS, BiomePoolTier.COMMON],
+      [BiomeId.FOREST, BiomePoolTier.UNCOMMON],
+      [BiomeId.MEADOW, BiomePoolTier.COMMON]
+    ]
+    ],
     [TrainerType.ARTIST, [
       [BiomeId.METROPOLIS, BiomePoolTier.RARE]
     ]
@@ -5291,6 +5297,11 @@ export function initBiomes() {
       [BiomeId.SLUM, BiomePoolTier.COMMON]
     ]
     ],
+    [TrainerType.BIRD_KEEPER, [
+      [BiomeId.TALL_GRASS, BiomePoolTier.COMMON],
+      [BiomeId.MOUNTAIN, BiomePoolTier.COMMON]
+    ]
+    ],
     [TrainerType.BLACK_BELT, [
       [BiomeId.DOJO, BiomePoolTier.COMMON],
       [BiomeId.PLAINS, BiomePoolTier.RARE],
@@ -5311,11 +5322,27 @@ export function initBiomes() {
       [BiomeId.BEACH, BiomePoolTier.UNCOMMON],
       [BiomeId.LAKE, BiomePoolTier.COMMON],
       [BiomeId.MEADOW, BiomePoolTier.UNCOMMON],
-      [BiomeId.FAIRY_CAVE, BiomePoolTier.UNCOMMON]
+      [BiomeId.FAIRY_CAVE, BiomePoolTier.UNCOMMON],
+      [BiomeId.VOLCANO, BiomePoolTier.RARE]
+    ]
+    ],
+    [TrainerType.BUG_CATCHER, [
+      [BiomeId.TALL_GRASS, BiomePoolTier.COMMON],
+      [BiomeId.FOREST, BiomePoolTier.COMMON]
+    ]
+    ],
+    [TrainerType.CAMPER, [
+      [BiomeId.GRASS, BiomePoolTier.COMMON],
+      [BiomeId.MOUNTAIN, BiomePoolTier.COMMON]
     ]
     ],
     [TrainerType.CLERK, [
       [BiomeId.METROPOLIS, BiomePoolTier.COMMON]
+    ]
+    ],
+    [TrainerType.COLLECTOR, [
+      [BiomeId.CAVE, BiomePoolTier.UNCOMMON],
+      [BiomeId.RUINS, BiomePoolTier.UNCOMMON],
     ]
     ],
     [TrainerType.CYCLIST, [
@@ -5329,6 +5356,17 @@ export function initBiomes() {
     ]
     ],
     [TrainerType.DOCTOR, []],
+    [TrainerType.DRAGON_TAMER, [
+      [BiomeId.BADLANDS, BiomePoolTier.UNCOMMON],
+      [BiomeId.WASTELAND, BiomePoolTier.COMMON]
+      [BiomeId.VOLCANO, BiomePoolTier.UNCOMMON],
+    ]
+    ],
+    [TrainerType.FAIRY_TALE_GIRL, [
+      [BiomeId.MEADOW, BiomePoolTier.UNCOMMON],
+      [BiomeId.FAIRY_CAVE, BiomePoolTier.COMMON]
+    ]
+    ],
     [TrainerType.FIREBREATHER, [
       [BiomeId.VOLCANO, BiomePoolTier.COMMON]
     ]
@@ -5344,9 +5382,15 @@ export function initBiomes() {
     ]
     ],
     [TrainerType.HARLEQUIN, []],
+    [TrainerType.HEX_MANIAC, [
+      [BiomeId.RUINS, BiomePoolTier.UNCOMMON],
+      [BiomeId.GRAVEYARD, BiomePoolTier.UNCOMMON]
+    ]
+    ],
     [TrainerType.HIKER, [
       [BiomeId.MOUNTAIN, BiomePoolTier.COMMON],
       [BiomeId.CAVE, BiomePoolTier.COMMON],
+      [BiomeId.VOLCANO, BiomePoolTier.COMMON],
       [BiomeId.BADLANDS, BiomePoolTier.COMMON]
     ]
     ],
@@ -5356,6 +5400,7 @@ export function initBiomes() {
     ],
     [TrainerType.HOOPSTER, []],
     [TrainerType.INFIELDER, []],
+    [TrainerType.INTERVIEWERS, []],
     [TrainerType.JANITOR, []],
     [TrainerType.LINEBACKER, []],
     [TrainerType.MAID, []],
@@ -5363,9 +5408,9 @@ export function initBiomes() {
       [BiomeId.MEADOW, BiomePoolTier.COMMON]
     ]
     ],
-    [TrainerType.HEX_MANIAC, [
-      [BiomeId.RUINS, BiomePoolTier.UNCOMMON],
-      [BiomeId.GRAVEYARD, BiomePoolTier.UNCOMMON]
+    [TrainerType.MYSTERIOUS_SISTERS, [
+      [BiomeId.GRAVEYARD, BiomePoolTier.RARE],
+      [BiomeId.FAIRY_CAVE, BiomePoolTier.RARE]
     ]
     ],
     [TrainerType.NURSERY_AIDE, []],
@@ -5415,6 +5460,13 @@ export function initBiomes() {
       [BiomeId.SLUM, BiomePoolTier.COMMON]
     ]
     ],
+    [TrainerType.RUIN_MANIAC, [
+      [BiomeId.CAVE, BiomePoolTier.UNCOMMON],
+      [BiomeId.DESERT, BiomePoolTier.UNCOMMON],
+      [BiomeId.RUINS, BiomePoolTier.COMMON],
+      [BiomeId.TEMPLE, BiomePoolTier.COMMON]
+    ]
+    ],
     [TrainerType.SAILOR, [
       [BiomeId.SEA, BiomePoolTier.COMMON],
       [BiomeId.BEACH, BiomePoolTier.COMMON]
@@ -5426,7 +5478,17 @@ export function initBiomes() {
       [BiomeId.LABORATORY, BiomePoolTier.COMMON]
     ]
     ],
+    [TrainerType.SCUBA_DIVER, [
+      [BiomeId.SEA, BiomePoolTier.UNCOMMON],
+      [BiomeId.SEABED, BiomePoolTier.COMMON]
+    ]
+    ],
     [TrainerType.SMASHER, []],
+    [TrainerType.SNOW_ACE_TRAINER, [
+      [BiomeId.ICE_CAVE, BiomePoolTier.UNCOMMON],
+      [BiomeId.SNOWY_FOREST, BiomePoolTier.UNCOMMON]
+    ]
+    ],
     [TrainerType.SNOW_WORKER, [
       [BiomeId.ICE_CAVE, BiomePoolTier.COMMON],
       [BiomeId.SNOWY_FOREST, BiomePoolTier.COMMON]
@@ -5439,7 +5501,7 @@ export function initBiomes() {
     ],
     [TrainerType.SWIMMER, [
       [BiomeId.SEA, BiomePoolTier.COMMON],
-      [BiomeId.SEABED, BiomePoolTier.COMMON]
+      [BiomeId.BEACH, BiomePoolTier.COMMON]
     ]
     ],
     [TrainerType.TWINS, [
@@ -5447,6 +5509,7 @@ export function initBiomes() {
     ]
     ],
     [TrainerType.VETERAN, [
+      [BiomeId.ABYSS, BiomePoolTier.COMMON],
       [BiomeId.WASTELAND, BiomePoolTier.COMMON]
     ]
     ],
@@ -5458,6 +5521,12 @@ export function initBiomes() {
       [BiomeId.POWER_PLANT, BiomePoolTier.COMMON],
       [BiomeId.FACTORY, BiomePoolTier.COMMON],
       [BiomeId.CONSTRUCTION_SITE, BiomePoolTier.COMMON]
+    ]
+    ],
+    [TrainerType.YOUNG_COUPLE, [
+      [BiomeId.LAKE, BiomePoolTier.UNCOMMON],
+      [BiomeId.ISLAND, BiomePoolTier.RARE],
+      [BiomeId.SNOWY_FOREST, BiomePoolTier.RARE]
     ]
     ],
     [TrainerType.YOUNGSTER, [
