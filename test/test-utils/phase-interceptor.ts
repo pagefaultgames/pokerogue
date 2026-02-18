@@ -8,6 +8,7 @@ import type { PromptHandler } from "#test/test-utils/helpers/prompt-handler";
 import { inspect } from "util";
 import chalk from "chalk";
 import { vi } from "vitest";
+import { TEST_TIMEOUT } from "./constants";
 import { getEnumStr } from "./string-utils";
 
 /**
@@ -15,7 +16,7 @@ import { getEnumStr } from "./string-utils";
  * Possible values are the following:
  * - `running`: The interceptor is currently running a phase.
  * - `interrupted`: The interceptor has been interrupted by a UI prompt or similar mechanism,
- *    and is currently waiting for the current phase to end.
+ *    and is waiting for the current phase to end.
  * - `idling`: The interceptor is not currently running a phase and is ready to start a new one.
  */
 type StateType = "running" | "interrupted" | "idling";
@@ -103,7 +104,7 @@ export class PhaseInterceptor {
         await this.run(currentPhase);
         return false;
       },
-      { interval: 0, timeout: 20_000 },
+      { interval: 0, timeout: TEST_TIMEOUT },
     );
 
     // We hit the target; run as applicable and wrap up.
@@ -128,10 +129,7 @@ export class PhaseInterceptor {
       this.state = "running";
       this.logPhase(currentPhase.phaseName);
       currentPhase.start();
-      await vi.waitUntil(
-        () => this.state !== "running",
-        { interval: 50, timeout: 20_000 }, // TODO: Figure out an appropriate timeout for individual phases
-      );
+      await vi.waitUntil(() => this.state !== "running", { interval: 50, timeout: TEST_TIMEOUT });
     } catch (error) {
       throw error instanceof Error
         ? error

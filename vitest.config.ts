@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+import { TEST_TIMEOUT } from "#test/test-utils/constants";
 import type { UserConfig } from "vite";
 import { defineConfig } from "vitest/config";
 import { BaseSequencer, type TestSpecification } from "vitest/node";
@@ -27,8 +28,8 @@ export default defineConfig(async config => {
         TZ: "UTC",
       },
       isolate: false,
-      testTimeout: 20_000,
-      slowTestThreshold: 10_000,
+      testTimeout: TEST_TIMEOUT,
+      slowTestThreshold: TEST_TIMEOUT / 2,
       // TODO: Vitest's current framework produces spurious errors for type tests with this option enabled.
       // We should move our type tests to a separate folder not covered by normal tests, and then enable the option.
       // expect: {
