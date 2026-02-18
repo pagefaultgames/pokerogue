@@ -5323,7 +5323,8 @@ export function initBiomes() {
       [BiomeId.BEACH, BiomePoolTier.UNCOMMON],
       [BiomeId.LAKE, BiomePoolTier.COMMON],
       [BiomeId.MEADOW, BiomePoolTier.UNCOMMON],
-      [BiomeId.FAIRY_CAVE, BiomePoolTier.UNCOMMON]
+      [BiomeId.FAIRY_CAVE, BiomePoolTier.UNCOMMON],
+      [BiomeId.VOLCANO, BiomePoolTier.RARE]
     ]
     ],
     [TrainerType.BUG_CATCHER, [
@@ -5359,6 +5360,7 @@ export function initBiomes() {
     [TrainerType.DRAGON_TAMER, [
       [BiomeId.BADLANDS, BiomePoolTier.UNCOMMON],
       [BiomeId.WASTELAND, BiomePoolTier.COMMON]
+      [BiomeId.VOLCANO, BiomePoolTier.UNCOMMON],
     ]
     ],
     [TrainerType.FAIRY_TALE_GIRL, [
@@ -5389,6 +5391,7 @@ export function initBiomes() {
     [TrainerType.HIKER, [
       [BiomeId.MOUNTAIN, BiomePoolTier.COMMON],
       [BiomeId.CAVE, BiomePoolTier.COMMON],
+      [BiomeId.VOLCANO, BiomePoolTier.COMMON],
       [BiomeId.BADLANDS, BiomePoolTier.COMMON]
     ]
     ],
@@ -5507,6 +5510,7 @@ export function initBiomes() {
     ]
     ],
     [TrainerType.VETERAN, [
+      [BiomeId.ABYSS, BiomePoolTier.COMMON],
       [BiomeId.WASTELAND, BiomePoolTier.COMMON]
     ]
     ],
@@ -5522,6 +5526,7 @@ export function initBiomes() {
     ],
     [TrainerType.YOUNG_COUPLE, [
       [BiomeId.LAKE, BiomePoolTier.UNCOMMON],
+      [BiomeId.ISLAND, BiomePoolTier.RARE],
       [BiomeId.SNOWY_FOREST, BiomePoolTier.RARE]
     ]
     ],
