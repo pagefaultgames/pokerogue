@@ -9,11 +9,12 @@ const IGNORE_STACKTRACE: boolean = true;
 
 const F_POINTER = "❯";
 
+// NB: If we ever want to use benchmark support, we will need to move the console log overriding to a mixin (different reporter base classes)
+
 /**
  * Custom Vitest reporter to strip file name headers and `console.log` stack traces from logging output.
  */
-// biome-ignore lint/style/noDefaultExport: Required by Vitest
-export default class CustomDefaultReporter extends DefaultReporter {
+export class CustomDefaultReporter extends DefaultReporter {
   public override onUserConsoleLog(log: UserConsoleLog, taskState?: TestState): void {
     // This code is more or less copied verbatim from the `vitest/reporters` bundled source code, with minor tweaks to use
     // dependencies we actually _have_ (i.e. chalk) rather than ones we don't (i.e. tinyrainbow).
