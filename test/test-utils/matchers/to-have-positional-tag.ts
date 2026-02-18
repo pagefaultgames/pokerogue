@@ -1,5 +1,5 @@
 import type { ToSerializedPosTag } from "#data/positional-tags/load-positional-tag";
-import { PositionalTag } from "#data/positional-tags/positional-tag";
+import type { PositionalTag } from "#data/positional-tags/positional-tag";
 import type { PositionalTagType } from "#enums/positional-tag-type";
 import type { OneOther } from "#test/@types/test-helpers";
 import type { GameManager } from "#test/test-utils/game-manager";

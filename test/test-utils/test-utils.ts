@@ -1,13 +1,12 @@
 import { Pokemon } from "#field/pokemon";
 import { GameManager } from "#test/test-utils/game-manager";
 import i18next, { type ParseKeys } from "i18next";
-import { vi } from "vitest";
+import { type MockInstance, vi } from "vitest";
 
 /**
- * Sets up the i18next mock.
- * Includes a i18next.t mocked implementation only returning the raw key (`(key) => key`)
+ * Mock i18next's {@linkcode t} function to only produce the raw key.
  *
- * @returns A spy/mock of i18next
+ * @returns A {@linkcode MockInstance} for `i18next.t`
  */
 export function mockI18next() {
   return (

@@ -17,7 +17,6 @@ import type { Egg } from "#data/egg";
 import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { loadPositionalTag } from "#data/positional-tags/load-positional-tag";
-import { TerrainType } from "#data/terrain";
 import { AbilityAttr } from "#enums/ability-attr";
 import { BattleType } from "#enums/battle-type";
 import { ChallengeType } from "#enums/challenge-type";
@@ -33,8 +32,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { TrainerVariant } from "#enums/trainer-variant";
 import { UiMode } from "#enums/ui-mode";
 import { Unlockables } from "#enums/unlockables";
-import { WeatherType } from "#enums/weather-type";
-import { TagAddedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#events/arena";
+import { ArenaTagAddedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#events/arena";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 // biome-ignore lint/performance/noNamespaceImport: Something weird is going on here and I don't want to touch it
 import * as Modifier from "#modifiers/modifier";
@@ -1005,45 +1003,38 @@ export class GameData {
       loadPokemonAssets.push(enemyPokemon.loadAssets());
     });
 
-    globalScene.arena.weather = fromSession.arena.weather;
-    globalScene.arena.eventTarget.dispatchEvent(
-      new WeatherChangedEvent(
-        WeatherType.NONE,
-        globalScene.arena.weather?.weatherType!,
-        globalScene.arena.weather?.turnsLeft!,
-        globalScene.arena.weather?.maxDuration!,
-      ),
-    ); // TODO: is this bang correct?
+    // #region Arena stuff
+    const { weather, terrain, playerTerasUsed, tags, positionalTags } = fromSession.arena;
 
-    globalScene.arena.terrain = fromSession.arena.terrain;
-    globalScene.arena.eventTarget.dispatchEvent(
-      new TerrainChangedEvent(
-        TerrainType.NONE,
-        globalScene.arena.terrain?.terrainType!,
-        globalScene.arena.terrain?.turnsLeft!,
-        globalScene.arena.terrain?.maxDuration!,
-      ),
-    ); // TODO: is this bang correct?
-
-    globalScene.arena.playerTerasUsed = fromSession.arena.playerTerasUsed;
-
-    globalScene.arena.tags = fromSession.arena.tags;
-    if (globalScene.arena.tags) {
-      for (const tag of globalScene.arena.tags) {
-        if (tag instanceof EntryHazardTag) {
-          const { tagType, side, turnCount, maxDuration, layers, maxLayers } = tag as EntryHazardTag;
-          globalScene.arena.eventTarget.dispatchEvent(
-            new TagAddedEvent(tagType, side, turnCount, maxDuration, layers, maxLayers),
-          );
-        } else {
-          globalScene.arena.eventTarget.dispatchEvent(
-            new TagAddedEvent(tag.tagType, tag.side, tag.turnCount, tag.maxDuration),
-          );
-        }
-      }
+    if (weather) {
+      globalScene.arena.weather = weather;
+      globalScene.arena.eventTarget.dispatchEvent(
+        new WeatherChangedEvent(weather.weatherType, weather.turnsLeft, weather.maxDuration),
+      );
     }
 
-    globalScene.arena.positionalTagManager.tags = fromSession.arena.positionalTags.map(tag => loadPositionalTag(tag));
+    if (terrain) {
+      globalScene.arena.terrain = terrain;
+      globalScene.arena.eventTarget.dispatchEvent(
+        new TerrainChangedEvent(terrain.terrainType, terrain.turnsLeft, terrain.maxDuration),
+      );
+    }
+
+    globalScene.arena.playerTerasUsed = playerTerasUsed;
+
+    globalScene.arena.tags = tags;
+    for (const tag of tags) {
+      const { tagType, side, turnCount, maxDuration } = tag;
+      const layers: [number, number] | undefined =
+        tag instanceof EntryHazardTag ? [tag.layers, tag.maxLayers] : undefined;
+      globalScene.arena.eventTarget.dispatchEvent(
+        new ArenaTagAddedEvent(tagType, side, turnCount, layers, maxDuration),
+      );
+    }
+
+    globalScene.arena.positionalTagManager.tags = positionalTags.map(tag => loadPositionalTag(tag));
+
+    // #endregion Arena stuff
 
     if (globalScene.modifiers.length > 0) {
       console.warn("Existing modifiers not cleared on session load, deleting...");

@@ -2,8 +2,7 @@ import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { biomePokemonPools, biomeTrainerPools } from "#balance/biomes";
-import type { ArenaTag, ArenaTagTypeMap } from "#data/arena-tag";
-import { EntryHazardTag, getArenaTag } from "#data/arena-tag";
+import { type ArenaTag, type ArenaTagTypeMap, getArenaTag } from "#data/arena-tag";
 import { getDailyForcedWaveBiomePoolTier } from "#data/daily-seed/daily-run";
 import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -17,6 +16,7 @@ import {
   Weather,
 } from "#data/weather";
 import { AbilityId } from "#enums/ability-id";
+import type { ArenaEventType } from "#enums/arena-event-type";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import type { ArenaTagType } from "#enums/arena-tag-type";
 import type { BattlerIndex } from "#enums/battler-index";
@@ -29,7 +29,13 @@ import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
 import { WeatherType } from "#enums/weather-type";
-import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#events/arena";
+import {
+  type ArenaEventMap,
+  ArenaTagAddedEvent,
+  ArenaTagRemovedEvent,
+  TerrainChangedEvent,
+  WeatherChangedEvent,
+} from "#events/arena";
 import type { Pokemon } from "#field/pokemon";
 import { FieldEffectModifier } from "#modifiers/modifier";
 import type { Move } from "#moves/move";
@@ -37,6 +43,7 @@ import type { BiomeTierTrainerPools, PokemonPools } from "#types/biomes";
 import type { Constructor } from "#types/common";
 import type { RGBArray } from "#types/sprite-types";
 import type { AbstractConstructor } from "#types/type-helpers";
+import type { TypedEventTarget } from "#types/typed-event-target";
 import { coerceArray } from "#utils/array";
 import { NumberHolder, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
@@ -49,7 +56,7 @@ export class Arena {
   public terrain: Terrain | null;
   /** All currently-active {@linkcode ArenaTag}s on both sides of the field. */
   public tags: ArenaTag[] = [];
-  /** All currently-active {@linkcode PositionalTag}s on both sides of the field, sorted by tag type. */
+  /** A manager for the currently-active {@linkcode PositionalTag}s on both sides of the field. */
   public readonly positionalTagManager: PositionalTagManager = new PositionalTagManager();
 
   public bgm: string;
@@ -66,8 +73,11 @@ export class Arena {
 
   private pokemonPool: PokemonPools;
   private readonly trainerPool: BiomeTierTrainerPools;
-
-  public readonly eventTarget: EventTarget = new EventTarget();
+  /**
+   * Event dispatcher for various {@linkcode ArenaEvent}s.
+   * Used primarily to update the arena flyout.
+   */
+  public readonly eventTarget = new EventTarget() as TypedEventTarget<ArenaEventType, ArenaEventMap>;
 
   constructor(biome: BiomeId, playerFaints = 0) {
     this.biomeId = biome;
@@ -630,28 +640,19 @@ export class Arena {
     const existingTag = this.getTagOnSide(tagType, side);
     if (existingTag) {
       existingTag.onOverlap(globalScene.getPokemonById(sourceId));
-
-      if (existingTag instanceof EntryHazardTag) {
-        const { tagType, side, turnCount, maxDuration, layers, maxLayers } = existingTag as EntryHazardTag;
-        this.eventTarget.dispatchEvent(new TagAddedEvent(tagType, side, turnCount, maxDuration, layers, maxLayers));
-      }
-
       return false;
     }
 
     // creates a new tag object
     const newTag = getArenaTag(tagType, turnCount, sourceMove, sourceId, side);
-    if (newTag) {
-      newTag.onAdd(quiet);
-      this.tags.push(newTag);
-
-      const { layers = 0, maxLayers = 0 } = newTag instanceof EntryHazardTag ? newTag : {};
-
-      this.eventTarget.dispatchEvent(
-        new TagAddedEvent(newTag.tagType, newTag.side, newTag.turnCount, newTag.maxDuration, layers, maxLayers),
-      );
+    if (!newTag) {
+      return false;
     }
 
+    newTag.onAdd(quiet);
+    this.tags.push(newTag);
+
+    this.eventTarget.dispatchEvent(new ArenaTagAddedEvent(tagType, side, turnCount));
     return true;
   }
 
@@ -733,31 +734,35 @@ export class Arena {
         t.onRemove();
         this.tags.splice(this.tags.indexOf(t), 1);
 
-        this.eventTarget.dispatchEvent(new TagRemovedEvent(t.tagType, t.side, t.turnCount));
+        this.eventTarget.dispatchEvent(new ArenaTagRemovedEvent(t.tagType, t.side));
       });
   }
 
+  // TODO: Remove unused boolean return
   public removeTag(tagType: ArenaTagType): boolean {
-    const tags = this.tags;
+    const { tags } = this;
     const tag = tags.find(t => t.tagType === tagType);
-    if (tag) {
-      tag.onRemove();
-      tags.splice(tags.indexOf(tag), 1);
-
-      this.eventTarget.dispatchEvent(new TagRemovedEvent(tag.tagType, tag.side, tag.turnCount));
+    if (!tag) {
+      return false;
     }
-    return !!tag;
+    tag.onRemove();
+    tags.splice(tags.indexOf(tag), 1);
+
+    this.eventTarget.dispatchEvent(new ArenaTagRemovedEvent(tag.tagType, tag.side));
+    return true;
   }
 
+  // TODO: Remove unused boolean return
   public removeTagOnSide(tagType: ArenaTagType, side: ArenaTagSide, quiet = false): boolean {
     const tag = this.getTagOnSide(tagType, side);
-    if (tag) {
-      tag.onRemove(quiet);
-      this.tags.splice(this.tags.indexOf(tag), 1);
-
-      this.eventTarget.dispatchEvent(new TagRemovedEvent(tag.tagType, tag.side, tag.turnCount));
+    if (!tag) {
+      return false;
     }
-    return !!tag;
+    tag.onRemove(quiet);
+    this.tags.splice(this.tags.indexOf(tag), 1);
+
+    this.eventTarget.dispatchEvent(new ArenaTagRemovedEvent(tag.tagType, tag.side));
+    return true;
   }
 
   /**
@@ -781,21 +786,18 @@ export class Arena {
       }
 
       tag.onRemove(quiet);
-      this.eventTarget.dispatchEvent(new TagRemovedEvent(tag.tagType, tag.side, tag.turnCount));
+      this.eventTarget.dispatchEvent(new ArenaTagRemovedEvent(tag.tagType, tag.side));
     }
 
     this.tags = leftoverTags;
   }
 
   public removeAllTags(): void {
-    while (this.tags.length > 0) {
-      this.tags[0].onRemove();
-      this.eventTarget.dispatchEvent(
-        new TagRemovedEvent(this.tags[0].tagType, this.tags[0].side, this.tags[0].turnCount),
-      );
-
-      this.tags.splice(0, 1);
+    for (const tag of this.tags) {
+      tag.onRemove();
+      this.eventTarget.dispatchEvent(new ArenaTagRemovedEvent(tag.tagType, tag.side));
     }
+    this.tags = [];
   }
 
   // #endregion

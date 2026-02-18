@@ -161,7 +161,7 @@ describe("Move - Heal Block", () => {
     await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(game).toHavePositionalTag(PositionalTagType.WISH, 1);
+    expect(game).toHavePositionalTag(PositionalTagType.WISH);
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.HEAL_BLOCK);

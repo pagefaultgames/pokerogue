@@ -45,10 +45,10 @@
  */
 
 import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
-import type { BattlerTag } from "#app/data/battler-tags";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { CommonBattleAnim } from "#data/battle-anims";
+import type { BattlerTag } from "#data/battler-tags";
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
@@ -63,6 +63,7 @@ import { MoveTarget } from "#enums/move-target";
 import { PokemonType } from "#enums/pokemon-type";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
+import { ArenaTagAddedEvent } from "#events/arena";
 import type { Arena } from "#field/arena";
 import type { Pokemon } from "#field/pokemon";
 import { isSpreadMove } from "#moves/move-utils";
@@ -798,6 +799,9 @@ export abstract class EntryHazardTag extends SerializableArenaTag {
     (this as Mutable<this>).layers++;
 
     this.onAdd();
+    globalScene.arena.eventTarget.dispatchEvent(
+      new ArenaTagAddedEvent(this.tagType, this.side, 0, [this.layers, this.maxLayers]),
+    );
   }
 
   /**
