@@ -1,5 +1,6 @@
 import type { ObjectValues } from "#types/type-helpers";
 import { FormChangeItemId } from "./form-change-item-id";
+import type { TrainerItemId } from "./trainer-item-id";
 
 // TODO: make category the lower 2 bytes
 // TODO: Create subsets of HeldItemId for different types of items
@@ -153,3 +154,5 @@ export function isItemInCategory(itemId: HeldItemId, category: HeldItemCategoryI
 export function isItemInRequested(itemId: HeldItemId, requestedItems: (HeldItemCategoryId | HeldItemId)[]): boolean {
   return requestedItems.some(entry => itemId === entry || (itemId & ITEM_CATEGORY_MASK) === entry);
 }
+
+declare const EnsureHeldItemsAndTrainerItemsDontOverlap: (HeldItemId & TrainerItemId) | 1;

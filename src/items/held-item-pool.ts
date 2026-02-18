@@ -86,7 +86,7 @@ export function assignEnemyHeldItemsForWave(
   poolType: HeldItemPoolType.WILD | HeldItemPoolType.TRAINER,
   upgradeChance = 0,
 ): void {
-  const existingItemCount = enemy.heldItemManager.getHeldItemCount();
+  const existingItemCount = enemy.heldItemManager.getItemCount();
   count -= existingItemCount;
   if (count <= 0) {
     return;

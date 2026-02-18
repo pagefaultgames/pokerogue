@@ -88,7 +88,7 @@ export class SpeciesFormChangeItemTrigger extends SpeciesFormChangeTrigger {
   }
 
   canChange(pokemon: Pokemon): boolean {
-    const matchItem = pokemon.heldItemManager.heldItems[this.item];
+    const matchItem = pokemon.heldItemManager.getItemSpecs(this.item);
     if (!matchItem) {
       return false;
     }

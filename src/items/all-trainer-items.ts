@@ -126,7 +126,7 @@ export function applyTrainerItems<T extends TrainerItemEffect>(
   params: TrainerItemEffectParamMap[T],
 ) {
   if (manager) {
-    for (const item of Object.keys(manager.trainerItems)) {
+    for (const item of manager.items.keys()) {
       if (allTrainerItems[item].effects.includes(effect)) {
         allTrainerItems[item].apply(manager, params);
       }

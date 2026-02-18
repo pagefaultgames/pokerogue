@@ -28,7 +28,7 @@ export class ItemBar extends Phaser.GameObjects.Container {
   updateItems(trainerItems: TrainerItemManager, pokemonA?: Pokemon, pokemonB?: Pokemon) {
     this.removeAll(true);
 
-    const sortedTrainerItems = trainerItems.getTrainerItems().sort(trainerItemSortFunc);
+    const sortedTrainerItems = trainerItems.getItems().sort(trainerItemSortFunc);
 
     const heldItemsA = pokemonA ? pokemonA.getHeldItems().sort(heldItemSortFunc) : [];
     const heldItemsB = pokemonB ? pokemonB.getHeldItems().sort(heldItemSortFunc) : [];

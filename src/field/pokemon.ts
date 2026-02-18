@@ -1157,7 +1157,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   // TODO: Review uses of this function - callers should try to use the held item manager's utils where possible
   getHeldItems(): HeldItemId[] {
-    return this.heldItemManager.getHeldItems();
+    return this.heldItemManager.getItems();
   }
 
   updateScale(): void {
@@ -5977,7 +5977,7 @@ export class PlayerPokemon extends Pokemon {
           this.variant,
           this.ivs,
           this.nature,
-          this.heldItemManager.generateHeldItemConfiguration(),
+          this.heldItemManager.generateItemConfiguration(),
           this,
         );
         this.fusionSpecies = originalFusionSpecies;
@@ -6000,7 +6000,7 @@ export class PlayerPokemon extends Pokemon {
           this.variant,
           this.ivs,
           this.nature,
-          this.heldItemManager.generateHeldItemConfiguration(),
+          this.heldItemManager.generateItemConfiguration(),
           this,
         );
       }
@@ -6154,7 +6154,7 @@ export class PlayerPokemon extends Pokemon {
         this.variant,
         this.ivs,
         this.nature,
-        this.heldItemManager.generateHeldItemConfiguration(),
+        this.heldItemManager.generateItemConfiguration(),
         this,
       );
       ret.loadAssets().then(() => resolve(ret));
@@ -6970,7 +6970,7 @@ export class EnemyPokemon extends Pokemon {
         this.variant,
         this.ivs,
         this.nature,
-        this.heldItemManager.generateHeldItemConfiguration(),
+        this.heldItemManager.generateItemConfiguration(),
         this,
       );
 

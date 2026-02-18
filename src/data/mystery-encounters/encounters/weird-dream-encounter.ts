@@ -387,7 +387,7 @@ function getTeamTransformations(): PokemonTransformation[] {
   for (let i = 0; i < numPokemon; i++) {
     const removed = removedPokemon[i];
     const index = pokemonTransformations.findIndex(p => p.previousPokemon.id === removed.id);
-    pokemonTransformations[index].heldItems = removed.heldItemManager.generateHeldItemConfiguration();
+    pokemonTransformations[index].heldItems = removed.heldItemManager.generateItemConfiguration();
 
     const bst = removed.getSpeciesForm().getBaseStatTotal();
     let newBstRange: [number, number];
