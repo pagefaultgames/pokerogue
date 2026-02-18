@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { TEST_TIMEOUT } from "#test/test-utils/constants";
 import type { UserConfig } from "vite";
 import { defineConfig } from "vitest/config";
 import { BaseSequencer, type TestSpecification } from "vitest/node";
+import { TEST_TIMEOUT } from "./test/test-utils/constants";
 import { sharedConfig } from "./vite.config";
 
 const customReporterFile = "./test/test-utils/reporters/custom-default-reporter.ts" as const;
