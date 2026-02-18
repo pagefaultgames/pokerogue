@@ -5244,7 +5244,7 @@ export function initBiomes() {
       [BiomeId.FOREST, BiomePoolTier.BOSS_RARE, TimeOfDay.NIGHT]
     ]
     ]
-  ];
+  ]
 
   const trainerBiomes = [
     [TrainerType.ACE_TRAINER, [
@@ -6020,7 +6020,8 @@ export function initBiomes() {
                 newEntry[level] = [speciesId];
               }
             }
-            biomeTierTimePool[e] = newEntry;
+            // TODO: Resolve later
+            biomeTierTimePool[e] = newEntry as any;
           }
         }
       }
