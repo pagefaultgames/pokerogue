@@ -9,7 +9,7 @@ export abstract class AwaitableUiHandler extends UiHandler {
   protected awaitingActionInput: boolean;
   // TODO: Rework to be `() => void` instead of `AnyFn` for better type safety once item rework is complete
   // and subclasses no longer violate LSP
-  protected onActionInput: AnyFn | null;
+  protected onActionInput: AnyFn<any> | null;
   public tutorialActive = false;
   public tutorialOverlay: Phaser.GameObjects.Rectangle;
 
