@@ -57,6 +57,17 @@ export class SettingsHelper extends GameManagerHelper {
   }
 
   /**
+   * Toggle the option to skip level move confirmations
+   * @param enable - Whether to enable or disable level move confirmations
+   * @returns `this`
+   */
+  public skipLevelPrompt(enable: boolean): this {
+    this.game.scene.hideMoveSkipConfirm = enable;
+    this.log(`Skip Move Confirmtion ${enable ? "enabled" : "disabled"}!`);
+    return this;
+  }
+
+  /**
    * Change the player character's selected gender.
    * @param gender - The {@linkcode PlayerGender} to set
    * @returns `this`

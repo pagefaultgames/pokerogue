@@ -93,4 +93,28 @@ describe("Learn Move Phase", () => {
     expect(bulbasaur.level).toBeGreaterThanOrEqual(levelReq);
     expect(bulbasaur.getMoveset().map(m => m?.moveId)).toEqual(prevMoveset);
   });
+
+  it("pressing cancel multiple times will stop learning move when hideMoveSkipConfirm is on", async () => {
+    game.settings.skipLevelPrompt(true);
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR);
+    const bulbasaur = game.field.getPlayerPokemon();
+    const prevMoveset = [MoveId.SPLASH, MoveId.ABSORB, MoveId.ACID, MoveId.VINE_WHIP];
+    game.override.startingLevel(8).levelCap(9);
+    game.move.changeMoveset(bulbasaur, [MoveId.SPLASH, MoveId.ABSORB, MoveId.ACID, MoveId.VINE_WHIP]);
+    game.move.select(MoveId.SPLASH);
+    await game.doKillOpponents();
+
+    // queue up inputs to confirm dialog boxes
+    game.onNextPrompt("LearnMovePhase", UiMode.CONFIRM, () => {
+      game.scene.ui.processInput(Button.CANCEL);
+    });
+    game.onNextPrompt("LearnMovePhase", UiMode.MESSAGE, () => {
+      game.scene.ui.processInput(Button.CANCEL);
+    });
+    await game.phaseInterceptor.to("LearnMovePhase");
+
+    const levelReq = bulbasaur.getLevelMoves(5)[0][0];
+    expect(bulbasaur.level).toBeGreaterThanOrEqual(levelReq);
+    expect(bulbasaur.getMoveset().map(m => m?.moveId)).toEqual(prevMoveset);
+  });
 });
