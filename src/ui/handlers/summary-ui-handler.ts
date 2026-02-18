@@ -1073,7 +1073,7 @@ export class SummaryUiHandler extends UiHandler {
           const natureStatMultiplier = getNatureStatMultiplier(this.pokemon?.getNature()!, s); // TODO: is this bang correct?
 
           const statLabel = addTextObject(
-            115 * colIndex + (colIndex === 1 ? 5 : 0),
+            116 * colIndex + (colIndex === 1 ? 5 : 0),
             16 * rowIndex,
             statName,
             natureStatMultiplier === 1
@@ -1083,7 +1083,7 @@ export class SummaryUiHandler extends UiHandler {
                 : TextStyle.SUMMARY_STATS_BLUE,
           );
           const ivLabel = addTextObject(
-            115 * colIndex + (colIndex === 1 ? 5 : 0),
+            116 * colIndex + (colIndex === 1 ? 5 : 0),
             16 * rowIndex,
             statName,
             this.pokemon?.ivs[stat] === 31 ? TextStyle.SUMMARY_STATS_GOLD : TextStyle.SUMMARY_STATS,
@@ -1100,10 +1100,10 @@ export class SummaryUiHandler extends UiHandler {
               : `${formatStat(this.pokemon?.hp!, true)}/${formatStat(this.pokemon?.getMaxHp()!, true)}`; // TODO: are those bangs correct?
           const ivText = `${this.pokemon?.ivs[stat]}/31`;
 
-          const statValue = addTextObject(93 + 88 * colIndex, 16 * rowIndex, statValueText, TextStyle.WINDOW_ALT);
+          const statValue = addTextObject(93 + 93 * colIndex, 16 * rowIndex, statValueText, TextStyle.WINDOW_ALT);
           statValue.setOrigin(1, 0);
           this.permStatsContainer.add(statValue);
-          const ivValue = addTextObject(93 + 88 * colIndex, 16 * rowIndex, ivText, TextStyle.WINDOW_ALT);
+          const ivValue = addTextObject(93 + 93 * colIndex, 16 * rowIndex, ivText, TextStyle.WINDOW_ALT);
           ivValue.setOrigin(1, 0);
           this.ivContainer.add(ivValue);
         });
@@ -1142,13 +1142,13 @@ export class SummaryUiHandler extends UiHandler {
         nextLvExpLabel.setOrigin(0, 0);
         this.statsContainer.add(nextLvExpLabel);
 
-        const expText = addTextObject(208, 112, pkmExp.toString(), TextStyle.WINDOW_ALT);
+        const expText = addTextObject(213, 112, pkmExp.toString(), TextStyle.WINDOW_ALT);
         expText.setOrigin(1, 0);
         this.statsContainer.add(expText);
 
         const nextLvExp =
           pkmLvl < globalScene.getMaxExpLevel() ? getLevelTotalExp(pkmLvl + 1, pkmSpeciesGrowthRate) - pkmExp : 0;
-        const nextLvExpText = addTextObject(208, 128, nextLvExp.toString(), TextStyle.WINDOW_ALT);
+        const nextLvExpText = addTextObject(213, 128, nextLvExp.toString(), TextStyle.WINDOW_ALT);
         nextLvExpText.setOrigin(1, 0);
         this.statsContainer.add(nextLvExpText);
 
@@ -1256,11 +1256,11 @@ export class SummaryUiHandler extends UiHandler {
           moveText.setOrigin(0, 1);
           moveRowContainer.add(moveText);
 
-          const ppOverlay = globalScene.add.image(172, -5, getLocalizedSpriteKey("summary_moves_overlay_pp")); // Pixel text 'PP'
+          const ppOverlay = globalScene.add.image(177, -5, getLocalizedSpriteKey("summary_moves_overlay_pp")); // Pixel text 'PP'
           ppOverlay.setOrigin(1, 0.5);
           moveRowContainer.add(ppOverlay);
 
-          const ppText = addTextObject(173, 1, "--/--", TextStyle.WINDOW);
+          const ppText = addTextObject(178, 1, "--/--", TextStyle.WINDOW);
           ppText.setOrigin(0, 1);
 
           if (move) {
