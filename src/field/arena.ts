@@ -423,14 +423,11 @@ export class Arena {
     // TODO: Rework in 1.13 to not clone the entire pokemon pool every few waves
     const biomePool = biomePokemonPools[this.biomeId];
 
-    this.pokemonPool = Object.entries(biomePool).reduce(
-      (acc, [tier, tierPool]) => {
-        // TODO: Remove type assertion once `Object.entries` gets properly typed to make `tier` a stringified `BiomePoolTier`
-        acc[tier as `${BiomePoolTier}`] = [...tierPool[TimeOfDay.ALL], ...tierPool[timeOfDay]];
-        return acc;
-      },
-      {} as typeof this.pokemonPool,
-    );
+    this.pokemonPool = Object.entries(biomePool).reduce((acc, [tier, tierPool]) => {
+      // TODO: Remove type assertion once `Object.entries` gets properly typed to make `tier` a stringified `BiomePoolTier`
+      acc[tier as `${BiomePoolTier}`] = [...tierPool[TimeOfDay.ALL], ...tierPool[timeOfDay]];
+      return acc;
+    }, {} as PokemonPools);
     this.lastTimeOfDay = timeOfDay;
   }
 
@@ -485,9 +482,25 @@ export class Arena {
 
     console.log("Final rarity: ", BiomePoolTier[tier]);
 
-    const speciesId = randSeedItem(tierPool);
+    const entry = randSeedItem(tierPool);
+    let speciesId: SpeciesId;
+    if (typeof entry === "number") {
+      speciesId = entry;
+    } else {
+      // TODO: This is scuffed
+      const levelThresholds = Object.keys(entry);
+      for (let l = levelThresholds.length - 1; l >= 0; l--) {
+        const levelThreshold = Number.parseInt(levelThresholds[l]);
+        if (level >= levelThreshold) {
+          const speciesIds = entry[levelThreshold];
+          speciesId = randSeedItem(speciesIds);
+          break;
+        }
+      }
+    }
 
-    const species = getPokemonSpecies(speciesId);
+    // TODO: Resolve later
+    const species = getPokemonSpecies(speciesId!);
 
     // Attempt to retry up to 10 times if generating a high BST mon
     // TODO: These should be removed from the pool beforehand

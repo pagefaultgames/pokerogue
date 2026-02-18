@@ -14,7 +14,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
-import type { BiomePokemonPools, BiomeTrainerPools } from "#types/biomes";
+import type { BiomePokemonPools, BiomeTrainerPools,SpeciesTree } from "#types/biomes";
 import type { Mutable } from "#types/type-helpers";
 import { randSeedInt } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
@@ -6007,7 +6007,7 @@ export function initBiomes() {
           if (entry.length === 1) {
             biomeTierTimePool[e] = entry[0];
           } else {
-            const newEntry = {
+            const newEntry: Mutable<SpeciesTree> = {
               1: [entry[0]]
             };
             for (let s = 1; s < entry.length; s++) {
@@ -6020,8 +6020,7 @@ export function initBiomes() {
                 newEntry[level] = [speciesId];
               }
             }
-            // TODO: Resolve later
-            biomeTierTimePool[e] = newEntry as any;
+            biomeTierTimePool[e] = newEntry;
           }
         }
       }
