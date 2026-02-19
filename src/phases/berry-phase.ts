@@ -2,7 +2,6 @@ import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { CommonAnim } from "#enums/move-anims-common";
-import { BerryUsedEvent } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
 import { BerryModifier } from "#modifiers/modifier";
 import { FieldPhase } from "#phases/field-phase";
@@ -65,7 +64,6 @@ export class BerryPhase extends FieldPhase {
         berryModifier.consumed = false;
         pokemon.loseHeldItem(berryModifier);
       }
-      globalScene.eventTarget.dispatchEvent(new BerryUsedEvent(berryModifier));
     }
     globalScene.updateModifiers(pokemon.isPlayer());
 

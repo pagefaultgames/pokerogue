@@ -6,6 +6,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
 import { HitResult } from "#enums/hit-result";
 import { type BattleStat, Stat } from "#enums/stat";
+import { MovesetChangedEvent } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
 import { NumberHolder, randSeedInt, toDmgValue } from "#utils/common";
 import i18next from "i18next";
@@ -140,8 +141,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
         {
           // Pick the first move completely out of PP, or else the first one that has any PP missing
           const ppRestoreMove =
-            consumer.getMoveset().find(m => m.ppUsed === m.getMovePp())
-            ?? consumer.getMoveset().find(m => m.ppUsed < m.getMovePp());
+            consumer.getMoveset().find(m => m.isOutOfPp()) ?? consumer.getMoveset().find(m => m.ppUsed < m.getMovePp());
           if (ppRestoreMove) {
             ppRestoreMove.ppUsed = Math.max(ppRestoreMove.ppUsed - 10, 0);
             globalScene.phaseManager.queueMessage(
@@ -151,6 +151,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
                 berryName: getBerryName(berryType),
               }),
             );
+            globalScene.eventTarget.dispatchEvent(new MovesetChangedEvent(consumer.id, ppRestoreMove));
           }
         }
         break;

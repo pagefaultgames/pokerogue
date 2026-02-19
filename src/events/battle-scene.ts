@@ -1,52 +1,65 @@
-import type { BerryModifier } from "#modifiers/modifier";
-import type { Move } from "#moves/move";
+import type { PokemonSummonData } from "#data/pokemon-data";
+import type { PokemonMove } from "#moves/pokemon-move";
 
-/** Alias for all {@linkcode BattleScene} events */
+/** Enum comprising all {@linkcode BattleScene} events that can be emitted. */
 export enum BattleSceneEventType {
   /**
-   * Triggers when the corresponding setting is changed
+   * Emitted when the corresponding setting is changed
    * @see {@linkcode CandyUpgradeNotificationChangedEvent}
    */
   CANDY_UPGRADE_NOTIFICATION_CHANGED = "onCandyUpgradeNotificationChanged",
 
   /**
-   * Triggers when a move is successfully used
-   * @see {@linkcode MoveUsedEvent}
+   * Emitted whenever a Pokemon's moveset is changed or altered - whether from moveset-overridding effects,
+   * PP consumption or restoration.
+   * @see {@linkcode MovesetChangedEvent}
    */
-  MOVE_USED = "onMoveUsed",
-  /**
-   * Triggers when a berry gets successfully used
-   * @see {@linkcode BerryUsedEvent}
-   */
-  BERRY_USED = "onBerryUsed",
+  MOVESET_CHANGED = "onMovesetChanged",
 
   /**
-   * Triggers at the start of each new encounter
+   * Emitted whenever the {@linkcode PokemonSummonData} of any {@linkcode Pokemon} is reset to its initial state
+   * (such as immediately before a switch-out).
+   * @see {@linkcode SummonDataResetEvent}
+   */
+  SUMMON_DATA_RESET = "onSummonDataReset",
+
+  /**
+   * Emitted at the start of each new encounter
    * @see {@linkcode EncounterPhaseEvent}
    */
   ENCOUNTER_PHASE = "onEncounterPhase",
   /**
-   * Triggers on the first turn of a new battle
-   * @see {@linkcode TurnInitEvent}
-   */
-  TURN_INIT = "onTurnInit",
-  /**
-   * Triggers after a turn ends in battle
+   * Emitted after a turn ends in battle
    * @see {@linkcode TurnEndEvent}
    */
   TURN_END = "onTurnEnd",
 
   /**
-   * Triggers when a new {@linkcode Arena} is created during initialization
+   * Emitted when a new {@linkcode Arena} is created during initialization
    * @see {@linkcode NewArenaEvent}
    */
   NEW_ARENA = "onNewArena",
 }
 
-/** Container class for {@linkcode BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED} events */
-export class CandyUpgradeNotificationChangedEvent extends Event {
+/**
+ * Abstract container class for all {@linkcode BattleSceneEventType} events.
+ */
+abstract class BattleSceneEvent<T extends BattleSceneEventType> extends Event {
+  public declare readonly type: T;
+  // biome-ignore lint/complexity/noUselessConstructor: Restricts the type of the type field
+  constructor(type: T) {
+    super(type);
+  }
+}
+
+export type { BattleSceneEvent };
+
+/**
+ * Container class for {@linkcode BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED} events
+ */
+export class CandyUpgradeNotificationChangedEvent extends BattleSceneEvent<BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED> {
   /** The new value the setting was changed to */
-  public newValue: number;
+  public readonly newValue: number;
   constructor(newValue: number) {
     super(BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED);
 
@@ -54,58 +67,74 @@ export class CandyUpgradeNotificationChangedEvent extends Event {
   }
 }
 
-/** Container class for {@linkcode BattleSceneEventType.MOVE_USED} events */
-export class MoveUsedEvent extends Event {
-  /** The ID of the {@linkcode Pokemon} that used the {@linkcode Move} */
-  public pokemonId: number;
-  /** The {@linkcode Move} used */
-  public move: Move;
-  /** The amount of PP used on the {@linkcode Move} this turn */
-  public ppUsed: number;
-  constructor(userId: number, move: Move, ppUsed: number) {
-    super(BattleSceneEventType.MOVE_USED);
+/**
+ * Container class for {@linkcode BattleSceneEventType.MOVESET_CHANGED} events. \
+ * Emitted whenever the moveset of any {@linkcode Pokemon} is changed, or a move's PP is increased or decreased.
+ */
+export class MovesetChangedEvent extends BattleSceneEvent<BattleSceneEventType.MOVESET_CHANGED> {
+  /** The {@linkcode Pokemon.ID | ID} of the {@linkcode Pokemon} whose moveset has changed. */
+  public readonly pokemonId: number;
+  /**
+   * The {@linkcode PokemonMove} having been changed.
+   * Will override the corresponding slot of the moveset flyout for that Pokemon.
+   */
+  public readonly move: PokemonMove;
 
-    this.pokemonId = userId;
+  constructor(pokemonId: number, move: PokemonMove) {
+    super(BattleSceneEventType.MOVESET_CHANGED);
+
+    this.pokemonId = pokemonId;
     this.move = move;
-    this.ppUsed = ppUsed;
-  }
-}
-/** Container class for {@linkcode BattleSceneEventType.BERRY_USED} events */
-export class BerryUsedEvent extends Event {
-  /** The {@linkcode BerryModifier} being used */
-  public berryModifier: BerryModifier;
-  constructor(berry: BerryModifier) {
-    super(BattleSceneEventType.BERRY_USED);
-
-    this.berryModifier = berry;
   }
 }
 
-/** Container class for {@linkcode BattleSceneEventType.ENCOUNTER_PHASE} events */
-export class EncounterPhaseEvent extends Event {
+/**
+ * Container class for {@linkcode BattleSceneEventType.SUMMON_DATA_RESET} events. \
+ * Emitted whenever the {@linkcode PokemonSummonData} of any {@linkcode Pokemon} is reset to its initial state
+ * (such as immediately before a switch-out).
+ */
+export class SummonDataResetEvent extends BattleSceneEvent<BattleSceneEventType.SUMMON_DATA_RESET> {
+  /** The {@linkcode Pokemon.ID | ID} of the {@linkcode Pokemon} whose data has been reset. */
+  public readonly pokemonId: number;
+
+  constructor(pokemonId: number) {
+    super(BattleSceneEventType.SUMMON_DATA_RESET);
+
+    this.pokemonId = pokemonId;
+  }
+}
+
+/**
+ * Container class for {@linkcode BattleSceneEventType.ENCOUNTER_PHASE} events.
+ */
+export class EncounterPhaseEvent extends BattleSceneEvent<BattleSceneEventType.ENCOUNTER_PHASE> {
   constructor() {
     super(BattleSceneEventType.ENCOUNTER_PHASE);
   }
 }
-/** Container class for {@linkcode BattleSceneEventType.TURN_INIT} events */
-export class TurnInitEvent extends Event {
-  constructor() {
-    super(BattleSceneEventType.TURN_INIT);
-  }
-}
-/** Container class for {@linkcode BattleSceneEventType.TURN_END} events */
-export class TurnEndEvent extends Event {
-  /** The amount of turns in the current battle */
-  public turnCount: number;
-  constructor(turnCount: number) {
-    super(BattleSceneEventType.TURN_END);
 
-    this.turnCount = turnCount;
+/**
+ * Container class for {@linkcode BattleSceneEventType.TURN_END} events
+ */
+export class TurnEndEvent extends BattleSceneEvent<BattleSceneEventType.TURN_END> {
+  constructor() {
+    super(BattleSceneEventType.TURN_END);
   }
 }
-/** Container class for {@linkcode BattleSceneEventType.NEW_ARENA} events */
-export class NewArenaEvent extends Event {
+/**
+ * Container class for {@linkcode BattleSceneEventType.NEW_ARENA} events
+ */
+export class NewArenaEvent extends BattleSceneEvent<BattleSceneEventType.NEW_ARENA> {
   constructor() {
     super(BattleSceneEventType.NEW_ARENA);
   }
 }
+
+export type BattleSceneEventMap = {
+  [BattleSceneEventType.CANDY_UPGRADE_NOTIFICATION_CHANGED]: CandyUpgradeNotificationChangedEvent;
+  [BattleSceneEventType.MOVESET_CHANGED]: MovesetChangedEvent;
+  [BattleSceneEventType.SUMMON_DATA_RESET]: SummonDataResetEvent;
+  [BattleSceneEventType.ENCOUNTER_PHASE]: EncounterPhaseEvent;
+  [BattleSceneEventType.TURN_END]: TurnEndEvent;
+  [BattleSceneEventType.NEW_ARENA]: NewArenaEvent;
+};

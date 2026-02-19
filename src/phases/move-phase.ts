@@ -24,7 +24,7 @@ import { MoveResult } from "#enums/move-result";
 import { isIgnorePP, isIgnoreStatus, isReflected, isVirtual, MoveUseMode } from "#enums/move-use-mode";
 import { PokemonType } from "#enums/pokemon-type";
 import { StatusEffect } from "#enums/status-effect";
-import { MoveUsedEvent } from "#events/battle-scene";
+import { MovesetChangedEvent } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import { frenzyMissFunc } from "#moves/move-utils";
@@ -641,13 +641,14 @@ export class MovePhase extends PokemonPhase {
    * Deduct PP from the move being used, accounting for Pressure and other effects.
    */
   protected usePP(): void {
-    if (!isIgnorePP(this.useMode)) {
-      const move = this.move;
-      // "commit" to using the move, deducting PP.
-      const ppUsed = 1 + this.getPpIncreaseFromPressure(this.getActiveTargetPokemon());
-      move.usePp(ppUsed);
-      globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon.id, move.getMove(), move.ppUsed));
+    if (isIgnorePP(this.useMode)) {
+      return;
     }
+
+    const { move } = this;
+    const ppUsed = 1 + this.getPpIncreaseFromPressure(this.getActiveTargetPokemon());
+    move.usePp(ppUsed);
+    globalScene.eventTarget.dispatchEvent(new MovesetChangedEvent(this.pokemon.id, move));
   }
 
   /**

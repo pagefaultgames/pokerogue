@@ -55,7 +55,7 @@ import { BATTLE_STATS, type BattleStat, type EffectiveStat, getStatKey, Stat } f
 import { StatusEffect } from "#enums/status-effect";
 import { SwitchType } from "#enums/switch-type";
 import { WeatherType } from "#enums/weather-type";
-import { MoveUsedEvent } from "#events/battle-scene";
+import { MovesetChangedEvent } from "#events/battle-scene";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import {
   AttackTypeBoosterModifier,
@@ -8038,7 +8038,7 @@ export class ReducePpMoveAttr extends MoveEffectAttr {
     const lastPpUsed = movesetMove.ppUsed;
     movesetMove.ppUsed = Math.min(lastPpUsed + this.reduction, movesetMove.getMovePp());
 
-    globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(target.id, movesetMove.getMove(), movesetMove.ppUsed));
+    globalScene.eventTarget.dispatchEvent(new MovesetChangedEvent(target.id, movesetMove));
     globalScene.phaseManager.queueMessage(
       i18next.t("battle:ppReduced", {
         targetName: getPokemonNameWithAffix(target),
@@ -8144,10 +8144,12 @@ export class MovesetCopyMoveAttr extends OverrideMoveEffectAttr {
       return false;
     }
 
-    // Populate summon data with a copy of the current moveset, replacing the copying move with the copied move
+    // Populate summon data with a copy of the current moveset, replacing the copying move with the copied move.
     user.summonData.moveset = user.getMoveset().slice(0);
-    user.summonData.moveset[thisMoveIndex] = new PokemonMove(copiedMove.id);
+    const newMove = new PokemonMove(copiedMove.id);
+    user.summonData.moveset[thisMoveIndex] = newMove;
 
+    globalScene.eventTarget.dispatchEvent(new MovesetChangedEvent(user.id, newMove));
     globalScene.phaseManager.queueMessage(
       i18next.t("moveTriggers:copiedMove", { pokemonName: getPokemonNameWithAffix(user), moveName: copiedMove.name }),
     );

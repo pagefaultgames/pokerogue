@@ -24,7 +24,7 @@ export class TurnEndPhase extends FieldPhase {
     super.start();
 
     globalScene.currentBattle.incrementTurn();
-    globalScene.eventTarget.dispatchEvent(new TurnEndEvent(globalScene.currentBattle.turn));
+    globalScene.eventTarget.dispatchEvent(new TurnEndEvent());
     globalScene.phaseManager.dynamicQueueManager.clearLastTurnOrder();
 
     globalScene.phaseManager.hideAbilityBar();

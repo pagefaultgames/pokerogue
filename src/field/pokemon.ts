@@ -114,6 +114,7 @@ import { SwitchType } from "#enums/switch-type";
 import type { TrainerSlot } from "#enums/trainer-slot";
 import { UiMode } from "#enums/ui-mode";
 import { WeatherType } from "#enums/weather-type";
+import { MovesetChangedEvent, SummonDataResetEvent } from "#events/battle-scene";
 import {
   BaseStatModifier,
   CritBoosterModifier,
@@ -2964,6 +2965,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.summonData.moveset) {
       this.summonData.moveset[moveIndex] = move;
     }
+    globalScene.eventTarget.dispatchEvent(new MovesetChangedEvent(this.id, move));
   }
 
   /**
@@ -5272,6 +5274,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       this.summonData.speciesForm = null;
       this.updateFusionPalette();
     }
+
+    globalScene.eventTarget.dispatchEvent(new SummonDataResetEvent(this.id));
+
     this.summonData = new PokemonSummonData();
     this.tempSummonData = new PokemonTempSummonData();
     this.updateInfo();
