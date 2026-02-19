@@ -156,18 +156,20 @@ describe("Moves - Delayed Attacks", () => {
 
   it("should trigger multiple pending attacks in order of creation, even if that order changes later on", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS);
+    await game.classicMode.startBattle(SpeciesId.ALOMOMOLA, SpeciesId.BLISSEY);
 
-    const [alomomola, blissey] = game.scene.getField();
+    const [alomomola, blissey, karp1, karp2] = game.scene.getField();
+    vi.spyOn(karp1, "getNameToRender").mockReturnValue("Karp 1");
+    vi.spyOn(karp2, "getNameToRender").mockReturnValue("Karp 2");
 
-    const oldOrder = game.field.getSpeedOrder();
+    const oldOrder = game.field.getSpeedOrder(true);
 
     game.move.use(MoveId.FUTURE_SIGHT, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.use(MoveId.FUTURE_SIGHT, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2);
     await game.move.forceEnemyMove(MoveId.FUTURE_SIGHT, BattlerIndex.PLAYER);
     await game.move.forceEnemyMove(MoveId.FUTURE_SIGHT, BattlerIndex.PLAYER_2);
     // Ensure that the moves are used deterministically in speed order (for speed ties)
-    await game.setTurnOrder(oldOrder.map(p => p.getBattlerIndex()));
+    game.setTurnOrder(oldOrder);
     await game.toNextTurn();
 
     expect(game).toHavePositionalTag(PositionalTagType.DELAYED_ATTACK, 4);
@@ -176,8 +178,9 @@ describe("Moves - Delayed Attacks", () => {
     alomomola.setStatStage(Stat.SPD, 6);
     blissey.setStatStage(Stat.SPD, -6);
 
-    const newOrder = game.field.getSpeedOrder();
+    const newOrder = game.field.getSpeedOrder(true);
     expect(newOrder).not.toEqual(oldOrder);
+    game.setTurnOrder(newOrder);
 
     await passTurns(2, false);
 
@@ -186,7 +189,10 @@ describe("Moves - Delayed Attacks", () => {
 
     const MEPs = game.scene.phaseManager["phaseQueue"].findAll("MoveEffectPhase");
     expect(MEPs).toHaveLength(4);
-    expect(MEPs.map(mep => mep.getPokemon())).toEqual(oldOrder);
+    expect(
+      MEPs.map(mep => mep.getPokemon().getBattlerIndex()),
+      "Delayed Attacks were not queued in correct order!",
+    ).toEqual(oldOrder);
   });
 
   it("should vanish silently if it would otherwise hit the user", async () => {

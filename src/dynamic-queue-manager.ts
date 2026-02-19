@@ -1,12 +1,12 @@
 import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type { Pokemon } from "#app/field/pokemon";
+import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
 import type { MovePhase } from "#app/phases/move-phase";
 import { MovePhasePriorityQueue } from "#app/queues/move-phase-priority-queue";
 import { PokemonPhasePriorityQueue } from "#app/queues/pokemon-phase-priority-queue";
 import { PostSummonPhasePriorityQueue } from "#app/queues/post-summon-phase-priority-queue";
 import type { PriorityQueue } from "#app/queues/priority-queue";
-import type { BattlerIndex } from "#enums/battler-index";
 import type { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import type { DynamicPhase, PhaseConditionFunc, PhaseString } from "#types/phase-types";
 
@@ -55,6 +55,9 @@ export class DynamicQueueManager {
     for (const queue of this.dynamicPhaseMap.values()) {
       queue.clear();
     }
+    // TODO: Remove in a later PR - this is both unwieldly for tests
+    // and would force MEs to reset the turn order at start of every single turn (which is dumb)
+    globalScene.turnCommandManager.resetTurnOrder();
   }
 
   /**
@@ -145,14 +148,6 @@ export class DynamicQueueManager {
    */
   public cancelMovePhase(condition: PhaseConditionFunc<"MovePhase">): void {
     this.getMovePhaseQueue().cancelMove(condition);
-  }
-
-  /**
-   * Sets the move order to a static array rather than a dynamic queue
-   * @param order - The order of {@linkcode BattlerIndex}s
-   */
-  public setMoveOrder(order: BattlerIndex[]): void {
-    this.getMovePhaseQueue().setMoveOrder(order);
   }
 
   /**

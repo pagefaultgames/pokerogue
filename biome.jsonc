@@ -329,8 +329,16 @@
           },
           "style": {
             "noNonNullAssertion": "off" // tedious in some tests
-          },
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/test/**/*.test.ts"],
+      "linter": {
+        "rules": {
           "nursery": {
+            // TODO: Enable for normal test folder files as well
             "noFloatingPromises": "error"
           }
         }

@@ -525,19 +525,27 @@ export class GameManager {
   }
 
   /**
-   * Modifies the queue manager to return move phases in a particular order
-   * Used to manually modify Pokemon turn order.
-   * Note: This *DOES NOT* account for priority.
-   * @param order - The turn order to set as an array of {@linkcode BattlerIndex}es.
+   * Override the turn order of the battle's current combatants.
+   *
+   * Affects all processes that check speed order.
+   * @param order - The turn order to set, as an array of {@linkcode BattlerIndex}es
    * @example
    * ```ts
-   * await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
+   * game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
    * ```
+   * @throws Fails test immediately if `order` does not contain all non-fainted combatants' `BattlerIndex`es.
+   * @remarks
+   * This does not affect other relative orderings like move priority, nor does it change
+   * the battlers' innate speed stats (for the purposes of Electro Ball, etc).
    */
-  async setTurnOrder(order: BattlerIndex[]): Promise<void> {
-    await this.phaseInterceptor.to("TurnStartPhase", false);
+  // TODO: Move to `FieldHelper`
+  // TODO: Bulk-remove `await`s from existing test files in a follow-up PR
+  public setTurnOrder(order: BattlerIndex[]): void {
+    expect(order, "Turn order passed to `setTurnOrder` lacked values for one or more Pokemon!").toEqualUnsorted(
+      this.scene.getField(true).map(p => p.getBattlerIndex()),
+    );
 
-    this.scene.phaseManager.dynamicQueueManager.setMoveOrder(order);
+    this.scene.turnCommandManager.setOrder = order;
   }
 
   /**
