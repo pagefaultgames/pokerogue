@@ -62,52 +62,114 @@ interface LanguageSetting {
 const languageSettings: { [key: string]: LanguageSetting } = {
   en: {
     starterInfoTextSize: "56px",
-    instructionTextSize: "38px",
+    instructionTextSize: "28px",
   },
   de: {
-    starterInfoTextSize: "48px",
-    instructionTextSize: "35px",
-    starterInfoXPos: 33,
+    starterInfoTextSize: "54px",
+    instructionTextSize: "25px",
+    starterInfoXPos: 35,
   },
   "es-ES": {
-    starterInfoTextSize: "56px",
-    instructionTextSize: "35px",
+    starterInfoTextSize: "50px",
+    instructionTextSize: "28px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 38,
+  },
+  "es-419": {
+    starterInfoTextSize: "50px",
+    instructionTextSize: "28px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 38,
   },
   fr: {
     starterInfoTextSize: "54px",
-    instructionTextSize: "38px",
+    instructionTextSize: "28px",
   },
   it: {
     starterInfoTextSize: "56px",
-    instructionTextSize: "38px",
+    instructionTextSize: "28px",
   },
-  pt_BR: {
-    starterInfoTextSize: "47px",
-    instructionTextSize: "38px",
+  "pt-BR": {
+    starterInfoTextSize: "48px",
+    instructionTextSize: "32px",
+    starterInfoYOffset: 0.5,
     starterInfoXPos: 33,
   },
   zh: {
-    starterInfoTextSize: "47px",
-    instructionTextSize: "38px",
-    starterInfoYOffset: 1,
-    starterInfoXPos: 24,
-  },
-  pt: {
-    starterInfoTextSize: "48px",
-    instructionTextSize: "42px",
-    starterInfoXPos: 33,
+    starterInfoTextSize: "56px",
+    instructionTextSize: "26px",
+    starterInfoXPos: 26,
   },
   ko: {
-    starterInfoTextSize: "52px",
-    instructionTextSize: "38px",
+    starterInfoTextSize: "60px",
+    instructionTextSize: "28px",
+    starterInfoYOffset: -0.5,
+    starterInfoXPos: 30,
   },
   ja: {
-    starterInfoTextSize: "51px",
-    instructionTextSize: "38px",
+    starterInfoTextSize: "48px",
+    instructionTextSize: "28px",
+    starterInfoYOffset: 1,
+    starterInfoXPos: 32,
   },
-  "ca-ES": {
+  ca: {
+    starterInfoTextSize: "48px",
+    instructionTextSize: "28px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 29,
+  },
+  da: {
     starterInfoTextSize: "56px",
-    instructionTextSize: "38px",
+    instructionTextSize: "28px",
+  },
+  th: {
+    starterInfoTextSize: "50px",
+    instructionTextSize: "28px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 40,
+  },
+  tr: {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "28px",
+    starterInfoXPos: 34,
+  },
+  ro: {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "28px",
+  },
+  ru: {
+    starterInfoTextSize: "46px",
+    instructionTextSize: "28px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 26,
+  },
+  uk: {
+    starterInfoTextSize: "46px",
+    instructionTextSize: "28px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 26,
+  },
+  id: {
+    starterInfoTextSize: "48px",
+    instructionTextSize: "32px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 37,
+  },
+  hi: {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "28px",
+  },
+  tl: {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "28px",
+  },
+  "nb-NO": {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "28px",
+  },
+  sv: {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "28px",
   },
 };
 
