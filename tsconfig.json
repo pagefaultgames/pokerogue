@@ -26,6 +26,7 @@
       "ESNext.Iterator",
       "ESNext.Collection"
     ],
+    "types": ["@commander-js/extra-typings"],
     // Skip typechecking `.d.ts` files for a ~20% speed boost
     // Won't be necessary if https://github.com/microsoft/TypeScript/issues/30511 is ever resolved
     "skipLibCheck": true,
