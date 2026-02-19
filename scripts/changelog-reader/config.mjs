@@ -6,7 +6,7 @@
  */
 
 /**
- * @typedef {LABELS[number]} Label
+ * @typedef {typeof LABELS[number]} Label
  */
 
 /**

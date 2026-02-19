@@ -7,7 +7,7 @@
 
 import chalk from "chalk";
 
-/** @import {Help} from "commander" */
+/** @import {Help} from "@commander-js/extra-typings" */
 
 /**
  * Obtain the value of a property value CLI argument (one of the form
