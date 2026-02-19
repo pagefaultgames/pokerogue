@@ -6,11 +6,14 @@ import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
 import type { ModalConfig } from "#ui/modal-ui-handler";
 import i18next from "i18next";
 
-export class ChangePasswordFormUiHandler extends FormModalUiHandler {
-  private readonly ERR_PASSWORD: string = "invalid password";
-  private readonly ERR_ACCOUNT_EXIST: string = "account doesn't exist";
-  private readonly ERR_PASSWORD_MISMATCH: string = "password doesn't match";
+const ERR_PASSWORD: string = "invalid password";
+const ERR_ACCOUNT_EXIST: string = "account doesn't exist";
+const ERR_PASSWORD_MISMATCH: string = "password doesn't match";
+const ERR_GENERATE_SALT: string = "failed to generate salt";
+const ERR_REMOVE_SESSIONS: string = "failed to remove sessions";
+const ERR_ADD_RECORD: string = "failed to add account record";
 
+export class ChangePasswordFormUiHandler extends FormModalUiHandler {
   constructor(mode: UiMode | null = null) {
     super(mode);
   }
@@ -41,12 +44,18 @@ export class ChangePasswordFormUiHandler extends FormModalUiHandler {
       error = error.slice(0, colonIndex);
     }
     switch (error) {
-      case this.ERR_PASSWORD:
+      case ERR_PASSWORD:
         return i18next.t("menu:invalidRegisterPassword");
-      case this.ERR_ACCOUNT_EXIST:
+      case ERR_ACCOUNT_EXIST:
         return i18next.t("menu:accountNonExistent");
-      case this.ERR_PASSWORD_MISMATCH:
+      case ERR_PASSWORD_MISMATCH:
         return i18next.t("menu:passwordNotMatchingConfirmPassword");
+      case ERR_GENERATE_SALT:
+        return i18next.t("menu:serverErrorGenerateSalt");
+      case ERR_REMOVE_SESSIONS:
+        return i18next.t("menu:serverErrorRemoveSessions");
+      case ERR_ADD_RECORD:
+        return i18next.t("menu:serverErrorUpdateAccount");
     }
 
     return super.getReadableErrorMessage(error);
@@ -84,7 +93,7 @@ export class ChangePasswordFormUiHandler extends FormModalUiHandler {
             return onFail(this.getReadableErrorMessage("invalid password"));
           }
           if (passwordInput.text !== confirmPasswordInput.text) {
-            return onFail(this.ERR_PASSWORD_MISMATCH);
+            return onFail(ERR_PASSWORD_MISMATCH);
           }
 
           pokerogueApi.account.changePassword({ password: passwordInput.text }).then(error => {
