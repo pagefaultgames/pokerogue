@@ -27,7 +27,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { MoveUsedEvent } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
-import { frenzyMissFunc } from "#moves/move-utils";
+import { frenzyMissFunc, getMoveTargets } from "#moves/move-utils";
 import type { PokemonMove } from "#moves/pokemon-move";
 import type { Move, PreUseInterruptAttr } from "#types/move-types";
 import type { TurnMove } from "#types/turn-move";
@@ -182,6 +182,9 @@ export class MovePhase extends PokemonPhase {
     // At this point, move's type changing and multi-target effects *should* be applied
     // Pokerogue's current implementation applies these effects during the move effect phase
     // as there is not (yet) a notion of a move-in-flight for determinations to occur
+
+    // Re-evaluate variable-target moves in case terrain/field changed mid-turn.
+    this.resolveChangeMoveTarget();
 
     this.resolveRedirectTarget();
     this.resolveCounterAttackTarget();
@@ -541,6 +544,24 @@ export class MovePhase extends PokemonPhase {
         }),
       );
     }
+  }
+
+  // recompute targets when VariableTargetAttr may change mid-turn
+  protected resolveChangeMoveTarget(): void {
+    const user = this.pokemon;
+    const moveObj = this.move.getMove();
+
+    if (!moveObj.hasAttr("VariableTargetAttr")) {
+      return;
+    }
+    const variableTarget = new NumberHolder(0);
+    user.getOpponents(false).forEach(p => {
+      applyMoveAttrs("VariableTargetAttr", user, p, moveObj, variableTarget);
+    });
+
+    const moveTarget = variableTarget.value;
+    const { targets } = getMoveTargets(user, moveObj.id, moveTarget);
+    this.targets = targets;
   }
 
   /**
