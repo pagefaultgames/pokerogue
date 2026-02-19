@@ -17,7 +17,7 @@ export class SelectBiomePhase extends BattlePhase {
     globalScene.resetSeed();
 
     const gameMode = globalScene.gameMode;
-    const currentBiome = globalScene.arena.biomeType;
+    const currentBiome = globalScene.arena.biomeId;
     const currentWaveIndex = globalScene.currentBattle.waveIndex;
     const nextWaveIndex = currentWaveIndex + 1;
 

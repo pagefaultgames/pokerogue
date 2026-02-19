@@ -7,6 +7,7 @@ onlyBuiltDependencies:
   - msw
 
 overrides:
+  markdown-it@>=13.0.0 <14.1.1: '>=14.1.1'
   undici@<6.23.0: '>=6.23.0'
 
 shellEmulator: true

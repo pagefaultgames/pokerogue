@@ -9,6 +9,7 @@ import { speciesEggMoves } from "#balance/egg-moves";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { speciesStarterCosts } from "#balance/starters";
 import { bypassLogin, isBeta, isDev } from "#constants/app-constants";
+import { MAX_STARTER_CANDY_COUNT } from "#constants/game-constants";
 import { EntryHazardTag } from "#data/arena-tag";
 import { getSerializedDailyRunConfig, parseDailySeed } from "#data/daily-seed/daily-seed-utils";
 import { allMoves, allSpecies } from "#data/data-lists";
@@ -1696,10 +1697,11 @@ export class GameData {
         }
 
         if (!hasPrevolution && (!globalScene.gameMode.isDaily || hasNewAttr || fromEgg)) {
-          this.addStarterCandy(
-            species,
-            1 * (pokemon.isShiny() ? 5 * (1 << (pokemon.variant ?? 0)) : 1) * (fromEgg || pokemon.isBoss() ? 2 : 1),
-          );
+          // TODO: remove `?? 0`, `pokemon.variant` shouldn't be able to be nullish
+          const variantBonus = 2 ** (pokemon.variant ?? 0);
+          const shinyBonus = pokemon.isShiny() ? 5 * variantBonus : 1;
+          const eggOrBossBonus = fromEgg || pokemon.isBoss() ? 2 : 1;
+          this.addStarterCandy(species.speciesId, 1 * shinyBonus * eggOrBossBonus);
         }
       }
 
@@ -1776,21 +1778,27 @@ export class GameData {
   }
 
   /**
-   * Adds a candy to the player's game data for a given {@linkcode PokemonSpecies}.
-   * @param species
-   * @param count
+   * Adds candy to the player's game data for a given {@linkcode PokemonSpecies}.
+   * @remarks
+   * Will not increase the candy count past {@linkcode MAX_STARTER_CANDY_COUNT}.
+   * @returns Whether the candy count was incremented
    */
-  addStarterCandy(species: PokemonSpecies, count: number): void {
-    globalScene.candyBar.showStarterSpeciesCandy(species.speciesId, count);
-    this.starterData[species.speciesId].candyCount += count;
+  public addStarterCandy(speciesId: SpeciesId, count: number): boolean {
+    const { candyCount } = this.starterData[speciesId];
+
+    if (candyCount >= MAX_STARTER_CANDY_COUNT) {
+      return false;
+    }
+
+    globalScene.candyBar.showStarterSpeciesCandy(speciesId, count);
+    this.starterData[speciesId].candyCount = Math.min(candyCount + count, MAX_STARTER_CANDY_COUNT);
+
+    return true;
   }
 
   /**
-   *
-   * @param species
-   * @param eggMoveIndex
-   * @param showMessage Default true. If true, will display message for unlocked egg move
-   * @param prependSpeciesToMessage Default false. If true, will change message from "X Egg Move Unlocked!" to "Bulbasaur X Egg Move Unlocked!"
+   * @param showMessage - (Default `true`) Whether to display a message for the unlocked egg move
+   * @param prependSpeciesToMessage - (Default `false`) Whether to change the message from "X Egg Move Unlocked!" to "Bulbasaur X Egg Move Unlocked!"
    */
   setEggMoveUnlocked(
     species: PokemonSpecies,

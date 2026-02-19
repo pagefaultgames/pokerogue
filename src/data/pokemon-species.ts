@@ -92,6 +92,7 @@ export abstract class PokemonSpeciesForm {
   readonly baseTotal: number;
   readonly baseStats: number[];
   readonly catchRate: number;
+  /** The base amount of friendship this species has when caught, as an integer from 0-255. */
   readonly baseFriendship: number;
   readonly baseExp: number;
   readonly genderDiffs: boolean;
@@ -199,10 +200,8 @@ export abstract class PokemonSpeciesForm {
    * @param formIndex The form index to use, defaults to form for this species instance
    * @returns The id of the ability
    */
-  getPassiveAbility(formIndex?: number): AbilityId {
-    if (formIndex == null) {
-      formIndex = this.formIndex;
-    }
+  getPassiveAbility(formIndex = this.formIndex): AbilityId {
+    // TODO: This logic is quite convoluted; besides, forms should not need to have their own `getPassiveAbility` functions
     let starterSpeciesId = this.speciesId;
     while (
       !(starterSpeciesId in starterPassiveAbilities)

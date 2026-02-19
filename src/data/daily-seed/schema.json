@@ -31,8 +31,8 @@
         "required": ["speciesId"],
         "additionalProperties": false
       },
-      "minItems": 3,
-      "maxItems": 3
+      "minItems": 1,
+      "maxItems": 6
     },
     "boss": {
       "type": "object",
@@ -75,6 +75,12 @@
     "startingMoney": {
       "type": "integer",
       "minimum": 0
+    },
+    "forcedWaves": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/forcedWave"
+      }
     },
     "seed": {
       "type": "string"
@@ -120,6 +126,43 @@
       },
       "minItems": 1,
       "maxItems": 4
+    },
+    "forcedWave": {
+      "type": "object",
+      "properties": {
+        "waveIndex": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 49
+        },
+        "speciesId": {
+          "$ref": "#/$defs/speciesId"
+        },
+        "tier": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 8
+        },
+        "hiddenAbility": {
+          "type": "boolean"
+        }
+      },
+      "required": ["waveIndex"],
+      "oneOf": [
+        {
+          "required": ["speciesId"],
+          "not": {
+            "required": ["tier"]
+          }
+        },
+        {
+          "required": ["tier"],
+          "not": {
+            "required": ["speciesId"]
+          }
+        }
+      ],
+      "additionalProperties": false
     }
   },
   "required": ["seed"],

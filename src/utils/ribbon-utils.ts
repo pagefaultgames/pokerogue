@@ -47,6 +47,7 @@ export function getAvailableRibbons(species: PokemonSpecies): RibbonFlag[] {
     RibbonData.NO_HEAL,
     RibbonData.NO_SHOP,
     RibbonData.NO_SUPPORT,
+    RibbonData.PASSIVE_CHALLENGE,
   ];
 
   let data = 0n;
@@ -148,6 +149,8 @@ export function getRibbonKey(flag: RibbonFlag): string {
       return "monoDark";
     case RibbonData.MONO_FAIRY:
       return "monoFairy";
+    case RibbonData.PASSIVE_CHALLENGE:
+      return "activePassives";
     case RibbonData.MONO_GEN_1:
       return "monoGen1";
     case RibbonData.MONO_GEN_2:
@@ -174,6 +177,7 @@ export function getRibbonKey(flag: RibbonFlag): string {
 /**
  * This list is used to determined the display order of ribbons in the Pokédex.
  */
+// todo: enforce no ribbon is used twice or missing
 export const orderedRibbons: RibbonFlag[] = [
   RibbonData.CLASSIC,
   RibbonData.FRIENDSHIP,
@@ -211,6 +215,7 @@ export const orderedRibbons: RibbonFlag[] = [
   RibbonData.MONO_DRAGON,
   RibbonData.MONO_DARK,
   RibbonData.MONO_FAIRY,
+  RibbonData.PASSIVE_CHALLENGE,
   RibbonData.INVERSE,
   RibbonData.FLIP_STATS,
 ];
