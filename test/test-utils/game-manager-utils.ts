@@ -111,5 +111,10 @@ export function initSceneWithoutEncounterPhase(scene: BattleScene, speciesIds?: 
     scene.getPlayerParty().push(starterPokemon);
   });
 
-  scene.currentBattle = new Battle(getGameMode(GameModes.CLASSIC), 5, BattleType.WILD, undefined, false);
+  scene.currentBattle = new Battle(getGameMode(GameModes.CLASSIC), {
+    waveIndex: 5,
+    battleType: BattleType.WILD,
+    trainer: undefined,
+    double: false,
+  });
 }

@@ -59,7 +59,6 @@ import {
   applySystemVersionMigration,
 } from "#system/version-migration/version-converter";
 import { VoucherType, vouchers } from "#system/voucher";
-import { trainerConfigs } from "#trainers/trainer-config";
 import type { DexData, DexEntry } from "#types/dex-data";
 import type {
   AchvUnlocks,
@@ -975,18 +974,8 @@ export class GameData {
 
     globalScene.newArena(fromSession.arena.biome, fromSession.playerFaints);
 
-    const battleType = fromSession.battleType || 0;
-    const trainerConfig = fromSession.trainer ? trainerConfigs[fromSession.trainer.trainerType] : null;
-    const mysteryEncounterType = fromSession.mysteryEncounterType !== -1 ? fromSession.mysteryEncounterType : undefined;
-    const battle = globalScene.newBattle(
-      fromSession.waveIndex,
-      battleType,
-      fromSession.trainer,
-      battleType === BattleType.TRAINER
-        ? trainerConfig?.doubleOnly || fromSession.trainer?.variant === TrainerVariant.DOUBLE
-        : fromSession.enemyParty.length > 1,
-      mysteryEncounterType,
-    );
+    const battle = globalScene.newBattle(fromSession);
+    const { battleType } = battle;
     battle.enemyLevels = fromSession.enemyParty.map(p => p.level);
 
     globalScene.arena.init();

@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { startingWave } from "#app/starting-wave";
+import { STARTING_WAVE } from "#balance/misc";
 import { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import { GameModes } from "#enums/game-modes";
@@ -22,8 +22,8 @@ export class TrainerPartyTemplate {
   constructor(
     size: number,
     strength: PartyMemberStrength,
-    sameSpecies?: boolean,
-    balanced?: boolean,
+    sameSpecies = false,
+    balanced = false,
     evoLevelThresholdKind: Exclude<
       EvoLevelThresholdKind,
       typeof EvoLevelThresholdKind.WILD
@@ -31,8 +31,8 @@ export class TrainerPartyTemplate {
   ) {
     this.size = size;
     this.strength = strength;
-    this.sameSpecies = !!sameSpecies;
-    this.balanced = !!balanced;
+    this.sameSpecies = sameSpecies;
+    this.balanced = balanced;
     this.evoLevelThresholdKind = evoLevelThresholdKind;
   }
 
@@ -263,7 +263,7 @@ export function getEvilGruntPartyTemplate(): TrainerPartyTemplate {
 
 export function getWavePartyTemplate(...templates: TrainerPartyTemplate[]) {
   const { currentBattle, gameMode } = globalScene;
-  const wave = gameMode.getWaveForDifficulty(currentBattle?.waveIndex || startingWave, true);
+  const wave = gameMode.getWaveForDifficulty(currentBattle?.waveIndex || STARTING_WAVE, true);
   const templateIndex = Math.ceil((wave - 20) / 30);
   return templates[Phaser.Math.Clamp(templateIndex, 0, templates.length - 1)];
 }

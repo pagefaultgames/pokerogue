@@ -63,15 +63,17 @@ describe("Abilities - Intimidate", () => {
   it("should activate on reload with single party", async () => {
     await game.classicMode.startBattle(SpeciesId.MIGHTYENA);
 
+    expect(game.field.getPlayerPokemon()).toHaveAbilityApplied(AbilityId.INTIMIDATE);
     expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, -1);
 
     await game.reload.reloadSession();
 
+    expect(game.field.getPlayerPokemon()).toHaveAbilityApplied(AbilityId.INTIMIDATE);
     expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, -1);
   });
 
   it("should lower ATK of all opponents in a double battle", async () => {
-    game.override.battleStyle("double");
+    game.override.startingWave(2).battleStyle("double");
     await game.classicMode.startBattle(SpeciesId.MIGHTYENA);
 
     const [enemy1, enemy2] = game.scene.getEnemyField();
