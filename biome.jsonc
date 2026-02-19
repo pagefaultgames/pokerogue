@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-
 {
   "$schema": "https://biomejs.dev/schemas/2.3.11/schema.json",
   "vcs": {
@@ -109,11 +108,15 @@
           "level": "info", // TODO: Graduate to error eventually
           // NOTE: "checkAllProperties" has an immature implementation that
           // causes many false positives across files. Enable if/when maturity improves
-          "options": { "checkAllProperties": false }
+          "options": {
+            "checkAllProperties": false
+          }
         },
         "useConsistentObjectDefinitions": {
           "level": "error",
-          "options": { "syntax": "shorthand" }
+          "options": {
+            "syntax": "shorthand"
+          }
         },
         "useCollapsedIf": "error",
         "useCollapsedElseIf": "error",
@@ -175,7 +178,6 @@
             }
           }
         },
-
         // TODO: Wait until the rule gets options for ignoring doc comments and/or different parameter names,
         // and THEN enable it codebase-wide
         "useUnifiedTypeSignatures": {
@@ -287,7 +289,9 @@
         "noUselessUndefined": "error",
         "useMaxParams": {
           "level": "info", // TODO: Change to "error"... eventually...
-          "options": { "max": 7 }
+          "options": {
+            "max": 7
+          }
         },
         "noShadow": "warn", // TODO: refactor and make "error"
         "noDuplicateDependencies": "error",
@@ -313,6 +317,18 @@
       "includes": ["**/scripts/**/*.js"],
       "linter": {
         "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "commander": {
+                    "message": "Imports from the commander package lack the strict type safety of @commander-js/extra-typings, producing type errors when passed to relevant utility functions."
+                  }
+                }
+              }
+            }
+          },
           "nursery": {
             "noFloatingPromises": "error"
           }
@@ -336,7 +352,6 @@
         }
       }
     },
-
     // Prevent forcing type-only imports inside `overrides.ts` (where they serve as placeholders for actual runtime symbols)
     {
       "includes": ["**/src/overrides.ts"],
