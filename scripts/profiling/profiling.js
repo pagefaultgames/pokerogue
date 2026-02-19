@@ -4,19 +4,21 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  *
- * This script wraps Vitest's test runner with node's built-in V8 profiler and a flamegraph visualizer powered by `speedscope.app`.
+ * This script wraps Vitest's test runner with node's built-in V8 profiler.
  * Any extra CLI arguments are passed directly to `vitest run`.
  */
 
-import { spawnSync } from "node:child_process";
-import { closeSync, globSync, openSync } from "node:fs";
+import { globSync } from "node:fs";
 import { mkdir, rm } from "node:fs/promises";
 import { join } from "node:path";
-import { Command } from "@commander-js/extra-typings";
+import { Command, Option } from "@commander-js/extra-typings";
 import chalk from "chalk";
+import { startVitest } from "vitest/node";
 import { defaultCommanderHelpArgs } from "../helpers/arguments.js";
 
 const version = "1.0.0";
+
+console.log(chalk.hex("#ffa500")(`📈 Test Profiler - v${version}\n`));
 
 const testProfile = new Command("pnpm test:profile")
   .description("Run Vitest with Node's V8 profiler and generate processed profiling output.")
@@ -30,73 +32,60 @@ const testProfile = new Command("pnpm test:profile")
   .option("--cleanup", "Whether to automatically delete generated files after processing.", false)
   .argument("<vitest-args...>", "Arguments to pass directly to Vitest.")
   .configureHelp(defaultCommanderHelpArgs)
+  // only show help on argument parsing errors, not on test failures
+  .showHelpAfterError(true)
   .parse();
 
-const opts = testProfile.opts();
+const { output: outputDir, cleanup, cpu, memory } = testProfile.opts();
+
+if (!cpu && !memory) {
+  testProfile.error("Cannot disable both CPU and memory profiling!");
+}
+
+testProfile.showHelpAfterError(false);
 
 /**
  * @returns {Promise<void>}
  */
 async function main() {
-  console.log(chalk.hex("#ffa500")(`📈 Test Profiler - v${version}\n`));
+  await rm(outputDir, { recursive: true, force: true });
+  await mkdir(outputDir, { recursive: true });
 
-  const { output, cleanup } = opts;
-  const logFile = join(output, "v8.log");
+  console.log(chalk.grey("Running Vitest with V8 profiler..."));
 
-  try {
-    await rm(output, { recursive: true, force: true });
-    await mkdir(output, { recursive: true });
-
-    console.log(chalk.grey("Running Vitest with V8 profiler..."));
-
-    const vitestProcess = spawnSync(
-      "node",
-      [
-        "--prof",
-        `--logfile=${logFile}`,
-        "node_modules/vitest/vitest.mjs",
-        "run",
-        "--silent='passed-only'",
-        ...testProfile.args,
-      ],
-      { stdio: "inherit", encoding: "utf-8" },
-    );
-    if (vitestProcess.status) {
-      process.exitCode = vitestProcess.status;
-      return;
-    }
-
-    const logFiles = globSync(join(output, "*.log"));
-    if (logFiles.length === 0) {
-      throw new Error("No V8 profiler log files were generated!");
-    }
-
-    const processedOutFile = join(output, "processed.json");
-
-    const fd = openSync(processedOutFile, "w");
-    const postProcess = spawnSync("node", ["--prof-process", "--preprocess", ...logFiles], {
-      stdio: ["pipe", fd, "pipe"],
-    });
-    closeSync(fd);
-    if (postProcess.status) {
-      process.exitCode = postProcess.status;
-      return;
-    }
-    console.log("Wrote processed output to: ", chalk.bold.blue(processedOutFile));
-
-    console.log(chalk.grey("Opening Speedscope..."));
-    // NOTE: This will not work on WSL.
-    // This is speedscope's fault.
-    const speedscopeProcess = spawnSync("pnpm", ["exec", "speedscope", processedOutFile], {
-      stdio: "inherit",
-    });
-    process.exitCode = speedscopeProcess.status;
-  } finally {
-    if (cleanup) {
-      console.log(chalk.grey("Removing generated files..."));
-      await rm(output, { recursive: true, force: true });
-    }
+  /** @type {string[]} */
+  const execArgv = [];
+  if (cpu) {
+    execArgv.push("--cpu-prof", `--cpu-prof-dir=${outputDir}`);
   }
+  if (memory) {
+    execArgv.push("--heap-prof", `--heap-prof-dir=${outputDir}`);
+  }
+
+  const vitest = await startVitest("test", testProfile.args, {
+    execArgv,
+  });
+  // NB: This sets `process.exitCode` to a non-zero value if it fails
+  await vitest.close();
+  if (process.exitCode) {
+    return;
+  }
+
+  const cpuProfile = globSync(join(outputDir, "*.cpuprofile")).at(0);
+  if (!cpuProfile) {
+    console.error(chalk.red.bold("No CPU profile found!"));
+    process.exitCode = 1;
+    return;
+  }
+
+  console.log("Wrote processed CPU profile to: ", chalk.bold.blue(cpuProfile));
 }
 
-await main();
+try {
+  await main();
+} finally {
+  if (cleanup) {
+    console.log(chalk.grey("Removing generated files..."));
+    await rm(outputDir, { recursive: true, force: true });
+  }
+}

@@ -74,7 +74,6 @@
     "lefthook": "^2.0.9",
     "msw": "^2.12.4",
     "phaser3spectorjs": "^0.0.8",
-    "speedscope": "^1.25.0",
     "type-fest": "^5.3.1",
     "typedoc": "^0.28.15",
     "typedoc-github-theme": "^0.3.1",

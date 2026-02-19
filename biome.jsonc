@@ -318,6 +318,7 @@
       "linter": {
         "rules": {
           "style": {
+            // TODO: Remove this and replace it with an ambient module declaration once TSGo is capable of handling these
             "noRestrictedImports": {
               "level": "error",
               "options": {
