@@ -554,14 +554,21 @@ export class MovePhase extends PokemonPhase {
     if (!moveObj.hasAttr("VariableTargetAttr")) {
       return;
     }
-    const variableTarget = new NumberHolder(0);
-    user.getOpponents(false).forEach(p => {
-      applyMoveAttrs("VariableTargetAttr", user, p, moveObj, variableTarget);
-    });
 
-    const moveTarget = variableTarget.value;
-    const { targets } = getMoveTargets(user, moveObj.id, moveTarget);
-    this.targets = targets;
+    const newTargetSet = getMoveTargets(user, moveObj.id);
+
+    if (newTargetSet.multiple) {
+      // move has become a spread move – adopt the full set of targets.
+      this.targets = newTargetSet.targets;
+    } else {
+      // remain single–target. Preserve whatever the player already chose, but
+      // guard against the (rare) case where the chosen battler is no longer
+      // valid by falling back to the first available option.
+      const current = this.targets[0];
+      if (!newTargetSet.targets.includes(current)) {
+        this.targets = [newTargetSet.targets[0]];
+      }
+    }
   }
 
   /**
