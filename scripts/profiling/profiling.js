@@ -26,7 +26,6 @@ const testProfile = new Command("pnpm test:profile")
     "-o, --output <path>",
     "Directory to which V8 profiler output will be written.",
     "./temp/vitest-profile",
-    // join(tmpdir(), "vitest-profile"),
   )
   .option("--cleanup", "Whether to automatically delete generated files after processing.", false)
   .argument("<vitest-args...>", "Arguments to pass directly to Vitest.")
