@@ -771,14 +771,13 @@ export async function catchPokemon(
                     globalScene.ui.setMode(UiMode.PARTY, {
                       partyUiMode: PartyUiMode.RELEASE,
                       fieldIndex: 0,
-                      selectCallback: (slotIndex: number, _option: PartyOption) => {
-                        globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
-                          if (slotIndex < 6) {
-                            addToParty(slotIndex);
-                          } else {
-                            promptRelease();
-                          }
-                        });
+                      selectCallback: async (slotIndex: number, _option: PartyOption) => {
+                        await globalScene.ui.setMode(UiMode.MESSAGE);
+                        if (slotIndex < 6) {
+                          addToParty(slotIndex);
+                        } else {
+                          promptRelease();
+                        }
                       },
                     });
                   },

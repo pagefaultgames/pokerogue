@@ -513,9 +513,9 @@ export class MenuUiHandler extends MessageUiHandler {
     this.setCursor(0);
   }
 
-  show(args: any[]): boolean {
+  show(): boolean {
     this.render();
-    super.show(args);
+    super.show();
 
     this.menuOptions = getEnumValues(MenuOptions).filter(m => {
       return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));

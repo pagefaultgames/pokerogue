@@ -4,6 +4,7 @@ import { Device } from "#enums/devices";
 import { PlayerGender } from "#enums/player-gender";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
+import type { HandlerOf, ModeToUiHandlerMap } from "#types/ui/ui-handler-map";
 import { AchvBar } from "#ui/achv-bar";
 import { AchvsUiHandler } from "#ui/achvs-ui-handler";
 import { AutoCompleteUiHandler } from "#ui/autocomplete-ui-handler";
@@ -62,7 +63,6 @@ import { executeIf } from "#utils/common";
 import i18next from "i18next";
 import { AdminUiHandler } from "./handlers/admin-ui-handler";
 import { RenameRunFormUiHandler } from "./handlers/rename-run-ui-handler";
-import type { HandlerOf } from "./ui-handler-map";
 
 interface SetModeParams {
   /** If `true`, calls the current handler's `clear` method before setting the new mode */
@@ -129,7 +129,7 @@ function allowsTransition(mode: UiMode): boolean {
   return noTransitionModes.indexOf(mode) === -1;
 }
 
-type ShowArgs<M extends UiMode> = Parameters<HandlerOf<M>["show"]>;
+type HandlerShowArgs<M extends UiMode> = Parameters<HandlerOf<M>["show"]>;
 
 // biome-ignore lint/style/useNamingConvention: a unique case (only 2 letters)
 export class UI extends Phaser.GameObjects.Container {
@@ -209,7 +209,7 @@ export class UI extends Phaser.GameObjects.Container {
       [UiMode.ADMIN]: new AdminUiHandler(),
       [UiMode.MYSTERY_ENCOUNTER]: new MysteryEncounterUiHandler(),
       [UiMode.CHANGE_PASSWORD_FORM]: new ChangePasswordFormUiHandler(),
-    } satisfies Record<UiMode, UiHandler>;
+    } satisfies ModeToUiHandlerMap;
   }
 
   setup(): void {
@@ -554,7 +554,7 @@ export class UI extends Phaser.GameObjects.Container {
     this: UI,
     mode: M,
     params: SetModeParams,
-    ...args: [...ShowArgs<M>]
+    ...args: HandlerShowArgs<M>
   ): Promise<void> {
     const { clear, forceTransition, chainMode } = params;
     return new Promise(resolve => {
@@ -577,7 +577,7 @@ export class UI extends Phaser.GameObjects.Container {
           if (touchControls) {
             touchControls.dataset.uiMode = UiMode[mode];
           }
-          (this.getHandler() as HandlerOf<M>).show(...args);
+          this.getHandler().show(...args);
         }
         resolve();
       };
@@ -608,33 +608,27 @@ export class UI extends Phaser.GameObjects.Container {
   }
 
   /** Default for setting a new mode, clearing the previous mode. Fails if trying to set the current mode. */
-  setMode<M extends UiMode>(mode: M): ShowArgs<M> extends [] ? Promise<void> : never;
-  setMode<M extends UiMode>(mode: M, ...args: ShowArgs<M>): ShowArgs<M> extends [] ? never : Promise<void>;
-  setMode<M extends UiMode>(mode: M, ...args: [...ShowArgs<M>]): Promise<void> {
+  setMode<M extends UiMode>(mode: M, ...args: HandlerShowArgs<M>): Promise<void> {
     return this.setModeInternal(mode, { clear: true, forceTransition: false, chainMode: false }, ...args);
   }
 
   /** Used to essentially reset the current mode with new args. */
-  setModeForceTransition<M extends UiMode>(mode: M): ShowArgs<M> extends [] ? Promise<void> : never;
-  setModeForceTransition<M extends UiMode>(
-    mode: M,
-    ...args: ShowArgs<M>
-  ): ShowArgs<M> extends [] ? never : Promise<void>;
-  setModeForceTransition<M extends UiMode>(mode: M, ...args: [...ShowArgs<M>]): Promise<void> {
+  setModeForceTransition<M extends UiMode>(mode: M, ...args: HandlerShowArgs<M>): Promise<void> {
     return this.setModeInternal(mode, { clear: true, forceTransition: true, chainMode: false }, ...args);
   }
 
   /** Used to set a new mode without clearing the previous one. */
-  setModeWithoutClear<M extends UiMode>(mode: M): ShowArgs<M> extends [] ? Promise<void> : never;
-  setModeWithoutClear<M extends UiMode>(mode: M, ...args: ShowArgs<M>): ShowArgs<M> extends [] ? never : Promise<void>;
-  setModeWithoutClear<M extends UiMode>(mode: M, ...args: [...ShowArgs<M>]): Promise<void> {
+  setModeWithoutClear<M extends UiMode>(mode: M, ...args: NoInfer<HandlerShowArgs<M>>): Promise<void> {
     return this.setModeInternal(mode, { clear: false, forceTransition: false, chainMode: false }, ...args);
   }
 
   /** Appends new mode to the chain, without clearing the previous one. */
-  setOverlayMode<M extends UiMode>(mode: M): ShowArgs<M> extends [] ? Promise<void> : never;
-  setOverlayMode<M extends UiMode>(mode: M, ...args: ShowArgs<M>): ShowArgs<M> extends [] ? never : Promise<void>;
-  setOverlayMode<M extends UiMode>(mode: M, ...args: [...ShowArgs<M>]): Promise<void> {
+  setOverlayMode<M extends UiMode>(mode: M): HandlerShowArgs<M> extends [] ? Promise<void> : never;
+  setOverlayMode<M extends UiMode>(
+    mode: M,
+    ...args: HandlerShowArgs<M>
+  ): HandlerShowArgs<M> extends [] ? never : Promise<void>;
+  setOverlayMode<M extends UiMode>(mode: M, ...args: [...HandlerShowArgs<M>]): Promise<void> {
     return this.setModeInternal(mode, { clear: false, forceTransition: false, chainMode: true }, ...args);
   }
 

@@ -47,6 +47,7 @@ export abstract class AbstractOptionSelectUiHandler extends UiHandler {
     const ui = this.getUi();
 
     this.optionSelectContainer = globalScene.add.container(globalScene.scaledCanvas.width - 1, -48);
+    // TODO: This internal call is the ONLY thing using `UiHandler.mode` and should be removed
     this.optionSelectContainer.setName(`option-select-${this.mode ? UiMode[this.mode] : "UNKNOWN"}`);
     this.optionSelectContainer.setVisible(false);
     ui.add(this.optionSelectContainer);

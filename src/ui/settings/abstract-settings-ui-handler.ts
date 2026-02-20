@@ -219,14 +219,8 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
     NavigationManager.getInstance().updateIcons();
   }
 
-  /**
-   * Show the UI with the provided arguments.
-   *
-   * @param args - Arguments to be passed to the show method.
-   * @returns `true` if successful.
-   */
-  show(args: any[]): boolean {
-    super.show(args);
+  show(): boolean {
+    super.show();
     this.updateBindings();
 
     const settings: object = localStorage.hasOwnProperty(this.localStorageKey)

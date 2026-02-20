@@ -105,6 +105,9 @@ export type ModeToUiHandlerMap = {
   [UiMode.CHANGE_PASSWORD_FORM]: ChangePasswordFormUiHandler;
 };
 
-declare const EnsureAllModesAreHandled: ModeToUiHandlerMap[UiMode] & never;
-
 export type HandlerOf<M extends UiMode> = ModeToUiHandlerMap[M];
+
+/**
+ * Dummy, TypeScript-only
+ */
+declare const EnsureAllUiModesAreHandled: ModeToUiHandlerMap[UiMode] & never;

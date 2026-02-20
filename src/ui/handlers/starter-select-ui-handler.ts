@@ -58,12 +58,8 @@ import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/pokemon-icon-ani
 import { ScrollBar } from "#ui/scroll-bar";
 import { StarterContainer } from "#ui/starter-container";
 import { StatsContainer } from "#ui/stats-container";
-<<<<<<< ui-cleanup
-import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
-import type { StarterSelectUiHandlerParams } from "#ui/ui-handler-params";
-=======
 import { addBBCodeTextObject, addTextObject, getTextColor, updateCandyCountTextStyle } from "#ui/text";
->>>>>>> beta
+import type { StarterSelectUiHandlerParams } from "#ui/ui-handler-params";
 import { addWindow } from "#ui/ui-theme";
 import type { OptionSelectItem, StarterSelectCallback } from "#ui/ui-types";
 import { applyChallenges, checkStarterValidForChallenge } from "#utils/challenge-utils";

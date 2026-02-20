@@ -403,7 +403,7 @@ export class GameStatsUiHandler extends UiHandler {
   }
 
   show(args: GameStatsUiHandlerParams): boolean {
-    super.show([]);
+    super.show();
 
     if (args.username != null && args.data != null) {
       this.gameData = args.data;

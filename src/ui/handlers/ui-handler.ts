@@ -19,7 +19,12 @@ export abstract class UiHandler {
 
   abstract setup(): void;
 
-  show(_args: any): boolean {
+  /**
+   * Show the current handler.
+   * @param args
+  */
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: psuedo-abstract method
+  public show(args?: object): boolean {
     this.active = true;
 
     return true;
@@ -27,6 +32,7 @@ export abstract class UiHandler {
 
   abstract processInput(button: Button): boolean;
 
+  // TODO: Remove this
   getUi() {
     return globalScene.ui;
   }

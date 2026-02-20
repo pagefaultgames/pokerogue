@@ -324,8 +324,8 @@ export class GameChallengesUiHandler extends UiHandler {
     this.challengesContainer.update();
   }
 
-  show(args: any[]): boolean {
-    super.show(args);
+  show(): boolean {
+    super.show();
 
     this.startCursor.setVisible(false);
     this.updateChallengeArrows(false);

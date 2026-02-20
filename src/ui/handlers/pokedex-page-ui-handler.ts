@@ -52,10 +52,6 @@ import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { PokedexInfoOverlay } from "#ui/pokedex-info-overlay";
 import { RibbonTray } from "#ui/ribbon-tray-container";
 import { StatsContainer } from "#ui/stats-container";
-<<<<<<< ui-cleanup
-import { addBBCodeTextObject, addTextObject, getTextColor, getTextStyleOptions } from "#ui/text";
-import type { PokedexPageUiHandlerParams } from "#ui/ui-handler-params";
-=======
 import {
   addBBCodeTextObject,
   addTextObject,
@@ -63,7 +59,7 @@ import {
   getTextStyleOptions,
   updateCandyCountTextStyle,
 } from "#ui/text";
->>>>>>> beta
+import type { PokedexPageUiHandlerParams } from "#ui/ui-handler-params";
 import { addWindow } from "#ui/ui-theme";
 import type { OptionSelectItem } from "#ui/ui-types";
 import { BooleanHolder, getLocalizedSpriteKey, padInt, rgbHexToRgba } from "#utils/common";
