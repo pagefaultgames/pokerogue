@@ -30,7 +30,11 @@ import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets
 import { allMoves, allSpecies, biomeDepths, modifierTypes } from "#data/data-lists";
 import { battleSpecDialogue } from "#data/dialogue";
 import type { SpeciesFormChangeTrigger } from "#data/form-change-triggers";
-import { SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger } from "#data/form-change-triggers";
+import {
+  SpeciesFormChangeItemTrigger,
+  SpeciesFormChangeManualTrigger,
+  SpeciesFormChangeTimeOfDayTrigger,
+} from "#data/form-change-triggers";
 import { Gender } from "#data/gender";
 import type { SpeciesFormChange } from "#data/pokemon-forms";
 import { pokemonFormChanges } from "#data/pokemon-forms";
@@ -3219,10 +3223,45 @@ export class BattleScene extends SceneBase {
           : formChangeItemModifiers.includes(FormChangeItem.N_SOLARIZER)
             ? matchingFormChangeOpts[1]
             : null;
+      } else if (formChangeTriggerType === SpeciesFormChangeItemTrigger && matchingFormChangeOpts.length > 1) {
+        const isPlayer = pokemon.isPlayer();
+        matchingFormChange =
+          matchingFormChangeOpts.find(fc => {
+            const itemTrigger = fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger | null;
+            if (!itemTrigger || itemTrigger.active) {
+              return false;
+            }
+            const modifier = this.findModifier(
+              m =>
+                m instanceof PokemonFormChangeItemModifier
+                && m.pokemonId === pokemon.id
+                && m.formChangeItem === itemTrigger.item,
+              isPlayer,
+            ) as PokemonFormChangeItemModifier | undefined;
+
+            return modifier?.preFormKey != null && modifier.preFormKey === fc.formKey;
+          }) ?? matchingFormChangeOpts[0];
       } else {
         matchingFormChange = matchingFormChangeOpts[0];
       }
       if (matchingFormChange) {
+        if (formChangeTriggerType === SpeciesFormChangeItemTrigger) {
+          const itemTrigger = matchingFormChange.findTrigger(
+            SpeciesFormChangeItemTrigger,
+          ) as SpeciesFormChangeItemTrigger | null;
+          if (itemTrigger?.active) {
+            const modifier = this.findModifier(
+              m =>
+                m instanceof PokemonFormChangeItemModifier
+                && m.pokemonId === pokemon.id
+                && m.formChangeItem === itemTrigger.item,
+              pokemon.isPlayer(),
+            ) as PokemonFormChangeItemModifier | undefined;
+            if (modifier) {
+              modifier.preFormKey = matchingFormChange.preFormKey;
+            }
+          }
+        }
         let phase: Phase;
         if (pokemon.isPlayer() && !matchingFormChange.quiet) {
           phase = this.phaseManager.create("FormChangePhase", pokemon, matchingFormChange, modal);

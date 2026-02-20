@@ -2779,6 +2779,7 @@ export class PokemonFormChangeItemModifier extends PokemonHeldItemModifier {
   public declare type: FormChangeItemModifierType;
   public formChangeItem: FormChangeItem;
   public active: boolean;
+  public preFormKey: string | null;
   public isTransferable = false;
 
   constructor(
@@ -2786,11 +2787,18 @@ export class PokemonFormChangeItemModifier extends PokemonHeldItemModifier {
     pokemonId: number,
     formChangeItem: FormChangeItem,
     active: boolean,
+    preFormKeyOrStackCount?: string | number | null,
     stackCount?: number,
   ) {
-    super(type, pokemonId, stackCount);
+    // Backward compatibility: saved data used to pass stackCount as the 5th arg.
+    const usesLegacyStackCount = typeof preFormKeyOrStackCount === "number" && stackCount === undefined;
+    const resolvedStackCount = usesLegacyStackCount ? preFormKeyOrStackCount : stackCount;
+    const resolvedPreFormKey = usesLegacyStackCount ? null : ((preFormKeyOrStackCount as string | null) ?? null);
+
+    super(type, pokemonId, resolvedStackCount);
     this.formChangeItem = formChangeItem;
     this.active = active;
+    this.preFormKey = resolvedPreFormKey;
   }
 
   matchType(modifier: Modifier): boolean {
@@ -2803,12 +2811,13 @@ export class PokemonFormChangeItemModifier extends PokemonHeldItemModifier {
       this.pokemonId,
       this.formChangeItem,
       this.active,
+      this.preFormKey,
       this.stackCount,
     );
   }
 
   getArgs(): any[] {
-    return super.getArgs().concat(this.formChangeItem, this.active);
+    return super.getArgs().concat(this.formChangeItem, this.active, this.preFormKey ?? null);
   }
 
   /**
