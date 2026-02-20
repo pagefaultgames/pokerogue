@@ -15,6 +15,7 @@ import { uncatchableSpecies } from "#data/data-lists";
 import type { GrowthRate } from "#data/exp";
 import { Gender } from "#data/gender";
 import { AbilityId } from "#enums/ability-id";
+import { ChallengeType } from "#enums/challenge-type";
 import { DexAttr } from "#enums/dex-attr";
 import { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import { PartyMemberStrength } from "#enums/party-member-strength";
@@ -31,6 +32,7 @@ import type { Localizable } from "#types/locales";
 import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { StarterMoveset } from "#types/save-data";
 import type { EvolutionLevel, EvolutionLevelWithThreshold } from "#types/species-gen-types";
+import { applyChallenges } from "#utils/challenge-utils";
 import { randSeedFloat, randSeedGauss } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase, toPascalCase } from "#utils/strings";
@@ -223,12 +225,17 @@ export abstract class PokemonSpeciesForm {
 
   getLevelMoves(): LevelMoves {
     if (
-      pokemonSpeciesFormLevelMoves.hasOwnProperty(this.speciesId)
-      && pokemonSpeciesFormLevelMoves[this.speciesId].hasOwnProperty(this.formIndex)
+      Object.hasOwn(pokemonSpeciesFormLevelMoves, this.speciesId)
+      && Object.hasOwn(pokemonSpeciesFormLevelMoves[this.speciesId], this.formIndex)
     ) {
-      return pokemonSpeciesFormLevelMoves[this.speciesId][this.formIndex].slice(0);
+      const speciesFormLevelMoves = pokemonSpeciesFormLevelMoves[this.speciesId][this.formIndex].slice(0);
+      applyChallenges(ChallengeType.LEVEL_UP_MOVESET, this, speciesFormLevelMoves);
+      return speciesFormLevelMoves;
     }
-    return pokemonSpeciesLevelMoves[this.speciesId].slice(0);
+
+    const speciesLevelMoves = pokemonSpeciesLevelMoves[this.speciesId].slice(0);
+    applyChallenges(ChallengeType.LEVEL_UP_MOVESET, this, speciesLevelMoves);
+    return speciesLevelMoves;
   }
 
   getRegion(): Region {

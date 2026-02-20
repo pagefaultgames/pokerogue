@@ -23,6 +23,7 @@ import {
 import { speciesTmMoves, tmPoolTiers } from "#balance/tms";
 import { IS_TEST, isBeta, isDev } from "#constants/app-constants";
 import { allMoves } from "#data/data-lists";
+import { ChallengeType } from "#enums/challenge-type";
 import { ModifierTier } from "#enums/modifier-tier";
 import { MoveCategory } from "#enums/move-category";
 import type { MoveId } from "#enums/move-id";
@@ -31,6 +32,7 @@ import type { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import { PokemonMove } from "#moves/pokemon-move";
+import { applyChallenges } from "#utils/challenge-utils";
 import { NumberHolder, randSeedInt } from "#utils/common";
 import { willTerastallize } from "#utils/pokemon-utils";
 
@@ -200,6 +202,8 @@ function getAndWeightTmMoves(
   if (fusionSpecies != null && fusionFormKey != null && fusionFormKey !== "") {
     getTmPoolForSpecies(fusionSpecies, level, fusionFormKey, currentPool, eggPool, tmPool, allowedTiers);
   }
+
+  applyChallenges(ChallengeType.ENEMY_TM_COMPATIBILITY, pokemon, tmPool);
 }
 
 /**
