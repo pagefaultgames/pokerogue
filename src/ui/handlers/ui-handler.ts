@@ -21,9 +21,10 @@ export abstract class UiHandler {
 
   /**
    * Show the current handler.
-   * @param args
-  */
-  // biome-ignore lint/correctness/noUnusedFunctionParameters: psuedo-abstract method
+   * @param args - The arguments taken by the current UI handler
+   */
+  // TODO: Review if we can remove the boolean return
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: Required to allow parameterized superclasses
   public show(args?: object): boolean {
     this.active = true;
 
