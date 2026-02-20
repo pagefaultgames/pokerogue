@@ -207,7 +207,7 @@ describe("Moves - Entry Hazards", () => {
 
       const enemy = game.field.getEnemyPokemon();
       expect(enemy).toHaveStatStage(Stat.SPD, -1);
-      expect(game.textInterceptor.logs).toContain(
+      expect(game).toHaveShownMessage(
         i18next.t("arenaTag:stickyWebActivateTrap", {
           pokemonNameWithAffix: getPokemonNameWithAffix(enemy),
         }),

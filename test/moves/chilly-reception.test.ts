@@ -4,11 +4,10 @@ import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { WeatherType } from "#enums/weather-type";
-import { RandomMoveAttr } from "#moves/move";
 import { GameManager } from "#test/test-utils/game-manager";
 import i18next from "i18next";
 import Phaser from "phaser";
-import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Chilly Reception", () => {
   let phaserGame: Phaser.Game;
@@ -112,7 +111,7 @@ describe("Moves - Chilly Reception", () => {
   });
 
   it("should succeed without message if called indirectly", async () => {
-    vi.spyOn(RandomMoveAttr.prototype, "getMoveOverride").mockReturnValue(MoveId.CHILLY_RECEPTION);
+    game.move.forceMetronomeMove(MoveId.CHILLY_RECEPTION);
     await game.classicMode.startBattle(SpeciesId.SLOWKING, SpeciesId.MEOWTH);
 
     const [slowking, meowth] = game.scene.getPlayerParty();

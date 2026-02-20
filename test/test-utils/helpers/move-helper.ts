@@ -12,6 +12,7 @@ import type { CommandPhase } from "#phases/command-phase";
 import type { EnemyCommandPhase } from "#phases/enemy-command-phase";
 import type { MoveEffectPhase } from "#phases/move-effect-phase";
 import { GameManagerHelper } from "#test/test-utils/helpers/game-manager-helper";
+import type { RandomMoveAttr } from "#types/move-types";
 import { coerceArray } from "#utils/array";
 import { toTitleCase } from "#utils/strings";
 import type { MockInstance } from "vitest";
@@ -345,7 +346,9 @@ export class MoveHelper extends GameManagerHelper {
    * Triggers during the next upcoming {@linkcode MoveEffectPhase} that Metronome is used.
    * @param move - The move to force Metronome to call
    * @param once - If `true`, mocks the return value exactly once; default `false`
-   * @returns The spy that for Metronome that was mocked (Usually unneeded).
+   * @returns The spy for Metronome that was mocked (Usually unneeded).
+   * @remarks
+   * This will bypass all effects that would otherwise prevent the move from being used.
    * @example
    * ```ts
    * game.move.use(MoveId.METRONOME);
@@ -353,9 +356,15 @@ export class MoveHelper extends GameManagerHelper {
    * ```
    */
   public forceMetronomeMove(move: MoveId, once = false): MockInstance {
-    const spy = vi.spyOn(allMoves[MoveId.METRONOME].getAttrs("RandomMoveAttr")[0], "getMoveOverride");
+    const spy = vi.spyOn(
+      allMoves[MoveId.METRONOME].getAttrs("RandomMoveAttr")[0] as RandomMoveAttr & {
+        getMove: RandomMoveAttr["getMove"];
+      },
+      "getMove",
+    );
     if (once) {
-      spy.mockReturnValueOnce(move);
+      // Need to mock twice since it gets called twice - once for condition function, once for `apply` check
+      spy.mockReturnValueOnce(move).mockReturnValueOnce(move);
     } else {
       spy.mockReturnValue(move);
     }

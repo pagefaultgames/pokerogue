@@ -15,7 +15,7 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
  * a different type and boost their power
  *
  * Includes
- * - Aerialate
+ * - Aerilate
  * - Galvanize
  * - Pixilate
  * - Refrigerate

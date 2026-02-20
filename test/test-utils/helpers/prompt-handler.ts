@@ -66,9 +66,10 @@ export class PromptHandler extends GameManagerHelper {
     super(game);
 
     this.originalSetModeInternal = this.game.scene.ui["setModeInternal"];
-    // type assertion needed as we are mocking private property
+    // type assertion needed as we are mocking private property.
+    // For whatever reason, this works with a type intersection for `protected`, but not `private`...
     vi.spyOn(
-      this.game.scene.ui as unknown as Pick<{ setModeInternal: UI["setModeInternal"] }, "setModeInternal">,
+      this.game.scene.ui as unknown as { setModeInternal: UI["setModeInternal"] },
       "setModeInternal",
     ).mockImplementation((...args) => this.setMode(args));
 

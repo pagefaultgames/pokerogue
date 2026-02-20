@@ -53,7 +53,7 @@ export class Arena {
   public readonly positionalTagManager: PositionalTagManager = new PositionalTagManager();
 
   public bgm: string;
-  public ignoreAbilities: boolean;
+  public ignoreAbilities = false;
   public ignoringEffectSource: BattlerIndex | null;
   public playerTerasUsed = 0;
   /**

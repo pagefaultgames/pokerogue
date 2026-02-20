@@ -1,14 +1,12 @@
-import { allMoves } from "#data/data-lists";
 import { TerrainType } from "#data/terrain";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { RandomMoveAttr } from "#moves/move";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 // See also: TypeImmunityAbAttr
 describe("Abilities - Sap Sipper", () => {
@@ -32,131 +30,97 @@ describe("Abilities - Sap Sipper", () => {
       .enemyMoveset(MoveId.SPLASH);
   });
 
-  it("raises ATK stat stage by 1 and block effects when activated against a grass attack", async () => {
-    const moveToUse = MoveId.LEAFAGE;
-
-    game.override.moveset(moveToUse);
-
+  it("should nullify all effects of Grass-type attacks and raise ATK by 1 stage", async () => {
     await game.classicMode.startBattle(SpeciesId.BULBASAUR);
 
+    game.move.use(MoveId.LEAFAGE);
+    await game.toNextTurn();
+
     const enemyPokemon = game.field.getEnemyPokemon();
-    const initialEnemyHp = enemyPokemon.hp;
-
-    game.move.select(moveToUse);
-
-    await game.phaseInterceptor.to("TurnEndPhase");
-
-    expect(initialEnemyHp - enemyPokemon.hp).toBe(0);
+    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
   });
 
-  it("raises ATK stat stage by 1 and block effects when activated against a grass status move", async () => {
-    const moveToUse = MoveId.SPORE;
-
-    game.override.moveset(moveToUse);
-
+  it("should work on grass status moves", async () => {
     await game.classicMode.startBattle(SpeciesId.BULBASAUR);
 
     const enemyPokemon = game.field.getEnemyPokemon();
 
-    game.move.select(moveToUse);
-
-    await game.phaseInterceptor.to("TurnEndPhase");
+    game.move.use(MoveId.SPORE);
+    await game.toNextTurn();
 
     expect(enemyPokemon.status).toBeUndefined();
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
   });
 
-  it("do not activate against status moves that target the field", async () => {
-    const moveToUse = MoveId.GRASSY_TERRAIN;
-
-    game.override.moveset(moveToUse);
-
+  it("should not activate on non Grass-type moves", async () => {
     await game.classicMode.startBattle(SpeciesId.BULBASAUR);
 
-    game.move.select(moveToUse);
+    game.move.use(MoveId.TACKLE);
+    await game.toEndOfTurn();
 
-    await game.phaseInterceptor.to("TurnEndPhase");
-
-    expect(game.scene.arena.terrain).toBeDefined();
-    expect(game.scene.arena.terrain!.terrainType).toBe(TerrainType.GRASSY);
-    expect(game.field.getEnemyPokemon().getStatStage(Stat.ATK)).toBe(0);
-  });
-
-  it("activate once against multi-hit grass attacks", async () => {
-    const moveToUse = MoveId.BULLET_SEED;
-
-    game.override.moveset(moveToUse);
-
-    await game.classicMode.startBattle(SpeciesId.BULBASAUR);
-
-    const enemyPokemon = game.field.getEnemyPokemon();
-    const initialEnemyHp = enemyPokemon.hp;
-
-    game.move.select(moveToUse);
-
-    await game.phaseInterceptor.to("TurnEndPhase");
-
-    expect(initialEnemyHp - enemyPokemon.hp).toBe(0);
-    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
-  });
-
-  it("do not activate against status moves that target the user", async () => {
-    const moveToUse = MoveId.SPIKY_SHIELD;
-
-    game.override.moveset(moveToUse);
-
-    await game.classicMode.startBattle(SpeciesId.BULBASAUR);
-
-    const playerPokemon = game.field.getPlayerPokemon();
-
-    game.move.select(moveToUse);
-
-    await game.phaseInterceptor.to("MoveEndPhase");
-
-    expect(playerPokemon.getTag(BattlerTagType.SPIKY_SHIELD)).toBeDefined();
-
-    await game.phaseInterceptor.to("TurnEndPhase");
-
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(0);
+    const enemy = game.field.getEnemyPokemon();
+    expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
+    expect(enemy.getStatStage(Stat.ATK)).toBe(0);
     expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
   });
 
-  it("activate once against multi-hit grass attacks (metronome)", async () => {
-    const moveToUse = MoveId.METRONOME;
-
-    const randomMoveAttr = allMoves[MoveId.METRONOME].findAttr(
-      attr => attr instanceof RandomMoveAttr,
-    ) as RandomMoveAttr;
-    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(MoveId.BULLET_SEED);
-
-    game.override.moveset(moveToUse);
-
+  it("should not activate against field-targeted moves", async () => {
     await game.classicMode.startBattle(SpeciesId.BULBASAUR);
 
-    const enemyPokemon = game.field.getEnemyPokemon();
-    const initialEnemyHp = enemyPokemon.hp;
+    game.move.use(MoveId.GRASSY_TERRAIN);
+    await game.toNextTurn();
 
-    game.move.select(moveToUse);
-
-    await game.phaseInterceptor.to("TurnEndPhase");
-
-    expect(initialEnemyHp - enemyPokemon.hp).toBe(0);
-    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
+    expect(game).toHaveTerrain(TerrainType.GRASSY);
+    expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, 0);
   });
 
-  it("still activates regardless of accuracy check", async () => {
-    game.override.moveset(MoveId.LEAF_BLADE);
-
+  it("should trigger and cancel multi-hit moves, including ones called indirectly", async () => {
+    game.move.forceMetronomeMove(MoveId.BULLET_SEED);
     await game.classicMode.startBattle(SpeciesId.BULBASAUR);
 
-    const enemyPokemon = game.field.getEnemyPokemon();
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
-    game.move.select(MoveId.LEAF_BLADE);
-    await game.phaseInterceptor.to("MoveEffectPhase");
+    game.move.use(MoveId.BULLET_SEED);
+    await game.toEndOfTurn();
 
+    expect(enemy.hp).toBe(enemy.getMaxHp());
+    expect(enemy.getStatStage(Stat.ATK)).toBe(1);
+    expect(player.turnData.hitCount).toBe(1);
+
+    game.move.use(MoveId.METRONOME);
+    await game.toEndOfTurn();
+
+    expect(enemy.hp).toBe(enemy.getMaxHp());
+    expect(enemy.getStatStage(Stat.ATK)).toBe(2);
+    expect(player.turnData.hitCount).toBe(1);
+  });
+
+  it("should not activate on self-targeted status moves", async () => {
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR);
+
+    const player = game.field.getPlayerPokemon();
+
+    game.move.use(MoveId.SPIKY_SHIELD);
+    await game.phaseInterceptor.to("MoveEndPhase");
+
+    expect(player.getTag(BattlerTagType.SPIKY_SHIELD)).toBeDefined();
+
+    await game.toEndOfTurn();
+
+    expect(player.getStatStage(Stat.ATK)).toBe(0);
+    expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
+  });
+
+  it("should activate even on missed moves", async () => {
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR);
+
+    game.move.use(MoveId.LEAF_BLADE);
     await game.move.forceMiss();
-    await game.phaseInterceptor.to("BerryPhase", false);
+    await game.toEndOfTurn();
+
+    const enemyPokemon = game.field.getEnemyPokemon();
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
   });
 });

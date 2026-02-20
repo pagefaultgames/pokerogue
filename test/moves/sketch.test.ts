@@ -1,14 +1,12 @@
-import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
-import { RandomMoveAttr } from "#moves/move";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
-import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Sketch", () => {
   let phaserGame: Phaser.Game;
@@ -76,12 +74,7 @@ describe("Moves - Sketch", () => {
   });
 
   it("should sketch moves that call other moves", async () => {
-    const randomMoveAttr = allMoves[MoveId.METRONOME].findAttr(
-      attr => attr instanceof RandomMoveAttr,
-    ) as RandomMoveAttr;
-    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(MoveId.FALSE_SWIPE);
-
-    game.override.enemyMoveset([MoveId.METRONOME]);
+    game.move.forceMetronomeMove(MoveId.FALSE_SWIPE);
     await game.classicMode.startBattle(SpeciesId.REGIELEKI);
 
     const playerPokemon = game.field.getPlayerPokemon();
@@ -89,8 +82,10 @@ describe("Moves - Sketch", () => {
 
     // Opponent uses Metronome -> False Swipe, then player uses Sketch, which should sketch Metronome
     game.move.select(MoveId.SKETCH);
+    await game.move.forceEnemyMove(MoveId.METRONOME);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
+
     expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
     expect(playerPokemon.moveset[0]?.moveId).toBe(MoveId.METRONOME);
     expect(playerPokemon.hp).toBeLessThan(playerPokemon.getMaxHp()); // Make sure opponent actually used False Swipe
