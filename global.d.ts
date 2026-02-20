@@ -1,5 +1,5 @@
 import type { Stringable, Stringify, Unstringify } from "#types/strings";
-import { ObjectValues, PreventHoverExpansion } from "#types/type-helpers";
+import type { ObjectValues, PreventHoverExpansion } from "#types/type-helpers";
 import type { SetupServerApi } from "msw/node";
 
 // #region Object-related types
