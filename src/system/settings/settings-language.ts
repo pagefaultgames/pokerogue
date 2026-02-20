@@ -1,7 +1,14 @@
 import { globalScene } from "#app/global-scene";
+import { supportedLngs } from "#plugins/i18n";
 import type { LoginRegisterInfoContainerUiHandler } from "#ui/login-register-info-container-ui-handler";
 import type { SettingsDisplayUiHandler } from "#ui/settings-display-ui-handler";
 import i18next from "i18next";
+
+//#region Interfaces/Types
+
+type Lang = { label: string; handler: () => boolean };
+
+//#endregion
 
 const cancelHandler = () => {
   globalScene.ui.revertMode();
@@ -28,95 +35,18 @@ const changeLocaleHandler = (locale: string): boolean => {
   }
 };
 
+// populating languageEntries
+const languageEntries: Lang[] = [];
+for (const lang of supportedLngs) {
+  const t = i18next.getFixedT(lang);
+  languageEntries.push({
+    label: t("settings:languageLabel"),
+    handler: () => changeLocaleHandler(lang),
+  });
+}
+
 export const languageOptions = [
-  {
-    label: "English",
-    handler: () => changeLocaleHandler("en"),
-  },
-  {
-    label: "Español (ES)",
-    handler: () => changeLocaleHandler("es-ES"),
-  },
-  {
-    label: "Español (LATAM)",
-    handler: () => changeLocaleHandler("es-419"),
-  },
-  {
-    label: "Français",
-    handler: () => changeLocaleHandler("fr"),
-  },
-  {
-    label: "Deutsch",
-    handler: () => changeLocaleHandler("de"),
-  },
-  {
-    label: "Italiano",
-    handler: () => changeLocaleHandler("it"),
-  },
-  {
-    label: "Português (BR)",
-    handler: () => changeLocaleHandler("pt-BR"),
-  },
-  {
-    label: "한국어",
-    handler: () => changeLocaleHandler("ko"),
-  },
-  {
-    label: "日本語",
-    handler: () => changeLocaleHandler("ja"),
-  },
-  {
-    label: "简体中文",
-    handler: () => changeLocaleHandler("zh-Hans"),
-  },
-  {
-    label: "繁體中文",
-    handler: () => changeLocaleHandler("zh-Hant"),
-  },
-  {
-    label: "Català (Needs Help)",
-    handler: () => changeLocaleHandler("ca"),
-  },
-  {
-    label: "Türkçe (Needs Help)",
-    handler: () => changeLocaleHandler("tr"),
-  },
-  {
-    label: "Русский (Needs Help)",
-    handler: () => changeLocaleHandler("ru"),
-  },
-  {
-    label: "Українська (Needs Help)",
-    handler: () => changeLocaleHandler("uk"),
-  },
-  {
-    label: "Bahasa Indonesia (Needs Help)",
-    handler: () => changeLocaleHandler("id"),
-  },
-  {
-    label: "हिन्दी (Needs Help)",
-    handler: () => changeLocaleHandler("hi"),
-  },
-  {
-    label: "Dansk (Needs Help)",
-    handler: () => changeLocaleHandler("da"),
-  },
-  {
-    label: "Norsk bokmål (Needs Help)",
-    handler: () => changeLocaleHandler("nb-NO"),
-  },
-  {
-    label: "Svenska",
-    handler: () => changeLocaleHandler("sv"),
-  },
-  {
-    label: "Română (Needs Help)",
-    handler: () => changeLocaleHandler("ro"),
-  },
-  {
-    label: "Tagalog (Needs Help)",
-    handler: () => changeLocaleHandler("tl"),
-  },
+  ...languageEntries,
   {
     label: i18next.t("settings:back"),
     handler: () => cancelHandler(),
