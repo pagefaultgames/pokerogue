@@ -108,6 +108,10 @@ export type ModeToUiHandlerMap = {
 export type HandlerOf<M extends UiMode> = ModeToUiHandlerMap[M];
 
 /**
- * Dummy, TypeScript-only
+ * Dummy, TypeScript-only declaration to ensure that {@linkcode ModeToUiHandlerMap} has corresponding entries for all {@linkcode UiMode}s.
+ *
+ * If a mode is missing from the map, TypeScript will throw an error on this statement.
+ *
+ * ⚠️ Does not actually exist at runtime, so it must not be used!
  */
 declare const EnsureAllUiModesAreHandled: ModeToUiHandlerMap[UiMode] & never;

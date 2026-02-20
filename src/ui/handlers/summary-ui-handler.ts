@@ -24,13 +24,13 @@ import type { PokemonMove } from "#moves/pokemon-move";
 import type { Variant } from "#sprites/variant";
 import { getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
-import { addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor, updateCandyCountTextStyle } from "#ui/text";
-import { UiHandler } from "#ui/ui-handler";
 import type {
   SummaryUiHandlerParams,
   SummaryUiHandlerParamsDefault,
   SummaryUiHandlerParamsLearnMove,
-} from "#ui/ui-handler-params";
+} from "#types/ui/ui-handler-params";
+import { addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor, updateCandyCountTextStyle } from "#ui/text";
+import { UiHandler } from "#ui/ui-handler";
 import { SummaryPage, SummaryUiMode } from "#ui/ui-types";
 import {
   fixedInt,

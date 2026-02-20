@@ -1,9 +1,9 @@
 import { globalScene } from "#app/global-scene";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import { UiMode } from "#enums/ui-mode";
+import type { FormModalUiHandlerParams } from "#types/ui/ui-handler-params";
 import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
-import type { FormModalUiHandlerParams } from "#ui/ui-handler-params";
 import type { ModalConfig } from "#ui/ui-types";
 import i18next from "i18next";
 

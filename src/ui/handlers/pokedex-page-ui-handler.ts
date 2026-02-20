@@ -46,6 +46,7 @@ import type { BiomeTierTod } from "#types/biomes";
 import type { DexEntry } from "#types/dex-data";
 import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { StarterAttributes } from "#types/save-data";
+import type { PokedexPageUiHandlerParams } from "#types/ui/ui-handler-params";
 import { BaseStatsOverlay } from "#ui/base-stats-overlay";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
@@ -59,7 +60,6 @@ import {
   getTextStyleOptions,
   updateCandyCountTextStyle,
 } from "#ui/text";
-import type { PokedexPageUiHandlerParams } from "#ui/ui-handler-params";
 import { addWindow } from "#ui/ui-theme";
 import type { OptionSelectItem } from "#ui/ui-types";
 import { BooleanHolder, getLocalizedSpriteKey, padInt, rgbHexToRgba } from "#utils/common";

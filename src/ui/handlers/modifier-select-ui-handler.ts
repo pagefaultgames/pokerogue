@@ -12,10 +12,10 @@ import { HealShopCostModifier, LockModifierTiersModifier, PokemonHeldItemModifie
 import type { ModifierTypeOption } from "#modifiers/modifier-type";
 import { getPlayerShopModifierTypeOptionsForWave, TmModifierType } from "#modifiers/modifier-type";
 import type { ModifierSelectCallback } from "#phases/select-modifier-phase";
+import type { ModifierSelectUiHandlerParams } from "#types/ui/ui-handler-params";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { addTextObject, getModifierTierTextTint, getTextColor, getTextStyleOptions } from "#ui/text";
-import type { ModifierSelectUiHandlerParams } from "#ui/ui-handler-params";
 import { formatMoney, NumberHolder } from "#utils/common";
 import i18next from "i18next";
 import Phaser from "phaser";
