@@ -1906,28 +1906,28 @@ export class BattleScene extends SceneBase {
     this.arenaFlyout.toggleFlyout(pressed);
   }
 
-  showFieldOverlay(duration: number): Promise<void> {
-    return new Promise(resolve => {
-      this.tweens.add({
+  public async showFieldOverlay(duration: number): Promise<void> {
+    await playTween(
+      {
         targets: this.fieldOverlay,
         alpha: 0.5,
         ease: "Sine.easeOut",
         duration,
-        onComplete: () => resolve(),
-      });
-    });
+      },
+      this,
+    );
   }
 
-  hideFieldOverlay(duration: number): Promise<void> {
-    return new Promise(resolve => {
-      this.tweens.add({
+  public async hideFieldOverlay(duration: number): Promise<void> {
+    await playTween(
+      {
         targets: this.fieldOverlay,
         alpha: 0,
         duration,
         ease: "Cubic.easeIn",
-        onComplete: () => resolve(),
-      });
-    });
+      },
+      this,
+    );
   }
 
   updateShopOverlayOpacity(value: number): void {
@@ -1938,9 +1938,9 @@ export class BattleScene extends SceneBase {
     }
   }
 
-  showShopOverlay(duration: number): Promise<void> {
+  public async showShopOverlay(duration: number): Promise<void> {
     this.shopOverlayShown = true;
-    return playTween({
+    await playTween({
       targets: this.shopOverlay,
       alpha: this.shopOverlayOpacity,
       ease: "Sine.easeOut",
@@ -1948,9 +1948,9 @@ export class BattleScene extends SceneBase {
     });
   }
 
-  hideShopOverlay(duration: number): Promise<void> {
+  public async hideShopOverlay(duration: number): Promise<void> {
     this.shopOverlayShown = false;
-    return playTween({
+    await playTween({
       targets: this.shopOverlay,
       alpha: 0,
       duration,

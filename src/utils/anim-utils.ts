@@ -1,17 +1,27 @@
 import { globalScene } from "#app/global-scene";
 import type { SceneBase } from "#app/scene-base";
-import type { OmitIndexSignature, PickIndexSignature } from "type-fest";
+import type { Except } from "type-fest";
 
-type OmitWithoutIndex<O extends object, K extends keyof O> = PickIndexSignature<O> & Omit<OmitIndexSignature<O>, K>;
-
+/**
+ * Argument type for {@linkcode playTween},
+ * containing all attributes of {@linkcode Phaser.Types.Tweens.TweenBuilderConfig | TweenBuilderConfig}
+ * save for ones related to the `onComplete` callback.
+ * @internal
+ */
 interface PlayTweenConfig
-  extends OmitWithoutIndex<Phaser.Types.Tweens.TweenBuilderConfig, "onComplete" | "onCompleteParams"> {}
+  extends Except<
+    Phaser.Types.Tweens.TweenBuilderConfig,
+    "onComplete" | "onCompleteParams",
+    { requireExactProps: true }
+  > {}
 
 /**
  * Play a Tween animation and wait for its animation to complete.
  * @param config - The config for a single Tween
- * @param scene - (Default {@linkcode globalScene}) The {@linkcode SceneBase} on which the Tween plays
+ * @param scene - (Default {@linkcode globalScene}) The {@linkcode SceneBase} on which the Tween should play
  * @returns A Promise that resolves once the Tween has been played.
+ * @remarks
+ * This is the preferred way to use Phaser's Tween system when simultaneous animations are not needed.
  */
 export async function playTween(config: PlayTweenConfig, scene: SceneBase = globalScene): Promise<void> {
   await new Promise(resolve =>

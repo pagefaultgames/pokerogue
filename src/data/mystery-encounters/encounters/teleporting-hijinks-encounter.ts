@@ -33,6 +33,7 @@ import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { MoneyRequirement, WaveModulusRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { PokemonData } from "#system/pokemon-data";
+import { playTween } from "#utils/anim-utils";
 import { randSeedInt } from "#utils/common";
 
 /** the i18n namespace for this encounter */
@@ -243,51 +244,40 @@ async function doBiomeTransitionDialogueAndBattleInit() {
   return config;
 }
 
-async function animateBiomeChange(nextBiome: BiomeId) {
-  return new Promise<void>(resolve => {
-    globalScene.tweens.add({
-      targets: [globalScene.arenaEnemy, globalScene.lastEnemyTrainer],
-      x: "+=300",
-      duration: 2000,
-      onComplete: () => {
-        globalScene.newArena(nextBiome);
+async function animateBiomeChange(nextBiome: BiomeId): Promise<void> {
+  await playTween({
+    targets: [globalScene.arenaEnemy, globalScene.lastEnemyTrainer],
+    x: "+=300",
+    duration: 2000,
+  });
 
-        const biomeKey = getBiomeKey(nextBiome);
-        const bgTexture = `${biomeKey}_bg`;
-        globalScene.arenaBgTransition.setTexture(bgTexture);
-        globalScene.arenaBgTransition.setAlpha(0);
-        globalScene.arenaBgTransition.setVisible(true);
-        globalScene.arenaPlayerTransition.setBiome(nextBiome);
-        globalScene.arenaPlayerTransition.setAlpha(0);
-        globalScene.arenaPlayerTransition.setVisible(true);
+  globalScene.newArena(nextBiome);
 
-        globalScene.tweens.add({
-          targets: [globalScene.arenaPlayer, globalScene.arenaBgTransition, globalScene.arenaPlayerTransition],
-          duration: 1000,
-          ease: "Sine.easeInOut",
-          alpha: (target: any) => (target === globalScene.arenaPlayer ? 0 : 1),
-          onComplete: () => {
-            globalScene.arenaBg.setTexture(bgTexture);
-            globalScene.arenaPlayer.setBiome(nextBiome);
-            globalScene.arenaPlayer.setAlpha(1);
-            globalScene.arenaEnemy.setBiome(nextBiome);
-            globalScene.arenaEnemy.setAlpha(1);
-            globalScene.arenaNextEnemy.setBiome(nextBiome);
-            globalScene.arenaBgTransition.setVisible(false);
-            globalScene.arenaPlayerTransition.setVisible(false);
-            if (globalScene.lastEnemyTrainer) {
-              globalScene.lastEnemyTrainer.destroy();
-            }
+  const biomeKey = getBiomeKey(nextBiome);
+  const bgTexture = `${biomeKey}_bg`;
+  globalScene.arenaBgTransition.setTexture(bgTexture).setAlpha(0).setVisible(true);
+  globalScene.arenaPlayerTransition.setAlpha(0).setVisible(true).setBiome(nextBiome);
 
-            resolve();
+  await playTween({
+    targets: [globalScene.arenaPlayer, globalScene.arenaBgTransition, globalScene.arenaPlayerTransition],
+    duration: 1000,
+    ease: "Sine.easeInOut",
+    alpha: (target: any) => (target === globalScene.arenaPlayer ? 0 : 1),
+  });
 
-            globalScene.tweens.add({
-              targets: globalScene.arenaEnemy,
-              x: "-=300",
-            });
-          },
-        });
-      },
-    });
+  globalScene.arenaBg.setTexture(bgTexture);
+  globalScene.arenaPlayer.setAlpha(1).setBiome(nextBiome);
+  globalScene.arenaEnemy.setAlpha(1).setBiome(nextBiome);
+  globalScene.arenaNextEnemy.setBiome(nextBiome);
+  globalScene.arenaBgTransition.setVisible(false);
+  globalScene.arenaPlayerTransition.setVisible(false);
+  if (globalScene.lastEnemyTrainer) {
+    globalScene.lastEnemyTrainer.destroy();
+  }
+
+  // TODO: This is floating
+  playTween({
+    targets: globalScene.arenaEnemy,
+    x: "-=300",
   });
 }
