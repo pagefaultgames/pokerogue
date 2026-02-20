@@ -322,24 +322,16 @@ export function getTextStyleOptions(
       break;
     case TextStyle.PARTY:
     case TextStyle.PARTY_RED: {
-      switch (lang) {
-        case "ja":
-          styleOptions.fontSize = defaultFontSize - 48;
-          styleOptions.padding = { top: -12, bottom: 4 };
-          break;
-        default:
-          styleOptions.fontSize = defaultFontSize - 48;
-          styleOptions.padding = { bottom: 16 };
-          break;
-      }
+      styleOptions.padding = { top: 2, bottom: 16 };
+      styleOptions.fontSize = defaultFontSize - 48;
       styleOptions.fontFamily = "pkmnems";
       break;
     }
     case TextStyle.PARTY_CANCEL_BUTTON: {
       switch (lang) {
         case "ja":
-          styleOptions.fontSize = defaultFontSize - 56;
-          styleOptions.padding = { top: 2, bottom: 2 };
+          styleOptions.fontSize = defaultFontSize - 54;
+          styleOptions.padding = { top: 4, bottom: 2 };
           break;
         case "ko":
           styleOptions.fontSize = defaultFontSize - 52;
@@ -373,8 +365,8 @@ export function getTextStyleOptions(
     case TextStyle.MOVE_LABEL: {
       switch (lang) {
         case "ja":
-          styleOptions.fontSize = defaultFontSize - 48;
-          styleOptions.padding = { top: -4, bottom: 8 };
+          styleOptions.fontSize = defaultFontSize - 42;
+          //styleOptions.padding = { top: -4, bottom: 8 };
           break;
         default:
           styleOptions.fontSize = defaultFontSize - 48;

@@ -102,33 +102,6 @@ const fonts: LoadingFontFaceProperty[] = [
       "sv",
     ],
   },
-  {
-    face: new FontFace("pkmnems", "url(./fonts/pokemon-bw.ttf)", {
-      unicodeRange: rangesByLanguage.japanese,
-    }),
-    extraOptions: { sizeAdjust: "133%" },
-    only: [
-      "en",
-      "es",
-      "fr",
-      "it",
-      "de",
-      "pt",
-      "ko",
-      "ja",
-      "ca",
-      "da",
-      "tr",
-      "th",
-      "ro",
-      "ru",
-      "uk",
-      "id",
-      "hi",
-      "tl",
-      "sv",
-    ],
-  },
   // devanagari
   {
     face: new FontFace("emerald", "url(./fonts/8-bit-devanagari.ttf)", {

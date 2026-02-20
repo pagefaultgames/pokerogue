@@ -108,7 +108,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   },
   ja: {
     starterInfoTextSize: "48px",
-    instructionTextSize: "28px",
+    instructionTextSize: "32px",
     starterInfoYOffset: 1,
     starterInfoXPos: 32,
   },
