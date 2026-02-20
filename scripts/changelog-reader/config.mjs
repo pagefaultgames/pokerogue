@@ -6,14 +6,15 @@
  */
 
 /**
- * @typedef {LABELS[number]} Label
+ * @typedef {typeof LABELS[number]} Label
  */
 
 /**
  * @typedef { "Bug Fixes" | "Balance" | "Translation" | "Art" | "Miscellaneous" | "Unknown" | "Beta" } CategoryName
  */
 
-/** @typedef {{
+/**
+ * @typedef {{
  *  name: CategoryName
  *  labels: Label[]
  * }} Category

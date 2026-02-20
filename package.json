@@ -14,6 +14,7 @@
     "build:app": "vite build --mode app && node scripts/sync-dist-assets.js",
     "preview": "vite preview",
     "test": "vitest run",
+    "test:profile": "node scripts/profiling/profiling.js",
     "test:cov": "vitest run --silent='passed-only' --coverage",
     "test:watch": "vitest watch --silent='passed-only'",
     "test:silent": "vitest run --silent='passed-only'",
@@ -42,6 +43,7 @@
     "update-submodules:remote": "pnpm update-submodules --remote"
   },
   "dependencies": {
+    "@commander-js/extra-typings": "^14.0.0",
     "@material/material-color-utilities": "^0.3.0",
     "ajv": "^8.17.1",
     "compare-versions": "^6.1.1",
@@ -66,6 +68,7 @@
     "@vitest/expect": "^4.0.16",
     "@vitest/utils": "^4.0.16",
     "chalk": "^5.6.2",
+    "commander": "^14.0.3",
     "dependency-cruiser": "^17.3.2",
     "jsdom": "^27.3.0",
     "lefthook": "^2.0.9",
