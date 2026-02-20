@@ -550,57 +550,56 @@ export class UI extends Phaser.GameObjects.Container {
     });
   }
 
-  private setModeInternal<M extends UiMode>(
+  private async setModeInternal<M extends UiMode>(
     this: UI,
     mode: M,
     params: SetModeParams,
     ...args: HandlerShowArgs<M>
   ): Promise<void> {
     const { clear, forceTransition, chainMode } = params;
-    return new Promise(resolve => {
-      if (this.mode === mode && !forceTransition) {
-        resolve();
-        return;
+    if (this.mode === mode && !forceTransition) {
+      return;
+    }
+    const doSetMode = () => {
+      if (clear) {
+        this.getHandler().clear();
       }
-      const doSetMode = () => {
-        if (this.mode !== mode) {
-          if (clear) {
-            this.getHandler().clear();
-          }
-          // Don't chain if previous mode is cleared; this set of options should never be passed.
-          if (chainMode && this.mode && !clear) {
-            this.modeChain.push(this.mode);
-            globalScene.updateGameInfo();
-          }
-          this.mode = mode;
-          const touchControls = document?.getElementById("touchControls");
-          if (touchControls) {
-            touchControls.dataset.uiMode = UiMode[mode];
-          }
-          this.getHandler().show(...args);
-        }
-        resolve();
-      };
-      /** Determine whether the mode transition should use fading.
-       If `chainMode` is `true`, require the new mode to be a transition mode.
-       If `chainMode` is `false`, either mode can be a transition mode. */
-      if (
-        (!chainMode
-          && (requiresTransition(this.mode) || requiresTransition(mode))
-          && allowsTransition(this.mode)
-          && allowsTransition(mode))
-        || (chainMode && allowsTransition(mode))
-      ) {
-        this.fadeOut(250).then(() => {
-          globalScene.time.delayedCall(100, () => {
+      // Don't chain if previous mode is cleared; this set of options should never be passed.
+      if (chainMode && this.mode && !clear) {
+        this.modeChain.push(this.mode);
+        globalScene.updateGameInfo();
+      }
+      this.mode = mode;
+      const touchControls = document?.getElementById("touchControls");
+      if (touchControls) {
+        touchControls.dataset.uiMode = UiMode[mode];
+      }
+      this.getHandler().show(...args);
+    };
+
+    /** Determine whether the mode transition should use fading.
+     If `chainMode` is `true`, require the new mode to be a transition mode.
+      If `chainMode` is `false`, either mode can be a transition mode. */
+    if (
+      (!chainMode
+        && (requiresTransition(this.mode) || requiresTransition(mode))
+        && allowsTransition(this.mode)
+        && allowsTransition(mode))
+      || (chainMode && allowsTransition(mode))
+    ) {
+      await this.fadeOut(250).then(() => {
+        globalScene.time.delayedCall(100, () => {
+          if (this.mode === mode) {
+            console.warn("UI mode changed to same as prior mode midway through setModeInternal call!", UiMode[mode]);
+          } else {
             doSetMode();
-            this.fadeIn(250);
-          });
+          }
+          this.fadeIn(250);
         });
-      } else {
-        doSetMode();
-      }
-    });
+      });
+    } else {
+      doSetMode();
+    }
   }
 
   getMode(): UiMode {
