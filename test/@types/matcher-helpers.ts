@@ -4,6 +4,7 @@
  * @module
  */
 
+import type { AnyFn } from "#types/type-helpers";
 import type { If } from "type-fest";
 
 /**
@@ -21,9 +22,6 @@ import type { If } from "type-fest";
 export type RestrictMatcher<M extends object, R, T> = {
   [k in keyof M]: T extends R ? M[k] : never;
 };
-
-// TODO: Replace the prior `AnyFn` declaration with this one - this is a proper "top type"
-type AnyFn<Args extends readonly unknown[] = never, Return = unknown> = (...args: Args) => Return;
 
 /**
  * Type representing an object containing some number of matchers.

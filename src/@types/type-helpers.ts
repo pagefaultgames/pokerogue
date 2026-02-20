@@ -3,7 +3,15 @@
  */
 
 import type { AbAttr } from "#abilities/ab-attrs";
-import type { IntClosedRange, NegativeInfinity, PositiveInfinity, TupleOf } from "type-fest";
+import type { IntClosedRange, NegativeInfinity, PositiveInfinity, RequiredKeysOf, TupleOf } from "type-fest";
+
+// Re-export a bunch of stuff from type-fest
+// TODO: Once the modifier rework makes merge conflicts less of a priority, remove these re-exports and change callsites to import directly from `type-fest`
+export type { RequiredKeysOf as RequiredKeys };
+
+import type { ValueOf as ObjectValues } from "type-fest";
+export type { ObjectValues };
+export type { Writable as Mutable } from "type-fest";
 
 /**
  * Exactly matches the type of the argument, preventing adding additional properties.
@@ -26,15 +34,6 @@ export type Exact<T> = {
 export type Closed<X> = X;
 
 /**
- * Helper type to strip `readonly` from all properties of the provided type.
- * Inverse of {@linkcode Readonly}
- * @typeParam T - The type to make mutable
- */
-export type Mutable<T> = {
-  -readonly [P in keyof T]: T[P];
-};
-
-/**
  * Type helper to obtain the keys associated with a given value inside an object. \
  * Functions similarly to `Pick`, but checking assignability of values instead of keys.
  * @typeParam O - The type of the object
@@ -45,19 +44,19 @@ export type InferKeys<O extends object, V> = {
 }[keyof O];
 
 /**
- * Utility type to obtain a union of the values of a given object. \
- * Functions similar to `keyof E`, except producing the values instead of the keys.
- * @typeParam E - The type of the object
- * @remarks
- * This can be used to convert an `enum` interface produced by `typeof Enum` into the union type representing its members.
+ * Type representing a given kind of {@linkcode Function}. \
+ * Defaults to a "top type" that is assignable to any function, but cannot be called without type assertions.
+ * @template Args - A tuple containing the arguments accepted by the function;
+ * defaults to `never` to render it uncallable without type assertions
+ * @template Return - The return type of the function; defaults to `unknown` to make the return value
+ * unusable without type assertions
+ * @example
+ * ```ts
+ * type MyCallback = AnyFn<[amount: number, message: string], void>;
+ * expectTypeOf<MyCallback>().toEqualTypeOf<(amount: number, message: string) => void>();
+ * ```
  */
-export type ObjectValues<E extends object> = E[keyof E];
-
-/**
- * Type helper that matches any `Function` type.
- * Equivalent to `Function`, but will not raise a warning from Biome.
- */
-export type AnyFn = (...args: any[]) => any;
+export type AnyFn<Args extends readonly unknown[] = never, Return = unknown> = (...args: Args) => Return;
 
 /**
  * Type helper to extract non-function properties from a type.
@@ -70,18 +69,6 @@ export type AnyFn = (...args: any[]) => any;
  */
 export type NonFunctionProperties<T> = {
   [K in keyof T as T[K] extends AnyFn ? never : K]: T[K];
-};
-
-/**
- * Type helper to extract out non-function properties from a type, recursively applying to nested properties.
- * This can be used to mimic the effects of JSON serialization and de-serialization on a given type.
- */
-export type NonFunctionPropertiesRecursive<Class> = {
-  [K in keyof Class as Class[K] extends AnyFn ? never : K]: Class[K] extends Array<infer U>
-    ? NonFunctionPropertiesRecursive<U>[]
-    : Class[K] extends object
-      ? NonFunctionPropertiesRecursive<Class[K]>
-      : Class[K];
 };
 
 /** Utility type for an abstract constructor. */
@@ -113,6 +100,7 @@ export type AtLeastOne<T extends object> = Partial<T> & ObjectValues<{ [K in key
  * @remarks
  * Brands should be either a string or unique symbol. This prevents overlap with other types.
  */
+// TODO: Replace with Type-fest's tags (which can carry arbitrary metadata and are easier to remove)
 export declare class Brander<B extends string | symbol> {
   private __brand: B;
 }
@@ -144,13 +132,8 @@ export type Negate<N extends number> =
               ? R
               : number;
 
-/** Extract the required keys from an object that has optional ones */
-export type RequiredKeys<T> = {
-  [K in keyof T]-?: object extends Pick<T, K> ? never : K;
-}[keyof T];
-
 /** Pick from `T` the set of required properties  */
-export type OnlyRequired<T> = Pick<T, RequiredKeys<T>>;
+export type OnlyRequired<T extends object> = Pick<T, RequiredKeysOf<T>>;
 
 /**
  * Type helper to create a union of tuples in a given range.
@@ -158,7 +141,7 @@ export type OnlyRequired<T> = Pick<T, RequiredKeys<T>>;
  * @typeParam Max - The maximum length of the tuple (inclusive)
  * @typeParam T - The type of the elements in the tuple
  */
-export type TupleRange<Min extends number, Max extends number, T> = IntClosedRange<
+export type TupleRange<Min extends number, Max extends number, T = unknown> = IntClosedRange<
   Min,
   Max
 > extends infer Lengths extends number
