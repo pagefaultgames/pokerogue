@@ -68,7 +68,7 @@ describe("Test Utils - PromptHandler", () => {
   describe("setMode", () => {
     it("should wrap and pass along original function arguments from setModeInternal", async () => {
       const setModeSpy = vi.spyOn(promptHandler as any, "setMode");
-      await promptHandler["game"].scene.ui["setModeInternal"](UiMode.PARTY as UiMode, {
+      await promptHandler["game"].scene.ui["setModeInternal"]<UiMode>(UiMode.PARTY, {
         clear: false,
         forceTransition: false,
         chainMode: false,
@@ -77,7 +77,6 @@ describe("Test Utils - PromptHandler", () => {
       expect(setModeSpy).toHaveBeenCalledExactlyOnceWith([
         UiMode.PARTY,
         { clear: false, forceTransition: false, chainMode: false },
-        [{}],
       ]);
       expect(setModeCallback).toHaveBeenCalledAfter(setModeSpy);
     });
