@@ -12,13 +12,13 @@ export type BiomeDepths = {
   [key: number]: [number, number];
 };
 
-export type BiomeTierTod = {
+export type BiomeTierTimeOfDay = {
   biome: BiomeId;
   tier: BiomePoolTier;
-  tod: TimeOfDay[];
+  timesOfDay: TimeOfDay[];
 };
 
-export type CatchableSpecies = Readonly<Record<SpeciesId, readonly BiomeTierTod[]>>;
+export type CatchableSpecies = Readonly<Record<SpeciesId, readonly BiomeTierTimeOfDay[]>>;
 
 export type ArenaPokemonPools = Readonly<Record<BiomePoolTier, readonly SpeciesId[]>>;
 

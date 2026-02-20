@@ -42,7 +42,7 @@ import { UiMode } from "#enums/ui-mode";
 import type { Variant } from "#sprites/variant";
 import { getVariantIcon, getVariantTint } from "#sprites/variant";
 import { SettingKeyboard } from "#system/settings-keyboard";
-import type { BiomeTierTod } from "#types/biomes";
+import type { BiomeTierTimeOfDay } from "#types/biomes";
 import type { DexEntry } from "#types/dex-data";
 import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { StarterAttributes } from "#types/save-data";
@@ -269,8 +269,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
   private passive: AbilityId;
   private hasPassive: boolean;
   private hasAbilities: number[];
-  private biomes: readonly BiomeTierTod[];
-  private preBiomes: readonly BiomeTierTod[];
+  private biomes: readonly BiomeTierTimeOfDay[];
+  private preBiomes: readonly BiomeTierTimeOfDay[];
   private baseStats: number[];
   private baseTotal: number;
   private evolutions: SpeciesFormEvolution[];
@@ -935,7 +935,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
   }
 
   // Function to ensure that forms appear in the appropriate biome and tod
-  sanitizeBiomes(biomes: readonly BiomeTierTod[], speciesId: number): readonly BiomeTierTod[] {
+  sanitizeBiomes(biomes: readonly BiomeTierTimeOfDay[], speciesId: number): readonly BiomeTierTimeOfDay[] {
     if (speciesId === SpeciesId.BURMY || speciesId === SpeciesId.WORMADAM) {
       return biomes.filter(b => {
         const formIndex = (() => {
@@ -975,7 +975,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     if (speciesId === SpeciesId.LYCANROC) {
       return biomes.filter(b => {
         const formIndex = (() => {
-          switch (b.tod[0]) {
+          switch (b.timesOfDay[0]) {
             case TimeOfDay.DAY:
             case TimeOfDay.DAWN:
               return 0;
@@ -1560,10 +1560,10 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                         i18next.t(`biome:${toCamelCase(enumValueToKey(BiomeId, b.biome))}`)
                         + " - "
                         + i18next.t(`biome:${toCamelCase(BiomePoolTier[b.tier])}`)
-                        + (b.tod.length === 1 && b.tod[0] === -1
+                        + (b.timesOfDay.length === 1 && b.timesOfDay[0] === -1
                           ? ""
                           : " ("
-                            + b.tod.map(tod => i18next.t(`biome:${toCamelCase(TimeOfDay[tod])}`)).join(", ")
+                            + b.timesOfDay.map(tod => i18next.t(`biome:${toCamelCase(TimeOfDay[tod])}`)).join(", ")
                             + ")"),
                       handler: () => false,
                     });
@@ -1581,10 +1581,10 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                           i18next.t(`biome:${toCamelCase(enumValueToKey(BiomeId, b.biome))}`)
                           + " - "
                           + i18next.t(`biome:${toCamelCase(BiomePoolTier[b.tier])}`)
-                          + (b.tod.length === 1 && b.tod[0] === -1
+                          + (b.timesOfDay.length === 1 && b.timesOfDay[0] === -1
                             ? ""
                             : " ("
-                              + b.tod.map(tod => i18next.t(`biome:${toCamelCase(TimeOfDay[tod])}`)).join(", ")
+                              + b.timesOfDay.map(tod => i18next.t(`biome:${toCamelCase(TimeOfDay[tod])}`)).join(", ")
                               + ")"),
                         handler: () => false,
                       });
