@@ -11,7 +11,7 @@
 import { globSync } from "node:fs";
 import { mkdir, rm } from "node:fs/promises";
 import { join } from "node:path";
-import { Command, Option } from "@commander-js/extra-typings";
+import { Command } from "@commander-js/extra-typings";
 import chalk from "chalk";
 import { startVitest } from "vitest/node";
 import { defaultCommanderHelpArgs } from "../helpers/arguments.js";
@@ -24,11 +24,7 @@ const testProfile = new Command("pnpm test:profile")
   .description("Run Vitest with Node's V8 profiler and generate processed profiling output.")
   .helpOption("-h, --help", "Show this help message.")
   .version(version, "-v, --version", "Show the version number.")
-  .option(
-    "-o, --output <path>",
-    "Directory to which V8 profiler output will be written.",
-    "./temp/vitest-profile",
-  )
+  .option("-o, --output <path>", "Directory to which V8 profiler output will be written.", "./temp/vitest-profile")
   .option("--cleanup", "Whether to automatically delete generated files after processing.", false)
   .argument("<vitest-args...>", "Arguments to pass directly to Vitest.")
   .configureHelp(defaultCommanderHelpArgs)
