@@ -1,8 +1,8 @@
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
+import type { ModalUiHandlerParams } from "#types/ui/ui-handler-params";
 import { ModalUiHandler } from "#ui/modal-ui-handler";
 import { addTextObject } from "#ui/text";
-import type { ModalUiHandlerParams } from "#ui/ui-handler-params";
 
 export class SessionReloadModalUiHandler extends ModalUiHandler {
   constructor(mode: UiMode | null = null) {

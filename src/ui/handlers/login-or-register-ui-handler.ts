@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
+import type { FormModalUiHandlerParams } from "#types/ui/ui-handler-params";
 import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { LoginRegisterInfoContainerUiHandler } from "#ui/login-register-info-container-ui-handler";
-import type { FormModalUiHandlerParams } from "#ui/ui-handler-params";
 import i18next from "i18next";
 import type Phaser from "phaser";
 

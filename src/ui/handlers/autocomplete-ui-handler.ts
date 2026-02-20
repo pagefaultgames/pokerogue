@@ -1,7 +1,7 @@
 import { Button } from "#enums/buttons";
 import { UiMode } from "#enums/ui-mode";
+import type { AutoCompleteUiHandlerParams } from "#types/ui/ui-handler-params";
 import { AbstractOptionSelectUiHandler } from "#ui/abstract-option-select-ui-handler";
-import type { AutoCompleteUiHandlerParams } from "#ui/ui-handler-params";
 
 export class AutoCompleteUiHandler extends AbstractOptionSelectUiHandler {
   modalContainer: Phaser.GameObjects.Container;

@@ -31,8 +31,6 @@ import type {
   TargetSelectCallback,
 } from "#ui/ui-types";
 
-export type NoParams = Record<string, never>;
-
 // This is the same as OptionSelectConfig
 export interface OptionSelectUiHandlerParams {
   xOffset?: number;

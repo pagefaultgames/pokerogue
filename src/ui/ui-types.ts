@@ -37,7 +37,7 @@ export interface OptionSelectItem {
 
 export type TargetSelectCallback = (targets: BattlerIndex[]) => void;
 
-// TODO: Move these enums to their own file
+// TODO: Move these enums to their own files and move the other types to `#types/ui
 export enum SaveSlotUiMode {
   LOAD,
   SAVE,

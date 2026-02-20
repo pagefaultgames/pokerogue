@@ -21,11 +21,11 @@ import type { PokemonMove } from "#moves/pokemon-move";
 import type { CommandPhase } from "#phases/command-phase";
 import { getVariantTint } from "#sprites/variant";
 import type { TurnMove } from "#types/turn-move";
+import type { PartyUiHandlerParams } from "#types/ui/ui-handler-params";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-helper";
 import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
-import type { PartyUiHandlerParams } from "#ui/ui-handler-params";
 import { addWindow } from "#ui/ui-theme";
 import {
   type PartyModifierSpliceSelectCallback,

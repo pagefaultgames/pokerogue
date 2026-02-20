@@ -2,9 +2,9 @@ import { globalScene } from "#app/global-scene";
 import type { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
+import type { ModalUiHandlerParams } from "#types/ui/ui-handler-params";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
-import type { ModalUiHandlerParams } from "#ui/ui-handler-params";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import type { ModalConfig } from "#ui/ui-types";
 

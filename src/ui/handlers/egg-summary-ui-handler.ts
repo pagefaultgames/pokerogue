@@ -3,13 +3,13 @@ import { getEggTierForSpecies } from "#data/egg";
 import type { EggHatchData } from "#data/egg-hatch-data";
 import { Button } from "#enums/buttons";
 import { UiMode } from "#enums/ui-mode";
+import type { EggSummaryUiHandlerParams } from "#types/ui/ui-handler-params";
 import { HatchedPokemonContainer } from "#ui/hatched-pokemon-container";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { PokemonHatchInfoContainer } from "#ui/pokemon-hatch-info-container";
 import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-helper";
 import { ScrollBar } from "#ui/scroll-bar";
 import { ScrollableGridHelper } from "#ui/scrollable-grid-helper";
-import type { EggSummaryUiHandlerParams } from "#ui/ui-handler-params";
 
 const iconContainerX = 112;
 const iconContainerY = 9;

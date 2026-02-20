@@ -1,7 +1,7 @@
 import { UiMode } from "#enums/ui-mode";
+import type { TestDialogueUiHandlerParams } from "#types/ui/ui-handler-params";
 import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
-import type { TestDialogueUiHandlerParams } from "#ui/ui-handler-params";
 import type { ModalConfig, OptionSelectItem } from "#ui/ui-types";
 import i18next from "i18next";
 

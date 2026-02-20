@@ -1,4 +1,4 @@
-import type { FormModalUiHandlerParams } from "#ui/ui-handler-params";
+import type { FormModalUiHandlerParams } from "#types/ui/ui-handler-params";
 import type { ModalConfig } from "#ui/ui-types";
 import i18next from "i18next";
 import { FormModalUiHandler, type InputFieldConfig } from "./form-modal-ui-handler";

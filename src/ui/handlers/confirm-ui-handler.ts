@@ -1,8 +1,8 @@
 import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { UiMode } from "#enums/ui-mode";
+import type { ConfirmUiHandlerParams } from "#types/ui/ui-handler-params";
 import { AbstractOptionSelectUiHandler } from "#ui/abstract-option-select-ui-handler";
-import type { ConfirmUiHandlerParams } from "#ui/ui-handler-params";
 import type { OptionSelectConfig } from "#ui/ui-types";
 import i18next from "i18next";
 

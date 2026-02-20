@@ -7,10 +7,10 @@ import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { GameData } from "#system/game-data";
 import type { AdminUiHandlerService, AdminUiHandlerServiceMode, SearchAccountResponse } from "#types/api";
+import type { AdminUiHandlerParams } from "#types/ui/ui-handler-params";
 import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
 import { getTextColor } from "#ui/text";
-import type { AdminUiHandlerParams } from "#ui/ui-handler-params";
 import type { ModalConfig } from "#ui/ui-types";
 import { toTitleCase } from "#utils/strings";
 

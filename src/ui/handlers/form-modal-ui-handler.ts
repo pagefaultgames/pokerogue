@@ -1,9 +1,9 @@
 import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
+import type { FormModalUiHandlerParams } from "#types/ui/ui-handler-params";
 import { ModalUiHandler } from "#ui/modal-ui-handler";
 import { addTextInputObject, addTextObject, getTextColor } from "#ui/text";
-import type { FormModalUiHandlerParams } from "#ui/ui-handler-params";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import type { FormModalConfig, ModalConfig } from "#ui/ui-types";
 import { fixedInt, truncateString } from "#utils/common";

@@ -7,8 +7,8 @@ import { UiMode } from "#enums/ui-mode";
 import type { Pokemon } from "#field/pokemon";
 import type { ModifierBar } from "#modifiers/modifier";
 import { getMoveTargets } from "#moves/move-utils";
+import type { TargetSelectUiHandlerParams } from "#types/ui/ui-handler-params";
 import { UiHandler } from "#ui/ui-handler";
-import type { TargetSelectUiHandlerParams } from "#ui/ui-handler-params";
 import type { TargetSelectCallback } from "#ui/ui-types";
 import { fixedInt } from "#utils/common";
 
