@@ -63,7 +63,7 @@ describe("Move - Heal Block", () => {
     feebas.addTag(BattlerTagType.HEAL_BLOCK);
 
     // "Fake" feebas having recieved a 1 hp healing instance
-    game.scene.phaseManager.unshiftNew("PokemonHealPhase", BattlerIndex.PLAYER, 1, null);
+    game.scene.phaseManager.unshiftNew("PokemonHealPhase", BattlerIndex.PLAYER, 1);
     game.move.use(MoveId.SPLASH);
     await game.phaseInterceptor.to("PokemonHealPhase");
 

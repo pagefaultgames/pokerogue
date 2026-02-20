@@ -1641,11 +1641,12 @@ export class TurnHealModifier extends PokemonHeldItemModifier {
         "PokemonHealPhase",
         pokemon.getBattlerIndex(),
         toDmgValue(pokemon.getMaxHp() / 16) * this.stackCount,
-        i18next.t("modifier:turnHealApply", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          typeName: this.type.name,
-        }),
-        true,
+        {
+          message: i18next.t("modifier:turnHealApply", {
+            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+            typeName: this.type.name,
+          }),
+        },
       );
       return true;
     }
@@ -1731,16 +1732,16 @@ export class HitHealModifier extends PokemonHeldItemModifier {
    */
   override apply(pokemon: Pokemon): boolean {
     if (pokemon.turnData.totalDamageDealt && !pokemon.isFullHp()) {
-      // TODO: this shouldn't be undefined AFAIK
       globalScene.phaseManager.unshiftNew(
         "PokemonHealPhase",
         pokemon.getBattlerIndex(),
-        toDmgValue(pokemon.turnData.totalDamageDealt / 8) * this.stackCount,
-        i18next.t("modifier:hitHealApply", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          typeName: this.type.name,
-        }),
-        true,
+        toDmgValue((pokemon.turnData.totalDamageDealt * this.stackCount) / 8),
+        {
+          message: i18next.t("modifier:hitHealApply", {
+            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+            typeName: this.type.name,
+          }),
+        },
       );
     }
 
@@ -1899,20 +1900,22 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
    */
   override apply(pokemon: Pokemon): boolean {
     // Restore the Pokemon to half HP
+    // TODO: This should not use a phase to revive pokemon
     globalScene.phaseManager.unshiftNew(
       "PokemonHealPhase",
       pokemon.getBattlerIndex(),
       toDmgValue(pokemon.getMaxHp() / 2),
-      i18next.t("modifier:pokemonInstantReviveApply", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        typeName: this.type.name,
-      }),
-      false,
-      false,
-      true,
+      {
+        message: i18next.t("modifier:pokemonInstantReviveApply", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+          typeName: this.type.name,
+        }),
+        revive: true,
+      },
     );
 
     // Remove the Pokemon's FAINT status
+    // TODO: Remove call to `resetStatus` once StatusEffect.FAINT is canned
     pokemon.resetStatus(true, false, true, false);
 
     for (const p of pokemon.getAlliesGenerator()) {
@@ -3506,24 +3509,24 @@ export class EnemyTurnHealModifier extends EnemyPersistentModifier {
    * @returns `true` if the {@linkcode Pokemon} was healed
    */
   override apply(enemyPokemon: Pokemon): boolean {
-    if (!enemyPokemon.isFullHp()) {
-      globalScene.phaseManager.unshiftNew(
-        "PokemonHealPhase",
-        enemyPokemon.getBattlerIndex(),
-        Math.max(Math.floor(enemyPokemon.getMaxHp() / (100 / this.healPercent)) * this.stackCount, 1),
-        i18next.t("modifier:enemyTurnHealApply", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(enemyPokemon),
-        }),
-        true,
-        false,
-        false,
-        false,
-        true,
-      );
-      return true;
+    if (enemyPokemon.isFullHp()) {
+      return false;
     }
 
-    return false;
+    // Prevent healing to full from healing tokens
+    globalScene.phaseManager.unshiftNew(
+      "PokemonHealPhase",
+      enemyPokemon.getBattlerIndex(),
+      (enemyPokemon.getMaxHp() * this.stackCount * this.healPercent) / 100,
+      {
+        message: i18next.t("modifier:enemyTurnHealApply", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(enemyPokemon),
+        }),
+        preventFullHeal: true,
+      },
+    );
+
+    return true;
   }
 
   getMaxStackCount(): number {
