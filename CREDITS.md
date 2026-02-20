@@ -333,27 +333,29 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 
 ## Balance Team
 - damocleas
-- Blitzy aka Kazapple
-- Cynthia_calliope
+- Blitzy / Kazapple
+- Plasto
+- Moro
 - Esca
 - Fontbane
-- Plasto
-- Sethcurry
+- Cynthia_calliope
 - Starkrieg
-
-## Past Members
-- Swizzo
 - Zaccie
 
+## Past Members
+- Sethcurry
+- Swizzo
+
 ## Past Contributors
-- chrysomelinae (Mystery Events)
-- AsdarDevelops (Mystery Events)
+- chrysomelinae (Mystery Encounters)
+- AsdarDevelops (Mystery Encounters)
 
 
 # 💻 Development
 
-## Server Developers
+## Server Developers and Maintainers
 - pancakes aka patapancakes
+- Scooom
 
 ## Current and former Development Team members
 - bennybroseph
@@ -446,22 +448,29 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 
 # 🌎 Translation
 
+## Translation Head
+- Lugiadrien
+
+## Former Translation Head
+- Sangara
+
 ## In-Game Translators
+
+### 🇪🇸 Spanish (es-ES)
+- Javi
+- Lily Alterni
+- Moro
 
 ### 🇩🇪 German (de)
 - CodeTappert
 
-### 🇪🇸 Spanish (es-ES)
-- Dan Stevenson
-- Javi
-- Lily Alterni
-- Qyxgames
-
 ### 🇫🇷 French (fr)
 - Lugiadrien
+- Jersee
 
 ### 🇮🇹 Italian (it)
 - Nicus
+- rrrroverto
 
 ### 🇯🇵 Japanese (ja)
 - 6mozuke9
@@ -469,30 +478,58 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - PeachFresca
 
 ### 🇰🇷 Korean (ko)
-- Enoch
-- KimJeongSun
-- Returntoice
 - sodamelon
+- LeKaaN
 
-### 🇧🇷 Portuguese (pt-BR)
+### 🇧🇷 Brazilian Portuguese (pt-BR)
 - Zé Ricardo
 
-### 🇨🇳 Chinese (zh-Hans)
-- dddsenic
+### 🇨🇳 Simplified Chinese (zh-Hans)
 - mercurius
 - VittorioVeneto
 - Yonmaru
 
-### 🇹🇼 Chinese (zh-Hant)
+### 🇹🇼 Traditional Chinese (zh-Hant)
 - mercurius
-- Seagull
+
+### Catalan (ca)
+- DEMO
+
+### 🇩🇰 Danish (da)
+- WackZero
+
+### 🇸🇪 Swedish (sv)
+- Chapybara
+
+### 🇷🇺 Russian (ru)
+- Shinigami Holo
+
+### 🇺🇦 Ukrainian
+- Rahr
+
+### 🇹🇷 Turkish (tr)
+- hotpink77
+- pantherinae
+
+### 🇵🇭 Tagalog (tl)
+- Naga42
 
 ### Past contributors
 - Asdar (es-ES)
 - Rafa (es-ES)
+- Qyxgames (es-ES)
+- Dan Stevenson (es-ES)
 - GINK-SS (ko)
+- Enoch (ko)
+- KimJeongSun (ko)
+- Returntoice (ko)
 - prostagma (pt-BR)
+- dddsenic (zh-Hans)
 - Ei (zh-Hant)
+- Seagull (zh-Hant)
+- Aleco (ca)
+- Qyxgames (ca)
+- CamiBear (da)
 
 ## Wiki Translators
 
@@ -591,32 +628,40 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - Embri
 - Nekod
 - P0kemonY
-- Scoom
+- Scooom
 - BlueVaron
 
 
 # ☎️ Discord
 
-## Head Moderator
-- leah
-
-## Senior Moderators
-- Solanum Tuberosum
-- Madmadness65
-- Necrowmancer
-- lana
-
-## Moderators
-- Sethcurry
-
-## Junior Moderators
-- chacolah
-- ChaosGrimmon
-- Cynthia
-- Kat
-- lyn
+## Head Moderators
+- Javi
 - Pom
 
+## Moderators
+- ChaosGrimmon
+- Kat
+
+## Junior Moderators
+- Cynthia_calliope
+- Mitsue
+- Rizbh
+- Tempest
+- Zaccie
+
+## Past Moderators
+- Cent
+- Chacolah
+- Lana
+- Leah
+- Lucky
+- Lyn
+- Madmadness65
+- Megalith
+- Necromancer
+- Sethcurry
+- Solanum Tuberosum
+- Ves
 
 # ✨ Special Thanks
 
@@ -628,6 +673,7 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - roi
 
 ## External Tools
-- Ydarissep (creator of the now defunct "Yda's Dex")
+- Sandstorm (Creator of "PokéRogue SearchDex")
 - Admiral-Billy (Offline App - Desktop)
 - Red aka StonedModder (iOS App)
+- Ydarissep (Creator of the now defunct "Yda's Dex")
