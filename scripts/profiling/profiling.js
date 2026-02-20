@@ -25,14 +25,13 @@ const testProfile = new Command("pnpm test:profile")
   .helpOption("-h, --help", "Show this help message.")
   .version(version, "-v, --version", "Show the version number.")
   .option("-o, --output <path>", "Directory to which V8 profiler output will be written.", "./temp/vitest-profile")
-  .option("--cleanup", "Whether to automatically delete generated files after processing.", false)
   .argument("<vitest-args...>", "Arguments to pass directly to Vitest.")
   .configureHelp(defaultCommanderHelpArgs)
   // only show help on argument parsing errors, not on test failures
   .showHelpAfterError(true)
   .parse();
 
-const { output: outputDir, cleanup, cpu, memory } = testProfile.opts();
+const { output: outputDir, cpu, memory } = testProfile.opts();
 
 if (!cpu && !memory) {
   testProfile.error("Cannot disable both CPU and memory profiling!");
@@ -68,20 +67,21 @@ async function main() {
   }
 
   const cpuProfile = globSync(join(outputDir, "*.cpuprofile")).at(0);
-  if (!cpuProfile) {
-    console.error(chalk.red.bold("No CPU profile found!"));
+  const memoryProfile = globSync(join(outputDir, "*.heapprofile")).at(0);
+  if (!cpuProfile && !memoryProfile) {
+    console.error(chalk.red.bold("No CPU or memory profile found!"));
     process.exitCode = 1;
     return;
   }
 
-  console.log("Wrote processed CPU profile to: ", chalk.bold.blue(cpuProfile));
+  if (cpuProfile) {
+    console.log("Wrote processed CPU profile to: ", chalk.bold.blue(cpuProfile));
+  }
+  if (memoryProfile) {
+    console.log("Wrote processed memory profile to: ", chalk.bold.blue(memoryProfile));
+  }
+
+  console.log(chalk.green.bold("Profiling complete!"));
 }
 
-try {
-  await main();
-} finally {
-  if (cleanup) {
-    console.log(chalk.grey("Removing generated files..."));
-    await rm(outputDir, { recursive: true, force: true });
-  }
-}
+await main();
