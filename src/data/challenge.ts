@@ -7,6 +7,7 @@ import { type StarterSpeciesId, speciesStarterCosts } from "#balance/starters";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { AbilityAttr } from "#enums/ability-attr";
 import { BattleType } from "#enums/battle-type";
+import { ChallengeCategory } from "#enums/challenge-category";
 import { Challenges } from "#enums/challenges";
 import { TypeColor, TypeShadow } from "#enums/color";
 import { DexAttr } from "#enums/dex-attr";
@@ -61,6 +62,8 @@ export abstract class Challenge {
   public get ribbonAwarded(): RibbonFlag {
     return 0n as RibbonFlag;
   }
+
+  public abstract get category(): ChallengeCategory;
 
   /**
    * @param id - The enum value for the challenge
@@ -453,6 +456,10 @@ export class SingleGenerationChallenge extends Challenge {
     return this.value ? ((RibbonData.MONO_GEN_1 << (BigInt(this.value) - 1n)) as RibbonFlag) : 0n;
   }
 
+  public override get category(): typeof ChallengeCategory.MISC {
+    return ChallengeCategory.MISC;
+  }
+
   constructor() {
     super(Challenges.SINGLE_GENERATION, 9);
   }
@@ -766,6 +773,10 @@ export class SingleTypeChallenge extends Challenge {
     return this.value ? ((RibbonData.MONO_NORMAL << (BigInt(this.value) - 1n)) as RibbonFlag) : 0n;
   }
 
+  public override get category(): typeof ChallengeCategory.MISC {
+    return ChallengeCategory.MISC;
+  }
+
   // TODO: Find a solution for all Pokemon with this ssui issue, including Basculin and Burmy
   private static TYPE_OVERRIDES: MonotypeOverride[] = [
     { species: SpeciesId.CASTFORM, type: PokemonType.NORMAL, fusion: false },
@@ -850,6 +861,11 @@ export class FreshStartChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
     return this.value ? RibbonData.FRESH_START : 0n;
   }
+
+  public override get category(): typeof ChallengeCategory.CHALLENGE {
+    return ChallengeCategory.CHALLENGE;
+  }
+
   constructor() {
     super(Challenges.FRESH_START, 2);
   }
@@ -977,6 +993,11 @@ export class InverseBattleChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
     return this.value ? RibbonData.INVERSE : 0n;
   }
+
+  public override get category(): typeof ChallengeCategory.MISC {
+    return ChallengeCategory.MISC;
+  }
+
   constructor() {
     super(Challenges.INVERSE_BATTLE, 1);
   }
@@ -1011,6 +1032,11 @@ export class FlipStatChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
     return this.value ? RibbonData.FLIP_STATS : 0n;
   }
+
+  public override get category(): typeof ChallengeCategory.MISC {
+    return ChallengeCategory.MISC;
+  }
+
   constructor() {
     super(Challenges.FLIP_STAT, 1);
   }
@@ -1036,6 +1062,10 @@ export class FlipStatChallenge extends Challenge {
 
 /** Lowers the amount of starter points available. */
 export class LowerStarterMaxCostChallenge extends Challenge {
+  public override get category(): typeof ChallengeCategory.CHALLENGE {
+    return ChallengeCategory.CHALLENGE;
+  }
+
   constructor() {
     super(Challenges.LOWER_MAX_STARTER_COST, 9);
   }
@@ -1062,6 +1092,10 @@ export class LowerStarterMaxCostChallenge extends Challenge {
 
 /** Lowers the maximum cost of starters available. */
 export class LowerStarterPointsChallenge extends Challenge {
+  public override get category(): typeof ChallengeCategory.CHALLENGE {
+    return ChallengeCategory.CHALLENGE;
+  }
+
   constructor() {
     super(Challenges.LOWER_STARTER_POINTS, 9);
   }
@@ -1097,6 +1131,11 @@ export class LimitedSupportChallenge extends Challenge {
         return 0n as RibbonFlag;
     }
   }
+
+  public override get category(): typeof ChallengeCategory.NUZLOCKE {
+    return ChallengeCategory.NUZLOCKE;
+  }
+
   constructor() {
     super(Challenges.LIMITED_SUPPORT, 3);
   }
@@ -1130,6 +1169,11 @@ export class LimitedCatchChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
     return this.value ? RibbonData.LIMITED_CATCH : 0n;
   }
+
+  public override get category(): typeof ChallengeCategory.NUZLOCKE {
+    return ChallengeCategory.NUZLOCKE;
+  }
+
   constructor() {
     super(Challenges.LIMITED_CATCH, 1);
   }
@@ -1160,6 +1204,11 @@ export class HardcoreChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
     return this.value ? RibbonData.HARDCORE : 0n;
   }
+
+  public override get category(): typeof ChallengeCategory.NUZLOCKE {
+    return ChallengeCategory.NUZLOCKE;
+  }
+
   constructor() {
     super(Challenges.HARDCORE, 1);
   }
@@ -1208,6 +1257,10 @@ export class HardcoreChallenge extends Challenge {
 export class PassivesChallenge extends Challenge {
   public override get ribbonAwarded(): RibbonFlag {
     return this.value ? RibbonData.PASSIVE_CHALLENGE : 0n;
+  }
+
+  public override get category(): typeof ChallengeCategory.MISC {
+    return ChallengeCategory.MISC;
   }
 
   constructor() {
