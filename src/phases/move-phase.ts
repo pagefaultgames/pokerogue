@@ -27,7 +27,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { MoveUsedEvent } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
-import { frenzyMissFunc } from "#moves/move-utils";
+import { frenzyMissFunc, getMoveTargets } from "#moves/move-utils";
 import type { PokemonMove } from "#moves/pokemon-move";
 import type { Move, PreUseInterruptAttr } from "#types/move-types";
 import type { TurnMove } from "#types/turn-move";
@@ -182,6 +182,9 @@ export class MovePhase extends PokemonPhase {
     // At this point, move's type changing and multi-target effects *should* be applied
     // Pokerogue's current implementation applies these effects during the move effect phase
     // as there is not (yet) a notion of a move-in-flight for determinations to occur
+
+    // Re-evaluate variable-target moves in case terrain/field changed mid-turn.
+    this.resolveChangeMoveTarget();
 
     this.resolveRedirectTarget();
     this.resolveCounterAttackTarget();
@@ -540,6 +543,31 @@ export class MovePhase extends PokemonPhase {
           moveName: this.move.getMove().name,
         }),
       );
+    }
+  }
+
+  // recompute targets when VariableTargetAttr may change mid-turn
+  protected resolveChangeMoveTarget(): void {
+    const user = this.pokemon;
+    const moveObj = this.move.getMove();
+
+    if (!moveObj.hasAttr("VariableTargetAttr")) {
+      return;
+    }
+
+    const newTargetSet = getMoveTargets(user, moveObj.id);
+
+    if (newTargetSet.multiple) {
+      // move has become a spread move – adopt the full set of targets.
+      this.targets = newTargetSet.targets;
+    } else {
+      // remain single–target. Preserve whatever the player already chose, but
+      // guard against the (rare) case where the chosen battler is no longer
+      // valid by falling back to the first available option.
+      const current = this.targets[0];
+      if (!newTargetSet.targets.includes(current)) {
+        this.targets = [newTargetSet.targets[0]];
+      }
     }
   }
 
