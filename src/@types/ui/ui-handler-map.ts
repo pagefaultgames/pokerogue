@@ -1,4 +1,4 @@
-import { UiMode } from "#enums/ui-mode";
+import type { UiMode } from "#enums/ui-mode";
 import type { AchvsUiHandler } from "#ui/achvs-ui-handler";
 import type { AdminUiHandler } from "#ui/admin-ui-handler";
 import type { AutoCompleteUiHandler } from "#ui/autocomplete-ui-handler";
