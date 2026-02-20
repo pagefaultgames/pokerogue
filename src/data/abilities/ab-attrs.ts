@@ -199,6 +199,13 @@ abstract class CancelInteractionAbAttr extends AbAttr {
   }
 }
 
+/** @sealed */
+export class UngroundedAbAttr extends CancelInteractionAbAttr {
+  constructor() {
+    super(false);
+  }
+}
+
 export class BlockRecoilDamageAttr extends CancelInteractionAbAttr {
   private declare readonly _: never;
   constructor() {
@@ -409,22 +416,6 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
 
   override getCondition(): AbAttrCondition | null {
     return this.condition;
-  }
-}
-
-export class AttackTypeImmunityAbAttr extends TypeImmunityAbAttr {
-  // biome-ignore lint/complexity/noUselessConstructor: Changes the type of `immuneType`
-  constructor(immuneType: PokemonType, condition?: AbAttrCondition) {
-    super(immuneType, condition);
-  }
-
-  override canApply(params: TypeMultiplierAbAttrParams): boolean {
-    const { move } = params;
-    return (
-      move.category !== MoveCategory.STATUS // TODO: make Thousand Arrows ignore Levitate in a different manner
-      && !move.hasAttr("NeutralDamageAgainstFlyingTypeAttr")
-      && super.canApply(params)
-    );
   }
 }
 
@@ -5930,7 +5921,6 @@ export const AbilityAttrs = Object.freeze({
   AllyStatMultiplierAbAttr,
   AlwaysHitAbAttr,
   ArenaTrapAbAttr,
-  AttackTypeImmunityAbAttr,
   BattlerTagImmunityAbAttr,
   BlockCritAbAttr,
   BlockItemTheftAbAttr,
@@ -6138,6 +6128,7 @@ export const AbilityAttrs = Object.freeze({
   VariableMovePowerAbAttr,
   VariableMovePowerBoostAbAttr,
   WeightMultiplierAbAttr,
+  UngroundedAbAttr,
   WonderSkinAbAttr,
 });
 

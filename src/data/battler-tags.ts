@@ -71,6 +71,7 @@ import { MoveResult } from "#enums/move-result";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { PokemonType } from "#enums/pokemon-type";
+import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import { type BattleStat, EFFECTIVE_STATS, type EffectiveStat, getStatKey, Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
@@ -130,8 +131,23 @@ export class BattlerTag implements BaseBattlerTag {
 
   //#region non-serializable fields
   // Fields that should never be serialized, as they must not change after instantiation
-  #isBatonPassable = false;
-  public get isBatonPassable(): boolean {
+
+  /**
+   * Whether this Tag can be transferred via {@linkcode MoveId.BATON_PASS}.
+   * @defaultValue `false`
+   */
+  // TODO: Remove this and make baton-passable subclasses override `isBatonPassable` below
+  readonly #isBatonPassable: boolean;
+
+  /**
+   * Check whether this Tag can be transferred to another Pokemon via Baton Pass.
+   * @param recipient - The {@linkcode Pokemon} receiving this Tag (i.e. the one switching in)
+   * Unused by default but exposed to allow for subclasses to perform custom logic.
+   * @returns Whether this Tag can be transferred via {@linkcode MoveId.BATON_PASS}.
+   * Defaults to returning the value set in the class constructor.
+   */
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: default impl of function
+  public isBatonPassable(recipient: Pokemon): boolean {
     return this.#isBatonPassable;
   }
 
@@ -761,6 +777,10 @@ export class FlinchedTag extends BattlerTag {
   }
 }
 
+/**
+ * Tag to interrupt a midair target's move when forcibly grounded via Smack Down, Gravity, etc.
+ */
+// TODO: This is an absolutely abhorrent way to interrupt the target's move, and may cause incorrect behavior with Truant
 export class InterruptedTag extends BattlerTag {
   public override readonly tagType = BattlerTagType.INTERRUPTED;
   constructor(sourceMove: MoveId) {
@@ -2254,33 +2274,21 @@ export class SemiInvulnerableTag extends SerializableBattlerTag {
   }
 }
 
-export abstract class TypeImmuneTag extends SerializableBattlerTag {
-  #immuneType: PokemonType;
-  public get immuneType(): PokemonType {
-    return this.#immuneType;
-  }
-
-  constructor(tagType: BattlerTagType, sourceMove: MoveId, immuneType: PokemonType, length = 1) {
-    super(tagType, BattlerTagLapseType.TURN_END, length, sourceMove, undefined, true);
-
-    this.#immuneType = immuneType;
-  }
-}
-
 /**
- * Battler Tag that lifts the affected Pokemon into the air and provides immunity to Ground type moves.
- * @see {@link https://bulbapedia.bulbagarden.net/wiki/Magnet_Rise_(move) | MoveId.MAGNET_RISE}
- * @see {@link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move) | MoveId.TELEKINESIS}
+ * Battler Tag that lifts the affected Pokemon into the air, providing immunity to Ground-type moves.
+ * Used by Magnet Rise.
  */
-export class FloatingTag extends TypeImmuneTag {
+export class FloatingTag extends SerializableBattlerTag {
   public override readonly tagType = BattlerTagType.FLOATING;
-  constructor(tagType: BattlerTagType, sourceMove: MoveId, turnCount: number) {
-    super(tagType, sourceMove, PokemonType.GROUND, turnCount);
+  constructor(turnCount: number) {
+    super(BattlerTagType.FLOATING, BattlerTagLapseType.TURN_END, turnCount);
   }
 
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
+    // TODO: This is still needed due to Telekinesis formerly sharing this tag,
+    // and should be removed once save migration can cull all tags with telekinesis' move ID.
     if (this.sourceMove === MoveId.MAGNET_RISE) {
       globalScene.phaseManager.queueMessage(
         i18next.t("battlerTags:magnetRisenOnAdd", {
@@ -2293,6 +2301,7 @@ export class FloatingTag extends TypeImmuneTag {
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
     if (this.sourceMove === MoveId.MAGNET_RISE) {
+      // TODO: This should not play if removed via Gravity.
       globalScene.phaseManager.queueMessage(
         i18next.t("battlerTags:magnetRisenOnRemove", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
@@ -2303,11 +2312,12 @@ export class FloatingTag extends TypeImmuneTag {
 }
 
 /**
- * Tag used by Telekinesis to provide its ungrounding and guaranteed hit effects.
+ * Tag used by {@link @link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move) | Telekinesis}
+ * to forcibly unground the user and guarantee that opposing moves will hit them.
  *
  * The effects of Telekinesis can be Baton Passed to a teammate, including ones unaffected by the original move. \
- * A notable exception is Mega Gengar, which cannot receive either effect via Baton Pass.
- * @see {@link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move)}
+ * A notable exception to this is Mega Gengar (and, exclusive to PokéRogue, G-Max Gengar),
+ * which cannot receive either effect via Baton Pass.
  */
 export class TelekinesisTag extends SerializableBattlerTag {
   public override readonly tagType = BattlerTagType.TELEKINESIS;
@@ -2330,6 +2340,16 @@ export class TelekinesisTag extends SerializableBattlerTag {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       }),
     );
+  }
+
+  public override isBatonPassable(recipient: Pokemon): boolean {
+    if (recipient.species.speciesId !== SpeciesId.GENGAR) {
+      return true;
+    }
+
+    // Gengar is only forbidden in its Mega or (PKR-exclusive) GMax forms
+    const formKey = recipient.getFormKey();
+    return !(formKey === SpeciesFormKey.MEGA || formKey === SpeciesFormKey.GIGANTAMAX);
   }
 }
 
@@ -3803,7 +3823,7 @@ export function getBattlerTag(
     case BattlerTagType.CHARGED:
       return new TypeBoostTag(tagType, sourceMove, PokemonType.ELECTRIC, 2, true);
     case BattlerTagType.FLOATING:
-      return new FloatingTag(tagType, sourceMove, turnCount);
+      return new FloatingTag(turnCount);
     case BattlerTagType.MINIMIZED:
       return new MinimizeTag();
     case BattlerTagType.DESTINY_BOND:

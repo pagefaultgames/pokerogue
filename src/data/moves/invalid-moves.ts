@@ -10,6 +10,7 @@
 
 import type { HealBlockTag } from "#data/battler-tags";
 import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 
 /**
  * Array containing all move-calling moves, used for DRY when writing move banlists.
@@ -381,4 +382,23 @@ export const invalidInstructMoves: ReadonlySet<MoveId> = new Set([
   MoveId.MIMIC,
   MoveId.STRUGGLE,
   // NB: Add Max/G-Max/Z-Move blockage if or when they are implemented
+]);
+
+/**
+ * Set of all {@linkcode SpeciesId}s that {@linkcode MoveId.TELEKINESIS} cannot directly affect.
+ * They can still receive the effect from Baton Passing, however.
+ *
+ * @remarks
+ * Not included here is Gengar, which is only forbidden in its Mega form and which
+ * _cannot_ receive either of Telekinesis' effects via Baton Pass.
+ */
+export const invalidTelekinesisSpecies: ReadonlySet<SpeciesId> = new Set([
+  SpeciesId.DIGLETT,
+  SpeciesId.DUGTRIO,
+  SpeciesId.ALOLA_DIGLETT,
+  SpeciesId.ALOLA_DUGTRIO,
+  SpeciesId.SANDYGAST,
+  SpeciesId.PALOSSAND,
+  SpeciesId.WIGLETT,
+  SpeciesId.WUGTRIO,
 ]);
