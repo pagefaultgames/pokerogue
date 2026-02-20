@@ -2224,7 +2224,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
   }
 
   updateButtonIcon(iconSetting, gamepadType, iconElement, controlLabel): void {
-    // biome-ignore lint/suspicious/noImplicitAnyLet: TODO
+    // biome-ignore lint/suspicious/noEvolvingTypes: TODO
     let iconPath;
     // touch controls cannot be rebound as is, and are just emulating a keyboard event.
     // Additionally, since keyboard controls can be rebound (and will be displayed when they are), we need to have special handling for the touch controls

@@ -5,7 +5,7 @@
  */
 
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.11/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.4.0/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -176,12 +176,15 @@
           }
         },
 
-        // TODO: Wait until the rule gets options for ignoring doc comments and/or different parameter names,
-        // and THEN enable it codebase-wide
         "useUnifiedTypeSignatures": {
-          "level": "info",
-          "fix": "none",
-          "options": {}
+          "level": "warn",
+          "fix": "unsafe",
+          "options": {
+            // Disable warnings on functions that differ only by parameter names or JSDoc comments, as these are often intentional
+            // (e.g. marking one overload as deprecated)
+            "ignoreDifferentlyNamedParameters": true,
+            "ignoreDifferentJsDoc": true
+          }
         },
         "useGroupedAccessorPairs": "error",
         "useObjectSpread": "error",
@@ -234,18 +237,21 @@
       "suspicious": {
         "noExtraNonNullAssertion": "error",
         "useErrorMessage": "error",
-        "noEvolvingTypes": "warn", // TODO: Review and enable ASAP - this is VERY VERY BAD
+        "noEvolvingTypes": "error",
+        "noImplicitAnyLet": "off", // covered by noEvolvingTypes; no need for duplicate warnings
         "useNumberToFixedDigitsArgument": "error",
-        "useGuardForIn": "warn", // TODO: Review and enable ASAP - this is EVEN FRICKING WORSE
+        "useGuardForIn": "warn", // TODO: Review and enable ASAP
         "noDoubleEquals": "error",
         // While this would be a nice rule to enable, the current structure of the codebase makes this infeasible
         // due to being used for move/ability `args` params and save data-related code.
         // This can likely be enabled for all non-utils files once these are eventually reworked, but until then we leave it off.
         "noExplicitAny": "off",
-        "noAssignInExpressions": "off",
-        "noPrototypeBuiltins": "off", // TODO: enable this
+        "noAssignInExpressions": "info", // TODO: Increase to "error" once all instances are fixed
+        "noPrototypeBuiltins": {
+          "level": "warn", // TODO: Add type guard global augment, fix errors and promote (adding a polyfill if needed)
+          "fix": "unsafe"
+        },
         "noFallthroughSwitchClause": "error", // Prevents accidental automatic fallthroughs in switch cases (use disable comment if needed)
-        "noImplicitAnyLet": "warn", // TODO: Refactor and make this an error
         "noRedeclare": "info", // TODO: Refactor and make this an error
         "noGlobalIsNan": "error",
         "noGlobalIsFinite": "error",
@@ -255,7 +261,9 @@
         "noConstantBinaryExpressions": "error",
         "noTsIgnore": "error",
         "useIterableCallbackReturn": "warn", // TODO: Refactor and change to error
-        "noNonNullAssertedOptionalChain": "warn" // TODO: Refactor and change to error
+        "noNonNullAssertedOptionalChain": "warn", // TODO: Refactor and change to error
+        "noDuplicateDependencies": "error",
+        "noImportCycles": "error"
       },
       "complexity": {
         "useWhile": "error",
@@ -270,7 +278,12 @@
         "noThisInStatic": "error",
         "noUselessThisAlias": "error",
         "noUselessTernary": "error",
-        "useIndexOf": "error"
+        "useIndexOf": "error",
+        "noUselessUndefined": "error",
+        "useMaxParams": {
+          "level": "info", // TODO: Change to "error"... eventually...
+          "options": { "max": 7 }
+        }
       },
       "performance": {
         "noNamespaceImport": "error",
@@ -284,14 +297,7 @@
         "noMultiStr": "error",
         "noProto": "error",
         "useFind": "error",
-        "noUselessUndefined": "error",
-        "useMaxParams": {
-          "level": "info", // TODO: Change to "error"... eventually...
-          "options": { "max": 7 }
-        },
         "noShadow": "warn", // TODO: refactor and make "error"
-        "noDuplicateDependencies": "error",
-        "noImportCycles": "error",
         // TODO: Change to error once promises are used properly
         "noMisusedPromises": "info"
       }

@@ -481,7 +481,7 @@ function filterPool(
  * @param willTera - Whether the Pokémon is expected to Tera (i.e., has instant Tera on a Trainer Pokémon); default `false`
  * @param forceAnyDamageIfNoStab - If true, will force any damaging move if no STAB move is available
  */
-// biome-ignore lint/nursery/useMaxParams: This is a complex function that needs all these parameters
+// biome-ignore lint/complexity/useMaxParams: This is a complex function that needs all these parameters
 function forceStabMove(
   pool: Map<MoveId, number>,
   tmPool: Map<MoveId, number>,
