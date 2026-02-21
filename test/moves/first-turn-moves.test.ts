@@ -1,10 +1,15 @@
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("Moves - Fake Out", () => {
+describe.each([
+  { move: MoveId.FAKE_OUT, name: "Fake Out" },
+  { move: MoveId.FIRST_IMPRESSION, name: "First Impression" },
+  { move: MoveId.MAT_BLOCK, name: "Mat Block" },
+])("Move - $name", ({ move }) => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -18,64 +23,56 @@ describe("Moves - Fake Out", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemySpecies(SpeciesId.CORVIKNIGHT)
+      .enemySpecies(SpeciesId.SHUCKLE)
       .enemyMoveset(MoveId.SPLASH)
-      .enemyLevel(10)
-      .startingLevel(1) // prevent LevelUpPhase from happening
+      .enemyLevel(100)
+      .startingLevel(100)
       .criticalHits(false);
   });
 
   it("should only work the first turn a pokemon is sent out in a battle", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    game.move.use(MoveId.FAKE_OUT);
+    game.move.use(move);
     await game.toNextTurn();
 
-    const corv = game.field.getEnemyPokemon();
-    expect(corv).not.toHaveFullHp();
-    corv.hp = corv.getMaxHp();
+    const feebas = game.field.getPlayerPokemon();
+    expect(feebas).toHaveUsedMove({ move, result: MoveResult.SUCCESS });
 
-    game.move.use(MoveId.FAKE_OUT);
-    await game.toNextTurn();
+    game.move.use(move);
+    await game.toEndOfTurn();
 
-    expect(corv).toHaveFullHp();
+    expect(feebas).toHaveUsedMove({ move, result: MoveResult.FAIL });
   });
 
-  // This is a PokeRogue buff to Fake Out
+  // This is a PokeRogue buff to Fake Out & co.
   it("should succeed at the start of each new wave, even if user wasn't recalled", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    // set hp to 1 for easy knockout
-    game.field.getEnemyPokemon().hp = 1;
-    game.move.use(MoveId.FAKE_OUT);
+    game.move.use(MoveId.SPLASH);
+    await game.doKillOpponents();
     await game.toNextWave();
 
-    game.move.use(MoveId.FAKE_OUT);
+    game.move.use(move);
     await game.toNextTurn();
 
-    const corv = game.field.getEnemyPokemon();
-    expect(corv).not.toHaveFullHp();
+    const feebas = game.field.getPlayerPokemon();
+    expect(feebas).toHaveUsedMove({ move, result: MoveResult.SUCCESS });
   });
 
   it("should succeed if recalled and sent back out", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MAGIKARP);
 
-    game.move.use(MoveId.FAKE_OUT);
-    await game.toNextTurn();
-
-    const corv = game.field.getEnemyPokemon();
-    expect(corv).not.toHaveFullHp();
-    corv.hp = corv.getMaxHp();
-
     game.doSwitchPokemon(1);
     await game.toNextTurn();
 
     game.doSwitchPokemon(1);
     await game.toNextTurn();
 
-    game.move.use(MoveId.FAKE_OUT);
+    game.move.use(move);
     await game.toNextTurn();
 
-    expect(corv).not.toHaveFullHp();
+    const feebas = game.field.getPlayerPokemon();
+    expect(feebas).toHaveUsedMove({ move, result: MoveResult.SUCCESS });
   });
 });
