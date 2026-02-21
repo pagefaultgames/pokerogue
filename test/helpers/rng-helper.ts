@@ -1,4 +1,4 @@
-import { GameManagerHelper } from "#test/utils/helpers/game-manager-helper";
+import { GameManagerHelper } from "#test/helpers/game-manager-helper";
 import { vi } from "vitest";
 
 export class RngHelper extends GameManagerHelper {

@@ -5,10 +5,10 @@ import type { BattlerIndex } from "#enums/battler-index";
 import { PokemonType } from "#enums/pokemon-type";
 import { Stat } from "#enums/stat";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
-import { GameManagerHelper } from "#test/utils/helpers/game-manager-helper";
-import type { MoveHelper } from "#test/utils/helpers/move-helper";
+import { GameManagerHelper } from "#test/helpers/game-manager-helper";
+import type { MoveHelper } from "#test/helpers/move-helper";
+import { getEnumStr } from "#test/utils/string-utils";
 import { expect, type MockInstance, vi } from "vitest";
-import { getEnumStr } from "../string-utils";
 
 /** Helper to manage pokemon */
 export class FieldHelper extends GameManagerHelper {

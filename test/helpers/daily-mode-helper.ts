@@ -3,7 +3,7 @@ import { BattleStyle } from "#enums/battle-style";
 import { Button } from "#enums/buttons";
 import { UiMode } from "#enums/ui-mode";
 import { TitlePhase } from "#phases/title-phase";
-import { GameManagerHelper } from "#test/utils/helpers/game-manager-helper";
+import { GameManagerHelper } from "#test/helpers/game-manager-helper";
 import type { SaveSlotSelectUiHandler } from "#ui/save-slot-select-ui-handler";
 
 /**

@@ -1,6 +1,6 @@
 import { TitlePhase } from "#phases/title-phase";
+import { GameManagerHelper } from "#test/helpers/game-manager-helper";
 import type { GameManager } from "#test/utils/game-manager";
-import { GameManagerHelper } from "#test/utils/helpers/game-manager-helper";
 import type { SessionSaveData } from "#types/save-data";
 import { vi } from "vitest";
 

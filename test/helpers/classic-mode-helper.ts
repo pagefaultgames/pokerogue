@@ -7,8 +7,8 @@ import { Nature } from "#enums/nature";
 import type { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { SelectStarterPhase } from "#phases/select-starter-phase";
+import { GameManagerHelper } from "#test/helpers/game-manager-helper";
 import { generateStarters } from "#test/utils/game-manager-utils";
-import { GameManagerHelper } from "#test/utils/helpers/game-manager-helper";
 import type { IntClosedRange, TupleOf } from "type-fest";
 
 /**

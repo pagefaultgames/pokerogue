@@ -1,7 +1,7 @@
 import { PROMPT_HANDLER_COLOR } from "#constants/colors";
 import { UiMode } from "#enums/ui-mode";
+import { GameManagerHelper } from "#test/helpers/game-manager-helper";
 import type { GameManager } from "#test/utils/game-manager";
-import { GameManagerHelper } from "#test/utils/helpers/game-manager-helper";
 import { getEnumStr } from "#test/utils/string-utils";
 import type { PhaseString } from "#types/phase-types";
 import type { AwaitableUiHandler } from "#ui/handlers/awaitable-ui-handler";
