@@ -59,7 +59,6 @@ import { TitleUiHandler } from "#ui/title-ui-handler";
 import type { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { UnavailableModalUiHandler } from "#ui/unavailable-modal-ui-handler";
-import { executeIf } from "#utils/common";
 import i18next from "i18next";
 import { AdminUiHandler } from "./handlers/admin-ui-handler";
 import { RenameRunFormUiHandler } from "./handlers/rename-run-ui-handler";
@@ -560,7 +559,7 @@ export class UI extends Phaser.GameObjects.Container {
     if (this.mode === mode && !forceTransition) {
       return;
     }
-    const doSetMode = () => {
+    const doSetMode = async () => {
       if (clear) {
         this.getHandler().clear();
       }
@@ -574,7 +573,7 @@ export class UI extends Phaser.GameObjects.Container {
       if (touchControls) {
         touchControls.dataset.uiMode = UiMode[mode];
       }
-      this.getHandler().show(...args);
+      await this.getHandler().show(...args);
     };
 
     /** Determine whether the mode transition should use fading.
@@ -587,18 +586,17 @@ export class UI extends Phaser.GameObjects.Container {
         && allowsTransition(mode))
       || (chainMode && allowsTransition(mode))
     ) {
-      await this.fadeOut(250).then(() => {
-        globalScene.time.delayedCall(100, () => {
-          if (this.mode === mode) {
-            console.warn("UI mode changed to same as prior mode midway through setModeInternal call!", UiMode[mode]);
-          } else {
-            doSetMode();
-          }
-          this.fadeIn(250);
-        });
-      });
+      await this.fadeOut(250);
+      await new Promise<void>(res => globalScene.time.delayedCall(100, res));
+
+      if (this.mode === mode) {
+        console.warn("UI mode changed to same as prior mode midway through setModeInternal call!", UiMode[mode]);
+      } else {
+        await doSetMode();
+      }
+      this.fadeIn(250);
     } else {
-      doSetMode();
+      await doSetMode();
     }
   }
 
@@ -622,12 +620,7 @@ export class UI extends Phaser.GameObjects.Container {
   }
 
   /** Appends new mode to the chain, without clearing the previous one. */
-  setOverlayMode<M extends UiMode>(mode: M): HandlerShowArgs<M> extends [] ? Promise<void> : never;
-  setOverlayMode<M extends UiMode>(
-    mode: M,
-    ...args: HandlerShowArgs<M>
-  ): HandlerShowArgs<M> extends [] ? never : Promise<void>;
-  setOverlayMode<M extends UiMode>(mode: M, ...args: [...HandlerShowArgs<M>]): Promise<void> {
+  setOverlayMode<M extends UiMode>(mode: M, ...args: HandlerShowArgs<M>): Promise<void> {
     return this.setModeInternal(mode, { clear: false, forceTransition: false, chainMode: true }, ...args);
   }
 
@@ -643,48 +636,43 @@ export class UI extends Phaser.GameObjects.Container {
    * Note that modes are never cleared while adding them to the chain.
    * Fails if the mode chain is empty.
    */
-  revertMode(): Promise<boolean> {
-    return new Promise<boolean>(resolve => {
-      if (this.modeChain.length === 0) {
-        return resolve(false);
+  // TODO: Remove boolean return
+  async revertMode(): Promise<boolean> {
+    const nextMode = this.modeChain.pop();
+    if (nextMode == null) {
+      return false;
+    }
+
+    const lastMode = this.mode;
+
+    const doRevertMode = () => {
+      this.getHandler().clear();
+      this.mode = nextMode;
+      globalScene.updateGameInfo();
+      const touchControls = document.getElementById("touchControls");
+      if (touchControls) {
+        touchControls.dataset.uiMode = UiMode[this.mode];
       }
+    };
 
-      const lastMode = this.mode;
-
-      const doRevertMode = () => {
-        this.getHandler().clear();
-        this.mode = this.modeChain.pop()!;
-        globalScene.updateGameInfo();
-        const touchControls = document.getElementById("touchControls");
-        if (touchControls) {
-          touchControls.dataset.uiMode = UiMode[this.mode];
-        }
-        resolve(true);
-      };
-
-      if (allowsTransition(lastMode)) {
-        this.fadeOut(250).then(() => {
-          globalScene.time.delayedCall(100, () => {
-            doRevertMode();
-            this.fadeIn(250);
-          });
-        });
-      } else {
-        doRevertMode();
-      }
-    });
+    if (allowsTransition(lastMode)) {
+      await this.fadeOut(250);
+      await new Promise<void>(res => globalScene.time.delayedCall(100, res));
+      doRevertMode();
+      await this.fadeIn(250);
+    } else {
+      doRevertMode();
+    }
+    return true;
   }
 
   /**
    * Reverts modes one by one until the chain is empty
    */
-  revertModes(): Promise<void> {
-    return new Promise<void>(resolve => {
-      if (this?.modeChain?.length === 0) {
-        return resolve();
-      }
-      this.revertMode().then(success => executeIf(success, this.revertModes).then(() => resolve()));
-    });
+  async revertModes(): Promise<void> {
+    while (this.modeChain.length > 0) {
+      await this.revertMode();
+    }
   }
 
   public getModeChain(): UiMode[] {

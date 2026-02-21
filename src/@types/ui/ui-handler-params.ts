@@ -31,6 +31,8 @@ import type {
   TargetSelectCallback,
 } from "#ui/ui-types";
 
+// TODO: Make all handlers taking callbacks actually handle async functions
+
 // This is the same as OptionSelectConfig
 export interface OptionSelectUiHandlerParams {
   xOffset?: number;

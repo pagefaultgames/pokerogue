@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import type { Button } from "#enums/buttons";
 import type { UiMode } from "#enums/ui-mode";
+import type { Promisable } from "type-fest";
 
 /**
  * A basic abstract class to act as a holder and processor for UI elements.
@@ -22,10 +23,11 @@ export abstract class UiHandler {
   /**
    * Show the current handler.
    * @param args - The arguments taken by the current UI handler
+   * @returns A boolean or a Promise returning a boolean
    */
-  // TODO: Review if we can remove the boolean return
+  // TODO: Review if we can remove the boolean return and simply make this `void | Promise<void>`
   // biome-ignore lint/correctness/noUnusedFunctionParameters: Required to allow parameterized superclasses
-  public show(args?: object): boolean {
+  public show(args?: object): Promisable<boolean> {
     this.active = true;
 
     return true;
