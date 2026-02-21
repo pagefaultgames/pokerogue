@@ -14,6 +14,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
+import type { SpeciesTree } from "#types/biomes";
 import type { Mutable } from "#types/type-helpers";
 import { randSeedInt } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
@@ -5912,15 +5913,15 @@ export function initBiomes() {
   biomeDepths[BiomeId.END] = [Object.values(biomeDepths).map(d => d[0]).reduce((max: number, value: number) => Math.max(max, value), 0) + 1, 1];
 
   for (const biome of getEnumValues(BiomeId)) {
-    (biomePokemonPools[biome] as Mutable<typeof biomePokemonPools[number]>) = {};
+    (biomePokemonPools[biome] as Mutable<typeof biomePokemonPools[BiomeId]>) = {} as typeof biomePokemonPools[BiomeId];
     (biomeTrainerPools[biome] as Mutable<typeof biomeTrainerPools[number]>) = {};
 
     for (const tier of getEnumValues(BiomePoolTier)) {
-      (biomePokemonPools[biome][tier] as Mutable<typeof biomePokemonPools[number][number]>) = {};
+      (biomePokemonPools[biome][tier] as Mutable<typeof biomePokemonPools[BiomeId][BiomePoolTier]>) = {} as typeof biomePokemonPools[BiomeId][BiomePoolTier];
       (biomeTrainerPools[biome][tier] as Mutable<typeof biomeTrainerPools[number][number]>) = [];
 
       for (const tod of getEnumValues(TimeOfDay)) {
-        (biomePokemonPools[biome][tier][tod] as Mutable<typeof biomePokemonPools[number][number][number]>) = [];
+        (biomePokemonPools[biome][tier][tod] as Mutable<typeof biomePokemonPools[BiomeId][BiomePoolTier][TimeOfDay]>) = [];
       }
     }
   }
@@ -5995,17 +5996,16 @@ export function initBiomes() {
     }
   }
 
-  for (const b of Object.keys(biomePokemonPools)) {
-    for (const t of Object.keys(biomePokemonPools[b])) {
-      const tier = Number.parseInt(t) as BiomePoolTier;
-      for (const tod of Object.keys(biomePokemonPools[b][t])) {
-        const biomeTierTimePool = biomePokemonPools[b][t][tod];
+  for (const biomePool of Object.values(biomePokemonPools)) {
+    for (const [tierStr, timePool] of Object.entries(biomePool)) {
+      const tier = Number<BiomePoolTier>(tierStr);
+      for (const biomeTierTimePool of Object.values(timePool)) {
         for (let e = 0; e < biomeTierTimePool.length; e++) {
-          const entry = biomeTierTimePool[e];
+          const entry = biomeTierTimePool[e] as unknown as SpeciesId[];
           if (entry.length === 1) {
             biomeTierTimePool[e] = entry[0];
           } else {
-            const newEntry = {
+            const newEntry: Mutable<SpeciesTree> = {
               1: [entry[0]]
             };
             for (let s = 1; s < entry.length; s++) {

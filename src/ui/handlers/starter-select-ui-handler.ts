@@ -4312,6 +4312,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.tryUpdateValue();
   }
 
+  // TODO: Dedupe from pokedex
   updateStarterValueLabel(starter: StarterContainer): void {
     const speciesId = starter.species.speciesId;
     const baseStarterValue = speciesStarterCosts[speciesId];
@@ -4320,7 +4321,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
     const starterValue = globalScene.gameData.getSpeciesStarterValue(speciesId);
     starter.cost = starterValue;
-    let valueStr = starterValue.toString();
+    let valueStr: string = starterValue.toString();
     if (valueStr.startsWith("0.")) {
       valueStr = valueStr.slice(1);
     }
@@ -4341,7 +4342,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     starter.label.setColor(getTextColor(textStyle)).setShadowColor(getTextColor(textStyle, true));
   }
 
-  tryUpdateValue(add?: number, addingToParty?: boolean): boolean {
+  tryUpdateValue(add = 0, addingToParty?: boolean): boolean {
     const value = this.starterSpecies
       .map(s => s.generation)
       .reduce(
@@ -4349,10 +4350,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           (total += globalScene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId)),
         0,
       );
-    const newValue = value + (add || 0);
+    const newValue = value + add;
     const valueLimit = this.getValueLimit();
     const overLimit = newValue > valueLimit;
-    let newValueStr = newValue.toString();
+    let newValueStr: string = newValue.toString();
     if (newValueStr.startsWith("0.")) {
       newValueStr = newValueStr.slice(1);
     }

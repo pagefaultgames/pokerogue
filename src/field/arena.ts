@@ -36,7 +36,7 @@ import type { Move } from "#moves/move";
 import type { BiomeTierTrainerPools, PokemonPools } from "#types/biomes";
 import type { Constructor } from "#types/common";
 import type { RGBArray } from "#types/sprite-types";
-import type { AbstractConstructor } from "#types/type-helpers";
+import type { AbstractConstructor, Mutable } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
 import { NumberHolder, randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
@@ -418,12 +418,18 @@ export class Arena {
   public updatePoolsForTimeOfDay(): void {
     const timeOfDay = this.getTimeOfDay();
     if (timeOfDay !== this.lastTimeOfDay) {
-      this.pokemonPool = {};
-      for (const tier of Object.keys(biomePokemonPools[this.biomeId])) {
-        this.pokemonPool[tier] = Object.assign([], biomePokemonPools[this.biomeId][tier][TimeOfDay.ALL]).concat(
-          biomePokemonPools[this.biomeId][tier][timeOfDay],
-        );
-      }
+      (this.pokemonPool as Mutable<PokemonPools>) = Object.keys(biomePokemonPools[this.biomeId]).reduce(
+        (poolAcc, tier) => {
+          const tierNum = Number.parseInt(tier);
+          return {
+            ...poolAcc,
+            [tierNum]: Object.assign([], biomePokemonPools[this.biomeId][tierNum][TimeOfDay.ALL]).concat(
+              biomePokemonPools[this.biomeId][tierNum][timeOfDay],
+            ),
+          };
+        },
+        {} as Mutable<PokemonPools>,
+      );
       this.lastTimeOfDay = timeOfDay;
     }
   }

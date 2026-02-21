@@ -297,7 +297,7 @@ export class StatStageChangePhase extends PokemonPhase {
   getStatStageChangeMessages(stats: readonly BattleStat[], stages: number, relStages: number[]): string[] {
     const messages: string[] = [];
 
-    const relStageStatIndexes = {};
+    const relStageStatIndexes: Record<number, number[]> = {};
     for (let rl = 0; rl < relStages.length; rl++) {
       const relStage = relStages[rl];
       if (!relStageStatIndexes[relStage]) {

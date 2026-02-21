@@ -48,7 +48,7 @@ export function getDailyRunStarters(): StarterTuple {
 
       for (const cost of starterCosts) {
         const costSpecies = Object.keys(speciesStarterCosts)
-          .map(s => Number.parseInt(s) as SpeciesId) // TODO: Remove
+          .map(s => Number.parseInt(s))
           .filter(
             s =>
               speciesStarterCosts[s] === cost

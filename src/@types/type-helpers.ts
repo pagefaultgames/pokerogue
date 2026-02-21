@@ -3,7 +3,7 @@
  */
 
 import type { AbAttr } from "#abilities/ab-attrs";
-import type { IntClosedRange, NegativeInfinity, PositiveInfinity, TupleOf } from "type-fest";
+import type { IntClosedRange, IsEqual, NegativeInfinity, PositiveInfinity, TupleOf } from "type-fest";
 
 /**
  * Exactly matches the type of the argument, preventing adding additional properties.
@@ -118,6 +118,24 @@ export declare class Brander<B extends string | symbol> {
 }
 
 /**
+ * Helper to check whether a type is a literal primitive (as opposed to something like `string` or `symbol`).
+ */
+export type IsPrimitiveLiteral<T> =
+  IsEqual<T, number> extends true
+    ? false
+    : IsEqual<T, string> extends true
+      ? false
+      : IsEqual<T, symbol> extends true
+        ? false
+        : IsEqual<T, boolean> extends true
+          ? false
+          : IsEqual<T, bigint> extends true
+            ? false
+            : IsEqual<T, object> extends true
+              ? false
+              : true;
+
+/**
  * Negate a number, converting its sign from positive to negative or vice versa.
  * @typeParam N - The number to negate
  * @privateRemarks
@@ -164,3 +182,15 @@ export type TupleRange<Min extends number, Max extends number, T> = IntClosedRan
 > extends infer Lengths extends number
   ? TupleOf<Lengths, T>
   : never;
+
+/**
+ * Internal type helper to forcibly prompt TypeScript's language service to prefer keeping a type opaque during hover expansion.
+ *
+ * Used for clarity of intent when preventing distributive conditional types from expanding into their full definitions
+ * while still allowing them to distribute over unions as normal.
+ * Is otherwise equivalent to {@linkcode NonNullable}.
+ * @internal
+ * @privateRemarks
+ * Any uses of this type should be double-checked to ensure that IDE hover tooltips are actually improved by its addition.
+ */
+export type PreventHoverExpansion<T> = T & {};

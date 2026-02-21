@@ -11,21 +11,16 @@ export interface BiomeLinks {
 export interface BiomeDepths {
   [key: number]: [number, number];
 }
-interface SpeciesTree {
-  readonly [key: number]: SpeciesId[];
+
+// TODO: This field is assigned dynamically at runtime inside `BiomePokemonPools`.
+// This is abhorrent and should be revisited.
+export interface SpeciesTree {
+  readonly [level: number]: SpeciesId[];
 }
 
-export interface PokemonPools {
-  readonly [key: number]: (SpeciesId | SpeciesTree)[];
-}
+export type PokemonPools = Readonly<Record<TimeOfDay, (SpeciesId | SpeciesTree)[]>>;
 
-interface BiomeTierPokemonPools {
-  readonly [key: number]: PokemonPools;
-}
-
-export interface BiomePokemonPools {
-  readonly [key: number]: BiomeTierPokemonPools;
-}
+export type BiomePokemonPools = Readonly<Record<BiomeId, Readonly<Record<BiomePoolTier, PokemonPools>>>>;
 
 export interface BiomeTierTod {
   biome: BiomeId;

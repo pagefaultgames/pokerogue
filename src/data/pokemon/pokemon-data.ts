@@ -246,7 +246,7 @@ export class PokemonSummonData {
       abilitiesApplied: [...this.abilitiesApplied.values()],
     };
     // Replace `null` with `undefined`, as `undefined` never gets serialized
-    for (const [key, value] of Object.entries(t)) {
+    for (const [key, value] of Object.entries<unknown>(t)) {
       if (value === null) {
         t[key] = undefined;
       }
