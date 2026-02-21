@@ -2,8 +2,8 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { PokemonType } from "#enums/pokemon-type";
 import type { Pokemon } from "#field/pokemon";
 import { stringifyEnumArray } from "#test/utils/string-utils";
+import { isPokemonInstance, receivedStr } from "#test/utils/test-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
-import { isPokemonInstance, receivedStr } from "../test-utils";
 
 /**
  * Options type for {@linkcode toHaveTypes}.

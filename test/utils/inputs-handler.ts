@@ -98,7 +98,7 @@ class Fakepad extends Phaser.Input.Gamepad.Gamepad {
 
 class FakeMobile {
   constructor() {
-    const fakeMobilePage = fs.readFileSync("././test/test-utils/fakeMobile.html", { encoding: "utf8", flag: "r" });
+    const fakeMobilePage = fs.readFileSync("./test/utils/fakeMobile.html", { encoding: "utf8", flag: "r" });
     const dom = new JSDOM(fakeMobilePage);
     Object.defineProperty(window, "document", {
       value: dom.window.document,

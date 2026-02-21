@@ -158,10 +158,10 @@ a full list of supported arguments can be found on [Vitest's website](https://vi
 
 ## 💾 Development Save File
 > Some issues may require you to have unlocks on your save file which go beyond normal overrides.
-> For this reason, the repository contains a [save file](test/test-utils/saves/everything.psrv) with _everything_ unlocked (it may also contain things that are not legitimately obtainable).
+> For this reason, the repository contains a [save file](test/utils/saves/everything.psrv) with _everything_ unlocked (it may also contain things that are not legitimately obtainable).
 
 1. Start the game up locally and navigate to `Menu -> Manage Data -> Import Data`
-2. Select [everything.prsv](test/test-utils/saves/everything.prsv) (`test/test-utils/saves/everything.prsv`) and confirm.
+2. Select [everything.prsv](test/utils/saves/everything.prsv) (`test/utils/saves/everything.prsv`) and confirm.
 
 ## ✅ Submitting a Pull Request
 

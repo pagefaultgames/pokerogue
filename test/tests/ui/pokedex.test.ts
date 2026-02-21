@@ -190,7 +190,7 @@ describe("UI - Pokedex", () => {
   // #region Filter Tests
 
   it("should filter to show only the pokemon with an ability when filtering by ability", async () => {
-    // await game.importData("test/test-utils/saves/everything.prsv");
+    // await game.importData("test/utils/saves/everything.prsv");
     const pokedexHandler = await runToOpenPokedex();
 
     // Get name of overgrow
@@ -288,7 +288,7 @@ describe("UI - Pokedex", () => {
 
   it("filtering for unlockable cost reduction only shows species with sufficient candies", async () => {
     // load the save file
-    await game.importData("./test/test-utils/saves/data_pokedex_tests.prsv");
+    await game.importData("./test/utils/saves/data_pokedex_tests.prsv");
     const pokedexHandler = await runToOpenPokedex();
 
     const filter = pokedexHandler["filterBar"].getFilter(DropDownColumn.UNLOCKS);
@@ -315,7 +315,7 @@ describe("UI - Pokedex", () => {
   });
 
   it("filtering by passive unlocked only shows species that have their passive", async () => {
-    await game.importData("./test/test-utils/saves/data_pokedex_tests.prsv");
+    await game.importData("./test/utils/saves/data_pokedex_tests.prsv");
     const pokedexHandler = await runToOpenPokedex();
 
     const filter = pokedexHandler["filterBar"].getFilter(DropDownColumn.UNLOCKS);
@@ -330,7 +330,7 @@ describe("UI - Pokedex", () => {
   });
 
   it("filtering for pokemon that can unlock passive shows only species with sufficient candies", async () => {
-    await game.importData("./test/test-utils/saves/data_pokedex_tests.prsv");
+    await game.importData("./test/utils/saves/data_pokedex_tests.prsv");
     const pokedexHandler = await runToOpenPokedex();
 
     const filter = pokedexHandler["filterBar"].getFilter(DropDownColumn.UNLOCKS);
@@ -356,7 +356,7 @@ describe("UI - Pokedex", () => {
   });
 
   it("filtering for pokemon that have any cost reduction shows only the species that have unlocked a cost reduction", async () => {
-    await game.importData("./test/test-utils/saves/data_pokedex_tests.prsv");
+    await game.importData("./test/utils/saves/data_pokedex_tests.prsv");
     const pokedexHandler = await runToOpenPokedex();
 
     const expectedPokemon = new Set([SpeciesId.TREECKO, SpeciesId.CYNDAQUIL, SpeciesId.TOTODILE]);
@@ -373,7 +373,7 @@ describe("UI - Pokedex", () => {
   });
 
   it("filtering for pokemon that have a single cost reduction shows only the species that have unlocked a single cost reduction", async () => {
-    await game.importData("./test/test-utils/saves/data_pokedex_tests.prsv");
+    await game.importData("./test/utils/saves/data_pokedex_tests.prsv");
     const pokedexHandler = await runToOpenPokedex();
 
     const expectedPokemon = new Set([SpeciesId.CYNDAQUIL, SpeciesId.TOTODILE]);
@@ -391,7 +391,7 @@ describe("UI - Pokedex", () => {
   });
 
   it("filtering for pokemon that have two cost reductions sorts only shows the species that have unlocked both cost reductions", async () => {
-    await game.importData("./test/test-utils/saves/data_pokedex_tests.prsv");
+    await game.importData("./test/utils/saves/data_pokedex_tests.prsv");
     const pokedexHandler = await runToOpenPokedex();
 
     const filter = pokedexHandler["filterBar"].getFilter(DropDownColumn.UNLOCKS);
@@ -408,7 +408,7 @@ describe("UI - Pokedex", () => {
   });
 
   it("filtering by shiny status shows the caught pokemon with the selected shiny tier", async () => {
-    await game.importData("./test/test-utils/saves/data_pokedex_tests.prsv");
+    await game.importData("./test/utils/saves/data_pokedex_tests.prsv");
     const pokedexHandler = await runToOpenPokedex();
     const filter = pokedexHandler["filterBar"].getFilter(DropDownColumn.CAUGHT);
     filter.toggleOptionState(3);
@@ -474,7 +474,7 @@ describe("UI - Pokedex", () => {
   // #region Pokedex Pages Tests
 
   it("should show caught battle form as caught", async () => {
-    await game.importData("./test/test-utils/saves/data_pokedex_tests_v2.prsv");
+    await game.importData("./test/utils/saves/data_pokedex_tests_v2.prsv");
     const pageHandler = await runToPokedexPage(getPokemonSpecies(SpeciesId.VENUSAUR), { form: 1 });
 
     expect(pageHandler["species"].speciesId).toEqual(SpeciesId.VENUSAUR);
@@ -487,7 +487,7 @@ describe("UI - Pokedex", () => {
 
   // TODO: check tint of the sprite
   it("should show uncaught battle form as seen", async () => {
-    await game.importData("./test/test-utils/saves/data_pokedex_tests_v2.prsv");
+    await game.importData("./test/utils/saves/data_pokedex_tests_v2.prsv");
     const pageHandler = await runToPokedexPage(getPokemonSpecies(SpeciesId.VENUSAUR), { form: 2 });
 
     expect(pageHandler["species"].speciesId).toEqual(SpeciesId.VENUSAUR);

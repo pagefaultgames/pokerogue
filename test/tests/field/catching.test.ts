@@ -101,13 +101,13 @@ describe("Throwing balls in classic", () => {
   });
 
   it("throwing ball at two previously caught mon in end biome", async () => {
-    await game.importData("./test/test-utils/saves/everything.prsv");
+    await game.importData("./test/utils/saves/everything.prsv");
     await runPokeballTest(game, PokeballType.MASTER_BALL, "success");
   });
 
   it("throwing ball at two mons in end biome", async () => {
     game.override.battleStyle("double");
-    await game.importData("./test/test-utils/saves/everything.prsv");
+    await game.importData("./test/utils/saves/everything.prsv");
     await runPokeballTest(game, PokeballType.MASTER_BALL, "battle:noPokeballMulti");
   });
 
@@ -117,13 +117,13 @@ describe("Throwing balls in classic", () => {
   });
 
   it("throwing rogue ball at final boss with full dex", async () => {
-    await game.importData("./test/test-utils/saves/everything.prsv");
+    await game.importData("./test/utils/saves/everything.prsv");
     game.override.startingWave(200);
     await runPokeballTest(game, PokeballType.ROGUE_BALL, "battle:noPokeballForceFinalBossCatchable");
   });
 
   it("throwing master ball at final boss with full dex", async () => {
-    await game.importData("./test/test-utils/saves/everything.prsv");
+    await game.importData("./test/utils/saves/everything.prsv");
     game.override.startingWave(200);
     await runPokeballTest(game, PokeballType.MASTER_BALL, "success");
   });
@@ -157,7 +157,7 @@ describe("Throwing balls in fresh start challenge", () => {
   });
 
   it("throwing ball at previously caught mon in end biome", async () => {
-    await game.importData("./test/test-utils/saves/everything.prsv");
+    await game.importData("./test/utils/saves/everything.prsv");
     await runPokeballTest(game, PokeballType.MASTER_BALL, "success", "challenge");
   });
 
@@ -167,14 +167,14 @@ describe("Throwing balls in fresh start challenge", () => {
   });
 
   it("throwing rogue ball at final boss with full dex", async () => {
-    await game.importData("./test/test-utils/saves/everything.prsv");
+    await game.importData("./test/utils/saves/everything.prsv");
     game.override.startingWave(200);
     await runPokeballTest(game, PokeballType.ROGUE_BALL, "battle:noPokeballForceFinalBossCatchable", "challenge");
   });
 
   // If a challenge is active, even if the dex is complete we still need to weaken the final boss to master ball it
   it("throwing ball at final boss with full dex", async () => {
-    await game.importData("./test/test-utils/saves/everything.prsv");
+    await game.importData("./test/utils/saves/everything.prsv");
     game.override.startingWave(200);
     await runPokeballTest(game, PokeballType.MASTER_BALL, "battle:noPokeballForceFinalBossCatchable", "challenge");
   });
@@ -204,12 +204,12 @@ describe("Throwing balls in full fresh start challenge", () => {
 
   // Paradox mons and final boss can NEVER be caught in the full fresh start challenge
   it("throwing ball at previously caught mon in end biome", async () => {
-    await game.importData("./test/test-utils/saves/everything.prsv");
+    await game.importData("./test/utils/saves/everything.prsv");
     await runPokeballTest(game, PokeballType.MASTER_BALL, "battle:noPokeballForce", "challenge");
   });
 
   it("throwing ball at final boss with full dex", async () => {
-    await game.importData("./test/test-utils/saves/everything.prsv");
+    await game.importData("./test/utils/saves/everything.prsv");
     game.override.startingWave(200);
     await runPokeballTest(game, PokeballType.MASTER_BALL, "battle:noPokeballForceFinalBoss", "challenge");
   });

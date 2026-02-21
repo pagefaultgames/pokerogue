@@ -20,7 +20,7 @@ describe("Manaphy Eggs", () => {
   });
 
   beforeEach(async () => {
-    await game.importData("./test/test-utils/saves/everything.prsv");
+    await game.importData("./test/utils/saves/everything.prsv");
 
     /**
      * In our tests, we will perform an "RNG sweep" by letting rngSweepProgress

@@ -37,7 +37,7 @@ describe("{{description}}", () => {
       .enemyLevel(100);
   });
 
-  // Find more awesome utility functions inside `#test/test-utils`!
+  // Find more awesome utility functions inside `#test/utils`!
   it("should do XYZ", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
