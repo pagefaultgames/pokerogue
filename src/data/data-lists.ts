@@ -5,10 +5,7 @@ import type { BiomeId } from "#enums/biome-id";
 import type { ModifierTypes } from "#modifiers/modifier-type";
 import type { Move } from "#moves/move";
 import type { BiomeDepths, CatchableSpecies } from "#types/biomes";
-
-interface DataMap<K, V> extends Map<K, V> {
-  get(key: K): V;
-}
+import type { DataMap } from "#types/common";
 
 export const allAbilities: readonly Ability[] = [];
 export const allMoves: readonly Move[] = [];
