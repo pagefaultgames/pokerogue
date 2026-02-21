@@ -8,7 +8,7 @@ import { SpeciesId } from "#enums/species-id";
  * If multiple moves are in the map, those that the species can learn will be selected with equal probability.
  */
 export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]>> = {
-// These moves are vitally important due to form interactions so they're listed separately
+  // These moves are vitally important due to form interactions so they're listed separately
   [SpeciesId.CASTFORM]: MoveId.WEATHER_BALL,
   [SpeciesId.ORICORIO]: MoveId.REVELATION_DANCE,
   [SpeciesId.PALDEA_TAUROS]: MoveId.RAGING_BULL,
@@ -110,7 +110,7 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
   [SpeciesId.GALAR_ARTICUNO]: MoveId.FREEZING_GLARE,
   [SpeciesId.GALAR_ZAPDOS]: MoveId.THUNDEROUS_KICK,
   [SpeciesId.GALAR_MOLTRES]: MoveId.FIERY_WRATH,
-  
+
   // Gen 4 Legends
   [SpeciesId.UXIE]: MoveId.MYSTICAL_POWER,
   [SpeciesId.AZELF]: MoveId.MYSTICAL_POWER,
@@ -178,7 +178,7 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
   [SpeciesId.TOXAPEX]: MoveId.BANEFUL_BUNKER,
   [SpeciesId.ARIADOS]: MoveId.TOXIC_THREAD,
   [SpeciesId.BLISSEY]: MoveId.SOFT_BOILED,
-  [SpeciesId.MEDICHAM]: [MoveId.ZEN_HEADBUTT, MoveId.PSYCHO_CUT], // Avoids special moves on level 
+  [SpeciesId.MEDICHAM]: [MoveId.ZEN_HEADBUTT, MoveId.PSYCHO_CUT], // Avoids special moves on level
   [SpeciesId.LILLIGANT]: MoveId.QUIVER_DANCE,
   [SpeciesId.HISUI_LILLIGANT]: MoveId.VICTORY_DANCE,
   [SpeciesId.PALOSSAND]: MoveId.SHORE_UP,
@@ -210,7 +210,6 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
   [SpeciesId.MISMAGIUS]: MoveId.SHADOW_BALL,
   // Avoids dazzling gleam possibility
   [SpeciesId.GRANBULL]: MoveId.PLAY_ROUGH,
-
 };
 export const FORCED_RIVAL_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]>> = {
   [SpeciesId.UNFEZANT]: MoveId.SLASH,

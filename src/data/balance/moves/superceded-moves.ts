@@ -580,13 +580,7 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
     MoveId.SMACK_DOWN,
     MoveId.MIGHTY_CLEAVE,
   ],
-  [MoveId.ROUND]: [
-    MoveId.TRI_ATTACK,
-    MoveId.UPROAR,
-    MoveId.HYPER_VOICE,
-    MoveId.TECHNO_BLAST,
-    MoveId.BOOMBURST,
-  ],
+  [MoveId.ROUND]: [MoveId.TRI_ATTACK, MoveId.UPROAR, MoveId.HYPER_VOICE, MoveId.TECHNO_BLAST, MoveId.BOOMBURST],
   [MoveId.SCRATCH]: [
     MoveId.VISE_GRIP,
     MoveId.CUT,

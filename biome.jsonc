@@ -16,7 +16,13 @@
     "enabled": true,
     "useEditorconfig": true,
     "indentStyle": "space",
-    "includes": ["**", "!src/data/balance/**"], // TODO: enable formatting of balance folder
+    "includes": [
+      "**",
+      "!src/data/balance/**",
+      "src/data/balance/moves/forbidden-moves.ts",
+      "src/data/balance/moves/signature-moves.ts",
+      "src/data/balance/moves/superceded-moves.ts"
+    ], // TODO: enable formatting of balance folder
     "lineWidth": 120
   },
   "files": {
