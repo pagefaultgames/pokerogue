@@ -8,7 +8,7 @@ import { SpeciesId } from "#enums/species-id";
 import { EFFECTIVE_STATS } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
-import { GameManager } from "#test/test-utils/game-manager";
+import { GameManager } from "#test/utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

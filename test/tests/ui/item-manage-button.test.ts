@@ -4,7 +4,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import type { Pokemon } from "#field/pokemon";
-import { GameManager } from "#test/test-utils/game-manager";
+import { GameManager } from "#test/utils/game-manager";
 import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { type PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import Phaser from "phaser";

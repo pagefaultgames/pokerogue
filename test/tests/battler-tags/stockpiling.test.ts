@@ -4,7 +4,7 @@ import { PokemonSummonData } from "#data/pokemon-data";
 import { Stat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
 import { StatStageChangePhase } from "#phases/stat-stage-change-phase";
-import { GameManager } from "#test/test-utils/game-manager";
+import { GameManager } from "#test/utils/game-manager";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 beforeEach(() => {

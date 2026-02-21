@@ -27,8 +27,8 @@ import {
   runMysteryEncounterToEnd,
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/mystery-encounter/encounter-test-utils";
-import { GameManager } from "#test/test-utils/game-manager";
-import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
+import { GameManager } from "#test/utils/game-manager";
+import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import type { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
 import type { PartyUiHandler } from "#ui/party-ui-handler";
 import { getPokemonSpecies } from "#utils/pokemon-utils";

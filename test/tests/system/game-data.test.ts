@@ -3,7 +3,7 @@ import * as account from "#app/account";
 import * as appConstants from "#constants/app-constants";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { GameManager } from "#test/test-utils/game-manager";
+import { GameManager } from "#test/utils/game-manager";
 import type { SessionSaveData } from "#types/save-data";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

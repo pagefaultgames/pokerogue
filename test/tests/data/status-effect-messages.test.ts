@@ -6,7 +6,7 @@ import {
   getStatusEffectOverlapText,
 } from "#data/status-effect";
 import { StatusEffect } from "#enums/status-effect";
-import { mockI18next } from "#test/test-utils/test-utils";
+import { mockI18next } from "#test/utils/test-utils";
 import { beforeEach, describe, expect, it } from "vitest";
 
 describe("Status Effect Messages", () => {

@@ -1,6 +1,6 @@
 import { PokerogueSavedataApi } from "#api/pokerogue-savedata-api";
-import { initServerForApiTests } from "#test/test-utils/test-file-initialization";
-import { getApiBaseUrl } from "#test/test-utils/test-utils";
+import { initServerForApiTests } from "#test/utils/test-file-initialization";
+import { getApiBaseUrl } from "#test/utils/test-utils";
 import type { UpdateAllSavedataRequest } from "#types/api";
 import { HttpResponse, http } from "msw";
 import type { SetupServerApi } from "msw/node";

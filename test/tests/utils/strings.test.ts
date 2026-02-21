@@ -1,4 +1,4 @@
-import { stringifyEnumArray } from "#test/test-utils/string-utils";
+import { stringifyEnumArray } from "#test/utils/string-utils";
 import type { EnumOrObject } from "#types/enum-types";
 import { splitWords } from "#utils/strings";
 import { describe, expect, it } from "vitest";
