@@ -119,7 +119,7 @@ describe("Fight or Flight - Mystery Encounter", () => {
       expect(game).toBeAtPhase("SelectModifierPhase");
       await game.phaseInterceptor.to("SelectModifierPhase");
 
-      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
+      expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
 
       const modifierSelectHandler = scene.ui.handlers.find(
         h => h instanceof ModifierSelectUiHandler,
@@ -179,7 +179,7 @@ describe("Fight or Flight - Mystery Encounter", () => {
       await game.phaseInterceptor.to("SelectModifierPhase", false);
       expect(game).toBeAtPhase("SelectModifierPhase");
       await game.phaseInterceptor.to("SelectModifierPhase");
-      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
+      expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
 
       const modifierSelectHandler = scene.ui.handlers.find(
         h => h instanceof ModifierSelectUiHandler,

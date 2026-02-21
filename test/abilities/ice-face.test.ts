@@ -55,12 +55,12 @@ describe("Abilities - Ice Face", () => {
 
     // Second hit
     await game.phaseInterceptor.to("MoveEffectPhase");
-    expect(eiscue.hp).lessThan(eiscue.getMaxHp());
+    expect(eiscue.hp).toBeLessThan(eiscue.getMaxHp());
     expect(eiscue.formIndex).toBe(noiceForm);
 
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(eiscue.hp).lessThan(eiscue.getMaxHp());
+    expect(eiscue.hp).toBeLessThan(eiscue.getMaxHp());
     expect(eiscue.formIndex).toBe(noiceForm);
   });
 

@@ -76,6 +76,110 @@ declare module "vitest" {
      * ```
      */
     not: NegativeAssertion<T>;
+
+    // enforce consistent style by banning chai assertions at a type level (except `not` which is also in jest).
+    // NB: We cannot place these in a nice interface since TS will complain about `Assertion` extending 2 interfaces with clashing types.
+    // We also cannot make these anything other than `never` as TS will error about incompatible types (which prevents any custom error messages)
+
+    // LanguageChains
+    to: never;
+    be: never;
+    been: never;
+    is: never;
+    that: never;
+    which: never;
+    and: never;
+    has: never;
+    have: never;
+    with: never;
+    at: never;
+    of: never;
+    same: never;
+    but: never;
+    does: never;
+
+    // NumericComparison
+    above: never;
+    gt: never;
+    greaterThan: never;
+    least: never;
+    gte: never;
+    greaterThanOrEqual: never;
+    below: never;
+    lt: never;
+    lessThan: never;
+    most: never;
+    lte: never;
+    lessThanOrEqual: never;
+    within: never;
+
+    // TypeComparison
+    instanceof: never;
+    instanceOf: never;
+
+    // Assertion properties
+    deep: never;
+    ordered: never;
+    nested: never;
+    own: never;
+    any: never;
+    all: never;
+    a: never;
+    an: never;
+    include: never;
+    includes: never;
+    contain: never;
+    contains: never;
+    ok: never;
+    true: never;
+    false: never;
+    null: never;
+    undefined: never;
+    NaN: never;
+    exist: never;
+    empty: never;
+    arguments: never;
+    Arguments: never;
+    finite: never;
+    equal: never;
+    equals: never;
+    eq: never;
+    eql: never;
+    eqls: never;
+    containSubset: never;
+    property: never;
+    ownProperty: never;
+    haveOwnProperty: never;
+    ownPropertyDescriptor: never;
+    haveOwnPropertyDescriptor: never;
+    length: never;
+    lengthOf: never;
+    match: never;
+    matches: never;
+    string: never;
+    keys: never;
+    key: never;
+    throw: never;
+    throws: never;
+    Throw: never;
+    respondTo: never;
+    respondsTo: never;
+    itself: never;
+    satisfy: never;
+    satisfies: never;
+    closeTo: never;
+    approximately: never;
+    members: never;
+    increase: never;
+    increases: never;
+    decrease: never;
+    decreases: never;
+    change: never;
+    changes: never;
+    extensible: never;
+    sealed: never;
+    frozen: never;
+    oneOf: never;
   }
 
   type NegativeAssertion<T> = Assertion<T, true>;

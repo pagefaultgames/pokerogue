@@ -35,8 +35,8 @@ describe.todo("Abilities - Illusion", () => {
     const zoroark = game.field.getPlayerPokemon();
     const zorua = game.field.getEnemyPokemon();
 
-    expect(!!zoroark.summonData.illusion).equals(true);
-    expect(!!zorua.summonData.illusion).equals(true);
+    expect(!!zoroark.summonData.illusion).toBe(true);
+    expect(!!zorua.summonData.illusion).toBe(true);
   });
 
   it("break after receiving damaging move", async () => {
@@ -47,8 +47,8 @@ describe.todo("Abilities - Illusion", () => {
 
     const zorua = game.field.getEnemyPokemon();
 
-    expect(!!zorua.summonData.illusion).equals(false);
-    expect(zorua.name).equals("Zorua");
+    expect(!!zorua.summonData.illusion).toBe(false);
+    expect(zorua.name).toBe("Zorua");
   });
 
   it("break after getting ability changed", async () => {
@@ -59,7 +59,7 @@ describe.todo("Abilities - Illusion", () => {
 
     const zorua = game.field.getEnemyPokemon();
 
-    expect(!!zorua.summonData.illusion).equals(false);
+    expect(!!zorua.summonData.illusion).toBe(false);
   });
 
   it("breaks with neutralizing gas", async () => {
@@ -68,7 +68,7 @@ describe.todo("Abilities - Illusion", () => {
 
     const zorua = game.field.getEnemyPokemon();
 
-    expect(!!zorua.summonData.illusion).equals(false);
+    expect(!!zorua.summonData.illusion).toBe(false);
   });
 
   it("does not activate if neutralizing gas is active", async () => {
@@ -105,7 +105,7 @@ describe.todo("Abilities - Illusion", () => {
       move: psychic,
       useIllusion: true,
     });
-    expect(psychicEffectiveness).above(flameThrowerEffectiveness);
+    expect(psychicEffectiveness).toBeGreaterThan(flameThrowerEffectiveness);
   });
 
   it("should not break from indirect damage from status, weather or recoil", async () => {
@@ -118,7 +118,7 @@ describe.todo("Abilities - Illusion", () => {
     await game.toEndOfTurn();
 
     const zoroark = game.field.getPlayerPokemon();
-    expect(!!zoroark.summonData.illusion).equals(true);
+    expect(!!zoroark.summonData.illusion).toBe(true);
   });
 
   it("copies the the name, nickname, gender, shininess, and pokeball from the illusion source", async () => {
@@ -137,11 +137,11 @@ describe.todo("Abilities - Illusion", () => {
 
     const zoroark = game.field.getPlayerPokemon();
 
-    expect(zoroark.summonData.illusion?.name).equals("Axew");
-    expect(zoroark.getNameToRender()).equals("axew nickname");
-    expect(zoroark.getGender(false, true)).equals(Gender.FEMALE);
-    expect(zoroark.isShiny(true)).equals(true);
-    expect(zoroark.getPokeball(true)).equals(PokeballType.GREAT_BALL);
+    expect(zoroark.summonData.illusion?.name).toBe("Axew");
+    expect(zoroark.getNameToRender()).toBe("axew nickname");
+    expect(zoroark.getGender(false, true)).toBe(Gender.FEMALE);
+    expect(zoroark.isShiny(true)).toBe(true);
+    expect(zoroark.getPokeball(true)).toBe(PokeballType.GREAT_BALL);
   });
 
   it("breaks when suppressed", async () => {

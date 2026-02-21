@@ -105,6 +105,6 @@ describe("Abilities - Wind Rider", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(shiftry.getStatStage(Stat.ATK)).toBe(0);
-    expect(shiftry.hp).lessThan(shiftry.getMaxHp());
+    expect(shiftry.hp).toBeLessThan(shiftry.getMaxHp());
   });
 });

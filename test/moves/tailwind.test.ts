@@ -35,8 +35,8 @@ describe("Moves - Tailwind", () => {
     const magikarpSpd = magikarp.getStat(Stat.SPD);
     const meowthSpd = meowth.getStat(Stat.SPD);
 
-    expect(magikarp.getEffectiveStat(Stat.SPD)).equal(magikarpSpd);
-    expect(meowth.getEffectiveStat(Stat.SPD)).equal(meowthSpd);
+    expect(magikarp.getEffectiveStat(Stat.SPD)).toBe(magikarpSpd);
+    expect(meowth.getEffectiveStat(Stat.SPD)).toBe(meowthSpd);
 
     game.move.select(MoveId.TAILWIND);
     game.move.select(MoveId.SPLASH, 1);
@@ -82,8 +82,8 @@ describe("Moves - Tailwind", () => {
     const allySpd = ally.getStat(Stat.SPD);
     const enemySpd = enemy.getStat(Stat.SPD);
 
-    expect(ally.getEffectiveStat(Stat.SPD)).equal(allySpd);
-    expect(enemy.getEffectiveStat(Stat.SPD)).equal(enemySpd);
+    expect(ally.getEffectiveStat(Stat.SPD)).toBe(allySpd);
+    expect(enemy.getEffectiveStat(Stat.SPD)).toBe(enemySpd);
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeUndefined();
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.ENEMY)).toBeUndefined();
 
@@ -92,7 +92,7 @@ describe("Moves - Tailwind", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(ally.getEffectiveStat(Stat.SPD)).toBe(allySpd * 2);
-    expect(enemy.getEffectiveStat(Stat.SPD)).equal(enemySpd);
+    expect(enemy.getEffectiveStat(Stat.SPD)).toBe(enemySpd);
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeDefined();
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.ENEMY)).toBeUndefined();
   });
