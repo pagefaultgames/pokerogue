@@ -400,14 +400,8 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
     }
   }
 
-  /**
-   * Show the UI with the provided arguments.
-   *
-   * @param args - Arguments to be passed to the show method.
-   * @returns `true` if successful.
-   */
-  show(args: any[]): boolean {
-    super.show(args);
+  show(): boolean {
+    super.show();
 
     this.updateNavigationDisplay();
     NavigationManager.getInstance().updateIcons();

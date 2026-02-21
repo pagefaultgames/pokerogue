@@ -21,9 +21,7 @@ import type { EnemyPokemon } from "#field/pokemon";
 import { PokemonHeldItemModifier } from "#modifiers/modifier";
 import { PokemonPhase } from "#phases/pokemon-phase";
 import { achvs } from "#system/achv";
-import type { PartyOption } from "#ui/party-ui-handler";
-import { PartyUiMode } from "#ui/party-ui-handler";
-import { SummaryUiMode } from "#ui/summary-ui-handler";
+import { type PartyOption, PartyUiMode, SummaryUiMode } from "#ui/ui-types";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder } from "#utils/common";
 import i18next from "i18next";
@@ -325,9 +323,8 @@ export class AttemptCapturePhase extends PokemonPhase {
                 null,
                 () => {
                   globalScene.pokemonInfoContainer.makeRoomForConfirmUi(1, true);
-                  globalScene.ui.setMode(
-                    UiMode.CONFIRM,
-                    () => {
+                  globalScene.ui.setMode(UiMode.CONFIRM, {
+                    onSummary: () => {
                       const newPokemon = globalScene.addPlayerPokemon(
                         pokemon.species,
                         pokemon.level,
@@ -340,45 +337,40 @@ export class AttemptCapturePhase extends PokemonPhase {
                         pokemon.nature,
                         pokemon,
                       );
-                      globalScene.ui.setMode(
-                        UiMode.SUMMARY,
-                        newPokemon,
-                        0,
-                        SummaryUiMode.DEFAULT,
-                        () => {
+                      globalScene.ui.setMode(UiMode.SUMMARY, {
+                        pokemon: newPokemon,
+                        startPage: 0,
+                        uiMode: SummaryUiMode.DEFAULT,
+                        selectCallback: () => {
                           globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
                             promptRelease();
                           });
                         },
-                        false,
-                      );
+                        player: false,
+                      });
                     },
-                    () => {
+                    onPokedex: () => {
                       const attributes = {
                         shiny: pokemon.shiny,
                         variant: pokemon.variant,
                         form: pokemon.formIndex,
                         female: pokemon.gender === Gender.FEMALE,
                       };
-                      globalScene.ui.setOverlayMode(
-                        UiMode.POKEDEX_PAGE,
-                        pokemon.species,
-                        attributes,
-                        null,
-                        null,
-                        () => {
+                      globalScene.ui.setOverlayMode(UiMode.POKEDEX_PAGE, {
+                        species: pokemon.species,
+                        savedStarterAttributes: attributes,
+                        exitCallback: () => {
                           globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
                             promptRelease();
                           });
                         },
-                      );
+                      });
                     },
-                    () => {
-                      globalScene.ui.setMode(
-                        UiMode.PARTY,
-                        PartyUiMode.RELEASE,
-                        this.fieldIndex,
-                        (slotIndex: number, _option: PartyOption) => {
+                    onYes: () => {
+                      globalScene.ui.setMode(UiMode.PARTY, {
+                        partyUiMode: PartyUiMode.RELEASE,
+                        fieldIndex: this.fieldIndex,
+                        selectCallback: (slotIndex: number, _option: PartyOption) => {
                           globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
                             if (slotIndex < 6) {
                               addToParty(slotIndex);
@@ -387,16 +379,15 @@ export class AttemptCapturePhase extends PokemonPhase {
                             }
                           });
                         },
-                      );
+                      });
                     },
-                    () => {
+                    onNo: () => {
                       globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
                         removePokemon();
                         end();
                       });
                     },
-                    "fullParty",
-                  );
+                  });
                 },
               );
             };

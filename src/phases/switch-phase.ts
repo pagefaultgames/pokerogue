@@ -2,7 +2,8 @@ import { globalScene } from "#app/global-scene";
 import { SwitchType } from "#enums/switch-type";
 import { UiMode } from "#enums/ui-mode";
 import { BattlePhase } from "#phases/battle-phase";
-import { PartyOption, PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
+import { PartyUiHandler } from "#ui/party-ui-handler";
+import { PartyOption, PartyUiMode } from "#ui/ui-types";
 
 /**
  * Opens the party selector UI and transitions into a {@linkcode SwitchSummonPhase}
@@ -66,18 +67,17 @@ export class SwitchPhase extends BattlePhase {
         ? this.fieldIndex
         : 0;
 
-    globalScene.ui.setMode(
-      UiMode.PARTY,
-      this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH,
+    globalScene.ui.setMode(UiMode.PARTY, {
+      partyUiMode: this.isModal ? PartyUiMode.FAINT_SWITCH : PartyUiMode.POST_BATTLE_SWITCH,
       fieldIndex,
-      (slotIndex: number, option: PartyOption) => {
+      selectCallback: (slotIndex: number, option: PartyOption) => {
         if (slotIndex >= globalScene.currentBattle.getBattlerCount() && slotIndex < 6) {
           const switchType = option === PartyOption.PASS_BATON ? SwitchType.BATON_PASS : this.switchType;
           globalScene.phaseManager.unshiftNew("SwitchSummonPhase", switchType, fieldIndex, slotIndex, this.doReturn);
         }
         globalScene.ui.setMode(UiMode.MESSAGE).then(() => super.end());
       },
-      PartyUiHandler.FilterNonFainted,
-    );
+      selectFilter: PartyUiHandler.FilterNonFainted,
+    });
   }
 }

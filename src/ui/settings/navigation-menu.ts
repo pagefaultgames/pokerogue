@@ -11,13 +11,20 @@ import i18next from "i18next";
 const LEFT = "LEFT";
 const RIGHT = "RIGHT";
 
+type SettingsModes =
+  | UiMode.SETTINGS
+  | UiMode.SETTINGS_DISPLAY
+  | UiMode.SETTINGS_AUDIO
+  | UiMode.SETTINGS_GAMEPAD
+  | UiMode.SETTINGS_KEYBOARD;
+
 /**
  * Manages navigation and menus tabs within the setting menu.
  */
 export class NavigationManager {
   private static instance: NavigationManager;
-  public modes: UiMode[];
-  public selectedMode: UiMode = UiMode.SETTINGS;
+  public modes: SettingsModes[];
+  public selectedMode: SettingsModes = UiMode.SETTINGS;
   public navigationMenus: NavigationMenu[] = [];
   public labels: string[];
 

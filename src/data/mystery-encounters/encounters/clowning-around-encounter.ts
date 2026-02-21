@@ -45,7 +45,7 @@ import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#trainers/trainer-party-template";
-import type { OptionSelectConfig } from "#ui/abstract-option-select-ui-handler";
+import type { OptionSelectConfig } from "#ui/ui-types";
 import { randSeedInt, randSeedShuffle } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
@@ -465,7 +465,7 @@ function displayYesNoOptions(resolve) {
     maxOptions: 7,
     yOffset: 0,
   };
-  globalScene.ui.setModeWithoutClear(UiMode.OPTION_SELECT, config, null, true);
+  globalScene.ui.setModeWithoutClear(UiMode.OPTION_SELECT, config);
 }
 
 function onYesAbilitySwap(resolve) {

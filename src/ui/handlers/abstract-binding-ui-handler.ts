@@ -2,13 +2,13 @@ import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
+import type { BindingUiHandlerParams } from "#types/ui/ui-handler-params";
 import { NavigationManager } from "#ui/navigation-menu";
 import { addTextObject, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
+import type { CancelFn } from "#ui/ui-types";
 import i18next from "i18next";
-
-type CancelFn = (success?: boolean) => boolean;
 
 /**
  * Abstract class for handling UI elements related to button bindings.
@@ -135,12 +135,12 @@ export abstract class AbstractBindingUiHandler extends UiHandler {
    * @param args - Arguments to be passed to the show method.
    * @returns `true` if successful.
    */
-  show(args: any[]): boolean {
+  show(args: BindingUiHandlerParams): boolean {
     super.show(args);
     this.buttonPressed = null;
     this.timeLeftAutoClose = 5;
-    this.cancelFn = args[0].cancelHandler;
-    this.target = args[0].target;
+    this.cancelFn = args.cancelHandler;
+    this.target = args.target;
 
     // Bring the option and action containers to the front of the UI.
     this.getUi().bringToTop(this.optionSelectContainer);

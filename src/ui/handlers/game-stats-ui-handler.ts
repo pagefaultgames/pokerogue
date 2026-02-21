@@ -7,6 +7,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { TextStyle } from "#enums/text-style";
 import { UiTheme } from "#enums/ui-theme";
 import type { GameData } from "#system/game-data";
+import type { GameStatsUiHandlerParams } from "#types/ui/ui-handler-params";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
@@ -401,13 +402,13 @@ export class GameStatsUiHandler extends UiHandler {
     this.gameStatsContainer.setVisible(false);
   }
 
-  show([username, data, callback]: [] | [username: string, data: GameData, callback?: () => void]): boolean {
-    super.show([]);
+  show(args: GameStatsUiHandlerParams): boolean {
+    super.show();
 
-    if (username != null && data != null) {
-      this.gameData = data;
-      this.exitCallback = callback;
-      this.headerText.setText(username);
+    if (args.username != null && args.data != null) {
+      this.gameData = args.data;
+      this.exitCallback = args.callback;
+      this.headerText.setText(args.username);
     } else {
       this.gameData = globalScene.gameData;
       this.exitCallback = undefined;

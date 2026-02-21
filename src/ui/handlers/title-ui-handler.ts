@@ -10,6 +10,7 @@ import type { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { version } from "#package.json";
+import type { OptionSelectUiHandlerParams } from "#types/ui/ui-handler-params";
 import { TimedEventDisplay } from "#ui/event-display";
 import { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
 import { addTextObject } from "#ui/text";
@@ -161,7 +162,7 @@ export class TitleUiHandler extends OptionSelectUiHandler {
     }
   }
 
-  show(args: any[]): boolean {
+  show(args: OptionSelectUiHandlerParams): boolean {
     const ret = super.show(args);
 
     if (!ret) {

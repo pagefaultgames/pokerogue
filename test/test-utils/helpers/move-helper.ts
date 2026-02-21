@@ -78,10 +78,9 @@ export class MoveHelper extends GameManagerHelper {
     }
 
     this.game.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
-      this.game.scene.ui.setMode(
-        UiMode.FIGHT,
-        (this.game.scene.phaseManager.getCurrentPhase() as CommandPhase).getFieldIndex(),
-      );
+      this.game.scene.ui.setMode(UiMode.FIGHT, {
+        fieldIndex: (this.game.scene.phaseManager.getCurrentPhase() as CommandPhase).getFieldIndex(),
+      });
     });
     this.game.onNextPrompt("CommandPhase", UiMode.FIGHT, () => {
       (this.game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(
@@ -128,11 +127,10 @@ export class MoveHelper extends GameManagerHelper {
     this.game.scene.getPlayerParty()[pkmIndex].isTerastallized = false;
 
     this.game.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
-      this.game.scene.ui.setMode(
-        UiMode.FIGHT,
-        (this.game.scene.phaseManager.getCurrentPhase() as CommandPhase).getFieldIndex(),
-        Command.TERA,
-      );
+      this.game.scene.ui.setMode(UiMode.FIGHT, {
+        fieldIndex: (this.game.scene.phaseManager.getCurrentPhase() as CommandPhase).getFieldIndex(),
+        command: Command.TERA,
+      });
     });
     this.game.onNextPrompt("CommandPhase", UiMode.FIGHT, () => {
       (this.game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(

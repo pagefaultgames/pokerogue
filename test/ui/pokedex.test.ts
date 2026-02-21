@@ -67,7 +67,7 @@ describe("UI - Pokedex", () => {
     // Open the pokedex UI.
     await game.runToTitle();
 
-    await game.scene.ui.setOverlayMode(UiMode.POKEDEX);
+    await game.scene.ui.setOverlayMode(UiMode.POKEDEX, {});
 
     // Get the handler for the current UI.
     const handler = game.scene.ui.getHandler();
@@ -87,7 +87,7 @@ describe("UI - Pokedex", () => {
     // Open the pokedex UI.
     await game.runToTitle();
 
-    await game.scene.ui.setOverlayMode(UiMode.POKEDEX_PAGE, species, starterAttributes);
+    await game.scene.ui.setOverlayMode(UiMode.POKEDEX_PAGE, { species, savedStarterAttributes: starterAttributes });
 
     // Get the handler for the current UI.
     const handler = game.scene.ui.getHandler();

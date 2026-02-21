@@ -4,6 +4,7 @@ import { Device } from "#enums/devices";
 import { PlayerGender } from "#enums/player-gender";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
+import type { HandlerOf, ModeToUiHandlerMap } from "#types/ui/ui-handler-map";
 import { AchvBar } from "#ui/achv-bar";
 import { AchvsUiHandler } from "#ui/achvs-ui-handler";
 import { AutoCompleteUiHandler } from "#ui/autocomplete-ui-handler";
@@ -58,10 +59,18 @@ import { TitleUiHandler } from "#ui/title-ui-handler";
 import type { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { UnavailableModalUiHandler } from "#ui/unavailable-modal-ui-handler";
-import { executeIf } from "#utils/common";
 import i18next from "i18next";
 import { AdminUiHandler } from "./handlers/admin-ui-handler";
 import { RenameRunFormUiHandler } from "./handlers/rename-run-ui-handler";
+
+interface SetModeParams {
+  /** If `true`, calls the current handler's `clear` method before setting the new mode */
+  clear: boolean;
+  /** If `true`, forces a transition even when the new mode is the same as the current one */
+  forceTransition: boolean;
+  /** If `true`, append the new mode to the mode chain */
+  chainMode: boolean;
+}
 
 const transitionModes = [
   UiMode.SAVE_SLOT,
@@ -109,11 +118,23 @@ const noTransitionModes = [
   UiMode.CHANGE_PASSWORD_FORM,
 ];
 
+/** Check whether this mode requires a fading transition, if possible */
+function requiresTransition(mode: UiMode): boolean {
+  return transitionModes.indexOf(mode) > -1;
+}
+
+/** Check whether this mode allows a fading transition */
+function allowsTransition(mode: UiMode): boolean {
+  return noTransitionModes.indexOf(mode) === -1;
+}
+
+type HandlerShowArgs<M extends UiMode> = Parameters<HandlerOf<M>["show"]>;
+
 // biome-ignore lint/style/useNamingConvention: a unique case (only 2 letters)
 export class UI extends Phaser.GameObjects.Container {
   private mode: UiMode;
-  private modeChain: UiMode[];
-  public handlers: UiHandler[];
+  private modeChain: UiMode[] = [];
+  public handlers: Partial<Record<UiMode, UiHandler>>;
   private overlay: Phaser.GameObjects.Rectangle;
   public achvBar: AchvBar;
   public bgmBar: BgmBar;
@@ -131,62 +152,68 @@ export class UI extends Phaser.GameObjects.Container {
 
     this.mode = UiMode.MESSAGE;
     this.modeChain = [];
-    this.handlers = [
-      new BattleMessageUiHandler(),
-      new TitleUiHandler(),
-      new CommandUiHandler(),
-      new FightUiHandler(),
-      new BallUiHandler(),
-      new TargetSelectUiHandler(),
-      new ModifierSelectUiHandler(),
-      new SaveSlotSelectUiHandler(),
-      new PartyUiHandler(),
-      new SummaryUiHandler(),
-      new StarterSelectUiHandler(),
-      new EvolutionSceneUiHandler(),
-      new EggHatchSceneUiHandler(),
-      new EggSummaryUiHandler(),
-      new ConfirmUiHandler(),
-      new OptionSelectUiHandler(),
-      new MenuUiHandler(),
-      new OptionSelectUiHandler(UiMode.MENU_OPTION_SELECT),
+    this.handlers = {
+      [UiMode.MESSAGE]: new BattleMessageUiHandler(),
+      [UiMode.TITLE]: new TitleUiHandler(),
+      [UiMode.COMMAND]: new CommandUiHandler(),
+      [UiMode.FIGHT]: new FightUiHandler(),
+      [UiMode.BALL]: new BallUiHandler(),
+      [UiMode.TARGET_SELECT]: new TargetSelectUiHandler(),
+      [UiMode.MODIFIER_SELECT]: new ModifierSelectUiHandler(),
+      [UiMode.SAVE_SLOT]: new SaveSlotSelectUiHandler(),
+      [UiMode.PARTY]: new PartyUiHandler(),
+      [UiMode.SUMMARY]: new SummaryUiHandler(),
+      [UiMode.STARTER_SELECT]: new StarterSelectUiHandler(),
+      [UiMode.EVOLUTION_SCENE]: new EvolutionSceneUiHandler(),
+      [UiMode.EGG_HATCH_SCENE]: new EggHatchSceneUiHandler(),
+      [UiMode.EGG_HATCH_SUMMARY]: new EggSummaryUiHandler(),
+      [UiMode.CONFIRM]: new ConfirmUiHandler(),
+      [UiMode.OPTION_SELECT]: new OptionSelectUiHandler(),
+      [UiMode.MENU]: new MenuUiHandler(),
+      [UiMode.MENU_OPTION_SELECT]: new OptionSelectUiHandler(UiMode.MENU_OPTION_SELECT),
+
       // settings
-      new SettingsUiHandler(),
-      new SettingsDisplayUiHandler(),
-      new SettingsAudioUiHandler(),
-      new SettingsGamepadUiHandler(),
-      new GamepadBindingUiHandler(),
-      new SettingsKeyboardUiHandler(),
-      new KeyboardBindingUiHandler(),
-      new AchvsUiHandler(),
-      new GameStatsUiHandler(),
-      new EggListUiHandler(),
-      new EggGachaUiHandler(),
-      new PokedexUiHandler(),
-      new PokedexScanUiHandler(UiMode.TEST_DIALOGUE),
-      new PokedexPageUiHandler(),
-      new LoginOrRegisterUiHandler(),
-      new LoginFormUiHandler(),
-      new RegistrationFormUiHandler(),
-      new LoadingModalUiHandler(),
-      new SessionReloadModalUiHandler(),
-      new UnavailableModalUiHandler(),
-      new GameChallengesUiHandler(),
-      new RenameFormUiHandler(),
-      new RenameRunFormUiHandler(),
-      new RunHistoryUiHandler(),
-      new RunInfoUiHandler(),
-      new TestDialogueUiHandler(UiMode.TEST_DIALOGUE),
-      new AutoCompleteUiHandler(),
-      new AdminUiHandler(),
-      new MysteryEncounterUiHandler(),
-      new ChangePasswordFormUiHandler(),
-    ];
+      [UiMode.SETTINGS]: new SettingsUiHandler(),
+      [UiMode.SETTINGS_DISPLAY]: new SettingsDisplayUiHandler(),
+      [UiMode.SETTINGS_AUDIO]: new SettingsAudioUiHandler(),
+      [UiMode.SETTINGS_GAMEPAD]: new SettingsGamepadUiHandler(),
+      [UiMode.GAMEPAD_BINDING]: new GamepadBindingUiHandler(),
+      [UiMode.SETTINGS_KEYBOARD]: new SettingsKeyboardUiHandler(),
+      [UiMode.KEYBOARD_BINDING]: new KeyboardBindingUiHandler(),
+
+      [UiMode.ACHIEVEMENTS]: new AchvsUiHandler(),
+      [UiMode.GAME_STATS]: new GameStatsUiHandler(),
+      [UiMode.EGG_LIST]: new EggListUiHandler(),
+      [UiMode.EGG_GACHA]: new EggGachaUiHandler(),
+      [UiMode.POKEDEX]: new PokedexUiHandler(),
+      [UiMode.POKEDEX_SCAN]: new PokedexScanUiHandler(UiMode.TEST_DIALOGUE),
+      [UiMode.POKEDEX_PAGE]: new PokedexPageUiHandler(),
+
+      [UiMode.LOGIN_OR_REGISTER]: new LoginOrRegisterUiHandler(),
+      [UiMode.LOGIN_FORM]: new LoginFormUiHandler(),
+      [UiMode.REGISTRATION_FORM]: new RegistrationFormUiHandler(),
+
+      [UiMode.LOADING]: new LoadingModalUiHandler(),
+      [UiMode.SESSION_RELOAD]: new SessionReloadModalUiHandler(),
+      [UiMode.UNAVAILABLE]: new UnavailableModalUiHandler(),
+
+      [UiMode.CHALLENGE_SELECT]: new GameChallengesUiHandler(),
+      [UiMode.RENAME_POKEMON]: new RenameFormUiHandler(),
+      [UiMode.RENAME_RUN]: new RenameRunFormUiHandler(),
+      [UiMode.RUN_HISTORY]: new RunHistoryUiHandler(),
+      [UiMode.RUN_INFO]: new RunInfoUiHandler(),
+
+      [UiMode.TEST_DIALOGUE]: new TestDialogueUiHandler(UiMode.TEST_DIALOGUE),
+      [UiMode.AUTO_COMPLETE]: new AutoCompleteUiHandler(),
+      [UiMode.ADMIN]: new AdminUiHandler(),
+      [UiMode.MYSTERY_ENCOUNTER]: new MysteryEncounterUiHandler(),
+      [UiMode.CHANGE_PASSWORD_FORM]: new ChangePasswordFormUiHandler(),
+    } satisfies ModeToUiHandlerMap;
   }
 
   setup(): void {
     this.setName(`ui-${UiMode[this.mode]}`);
-    for (const handler of this.handlers) {
+    for (const handler of Object.values(this.handlers)) {
       handler.setup();
     }
     this.overlay = globalScene.add.rectangle(0, 0, globalScene.scaledCanvas.width, globalScene.scaledCanvas.height, 0);
@@ -522,120 +549,130 @@ export class UI extends Phaser.GameObjects.Container {
     });
   }
 
-  private setModeInternal(
+  private async setModeInternal<M extends UiMode>(
     this: UI,
-    mode: UiMode,
-    clear: boolean,
-    forceTransition: boolean,
-    chainMode: boolean,
-    args: any[],
+    mode: M,
+    params: SetModeParams,
+    ...args: HandlerShowArgs<M>
   ): Promise<void> {
-    return new Promise(resolve => {
-      if (this.mode === mode && !forceTransition) {
-        resolve();
-        return;
+    const { clear, forceTransition, chainMode } = params;
+    if (this.mode === mode && !forceTransition) {
+      return;
+    }
+    const doSetMode = async () => {
+      if (clear) {
+        this.getHandler().clear();
       }
-      const doSetMode = () => {
-        if (this.mode !== mode) {
-          if (clear) {
-            this.getHandler().clear();
-          }
-          if (chainMode && this.mode && !clear) {
-            this.modeChain.push(this.mode);
-            globalScene.updateGameInfo();
-          }
-          this.mode = mode;
-          const touchControls = document?.getElementById("touchControls");
-          if (touchControls) {
-            touchControls.dataset.uiMode = UiMode[mode];
-          }
-          this.getHandler().show(args);
-        }
-        resolve();
-      };
-      if (
-        (!chainMode
-          && (transitionModes.indexOf(this.mode) > -1 || transitionModes.indexOf(mode) > -1)
-          && noTransitionModes.indexOf(this.mode) === -1
-          && noTransitionModes.indexOf(mode) === -1)
-        || (chainMode && noTransitionModes.indexOf(mode) === -1)
-      ) {
-        this.fadeOut(250).then(() => {
-          globalScene.time.delayedCall(100, () => {
-            doSetMode();
-            this.fadeIn(250);
-          });
-        });
+      // Don't chain if previous mode is cleared; this set of options should never be passed.
+      if (chainMode && this.mode && !clear) {
+        this.modeChain.push(this.mode);
+        globalScene.updateGameInfo();
+      }
+      this.mode = mode;
+      const touchControls = document?.getElementById("touchControls");
+      if (touchControls) {
+        touchControls.dataset.uiMode = UiMode[mode];
+      }
+      await this.getHandler().show(...args);
+    };
+
+    /** Determine whether the mode transition should use fading.
+     If `chainMode` is `true`, require the new mode to be a transition mode.
+      If `chainMode` is `false`, either mode can be a transition mode. */
+    if (
+      (!chainMode
+        && (requiresTransition(this.mode) || requiresTransition(mode))
+        && allowsTransition(this.mode)
+        && allowsTransition(mode))
+      || (chainMode && allowsTransition(mode))
+    ) {
+      await this.fadeOut(250);
+      await new Promise<void>(res => globalScene.time.delayedCall(100, res));
+
+      if (this.mode === mode) {
+        console.warn("UI mode changed to same as prior mode midway through setModeInternal call!", UiMode[mode]);
       } else {
-        doSetMode();
+        await doSetMode();
       }
-    });
+      this.fadeIn(250);
+    } else {
+      await doSetMode();
+    }
   }
 
   getMode(): UiMode {
     return this.mode;
   }
 
-  setMode(mode: UiMode, ...args: any[]): Promise<void> {
-    return this.setModeInternal(mode, true, false, false, args);
+  /** Default for setting a new mode, clearing the previous mode. Fails if trying to set the current mode. */
+  setMode<M extends UiMode>(mode: M, ...args: HandlerShowArgs<M>): Promise<void> {
+    return this.setModeInternal(mode, { clear: true, forceTransition: false, chainMode: false }, ...args);
   }
 
-  setModeForceTransition(mode: UiMode, ...args: any[]): Promise<void> {
-    return this.setModeInternal(mode, true, true, false, args);
+  /** Used to essentially reset the current mode with new args. */
+  setModeForceTransition<M extends UiMode>(mode: M, ...args: HandlerShowArgs<M>): Promise<void> {
+    return this.setModeInternal(mode, { clear: true, forceTransition: true, chainMode: false }, ...args);
   }
 
-  setModeWithoutClear(mode: UiMode, ...args: any[]): Promise<void> {
-    return this.setModeInternal(mode, false, false, false, args);
+  /** Used to set a new mode without clearing the previous one. */
+  setModeWithoutClear<M extends UiMode>(mode: M, ...args: NoInfer<HandlerShowArgs<M>>): Promise<void> {
+    return this.setModeInternal(mode, { clear: false, forceTransition: false, chainMode: false }, ...args);
   }
 
-  setOverlayMode(mode: UiMode, ...args: any[]): Promise<void> {
-    return this.setModeInternal(mode, false, false, true, args);
+  /** Appends new mode to the chain, without clearing the previous one. */
+  setOverlayMode<M extends UiMode>(mode: M, ...args: HandlerShowArgs<M>): Promise<void> {
+    return this.setModeInternal(mode, { clear: false, forceTransition: false, chainMode: true }, ...args);
   }
 
+  // TODO: shouldn't this call `UiHandler().clear()` for the modes in the chain?
   resetModeChain(): void {
     this.modeChain = [];
     globalScene.updateGameInfo();
   }
 
-  revertMode(): Promise<boolean> {
-    return new Promise<boolean>(resolve => {
-      if (this?.modeChain?.length === 0) {
-        return resolve(false);
+  /**
+   * Reverts the current mode, calling its handler's `clear` method, then
+   * setting the current mode to the most recent one in the mode chain.
+   * Note that modes are never cleared while adding them to the chain.
+   * Fails if the mode chain is empty.
+   */
+  // TODO: Remove boolean return
+  async revertMode(): Promise<boolean> {
+    const nextMode = this.modeChain.pop();
+    if (nextMode == null) {
+      return false;
+    }
+
+    const lastMode = this.mode;
+
+    const doRevertMode = () => {
+      this.getHandler().clear();
+      this.mode = nextMode;
+      globalScene.updateGameInfo();
+      const touchControls = document.getElementById("touchControls");
+      if (touchControls) {
+        touchControls.dataset.uiMode = UiMode[this.mode];
       }
+    };
 
-      const lastMode = this.mode;
-
-      const doRevertMode = () => {
-        this.getHandler().clear();
-        this.mode = this.modeChain.pop()!; // TODO: is this bang correct?
-        globalScene.updateGameInfo();
-        const touchControls = document.getElementById("touchControls");
-        if (touchControls) {
-          touchControls.dataset.uiMode = UiMode[this.mode];
-        }
-        resolve(true);
-      };
-
-      if (noTransitionModes.indexOf(lastMode) === -1) {
-        this.fadeOut(250).then(() => {
-          globalScene.time.delayedCall(100, () => {
-            doRevertMode();
-            this.fadeIn(250);
-          });
-        });
-      } else {
-        doRevertMode();
-      }
-    });
+    if (allowsTransition(lastMode)) {
+      await this.fadeOut(250);
+      await new Promise<void>(res => globalScene.time.delayedCall(100, res));
+      doRevertMode();
+      await this.fadeIn(250);
+    } else {
+      doRevertMode();
+    }
+    return true;
   }
 
-  revertModes(): Promise<void> {
-    return new Promise<void>(resolve => {
-      if (this?.modeChain?.length === 0) {
-        return resolve();
-      }
-      this.revertMode().then(success => executeIf(success, this.revertModes).then(() => resolve()));
-    });
+  /**
+   * Reverts modes one by one until the chain is empty
+   */
+  async revertModes(): Promise<void> {
+    while (this.modeChain.length > 0) {
+      await this.revertMode();
+    }
   }
 
   public getModeChain(): UiMode[] {
@@ -662,8 +699,10 @@ export class UI extends Phaser.GameObjects.Container {
    * and clears menus from {@linkcode NavigationManager} to prepare for reset
    */
   public freeUIData(): void {
-    this.handlers.forEach(h => h.destroy());
-    this.handlers = [];
+    for (const handler of Object.values(this.handlers)) {
+      handler.destroy();
+    }
+    this.handlers = {};
     NavigationManager.getInstance().clearNavigationMenus();
   }
 }

@@ -12,6 +12,7 @@ const cancelHandler = () => {
   } else if (handler && typeof (handler as LoginRegisterInfoContainerUiHandler).setInteractive === "function") {
     (handler as LoginRegisterInfoContainerUiHandler).setInteractive(true);
   }
+  return true;
 };
 
 const changeLocaleHandler = (locale: string): boolean => {

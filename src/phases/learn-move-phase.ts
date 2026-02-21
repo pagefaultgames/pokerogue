@@ -7,17 +7,17 @@ import { SpeciesFormChangeMoveLearnedTrigger } from "#data/form-change-triggers"
 import { LearnMoveType } from "#enums/learn-move-type";
 import { MoveId } from "#enums/move-id";
 import { UiMode } from "#enums/ui-mode";
-import type { Pokemon } from "#field/pokemon";
+import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { Move } from "#moves/move";
 import { PlayerPartyMemberPokemonPhase } from "#phases/player-party-member-pokemon-phase";
 import { EvolutionSceneUiHandler } from "#ui/evolution-scene-ui-handler";
-import { SummaryUiMode } from "#ui/summary-ui-handler";
+import { SummaryUiMode } from "#ui/ui-types";
 import i18next from "i18next";
 
 export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   public readonly phaseName = "LearnMovePhase";
   private moveId: MoveId;
-  private messageMode: UiMode;
+  private messageMode: UiMode.EVOLUTION_SCENE | UiMode.MESSAGE;
   private learnMoveType: LearnMoveType;
   private cost: number;
 
@@ -81,15 +81,14 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     const preQText = [learnMovePrompt, moveLimitReached].join("$");
     await globalScene.ui.showTextPromise(preQText);
     await globalScene.ui.showTextPromise(shouldReplaceQ, undefined, false);
-    await globalScene.ui.setModeWithoutClear(
-      UiMode.CONFIRM,
-      () => this.forgetMoveProcess(move, pokemon), // Yes
-      () => {
+    await globalScene.ui.setModeWithoutClear(UiMode.CONFIRM, {
+      onYes: () => this.forgetMoveProcess(move, pokemon), // Yes
+      onNo: () => {
         // No
         globalScene.ui.setMode(this.messageMode);
         this.rejectMoveAndEnd(move, pokemon);
       },
-    );
+    });
   }
 
   /**
@@ -106,12 +105,11 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   async forgetMoveProcess(move: Move, pokemon: Pokemon) {
     globalScene.ui.setMode(this.messageMode);
     await globalScene.ui.showTextPromise(i18next.t("battle:learnMoveForgetQuestion"), undefined, true);
-    await globalScene.ui.setModeWithoutClear(
-      UiMode.SUMMARY,
-      pokemon,
-      SummaryUiMode.LEARN_MOVE,
+    await globalScene.ui.setModeWithoutClear(UiMode.SUMMARY, {
+      pokemon: pokemon as PlayerPokemon,
+      uiMode: SummaryUiMode.LEARN_MOVE,
       move,
-      (moveIndex: number) => {
+      selectCallback: (moveIndex: number) => {
         if (moveIndex === 4) {
           globalScene.ui.setMode(this.messageMode).then(() => this.rejectMoveAndEnd(move, pokemon));
           return;
@@ -125,7 +123,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
         );
         globalScene.ui.setMode(this.messageMode).then(() => this.learnMove(moveIndex, move, pokemon, fullText));
       },
-    );
+    });
   }
 
   /**
@@ -144,9 +142,8 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
       undefined,
       false,
     );
-    globalScene.ui.setModeWithoutClear(
-      UiMode.CONFIRM,
-      () => {
+    globalScene.ui.setModeWithoutClear(UiMode.CONFIRM, {
+      onYes: () => {
         globalScene.ui.setMode(this.messageMode);
         globalScene.ui
           .showTextPromise(
@@ -159,11 +156,11 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
           )
           .then(() => this.end());
       },
-      () => {
+      onNo: () => {
         globalScene.ui.setMode(this.messageMode);
         this.replaceMoveCheck(move, pokemon);
       },
-    );
+    });
   }
 
   /**

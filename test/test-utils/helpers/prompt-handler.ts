@@ -53,7 +53,7 @@ export class PromptHandler extends GameManagerHelper {
   /** An array of {@linkcode UIPrompt | prompts} with associated callbacks. */
   private readonly prompts: UIPrompt[] = [];
   /** The original `setModeInternal` function, stored for use in {@linkcode setMode}. */
-  private readonly originalSetModeInternal: (typeof this.game.scene.ui)["setModeInternal"];
+  private readonly originalSetModeInternal: UI["setModeInternal"];
 
   /**
    * A {@linkcode NodeJS.Timeout | Timeout} containing an interval used to check prompts.
@@ -68,7 +68,7 @@ export class PromptHandler extends GameManagerHelper {
     this.originalSetModeInternal = this.game.scene.ui["setModeInternal"];
     // type assertion needed as we are mocking private property
     vi.spyOn(
-      this.game.scene.ui as unknown as Pick<{ setModeInternal: UI["setModeInternal"] }, "setModeInternal">,
+      this.game.scene.ui as unknown as { setModeInternal: UI["setModeInternal"] },
       "setModeInternal",
     ).mockImplementation((...args) => this.setMode(args));
 
@@ -85,9 +85,7 @@ export class PromptHandler extends GameManagerHelper {
    * @returns The original return value.
    * @todo Make this wait for the actual UI mode setting
    */
-  private setMode(
-    args: Parameters<typeof this.originalSetModeInternal>,
-  ): ReturnType<typeof this.originalSetModeInternal> {
+  private setMode(args: Parameters<UI["setModeInternal"]>): ReturnType<UI["setModeInternal"]> {
     const mode = args[0];
 
     this.doLog(

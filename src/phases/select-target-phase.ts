@@ -35,11 +35,10 @@ export class SelectTargetPhase extends PokemonPhase {
       && !ally.isFainted();
     const defaultTargets = shouldDefaultToAlly ? [ally.getBattlerIndex()] : undefined;
 
-    globalScene.ui.setMode(
-      UiMode.TARGET_SELECT,
-      this.fieldIndex,
-      move.id,
-      (targets: BattlerIndex[]) => {
+    globalScene.ui.setMode(UiMode.TARGET_SELECT, {
+      fieldIndex: this.fieldIndex,
+      moveId: move.id,
+      targetSelectCallback: (targets: BattlerIndex[]) => {
         globalScene.ui.setMode(UiMode.MESSAGE);
         // Find any tags blocking this target from being selected
         // TODO: Denest and make less jank
@@ -65,6 +64,6 @@ export class SelectTargetPhase extends PokemonPhase {
         this.end();
       },
       defaultTargets,
-    );
+    });
   }
 }

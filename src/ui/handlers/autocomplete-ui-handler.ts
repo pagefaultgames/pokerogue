@@ -1,5 +1,6 @@
 import { Button } from "#enums/buttons";
 import { UiMode } from "#enums/ui-mode";
+import type { AutoCompleteUiHandlerParams } from "#types/ui/ui-handler-params";
 import { AbstractOptionSelectUiHandler } from "#ui/abstract-option-select-ui-handler";
 
 export class AutoCompleteUiHandler extends AbstractOptionSelectUiHandler {
@@ -12,16 +13,12 @@ export class AutoCompleteUiHandler extends AbstractOptionSelectUiHandler {
     return 64;
   }
 
-  show(args: any[]): boolean {
-    if (args[0].modalContainer) {
-      const { modalContainer } = args[0];
-      const show = super.show(args);
-      this.modalContainer = modalContainer;
-      this.setupOptions();
+  show(args: AutoCompleteUiHandlerParams): boolean {
+    const show = super.show(args);
+    this.modalContainer = args.modalContainer;
+    this.setupOptions();
 
-      return show;
-    }
-    return false;
+    return show;
   }
 
   protected setupOptions() {

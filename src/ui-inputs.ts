@@ -243,7 +243,7 @@ export class UiInputs {
       Phaser.Math.Clamp(currentSetting + direction, 0, settingOptions.length - 1),
     );
     if (globalScene.ui?.getMode() === UiMode.SETTINGS) {
-      (globalScene.ui.getHandler() as SettingsUiHandler).show([]);
+      globalScene.ui.getHandler<SettingsUiHandler>().show();
     }
   }
 }

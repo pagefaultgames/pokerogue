@@ -68,16 +68,27 @@ describe("Test Utils - PromptHandler", () => {
   describe("setMode", () => {
     it("should wrap and pass along original function arguments from setModeInternal", async () => {
       const setModeSpy = vi.spyOn(promptHandler as any, "setMode");
-      await promptHandler["game"].scene.ui["setModeInternal"](UiMode.PARTY, false, false, false, []);
+      await promptHandler["game"].scene.ui["setModeInternal"]<UiMode>(UiMode.PARTY, {
+        clear: false,
+        forceTransition: false,
+        chainMode: false,
+      });
 
-      expect(setModeSpy).toHaveBeenCalledExactlyOnceWith([UiMode.PARTY, false, false, false, []]);
+      expect(setModeSpy).toHaveBeenCalledExactlyOnceWith([
+        UiMode.PARTY,
+        { clear: false, forceTransition: false, chainMode: false },
+      ]);
       expect(setModeCallback).toHaveBeenCalledAfter(setModeSpy);
     });
 
     it("should call PhaseInterceptor.checkMode if current phase is in `endBySetMode`", async () => {
       promptHandler["game"]["scene"]["phaseManager"]["getCurrentPhase"] = () =>
         ({ phaseName: "CommandPhase" }) as Phase;
-      await promptHandler["game"].scene.ui["setModeInternal"](UiMode.PARTY, false, false, false, []);
+      await promptHandler["game"].scene.ui["setModeInternal"](
+        UiMode.PARTY,
+        { clear: false, forceTransition: false, chainMode: false },
+        {},
+      );
 
       expect(checkModeCallback).toHaveBeenCalledOnce();
     });

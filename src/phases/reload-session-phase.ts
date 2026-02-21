@@ -14,7 +14,7 @@ export class ReloadSessionPhase extends Phase {
   }
 
   start(): void {
-    globalScene.ui.setMode(UiMode.SESSION_RELOAD);
+    globalScene.ui.setMode(UiMode.SESSION_RELOAD, { buttonActions: [] });
 
     let delayElapsed = false;
     let loaded = false;

@@ -5,9 +5,12 @@ import { UiMode } from "#enums/ui-mode";
 export class UnavailablePhase extends Phase {
   public readonly phaseName = "UnavailablePhase";
   start(): void {
-    globalScene.ui.setMode(UiMode.UNAVAILABLE, () => {
-      globalScene.phaseManager.unshiftNew("LoginPhase", true);
-      this.end();
+    globalScene.ui.setMode(UiMode.UNAVAILABLE, {
+      reconnectCallback: () => {
+        globalScene.phaseManager.unshiftNew("LoginPhase", true);
+        this.end();
+      },
+      buttonActions: [],
     });
   }
 }

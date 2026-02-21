@@ -2,34 +2,14 @@ import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
+import type { OptionSelectUiHandlerParams } from "#types/ui/ui-handler-params";
 import { addBBCodeTextObject, getTextColor, getTextStyleOptions } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
+import type { OptionSelectConfig, OptionSelectItem } from "#ui/ui-types";
 import { fixedInt, rgbHexToRgba } from "#utils/common";
 import { argbFromRgba } from "@material/material-color-utilities";
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
-
-export interface OptionSelectConfig {
-  xOffset?: number;
-  yOffset?: number;
-  options: OptionSelectItem[];
-  maxOptions?: number;
-  delay?: number;
-  noCancel?: boolean;
-  supportHover?: boolean;
-}
-
-export interface OptionSelectItem {
-  label: string;
-  handler: () => boolean;
-  onHover?: () => void;
-  skip?: boolean;
-  keepOpen?: boolean;
-  overrideSound?: boolean;
-  style?: TextStyle;
-  item?: string;
-  itemArgs?: any[];
-}
 
 const scrollUpLabel = "↑";
 const scrollDownLabel = "↓";
@@ -67,6 +47,7 @@ export abstract class AbstractOptionSelectUiHandler extends UiHandler {
     const ui = this.getUi();
 
     this.optionSelectContainer = globalScene.add.container(globalScene.scaledCanvas.width - 1, -48);
+    // TODO: This internal call is the ONLY thing using `UiHandler.mode` and should be removed
     this.optionSelectContainer.setName(`option-select-${this.mode ? UiMode[this.mode] : "UNKNOWN"}`);
     this.optionSelectContainer.setVisible(false);
     ui.add(this.optionSelectContainer);
@@ -183,14 +164,10 @@ export abstract class AbstractOptionSelectUiHandler extends UiHandler {
     });
   }
 
-  show(args: any[]): boolean {
-    if (args.length === 0 || !args[0].hasOwnProperty("options") || args[0].options.length === 0) {
-      return false;
-    }
-
+  override show(args: OptionSelectUiHandlerParams): boolean {
     super.show(args);
 
-    this.config = args[0] as OptionSelectConfig;
+    this.config = args as OptionSelectConfig;
     this.setupOptions();
 
     globalScene.ui.bringToTop(this.optionSelectContainer);

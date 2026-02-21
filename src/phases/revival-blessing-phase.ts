@@ -3,8 +3,8 @@ import { SwitchType } from "#enums/switch-type";
 import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
 import { BattlePhase } from "#phases/battle-phase";
-import type { PartyOption } from "#ui/party-ui-handler";
-import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
+import { PartyUiHandler } from "#ui/party-ui-handler";
+import { type PartyOption, PartyUiMode } from "#ui/ui-types";
 import { toDmgValue } from "#utils/common";
 import i18next from "i18next";
 
@@ -19,11 +19,10 @@ export class RevivalBlessingPhase extends BattlePhase {
   }
 
   public override start(): void {
-    globalScene.ui.setMode(
-      UiMode.PARTY,
-      PartyUiMode.REVIVAL_BLESSING,
-      this.user.getFieldIndex(),
-      (slotIndex: number, _option: PartyOption) => {
+    globalScene.ui.setMode(UiMode.PARTY, {
+      partyUiMode: PartyUiMode.REVIVAL_BLESSING,
+      fieldIndex: this.user.getFieldIndex(),
+      selectCallback: (slotIndex: number, _option: PartyOption) => {
         if (slotIndex >= 0 && slotIndex < 6) {
           const pokemon = globalScene.getPlayerParty()[slotIndex];
           if (!pokemon || !pokemon.isFainted()) {
@@ -70,7 +69,7 @@ export class RevivalBlessingPhase extends BattlePhase {
         }
         globalScene.ui.setMode(UiMode.MESSAGE).then(() => this.end());
       },
-      PartyUiHandler.FilterFainted,
-    );
+      selectFilter: PartyUiHandler.FilterFainted,
+    });
   }
 }

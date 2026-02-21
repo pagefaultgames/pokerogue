@@ -2,7 +2,7 @@ import { updateUserInfo } from "#app/account";
 import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
-import type { ModalConfig } from "#ui/modal-ui-handler";
+import type { UnavailableModalUiHandlerParams } from "#types/ui/ui-handler-params";
 import { ModalUiHandler } from "#ui/modal-ui-handler";
 import { addTextObject } from "#ui/text";
 import { sessionIdKey } from "#utils/common";
@@ -78,19 +78,13 @@ export class UnavailableModalUiHandler extends ModalUiHandler {
     });
   }
 
-  show(args: any[]): boolean {
-    if (args.length > 0 && args[0] instanceof Function) {
-      const config: ModalConfig = {
-        buttonActions: [],
-      };
+  show(args: UnavailableModalUiHandlerParams): boolean {
+    this.reconnectCallback = args.reconnectCallback;
+    this.reconnectDuration = this.minTime;
+    setTimeout(() => this.tryReconnect(), this.reconnectDuration);
 
-      this.reconnectCallback = args[0];
-      this.reconnectDuration = this.minTime;
-      setTimeout(() => this.tryReconnect(), this.reconnectDuration);
-
-      return super.show([config]);
-    }
-
-    return false;
+    return super.show({
+      buttonActions: [],
+    });
   }
 }

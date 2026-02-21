@@ -308,9 +308,8 @@ export class EvolutionPhase extends Phase {
    *  This should end the evolution phase
    */
   private showPauseEvolutionConfirmation(endCallback: () => void): void {
-    globalScene.ui.setOverlayMode(
-      UiMode.CONFIRM,
-      () => {
+    globalScene.ui.setOverlayMode(UiMode.CONFIRM, {
+      onYes: () => {
         globalScene.ui.revertMode();
         this.pokemon.pauseEvolutions = true;
         globalScene.ui.showText(
@@ -322,11 +321,11 @@ export class EvolutionPhase extends Phase {
           3000,
         );
       },
-      () => {
+      onNo: () => {
         globalScene.ui.revertMode();
         globalScene.time.delayedCall(3000, endCallback);
       },
-    );
+    });
   }
 
   /**

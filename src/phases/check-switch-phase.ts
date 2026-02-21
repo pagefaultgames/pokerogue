@@ -65,18 +65,17 @@ export class CheckSwitchPhase extends BattlePhase {
       }),
       null,
       () => {
-        globalScene.ui.setMode(
-          UiMode.CONFIRM,
-          () => {
+        globalScene.ui.setMode(UiMode.CONFIRM, {
+          onYes: () => {
             globalScene.ui.setMode(UiMode.MESSAGE);
             globalScene.phaseManager.unshiftNew("SwitchPhase", SwitchType.INITIAL_SWITCH, this.fieldIndex, false, true);
             this.end();
           },
-          () => {
+          onNo: () => {
             globalScene.ui.setMode(UiMode.MESSAGE);
             this.end();
           },
-        );
+        });
       },
     );
   }
