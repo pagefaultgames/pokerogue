@@ -69,7 +69,13 @@ declare global {
     <N extends number>(value: Stringify<N>): N;
     parseInt<N extends number>(string: Stringify<N>, radix?: 10): N;
 
-    // add overloads for coercing numbers to... numbers
+    /*
+     * Propagates number types, e.g.:
+     * ```
+     * const thing: Stat = Stat.HP;
+     * const other = Number(thing); // type is `Stat`
+     * ```
+     */
     new <N extends number>(value: N): N;
     <N extends number>(value: N): N;
   }
