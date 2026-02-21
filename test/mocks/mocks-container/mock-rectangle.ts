@@ -1,4 +1,4 @@
-import type { MockGameObject } from "#test/utils/mocks/mock-game-object";
+import type { MockGameObject } from "#test/mocks/mock-game-object";
 import { coerceArray } from "#utils/array";
 
 export class MockRectangle implements MockGameObject {

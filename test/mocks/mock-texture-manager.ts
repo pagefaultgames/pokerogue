@@ -1,15 +1,15 @@
-import type { MockGameObject } from "#test/utils/mocks/mock-game-object";
-import { MockVideoGameObject } from "#test/utils/mocks/mock-video-game-object";
-import { MockBBCodeText } from "#test/utils/mocks/mocks-container/mock-bbcode-text";
-import { MockContainer } from "#test/utils/mocks/mocks-container/mock-container";
-import { MockImage } from "#test/utils/mocks/mocks-container/mock-image";
-import { MockInputText } from "#test/utils/mocks/mocks-container/mock-input-text";
-import { MockNineslice } from "#test/utils/mocks/mocks-container/mock-nineslice";
-import { MockPolygon } from "#test/utils/mocks/mocks-container/mock-polygon";
-import { MockRectangle } from "#test/utils/mocks/mocks-container/mock-rectangle";
-import { MockSprite } from "#test/utils/mocks/mocks-container/mock-sprite";
-import { MockText } from "#test/utils/mocks/mocks-container/mock-text";
-import { MockTexture } from "#test/utils/mocks/mocks-container/mock-texture";
+import type { MockGameObject } from "#test/mocks/mock-game-object";
+import { MockVideoGameObject } from "#test/mocks/mock-video-game-object";
+import { MockBBCodeText } from "#test/mocks/mocks-container/mock-bbcode-text";
+import { MockContainer } from "#test/mocks/mocks-container/mock-container";
+import { MockImage } from "#test/mocks/mocks-container/mock-image";
+import { MockInputText } from "#test/mocks/mocks-container/mock-input-text";
+import { MockNineslice } from "#test/mocks/mocks-container/mock-nineslice";
+import { MockPolygon } from "#test/mocks/mocks-container/mock-polygon";
+import { MockRectangle } from "#test/mocks/mocks-container/mock-rectangle";
+import { MockSprite } from "#test/mocks/mocks-container/mock-sprite";
+import { MockText } from "#test/mocks/mocks-container/mock-text";
+import { MockTexture } from "#test/mocks/mocks-container/mock-texture";
 
 /**
  * Stub class for Phaser.Textures.TextureManager

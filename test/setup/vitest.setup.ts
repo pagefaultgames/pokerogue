@@ -2,7 +2,7 @@ import "vitest-canvas-mock";
 import "#plugins/i18n"; // tests don't go through `main.ts`, requiring this to be imported here as well
 
 import { PromptHandler } from "#test/helpers/prompt-handler";
-import { MockConsole } from "#test/utils/mocks/mock-console/mock-console";
+import { MockConsole } from "#test/mocks/mock-console/mock-console";
 import { logTestEnd, logTestStart } from "#test/utils/setup/test-end-log";
 import { initTests } from "#test/utils/test-file-initialization";
 import chalk from "chalk";

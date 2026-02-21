@@ -1,4 +1,4 @@
-import { MockText } from "#test/utils/mocks/mocks-container/mock-text";
+import { MockText } from "#test/mocks/mocks-container/mock-text";
 
 export class MockInputText extends MockText {
   public inputType: string;
