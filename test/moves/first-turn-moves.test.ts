@@ -23,7 +23,7 @@ describe.each([
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemySpecies(SpeciesId.FEEBAS)
+      .enemySpecies(SpeciesId.SHUCKLE)
       .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(100)
       .startingLevel(100)
@@ -45,7 +45,7 @@ describe.each([
     expect(feebas).toHaveUsedMove({ move, result: MoveResult.FAIL });
   });
 
-  // This is a PokeRogue buff to Fake Out
+  // This is a PokeRogue buff to Fake Out & co.
   it("should succeed at the start of each new wave, even if user wasn't recalled", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
