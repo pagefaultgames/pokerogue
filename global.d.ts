@@ -68,6 +68,10 @@ declare global {
     new <N extends number>(value: Stringify<N>): N;
     <N extends number>(value: Stringify<N>): N;
     parseInt<N extends number>(string: Stringify<N>, radix?: 10): N;
+
+    // add overloads for coercing numbers to... numbers
+    new <N extends number>(value: N): N;
+    <N extends number>(value: N): N;
   }
 
   interface Number {
