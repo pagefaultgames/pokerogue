@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+SPDX-FileCopyrightText: 2024-2026 Pagefault Games
 
 SPDX-License-Identifier: CC-BY-NC-SA-4.0
 -->
@@ -48,7 +48,7 @@ This document is intended to serve as a guide for how to (and not to) document c
    - Adding too many comments can risk distracting from the actual code in favor of repeating the self-evident.
    - Where possible, try to summarize blocks of code instead of singular lines where possible, always preferring giving a reason over stating a fact. Single line comments should call out specific oddities or features.
 
-[^1]: With exceptions for extremely long, convoluted or unintuitive methods (though an over-dependency on said comments is likely a symptom of poorly structured code).
+[^1]: With exceptions for extremely long, convoluted or unintuitive methods (though a dependency on said comments is likely a symptom of poorly structured code).
 
 ## TSDoc
 The codebase makes extensive use of [TSDoc](https://tsdoc.org), a TypeScript-specific version of [JSDoc](https://jsdoc.app/about-getting-started) with standardized syntax and Markdown support.
@@ -57,9 +57,9 @@ The codebase makes extensive use of [TSDoc](https://tsdoc.org), a TypeScript-spe
 > Most modern IDEs have functionality for showing JSDoc annotations upon hovering over attached constructs.
 > Some (like VS Code) also show `@param` descriptions for function parameters as you type them, helping keep track of arguments inside lengthy functions.
 
-#### Typedoc
+#### TypeDoc
 One of TSDoc's many upsides is its standardized parser that allows other tools to read and process module documentation. \
-We make use of one such tool ([Typedoc](https://typedoc.org/)) to automatically generate [API documentation](https://pagefaultgames.github.io/pokerogue/beta/index.html) from comments on classes, interfaces and the like[^2].
+We make use of one such tool ([TypeDoc](https://typedoc.org/)) to automatically generate [API documentation](https://pagefaultgames.github.io/pokerogue/beta/index.html) from comments on classes, interfaces and the like[^2].
 
 [^2]: You can preview the output by running `pnpm typedoc`, though [Live Preview](<https://marketplace.visualstudio.com/items?itemName=ms-vscode.live-server>) or a similar method of previewing local HTML files is recommended to make your life easier. \
 Note that certain features (like the "Go to Main/Beta" navigation bar links) are disabled on local docs builds due to relying on CI-exclusive environment variables.
@@ -133,25 +133,39 @@ With all these in mind, here are a few TSDoc-specific guidelines to ensure reada
 - <details>
   <summary>Use <b>proper English sentences</b> for descriptors</summary>
 
-  Since these comments are going onto a website, annotations for properties, methods and functions should be well-formed, present-tense English sentences where possible.
+  Since these comments are going onto a website, annotations for properties, methods and functions should be _well-formed_, _present-tense English sentences_ where possible.
   - The only exceptions are single-sentence `@param`/`@typeParam` lines - these should _not_ end with periods and instead take the form of bullet-point declarations.
   Example:
   ```ts
   /**
-   * Wrapper class to handle doomsday events.
+   * Baseline arguments used to construct all {@linkcode PositionalTag}s,
+   * the contents of which are serialized and used to construct new tags. \
+   * Does not contain the `tagType` parameter (which is used to select the proper class constructor during tag loading).
+   * @privateRemarks
+   * All {@linkcode PositionalTag}s are intended to implement a sub-interface of this containing their respective parameters,
+   * and should refrain from adding extra serializable fields not contained in said interface.
+   * This ensures that all tags truly "become" their respective interfaces when converted to and from JSON.
    */
-  class Doomsday {
+  interface PositionalTagBaseArgs {
     /**
-     * Whether the world has exploded yet.
-     * Set to `true` upon any of this class' methods being called.
-    */
-    public worldExploded: boolean;
-  };
+     * The number of turns remaining until this tag's activation. \
+     * Decremented by 1 at the end of each turn until reaching 0, at which point it will
+     * {@linkcode PositionalTag.trigger | trigger} the tag's effects and be removed.
+     */
+    turnCount: number;
+    /**
+     * The {@linkcode BattlerIndex} targeted by this effect.
+     */
+    readonly targetIndex: BattlerIndex;
+  }
 
   /**
    * Compute the geometric mean of multiple numbers.
    * @param nums - The numbers whose mean will be computed
    * @returns The geometric mean of `nums`.
+   * @remarks
+   * This is equivalent to Π(nums)^(1/nums.length).
+   * @see {@link https://en.wikipedia.org/wiki/Geometric_mean | Geometric Mean - Wikipedia}
    */
   declare function geometricMean(nums: number[]): number;
   ```
@@ -173,14 +187,6 @@ With all these in mind, here are a few TSDoc-specific guidelines to ensure reada
      */
     public failedRunAway = false;
   }
-
-  /**
-   * Turn all frogs in the global frog registry gay using science mumbo-jumbo.
-   * @param maxFrogs - The maximum number of animals to convert
-   * @param includeToads - (Default `false`) Whether to also convert toads as well
-   * @param turnExplosive - (Default `true`) Whether to make converted frogs explode
-   */
-  function turnFrogsGay(maxFrogs: number, includeToads = false, turnExplosive = true): void {};
 
   /**
    * Print a copiously long, procedurally generated lorem ipsum-like placeholder string.

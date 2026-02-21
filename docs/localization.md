@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+SPDX-FileCopyrightText: 2024-2026 Pagefault Games
 
 SPDX-License-Identifier: CC-BY-NC-SA-4.0
 -->
@@ -106,7 +106,7 @@ If a key is present in any language _except_ the master language, it won't appea
 
 > [!IMPORTANT]
 > The Dev and Translation teams have strict requirements for ensuring consistency of newly added locales entries.
-> PRs failing these requirements **will not be mergeable into `locales`**!  
+> PRs failing these requirements **will not be mergeable into `locales`**!
 > - File names should be in `kebab-case`. Example: `trainer-names.json`
 > - Key names should be in `camelCase`. Example: `aceTrainer`
 > - Keys making use of i18next's inbuilt [context support](https://www.i18next.com/translation-function/context) must use `snake_case` for the context extension[^3]. Example: `aceTrainer_male`
@@ -136,9 +136,9 @@ The basic procedure is roughly as follows:
     ```
 2. Set some of the [in-game overrides](../CONTRIBUTING.md#1---manual-testing) inside `overrides.ts` to values corresponding to the interactions being tested.
 3. Start a local dev server (`pnpm start:dev`) and open localhost in your browser.
-4. Take screenshots or record a video of the locales changes being displayed in-game using the software of your choice[^3].
+4. Take screenshots or record a video of the locales changes being displayed in-game using the software of your choice[^4].
 
-[^3]: For those lacking a screen capture device, [OBS Studio](https://obsproject.com) is a popular open-source option.
+[^4]: For those lacking a dedicated screen capture software, [OBS Studio](https://obsproject.com) is a popular open-source option, available on all major OSes.
 
 > [!NOTE]
 > For those aiming to film their changes, bear in mind that GitHub has a hard **10mB limit** on uploaded media content.
@@ -152,7 +152,7 @@ The easiest way to do this is by **pinging the current Head of Translation** in 
 <!-- Remember to update this everytime the head of translation changes! -->
 > [!IMPORTANT]
 > The current Head of Translation is: \
-> ** @lugiadrien **
+> `@lugiadrien` (@Adri1 on GitHub)
 
 # Closing Remarks
 If you have any questions about the developer process for localization, don't hesitate to ask!

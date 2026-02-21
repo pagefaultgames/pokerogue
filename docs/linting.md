@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+SPDX-FileCopyrightText: 2024-2026 Pagefault Games
 
 SPDX-License-Identifier: CC-BY-NC-SA-4.0
 -->
@@ -15,7 +15,7 @@ You probably installed Biome already without noticing it - it's included inside 
 # Using Biome
 
 For the most part, Biome attempts to stay "out of your hair", letting you write code while enforcing a consistent formatting standard and only notifying for errors it can't automatically fix. \
-On the other hand, if Biome complains about a piece of code, **there's probably a good reason why**. Disable comments should be used sparingly or when readabilty demands it - your first instinct should be to fix the code in question, not disable the rule.
+On the other hand, if Biome complains about a piece of code, **there's probably a good reason why**. Disable comments should be used sparingly or when readability demands it - your first instinct should be to fix the code in question, not disable the rule.
 
 ## Editor Integration
 Biome has integrations with many popular code editors. See [these](https://biomejs.dev/guides/editors/first-party-extensions/) [pages](https://biomejs.dev/guides/editors/third-party-extensions/) for information about enabling Biome in your editor of choice.
@@ -23,12 +23,12 @@ Biome has integrations with many popular code editors. See [these](https://biome
 ## Automated Runs
 Generally speaking, most users shouldn't need to run Biome directly; in addition to editor integration, a [pre-commit hook](../lefthook.yml) will automatically format and lint all staged files before each commit.
 
-> ![WARNING]
+> [!WARNING]
 > You will **not** be able to commit code if any staged files contain `error`-level linting problems. \
 > If you, for whatever reason, _absolutely need_ to bypass Lefthook for a given commit,
 > pass the `--no-verify` flag to `git commit`.
 
-We also have a [Github Action](../.github/workflows/linting.yml) to verify code quality each time a PR is updated, preventing bad code from inadvertently making its way upstream. \
+We also have a [GitHub Actions workflow](../.github/workflows/linting.yml) to verify code quality each time a PR is updated, preventing bad code from inadvertently making its way upstream. \
 These are effectively the same commands as run by Lefthook, merely on a project-wide scale.
 
 ## Running Biome via CLI
@@ -45,8 +45,9 @@ To run Biome on your files manually, you have 2 main options:
 A full list of flags and options can be found on [their website](https://biomejs.dev/reference/cli/), but here's a few useful ones to keep in mind:
 
 - `--write` will cause Biome to write all "safe" fixes and formatting changes directly to your files (rather than just complaining and erroring out).
-- `--changed` and `--staged` will limit checking to all changed or staged files respectively. Biome sources this info from the relevant version control system (in this case `git`).
+- `--changed` and `--staged` will limit checking to all changed or staged files respectively. Biome sources this info from the relevant version control system (in this case `git`). Great for quick checks before committing or pushing.
 - `diagnostic-level=XXX` will only show diagnostics with at least the given severity level (`info/warn/error`). Useful to only focus on errors causing a failed workflow run or similar.
+- `only=XXX` will only check for the given rule(s). This can be used in combination with `diagnostic-level` to only show errors for a specific rule, for instance.
 
 ## Linting Rules
 
