@@ -53,11 +53,13 @@
     "paths": {
       "#abilities/*": ["./src/data/abilities/*.ts"],
       "#api/*": ["./src/plugins/api/*.ts"],
+      "#biomes/*": ["./src/data/balance/biomes/*.ts"],
       "#balance/*": ["./src/data/balance/*.ts"],
       "#constants/*": ["./src/constants/*.ts"],
       "#enums/*": ["./src/enums/*.ts"],
       "#events/*": ["./src/events/*.ts"],
       "#field/*": ["./src/field/*.ts"],
+      "#init/*": ["./src/init/*.ts"],
       "#inputs/*": ["./src/configs/inputs/*.ts"],
       "#modifiers/*": ["./src/modifier/*.ts"],
       "#moves/*": ["./src/data/moves/*.ts"],

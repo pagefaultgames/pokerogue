@@ -16,7 +16,7 @@
     "enabled": true,
     "useEditorconfig": true,
     "indentStyle": "space",
-    "includes": ["**", "!src/data/balance/**"], // TODO: enable formatting of balance folder
+    "includes": ["**", "!src/data/balance/**", "src/data/balance/biomes/**", "src/data/balance/timed-events.ts"], // TODO: enable formatting of balance folder
     "lineWidth": 120
   },
   "files": {

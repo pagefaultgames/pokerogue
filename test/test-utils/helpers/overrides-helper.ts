@@ -25,6 +25,7 @@ import type { MoveHelper } from "#test/test-utils/helpers/move-helper";
 import { getEnumStr, stringifyEnumArray } from "#test/test-utils/string-utils";
 import { coerceArray } from "#utils/array";
 import { shiftCharCodes } from "#utils/common";
+import { enumValueToKey } from "#utils/enums";
 import chalk from "chalk";
 import { vi } from "vitest";
 
@@ -62,7 +63,7 @@ export class OverridesHelper extends GameManagerHelper {
    */
   public startingBiome(biome: BiomeId): this {
     this.game.scene.newArena(biome);
-    this.log(`Starting biome set to ${BiomeId[biome]} (=${biome})!`);
+    this.log(`Starting biome set to ${enumValueToKey(BiomeId, biome)} (=${biome})!`);
     return this;
   }
 

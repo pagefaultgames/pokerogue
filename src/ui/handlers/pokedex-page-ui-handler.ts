@@ -42,7 +42,7 @@ import { UiMode } from "#enums/ui-mode";
 import type { Variant } from "#sprites/variant";
 import { getVariantIcon, getVariantTint } from "#sprites/variant";
 import { SettingKeyboard } from "#system/settings-keyboard";
-import type { BiomeTierTod } from "#types/biomes";
+import type { BiomeTierTimeOfDay } from "#types/biomes";
 import type { DexEntry } from "#types/dex-data";
 import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { StarterAttributes } from "#types/save-data";
@@ -62,7 +62,7 @@ import {
 } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { BooleanHolder, getLocalizedSpriteKey, padInt, rgbHexToRgba } from "#utils/common";
-import { getEnumValues } from "#utils/enums";
+import { enumValueToKey, getEnumValues } from "#utils/enums";
 import { getDexNumber, getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
@@ -269,8 +269,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
   private passive: AbilityId;
   private hasPassive: boolean;
   private hasAbilities: number[];
-  private biomes: readonly BiomeTierTod[];
-  private preBiomes: readonly BiomeTierTod[];
+  private biomes: readonly BiomeTierTimeOfDay[];
+  private preBiomes: readonly BiomeTierTimeOfDay[];
   private baseStats: number[];
   private baseTotal: number;
   private evolutions: SpeciesFormEvolution[];
@@ -401,7 +401,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     const starterBoxContainer = globalScene.add.container(speciesContainerX + 6, 9); //115
 
     for (const species of allSpecies) {
-      if (!speciesStarterCosts.hasOwnProperty(species.speciesId) || !species.isObtainable()) {
+      if (!Object.hasOwn(speciesStarterCosts, species.speciesId)) {
         continue;
       }
 
@@ -897,6 +897,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
     this.hasAbilities = [hasAbility1, hasAbility2, hasHiddenAbility];
 
+    // TODO: this is jank, relying on extremely jank data structures that have been removed; refactor
     const allBiomes = catchableSpecies[species.speciesId] ?? [];
     this.preBiomes = this.sanitizeBiomes(
       (catchableSpecies[this.starterId] ?? []).filter(
@@ -934,7 +935,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
   }
 
   // Function to ensure that forms appear in the appropriate biome and tod
-  sanitizeBiomes(biomes: readonly BiomeTierTod[], speciesId: number): readonly BiomeTierTod[] {
+  sanitizeBiomes(biomes: readonly BiomeTierTimeOfDay[], speciesId: number): readonly BiomeTierTimeOfDay[] {
     if (speciesId === SpeciesId.BURMY || speciesId === SpeciesId.WORMADAM) {
       return biomes.filter(b => {
         const formIndex = (() => {
@@ -974,7 +975,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     if (speciesId === SpeciesId.LYCANROC) {
       return biomes.filter(b => {
         const formIndex = (() => {
-          switch (b.tod[0]) {
+          switch (b.timesOfDay[0]) {
             case TimeOfDay.DAY:
             case TimeOfDay.DAWN:
               return 0;
@@ -1553,16 +1554,16 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                 const options: any[] = [];
 
                 ui.showText(i18next.t("pokedexUiHandler:showBiomes"), null, () => {
-                  this.biomes.map(b => {
+                  this.biomes.forEach(b => {
                     options.push({
                       label:
-                        i18next.t(`biome:${toCamelCase(BiomeId[b.biome])}`)
+                        i18next.t(`biome:${toCamelCase(enumValueToKey(BiomeId, b.biome))}`)
                         + " - "
                         + i18next.t(`biome:${toCamelCase(BiomePoolTier[b.tier])}`)
-                        + (b.tod.length === 1 && b.tod[0] === -1
+                        + (b.timesOfDay.length === 1 && b.timesOfDay[0] === -1
                           ? ""
                           : " ("
-                            + b.tod.map(tod => i18next.t(`biome:${toCamelCase(TimeOfDay[tod])}`)).join(", ")
+                            + b.timesOfDay.map(tod => i18next.t(`biome:${toCamelCase(TimeOfDay[tod])}`)).join(", ")
                             + ")"),
                       handler: () => false,
                     });
@@ -1574,16 +1575,16 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                       skip: true,
                       handler: () => false,
                     });
-                    this.preBiomes.map(b => {
+                    this.preBiomes.forEach(b => {
                       options.push({
                         label:
-                          i18next.t(`biome:${toCamelCase(BiomeId[b.biome])}`)
+                          i18next.t(`biome:${toCamelCase(enumValueToKey(BiomeId, b.biome))}`)
                           + " - "
                           + i18next.t(`biome:${toCamelCase(BiomePoolTier[b.tier])}`)
-                          + (b.tod.length === 1 && b.tod[0] === -1
+                          + (b.timesOfDay.length === 1 && b.timesOfDay[0] === -1
                             ? ""
                             : " ("
-                              + b.tod.map(tod => i18next.t(`biome:${toCamelCase(TimeOfDay[tod])}`)).join(", ")
+                              + b.timesOfDay.map(tod => i18next.t(`biome:${toCamelCase(TimeOfDay[tod])}`)).join(", ")
                               + ")"),
                         handler: () => false,
                       });

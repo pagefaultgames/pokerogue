@@ -2,12 +2,11 @@ import { globalScene } from "#app/global-scene";
 import { SHINY_CATCH_RATE_MULTIPLIER } from "#balance/rates";
 import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER } from "#balance/starters";
 import type { PokemonSpeciesFilter } from "#data/pokemon-species";
-import type { WeatherPoolEntry } from "#data/weather";
 import type { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { SpeciesId } from "#enums/species-id";
 import type { ModifierTypeKeys } from "#modifiers/modifier-type";
-import type { EventEncounter, EventMysteryEncounterTier, TimedEvent } from "#types/events";
+import type { EventEncounter, EventMysteryEncounterTier, EventWeatherPools, TimedEvent } from "#types/events";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { timedEvents } from "./data/balance/timed-events";
 
@@ -123,8 +122,8 @@ export class TimedEventManager {
    * For events where there's a set weather for town biome (other biomes are hard)
    * @returns Event weathers for town
    */
-  getWeather(): WeatherPoolEntry[] {
-    return [...(this.activeEvent()?.weather ?? [])];
+  getWeather(): EventWeatherPools | undefined {
+    return this.activeEvent()?.weather;
   }
 
   getAllMysteryEncounterChanges(): EventMysteryEncounterTier[] {

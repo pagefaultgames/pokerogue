@@ -85,11 +85,11 @@ export function getDailyStartingBiome(): BiomeId {
     return eventBiome;
   }
 
-  // TODO: make an actual weighted average utility function
-  const biomes = getEnumValues(BiomeId);
+  // TODO: use weighted RNG utility function
+  const biomes = Object.values(BiomeId);
   let totalWeight = 0;
   const biomeThresholds: number[] = [];
-  for (const biome of getEnumValues(BiomeId)) {
+  for (const biome of biomes) {
     const weight = dailyBiomeWeights[biome];
     if (weight === 0) {
       continue;
@@ -281,7 +281,7 @@ export function getDailyEventSeedBiome(): BiomeId | null {
     return null;
   }
 
-  if (!getEnumValues(BiomeId).includes(startingBiome)) {
+  if (!Object.values(BiomeId).includes(startingBiome)) {
     console.warn("Invalid biome ID used for custom daily run seed:", startingBiome);
     return null;
   }

@@ -1,6 +1,5 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { getRandomWeatherType } from "#data/weather";
 import { NextEncounterPhase } from "#phases/next-encounter-phase";
 
 export class NewBiomeEncounterPhase extends NextEncounterPhase {
@@ -36,12 +35,5 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
         }
       },
     });
-  }
-
-  /**
-   * Set biome weather.
-   */
-  trySetWeatherIfNewBiome(): void {
-    globalScene.arena.trySetWeather(getRandomWeatherType(globalScene.arena));
   }
 }

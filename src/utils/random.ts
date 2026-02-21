@@ -12,7 +12,7 @@
 
 import { globalScene } from "#app/global-scene";
 import type { Mutable } from "#types/type-helpers";
-import { randSeedItem, randSeedShuffle } from "#utils/common";
+import { randSeedInt, randSeedItem, randSeedShuffle } from "#utils/common";
 
 /**
  * Select a random element using an offset such that the chosen element is
@@ -50,4 +50,28 @@ export function randSeedUniqueItem<T>(choices: readonly T[], seedOffset: number,
     choice = randSeedShuffle(choices.slice())[seedOffset];
   }, 0);
   return choice!;
+}
+
+/**
+ * Function for picking an item out of a mapping based on the given weights
+ * @param items - The mapping of item to weight
+ * @returns a randomly picked item according to the weights
+ */
+export function weightedPick<T>(items: Map<T, number>): T {
+  const totalWeight = [...items.values()].reduce((a: number, b: number) => a + b, 0);
+  const randomNumber = randSeedInt(totalWeight);
+
+  let totalWeightSoFar = 0;
+  for (const [i, weight] of items) {
+    totalWeightSoFar += weight;
+
+    // This is a < and not a <= since the first item can have 0 weight
+    if (randomNumber < totalWeightSoFar) {
+      return i;
+    }
+  }
+
+  // Failsafe if the above loop somehow failed (e.g., if all items have 0 weight)
+  console.error("Random selection failed, selecting the first element instead. Original list of items:", items);
+  return items.keys()[0];
 }

@@ -17,7 +17,6 @@ import { ChallengeType } from "#enums/challenge-type";
 import { Challenges } from "#enums/challenges";
 import { GameModes } from "#enums/game-modes";
 import { SpeciesId } from "#enums/species-id";
-import type { Arena } from "#field/arena";
 import { classicFixedBattles, type FixedBattleConfigs } from "#trainers/fixed-battle-configs";
 import type { CustomDailyRunConfig } from "#types/daily-run";
 import { applyChallenges } from "#utils/challenge-utils";
@@ -201,18 +200,17 @@ export class GameMode implements GameModeConfig {
 
   /**
    * Determines whether or not to generate a trainer
-   * @param waveIndex the current floor the player is on (trainer sprites fail to generate on X1 floors)
-   * @param arena the current {@linkcode Arena}
-   * @returns `true` if a trainer should be generated, `false` otherwise
+   * @param waveIndex - The current floor the player is on (trainer sprites fail to generate on X1 floors)
+   * @returns Whether a trainer should be generated
    */
-  isWaveTrainer(waveIndex: number, arena: Arena): boolean {
-    /**
-     * Daily spawns trainers on floors 5, 15, 20, 25, 30, 35, 40, and 45
-     */
+  public isWaveTrainer(waveIndex: number): boolean {
+    const { arena, offsetGym } = globalScene;
+
+    // Daily spawns trainers on floors 5, 15, 20, 25, 30, 35, 40, and 45
     if (this.isDaily) {
       return waveIndex % 10 === 5 || (!(waveIndex % 10) && waveIndex > 10 && !this.isWaveFinal(waveIndex));
     }
-    if (waveIndex % 30 === (globalScene.offsetGym ? 0 : 20) && !this.isWaveFinal(waveIndex)) {
+    if (waveIndex % 30 === (offsetGym ? 0 : 20) && !this.isWaveFinal(waveIndex)) {
       return true;
     }
     if (waveIndex % 10 !== 1 && waveIndex % 10) {
@@ -220,7 +218,7 @@ export class GameMode implements GameModeConfig {
        * Do not check X1 floors since there's a bug that stops trainer sprites from appearing
        * after a X0 full party heal, this also allows for a smoother biome transition for general gameplay feel
        */
-      const trainerChance = arena.getTrainerChance();
+      const trainerChance = arena.trainerChance;
       let allowTrainerBattle = true;
       if (trainerChance) {
         const waveBase = Math.floor(waveIndex / 10) * 10;
@@ -229,13 +227,13 @@ export class GameMode implements GameModeConfig {
           if (w === waveIndex) {
             continue;
           }
-          if (w % 30 === (globalScene.offsetGym ? 0 : 20) || this.isFixedBattle(w)) {
+          if (w % 30 === (offsetGym ? 0 : 20) || this.isFixedBattle(w)) {
             allowTrainerBattle = false;
             break;
           }
           if (w < waveIndex) {
             globalScene.executeWithSeedOffset(() => {
-              const waveTrainerChance = arena.getTrainerChance();
+              const waveTrainerChance = arena.trainerChance;
               if (!randSeedInt(waveTrainerChance)) {
                 allowTrainerBattle = false;
               }

@@ -1,3 +1,4 @@
+import { BiomeId } from "#enums/biome-id";
 import { Challenges } from "#enums/challenges";
 import { EventType } from "#enums/event-type";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -137,7 +138,7 @@ export const timedEvents: readonly TimedEvent[] = [
       { species: SpeciesId.IRON_BUNDLE },
     ],
     delibirdyBuff: ["CATCHING_CHARM", "SHINY_CHARM", "ABILITY_CHARM", "EXP_CHARM", "SUPER_EXP_CHARM", "HEALING_CHARM"],
-    weather: [{ weatherType: WeatherType.SNOW, weight: 1 }],
+    weather: { [BiomeId.TOWN]: { [WeatherType.SNOW]: 1 } },
     mysteryEncounterTierChanges: [
       {
         mysteryEncounter: MysteryEncounterType.DELIBIRDY,

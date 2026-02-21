@@ -45,7 +45,7 @@ import i18next from "i18next";
 const namespace = "mysteryEncounters/dancingLessons";
 
 // Fire form
-const BAILE_STYLE_BIOMES = [
+const BAILE_STYLE_BIOMES: readonly BiomeId[] = [
   BiomeId.VOLCANO,
   BiomeId.BEACH,
   BiomeId.ISLAND,
@@ -56,7 +56,7 @@ const BAILE_STYLE_BIOMES = [
 ];
 
 // Electric form
-const POM_POM_STYLE_BIOMES = [
+const POM_POM_STYLE_BIOMES: readonly BiomeId[] = [
   BiomeId.CONSTRUCTION_SITE,
   BiomeId.POWER_PLANT,
   BiomeId.FACTORY,
@@ -67,7 +67,7 @@ const POM_POM_STYLE_BIOMES = [
 ];
 
 // Psychic form
-const PAU_STYLE_BIOMES = [
+const PAU_STYLE_BIOMES: readonly BiomeId[] = [
   BiomeId.JUNGLE,
   BiomeId.FAIRY_CAVE,
   BiomeId.MEADOW,
@@ -78,7 +78,7 @@ const PAU_STYLE_BIOMES = [
 ];
 
 // Ghost form
-const SENSU_STYLE_BIOMES = [
+const SENSU_STYLE_BIOMES: readonly BiomeId[] = [
   BiomeId.RUINS,
   BiomeId.SWAMP,
   BiomeId.CAVE,
@@ -156,8 +156,8 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
     const oricorio = globalScene.addEnemyPokemon(species, level, TrainerSlot.NONE, false, false, oricorioData);
 
     // Adds a real Pokemon sprite to the field (required for the animation)
-    for (const enemyPokemon of globalScene.getEnemyParty()) {
-      enemyPokemon.leaveField(true, true, true);
+    for (const enemy of globalScene.getEnemyParty()) {
+      enemy.leaveField(true, true, true);
     }
     globalScene.currentBattle.enemyParty = [oricorio];
     globalScene.field.add(oricorio);
