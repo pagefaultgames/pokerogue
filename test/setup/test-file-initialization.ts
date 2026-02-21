@@ -13,9 +13,7 @@ import InputText from "phaser3-rex-plugins/plugins/inputtext";
 
 let wasInitialized = false;
 
-/**
- * Run initialization code upon starting a new file, both per-suite and per-instance ones.
- */
+/** Run initialization code upon starting a new file, both per-suite and per-instance ones. */
 export function initTests(): void {
   setupStubs();
   if (!wasInitialized) {
@@ -26,12 +24,10 @@ export function initTests(): void {
   manageListeners();
 }
 
-/**
- * Setup various stubs for testing.
- * @todo Move this into a dedicated stub file instead of running it once per test instance
- * @todo review these to see which are actually necessary
- * @todo Investigate why this resets on new test suite start
- */
+/** Setup various stubs for testing. */
+// TODO: Move this into a dedicated stub file instead of running it once per test instance
+// TODO: review these to see which are actually necessary
+// TODO: Investigate why this resets on new test suite start
 function setupStubs(): void {
   // TODO: Make this type safe
   Object.defineProperties(globalThis, {
@@ -55,8 +51,7 @@ function setupStubs(): void {
   });
 
   BBCodeText.prototype.destroy = () => null;
-  // @ts-expect-error
-  BBCodeText.prototype.resize = () => null;
+  BBCodeText.prototype.resize = () => null as any;
   InputText.prototype.setElement = () => null as any;
   InputText.prototype.resize = () => null as any;
   Phaser.GameObjects.Image = MockImage as any;
@@ -73,6 +68,7 @@ function setupStubs(): void {
 
 /**
  * Closes the current mock server and initializes a new mock server.
+ * @remarks
  * This is run at the beginning of every API test file.
  */
 export async function initServerForApiTests() {
