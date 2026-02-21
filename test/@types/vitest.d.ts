@@ -78,7 +78,8 @@ declare module "vitest" {
     not: NegativeAssertion<T>;
 
     // enforce consistent style by banning chai assertions at a type level (except `not` which is also in jest).
-    // NB: We cannot place these in a nice interface since TS will complain about `Assertion` extending 2 interfaces with clashing types
+    // NB: We cannot place these in a nice interface since TS will complain about `Assertion` extending 2 interfaces with clashing types.
+    // We also cannot make these anything other than `never` as TS will error about incompatible types (which prevents any custom error messages)
 
     // LanguageChains
     to: never;

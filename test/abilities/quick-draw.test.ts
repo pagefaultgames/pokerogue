@@ -65,7 +65,7 @@ describe("Abilities - Quick Draw", () => {
 
     expect(pokemon.isFainted()).toBe(true);
     expect(enemy.isFainted()).toBe(false);
-    expect(pokemon.waveData.abilitiesApplied).not.contain(AbilityId.QUICK_DRAW);
+    expect(pokemon.waveData.abilitiesApplied).not.toContain(AbilityId.QUICK_DRAW);
   });
 
   it("does not increase priority", async () => {

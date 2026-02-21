@@ -38,7 +38,7 @@ describe("Items - Mystical Rock", () => {
     const weather = globalScene.arena.weather;
 
     expect(weather).toBeDefined();
-    expect(weather!.turnsLeft).to.equal(9);
+    expect(weather!.turnsLeft).toBe(9);
   });
 
   it("should increase terrain duration by +2 turns per stack", async () => {
@@ -51,6 +51,6 @@ describe("Items - Mystical Rock", () => {
     const terrain = globalScene.arena.terrain;
 
     expect(terrain).toBeDefined();
-    expect(terrain!.turnsLeft).to.equal(9);
+    expect(terrain!.turnsLeft).toBe(9);
   });
 });
