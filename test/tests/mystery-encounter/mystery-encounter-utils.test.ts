@@ -18,7 +18,7 @@ import {
 } from "#mystery-encounters/encounter-pokemon-utils";
 import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MessagePhase } from "#phases/message-phase";
-import { GameManager } from "#test/utils/game-manager";
+import { GameManager } from "#test/framework/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import Phaser from "phaser";

@@ -1,4 +1,4 @@
-import type { GameManager } from "#test/utils/game-manager";
+import type { GameManager } from "#test/framework/game-manager";
 
 /**
  * Base class for defining all game helpers.

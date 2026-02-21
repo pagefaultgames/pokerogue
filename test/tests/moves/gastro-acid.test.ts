@@ -4,7 +4,7 @@ import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
-import { GameManager } from "#test/utils/game-manager";
+import { GameManager } from "#test/framework/game-manager";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Gastro Acid", () => {

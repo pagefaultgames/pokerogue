@@ -3,7 +3,7 @@ import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { Stat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
 import { StatStageChangePhase } from "#phases/stat-stage-change-phase";
-import { GameManager } from "#test/utils/game-manager";
+import { GameManager } from "#test/framework/game-manager";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
 describe("BattlerTag - OctolockTag", () => {

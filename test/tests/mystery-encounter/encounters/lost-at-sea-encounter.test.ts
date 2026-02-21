@@ -8,8 +8,8 @@ import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils"
 import { LostAtSeaEncounter } from "#mystery-encounters/lost-at-sea-encounter";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
+import { GameManager } from "#test/framework/game-manager";
 import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption } from "#test/utils/encounter-test-utils";
-import { GameManager } from "#test/utils/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";

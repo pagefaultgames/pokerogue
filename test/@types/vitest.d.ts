@@ -22,7 +22,7 @@ import type { Arena } from "#field/arena";
 import type { Pokemon } from "#field/pokemon";
 import type { PokemonMove } from "#moves/pokemon-move";
 import type { OneOther } from "#test/@types/test-helpers";
-import type { GameManager } from "#test/utils/game-manager";
+import type { GameManager } from "#test/framework/game-manager";
 import type { PartiallyFilledArenaTag } from "#test/matchers/to-have-arena-tag";
 import type { PartiallyFilledBattlerTag } from "#test/matchers/to-have-battler-tag";
 import type { ToHaveEffectiveStatOptions } from "#test/matchers/to-have-effective-stat";

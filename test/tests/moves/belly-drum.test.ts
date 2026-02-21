@@ -2,7 +2,7 @@ import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
-import { GameManager } from "#test/utils/game-manager";
+import { GameManager } from "#test/framework/game-manager";
 import { toDmgValue } from "#utils/common";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, test } from "vitest";

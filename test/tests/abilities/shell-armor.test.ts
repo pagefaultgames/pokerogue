@@ -4,7 +4,7 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { Pokemon } from "#field/pokemon";
 import type { Move } from "#moves/move";
-import { GameManager } from "#test/utils/game-manager";
+import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
 

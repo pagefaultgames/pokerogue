@@ -1,6 +1,6 @@
 import { PokerogueAccountApi } from "#api/pokerogue-account-api";
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
-import { initServerForApiTests } from "#test/utils/test-file-initialization";
+import { initServerForApiTests } from "#test/setup/test-file-initialization";
 import { getApiBaseUrl } from "#test/utils/test-utils";
 import type { AccountInfoResponse } from "#types/api";
 import * as CookieUtils from "#utils/cookies";

@@ -4,7 +4,7 @@ import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { PokeballType } from "#enums/pokeball";
 import { SpeciesId } from "#enums/species-id";
-import { GameManager } from "#test/utils/game-manager";
+import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
 

@@ -3,8 +3,8 @@ import "#plugins/i18n"; // tests don't go through `main.ts`, requiring this to b
 
 import { PromptHandler } from "#test/helpers/prompt-handler";
 import { MockConsole } from "#test/mocks/mock-console/mock-console";
-import { logTestEnd, logTestStart } from "#test/utils/setup/test-end-log";
-import { initTests } from "#test/utils/test-file-initialization";
+import { logTestEnd, logTestStart } from "#test/setup/test-end-log";
+import { initTests } from "#test/setup/test-file-initialization";
 import chalk from "chalk";
 import { afterAll, afterEach, beforeAll, beforeEach, vi } from "vitest";
 

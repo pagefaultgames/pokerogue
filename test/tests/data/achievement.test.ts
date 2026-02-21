@@ -11,7 +11,7 @@ import {
   MoneyAchv,
   RibbonAchv,
 } from "#system/achv";
-import { GameManager } from "#test/utils/game-manager";
+import { GameManager } from "#test/framework/game-manager";
 import { NumberHolder } from "#utils/common";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

@@ -7,7 +7,7 @@ import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { MapModifier } from "#modifiers/modifier";
 import { getPartyLuckValue } from "#modifiers/modifier-type";
-import { GameManager } from "#test/utils/game-manager";
+import { GameManager } from "#test/framework/game-manager";
 import { stringifyEnumArray } from "#test/utils/string-utils";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

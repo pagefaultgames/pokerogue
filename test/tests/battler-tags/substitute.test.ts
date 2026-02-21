@@ -9,7 +9,7 @@ import { MoveResult } from "#enums/move-result";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import type { Pokemon } from "#field/pokemon";
 import type { MoveEffectPhase } from "#phases/move-effect-phase";
-import { GameManager } from "#test/utils/game-manager";
+import { GameManager } from "#test/framework/game-manager";
 import type { TurnMove } from "#types/turn-move";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

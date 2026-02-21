@@ -1,5 +1,5 @@
+import type { TextInterceptor } from "#test/framework/text-interceptor";
 import type { MockGameObject } from "#test/mocks/mock-game-object";
-import type { TextInterceptor } from "#test/utils/text-interceptor";
 import { UI } from "#ui/ui";
 
 export class MockText implements MockGameObject {

@@ -1,5 +1,5 @@
 import { PokerogueDailyApi } from "#api/pokerogue-daily-api";
-import { initServerForApiTests } from "#test/utils/test-file-initialization";
+import { initServerForApiTests } from "#test/setup/test-file-initialization";
 import { getApiBaseUrl } from "#test/utils/test-utils";
 import type { GetDailyRankingsPageCountRequest, GetDailyRankingsRequest } from "#types/pokerogue-daily-api";
 import { type RankingEntry, ScoreboardCategory } from "#ui/daily-run-scoreboard";

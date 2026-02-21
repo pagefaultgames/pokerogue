@@ -7,7 +7,7 @@ import { UiMode } from "#enums/ui-mode";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import { MysteryEncounterRewardsPhase } from "#phases/mystery-encounter-phases";
 import { VictoryPhase } from "#phases/victory-phase";
-import type { GameManager } from "#test/utils/game-manager";
+import type { GameManager } from "#test/framework/game-manager";
 import type { MessageUiHandler } from "#ui/message-ui-handler";
 import type { MysteryEncounterUiHandler } from "#ui/mystery-encounter-ui-handler";
 import type { OptionSelectUiHandler } from "#ui/option-select-ui-handler";

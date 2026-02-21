@@ -13,12 +13,12 @@ import { BugTypeSuperfanEncounter } from "#mystery-encounters/bug-type-superfan-
 import * as encounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
+import { GameManager } from "#test/framework/game-manager";
 import {
   runMysteryEncounterToEnd,
   runSelectMysteryEncounterOption,
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/utils/encounter-test-utils";
-import { GameManager } from "#test/utils/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

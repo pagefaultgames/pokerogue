@@ -2,7 +2,7 @@ import type { ArenaTag, ArenaTagTypeMap } from "#data/arena-tag";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import type { ArenaTagType } from "#enums/arena-tag-type";
 import type { OneOther } from "#test/@types/test-helpers";
-import type { GameManager } from "#test/utils/game-manager";
+import type { GameManager } from "#test/framework/game-manager";
 import { getOnelineDiffStr } from "#test/utils/string-utils";
 import { isGameManagerInstance, receivedStr } from "#test/utils/test-utils";
 import type { ArenaTagDataMap, SerializableArenaTagType } from "#types/arena-tags";

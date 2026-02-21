@@ -1,5 +1,5 @@
 import { Pokemon } from "#field/pokemon";
-import { GameManager } from "#test/utils/game-manager";
+import { GameManager } from "#test/framework/game-manager";
 import i18next, { type ParseKeys } from "i18next";
 import { vi } from "vitest";
 

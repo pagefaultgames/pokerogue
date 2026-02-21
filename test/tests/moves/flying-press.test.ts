@@ -6,7 +6,7 @@ import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
-import { GameManager } from "#test/utils/game-manager";
+import { GameManager } from "#test/framework/game-manager";
 import { getEnumValues } from "#utils/enums";
 import { toTitleCase } from "#utils/strings";
 import Phaser from "phaser";

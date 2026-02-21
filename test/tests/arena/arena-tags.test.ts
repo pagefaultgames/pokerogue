@@ -5,7 +5,7 @@ import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleType } from "#enums/battle-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { GameManager } from "#test/utils/game-manager";
+import { GameManager } from "#test/framework/game-manager";
 import { getEnumStr } from "#test/utils/string-utils";
 import { getEnumValues } from "#utils/enums";
 import { toTitleCase } from "#utils/strings";

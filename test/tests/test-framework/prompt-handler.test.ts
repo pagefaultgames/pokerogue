@@ -1,8 +1,8 @@
 import type { Phase } from "#app/phase";
 import { UiMode } from "#enums/ui-mode";
+import type { GameManager } from "#test/framework/game-manager";
+import type { PhaseInterceptor } from "#test/framework/phase-interceptor";
 import { PromptHandler } from "#test/helpers/prompt-handler";
-import type { GameManager } from "#test/utils/game-manager";
-import type { PhaseInterceptor } from "#test/utils/phase-interceptor";
 import type { PhaseManager, PhaseString } from "#types/phase-types";
 import type { AwaitableUiHandler } from "#ui/handlers/awaitable-ui-handler";
 import type { UI } from "#ui/ui";

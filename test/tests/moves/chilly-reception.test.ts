@@ -5,7 +5,7 @@ import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { WeatherType } from "#enums/weather-type";
 import { RandomMoveAttr } from "#moves/move";
-import { GameManager } from "#test/utils/game-manager";
+import { GameManager } from "#test/framework/game-manager";
 import i18next from "i18next";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

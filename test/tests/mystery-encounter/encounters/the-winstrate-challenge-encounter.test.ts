@@ -17,8 +17,8 @@ import { HUMAN_TRANSITABLE_BIOMES } from "#mystery-encounters/mystery-encounters
 import { TheWinstrateChallengeEncounter } from "#mystery-encounters/the-winstrate-challenge-encounter";
 import { PartyHealPhase } from "#phases/party-heal-phase";
 import { VictoryPhase } from "#phases/victory-phase";
+import { GameManager } from "#test/framework/game-manager";
 import { runMysteryEncounterToEnd } from "#test/utils/encounter-test-utils";
-import { GameManager } from "#test/utils/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { getPokemonSpecies } from "#utils/pokemon-utils";

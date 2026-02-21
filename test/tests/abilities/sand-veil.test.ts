@@ -4,7 +4,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { WeatherType } from "#enums/weather-type";
-import { GameManager } from "#test/utils/game-manager";
+import { GameManager } from "#test/framework/game-manager";
 import type { StatMultiplierAbAttrParams } from "#types/ability-types";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";

@@ -2,7 +2,7 @@ import { modifierTypes } from "#data/data-lists";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { SpeciesStatBoosterModifier } from "#modifiers/modifier";
-import { GameManager } from "#test/utils/game-manager";
+import { GameManager } from "#test/framework/game-manager";
 import { NumberHolder } from "#utils/common";
 import i18next from "i18next";
 import Phaser from "phaser";

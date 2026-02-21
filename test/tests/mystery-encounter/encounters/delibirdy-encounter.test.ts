@@ -22,8 +22,8 @@ import { generateModifierType } from "#mystery-encounters/encounter-phase-utils"
 import type { MoneyRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
+import { GameManager } from "#test/framework/game-manager";
 import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption } from "#test/utils/encounter-test-utils";
-import { GameManager } from "#test/utils/game-manager";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/delibirdy";

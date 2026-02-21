@@ -3,8 +3,8 @@ import { BattleStyle } from "#enums/battle-style";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { ExpNotification } from "#enums/exp-notification";
 import { PlayerGender } from "#enums/player-gender";
+import type { GameManager } from "#test/framework/game-manager";
 import { GameManagerHelper } from "#test/helpers/game-manager-helper";
-import type { GameManager } from "#test/utils/game-manager";
 import { getEnumStr } from "#test/utils/string-utils";
 import chalk from "chalk";
 

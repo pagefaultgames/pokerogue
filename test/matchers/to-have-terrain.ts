@@ -1,5 +1,5 @@
 import { TerrainType } from "#app/data/terrain";
-import type { GameManager } from "#test/utils/game-manager";
+import type { GameManager } from "#test/framework/game-manager";
 import { getEnumStr } from "#test/utils/string-utils";
 import { isGameManagerInstance, receivedStr } from "#test/utils/test-utils";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";

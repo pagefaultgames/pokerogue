@@ -10,8 +10,8 @@ import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { CIVILIZATION_ENCOUNTER_BIOMES } from "#mystery-encounters/mystery-encounters";
 import { PartTimerEncounter } from "#mystery-encounters/part-timer-encounter";
 import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
+import { GameManager } from "#test/framework/game-manager";
 import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption } from "#test/utils/encounter-test-utils";
-import { GameManager } from "#test/utils/game-manager";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/partTimer";

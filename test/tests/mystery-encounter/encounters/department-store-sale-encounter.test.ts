@@ -9,8 +9,8 @@ import { DepartmentStoreSaleEncounter } from "#mystery-encounters/department-sto
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { CIVILIZATION_ENCOUNTER_BIOMES } from "#mystery-encounters/mystery-encounters";
+import { GameManager } from "#test/framework/game-manager";
 import { runMysteryEncounterToEnd } from "#test/utils/encounter-test-utils";
-import { GameManager } from "#test/utils/game-manager";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

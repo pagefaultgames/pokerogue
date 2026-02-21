@@ -11,8 +11,8 @@ import { AnOfferYouCantRefuseEncounter } from "#mystery-encounters/an-offer-you-
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { HUMAN_TRANSITABLE_BIOMES } from "#mystery-encounters/mystery-encounters";
+import { GameManager } from "#test/framework/game-manager";
 import { runMysteryEncounterToEnd } from "#test/utils/encounter-test-utils";
-import { GameManager } from "#test/utils/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";

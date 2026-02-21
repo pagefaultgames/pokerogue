@@ -2,7 +2,7 @@ import type { ToSerializedPosTag } from "#data/positional-tags/load-positional-t
 import { PositionalTag } from "#data/positional-tags/positional-tag";
 import type { PositionalTagType } from "#enums/positional-tag-type";
 import type { OneOther } from "#test/@types/test-helpers";
-import type { GameManager } from "#test/utils/game-manager";
+import type { GameManager } from "#test/framework/game-manager";
 import { getOnelineDiffStr } from "#test/utils/string-utils";
 import { isGameManagerInstance, receivedStr } from "#test/utils/test-utils";
 import { isBetween } from "#utils/common";

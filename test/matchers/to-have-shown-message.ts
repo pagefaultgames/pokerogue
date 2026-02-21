@@ -1,4 +1,4 @@
-import type { GameManager } from "#test/utils/game-manager";
+import type { GameManager } from "#test/framework/game-manager";
 import { isGameManagerInstance, receivedStr } from "#test/utils/test-utils";
 import { truncateString } from "#utils/common";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";

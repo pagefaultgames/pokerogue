@@ -1,5 +1,5 @@
 import { WeatherType } from "#enums/weather-type";
-import type { GameManager } from "#test/utils/game-manager";
+import type { GameManager } from "#test/framework/game-manager";
 import { isGameManagerInstance, receivedStr } from "#test/utils/test-utils";
 import { toTitleCase } from "#utils/strings";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";

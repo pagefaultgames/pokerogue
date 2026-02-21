@@ -3,12 +3,12 @@ import type { BattleScene } from "#app/battle-scene";
 import { PHASE_INTERCEPTOR_COLOR, PHASE_START_COLOR } from "#app/constants/colors";
 import type { Phase } from "#app/phase";
 import { UiMode } from "#enums/ui-mode";
+import type { GameManager } from "#test/framework/game-manager";
 import type { PromptHandler } from "#test/helpers/prompt-handler";
-import type { GameManager } from "#test/utils/game-manager";
+import { getEnumStr } from "#test/utils/string-utils";
 import { inspect } from "util";
 import chalk from "chalk";
 import { vi } from "vitest";
-import { getEnumStr } from "./string-utils";
 
 /**
  * The interceptor's current state.

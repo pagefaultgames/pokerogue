@@ -9,12 +9,12 @@ import { UiMode } from "#enums/ui-mode";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { TeleportingHijinksEncounter } from "#mystery-encounters/teleporting-hijinks-encounter";
 import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
+import { GameManager } from "#test/framework/game-manager";
 import {
   runMysteryEncounterToEnd,
   runSelectMysteryEncounterOption,
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/utils/encounter-test-utils";
-import { GameManager } from "#test/utils/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import i18next from "i18next";

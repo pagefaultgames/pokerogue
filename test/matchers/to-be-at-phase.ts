@@ -1,5 +1,5 @@
 import type { Phase } from "#app/phase";
-import type { GameManager } from "#test/utils/game-manager";
+import type { GameManager } from "#test/framework/game-manager";
 import { isGameManagerInstance, receivedStr } from "#test/utils/test-utils";
 import type { PhaseString } from "#types/phase-types";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";

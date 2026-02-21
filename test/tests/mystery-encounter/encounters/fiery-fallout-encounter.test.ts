@@ -18,12 +18,12 @@ import { FieryFalloutEncounter } from "#mystery-encounters/fiery-fallout-encount
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { MovePhase } from "#phases/move-phase";
 import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
+import { GameManager } from "#test/framework/game-manager";
 import {
   runMysteryEncounterToEnd,
   runSelectMysteryEncounterOption,
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/utils/encounter-test-utils";
-import { GameManager } from "#test/utils/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";

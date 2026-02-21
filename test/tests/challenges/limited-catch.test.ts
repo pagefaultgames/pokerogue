@@ -4,8 +4,8 @@ import { MoveId } from "#enums/move-id";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokeballType } from "#enums/pokeball";
 import { SpeciesId } from "#enums/species-id";
+import { GameManager } from "#test/framework/game-manager";
 import { runMysteryEncounterToEnd } from "#test/utils/encounter-test-utils";
-import { GameManager } from "#test/utils/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 

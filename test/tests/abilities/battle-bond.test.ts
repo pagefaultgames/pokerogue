@@ -6,7 +6,7 @@ import { MultiHitType } from "#enums/multi-hit-type";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
-import { GameManager } from "#test/utils/game-manager";
+import { GameManager } from "#test/framework/game-manager";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Battle Bond", () => {

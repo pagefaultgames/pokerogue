@@ -1,11 +1,11 @@
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
 import { initializeGame } from "#app/init/init";
+import { manageListeners } from "#test/framework/listeners-manager";
 import { MockConsole } from "#test/mocks/mock-console/mock-console";
 import { mockContext } from "#test/mocks/mock-context-canvas";
 import { mockLocalStorage } from "#test/mocks/mock-local-storage";
 import { MockImage } from "#test/mocks/mocks-container/mock-image";
 import { blobToString } from "#test/utils/game-manager-utils";
-import { manageListeners } from "#test/utils/listeners-manager";
 import { setCookie } from "#utils/cookies";
 import Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";

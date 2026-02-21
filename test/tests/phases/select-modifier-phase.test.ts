@@ -10,7 +10,7 @@ import { PlayerPokemon } from "#field/pokemon";
 import type { CustomModifierSettings } from "#modifiers/modifier-type";
 import { ModifierTypeOption } from "#modifiers/modifier-type";
 import { SelectModifierPhase } from "#phases/select-modifier-phase";
-import { GameManager } from "#test/utils/game-manager";
+import { GameManager } from "#test/framework/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { shiftCharCodes } from "#utils/common";

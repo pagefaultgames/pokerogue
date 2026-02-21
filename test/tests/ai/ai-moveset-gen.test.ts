@@ -9,7 +9,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { EnemyPokemon } from "#field/pokemon";
-import { GameManager } from "#test/utils/game-manager";
+import { GameManager } from "#test/framework/game-manager";
 import { NumberHolder } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { afterEach } from "node:test";

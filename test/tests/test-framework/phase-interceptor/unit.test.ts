@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
+import { GameManager } from "#test/framework/game-manager";
 import { MockPhase } from "#test/mocks/mock-phase";
-import { GameManager } from "#test/utils/game-manager";
 import type { Constructor } from "#types/common";
 import type { PhaseString } from "#types/phase-types";
 import Phaser from "phaser";
