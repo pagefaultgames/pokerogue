@@ -70,7 +70,6 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
   [SpeciesId.GHOLDENGO]: MoveId.MAKE_IT_RAIN,
   [SpeciesId.SINISTCHA]: MoveId.MATCHA_GOTCHA,
   [SpeciesId.MALAMAR]: MoveId.TOPSY_TURVY,
-  [SpeciesId.TOGEDEMARU]: MoveId.ZING_ZAP,
   [SpeciesId.WUGTRIO]: MoveId.TRIPLE_DIVE,
   [SpeciesId.REVAVROOM]: [
     MoveId.SPIN_OUT,
