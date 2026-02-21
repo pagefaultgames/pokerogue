@@ -11,7 +11,7 @@ Thank you for taking the time to contribute; every little bit helps! This projec
 Please make sure you understand everything relevant to your changes from the [Table of Contents](#-table-of-contents), and absolutely *feel free to reach out in the **#pokerogue-dev** channel on [Discord](https://discord.gg/pokerogue)*.
 We are here to help and the better you understand what you're working on, the easier it will be for it to find its way into the game.
 
-> [!INFO]
+> [!NOTE]
 > As per GitHub's [terms of service](https://docs.github.com/en/site-policy/github-terms/github-terms-of-service#6-contributions-under-repository-license), any contributions made to this repository will be licensed under this repository's terms.
 > If you use any external code, please make sure to follow its licensing information. Please make use of [SPDX snippets](https://reuse.software/spec-3.3/#in-line-snippet-comments) for any portion of the file that is licensed differently.
 
