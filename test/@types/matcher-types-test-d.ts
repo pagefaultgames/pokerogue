@@ -7,4 +7,7 @@ describe("Matcher Types", () => {
     expectTypeOf<Assertion[ChaiAssertionKeys]>().toBeNever();
     expectTypeOf<Assertion["not"]>().not.toBeNever();
   });
+
+  // TODO: Write comprehensive tests detailing allowed parameters for each matcher to ensure we don't break them again
+  it.todo("should support custom types for matchers");
 });
