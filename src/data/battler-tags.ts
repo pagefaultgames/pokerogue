@@ -2302,6 +2302,37 @@ export class FloatingTag extends TypeImmuneTag {
   }
 }
 
+/**
+ * Tag used by Telekinesis to provide its ungrounding and guaranteed hit effects.
+ *
+ * The effects of Telekinesis can be Baton Passed to a teammate, including ones unaffected by the original move. \
+ * A notable exception is Mega Gengar, which cannot receive either effect via Baton Pass.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move)}
+ */
+export class TelekinesisTag extends SerializableBattlerTag {
+  public override readonly tagType = BattlerTagType.TELEKINESIS;
+
+  constructor() {
+    super(BattlerTagType.TELEKINESIS, BattlerTagLapseType.TURN_END, 3);
+  }
+
+  override onAdd(pokemon: Pokemon) {
+    globalScene.phaseManager.queueMessage(
+      i18next.t("battlerTags:telekinesisOnAdd", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+      }),
+    );
+  }
+
+  override onRemove(pokemon: Pokemon) {
+    globalScene.phaseManager.queueMessage(
+      i18next.t("battlerTags:telekinesisOnRemove", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+      }),
+    );
+  }
+}
+
 export class TypeBoostTag extends SerializableBattlerTag {
   public declare readonly tagType: TypeBoostTagType;
   #boostedType: PokemonType;
@@ -2586,63 +2617,6 @@ export class RoostedTag extends BattlerTag {
     }
     pokemon.summonData.types = modifiedTypes;
     pokemon.updateInfo();
-  }
-}
-
-/** Common attributes of form change abilities that block damage */
-export class FormBlockDamageTag extends SerializableBattlerTag {
-  public declare readonly tagType: BattlerTagType.ICE_FACE | BattlerTagType.DISGUISE;
-  constructor(tagType: BattlerTagType.ICE_FACE | BattlerTagType.DISGUISE) {
-    super(tagType, BattlerTagLapseType.CUSTOM, 1);
-  }
-
-  /**
-   * Determines if the tag can be added to the Pokémon.
-   * @param pokemon - The Pokémon to which the tag might be added.
-   * @returns `true` if the tag can be added, `false` otherwise.
-   */
-  canAdd(pokemon: Pokemon): boolean {
-    return pokemon.formIndex === 0;
-  }
-
-  /**
-   * Applies the tag to the Pokémon.
-   * Triggers a form change if the Pokémon is not in its defense form.
-   * @param pokemon The Pokémon to which the tag is added.
-   */
-  onAdd(pokemon: Pokemon): void {
-    super.onAdd(pokemon);
-
-    if (pokemon.formIndex !== 0) {
-      globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
-    }
-  }
-
-  /**
-   * Removes the tag from the Pokémon.
-   * Triggers a form change when the tag is removed.
-   * @param pokemon - The Pokémon from which the tag is removed.
-   */
-  onRemove(pokemon: Pokemon): void {
-    super.onRemove(pokemon);
-
-    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
-  }
-}
-
-/** Provides the additional weather-based effects of the Ice Face ability */
-export class IceFaceBlockDamageTag extends FormBlockDamageTag {
-  public override readonly tagType = BattlerTagType.ICE_FACE;
-  /**
-   * Determines if the tag can be added to the Pokémon.
-   * @param pokemon - The Pokémon to which the tag might be added.
-   * @returns `true` if the tag can be added, `false` otherwise.
-   */
-  canAdd(pokemon: Pokemon): boolean {
-    const weatherType = globalScene.arena.weather?.weatherType;
-    const isWeatherSnowOrHail = weatherType === WeatherType.HAIL || weatherType === WeatherType.SNOW;
-
-    return super.canAdd(pokemon) || isWeatherSnowOrHail;
   }
 }
 
@@ -3489,34 +3463,6 @@ export class SyrupBombTag extends SerializableBattlerTag {
 }
 
 /**
- * Telekinesis raises the target into the air for three turns and causes all moves used against the target (aside from OHKO moves) to hit the target unless the target is in a semi-invulnerable state from Fly/Dig.
- * The first effect is provided by {@linkcode FloatingTag}, the accuracy-bypass effect is provided by TelekinesisTag
- * The effects of Telekinesis can be baton passed to a teammate.
- * @see {@link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move) | MoveId.TELEKINESIS}
- */
-export class TelekinesisTag extends SerializableBattlerTag {
-  public override readonly tagType = BattlerTagType.TELEKINESIS;
-  constructor(sourceMove: MoveId) {
-    super(
-      BattlerTagType.TELEKINESIS,
-      [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.AFTER_MOVE],
-      3,
-      sourceMove,
-      undefined,
-      true,
-    );
-  }
-
-  override onAdd(pokemon: Pokemon) {
-    globalScene.phaseManager.queueMessage(
-      i18next.t("battlerTags:telekinesisOnAdd", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      }),
-    );
-  }
-}
-
-/**
  * Tag that swaps the user's base ATK stat with its base DEF stat.
  */
 export class PowerTrickTag extends SerializableBattlerTag {
@@ -3862,10 +3808,6 @@ export function getBattlerTag(
       return new MinimizeTag();
     case BattlerTagType.DESTINY_BOND:
       return new DestinyBondTag(sourceMove, sourceId);
-    case BattlerTagType.ICE_FACE:
-      return new IceFaceBlockDamageTag(tagType);
-    case BattlerTagType.DISGUISE:
-      return new FormBlockDamageTag(tagType);
     case BattlerTagType.COMMANDED:
       return new CommandedTag(sourceId);
     case BattlerTagType.STOCKPILING:
@@ -3908,7 +3850,7 @@ export function getBattlerTag(
     case BattlerTagType.SYRUP_BOMB:
       return new SyrupBombTag(sourceId);
     case BattlerTagType.TELEKINESIS:
-      return new TelekinesisTag(sourceMove);
+      return new TelekinesisTag();
     case BattlerTagType.POWER_TRICK:
       return new PowerTrickTag(sourceMove, sourceId);
     case BattlerTagType.GRUDGE:
@@ -4025,8 +3967,6 @@ export type BattlerTagTypeMap = {
   [BattlerTagType.FLOATING]: FloatingTag;
   [BattlerTagType.MINIMIZED]: MinimizeTag;
   [BattlerTagType.DESTINY_BOND]: DestinyBondTag;
-  [BattlerTagType.ICE_FACE]: IceFaceBlockDamageTag;
-  [BattlerTagType.DISGUISE]: FormBlockDamageTag;
   [BattlerTagType.COMMANDED]: CommandedTag;
   [BattlerTagType.STOCKPILING]: StockpilingTag;
   [BattlerTagType.OCTOLOCK]: OctolockTag;

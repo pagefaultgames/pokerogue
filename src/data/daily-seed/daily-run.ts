@@ -2,13 +2,16 @@ import { globalScene } from "#app/global-scene";
 import { dailyBiomeWeights } from "#balance/daily-biome-weights";
 import { pokemonStarters } from "#balance/pokemon-evolutions";
 import { speciesStarterCosts } from "#balance/starters";
+import type { PokemonSpecies } from "#data/pokemon-species";
 import { BiomeId } from "#enums/biome-id";
+import type { BiomePoolTier } from "#enums/biome-pool-tier";
 import { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import { MoveId } from "#enums/move-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import type { SpeciesId } from "#enums/species-id";
 import type { DailySeedBoss } from "#types/daily-run";
 import type { Starter, StarterMoveset } from "#types/save-data";
+import type { TupleRange } from "#types/type-helpers";
 import { isBetween, randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
@@ -19,7 +22,7 @@ import {
   validateDailyStarterConfig,
 } from "./daily-seed-utils";
 
-type StarterTuple = [Starter, Starter, Starter];
+type StarterTuple = TupleRange<1, 6, Starter>;
 
 /**
  * Generate the daily run starters.
@@ -121,13 +124,6 @@ function setDailyRunEventStarterMovesets(starters: StarterTuple): void {
     return;
   }
 
-  if (!isBetween(movesets.length, 1, 3)) {
-    console.error(
-      `Invalid number of custom daily run starter movesets specified (${movesets.length})!\nMovesets: ${movesets}`,
-    );
-    return;
-  }
-
   const moveIds = getEnumValues(MoveId);
   for (const [index, moveset] of movesets.entries()) {
     if (moveset == null) {
@@ -167,8 +163,7 @@ function getDailyEventSeedStarters(): StarterTuple | null {
 
   const speciesConfigurations = globalScene.gameMode.dailyConfig?.starters;
 
-  if (speciesConfigurations == null || speciesConfigurations.length !== 3) {
-    console.error(`Invalid starters used for custom daily run seed!\nStarters:${speciesConfigurations}`);
+  if (speciesConfigurations == null) {
     return null;
   }
 
@@ -207,6 +202,67 @@ export function getDailyEventSeedBoss(): DailySeedBoss | null {
 
   const bossConfig = validateDailyBossConfig(dailyConfig.boss);
   return bossConfig;
+}
+
+/**
+ * Get the species for a forced wave for custom daily run.
+ * @param waveIndex - The wave index to check
+ * @returns The {@linkcode PokemonSpecies} to use, or `null` if there is no forced wave for the given index.
+ */
+export function getDailyForcedWaveSpecies(waveIndex: number): PokemonSpecies | null {
+  if (!isDailyEventSeed()) {
+    return null;
+  }
+
+  // Only override the first enemy if it's a double battle
+  if (globalScene.getEnemyParty().length > 0) {
+    return null;
+  }
+
+  const forcedWave = globalScene.gameMode.dailyConfig?.forcedWaves?.find(w => w.waveIndex === waveIndex);
+  if (forcedWave?.speciesId == null) {
+    return null;
+  }
+
+  return getPokemonSpecies(forcedWave.speciesId);
+}
+
+export function getDailyForcedWaveBiomePoolTier(waveIndex: number): BiomePoolTier | null {
+  if (!isDailyEventSeed()) {
+    return null;
+  }
+
+  // Only override the first enemy if it's a double battle
+  if (globalScene.getEnemyParty().length > 0) {
+    return null;
+  }
+
+  const forcedWave = globalScene.gameMode.dailyConfig?.forcedWaves?.find(w => w.waveIndex === waveIndex);
+  if (forcedWave?.tier == null) {
+    return null;
+  }
+
+  return forcedWave.tier;
+}
+
+export function isDailyForcedWaveHiddenAbility(): boolean {
+  if (!isDailyEventSeed()) {
+    return false;
+  }
+
+  // Only override the first enemy if it's a double battle
+  if (globalScene.getEnemyParty().length > 0) {
+    return false;
+  }
+
+  const forcedWave = globalScene.gameMode.dailyConfig?.forcedWaves?.find(
+    w => w.waveIndex === globalScene.currentBattle.waveIndex,
+  );
+  if (forcedWave == null) {
+    return false;
+  }
+
+  return forcedWave.hiddenAbility ?? false;
 }
 
 /**

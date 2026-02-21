@@ -5,16 +5,31 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { input, number, select } from "@inquirer/prompts";
+import { confirm, input, number, search, select } from "@inquirer/prompts";
 import { Ajv } from "ajv";
 import chalk from "chalk";
 import customDailyRunSchema from "../../../src/data/daily-seed/schema.json" with { type: "json" };
+import { BIOMES } from "../../enums/biomes.js";
 import { toTitleCase, toUpperSnakeCase } from "../../helpers/casing.js";
-import { BIOMES } from "../constants.js";
+import { BIOME_POOL_TIERS } from "../constants.js";
+import { promptSpeciesId } from "./pokemon.js";
+
+/**
+ * @typedef {{
+ *   waveIndex: number,
+ *   speciesId: number,
+ *   hiddenAbility?: boolean,
+ * } | {
+ *   waveIndex: number,
+ *   tier: number,
+ *   hiddenAbility?: boolean,
+ * }} ForcedWaveConfig
+ */
 
 const ajv = new Ajv({
   allErrors: true,
 });
+
 /**
  * The validator for the {@linkcode CustomDailyRunConfig}.
  */
@@ -52,12 +67,18 @@ export async function promptLuck() {
  * @returns {Promise<number>} A Promise that resolves with the chosen biome.
  */
 export async function promptBiome() {
-  const biome = await select({
+  const biomeName = await search({
     message: "Please enter the starting biome to set.",
-    choices: [...Object.keys(BIOMES).map(toTitleCase)],
-    pageSize: 10,
+    source: term => {
+      const biomes = Object.keys(BIOMES).map(toTitleCase);
+      if (!term) {
+        return biomes;
+      }
+      return biomes.filter(id => id.toLowerCase().includes(term.toLowerCase()));
+    },
   });
-  return BIOMES[/** @type {keyof typeof BIOMES} */ (toUpperSnakeCase(biome))];
+  const biomeId = BIOMES[/** @type {keyof typeof BIOMES} */ (toUpperSnakeCase(biomeName))];
+  return biomeId;
 }
 
 /**
@@ -110,4 +131,68 @@ export async function promptSeed() {
       return true;
     },
   });
+}
+
+/**
+ * Prompt the user to enter a list of forced waves.
+ * @returns {Promise<ForcedWaveConfig[] | undefined>} A Promise that resolves with the list of forced waves.
+ */
+export async function promptForcedWaves() {
+  /** @type {ForcedWaveConfig[]} */
+  const forcedWaves = [];
+
+  async function addForcedWave() {
+    const waveIndex = await number({
+      message: "Please enter the wave to force.\nPressing ENTER will end the prompt early.",
+      min: 1,
+      max: 49,
+      validate: value => {
+        if (forcedWaves.some(wave => wave.waveIndex === value)) {
+          return chalk.red.bold("Wave already forced!");
+        }
+        return true;
+      },
+    });
+    if (!waveIndex) {
+      return;
+    }
+
+    const hiddenAbility = await confirm({
+      message: "Should the forced wave have the hidden ability?",
+      default: false,
+    });
+
+    /** @type {"Species" | "Tier"} */
+    const type = await select({
+      message: "Please select the type of wave to force.",
+      choices: ["Species", "Tier"],
+    });
+    switch (type) {
+      case "Species": {
+        const speciesId = await promptSpeciesId();
+        forcedWaves.push({ waveIndex, speciesId, hiddenAbility: hiddenAbility ? true : undefined });
+        break;
+      }
+      case "Tier": {
+        const poolTier = await select({
+          message: "Please select the pool tier to force.",
+          choices: [...Object.keys(BIOME_POOL_TIERS).map(toTitleCase)],
+          pageSize: 10,
+        });
+        forcedWaves.push({
+          waveIndex,
+          tier: BIOME_POOL_TIERS[/** @type {keyof typeof BIOME_POOL_TIERS} */ (toUpperSnakeCase(poolTier))],
+          hiddenAbility: hiddenAbility ? true : undefined,
+        });
+        break;
+      }
+    }
+    await addForcedWave();
+  }
+
+  await addForcedWave();
+  if (forcedWaves.length === 0) {
+    return;
+  }
+  return forcedWaves;
 }

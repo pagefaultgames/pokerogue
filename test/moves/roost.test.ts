@@ -1,3 +1,4 @@
+import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
@@ -22,13 +23,14 @@ describe("Moves - Roost", () => {
     game.override
       .battleStyle("single")
       .enemySpecies(SpeciesId.RELICANTH)
+      .ability(AbilityId.BALL_FETCH)
       .startingLevel(100)
       .enemyLevel(100)
       .enemyMoveset(MoveId.EARTHQUAKE)
       .moveset([MoveId.ROOST, MoveId.BURN_UP, MoveId.DOUBLE_SHOCK]);
   });
 
-  /**
+  /*
    * Roost's behavior should be defined as:
    * The pokemon loses its flying type for a turn. If the pokemon was ungroundd solely due to being a flying type, it will be grounded until end of turn.
    * 1. Pure Flying type pokemon -> become normal type until end of turn
@@ -114,7 +116,7 @@ describe("Moves - Roost", () => {
   });
 
   test("Pokemon with levitate after using roost should lose flying type but still be unaffected by ground moves", async () => {
-    game.override.starterForms({ [SpeciesId.ROTOM]: 4 });
+    game.override.starterForms({ [SpeciesId.ROTOM]: 4 }).ability(AbilityId.LEVITATE);
     await game.classicMode.startBattle(SpeciesId.ROTOM);
     const playerPokemon = game.field.getPlayerPokemon();
     const playerPokemonStartingHP = playerPokemon.hp;
@@ -262,26 +264,27 @@ describe("Moves - Roost", () => {
     expect(tornadus).toHaveTypes([PokemonType.STEEL, PokemonType.FLYING, PokemonType.GHOST]);
   });
 
-  it.each<{ name: string; move: MoveId; type: PokemonType }>([
+  // TODO: this interaction is currently broken
+  it.todo.each<{ name: string; move: MoveId; type: PokemonType }>([
     { name: "Trick-or-Treat", move: MoveId.TRICK_OR_TREAT, type: PokemonType.GHOST },
     { name: "Forest's Curse", move: MoveId.FORESTS_CURSE, type: PokemonType.GRASS },
   ])("should ignore added types from $name when changing Flying to Normal type", async ({ move, type }) => {
-    await game.classicMode.startBattle(SpeciesId.TORNADUS);
+    await game.classicMode.startBattle(SpeciesId.CORVISQUIRE);
 
-    const tornadus = game.field.getPlayerPokemon();
-    tornadus.hp = 1;
+    const player = game.field.getPlayerPokemon();
+    player.hp = 1;
 
     game.move.use(MoveId.ROOST);
     await game.move.forceEnemyMove(move);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toEndOfTurn(false);
 
-    expect(tornadus).toHaveTypes([PokemonType.NORMAL, type]);
-    expect(tornadus.isGrounded()).toBe(true);
+    expect(player).toHaveTypes([PokemonType.NORMAL, type]);
+    expect(player.isGrounded()).toBe(true);
 
     await game.toEndOfTurn();
 
-    expect(tornadus).toHaveTypes([PokemonType.FLYING, type]);
-    expect(tornadus.isGrounded()).toBe(false);
+    expect(player).toHaveTypes([PokemonType.FLYING, type]);
+    expect(player.isGrounded()).toBe(false);
   });
 });

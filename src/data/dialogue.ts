@@ -792,6 +792,24 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
       victory: ["dialogue:xerosic.victory.1", "dialogue:xerosic.victory.2", "dialogue:xerosic.victory.3"],
     },
   ],
+  [TrainerType.ALIANA]: [
+    {
+      encounter: ["dialogue:aliana.encounter.1", "dialogue:aliana.encounter.2"],
+      victory: ["dialogue:aliana.victory.1", "dialogue:aliana.victory.2"],
+    },
+  ],
+  [TrainerType.CELOSIA]: [
+    {
+      encounter: ["dialogue:celosia.encounter.1", "dialogue:celosia.encounter.2"],
+      victory: ["dialogue:celosia.victory.1", "dialogue:celosia.victory.2"],
+    },
+  ],
+  [TrainerType.MABLE]: [
+    {
+      encounter: ["dialogue:mable.encounter.1", "dialogue:mable.encounter.2"],
+      victory: ["dialogue:mable.victory.1", "dialogue:mable.victory.2"],
+    },
+  ],
   [TrainerType.AETHER_GRUNT]: [
     {
       encounter: [
@@ -1801,6 +1819,11 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
     encounter: ["dialogue:marnieElite.encounter.1", "dialogue:marnieElite.encounter.2"],
     victory: ["dialogue:marnieElite.victory.1", "dialogue:marnieElite.victory.2"],
     defeat: ["dialogue:marnieElite.defeat.1", "dialogue:marnieElite.defeat.2"],
+  },
+  [TrainerType.BEDE_ELITE]: {
+    encounter: ["dialogue:bedeElite.encounter.1", "dialogue:bedeElite.encounter.2"],
+    victory: ["dialogue:bedeElite.victory.1", "dialogue:bedeElite.victory.2"],
+    defeat: ["dialogue:bedeElite.defeat.1"],
   },
   [TrainerType.NESSA_ELITE]: {
     encounter: ["dialogue:nessaElite.encounter.1", "dialogue:nessaElite.encounter.2"],

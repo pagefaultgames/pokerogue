@@ -18,11 +18,6 @@ export type MoveRestrictionBattlerTagType =
   | BattlerTagType.GORILLA_TACTICS;
 
 /**
- * Subset of {@linkcode BattlerTagType}s that block damage from moves.
- */
-export type FormBlockDamageBattlerTagType = BattlerTagType.ICE_FACE | BattlerTagType.DISGUISE;
-
-/**
  * Subset of {@linkcode BattlerTagType}s that are related to trapping effects.
  */
 export type TrappingBattlerTagType =
