@@ -29,10 +29,13 @@ vi.mock(import("#app/overrides"), async importOriginal => {
  * Do NOT try to put any of this code into external functions, it won't work as it's elevated during runtime.
  */
 vi.mock(import("i18next"), async importOriginal => {
-  console.log("Mocking i18next");
+  // NB: We have to use raw ANSI escapes here since chalk isn't initialized yet.
+  // (For those wondering, this corresponds to the same rgb(223, 184, 216) color used in the chalk calls below, just in RGB)
+  console.log("\x1b[38;2;223;184;216mMocking i18next...\x1b[0m");
   const { setupServer } = await import("msw/node");
   const { http, HttpResponse } = await import("msw");
 
+  // TODO: This sounds like a good use for Vitest's `globalSetupFiles`...?
   global.server = setupServer(
     http.get("/locales/en/*", async req => {
       const filename = req.params[0];
@@ -45,7 +48,7 @@ vi.mock(import("i18next"), async importOriginal => {
         }
         return HttpResponse.json(json);
       } catch (err) {
-        console.error(`Failed to load locale ${filename}\n`, err);
+        console.error(`Failed to load locale ${filename}!\n`, err);
         return HttpResponse.json({});
       }
     }),
@@ -54,7 +57,7 @@ vi.mock(import("i18next"), async importOriginal => {
     }),
   );
   global.server.listen({ onUnhandledRequest: "error" });
-  console.log("i18n MSW server listening!");
+  console.log("\x1b[38;2;223;184;216mi18n MSW server listening\x1b[0m");
 
   return await importOriginal();
 });

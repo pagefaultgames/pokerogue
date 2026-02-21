@@ -27,8 +27,7 @@ export function getBerryPredicate(berryType: BerryType): BerryPredicate {
     case BerryType.LUM:
       return (pokemon: Pokemon) => !!pokemon.status || !!pokemon.getTag(BattlerTagType.CONFUSED);
     case BerryType.ENIGMA:
-      return (pokemon: Pokemon) =>
-        pokemon.turnData.attacksReceived.filter(a => a.result === HitResult.SUPER_EFFECTIVE).length > 0;
+      return (pokemon: Pokemon) => pokemon.turnData.attacksReceived.some(a => a.result === HitResult.SUPER_EFFECTIVE);
     case BerryType.LIECHI:
     case BerryType.GANLON:
     case BerryType.PETAYA:

@@ -589,7 +589,7 @@ async function postProcessTransformedPokemon(
 
   // For pokemon that the player owns (including ones just caught), gain a candy
   if (!forBattle && !!globalScene.gameData.dexData[speciesRootForm].caughtAttr) {
-    globalScene.gameData.addStarterCandy(getPokemonSpecies(speciesRootForm), 1);
+    globalScene.gameData.addStarterCandy(speciesRootForm, 1);
   }
 
   // Set the moveset of the new pokemon to be the same as previous, but with 1 egg move and 1 (attempted) STAB move of the new species

@@ -9,7 +9,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import type { PlayerPokemon } from "#field/pokemon";
-import { addTextObject } from "#ui/text";
+import { addTextObject, updateCandyCountTextStyle } from "#ui/text";
 import { padInt, rgbHexToRgba } from "#utils/common";
 import { getDexNumber, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { argbFromRgba } from "@material/material-color-utilities";
@@ -166,6 +166,12 @@ export class PokemonHatchInfoContainer extends PokemonInfoContainer {
     this.pokemonCandyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
     this.pokemonCandyOverlayIcon.setVisible(true);
     this.pokemonCandyCountText.setText(`×${globalScene.gameData.starterData[species.speciesId].candyCount}`);
+    updateCandyCountTextStyle(
+      this.pokemonCandyCountText,
+      globalScene.gameData.starterData[species.speciesId].candyCount,
+      TextStyle.SUMMARY,
+      TextStyle.SUMMARY,
+    );
     this.pokemonCandyCountText.setVisible(true);
     this.pokemonNumberText.setText(padInt(getDexNumber(species.speciesId), 4));
     this.pokemonNameText.setText(species.name);

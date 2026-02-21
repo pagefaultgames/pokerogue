@@ -5,10 +5,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { number, select } from "@inquirer/prompts";
-import chalk from "chalk";
+import { number, search } from "@inquirer/prompts";
+import { ABILITIES } from "../../enums/abilities.js";
+import { MOVES } from "../../enums/moves.js";
+import { NATURES } from "../../enums/natures.js";
+import { SPECIES } from "../../enums/species.js";
 import { toTitleCase, toUpperSnakeCase } from "../../helpers/casing.js";
-import { MAX_ABILITY_ID, MAX_MOVE_ID, NATURES, SPECIES_IDS } from "../constants.js";
 
 /**
  * @typedef {0 | 1 | 2} Variant
@@ -20,18 +22,18 @@ import { MAX_ABILITY_ID, MAX_MOVE_ID, NATURES, SPECIES_IDS } from "../constants.
  * @returns {Promise<number>} A Promise that resolves with the chosen `SpeciesId`.
  */
 export async function promptSpeciesId() {
-  return await number({
+  const speciesName = await search({
     message: "Please enter the SpeciesId to set.",
-    min: 1,
-    max: Math.max(...SPECIES_IDS),
-    required: true,
-    validate: input => {
-      if (!input || !SPECIES_IDS.includes(input)) {
-        return chalk.red.bold("Invalid SpeciesId specified!");
+    source: term => {
+      const species = Object.keys(SPECIES).map(toTitleCase);
+      if (!term) {
+        return species;
       }
-      return true;
+      return species.filter(id => id.toLowerCase().includes(term.toLowerCase()));
     },
   });
+  const speciesId = SPECIES[/** @type {keyof typeof SPECIES} */ (toUpperSnakeCase(speciesName))];
+  return speciesId;
 }
 
 /**
@@ -69,12 +71,18 @@ export async function promptVariant() {
  * @returns {Promise<number>} A Promise that resolves with the chosen nature.
  */
 export async function promptNature() {
-  const nature = await select({
+  const natureName = await search({
     message: "Please enter the nature to set.",
-    choices: [...Object.keys(NATURES).map(toTitleCase)],
-    pageSize: 10,
+    source: term => {
+      const natures = Object.keys(NATURES).map(toTitleCase);
+      if (!term) {
+        return natures;
+      }
+      return natures.filter(id => id.toLowerCase().includes(term.toLowerCase()));
+    },
   });
-  return NATURES[/** @type {keyof typeof NATURES} */ (toUpperSnakeCase(nature))];
+  const natureId = NATURES[/** @type {keyof typeof NATURES} */ (toUpperSnakeCase(natureName))];
+  return natureId;
 }
 
 /**
@@ -86,15 +94,30 @@ export async function promptMoveset() {
   const moveset = [];
 
   async function addMove() {
-    const move = await number({
-      message: "Please enter the move to add to the moveset.\nPressing ENTER will end the prompt early.",
-      min: 1,
-      max: MAX_MOVE_ID,
+    const moveName = await search({
+      message:
+        "Please enter the move to add to the moveset.\nPressing ENTER with 'None' selected will end the prompt early.",
+      source: term => {
+        const moves = Object.keys(MOVES).map(toTitleCase);
+        if (!term) {
+          return moves;
+        }
+        return moves.filter(id => id.toLowerCase().includes(term.toLowerCase()));
+      },
+      validate: value => {
+        const moveId = MOVES[/** @type {keyof typeof MOVES} */ (toUpperSnakeCase(value))];
+        if (moveset.includes(moveId)) {
+          return "Move already in moveset!";
+        }
+        return true;
+      },
     });
-    if (!move) {
+    const moveId = MOVES[/** @type {keyof typeof MOVES} */ (toUpperSnakeCase(moveName))];
+
+    if (!moveId) {
       return;
     }
-    moveset.push(move);
+    moveset.push(moveId);
     if (moveset.length < 4) {
       await addMove();
     }
@@ -112,12 +135,18 @@ export async function promptMoveset() {
  * This is boss only for now, since the option for setting any ability is not yet implemented.
  */
 export async function promptAbility(passive = false) {
-  return await number({
+  const abilityName = await search({
     message: `Please enter the ${passive ? "passive" : "normal"} ability of the final boss.`,
-    min: 1,
-    max: MAX_ABILITY_ID,
-    required: true,
+    source: term => {
+      const abilities = Object.keys(ABILITIES).map(toTitleCase);
+      if (!term) {
+        return abilities;
+      }
+      return abilities.filter(id => id.toLowerCase().includes(term.toLowerCase()));
+    },
   });
+  const abilityId = ABILITIES[/** @type {keyof typeof ABILITIES} */ (toUpperSnakeCase(abilityName))];
+  return abilityId;
 }
 
 /**

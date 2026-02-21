@@ -1,3 +1,4 @@
+import { IS_TEST } from "#constants/app-constants";
 import { SpeciesId } from "#enums/species-id";
 
 export const POKERUS_STARTER_COUNT = 5;
@@ -695,7 +696,7 @@ export function getSameSpeciesEggCandyCounts(starterCost: number, hatchCount: nu
  */
 export const __TEST_allStarterCandyCosts: readonly StarterCandyCosts[] = [];
 
-if (import.meta.env.NODE_ENV === "test") {
+if (IS_TEST) {
   for (const starterCandyCosts of allStarterCandyCosts) {
     // @ts-expect-error: done this way to keep it `readonly`
     __TEST_allStarterCandyCosts.push(starterCandyCosts);
