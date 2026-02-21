@@ -2,8 +2,8 @@ import { getAppRootDir } from "#test/utils/sprite-utils";
 import fs from "fs";
 import path from "path";
 import { beforeAll, describe, expect, it } from "vitest";
-import _exp_masterlist from "../../assets/images/pokemon/variant/_exp_masterlist.json";
-import _masterlist from "../../assets/images/pokemon/variant/_masterlist.json";
+import _exp_masterlist from "../../../assets/images/pokemon/variant/_exp_masterlist.json";
+import _masterlist from "../../../assets/images/pokemon/variant/_masterlist.json";
 
 type PokemonVariantMasterlist = typeof _masterlist;
 type PokemonExpVariantMasterlist = typeof _exp_masterlist;
