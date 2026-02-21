@@ -114,7 +114,8 @@ describe("Status Effects", () => {
         .criticalHits(false)
         .enemySpecies(SpeciesId.MAGIKARP)
         .enemyAbility(AbilityId.BALL_FETCH)
-        .enemyMoveset(MoveId.SPLASH);
+        .enemyMoveset(MoveId.SPLASH)
+        .enemyLevel(200);
     });
 
     it("should not inflict a 0 HP mon with a status", async () => {
@@ -129,7 +130,7 @@ describe("Status Effects", () => {
 
     it("multiple status effects from the same interaction should not overwrite each other", async () => {
       game.override.ability(AbilityId.POISON_TOUCH);
-      await game.classicMode.startBattle(SpeciesId.PIKACHU);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
       // Force poison touch to always apply
       vi.spyOn(
