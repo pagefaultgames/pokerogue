@@ -18,10 +18,7 @@ import { UncommonBreedEncounter } from "#mystery-encounters/uncommon-breed-encou
 import { MovePhase } from "#phases/move-phase";
 import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
 import { StatStageChangePhase } from "#phases/stat-stage-change-phase";
-import {
-  runMysteryEncounterToEnd,
-  runSelectMysteryEncounterOption,
-} from "#test/mystery-encounter/encounter-test-utils";
+import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption } from "#test/utils/encounter-test-utils";
 import { GameManager } from "#test/utils/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";

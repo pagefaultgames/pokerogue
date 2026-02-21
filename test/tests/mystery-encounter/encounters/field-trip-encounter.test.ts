@@ -9,7 +9,7 @@ import { UiMode } from "#enums/ui-mode";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import { FieldTripEncounter } from "#mystery-encounters/field-trip-encounter";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
-import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
+import { runMysteryEncounterToEnd } from "#test/utils/encounter-test-utils";
 import { GameManager } from "#test/utils/game-manager";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import i18next from "i18next";

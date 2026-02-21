@@ -10,10 +10,7 @@ import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { getSafariSpeciesSpawn, SafariZoneEncounter } from "#mystery-encounters/safari-zone-encounter";
 import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
-import {
-  runMysteryEncounterToEnd,
-  runSelectMysteryEncounterOption,
-} from "#test/mystery-encounter/encounter-test-utils";
+import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption } from "#test/utils/encounter-test-utils";
 import { GameManager } from "#test/utils/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

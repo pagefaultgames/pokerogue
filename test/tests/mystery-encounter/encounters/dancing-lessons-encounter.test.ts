@@ -16,7 +16,7 @@ import {
   runMysteryEncounterToEnd,
   runSelectMysteryEncounterOption,
   skipBattleRunMysteryEncounterRewardsPhase,
-} from "#test/mystery-encounter/encounter-test-utils";
+} from "#test/utils/encounter-test-utils";
 import { GameManager } from "#test/utils/game-manager";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

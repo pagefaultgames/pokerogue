@@ -11,10 +11,7 @@ import { BerriesAboundEncounter } from "#mystery-encounters/berries-abound-encou
 import * as EncounterDialogueUtils from "#mystery-encounters/encounter-dialogue-utils";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
-import {
-  runMysteryEncounterToEnd,
-  skipBattleRunMysteryEncounterRewardsPhase,
-} from "#test/mystery-encounter/encounter-test-utils";
+import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/utils/encounter-test-utils";
 import { GameManager } from "#test/utils/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";

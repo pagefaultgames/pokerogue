@@ -11,10 +11,7 @@ import { AbsoluteAvariceEncounter } from "#mystery-encounters/absolute-avarice-e
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { MovePhase } from "#phases/move-phase";
-import {
-  runMysteryEncounterToEnd,
-  skipBattleRunMysteryEncounterRewardsPhase,
-} from "#test/mystery-encounter/encounter-test-utils";
+import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/utils/encounter-test-utils";
 import { GameManager } from "#test/utils/game-manager";
 import i18next from "i18next";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

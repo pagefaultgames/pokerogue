@@ -10,10 +10,7 @@ import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils"
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { HUMAN_TRANSITABLE_BIOMES } from "#mystery-encounters/mystery-encounters";
 import type { PartyHealPhase } from "#phases/party-heal-phase";
-import {
-  runMysteryEncounterToEnd,
-  skipBattleRunMysteryEncounterRewardsPhase,
-} from "#test/mystery-encounter/encounter-test-utils";
+import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/utils/encounter-test-utils";
 import { GameManager } from "#test/utils/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import i18next from "i18next";

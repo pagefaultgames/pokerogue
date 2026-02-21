@@ -23,10 +23,7 @@ import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils"
 import { generateModifierType } from "#mystery-encounters/encounter-phase-utils";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { MovePhase } from "#phases/move-phase";
-import {
-  runMysteryEncounterToEnd,
-  skipBattleRunMysteryEncounterRewardsPhase,
-} from "#test/mystery-encounter/encounter-test-utils";
+import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/utils/encounter-test-utils";
 import { GameManager } from "#test/utils/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import type { OptionSelectUiHandler } from "#ui/option-select-ui-handler";

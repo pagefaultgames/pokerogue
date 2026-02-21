@@ -21,10 +21,7 @@ import {
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { TrashToTreasureEncounter } from "#mystery-encounters/trash-to-treasure-encounter";
 import { MovePhase } from "#phases/move-phase";
-import {
-  runMysteryEncounterToEnd,
-  skipBattleRunMysteryEncounterRewardsPhase,
-} from "#test/mystery-encounter/encounter-test-utils";
+import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/utils/encounter-test-utils";
 import { GameManager } from "#test/utils/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
