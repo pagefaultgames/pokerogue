@@ -64,24 +64,5 @@ describe("Moves - Mat Block", () => {
     leadPokemon.forEach(p => expect(p.getStatStage(Stat.ATK)).toBe(-2));
   });
 
-  test("should fail when used after the first turn", async () => {
-    await game.classicMode.startBattle(SpeciesId.BLASTOISE, SpeciesId.CHARIZARD);
-
-    const leadPokemon = game.scene.getPlayerField();
-
-    game.move.select(MoveId.SPLASH);
-    game.move.select(MoveId.SPLASH, 1);
-
-    await game.phaseInterceptor.to("TurnEndPhase");
-
-    const leadStartingHp = leadPokemon.map(p => p.hp);
-
-    await game.phaseInterceptor.to("CommandPhase", false);
-    game.move.select(MoveId.MAT_BLOCK);
-    game.move.select(MoveId.MAT_BLOCK, 1);
-
-    await game.phaseInterceptor.to("BerryPhase", false);
-
-    expect(leadPokemon.some((p, i) => p.hp < leadStartingHp[i])).toBeTruthy();
-  });
+  // first turn behavior covered inside first-turn-moves.test.ts
 });

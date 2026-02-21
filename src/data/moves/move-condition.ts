@@ -49,7 +49,7 @@ export class FirstMoveCondition extends MoveCondition {
     super(user => user.tempSummonData.waveTurnCount === 1);
   }
 
-  // TODO: Update AI move selection logic to not require this method at all
+  // TODO: Update AI move selection logic to not require this method (and this class) at all
   // Currently, it is used to avoid having the AI select the move if its condition will fail
   getUserBenefitScore(user: Pokemon, _target: Pokemon, _move: Move): number {
     return this.apply(user, _target, _move) ? 10 : -20;
