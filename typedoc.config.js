@@ -15,7 +15,7 @@ const dryRun = !!process.env.DRY_RUN?.match(/true/gi);
  * <!-- @satisfies {Partial<import("typedoc").TypeDocOptions>} -->
  */
 const config = {
-  entryPoints: ["./src", "./test/utils"],
+  entryPoints: ["./src", ".test/framework", ".test/helpers", "./test/matchers", "./test/utils"],
   entryPointStrategy: "expand",
   exclude: [
     "src/polyfills.ts",
