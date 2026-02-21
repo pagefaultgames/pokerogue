@@ -1,5 +1,6 @@
 /*
- * SPDX-Copyright-Text: 2025 Pagefault Games
+ * SPDX-FileCopyrightText: 2025-2026 Pagefault Games
+ * SPDX-FileContributor: SirzBenjie
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
@@ -31,8 +32,10 @@
  * @module
  */
 
+import type { LEVEL_BASED_DENYLIST } from "#balance/moves/forbidden-moves";
+import type { FORCED_SIGNATURE_MOVES } from "#balance/moves/signature-moves";
 import { MoveId } from "#enums/move-id";
-
+import type { IntRange } from "type-fest";
 
 //#region Constants
 /**
@@ -52,9 +55,15 @@ export const GREAT_TIER_TM_LEVEL_REQUIREMENT = 40;
 export const ULTRA_TIER_TM_LEVEL_REQUIREMENT = 55;
 
 /** Below this level, Pokémon will be unable to generate with any egg moves */
-export const EGG_MOVE_LEVEL_REQUIREMENT = 60;
+export const EGG_MOVE_LEVEL_REQUIREMENT = 80;
 /** Below this level, Pokémon will be unable to generate with rare egg moves */
 export const RARE_EGG_MOVE_LEVEL_REQUIREMENT = 170;
+
+/** The rate, out of 100, for {@link FORCED_SIGNATURE_MOVES | forced signature moves} to be generated. */
+export const FORCED_SIGNATURE_MOVE_CHANCE = 60 satisfies IntRange<1, 100>; // X in 100 chance
+
+/** The level threshold above which moves in the {@linkcode LEVEL_BASED_DENYLIST} are prevented from spawning */
+export const LEVEL_BASED_DENYLIST_THRESHOLD = 70;
 
 // Note: Not exported, only for use with `getMaxTmCount
 /** Below this level, Pokémon will be unable to generate with any TMs */
@@ -67,14 +76,13 @@ const THREE_TM_THRESHOLD = 71;
 const FOUR_TM_THRESHOLD = 101;
 
 /** Below this level, Pokémon will be unable to generate any egg moves */
-const ONE_EGG_MOVE_THRESHOLD = 80;
+const ONE_EGG_MOVE_THRESHOLD = EGG_MOVE_LEVEL_REQUIREMENT;
 /** Below this level, Pokémon will generate with at most 1 egg moves */
 const TWO_EGG_MOVE_THRESHOLD = 121;
 /** Below this level, Pokémon will generate with at most 2 egg moves */
 const THREE_EGG_MOVE_THRESHOLD = 161;
-/** Above this level, Pokémon will generate with at most 3 egg moves */
+/** Below this level, Pokémon will generate with at most 3 egg moves */
 const FOUR_EGG_MOVE_THRESHOLD = 201;
-
 
 /** The weight given to TMs in the common tier during moveset generation */
 export const COMMON_TM_MOVESET_WEIGHT = 12;
@@ -110,6 +118,9 @@ export const ULTRA_TM_MOVESET_WEIGHT = 18;
  */
 export const BASE_LEVEL_WEIGHT_OFFSET = 20;
 
+/** The bp threshold for considering a level 1 move as a "move reminder" */
+export const EVO_MOVE_BP_THRESHOLD = 70;
+
 /**
  * The maximum weight an egg move can ever have
  * @remarks
@@ -139,10 +150,8 @@ export const BASE_WEIGHT_MULTIPLIER = 1.6;
 /** The additional weight added onto {@linkcode BASE_WEIGHT_MULTIPLIER} for boss Pokémon */
 export const BOSS_EXTRA_WEIGHT_MULTIPLIER = 0.4;
 
-
-
 /**
- * Set of moves that should be blacklisted from the forced STAB during moveset generation
+ * Set of moves that should be excluded from the forced STAB during moveset generation
  *
  * @remarks
  * During moveset generation, trainer pokemon attempt to force their pokemon to generate with STAB
@@ -154,19 +163,14 @@ export const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
   MoveId.BEAT_UP,
   MoveId.BELCH,
   MoveId.BIDE,
-  MoveId.BIND,
-  MoveId.CLAMP,
-  MoveId.CIRCLE_THROW,
   MoveId.COMEUPPANCE,
   MoveId.COUNTER,
   MoveId.DOOM_DESIRE,
   MoveId.DRAGON_RAGE,
-  MoveId.DRAGON_TAIL,
   MoveId.DREAM_EATER,
   MoveId.ENDEAVOR,
   MoveId.EXPLOSION,
   MoveId.FAKE_OUT,
-  MoveId.FIRE_SPIN,
   MoveId.FIRST_IMPRESSION,
   MoveId.FISSURE,
   MoveId.FLING,
@@ -175,7 +179,6 @@ export const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
   MoveId.GUILLOTINE,
   MoveId.HOLD_BACK,
   MoveId.HORN_DRILL,
-  MoveId.INFESTATION,
   MoveId.LAST_RESORT,
   MoveId.METAL_BURST,
   MoveId.MIRROR_COAT,
@@ -186,7 +189,6 @@ export const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
   MoveId.POWER_TRIP,
   MoveId.PSYWAVE,
   MoveId.RUINATION,
-  MoveId.SAND_TOMB,
   MoveId.SELF_DESTRUCT,
   MoveId.SHEER_COLD,
   MoveId.SHELL_TRAP,
@@ -200,8 +202,9 @@ export const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
   MoveId.SUPER_FANG,
   MoveId.SYNCHRONOISE,
   MoveId.UPPER_HAND,
-  MoveId.WHIRLPOOL,
-  MoveId.WRAP,
+  // Moves that always change type.
+  MoveId.NATURE_POWER,
+  MoveId.HIDDEN_POWER,
 ]);
 
 //#endregion Constants
@@ -227,7 +230,6 @@ export function getMaxTmCount(level: number) {
   }
   return 4;
 }
-
 
 export function getMaxEggMoveCount(level: number): number {
   if (level < ONE_EGG_MOVE_THRESHOLD) {
