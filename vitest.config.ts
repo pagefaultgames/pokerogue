@@ -4,9 +4,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+// NB: We cannot use `#XYZ` imports in this file since `vite-tsconfig-paths` has not been initialized yet.
+
 import type { UserConfig } from "vite";
 import { defineConfig } from "vitest/config";
 import { BaseSequencer, type TestSpecification } from "vitest/node";
+import { TEST_TIMEOUT } from "./test/test-utils/constants";
 import { sharedConfig } from "./vite.config";
 
 const customReporterFile = "./test/test-utils/reporters/custom-default-reporter.ts" as const;
@@ -27,8 +30,8 @@ export default defineConfig(async config => {
         TZ: "UTC",
       },
       isolate: false,
-      testTimeout: 20_000,
-      slowTestThreshold: 10_000,
+      testTimeout: TEST_TIMEOUT,
+      slowTestThreshold: TEST_TIMEOUT / 2,
       // TODO: Vitest's current framework produces spurious errors for type tests with this option enabled.
       // We should move our type tests to a separate folder not covered by normal tests, and then enable the option.
       // expect: {
