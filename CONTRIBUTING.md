@@ -1,18 +1,19 @@
 <!--
-SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+SPDX-FileCopyrightText: 2024-2026 Pagefault Games
 
 SPDX-License-Identifier: CC-BY-NC-SA-4.0
 -->
 
 # Contributing to PokéRogue
 
-Thank you for taking the time to contribute, every little bit helps. This project is entirely open-source and unmonetized - community contributions are what keep it alive!
+Thank you for taking the time to contribute; every little bit helps! This project is entirely open-source and unmonetized - community contributions are what keep it alive!
 
 Please make sure you understand everything relevant to your changes from the [Table of Contents](#-table-of-contents), and absolutely *feel free to reach out in the **#pokerogue-dev** channel on [Discord](https://discord.gg/pokerogue)*.
 We are here to help and the better you understand what you're working on, the easier it will be for it to find its way into the game.
 
-Note that, as per GitHub's [terms of service](https://docs.github.com/en/site-policy/github-terms/github-terms-of-service#6-contributions-under-repository-license), any contributions made to this repository will be licensed under this repository's terms.
-If you use any external code, please make sure to follow its licensing information. Please make use of [SPDX snippets](https://reuse.software/spec-3.3/#in-line-snippet-comments) for the portion of the file that is licensed differently.
+> [!NOTE]
+> As per GitHub's [terms of service](https://docs.github.com/en/site-policy/github-terms/github-terms-of-service#6-contributions-under-repository-license), any contributions made to this repository will be licensed under this repository's terms.
+> If you use any external code, please make sure to follow its licensing information. Please make use of [SPDX snippets](https://reuse.software/spec-3.3/#in-line-snippet-comments) for any portion of the file that is licensed differently.
 
 
 ## 📄 Table of Contents
@@ -32,7 +33,6 @@ PokéRogue is built with [TypeScript](https://www.typescriptlang.org/docs/handbo
 
 If you have the motivation and experience with TypeScript/JavaScript (or are willing to learn), you can contribute by forking the repository and making pull requests with contributions.
 
-
 ## 💻 Environment Setup
 
 ### Codespaces/Devcontainer Environment
@@ -51,8 +51,8 @@ This Linux environment comes with all required dependencies needed to start work
 [devcontainer-ext]: <https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers>
 
 > [!IMPORTANT]
-> Due to quirks of devcontainer port forwarding, you must use **`pnpm start:podman`** to start a local dev server from within a devcontainer.
-> All other instructions remain the same as local development.
+> Due to quirks of devcontainer port forwarding, **you must use `pnpm start:podman`** to start a local dev server from within a devcontainer.
+> _All other instructions remain the same as local development_.
 
 ### Podman
 
@@ -95,7 +95,7 @@ You are free to comment on any issue so that you may be assigned to it and we ca
 
 ## 📚 Documentation
 
-You can find the auto-generated documentation [here](https://pagefaultgames.github.io/pokerogue/main/index.html).
+You can find the auto-generated API documentation [here](https://pagefaultgames.github.io/pokerogue/beta/index.html). It can be incomplete at times (as many methods lack documentation comments), but it's a great way to get a look at the overall structure of the codebase and find particular methods or classes you may be looking for.
 
 Additionally, the [docs folder](./docs) contains a variety of in-depth documents and guides useful for aspiring contributors. \
 Notable topics include:
@@ -105,17 +105,19 @@ Notable topics include:
 - [Enemy AI move selection](./docs/enemy-ai.md)
 - [Running with Podman](./docs/podman.md)
 
-Again, if you have unanswered questions please feel free to ask!
+Again, please feel free to ask any questions you may have!
 
 ## 🧪 Testing Your Changes
 
-You've just made a change - how can you check if it works? You have two areas to hit:
+You've just made a change - how can you check if it works? \
+You have two areas to hit:
 
 ### 1 - Manual Testing
 
 > This will likely be your first stop. After making a change, you'll want to spin the game up and make sure everything is as you expect. To do this, you will need a way to manipulate the game to produce the situation you're looking to test.
 
 [src/overrides.ts](./src/overrides.ts) contains overrides for most values you'll need to change for testing, controlled through the `overrides` object.
+There are a variety of overrides available, ranging from changing movesets and abilities to modifying battle conditions and forcing specific scenarios.
 For example, here is how you could test a scenario where the player Pokemon has the ability Drought and the enemy Pokemon has the move Water Gun:
 
 ```typescript
@@ -125,11 +127,13 @@ const overrides = {
 } satisfies Partial<InstanceType<typeof DefaultOverrides>>;
 ```
 
-Read through `src/overrides.ts` file to find the override that fits your needs - there are a lot of them!
-If the situation you're trying to test can't be created using existing overrides (or with the [Dev Save](#-development-save-file)), reach out in **#pokerogue-dev**.
-You can get help testing your specific changes, and you might have found a new override that needs to be created!
+> [!NOTE]
+> If the situation you're trying to test can't be created using existing overrides (or with the [Dev Save](#-development-save-file)), reach out in **#pokerogue-dev**.
+> You can get help testing your specific changes, and you might have found a new override that needs to be created!
 
 ### 2 - Automatic Testing
+
+<!-- TODO: Consider moving this to a separate document. There's tons more we could (and should) expand on here, like the `test:create` script, basically the entire `test/test-utils` folder, project conventions, etc etc.-->
 
 PokéRogue uses [Vitest](https://vitest.dev/) for automated testing.
 Checking out existing tests in the [test](./test/) folder is a great way to understand how the existing system works, as well as familiarizing yourself with the project as a whole.
@@ -145,11 +149,16 @@ Ensure that new test cases:
 - Do not test multiple separate things in the same test case. If you have made two distinct changes, they should be tested in two separate cases.
 - Cover as many edge cases as possible. A good strategy is to think of edge cases beforehand and create tests for them using `it.todo`. Once the edge case has been handled, you can remove the `todo` marker.
 
-<!-- TODO: Decide on and suggest a specific placement heiarchy for test cases involving interactions between different moves/abilities/etc. -->
+> [!CAUTION]
+> Testing UI-related code within the automated test harness is _usually_ a bad idea. \
+> While it can be done, such tests tend to be boilerplate-heavy, hard to maintain and prone to randomly breaking/timing out.
+> If your change is primarily UI-related, it's usually best to test it manually and only use automated tests for the underlying logic (if applicable).
+
+<!-- TODO: Decide on and suggest a specific placement hierarchy for test cases involving interactions between different moves/abilities/etc., and enforce said placement if feasible -->
 
 #### Running tests
-To make sure your changes didn't break any existing test cases, run `pnpm test:silent` in your terminal to run the full test suite. \
-You can provide additional arguments to the command to change its behavior or specify which test files to run;
+To make sure your changes didn't break any existing test cases, run `pnpm test:silent <files>` in your terminal to run test files associated with your changes. \
+You can provide additional arguments to the command to alter its behavior;
 a full list of supported arguments can be found on [Vitest's website](https://vitest.dev/guide/cli.html).
 
 > [!CAUTION]
@@ -158,10 +167,11 @@ a full list of supported arguments can be found on [Vitest's website](https://vi
 
 ## 💾 Development Save File
 > Some issues may require you to have unlocks on your save file which go beyond normal overrides.
-> For this reason, the repository contains a [save file](test/test-utils/saves/everything.psrv) with _everything_ unlocked (it may also contain things that are not legitimately obtainable).
+> For this reason, the repository contains a [save file](test/test-utils/saves/everything.prsv) with _everything_ unlocked (including things not legitimately obtainable, like unreleased variant shinies).
 
 1. Start the game up locally and navigate to `Menu -> Manage Data -> Import Data`
-2. Select [everything.prsv](test/test-utils/saves/everything.prsv) (`test/test-utils/saves/everything.prsv`) and confirm.
+2. Select [everything.prsv](test/test-utils/saves/everything.prsv) (`test/test-utils/saves/everything.prsv`) and hit "Confirm".
+3. The page will reload with everything unlocked! You can now test your changes with this save file.
 
 ## ✅ Submitting a Pull Request
 
