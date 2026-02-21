@@ -1,0 +1,81 @@
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
+import { GameManager } from "#test/framework/game-manager";
+import Phaser from "phaser";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
+
+describe("Moves - Fake Out", () => {
+  let phaserGame: Phaser.Game;
+  let game: GameManager;
+
+  beforeAll(() => {
+    phaserGame = new Phaser.Game({
+      type: Phaser.HEADLESS,
+    });
+  });
+
+  beforeEach(() => {
+    game = new GameManager(phaserGame);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(SpeciesId.CORVIKNIGHT)
+      .enemyMoveset(MoveId.SPLASH)
+      .enemyLevel(10)
+      .startingLevel(1) // prevent LevelUpPhase from happening
+      .criticalHits(false);
+  });
+
+  it("should only work the first turn a pokemon is sent out in a battle", async () => {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+    game.move.use(MoveId.FAKE_OUT);
+    await game.toNextTurn();
+
+    const corv = game.field.getEnemyPokemon();
+    expect(corv).not.toHaveFullHp();
+    corv.hp = corv.getMaxHp();
+
+    game.move.use(MoveId.FAKE_OUT);
+    await game.toNextTurn();
+
+    expect(corv).toHaveFullHp();
+  });
+
+  // This is a PokeRogue buff to Fake Out
+  it("should succeed at the start of each new wave, even if user wasn't recalled", async () => {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+    // set hp to 1 for easy knockout
+    game.field.getEnemyPokemon().hp = 1;
+    game.move.use(MoveId.FAKE_OUT);
+    await game.toNextWave();
+
+    game.move.use(MoveId.FAKE_OUT);
+    await game.toNextTurn();
+
+    const corv = game.field.getEnemyPokemon();
+    expect(corv).not.toHaveFullHp();
+  });
+
+  it("should succeed if recalled and sent back out", async () => {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MAGIKARP);
+
+    game.move.use(MoveId.FAKE_OUT);
+    await game.toNextTurn();
+
+    const corv = game.field.getEnemyPokemon();
+    expect(corv).not.toHaveFullHp();
+    corv.hp = corv.getMaxHp();
+
+    game.doSwitchPokemon(1);
+    await game.toNextTurn();
+
+    game.doSwitchPokemon(1);
+    await game.toNextTurn();
+
+    game.move.use(MoveId.FAKE_OUT);
+    await game.toNextTurn();
+
+    expect(corv).not.toHaveFullHp();
+  });
+});

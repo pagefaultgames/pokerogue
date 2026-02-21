@@ -9,7 +9,7 @@ import { defineConfig } from "vitest/config";
 import { BaseSequencer, type TestSpecification } from "vitest/node";
 import { sharedConfig } from "./vite.config";
 
-const customReporterFile = "./test/test-utils/reporters/custom-default-reporter.ts" as const;
+const customReporterFile = "./test/reporters/custom-default-reporter.ts" as const;
 
 // biome-ignore lint/style/noDefaultExport: required for vitest
 export default defineConfig(async config => {
@@ -47,7 +47,7 @@ export default defineConfig(async config => {
       },
       typecheck: {
         tsconfig: "tsconfig.json",
-        include: ["./test/types/**/*.{test,spec}-d.ts"],
+        include: ["./test/tests/types/**/*.{test,spec}-d.ts"],
       },
       restoreMocks: true,
       watch: false,
@@ -56,7 +56,7 @@ export default defineConfig(async config => {
         reportsDirectory: "coverage",
         reporter: process.env.MERGE_REPORTS ? ["text-summary", "json-summary"] : [],
         exclude: ["{src,test}/**/*.d.ts"],
-        include: ["src/**/*.ts", "test/test-utils/**/*.ts"],
+        include: ["src/**/*.ts", "test/utils/**/*.ts"],
       },
       name: "main",
       include: ["./test/**/*.{test,spec}.ts"],

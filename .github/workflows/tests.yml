@@ -82,7 +82,7 @@ jobs:
           sparse-checkout: |
             .github/actions/setup-deps/action.yml
             test/setup
-            test/test-utils/reporters/custom-default-reporter.ts
+            test/reporters/custom-default-reporter.ts
 
       - uses: ./.github/actions/setup-deps
 
