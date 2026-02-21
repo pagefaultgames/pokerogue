@@ -6086,6 +6086,35 @@ export class FreezeDryAttr extends MoveTypeChartOverrideAttr {
 }
 
 /**
+ * Attribute to implement {@link https://bulbapedia.bulbagarden.net/wiki/Nihil_Light_(move) | Nihil Light}'s
+ * neutral effectiveness against Fairy types.
+ */
+export class NihilLightAttr extends MoveTypeChartOverrideAttr {
+  public override apply(
+    _user: Pokemon,
+    _target: Pokemon,
+    _move: Move,
+    args: [multiplier: NumberHolder, types: readonly PokemonType[], moveType: PokemonType],
+  ): boolean {
+    const [multiplier, types, moveType] = args;
+    if (moveType !== PokemonType.DRAGON || !types.includes(PokemonType.FAIRY)) {
+      return false;
+    }
+
+    let eff = 1;
+    for (const type of types) {
+      if (type === PokemonType.FAIRY) {
+        eff *= 1;
+      } else {
+        eff *= getTypeDamageMultiplier(moveType, type);
+      }
+    }
+    multiplier.value = eff;
+    return true;
+  }
+}
+
+/**
  * Attribute used by {@link https://bulbapedia.bulbagarden.net/wiki/Thousand_Arrows_(move) | Thousand Arrows}
  * to cause it to deal a fixed 1x damage against all ungrounded flying types.
  */
@@ -9061,6 +9090,7 @@ const MoveAttrs = Object.freeze({
   FlyingTypeMultiplierAttr,
   MoveTypeChartOverrideAttr,
   FreezeDryAttr,
+  NihilLightAttr,
   OneHitKOAccuracyAttr,
   HitsSameTypeAttr,
   SheerColdAccuracyAttr,
@@ -11161,7 +11191,10 @@ export function initMoves() {
     new AttackMove(MoveId.WATER_SHURIKEN, PokemonType.WATER, MoveCategory.SPECIAL, 15, 100, 20, -1, 1, 6)
       .attr(MultiHitAttr)
       .attr(WaterShurikenPowerAttr)
-      .attr(WaterShurikenMultiHitTypeAttr),
+      .attr(WaterShurikenMultiHitTypeAttr)
+      // This move gained new functionality in ZA when used by Mega Greninja
+      // It should deal 75 damage and be a regular, single hit attack
+      .edgeCase(),
     new AttackMove(MoveId.MYSTICAL_FIRE, PokemonType.FIRE, MoveCategory.SPECIAL, 75, 100, 10, 100, 0, 6) //
       .attr(StatStageChangeAttr, [Stat.SPATK], -1),
     new SelfStatusMove(MoveId.SPIKY_SHIELD, PokemonType.GRASS, -1, 10, -1, 4, 6)
@@ -12431,5 +12464,10 @@ export function initMoves() {
       .condition(upperHandCondition, 3),
     new AttackMove(MoveId.MALIGNANT_CHAIN, PokemonType.POISON, MoveCategory.SPECIAL, 100, 100, 5, 50, 0, 9) //
       .attr(StatusEffectAttr, StatusEffect.TOXIC),
+    new AttackMove(MoveId.NIHIL_LIGHT, PokemonType.DRAGON, MoveCategory.SPECIAL, 100, 100, 10, -1, 0, 9)
+      .attr(IgnoreOpponentStatStagesAttr)
+      .attr(NihilLightAttr)
+      .target(MoveTarget.ALL_NEAR_ENEMIES)
+      .edgeCase(), // Needs to replace the user's Core Enforcer if mega evolved (Zygarde-Complete to Mega Zygarde)
   );
 }
