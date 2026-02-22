@@ -43,7 +43,7 @@
   },
   "dependencies": {
     "@material/material-color-utilities": "^0.3.0",
-    "ajv": "^8.17.1",
+    "ajv": "^8.18.0",
     "compare-versions": "^6.1.1",
     "core-js": "^3.47.0",
     "crypto-js": "^4.2.0",

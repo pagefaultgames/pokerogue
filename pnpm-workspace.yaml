@@ -7,7 +7,9 @@ onlyBuiltDependencies:
   - msw
 
 overrides:
+  ajv@>=7.0.0-alpha.0 <8.18.0: '>=8.18.0'
   markdown-it@>=13.0.0 <14.1.1: '>=14.1.1'
+  minimatch@<10.2.1: '>=10.2.1'
   undici@<6.23.0: '>=6.23.0'
 
 shellEmulator: true
