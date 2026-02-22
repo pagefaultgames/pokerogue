@@ -366,7 +366,10 @@ export function getTextStyleOptions(
       switch (lang) {
         case "ja":
           styleOptions.fontSize = defaultFontSize - 42;
-          //styleOptions.padding = { top: -4, bottom: 8 };
+          break;
+        case "ko":
+          styleOptions.fontSize = defaultFontSize - 40;
+          styleOptions.padding = { top: -6, bottom: 5 };
           break;
         default:
           styleOptions.fontSize = defaultFontSize - 48;
