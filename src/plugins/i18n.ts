@@ -54,12 +54,6 @@ const fonts: LoadingFontFaceProperty[] = [
       unicodeRange: rangesByLanguage.korean,
     }),
   },
-  {
-    face: new FontFace("pkmnems", "url(./fonts/PokePT_Wansung.woff2)", {
-      unicodeRange: rangesByLanguage.korean,
-    }),
-    extraOptions: { sizeAdjust: "177%" },
-  },
   // unicode (chinese)
   {
     face: new FontFace("emerald", "url(./fonts/unifont-15.1.05.subset.woff2)", {

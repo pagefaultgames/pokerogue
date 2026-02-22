@@ -335,7 +335,7 @@ export function getTextStyleOptions(
           break;
         case "ko":
           styleOptions.fontSize = defaultFontSize - 52;
-          styleOptions.padding = { top: 4, left: 6 };
+          styleOptions.padding = { top: 2, bottom: 12, left: 4 };
           break;
         case "zh-Hans":
         case "zh-Hant":
