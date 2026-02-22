@@ -322,32 +322,28 @@ export function getTextStyleOptions(
       break;
     case TextStyle.PARTY:
     case TextStyle.PARTY_RED: {
-      switch (lang) {
-        case "ja":
-          styleOptions.padding = { top: -12, bottom: 4 };
-          break;
-      }
-      styleOptions.fontSize = defaultFontSize - 30;
+      styleOptions.padding = { top: 2, bottom: 16 };
+      styleOptions.fontSize = defaultFontSize - 48;
       styleOptions.fontFamily = "pkmnems";
       break;
     }
     case TextStyle.PARTY_CANCEL_BUTTON: {
       switch (lang) {
         case "ja":
-          styleOptions.fontSize = defaultFontSize - 42;
-          styleOptions.padding = { top: 4 };
+          styleOptions.fontSize = defaultFontSize - 54;
+          styleOptions.padding = { top: 4, bottom: 2 };
           break;
         case "ko":
-          styleOptions.fontSize = defaultFontSize - 38;
-          styleOptions.padding = { top: 4, left: 6 };
+          styleOptions.fontSize = defaultFontSize - 52;
+          styleOptions.padding = { top: 2, bottom: 12, left: 4 };
           break;
         case "zh-Hans":
         case "zh-Hant":
-          styleOptions.fontSize = defaultFontSize - 42;
-          styleOptions.padding = { top: 5, left: 14 };
+          styleOptions.fontSize = defaultFontSize - 56;
+          styleOptions.padding = { top: 2, bottom: 12, left: 14 };
           break;
         default:
-          styleOptions.fontSize = defaultFontSize - 30;
+          styleOptions.fontSize = defaultFontSize - 48;
           styleOptions.padding = { left: 12 };
           break;
       }
@@ -357,10 +353,10 @@ export function getTextStyleOptions(
     case TextStyle.INSTRUCTIONS_TEXT: {
       switch (lang) {
         case "ja":
-          styleOptions.padding = { top: -3, bottom: 4 };
+          styleOptions.padding = { top: -4, bottom: 4 };
           break;
       }
-      styleOptions.fontSize = defaultFontSize - 30;
+      styleOptions.fontSize = defaultFontSize - 48;
       styleOptions.fontFamily = "pkmnems";
       shadowXpos = 3;
       shadowYpos = 3;
@@ -369,11 +365,14 @@ export function getTextStyleOptions(
     case TextStyle.MOVE_LABEL: {
       switch (lang) {
         case "ja":
-          styleOptions.fontSize = defaultFontSize - 16;
-          styleOptions.padding = { top: -14, bottom: 8 };
+          styleOptions.fontSize = defaultFontSize - 42;
+          break;
+        case "ko":
+          styleOptions.fontSize = defaultFontSize - 40;
+          styleOptions.padding = { top: -6, bottom: 5 };
           break;
         default:
-          styleOptions.fontSize = defaultFontSize - 30;
+          styleOptions.fontSize = defaultFontSize - 48;
           break;
       }
       styleOptions.fontFamily = "pkmnems";
