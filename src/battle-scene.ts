@@ -1268,7 +1268,8 @@ export class BattleScene extends SceneBase {
   ): Battle {
     // failsafe for corrupt saves (such as due to enum shifting)
     if (trainerData?.variant === TrainerVariant.DOUBLE && !trainerConfigs[trainerData.trainerType].hasDouble) {
-      trainerData = undefined;
+      trainerData.variant = TrainerVariant.DEFAULT;
+      double = false;
     }
     const _startingWave = Overrides.STARTING_WAVE_OVERRIDE || startingWave;
     const newWaveIndex = waveIndex || (this.currentBattle?.waveIndex || _startingWave - 1) + 1;
