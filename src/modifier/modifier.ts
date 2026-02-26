@@ -1,7 +1,7 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { FusionSpeciesFormEvolution, pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#balance/starters";
 import { getBerryEffectFunc, getBerryPredicate } from "#data/berry";
@@ -3718,8 +3718,8 @@ export class EnemyFusionChanceModifier extends EnemyPersistentModifier {
  */
 export function overrideModifiers(isPlayer = true): void {
   const modifiersOverride: ModifierOverride[] = isPlayer
-    ? Overrides.STARTING_MODIFIER_OVERRIDE
-    : Overrides.ENEMY_MODIFIER_OVERRIDE;
+    ? activeOverrides.STARTING_MODIFIER_OVERRIDE
+    : activeOverrides.ENEMY_MODIFIER_OVERRIDE;
   if (!modifiersOverride || modifiersOverride.length === 0 || !globalScene) {
     return;
   }
@@ -3760,8 +3760,8 @@ export function overrideModifiers(isPlayer = true): void {
  */
 export function overrideHeldItems(pokemon: Pokemon, isPlayer = true): void {
   const heldItemsOverride: ModifierOverride[] = isPlayer
-    ? Overrides.STARTING_HELD_ITEMS_OVERRIDE
-    : Overrides.ENEMY_HELD_ITEMS_OVERRIDE;
+    ? activeOverrides.STARTING_HELD_ITEMS_OVERRIDE
+    : activeOverrides.ENEMY_HELD_ITEMS_OVERRIDE;
   if (!heldItemsOverride || heldItemsOverride.length === 0 || !globalScene) {
     return;
   }

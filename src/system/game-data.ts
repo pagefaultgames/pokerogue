@@ -3,7 +3,7 @@ import { clientSessionId, getSessionDataLocalStorageKey, loggedInUser, updateUse
 import { defaultStarterSpecies, saveKey } from "#app/constants";
 import { getGameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { isIos } from "#app/touch-controls";
 import { Tutorial } from "#app/tutorial";
 import { speciesEggMoves } from "#balance/moves/egg-moves";
@@ -212,7 +212,7 @@ export class GameData {
    * @returns `true` if the player has unlocked this `Unlockable` or an override has enabled it
    */
   public isUnlocked(unlockable: Unlockables): boolean {
-    if (Overrides.ITEM_UNLOCK_OVERRIDE.includes(unlockable)) {
+    if (activeOverrides.ITEM_UNLOCK_OVERRIDE.includes(unlockable)) {
       return true;
     }
     return this.unlocks[unlockable];
@@ -956,8 +956,8 @@ export class GameData {
     Object.keys(globalScene.pokeballCounts).forEach((key: string) => {
       globalScene.pokeballCounts[key] = fromSession.pokeballCounts[key] || 0;
     });
-    if (Overrides.POKEBALL_OVERRIDE.active) {
-      globalScene.pokeballCounts = Overrides.POKEBALL_OVERRIDE.pokeballs;
+    if (activeOverrides.POKEBALL_OVERRIDE.active) {
+      globalScene.pokeballCounts = activeOverrides.POKEBALL_OVERRIDE.pokeballs;
     }
 
     globalScene.money = Math.floor(fromSession.money || 0);
@@ -1852,8 +1852,8 @@ export class GameData {
    * Adds candy to the player's game data for a given {@linkcode PokemonSpecies}.
    * @remarks
    * Will not increase the candy count past {@linkcode MAX_STARTER_CANDY_COUNT}.
-   * @param speciesId - The species ID of the PokÃ©mon to increment candy for
-   * @param numCandiesToAdd - The number of candies to add to the PokÃ©mon
+   * @param speciesId - The species ID of the Pokémon to increment candy for
+   * @param numCandiesToAdd - The number of candies to add to the Pokémon
    * @returns Whether the candy count was incremented
    */
   public addStarterCandy(speciesId: SpeciesId, numCandiesToAdd: number): boolean {

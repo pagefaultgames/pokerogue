@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { allMoves } from "#data/data-lists";
 import { getPokeballAtlasKey } from "#data/pokeball";
@@ -1036,7 +1036,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
   }
 
   updateCostText(): void {
-    const cost = Overrides.WAIVE_ROLL_FEE_OVERRIDE ? 0 : this.modifierTypeOption.cost;
+    const cost = activeOverrides.WAIVE_ROLL_FEE_OVERRIDE ? 0 : this.modifierTypeOption.cost;
     const textStyle = cost <= globalScene.money ? TextStyle.MONEY : TextStyle.PARTY_RED;
 
     const formattedMoney = formatMoney(globalScene.moneyFormat, cost);

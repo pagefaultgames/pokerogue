@@ -52,7 +52,7 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { CommonBattleAnim, MoveChargeAnim } from "#data/battle-anims";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { SpeciesFormChangeAbilityTrigger } from "#data/form-change-triggers";
@@ -883,7 +883,7 @@ export class ConfusedTag extends SerializableBattlerTag {
     phaseManager.unshiftNew("CommonAnimPhase", pokemon.getBattlerIndex(), undefined, CommonAnim.CONFUSION);
 
     // 1/3 chance of hitting self with a 40 base power move
-    if (pokemon.randBattleSeedInt(3) === 0 || Overrides.CONFUSION_ACTIVATION_OVERRIDE === true) {
+    if (pokemon.randBattleSeedInt(3) === 0 || activeOverrides.CONFUSION_ACTIVATION_OVERRIDE === true) {
       const atk = pokemon.getEffectiveStat(Stat.ATK);
       const def = pokemon.getEffectiveStat(Stat.DEF);
       const damage = toDmgValue(

@@ -2,7 +2,7 @@ import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { MOVE_COLOR } from "#app/constants/colors";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { CenterOfAttentionTag, type EncoreTag } from "#data/battler-tags";
 import { SpeciesFormChangePreMoveTrigger } from "#data/form-change-triggers";
@@ -370,7 +370,7 @@ export class MovePhase extends PokemonPhase {
       return false;
     }
 
-    if (Overrides.STATUS_ACTIVATION_OVERRIDE) {
+    if (activeOverrides.STATUS_ACTIVATION_OVERRIDE) {
       return false;
     }
 
@@ -384,11 +384,11 @@ export class MovePhase extends PokemonPhase {
       return false;
     }
     if (
-      Overrides.STATUS_ACTIVATION_OVERRIDE === false
+      activeOverrides.STATUS_ACTIVATION_OVERRIDE === false
       || this.move
         .getMove()
         .findAttr(attr => attr.selfTarget && attr.is("HealStatusEffectAttr") && attr.isOfEffect(StatusEffect.FREEZE))
-      || (!pokemon.randBattleSeedInt(5) && Overrides.STATUS_ACTIVATION_OVERRIDE !== true)
+      || (!pokemon.randBattleSeedInt(5) && activeOverrides.STATUS_ACTIVATION_OVERRIDE !== true)
     ) {
       pokemon.cureStatus(StatusEffect.FREEZE);
       return false;
@@ -519,7 +519,7 @@ export class MovePhase extends PokemonPhase {
       return false;
     }
 
-    const proc = Overrides.STATUS_ACTIVATION_OVERRIDE ?? user.randBattleSeedInt(4) === 0;
+    const proc = activeOverrides.STATUS_ACTIVATION_OVERRIDE ?? user.randBattleSeedInt(4) === 0;
     if (!proc) {
       return false;
     }

@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { initMoveAnim, loadMoveAnimAssets } from "#data/battle-anims";
 import { allMoves } from "#data/data-lists";
 import { SpeciesFormChangeMoveLearnedTrigger } from "#data/form-change-triggers";
@@ -206,7 +206,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
       if (this.cost === -1) {
         globalScene.phaseManager.tryRemovePhase("SelectModifierPhase");
       } else {
-        if (!Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
+        if (!activeOverrides.WAIVE_ROLL_FEE_OVERRIDE) {
           globalScene.money -= this.cost;
           globalScene.updateMoneyText();
           globalScene.animateMoneyChanged(false);
