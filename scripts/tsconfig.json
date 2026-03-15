@@ -1,0 +1,36 @@
+/*
+ * SPDX-FileCopyrightText: 2025 Pagefault Games
+ * SPDX-FileContributor: Bertie690
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+{
+  "extends": "../tsconfig.json",
+  "include": ["./**/*.js", "./**/*.ts", "./**/*.mjs", "./**/*.cjs"],
+  "exclude": ["../dist", "../node_modules"],
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "preserve",
+    "moduleResolution": "bundler", // we use vite-node
+    "strict": true,
+    "allowJs": true,
+    "checkJs": true,
+    "erasableSyntaxOnly": true,
+    "paths": {
+      "#abilities/*": ["../src/data/abilities/*.ts"],
+      "#api/*": ["../src/plugins/api/*.ts"],
+      "#biomes/*": ["../src/data/balance/biomes/*.ts"],
+      "#constants/*": ["../src/constants/*.ts"],
+      "#enums/*": ["../src/enums/*.ts"],
+      "#moves/*": ["../src/data/moves/*.ts"],
+      "#mystery-encounters/*": [
+        "../src/data/mystery-encounters/utils/*.ts",
+        "../src/data/mystery-encounters/encounters/*.ts",
+        "../src/data/mystery-encounters/requirements/*.ts",
+        "../src/data/mystery-encounters/*.ts"
+      ],
+      "#types/*": ["../src/@types/*.ts"],
+      "#utils/*": ["../src/utils/*.ts", "./helpers/*.ts"]
+    }
+  }
+}

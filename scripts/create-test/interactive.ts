@@ -6,20 +6,17 @@
 
 import { input, select } from "@inquirer/prompts";
 import chalk from "chalk";
+import type { TestType } from "./constants.js";
 import { validTestTypes } from "./constants.js";
 
 /**
- * @import {testType} from "./constants.js"
- */
-/**
  * Prompt the user to select a test type via list.
- * @returns {Promise<testType | undefined>} The selected type, or `undefined` if "Exit" was pressed.
+ * @returns The selected type, or `undefined` if "Exit" was pressed.
  */
-export async function promptTestType() {
-  /** @type {testType | "EXIT"} */
+export async function promptTestType(): Promise<TestType | undefined> {
   const choice = await select({
     message: "What type of test would you like to create?",
-    choices: [...validTestTypes, "EXIT"],
+    choices: [...validTestTypes, "EXIT"] as const,
   });
 
   if (choice === "EXIT") {
@@ -33,11 +30,10 @@ export async function promptTestType() {
 
 /**
  * Prompt the user to provide a file name.
- * @param {testType} selectedType - The chosen string (used for logging & validation)
- * @returns {Promise<string>} The selected file name
+ * @param selectedType - The chosen type (used for the prompt message)
+ * @returns The selected file name
  */
-export async function promptFileName(selectedType) {
-  /** @type {string} */
+export async function promptFileName(selectedType: TestType): Promise<string> {
   const fileNameAnswer = await input({
     message: `Please provide the name of the ${selectedType}.`,
     validate: name => {
@@ -49,6 +45,5 @@ export async function promptFileName(selectedType) {
     },
   });
 
-  // Trim whitespace and any extension suffixes
   return fileNameAnswer.trim().replace(".test.ts", "");
 }

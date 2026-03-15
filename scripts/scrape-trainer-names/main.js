@@ -5,11 +5,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+import { toCamelCase, toPascalSnakeCase, toTitleCase } from "#utils/strings";
 import { format, inspect } from "node:util";
 import chalk from "chalk";
 import { JSDOM } from "jsdom";
-import { getPropertyValue } from "../helpers/arguments.js";
-import { toCamelCase, toPascalSnakeCase, toTitleCase } from "../helpers/casing.js";
+import { getPropertyValue } from "../helpers/arguments";
 import { writeFileSafe } from "../helpers/file.js";
 import { normalizeDiacritics } from "../helpers/strings.js";
 import { checkGenderAndType } from "./check-gender.js";
