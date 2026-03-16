@@ -6,15 +6,16 @@
  */
 {
   "extends": "../tsconfig.json",
-  "include": ["./**/*.js", "./**/*.ts", "./**/*.mjs", "./**/*.cjs"],
+  "include": ["*.ts", "**/*.ts", "**/*.mjs", "**/*.cjs"],
   "exclude": ["../dist", "../node_modules"],
   "compilerOptions": {
+    "types": ["@types/node"],
     "target": "esnext",
     "module": "preserve",
+    "lib": ["ESNext"],
     "moduleResolution": "bundler", // we use vite-node
     "strict": true,
-    "allowJs": true,
-    "checkJs": true,
+    // todo: remove once all ts files have been converted and we can use enums
     "erasableSyntaxOnly": true,
     "paths": {
       "#abilities/*": ["../src/data/abilities/*.ts"],
@@ -30,7 +31,7 @@
         "../src/data/mystery-encounters/*.ts"
       ],
       "#types/*": ["../src/@types/*.ts"],
-      "#utils/*": ["../src/utils/*.ts", "./helpers/*.ts"]
+      "#utils/*": ["../src/utils/*.ts", "./utils/*.ts"]
     }
   }
 }
