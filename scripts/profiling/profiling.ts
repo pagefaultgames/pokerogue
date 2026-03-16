@@ -8,13 +8,13 @@
  * Any extra CLI arguments are passed directly to `vitest run`.
  */
 
+import { defaultCommanderHelpArgs } from "#utils/arguments";
 import { copyFile, glob, mkdir, mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { basename, join } from "node:path";
 import { Command } from "@commander-js/extra-typings";
 import chalk from "chalk";
 import { parseCLI, startVitest } from "vitest/node";
-import { defaultCommanderHelpArgs } from "../helpers/arguments.js";
 
 const version = "1.0.0";
 
@@ -48,9 +48,9 @@ if (!cpu && !memory) {
 testProfile.showHelpAfterError(false);
 
 /**
- * @returns {Promise<void>}
+ * Run the `test:profile` CLI.
  */
-async function main() {
+async function main(): Promise<void> {
   if (clean) {
     await rm(outputDir, { recursive: true, force: true });
     await mkdir(outputDir, { recursive: true });
@@ -62,8 +62,7 @@ async function main() {
 
   console.log(chalk.grey("Running Vitest with V8 profiler..."));
 
-  /** @type {string[]} */
-  const execArgv = [];
+  const execArgv: string[] = [];
   if (cpu) {
     execArgv.push(
       "--cpu-prof",

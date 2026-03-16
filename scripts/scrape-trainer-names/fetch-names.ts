@@ -5,9 +5,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-/**
- * @import { parsedNames } from "./types.js";
- */
+import type { ParsedNames } from "./types";
 
 /**
  * An error code for a bad URL.
@@ -16,15 +14,17 @@ export const INVALID_URL = "bad_url_code";
 
 /**
  * Fetch a given trainer's names from the given HTML document.
- * @param {HTMLElement | null | undefined} trainerListHeader - The header containing the trainer lists
- * @param {boolean} [knownFemale=false] - Whether the class is known to be female; default `false`
- * @returns {parsedNames | typeof INVALID_URL}
- * An object containing the parsed names. \
+ * @param trainerListHeader - The header containing the trainer lists
+ * @param knownFemale - Whether the class is known to be female; default `false`
+ * @returns An object containing the parsed names.
  * Will instead return with {@linkcode INVALID_URL} if the data is invalid.
  */
-export function fetchNames(trainerListHeader, knownFemale = false) {
-  const trainerNames = /** @type {Set<string>} */ (new Set());
-  const femaleTrainerNames = /** @type {Set<string>} */ (new Set());
+export function fetchNames(
+  trainerListHeader: HTMLElement | null | undefined,
+  knownFemale = false,
+): ParsedNames | typeof INVALID_URL {
+  const trainerNames = new Set<string>();
+  const femaleTrainerNames = new Set<string>();
   if (!trainerListHeader?.parentElement?.childNodes) {
     // Return early if no child nodes (ie tables) can be found
     return INVALID_URL;
@@ -38,12 +38,9 @@ export function fetchNames(trainerListHeader, knownFemale = false) {
 
   // Grab all the trainer name tables sorted by generation
   const tables = elements.slice(startChildIndex, endChildIndex).filter(
-    /** @type {(t: ChildNode) => t is HTMLTableElement} */
-    (
-      t =>
-        // Only grab expandable tables within the header block
-        t.nodeName === "TABLE" && /** @type {HTMLTableElement} */ (t)["className"] === "expandable"
-    ),
+    (t): t is HTMLTableElement =>
+      // Only grab expandable tables within the header block
+      t.nodeName === "TABLE" && (t as HTMLTableElement).className === "expandable",
   );
 
   parseTable(tables, knownFemale, trainerNames, femaleTrainerNames);
@@ -55,12 +52,17 @@ export function fetchNames(trainerListHeader, knownFemale = false) {
 
 /**
  * Parse the table in question.
- * @param {HTMLTableElement[]} tables - The array of Elements forming the current table
- * @param {boolean} isFemale - Whether the trainer is known to be female or not
- * @param {Set<string>} trainerNames A Set containing the male trainer names
- * @param {Set<string>} femaleTrainerNames - A Set containing the female trainer names
+ * @param tables - The array of Elements forming the current table
+ * @param isFemale - Whether the trainer is known to be female or not
+ * @param trainerNames A Set containing the male trainer names
+ * @param femaleTrainerNames - A Set containing the female trainer names
  */
-function parseTable(tables, isFemale, trainerNames, femaleTrainerNames) {
+function parseTable(
+  tables: HTMLTableElement[],
+  isFemale: boolean,
+  trainerNames: Set<string>,
+  femaleTrainerNames: Set<string>,
+) {
   for (const table of tables) {
     // Grab all rows past the first header with exactly 9 children in them (Name, Battle, Winnings, 6 party slots)
     const trainerRows = [...table.rows].slice(1).filter(r => r.children.length === 9);

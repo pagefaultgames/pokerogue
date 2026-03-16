@@ -11,34 +11,24 @@
  */
 
 import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 import chalk from "chalk";
 import { showHelpText } from "./help-message.js";
 import { runInteractive } from "./interactive.js";
 import { parseEggMoves } from "./parse.js";
+import type { Option } from "./types.js";
 
 const version = "1.0.1";
 
-// Get the directory name of the current module file
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const projectRoot = path.join(__dirname, "..", "..");
-const templatePath = path.join(__dirname, "egg-move-template.boilerplate.ts");
+const projectRoot = join(import.meta.dirname, "..", "..");
+const templatePath = join(import.meta.dirname, "egg-move-template.boilerplate.ts");
 // TODO: Do we want this to be configurable?
-const eggMoveTargetPath = path.join(projectRoot, "src/data/balance/egg-moves.ts");
-
-/**
- * @typedef {{type: "Console" | "File", value: string} | {type: "Exit"}}
- * Option
- * An option selected by the user.
- */
+const eggMoveTargetPath = join(projectRoot, "src/data/balance/egg-moves.ts");
 
 /**
  * Runs the interactive eggMoves:parse CLI.
- * @returns {Promise<void>}
  */
-async function start() {
+async function start(): Promise<void> {
   console.log(chalk.yellow(`🥚 Egg Move Parser - v${version}`));
 
   if (process.argv.length > 4) {
@@ -74,15 +64,14 @@ async function start() {
 
 /**
  * Handle the arguments passed to the script and obtain the CSV input type.
- * @returns {Promise<{type: "Console" | "File", value: string} | {type: "Exit"}>} The input method selected by the user
+ * @returns The input method selected by the user
  */
-async function parseArguments() {
+async function parseArguments(): Promise<Option> {
   const args = process.argv.slice(2); // first 2 args are node and script name (irrelevant)
 
-  // Yoink everything up to the first "=" to get the raw command, using nullish coaclescing to convert
+  // Yoink everything up to the first "=" to get the raw command, using nullish coalescing to convert
   // "no args" into "undefined"
-  /** @type {string | undefined}  */
-  const arg = args[0]?.split("=")[0];
+  const arg: string | undefined = args[0]?.split("=")[0];
   switch (arg) {
     case "-f":
     case "--file":
@@ -114,17 +103,16 @@ async function parseArguments() {
 
 /**
  * Get the value of the argument provided.
- * @returns {string} The CSV or file path from the arguments
+ * @returns The CSV or file path from the arguments
  * @throws {Error} If arguments are malformed
  */
-function getArgValue() {
+function getArgValue(): string {
   // If the user provided a value as argument 2, take that as the argument.
   // Otherwise, check the 1st argument to see if it contains an `=` and extract everything afterwards.
-  /** @type {string | undefined} */
-  let filePath = process.argv[3];
+  let filePath: string | undefined = process.argv[3];
   const equalsIndex = process.argv[2].indexOf("=");
   if (equalsIndex > -1) {
-    // If arg 3 was aleady existing and someone used `=` notation to assign a property, throw an error.
+    // If arg 3 was already existing and someone used `=` notation to assign a property, throw an error.
     filePath = filePath ? undefined : process.argv[2].slice(equalsIndex + 1);
   }
 
@@ -138,10 +126,9 @@ function getArgValue() {
 
 /**
  * Write out the parsed CSV to a file.
- * @param {string} moves - The parsed CSV
- * @returns {Promise<void>}
+ * @param moves - The parsed CSV
  */
-export async function writeToFile(moves) {
+export async function writeToFile(moves: string): Promise<void> {
   try {
     // Read the template file, replacing the placeholder with the move table.
     const content = fs.readFileSync(templatePath, "utf8").replace(`"{{table}}"`, moves);
@@ -163,9 +150,8 @@ export async function writeToFile(moves) {
 
 /**
  * Do logging for incorrect or malformed CLI arguments.
- * @returns {void}
  */
-function badArgs() {
+function badArgs(): void {
   chalk.red.bold(`✗ Error: Malformed arguments!\nArgs: ${chalk.hex("#7310fdff")(process.argv.slice(2).join(" "))}`);
   showHelpText();
   process.exitCode = 1;

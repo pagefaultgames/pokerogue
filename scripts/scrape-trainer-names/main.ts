@@ -5,17 +5,6 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { toCamelCase, toPascalSnakeCase, toTitleCase } from "#utils/strings";
-import { format, inspect } from "node:util";
-import chalk from "chalk";
-import { JSDOM } from "jsdom";
-import { getPropertyValue } from "../helpers/arguments";
-import { writeFileSafe } from "../helpers/file.js";
-import { normalizeDiacritics } from "../helpers/strings.js";
-import { checkGenderAndType } from "./check-gender.js";
-import { fetchNames, INVALID_URL } from "./fetch-names.js";
-import { showHelpText } from "./help-message.js";
-
 /**
  * @packageDocumentation
  * This script will scrape Bulbapedia for the English names of a given trainer class,
@@ -23,25 +12,32 @@ import { showHelpText } from "./help-message.js";
  * Usage: `pnpm scrape-trainers`
  */
 
-/**
- * @import { parsedNames } from "./types.js"
- */
+import { getPropertyValue } from "#utils/arguments";
+import { toCamelCase, toPascalSnakeCase, toTitleCase } from "#utils/strings";
+import { format, inspect } from "node:util";
+import chalk from "chalk";
+import { JSDOM } from "jsdom";
+import { writeFileSafe } from "../utils/file.js";
+import { normalizeDiacritics } from "../utils/strings.js";
+import { checkGenderAndType } from "./check-gender.js";
+import { fetchNames, INVALID_URL } from "./fetch-names.js";
+import { showHelpText } from "./help-message.js";
+import type { ParsedNames } from "./types.js";
 
 const version = "1.0.0";
 
 /**
  * A large object mapping each "base" trainer name to a list of replacements.
  * Used to allow for trainer classes with different `TrainerType`s than in mainline.
- * @type {Record<string, string[]>}
  */
-const trainerNamesMap = {
+const trainerNamesMap: Record<string, string[]> = {
   pokemonBreeder: ["breeder"],
   worker: ["worker", "snowWorker"],
   richBoy: ["richKid"],
   gentleman: ["rich"],
 };
 
-const OUTFILE_ALIASES = /** @type {const} */ (["-o", "--outfile", "--outFile"]);
+const OUTFILE_ALIASES = ["-o", "--outfile", "--outFile"] as const;
 
 async function main() {
   console.log(chalk.hex("#FF7F50")(`🍳 Trainer Name Scraper v${version}`));
@@ -66,41 +62,38 @@ async function main() {
 
 /**
  * Scrape the requested trainer names and format the resultant output.
- * @param {string[]} classes The names of the trainer classes to retrieve
- * @returns {Promise<string>} A Promise that resolves with the finished text.
+ * @param classes The names of the trainer classes to retrieve
+ * @returns A Promise that resolves with the finished text.
  */
-async function scrapeTrainerNames(classes) {
+async function scrapeTrainerNames(classes: string[]): Promise<string> {
   classes = [...new Set(classes)];
 
   /**
    * A Set containing all trainer URLs that have been seen.
-   * @type {Set<string>}
    */
-  const seenClasses = new Set();
+  const seenClasses = new Set<string>();
 
   /**
    * A large array of tuples matching each class to their corresponding list of trainer names. \
    * Trainer classes with only 1 gender will only contain the single array for that gender.
-   * @type {[keyName: string, names: string[] | parsedNames][]}
    */
-  const namesTuples = await Promise.all(
+  const namesTuples: [keyName: string, names: string[] | ParsedNames][] = await Promise.all(
     classes.map(async trainerClass => {
       try {
         const [trainerName, names] = await doFetch(trainerClass, seenClasses);
         const namesObj = names.female.length === 0 ? names.male : names;
-        return /** @type {const} */ ([trainerName, namesObj]);
+        return [trainerName, namesObj] as const;
       } catch (e) {
         if (!(e instanceof Error)) {
           throw new Error(chalk.red.bold("Unrecognized error detected:", inspect(e)));
         }
         // If the error contains an HTTP status, attempt to parse the code to give a more friendly
-        // response than JSDOM's "Resource was not loaded"gi
+        // response than JSDOM's "Resource was not loaded"
         const errCode = /Status: (\d*)/g.exec(e.message)?.[1];
         if (!errCode) {
           throw e;
         }
-        /** @type {string} */
-        let reason;
+        let reason: string;
         switch (+errCode) {
           case 404:
             reason = "Page not found";
@@ -125,23 +118,20 @@ async function scrapeTrainerNames(classes) {
     namesTuples.splice(
       namesTuples.indexOf(mappedName),
       1,
-      ...namesMapping.map(
-        name => /** @type {[keyName: string, names: parsedNames | string[]]} */ ([name, mappedName[1]]),
-      ),
+      ...namesMapping.map(name => [name, mappedName[1]] as [string, string[] | ParsedNames]),
     );
   }
 
   namesTuples.sort((a, b) => a[0].localeCompare(b[0]));
 
-  /** @type {Record<string, string[] | parsedNames>} */
-  const namesRecord = Object.fromEntries(namesTuples);
+  const namesRecord: Record<string, string[] | ParsedNames> = Object.fromEntries(namesTuples);
 
   // Convert all arrays into objects indexed by numbers
   return JSON.stringify(
     namesRecord,
     (_, v) => {
       if (Array.isArray(v)) {
-        return v.reduce((ret, curr, i) => {
+        return v.reduce<Record<number, unknown>>((ret, curr, i) => {
           ret[i + 1] = curr; // 1 indexed
           return ret;
         }, {});
@@ -154,14 +144,13 @@ async function scrapeTrainerNames(classes) {
 
 /**
  * Recursively scrape names from a given Trainer class and its gender counterparts.
- * @param {string} trainerClass - The URL to parse
- * @param {Set<string>} seenClasses - A Set containing all seen class URLs, used for record keeping.
- * @returns {Promise<[string, parsedNames]>}
- * A Promise that resolves with:
+ * @param trainerClass - The URL to parse
+ * @param seenClasses - A Set containing all seen class URLs, used for record keeping.
+ * @returns A Promise that resolves with:
  * 1. The name to use for the key.
  * 2. All fetched names for this trainer class and its gender variants.
  */
-async function doFetch(trainerClass, seenClasses) {
+async function doFetch(trainerClass: string, seenClasses: Set<string>): Promise<[string, ParsedNames]> {
   let keyName = toCamelCase(trainerClass);
   // Bulba URLs are in Pascal_Snake_Case (Pokemon_Breeder)
   const classURL = toPascalSnakeCase(trainerClass);
@@ -200,11 +189,11 @@ async function doFetch(trainerClass, seenClasses) {
 }
 
 /**
- * Try to write the output to a file (or log it to stdout, as the case may be).
- * @param {string | undefined} outFile - The outfile
- * @param {string} output - The scraped output to produce
+ * Write the output to a file, or stdout if no outfile is provided.
+ * @param outFile - The path to write the output to
+ * @param output - The scraped output to produce
  */
-async function tryWriteFile(outFile, output) {
+async function tryWriteFile(outFile: string | undefined, output: string): Promise<void> {
   if (!outFile) {
     console.log(chalk.hex("#ffa500")("No outfile detected, logging to stdout..."));
     console.log(output);
@@ -217,10 +206,9 @@ async function tryWriteFile(outFile, output) {
     writeFileSafe(outFile, output);
     console.log(chalk.green.bold(`✔ Output written to ${chalk.blue(outFile)} successfully!`));
   } catch (e) {
-    let /** @type {string} */ errStr;
+    let errStr: string;
     if (e instanceof Error) {
-      // @ts-expect-error - Node.JS file errors always have codes
-      switch (e.code) {
+      switch ((e as NodeJS.ErrnoException).code) {
         case "ENOENT":
           errStr = `File not found: ${outFile}`;
           break;

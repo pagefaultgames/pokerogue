@@ -4,13 +4,10 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
+import { toUpperSnakeCase } from "#utils/strings";
 import chalk from "chalk";
 
-/**
- * A single line of the inputted CSV.
- * @typedef {[speciesName: string, move1: string, move2: string, move3: string, move4: string]}
- * CSVLine
- */
+type CSVLine = [speciesName: string, move1: string, move2: string, move3: string, move4: string];
 
 /**
  * Regex to determine if a string follows the required CSV format.
@@ -19,10 +16,10 @@ const csvRegex = /^((?:[^,]+?,){4}(?:\w|\s)+?,?\n?)+$/g;
 
 /**
  * Given a CSV string, parse it and return a structured table ready to be inputted into code.
- * @param {string} csv - The formatted CSV string.
- * @returns {string} The fully formatted table.
+ * @param csv - The formatted CSV string.
+ * @returns The fully formatted table.
  */
-export function parseEggMoves(csv) {
+export function parseEggMoves(csv: string): string {
   console.log(chalk.grey("⚙️ Parsing egg moves..."));
   if (!csvRegex.test(csv)) {
     console.error(chalk.redBright("! Input was not proper CSV!"));
@@ -35,17 +32,10 @@ export function parseEggMoves(csv) {
   const lines = csv.split(/\n/g);
 
   for (const line of lines) {
-    /**
-     * The individual CSV column for this species.
-     */
-    const cols =
-      /** @type {CSVLine} */
-      (line.split(",").slice(0, 5));
+    const cols = line.split(",").slice(0, 5) as CSVLine;
     const speciesName = toUpperSnakeCase(cols[0]);
 
-    const eggMoves =
-      /** @type {string[]} */
-      ([]);
+    const eggMoves: string[] = [];
 
     for (let m = 1; m < 5; m++) {
       const moveName = cols[m].trim();
@@ -70,16 +60,4 @@ export function parseEggMoves(csv) {
 
   // NB: We omit the semicolon as it is contained in the template string itself
   return output + "} satisfies Partial<Record<SpeciesId, [MoveId, MoveId, MoveId, MoveId]>>";
-}
-
-/**
- * Helper method to convert a string into `UPPER_SNAKE_CASE`.
- * @param {string} str - The string being converted
- * @returns {string} The result of converting `str` into upper snake case.
- */
-function toUpperSnakeCase(str) {
-  return str
-    .split(/[_ -]+/g)
-    .map(word => word.toUpperCase())
-    .join("_");
 }

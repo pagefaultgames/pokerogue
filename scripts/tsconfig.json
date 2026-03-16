@@ -6,8 +6,9 @@
  */
 {
   "extends": "../tsconfig.json",
+  "files": [],
   "include": ["*.ts", "**/*.ts", "**/*.mjs", "**/*.cjs"],
-  "exclude": ["../dist", "../node_modules"],
+  "exclude": ["../dist", "../node_modules", "**/*.boilerplate.ts"],
   "compilerOptions": {
     "types": ["@types/node"],
     "target": "esnext",
