@@ -98,12 +98,10 @@
       "#data/*": ["./src/data/pokemon-forms/*.ts", "./src/data/pokemon/*.ts", "./src/data/*.ts"],
       "#test/*": ["./test/*.ts"],
       "#app/*": ["./src/*.ts"]
-    }
+    } //gtb tho54rfvgrb4f
   },
   // Exclude checking for script files as those are covered by the folder's `tsconfig.json`
-  // Boilerplate files are excluded from scripts/tsconfig.json and explicitly listed here instead,
-  // since they reference main-repo path aliases and types.
-  "files": ["scripts/create-test/boilerplates/default.boilerplate.ts"],
-  "include": ["**/*.ts", "**/*.d.ts", "**/*.mts", "**/*.js"],
+  // We do not use explicit `exclude` paths to allow explicitly including
+  "include": ["*.ts", "*.d.ts", "*.js", "src", "test", "./github/**/*.mts"],
   "exclude": ["dist", "node_modules", "scripts"]
 }
