@@ -3,6 +3,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
+import { PokemonType } from "#enums/pokemon-type";
 import { BATTLE_STATS, EFFECTIVE_STATS } from "#enums/stat";
 import { PokemonMove } from "#moves/pokemon-move";
 import { PokemonPhase } from "#phases/pokemon-phase";
@@ -59,8 +60,14 @@ export class PokemonTransformPhase extends PokemonPhase {
       return new PokemonMove(MoveId.NONE);
     });
 
-    // TODO: This should fallback to the target's original typing if none are left (from Burn Up, etc.)
-    user.summonData.types = target.getTypes();
+    //target type falls back to the target's original typing if none are left (from Burn Up, etc.)
+    const targetTypes = target.getTypes();
+
+    if (targetTypes.includes(PokemonType.UNKNOWN)) {
+      user.summonData.types = target.getTypes(false, false, true); // ignoreOverride = true → get original types
+    } else {
+      user.summonData.types = targetTypes;
+    }
 
     const promises = [user.updateInfo()];
 
