@@ -6695,7 +6695,7 @@ export class EnemyPokemon extends Pokemon {
       }
       // If a move is forced because of Encore, use it.
       // Said moves are executed normally
-      const encoreTag = this.getTag(EncoreTag) as EncoreTag;
+      const encoreTag = this.getTag(EncoreTag);
       if (encoreTag) {
         const encoreMove = movePool.find(m => m.moveId === encoreTag.moveId);
         if (encoreMove) {

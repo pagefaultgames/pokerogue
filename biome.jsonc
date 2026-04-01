@@ -271,7 +271,12 @@
         "noDocumentCookie": "off", // Firefox has minimal support for the "Cookie Store API"
         "noConstantBinaryExpressions": "error",
         "noTsIgnore": "error",
-        "useIterableCallbackReturn": "warn", // TODO: Refactor and change to error
+        "useIterableCallbackReturn": {
+          "level": "warn", // TODO: refactor and make error
+          "options": {
+            "checkForEach": false
+          }
+        },
         "noNonNullAssertedOptionalChain": "warn", // TODO: Refactor and change to error
         "noDuplicateDependencies": "error",
         "noImportCycles": "error"

@@ -9,11 +9,14 @@ onlyBuiltDependencies:
 
 overrides:
   ajv@>=7.0.0-alpha.0 <8.18.0: '>=8.18.0'
+  brace-expansion@>=4.0.0 <5.0.5: '>=5.0.5'
   markdown-it@>=13.0.0 <14.1.1: '>=14.1.1'
   minimatch@<10.2.1: '>=10.2.1'
-  undici@<6.24.0: '>=6.24.0'
+  picomatch@>=4.0.0 <4.0.4: '>=4.0.4'
   undici-types@<6.24.0: '>=6.24.0'
-  undici@>=7.0.0 <7.24.0: '>=7.24.0'
   undici-types@>=7.0.0 <7.24.0: '>=7.24.0'
+  undici@<6.24.0: '>=6.24.0'
+  undici@>=7.0.0 <7.24.0: '>=7.24.0'
+  yaml@>=2.0.0 <2.8.3: '>=2.8.3'
 
 shellEmulator: true

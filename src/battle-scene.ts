@@ -1178,8 +1178,7 @@ export class BattleScene extends SceneBase {
       this.field.remove(this.currentBattle.mysteryEncounter?.introVisuals, true);
     }
 
-    //@ts-expect-error  - allowing `null` for currentBattle causes a lot of trouble
-    this.currentBattle = null; // TODO: resolve ts-ignore
+    this.currentBattle = null!; // TODO: this should never be `null`, probably needs multiple scenes
 
     // Reset RNG after end of game or save & quit.
     // This needs to happen after clearing this.currentBattle or the seed will be affected by the last wave played
