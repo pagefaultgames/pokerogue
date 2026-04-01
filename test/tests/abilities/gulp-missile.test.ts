@@ -299,4 +299,46 @@ describe("Abilities - Gulp Missile", () => {
 
     expect(game.field.getEnemyPokemon().hasAbility(AbilityId.GULP_MISSILE)).toBe(false);
   });
+  it("doesn't cause a softlock if it faints the player pokemon", async () => {
+    game.override.enemySpecies(SpeciesId.CRAMORANT).enemyAbility(AbilityId.GULP_MISSILE).startingLevel(200);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
+
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
+
+    game.move.use(MoveId.FALSE_SWIPE);
+    await game.move.forceEnemyMove(MoveId.DIVE);
+    await game.toNextTurn();
+
+    game.move.use(MoveId.SPLASH);
+    await game.toNextTurn();
+
+    player.hp = 1;
+    game.move.use(MoveId.EXTREME_SPEED);
+    game.doSelectPartyPokemon(1);
+    await game.toEndOfTurn();
+
+    expect(player).toHaveFainted();
+    expect(enemy).toHaveFainted();
+  });
+
+  it("doesn't cause a softlock if it faints the player pokemon when player is Cramorant", async () => {
+    game.override.startingLevel(1).enemyLevel(200);
+    await game.classicMode.startBattle(SpeciesId.CRAMORANT, SpeciesId.MILOTIC);
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
+
+    game.move.use(MoveId.SURF);
+    await game.move.forceEnemyMove(MoveId.SPLASH);
+    await game.toNextTurn();
+
+    enemy.hp = 1;
+    game.move.use(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.TACKLE);
+    game.doSelectPartyPokemon(1);
+    await game.toEndOfTurn();
+
+    expect(player).toHaveFainted();
+    expect(enemy).toHaveFainted();
+  });
 });
