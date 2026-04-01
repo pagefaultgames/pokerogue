@@ -45,6 +45,7 @@ import { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { TimeOfDay } from "#enums/time-of-day";
 import { UiMode } from "#enums/ui-mode";
+import { UiTheme } from "#enums/ui-theme";
 import type { Variant } from "#sprites/variant";
 import { getVariantIcon, getVariantTint } from "#sprites/variant";
 import { SettingKeyboard } from "#system/settings-keyboard";
@@ -371,11 +372,6 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       .setOrigin(0);
     this.starterSelectContainer.add(starterSelectBg);
 
-    this.pokemonSprite = globalScene.add //
-      .sprite(53, 63, "pkmn__sub")
-      .setPipeline(globalScene.spritePipeline, { tone: [0.0, 0.0, 0.0, 0.0], ignoreTimeTint: true });
-    this.starterSelectContainer.add(this.pokemonSprite);
-
     this.starterDexNoLabel = globalScene.add //
       .image(6, 14, getLocalizedSpriteKey("summary_dexnb_label"))
       .setOrigin(0, 1);
@@ -386,6 +382,11 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       .setOrigin(0, 1)
       .setVisible(false);
     this.starterSelectContainer.add(this.shinyOverlay);
+
+    this.pokemonSprite = globalScene.add //
+      .sprite(53, 63, "pkmn__sub")
+      .setPipeline(globalScene.spritePipeline, { tone: [0.0, 0.0, 0.0, 0.0], ignoreTimeTint: true });
+    this.starterSelectContainer.add(this.pokemonSprite);
 
     this.pokemonNumberText = addTextObject(17, 1, "0000", TextStyle.SUMMARY_DEX_NUM) //
       .setOrigin(0);
@@ -399,7 +400,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       8,
       106,
       i18next.t("pokedexUiHandler:growthRate"),
-      TextStyle.SUMMARY_ALT,
+      TextStyle.WINDOW_ALT,
       { fontSize: "36px" },
     )
       .setOrigin(0)
@@ -462,7 +463,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     this.starterSelectContainer.add(this.pokemonLuckText);
 
     // Candy icon and count
-    this.pokemonCandyContainer = globalScene.add.container(4.5, 18);
+    const isLegacyUi = globalScene.uiTheme === UiTheme.LEGACY;
+    this.pokemonCandyContainer = globalScene.add //
+      .container(isLegacyUi ? 7 : 4.5, 18);
 
     this.pokemonCandyIcon = globalScene.add //
       .sprite(0, 0, "candy")
@@ -500,7 +503,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     this.starterSelectContainer.add(this.pokemonCategoryText);
 
     this.pokemonCaughtHatchedContainer = globalScene.add //
-      .container(2, 25)
+      .container(isLegacyUi ? 4.5 : 2, 25)
       .setScale(0.5);
     this.starterSelectContainer.add(this.pokemonCaughtHatchedContainer);
 
@@ -510,7 +513,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       .setScale(0.75);
     this.pokemonCaughtHatchedContainer.add(pokemonCaughtIcon);
 
-    this.pokemonCaughtCountText = addTextObject(24, 4, "0", TextStyle.SUMMARY_ALT) //
+    this.pokemonCaughtCountText = addTextObject(24, 4, "0", TextStyle.WINDOW_ALT) //
       .setOrigin(0);
     this.pokemonCaughtHatchedContainer.add(this.pokemonCaughtCountText);
 
@@ -532,7 +535,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       this.pokemonShinyIcons.push(pokemonShinyIcon);
     }
 
-    this.pokemonHatchedCountText = addTextObject(24, 19, "0", TextStyle.SUMMARY_ALT) //
+    this.pokemonHatchedCountText = addTextObject(24, 19, "0", TextStyle.WINDOW_ALT) //
       .setOrigin(0);
     this.pokemonCaughtHatchedContainer.add(this.pokemonHatchedCountText);
 
