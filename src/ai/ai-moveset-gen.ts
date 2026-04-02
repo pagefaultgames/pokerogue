@@ -1154,9 +1154,9 @@ export function generateMoveset(pokemon: Pokemon, forceRivalSignatures = false):
 
   // Step 5: Force a STAB move if no signature was generated or was not a damaging STAB move
   if (
-    forcedSignature != null
-    && forcedSignature.category !== MoveCategory.STATUS
-    && pokemon.getTypes().includes(getMoveType(forcedSignature, pokemon, willTera))
+    forcedSignature === undefined
+    || forcedSignature.category === MoveCategory.STATUS
+    || !pokemon.isOfType(getMoveType(forcedSignature, pokemon, willTera))
   ) {
     forceStabMove(baseWeights, tmPool, eggMovePool, pokemon, tmCount, eggMoveCount, willTera);
   }

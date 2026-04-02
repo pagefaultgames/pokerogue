@@ -249,7 +249,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
       ],
     },
     async () => {
-      // Battle your "future" team for some item rewards
+      // Battle your "alternate" team for some item rewards
       const transformations: PokemonTransformation[] =
         globalScene.currentBattle.mysteryEncounter!.misc.teamTransformations;
 
@@ -296,7 +296,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
       const genderIndex = globalScene.gameData.gender ?? PlayerGender.UNSET;
       const trainerConfig =
         trainerConfigs[
-          genderIndex === PlayerGender.FEMALE ? TrainerType.FUTURE_SELF_F : TrainerType.FUTURE_SELF_M
+          genderIndex === PlayerGender.FEMALE ? TrainerType.PLAYER_F_ALTERNATE : TrainerType.PLAYER_M_ALTERNATE
         ].clone();
       trainerConfig.setPartyTemplates(new TrainerPartyTemplate(transformations.length, PartyMemberStrength.STRONG));
       const enemyPartyConfig: EnemyPartyConfig = {

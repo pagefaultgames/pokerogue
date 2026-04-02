@@ -8,6 +8,7 @@ import {
   getDailyForcedWaveSpecies,
   getDailyStartingBiome,
   getDailyStartingMoney,
+  getDailyTrainerManipulation,
 } from "#data/daily-seed/daily-run";
 import { parseDailySeed } from "#data/daily-seed/daily-seed-utils";
 import { allSpecies } from "#data/data-lists";
@@ -208,6 +209,10 @@ export class GameMode implements GameModeConfig {
 
     // Daily spawns trainers on floors 5, 15, 20, 25, 30, 35, 40, and 45
     if (this.isDaily) {
+      const trainerManipulation = getDailyTrainerManipulation(waveIndex);
+      if (trainerManipulation != null) {
+        return trainerManipulation;
+      }
       return waveIndex % 10 === 5 || (!(waveIndex % 10) && waveIndex > 10 && !this.isWaveFinal(waveIndex));
     }
     if (waveIndex % 30 === (offsetGym ? 0 : 20) && !this.isWaveFinal(waveIndex)) {

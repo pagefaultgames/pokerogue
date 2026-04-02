@@ -34,6 +34,9 @@ export const EDIT_OPTIONS = /** @type {const} */ ([
   "biome",
   "luck",
   "forced waves",
+  "trainer manipulation",
+  "challenges",
+  "mystery encounters",
   "starting money",
   "seed",
   "edit",
@@ -49,6 +52,8 @@ export const BOSS_OPTIONS = /** @type {const} */ ([
   "nature",
   "ability",
   "passive",
+  "segments",
+  "catchable",
   "finish",
 ]);
 
@@ -58,7 +63,8 @@ export const STARTER_OPTIONS = /** @type {const} */ ([
   "variant",
   "moveset",
   "nature",
-  "abilityIndex",
+  "ability",
+  "passive",
   "finish",
 ]);
 

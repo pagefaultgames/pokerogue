@@ -19,7 +19,17 @@ import { toTitleCase } from "../helpers/casing.js";
 import { promptOverwrite, writeFileSafe } from "../helpers/file.js";
 import { EDIT_OPTIONS } from "./constants.js";
 import { promptBoss } from "./prompts/boss.js";
-import { promptBiome, promptEdit, promptForcedWaves, promptLuck, promptMoney, promptSeed } from "./prompts/general.js";
+import {
+  promptBiome,
+  promptChallenges,
+  promptEdit,
+  promptForcedWaves,
+  promptLuck,
+  promptMoney,
+  promptMysteryEncounters,
+  promptSeed,
+  promptTrainerManipulation,
+} from "./prompts/general.js";
 import { promptStarters } from "./prompts/starter.js";
 
 /**
@@ -33,7 +43,8 @@ const rootDir = join(import.meta.dirname, "..", "..");
 /**
  * @import {BossConfig} from "./prompts/boss.js"
  * @import {StarterConfig} from "./prompts/starter.js"
- * @import {ForcedWaveConfig} from "./prompts/general.js"
+ * @import {ForcedWaveConfig, DailyTrainerManipulation, DailyEventChallenge} from "./prompts/general.js"
+ * @import {DailyEventMysteryEncounter} from "./prompts/general.js"
  */
 
 /**
@@ -48,6 +59,9 @@ const rootDir = join(import.meta.dirname, "..", "..");
  *   biome?: number,
  *   luck?: number,
  *   forcedWaves?: ForcedWaveConfig[],
+ *   trainerManipulations?: DailyTrainerManipulation[],
+ *   challenges?: DailyEventChallenge[],
+ *   mysteryEncounters?: DailyEventMysteryEncounter[],
  *   startingMoney?: number,
  *   seed: string
  * }}
@@ -58,6 +72,8 @@ const customSeedConfig = {
   biome: undefined,
   luck: undefined,
   forcedWaves: undefined,
+  trainerManipulations: undefined,
+  challenges: undefined,
   startingMoney: undefined,
   seed: "",
 };
@@ -136,6 +152,15 @@ async function handleAnswer(answer) {
       break;
     case "forced waves":
       customSeedConfig.forcedWaves = await promptForcedWaves();
+      break;
+    case "trainer manipulation":
+      customSeedConfig.trainerManipulations = await promptTrainerManipulation();
+      break;
+    case "challenges":
+      customSeedConfig.challenges = await promptChallenges();
+      break;
+    case "mystery encounters":
+      customSeedConfig.mysteryEncounters = await promptMysteryEncounters();
       break;
     case "starting money":
       customSeedConfig.startingMoney = await promptMoney();
