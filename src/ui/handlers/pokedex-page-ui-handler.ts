@@ -60,6 +60,12 @@ import { MessageUiHandler } from "#ui/message-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { PokedexInfoOverlay } from "#ui/pokedex-info-overlay";
 import { RibbonTray } from "#ui/ribbon-tray-container";
+import {
+  isPassiveAvailable,
+  isSameSpeciesEggAvailable,
+  isValueReductionAvailable,
+  type SpeciesDetails,
+} from "#ui/starter-select-ui-utils";
 import { StatsContainer } from "#ui/stats-container";
 import {
   addBBCodeTextObject,
@@ -78,19 +84,6 @@ import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
 import type BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
-import {
-  isPassiveAvailable,
-  isSameSpeciesEggAvailable,
-  isValueReductionAvailable,
-  type SpeciesDetails,
-} from "../utils/starter-select-ui-utils";
-
-interface SpeciesDetails {
-  shiny?: boolean | undefined;
-  formIndex?: number | undefined;
-  female?: boolean | undefined;
-  variant?: number | undefined;
-}
 
 interface LanguageSetting {
   starterInfoTextSize: string;
@@ -1761,8 +1754,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                         this.previousStarterPreferences.push({ ...this.savedStarterPreferences });
                         const newSpecies = this.species;
                         const newBattleFormIndex = this.species.forms.find(f => f.formKey === bf.formKey)?.formIndex;
-                        this.starterPreferences.form = newBattleFormIndex;
-                        this.savedStarterPreferences.form = newBattleFormIndex;
+                        this.starterPreferences.formIndex = newBattleFormIndex;
+                        this.savedStarterPreferences.formIndex = newBattleFormIndex;
                         this.moveInfoOverlay.clear();
                         this.clearText();
                         ui.setMode(UiMode.POKEDEX_PAGE, newSpecies, this.savedStarterPreferences, this.filteredIndices);

@@ -50,9 +50,6 @@ import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/pokemon-icon-ani
 import { ScrollBar } from "#ui/scroll-bar";
 import { StarterContainer } from "#ui/starter-container";
 import { StarterSelectInstructionsContainer } from "#ui/starter-select-instructions";
-import { StarterSummary } from "#ui/starter-summary";
-import { addTextObject, getTextColor, updateCandyCountTextStyle } from "#ui/text";
-import { addWindow } from "#ui/ui-theme";
 import {
   type CanCycle,
   getDexAttrFromPreferences,
@@ -69,7 +66,10 @@ import {
   isUpgradeIconEnabled,
   isValueReductionAvailable,
   sortSpecies,
-} from "#ui/utils/starter-select-ui-utils";
+} from "#ui/starter-select-ui-utils";
+import { StarterSummary } from "#ui/starter-summary";
+import { addTextObject, getTextColor } from "#ui/text";
+import { addWindow } from "#ui/ui-theme";
 import { checkStarterValidForChallenge } from "#utils/challenge-utils";
 import { fixedInt, getLocalizedSpriteKey, randIntRange, rgbHexToRgba } from "#utils/common";
 import type { AllStarterPreferences } from "#utils/data";
@@ -148,7 +148,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   private pokerusCursorObjs: Phaser.GameObjects.Image[];
   private starterSelectScrollBar: ScrollBar;
   private scrollCursor: number;
-  private allStarterSpeciesIds: StarterSpeciesId[] = [];
+  private readonly allStarterSpeciesIds: StarterSpeciesId[] = [];
   private filteredStarterIds: StarterSpeciesId[] = [];
   private lastStarterId: StarterSpeciesId;
 
@@ -156,7 +156,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   private partyIcons: Phaser.GameObjects.Sprite[];
   private partyCursorObj: Phaser.GameObjects.Image;
   private partyIconsCursorIndex: number;
-  private partyStarters: Starter[] = [];
+  private readonly partyStarters: Starter[] = [];
   public partyStarterIds: StarterSpeciesId[] = [];
 
   private valueLimitLabel: Phaser.GameObjects.Text;
@@ -180,7 +180,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
   private starterMoveset: StarterMoveset | null;
   private pokerusSpeciesIds: StarterSpeciesId[] = [];
-  private canCycle: CanCycle = {};
+  private readonly canCycle: CanCycle = {};
 
   //variables to keep track of the dynamically rendered list of instruction prompts for starter select
 
@@ -263,7 +263,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     starterBoxContainer.add(this.cursorObj);
 
     for (const species of allSpecies) {
-      if (!speciesStarterCosts.hasOwnProperty(species.speciesId) || !species.isObtainable()) {
+      if (!Object.hasOwn(speciesStarterCosts, species.speciesId)) {
         continue;
       }
       this.allStarterSpeciesIds.push(species.speciesId as StarterSpeciesId);
@@ -559,7 +559,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.moveInfoOverlay.clear(); // clear this when removing a menu; the cancel button doesn't seem to trigger this automatically on controllers
     this.pokerusSpeciesIds = getPokerusStarters();
 
-    this.allowTera = globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id);
+    this.allowTera = Object.hasOwn(globalScene.gameData.achvUnlocks, achvs.TERASTALLIZE.id);
 
     if (args.length > 0 && args[0] instanceof Function) {
       super.show(args);
@@ -1919,7 +1919,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 starterData.candyCount = persistentStarterData.candyCount;
               }
               this.starterSummary.updateCandyCount(starterData.candyCount);
-              updateCandyCountTextStyle(this.pokemonCandyCountText, starterData.candyCount);
               globalScene.gameData.saveSystem().then(success => {
                 if (!success) {
                   return globalScene.reset(true);
@@ -1958,7 +1957,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 starterData.candyCount = persistentStarterData.candyCount;
               }
               this.starterSummary.updateCandyCount(starterData.candyCount);
-              updateCandyCountTextStyle(this.pokemonCandyCountText, starterData.candyCount);
               globalScene.gameData.saveSystem().then(success => {
                 if (!success) {
                   return globalScene.reset(true);
@@ -2007,7 +2005,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
               starterData.candyCount = persistentStarterData.candyCount;
             }
             this.starterSummary.updateCandyCount(starterData.candyCount);
-            updateCandyCountTextStyle(this.pokemonCandyCountText, starterData.candyCount);
 
             const egg = new Egg({
               species: this.lastStarterId,
@@ -2074,7 +2071,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         return true;
       },
     });
-    if (!pokemonPrevolutions.hasOwnProperty(this.lastStarterId)) {
+    if (!Object.hasOwn(pokemonPrevolutions, this.lastStarterId)) {
       options.push({
         label: i18next.t("starterSelectUiHandler:useCandies"),
         handler: () => {
@@ -2278,7 +2275,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     );
     const starterDataEntry = globalScene.gameData.starterData[starterId];
     // species has different forms
-    if (pokemonFormLevelMoves.hasOwnProperty(starterId)) {
+    if (Object.hasOwn(pokemonFormLevelMoves, starterId)) {
       // species has forms with different movesets
       if (!starterDataEntry.moveset || Array.isArray(starterDataEntry.moveset)) {
         starterDataEntry.moveset = {};
@@ -2347,7 +2344,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       // First, ensure you have the caught attributes for the species else default to bigint 0
       const { dexEntry, starterDataEntry: starterData } = getStarterData(starterId);
       const caughtAttr = dexEntry?.caughtAttr ?? BigInt(0);
-      const isStarterProgressable = speciesEggMoves.hasOwnProperty(starterId);
+      const isStarterProgressable = Object.hasOwn(speciesEggMoves, starterId);
 
       // Gen filter
       const fitsGen = this.filterBar.getVals(DropDownColumn.GEN).includes(species.generation);
@@ -2900,7 +2897,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         : speciesMoveData[formIndex!] // TODO: is this bang correct?
       : null;
     const availableStarterMoves = starterMoves.concat(
-      speciesEggMoves.hasOwnProperty(starterId)
+      Object.hasOwn(speciesEggMoves, starterId)
         ? speciesEggMoves[starterId].filter((_: any, em: number) => starterDataEntry.eggMoves & (1 << em))
         : [],
     );
@@ -2925,7 +2922,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.starterMoveset = starterMoves.slice(0, 4) as StarterMoveset;
     }
     this.starterSummary.updateMoveset(this.starterMoveset, starterMoves.length);
-    if (speciesEggMoves.hasOwnProperty(starterId)) {
+    if (Object.hasOwn(speciesEggMoves, starterId)) {
       this.starterSummary.updateEggMoves(starterDataEntry.eggMoves);
     } else {
       this.starterSummary.hideEggMoves();

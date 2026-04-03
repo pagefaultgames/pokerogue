@@ -20,6 +20,15 @@ import { UiTheme } from "#enums/ui-theme";
 import { getVariantIcon, getVariantTint, type Variant } from "#sprites/variant";
 import { achvs } from "#system/achv";
 import type { StarterMoveset, StarterPreferences } from "#types/save-data";
+import {
+  getDexAttrFromPreferences,
+  getFriendship,
+  getStarterData,
+  getStarterSelectTextSettings,
+  type SpeciesDetails,
+} from "#ui/starter-select-ui-utils";
+import { StatsContainer } from "#ui/stats-container";
+import { addBBCodeTextObject, addTextObject, getTextColor, updateCandyCountTextStyle } from "#ui/text";
 import { BooleanHolder, getLocalizedSpriteKey, padInt, rgbHexToRgba, truncateString } from "#utils/common";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
@@ -27,21 +36,12 @@ import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import { addBBCodeTextObject, addTextObject, getTextColor, updateCandyCountTextStyle } from "../text";
-import {
-  getDexAttrFromPreferences,
-  getFriendship,
-  getStarterData,
-  getStarterSelectTextSettings,
-  type SpeciesDetails,
-} from "../utils/starter-select-ui-utils";
-import { StatsContainer } from "./stats-container";
 
 export class StarterSummary extends Phaser.GameObjects.Container {
-  private pokemonSprite: Phaser.GameObjects.Sprite;
-  private pokemonNumberText: Phaser.GameObjects.Text;
-  private shinyOverlay: Phaser.GameObjects.Image;
-  private pokemonNameText: Phaser.GameObjects.Text;
+  private readonly pokemonSprite: Phaser.GameObjects.Sprite;
+  private readonly pokemonNumberText: Phaser.GameObjects.Text;
+  private readonly shinyOverlay: Phaser.GameObjects.Image;
+  private readonly pokemonNameText: Phaser.GameObjects.Text;
   private pokemonGrowthRateLabelText: Phaser.GameObjects.Text;
   private pokemonGrowthRateText: Phaser.GameObjects.Text;
   private type1Icon: Phaser.GameObjects.Sprite;
@@ -49,7 +49,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
   private pokemonLuckLabelText: Phaser.GameObjects.Text;
   private pokemonLuckText: Phaser.GameObjects.Text;
   private pokemonGenderText: Phaser.GameObjects.Text;
-  private pokemonUncaughtText: Phaser.GameObjects.Text;
+  private readonly pokemonUncaughtText: Phaser.GameObjects.Text;
   private pokemonAbilityLabelText: Phaser.GameObjects.Text;
   private pokemonAbilityText: Phaser.GameObjects.Text;
   private pokemonPassiveLabelText: Phaser.GameObjects.Text;
@@ -57,15 +57,15 @@ export class StarterSummary extends Phaser.GameObjects.Container {
   private pokemonNatureLabelText: Phaser.GameObjects.Text;
   private pokemonNatureText: BBCodeText;
   private pokemonMovesContainer: Phaser.GameObjects.Container;
-  private pokemonMoveContainers: Phaser.GameObjects.Container[];
-  private pokemonMoveBgs: Phaser.GameObjects.NineSlice[];
-  private pokemonMoveLabels: Phaser.GameObjects.Text[];
-  private pokemonAdditionalMoveCountLabel: Phaser.GameObjects.Text;
-  private eggMovesLabel: Phaser.GameObjects.Text;
-  private pokemonEggMovesContainer: Phaser.GameObjects.Container;
-  private pokemonEggMoveContainers: Phaser.GameObjects.Container[];
-  private pokemonEggMoveBgs: Phaser.GameObjects.NineSlice[];
-  private pokemonEggMoveLabels: Phaser.GameObjects.Text[];
+  private readonly pokemonMoveContainers: Phaser.GameObjects.Container[];
+  private readonly pokemonMoveBgs: Phaser.GameObjects.NineSlice[];
+  private readonly pokemonMoveLabels: Phaser.GameObjects.Text[];
+  private readonly pokemonAdditionalMoveCountLabel: Phaser.GameObjects.Text;
+  private readonly eggMovesLabel: Phaser.GameObjects.Text;
+  private readonly pokemonEggMovesContainer: Phaser.GameObjects.Container;
+  private readonly pokemonEggMoveContainers: Phaser.GameObjects.Container[];
+  private readonly pokemonEggMoveBgs: Phaser.GameObjects.NineSlice[];
+  private readonly pokemonEggMoveLabels: Phaser.GameObjects.Text[];
   private pokemonCandyContainer: Phaser.GameObjects.Container;
   private pokemonCandyIcon: Phaser.GameObjects.Sprite;
   private pokemonCandyDarknessOverlay: Phaser.GameObjects.Sprite;
@@ -81,24 +81,24 @@ export class StarterSummary extends Phaser.GameObjects.Container {
   private pokemonPassiveLockedIcon: Phaser.GameObjects.Sprite;
   private teraIcon: Phaser.GameObjects.Sprite;
 
-  // Whether the tera type icon should be displayed
+  /** Whether the tera type icon should be displayed */
   private allowTera: boolean;
 
-  // Container for ivs, whether they should be shown
-  private statsContainer: StatsContainer;
+  /** Container for ivs, whether they should be shown */
+  private readonly statsContainer: StatsContainer;
   private statsMode = false;
 
   private assetLoadCancelled: BooleanHolder | null;
 
-  // Which of the tooltips is displayed (on mouse hover)
+  /** Which of the tooltips is displayed (on mouse hover) */
   private activeTooltip: "ABILITY" | "PASSIVE" | "CANDY" | undefined;
 
-  // Container for type, growth rate, luck
-  private pokemonPermanentInfoContainer: GameObjects.Container;
-  // Container for numbers of caught pokémon, eggs
-  private pokemonStatisticsContainer: GameObjects.Container;
-  // Container for everything that's a preference (abilities, nature, form...)
-  private pokemonPreferencesContainer: GameObjects.Container;
+  /** Container for type, growth rate, luck */
+  private readonly pokemonPermanentInfoContainer: GameObjects.Container;
+  /** Container for numbers of caught pokémon, eggs */
+  private readonly pokemonStatisticsContainer: GameObjects.Container;
+  /** Container for everything that's a preference (abilities, nature, form...) */
+  private readonly pokemonPreferencesContainer: GameObjects.Container;
 
   private speciesId: StarterSpeciesId;
 
@@ -207,7 +207,6 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     globalScene.add.existing(this.statsContainer);
 
     this.add([
-      this.pokemonSprite,
       this.shinyOverlay,
       this.pokemonNumberText,
       this.pokemonNameText,
@@ -218,6 +217,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
       this.pokemonMovesContainer,
       this.pokemonEggMovesContainer,
       this.statsContainer,
+      this.pokemonSprite,
     ]);
   }
 
@@ -291,12 +291,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
       fontSize: starterInfoTextSize,
     }).setOrigin(0);
 
-    //! TODO: investigate
     this.pokemonShinyIcon = globalScene.add.sprite(12, 0, "shiny_icons").setScale(0.5);
-    // this.pokemonShinyIcon = globalScene.add //
-    //   .sprite(isLegacyUi ? 8 : 14, 76, "shiny_icons")
-    //   .setOrigin(0.15, 0.2)
-    //   .setScale(1);
 
     this.teraIcon = globalScene.add.sprite(85, 63, "button_tera").setName("terastallize-icon").setFrame("fire");
 
