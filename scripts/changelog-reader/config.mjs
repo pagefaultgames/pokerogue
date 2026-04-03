@@ -13,7 +13,8 @@
  * @typedef { "Bug Fixes" | "Balance" | "Translation" | "Art" | "Miscellaneous" | "Unknown" | "Beta" } CategoryName
  */
 
-/** @typedef {{
+/**
+ * @typedef {{
  *  name: CategoryName
  *  labels: Label[]
  * }} Category
