@@ -229,6 +229,8 @@ export const timedEvents: readonly TimedEvent[] = [
       ["battle_rival_3", "battle_rival_3_afd"],
       ["battle_final_encounter", "battle_legendary_mew"],
       ["battle_final", "battle_rogue_mega"],
+      ["battle_legendary_eternatus_p1", "battle_legendary_mew"],
+      ["battle_legendary_eternatus_p2", "battle_rogue_mega"],
       ["battle_kanto_gym", "battle_jacinthe"],
       ["battle_johto_gym", "battle_jacinthe"],
       ["battle_hoenn_gym", "battle_jacinthe"],
