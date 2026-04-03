@@ -3,7 +3,7 @@ import { globalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
 import Overrides from "#app/overrides";
 import { handleTutorial, Tutorial } from "#app/tutorial";
-import { speciesEggMoves } from "#balance/egg-moves";
+import { speciesEggMoves } from "#balance/moves/egg-moves";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { pokemonFormLevelMoves } from "#balance/pokemon-level-moves";
 import {
@@ -51,7 +51,7 @@ import { ScrollBar } from "#ui/scroll-bar";
 import { StarterContainer } from "#ui/starter-container";
 import { StarterSelectInstructionsContainer } from "#ui/starter-select-instructions";
 import { StarterSummary } from "#ui/starter-summary";
-import { addTextObject, getTextColor } from "#ui/text";
+import { addTextObject, getTextColor, updateCandyCountTextStyle } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import {
   type CanCycle,
@@ -1919,6 +1919,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 starterData.candyCount = persistentStarterData.candyCount;
               }
               this.starterSummary.updateCandyCount(starterData.candyCount);
+              updateCandyCountTextStyle(this.pokemonCandyCountText, starterData.candyCount);
               globalScene.gameData.saveSystem().then(success => {
                 if (!success) {
                   return globalScene.reset(true);
@@ -1957,6 +1958,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 starterData.candyCount = persistentStarterData.candyCount;
               }
               this.starterSummary.updateCandyCount(starterData.candyCount);
+              updateCandyCountTextStyle(this.pokemonCandyCountText, starterData.candyCount);
               globalScene.gameData.saveSystem().then(success => {
                 if (!success) {
                   return globalScene.reset(true);
@@ -2005,6 +2007,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
               starterData.candyCount = persistentStarterData.candyCount;
             }
             this.starterSummary.updateCandyCount(starterData.candyCount);
+            updateCandyCountTextStyle(this.pokemonCandyCountText, starterData.candyCount);
 
             const egg = new Egg({
               species: this.lastStarterId,

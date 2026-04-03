@@ -61,6 +61,9 @@ const PREFIX_SCOPE_MAP = {
   test: ALL_SCOPES,
 } as const satisfies Record<Prefixes, readonly AllScopes[]>;
 
+// @ts-expect-error: Add special scope for fixing bugs that only existed on the beta branch
+PREFIX_SCOPE_MAP.fix = [...ALL_SCOPES, "beta"];
+
 async function run(): Promise<void> {
   try {
     const authToken = core.getInput("github_token", { required: true });

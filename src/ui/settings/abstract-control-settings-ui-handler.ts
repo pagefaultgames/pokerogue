@@ -206,18 +206,13 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
       settingFiltered.forEach((setting, s) => {
         // Convert the setting key from format 'Key_Name' to 'Key name' for display.
         // TODO: IDK if this can be followed by both an underscore and a space, so leaving it as a regex matching both for now
-        const i18nKey = toCamelCase(setting.replace(/Alt(_| )/, ""));
+        const i18nKey = toCamelCase(setting.replace(/ALT(_| )/, ""));
 
         // Create and add a text object for the setting name to the scene.
         const isLock = this.settingBlacklisted.includes(this.setting[setting]);
         const labelStyle = isLock ? TextStyle.SETTINGS_LOCKED : TextStyle.SETTINGS_LABEL;
-        const isAlt = setting.includes("Alt");
-        let labelText: string;
-        if (isAlt) {
-          labelText = `${i18next.t(`settings:${i18nKey}`)}${i18next.t("settings:alt")}`;
-        } else {
-          labelText = i18next.t(`settings:${i18nKey}`);
-        }
+        const isAlt = setting.includes("ALT");
+        const labelText = i18next.t(`settings:${i18nKey}`) + (isAlt ? i18next.t("settings:alt") : "");
         settingLabels[s] = addTextObject(8, 28 + s * 16, labelText, labelStyle);
         settingLabels[s].setOrigin(0, 0);
         optionsContainer.add(settingLabels[s]);

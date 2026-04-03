@@ -1,3 +1,4 @@
+import type { PostMoveInteractionAbAttrParams } from "#abilities/ab-attrs";
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -16,7 +17,6 @@ import { MoveCategory } from "#enums/move-category";
 import { MoveEffectTrigger } from "#enums/move-effect-trigger";
 import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
-import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import { MoveResult } from "#enums/move-result";
 import { MoveTarget } from "#enums/move-target";
 import { isReflected, MoveUseMode } from "#enums/move-use-mode";
@@ -33,8 +33,7 @@ import {
 } from "#modifiers/modifier";
 import { applyFilteredMoveAttrs, applyMoveAttrs } from "#moves/apply-attrs";
 import type { Move, MoveAttr } from "#moves/move";
-import { getMoveTargets, isFieldTargeted } from "#moves/move-utils";
-import { PokemonMove } from "#moves/pokemon-move";
+import { isFieldTargeted } from "#moves/move-utils";
 import { PokemonPhase } from "#phases/pokemon-phase";
 import { DamageAchv } from "#system/achv";
 import type { nil } from "#types/common";
@@ -178,15 +177,23 @@ export class MoveEffectPhase extends PokemonPhase {
       this.moveHistoryEntry.result === MoveResult.SUCCESS
       || move.getAttrs("MoveEffectAttr").some(attr => attr.trigger === MoveEffectTrigger.POST_TARGET)
     ) {
-      const firstTarget = this.getFirstTarget();
-      new MoveAnim(
-        move.id as MoveId,
-        user,
-        firstTarget?.getBattlerIndex() ?? BattlerIndex.ATTACKER,
-        // Some moves used in mystery encounters should be played even on an empty field
-        globalScene.currentBattle?.mysteryEncounter?.hasBattleAnimationsWithoutTargets ?? false,
-      ).play(move.hitsSubstitute(user, firstTarget), () => this.postAnimCallback(user, targets));
+      const targetsForAnimation = this.getTargets();
+      let animationsLeft = targetsForAnimation.length;
 
+      for (const target of targetsForAnimation) {
+        new MoveAnim(
+          move.id as MoveId,
+          user,
+          target?.getBattlerIndex() ?? BattlerIndex.ATTACKER,
+          // Some moves used in mystery encounters should be played even on an empty field
+          globalScene.currentBattle?.mysteryEncounter?.hasBattleAnimationsWithoutTargets ?? false,
+        ).play(move.hitsSubstitute(user, target), () => {
+          animationsLeft--;
+          if (animationsLeft === 0) {
+            this.postAnimCallback(user, targets);
+          }
+        });
+      }
       return;
     }
     this.postAnimCallback(user, targets);
@@ -312,43 +319,13 @@ export class MoveEffectPhase extends PokemonPhase {
           applyMoveAttrs("MissEffectAttr", user, target, this.move);
           break;
         case HitCheckResult.REFLECTED:
-          this.queueReflectedMove(user, target);
+          globalScene.phaseManager.unshiftNew("MoveReflectPhase", target, user, this.move);
           break;
         case HitCheckResult.PENDING:
         case HitCheckResult.ERROR:
           throw new Error("Unexpected hit check result");
       }
     }
-  }
-
-  /**
-   * Queue the phases that should occur when the target reflects the move back to the user
-   * @param user - The {@linkcode Pokemon} using this phase's invoked move
-   * @param target - The {@linkcode Pokemon} that is reflecting the move
-   * TODO: Rework this to use `onApply` of Magic Coat
-   */
-  private queueReflectedMove(user: Pokemon, target: Pokemon): void {
-    const newTargets = this.move.isMultiTarget()
-      ? getMoveTargets(target, this.move.id).targets
-      : [user.getBattlerIndex()];
-    // TODO: ability displays should be handled by the ability
-    if (!target.getTag(BattlerTagType.MAGIC_COAT)) {
-      globalScene.phaseManager.unshiftNew(
-        "ShowAbilityPhase",
-        target.getBattlerIndex(),
-        target.getPassiveAbility().hasAttr("ReflectStatusMoveAbAttr"),
-      );
-      globalScene.phaseManager.unshiftNew("HideAbilityPhase");
-    }
-
-    globalScene.phaseManager.unshiftNew(
-      "MovePhase",
-      target,
-      newTargets,
-      new PokemonMove(this.move.id),
-      MoveUseMode.REFLECTED,
-      MovePhaseTimingModifier.FIRST,
-    );
   }
 
   /**
@@ -839,7 +816,14 @@ export class MoveEffectPhase extends PokemonPhase {
     target: Pokemon,
     [hitResult, damage, wasCritical]: MoveDamageTuple,
   ): void {
-    const params = { pokemon: target, opponent: user, move: this.move, hitResult, damage };
+    const { move } = this;
+    const params: PostMoveInteractionAbAttrParams = {
+      pokemon: target,
+      opponent: user,
+      move,
+      hitResult,
+      damage,
+    };
     applyAbAttrs("PostDefendAbAttr", params);
 
     if (wasCritical) {

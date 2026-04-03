@@ -3,6 +3,8 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { speciesStarterCosts } from "#balance/starters";
 import { TrappedTag } from "#data/battler-tags";
+import { getDailyEventSeedBoss } from "#data/daily-seed/daily-run";
+import { isDailyFinalBoss } from "#data/daily-seed/daily-seed-utils";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -174,11 +176,6 @@ export class CommandPhase extends FieldPhase {
     }
 
     this.checkCommander();
-
-    const playerPokemon = this.getPokemon();
-
-    // Note: It is OK to call this if the target is not under the effect of encore; it will simply do nothing.
-    playerPokemon.lapseTag(BattlerTagType.ENCORE);
 
     if (globalScene.currentBattle.turnCommands[this.fieldIndex]?.skip) {
       this.end();
@@ -368,6 +365,7 @@ export class CommandPhase extends FieldPhase {
       .some(p => p.isActive() && !dexData[p.species.speciesId].caughtAttr);
     const missingMultipleStarters =
       gameData.getStarterCount(d => !!d.caughtAttr) < Object.keys(speciesStarterCosts).length - 1;
+    const isCatchableDailyBoss = isDailyFinalBoss() && (getDailyEventSeedBoss()?.catchable ?? false);
 
     if (biomeId === BiomeId.END && battleType === BattleType.WILD) {
       if (
@@ -381,7 +379,7 @@ export class CommandPhase extends FieldPhase {
         (isClassic && isClassicFinalBoss && missingMultipleStarters)
         || (isFullFreshStart && isClassicFinalBoss)
         || (isEndless && isEndlessMinorBoss)
-        || isDaily
+        || (isDaily && !isCatchableDailyBoss)
       ) {
         // Uncatchable final boss in classic, endless and daily
         this.queueShowText("battle:noPokeballForceFinalBoss");
@@ -422,6 +420,7 @@ export class CommandPhase extends FieldPhase {
 
     const isChallengeActive = globalScene.gameMode.hasAnyChallenges();
     const isFinalBoss = globalScene.gameMode.isBattleClassicFinalBoss(globalScene.currentBattle.waveIndex);
+    const isCatchableDailyBoss = isDailyFinalBoss() && (getDailyEventSeedBoss()?.catchable ?? false);
 
     const numBallTypes = 5;
     if (cursor < numBallTypes) {
@@ -441,7 +440,7 @@ export class CommandPhase extends FieldPhase {
           return false;
         }
         // When facing any other boss, Master Ball can always be used, and we use the standard message.
-        if (cursor < PokeballType.MASTER_BALL) {
+        if (isCatchableDailyBoss || cursor < PokeballType.MASTER_BALL) {
           this.queueShowText("battle:noPokeballStrong");
           return false;
         }

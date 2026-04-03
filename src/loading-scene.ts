@@ -8,7 +8,7 @@ import { getBiomeHasProps } from "#field/arena";
 import { CacheBustedLoaderPlugin } from "#plugins/cache-busted-loader-plugin";
 import { getWindowVariantSuffix, WindowVariant } from "#ui/ui-theme";
 import { hasAllLocalizedSprites, localPing } from "#utils/common";
-import { getEnumValues } from "#utils/enums";
+import { enumValueToKey, getEnumValues } from "#utils/enums";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
 
@@ -149,8 +149,8 @@ export class LoadingScene extends SceneBase {
 
       .loadImage("language_icon", "ui")
       .loadImage("saving_icon", "ui")
-      .loadImage("discord", "ui")
-      .loadImage("google", "ui")
+      .loadImage("discord_oauth", "ui")
+      .loadImage("google_oauth", "ui")
       .loadImage("settings_icon", "ui")
       .loadImage("link_icon", "ui")
       .loadImage("unlink_icon", "ui")
@@ -561,8 +561,8 @@ export class LoadingScene extends SceneBase {
   }
 
   private loadBiomeImages(): this {
-    getEnumValues(BiomeId).forEach(bt => {
-      const btKey = BiomeId[bt].toLowerCase();
+    Object.values(BiomeId).forEach(bt => {
+      const btKey = enumValueToKey(BiomeId, bt).toLowerCase();
       const isBaseAnimated = btKey === "end";
       const baseAKey = `${btKey}_a`;
       const baseBKey = `${btKey}_b`;

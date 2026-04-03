@@ -162,8 +162,9 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
           : SpeciesId.CLEFABLE;
     encounter.spriteConfigs = [
       {
-        spriteKey: cleffaSpecies.toString(),
-        fileRoot: "pokemon",
+        species: cleffaSpecies,
+        spriteKey: "",
+        fileRoot: "",
         hasShadow: true,
         repeat: true,
         x: 14,

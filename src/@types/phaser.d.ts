@@ -19,9 +19,4 @@ declare module "phaser" {
       }
     }
   }
-
-  interface Game {
-    /** A manifest used to cache various files requested from the server. */
-    manifest?: Record<string, string> | undefined;
-  }
 }

@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { VariantTier } from "#enums/variant-tier";
 import type { Pokemon } from "#field/pokemon";
 import { hasExpSprite } from "#sprites/sprite-utils";
+import { cachedFetch } from "#utils/fetch-utils";
 
 export type Variant = 0 | 1 | 2;
 
@@ -124,8 +125,7 @@ export async function populateVariantColorCache(
   battleSpritePath: string,
 ): Promise<void> {
   const spritePath = `./images/pokemon/variant/${useExpSprite ? "exp/" : ""}${battleSpritePath}.json`;
-  return globalScene
-    .cachedFetch(spritePath)
+  return cachedFetch(spritePath)
     .then(res => {
       // Prevent the JSON from processing if it failed to load
       if (!res.ok) {

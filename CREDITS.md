@@ -4,46 +4,40 @@ SPDX-FileCopyrightText: 2024-2025 Pagefault Games
 SPDX-License-Identifier: CC-BY-NC-SA-4.0
 -->
 
-# 🎵 Music
+# 🎨 Art and 🎵 Music
 
-## BGM
-- Pokémon Mystery Dungeon: Explorers of Sky
-  - Arata Iiyoshi
-  - Hideki Sakamoto
-  - Keisuke Ito
-  - Ken-ichi Saito
-  - Yoshihiro Maeda
-- Pokémon Black/White
-  - Go Ichinose
-  - Hitomi Sato
-  - Shota Kageyama
-- Pokémon Mystery Dungeon: Rescue Team DX
-  - Keisuke Ito
-  - Arata Iiyoshi
-  - Atsuhiro Ishizuna
-- Pokémon HeartGold/SoulSilver
-- Pokémon Black/White 2
-- Pokémon X/Y
-- Pokémon Omega Ruby/Alpha Sapphire
-- Pokémon Sun/Moon
-- Pokémon Ultra Sun/Ultra Moon
-- Pokémon Sword/Shield
-- Pokémon Legends: Arceus
-- Pokémon Scarlet/Violet
-- Firel (Custom Graveyard, Ice Cave, Laboratory, Metropolis, Plains, Power Plant, Seabed, Space, Volcano, and Desert biome music)
-- Lmz (Custom Ancient Ruins, Jungle, and Lake biome music)
-- Andr06 (Custom Forest, Slum, Sea, and Fairy Cave biome music)
-- Leavannite (Custom Wasteland biome music)
-- “Big” bird_obsession (Custom Snowy Forest biome music)
-- _tresnoir
+## Head of Art
+- Firel
+
+## Team Members
+
+### Senior Artist
+- damocleas
+- “Hanniel” hanniel.15
+- “Splash Damage” splashceles
+
+### Artist
+- bwl626
+- Crow W (aka Crowo)
+- “Caramel” saltedcarriemel
+- Dops
+- "Green Ninja757" (aka DaleB)
+- Fontbane
+- “Momo” sphinx_sage
+- Necrow (aka Necrowmancy)
+- officerporkchops
+- Omniv
+- redactedinlight
+- “Togepi” togepimax
+- unicorn_power
+
+### Composers
+- Andr06
+- “Big” bird_obsession
+- Leavannite
+- Lmz
 - unveiler
-
-## Sound Effects
-- Pokémon Emerald
-- Pokémon Black/White
-
-
-# 🎨 Art
+- Vanstesan
 
 ## Backgrounds
 - Squip (Paid Commissions)
@@ -62,23 +56,14 @@ SPDX-License-Identifier: CC-BY-NC-SA-4.0
 
 ## Trainer Sprites
 - GAMEFREAK (Pokémon Black/White 2, Pokémon Diamond/Pearl)
-- kyledove
 - Brumirage
-- pkmn_realidea (Paid Commissions)
 - IceJkai
+- kyledove
 - Leparagon
+- pkmn_realidea (Paid Commissions)
 - wormhood
 
-## Mystery Event Sprites
-- chrysomelinae
-- koda_want_to_sleep
-- “🐺Kieran/YJ 🐍” rival_kieran aka thedreadedden
-- ImperialSympathizer
-- wormhood
-- gerolau
-- otterwatch
-
-## Trainer Portraits
+### Trainer Portraits
 - pkmn_realidea (Paid Commissions)
 
 ## Pokémon Sprites and Animation
@@ -86,30 +71,31 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 
 - GAMEFREAK (Pokémon Black/White 2)
 - Smogon Sprite Project (Various Artists)
-- Skyflyer
-- Nolo33
+- AshnixsLaw
+- Azrita
+- bizcoeindoloro
+- Caruban
 - Ebaru
 - EricLostie
-- kiriaura
-- Caruban
-- Sopita_Yorita
-- Azrita
-- AshnixsLaw
-- Hellfire0raptor
-- RetroNC
+- Fleimer_
 - Franark122k
+- Hellfire0raptor
+- ItsYugen
+- kiriaura
+- kyledove
+- lucasomi
+- mangalos810
+- Nolo33
 - OldSoulja
 - PKMarioG
-- ItsYugen
-- lucasomi
 - Pkm Sinfonia
 - Poki Papillon
-- Fleimer_
-- bizcoeindoloro
-- mangalos810
+- RetroNC
 - selstar
+- Skyflyer
+- Sopita_Yorita
 
-### Static Sprites and Base Shiny Replacements Credits
+## Static Sprites and Base Shiny Replacements Credits
 - AMVictory
 - Antiant
 - Arhops
@@ -200,7 +186,7 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - Zerudez
 - Z-nogyroP
 
-### Animated Sprites Credits
+## Animated Sprites Credits
 - Antiant
 - arinoelle
 - Blaquaza
@@ -233,7 +219,19 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - uppa
 - “Vari” \_vari\_
 
-### Rare/Epic Shiny Variants Credits
+## Move Animations
+- Pokémon Reborn
+
+## Mystery Encounter Sprites
+- chrysomelinae
+- koda_want_to_sleep
+- “🐺Kieran/YJ 🐍” rival_kieran (aka thedreadedden)
+- ImperialSympathizer
+- wormhood
+- gerolau
+- otterwatch
+
+## Rare/Epic Shiny Variants Credits
 - “Andr06” andr06
 - “Appo” appo
 - “Ashhawk” k_redacted
@@ -242,9 +240,11 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - “Bagon” bagonganda
 - “Bibble” nuts_.
 - “BloomOfWoods” bloomofwoods
+- BlindVoid
 - “Buge” buge
 - “bun” bunove
 - “bukie” bukie
+- bwl626
 - cameranian
 - “Caramel” saltedcarriemel
 - “Chocolate Niblets” choconibs
@@ -254,7 +254,9 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - “Cmac2173” cmac2173
 - “Corsola” corsola_bandit
 - “Criminon” criminon
+- Crow W (aka Crowo)
 - “Cryptican Gogoat Enthusiast” crypticanexe
+- damocleas
 - “Diashi” diazhi
 - “deviant.daffodil, bug enthusiast” deviant.daffodil
 - “DigitalVaporeon” digitalvaporeon
@@ -273,6 +275,7 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - “GreenMegaMan” greenmegaman
 - “GROWL” myflixer.to
 - “guy claiming to work on a guide” 7thatlas
+- Gyaradope
 - “h. 🍄” letterh.
 - “hamez” .hamez
 - “Hanniel” hanniel.15
@@ -280,15 +283,17 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - “Jay” itsamejay
 - “Jelke” jelke
 - kalikimothy
-- “🐺Kieran/YJ 🐍” rival_kieran aka thedreadedden
+- “🐺Kieran/YJ 🐍” rival_kieran (aka thedreadedden)
 - “Koda” Koda_want_to_sleep
 - “Lana” smogonian
+- Leavannite
 - “LJ” lj_birdman
 - “Long Girl” docamakesart
 - “Lucky” luckyluckylucky
 - “MissingNo.” clickonflareblitz
 - “Momo” sphinx_sage
 - monkehestman
+- Necrow (aka Necrowmancy)
 - “Nexxus” nexxus_
 - “Nik :3” realniktrustme
 - “Nikolatsu”
@@ -308,6 +313,7 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - “serif” serifaizawa
 - “SillyTopplingGoose” sillytopplinggoose
 - “Splash Damage” splashceles
+- Starkrieg
 - “Sweg1b01” sweg1b01
 - “SyntheGrim” synthegrim
 - “TaMenace” tamariontherestless
@@ -317,6 +323,7 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - “Toopy” .toopy
 - “Tristan” tristan.w
 - “Umbreon” umbreon\_.\_
+- unicorn_power
 - “Vari” \_vari\_
 - “Waasephi”
 - wormhood
@@ -325,37 +332,70 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - “zaccie” zaccie
 - “zan” smtif
 
-## Move Animations
-- Pokémon Reborn
+## BGM
+- Pokémon Mystery Dungeon: Explorers of Sky
+  - Arata Iiyoshi
+  - Hideki Sakamoto
+  - Keisuke Ito
+  - Ken-ichi Saito
+  - Yoshihiro Maeda
+- Pokémon Black/White
+  - Go Ichinose
+  - Hitomi Sato
+  - Shota Kageyama
+- Pokémon Mystery Dungeon: Rescue Team DX
+  - Keisuke Ito
+  - Arata Iiyoshi
+  - Atsuhiro Ishizuna
+- Pokémon HeartGold/SoulSilver
+- Pokémon Black/White 2
+- Pokémon X/Y
+- Pokémon Omega Ruby/Alpha Sapphire
+- Pokémon Sun/Moon
+- Pokémon Ultra Sun/Ultra Moon
+- Pokémon Sword/Shield
+- Pokémon Legends: Arceus
+- Pokémon Scarlet/Violet
+- Firel (Custom Graveyard, Ice Cave, Laboratory, Metropolis, Plains, Power Plant, Seabed, Space, Volcano, and Desert biome music)
+- Lmz (Custom Ancient Ruins, Jungle, and Lake biome music)
+- Andr06 (Custom Forest, Slum, Sea, and Fairy Cave biome music)
+- Leavannite (Custom Wasteland biome music)
+- “Big” bird_obsession (Custom Snowy Forest biome music)
+- _tresnoir
+- unveiler
 
-
-# ⚖️ Balance
-
-## Balance Team
-- damocleas
-- Blitzy aka Kazapple
-- Cynthia_calliope
-- Esca
-- Fontbane
-- Plasto
-- Sethcurry
-- Starkrieg
-
-## Past Members
-- Swizzo
-- Zaccie
-
-## Past Contributors
-- chrysomelinae (Mystery Events)
-- AsdarDevelops (Mystery Events)
+## Sound Effects
+- Pokémon Emerald
+- Pokémon Black/White
 
 
 # 💻 Development
 
-## Server Developers
-- pancakes aka patapancakes
+## Server Developer and Maintainer
+- pancakes (aka patapancakes)
 
-## Current and former Development Team members
+## Head of Development
+- SirzBenjie
+
+## Team Members
+
+### Senior Dev
+- Madmadness65
+- NightKev
+
+### Dev
+- bertie690
+- Curbio
+- emdeann (aka Dean)
+- Fabi (aka fabske)
+- SN34KZ
+- Wlowscha (aka Curbio)
+- Xavion
+
+### Junior Dev
+- Fontbane
+
+## Former Development Team Members
 - bennybroseph
 - Brain Frog
 - CodeTappert
@@ -366,63 +406,63 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - ImperialSympathizer
 - innerthunder
 - KimJeongSun
-- Madmadness65
 - Moka
 - Navori
-- NightKev
 - Opaquer
 - OrangeRed
-- Sam aka Flashfyre (initial developer, started PokéRogue)
-- SirzBenjie
+- Sam (aka Flashfyre) (initial developer, started PokéRogue)
+- Scooom (Past Server Maintainer)
 - sirzento
-- SN34KZ
-- Swain aka torranx
-- Temp aka Tempo-anon
+- Swain (aka torranx)
+- Temp (aka Tempo-anon)
 - Walker
-- Wlowscha (aka Curbio)
-- Xavion
-
-## Bug/Issue Managers
-- Daleks
-- Lily
-- PigeonBar
-- Snailman
 
 ## Other Code Contributors
+- acelynnzhang
 - Admiral-Billy
 - allen925
 - arColm
 - Arxalc
 - AsdarDevelops
+- baekanthony
+- Blitzy (aka Kazapple)
 - Corrade
+- damocleas
+- domagoj03
 - DustinLin
 - ElizaAlex
 - EmberCM
 - EmoUsedHM01
 - EvasiveAce
-- Fontbane
 - francktrouillez
 - FredeX
 - geeilhan
 - happinyz
 - hayuna
 - InfernoVulpix
+- isaac105
+- izaankml
 - j-diefenbach
 - jaimefd
 - JakubHanko
+- Jimmybald1
 - JonStudders
 - karl-police
+- LaraFranconi
 - lucfd
 - Lugiadrien
+- macwellbz
 - madibye
 - mattrossdev
 - mcmontag
 - meepen
 - Mewtwo2387
 - muscode
+- Nikhilesh002
 - Neverblade
 - NxKarim
 - okimin
+- Ovdoes-dd
 - PigeonBar
 - PrabbyDD
 - prateau
@@ -432,6 +472,8 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - RedstonewolfX
 - ReneGV
 - rnicar245
+- scarlyle0
+- Scooom
 - schmidtc1
 - shayebeadling
 - snoozbuster
@@ -443,25 +485,65 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - zacharied
 - Zé Ricardo
 
+## Bug/Issue Managers
+- Daleks
+- Lily
+- PigeonBar
+- Snailman
+
+# ⚖️ Balance
+
+
+## Head of Balance
+- damocleas
+
+## Team Members
+
+### Balance Team
+- Blitzy (aka Kazapple)
+- Plasto
+- Moro
+- Esca
+- Fontbane
+- Starkrieg
+- Zaccie
+
+### Past Members
+- Cynthia_calliope
+- Sethcurry
+- Swizzo
+
+## Past Contributors
+- AsdarDevelops (Mystery Encounters)
+- chrysomelinae (Mystery Encounters)
+
 
 # 🌎 Translation
 
+## Head of Translation
+- Lugiadrien
+
+## Former Head of Translation
+- Sangara
+
 ## In-Game Translators
+
+### 🇪🇸 Spanish (es-ES)
+- Javi
+- Lily Alterni
+- Moro
 
 ### 🇩🇪 German (de)
 - CodeTappert
 
-### 🇪🇸 Spanish (es-ES)
-- Dan Stevenson
-- Javi
-- Lily Alterni
-- Qyxgames
-
 ### 🇫🇷 French (fr)
 - Lugiadrien
+- Jersee
 
 ### 🇮🇹 Italian (it)
 - Nicus
+- rrrroverto
+- Curbio
 
 ### 🇯🇵 Japanese (ja)
 - 6mozuke9
@@ -469,30 +551,67 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - PeachFresca
 
 ### 🇰🇷 Korean (ko)
-- Enoch
-- KimJeongSun
-- Returntoice
 - sodamelon
+- LeKaaN
 
-### 🇧🇷 Portuguese (pt-BR)
+### 🇧🇷 Brazilian Portuguese (pt-BR)
 - Zé Ricardo
 
-### 🇨🇳 Chinese (zh-Hans)
-- dddsenic
+### 🇨🇳 Simplified Chinese (zh-Hans)
 - mercurius
 - VittorioVeneto
 - Yonmaru
 
-### 🇹🇼 Chinese (zh-Hant)
+### 🇹🇼 Traditional Chinese (zh-Hant)
 - mercurius
-- Seagull
+
+### Catalan (ca)
+- DEMO
+- origamer1000
+- serpercito
+
+### 🇩🇰 Danish (da)
+- WackZero
+- SebCraft
+
+### 🇸🇪 Swedish (sv)
+- Chapybara
+
+### 🇷🇺 Russian (ru)
+- Shinigami Holo
+
+### 🇺🇦 Ukrainian (uk)
+- Rahr
+
+### 🇹🇷 Turkish (tr)
+- hotpink77
+- pantherinae
+
+### 🇹🇭 Thai (th)
+- tEmar1
+
+### Basque (eu)
+- Moro
+
+### 🇵🇭 Tagalog (tl)
+- Naga42
 
 ### Past contributors
+- Aleco (ca)
 - Asdar (es-ES)
-- Rafa (es-ES)
-- GINK-SS (ko)
-- prostagma (pt-BR)
+- CamiBear (da)
+- Dan Stevenson (es-ES)
+- dddsenic (zh-Hans)
 - Ei (zh-Hant)
+- Enoch (ko)
+- GINK-SS (ko)
+- KimJeongSun (ko)
+- prostagma (pt-BR)
+- Qyxgames (ca)
+- Qyxgames (es-ES)
+- Rafa (es-ES)
+- Returntoice (ko)
+- Seagull (zh-Hant)
 
 ## Wiki Translators
 
@@ -527,18 +646,18 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - jw-0-
 
 ### Past contributors
-- Dietaube (de)
-- Gnorpelltroll (de)
-- xRegix (de)
-- Broly Ikari (fr)
-- Leo Edgar_Zimmer (fr)
-- Telor (fr)
-- dorri (ko)
-- Little Moder_eldenring (ko)
 - Andy (zh-Hans)
 - Black Feather (zh-Hans)
+- Broly Ikari (fr)
+- Dietaube (de)
+- dorri (ko)
+- Gnorpelltroll (de)
 - itschili (zh-Hans)
+- Leo Edgar_Zimmer (fr)
+- Little Moder_eldenring (ko)
 - RimKnight (zh-Hans)
+- Telor (fr)
+- xRegix (de)
 - Yubari (zh-Hans)
 
 ## 🇺🇸 English Proofreaders
@@ -558,65 +677,78 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 
 # 📰 Wiki
 
-## Wiki Head
+## Head of Wiki
 - H.A.R.V.
 
-## Wiki Lead
-- Sangara
-- Zac
-- Smew
-- Brain Frog
-- Hannah
+## Senior Wiki Editor
+- Moro
 
-## Editor
-- Prodigy
+## Current and Former Wiki Contributors
+- Quill
 - Akuma
-- Dan Gioia
-- Shimizoki
-- Stave
-- NalysArbur
+- Blitzy (aka Kazapple)
+- BlueVaron
+- Brain Frog
 - Ceimir
-- Solanum Tuberosum
-- Pom
-
-## Artist
-- dub
-- SmashMania
-- Wren
-- Lugiadrien
-
-## Contributor
 - Daleks <3
-- Inferno Vulpix
+- Dan Gioia
 - Embri
+- Hannah
+- Inferno Vulpix
+- Jimmybald1
+- NalysArbur
 - Nekod
 - P0kemonY
-- Scoom
-- BlueVaron
+- Pom
+- Prodigy
+- Sangara
+- Scooom
+- Shimizoki
+- Smew
+- Solanum Tuberosum
+- Stave
+- Zac
+
+## Wiki Artist
+- dub
+- Lugiadrien
+- SmashMania
+- Wren
 
 
 # ☎️ Discord
 
-## Head Moderator
-- leah
-
-## Senior Moderators
-- Solanum Tuberosum
-- Madmadness65
-- Necrowmancer
-- lana
-
-## Moderators
-- Sethcurry
-
-## Junior Moderators
-- chacolah
-- ChaosGrimmon
-- Cynthia
-- Kat
-- lyn
+## Head Moderators
+- Javi
 - Pom
 
+## Moderators
+- Cynthia_calliope
+- ChaosGrimmon
+- Kat
+- Mitsue
+- Rizbh
+
+## Junior Moderators
+- Blitzy (aka Kazapple)
+- bwl626
+- Kappals
+
+## Past Moderators
+- Cent
+- Chacolah
+- Lana
+- Leah
+- Lucky
+- Lyn
+- Madmadness65
+- Megalith
+- Necromancer
+- Sethcurry
+- Solanum Tuberosum
+- Tempest
+- Ves
+- Zaccie
 
 # ✨ Special Thanks
 
@@ -628,6 +760,7 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 - roi
 
 ## External Tools
-- Ydarissep (creator of the now defunct "Yda's Dex")
+- Sandstorm (Creator of "PokéRogue SearchDex")
 - Admiral-Billy (Offline App - Desktop)
-- Red aka StonedModder (iOS App)
+- Red (aka StonedModder) (iOS App)
+- Ydarissep (Creator of the now defunct "Yda's Dex")

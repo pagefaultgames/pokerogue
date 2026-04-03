@@ -1,5 +1,6 @@
 import {
   AddSecondStrikeAbAttr,
+  AiMovegenMoveStatsAbAttr,
   AlliedFieldDamageReductionAbAttr,
   AllyMoveCategoryPowerBoostAbAttr,
   AllyStatMultiplierAbAttr,
@@ -20,8 +21,6 @@ import {
   BypassSpeedChanceAbAttr,
   ChangeMovePriorityAbAttr,
   ChangeMovePriorityInBracketAbAttr,
-  ClearTerrainAbAttr,
-  ClearWeatherAbAttr,
   CommanderAbAttr,
   ConditionalCritAbAttr,
   ConditionalUserFieldBattlerTagImmunityAbAttr,
@@ -49,6 +48,7 @@ import {
   GorillaTacticsAbAttr,
   getWeatherCondition,
   HealFromBerryUseAbAttr,
+  IceFaceFormChangeAbAttr,
   IgnoreContactAbAttr,
   IgnoreMoveEffectsAbAttr,
   IgnoreOpponentStatStagesAbAttr,
@@ -129,7 +129,6 @@ import {
   PostSummonUserFieldRemoveStatusEffectAbAttr,
   PostSummonWeatherChangeAbAttr,
   PostSummonWeatherSuppressedFormChangeAbAttr,
-  PostTeraFormChangeStatChangeAbAttr,
   PostTerrainChangeAddBattlerTagAttr,
   PostTurnFormChangeAbAttr,
   PostTurnHurtIfSleepingAbAttr,
@@ -167,6 +166,7 @@ import {
   StatStageChangeCopyAbAttr,
   StatStageChangeMultiplierAbAttr,
   StatusEffectImmunityAbAttr,
+  SummonTerrainAiMovegenMoveStatsAbAttr,
   SuppressWeatherEffectAbAttr,
   SyncEncounterNatureAbAttr,
   SynchronizeStatusAbAttr,
@@ -204,9 +204,10 @@ import { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import { noAbilityTypeOverrideMoves } from "#moves/invalid-moves";
-import type { AbAttrCondition, PokemonAttackCondition } from "#types/ability-types";
+import { failIfDampCondition } from "#moves/move-condition";
+import type { AbAttrCondition, AiMovegenMoveStatsAbAttrParams, PokemonAttackCondition } from "#types/ability-types";
 import type { Move } from "#types/move-types";
-import { NumberHolder, randSeedInt, toDmgValue } from "#utils/common";
+import { NumberHolder, randSeedInt } from "#utils/common";
 import i18next from "i18next";
 
 export function initAbilities() {
@@ -223,6 +224,7 @@ export function initAbilities() {
     new AbBuilder(AbilityId.DRIZZLE, 3) //
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.RAIN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.RAIN)
+      .attr(AiMovegenMoveStatsAbAttr, drizzleAiMovegenEffect)
       .build(),
     new AbBuilder(AbilityId.SPEED_BOOST, 3) //
       .attr(SpeedBoostAbAttr)
@@ -238,6 +240,11 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.DAMP, 3) //
       .attr(FieldPreventExplosiveMovesAbAttr)
+      .attr(AiMovegenMoveStatsAbAttr, params => {
+        if (params.move.hasCondition(failIfDampCondition)) {
+          params.powerMult.value = 0;
+        }
+      })
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.LIMBER, 3) //
@@ -278,6 +285,9 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.COMPOUND_EYES, 3) //
       .attr(StatMultiplierAbAttr, Stat.ACC, 1.3)
+      .attr(AiMovegenMoveStatsAbAttr, ({ accMult }) => {
+        accMult.value *= 1.3;
+      })
       .build(),
     new AbBuilder(AbilityId.INSOMNIA, 3) //
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
@@ -377,6 +387,11 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.HUGE_POWER, 3) //
       .attr(StatMultiplierAbAttr, Stat.ATK, 2)
+      .attr(AiMovegenMoveStatsAbAttr, ({ move, powerMult }) => {
+        if (move.category === MoveCategory.PHYSICAL) {
+          powerMult.value *= 2;
+        }
+      })
       .build(),
     new AbBuilder(AbilityId.POISON_POINT, 3) //
       .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.POISON)
@@ -458,6 +473,12 @@ export function initAbilities() {
     new AbBuilder(AbilityId.HUSTLE, 3) //
       .attr(StatMultiplierAbAttr, Stat.ATK, 1.5)
       .attr(StatMultiplierAbAttr, Stat.ACC, 0.8, (_user, _target, move) => move.category === MoveCategory.PHYSICAL)
+      .attr(AiMovegenMoveStatsAbAttr, ({ move, accMult, powerMult }: AiMovegenMoveStatsAbAttrParams) => {
+        if (move.category === MoveCategory.PHYSICAL) {
+          accMult.value *= 0.8;
+          powerMult.value *= 1.5;
+        }
+      })
       .build(),
     new AbBuilder(AbilityId.CUTE_CHARM, 3) //
       .attr(PostDefendContactApplyTagChanceAbAttr, 30, BattlerTagType.INFATUATED)
@@ -541,6 +562,7 @@ export function initAbilities() {
     new AbBuilder(AbilityId.DROUGHT, 3) //
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SUNNY)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SUNNY)
+      .attr(AiMovegenMoveStatsAbAttr, droughtAiMovegenEffect)
       .build(),
     new AbBuilder(AbilityId.ARENA_TRAP, 3) //
       .attr(ArenaTrapAbAttr, (_user, target) => target.isGrounded())
@@ -558,6 +580,11 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.PURE_POWER, 3) //
       .attr(StatMultiplierAbAttr, Stat.ATK, 2)
+      .attr(AiMovegenMoveStatsAbAttr, ({ move, powerMult }) => {
+        if (move.category === MoveCategory.PHYSICAL) {
+          powerMult.value *= 2;
+        }
+      })
       .build(),
     new AbBuilder(AbilityId.SHELL_ARMOR, 3) //
       .attr(BlockCritAbAttr)
@@ -643,6 +670,9 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.SKILL_LINK, 4) //
       .attr(MaxMultiHitAbAttr)
+      .attr(AiMovegenMoveStatsAbAttr, ({ maxMultiHit }) => {
+        maxMultiHit.value = true;
+      })
       .build(),
     new AbBuilder(AbilityId.HYDRATION, 4) //
       .attr(PostTurnResetStatusAbAttr)
@@ -674,6 +704,11 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.SNIPER, 4) //
       .attr(MultCritAbAttr, 1.5)
+      .attr(AiMovegenMoveStatsAbAttr, ({ move, powerMult }) => {
+        if (move.hasAttr("CritOnlyAttr")) {
+          powerMult.value *= 1.5;
+        }
+      })
       .build(),
     new AbBuilder(AbilityId.MAGIC_GUARD, 4) //
       .attr(BlockNonDirectDamageAbAttr)
@@ -767,6 +802,25 @@ export function initAbilities() {
     new AbBuilder(AbilityId.SNOW_WARNING, 4) //
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SNOW)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SNOW)
+      .attr(AiMovegenMoveStatsAbAttr, ({ move, powerMult, accMult, instantCharge }) => {
+        if (move.id === MoveId.WEATHER_BALL) {
+          // double power in addition to weather boost
+          powerMult.value *= 2;
+          return;
+        }
+        if (move.hasAttr("BlizzardAccuracyAttr")) {
+          accMult.value = Number.POSITIVE_INFINITY;
+        }
+        if (move.hasAttr("AntiSunlightPowerDecreaseAttr")) {
+          powerMult.value *= 0.5;
+        }
+        if (
+          move.isChargingMove()
+          && move.getChargeAttrs("WeatherInstantChargeAttr").some(attr => attr.weatherTypes.includes(WeatherType.SNOW))
+        ) {
+          instantCharge.value = true;
+        }
+      })
       .build(),
     new AbBuilder(AbilityId.HONEY_GATHER, 4) //
       .attr(MoneyAbAttr)
@@ -956,6 +1010,11 @@ export function initAbilities() {
           !globalScene.phaseManager.hasPhaseOfType("MovePhase", phase => phase.pokemon.id !== user.id),
         1.3,
       )
+      .attr(AiMovegenMoveStatsAbAttr, ({ move, powerMult }) => {
+        if (move.priority < 0) {
+          powerMult.value *= 1.3;
+        }
+      })
       .build(),
     new AbBuilder(AbilityId.ILLUSION, 5) //
       // // The Pokemon generate an illusion if it's available
@@ -1013,9 +1072,6 @@ export function initAbilities() {
     new AbBuilder(AbilityId.MAGIC_BOUNCE, 5) //
       .attr(ReflectStatusMoveAbAttr)
       .ignorable()
-      // Interactions with stomping tantrum, instruct, encore, and probably other moves that
-      // rely on move history
-      .edgeCase()
       .build(),
     new AbBuilder(AbilityId.SAP_SIPPER, 5) //
       .attr(TypeImmunityStatStageChangeAbAttr, PokemonType.GRASS, Stat.ATK, 1)
@@ -1025,9 +1081,9 @@ export function initAbilities() {
       .attr(ChangeMovePriorityAbAttr, (_pokemon, move: Move) => move.category === MoveCategory.STATUS, 1)
       .build(),
     new AbBuilder(AbilityId.SAND_FORCE, 5) //
-      .attr(MoveTypePowerBoostAbAttr, PokemonType.ROCK, 1.3)
-      .attr(MoveTypePowerBoostAbAttr, PokemonType.GROUND, 1.3)
-      .attr(MoveTypePowerBoostAbAttr, PokemonType.STEEL, 1.3)
+      .attr(MoveTypePowerBoostAbAttr, PokemonType.ROCK, 1.3, true)
+      .attr(MoveTypePowerBoostAbAttr, PokemonType.GROUND, 1.3, true)
+      .attr(MoveTypePowerBoostAbAttr, PokemonType.STEEL, 1.3, true)
       .attr(BlockWeatherDamageAttr, WeatherType.SANDSTORM)
       .condition(getWeatherCondition(WeatherType.SANDSTORM))
       .build(),
@@ -1048,6 +1104,9 @@ export function initAbilities() {
     new AbBuilder(AbilityId.VICTORY_STAR, 5) //
       .attr(StatMultiplierAbAttr, Stat.ACC, 1.1)
       .attr(AllyStatMultiplierAbAttr, Stat.ACC, 1.1, false)
+      .attr(AiMovegenMoveStatsAbAttr, ({ accMult }) => {
+        accMult.value *= 1.1;
+      })
       .build(),
     new AbBuilder(AbilityId.TURBOBLAZE, 5) //
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) =>
@@ -1068,6 +1127,7 @@ export function initAbilities() {
         BattlerTagType.DISABLED,
         BattlerTagType.TORMENT,
         BattlerTagType.HEAL_BLOCK,
+        BattlerTagType.ENCORE,
       ])
       .ignorable()
       .build(),
@@ -1182,6 +1242,11 @@ export function initAbilities() {
           && user.turnData.hitsLeft === 1 // move is on its final strike
           && move.canBeMultiStrikeEnhanced(user, true, target),
       )
+      .attr(AiMovegenMoveStatsAbAttr, ({ pokemon, move, powerMult }) => {
+        if (move.canBeMultiStrikeEnhanced(pokemon, false, null)) {
+          powerMult.value *= 1.25;
+        }
+      })
       .build(),
     new AbBuilder(AbilityId.DARK_AURA, 6) //
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) =>
@@ -1221,12 +1286,28 @@ export function initAbilities() {
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HEAVY_RAIN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HEAVY_RAIN)
       .attr(PreLeaveFieldClearWeatherAbAttr, WeatherType.HEAVY_RAIN)
+      .attr(AiMovegenMoveStatsAbAttr, params => {
+        // hardcode fire type move as having 0 power
+        if (params.move.type === PokemonType.FIRE) {
+          params.powerMult.value *= 0;
+        } else {
+          drizzleAiMovegenEffect(params);
+        }
+      })
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.DESOLATE_LAND, 6) //
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.HARSH_SUN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.HARSH_SUN)
       .attr(PreLeaveFieldClearWeatherAbAttr, WeatherType.HARSH_SUN)
+      .attr(AiMovegenMoveStatsAbAttr, params => {
+        // hardcode fire type move as having 0 power
+        if (params.move.type === PokemonType.WATER) {
+          params.powerMult.value *= 0;
+        } else {
+          droughtAiMovegenEffect(params);
+        }
+      })
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.DELTA_STREAM, 6) //
@@ -1298,14 +1379,10 @@ export function initAbilities() {
       .attr(MoveTypePowerBoostAbAttr, PokemonType.STEEL)
       .build(),
     new AbBuilder(AbilityId.BERSERK, 7) //
-      .attr(
-        PostDefendHpGatedStatStageChangeAbAttr,
-        (_target, _user, move) => move.category !== MoveCategory.STATUS,
-        0.5,
-        [Stat.SPATK],
-        1,
-      )
+      .attr(PostDefendHpGatedStatStageChangeAbAttr, 0.5, [Stat.SPATK], 1)
       .condition(sheerForceHitDisableAbCondition)
+      // Should trigger after the last strike of multi-strike moves, not in the middle
+      .edgeCase()
       .build(),
     new AbBuilder(AbilityId.SLUSH_RUSH, 7) //
       .attr(StatMultiplierAbAttr, Stat.SPD, 2)
@@ -1345,26 +1422,7 @@ export function initAbilities() {
     new AbBuilder(AbilityId.DISGUISE, 7) //
       .attr(NoTransformAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
-      // Add BattlerTagType.DISGUISE if the pokemon is in its disguised form
-      .conditionalAttr(
-        pokemon => pokemon.formIndex === 0,
-        PostSummonAddBattlerTagAbAttr,
-        BattlerTagType.DISGUISE,
-        0,
-        false,
-      )
-      .attr(
-        FormBlockDamageAbAttr,
-        (target, user, move) => !!target.getTag(BattlerTagType.DISGUISE) && target.getMoveEffectiveness(user, move) > 0,
-        0,
-        BattlerTagType.DISGUISE,
-        (pokemon, abilityName) =>
-          i18next.t("abilityTriggers:disguiseAvoidedDamage", {
-            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-            abilityName,
-          }),
-        pokemon => toDmgValue(pokemon.getMaxHp() / 8),
-      )
+      .attr(FormBlockDamageAbAttr, 0, "abilityTriggers:disguiseAvoidedDamage", 0.125)
       .attr(PostBattleInitFormChangeAbAttr, () => 0)
       .attr(PostFaintFormChangeAbAttr, () => 0)
       .uncopiable()
@@ -1375,27 +1433,26 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.BATTLE_BOND, 7) //
       .conditionalAttr(
-        p => p.species.speciesId === SpeciesId.GRENINJA,
+        p => p.species.speciesId === SpeciesId.GRENINJA && !p.isFusion(),
         PostVictoryFormChangeAbAttr,
         () => 2,
       )
       .conditionalAttr(
-        p => p.species.speciesId === SpeciesId.GRENINJA,
+        p => p.species.speciesId === SpeciesId.GRENINJA && !p.isFusion(),
         PostBattleInitFormChangeAbAttr,
         () => 1,
       )
       .conditionalAttr(
-        p => p.species.speciesId === SpeciesId.GRENINJA,
+        p => p.species.speciesId === SpeciesId.GRENINJA && !p.isFusion(),
         PostFaintFormChangeAbAttr,
         () => 1,
       )
       .conditionalAttr(
-        p => p.species.speciesId !== SpeciesId.GRENINJA && !p.summonData.abilitiesApplied.has(AbilityId.BATTLE_BOND),
+        p => !p.hasSpecies(SpeciesId.GRENINJA) && !p.summonData.abilitiesApplied.has(AbilityId.BATTLE_BOND),
         PostVictoryStatStageChangeAbAttr,
         [Stat.ATK, Stat.SPATK, Stat.SPD],
         1,
       )
-      .attr(NoFusionAbilityAbAttr)
       .uncopiable()
       .unreplaceable()
       .unsuppressable()
@@ -1526,18 +1583,37 @@ export function initAbilities() {
     new AbBuilder(AbilityId.ELECTRIC_SURGE, 7) //
       .attr(PostSummonTerrainChangeAbAttr, TerrainType.ELECTRIC)
       .attr(PostBiomeChangeTerrainChangeAbAttr, TerrainType.ELECTRIC)
+      .attr(SummonTerrainAiMovegenMoveStatsAbAttr, PokemonType.ELECTRIC, [MoveId.RISING_VOLTAGE, 2])
       .build(),
     new AbBuilder(AbilityId.PSYCHIC_SURGE, 7) //
       .attr(PostSummonTerrainChangeAbAttr, TerrainType.PSYCHIC)
       .attr(PostBiomeChangeTerrainChangeAbAttr, TerrainType.PSYCHIC)
+      .attr(SummonTerrainAiMovegenMoveStatsAbAttr, PokemonType.PSYCHIC, [MoveId.EXPANDING_FORCE, 1.5])
       .build(),
     new AbBuilder(AbilityId.MISTY_SURGE, 7) //
       .attr(PostSummonTerrainChangeAbAttr, TerrainType.MISTY)
       .attr(PostBiomeChangeTerrainChangeAbAttr, TerrainType.MISTY)
+      .attr(AiMovegenMoveStatsAbAttr, ({ pokemon, move, powerMult }) => {
+        // NB: Though Misty terrain only protects grounded defenders from Dragon
+        // moves, we have no way of knowing the defender's attributes during
+        // moveset gen (hence why we ignore this)
+        if (move.type === PokemonType.DRAGON) {
+          powerMult.value *= 0.5;
+        }
+        if (pokemon.hasAbility(AbilityId.LEVITATE) || pokemon.isOfType(PokemonType.FLYING)) {
+          return;
+        }
+        if (move.id === MoveId.MISTY_EXPLOSION) {
+          powerMult.value *= 1.5;
+        } else if (move.id === MoveId.TERRAIN_PULSE) {
+          powerMult.value *= 1.5;
+        }
+      })
       .build(),
     new AbBuilder(AbilityId.GRASSY_SURGE, 7) //
       .attr(PostSummonTerrainChangeAbAttr, TerrainType.GRASSY)
       .attr(PostBiomeChangeTerrainChangeAbAttr, TerrainType.GRASSY)
+      .attr(SummonTerrainAiMovegenMoveStatsAbAttr, PokemonType.GRASS)
       .build(),
     new AbBuilder(AbilityId.FULL_METAL_BODY, 7) //
       .attr(ProtectStatAbAttr)
@@ -1557,9 +1633,19 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.INTREPID_SWORD, 8) //
       .attr(PostSummonStatStageChangeAbAttr, [Stat.ATK], 1, true)
+      .attr(AiMovegenMoveStatsAbAttr, ({ move, powerMult }) => {
+        if (move.category === MoveCategory.PHYSICAL && !move.hasAttr("DefAtkAttr")) {
+          powerMult.value *= 1.5;
+        }
+      })
       .build(),
     new AbBuilder(AbilityId.DAUNTLESS_SHIELD, 8) //
       .attr(PostSummonStatStageChangeAbAttr, [Stat.DEF], 1, true)
+      .attr(AiMovegenMoveStatsAbAttr, ({ move, powerMult }) => {
+        if (move.hasAttr("DefAtkAttr")) {
+          powerMult.value *= 1.5;
+        }
+      })
       .build(),
     new AbBuilder(AbilityId.LIBERO, 8) //
       .attr(PokemonTypeChangeAbAttr)
@@ -1641,33 +1727,16 @@ export function initAbilities() {
     new AbBuilder(AbilityId.ICE_FACE, 8, -2) //
       .attr(NoTransformAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
-      // Add BattlerTagType.ICE_FACE if the pokemon is in ice face form
-      .conditionalAttr(
-        pokemon => pokemon.formIndex === 0,
-        PostSummonAddBattlerTagAbAttr,
-        BattlerTagType.ICE_FACE,
-        0,
-        false,
-      )
-      // When summoned with active HAIL or SNOW, add BattlerTagType.ICE_FACE
-      .conditionalAttr(
-        getWeatherCondition(WeatherType.HAIL, WeatherType.SNOW),
-        PostSummonAddBattlerTagAbAttr,
-        BattlerTagType.ICE_FACE,
-        0,
-      )
-      // When weather changes to HAIL or SNOW while pokemon is fielded, add BattlerTagType.ICE_FACE
-      .attr(PostWeatherChangeAddBattlerTagAbAttr, BattlerTagType.ICE_FACE, 0, WeatherType.HAIL, WeatherType.SNOW)
+      // Turn into Ice form when switched in during hail/snow in Noice form
+      .conditionalAttr(getWeatherCondition(WeatherType.HAIL, WeatherType.SNOW), PostSummonFormChangeAbAttr, () => 0)
+      // Turn into Ice form when hail/snow starts in Noice form while active
+      .attr(IceFaceFormChangeAbAttr, 1)
       .attr(
         FormBlockDamageAbAttr,
-        (target, _user, move) => move.category === MoveCategory.PHYSICAL && !!target.getTag(BattlerTagType.ICE_FACE),
         0,
-        BattlerTagType.ICE_FACE,
-        (pokemon, abilityName) =>
-          i18next.t("abilityTriggers:iceFaceAvoidedDamage", {
-            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-            abilityName,
-          }),
+        "abilityTriggers:iceFaceAvoidedDamage",
+        0,
+        (_target, _user, move) => move.category === MoveCategory.PHYSICAL,
       )
       .attr(PostBattleInitFormChangeAbAttr, () => 0)
       .uncopiable()
@@ -1699,6 +1768,11 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.GORILLA_TACTICS, 8) //
       .attr(GorillaTacticsAbAttr)
+      .attr(AiMovegenMoveStatsAbAttr, ({ move, powerMult }) => {
+        if (move.category === MoveCategory.PHYSICAL) {
+          powerMult.value *= 1.5;
+        }
+      })
       // TODO: Verify whether Gorilla Tactics increases struggle's power or not
       .edgeCase()
       .build(),
@@ -1788,21 +1862,11 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.ANGER_SHELL, 9) //
-      .attr(
-        PostDefendHpGatedStatStageChangeAbAttr,
-        (_target, _user, move) => move.category !== MoveCategory.STATUS,
-        0.5,
-        [Stat.ATK, Stat.SPATK, Stat.SPD],
-        1,
-      )
-      .attr(
-        PostDefendHpGatedStatStageChangeAbAttr,
-        (_target, _user, move) => move.category !== MoveCategory.STATUS,
-        0.5,
-        [Stat.DEF, Stat.SPDEF],
-        -1,
-      )
+      .attr(PostDefendHpGatedStatStageChangeAbAttr, 0.5, [Stat.ATK, Stat.SPATK, Stat.SPD], 1)
+      .attr(PostDefendHpGatedStatStageChangeAbAttr, 0.5, [Stat.DEF, Stat.SPDEF], -1)
       .condition(sheerForceHitDisableAbCondition)
+      // Should trigger after the last strike of multi-strike moves, not in the middle
+      .edgeCase()
       .build(),
     new AbBuilder(AbilityId.PURIFYING_SALT, 9) //
       .attr(StatusEffectImmunityAbAttr)
@@ -1915,6 +1979,11 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.SWORD_OF_RUIN, 9) //
       .attr(FieldMultiplyStatAbAttr, Stat.DEF, 0.75)
+      .attr(AiMovegenMoveStatsAbAttr, ({ move, powerMult }) => {
+        if (move.category === MoveCategory.PHYSICAL) {
+          powerMult.value *= 1.25;
+        }
+      })
       .attr(PostSummonMessageAbAttr, user =>
         i18next.t("abilityTriggers:postSummonSwordOfRuin", {
           pokemonNameWithAffix: getPokemonNameWithAffix(user),
@@ -1934,6 +2003,11 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.BEADS_OF_RUIN, 9) //
       .attr(FieldMultiplyStatAbAttr, Stat.SPDEF, 0.75)
+      .attr(AiMovegenMoveStatsAbAttr, ({ move, powerMult }) => {
+        if (move.category === MoveCategory.SPECIAL) {
+          powerMult.value *= 1.25;
+        }
+      })
       .attr(PostSummonMessageAbAttr, user =>
         i18next.t("abilityTriggers:postSummonBeadsOfRuin", {
           pokemonNameWithAffix: getPokemonNameWithAffix(user),
@@ -1950,10 +2024,21 @@ export function initAbilities() {
         Stat.ATK,
         4 / 3,
       )
+      .attr(AiMovegenMoveStatsAbAttr, params => {
+        droughtAiMovegenEffect(params);
+        if (params.move.category === MoveCategory.PHYSICAL) {
+          params.powerMult.value *= 4 / 3;
+        }
+      })
       .build(),
     new AbBuilder(AbilityId.HADRON_ENGINE, 9) //
       .attr(PostSummonTerrainChangeAbAttr, TerrainType.ELECTRIC)
       .attr(PostBiomeChangeTerrainChangeAbAttr, TerrainType.ELECTRIC)
+      .attr(AiMovegenMoveStatsAbAttr, ({ move, powerMult }) => {
+        if (move.category === MoveCategory.SPECIAL) {
+          powerMult.value *= 4 / 3;
+        }
+      })
       .conditionalAttr(getTerrainCondition(TerrainType.ELECTRIC), StatMultiplierAbAttr, Stat.SPATK, 4 / 3)
       .build(),
     new AbBuilder(AbilityId.OPPORTUNIST, 9) //
@@ -2020,29 +2105,25 @@ export function initAbilities() {
       .attr(PostAttackApplyStatusEffectAbAttr, false, 30, StatusEffect.TOXIC)
       .build(),
     new AbBuilder(AbilityId.EMBODY_ASPECT_TEAL, 9) //
-      .attr(PostTeraFormChangeStatChangeAbAttr, [Stat.SPD], 1) // Activates immediately upon Terastallizing, as well as upon switching in while Terastallized
-      .conditionalAttr(pokemon => pokemon.isTerastallized, PostSummonStatStageChangeAbAttr, [Stat.SPD], 1, true)
+      .attr(PostSummonStatStageChangeAbAttr, [Stat.SPD], 1, true)
       .uncopiable()
       .unreplaceable() // TODO is this true?
       .attr(NoTransformAbilityAbAttr)
       .build(),
     new AbBuilder(AbilityId.EMBODY_ASPECT_WELLSPRING, 9) //
-      .attr(PostTeraFormChangeStatChangeAbAttr, [Stat.SPDEF], 1)
-      .conditionalAttr(pokemon => pokemon.isTerastallized, PostSummonStatStageChangeAbAttr, [Stat.SPDEF], 1, true)
+      .attr(PostSummonStatStageChangeAbAttr, [Stat.SPDEF], 1, true)
       .uncopiable()
       .unreplaceable()
       .attr(NoTransformAbilityAbAttr)
       .build(),
     new AbBuilder(AbilityId.EMBODY_ASPECT_HEARTHFLAME, 9) //
-      .attr(PostTeraFormChangeStatChangeAbAttr, [Stat.ATK], 1)
-      .conditionalAttr(pokemon => pokemon.isTerastallized, PostSummonStatStageChangeAbAttr, [Stat.ATK], 1, true)
+      .attr(PostSummonStatStageChangeAbAttr, [Stat.ATK], 1, true)
       .uncopiable()
       .unreplaceable()
       .attr(NoTransformAbilityAbAttr)
       .build(),
     new AbBuilder(AbilityId.EMBODY_ASPECT_CORNERSTONE, 9) //
-      .attr(PostTeraFormChangeStatChangeAbAttr, [Stat.DEF], 1)
-      .conditionalAttr(pokemon => pokemon.isTerastallized, PostSummonStatStageChangeAbAttr, [Stat.DEF], 1, true)
+      .attr(PostSummonStatStageChangeAbAttr, [Stat.DEF], 1, true)
       .uncopiable()
       .unreplaceable()
       .attr(NoTransformAbilityAbAttr)
@@ -2061,10 +2142,9 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.TERAFORM_ZERO, 9) //
-      .attr(ClearWeatherAbAttr)
-      .attr(ClearTerrainAbAttr)
+      .attr(PostSummonWeatherChangeAbAttr, WeatherType.NONE)
+      .attr(PostSummonTerrainChangeAbAttr, TerrainType.NONE)
       .uncopiable()
-      .condition(getOncePerBattleCondition(AbilityId.TERAFORM_ZERO))
       .build(),
     new AbBuilder(AbilityId.POISON_PUPPETEER, 9) //
       .uncopiable()
@@ -2188,3 +2268,58 @@ const sheerForceHitDisableAbCondition: AbAttrCondition = (pokemon: Pokemon): boo
 
   return !sheerForceAffected;
 };
+
+/**
+ * DRY implementation for the `AIMovegenMoveStatsAbAttr` effect of harsh-sunlight summoning abilities.
+ * @param __namedParameters.move - Needed for proper typedoc rendering
+ */
+function drizzleAiMovegenEffect({ move, powerMult, accMult }: AiMovegenMoveStatsAbAttrParams) {
+  if (move.id === MoveId.WEATHER_BALL) {
+    // double power plus weather boost
+    powerMult.value *= 3;
+    return;
+  }
+  switch (move.type) {
+    case PokemonType.FIRE:
+      powerMult.value *= 0.5;
+      break;
+    case PokemonType.WATER:
+      powerMult.value *= 1.5;
+      break;
+  }
+  if (move.hasAttr("ThunderAccuracyAttr") || move.hasAttr("StormAccuracyAttr")) {
+    accMult.value = Number.POSITIVE_INFINITY;
+  }
+  if (move.hasAttr("AntiSunlightPowerDecreaseAttr")) {
+    powerMult.value *= 0.5;
+  }
+}
+
+/**
+ * DRY implementation for the `AIMovegenMoveStatsAbAttr` effect of harsh-sunlight summoning abilities
+ * @param __namedParameters.move - Needed for proper typedoc rendering
+ */
+function droughtAiMovegenEffect({ move, powerMult, accMult, instantCharge }: AiMovegenMoveStatsAbAttrParams) {
+  if (move.id === MoveId.WEATHER_BALL) {
+    // double power in addition to weather boost
+    powerMult.value *= 3;
+    return;
+  }
+
+  if (move.id === MoveId.HYDRO_STEAM || move.type === PokemonType.FIRE) {
+    powerMult.value *= 1.5;
+  } else if (move.type === PokemonType.WATER) {
+    powerMult.value *= 0.5;
+  }
+
+  if (move.hasAttr("ThunderAccuracyAttr")) {
+    accMult.value *= 0.5;
+  }
+
+  if (
+    move.isChargingMove()
+    && move.getChargeAttrs("WeatherInstantChargeAttr").some(attr => attr.weatherTypes.includes(WeatherType.SUNNY))
+  ) {
+    instantCharge.value = true;
+  }
+}

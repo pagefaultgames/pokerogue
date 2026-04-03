@@ -20,10 +20,10 @@ export const namespaceMap = {
 
 /**
  * Swap the value with the key and the key with the value
- * @param json type {[key: string]: string}
- * @returns [value]: key
+ * @param json - The object to swap key/value pairs of
+ * @returns The swapped object
  *
- * @source {@link https://stackoverflow.com/a/23013726}
+ * @see {@link https://stackoverflow.com/a/23013726}
  */
 export function objectSwap(json: { [key: string]: string }): { [value: string]: string } {
   const ret = {};

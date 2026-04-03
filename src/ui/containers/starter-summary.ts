@@ -16,6 +16,7 @@ import { Passive } from "#enums/passive";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
+import { UiTheme } from "#enums/ui-theme";
 import { getVariantIcon, getVariantTint, type Variant } from "#sprites/variant";
 import { achvs } from "#system/achv";
 import type { StarterMoveset, StarterPreferences } from "#types/save-data";
@@ -26,7 +27,7 @@ import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import { addBBCodeTextObject, addTextObject, getTextColor } from "../text";
+import { addBBCodeTextObject, addTextObject, getTextColor, updateCandyCountTextStyle } from "../text";
 import {
   getDexAttrFromPreferences,
   getFriendship,
@@ -162,11 +163,16 @@ export class StarterSummary extends Phaser.GameObjects.Container {
       56,
       "(+0)",
       TextStyle.MOVE_LABEL,
-    ).setOrigin(0.5, 0);
+    )
+      .setOrigin(0.5, 0)
+      .setColor(getTextColor(TextStyle.WINDOW_ALT))
+      .setShadowColor(getTextColor(TextStyle.WINDOW_ALT, true));
 
     this.pokemonMovesContainer.add(this.pokemonAdditionalMoveCountLabel);
 
-    this.pokemonEggMovesContainer = globalScene.add.container(102, 85).setScale(0.375);
+    this.pokemonEggMovesContainer = globalScene.add //
+      .container(102, 85)
+      .setScale(0.375);
 
     this.eggMovesLabel = addTextObject(
       -46,
@@ -285,7 +291,12 @@ export class StarterSummary extends Phaser.GameObjects.Container {
       fontSize: starterInfoTextSize,
     }).setOrigin(0);
 
+    //! TODO: investigate
     this.pokemonShinyIcon = globalScene.add.sprite(12, 0, "shiny_icons").setScale(0.5);
+    // this.pokemonShinyIcon = globalScene.add //
+    //   .sprite(isLegacyUi ? 8 : 14, 76, "shiny_icons")
+    //   .setOrigin(0.15, 0.2)
+    //   .setScale(1);
 
     this.teraIcon = globalScene.add.sprite(85, 63, "button_tera").setName("terastallize-icon").setFrame("fire");
 
@@ -317,7 +328,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
       8,
       106,
       i18next.t("starterSelectUiHandler:growthRate"),
-      TextStyle.SUMMARY_ALT,
+      TextStyle.WINDOW_ALT,
       { fontSize: "36px" },
     ).setOrigin(0);
 
@@ -352,12 +363,19 @@ export class StarterSummary extends Phaser.GameObjects.Container {
   setupPokemonStatisticsContainer(): GameObjects.Container {
     const pokemonStatisticsContainer = globalScene.add.container(0, 0);
 
+    const isLegacyUi = globalScene.uiTheme === UiTheme.LEGACY;
     // Candy icon and count
     this.pokemonCandyContainer = globalScene.add
-      .container(4.5, 18)
+      .container(isLegacyUi ? 7 : 4.5, 18)
       .setInteractive(new Phaser.Geom.Rectangle(0, 0, 30, 20), Phaser.Geom.Rectangle.Contains);
-    this.pokemonCandyIcon = globalScene.add.sprite(0, 0, "candy").setScale(0.5).setOrigin(0);
-    this.pokemonCandyOverlayIcon = globalScene.add.sprite(0, 0, "candy_overlay").setScale(0.5).setOrigin(0);
+    this.pokemonCandyIcon = globalScene.add //
+      .sprite(0, 0, "candy")
+      .setScale(0.5)
+      .setOrigin(0);
+    this.pokemonCandyOverlayIcon = globalScene.add //
+      .sprite(0, 0, "candy_overlay")
+      .setScale(0.5)
+      .setOrigin(0);
     this.pokemonCandyDarknessOverlay = globalScene.add
       .sprite(0, 0, "candy")
       .setScale(0.5)
@@ -373,14 +391,26 @@ export class StarterSummary extends Phaser.GameObjects.Container {
       this.pokemonCandyCountText,
     ]);
 
-    this.pokemonCaughtHatchedContainer = globalScene.add.container(2, 25).setScale(0.5);
+    this.pokemonCaughtHatchedContainer = globalScene.add //
+      .container(isLegacyUi ? 4.5 : 2, 25)
+      .setScale(0.5);
 
-    const pokemonCaughtIcon = globalScene.add.sprite(1, 0, "items", "pb").setOrigin(0).setScale(0.75);
+    const pokemonCaughtIcon = globalScene.add //
+      .sprite(1, 0, "items", "pb")
+      .setOrigin(0)
+      .setScale(0.75);
 
-    this.pokemonCaughtCountText = addTextObject(24, 4, "0", TextStyle.SUMMARY_ALT).setOrigin(0);
-    this.pokemonHatchedIcon = globalScene.add.sprite(1, 14, "egg_icons").setOrigin(0.15, 0.2).setScale(0.8);
-    this.pokemonHatchedCountText = addTextObject(24, 19, "0", TextStyle.SUMMARY_ALT).setOrigin(0);
-    this.pokemonMovesContainer = globalScene.add.container(102, 16).setScale(0.375);
+    this.pokemonCaughtCountText = addTextObject(24, 4, "0", TextStyle.WINDOW_ALT) //
+      .setOrigin(0);
+    this.pokemonHatchedIcon = globalScene.add //
+      .sprite(1, 14, "egg_icons")
+      .setOrigin(0.15, 0.2)
+      .setScale(0.8);
+    this.pokemonHatchedCountText = addTextObject(24, 19, "0", TextStyle.WINDOW_ALT) //
+      .setOrigin(0);
+    this.pokemonMovesContainer = globalScene.add //
+      .container(102, 16)
+      .setScale(0.375);
     this.pokemonCaughtHatchedContainer.add([
       pokemonCaughtIcon,
       this.pokemonCaughtCountText,
@@ -414,6 +444,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
 
   updateCandyCount(count: number) {
     this.pokemonCandyCountText.setText(`×${count}`);
+    updateCandyCountTextStyle(this.pokemonCandyCountText, count);
   }
 
   setNameAndNumber(species: PokemonSpecies, starterPreferences: StarterPreferences) {
@@ -462,7 +493,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
 
   setStarter(starterId: StarterSpeciesId, starterPreferences: StarterPreferences) {
     // Checking here to ensure achievements are loaded, and updated if unlocked while playing
-    this.allowTera = globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id);
+    this.allowTera = Object.hasOwn(globalScene.gameData.achvUnlocks, achvs.TERASTALLIZE.id);
 
     this.speciesId = starterId;
     const species = getPokemonSpecies(starterId);
@@ -519,7 +550,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
 
       const defaultDexAttr = getDexAttrFromPreferences(starterId, starterPreferences);
 
-      if (pokemonPrevolutions.hasOwnProperty(species.speciesId)) {
+      if (Object.hasOwn(pokemonPrevolutions, species.speciesId)) {
         this.pokemonCaughtHatchedContainer.setVisible(false);
         this.pokemonShinyIcon.setY(104);
         this.pokemonFormText.setY(25);
@@ -528,7 +559,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
         this.pokemonShinyIcon.setY(86);
         this.pokemonCandyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
         this.pokemonCandyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
-        this.pokemonCandyCountText.setText(`×${globalScene.gameData.starterData[species.speciesId].candyCount}`);
+        this.updateCandyCount(globalScene.gameData.starterData[species.speciesId].candyCount);
         this.pokemonFormText.setY(42);
         this.pokemonHatchedIcon.setVisible(true);
         this.pokemonHatchedCountText.setVisible(true);
