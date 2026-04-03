@@ -262,4 +262,9 @@ export class MockSprite implements MockGameObject {
     this.phaserSprite.setActive(active);
     return this;
   }
+
+  setBelow(gameObject: Phaser.GameObjects.GameObject): this {
+    this.phaserSprite.setBelow(gameObject);
+    return this;
+  }
 }
