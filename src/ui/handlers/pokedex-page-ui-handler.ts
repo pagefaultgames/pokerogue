@@ -1852,56 +1852,60 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       } else {
         const props = globalScene.gameData.getDexAttrProps(this.getCurrentDexProps(this.species.speciesId));
         switch (button) {
-          case Button.CYCLE_SHINY:
-            if (this.canCycleShiny) {
-              if (starterPreferences.shiny) {
-                let newVariant = props.variant;
-                do {
-                  newVariant = (newVariant + 1) % 3;
-                  if (newVariant === 0) {
-                    if (this.isCaught() & DexAttr.DEFAULT_VARIANT) {
-                      break;
-                    }
-                  } else if (newVariant === 1) {
-                    if (this.isCaught() & DexAttr.VARIANT_2) {
-                      break;
-                    }
-                  } else if (this.isCaught() & DexAttr.VARIANT_3) {
-                    break;
-                  }
-                } while (newVariant !== props.variant);
-
-                starterPreferences.variant = newVariant; // store the selected variant
-                this.savedStarterPreferences.variant = starterPreferences.variant;
-                if (this.isCaught() & DexAttr.NON_SHINY && newVariant <= props.variant) {
-                  this.setSpeciesDetails(this.species, {
-                    shiny: false,
-                    variant: 0,
-                  });
-                  success = true;
-                  starterPreferences.shiny = false;
-                  this.savedStarterPreferences.shiny = starterPreferences.shiny;
-                } else {
-                  this.setSpeciesDetails(this.species, {
-                    variant: newVariant as Variant,
-                  });
-                  success = true;
-                }
-              } else {
-                // Change to shiny, we need to get the proper default variant
-                const newVariant = starterPreferences.variant ? (starterPreferences.variant as Variant) : 0;
-                this.setSpeciesDetails(this.species, {
-                  shiny: true,
-                  variant: newVariant,
-                });
-
-                globalScene.playSound("se/sparkle");
-
-                starterPreferences.shiny = true;
-                this.savedStarterPreferences.shiny = starterPreferences.shiny;
-              }
+          case Button.CYCLE_SHINY: {
+            if (!this.canCycleShiny) {
+              break;
             }
+
+            if (!starterPreferences.shiny) {
+              // Change to shiny, we need to get the proper default variant
+              const newVariant = starterPreferences.variant ? (starterPreferences.variant as Variant) : 0;
+              this.setSpeciesDetails(this.species, {
+                shiny: true,
+                variant: newVariant,
+              });
+
+              globalScene.playSound("se/sparkle");
+
+              starterPreferences.shiny = true;
+              this.savedStarterPreferences.shiny = starterPreferences.shiny;
+            }
+
+            let newVariant = props.variant;
+            do {
+              newVariant = (newVariant + 1) % 3;
+              if (newVariant === 0) {
+                if (this.isCaught() & DexAttr.DEFAULT_VARIANT) {
+                  break;
+                }
+              } else if (newVariant === 1) {
+                if (this.isCaught() & DexAttr.VARIANT_2) {
+                  break;
+                }
+              } else if (this.isCaught() & DexAttr.VARIANT_3) {
+                break;
+              }
+            } while (newVariant !== props.variant);
+
+            starterPreferences.variant = newVariant;
+            this.savedStarterPreferences.variant = starterPreferences.variant;
+            if (this.isCaught() & DexAttr.NON_SHINY && newVariant <= props.variant) {
+              this.setSpeciesDetails(this.species, {
+                shiny: false,
+                variant: 0,
+              });
+              success = true;
+              starterPreferences.shiny = false;
+              this.savedStarterPreferences.shiny = starterPreferences.shiny;
+            } else {
+              this.setSpeciesDetails(this.species, {
+                variant: newVariant as Variant,
+              });
+              success = true;
+            }
+
             break;
+          }
           case Button.CYCLE_FORM:
             if (this.canCycleForm) {
               const formCount = this.species.forms.length;
