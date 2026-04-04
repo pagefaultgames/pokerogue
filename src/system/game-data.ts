@@ -4,6 +4,7 @@ import { defaultStarterSpecies, saveKey } from "#app/constants";
 import { getGameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
+import { isIOS } from "#app/touch-controls";
 import { Tutorial } from "#app/tutorial";
 import { speciesEggMoves } from "#balance/moves/egg-moves";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
@@ -1375,8 +1376,71 @@ export class GameData {
     saveFile.id = "saveFile";
     saveFile.type = "file";
     saveFile.accept = ".prsv";
-    saveFile.style.display = "none";
+    
+    // iOS requires user interaction with a visible element to trigger file input
+    if (isIOS()) {
+      // Create a visible button for iOS
+      const uploadButton = document.createElement("button");
+      uploadButton.id = "iosUploadButton";
+      uploadButton.textContent = "Select File to Import";
+      uploadButton.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 15px 30px;
+        font-size: 18px;
+        font-family: Arial, sans-serif;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        z-index: 10000;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      `;
+      
+      // Create overlay
+      const overlay = document.createElement("div");
+      overlay.id = "iosUploadOverlay";
+      overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.7);
+        z-index: 9999;
+      `;
+      
+      // Add file input to the button (hidden but functional on iOS)
+      saveFile.style.display = "none";
+      
+      // Handle button click to trigger file input
+      uploadButton.onclick = () => {
+        saveFile.click();
+      };
+      
+      // Handle overlay click to cancel
+      overlay.onclick = () => {
+        overlay.remove();
+        uploadButton.remove();
+        saveFile.remove();
+      };
+      
+      document.body.appendChild(overlay);
+      document.body.appendChild(uploadButton);
+    } else {
+      saveFile.style.display = "none";
+    }
+    
     saveFile.addEventListener("change", e => {
+      // Remove iOS UI elements if they exist
+      const overlay = document.getElementById("iosUploadOverlay");
+      const button = document.getElementById("iosUploadButton");
+      if (overlay) overlay.remove();
+      if (button) button.remove();
+      
       const reader = new FileReader();
 
       reader.onload = (_ => {
@@ -1478,7 +1542,14 @@ export class GameData {
 
       reader.readAsText((e.target as any).files[0]);
     });
-    saveFile.click();
+    
+    // Only auto-click on non-iOS devices
+    if (!isIOS()) {
+      saveFile.click();
+    }
+    
+    // Append the file input to body for iOS compatibility
+    document.body.appendChild(saveFile);
   }
 
   private initDexData(): void {

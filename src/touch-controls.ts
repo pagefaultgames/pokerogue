@@ -251,3 +251,13 @@ export function isMobile(): boolean {
   })(navigator.userAgent || navigator.vendor || window["opera"]);
   return ret;
 }
+
+/**
+ * Detect if the current device is running iOS (iPhone, iPad, or iPod)
+ * @returns true if the device is running iOS
+ */
+export function isIOS(): boolean {
+  const userAgent = navigator.userAgent || navigator.vendor || (window as any)["opera"];
+  // Check for iPhone, iPad, or iPod
+  return /iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream;
+}
