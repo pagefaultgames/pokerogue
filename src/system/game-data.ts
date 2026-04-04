@@ -1376,7 +1376,7 @@ export class GameData {
     saveFile.id = "saveFile";
     saveFile.type = "file";
     saveFile.accept = ".prsv";
-    
+
     // iOS requires user interaction with a visible element to trigger file input
     if (isIOS()) {
       // Create a visible button for iOS
@@ -1399,7 +1399,7 @@ export class GameData {
         z-index: 10000;
         box-shadow: 0 4px 6px rgba(0,0,0,0.3);
       `;
-      
+
       // Create overlay
       const overlay = document.createElement("div");
       overlay.id = "iosUploadOverlay";
@@ -1412,35 +1412,39 @@ export class GameData {
         background-color: rgba(0,0,0,0.7);
         z-index: 9999;
       `;
-      
+
       // Add file input to the button (hidden but functional on iOS)
       saveFile.style.display = "none";
-      
+
       // Handle button click to trigger file input
       uploadButton.onclick = () => {
         saveFile.click();
       };
-      
+
       // Handle overlay click to cancel
       overlay.onclick = () => {
         overlay.remove();
         uploadButton.remove();
         saveFile.remove();
       };
-      
+
       document.body.appendChild(overlay);
       document.body.appendChild(uploadButton);
     } else {
       saveFile.style.display = "none";
     }
-    
+
     saveFile.addEventListener("change", e => {
       // Remove iOS UI elements if they exist
       const overlay = document.getElementById("iosUploadOverlay");
       const button = document.getElementById("iosUploadButton");
-      if (overlay) { overlay.remove(); }
-      if (button) { button.remove(); }
-      
+      if (overlay) {
+        overlay.remove();
+      }
+      if (button) {
+        button.remove();
+      }
+
       const reader = new FileReader();
 
       reader.onload = (_ => {
@@ -1542,12 +1546,12 @@ export class GameData {
 
       reader.readAsText((e.target as any).files[0]);
     });
-    
+
     // Only auto-click on non-iOS devices
     if (!isIOS()) {
       saveFile.click();
     }
-    
+
     // Append the file input to body for iOS compatibility
     document.body.appendChild(saveFile);
   }
