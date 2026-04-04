@@ -108,7 +108,7 @@ export abstract class ApiBase {
    */
   protected toUrlSearchParams(data: Record<string, any>): URLSearchParams {
     const arr = Object.entries(data)
-      .map(([key, value]) => (value !== undefined ? [key, String(value)] : [key, ""]))
+      .map(([key, value]) => [key, value === undefined ? "" : String(value)])
       .filter(([, value]) => value !== "");
 
     return new URLSearchParams(arr);

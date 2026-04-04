@@ -2682,9 +2682,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             break;
           case Button.LEFT:
             if (!this.starterIconsCursorObj.visible) {
-              if (this.cursor % 9 !== 0) {
-                success = this.setCursor(this.cursor - 1);
-              } else {
+              if (this.cursor % 9 === 0) {
                 // LEFT from filtered Pokemon, on the left edge
                 if (onScreenCurrentRow === 0) {
                   // from the first row of starters we go to the random selection
@@ -2708,6 +2706,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                   this.startCursorObj.setVisible(true);
                 }
                 success = true;
+              } else {
+                success = this.setCursor(this.cursor - 1);
               }
             } else if (numberOfStarters > 0) {
               // LEFT from team > Go to closest filtered Pokemon
@@ -3907,23 +3907,23 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
 
     if (species) {
-      this.dexAttrCursor |= (shiny !== undefined ? !shiny : !(shiny = oldProps?.shiny))
+      this.dexAttrCursor |= (shiny === undefined ? !(shiny = oldProps?.shiny) : !shiny)
         ? DexAttr.NON_SHINY
         : DexAttr.SHINY;
-      this.dexAttrCursor |= (female !== undefined ? !female : !(female = oldProps?.female))
+      this.dexAttrCursor |= (female === undefined ? !(female = oldProps?.female) : !female)
         ? DexAttr.MALE
         : DexAttr.FEMALE;
-      this.dexAttrCursor |= (variant !== undefined ? !variant : !(variant = oldProps?.variant))
+      this.dexAttrCursor |= (variant === undefined ? !(variant = oldProps?.variant) : !variant)
         ? DexAttr.DEFAULT_VARIANT
         : variant === 1
           ? DexAttr.VARIANT_2
           : DexAttr.VARIANT_3;
       this.dexAttrCursor |= globalScene.gameData.getFormAttr(
-        formIndex !== undefined ? formIndex : (formIndex = oldProps!.formIndex),
+        formIndex === undefined ? (formIndex = oldProps!.formIndex) : formIndex,
       ); // TODO: is this bang correct?
-      this.abilityCursor = abilityIndex !== undefined ? abilityIndex : (abilityIndex = oldAbilityIndex);
-      this.natureCursor = natureIndex !== undefined ? natureIndex : (natureIndex = oldNatureIndex);
-      this.teraCursor = teraType != null ? teraType : (teraType = oldTeraType);
+      this.abilityCursor = abilityIndex === undefined ? (abilityIndex = oldAbilityIndex) : abilityIndex;
+      this.natureCursor = natureIndex === undefined ? (natureIndex = oldNatureIndex) : natureIndex;
+      this.teraCursor = teraType == null ? (teraType = oldTeraType) : teraType;
       const [isInParty, partyIndex]: [boolean, number] = this.isInParty(species); // we use this to firstly check if the pokemon is in the party, and if so, to get the party index in order to update the icon image
       if (isInParty) {
         this.updatePartyIcon(species, partyIndex);
@@ -4285,15 +4285,15 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   setTypeIcons(type1: PokemonType | null, type2: PokemonType | null): void {
-    if (type1 !== null) {
-      this.type1Icon.setVisible(true).setFrame(PokemonType[type1].toLowerCase());
-    } else {
+    if (type1 === null) {
       this.type1Icon.setVisible(false);
-    }
-    if (type2 !== null) {
-      this.type2Icon.setVisible(true).setFrame(PokemonType[type2].toLowerCase());
     } else {
+      this.type1Icon.setVisible(true).setFrame(PokemonType[type1].toLowerCase());
+    }
+    if (type2 === null) {
       this.type2Icon.setVisible(false);
+    } else {
+      this.type2Icon.setVisible(true).setFrame(PokemonType[type2].toLowerCase());
     }
   }
 
