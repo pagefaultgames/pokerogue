@@ -259,5 +259,7 @@ export function isMobile(): boolean {
 export function isIOS(): boolean {
   const userAgent = navigator.userAgent || navigator.vendor || (window as any)["opera"];
   // Check for iPhone, iPad, or iPod
-  return /iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream;
+  const userAgentCheck = /iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream;
+  const iPadSpecificCheck = navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
+  return userAgentCheck || iPadSpecificCheck;
 }
