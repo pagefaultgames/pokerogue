@@ -4,7 +4,7 @@ import { toKebabCase } from "#utils/strings";
 import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import HttpBackend from "i18next-http-backend";
-import processor from "i18next-korean-postposition-processor";
+import { KoreanPostpositionProcessor } from "i18next-korean-postposition-processor";
 import { namespaceMap } from "./utils-plugins";
 
 //#region Interfaces/Types
@@ -164,7 +164,7 @@ const nsEn: string[] = [];
 await i18next
   .use(HttpBackend)
   .use(LanguageDetector)
-  .use(processor)
+  .use(new KoreanPostpositionProcessor())
   .init(
     {
       fallbackLng: {
