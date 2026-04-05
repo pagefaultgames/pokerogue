@@ -42,7 +42,6 @@ export const sharedConfig: UserConfigFnPromise = async ({ mode }) => {
           // propertyWriteSideEffects: mode === "production" ? false : "always",
         },
         output: {
-          sourcemap: mode !== "production",
           // TODO: Look into configuring more rolldown options for smaller bundle size
           keepNames: true,
           minify: {
@@ -57,6 +56,7 @@ export const sharedConfig: UserConfigFnPromise = async ({ mode }) => {
       },
     },
     // TODO: Vitest is currently incompatible with vite's tsconfig paths resolution, requiring us to use the plugin
+    // Remove the plugin once https://github.com/vitest-dev/vitest/issues/10054 is resolved
     // resolve: {
     //   tsconfigPaths: true,
     // },
