@@ -296,8 +296,8 @@ export abstract class SerializableArenaTag extends ArenaTag {
  */
 export class MistTag extends SerializableArenaTag {
   readonly tagType = ArenaTagType.MIST;
-  constructor(turnCount: number, sourceId: number | undefined, side: ArenaTagSide) {
-    super(turnCount, MoveId.MIST, sourceId, side);
+  constructor(turnCount: number, side: ArenaTagSide) {
+    super(turnCount, MoveId.MIST, undefined, side);
   }
 
   protected override get onAddMessageKey(): string {
@@ -1728,7 +1728,7 @@ export function getArenaTag(
 ): ArenaTag | null {
   switch (tagType) {
     case ArenaTagType.MIST:
-      return new MistTag(turnCount, sourceId, side);
+      return new MistTag(turnCount, side);
     case ArenaTagType.QUICK_GUARD:
       return new QuickGuardTag(sourceId, side);
     case ArenaTagType.WIDE_GUARD:
