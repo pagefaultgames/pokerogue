@@ -55,7 +55,7 @@ export class AttemptCapturePhase extends Phase {
 
     // bang is benign as we immediately abort if nullish
     this.pokemon = globalScene.getPokemonByBattlerIndex(index)!;
-    if (!this.pokemon || !this.pokemon.isActive(true)) {
+    if (!this.pokemon?.isActive(true)) {
       console.warn(
         "Warning: attempted to capture a nonexistent, inactive or off-field Pokemon!\nAborting capture attempt...",
       );
