@@ -3,7 +3,7 @@ import type { SceneBase } from "#app/scene-base";
 
 /**
  * Create a Timer event and wait for it to conclude.
- * @param delay - The delay (in milliseconds) to wait for
+ * @param delay - The delay (in milliseconds) to wait for; will be modified by game speed.
  * @param scene - (Default {@linkcode globalScene}) The {@linkcode SceneBase} on which the timer event should play
  * @returns A Promise that resolves once the timer event has concluded.
  * @remarks
