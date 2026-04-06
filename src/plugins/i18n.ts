@@ -1,11 +1,11 @@
 import { timedEventManager } from "#app/global-event-manager";
+import { namespaceMap } from "#plugins/namespace-map";
 import { getCachedUrl } from "#utils/fetch-utils";
 import { toKebabCase } from "#utils/strings";
 import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import HttpBackend from "i18next-http-backend";
 import { KoreanPostpositionProcessor } from "i18next-korean-postposition-processor";
-import { namespaceMap } from "./utils-plugins";
 
 //#region Interfaces/Types
 

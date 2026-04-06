@@ -2,7 +2,8 @@ import fs from "fs";
 import path from "path";
 import { normalizePath, type Plugin as VitePlugin } from "vite";
 import { toCamelCase } from "../../utils/strings";
-import { isFileInsideDir, namespaceMap, objectSwap } from "../utils-plugins";
+import { namespaceMap } from "../namespace-map";
+import { isFileInsideDir, objectSwap } from ".//vite-plugin-utils";
 
 const namespaceMapSwap = objectSwap(namespaceMap);
 
