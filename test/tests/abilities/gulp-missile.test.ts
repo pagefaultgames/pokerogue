@@ -305,7 +305,6 @@ describe("Abilities - Gulp Missile", () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
 
     const player = game.field.getPlayerPokemon();
-    const enemy = game.field.getEnemyPokemon();
 
     game.move.use(MoveId.FALSE_SWIPE);
     await game.move.forceEnemyMove(MoveId.DIVE);
