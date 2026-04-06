@@ -465,7 +465,7 @@ export class AttemptCapturePhase extends Phase {
   private async showCaughtPokemonSummary(): Promise<void> {
     const { pokemon } = this;
 
-    // TODO: We should need to create a new dummy Pokemon solely to display the summary page
+    // TODO: We shouldn't need to create a new dummy Pokemon solely to display the summary page
     const newPokemon = globalScene.addPlayerPokemon(
       pokemon.species,
       pokemon.level,
