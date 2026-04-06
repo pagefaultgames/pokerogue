@@ -299,7 +299,7 @@ export class AttemptCapturePhase extends Phase {
   /**
    * Resolve a failed capture attempt by restoring the Pokemon, replaying the ball opening, and ending the phase.
    */
-  async failCatch(_shakeCount: number): Promise<void> {
+  private async failCatch(): Promise<void> {
     const { pokemon, pokeballType } = this;
 
     globalScene.playSound("se/pb_rel");
