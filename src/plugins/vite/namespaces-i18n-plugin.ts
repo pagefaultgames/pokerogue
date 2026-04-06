@@ -3,7 +3,7 @@ import path from "path";
 import { normalizePath, type Plugin as VitePlugin } from "vite";
 import { toCamelCase } from "../../utils/strings";
 import { namespaceMap } from "../namespace-map";
-import { isFileInsideDir, objectSwap } from ".//vite-plugin-utils";
+import { isFileInsideDir, objectSwap } from "./vite-plugin-utils";
 
 const namespaceMapSwap = objectSwap(namespaceMap);
 
