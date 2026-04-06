@@ -148,6 +148,5 @@ export const meadowBiome: Biome = {
   trainerChance: 8,
   weatherPool,
   terrainPool,
-  bgmLoopPoint: 3.891,
   biomeLinks,
 };

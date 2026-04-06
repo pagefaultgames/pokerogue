@@ -123,6 +123,5 @@ export const constructionSiteBiome: Biome = {
   trainerChance: 6,
   weatherPool,
   terrainPool,
-  bgmLoopPoint: 1.222,
   biomeLinks,
 };

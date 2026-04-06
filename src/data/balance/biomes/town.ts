@@ -210,6 +210,5 @@ export const townBiome: Biome = {
   trainerChance: 0,
   weatherPool,
   terrainPool,
-  bgmLoopPoint: 7.288,
   biomeLinks,
 };

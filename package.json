@@ -1,7 +1,7 @@
 {
   "name": "pokemon-rogue-battle",
   "private": true,
-  "version": "1.11.13",
+  "version": "1.11.18",
   "type": "module",
   "scripts": {
     "start:prod": "vite --mode production",
@@ -14,6 +14,7 @@
     "build:app": "vite build --mode app",
     "preview": "vite preview",
     "test": "vitest run",
+    "test:profile": "node scripts/profiling/profiling.js",
     "test:cov": "vitest run --silent='passed-only' --coverage",
     "test:watch": "vitest watch --silent='passed-only'",
     "test:silent": "vitest run --silent='passed-only'",
@@ -39,7 +40,8 @@
     "update-assets": "pnpm update-submodules assets",
     "update-assets:remote": "pnpm update-submodules:remote assets",
     "update-submodules": "git submodule update --progress --init --recursive --force --depth 1",
-    "update-submodules:remote": "pnpm update-submodules --remote"
+    "update-submodules:remote": "pnpm update-submodules --remote",
+    "sample-movesets": "pnpm dlx vite-node scripts/gen-moveset/gen-moveset-driver.ts"
   },
   "dependencies": {
     "@material/material-color-utilities": "^0.3.0",
@@ -57,6 +59,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.4",
+    "@commander-js/extra-typings": "^14.0.0",
     "@inquirer/prompts": "^8.3.0",
     "@ls-lint/ls-lint": "2.3.1",
     "@types/crypto-js": "^4.2.2",
@@ -66,6 +69,7 @@
     "@vitest/expect": "^4.0.18",
     "@vitest/utils": "^4.0.18",
     "chalk": "^5.6.2",
+    "commander": "^14.0.3",
     "dependency-cruiser": "^17.3.8",
     "jsdom": "^28.1.0",
     "lefthook": "^2.1.2",
@@ -91,5 +95,5 @@
   "engines": {
     "node": ">=24.9.0"
   },
-  "packageManager": "pnpm@10.28.2"
+  "packageManager": "pnpm@10.33.0"
 }

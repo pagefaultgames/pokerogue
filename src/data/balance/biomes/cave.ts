@@ -127,6 +127,5 @@ export const caveBiome: Biome = {
   trainerChance: 6,
   weatherPool,
   terrainPool,
-  bgmLoopPoint: 14.24,
   biomeLinks,
 };

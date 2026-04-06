@@ -125,6 +125,5 @@ export const desertBiome: Biome = {
   trainerChance: 6,
   weatherPool,
   terrainPool,
-  bgmLoopPoint: 9.02,
   biomeLinks,
 };

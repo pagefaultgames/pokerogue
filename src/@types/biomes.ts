@@ -51,8 +51,6 @@ export interface Biome {
   readonly terrainPool: TerrainPool;
   /** A string representing the bgm of the biome. Only needed if the bgm name doesn't match the biome name. */
   readonly bgm?: string;
-  /** A float representing the loop point of the biome's bgm in seconds */
-  readonly bgmLoopPoint: number;
   /** The biomes that can be travelled to from this biome */
   readonly biomeLinks: BiomeLinks;
 }

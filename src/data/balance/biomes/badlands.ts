@@ -112,6 +112,5 @@ export const badlandsBiome: Biome = {
   trainerChance: 8,
   weatherPool,
   terrainPool,
-  bgmLoopPoint: 17.79,
   biomeLinks,
 };

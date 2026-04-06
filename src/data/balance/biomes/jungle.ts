@@ -138,6 +138,5 @@ export const jungleBiome: Biome = {
   trainerChance: 12,
   weatherPool,
   terrainPool,
-  bgmLoopPoint: 0,
   biomeLinks,
 };

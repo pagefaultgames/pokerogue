@@ -4,7 +4,7 @@ import { globalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
 import Overrides from "#app/overrides";
 import { handleTutorial, Tutorial } from "#app/tutorial";
-import { speciesEggMoves } from "#balance/egg-moves";
+import { speciesEggMoves } from "#balance/moves/egg-moves";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#balance/pokemon-level-moves";
 import {
@@ -144,6 +144,12 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoXPos: 32,
   },
   ca: {
+    starterInfoTextSize: "48px",
+    instructionTextSize: "28px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 29,
+  },
+  eu: {
     starterInfoTextSize: "48px",
     instructionTextSize: "28px",
     starterInfoYOffset: 0.5,
@@ -638,7 +644,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       8,
       106,
       i18next.t("starterSelectUiHandler:growthRate"),
-      TextStyle.SUMMARY_ALT,
+      TextStyle.WINDOW_ALT,
       { fontSize: "36px" },
     )
       .setOrigin(0)
@@ -839,12 +845,19 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     ).setOrigin(0);
 
     // Candy icon and count
+    const isLegacyUi = globalScene.uiTheme === UiTheme.LEGACY;
     this.pokemonCandyContainer = globalScene.add
-      .container(4.5, 18)
+      .container(isLegacyUi ? 7 : 4.5, 18)
       .setInteractive(new Phaser.Geom.Rectangle(0, 0, 30, 20), Phaser.Geom.Rectangle.Contains);
-    this.pokemonCandyIcon = globalScene.add.sprite(0, 0, "candy").setScale(0.5).setOrigin(0);
-    this.pokemonCandyOverlayIcon = globalScene.add.sprite(0, 0, "candy_overlay").setScale(0.5).setOrigin(0);
-    this.pokemonCandyDarknessOverlay = globalScene.add
+    this.pokemonCandyIcon = globalScene.add //
+      .sprite(0, 0, "candy")
+      .setScale(0.5)
+      .setOrigin(0);
+    this.pokemonCandyOverlayIcon = globalScene.add //
+      .sprite(0, 0, "candy_overlay")
+      .setScale(0.5)
+      .setOrigin(0);
+    this.pokemonCandyDarknessOverlay = globalScene.add //
       .sprite(0, 0, "candy")
       .setScale(0.5)
       .setOrigin(0)
@@ -863,15 +876,30 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       fontSize: "42px",
     }).setOrigin(0);
 
-    this.pokemonCaughtHatchedContainer = globalScene.add.container(2, 25).setScale(0.5);
+    this.pokemonCaughtHatchedContainer = globalScene.add //
+      .container(isLegacyUi ? 4.5 : 2, 25)
+      .setScale(0.5);
 
-    const pokemonCaughtIcon = globalScene.add.sprite(1, 0, "items", "pb").setOrigin(0).setScale(0.75);
+    const pokemonCaughtIcon = globalScene.add //
+      .sprite(1, 0, "items", "pb")
+      .setOrigin(0)
+      .setScale(0.75);
 
-    this.pokemonCaughtCountText = addTextObject(24, 4, "0", TextStyle.SUMMARY_ALT).setOrigin(0);
-    this.pokemonHatchedIcon = globalScene.add.sprite(1, 14, "egg_icons").setOrigin(0.15, 0.2).setScale(0.8);
-    this.pokemonShinyIcon = globalScene.add.sprite(14, 76, "shiny_icons").setOrigin(0.15, 0.2).setScale(1);
-    this.pokemonHatchedCountText = addTextObject(24, 19, "0", TextStyle.SUMMARY_ALT).setOrigin(0);
-    this.pokemonMovesContainer = globalScene.add.container(102, 16).setScale(0.375);
+    this.pokemonCaughtCountText = addTextObject(24, 4, "0", TextStyle.WINDOW_ALT) //
+      .setOrigin(0);
+    this.pokemonHatchedIcon = globalScene.add //
+      .sprite(1, 14, "egg_icons")
+      .setOrigin(0.15, 0.2)
+      .setScale(0.8);
+    this.pokemonShinyIcon = globalScene.add //
+      .sprite(isLegacyUi ? 8 : 14, 76, "shiny_icons")
+      .setOrigin(0.15, 0.2)
+      .setScale(1);
+    this.pokemonHatchedCountText = addTextObject(24, 19, "0", TextStyle.WINDOW_ALT) //
+      .setOrigin(0);
+    this.pokemonMovesContainer = globalScene.add //
+      .container(102, 16)
+      .setScale(0.375);
     this.pokemonCaughtHatchedContainer.add([
       pokemonCaughtIcon,
       this.pokemonCaughtCountText,
@@ -903,11 +931,16 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       56,
       "(+0)",
       TextStyle.MOVE_LABEL,
-    ).setOrigin(0.5, 0);
+    )
+      .setOrigin(0.5, 0)
+      .setColor(getTextColor(TextStyle.WINDOW_ALT))
+      .setShadowColor(getTextColor(TextStyle.WINDOW_ALT, true));
 
     this.pokemonMovesContainer.add(this.pokemonAdditionalMoveCountLabel);
 
-    this.pokemonEggMovesContainer = globalScene.add.container(102, 85).setScale(0.375);
+    this.pokemonEggMovesContainer = globalScene.add //
+      .container(102, 85)
+      .setScale(0.375);
 
     this.eggMovesLabel = addTextObject(
       -46,
@@ -3564,8 +3597,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         this.showStats();
       } else {
         this.statsContainer.setVisible(false);
-        //@ts-expect-error
-        this.statsContainer.updateIvs(null); // TODO: resolve ts-ignore. what. how? huh?
+        this.statsContainer.updateIvs(null);
       }
     }
 
@@ -4621,8 +4653,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.statsMode = false;
       this.statsContainer.setVisible(false);
       this.pokemonSprite.setVisible(!!this.speciesStarterDexEntry?.caughtAttr);
-      //@ts-expect-error
-      this.statsContainer.updateIvs(null); // TODO: resolve ts-ignore. !?!?
+      this.statsContainer.updateIvs(null);
       this.teraIcon.setVisible(this.allowTera);
       const props = globalScene.gameData.getSpeciesDexAttrProps(
         this.lastSpecies,
