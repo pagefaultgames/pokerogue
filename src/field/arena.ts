@@ -652,7 +652,7 @@ export class Arena {
         continue;
       }
 
-      tag.apply(...args);
+      (tag.apply as (...params: Parameters<T["apply"]>) => void)(...args);
     }
   }
 

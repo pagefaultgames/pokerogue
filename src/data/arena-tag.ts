@@ -170,7 +170,7 @@ export abstract class ArenaTag implements BaseArenaTag {
   // TODO: Move all classes with `apply` triggers into a unique sub-class to prevent
   // applying effects of tags that lack effect application
   // biome-ignore lint/correctness/noUnusedFunctionParameters: pseudo-abstract method
-  public apply(...args: unknown[]): void {}
+  public apply(...args: never): void {}
 
   /**
    * Trigger effects when this tag is added to the Arena.
@@ -309,36 +309,30 @@ export class MistTag extends SerializableArenaTag {
   }
 
   /**
-   * Cancels the lowering of stats
-   * @param simulated `true` if the effect should be applied quietly
-   * @param attacker the {@linkcode Pokemon} using a move into this effect.
-   * @param cancelled a {@linkcode BooleanHolder} whose value is set to `true`
-   * to flag the stat reduction as cancelled
-   * @returns `true` if a stat reduction was cancelled; `false` otherwise
+   * Attempt to block the lowering of stats.
+   * @param simulated - Whether to suppress messages and other animations from being playerd
+   * @param defender - The {@linkcode Pokemon} receiving the stat drop
+   * @param cancelled - A {@linkcode BooleanHolder} containing whether to nullify the interaction
    */
-  override apply(simulated: boolean, attacker: Pokemon | null, cancelled: BooleanHolder): boolean {
+  override apply(simulated: boolean, defender: Pokemon, cancelled: BooleanHolder, _source: undefined): void {
     // `StatStageChangePhase` currently doesn't have a reference to the source of stat drops,
     // so this code currently has no effect on gameplay.
-    if (attacker) {
-      const bypassed = new BooleanHolder(false);
-      // TODO: Allow this to be simulated
-      applyAbAttrs("InfiltratorAbAttr", { pokemon: attacker, simulated: false, bypassed });
-      if (bypassed.value) {
-        return false;
-      }
-    }
+    // if (source) {
+    //   const bypassed = new BooleanHolder(false);
+    //   applyAbAttrs("InfiltratorAbAttr", { pokemon: source, simulated, bypassed });
+    //   if (bypassed.value) {
+    //     return;
+    //   }
+    // }
 
     cancelled.value = true;
-
     if (!simulated) {
       globalScene.phaseManager.queueMessage(
         i18next.t("arenaTag:mistApply", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(this.getSourcePokemon()),
+          pokemonNameWithAffix: getPokemonNameWithAffix(defender),
         }),
       );
     }
-
-    return true;
   }
 }
 
