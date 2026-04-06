@@ -133,7 +133,7 @@ export class AttemptCapturePhase extends Phase {
     await this.animateShakeChecks(successfulShakes);
 
     if (!caught) {
-      await this.failCatch(successfulShakes);
+      await this.failCatch();
       return;
     }
 
