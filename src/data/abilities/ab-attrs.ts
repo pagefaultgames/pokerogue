@@ -6,7 +6,6 @@ import { type BattlerTag, CritBoostTag, SemiInvulnerableTag } from "#data/battle
 import { getBerryEffectFunc } from "#data/berry";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { SpeciesFormChangeAbilityTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
-import { getMoveTargets } from "#data/moves/move-utils";
 import { getPokeballName } from "#data/pokeball";
 import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies } from "#data/pokemon-species";
