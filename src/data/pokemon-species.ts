@@ -1,6 +1,7 @@
 import { determineEnemySpecies } from "#app/ai/ai-species-gen";
 import type { AnySound } from "#app/battle-scene";
 import type { GameMode } from "#app/game-mode";
+import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { speciesEggMoves } from "#balance/moves/egg-moves";
 import { starterPassiveAbilities } from "#balance/passives";
@@ -31,7 +32,7 @@ import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { StarterMoveset } from "#types/save-data";
 import type { EvolutionLevel, EvolutionLevelWithThreshold } from "#types/species-gen-types";
 import { randSeedFloat, randSeedGauss } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase, toPascalCase } from "#utils/strings";
 import { argbFromRgba, QuantizerCelebi, rgbaFromArgb } from "@material/material-color-utilities";
 import i18next from "i18next";
@@ -338,7 +339,23 @@ export abstract class PokemonSpeciesForm {
       && female
       && ![SpeciesFormKey.MEGA, SpeciesFormKey.GIGANTAMAX].includes(formSpriteKey as SpeciesFormKey);
 
-    return `${showGenderDiffs ? "female__" : ""}${this.speciesId}${formSpriteKey ? `-${formSpriteKey}` : ""}`;
+    let spriteKey = `${showGenderDiffs ? "female__" : ""}${this.speciesId}${formSpriteKey ? `-${formSpriteKey}` : ""}`;
+
+    const replacement = timedEventManager.getEventPokemonSpriteReplacement(this.speciesId, formIndex);
+    if (replacement) {
+      const replacementFormSpriteKey = getPokemonSpecies(replacement.speciesId).forms[
+        replacement.formIndex
+      ]?.getFormSpriteKey(replacement.formIndex);
+
+      const replacementShowGenderDiffs =
+        getPokemonSpecies(replacement.speciesId).genderDiffs
+        && female
+        && ![SpeciesFormKey.MEGA, SpeciesFormKey.GIGANTAMAX].includes(replacementFormSpriteKey as SpeciesFormKey);
+
+      spriteKey = `${replacementShowGenderDiffs ? "female__" : ""}${replacement.speciesId}${replacementFormSpriteKey ? `-${replacementFormSpriteKey}` : ""}`;
+    }
+
+    return spriteKey;
   }
 
   /** Compute the sprite ID of the pokemon form. */
@@ -363,7 +380,7 @@ export abstract class PokemonSpeciesForm {
    * @param formIndex optional form index for pokemon with different forms
    * @returns species id if no additional forms, index with formkey if a pokemon with a form
    */
-  getVariantDataIndex(formIndex?: number) {
+  getVariantDataIndex(formIndex?: number): string | number {
     let formkey: string | null = null;
     let variantDataIndex: number | string = this.speciesId;
     const species = getPokemonSpecies(this.speciesId);
@@ -373,6 +390,17 @@ export abstract class PokemonSpeciesForm {
         variantDataIndex = `${this.speciesId}-${formkey}`;
       }
     }
+
+    const replacement = timedEventManager.getEventPokemonSpriteReplacement(this.speciesId, formIndex);
+    if (replacement) {
+      formkey = species.forms[replacement.formIndex]?.getFormSpriteKey(replacement.formIndex);
+      if (formkey) {
+        variantDataIndex = `${replacement.speciesId}-${formkey}`;
+      } else {
+        variantDataIndex = replacement.speciesId;
+      }
+    }
+
     return variantDataIndex;
   }
 
@@ -380,7 +408,12 @@ export abstract class PokemonSpeciesForm {
     const variantDataIndex = this.getVariantDataIndex(formIndex);
     const isVariant =
       shiny && variantData[variantDataIndex] && variant !== undefined && variantData[variantDataIndex][variant];
-    return `pokemon_icons_${this.generation}${isVariant ? "v" : ""}`;
+
+    const replacementSpecies = timedEventManager.getEventPokemonSpriteReplacement(this.speciesId, formIndex);
+    const generation = replacementSpecies
+      ? getPokemonSpeciesForm(replacementSpecies.speciesId, replacementSpecies.formIndex).generation
+      : this.generation;
+    return `pokemon_icons_${generation}${isVariant ? "v" : ""}`;
   }
 
   getIconId(female: boolean, formIndex?: number, shiny?: boolean, variant?: number): string {
@@ -389,8 +422,13 @@ export abstract class PokemonSpeciesForm {
     }
 
     const variantDataIndex = this.getVariantDataIndex(formIndex);
+    const replacement = timedEventManager.getEventPokemonSpriteReplacement(this.speciesId, formIndex);
 
     let ret = this.speciesId.toString();
+
+    if (replacement) {
+      ret = replacement.speciesId.toString();
+    }
 
     const isVariant =
       shiny && variantData[variantDataIndex] && variant !== undefined && variantData[variantDataIndex][variant];
@@ -417,6 +455,11 @@ export abstract class PokemonSpeciesForm {
     }
 
     let formSpriteKey = this.getFormSpriteKey(formIndex);
+    if (replacement) {
+      formSpriteKey = getPokemonSpeciesForm(replacement.speciesId, replacement.formIndex).getFormSpriteKey(
+        replacement.formIndex,
+      );
+    }
     if (formSpriteKey) {
       switch (this.speciesId) {
         case SpeciesId.DUDUNSPARCE:
@@ -442,8 +485,15 @@ export abstract class PokemonSpeciesForm {
 
   getCryKey(formIndex?: number): string {
     let speciesId = this.speciesId;
-    if (this.speciesId > 2000) {
-      switch (this.speciesId) {
+
+    const override = timedEventManager.getEventPokemonSpriteReplacement(this.speciesId, formIndex);
+    if (override) {
+      speciesId = override.speciesId;
+      formIndex = override.formIndex;
+    }
+
+    if (speciesId > 2000) {
+      switch (speciesId) {
         case SpeciesId.GALAR_SLOWPOKE:
           break;
         case SpeciesId.ETERNAL_FLOETTE:
