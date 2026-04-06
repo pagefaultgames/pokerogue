@@ -2443,9 +2443,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     applyMoveAttrs("VariableMoveTypeAttr", this, null, move, moveTypeHolder);
 
-    // Moves that are overridden by an ability (e.g. Aerilate) should not have their type
-    // changed by MoveTypeChangeAbAttr
-    if (!move.hasAttr("OverrideMoveEffectAttr")) {
+    // Avoid applying type-changing abilities (e.g. Aerilate) for move-calling moves
+    if (!move.hasAttr("CallMoveAttr")) {
       applyAbAttrs("MoveTypeChangeAbAttr", {
         pokemon: this,
         move,
