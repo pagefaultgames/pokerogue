@@ -324,7 +324,6 @@ describe("Abilities - Gulp Missile", () => {
   it("shouldn't cause a softlock if it faints the enemy pokemon", async () => {
     game.override.startingLevel(1).enemyLevel(200);
     await game.classicMode.startBattle(SpeciesId.CRAMORANT, SpeciesId.MILOTIC);
-    const player = game.field.getPlayerPokemon();
     const enemy = game.field.getEnemyPokemon();
 
     game.move.use(MoveId.SURF);
