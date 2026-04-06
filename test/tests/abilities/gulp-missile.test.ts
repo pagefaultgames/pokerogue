@@ -299,7 +299,8 @@ describe("Abilities - Gulp Missile", () => {
 
     expect(game.field.getEnemyPokemon().hasAbility(AbilityId.GULP_MISSILE)).toBe(false);
   });
-  it("doesn't cause a softlock if it faints the player pokemon", async () => {
+
+  it("shouldn't cause a softlock if it faints the player", async () => {
     game.override.enemySpecies(SpeciesId.CRAMORANT).enemyAbility(AbilityId.GULP_MISSILE).startingLevel(200);
     await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
 
