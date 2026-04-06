@@ -67,8 +67,12 @@ async function run(): Promise<void> {
     const authToken = core.getInput("github_token", { required: true });
 
     const { eventName } = github.context;
-    if (eventName !== "pull_request" || !github.context.payload.pull_request) {
+    if (eventName !== "pull_request") {
       core.setFailed(`Invalid event: ${eventName}`);
+      return;
+    }
+    if (!github.context.payload.pull_request) {
+      core.setFailed("Error parsing pull request data!");
       return;
     }
 
