@@ -56,8 +56,6 @@ export function getPokeballCatchMultiplier(type: PokeballType): number {
       return 3;
     case PokeballType.MASTER_BALL:
       return -1;
-    // case PokeballType.LUXURY_BALL:
-    //   return 1;
   }
 }
 
