@@ -75,16 +75,15 @@ export class BattleFlyout extends Phaser.GameObjects.Container {
     this.flyoutParent = globalScene.add
       .container(this.anchorX - this.translationX, this.anchorY) //
       .setAlpha(0);
-    this.add(this.flyoutParent);
 
     this.flyoutBackground = globalScene.add
       .sprite(0, 0, "pbinfo_enemy_boss_stats") //
       .setOrigin(0, 0);
 
     this.flyoutContainer = globalScene.add.container(44 + (this.isPlayer ? -FLYOUT_WIDTH : 0), 2);
-    this.flyoutParent.add([this.flyoutContainer, this.flyoutBackground]);
+    this.flyoutParent.add([this.flyoutParent, this.flyoutContainer, this.flyoutBackground]);
 
-    // Loops through and sets the position of each text object according to the width and height of the flyout
+    // Create a 2x2 grid of text objects for move infos
     for (let i = 0; i < 4; i++) {
       this.flyoutText[i] = addTextObject(
         FLYOUT_WIDTH / 4 + (FLYOUT_WIDTH / 2) * (i % 2),
@@ -98,9 +97,9 @@ export class BattleFlyout extends Phaser.GameObjects.Container {
         .setOrigin(0.5, 0.5);
     }
 
-    // TODO: What are these rectangles for?
     this.flyoutContainer
       .add(this.flyoutText)
+      // TODO: What are these rectangles for?
       .add(
         new Phaser.GameObjects.Rectangle(
           globalScene,
@@ -110,13 +109,11 @@ export class BattleFlyout extends Phaser.GameObjects.Container {
           FLYOUT_HEIGHT + (globalScene.uiTheme === UiTheme.LEGACY ? 1 : 0),
           0x212121,
         ).setOrigin(0.5, 0),
+      )
+      .add(
+        new Phaser.GameObjects.Rectangle(globalScene, 0, FLYOUT_HEIGHT / 2, FLYOUT_WIDTH + 6, 1, 0x212121) //
+          .setOrigin(0, 0.5),
       );
-    this.flyoutContainer.add(
-      new Phaser.GameObjects.Rectangle(globalScene, 0, FLYOUT_HEIGHT / 2, FLYOUT_WIDTH + 6, 1, 0x212121).setOrigin(
-        0,
-        0.5,
-      ),
-    );
   }
 
   /**
@@ -153,7 +150,7 @@ export class BattleFlyout extends Phaser.GameObjects.Container {
    * Update the corresponding {@linkcode MoveInfo} object in the moveInfo array.
    * @param event - The {@linkcode MovesetChangedEvent} having been emitted
    */
-  #onMovesetChanged = (event: MovesetChangedEvent): void => {
+  readonly #onMovesetChanged = (event: MovesetChangedEvent): void => {
     const { pokemonId, move: movesetMove } = event;
     if (pokemonId !== this.pokemon.id || movesetMove.moveId === MoveId.NONE || movesetMove.moveId === MoveId.STRUGGLE) {
       return;
@@ -182,7 +179,7 @@ export class BattleFlyout extends Phaser.GameObjects.Container {
    * Reset the linked Pokemon's temporary moveset data when it is switched out.
    * @param event - The {@linkcode SummonDataResetEvent} having been emitted
    */
-  #onSummonDataReset = (event: SummonDataResetEvent) => {
+  readonly #onSummonDataReset = (event: SummonDataResetEvent) => {
     if (event.pokemonId !== this.pokemon.id) {
       return;
     }
@@ -202,6 +199,7 @@ export class BattleFlyout extends Phaser.GameObjects.Container {
       ease: "Sine.easeInOut",
       alpha: visible ? 1 : 0,
     });
+    this.setVisible(visible);
   }
 
   /** Destroy this element and remove all associated listeners. */
