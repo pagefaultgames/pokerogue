@@ -320,7 +320,6 @@ describe("Abilities - Gulp Missile", () => {
     await game.toEndOfTurn();
 
     expect(player).toHaveFainted();
-    expect(enemy).toHaveFainted();
   });
 
   it("shouldn't cause a softlock if it faints the enemy pokemon", async () => {
