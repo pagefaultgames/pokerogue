@@ -1228,11 +1228,13 @@ export class GravityTag extends SerializableArenaTag {
         if (pokemon.getTag(BattlerTagType.FLYING)) {
           pokemon.addTag(BattlerTagType.INTERRUPTED);
         }
-        globalScene.phaseManager.queueMessage(
-          i18next.t("arenaTag:gravityGroundsPokemon", {
-            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          }),
-        );
+        if (pokemon.isGrounded()) {
+          globalScene.phaseManager.queueMessage(
+            i18next.t("arenaTag:gravityGroundsPokemon", {
+              pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+            }),
+          );
+        }
       }
     }
   }
