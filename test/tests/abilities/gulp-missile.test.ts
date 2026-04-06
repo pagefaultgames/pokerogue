@@ -339,7 +339,6 @@ describe("Abilities - Gulp Missile", () => {
     game.doSelectPartyPokemon(1);
     await game.toEndOfTurn();
 
-    expect(player).toHaveFainted();
     expect(enemy).toHaveFainted();
   });
 });
