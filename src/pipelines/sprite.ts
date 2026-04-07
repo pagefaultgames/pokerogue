@@ -164,7 +164,7 @@ export class SpritePipeline extends FieldSpritePipeline {
     super.onBatch(gameObject);
   }
 
-  // biome-ignore lint/nursery/useMaxParams: Not our fault Phaser gives this 20 params
+  // biome-ignore lint/complexity/useMaxParams: Not our fault Phaser gives this 20 params
   override batchQuad(
     gameObject: Phaser.GameObjects.GameObject,
     x0: number,

@@ -8,6 +8,7 @@ import {
   getDailyForcedWaveSpecies,
   getDailyStartingBiome,
   getDailyStartingMoney,
+  getDailyTrainerManipulation,
 } from "#data/daily-seed/daily-run";
 import { parseDailySeed } from "#data/daily-seed/daily-seed-utils";
 import { allSpecies } from "#data/data-lists";
@@ -17,7 +18,6 @@ import { ChallengeType } from "#enums/challenge-type";
 import { Challenges } from "#enums/challenges";
 import { GameModes } from "#enums/game-modes";
 import { SpeciesId } from "#enums/species-id";
-import type { Arena } from "#field/arena";
 import { classicFixedBattles, type FixedBattleConfigs } from "#trainers/fixed-battle-configs";
 import type { CustomDailyRunConfig } from "#types/daily-run";
 import { applyChallenges } from "#utils/challenge-utils";
@@ -201,18 +201,21 @@ export class GameMode implements GameModeConfig {
 
   /**
    * Determines whether or not to generate a trainer
-   * @param waveIndex the current floor the player is on (trainer sprites fail to generate on X1 floors)
-   * @param arena the current {@linkcode Arena}
-   * @returns `true` if a trainer should be generated, `false` otherwise
+   * @param waveIndex - The current floor the player is on (trainer sprites fail to generate on X1 floors)
+   * @returns Whether a trainer should be generated
    */
-  isWaveTrainer(waveIndex: number, arena: Arena): boolean {
-    /**
-     * Daily spawns trainers on floors 5, 15, 20, 25, 30, 35, 40, and 45
-     */
+  public isWaveTrainer(waveIndex: number): boolean {
+    const { arena, offsetGym } = globalScene;
+
+    // Daily spawns trainers on floors 5, 15, 20, 25, 30, 35, 40, and 45
     if (this.isDaily) {
+      const trainerManipulation = getDailyTrainerManipulation(waveIndex);
+      if (trainerManipulation != null) {
+        return trainerManipulation;
+      }
       return waveIndex % 10 === 5 || (!(waveIndex % 10) && waveIndex > 10 && !this.isWaveFinal(waveIndex));
     }
-    if (waveIndex % 30 === (globalScene.offsetGym ? 0 : 20) && !this.isWaveFinal(waveIndex)) {
+    if (waveIndex % 30 === (offsetGym ? 0 : 20) && !this.isWaveFinal(waveIndex)) {
       return true;
     }
     if (waveIndex % 10 !== 1 && waveIndex % 10) {
@@ -220,7 +223,7 @@ export class GameMode implements GameModeConfig {
        * Do not check X1 floors since there's a bug that stops trainer sprites from appearing
        * after a X0 full party heal, this also allows for a smoother biome transition for general gameplay feel
        */
-      const trainerChance = arena.getTrainerChance();
+      const trainerChance = arena.trainerChance;
       let allowTrainerBattle = true;
       if (trainerChance) {
         const waveBase = Math.floor(waveIndex / 10) * 10;
@@ -229,13 +232,13 @@ export class GameMode implements GameModeConfig {
           if (w === waveIndex) {
             continue;
           }
-          if (w % 30 === (globalScene.offsetGym ? 0 : 20) || this.isFixedBattle(w)) {
+          if (w % 30 === (offsetGym ? 0 : 20) || this.isFixedBattle(w)) {
             allowTrainerBattle = false;
             break;
           }
           if (w < waveIndex) {
             globalScene.executeWithSeedOffset(() => {
-              const waveTrainerChance = arena.getTrainerChance();
+              const waveTrainerChance = arena.trainerChance;
               if (!randSeedInt(waveTrainerChance)) {
                 allowTrainerBattle = false;
               }
@@ -297,7 +300,7 @@ export class GameMode implements GameModeConfig {
         return waveIndex === 200;
       case GameModes.ENDLESS:
       case GameModes.SPLICED_ENDLESS:
-        return !(waveIndex % 250);
+        return waveIndex % 250 === 0;
       case GameModes.DAILY:
         return waveIndex === 50;
     }
@@ -319,20 +322,21 @@ export class GameMode implements GameModeConfig {
   }
 
   /**
-   * Every 50 waves of an Endless mode is a boss
-   * At this time it is paradox pokemon
-   * @returns true if waveIndex is a multiple of 50 in Endless
+   * Check whether the current wave is an Endless boss of any kind.
+   * @param waveIndex - The current wave number.
+   * @returns Whether `waveIndex` corresponds to an Endless boss.
    */
   isEndlessBoss(waveIndex: number): boolean {
     return waveIndex % 50 === 0 && (this.modeId === GameModes.ENDLESS || this.modeId === GameModes.SPLICED_ENDLESS);
   }
 
   /**
-   * Every 250 waves of an Endless mode is a minor boss
-   * At this time it is Eternatus
-   * @returns true if waveIndex is a multiple of 250 in Endless
+   * Check whether the current wave is an Endless minor boss.
+   * Currently is normal Eternatus.
+   * @param waveIndex - The current wave number.
+   * @returns Whether `waveIndex` is a multiple of 250 during endless mode.
    */
-  isEndlessMinorBoss(waveIndex: number): boolean {
+  public isEndlessMinorBoss(waveIndex: number): boolean {
     return waveIndex % 250 === 0 && (this.modeId === GameModes.ENDLESS || this.modeId === GameModes.SPLICED_ENDLESS);
   }
 
@@ -363,7 +367,7 @@ export class GameMode implements GameModeConfig {
    * @param waveIndex The wave to check.
    * @returns The fixed battle for this wave.
    */
-  getFixedBattle(waveIndex: number): FixedBattleConfig {
+  getFixedBattle(waveIndex: number): FixedBattleConfig | undefined {
     const challengeConfig = new FixedBattleConfig();
     if (applyChallenges(ChallengeType.FIXED_BATTLES, waveIndex, challengeConfig)) {
       return challengeConfig;
@@ -423,7 +427,7 @@ export class GameMode implements GameModeConfig {
   /**
    * Returns the wave range where MEs can spawn for the game mode [min, max]
    */
-  getMysteryEncounterLegalWaves(): [number, number] {
+  getMysteryEncounterLegalWaves(): [minWave: number, maxWave: number] {
     switch (this.modeId) {
       case GameModes.CLASSIC:
         return CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES;

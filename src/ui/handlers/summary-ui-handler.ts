@@ -848,19 +848,16 @@ export class SummaryUiHandler extends UiHandler {
             ? i18next.t("trainerNames:playerF")
             : i18next.t("trainerNames:playerM");
 
-        const profileContainerProfilTitle = globalScene.add.image(
-          7,
-          4,
-          getLocalizedSpriteKey("summary_profile_profile_title"), // Pixel text 'PROFIL'
-        );
-        profileContainerProfilTitle.setOrigin(0, 0.5);
-        profileContainer.add(profileContainerProfilTitle);
+        const profileContainerProfileTitle = globalScene.add //
+          .image(7, 4, getLocalizedSpriteKey("summary_profile_profile_title")) // Pixel text 'PROFILE'
+          .setOrigin(0, 0.5);
+        profileContainer.add(profileContainerProfileTitle);
 
         // TODO: should add field for original trainer name to Pokemon object, to support gift/traded Pokemon from MEs
         const trainerText = addBBCodeTextObject(
           7,
           12,
-          `${i18next.t("pokemonSummary:ot")}/${getBBCodeFrag(
+          `${getBBCodeFrag(`${i18next.t("pokemonSummary:ot")}/`, TextStyle.SUMMARY_ALT)}${getBBCodeFrag(
             globalScene.hideUsername
               ? usernameReplacement
               : loggedInUser?.username || i18next.t("pokemonSummary:unknown"),
@@ -904,8 +901,12 @@ export class SummaryUiHandler extends UiHandler {
         }
 
         if (this.pokemon?.getLuck()) {
-          const luckLabelText = addTextObject(141, 28, i18next.t("common:luckIndicator"), TextStyle.SUMMARY_ALT);
-          luckLabelText.setOrigin(0, 0);
+          const luckLabelText = addTextObject(
+            141,
+            28,
+            i18next.t("common:luckIndicator"),
+            TextStyle.WINDOW_ALT,
+          ).setOrigin(0, 0);
           profileContainer.add(luckLabelText);
 
           const luckText = addTextObject(
@@ -1225,12 +1226,12 @@ export class SummaryUiHandler extends UiHandler {
             newMoveTypeIcon.setOrigin(0, 1);
             this.extraMoveRowContainer.add(newMoveTypeIcon);
           }
-          const ppOverlay = globalScene.add.image(172, -5, getLocalizedSpriteKey("summary_moves_overlay_pp")); // Pixel text 'PP'
+          const ppOverlay = globalScene.add.image(177, -5, getLocalizedSpriteKey("summary_moves_overlay_pp")); // Pixel text 'PP'
           ppOverlay.setOrigin(1, 0.5);
           this.extraMoveRowContainer.add(ppOverlay);
 
           const pp = padInt(this.newMove?.pp!, 2, "  "); // TODO: is this bang correct?
-          const ppText = addTextObject(173, 1, `${pp}/${pp}`, TextStyle.WINDOW);
+          const ppText = addTextObject(178, 1, `${pp}/${pp}`, TextStyle.WINDOW);
           ppText.setOrigin(0, 1);
           this.extraMoveRowContainer.add(ppText);
         }

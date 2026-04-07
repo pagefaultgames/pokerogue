@@ -1,4 +1,5 @@
 import { coerceArray } from "#utils/array";
+import { getCachedUrl } from "#utils/fetch-utils";
 
 export const legacyCompatibleImages: string[] = [];
 
@@ -26,38 +27,23 @@ export class SceneBase extends Phaser.Scene {
     });
   }
 
-  public getCachedUrl(url: string): string {
-    const manifest = this.game.manifest;
-    if (!manifest) {
-      return url;
-    }
-
-    // TODO: This is inconsistent with how the battle scene cached fetch
-    // uses the manifest
-    const timestamp = manifest[`/${url}`];
-    if (timestamp) {
-      url += `?t=${timestamp}`;
-    }
-    return url;
-  }
-
   public loadImage(key: string, folder: string, filename = `${key}.png`): this {
-    this.load.image(key, this.getCachedUrl(`images/${folder}/${filename}`));
+    this.load.image(key, getCachedUrl(`images/${folder}/${filename}`));
     if (folder.startsWith("ui")) {
       folder = folder.replace("ui", "ui/legacy");
-      this.load.image(`${key}_legacy`, this.getCachedUrl(`images/${folder}/${filename}`));
+      this.load.image(`${key}_legacy`, getCachedUrl(`images/${folder}/${filename}`));
     }
     return this;
   }
 
   public loadSpritesheet(key: string, folder: string, size: number, filename = `${key}.png`): this {
-    this.load.spritesheet(key, this.getCachedUrl(`images/${folder}/${filename}`), {
+    this.load.spritesheet(key, getCachedUrl(`images/${folder}/${filename}`), {
       frameWidth: size,
       frameHeight: size,
     });
     if (folder.startsWith("ui")) {
       folder = folder.replace("ui", "ui/legacy");
-      this.load.spritesheet(`${key}_legacy`, this.getCachedUrl(`images/${folder}/${filename}`), {
+      this.load.spritesheet(`${key}_legacy`, getCachedUrl(`images/${folder}/${filename}`), {
         frameWidth: size,
         frameHeight: size,
       });
@@ -71,15 +57,15 @@ export class SceneBase extends Phaser.Scene {
     }
     this.load.atlas(
       key,
-      this.getCachedUrl(`images/${folder}${filenameRoot}.png`),
-      this.getCachedUrl(`images/${folder}${filenameRoot}.json`),
+      getCachedUrl(`images/${folder}${filenameRoot}.png`),
+      getCachedUrl(`images/${folder}${filenameRoot}.json`),
     );
     if (folder.startsWith("ui")) {
       folder = folder.replace("ui", "ui/legacy");
       this.load.atlas(
         `${key}_legacy`,
-        this.getCachedUrl(`images/${folder}${filenameRoot}.png`),
-        this.getCachedUrl(`images/${folder}${filenameRoot}.json`),
+        getCachedUrl(`images/${folder}${filenameRoot}.png`),
+        getCachedUrl(`images/${folder}${filenameRoot}.json`),
       );
     }
     return this;
@@ -91,13 +77,13 @@ export class SceneBase extends Phaser.Scene {
     filenames = coerceArray(filenames);
     for (const f of filenames as string[]) {
       // TODO: Use actual path joining logic
-      this.load.audio(folder + key, this.getCachedUrl(`audio/${folder}${f}`));
+      this.load.audio(folder + key, getCachedUrl(`audio/${folder}${f}`));
     }
     return this;
   }
 
   public loadBgm(key: string, filename = `${key}.mp3`): this {
-    this.load.audio(key, this.getCachedUrl(`audio/bgm/${filename}`));
+    this.load.audio(key, getCachedUrl(`audio/bgm/${filename}`));
     return this;
   }
 }

@@ -25,6 +25,7 @@ import type { MoveHelper } from "#test/helpers/move-helper";
 import { getEnumStr, stringifyEnumArray } from "#test/utils/string-utils";
 import { coerceArray } from "#utils/array";
 import { shiftCharCodes } from "#utils/common";
+import { enumValueToKey } from "#utils/enums";
 import chalk from "chalk";
 import { vi } from "vitest";
 
@@ -62,16 +63,19 @@ export class OverridesHelper extends GameManagerHelper {
    */
   public startingBiome(biome: BiomeId): this {
     this.game.scene.newArena(biome);
-    this.log(`Starting biome set to ${BiomeId[biome]} (=${biome})!`);
+    this.log(`Starting biome set to ${enumValueToKey(BiomeId, biome)} (=${biome})!`);
     return this;
   }
 
   /**
-   * Override the starting wave index
-   * @param wave - The wave to set. Classic: `1`-`200`
+   * Override the starting wave index.
+   * @param wave - The wave to set, or `null` to disable the override
    * @returns `this`
    */
-  public startingWave(wave: number): this {
+  public startingWave(wave: number | null): this {
+    if (wave != null && wave <= 0) {
+      throw new Error("Attempted to set invalid wave index: " + wave.toString());
+    }
     vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(wave);
     this.log(`Starting wave set to ${wave}!`);
     return this;
@@ -510,7 +514,7 @@ export class OverridesHelper extends GameManagerHelper {
    * @returns `this`
    * @remarks
    * Does nothing if {@linkcode Overrides.ENEMY_FUSION_OVERRIDE} is not enabled
-   * {@see {@linkcode enableEnemyFusion}}
+   * @see {@linkcode enableEnemyFusion}
    */
   // TODO: Should we just bundle these 2 together?
   public enemyFusionSpecies(species: SpeciesId | null): this {

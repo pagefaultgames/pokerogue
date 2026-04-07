@@ -1,7 +1,6 @@
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
-import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
@@ -38,7 +37,7 @@ describe("Move - Trick Room", () => {
     const karp = game.field.getEnemyPokemon();
     feebas.setStat(Stat.SPD, 2);
     karp.setStat(Stat.SPD, 1);
-    expect(game.field.getSpeedOrder(true)).toEqual([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    expect(game.field.getSpeedOrder()).toEqual([feebas, karp]);
 
     // Add trick room to the field
     game.move.use(MoveId.TRICK_ROOM);
@@ -51,6 +50,7 @@ describe("Move - Trick Room", () => {
       sourceMove: MoveId.TRICK_ROOM,
       turnCount: 4, // The 5 turn limit _includes_ the current turn!
     });
+    expect(game.field.getSpeedOrder(false, false)).toEqual([karp, feebas]);
 
     game.move.use(MoveId.SUNNY_DAY);
     await game.move.forceEnemyMove(MoveId.RAIN_DANCE);

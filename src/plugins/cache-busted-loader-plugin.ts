@@ -1,10 +1,11 @@
-import { globalScene } from "#app/global-scene";
+import { globalManifest } from "#app/global-manifest";
 import { coerceArray } from "#utils/array";
+import { getCachedUrl } from "#utils/fetch-utils";
 
 export class CacheBustedLoaderPlugin extends Phaser.Loader.LoaderPlugin {
   addFile(files: Phaser.Loader.File | Phaser.Loader.File[]): void {
     files = coerceArray(files);
-    const { manifest } = globalScene.game;
+    const manifest = globalManifest;
 
     if (!manifest) {
       super.addFile(files);
@@ -16,10 +17,7 @@ export class CacheBustedLoaderPlugin extends Phaser.Loader.LoaderPlugin {
         continue;
       }
 
-      const timestamp = manifest[`/${item.url.replace(/\/\//g, "/")}`];
-      if (timestamp) {
-        item.url += `?t=${timestamp}`;
-      }
+      item.url = getCachedUrl(item.url.replace(/\/\//g, "/"));
     }
 
     super.addFile(files);

@@ -6,7 +6,7 @@ import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 import { Phase } from "#app/phase";
 import { bypassLogin } from "#constants/app-constants";
-import { getDailyRunStarters } from "#data/daily-seed/daily-run";
+import { getDailyRunStarters, startDailyEventChallenges } from "#data/daily-seed/daily-run";
 import { modifierTypes } from "#data/data-lists";
 import { Gender } from "#data/gender";
 import { BattleType } from "#enums/battle-type";
@@ -228,10 +228,11 @@ export class TitlePhase extends Phase {
 
       const generateDaily = (seed: string) => {
         globalScene.gameMode = getGameMode(GameModes.DAILY);
-        // Daily runs don't support all challenges yet (starter select restrictions aren't considered)
-        timedEventManager.startEventChallenges();
 
         seed = globalScene.gameMode.trySetCustomDailyConfig(seed);
+
+        // Daily runs don't support all challenges yet (starter select restrictions aren't considered)
+        startDailyEventChallenges();
 
         globalScene.setSeed(seed);
         globalScene.resetSeed();
@@ -244,7 +245,7 @@ export class TitlePhase extends Phase {
         // TODO: Dedupe this
         const party = globalScene.getPlayerParty();
         const loadPokemonAssets: Promise<void>[] = [];
-        for (const starter of starters) {
+        for (const [index, starter] of starters.entries()) {
           const species = getPokemonSpecies(starter.speciesId);
           const starterFormIndex = starter.formIndex;
           const starterGender =
@@ -264,6 +265,14 @@ export class TitlePhase extends Phase {
           if (starter.moveset) {
             // avoid validating daily run starter movesets which are pre-populated already
             starterPokemon.tryPopulateMoveset(starter.moveset, true);
+          }
+
+          const customStarterConfig = globalScene.gameMode.dailyConfig?.starters?.[index];
+          if (customStarterConfig?.ability != null) {
+            starterPokemon.customPokemonData.ability = customStarterConfig.ability;
+          }
+          if (customStarterConfig?.passive != null) {
+            starterPokemon.customPokemonData.passive = customStarterConfig.passive;
           }
 
           party.push(starterPokemon);

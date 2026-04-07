@@ -78,7 +78,7 @@ jobs:
 
       # Lint files with Biome-Lint - https://biomejs.dev/linter/
       - name: Lint with Biome
-        run: pnpm biome-ci
+        run: pnpm biome:ci
         if: ${{ !cancelled() && (needs.linting-path-filter.outputs.all == 'true' || needs.linting-path-filter.outputs.ts-files == 'true' || needs.linting-path-filter.outputs.js-files == 'true') }}
 
       # Validate dependencies with dependency-cruiser - https://github.com/sverweij/dependency-cruiser

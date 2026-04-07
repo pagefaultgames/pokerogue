@@ -18,7 +18,5 @@ export type EvoLevelThreshold = [strong: number, normal: number, wild: number];
  */
 export type EvolutionLevel = [species: SpeciesId, level: number];
 
-/**
- * {@inheritdoc EvolutionLevel}
- */
+/** @see {@linkcode EvolutionLevel} */
 export type EvolutionLevelWithThreshold = [species: SpeciesId, level: number, evoLevelThreshold?: EvoLevelThreshold];
