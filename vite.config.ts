@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+ * SPDX-FileCopyrightText: 2024-2026 Pagefault Games
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
@@ -17,10 +17,7 @@ export const sharedConfig: UserConfigFnPromise = async ({ mode }) =>
       ? []
       : [
           tsconfigPaths(),
-          (await import("./src/plugins/vite/vite-minify-json-plugin")).minifyJsonPlugin(
-            ["images", "battle-anims"],
-            true,
-          ),
+          (await import("./src/plugins/vite/vite-minify-json-plugin")).minifyPublicJsonFiles(),
           (await import("./src/plugins/vite/namespaces-i18n-plugin")).LocaleNamespace(),
         ],
     clearScreen: false,

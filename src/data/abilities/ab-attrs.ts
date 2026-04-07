@@ -42,7 +42,9 @@ import { BerryUsedEvent } from "#events/battle-scene";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#modifiers/modifier";
 import { BerryModifierType } from "#modifiers/modifier-type";
-import type { PokemonMove } from "#moves/pokemon-move";
+import { getMoveTargets } from "#moves/move-utils";
+import { PokemonMove } from "#moves/pokemon-move";
+import type { MoveReflectPhase } from "#phases/move-reflect-phase";
 import type {
   AbAttrCondition,
   AbAttrMap,
@@ -1487,8 +1489,11 @@ As such, we require that all subclasses have compatible `apply` parameters.
 The `Closed` type is used to indicate that subclasses should not modify the param typing.
 */
 export abstract class VariableMovePowerAbAttr extends PreAttackAbAttr {
+  /** Whether to skip this attribute's application during moveset generation */
+  protected readonly skipDuringMovesetGen: boolean = false;
+
   override canApply(_params: Closed<PreAttackModifyPowerAbAttrParams>): boolean {
-    return true;
+    return !this.skipDuringMovesetGen || globalScene.movesetGenInProgress;
   }
   override apply(_params: Closed<PreAttackModifyPowerAbAttrParams>): void {}
 }
@@ -1513,12 +1518,18 @@ export class MovePowerBoostAbAttr extends VariableMovePowerAbAttr {
 }
 
 export class MoveTypePowerBoostAbAttr extends MovePowerBoostAbAttr {
-  constructor(boostedType: PokemonType, powerMultiplier?: number) {
+  // Need to use declare here to override the parent class's property, allows for modification in subclass' constructor
+  protected declare readonly skipDuringMovesetGen: boolean;
+  constructor(boostedType: PokemonType, powerMultiplier?: number, skipDuringMovesetGen?: boolean) {
     super((pokemon, _defender, move) => pokemon?.getMoveType(move) === boostedType, powerMultiplier || 1.5, false);
+    if (skipDuringMovesetGen != null) {
+      this.skipDuringMovesetGen = skipDuringMovesetGen;
+    }
   }
 }
 
 export class LowHpMoveTypePowerBoostAbAttr extends MoveTypePowerBoostAbAttr {
+  protected override readonly skipDuringMovesetGen = true;
   // biome-ignore lint/complexity/noUselessConstructor: Changes the constructor params
   constructor(boostedType: PokemonType) {
     super(boostedType);
@@ -1618,8 +1629,8 @@ export interface StatMultiplierAbAttrParams extends AbAttrBaseParams {
 
 export class StatMultiplierAbAttr extends AbAttr {
   private declare readonly _: never;
-  private readonly stat: BattleStat;
-  private readonly multiplier: number;
+  public readonly stat: BattleStat;
+  public readonly multiplier: number;
   /**
    * Function determining if the stat multiplier is able to be applied to the move.
    *
@@ -2511,7 +2522,7 @@ export class DownloadAbAttr extends PostSummonAbAttr {
 }
 
 export class PostSummonWeatherChangeAbAttr extends PostSummonAbAttr {
-  private readonly weatherType: WeatherType;
+  public readonly weatherType: WeatherType;
 
   constructor(weatherType: WeatherType) {
     super();
@@ -4671,14 +4682,10 @@ export class RunSuccessAbAttr extends AbAttr {
 
 type ArenaTrapCondition = (user: Pokemon, target: Pokemon) => boolean;
 
-/**
- * Base class for checking if a Pokemon is trapped by arena trap
- * @field {@linkcode arenaTrapCondition} Conditional for trapping abilities.
- * For example, Magnet Pull will only activate if opponent is Steel type.
- * @see {@linkcode applyCheckTrapped}
- */
+/** Base class for checking if a Pokemon is trapped by a trapping effect. */
 export class CheckTrappedAbAttr extends AbAttr {
   protected arenaTrapCondition: ArenaTrapCondition;
+
   constructor(condition: ArenaTrapCondition) {
     super(false);
     this.arenaTrapCondition = condition;
@@ -5150,10 +5157,6 @@ export class MoveAbilityBypassAbAttr extends AbAttr {
   }
 }
 
-export class AlwaysHitAbAttr extends AbAttr {
-  private declare readonly _: never;
-}
-
 /** Attribute for abilities that allow moves that make contact to ignore protection (i.e. Unseen Fist) */
 export class IgnoreProtectOnContactAbAttr extends AbAttr {
   private declare readonly _: never;
@@ -5190,13 +5193,25 @@ export class InfiltratorAbAttr extends AbAttr {
 
 /**
  * Attribute implementing the effects of {@link https://bulbapedia.bulbagarden.net/wiki/Magic_Bounce_(ability) | Magic Bounce}.
+ *
  * Allows the source to bounce back {@linkcode MoveFlags.REFLECTABLE | Reflectable}
- *  moves as if the user had used {@linkcode MoveId.MAGIC_COAT | Magic Coat}.
- * @sealed
- * @todo Make reflection a part of this ability's effects
+ * moves as if the user had used {@linkcode MoveId.MAGIC_COAT | Magic Coat}.
+ *
+ * The calling {@linkcode MoveEffectPhase} will "skip" targets with a reflection effect active,
+ * showing the flyout and activating this ability during the queued {@linkcode MoveReflectPhase}.
  */
-export class ReflectStatusMoveAbAttr extends AbAttr {
-  private declare readonly _: never;
+export class ReflectStatusMoveAbAttr extends PreDefendAbAttr {
+  override apply({ pokemon, opponent, move }: AugmentMoveInteractionAbAttrParams): void {
+    const newTargets = move.isMultiTarget() ? getMoveTargets(pokemon, move.id).targets : [opponent.getBattlerIndex()];
+    globalScene.phaseManager.unshiftNew(
+      "MovePhase",
+      pokemon,
+      newTargets,
+      new PokemonMove(move.id),
+      MoveUseMode.REFLECTED,
+      MovePhaseTimingModifier.FIRST,
+    );
+  }
 }
 
 // TODO: Make these ability attributes be flags instead of dummy attributes
@@ -5785,6 +5800,93 @@ class ForceSwitchOutHelper {
 }
 
 /**
+ * Parameters for ability attributes that modify move stats during AI move
+ * generation.
+ *
+ * @remarks
+ * Ability attributes should modify the parameters here to indicate that
+ * they modify the move's power or accuracy unconditionally
+ *
+ * @see {@linkcode AiMovegenMoveStatsAbAttr}
+ */
+export interface AiMovegenMoveStatsAbAttrParams extends AbAttrBaseParams {
+  /** Multiplier for move power*/
+  powerMult: NumberHolder;
+  /** Multiplier for move accuracy */
+  accMult: NumberHolder;
+  /** The move being evaluated */
+  move: Move;
+  /** True if the move does not charge due to the ability */
+  instantCharge: BooleanHolder;
+
+  /**
+   * Indicate the multi-hit move power check should be skipped.
+   * @privateRemarks
+   * Used for skill link
+   */
+  maxMultiHit: BooleanHolder;
+}
+
+/**
+ * Ability attribute for modifying move stats during AI move generation.
+ * Modifies the power and accuracy multiplier of the move, agnostic of the move's target.
+ *
+ * ⚠️ Should not be added for abilities that already have any `VariableMovePowerAbAttr`
+ *
+ * @remarks
+ * Meant to be used for things like Drizzle (which gives water moves a 1.5x power boost)
+ * or things like compound eyes / victory star (which are treated as increasing move accuracy).
+ *
+ * @see {@linkcode AiMovegenMoveStatsAbAttrParams}
+ */
+export class AiMovegenMoveStatsAbAttr extends AbAttr {
+  protected readonly effect: (params: AiMovegenMoveStatsAbAttrParams) => void;
+  constructor(effect: (params: AiMovegenMoveStatsAbAttrParams) => void) {
+    super(false);
+    this.effect = effect;
+  }
+
+  override canApply(_params: AiMovegenMoveStatsAbAttrParams): boolean {
+    return globalScene.movesetGenInProgress;
+  }
+  override apply(params: AiMovegenMoveStatsAbAttrParams): void {
+    this.effect(params);
+  }
+}
+
+/** Used for No Guard. */
+export class AlwaysHitAbAttr extends AiMovegenMoveStatsAbAttr {
+  constructor() {
+    super(({ accMult }: AiMovegenMoveStatsAbAttrParams) => {
+      accMult.value = Number.POSITIVE_INFINITY;
+    });
+  }
+}
+
+/**
+ * Ability attribute for the terrain-summoning abilities that modifies the base power of matching types
+ */
+export class SummonTerrainAiMovegenMoveStatsAbAttr extends AiMovegenMoveStatsAbAttr {
+  /**
+   * @param moveType - Moves with this type will have power boosted during moveset gen
+   * @param boostedMove - A tuple containing the move ID and a multiplier for its power
+   */
+  constructor(moveType: PokemonType, boostedMove?: [boostedMove: MoveId, boostAmount: number]) {
+    super(({ pokemon, move, powerMult }: AiMovegenMoveStatsAbAttrParams) => {
+      if (pokemon.hasAbility(AbilityId.LEVITATE) || pokemon.isOfType(PokemonType.FLYING)) {
+        return;
+      }
+      if (move.type === moveType) {
+        powerMult.value *= 1.3;
+      }
+      if (boostedMove && move.id === boostedMove[0]) {
+        powerMult.value *= boostedMove[1];
+      }
+    });
+  }
+}
+
+/**
  * Calculate the amount of recovery from the Shell Bell item.
  * @remarks
  * If the Pokémon is holding a Shell Bell, this function computes the amount of health
@@ -6136,6 +6238,8 @@ export const AbilityAttrs = Object.freeze({
   WeightMultiplierAbAttr,
   UngroundedAbAttr,
   WonderSkinAbAttr,
+  AiMovegenMoveStatsAbAttr,
+  SummonTerrainAiMovegenMoveStatsAbAttr,
 });
 
 /** A map of of all {@linkcode AbAttr} constructors */

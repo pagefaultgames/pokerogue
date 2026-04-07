@@ -8,6 +8,10 @@ declare global {
    * ⚠️ Should not be used in production code, as it is only populated during test runs!
    */
   var server: SetupServerApi;
+  // Override for `Array.isArray` to not remove `readonly`-ness from arrays known to be readonly
+  interface ArrayConstructor {
+    isArray<T>(arg: readonly T[]): arg is readonly T[];
+  }
 }
 
 // Global augments for `typedoc` to prevent TS from erroring when editing the config JS file

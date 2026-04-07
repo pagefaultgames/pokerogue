@@ -1,10 +1,11 @@
 import { GameManager } from "#test/framework/game-manager";
+import { cachedFetch } from "#utils/fetch-utils";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Test misc", () => {
   let phaserGame: Phaser.Game;
-  let game: GameManager;
+  let _game: GameManager;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -13,7 +14,7 @@ describe("Test misc", () => {
   });
 
   beforeEach(() => {
-    game = new GameManager(phaserGame);
+    _game = new GameManager(phaserGame);
   });
 
   it("test fetch mock async", async () => {
@@ -41,7 +42,7 @@ describe("Test misc", () => {
   });
 
   it("test apifetch mock sync", async () => {
-    const data = await game.scene.cachedFetch("./battle-anims/splishy-splash.json");
+    const data = await cachedFetch("./battle-anims/splishy-splash.json");
     expect(data).toBeDefined();
   });
 });

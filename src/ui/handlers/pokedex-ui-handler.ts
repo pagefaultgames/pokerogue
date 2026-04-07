@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
-import { speciesEggMoves } from "#balance/egg-moves";
-import { pokemonStarters } from "#balance/pokemon-evolutions";
+import { speciesEggMoves } from "#balance/moves/egg-moves";
+import { getEvolutions, getPreEvolutions, pokemonStarters } from "#balance/pokemon-evolutions";
 import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#balance/pokemon-level-moves";
 import {
   getPassiveCandyCount,
@@ -47,6 +47,7 @@ import { addWindow } from "#ui/ui-theme";
 import { BooleanHolder, fixedInt, getLocalizedSpriteKey, padInt, randIntRange, rgbHexToRgba } from "#utils/common";
 import type { StarterPreferences } from "#utils/data";
 import { loadStarterPreferences } from "#utils/data";
+import { enumValueToKey } from "#utils/enums";
 import { getDexNumber, getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
@@ -118,6 +119,12 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoYOffset: 0.5,
     starterInfoXPos: 29,
   },
+  eu: {
+    starterInfoTextSize: "48px",
+    instructionTextSize: "28px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 29,
+  },
   da: {
     starterInfoTextSize: "56px",
     instructionTextSize: "28px",
@@ -172,14 +179,6 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: "28px",
   },
 };
-
-enum FilterTextOptions {
-  NAME,
-  MOVE_1,
-  MOVE_2,
-  ABILITY_1,
-  ABILITY_2,
-}
 
 interface ContainerData {
   species: PokemonSpecies;
@@ -245,7 +244,7 @@ export class PokedexUiHandler extends MessageUiHandler {
   private oldCursor = -1;
 
   private lastSpecies: PokemonSpecies;
-  private speciesLoaded: Map<SpeciesId, boolean> = new Map<SpeciesId, boolean>();
+  private readonly speciesLoaded: Map<SpeciesId, boolean> = new Map<SpeciesId, boolean>();
   private pokerusSpecies: PokemonSpecies[] = [];
   private speciesStarterDexEntry: DexEntry | null;
 
@@ -259,18 +258,9 @@ export class PokedexUiHandler extends MessageUiHandler {
 
   protected blockInput = false;
 
-  // for text filters
-  private readonly textPadding = 8;
-  private readonly defaultMessageBoxWidth = 220;
-  private readonly defaultWordWrapWidth = 1224;
-  private menuMessageBoxContainer: Phaser.GameObjects.Container;
-  private menuMessageBox: Phaser.GameObjects.NineSlice;
-  private dialogueMessageBox: Phaser.GameObjects.NineSlice;
   protected manageDataConfig: OptionSelectConfig;
-  private filterTextOptions: FilterTextOptions[];
   protected optionSelectText: Phaser.GameObjects.Text;
   protected scale = 0.1666666667;
-  private menuBg: Phaser.GameObjects.NineSlice;
 
   private filterTextContainer: Phaser.GameObjects.Container;
   private filterText: FilterText;
@@ -388,12 +378,13 @@ export class PokedexUiHandler extends MessageUiHandler {
     );
 
     // biome filter, making an entry in the dropdown for each biome
-    const biomeOptions = Object.values(BiomeId)
-      .filter(value => typeof value === "number") // Filter numeric values from the enum
-      .map(
-        (biomeValue, index) =>
-          new DropDownOption(index, new DropDownLabel(i18next.t(`biome:${toCamelCase(BiomeId[biomeValue])}`))),
-      );
+    const biomeOptions = Object.values(BiomeId).map(
+      (biomeValue, index) =>
+        new DropDownOption(
+          index,
+          new DropDownLabel(i18next.t(`biome:${toCamelCase(enumValueToKey(BiomeId, biomeValue))}`)),
+        ),
+    );
     biomeOptions.push(new DropDownOption(biomeOptions.length, new DropDownLabel(i18next.t("filterBar:uncatchable"))));
     const biomeDropDown: DropDown = new DropDown(0, 0, biomeOptions, this.updateStarters, DropDownType.HYBRID);
     this.filterBar.addFilter(DropDownColumn.BIOME, i18next.t("filterBar:biomeFilter"), biomeDropDown);
@@ -909,8 +900,8 @@ export class PokedexUiHandler extends MessageUiHandler {
     return globalScene.candyUpgradeNotification !== 0 && globalScene.candyUpgradeDisplay === 1;
   }
 
-  getStarterSpeciesId(speciesId): number {
-    if (speciesStarterCosts.hasOwnProperty(speciesId)) {
+  getStarterSpeciesId(speciesId: SpeciesId): SpeciesId {
+    if (Object.hasOwn(speciesStarterCosts, speciesId)) {
       return speciesId;
     }
     return pokemonStarters[speciesId];
@@ -1375,7 +1366,7 @@ export class PokedexUiHandler extends MessageUiHandler {
   }
 
   updateButtonIcon(iconSetting, gamepadType, iconElement, controlLabel): void {
-    // biome-ignore lint/suspicious/noImplicitAnyLet: TODO
+    // biome-ignore lint/suspicious/noEvolvingTypes: TODO
     let iconPath;
     // touch controls cannot be rebound as is, and are just emulating a keyboard event.
     // Additionally, since keyboard controls can be rebound (and will be displayed when they are), we need to have special handling for the touch controls
@@ -1403,7 +1394,7 @@ export class PokedexUiHandler extends MessageUiHandler {
   }
 
   updateFilterButtonIcon(iconSetting, gamepadType, iconElement, controlLabel): void {
-    // biome-ignore lint/suspicious/noImplicitAnyLet: TODO
+    // biome-ignore lint/suspicious/noEvolvingTypes: TODO
     let iconPath;
     // touch controls cannot be rebound as is, and are just emulating a keyboard event.
     // Additionally, since keyboard controls can be rebound (and will be displayed when they are), we need to have special handling for the touch controls
@@ -1440,6 +1431,7 @@ export class PokedexUiHandler extends MessageUiHandler {
     return levelMoves.includes(selectedMove);
   }
 
+  // TODO: why does this need to be `() => {}` in order to not crash?
   updateStarters = () => {
     this.scrollCursor = 0;
     this.filteredPokemonData = [];
@@ -1451,7 +1443,7 @@ export class PokedexUiHandler extends MessageUiHandler {
 
     this.filteredPokemonData = [];
 
-    allSpecies.forEach(species => {
+    for (const species of allSpecies) {
       const starterId = this.getStarterSpeciesId(species.speciesId);
 
       const currentDexAttr = this.getCurrentDexProps(species.speciesId);
@@ -1571,23 +1563,33 @@ export class PokedexUiHandler extends MessageUiHandler {
         .some(type => species.isOfType((type as number) - 1));
 
       // Biome filter
-      const indexToBiome = new Map(
-        Object.values(BiomeId)
-          .map((value, index) => (typeof value === "string" ? [index, value] : undefined))
-          .filter((entry): entry is [number, string] => entry !== undefined),
-      );
+      const indexToBiome = new Map(Object.keys(BiomeId).map((key, idx) => [idx, key]));
       indexToBiome.set(35, "Uncatchable");
 
-      // We get biomes for both the mon and its starters to ensure that evolutions get the correct filters.
-      // TODO: We might also need to do it the other way around.
-      const biomes = catchableSpecies[species.speciesId].concat(catchableSpecies[starterId]).map(b => BiomeId[b.biome]);
-      if (biomes.length === 0) {
-        biomes.push("Uncatchable");
+      // The entire evolutionary line is processed from the point of the current species,
+      // due to pokemon being automatically [de-]evolved when encountered
+      const evoLine: Set<SpeciesId> = new Set([
+        species.speciesId,
+        ...getPreEvolutions(species.speciesId),
+        ...getEvolutions(species.speciesId).values(),
+      ]);
+
+      const biomes: Set<string> = new Set(catchableSpecies[starterId].map(b => enumValueToKey(BiomeId, b.biome)));
+      for (const sId of evoLine) {
+        for (const bttod of catchableSpecies[sId]) {
+          biomes.add(enumValueToKey(BiomeId, bttod.biome));
+        }
       }
-      const showNoBiome = !!(biomes.length === 0 && this.filterBar.getVals(DropDownColumn.BIOME).length === 36);
+
+      if (biomes.size === 0) {
+        biomes.add("Uncatchable");
+      }
+
+      const showNoBiome = !!(biomes.size === 0 && this.filterBar.getVals(DropDownColumn.BIOME).length === 36);
       const fitsBiome =
-        this.filterBar.getVals(DropDownColumn.BIOME).some(item => biomes.includes(indexToBiome.get(item) ?? ""))
-        || showNoBiome;
+        this.filterBar
+          .getVals(DropDownColumn.BIOME)
+          .some(item => indexToBiome.has(item) && biomes.has(indexToBiome.get(item)!)) || showNoBiome;
 
       // Caught / Shiny filter
       const isNonShinyCaught = !!(caughtAttr & DexAttr.NON_SHINY);
@@ -1794,7 +1796,7 @@ export class PokedexUiHandler extends MessageUiHandler {
       ) {
         this.filteredPokemonData.push(data);
       }
-    });
+    }
 
     this.starterSelectScrollBar.setTotalRows(Math.max(Math.ceil(this.filteredPokemonData.length / 9), 1));
     this.starterSelectScrollBar.setScrollCursor(0);

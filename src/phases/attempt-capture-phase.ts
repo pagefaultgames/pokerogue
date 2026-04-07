@@ -147,10 +147,7 @@ export class AttemptCapturePhase extends PokemonPhase {
                   }
                 },
                 onRepeat: () => {
-                  if (!pokemon.species.isObtainable()) {
-                    shakeCounter.stop();
-                    this.failCatch(shakeCount);
-                  } else if (shakeCount++ < (isCritical ? 1 : 3)) {
+                  if (shakeCount++ < (isCritical ? 1 : 3)) {
                     // Shake check (skip check for critical or guaranteed captures, but still play the sound)
                     if (
                       pokeballMultiplier === -1
