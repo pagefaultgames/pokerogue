@@ -83,7 +83,7 @@ describe("Move - Court Change", () => {
     await game.classicMode.startBattle(SpeciesId.CINDERACE);
 
     for (let i = 0; i < 3; i++) {
-      game.move.use(MoveId.SPIKES);
+      game.move.use(MoveId.TOXIC_SPIKES);
       await game.toNextTurn();
     }
 
@@ -91,7 +91,7 @@ describe("Move - Court Change", () => {
     await game.toEndOfTurn();
 
     // Magikarp and Cinderace should both keep the same number of layers on their respective sides
-    expect(game).toHaveArenaTag({ tagType: ArenaTagType.SPIKES, layers: 3, side: ArenaTagSide.PLAYER });
+    expect(game).toHaveArenaTag({ tagType: ArenaTagType.TOXIC_SPIKES, layers: 2, side: ArenaTagSide.PLAYER });
     expect(game).toHaveArenaTag({ tagType: ArenaTagType.SPIKES, layers: 3, side: ArenaTagSide.ENEMY });
   });
 });

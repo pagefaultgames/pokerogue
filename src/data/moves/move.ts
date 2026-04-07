@@ -7087,7 +7087,7 @@ export class SwapArenaTagsAttr extends MoveEffectAttr {
       globalScene.arena.removeTagOnSide(enemyTag.tagType, ArenaTagSide.ENEMY, true);
     }
     for (const playerTag of tagPlayerTemp) {
-      const layers = "layers" in playerTag ? (playerTag as EntryHazardTag).layers : 1;
+      const layers = (playerTag as EntryHazardTag)?.layers ?? 1;
       for (let i = 0; i < layers; i++) {
         globalScene.arena.addTag(
           playerTag.tagType,
@@ -7100,7 +7100,7 @@ export class SwapArenaTagsAttr extends MoveEffectAttr {
       }
     }
     for (const enemyTag of tagEnemyTemp) {
-      const layers = "layers" in enemyTag ? (enemyTag as EntryHazardTag).layers : 1;
+      const layers = (enemyTag as EntryHazardTag)?.layers ?? 1;
       for (let i = 0; i < layers; i++) {
         globalScene.arena.addTag(
           enemyTag.tagType,
