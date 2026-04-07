@@ -60,5 +60,7 @@ describe("Capture Phase", () => {
 
   // TODO: Create a table-driven test using datapoints from Cave of Dragonflies:
   // https://www.dragonflycave.com/calculators/gen-vi-vii-catch-rate/
+  // Note that PKR removes much of the `4096`-based rounding from the original formula,
+  // so the results will likely vary by ~0.3% at most
   it.todo("should have proper odds");
 });

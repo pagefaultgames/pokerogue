@@ -168,6 +168,12 @@ export interface PokeballCounts {
 
 export type AnySound = Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.NoAudioSound;
 
+type BattlerIndexToPokemon<B extends BattlerIndex> = B extends BattlerIndex.ENEMY | BattlerIndex.ENEMY_2
+  ? EnemyPokemon
+  : B extends BattlerIndex.PLAYER | BattlerIndex.PLAYER_2
+    ? PlayerPokemon
+    : Pokemon;
+
 export interface InfoToggle {
   toggleInfo(force?: boolean): void;
   isActive(): boolean;
@@ -816,9 +822,7 @@ export class BattleScene extends SceneBase {
    * This function is allowed to return inactive (i.e. fainted) Pokemon.
    */
   // TODO: Replace prior indexing into `getField` with this abstraction to make an overhaul of this system easier
-  public getPokemonByBattlerIndex(battlerIndex: BattlerIndex.ENEMY | BattlerIndex.ENEMY_2): EnemyPokemon | undefined;
-  public getPokemonByBattlerIndex(battlerIndex: BattlerIndex.PLAYER | BattlerIndex.PLAYER_2): PlayerPokemon | undefined;
-  public getPokemonByBattlerIndex(battlerIndex: BattlerIndex): Pokemon | undefined;
+  public getPokemonByBattlerIndex<B extends BattlerIndex>(battlerIndex: B): BattlerIndexToPokemon<B> | undefined;
   public getPokemonByBattlerIndex(battlerIndex: BattlerIndex): Pokemon | undefined {
     // TODO: `?? undefined` is dumb and a byproduct of us splicing `null`s into `getFIeld`
     return this.getField()[battlerIndex] ?? undefined;

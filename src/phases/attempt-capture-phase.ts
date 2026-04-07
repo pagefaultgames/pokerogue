@@ -491,6 +491,8 @@ export class AttemptCapturePhase extends Phase {
         false,
       );
     });
+
+    pokemon.destroy();
   }
 
   /**
