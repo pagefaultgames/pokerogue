@@ -1222,16 +1222,26 @@ export class GravityTag extends SerializableArenaTag {
   onAdd(quiet = false): void {
     super.onAdd(quiet);
 
-    // Remove all flying-related effects from all on-field Pokemon.
-    // TODO: Do we need to move this to a helper method?
-    inSpeedOrder(ArenaTagSide.BOTH).forEach(pokemon => {
+    // Remove all flying-related effects from all on-field Pokemon, displaying a message for each one
+    // that was airborne prior to move use.
+    for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
+      const wasAirborne = !pokemon.isGrounded(true);
+
       pokemon.removeTag(BattlerTagType.FLOATING);
       pokemon.removeTag(BattlerTagType.TELEKINESIS);
       if (pokemon.getTag(BattlerTagType.FLYING)) {
         pokemon.removeTag(BattlerTagType.FLYING);
         pokemon.addTag(BattlerTagType.INTERRUPTED);
       }
-    });
+
+      if (wasAirborne) {
+        globalScene.phaseManager.queueMessage(
+          i18next.t("arenaTag:gravityGroundsPokemon", {
+            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+          }),
+        );
+      }
+    }
   }
 
   // TODO: Move accuracy boost to an `apply` method
@@ -1766,7 +1776,7 @@ export function getArenaTag(
     case ArenaTagType.TRICK_ROOM:
       return new TrickRoomTag(turnCount, sourceId);
     case ArenaTagType.GRAVITY:
-      return new GravityTag(turnCount, sourceId);
+      return new GravityTag(turnCount,sourceId);
     case ArenaTagType.REFLECT:
       return new ReflectTag(turnCount, sourceId, side);
     case ArenaTagType.LIGHT_SCREEN:
