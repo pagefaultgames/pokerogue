@@ -17,8 +17,6 @@ export function getPokeballAtlasKey(type: PokeballType): string {
       return "rb";
     case PokeballType.MASTER_BALL:
       return "mb";
-    // case PokeballType.LUXURY_BALL:
-    //   return "lb";
   }
 }
 
