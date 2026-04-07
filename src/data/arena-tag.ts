@@ -1776,7 +1776,7 @@ export function getArenaTag(
     case ArenaTagType.TRICK_ROOM:
       return new TrickRoomTag(turnCount, sourceId);
     case ArenaTagType.GRAVITY:
-      return new GravityTag(turnCount,sourceId);
+      return new GravityTag(turnCount, sourceId);
     case ArenaTagType.REFLECT:
       return new ReflectTag(turnCount, sourceId, side);
     case ArenaTagType.LIGHT_SCREEN:
