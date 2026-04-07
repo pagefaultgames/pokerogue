@@ -32,8 +32,6 @@ export function getPokeballName(type: PokeballType): string {
       return i18next.t("pokeball:rogueBall");
     case PokeballType.MASTER_BALL:
       return i18next.t("pokeball:masterBall");
-    // case PokeballType.LUXURY_BALL:
-    //   return i18next.t("pokeball:luxuryBall");
   }
 }
 
