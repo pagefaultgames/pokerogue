@@ -34,8 +34,8 @@ describe("Data - Splash Messages", () => {
       testSeason(new Date("2025-04-01"), new Date("2025-04-03"), "aprilFools");
     });
 
-    it("should contain halloween messages from Oct 15 to Oct 31", () => {
-      testSeason(new Date("2025-10-15"), new Date("2025-10-31"), "halloween");
+    it("should contain halloween messages from Oct 15 to Nov 1", () => {
+      testSeason(new Date("2025-10-15"), new Date("2025-11-01"), "halloween");
     });
 
     it("should contain winter holiday messages from Dec 1 to Dec 31", () => {

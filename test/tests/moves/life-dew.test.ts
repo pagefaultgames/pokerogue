@@ -5,16 +5,13 @@
  */
 
 import { AbilityId } from "#enums/ability-id";
-import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
-import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/framework/game-manager";
-import i18next from "i18next";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("{{description}}", () => {
+describe("Move - Life Dew", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -37,18 +34,20 @@ describe("{{description}}", () => {
       .enemyLevel(100);
   });
 
-  // Find more awesome utility functions inside `#test/utils`!
-  it("should do XYZ", async () => {
+  // TODO: add test to check that all moves have the correct move flags, then delete this test file
+  // cf: https://github.com/Despair-Games/poketernity/pull/268
+  it("should ignore substitute", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    const feebas = game.field.getPlayerPokemon();
+    const player = game.field.getPlayerPokemon();
 
-    game.move.use(MoveId.SPLASH);
-    await game.move.forceEnemyMove(MoveId.HOLD_HANDS);
-    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.toEndOfTurn();
+    game.move.use(MoveId.SUBSTITUTE);
+    await game.toNextTurn();
+    player.hp = player.getMaxHp() - 1;
 
-    expect(feebas).toHaveUsedMove({ move: MoveId.SPLASH, result: MoveResult.SUCCESS });
-    expect(game).toHaveShownMessage(i18next.t("moveTriggers:splash"));
+    game.move.use(MoveId.LIFE_DEW);
+    await game.toNextTurn();
+
+    expect(player).toHaveFullHp();
   });
 });

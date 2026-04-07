@@ -24,8 +24,11 @@
           "nature": {
             "$ref": "#/$defs/nature"
           },
-          "abilityIndex": {
-            "$ref": "#/$defs/abilityIndex"
+          "ability": {
+            "$ref": "#/$defs/ability"
+          },
+          "passive": {
+            "$ref": "#/$defs/passive"
           }
         },
         "required": ["speciesId"],
@@ -58,6 +61,13 @@
         },
         "passive": {
           "$ref": "#/$defs/passive"
+        },
+        "segments": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "catchable": {
+          "type": "boolean"
         }
       },
       "required": ["speciesId"],
@@ -80,6 +90,24 @@
       "type": "array",
       "items": {
         "$ref": "#/$defs/forcedWave"
+      }
+    },
+    "trainerManipulations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/trainerManipulation"
+      }
+    },
+    "challenges": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/challenge"
+      }
+    },
+    "mysteryEncounters": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/mysteryEncounter"
       }
     },
     "seed": {
@@ -113,11 +141,6 @@
     "passive": {
       "type": "integer",
       "exclusiveMinimum": 0
-    },
-    "abilityIndex": {
-      "type": "integer",
-      "minimum": 0,
-      "maximum": 2
     },
     "moveset": {
       "type": "array",
@@ -162,6 +185,52 @@
           }
         }
       ],
+      "additionalProperties": false
+    },
+    "trainerManipulation": {
+      "type": "object",
+      "properties": {
+        "waveIndex": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 49
+        },
+        "isTrainer": {
+          "type": "boolean"
+        }
+      },
+      "required": ["waveIndex", "isTrainer"],
+      "additionalProperties": false
+    },
+    "challenge": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "value": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "required": ["id", "value"],
+      "additionalProperties": false
+    },
+    "mysteryEncounter": {
+      "type": "object",
+      "properties": {
+        "waveIndex": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 49
+        },
+        "type": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": ["waveIndex", "type"],
       "additionalProperties": false
     }
   },

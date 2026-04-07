@@ -629,11 +629,13 @@ export class EncounterPhase extends BattlePhase {
                     })
                   : "";
               const cycleCount = count.toLocaleString() + ordinalUsed;
+              const cycleCountNoOrdinal = count.toLocaleString();
               const genderIndex = globalScene.gameData.gender ?? PlayerGender.UNSET;
               const genderStr = PlayerGender[genderIndex].toLowerCase();
               const encounterDialogue = i18next.t(localizationKey, {
                 context: genderStr,
                 cycleCount,
+                cycleCountNoOrdinal,
               });
               if (!globalScene.gameData.getSeenDialogues()[localizationKey]) {
                 globalScene.gameData.saveSeenDialogue(localizationKey);

@@ -39,7 +39,7 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
   [SpeciesId.SPIDOPS]: [MoveId.SILK_TRAP, MoveId.STICKY_WEB],
   [SpeciesId.SABLEYE]: [MoveId.WILL_O_WISP, MoveId.THUNDER_WAVE],
   [SpeciesId.KLEFKI]: [MoveId.LIGHT_SCREEN, MoveId.REFLECT],
-  [SpeciesId.ALOMOMOLA]: [MoveId.WISH, MoveId.TOXIC],
+  [SpeciesId.ALOMOMOLA]: [MoveId.WISH],
   [SpeciesId.PACHIRISU]: [MoveId.SUPER_FANG, MoveId.NUZZLE],
   [SpeciesId.CLODSIRE]: [MoveId.TOXIC, MoveId.TOXIC_SPIKES],
   [SpeciesId.MANDIBUZZ]: [MoveId.TOXIC, MoveId.KNOCK_OFF],
@@ -51,7 +51,7 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
   [SpeciesId.BASTIODON]: [MoveId.BODY_PRESS, MoveId.FOUL_PLAY],
   [SpeciesId.TOXAPEX]: [MoveId.BANEFUL_BUNKER, MoveId.TOXIC_SPIKES, MoveId.TOXIC],
   [SpeciesId.CARBINK]: [MoveId.LIGHT_SCREEN, MoveId.REFLECT],
-  [SpeciesId.COFAGRIGUS]: [MoveId.WILL_O_WISP, MoveId.BODY_PRESS, MoveId.TOXIC],
+  [SpeciesId.COFAGRIGUS]: [MoveId.WILL_O_WISP, MoveId.BODY_PRESS],
   [SpeciesId.NACLSTACK]: MoveId.SALT_CURE,
   [SpeciesId.GARGANACL]: MoveId.SALT_CURE,
 
@@ -200,13 +200,6 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
     MoveId.SAPPY_SEED,
     MoveId.SPARKLY_SWIRL,
   ],
-  [SpeciesId.FLAREON]: [MoveId.SIZZLY_SLIDE, MoveId.FLARE_BLITZ],
-  [SpeciesId.VAPOREON]: [MoveId.BOUNCY_BUBBLE, MoveId.SURF],
-  [SpeciesId.JOLTEON]: [MoveId.BUZZY_BUZZ, MoveId.THUNDERBOLT],
-  [SpeciesId.UMBREON]: [MoveId.BADDY_BAD, MoveId.FOUL_PLAY],
-  [SpeciesId.ESPEON]: MoveId.GLITZY_GLOW,
-  [SpeciesId.LEAFEON]: MoveId.SAPPY_SEED,
-  [SpeciesId.GLACEON]: [MoveId.FREEZY_FROST, MoveId.FREEZE_DRY],
   [SpeciesId.ARCTOVISH]: MoveId.FISHIOUS_REND, // Benjie prefers this be addressed outside of signature moves
   [SpeciesId.DRACOVISH]: MoveId.FISHIOUS_REND, // Benjie doesn't approve >:o
   [SpeciesId.ARCTOZOLT]: MoveId.BOLT_BEAK,
@@ -246,7 +239,7 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
   // Avoids bad moves from spawning due to poor learnsets
   [SpeciesId.GRANBULL]: MoveId.PLAY_ROUGH,
   [SpeciesId.SKUNTANK]: MoveId.POISON_JAB,
-  [SpeciesId.VENOMOTH]: MoveId.SLUDGE_BOMB,
+  [SpeciesId.VENOMOTH]: [MoveId.SLUDGE_BOMB, MoveId.SLUDGE_WAVE],
 };
 export const FORCED_RIVAL_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]>> = {
   // Force certain moves on Rival's Birds to keep them relative in power due to lacking learnsets / to utilize their Boss passives.

@@ -3,7 +3,6 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-
 {
   "$schema": "https://biomejs.dev/schemas/2.4.4/schema.json",
   "vcs": {
@@ -117,11 +116,15 @@
           "level": "info", // TODO: Graduate to error eventually
           // NOTE: "checkAllProperties" has an immature implementation that
           // causes many false positives across files. Enable if/when maturity improves
-          "options": { "checkAllProperties": false }
+          "options": {
+            "checkAllProperties": false
+          }
         },
         "useConsistentObjectDefinitions": {
           "level": "error",
-          "options": { "syntax": "shorthand" }
+          "options": {
+            "syntax": "shorthand"
+          }
         },
         "useCollapsedIf": "error",
         "useCollapsedElseIf": "error",
@@ -268,7 +271,12 @@
         "noDocumentCookie": "off", // Firefox has minimal support for the "Cookie Store API"
         "noConstantBinaryExpressions": "error",
         "noTsIgnore": "error",
-        "useIterableCallbackReturn": "warn", // TODO: Refactor and change to error
+        "useIterableCallbackReturn": {
+          "level": "warn", // TODO: refactor and make error
+          "options": {
+            "checkForEach": false
+          }
+        },
         "noNonNullAssertedOptionalChain": "warn", // TODO: Refactor and change to error
         "noDuplicateDependencies": "error",
         "noImportCycles": "error"
@@ -343,6 +351,19 @@
       "includes": ["**/scripts/**/*.js"],
       "linter": {
         "rules": {
+          "style": {
+            // TODO: Remove this and replace it with an ambient module declaration once TSGo is capable of handling these
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "commander": {
+                    "message": "Imports from the commander package lack the strict type safety of @commander-js/extra-typings, producing type errors when passed to relevant utility functions."
+                  }
+                }
+              }
+            }
+          },
           "nursery": {
             "noFloatingPromises": "error"
           }
