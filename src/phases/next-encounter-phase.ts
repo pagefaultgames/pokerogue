@@ -7,7 +7,8 @@ import { EncounterPhase } from "#phases/encounter-phase";
  */
 export class NextEncounterPhase extends EncounterPhase {
   public readonly phaseName: "NextEncounterPhase" | "NewBiomeEncounterPhase" = "NextEncounterPhase";
-  start() {
+
+  public override async start(): Promise<void> {
     super.start();
   }
 
