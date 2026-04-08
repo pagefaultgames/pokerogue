@@ -957,9 +957,11 @@ export class Arena {
   // #endregion
 
   // TODO: replace this
-  getAttackTypeMultiplier(attackType: PokemonType, grounded: boolean): number {
+  getAttackTypeMultiplier(attackType: PokemonType, grounded: boolean, effectiveWeather?: WeatherType): number {
     let weatherMultiplier = 1;
-    if (this.weather && !this.weather.isEffectSuppressed()) {
+    if (effectiveWeather !== undefined && effectiveWeather !== WeatherType.NONE) {
+      weatherMultiplier = new Weather(effectiveWeather).getAttackTypeMultiplier(attackType);
+    } else if (this.weather && !this.weather.isEffectSuppressed()) {
       weatherMultiplier = this.weather.getAttackTypeMultiplier(attackType);
     }
 

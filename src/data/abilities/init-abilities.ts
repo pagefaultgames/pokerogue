@@ -89,6 +89,7 @@ import {
   PostDefendAbilitySwapAbAttr,
   PostDefendApplyArenaTrapTagAbAttr,
   PostDefendApplyBattlerTagAbAttr,
+  PostDefendApplyStatusEffectAbAttr,
   PostDefendContactApplyStatusEffectAbAttr,
   PostDefendContactApplyTagChanceAbAttr,
   PostDefendContactDamageAbAttr,
@@ -141,6 +142,7 @@ import {
   PostWeatherChangeFormChangeAbAttr,
   PostWeatherLapseDamageAbAttr,
   PostWeatherLapseHealAbAttr,
+  PreAttackWeatherOverrideAbAttr,
   PreDefendFullHpEndureAbAttr,
   PreLeaveFieldClearWeatherAbAttr,
   PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr,
@@ -183,7 +185,7 @@ import {
 import { AbBuilder, type Ability } from "#abilities/ability";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { GroundedTag } from "#data/battler-tags";
+import { DamageProtectedTag, GroundedTag, ProtectedTag } from "#data/battler-tags";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { Gender } from "#data/gender";
 import { getNonVolatileStatusEffects } from "#data/status-effect";
@@ -2149,6 +2151,30 @@ export function initAbilities() {
     new AbBuilder(AbilityId.POISON_PUPPETEER, 9) //
       .uncopiable()
       .attr(ConfusionOnStatusEffectAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
+      .build(),
+    new AbBuilder(AbilityId.PIERCING_DRILL, 9) //
+      .attr(IgnoreProtectOnContactAbAttr)
+      .attr(
+        MoveDamageBoostAbAttr,
+        0.25,
+        (user, target, move) =>
+          !!target
+          && target.findTags(t => t instanceof ProtectedTag || t instanceof DamageProtectedTag).length > 0
+          && move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user }),
+      )
+      .build(),
+    new AbBuilder(AbilityId.DRAGONIZE, 9) //
+      .attr(MoveTypeChangeAbAttr, PokemonType.DRAGON, normalTypeMoveConversionCondition)
+      .attr(MovePowerBoostAbAttr, normalTypeMoveConversionCondition, 1.2)
+      .build(),
+    // TODO: Unknown abilities, ID 313 & 314
+    new AbBuilder(AbilityId.MEGA_SOL, 9) //
+      .attr(PreAttackWeatherOverrideAbAttr, WeatherType.SUNNY)
+      .build(),
+    // TODO: Unknown abilities, ID 316 & 317
+    new AbBuilder(AbilityId.SPICY_SPRAY, 9) //
+      .attr(PostDefendApplyStatusEffectAbAttr, 100, StatusEffect.BURN)
+      .bypassFaint()
       .build(),
   );
 }

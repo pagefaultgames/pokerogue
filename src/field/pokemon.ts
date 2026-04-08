@@ -2336,6 +2336,27 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
+   * Get the effective weather type for this Pokemon's moves, accounting for
+   * the `PreAttackWeatherOverrideAbAttr` ability attribute.
+   *
+   * If the Pokemon has an ability that overrides the weather for its moves,
+   * the overridden weather type is returned regardless of the actual arena weather.
+   * Otherwise, the current arena weather type is returned (or {@linkcode WeatherType.NONE}
+   * if weather is absent or suppressed).
+   */
+  public getEffectiveWeatherTypeForMoves(): WeatherType {
+    const overrideAttrs = this.getAbilityAttrs("PreAttackWeatherOverrideAbAttr");
+    if (overrideAttrs.length > 0) {
+      return overrideAttrs[0].weatherType;
+    }
+    const weather = globalScene.arena.weather;
+    if (!weather || weather.isEffectSuppressed()) {
+      return WeatherType.NONE;
+    }
+    return weather.weatherType;
+  }
+
+  /**
    * Gets the weight of the Pokemon with subtractive modifiers (Autotomize) happening first
    * and then multiplicative modifiers happening after (Heavy Metal and Light Metal)
    * @returns the kg of the Pokemon (minimum of 0.1)
@@ -3733,7 +3754,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     /** Combined damage multiplier from field effects such as weather, terrain, etc. */
     const arenaAttackTypeMultiplier = new NumberHolder(
-      globalScene.arena.getAttackTypeMultiplier(moveType, source.isGrounded()),
+      globalScene.arena.getAttackTypeMultiplier(
+        moveType,
+        source.isGrounded(),
+        source.getEffectiveWeatherTypeForMoves(),
+      ),
     );
     applyMoveAttrs("IgnoreWeatherTypeDebuffAttr", source, this, move, arenaAttackTypeMultiplier);
 

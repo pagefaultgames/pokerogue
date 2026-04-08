@@ -955,6 +955,39 @@ export class PostDefendContactApplyStatusEffectAbAttr extends PostDefendAbAttr {
   }
 }
 
+/**
+ * Applies a status effect to the attacker when the Pokemon is hit by an attacking move.
+ * Unlike {@linkcode PostDefendContactApplyStatusEffectAbAttr}, this does not require the move to make contact.
+ */
+export class PostDefendApplyStatusEffectAbAttr extends PostDefendAbAttr {
+  private readonly chance: number;
+  private readonly effects: readonly StatusEffect[];
+
+  constructor(chance: number, ...effects: StatusEffect[]) {
+    super(true);
+
+    this.chance = chance;
+    this.effects = effects;
+  }
+
+  override canApply({ pokemon, move, opponent: attacker }: PostMoveInteractionAbAttrParams): boolean {
+    const effect =
+      this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randBattleSeedInt(this.effects.length)];
+    return (
+      move.category !== MoveCategory.STATUS
+      && !attacker.status
+      && (this.chance === -1 || pokemon.randBattleSeedInt(100) < this.chance)
+      && attacker.canSetStatus(effect, true, false, pokemon)
+    );
+  }
+
+  override apply({ opponent: attacker, pokemon }: PostMoveInteractionAbAttrParams): void {
+    const effect =
+      this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randBattleSeedInt(this.effects.length)];
+    attacker.trySetStatus(effect, pokemon);
+  }
+}
+
 export class EffectSporeAbAttr extends PostDefendContactApplyStatusEffectAbAttr {
   constructor() {
     super(10, StatusEffect.POISON, StatusEffect.PARALYSIS, StatusEffect.SLEEP);
@@ -1615,6 +1648,19 @@ export class FieldMoveTypePowerBoostAbAttr extends PreAttackFieldMoveTypePowerBo
 
 /** Boosts the power of a specific type of move for the user and its allies. */
 export class UserFieldMoveTypePowerBoostAbAttr extends PreAttackFieldMoveTypePowerBoostAbAttr {}
+
+/**
+ * Causes moves used by the Pokemon to behave as if the weather is set to a specific {@linkcode WeatherType}.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Mega_Sol_(Ability) | Mega Sol (Bulbapedia)}
+ */
+export class PreAttackWeatherOverrideAbAttr extends PreAttackAbAttr {
+  public readonly weatherType: WeatherType;
+
+  constructor(weatherType: WeatherType) {
+    super(false);
+    this.weatherType = weatherType;
+  }
+}
 
 /** Boosts the power of moves in specified categories. */
 export class AllyMoveCategoryPowerBoostAbAttr extends FieldMovePowerBoostAbAttr {
@@ -6131,6 +6177,7 @@ export const AbilityAttrs = Object.freeze({
   PostDefendAbilitySwapAbAttr,
   PostDefendApplyArenaTrapTagAbAttr,
   PostDefendApplyBattlerTagAbAttr,
+  PostDefendApplyStatusEffectAbAttr,
   PostDefendContactApplyStatusEffectAbAttr,
   PostDefendContactApplyTagChanceAbAttr,
   PostDefendContactDamageAbAttr,
@@ -6199,6 +6246,7 @@ export const AbilityAttrs = Object.freeze({
   PreApplyBattlerTagImmunityAbAttr,
   PreAttackAbAttr,
   PreAttackFieldMoveTypePowerBoostAbAttr,
+  PreAttackWeatherOverrideAbAttr,
   PreDefendAbAttr,
   PreDefendFullHpEndureAbAttr,
   PreLeaveFieldAbAttr,

@@ -2698,10 +2698,11 @@ export class IgnoreWeatherTypeDebuffAttr extends MoveAttr {
    * @param args [0] {@linkcode NumberHolder} for arenaAttackTypeMultiplier
    * @returns true if the function succeeds
    */
-  apply(_user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
     const weatherModifier = args[0] as NumberHolder;
     //If the type-based attack power modifier due to weather (e.g. Water moves in Sun) is below 1, set it to 1
-    if (globalScene.arena.weather?.weatherType === this.weather) {
+    const weatherType = getEffectiveWeatherForUser(user);
+    if (weatherType === this.weather) {
       weatherModifier.value = Math.max(weatherModifier.value, 1);
     }
     return true;
@@ -2714,11 +2715,8 @@ export abstract class WeatherHealAttr extends HealAttr {
   }
 
   apply(user: Pokemon, _target: Pokemon, _move: Move, _args: any[]): boolean {
-    let healRatio = 0.5;
-    if (!globalScene.arena.weather?.isEffectSuppressed()) {
-      const weatherType = globalScene.arena.weather?.weatherType || WeatherType.NONE;
-      healRatio = this.getWeatherHealRatio(weatherType);
-    }
+    const weatherType = getEffectiveWeatherForUser(user);
+    const healRatio = this.getWeatherHealRatio(weatherType);
     this.addHealPhase(user, healRatio);
     return true;
   }
@@ -3709,13 +3707,9 @@ export class WeatherInstantChargeAttr extends InstantChargeAttr {
    */
   public readonly weatherTypes: WeatherType[];
   constructor(weatherTypes: WeatherType[]) {
-    super(() => {
-      const currentWeather = globalScene.arena.weather;
-
-      if (currentWeather?.weatherType == null) {
-        return false;
-      }
-      return !currentWeather.isEffectSuppressed() && this.weatherTypes.includes(currentWeather.weatherType);
+    super((user: Pokemon) => {
+      const effectiveWeather = getEffectiveWeatherForUser(user);
+      return this.weatherTypes.includes(effectiveWeather);
     });
 
     this.weatherTypes = weatherTypes;
@@ -4231,12 +4225,10 @@ export class GrowthStatStageChangeAttr extends StatStageChangeAttr {
     super([Stat.ATK, Stat.SPATK], 1, true);
   }
 
-  getLevels(_user: Pokemon): number {
-    if (!globalScene.arena.weather?.isEffectSuppressed()) {
-      const weatherType = globalScene.arena.weather?.weatherType;
-      if (weatherType === WeatherType.SUNNY || weatherType === WeatherType.HARSH_SUN) {
-        return this.stages + 1;
-      }
+  getLevels(user: Pokemon): number {
+    const weatherType = getEffectiveWeatherForUser(user);
+    if (weatherType === WeatherType.SUNNY || weatherType === WeatherType.HARSH_SUN) {
+      return this.stages + 1;
     }
     return this.stages;
   }
@@ -4915,10 +4907,10 @@ export class MagnitudePowerAttr extends VariablePowerAttr {
 }
 
 export class AntiSunlightPowerDecreaseAttr extends VariablePowerAttr {
-  apply(_user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
-    if (!globalScene.arena.weather?.isEffectSuppressed()) {
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
+    const weatherType = getEffectiveWeatherForUser(user);
+    if (weatherType !== WeatherType.NONE) {
       const power = args[0] as NumberHolder;
-      const weatherType = globalScene.arena.weather?.weatherType || WeatherType.NONE;
       switch (weatherType) {
         case WeatherType.RAIN:
         case WeatherType.SANDSTORM:
@@ -5433,10 +5425,10 @@ export class VariableAccuracyAttr extends MoveAttr {
  * Attribute used for Thunder and Hurricane that sets accuracy to 50 in sun and never miss in rain
  */
 export class ThunderAccuracyAttr extends VariableAccuracyAttr {
-  apply(_user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
-    if (!globalScene.arena.weather?.isEffectSuppressed()) {
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
+    const weatherType = getEffectiveWeatherForUser(user);
+    if (weatherType !== WeatherType.NONE) {
       const accuracy = args[0] as NumberHolder;
-      const weatherType = globalScene.arena.weather?.weatherType || WeatherType.NONE;
       switch (weatherType) {
         case WeatherType.SUNNY:
         case WeatherType.HARSH_SUN:
@@ -5459,10 +5451,10 @@ export class ThunderAccuracyAttr extends VariableAccuracyAttr {
  * Springtide Storm does NOT have this property
  */
 export class StormAccuracyAttr extends VariableAccuracyAttr {
-  apply(_user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
-    if (!globalScene.arena.weather?.isEffectSuppressed()) {
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
+    const weatherType = getEffectiveWeatherForUser(user);
+    if (weatherType !== WeatherType.NONE) {
       const accuracy = args[0] as NumberHolder;
-      const weatherType = globalScene.arena.weather?.weatherType || WeatherType.NONE;
       switch (weatherType) {
         case WeatherType.RAIN:
         case WeatherType.HEAVY_RAIN:
@@ -5513,14 +5505,12 @@ export class ToxicAccuracyAttr extends VariableAccuracyAttr {
 }
 
 export class BlizzardAccuracyAttr extends VariableAccuracyAttr {
-  apply(_user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
-    if (!globalScene.arena.weather?.isEffectSuppressed()) {
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
+    const weatherType = getEffectiveWeatherForUser(user);
+    if (weatherType === WeatherType.HAIL || weatherType === WeatherType.SNOW) {
       const accuracy = args[0] as NumberHolder;
-      const weatherType = globalScene.arena.weather?.weatherType || WeatherType.NONE;
-      if (weatherType === WeatherType.HAIL || weatherType === WeatherType.SNOW) {
-        accuracy.value = -1;
-        return true;
-      }
+      accuracy.value = -1;
+      return true;
     }
 
     return false;
@@ -5889,40 +5879,37 @@ export class IvyCudgelTypeAttr extends VariableMoveTypeAttr {
 }
 
 export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
-  apply(_user: Pokemon, _target: Pokemon, move: Move, args: any[]): boolean {
+  apply(user: Pokemon, _target: Pokemon, move: Move, args: any[]): boolean {
     const moveType = args[0];
     if (!(moveType instanceof NumberHolder)) {
       return false;
     }
 
-    if (!globalScene.arena.weather?.isEffectSuppressed()) {
-      switch (globalScene.arena.weather?.weatherType) {
-        case WeatherType.SUNNY:
-        case WeatherType.HARSH_SUN:
-          moveType.value = PokemonType.FIRE;
-          break;
-        case WeatherType.RAIN:
-        case WeatherType.HEAVY_RAIN:
-          moveType.value = PokemonType.WATER;
-          break;
-        case WeatherType.SANDSTORM:
-          moveType.value = PokemonType.ROCK;
-          break;
-        case WeatherType.HAIL:
-        case WeatherType.SNOW:
-          moveType.value = PokemonType.ICE;
-          break;
-        default:
-          if (moveType.value === move.type) {
-            return false;
-          }
-          moveType.value = move.type;
-          break;
-      }
-      return true;
+    const weatherType = getEffectiveWeatherForUser(user);
+    switch (weatherType) {
+      case WeatherType.SUNNY:
+      case WeatherType.HARSH_SUN:
+        moveType.value = PokemonType.FIRE;
+        break;
+      case WeatherType.RAIN:
+      case WeatherType.HEAVY_RAIN:
+        moveType.value = PokemonType.WATER;
+        break;
+      case WeatherType.SANDSTORM:
+        moveType.value = PokemonType.ROCK;
+        break;
+      case WeatherType.HAIL:
+      case WeatherType.SNOW:
+        moveType.value = PokemonType.ICE;
+        break;
+      default:
+        if (moveType.value === move.type) {
+          return false;
+        }
+        moveType.value = move.type;
+        break;
     }
-
-    return false;
+    return true;
   }
 
   override getTypeForMovegen(user: Pokemon, move: Move): PokemonType {
@@ -9092,6 +9079,26 @@ export class ExposedMoveAttr extends AddBattlerTagAttr {
 }
 
 /**
+ * Get the effective weather type for a user Pokemon's moves, accounting for
+ * `PreAttackWeatherOverrideAbAttr` ability attribute.
+ * @param user - The Pokemon using the move
+ * @returns The effective weather type for the user's moves
+ */
+function getEffectiveWeatherForUser(user: Pokemon | null): WeatherType {
+  if (user) {
+    const overrideAttrs = user.getAbilityAttrs("PreAttackWeatherOverrideAbAttr", false);
+    if (overrideAttrs.length > 0) {
+      return overrideAttrs[0].weatherType;
+    }
+  }
+  const weather = globalScene.arena.weather;
+  if (!weather || weather.isEffectSuppressed()) {
+    return WeatherType.NONE;
+  }
+  return weather.weatherType;
+}
+
+/**
  * Map of Move attributes to their respective classes. Used for instanceof checks.
  */
 const MoveAttrs = Object.freeze({
@@ -10355,25 +10362,9 @@ export function initMoves() {
       .attr(FlinchAttr),
     new AttackMove(MoveId.WEATHER_BALL, PokemonType.NORMAL, MoveCategory.SPECIAL, 50, 100, 10, -1, 0, 3)
       .attr(WeatherBallTypeAttr)
-      .attr(MovePowerMultiplierAttr, (_user, _target, _move) => {
-        const weather = globalScene.arena.weather;
-        if (!weather) {
-          return 1;
-        }
-        const weatherTypes = [
-          WeatherType.SUNNY,
-          WeatherType.RAIN,
-          WeatherType.SANDSTORM,
-          WeatherType.HAIL,
-          WeatherType.SNOW,
-          WeatherType.FOG,
-          WeatherType.HEAVY_RAIN,
-          WeatherType.HARSH_SUN,
-        ];
-        if (weatherTypes.includes(weather.weatherType) && !weather.isEffectSuppressed()) {
-          return 2;
-        }
-        return 1;
+      .attr(MovePowerMultiplierAttr, (user, _target, _move) => {
+        const weatherType = getEffectiveWeatherForUser(user);
+        return weatherType !== WeatherType.NONE ? 2 : 1;
       })
       .ballBombMove(),
     new StatusMove(MoveId.AROMATHERAPY, PokemonType.GRASS, -1, 5, -1, 0, 3)
@@ -11679,12 +11670,9 @@ export function initMoves() {
     new AttackMove(MoveId.BRUTAL_SWING, PokemonType.DARK, MoveCategory.PHYSICAL, 60, 100, 20, -1, 0, 7) //
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new StatusMove(MoveId.AURORA_VEIL, PokemonType.ICE, -1, 20, -1, 0, 7)
-      .condition(() => {
-        const weather = globalScene.arena.weather;
-        if (weather == null || weather.isEffectSuppressed()) {
-          return false;
-        }
-        return weather.weatherType === WeatherType.HAIL || weather.weatherType === WeatherType.SNOW;
+      .condition(user => {
+        const weatherType = getEffectiveWeatherForUser(user);
+        return weatherType === WeatherType.HAIL || weatherType === WeatherType.SNOW;
       }, 3)
       .attr(AddArenaTagAttr, ArenaTagType.AURORA_VEIL, 5, true)
       .target(MoveTarget.USER_SIDE),
@@ -12241,103 +12229,103 @@ export function initMoves() {
         StatusEffect.SLEEP,
       ]),
     /* Unused
-    new AttackMove(MoveId.G_MAX_WILDFIRE, PokemonType.Fire, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_WILDFIRE, PokemonType.FIRE, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_BEFUDDLE, Type.BUG, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_BEFUDDLE, PokemonType.BUG, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_VOLT_CRASH, Type.ELECTRIC, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_VOLT_CRASH, PokemonType.ELECTRIC, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_GOLD_RUSH, Type.NORMAL, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_GOLD_RUSH, PokemonType.NORMAL, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_CHI_STRIKE, Type.FIGHTING, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_CHI_STRIKE, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_TERROR, Type.GHOST, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_TERROR, PokemonType.GHOST, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_RESONANCE, Type.ICE, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_RESONANCE, PokemonType.ICE, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_CUDDLE, Type.NORMAL, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_CUDDLE, PokemonType.NORMAL, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_REPLENISH, Type.NORMAL, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_REPLENISH, PokemonType.NORMAL, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_MALODOR, Type.POISON, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_MALODOR, PokemonType.POISON, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_STONESURGE, Type.WATER, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_STONESURGE, PokemonType.WATER, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_WIND_RAGE, Type.FLYING, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_WIND_RAGE, PokemonType.FLYING, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_STUN_SHOCK, Type.ELECTRIC, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_STUN_SHOCK, PokemonType.ELECTRIC, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_FINALE, Type.FAIRY, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_FINALE, PokemonType.FAIRY, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_DEPLETION, Type.DRAGON, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_DEPLETION, PokemonType.DRAGON, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_GRAVITAS, Type.PSYCHIC, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_GRAVITAS, PokemonType.PSYCHIC, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_VOLCALITH, Type.ROCK, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_VOLCALITH, PokemonType.ROCK, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_SANDBLAST, Type.GROUND, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_SANDBLAST, PokemonType.GROUND, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_SNOOZE, Type.DARK, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_SNOOZE, PokemonType.DARK, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_TARTNESS, Type.GRASS, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_TARTNESS, PokemonType.GRASS, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_SWEETNESS, Type.GRASS, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_SWEETNESS, PokemonType.GRASS, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_SMITE, Type.FAIRY, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_SMITE, PokemonType.FAIRY, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_STEELSURGE, Type.STEEL, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_STEELSURGE, PokemonType.STEEL, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_MELTDOWN, Type.STEEL, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_MELTDOWN, PokemonType.STEEL, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_FOAM_BURST, Type.WATER, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_FOAM_BURST, PokemonType.WATER, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_CENTIFERNO, PokemonType.Fire, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_CENTIFERNO, PokemonType.FIRE, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_VINE_LASH, Type.GRASS, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_VINE_LASH, PokemonType.GRASS, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_CANNONADE, Type.WATER, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_CANNONADE, PokemonType.WATER, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_DRUM_SOLO, Type.GRASS, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_DRUM_SOLO, PokemonType.GRASS, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_FIREBALL, PokemonType.Fire, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_FIREBALL, PokemonType.FIRE, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_HYDROSNIPE, Type.WATER, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_HYDROSNIPE, PokemonType.WATER, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_ONE_BLOW, Type.DARK, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_ONE_BLOW, PokemonType.DARK, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(MoveId.G_MAX_RAPID_FLOW, Type.WATER, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_RAPID_FLOW, PokemonType.WATER, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
     End Unused */
@@ -12444,14 +12432,9 @@ export function initMoves() {
       .slicingMove(),
     new AttackMove(MoveId.HYDRO_STEAM, PokemonType.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, 0, 9)
       .attr(IgnoreWeatherTypeDebuffAttr, WeatherType.SUNNY)
-      .attr(MovePowerMultiplierAttr, (_user, _target, _move) => {
-        const weather = globalScene.arena.weather;
-        if (!weather) {
-          return 1;
-        }
-        return [WeatherType.SUNNY, WeatherType.HARSH_SUN].includes(weather.weatherType) && !weather.isEffectSuppressed()
-          ? 1.5
-          : 1;
+      .attr(MovePowerMultiplierAttr, (user, _target, _move) => {
+        const weatherType = getEffectiveWeatherForUser(user);
+        return [WeatherType.SUNNY, WeatherType.HARSH_SUN].includes(weatherType) ? 1.5 : 1;
       }),
     new AttackMove(MoveId.RUINATION, PokemonType.DARK, MoveCategory.SPECIAL, -1, 90, 10, -1, 0, 9) //
       .attr(TargetHalfHpDamageAttr),

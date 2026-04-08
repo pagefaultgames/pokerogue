@@ -462,12 +462,14 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(SpeciesId.GRENINJA, "ash", "battle-bond", new SpeciesFormChangeAbilityTrigger(), true)
     // new SpeciesFormChange(SpeciesId.GRENINJA, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.GRENINJITE))
   ],
-  // [SpeciesId.PYROAR]: [ // Will need tested to make sure it reverts to the proper gendered form
+  // [SpeciesId.PYROAR]: [
   //   new SpeciesFormChange(SpeciesId.PYROAR, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.PYROARITE))
   // ],
-  // [SpeciesId.MEOWSTIC]: [ // Will need tested to make sure it reverts to the proper gendered form
-  //   new SpeciesFormChange(SpeciesId.MEOWSTIC, "male", SpeciesFormKey.MEGA, new SpeciesFormChangeCompoundTrigger(new SpeciesFormChangeItemTrigger(FormChangeItem.MEOWSTICITE, false), new SpeciesDefaultFormMatchTrigger("male"))),
-  //   new SpeciesFormChange(SpeciesId.MEOWSTIC, "female", SpeciesFormKey.MEGA, new SpeciesFormChangeCompoundTrigger(new SpeciesFormChangeItemTrigger(FormChangeItem.MEOWSTICITE, false), new SpeciesDefaultFormMatchTrigger("female")))
+  // [SpeciesId.MEOWSTIC]: [
+  //   new SpeciesFormChange(SpeciesId.MEOWSTIC, "male", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.MEOWSTICITE)),
+  //   new SpeciesFormChange(SpeciesId.MEOWSTIC, "female", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.MEOWSTICITE)),
+  //   new SpeciesFormChange(SpeciesId.MEOWSTIC, SpeciesFormKey.MEGA, "male", new SpeciesFormChangeCompoundTrigger(new SpeciesFormChangeItemTrigger(FormChangeItem.MEOWSTICITE, false), new SpeciesDefaultFormMatchTrigger("male"))),
+  //   new SpeciesFormChange(SpeciesId.MEOWSTIC, SpeciesFormKey.MEGA, "female", new SpeciesFormChangeCompoundTrigger(new SpeciesFormChangeItemTrigger(FormChangeItem.MEOWSTICITE, false), new SpeciesDefaultFormMatchTrigger("female")))
   // ],
   [SpeciesId.AEGISLASH]: [
     new SpeciesFormChange(SpeciesId.AEGISLASH, "blade", "shield", new SpeciesFormChangePreMoveTrigger(MoveId.KINGS_SHIELD), true, new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.STANCE_CHANGE))),
