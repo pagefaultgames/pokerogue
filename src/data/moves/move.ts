@@ -12156,7 +12156,7 @@ export function initMoves() {
       .recklessMove(),
     new AttackMove(MoveId.CHLOROBLAST, PokemonType.GRASS, MoveCategory.SPECIAL, 150, 95, 5, -1, 0, 8) //
       .attr(RecoilAttr, true, 0.5),
-    new AttackMove(MoveId.MOUNTAIN_GALE, PokemonType.ICE, MoveCategory.PHYSICAL, 100, 85, 10, 30, 0, 8)
+    new AttackMove(MoveId.MOUNTAIN_GALE, PokemonType.ICE, MoveCategory.PHYSICAL, 120, 85, 10, 30, 0, 8)
       .makesContact(false)
       .attr(FlinchAttr),
     new SelfStatusMove(MoveId.VICTORY_DANCE, PokemonType.FIGHTING, -1, 10, -1, 0, 8)
