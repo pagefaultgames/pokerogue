@@ -238,7 +238,7 @@ export class GameData {
     if (error) {
       if (error.startsWith("session out of date")) {
         globalScene.phaseManager.clearPhaseQueue();
-        globalScene.phaseManager.unshiftNew("ReloadSessionPhase");
+        await this.reinitializeSaveData();
       }
       console.error(error);
       return false;
@@ -260,19 +260,11 @@ export class GameData {
 
     if (typeof saveDataOrErr === "number" || !saveDataOrErr || saveDataOrErr.length === 0 || saveDataOrErr[0] !== "{") {
       if (saveDataOrErr === 404) {
-        globalScene.phaseManager.queueMessage(
-          "Save data could not be found. If this is a new account, you can safely ignore this message.",
-          null,
-          true,
-        );
+        globalScene.phaseManager.queueMessage(i18next.t("gameData:saveDataNotFound"), null, true);
         return true;
       }
       if (typeof saveDataOrErr === "string" && saveDataOrErr.includes("Too many connections")) {
-        globalScene.phaseManager.queueMessage(
-          "Too many people are trying to connect and the server is overloaded. Please try again later.",
-          null,
-          true,
-        );
+        globalScene.phaseManager.queueMessage(i18next.t("gameData:tooManyConnections"), null, true);
         return false;
       }
       return false;
@@ -535,8 +527,7 @@ export class GameData {
     }
 
     globalScene.phaseManager.clearPhaseQueue();
-    globalScene.phaseManager.unshiftNew("ReloadSessionPhase", JSON.stringify(systemData));
-    this.clearLocalData();
+    await this.reinitializeSaveData(JSON.stringify(systemData));
     return false;
   }
 
@@ -548,6 +539,27 @@ export class GameData {
     for (let s = 0; s < 5; s++) {
       localStorage.removeItem(getSessionDataLocalStorageKey(s));
     }
+  }
+
+  /**
+   * Discards local save data and re-populates it with data from the server (or the provided data).
+   * @param systemDataStr - (Optional) Save data to load
+   */
+  private async reinitializeSaveData(systemDataStr?: string): Promise<void> {
+    const { promise, resolve } = Promise.withResolvers<void>();
+
+    await globalScene.ui.setMode(UiMode.SESSION_RELOAD, !!systemDataStr);
+
+    this.clearLocalData();
+
+    if (systemDataStr) {
+      await this.initSystem(systemDataStr);
+    } else {
+      await this.loadSystem();
+    }
+
+    globalScene.time.delayedCall(fixedInt(5000), () => resolve());
+    return promise;
   }
 
   /**
@@ -1073,7 +1085,7 @@ export class GameData {
     }
     if (error.startsWith("session out of date")) {
       globalScene.phaseManager.clearPhaseQueue();
-      globalScene.phaseManager.unshiftNew("ReloadSessionPhase");
+      await this.reinitializeSaveData();
     }
     console.error(error);
     return false;
@@ -1134,7 +1146,7 @@ export class GameData {
 
     if (jsonResponse.error.startsWith("session out of date")) {
       globalScene.phaseManager.clearPhaseQueue();
-      globalScene.phaseManager.unshiftNew("ReloadSessionPhase");
+      await this.reinitializeSaveData();
     }
 
     console.error(jsonResponse);
@@ -1297,7 +1309,7 @@ export class GameData {
     // TODO: handle this more gracefully
     if (saveError.startsWith("session out of date")) {
       globalScene.phaseManager.clearPhaseQueue();
-      globalScene.phaseManager.unshiftNew("ReloadSessionPhase");
+      await this.reinitializeSaveData();
     }
     console.error(saveError);
     return false;
