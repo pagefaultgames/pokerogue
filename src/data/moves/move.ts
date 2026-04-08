@@ -9499,7 +9499,7 @@ export function initMoves() {
       .attr(LeechSeedAttr)
       .condition((_user, target, _move) => !target.getTag(BattlerTagType.SEEDED) && !target.isOfType(PokemonType.GRASS))
       .reflectable(),
-    new SelfStatusMove(MoveId.GROWTH, PokemonType.NORMAL, -1, 20, -1, 0, 1) //
+    new SelfStatusMove(MoveId.GROWTH, PokemonType.GRASS, -1, 20, -1, 0, 1) //
       .attr(GrowthStatStageChangeAttr),
     new AttackMove(MoveId.RAZOR_LEAF, PokemonType.GRASS, MoveCategory.PHYSICAL, 55, 95, 25, -1, 0, 1)
       .attr(HighCritAttr)
@@ -11131,7 +11131,7 @@ export function initMoves() {
       .attr(FlinchAttr),
     new SelfStatusMove(MoveId.COTTON_GUARD, PokemonType.GRASS, -1, 10, -1, 0, 5) //
       .attr(StatStageChangeAttr, [Stat.DEF], 3, true),
-    new AttackMove(MoveId.NIGHT_DAZE, PokemonType.DARK, MoveCategory.SPECIAL, 85, 95, 10, 40, 0, 5) //
+    new AttackMove(MoveId.NIGHT_DAZE, PokemonType.DARK, MoveCategory.SPECIAL, 90, 95, 10, 40, 0, 5) //
       .attr(StatStageChangeAttr, [Stat.ACC], -1),
     new AttackMove(MoveId.PSYSTRIKE, PokemonType.PSYCHIC, MoveCategory.SPECIAL, 100, 100, 10, -1, 0, 5) //
       .attr(DefDefAttr),
@@ -11511,7 +11511,7 @@ export function initMoves() {
     new SelfStatusMove(MoveId.BANEFUL_BUNKER, PokemonType.POISON, -1, 10, -1, 4, 7) //
       .attr(ProtectAttr, BattlerTagType.BANEFUL_BUNKER)
       .condition(failIfLastCondition, 3),
-    new AttackMove(MoveId.SPIRIT_SHACKLE, PokemonType.GHOST, MoveCategory.PHYSICAL, 80, 100, 10, 100, 0, 7) //
+    new AttackMove(MoveId.SPIRIT_SHACKLE, PokemonType.GHOST, MoveCategory.PHYSICAL, 90, 100, 10, 100, 0, 7) //
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1, 1, true)
       .makesContact(false),
     new AttackMove(MoveId.DARKEST_LARIAT, PokemonType.DARK, MoveCategory.PHYSICAL, 85, 100, 10, -1, 0, 7) //
@@ -11594,7 +11594,7 @@ export function initMoves() {
       .target(MoveTarget.BOTH_SIDES),
     new AttackMove(MoveId.LUNGE, PokemonType.BUG, MoveCategory.PHYSICAL, 80, 100, 15, 100, 0, 7) //
       .attr(StatStageChangeAttr, [Stat.ATK], -1),
-    new AttackMove(MoveId.FIRE_LASH, PokemonType.FIRE, MoveCategory.PHYSICAL, 80, 100, 15, 100, 0, 7) //
+    new AttackMove(MoveId.FIRE_LASH, PokemonType.FIRE, MoveCategory.PHYSICAL, 90, 100, 15, 100, 0, 7) //
       .attr(StatStageChangeAttr, [Stat.DEF], -1),
     new AttackMove(MoveId.POWER_TRIP, PokemonType.DARK, MoveCategory.PHYSICAL, 20, 100, 10, -1, 0, 7) //
       .attr(PositiveStatStagePowerAttr),
@@ -11646,7 +11646,7 @@ export function initMoves() {
        */
       .targetsAllyDefault()
       .edgeCase(),
-    new AttackMove(MoveId.BEAK_BLAST, PokemonType.FLYING, MoveCategory.PHYSICAL, 100, 100, 15, -1, -3, 7)
+    new AttackMove(MoveId.BEAK_BLAST, PokemonType.FLYING, MoveCategory.PHYSICAL, 120, 100, 5, -1, -3, 7)
       .attr(BeakBlastHeaderAttr)
       .ballBombMove()
       .makesContact(false),
@@ -12131,7 +12131,7 @@ export function initMoves() {
     new AttackMove(MoveId.DIRE_CLAW, PokemonType.POISON, MoveCategory.PHYSICAL, 80, 100, 15, 30, 0, 8) //
       .attr(MultiStatusEffectAttr, [StatusEffect.POISON, StatusEffect.PARALYSIS, StatusEffect.SLEEP])
       .slicingMove(),
-    new AttackMove(MoveId.PSYSHIELD_BASH, PokemonType.PSYCHIC, MoveCategory.PHYSICAL, 70, 90, 10, 100, 0, 8) //
+    new AttackMove(MoveId.PSYSHIELD_BASH, PokemonType.PSYCHIC, MoveCategory.PHYSICAL, 90, 90, 10, 100, 0, 8) //
       .attr(StatStageChangeAttr, [Stat.DEF], 1, true),
     new SelfStatusMove(MoveId.POWER_SHIFT, PokemonType.NORMAL, -1, 10, -1, 0, 8)
       .target(MoveTarget.USER)
@@ -12185,7 +12185,7 @@ export function initMoves() {
       .attr(HighCritAttr)
       .attr(StatStageChangeAttr, [Stat.DEF], -1, false, { effectChanceOverride: 50 })
       .attr(FlinchAttr),
-    new AttackMove(MoveId.INFERNAL_PARADE, PokemonType.GHOST, MoveCategory.SPECIAL, 60, 100, 15, 30, 0, 8)
+    new AttackMove(MoveId.INFERNAL_PARADE, PokemonType.GHOST, MoveCategory.SPECIAL, 65, 100, 15, 30, 0, 8)
       .attr(StatusEffectAttr, StatusEffect.BURN)
       .attr(MovePowerMultiplierAttr, (_user, target, _move) => (target.status ? 2 : 1)),
     new AttackMove(MoveId.CEASELESS_EDGE, PokemonType.DARK, MoveCategory.PHYSICAL, 65, 90, 15, 100, 0, 8)
