@@ -24,7 +24,7 @@ import { HELP_FLAGS, showHelpText } from "./help-message.js";
  */
 
 //#region Constants
-const version = "2.1.0";
+const version = "2.1.1";
 const __dirname = import.meta.dirname;
 const projectRoot = join(__dirname, "..", "..");
 //#endregion
@@ -57,7 +57,7 @@ async function runInteractive() {
   try {
     doCreateFile(testType, fileNameAnswer);
   } catch (err) {
-    console.error(chalk.red("✗ Error: ", err));
+    console.error(chalk.red("✗", err));
   }
   console.groupEnd();
 }
@@ -67,6 +67,7 @@ async function runInteractive() {
  * @param {testType} testType - The type of test to create
  * @param {string} fileNameAnswer - The name of the file to create
  * @returns {void}
+ * @throws {Error} If the file to create already exists
  */
 function doCreateFile(testType, fileNameAnswer) {
   // Convert file name to kebab-case, formatting the description in Title Case
@@ -76,6 +77,9 @@ function doCreateFile(testType, fileNameAnswer) {
 
   const content = fs.readFileSync(getBoilerplatePath(testType), "utf8").replace("{{description}}", description);
   const filePath = getTestFileFullPath(testType, fileName);
+  if (fs.existsSync(filePath)) {
+    throw new Error(`File "${filePath}" already exists!`);
+  }
   writeFileSafe(filePath, content, "utf8");
 
   console.log(chalk.green.bold(`✔ File created at: ${filePath.replace(`${projectRoot}/`, "")}\n`));

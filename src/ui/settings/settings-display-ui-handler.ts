@@ -99,6 +99,12 @@ export class SettingsDisplayUiHandler extends AbstractSettingsUiHandler {
             label: "Català (Needs Help)",
           };
           break;
+        case "eu":
+          this.settings[languageIndex].options[0] = {
+            value: "Euskara",
+            label: "Euskara (Needs Help)",
+          };
+          break;
         case "tr":
           this.settings[languageIndex].options[0] = {
             value: "Türkçe",

@@ -1,8 +1,7 @@
-import { timedEventManager } from "#app/global-event-manager";
 import { PokeballType } from "#enums/pokeball";
 import { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon } from "#field/pokemon";
-import { randSeedIntRange, randSeedItem } from "#utils/common";
+import { randSeedItem } from "#utils/common";
 
 //#region constants
 
@@ -15,7 +14,7 @@ const SLOT_3_FIGHT_4_LEVEL = 71;
 const SLOT_3_FIGHT_5_LEVEL = 125;
 const SLOT_3_FIGHT_6_LEVEL = 189;
 
-// Fights 1 and 2 don't have slot 4
+// Fights 1-2 don't have slot 4
 const SLOT_4_FIGHT_3_LEVEL = 38;
 const SLOT_4_FIGHT_4_LEVEL = 71;
 const SLOT_4_FIGHT_5_LEVEL = 125;
@@ -388,15 +387,27 @@ function postProcessSlot4Fight3(pokemon: EnemyPokemon): void {
   pokemon.level = SLOT_4_FIGHT_3_LEVEL;
   switch (pokemon.species.speciesId) {
     case SpeciesId.BASCULIN:
-      pokemon.formIndex = 2; // White
+      // White
+      pokemon.formIndex = 2;
       return;
-    case SpeciesId.ROTOM:
+    case SpeciesId.ROTOM: {
       // Heat, Wash, Mow
-      pokemon.formIndex = randSeedItem([1, 2, 5]);
+      const newIndex = randSeedItem([1, 2, 5]);
+      if (pokemon.formIndex !== newIndex) {
+        pokemon.formIndex = newIndex;
+        pokemon.generateAndPopulateMoveset();
+      }
       return;
-    case SpeciesId.PALDEA_TAUROS:
-      pokemon.formIndex = randSeedIntRange(1, 2); // Blaze, Aqua
+    }
+    case SpeciesId.PALDEA_TAUROS: {
+      // Blaze, Aqua
+      const newIndex = randSeedItem([1, 2]);
+      if (pokemon.formIndex !== newIndex) {
+        pokemon.formIndex = newIndex;
+        pokemon.generateAndPopulateMoveset();
+      }
       return;
+    }
   }
 }
 /** Rival's slot 4 species pool for fight 3 */
@@ -451,15 +462,27 @@ function postProcessSlot4Fight4(pokemon: EnemyPokemon, level = SLOT_4_FIGHT_4_LE
   pokemon.level = level;
   switch (pokemon.species.speciesId) {
     case SpeciesId.BASCULEGION:
-      pokemon.formIndex = randSeedIntRange(0, 1);
+      // Male, Female
+      pokemon.formIndex = randSeedItem([0, 1]);
       return;
-    case SpeciesId.ROTOM:
+    case SpeciesId.ROTOM: {
       // Heat, Wash, Mow
-      pokemon.formIndex = randSeedItem([1, 2, 5]);
+      const newIndex = randSeedItem([1, 2, 5]);
+      if (pokemon.formIndex !== newIndex) {
+        pokemon.formIndex = newIndex;
+        pokemon.generateAndPopulateMoveset();
+      }
       return;
-    case SpeciesId.PALDEA_TAUROS:
-      pokemon.formIndex = randSeedIntRange(1, 2); // Blaze, Aqua
+    }
+    case SpeciesId.PALDEA_TAUROS: {
+      // Blaze, Aqua
+      const newIndex = randSeedItem([1, 2]);
+      if (pokemon.formIndex !== newIndex) {
+        pokemon.formIndex = newIndex;
+        pokemon.generateAndPopulateMoveset();
+      }
       return;
+    }
   }
 }
 
@@ -543,10 +566,8 @@ const SLOT_5_FINAL = [
 function postProcessSlot6Fight5(pokemon: EnemyPokemon, level = SLOT_6_FIGHT_5_LEVEL, overrideSegments = true): void {
   pokemon.level = level;
   pokemon.pokeball = PokeballType.MASTER_BALL;
-  if (timedEventManager.getClassicTrainerShinyChance() === 0) {
-    pokemon.shiny = true;
-    pokemon.variant = 1;
-  }
+  pokemon.shiny = true;
+  pokemon.variant = 1;
   // When called for fight 5, uses 3 segments.
   // For fight 6, uses the logic from `getEncounterBossSegments`
   pokemon.setBoss(true, overrideSegments ? 3 : undefined);

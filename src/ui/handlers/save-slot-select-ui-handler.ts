@@ -373,7 +373,7 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
     if (!this.cursorObj) {
       this.cursorObj = globalScene.add.container(0, 0);
       const cursorBox = globalScene.add.nineslice(
-        0,
+        1,
         15,
         "select_cursor_highlight_thick",
         undefined,

@@ -82,6 +82,10 @@ export const languageOptions = [
     handler: () => changeLocaleHandler("ca"),
   },
   {
+    label: "Euskara (Needs Help)",
+    handler: () => changeLocaleHandler("eu"),
+  },
+  {
     label: "Türkçe (Needs Help)",
     handler: () => changeLocaleHandler("tr"),
   },
