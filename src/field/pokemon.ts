@@ -5128,7 +5128,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   public doSetStatus(
     effect: StatusEffect,
-    sleepTurnsRemaining = effect !== StatusEffect.SLEEP ? 0 : this.randBattleSeedIntRange(2, 4),
+    sleepTurnsRemaining = effect !== StatusEffect.SLEEP ? 0 : this.randBattleSeedInt(3) === 0 ? 2 : 3,
   ): void {
     // Reset any pending status
     this.turnData.pendingStatus = StatusEffect.NONE;
@@ -5171,7 +5171,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         break;
     }
 
-    this.status = new Status(effect, 0, sleepTurnsRemaining);
+    this.status = new Status(effect, 0, sleepTurnsRemaining, effect === StatusEffect.FREEZE ? 3 : undefined);
   }
 
   /**
