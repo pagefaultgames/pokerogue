@@ -1,4 +1,3 @@
-import { timedEventManager } from "#app/global-event-manager";
 import { PokeballType } from "#enums/pokeball";
 import { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon } from "#field/pokemon";
@@ -567,10 +566,8 @@ const SLOT_5_FINAL = [
 function postProcessSlot6Fight5(pokemon: EnemyPokemon, level = SLOT_6_FIGHT_5_LEVEL, overrideSegments = true): void {
   pokemon.level = level;
   pokemon.pokeball = PokeballType.MASTER_BALL;
-  if (timedEventManager.getClassicTrainerShinyChance() === 0) {
-    pokemon.shiny = true;
-    pokemon.variant = 1;
-  }
+  pokemon.shiny = true;
+  pokemon.variant = 1;
   // When called for fight 5, uses 3 segments.
   // For fight 6, uses the logic from `getEncounterBossSegments`
   pokemon.setBoss(true, overrideSegments ? 3 : undefined);

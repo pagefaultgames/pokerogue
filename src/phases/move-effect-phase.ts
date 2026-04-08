@@ -177,15 +177,23 @@ export class MoveEffectPhase extends PokemonPhase {
       this.moveHistoryEntry.result === MoveResult.SUCCESS
       || move.getAttrs("MoveEffectAttr").some(attr => attr.trigger === MoveEffectTrigger.POST_TARGET)
     ) {
-      const firstTarget = this.getFirstTarget();
-      new MoveAnim(
-        move.id as MoveId,
-        user,
-        firstTarget?.getBattlerIndex() ?? BattlerIndex.ATTACKER,
-        // Some moves used in mystery encounters should be played even on an empty field
-        globalScene.currentBattle?.mysteryEncounter?.hasBattleAnimationsWithoutTargets ?? false,
-      ).play(move.hitsSubstitute(user, firstTarget), () => this.postAnimCallback(user, targets));
+      const targetsForAnimation = this.getTargets();
+      let animationsLeft = targetsForAnimation.length;
 
+      for (const target of targetsForAnimation) {
+        new MoveAnim(
+          move.id as MoveId,
+          user,
+          target?.getBattlerIndex() ?? BattlerIndex.ATTACKER,
+          // Some moves used in mystery encounters should be played even on an empty field
+          globalScene.currentBattle?.mysteryEncounter?.hasBattleAnimationsWithoutTargets ?? false,
+        ).play(move.hitsSubstitute(user, target), () => {
+          animationsLeft--;
+          if (animationsLeft === 0) {
+            this.postAnimCallback(user, targets);
+          }
+        });
+      }
       return;
     }
     this.postAnimCallback(user, targets);

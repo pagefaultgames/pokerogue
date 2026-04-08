@@ -2443,7 +2443,17 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     applyMoveAttrs("VariableMoveTypeAttr", this, null, move, moveTypeHolder);
 
-    applyAbAttrs("MoveTypeChangeAbAttr", { pokemon: this, move, simulated, moveType: moveTypeHolder, opponent: this });
+    // Moves that are overridden by an ability (e.g. Aerilate) should not have their type
+    // changed by MoveTypeChangeAbAttr
+    if (!move.hasAttr("OverrideMoveEffectAttr")) {
+      applyAbAttrs("MoveTypeChangeAbAttr", {
+        pokemon: this,
+        move,
+        simulated,
+        moveType: moveTypeHolder,
+        opponent: this,
+      });
+    }
 
     // If the user is terastallized and the move is tera blast, or tera starstorm that is stellar type,
     // then bypass the check for ion deluge and electrify
