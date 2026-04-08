@@ -9740,7 +9740,7 @@ export function initMoves() {
       .affectedByGravity(),
     new SelfStatusMove(MoveId.ACID_ARMOR, PokemonType.POISON, -1, 20, -1, 0, 1) //
       .attr(StatStageChangeAttr, [Stat.DEF], 2, true),
-    new AttackMove(MoveId.CRABHAMMER, PokemonType.WATER, MoveCategory.PHYSICAL, 100, 90, 10, -1, 0, 1) //
+    new AttackMove(MoveId.CRABHAMMER, PokemonType.WATER, MoveCategory.PHYSICAL, 100, 95, 10, -1, 0, 1) //
       .attr(HighCritAttr),
     new AttackMove(MoveId.EXPLOSION, PokemonType.NORMAL, MoveCategory.PHYSICAL, 250, 100, 5, -1, 0, 1)
       .condition(failIfDampCondition, 3)
@@ -9910,7 +9910,7 @@ export function initMoves() {
     new SelfStatusMove(MoveId.DETECT, PokemonType.FIGHTING, -1, 5, -1, 4, 2)
       .attr(ProtectAttr)
       .condition(failIfLastCondition, 3),
-    new AttackMove(MoveId.BONE_RUSH, PokemonType.GROUND, MoveCategory.PHYSICAL, 25, 90, 10, -1, 0, 2)
+    new AttackMove(MoveId.BONE_RUSH, PokemonType.GROUND, MoveCategory.PHYSICAL, 30, 90, 10, -1, 0, 2)
       .attr(MultiHitAttr)
       .makesContact(false),
     new StatusMove(MoveId.LOCK_ON, PokemonType.NORMAL, -1, 5, -1, 0, 2)
@@ -10434,7 +10434,8 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [Stat.ATK], 1)
       .soundBased()
       .target(MoveTarget.USER_AND_ALLIES),
-    new AttackMove(MoveId.DRAGON_CLAW, PokemonType.DRAGON, MoveCategory.PHYSICAL, 80, 100, 15, -1, 0, 3),
+    new AttackMove(MoveId.DRAGON_CLAW, PokemonType.DRAGON, MoveCategory.PHYSICAL, 80, 100, 15, -1, 0, 3) //
+      .slicingMove(),
     new AttackMove(MoveId.FRENZY_PLANT, PokemonType.GRASS, MoveCategory.SPECIAL, 150, 90, 5, -1, 0, 3) //
       .attr(RechargeAttr),
     new SelfStatusMove(MoveId.BULK_UP, PokemonType.FIGHTING, -1, 20, -1, 0, 3) //
@@ -10702,7 +10703,8 @@ export function initMoves() {
     new AttackMove(MoveId.ICE_SHARD, PokemonType.ICE, MoveCategory.PHYSICAL, 40, 100, 30, -1, 1, 4) //
       .makesContact(false),
     new AttackMove(MoveId.SHADOW_CLAW, PokemonType.GHOST, MoveCategory.PHYSICAL, 70, 100, 15, -1, 0, 4) //
-      .attr(HighCritAttr),
+      .attr(HighCritAttr)
+      .slicingMove(),
     new AttackMove(MoveId.THUNDER_FANG, PokemonType.ELECTRIC, MoveCategory.PHYSICAL, 65, 95, 15, 10, 0, 4)
       .attr(FlinchAttr)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
@@ -10767,7 +10769,7 @@ export function initMoves() {
     new AttackMove(MoveId.GUNK_SHOT, PokemonType.POISON, MoveCategory.PHYSICAL, 120, 80, 5, 30, 0, 4)
       .attr(StatusEffectAttr, StatusEffect.POISON)
       .makesContact(false),
-    new AttackMove(MoveId.IRON_HEAD, PokemonType.STEEL, MoveCategory.PHYSICAL, 80, 100, 15, 30, 0, 4) //
+    new AttackMove(MoveId.IRON_HEAD, PokemonType.STEEL, MoveCategory.PHYSICAL, 80, 100, 15, 20, 0, 4) //
       .attr(FlinchAttr),
     new AttackMove(MoveId.MAGNET_BOMB, PokemonType.STEEL, MoveCategory.PHYSICAL, 60, -1, 20, -1, 0, 4)
       .makesContact(false)
@@ -11284,7 +11286,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [Stat.ATK], -1),
     new AttackMove(MoveId.FAIRY_WIND, PokemonType.FAIRY, MoveCategory.SPECIAL, 40, 100, 30, -1, 0, 6) //
       .windMove(),
-    new AttackMove(MoveId.MOONBLAST, PokemonType.FAIRY, MoveCategory.SPECIAL, 95, 100, 15, 30, 0, 6) //
+    new AttackMove(MoveId.MOONBLAST, PokemonType.FAIRY, MoveCategory.SPECIAL, 95, 100, 15, 10, 0, 6) //
       .attr(StatStageChangeAttr, [Stat.SPATK], -1),
     new AttackMove(MoveId.BOOMBURST, PokemonType.NORMAL, MoveCategory.SPECIAL, 140, 100, 10, -1, 0, 6)
       .soundBased()
@@ -11504,7 +11506,7 @@ export function initMoves() {
     new SelfStatusMove(MoveId.SHORE_UP, PokemonType.GROUND, -1, 5, -1, 0, 7) //
       .attr(SandHealAttr)
       .triageMove(),
-    new AttackMove(MoveId.FIRST_IMPRESSION, PokemonType.BUG, MoveCategory.PHYSICAL, 90, 100, 10, -1, 2, 7) //
+    new AttackMove(MoveId.FIRST_IMPRESSION, PokemonType.BUG, MoveCategory.PHYSICAL, 100, 100, 10, -1, 2, 7) //
       .condition(new FirstMoveCondition(), 3),
     new SelfStatusMove(MoveId.BANEFUL_BUNKER, PokemonType.POISON, -1, 10, -1, 4, 7) //
       .attr(ProtectAttr, BattlerTagType.BANEFUL_BUNKER)
@@ -11552,7 +11554,7 @@ export function initMoves() {
       .reflectable(),
     new StatusMove(MoveId.TOXIC_THREAD, PokemonType.POISON, 100, 20, -1, 0, 7)
       .attr(StatusEffectAttr, StatusEffect.POISON)
-      .attr(StatStageChangeAttr, [Stat.SPD], -1)
+      .attr(StatStageChangeAttr, [Stat.SPD], -2)
       .reflectable(),
     new SelfStatusMove(MoveId.LASER_FOCUS, PokemonType.NORMAL, -1, 30, -1, 0, 7)
       .attr(AddBattlerTagAttr, BattlerTagType.ALWAYS_CRIT, true, false)
@@ -11631,7 +11633,7 @@ export function initMoves() {
     new AttackMove(MoveId.CORE_ENFORCER, PokemonType.DRAGON, MoveCategory.SPECIAL, 100, 100, 10, -1, 0, 7)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .attr(SuppressAbilitiesIfActedAttr),
-    new AttackMove(MoveId.TROP_KICK, PokemonType.GRASS, MoveCategory.PHYSICAL, 70, 100, 15, 100, 0, 7) //
+    new AttackMove(MoveId.TROP_KICK, PokemonType.GRASS, MoveCategory.PHYSICAL, 85, 100, 15, 100, 0, 7) //
       .attr(StatStageChangeAttr, [Stat.ATK], -1),
     new StatusMove(MoveId.INSTRUCT, PokemonType.PSYCHIC, -1, 15, -1, 0, 7)
       .attr(RepeatMoveAttr)
@@ -11966,7 +11968,7 @@ export function initMoves() {
     new AttackMove(MoveId.DRUM_BEATING, PokemonType.GRASS, MoveCategory.PHYSICAL, 80, 100, 10, 100, 0, 8)
       .attr(StatStageChangeAttr, [Stat.SPD], -1)
       .makesContact(false),
-    new AttackMove(MoveId.SNAP_TRAP, PokemonType.GRASS, MoveCategory.PHYSICAL, 35, 100, 15, -1, 0, 8) //
+    new AttackMove(MoveId.SNAP_TRAP, PokemonType.STEEL, MoveCategory.PHYSICAL, 35, 100, 15, -1, 0, 8) //
       .attr(TrapAttr, BattlerTagType.SNAP_TRAP),
     new AttackMove(MoveId.PYRO_BALL, PokemonType.FIRE, MoveCategory.PHYSICAL, 120, 90, 5, 10, 0, 8)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
@@ -11987,9 +11989,9 @@ export function initMoves() {
     new AttackMove(MoveId.OVERDRIVE, PokemonType.ELECTRIC, MoveCategory.SPECIAL, 80, 100, 10, -1, 0, 8)
       .soundBased()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
-    new AttackMove(MoveId.APPLE_ACID, PokemonType.GRASS, MoveCategory.SPECIAL, 80, 100, 10, 100, 0, 8) //
+    new AttackMove(MoveId.APPLE_ACID, PokemonType.GRASS, MoveCategory.SPECIAL, 90, 100, 10, 100, 0, 8) //
       .attr(StatStageChangeAttr, [Stat.SPDEF], -1),
-    new AttackMove(MoveId.GRAV_APPLE, PokemonType.GRASS, MoveCategory.PHYSICAL, 80, 100, 10, 100, 0, 8)
+    new AttackMove(MoveId.GRAV_APPLE, PokemonType.GRASS, MoveCategory.PHYSICAL, 90, 100, 10, 100, 0, 8)
       .attr(StatStageChangeAttr, [Stat.DEF], -1)
       .attr(MovePowerMultiplierAttr, (_user, _target, _move) =>
         globalScene.arena.getTag(ArenaTagType.GRAVITY) ? 1.5 : 1,
@@ -12126,8 +12128,9 @@ export function initMoves() {
     new AttackMove(MoveId.EERIE_SPELL, PokemonType.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 5, 100, 0, 8)
       .attr(AttackReducePpMoveAttr, 3)
       .soundBased(),
-    new AttackMove(MoveId.DIRE_CLAW, PokemonType.POISON, MoveCategory.PHYSICAL, 80, 100, 15, 50, 0, 8) //
-      .attr(MultiStatusEffectAttr, [StatusEffect.POISON, StatusEffect.PARALYSIS, StatusEffect.SLEEP]),
+    new AttackMove(MoveId.DIRE_CLAW, PokemonType.POISON, MoveCategory.PHYSICAL, 80, 100, 15, 30, 0, 8) //
+      .attr(MultiStatusEffectAttr, [StatusEffect.POISON, StatusEffect.PARALYSIS, StatusEffect.SLEEP])
+      .slicingMove(),
     new AttackMove(MoveId.PSYSHIELD_BASH, PokemonType.PSYCHIC, MoveCategory.PHYSICAL, 70, 90, 10, 100, 0, 8) //
       .attr(StatStageChangeAttr, [Stat.DEF], 1, true),
     new SelfStatusMove(MoveId.POWER_SHIFT, PokemonType.NORMAL, -1, 10, -1, 0, 8)
@@ -12524,7 +12527,7 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.BURN)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .triageMove(),
-    new AttackMove(MoveId.SYRUP_BOMB, PokemonType.GRASS, MoveCategory.SPECIAL, 60, 85, 10, 100, 0, 9)
+    new AttackMove(MoveId.SYRUP_BOMB, PokemonType.GRASS, MoveCategory.SPECIAL, 60, 90, 10, 100, 0, 9)
       .attr(AddBattlerTagAttr, BattlerTagType.SYRUP_BOMB, false, false, 3)
       .ballBombMove(),
     new AttackMove(MoveId.IVY_CUDGEL, PokemonType.GRASS, MoveCategory.PHYSICAL, 100, 100, 10, -1, 0, 9)
