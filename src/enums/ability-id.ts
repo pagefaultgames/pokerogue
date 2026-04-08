@@ -625,8 +625,16 @@ export enum AbilityId {
   PIERCING_DRILL,
   /** {@link https://bulbapedia.bulbagarden.net/wiki/Dragonize_(ability) | Source} */
   DRAGONIZE,
+  /** Unknown ability for ZA megas */
+  ABILITY_313,
+  /** Unknown ability for ZA megas */
+  ABILITY_314,
   /** {@link https://bulbapedia.bulbagarden.net/wiki/Mega_Sol_(ability) | Source} */
-  MEGA_SOL = 315,
+  MEGA_SOL,
+  /** Unknown ability for ZA megas */
+  ABILITY_316,
+  /** Unknown ability for ZA megas */
+  ABILITY_317,
   /** {@link https://bulbapedia.bulbagarden.net/wiki/Spicy_Spray_(ability) | Source} */
-  SPICY_SPRAY = 318,
+  SPICY_SPRAY,
 }

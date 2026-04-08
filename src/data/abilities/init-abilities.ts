@@ -2168,10 +2168,14 @@ export function initAbilities() {
       .attr(MovePowerBoostAbAttr, normalTypeMoveConversionCondition, 1.2)
       .build(),
     // TODO: Unknown abilities, ID 313 & 314
+    new AbBuilder(AbilityId.ABILITY_313, 9).unimplemented().build(),
+    new AbBuilder(AbilityId.ABILITY_314, 9).unimplemented().build(),
     new AbBuilder(AbilityId.MEGA_SOL, 9) //
       .attr(PreAttackWeatherOverrideAbAttr, WeatherType.SUNNY)
       .build(),
     // TODO: Unknown abilities, ID 316 & 317
+    new AbBuilder(AbilityId.ABILITY_316, 9).unimplemented().build(),
+    new AbBuilder(AbilityId.ABILITY_317, 9).unimplemented().build(),
     new AbBuilder(AbilityId.SPICY_SPRAY, 9) //
       .attr(PostDefendApplyStatusEffectAbAttr, 100, StatusEffect.BURN)
       .bypassFaint()
