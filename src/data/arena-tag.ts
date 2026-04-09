@@ -317,13 +317,13 @@ export class MistTag extends SerializableArenaTag {
   override apply(simulated: boolean, defender: Pokemon, cancelled: BooleanHolder, source: Pokemon | undefined): boolean {
     // `StatStageChangePhase` currently doesn't have a reference to the source of stat drops,
     // so this code currently has no effect on gameplay.
-    // if (source) {
-    //   const bypassed = new BooleanHolder(false);
-    //   applyAbAttrs("InfiltratorAbAttr", { pokemon: source, simulated, bypassed });
-    //   if (bypassed.value) {
-    //     return;
-    //   }
-    // }
+    if (source) {
+      const bypassed = new BooleanHolder(false);
+      applyAbAttrs("InfiltratorAbAttr", { pokemon: source, simulated, bypassed });
+      if (bypassed.value) {
+        return;
+      }
+    }
 
     cancelled.value = true;
     if (!simulated) {
