@@ -6085,6 +6085,9 @@ export class PlayerPokemon extends Pokemon {
           sd.friendship = friendshipCap - 1;
         }
       }
+      if (Overrides.IMMEDIATE_ADD_CANDY_OVERRIDE > 0) {
+        gameData.addStarterCandy(id, Overrides.IMMEDIATE_ADD_CANDY_OVERRIDE);
+      }
     });
   }
 

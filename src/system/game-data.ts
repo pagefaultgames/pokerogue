@@ -1779,17 +1779,19 @@ export class GameData {
    * Adds candy to the player's game data for a given {@linkcode PokemonSpecies}.
    * @remarks
    * Will not increase the candy count past {@linkcode MAX_STARTER_CANDY_COUNT}.
+   * @param speciesId - The species ID of the Pokémon to increment candy for
+   * @param numCandiesToAdd - The number of candies to add to the Pokémon
    * @returns Whether the candy count was incremented
    */
-  public addStarterCandy(speciesId: SpeciesId, count: number): boolean {
+  public addStarterCandy(speciesId: SpeciesId, numCandiesToAdd: number): boolean {
     const { candyCount } = this.starterData[speciesId];
 
     if (candyCount >= MAX_STARTER_CANDY_COUNT) {
       return false;
     }
 
-    globalScene.candyBar.showStarterSpeciesCandy(speciesId, count);
-    this.starterData[speciesId].candyCount = Math.min(candyCount + count, MAX_STARTER_CANDY_COUNT);
+    this.starterData[speciesId].candyCount = Math.min(candyCount + numCandiesToAdd, MAX_STARTER_CANDY_COUNT);
+    globalScene.candyBar.showStarterSpeciesCandy(speciesId, numCandiesToAdd);
 
     return true;
   }
