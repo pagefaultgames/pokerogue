@@ -912,7 +912,7 @@ export function initAbilities() {
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.HEALER, 5) //
-      .conditionalAttr(pokemon => pokemon.getAlly() != null && randSeedInt(10) < 3, PostTurnResetStatusAbAttr, true)
+      .conditionalAttr(pokemon => pokemon.getAlly() != null && randSeedInt(2) === 1, PostTurnResetStatusAbAttr, true)
       .build(),
     new AbBuilder(AbilityId.FRIEND_GUARD, 5) //
       .attr(AlliedFieldDamageReductionAbAttr, 0.75)
