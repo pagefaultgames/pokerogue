@@ -321,7 +321,7 @@ export class MistTag extends SerializableArenaTag {
       const bypassed = new BooleanHolder(false);
       applyAbAttrs("InfiltratorAbAttr", { pokemon: source, simulated, bypassed });
       if (bypassed.value) {
-        return;
+        return false;
       }
     }
 
