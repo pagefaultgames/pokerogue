@@ -314,7 +314,7 @@ export class MistTag extends SerializableArenaTag {
    * @param defender - The {@linkcode Pokemon} receiving the stat drop
    * @param cancelled - A {@linkcode BooleanHolder} containing whether to nullify the interaction
    */
-  override apply(simulated: boolean, defender: Pokemon, cancelled: BooleanHolder, _source: undefined): void {
+  override apply(simulated: boolean, defender: Pokemon, cancelled: BooleanHolder, source: Pokemon | undefined): boolean {
     // `StatStageChangePhase` currently doesn't have a reference to the source of stat drops,
     // so this code currently has no effect on gameplay.
     // if (source) {
