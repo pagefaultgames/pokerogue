@@ -97,6 +97,6 @@
     }
   },
   // Exclude checking for script JS files as those are covered by the folder's `jsconfig.json`
-  "include": ["**/*.ts", "**/*.d.ts", "**/*.mts"],
+  "include": ["**/*.ts", "**/*.d.ts", "**/*.mts", ".github/**/*.mts"],
   "exclude": ["dist", "node_modules"]
 }
