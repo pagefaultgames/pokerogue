@@ -45,7 +45,9 @@ export class FaintPhase extends PokemonPhase {
     super.start();
 
     const faintPokemon = this.getPokemon();
-
+    if (faintPokemon.hp > 0) {
+      return this.end();
+    }
     if (this.source) {
       faintPokemon.getTag(BattlerTagType.DESTINY_BOND)?.lapse(this.source, BattlerTagLapseType.CUSTOM);
       faintPokemon.getTag(BattlerTagType.GRUDGE)?.lapse(faintPokemon, BattlerTagLapseType.CUSTOM, this.source);
