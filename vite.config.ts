@@ -15,7 +15,6 @@ export const sharedConfig: UserConfigFnPromise = async ({ mode }) => {
     clearScreen: false,
     appType: "mpa",
     build: {
-      // TODO: Do we need to specify this twice?
       sourcemap: mode !== "production",
       chunkSizeWarningLimit: 10000,
       minify: "oxc",
