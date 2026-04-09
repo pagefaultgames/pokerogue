@@ -135,8 +135,7 @@ export class StatStageChangePhase extends PokemonPhase {
           false,
           pokemon,
           cancelled,
-          // TODO: add a reference to the source of the stat change to fix Infiltrator interaction
-          undefined,
+          opponentPokemon,
         );
       }
 
