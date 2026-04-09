@@ -333,6 +333,8 @@ export class MistTag extends SerializableArenaTag {
         }),
       );
     }
+    
+    return true;
   }
 }
 
