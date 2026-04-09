@@ -39,7 +39,6 @@ describe("Ability - Contact Damage (Rough Skin, Iron Barbs)", () => {
 
     expect(firstEnemy).toHaveFainted();
     const secondEnemy = game.field.getEnemyPokemon();
-    expect(secondEnemy).toBeDefined();
     expect(secondEnemy).not.toHaveFainted();
 
     // Second enemy uses Flip Turn and also faints from contact damage
