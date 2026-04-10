@@ -492,7 +492,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
    * Handle pulling eggs from the gacha machine; plays the animations, adds the eggs, and saves game data
    * @param pullCount - The number of eggs to pull
    */
-  async pull(pullCount = 0): Promise<void> {
+  private async pull(pullCount = 0): Promise<void> {
     if (Overrides.EGG_GACHA_PULL_COUNT_OVERRIDE) {
       pullCount = Overrides.EGG_GACHA_PULL_COUNT_OVERRIDE;
     }
@@ -505,16 +505,10 @@ export class EggGachaUiHandler extends MessageUiHandler {
 
     const saveSuccess = await (globalScene.currentBattle
       ? globalScene.gameData.saveAll(true, true, true)
-      : globalScene.gameData.saveSystem()
-    ).then(success => {
-      if (!success) {
-        globalScene.reset(true);
-        return false;
-      }
-      return true;
-    });
+      : globalScene.gameData.saveSystem());
 
     if (!saveSuccess) {
+      globalScene.reset(true);
       return;
     }
 
@@ -525,7 +519,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
       }
       const eggSprite = globalScene.add.sprite(127, 75, "egg", `egg_${eggs[i].getKey()}`).setScale(0.5);
       gachaContainer.addAt(eggSprite, 2);
-      // biome-ignore lint/performance/noAwaitInLoops: The point of this loop is to play the animations, one after another
+      // TODO: is `.finally()` needed?
       await this.doPullAnim(eggSprite, i).finally(() => gachaContainer.remove(eggSprite, true));
     }
 

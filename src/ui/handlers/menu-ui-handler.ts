@@ -648,10 +648,10 @@ export class MenuUiHandler extends MessageUiHandler {
           const doSaveQuit = () => {
             ui.setMode(UiMode.LOADING, {
               buttonActions: [],
-              fadeOut: () =>
-                globalScene.gameData.saveAll(true, true, true, true).then(() => {
-                  globalScene.reset(true);
-                }),
+              fadeOut: async () => {
+                await globalScene.gameData.saveAll(true, true, true, true);
+                globalScene.reset(true);
+              },
             });
           };
           if (globalScene.currentBattle.turn > 1) {

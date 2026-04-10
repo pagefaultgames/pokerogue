@@ -59,6 +59,7 @@ export class Battle {
   protected gameMode: GameMode;
   public waveIndex: number;
   public battleType: BattleType;
+  /** @deprecated This is redundant and should be deleted; cf https://github.com/Despair-Games/poketernity/pull/28 */
   public battleSpec: BattleSpec;
   public trainer: Trainer | null;
   public enemyLevels: number[] | undefined;
