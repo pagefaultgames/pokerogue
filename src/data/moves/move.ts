@@ -12596,7 +12596,7 @@ export function initMoves() {
       .condition(upperHandCondition, 3),
     new AttackMove(MoveId.MALIGNANT_CHAIN, PokemonType.POISON, MoveCategory.SPECIAL, 100, 100, 5, 50, 0, 9) //
       .attr(StatusEffectAttr, StatusEffect.TOXIC),
-    new AttackMove(MoveId.NIHIL_LIGHT, PokemonType.DRAGON, MoveCategory.SPECIAL, 100, 100, 10, -1, 0, 9)
+    new AttackMove(MoveId.NIHIL_LIGHT, PokemonType.DRAGON, MoveCategory.SPECIAL, 100, 100, 5, -1, 0, 9)
       .attr(IgnoreOpponentStatStagesAttr)
       .attr(NihilLightAttr)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
