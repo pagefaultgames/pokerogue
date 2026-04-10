@@ -3639,7 +3639,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     /** Debug message for non-simulated calls (i.e. when damage is actually dealt) */
     if (!simulated) {
-      console.log("base damage", baseDamage, move.name, power, sourceAtk.value, targetDef.value);
+      console.log(
+        `Move: ${move.name} | Base damage: ${baseDamage} | Power: ${power} | Source attack: ${sourceAtk.value} | Target defense: ${targetDef.value}`,
+      );
     }
 
     return baseDamage;
@@ -3949,7 +3951,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     // debug message for when damage is applied (i.e. not simulated)
     if (!simulated) {
-      console.log("damage", damage.value, move.name);
+      console.log(`Move: ${move.name} | Attack damage: ${damage.value}`);
     }
 
     let hitResult: HitResult;
