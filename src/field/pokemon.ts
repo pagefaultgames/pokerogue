@@ -636,7 +636,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /** Generate `abilityIndex` based on species and hidden ability if not pre-defined. */
   private generateAbilityIndex(): number {
-    const hiddenAbilityChance = new NumberHolder(BASE_HIDDEN_ABILITY_RATE);
+    const hiddenAbilityChance = new ValueHolder(BASE_HIDDEN_ABILITY_RATE);
     // Ability Charms should only affect wild Pokemon
     // TODO: move this `if` check into the ability charm code
     if (!this.hasTrainer()) {
@@ -3148,7 +3148,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param forStarter - Whether this fusion is being generated for a starter Pokémon; default `false`
    */
   public generateFusionSpecies(forStarter?: boolean): void {
-    const hiddenAbilityChance = new NumberHolder(BASE_HIDDEN_ABILITY_RATE);
+    const hiddenAbilityChance = new ValueHolder(BASE_HIDDEN_ABILITY_RATE);
     if (!this.hasTrainer()) {
       globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
     }
