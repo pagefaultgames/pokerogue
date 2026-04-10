@@ -5,7 +5,6 @@
  */
 
 import { defineConfig, loadEnv, type PluginOption, type UserConfig, type UserConfigFnPromise } from "vite";
-import tsconfigPaths from "vite-tsconfig-paths";
 
 /**
  * Default config object used for both Vitest and local dev runs.
@@ -54,17 +53,14 @@ export const sharedConfig: UserConfigFnPromise = async ({ mode }) => {
         },
       },
     },
-    // TODO: Vitest is currently incompatible with vite's tsconfig paths resolution, requiring us to use the plugin
-    // Remove the plugin once https://github.com/vitest-dev/vitest/issues/10054 is resolved
-    // resolve: {
-    //   tsconfigPaths: true,
-    // },
+    resolve: {
+      tsconfigPaths: true,
+    },
     plugins: [] as PluginOption[],
   } satisfies UserConfig;
 
   if (!process.env.MERGE_REPORTS) {
     opts.plugins = [
-      tsconfigPaths(),
       (await import("./src/plugins/vite/vite-minify-json-plugin")).minifyPublicJsonFiles(),
       (await import("./src/plugins/vite/namespaces-i18n-plugin")).LocaleNamespace(),
       (await import("unplugin-inline-enum/vite")).default({ scanDir: "src" }),

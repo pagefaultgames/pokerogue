@@ -84,7 +84,6 @@
     "typescript": "^5.9.3",
     "unplugin-inline-enum": "^0.6.4",
     "vite": "^8.0.8",
-    "vite-tsconfig-paths": "^6.1.1",
     "vitest": "^4.1.4",
     "vitest-canvas-mock": "^1.1.4"
   },
