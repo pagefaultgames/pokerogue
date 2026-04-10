@@ -91,6 +91,9 @@ describe("Moves - Mist", () => {
     game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     game.move.use(MoveId.GROWL);
     await game.move.forceEnemyMove(MoveId.MIST);
+    await game.phaseInterceptor.to("MoveEndPhase");
+    expect(game).toHaveArenaTag(ArenaTagType.MIST, ArenaTagSide.ENEMY);
+    expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, 0);
     await game.toEndOfTurn();
 
     expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, -1);
