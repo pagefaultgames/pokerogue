@@ -170,7 +170,7 @@ export abstract class ArenaTag implements BaseArenaTag {
   // TODO: Move all classes with `apply` triggers into a unique sub-class to prevent
   // applying effects of tags that lack effect application
   // biome-ignore lint/correctness/noUnusedFunctionParameters: pseudo-abstract method
-  public apply(...args: never): void {}
+  public apply(...args: unknown[]): void {}
 
   /**
    * Trigger effects when this tag is added to the Arena.
