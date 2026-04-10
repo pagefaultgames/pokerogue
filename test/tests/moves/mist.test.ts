@@ -84,6 +84,15 @@ describe("Moves - Mist", () => {
     expect(feebas).toHaveStatStage(Stat.DEF, -1);
   });
 
-  // TODO: Implement once stat stage change phase is refactored
-  it.todo("should be ignored by opponents with Infiltrator");
+  it("should be ignored by opponents with Infiltrator", async () => {
+    game.override.ability(AbilityId.INFILTRATOR);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.move.use(MoveId.GROWL);
+    await game.move.forceEnemyMove(MoveId.MIST);
+    await game.toEndOfTurn();
+
+    expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, -1);
+  });
 });
