@@ -8,7 +8,7 @@ import { DamageProtectedTag, ProtectedTag, SemiInvulnerableTag, SubstituteTag, T
 import { SpeciesFormChangePostMoveTrigger } from "#data/form-change-triggers";
 import type { TypeDamageMultiplier } from "#data/type";
 import { ArenaTagSide } from "#enums/arena-tag-side";
-import { BattlerIndex } from "#enums/battler-index";
+import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { HitCheckResult } from "#enums/hit-check-result";
@@ -177,14 +177,15 @@ export class MoveEffectPhase extends PokemonPhase {
       this.moveHistoryEntry.result === MoveResult.SUCCESS
       || move.getAttrs("MoveEffectAttr").some(attr => attr.trigger === MoveEffectTrigger.POST_TARGET)
     ) {
-      const targetsForAnimation = this.getTargets();
+      const moveTargets = this.getTargets();
+      const targetsForAnimation = moveTargets.length > 0 ? moveTargets : [user];
       let animationsLeft = targetsForAnimation.length;
 
       for (const target of targetsForAnimation) {
         new MoveAnim(
           move.id as MoveId,
           user,
-          target?.getBattlerIndex() ?? BattlerIndex.ATTACKER,
+          target.getBattlerIndex(),
           // Some moves used in mystery encounters should be played even on an empty field
           globalScene.currentBattle?.mysteryEncounter?.hasBattleAnimationsWithoutTargets ?? false,
         ).play(move.hitsSubstitute(user, target), () => {
