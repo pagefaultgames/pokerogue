@@ -1,5 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import type { InputsController } from "#app/inputs-controller";
+import { isDev } from "#constants/app-constants";
 import { Button } from "#enums/buttons";
 import { UiMode } from "#enums/ui-mode";
 import { Setting, SettingKeys, settingIndex } from "#system/settings";
@@ -97,6 +98,11 @@ export class UiInputs {
       [Button.CYCLE_TERA]: () => this.buttonCycleOption(Button.CYCLE_TERA),
       [Button.SPEED_UP]: () => this.buttonSpeedChange(),
       [Button.SLOW_DOWN]: () => this.buttonSpeedChange(false),
+      [Button.DEV_CUSTOM]: () => {
+        if (isDev) {
+          import("./dev-function").then(m => m.customDevFunction());
+        }
+      },
     };
     return actions;
   }
@@ -120,6 +126,7 @@ export class UiInputs {
       [Button.CYCLE_TERA]: () => this.buttonInfo(false),
       [Button.SPEED_UP]: () => {},
       [Button.SLOW_DOWN]: () => {},
+      [Button.DEV_CUSTOM]: () => {},
     };
     return actions;
   }

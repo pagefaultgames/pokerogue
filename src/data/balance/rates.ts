@@ -1,4 +1,4 @@
-/**
+/*
  * Rates for shinies and other random properties are defined in this file.
  * CHANCE is defined as x/65536
  * RATE is defined as 1/x
