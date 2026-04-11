@@ -27,7 +27,7 @@ import { TmRewardGenerator } from "./rewards/tm";
 import { LapsingTrainerItemReward, TempStatStageBoosterRewardGenerator } from "./rewards/trainer-item-reward";
 import { AddVoucherReward } from "./rewards/voucher";
 
-// TODO: Move to `reward-utils.ts` and un-exportt
+// TODO: Move to `reward-utils.ts` and remove export
 export const allRewards = {
   [RewardId.NONE]: new EmptyReward(),
 
@@ -181,4 +181,4 @@ export const allRewards = {
   [k in RewardId]: Reward | RewardGenerator;
 };
 
-export type allRewardsType = typeof allRewards;
+export type AllRewardsType = typeof allRewards;

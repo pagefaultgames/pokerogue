@@ -8,6 +8,7 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/framework/game-manager";
+import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -58,11 +59,11 @@ describe("Challenges - Hardcore", () => {
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
 
-    await game.phaseInterceptor.to("SelectModifierPhase");
-    expect(game.scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
+    await game.phaseInterceptor.to("SelectRewardPhase");
+    expect(game.scene.ui.getMode()).toBe(UiMode.REWARD_SELECT);
     const modifierSelectHandler = game.scene.ui.handlers.find(
-      h => h instanceof ModifierSelectUiHandler,
-    ) as ModifierSelectUiHandler;
+      h => h instanceof RewardSelectUiHandler,
+    ) as RewardSelectUiHandler;
     expect(
       modifierSelectHandler.options.find(reward => reward.modifierTypeOption.type.group === "revive"),
     ).toBeUndefined();
@@ -103,12 +104,12 @@ describe("Challenges - Hardcore", () => {
     game.move.select(MoveId.RAZOR_LEAF);
     await game.doKillOpponents();
 
-    await game.phaseInterceptor.to("SelectModifierPhase");
+    await game.phaseInterceptor.to("SelectRewardPhase");
     game.onNextPrompt(
-      "SelectModifierPhase",
-      UiMode.MODIFIER_SELECT,
+      "SelectRewardPhase",
+      UiMode.REWARD_SELECT,
       () => {
-        const handler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
+        const handler = game.scene.ui.getHandler<RewardSelectUiHandler>();
         // Traverse to and select first modifier
         handler.setCursor(0);
         handler.setRowCursor(ShopCursorTarget.REWARDS);
@@ -140,12 +141,12 @@ describe("Challenges - Hardcore", () => {
     game.move.select(MoveId.RAZOR_LEAF);
     await game.doKillOpponents();
 
-    await game.phaseInterceptor.to("SelectModifierPhase");
+    await game.phaseInterceptor.to("SelectRewardPhase");
     game.onNextPrompt(
-      "SelectModifierPhase",
-      UiMode.MODIFIER_SELECT,
+      "SelectRewardPhase",
+      UiMode.REWARD_SELECT,
       () => {
-        const handler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
+        const handler = game.scene.ui.getHandler<RewardSelectUiHandler>();
         // Traverse to and select first modifier
         handler.setCursor(0);
         handler.setRowCursor(ShopCursorTarget.REWARDS);

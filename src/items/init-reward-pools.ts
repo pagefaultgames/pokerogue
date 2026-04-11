@@ -95,7 +95,7 @@ function initCommonRewardPool() {
 /**
  * Initialize the Great modifier pool
  */
-function initGreatRewardPool() {
+function initGreatRewardPool(): void {
   rewardPool[RarityTier.GREAT] = [
     { id: RewardId.GREAT_BALL, weight: () => (hasMaximumBalls(PokeballType.GREAT_BALL) ? 0 : 6), maxWeight: 6 },
     { id: RewardId.PP_UP, weight: 2 },
@@ -284,8 +284,8 @@ function initGreatRewardPool() {
     },
     {
       id: RewardId.VOUCHER,
-      weight: (_party: Pokemon[], rerollCount: number) =>
-        !globalScene.gameMode.isDaily ? Math.max(1 - rerollCount, 0) : 0,
+      weight: (_party: Pokemon[], rerollCount?: number) =>
+        globalScene.gameMode.isDaily ? 0 : Math.max(1 - (rerollCount ?? 0), 0), // TODO: is `rerollCount ?? 0` correct?
       maxWeight: 1,
     },
   ];
@@ -503,9 +503,9 @@ function initUltraRewardPool() {
     {
       id: TrainerItemId.TERA_ORB,
       weight: () =>
-        !globalScene.gameMode.isClassic
-          ? Math.min(Math.max(Math.floor(globalScene.currentBattle.waveIndex / 50) * 2, 1), 4)
-          : 0,
+        globalScene.gameMode.isClassic
+          ? 0
+          : Math.min(Math.max(Math.floor(globalScene.currentBattle.waveIndex / 50) * 2, 1), 4),
       maxWeight: 4,
     },
     { id: HeldItemId.QUICK_CLAW, weight: 3 },
@@ -524,7 +524,7 @@ function initRogueRewardPool() {
     { id: HeldItemId.SCOPE_LENS, weight: 4 },
     { id: HeldItemId.BATON, weight: 2 },
     { id: HeldItemId.SOUL_DEW, weight: 7 },
-    { id: TrainerItemId.CATCHING_CHARM, weight: () => (!globalScene.gameMode.isClassic ? 4 : 0), maxWeight: 4 },
+    { id: TrainerItemId.CATCHING_CHARM, weight: () => (globalScene.gameMode.isClassic ? 0 : 4), maxWeight: 4 },
     { id: TrainerItemId.ABILITY_CHARM, weight: skipInClassicAfterWave(189, 6) },
     { id: HeldItemId.FOCUS_BAND, weight: 5 },
     { id: HeldItemId.KINGS_ROCK, weight: 3 },
@@ -547,8 +547,8 @@ function initRogueRewardPool() {
     },
     {
       id: RewardId.VOUCHER_PLUS,
-      weight: (_party: Pokemon[], rerollCount: number) =>
-        !globalScene.gameMode.isDaily ? Math.max(3 - rerollCount * 1, 0) : 0,
+      weight: (_party: Pokemon[], rerollCount?: number) =>
+        globalScene.gameMode.isDaily ? 0 : Math.max(3 - (rerollCount ?? 0), 0), // TODO: is `rerollCount ?? 0` correct?
       maxWeight: 3,
     },
   ];
@@ -565,9 +565,9 @@ function initMasterRewardPool() {
     { id: HeldItemId.MULTI_LENS, weight: 18 },
     {
       id: RewardId.VOUCHER_PREMIUM,
-      weight: (_party: Pokemon[], rerollCount: number) =>
+      weight: (_party: Pokemon[], rerollCount?: number) =>
         !globalScene.gameMode.isDaily && !globalScene.gameMode.isEndless && !globalScene.gameMode.isSplicedOnly
-          ? Math.max(5 - rerollCount * 2, 0)
+          ? Math.max(5 - (rerollCount ?? 0) * 2, 0) // TODO: is `rerollCount ?? 0` correct?
           : 0,
       maxWeight: 5,
     },

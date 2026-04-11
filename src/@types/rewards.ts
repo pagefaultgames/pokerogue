@@ -2,7 +2,7 @@ import type { HeldItemId } from "#enums/held-item-id";
 import type { RewardId } from "#enums/reward-id";
 import type { TrainerItemId } from "#enums/trainer-item-id";
 import type { Pokemon } from "#field/pokemon";
-import type { allRewardsType } from "#items/all-rewards";
+import type { AllRewardsType } from "#items/all-rewards";
 import type { RewardGenerator } from "#items/reward";
 
 // TODO: Remove party from arguments - can be accessed from `globalScene`
@@ -11,7 +11,7 @@ export type WeightedRewardWeightFunc = (party: Pokemon[], rerollCount?: number) 
 export type RewardPoolId = RewardId | HeldItemId | TrainerItemId;
 
 type AllRewardGenerators = {
-  [k in keyof allRewardsType as allRewardsType[k] extends RewardGenerator ? k : never]: allRewardsType[k];
+  [k in keyof AllRewardsType as AllRewardsType[k] extends RewardGenerator ? k : never]: AllRewardsType[k];
 };
 
 type RewardGeneratorArgMap = {

@@ -147,12 +147,7 @@ export function generatePlayerRewardOptions(
   // TODO: Change this to allow for custom reward pools
   const pool = getRewardPoolForType(RewardPoolType.PLAYER);
   const weights = getRewardWeightsForType(RewardPoolType.PLAYER);
-  if (!customRewardSettings) {
-    for (let i = 0; i < count; i++) {
-      const tier = rarityTiers && rarityTiers.length > i ? rarityTiers[i] : undefined;
-      options.push(getRewardOptionWithRetry(pool, weights, options, retryCount, party, tier));
-    }
-  } else {
+  if (customRewardSettings) {
     // Guaranteed reward options first
     if (customRewardSettings?.guaranteedRewardOptions && customRewardSettings.guaranteedRewardOptions.length > 0) {
       options.push(...customRewardSettings.guaranteedRewardOptions!);
@@ -180,6 +175,11 @@ export function generatePlayerRewardOptions(
       while (options.length < count) {
         options.push(getRewardOptionWithRetry(pool, weights, options, retryCount, party, undefined));
       }
+    }
+  } else {
+    for (let i = 0; i < count; i++) {
+      const tier = rarityTiers && rarityTiers.length > i ? rarityTiers[i] : undefined;
+      options.push(getRewardOptionWithRetry(pool, weights, options, retryCount, party, tier));
     }
   }
 

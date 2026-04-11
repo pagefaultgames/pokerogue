@@ -120,6 +120,7 @@ import { UiMode } from "#enums/ui-mode";
 import { WeatherType } from "#enums/weather-type";
 import { HeldItemManager } from "#items/held-item-manager";
 import { assignItemsFromConfiguration } from "#items/held-item-pool";
+import { applyMoveAttrs } from "#moves/apply-attrs";
 import type { Move } from "#moves/move";
 import { getMoveTargets } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
@@ -6272,7 +6273,7 @@ export class PlayerPokemon extends Pokemon {
         newPokemon.usedTMs = this.usedTMs;
 
         globalScene.getPlayerParty().push(newPokemon);
-        newPokemon.evolve(!isFusion ? newEvolution : new FusionSpeciesFormEvolution(this.id, newEvolution), evoSpecies);
+        newPokemon.evolve(isFusion ? new FusionSpeciesFormEvolution(this.id, newEvolution) : newEvolution, evoSpecies);
         //TODO: This currently does not consider any values associated with the items e.g. disabled
         const heldItems = this.getHeldItems();
         heldItems.forEach(item => {

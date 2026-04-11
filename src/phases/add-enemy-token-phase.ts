@@ -5,17 +5,23 @@ import { assignEnemyBuffTokenForWave } from "#items/trainer-item-pool";
 
 export class AddEnemyTokenPhase extends Phase {
   public readonly phaseName = "AddEnemyTokenPhase";
-  start() {
+
+  public override start(): void {
     super.start();
 
     const waveIndex = globalScene.currentBattle.waveIndex;
-    const tier = !(waveIndex % 1000) ? RarityTier.ULTRA : !(waveIndex % 250) ? RarityTier.GREAT : RarityTier.COMMON;
+    let tier = RarityTier.ULTRA;
+    if (waveIndex % 1000) {
+      tier = waveIndex % 250 ? RarityTier.COMMON : RarityTier.GREAT;
+    }
 
     const count = Math.ceil(waveIndex / 250);
     for (let i = 0; i < count; i++) {
       assignEnemyBuffTokenForWave(tier);
     }
+
     globalScene.updateItems(false);
+
     this.end();
   }
 }

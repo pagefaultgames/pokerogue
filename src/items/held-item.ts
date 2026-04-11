@@ -149,7 +149,7 @@ export abstract class HeldItem<
    * @returns Whether the effect should apply.
    * Defaults to `true` if not overridden.
    */
-  // biome-ignore lint/style/noUnusedParameters: psuedo-abstract base method
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: pseudo-abstract method
   public shouldApply<const E extends this["effects"][number]>(effect: E, args: HeldItemEffectParamMap[E]): boolean {
     return true;
   }

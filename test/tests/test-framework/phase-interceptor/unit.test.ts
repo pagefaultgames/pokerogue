@@ -80,7 +80,7 @@ describe("Utils - Phase Interceptor - Unit", () => {
 
   /** Wrapper function to make TS not complain about incompatible argument typing on `PhaseString`. */
   function to(phaseName: string, runTarget?: false): Promise<void> {
-    return game.phaseInterceptor.to("phaseName" as unknown as PhaseString, runTarget);
+    return game.phaseInterceptor.to(phaseName as unknown as PhaseString, runTarget);
   }
 
   describe("to", () => {

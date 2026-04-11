@@ -1,6 +1,7 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { RarityTier } from "#enums/reward-tier";
+import { SpeciesId } from "#enums/species-id";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { UiMode } from "#enums/ui-mode";
 import { SelectRewardPhase } from "#phases/select-reward-phase";

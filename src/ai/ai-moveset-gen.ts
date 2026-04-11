@@ -39,6 +39,8 @@ import { SUPERCEDED_MOVES } from "#balance/moves/superceded-moves";
 import { speciesTmMoves, tmPoolTiers } from "#balance/tms";
 import { IS_TEST, isBeta, isDev } from "#constants/app-constants";
 import { allMoves } from "#data/data-lists";
+import { AbilityId } from "#enums/ability-id";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveCategory } from "#enums/move-category";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
