@@ -1,6 +1,7 @@
 import { RewardId } from "#enums/reward-id";
 import { RarityTier } from "#enums/reward-tier";
 
+// TODO: should this be exported? why?
 export const rewardRarities = {
   [RewardId.POKEBALL]: RarityTier.COMMON,
   [RewardId.GREAT_BALL]: RarityTier.GREAT,

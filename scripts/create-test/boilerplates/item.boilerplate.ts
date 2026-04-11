@@ -4,8 +4,8 @@ import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { GameManager } from "#test/test-utils/game-manager";
-import { applySingleHeldItem } from "#test/test-utils/utils/item-test-utils";
+import { GameManager } from "#test/framework/game-manager";
+import { applySingleHeldItem } from "#test/utils/item-test-utils";
 import { NumberHolder } from "#utils/common";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -36,7 +36,7 @@ describe("{{description}}", () => {
   });
 
   it("should do XYZ when applied", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     feebas.heldItemManager.add(HeldItemId.WIDE_LENS);
@@ -52,7 +52,7 @@ describe("{{description}}", () => {
   });
 
   it("should be applied when XYZ occurs", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
 

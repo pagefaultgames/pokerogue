@@ -1,7 +1,8 @@
 import { getPokemonNameWithAffix } from "#app/messages";
 import { HeldItemNames } from "#enums/held-item-id";
 import type { Pokemon } from "#field/pokemon";
-import type { ApplicableHeldItemId, allHeldItemsType, HeldItemSpecs } from "#types/held-item-data-types";
+import type { AllHeldItems } from "#items/all-held-items";
+import type { ApplicableHeldItemId, HeldItemSpecs } from "#types/held-item-data-types";
 import type { HeldItemEffectParamMap } from "#types/held-item-parameter";
 import { expect } from "vitest";
 
@@ -21,7 +22,7 @@ export function getAllItemSpecs(pokemon: Pokemon): HeldItemSpecs[] {
  * @throws {Error}
  * Fails test immediately if the `pokemon` contained in the parameter map lacks the item in question.
  */
-export function applySingleHeldItem<T extends ApplicableHeldItemId, E extends allHeldItemsType[T]["effects"][number]>(
+export function applySingleHeldItem<T extends ApplicableHeldItemId, E extends AllHeldItems[T]["effects"][number]>(
   item: T,
   effect: E,
   params: HeldItemEffectParamMap[E],

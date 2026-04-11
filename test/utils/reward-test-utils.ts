@@ -2,8 +2,10 @@ import type { HeldItemId } from "#enums/held-item-id";
 import type { RewardId } from "#enums/reward-id";
 import type { TrainerItemId } from "#enums/trainer-item-id";
 import { allRewards, type allRewardsType } from "#items/all-rewards";
-import { HeldItemReward, type Reward, RewardGenerator, TrainerItemReward } from "#items/reward";
+import { HeldItemReward } from "#items/held-item-reward";
+import { type Reward, RewardGenerator } from "#items/reward";
 import { isHeldItemId, isTrainerItemId } from "#items/reward-utils";
+import { TrainerItemReward } from "#items/trainer-item-reward";
 import type { RewardPoolId, RewardSpecs } from "#types/rewards";
 
 // Type used to pares allRewards and convert generators into their return values

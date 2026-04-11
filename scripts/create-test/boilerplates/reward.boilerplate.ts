@@ -4,8 +4,8 @@ import { MoveId } from "#enums/move-id";
 import { RewardId } from "#enums/reward-id";
 import { SpeciesId } from "#enums/species-id";
 import { HeldItemReward } from "#items/held-item-reward";
-import { GameManager } from "#test/test-utils/game-manager";
-import { generateRewardForTest } from "#test/test-utils/reward-test-utils";
+import { GameManager } from "#test/framework/game-manager";
+import { generateRewardForTest } from "#test/utils/reward-test-utils";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -33,7 +33,7 @@ describe("{{description}}", () => {
   });
 
   it("should do XYZ when applied", async () => {
-    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
 
