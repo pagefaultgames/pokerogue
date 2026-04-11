@@ -279,7 +279,7 @@
         },
         "noNonNullAssertedOptionalChain": "warn", // TODO: Refactor and change to error
         "noDuplicateDependencies": "error",
-        "noImportCycles": "warn" // temporary until work is finished
+        "noImportCycles": "error"
       },
       "complexity": {
         "useWhile": "error",
