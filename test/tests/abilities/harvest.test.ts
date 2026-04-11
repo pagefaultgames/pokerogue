@@ -82,7 +82,7 @@ describe("Abilities - Harvest", () => {
     await game.move.selectEnemyMove(MoveId.NUZZLE);
     await game.toNextTurn();
 
-    expect(milotic.battleData.berriesEaten).toEqualArrayUnsorted([BerryType.ENIGMA, BerryType.LUM]);
+    expect(milotic.battleData.berriesEaten).toEqualUnsorted([BerryType.ENIGMA, BerryType.LUM]);
     expect(getPartyBerries()).toHaveLength(2);
 
     // Give ourselves harvest and disable enemy neut gas,
@@ -94,7 +94,7 @@ describe("Abilities - Harvest", () => {
 
     await game.toNextTurn();
 
-    expect(milotic.battleData.berriesEaten).toEqualArrayUnsorted([
+    expect(milotic.battleData.berriesEaten).toEqualUnsorted([
       BerryType.ENIGMA,
       BerryType.LUM,
       BerryType.ENIGMA,

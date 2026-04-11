@@ -110,7 +110,7 @@ describe("Moves - Safeguard", () => {
 
   it("doesn't protect from self-inflicted status from Rest or Flame Orb", async () => {
     game.override.enemyHeldItems([{ entry: HeldItemId.FLAME_ORB }]);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.DRATINI);
     const enemyPokemon = game.field.getEnemyPokemon();
     enemyPokemon.hp = 1;
 

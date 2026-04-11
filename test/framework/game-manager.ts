@@ -181,7 +181,7 @@ export class GameManager {
   onNextPrompt(
     phaseTarget: PhaseString,
     mode: UiMode,
-    callback: () => void,
+    callback: () => void, // TODO: add `| Promise<void>` and so on?
     expireFn?: () => boolean,
     awaitingActionInput = false,
   ) {

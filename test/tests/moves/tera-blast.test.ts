@@ -138,7 +138,7 @@ describe("Moves - Tera Blast", () => {
 
   it("does not change its move category from stat changes due to held items", async () => {
     game.override.startingHeldItems([{ entry: HeldItemId.THICK_CLUB }]).starterSpecies(SpeciesId.CUBONE);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle(SpeciesId.CUBONE);
 
     const playerPokemon = game.field.getPlayerPokemon();
 
