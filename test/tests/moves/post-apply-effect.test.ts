@@ -9,7 +9,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
-import { beforeAll, beforeEach, describe, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Move - Post Apply Effect", () => {
   let phaserGame: Phaser.Game;
