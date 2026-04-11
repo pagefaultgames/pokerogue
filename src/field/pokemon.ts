@@ -18,7 +18,7 @@ import {
   pokemonPrevolutions,
   validateShedinjaEvo,
 } from "#balance/pokemon-evolutions";
-import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY_VARIANT_CHANCE } from "#balance/rates";
+import { BASE_HIDDEN_ABILITY_RATE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY_VARIANT_CHANCE } from "#balance/rates";
 import {
   getStarterValueFriendshipCap,
   speciesStarterCosts,
@@ -187,6 +187,7 @@ import { getEnumValues } from "#utils/enums";
 import { cachedFetch } from "#utils/fetch-utils";
 import { getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
+import { ValueHolder } from "#utils/value-holder";
 import { argbFromRgba, QuantizerCelebi, rgbaFromArgb } from "@material/material-color-utilities";
 import i18next from "i18next";
 import Phaser from "phaser";
@@ -635,7 +636,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /** Generate `abilityIndex` based on species and hidden ability if not pre-defined. */
   private generateAbilityIndex(): number {
-    const hiddenAbilityChance = new NumberHolder(BASE_HIDDEN_ABILITY_CHANCE);
+    const hiddenAbilityChance = new ValueHolder(BASE_HIDDEN_ABILITY_RATE);
     // Ability Charms should only affect wild Pokemon
     // TODO: move this `if` check into the ability charm code
     if (!this.hasTrainer()) {
@@ -3126,30 +3127,20 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Function that tries to set this Pokemon to have its hidden ability based on seed, if it exists.
-   *
-   * @remarks
-   * For manual use only, usually to roll a Pokemon's hidden ability chance a second time.
-   *
-   * The base hidden ability odds are {@linkcode BASE_HIDDEN_ABILITY_CHANCE} / `65536`
-   * @param thresholdOverride - number that is divided by `2^16` (`65536`) to get the HA chance, overrides {@linkcode haThreshold} if set (bypassing HA rate modifiers such as Ability Charm)
-   * @param applyModifiersToOverride - If {@linkcode thresholdOverride} is set and this is true, will apply Ability Charm to {@linkcode thresholdOverride}
-   * @returns `true` if the Pokemon has been set to have its hidden ability, `false` otherwise
+   * Used by Mystery Encounters to override a Pokemon's ability to be its hidden ability
+   * @param haThreshold - The denominator for the HA chance (`1 / haThreshold`)
    */
-  public tryRerollHiddenAbilitySeed(thresholdOverride?: number, applyModifiersToOverride?: boolean): boolean {
+  public tryRerollHiddenAbilitySeed(haThreshold: number): void {
     if (!this.species.abilityHidden) {
-      return false;
-    }
-    const haThreshold = new NumberHolder(thresholdOverride ?? BASE_HIDDEN_ABILITY_CHANCE);
-    if (applyModifiersToOverride && !this.hasTrainer()) {
-      globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, haThreshold);
+      return;
     }
 
-    if (randSeedInt(65536) < haThreshold.value) {
+    const hiddenAbilityChance = new ValueHolder(haThreshold);
+    globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
+
+    if (!randSeedInt(hiddenAbilityChance.value)) {
       this.abilityIndex = 2;
     }
-
-    return this.abilityIndex === 2;
   }
 
   /**
@@ -3157,7 +3148,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param forStarter - Whether this fusion is being generated for a starter Pokémon; default `false`
    */
   public generateFusionSpecies(forStarter?: boolean): void {
-    const hiddenAbilityChance = new NumberHolder(BASE_HIDDEN_ABILITY_CHANCE);
+    const hiddenAbilityChance = new ValueHolder(BASE_HIDDEN_ABILITY_RATE);
     if (!this.hasTrainer()) {
       globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
     }
