@@ -2,15 +2,15 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { HeldItemCategoryId, HeldItemId, isCategoryId, isItemInCategory } from "#enums/held-item-id";
 import type { Pokemon } from "#field/pokemon";
 import type { OneOther } from "#test/@types/test-helpers";
-import { getEnumStr, getOnelineDiffStr, stringifyEnumArray } from "#test/test-utils/string-utils";
-import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
+import { getEnumStr, getOnelineDiffStr, stringifyEnumArray } from "#test/utils/string-utils";
+import { isPokemonInstance, receivedStr } from "#test/utils/test-utils";
 import type { HeldItemSpecs } from "#types/held-item-data-types";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
  * Options type for {@linkcode toHaveHeldItem}.
  */
-export type expectedHeldItemType = OneOther<HeldItemSpecs, "id" | "stack">;
+export type ExpectedHeldItemType = OneOther<HeldItemSpecs, "id" | "stack">;
 
 /**
  * Matcher that checks if a {@linkcode Pokemon} has the given held item.
@@ -23,7 +23,7 @@ export type expectedHeldItemType = OneOther<HeldItemSpecs, "id" | "stack">;
 export function toHaveHeldItem(
   this: MatcherState,
   received: unknown,
-  expectedItem: HeldItemId | HeldItemCategoryId | expectedHeldItemType,
+  expectedItem: HeldItemId | HeldItemCategoryId | ExpectedHeldItemType,
   count = 1,
 ): SyncExpectationResult {
   if (!isPokemonInstance(received)) {

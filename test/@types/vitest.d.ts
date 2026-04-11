@@ -21,26 +21,27 @@ import type { StatusEffect } from "#enums/status-effect";
 import type { WeatherType } from "#enums/weather-type";
 import type { Arena } from "#field/arena";
 import type { Pokemon } from "#field/pokemon";
+import type { AllHeldItems } from "#items/all-held-items";
 import type { PokemonMove } from "#moves/pokemon-move";
 import type { OneOther } from "#test/@types/test-helpers";
-import type { ApplicableHeldItemId } from "#types/held-item-data-types";
 import type { GameManager } from "#test/framework/game-manager";
+import type { ToHaveAppliedItemOptions } from "#test/matchers/to-have-applied-item";
 import type { PartiallyFilledArenaTag } from "#test/matchers/to-have-arena-tag";
 import type { PartiallyFilledBattlerTag } from "#test/matchers/to-have-battler-tag";
 import type { ToHaveEffectiveStatOptions } from "#test/matchers/to-have-effective-stat";
+import type { ExpectedHeldItemType } from "#test/matchers/to-have-held-item";
 import type { ToHaveHpOptions } from "#test/matchers/to-have-hp";
 import type { PartiallyFilledPositionalTag } from "#test/matchers/to-have-positional-tag";
 import type { PartiallyFilledStatus } from "#test/matchers/to-have-status-effect";
 import type { ToHaveTypesOptions } from "#test/matchers/to-have-types";
+import type { ApplicableHeldItemId } from "#types/held-item-data-types";
 import type { PhaseString } from "#types/phase-types";
 import type { TurnMove } from "#types/turn-move";
 import type { toDmgValue } from "#utils/common";
 import type { If, IntClosedRange, Integer, IsNumericLiteral, IsStringLiteral, NonNegativeInteger } from "type-fest";
 import type { expect } from "vitest";
 import type { GetMatchers, MatchersBase, RestrictMatcher } from "./matcher-helpers";
-import type { ExpectedHeldItemType } from "#test/matchers/to-have-held-item";
-import type { ToHaveAppliedItemOptions } from "#test/matchers/to-have-applied-item";
-import type { AllHeldItems } from "#items/all-held-items";
+
 // #region Helper Types
 
 /**

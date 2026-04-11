@@ -2,10 +2,11 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { allHeldItems } from "#data/data-lists";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemNames } from "#enums/held-item-id";
+import type { AllHeldItems } from "#items/all-held-items";
 import { type CosmeticHeldItem, HeldItem } from "#items/held-item";
-import { getOnelineDiffStr } from "#test/test-utils/string-utils";
-import { isPokemonInstance, receivedStr } from "#test/test-utils/test-utils";
-import type { ApplicableHeldItemId, allHeldItemsType } from "#types/held-item-data-types";
+import { getOnelineDiffStr } from "#test/utils/string-utils";
+import { isPokemonInstance, receivedStr } from "#test/utils/test-utils";
+import type { ApplicableHeldItemId } from "#types/held-item-data-types";
 import type { HeldItemEffectParamMap } from "#types/held-item-parameter";
 import type { AtLeastOne } from "#types/type-helpers";
 import { enumValueToKey } from "#utils/enums";
@@ -13,7 +14,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 import { type MockInstance, vi } from "vitest";
 
 /** Options type for {@linkcode toHaveAppliedItem}. */
-export type toHaveAppliedItemOptions<E extends HeldItemEffect> =
+export type ToHaveAppliedItemOptions<E extends HeldItemEffect> =
   Omit<HeldItemEffectParamMap[E], "pokemon"> extends Record<string, never>
     ? never
     : AtLeastOne<Omit<HeldItemEffectParamMap[E], "pokemon">>;
@@ -26,12 +27,12 @@ export type toHaveAppliedItemOptions<E extends HeldItemEffect> =
  * @param options - A partially-filled parameters object used to query the arguments `item` was called with
  * @returns Whether the matcher passed
  */
-export function toHaveAppliedItem<T extends ApplicableHeldItemId, E extends allHeldItemsType[T]["effects"][number]>(
+export function toHaveAppliedItem<T extends ApplicableHeldItemId, E extends AllHeldItems[T]["effects"][number]>(
   this: MatcherState,
   received: unknown,
   id: T,
   effect: E,
-  options: toHaveAppliedItemOptions<E> = {} as toHaveAppliedItemOptions<E>,
+  options: ToHaveAppliedItemOptions<E> = {} as ToHaveAppliedItemOptions<E>,
 ): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
     return {
