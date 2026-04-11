@@ -40,6 +40,8 @@ describe("Move - Post Apply Effect", () => {
     game.move.use(MoveId.PROTECT);
     await game.move.forceEnemyMove(MoveId.EXPLOSION);
     await game.toEndOfTurn();
+
     // If we get here, there was no softlock
+    expect(game.field.getPlayerPokemon()).toHaveFullHp();
   });
 });
