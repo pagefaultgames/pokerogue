@@ -1,11 +1,11 @@
-import { heldItemRarities } from "#data/items/held-item-default-tiers";
 import { rewardRarities } from "#data/items/reward-defaults-tiers";
-import { trainerItemRarities } from "#data/items/trainer-item-default-tiers";
 import type { HeldItemId } from "#enums/held-item-id";
 import { getRewardCategory, RewardCategoryId, RewardId } from "#enums/reward-id";
 import type { RarityTier } from "#enums/reward-tier";
 import type { TrainerItemId } from "#enums/trainer-item-id";
 import { allRewards } from "#items/all-rewards";
+import { heldItemRarities } from "#items/held-item-default-tiers";
+import { trainerItemRarities } from "#items/trainer-item-default-tiers";
 import type { RewardPoolId, RewardSpecs } from "#types/rewards";
 import { EmptyReward, type PokemonMoveReward, type Reward, RewardGenerator, RewardOption } from "./reward";
 import { HeldItemReward } from "./rewards/held-item-reward";
