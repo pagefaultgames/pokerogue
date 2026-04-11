@@ -564,9 +564,9 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(SpeciesId.NECROZMA, "dawn-wings", "ultra", new SpeciesFormChangeItemTrigger(FormChangeItem.ULTRANECROZIUM_Z)),
     new SpeciesFormChange(SpeciesId.NECROZMA, "dusk-mane", "ultra", new SpeciesFormChangeItemTrigger(FormChangeItem.ULTRANECROZIUM_Z))
   ],
-  // [SpeciesId.MAGEARNA]: [ // Will need tested to make sure it reverts to the proper form of Magearna
+  // [SpeciesId.MAGEARNA]: [
   //   new SpeciesFormChange(SpeciesId.MAGEARNA, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.MAGEARNITE)),
-  //   new SpeciesFormChange(SpeciesId.MAGEARNA, "original", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.MAGEARNITE))
+  //   new SpeciesFormChange(SpeciesId.MAGEARNA, "original", SpeciesFormKey.MEGA_ORIGINAL, new SpeciesFormChangeItemTrigger(FormChangeItem.MAGEARNITE))
   // ],
   // [SpeciesId.ZERAORA]: [
   //   new SpeciesFormChange(SpeciesId.ZERAORA, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.ZERAORITE))
@@ -686,10 +686,10 @@ export const pokemonFormChanges: PokemonFormChanges = {
   // [SpeciesId.GLIMMORA]: [
   //   new SpeciesFormChange(SpeciesId.GLIMMORA, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.GLIMMORANITE))
   // ],
-  // [SpeciesId.TATSUGIRI]: [ // Will need tested to make sure it reverts to the proper form of Tatsugiri
-  //   new SpeciesFormChange(SpeciesId.TATSUGIRI, "curly", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.TATSUGIRINITE)),
-  //   new SpeciesFormChange(SpeciesId.TATSUGIRI, "droopy", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.TATSUGIRINITE)),
-  //   new SpeciesFormChange(SpeciesId.TATSUGIRI, "stretchy", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.TATSUGIRINITE))
+  // [SpeciesId.TATSUGIRI]: [
+  //   new SpeciesFormChange(SpeciesId.TATSUGIRI, "curly", SpeciesFormKey.MEGA_CURLY, new SpeciesFormChangeItemTrigger(FormChangeItem.TATSUGIRINITE)),
+  //   new SpeciesFormChange(SpeciesId.TATSUGIRI, "droopy", SpeciesFormKey.MEGA_DROOPY, new SpeciesFormChangeItemTrigger(FormChangeItem.TATSUGIRINITE)),
+  //   new SpeciesFormChange(SpeciesId.TATSUGIRI, "stretchy", SpeciesFormKey.MEGA_STRETCHY, new SpeciesFormChangeItemTrigger(FormChangeItem.TATSUGIRINITE))
   // ],
   // [SpeciesId.BAXCALIBUR]: [
   //   new SpeciesFormChange(SpeciesId.BAXCALIBUR, "", SpeciesFormKey.MEGA, new SpeciesFormChangeItemTrigger(FormChangeItem.BAXCALIBRITE))

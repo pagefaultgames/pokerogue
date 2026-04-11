@@ -4169,6 +4169,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       SpeciesFormKey.MEGA_X,
       SpeciesFormKey.MEGA_Y,
       SpeciesFormKey.MEGA_Z,
+      SpeciesFormKey.MEGA_ORIGINAL,
+      SpeciesFormKey.MEGA_CURLY,
+      SpeciesFormKey.MEGA_DROOPY,
+      SpeciesFormKey.MEGA_STRETCHY,
       SpeciesFormKey.PRIMAL,
     ] as string[];
     return (
