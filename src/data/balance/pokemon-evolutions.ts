@@ -148,6 +148,11 @@ export class SpeciesEvolutionCondition {
           return i18next.t("pokemonEvolutions:caught", {species: getPokemonSpecies(cond.speciesCaught).name});
         case EvoCondKey.HELD_ITEM:
           return i18next.t(`pokemonEvolutions:heldItem.${toCamelCase(allHeldItems[cond.itemKey].name)}`);
+        case EvoCondKey.RANDOM_FORM:
+          return null;
+        default:
+          cond satisfies never;
+          return null;
       }
     }).filter(s => s != null); // Filter out stringless conditions
     return this.desc;
@@ -166,7 +171,7 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.MOVE_TYPE:
           return pokemon.moveset.some(m => m.getMove().type === cond.pkmnType);
         case EvoCondKey.PARTY_TYPE:
-          return globalScene.getPlayerParty().some(p => p.getTypes(false, false, true).includes(cond.pkmnType))
+          return globalScene.getPlayerParty().some(p => p.getTypes(false, false, true).includes(cond.pkmnType));
         case EvoCondKey.EVO_TREASURE_TRACKER:
           return allHeldItems[HeldItemId.GIMMIGHOUL_EVO_TRACKER].getStackCount(pokemon) >= cond.value;
         case EvoCondKey.GENDER:
@@ -193,6 +198,9 @@ export class SpeciesEvolutionCondition {
           return !!globalScene.gameData.dexData[cond.speciesCaught].caughtAttr;
         case EvoCondKey.HELD_ITEM:
           return pokemon.heldItemManager.hasItem(cond.itemKey);
+        default:
+          cond satisfies never;
+          return false;
       }
     });
   }
@@ -1882,23 +1890,48 @@ export function initPokemonPrevolutions(): void {
 // TODO: This may cause funny business for double starters such as Pichu/Pikachu
 export const pokemonStarters: PokemonPrevolutions = {};
 
-/**
- * The default species and all their evolutions
- */
-export const defaultStarterSpeciesAndEvolutions: SpeciesId[] = defaultStarterSpecies.flatMap(id => {
-  const stage2ids = pokemonEvolutions[id]?.map(e => e.speciesId) ?? [];
-  const stage3ids = stage2ids.flatMap(s2id => pokemonEvolutions[s2id]?.map(e => e.speciesId) ?? []);
-  return [id, ...stage2ids, ...stage3ids];
-});
+/** The default starters and their evolution lines */
+export const defaultStarterSpeciesAndEvolutions: SpeciesId[] = defaultStarterSpecies.flatMap(sId => [sId, ...getEvolutions(sId).values()]);
 
 export function initPokemonStarters(): void {
   const starterKeys = Object.keys(pokemonPrevolutions);
   starterKeys.forEach(pk => {
     const prevolution = pokemonPrevolutions[pk];
-    if (speciesStarterCosts.hasOwnProperty(prevolution)) {
+    if (Object.hasOwn(speciesStarterCosts, prevolution)) {
       pokemonStarters[pk] = prevolution;
     } else {
       pokemonStarters[pk] = pokemonPrevolutions[prevolution];
     }
   });
+}
+
+/**
+ * @param speciesId - The ID of the species to get the evolutions of
+ * @returns A set containing all the {@linkcode SpeciesId}s the input species can evolve into
+ */
+export function getEvolutions(speciesId: SpeciesId): Set<SpeciesId> {
+  const evolutionIds: Set<SpeciesId> = new Set();
+  const recurseEvolutions = (sId: SpeciesId): void => {
+    const evolutions = pokemonEvolutions[sId] ?? [];
+    for (const evoSpecies of evolutions) {
+      evolutionIds.add(evoSpecies.speciesId);
+      recurseEvolutions(evoSpecies.speciesId);
+    }
+  };
+  recurseEvolutions(speciesId);
+  return evolutionIds;
+}
+
+/**
+ * @param speciesId - The ID of the species to get the pre-evolutions of
+ * @returns An array containing all the {@linkcode SpeciesId}s that can evolve into the input species
+ */
+export function getPreEvolutions(speciesId: SpeciesId): SpeciesId[] {
+  const preEvoSpecies: SpeciesId[] = [];
+  let preEvoSpeciesId = pokemonPrevolutions[speciesId];
+  while (preEvoSpeciesId) {
+    preEvoSpecies.push(preEvoSpeciesId);
+    preEvoSpeciesId = pokemonPrevolutions[preEvoSpeciesId];
+  }
+  return preEvoSpecies;
 }

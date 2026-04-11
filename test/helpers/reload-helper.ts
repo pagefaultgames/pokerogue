@@ -8,7 +8,7 @@ import { vi } from "vitest";
  * Helper to allow reloading sessions in unit tests.
  */
 export class ReloadHelper extends GameManagerHelper {
-  sessionData: SessionSaveData;
+  private sessionData: SessionSaveData;
 
   constructor(game: GameManager) {
     super(game);
@@ -24,8 +24,13 @@ export class ReloadHelper extends GameManagerHelper {
    * Simulate reloading the session from the title screen, until reaching the
    * beginning of the first turn (equivalent to running `startBattle()`) for
    * the reloaded session.
+   * @returns A Promise that resolves once the reloading process completes.
+   *
+   * @remarks
+   * After reloading, all references to player/enemy Pokemon will no longer be correct
+   * (due to initializing new `Pokemon` instances).
    */
-  async reloadSession(): Promise<void> {
+  public async reloadSession(): Promise<void> {
     const scene = this.game.scene;
     const titlePhase = new TitlePhase();
 

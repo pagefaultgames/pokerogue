@@ -156,6 +156,5 @@ export const volcanoBiome: Biome = {
   trainerChance: 12,
   weatherPool,
   terrainPool,
-  bgmLoopPoint: 17.637,
   biomeLinks,
 };

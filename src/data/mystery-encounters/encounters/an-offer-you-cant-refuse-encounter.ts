@@ -49,8 +49,9 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter = MysteryEncounterB
   .withScenePartySizeRequirement(2, 6, true) // Must have at least 2 pokemon in party
   .withIntroSpriteConfigs([
     {
-      spriteKey: SpeciesId.LIEPARD.toString(),
-      fileRoot: "pokemon",
+      species: SpeciesId.LIEPARD,
+      spriteKey: "",
+      fileRoot: "",
       hasShadow: true,
       repeat: true,
       x: 0,

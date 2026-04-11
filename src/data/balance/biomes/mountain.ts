@@ -155,6 +155,5 @@ export const mountainBiome: Biome = {
   trainerChance: 8,
   weatherPool,
   terrainPool,
-  bgmLoopPoint: 4.018,
   biomeLinks,
 };

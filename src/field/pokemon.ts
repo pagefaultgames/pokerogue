@@ -9,7 +9,8 @@ import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
-import { speciesEggMoves } from "#balance/egg-moves";
+import { speciesEggMoves } from "#balance/moves/egg-moves";
+import type { FORCED_RIVAL_SIGNATURE_MOVES } from "#balance/moves/signature-moves";
 import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import {
   FusionSpeciesFormEvolution,
@@ -17,7 +18,7 @@ import {
   pokemonPrevolutions,
   validateShedinjaEvo,
 } from "#balance/pokemon-evolutions";
-import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY_VARIANT_CHANCE } from "#balance/rates";
+import { BASE_HIDDEN_ABILITY_RATE, BASE_SHINY_CHANCE, SHINY_EPIC_CHANCE, SHINY_VARIANT_CHANCE } from "#balance/rates";
 import {
   getStarterValueFriendshipCap,
   speciesStarterCosts,
@@ -171,6 +172,7 @@ import { cachedFetch } from "#utils/fetch-utils";
 import { applyHeldItems } from "#utils/items";
 import { getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
+import { ValueHolder } from "#utils/value-holder";
 import { argbFromRgba, QuantizerCelebi, rgbaFromArgb } from "@material/material-color-utilities";
 import i18next from "i18next";
 import Phaser from "phaser";
@@ -627,7 +629,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /** Generate `abilityIndex` based on species and hidden ability if not pre-defined. */
   private generateAbilityIndex(): number {
-    const hiddenAbilityChance = new NumberHolder(BASE_HIDDEN_ABILITY_CHANCE);
+    const hiddenAbilityChance = new ValueHolder(BASE_HIDDEN_ABILITY_RATE);
     // Ability Charms should only affect wild Pokemon
     // TODO: move this `if` check into the ability charm code
     if (!this.hasTrainer()) {
@@ -2216,6 +2218,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return false;
     }
 
+    if (
+      globalScene.gameMode.isDaily
+      && this.customPokemonData.passive != null
+      && this.customPokemonData.passive !== -1
+    ) {
+      return true;
+    }
+
     const hasPassive = new BooleanHolder(this.passive);
     applyChallenges(ChallengeType.PASSIVE_ACCESS, this, hasPassive);
 
@@ -2238,6 +2248,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const ability = passive ? this.getPassiveAbility() : this.getAbility();
     if (this.isFusion() && ability.hasAttr("NoFusionAbilityAbAttr")) {
       return false;
+    }
+    // Suppression / transformation checks are ignored during moveset generation
+    if (globalScene.movesetGenInProgress) {
+      return true;
     }
     if (this.isTransformed() && ability.hasAttr("NoTransformAbilityAbAttr")) {
       return false;
@@ -2418,7 +2432,17 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     applyMoveAttrs("VariableMoveTypeAttr", this, null, move, moveTypeHolder);
 
-    applyAbAttrs("MoveTypeChangeAbAttr", { pokemon: this, move, simulated, moveType: moveTypeHolder, opponent: this });
+    // Moves that are overridden by an ability (e.g. Aerilate) should not have their type
+    // changed by MoveTypeChangeAbAttr
+    if (!move.hasAttr("OverrideMoveEffectAttr")) {
+      applyAbAttrs("MoveTypeChangeAbAttr", {
+        pokemon: this,
+        move,
+        simulated,
+        moveType: moveTypeHolder,
+        opponent: this,
+      });
+    }
 
     // If the user is terastallized and the move is tera blast, or tera starstorm that is stellar type,
     // then bypass the check for ion deluge and electrify
@@ -3087,30 +3111,20 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Function that tries to set this Pokemon to have its hidden ability based on seed, if it exists.
-   *
-   * @remarks
-   * For manual use only, usually to roll a Pokemon's hidden ability chance a second time.
-   *
-   * The base hidden ability odds are {@linkcode BASE_HIDDEN_ABILITY_CHANCE} / `65536`
-   * @param thresholdOverride - number that is divided by `2^16` (`65536`) to get the HA chance, overrides {@linkcode haThreshold} if set (bypassing HA rate modifiers such as Ability Charm)
-   * @param applyModifiersToOverride - If {@linkcode thresholdOverride} is set and this is true, will apply Ability Charm to {@linkcode thresholdOverride}
-   * @returns `true` if the Pokemon has been set to have its hidden ability, `false` otherwise
+   * Used by Mystery Encounters to override a Pokemon's ability to be its hidden ability
+   * @param haThreshold - The denominator for the HA chance (`1 / haThreshold`)
    */
-  public tryRerollHiddenAbilitySeed(thresholdOverride?: number, applyItemsToOverride?: boolean): boolean {
+  public tryRerollHiddenAbilitySeed(haThreshold: number): void {
     if (!this.species.abilityHidden) {
-      return false;
-    }
-    const haThreshold = new NumberHolder(thresholdOverride ?? BASE_HIDDEN_ABILITY_CHANCE);
-    if (applyItemsToOverride && !this.hasTrainer()) {
-      globalScene.applyPlayerItems(TrainerItemEffect.HIDDEN_ABILITY_CHANCE_BOOSTER, { numberHolder: haThreshold });
+      return;
     }
 
-    if (randSeedInt(65536) < haThreshold.value) {
+    const hiddenAbilityChance = new ValueHolder(haThreshold);
+    globalScene.applyPlayerItems(TrainerItemEffect.HIDDEN_ABILITY_CHANCE_BOOSTER, { numberHolder: hiddenAbilityChance });
+
+    if (!randSeedInt(hiddenAbilityChance.value)) {
       this.abilityIndex = 2;
     }
-
-    return this.abilityIndex === 2;
   }
 
   /**
@@ -3118,7 +3132,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param forStarter - Whether this fusion is being generated for a starter Pokémon; default `false`
    */
   public generateFusionSpecies(forStarter?: boolean): void {
-    const hiddenAbilityChance = new NumberHolder(BASE_HIDDEN_ABILITY_CHANCE);
+    const hiddenAbilityChance = new ValueHolder(BASE_HIDDEN_ABILITY_RATE);
     if (!this.hasTrainer()) {
       globalScene.applyPlayerItems(TrainerItemEffect.HIDDEN_ABILITY_CHANCE_BOOSTER, {
         numberHolder: hiddenAbilityChance,
@@ -3200,9 +3214,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     this.calculateStats();
   }
 
-  /** Generate a semi-random moveset for this Pokémon */
-  public generateAndPopulateMoveset(): void {
-    generateMoveset(this);
+  /**
+   * Generate a semi-random moveset for this Pokémon
+   *
+   * @param useRivalSignatures - (default `false`) Sets moveset gen to use rival signature pool ({@linkcode FORCED_RIVAL_SIGNATURE_MOVES})
+   */
+  public generateAndPopulateMoveset(useRivalSignatures = false): void {
+    generateMoveset(this, useRivalSignatures);
 
     // Trigger FormChange, except for enemy Pokemon during Mystery Encounters, to avoid crashes
     if (
@@ -3600,7 +3618,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     /** Debug message for non-simulated calls (i.e. when damage is actually dealt) */
     if (!simulated) {
-      console.log("base damage", baseDamage, move.name, power, sourceAtk.value, targetDef.value);
+      console.log(
+        `Move: ${move.name} | Base damage: ${baseDamage} | Power: ${power} | Source attack: ${sourceAtk.value} | Target defense: ${targetDef.value}`,
+      );
     }
 
     return baseDamage;
@@ -3904,7 +3924,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     // debug message for when damage is applied (i.e. not simulated)
     if (!simulated) {
-      console.log("damage", damage.value, move.name);
+      console.log(`Move: ${move.name} | Attack damage: ${damage.value}`);
     }
 
     let hitResult: HitResult;
@@ -4574,7 +4594,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   public cry(soundConfig?: Phaser.Types.Sound.SoundConfig, sceneOverride?: BattleScene): AnySound | null {
     const scene = sceneOverride ?? globalScene; // TODO: is `sceneOverride` needed?
     const cry = this.getSpeciesForm(undefined, true).cry(soundConfig);
-    if (!cry) {
+    if (!cry || globalScene.masterVolume === 0 || globalScene.fieldVolume === 0) {
       return cry;
     }
     let duration = cry.totalDuration * 1000;
@@ -4632,7 +4652,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
     const cry = globalScene.playSound(key, crySoundConfig);
-    if (!cry || globalScene.fieldVolume === 0) {
+    if (!cry || globalScene.fieldVolume === 0 || globalScene.masterVolume === 0) {
       callback();
       return;
     }
@@ -4703,7 +4723,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     let fusionCry = globalScene.playSound(fusionCryKey, {
       rate,
     });
-    if (!cry || !fusionCry || globalScene.fieldVolume === 0) {
+    if (!cry || !fusionCry || globalScene.fieldVolume === 0 || globalScene.masterVolume === 0) {
       callback();
       return;
     }
@@ -6422,6 +6442,7 @@ export class EnemyPokemon extends Pokemon {
     shinyLock = false,
     heldItemConfig?: HeldItemConfiguration,
     dataSource?: PokemonData,
+    forRival = false,
   ) {
     super(
       236,
@@ -6465,7 +6486,7 @@ export class EnemyPokemon extends Pokemon {
     }
 
     if (!dataSource) {
-      this.generateAndPopulateMoveset();
+      this.generateAndPopulateMoveset(forRival);
       if (shinyLock || Overrides.ENEMY_SHINY_OVERRIDE === false) {
         this.shiny = false;
       } else {
@@ -6483,8 +6504,11 @@ export class EnemyPokemon extends Pokemon {
 
       this.luck = (this.shiny ? this.variant + 1 : 0) + (this.fusionShiny ? this.fusionVariant + 1 : 0);
 
+      if (isDailyFinalBoss()) {
+        this.applyCustomDailyBossConfig();
+      } else {
       this.applyCustomDailyConfig();
-      this.applyCustomDailyBossConfig();
+      }
 
       if (this.hasTrainer() && globalScene.currentBattle) {
         const { waveIndex } = globalScene.currentBattle;
@@ -6578,7 +6602,7 @@ export class EnemyPokemon extends Pokemon {
     }
   }
 
-  generateAndPopulateMoveset(formIndex?: number): void {
+  override generateAndPopulateMoveset(useRivalSignatures = false, formIndex?: number): void {
     switch (true) {
       case this.species.speciesId === SpeciesId.SMEARGLE:
         this.moveset = [
@@ -6607,7 +6631,7 @@ export class EnemyPokemon extends Pokemon {
         }
         break;
       default:
-        super.generateAndPopulateMoveset();
+        super.generateAndPopulateMoveset(useRivalSignatures);
         break;
     }
   }
@@ -6650,7 +6674,7 @@ export class EnemyPokemon extends Pokemon {
       }
       // If a move is forced because of Encore, use it.
       // Said moves are executed normally
-      const encoreTag = this.getTag(EncoreTag) as EncoreTag;
+      const encoreTag = this.getTag(EncoreTag);
       if (encoreTag) {
         const encoreMove = movePool.find(m => m.moveId === encoreTag.moveId);
         if (encoreMove) {

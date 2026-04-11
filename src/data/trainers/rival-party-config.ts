@@ -1,10 +1,9 @@
-import { timedEventManager } from "#app/global-event-manager";
 import { AbilityId } from "#enums/ability-id";
 import { HeldItemId } from "#enums/held-item-id";
 import { PokeballType } from "#enums/pokeball";
 import { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon } from "#field/pokemon";
-import { randSeedIntRange, randSeedItem } from "#utils/common";
+import { randSeedItem } from "#utils/common";
 
 //#region constants
 
@@ -17,7 +16,7 @@ const SLOT_3_FIGHT_4_LEVEL = 71;
 const SLOT_3_FIGHT_5_LEVEL = 125;
 const SLOT_3_FIGHT_6_LEVEL = 189;
 
-// Fights 1 and 2 don't have slot 4
+// Fights 1-2 don't have slot 4
 const SLOT_4_FIGHT_3_LEVEL = 38;
 const SLOT_4_FIGHT_4_LEVEL = 71;
 const SLOT_4_FIGHT_5_LEVEL = 125;
@@ -41,14 +40,17 @@ const SLOT_6_FIGHT_6_LEVEL = 200;
  *
  * @param pokemon - The pokemon to force traits for
  * @param bars - (default `0`) The number of boss bar segments to set. If `zero`, the pokemon will not be a boss
+ * @param useRivalSignature - (default `false`) Whether to use the rival signature move when generating the moveset.
  */
 
-function forceRivalStarterTraits(pokemon: EnemyPokemon, bars = 0): void {
+function forceRivalStarterTraits(pokemon: EnemyPokemon, bars = 0, useRivalSignature = false): void {
   pokemon.abilityIndex = 0;
   pokemon.teraType = pokemon.species.type1;
   if (bars > 0) {
     pokemon.setBoss(true, bars);
-    pokemon.generateAndPopulateMoveset();
+  }
+  if (bars > 0 || useRivalSignature) {
+    pokemon.generateAndPopulateMoveset(useRivalSignature);
   }
 }
 
@@ -155,10 +157,16 @@ const SLOT_1_FINAL = [
  *
  * @param pokemon - The rival bird pokemon to force an ability for
  * @param bars - (default `0`) The number of boss bar segments to set. If `zero`, the pokemon will not be a boss
+ * @param useRivalSignature - (default `false`) Whether to use the rival signature move when generating the moveset.
  */
 
-function forceRivalBirdAbility(pokemon: EnemyPokemon, bars = 0, forceGutsFlameOrb = false): void {
+// TODO: check invocations of this function due to changed params
+function forceRivalBirdAbility(pokemon: EnemyPokemon, bars = 0, useRivalSignature = false, forceGutsFlameOrb = false): void {
   switch (pokemon.species.speciesId) {
+    // Keen Eye for Pidgey line
+    case SpeciesId.PIDGEY:
+    case SpeciesId.PIDGEOTTO:
+    case SpeciesId.PIDGEOT:
     // Guts for Tailow line
     case SpeciesId.TAILLOW:
     case SpeciesId.SWELLOW:
@@ -169,10 +177,6 @@ function forceRivalBirdAbility(pokemon: EnemyPokemon, bars = 0, forceGutsFlameOr
       pokemon.abilityIndex = 0;
       break;
     }
-    // Tangled Feet for Pidgey line
-    case SpeciesId.PIDGEY:
-    case SpeciesId.PIDGEOTTO:
-    case SpeciesId.PIDGEOT:
     // Super Luck for pidove line
     case SpeciesId.PIDOVE:
     case SpeciesId.TRANQUILL:
@@ -206,7 +210,9 @@ function forceRivalBirdAbility(pokemon: EnemyPokemon, bars = 0, forceGutsFlameOr
 
   if (bars > 0) {
     pokemon.setBoss(true, bars);
-    pokemon.generateAndPopulateMoveset();
+  }
+  if (bars > 0 || useRivalSignature) {
+    pokemon.generateAndPopulateMoveset(useRivalSignature);
   }
 }
 
@@ -390,15 +396,27 @@ function postProcessSlot4Fight3(pokemon: EnemyPokemon): void {
   pokemon.level = SLOT_4_FIGHT_3_LEVEL;
   switch (pokemon.species.speciesId) {
     case SpeciesId.BASCULIN:
-      pokemon.formIndex = 2; // White
+      // White
+      pokemon.formIndex = 2;
       return;
-    case SpeciesId.ROTOM:
+    case SpeciesId.ROTOM: {
       // Heat, Wash, Mow
-      pokemon.formIndex = randSeedItem([1, 2, 5]);
+      const newIndex = randSeedItem([1, 2, 5]);
+      if (pokemon.formIndex !== newIndex) {
+        pokemon.formIndex = newIndex;
+        pokemon.generateAndPopulateMoveset();
+      }
       return;
-    case SpeciesId.PALDEA_TAUROS:
-      pokemon.formIndex = randSeedIntRange(1, 2); // Blaze, Aqua
+    }
+    case SpeciesId.PALDEA_TAUROS: {
+      // Blaze, Aqua
+      const newIndex = randSeedItem([1, 2]);
+      if (pokemon.formIndex !== newIndex) {
+        pokemon.formIndex = newIndex;
+        pokemon.generateAndPopulateMoveset();
+      }
       return;
+  }
   }
 }
 /** Rival's slot 4 species pool for fight 3 */
@@ -453,15 +471,27 @@ function postProcessSlot4Fight4(pokemon: EnemyPokemon, level = SLOT_4_FIGHT_4_LE
   pokemon.level = level;
   switch (pokemon.species.speciesId) {
     case SpeciesId.BASCULEGION:
-      pokemon.formIndex = randSeedIntRange(0, 1);
+      // Male, Female
+      pokemon.formIndex = randSeedItem([0, 1]);
       return;
-    case SpeciesId.ROTOM:
+    case SpeciesId.ROTOM: {
       // Heat, Wash, Mow
-      pokemon.formIndex = randSeedItem([1, 2, 5]);
+      const newIndex = randSeedItem([1, 2, 5]);
+      if (pokemon.formIndex !== newIndex) {
+        pokemon.formIndex = newIndex;
+        pokemon.generateAndPopulateMoveset();
+      }
       return;
-    case SpeciesId.PALDEA_TAUROS:
-      pokemon.formIndex = randSeedIntRange(1, 2); // Blaze, Aqua
+    }
+    case SpeciesId.PALDEA_TAUROS: {
+      // Blaze, Aqua
+      const newIndex = randSeedItem([1, 2]);
+      if (pokemon.formIndex !== newIndex) {
+        pokemon.formIndex = newIndex;
+        pokemon.generateAndPopulateMoveset();
+      }
       return;
+  }
   }
 }
 
@@ -545,10 +575,8 @@ const SLOT_5_FINAL = [
 function postProcessSlot6Fight5(pokemon: EnemyPokemon, level = SLOT_6_FIGHT_5_LEVEL, overrideSegments = true): void {
   pokemon.level = level;
   pokemon.pokeball = PokeballType.MASTER_BALL;
-  if (timedEventManager.getClassicTrainerShinyChance() === 0) {
     pokemon.shiny = true;
     pokemon.variant = 1;
-  }
   // When called for fight 5, uses 3 segments.
   // For fight 6, uses the logic from `getEncounterBossSegments`
   pokemon.setBoss(true, overrideSegments ? 3 : undefined);
@@ -656,8 +684,8 @@ export const RIVAL_4_POOL: RivalPoolConfig = [
 
 /** Pools for the fifth rival fight */
 export const RIVAL_5_POOL: RivalPoolConfig = [
-  { pool: SLOT_1_FINAL, postProcess: p => forceRivalStarterTraits(p, 2) },
-  { pool: SLOT_2_FINAL, postProcess: forceRivalBirdAbility },
+  { pool: SLOT_1_FINAL, postProcess: p => forceRivalStarterTraits(p, 2, true) },
+  { pool: SLOT_2_FINAL, postProcess: p => forceRivalBirdAbility(p, 0, true) },
   {
     pool: SLOT_3_FINAL,
     postProcess: p => (p.level = SLOT_3_FIGHT_5_LEVEL),
@@ -676,8 +704,8 @@ export const RIVAL_5_POOL: RivalPoolConfig = [
 
 /** Pools for the sixth rival fight */
 export const RIVAL_6_POOL: RivalPoolConfig = [
-  { pool: SLOT_1_FINAL, postProcess: p => forceRivalStarterTraits(p, 3) },
-  { pool: SLOT_2_FINAL, postProcess: p => forceRivalBirdAbility(p, 2, true) },
+  { pool: SLOT_1_FINAL, postProcess: p => forceRivalStarterTraits(p, 3, true) },
+  { pool: SLOT_2_FINAL, postProcess: p => forceRivalBirdAbility(p, 2, true, true) },
   {
     pool: SLOT_3_FINAL,
     postProcess: p => (p.level = SLOT_3_FIGHT_6_LEVEL),

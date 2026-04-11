@@ -135,6 +135,5 @@ export const slumBiome: Biome = {
   trainerChance: 6,
   weatherPool,
   terrainPool,
-  bgmLoopPoint: 0,
   biomeLinks,
 };

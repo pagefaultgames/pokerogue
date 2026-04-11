@@ -142,6 +142,5 @@ export const powerPlantBiome: Biome = {
   trainerChance: 8,
   weatherPool,
   terrainPool,
-  bgmLoopPoint: 9.447,
   biomeLinks,
 };

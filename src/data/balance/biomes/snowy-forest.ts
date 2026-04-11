@@ -109,6 +109,5 @@ export const snowyForestBiome: Biome = {
   trainerChance: 8,
   weatherPool,
   terrainPool,
-  bgmLoopPoint: 3.814,
   biomeLinks,
 };

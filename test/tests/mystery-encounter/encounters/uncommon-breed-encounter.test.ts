@@ -1,5 +1,5 @@
 import type { BattleScene } from "#app/battle-scene";
-import { speciesEggMoves } from "#balance/egg-moves";
+import { speciesEggMoves } from "#balance/moves/egg-moves";
 import { AbilityId } from "#enums/ability-id";
 import { BiomeId } from "#enums/biome-id";
 import { HeldItemId } from "#enums/held-item-id";

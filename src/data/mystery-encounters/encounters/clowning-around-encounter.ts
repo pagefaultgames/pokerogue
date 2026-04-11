@@ -81,8 +81,9 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
   .withAutoHideIntroVisuals(false)
   .withIntroSpriteConfigs([
     {
-      spriteKey: SpeciesId.MR_MIME.toString(),
-      fileRoot: "pokemon",
+      species: SpeciesId.MR_MIME,
+      spriteKey: "",
+      fileRoot: "",
       hasShadow: true,
       repeat: true,
       x: -25,
@@ -91,8 +92,9 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
       yShadow: -3,
     },
     {
-      spriteKey: SpeciesId.BLACEPHALON.toString(),
-      fileRoot: "pokemon/exp",
+      species: SpeciesId.BLACEPHALON,
+      spriteKey: "",
+      fileRoot: "",
       hasShadow: true,
       repeat: true,
       x: 25,

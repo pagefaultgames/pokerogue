@@ -111,6 +111,5 @@ export const seaBiome: Biome = {
   trainerChance: 12,
   weatherPool,
   terrainPool,
-  bgmLoopPoint: 0.024,
   biomeLinks,
 };

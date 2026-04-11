@@ -327,6 +327,7 @@ export function getRandomRivalPartyMemberFunc(
       undefined,
       undefined,
       postProcess,
+      true,
     );
   };
 }

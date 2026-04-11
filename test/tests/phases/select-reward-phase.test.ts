@@ -1,5 +1,5 @@
 import type { BattleScene } from "#app/battle-scene";
-import { allRewards } from "#data/data-lists";
+import { allRewards } from "#data/data-lists"; // TODO: huh??
 import { AbilityId } from "#enums/ability-id";
 import { Button } from "#enums/buttons";
 import { HeldItemId } from "#enums/held-item-id";
@@ -11,9 +11,9 @@ import { TrainerItemId } from "#enums/trainer-item-id";
 import { UiMode } from "#enums/ui-mode";
 import { PlayerPokemon } from "#field/pokemon";
 import type { HeldItemReward } from "#items/held-item-reward";
-import type { TrainerItemReward } from "#items/trainer-item-reward";
 import { RewardOption } from "#items/reward";
 import type { CustomRewardSettings } from "#items/reward-pool-utils";
+import type { TrainerItemReward } from "#items/trainer-item-reward";
 import { SelectRewardPhase } from "#phases/select-reward-phase";
 import { GameManager } from "#test/framework/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
@@ -42,7 +42,8 @@ describe("SelectRewardPhase", () => {
       .moveset([MoveId.FISSURE, MoveId.SPLASH])
       .ability(AbilityId.NO_GUARD)
       .startingLevel(200)
-      .enemySpecies(SpeciesId.MAGIKARP);
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .battleStyle("single");
   });
 
   it("should start a select modifier phase", async () => {

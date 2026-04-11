@@ -324,21 +324,6 @@ export class MenuUiHandler extends MessageUiHandler {
         },
         keepOpen: true,
       },
-      {
-        label: i18next.t("menuUiHandler:consentPreferences"),
-        handler: () => {
-          const consentLink = document.querySelector(".termly-display-preferences") as HTMLInputElement;
-          const clickEvent = new MouseEvent("click", {
-            view: window,
-            bubbles: true,
-            cancelable: true,
-          });
-          consentLink.dispatchEvent(clickEvent);
-          consentLink.focus();
-          return true;
-        },
-        keepOpen: true,
-      },
     );
     if (isBeta || isDev) {
       manageDataOptions.push({

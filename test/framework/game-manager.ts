@@ -368,7 +368,7 @@ export class GameManager {
 
   /**
    * Transition to the {@linkcode TurnEndPhase | end of the current turn}.
-   * @param endTurn - Whether to run the `TurnEndPhase` or not; default `true`
+   * @param endTurn - (Default `true`) Whether to run the `TurnEndPhase` before resolving.
    * @returns A Promise that resolves once the current turn has ended.
    */
   async toEndOfTurn(endTurn = true): Promise<void> {
@@ -525,7 +525,8 @@ export class GameManager {
   /**
    * Override the turn order of the battle's current combatants.
    *
-   * Affects all processes that check speed order.
+   * Affects all processes that check speed order,
+   * and lasts until the `BattleScene` is reset or **a new wave is started**.
    * @param order - The turn order to set, as an array of {@linkcode BattlerIndex}es
    * @example
    * ```ts
