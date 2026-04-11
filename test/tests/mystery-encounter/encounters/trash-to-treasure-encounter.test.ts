@@ -16,10 +16,8 @@ import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils"
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { TrashToTreasureEncounter } from "#mystery-encounters/trash-to-treasure-encounter";
 import { MovePhase } from "#phases/move-phase";
-import {
-    runMysteryEncounterToEnd,
-    skipBattleRunMysteryEncounterRewardsPhase,
-} from "#test/utils/encounter-test-utils";
+import { GameManager } from "#test/framework/game-manager";
+import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/utils/encounter-test-utils";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import * as Utils from "#utils/common";

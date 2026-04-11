@@ -10,11 +10,8 @@ import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils"
 import * as EncounterTransformationSequence from "#mystery-encounters/encounter-transformation-sequence";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { WeirdDreamEncounter } from "#mystery-encounters/weird-dream-encounter";
-import {
-    runMysteryEncounterToEnd,
-    skipBattleRunMysteryEncounterRewardsPhase,
-} from "#test/utils/encounter-test-utils";
 import { GameManager } from "#test/framework/game-manager";
+import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/utils/encounter-test-utils";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

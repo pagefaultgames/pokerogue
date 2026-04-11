@@ -8,9 +8,9 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import { WeatherType } from "#enums/weather-type";
-import type { PokemonItemMap } from "#types/held-item-data-types";
 import { getPartyBerries } from "#items/item-utility";
 import { GameManager } from "#test/framework/game-manager";
+import type { PokemonItemMap } from "#types/held-item-data-types";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

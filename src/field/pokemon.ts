@@ -3120,7 +3120,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     const hiddenAbilityChance = new ValueHolder(haThreshold);
-    globalScene.applyPlayerItems(TrainerItemEffect.HIDDEN_ABILITY_CHANCE_BOOSTER, { numberHolder: hiddenAbilityChance });
+    globalScene.applyPlayerItems(TrainerItemEffect.HIDDEN_ABILITY_CHANCE_BOOSTER, {
+      numberHolder: hiddenAbilityChance,
+    });
 
     if (!randSeedInt(hiddenAbilityChance.value)) {
       this.abilityIndex = 2;
@@ -6507,7 +6509,7 @@ export class EnemyPokemon extends Pokemon {
       if (isDailyFinalBoss()) {
         this.applyCustomDailyBossConfig();
       } else {
-      this.applyCustomDailyConfig();
+        this.applyCustomDailyConfig();
       }
 
       if (this.hasTrainer() && globalScene.currentBattle) {

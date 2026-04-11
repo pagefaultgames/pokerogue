@@ -231,7 +231,7 @@ export class TimedEventManager {
     const sprites = event?.sprites;
     if (!sprites) {
       return null;
-  }
+    }
     const eventSpriteReplacements = sprites.pokemonReplacements;
     const fillRandom = sprites.fillRandom ?? false;
 

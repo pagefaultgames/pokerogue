@@ -6,17 +6,15 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
-import type { HeldItemSpecs } from "#typescommon";
 import { getPartyBerries } from "#items/item-utility";
 import { BerriesAboundEncounter } from "#mystery-encounters/berries-abound-encounter";
 import * as EncounterDialogueUtils from "#mystery-encounters/encounter-dialogue-utils";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
-import {
-    runMysteryEncounterToEnd,
-    skipBattleRunMysteryEncounterRewardsPhase,
-} from "#test/utils/encounter-test-utils";
+import { GameManager } from "#test/framework/game-manager";
+import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } from "#test/utils/encounter-test-utils";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
+import type { HeldItemSpecs } from "#types/held-item-data-types";
 import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

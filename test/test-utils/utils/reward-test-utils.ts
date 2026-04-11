@@ -7,7 +7,7 @@ import { isHeldItemId, isTrainerItemId } from "#items/reward-utils";
 import type { RewardPoolId, RewardSpecs } from "#types/rewards";
 
 // Type used to pares allRewards and convert generators into their return values
-type allRewardsRewardType = {
+type AllRewardsRewardType = {
   [k in keyof allRewardsType]: allRewardsType[k] extends RewardGenerator
     ? ReturnType<allRewardsType[k]["generateReward"]>
     : allRewardsType[k];
@@ -23,7 +23,7 @@ type allRewardsRewardType = {
  * const reward = generateRewardForTest({id: RewardId.BERRY, args: BerryType.SITRUS});
  * ```
  */
-export function generateRewardForTest<T extends RewardId>(specs: RewardSpecs<T>): allRewardsRewardType[T] | null;
+export function generateRewardForTest<T extends RewardId>(specs: RewardSpecs<T>): AllRewardsRewardType[T] | null;
 /**
  * Dynamically generate a {@linkcode Reward} from a given HeldItemId.
  * @param id - The {@linkcode HeldItemId | ID} of the Held item to generate

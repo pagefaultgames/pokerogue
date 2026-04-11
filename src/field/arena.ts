@@ -26,7 +26,6 @@ import type { BattlerIndex } from "#enums/battler-index";
 import { BiomeId } from "#enums/biome-id";
 import { BiomePoolTier } from "#enums/biome-pool-tier";
 import { HeldItemEffect } from "#enums/held-item-effect";
-import { HeldItemId } from "#enums/held-item-id";
 import { CommonAnim } from "#enums/move-anims-common";
 import type { MoveId } from "#enums/move-id";
 import type { PokemonType } from "#enums/pokemon-type";
@@ -159,7 +158,7 @@ export class Arena {
     }
     // Don't reset terrain if a Biome's permanent terrain is active
     if (this.terrain?.turnsLeft !== 0) {
-    this.trySetTerrain(TerrainType.NONE, true);
+      this.trySetTerrain(TerrainType.NONE, true);
     }
     this.resetPlayerFaintCount();
     this.removeAllTags();
@@ -278,7 +277,7 @@ export class Arena {
 
     if (user != null) {
       weatherDuration.value = 5;
-      applyHeldItems(HeldItemEffect.FIELD_EFFECT, { pokemon: user, fieldDuration: weatherDuration});
+      applyHeldItems(HeldItemEffect.FIELD_EFFECT, { pokemon: user, fieldDuration: weatherDuration });
     }
 
     this.weather = weather ? new Weather(weather, weatherDuration.value, weatherDuration.value) : null;
@@ -401,7 +400,7 @@ export class Arena {
 
     if (user != null) {
       terrainDuration.value = 5;
-      applyHeldItems(HeldItemEffect.FIELD_EFFECT, { pokemon: user, fieldDuration: terrainDuration});
+      applyHeldItems(HeldItemEffect.FIELD_EFFECT, { pokemon: user, fieldDuration: terrainDuration });
     }
 
     this.terrain = terrain ? new Terrain(terrain, terrainDuration.value, terrainDuration.value) : null;
@@ -492,7 +491,7 @@ export class Arena {
 
     const tierPool = this.trainerPool[tier];
     return tierPool.length > 0 ? randSeedItem(tierPool) : TrainerType.BREEDER;
-    }
+  }
 
   // #endregion
   // #region Pokemon
@@ -509,9 +508,9 @@ export class Arena {
         return acc;
       },
       {} as Mutable<ArenaPokemonPools>,
-        );
-      this.lastTimeOfDay = timeOfDay;
-    }
+    );
+    this.lastTimeOfDay = timeOfDay;
+  }
 
   /**
    * Generate a random Pokemon species for the current biome
@@ -568,24 +567,24 @@ export class Arena {
       species = globalScene.randomSpecies(waveIndex, level);
     } else {
       species = getPokemonSpecies(randSeedItem(tierPool));
-            }
+    }
 
     const regen = this.checkLegendBST(species, globalScene.gameMode.getWaveForDifficulty(waveIndex, true));
     // Attempt to retry 10 times if generated a LegendLike with an incompatible level
     if (regen && attempt < 10) {
       console.log("Incompatible level: regenerating...");
       return this.randomSpecies(waveIndex, level, ++attempt, luckValue, isBoss);
-          }
+    }
 
     // TODO: Clarify what the `isBoss` parameter does
     const newSpeciesId = species.getWildSpeciesForLevel(level, true, isBoss ?? isBossSpecies, globalScene.gameMode);
     if (newSpeciesId !== species.speciesId) {
       console.log("Replaced", SpeciesId[species.speciesId], "with", SpeciesId[newSpeciesId]);
       species = getPokemonSpecies(newSpeciesId);
-        }
+    }
 
     return species;
-        }
+  }
 
   /**
    * Helper method to determine whether or not to reroll a legend-like species generation attempt
@@ -604,7 +603,7 @@ export class Arena {
     return species.baseTotal >= 660
       ? adjustedWave < 80 // Wave 50+ in daily (however, max Daily wave is 50 currently so not possible)
       : adjustedWave < 55; // Wave 25+ in daily
-    }
+  }
 
   // #endregion
   // #region Arena Tags

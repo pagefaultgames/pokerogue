@@ -1,4 +1,5 @@
-import { PokeballCounts } from "#app/battle-scene";import { OVERRIDES_COLOR } from "#app/constants/colors";
+import type { PokeballCounts } from "#app/battle-scene";
+import { OVERRIDES_COLOR } from "#app/constants/colors";
 import { TerrainType } from "#app/data/terrain";
 import type { BattleStyle, RandomTrainerOverride } from "#app/overrides";
 import Overrides from "#app/overrides";
@@ -23,7 +24,7 @@ import type { FieldHelper } from "#test/helpers/field-helper";
 import { GameManagerHelper } from "#test/helpers/game-manager-helper";
 import type { MoveHelper } from "#test/helpers/move-helper";
 import { getEnumStr, stringifyEnumArray } from "#test/utils/string-utils";
-import { TrainerItemConfiguration } from "#types/trainer-item-data-types";
+import type { TrainerItemConfiguration } from "#types/trainer-item-data-types";
 import { coerceArray } from "#utils/array";
 import { shiftCharCodes } from "#utils/common";
 import { enumValueToKey } from "#utils/enums";

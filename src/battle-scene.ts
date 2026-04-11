@@ -147,7 +147,6 @@ import { deepMergeSpriteData } from "#utils/data";
 import { getEnumValues } from "#utils/enums";
 import { cachedFetch } from "#utils/fetch-utils";
 import { applyHeldItems } from "#utils/items";
-import { getModifierPoolForType, getModifierType } from "#utils/modifier-utils";
 import { getLuckString, getLuckTextTint, getPartyLuckValue } from "#utils/party";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
@@ -934,7 +933,16 @@ export class BattleScene extends SceneBase {
       boss = this.getEncounterBossSegments(this.currentBattle.waveIndex, level, species) > 1;
     }
 
-    const pokemon = new EnemyPokemon(species, level, trainerSlot, boss, shinyLock, heldItemConfig, dataSource, forRival);
+    const pokemon = new EnemyPokemon(
+      species,
+      level,
+      trainerSlot,
+      boss,
+      shinyLock,
+      heldItemConfig,
+      dataSource,
+      forRival,
+    );
     if (Overrides.ENEMY_FUSION_OVERRIDE) {
       pokemon.generateFusionSpecies();
     }
@@ -1409,17 +1417,17 @@ export class BattleScene extends SceneBase {
 
     // `!` tells TS this will always be defined; necessary due to block scoping from using `executeWithSeedOffset`
     let trainer!: Trainer;
-      this.executeWithSeedOffset(
+    this.executeWithSeedOffset(
       () => {
         trainer = battleConfig.getTrainer();
       },
       // TODO: This is only used to ensure evil team leaders get pre-generated as the same team, which is EXTREMELY susceptible to internal RNG changes
       // Instead, the save data can store the evil team/gym leader preset used upon run creation
       (battleConfig.seedOffsetWaveIndex || waveIndex) << 8,
-      );
+    );
     this.field.add(trainer);
     resolved.trainer = trainer;
-      }
+  }
 
   /**
    * Sub-method of {@linkcode newBattle} that handles loading existing saved battles.
@@ -1432,8 +1440,8 @@ export class BattleScene extends SceneBase {
     resolved.trainer = props.trainerData?.toTrainer();
     if (resolved.trainer) {
       this.field.add(resolved.trainer);
-          }
-        }
+    }
+  }
 
   /**
    * Sub-method of {@linkcode newBattle} that handles generating a new battle from scratch.
@@ -1447,16 +1455,16 @@ export class BattleScene extends SceneBase {
         : (Overrides.BATTLE_TYPE_OVERRIDE
           ?? (this.gameMode.isWaveTrainer(waveIndex) ? BattleType.TRAINER : BattleType.WILD));
 
-      // Check for mystery encounter
-      // Can only occur in place of a standard (non-boss) wild battle, waves 10-180
+    // Check for mystery encounter
+    // Can only occur in place of a standard (non-boss) wild battle, waves 10-180
     // NB: battle type checks are offloaded to `isWaveMysteryEncounter`
     // TODO: This means MEs can generate when the override is set to `BattleType.WILD`
     if (!Overrides.BATTLE_TYPE_OVERRIDE && this.isWaveMysteryEncounter(resolved.battleType, waveIndex)) {
       resolved.battleType = BattleType.MYSTERY_ENCOUNTER;
-        // Reset to base spawn weight
-        this.mysteryEncounterSaveData.encounterSpawnChance = BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT;
+      // Reset to base spawn weight
+      this.mysteryEncounterSaveData.encounterSpawnChance = BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT;
       return;
-      }
+    }
 
     if (resolved.battleType !== BattleType.TRAINER) {
       return;
@@ -1465,7 +1473,7 @@ export class BattleScene extends SceneBase {
     const trainer = this.generateNewBattleTrainer(waveIndex);
     this.field.add(trainer);
     resolved.trainer = trainer;
-      }
+  }
 
   /**
    * Helper function to randomly determine the attributes of a newly generated trainer.
@@ -1494,19 +1502,19 @@ export class BattleScene extends SceneBase {
     const variant = overrideVariant ?? (randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
 
     return new Trainer(trainerType, variant);
-      }
+  }
 
-      /**
+  /**
    * Sub-method of {@linkcode newBattle} that returns whether the new battle is a double battle.
    * @param __namedParameters - Needed for typedoc to function
    * @returns Whether the battle should be a double battle.
-       */
+   */
   private checkIsDouble({ double: forcedDouble, battleType, waveIndex, trainer }: NewBattleConstructedProps): boolean {
     // TODO: enforce using the proper override depending on whether it's a trainer or a wild battle
     const doubleBattleOverride = this.doCheckDoubleOverride(waveIndex);
     if (doubleBattleOverride != null) {
       return doubleBattleOverride;
-      }
+    }
 
     // Edge cases
     if (
@@ -1525,9 +1533,9 @@ export class BattleScene extends SceneBase {
     // TODO: Rework the calcs here - this is weird
     if (battleType === BattleType.WILD) {
       return randSeedInt(this.getDoubleBattleChance(waveIndex)) === 0;
-      }
-    return trainer?.variant === TrainerVariant.DOUBLE;
     }
+    return trainer?.variant === TrainerVariant.DOUBLE;
+  }
 
   /**
    * Check the double battle override for the current wave.
@@ -1553,64 +1561,64 @@ export class BattleScene extends SceneBase {
 
   // TODO: Split this up and move it to a "post battle phase"
   private doPostBattleCleanup(lastBattle: Battle, maxExpLevel: number): void {
-      const isNewBiome = this.isNewBiome(lastBattle);
-      /** Whether to reset and recall pokemon */
-      const resetArenaState =
-        isNewBiome
-        || [BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(this.currentBattle.battleType)
-        || this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
+    const isNewBiome = this.isNewBiome(lastBattle);
+    /** Whether to reset and recall pokemon */
+    const resetArenaState =
+      isNewBiome
+      || [BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(this.currentBattle.battleType)
+      || this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
 
-      for (const enemyPokemon of this.getEnemyParty()) {
-        enemyPokemon.destroy();
-      }
+    for (const enemyPokemon of this.getEnemyParty()) {
+      enemyPokemon.destroy();
+    }
 
-      this.trySpreadPokerus();
+    this.trySpreadPokerus();
     if (!isNewBiome && this.currentBattle.waveIndex % 10 === 5) {
-        this.arena.updatePoolsForTimeOfDay();
-      }
+      this.arena.updatePoolsForTimeOfDay();
+    }
 
     // use the old value of `double` to ensure both combatants get recalled properly when going from double to single battles
     const playerField = this.getPlayerParty().slice(0, 1 + Number(lastBattle.double));
-      if (resetArenaState) {
-        this.arena.resetArenaEffects();
+    if (resetArenaState) {
+      this.arena.resetArenaEffects();
 
       playerField.forEach((pokemon, index) => {
-          pokemon.lapseTag(BattlerTagType.COMMANDED);
-          if (pokemon.isOnField()) {
+        pokemon.lapseTag(BattlerTagType.COMMANDED);
+        if (pokemon.isOnField()) {
           this.phaseManager.pushNew("ReturnPhase", index);
-          }
-        });
-
-        for (const pokemon of this.getPlayerParty()) {
-          pokemon.resetBattleAndWaveData();
-          pokemon.resetTera();
-          applyAbAttrs("PostBattleInitAbAttr", { pokemon });
-          // Terapagos resets tera on each fight
-          if (pokemon.hasSpecies(SpeciesId.TERAPAGOS)) {
-            this.arena.playerTerasUsed = 0;
-          }
         }
-
-        if (!this.trainer.visible) {
-          this.phaseManager.pushNew("ShowTrainerPhase");
-        }
-      }
+      });
 
       for (const pokemon of this.getPlayerParty()) {
-        this.triggerPokemonFormChange(pokemon, SpeciesFormChangeTimeOfDayTrigger);
-      }
-
-      if (!this.gameMode.hasRandomBiomes && !isNewBiome) {
-        this.phaseManager.pushNew("NextEncounterPhase");
-      } else {
-        this.phaseManager.pushNew("NewBiomeEncounterPhase");
-
-        const newMaxExpLevel = this.getMaxExpLevel();
-        if (newMaxExpLevel > maxExpLevel) {
-          this.phaseManager.pushNew("LevelCapPhase");
+        pokemon.resetBattleAndWaveData();
+        pokemon.resetTera();
+        applyAbAttrs("PostBattleInitAbAttr", { pokemon });
+        // Terapagos resets tera on each fight
+        if (pokemon.hasSpecies(SpeciesId.TERAPAGOS)) {
+          this.arena.playerTerasUsed = 0;
         }
       }
+
+      if (!this.trainer.visible) {
+        this.phaseManager.pushNew("ShowTrainerPhase");
+      }
     }
+
+    for (const pokemon of this.getPlayerParty()) {
+      this.triggerPokemonFormChange(pokemon, SpeciesFormChangeTimeOfDayTrigger);
+    }
+
+    if (!this.gameMode.hasRandomBiomes && !isNewBiome) {
+      this.phaseManager.pushNew("NextEncounterPhase");
+    } else {
+      this.phaseManager.pushNew("NewBiomeEncounterPhase");
+
+      const newMaxExpLevel = this.getMaxExpLevel();
+      if (newMaxExpLevel > maxExpLevel) {
+        this.phaseManager.pushNew("LevelCapPhase");
+      }
+    }
+  }
 
   newArena(biome: BiomeId, playerFaints = 0): Arena {
     this.arena = new Arena(biome, playerFaints);
@@ -3364,7 +3372,7 @@ export class BattleScene extends SceneBase {
   private isWaveMysteryEncounter(battleType: BattleType, waveIndex: number): boolean {
     if (getDailyMysteryEncounter(waveIndex) != null) {
       return true;
-  }
+    }
     if (!this.isMysteryEncounterValidForWave(battleType, waveIndex)) {
       return false;
     }
@@ -3372,8 +3380,8 @@ export class BattleScene extends SceneBase {
     const [lowestMysteryEncounterWave, highestMysteryEncounterWave] = this.gameMode.getMysteryEncounterLegalWaves();
     // Base spawn weight is BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT/256, and increases
     // by WEIGHT_INCREMENT_ON_SPAWN_MISS/256 for each missed attempt at spawning an encounter on a valid floor
-      const sessionEncounterRate = this.mysteryEncounterSaveData.encounterSpawnChance;
-      const encounteredEvents = this.mysteryEncounterSaveData.encounteredEvents;
+    const sessionEncounterRate = this.mysteryEncounterSaveData.encounterSpawnChance;
+    const encounteredEvents = this.mysteryEncounterSaveData.encounteredEvents;
 
     // MEs can only spawn 3 or more waves after the previous ME, barring overrides
     const canSpawn =
@@ -3384,26 +3392,26 @@ export class BattleScene extends SceneBase {
       return false;
     }
 
-      // If total number of encounters is lower than expected for the run, slightly favor a new encounter spawn (reverse as well)
-      // Reduces occurrence of runs with total encounters significantly different from AVERAGE_ENCOUNTERS_PER_RUN_TARGET
-      // Favored rate changes can never exceed 50%. So if base rate is 15/256 and favored rate would add 200/256, result will be (15 + 128)/256
-      const expectedEncountersByFloor =
-        (AVERAGE_ENCOUNTERS_PER_RUN_TARGET / (highestMysteryEncounterWave - lowestMysteryEncounterWave))
-        * (waveIndex - lowestMysteryEncounterWave);
-      const currentRunDiffFromAvg = expectedEncountersByFloor - encounteredEvents.length;
-      const favoredEncounterRate =
-        sessionEncounterRate
-        + Math.min(currentRunDiffFromAvg * ANTI_VARIANCE_WEIGHT_MODIFIER, MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT / 2);
+    // If total number of encounters is lower than expected for the run, slightly favor a new encounter spawn (reverse as well)
+    // Reduces occurrence of runs with total encounters significantly different from AVERAGE_ENCOUNTERS_PER_RUN_TARGET
+    // Favored rate changes can never exceed 50%. So if base rate is 15/256 and favored rate would add 200/256, result will be (15 + 128)/256
+    const expectedEncountersByFloor =
+      (AVERAGE_ENCOUNTERS_PER_RUN_TARGET / (highestMysteryEncounterWave - lowestMysteryEncounterWave))
+      * (waveIndex - lowestMysteryEncounterWave);
+    const currentRunDiffFromAvg = expectedEncountersByFloor - encounteredEvents.length;
+    const favoredEncounterRate =
+      sessionEncounterRate
+      + Math.min(currentRunDiffFromAvg * ANTI_VARIANCE_WEIGHT_MODIFIER, MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT / 2);
 
-      const successRate = Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE ?? favoredEncounterRate;
+    const successRate = Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE ?? favoredEncounterRate;
 
     let roll = 0;
-        // Always rolls the check on the same offset to ensure no RNG changes from reloading session
+    // Always rolls the check on the same offset to ensure no RNG changes from reloading session
     this.executeWithSeedOffset(() => {
-            roll = randSeedInt(MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT);
+      roll = randSeedInt(MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT);
     }, waveIndex * 3000);
-        return roll < successRate;
-      }
+    return roll < successRate;
+  }
 
   /**
    * Returns if a wave COULD spawn a {@linkcode MysteryEncounter}.

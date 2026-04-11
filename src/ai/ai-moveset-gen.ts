@@ -109,7 +109,7 @@ function getAndWeightLevelMoves(pokemon: Pokemon): Map<MoveId, number> {
         break;
       case RELEARN_MOVE:
         weight = hasTrainer ? RELEARN_MOVE_WEIGHT : 0;
-        }
+    }
 
     movePool.set(id, weight);
   }
@@ -340,7 +340,7 @@ function filterSupercededMoves(pool: Map<MoveId, number>, ...otherPools: Map<Mov
       continue;
     }
     pool.delete(move);
-    }
+  }
 }
 
 /**
@@ -376,7 +376,7 @@ function filterMovePool(pool: Map<MoveId, number>, isBoss: boolean, hasTrainer: 
     ) {
       pool.delete(moveId);
     }
-    }
+  }
 }
 
 /**
@@ -467,8 +467,8 @@ function adjustDamageMoveWeights(pool: Map<MoveId, number>, pokemon: Pokemon, wi
       adjustedWeight *= adjustmentRatio;
     }
 
-      pool.set(moveId, adjustedWeight);
-    }
+    pool.set(moveId, adjustedWeight);
+  }
 }
 
 /**
@@ -657,7 +657,7 @@ function forceStabMove(
     }
     const selectedId = chosenPool[index][0];
     addToMoveset(selectedId, pokemon, pool, tmPool, eggPool, tmCount, eggMoveCount);
-    }
+  }
 }
 
 /**
@@ -983,8 +983,8 @@ function filterRemainingTrainerMovePool(pool: [id: MoveId, weight: number][], po
       ret = weight / weightDenominator;
       if (typesForStab.has(moveType) && !STAB_BLACKLIST.has(moveId)) {
         ret *= 20;
+      }
     }
-  }
     pool[idx] = [moveId, Math.ceil(ret)];
   }
 }
@@ -1100,7 +1100,7 @@ export function generateMoveset(pokemon: Pokemon, forceRivalSignatures = false):
     if (tmPool.size > 0) {
       debugMoveWeights(pokemon, tmPool, "Initial Tm Moves");
       filterSupercededMoves(tmPool, learnPool, eggMovePool);
-  }
+    }
   }
 
   // Now, combine pools into one master pool.

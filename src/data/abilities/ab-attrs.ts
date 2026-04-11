@@ -1534,7 +1534,7 @@ export class MoveTypePowerBoostAbAttr extends MovePowerBoostAbAttr {
     super((pokemon, _defender, move) => pokemon?.getMoveType(move) === boostedType, powerMultiplier || 1.5, false);
     if (skipDuringMovesetGen != null) {
       this.skipDuringMovesetGen = skipDuringMovesetGen;
-  }
+    }
   }
 }
 

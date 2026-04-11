@@ -146,9 +146,11 @@ const SLOT_1_FINAL = [
   SpeciesId.SKELEDIRGE,
   SpeciesId.QUAQUAVAL,
 ];
+
 //#endregion slot 1
 
 //#region Slot 2
+
 /**
  * Post-process rival birds to override their sets
  *
@@ -159,9 +161,12 @@ const SLOT_1_FINAL = [
  * @param bars - (default `0`) The number of boss bar segments to set. If `zero`, the pokemon will not be a boss
  * @param useRivalSignature - (default `false`) Whether to use the rival signature move when generating the moveset.
  */
-
-// TODO: check invocations of this function due to changed params
-function forceRivalBirdAbility(pokemon: EnemyPokemon, bars = 0, useRivalSignature = false, forceGutsFlameOrb = false): void {
+function forceRivalBirdAbility(
+  pokemon: EnemyPokemon,
+  bars = 0,
+  useRivalSignature = false,
+  forceGutsFlameOrb = false,
+): void {
   switch (pokemon.species.speciesId) {
     // Keen Eye for Pidgey line
     case SpeciesId.PIDGEY:
@@ -254,9 +259,11 @@ const SLOT_2_FINAL = [
   SpeciesId.CORVIKNIGHT,
   SpeciesId.KILOWATTREL,
 ];
+
 //#endregion Slot 2
 
 //#region Slot 3
+
 /** Rival's slot 3 species pool for fight 2 */
 const SLOT_3_FIGHT_2 = [
   SpeciesId.NIDORINA,
@@ -382,6 +389,7 @@ const SLOT_3_FINAL = [
   SpeciesId.TINKATON,
   SpeciesId.GLIMMORA,
 ];
+
 //#endregion Slot 3
 
 //#region Slot 4
@@ -416,9 +424,10 @@ function postProcessSlot4Fight3(pokemon: EnemyPokemon): void {
         pokemon.generateAndPopulateMoveset();
       }
       return;
-  }
+    }
   }
 }
+
 /** Rival's slot 4 species pool for fight 3 */
 const SLOT_4_FIGHT_3 = [
   SpeciesId.CLEFABLE,
@@ -491,7 +500,7 @@ function postProcessSlot4Fight4(pokemon: EnemyPokemon, level = SLOT_4_FIGHT_4_LE
         pokemon.generateAndPopulateMoveset();
       }
       return;
-  }
+    }
   }
 }
 
@@ -537,9 +546,11 @@ const SLOT_4_FINAL = [
   SpeciesId.HISUI_ARCANINE,
   SpeciesId.PALDEA_TAUROS,
 ];
+
 //#endregion Slot 4
 
 //#region Slot 5
+
 /** Rival's slot 5 species pool for fight 4 and beyond */
 const SLOT_5_FINAL = [
   SpeciesId.DRAGONITE,
@@ -560,9 +571,11 @@ const SLOT_5_FINAL = [
   SpeciesId.HYDRAPPLE,
   SpeciesId.HISUI_GOODRA,
 ];
+
 //#endregion Slot 5
 
 //#region Slot 6
+
 /**
  * Post-process logic for rival slot 6, fight 5
  *
@@ -575,8 +588,8 @@ const SLOT_5_FINAL = [
 function postProcessSlot6Fight5(pokemon: EnemyPokemon, level = SLOT_6_FIGHT_5_LEVEL, overrideSegments = true): void {
   pokemon.level = level;
   pokemon.pokeball = PokeballType.MASTER_BALL;
-    pokemon.shiny = true;
-    pokemon.variant = 1;
+  pokemon.shiny = true;
+  pokemon.variant = 1;
   // When called for fight 5, uses 3 segments.
   // For fight 6, uses the logic from `getEncounterBossSegments`
   pokemon.setBoss(true, overrideSegments ? 3 : undefined);
@@ -601,6 +614,7 @@ function postProcessSlot6Fight6(pokemon: EnemyPokemon): void {
 
 /** Rival's slot 6 species pool for fight 5 and beyond */
 const SLOT_6_FINAL = [SpeciesId.RAYQUAZA];
+
 //#endregion Slot 6
 
 export interface RivalSlotConfig {

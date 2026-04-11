@@ -12,9 +12,9 @@ import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
 import { GameManager } from "#test/framework/game-manager";
 import {
-    runMysteryEncounterToEnd,
-    runSelectMysteryEncounterOption,
-    skipBattleRunMysteryEncounterRewardsPhase,
+  runMysteryEncounterToEnd,
+  runSelectMysteryEncounterOption,
+  skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/utils/encounter-test-utils";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
