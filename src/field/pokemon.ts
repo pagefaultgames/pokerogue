@@ -2779,7 +2779,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns The evolution this pokemon can currently evolve into, or `null` if it cannot evolve
    */
   getEvolution(): SpeciesFormEvolution | null {
-    if (pokemonEvolutions.hasOwnProperty(this.species.speciesId)) {
+    if (Object.hasOwn(pokemonEvolutions, this.species.speciesId)) {
       const evolutions = pokemonEvolutions[this.species.speciesId];
       for (const e of evolutions) {
         if (e.validate(this)) {
@@ -2788,7 +2788,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
-    if (this.isFusion() && this.fusionSpecies && pokemonEvolutions.hasOwnProperty(this.fusionSpecies.speciesId)) {
+    if (this.isFusion() && this.fusionSpecies && Object.hasOwn(pokemonEvolutions, this.fusionSpecies.speciesId)) {
       const fusionEvolutions = pokemonEvolutions[this.fusionSpecies.speciesId].map(
         e => new FusionSpeciesFormEvolution(this.species.speciesId, e),
       );
@@ -3105,7 +3105,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     // Checks if there is no variant data for both the index or index with form
     if (
       !this.shiny
-      || (!variantData.hasOwnProperty(variantDataIndex) && !variantData.hasOwnProperty(this.species.speciesId))
+      || (!Object.hasOwn(variantData, variantDataIndex) && !Object.hasOwn(variantData, this.species.speciesId))
     ) {
       return 0;
     }
@@ -3159,8 +3159,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const filter = forStarter
       ? (species: PokemonSpecies) => {
           return (
-            pokemonEvolutions.hasOwnProperty(species.speciesId)
-            && !pokemonPrevolutions.hasOwnProperty(species.speciesId)
+            Object.hasOwn(pokemonEvolutions, species.speciesId)
+            && !Object.hasOwn(pokemonPrevolutions, species.speciesId)
             && !species.subLegendary
             && !species.legendary
             && !species.mythical

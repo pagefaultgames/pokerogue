@@ -361,7 +361,7 @@ export class GameData {
 
     if (systemData.unlocks) {
       for (const key of Object.keys(systemData.unlocks)) {
-        if (this.unlocks.hasOwnProperty(key)) {
+        if (Object.hasOwn(this.unlocks, key)) {
           this.unlocks[key] = systemData.unlocks[key];
         }
       }
@@ -369,7 +369,7 @@ export class GameData {
 
     if (systemData.achvUnlocks) {
       for (const a of Object.keys(systemData.achvUnlocks)) {
-        if (achvs.hasOwnProperty(a)) {
+        if (Object.hasOwn(achvs, a)) {
           this.achvUnlocks[a] = systemData.achvUnlocks[a];
         }
       }
@@ -377,7 +377,7 @@ export class GameData {
 
     if (systemData.voucherUnlocks) {
       for (const v of Object.keys(systemData.voucherUnlocks)) {
-        if (vouchers.hasOwnProperty(v)) {
+        if (Object.hasOwn(vouchers, v)) {
           this.voucherUnlocks[v] = systemData.voucherUnlocks[v];
         }
       }
@@ -573,7 +573,7 @@ export class GameData {
    */
   public saveSetting(setting: string, valueIndex: number): boolean {
     let settings: object = {};
-    if (localStorage.hasOwnProperty("settings")) {
+    if (Object.hasOwn(localStorage, "settings")) {
       settings = JSON.parse(localStorage.getItem("settings")!); // TODO: is this bang correct?
     }
 
@@ -597,7 +597,7 @@ export class GameData {
   public saveMappingConfigs(deviceName: string, config): boolean {
     const key = deviceName.toLowerCase(); // Convert the gamepad name to lowercase to use as a key
     let mappingConfigs: object = {}; // Initialize an empty object to hold the mapping configurations
-    if (localStorage.hasOwnProperty("mappingConfigs")) {
+    if (Object.hasOwn(localStorage, "mappingConfigs")) {
       // Check if 'mappingConfigs' exists in localStorage
       mappingConfigs = JSON.parse(localStorage.getItem("mappingConfigs")!); // TODO: is this bang correct?
     } // Parse the existing 'mappingConfigs' from localStorage
@@ -620,7 +620,7 @@ export class GameData {
    * for the corresponding gamepad or device key. The method then returns `true` to indicate success.
    */
   public loadMappingConfigs(): boolean {
-    if (!localStorage.hasOwnProperty("mappingConfigs")) {
+    if (!Object.hasOwn(localStorage, "mappingConfigs")) {
       // Check if 'mappingConfigs' exists in localStorage
       return false;
     } // If 'mappingConfigs' does not exist, return false
@@ -636,7 +636,7 @@ export class GameData {
   }
 
   public resetMappingToFactory(): boolean {
-    if (!localStorage.hasOwnProperty("mappingConfigs")) {
+    if (!Object.hasOwn(localStorage, "mappingConfigs")) {
       // Check if 'mappingConfigs' exists in localStorage
       return false;
     } // If 'mappingConfigs' does not exist, return false
@@ -667,7 +667,7 @@ export class GameData {
   ): boolean {
     let settingsControls: object = {}; // Initialize an empty object to hold the gamepad settings
 
-    if (localStorage.hasOwnProperty(localStoragePropertyName)) {
+    if (Object.hasOwn(localStorage, localStoragePropertyName)) {
       // Check if 'settingsControls' exists in localStorage
       settingsControls = JSON.parse(localStorage.getItem(localStoragePropertyName)!); // Parse the existing 'settingsControls' from localStorage // TODO: is this bang correct?
     }
@@ -698,7 +698,7 @@ export class GameData {
   private loadSettings(): boolean {
     resetSettings();
 
-    if (!localStorage.hasOwnProperty("settings")) {
+    if (!Object.hasOwn(localStorage, "settings")) {
       return false;
     }
 
@@ -718,7 +718,7 @@ export class GameData {
       setSettingGamepad(setting, settingGamepadDefaults[setting]);
     });
 
-    if (!localStorage.hasOwnProperty("settingsGamepad")) {
+    if (!Object.hasOwn(localStorage, "settingsGamepad")) {
       return;
     }
     const settingsGamepad = JSON.parse(localStorage.getItem("settingsGamepad")!); // TODO: is this bang correct?
@@ -736,7 +736,7 @@ export class GameData {
   public saveTutorialFlag(tutorial: Tutorial, status: boolean): void {
     // Grab the prior save data tutorial
     const saveDataKey = getDataTypeKey(GameDataType.TUTORIALS);
-    const tutorials: TutorialFlags = localStorage.hasOwnProperty(saveDataKey)
+    const tutorials: TutorialFlags = Object.hasOwn(localStorage, saveDataKey)
       ? JSON.parse(localStorage.getItem(saveDataKey)!)
       : {};
 
@@ -759,7 +759,7 @@ export class GameData {
       return acc;
     }, {} as TutorialFlags);
 
-    if (!localStorage.hasOwnProperty(key)) {
+    if (!Object.hasOwn(localStorage, key)) {
       return ret;
     }
 
@@ -787,7 +787,7 @@ export class GameData {
     const key = getDataTypeKey(GameDataType.SEEN_DIALOGUES);
     const ret: SeenDialogues = {};
 
-    if (!localStorage.hasOwnProperty(key)) {
+    if (!Object.hasOwn(localStorage, key)) {
       return ret;
     }
 
@@ -1106,7 +1106,7 @@ export class GameData {
       let daily: string[] = [];
 
       if (sessionData.gameMode === GameModes.DAILY) {
-        if (localStorage.hasOwnProperty("daily")) {
+        if (Object.hasOwn(localStorage, "daily")) {
           daily = JSON.parse(atob(localStorage.getItem("daily")!)); // TODO: is this bang correct?
           if (daily.includes(seed)) {
             return resolve(false);
@@ -1641,7 +1641,7 @@ export class GameData {
             dexEntry.caughtAttr |= globalScene.gameData.getFormAttr(3);
           }
         } else {
-          const allFormChanges = pokemonFormChanges.hasOwnProperty(species.speciesId)
+          const allFormChanges = Object.hasOwn(pokemonFormChanges, species.speciesId)
             ? pokemonFormChanges[species.speciesId]
             : [];
           const toCurrentFormChanges = allFormChanges.filter(f => f.formKey === formKey);
@@ -1653,7 +1653,7 @@ export class GameData {
       }
 
       // Unlock ability
-      if (speciesStarterCosts.hasOwnProperty(species.speciesId)) {
+      if (Object.hasOwn(speciesStarterCosts, species.speciesId)) {
         this.starterData[species.speciesId].abilityAttr |=
           pokemon.abilityIndex !== 1 || pokemon.species.ability2
             ? 1 << pokemon.abilityIndex
@@ -1663,7 +1663,7 @@ export class GameData {
       // Unlock nature
       dexEntry.natureAttr |= 1 << (pokemon.nature + 1);
 
-      const hasPrevolution = pokemonPrevolutions.hasOwnProperty(species.speciesId);
+      const hasPrevolution = Object.hasOwn(pokemonPrevolutions, species.speciesId);
       const newCatch = !caughtAttr;
       const hasNewAttr = (caughtAttr & dexAttr) !== dexAttr;
 
@@ -1720,7 +1720,7 @@ export class GameData {
         }
       };
 
-      if (newCatch && speciesStarterCosts.hasOwnProperty(species.speciesId)) {
+      if (newCatch && Object.hasOwn(speciesStarterCosts, species.speciesId)) {
         if (!showMessage) {
           resolve(true);
           return;
@@ -1808,7 +1808,7 @@ export class GameData {
   ): Promise<boolean> {
     return new Promise<boolean>(resolve => {
       const speciesId = species.speciesId;
-      if (!speciesEggMoves.hasOwnProperty(speciesId) || !speciesEggMoves[speciesId][eggMoveIndex]) {
+      if (!Object.hasOwn(speciesEggMoves, speciesId) || !speciesEggMoves[speciesId][eggMoveIndex]) {
         resolve(false);
         return;
       }
@@ -1858,7 +1858,7 @@ export class GameData {
     //recursively unlock nature for species and prevolutions
     const _unlockSpeciesNature = (speciesId: SpeciesId) => {
       this.dexData[speciesId].natureAttr |= 1 << (nature + 1);
-      if (pokemonPrevolutions.hasOwnProperty(speciesId)) {
+      if (Object.hasOwn(pokemonPrevolutions, speciesId)) {
         _unlockSpeciesNature(pokemonPrevolutions[speciesId]);
       }
     };
@@ -1878,7 +1878,7 @@ export class GameData {
       if (dexIvs.filter(iv => iv === 31).length === 6) {
         globalScene.validateAchv(achvs.PERFECT_IVS);
       }
-    } while (pokemonPrevolutions.hasOwnProperty(speciesId) && (speciesId = pokemonPrevolutions[speciesId]));
+    } while (Object.hasOwn(pokemonPrevolutions, speciesId) && (speciesId = pokemonPrevolutions[speciesId]));
   }
 
   getSpeciesCount(dexEntryPredicate: (entry: DexEntry) => boolean): number {
@@ -2038,13 +2038,13 @@ export class GameData {
   consolidateDexData(dexData: DexData): void {
     for (const k of Object.keys(dexData)) {
       const entry = dexData[k] as DexEntry;
-      if (!entry.hasOwnProperty("hatchedCount")) {
+      if (!Object.hasOwn(entry, "hatchedCount")) {
         entry.hatchedCount = 0;
       }
-      if (!entry.hasOwnProperty("natureAttr") || (entry.caughtAttr && !entry.natureAttr)) {
+      if (!Object.hasOwn(entry, "natureAttr") || (entry.caughtAttr && !entry.natureAttr)) {
         entry.natureAttr = this.defaultDexData?.[k].natureAttr || 1 << randInt(25, 1);
       }
-      if (!entry.hasOwnProperty("ribbons")) {
+      if (!Object.hasOwn(entry, "ribbons")) {
         entry.ribbons = new RibbonData(0);
       }
     }
