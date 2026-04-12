@@ -2296,7 +2296,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 valueReduction
               ];
               options.push({
-                label: `×${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost")}`,
+                label: `×${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost", { newCost: globalScene.gameData.getSpeciesStarterValue(this.lastSpecies.speciesId, starterData.valueReduction + 1) })}`,
                 handler: () => {
                   if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= reductionCost) {
                     persistentStarterData.valueReduction++;

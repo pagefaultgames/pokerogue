@@ -1996,21 +1996,30 @@ export class GameData {
     return ret;
   }
 
-  getSpeciesStarterValue(speciesId: SpeciesId): number {
+  /**
+   * Obtain the value of a particular starter by SpeciesID
+   * @param speciesId - The {@linkcode SpeciesId} of the starter
+   * @param valueReduction - The applied value reduction; defaults to the value stored in `this.starterData[speciesId].valueReduction`
+   * @returns The value/cost of the starter
+   * @privateRemarks
+   * `valueReduction` only needs to be provided when testing a value reduction other than the one currently unlocked
+   */
+  getSpeciesStarterValue(speciesId: SpeciesId, valueReduction?: number): number {
     // TODO: is this bang correct?
     const baseValue = speciesStarterCosts[speciesId]!;
+    const reduction = valueReduction ?? this.starterData[speciesId].valueReduction;
     let value = baseValue;
 
-    const decrementValue = (value: number) => {
-      if (value > 1) {
-        value--;
+    const decrementValue = (v: number) => {
+      if (v > 1) {
+        v--;
       } else {
-        value /= 2;
+        v /= 2;
       }
-      return value;
+      return v;
     };
 
-    for (let v = 0; v < this.starterData[speciesId].valueReduction; v++) {
+    for (let v = 0; v < reduction; v++) {
       value = decrementValue(value);
     }
 
