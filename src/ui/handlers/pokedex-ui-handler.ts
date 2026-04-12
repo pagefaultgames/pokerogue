@@ -1422,8 +1422,8 @@ export class PokedexUiHandler extends MessageUiHandler {
   // Returns true if one of the forms has the requested move
   hasFormLevelMove(form: PokemonForm, selectedMove: string): boolean {
     if (
-      !pokemonFormLevelMoves.hasOwnProperty(form.speciesId)
-      || !pokemonFormLevelMoves[form.speciesId].hasOwnProperty(form.formIndex)
+      !Object.hasOwn(pokemonFormLevelMoves, form.speciesId)
+      || !Object.hasOwn(pokemonFormLevelMoves[form.speciesId], form.formIndex)
     ) {
       return false;
     }
@@ -1462,7 +1462,7 @@ export class PokedexUiHandler extends MessageUiHandler {
         & (this.gameData.dexData[this.getStarterSpeciesId(species.speciesId)]?.caughtAttr || BigInt(0))
         & species.getFullUnlocksData();
       const starterData = this.gameData.starterData[starterId];
-      const isStarterProgressable = speciesEggMoves.hasOwnProperty(starterId);
+      const isStarterProgressable = Object.hasOwn(speciesEggMoves, starterId);
 
       // Name filter
       const selectedName = this.filterText.getValue(FilterTextRow.NAME);

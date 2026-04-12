@@ -106,7 +106,7 @@ const fixRerollTarget: SettingsSaveMigrator = {
   version: "1.0.4",
   // biome-ignore lint/complexity/noBannedTypes: TODO - refactor settings
   migrate: (data: Object): void => {
-    if (data.hasOwnProperty("REROLL_TARGET") && !data.hasOwnProperty(SettingKeys.Shop_Cursor_Target)) {
+    if (Object.hasOwn(data, "REROLL_TARGET") && !Object.hasOwn(data, SettingKeys.Shop_Cursor_Target)) {
       data[SettingKeys.Shop_Cursor_Target] = data["REROLL_TARGET"];
       // biome-ignore lint/performance/noDelete: intentional
       delete data["REROLL_TARGET"];

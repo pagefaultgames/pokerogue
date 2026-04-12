@@ -41,7 +41,7 @@
     "update-assets:remote": "pnpm update-submodules:remote assets",
     "update-submodules": "git submodule update --progress --init --recursive --force --depth 1",
     "update-submodules:remote": "pnpm update-submodules --remote",
-    "sample-movesets": "pnpm dlx vite-node scripts/gen-moveset/gen-moveset-driver.ts"
+    "sample-movesets": "pnpm dlx vite-node@5.3.0 scripts/gen-moveset/gen-moveset-driver.ts"
   },
   "dependencies": {
     "@material/material-color-utilities": "^0.3.0",

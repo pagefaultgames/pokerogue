@@ -83,7 +83,7 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
 
   getLocalStorageSetting(): object {
     // Retrieve the settings from local storage or use an empty object if none exist.
-    const settings: object = localStorage.hasOwnProperty(this.localStoragePropertyName)
+    const settings: object = Object.hasOwn(localStorage, this.localStoragePropertyName)
       ? JSON.parse(localStorage.getItem(this.localStoragePropertyName)!)
       : {}; // TODO: is this bang correct?
     return settings;
@@ -344,7 +344,7 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
     this.keys.forEach((key, index) => {
       this.setOptionCursor(
         index,
-        settings.hasOwnProperty(key as string) ? settings[key as string] : this.optionCursors[index],
+        Object.hasOwn(settings, key as string) ? settings[key as string] : this.optionCursors[index],
       );
     });
 
