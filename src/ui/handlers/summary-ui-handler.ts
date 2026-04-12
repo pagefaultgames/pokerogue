@@ -920,7 +920,7 @@ export class SummaryUiHandler extends UiHandler {
           profileContainer.add(luckText);
         }
 
-        if (globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id) && this.pokemon != null) {
+        if (Object.hasOwn(globalScene.gameData.achvUnlocks, achvs.TERASTALLIZE.id) && this.pokemon != null) {
           const teraIcon = globalScene.add.sprite(128, 26, "button_tera");
           teraIcon.setName("terastallize-icon");
           teraIcon.setFrame(PokemonType[this.pokemon.getTeraType()].toLowerCase());
