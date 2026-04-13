@@ -1,3 +1,4 @@
+import { timedEventManager } from "#app/global-event-manager";
 import { getCachedUrl } from "#utils/fetch-utils";
 import { toKebabCase } from "#utils/strings";
 import i18next from "i18next";
@@ -67,6 +68,7 @@ const fonts: LoadingFontFaceProperty[] = [
       "hi",
       "tl",
       "sv",
+      "eu",
       "zh",
     ],
   },
@@ -182,6 +184,7 @@ await i18next
         "ko",
         "ja",
         "ca",
+        "eu",
         "da",
         "th",
         "tr",
@@ -225,5 +228,23 @@ await i18next
       await initFonts(localStorage.getItem("prLang") ?? undefined);
     },
   );
+
+//#endregion
+
+//#region Event Proxy
+
+if (timedEventManager.hasEventTextReplacement()) {
+  console.warn("Event text replacements are active.");
+  i18next.t = new Proxy(i18next.t.bind(i18next), {
+    apply(target, _, args: [key: string, options?: any]) {
+      const key = timedEventManager.getEventTextReplacement(args[0]);
+      if (args[0] !== key) {
+        console.debug(`Replacing i18n key "${args[0]}" with "${key}"`);
+        args[0] = key;
+      }
+      return target(...args);
+    },
+  });
+}
 
 //#endregion

@@ -6,6 +6,8 @@ import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
 import { BerryType } from "#enums/berry-type";
 import { BiomeId } from "#enums/biome-id";
+import { BiomePoolTier } from "#enums/biome-pool-tier";
+import { Challenges } from "#enums/challenges";
 import { EggTier } from "#enums/egg-type";
 import { FormChangeItem } from "#enums/form-change-item";
 import { MoveId } from "#enums/move-id";
@@ -31,7 +33,7 @@ import type { IntClosedRange, TupleOf } from "type-fest";
 /**
  * This comment block exists to prevent IDEs from automatically removing unused imports
  * {@linkcode BerryType}, {@linkcode EvolutionItem}, {@linkcode FormChangeItem}
- * {@linkcode Stat}, {@linkcode PokemonType}
+ * {@linkcode Stat}, {@linkcode PokemonType} {@linkcode Challenges} {@linkcode BiomePoolTier}
  */
 
 /**
@@ -81,14 +83,27 @@ class DefaultOverrides {
    *
    * If `"single"`, set every non-trainer battle to be a single battle.
    *
-   * If `"double"`, set every battle (including trainer battles) to be a double battle.
+   * If `"double"`, set every battle (_including trainer battles that are normally singles-only_)
+   * to be a double battle.
    *
-   * If `"even-doubles"`, follow the `"double"` rule on even wave numbers, and follow the `"single"` rule on odd wave numbers.
+   * If `"even-doubles"`, follow the `"double"` rule on even wave numbers,
+   * and the `"single"` rule on odd wave numbers.
    *
-   * If `"odd-doubles"`, follow the `"double"` rule on odd wave numbers, and follow the `"single"` rule on even wave numbers.
+   * If `"odd-doubles"`, follow the `"double"` rule on odd wave numbers,
+   * and the `"single"` rule on even wave numbers.
+   * @defaultValue `null`
+   * @privateRemarks
+   * Prefer using {@linkcode RANDOM_TRAINER_OVERRIDE} to override trainer battles.
+   * This override's ability to force doubles trainer battles is deprecated due to not altering the spawned trainer's variant,
+   * and may be removed in a future PR.
    */
   readonly BATTLE_STYLE_OVERRIDE: BattleStyle | null = null;
-  readonly STARTING_WAVE_OVERRIDE: number = 0;
+  /**
+   * If present and non-`null`, will override the starting wave # when starting a new run.
+   * Should never be set to a negative value.
+   * @defaultValue `null`
+   */
+  readonly STARTING_WAVE_OVERRIDE: number | null = null;
   readonly STARTING_BIOME_OVERRIDE: BiomeId | null = null;
   /**
    * Overrides the Time of Day for the given biome.
@@ -313,6 +328,7 @@ class DefaultOverrides {
   readonly ITEM_REWARD_OVERRIDE: ModifierOverride[] = [];
 
   /** If `true`, disable all non-scripted opponent trainer encounters. */
+  // TODO: Merge into `BATTLE_TYPE_OVERRIDE`
   readonly DISABLE_STANDARD_TRAINERS_OVERRIDE: boolean = false;
 
   /**

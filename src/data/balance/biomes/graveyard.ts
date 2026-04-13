@@ -124,6 +124,5 @@ export const graveyardBiome: Biome = {
   trainerChance: 12,
   weatherPool,
   terrainPool,
-  bgmLoopPoint: 13.711,
   biomeLinks,
 };

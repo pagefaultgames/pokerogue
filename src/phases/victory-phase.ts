@@ -71,9 +71,7 @@ export class VictoryPhase extends PokemonPhase {
             "SelectModifierPhase",
             undefined,
             undefined,
-            gameMode.isFixedBattle(currentWaveIndex)
-              ? gameMode.getFixedBattle(currentWaveIndex).customModifierRewardSettings
-              : undefined,
+            gameMode.getFixedBattle(currentWaveIndex)?.customModifierRewardSettings,
           );
         } else if (gameMode.isDaily) {
           globalScene.phaseManager.pushNew("ModifierRewardPhase", modifierTypes.EXP_CHARM);

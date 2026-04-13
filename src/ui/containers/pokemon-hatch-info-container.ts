@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
-import { speciesEggMoves } from "#balance/egg-moves";
+import { speciesEggMoves } from "#balance/moves/egg-moves";
 import { allMoves } from "#data/data-lists";
 import { getEggTierForSpecies } from "#data/egg";
 import type { EggHatchData } from "#data/egg-hatch-data";
@@ -176,7 +176,7 @@ export class PokemonHatchInfoContainer extends PokemonInfoContainer {
     this.pokemonNumberText.setText(padInt(getDexNumber(species.speciesId), 4));
     this.pokemonNameText.setText(species.name);
 
-    const hasEggMoves = species && speciesEggMoves.hasOwnProperty(species.speciesId);
+    const hasEggMoves = species && Object.hasOwn(speciesEggMoves, species.speciesId);
 
     for (let em = 0; em < 4; em++) {
       const eggMove = hasEggMoves ? allMoves[speciesEggMoves[species.speciesId][em]] : null;

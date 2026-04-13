@@ -108,6 +108,5 @@ export const spaceBiome: Biome = {
   trainerChance: 16,
   weatherPool,
   terrainPool,
-  bgmLoopPoint: 20.036,
   biomeLinks,
 };

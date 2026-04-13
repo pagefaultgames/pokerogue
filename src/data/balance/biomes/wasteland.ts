@@ -125,6 +125,5 @@ export const wastelandBiome: Biome = {
   trainerChance: 12,
   weatherPool,
   terrainPool,
-  bgmLoopPoint: 6.024,
   biomeLinks,
 };

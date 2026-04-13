@@ -5,6 +5,7 @@ import Overrides from "#app/overrides";
 import { NIGHT_TIME } from "#constants/game-constants";
 import type { ArenaTag, ArenaTagTypeMap } from "#data/arena-tag";
 import { EntryHazardTag, getArenaTag } from "#data/arena-tag";
+import { biomeBgmLoopPoints } from "#data/biome-bgm-loop-points";
 import { getDailyForcedWaveBiomePoolTier } from "#data/daily-seed/daily-run";
 import { allBiomes } from "#data/data-lists";
 import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
@@ -107,7 +108,7 @@ export class Arena {
 
   /** A float representing the loop point of the current biome's bgm in seconds */
   public get bgmLoopPoint(): number {
-    return allBiomes.get(this.biomeId).bgmLoopPoint;
+    return biomeBgmLoopPoints[getBiomeKey(this.biomeId)];
   }
 
   public get bgTerrainColorRatioForBiome(): number {

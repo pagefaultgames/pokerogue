@@ -184,7 +184,7 @@ export abstract class AbstractOptionSelectUiHandler extends UiHandler {
   }
 
   show(args: any[]): boolean {
-    if (args.length === 0 || !args[0].hasOwnProperty("options") || args[0].options.length === 0) {
+    if (args.length === 0 || !Object.hasOwn(args[0], "options") || args[0].options.length === 0) {
       return false;
     }
 

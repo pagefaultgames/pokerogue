@@ -14,7 +14,6 @@ import type { Phase } from "#app/phase";
 import { PhaseTree } from "#app/phase-tree";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import type { Pokemon } from "#field/pokemon";
-import type { PokemonMove } from "#moves/pokemon-move";
 import { AddEnemyBuffModifierPhase } from "#phases/add-enemy-buff-modifier-phase";
 import { AttemptCapturePhase } from "#phases/attempt-capture-phase";
 import { AttemptRunPhase } from "#phases/attempt-run-phase";
@@ -57,6 +56,7 @@ import { MoveEffectPhase } from "#phases/move-effect-phase";
 import { MoveEndPhase } from "#phases/move-end-phase";
 import { MoveHeaderPhase } from "#phases/move-header-phase";
 import { MovePhase } from "#phases/move-phase";
+import { MoveReflectPhase } from "#phases/move-reflect-phase";
 import {
   MysteryEncounterBattlePhase,
   MysteryEncounterBattleStartCleanupPhase,
@@ -165,6 +165,7 @@ const PHASES = Object.freeze({
   MoveEffectPhase,
   MoveEndPhase,
   MoveHeaderPhase,
+  MoveReflectPhase,
   MovePhase,
   MysteryEncounterPhase,
   MysteryEncounterOptionSelectedPhase,
@@ -575,15 +576,6 @@ export class PhaseManager {
    */
   public forceMoveLast(phaseCondition: PhaseConditionFunc<"MovePhase">): void {
     this.dynamicQueueManager.setMoveTimingModifier(phaseCondition, MovePhaseTimingModifier.LAST);
-  }
-
-  /**
-   * Find and change the queued move of the first {@linkcode MovePhase} meeting the given condition.
-   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function used to retrieve the phase
-   * @param move - The {@linkcode PokemonMove | move} to use in replacement
-   */
-  public changePhaseMove(phaseCondition: PhaseConditionFunc<"MovePhase">, move: PokemonMove): void {
-    this.dynamicQueueManager.setMoveForPhase(phaseCondition, move);
   }
 
   /**

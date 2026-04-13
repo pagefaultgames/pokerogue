@@ -4,7 +4,7 @@ import { globalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
 import Overrides from "#app/overrides";
 import { handleTutorial, Tutorial } from "#app/tutorial";
-import { speciesEggMoves } from "#balance/egg-moves";
+import { speciesEggMoves } from "#balance/moves/egg-moves";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#balance/pokemon-level-moves";
 import {
@@ -144,6 +144,12 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoXPos: 32,
   },
   ca: {
+    starterInfoTextSize: "48px",
+    instructionTextSize: "28px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 29,
+  },
+  eu: {
     starterInfoTextSize: "48px",
     instructionTextSize: "28px",
     starterInfoYOffset: 0.5,
@@ -638,7 +644,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       8,
       106,
       i18next.t("starterSelectUiHandler:growthRate"),
-      TextStyle.SUMMARY_ALT,
+      TextStyle.WINDOW_ALT,
       { fontSize: "36px" },
     )
       .setOrigin(0)
@@ -839,12 +845,19 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     ).setOrigin(0);
 
     // Candy icon and count
+    const isLegacyUi = globalScene.uiTheme === UiTheme.LEGACY;
     this.pokemonCandyContainer = globalScene.add
-      .container(4.5, 18)
+      .container(isLegacyUi ? 7 : 4.5, 18)
       .setInteractive(new Phaser.Geom.Rectangle(0, 0, 30, 20), Phaser.Geom.Rectangle.Contains);
-    this.pokemonCandyIcon = globalScene.add.sprite(0, 0, "candy").setScale(0.5).setOrigin(0);
-    this.pokemonCandyOverlayIcon = globalScene.add.sprite(0, 0, "candy_overlay").setScale(0.5).setOrigin(0);
-    this.pokemonCandyDarknessOverlay = globalScene.add
+    this.pokemonCandyIcon = globalScene.add //
+      .sprite(0, 0, "candy")
+      .setScale(0.5)
+      .setOrigin(0);
+    this.pokemonCandyOverlayIcon = globalScene.add //
+      .sprite(0, 0, "candy_overlay")
+      .setScale(0.5)
+      .setOrigin(0);
+    this.pokemonCandyDarknessOverlay = globalScene.add //
       .sprite(0, 0, "candy")
       .setScale(0.5)
       .setOrigin(0)
@@ -863,15 +876,30 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       fontSize: "42px",
     }).setOrigin(0);
 
-    this.pokemonCaughtHatchedContainer = globalScene.add.container(2, 25).setScale(0.5);
+    this.pokemonCaughtHatchedContainer = globalScene.add //
+      .container(isLegacyUi ? 4.5 : 2, 25)
+      .setScale(0.5);
 
-    const pokemonCaughtIcon = globalScene.add.sprite(1, 0, "items", "pb").setOrigin(0).setScale(0.75);
+    const pokemonCaughtIcon = globalScene.add //
+      .sprite(1, 0, "items", "pb")
+      .setOrigin(0)
+      .setScale(0.75);
 
-    this.pokemonCaughtCountText = addTextObject(24, 4, "0", TextStyle.SUMMARY_ALT).setOrigin(0);
-    this.pokemonHatchedIcon = globalScene.add.sprite(1, 14, "egg_icons").setOrigin(0.15, 0.2).setScale(0.8);
-    this.pokemonShinyIcon = globalScene.add.sprite(14, 76, "shiny_icons").setOrigin(0.15, 0.2).setScale(1);
-    this.pokemonHatchedCountText = addTextObject(24, 19, "0", TextStyle.SUMMARY_ALT).setOrigin(0);
-    this.pokemonMovesContainer = globalScene.add.container(102, 16).setScale(0.375);
+    this.pokemonCaughtCountText = addTextObject(24, 4, "0", TextStyle.WINDOW_ALT) //
+      .setOrigin(0);
+    this.pokemonHatchedIcon = globalScene.add //
+      .sprite(1, 14, "egg_icons")
+      .setOrigin(0.15, 0.2)
+      .setScale(0.8);
+    this.pokemonShinyIcon = globalScene.add //
+      .sprite(isLegacyUi ? 8 : 14, 76, "shiny_icons")
+      .setOrigin(0.15, 0.2)
+      .setScale(1);
+    this.pokemonHatchedCountText = addTextObject(24, 19, "0", TextStyle.WINDOW_ALT) //
+      .setOrigin(0);
+    this.pokemonMovesContainer = globalScene.add //
+      .container(102, 16)
+      .setScale(0.375);
     this.pokemonCaughtHatchedContainer.add([
       pokemonCaughtIcon,
       this.pokemonCaughtCountText,
@@ -903,11 +931,16 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       56,
       "(+0)",
       TextStyle.MOVE_LABEL,
-    ).setOrigin(0.5, 0);
+    )
+      .setOrigin(0.5, 0)
+      .setColor(getTextColor(TextStyle.WINDOW_ALT))
+      .setShadowColor(getTextColor(TextStyle.WINDOW_ALT, true));
 
     this.pokemonMovesContainer.add(this.pokemonAdditionalMoveCountLabel);
 
-    this.pokemonEggMovesContainer = globalScene.add.container(102, 85).setScale(0.375);
+    this.pokemonEggMovesContainer = globalScene.add //
+      .container(102, 85)
+      .setScale(0.375);
 
     this.eggMovesLabel = addTextObject(
       -46,
@@ -1165,7 +1198,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.moveInfoOverlay.clear(); // clear this when removing a menu; the cancel button doesn't seem to trigger this automatically on controllers
     this.pokerusSpecies = getPokerusStarters();
 
-    this.allowTera = globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id);
+    this.allowTera = Object.hasOwn(globalScene.gameData.achvUnlocks, achvs.TERASTALLIZE.id);
 
     if (args.length > 0 && args[0] instanceof Function) {
       super.show(args);
@@ -2263,7 +2296,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 valueReduction
               ];
               options.push({
-                label: `×${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost")}`,
+                label: `×${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost", { newCost: globalScene.gameData.getSpeciesStarterValue(this.lastSpecies.speciesId, starterData.valueReduction + 1) })}`,
                 handler: () => {
                   if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= reductionCost) {
                     persistentStarterData.valueReduction++;
@@ -2389,7 +2422,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
               return true;
             },
           });
-          if (!pokemonPrevolutions.hasOwnProperty(this.lastSpecies.speciesId)) {
+          if (!Object.hasOwn(pokemonPrevolutions, this.lastSpecies.speciesId)) {
             options.push({
               label: i18next.t("starterSelectUiHandler:useCandies"),
               handler: () => {
@@ -2843,7 +2876,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const formIndex = globalScene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.dexAttrCursor).formIndex;
     const starterDataEntry = globalScene.gameData.starterData[speciesId];
     // species has different forms
-    if (pokemonFormLevelMoves.hasOwnProperty(speciesId)) {
+    if (Object.hasOwn(pokemonFormLevelMoves, speciesId)) {
       // Species has forms with different movesets
       if (!starterDataEntry.moveset || Array.isArray(starterDataEntry.moveset)) {
         starterDataEntry.moveset = {};
@@ -3051,10 +3084,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.filteredStarterContainers = [];
     this.validStarterContainers = [];
 
-    // biome-ignore-start lint/suspicious/useIterableCallbackReturn: benign
     this.pokerusCursorObjs.forEach(cursor => cursor.setVisible(false));
     this.starterCursorObjs.forEach(cursor => cursor.setVisible(false));
-    // biome-ignore-end lint/suspicious/useIterableCallbackReturn: benign
 
     this.filterBar.updateFilterLabels();
 
@@ -3123,7 +3154,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       // First, ensure you have the caught attributes for the species else default to bigint 0
       const { dexEntry, starterDataEntry: starterData } = this.getSpeciesData(container.species.speciesId);
       const caughtAttr = dexEntry?.caughtAttr ?? BigInt(0);
-      const isStarterProgressable = speciesEggMoves.hasOwnProperty(container.species.speciesId);
+      const isStarterProgressable = Object.hasOwn(speciesEggMoves, container.species.speciesId);
 
       // Gen filter
       const fitsGen = this.filterBar.getVals(DropDownColumn.GEN).includes(container.species.generation);
@@ -3564,8 +3595,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         this.showStats();
       } else {
         this.statsContainer.setVisible(false);
-        //@ts-expect-error
-        this.statsContainer.updateIvs(null); // TODO: resolve ts-ignore. what. how? huh?
+        this.statsContainer.updateIvs(null);
       }
     }
 
@@ -3635,7 +3665,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonCaughtHatchedContainer.setVisible(true);
         this.pokemonFormText.setVisible(true);
 
-        if (pokemonPrevolutions.hasOwnProperty(species.speciesId)) {
+        if (Object.hasOwn(pokemonPrevolutions, species.speciesId)) {
           this.pokemonCaughtHatchedContainer.setY(16);
           this.pokemonShinyIcon.setY(135).setFrame(getVariantIcon(variant));
           [this.pokemonCandyContainer, this.pokemonHatchedIcon, this.pokemonHatchedCountText].map(c =>
@@ -4137,16 +4167,16 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
         let levelMoves: LevelMoves;
         if (
-          pokemonFormLevelMoves.hasOwnProperty(species.speciesId)
+          Object.hasOwn(pokemonFormLevelMoves, species.speciesId)
           && formIndex
-          && pokemonFormLevelMoves[species.speciesId].hasOwnProperty(formIndex)
+          && Object.hasOwn(pokemonFormLevelMoves[species.speciesId], formIndex)
         ) {
           levelMoves = pokemonFormLevelMoves[species.speciesId][formIndex];
         } else {
           levelMoves = pokemonSpeciesLevelMoves[species.speciesId];
         }
         this.speciesStarterMoves.push(...levelMoves.filter(lm => lm[0] > 0 && lm[0] <= 5).map(lm => lm[1]));
-        if (speciesEggMoves.hasOwnProperty(species.speciesId)) {
+        if (Object.hasOwn(speciesEggMoves, species.speciesId)) {
           for (let em = 0; em < 4; em++) {
             if (starterDataEntry.eggMoves & (1 << em)) {
               this.speciesStarterMoves.push(speciesEggMoves[species.speciesId][em]);
@@ -4161,7 +4191,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             : speciesMoveData[formIndex!] // TODO: is this bang correct?
           : null;
         const availableStarterMoves = this.speciesStarterMoves.concat(
-          speciesEggMoves.hasOwnProperty(species.speciesId)
+          Object.hasOwn(speciesEggMoves, species.speciesId)
             ? speciesEggMoves[species.speciesId].filter((_: any, em: number) => starterDataEntry.eggMoves & (1 << em))
             : [],
         );
@@ -4221,7 +4251,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.pokemonMoveContainers[m].setVisible(!!move);
     }
 
-    const hasEggMoves = species && speciesEggMoves.hasOwnProperty(species.speciesId);
+    const hasEggMoves = species && Object.hasOwn(speciesEggMoves, species.speciesId);
     let eggMoves = 0;
     if (species) {
       const { starterDataEntry } = this.getSpeciesData(this.lastSpecies.speciesId);
@@ -4622,8 +4652,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.statsMode = false;
       this.statsContainer.setVisible(false);
       this.pokemonSprite.setVisible(!!this.speciesStarterDexEntry?.caughtAttr);
-      //@ts-expect-error
-      this.statsContainer.updateIvs(null); // TODO: resolve ts-ignore. !?!?
+      this.statsContainer.updateIvs(null);
       this.teraIcon.setVisible(this.allowTera);
       const props = globalScene.gameData.getSpeciesDexAttrProps(
         this.lastSpecies,

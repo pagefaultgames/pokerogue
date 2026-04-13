@@ -4,7 +4,7 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
-import { CenterOfAttentionTag } from "#data/battler-tags";
+import { CenterOfAttentionTag, type EncoreTag } from "#data/battler-tags";
 import { SpeciesFormChangePreMoveTrigger } from "#data/form-change-triggers";
 import { getStatusEffectActivationText } from "#data/status-effect";
 import { getTerrainBlockMessage } from "#data/terrain";
@@ -35,6 +35,7 @@ import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, NumberHolder } from "#utils/common";
 import { enumValueToKey } from "#utils/enums";
 import { inSpeedOrder } from "#utils/speed-order-generator";
+import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 
 export class MovePhase extends PokemonPhase {
@@ -138,6 +139,13 @@ export class MovePhase extends PokemonPhase {
     // Removing Glaive Rush's two flags happens before everything else
     user.removeTag(BattlerTagType.ALWAYS_GET_HIT);
     user.removeTag(BattlerTagType.RECEIVE_DOUBLE_DAMAGE);
+
+    // Override the move being used if Encore was added to this Pokemon this turn.
+    const encoreTag = user.getTag(BattlerTagType.ENCORE) as EncoreTag | undefined;
+    const override = encoreTag?.tryOverrideMove(user);
+    if (override) {
+      [this.move, this.targets] = override;
+    }
 
     // For the purposes of payback and kin, the pokemon is considered to have acted
     // if it attempted to move at all.
@@ -845,30 +853,22 @@ export class MovePhase extends PokemonPhase {
    * The rest of the failure conditions are marked as sequence 4 and *should* happen in the move effect phase (though happen here for now)
    */
   protected thirdFailureCheck(): boolean {
-    /**
-     * Move conditions assume the move has a single target
-     * TODO: is this sustainable?
-     */
     const move = this.move.getMove();
     const targets = this.getActiveTargetPokemon();
     const arena = globalScene.arena;
     const user = this.pokemon;
 
+    // Note: Move conditions currently assume the move has a single target
+    // TODO: should this be changed?
     const failsConditions = !move.applyConditions(user, targets[0], 3);
     const failedDueToTerrain = arena.isMoveTerrainCancelled(user, this.targets, move);
     let failed = failsConditions || failedDueToTerrain;
 
-    // Apply queenly majesty / dazzling
-    if (!failed) {
+    if (!failed && user.isOpponent(targets[0])) {
       const defendingSidePlayField = user.isPlayer() ? globalScene.getEnemyField() : globalScene.getPlayerField();
-      const cancelled = new BooleanHolder(false);
+      const cancelled = new ValueHolder(false);
       defendingSidePlayField.forEach((pokemon: Pokemon) => {
-        applyAbAttrs("FieldPriorityMoveImmunityAbAttr", {
-          pokemon,
-          opponent: user,
-          move,
-          cancelled,
-        });
+        applyAbAttrs("FieldPriorityMoveImmunityAbAttr", { pokemon, opponent: user, move, cancelled });
       });
       failed = cancelled.value;
     }

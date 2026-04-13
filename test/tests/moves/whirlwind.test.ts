@@ -193,7 +193,8 @@ describe("Moves - Whirlwind", () => {
         trainerVariant: TrainerVariant.DOUBLE,
       })
       .enemyMoveset([MoveId.SPLASH, MoveId.LUNAR_DANCE])
-      .moveset([MoveId.WHIRLWIND, MoveId.SPLASH]);
+      .moveset([MoveId.WHIRLWIND, MoveId.SPLASH])
+      .battleStyle(null);
     await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.TOTODILE);
 
     // expect the enemy to have at least 4 pokemon, necessary for this check to even work

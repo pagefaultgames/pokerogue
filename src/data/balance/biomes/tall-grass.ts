@@ -125,6 +125,5 @@ export const tallGrassBiome: Biome = {
   trainerChance: 8,
   weatherPool,
   terrainPool,
-  bgmLoopPoint: 9.608,
   biomeLinks,
 };
