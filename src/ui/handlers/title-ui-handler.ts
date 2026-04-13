@@ -10,6 +10,7 @@ import type { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { version } from "#package.json";
+import { AccessibilityManager } from "#ui/accessibility-manager";
 import { TimedEventDisplay } from "#ui/event-display";
 import { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
 import { addTextObject } from "#ui/text";
@@ -223,6 +224,18 @@ export class TitleUiHandler extends OptionSelectUiHandler {
       alpha: (target: any) => (target === this.titleContainer ? 1 : 0),
       ease: "Sine.easeInOut",
     });
+
+    // Announce title screen and first menu option to screen readers
+    const a11y = AccessibilityManager.getInstance();
+    a11y.announceContext("PokéRogue Title Screen. Use arrow keys to navigate, Enter or Z to select.");
+    if (this.config?.options && this.config.options.length > 0) {
+      const labels = this.config.options.filter(o => !o.skip).map(o => o.label);
+      a11y.setMenu(labels, 0, "Title Menu");
+      // Delay the first option announcement slightly so NVDA reads the context first
+      setTimeout(() => {
+        a11y.announceMessage(labels[0]);
+      }, 500);
+    }
 
     return true;
   }

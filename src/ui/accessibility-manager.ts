@@ -64,6 +64,17 @@ export class AccessibilityManager {
     this.rootEl.appendChild(this.contextEl);
     this.rootEl.appendChild(this.menuEl);
     app.appendChild(this.rootEl);
+
+    // Ensure the game canvas is focusable for screen readers
+    const canvas = app.querySelector("canvas");
+    if (canvas) {
+      canvas.setAttribute("tabindex", "0");
+      canvas.setAttribute("aria-label", "PokéRogue game window");
+    }
+
+    // Also make #app focusable and auto-focus it so screen readers pick up the live regions
+    app.setAttribute("tabindex", "-1");
+    app.focus();
   }
 
   /**
