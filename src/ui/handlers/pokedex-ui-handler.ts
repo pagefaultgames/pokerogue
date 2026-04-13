@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
-import { speciesEggMoves } from "#balance/egg-moves";
-import { pokemonStarters } from "#balance/pokemon-evolutions";
+import { speciesEggMoves } from "#balance/moves/egg-moves";
+import { getEvolutions, getPreEvolutions, pokemonStarters } from "#balance/pokemon-evolutions";
 import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#balance/pokemon-level-moves";
 import {
   getPassiveCandyCount,
@@ -47,6 +47,7 @@ import { addWindow } from "#ui/ui-theme";
 import { BooleanHolder, fixedInt, getLocalizedSpriteKey, padInt, randIntRange, rgbHexToRgba } from "#utils/common";
 import type { StarterPreferences } from "#utils/data";
 import { loadStarterPreferences } from "#utils/data";
+import { enumValueToKey } from "#utils/enums";
 import { getDexNumber, getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import { argbFromRgba } from "@material/material-color-utilities";
@@ -62,62 +63,122 @@ interface LanguageSetting {
 const languageSettings: { [key: string]: LanguageSetting } = {
   en: {
     starterInfoTextSize: "56px",
-    instructionTextSize: "38px",
+    instructionTextSize: "28px",
   },
   de: {
-    starterInfoTextSize: "48px",
-    instructionTextSize: "35px",
-    starterInfoXPos: 33,
+    starterInfoTextSize: "54px",
+    instructionTextSize: "25px",
+    starterInfoXPos: 35,
   },
   "es-ES": {
-    starterInfoTextSize: "56px",
-    instructionTextSize: "35px",
+    starterInfoTextSize: "50px",
+    instructionTextSize: "28px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 38,
+  },
+  "es-419": {
+    starterInfoTextSize: "50px",
+    instructionTextSize: "28px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 38,
   },
   fr: {
     starterInfoTextSize: "54px",
-    instructionTextSize: "38px",
+    instructionTextSize: "28px",
   },
   it: {
     starterInfoTextSize: "56px",
-    instructionTextSize: "38px",
+    instructionTextSize: "28px",
   },
-  pt_BR: {
-    starterInfoTextSize: "47px",
-    instructionTextSize: "38px",
+  "pt-BR": {
+    starterInfoTextSize: "48px",
+    instructionTextSize: "32px",
+    starterInfoYOffset: 0.5,
     starterInfoXPos: 33,
   },
   zh: {
-    starterInfoTextSize: "47px",
-    instructionTextSize: "38px",
-    starterInfoYOffset: 1,
-    starterInfoXPos: 24,
-  },
-  pt: {
-    starterInfoTextSize: "48px",
-    instructionTextSize: "42px",
-    starterInfoXPos: 33,
+    starterInfoTextSize: "56px",
+    instructionTextSize: "26px",
+    starterInfoXPos: 26,
   },
   ko: {
-    starterInfoTextSize: "52px",
-    instructionTextSize: "38px",
+    starterInfoTextSize: "60px",
+    instructionTextSize: "28px",
+    starterInfoYOffset: -0.5,
+    starterInfoXPos: 30,
   },
   ja: {
-    starterInfoTextSize: "51px",
-    instructionTextSize: "38px",
+    starterInfoTextSize: "48px",
+    instructionTextSize: "32px",
+    starterInfoYOffset: 1,
+    starterInfoXPos: 32,
   },
-  "ca-ES": {
+  ca: {
+    starterInfoTextSize: "48px",
+    instructionTextSize: "28px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 29,
+  },
+  eu: {
+    starterInfoTextSize: "48px",
+    instructionTextSize: "28px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 29,
+  },
+  da: {
     starterInfoTextSize: "56px",
-    instructionTextSize: "38px",
+    instructionTextSize: "28px",
+  },
+  th: {
+    starterInfoTextSize: "50px",
+    instructionTextSize: "30px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 40,
+  },
+  tr: {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "28px",
+    starterInfoXPos: 34,
+  },
+  ro: {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "28px",
+  },
+  ru: {
+    starterInfoTextSize: "46px",
+    instructionTextSize: "28px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 26,
+  },
+  uk: {
+    starterInfoTextSize: "46px",
+    instructionTextSize: "28px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 26,
+  },
+  id: {
+    starterInfoTextSize: "48px",
+    instructionTextSize: "32px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 37,
+  },
+  hi: {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "28px",
+  },
+  tl: {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "28px",
+  },
+  "nb-NO": {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "28px",
+  },
+  sv: {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "28px",
   },
 };
-
-enum FilterTextOptions {
-  NAME,
-  MOVE_1,
-  MOVE_2,
-  ABILITY_1,
-  ABILITY_2,
-}
 
 interface ContainerData {
   species: PokemonSpecies;
@@ -152,12 +213,12 @@ function calcStarterPosition(index: number): { x: number; y: number } {
 }
 
 interface SpeciesDetails {
-  shiny?: boolean;
-  formIndex?: number;
-  female?: boolean;
-  variant?: Variant;
-  abilityIndex?: number;
-  natureIndex?: number;
+  shiny?: boolean | undefined;
+  formIndex?: number | undefined;
+  female?: boolean | undefined;
+  variant?: Variant | undefined;
+  abilityIndex?: number | undefined;
+  natureIndex?: number | undefined;
 }
 
 export class PokedexUiHandler extends MessageUiHandler {
@@ -183,7 +244,7 @@ export class PokedexUiHandler extends MessageUiHandler {
   private oldCursor = -1;
 
   private lastSpecies: PokemonSpecies;
-  private speciesLoaded: Map<SpeciesId, boolean> = new Map<SpeciesId, boolean>();
+  private readonly speciesLoaded: Map<SpeciesId, boolean> = new Map<SpeciesId, boolean>();
   private pokerusSpecies: PokemonSpecies[] = [];
   private speciesStarterDexEntry: DexEntry | null;
 
@@ -197,18 +258,9 @@ export class PokedexUiHandler extends MessageUiHandler {
 
   protected blockInput = false;
 
-  // for text filters
-  private readonly textPadding = 8;
-  private readonly defaultMessageBoxWidth = 220;
-  private readonly defaultWordWrapWidth = 1224;
-  private menuMessageBoxContainer: Phaser.GameObjects.Container;
-  private menuMessageBox: Phaser.GameObjects.NineSlice;
-  private dialogueMessageBox: Phaser.GameObjects.NineSlice;
   protected manageDataConfig: OptionSelectConfig;
-  private filterTextOptions: FilterTextOptions[];
   protected optionSelectText: Phaser.GameObjects.Text;
   protected scale = 0.1666666667;
-  private menuBg: Phaser.GameObjects.NineSlice;
 
   private filterTextContainer: Phaser.GameObjects.Container;
   private filterText: FilterText;
@@ -238,7 +290,7 @@ export class PokedexUiHandler extends MessageUiHandler {
   private filteredIndices: SpeciesId[];
 
   private gameData: GameData;
-  private exitCallback?: () => void;
+  private exitCallback?: (() => void) | undefined;
   private blockOpenPage = false;
 
   constructor() {
@@ -326,12 +378,13 @@ export class PokedexUiHandler extends MessageUiHandler {
     );
 
     // biome filter, making an entry in the dropdown for each biome
-    const biomeOptions = Object.values(BiomeId)
-      .filter(value => typeof value === "number") // Filter numeric values from the enum
-      .map(
-        (biomeValue, index) =>
-          new DropDownOption(index, new DropDownLabel(i18next.t(`biome:${toCamelCase(BiomeId[biomeValue])}`))),
-      );
+    const biomeOptions = Object.values(BiomeId).map(
+      (biomeValue, index) =>
+        new DropDownOption(
+          index,
+          new DropDownLabel(i18next.t(`biome:${toCamelCase(enumValueToKey(BiomeId, biomeValue))}`)),
+        ),
+    );
     biomeOptions.push(new DropDownOption(biomeOptions.length, new DropDownLabel(i18next.t("filterBar:uncatchable"))));
     const biomeDropDown: DropDown = new DropDown(0, 0, biomeOptions, this.updateStarters, DropDownType.HYBRID);
     this.filterBar.addFilter(DropDownColumn.BIOME, i18next.t("filterBar:biomeFilter"), biomeDropDown);
@@ -847,8 +900,8 @@ export class PokedexUiHandler extends MessageUiHandler {
     return globalScene.candyUpgradeNotification !== 0 && globalScene.candyUpgradeDisplay === 1;
   }
 
-  getStarterSpeciesId(speciesId): number {
-    if (speciesStarterCosts.hasOwnProperty(speciesId)) {
+  getStarterSpeciesId(speciesId: SpeciesId): SpeciesId {
+    if (Object.hasOwn(speciesStarterCosts, speciesId)) {
       return speciesId;
     }
     return pokemonStarters[speciesId];
@@ -1313,20 +1366,20 @@ export class PokedexUiHandler extends MessageUiHandler {
   }
 
   updateButtonIcon(iconSetting, gamepadType, iconElement, controlLabel): void {
-    // biome-ignore lint/suspicious/noImplicitAnyLet: TODO
+    // biome-ignore lint/suspicious/noEvolvingTypes: TODO
     let iconPath;
     // touch controls cannot be rebound as is, and are just emulating a keyboard event.
     // Additionally, since keyboard controls can be rebound (and will be displayed when they are), we need to have special handling for the touch controls
     if (gamepadType === "touch") {
       gamepadType = "keyboard";
       switch (iconSetting) {
-        case SettingKeyboard.Button_Cycle_Shiny:
+        case SettingKeyboard.BUTTON_CYCLE_SHINY:
           iconPath = "R.png";
           break;
-        case SettingKeyboard.Button_Cycle_Form:
+        case SettingKeyboard.BUTTON_CYCLE_FORM:
           iconPath = "F.png";
           break;
-        case SettingKeyboard.Button_Stats:
+        case SettingKeyboard.BUTTON_STATS:
           iconPath = "C.png";
           break;
         default:
@@ -1341,7 +1394,7 @@ export class PokedexUiHandler extends MessageUiHandler {
   }
 
   updateFilterButtonIcon(iconSetting, gamepadType, iconElement, controlLabel): void {
-    // biome-ignore lint/suspicious/noImplicitAnyLet: TODO
+    // biome-ignore lint/suspicious/noEvolvingTypes: TODO
     let iconPath;
     // touch controls cannot be rebound as is, and are just emulating a keyboard event.
     // Additionally, since keyboard controls can be rebound (and will be displayed when they are), we need to have special handling for the touch controls
@@ -1369,8 +1422,8 @@ export class PokedexUiHandler extends MessageUiHandler {
   // Returns true if one of the forms has the requested move
   hasFormLevelMove(form: PokemonForm, selectedMove: string): boolean {
     if (
-      !pokemonFormLevelMoves.hasOwnProperty(form.speciesId)
-      || !pokemonFormLevelMoves[form.speciesId].hasOwnProperty(form.formIndex)
+      !Object.hasOwn(pokemonFormLevelMoves, form.speciesId)
+      || !Object.hasOwn(pokemonFormLevelMoves[form.speciesId], form.formIndex)
     ) {
       return false;
     }
@@ -1378,6 +1431,7 @@ export class PokedexUiHandler extends MessageUiHandler {
     return levelMoves.includes(selectedMove);
   }
 
+  // TODO: why does this need to be `() => {}` in order to not crash?
   updateStarters = () => {
     this.scrollCursor = 0;
     this.filteredPokemonData = [];
@@ -1389,7 +1443,7 @@ export class PokedexUiHandler extends MessageUiHandler {
 
     this.filteredPokemonData = [];
 
-    allSpecies.forEach(species => {
+    for (const species of allSpecies) {
       const starterId = this.getStarterSpeciesId(species.speciesId);
 
       const currentDexAttr = this.getCurrentDexProps(species.speciesId);
@@ -1408,7 +1462,7 @@ export class PokedexUiHandler extends MessageUiHandler {
         & (this.gameData.dexData[this.getStarterSpeciesId(species.speciesId)]?.caughtAttr || BigInt(0))
         & species.getFullUnlocksData();
       const starterData = this.gameData.starterData[starterId];
-      const isStarterProgressable = speciesEggMoves.hasOwnProperty(starterId);
+      const isStarterProgressable = Object.hasOwn(speciesEggMoves, starterId);
 
       // Name filter
       const selectedName = this.filterText.getValue(FilterTextRow.NAME);
@@ -1509,23 +1563,33 @@ export class PokedexUiHandler extends MessageUiHandler {
         .some(type => species.isOfType((type as number) - 1));
 
       // Biome filter
-      const indexToBiome = new Map(
-        Object.values(BiomeId)
-          .map((value, index) => (typeof value === "string" ? [index, value] : undefined))
-          .filter((entry): entry is [number, string] => entry !== undefined),
-      );
+      const indexToBiome = new Map(Object.keys(BiomeId).map((key, idx) => [idx, key]));
       indexToBiome.set(35, "Uncatchable");
 
-      // We get biomes for both the mon and its starters to ensure that evolutions get the correct filters.
-      // TODO: We might also need to do it the other way around.
-      const biomes = catchableSpecies[species.speciesId].concat(catchableSpecies[starterId]).map(b => BiomeId[b.biome]);
-      if (biomes.length === 0) {
-        biomes.push("Uncatchable");
+      // The entire evolutionary line is processed from the point of the current species,
+      // due to pokemon being automatically [de-]evolved when encountered
+      const evoLine: Set<SpeciesId> = new Set([
+        species.speciesId,
+        ...getPreEvolutions(species.speciesId),
+        ...getEvolutions(species.speciesId).values(),
+      ]);
+
+      const biomes: Set<string> = new Set(catchableSpecies[starterId].map(b => enumValueToKey(BiomeId, b.biome)));
+      for (const sId of evoLine) {
+        for (const bttod of catchableSpecies[sId]) {
+          biomes.add(enumValueToKey(BiomeId, bttod.biome));
+        }
       }
-      const showNoBiome = !!(biomes.length === 0 && this.filterBar.getVals(DropDownColumn.BIOME).length === 36);
+
+      if (biomes.size === 0) {
+        biomes.add("Uncatchable");
+      }
+
+      const showNoBiome = !!(biomes.size === 0 && this.filterBar.getVals(DropDownColumn.BIOME).length === 36);
       const fitsBiome =
-        this.filterBar.getVals(DropDownColumn.BIOME).some(item => biomes.includes(indexToBiome.get(item) ?? ""))
-        || showNoBiome;
+        this.filterBar
+          .getVals(DropDownColumn.BIOME)
+          .some(item => indexToBiome.has(item) && biomes.has(indexToBiome.get(item)!)) || showNoBiome;
 
       // Caught / Shiny filter
       const isNonShinyCaught = !!(caughtAttr & DexAttr.NON_SHINY);
@@ -1732,7 +1796,7 @@ export class PokedexUiHandler extends MessageUiHandler {
       ) {
         this.filteredPokemonData.push(data);
       }
-    });
+    }
 
     this.starterSelectScrollBar.setTotalRows(Math.max(Math.ceil(this.filteredPokemonData.length / 9), 1));
     this.starterSelectScrollBar.setScrollCursor(0);

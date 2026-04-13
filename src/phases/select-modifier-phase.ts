@@ -35,8 +35,8 @@ export type ModifierSelectCallback = (rowCursor: number, cursor: number) => bool
 export class SelectModifierPhase extends BattlePhase {
   public readonly phaseName = "SelectModifierPhase";
   private rerollCount: number;
-  private modifierTiers?: ModifierTier[];
-  private customModifierSettings?: CustomModifierSettings;
+  private modifierTiers?: ModifierTier[] | undefined;
+  private customModifierSettings?: CustomModifierSettings | undefined;
   private isCopy: boolean;
 
   private typeOptions: ModifierTypeOption[];

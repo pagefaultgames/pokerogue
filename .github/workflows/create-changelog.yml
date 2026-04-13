@@ -1,0 +1,41 @@
+name: Create Changelog
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  Create-changelog:
+    if: github.repository == 'pagefaultgames/pokerogue'
+    name: Generate Changelog
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            .nvmrc
+            pnpm-lock.yaml
+            scripts
+          sparse-checkout-cone-mode: false
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Install Node.js dependencies
+        run: pnpm add chalk octokit
+
+      - name: Generate Changelog
+        run: node scripts/changelog-reader/main.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.number }}
+          PR_BRANCH: ${{ github.event.pull_request.head.label }}

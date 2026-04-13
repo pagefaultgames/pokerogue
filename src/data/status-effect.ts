@@ -7,8 +7,9 @@ export class Status {
   public effect: StatusEffect;
   /** Toxic damage is `1/16 max HP * toxicTurnCount` */
   public toxicTurnCount = 0;
-  public sleepTurnsRemaining?: number;
+  public sleepTurnsRemaining?: number | undefined;
 
+  // TODO: Make this take an object?
   constructor(effect: StatusEffect, toxicTurnCount = 0, sleepTurnsRemaining?: number) {
     this.effect = effect;
     this.toxicTurnCount = toxicTurnCount;
@@ -135,7 +136,7 @@ export function getRandomStatusEffect(statusEffectA: StatusEffect, statusEffectB
     return statusEffectA;
   }
 
-  return randIntRange(0, 2) ? statusEffectA : statusEffectB;
+  return randIntRange(0, 1) ? statusEffectA : statusEffectB;
 }
 
 /**
@@ -151,7 +152,7 @@ export function getRandomStatus(statusA: Status | null, statusB: Status | null):
     return statusA;
   }
 
-  return randIntRange(0, 2) ? statusA : statusB;
+  return randIntRange(0, 1) ? statusA : statusB;
 }
 
 /**

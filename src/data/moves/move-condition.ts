@@ -1,17 +1,23 @@
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import type { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { TrappedTag } from "#data/battler-tags";
 import { allMoves } from "#data/data-lists";
+import { AbilityId } from "#enums/ability-id";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Command } from "#enums/command";
 import { MoveCategory, type MoveDamageCategory } from "#enums/move-category";
 import type { MoveId } from "#enums/move-id";
 import { isVirtual } from "#enums/move-use-mode";
 import { PokemonType } from "#enums/pokemon-type";
+import { StatusEffect } from "#enums/status-effect";
 import type { Pokemon } from "#field/pokemon";
 import type { Move, MoveConditionFunc, UserMoveConditionFunc } from "#moves/move";
 import { getCounterAttackTarget } from "#moves/move-utils";
+import { BooleanHolder } from "#utils/common";
+import { inSpeedOrder } from "#utils/speed-order-generator";
 import i18next from "i18next";
 
 /**
@@ -49,7 +55,7 @@ export class FirstMoveCondition extends MoveCondition {
     super(user => user.tempSummonData.waveTurnCount === 1);
   }
 
-  // TODO: Update AI move selection logic to not require this method at all
+  // TODO: Update AI move selection logic to not require this method (and this class) at all
   // Currently, it is used to avoid having the AI select the move if its condition will fail
   getUserBenefitScore(user: Pokemon, _target: Pokemon, _move: Move): number {
     return this.apply(user, _target, _move) ? 10 : -20;
@@ -170,7 +176,7 @@ export const upperHandCondition = new MoveCondition((_user, target) => {
  * Condition used by the move {@link https://bulbapedia.bulbagarden.net/wiki/Last_Resort_(move) | Last Resort}
  *
  * @remarks
- * Last resort fails if
+ * Last resort fails if:
  * - It is not in the user's moveset
  * - The user does not know at least one other move
  * - The user has not directly used each other move in its moveset since it was sent into battle
@@ -192,6 +198,23 @@ export const lastResortCondition = new MoveCondition((user, _target, move) => {
 
   // Since `Set.intersection()` is only present in ESNext, we have to do this to check inclusion
   return [...otherMovesInMoveset].every(m => movesInHistory.has(m));
+});
+
+export const failIfDampCondition = new MoveCondition((user, _target, move) => {
+  const cancelled = new BooleanHolder(false);
+  // temporary workaround to prevent displaying the message during enemy command phase
+  // TODO: either move this, or make the move condition func have a `simulated` param
+  const simulated = globalScene.phaseManager.getCurrentPhase()?.is("EnemyCommandPhase");
+  for (const p of inSpeedOrder(ArenaTagSide.BOTH)) {
+    applyAbAttrs("FieldPreventExplosiveMovesAbAttr", { pokemon: p, cancelled, simulated });
+  }
+  // Queue a message if an ability prevented usage of the move
+  if (!simulated && cancelled.value) {
+    globalScene.phaseManager.queueMessage(
+      i18next.t("moveTriggers:cannotUseMove", { pokemonName: getPokemonNameWithAffix(user), moveName: move.name }),
+    );
+  }
+  return !cancelled.value;
 });
 
 /**
@@ -219,12 +242,24 @@ export const counterAttackConditionBoth = new CounterAttackConditon();
  * A restriction that prevents a move from being selected
  *
  * @remarks
- * Only checked when the move is selected, but not when it is attempted to be invoked. To prevent a move from being used,
- * use a {@linkcode MoveCondition} instead.
+ * Restrictions will only prevent the move from being **selected**,
+ * and have no bearing on the actual success or failure thereof. \
+ * @see {@linkcode MoveCondition} Similar class handling move failures instead
  */
 export class MoveRestriction {
+  /**
+   * An arbitrary lambda function checked when this move is selected. \
+   * Should return `false` if the move is to be rendered unselectable.
+   */
   public readonly func: UserMoveConditionFunc;
+  /**
+   * The `i18n` locales key shown when preventing the player from selecting the move. \
+   * Within the text, `{{pokemonNameWithAffix}}` and `{{moveName}}` will be populated with
+   * the name of the Pokemon using the move and the name of the move being selected, respectively.
+   * @defaultValue `"battle:moveRestricted"`
+   */
   public readonly i18nkey: string;
+
   constructor(func: UserMoveConditionFunc, i18nkey = "battle:moveRestricted") {
     this.func = func;
     this.i18nkey = i18nkey;
@@ -260,4 +295,12 @@ export const consecutiveUseRestriction = new MoveRestriction(
 export const gravityUseRestriction = new MoveRestriction(
   () => globalScene.arena.hasTag(ArenaTagType.GRAVITY),
   "battle:moveDisabledGravity",
+);
+
+export const targetSleptOrComatoseCondition = new MoveCondition(
+  (_user: Pokemon, target: Pokemon, _move: Move) =>
+    target.status?.effect === StatusEffect.SLEEP || target.hasAbility(AbilityId.COMATOSE),
+);
+export const userSleptOrComatoseCondition = new MoveCondition(
+  user => user.status?.effect === StatusEffect.SLEEP || user.hasAbility(AbilityId.COMATOSE),
 );

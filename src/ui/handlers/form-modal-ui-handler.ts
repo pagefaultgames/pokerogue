@@ -100,7 +100,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
       const input = addTextInputObject(4, -2, inputWidth * 5.5, 116, TextStyle.TOOLTIP_CONTENT, {
         type: isPassword ? "password" : "text",
         maxLength: isPassword ? 64 : 20,
-        readOnly: isReadOnly,
+        readOnly: isReadOnly ?? false,
       }).setOrigin(0);
 
       inputContainer.add([inputBg, input]);

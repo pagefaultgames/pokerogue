@@ -11,6 +11,7 @@ import type { nil } from "#types/common";
 import { coerceArray } from "#utils/array";
 import { getFrameMs } from "#utils/common";
 import { getEnumKeys, getEnumValues } from "#utils/enums";
+import { cachedFetch } from "#utils/fetch-utils";
 import { toKebabCase } from "#utils/strings";
 import Phaser from "phaser";
 
@@ -421,8 +422,7 @@ export async function initCommonAnims(): Promise<void> {
   for (const commonAnimName of getEnumKeys(CommonAnim)) {
     const commonAnimId = CommonAnim[commonAnimName];
     commonAnimFetches.push(
-      globalScene
-        .cachedFetch(`./battle-anims/common-${toKebabCase(commonAnimName)}.json`)
+      cachedFetch(`./battle-anims/common-${toKebabCase(commonAnimName)}.json`)
         .then(response => response.json())
         .then(cas => commonAnims.set(commonAnimId, new AnimConfig(cas))),
     );
@@ -458,8 +458,7 @@ export function initMoveAnim(move: MoveId): Promise<void> {
           : MoveId.TAIL_WHIP;
 
       const fetchAnimAndResolve = (move: MoveId) => {
-        globalScene
-          .cachedFetch(`./battle-anims/${toKebabCase(MoveId[move])}.json`)
+        cachedFetch(`./battle-anims/${toKebabCase(MoveId[move])}.json`)
           .then(response => {
             const contentType = response.headers.get("content-type");
             if (!response.ok || contentType?.indexOf("application/json") === -1) {
@@ -532,8 +531,7 @@ export async function initEncounterAnims(encounterAnim: EncounterAnim | Encounte
       continue;
     }
     encounterAnimFetches.push(
-      globalScene
-        .cachedFetch(`./battle-anims/encounter-${toKebabCase(encounterAnimNames[anim])}.json`)
+      cachedFetch(`./battle-anims/encounter-${toKebabCase(encounterAnimNames[anim])}.json`)
         .then(response => response.json())
         .then(cas => encounterAnims.set(anim, new AnimConfig(cas))),
     );
@@ -556,8 +554,7 @@ export function initMoveChargeAnim(chargeAnim: ChargeAnim): Promise<void> {
       }
     } else {
       chargeAnims.set(chargeAnim, null);
-      globalScene
-        .cachedFetch(`./battle-anims/${toKebabCase(ChargeAnim[chargeAnim])}.json`)
+      cachedFetch(`./battle-anims/${toKebabCase(ChargeAnim[chargeAnim])}.json`)
         .then(response => response.json())
         .then(ca => {
           if (Array.isArray(ca)) {
@@ -837,7 +834,6 @@ export abstract class BattleAnim {
   }
 
   // TODO: Make this async
-  // biome-ignore lint/complexity/noBannedTypes: callback is used liberally
   play(onSubstitute?: boolean, callback?: () => void) {
     const isOppAnim = this.isOppAnim();
     const user = isOppAnim ? this.target! : this.user!;
@@ -1181,7 +1177,6 @@ export abstract class BattleAnim {
     targetInitialY: number,
     frameTimeMult: number,
     frameTimedEventPriority?: 0 | 1 | 3 | 5,
-    // biome-ignore lint/complexity/noBannedTypes: callback is used liberally
     callback?: () => void,
   ) {
     const spriteCache: SpriteCache = {

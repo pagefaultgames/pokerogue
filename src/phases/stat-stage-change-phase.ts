@@ -3,7 +3,6 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import type { ArenaTag } from "#data/arena-tag";
-import { MistTag } from "#data/arena-tag";
 import { OctolockTag } from "#data/battler-tags";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -130,13 +129,13 @@ export class StatStageChangePhase extends PokemonPhase {
       const cancelled = new BooleanHolder(false);
 
       if (!this.selfTarget && stages.value < 0) {
-        // TODO: add a reference to the source of the stat change to fix Infiltrator interaction
         globalScene.arena.applyTagsForSide(
-          MistTag,
+          ArenaTagType.MIST,
           pokemon.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY,
           false,
-          null,
+          pokemon,
           cancelled,
+          opponentPokemon,
         );
       }
 
@@ -239,7 +238,7 @@ export class StatStageChangePhase extends PokemonPhase {
 
       pokemon.updateInfo();
 
-      handleTutorial(Tutorial.Stat_Change).then(() => super.end());
+      handleTutorial(Tutorial.STAT_CHANGE).then(() => super.end());
     };
 
     if (relLevels.filter(l => l).length > 0 && globalScene.moveAnimations) {

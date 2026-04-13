@@ -5,7 +5,7 @@ import { fixedInt } from "#utils/common";
 
 export class ReloadSessionPhase extends Phase {
   public readonly phaseName = "ReloadSessionPhase";
-  private systemDataStr?: string;
+  private systemDataStr?: string | undefined;
 
   constructor(systemDataStr?: string) {
     super();

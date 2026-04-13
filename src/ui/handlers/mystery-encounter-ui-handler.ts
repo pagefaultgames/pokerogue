@@ -19,7 +19,7 @@ import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
 export class MysteryEncounterUiHandler extends UiHandler {
   private cursorContainer: Phaser.GameObjects.Container;
-  private cursorObj?: Phaser.GameObjects.Image;
+  private cursorObj?: Phaser.GameObjects.Image | undefined;
 
   private optionsContainer: Phaser.GameObjects.Container;
   // Length = max number of allowable options (4)
@@ -27,18 +27,18 @@ export class MysteryEncounterUiHandler extends UiHandler {
 
   private tooltipWindow: Phaser.GameObjects.NineSlice;
   private tooltipContainer: Phaser.GameObjects.Container;
-  private tooltipScrollTween?: Phaser.Tweens.Tween;
+  private tooltipScrollTween?: Phaser.Tweens.Tween | undefined;
 
   private descriptionWindow: Phaser.GameObjects.NineSlice;
   private descriptionContainer: Phaser.GameObjects.Container;
-  private descriptionScrollTween?: Phaser.Tweens.Tween;
+  private descriptionScrollTween?: Phaser.Tweens.Tween | undefined;
   private rarityBall: Phaser.GameObjects.Sprite;
 
   private dexProgressWindow: Phaser.GameObjects.NineSlice;
   private dexProgressContainer: Phaser.GameObjects.Container;
   private showDexProgress = false;
 
-  private overrideSettings?: OptionSelectSettings;
+  private overrideSettings?: OptionSelectSettings | undefined;
   private encounterOptions: MysteryEncounterOption[] = [];
   private optionsMeetsReqs: boolean[];
 

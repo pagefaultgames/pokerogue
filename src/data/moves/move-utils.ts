@@ -5,9 +5,11 @@ import { MoveCategory, type MoveDamageCategory } from "#enums/move-category";
 import type { MoveId } from "#enums/move-id";
 import { MoveTarget } from "#enums/move-target";
 import { PokemonType } from "#enums/pokemon-type";
+import type { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
-import type { Move, MoveTargetSet, UserMoveConditionFunc } from "#moves/move";
+import type { Move, UserMoveConditionFunc } from "#moves/move";
+import type { MoveTargetSet } from "#types/move-target-set";
 import { NumberHolder } from "#utils/common";
 import { areAllies } from "#utils/pokemon-utils";
 
@@ -156,4 +158,31 @@ export function getCounterAttackTarget(user: Pokemon, damageCategory?: MoveDamag
     }
   }
   return null;
+}
+
+/**
+ * Determine whether the move's {@linkcode Move#moveTarget | target} can target an opponent
+ * @param move - The move to check
+ * @returns Whether the move can target an opponent
+ */
+export function mayTargetOpponent(move: Move): boolean {
+  switch (move.moveTarget) {
+    case MoveTarget.NEAR_ENEMY:
+    case MoveTarget.ALL_NEAR_ENEMIES:
+    case MoveTarget.ALL_ENEMIES:
+    case MoveTarget.ENEMY_SIDE:
+    case MoveTarget.RANDOM_NEAR_ENEMY:
+    case MoveTarget.ATTACKER:
+      return true;
+  }
+  return false;
+}
+
+/**
+ * @returns Whether the move is instantly charged by the given weather
+ * @param move - The move to check
+ * @param weather - The weather to check
+ */
+export function isWeatherInstantCharge(move: Move, weather: WeatherType): boolean {
+  return !!move.findAttr(attr => attr.is("WeatherInstantChargeAttr") && attr.weatherTypes.includes(weather));
 }

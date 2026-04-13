@@ -39,7 +39,6 @@ jobs:
         with:
           sparse-checkout: |
             .github/test-filters.yml
-          sparse-checkout-cone-mode: false
 
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36
         id: filter
@@ -82,7 +81,7 @@ jobs:
           sparse-checkout: |
             .github/actions/setup-deps/action.yml
             test/setup
-            test/test-utils/reporters/custom-default-reporter.ts
+            test/reporters/custom-default-reporter.ts
 
       - uses: ./.github/actions/setup-deps
 

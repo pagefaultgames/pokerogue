@@ -4,6 +4,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import type { Pokemon } from "#field/pokemon";
 import type { Move } from "#moves/move";
 import { isFieldTargeted, isSpreadMove } from "#moves/move-utils";
+import type { RGBArray } from "#types/sprite-types";
 import i18next from "i18next";
 
 export enum TerrainType {
@@ -30,7 +31,12 @@ export class Terrain {
     this.maxDuration = maxDuration;
   }
 
+  /**
+   * Tick down this terrain's duration.
+   * @returns Whether the current terrain should remain active (`turnsLeft > 0`)
+   */
   lapse(): boolean {
+    // TODO: Add separate flag for infinite duration terrains
     if (this.turnsLeft) {
       return !!--this.turnsLeft;
     }
@@ -91,7 +97,7 @@ export function getTerrainName(terrainType: TerrainType): string {
   return "";
 }
 
-export function getTerrainColor(terrainType: TerrainType): [number, number, number] {
+export function getTerrainColor(terrainType: TerrainType): RGBArray {
   switch (terrainType) {
     case TerrainType.MISTY:
       return [232, 136, 200];

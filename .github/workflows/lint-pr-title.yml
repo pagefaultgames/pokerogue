@@ -4,6 +4,8 @@ on:
     branches:
       - main
       - beta
+      - release
+      - "hotfix*"
     types: [opened, edited, reopened, synchronize]
 
 concurrency:

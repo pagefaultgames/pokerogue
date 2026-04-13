@@ -1,4 +1,5 @@
-import pkg from "#package.json";
+import { timedEventManager } from "#app/global-event-manager";
+import { getCachedUrl } from "#utils/fetch-utils";
 import { toKebabCase } from "#utils/strings";
 import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
@@ -18,17 +19,15 @@ interface LoadingFontFaceProperty {
 
 const unicodeRanges = {
   fullwidth: "U+FF00-FFEF",
-  hangul: "U+1100-11FF,U+3130-318F,U+A960-A97F,U+AC00-D7AF,U+D7B0-D7FF",
   kana: "U+3040-30FF",
   CJKCommon: "U+2E80-2EFF,U+3000-303F,U+31C0-31EF,U+3200-32FF,U+3400-4DBF,U+F900-FAFF,U+FE30-FE4F",
   CJKIdeograph: "U+4E00-9FFF",
   devanagari: "U+0900-097F",
   thai: "U+0E00-0E7F",
-  specialCharacters: "U+266A,U+2605,U+2665,U+2663", //♪.★,♥,♣
+  specialCharacters: "U+266A,U+2605,U+2665,U+2663", //♪,★,♥,♣
 };
 
 const rangesByLanguage = {
-  korean: [unicodeRanges.CJKCommon, unicodeRanges.hangul].join(","),
   chinese: [unicodeRanges.CJKCommon, unicodeRanges.fullwidth, unicodeRanges.CJKIdeograph].join(","),
   japanese: [unicodeRanges.CJKCommon, unicodeRanges.fullwidth, unicodeRanges.kana, unicodeRanges.CJKIdeograph].join(
     ",",
@@ -36,72 +35,64 @@ const rangesByLanguage = {
 };
 
 const fonts: LoadingFontFaceProperty[] = [
-  // unicode (special character from PokePT)
+  // unicode (special characters)
   {
-    face: new FontFace("emerald", "url(./fonts/PokePT_Wansung.woff2)", {
+    face: new FontFace("pkmnems", `url(${getCachedUrl("./fonts/pokemon-emerald-pro.ttf")})`, {
       unicodeRange: unicodeRanges.specialCharacters,
-    }),
-  },
-  {
-    face: new FontFace("pkmnems", "url(./fonts/PokePT_Wansung.woff2)", {
-      unicodeRange: unicodeRanges.specialCharacters,
-    }),
-    extraOptions: { sizeAdjust: "133%" },
-  },
-  // unicode (korean)
-  {
-    face: new FontFace("emerald", "url(./fonts/PokePT_Wansung.woff2)", {
-      unicodeRange: rangesByLanguage.korean,
-    }),
-  },
-  {
-    face: new FontFace("pkmnems", "url(./fonts/PokePT_Wansung.woff2)", {
-      unicodeRange: rangesByLanguage.korean,
     }),
     extraOptions: { sizeAdjust: "133%" },
   },
   // unicode (chinese)
   {
-    face: new FontFace("emerald", "url(./fonts/unifont-15.1.05.subset.woff2)", {
+    face: new FontFace("pkmnems", `url(${getCachedUrl("./fonts/pokemon-emerald-pro.ttf")})`, {
       unicodeRange: rangesByLanguage.chinese,
     }),
-    extraOptions: { sizeAdjust: "70%", format: "woff2" },
-    only: ["zh"],
-  },
-  {
-    face: new FontFace("pkmnems", "url(./fonts/unifont-15.1.05.subset.woff2)", {
-      unicodeRange: rangesByLanguage.chinese,
-    }),
-    extraOptions: { format: "woff2" },
-    only: ["zh"],
+    extraOptions: { sizeAdjust: "133%" },
+    only: [
+      "en",
+      "es",
+      "fr",
+      "it",
+      "de",
+      "pt",
+      "ko",
+      "ja",
+      "ca",
+      "da",
+      "tr",
+      "th",
+      "ro",
+      "ru",
+      "uk",
+      "id",
+      "hi",
+      "tl",
+      "sv",
+      "eu",
+      "zh",
+    ],
   },
   // japanese
   {
-    face: new FontFace("emerald", "url(./fonts/pokemon-bw.ttf)", {
+    face: new FontFace("emerald", `url(${getCachedUrl("./fonts/pokemon-bw.ttf")})`, {
       unicodeRange: rangesByLanguage.japanese,
     }),
-    only: ["en", "es", "fr", "it", "de", "pt", "ko", "ja", "ca", "da", "tr", "ro", "ru", "id", "hi", "tl", "sv"],
-  },
-  {
-    face: new FontFace("pkmnems", "url(./fonts/pokemon-bw.ttf)", {
-      unicodeRange: rangesByLanguage.japanese,
-    }),
-    only: ["en", "es", "fr", "it", "de", "pt", "ko", "ja", "ca", "da", "tr", "ro", "ru", "id", "hi", "tl", "sv"],
+    only: ["ja"],
   },
   // devanagari
   {
-    face: new FontFace("emerald", "url(./fonts/8-bit-devanagari.ttf)", {
+    face: new FontFace("emerald", `url(${getCachedUrl("./fonts/8-bit-devanagari.ttf")})`, {
       unicodeRange: unicodeRanges.devanagari,
     }),
   },
   {
-    face: new FontFace("pkmnems", "url(./fonts/8-bit-devanagari.ttf)", {
+    face: new FontFace("pkmnems", `url(${getCachedUrl("./fonts/8-bit-devanagari.ttf")})`, {
       unicodeRange: unicodeRanges.devanagari,
     }),
   },
   // thai
   {
-    face: new FontFace("emerald", "url(./fonts/fsrebellion.otf)", {
+    face: new FontFace("emerald", `url(${getCachedUrl("./fonts/fsrebellion.otf")})`, {
       unicodeRange: unicodeRanges.thai,
     }),
   },
@@ -109,6 +100,7 @@ const fonts: LoadingFontFaceProperty[] = [
     face: new FontFace("pkmnems", "url(./fonts/terrible-thaifix.ttf)", {
       unicodeRange: unicodeRanges.thai,
     }),
+    extraOptions: { sizeAdjust: "133%" },
   },
 ];
 
@@ -192,7 +184,9 @@ await i18next
         "ko",
         "ja",
         "ca",
+        "eu",
         "da",
+        "th",
         "tr",
         "ro",
         "ru",
@@ -214,8 +208,8 @@ await i18next
           } else {
             fileName = toKebabCase(ns);
           }
-          // ex: "./locales/en/move-anims"
-          return `./locales/${lng}/${fileName}.json?v=${pkg.version}`;
+          // ex: "./locales/en/move-anims?t=1234567890"
+          return getCachedUrl(`./locales/${lng}/${fileName}.json`);
         },
       },
       defaultNS: "menu",
@@ -234,5 +228,23 @@ await i18next
       await initFonts(localStorage.getItem("prLang") ?? undefined);
     },
   );
+
+//#endregion
+
+//#region Event Proxy
+
+if (timedEventManager.hasEventTextReplacement()) {
+  console.warn("Event text replacements are active.");
+  i18next.t = new Proxy(i18next.t.bind(i18next), {
+    apply(target, _, args: [key: string, options?: any]) {
+      const key = timedEventManager.getEventTextReplacement(args[0]);
+      if (args[0] !== key) {
+        console.debug(`Replacing i18n key "${args[0]}" with "${key}"`);
+        args[0] = key;
+      }
+      return target(...args);
+    },
+  });
+}
 
 //#endregion

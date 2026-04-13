@@ -52,14 +52,19 @@ export interface SessionSaveData {
   money: number;
   score: number;
   waveIndex: number;
-  battleType: BattleType;
+  // TODO: This enum being inside save data is basically useless, being inferrable from the presence or absence of `trainer` and `mysteryEncounterType`.
+  // Remove this later on to reduce save size and improve clarity.
+  battleType: Exclude<BattleType, BattleType.CLEAR>;
+  // TODO: This being nullable NEEDS to be reflected in the type signature
   trainer: TrainerData;
   gameVersion: string;
   /** The player-chosen name of the run */
   name: string;
   timestamp: number;
   challenges: ChallengeData[];
+  // TODO: Change default value to `undefined` to both save space and ease nullishness checks
   mysteryEncounterType: MysteryEncounterType | -1; // Only defined when current wave is ME,
+  // TODO: This can be `undefined` - reflect that in the type signature
   mysteryEncounterSaveData: MysteryEncounterSaveData;
   /**
    * Counts the amount of pokemon fainted in your party during the current arena encounter.
@@ -94,15 +99,15 @@ export interface StarterMoveData {
 }
 
 export interface StarterAttributes {
-  nature?: number;
-  ability?: number;
-  variant?: number;
-  form?: number;
-  female?: boolean;
-  shiny?: boolean;
-  favorite?: boolean;
-  nickname?: string;
-  tera?: PokemonType;
+  nature?: number | undefined;
+  ability?: number | undefined;
+  variant?: number | undefined;
+  form?: number | undefined;
+  female?: boolean | undefined;
+  shiny?: boolean | undefined;
+  favorite?: boolean | undefined;
+  nickname?: string | undefined;
+  tera?: PokemonType | undefined;
 }
 
 export interface DexAttrProps {
@@ -117,14 +122,14 @@ export interface Starter {
   shiny: boolean;
   variant: Variant;
   formIndex: number;
-  female?: boolean;
+  female?: boolean | undefined;
   abilityIndex: number;
   passive: boolean;
   nature: Nature;
-  moveset?: StarterMoveset;
+  moveset?: StarterMoveset | undefined;
   pokerus: boolean;
-  nickname?: string;
-  teraType?: PokemonType;
+  nickname?: string | undefined;
+  teraType?: PokemonType | undefined;
   ivs: number[];
 }
 

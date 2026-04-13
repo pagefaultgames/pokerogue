@@ -1,14 +1,10 @@
-import type { SuppressWeatherEffectAbAttr } from "#abilities/ability";
-import { timedEventManager } from "#app/global-event-manager";
+import type { SuppressWeatherEffectAbAttr } from "#abilities/ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { BiomeId } from "#enums/biome-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { WeatherType } from "#enums/weather-type";
-import type { Arena } from "#field/arena";
 import type { Pokemon } from "#field/pokemon";
 import type { Move } from "#moves/move";
-import { randSeedInt } from "#utils/common";
 import i18next from "i18next";
 
 export interface SerializedWeather {
@@ -17,6 +13,7 @@ export interface SerializedWeather {
 }
 
 export class Weather {
+  // TODO: Exclude `WeatherType.NONE` from this (which indicates a lack of weather)
   public weatherType: WeatherType;
   public turnsLeft: number;
   public maxDuration: number;
@@ -27,10 +24,15 @@ export class Weather {
     this.maxDuration = this.isImmutable() ? 0 : maxDuration;
   }
 
+  /**
+   * Tick down this weather's duration.
+   * @returns Whether the current weather should remain active (`turnsLeft > 0`)
+   */
   lapse(): boolean {
     if (this.isImmutable()) {
       return true;
     }
+    // TODO: Add a flag for infinite duration weathers separate from "0 turn count"
     if (this.turnsLeft) {
       return !!--this.turnsLeft;
     }
@@ -129,6 +131,8 @@ export class Weather {
   }
 }
 
+// TODO: These functions should not be able to accept `WeatherType.NONE`
+// and should have `null` removed from the signature
 export function getWeatherStartMessage(weatherType: WeatherType): string | null {
   switch (weatherType) {
     case WeatherType.SUNNY:
@@ -239,164 +243,4 @@ export function getWeatherBlockMessage(weatherType: WeatherType): string {
       return i18next.t("weather:heavyRainEffectMessage");
   }
   return i18next.t("weather:defaultEffectMessage");
-}
-
-export interface WeatherPoolEntry {
-  weatherType: WeatherType;
-  weight: number;
-}
-
-export function getRandomWeatherType(arena: Arena): WeatherType {
-  let weatherPool: WeatherPoolEntry[] = [];
-  const hasSun = arena.getTimeOfDay() < 2;
-  switch (arena.biomeType) {
-    case BiomeId.GRASS:
-      weatherPool = [
-        { weatherType: WeatherType.NONE, weight: 8 },
-        { weatherType: WeatherType.RAIN, weight: 4 },
-      ];
-      if (hasSun) {
-        weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 8 });
-      }
-      break;
-    case BiomeId.TALL_GRASS:
-      weatherPool = [
-        { weatherType: WeatherType.NONE, weight: 8 },
-        { weatherType: WeatherType.RAIN, weight: 4 },
-      ];
-      if (hasSun) {
-        weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 4 });
-      }
-      break;
-    case BiomeId.FOREST:
-      weatherPool = [
-        { weatherType: WeatherType.NONE, weight: 8 },
-        { weatherType: WeatherType.RAIN, weight: 4 },
-      ];
-      if (!hasSun) {
-        weatherPool.push({ weatherType: WeatherType.FOG, weight: 1 });
-      }
-      break;
-    case BiomeId.SEA:
-      weatherPool = [
-        { weatherType: WeatherType.NONE, weight: 3 },
-        { weatherType: WeatherType.RAIN, weight: 12 },
-      ];
-      break;
-    case BiomeId.SWAMP:
-      weatherPool = [
-        { weatherType: WeatherType.NONE, weight: 3 },
-        { weatherType: WeatherType.RAIN, weight: 4 },
-        { weatherType: WeatherType.FOG, weight: 1 },
-      ];
-      break;
-    case BiomeId.BEACH:
-      weatherPool = [
-        { weatherType: WeatherType.NONE, weight: 8 },
-        { weatherType: WeatherType.RAIN, weight: 3 },
-      ];
-      if (hasSun) {
-        weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 5 });
-      }
-      break;
-    case BiomeId.LAKE:
-      weatherPool = [
-        { weatherType: WeatherType.NONE, weight: 10 },
-        { weatherType: WeatherType.RAIN, weight: 4 },
-        { weatherType: WeatherType.FOG, weight: 1 },
-      ];
-      break;
-    case BiomeId.SEABED:
-      weatherPool = [{ weatherType: WeatherType.RAIN, weight: 1 }];
-      break;
-    case BiomeId.BADLANDS:
-      weatherPool = [
-        { weatherType: WeatherType.NONE, weight: 8 },
-        { weatherType: WeatherType.SANDSTORM, weight: 2 },
-      ];
-      if (hasSun) {
-        weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 5 });
-      }
-      break;
-    case BiomeId.DESERT:
-      weatherPool = [
-        { weatherType: WeatherType.NONE, weight: 2 },
-        { weatherType: WeatherType.SANDSTORM, weight: 8 },
-      ];
-      if (hasSun) {
-        weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 5 });
-      }
-      break;
-    case BiomeId.ICE_CAVE:
-      weatherPool = [
-        { weatherType: WeatherType.NONE, weight: 3 },
-        { weatherType: WeatherType.SNOW, weight: 4 },
-        { weatherType: WeatherType.HAIL, weight: 1 },
-      ];
-      break;
-    case BiomeId.MEADOW:
-      weatherPool = [{ weatherType: WeatherType.NONE, weight: 3 }];
-      if (hasSun) {
-        weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 5 });
-      }
-      break;
-    case BiomeId.VOLCANO:
-      weatherPool = [
-        {
-          weatherType: hasSun ? WeatherType.SUNNY : WeatherType.NONE,
-          weight: 1,
-        },
-      ];
-      break;
-    case BiomeId.GRAVEYARD:
-      weatherPool = [
-        { weatherType: WeatherType.NONE, weight: 3 },
-        { weatherType: WeatherType.FOG, weight: 1 },
-      ];
-      break;
-    case BiomeId.JUNGLE:
-      weatherPool = [
-        { weatherType: WeatherType.NONE, weight: 8 },
-        { weatherType: WeatherType.RAIN, weight: 6 },
-        { weatherType: WeatherType.FOG, weight: 1 },
-      ];
-      break;
-    case BiomeId.SNOWY_FOREST:
-      weatherPool = [
-        { weatherType: WeatherType.SNOW, weight: 7 },
-        { weatherType: WeatherType.HAIL, weight: 1 },
-      ];
-      break;
-    case BiomeId.ISLAND:
-      weatherPool = [
-        { weatherType: WeatherType.NONE, weight: 7 },
-        { weatherType: WeatherType.RAIN, weight: 3 },
-      ];
-      if (hasSun) {
-        weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 5 });
-      }
-      break;
-  }
-
-  if (arena.biomeType === BiomeId.TOWN && timedEventManager.isEventActive()) {
-    timedEventManager.getWeather()?.map(w => weatherPool.push(w));
-  }
-
-  if (weatherPool.length > 1) {
-    let totalWeight = 0;
-    for (const w of weatherPool) {
-      totalWeight += w.weight;
-    }
-
-    const rand = randSeedInt(totalWeight);
-    let w = 0;
-    for (const weather of weatherPool) {
-      w += weather.weight;
-      if (rand < w) {
-        return weather.weatherType;
-      }
-    }
-  }
-
-  return weatherPool.length > 0 ? weatherPool[0].weatherType : WeatherType.NONE;
 }

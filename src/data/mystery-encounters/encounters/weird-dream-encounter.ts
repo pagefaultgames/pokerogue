@@ -249,7 +249,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
       ],
     },
     async () => {
-      // Battle your "future" team for some item rewards
+      // Battle your "alternate" team for some item rewards
       const transformations: PokemonTransformation[] =
         globalScene.currentBattle.mysteryEncounter!.misc.teamTransformations;
 
@@ -296,7 +296,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
       const genderIndex = globalScene.gameData.gender ?? PlayerGender.UNSET;
       const trainerConfig =
         trainerConfigs[
-          genderIndex === PlayerGender.FEMALE ? TrainerType.FUTURE_SELF_F : TrainerType.FUTURE_SELF_M
+          genderIndex === PlayerGender.FEMALE ? TrainerType.PLAYER_F_ALTERNATE : TrainerType.PLAYER_M_ALTERNATE
         ].clone();
       trainerConfig.setPartyTemplates(new TrainerPartyTemplate(transformations.length, PartyMemberStrength.STRONG));
       const enemyPartyConfig: EnemyPartyConfig = {
@@ -589,7 +589,7 @@ async function postProcessTransformedPokemon(
 
   // For pokemon that the player owns (including ones just caught), gain a candy
   if (!forBattle && !!globalScene.gameData.dexData[speciesRootForm].caughtAttr) {
-    globalScene.gameData.addStarterCandy(getPokemonSpecies(speciesRootForm), 1);
+    globalScene.gameData.addStarterCandy(speciesRootForm, 1);
   }
 
   // Set the moveset of the new pokemon to be the same as previous, but with 1 egg move and 1 (attempted) STAB move of the new species

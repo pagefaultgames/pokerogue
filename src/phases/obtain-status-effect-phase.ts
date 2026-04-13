@@ -14,8 +14,8 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
   public readonly phaseName = "ObtainStatusEffectPhase";
 
   private readonly statusEffect: StatusEffect;
-  private readonly sourcePokemon?: Pokemon;
-  private readonly sleepTurnsRemaining?: number;
+  private readonly sourcePokemon?: Pokemon | undefined;
+  private readonly sleepTurnsRemaining?: number | undefined;
   private readonly statusMessage: string;
 
   /**

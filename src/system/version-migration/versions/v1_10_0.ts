@@ -10,10 +10,10 @@ import type { TurnMove } from "#types/turn-move";
 interface OldTurnMove {
   move: MoveId;
   targets: BattlerIndex[];
-  result?: MoveResult;
-  turn?: number;
-  virtual?: boolean;
-  ignorePP?: boolean;
+  result?: MoveResult | undefined;
+  turn?: number | undefined;
+  virtual?: boolean | undefined;
+  ignorePP?: boolean | undefined;
 }
 
 /**
@@ -29,7 +29,6 @@ const fixMoveHistory: SessionSaveMigrator = {
       move: tm.move,
       targets: tm.targets,
       result: tm.result,
-      turn: tm.turn,
       // NOTE: This unfortuately has to mis-classify Dancer and Magic Bounce-induced moves as `FOLLOW_UP`,
       // given we previously had _no way_ of distinguishing them from follow-up moves post hoc.
       useMode: tm.virtual ? MoveUseMode.FOLLOW_UP : tm.ignorePP ? MoveUseMode.IGNORE_PP : MoveUseMode.NORMAL,

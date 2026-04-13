@@ -562,12 +562,12 @@ export class InputsController {
     const mappingOverrides = {
       BUTTON_CYCLE_VARIANT: "BUTTON_CYCLE_TERA",
     };
-    type mappingConfigKey = keyof typeof mappingConfigs.custom;
+    type MappingConfigKey = keyof typeof mappingConfigs.custom;
     for (const key in mappingConfigs.custom) {
-      if (mappingConfigs.custom[key as mappingConfigKey] in mappingOverrides) {
+      if (mappingConfigs.custom[key as MappingConfigKey] in mappingOverrides) {
         // @ts-expect-error - TS narrows mappingConfigs.custom[key] to never for some reason
-        mappingConfigs.custom[key as mappingConfigKey] =
-          mappingOverrides[mappingConfigs.custom[key as mappingConfigKey] as keyof typeof mappingOverrides];
+        mappingConfigs.custom[key as MappingConfigKey] =
+          mappingOverrides[mappingConfigs.custom[key as MappingConfigKey] as keyof typeof mappingOverrides];
       }
     }
     this.configs[selectedDevice].custom = mappingConfigs.custom;

@@ -4,10 +4,11 @@ import { Phase } from "#app/phase";
 export class MessagePhase extends Phase {
   public readonly phaseName = "MessagePhase";
   private text: string;
-  private callbackDelay?: number | null;
-  private prompt?: boolean | null;
-  private promptDelay?: number | null;
-  private speaker?: string;
+  // TODO: Remove null from signatures
+  private callbackDelay?: number | null | undefined;
+  private prompt?: boolean | null | undefined;
+  private promptDelay?: number | null | undefined;
+  private speaker?: string | undefined;
 
   constructor(
     text: string,

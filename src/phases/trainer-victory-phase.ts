@@ -28,7 +28,7 @@ export class TrainerVictoryPhase extends BattlePhase {
     const trainerType = globalScene.currentBattle.trainer?.config.trainerType!; // TODO: is this bang correct?
     // Validate Voucher for boss trainers
     if (
-      vouchers.hasOwnProperty(TrainerType[trainerType])
+      Object.hasOwn(vouchers, TrainerType[trainerType])
       && !globalScene.validateVoucher(vouchers[TrainerType[trainerType]])
       && globalScene.currentBattle.trainer?.config.isBoss
     ) {
@@ -53,7 +53,7 @@ export class TrainerVictoryPhase extends BattlePhase {
     }
     // Breeders in Space achievement
     if (
-      globalScene.arena.biomeType === BiomeId.SPACE
+      globalScene.arena.biomeId === BiomeId.SPACE
       && (trainerType === TrainerType.BREEDER || trainerType === TrainerType.EXPERT_POKEMON_BREEDER)
     ) {
       globalScene.validateAchv(achvs.BREEDERS_IN_SPACE);
