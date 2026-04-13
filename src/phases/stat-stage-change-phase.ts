@@ -12,333 +12,405 @@ import type { Pokemon } from "#field/pokemon";
 import { ResetNegativeStatStageModifier } from "#modifiers/modifier";
 import { PokemonPhase } from "#phases/pokemon-phase";
 import type { ConditionalUserFieldProtectStatAbAttrParams, PreStatStageChangeAbAttrParams } from "#types/ability-types";
-import { BooleanHolder, NumberHolder } from "#utils/common";
+import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 
 export type StatStageChangeCallback = (
   target: Pokemon | null,
-  changed: BattleStat[],
-  relativeChanges: number[],
+  changed: readonly BattleStat[],
+  relativeChanges: number,
 ) => void;
 
-// TODO: Refactor this mess of a phase
+export interface StatStageChangePhaseOptions {
+  battlerIndex: BattlerIndex | number;
+  selfTarget?: boolean;
+  stats: readonly BattleStat[];
+  stages: number;
+  showMessage?: boolean;
+  ignoreAbilities?: boolean;
+  canBeCopied?: boolean;
+  onChange?: StatStageChangeCallback;
+  comingFromMirrorArmorUser?: boolean;
+  comingFromStickyWeb?: boolean;
+  /** If this phase was queued after splitting by another SSCP, avoid doing housekeeping again */
+  processed?: boolean;
+}
+
 export class StatStageChangePhase extends PokemonPhase {
   public readonly phaseName = "StatStageChangePhase";
-  private readonly stats: readonly BattleStat[];
-  private readonly selfTarget: boolean;
-  private readonly stages: number;
-  private readonly showMessage: boolean;
-  private readonly ignoreAbilities: boolean;
-  private readonly canBeCopied: boolean;
-  private readonly onChange: StatStageChangeCallback | null;
-  private readonly comingFromMirrorArmorUser: boolean;
-  private readonly comingFromStickyWeb: boolean;
+  private readonly options: StatStageChangePhaseOptions;
 
-  constructor(
-    battlerIndex: BattlerIndex,
-    selfTarget: boolean,
-    stats: readonly BattleStat[],
-    stages: number,
-    showMessage = true,
-    ignoreAbilities = false,
-    canBeCopied = true,
-    onChange: StatStageChangeCallback | null = null,
-    comingFromMirrorArmorUser = false,
-    comingFromStickyWeb = false,
-  ) {
-    super(battlerIndex);
+  constructor(options: StatStageChangePhaseOptions) {
+    super(options.battlerIndex);
 
-    this.selfTarget = selfTarget;
-    this.stats = stats;
-    this.stages = stages;
-    this.showMessage = showMessage;
-    this.ignoreAbilities = ignoreAbilities;
-    this.canBeCopied = canBeCopied;
-    this.onChange = onChange;
-    this.comingFromMirrorArmorUser = comingFromMirrorArmorUser;
-    this.comingFromStickyWeb = comingFromStickyWeb;
+    this.options = options;
   }
 
   start() {
-    // Check if multiple stats are being changed at the same time, then run SSCPhase for each of them
-    if (this.stats.length > 1) {
-      for (const stat of this.stats) {
-        globalScene.phaseManager.unshiftNew(
-          "StatStageChangePhase",
-          this.battlerIndex,
-          this.selfTarget,
-          [stat],
-          this.stages,
-          this.showMessage,
-          this.ignoreAbilities,
-          this.canBeCopied,
-          this.onChange,
-          this.comingFromMirrorArmorUser,
-        );
-      }
-      return this.end();
-    }
-
     const pokemon = this.getPokemon();
-    let opponentPokemon: Pokemon | undefined;
-
-    /** Gets the position of last enemy or player pokemon that used ability or move, primarily for double battles involving Mirror Armor */
-    if (pokemon.isPlayer()) {
-      /** If this SSCP is not from sticky web, then we find the opponent pokemon that last did something */
-      if (this.comingFromStickyWeb) {
-        /** If this SSCP is from sticky web, then check if pokemon that last sucessfully used sticky web is on field */
-        const stickyTagID = globalScene.arena.findTagsOnSide(
-          (t: ArenaTag) => t.tagType === ArenaTagType.STICKY_WEB,
-          ArenaTagSide.PLAYER,
-        )[0].sourceId;
-        globalScene.getEnemyField().forEach(e => {
-          if (e.id === stickyTagID) {
-            opponentPokemon = e;
-          }
-        });
-      } else {
-        opponentPokemon = globalScene.getEnemyField()[globalScene.currentBattle.lastEnemyInvolved];
-      }
-    } else if (this.comingFromStickyWeb) {
-      const stickyTagID = globalScene.arena.findTagsOnSide(
-        (t: ArenaTag) => t.tagType === ArenaTagType.STICKY_WEB,
-        ArenaTagSide.ENEMY,
-      )[0].sourceId;
-      globalScene.getPlayerField().forEach(e => {
-        if (e.id === stickyTagID) {
-          opponentPokemon = e;
-        }
-      });
-    } else {
-      opponentPokemon = globalScene.getPlayerField()[globalScene.currentBattle.lastPlayerInvolved];
-    }
-
     if (!pokemon.isActive(true)) {
       return this.end();
     }
 
-    const stages = new NumberHolder(this.stages);
+    const opponentPokemon = this.findOpponentPokemon(pokemon);
+    let statsToChange: readonly BattleStat[];
+    let relativeChange: number;
 
-    if (!this.ignoreAbilities) {
-      applyAbAttrs("StatStageChangeMultiplierAbAttr", { pokemon, numStages: stages });
+    if (this.options.processed) {
+      statsToChange = this.options.stats;
+      relativeChange = this.getRelativeChanges(pokemon, statsToChange, this.options.stages)[0];
+    } else {
+      const stages = new ValueHolder(this.options.stages);
+      if (!this.options.ignoreAbilities) {
+        applyAbAttrs("StatStageChangeMultiplierAbAttr", { pokemon, numStages: stages });
+      }
+
+      const filteredStats = this.options.stats.filter(stat => {
+        return !this.checkStatCancellation(pokemon, opponentPokemon, stat);
+      });
+
+      if (filteredStats.length === 0) {
+        this.end();
+        return;
+      }
+
+      const relativeChanges = this.getRelativeChanges(pokemon, filteredStats, stages.value);
+
+      // Split stat changes into separate phases when the relative changes don't match
+      // If split, continue running this phase with the first group instead of re-queuing
+      statsToChange = this.splitUnlikeChanges(filteredStats, relativeChanges);
+      relativeChange = relativeChanges[0];
     }
 
-    let simulate = false;
+    this.options.onChange?.(pokemon, statsToChange, relativeChange);
 
-    const filteredStats = this.stats.filter(stat => {
-      const cancelled = new BooleanHolder(false);
+    const hasVisibleChanges = relativeChange !== 0;
+    if (hasVisibleChanges && globalScene.moveAnimations) {
+      this.playStatChangeAnimation(pokemon, relativeChange, () => {
+        this.applyStatChangesAndEnd(pokemon, statsToChange, this.options.stages, relativeChange);
+      });
+    } else {
+      this.applyStatChangesAndEnd(pokemon, statsToChange, this.options.stages, relativeChange);
+    }
+  }
 
-      if (!this.selfTarget && stages.value < 0) {
-        globalScene.arena.applyTagsForSide(
-          ArenaTagType.MIST,
-          pokemon.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY,
-          false,
-          pokemon,
-          cancelled,
-          opponentPokemon,
-        );
-      }
+  /**
+   * Split stat changes into phases by relative changes (i.e. groups where the message would be the same)
+   * @param filteredStats - The stats to change
+   * @param relLevels - The relative level by which each stat is changing
+   * @returns The first group of stats changed, so it can be used immediately instead of in a subsequent Phase
+   */
+  private splitUnlikeChanges(filteredStats: BattleStat[], relLevels: number[]): BattleStat[] {
+    const groups = this.groupStatsByRelativeStage(filteredStats, relLevels);
+    const groupEntries = Object.values(groups);
 
-      if (!cancelled.value && !this.selfTarget && stages.value < 0) {
-        const abAttrParams: PreStatStageChangeAbAttrParams & ConditionalUserFieldProtectStatAbAttrParams = {
-          pokemon,
-          stat,
-          cancelled,
-          simulated: simulate,
-          target: pokemon,
-          stages: this.stages,
-        };
-        applyAbAttrs("ProtectStatAbAttr", abAttrParams);
-        applyAbAttrs("ConditionalUserFieldProtectStatAbAttr", abAttrParams);
-        // TODO: Consider skipping this call if `cancelled` is false.
-        const ally = pokemon.getAlly();
-        if (ally != null) {
-          applyAbAttrs("ConditionalUserFieldProtectStatAbAttr", { ...abAttrParams, pokemon: ally });
-        }
+    for (let i = 1; i < groupEntries.length; i++) {
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        ...this.options,
+        stats: groupEntries[i],
+      });
+    }
+    return groupEntries[0];
+  }
 
-        /** Potential stat reflection due to Mirror Armor, does not apply to Octolock end of turn effect */
-        if (
-          opponentPokemon !== undefined // TODO: investigate whether this is stoping mirror armor from applying to non-octolock // reasons for stat drops if the user has the Octolock tag
-          && !pokemon.findTag(t => t instanceof OctolockTag)
-          && !this.comingFromMirrorArmorUser
-        ) {
-          applyAbAttrs("ReflectStatStageChangeAbAttr", {
-            pokemon,
-            stat,
-            cancelled,
-            simulated: simulate,
-            source: opponentPokemon,
-            stages: this.stages,
-          });
-        }
-      }
+  /**
+   * Determine the opponent of the given pokemon:
+   * - If this phase was caused by Sticky Web, determined by {@linkcode findStickyWebSource}
+   * - Otherwise, it is the opposing field of the player, indexed by last(Enemy|Player)Involved
+   * @param pokemon - The pokemon whose opponent to find
+   * @returns The opponent
+   */
+  private findOpponentPokemon(pokemon: Pokemon): Pokemon | undefined {
+    if (this.options.comingFromStickyWeb) {
+      return this.findStickyWebSource(pokemon);
+    }
+    if (pokemon.isPlayer()) {
+      return globalScene.getEnemyField()[globalScene.currentBattle.lastEnemyInvolved];
+    }
+    return globalScene.getPlayerField()[globalScene.currentBattle.lastPlayerInvolved];
+  }
 
-      // If one stat stage decrease is cancelled, simulate the rest of the applications
-      if (cancelled.value) {
-        simulate = true;
-      }
-
-      return !cancelled.value;
-    });
-
-    const relLevels = filteredStats.map(
-      s =>
-        (stages.value >= 1
-          ? Math.min(pokemon.getStatStage(s) + stages.value, 6)
-          : Math.max(pokemon.getStatStage(s) + stages.value, -6)) - pokemon.getStatStage(s),
+  /**
+   * Determine the source of Sticky Web through the corresponding tag
+   * @param pokemon - The Pokemon whose side to search on
+   * @returns The Pokemon which set Sticky Web, or undefined if there is no on-field source
+   */
+  private findStickyWebSource(pokemon: Pokemon): Pokemon | undefined {
+    const arenaSide = pokemon.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+    const stickyTags = globalScene.arena.findTagsOnSide(
+      (t: ArenaTag) => t.tagType === ArenaTagType.STICKY_WEB,
+      arenaSide,
     );
 
-    this.onChange?.(this.getPokemon(), filteredStats, relLevels);
+    if (stickyTags.length === 0) {
+      return;
+    }
 
-    const end = () => {
-      if (this.showMessage) {
-        const messages = this.getStatStageChangeMessages(filteredStats, stages.value, relLevels);
-        for (const message of messages) {
-          globalScene.phaseManager.queueMessage(message);
-        }
+    const sourceId = stickyTags[0].sourceId;
+    const searchField = pokemon.isPlayer() ? globalScene.getEnemyField() : globalScene.getPlayerField();
+    return searchField.find(e => e.id === sourceId);
+  }
+
+  /**
+   * Compute the relative level for each stat stage change after clamping the result between -6 and 6.
+   * @param pokemon - The Pokemon with potential stat changes
+   * @param stats - The stats being changes
+   * @param stages - The pre-clamp number of stages to change each stat
+   * @returns A parallel array to `stats` holding the relative change for each stat
+   */
+  private getRelativeChanges(pokemon: Pokemon, stats: readonly BattleStat[], stages: number): number[] {
+    return stats.map(s => {
+      const current = pokemon.getStatStage(s);
+      const clamped = stages > 0 ? Math.min(current + stages, 6) : Math.max(current + stages, -6);
+      return clamped - current;
+    });
+  }
+
+  /**
+   * Determine if a single stat stage should be cancelled by field or enemy effects such as Mirror Armor or Mist
+   * @param pokemon - The Pokemon with potential stat changes
+   * @param opponentPokemon - The opponent of the provided pokemon
+   * @param stat - The stat to change
+   * @returns - Whether the stat should be cancelled
+   */
+  private checkStatCancellation(pokemon: Pokemon, opponentPokemon: Pokemon | undefined, stat: BattleStat): boolean {
+    // No reflection method currently exists which blocks positive or self-target changes
+    if (this.options.stages >= 0 || this.options.selfTarget) {
+      return false;
+    }
+
+    const cancelled = new ValueHolder(false);
+
+    globalScene.arena.applyTagsForSide(
+      ArenaTagType.MIST,
+      pokemon.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY,
+      false,
+      pokemon,
+      cancelled,
+      opponentPokemon,
+    );
+
+    if (!cancelled.value) {
+      this.checkAbilityProtection(pokemon, opponentPokemon, stat, cancelled);
+    }
+
+    return cancelled.value;
+  }
+
+  /**
+   * Helper to check if a stat change is prevented by the target Pokemon's or its ally's ability.
+   */
+  private checkAbilityProtection(
+    pokemon: Pokemon,
+    opponentPokemon: Pokemon | undefined,
+    stat: BattleStat,
+    cancelled: ValueHolder<boolean>,
+  ): void {
+    const abAttrParams: PreStatStageChangeAbAttrParams & ConditionalUserFieldProtectStatAbAttrParams = {
+      pokemon,
+      stat,
+      cancelled,
+      simulated: false,
+      target: pokemon,
+      stages: this.options.stages,
+    };
+
+    applyAbAttrs("ProtectStatAbAttr", abAttrParams);
+    applyAbAttrs("ConditionalUserFieldProtectStatAbAttr", abAttrParams);
+
+    // TODO: Consider skipping this call if `cancelled` is already true.
+    const ally = pokemon.getAlly();
+    if (ally != null) {
+      applyAbAttrs("ConditionalUserFieldProtectStatAbAttr", { ...abAttrParams, pokemon: ally });
+    }
+
+    // TODO: investigate whether the `opponentPokemon` check is stopping mirror armor from applying
+    // to non-octolock reasons for stat drops if the user has the Octolock tag
+    if (
+      opponentPokemon == null
+      || this.options.comingFromMirrorArmorUser
+      || pokemon.findTag(t => t instanceof OctolockTag)
+    ) {
+      return;
+    }
+
+    applyAbAttrs("ReflectStatStageChangeAbAttr", {
+      pokemon,
+      stat,
+      cancelled,
+      simulated: false,
+      source: opponentPokemon,
+      stages: this.options.stages,
+    });
+  }
+
+  /**
+   * After validity checks, apply stat stage changes and reactions (i.e. Defiant, White Herb) then end the phase.
+   * @param pokemon - The Pokemon receiving stat changes
+   * @param filteredStats - The stats to change
+   * @param stages - The amount of stages to change for each stat, before clamping (used to i.e. determine if a stat change was positive or negative)
+   * @param relLevel - The amount of stages to change for each stat, after clamping
+   */
+  private applyStatChangesAndEnd(
+    pokemon: Pokemon,
+    filteredStats: readonly BattleStat[],
+    stages: number,
+    relLevel: number,
+  ): void {
+    if (this.options.showMessage) {
+      const message = this.buildStatStageChangeMessage(filteredStats, stages, relLevel);
+      globalScene.phaseManager.queueMessage(message);
+    }
+
+    this.updateStatStages(pokemon, filteredStats, relLevel);
+    this.triggerPerStatReactionAbilities(pokemon, filteredStats, stages);
+    this.checkWhiteHerb(pokemon);
+
+    pokemon.updateInfo();
+    handleTutorial(Tutorial.STAT_CHANGE).then(() => super.end());
+  }
+
+  private updateStatStages(pokemon: Pokemon, stats: readonly BattleStat[], stages: number): void {
+    for (const s of stats) {
+      const current = pokemon.getStatStage(s);
+
+      if (stages > 0 && current < 6) {
+        pokemon.turnData.statStagesIncreased = true;
+      } else if (stages < 0 && current > -6) {
+        pokemon.turnData.statStagesDecreased = true;
       }
 
-      for (const s of filteredStats) {
-        if (stages.value > 0 && pokemon.getStatStage(s) < 6) {
-          pokemon.turnData.statStagesIncreased = true;
-        } else if (stages.value < 0 && pokemon.getStatStage(s) > -6) {
-          pokemon.turnData.statStagesDecreased = true;
-        }
+      pokemon.setStatStage(s, current + stages);
+    }
+  }
 
-        pokemon.setStatStage(s, pokemon.getStatStage(s) + stages.value);
-      }
-
-      if (stages.value > 0 && this.canBeCopied) {
+  private triggerPerStatReactionAbilities(
+    pokemon: Pokemon,
+    filteredStats: readonly BattleStat[],
+    stages: number,
+  ): void {
+    for (const stat of filteredStats) {
+      if (stages > 0 && this.options.canBeCopied) {
         for (const opponent of pokemon.getOpponentsGenerator()) {
-          applyAbAttrs("StatStageChangeCopyAbAttr", { pokemon: opponent, stats: this.stats, numStages: stages.value });
+          applyAbAttrs("StatStageChangeCopyAbAttr", { pokemon: opponent, stats: [stat], numStages: stages });
         }
       }
 
       applyAbAttrs("PostStatStageChangeAbAttr", {
         pokemon,
-        stats: filteredStats,
-        stages: this.stages,
-        selfTarget: this.selfTarget,
+        stats: [stat],
+        stages: this.options.stages,
+        selfTarget: this.options.selfTarget ?? false,
       });
-
-      // Look for any other stat change phases; if this is the last one, do White Herb check
-      if (!globalScene.phaseManager.hasPhaseOfType("StatStageChangePhase", p => p.battlerIndex === this.battlerIndex)) {
-        // Apply White Herb if needed
-        const whiteHerb = globalScene.applyModifier(
-          ResetNegativeStatStageModifier,
-          this.player,
-          pokemon,
-        ) as ResetNegativeStatStageModifier;
-        // If the White Herb was applied, consume it
-        if (whiteHerb) {
-          pokemon.loseHeldItem(whiteHerb);
-          globalScene.updateModifiers(this.player);
-        }
-      }
-
-      pokemon.updateInfo();
-
-      handleTutorial(Tutorial.STAT_CHANGE).then(() => super.end());
-    };
-
-    if (relLevels.filter(l => l).length > 0 && globalScene.moveAnimations) {
-      pokemon.enableMask();
-      const pokemonMaskSprite = pokemon.maskSprite;
-
-      const tileX = (this.player ? 106 : 236) * pokemon.getSpriteScale() * globalScene.field.scale;
-      const tileY =
-        ((this.player ? 148 : 84) + (stages.value >= 1 ? 160 : 0)) * pokemon.getSpriteScale() * globalScene.field.scale;
-      const tileWidth = 156 * globalScene.field.scale * pokemon.getSpriteScale();
-      const tileHeight = 316 * globalScene.field.scale * pokemon.getSpriteScale();
-
-      // On increase, show the red sprite located at ATK
-      // On decrease, show the blue sprite located at SPD
-      const spriteColor = stages.value >= 1 ? Stat[Stat.ATK].toLowerCase() : Stat[Stat.SPD].toLowerCase();
-      const statSprite = globalScene.add.tileSprite(tileX, tileY, tileWidth, tileHeight, "battle_stats", spriteColor);
-      statSprite.setPipeline(globalScene.fieldSpritePipeline);
-      statSprite.setAlpha(0);
-      statSprite.setScale(6);
-      statSprite.setOrigin(0.5, 1);
-
-      globalScene.playSound(`se/stat_${stages.value >= 1 ? "up" : "down"}`);
-
-      statSprite.setMask(new Phaser.Display.Masks.BitmapMask(globalScene, pokemonMaskSprite ?? undefined));
-
-      globalScene.tweens.add({
-        targets: statSprite,
-        duration: 250,
-        alpha: 0.8375,
-        onComplete: () => {
-          globalScene.tweens.add({
-            targets: statSprite,
-            delay: 1000,
-            duration: 250,
-            alpha: 0,
-          });
-        },
-      });
-
-      globalScene.tweens.add({
-        targets: statSprite,
-        duration: 1500,
-        y: `${stages.value >= 1 ? "-" : "+"}=${160 * 6}`,
-      });
-
-      globalScene.time.delayedCall(1750, () => {
-        pokemon.disableMask();
-        end();
-      });
-    } else {
-      end();
     }
   }
 
-  getStatStageChangeMessages(stats: readonly BattleStat[], stages: number, relStages: number[]): string[] {
-    const messages: string[] = [];
-
-    const relStageStatIndexes = {};
-    for (let rl = 0; rl < relStages.length; rl++) {
-      const relStage = relStages[rl];
-      if (!relStageStatIndexes[relStage]) {
-        relStageStatIndexes[relStage] = [];
-      }
-      relStageStatIndexes[relStage].push(rl);
+  /** If this is the last stat change phase for the target, apply White Herb if held. */
+  private checkWhiteHerb(pokemon: Pokemon): void {
+    const hasMoreStatPhases = globalScene.phaseManager.hasPhaseOfType(
+      "StatStageChangePhase",
+      p => p.battlerIndex === this.battlerIndex,
+    );
+    if (hasMoreStatPhases) {
+      return;
     }
 
-    Object.keys(relStageStatIndexes).forEach(rl => {
-      const relStageStats = stats.filter((_, i) => relStageStatIndexes[rl].includes(i));
-      let statsFragment = "";
+    const whiteHerb = globalScene.applyModifier(
+      ResetNegativeStatStageModifier,
+      this.player,
+      pokemon,
+    ) as ResetNegativeStatStageModifier;
 
-      if (relStageStats.length > 1) {
-        statsFragment =
-          relStageStats.length >= 5
-            ? i18next.t("battle:stats")
-            : `${relStageStats
-                .slice(0, -1)
-                .map(s => i18next.t(getStatKey(s)))
-                .join(
-                  ", ",
-                  // Bang is justified as we explicitly check for the existence of 2+ args
-                )}${relStageStats.length > 2 ? "," : ""} ${i18next.t("battle:statsAnd")} ${i18next.t(getStatKey(relStageStats.at(-1)!))}`;
-        messages.push(
-          i18next.t(getStatStageChangeDescriptionKey(Math.abs(Number.parseInt(rl)), stages >= 1), {
-            pokemonNameWithAffix: getPokemonNameWithAffix(this.getPokemon()),
-            stats: statsFragment,
-            count: relStageStats.length,
-          }),
-        );
-      } else {
-        statsFragment = i18next.t(getStatKey(relStageStats[0]));
-        messages.push(
-          i18next.t(getStatStageChangeDescriptionKey(Math.abs(Number.parseInt(rl)), stages >= 1), {
-            pokemonNameWithAffix: getPokemonNameWithAffix(this.getPokemon()),
-            stats: statsFragment,
-            count: relStageStats.length,
-          }),
-        );
-      }
+    if (whiteHerb) {
+      pokemon.loseHeldItem(whiteHerb);
+      globalScene.updateModifiers(this.player);
+    }
+  }
+
+  private playStatChangeAnimation(pokemon: Pokemon, stages: number, onComplete: () => void): void {
+    pokemon.enableMask();
+
+    const isIncrease = stages >= 1;
+    const scale = pokemon.getSpriteScale() * globalScene.field.scale;
+
+    const tileX = (this.player ? 106 : 236) * scale;
+    const tileY = ((this.player ? 148 : 84) + (isIncrease ? 160 : 0)) * scale;
+    const tileWidth = 156 * scale;
+    const tileHeight = 316 * scale;
+
+    // On increase, show the red sprite located at ATK; on decrease, the blue sprite at SPD
+    const spriteColor = isIncrease ? Stat[Stat.ATK].toLowerCase() : Stat[Stat.SPD].toLowerCase();
+    const statSprite = globalScene.add.tileSprite(tileX, tileY, tileWidth, tileHeight, "battle_stats", spriteColor);
+    statSprite.setPipeline(globalScene.fieldSpritePipeline);
+    statSprite.setAlpha(0);
+    statSprite.setScale(6);
+    statSprite.setOrigin(0.5, 1);
+    statSprite.setMask(new Phaser.Display.Masks.BitmapMask(globalScene, pokemon.maskSprite ?? undefined));
+
+    globalScene.playSound(`se/stat_${isIncrease ? "up" : "down"}`);
+
+    globalScene.tweens.add({
+      targets: statSprite,
+      duration: 250,
+      alpha: 0.8375,
+      onComplete: () => {
+        globalScene.tweens.add({
+          targets: statSprite,
+          delay: 1000,
+          duration: 250,
+          alpha: 0,
+        });
+      },
     });
 
-    return messages;
+    globalScene.tweens.add({
+      targets: statSprite,
+      duration: 1500,
+      y: `${isIncrease ? "-" : "+"}=${160 * 6}`,
+    });
+
+    globalScene.time.delayedCall(1750, () => {
+      pokemon.disableMask();
+      onComplete();
+    });
+  }
+
+  private buildStatStageChangeMessage(stats: readonly BattleStat[], stages: number, relStages: number): string {
+    const statsFragment = this.formatStatsFragment(stats);
+    return i18next.t(getStatStageChangeDescriptionKey(Math.abs(relStages), stages > 0), {
+      pokemonNameWithAffix: getPokemonNameWithAffix(this.getPokemon()),
+      stats: statsFragment,
+      count: stats.length,
+    });
+  }
+
+  private groupStatsByRelativeStage(stats: readonly BattleStat[], relStages: number[]): Record<number, BattleStat[]> {
+    const groups: Record<number, BattleStat[]> = {};
+    for (let i = 0; i < relStages.length; i++) {
+      const key = relStages[i];
+      if (!groups[key]) {
+        groups[key] = [];
+      }
+      groups[key].push(stats[i]);
+    }
+    return groups;
+  }
+
+  private formatStatsFragment(stats: readonly BattleStat[]): string {
+    if (stats.length >= 5) {
+      return i18next.t("battle:stats");
+    }
+
+    if (stats.length === 1) {
+      return i18next.t(getStatKey(stats[0]));
+    }
+
+    const allButLast = stats
+      .slice(0, -1)
+      .map(s => i18next.t(getStatKey(s)))
+      .join(", ");
+    const oxfordComma = stats.length > 2 ? "," : "";
+    const last = i18next.t(getStatKey(stats.at(-1)!));
+    return `${allButLast}${oxfordComma} ${i18next.t("battle:statsAnd")} ${last}`;
   }
 }
