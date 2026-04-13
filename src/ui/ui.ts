@@ -550,7 +550,10 @@ export class UI extends Phaser.GameObjects.Container {
           if (touchControls) {
             touchControls.dataset.uiMode = UiMode[mode];
           }
-          AccessibilityManager.getInstance().announceContext(UI.getModeLabel(mode));
+          // Announce mode transitions to screen readers (skip MESSAGE mode as it fires constantly)
+          if (mode !== UiMode.MESSAGE) {
+            AccessibilityManager.getInstance().announceContext(UI.getModeLabel(mode));
+          }
           this.getHandler().show(args);
         }
         resolve();
@@ -615,7 +618,9 @@ export class UI extends Phaser.GameObjects.Container {
         if (touchControls) {
           touchControls.dataset.uiMode = UiMode[this.mode];
         }
-        AccessibilityManager.getInstance().announceContext(UI.getModeLabel(this.mode));
+        if (this.mode !== UiMode.MESSAGE) {
+          AccessibilityManager.getInstance().announceContext(UI.getModeLabel(this.mode));
+        }
         resolve(true);
       };
 

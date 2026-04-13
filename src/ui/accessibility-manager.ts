@@ -44,7 +44,6 @@ export class AccessibilityManager {
     this.messageEl.setAttribute("role", "log");
     this.messageEl.setAttribute("aria-live", "assertive");
     this.messageEl.setAttribute("aria-atomic", "true");
-    this.messageEl.setAttribute("aria-label", "Game messages");
 
     // Context region: mode transitions, status info (polite = waits for current speech)
     this.contextEl = document.createElement("div");
@@ -52,7 +51,6 @@ export class AccessibilityManager {
     this.contextEl.setAttribute("role", "status");
     this.contextEl.setAttribute("aria-live", "polite");
     this.contextEl.setAttribute("aria-atomic", "true");
-    this.contextEl.setAttribute("aria-label", "Game status");
 
     // Menu region: current menu options
     this.menuEl = document.createElement("div");

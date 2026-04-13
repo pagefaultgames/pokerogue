@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import type { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
+import { AccessibilityManager } from "#ui/accessibility-manager";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
@@ -132,6 +133,12 @@ export abstract class ModalUiHandler extends UiHandler {
       this.modalContainer.setVisible(true);
 
       this.getUi().moveTo(this.modalContainer, this.getUi().length - 1);
+
+      // Announce modal title and buttons to screen readers
+      const a11y = AccessibilityManager.getInstance();
+      const title = this.getModalTitle(config);
+      const buttons = this.buttonLabels.map(l => l.text).join(", ");
+      a11y.announceMessage(title ? `${title}. Options: ${buttons}` : buttons);
 
       for (let a = 0; a < this.buttonBgs.length; a++) {
         if (a < this.buttonBgs.length) {

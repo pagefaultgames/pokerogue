@@ -6,6 +6,7 @@ import type { SettingType } from "#system/settings";
 import { Setting, SettingKeys } from "#system/settings";
 import type { MappingSettingName } from "#types/configs/inputs";
 import type { InputsIcons } from "#ui/abstract-control-settings-ui-handler";
+import { AccessibilityManager } from "#ui/accessibility-manager";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { NavigationManager, NavigationMenu } from "#ui/navigation-menu";
 import { ScrollBar } from "#ui/scroll-bar";
@@ -387,6 +388,15 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
 
     this.cursorObj.setPositionRelative(this.optionsBg, 4, 4 + (this.cursor + this.scrollCursor) * 16);
 
+    // Announce setting name and current value to screen readers
+    const settingIndex = this.cursor + this.scrollCursor;
+    if (settingIndex < this.settings.length) {
+      const setting = this.settings[settingIndex];
+      const currentValue = this.optionCursors[settingIndex];
+      const valueLabel = setting.options[currentValue]?.label ?? "";
+      AccessibilityManager.getInstance().announceMessage(`${setting.label}: ${valueLabel}`);
+    }
+
     return ret;
   }
 
@@ -418,6 +428,9 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
     this.optionValueLabels[settingIndex][cursor]
       .setColor(getTextColor(TextStyle.SETTINGS_SELECTED))
       .setShadowColor(getTextColor(TextStyle.SETTINGS_SELECTED, true));
+
+    // Announce changed value to screen readers
+    AccessibilityManager.getInstance().announceMessage(`${setting.label}: ${setting.options[cursor]?.label ?? ""}`);
 
     if (save) {
       const saveSetting = () => {
