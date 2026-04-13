@@ -60,16 +60,20 @@ describe("Moves - Move-Calling Moves", () => {
     });
 
     // TODO: Remove type assertions after `Object.keys` branch is merged
-    const cases = (Object.keys(BiomeId) as `${BiomeId}`[]).map<[BiomeId, MoveId]>(biome => [
-      Number(biome) as BiomeId,
-      getMoveId(TerrainType.NONE, Number(biome) as BiomeId),
-    ]);
-    it.each(
-      cases.map(([biome, move]) => ({
+    const cases = (Object.keys(BiomeId) as `${BiomeId}`[]).map(
+      biome => [biome, getMoveId(TerrainType.NONE, Number(BiomeId[biome]) as BiomeId)] as const,
+    );
+    it.each<{
+      move: MoveId;
+      moveName: string;
+      biome: BiomeId;
+      biomeName: string;
+    }>(
+      cases.map(([biomeName, move]) => ({
         move,
         moveName: toTitleCase(MoveId[move]),
-        biome,
-        biomeName: BiomeId[biome],
+        biome: Number(BiomeId[biomeName]) as BiomeId,
+        biomeName,
       })),
     )("should select $moveName if the current biome is $biomeName", async ({ move, biome }) => {
       game.override.startingBiome(biome);
