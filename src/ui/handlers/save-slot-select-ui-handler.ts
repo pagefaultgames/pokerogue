@@ -10,6 +10,7 @@ import * as Modifier from "#modifiers/modifier";
 import type { PokemonData } from "#system/pokemon-data";
 import type { SessionSaveData } from "#types/save-data";
 import type { OptionSelectConfig } from "#ui/abstract-option-select-ui-handler";
+import { AccessibilityManager } from "#ui/accessibility-manager";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { RunDisplayMode } from "#ui/run-info-ui-handler";
 import { addTextObject } from "#ui/text";
@@ -405,6 +406,17 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
         this.sessionSlots[cursorPosition].setPosition(0, cursorIncrement);
       }
       this.setArrowVisibility(hasData);
+
+      // Announce save slot info to screen readers
+      const saveData = session.saveData;
+      if (hasData && saveData) {
+        const modeName = GameMode.getModeName(saveData.gameMode as GameModes);
+        AccessibilityManager.getInstance().announceMessage(
+          `Slot ${cursorPosition + 1}: ${modeName}, Wave ${saveData.waveIndex}`,
+        );
+      } else {
+        AccessibilityManager.getInstance().announceMessage(`Slot ${cursorPosition + 1}: Empty`);
+      }
     }
     if (prevSlotIndex != null) {
       this.revertSessionSlot(prevSlotIndex);

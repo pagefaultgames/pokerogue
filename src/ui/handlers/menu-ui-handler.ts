@@ -9,6 +9,7 @@ import { GameDataType } from "#enums/game-data-type";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import { AccessibilityManager } from "#ui/accessibility-manager";
 import type { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { BgmBar } from "#ui/bgm-bar";
 import { MessageUiHandler } from "#ui/message-ui-handler";
@@ -801,6 +802,12 @@ export class MenuUiHandler extends MessageUiHandler {
 
     this.cursorObj.setScale(this.scale * 6);
     this.cursorObj.setPositionRelative(this.menuBg, 7, 6 + (18 + this.cursor * 96) * this.scale);
+
+    // Announce menu option to screen readers
+    if (this.menuOptions && cursor < this.menuOptions.length) {
+      const optionLabel = i18next.t(`menuUiHandler:${toCamelCase(MenuOptions[this.menuOptions[cursor]])}`);
+      AccessibilityManager.getInstance().announceMessage(optionLabel);
+    }
 
     return ret;
   }

@@ -24,6 +24,7 @@ import type { PokemonMove } from "#moves/pokemon-move";
 import type { Variant } from "#sprites/variant";
 import { getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
+import { AccessibilityManager } from "#ui/accessibility-manager";
 import { addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor, updateCandyCountTextStyle } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import {
@@ -415,6 +416,11 @@ export class SummaryUiHandler extends UiHandler {
 
     this.nameText.setText(this.pokemon.getNameToRender({ useIllusion: false }));
 
+    // Announce pokemon summary to screen readers
+    AccessibilityManager.getInstance().announceMessage(
+      `Summary: ${this.pokemon.getNameToRender({ useIllusion: false })}, Level ${this.pokemon.level}`,
+    );
+
     const isFusion = this.pokemon.isFusion();
 
     this.splicedIcon.setPositionRelative(this.nameText, this.nameText.displayWidth + 2, 3);
@@ -710,6 +716,12 @@ export class SummaryUiHandler extends UiHandler {
         this.moveAccuracyText.setText(selectedMove.accuracy >= 0 ? selectedMove.accuracy.toString() : "---");
         this.moveCategoryIcon.setFrame(MoveCategory[selectedMove.category].toLowerCase());
         this.showMoveEffect();
+
+        // Announce move details to screen readers
+        AccessibilityManager.getInstance().announceMessage(
+          `${selectedMove.name}, Power ${selectedMove.power >= 0 ? selectedMove.power : "N/A"}, `
+            + `Accuracy ${selectedMove.accuracy >= 0 ? selectedMove.accuracy : "N/A"}`,
+        );
       } else {
         this.hideMoveEffect();
       }
@@ -773,6 +785,10 @@ export class SummaryUiHandler extends UiHandler {
       if (changed) {
         const forward = this.cursor < cursor;
         this.cursor = cursor;
+
+        // Announce page change to screen readers
+        const pageNames = ["Profile", "Stats", "Moves"];
+        AccessibilityManager.getInstance().announceMessage(pageNames[this.cursor] ?? "");
 
         this.tabSprite.setTexture(getLocalizedSpriteKey(`summary_tabs_${this.cursor + 1}`)); // Pixel text 'STATUS' and "MOVES" tabs
 

@@ -21,6 +21,7 @@ import type { PokemonMove } from "#moves/pokemon-move";
 import type { CommandPhase } from "#phases/command-phase";
 import { getVariantTint } from "#sprites/variant";
 import type { TurnMove } from "#types/turn-move";
+import { AccessibilityManager } from "#ui/accessibility-manager";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-helper";
@@ -1235,10 +1236,22 @@ export class PartyUiHandler extends MessageUiHandler {
       }
       if (cursor < 6) {
         this.partySlots[cursor].select();
+        // Announce pokemon info to screen readers
+        const pokemon = globalScene.getPlayerParty()[cursor];
+        if (pokemon) {
+          const hp = pokemon.hp;
+          const maxHp = pokemon.getMaxHp();
+          const status = pokemon.status ? `, ${pokemon.status.effect}` : "";
+          AccessibilityManager.getInstance().announceMessage(
+            `${pokemon.getNameToRender()}, Level ${pokemon.level}, HP ${hp}/${maxHp}${status}`,
+          );
+        }
       } else if (cursor === 6) {
         this.partyCancelButton.select();
+        AccessibilityManager.getInstance().announceMessage("Cancel");
       } else if (cursor === 7) {
         this.partyDiscardModeButton.select();
+        AccessibilityManager.getInstance().announceMessage("Discard Mode");
       }
     }
     return changed;

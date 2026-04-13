@@ -51,6 +51,7 @@ import type { DexEntry } from "#types/dex-data";
 import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { Starter, StarterAttributes, StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import { AccessibilityManager } from "#ui/accessibility-manager";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
 import { FilterBar } from "#ui/filter-bar";
 import { MessageUiHandler } from "#ui/message-ui-handler";
@@ -3474,6 +3475,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonShinyIcon.setFrame(getVariantIcon(variant)).setTint(tint);
         this.setSpecies(species);
         this.updateInstructions();
+
+        // Announce selected starter to screen readers
+        const dexEntry: DexEntry | undefined = globalScene.gameData.dexData[species.speciesId];
+        const cost = speciesStarterCosts[species.speciesId] ?? 0;
+        AccessibilityManager.getInstance().announceMessage(
+          `${species.name}, Cost ${cost}${dexEntry?.caughtAttr ? "" : ", Not caught"}`,
+        );
       }
     }
 

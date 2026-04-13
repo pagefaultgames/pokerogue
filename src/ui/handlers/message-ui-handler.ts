@@ -241,6 +241,10 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
     }
     this.pendingPrompt = false;
     this.awaitingActionInput = true;
+
+    // Announce prompt to screen readers
+    AccessibilityManager.getInstance().announceMessage("Press enter to continue.");
+
     this.onActionInput = () => {
       if (this.prompt) {
         this.prompt.anims.stop();
