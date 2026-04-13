@@ -3,6 +3,7 @@ import { Button } from "#enums/buttons";
 import { getStatKey, PERMANENT_STATS } from "#enums/stat";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
+import { AccessibilityManager } from "#ui/accessibility-manager";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
@@ -191,6 +192,8 @@ export class BattleMessageUiHandler extends MessageUiHandler {
   ) {
     if (name) {
       this.showNameText(name);
+      // Announce dialogue with speaker name for screen readers
+      AccessibilityManager.getInstance().announceMessage(`${name}: ${text}`);
     }
     super.showDialogue(text, name, delay, callback, callbackDelay, prompt, promptDelay);
   }

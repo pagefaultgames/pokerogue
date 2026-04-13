@@ -12,6 +12,7 @@ import { UiMode } from "#enums/ui-mode";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import type { PokemonMove } from "#moves/pokemon-move";
 import type { CommandPhase } from "#phases/command-phase";
+import { AccessibilityManager } from "#ui/accessibility-manager";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { addTextObject, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
@@ -306,6 +307,23 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
     }
 
     this.setMoveInfo(cursor);
+
+    // Announce move details to screen readers
+    const pokemon = (globalScene.phaseManager.getCurrentPhase() as CommandPhase).getPokemon();
+    const moveset = pokemon.getMoveset();
+    if (cursor < moveset.length) {
+      const pokemonMove = moveset[cursor];
+      const moveType = PokemonType[pokemon.getMoveType(pokemonMove.getMove())];
+      const maxPP = pokemonMove.getMovePp();
+      const pp = maxPP - pokemonMove.ppUsed;
+      const power = pokemonMove.getMove().power;
+      const accuracy = pokemonMove.getMove().accuracy;
+      const category = MoveCategory[pokemonMove.getMove().category];
+      AccessibilityManager.getInstance().announceMessage(
+        `${pokemonMove.getName()}, ${moveType} type, ${category}, PP ${pp}/${maxPP}, ` +
+          `Power ${power >= 0 ? power : "N/A"}, Accuracy ${accuracy >= 0 ? accuracy : "N/A"}`,
+      );
+    }
 
     if (!this.cursorObj) {
       const isTera = this.fromCommand === Command.TERA;

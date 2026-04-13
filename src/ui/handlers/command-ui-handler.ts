@@ -7,6 +7,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { CommandPhase } from "#phases/command-phase";
+import { AccessibilityManager } from "#ui/accessibility-manager";
 import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
@@ -237,6 +238,16 @@ export class CommandUiHandler extends UiHandler {
       this.cursorObj.setPosition(-5 + (cursor % 2 === 1 ? 56 : 0), 8 + (cursor >= 2 ? 16 : 0));
       this.cursorObj.setVisible(true);
     }
+
+    // Announce selected command to screen readers
+    const commandLabels = [
+      i18next.t("commandUiHandler:fight"),
+      i18next.t("commandUiHandler:ball"),
+      i18next.t("commandUiHandler:pokemon"),
+      i18next.t("commandUiHandler:run"),
+      i18next.t("commandUiHandler:tera", { defaultValue: "Terastallize" }),
+    ];
+    AccessibilityManager.getInstance().announceMessage(commandLabels[cursor] ?? "");
 
     return changed;
   }

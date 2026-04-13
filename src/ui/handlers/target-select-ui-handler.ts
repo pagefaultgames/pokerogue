@@ -7,6 +7,7 @@ import { UiMode } from "#enums/ui-mode";
 import type { Pokemon } from "#field/pokemon";
 import type { ModifierBar } from "#modifiers/modifier";
 import { getMoveTargets } from "#moves/move-utils";
+import { AccessibilityManager } from "#ui/accessibility-manager";
 import { UiHandler } from "#ui/ui-handler";
 import { fixedInt } from "#utils/common";
 
@@ -143,6 +144,15 @@ export class TargetSelectUiHandler extends UiHandler {
     const multipleTargets = this.targets.map(index => globalScene.getField()[index]);
 
     this.targetsHighlighted = this.isMultipleTargets ? multipleTargets : [singleTarget];
+
+    // Announce target to screen readers
+    if (singleTarget) {
+      const isEnemy = cursor >= BattlerIndex.ENEMY;
+      const name = singleTarget.getNameToRender();
+      AccessibilityManager.getInstance().announceMessage(
+        `Target: ${isEnemy ? "Enemy " : ""}${name}`,
+      );
+    }
 
     const ret = super.setCursor(cursor);
 

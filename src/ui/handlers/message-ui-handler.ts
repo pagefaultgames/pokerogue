@@ -1,5 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import type { UiMode } from "#enums/ui-mode";
+import { AccessibilityManager } from "#ui/accessibility-manager";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { getFrameMs } from "#utils/common";
 
@@ -126,6 +127,11 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
       }
 
       text = newText;
+    }
+
+    // Announce full text to screen readers immediately (before character-by-character animation)
+    if (text) {
+      AccessibilityManager.getInstance().announceMessage(text);
     }
 
     if (this.textTimer) {

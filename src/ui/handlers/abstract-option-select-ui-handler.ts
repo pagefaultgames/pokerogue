@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
+import { AccessibilityManager } from "#ui/accessibility-manager";
 import { addBBCodeTextObject, getTextColor, getTextStyleOptions } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
@@ -199,6 +200,17 @@ export abstract class AbstractOptionSelectUiHandler extends UiHandler {
     this.scrollCursor = 0;
     this.fullCursor = 0;
     this.setCursor(0);
+
+    // Build accessible menu for screen readers
+    if (this.config?.options) {
+      const labels = this.config.options
+        .filter(o => !o.skip)
+        .map(o => o.label);
+      AccessibilityManager.getInstance().setMenu(labels, 0);
+      if (labels.length > 0) {
+        AccessibilityManager.getInstance().announceMessage(labels[0]);
+      }
+    }
 
     if (this.config.delay) {
       this.blockInput = true;
@@ -412,6 +424,14 @@ export abstract class AbstractOptionSelectUiHandler extends UiHandler {
       102 * this.scale + this.cursor * (114 * this.scale - 3),
     );
 
+    // Announce selected option to screen readers
+    if (changed && this.config?.options) {
+      const currentOption = this.config.options[this.unskippedIndices[this.fullCursor]];
+      if (currentOption) {
+        AccessibilityManager.getInstance().announceMessage(currentOption.label);
+      }
+    }
+
     return changed;
   }
 
@@ -422,6 +442,7 @@ export abstract class AbstractOptionSelectUiHandler extends UiHandler {
     this.fullCursor = 0;
     this.scrollCursor = 0;
     this.eraseCursor();
+    AccessibilityManager.getInstance().clearMenu();
   }
 
   eraseCursor() {

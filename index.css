@@ -4,6 +4,19 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+/* Screen reader only - visually hidden but accessible to assistive technology */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* Global */
 :root {
   --color-base: hsl(0, 0%, 55%);
