@@ -46,3 +46,7 @@ coverage
 
 # Script outputs
 *.csv
+
+# Project-local Claude Code and docs
+/CLAUDE.md
+/docs/
