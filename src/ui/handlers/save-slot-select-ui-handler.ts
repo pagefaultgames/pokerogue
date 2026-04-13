@@ -101,6 +101,13 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
 
     this.setScrollCursor(0);
     this.setCursor(0);
+
+    // Announce save slot context to screen readers
+    const modeLabel = this.uiMode === SaveSlotUiMode.LOAD ? "Load" : "Save";
+    AccessibilityManager.getInstance().announceContext(
+      `${modeLabel} Game. Up/Down to browse save slots, Z or Enter to select, X to cancel.`,
+    );
+
     return true;
   }
 

@@ -1227,6 +1227,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
       handleTutorial(Tutorial.STARTER_SELECT);
 
+      // Announce starter select context to screen readers
+      AccessibilityManager.getInstance().announceContext(
+        "Starter Selection. Arrow keys to browse Pokémon, Z or Enter to add to team, X to go back. "
+          + "Press V to filter, F to change form, R for shiny, E for ability, N for nature.",
+      );
+
       return true;
     }
 

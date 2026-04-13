@@ -140,6 +140,12 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
     this.displayMoves();
     this.toggleInfo(false); // in case cancel was pressed while info toggle is active
     this.active = true;
+
+    // Announce move selection context to screen readers
+    AccessibilityManager.getInstance().announceContext(
+      "Choose a move. Arrow keys to select, Z or Enter to confirm, X to go back.",
+    );
+
     return true;
   }
 
@@ -320,8 +326,8 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
       const accuracy = pokemonMove.getMove().accuracy;
       const category = MoveCategory[pokemonMove.getMove().category];
       AccessibilityManager.getInstance().announceMessage(
-        `${pokemonMove.getName()}, ${moveType} type, ${category}, PP ${pp}/${maxPP}, ` +
-          `Power ${power >= 0 ? power : "N/A"}, Accuracy ${accuracy >= 0 ? accuracy : "N/A"}`,
+        `${pokemonMove.getName()}, ${moveType} type, ${category}, PP ${pp}/${maxPP}, `
+          + `Power ${power >= 0 ? power : "N/A"}, Accuracy ${accuracy >= 0 ? accuracy : "N/A"}`,
       );
     }
 

@@ -99,6 +99,11 @@ export class CommandUiHandler extends UiHandler {
     messageHandler.message.setWordWrapWidth(this.canTera() ? 910 : 1110);
     messageHandler.showText(i18next.t("commandUiHandler:actionMessage", { pokemonName }), 0);
 
+    // Announce battle context to screen readers
+    AccessibilityManager.getInstance().announceContext(
+      `What will ${pokemonName} do? Arrow keys to choose, Z or Enter to select, X to cancel.`,
+    );
+
     if (this.getCursor() === Command.POKEMON) {
       this.setCursor(Command.FIGHT);
     } else {

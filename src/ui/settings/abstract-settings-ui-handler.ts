@@ -248,6 +248,11 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
 
     ui.hideTooltip();
 
+    // Announce settings context to screen readers
+    AccessibilityManager.getInstance().announceContext(
+      `${this.title}. Up/Down to browse settings, Left/Right to change values. F and R to switch tabs. X to go back.`,
+    );
+
     return true;
   }
 

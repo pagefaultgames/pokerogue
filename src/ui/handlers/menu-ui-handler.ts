@@ -542,6 +542,9 @@ export class MenuUiHandler extends MessageUiHandler {
 
     this.bgmBar.toggleBgmBar(true);
 
+    // Announce menu context to screen readers
+    AccessibilityManager.getInstance().announceContext("Menu. Up/Down to browse, Z or Enter to select, X to close.");
+
     return true;
   }
 

@@ -393,6 +393,11 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     // #endregion: animation
 
+    // Announce item selection context to screen readers
+    AccessibilityManager.getInstance().announceContext(
+      "Choose an item reward. Arrow keys to browse, Z or Enter to select, X to skip.",
+    );
+
     return true;
   }
 

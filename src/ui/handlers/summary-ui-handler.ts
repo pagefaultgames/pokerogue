@@ -418,7 +418,8 @@ export class SummaryUiHandler extends UiHandler {
 
     // Announce pokemon summary to screen readers
     AccessibilityManager.getInstance().announceMessage(
-      `Summary: ${this.pokemon.getNameToRender({ useIllusion: false })}, Level ${this.pokemon.level}`,
+      `Summary: ${this.pokemon.getNameToRender({ useIllusion: false })}, Level ${this.pokemon.level}. `
+        + "Left/Right to switch pages, X to close.",
     );
 
     const isFusion = this.pokemon.isFusion();

@@ -381,6 +381,11 @@ export class PartyUiHandler extends MessageUiHandler {
     this.showPartyText();
     this.setCursor(0);
 
+    // Announce party context to screen readers
+    AccessibilityManager.getInstance().announceContext(
+      "Party. Up/Down to select Pokémon, Z or Enter to choose, X to cancel.",
+    );
+
     return true;
   }
 
