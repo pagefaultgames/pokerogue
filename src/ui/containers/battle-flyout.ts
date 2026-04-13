@@ -29,9 +29,6 @@ const FLYOUT_HEIGHT = 23;
  */
 // TODO: Stop tracking player move uses in this flyout
 export class BattleFlyout extends Phaser.GameObjects.Container {
-  /** Is this object linked to a player's Pokemon? */
-  private readonly isPlayer: boolean;
-
   /** The Pokemon this object is linked to. */
   private pokemon: Pokemon;
 
@@ -42,8 +39,6 @@ export class BattleFlyout extends Phaser.GameObjects.Container {
   /** The y-axis point where the flyout should sit when activated */
   private readonly anchorY: number;
 
-  /** The initial container which defines where the flyout should be attached */
-  private readonly flyoutParent: Phaser.GameObjects.Container;
   /** The background {@linkcode Phaser.GameObjects.Sprite} for the flyout */
   private readonly flyoutBackground: Phaser.GameObjects.Sprite;
 
@@ -51,37 +46,33 @@ export class BattleFlyout extends Phaser.GameObjects.Container {
   private readonly flyoutContainer: Phaser.GameObjects.Container;
 
   /** The array of {@linkcode Phaser.GameObjects.Text} objects which are drawn on the flyout */
-  private readonly flyoutText: Phaser.GameObjects.Text[] = new Array(4);
+  private readonly flyoutText: Phaser.GameObjects.Text[] = [];
   /** An array of {@linkcode PokemonMove}s used to track moves used by the attached Pokemon. */
   private readonly moveInfo: MoveInfoTuple = [];
   /**
    * A sparse array of {@linkcode PokemonMove}s used to track move slots
-   * temporarily overridden by Transform or Mimic.
+   * temporarily overridden by Transform or Mimic-like effects.
    *
    * Reset once `pokemon` switches out via a {@linkcode SummonDataResetEvent}.
    */
-  private tempMoveInfo: MoveInfoTuple = [];
+  private readonly tempMoveInfo: MoveInfoTuple = [];
 
   constructor(isPlayer: boolean) {
     super(globalScene, 0, 0);
 
-    // Note that all player based flyouts are disabled. This is included in case of future development
-    this.isPlayer = isPlayer;
+    this.translationX = isPlayer ? -FLYOUT_WIDTH : FLYOUT_WIDTH;
+    this.anchorX = isPlayer ? -130 : -40;
+    this.anchorY = -2.5 + (isPlayer ? -18.5 : -13);
 
-    this.translationX = this.isPlayer ? -FLYOUT_WIDTH : FLYOUT_WIDTH;
-    this.anchorX = this.isPlayer ? -130 : -40;
-    this.anchorY = -2.5 + (this.isPlayer ? -18.5 : -13);
-
-    this.flyoutParent = globalScene.add
-      .container(this.anchorX - this.translationX, this.anchorY) //
+    this.setPosition(this.anchorX - this.translationX, this.anchorY) //
       .setAlpha(0);
 
     this.flyoutBackground = globalScene.add
       .sprite(0, 0, "pbinfo_enemy_boss_stats") //
       .setOrigin(0, 0);
 
-    this.flyoutContainer = globalScene.add.container(44 + (this.isPlayer ? -FLYOUT_WIDTH : 0), 2);
-    this.flyoutParent.add([this.flyoutParent, this.flyoutContainer, this.flyoutBackground]);
+    this.flyoutContainer = globalScene.add.container(44 + (isPlayer ? -FLYOUT_WIDTH : 0), 2);
+    this.add([this.flyoutBackground, this.flyoutContainer]);
 
     // Create a 2x2 grid of text objects for move infos
     for (let i = 0; i < 4; i++) {
@@ -124,7 +115,6 @@ export class BattleFlyout extends Phaser.GameObjects.Container {
     this.pokemon = pokemon;
 
     this.name = `Flyout ${getPokemonNameWithAffix(this.pokemon)}`;
-    this.flyoutParent.name = `Flyout Parent ${getPokemonNameWithAffix(this.pokemon)}`;
 
     globalScene.eventTarget.addEventListener(BattleSceneEventType.MOVESET_CHANGED, this.#onMovesetChanged);
     globalScene.eventTarget.addEventListener(BattleSceneEventType.SUMMON_DATA_RESET, this.#onSummonDataReset);
@@ -184,7 +174,7 @@ export class BattleFlyout extends Phaser.GameObjects.Container {
       return;
     }
 
-    this.tempMoveInfo = [];
+    this.tempMoveInfo.splice(0, this.tempMoveInfo.length);
   };
 
   /**
@@ -192,18 +182,22 @@ export class BattleFlyout extends Phaser.GameObjects.Container {
    * @param visible - Whether the flyout should be shown
    */
   public toggleFlyout(visible: boolean): void {
+    // TODO: Figure out how to get this to use Phaser's `visible` property without messing with the animation
     globalScene.tweens.add({
-      targets: this.flyoutParent,
+      targets: this,
       x: visible ? this.anchorX : this.anchorX - this.translationX,
       duration: fixedInt(125),
       ease: "Sine.easeInOut",
       alpha: visible ? 1 : 0,
     });
-    this.setVisible(visible);
   }
 
-  /** Destroy this element and remove all associated listeners. */
-  public destroy(fromScene?: boolean): void {
+  /** @returns Whether the flyout is currently visible. */
+  public get isVisible(): boolean {
+    return this.alpha > 0;
+  }
+
+  public override destroy(fromScene?: boolean): void {
     globalScene.eventTarget.removeEventListener(BattleSceneEventType.MOVESET_CHANGED, this.#onMovesetChanged);
     globalScene.eventTarget.removeEventListener(BattleSceneEventType.SUMMON_DATA_RESET, this.#onSummonDataReset);
 
