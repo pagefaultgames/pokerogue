@@ -3966,14 +3966,14 @@ export class StatStageChangeAttr extends MoveEffectAttr {
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget, true);
     if (moveChance < 0 || moveChance === 100 || user.randBattleSeedInt(100) < moveChance) {
       const stages = this.getLevels(user);
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        (this.selfTarget ? user : target).getBattlerIndex(),
-        this.selfTarget,
-        this.stats,
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: (this.selfTarget ? user : target).getBattlerIndex(),
+        stats: this.stats,
         stages,
-        this.showMessage,
-      );
+        selfTarget: this.selfTarget,
+        showMessage: this.showMessage,
+      });
+
       return true;
     }
 
@@ -4213,13 +4213,13 @@ export class AcupressureStatStageChangeAttr extends MoveEffectAttr {
     const randStats = BATTLE_STATS.filter(s => target.getStatStage(s) < 6);
     if (randStats.length > 0) {
       const boostStat = [randStats[user.randBattleSeedInt(randStats.length)]];
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        target.getBattlerIndex(),
-        this.selfTarget,
-        boostStat,
-        2,
-      );
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: target.getBattlerIndex(),
+        stats: boostStat,
+        stages: 2,
+        selfTarget: this.selfTarget,
+      });
+
       return true;
     }
     return false;
@@ -4300,14 +4300,13 @@ export class OrderUpStatBoostAttr extends MoveEffectAttr {
         increasedStat = Stat.SPD;
         break;
     }
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+      battlerIndex: user.getBattlerIndex(),
+      stats: [increasedStat],
+      stages: 1,
+      selfTarget: this.selfTarget,
+    });
 
-    globalScene.phaseManager.unshiftNew(
-      "StatStageChangePhase",
-      user.getBattlerIndex(),
-      this.selfTarget,
-      [increasedStat],
-      1,
-    );
     return true;
   }
 }
@@ -5362,14 +5361,13 @@ export class SpectralThiefAttr extends StatChangeBeforeDmgCalcAttr {
          * Only value of up to 6 can be stolen (stat stages don't exceed 6)
          */
         const availableToSteal = Math.min(statStageValueTarget, 6 - statStageValueUser);
+        globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+          battlerIndex: user.getBattlerIndex(),
+          stats: [s],
+          stages: availableToSteal,
+          selfTarget: this.selfTarget,
+        });
 
-        globalScene.phaseManager.unshiftNew(
-          "StatStageChangePhase",
-          user.getBattlerIndex(),
-          this.selfTarget,
-          [s],
-          availableToSteal,
-        );
         target.setStatStage(s, statStageValueTarget - availableToSteal);
       }
     }

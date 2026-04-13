@@ -1067,19 +1067,14 @@ class StickyWebTag extends EntryHazardTag {
       }),
     );
 
-    globalScene.phaseManager.unshiftNew(
-      "StatStageChangePhase",
-      pokemon.getBattlerIndex(),
-      false,
-      [Stat.SPD],
-      -1,
-      true,
-      false,
-      true,
-      null,
-      false,
-      true,
-    );
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+      battlerIndex: pokemon.getBattlerIndex(),
+      stats: [Stat.SPD],
+      stages: -1,
+      showMessage: true,
+      canBeCopied: true,
+      comingFromStickyWeb: true,
+    });
     return true;
   }
 }
@@ -1286,14 +1281,13 @@ class TailwindTag extends SerializableArenaTag {
       // TODO: Ability displays should be handled by the ability
       if (pokemon.hasAbility(AbilityId.WIND_RIDER)) {
         globalScene.phaseManager.queueAbilityDisplay(pokemon, false, true);
-        globalScene.phaseManager.unshiftNew(
-          "StatStageChangePhase",
-          pokemon.getBattlerIndex(),
-          true,
-          [Stat.ATK],
-          1,
-          true,
-        );
+        globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+          battlerIndex: pokemon.getBattlerIndex(),
+          stats: [Stat.ATK],
+          stages: 1,
+          showMessage: true,
+          selfTarget: true,
+        });
         globalScene.phaseManager.queueAbilityDisplay(pokemon, false, false);
       }
     }

@@ -91,13 +91,12 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
           gender: Gender.MALE,
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-            globalScene.phaseManager.unshiftNew(
-              "StatStageChangePhase",
-              pokemon.getBattlerIndex(),
-              true,
-              [Stat.SPDEF, Stat.SPD],
-              1,
-            );
+            globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+              battlerIndex: pokemon.getBattlerIndex(),
+              stats: [Stat.SPDEF, Stat.SPD],
+              stages: 1,
+              selfTarget: true,
+            });
           },
         },
         {
@@ -106,13 +105,12 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
           gender: Gender.FEMALE,
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-            globalScene.phaseManager.unshiftNew(
-              "StatStageChangePhase",
-              pokemon.getBattlerIndex(),
-              true,
-              [Stat.SPDEF, Stat.SPD],
-              1,
-            );
+            globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+              battlerIndex: pokemon.getBattlerIndex(),
+              stats: [Stat.SPDEF, Stat.SPD],
+              stages: 1,
+              selfTarget: true,
+            });
           },
         },
       ],

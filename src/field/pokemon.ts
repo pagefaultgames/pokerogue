@@ -7125,16 +7125,14 @@ export class EnemyPokemon extends Pokemon {
       if (this.bossSegments >= 5 && this.bossSegmentIndex === 1) {
         stages++;
       }
-
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        this.getBattlerIndex(),
-        true,
-        [boostedStat],
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: this.getBattlerIndex(),
+        stats: [boostedStat],
         stages,
-        true,
-        true,
-      );
+        selfTarget: true,
+        showMessage: true,
+        ignoreAbilities: true,
+      });
     }
   }
 

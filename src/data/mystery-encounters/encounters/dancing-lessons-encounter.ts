@@ -175,13 +175,12 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
             queueEncounterMessage(`${namespace}:option.1.bossEnraged`);
-            globalScene.phaseManager.unshiftNew(
-              "StatStageChangePhase",
-              pokemon.getBattlerIndex(),
-              true,
-              [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF],
-              1,
-            );
+            globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+              battlerIndex: pokemon.getBattlerIndex(),
+              stats: [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF],
+              stages: 1,
+              selfTarget: true,
+            });
           },
         },
       ],

@@ -1489,13 +1489,11 @@ export class OctolockTag extends TrappedTag {
     const shouldLapse = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
 
     if (shouldLapse) {
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        pokemon.getBattlerIndex(),
-        false,
-        [Stat.DEF, Stat.SPDEF],
-        -1,
-      );
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        stats: [Stat.DEF, Stat.SPDEF],
+        stages: -1,
+      });
       return true;
     }
 
@@ -1959,13 +1957,11 @@ export class ContactStatStageChangeProtectedTag extends DamageProtectedTag {
    * @param user - The pokemon that is being attacked and has the tag
    */
   override onContact(attacker: Pokemon, _user: Pokemon): void {
-    globalScene.phaseManager.unshiftNew(
-      "StatStageChangePhase",
-      attacker.getBattlerIndex(),
-      false,
-      [this.#stat],
-      this.#levels,
-    );
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+      battlerIndex: attacker.getBattlerIndex(),
+      stats: [this.#stat],
+      stages: this.#levels,
+    });
   }
 }
 
@@ -2675,13 +2671,12 @@ export class CommandedTag extends SerializableBattlerTag {
   /** Caches the Tatsugiri's form key and sharply boosts the tagged Pokemon's stats */
   override onAdd(pokemon: Pokemon): void {
     (this as Mutable<this>).tatsugiriFormKey = this.getSourcePokemon()?.getFormKey() ?? "curly";
-    globalScene.phaseManager.unshiftNew(
-      "StatStageChangePhase",
-      pokemon.getBattlerIndex(),
-      true,
-      [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD],
-      2,
-    );
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+      battlerIndex: pokemon.getBattlerIndex(),
+      stats: [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD],
+      stages: 2,
+      selfTarget: true,
+    });
   }
 
   /** Triggers an {@linkcode PokemonAnimType | animation} of the tagged Pokemon "spitting out" Tatsugiri */
@@ -2720,9 +2715,9 @@ export class StockpilingTag extends SerializableBattlerTag {
     super(BattlerTagType.STOCKPILING, BattlerTagLapseType.CUSTOM, 1, sourceMove);
   }
 
-  private onStatStagesChanged(_: Pokemon | null, statsChanged: BattleStat[], statChanges: number[]) {
-    const defChange = statChanges[statsChanged.indexOf(Stat.DEF)] ?? 0;
-    const spDefChange = statChanges[statsChanged.indexOf(Stat.SPDEF)] ?? 0;
+  private onStatStagesChanged(_: Pokemon | null, statsChanged: readonly BattleStat[], relativeChange: number) {
+    const defChange = statsChanged.includes(Stat.DEF) && relativeChange > 0;
+    const spDefChange = statsChanged.includes(Stat.SPDEF) && relativeChange > 0;
 
     if (defChange) {
       this.statChangeCounts[Stat.DEF]++;
@@ -2765,17 +2760,15 @@ export class StockpilingTag extends SerializableBattlerTag {
       );
 
       // Attempt to increase DEF and SPDEF by one stage, keeping track of successful changes.
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        pokemon.getBattlerIndex(),
-        true,
-        [Stat.SPDEF, Stat.DEF],
-        1,
-        true,
-        false,
-        true,
-        this.onStatStagesChanged.bind(this),
-      );
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        stats: [Stat.SPDEF, Stat.DEF],
+        stages: 1,
+        selfTarget: true,
+        showMessage: true,
+        canBeCopied: true,
+        onChange: this.onStatStagesChanged.bind(this),
+      });
     }
   }
 
@@ -2792,29 +2785,25 @@ export class StockpilingTag extends SerializableBattlerTag {
     const spDefChange = this.statChangeCounts[Stat.SPDEF];
 
     if (defChange) {
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        pokemon.getBattlerIndex(),
-        true,
-        [Stat.DEF],
-        -defChange,
-        true,
-        false,
-        true,
-      );
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        stats: [Stat.DEF],
+        stages: -defChange,
+        selfTarget: true,
+        showMessage: true,
+        canBeCopied: true,
+      });
     }
 
     if (spDefChange) {
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        pokemon.getBattlerIndex(),
-        true,
-        [Stat.SPDEF],
-        -spDefChange,
-        true,
-        false,
-        true,
-      );
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        stats: [Stat.SPDEF],
+        stages: -defChange,
+        selfTarget: true,
+        showMessage: true,
+        canBeCopied: true,
+      });
     }
   }
 }
@@ -2853,7 +2842,11 @@ export class GulpMissileTag extends SerializableBattlerTag {
       }
 
       if (this.tagType === BattlerTagType.GULP_MISSILE_ARROKUDA) {
-        globalScene.phaseManager.unshiftNew("StatStageChangePhase", attacker.getBattlerIndex(), false, [Stat.DEF], -1);
+        globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+          battlerIndex: attacker.getBattlerIndex(),
+          stats: [Stat.DEF],
+          stages: -1,
+        });
       } else {
         attacker.trySetStatus(StatusEffect.PARALYSIS, pokemon);
       }
@@ -3487,16 +3480,14 @@ export class SyrupBombTag extends SerializableBattlerTag {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       }),
     );
-    globalScene.phaseManager.unshiftNew(
-      "StatStageChangePhase",
-      pokemon.getBattlerIndex(),
-      true,
-      [Stat.SPD],
-      -1,
-      true,
-      false,
-      true,
-    );
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+      battlerIndex: pokemon.getBattlerIndex(),
+      stats: [Stat.SPD],
+      stages: -1,
+      selfTarget: true,
+      showMessage: true,
+      canBeCopied: true,
+    });
     return super.lapse(pokemon, _lapseType);
   }
 }

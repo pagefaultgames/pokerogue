@@ -105,13 +105,12 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
           const stat: BattleStat = berryType - BerryType.ENIGMA;
           const statStages = new NumberHolder(1);
           applyAbAttrs("DoubleBerryEffectAbAttr", { pokemon: consumer, effectValue: statStages });
-          globalScene.phaseManager.unshiftNew(
-            "StatStageChangePhase",
-            consumer.getBattlerIndex(),
-            true,
-            [stat],
-            statStages.value,
-          );
+          globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+            battlerIndex: consumer.getBattlerIndex(),
+            stats: [stat],
+            stages: statStages.value,
+            selfTarget: true,
+          });
         }
         break;
 
@@ -126,13 +125,12 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
           const randStat = randSeedInt(Stat.SPD, Stat.ATK);
           const stages = new NumberHolder(2);
           applyAbAttrs("DoubleBerryEffectAbAttr", { pokemon: consumer, effectValue: stages });
-          globalScene.phaseManager.unshiftNew(
-            "StatStageChangePhase",
-            consumer.getBattlerIndex(),
-            true,
-            [randStat],
-            stages.value,
-          );
+          globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+            battlerIndex: consumer.getBattlerIndex(),
+            stats: [randStat],
+            stages: stages.value,
+            selfTarget: true,
+          });
         }
         break;
 

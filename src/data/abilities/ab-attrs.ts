@@ -472,13 +472,12 @@ export class TypeImmunityStatStageChangeAbAttr extends TypeImmunityAbAttr {
     super.apply(params);
     cancelled.value = true; // Suppresses "No Effect" message
     if (!simulated) {
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        pokemon.getBattlerIndex(),
-        true,
-        [this.stat],
-        this.stages,
-      );
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        stats: [this.stat],
+        stages: this.stages,
+        selfTarget: true,
+      });
     }
   }
 }
@@ -644,13 +643,12 @@ export class MoveImmunityStatStageChangeAbAttr extends MoveImmunityAbAttr {
   override apply(params: MoveImmunityAbAttrParams): void {
     super.apply(params);
     // TODO: We probably should not unshift the phase if this is simulated
-    globalScene.phaseManager.unshiftNew(
-      "StatStageChangePhase",
-      params.pokemon.getBattlerIndex(),
-      true,
-      [this.stat],
-      this.stages,
-    );
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+      battlerIndex: params.pokemon.getBattlerIndex(),
+      stats: [this.stat],
+      stages: this.stages,
+      selfTarget: true,
+    });
   }
 }
 
@@ -745,22 +743,19 @@ export class PostDefendStatStageChangeAbAttr extends PostDefendAbAttr {
       const ally = pokemon.getAlly();
       const otherPokemon = ally != null ? pokemon.getOpponents().concat([ally]) : pokemon.getOpponents();
       for (const other of otherPokemon) {
-        globalScene.phaseManager.unshiftNew(
-          "StatStageChangePhase",
-          other.getBattlerIndex(),
-          false,
-          [this.stat],
-          this.stages,
-        );
+        globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+          battlerIndex: other.getBattlerIndex(),
+          stats: [this.stat],
+          stages: this.stages,
+        });
       }
     } else {
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        (this.selfTarget ? pokemon : attacker).getBattlerIndex(),
-        this.selfTarget,
-        [this.stat],
-        this.stages,
-      );
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: (this.selfTarget ? pokemon : attacker).getBattlerIndex(),
+        stats: [this.stat],
+        stages: this.stages,
+        selfTarget: this.selfTarget,
+      });
     }
   }
 }
@@ -794,13 +789,13 @@ export class PostDefendHpGatedStatStageChangeAbAttr extends PostDefendAbAttr {
 
   override apply({ simulated, pokemon, opponent }: PostMoveInteractionAbAttrParams): void {
     if (!simulated) {
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        (this.selfTarget ? pokemon : opponent).getBattlerIndex(),
-        true,
-        this.stats,
-        this.stages,
-      );
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: (this.selfTarget ? pokemon : opponent).getBattlerIndex(),
+        stats: this.stats,
+        stages: this.stages,
+        // todo should this.selfTarget be passed here instead?
+        selfTarget: true,
+      });
     }
   }
 }
@@ -1017,13 +1012,12 @@ export class PostReceiveCritStatStageChangeAbAttr extends AbAttr {
 
   override apply({ simulated, pokemon }: PostMoveInteractionAbAttrParams): void {
     if (!simulated) {
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        pokemon.getBattlerIndex(),
-        true,
-        [this.stat],
-        this.stages,
-      );
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        stats: [this.stat],
+        stages: this.stages,
+        selfTarget: true,
+      });
     }
   }
 }
@@ -1237,13 +1231,12 @@ export class PostStatStageChangeStatStageChangeAbAttr extends PostStatStageChang
 
   override apply({ simulated, pokemon }: PostStatStageChangeAbAttrParams): void {
     if (!simulated) {
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        pokemon.getBattlerIndex(),
-        true,
-        this.statsToChange,
-        this.stages,
-      );
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        stats: this.statsToChange,
+        stages: this.stages,
+        selfTarget: true,
+      });
     }
   }
 }
@@ -2056,7 +2049,12 @@ export class PostVictoryStatStageChangeAbAttr extends PostVictoryAbAttr {
     }
 
     const stats = coerceArray(typeof this.stats === "function" ? this.stats(pokemon) : this.stats);
-    globalScene.phaseManager.unshiftNew("StatStageChangePhase", pokemon.getBattlerIndex(), true, stats, this.stages);
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+      battlerIndex: pokemon.getBattlerIndex(),
+      stats,
+      stages: this.stages,
+      selfTarget: true,
+    });
   }
 }
 
@@ -2116,7 +2114,12 @@ export class PostKnockOutStatStageChangeAbAttr extends PostKnockOutAbAttr {
   override apply({ pokemon, simulated }: PostKnockOutAbAttrParams): void {
     const stat = typeof this.stat === "function" ? this.stat(pokemon) : this.stat;
     if (!simulated) {
-      globalScene.phaseManager.unshiftNew("StatStageChangePhase", pokemon.getBattlerIndex(), true, [stat], this.stages);
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        stats: [stat],
+        stages: this.stages,
+        selfTarget: true,
+      });
     }
   }
 }
@@ -2199,13 +2202,12 @@ export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
 
   override apply({ pokemon, simulated, cancelled }: AbAttrParamsWithCancel): void {
     if (!simulated) {
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        pokemon.getBattlerIndex(),
-        false,
-        this.stats,
-        this.stages,
-      );
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        stats: this.stats,
+        stages: this.stages,
+        selfTarget: false,
+      });
     }
     cancelled.value = this.overwrites;
   }
@@ -2400,13 +2402,13 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
     if (this.selfTarget) {
       // we unshift the StatStageChangePhase to put it right after the showAbility and not at the end of the
       // phase list (which could be after CommandPhase for example)
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        pokemon.getBattlerIndex(),
-        true,
-        this.stats,
-        this.stages,
-      );
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        stats: this.stats,
+        stages: this.stages,
+        selfTarget: true,
+      });
+
       return;
     }
 
@@ -2422,13 +2424,12 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
         }
       }
       if (!cancelled.value) {
-        globalScene.phaseManager.unshiftNew(
-          "StatStageChangePhase",
-          opponent.getBattlerIndex(),
-          false,
-          this.stats,
-          this.stages,
-        );
+        globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+          battlerIndex: opponent.getBattlerIndex(),
+          stats: this.stats,
+          stages: this.stages,
+          selfTarget: false,
+        });
       }
     }
   }
@@ -2525,7 +2526,11 @@ export class DownloadAbAttr extends PostSummonAbAttr {
     }
 
     if (!simulated) {
-      globalScene.phaseManager.unshiftNew("StatStageChangePhase", pokemon.getBattlerIndex(), false, this.stats, 1);
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        stats: this.stats,
+        stages: 1,
+      });
     }
   }
 }
@@ -3082,18 +3087,16 @@ export class ReflectStatStageChangeAbAttr extends PreStatStageChangeAbAttr {
     }
     this.reflectedStat = stat;
     if (!simulated) {
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        source.getBattlerIndex(),
-        false,
-        [stat],
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: source.getBattlerIndex(),
+        stats: [stat],
         stages,
-        true,
-        false,
-        true,
-        null,
-        true,
-      );
+        selfTarget: false,
+        showMessage: true,
+        ignoreAbilities: false,
+        canBeCopied: true,
+        comingFromMirrorArmorUser: true,
+      });
     }
     cancelled.value = true;
   }
@@ -4271,11 +4274,21 @@ export class MoodyAbAttr extends PostTurnAbAttr {
       if (canRaise.length > 0) {
         const raisedStat = canRaise[pokemon.randBattleSeedInt(canRaise.length)];
         canLower = canLower.filter(s => s !== raisedStat);
-        globalScene.phaseManager.unshiftNew("StatStageChangePhase", pokemon.getBattlerIndex(), true, [raisedStat], 2);
+        globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+          battlerIndex: pokemon.getBattlerIndex(),
+          stats: [raisedStat],
+          stages: 2,
+          selfTarget: true,
+        });
       }
       if (canLower.length > 0) {
         const loweredStat = canLower[pokemon.randBattleSeedInt(canLower.length)];
-        globalScene.phaseManager.unshiftNew("StatStageChangePhase", pokemon.getBattlerIndex(), true, [loweredStat], -1);
+        globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+          battlerIndex: pokemon.getBattlerIndex(),
+          stats: [loweredStat],
+          stages: -1,
+          selfTarget: true,
+        });
       }
     }
   }
@@ -4293,7 +4306,12 @@ export class SpeedBoostAbAttr extends PostTurnAbAttr {
   }
 
   override apply({ pokemon }: AbAttrBaseParams): void {
-    globalScene.phaseManager.unshiftNew("StatStageChangePhase", pokemon.getBattlerIndex(), true, [Stat.SPD], 1);
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+      battlerIndex: pokemon.getBattlerIndex(),
+      stats: [Stat.SPD],
+      stages: 1,
+      selfTarget: true,
+    });
   }
 }
 
@@ -4582,16 +4600,15 @@ export interface StatStageChangeCopyAbAttrParams extends AbAttrBaseParams {
 export class StatStageChangeCopyAbAttr extends AbAttr {
   override apply({ pokemon, stats, numStages, simulated }: StatStageChangeCopyAbAttrParams): void {
     if (!simulated) {
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        pokemon.getBattlerIndex(),
-        true,
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
         stats,
-        numStages,
-        true,
-        false,
-        false,
-      );
+        stages: numStages,
+        selfTarget: true,
+        showMessage: true,
+        ignoreAbilities: false,
+        canBeCopied: false,
+      });
     }
   }
 }
@@ -5062,13 +5079,12 @@ export class FlinchStatStageChangeAbAttr extends FlinchEffectAbAttr {
 
   override apply({ simulated, pokemon }: AbAttrBaseParams): void {
     if (!simulated) {
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        pokemon.getBattlerIndex(),
-        true,
-        this.stats,
-        this.stages,
-      );
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        stats: this.stats,
+        stages: this.stages,
+        selfTarget: true,
+      });
     }
   }
 }
