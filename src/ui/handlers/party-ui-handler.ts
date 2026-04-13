@@ -1300,6 +1300,15 @@ export class PartyUiHandler extends MessageUiHandler {
       -19 - 16 * (this.options.length - 1 - this.optionsCursor),
     );
 
+    // Announce selected option to screen readers
+    const partyPokemon = globalScene.getPlayerParty()[this.cursor];
+    if (partyPokemon) {
+      const optionLabel = this.getOptionLabel(this.options[this.optionsCursor], partyPokemon);
+      if (optionLabel) {
+        AccessibilityManager.getInstance().announceMessage(optionLabel);
+      }
+    }
+
     return changed;
   }
 
@@ -1617,6 +1626,26 @@ export class PartyUiHandler extends MessageUiHandler {
     // Generic, these are applied to all Modes
     this.addCancelAndScrollOptions();
     this.updateOptionsWindow();
+  }
+
+  /**
+   * Get a human-readable label for a party option, used for screen reader announcements.
+   */
+  private getOptionLabel(option: PartyOption, pokemon: PlayerPokemon): string {
+    if (option === PartyOption.SCROLL_UP || option === PartyOption.SCROLL_DOWN) {
+      return "";
+    }
+    if (option >= PartyOption.MOVE_1 && option <= PartyOption.MOVE_4) {
+      const move = pokemon.moveset[option - PartyOption.MOVE_1];
+      return move ? move.getName() : "";
+    }
+    if (this.localizedOptions.includes(option)) {
+      return i18next.t(`partyUiHandler:${toCamelCase(PartyOption[option])}`);
+    }
+    if (option === PartyOption.ALL) {
+      return i18next.t("partyUiHandler:all");
+    }
+    return toTitleCase(PartyOption[option] ?? "");
   }
 
   private updateOptionsWindow(): void {
