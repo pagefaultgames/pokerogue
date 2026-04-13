@@ -6740,8 +6740,18 @@ export class CurseAttr extends MoveEffectAttr {
       target.addTag(BattlerTagType.CURSED, 0, move.id, user.id);
       return true;
     }
-    globalScene.phaseManager.unshiftNew("StatStageChangePhase", user.getBattlerIndex(), true, [Stat.ATK, Stat.DEF], 1);
-    globalScene.phaseManager.unshiftNew("StatStageChangePhase", user.getBattlerIndex(), true, [Stat.SPD], -1);
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+      battlerIndex: user.getBattlerIndex(),
+      stats: [Stat.ATK, Stat.DEF],
+      stages: 1,
+      selfTarget: true,
+    });
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+      battlerIndex: user.getBattlerIndex(),
+      stats: [Stat.SPD],
+      stages: -1,
+      selfTarget: true,
+    });
     return true;
   }
 }
