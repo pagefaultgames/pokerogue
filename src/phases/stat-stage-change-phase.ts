@@ -8,6 +8,7 @@ import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import type { BattlerIndex } from "#enums/battler-index";
 import { type BattleStat, getStatKey, getStatStageChangeDescriptionKey, Stat } from "#enums/stat";
+import { StatChangeSource } from "#enums/stat-change-source";
 import type { Pokemon } from "#field/pokemon";
 import { ResetNegativeStatStageModifier } from "#modifiers/modifier";
 import { PokemonPhase } from "#phases/pokemon-phase";
@@ -30,8 +31,7 @@ export interface StatStageChangePhaseOptions {
   ignoreAbilities?: boolean;
   canBeCopied?: boolean;
   onChange?: StatStageChangeCallback;
-  comingFromMirrorArmorUser?: boolean;
-  comingFromStickyWeb?: boolean;
+  sourceEffect?: StatChangeSource;
   /** If this phase was queued after splitting by another SSCP, avoid doing housekeeping again */
   processed?: boolean;
 }
@@ -43,7 +43,7 @@ export class StatStageChangePhase extends PokemonPhase {
   constructor(options: StatStageChangePhaseOptions) {
     super(options.battlerIndex);
 
-    this.options = options;
+    this.options = { sourceEffect: StatChangeSource.NORMAL, ...options };
   }
 
   start() {
@@ -121,7 +121,7 @@ export class StatStageChangePhase extends PokemonPhase {
    * @returns The opponent
    */
   private findOpponentPokemon(pokemon: Pokemon): Pokemon | undefined {
-    if (this.options.comingFromStickyWeb) {
+    if (this.options.sourceEffect === StatChangeSource.STICKY_WEB) {
       return this.findStickyWebSource(pokemon);
     }
     if (pokemon.isPlayer()) {
@@ -228,7 +228,7 @@ export class StatStageChangePhase extends PokemonPhase {
     // to non-octolock reasons for stat drops if the user has the Octolock tag
     if (
       opponentPokemon == null
-      || this.options.comingFromMirrorArmorUser
+      || this.options.sourceEffect === StatChangeSource.MIRROR_ARMOR
       || pokemon.findTag(t => t instanceof OctolockTag)
     ) {
       return;
