@@ -206,11 +206,14 @@ export function showLoginFormOverlay(onSuccess: () => void, onBack: () => void):
     pokerogueApi.account.login({ username, password }).then(error => {
       if (error) {
         submitBtn.disabled = false;
-        const readableError = error.includes("password doesn't match")
-          ? i18next.t("menu:unmatchingPassword")
-          : error.includes("account doesn't exist")
-            ? i18next.t("menu:accountNonExistent")
-            : error;
+        let readableError = error;
+        if (error.includes("password doesn't match")) {
+          readableError = i18next.t("menu:unmatchingPassword");
+        } else if (error.includes("account doesn't exist")) {
+          readableError = i18next.t("menu:accountNonExistent");
+        } else if (error.includes("Unknown")) {
+          readableError = "Could not connect to the server. The game API may not support this domain.";
+        }
         errorEl.textContent = readableError;
         AccessibilityManager.getInstance().announceMessage(`Error: ${readableError}`);
       } else {
@@ -300,9 +303,12 @@ export function showRegistrationFormOverlay(onSuccess: () => void, onBack: () =>
     pokerogueApi.account.register({ username, password }).then(registerError => {
       if (registerError) {
         submitBtn.disabled = false;
-        const readableError = registerError.includes("username")
-          ? i18next.t("menu:usernameAlreadyUsed")
-          : registerError;
+        let readableError = registerError;
+        if (registerError.includes("username")) {
+          readableError = i18next.t("menu:usernameAlreadyUsed");
+        } else if (registerError.includes("Unknown")) {
+          readableError = "Could not connect to the server. The game API may not support this domain.";
+        }
         errorEl.textContent = readableError;
         AccessibilityManager.getInstance().announceMessage(`Error: ${readableError}`);
         return;
