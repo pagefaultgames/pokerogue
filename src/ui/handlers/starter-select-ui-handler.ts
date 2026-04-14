@@ -3487,8 +3487,14 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         // Announce selected starter to screen readers
         const dexEntry: DexEntry | undefined = globalScene.gameData.dexData[species.speciesId];
         const cost = speciesStarterCosts[species.speciesId] ?? 0;
+        const type1 = PokemonType[species.type1];
+        const type2 = species.type2 !== null ? `/${PokemonType[species.type2]}` : "";
+        const ability = allAbilities[species.ability1]?.name ?? "";
+        const baseTotal = species.baseTotal;
+        const caughtText = dexEntry?.caughtAttr ? "" : ", Not caught";
         AccessibilityManager.getInstance().announceMessage(
-          `${species.name}, Cost ${cost}${dexEntry?.caughtAttr ? "" : ", Not caught"}`,
+          `${species.name}, ${type1}${type2} type, Ability: ${ability}, `
+            + `Base stat total: ${baseTotal}, Cost: ${cost}${caughtText}`,
         );
       }
     }

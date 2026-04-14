@@ -325,9 +325,27 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
       const power = pokemonMove.getMove().power;
       const accuracy = pokemonMove.getMove().accuracy;
       const category = MoveCategory[pokemonMove.getMove().category];
+
+      // Get effectiveness against opponents
+      let effectivenessText = "";
+      const opponents = pokemon.getOpponents();
+      if (opponents.length > 0 && pokemonMove.getMove().category !== MoveCategory.STATUS) {
+        const effectiveness = this.getEffectivenessText(pokemon, opponents[0], pokemonMove);
+        if (effectiveness === "0x") {
+          effectivenessText = ", No effect";
+        } else if (effectiveness === "0.25x" || effectiveness === "0.5x") {
+          effectivenessText = ", Not very effective";
+        } else if (effectiveness === "2x" || effectiveness === "4x") {
+          effectivenessText = ", Super effective";
+        }
+      }
+
+      const powerText = power >= 0 ? `${power} power` : "Status move";
+      const accuracyText = accuracy >= 0 ? `${accuracy}% accuracy` : "Can't miss";
+
       AccessibilityManager.getInstance().announceMessage(
-        `${pokemonMove.getName()}, ${moveType} type, ${category}, PP ${pp}/${maxPP}, `
-          + `Power ${power >= 0 ? power : "N/A"}, Accuracy ${accuracy >= 0 ? accuracy : "N/A"}`,
+        `${pokemonMove.getName()}, ${moveType} type, ${category}, `
+          + `${powerText}, ${accuracyText}, PP ${pp} of ${maxPP}${effectivenessText}`,
       );
     }
 
