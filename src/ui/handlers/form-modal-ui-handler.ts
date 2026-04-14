@@ -178,11 +178,15 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
       });
 
       // Create accessible HTML buttons for screen readers and Tab navigation
+      // Delay creation so subclass show() can override submitAction/cancelAction first
       this.removeA11yButtons();
-      const app = document.getElementById("app");
-      if (app) {
+      const savedButtonActions = [...buttonActions];
+      setTimeout(() => {
+        const app = document.getElementById("app");
+        if (!app) {
+          return;
+        }
         this.a11yButtonContainer = document.createElement("div");
-        this.a11yButtonContainer.className = "sr-only";
         this.a11yButtonContainer.setAttribute("role", "group");
         this.a11yButtonContainer.setAttribute("aria-label", "Form actions");
 
@@ -194,21 +198,22 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
           const btn = document.createElement("button");
           btn.textContent = label;
           btn.setAttribute("aria-label", label);
-          btn.style.cssText = "position:absolute;width:auto;height:auto;padding:4px 8px;clip:auto;overflow:visible;";
+          btn.style.cssText = "margin: 4px;";
           const index = i;
-          // Read actions at click time via arrow function capturing `this`
-          // because subclasses reassign submitAction/cancelAction after super.show()
           btn.addEventListener("click", () => {
+            // Try the current action properties first, fall back to original config actions
             if (index === 0) {
-              this.submitAction?.();
+              (this.submitAction ?? savedButtonActions[0])?.();
             } else if (index === 1) {
-              this.cancelAction?.();
+              (this.cancelAction ?? savedButtonActions[1])?.();
+            } else {
+              savedButtonActions[index]?.();
             }
           });
           this.a11yButtonContainer.appendChild(btn);
         }
         app.appendChild(this.a11yButtonContainer);
-      }
+      }, 100);
 
       // Announce form to screen readers
       const title = this.getModalTitle();
