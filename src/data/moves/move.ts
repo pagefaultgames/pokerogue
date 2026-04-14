@@ -10047,7 +10047,8 @@ export function initMoves() {
     new AttackMove(MoveId.IRON_TAIL, PokemonType.STEEL, MoveCategory.PHYSICAL, 100, 75, 15, 30, 0, 2) //
       .attr(StatStageChangeAttr, [Stat.DEF], -1),
     new AttackMove(MoveId.METAL_CLAW, PokemonType.STEEL, MoveCategory.PHYSICAL, 50, 95, 35, 10, 0, 2) //
-      .attr(StatStageChangeAttr, [Stat.ATK], 1, true),
+      .attr(StatStageChangeAttr, [Stat.ATK], 1, true)
+      .slicingMove(),
     new AttackMove(MoveId.VITAL_THROW, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 70, -1, 10, -1, -1, 2),
     new SelfStatusMove(MoveId.MORNING_SUN, PokemonType.NORMAL, -1, 5, -1, 0, 2) //
       .attr(PlantHealAttr)
@@ -10323,7 +10324,8 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.TOXIC)
       .bitingMove(),
     new AttackMove(MoveId.CRUSH_CLAW, PokemonType.NORMAL, MoveCategory.PHYSICAL, 75, 95, 10, 50, 0, 3) //
-      .attr(StatStageChangeAttr, [Stat.DEF], -1),
+      .attr(StatStageChangeAttr, [Stat.DEF], -1)
+      .slicingMove(),
     new AttackMove(MoveId.BLAST_BURN, PokemonType.FIRE, MoveCategory.SPECIAL, 150, 90, 5, -1, 0, 3) //
       .attr(RechargeAttr),
     new AttackMove(MoveId.HYDRO_CANNON, PokemonType.WATER, MoveCategory.SPECIAL, 150, 90, 5, -1, 0, 3) //
@@ -11246,9 +11248,7 @@ export function initMoves() {
       .windMove()
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_OTHERS),
-    new AttackMove(MoveId.FREEZE_DRY, PokemonType.ICE, MoveCategory.SPECIAL, 70, 100, 20, 10, 0, 6)
-      .attr(StatusEffectAttr, StatusEffect.FREEZE)
-      .attr(FreezeDryAttr),
+    new AttackMove(MoveId.FREEZE_DRY, PokemonType.ICE, MoveCategory.SPECIAL, 70, 100, 20, -1, 0, 6).attr(FreezeDryAttr),
     new AttackMove(MoveId.DISARMING_VOICE, PokemonType.FAIRY, MoveCategory.SPECIAL, 40, -1, 15, -1, 0, 6)
       .soundBased()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
