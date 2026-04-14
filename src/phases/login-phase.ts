@@ -99,7 +99,12 @@ export class LoginPhase extends Phase {
     ui.setMode(UiMode.LOGIN_OR_REGISTER, { buttonActions: [goToLoginButton, goToRegistrationButton] });
 
     // Show accessible HTML overlay for screen readers
-    showLoginOrRegisterOverlay(goToLoginButton, goToRegistrationButton);
+    const goToGuest = async () => {
+      ui.setMode(UiMode.LOADING, { buttonActions: [] });
+      await globalScene.gameData.loadSystem();
+      this.end();
+    };
+    showLoginOrRegisterOverlay(goToLoginButton, goToRegistrationButton, goToGuest);
   }
 
   private async checkUserInfo(): Promise<boolean> {

@@ -123,7 +123,11 @@ function createErrorEl(): HTMLDivElement {
 /**
  * Show the Login or Register choice overlay.
  */
-export function showLoginOrRegisterOverlay(goToLogin: () => void, goToRegister: () => void): void {
+export function showLoginOrRegisterOverlay(
+  goToLogin: () => void,
+  goToRegister: () => void,
+  goToGuest?: () => void,
+): void {
   const overlay = createOverlayContainer();
   const box = createFormBox("");
 
@@ -133,7 +137,10 @@ export function showLoginOrRegisterOverlay(goToLogin: () => void, goToRegister: 
   box.appendChild(title);
 
   const buttonContainer = document.createElement("div");
-  buttonContainer.style.cssText = "display: flex; justify-content: center; gap: 12px;";
+  buttonContainer.style.cssText = "display: flex; flex-direction: column; align-items: center; gap: 8px;";
+
+  const topRow = document.createElement("div");
+  topRow.style.cssText = "display: flex; gap: 12px;";
 
   const loginBtn = createButton(i18next.t("menu:login"), true);
   loginBtn.addEventListener("click", () => {
@@ -147,16 +154,34 @@ export function showLoginOrRegisterOverlay(goToLogin: () => void, goToRegister: 
     goToRegister();
   });
 
-  buttonContainer.appendChild(loginBtn);
-  buttonContainer.appendChild(registerBtn);
+  topRow.appendChild(loginBtn);
+  topRow.appendChild(registerBtn);
+  buttonContainer.appendChild(topRow);
+
+  if (goToGuest) {
+    const guestBtn = createButton("Play as Guest", false);
+    guestBtn.style.cssText += "width: 100%; margin-top: 8px;";
+    guestBtn.addEventListener("click", () => {
+      removeOverlay();
+      goToGuest();
+    });
+    buttonContainer.appendChild(guestBtn);
+
+    const note = document.createElement("p");
+    note.textContent = "Guest saves are stored in your browser only.";
+    note.style.cssText = "font-size: 11px; color: #999; margin: 4px 0 0 0; text-align: center;";
+    buttonContainer.appendChild(note);
+  }
+
   box.appendChild(buttonContainer);
   overlay.appendChild(box);
 
   // Focus the login button and announce
   setTimeout(() => {
     loginBtn.focus();
+    const guestText = goToGuest ? " Or Play as Guest." : "";
     AccessibilityManager.getInstance().announceMessage(
-      `PokéRogue. ${i18next.t("menu:login")} or ${i18next.t("menu:register")}. Tab to switch, Enter to select.`,
+      `PokéRogue. ${i18next.t("menu:login")}, ${i18next.t("menu:register")}, or Play as Guest. Tab to switch, Enter to select.${guestText}`,
     );
   }, 100);
 }
