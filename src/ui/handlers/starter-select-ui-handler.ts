@@ -3490,11 +3490,15 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         const type1 = PokemonType[species.type1];
         const type2 = species.type2 !== null ? `/${PokemonType[species.type2]}` : "";
         const ability = allAbilities[species.ability1]?.name ?? "";
-        const baseTotal = species.baseTotal;
+        const hiddenAbility =
+          species.abilityHidden !== species.ability1 ? allAbilities[species.abilityHidden]?.name : null;
+        const hiddenAbilityText = hiddenAbility ? `, Hidden: ${hiddenAbility}` : "";
+        const [hp, atk, def, spa, spd, spe] = species.baseStats;
         const caughtText = dexEntry?.caughtAttr ? "" : ", Not caught";
         AccessibilityManager.getInstance().announceMessage(
-          `${species.name}, ${type1}${type2} type, Ability: ${ability}, `
-            + `Base stat total: ${baseTotal}, Cost: ${cost}${caughtText}`,
+          `${species.name}, ${type1}${type2} type, Ability: ${ability}${hiddenAbilityText}, `
+            + `HP ${hp}, Attack ${atk}, Defense ${def}, Sp.Atk ${spa}, Sp.Def ${spd}, Speed ${spe}, `
+            + `Cost: ${cost}${caughtText}`,
         );
       }
     }

@@ -9,6 +9,7 @@ import { getEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { OptionSelectSettings } from "#mystery-encounters/encounter-phase-utils";
 import type { MysteryEncounterOption } from "#mystery-encounters/mystery-encounter-option";
 import type { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
+import { AccessibilityManager } from "#ui/accessibility-manager";
 import { PartyUiMode } from "#ui/party-ui-handler";
 import { addBBCodeTextObject, getBBCodeFrag } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
@@ -570,6 +571,13 @@ export class MysteryEncounterUiHandler extends UiHandler {
       // Hide dex progress if visible
       this.showHideDexProgress(false);
       return;
+    }
+
+    // Announce option to screen readers
+    const optionLabel = this.encounterOptions[cursor]?.dialogue?.buttonLabel;
+    if (optionLabel) {
+      const labelText = getEncounterText(optionLabel);
+      AccessibilityManager.getInstance().announceMessage(labelText?.replace(/\[\/?\w+(?:=[^\]]+)?\]/g, "") ?? "");
     }
 
     let text: string | null;
