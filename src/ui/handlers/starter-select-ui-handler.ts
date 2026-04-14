@@ -3501,9 +3501,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             + `HP ${hp}, Attack ${atk}, Defense ${def}, Sp.Atk ${spa}, Sp.Def ${spd}, Speed ${spe}, `
             + `Cost: ${cost}${caughtText}`,
         );
-
-        // Fetch and announce Pokedex flavor text (async, cached)
-        a11y.announcePokedexDescription(species.speciesId, species.name);
       }
     }
 

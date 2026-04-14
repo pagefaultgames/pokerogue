@@ -184,45 +184,6 @@ export class AccessibilityManager {
   }
 
   /**
-   * Fetch a Pokemon's Pokedex flavor text from PokeAPI and announce it.
-   * Results are cached so each species is only fetched once.
-   */
-  private flavorTextCache: Map<number, string> = new Map();
-
-  async announcePokedexDescription(speciesId: number, speciesName: string): Promise<void> {
-    if (!this.enabled) {
-      return;
-    }
-
-    // Check cache first
-    if (this.flavorTextCache.has(speciesId)) {
-      const cached = this.flavorTextCache.get(speciesId)!;
-      if (cached) {
-        this.announceMessage(`${speciesName}: ${cached}`);
-      }
-      return;
-    }
-
-    try {
-      const response = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${speciesId}`);
-      if (!response.ok) {
-        this.flavorTextCache.set(speciesId, "");
-        return;
-      }
-      const data = await response.json();
-      const entries = data.flavor_text_entries ?? [];
-      const englishEntry = entries.find((e: { language: { name: string } }) => e.language.name === "en");
-      const flavorText = englishEntry ? englishEntry.flavor_text.replace(/[\n\f\r]/g, " ") : "";
-      this.flavorTextCache.set(speciesId, flavorText);
-      if (flavorText) {
-        this.announceMessage(`${speciesName}: ${flavorText}`);
-      }
-    } catch {
-      this.flavorTextCache.set(speciesId, "");
-    }
-  }
-
-  /**
    * Strip BBCode formatting tags and action patterns from text.
    * Removes [color=...], [shadow=...], [/color], [/shadow] and @c{}, @d{}, @s{}, @f{} patterns.
    */

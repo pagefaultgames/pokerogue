@@ -2020,9 +2020,6 @@ export class PokedexUiHandler extends MessageUiHandler {
         const categoryText = category ? `, ${category}` : "";
         a11y.announceMessage(`${species.name}${categoryText}, ${type1}${type2} type, ${caught}`);
 
-        // Fetch and announce Pokedex flavor text (async, cached)
-        a11y.announcePokedexDescription(species.speciesId, species.name);
-
         return true;
       }
     }
