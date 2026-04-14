@@ -1,8 +1,7 @@
 import { globalScene } from "#app/global-scene";
-import { Button } from "#enums/buttons";
+import type { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
-import { AccessibilityManager } from "#ui/accessibility-manager";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
@@ -18,7 +17,6 @@ export abstract class ModalUiHandler extends UiHandler {
   protected buttonContainers: Phaser.GameObjects.Container[];
   protected buttonBgs: Phaser.GameObjects.NineSlice[];
   protected buttonLabels: Phaser.GameObjects.Text[];
-  protected modalConfig: ModalConfig | null = null;
 
   constructor(mode: UiMode | null = null) {
     super(mode);
@@ -128,22 +126,12 @@ export abstract class ModalUiHandler extends UiHandler {
       }
 
       const config = args[0] as ModalConfig;
-      this.modalConfig = config;
 
       this.updateContainer(config);
 
       this.modalContainer.setVisible(true);
 
       this.getUi().moveTo(this.modalContainer, this.getUi().length - 1);
-
-      // Set initial cursor and announce modal to screen readers
-      this.setCursor(0);
-      const a11y = AccessibilityManager.getInstance();
-      const title = this.getModalTitle(config);
-      const buttonNames = this.buttonLabels.map(l => l.text).join(", ");
-      a11y.announceMessage(
-        `${title || "Choose an option"}. ${buttonNames}. Left/Right to choose, Z or Enter to select.`,
-      );
 
       for (let a = 0; a < this.buttonBgs.length; a++) {
         if (a < this.buttonBgs.length) {
@@ -220,65 +208,8 @@ export abstract class ModalUiHandler extends UiHandler {
     });
   }
 
-  processInput(button: Button): boolean {
-    if (this.buttonBgs.length === 0) {
-      return false;
-    }
-
-    const visibleButtons = this.buttonContainers.filter(c => c.visible);
-    if (visibleButtons.length === 0) {
-      return false;
-    }
-
-    let success = false;
-    switch (button) {
-      case Button.LEFT:
-        if (this.cursor > 0) {
-          success = this.setCursor(this.cursor - 1);
-        }
-        break;
-      case Button.RIGHT:
-        if (this.cursor < visibleButtons.length - 1) {
-          success = this.setCursor(this.cursor + 1);
-        }
-        break;
-      case Button.ACTION: {
-        // Call the button action directly, bypassing the tween animation check
-        // that blocks pointerdown events during the modal fade-in
-        const buttonConfig = this.modalConfig;
-        if (buttonConfig?.buttonActions?.[this.cursor]) {
-          buttonConfig.buttonActions[this.cursor]();
-          success = true;
-        }
-        break;
-      }
-    }
-
-    if (success) {
-      this.getUi().playSelect();
-    }
-
-    return success;
-  }
-
-  override setCursor(cursor: number): boolean {
-    const changed = super.setCursor(cursor);
-
-    // Visually highlight the selected button
-    for (let i = 0; i < this.buttonBgs.length; i++) {
-      if (i === cursor) {
-        this.buttonBgs[i].setTint(0xbbbbbb);
-      } else {
-        this.buttonBgs[i].clearTint();
-      }
-    }
-
-    // Announce button to screen readers
-    if (this.buttonLabels[cursor]) {
-      AccessibilityManager.getInstance().announceMessage(this.buttonLabels[cursor].text);
-    }
-
-    return changed;
+  processInput(_button: Button): boolean {
+    return false;
   }
 
   clear() {
