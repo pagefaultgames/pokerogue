@@ -18,6 +18,7 @@ export abstract class ModalUiHandler extends UiHandler {
   protected buttonContainers: Phaser.GameObjects.Container[];
   protected buttonBgs: Phaser.GameObjects.NineSlice[];
   protected buttonLabels: Phaser.GameObjects.Text[];
+  protected modalConfig: ModalConfig | null = null;
 
   constructor(mode: UiMode | null = null) {
     super(mode);
@@ -127,6 +128,7 @@ export abstract class ModalUiHandler extends UiHandler {
       }
 
       const config = args[0] as ModalConfig;
+      this.modalConfig = config;
 
       this.updateContainer(config);
 
@@ -240,11 +242,16 @@ export abstract class ModalUiHandler extends UiHandler {
           success = this.setCursor(this.cursor + 1);
         }
         break;
-      case Button.ACTION:
-        // Trigger the button's pointerdown event
-        this.buttonBgs[this.cursor]?.emit("pointerdown");
-        success = true;
+      case Button.ACTION: {
+        // Call the button action directly, bypassing the tween animation check
+        // that blocks pointerdown events during the modal fade-in
+        const buttonConfig = this.modalConfig;
+        if (buttonConfig?.buttonActions?.[this.cursor]) {
+          buttonConfig.buttonActions[this.cursor]();
+          success = true;
+        }
         break;
+      }
     }
 
     if (success) {
