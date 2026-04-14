@@ -4,6 +4,7 @@ import { Phase } from "#app/phase";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { bypassLogin } from "#constants/app-constants";
 import { UiMode } from "#enums/ui-mode";
+import { showLoginFormOverlay, showLoginOrRegisterOverlay, showRegistrationFormOverlay } from "#ui/a11y-form-overlay";
 import { executeIf, sessionIdKey } from "#utils/common";
 import { getCookie, removeCookie } from "#utils/cookies";
 import i18next, { t } from "i18next";
@@ -96,6 +97,9 @@ export class LoginPhase extends Phase {
     globalScene.playSound("ui/menu_open");
 
     ui.setMode(UiMode.LOGIN_OR_REGISTER, { buttonActions: [goToLoginButton, goToRegistrationButton] });
+
+    // Show accessible HTML overlay for screen readers
+    showLoginOrRegisterOverlay(goToLoginButton, goToRegistrationButton);
   }
 
   private async checkUserInfo(): Promise<boolean> {
@@ -128,6 +132,9 @@ export class LoginPhase extends Phase {
     globalScene.playSound("ui/menu_open");
 
     ui.setMode(UiMode.LOGIN_FORM, { buttonActions: [loginButton, backButton] });
+
+    // Show accessible HTML login form for screen readers
+    showLoginFormOverlay(loginButton, backButton);
   }
 
   public goToRegister(): void {
@@ -148,5 +155,8 @@ export class LoginPhase extends Phase {
     globalScene.playSound("ui/menu_open");
 
     ui.setMode(UiMode.REGISTRATION_FORM, { buttonActions: [registerButton, backButton] });
+
+    // Show accessible HTML registration form for screen readers
+    showRegistrationFormOverlay(registerButton, backButton);
   }
 }
