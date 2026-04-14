@@ -1,8 +1,10 @@
 import { globalScene } from "#app/global-scene";
 import type { InputsController } from "#app/inputs-controller";
 import { Button } from "#enums/buttons";
+import { StatusEffect } from "#enums/status-effect";
 import { UiMode } from "#enums/ui-mode";
 import { Setting, SettingKeys, settingIndex } from "#system/settings";
+import { AccessibilityManager } from "#ui/accessibility-manager";
 import type { MessageUiHandler } from "#ui/message-ui-handler";
 import { PokedexPageUiHandler } from "#ui/pokedex-page-ui-handler";
 import { PokedexUiHandler } from "#ui/pokedex-ui-handler";
@@ -147,6 +149,32 @@ export class UiInputs {
     for (const p of globalScene.getField().filter(p => p?.isActive(true))) {
       p.toggleStats(pressed);
     }
+    // Announce HP/status for all active Pokémon on press. The visual flyout is purely graphical,
+    // so screen reader users have no way to read enemy HP without this.
+    if (pressed) {
+      this.announceBattleStatus();
+    }
+  }
+
+  /** Read the current HP / status / level of all active Pokémon (player and enemy) aloud. */
+  private announceBattleStatus(): void {
+    const active = globalScene.getField().filter(p => p?.isActive(true));
+    if (active.length === 0) {
+      return;
+    }
+    const parts: string[] = [];
+    // Enemies first so the user hears what matters most — the threat — at the start of the message.
+    const enemies = active.filter(p => p.isEnemy());
+    const players = active.filter(p => p.isPlayer());
+    for (const p of [...enemies, ...players]) {
+      const prefix = p.isEnemy() ? "Enemy" : "Your";
+      const maxHp = p.getMaxHp();
+      const pct = maxHp > 0 ? Math.round((p.hp / maxHp) * 100) : 0;
+      const statusName =
+        p.status && p.status.effect !== StatusEffect.NONE ? StatusEffect[p.status.effect].toLowerCase() : "healthy";
+      parts.push(`${prefix} ${p.name}, ${p.hp} of ${maxHp} HP, ${pct} percent, ${statusName}, level ${p.level}.`);
+    }
+    AccessibilityManager.getInstance().announceMessage(parts.join(" "));
   }
 
   buttonGoToFilter(button: Button): void {
