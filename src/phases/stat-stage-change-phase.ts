@@ -222,7 +222,7 @@ export class StatStageChangePhase extends PokemonPhase {
     globalScene.phaseManager.queueMessage(message);
 
     this.updateStatStages(pokemon, filteredStats, relLevel);
-    this.triggerPerStatReactionAbilities(pokemon, filteredStats, this.options.stages);
+    this.triggerReactionAbilities(pokemon, filteredStats, this.options.stages);
     this.checkWhiteHerb(pokemon);
 
     pokemon.updateInfo();
@@ -243,25 +243,19 @@ export class StatStageChangePhase extends PokemonPhase {
     }
   }
 
-  private triggerPerStatReactionAbilities(
-    pokemon: Pokemon,
-    filteredStats: readonly BattleStat[],
-    stages: number,
-  ): void {
-    for (const stat of filteredStats) {
-      if (stages > 0 && this.options.canBeCopied) {
-        for (const opponent of pokemon.getOpponentsGenerator()) {
-          applyAbAttrs("StatStageChangeCopyAbAttr", { pokemon: opponent, stats: [stat], numStages: stages });
-        }
+  private triggerReactionAbilities(pokemon: Pokemon, filteredStats: readonly BattleStat[], stages: number): void {
+    if (stages > 0 && this.options.canBeCopied) {
+      for (const opponent of pokemon.getOpponentsGenerator()) {
+        applyAbAttrs("StatStageChangeCopyAbAttr", { pokemon: opponent, stats: filteredStats, numStages: stages });
       }
-
-      applyAbAttrs("PostStatStageChangeAbAttr", {
-        pokemon,
-        stats: [stat],
-        stages: this.options.stages,
-        selfTarget: this.selfTarget ?? false,
-      });
     }
+
+    applyAbAttrs("PostStatStageChangeAbAttr", {
+      pokemon,
+      stats: filteredStats,
+      stages: this.options.stages,
+      selfTarget: this.selfTarget ?? false,
+    });
   }
 
   /** If this is the last stat change phase for the target, apply White Herb if held. */

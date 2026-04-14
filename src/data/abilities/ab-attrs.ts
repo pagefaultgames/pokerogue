@@ -52,7 +52,7 @@ import type {
   AbAttrString,
   PokemonAttackCondition,
   PokemonDefendCondition,
-  PokemonStatStageChangeCondition,
+  PokemonStatStageChangeFunc,
 } from "#types/ability-types";
 import type { Move, StatusEffectAttr } from "#types/move-types";
 import type { Closed, Exact, Mutable } from "#types/type-helpers";
@@ -1214,28 +1214,26 @@ export class PostStatStageChangeAbAttr extends AbAttr {
 }
 
 export class PostStatStageChangeStatStageChangeAbAttr extends PostStatStageChangeAbAttr {
-  private readonly condition: PokemonStatStageChangeCondition;
+  private readonly stagesFunc: PokemonStatStageChangeFunc;
   private readonly statsToChange: readonly BattleStat[];
-  private readonly stages: number;
 
-  constructor(condition: PokemonStatStageChangeCondition, statsToChange: BattleStat[], stages: number) {
+  constructor(stagesFunc: PokemonStatStageChangeFunc, statsToChange: BattleStat[]) {
     super(true);
 
-    this.condition = condition;
+    this.stagesFunc = stagesFunc;
     this.statsToChange = statsToChange;
-    this.stages = stages;
   }
 
   override canApply({ pokemon, stats, stages, selfTarget }: PostStatStageChangeAbAttrParams): boolean {
-    return this.condition(pokemon, stats, stages) && !selfTarget;
+    return !selfTarget && this.stagesFunc(pokemon, stats, stages) !== 0;
   }
 
-  override apply({ simulated, pokemon }: PostStatStageChangeAbAttrParams): void {
+  override apply({ simulated, pokemon, stats, stages }: PostStatStageChangeAbAttrParams): void {
     if (!simulated) {
       globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
         battlerIndex: pokemon.getBattlerIndex(),
         stats: this.statsToChange,
-        stages: this.stages,
+        stages: this.stagesFunc(pokemon, stats, stages),
         sourcePokemon: pokemon,
       });
     }

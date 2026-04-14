@@ -900,7 +900,11 @@ export function initAbilities() {
       .attr(PreventBerryUseAbAttr)
       .build(),
     new AbBuilder(AbilityId.DEFIANT, 5) //
-      .attr(PostStatStageChangeStatStageChangeAbAttr, (_target, _statsChanged, stages) => stages < 0, [Stat.ATK], 2)
+      .attr(
+        PostStatStageChangeStatStageChangeAbAttr,
+        (_target, statsChanged, stages) => (stages < 0 ? 2 * statsChanged.length : 0),
+        [Stat.ATK],
+      )
       .build(),
     new AbBuilder(AbilityId.DEFEATIST, 5) //
       .attr(StatMultiplierAbAttr, Stat.ATK, 0.5)
@@ -1170,7 +1174,11 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.COMPETITIVE, 6) //
-      .attr(PostStatStageChangeStatStageChangeAbAttr, (_target, _statsChanged, stages) => stages < 0, [Stat.SPATK], 2)
+      .attr(
+        PostStatStageChangeStatStageChangeAbAttr,
+        (_target, statsChanged, stages) => (stages < 0 ? 2 * statsChanged.length : 0),
+        [Stat.SPATK],
+      )
       .build(),
     new AbBuilder(AbilityId.STRONG_JAW, 6) //
       .attr(MovePowerBoostAbAttr, (_user, _target, move) => move.hasFlag(MoveFlags.BITING_MOVE), 1.5)
