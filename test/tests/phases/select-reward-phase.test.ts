@@ -266,7 +266,7 @@ describe("SelectRewardPhase", () => {
     const selectRewardPhase = new SelectRewardPhase(0, undefined, customRewards);
     scene.phaseManager.unshiftPhase(selectRewardPhase);
     game.move.select(MoveId.SPLASH);
-    await game.phaseInterceptor.run(SelectRewardPhase);
+    await game.phaseInterceptor.to("SelectRewardPhase");
 
     expect(scene.ui.getMode()).toBe(UiMode.REWARD_SELECT);
     const rewardSelectHandler = scene.ui.handlers.find(
