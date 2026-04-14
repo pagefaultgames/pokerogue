@@ -23,6 +23,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
   protected cancelAction: (() => void) | undefined;
   protected tween: Phaser.Tweens.Tween | undefined;
   protected formLabels: Phaser.GameObjects.Text[] = [];
+  private a11yButtonContainer: HTMLDivElement | null = null;
 
   /**
    * Get configuration for all fields that should be part of the modal
@@ -176,14 +177,47 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
         alpha: 1,
       });
 
+      // Create accessible HTML buttons for screen readers and Tab navigation
+      this.removeA11yButtons();
+      const app = document.getElementById("app");
+      if (app) {
+        this.a11yButtonContainer = document.createElement("div");
+        this.a11yButtonContainer.className = "sr-only";
+        this.a11yButtonContainer.setAttribute("role", "group");
+        this.a11yButtonContainer.setAttribute("aria-label", "Form actions");
+
+        for (let i = 0; i < this.buttonLabels.length; i++) {
+          const label = this.buttonLabels[i]?.text;
+          if (!label) {
+            continue;
+          }
+          const btn = document.createElement("button");
+          btn.textContent = label;
+          btn.setAttribute("aria-label", label);
+          btn.style.cssText = "position:absolute;width:auto;height:auto;padding:4px 8px;clip:auto;overflow:visible;";
+          const index = i;
+          btn.addEventListener("click", () => {
+            if (index === 0 && this.submitAction) {
+              this.submitAction();
+            } else if (index === 1 && this.cancelAction) {
+              this.cancelAction();
+            } else {
+              this.buttonBgs[index]?.emit("pointerdown");
+            }
+          });
+          this.a11yButtonContainer.appendChild(btn);
+        }
+        app.appendChild(this.a11yButtonContainer);
+      }
+
       // Announce form to screen readers
       const title = this.getModalTitle();
       const fieldLabels = this.getInputFieldConfigs()
         .map(f => f.label)
         .join(", ");
-      const buttons = this.buttonLabels.map(l => l.text).join(", ");
+      const buttonNames = this.buttonLabels.map(l => l.text).join(", ");
       AccessibilityManager.getInstance().announceMessage(
-        `${title || "Form"}. Fields: ${fieldLabels}. Buttons: ${buttons}. Tab between fields, Enter to submit.`,
+        `${title || "Form"}. Fields: ${fieldLabels}. Buttons: ${buttonNames}. Tab between fields, Tab to buttons, Enter to submit.`,
       );
 
       return true;
@@ -234,9 +268,17 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
     }
   }
 
+  private removeA11yButtons(): void {
+    if (this.a11yButtonContainer) {
+      this.a11yButtonContainer.remove();
+      this.a11yButtonContainer = null;
+    }
+  }
+
   public override clear(): void {
     super.clear();
     this.modalContainer.setVisible(false);
+    this.removeA11yButtons();
 
     for (const ic of this.inputContainers) {
       ic.setVisible(false).setActive(false);
