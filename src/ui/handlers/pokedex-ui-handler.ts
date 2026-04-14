@@ -2011,15 +2011,17 @@ export class PokedexUiHandler extends MessageUiHandler {
         this.setSpecies(species);
 
         // Announce pokemon to screen readers
+        const a11y = AccessibilityManager.getInstance();
         const dexEntry = globalScene.gameData.dexData[species.speciesId];
         const caught = dexEntry?.caughtAttr ? "Caught" : "Not caught";
         const type1 = PokemonType[species.type1];
         const type2 = species.type2 !== null ? `/${PokemonType[species.type2]}` : "";
         const category = species.category ?? "";
         const categoryText = category ? `, ${category}` : "";
-        AccessibilityManager.getInstance().announceMessage(
-          `${species.name}${categoryText}, ${type1}${type2} type, ${caught}`,
-        );
+        a11y.announceMessage(`${species.name}${categoryText}, ${type1}${type2} type, ${caught}`);
+
+        // Fetch and announce Pokedex flavor text (async, cached)
+        a11y.announcePokedexDescription(species.speciesId, species.name);
 
         return true;
       }

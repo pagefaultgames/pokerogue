@@ -3495,11 +3495,15 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         const hiddenAbilityText = hiddenAbility ? `, Hidden: ${hiddenAbility}` : "";
         const [hp, atk, def, spa, spd, spe] = species.baseStats;
         const caughtText = dexEntry?.caughtAttr ? "" : ", Not caught";
-        AccessibilityManager.getInstance().announceMessage(
+        const a11y = AccessibilityManager.getInstance();
+        a11y.announceMessage(
           `${species.name}, ${type1}${type2} type, Ability: ${ability}${hiddenAbilityText}, `
             + `HP ${hp}, Attack ${atk}, Defense ${def}, Sp.Atk ${spa}, Sp.Def ${spd}, Speed ${spe}, `
             + `Cost: ${cost}${caughtText}`,
         );
+
+        // Fetch and announce Pokedex flavor text (async, cached)
+        a11y.announcePokedexDescription(species.speciesId, species.name);
       }
     }
 
