@@ -2,7 +2,6 @@ import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { handleTutorial, Tutorial } from "#app/tutorial";
-import type { ArenaTag } from "#data/arena-tag";
 import { OctolockTag } from "#data/battler-tags";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -24,13 +23,14 @@ export type StatStageChangeCallback = (
 
 export interface StatStageChangePhaseOptions {
   battlerIndex: BattlerIndex | number;
-  selfTarget?: boolean;
   stats: readonly BattleStat[];
   stages: number;
+  sourcePokemon: Pokemon | undefined;
   showMessage?: boolean;
   ignoreAbilities?: boolean;
   canBeCopied?: boolean;
   onChange?: StatStageChangeCallback;
+  /** The Pokemon whose effect caused these stat changes */
   sourceEffect?: StatChangeSource;
   /** If this phase was queued after splitting by another SSCP, avoid doing housekeeping again */
   processed?: boolean;
@@ -39,34 +39,38 @@ export interface StatStageChangePhaseOptions {
 export class StatStageChangePhase extends PokemonPhase {
   public readonly phaseName = "StatStageChangePhase";
   private readonly options: StatStageChangePhaseOptions;
+  private readonly selfTarget: boolean;
 
   constructor(options: StatStageChangePhaseOptions) {
     super(options.battlerIndex);
 
     this.options = { sourceEffect: StatChangeSource.NORMAL, ...options };
+    this.selfTarget = options.sourcePokemon != null && options.sourcePokemon === this.getPokemon();
   }
 
   start() {
     const pokemon = this.getPokemon();
+    const opponent = this.selfTarget ? undefined : this.options.sourcePokemon;
+
     if (!pokemon.isActive(true)) {
       return this.end();
     }
 
-    const opponentPokemon = this.findOpponentPokemon(pokemon);
     let statsToChange: readonly BattleStat[];
     let relativeChange: number;
 
     if (this.options.processed) {
       statsToChange = this.options.stats;
-      relativeChange = this.getRelativeChanges(pokemon, statsToChange, this.options.stages)[0];
+      relativeChange = this.getRelativeChanges(pokemon, statsToChange)[0];
     } else {
       const stages = new ValueHolder(this.options.stages);
       if (!this.options.ignoreAbilities) {
         applyAbAttrs("StatStageChangeMultiplierAbAttr", { pokemon, numStages: stages });
       }
+      this.options.stages = stages.value;
 
       const filteredStats = this.options.stats.filter(stat => {
-        return !this.checkStatCancellation(pokemon, opponentPokemon, stat);
+        return !this.checkStatCancellation(pokemon, opponent, stat);
       });
 
       if (filteredStats.length === 0) {
@@ -74,7 +78,7 @@ export class StatStageChangePhase extends PokemonPhase {
         return;
       }
 
-      const relativeChanges = this.getRelativeChanges(pokemon, filteredStats, stages.value);
+      const relativeChanges = this.getRelativeChanges(pokemon, filteredStats);
 
       // Split stat changes into separate phases when the relative changes don't match
       // If split, continue running this phase with the first group instead of re-queuing
@@ -87,10 +91,10 @@ export class StatStageChangePhase extends PokemonPhase {
     const hasVisibleChanges = relativeChange !== 0;
     if (hasVisibleChanges && globalScene.moveAnimations) {
       this.playStatChangeAnimation(pokemon, relativeChange, () => {
-        this.applyStatChangesAndEnd(pokemon, statsToChange, this.options.stages, relativeChange);
+        this.applyStatChangesAndEnd(pokemon, statsToChange, relativeChange);
       });
     } else {
-      this.applyStatChangesAndEnd(pokemon, statsToChange, this.options.stages, relativeChange);
+      this.applyStatChangesAndEnd(pokemon, statsToChange, relativeChange);
     }
   }
 
@@ -114,52 +118,15 @@ export class StatStageChangePhase extends PokemonPhase {
   }
 
   /**
-   * Determine the opponent of the given pokemon:
-   * - If this phase was caused by Sticky Web, determined by {@linkcode findStickyWebSource}
-   * - Otherwise, it is the opposing field of the player, indexed by last(Enemy|Player)Involved
-   * @param pokemon - The pokemon whose opponent to find
-   * @returns The opponent
-   */
-  private findOpponentPokemon(pokemon: Pokemon): Pokemon | undefined {
-    if (this.options.sourceEffect === StatChangeSource.STICKY_WEB) {
-      return this.findStickyWebSource(pokemon);
-    }
-    if (pokemon.isPlayer()) {
-      return globalScene.getEnemyField()[globalScene.currentBattle.lastEnemyInvolved];
-    }
-    return globalScene.getPlayerField()[globalScene.currentBattle.lastPlayerInvolved];
-  }
-
-  /**
-   * Determine the source of Sticky Web through the corresponding tag
-   * @param pokemon - The Pokemon whose side to search on
-   * @returns The Pokemon which set Sticky Web, or undefined if there is no on-field source
-   */
-  private findStickyWebSource(pokemon: Pokemon): Pokemon | undefined {
-    const arenaSide = pokemon.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
-    const stickyTags = globalScene.arena.findTagsOnSide(
-      (t: ArenaTag) => t.tagType === ArenaTagType.STICKY_WEB,
-      arenaSide,
-    );
-
-    if (stickyTags.length === 0) {
-      return;
-    }
-
-    const sourceId = stickyTags[0].sourceId;
-    const searchField = pokemon.isPlayer() ? globalScene.getEnemyField() : globalScene.getPlayerField();
-    return searchField.find(e => e.id === sourceId);
-  }
-
-  /**
    * Compute the relative level for each stat stage change after clamping the result between -6 and 6.
    * @param pokemon - The Pokemon with potential stat changes
    * @param stats - The stats being changes
    * @param stages - The pre-clamp number of stages to change each stat
    * @returns A parallel array to `stats` holding the relative change for each stat
    */
-  private getRelativeChanges(pokemon: Pokemon, stats: readonly BattleStat[], stages: number): number[] {
+  private getRelativeChanges(pokemon: Pokemon, stats: readonly BattleStat[]): number[] {
     return stats.map(s => {
+      const stages = this.options.stages;
       const current = pokemon.getStatStage(s);
       const clamped = stages > 0 ? Math.min(current + stages, 6) : Math.max(current + stages, -6);
       return clamped - current;
@@ -171,11 +138,11 @@ export class StatStageChangePhase extends PokemonPhase {
    * @param pokemon - The Pokemon with potential stat changes
    * @param opponentPokemon - The opponent of the provided pokemon
    * @param stat - The stat to change
-   * @returns - Whether the stat should be cancelled
+   * @returns Whether the stat should be cancelled
    */
   private checkStatCancellation(pokemon: Pokemon, opponentPokemon: Pokemon | undefined, stat: BattleStat): boolean {
     // No reflection method currently exists which blocks positive or self-target changes
-    if (this.options.stages >= 0 || this.options.selfTarget) {
+    if (this.options.stages >= 0 || this.selfTarget) {
       return false;
     }
 
@@ -251,19 +218,14 @@ export class StatStageChangePhase extends PokemonPhase {
    * @param stages - The amount of stages to change for each stat, before clamping (used to i.e. determine if a stat change was positive or negative)
    * @param relLevel - The amount of stages to change for each stat, after clamping
    */
-  private applyStatChangesAndEnd(
-    pokemon: Pokemon,
-    filteredStats: readonly BattleStat[],
-    stages: number,
-    relLevel: number,
-  ): void {
+  private applyStatChangesAndEnd(pokemon: Pokemon, filteredStats: readonly BattleStat[], relLevel: number): void {
     if (this.options.showMessage) {
-      const message = this.buildStatStageChangeMessage(filteredStats, stages, relLevel);
+      const message = this.buildStatStageChangeMessage(filteredStats, this.options.stages, relLevel);
       globalScene.phaseManager.queueMessage(message);
     }
 
     this.updateStatStages(pokemon, filteredStats, relLevel);
-    this.triggerPerStatReactionAbilities(pokemon, filteredStats, stages);
+    this.triggerPerStatReactionAbilities(pokemon, filteredStats, this.options.stages);
     this.checkWhiteHerb(pokemon);
 
     pokemon.updateInfo();
@@ -300,7 +262,7 @@ export class StatStageChangePhase extends PokemonPhase {
         pokemon,
         stats: [stat],
         stages: this.options.stages,
-        selfTarget: this.options.selfTarget ?? false,
+        selfTarget: this.selfTarget ?? false,
       });
     }
   }
