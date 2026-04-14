@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import type { Button } from "#enums/buttons";
+import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
 import { AccessibilityManager } from "#ui/accessibility-manager";
@@ -134,11 +134,14 @@ export abstract class ModalUiHandler extends UiHandler {
 
       this.getUi().moveTo(this.modalContainer, this.getUi().length - 1);
 
-      // Announce modal title and buttons to screen readers
+      // Set initial cursor and announce modal to screen readers
+      this.setCursor(0);
       const a11y = AccessibilityManager.getInstance();
       const title = this.getModalTitle(config);
-      const buttons = this.buttonLabels.map(l => l.text).join(", ");
-      a11y.announceMessage(title ? `${title}. Options: ${buttons}` : buttons);
+      const buttonNames = this.buttonLabels.map(l => l.text).join(", ");
+      a11y.announceMessage(
+        `${title || "Choose an option"}. ${buttonNames}. Left/Right to choose, Z or Enter to select.`,
+      );
 
       for (let a = 0; a < this.buttonBgs.length; a++) {
         if (a < this.buttonBgs.length) {
@@ -215,8 +218,60 @@ export abstract class ModalUiHandler extends UiHandler {
     });
   }
 
-  processInput(_button: Button): boolean {
-    return false;
+  processInput(button: Button): boolean {
+    if (this.buttonBgs.length === 0) {
+      return false;
+    }
+
+    const visibleButtons = this.buttonContainers.filter(c => c.visible);
+    if (visibleButtons.length === 0) {
+      return false;
+    }
+
+    let success = false;
+    switch (button) {
+      case Button.LEFT:
+        if (this.cursor > 0) {
+          success = this.setCursor(this.cursor - 1);
+        }
+        break;
+      case Button.RIGHT:
+        if (this.cursor < visibleButtons.length - 1) {
+          success = this.setCursor(this.cursor + 1);
+        }
+        break;
+      case Button.ACTION:
+        // Trigger the button's pointerdown event
+        this.buttonBgs[this.cursor]?.emit("pointerdown");
+        success = true;
+        break;
+    }
+
+    if (success) {
+      this.getUi().playSelect();
+    }
+
+    return success;
+  }
+
+  override setCursor(cursor: number): boolean {
+    const changed = super.setCursor(cursor);
+
+    // Visually highlight the selected button
+    for (let i = 0; i < this.buttonBgs.length; i++) {
+      if (i === cursor) {
+        this.buttonBgs[i].setTint(0xbbbbbb);
+      } else {
+        this.buttonBgs[i].clearTint();
+      }
+    }
+
+    // Announce button to screen readers
+    if (this.buttonLabels[cursor]) {
+      AccessibilityManager.getInstance().announceMessage(this.buttonLabels[cursor].text);
+    }
+
+    return changed;
   }
 
   clear() {
