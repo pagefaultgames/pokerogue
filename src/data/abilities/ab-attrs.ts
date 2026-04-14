@@ -35,6 +35,7 @@ import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { BATTLE_STATS, type BattleStat, EFFECTIVE_STATS, getStatKey, Stat } from "#enums/stat";
+import { StatChangeSource } from "#enums/stat-change-source";
 import { StatusEffect } from "#enums/status-effect";
 import { SwitchType } from "#enums/switch-type";
 import { WeatherType } from "#enums/weather-type";
@@ -476,7 +477,7 @@ export class TypeImmunityStatStageChangeAbAttr extends TypeImmunityAbAttr {
         battlerIndex: pokemon.getBattlerIndex(),
         stats: [this.stat],
         stages: this.stages,
-        selfTarget: true,
+        sourcePokemon: pokemon,
       });
     }
   }
@@ -647,7 +648,7 @@ export class MoveImmunityStatStageChangeAbAttr extends MoveImmunityAbAttr {
       battlerIndex: params.pokemon.getBattlerIndex(),
       stats: [this.stat],
       stages: this.stages,
-      selfTarget: true,
+      sourcePokemon: params.pokemon,
     });
   }
 }
@@ -747,6 +748,7 @@ export class PostDefendStatStageChangeAbAttr extends PostDefendAbAttr {
           battlerIndex: other.getBattlerIndex(),
           stats: [this.stat],
           stages: this.stages,
+          sourcePokemon: pokemon,
         });
       }
     } else {
@@ -754,7 +756,7 @@ export class PostDefendStatStageChangeAbAttr extends PostDefendAbAttr {
         battlerIndex: (this.selfTarget ? pokemon : attacker).getBattlerIndex(),
         stats: [this.stat],
         stages: this.stages,
-        selfTarget: this.selfTarget,
+        sourcePokemon: pokemon,
       });
     }
   }
@@ -793,8 +795,7 @@ export class PostDefendHpGatedStatStageChangeAbAttr extends PostDefendAbAttr {
         battlerIndex: (this.selfTarget ? pokemon : opponent).getBattlerIndex(),
         stats: this.stats,
         stages: this.stages,
-        // todo should this.selfTarget be passed here instead?
-        selfTarget: true,
+        sourcePokemon: pokemon,
       });
     }
   }
@@ -1016,7 +1017,7 @@ export class PostReceiveCritStatStageChangeAbAttr extends AbAttr {
         battlerIndex: pokemon.getBattlerIndex(),
         stats: [this.stat],
         stages: this.stages,
-        selfTarget: true,
+        sourcePokemon: pokemon,
       });
     }
   }
@@ -1235,7 +1236,7 @@ export class PostStatStageChangeStatStageChangeAbAttr extends PostStatStageChang
         battlerIndex: pokemon.getBattlerIndex(),
         stats: this.statsToChange,
         stages: this.stages,
-        selfTarget: true,
+        sourcePokemon: pokemon,
       });
     }
   }
@@ -2053,7 +2054,7 @@ export class PostVictoryStatStageChangeAbAttr extends PostVictoryAbAttr {
       battlerIndex: pokemon.getBattlerIndex(),
       stats,
       stages: this.stages,
-      selfTarget: true,
+      sourcePokemon: pokemon,
     });
   }
 }
@@ -2118,7 +2119,7 @@ export class PostKnockOutStatStageChangeAbAttr extends PostKnockOutAbAttr {
         battlerIndex: pokemon.getBattlerIndex(),
         stats: [stat],
         stages: this.stages,
-        selfTarget: true,
+        sourcePokemon: pokemon,
       });
     }
   }
@@ -2206,7 +2207,7 @@ export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
         battlerIndex: pokemon.getBattlerIndex(),
         stats: this.stats,
         stages: this.stages,
-        selfTarget: false,
+        sourcePokemon: pokemon,
       });
     }
     cancelled.value = this.overwrites;
@@ -2406,7 +2407,7 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
         battlerIndex: pokemon.getBattlerIndex(),
         stats: this.stats,
         stages: this.stages,
-        selfTarget: true,
+        sourcePokemon: pokemon,
       });
 
       return;
@@ -2428,7 +2429,7 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
           battlerIndex: opponent.getBattlerIndex(),
           stats: this.stats,
           stages: this.stages,
-          selfTarget: false,
+          sourcePokemon: pokemon,
         });
       }
     }
@@ -2530,6 +2531,7 @@ export class DownloadAbAttr extends PostSummonAbAttr {
         battlerIndex: pokemon.getBattlerIndex(),
         stats: this.stats,
         stages: 1,
+        sourcePokemon: pokemon,
       });
     }
   }
@@ -3091,11 +3093,12 @@ export class ReflectStatStageChangeAbAttr extends PreStatStageChangeAbAttr {
         battlerIndex: source.getBattlerIndex(),
         stats: [stat],
         stages,
-        selfTarget: false,
+        // if necessary later, pass the ability user through here
+        sourcePokemon: undefined,
         showMessage: true,
         ignoreAbilities: false,
         canBeCopied: true,
-        comingFromMirrorArmorUser: true,
+        sourceEffect: StatChangeSource.MIRROR_ARMOR,
       });
     }
     cancelled.value = true;
@@ -4278,7 +4281,7 @@ export class MoodyAbAttr extends PostTurnAbAttr {
           battlerIndex: pokemon.getBattlerIndex(),
           stats: [raisedStat],
           stages: 2,
-          selfTarget: true,
+          sourcePokemon: pokemon,
         });
       }
       if (canLower.length > 0) {
@@ -4287,7 +4290,7 @@ export class MoodyAbAttr extends PostTurnAbAttr {
           battlerIndex: pokemon.getBattlerIndex(),
           stats: [loweredStat],
           stages: -1,
-          selfTarget: true,
+          sourcePokemon: pokemon,
         });
       }
     }
@@ -4310,7 +4313,7 @@ export class SpeedBoostAbAttr extends PostTurnAbAttr {
       battlerIndex: pokemon.getBattlerIndex(),
       stats: [Stat.SPD],
       stages: 1,
-      selfTarget: true,
+      sourcePokemon: pokemon,
     });
   }
 }
@@ -4604,7 +4607,7 @@ export class StatStageChangeCopyAbAttr extends AbAttr {
         battlerIndex: pokemon.getBattlerIndex(),
         stats,
         stages: numStages,
-        selfTarget: true,
+        sourcePokemon: pokemon,
         showMessage: true,
         ignoreAbilities: false,
         canBeCopied: false,
@@ -5083,7 +5086,7 @@ export class FlinchStatStageChangeAbAttr extends FlinchEffectAbAttr {
         battlerIndex: pokemon.getBattlerIndex(),
         stats: this.stats,
         stages: this.stages,
-        selfTarget: true,
+        sourcePokemon: pokemon,
       });
     }
   }

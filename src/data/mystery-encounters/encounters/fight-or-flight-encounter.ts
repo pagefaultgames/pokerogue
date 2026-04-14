@@ -81,7 +81,7 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder.
               battlerIndex: pokemon.getBattlerIndex(),
               stats: [randSeedInt(4, 1)],
               stages: 2,
-              selfTarget: true,
+              sourcePokemon: pokemon,
             });
           },
         },

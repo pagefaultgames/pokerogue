@@ -243,7 +243,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
               battlerIndex: pokemon.getBattlerIndex(),
               stats: statChangesForBattle,
               stages: 1,
-              selfTarget: true,
+              sourcePokemon: pokemon,
             });
           },
         },

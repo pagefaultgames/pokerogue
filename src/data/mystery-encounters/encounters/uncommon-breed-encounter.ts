@@ -107,7 +107,7 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
               battlerIndex: pokemon.getBattlerIndex(),
               stats: statChangesForBattle,
               stages: 1,
-              selfTarget: true,
+              sourcePokemon: pokemon,
             });
           },
         },

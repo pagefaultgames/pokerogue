@@ -7129,7 +7129,7 @@ export class EnemyPokemon extends Pokemon {
         battlerIndex: this.getBattlerIndex(),
         stats: [boostedStat],
         stages,
-        selfTarget: true,
+        sourcePokemon: this,
         showMessage: true,
         ignoreAbilities: true,
       });

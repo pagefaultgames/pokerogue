@@ -62,6 +62,7 @@ import { MoveId } from "#enums/move-id";
 import { MoveTarget } from "#enums/move-target";
 import { PokemonType } from "#enums/pokemon-type";
 import { Stat } from "#enums/stat";
+import { StatChangeSource } from "#enums/stat-change-source";
 import { StatusEffect } from "#enums/status-effect";
 import type { Arena } from "#field/arena";
 import type { Pokemon } from "#field/pokemon";
@@ -1071,9 +1072,10 @@ class StickyWebTag extends EntryHazardTag {
       battlerIndex: pokemon.getBattlerIndex(),
       stats: [Stat.SPD],
       stages: -1,
+      sourcePokemon: this.getSourcePokemon(),
       showMessage: true,
       canBeCopied: true,
-      comingFromStickyWeb: true,
+      sourceEffect: StatChangeSource.STICKY_WEB,
     });
     return true;
   }
@@ -1285,8 +1287,8 @@ class TailwindTag extends SerializableArenaTag {
           battlerIndex: pokemon.getBattlerIndex(),
           stats: [Stat.ATK],
           stages: 1,
+          sourcePokemon: pokemon,
           showMessage: true,
-          selfTarget: true,
         });
         globalScene.phaseManager.queueAbilityDisplay(pokemon, false, false);
       }

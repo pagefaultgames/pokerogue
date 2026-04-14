@@ -95,7 +95,7 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
               battlerIndex: pokemon.getBattlerIndex(),
               stats: [Stat.SPDEF, Stat.SPD],
               stages: 1,
-              selfTarget: true,
+              sourcePokemon: pokemon,
             });
           },
         },
@@ -109,7 +109,7 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
               battlerIndex: pokemon.getBattlerIndex(),
               stats: [Stat.SPDEF, Stat.SPD],
               stages: 1,
-              selfTarget: true,
+              sourcePokemon: pokemon,
             });
           },
         },

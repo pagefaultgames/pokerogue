@@ -1493,6 +1493,7 @@ export class OctolockTag extends TrappedTag {
         battlerIndex: pokemon.getBattlerIndex(),
         stats: [Stat.DEF, Stat.SPDEF],
         stages: -1,
+        sourcePokemon: this.getSourcePokemon(),
       });
       return true;
     }
@@ -1961,6 +1962,7 @@ export class ContactStatStageChangeProtectedTag extends DamageProtectedTag {
       battlerIndex: attacker.getBattlerIndex(),
       stats: [this.#stat],
       stages: this.#levels,
+      sourcePokemon: this.getSourcePokemon(),
     });
   }
 }
@@ -2675,7 +2677,7 @@ export class CommandedTag extends SerializableBattlerTag {
       battlerIndex: pokemon.getBattlerIndex(),
       stats: [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD],
       stages: 2,
-      selfTarget: true,
+      sourcePokemon: pokemon,
     });
   }
 
@@ -2764,7 +2766,7 @@ export class StockpilingTag extends SerializableBattlerTag {
         battlerIndex: pokemon.getBattlerIndex(),
         stats: [Stat.SPDEF, Stat.DEF],
         stages: 1,
-        selfTarget: true,
+        sourcePokemon: pokemon,
         showMessage: true,
         canBeCopied: true,
         onChange: this.onStatStagesChanged.bind(this),
@@ -2784,12 +2786,24 @@ export class StockpilingTag extends SerializableBattlerTag {
     const defChange = this.statChangeCounts[Stat.DEF];
     const spDefChange = this.statChangeCounts[Stat.SPDEF];
 
+    if (defChange > 0 && defChange === spDefChange) {
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        stats: [Stat.DEF, Stat.SPDEF],
+        stages: -defChange,
+        sourcePokemon: pokemon,
+        showMessage: true,
+        canBeCopied: true,
+      });
+      return;
+    }
+
     if (defChange) {
       globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
         battlerIndex: pokemon.getBattlerIndex(),
         stats: [Stat.DEF],
         stages: -defChange,
-        selfTarget: true,
+        sourcePokemon: pokemon,
         showMessage: true,
         canBeCopied: true,
       });
@@ -2800,7 +2814,7 @@ export class StockpilingTag extends SerializableBattlerTag {
         battlerIndex: pokemon.getBattlerIndex(),
         stats: [Stat.SPDEF],
         stages: -defChange,
-        selfTarget: true,
+        sourcePokemon: pokemon,
         showMessage: true,
         canBeCopied: true,
       });
@@ -2846,6 +2860,7 @@ export class GulpMissileTag extends SerializableBattlerTag {
           battlerIndex: attacker.getBattlerIndex(),
           stats: [Stat.DEF],
           stages: -1,
+          sourcePokemon: pokemon,
         });
       } else {
         attacker.trySetStatus(StatusEffect.PARALYSIS, pokemon);
@@ -3484,7 +3499,7 @@ export class SyrupBombTag extends SerializableBattlerTag {
       battlerIndex: pokemon.getBattlerIndex(),
       stats: [Stat.SPD],
       stages: -1,
-      selfTarget: true,
+      sourcePokemon: pokemon,
       showMessage: true,
       canBeCopied: true,
     });

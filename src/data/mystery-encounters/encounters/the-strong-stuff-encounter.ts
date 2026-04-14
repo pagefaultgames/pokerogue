@@ -121,7 +121,7 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
               battlerIndex: pokemon.getBattlerIndex(),
               stats: [Stat.DEF, Stat.SPDEF],
               stages: 1,
-              selfTarget: true,
+              sourcePokemon: pokemon,
             });
           },
         },

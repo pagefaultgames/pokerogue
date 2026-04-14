@@ -109,7 +109,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
             battlerIndex: consumer.getBattlerIndex(),
             stats: [stat],
             stages: statStages.value,
-            selfTarget: true,
+            sourcePokemon: consumer,
           });
         }
         break;
@@ -129,7 +129,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
             battlerIndex: consumer.getBattlerIndex(),
             stats: [randStat],
             stages: stages.value,
-            selfTarget: true,
+            sourcePokemon: consumer,
           });
         }
         break;

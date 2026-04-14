@@ -3970,7 +3970,7 @@ export class StatStageChangeAttr extends MoveEffectAttr {
         battlerIndex: (this.selfTarget ? user : target).getBattlerIndex(),
         stats: this.stats,
         stages,
-        selfTarget: this.selfTarget,
+        sourcePokemon: user,
         showMessage: this.showMessage,
       });
 
@@ -4217,7 +4217,7 @@ export class AcupressureStatStageChangeAttr extends MoveEffectAttr {
         battlerIndex: target.getBattlerIndex(),
         stats: boostStat,
         stages: 2,
-        selfTarget: this.selfTarget,
+        sourcePokemon: user,
       });
 
       return true;
@@ -4304,7 +4304,7 @@ export class OrderUpStatBoostAttr extends MoveEffectAttr {
       battlerIndex: user.getBattlerIndex(),
       stats: [increasedStat],
       stages: 1,
-      selfTarget: this.selfTarget,
+      sourcePokemon: user,
     });
 
     return true;
@@ -5365,7 +5365,7 @@ export class SpectralThiefAttr extends StatChangeBeforeDmgCalcAttr {
           battlerIndex: user.getBattlerIndex(),
           stats: [s],
           stages: availableToSteal,
-          selfTarget: this.selfTarget,
+          sourcePokemon: user,
         });
 
         target.setStatStage(s, statStageValueTarget - availableToSteal);
@@ -6744,13 +6744,13 @@ export class CurseAttr extends MoveEffectAttr {
       battlerIndex: user.getBattlerIndex(),
       stats: [Stat.ATK, Stat.DEF],
       stages: 1,
-      selfTarget: true,
+      sourcePokemon: user,
     });
     globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
       battlerIndex: user.getBattlerIndex(),
       stats: [Stat.SPD],
       stages: -1,
-      selfTarget: true,
+      sourcePokemon: user,
     });
     return true;
   }

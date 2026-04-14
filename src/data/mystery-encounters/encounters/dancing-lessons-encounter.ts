@@ -179,7 +179,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
               battlerIndex: pokemon.getBattlerIndex(),
               stats: [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF],
               stages: 1,
-              selfTarget: true,
+              sourcePokemon: pokemon,
             });
           },
         },
