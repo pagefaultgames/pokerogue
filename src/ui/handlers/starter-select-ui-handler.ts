@@ -1628,6 +1628,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       if (this.filterMode && this.filterBar.openDropDown) {
         // CANCEL with a filter menu open > close it
         this.filterBar.toggleDropDown(this.filterBarCursor);
+        const filterLabel = this.filterBar.getLabelText(this.filterBarCursor);
+        AccessibilityManager.getInstance().announceMessage(`${filterLabel} options closed.`);
         success = true;
       } else if (
         this.filterMode
@@ -1728,6 +1730,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         case Button.UP:
           if (this.filterBar.openDropDown) {
             success = this.filterBar.decDropDownCursor();
+            const optText = this.filterBar.getCurrentDropDownOptionText();
+            if (optText) {
+              AccessibilityManager.getInstance().announceMessage(optText);
+            }
           } else if (this.filterBarCursor === this.filterBar.numFilters - 1) {
             // UP from the last filter, move to start button
             this.setFilterMode(false);
@@ -1756,6 +1762,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         case Button.DOWN:
           if (this.filterBar.openDropDown) {
             success = this.filterBar.incDropDownCursor();
+            const optText = this.filterBar.getCurrentDropDownOptionText();
+            if (optText) {
+              AccessibilityManager.getInstance().announceMessage(optText);
+            }
           } else if (this.filterBarCursor === this.filterBar.numFilters - 1) {
             // DOWN from the last filter, move to random selection label
             this.setFilterMode(false);
@@ -1776,8 +1786,17 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         case Button.ACTION:
           if (this.filterBar.openDropDown) {
             this.filterBar.toggleOptionState();
+            const optText = this.filterBar.getCurrentDropDownOptionText();
+            if (optText) {
+              AccessibilityManager.getInstance().announceMessage(`Toggled ${optText}`);
+            }
           } else {
             this.filterBar.toggleDropDown(this.filterBarCursor);
+            const filterLabel = this.filterBar.getLabelText(this.filterBarCursor);
+            const optText = this.filterBar.getCurrentDropDownOptionText();
+            AccessibilityManager.getInstance().announceMessage(
+              `${filterLabel} options opened.${optText ? ` ${optText}.` : ""} Up/Down to browse, Z to toggle, X to close.`,
+            );
           }
           success = true;
           break;
@@ -3463,6 +3482,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.filterBarCursor = cursor;
 
       this.filterBar.setCursor(cursor);
+
+      if (changed) {
+        const label = this.filterBar.getLabelText(cursor);
+        if (label) {
+          AccessibilityManager.getInstance().announceMessage(`${label} filter`);
+        }
+      }
     } else {
       cursor = Math.max(Math.min(this.filteredStarterContainers.length - 1, cursor), 0);
       changed = super.setCursor(cursor);
@@ -3517,6 +3543,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       if (filterMode) {
         this.setSpecies(null);
         this.updateInstructions();
+        const label = this.filterBar.getLabelText(this.filterBarCursor);
+        AccessibilityManager.getInstance().announceContext(
+          `Filter bar. Left/Right to switch filters, Z or Enter to open, Up/Down to move between filters and Pokémon list.${label ? ` ${label} filter.` : ""}`,
+        );
       }
 
       return true;

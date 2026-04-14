@@ -1,4 +1,4 @@
-import { updateUserInfo } from "#app/account";
+import { enableGuestMode, updateUserInfo } from "#app/account";
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 import { handleTutorial, Tutorial } from "#app/tutorial";
@@ -100,6 +100,9 @@ export class LoginPhase extends Phase {
 
     // Show accessible HTML overlay for screen readers
     const goToGuest = async () => {
+      // Mark this session as offline so saveAll/loadSystem use localStorage and never hit the server.
+      // Without this, the first-wave server save fails (CORS on GH Pages) and the game resets to login.
+      enableGuestMode();
       ui.setMode(UiMode.LOADING, { buttonActions: [] });
       await globalScene.gameData.loadSystem();
       this.end();

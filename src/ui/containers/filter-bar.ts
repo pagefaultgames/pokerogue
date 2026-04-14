@@ -92,6 +92,32 @@ export class FilterBar extends Phaser.GameObjects.Container {
   }
 
   /**
+   * Get the display label text of a filter at a given index (used for screen reader announcements)
+   * @param index the filter index
+   * @returns the label text, or an empty string if out of range
+   */
+  public getLabelText(index: number): string {
+    return this.labels[index]?.text ?? "";
+  }
+
+  /**
+   * Get the currently-highlighted dropdown option text (used for screen reader announcements
+   * while navigating within an open dropdown)
+   * @returns the option text, or null if no dropdown is open or cursor is invalid
+   */
+  public getCurrentDropDownOptionText(): string | null {
+    if (this.lastCursor < 0 || !this.openDropDown) {
+      return null;
+    }
+    const dd = this.dropDowns[this.lastCursor];
+    if (!dd) {
+      return null;
+    }
+    const opt = dd.options?.[dd.cursor];
+    return opt?.text?.text ?? null;
+  }
+
+  /**
    * Highlight the labels of the FilterBar if the filters are different from their default values
    */
   updateFilterLabels(): void {
