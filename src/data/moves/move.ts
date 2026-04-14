@@ -11248,7 +11248,8 @@ export function initMoves() {
       .windMove()
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_OTHERS),
-    new AttackMove(MoveId.FREEZE_DRY, PokemonType.ICE, MoveCategory.SPECIAL, 70, 100, 20, -1, 0, 6).attr(FreezeDryAttr),
+    new AttackMove(MoveId.FREEZE_DRY, PokemonType.ICE, MoveCategory.SPECIAL, 70, 100, 20, -1, 0, 6) //
+      .attr(FreezeDryAttr),
     new AttackMove(MoveId.DISARMING_VOICE, PokemonType.FAIRY, MoveCategory.SPECIAL, 40, -1, 15, -1, 0, 6)
       .soundBased()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
