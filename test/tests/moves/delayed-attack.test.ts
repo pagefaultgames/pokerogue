@@ -362,7 +362,7 @@ describe("Moves - Delayed Attacks", () => {
   });
 
   it.todo("should not apply the user's held items when dealing damage if the user is inactive", async () => {
-    game.override.startingHeldItems([{ name: "ATTACK_TYPE_BOOSTER", count: 99, type: PokemonType.PSYCHIC }]);
+    game.override.startingHeldItems([{ entry: HeldItemId.TWISTED_SPOON, count: 99 }]);
     await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
 
     game.move.use(MoveId.FUTURE_SIGHT);
@@ -375,7 +375,7 @@ describe("Moves - Delayed Attacks", () => {
     game.doSwitchPokemon(1);
 
     const powerMock = vi.spyOn(allMoves[MoveId.FUTURE_SIGHT], "calculateBattlePower");
-    const typeBoostSpy = vi.spyOn(allHeldItems[HeldItemId.SILK_SCARF], "getAttackTypeBoost");
+    const typeBoostSpy = vi.spyOn(allHeldItems[HeldItemId.SILK_SCARF], "apply");
 
     await game.toNextTurn();
 
@@ -384,7 +384,7 @@ describe("Moves - Delayed Attacks", () => {
   });
 
   it("should not crash when catching & releasing a Pokemon on the same turn its delayed attack expires", async () => {
-    game.override.startingTrainerItems([{ name: "MASTER_BALL", count: 1 }]);
+    game.override.startingPokeballs({ [PokeballType.MASTER_BALL]: 1 });
     await game.classicMode.startBattle(
       SpeciesId.FEEBAS,
       SpeciesId.FEEBAS,

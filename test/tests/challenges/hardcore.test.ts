@@ -3,6 +3,7 @@ import { AbilityId } from "#enums/ability-id";
 import { Button } from "#enums/buttons";
 import { Challenges } from "#enums/challenges";
 import { MoveId } from "#enums/move-id";
+import { RewardId } from "#enums/reward-id";
 import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
@@ -87,7 +88,7 @@ describe("Challenges - Hardcore", () => {
 
   // TODO: Couldn't figure out how to select party Pokémon
   it.skip("prevents fusion with a fainted Pokémon", async () => {
-    game.override.itemRewards([{ name: "DNA_SPLICERS" }]);
+    game.override.itemRewards([RewardId.DNA_SPLICERS]);
     await game.challengeMode.startBattle(SpeciesId.NUZLEAF, SpeciesId.WHISMUR);
 
     const faintedPokemon = game.scene.getPlayerParty()[1];
@@ -124,7 +125,7 @@ describe("Challenges - Hardcore", () => {
 
   // TODO: Couldn't figure out how to select party Pokémon
   it.skip("prevents fainted Pokémon from being revived", async () => {
-    game.override.itemRewards([{ name: "MAX_REVIVE" }]);
+    game.override.itemRewards([RewardId.MAX_REVIVE]);
     await game.challengeMode.startBattle(SpeciesId.NUZLEAF, SpeciesId.WHISMUR);
 
     const faintedPokemon = game.scene.getPlayerParty()[1];

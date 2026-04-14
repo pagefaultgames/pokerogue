@@ -24,6 +24,7 @@ import { GameManagerHelper } from "#test/helpers/game-manager-helper";
 import type { MoveHelper } from "#test/helpers/move-helper";
 import { getEnumStr, stringifyEnumArray } from "#test/utils/string-utils";
 import type { HeldItemConfiguration } from "#types/held-item-data-types";
+import type { RewardSpecs } from "#types/rewards";
 import type { TrainerItemConfiguration } from "#types/trainer-item-data-types";
 import { coerceArray } from "#utils/array";
 import { shiftCharCodes } from "#utils/common";
@@ -154,7 +155,7 @@ export class OverridesHelper extends GameManagerHelper {
    */
   public startingPokeballs(pokeballs: PokeballCounts): this {
     vi.spyOn(Overrides, "POKEBALL_OVERRIDE", "get").mockReturnValue({ active: true, pokeballs });
-    this.log("Player Pokemon starting held items set to:", { active: true, pokeballs });
+    this.log("Player starting pokeball counts set to:", { active: true, pokeballs });
     return this;
   }
 
@@ -217,17 +218,6 @@ export class OverridesHelper extends GameManagerHelper {
       .map(([speciesId, formIndex]) => `${SpeciesId[speciesId]}=${formIndex}`)
       .join(", ");
     this.log(`Player Pokemon form set to: ${formsStr}!`);
-    return this;
-  }
-
-  /**
-   * Override the player's starting modifiers
-   * @param modifiers - The modifiers to set
-   * @returns `this`
-   */
-  public startingModifier(modifiers: ModifierOverride[]): this {
-    vi.spyOn(Overrides, "STARTING_MODIFIER_OVERRIDE", "get").mockReturnValue(modifiers);
-    this.log(`Player starting modifiers set to: ${modifiers}`);
     return this;
   }
 
@@ -654,7 +644,7 @@ export class OverridesHelper extends GameManagerHelper {
    * @param items the items to hold
    * @returns `this`
    */
-  public enemyHeldItems(items: ModifierOverride[]): this {
+  public enemyHeldItems(items: HeldItemConfiguration): this {
     vi.spyOn(Overrides, "ENEMY_HELD_ITEMS_OVERRIDE", "get").mockReturnValue(items);
     this.log("Enemy Pokemon held items set to:", items);
     return this;
@@ -676,8 +666,8 @@ export class OverridesHelper extends GameManagerHelper {
    * @param items - The items to be rolled
    * @returns `this`
    */
-  public itemRewards(items: ModifierOverride[]): this {
-    vi.spyOn(Overrides, "ITEM_REWARD_OVERRIDE", "get").mockReturnValue(items);
+  public itemRewards(items: RewardSpecs[]): this {
+    vi.spyOn(Overrides, "REWARD_OVERRIDE", "get").mockReturnValue(items);
     this.log("Item rewards set to:", items);
     return this;
   }
