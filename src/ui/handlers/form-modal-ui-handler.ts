@@ -196,13 +196,13 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
           btn.setAttribute("aria-label", label);
           btn.style.cssText = "position:absolute;width:auto;height:auto;padding:4px 8px;clip:auto;overflow:visible;";
           const index = i;
+          // Read actions at click time via arrow function capturing `this`
+          // because subclasses reassign submitAction/cancelAction after super.show()
           btn.addEventListener("click", () => {
-            if (index === 0 && this.submitAction) {
-              this.submitAction();
-            } else if (index === 1 && this.cancelAction) {
-              this.cancelAction();
-            } else {
-              this.buttonBgs[index]?.emit("pointerdown");
+            if (index === 0) {
+              this.submitAction?.();
+            } else if (index === 1) {
+              this.cancelAction?.();
             }
           });
           this.a11yButtonContainer.appendChild(btn);
