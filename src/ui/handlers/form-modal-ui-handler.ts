@@ -116,6 +116,14 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
       if (inputElement) {
         inputElement.setAttribute("aria-label", config.label);
         inputElement.setAttribute("placeholder", config.label);
+
+        // Allow Enter key in input fields to trigger submit
+        inputElement.addEventListener("keydown", (e: KeyboardEvent) => {
+          if (e.key === "Enter" && this.submitAction) {
+            e.preventDefault();
+            this.submitAction();
+          }
+        });
       }
     }
   }
@@ -190,7 +198,8 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
       return true;
     }
 
-    return false;
+    // Delegate to parent for arrow key navigation between buttons
+    return super.processInput(button);
   }
 
   public sanitizeInputs(): void {
