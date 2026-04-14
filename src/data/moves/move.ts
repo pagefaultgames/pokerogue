@@ -3906,8 +3906,6 @@ export class AwaitCombinedPledgeAttr extends OverrideMoveEffectAttr {
 interface StatStageChangeAttrOptions extends MoveEffectAttrOptions {
   /** If defined, needs to be met in order for the stat change to apply */
   condition?: MoveConditionFunc;
-  /** `true` to display a message */
-  showMessage?: boolean;
 }
 
 /**
@@ -3943,14 +3941,6 @@ export class StatStageChangeAttr extends MoveEffectAttr {
   }
 
   /**
-   * `true` to display a message for the stat change.
-   * @defaultValue `true`
-   */
-  private get showMessage() {
-    return this.options?.showMessage ?? true;
-  }
-
-  /**
    * Attempts to change stats of the user or target (depending on value of selfTarget) if conditions are met
    * @param user {@linkcode Pokemon} the user of the move
    * @param target {@linkcode Pokemon} the target of the move
@@ -3971,7 +3961,6 @@ export class StatStageChangeAttr extends MoveEffectAttr {
         stats: this.stats,
         stages,
         sourcePokemon: user,
-        showMessage: this.showMessage,
       });
 
       return true;

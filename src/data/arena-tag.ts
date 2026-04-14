@@ -1073,7 +1073,6 @@ class StickyWebTag extends EntryHazardTag {
       stats: [Stat.SPD],
       stages: -1,
       sourcePokemon: this.getSourcePokemon(),
-      showMessage: true,
       canBeCopied: true,
       sourceEffect: StatChangeSource.STICKY_WEB,
     });
@@ -1288,7 +1287,6 @@ class TailwindTag extends SerializableArenaTag {
           stats: [Stat.ATK],
           stages: 1,
           sourcePokemon: pokemon,
-          showMessage: true,
         });
         globalScene.phaseManager.queueAbilityDisplay(pokemon, false, false);
       }

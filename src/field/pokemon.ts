@@ -7130,7 +7130,6 @@ export class EnemyPokemon extends Pokemon {
         stats: [boostedStat],
         stages,
         sourcePokemon: this,
-        showMessage: true,
         ignoreAbilities: true,
       });
     }

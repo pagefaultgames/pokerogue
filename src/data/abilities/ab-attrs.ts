@@ -3095,7 +3095,6 @@ export class ReflectStatStageChangeAbAttr extends PreStatStageChangeAbAttr {
         stages,
         // if necessary later, pass the ability user through here
         sourcePokemon: undefined,
-        showMessage: true,
         ignoreAbilities: false,
         canBeCopied: true,
         sourceEffect: StatChangeSource.MIRROR_ARMOR,
@@ -4608,7 +4607,6 @@ export class StatStageChangeCopyAbAttr extends AbAttr {
         stats,
         stages: numStages,
         sourcePokemon: pokemon,
-        showMessage: true,
         ignoreAbilities: false,
         canBeCopied: false,
       });

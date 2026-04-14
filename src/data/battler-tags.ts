@@ -2767,7 +2767,6 @@ export class StockpilingTag extends SerializableBattlerTag {
         stats: [Stat.SPDEF, Stat.DEF],
         stages: 1,
         sourcePokemon: pokemon,
-        showMessage: true,
         canBeCopied: true,
         onChange: this.onStatStagesChanged.bind(this),
       });
@@ -2792,7 +2791,6 @@ export class StockpilingTag extends SerializableBattlerTag {
         stats: [Stat.DEF, Stat.SPDEF],
         stages: -defChange,
         sourcePokemon: pokemon,
-        showMessage: true,
         canBeCopied: true,
       });
       return;
@@ -2804,7 +2802,6 @@ export class StockpilingTag extends SerializableBattlerTag {
         stats: [Stat.DEF],
         stages: -defChange,
         sourcePokemon: pokemon,
-        showMessage: true,
         canBeCopied: true,
       });
     }
@@ -2815,7 +2812,6 @@ export class StockpilingTag extends SerializableBattlerTag {
         stats: [Stat.SPDEF],
         stages: -defChange,
         sourcePokemon: pokemon,
-        showMessage: true,
         canBeCopied: true,
       });
     }
@@ -3500,7 +3496,6 @@ export class SyrupBombTag extends SerializableBattlerTag {
       stats: [Stat.SPD],
       stages: -1,
       sourcePokemon: pokemon,
-      showMessage: true,
       canBeCopied: true,
     });
     return super.lapse(pokemon, _lapseType);

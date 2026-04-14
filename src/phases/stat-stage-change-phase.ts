@@ -26,7 +26,6 @@ export interface StatStageChangePhaseOptions {
   stats: readonly BattleStat[];
   stages: number;
   sourcePokemon: Pokemon | undefined;
-  showMessage?: boolean;
   ignoreAbilities?: boolean;
   canBeCopied?: boolean;
   onChange?: StatStageChangeCallback;
@@ -219,10 +218,8 @@ export class StatStageChangePhase extends PokemonPhase {
    * @param relLevel - The amount of stages to change for each stat, after clamping
    */
   private applyStatChangesAndEnd(pokemon: Pokemon, filteredStats: readonly BattleStat[], relLevel: number): void {
-    if (this.options.showMessage) {
-      const message = this.buildStatStageChangeMessage(filteredStats, this.options.stages, relLevel);
-      globalScene.phaseManager.queueMessage(message);
-    }
+    const message = this.buildStatStageChangeMessage(filteredStats, this.options.stages, relLevel);
+    globalScene.phaseManager.queueMessage(message);
 
     this.updateStatStages(pokemon, filteredStats, relLevel);
     this.triggerPerStatReactionAbilities(pokemon, filteredStats, this.options.stages);
