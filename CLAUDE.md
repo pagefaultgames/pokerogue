@@ -15,7 +15,10 @@ All UI is canvas-based via Phaser 3 WebGL -- there are no native DOM elements fo
 - `src/ui/handlers/` -- UI handler classes for each game screen/mode. These have accessibility hooks added.
 - `src/ui/ui.ts` -- Mode orchestration. Manages transitions between UI modes and announces mode changes via `announceContext()`.
 - `src/ui/settings/abstract-settings-ui-handler.ts` -- Settings handler with accessibility hooks for setting navigation.
-- `src/phases/login-phase.ts` -- Login phase with HTML overlay integration and "Play as Guest" option.
+- `src/phases/login-phase.ts` -- Login phase with HTML overlay integration and "Play as Guest" option. Calls `enableGuestMode()` when the guest button is clicked.
+- `src/account.ts` -- Exports `isGuestMode` (runtime flag) and `enableGuestMode()`. Seeds `loggedInUser` as a `Guest` account so localStorage keys resolve.
+- `src/system/game-data.ts` -- Save/load. Every server-sync branch checks `bypassLogin || isGuestMode` so guest saves go to localStorage only (no server calls that would fail on CORS and trigger a reset).
+- `src/ui-inputs.ts` -- Global keyboard/gamepad input routing. `buttonStats` hooks the stats key (default `C`) to announce HP/status for all active Pokémon in battle.
 
 ### Path Aliases
 
@@ -37,14 +40,16 @@ GitHub Pages auto-deploys on every push to `feature/screen-reader-accessibility`
 - Live at: https://michaeljohann1.github.io/pokerogue/
 - Workflow: `.github/workflows/deploy-pages.yml`
 - Note: Login/register API is CORS-blocked on GitHub Pages. Use "Play as Guest" to test.
+- Guest mode is fully offline: clicking "Play as Guest" sets `isGuestMode = true` and every save/load path writes to localStorage instead of the server. Without this, the first-wave `saveAll` would CORS-fail and `encounter-phase.ts` would call `globalScene.reset(true)`, bouncing the player back to the login screen.
 
 ## Testing with Screen Readers
 
 1. Run `pnpm start:dev` to start the local dev server.
 2. Enable NVDA (or another screen reader).
 3. Navigate with **arrow keys**; press **Z** or **Enter** to select; **X** to cancel/go back.
-4. Verify announcements match on-screen content.
-5. Each screen announces navigation instructions when it opens.
+4. During battle, press **C** to hear current HP / status / level for all active Pokémon (enemy first, then yours).
+5. Verify announcements match on-screen content.
+6. Each screen announces navigation instructions when it opens.
 
 ## Accessibility Pattern
 
@@ -89,7 +94,7 @@ AccessibilityManager.getInstance().clearMenu();
 | `abstract-option-select-ui-handler` | Option labels as menu items; cursor changes |
 | `title-ui-handler` | Title screen context + menu options |
 | `abstract-settings-ui-handler` | Setting label, current value, and tab switching instructions |
-| `starter-select-ui-handler` | Pokemon name, types, abilities, full base stats, cost |
+| `starter-select-ui-handler` | Pokemon name, types, abilities, full base stats, cost. Filter bar labels, dropdown options, toggle state. Start Run button, Randomize button, and party-slot cursors |
 | `party-ui-handler` | Pokemon name, level, HP, status + party option labels |
 | `modifier-select-ui-handler` | Item name, description + navigation context |
 | `menu-ui-handler` | Pause menu option labels |
@@ -105,3 +110,4 @@ AccessibilityManager.getInstance().clearMenu();
 | `game-stats-ui-handler` | All visible stat labels and values |
 | `ui.ts` | Mode transition labels via `announceContext()` |
 | `a11y-form-overlay.ts` | Login/Register/Guest HTML forms (bypasses canvas modals) |
+| `ui-inputs.ts` | Stats key (default `C`) announces HP / max HP / percent / status / level for every active Pokémon in battle, enemies first |

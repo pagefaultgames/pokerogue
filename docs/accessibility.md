@@ -49,6 +49,22 @@ The canvas-based login/register modals are fundamentally inaccessible because Ph
 
 The overlays are created in `src/phases/login-phase.ts` alongside the canvas modals, sitting on top visually.
 
+## Guest Mode (Offline Play on GitHub Pages)
+
+The deployed build on GitHub Pages can't reach the PokéRogue API because of CORS. "Play as Guest" is the mode users land in, so the save/load layer has to run without a server.
+
+**How it works**
+
+- `src/account.ts` exports a runtime flag `isGuestMode` and a function `enableGuestMode()`.
+- `enableGuestMode()` sets the flag to `true`, seeds `loggedInUser` as a `Guest` account (so `data_Guest` / `sessionData_Guest` localStorage keys resolve), and scans localStorage for the most recent guest save slot.
+- `src/phases/login-phase.ts` calls `enableGuestMode()` from the "Play as Guest" click handler before running `loadSystem()`.
+- Every server-sync branch in `src/system/game-data.ts` (`saveSystem`, `loadSystem`, `verify`, `getSession`, `renameSession`, `deleteSession`, `tryClearSession`, `saveAll`, `tryExportData`, import) checks `bypassLogin || isGuestMode`. When either is true, the code takes the localStorage-only path and skips every `pokerogueApi.*` call.
+- Encryption still uses the regular online path (AES with `saveKey`). `bypassLogin` (dev builds) keeps using base64. We only branched the *control flow*, not the encryption choice.
+
+**Why the flag exists**
+
+Before this change, a guest clicking Play as Guest would get through starter select and land in battle, but the first-wave `saveAll` in `src/phases/encounter-phase.ts` would call `pokerogueApi.savedata.updateAll()`, get blocked by CORS, return `false`, and `encounter-phase` would call `globalScene.reset(true)`. `reset(true)` re-runs `launchBattle` which ends with `phaseManager.toTitleScreen(true)` — which unshifts a new `LoginPhase`. Result: battle music started, then the login/register/guest overlay came back. The guest-mode flag short-circuits that whole chain.
+
 ## How to Add Accessibility to a New UI Handler
 
 ### Step 1: Import AccessibilityManager
@@ -120,7 +136,7 @@ clear(): void {
 - **game-stats-ui-handler.ts** -- All visible stat labels and values when scrolling
 
 ### Pokemon Screens
-- **starter-select-ui-handler.ts** -- Pokemon name, types, abilities (including hidden), full base stats (HP/Atk/Def/SpA/SpD/Spe), cost, caught status
+- **starter-select-ui-handler.ts** -- Pokemon name, types, abilities (including hidden), full base stats (HP/Atk/Def/SpA/SpD/Spe), cost, caught status. Filter bar also announces on navigation: entering the filter row, switching between filter columns (Gen / Type / Caught / Unlocks / Misc / Sort), opening a dropdown, moving through options, toggling an option, and closing a dropdown. The Start Run button, Randomize button, and each of the six party-slot icons speak when the cursor lands on them.
 - **party-ui-handler.ts** -- Pokemon name, level, HP, status + party option labels (Send Out, Summary, Cancel, etc.)
 - **summary-ui-handler.ts** -- Pokemon summary info, page tabs (Profile/Stats/Moves), move details
 - **pokedex-ui-handler.ts** -- Pokemon name, category (e.g., "Seed Pokémon"), types, caught status
@@ -137,7 +153,8 @@ clear(): void {
 ### System Level
 - **ui.ts** -- Mode transition labels via `announceContext()` (skips MESSAGE mode)
 - **a11y-form-overlay.ts** -- Accessible HTML login/register/guest forms (bypasses canvas modals)
-- **login-phase.ts** -- Integrates HTML overlay with game login flow + "Play as Guest" option
+- **login-phase.ts** -- Integrates HTML overlay with game login flow + "Play as Guest" option; calls `enableGuestMode()` when guest is chosen
+- **ui-inputs.ts** -- Stats key (default `C`) announces HP / max HP / percent / status / level for every active Pokémon. Enemies are announced before player Pokémon so the most battle-critical info comes first. Hooks `buttonStats()` so the same key that toggles the visual stats flyout also speaks
 
 ## Testing with NVDA
 
@@ -151,18 +168,23 @@ clear(): void {
 - **Arrow keys**: Navigate menus and options
 - **Z or Enter**: Select / confirm
 - **X or Backspace**: Cancel / go back
+- **C**: In battle, speak HP / status / level for every active Pokémon (enemies first). Same key toggles the visual stats flyout.
 - **F / R**: Switch settings tabs (previous/next)
 - **V**: Open filter menu (starter select)
 - **E / N**: Change ability / nature (starter select)
 
 ### What to Verify
 - Login screen offers Login, Register, and Play as Guest options
+- Guest play on GitHub Pages reaches the first battle without the login overlay reappearing (the save-sync failure that used to reset the game is now skipped for guests)
 - Title screen announces context and menu options on load
 - Each screen announces navigation instructions when it opens
 - Command menu (Fight/Ball/Pokemon/Run) announces each option
 - Fight menu announces move details including effectiveness
 - Battle messages are read aloud with "Press enter to continue"
+- Pressing `C` during battle announces enemy HP/status first, then player HP/status
 - Starter select reads Pokemon name, types, abilities, base stats
+- Starter select filter bar announces each filter (Gen/Type/Caught/Unlocks/Misc/Sort), dropdown options, and toggle state
+- Starter select Start Run, Randomize, and party-slot cursors all announce when focused
 - Party screen reads Pokemon name, level, HP, and status
 - Settings announce setting name and value, change with Left/Right
 - Pokedex reads Pokemon name, category, types, caught status
@@ -179,4 +201,4 @@ The game auto-deploys to GitHub Pages on every push to `feature/screen-reader-ac
 - **URL**: https://michaeljohann1.github.io/pokerogue/
 - **Workflow**: `.github/workflows/deploy-pages.yml`
 - **Limitation**: The PokeRogue API blocks CORS from `github.io`, so login/register won't work. Use "Play as Guest" instead.
-- **Saves**: Guest mode saves to browser localStorage (local to that browser only).
+- **Saves**: Guest mode saves to browser localStorage (local to that browser only). See the [Guest Mode](#guest-mode-offline-play-on-github-pages) section for how the runtime flag keeps the game from bouncing back to the login screen on save.
