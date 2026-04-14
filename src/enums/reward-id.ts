@@ -70,6 +70,7 @@ export const RewardId = {
 
 export type RewardId = ObjectValues<typeof RewardId>;
 
+// TODO: These are incorrect and do not match up with the actual reward IDs...
 export const RewardCategoryId = {
   NONE: 0x0000,
   POKEBALL: 0x0100,

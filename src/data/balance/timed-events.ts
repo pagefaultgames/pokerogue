@@ -3,6 +3,7 @@ import { EventType } from "#enums/event-type";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
+import { TrainerItemId } from "#enums/trainer-item-id";
 import { TrainerType } from "#enums/trainer-type";
 import { WeatherType } from "#enums/weather-type";
 import type { TimedEvent } from "#types/events";
@@ -241,12 +242,12 @@ export const timedEvents: readonly TimedEvent[] = [
       ["battle_paldea_gym", "battle_jacinthe"],
     ],
     classicWaveRewards: [
-      { wave: 8, type: "SHINY_CHARM" },
-      { wave: 8, type: "ABILITY_CHARM" },
-      { wave: 8, type: "CATCHING_CHARM" },
-      { wave: 25, type: "SHINY_CHARM" },
+      { wave: 8, type: TrainerItemId.SHINY_CHARM },
+      { wave: 8, type: TrainerItemId.ABILITY_CHARM },
+      { wave: 8, type: TrainerItemId.CATCHING_CHARM },
+      { wave: 25, type: TrainerItemId.SHINY_CHARM },
     ],
-    dailyRunStartingItems: ["ABILITY_CHARM", "SHINY_CHARM"],
+    dailyRunStartingItems: [TrainerItemId.ABILITY_CHARM, TrainerItemId.SHINY_CHARM],
   },
   {
     name: "Hearts and Horses",
@@ -285,12 +286,12 @@ export const timedEvents: readonly TimedEvent[] = [
       { species: SpeciesId.ENAMORUS },
     ],
     classicWaveRewards: [
-      { wave: 8, type: "SHINY_CHARM" },
-      { wave: 8, type: "ABILITY_CHARM" },
-      { wave: 8, type: "CATCHING_CHARM" },
-      { wave: 25, type: "SHINY_CHARM" },
+      { wave: 8, type: TrainerItemId.SHINY_CHARM },
+      { wave: 8, type: TrainerItemId.ABILITY_CHARM },
+      { wave: 8, type: TrainerItemId.CATCHING_CHARM },
+      { wave: 25, type: TrainerItemId.SHINY_CHARM },
     ],
-    dailyRunStartingItems: ["ABILITY_CHARM", "SHINY_CHARM"],
+    dailyRunStartingItems: [TrainerItemId.ABILITY_CHARM, TrainerItemId.SHINY_CHARM],
   },
   {
     name: "Winter 25",
@@ -326,12 +327,19 @@ export const timedEvents: readonly TimedEvent[] = [
       { species: SpeciesId.GALAR_DARUMAKA },
     ],
     classicWaveRewards: [
-      { wave: 8, type: "SHINY_CHARM" },
-      { wave: 8, type: "ABILITY_CHARM" },
-      { wave: 8, type: "CATCHING_CHARM" },
-      { wave: 25, type: "SHINY_CHARM" },
+      { wave: 8, type: TrainerItemId.SHINY_CHARM },
+      { wave: 8, type: TrainerItemId.ABILITY_CHARM },
+      { wave: 8, type: TrainerItemId.CATCHING_CHARM },
+      { wave: 25, type: TrainerItemId.SHINY_CHARM },
     ],
-    delibirdyBuff: ["CATCHING_CHARM", "SHINY_CHARM", "ABILITY_CHARM", "EXP_CHARM", "SUPER_EXP_CHARM", "HEALING_CHARM"],
+    delibirdyBuff: [
+      TrainerItemId.CATCHING_CHARM,
+      TrainerItemId.SHINY_CHARM,
+      TrainerItemId.ABILITY_CHARM,
+      TrainerItemId.EXP_CHARM,
+      TrainerItemId.SUPER_EXP_CHARM,
+      TrainerItemId.HEALING_CHARM,
+    ],
     mysteryEncounterTierChanges: [
       {
         mysteryEncounter: MysteryEncounterType.DELIBIRDY,
@@ -343,7 +351,7 @@ export const timedEvents: readonly TimedEvent[] = [
         disable: true,
       },
     ],
-    dailyRunStartingItems: ["ABILITY_CHARM", "SHINY_CHARM"],
+    dailyRunStartingItems: [TrainerItemId.ABILITY_CHARM, TrainerItemId.SHINY_CHARM],
   },
   {
     name: "Winter Holiday Update",
@@ -377,7 +385,14 @@ export const timedEvents: readonly TimedEvent[] = [
       { species: SpeciesId.GALAR_DARUMAKA },
       { species: SpeciesId.IRON_BUNDLE },
     ],
-    delibirdyBuff: ["CATCHING_CHARM", "SHINY_CHARM", "ABILITY_CHARM", "EXP_CHARM", "SUPER_EXP_CHARM", "HEALING_CHARM"],
+    delibirdyBuff: [
+      TrainerItemId.CATCHING_CHARM,
+      TrainerItemId.SHINY_CHARM,
+      TrainerItemId.ABILITY_CHARM,
+      TrainerItemId.EXP_CHARM,
+      TrainerItemId.SUPER_EXP_CHARM,
+      TrainerItemId.HEALING_CHARM,
+    ],
     weather: { [BiomeId.TOWN]: { [WeatherType.SNOW]: 1 } },
     mysteryEncounterTierChanges: [
       {
@@ -396,10 +411,10 @@ export const timedEvents: readonly TimedEvent[] = [
       },
     ],
     classicWaveRewards: [
-      { wave: 8, type: "SHINY_CHARM" },
-      { wave: 8, type: "ABILITY_CHARM" },
-      { wave: 8, type: "CATCHING_CHARM" },
-      { wave: 25, type: "SHINY_CHARM" },
+      { wave: 8, type: TrainerItemId.SHINY_CHARM },
+      { wave: 8, type: TrainerItemId.ABILITY_CHARM },
+      { wave: 8, type: TrainerItemId.CATCHING_CHARM },
+      { wave: 25, type: TrainerItemId.SHINY_CHARM },
     ],
   },
   {
@@ -467,10 +482,10 @@ export const timedEvents: readonly TimedEvent[] = [
       SpeciesId.BLOODMOON_URSALUNA,
     ],
     classicWaveRewards: [
-      { wave: 8, type: "SHINY_CHARM" },
-      { wave: 8, type: "ABILITY_CHARM" },
-      { wave: 8, type: "CATCHING_CHARM" },
-      { wave: 25, type: "SHINY_CHARM" },
+      { wave: 8, type: TrainerItemId.SHINY_CHARM },
+      { wave: 8, type: TrainerItemId.ABILITY_CHARM },
+      { wave: 8, type: TrainerItemId.CATCHING_CHARM },
+      { wave: 25, type: TrainerItemId.SHINY_CHARM },
     ],
   },
   {
@@ -507,10 +522,10 @@ export const timedEvents: readonly TimedEvent[] = [
     ],
     luckBoostedSpecies: [SpeciesId.LUVDISC],
     classicWaveRewards: [
-      { wave: 8, type: "SHINY_CHARM" },
-      { wave: 8, type: "ABILITY_CHARM" },
-      { wave: 8, type: "CATCHING_CHARM" },
-      { wave: 25, type: "SHINY_CHARM" },
+      { wave: 8, type: TrainerItemId.SHINY_CHARM },
+      { wave: 8, type: TrainerItemId.ABILITY_CHARM },
+      { wave: 8, type: TrainerItemId.CATCHING_CHARM },
+      { wave: 25, type: TrainerItemId.SHINY_CHARM },
     ],
   },
   {
@@ -558,10 +573,10 @@ export const timedEvents: readonly TimedEvent[] = [
       SpeciesId.ETERNAL_FLOETTE,
     ],
     classicWaveRewards: [
-      { wave: 8, type: "SHINY_CHARM" },
-      { wave: 8, type: "ABILITY_CHARM" },
-      { wave: 8, type: "CATCHING_CHARM" },
-      { wave: 25, type: "SHINY_CHARM" },
+      { wave: 8, type: TrainerItemId.SHINY_CHARM },
+      { wave: 8, type: TrainerItemId.ABILITY_CHARM },
+      { wave: 8, type: TrainerItemId.CATCHING_CHARM },
+      { wave: 25, type: TrainerItemId.SHINY_CHARM },
     ],
   },
   {
@@ -620,10 +635,10 @@ export const timedEvents: readonly TimedEvent[] = [
       { species: SpeciesId.APPLIN },
     ],
     classicWaveRewards: [
-      { wave: 8, type: "SHINY_CHARM" },
-      { wave: 8, type: "ABILITY_CHARM" },
-      { wave: 8, type: "CATCHING_CHARM" },
-      { wave: 25, type: "SHINY_CHARM" },
+      { wave: 8, type: TrainerItemId.SHINY_CHARM },
+      { wave: 8, type: TrainerItemId.ABILITY_CHARM },
+      { wave: 8, type: TrainerItemId.CATCHING_CHARM },
+      { wave: 25, type: TrainerItemId.SHINY_CHARM },
     ],
   },
   {
@@ -650,12 +665,12 @@ export const timedEvents: readonly TimedEvent[] = [
       { species: SpeciesId.ALOLA_MEOWTH },
     ],
     classicWaveRewards: [
-      { wave: 8, type: "SHINY_CHARM" },
-      { wave: 8, type: "ABILITY_CHARM" },
-      { wave: 8, type: "CATCHING_CHARM" },
-      { wave: 25, type: "SHINY_CHARM" },
+      { wave: 8, type: TrainerItemId.SHINY_CHARM },
+      { wave: 8, type: TrainerItemId.ABILITY_CHARM },
+      { wave: 8, type: TrainerItemId.CATCHING_CHARM },
+      { wave: 25, type: TrainerItemId.SHINY_CHARM },
     ],
-    dailyRunStartingItems: ["SHINY_CHARM", "ABILITY_CHARM"],
+    dailyRunStartingItems: [TrainerItemId.SHINY_CHARM, TrainerItemId.ABILITY_CHARM],
   },
   {
     name: "Halloween 25",
@@ -692,12 +707,12 @@ export const timedEvents: readonly TimedEvent[] = [
       { species: SpeciesId.SANDYGAST },
     ],
     classicWaveRewards: [
-      { wave: 8, type: "SHINY_CHARM" },
-      { wave: 8, type: "ABILITY_CHARM" },
-      { wave: 8, type: "CATCHING_CHARM" },
-      { wave: 25, type: "SHINY_CHARM" },
-      { wave: 25, type: "CANDY_JAR" },
+      { wave: 8, type: TrainerItemId.SHINY_CHARM },
+      { wave: 8, type: TrainerItemId.ABILITY_CHARM },
+      { wave: 8, type: TrainerItemId.CATCHING_CHARM },
+      { wave: 25, type: TrainerItemId.SHINY_CHARM },
+      { wave: 25, type: TrainerItemId.CANDY_JAR },
     ],
-    dailyRunStartingItems: ["ABILITY_CHARM", "SHINY_CHARM", "CANDY_JAR"],
+    dailyRunStartingItems: [TrainerItemId.ABILITY_CHARM, TrainerItemId.SHINY_CHARM, TrainerItemId.CANDY_JAR],
   },
 ];

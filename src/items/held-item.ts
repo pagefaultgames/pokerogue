@@ -132,6 +132,7 @@ export abstract class HeldItemBase {
  * Abstract class for all non-cosmetic held items
  * (i.e. ones that can have their effects applied during or outside of battle).
  */
+// TODO: Try and make items that have multiple effects more ergonomic rather than requiring dynamic dispatch
 export abstract class HeldItem<
   T extends NonEmptyTuple<HeldItemEffect> = NonEmptyTuple<HeldItemEffect>,
 > extends HeldItemBase {
@@ -151,18 +152,18 @@ export abstract class HeldItem<
    * Defaults to `true` if not overridden.
    */
   // biome-ignore lint/correctness/noUnusedFunctionParameters: pseudo-abstract method
-  public shouldApply<const E extends this["effects"][number]>(effect: E, args: HeldItemEffectParamMap[E]): boolean {
+  public shouldApply<E extends T[number]>(effect: E, args: HeldItemEffectParamMap[E]): boolean {
     return true;
   }
 
   /**
    * Apply the given item's effects.
-   * Called if and only if {@linkcode HeldItem.shouldApply} returns `true`.
+   * Called if and only if {@linkcode HeldItem.shouldApply | shouldApply} returns `true`.
    * @typeParam E - The type of one of this class' {@linkcode HeldItem.effects | effects}
    * @param effect - The effect being applied
    * @param args - Arguments required for the effect application
    */
-  public abstract apply<const E extends this["effects"][number]>(effect: E, param: HeldItemEffectParamMap[E]): void;
+  public abstract apply<E extends T[number]>(effect: E, param: HeldItemEffectParamMap[E]): void;
 }
 
 /** Abstract class for all `HeldItem`s that can be consumed during battle. */

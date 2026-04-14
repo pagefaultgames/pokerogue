@@ -28,7 +28,6 @@ import { ChallengeModeHelper } from "#test/helpers/challenge-mode-helper";
 import { ClassicModeHelper } from "#test/helpers/classic-mode-helper";
 import { DailyModeHelper } from "#test/helpers/daily-mode-helper";
 import { FieldHelper } from "#test/helpers/field-helper";
-import { ModifierHelper } from "#test/helpers/modifiers-helper";
 import { MoveHelper } from "#test/helpers/move-helper";
 import { OverridesHelper } from "#test/helpers/overrides-helper";
 import { PromptHandler } from "#test/helpers/prompt-handler";
@@ -67,7 +66,6 @@ export class GameManager {
   public readonly challengeMode: ChallengeModeHelper;
   public readonly settings: SettingsHelper;
   public readonly reload: ReloadHelper;
-  public readonly modifiers: ModifierHelper;
   public readonly field: FieldHelper;
   public readonly rng: RngHelper;
 
@@ -105,7 +103,6 @@ export class GameManager {
     this.challengeMode = new ChallengeModeHelper(this);
     this.settings = new SettingsHelper(this);
     this.reload = new ReloadHelper(this);
-    this.modifiers = new ModifierHelper(this);
     this.field = new FieldHelper(this);
     this.rng = new RngHelper(this);
 

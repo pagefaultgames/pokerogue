@@ -211,7 +211,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
         const receivedPokemonData: EnemyPokemon = encounter.misc.receivedPokemon;
         const heldItemConfig = tradedPokemon.heldItemManager
           .generateItemConfiguration()
-          .filter(ic => !isItemInCategory(ic.entry as HeldItemId, HeldItemCategoryId.SPECIES_STAT_BOOSTER));
+          .filter(ic => !isItemInCategory(ic.entry.id, HeldItemCategoryId.SPECIES_STAT_BOOSTER));
 
         // Generate a trainer name
         const traderName = generateRandomTraderName();
@@ -312,7 +312,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
         const receivedPokemonData: EnemyPokemon = encounter.misc.receivedPokemon;
         const heldItemConfig = tradedPokemon.heldItemManager
           .generateItemConfiguration()
-          .filter(ic => !isItemInCategory(ic.entry as HeldItemId, HeldItemCategoryId.SPECIES_STAT_BOOSTER));
+          .filter(ic => !isItemInCategory(ic.entry.id, HeldItemCategoryId.SPECIES_STAT_BOOSTER));
 
         // Generate a trainer name
         const traderName = generateRandomTraderName();

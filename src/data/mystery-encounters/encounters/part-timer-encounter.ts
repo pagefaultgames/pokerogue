@@ -1,11 +1,11 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { MoneyMultiplierModifier } from "#app/modifier/modifier";
 import { NumberHolder } from "#app/utils/common";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Stat } from "#enums/stat";
+import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import { showEncounterDialogue, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import {
@@ -345,7 +345,7 @@ function doSalesSfx() {
 
 function applyMoneyMultipliers(moneyMultiplier: number): number {
   const moneyChange = new NumberHolder(globalScene.getWaveMoneyAmount(moneyMultiplier));
-  globalScene.applyModifiers(MoneyMultiplierModifier, true, moneyChange);
+  globalScene.applyPlayerItems(TrainerItemEffect.MONEY_MULTIPLIER, { numberHolder: moneyChange });
   updatePlayerMoney(moneyChange.value, true, false);
 
   return moneyChange.value;

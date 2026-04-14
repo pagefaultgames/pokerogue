@@ -3,6 +3,7 @@ import { globalScene } from "#app/global-scene";
 import { BattleType } from "#enums/battle-type";
 import type { BattlerIndex } from "#enums/battler-index";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
+import { RewardId } from "#enums/reward-id";
 import { TrainerItemId } from "#enums/trainer-item-id";
 import type { CustomRewardSettings } from "#items/reward-pool-utils";
 import { handleMysteryEncounterVictory } from "#mystery-encounters/encounter-phase-utils";
@@ -101,7 +102,7 @@ export class VictoryPhase extends PokemonPhase {
           if (gameMode.isEndless && !(currentWaveIndex % 50)) {
             globalScene.phaseManager.pushNew(
               "RewardPhase",
-              currentWaveIndex % 250 ? TrainerItemId.VOUCHER_PLUS : TrainerItemId.VOUCHER_PREMIUM,
+              currentWaveIndex % 250 ? RewardId.VOUCHER_PLUS : RewardId.VOUCHER_PREMIUM,
             );
             globalScene.phaseManager.pushNew("AddEnemyTokenPhase");
           }

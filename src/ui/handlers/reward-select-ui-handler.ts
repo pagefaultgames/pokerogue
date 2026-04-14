@@ -768,6 +768,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
   }
 }
 
+// TODO: Rename
 class ModifierOption extends Phaser.GameObjects.Container {
   public rewardOption: RewardOption;
   private pb: Phaser.GameObjects.Sprite;
