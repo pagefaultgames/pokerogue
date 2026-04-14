@@ -166,6 +166,7 @@ export abstract class HeldItem<
   public abstract apply<E extends T[number]>(effect: E, param: HeldItemEffectParamMap[E]): void;
 }
 
+// TODO: Make this a mixin to avoid diamond problem issues
 /** Abstract class for all `HeldItem`s that can be consumed during battle. */
 export abstract class ConsumableHeldItem<T extends NonEmptyTuple<HeldItemEffect>> extends HeldItem<T> {
   /**

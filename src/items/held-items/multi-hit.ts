@@ -7,17 +7,16 @@ import type { NumberHolder } from "#utils/common";
 import i18next from "i18next";
 
 /**
- * Modifier used for held items, namely Toxic Orb and Flame Orb, that apply a
- * set {@linkcode StatusEffect} at the end of a turn.
- * @extends PokemonHeldItemModifier
- * @see {@linkcode apply}
+ * Class used for held items that add additional hits to a move and reduce its damage proportionally.
+ * Used by Multi Lens.
+ * @sealed
  */
 export class MultiHitHeldItem extends HeldItem<
   [typeof HeldItemEffect.MULTI_HIT_COUNT, typeof HeldItemEffect.MULTI_HIT_DAMAGE]
 > {
   public readonly effects = [HeldItemEffect.MULTI_HIT_COUNT, HeldItemEffect.MULTI_HIT_DAMAGE] as const;
 
-  get description(): string {
+  public override get description(): string {
     return i18next.t("modifierType:ModifierType.PokemonMultiHitModifierType.description");
   }
 
@@ -29,28 +28,13 @@ export class MultiHitHeldItem extends HeldItem<
     );
   }
 
-  override shouldApply(effect: typeof HeldItemEffect.MULTI_HIT_COUNT, params: MultiHitCountParams): boolean;
-  override shouldApply(effect: typeof HeldItemEffect.MULTI_HIT_DAMAGE, params: MultiHitDamageParams): boolean;
   override shouldApply(
-    effect: typeof HeldItemEffect.MULTI_HIT_COUNT | typeof HeldItemEffect.MULTI_HIT_DAMAGE,
-    params: MultiHitCountParams & MultiHitDamageParams,
-  ): boolean;
-  public override shouldApply(
     effect: typeof HeldItemEffect.MULTI_HIT_COUNT | typeof HeldItemEffect.MULTI_HIT_DAMAGE,
     params: MultiHitCountParams & MultiHitDamageParams,
   ): boolean {
     const { moveId, pokemon } = params;
     const move = allMoves[moveId];
 
-    /*
-     * The move must meet Parental Bond's restrictions for this item
-     * to apply. This means
-     * - Only attacks are boosted
-     * - Multi-strike moves, charge moves, and self-sacrificial moves are not boosted
-     *   (though Multi-Lens can still affect moves boosted by Parental Bond)
-     * - Multi-target moves are not boosted *unless* they can only hit a single Pokemon
-     * - Fling, Uproar, Rollout, Ice Ball, and Endeavor are not boosted
-     */
     if (!move.canBeMultiStrikeEnhanced(pokemon)) {
       return false;
     }
@@ -64,32 +48,22 @@ export class MultiHitHeldItem extends HeldItem<
 
   /**
    * For each stack, adds one additional hit
-   * @param effect - The effect to apply, in this override, must be `HeldItemEffect.MULTI_HIT_COUNT`
+   * @param effect - {@linkcode HeldItemEffect.MULTI_HIT_COUNT}
    * @param params - The parameters associated with the effect
    */
-  override apply(effect: typeof HeldItemEffect.MULTI_HIT_COUNT, params: MultiHitCountParams): void;
+  public override apply(effect: typeof HeldItemEffect.MULTI_HIT_COUNT, params: MultiHitCountParams): void;
   /**
    * For each stack, reduces the damage of the hit by 25%
-   * @param effect - The effect to apply, in this override, must be `HeldItemEffect.MULTI_HIT_DAMAGE`
-   * @param params - The parameters associated with the effect
-   *
-   * @see {@linkcode applyDamageModifier}
-   */
-  override apply(effect: typeof HeldItemEffect.MULTI_HIT_DAMAGE, params: MultiHitDamageParams): void;
-  /**
-   * For each stack, adds one additional hit and reduces the damage of the hit by 25%
-   * @param effect - The effect to apply, which is either `HeldItemEffect.MULTI_HIT_COUNT` or `HeldItemEffect.MULTI_HIT_DAMAGE`
+   * @param effect - {@linkcode HeldItemEffect.MULTI_HIT_DAMAGE}
    * @param params - The parameters associated with the effect
    */
-  override apply(
-    effect: typeof HeldItemEffect.MULTI_HIT_COUNT | typeof HeldItemEffect.MULTI_HIT_DAMAGE,
-    params: MultiHitCountParams & MultiHitDamageParams,
-  ): void;
-  override apply(
+  public override apply(effect: typeof HeldItemEffect.MULTI_HIT_DAMAGE, params: MultiHitDamageParams): void;
+  // TODO: This implementation signature does not restrict us from using the wrong parameter type (and hence, crashing)
+  public override apply(
     effect: typeof HeldItemEffect.MULTI_HIT_COUNT | typeof HeldItemEffect.MULTI_HIT_DAMAGE,
     params: MultiHitCountParams & MultiHitDamageParams,
   ): void {
-    const pokemon = params.pokemon;
+    const { pokemon } = params;
 
     switch (effect) {
       case HeldItemEffect.MULTI_HIT_COUNT:

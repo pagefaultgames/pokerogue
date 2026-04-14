@@ -1446,7 +1446,7 @@ export class PartyUiHandler extends MessageUiHandler {
           this.options.push(PartyOption.TRANSFER);
           this.addCommonOptions(pokemon);
         } else {
-          this.updateOptionsWithModifierTransferMode(pokemon);
+          this.updateOptionsWithItemTransferMode(pokemon);
         }
         break;
       case PartyUiMode.DISCARD:

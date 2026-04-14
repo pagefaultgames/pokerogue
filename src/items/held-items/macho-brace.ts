@@ -8,6 +8,7 @@ import i18next from "i18next";
  * Currently used by Macho Brace item
  */
 export class MachoBraceHeldItem extends HeldItem<[typeof HeldItemEffect.MACHO_BRACE]> {
+  // TODO: Rename to be more general instead of tying the effect to its sole use
   public readonly effects = [HeldItemEffect.MACHO_BRACE] as const;
   public readonly isTransferable = false;
 

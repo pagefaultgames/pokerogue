@@ -5,6 +5,9 @@ import { HeldItem } from "#items/held-item";
 import type { DamageMoneyRewardParams } from "#types/held-item-parameter";
 import { NumberHolder } from "#utils/common";
 
+/**
+ * Class used for
+ */
 export class DamageMoneyRewardHeldItem extends HeldItem<[typeof HeldItemEffect.DAMAGE_MONEY_REWARD]> {
   public readonly effects = [HeldItemEffect.DAMAGE_MONEY_REWARD] as const;
 

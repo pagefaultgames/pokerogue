@@ -4,9 +4,9 @@ import type { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { type PermanentStat, Stat } from "#enums/stat";
 import { attackTypeToHeldItem } from "#items/attack-type-booster";
-import { permanentStatToHeldItem } from "#items/base-stat-booster";
+import { permanentStatToHeldItem } from "#items/base-stat-multiply";
 import { berryTypeToHeldItem } from "#items/berry";
-import type { PokemonItemMap } from "#items/held-item-data-types";
+import type { PokemonItemMap } from "#types/held-item-data-types";
 
 const uniqueModifierToItem = {
   EvoTrackerModifier: HeldItemId.GIMMIGHOUL_EVO_TRACKER,

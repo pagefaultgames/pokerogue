@@ -6,7 +6,11 @@ import type { Pokemon } from "#field/pokemon";
 import { CosmeticHeldItem } from "#items/held-item";
 import i18next from "i18next";
 
-export class EvoTrackerHeldItem extends CosmeticHeldItem {
+/**
+ * Class for cosmetic held items used to track evolution progress for certain species.
+ * These items do not have any effects and are not transferable.
+ */
+abstract class EvoTrackerHeldItem extends CosmeticHeldItem {
   protected species: SpeciesId;
   protected required: number;
   public isTransferable = false;

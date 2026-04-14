@@ -173,8 +173,8 @@ function initGreatRewardPool(): void {
               && !!p.status
               && !p
                 .getHeldItems()
-                .filter(i => i in [HeldItemId.TOXIC_ORB, HeldItemId.FLAME_ORB])
-                .some(i => (allHeldItems[i] as TurnEndStatusHeldItem).effect === p.status?.effect),
+                .filter(i => i === HeldItemId.TOXIC_ORB || i === HeldItemId.FLAME_ORB)
+                .some(i => (allHeldItems[i] satisfies TurnEndStatusHeldItem).effect === p.status?.effect),
           ).length,
           3,
         );

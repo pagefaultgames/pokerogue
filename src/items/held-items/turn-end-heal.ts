@@ -7,6 +7,11 @@ import type { TurnEndHealParams } from "#types/held-item-parameter";
 import { toDmgValue } from "#utils/common";
 import i18next from "i18next";
 
+/**
+ * Class used for items that heal the holder at the end of each turn.
+ * Used for Leftovers.
+ * @sealed
+ */
 export class TurnEndHealHeldItem extends HeldItem<[typeof HeldItemEffect.TURN_END_HEAL]> {
   public readonly effects = [HeldItemEffect.TURN_END_HEAL] as const;
 

@@ -33,10 +33,7 @@ export class CritBoostHeldItem extends HeldItem<[typeof HeldItemEffect.CRIT_BOOS
 }
 
 /**
- * Modifier used for held items that apply critical-hit stage boost(s)
- * if the holder is of a specific {@linkcode SpeciesId}.
- * @extends CritBoosterModifier
- * @see {@linkcode shouldApply}
+ * Class used for held items that apply critical-hit stage boost(s) if the holder is of a specific {@linkcode SpeciesId}.
  */
 export class SpeciesCritBoostHeldItem extends CritBoostHeldItem {
   /** The species that the held item's critical-hit stage boost applies to */
@@ -48,14 +45,7 @@ export class SpeciesCritBoostHeldItem extends CritBoostHeldItem {
     this.species = species;
   }
 
-  /**
-   * Checks if the holder's {@linkcode SpeciesId} (or its fused species) is listed
-   * in {@linkcode species}.
-   * @param effect - The effect to be applied
-   * @param __namedParameters.critStage - Needed for proper typedoc rendering
-   * @returns Whether the critical-hit stage boost should be applied
-   */
-  override shouldApply(effect: typeof HeldItemEffect.CRIT_BOOST, params: CritBoostParams): boolean {
+  public override shouldApply(effect: typeof HeldItemEffect.CRIT_BOOST, params: CritBoostParams): boolean {
     const pokemon = params.pokemon;
     return (
       super.shouldApply(effect, params)

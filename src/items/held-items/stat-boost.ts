@@ -7,15 +7,14 @@ import { HeldItem } from "#items/held-item";
 import type { StatBoostParams } from "#types/held-item-parameter";
 
 /**
- * Modifier used for held items that Applies {@linkcode Stat} boost(s)
- * using a multiplier.
- * @see {@linkcode apply}
+ * Class used for held items that boost specific stats by a multiplicative amount.
  */
-export class StatBoostHeldItem extends HeldItem<[typeof HeldItemEffect.STAT_BOOST]> {
+abstract class StatBoostHeldItem extends HeldItem<[typeof HeldItemEffect.STAT_BOOST]> {
   public readonly effects = [HeldItemEffect.STAT_BOOST] as const;
   /** The stats that the held item boosts */
   protected readonly stats: readonly Stat[];
   /** The multiplier used to increase the relevant stat(s) */
+  // TODO: Consider making this an object mapping stats to multipliers if flaxibility is desired
   protected readonly multiplier: number;
 
   constructor(type: HeldItemId, maxStackCount: number, stats: readonly Stat[], multiplier: number) {
@@ -32,9 +31,9 @@ export class StatBoostHeldItem extends HeldItem<[typeof HeldItemEffect.STAT_BOOS
    * @param statValue {@linkcode NumberHolder} that holds the resulting value of the stat
    * @returns `true` if the stat could be boosted, false otherwise
    */
-  //  override shouldApply(pokemon: Pokemon, stat: Stat, statValue: NumberHolder): boolean {
-  //    return super.shouldApply(pokemon, stat, statValue) && this.stats.includes(stat);
-  //  }
+  public override shouldApply(_effect: typeof HeldItemEffect.STAT_BOOST, { stat }: StatBoostParams): boolean {
+    return this.stats.includes(stat);
+  }
 
   /**
    * Boosts the incoming stat by a {@linkcode multiplier} if the stat is listed

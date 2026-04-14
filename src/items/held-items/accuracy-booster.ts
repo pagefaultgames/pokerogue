@@ -4,7 +4,7 @@ import { HeldItem } from "#items/held-item";
 import type { AccuracyBoostParams } from "#types/held-item-parameter";
 
 /**
- * Held item class used for Wide Lens that boosts the accuracy of moves.
+ * Class used for items that boost move accuracy by a flat amount.
  * @sealed
  */
 export class AccuracyBoosterHeldItem extends HeldItem<[typeof HeldItemEffect.ACCURACY_BOOSTER]> {

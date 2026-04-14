@@ -52,7 +52,7 @@ export class BerryHeldItem extends ConsumableHeldItem<[typeof HeldItemEffect.BER
     return `${BerryType[this.berryType].toLowerCase()}_berry`;
   }
 
-  shouldApply(_effect: typeof HeldItemEffect.BERRY, { pokemon }: BerryParams): boolean {
+  override shouldApply(_effect: typeof HeldItemEffect.BERRY, { pokemon }: BerryParams): boolean {
     return getBerryPredicate(this.berryType)(pokemon);
   }
 
@@ -61,14 +61,13 @@ export class BerryHeldItem extends ConsumableHeldItem<[typeof HeldItemEffect.BER
     globalScene.applyPlayerItems(TrainerItemEffect.PRESERVE_BERRY, { pokemon, doPreserve: preserve });
     const consumed = !preserve.value;
 
-    // munch the berry and trigger unburden-like effects
     getBerryEffectFunc(this.berryType)(pokemon);
     this.consume(pokemon, consumed);
 
-    // TODO: Update this method to work with held items
     // Update berry eaten trackers for Belch, Harvest, Cud Chew, etc.
-    // Don't recover it if we proc berry pouch (no item duplication)
+    // Don't recover if we proc berry pouch (no item duplication)
     pokemon.recordEatenBerry(this.berryType, consumed);
+    // TODO: remove event emission after battle move flyout PR is merged
 
     globalScene.eventTarget.dispatchEvent(new BerryUsedEvent(pokemon, this.berryType));
   }

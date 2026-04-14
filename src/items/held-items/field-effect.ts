@@ -3,9 +3,9 @@ import { HeldItem } from "#items/held-item";
 import type { FieldEffectParams } from "#types/held-item-parameter";
 
 /**
- * Modifier used for held items, namely Mystical Rock, that extend the
- * duration of weather and terrain effects.
- * @see {@linkcode apply}
+ * Class for held items that extend the duration of weather and terrain effects.
+ * Used for Mystical Rock.
+ * @sealed
  */
 // TODO: Rename this to be more descriptive
 export class FieldEffectHeldItem extends HeldItem<[typeof HeldItemEffect.FIELD_EFFECT]> {
