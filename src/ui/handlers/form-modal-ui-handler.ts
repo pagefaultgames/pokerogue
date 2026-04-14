@@ -191,6 +191,11 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
         this.a11yButtonContainer.setAttribute("role", "group");
         this.a11yButtonContainer.setAttribute("aria-label", "Form actions");
 
+        // Capture the current action references NOW (after subclass show() has
+        // overridden them) so they won't be reset by the one-time-use pattern
+        const capturedSubmit = this.submitAction;
+        const capturedCancel = this.cancelAction;
+
         for (let i = 0; i < this.buttonLabels.length; i++) {
           const label = this.buttonLabels[i]?.text;
           if (!label) {
@@ -202,12 +207,10 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
           btn.style.cssText = "margin: 4px;";
           const index = i;
           btn.addEventListener("click", () => {
-            // Use submitAction/cancelAction which get overridden by subclasses
-            // to add validation (e.g. LoginFormUiHandler adds API call)
             if (index === 0) {
-              this.submitAction?.();
+              capturedSubmit?.();
             } else if (index === 1) {
-              this.cancelAction?.();
+              capturedCancel?.();
             }
           });
           this.a11yButtonContainer.appendChild(btn);
