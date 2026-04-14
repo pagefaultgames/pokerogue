@@ -6,11 +6,11 @@ import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 const PROPERTIES = ["delay", "completeDelay", "loopDelay", "duration", "repeatDelay", "hold", "startDelay"] as const;
 
 /**
- * Override various Phaser methods to alter their time-related properties based on the current game speed.
- * Any duration values passed that are {@linkcode FixedInt}s will be treated as fixed values and preserved.
+ * Override and wrap various Phaser methods to alter time-related properties based on the current game speed.
+ * Any duration values passed that are {@linkcode FixedInt}s will be treated as fixed duration values and preserved.
  * @privateRemarks
- * While this may sound ominous, there is effectively no other way to do what we want to do within the constraints set by Phaser,
- * as altering game speed would affect all time-related aspects of the game (including ones we want to keep fixed).
+ * While this may appear somewhat heavy-handed, there is effectively no other way to achieve the desired effect within the constraints set by Phaser,
+ * as altering game speed would affect _all_ time-related processes (including ones we want to remain unchanged).
  */
 export function initGameSpeed(this: BattleScene): void {
   /** Mutate a duration value based on the current speed. */
