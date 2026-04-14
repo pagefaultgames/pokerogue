@@ -27,6 +27,7 @@ type RewardGeneratorSpecs<T extends RewardGeneratorId = RewardGeneratorId> = {
 };
 
 /** Union type used to specify fixed rewards used in generation. */
+// TODO: Rename from "specs" since this is only sometimes an object
 export type RewardSpecs<T extends RewardPoolId = RewardPoolId> = T extends RewardGeneratorId
   ? T | RewardGeneratorSpecs<T>
   : T;

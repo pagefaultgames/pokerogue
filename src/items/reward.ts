@@ -102,7 +102,7 @@ export abstract class Reward {
 
 /**
  * A {@linkcode RewardGenerator} represents a dynamic generator for a given type of reward.
- * These can be customized by lieu of {@linkcode generateReward} to alter the generation result.
+ * These can be customized by lieu of {@linkcode RewardGenerator.generateReward | RewardGenerator} to alter the generation result.
  */
 export abstract class RewardGenerator {
   /**
@@ -175,6 +175,7 @@ export interface PokemonFusionRewardParams {
 }
 
 export class RewardOption {
+  // TODO: Rename to `reward` or similar
   public type: Reward;
   public upgradeCount: number;
   public tier: RarityTier;

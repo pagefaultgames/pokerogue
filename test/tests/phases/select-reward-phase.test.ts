@@ -1,5 +1,4 @@
 import type { BattleScene } from "#app/battle-scene";
-import { allRewards } from "#data/data-lists"; // TODO: huh??
 import { AbilityId } from "#enums/ability-id";
 import { Button } from "#enums/buttons";
 import { HeldItemId } from "#enums/held-item-id";
@@ -11,18 +10,19 @@ import { TrainerItemId } from "#enums/trainer-item-id";
 import { UiMode } from "#enums/ui-mode";
 import { PlayerPokemon } from "#field/pokemon";
 import type { HeldItemReward } from "#items/held-item-reward";
-import { RewardOption } from "#items/reward";
 import type { CustomRewardSettings } from "#items/reward-pool-utils";
 import type { TrainerItemReward } from "#items/trainer-item-reward";
 import { SelectRewardPhase } from "#phases/select-reward-phase";
 import { GameManager } from "#test/framework/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
+import type { RewardSpecs } from "#types/rewards";
 import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import { shiftCharCodes } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
+// TODO: Clean up these tests, some of these are geuninely abhorrent
 describe("SelectRewardPhase", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -69,17 +69,13 @@ describe("SelectRewardPhase", () => {
 
   it("should modify reroll cost", async () => {
     initSceneWithoutEncounterPhase(scene, [SpeciesId.ABRA, SpeciesId.VOLCARONA]);
-    const options = [
-      new RewardOption(allRewards.POTION(), 0, RarityTier.COMMON, 100),
-      new RewardOption(allRewards.ETHER(), 0, RarityTier.COMMON, 400),
-      new RewardOption(allRewards.REVIVE(), 0, RarityTier.COMMON, 1000),
-    ];
+    const specs: RewardSpecs[] = [RewardId.POTION, RewardId.ETHER, RewardId.REVIVE];
 
     const selectRewardPhase1 = new SelectRewardPhase(0, undefined, {
-      guaranteedRewardOptions: options,
+      guaranteedRewardSpecs: specs,
     });
     const selectRewardPhase2 = new SelectRewardPhase(0, undefined, {
-      guaranteedRewardOptions: options,
+      guaranteedRewardSpecs: specs,
       rerollMultiplier: 2,
     });
 
@@ -116,11 +112,11 @@ describe("SelectRewardPhase", () => {
     await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     scene.money = 1000000;
     // Just use fully random seed for this test
+    // TODO: make a helper for this ffs
     vi.spyOn(scene, "resetSeed").mockImplementation(() => {
       scene.waveSeed = shiftCharCodes(scene.seed, 5);
       Phaser.Math.RND.sow([scene.waveSeed]);
       console.log("Wave Seed:", scene.waveSeed, 5);
-      scene.rngCounter = 0;
     });
 
     game.move.select(MoveId.FISSURE);
@@ -154,11 +150,11 @@ describe("SelectRewardPhase", () => {
     scene.money = 1000000;
     const customRewards: CustomRewardSettings = {
       guaranteedRewardSpecs: [
-        allRewards.MEMORY_MUSHROOM,
-        allRewards.TM_ULTRA,
-        allRewards.LEFTOVERS,
-        allRewards.AMULET_COIN,
-        allRewards.GOLDEN_PUNCH,
+        RewardId.MEMORY_MUSHROOM,
+        RewardId.TM_ULTRA,
+        HeldItemId.LEFTOVERS,
+        TrainerItemId.AMULET_COIN,
+        HeldItemId.GOLDEN_PUNCH,
       ],
     };
     const selectRewardPhase = new SelectRewardPhase(0, undefined, customRewards);
@@ -173,13 +169,10 @@ describe("SelectRewardPhase", () => {
     expect(rewardSelectHandler.options.length).toEqual(5);
     expect(rewardSelectHandler.options[0].rewardOption.type.id).toEqual(RewardId.MEMORY_MUSHROOM);
     expect(rewardSelectHandler.options[1].rewardOption.type.id).toEqual(RewardId.TM_ULTRA);
-    expect(rewardSelectHandler.options[2].rewardOption.type.id).toEqual(RewardId.HELD_ITEM);
     expect((rewardSelectHandler.options[2].rewardOption.type as HeldItemReward).itemId).toEqual(HeldItemId.LEFTOVERS);
-    expect(rewardSelectHandler.options[3].rewardOption.type.id).toEqual(RewardId.TRAINER_ITEM);
     expect((rewardSelectHandler.options[3].rewardOption.type as TrainerItemReward).itemId).toEqual(
       TrainerItemId.AMULET_COIN,
     );
-    expect(rewardSelectHandler.options[4].rewardOption.type.id).toEqual(RewardId.HELD_ITEM);
     expect((rewardSelectHandler.options[4].rewardOption.type as HeldItemReward).itemId).toEqual(
       HeldItemId.GOLDEN_PUNCH,
     );
@@ -236,13 +229,13 @@ describe("SelectRewardPhase", () => {
     await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     scene.money = 1000000;
     const customRewards: CustomRewardSettings = {
-      guaranteedRewardSpecs: [allRewards.MEMORY_MUSHROOM, allRewards.TM_COMMON],
+      guaranteedRewardSpecs: [RewardId.MEMORY_MUSHROOM, RewardId.TM_COMMON],
       guaranteedRarityTiers: [RarityTier.MASTER, RarityTier.MASTER],
     };
     const selectRewardPhase = new SelectRewardPhase(0, undefined, customRewards);
     scene.phaseManager.unshiftPhase(selectRewardPhase);
     game.move.select(MoveId.SPLASH);
-    await game.phaseInterceptor.run(SelectRewardPhase);
+    await game.phaseInterceptor.to("SelectRewardPhase");
 
     expect(scene.ui.getMode()).toBe(UiMode.REWARD_SELECT);
     const rewardSelectHandler = scene.ui.handlers.find(
@@ -259,7 +252,7 @@ describe("SelectRewardPhase", () => {
     await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
     scene.money = 1000000;
     const customRewards: CustomRewardSettings = {
-      guaranteedRewardSpecs: [allRewards.MEMORY_MUSHROOM],
+      guaranteedRewardSpecs: [RewardId.MEMORY_MUSHROOM],
       guaranteedRarityTiers: [RarityTier.MASTER],
       fillRemaining: true,
     };
