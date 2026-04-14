@@ -3077,15 +3077,15 @@ export class ReflectStatStageChangeAbAttr extends PreStatStageChangeAbAttr {
   private reflectedStats?: BattleStat[];
 
   override canApply({ source, stats, cancelledStats }: PreStatStageChangeAbAttrParams): boolean {
-    return !!source && stats.some(s => !cancelledStats.includes(s));
+    this.reflectedStats = stats.filter(s => !cancelledStats.includes(s));
+    return !!source && this.reflectedStats.length > 0;
   }
 
   override apply({ source, stats, cancelledStats, simulated, stages }: PreStatStageChangeAbAttrParams): void {
-    if (!source) {
+    // Defensive programming; these should never be undefined here
+    if (!source || !this.reflectedStats) {
       return;
     }
-    // Reflect all stat changes which have not already been cancelled
-    this.reflectedStats = stats.filter(s => !cancelledStats.includes(s));
     if (!simulated) {
       globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
         battlerIndex: source.getBattlerIndex(),
