@@ -61,7 +61,7 @@ import { MoveCategory } from "#enums/move-category";
 import { MoveId } from "#enums/move-id";
 import { MoveTarget } from "#enums/move-target";
 import { PokemonType } from "#enums/pokemon-type";
-import { Stat } from "#enums/stat";
+import { type BattleStat, Stat } from "#enums/stat";
 import { StatChangeSource } from "#enums/stat-change-source";
 import { StatusEffect } from "#enums/status-effect";
 import type { Arena } from "#field/arena";
@@ -1045,16 +1045,16 @@ class StickyWebTag extends EntryHazardTag {
   }
 
   override activateTrap(simulated: boolean, pokemon: Pokemon): boolean {
-    const cancelled = new BooleanHolder(false);
+    const cancelledStats: BattleStat[] = [];
     // TODO: Does this need to pass `simulated` as a parameter?
     applyAbAttrs("ProtectStatAbAttr", {
       pokemon,
-      cancelled,
-      stat: Stat.SPD,
+      cancelledStats,
+      stats: [Stat.SPD],
       stages: -1,
     });
 
-    if (cancelled.value) {
+    if (cancelledStats.length > 0) {
       return false;
     }
 
@@ -1073,7 +1073,6 @@ class StickyWebTag extends EntryHazardTag {
       stats: [Stat.SPD],
       stages: -1,
       sourcePokemon: this.getSourcePokemon(),
-      canBeCopied: true,
       sourceEffect: StatChangeSource.STICKY_WEB,
     });
     return true;

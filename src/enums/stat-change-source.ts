@@ -3,4 +3,5 @@ export enum StatChangeSource {
   NORMAL,
   STICKY_WEB,
   MIRROR_ARMOR,
+  OPPORTUNIST,
 }

@@ -27,7 +27,6 @@ export interface StatStageChangePhaseOptions {
   stages: number;
   sourcePokemon: Pokemon | undefined;
   ignoreAbilities?: boolean;
-  canBeCopied?: boolean;
   onChange?: StatStageChangeCallback;
   /** The Pokemon whose effect caused these stat changes */
   sourceEffect?: StatChangeSource;
@@ -68,9 +67,7 @@ export class StatStageChangePhase extends PokemonPhase {
       }
       this.options.stages = stages.value;
 
-      const filteredStats = this.options.stats.filter(stat => {
-        return !this.checkStatCancellation(pokemon, opponent, stat);
-      });
+      const filteredStats = this.checkStatCancellation(pokemon, opponent, this.options.stats);
 
       if (filteredStats.length === 0) {
         this.end();
@@ -111,6 +108,7 @@ export class StatStageChangePhase extends PokemonPhase {
       globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
         ...this.options,
         stats: groupEntries[i],
+        processed: true,
       });
     }
     return groupEntries[0];
@@ -139,28 +137,35 @@ export class StatStageChangePhase extends PokemonPhase {
    * @param stat - The stat to change
    * @returns Whether the stat should be cancelled
    */
-  private checkStatCancellation(pokemon: Pokemon, opponentPokemon: Pokemon | undefined, stat: BattleStat): boolean {
-    // No reflection method currently exists which blocks positive or self-target changes
+  private checkStatCancellation(
+    pokemon: Pokemon,
+    opponentPokemon: Pokemon | undefined,
+    stats: readonly BattleStat[],
+  ): BattleStat[] {
+    // No reflection method currently exists which blocks positive or self-target changes (this method is called after Contrary, etc are applied)
     if (this.options.stages >= 0 || this.selfTarget) {
-      return false;
+      return [...stats];
     }
 
-    const cancelled = new ValueHolder(false);
+    const cancelledStats: BattleStat[] = [];
+    const applied = new ValueHolder(false);
 
     globalScene.arena.applyTagsForSide(
       ArenaTagType.MIST,
       pokemon.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY,
       false,
       pokemon,
-      cancelled,
+      applied,
       opponentPokemon,
     );
 
-    if (!cancelled.value) {
-      this.checkAbilityProtection(pokemon, opponentPokemon, stat, cancelled);
+    if (applied.value) {
+      return [];
     }
 
-    return cancelled.value;
+    this.checkAbilityProtection(pokemon, opponentPokemon, stats, cancelledStats);
+
+    return stats.filter(s => !cancelledStats.includes(s));
   }
 
   /**
@@ -169,22 +174,22 @@ export class StatStageChangePhase extends PokemonPhase {
   private checkAbilityProtection(
     pokemon: Pokemon,
     opponentPokemon: Pokemon | undefined,
-    stat: BattleStat,
-    cancelled: ValueHolder<boolean>,
+    stats: readonly BattleStat[],
+    cancelledStats: BattleStat[],
   ): void {
     const abAttrParams: PreStatStageChangeAbAttrParams & ConditionalUserFieldProtectStatAbAttrParams = {
       pokemon,
-      stat,
-      cancelled,
+      stats,
+      cancelledStats,
       simulated: false,
       target: pokemon,
       stages: this.options.stages,
     };
 
+    // It is the responsibility of the ability to check if it is applicable based on `stats` and `cancelledStats`
     applyAbAttrs("ProtectStatAbAttr", abAttrParams);
     applyAbAttrs("ConditionalUserFieldProtectStatAbAttr", abAttrParams);
 
-    // TODO: Consider skipping this call if `cancelled` is already true.
     const ally = pokemon.getAlly();
     if (ally != null) {
       applyAbAttrs("ConditionalUserFieldProtectStatAbAttr", { ...abAttrParams, pokemon: ally });
@@ -202,8 +207,8 @@ export class StatStageChangePhase extends PokemonPhase {
 
     applyAbAttrs("ReflectStatStageChangeAbAttr", {
       pokemon,
-      stat,
-      cancelled,
+      stats,
+      cancelledStats,
       simulated: false,
       source: opponentPokemon,
       stages: this.options.stages,
@@ -243,8 +248,21 @@ export class StatStageChangePhase extends PokemonPhase {
     }
   }
 
+  /**
+   * Trigger reactions like Opportunist and Defiant
+   * @param pokemon - The Pokemon whose stats have changed
+   * @param filteredStats - The stats which changed
+   * @param stages - How many stages each stat changed
+   *
+   * @privateRemarks
+   * Triggering for all stats at once means certain interactions diverge from mainline.
+   * For example, Defiant will proc one time +4 if two stats are dropped instead of twice +2.
+   * This would be a real behavior difference in the case of something like Mirror Herb
+   * (which would copy +4 instead of a single +2), but is not currently significant aside from
+   * faster animation.
+   */
   private triggerReactionAbilities(pokemon: Pokemon, filteredStats: readonly BattleStat[], stages: number): void {
-    if (stages > 0 && this.options.canBeCopied) {
+    if (stages > 0) {
       for (const opponent of pokemon.getOpponentsGenerator()) {
         applyAbAttrs("StatStageChangeCopyAbAttr", { pokemon: opponent, stats: filteredStats, numStages: stages });
       }

@@ -3043,8 +3043,8 @@ export class PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr extends PreLeaveFi
 }
 
 export interface PreStatStageChangeAbAttrParams extends AbAttrBaseParams {
-  /** The stat being affected by the stat stage change */
-  stat: BattleStat;
+  /** The stats being affected by the stat stage change */
+  stats: readonly BattleStat[];
   /** The amount of stages to change by (negative if the stat is being decreased) */
   stages: number;
   /**
@@ -3054,8 +3054,8 @@ export interface PreStatStageChangeAbAttrParams extends AbAttrBaseParams {
    * Currently, only used by {@linkcode ReflectStatStageChangeAbAttr} in order to reflect the stat stage change
    */
   source?: Pokemon | undefined;
-  /** Holder that will be set to true if the stat stage change should be cancelled due to the ability */
-  cancelled: BooleanHolder;
+  /** All cancelled stat changes; a subset of {@linkcode stats}. Any stat change which the ability cancels should be added to this array */
+  cancelledStats: BattleStat[];
 }
 
 /**
@@ -3074,38 +3074,38 @@ export abstract class PreStatStageChangeAbAttr extends AbAttr {
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Mirror_Armor_(Ability) | Mirror Armor (Bulbapedia)}
  */
 export class ReflectStatStageChangeAbAttr extends PreStatStageChangeAbAttr {
-  /** The stat to reflect */
-  private reflectedStat?: BattleStat;
+  private reflectedStats?: BattleStat[];
 
-  override canApply({ source, cancelled }: PreStatStageChangeAbAttrParams): boolean {
-    return !!source && !cancelled.value;
+  override canApply({ source, stats, cancelledStats }: PreStatStageChangeAbAttrParams): boolean {
+    return !!source && stats.some(s => !cancelledStats.includes(s));
   }
 
-  override apply({ source, cancelled, stat, simulated, stages }: PreStatStageChangeAbAttrParams): void {
+  override apply({ source, stats, cancelledStats, simulated, stages }: PreStatStageChangeAbAttrParams): void {
     if (!source) {
       return;
     }
-    this.reflectedStat = stat;
+    // Reflect all stat changes which have not already been cancelled
+    this.reflectedStats = stats.filter(s => !cancelledStats.includes(s));
     if (!simulated) {
       globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
         battlerIndex: source.getBattlerIndex(),
-        stats: [stat],
+        stats,
         stages,
         // if necessary later, pass the ability user through here
         sourcePokemon: undefined,
         ignoreAbilities: false,
-        canBeCopied: true,
         sourceEffect: StatChangeSource.MIRROR_ARMOR,
       });
     }
-    cancelled.value = true;
+    cancelledStats.push(...this.reflectedStats);
   }
 
   getTriggerMessage({ pokemon }: PreStatStageChangeAbAttrParams, abilityName: string): string {
     return i18next.t("abilityTriggers:protectStat", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       abilityName,
-      statName: this.reflectedStat ? i18next.t(getStatKey(this.reflectedStat)) : i18next.t("battle:stats"),
+      statName:
+        this.reflectedStats?.length === 1 ? i18next.t(getStatKey(this.reflectedStats[0])) : i18next.t("battle:stats"),
     });
   }
 }
@@ -3124,12 +3124,18 @@ export class ProtectStatAbAttr extends PreStatStageChangeAbAttr {
     }
   }
 
-  override canApply({ stat, cancelled }: PreStatStageChangeAbAttrParams): boolean {
-    return !cancelled.value && (this.protectedStat == null || stat === this.protectedStat);
+  override canApply({ stats, cancelledStats }: PreStatStageChangeAbAttrParams): boolean {
+    return stats.some(s => (s === this.protectedStat || this.protectedStat == null) && !cancelledStats.includes(s));
   }
 
-  override apply({ cancelled }: PreStatStageChangeAbAttrParams): void {
-    cancelled.value = true;
+  override apply({ stats, cancelledStats }: PreStatStageChangeAbAttrParams): void {
+    if (this.protectedStat == null) {
+      const statsToCancel = stats.filter(s => !cancelledStats.includes(s));
+      cancelledStats.push(...statsToCancel);
+      return;
+    }
+
+    cancelledStats.push(this.protectedStat);
   }
 
   override getTriggerMessage({ pokemon }: PreStatStageChangeAbAttrParams, abilityName: string): string {
@@ -3306,10 +3312,10 @@ export class ConditionalUserFieldStatusEffectImmunityAbAttr extends UserFieldSta
 }
 
 export interface ConditionalUserFieldProtectStatAbAttrParams extends AbAttrBaseParams {
-  /** The stat being affected by the stat stage change */
-  stat: BattleStat;
-  /** Holds whether the stat stage change is prevented by the ability */
-  cancelled: BooleanHolder;
+  /** The stats being affected by the stat stage change */
+  stats: readonly BattleStat[];
+  /** All cancelled stat changes; a subset of {@linkcode stats}. Any stat change which the ability cancels should be added to this array */
+  cancelledStats: BattleStat[];
   // TODO: consider making this required and not inherit from PreStatStageChangeAbAttr
   /** The target of the stat stage change */
   target?: Pokemon;
@@ -3334,18 +3340,27 @@ export class ConditionalUserFieldProtectStatAbAttr extends PreStatStageChangeAbA
   /**
    * @returns Whether the ability can be used to cancel the stat stage change.
    */
-  override canApply({ stat, cancelled, target }: ConditionalUserFieldProtectStatAbAttrParams): boolean {
+  override canApply({ stats, cancelledStats, target }: ConditionalUserFieldProtectStatAbAttrParams): boolean {
     if (!target) {
       return false;
     }
-    return !cancelled.value && (this.protectedStat == null || stat === this.protectedStat) && this.condition(target);
+    return (
+      stats.some(s => (s === this.protectedStat || this.protectedStat == null) && !cancelledStats.includes(s))
+      && this.condition(target)
+    );
   }
 
   /**
    * Apply the {@linkcode ConditionalUserFieldStatusEffectImmunityAbAttr} to an interaction
    */
-  override apply({ cancelled }: ConditionalUserFieldProtectStatAbAttrParams): void {
-    cancelled.value = true;
+  override apply({ stats, cancelledStats }: ConditionalUserFieldProtectStatAbAttrParams): void {
+    if (this.protectedStat == null) {
+      const statsToCancel = stats.filter(s => !cancelledStats.includes(s));
+      cancelledStats.push(...statsToCancel);
+      return;
+    }
+
+    cancelledStats.push(this.protectedStat);
   }
 }
 
@@ -4606,7 +4621,7 @@ export class StatStageChangeCopyAbAttr extends AbAttr {
         stages: numStages,
         sourcePokemon: pokemon,
         ignoreAbilities: false,
-        canBeCopied: false,
+        sourceEffect: StatChangeSource.OPPORTUNIST,
       });
     }
   }
