@@ -11,9 +11,11 @@ All UI is canvas-based via Phaser 3 WebGL -- there are no native DOM elements fo
 ### Key Files
 
 - `src/ui/accessibility-manager.ts` -- Core accessibility service (singleton). Creates hidden DOM with ARIA live regions inside `#app`.
-- `src/ui/handlers/` -- UI handler classes for each game screen/mode. These need accessibility hooks added.
+- `src/ui/a11y-form-overlay.ts` -- Accessible HTML form overlays for login/register/guest screens. Replaces inaccessible canvas modals.
+- `src/ui/handlers/` -- UI handler classes for each game screen/mode. These have accessibility hooks added.
 - `src/ui/ui.ts` -- Mode orchestration. Manages transitions between UI modes and announces mode changes via `announceContext()`.
 - `src/ui/settings/abstract-settings-ui-handler.ts` -- Settings handler with accessibility hooks for setting navigation.
+- `src/phases/login-phase.ts` -- Login phase with HTML overlay integration and "Play as Guest" option.
 
 ### Path Aliases
 
@@ -27,12 +29,22 @@ pnpm start:dev        # Local dev server
 pnpm build            # Production build
 ```
 
+Or use `run-local.bat` on Windows to start the dev server with auto-open.
+
+## Deployment
+
+GitHub Pages auto-deploys on every push to `feature/screen-reader-accessibility`:
+- Live at: https://michaeljohann1.github.io/pokerogue/
+- Workflow: `.github/workflows/deploy-pages.yml`
+- Note: Login/register API is CORS-blocked on GitHub Pages. Use "Play as Guest" to test.
+
 ## Testing with Screen Readers
 
 1. Run `pnpm start:dev` to start the local dev server.
 2. Enable NVDA (or another screen reader).
-3. Navigate with **arrow keys**; press **Z** or **Enter** to select.
+3. Navigate with **arrow keys**; press **Z** or **Enter** to select; **X** to cancel/go back.
 4. Verify announcements match on-screen content.
+5. Each screen announces navigation instructions when it opens.
 
 ## Accessibility Pattern
 
@@ -63,18 +75,33 @@ AccessibilityManager.getInstance().clearMenu();
 - Use `announceMessage()` (assertive) for content the user must hear immediately.
 - Use `announceContext()` (polite) for ambient status changes.
 - Strip BBCode/formatting before announcing -- `AccessibilityManager` handles this internally via `stripFormatting()`.
+- Each screen should announce **navigation instructions** when it opens (e.g., "Arrow keys to navigate, Z to select, X to go back").
 
 ## Currently Hooked Handlers
 
 | Handler | What it announces |
 |---|---|
 | `battle-message-ui-handler` | Battle messages with speaker name |
-| `message-ui-handler` | Dialogue/message text |
-| `command-ui-handler` | Command menu cursor changes (Fight/Ball/Pokemon/Run) |
-| `fight-ui-handler` | Move name, type, and PP on cursor change |
-| `target-select-ui-handler` | Target Pokemon name on cursor change |
+| `message-ui-handler` | Dialogue/message text + "press enter to continue" |
+| `command-ui-handler` | Command menu (Fight/Ball/Pokemon/Run) + navigation context |
+| `fight-ui-handler` | Move name, type, category, power, accuracy, PP, effectiveness |
+| `target-select-ui-handler` | Target Pokemon name (with Enemy prefix) |
 | `abstract-option-select-ui-handler` | Option labels as menu items; cursor changes |
-| `title-ui-handler` | Title screen context; menu options |
-| `modal-ui-handler` | Modal title and button options |
-| `abstract-settings-ui-handler` | Setting label and current value on navigate |
+| `title-ui-handler` | Title screen context + menu options |
+| `abstract-settings-ui-handler` | Setting label, current value, and tab switching instructions |
+| `starter-select-ui-handler` | Pokemon name, types, abilities, full base stats, cost |
+| `party-ui-handler` | Pokemon name, level, HP, status + party option labels |
+| `modifier-select-ui-handler` | Item name, description + navigation context |
+| `menu-ui-handler` | Pause menu option labels |
+| `save-slot-select-ui-handler` | Slot number, game mode, wave |
+| `summary-ui-handler` | Pokemon summary, page tabs, move details |
+| `achvs-ui-handler` | Achievement name, status, description |
+| `egg-list-ui-handler` | Egg descriptor, hatch waves |
+| `egg-gacha-ui-handler` | Gacha pull options |
+| `ball-ui-handler` | Pokeball name and count remaining |
+| `mystery-encounter-ui-handler` | Mystery encounter option labels |
+| `run-history-ui-handler` | Run mode, wave, victory/defeat |
+| `pokedex-ui-handler` | Pokemon name, category, types, caught status |
+| `game-stats-ui-handler` | All visible stat labels and values |
 | `ui.ts` | Mode transition labels via `announceContext()` |
+| `a11y-form-overlay.ts` | Login/Register/Guest HTML forms (bypasses canvas modals) |
