@@ -7,24 +7,19 @@
  * @typeParam Data - The data type associated with the given ID; must include
  * @typeParam Specs - The serializable item specification type (Data + `id`).
  */
-// NB: To anyone looking at this, please upvote https://github.com/microsoft/TypeScript/issues/7061
+// NB: To anyone looking at this, please upvote httxx`ps://github.com/microsoft/TypeScript/issues/7061
+
 // so we can make `Specs` a proper type alias instead of a free type parameter and remove numerous `as Specs` calls
-export abstract class ItemManager<
-  Id extends number,
-  // TODO: Restrict `Data` to have `stack` as the only allowed non-optional property (which would hopefully shut up the type errors);
-  // this will be untenable until after a beta merge since `exactOptionalPropertyTypes` is disabled atm
-  Data extends { stack: number },
-  Specs extends Data & { id: Id } = Data & { id: Id },
-> {
+export abstract class ItemManager<Id extends number, Data extends { stack: number }> {
   protected readonly items: Map<Id, Data> = new Map();
 
   /** Look up the item definition's max stack count for the given ID. */
   protected abstract getMaxStackCount(id: Id): number;
 
   /** Type guard to check whether an input is a full `Specs` object. */
-  protected abstract isSpecs(entry: Id | Specs): entry is Specs;
+  protected abstract isSpecs(entry: Id | (Data & { id: Id })): entry is Data & { id: Id };
 
-  public getItemSpecs(id: Id): Specs | undefined {
+  public getItemSpecs(id: Id): (Data & { id: Id }) | undefined {
     const item = this.items.get(id);
     if (!item) {
       return;
@@ -32,7 +27,7 @@ export abstract class ItemManager<
     return {
       ...item,
       id,
-    } as Specs;
+    };
   }
 
   /**
@@ -40,27 +35,22 @@ export abstract class ItemManager<
    * @param restrictedIds - If provided, only include items whose ID is in this array.
    */
   // TODO: This is never called with a restricted ID array ever
-  // TODO: Would an array of `Specs` make more sense as a return value?
+  // TODO: Would an array/iterator of `Specs` make more sense as a return value?
   // We're literally just bundling these into objects with counts of 1 apiece
-  public generateItemConfiguration(restrictedIds?: Id[]): { entry: Specs; count: 1 }[] {
-    const config: { entry: Specs; count: 1 }[] = [];
-    for (const [id, item] of this.items) {
-      if (!restrictedIds || restrictedIds.includes(id)) {
-        const specs = { ...item, id } as Specs;
-        config.push({ entry: specs, count: 1 });
-      }
-    }
-    return config;
+  public generateItemConfiguration(restrictedIds: Id[] = []): { entry: Data & { id: Id }; count: number }[] {
+    return this.items
+      .entries()
+      .filter(([iid]) => !restrictedIds.includes(iid))
+      .map(([id, item]) => ({ entry: { ...item, id }, count: 1 }))
+      .toArray();
   }
 
   // TODO: Rename to `getAllItemSpecs` or something more illustrative of its functionality
-  public generateSaveData(): Specs[] {
-    const saveData: Specs[] = [];
-    for (const [id, item] of this.items) {
-      const specs = { ...item, id } as Specs;
-      saveData.push(specs);
-    }
-    return saveData;
+  public generateSaveData(): (Data & { id: Id })[] {
+    return this.items
+      .entries()
+      .map(([id, item]) => ({ ...item, id }))
+      .toArray();
   }
 
   // TODO: Return an iterator for efficiency; we already provide an arity function
@@ -88,9 +78,9 @@ export abstract class ItemManager<
     return !!item && item.stack >= this.getMaxStackCount(itemType);
   }
 
-  public add(itemType: Specs): boolean;
-  public add(itemType: Id | Specs, qty?: number): boolean;
-  public add(itemType: Id | Specs, qty = 1): boolean {
+  public add(itemType: Data & { id: Id }): boolean;
+  public add(itemType: Id | (Data & { id: Id }), qty?: number): boolean;
+  public add(itemType: Id | (Data & { id: Id }), qty = 1): boolean {
     if (this.isSpecs(itemType)) {
       return this.addItemWithSpecs(itemType);
     }
@@ -111,7 +101,7 @@ export abstract class ItemManager<
     return false;
   }
 
-  private addItemWithSpecs(itemSpecs: Specs): boolean {
+  private addItemWithSpecs(itemSpecs: Data & { id: Id }): boolean {
     const { id } = itemSpecs;
     const maxStack = this.getMaxStackCount(id);
     const existing = this.items.get(id);
