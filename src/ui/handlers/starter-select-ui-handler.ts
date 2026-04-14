@@ -1684,6 +1684,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             // TODO: how can we get here if start button can't be selected? this appears to be redundant
             this.startCursorObj.setVisible(false);
             this.randomCursorObj.setVisible(true);
+            this.announceRandomButtonFocus();
           }
           success = true;
           break;
@@ -1740,8 +1741,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             this.cursorObj.setVisible(false);
             if (this.starterSpecies.length > 0) {
               this.startCursorObj.setVisible(true);
+              this.announceStartButtonFocus();
             } else {
               this.randomCursorObj.setVisible(true);
+              this.announceRandomButtonFocus();
             }
             success = true;
           } else if (numberOfStarters > 0) {
@@ -1771,6 +1774,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             this.setFilterMode(false);
             this.cursorObj.setVisible(false);
             this.randomCursorObj.setVisible(true);
+            this.announceRandomButtonFocus();
             success = true;
           } else if (numberOfStarters > 0) {
             // DOWN from filter bar to top of Pokemon list
@@ -2633,6 +2637,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 this.starterIconsCursorObj.setVisible(false);
                 this.setSpecies(null);
                 this.randomCursorObj.setVisible(true);
+                this.announceRandomButtonFocus();
               } else {
                 this.starterIconsCursorIndex--;
                 this.moveStarterIconsCursor(this.starterIconsCursorIndex);
@@ -2659,6 +2664,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 this.starterIconsCursorObj.setVisible(false);
                 this.setSpecies(null);
                 this.startCursorObj.setVisible(true);
+                this.announceStartButtonFocus();
               }
               success = true;
             } else if (currentRow < numOfRows - 1) {
@@ -2691,6 +2697,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                   // from the first row of starters we go to the random selection
                   this.cursorObj.setVisible(false);
                   this.randomCursorObj.setVisible(true);
+                  this.announceRandomButtonFocus();
                 } else if (this.starterSpecies.length === 0) {
                   // no starter in team and not on first row > wrap around to the last column
                   success = this.setCursor(this.cursor + Math.min(8, numberOfStarters - this.cursor));
@@ -2707,6 +2714,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                   this.cursorObj.setVisible(false);
                   this.setSpecies(null);
                   this.startCursorObj.setVisible(true);
+                  this.announceStartButtonFocus();
                 }
                 success = true;
               }
@@ -2733,6 +2741,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                   // from the first row of starters we go to the random selection
                   this.cursorObj.setVisible(false);
                   this.randomCursorObj.setVisible(true);
+                  this.announceRandomButtonFocus();
                 } else if (this.starterSpecies.length === 0) {
                   // no selected starter in team > wrap around to the first column
                   success = this.setCursor(this.cursor - Math.min(8, this.cursor % 9));
@@ -2749,6 +2758,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                   this.cursorObj.setVisible(false);
                   this.setSpecies(null);
                   this.startCursorObj.setVisible(true);
+                  this.announceStartButtonFocus();
                 }
                 success = true;
               }
@@ -3564,10 +3574,32 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     if (this.starterSpecies.length > 0) {
       this.starterIconsCursorObj.setVisible(true);
       this.setSpecies(this.starterSpecies[index]);
+      // Announce the party slot the cursor landed on. setSpecies() updates on-screen info
+      // but does not produce a screen-reader announcement on its own.
+      const species = this.starterSpecies[index];
+      if (species) {
+        AccessibilityManager.getInstance().announceMessage(
+          `Party slot ${index + 1} of ${this.starterSpecies.length}: ${species.name}. X to remove from team.`,
+        );
+      }
     } else {
       this.starterIconsCursorObj.setVisible(false);
       this.setSpecies(null);
     }
+  }
+
+  /** Announce the Start Run button when the cursor lands on it. */
+  private announceStartButtonFocus(): void {
+    AccessibilityManager.getInstance().announceMessage(
+      `${i18next.t("common:start")} button. Z or Enter to start your run with this team.`,
+    );
+  }
+
+  /** Announce the Random Select button when the cursor lands on it. */
+  private announceRandomButtonFocus(): void {
+    AccessibilityManager.getInstance().announceMessage(
+      `${i18next.t("starterSelectUiHandler:randomize")} button. Z or Enter to add a random Pokémon to your team.`,
+    );
   }
 
   getFriendship(speciesId: number) {
