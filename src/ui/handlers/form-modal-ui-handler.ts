@@ -178,7 +178,9 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
       });
 
       // Create accessible HTML buttons for screen readers and Tab navigation
-      // Delay creation so subclass show() can override submitAction/cancelAction first
+      // Delay creation until after the 1-second modal fade-in tween completes,
+      // so subclass show() has overridden submitAction/cancelAction and the tween
+      // check inside those overrides won't block the action
       this.removeA11yButtons();
       setTimeout(() => {
         const app = document.getElementById("app");
@@ -211,7 +213,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
           this.a11yButtonContainer.appendChild(btn);
         }
         app.appendChild(this.a11yButtonContainer);
-      }, 100);
+      }, 1200);
 
       // Announce form to screen readers
       const title = this.getModalTitle();
