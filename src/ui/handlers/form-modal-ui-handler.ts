@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
+import { AccessibilityManager } from "#ui/accessibility-manager";
 import type { ModalConfig } from "#ui/modal-ui-handler";
 import { ModalUiHandler } from "#ui/modal-ui-handler";
 import { addTextInputObject, addTextObject, getTextColor } from "#ui/text";
@@ -109,6 +110,13 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
       this.modalContainer.add(inputContainer);
 
       this.inputs[f] = input;
+
+      // Add ARIA label to the underlying HTML input for screen readers
+      const inputElement = input.node as HTMLInputElement | undefined;
+      if (inputElement) {
+        inputElement.setAttribute("aria-label", config.label);
+        inputElement.setAttribute("placeholder", config.label);
+      }
     }
   }
 
@@ -160,6 +168,16 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
         alpha: 1,
       });
 
+      // Announce form to screen readers
+      const title = this.getModalTitle();
+      const fieldLabels = this.getInputFieldConfigs()
+        .map(f => f.label)
+        .join(", ");
+      const buttons = this.buttonLabels.map(l => l.text).join(", ");
+      AccessibilityManager.getInstance().announceMessage(
+        `${title || "Form"}. Fields: ${fieldLabels}. Buttons: ${buttons}. Tab between fields, Enter to submit.`,
+      );
+
       return true;
     }
 
@@ -184,9 +202,13 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
   public override updateContainer(config?: ModalConfig): void {
     super.updateContainer(config);
 
-    this.errorMessage
-      .setText(this.getReadableErrorMessage((config as FormModalConfig)?.errorMessage || ""))
-      .setVisible(!!this.errorMessage.text);
+    const errorText = this.getReadableErrorMessage((config as FormModalConfig)?.errorMessage || "");
+    this.errorMessage.setText(errorText).setVisible(!!errorText);
+
+    // Announce error message to screen readers
+    if (errorText) {
+      AccessibilityManager.getInstance().announceMessage(`Error: ${errorText}`);
+    }
   }
 
   public hide(): void {
