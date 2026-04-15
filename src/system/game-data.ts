@@ -1313,7 +1313,7 @@ export class GameData {
           if (typeof resp !== "string") {
             return false;
           }
-          data = resp;
+          data = this.convertSystemDataStr(resp, true);
           break;
         }
         case GameDataType.SESSION: {
@@ -1324,7 +1324,7 @@ export class GameData {
           if (typeof resp !== "string") {
             return false;
           }
-          data = this.convertSystemDataStr(resp, true);
+          data = resp;
           break;
         }
         default:
