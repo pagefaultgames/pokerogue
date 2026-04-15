@@ -18,6 +18,8 @@ All UI is canvas-based via Phaser 3 WebGL -- there are no native DOM elements fo
 - `src/phases/login-phase.ts` -- Login phase with HTML overlay integration and "Play as Guest" option. Calls `enableGuestMode()` when the guest button is clicked.
 - `src/account.ts` -- Exports `isGuestMode` (runtime flag) and `enableGuestMode()`. Seeds `loggedInUser` as a `Guest` account so localStorage keys resolve.
 - `src/system/game-data.ts` -- Save/load. Every server-sync branch checks `bypassLogin || isGuestMode` so guest saves go to localStorage only (no server calls that would fail on CORS and trigger a reset).
+- `src/phases/game-over-phase.ts` -- Run-end flow. Guarded with `!isGuestMode` so guest runs skip the `savedata/session/newclear` POST (which CORS-fails on GitHub Pages and would otherwise show "server communication failed" and hard-reload the tab).
+- `src/phases/title-phase.ts` -- Daily-run seed fetch. Guarded with `!isGuestMode` so guest daily runs fall back to the offline date-based seed instead of hitting the server.
 - `src/ui-inputs.ts` -- Global keyboard/gamepad input routing. `buttonStats` hooks the stats key (default `C`) to announce HP/status for all active Pokémon in battle.
 
 ### Path Aliases

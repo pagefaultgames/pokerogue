@@ -1,5 +1,5 @@
 import { pokerogueApi } from "#api/pokerogue-api";
-import { loggedInUser } from "#app/account";
+import { isGuestMode, loggedInUser } from "#app/account";
 import { GameMode, getGameMode } from "#app/game-mode";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
@@ -322,7 +322,7 @@ export class TitlePhase extends Phase {
       };
 
       // If Online, calls seed fetch from db to generate daily run. If Offline, generates a daily run based on current date.
-      if (!bypassLogin || isLocalServerConnected) {
+      if ((!bypassLogin || isLocalServerConnected) && !isGuestMode) {
         pokerogueApi.daily
           .getSeed()
           .then(seed => {
