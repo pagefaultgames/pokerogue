@@ -1769,11 +1769,11 @@ export class InfestationTag extends DamagingTrapTag {
 export class ProtectedTag extends BattlerTag {
   public declare readonly tagType: ProtectionBattlerTagType;
 
-  /** 
+  /**
    * Whether this protection effect should block status moves.
    * @defaultValue `true`
    * @remarks
-   * Damaging moves are always blocked, regardless of this flag's state. 
+   * Damaging moves are always blocked, regardless of this flag's state.
    */
   public get blockStatus(): boolean {
     return true;
@@ -1881,7 +1881,8 @@ export class ContactDamageProtectedTag extends ContactProtectedTag {
 
 /**
  * `BattlerTag` class for protection effects that set a status condition on contact.
- * Used by {@linkcode MoveId.BANEFUL_BUNKER} and {@linkcode MoveId.BURNING_BULWARK}.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Burning_Bulwark_(move)}
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Baneful_Bunker_(move)}
  */
 export class ContactSetStatusProtectedTag extends ContactProtectedTag {
   public declare readonly tagType: ContactSetStatusProtectedTagType;
@@ -1923,7 +1924,9 @@ export class ContactSetStatusProtectedTag extends ContactProtectedTag {
 
 /**
  * `BattlerTag` class for moves that block damaging moves and lower enemy stats if the enemy's move makes contact
- * Used by {@linkcode MoveId.KINGS_SHIELD}, {@linkcode MoveId.OBSTRUCT}, {@linkcode MoveId.SILK_TRAP}
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/King%27s_Shield_(move)}
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Obstruct_(move)}
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Silk_Trap_(move)}
  */
 export class ContactStatStageChangeProtectedTag extends ContactProtectedTag {
   public declare readonly tagType: ContactStatStageChangeProtectedTagType;
