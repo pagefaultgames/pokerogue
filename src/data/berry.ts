@@ -105,7 +105,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
           const stat: BattleStat = berryType - BerryType.ENIGMA;
           const statStages = new NumberHolder(1);
           applyAbAttrs("DoubleBerryEffectAbAttr", { pokemon: consumer, effectValue: statStages });
-          consumer.queuedBerryStatChanges[stat] = consumer.queuedBerryStatChanges.get(stat) ?? 0 + statStages.value;
+          consumer.queuedBerryStatChanges.set(stat, consumer.queuedBerryStatChanges.get(stat) ?? 0 + statStages.value);
         }
         break;
 
