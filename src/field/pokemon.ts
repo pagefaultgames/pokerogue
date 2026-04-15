@@ -316,6 +316,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   private shinySparkle: Phaser.GameObjects.Sprite;
 
+  /** Stat stages queued by berry eating to be run in a single phase */
+  public queuedBerryStatChanges: Map<BattleStat, number>; // todo Doing it this way to touch modifiers as little as possible, may not be ideal permanent solution
+
   // TODO: Rework this eventually
   constructor(
     x: number,
