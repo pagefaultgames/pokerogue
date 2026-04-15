@@ -1851,7 +1851,7 @@ export abstract class ContactProtectedTag extends ProtectedTag {
  */
 export class ContactDamageProtectedTag extends ContactProtectedTag {
   public override readonly tagType = BattlerTagType.SPIKY_SHIELD;
-  #damageRatio: number;
+  readonly #damageRatio: number;
 
   constructor(sourceMove: MoveId, damageRatio: number) {
     super(sourceMove, BattlerTagType.SPIKY_SHIELD);
@@ -1881,7 +1881,7 @@ export class ContactDamageProtectedTag extends ContactProtectedTag {
 export class ContactSetStatusProtectedTag extends ContactProtectedTag {
   public declare readonly tagType: ContactSetStatusProtectedTagType;
   /** The status effect applied to attackers */
-  #statusEffect: StatusEffect;
+  readonly #statusEffect: StatusEffect;
   /** Whether this protection effect blocks status moves. */
   readonly #blockStatus: boolean;
 
@@ -1922,8 +1922,8 @@ export class ContactSetStatusProtectedTag extends ContactProtectedTag {
  */
 export class ContactStatStageChangeProtectedTag extends ContactProtectedTag {
   public declare readonly tagType: ContactStatStageChangeProtectedTagType;
-  #stat: BattleStat;
-  #levels: number;
+  readonly #stat: BattleStat;
+  readonly #levels: number;
 
   public override get blockStatus(): boolean {
     return false;
