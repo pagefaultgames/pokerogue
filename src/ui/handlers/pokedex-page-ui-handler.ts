@@ -2030,7 +2030,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
             if (valueReduction < valueReductionMax) {
               const reductionCost = getValueReductionCandyCounts(speciesStarterCosts[this.starterId])[valueReduction];
               options.push({
-                label: `×${reductionCost} ${i18next.t("pokedexUiHandler:reduceCost")}`,
+                label: `×${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost", { newCost: globalScene.gameData.getSpeciesStarterValue(this.starterId, starterData.valueReduction + 1) })}`,
                 handler: () => {
                   if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE && candyCount < reductionCost) {
                     return false;

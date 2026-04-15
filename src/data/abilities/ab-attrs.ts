@@ -558,12 +558,13 @@ export interface FieldPriorityMoveImmunityAbAttrParams extends AugmentMoveIntera
 }
 
 export class FieldPriorityMoveImmunityAbAttr extends PreDefendAbAttr {
-  override canApply({ move, opponent: attacker, cancelled }: FieldPriorityMoveImmunityAbAttrParams): boolean {
+  override canApply({ move, opponent: attacker, cancelled, pokemon }: FieldPriorityMoveImmunityAbAttrParams): boolean {
     return (
       !cancelled.value
-      && !(move.moveTarget === MoveTarget.USER || move.moveTarget === MoveTarget.NEAR_ALLY)
       && move.getPriority(attacker) > 0
+      && !move.isAllyTarget()
       && !move.isMultiTarget()
+      && attacker.isOpponent(pokemon)
     );
   }
 
@@ -2372,7 +2373,6 @@ export class PostSummonRemoveBattlerTagAbAttr extends PostSummonRemoveEffectAbAt
   }
 
   public override apply({ pokemon }: AbAttrBaseParams): void {
-    // biome-ignore lint/suspicious/useIterableCallbackReturn: the return type of `removeTag` is `void`
     this.immuneTags.forEach(tagType => pokemon.removeTag(tagType));
   }
 }

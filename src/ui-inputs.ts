@@ -35,7 +35,7 @@ export class UiInputs {
   detectInputMethod(evt): void {
     if (evt.controller_type === "keyboard") {
       //if the touch property is present and defined, then this is a simulated keyboard event from the touch screen
-      if (evt.hasOwnProperty("isTouch") && evt.isTouch) {
+      if (Object.hasOwn(evt, "isTouch") && evt.isTouch) {
         globalScene.inputMethod = "touch";
       } else {
         globalScene.inputMethod = "keyboard";
@@ -52,7 +52,7 @@ export class UiInputs {
         this.detectInputMethod(event);
 
         const actions = this.getActionsKeyDown();
-        if (!actions.hasOwnProperty(event.button)) {
+        if (!Object.hasOwn(actions, event.button)) {
           return;
         }
         actions[event.button]();
@@ -64,7 +64,7 @@ export class UiInputs {
       "input_up",
       event => {
         const actions = this.getActionsKeyUp();
-        if (!actions.hasOwnProperty(event.button)) {
+        if (!Object.hasOwn(actions, event.button)) {
           return;
         }
         actions[event.button]();
