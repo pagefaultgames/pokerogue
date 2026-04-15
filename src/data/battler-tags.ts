@@ -1769,7 +1769,12 @@ export class InfestationTag extends DamagingTrapTag {
 export class ProtectedTag extends BattlerTag {
   public declare readonly tagType: ProtectionBattlerTagType;
 
-  /** Whether this protection effect blocks status moves in addition to damaging moves. */
+  /** 
+   * Whether this protection effect should block status moves.
+   * @defaultValue `true`
+   * @remarks
+   * Damaging moves are always blocked, regardless of this flag's state. 
+   */
   public get blockStatus(): boolean {
     return true;
   }
