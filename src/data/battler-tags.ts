@@ -88,7 +88,6 @@ import type {
   ContactSetStatusProtectedTagType,
   ContactStatStageChangeProtectedTagType,
   CritStageBoostTagType,
-  DamageProtectedTagType,
   EndureTagType,
   HighestStatBoostTagType,
   MoveRestrictionBattlerTagType,
@@ -1875,15 +1874,6 @@ export class ContactDamageProtectedTag extends ContactProtectedTag {
   }
 }
 
-/** Base class for `BattlerTag`s that block damaging moves but not status moves */
-export abstract class DamageProtectedTag extends ContactProtectedTag {
-  public declare readonly tagType: DamageProtectedTagType;
-
-  public override get blockStatus(): boolean {
-    return false;
-  }
-}
-
 /**
  * `BattlerTag` class for protection effects that set a status condition on contact.
  * Used by {@linkcode MoveId.BANEFUL_BUNKER} and {@linkcode MoveId.BURNING_BULWARK}.
@@ -1930,10 +1920,14 @@ export class ContactSetStatusProtectedTag extends ContactProtectedTag {
  * `BattlerTag` class for moves that block damaging moves and lower enemy stats if the enemy's move makes contact
  * Used by {@linkcode MoveId.KINGS_SHIELD}, {@linkcode MoveId.OBSTRUCT}, {@linkcode MoveId.SILK_TRAP}
  */
-export class ContactStatStageChangeProtectedTag extends DamageProtectedTag {
+export class ContactStatStageChangeProtectedTag extends ContactProtectedTag {
   public declare readonly tagType: ContactStatStageChangeProtectedTagType;
   #stat: BattleStat;
   #levels: number;
+
+  public override get blockStatus(): boolean {
+    return false;
+  }
 
   constructor(sourceMove: MoveId, tagType: ContactStatStageChangeProtectedTagType, stat: BattleStat, levels: number) {
     super(sourceMove, tagType);

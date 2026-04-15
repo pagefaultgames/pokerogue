@@ -43,6 +43,7 @@ export type ProtectionBattlerTagType =
   | BattlerTagType.SPIKY_SHIELD
   | ContactSetStatusProtectedTagType
   | DamageProtectedTagType;
+
 /**
  * Subset of {@linkcode BattlerTagType}s related to protection effects that block damage but not status moves.
  */
