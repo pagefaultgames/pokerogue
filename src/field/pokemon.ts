@@ -452,6 +452,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     this.summonData = new PokemonSummonData(dataSource?.summonData);
     this.battleData = new PokemonBattleData(dataSource?.battleData);
+    this.queuedBerryStatChanges = new Map();
 
     this.generateName();
 
