@@ -81,6 +81,8 @@ export class Battle {
   public battleSeed: string = randomString(16, true);
   private battleSeedState: string | null = null;
   public moneyScattered = 0;
+  // TODO: These trackers are only used for Sticky Web + Mirror Armor edge cases
+  // and are abhorrently janky.
   /** Primarily for double battles, keeps track of last enemy and player pokemon that triggered its ability or used a move */
   public lastEnemyInvolved: number;
   public lastPlayerInvolved: number;
@@ -283,6 +285,12 @@ export class Battle {
       ) {
         if (globalScene.musicPreference === MusicPreference.GENFIVE) {
           switch (pokemon.species.speciesId) {
+            case SpeciesId.ARTICUNO:
+            case SpeciesId.ZAPDOS:
+            case SpeciesId.MOLTRES:
+            case SpeciesId.MEWTWO:
+            case SpeciesId.MEW:
+              return "battle_legendary_mew";
             case SpeciesId.REGIROCK:
             case SpeciesId.REGICE:
             case SpeciesId.REGISTEEL:
@@ -326,7 +334,10 @@ export class Battle {
               return "battle_legendary_regis_g6";
             case SpeciesId.GROUDON:
             case SpeciesId.KYOGRE:
-              return "battle_legendary_gro_kyo";
+              if (pokemon.getFormKey() === SpeciesFormKey.PRIMAL) {
+                return "battle_legendary_gro_kyo";
+              }
+              return "battle_legendary_rayquaza";
             case SpeciesId.RAYQUAZA:
               return "battle_legendary_rayquaza";
             case SpeciesId.DEOXYS:
@@ -342,7 +353,7 @@ export class Battle {
               return "battle_legendary_sinnoh";
             case SpeciesId.DIALGA:
             case SpeciesId.PALKIA:
-              if (pokemon.species.getFormSpriteKey(pokemon.formIndex) === SpeciesFormKey.ORIGIN) {
+              if (pokemon.getFormKey() === SpeciesFormKey.ORIGIN) {
                 return "battle_legendary_origin_forme";
               }
               return "battle_legendary_dia_pal";
@@ -371,6 +382,8 @@ export class Battle {
             case SpeciesId.TAPU_BULU:
             case SpeciesId.TAPU_FINI:
               return "battle_legendary_tapu";
+            case SpeciesId.COSMOG:
+            case SpeciesId.COSMOEM:
             case SpeciesId.SOLGALEO:
             case SpeciesId.LUNALA:
               return "battle_legendary_sol_lun";

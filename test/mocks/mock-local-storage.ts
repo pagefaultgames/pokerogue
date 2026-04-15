@@ -11,7 +11,7 @@ export const mockLocalStorage = () => {
     },
 
     hasOwnProperty(key: string) {
-      return store.hasOwnProperty(key);
+      return Object.hasOwn(store, key);
     },
 
     removeItem(key: string) {

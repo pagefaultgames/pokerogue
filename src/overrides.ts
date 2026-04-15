@@ -6,6 +6,8 @@ import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
 import { BerryType } from "#enums/berry-type";
 import { BiomeId } from "#enums/biome-id";
+import { BiomePoolTier } from "#enums/biome-pool-tier";
+import { Challenges } from "#enums/challenges";
 import { EggTier } from "#enums/egg-type";
 import { FormChangeItem } from "#enums/form-change-item";
 import { MoveId } from "#enums/move-id";
@@ -31,7 +33,7 @@ import type { IntClosedRange, TupleOf } from "type-fest";
 /**
  * This comment block exists to prevent IDEs from automatically removing unused imports
  * {@linkcode BerryType}, {@linkcode EvolutionItem}, {@linkcode FormChangeItem}
- * {@linkcode Stat}, {@linkcode PokemonType}
+ * {@linkcode Stat}, {@linkcode PokemonType} {@linkcode Challenges} {@linkcode BiomePoolTier}
  */
 
 /**

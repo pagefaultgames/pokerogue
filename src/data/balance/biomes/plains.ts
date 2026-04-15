@@ -41,21 +41,14 @@ const pokemonPool: BiomePokemonPools = {
     [TimeOfDay.DAY]: [SpeciesId.PALDEA_TAUROS],
     [TimeOfDay.DUSK]: [SpeciesId.SHINX],
     [TimeOfDay.NIGHT]: [SpeciesId.SHINX],
-    [TimeOfDay.ALL]: [SpeciesId.ABRA, SpeciesId.BUNEARY, SpeciesId.ROOKIDEE],
+    [TimeOfDay.ALL]: [SpeciesId.ABRA, SpeciesId.LICKITUNG, SpeciesId.BUNEARY, SpeciesId.ROOKIDEE],
   },
   [BiomePoolTier.SUPER_RARE]: {
     [TimeOfDay.DAWN]: [],
     [TimeOfDay.DAY]: [],
     [TimeOfDay.DUSK]: [],
     [TimeOfDay.NIGHT]: [],
-    [TimeOfDay.ALL]: [
-      SpeciesId.FARFETCHD,
-      SpeciesId.LICKITUNG,
-      SpeciesId.CHANSEY,
-      SpeciesId.EEVEE,
-      SpeciesId.SNORLAX,
-      SpeciesId.DUNSPARCE,
-    ],
+    [TimeOfDay.ALL]: [SpeciesId.FARFETCHD, SpeciesId.CHANSEY, SpeciesId.EEVEE, SpeciesId.SNORLAX, SpeciesId.DUNSPARCE],
   },
   [BiomePoolTier.ULTRA_RARE]: {
     [TimeOfDay.DAWN]: [],

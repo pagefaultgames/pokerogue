@@ -1037,7 +1037,6 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.INFILTRATOR, 5) //
       .attr(InfiltratorAbAttr)
-      .partial() // does not bypass Mist
       .build(),
     new AbBuilder(AbilityId.MUMMY, 5) //
       .attr(PostDefendAbilityGiveAbAttr, AbilityId.MUMMY)
@@ -1072,9 +1071,6 @@ export function initAbilities() {
     new AbBuilder(AbilityId.MAGIC_BOUNCE, 5) //
       .attr(ReflectStatusMoveAbAttr)
       .ignorable()
-      // Interactions with stomping tantrum, instruct, encore, and probably other moves that
-      // rely on move history
-      .edgeCase()
       .build(),
     new AbBuilder(AbilityId.SAP_SIPPER, 5) //
       .attr(TypeImmunityStatStageChangeAbAttr, PokemonType.GRASS, Stat.ATK, 1)
@@ -1130,6 +1126,7 @@ export function initAbilities() {
         BattlerTagType.DISABLED,
         BattlerTagType.TORMENT,
         BattlerTagType.HEAL_BLOCK,
+        BattlerTagType.ENCORE,
       ])
       .ignorable()
       .build(),

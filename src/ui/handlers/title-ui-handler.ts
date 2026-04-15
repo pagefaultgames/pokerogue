@@ -190,6 +190,7 @@ export class TitleUiHandler extends OptionSelectUiHandler {
     this.splashMessageText.setText(
       i18next.t(this.splashMessage, {
         count: TitleUiHandler.BATTLES_WON_FALLBACK,
+        cycleCountNoOrdinal: 5643853 + globalScene.gameData.gameStats.classicSessionsPlayed, // for `splashMessages:itsBeenTotalRuns`
       }),
     );
 
