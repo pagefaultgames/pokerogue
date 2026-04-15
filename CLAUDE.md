@@ -110,6 +110,11 @@ AccessibilityManager.getInstance().clearMenu();
 | `run-history-ui-handler` | Run mode, wave, victory/defeat |
 | `pokedex-ui-handler` | Pokemon name, category, types, caught status |
 | `game-stats-ui-handler` | All visible stat labels and values |
+| `challenges-select-ui-handler` | Challenge title, navigation instructions, current challenge name + value on UP/DOWN, value on LEFT/RIGHT, start button state |
+| `abstract-binding-ui-handler` | "Press a key to bind" prompt on show, capture confirmation, Confirm/Cancel label on LEFT/RIGHT |
+| `rename-form-ui-handler` | Modal title, nickname field label + current value, Rename/Cancel buttons |
+| `rename-run-ui-handler` | Modal title, run-name field label, Rename/Cancel buttons |
+| `pokedex-scan-ui-handler` | Modal title, field label + current value, Select/Cancel buttons |
 | `ui.ts` | Mode transition labels via `announceContext()` |
 | `a11y-form-overlay.ts` | Login/Register/Guest HTML forms (bypasses canvas modals) |
 | `ui-inputs.ts` | Stats key (default `C`) announces HP / max HP / percent / status / level for every active Pokémon in battle, enemies first |

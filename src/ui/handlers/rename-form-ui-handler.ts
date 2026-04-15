@@ -1,4 +1,5 @@
 import type { PlayerPokemon } from "#field/pokemon";
+import { AccessibilityManager } from "#ui/accessibility-manager";
 import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
 import type { ModalConfig } from "#ui/modal-ui-handler";
@@ -49,6 +50,12 @@ export class RenameFormUiHandler extends FormModalUiHandler {
         config.buttonActions[0](sanitizedName);
         return true;
       };
+
+      const currentName = this.inputs[0].text;
+      AccessibilityManager.getInstance().announceContext(
+        `${i18next.t("menu:renamePokemon")}. ${i18next.t("menu:nickname")}${currentName ? `: ${currentName}` : ""}. ${i18next.t("menu:rename")} or ${i18next.t("menu:cancel")}.`,
+      );
+
       return true;
     }
     return false;

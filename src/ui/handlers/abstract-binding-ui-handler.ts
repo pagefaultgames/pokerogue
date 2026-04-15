@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
+import { AccessibilityManager } from "#ui/accessibility-manager";
 import { NavigationManager } from "#ui/navigation-menu";
 import { addTextObject, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
@@ -151,6 +152,11 @@ export abstract class AbstractBindingUiHandler extends UiHandler {
       this.listening = true;
       this.manageAutoCloseTimer();
     }, 100);
+
+    AccessibilityManager.getInstance().announceContext(
+      `${i18next.t("settings:pressButton")} — five seconds to bind, or press X to cancel.`,
+    );
+
     return true;
   }
 
@@ -226,12 +232,14 @@ export abstract class AbstractBindingUiHandler extends UiHandler {
       this.actionLabel.setShadowColor(getTextColor(TextStyle.SETTINGS_SELECTED, true));
       this.cancelLabel.setColor(getTextColor(TextStyle.WINDOW));
       this.cancelLabel.setShadowColor(getTextColor(TextStyle.WINDOW, true));
+      AccessibilityManager.getInstance().announceMessage(this.actionLabel.text);
       return true;
     }
     this.actionLabel.setColor(getTextColor(TextStyle.WINDOW));
     this.actionLabel.setShadowColor(getTextColor(TextStyle.WINDOW, true));
     this.cancelLabel.setColor(getTextColor(TextStyle.SETTINGS_SELECTED));
     this.cancelLabel.setShadowColor(getTextColor(TextStyle.SETTINGS_SELECTED, true));
+    AccessibilityManager.getInstance().announceMessage(this.cancelLabel.text);
     return true;
   }
 
@@ -271,6 +279,12 @@ export abstract class AbstractBindingUiHandler extends UiHandler {
       this.swapText.setVisible(true);
     }
     this.newButtonIcon.setVisible(true);
+
+    const prompt = assignedButtonIcon
+      ? "Key captured. That key is already bound — left and right to choose swap or cancel, Z to confirm."
+      : "Key captured. Left and right to choose confirm or cancel, Z to confirm.";
+    AccessibilityManager.getInstance().announceContext(prompt);
+
     this.setCursor(0);
     this.actionsContainer.setVisible(true);
   }

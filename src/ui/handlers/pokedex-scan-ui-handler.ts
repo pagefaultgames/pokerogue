@@ -2,6 +2,7 @@ import { allAbilities, allMoves, allSpecies } from "#data/data-lists";
 import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
 import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import { AccessibilityManager } from "#ui/accessibility-manager";
 import { FilterTextRow } from "#ui/filter-text";
 import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
@@ -175,6 +176,13 @@ export class PokedexScanUiHandler extends FormModalUiHandler {
         }
         return false;
       };
+
+      const fieldLabel = this.getInputFieldConfigs()[0]?.label ?? "";
+      const currentText = this.inputs[0].text;
+      AccessibilityManager.getInstance().announceContext(
+        `${i18next.t("pokedexUiHandler:scanChooseOption")}. ${fieldLabel}${currentText ? `: ${currentText}` : ""}. Type to search, ${i18next.t("pokedexUiHandler:scanSelect")} or ${i18next.t("pokedexUiHandler:scanCancel")}.`,
+      );
+
       return true;
     }
     return false;

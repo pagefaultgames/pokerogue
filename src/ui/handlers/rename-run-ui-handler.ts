@@ -1,3 +1,4 @@
+import { AccessibilityManager } from "#ui/accessibility-manager";
 import i18next from "i18next";
 import { FormModalUiHandler, type InputFieldConfig } from "./form-modal-ui-handler";
 import type { ModalConfig } from "./modal-ui-handler";
@@ -48,6 +49,11 @@ export class RenameRunFormUiHandler extends FormModalUiHandler {
       config.buttonActions[0](sanitizedName);
       return true;
     };
+
+    AccessibilityManager.getInstance().announceContext(
+      `${i18next.t("menu:renameRun")}. ${i18next.t("menu:runName")}. ${i18next.t("menu:rename")} or ${i18next.t("menu:cancel")}.`,
+    );
+
     return true;
   }
 }

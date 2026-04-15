@@ -5,6 +5,7 @@ import { Challenges } from "#enums/challenges";
 import { Color, ShadowColor } from "#enums/color";
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
+import { AccessibilityManager } from "#ui/accessibility-manager";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
@@ -323,7 +324,33 @@ export class GameChallengesUiHandler extends UiHandler {
 
     this.getUi().hideTooltip();
 
+    this.announceA11y();
+
     return true;
+  }
+
+  /**
+   * Announce the challenges screen to screen readers: context, the current
+   * challenge + its value, and navigation instructions.
+   */
+  private announceA11y(): void {
+    const a11y = AccessibilityManager.getInstance();
+    a11y.announceContext(
+      `${i18next.t("challenges:title")}. Up and down to pick a challenge, left and right to change its value, Z to confirm, X to go back.`,
+    );
+    const challenge = this.getActiveChallenge();
+    if (challenge) {
+      a11y.announceMessage(`${challenge.getName()}: ${challenge.getValue()}`);
+    }
+  }
+
+  /**
+   * Announce the start button state (selected or no challenge chosen).
+   */
+  private announceStartA11y(): void {
+    const a11y = AccessibilityManager.getInstance();
+    const key = this.hasSelectedChallenge ? "common:start" : "challenges:noneSelected";
+    a11y.announceMessage(i18next.t(key));
   }
 
   private updateChallengeArrowsTint(tinted: boolean): void {
@@ -366,6 +393,10 @@ export class GameChallengesUiHandler extends UiHandler {
         this.startCursor.setVisible(false);
         this.cursorObj?.setVisible(true);
         this.updateChallengeArrowsTint(this.startCursor.visible);
+        const challenge = this.getActiveChallenge();
+        if (challenge) {
+          AccessibilityManager.getInstance().announceMessage(`${challenge.getName()}: ${challenge.getValue()}`);
+        }
       } else {
         phaseManager.toTitleScreen();
         phaseManager.getCurrentPhase().end();
@@ -380,6 +411,7 @@ export class GameChallengesUiHandler extends UiHandler {
           this.startCursor.setVisible(true);
           this.cursorObj?.setVisible(false);
           this.updateChallengeArrowsTint(this.startCursor.visible);
+          this.announceStartA11y();
         }
         success = true;
       } else {
@@ -410,6 +442,10 @@ export class GameChallengesUiHandler extends UiHandler {
           }
           if (success) {
             this.updateText();
+            const challengeUp = this.getActiveChallenge();
+            if (challengeUp) {
+              AccessibilityManager.getInstance().announceMessage(`${challengeUp.getName()}: ${challengeUp.getValue()}`);
+            }
           }
           break;
         case Button.DOWN:
@@ -433,18 +469,28 @@ export class GameChallengesUiHandler extends UiHandler {
           }
           if (success) {
             this.updateText();
+            const challengeDown = this.getActiveChallenge();
+            if (challengeDown) {
+              AccessibilityManager.getInstance().announceMessage(
+                `${challengeDown.getName()}: ${challengeDown.getValue()}`,
+              );
+            }
           }
           break;
         case Button.LEFT:
           success = this.getActiveChallenge().decreaseValue();
           if (success) {
             this.updateText();
+            const challengeLeft = this.getActiveChallenge();
+            AccessibilityManager.getInstance().announceMessage(challengeLeft.getValue());
           }
           break;
         case Button.RIGHT:
           success = this.getActiveChallenge().increaseValue();
           if (success) {
             this.updateText();
+            const challengeRight = this.getActiveChallenge();
+            AccessibilityManager.getInstance().announceMessage(challengeRight.getValue());
           }
           break;
       }
