@@ -59,6 +59,8 @@ The deployed build on GitHub Pages can't reach the PokéRogue API because of COR
 - `enableGuestMode()` sets the flag to `true`, seeds `loggedInUser` as a `Guest` account (so `data_Guest` / `sessionData_Guest` localStorage keys resolve), and scans localStorage for the most recent guest save slot.
 - `src/phases/login-phase.ts` calls `enableGuestMode()` from the "Play as Guest" click handler before running `loadSystem()`.
 - Every server-sync branch in `src/system/game-data.ts` (`saveSystem`, `loadSystem`, `verify`, `getSession`, `renameSession`, `deleteSession`, `tryClearSession`, `saveAll`, `tryExportData`, import) checks `bypassLogin || isGuestMode`. When either is true, the code takes the localStorage-only path and skips every `pokerogueApi.*` call.
+- `src/phases/game-over-phase.ts` gates the `savedata/session/newclear` POST behind `!isGuestMode` so guest runs fall into the offline branch (`offlineNewClear()` for victories, no-op for losses). Without this guard, every run-end would CORS-fail on GitHub Pages, show "server communication failed", and hard-reload the tab.
+- `src/phases/title-phase.ts` gates the daily-run seed fetch behind `!isGuestMode` so guest daily runs use the offline date-based seed instead of hitting the server.
 - Encryption still uses the regular online path (AES with `saveKey`). `bypassLogin` (dev builds) keeps using base64. We only branched the *control flow*, not the encryption choice.
 
 **Why the flag exists**
@@ -133,6 +135,8 @@ clear(): void {
 - **menu-ui-handler.ts** -- Pause menu option labels
 - **abstract-option-select-ui-handler.ts** -- Base class for all option menus; builds accessible menus and announces cursor
 - **abstract-settings-ui-handler.ts** -- Setting name, current value, value changes, tab switching instructions
+- **abstract-binding-ui-handler.ts** -- Keyboard/gamepad rebinding flow. Announces "Press a button to bind" on open, confirms the captured key (or "already bound — swap or cancel" on collision), and reads Confirm/Cancel as the cursor moves between them
+- **challenges-select-ui-handler.ts** -- Challenge-mode setup screen. Announces the title and navigation instructions on open, reads challenge name + current value on UP/DOWN, reads the new value on LEFT/RIGHT, and announces the start button state when activated
 - **game-stats-ui-handler.ts** -- All visible stat labels and values when scrolling
 
 ### Pokemon Screens
@@ -149,6 +153,12 @@ clear(): void {
 - **egg-gacha-ui-handler.ts** -- Gacha pull options and costs
 - **mystery-encounter-ui-handler.ts** -- Mystery encounter option labels
 - **run-history-ui-handler.ts** -- Run mode, wave, victory/defeat status
+
+### Canvas Form Handlers
+These extend `FormModalUiHandler`. Login/register are handled separately by the HTML overlay (`a11y-form-overlay.ts`) — the canvas form is still constructed, so these hooks live on the subclasses rather than the parent to avoid double-announcing on the login screen.
+- **rename-form-ui-handler.ts** -- "Rename Pokémon" modal. Announces title, nickname field label + current value, Rename/Cancel buttons
+- **rename-run-ui-handler.ts** -- "Rename Run" modal (save-slot rename). Announces title, run-name field label, Rename/Cancel buttons
+- **pokedex-scan-ui-handler.ts** -- Pokédex search/scan modal. Announces title, field label (varies by row -- Name/Move/Ability/Passive), current text, Select/Cancel buttons
 
 ### System Level
 - **ui.ts** -- Mode transition labels via `announceContext()` (skips MESSAGE mode)
@@ -176,6 +186,7 @@ clear(): void {
 ### What to Verify
 - Login screen offers Login, Register, and Play as Guest options
 - Guest play on GitHub Pages reaches the first battle without the login overlay reappearing (the save-sync failure that used to reset the game is now skipped for guests)
+- Guest run can be won or lost without "server communication failed" hard-reloading the tab
 - Title screen announces context and menu options on load
 - Each screen announces navigation instructions when it opens
 - Command menu (Fight/Ball/Pokemon/Run) announces each option
@@ -187,6 +198,9 @@ clear(): void {
 - Starter select Start Run, Randomize, and party-slot cursors all announce when focused
 - Party screen reads Pokemon name, level, HP, and status
 - Settings announce setting name and value, change with Left/Right
+- Rebinding a key in settings announces "Press a button to bind", confirms the captured key, and reads Confirm/Cancel as the cursor moves
+- Challenge mode select announces each challenge and its value, and the start button state
+- Rename Pokémon, Rename Run, and Pokédex scan modals announce title + field label + buttons on open
 - Pokedex reads Pokemon name, category, types, caught status
 
 ### Debugging Tips
