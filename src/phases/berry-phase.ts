@@ -69,11 +69,11 @@ export class BerryPhase extends FieldPhase {
     }
     globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
       battlerIndex: pokemon.getBattlerIndex(),
-      stats: Array.from(pokemon.queuedBerryStatChanges.keys()),
-      stages: Array.from(pokemon.queuedBerryStatChanges.values()),
+      changes: pokemon.queuedBerryStatChanges,
       sourcePokemon: pokemon,
     });
     globalScene.updateModifiers(pokemon.isPlayer());
+    pokemon.queuedBerryStatChanges = [];
 
     // AbilityId.CHEEK_POUCH only works once per round of nom noms
     applyAbAttrs("HealFromBerryUseAbAttr", { pokemon });

@@ -157,6 +157,7 @@ import type {
 import type { DamageCalculationResult, DamageResult } from "#types/damage-result";
 import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
+import type { StatChange } from "#types/stat-change";
 import type { TurnMove } from "#types/turn-move";
 import type { AbstractConstructor } from "#types/type-helpers";
 import { BattleInfo } from "#ui/battle-info";
@@ -317,7 +318,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   private shinySparkle: Phaser.GameObjects.Sprite;
 
   /** Stat stages queued by berry eating to be run in a single phase */
-  public queuedBerryStatChanges: Map<BattleStat, number>; // todo Doing it this way to touch modifiers as little as possible, may not be ideal permanent solution
+  public queuedBerryStatChanges: StatChange[] = []; // todo Doing it this way to touch modifiers as little as possible, may not be ideal permanent solution
 
   // TODO: Rework this eventually
   constructor(
@@ -452,7 +453,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     this.summonData = new PokemonSummonData(dataSource?.summonData);
     this.battleData = new PokemonBattleData(dataSource?.battleData);
-    this.queuedBerryStatChanges = new Map();
 
     this.generateName();
 
@@ -7131,8 +7131,7 @@ export class EnemyPokemon extends Pokemon {
       }
       globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
         battlerIndex: this.getBattlerIndex(),
-        stats: [boostedStat],
-        stages,
+        changes: [{ stat: boostedStat, stages }],
         sourcePokemon: this,
         ignoreAbilities: true,
       });

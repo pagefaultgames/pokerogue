@@ -29,6 +29,7 @@ import { modifyPlayerPokemonBST } from "#mystery-encounters/encounter-pokemon-ut
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { groupStatChange } from "#utils/stat-change";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/theStrongStuff";
@@ -119,8 +120,7 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
             queueEncounterMessage(`${namespace}:option.2.statBoost`);
             globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
               battlerIndex: pokemon.getBattlerIndex(),
-              stats: [Stat.DEF, Stat.SPDEF],
-              stages: 1,
+              changes: groupStatChange([Stat.DEF, Stat.SPDEF], 1),
               sourcePokemon: pokemon,
             });
           },

@@ -1050,8 +1050,7 @@ class StickyWebTag extends EntryHazardTag {
     applyAbAttrs("ProtectStatAbAttr", {
       pokemon,
       cancelledStats,
-      stats: [Stat.SPD],
-      stages: -1,
+      changes: [{ stat: Stat.SPD, stages: -1 }],
     });
 
     if (cancelledStats.length > 0) {
@@ -1070,8 +1069,7 @@ class StickyWebTag extends EntryHazardTag {
 
     globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
       battlerIndex: pokemon.getBattlerIndex(),
-      stats: [Stat.SPD],
-      stages: -1,
+      changes: [{ stat: Stat.SPD, stages: -1 }],
       sourcePokemon: this.getSourcePokemon(),
       sourceEffect: StatChangeSource.STICKY_WEB,
     });
@@ -1283,8 +1281,7 @@ class TailwindTag extends SerializableArenaTag {
         globalScene.phaseManager.queueAbilityDisplay(pokemon, false, true);
         globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
           battlerIndex: pokemon.getBattlerIndex(),
-          stats: [Stat.ATK],
-          stages: 1,
+          changes: [{ stat: Stat.ATK, stages: 1 }],
           sourcePokemon: pokemon,
         });
         globalScene.phaseManager.queueAbilityDisplay(pokemon, false, false);

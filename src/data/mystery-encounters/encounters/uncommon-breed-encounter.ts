@@ -33,6 +33,7 @@ import { MoveRequirement, PersistentModifierRequirement } from "#mystery-encount
 import { CHARMING_MOVES } from "#mystery-encounters/requirement-groups";
 import { PokemonData } from "#system/pokemon-data";
 import { randSeedInt } from "#utils/common";
+import { groupStatChange } from "#utils/stat-change";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/uncommonBreed";
@@ -105,8 +106,7 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
             queueEncounterMessage(`${namespace}:option.1.statBoost`);
             globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
               battlerIndex: pokemon.getBattlerIndex(),
-              stats: statChangesForBattle,
-              stages: 1,
+              changes: groupStatChange(statChangesForBattle, 1),
               sourcePokemon: pokemon,
             });
           },

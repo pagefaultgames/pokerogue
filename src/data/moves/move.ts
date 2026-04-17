@@ -133,6 +133,7 @@ import {
 import { getEnumValues } from "#utils/enums";
 import { areAllies, canSpeciesTera, willTerastallize } from "#utils/pokemon-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
+import { groupStatChange } from "#utils/stat-change";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 
@@ -3958,8 +3959,7 @@ export class StatStageChangeAttr extends MoveEffectAttr {
       const stages = this.getLevels(user);
       globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
         battlerIndex: (this.selfTarget ? user : target).getBattlerIndex(),
-        stats: this.stats,
-        stages,
+        changes: groupStatChange(this.stats, stages),
         sourcePokemon: user,
       });
 
@@ -4204,8 +4204,7 @@ export class AcupressureStatStageChangeAttr extends MoveEffectAttr {
       const boostStat = [randStats[user.randBattleSeedInt(randStats.length)]];
       globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
         battlerIndex: target.getBattlerIndex(),
-        stats: boostStat,
-        stages: 2,
+        changes: groupStatChange(boostStat, 2),
         sourcePokemon: user,
       });
 
@@ -4291,8 +4290,7 @@ export class OrderUpStatBoostAttr extends MoveEffectAttr {
     }
     globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
       battlerIndex: user.getBattlerIndex(),
-      stats: [increasedStat],
-      stages: 1,
+      changes: [{ stat: increasedStat, stages: 1 }],
       sourcePokemon: user,
     });
 
@@ -5352,8 +5350,7 @@ export class SpectralThiefAttr extends StatChangeBeforeDmgCalcAttr {
         const availableToSteal = Math.min(statStageValueTarget, 6 - statStageValueUser);
         globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
           battlerIndex: user.getBattlerIndex(),
-          stats: [s],
-          stages: availableToSteal,
+          changes: [{ stat: s, stages: availableToSteal }],
           sourcePokemon: user,
         });
 
@@ -6731,14 +6728,12 @@ export class CurseAttr extends MoveEffectAttr {
     }
     globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
       battlerIndex: user.getBattlerIndex(),
-      stats: [Stat.ATK, Stat.DEF],
-      stages: 1,
+      changes: groupStatChange([Stat.ATK, Stat.DEF], 1),
       sourcePokemon: user,
     });
     globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
       battlerIndex: user.getBattlerIndex(),
-      stats: [Stat.SPD],
-      stages: -1,
+      changes: [{ stat: Stat.SPD, stages: -1 }],
       sourcePokemon: user,
     });
     return true;

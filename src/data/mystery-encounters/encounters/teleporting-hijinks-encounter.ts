@@ -34,6 +34,7 @@ import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encou
 import { MoneyRequirement, WaveModulusRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { PokemonData } from "#system/pokemon-data";
 import { randSeedInt } from "#utils/common";
+import { groupStatChange } from "#utils/stat-change";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/teleportingHijinks";
@@ -230,8 +231,7 @@ async function doBiomeTransitionDialogueAndBattleInit() {
           queueEncounterMessage(`${namespace}:bossEnraged`);
           globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
             battlerIndex: pokemon.getBattlerIndex(),
-            stats: statChangesForBattle,
-            stages: 1,
+            changes: groupStatChange(statChangesForBattle, 1),
             sourcePokemon: pokemon,
           });
         },

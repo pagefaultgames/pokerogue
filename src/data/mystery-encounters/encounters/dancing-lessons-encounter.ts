@@ -39,6 +39,7 @@ import { DANCING_MOVES } from "#mystery-encounters/requirement-groups";
 import { PokemonData } from "#system/pokemon-data";
 import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { groupStatChange } from "#utils/stat-change";
 import i18next from "i18next";
 
 /** the i18n namespace for this encounter */
@@ -177,8 +178,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
             queueEncounterMessage(`${namespace}:option.1.bossEnraged`);
             globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
               battlerIndex: pokemon.getBattlerIndex(),
-              stats: [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF],
-              stages: 1,
+              changes: groupStatChange([Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF], 1),
               sourcePokemon: pokemon,
             });
           },

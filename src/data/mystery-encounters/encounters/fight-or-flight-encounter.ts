@@ -79,8 +79,7 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder.
             // Cannot boost Spd, Acc, or Evasion
             globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
               battlerIndex: pokemon.getBattlerIndex(),
-              stats: [randSeedInt(4, 1)],
-              stages: 2,
+              changes: [{ stat: randSeedInt(4, 1), stages: 2 }],
               sourcePokemon: pokemon,
             });
           },
