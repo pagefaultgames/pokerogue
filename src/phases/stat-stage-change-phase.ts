@@ -86,9 +86,7 @@ export class StatStageChangePhase extends PokemonPhase {
   }
 
   /**
-   * Apply stat-stage multiplier abilities (e.g. Simple, Contrary) to every
-   * requested change, writing the result back into each
-   * {@linkcode StatChange.stages}.
+   * Apply stat stage multiplier abilities to every requested change.
    *
    * @param pokemon - The Pokemon receiving the stat changes
    */
@@ -139,7 +137,7 @@ export class StatStageChangePhase extends PokemonPhase {
   }
 
   /**
-   * Invoke ability hooks that may block or reflect a set of stat drops,
+   * Invoke abilities that may block or reflect a set of stat drops,
    * pushing any blocked stats into {@linkcode cancelledStats}.
    *
    * @param pokemon - The Pokemon receiving the stat changes
@@ -383,9 +381,8 @@ export class StatStageChangePhase extends PokemonPhase {
    * Build a stat change message for a group of changes that share the same magnitude.
    *
    * @param changes - The changes described by this message (all sharing one {@linkcode StatChange.stages | stages} value)
-   * @param isIncrease - Whether the *intended* direction was positive (used
-   *   when the clamped change is `0` to distinguish "won't go any higher" from
-   *   "won't go any lower")
+   * @param isIncrease - Whether the intended direction was positive (used
+   *   when the clamped change is `0` to distinguish "won't go any higher" from "won't go any lower")
    * @returns The localised message string
    */
   private buildStatStageChangeMessage(changes: readonly StatChange[]): string {
