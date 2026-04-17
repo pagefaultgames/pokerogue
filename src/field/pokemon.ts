@@ -187,6 +187,7 @@ import { calculateBossSegmentDamage } from "#utils/damage";
 import { getEnumValues } from "#utils/enums";
 import { cachedFetch } from "#utils/fetch-utils";
 import { getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { weightedPick } from "#utils/random";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { ValueHolder } from "#utils/value-holder";
 import { argbFromRgba, QuantizerCelebi, rgbaFromArgb } from "@material/material-color-utilities";
@@ -7084,6 +7085,7 @@ export class EnemyPokemon extends Pokemon {
    */
   private handleBossSegmentCleared(segmentIndex: number): void {
     let doStatBoost = !this.hasTrainer();
+    const changes: StatChange[] = [];
     // TODO: Rewrite this bespoke logic to improve clarity
     while (this.bossSegmentIndex > 0 && segmentIndex - 1 < this.bossSegmentIndex) {
       this.bossSegmentIndex--;
@@ -7092,27 +7094,11 @@ export class EnemyPokemon extends Pokemon {
       if (!doStatBoost) {
         continue;
       }
-      let boostedStat: EffectiveStat | undefined;
       // Filter out already maxed out stat stages and weigh the rest based on existing stats
-      const leftoverStats = EFFECTIVE_STATS.filter((s: EffectiveStat) => this.getStatStage(s) < 6);
-      const statWeights = leftoverStats.map((s: EffectiveStat) => this.getStat(s, false));
-
-      const statThresholds: number[] = [];
-      let totalWeight = 0;
-
-      for (const i in statWeights) {
-        totalWeight += statWeights[i];
-        statThresholds.push(totalWeight);
-      }
-
-      // Pick a random stat from the leftover stats to increase its stages
-      const randInt = randSeedInt(totalWeight);
-      for (const i in statThresholds) {
-        if (randInt < statThresholds[i]) {
-          boostedStat = leftoverStats[i];
-          break;
-        }
-      }
+      const leftoverStats = EFFECTIVE_STATS.filter(
+        (s: EffectiveStat) => this.getStatStage(s) + (changes.find(c => c.stat === s)?.stages ?? 0) < 6,
+      );
+      const boostedStat = weightedPick(new Map(leftoverStats.map(s => [s, this.getStat(s, false)])));
 
       if (boostedStat === undefined) {
         doStatBoost = false;
@@ -7129,13 +7115,15 @@ export class EnemyPokemon extends Pokemon {
       if (this.bossSegments >= 5 && this.bossSegmentIndex === 1) {
         stages++;
       }
-      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
-        battlerIndex: this.getBattlerIndex(),
-        changes: [{ stat: boostedStat, stages }],
-        sourcePokemon: this,
-        ignoreAbilities: true,
-      });
+      changes.push({ stat: boostedStat, stages });
     }
+
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+      battlerIndex: this.getBattlerIndex(),
+      changes,
+      sourcePokemon: this,
+      ignoreAbilities: true,
+    });
   }
 
   public getFieldIndex(): number {

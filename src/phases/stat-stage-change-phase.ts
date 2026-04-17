@@ -70,6 +70,7 @@ export class StatStageChangePhase extends PokemonPhase {
       this.splitBySign();
     }
 
+    this.isIncrease = this.options.changes.some(c => c.stages > 0);
     if (this.options.changes.length === 0) {
       return this.end();
     }
@@ -100,7 +101,6 @@ export class StatStageChangePhase extends PokemonPhase {
     for (const change of this.options.changes) {
       (change as Mutable<StatChange>).stages *= stages.value;
     }
-    this.isIncrease = this.options.changes.some(c => c.stages > 0);
   }
 
   /**
