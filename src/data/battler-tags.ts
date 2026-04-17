@@ -2715,7 +2715,7 @@ export class StockpilingTag extends SerializableBattlerTag {
     super(BattlerTagType.STOCKPILING, BattlerTagLapseType.CUSTOM, 1, sourceMove);
   }
 
-  private onStatStagesChanged(_: Pokemon | null, changed: StatChange[]) {
+  private onStatStagesChanged(_: Pokemon | null, changed: readonly StatChange[]) {
     const defChange = changed.find(c => c.stat === Stat.DEF && c.stages > 0) != null;
     const spDefChange = changed.find(c => c.stat === Stat.SPDEF && c.stages > 0) != null;
 

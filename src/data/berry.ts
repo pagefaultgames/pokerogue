@@ -63,7 +63,7 @@ export function getBerryPredicate(berryType: BerryType): BerryPredicate {
 
 export type BerryEffectFunc = (consumer: Pokemon) => void;
 
-export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
+export function getBerryEffectFunc(berryType: BerryType, berryPhase = false): BerryEffectFunc {
   return (consumer: Pokemon) => {
     // Apply an effect pertaining to what berry we're using
     switch (berryType) {
@@ -105,11 +105,19 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
           const stat: BattleStat = berryType - BerryType.ENIGMA;
           const statStages = new NumberHolder(1);
           applyAbAttrs("DoubleBerryEffectAbAttr", { pokemon: consumer, effectValue: statStages });
-          const queuedChange = consumer.queuedBerryStatChanges.find(c => c.stat === stat);
-          if (queuedChange != null) {
-            queuedChange.stages += statStages.value;
+          if (berryPhase) {
+            const queuedChange = consumer.queuedBerryStatChanges.find(c => c.stat === stat);
+            if (queuedChange != null) {
+              queuedChange.stages += statStages.value;
+            } else {
+              consumer.queuedBerryStatChanges.push({ stat, stages: statStages.value });
+            }
           } else {
-            consumer.queuedBerryStatChanges.push({ stat, stages: statStages.value });
+            globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+              battlerIndex: consumer.getBattlerIndex(),
+              changes: [{ stat, stages: statStages.value }],
+              sourcePokemon: consumer,
+            });
           }
         }
         break;

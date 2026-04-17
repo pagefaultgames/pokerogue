@@ -159,7 +159,7 @@ import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { StatChange } from "#types/stat-change";
 import type { TurnMove } from "#types/turn-move";
-import type { AbstractConstructor } from "#types/type-helpers";
+import type { AbstractConstructor, Mutable } from "#types/type-helpers";
 import { BattleInfo } from "#ui/battle-info";
 import { EnemyBattleInfo } from "#ui/enemy-battle-info";
 import type { PartyOption } from "#ui/party-ui-handler";
@@ -318,7 +318,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   private shinySparkle: Phaser.GameObjects.Sprite;
 
   /** Stat stages queued by berry eating to be run in a single phase */
-  public queuedBerryStatChanges: StatChange[] = []; // todo Doing it this way to touch modifiers as little as possible, may not be ideal permanent solution
+  public queuedBerryStatChanges: Mutable<StatChange>[] = []; // todo Doing it this way to touch modifiers as little as possible, may not be ideal permanent solution
 
   // TODO: Rework this eventually
   constructor(
@@ -7082,7 +7082,7 @@ export class EnemyPokemon extends Pokemon {
    * For Pokemon with 5 health segments or more, breaking the last two shields give +2 each
    * @param segmentIndex - index of the segment to get down to (0 = no shield left, 1 = 1 shield left, etc.)
    */
-  handleBossSegmentCleared(segmentIndex: number): void {
+  private handleBossSegmentCleared(segmentIndex: number): void {
     let doStatBoost = !this.hasTrainer();
     // TODO: Rewrite this bespoke logic to improve clarity
     while (this.bossSegmentIndex > 0 && segmentIndex - 1 < this.bossSegmentIndex) {

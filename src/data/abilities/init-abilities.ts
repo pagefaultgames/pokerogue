@@ -1175,7 +1175,7 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.COMPETITIVE, 6) //
       .attr(PostStatStageChangeStatStageChangeAbAttr, (_target, changes) => ({
-        stat: Stat.SPDEF,
+        stat: Stat.SPATK,
         stages: changes[0].stages < 0 ? 2 * changes.length : 0,
       }))
       .build(),

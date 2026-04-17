@@ -762,10 +762,10 @@ export class PostDefendStatStageChangeAbAttr extends PostDefendAbAttr {
 
 export class PostDefendHpGatedStatStageChangeAbAttr extends PostDefendAbAttr {
   private readonly hpGate: number;
-  private readonly changes: StatChange[];
+  private readonly changes: readonly StatChange[];
   private readonly selfTarget: boolean;
 
-  constructor(hpGate: number, changes: StatChange[], selfTarget = true) {
+  constructor(hpGate: number, changes: readonly StatChange[], selfTarget = true) {
     super(true);
 
     this.hpGate = hpGate;
@@ -1189,7 +1189,7 @@ export class PostDefendMoveDisableAbAttr extends PostDefendAbAttr {
 }
 
 export interface PostStatStageChangeAbAttrParams extends AbAttrBaseParams {
-  changes: StatChange[];
+  changes: readonly StatChange[];
   /** Whether the source of the stat stages were from the user's own move */
   selfTarget: boolean;
 }
@@ -2017,8 +2017,8 @@ export class PostVictoryAbAttr extends AbAttr {
 }
 
 export class PostVictoryStatStageChangeAbAttr extends PostVictoryAbAttr {
-  private readonly changes: StatChange[] | ((p: Pokemon) => StatChange[]);
-  constructor(changes: StatChange[] | ((p: Pokemon) => StatChange[])) {
+  private readonly changes: readonly StatChange[] | ((p: Pokemon) => readonly StatChange[]);
+  constructor(changes: readonly StatChange[] | ((p: Pokemon) => readonly StatChange[])) {
     super();
 
     this.changes = changes;
@@ -2167,10 +2167,10 @@ export class IntimidateImmunityAbAttr extends CancelInteractionAbAttr {
 }
 
 export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
-  private readonly changes: StatChange[];
+  private readonly changes: readonly StatChange[];
   private readonly overwrites: boolean;
 
-  constructor(changes: StatChange[], overwrites?: boolean) {
+  constructor(changes: readonly StatChange[], overwrites?: boolean) {
     super(true);
     this.changes = changes;
     this.overwrites = !!overwrites;
@@ -2355,11 +2355,11 @@ export class PostSummonRemoveBattlerTagAbAttr extends PostSummonRemoveEffectAbAt
 }
 
 export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
-  private readonly changes: StatChange[];
+  private readonly changes: readonly StatChange[];
   private readonly selfTarget: boolean;
   private readonly intimidate: boolean;
 
-  constructor(changes: StatChange[], selfTarget = false, intimidate = false) {
+  constructor(changes: readonly StatChange[], selfTarget = false, intimidate = false) {
     super(true);
 
     this.changes = changes;
@@ -3014,7 +3014,7 @@ export class PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr extends PreLeaveFi
 }
 
 export interface PreStatStageChangeAbAttrParams extends AbAttrBaseParams {
-  changes: StatChange[];
+  changes: readonly StatChange[];
   /**
    * The source of the stat stage drop. May be omitted if the source of the stat drop is the user itself.
    *
@@ -4575,7 +4575,7 @@ export class StatStageChangeMultiplierAbAttr extends AbAttr {
 }
 
 export interface StatStageChangeCopyAbAttrParams extends AbAttrBaseParams {
-  changes: StatChange[];
+  changes: readonly StatChange[];
 }
 
 export class StatStageChangeCopyAbAttr extends AbAttr {
@@ -5046,9 +5046,9 @@ export abstract class FlinchEffectAbAttr extends AbAttr {
 }
 
 export class FlinchStatStageChangeAbAttr extends FlinchEffectAbAttr {
-  private readonly changes: StatChange[];
+  private readonly changes: readonly StatChange[];
 
-  constructor(changes: StatChange[]) {
+  constructor(changes: readonly StatChange[]) {
     super();
 
     this.changes = changes;

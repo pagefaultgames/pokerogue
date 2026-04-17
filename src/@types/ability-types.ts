@@ -10,7 +10,7 @@ export type * from "#abilities/ab-attrs";
 export type AbAttrCondition = (pokemon: Pokemon) => boolean;
 export type PokemonAttackCondition = (user: Pokemon, target: Pokemon | null, move: Move) => boolean;
 export type PokemonDefendCondition = (target: Pokemon, user: Pokemon, move: Move) => boolean;
-export type PokemonStatStageChangeFunc = (target: Pokemon, changes: StatChange[]) => StatChange;
+export type PokemonStatStageChangeFunc = (target: Pokemon, changes: readonly StatChange[]) => StatChange;
 
 /**
  * Union type of all ability attribute class names as strings

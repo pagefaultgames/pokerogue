@@ -13,12 +13,14 @@ import { ResetNegativeStatStageModifier } from "#modifiers/modifier";
 import { PokemonPhase } from "#phases/pokemon-phase";
 import type { ConditionalUserFieldProtectStatAbAttrParams, PreStatStageChangeAbAttrParams } from "#types/ability-types";
 import type { StatChange, StatStageChangeCallback } from "#types/stat-change";
+import type { Mutable } from "#types/type-helpers";
+import { deepCopy } from "#utils/data";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 
 export interface StatStageChangePhaseOptions {
   battlerIndex: BattlerIndex | number;
-  changes: StatChange[];
+  changes: readonly StatChange[];
   /** The Pokemon who caused these stat changes (may be the same as the Pokemon). */
   sourcePokemon: Pokemon | undefined;
   /** If `true`, skip `StatStageChangeMultiplierAbAttr` */
@@ -50,6 +52,8 @@ export class StatStageChangePhase extends PokemonPhase {
   constructor(options: StatStageChangePhaseOptions) {
     super(options.battlerIndex);
     this.options = { ...options };
+    // Deep copying allows this phase to simplify operations by modifying changes in place
+    this.options.changes = deepCopy(options.changes);
     this.selfTarget = options.sourcePokemon != null && options.sourcePokemon === this.getPokemon();
   }
 
@@ -94,7 +98,7 @@ export class StatStageChangePhase extends PokemonPhase {
     const stages = new ValueHolder(1);
     applyAbAttrs("StatStageChangeMultiplierAbAttr", { pokemon, numStages: stages });
     for (const change of this.options.changes) {
-      change.stages *= stages.value;
+      (change as Mutable<StatChange>).stages *= stages.value;
     }
     this.isIncrease = this.options.changes.some(c => c.stages > 0);
   }
@@ -150,7 +154,7 @@ export class StatStageChangePhase extends PokemonPhase {
   private checkAbilityProtection(
     pokemon: Pokemon,
     opponentPokemon: Pokemon | undefined,
-    changes: StatChange[],
+    changes: readonly StatChange[],
   ): BattleStat[] {
     const cancelledStats: BattleStat[] = [];
     const abAttrParams: PreStatStageChangeAbAttrParams & ConditionalUserFieldProtectStatAbAttrParams = {
