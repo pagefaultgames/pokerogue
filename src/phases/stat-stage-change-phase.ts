@@ -96,10 +96,10 @@ export class StatStageChangePhase extends PokemonPhase {
     if (this.options.ignoreAbilities) {
       return;
     }
-    const stages = new ValueHolder(1);
-    applyAbAttrs("StatStageChangeMultiplierAbAttr", { pokemon, numStages: stages });
+    const multiplier = new ValueHolder(1);
+    applyAbAttrs("StatStageChangeMultiplierAbAttr", { pokemon, numStages: multiplier });
     for (const change of this.options.changes) {
-      (change as Mutable<StatChange>).stages *= stages.value;
+      (change as Mutable<StatChange>).stages *= multiplier.value;
     }
   }
 
