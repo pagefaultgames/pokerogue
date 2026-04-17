@@ -133,11 +133,20 @@ export function getBerryEffectFunc(berryType: BerryType, berryPhase = false): Be
           const randStat = randSeedInt(Stat.SPD, Stat.ATK);
           const stages = new NumberHolder(2);
           applyAbAttrs("DoubleBerryEffectAbAttr", { pokemon: consumer, effectValue: stages });
-          globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
-            battlerIndex: consumer.getBattlerIndex(),
-            changes: [{ stat: randStat, stages: stages.value }],
-            sourcePokemon: consumer,
-          });
+          if (berryPhase) {
+            const queuedChange = consumer.queuedBerryStatChanges.find(c => c.stat === randStat);
+            if (queuedChange != null) {
+              queuedChange.stages += stages.value;
+            } else {
+              consumer.queuedBerryStatChanges.push({ stat: randStat, stages: stages.value });
+            }
+          } else {
+            globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+              battlerIndex: consumer.getBattlerIndex(),
+              changes: [{ stat: randStat, stages: stages.value }],
+              sourcePokemon: consumer,
+            });
+          }
         }
         break;
 

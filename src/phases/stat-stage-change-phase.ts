@@ -119,27 +119,23 @@ export class StatStageChangePhase extends PokemonPhase {
     }
 
     const opponent = this.options.sourcePokemon;
-    const mistApplied = new ValueHolder(false);
+    const cancelledStats: BattleStat[] = [];
 
     globalScene.arena.applyTagsForSide(
       ArenaTagType.MIST,
       pokemon.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY,
       false,
       pokemon,
-      mistApplied,
+      this.options.changes,
+      cancelledStats,
       opponent,
     );
 
-    if (mistApplied.value) {
-      this.options.changes = this.options.changes.filter(c => c.stages >= 0);
-      return;
+    if (cancelledStats.length < this.options.changes.length) {
+      this.checkAbilityProtection(pokemon, opponent, negative, cancelledStats);
     }
 
-    const cancelledStats = this.checkAbilityProtection(pokemon, opponent, negative);
-
-    if (cancelledStats.length > 0) {
-      this.options.changes = this.options.changes.filter(c => !cancelledStats.includes(c.stat));
-    }
+    this.options.changes = this.options.changes.filter(c => !cancelledStats.includes(c.stat));
   }
 
   /**
@@ -149,14 +145,14 @@ export class StatStageChangePhase extends PokemonPhase {
    * @param pokemon - The Pokemon receiving the stat changes
    * @param opponentPokemon - The Pokemon that caused the change, if not self-inflicted
    * @param changes - The negative stat changes to evaluate
-   * @returns An array containing each {@linkcode BattleStat} whose change was cancelled
+   * @param cancelledStats - An array containing each {@linkcode BattleStat} whose change was cancelled; modified by this method
    */
   private checkAbilityProtection(
     pokemon: Pokemon,
     opponentPokemon: Pokemon | undefined,
     changes: readonly StatChange[],
-  ): BattleStat[] {
-    const cancelledStats: BattleStat[] = [];
+    cancelledStats: BattleStat[],
+  ): void {
     const abAttrParams: PreStatStageChangeAbAttrParams & ConditionalUserFieldProtectStatAbAttrParams = {
       pokemon,
       changes,
@@ -182,7 +178,7 @@ export class StatStageChangePhase extends PokemonPhase {
       || this.options.sourceEffect === StatChangeSource.MIRROR_ARMOR
       || pokemon.findTag(t => t instanceof OctolockTag)
     ) {
-      return cancelledStats;
+      return;
     }
 
     applyAbAttrs("ReflectStatStageChangeAbAttr", {
@@ -192,8 +188,6 @@ export class StatStageChangePhase extends PokemonPhase {
       simulated: false,
       source: opponentPokemon,
     });
-
-    return cancelledStats;
   }
 
   /**

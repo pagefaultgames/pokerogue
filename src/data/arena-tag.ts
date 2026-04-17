@@ -74,9 +74,11 @@ import type {
   RoomArenaTagType,
   SerializableArenaTagType,
 } from "#types/arena-tags";
+import type { StatChange } from "#types/stat-change";
 import type { Mutable } from "#types/type-helpers";
 import { BooleanHolder, type NumberHolder, toDmgValue } from "#utils/common";
 import { inSpeedOrder } from "#utils/speed-order-generator";
+import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 
 /** Interface containing the serializable fields of ArenaTagData. */
@@ -319,18 +321,23 @@ export class MistTag extends SerializableArenaTag {
   override apply(
     simulated: boolean,
     defender: Pokemon,
-    cancelled: BooleanHolder,
+    changes: readonly StatChange[],
+    cancelledStats: BattleStat[],
     source: Pokemon | undefined,
   ): boolean {
     if (source) {
-      const bypassed = new BooleanHolder(false);
+      const bypassed = new ValueHolder(false);
       applyAbAttrs("InfiltratorAbAttr", { pokemon: source, simulated, bypassed });
       if (bypassed.value) {
         return false;
       }
     }
 
-    cancelled.value = true;
+    cancelledStats.push(...changes.filter(c => c.stages < 0 && !cancelledStats.includes(c.stat)).map(c => c.stat));
+    if (cancelledStats.length === 0) {
+      return false;
+    }
+
     if (!simulated) {
       globalScene.phaseManager.queueMessage(
         i18next.t("arenaTag:mistApply", {
