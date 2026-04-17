@@ -53,7 +53,7 @@ export class StatStageChangePhase extends PokemonPhase {
     super(options.battlerIndex);
     this.options = { ...options };
     // Deep copying allows this phase to simplify operations by modifying changes in place
-    this.options.changes = deepCopy(options.changes);
+    this.options.changes = deepCopy(options.changes).filter(c => c.stages !== 0); // Allow changes with 0 stages to be passed as no-ops
     this.selfTarget = options.sourcePokemon != null && options.sourcePokemon === this.getPokemon();
   }
 

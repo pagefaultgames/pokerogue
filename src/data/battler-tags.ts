@@ -2781,27 +2781,13 @@ export class StockpilingTag extends SerializableBattlerTag {
     const defChange = this.statChangeCounts[Stat.DEF];
     const spDefChange = this.statChangeCounts[Stat.SPDEF];
 
-    if (defChange > 0 && defChange === spDefChange) {
+    if (defChange > 0 || spDefChange > 0) {
       globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
         battlerIndex: pokemon.getBattlerIndex(),
-        changes: groupStatChange([Stat.DEF, Stat.SPDEF], -defChange),
-        sourcePokemon: pokemon,
-      });
-      return;
-    }
-
-    if (defChange) {
-      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
-        battlerIndex: pokemon.getBattlerIndex(),
-        changes: [{ stat: Stat.DEF, stages: -defChange }],
-        sourcePokemon: pokemon,
-      });
-    }
-
-    if (spDefChange) {
-      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
-        battlerIndex: pokemon.getBattlerIndex(),
-        changes: [{ stat: Stat.SPDEF, stages: -defChange }],
+        changes: [
+          { stat: Stat.DEF, stages: -defChange },
+          { stat: Stat.SPDEF, stages: -spDefChange },
+        ],
         sourcePokemon: pokemon,
       });
     }
