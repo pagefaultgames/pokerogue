@@ -12,178 +12,153 @@ import type { Pokemon } from "#field/pokemon";
 import { ResetNegativeStatStageModifier } from "#modifiers/modifier";
 import { PokemonPhase } from "#phases/pokemon-phase";
 import type { ConditionalUserFieldProtectStatAbAttrParams, PreStatStageChangeAbAttrParams } from "#types/ability-types";
+import type { StatChange, StatStageChangeCallback } from "#types/stat-change";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 
-export type StatStageChangeCallback = (
-  target: Pokemon | null,
-  changed: readonly BattleStat[],
-  relativeChanges: number,
-) => void;
-
 export interface StatStageChangePhaseOptions {
   battlerIndex: BattlerIndex | number;
-  stats: readonly BattleStat[];
-  stages: number;
+  changes: StatChange[];
+  /** The Pokemon who caused these stat changes (may be the same as the Pokemon). */
   sourcePokemon: Pokemon | undefined;
+  /** If `true`, skip `StatStageChangeMultiplierAbAttr` */
   ignoreAbilities?: boolean;
+  /** Callback invoked with the applied changes. */
   onChange?: StatStageChangeCallback;
-  /** The Pokemon whose effect caused these stat changes */
+  /** The category of effect that produced this change, if relevant */
   sourceEffect?: StatChangeSource;
-  /** If this phase was queued after splitting by another SSCP, avoid doing housekeeping again */
+  /**
+   * When `true`, pre-processing (multipliers, protection checks, sign-splitting)
+   * is skipped because it was already performed by the phase that queued this one.
+   */
   processed?: boolean;
 }
 
+/**
+ * Phase responsible for resolving, animating, and applying one or more
+ * stat-stage changes to a single target Pokemon.
+ *
+ * Changes to multiple stats may be applied at once. If both raises and drops are provided to the same phase,
+ * it will be split into one phase for raises and one phase for drops.
+ */
 export class StatStageChangePhase extends PokemonPhase {
   public readonly phaseName = "StatStageChangePhase";
   private readonly options: StatStageChangePhaseOptions;
   private readonly selfTarget: boolean;
+  private isIncrease = false;
 
   constructor(options: StatStageChangePhaseOptions) {
     super(options.battlerIndex);
-
-    this.options = { sourceEffect: StatChangeSource.NORMAL, ...options };
+    this.options = { ...options };
     this.selfTarget = options.sourcePokemon != null && options.sourcePokemon === this.getPokemon();
   }
 
   start() {
     const pokemon = this.getPokemon();
-    const opponent = this.selfTarget ? undefined : this.options.sourcePokemon;
 
     if (!pokemon.isActive(true)) {
       return this.end();
     }
 
-    let statsToChange: readonly BattleStat[];
-    let relativeChange: number;
+    if (!this.options.processed) {
+      this.applyStageMultipliers(pokemon);
+      this.removeCancelledChanges(pokemon);
+      this.splitBySign();
+    }
 
-    if (this.options.processed) {
-      statsToChange = this.options.stats;
-      relativeChange = this.getRelativeChanges(pokemon, statsToChange)[0];
+    if (this.options.changes.length === 0) {
+      return this.end();
+    }
+
+    const applied = this.getAppliedChanges(pokemon);
+    this.options.onChange?.(pokemon, applied);
+
+    if (applied.some(c => c.stages !== 0) && globalScene.moveAnimations) {
+      this.playStatChangeAnimation(pokemon, () => this.applyStatChangesAndEnd(pokemon, applied));
     } else {
-      const stages = new ValueHolder(this.options.stages);
-      if (!this.options.ignoreAbilities) {
-        applyAbAttrs("StatStageChangeMultiplierAbAttr", { pokemon, numStages: stages });
-      }
-      this.options.stages = stages.value;
-
-      const filteredStats = this.checkStatCancellation(pokemon, opponent, this.options.stats);
-
-      if (filteredStats.length === 0) {
-        this.end();
-        return;
-      }
-
-      const relativeChanges = this.getRelativeChanges(pokemon, filteredStats);
-
-      // Split stat changes into separate phases when the relative changes don't match
-      // If split, continue running this phase with the first group instead of re-queuing
-      statsToChange = this.splitUnlikeChanges(filteredStats, relativeChanges);
-      relativeChange = relativeChanges[0];
-    }
-
-    this.options.onChange?.(pokemon, statsToChange, relativeChange);
-
-    const hasVisibleChanges = relativeChange !== 0;
-    if (hasVisibleChanges && globalScene.moveAnimations) {
-      this.playStatChangeAnimation(pokemon, relativeChange, () => {
-        this.applyStatChangesAndEnd(pokemon, statsToChange, relativeChange);
-      });
-    } else {
-      this.applyStatChangesAndEnd(pokemon, statsToChange, relativeChange);
+      this.applyStatChangesAndEnd(pokemon, applied);
     }
   }
 
   /**
-   * Split stat changes into phases by relative changes (i.e. groups where the message would be the same)
-   * @param filteredStats - The stats to change
-   * @param relLevels - The relative level by which each stat is changing
-   * @returns The first group of stats changed, so it can be used immediately instead of in a subsequent Phase
+   * Apply stat-stage multiplier abilities (e.g. Simple, Contrary) to every
+   * requested change, writing the result back into each
+   * {@linkcode StatChange.stages}.
+   *
+   * @param pokemon - The Pokemon receiving the stat changes
    */
-  private splitUnlikeChanges(filteredStats: BattleStat[], relLevels: number[]): BattleStat[] {
-    const groups = this.groupStatsByRelativeStage(filteredStats, relLevels);
-    const groupEntries = Object.values(groups);
-
-    for (let i = 1; i < groupEntries.length; i++) {
-      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
-        ...this.options,
-        stats: groupEntries[i],
-        processed: true,
-      });
+  private applyStageMultipliers(pokemon: Pokemon): void {
+    if (this.options.ignoreAbilities) {
+      return;
     }
-    return groupEntries[0];
+    const stages = new ValueHolder(1);
+    applyAbAttrs("StatStageChangeMultiplierAbAttr", { pokemon, numStages: stages });
+    for (const change of this.options.changes) {
+      change.stages *= stages.value;
+    }
+    this.isIncrease = this.options.changes.some(c => c.stages > 0);
   }
 
   /**
-   * Compute the relative level for each stat stage change after clamping the result between -6 and 6.
-   * @param pokemon - The Pokemon with potential stat changes
-   * @param stats - The stats being changes
-   * @param stages - The pre-clamp number of stages to change each stat
-   * @returns A parallel array to `stats` holding the relative change for each stat
+   * Remove any negative stat changes that are blocked by field effects or abilities, updating {@linkcode StatStageChangePhaseOptions.changes | options.changes} in place.
+   *
+   * @param pokemon - The Pokemon receiving the stat changes
    */
-  private getRelativeChanges(pokemon: Pokemon, stats: readonly BattleStat[]): number[] {
-    return stats.map(s => {
-      const stages = this.options.stages;
-      const current = pokemon.getStatStage(s);
-      const clamped = stages > 0 ? Math.min(current + stages, 6) : Math.max(current + stages, -6);
-      return clamped - current;
-    });
-  }
-
-  /**
-   * Determine if a single stat stage should be cancelled by field or enemy effects such as Mirror Armor or Mist
-   * @param pokemon - The Pokemon with potential stat changes
-   * @param opponentPokemon - The opponent of the provided pokemon
-   * @param stat - The stat to change
-   * @returns Whether the stat should be cancelled
-   */
-  private checkStatCancellation(
-    pokemon: Pokemon,
-    opponentPokemon: Pokemon | undefined,
-    stats: readonly BattleStat[],
-  ): BattleStat[] {
-    // No reflection method currently exists which blocks positive or self-target changes (this method is called after Contrary, etc are applied)
-    if (this.options.stages >= 0 || this.selfTarget) {
-      return [...stats];
+  private removeCancelledChanges(pokemon: Pokemon): void {
+    if (this.selfTarget) {
+      return;
     }
 
-    const cancelledStats: BattleStat[] = [];
-    const applied = new ValueHolder(false);
+    const negative = this.options.changes.filter(c => c.stages < 0);
+    if (negative.length === 0) {
+      return;
+    }
+
+    const opponent = this.options.sourcePokemon;
+    const mistApplied = new ValueHolder(false);
 
     globalScene.arena.applyTagsForSide(
       ArenaTagType.MIST,
       pokemon.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY,
       false,
       pokemon,
-      applied,
-      opponentPokemon,
+      mistApplied,
+      opponent,
     );
 
-    if (applied.value) {
-      return [];
+    if (mistApplied.value) {
+      this.options.changes = this.options.changes.filter(c => c.stages >= 0);
+      return;
     }
 
-    this.checkAbilityProtection(pokemon, opponentPokemon, stats, cancelledStats);
+    const cancelledStats = this.checkAbilityProtection(pokemon, opponent, negative);
 
-    return stats.filter(s => !cancelledStats.includes(s));
+    if (cancelledStats.length > 0) {
+      this.options.changes = this.options.changes.filter(c => !cancelledStats.includes(c.stat));
+    }
   }
 
   /**
-   * Helper to check if a stat change is prevented by the target Pokemon's or its ally's ability.
+   * Invoke ability hooks that may block or reflect a set of stat drops,
+   * pushing any blocked stats into {@linkcode cancelledStats}.
+   *
+   * @param pokemon - The Pokemon receiving the stat changes
+   * @param opponentPokemon - The Pokemon that caused the change, if not self-inflicted
+   * @param changes - The negative stat changes to evaluate
+   * @returns An array containing each {@linkcode BattleStat} whose change was cancelled
    */
   private checkAbilityProtection(
     pokemon: Pokemon,
     opponentPokemon: Pokemon | undefined,
-    stats: readonly BattleStat[],
-    cancelledStats: BattleStat[],
-  ): void {
+    changes: StatChange[],
+  ): BattleStat[] {
+    const cancelledStats: BattleStat[] = [];
     const abAttrParams: PreStatStageChangeAbAttrParams & ConditionalUserFieldProtectStatAbAttrParams = {
       pokemon,
-      stats,
+      changes,
       cancelledStats,
       simulated: false,
       target: pokemon,
-      stages: this.options.stages,
     };
 
     // It is the responsibility of the ability to check if it is applicable based on `stats` and `cancelledStats`
@@ -195,48 +170,97 @@ export class StatStageChangePhase extends PokemonPhase {
       applyAbAttrs("ConditionalUserFieldProtectStatAbAttr", { ...abAttrParams, pokemon: ally });
     }
 
-    // TODO: investigate whether the `opponentPokemon` check is stopping mirror armor from applying
-    // to non-octolock reasons for stat drops if the user has the Octolock tag
+    // TODO: investigate whether the `opponentPokemon` check prevents Mirror
+    // Armor from applying to non-Octolock stat drops when the target has the
+    // Octolock tag.
     if (
       opponentPokemon == null
       || this.options.sourceEffect === StatChangeSource.MIRROR_ARMOR
       || pokemon.findTag(t => t instanceof OctolockTag)
     ) {
-      return;
+      return cancelledStats;
     }
 
     applyAbAttrs("ReflectStatStageChangeAbAttr", {
       pokemon,
-      stats,
+      changes,
       cancelledStats,
       simulated: false,
       source: opponentPokemon,
-      stages: this.options.stages,
+    });
+
+    return cancelledStats;
+  }
+
+  /**
+   * If both positive and negative stage changes are present, split the negative changes into a follow-up {@linkcode StatStageChangePhase}.
+   */
+  private splitBySign(): void {
+    const positive = this.options.changes.filter(c => c.stages >= 0);
+    const negative = this.options.changes.filter(c => c.stages < 0);
+
+    if (positive.length === 0 || negative.length === 0) {
+      return;
+    }
+
+    this.options.changes = positive;
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+      ...this.options,
+      changes: negative,
+      processed: true,
     });
   }
 
   /**
-   * After validity checks, apply stat stage changes and reactions (i.e. Defiant, White Herb) then end the phase.
-   * @param pokemon - The Pokemon receiving stat changes
-   * @param filteredStats - The stats to change
-   * @param stages - The amount of stages to change for each stat, before clamping (used to i.e. determine if a stat change was positive or negative)
-   * @param relLevel - The amount of stages to change for each stat, after clamping
+   * Compute the relative change for each requested change by clamping to [-6, 6].
+   *
+   * @param pokemon - The Pokemon receiving the stat changes
+   * @returns A new array of {@linkcode StatChange}s
    */
-  private applyStatChangesAndEnd(pokemon: Pokemon, filteredStats: readonly BattleStat[], relLevel: number): void {
-    const message = this.buildStatStageChangeMessage(filteredStats, this.options.stages, relLevel);
-    globalScene.phaseManager.queueMessage(message);
+  private getAppliedChanges(pokemon: Pokemon): StatChange[] {
+    return this.options.changes.map(({ stat, stages }) => {
+      const current = pokemon.getStatStage(stat);
+      const clamped = stages > 0 ? Math.min(current + stages, 6) : Math.max(current + stages, -6);
+      return { stat, stages: clamped - current };
+    });
+  }
 
-    this.updateStatStages(pokemon, filteredStats, relLevel);
-    this.triggerReactionAbilities(pokemon, filteredStats, this.options.stages);
+  /**
+   * Apply the resolved changes, queue battle messages, trigger reactive abilities/items, and end the phase.
+   *
+   * @param pokemon - The Pokemon receiving the stat changes
+   * @param applied - The clamped per-stat deltas to apply
+   */
+  private applyStatChangesAndEnd(pokemon: Pokemon, applied: readonly StatChange[]): void {
+    this.queueStatChangeMessages(applied);
+    this.updateStatStages(pokemon, applied);
+    this.triggerReactionAbilities(pokemon);
     this.checkWhiteHerb(pokemon);
 
     pokemon.updateInfo();
     handleTutorial(Tutorial.STAT_CHANGE).then(() => super.end());
   }
 
-  private updateStatStages(pokemon: Pokemon, stats: readonly BattleStat[], stages: number): void {
-    for (const s of stats) {
-      const current = pokemon.getStatStage(s);
+  /**
+   * Queue one battle message per distinct stage change magnitude.
+   *
+   * @param applied - The applied changes
+   */
+  private queueStatChangeMessages(applied: readonly StatChange[]): void {
+    for (const [_, group] of Map.groupBy(applied, c => c.stages)) {
+      globalScene.phaseManager.queueMessage(this.buildStatStageChangeMessage(group));
+    }
+  }
+
+  /**
+   * Write each clamped change to the target's stat stages and flag turn data accordingly.
+   *
+   * @param pokemon - The Pokemon receiving the stat changes
+   * @param applied - The applied changes
+   */
+  private updateStatStages(pokemon: Pokemon, applied: readonly StatChange[]): void {
+    for (const { stat, stages } of applied) {
+      const current = pokemon.getStatStage(stat);
 
       if (stages > 0 && current < 6) {
         pokemon.turnData.statStagesIncreased = true;
@@ -244,39 +268,45 @@ export class StatStageChangePhase extends PokemonPhase {
         pokemon.turnData.statStagesDecreased = true;
       }
 
-      pokemon.setStatStage(s, current + stages);
+      pokemon.setStatStage(stat, current + stages);
     }
   }
 
   /**
-   * Trigger reactions like Opportunist and Defiant
+   * Trigger abilities that react to stat stage changes, such as Opportunist and Defiant.
+   *
    * @param pokemon - The Pokemon whose stats have changed
-   * @param filteredStats - The stats which changed
-   * @param stages - How many stages each stat changed
    *
    * @privateRemarks
-   * Triggering for all stats at once means certain interactions diverge from mainline.
-   * For example, Defiant will proc one time +4 if two stats are dropped instead of twice +2.
-   * This would be a real behavior difference in the case of something like Mirror Herb
-   * (which would copy +4 instead of a single +2), but is not currently significant aside from
-   * faster animation.
+   * Triggering once with all changes means certain interactions diverge from
+   * mainline.  For example, Defiant will proc as a single +4 when two stats
+   * are dropped instead of twice +2, which would be a real difference for
+   * something like Mirror Herb (copying +4 instead of a single +2) but is
+   * otherwise not significant beyond faster animation.
    */
-  private triggerReactionAbilities(pokemon: Pokemon, filteredStats: readonly BattleStat[], stages: number): void {
-    if (stages > 0) {
+  private triggerReactionAbilities(pokemon: Pokemon): void {
+    if (this.options.changes.some(c => c.stages > 0)) {
       for (const opponent of pokemon.getOpponentsGenerator()) {
-        applyAbAttrs("StatStageChangeCopyAbAttr", { pokemon: opponent, stats: filteredStats, numStages: stages });
+        applyAbAttrs("StatStageChangeCopyAbAttr", {
+          pokemon: opponent,
+          changes: this.options.changes,
+        });
       }
     }
 
     applyAbAttrs("PostStatStageChangeAbAttr", {
       pokemon,
-      stats: filteredStats,
-      stages: this.options.stages,
-      selfTarget: this.selfTarget ?? false,
+      changes: this.options.changes,
+      selfTarget: this.selfTarget,
     });
   }
 
-  /** If this is the last stat change phase for the target, apply White Herb if held. */
+  /**
+   * If this is the last queued {@linkcode StatStageChangePhase} for the
+   * target, consume a held White Herb (if any) to reset negative stat stages.
+   *
+   * @param pokemon - The Pokemon to check
+   */
   private checkWhiteHerb(pokemon: Pokemon): void {
     const hasMoreStatPhases = globalScene.phaseManager.hasPhaseOfType(
       "StatStageChangePhase",
@@ -298,19 +328,24 @@ export class StatStageChangePhase extends PokemonPhase {
     }
   }
 
-  private playStatChangeAnimation(pokemon: Pokemon, stages: number, onComplete: () => void): void {
+  /**
+   * Play the rising stat change animation, depending on whether there were increases or decreases.
+   *
+   * @param pokemon - The Pokemon to animate
+   * @param onComplete - Callback for after the animation completes
+   */
+  private playStatChangeAnimation(pokemon: Pokemon, onComplete: () => void): void {
     pokemon.enableMask();
 
-    const isIncrease = stages >= 1;
     const scale = pokemon.getSpriteScale() * globalScene.field.scale;
 
     const tileX = (this.player ? 106 : 236) * scale;
-    const tileY = ((this.player ? 148 : 84) + (isIncrease ? 160 : 0)) * scale;
+    const tileY = ((this.player ? 148 : 84) + (this.isIncrease ? 160 : 0)) * scale;
     const tileWidth = 156 * scale;
     const tileHeight = 316 * scale;
 
     // On increase, show the red sprite located at ATK; on decrease, the blue sprite at SPD
-    const spriteColor = isIncrease ? Stat[Stat.ATK].toLowerCase() : Stat[Stat.SPD].toLowerCase();
+    const spriteColor = this.isIncrease ? Stat[Stat.ATK].toLowerCase() : Stat[Stat.SPD].toLowerCase();
     const statSprite = globalScene.add.tileSprite(tileX, tileY, tileWidth, tileHeight, "battle_stats", spriteColor);
     statSprite.setPipeline(globalScene.fieldSpritePipeline);
     statSprite.setAlpha(0);
@@ -318,7 +353,7 @@ export class StatStageChangePhase extends PokemonPhase {
     statSprite.setOrigin(0.5, 1);
     statSprite.setMask(new Phaser.Display.Masks.BitmapMask(globalScene, pokemon.maskSprite ?? undefined));
 
-    globalScene.playSound(`se/stat_${isIncrease ? "up" : "down"}`);
+    globalScene.playSound(`se/stat_${this.isIncrease ? "up" : "down"}`);
 
     globalScene.tweens.add({
       targets: statSprite,
@@ -337,7 +372,7 @@ export class StatStageChangePhase extends PokemonPhase {
     globalScene.tweens.add({
       targets: statSprite,
       duration: 1500,
-      y: `${isIncrease ? "-" : "+"}=${160 * 6}`,
+      y: `${this.isIncrease ? "-" : "+"}=${160 * 6}`,
     });
 
     globalScene.time.delayedCall(1750, () => {
@@ -346,42 +381,45 @@ export class StatStageChangePhase extends PokemonPhase {
     });
   }
 
-  private buildStatStageChangeMessage(stats: readonly BattleStat[], stages: number, relStages: number): string {
-    const statsFragment = this.formatStatsFragment(stats);
-    return i18next.t(getStatStageChangeDescriptionKey(Math.abs(relStages), stages > 0), {
+  /**
+   * Build a stat change message for a group of changes that share the same magnitude.
+   *
+   * @param changes - The changes described by this message (all sharing one {@linkcode StatChange.stages | stages} value)
+   * @param isIncrease - Whether the *intended* direction was positive (used
+   *   when the clamped change is `0` to distinguish "won't go any higher" from
+   *   "won't go any lower")
+   * @returns The localised message string
+   */
+  private buildStatStageChangeMessage(changes: readonly StatChange[]): string {
+    const relStages = changes[0].stages;
+    return i18next.t(getStatStageChangeDescriptionKey(Math.abs(relStages), this.isIncrease), {
       pokemonNameWithAffix: getPokemonNameWithAffix(this.getPokemon()),
-      stats: statsFragment,
-      count: stats.length,
+      stats: this.formatStatsFragment(changes),
+      count: changes.length,
     });
   }
 
-  private groupStatsByRelativeStage(stats: readonly BattleStat[], relStages: number[]): Record<number, BattleStat[]> {
-    const groups: Record<number, BattleStat[]> = {};
-    for (let i = 0; i < relStages.length; i++) {
-      const key = relStages[i];
-      if (!groups[key]) {
-        groups[key] = [];
-      }
-      groups[key].push(stats[i]);
-    }
-    return groups;
-  }
-
-  private formatStatsFragment(stats: readonly BattleStat[]): string {
-    if (stats.length >= 5) {
+  /**
+   * Format a list of changes into a localised stat-name fragment (e.g. `"Attack, Defense, and Speed"`).
+   *
+   * @param changes - The changes whose stat names should be listed
+   * @returns The localised fragment, or the generic `"stats"` string for 5+
+   */
+  private formatStatsFragment(changes: readonly StatChange[]): string {
+    if (changes.length >= 5) {
       return i18next.t("battle:stats");
     }
 
-    if (stats.length === 1) {
-      return i18next.t(getStatKey(stats[0]));
+    if (changes.length === 1) {
+      return i18next.t(getStatKey(changes[0].stat));
     }
 
-    const allButLast = stats
+    const allButLast = changes
       .slice(0, -1)
-      .map(s => i18next.t(getStatKey(s)))
+      .map(c => i18next.t(getStatKey(c.stat)))
       .join(", ");
-    const oxfordComma = stats.length > 2 ? "," : "";
-    const last = i18next.t(getStatKey(stats.at(-1)!));
+    const oxfordComma = changes.length > 2 ? "," : "";
+    const last = i18next.t(getStatKey(changes.at(-1)!.stat));
     return `${allButLast}${oxfordComma} ${i18next.t("battle:statsAnd")} ${last}`;
   }
 }
