@@ -10,39 +10,30 @@ import { UiMode } from "#enums/ui-mode";
  */
 export class EggSummaryPhase extends Phase {
   public readonly phaseName = "EggSummaryPhase";
-  private eggHatchData: EggHatchData[];
+  private readonly eggHatchData: EggHatchData[];
 
   constructor(eggHatchData: EggHatchData[]) {
     super();
     this.eggHatchData = eggHatchData;
   }
 
-  start() {
+  public override async start(): Promise<void> {
     super.start();
 
-    // updates next pokemon once the current update has been completed
-    const updateNextPokemon = (i: number) => {
-      if (i >= this.eggHatchData.length) {
-        globalScene.ui.setModeForceTransition(UiMode.EGG_HATCH_SUMMARY, this.eggHatchData).then(() => {
-          globalScene.fadeOutBgm(undefined, false);
-        });
-      } else {
-        this.eggHatchData[i].setDex();
-        this.eggHatchData[i].updatePokemon().then(() => {
-          if (i < this.eggHatchData.length) {
-            updateNextPokemon(i + 1);
-          }
-        });
-      }
-    };
-    updateNextPokemon(0);
+    for (const eggHatchData of this.eggHatchData) {
+      eggHatchData.setDex();
+      await eggHatchData.updatePokemon();
+    }
+
+    await globalScene.ui.setModeForceTransition(UiMode.EGG_HATCH_SUMMARY, this.eggHatchData);
+    globalScene.fadeOutBgm(undefined, false);
   }
 
-  end() {
+  public override end(): void {
     this.eggHatchData.forEach(data => {
       data.pokemon?.destroy();
     });
-    this.eggHatchData = [];
+    this.eggHatchData.splice(0, this.eggHatchData.length);
     globalScene.time.delayedCall(250, () => globalScene.setModifiersVisible(true));
     globalScene.ui.setModeForceTransition(UiMode.MESSAGE).then(() => {
       super.end();
