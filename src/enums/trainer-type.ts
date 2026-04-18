@@ -151,8 +151,8 @@ export enum TrainerType {
   VITO,
   BUG_TYPE_SUPERFAN,
   EXPERT_POKEMON_BREEDER,
-  FUTURE_SELF_M,
-  FUTURE_SELF_F,
+  PLAYER_M_ALTERNATE,
+  PLAYER_F_ALTERNATE,
   // #endregion
 
   // #region Gym Leaders

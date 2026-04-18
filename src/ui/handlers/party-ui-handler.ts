@@ -1425,10 +1425,10 @@ export class PartyUiHandler extends MessageUiHandler {
     this.options.push(PartyOption.RENAME);
 
     if (
-      pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId)
+      Object.hasOwn(pokemonEvolutions, pokemon.species.speciesId)
       || (pokemon.isFusion()
         && pokemon.fusionSpecies
-        && pokemonEvolutions.hasOwnProperty(pokemon.fusionSpecies.speciesId))
+        && Object.hasOwn(pokemonEvolutions, pokemon.fusionSpecies.speciesId))
     ) {
       this.options.push(PartyOption.UNPAUSE_EVOLUTION);
     }

@@ -1,4 +1,3 @@
-import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type { Pokemon } from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import type { MovePhase } from "#app/phases/move-phase";
@@ -44,13 +43,6 @@ export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase>
     const phase = this.queue.find(condition);
     if (phase != null) {
       phase.timingModifier = modifier;
-    }
-  }
-
-  public setMoveForPhase(condition: PhaseConditionFunc<"MovePhase">, move: PokemonMove) {
-    const phase = this.queue.find(condition);
-    if (phase != null) {
-      phase.move = move;
     }
   }
 
