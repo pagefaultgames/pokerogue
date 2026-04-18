@@ -5,7 +5,7 @@ import type { FlinchChanceParams } from "#types/held-item-parameter";
 
 /**
  * Class for held items that grant a chance to flinch opponents on moves that do not already do so.
- * Used for King's Rock.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/King%27s_Rock}
  * @sealed
  */
 export class FlinchChanceHeldItem extends HeldItem<[typeof HeldItemEffect.FLINCH_CHANCE]> {

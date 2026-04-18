@@ -6,7 +6,8 @@ import type { TurnEndStatusParams } from "#types/held-item-parameter";
 
 /**
  * Class used for held items that inflict a status effect on the holder at the end of each turn.
- * Used for Flame Orb and Toxic Orb.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Flame_Orb}
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Toxic_Orb}
  * @sealed
  */
 export class TurnEndStatusHeldItem extends HeldItem<[typeof HeldItemEffect.TURN_END_STATUS]> {

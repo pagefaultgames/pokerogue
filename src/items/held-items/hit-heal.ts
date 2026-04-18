@@ -9,7 +9,7 @@ import i18next from "i18next";
 
 /**
  * Class used for items that heal the holder by a fraction of the damage dealt in battle.
- * Used for Shell Bell.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Shell_Bell}
  * @sealed
  */
 export class HitHealHeldItem extends HeldItem<[typeof HeldItemEffect.HIT_HEAL]> {

@@ -9,7 +9,7 @@ import i18next from "i18next";
 
 /**
  * Class used for items that allow a Pokémon to randomly move first in their priority bracket.
- * Used by Quick Claw.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Quick_Claw}
  * @sealed
  */
 export class BypassSpeedChanceHeldItem extends HeldItem<[typeof HeldItemEffect.BYPASS_SPEED_CHANCE]> {

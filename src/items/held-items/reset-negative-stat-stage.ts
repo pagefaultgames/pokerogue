@@ -7,7 +7,7 @@ import i18next from "i18next";
 
 /**
  * Class used for held items that restore adverse stat stages in battle.
- * Used by White Herb.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/White_Herb}
  * @sealed
  */
 export class ResetNegativeStatStageHeldItem extends ConsumableHeldItem<

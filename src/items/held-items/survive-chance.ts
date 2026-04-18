@@ -7,7 +7,7 @@ import i18next from "i18next";
 
 /**
  * Class used for items that provide a chance to survive otherwise-fatal damage.
- * Used by Focus Band.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Focus_Band}
  * @sealed
  */
 // TODO: Rename to "endure chance" for clarity

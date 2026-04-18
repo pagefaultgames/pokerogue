@@ -9,7 +9,7 @@ import i18next from "i18next";
 
 /**
  * Class used for items that heal the holder at the end of each turn.
- * Used for Leftovers.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Leftovers}
  * @sealed
  */
 export class TurnEndHealHeldItem extends HeldItem<[typeof HeldItemEffect.TURN_END_HEAL]> {
