@@ -833,7 +833,6 @@ export abstract class BattleAnim {
     return ret;
   }
 
-  // biome-ignore lint/complexity/noBannedTypes: callback is used liberally
   play(onSubstitute?: boolean, callback?: () => void) {
     const isOppAnim = this.isOppAnim();
     const user = isOppAnim ? this.target! : this.user!;
@@ -1177,7 +1176,6 @@ export abstract class BattleAnim {
     targetInitialY: number,
     frameTimeMult: number,
     frameTimedEventPriority?: 0 | 1 | 3 | 5,
-    // biome-ignore lint/complexity/noBannedTypes: callback is used liberally
     callback?: () => void,
   ) {
     const spriteCache: SpriteCache = {

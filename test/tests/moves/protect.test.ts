@@ -6,6 +6,7 @@ import { MoveResult } from "#enums/move-result";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -225,6 +226,18 @@ describe("Moves - Protect", () => {
 
     expect(aggron.hp).toBeLessThan(aggron.getMaxHp());
     expect(aggron.status?.effect).toBeUndefined(); // check that protect actually worked
+  });
+
+  it("should block status moves", async () => {
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+    const player = game.field.getPlayerPokemon();
+
+    game.move.use(MoveId.PROTECT);
+    await game.move.forceEnemyMove(MoveId.SPORE);
+    await game.toEndOfTurn();
+
+    expect(player).not.toHaveStatusEffect(StatusEffect.SLEEP);
   });
 
   // TODO: Add test

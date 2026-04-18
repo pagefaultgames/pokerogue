@@ -348,7 +348,7 @@ export class GameData {
 
     if (systemData.unlocks) {
       for (const key of Object.keys(systemData.unlocks)) {
-        if (this.unlocks.hasOwnProperty(key)) {
+        if (Object.hasOwn(this.unlocks, key)) {
           this.unlocks[key] = systemData.unlocks[key];
         }
       }
@@ -356,7 +356,7 @@ export class GameData {
 
     if (systemData.achvUnlocks) {
       for (const a of Object.keys(systemData.achvUnlocks)) {
-        if (achvs.hasOwnProperty(a)) {
+        if (Object.hasOwn(achvs, a)) {
           this.achvUnlocks[a] = systemData.achvUnlocks[a];
         }
       }
@@ -364,7 +364,7 @@ export class GameData {
 
     if (systemData.voucherUnlocks) {
       for (const v of Object.keys(systemData.voucherUnlocks)) {
-        if (vouchers.hasOwnProperty(v)) {
+        if (Object.hasOwn(vouchers, v)) {
           this.voucherUnlocks[v] = systemData.voucherUnlocks[v];
         }
       }
@@ -558,7 +558,7 @@ export class GameData {
    */
   public saveSetting(setting: string, valueIndex: number): boolean {
     let settings: object = {};
-    if (localStorage.hasOwnProperty("settings")) {
+    if (Object.hasOwn(localStorage, "settings")) {
       settings = JSON.parse(localStorage.getItem("settings")!); // TODO: is this bang correct?
     }
 
@@ -582,7 +582,7 @@ export class GameData {
   public saveMappingConfigs(deviceName: string, config): boolean {
     const key = deviceName.toLowerCase(); // Convert the gamepad name to lowercase to use as a key
     let mappingConfigs: object = {}; // Initialize an empty object to hold the mapping configurations
-    if (localStorage.hasOwnProperty("mappingConfigs")) {
+    if (Object.hasOwn(localStorage, "mappingConfigs")) {
       // Check if 'mappingConfigs' exists in localStorage
       mappingConfigs = JSON.parse(localStorage.getItem("mappingConfigs")!); // TODO: is this bang correct?
     } // Parse the existing 'mappingConfigs' from localStorage
@@ -605,7 +605,7 @@ export class GameData {
    * for the corresponding gamepad or device key. The method then returns `true` to indicate success.
    */
   public loadMappingConfigs(): boolean {
-    if (!localStorage.hasOwnProperty("mappingConfigs")) {
+    if (!Object.hasOwn(localStorage, "mappingConfigs")) {
       // Check if 'mappingConfigs' exists in localStorage
       return false;
     } // If 'mappingConfigs' does not exist, return false
@@ -621,7 +621,7 @@ export class GameData {
   }
 
   public resetMappingToFactory(): boolean {
-    if (!localStorage.hasOwnProperty("mappingConfigs")) {
+    if (!Object.hasOwn(localStorage, "mappingConfigs")) {
       // Check if 'mappingConfigs' exists in localStorage
       return false;
     } // If 'mappingConfigs' does not exist, return false
@@ -652,7 +652,7 @@ export class GameData {
   ): boolean {
     let settingsControls: object = {}; // Initialize an empty object to hold the gamepad settings
 
-    if (localStorage.hasOwnProperty(localStoragePropertyName)) {
+    if (Object.hasOwn(localStorage, localStoragePropertyName)) {
       // Check if 'settingsControls' exists in localStorage
       settingsControls = JSON.parse(localStorage.getItem(localStoragePropertyName)!); // Parse the existing 'settingsControls' from localStorage // TODO: is this bang correct?
     }
@@ -683,7 +683,7 @@ export class GameData {
   private loadSettings(): boolean {
     resetSettings();
 
-    if (!localStorage.hasOwnProperty("settings")) {
+    if (!Object.hasOwn(localStorage, "settings")) {
       return false;
     }
 
@@ -703,7 +703,7 @@ export class GameData {
       setSettingGamepad(setting, settingGamepadDefaults[setting]);
     });
 
-    if (!localStorage.hasOwnProperty("settingsGamepad")) {
+    if (!Object.hasOwn(localStorage, "settingsGamepad")) {
       return;
     }
     const settingsGamepad = JSON.parse(localStorage.getItem("settingsGamepad")!); // TODO: is this bang correct?
@@ -721,7 +721,7 @@ export class GameData {
   public saveTutorialFlag(tutorial: Tutorial, status: boolean): void {
     // Grab the prior save data tutorial
     const saveDataKey = getDataTypeKey(GameDataType.TUTORIALS);
-    const tutorials: TutorialFlags = localStorage.hasOwnProperty(saveDataKey)
+    const tutorials: TutorialFlags = Object.hasOwn(localStorage, saveDataKey)
       ? JSON.parse(localStorage.getItem(saveDataKey)!)
       : {};
 
@@ -744,7 +744,7 @@ export class GameData {
       return acc;
     }, {} as TutorialFlags);
 
-    if (!localStorage.hasOwnProperty(key)) {
+    if (!Object.hasOwn(localStorage, key)) {
       return ret;
     }
 
@@ -772,7 +772,7 @@ export class GameData {
     const key = getDataTypeKey(GameDataType.SEEN_DIALOGUES);
     const ret: SeenDialogues = {};
 
-    if (!localStorage.hasOwnProperty(key)) {
+    if (!Object.hasOwn(localStorage, key)) {
       return ret;
     }
 
@@ -1638,7 +1638,7 @@ export class GameData {
           dexEntry.caughtAttr |= globalScene.gameData.getFormAttr(3);
         }
       } else {
-        const allFormChanges = pokemonFormChanges.hasOwnProperty(species.speciesId)
+        const allFormChanges = Object.hasOwn(pokemonFormChanges, species.speciesId)
           ? pokemonFormChanges[species.speciesId]
           : [];
         const toCurrentFormChanges = allFormChanges.filter(f => f.formKey === formKey);
@@ -1650,7 +1650,7 @@ export class GameData {
     }
 
     // Unlock ability
-    if (speciesStarterCosts.hasOwnProperty(species.speciesId)) {
+    if (Object.hasOwn(speciesStarterCosts, species.speciesId)) {
       this.starterData[species.speciesId].abilityAttr |=
         pokemon.abilityIndex !== 1 || pokemon.species.ability2 ? 1 << pokemon.abilityIndex : AbilityAttr.ABILITY_HIDDEN;
     }
@@ -1713,7 +1713,7 @@ export class GameData {
       );
     };
 
-    if (!newCatch || !speciesStarterCosts.hasOwnProperty(species.speciesId)) {
+    if (!newCatch || !Object.hasOwn(speciesStarterCosts, species.speciesId)) {
       return await checkPrevolution(false);
     }
     // TODO: This will skip unlocking a pre-evolution if the player catches an evolved form that is itself a starter.
@@ -1804,7 +1804,7 @@ export class GameData {
     prependSpeciesToMessage = false,
   ): Promise<boolean> {
     const { speciesId } = species;
-    if (!speciesEggMoves.hasOwnProperty(speciesId) || !speciesEggMoves[speciesId][eggMoveIndex]) {
+    if (!Object.hasOwn(speciesEggMoves, speciesId) || !speciesEggMoves[speciesId][eggMoveIndex]) {
       return false;
     }
 
@@ -1985,21 +1985,30 @@ export class GameData {
     return ret;
   }
 
-  getSpeciesStarterValue(speciesId: SpeciesId): number {
+  /**
+   * Obtain the value of a particular starter by SpeciesID
+   * @param speciesId - The {@linkcode SpeciesId} of the starter
+   * @param valueReduction - The applied value reduction; defaults to the value stored in `this.starterData[speciesId].valueReduction`
+   * @returns The value/cost of the starter
+   * @privateRemarks
+   * `valueReduction` only needs to be provided when testing a value reduction other than the one currently unlocked
+   */
+  getSpeciesStarterValue(speciesId: SpeciesId, valueReduction?: number): number {
     // TODO: is this bang correct?
     const baseValue = speciesStarterCosts[speciesId]!;
+    const reduction = valueReduction ?? this.starterData[speciesId].valueReduction;
     let value = baseValue;
 
-    const decrementValue = (value: number) => {
-      if (value > 1) {
-        value--;
+    const decrementValue = (v: number) => {
+      if (v > 1) {
+        v--;
       } else {
-        value /= 2;
+        v /= 2;
       }
-      return value;
+      return v;
     };
 
-    for (let v = 0; v < this.starterData[speciesId].valueReduction; v++) {
+    for (let v = 0; v < reduction; v++) {
       value = decrementValue(value);
     }
 
@@ -2027,13 +2036,13 @@ export class GameData {
   consolidateDexData(dexData: DexData): void {
     for (const k of Object.keys(dexData)) {
       const entry = dexData[k] as DexEntry;
-      if (!entry.hasOwnProperty("hatchedCount")) {
+      if (!Object.hasOwn(entry, "hatchedCount")) {
         entry.hatchedCount = 0;
       }
-      if (!entry.hasOwnProperty("natureAttr") || (entry.caughtAttr && !entry.natureAttr)) {
+      if (!Object.hasOwn(entry, "natureAttr") || (entry.caughtAttr && !entry.natureAttr)) {
         entry.natureAttr = this.defaultDexData?.[k].natureAttr || 1 << randInt(25, 1);
       }
-      if (!entry.hasOwnProperty("ribbons")) {
+      if (!Object.hasOwn(entry, "ribbons")) {
         entry.ribbons = new RibbonData(0);
       }
     }

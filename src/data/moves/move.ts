@@ -7069,25 +7069,35 @@ export class SwapArenaTagsAttr extends MoveEffectAttr {
 
     for (const playerTag of tagPlayerTemp) {
       globalScene.arena.removeTagOnSide(playerTag.tagType, ArenaTagSide.PLAYER, true);
-      globalScene.arena.addTag(
-        playerTag.tagType,
-        playerTag.turnCount,
-        playerTag.sourceMove,
-        playerTag.sourceId!,
-        ArenaTagSide.ENEMY,
-        true,
-      ); // TODO: is the bang correct?
     }
     for (const enemyTag of tagEnemyTemp) {
       globalScene.arena.removeTagOnSide(enemyTag.tagType, ArenaTagSide.ENEMY, true);
-      globalScene.arena.addTag(
-        enemyTag.tagType,
-        enemyTag.turnCount,
-        enemyTag.sourceMove,
-        enemyTag.sourceId!,
-        ArenaTagSide.PLAYER,
-        true,
-      ); // TODO: is the bang correct?
+    }
+    for (const playerTag of tagPlayerTemp) {
+      const layers = (playerTag as EntryHazardTag)?.layers ?? 1;
+      for (let i = 0; i < layers; i++) {
+        globalScene.arena.addTag(
+          playerTag.tagType,
+          playerTag.turnCount,
+          playerTag.sourceMove,
+          playerTag.sourceId!,
+          ArenaTagSide.ENEMY,
+          true,
+        ); // TODO: is the bang correct?
+      }
+    }
+    for (const enemyTag of tagEnemyTemp) {
+      const layers = (enemyTag as EntryHazardTag)?.layers ?? 1;
+      for (let i = 0; i < layers; i++) {
+        globalScene.arena.addTag(
+          enemyTag.tagType,
+          enemyTag.turnCount,
+          enemyTag.sourceMove,
+          enemyTag.sourceId!,
+          ArenaTagSide.PLAYER,
+          true,
+        ); // TODO: is the bang correct?
+      }
     }
 
     globalScene.phaseManager.queueMessage(
