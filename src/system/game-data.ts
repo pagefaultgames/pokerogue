@@ -1085,11 +1085,11 @@ export class GameData {
   // TODO: Explain what this boolean return is supposed to signify inside game-over-phase.ts
   async offlineNewClear(): Promise<boolean> {
     const sessionData = this.getSessionSaveData();
-    const seed = sessionData.seed;
-
-    if (sessionData.gameMode !== GameModes.DAILY) {
+    const { seed, gameMode } = sessionData;
+    if (gameMode !== GameModes.DAILY) {
       return true;
     }
+
     const prevDailies = localStorage.getItem("daily");
     if (!prevDailies) {
       localStorage.setItem("daily", btoa(JSON.stringify([seed])));
@@ -1571,8 +1571,15 @@ export class GameData {
    * @param showMessage
    * @returns `true` if Pokemon catch unlocked a new starter, `false` if Pokemon catch did not unlock a starter
    */
-  // TODO: Most callsites ignore the function parameter; see if we need it
-  setPokemonCaught(pokemon: Pokemon, incrementCount = true, fromEgg = false, showMessage = true): Promise<boolean> {
+  // TODO: This return value is exclusively used inside Weird Dream (which manually displays the "new starter unlocked" message),
+  // all for the purposes of playing a level up fanfare if 1+ species were unlocked.
+  // Given its only use is effectively useless, we should consider removing this return value at a future date
+  async setPokemonCaught(
+    pokemon: Pokemon,
+    incrementCount = true,
+    fromEgg = false,
+    showMessage = true,
+  ): Promise<boolean> {
     // If incrementCount === false (not a catch scenario), only update the pokemon's dex data if the Pokemon has already been marked as caught in dex
     // Prevents form changes, nature changes, etc. from unintentionally updating the dex data of a "rental" pokemon
     const speciesRootForm = pokemon.species.getRootSpeciesId();
@@ -1709,6 +1716,9 @@ export class GameData {
     if (!newCatch || !speciesStarterCosts.hasOwnProperty(species.speciesId)) {
       return await checkPrevolution(false);
     }
+    // TODO: This will skip unlocking a pre-evolution if the player catches an evolved form that is itself a starter.
+    // (This only affects Pikachu, which is the only evolved starter Pokemon, but should be fixed anyways)
+    // Better yet, rework this entire function to not do 10 different things at once
     if (!showMessage) {
       return true;
     }
