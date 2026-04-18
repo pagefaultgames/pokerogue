@@ -1317,10 +1317,7 @@ export class GameData {
           break;
         }
         case GameDataType.SESSION: {
-          const resp = await pokerogueApi.savedata.session.get({
-            slot: slotId,
-            clientSessionId,
-          });
+          const resp = await pokerogueApi.savedata.session.get({ slot: slotId, clientSessionId });
           if (typeof resp !== "string") {
             return false;
           }
