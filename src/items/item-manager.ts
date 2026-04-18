@@ -7,8 +7,7 @@
  * @typeParam Data - The data type associated with the given ID; must include
  * @typeParam Specs - The serializable item specification type (Data + `id`).
  */
-// NB: To anyone looking at this, please upvote httxx`ps://github.com/microsoft/TypeScript/issues/7061
-
+// NB: To anyone looking at this, please upvote https://github.com/microsoft/TypeScript/issues/7061
 // so we can make `Specs` a proper type alias instead of a free type parameter and remove numerous `as Specs` calls
 export abstract class ItemManager<Id extends number, Data extends { stack: number }> {
   protected readonly items: Map<Id, Data> = new Map();
