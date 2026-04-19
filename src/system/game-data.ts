@@ -1306,12 +1306,18 @@ export class GameData {
     let data: string | null;
 
     // TODO: This control flow still leaves something to be desired
-    if (bypassLogin || (dataType !== GameDataType.SYSTEM && dataType !== GameDataType.SESSION) {
+    if (bypassLogin || (dataType !== GameDataType.SYSTEM && dataType !== GameDataType.SESSION)) {
       const dataKey = `${getDataTypeKey(dataType, slotId)}_${loggedInUser?.username}`;
-      data = decrypt(localStorage.getItem(dataKey), bypassLogin);
+      const encrypted = localStorage.getItem(dataKey);
+      if (typeof encrypted !== "string") {
+        return false;
+      }
+
+      data = decrypt(encrypted, bypassLogin);
       if (dataType === GameDataType.SYSTEM) {
         data = this.convertSystemDataStr(data, true);
       }
+
     } else if (dataType === GameDataType.SYSTEM) {
       const resp = await pokerogueApi.savedata.system.get({ clientSessionId });
       if (typeof resp !== "string") {
