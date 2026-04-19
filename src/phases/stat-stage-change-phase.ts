@@ -21,7 +21,7 @@ import i18next from "i18next";
 export interface StatStageChangePhaseOptions {
   battlerIndex: BattlerIndex | number;
   changes: readonly StatChange[];
-  /** The Pokemon who caused these stat changes (may be the same as the Pokemon). */
+  /** The Pokemon who caused these stat changes (may be the same as the Pokemon this Phase is applied to). */
   sourcePokemon: Pokemon | undefined;
   /** If `true`, skip `StatStageChangeMultiplierAbAttr` */
   ignoreAbilities?: boolean;
