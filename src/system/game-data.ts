@@ -1289,49 +1289,47 @@ export class GameData {
       globalScene.lastSavePlayTime = 0;
       globalScene.ui.savingIcon.hide();
     }
-    if (saveError) {
-      // TODO: handle this more gracefully
-      if (saveError.startsWith("session out of date")) {
-        globalScene.phaseManager.clearPhaseQueue();
-        globalScene.phaseManager.unshiftNew("ReloadSessionPhase");
-      }
-      console.error(saveError);
-      return false;
+    if (!saveError) {
+      return true;
     }
-    return true;
+
+    // TODO: handle this more gracefully
+    if (saveError.startsWith("session out of date")) {
+      globalScene.phaseManager.clearPhaseQueue();
+      globalScene.phaseManager.unshiftNew("ReloadSessionPhase");
+    }
+    console.error(saveError);
+    return false;
   }
 
   public async tryExportData(dataType: GameDataType, slotId = 0): Promise<boolean> {
-    const dataKey = `${getDataTypeKey(dataType, slotId)}_${loggedInUser?.username}`;
     let data: string | null;
-    if (bypassLogin) {
-      data = localStorage.getItem(dataKey);
-    } else {
-      switch (dataType) {
-        case GameDataType.SYSTEM: {
-          const resp = await pokerogueApi.savedata.system.get({ clientSessionId });
-          if (typeof resp !== "string") {
-            return false;
-          }
-          data = this.convertSystemDataStr(resp, true);
-          break;
-        }
-        case GameDataType.SESSION: {
-          const resp = await pokerogueApi.savedata.session.get({ slot: slotId, clientSessionId });
-          if (typeof resp !== "string") {
-            return false;
-          }
-          data = resp;
-          break;
-        }
-        default:
-          data = localStorage.getItem(dataKey);
+
+    // TODO: This control flow still leaves something to be desired
+    if (bypassLogin || (dataType !== GameDataType.SYSTEM && dataType !== GameDataType.SESSION) {
+      const dataKey = `${getDataTypeKey(dataType, slotId)}_${loggedInUser?.username}`;
+      data = decrypt(localStorage.getItem(dataKey), bypassLogin);
+      if (dataType === GameDataType.SYSTEM) {
+        data = this.convertSystemDataStr(data, true);
       }
+    } else if (dataType === GameDataType.SYSTEM) {
+      const resp = await pokerogueApi.savedata.system.get({ clientSessionId });
+      if (typeof resp !== "string") {
+        return false;
+      }
+      data = this.convertSystemDataStr(resp, true);
+    } else {
+      dataType satisfies GameDataType.SESSION;
+      const resp = await pokerogueApi.savedata.session.get({ slot: slotId, clientSessionId });
+      if (typeof resp !== "string") {
+        return false;
+      }
+      data = resp;
     }
 
     // TODO: this is a really shit way of checking JSON validity
     if (!data || data.charAt(0) !== "{") {
-      console.error(data);
+      console.error("Exported save data is invalid JSON!", data);
       return false;
     }
 
