@@ -10,7 +10,7 @@ import { UiMode } from "#enums/ui-mode";
  */
 export class EggSummaryPhase extends Phase {
   public readonly phaseName = "EggSummaryPhase";
-  private readonly eggHatchData: EggHatchData[];
+  private eggHatchData: EggHatchData[];
 
   constructor(eggHatchData: EggHatchData[]) {
     super();
@@ -33,7 +33,7 @@ export class EggSummaryPhase extends Phase {
     this.eggHatchData.forEach(data => {
       data.pokemon?.destroy();
     });
-    this.eggHatchData.splice(0, this.eggHatchData.length);
+    this.eggHatchData = [];
     globalScene.time.delayedCall(250, () => globalScene.setModifiersVisible(true));
     globalScene.ui.setModeForceTransition(UiMode.MESSAGE).then(() => {
       super.end();
