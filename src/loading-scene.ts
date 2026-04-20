@@ -358,6 +358,8 @@ export class LoadingScene extends SceneBase {
       .loadSe("gacha_dial")
       .loadSe("gacha_running")
       .loadSe("gacha_dispense")
+      .loadSe("heal", "se", "heal.mp3")
+      .loadSe("item_fanfare", "se", "item_fanfare.mp3")
 
       .loadSe("PRSFX- Transform", "battle_anims");
 

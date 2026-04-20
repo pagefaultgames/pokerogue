@@ -2325,7 +2325,7 @@ export class BattleScene extends SceneBase {
     this.bgm.play({ volume: this.masterVolume * this.bgmVolume });
   }
 
-  public playBgm(bgmName?: string, fadeOut?: boolean, callback?: () => void): void {
+  public playBgm(bgmName?: string, fadeOutPrevious?: boolean, callback?: () => void): void {
     const resolvedName = timedEventManager.getEventBgmReplacement(
       bgmName ?? this.currentBattle?.getBgmOverride() ?? this.arena?.bgm,
     );
@@ -2343,7 +2343,7 @@ export class BattleScene extends SceneBase {
 
     const loopPoint = resolvedName === this.arena?.bgm ? this.arena.bgmLoopPoint : this.getBgmLoopPoint(resolvedName);
 
-    const shouldFadeOut = fadeOut && this.bgm?.isPlaying;
+    const shouldFadeOut = fadeOutPrevious && this.bgm?.isPlaying;
 
     if (shouldFadeOut) {
       const fadeDuration = 500;
@@ -2423,9 +2423,9 @@ export class BattleScene extends SceneBase {
       config["volume"] = config["volume"] ?? 1;
       switch (keyDetails[0]) {
         case "bw/level_up_fanfare":
-        case "bw/item_fanfare":
+        case "item_fanfare":
         case "bw/minor_fanfare":
-        case "bw/heal":
+        case "heal":
         case "bw/evolution":
         case "bw/evolution_fanfare":
           // These sounds are loaded in as BGM, but played as sound effects
