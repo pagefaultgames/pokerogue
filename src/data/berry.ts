@@ -107,10 +107,10 @@ export function getBerryEffectFunc(berryType: BerryType, berryPhase = false): Be
           applyAbAttrs("DoubleBerryEffectAbAttr", { pokemon: consumer, effectValue: statStages });
           if (berryPhase) {
             const queuedChange = consumer.queuedBerryStatChanges.find(c => c.stat === stat);
-            if (queuedChange != null) {
-              queuedChange.stages += statStages.value;
-            } else {
+            if (queuedChange == null) {
               consumer.queuedBerryStatChanges.push({ stat, stages: statStages.value });
+            } else {
+              queuedChange.stages += statStages.value;
             }
           } else {
             globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
@@ -135,10 +135,10 @@ export function getBerryEffectFunc(berryType: BerryType, berryPhase = false): Be
           applyAbAttrs("DoubleBerryEffectAbAttr", { pokemon: consumer, effectValue: stages });
           if (berryPhase) {
             const queuedChange = consumer.queuedBerryStatChanges.find(c => c.stat === randStat);
-            if (queuedChange != null) {
-              queuedChange.stages += stages.value;
-            } else {
+            if (queuedChange == null) {
               consumer.queuedBerryStatChanges.push({ stat: randStat, stages: stages.value });
+            } else {
+              queuedChange.stages += stages.value;
             }
           } else {
             globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
