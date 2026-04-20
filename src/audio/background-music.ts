@@ -1,7 +1,21 @@
 import { getCachedUrl } from "#utils/fetch-utils";
 import { Howl } from "howler";
 
+/**
+ * Stream background music with Howler.
+ *
+ * This class is separate from and unrelated to Phaser's sound system.
+ * @privateRemarks
+ * A separate class is used for background music to allow it to be streamed as HTML5 audio
+ * rather than being decoded into memory all at once. Considering single BGM tracks can exceed
+ * 100 MB decoded, this is extremely significant.
+ *
+ * It is separate because Phaser does not support using both WebAudio and HTML5 audio
+ * in the same project. There is indication that Phaser 4 will support this, at which time
+ * this class could be removed and replaced with Phaser's built in support.
+ */
 export class BackgroundMusic {
+  /** The key for the audio file */
   readonly key: string;
   private readonly howl: Howl;
   private readonly loopPoint: number;
@@ -29,15 +43,14 @@ export class BackgroundMusic {
 
     if (onEnd != null) {
       this.howl.on("end", onEnd);
-    } else if (loopPoint > 0) {
+    } else if (loop && loopPoint > 0) {
       this.howl.on("end", this.loopOnEnd);
     }
   }
 
-  private readonly loopOnEnd = (): void => {
-    this.howl.seek(this.loopPoint);
-    this.howl.play();
-  };
+  private loopOnEnd(): void {
+    this.play({ seek: this.loopPoint });
+  }
 
   public play(config?: { volume?: number; seek?: number }): void {
     if (config?.volume !== undefined) {
@@ -70,7 +83,6 @@ export class BackgroundMusic {
       return;
     }
     this.destroyed = true;
-    this.howl.off("end", this.loopOnEnd);
     this.howl.unload();
   }
 
