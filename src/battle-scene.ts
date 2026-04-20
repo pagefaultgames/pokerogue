@@ -2449,7 +2449,7 @@ export class BattleScene extends SceneBase {
   public replaceBgmUntilEnd(bgmName: string, callback?: () => void): BackgroundMusic {
     const tempBgm = new BackgroundMusic(bgmName, false, 0, () => {
       callback?.();
-      this.bgm?.resume;
+      this.bgm?.resume();
     });
     this.bgm?.pause();
     tempBgm.play();

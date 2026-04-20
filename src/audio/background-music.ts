@@ -16,7 +16,7 @@ import { Howl } from "howler";
  */
 export class BackgroundMusic {
   /** The key for the audio file */
-  readonly key: string;
+  public readonly key: string;
   private readonly howl: Howl;
   private destroyed = false;
 
@@ -74,7 +74,7 @@ export class BackgroundMusic {
   }
 
   public setVolume(value: number): void {
-    this.howl.volume(Math.max(0, Math.min(1, value)));
+    this.howl.volume(Phaser.Math.Clamp(value, 0, 1));
   }
 
   public destroy(): void {
