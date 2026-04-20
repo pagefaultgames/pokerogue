@@ -137,8 +137,6 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   .withOnInit(() => {
     const encounter = globalScene.currentBattle.mysteryEncounter!;
     encounter.setDialogueToken("delibirdName", getPokemonSpecies(SpeciesId.DELIBIRD).getName());
-
-    globalScene.loadBgm("mystery_encounter_delibirdy", "mystery_encounter_delibirdy.mp3");
     return true;
   })
   .withOnVisualsStart(() => {

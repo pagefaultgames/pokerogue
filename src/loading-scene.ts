@@ -360,16 +360,10 @@ export class LoadingScene extends SceneBase {
       .loadSe("gacha_dispense")
 
       .loadSe("PRSFX- Transform", "battle_anims")
-      .loadBgm("menu")
       .loadBgm("level_up_fanfare", "bw/level_up_fanfare.mp3")
       .loadBgm("item_fanfare", "bw/item_fanfare.mp3")
       .loadBgm("minor_fanfare", "bw/minor_fanfare.mp3")
       .loadBgm("heal", "bw/heal.mp3")
-      .loadBgm("victory_trainer", "bw/victory_trainer.mp3")
-      .loadBgm("victory_team_plasma", "bw/victory_team_plasma.mp3")
-      .loadBgm("victory_gym", "bw/victory_gym.mp3")
-      .loadBgm("victory_champion", "bw/victory_champion.mp3")
-      .loadBgm("evolution", "bw/evolution.mp3")
       .loadBgm("evolution_fanfare", "bw/evolution_fanfare.mp3");
 
     // TODO: Shouldn't this be inside the middle of the code?

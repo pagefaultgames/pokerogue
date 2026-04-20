@@ -154,8 +154,6 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
   .withDescription(`${namespace}:description`)
   .withQuery(`${namespace}:query`)
   .withOnInit(() => {
-    globalScene.loadBgm("mystery_encounter_weird_dream", "mystery_encounter_weird_dream.mp3");
-
     // Calculate all the newly transformed Pokemon and begin asset load
     const teamTransformations = getTeamTransformations();
     const loadAssets = teamTransformations.map(t => (t.newPokemon as PlayerPokemon).loadAssets());
