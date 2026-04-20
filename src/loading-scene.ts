@@ -359,12 +359,7 @@ export class LoadingScene extends SceneBase {
       .loadSe("gacha_running")
       .loadSe("gacha_dispense")
 
-      .loadSe("PRSFX- Transform", "battle_anims")
-      .loadBgm("level_up_fanfare", "bw/level_up_fanfare.mp3")
-      .loadBgm("item_fanfare", "bw/item_fanfare.mp3")
-      .loadBgm("minor_fanfare", "bw/minor_fanfare.mp3")
-      .loadBgm("heal", "bw/heal.mp3")
-      .loadBgm("evolution_fanfare", "bw/evolution_fanfare.mp3");
+      .loadSe("PRSFX- Transform", "battle_anims");
 
     // TODO: Shouldn't this be inside the middle of the code?
     this.load.plugin(

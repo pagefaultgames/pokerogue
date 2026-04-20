@@ -2310,7 +2310,7 @@ export class BattleScene extends SceneBase {
     return this.bgm?.isPlaying ?? false;
   }
 
-  private playNewBgm(bgmName: string, loopPoint: number): void {
+  private playNewBgm(bgmName: string, loopPoint: number, callback?: () => void): void {
     this.ui.bgmBar.setBgmToBgmBar(bgmName);
 
     const previous = this.bgm;
@@ -2321,11 +2321,11 @@ export class BattleScene extends SceneBase {
       previous.destroy();
     }
 
-    this.bgm = new BackgroundMusic(bgmName, loopPoint);
+    this.bgm = new BackgroundMusic(bgmName, true, loopPoint, callback);
     this.bgm.play({ volume: this.masterVolume * this.bgmVolume });
   }
 
-  public playBgm(bgmName?: string, fadeOut?: boolean): void {
+  public playBgm(bgmName?: string, fadeOut?: boolean, callback?: () => void): void {
     const resolvedName = timedEventManager.getEventBgmReplacement(
       bgmName ?? this.currentBattle?.getBgmOverride() ?? this.arena?.bgm,
     );
@@ -2349,10 +2349,10 @@ export class BattleScene extends SceneBase {
       const fadeDuration = 500;
       this.fadeOutBgm(fadeDuration, true);
       this.time.delayedCall(fadeDuration + 250, () => {
-        this.playNewBgm(resolvedName, loopPoint);
+        this.playNewBgm(resolvedName, loopPoint, callback);
       });
     } else {
-      this.playNewBgm(resolvedName, loopPoint);
+      this.playNewBgm(resolvedName, loopPoint, callback);
     }
   }
 
@@ -2408,7 +2408,7 @@ export class BattleScene extends SceneBase {
   /**
    * Fade out the current bgm over `delay` ms, then start a new one.
    */
-  fadeAndSwitchBgm(newBgmKey: string, destroy = false, delay = 2000): void {
+  fadeAndSwitchBgm(newBgmKey?: string, destroy = false, delay = 2000): void {
     this.fadeOutBgm(delay, destroy);
     this.time.delayedCall(delay, () => {
       this.playBgm(newBgmKey);
@@ -2422,12 +2422,12 @@ export class BattleScene extends SceneBase {
       const keyDetails = key.split("/");
       config["volume"] = config["volume"] ?? 1;
       switch (keyDetails[0]) {
-        case "level_up_fanfare":
-        case "item_fanfare":
-        case "minor_fanfare":
-        case "heal":
-        case "evolution":
-        case "evolution_fanfare":
+        case "bw/level_up_fanfare":
+        case "bw/item_fanfare":
+        case "bw/minor_fanfare":
+        case "bw/heal":
+        case "bw/evolution":
+        case "bw/evolution_fanfare":
           // These sounds are loaded in as BGM, but played as sound effects
           // When these sounds are updated in updateVolume(), they are treated as BGM however because they are placed in the BGM Cache through being called by playSoundWithoutBGM()
           config["volume"] *= this.masterVolume * this.bgmVolume;
@@ -2456,24 +2456,15 @@ export class BattleScene extends SceneBase {
     }
   }
 
-  playSoundWithoutBgm(soundName: string, pauseDuration?: number): AnySound | null {
-    this.bgmCache.add(soundName);
-    const resumeBgm = this.pauseBgm();
-    this.playSound(soundName);
-    const sound = this.sound.get(soundName);
-    if (!sound) {
-      return sound;
-    }
-    if (this.bgmResumeTimer) {
-      this.bgmResumeTimer.destroy();
-    }
-    if (resumeBgm) {
-      this.bgmResumeTimer = this.time.delayedCall(pauseDuration || fixedInt(sound.totalDuration * 1000), () => {
-        this.resumeBgm();
-        this.bgmResumeTimer = null;
-      });
-    }
-    return sound as AnySound;
+  public replaceBgmUntilEnd(bgmName: string, callback?: () => void): BackgroundMusic {
+    const tempBgm = new BackgroundMusic(bgmName, false, 0, () => {
+      callback?.();
+      this.bgm?.resume;
+    });
+    this.bgm?.pause();
+    tempBgm.play();
+
+    return tempBgm;
   }
 
   /** The loop point of any given battle, mystery encounter, or title track, read as seconds and milliseconds. */

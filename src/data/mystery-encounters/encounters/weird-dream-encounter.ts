@@ -495,7 +495,7 @@ async function doNewTeamPostProcess(transformations: PokemonTransformation[]) {
 
   // If at least one new starter was unlocked, play 1 fanfare
   if (atLeastOneNewStarter) {
-    globalScene.playSound("level_up_fanfare");
+    globalScene.playSound("bw/level_up_fanfare");
   }
 }
 

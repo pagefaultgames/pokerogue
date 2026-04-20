@@ -722,7 +722,7 @@ function doPokemonTradeSequence(tradedPokemon: PlayerPokemon, receivedPokemon: P
         globalScene.fadeOutBgm(1000, false);
         await showEncounterText(`${namespace}:pokemonTradeSelected`);
         tradedPokemon.cry();
-        globalScene.playBgm("evolution");
+        globalScene.playBgm("bw/evolution");
         await showEncounterText(`${namespace}:pokemonTradeGoodbye`);
 
         tradedPokeball.setAlpha(0);
