@@ -2422,16 +2422,6 @@ export class BattleScene extends SceneBase {
       const keyDetails = key.split("/");
       config["volume"] = config["volume"] ?? 1;
       switch (keyDetails[0]) {
-        case "bw/level_up_fanfare":
-        case "item_fanfare":
-        case "bw/minor_fanfare":
-        case "heal":
-        case "bw/evolution":
-        case "bw/evolution_fanfare":
-          // These sounds are loaded in as BGM, but played as sound effects
-          // When these sounds are updated in updateVolume(), they are treated as BGM however because they are placed in the BGM Cache through being called by playSoundWithoutBGM()
-          config["volume"] *= this.masterVolume * this.bgmVolume;
-          break;
         case "battle_anims":
         case "cry":
           config["volume"] *= this.masterVolume * this.fieldVolume;
