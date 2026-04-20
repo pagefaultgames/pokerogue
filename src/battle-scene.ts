@@ -1,5 +1,6 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { Animation } from "#app/animations";
+import { BackgroundMusic } from "#app/audio/background-music";
 import { Battle } from "#app/battle";
 import {
   ANTI_VARIANCE_WEIGHT_MODIFIER,
@@ -160,8 +161,6 @@ import { getModifierPoolForType, getModifierType } from "#utils/modifier-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 import Phaser from "phaser";
-import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-
 export interface PokeballCounts {
   [pb: string]: number;
 }
@@ -343,7 +342,7 @@ export class BattleScene extends SceneBase {
   public fieldSpritePipeline: FieldSpritePipeline;
   public spritePipeline: SpritePipeline;
 
-  private bgm: AnySound;
+  private bgm: BackgroundMusic | null = null;
   private bgmResumeTimer: Phaser.Time.TimerEvent | null;
   private readonly bgmCache: Set<string> = new Set();
   private playTimeTimer: Phaser.Time.TimerEvent;
@@ -2311,128 +2310,105 @@ export class BattleScene extends SceneBase {
     return this.bgm?.isPlaying ?? false;
   }
 
-  playBgm(bgmName?: string, fadeOut?: boolean): void {
-    if (bgmName === undefined) {
-      bgmName = this.currentBattle?.getBgmOverride() || this.arena?.bgm;
+  private playNewBgm(bgmName: string, loopPoint: number): void {
+    this.ui.bgmBar.setBgmToBgmBar(bgmName);
+
+    const previous = this.bgm;
+    if (previous?.isPlaying) {
+      previous.stop();
+    }
+    if (previous && previous.key !== bgmName) {
+      previous.destroy();
     }
 
-    bgmName = timedEventManager.getEventBgmReplacement(bgmName);
+    this.bgm = new BackgroundMusic(bgmName, loopPoint);
+    this.bgm.play({ volume: this.masterVolume * this.bgmVolume });
+  }
 
-    if (this.bgm && bgmName === this.bgm.key) {
+  public playBgm(bgmName?: string, fadeOut?: boolean): void {
+    const resolvedName = timedEventManager.getEventBgmReplacement(
+      bgmName ?? this.currentBattle?.getBgmOverride() ?? this.arena?.bgm,
+    );
+
+    if (!resolvedName) {
+      return;
+    }
+
+    if (this.bgm?.key === resolvedName) {
       if (!this.bgm.isPlaying) {
-        this.bgm.play({
-          volume: this.masterVolume * this.bgmVolume,
-        });
+        this.bgm.play({ volume: this.masterVolume * this.bgmVolume });
       }
       return;
     }
-    if (fadeOut && !this.bgm) {
-      fadeOut = false;
-    }
-    this.bgmCache.add(bgmName);
-    this.loadBgm(bgmName);
-    let loopPoint = 0;
-    loopPoint = bgmName === this.arena.bgm ? this.arena.bgmLoopPoint : this.getBgmLoopPoint(bgmName);
-    let loaded = false;
-    const playNewBgm = () => {
-      this.ui.bgmBar.setBgmToBgmBar(bgmName);
-      if (bgmName === null && this.bgm && !this.bgm.pendingRemove) {
-        this.bgm.play({
-          volume: this.masterVolume * this.bgmVolume,
-        });
-        return;
-      }
-      if (this.bgm && !this.bgm.pendingRemove && this.bgm.isPlaying) {
-        this.bgm.stop();
-      }
-      this.bgm = this.sound.add(bgmName, { loop: true });
-      this.bgm.play({
-        volume: this.masterVolume * this.bgmVolume,
+
+    const loopPoint = resolvedName === this.arena?.bgm ? this.arena.bgmLoopPoint : this.getBgmLoopPoint(resolvedName);
+
+    const shouldFadeOut = fadeOut && this.bgm?.isPlaying;
+
+    if (shouldFadeOut) {
+      const fadeDuration = 500;
+      this.fadeOutBgm(fadeDuration, true);
+      this.time.delayedCall(fadeDuration + 250, () => {
+        this.playNewBgm(resolvedName, loopPoint);
       });
-      if (loopPoint) {
-        this.bgm.on("looped", () => this.bgm.play({ seek: loopPoint }));
-      }
-    };
-    this.load.once(Phaser.Loader.Events.COMPLETE, () => {
-      loaded = true;
-      if (!fadeOut || !this.bgm.isPlaying) {
-        playNewBgm();
-      }
-    });
-    if (fadeOut) {
-      const onBgmFaded = () => {
-        if (loaded && (!this.bgm.isPlaying || this.bgm.pendingRemove)) {
-          playNewBgm();
-        }
-      };
-      this.time.delayedCall(this.fadeOutBgm(500, true) ? 750 : 250, onBgmFaded);
-    }
-    if (!this.load.isLoading()) {
-      this.load.start();
+    } else {
+      this.playNewBgm(resolvedName, loopPoint);
     }
   }
 
-  pauseBgm(): boolean {
-    if (this.bgm && !this.bgm.pendingRemove && this.bgm.isPlaying) {
+  public pauseBgm(): boolean {
+    if (this.bgm?.isPlaying) {
       this.bgm.pause();
       return true;
     }
     return false;
   }
 
-  resumeBgm(): boolean {
-    if (this.bgm && !this.bgm.pendingRemove && this.bgm.isPaused) {
+  public resumeBgm(): boolean {
+    if (this.bgm?.isPaused) {
       this.bgm.resume();
       return true;
     }
     return false;
   }
 
-  updateSoundVolume(): void {
-    if (this.sound) {
-      for (const sound of this.sound.getAllPlaying() as AnySound[]) {
-        if (this.bgmCache.has(sound.key)) {
-          sound.setVolume(this.masterVolume * this.bgmVolume);
-        } else {
-          const soundDetails = sound.key.split("/");
-          switch (soundDetails[0]) {
-            case "battle_anims":
-            case "cry":
-              if (soundDetails[1].startsWith("PRSFX- ")) {
-                sound.setVolume(this.masterVolume * this.fieldVolume * 0.5);
-              } else {
-                sound.setVolume(this.masterVolume * this.fieldVolume);
-              }
-              break;
-            case "se":
-            case "ui":
-              sound.setVolume(this.masterVolume * this.seVolume);
+  public updateSoundVolume(): void {
+    if (!this.sound) {
+      return;
+    }
+
+    this.bgm?.setVolume(this.masterVolume * this.bgmVolume);
+
+    for (const sound of this.sound.getAllPlaying() as AnySound[]) {
+      const [category, name] = sound.key.split("/");
+      switch (category) {
+        case "battle_anims":
+        case "cry":
+          if (name?.startsWith("PRSFX- ")) {
+            sound.setVolume(this.masterVolume * this.fieldVolume * 0.5);
+          } else {
+            sound.setVolume(this.masterVolume * this.fieldVolume);
           }
-        }
+          break;
+        case "se":
+        case "ui":
+          sound.setVolume(this.masterVolume * this.seVolume);
+          break;
       }
     }
   }
 
-  fadeOutBgm(duration = 500, destroy = true): boolean {
+  public fadeOutBgm(duration = 500, destroy = true): boolean {
     if (!this.bgm) {
       return false;
     }
-    const bgm = this.sound.getAllPlaying().find(bgm => bgm.key === this.bgm.key);
-    if (bgm) {
-      SoundFade.fadeOut(this, this.bgm, duration, destroy);
-      return true;
-    }
-
-    return false;
+    return this.bgm.fadeOut(duration, destroy);
   }
 
   /**
-   * Fades out current track for `delay` ms, then fades in new track.
-   * @param newBgmKey
-   * @param destroy
-   * @param delay
+   * Fade out the current bgm over `delay` ms, then start a new one.
    */
-  fadeAndSwitchBgm(newBgmKey: string, destroy = false, delay = 2000) {
+  fadeAndSwitchBgm(newBgmKey: string, destroy = false, delay = 2000): void {
     this.fadeOutBgm(delay, destroy);
     this.time.delayedCall(delay, () => {
       this.playBgm(newBgmKey);
