@@ -1289,6 +1289,7 @@ export class GameData {
       globalScene.lastSavePlayTime = 0;
       globalScene.ui.savingIcon.hide();
     }
+
     if (!saveError) {
       return true;
     }
@@ -1303,11 +1304,11 @@ export class GameData {
   }
 
   public async tryExportData(dataType: GameDataType, slotId = 0): Promise<boolean> {
+    const dataKey = `${getDataTypeKey(dataType, slotId)}_${loggedInUser?.username}`;
     let data: string | null;
 
     // TODO: This control flow still leaves something to be desired
     if (bypassLogin || (dataType !== GameDataType.SYSTEM && dataType !== GameDataType.SESSION)) {
-      const dataKey = `${getDataTypeKey(dataType, slotId)}_${loggedInUser?.username}`;
       const encrypted = localStorage.getItem(dataKey);
       if (typeof encrypted !== "string") {
         return false;
