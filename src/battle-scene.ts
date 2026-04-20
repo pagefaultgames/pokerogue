@@ -2322,7 +2322,7 @@ export class BattleScene extends SceneBase {
     }
 
     this.bgm = new BackgroundMusic(bgmName, true, loopPoint, callback);
-    this.bgm.play({ volume: this.masterVolume * this.bgmVolume });
+    this.bgm.play(this.masterVolume * this.bgmVolume);
   }
 
   public playBgm(bgmName?: string, fadeOutPrevious?: boolean, callback?: () => void): void {
@@ -2336,7 +2336,7 @@ export class BattleScene extends SceneBase {
 
     if (this.bgm?.key === resolvedName) {
       if (!this.bgm.isPlaying) {
-        this.bgm.play({ volume: this.masterVolume * this.bgmVolume });
+        this.bgm.play(this.masterVolume * this.bgmVolume);
       }
       return;
     }

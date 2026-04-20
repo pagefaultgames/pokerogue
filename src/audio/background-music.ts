@@ -53,13 +53,11 @@ export class BackgroundMusic {
     this.howl.play("loop");
   }
 
-  public play(config?: { volume?: number; seek?: number }): void {
-    if (config?.volume !== undefined) {
-      this.howl.volume(config.volume);
+  public play(volume?: number): void {
+    if (volume != null) {
+      this.howl.volume(volume);
     }
-    if (config?.seek !== undefined) {
-      this.howl.seek(config.seek);
-    }
+
     this.howl.play();
   }
 
