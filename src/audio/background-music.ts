@@ -18,7 +18,6 @@ export class BackgroundMusic {
   /** The key for the audio file */
   readonly key: string;
   private readonly howl: Howl;
-  private readonly loopPoint: number;
   private destroyed = false;
 
   public get isPlaying(): boolean {
@@ -31,25 +30,27 @@ export class BackgroundMusic {
 
   constructor(key: string, loop: boolean, loopPoint = 0, onEnd?: () => void) {
     this.key = key;
-    this.loopPoint = loopPoint;
     const url = getCachedUrl(`audio/bgm/${key}.mp3`);
 
     this.howl = new Howl({
       src: [url],
       html5: true,
-      loop,
       preload: true,
+      onload: () => {
+        this.howl["_sprite"].loop = [loopPoint * 1000, this.howl.duration() * 1000 - loopPoint * 1000, true];
+      },
     });
 
     if (onEnd != null) {
       this.howl.on("end", onEnd);
     } else if (loop && loopPoint > 0) {
-      this.howl.on("end", this.loopOnEnd);
+      this.howl.on("end", this.loopOnEnd.bind(this));
     }
   }
 
   private loopOnEnd(): void {
-    this.play({ seek: this.loopPoint });
+    this.howl.stop();
+    this.howl.play("loop");
   }
 
   public play(config?: { volume?: number; seek?: number }): void {
