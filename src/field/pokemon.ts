@@ -4016,8 +4016,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!preventEndure && this.hp - damage <= 0) {
       if (this.hp >= 1 && this.getTag(BattlerTagType.ENDURING)) {
         surviveDamage.value = this.lapseTag(BattlerTagType.ENDURING);
-      } else if (this.hp > 1 && this.getTag(BattlerTagType.STURDY)) {
-        surviveDamage.value = this.lapseTag(BattlerTagType.STURDY);
+      } else if (this.hp === this.getMaxHp() && this.getTag(BattlerTagType.STURDY)) {
+        surviveDamage.value = true;
+        this.lapseTag(BattlerTagType.STURDY);
       } else if (this.hp >= 1 && this.getTag(BattlerTagType.ENDURE_TOKEN)) {
         surviveDamage.value = this.lapseTag(BattlerTagType.ENDURE_TOKEN);
       }
