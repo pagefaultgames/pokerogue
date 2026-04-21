@@ -1546,9 +1546,6 @@ export class GameData {
     if (!isIos()) {
       saveFile.click();
     }
-
-    // Append the file input to body for iOS compatibility
-    document.body.appendChild(saveFile);
   }
 
   private initDexData(): void {
