@@ -256,7 +256,7 @@ export function isMobile(): boolean {
  * Detect if the current device is running iOS (iPhone, iPad, or iPod)
  * @returns true if the device is running iOS
  */
-export function isIOS(): boolean {
+export function isIos(): boolean {
   const userAgent = navigator.userAgent || navigator.vendor || (window as any)["opera"];
   // Check for iPhone, iPad, or iPod
   const userAgentCheck = /iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream;

@@ -4,7 +4,7 @@ import { defaultStarterSpecies, saveKey } from "#app/constants";
 import { getGameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
-import { isIOS } from "#app/touch-controls";
+import { isIos } from "#app/touch-controls";
 import { Tutorial } from "#app/tutorial";
 import { speciesEggMoves } from "#balance/moves/egg-moves";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
@@ -1378,8 +1378,7 @@ export class GameData {
     saveFile.accept = ".prsv";
 
     // iOS requires user interaction with a visible element to trigger file input
-    if (isIOS()) {
-      // Create a visible button for iOS
+    if (isIos()) {
       const uploadButton = document.createElement("button");
       uploadButton.id = "iosUploadButton";
       uploadButton.textContent = "Select File to Import";
@@ -1544,7 +1543,7 @@ export class GameData {
     });
 
     // Only auto-click on non-iOS devices
-    if (!isIOS()) {
+    if (!isIos()) {
       saveFile.click();
     }
 
