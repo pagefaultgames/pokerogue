@@ -1438,12 +1438,8 @@ export class GameData {
       // Remove iOS UI elements if they exist
       const overlay = document.getElementById("iosUploadOverlay");
       const button = document.getElementById("iosUploadButton");
-      if (overlay) {
-        overlay.remove();
-      }
-      if (button) {
-        button.remove();
-      }
+      overlay?.remove();
+      button?.remove();
 
       const reader = new FileReader();
 
