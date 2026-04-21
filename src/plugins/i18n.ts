@@ -167,6 +167,7 @@ await i18next
   .use(processor)
   .init(
     {
+      showSupportNotice: false,
       fallbackLng: {
         "es-419": ["es-ES", "en"],
         default: ["en"],

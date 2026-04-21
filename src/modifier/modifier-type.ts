@@ -763,7 +763,7 @@ export class TempStatStageBoosterModifierType extends ModifierType implements Ge
 
     this.stat = stat;
     this.nameKey = nameKey;
-    this.quantityKey = stat !== Stat.ACC ? "percentage" : "stage";
+    this.quantityKey = stat === Stat.ACC ? "stage" : "percentage";
   }
 
   get name(): string {

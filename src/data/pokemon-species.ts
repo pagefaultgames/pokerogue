@@ -175,7 +175,7 @@ export abstract class PokemonSpeciesForm {
    * @returns Number of abilities
    */
   getAbilityCount(): number {
-    return this.abilityHidden !== AbilityId.NONE ? 3 : 2;
+    return this.abilityHidden === AbilityId.NONE ? 2 : 3;
   }
 
   /**
@@ -1292,6 +1292,6 @@ export class PokemonForm extends PokemonSpeciesForm {
   }
 
   getFormSpriteKey(_formIndex?: number) {
-    return this.formSpriteKey !== null ? this.formSpriteKey : this.formKey;
+    return this.formSpriteKey === null ? this.formKey : this.formSpriteKey;
   }
 }

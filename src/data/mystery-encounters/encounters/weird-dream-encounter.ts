@@ -772,12 +772,12 @@ async function addEggMoveToNewPokemonMoveset(
   if (eggMoves) {
     const eggMoveIndices = randSeedShuffle([0, 1, 2, 3]);
     let randomEggMoveIndex = eggMoveIndices.pop();
-    let randomEggMove = randomEggMoveIndex != null ? eggMoves[randomEggMoveIndex] : null;
+    let randomEggMove = randomEggMoveIndex == null ? null : eggMoves[randomEggMoveIndex];
     let retries = 0;
     while (retries < 3 && (!randomEggMove || newPokemon.moveset.some(m => m.moveId === randomEggMove))) {
       // If Pokemon already knows this move, roll for another egg move
       randomEggMoveIndex = eggMoveIndices.pop();
-      randomEggMove = randomEggMoveIndex != null ? eggMoves[randomEggMoveIndex] : null;
+      randomEggMove = randomEggMoveIndex == null ? null : eggMoves[randomEggMoveIndex];
       retries++;
     }
 

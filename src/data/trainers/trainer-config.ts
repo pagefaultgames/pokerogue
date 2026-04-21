@@ -539,7 +539,7 @@ export class TrainerConfig {
         .fill(null)
         .map((_, i) => i)
         .filter(i => shedinjaCanTera || party[i].species.speciesId !== SpeciesId.SHEDINJA); // Shedinja can only Tera on Bug specialty type (or no specialty type)
-      const setPartySlot = slot != null ? Phaser.Math.Wrap(slot, 0, party.length) : -1; // If we have a tera slot defined, wrap it to party size.
+      const setPartySlot = slot == null ? -1 : Phaser.Math.Wrap(slot, 0, party.length); // If we have a tera slot defined, wrap it to party size.
       for (let t = 0; t < Math.min(count(), party.length); t++) {
         const randomIndex =
           partyMemberIndexes.indexOf(setPartySlot) > -1 ? setPartySlot : randSeedItem(partyMemberIndexes);
@@ -747,11 +747,11 @@ export class TrainerConfig {
     });
 
     // Set species filter and specialty type if provided, otherwise filter by base total.
-    if (specialtyType != null) {
+    if (specialtyType == null) {
+      this.setSpeciesFilter(p => p.baseTotal >= ELITE_FOUR_MINIMUM_BST);
+    } else {
       this.setSpeciesFilter(p => p.isOfType(specialtyType) && p.baseTotal >= ELITE_FOUR_MINIMUM_BST);
       this.setSpecialtyType(specialtyType);
-    } else {
-      this.setSpeciesFilter(p => p.baseTotal >= ELITE_FOUR_MINIMUM_BST);
     }
 
     // Localize the trainer's name by converting it to camel case.
