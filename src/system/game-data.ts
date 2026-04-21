@@ -1318,7 +1318,6 @@ export class GameData {
       if (dataType === GameDataType.SYSTEM) {
         data = this.convertSystemDataStr(data, true);
       }
-
     } else if (dataType === GameDataType.SYSTEM) {
       const resp = await pokerogueApi.savedata.system.get({ clientSessionId });
       if (typeof resp !== "string") {
