@@ -741,10 +741,10 @@ export class OverridesHelper extends GameManagerHelper {
    */
   public statusActivation(activate: boolean | null): this {
     vi.spyOn(Overrides, "STATUS_ACTIVATION_OVERRIDE", "get").mockReturnValue(activate);
-    if (activate !== null) {
-      this.log(`Paralysis and Freeze forced to ${activate ? "always" : "never"} activate!`);
-    } else {
+    if (activate === null) {
       this.log("Status activation override disabled!");
+    } else {
+      this.log(`Paralysis and Freeze forced to ${activate ? "always" : "never"} activate!`);
     }
     return this;
   }
@@ -756,10 +756,10 @@ export class OverridesHelper extends GameManagerHelper {
    */
   public confusionActivation(activate: boolean | null): this {
     vi.spyOn(Overrides, "CONFUSION_ACTIVATION_OVERRIDE", "get").mockReturnValue(activate);
-    if (activate !== null) {
-      this.log(`Confusion forced to ${activate ? "always" : "never"} activate!`);
-    } else {
+    if (activate === null) {
       this.log("Confusion activation override disabled!");
+    } else {
+      this.log(`Confusion forced to ${activate ? "always" : "never"} activate!`);
     }
     return this;
   }

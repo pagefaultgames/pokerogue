@@ -57,7 +57,7 @@ describe("Moves - Protect", () => {
     const charizard = game.field.getPlayerPokemon();
 
     // mock RNG roll to suceed unless exactly the desired chance is hit
-    vi.spyOn(charizard, "randBattleSeedInt").mockImplementation(range => (range !== chance ? 0 : 1));
+    vi.spyOn(charizard, "randBattleSeedInt").mockImplementation(range => (range === chance ? 1 : 0));
     const conditionSpy = vi.spyOn(allMoves[MoveId.PROTECT]["conditions"][0], "apply");
 
     // click protect many times

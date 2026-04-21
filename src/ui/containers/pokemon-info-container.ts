@@ -300,7 +300,7 @@ export class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
         this.pokemonFormText.setText(
           formName.length > this.numCharsBeforeCutoff
-            ? `${formName.substring(0, this.numCharsBeforeCutoff - 3)}...`
+            ? `${formName.slice(0, this.numCharsBeforeCutoff - 3)}...`
             : formName,
         );
         if (formName.length > this.numCharsBeforeCutoff) {
