@@ -1399,7 +1399,6 @@ export class GameData {
         box-shadow: 0 4px 6px rgba(0,0,0,0.3);
       `;
 
-      // Create overlay
       const overlay = document.createElement("div");
       overlay.id = "iosUploadOverlay";
       overlay.style.cssText = `
@@ -1412,15 +1411,12 @@ export class GameData {
         z-index: 9999;
       `;
 
-      // Add file input to the button (hidden but functional on iOS)
       saveFile.style.display = "none";
 
-      // Handle button click to trigger file input
       uploadButton.onclick = () => {
         saveFile.click();
       };
 
-      // Handle overlay click to cancel
       overlay.onclick = () => {
         overlay.remove();
         uploadButton.remove();
@@ -1434,7 +1430,6 @@ export class GameData {
     }
 
     saveFile.addEventListener("change", e => {
-      // Remove iOS UI elements if they exist
       const overlay = document.getElementById("iosUploadOverlay");
       const button = document.getElementById("iosUploadButton");
       overlay?.remove();
@@ -1542,13 +1537,9 @@ export class GameData {
       reader.readAsText((e.target as any).files[0]);
     });
 
-    // Only auto-click on non-iOS devices
     if (!isIos()) {
       saveFile.click();
     }
-
-    // Append the file input to body for iOS compatibility
-    document.body.appendChild(saveFile);
   }
 
   private initDexData(): void {
