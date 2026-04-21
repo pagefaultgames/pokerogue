@@ -3,8 +3,9 @@ import { globalScene } from "#app/global-scene";
 import type { HeldItemEffect } from "#enums/held-item-effect";
 import { type HeldItemId, HeldItemNames } from "#enums/held-item-id";
 import type { Pokemon } from "#field/pokemon";
+import type { HeldItemAttr, HeldItemRecord } from "#items/held-item-attr";
+import type { HeldItemBuilder } from "#items/held-item-builder";
 import type { HeldItemEffectParamMap } from "#types/held-item-parameter";
-import type { Mutable } from "#types/type-helpers";
 import i18next from "i18next";
 import type { NonEmptyTuple } from "type-fest";
 
@@ -12,10 +13,11 @@ import type { NonEmptyTuple } from "type-fest";
  * Base class for all held items, both functional and cosmetic.
  */
 export abstract class HeldItemBase {
-  // TODO: Renme parameter to `id` or similar
+  // TODO: Rename parameter to `id` or similar
   public readonly type: HeldItemId;
   public readonly maxStackCount: number;
   // TODO: Consider converting these to a bitmask for efficiency
+
   /**
    * Whether this item can be transferred to another {@linkcode Pokemon}.
    * @defaultValue `true`
@@ -32,21 +34,21 @@ export abstract class HeldItemBase {
    */
   public isSuppressable = true;
 
-  constructor(type: HeldItemId, maxStackCount = 1) {
-    this.type = type;
-    this.maxStackCount = maxStackCount;
-  }
-
-  get name(): string {
+  public get name(): string {
     return i18next.t(`modifierType:ModifierType.${HeldItemNames[this.type]}.name`);
   }
 
-  get description(): string {
+  public get description(): string {
     return i18next.t(`modifierType:ModifierType.${HeldItemNames[this.type]}.description`);
   }
 
-  get iconName(): string {
+  public get iconName(): string {
     return `${HeldItemNames[this.type]?.toLowerCase()}`;
+  }
+
+  constructor(type: HeldItemId, maxStackCount = 1) {
+    this.type = type;
+    this.maxStackCount = maxStackCount;
   }
 
   // TODO: https://github.com/pagefaultgames/pokerogue/pull/5656#discussion_r2114950716
@@ -111,64 +113,108 @@ export abstract class HeldItemBase {
   getScoreMultiplier(): number {
     return 1;
   }
-
-  untransferable(): this {
-    (this as Mutable<this>).isTransferable = false;
-    return this;
-  }
-
-  unstealable(): this {
-    this.isStealable = false;
-    return this;
-  }
-
-  unsuppressable(): this {
-    this.isSuppressable = false;
-    return this;
-  }
 }
 
 /**
- * Abstract class for all non-cosmetic held items
+ * Class for all non-cosmetic held items
  * (i.e. ones that can have their effects applied during or outside of battle).
+ *
+ * @see {@linkcode HeldItemBuilder}
  */
-// TODO: Try and make items that have multiple effects more ergonomic rather than requiring dynamic dispatch
-export abstract class HeldItem<
-  T extends NonEmptyTuple<HeldItemEffect> = NonEmptyTuple<HeldItemEffect>,
-> extends HeldItemBase {
-  /**
-   * A readonly tuple containing all {@linkcode HeldItemEffect | effects} that this class can apply.
-   * @privateRemarks
-   * Please sort entries in ascending numerical order (for consistency)
-   */
-  public abstract readonly effects: Readonly<T>;
+export class HeldItem<Effects extends HeldItemEffect = HeldItemEffect> extends HeldItemBase {
+  /** An object matching each supported {@linkcode HeldItemEffect} to the attributes that implement said effect. */
+  public readonly effects: HeldItemRecord<Effects>;
 
+  // #region Localization
   /**
-   * Check whether a given effect of this item should apply.
-   * @typeParam E - The type of one of this class' {@linkcode HeldItem.effects | effects}
-   * @param effect - The {@linkcode HeldItemEffect | effect} being applied
-   * @param args - Arguments required for the effect application
-   * @returns Whether the effect should apply.
-   * Defaults to `true` if not overridden.
+   * Optional parameters used to localize this item's name.
+   * If omitted, will use the default implementation provided from {@linkcode HeldItemBase}.
    */
-  // biome-ignore lint/correctness/noUnusedFunctionParameters: pseudo-abstract method
-  public shouldApply<E extends T[number]>(effect: E, args: HeldItemEffectParamMap[E]): boolean {
-    return true;
+  private readonly nameParams?: Parameters<typeof i18next.t> | undefined;
+  /**
+   * Optional parameters used to localize this item's description.
+   * If omitted, will use the default implementation provided from {@linkcode HeldItemBase}.
+   */
+  private readonly descriptionParams?: Parameters<typeof i18next.t> | undefined;
+  public readonly customIconName?: string | undefined;
+
+  public override get name(): string {
+    return this.nameParams ? i18next.t(...this.nameParams) : super.name;
+  }
+
+  public override get description(): string {
+    return this.descriptionParams ? i18next.t(...this.descriptionParams) : super.description;
+  }
+
+  public override get iconName(): string {
+    return this.customIconName ?? super.iconName;
+  }
+  // #endregion Localization
+
+  protected constructor({
+    type,
+    effects,
+    maxStackCount = 1,
+    nameParams,
+    descriptionParams,
+    iconName,
+  }: {
+    type: HeldItemId;
+    effects: HeldItemRecord<Effects>;
+    maxStackCount?: number;
+    nameParams?: Parameters<typeof i18next.t> | undefined;
+    descriptionParams?: Parameters<typeof i18next.t> | undefined;
+    iconName?: string | undefined;
+  }) {
+    super(type, maxStackCount);
+
+    this.effects = effects;
+    this.nameParams = nameParams;
+    this.descriptionParams = descriptionParams;
+    this.customIconName = iconName;
   }
 
   /**
-   * Apply the given item's effects.
-   * Called if and only if {@linkcode HeldItem.shouldApply | shouldApply} returns `true`.
-   * @typeParam E - The type of one of this class' {@linkcode HeldItem.effects | effects}
-   * @param effect - The effect being applied
-   * @param args - Arguments required for the effect application
+   * Retrieve all {@linkcode HeldItemAttr}s this item has for a given effect.
+   * @param effect - The effect to check
+   * @returns An array containing all attributes of the given type that exist on this item;
+   * will be empty if none exist
+   * @remarks
+   * The order of the attributes within the returned array is unspecified and should not be relied upon.
    */
-  public abstract apply<E extends T[number]>(effect: E, param: HeldItemEffectParamMap[E]): void;
+  private getAttrs<E extends Effects>(effect: E): readonly HeldItemAttr<E>[] {
+    return (this.effects[effect] ?? []) as HeldItemAttr<E>[];
+  }
+
+  /**
+   * Check whether this item handles the given effect at runtime.
+   * Narrows the item's effect set to include `E`.
+   * @param effect - The {@linkcode HeldItemEffect} to check
+   * @returns Whether this item has at least 1 attribute for `effect`
+   */
+  public hasEffect<E extends HeldItemEffect>(effect: E): this is HeldItem<Effects | E> {
+    return (this.effects as Record<HeldItemEffect, NonEmptyTuple<HeldItemAttr> | undefined>)[effect] != null;
+  }
+
+  /**
+   * Apply all of this item's attributes that pertain to the given effect, subject to their individual
+   * {@linkcode HeldItemAttr.shouldApply | shouldApply} conditions.
+   * @param effect - The {@linkcode HeldItemEffect | effect} to apply
+   * @param params - The parameters to pass to the item attributes' `apply` methods
+   * @sealed
+   */
+  public apply<E extends Effects>(effect: E, params: HeldItemEffectParamMap[E]): void {
+    for (const attr of this.getAttrs(effect)) {
+      if (attr.shouldApply(params)) {
+        attr.apply(params);
+      }
+    }
+  }
 }
 
 // TODO: Make this a mixin to avoid diamond problem issues
-/** Abstract class for all `HeldItem`s that can be consumed during battle. */
-export abstract class ConsumableHeldItem<T extends NonEmptyTuple<HeldItemEffect>> extends HeldItem<T> {
+/** Class for all {@linkcode HeldItem}s that can be consumed during battle. */
+export class ConsumableHeldItem<Effects extends HeldItemEffect = HeldItemEffect> extends HeldItem<Effects> {
   /**
    * Consume this item and apply relevant effects.
    * Should be extended by any subclasses with their own on-consume effects.

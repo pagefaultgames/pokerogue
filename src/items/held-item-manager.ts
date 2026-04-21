@@ -7,6 +7,7 @@ import {
   isItemInCategory,
   isItemInRequested,
 } from "#enums/held-item-id";
+import type { CosmeticHeldItem, HeldItem } from "#items/held-item";
 import { ItemManager } from "#items/item-manager";
 import { type HeldItemData, type HeldItemSpecs, isHeldItemSpecs } from "#types/held-item-data-types";
 
@@ -18,7 +19,7 @@ import { type HeldItemData, type HeldItemSpecs, isHeldItemSpecs } from "#types/h
 export class HeldItemManager extends ItemManager<HeldItemId, HeldItemData> {
   // #region Abstract method implementations
   protected override getMaxStackCount(id: HeldItemId): number {
-    return allHeldItems[id].getMaxStackCount();
+    return (allHeldItems[id] satisfies HeldItem | CosmeticHeldItem).getMaxStackCount();
   }
 
   protected override isSpecs(entry: unknown): entry is HeldItemSpecs {
