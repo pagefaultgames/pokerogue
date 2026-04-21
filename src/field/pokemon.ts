@@ -216,7 +216,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   protected battleInfo: BattleInfo;
   public level: number;
   public exp: number;
-  public levelExp: number;
   public gender: Gender;
   public hp: number;
   public stats: number[];
@@ -352,7 +351,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       this.variant = variant;
     }
     this.exp = dataSource?.exp || getLevelTotalExp(this.level, species.growthRate);
-    this.levelExp = dataSource?.levelExp || 0;
 
     if (dataSource) {
       this.id = dataSource.id;
@@ -455,6 +453,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!dataSource) {
       this.calculateStats();
     }
+  }
+
+  /** The amount of EXP the Pokemon has earned within its current level */
+  public get levelExp(): number {
+    return this.exp - getLevelTotalExp(this.level, this.species.growthRate);
   }
 
   /**
@@ -3361,7 +3364,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       console.log(initialExp, this.exp, getLevelTotalExp(this.level, this.species.growthRate));
       this.exp = Math.max(getLevelTotalExp(this.level, this.species.growthRate), initialExp);
     }
-    this.levelExp = this.exp - getLevelTotalExp(this.level, this.species.growthRate);
   }
 
   /**
