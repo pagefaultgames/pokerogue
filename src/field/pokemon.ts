@@ -372,7 +372,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       this.luck = dataSource.luck;
       this.metBiome = dataSource.metBiome;
       this.metSpecies =
-        dataSource.metSpecies ?? (this.metBiome !== -1 ? this.species.speciesId : this.species.getRootSpeciesId(true));
+        dataSource.metSpecies ?? (this.metBiome === -1 ? this.species.getRootSpeciesId(true) : this.species.speciesId);
       this.metWave = dataSource.metWave ?? (this.metBiome === -1 ? -1 : 0);
       this.pauseEvolutions = dataSource.pauseEvolutions;
       this.pokerus = !!dataSource.pokerus;
@@ -415,10 +415,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         this.variant = this.shiny ? this.generateShinyVariant() : 0;
       }
 
-      if (nature !== undefined) {
-        this.setNature(nature);
-      } else {
+      if (nature === undefined) {
         this.generateNature();
+      } else {
+        this.setNature(nature);
       }
 
       this.friendship = species.baseFriendship;
@@ -608,7 +608,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   public getDexAttr(): bigint {
     let ret = 0n;
     if (this.gender !== Gender.GENDERLESS) {
-      ret |= this.gender !== Gender.FEMALE ? DexAttr.MALE : DexAttr.FEMALE;
+      ret |= this.gender === Gender.FEMALE ? DexAttr.FEMALE : DexAttr.MALE;
     }
     ret |= this.shiny ? DexAttr.SHINY : DexAttr.NON_SHINY;
     ret |= this.variant >= 2 ? DexAttr.VARIANT_3 : this.variant === 1 ? DexAttr.VARIANT_2 : DexAttr.DEFAULT_VARIANT;
@@ -644,7 +644,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     // Neither RNG roll depends on the outcome of the other, so that Ability Charms do not affect RNG.
-    const regularAbility = this.species.ability2 !== this.species.ability1 ? randSeedInt(2) : 0;
+    const regularAbility = this.species.ability2 === this.species.ability1 ? 0 : randSeedInt(2);
     const useHiddenAbility = this.species.abilityHidden ? !randSeedInt(hiddenAbilityChance.value) : false;
 
     return useHiddenAbility ? 2 : regularAbility;
@@ -1650,7 +1650,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   // TODO: Convert this into a getter
   getNature(): Nature {
-    return this.customPokemonData.nature !== -1 ? this.customPokemonData.nature : this.nature;
+    return this.customPokemonData.nature === -1 ? this.nature : this.customPokemonData.nature;
   }
 
   // TODO: Convert this into a setter OR just add a listener for calculateStats...
@@ -3185,9 +3185,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     this.fusionAbilityIndex =
       this.fusionSpecies.abilityHidden && hasHiddenAbility
         ? 2
-        : this.fusionSpecies.ability2 !== this.fusionSpecies.ability1
-          ? randAbilityIndex
-          : 0;
+        : this.fusionSpecies.ability2 === this.fusionSpecies.ability1
+          ? 0
+          : randAbilityIndex;
     this.fusionShiny = this.shiny;
     this.fusionVariant = this.variant;
 
@@ -3918,18 +3918,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       simulated,
       damage,
     };
-    /** Apply this Pokemon's post-calc defensive modifiers (e.g. Fur Coat) */
+    // Apply this Pokemon's post-calc defensive modifiers (e.g. Fur Coat)
     if (!ignoreAbility) {
       applyAbAttrs("ReceivedMoveDamageMultiplierAbAttr", abAttrParams);
 
       const ally = this.getAlly();
-      /** Additionally apply friend guard damage reduction if ally has it. */
-      if (globalScene.currentBattle.double && ally != null && ally.isActive(true)) {
-        applyAbAttrs("AlliedFieldDamageReductionAbAttr", {
-          ...abAttrParams,
-          // Same parameters as before, except we are applying the ally's ability
-          pokemon: ally,
-        });
+      // Additionally apply friend guard damage reduction if ally has it.
+      if (globalScene.currentBattle.double && ally?.isActive(true)) {
+        applyAbAttrs("AlliedFieldDamageReductionAbAttr", { ...abAttrParams, pokemon: ally });
       }
     }
 
@@ -3940,7 +3936,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       applyAbAttrs("PreDefendFullHpEndureAbAttr", abAttrParams);
     }
 
-    // debug message for when damage is applied (i.e. not simulated)
+    // debug message for when damage is applied
     if (!simulated) {
       console.log(`Move: ${move.name} | Attack damage: ${damage.value}`);
     }
@@ -5121,7 +5117,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   public doSetStatus(
     effect: StatusEffect,
-    sleepTurnsRemaining = effect !== StatusEffect.SLEEP ? 0 : this.randBattleSeedIntRange(2, 4),
+    sleepTurnsRemaining = effect === StatusEffect.SLEEP ? this.randBattleSeedIntRange(2, 4) : 0,
   ): void {
     // Reset any pending status
     this.turnData.pendingStatus = StatusEffect.NONE;
@@ -6124,12 +6120,12 @@ export class PlayerPokemon extends Pokemon {
         const originalFusionFormIndex = this.fusionFormIndex;
         this.fusionSpecies = evolutionSpecies;
         this.fusionFormIndex =
-          evolution.evoFormKey !== null
-            ? Math.max(
+          evolution.evoFormKey === null
+            ? this.fusionFormIndex
+            : Math.max(
                 evolutionSpecies.forms.findIndex(f => f.formKey === evolution.evoFormKey),
                 0,
-              )
-            : this.fusionFormIndex;
+              );
         ret = globalScene.addPlayerPokemon(
           this.species,
           this.level,
@@ -6637,7 +6633,7 @@ export class EnemyPokemon extends Pokemon {
         ];
         break;
       case this.species.speciesId === SpeciesId.ETERNATUS:
-        this.moveset = (formIndex !== undefined ? formIndex : this.formIndex)
+        this.moveset = (formIndex === undefined ? this.formIndex : formIndex)
           ? [
               new PokemonMove(MoveId.DYNAMAX_CANNON),
               new PokemonMove(MoveId.CROSS_POISON),

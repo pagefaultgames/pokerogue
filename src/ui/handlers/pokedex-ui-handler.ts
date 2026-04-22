@@ -1257,12 +1257,12 @@ export class PokedexUiHandler extends MessageUiHandler {
             }
             break;
           case Button.LEFT:
-            if (this.trayCursor % 9 !== 0) {
-              success = this.setTrayCursor(this.trayCursor - 1);
-            } else {
+            if (this.trayCursor % 9 === 0) {
               success = this.setTrayCursor(
                 currentTrayRow < numOfRows - 1 ? (currentTrayRow + 1) * maxColumns - 1 : numberOfForms - 1,
               );
+            } else {
+              success = this.setTrayCursor(this.trayCursor - 1);
             }
             break;
           case Button.RIGHT:
@@ -1326,13 +1326,13 @@ export class PokedexUiHandler extends MessageUiHandler {
           }
           break;
         case Button.LEFT:
-          if (this.cursor % 9 !== 0) {
-            success = this.setCursor(this.cursor - 1);
-          } else {
+          if (this.cursor % 9 === 0) {
             // LEFT from filtered pokemon, on the left edge
             this.filterTextCursor = this.filterText.getNearestFilter(this.pokemonContainers[this.cursor]);
             this.setFilterTextMode(true);
             success = true;
+          } else {
+            success = this.setCursor(this.cursor - 1);
           }
           break;
         case Button.RIGHT:
@@ -2359,17 +2359,17 @@ export class PokedexUiHandler extends MessageUiHandler {
   }
 
   setTypeIcons(type1: PokemonType | null, type2: PokemonType | null): void {
-    if (type1 !== null) {
+    if (type1 === null) {
+      this.type1Icon.setVisible(false);
+    } else {
       this.type1Icon.setVisible(true);
       this.type1Icon.setFrame(PokemonType[type1].toLowerCase());
-    } else {
-      this.type1Icon.setVisible(false);
     }
-    if (type2 !== null) {
+    if (type2 === null) {
+      this.type2Icon.setVisible(false);
+    } else {
       this.type2Icon.setVisible(true);
       this.type2Icon.setFrame(PokemonType[type2].toLowerCase());
-    } else {
-      this.type2Icon.setVisible(false);
     }
   }
 

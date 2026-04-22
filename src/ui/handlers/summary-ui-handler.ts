@@ -1095,10 +1095,11 @@ export class SummaryUiHandler extends UiHandler {
           this.permStatsContainer.add(statLabel);
           this.ivContainer.add(ivLabel);
 
+          // TODO: are those bangs correct?
           const statValueText =
-            stat !== Stat.HP
-              ? formatStat(this.pokemon?.getStat(stat)!) // TODO: is this bang correct?
-              : `${formatStat(this.pokemon?.hp!, true)}/${formatStat(this.pokemon?.getMaxHp()!, true)}`; // TODO: are those bangs correct?
+            stat === Stat.HP
+              ? `${formatStat(this.pokemon?.hp!, true)}/${formatStat(this.pokemon?.getMaxHp()!, true)}`
+              : formatStat(this.pokemon?.getStat(stat)!);
           const ivText = `${this.pokemon?.ivs[stat]}/31`;
 
           const statValue = addTextObject(93 + 93 * colIndex, 16 * rowIndex, statValueText, TextStyle.WINDOW_ALT);

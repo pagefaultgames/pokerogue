@@ -540,9 +540,7 @@ export class Arena {
 
     let tier: BiomePoolTier;
     const forcedTier = getDailyForcedWaveBiomePoolTier(waveIndex);
-    if (forcedTier !== null) {
-      tier = forcedTier;
-    } else {
+    if (forcedTier === null) {
       const rollMax = isBossSpecies ? 64 : 512;
 
       // Luck reduces the RNG ceiling by 0.5x for bosses or 2x otherwise
@@ -550,6 +548,8 @@ export class Arena {
 
       const rngRoll = randSeedInt(rollMax - luckModifier);
       tier = (isBossSpecies ? this.generateBossBiomeTier : this.generateNonBossBiomeTier)(rngRoll);
+    } else {
+      tier = forcedTier;
     }
 
     console.log("Starting species pool tier:", BiomePoolTier[tier]);

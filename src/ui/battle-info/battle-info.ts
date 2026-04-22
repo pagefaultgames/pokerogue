@@ -637,7 +637,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
     while (
       nameTextWidth
       > (this.player || !this.boss ? 60 : 98)
-        - ((gender !== Gender.GENDERLESS ? 6 : 0)
+        - ((gender === Gender.GENDERLESS ? 0 : 6)
           + (pokemon.fusionSpecies ? 8 : 0)
           + (pokemon.isShiny() ? 8 : 0)
           + (Math.min(pokemon.level.toString().length, 3) - 3) * 8)
