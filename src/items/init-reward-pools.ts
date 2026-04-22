@@ -105,12 +105,12 @@ function initGreatRewardPool(): void {
         const statusEffectPartyMemberCount = Math.min(
           party.filter(
             p =>
-              p.hp
-              && !!p.status
+              p.hp > 0
+              && p.status != null
               && !p
                 .getHeldItems()
-                .filter(i => i in [HeldItemId.TOXIC_ORB, HeldItemId.FLAME_ORB])
-                .some(i => (allHeldItems[i] as TurnEndStatusHeldItem).effect === p.status?.effect),
+                .filter(i => i === HeldItemId.TOXIC_ORB || i === HeldItemId.FLAME_ORB)
+                .some(i => (allHeldItems[i] satisfies TurnEndStatusHeldItem).effect === p.status?.effect),
           ).length,
           3,
         );
@@ -173,8 +173,8 @@ function initGreatRewardPool(): void {
               && !!p.status
               && !p
                 .getHeldItems()
-                .filter(i => i in [HeldItemId.TOXIC_ORB, HeldItemId.FLAME_ORB])
-                .some(i => (allHeldItems[i] as TurnEndStatusHeldItem).effect === p.status?.effect),
+                .filter(i => i === HeldItemId.TOXIC_ORB || i === HeldItemId.FLAME_ORB)
+                .some(i => (allHeldItems[i] satisfies TurnEndStatusHeldItem).effect === p.status?.effect),
           ).length,
           3,
         );

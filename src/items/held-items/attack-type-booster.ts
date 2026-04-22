@@ -48,10 +48,6 @@ export class AttackTypeBoosterHeldItem extends HeldItem<[typeof HeldItemEffect.A
     });
   }
 
-  get iconName(): string {
-    return `${HeldItemNames[this.type]?.toLowerCase()}`;
-  }
-
   public override shouldApply(
     _effect: typeof HeldItemEffect.ATTACK_TYPE_BOOST,
     { moveType, movePower }: AttackTypeBoostParams,
@@ -64,6 +60,7 @@ export class AttackTypeBoosterHeldItem extends HeldItem<[typeof HeldItemEffect.A
     _effect: typeof HeldItemEffect.ATTACK_TYPE_BOOST,
     { pokemon, movePower }: AttackTypeBoostParams,
   ): void {
+    // TODO: Don't round this
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     movePower.value = Math.floor(movePower.value * (1 + stackCount * this.powerBoost));
   }

@@ -4,7 +4,7 @@ import { ItemManager } from "#items/item-manager";
 import { isTrainerItemSpecs, type TrainerItemData, type TrainerItemSpecs } from "#types/trainer-item-data-types";
 
 // TODO: Remove unused methods
-export class TrainerItemManager extends ItemManager<TrainerItemId, TrainerItemData, TrainerItemSpecs> {
+export class TrainerItemManager extends ItemManager<TrainerItemId, TrainerItemData> {
   // #region Abstract method implementations
   protected override getMaxStackCount(id: TrainerItemId): number {
     return allTrainerItems[id].getMaxStackCount();

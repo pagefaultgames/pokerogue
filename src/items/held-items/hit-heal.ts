@@ -7,6 +7,11 @@ import type { HitHealParams } from "#types/held-item-parameter";
 import { toDmgValue } from "#utils/common";
 import i18next from "i18next";
 
+/**
+ * Class used for items that heal the holder by a fraction of the damage dealt in battle.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Shell_Bell}
+ * @sealed
+ */
 export class HitHealHeldItem extends HeldItem<[typeof HeldItemEffect.HIT_HEAL]> {
   public readonly effects = [HeldItemEffect.HIT_HEAL] as const;
 
@@ -28,7 +33,8 @@ export class HitHealHeldItem extends HeldItem<[typeof HeldItemEffect.HIT_HEAL]> 
 
   apply(_effect: typeof HeldItemEffect.HIT_HEAL, { pokemon }: HitHealParams): void {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
-    // TODO: this shouldn't be undefined AFAIK
+
+    // TODO: This will need to be adjusted after the pokemon heal phase refactor
     globalScene.phaseManager.unshiftPhase(
       new PokemonHealPhase(
         pokemon.getBattlerIndex(),

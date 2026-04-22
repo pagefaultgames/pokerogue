@@ -4,9 +4,9 @@ import { HeldItem } from "#items/held-item";
 import type { FlinchChanceParams } from "#types/held-item-parameter";
 
 /**
- * Modifier used for held items, namely Toxic Orb and Flame Orb, that apply a
- * set {@linkcode StatusEffect} at the end of a turn.
- * @see {@linkcode apply}
+ * Class for held items that grant a chance to flinch opponents on moves that do not already do so.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/King%27s_Rock}
+ * @sealed
  */
 export class FlinchChanceHeldItem extends HeldItem<[typeof HeldItemEffect.FLINCH_CHANCE]> {
   public readonly effects = [HeldItemEffect.FLINCH_CHANCE] as const;
@@ -15,7 +15,7 @@ export class FlinchChanceHeldItem extends HeldItem<[typeof HeldItemEffect.FLINCH
   constructor(type: HeldItemId, maxStackCount: number, chance: number) {
     super(type, maxStackCount);
 
-    this.chance = chance; // 10
+    this.chance = chance;
   }
 
   /**
@@ -29,10 +29,9 @@ export class FlinchChanceHeldItem extends HeldItem<[typeof HeldItemEffect.FLINCH
   ): boolean {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     return !flinched.value && pokemon.randBattleSeedInt(100) < stackCount * this.chance;
-    // The check for pokemon.summonData is to ensure that a crash doesn't occur when a Pokemon with King's Rock procs a flinch
   }
 
-  apply(_effect: typeof HeldItemEffect.FLINCH_CHANCE, { flinched }: FlinchChanceParams): boolean {
+  apply(_effect: typeof HeldItemEffect.FLINCH_CHANCE, { flinched }: FlinchChanceParams): void {
     flinched.value = true;
   }
 }

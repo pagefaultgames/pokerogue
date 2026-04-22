@@ -2,6 +2,7 @@ import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItem } from "#items/held-item";
 import type { NatureWeightBoostParams } from "#types/held-item-parameter";
 
+// TODO: Consider renaming this ("nature stat mult" or similar would perhaps be clearer)
 export class NatureWeightBoosterHeldItem extends HeldItem<[typeof HeldItemEffect.NATURE_WEIGHT_BOOSTER]> {
   public readonly effects = [HeldItemEffect.NATURE_WEIGHT_BOOSTER] as const;
 
@@ -17,7 +18,7 @@ export class NatureWeightBoosterHeldItem extends HeldItem<[typeof HeldItemEffect
     { pokemon, multiplier }: NatureWeightBoostParams,
   ): boolean {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
-    multiplier.value += 0.1 * stackCount * (multiplier.value > 1 ? 1 : -1);
+    multiplier.value += 0.1 * stackCount * Math.sign(multiplier.value);
     return true;
   }
 }

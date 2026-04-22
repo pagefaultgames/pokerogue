@@ -3,11 +3,9 @@ import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerItemId } from "#enums/trainer-item-id";
-import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/framework/game-manager";
 import { stringifyEnumArray } from "#test/utils/string-utils";
-import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Daily Mode", () => {
   let phaserGame: Phaser.Game;
@@ -122,7 +120,7 @@ describe("Daily Mode", () => {
   });
 });
 
-describe("Shop modifications", async () => {
+describe.todo("Shop modifications", async () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -142,33 +140,11 @@ describe("Shop modifications", async () => {
       .disableTrainerWaves()
       .moveset([MoveId.SPLASH])
       .enemyMoveset(MoveId.SPLASH);
-    game.modifiers.addCheck("EVIOLITE").addCheck("MINI_BLACK_HOLE");
     vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue("test-seed");
   });
 
-  afterEach(() => {
-    game.modifiers.clearChecks();
-  });
+  // TODO: Rework to check the item pools directly
+  it.todo("should not have Eviolite and Mini Black Hole available in Classic if not unlocked", async () => {});
 
-  it("should not have Eviolite and Mini Black Hole available in Classic if not unlocked", async () => {
-    await game.classicMode.startBattle(SpeciesId.BULBASAUR);
-    game.move.select(MoveId.SPLASH);
-    await game.doKillOpponents();
-    await game.phaseInterceptor.to("BattleEndPhase");
-    game.onNextPrompt("SelectRewardPhase", UiMode.REWARD_SELECT, () => {
-      expect(game.scene.ui.getHandler()).toBeInstanceOf(RewardSelectUiHandler);
-      game.modifiers.testCheck("EVIOLITE", false).testCheck("MINI_BLACK_HOLE", false);
-    });
-  });
-
-  it("should have Eviolite and Mini Black Hole available in Daily", async () => {
-    await game.dailyMode.startBattle();
-    game.move.select(MoveId.SPLASH);
-    await game.doKillOpponents();
-    await game.phaseInterceptor.to("BattleEndPhase");
-    game.onNextPrompt("SelectRewardPhase", UiMode.REWARD_SELECT, () => {
-      expect(game.scene.ui.getHandler()).toBeInstanceOf(RewardSelectUiHandler);
-      game.modifiers.testCheck("EVIOLITE", true).testCheck("MINI_BLACK_HOLE", true);
-    });
-  });
+  it.todo("should have Eviolite and Mini Black Hole available in Daily even if not unlocked");
 });

@@ -3,6 +3,10 @@ import { HeldItem } from "#items/held-item";
 import type { FriendshipBoostParams } from "#types/held-item-parameter";
 import i18next from "i18next";
 
+/**
+ * Class used for items that boost the amount of friendship gained from battles.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Soothe_Bell}
+ */
 export class FriendshipBoosterHeldItem extends HeldItem<[typeof HeldItemEffect.FRIENDSHIP_BOOSTER]> {
   public readonly effects = [HeldItemEffect.FRIENDSHIP_BOOSTER] as const;
 

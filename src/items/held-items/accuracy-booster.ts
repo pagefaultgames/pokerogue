@@ -4,6 +4,7 @@ import { HeldItem } from "#items/held-item";
 import type { AccuracyBoostParams } from "#types/held-item-parameter";
 
 /**
+ * Class used for items that boost move accuracy by a flat amount.
  * @sealed
  */
 export class AccuracyBoosterHeldItem extends HeldItem<[typeof HeldItemEffect.ACCURACY_BOOSTER]> {

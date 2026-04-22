@@ -8,6 +8,8 @@ import { addTextObject } from "#ui/text";
 import { hslToHex } from "#utils/common";
 import i18next from "i18next";
 
+// TODO: Give this the subclass treatment for `HeldItem` - splitting it into "marker" held items and ones that can be applied
+// (this would resolve some type errors)
 export class TrainerItem {
   //  public pokemonId: number;
   public readonly type: TrainerItemId;

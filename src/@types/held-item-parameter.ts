@@ -33,10 +33,7 @@ export interface BatonParams extends DefaultHeldItemParams {}
 
 export interface BerryParams extends DefaultHeldItemParams {}
 
-export interface BypassSpeedChanceParams extends DefaultHeldItemParams {
-  /** Holder for whether the speed should be bypassed */
-  doBypassSpeed: BooleanHolder;
-}
+export interface BypassSpeedChanceParams extends DefaultHeldItemParams {}
 
 export interface CritBoostParams extends DefaultHeldItemParams {
   /** The critical hit stage */

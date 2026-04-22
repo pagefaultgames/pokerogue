@@ -118,7 +118,7 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder.
     const { spriteKey, fileRoot } = getSpriteKeysFromPokemon(bossPokemon);
     encounter.spriteConfigs = [
       {
-        spriteKey: item.type.iconImage,
+        spriteKey: item.type.iconName,
         fileRoot: "items",
         hasShadow: false,
         x: 35,

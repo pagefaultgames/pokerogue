@@ -10,8 +10,6 @@ import { coerceArray, randSeedFloat } from "#utils/common";
 import i18next from "i18next";
 import type { NonEmptyTuple } from "type-fest";
 
-//  constructor(type: HeldItemId, maxStackCount: number, boostPercent: number) {
-
 /**
  * Abstract class for held items that steal other Pokemon's items.
  * @see {@linkcode TurnEndItemStealHeldItem}
@@ -27,7 +25,7 @@ export abstract class ItemTransferHeldItem<T extends NonEmptyTuple<HeldItemEffec
       return;
     }
 
-    const pokemon = params.pokemon;
+    const { pokemon } = params;
     //TODO: Simplify this logic here
     const targetPokemon = opponents[pokemon.randBattleSeedInt(opponents.length)];
 
@@ -37,7 +35,7 @@ export abstract class ItemTransferHeldItem<T extends NonEmptyTuple<HeldItemEffec
     }
 
     // TODO: Change this logic to use held items
-    const transferredRewards: HeldItemId[] = [];
+    const transferredItems: HeldItemId[] = [];
     const heldItems = targetPokemon.heldItemManager.getTransferableHeldItems();
 
     for (let i = 0; i < transferredItemCount; i++) {
@@ -48,12 +46,12 @@ export abstract class ItemTransferHeldItem<T extends NonEmptyTuple<HeldItemEffec
       const randItem = heldItems[randItemIndex];
       // TODO: Fix this after updating the various methods in battle-scene.ts
       if (globalScene.tryTransferHeldItem(randItem, targetPokemon, pokemon, false)) {
-        transferredRewards.push(randItem);
+        transferredItems.push(randItem);
         heldItems.splice(randItemIndex, 1);
       }
     }
 
-    for (const mt of transferredRewards) {
+    for (const mt of transferredItems) {
       globalScene.phaseManager.queueMessage(this.getTransferMessage(params, mt));
     }
   }

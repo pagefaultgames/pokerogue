@@ -9,8 +9,9 @@ import { toDmgValue } from "#utils/common";
 import i18next from "i18next";
 
 /**
- * Class used for held items (Reviver Seed) that revive a fainted
- * {@linkcode Pokemon} immediately when it faints to direct damage.
+ * Class used for items that revive a Pokemon when it faints to direct damage.
+ * Used for Reviver Seed.
+ * @sealed
  */
 export class InstantReviveHeldItem extends ConsumableHeldItem<[typeof HeldItemEffect.INSTANT_REVIVE]> {
   public readonly effects = [HeldItemEffect.INSTANT_REVIVE] as const;
@@ -52,7 +53,7 @@ export class InstantReviveHeldItem extends ConsumableHeldItem<[typeof HeldItemEf
     for (const p of field) {
       applyAbAttrs("CommanderAbAttr", { pokemon: p });
     }
-  }
 
-  //TODO: is this missing the consume call?
+    this.consume(pokemon);
+  }
 }

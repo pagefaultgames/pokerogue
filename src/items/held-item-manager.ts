@@ -15,7 +15,7 @@ import { type HeldItemData, type HeldItemSpecs, isHeldItemSpecs } from "#types/h
  * It stores data about the items its associated `Pokemon` is holding,
  * with methods to query, retrieve and alter them as needed.
  */
-export class HeldItemManager extends ItemManager<HeldItemId, HeldItemData, HeldItemSpecs> {
+export class HeldItemManager extends ItemManager<HeldItemId, HeldItemData> {
   // #region Abstract method implementations
   protected override getMaxStackCount(id: HeldItemId): number {
     return allHeldItems[id].getMaxStackCount();

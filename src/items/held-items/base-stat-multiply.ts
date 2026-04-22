@@ -23,9 +23,14 @@ export const statBoostItems: Record<PermanentStat, string> = {
   [Stat.SPD]: "carbos",
 };
 
+/**
+ * Class used for items that multiply a given base stat.
+ * Used for the various Vitamin items.
+ */
 export class BaseStatMultiplyHeldItem extends HeldItem<[typeof HeldItemEffect.BASE_STAT_MULTIPLY]> {
   public readonly effects = [HeldItemEffect.BASE_STAT_MULTIPLY] as const;
-  public stat: PermanentStat;
+  /** The {@linkcode PermanentStat} to boost */
+  private readonly stat: PermanentStat;
 
   constructor(type: HeldItemId, maxStackCount: number, stat: PermanentStat) {
     super(type, maxStackCount);
@@ -46,15 +51,12 @@ export class BaseStatMultiplyHeldItem extends HeldItem<[typeof HeldItemEffect.BA
     return statBoostItems[this.stat];
   }
 
-  /**
-   * Applies the {@linkcode BaseStatModifier} to the specified {@linkcode Pokemon}.
-   */
   public override apply(
     _effect: typeof HeldItemEffect.BASE_STAT_MULTIPLY,
     { pokemon, baseStats }: BaseStatParams,
   ): void {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
-    const stat = this.stat;
+    const { stat } = this;
     baseStats[stat] = Math.floor(baseStats[stat] * (1 + stackCount * 0.1));
   }
 }

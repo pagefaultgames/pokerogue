@@ -58,31 +58,32 @@ import i18next from "i18next";
 export type MatchExact<T> = T extends object ? Exact<T> : T;
 
 export abstract class Reward {
-  // TODO: If all we care about for categorization is the reward's ID's _category_, why not do it there?
+  // TODO: This is set inconsistently across classes and is only really used for category checks
   public id: RewardId;
-  public localeKey: string;
-  public iconImage: string;
+  private readonly localeKey: string;
+  private readonly iconImage: string;
   public group: string; // TODO: Make a union type of all groups
-  public soundName: string;
+  public readonly soundName: string;
   public tier: RarityTier;
 
-  constructor(localeKey: string | null, iconImage: string | null, group?: string, soundName?: string) {
-    this.localeKey = localeKey!; // TODO: is this bang correct?
-    this.iconImage = iconImage!; // TODO: is this bang correct?
-    this.group = group!; // TODO: is this bang correct?
-    this.soundName = soundName ?? "se/restore";
+  // TODO: These bangs are emphatically NOT correct
+  constructor(localeKey: string | null, iconImage: string | null, group?: string, soundName = "se/restore") {
+    this.localeKey = localeKey!;
+    this.iconImage = iconImage!;
+    this.group = group!;
+    this.soundName = soundName;
   }
 
-  get name(): string {
+  public get name(): string {
     return i18next.t(`${this.localeKey}.name`);
   }
 
-  // TODO: These should be getters
-  get description(): string {
+  public get description(): string {
     return i18next.t(`${this.localeKey}.description`);
   }
 
-  get iconName(): string {
+  // TODO: why does this exist if the underlying property is still public
+  public get iconName(): string {
     return this.iconImage;
   }
 
@@ -102,7 +103,7 @@ export abstract class Reward {
 
 /**
  * A {@linkcode RewardGenerator} represents a dynamic generator for a given type of reward.
- * These can be customized by lieu of {@linkcode generateReward} to alter the generation result.
+ * These can be customized by lieu of {@linkcode RewardGenerator.generateReward | RewardGenerator} to alter the generation result.
  */
 export abstract class RewardGenerator {
   /**
@@ -111,7 +112,7 @@ export abstract class RewardGenerator {
    * @returns The generated reward, or `null` if none are able to be produced
    */
   // TODO: Remove null from signature in favor of adding a condition or similar (reduces bangs needed)
-  abstract generateReward(pregenArgs?: unknown): Reward | null;
+  public abstract generateReward(pregenArgs?: unknown): Reward | null;
 }
 
 /** Rewards that are applied to individual Pokemon. */
@@ -175,6 +176,7 @@ export interface PokemonFusionRewardParams {
 }
 
 export class RewardOption {
+  // TODO: Rename to `reward` or similar
   public type: Reward;
   public upgradeCount: number;
   public tier: RarityTier;

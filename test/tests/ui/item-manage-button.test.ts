@@ -1,5 +1,5 @@
-import { BerryType } from "#enums/berry-type";
 import { Button } from "#enums/buttons";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
@@ -27,9 +27,9 @@ describe.todo("UI - Transfer Items", () => {
       .battleStyle("single")
       .startingLevel(100)
       .startingHeldItems([
-        { name: "BERRY", count: 1, type: BerryType.SITRUS },
-        { name: "BERRY", count: 2, type: BerryType.APICOT },
-        { name: "BERRY", count: 2, type: BerryType.LUM },
+        { entry: HeldItemId.SITRUS_BERRY, count: 1 },
+        { entry: HeldItemId.APICOT_BERRY, count: 2 },
+        { entry: HeldItemId.LUM_BERRY, count: 2 },
       ])
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyMoveset(MoveId.SPLASH);
@@ -135,7 +135,7 @@ describe.todo("UI - Transfer Items", () => {
     expect(pokemon).toBeDefined();
     if (pokemon) {
       expect(pokemon.getHeldItems()).toHaveLength(3);
-      expect(pokemon.getHeldItems().map(h => h.stackCount)).toEqual([1, 2, 2]);
+      expect(pokemon.getHeldItems().map(h => pokemon!.heldItemManager.getStack(h))).toEqual([1, 2, 2]);
     }
 
     await new Promise<void>(resolve => {
@@ -164,7 +164,7 @@ describe.todo("UI - Transfer Items", () => {
     if (pokemon) {
       // Sitrus berry was discarded, leaving 2 stacks of 2 berries behind
       expect(pokemon.getHeldItems()).toHaveLength(2);
-      expect(pokemon.getHeldItems().map(h => h.stackCount)).toEqual([2, 2]);
+      expect(pokemon.getHeldItems().map(h => pokemon!.heldItemManager.getStack(h))).toEqual([2, 2]);
     }
   });
 
