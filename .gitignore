@@ -53,4 +53,3 @@ coverage
 
 # Script outputs
 ./*.csv
-package-lock.json
