@@ -433,9 +433,7 @@ export async function initCommonAnims(): Promise<void> {
 export function initMoveAnim(move: MoveId): Promise<void> {
   return new Promise(resolve => {
     if (moveAnims.has(move)) {
-      if (moveAnims.get(move) !== null) {
-        resolve();
-      } else {
+      if (moveAnims.get(move) === null) {
         const loadedCheckTimer = setInterval(() => {
           if (moveAnims.get(move) !== null) {
             const chargeAnimSource = allMoves[move].isChargingMove()
@@ -448,6 +446,8 @@ export function initMoveAnim(move: MoveId): Promise<void> {
             resolve();
           }
         }, 50);
+      } else {
+        resolve();
       }
     } else {
       moveAnims.set(move, null);
@@ -542,15 +542,15 @@ export async function initEncounterAnims(encounterAnim: EncounterAnim | Encounte
 export function initMoveChargeAnim(chargeAnim: ChargeAnim): Promise<void> {
   return new Promise(resolve => {
     if (chargeAnims.has(chargeAnim)) {
-      if (chargeAnims.get(chargeAnim) !== null) {
-        resolve();
-      } else {
+      if (chargeAnims.get(chargeAnim) === null) {
         const loadedCheckTimer = setInterval(() => {
           if (chargeAnims.get(chargeAnim) !== null) {
             clearInterval(loadedCheckTimer);
             resolve();
           }
         }, 50);
+      } else {
+        resolve();
       }
     } else {
       chargeAnims.set(chargeAnim, null);
@@ -833,7 +833,6 @@ export abstract class BattleAnim {
     return ret;
   }
 
-  // biome-ignore lint/complexity/noBannedTypes: callback is used liberally
   play(onSubstitute?: boolean, callback?: () => void) {
     const isOppAnim = this.isOppAnim();
     const user = isOppAnim ? this.target! : this.user!;
@@ -942,75 +941,7 @@ export abstract class BattleAnim {
         let t = 0;
         let g = 0;
         for (const frame of spriteFrames) {
-          if (frame.target !== AnimFrameTarget.GRAPHIC) {
-            const isUser = frame.target === AnimFrameTarget.USER;
-            if (isUser && target === user) {
-              continue;
-            }
-            if (this.playRegardlessOfIssues && frame.target === AnimFrameTarget.TARGET && !target.isOnField()) {
-              continue;
-            }
-            const sprites = spriteCache[isUser ? AnimFrameTarget.USER : AnimFrameTarget.TARGET];
-            const spriteSource = isUser ? userSprite : targetSprite;
-            if ((isUser ? u : t) === sprites.length) {
-              if (isUser || !targetSubstitute) {
-                const sprite = globalScene.addPokemonSprite(
-                  isUser ? user! : target,
-                  0,
-                  0,
-                  spriteSource!.texture,
-                  spriteSource!.frame.name,
-                  true,
-                ); // TODO: are those bangs correct?
-                ["spriteColors", "fusionSpriteColors"].map(
-                  k => (sprite.pipelineData[k] = (isUser ? user! : target).getSprite().pipelineData[k]),
-                ); // TODO: are those bangs correct?
-                sprite.setPipelineData("spriteKey", (isUser ? user! : target).getBattleSpriteKey());
-                sprite.setPipelineData("shiny", (isUser ? user : target).shiny);
-                sprite.setPipelineData("variant", (isUser ? user : target).variant);
-                sprite.setPipelineData("ignoreFieldPos", true);
-                spriteSource.on("animationupdate", (_anim, frame) => sprite.setFrame(frame.textureFrame));
-                globalScene.field.add(sprite);
-                sprites.push(sprite);
-              } else {
-                const sprite = globalScene.addFieldSprite(spriteSource.x, spriteSource.y, spriteSource.texture);
-                spriteSource.on("animationupdate", (_anim, frame) => sprite.setFrame(frame.textureFrame));
-                globalScene.field.add(sprite);
-                sprites.push(sprite);
-              }
-            }
-
-            const spriteIndex = isUser ? u++ : t++;
-            const pokemonSprite = sprites[spriteIndex];
-            const graphicFrameData = frameData.get(frame.target)!.get(spriteIndex)!; // TODO: are the bangs correct?
-            const spriteSourceScale =
-              isUser || !targetSubstitute
-                ? spriteSource.parentContainer.scale
-                : target.getSpriteScale() * (target.isPlayer() ? 0.5 : 1);
-            pokemonSprite.setPosition(
-              graphicFrameData.x,
-              graphicFrameData.y - (spriteSource.height / 2) * (spriteSourceScale - 1),
-            );
-
-            pokemonSprite.setAngle(graphicFrameData.angle);
-            pokemonSprite.setScale(
-              graphicFrameData.scaleX * spriteSourceScale,
-              graphicFrameData.scaleY * spriteSourceScale,
-            );
-
-            pokemonSprite.setData("locked", frame.locked);
-
-            pokemonSprite.setAlpha(frame.opacity / 255);
-            pokemonSprite.pipelineData["tone"] = frame.tone;
-            pokemonSprite.setVisible(frame.visible && (isUser ? user.visible : target.visible));
-            pokemonSprite.setBlendMode(
-              frame.blendType === AnimBlendType.NORMAL
-                ? Phaser.BlendModes.NORMAL
-                : frame.blendType === AnimBlendType.ADD
-                  ? Phaser.BlendModes.ADD
-                  : Phaser.BlendModes.DIFFERENCE,
-            );
-          } else {
+          if (frame.target === AnimFrameTarget.GRAPHIC) {
             const sprites = spriteCache[AnimFrameTarget.GRAPHIC];
             if (g === sprites.length) {
               const newSprite: Phaser.GameObjects.Sprite = globalScene.addFieldSprite(0, 0, anim!.graphic, 1); // TODO: is the bang correct?
@@ -1073,6 +1004,74 @@ export abstract class BattleAnim {
             moveSprite.setAlpha(frame.opacity / 255);
             moveSprite.setVisible(frame.visible);
             moveSprite.setBlendMode(
+              frame.blendType === AnimBlendType.NORMAL
+                ? Phaser.BlendModes.NORMAL
+                : frame.blendType === AnimBlendType.ADD
+                  ? Phaser.BlendModes.ADD
+                  : Phaser.BlendModes.DIFFERENCE,
+            );
+          } else {
+            const isUser = frame.target === AnimFrameTarget.USER;
+            if (isUser && target === user) {
+              continue;
+            }
+            if (this.playRegardlessOfIssues && frame.target === AnimFrameTarget.TARGET && !target.isOnField()) {
+              continue;
+            }
+            const sprites = spriteCache[isUser ? AnimFrameTarget.USER : AnimFrameTarget.TARGET];
+            const spriteSource = isUser ? userSprite : targetSprite;
+            if ((isUser ? u : t) === sprites.length) {
+              if (isUser || !targetSubstitute) {
+                const sprite = globalScene.addPokemonSprite(
+                  isUser ? user! : target,
+                  0,
+                  0,
+                  spriteSource!.texture,
+                  spriteSource!.frame.name,
+                  true,
+                ); // TODO: are those bangs correct?
+                ["spriteColors", "fusionSpriteColors"].map(
+                  k => (sprite.pipelineData[k] = (isUser ? user! : target).getSprite().pipelineData[k]),
+                ); // TODO: are those bangs correct?
+                sprite.setPipelineData("spriteKey", (isUser ? user! : target).getBattleSpriteKey());
+                sprite.setPipelineData("shiny", (isUser ? user : target).shiny);
+                sprite.setPipelineData("variant", (isUser ? user : target).variant);
+                sprite.setPipelineData("ignoreFieldPos", true);
+                spriteSource.on("animationupdate", (_anim, frame) => sprite.setFrame(frame.textureFrame));
+                globalScene.field.add(sprite);
+                sprites.push(sprite);
+              } else {
+                const sprite = globalScene.addFieldSprite(spriteSource.x, spriteSource.y, spriteSource.texture);
+                spriteSource.on("animationupdate", (_anim, frame) => sprite.setFrame(frame.textureFrame));
+                globalScene.field.add(sprite);
+                sprites.push(sprite);
+              }
+            }
+
+            const spriteIndex = isUser ? u++ : t++;
+            const pokemonSprite = sprites[spriteIndex];
+            const graphicFrameData = frameData.get(frame.target)!.get(spriteIndex)!; // TODO: are the bangs correct?
+            const spriteSourceScale =
+              isUser || !targetSubstitute
+                ? spriteSource.parentContainer.scale
+                : target.getSpriteScale() * (target.isPlayer() ? 0.5 : 1);
+            pokemonSprite.setPosition(
+              graphicFrameData.x,
+              graphicFrameData.y - (spriteSource.height / 2) * (spriteSourceScale - 1),
+            );
+
+            pokemonSprite.setAngle(graphicFrameData.angle);
+            pokemonSprite.setScale(
+              graphicFrameData.scaleX * spriteSourceScale,
+              graphicFrameData.scaleY * spriteSourceScale,
+            );
+
+            pokemonSprite.setData("locked", frame.locked);
+
+            pokemonSprite.setAlpha(frame.opacity / 255);
+            pokemonSprite.pipelineData["tone"] = frame.tone;
+            pokemonSprite.setVisible(frame.visible && (isUser ? user.visible : target.visible));
+            pokemonSprite.setBlendMode(
               frame.blendType === AnimBlendType.NORMAL
                 ? Phaser.BlendModes.NORMAL
                 : frame.blendType === AnimBlendType.ADD
@@ -1177,7 +1176,6 @@ export abstract class BattleAnim {
     targetInitialY: number,
     frameTimeMult: number,
     frameTimedEventPriority?: 0 | 1 | 3 | 5,
-    // biome-ignore lint/complexity/noBannedTypes: callback is used liberally
     callback?: () => void,
   ) {
     const spriteCache: SpriteCache = {

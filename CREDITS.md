@@ -762,5 +762,5 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 ## External Tools
 - Sandstorm (Creator of "PokéRogue SearchDex")
 - Admiral-Billy (Offline App - Desktop)
-- Red (aka StonedModder) (iOS App)
+- Red (aka StonedModder) (former creator of an unofficial iOS App)
 - Ydarissep (Creator of the now defunct "Yda's Dex")

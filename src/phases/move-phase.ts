@@ -35,6 +35,7 @@ import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, NumberHolder } from "#utils/common";
 import { enumValueToKey } from "#utils/enums";
 import { inSpeedOrder } from "#utils/speed-order-generator";
+import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 
 export class MovePhase extends PokemonPhase {
@@ -852,30 +853,22 @@ export class MovePhase extends PokemonPhase {
    * The rest of the failure conditions are marked as sequence 4 and *should* happen in the move effect phase (though happen here for now)
    */
   protected thirdFailureCheck(): boolean {
-    /**
-     * Move conditions assume the move has a single target
-     * TODO: is this sustainable?
-     */
     const move = this.move.getMove();
     const targets = this.getActiveTargetPokemon();
     const arena = globalScene.arena;
     const user = this.pokemon;
 
+    // Note: Move conditions currently assume the move has a single target
+    // TODO: should this be changed?
     const failsConditions = !move.applyConditions(user, targets[0], 3);
     const failedDueToTerrain = arena.isMoveTerrainCancelled(user, this.targets, move);
     let failed = failsConditions || failedDueToTerrain;
 
-    // Apply queenly majesty / dazzling
-    if (!failed) {
+    if (!failed && user.isOpponent(targets[0])) {
       const defendingSidePlayField = user.isPlayer() ? globalScene.getEnemyField() : globalScene.getPlayerField();
-      const cancelled = new BooleanHolder(false);
+      const cancelled = new ValueHolder(false);
       defendingSidePlayField.forEach((pokemon: Pokemon) => {
-        applyAbAttrs("FieldPriorityMoveImmunityAbAttr", {
-          pokemon,
-          opponent: user,
-          move,
-          cancelled,
-        });
+        applyAbAttrs("FieldPriorityMoveImmunityAbAttr", { pokemon, opponent: user, move, cancelled });
       });
       failed = cancelled.value;
     }

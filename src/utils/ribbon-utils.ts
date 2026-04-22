@@ -73,7 +73,7 @@ export function getAvailableRibbons(species: PokemonSpecies): RibbonFlag[] {
       }
     }
 
-    if (checking && pokemonEvolutions.hasOwnProperty(checking)) {
+    if (checking && Object.hasOwn(pokemonEvolutions, checking)) {
       pokemonEvolutions[checking].forEach(e => {
         speciesToCheck.push(e.speciesId);
       });
