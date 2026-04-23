@@ -28,10 +28,10 @@ export const sharedConfig: UserConfigFnPromise = async ({ mode }) => {
         },
         checks: {
           // For some stupid reason, Phaser uses direct eval when loading scene classes, producing errors for a method
-          // that we will realistically never use 
+          // that we actively never use
           eval: false,
         },
-        // Enable more aggressive tree-shaking for production builds, but disable them during dev builds
+        // Enable more aggressive tree-shaking for production builds, but disable them during dev builds (including the beta site)
         // to ensure removing statements does not mask hidden errors.
         treeshake: {
           manualPureFunctions: mode === "production" ? ["console.debug", "console.log"] : [],
