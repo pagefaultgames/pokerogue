@@ -62,12 +62,7 @@ describe("Moves - Move-Calling Moves", () => {
     const cases = Object.keys(BiomeId).map(
       biome => [biome, getMoveId(TerrainType.NONE, Number(BiomeId[biome]) as BiomeId)] as const,
     );
-    it.each<{
-      move: MoveId;
-      moveName: string;
-      biome: BiomeId;
-      biomeName: string;
-    }>(
+    it.each<{ move: MoveId; moveName: string; biome: BiomeId; biomeName: string }>(
       cases.map(([biomeName, move]) => ({
         move,
         moveName: toTitleCase(MoveId[move]),
@@ -274,11 +269,7 @@ describe("Moves - Move-Calling Moves", () => {
         useMode: MoveUseMode.FOLLOW_UP,
       });
       expect(feebas).toHaveUsedMove(
-        {
-          move: MoveId.SLEEP_TALK,
-          result: MoveResult.SUCCESS,
-          useMode: MoveUseMode.NORMAL,
-        },
+        { move: MoveId.SLEEP_TALK, result: MoveResult.SUCCESS, useMode: MoveUseMode.NORMAL },
         1,
       );
     });
@@ -351,11 +342,7 @@ describe("Moves - Move-Calling Moves", () => {
       game.move.use(MoveId.ASSIST);
       await game.toEndOfTurn();
 
-      expect(feebas).toHaveUsedMove({
-        move: MoveId.SOAK,
-        useMode: MoveUseMode.FOLLOW_UP,
-        result: MoveResult.SUCCESS,
-      });
+      expect(feebas).toHaveUsedMove({ move: MoveId.SOAK, useMode: MoveUseMode.FOLLOW_UP, result: MoveResult.SUCCESS });
     });
 
     it("should fail if there are no allies, even if user has eligible moves", async () => {
@@ -405,8 +392,8 @@ describe("Moves - Move-Calling Moves", () => {
 
         const feebas = game.field.getPlayerPokemon();
         // Mock RNG functions to return high rolls (i.e. last eligible target)
-        // This will force the test to fail if MM were to use the same random targeting algorithm
-        // as Copycat/etc
+        // This will force the test to fail if Mirror Move were to use
+        // the same random targeting algorithm as Copycat/etc
         vi.spyOn(feebas, "randBattleSeedInt").mockReturnValue(1);
 
         game.move.use(MoveId.MIRROR_MOVE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
@@ -501,14 +488,7 @@ describe("Moves - Move-Calling Moves", () => {
       await game.toEndOfTurn();
 
       const enemy = game.field.getEnemyPokemon();
-      expect(enemy).toHaveUsedMove(
-        {
-          move,
-          result: MoveResult.SUCCESS,
-          useMode: MoveUseMode.NORMAL,
-        },
-        1,
-      );
+      expect(enemy).toHaveUsedMove({ move, result: MoveResult.SUCCESS, useMode: MoveUseMode.NORMAL }, 1);
       expect(enemy).toHaveUsedMove({
         move: MoveId.SWORDS_DANCE,
         result: MoveResult.SUCCESS,
