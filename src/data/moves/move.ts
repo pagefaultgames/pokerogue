@@ -7786,7 +7786,7 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
  */
 export abstract class CallMoveAttr extends OverrideMoveEffectAttr {
   /**
-   * Whether to target the called move at the move's selected target if possible.
+   * Whether to target the called move at the move's selected target if possible. \
    * If `false`, will unleash non-spread moves against a random eligible target.
    * @defaultValue `false`
    * @remarks
@@ -7796,23 +7796,24 @@ export abstract class CallMoveAttr extends OverrideMoveEffectAttr {
 
   constructor(
     /**
-     * Whether to target the called move at the move's selected target if possible; default `false`.
+     * (Default `false`) Whether to target the called move at the move's selected target if possible. \
      * If `false`, will unleash non-spread moves against a random eligible target.
-     *
+     * @remarks
      * Should never be `true` if the move is set to target the user!
      */
-    targetEnemy = false,
+    preserveTargeting = false,
   ) {
     // NB: We probably won't care about this after move-calling-move refactor, but
     // this (for now) makes Mirror Move bypass substitute i guess?
     super(false);
-    this.preserveTargeting = targetEnemy;
+
+    this.preserveTargeting = preserveTargeting;
   }
 
   /**
    * Determine the move that should be called by this move-calling move.
    * @param user - The {@linkcode Pokemon} using the move
-   * @param target - The {@linkcode Pokemon} being targeted by the move
+   * @param target - The `Pokemon` being targeted by the move
    * @returns The {@linkcode MoveId} that will be called and used.
    * @privateRemarks
    * By default, this is only called once during attribute application,
@@ -7860,8 +7861,7 @@ export abstract class CallMoveAttr extends OverrideMoveEffectAttr {
 
 /**
  * Attribute to call a different move based on the current terrain and biome.
- *
- * Used by {@link https://bulbapedia.bulbagarden.net/Nature_Power_(Move) | Nature Power}..
+ * @see {@link https://bulbapedia.bulbagarden.net/Nature_Power_(Move)}
  */
 export class NaturePowerAttr extends CallMoveAttr {
   constructor() {
@@ -7995,7 +7995,7 @@ abstract class CallMoveAttrWithBanlist extends CallMoveAttr {
   /**
    * A {@linkcode ReadonlySet} containing all {@linkcode MoveId | moves} that this attribute cannot copy.
    * @remarks
-   * Is  addition to unimplemented/challenge-restricted moves and `MoveId.NONE`.
+   * Is in addition to unimplemented/challenge-restricted moves and `MoveId.NONE`.
    */
   private readonly invalidMoves: ReadonlySet<MoveId>;
 
@@ -8005,6 +8005,7 @@ abstract class CallMoveAttrWithBanlist extends CallMoveAttr {
     targetEnemy = false,
   ) {
     super(targetEnemy);
+
     this.invalidMoves = invalidMoves;
   }
 
@@ -8034,11 +8035,13 @@ abstract class CallMoveAttrWithBanlist extends CallMoveAttr {
   }
 }
 
+// exported for tests
 export type { CallMoveAttrWithBanlist };
 
 /**
  * Attribute used to copy the last move executed, either globally or by the specific target.
- * Used for {@linkcode MoveId.COPYCAT} and {@linkcode MoveId.MIRROR_MOVE}.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Copycat_(move)}
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Mirror_Move_(move)}
  */
 export class CopyMoveAttr extends CallMoveAttrWithBanlist {
   protected override getMove(_user: Pokemon, target: Pokemon): MoveId {
@@ -8054,7 +8057,7 @@ export class CopyMoveAttr extends CallMoveAttrWithBanlist {
 
 /**
  * Attribute to call a random move among moves not in a banlist.
- * Used for {@linkcode MoveId.METRONOME}.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Metronome_(move)}
  */
 export class RandomMoveAttr extends CallMoveAttrWithBanlist {
   constructor(invalidMoves: ReadonlySet<MoveId>) {
@@ -8070,10 +8073,10 @@ export class RandomMoveAttr extends CallMoveAttrWithBanlist {
 }
 
 /**
- * Attribute used to call a random move in the user or its allies' moveset.
- * Used for {@linkcode MoveId.ASSIST} and {@linkcode MoveId.SLEEP_TALK}.
- *
+ * Attribute used to call a random move in the user or its allies' moveset. \
  * Fails if no callable moves are found.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Assist_(move)}
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Sleep_Talk_(move)}
  */
 export class RandomMovesetMoveAttr extends RandomMoveAttr {
   /**
@@ -8087,10 +8090,11 @@ export class RandomMovesetMoveAttr extends RandomMoveAttr {
    * or the user's own moveset (`false`).
    * @defaultValue `false`
    */
-  private includeParty = false;
+  private readonly includeParty: boolean;
 
   constructor(invalidMoves: ReadonlySet<MoveId>, includeParty = false) {
     super(invalidMoves);
+
     this.includeParty = includeParty;
   }
 
@@ -8120,9 +8124,7 @@ export class RandomMovesetMoveAttr extends RandomMoveAttr {
 
 /**
  * Attribute used for moves that cause the target to repeat their last used move.
- *
- * Used by {@linkcode MoveId.INSTRUCT | Instruct}.
- * @see {@link https://bulbapedia.bulbagarden.net/wiki/Instruct_(move) | Instruct on Bulbapedia}
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Instruct_(move)}
  */
 export class RepeatMoveAttr extends MoveEffectAttr {
   private movesetMove: PokemonMove;
