@@ -59,8 +59,7 @@ describe("Moves - Move-Calling Moves", () => {
       );
     });
 
-    // TODO: Remove type assertions after `Object.keys` branch is merged
-    const cases = (Object.keys(BiomeId) as `${BiomeId}`[]).map(
+    const cases = Object.keys(BiomeId).map(
       biome => [biome, getMoveId(TerrainType.NONE, Number(BiomeId[biome]) as BiomeId)] as const,
     );
     it.each<{
