@@ -21,7 +21,7 @@ export type CatchableSpecies = Readonly<Record<SpeciesId, readonly BiomeTierTime
 
 export type ArenaPokemonPools = Readonly<Record<BiomePoolTier, readonly SpeciesId[]>>;
 
-export type BiomePokemonPools = Readonly<Record<BiomePoolTier, Readonly<Record<TimeOfDay, SpeciesId[]>>>>;
+export type BiomePokemonPools = Readonly<Record<BiomePoolTier, Readonly<Record<TimeOfDay, readonly SpeciesId[]>>>>;
 
 export type TrainerPools = Readonly<Record<BiomePoolTier, readonly TrainerType[]>>;
 
