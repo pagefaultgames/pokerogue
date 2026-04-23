@@ -27,7 +27,8 @@ export const sharedConfig: UserConfigFnPromise = async ({ mode }) => {
           defaultHandler(warning);
         },
         checks: {
-          // For some stupid reason, Phaser uses direct eval when loading scene classes
+          // For some stupid reason, Phaser uses direct eval when loading scene classes, producing errors for a method
+          // that we will realistically never use 
           eval: false,
         },
         // Enable more aggressive tree-shaking for production builds, but disable them during dev builds
@@ -44,7 +45,7 @@ export const sharedConfig: UserConfigFnPromise = async ({ mode }) => {
           keepNames: true,
           minify: {
             mangle: {
-              keepNames: false, // for testing
+              keepNames: true,
             },
             compress: {
               keepNames: { class: true, function: true },
