@@ -123,6 +123,14 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
 
   fragB = `${fragB.slice(0, 1).toLowerCase()}${fragB.slice(1)}`;
 
+  // Prevents some unfortunate fusion names from Rapidash + X
+  if (fragA === "Rapi") {
+    fragA = "Rapid";
+    if (fragB === "ng") {
+      fragB = speciesBName.slice(speciesBName.length - 3);
+    }
+  }
+
   return `${speciesAPrefix || speciesBPrefix}${fragA}${fragB}${speciesBSuffix || speciesASuffix}`;
 }
 

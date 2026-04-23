@@ -156,7 +156,7 @@ export class PokemonSummonData {
 
     // TODO: Rework this into an actual generic function for use elsewhere
     for (const [key, value] of Object.entries(source)) {
-      if (value == null && this.hasOwnProperty(key)) {
+      if (value == null && Object.hasOwn(this, key)) {
         continue;
       }
 

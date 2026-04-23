@@ -96,7 +96,7 @@ export function randInt(range: number, min = 0): number {
  * Generate a random integer using the global seed, or the current battle's seed if called via `Battle.randSeedInt`
  * @param range - How large of a range of random numbers to choose from. If {@linkcode range} <= 1, returns {@linkcode min}
  * @param min - The minimum integer to pick, default `0`
- * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1)
+ * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1) inclusive
  */
 export function randSeedInt(range: number, min = 0): number {
   if (range <= 1) {
@@ -116,12 +116,13 @@ export function randSeedIntRange(min: number, max: number): number {
 }
 
 /**
- * Returns a random integer between min and max (non-inclusive)
+ * Returns a **completely unseeded** random integer
  * @param min The lowest number
  * @param max The highest number
+ * @returns a random integer between {@linkcode min} and {@linkcode max} inclusive
  */
 export function randIntRange(min: number, max: number): number {
-  return randInt(max - min, min);
+  return randInt(max - min + 1, min);
 }
 
 /**
@@ -278,6 +279,7 @@ export function formatStat(stat: number, forHp = false): string {
   return formatLargeNumber(stat, forHp ? 100_000 : 1_000_000);
 }
 
+// TODO: Remove in favor of async functions
 export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T | undefined> {
   return condition ? promiseFunc() : Promise.resolve(undefined);
 }
@@ -394,6 +396,7 @@ export function hasAllLocalizedSprites(lang?: string): boolean {
   switch (lang) {
     case "es-ES":
     case "es-419":
+    case "eu":
     case "fr":
     case "da":
     case "de":

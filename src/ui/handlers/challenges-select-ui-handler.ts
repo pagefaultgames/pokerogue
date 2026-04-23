@@ -469,7 +469,7 @@ export class GameChallengesUiHandler extends UiHandler {
     ret ||= !this.cursorObj.visible;
     this.cursorObj //
       .setVisible(true)
-      .setPositionRelative(this.optionsBg, 4, 4 + (this.cursor + this.scrollCursor) * 16);
+      .setPositionRelative(this.optionsBg, 4, 4 + this.cursor * 16);
 
     return ret;
   }

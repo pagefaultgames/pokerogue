@@ -229,12 +229,12 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
     super.show(args);
     this.updateBindings();
 
-    const settings: object = localStorage.hasOwnProperty(this.localStorageKey)
+    const settings: object = Object.hasOwn(localStorage, this.localStorageKey)
       ? JSON.parse(localStorage.getItem(this.localStorageKey)!)
       : {}; // TODO: is this bang correct?
 
     this.settings.forEach((setting, s) => {
-      this.setOptionCursor(s, settings.hasOwnProperty(setting.key) ? settings[setting.key] : this.settings[s].default);
+      this.setOptionCursor(s, Object.hasOwn(settings, setting.key) ? settings[setting.key] : this.settings[s].default);
     });
 
     this.settingsContainer.setVisible(true);

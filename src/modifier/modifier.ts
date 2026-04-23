@@ -502,7 +502,7 @@ export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
     this.stat = stat;
     // Note that, because we want X Accuracy to maintain its original behavior,
     // it will increment as it did previously, directly to the stat stage.
-    this.boost = stat !== Stat.ACC ? 0.2 : 1;
+    this.boost = stat === Stat.ACC ? 1 : 0.2;
   }
 
   match(modifier: Modifier): boolean {
@@ -2263,7 +2263,6 @@ export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
     playerPokemon.level += levelCount.value;
     if (playerPokemon.level <= globalScene.getMaxExpLevel(true)) {
       playerPokemon.exp = getLevelTotalExp(playerPokemon.level, playerPokemon.species.growthRate);
-      playerPokemon.levelExp = 0;
     }
 
     playerPokemon.addFriendship(FRIENDSHIP_GAIN_FROM_RARE_CANDY, true);
@@ -2334,7 +2333,7 @@ export class EvolutionItemModifier extends ConsumablePokemonModifier {
    * @returns `true` if the evolution was successful
    */
   override apply(playerPokemon: PlayerPokemon): boolean {
-    let matchingEvolution = pokemonEvolutions.hasOwnProperty(playerPokemon.species.speciesId)
+    let matchingEvolution = Object.hasOwn(pokemonEvolutions, playerPokemon.species.speciesId)
       ? pokemonEvolutions[playerPokemon.species.speciesId].find(
           e => e.evoItem === this.type.evolutionItem && e.validate(playerPokemon, false, e.item!),
         )

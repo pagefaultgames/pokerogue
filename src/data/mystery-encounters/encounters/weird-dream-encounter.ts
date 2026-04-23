@@ -249,7 +249,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
       ],
     },
     async () => {
-      // Battle your "future" team for some item rewards
+      // Battle your "alternate" team for some item rewards
       const transformations: PokemonTransformation[] =
         globalScene.currentBattle.mysteryEncounter!.misc.teamTransformations;
 
@@ -296,7 +296,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
       const genderIndex = globalScene.gameData.gender ?? PlayerGender.UNSET;
       const trainerConfig =
         trainerConfigs[
-          genderIndex === PlayerGender.FEMALE ? TrainerType.FUTURE_SELF_F : TrainerType.FUTURE_SELF_M
+          genderIndex === PlayerGender.FEMALE ? TrainerType.PLAYER_F_ALTERNATE : TrainerType.PLAYER_M_ALTERNATE
         ].clone();
       trainerConfig.setPartyTemplates(new TrainerPartyTemplate(transformations.length, PartyMemberStrength.STRONG));
       const enemyPartyConfig: EnemyPartyConfig = {
@@ -352,7 +352,6 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
       for (const pokemon of globalScene.getPlayerParty()) {
         pokemon.level = Math.max(Math.ceil(((100 - PERCENT_LEVEL_LOSS_ON_REFUSE) / 100) * pokemon.level), 1);
         pokemon.exp = getLevelTotalExp(pokemon.level, pokemon.species.growthRate);
-        pokemon.levelExp = 0;
 
         pokemon.calculateStats();
         pokemon.getBattleInfo().setLevel(pokemon.level);
@@ -772,12 +771,12 @@ async function addEggMoveToNewPokemonMoveset(
   if (eggMoves) {
     const eggMoveIndices = randSeedShuffle([0, 1, 2, 3]);
     let randomEggMoveIndex = eggMoveIndices.pop();
-    let randomEggMove = randomEggMoveIndex != null ? eggMoves[randomEggMoveIndex] : null;
+    let randomEggMove = randomEggMoveIndex == null ? null : eggMoves[randomEggMoveIndex];
     let retries = 0;
     while (retries < 3 && (!randomEggMove || newPokemon.moveset.some(m => m.moveId === randomEggMove))) {
       // If Pokemon already knows this move, roll for another egg move
       randomEggMoveIndex = eggMoveIndices.pop();
-      randomEggMove = randomEggMoveIndex != null ? eggMoves[randomEggMoveIndex] : null;
+      randomEggMove = randomEggMoveIndex == null ? null : eggMoves[randomEggMoveIndex];
       retries++;
     }
 
