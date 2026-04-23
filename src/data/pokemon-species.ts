@@ -1019,16 +1019,14 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
 
   getEvolutionLevels(): EvolutionLevel[] {
     const evolutionLevels: EvolutionLevel[] = [];
+    const { speciesId } = this;
 
-    //console.log(Species[this.speciesId], pokemonEvolutions[this.speciesId])
-
-    if (Object.hasOwn(pokemonEvolutions, this.speciesId)) {
-      for (const e of pokemonEvolutions[this.speciesId]!) {
-        const speciesId = e.speciesId;
+    if (pokemonEvolutions[speciesId] != null) {
+      for (const e of pokemonEvolutions[speciesId]) {
+        const sId = e.speciesId;
         const level = e.level;
-        evolutionLevels.push([speciesId, level]);
-        //console.log(Species[speciesId], getPokemonSpecies(speciesId), getPokemonSpecies(speciesId).getEvolutionLevels());
-        const nextEvolutionLevels = getPokemonSpecies(speciesId).getEvolutionLevels();
+        evolutionLevels.push([sId, level]);
+        const nextEvolutionLevels = getPokemonSpecies(sId).getEvolutionLevels();
         for (const npl of nextEvolutionLevels) {
           evolutionLevels.push(npl);
         }
