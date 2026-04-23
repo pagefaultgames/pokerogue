@@ -93,7 +93,6 @@ import type {
   ContactSetStatusProtectedTagType,
   ContactStatStageChangeProtectedTagType,
   CritStageBoostTagType,
-  DamageProtectedTagType,
   EndureTagType,
   HighestStatBoostTagType,
   MoveRestrictionBattlerTagType,
@@ -133,7 +132,7 @@ export class BattlerTag implements BaseBattlerTag {
   public sourceMove?: MoveId;
   public sourceId?: number;
 
-  //#region non-serializable fields
+  // #region Non-serializable fields
   // Fields that should never be serialized, as they must not change after instantiation
 
   /**
@@ -155,16 +154,16 @@ export class BattlerTag implements BaseBattlerTag {
     return this.#isBatonPassable;
   }
 
-  #lapseTypes: readonly [BattlerTagLapseType, ...BattlerTagLapseType[]];
+  readonly #lapseTypes: readonly [BattlerTagLapseType, ...BattlerTagLapseType[]];
   /**
    * The set of lapse types that this tag can be automatically lapsed with.
    * If this is exclusively {@linkcode BattlerTagLapseType.CUSTOM}, then the tag can only ever be lapsed
-   * manually via {@linkcode Pokemon.lapseTag} (or calling the tag's lapse method directly)
+   * manually via {@linkcode Pokemon.lapseTag} (or calling the tag's `lapse` method directly)
    */
   public get lapseTypes(): readonly BattlerTagLapseType[] {
     return this.#lapseTypes;
   }
-  //#endregion non-serializable fields
+  // #endregion Non-serializable fields
 
   constructor(
     tagType: BattlerTagType,
@@ -188,7 +187,8 @@ export class BattlerTag implements BaseBattlerTag {
     this.#isBatonPassable = isBatonPassable;
   }
 
-  canAdd(_pokemon: Pokemon): boolean {
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: pseudo-abstract method
+  canAdd(pokemon: Pokemon): boolean {
     return true;
   }
 
@@ -207,13 +207,14 @@ export class BattlerTag implements BaseBattlerTag {
    *
    * @remarks
    * Generally, this involves ticking down the tag's duration. The tag also initiates the effects it is responsbile for
-   * @param _pokemon - The {@linkcode Pokemon} whom this tag belongs to.
+   * @param pokemon - The {@linkcode Pokemon} whom this tag belongs to.
    * Unused by default but can be used by subclasses.
-   * @param _lapseType - The {@linkcode BattlerTagLapseType} being lapsed.
+   * @param lapseType - The {@linkcode BattlerTagLapseType} being lapsed.
    * Unused by default but can be used by subclasses.
-   * @returns `true` if the tag should be kept (`turnCount` > 0`)
+   * @returns `true` if the tag should be kept (`turnCount > 0` by default)
    */
-  lapse(_pokemon: Pokemon, _lapseType: BattlerTagLapseType): boolean {
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: params supplied for subclasses
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     return --this.turnCount > 0;
   }
 
@@ -1828,6 +1829,17 @@ export class InfestationTag extends DamagingTrapTag {
 
 export class ProtectedTag extends BattlerTag {
   public declare readonly tagType: ProtectionBattlerTagType;
+
+  /**
+   * Whether this protection effect should block status moves.
+   * @defaultValue `true`
+   * @remarks
+   * Damaging moves are always blocked, regardless of this flag's state.
+   */
+  public get blockStatus(): boolean {
+    return true;
+  }
+
   constructor(sourceMove: MoveId, tagType: ProtectionBattlerTagType = BattlerTagType.PROTECTED) {
     super(tagType, BattlerTagLapseType.TURN_END, 0, sourceMove);
   }
@@ -1905,7 +1917,7 @@ export abstract class ContactProtectedTag extends ProtectedTag {
  */
 export class ContactDamageProtectedTag extends ContactProtectedTag {
   public override readonly tagType = BattlerTagType.SPIKY_SHIELD;
-  #damageRatio: number;
+  readonly #damageRatio: number;
 
   constructor(sourceMove: MoveId, damageRatio: number) {
     super(sourceMove, BattlerTagType.SPIKY_SHIELD);
@@ -1928,23 +1940,37 @@ export class ContactDamageProtectedTag extends ContactProtectedTag {
   }
 }
 
-/** Base class for `BattlerTag`s that block damaging moves but not status moves */
-export abstract class DamageProtectedTag extends ContactProtectedTag {
-  public declare readonly tagType: DamageProtectedTagType;
-}
-
-export class ContactSetStatusProtectedTag extends DamageProtectedTag {
+/**
+ * `BattlerTag` class for protection effects that set a status condition on contact.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Burning_Bulwark_(move)}
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Baneful_Bunker_(move)}
+ */
+export class ContactSetStatusProtectedTag extends ContactProtectedTag {
   public declare readonly tagType: ContactSetStatusProtectedTagType;
   /** The status effect applied to attackers */
-  #statusEffect: StatusEffect;
+  readonly #statusEffect: StatusEffect;
+  /** Whether this protection effect blocks status moves. */
+  readonly #blockStatus: boolean;
+
+  public override get blockStatus(): boolean {
+    return this.#blockStatus;
+  }
+
   /**
    * @param sourceMove - The move that caused the tag to be applied
    * @param tagType - The type of the tag
    * @param statusEffect - The status effect applied to attackers
+   * @param blockStatus - Whether this protection also blocks status-category moves
    */
-  constructor(sourceMove: MoveId, tagType: ContactSetStatusProtectedTagType, statusEffect: StatusEffect) {
+  constructor(
+    sourceMove: MoveId,
+    tagType: ContactSetStatusProtectedTagType,
+    statusEffect: StatusEffect,
+    blockStatus = true,
+  ) {
     super(sourceMove, tagType);
     this.#statusEffect = statusEffect;
+    this.#blockStatus = blockStatus;
   }
 
   /**
@@ -1959,12 +1985,18 @@ export class ContactSetStatusProtectedTag extends DamageProtectedTag {
 
 /**
  * `BattlerTag` class for moves that block damaging moves and lower enemy stats if the enemy's move makes contact
- * Used by {@linkcode MoveId.KINGS_SHIELD}, {@linkcode MoveId.OBSTRUCT}, {@linkcode MoveId.SILK_TRAP}
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/King%27s_Shield_(move)}
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Obstruct_(move)}
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Silk_Trap_(move)}
  */
-export class ContactStatStageChangeProtectedTag extends DamageProtectedTag {
+export class ContactStatStageChangeProtectedTag extends ContactProtectedTag {
   public declare readonly tagType: ContactStatStageChangeProtectedTagType;
-  #stat: BattleStat;
-  #levels: number;
+  readonly #stat: BattleStat;
+  readonly #levels: number;
+
+  public override get blockStatus(): boolean {
+    return false;
+  }
 
   constructor(sourceMove: MoveId, tagType: ContactStatStageChangeProtectedTagType, stat: BattleStat, levels: number) {
     super(sourceMove, tagType);
@@ -3825,7 +3857,7 @@ export function getBattlerTag(
     case BattlerTagType.BANEFUL_BUNKER:
       return new ContactSetStatusProtectedTag(sourceMove, tagType, StatusEffect.POISON);
     case BattlerTagType.BURNING_BULWARK:
-      return new ContactSetStatusProtectedTag(sourceMove, tagType, StatusEffect.BURN);
+      return new ContactSetStatusProtectedTag(sourceMove, tagType, StatusEffect.BURN, false);
     case BattlerTagType.ENDURING:
       return new EnduringTag(tagType, BattlerTagLapseType.TURN_END, sourceMove);
     case BattlerTagType.ENDURE_TOKEN:

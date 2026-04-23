@@ -105,12 +105,10 @@ function getKeyPart<E extends EnumOrObject, V extends E[keyof E]>(
   }
 
   const keyName =
-    obj[val] !== undefined
-      ? // TS reverse mapped enum
-        (obj[val] as string)
-      : // Normal enum / `const object`
-        // TODO: Figure out a way to cache the names of commonly-used enum numbers for performance if needed
-        (enumValueToKey(obj as NormalEnum<E>, val) as string);
+    obj[val] === undefined
+      ? // TODO: Figure out a way to cache the names of commonly-used enum numbers for performance if needed
+        (enumValueToKey(obj as NormalEnum<E>, val) as string) // Normal enum / `const object`
+      : (obj[val] as string); // TS reverse mapped enum
 
   return `${prefix}${casingFunc(keyName)}${suffix}`;
 }

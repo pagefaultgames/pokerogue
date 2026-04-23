@@ -208,8 +208,8 @@ export class AchvsUiHandler extends MessageUiHandler {
     });
     achv.description = getAchievementDescription(achv.localizationKey);
     const achvUnlocks = globalScene.gameData.achvUnlocks;
-    const unlocked = achvUnlocks.hasOwnProperty(achv.id);
-    const hidden = !unlocked && achv.secret && (!achv.parentId || !achvUnlocks.hasOwnProperty(achv.parentId));
+    const unlocked = Object.hasOwn(achvUnlocks, achv.id);
+    const hidden = !unlocked && achv.secret && (!achv.parentId || !Object.hasOwn(achvUnlocks, achv.parentId));
     this.titleText.setText(unlocked ? achv.name : "???");
     this.showText(hidden ? "" : achv.description);
     this.scoreText.setText(`${achv.score}pt`);
@@ -220,7 +220,7 @@ export class AchvsUiHandler extends MessageUiHandler {
 
   protected showVoucher(voucher: Voucher) {
     const voucherUnlocks = globalScene.gameData.voucherUnlocks;
-    const unlocked = voucherUnlocks.hasOwnProperty(voucher.id);
+    const unlocked = Object.hasOwn(voucherUnlocks, voucher.id);
 
     this.titleText.setText(getVoucherTypeName(voucher.voucherType));
     this.showText(voucher.description);
@@ -461,12 +461,12 @@ export class AchvsUiHandler extends MessageUiHandler {
 
     itemRange.forEach((item: (typeof itemRange)[0], i: number) => {
       const icon = this.icons[i];
-      const unlocked = unlocks.hasOwnProperty(item.id);
+      const unlocked = Object.hasOwn(unlocks, item.id);
       let tinted = !unlocked;
       if (forAchievements) {
         // Typescript cannot properly infer the type of `item` here, so we need to cast it
         const achv = item as Achv;
-        const hidden = !unlocked && achv.secret && (!achv.parentId || !unlocks.hasOwnProperty(achv.parentId));
+        const hidden = !unlocked && achv.secret && (!achv.parentId || !Object.hasOwn(unlocks, achv.parentId));
         tinted &&= !hidden;
         icon.setFrame(hidden ? "unknown" : achv.iconImage);
       } else {

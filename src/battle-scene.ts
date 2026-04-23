@@ -1356,15 +1356,15 @@ export class BattleScene extends SceneBase {
         battleType: BattleType.WILD,
         // Don't increment wave index when computing starting wave
         waveIndex:
-          this.currentBattle != null
-            ? this.currentBattle.waveIndex + 1
-            : (Overrides.STARTING_WAVE_OVERRIDE ?? STARTING_WAVE),
+          this.currentBattle == null
+            ? (Overrides.STARTING_WAVE_OVERRIDE ?? STARTING_WAVE)
+            : this.currentBattle.waveIndex + 1,
       };
     }
 
     const { waveIndex, battleType, trainer: trainerData, mysteryEncounterType: sessionMEType } = fromSession;
     // TODO: Remove fallback once we stop using `-1` as a default value for session data fields (which wastes space)
-    const mysteryEncounterType = sessionMEType !== -1 ? sessionMEType : undefined;
+    const mysteryEncounterType = sessionMEType === -1 ? undefined : sessionMEType;
 
     let fixedDouble: boolean;
     // make sure illegal battle types don't occur due to save data corruption (e.g. from enum shifting)
@@ -3342,7 +3342,7 @@ export class BattleScene extends SceneBase {
     delayed = false,
     modal = false,
   ): boolean {
-    if (pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId)) {
+    if (Object.hasOwn(pokemonFormChanges, pokemon.species.speciesId)) {
       // in case this is NECROZMA, determine which forms this
       const matchingFormChangeOpts = pokemonFormChanges[pokemon.species.speciesId].filter(
         fc => fc.findTrigger(formChangeTriggerType) && fc.canChange(pokemon),
@@ -3412,12 +3412,12 @@ export class BattleScene extends SceneBase {
 
   validateAchv<T extends Achv>(achv: T, args?: Parameters<T["validate"]>[0]): boolean {
     if (
-      (!this.gameData.achvUnlocks.hasOwnProperty(achv.id) || Overrides.ACHIEVEMENTS_REUNLOCK_OVERRIDE)
+      (!Object.hasOwn(this.gameData.achvUnlocks, achv.id) || Overrides.ACHIEVEMENTS_REUNLOCK_OVERRIDE)
       && achv.validate(args)
     ) {
       this.gameData.achvUnlocks[achv.id] = Date.now();
       this.ui.achvBar.showAchv(achv);
-      if (vouchers.hasOwnProperty(achv.id)) {
+      if (Object.hasOwn(vouchers, achv.id)) {
         this.validateVoucher(vouchers[achv.id]);
       }
       return true;
@@ -3427,7 +3427,7 @@ export class BattleScene extends SceneBase {
   }
 
   validateVoucher(voucher: Voucher, args?: unknown[]): boolean {
-    if (!this.gameData.voucherUnlocks.hasOwnProperty(voucher.id) && voucher.validate(args)) {
+    if (!Object.hasOwn(this.gameData.voucherUnlocks, voucher.id) && voucher.validate(args)) {
       this.gameData.voucherUnlocks[voucher.id] = Date.now();
       this.ui.achvBar.showAchv(voucher);
       this.gameData.voucherCounts[voucher.voucherType]++;
@@ -3723,7 +3723,7 @@ export class BattleScene extends SceneBase {
     let encounter: MysteryEncounter | null;
     if (
       Overrides.MYSTERY_ENCOUNTER_OVERRIDE != null
-      && allMysteryEncounters.hasOwnProperty(Overrides.MYSTERY_ENCOUNTER_OVERRIDE)
+      && Object.hasOwn(allMysteryEncounters, Overrides.MYSTERY_ENCOUNTER_OVERRIDE)
     ) {
       encounter = allMysteryEncounters[Overrides.MYSTERY_ENCOUNTER_OVERRIDE];
       if (canBypass) {
@@ -3732,10 +3732,10 @@ export class BattleScene extends SceneBase {
     } else if (canBypass) {
       encounter = allMysteryEncounters[encounterType ?? -1];
       return encounter;
-    } else if (getDailyMysteryEncounter(this.currentBattle.waveIndex) != null) {
-      encounter = allMysteryEncounters[getDailyMysteryEncounter(this.currentBattle.waveIndex)!];
+    } else if (getDailyMysteryEncounter(this.currentBattle.waveIndex) == null) {
+      encounter = encounterType == null ? null : allMysteryEncounters[encounterType];
     } else {
-      encounter = encounterType != null ? allMysteryEncounters[encounterType] : null;
+      encounter = allMysteryEncounters[getDailyMysteryEncounter(this.currentBattle.waveIndex)!];
     }
 
     // Check for queued encounters first

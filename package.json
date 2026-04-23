@@ -41,7 +41,7 @@
     "update-assets:remote": "pnpm update-submodules:remote assets",
     "update-submodules": "git submodule update --progress --init --recursive --force --depth 1",
     "update-submodules:remote": "pnpm update-submodules --remote",
-    "sample-movesets": "pnpm dlx vite-node scripts/gen-moveset/gen-moveset-driver.ts"
+    "sample-movesets": "pnpm dlx vite-node@5.3.0 scripts/gen-moveset/gen-moveset-driver.ts"
   },
   "dependencies": {
     "@material/material-color-utilities": "^0.3.0",
@@ -58,7 +58,7 @@
     "phaser3-rex-plugins": "^1.80.19"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.4",
+    "@biomejs/biome": "2.4.9",
     "@commander-js/extra-typings": "^14.0.0",
     "@inquirer/prompts": "^8.3.0",
     "@ls-lint/ls-lint": "2.3.1",

@@ -117,7 +117,7 @@ export class SpritePipeline extends FieldSpritePipeline {
       const sprite = gameObject as Phaser.GameObjects.Sprite;
       const data = sprite.pipelineData;
 
-      const variant: number = data.hasOwnProperty("variant")
+      const variant: number = Object.hasOwn(data, "variant")
         ? data["variant"]
         : sprite.parentContainer instanceof Pokemon
           ? sprite.parentContainer.variant
@@ -136,7 +136,7 @@ export class SpritePipeline extends FieldSpritePipeline {
               ? sprite.parentContainer.getSprite().texture.key
               : data["spriteKey"]
           ])
-        && variantColors.hasOwnProperty(variant)
+        && Object.hasOwn(variantColors, variant)
       ) {
         const baseColors = Object.keys(variantColors[variant]);
         for (let c = 0; c < 32; c++) {
