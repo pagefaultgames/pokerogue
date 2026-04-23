@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.4.9/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -258,10 +258,7 @@
         // This can likely be enabled for all non-utils files once these are eventually reworked, but until then we leave it off.
         "noExplicitAny": "off",
         "noAssignInExpressions": "info", // TODO: Increase to "error" once all instances are fixed
-        "noPrototypeBuiltins": {
-          "level": "warn", // TODO: Add type guard global augment, fix errors and promote (adding a polyfill if needed)
-          "fix": "unsafe"
-        },
+        "noPrototypeBuiltins": "error",
         "noFallthroughSwitchClause": "error", // Prevents accidental automatic fallthroughs in switch cases (use disable comment if needed)
         "noRedeclare": "info", // TODO: Refactor and make this an error
         "noGlobalIsNan": "error",
