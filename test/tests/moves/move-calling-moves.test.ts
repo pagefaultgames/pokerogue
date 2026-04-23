@@ -131,6 +131,7 @@ describe("Moves - Move-Calling Moves", () => {
       name: "Metronome",
       move: MoveId.METRONOME,
       attrName: "RandomMoveAttr",
+      // unused
       callback: m => {
         game.move.forceMetronomeMove(m);
       },
@@ -148,7 +149,7 @@ describe("Moves - Move-Calling Moves", () => {
       move: MoveId.ASSIST,
       attrName: "RandomMovesetMoveAttr",
       callback: m => {
-        game.move.changeMoveset(game.scene.getPlayerParty()[1], m);
+        game.move.changeMoveset(game.field.getPlayerParty()[1], m);
       },
     },
     {
@@ -179,8 +180,6 @@ describe("Moves - Move-Calling Moves", () => {
       banlist = attr["invalidMoves"];
       getMoveSpy = vi.spyOn(attr as typeof attr & { getMove: (typeof attr)["getMove"] }, "getMove");
 
-      // Barring other things, ensure Sleep Talk (at least) has that particular move in its moveset
-      game.override.moveset(move);
       if (move === MoveId.SLEEP_TALK) {
         game.override.statusEffect(StatusEffect.SLEEP);
       }
@@ -228,6 +227,10 @@ describe("Moves - Move-Calling Moves", () => {
     if (move !== MoveId.METRONOME) {
       it("should return MoveId.NONE if an invalid move would be picked", async () => {
         await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
+        for (const pkmn of game.field.getPlayerParty()) {
+          game.move.changeMoveset(pkmn, MoveId.TACKLE);
+        }
+
         const firstBanlistedMove = [...banlist.values()][0];
         expect(attr["isMoveAllowed"](firstBanlistedMove)).toBe(false);
 
@@ -238,6 +241,9 @@ describe("Moves - Move-Calling Moves", () => {
 
     it("should fail if MoveId.NONE would otherwise be called", async () => {
       await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
+      for (const pkmn of game.field.getPlayerParty()) {
+        game.move.changeMoveset(pkmn, MoveId.TACKLE);
+      }
 
       getMoveSpy.mockReturnValueOnce(MoveId.NONE);
 
