@@ -4,6 +4,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -37,8 +38,8 @@ describe("Abilities - Sap Sipper", () => {
     await game.toNextTurn();
 
     const enemyPokemon = game.field.getEnemyPokemon();
-    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
-    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
+    expect(enemyPokemon).toHaveFullHp();
+    expect(enemyPokemon).toHaveStatStage(Stat.ATK, 1);
   });
 
   it("should work on grass status moves", async () => {
@@ -49,8 +50,8 @@ describe("Abilities - Sap Sipper", () => {
     game.move.use(MoveId.SPORE);
     await game.toNextTurn();
 
-    expect(enemyPokemon.status).toBeUndefined();
-    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
+    expect(enemyPokemon).toHaveStatusEffect(StatusEffect.NONE);
+    expect(enemyPokemon).toHaveStatStage(Stat.ATK, 1);
   });
 
   it("should not activate on non Grass-type moves", async () => {
@@ -60,8 +61,8 @@ describe("Abilities - Sap Sipper", () => {
     await game.toEndOfTurn();
 
     const enemy = game.field.getEnemyPokemon();
-    expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
-    expect(enemy.getStatStage(Stat.ATK)).toBe(0);
+    expect(enemy).not.toHaveFullHp();
+    expect(enemy).toHaveStatStage(Stat.ATK, 0);
     expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
   });
 
@@ -85,15 +86,15 @@ describe("Abilities - Sap Sipper", () => {
     game.move.use(MoveId.BULLET_SEED);
     await game.toEndOfTurn();
 
-    expect(enemy.hp).toBe(enemy.getMaxHp());
-    expect(enemy.getStatStage(Stat.ATK)).toBe(1);
+    expect(enemy).toHaveFullHp();
+    expect(enemy).toHaveStatStage(Stat.ATK, 1);
     expect(player.turnData.hitCount).toBe(1);
 
     game.move.use(MoveId.METRONOME);
     await game.toEndOfTurn();
 
-    expect(enemy.hp).toBe(enemy.getMaxHp());
-    expect(enemy.getStatStage(Stat.ATK)).toBe(2);
+    expect(enemy).toHaveFullHp();
+    expect(enemy).toHaveStatStage(Stat.ATK, 2);
     expect(player.turnData.hitCount).toBe(1);
   });
 
@@ -105,11 +106,11 @@ describe("Abilities - Sap Sipper", () => {
     game.move.use(MoveId.SPIKY_SHIELD);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(player.getTag(BattlerTagType.SPIKY_SHIELD)).toBeDefined();
+    expect(player).toHaveBattlerTag(BattlerTagType.SPIKY_SHIELD);
 
     await game.toEndOfTurn();
 
-    expect(player.getStatStage(Stat.ATK)).toBe(0);
+    expect(player).toHaveStatStage(Stat.ATK, 0);
     expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
   });
 
@@ -120,7 +121,6 @@ describe("Abilities - Sap Sipper", () => {
     await game.move.forceMiss();
     await game.toEndOfTurn();
 
-    const enemyPokemon = game.field.getEnemyPokemon();
-    expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
+    expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, 1);
   });
 });
