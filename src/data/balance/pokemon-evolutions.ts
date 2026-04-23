@@ -1866,6 +1866,7 @@ export const pokemonEvolutions = Object.freeze({
   ]
 }) satisfies Readonly<Partial<Record<SpeciesId, SpeciesFormEvolution[]>>>;
 
+// TODO: Change to Partial<Record<SpeciesId, SpeciesId>>
 interface PokemonPrevolutions {
   [key: string]: SpeciesId
 }
@@ -1874,12 +1875,14 @@ export const pokemonPrevolutions: PokemonPrevolutions = {};
 
 export function initPokemonPrevolutions(): void {
   const megaFormKeys: string[] = [SpeciesFormKey.MEGA, SpeciesFormKey.MEGA_X, SpeciesFormKey.MEGA_Y];
+
   for (const [pk, evolutions] of Object.entries(pokemonEvolutions)) {
     for (const ev of evolutions) {
-      if (ev.evoFormKey && megaFormKeys.indexOf(ev.evoFormKey) > -1) {
+      if (ev.evoFormKey && megaFormKeys.includes(ev.evoFormKey)) {
         continue;
       }
-      pokemonPrevolutions[ev.speciesId] = Number.parseInt(pk) as SpeciesId;
+      // TODO: Remove type assertion once `pokemonEvolutions` is typed correctly with `SpeciesId` indices instead of `string`
+      pokemonPrevolutions[ev.speciesId] = Number.parseInt(pk) satisfies SpeciesId;
     }
   }
 }

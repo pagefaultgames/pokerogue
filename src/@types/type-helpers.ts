@@ -2,15 +2,15 @@
  * A collection of custom utility types that aid in type checking and ensuring strict type conformity
  */
 
+// biome-ignore assist/source/organizeImports: temporary until re-exports are removed
 import type { AbAttr } from "#abilities/ab-attrs";
 import type { IntClosedRange, NegativeInfinity, PositiveInfinity, RequiredKeysOf, TupleOf } from "type-fest";
 
 // Re-export a bunch of stuff from type-fest
 // TODO: Once the modifier rework makes merge conflicts less of a priority, remove these re-exports and change callsites to import directly from `type-fest`
-export type { RequiredKeysOf as RequiredKeys };
-
 import type { ValueOf as ObjectValues } from "type-fest";
 export type { ObjectValues };
+export type { RequiredKeysOf as RequiredKeys };
 export type { Writable as Mutable } from "type-fest";
 
 /**

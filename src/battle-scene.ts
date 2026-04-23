@@ -1356,15 +1356,15 @@ export class BattleScene extends SceneBase {
         battleType: BattleType.WILD,
         // Don't increment wave index when computing starting wave
         waveIndex:
-          this.currentBattle != null
-            ? this.currentBattle.waveIndex + 1
-            : (Overrides.STARTING_WAVE_OVERRIDE ?? STARTING_WAVE),
+          this.currentBattle == null
+            ? (Overrides.STARTING_WAVE_OVERRIDE ?? STARTING_WAVE)
+            : this.currentBattle.waveIndex + 1,
       };
     }
 
     const { waveIndex, battleType, trainer: trainerData, mysteryEncounterType: sessionMEType } = fromSession;
     // TODO: Remove fallback once we stop using `-1` as a default value for session data fields (which wastes space)
-    const mysteryEncounterType = sessionMEType !== -1 ? sessionMEType : undefined;
+    const mysteryEncounterType = sessionMEType === -1 ? undefined : sessionMEType;
 
     let fixedDouble: boolean;
     // make sure illegal battle types don't occur due to save data corruption (e.g. from enum shifting)
@@ -3732,10 +3732,10 @@ export class BattleScene extends SceneBase {
     } else if (canBypass) {
       encounter = allMysteryEncounters[encounterType ?? -1];
       return encounter;
-    } else if (getDailyMysteryEncounter(this.currentBattle.waveIndex) != null) {
-      encounter = allMysteryEncounters[getDailyMysteryEncounter(this.currentBattle.waveIndex)!];
+    } else if (getDailyMysteryEncounter(this.currentBattle.waveIndex) == null) {
+      encounter = encounterType == null ? null : allMysteryEncounters[encounterType];
     } else {
-      encounter = encounterType != null ? allMysteryEncounters[encounterType] : null;
+      encounter = allMysteryEncounters[getDailyMysteryEncounter(this.currentBattle.waveIndex)!];
     }
 
     // Check for queued encounters first
