@@ -13,6 +13,7 @@ import { UiMode } from "#enums/ui-mode";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import type { PokemonMove } from "#moves/pokemon-move";
 import type { CommandPhase } from "#phases/command-phase";
+import { settings } from "#system/settings-manager";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { addTextObject, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
@@ -372,7 +373,7 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
    * @returns A color or undefined if the default color should be used
    */
   private getMoveColor(pokemon: Pokemon, pokemonMove: PokemonMove): string | undefined {
-    if (globalScene.typeHints === TypeHints.OFF) {
+    if (settings.display.typeHintsMode === TypeHints.OFF) {
       return;
     }
 
@@ -395,12 +396,13 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
       .sort((a, b) => b - a)
       .map(effectiveness => {
         if (pokemonMove.getMove().category === MoveCategory.STATUS && effectiveness !== 0) {
-          return;
+          // biome-ignore lint/complexity/noUselessUndefined: intentional
+          return undefined;
         }
         return getTypeDamageMultiplierColor(
           effectiveness ?? 0,
           "offense",
-          globalScene.typeHints === TypeHints.HIGH_CONTRAST,
+          settings.display.typeHintsMode === TypeHints.HIGH_CONTRAST,
         );
       });
 

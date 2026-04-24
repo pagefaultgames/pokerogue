@@ -17,7 +17,6 @@ import { getStatusEffectCatchRateMultiplier } from "#data/status-effect";
 import type { AbilityId } from "#enums/ability-id";
 import { ChallengeType } from "#enums/challenge-type";
 import { PartyUiMode } from "#enums/party-ui-mode";
-import { PlayerGender } from "#enums/player-gender";
 import type { PokeballType } from "#enums/pokeball";
 import type { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
@@ -33,6 +32,7 @@ import {
   showEncounterText,
 } from "#mystery-encounters/encounter-dialogue-utils";
 import { achvs } from "#system/achv";
+import { settings } from "#system/settings-manager";
 import type { PartyOption } from "#ui/party-ui-handler";
 import { SummaryUiMode } from "#ui/summary-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
@@ -459,9 +459,7 @@ export function trainerThrowPokeball(
   });
 
   return new Promise(resolve => {
-    globalScene.trainer.setTexture(
-      `trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`,
-    );
+    globalScene.trainer.setTexture(`trainer_${settings.isPlayerFemale ? "f" : "m"}_back_pb`);
     globalScene.time.delayedCall(512, () => {
       audioManager.playSound("se/pb_throw");
 
@@ -470,9 +468,7 @@ export function trainerThrowPokeball(
       globalScene.time.delayedCall(256, () => {
         globalScene.trainer.setFrame("3");
         globalScene.time.delayedCall(768, () => {
-          globalScene.trainer.setTexture(
-            `trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`,
-          );
+          globalScene.trainer.setTexture(`trainer_${settings.isPlayerFemale ? "f" : "m"}_back`);
         });
       });
 

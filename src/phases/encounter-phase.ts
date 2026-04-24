@@ -34,6 +34,7 @@ import { doTrainerExclamation } from "#mystery-encounters/encounter-phase-utils"
 import { getGoldenBugNetSpecies } from "#mystery-encounters/encounter-pokemon-utils";
 import { BattlePhase } from "#phases/battle-phase";
 import { achvs } from "#system/achv";
+import { settings } from "#system/settings-manager";
 import { randSeedInt, randSeedItem } from "#utils/common";
 import i18next from "i18next";
 
@@ -638,7 +639,7 @@ export class EncounterPhase extends BattlePhase {
               : "";
           const cycleCount = count.toLocaleString() + ordinalUsed;
           const cycleCountNoOrdinal = count.toLocaleString();
-          const genderIndex = gameData.gender ?? PlayerGender.UNSET;
+          const genderIndex = settings.general.playerGender;
           const genderStr = PlayerGender[genderIndex].toLowerCase();
           const encounterDialogue = i18next.t(localizationKey, {
             context: genderStr,

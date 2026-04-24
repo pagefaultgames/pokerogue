@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
-import { UiTheme } from "#enums/ui-theme";
+import { settings } from "#system/settings-manager";
 import { addTextObject } from "#ui/text";
 import { playTween } from "#utils/anim-utils";
 import i18next from "i18next";
@@ -30,7 +30,7 @@ export class AbilityBar extends Phaser.GameObjects.Container {
     this.abilityBars = [];
     this.player = true;
     this.shown = false;
-    this.isLegacyUi = globalScene.uiTheme === UiTheme.LEGACY;
+    this.isLegacyUi = settings.isLegacyTheme;
     this.currentBarWidth = this.isLegacyUi ? defaultLegacyBarWidth : defaultBarWidth;
   }
 

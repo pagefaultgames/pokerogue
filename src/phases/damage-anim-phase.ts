@@ -3,6 +3,7 @@ import { globalScene } from "#app/global-scene";
 import type { BattlerIndex } from "#enums/battler-index";
 import { HitResult } from "#enums/hit-result";
 import { PokemonPhase } from "#phases/pokemon-phase";
+import { settings } from "#system/settings-manager";
 import type { DamageResult } from "#types/damage-result";
 import { fixedInt } from "#utils/common";
 
@@ -30,7 +31,7 @@ export class DamageAnimPhase extends PokemonPhase {
     super.start();
 
     if (this.damageResult === HitResult.ONE_HIT_KO || this.damageResult === HitResult.INDIRECT_KO) {
-      if (globalScene.moveAnimations) {
+      if (settings.display.enableMoveAnimations) {
         globalScene.toggleInvert(true);
       }
       globalScene.time.delayedCall(fixedInt(1000), () => {

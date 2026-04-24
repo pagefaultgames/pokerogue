@@ -5,12 +5,14 @@ import { AbilityId } from "#enums/ability-id";
 import { Button } from "#enums/buttons";
 import { ModifierTier } from "#enums/modifier-tier";
 import { MoveId } from "#enums/move-id";
+import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { PlayerPokemon } from "#field/pokemon";
 import type { CustomModifierSettings } from "#modifiers/modifier-type";
 import { ModifierTypeOption } from "#modifiers/modifier-type";
 import { SelectModifierPhase } from "#phases/select-modifier-phase";
+import { settings } from "#system/settings-manager";
 import { GameManager } from "#test/framework/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
@@ -85,8 +87,9 @@ describe("SelectModifierPhase", () => {
 
   it.todo("should generate random modifiers from reroll", async () => {
     await game.classicMode.startBattle(SpeciesId.ABRA, SpeciesId.VOLCARONA);
+
     scene.money = 1000000;
-    scene.shopCursorTarget = 0;
+    settings.update("display", "shopCursorTarget", ShopCursorTarget.REROLL);
 
     game.move.select(MoveId.FISSURE);
     await game.phaseInterceptor.to("SelectModifierPhase");

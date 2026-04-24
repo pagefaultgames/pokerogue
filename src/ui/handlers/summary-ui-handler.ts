@@ -12,7 +12,6 @@ import { getTypeRgb } from "#data/type";
 import { Button } from "#enums/buttons";
 import { MoveCategory } from "#enums/move-category";
 import { Nature } from "#enums/nature";
-import { PlayerGender } from "#enums/player-gender";
 import { PokemonType } from "#enums/pokemon-type";
 import { getStatKey, PERMANENT_STATS, Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
@@ -25,6 +24,7 @@ import type { PokemonMove } from "#moves/pokemon-move";
 import type { Variant } from "#sprites/variant";
 import { getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
+import { settings } from "#system/settings-manager";
 import { addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor, updateCandyCountTextStyle } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
@@ -834,12 +834,10 @@ export class SummaryUiHandler extends UiHandler {
       case Page.PROFILE: {
         const profileContainer = globalScene.add.container(0, -pageBg.height);
         pageContainer.add(profileContainer);
-        const otColor =
-          globalScene.gameData.gender === PlayerGender.FEMALE ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE;
-        const usernameReplacement =
-          globalScene.gameData.gender === PlayerGender.FEMALE
-            ? i18next.t("trainerNames:playerF")
-            : i18next.t("trainerNames:playerM");
+        const otColor = settings.isPlayerFemale ? TextStyle.SUMMARY_PINK : TextStyle.SUMMARY_BLUE;
+        const usernameReplacement = settings.isPlayerFemale
+          ? i18next.t("trainerNames:playerF")
+          : i18next.t("trainerNames:playerM");
 
         const profileContainerProfileTitle = globalScene.add //
           .image(7, 4, getLocalizedSpriteKey("summary_profile_profile_title")) // Pixel text 'PROFILE'
@@ -851,7 +849,7 @@ export class SummaryUiHandler extends UiHandler {
           7,
           10,
           `${getBBCodeFrag(`${i18next.t("pokemonSummary:ot")}/`, TextStyle.SUMMARY_ALT)}${getBBCodeFrag(
-            globalScene.hideUsername
+            settings.display.hideUsername
               ? usernameReplacement
               : loggedInUser?.username || i18next.t("pokemonSummary:unknown"),
             otColor,
@@ -860,7 +858,7 @@ export class SummaryUiHandler extends UiHandler {
         ).setOrigin(0);
         profileContainer.add(trainerText);
 
-        const idToDisplay = globalScene.hideUsername ? "*****" : globalScene.gameData.trainerId.toString();
+        const idToDisplay = settings.display.hideUsername ? "*****" : globalScene.gameData.trainerId.toString();
         const trainerIdText = addTextObject(
           141,
           10,

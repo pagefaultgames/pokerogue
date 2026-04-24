@@ -1,5 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
+import { settings } from "#system/settings-manager";
 import { addTextObject } from "#ui/text";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
@@ -84,7 +85,7 @@ export class BgmBar extends Phaser.GameObjects.Container {
       return;
     }
 
-    if (!globalScene.showBgmBar) {
+    if (!settings.display.showBgmBar) {
       this.setVisible(false);
       return;
     }

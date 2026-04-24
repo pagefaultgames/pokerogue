@@ -9,7 +9,6 @@ import { BattlerIndex } from "#enums/battler-index";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { PlayerGender } from "#enums/player-gender";
 import { PokeballType } from "#enums/pokeball";
 import type { EnemyPokemon } from "#field/pokemon";
 import { IvScannerModifier } from "#modifiers/modifier";
@@ -32,6 +31,7 @@ import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import type { MysteryEncounterOption } from "#mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { MoneyRequirement } from "#mystery-encounters/mystery-encounter-requirements";
+import { settings } from "#system/settings-manager";
 import { BooleanHolder, NumberHolder, randSeedInt } from "#utils/common";
 
 /** the i18n namespace for the encounter */
@@ -370,9 +370,7 @@ async function throwBait(pokemon: EnemyPokemon): Promise<boolean> {
   globalScene.field.add(bait);
 
   return new Promise(resolve => {
-    globalScene.trainer.setTexture(
-      `trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`,
-    );
+    globalScene.trainer.setTexture(`trainer_${settings.isPlayerFemale ? "f" : "m"}_back_pb`);
     globalScene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[0], () => {
       audioManager.playSound("se/pb_throw");
 
@@ -381,9 +379,7 @@ async function throwBait(pokemon: EnemyPokemon): Promise<boolean> {
       globalScene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[1], () => {
         globalScene.trainer.setFrame("3");
         globalScene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[2], () => {
-          globalScene.trainer.setTexture(
-            `trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`,
-          );
+          globalScene.trainer.setTexture(`trainer_${settings.isPlayerFemale ? "f" : "m"}_back`);
         });
       });
 
@@ -439,9 +435,7 @@ async function throwMud(pokemon: EnemyPokemon): Promise<boolean> {
   globalScene.field.add(mud);
 
   return new Promise(resolve => {
-    globalScene.trainer.setTexture(
-      `trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`,
-    );
+    globalScene.trainer.setTexture(`trainer_${settings.isPlayerFemale ? "f" : "m"}_back_pb`);
     globalScene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[0], () => {
       audioManager.playSound("se/pb_throw");
 
@@ -450,9 +444,7 @@ async function throwMud(pokemon: EnemyPokemon): Promise<boolean> {
       globalScene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[1], () => {
         globalScene.trainer.setFrame("3");
         globalScene.time.delayedCall(TRAINER_THROW_ANIMATION_TIMES[2], () => {
-          globalScene.trainer.setTexture(
-            `trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back`,
-          );
+          globalScene.trainer.setTexture(`trainer_${settings.isPlayerFemale ? "f" : "m"}_back`);
         });
       });
 

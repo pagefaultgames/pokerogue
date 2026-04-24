@@ -5,6 +5,7 @@ import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
 import type { Achv } from "#system/achv";
 import { achvs } from "#system/achv";
+import { settings } from "#system/settings-manager";
 import type { Voucher } from "#system/voucher";
 import { getVoucherTypeIcon, getVoucherTypeName, vouchers } from "#system/voucher";
 import type { AchvUnlocks, VoucherUnlocks } from "#types/save-data";
@@ -93,7 +94,7 @@ export class AchvsUiHandler extends MessageUiHandler {
       .setPositionRelative(this.headerBg, 264, 8);
 
     // We need to get the player gender from the game data to add the correct prefix to the achievement name
-    const genderIndex = globalScene.gameData.gender ?? PlayerGender.MALE;
+    const genderIndex = settings.general.playerGender;
     const genderStr = PlayerGender[genderIndex].toLowerCase();
 
     this.achvsName = i18next.t("achv:achievements.name", { context: genderStr });

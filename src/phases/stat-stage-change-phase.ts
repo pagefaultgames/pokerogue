@@ -11,6 +11,7 @@ import { StatChangeSource } from "#enums/stat-change-source";
 import type { Pokemon } from "#field/pokemon";
 import { ResetNegativeStatStageModifier } from "#modifiers/modifier";
 import { PokemonPhase } from "#phases/pokemon-phase";
+import { settings } from "#system/settings-manager";
 import type { ConditionalUserFieldProtectStatAbAttrParams, PreStatStageChangeAbAttrParams } from "#types/ability-types";
 import type { StatChange, StatStageChangePhaseOptions } from "#types/stat-change";
 import type { Mutable } from "#types/type-helpers";
@@ -72,7 +73,7 @@ export class StatStageChangePhase extends PokemonPhase {
     const applied = this.getAppliedChanges(pokemon);
     this.options.onChange?.(pokemon, applied);
 
-    if (applied.some(c => c.stages !== 0) && globalScene.moveAnimations) {
+    if (applied.some(c => c.stages !== 0) && settings.display.enableMoveAnimations) {
       this.playStatChangeAnimation(pokemon).then(() => this.applyStatChangesAndEnd(pokemon, applied));
     } else {
       this.applyStatChangesAndEnd(pokemon, applied);

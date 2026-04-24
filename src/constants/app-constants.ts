@@ -20,6 +20,12 @@ export const IS_TEST = import.meta.env.MODE === "test";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
+/** The ratio at which PRSFX sound volumes are played is adjusted since they are sigificantly louder. */
+export const PRSFX_SOUND_ADJUSTMENT_RATIO = 0.5;
+
+/** The maximum number of language options to display simultaneously. */
+export const LANGUAGE_MAX_OPTIONS = 7;
+
 /** A map of condensed keynames to their associated full names. */
 export const systemSaveShortKeyMap = {
   seenAttr: "$sa",

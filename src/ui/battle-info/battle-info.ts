@@ -5,9 +5,9 @@ import { PokemonType } from "#enums/pokemon-type";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { TextStyle } from "#enums/text-style";
-import { UiTheme } from "#enums/ui-theme";
 import type { Pokemon } from "#field/pokemon";
 import { getVariantTint } from "#sprites/variant";
+import { settings } from "#system/settings-manager";
 import { addTextObject } from "#ui/text";
 import { fixedInt, getLocalizedSpriteKey, getShinyDescriptor } from "#utils/common";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
@@ -265,7 +265,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
     this.add(this.hpLabel);
 
     this.levelNumbersContainer = globalScene.add
-      .container(9.5, globalScene.uiTheme === UiTheme.LEGACY ? 0 : -0.5)
+      .container(9.5, settings.isLegacyTheme ? 0 : -0.5)
       .setName("container_level");
     this.levelContainer.add(this.levelNumbersContainer);
 
@@ -541,7 +541,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
   /** Update the pokemonHp bar */
   protected updatePokemonHp(pokemon: Pokemon, resolve: (r: void | PromiseLike<void>) => void, instant?: boolean): void {
     let duration = instant ? 0 : Phaser.Math.Clamp(Math.abs(this.lastHp - pokemon.hp) * 5, 250, 5000);
-    const speed = globalScene.hpBarSpeed;
+    const speed = settings.general.hpBarSpeed;
     if (speed) {
       duration = speed >= 3 ? 0 : duration / Math.pow(2, speed);
     }

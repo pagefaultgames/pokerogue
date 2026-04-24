@@ -5,6 +5,7 @@ import { Device } from "#enums/devices";
 import { PlayerGender } from "#enums/player-gender";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
+import { settings } from "#system/settings-manager";
 import { AchvBar } from "#ui/achv-bar";
 import { AchvsUiHandler } from "#ui/achvs-ui-handler";
 import { AlertModalUiHandler } from "#ui/alert-modal-ui-handler";
@@ -28,6 +29,7 @@ import { FightUiHandler } from "#ui/fight-ui-handler";
 import { GameStatsUiHandler } from "#ui/game-stats-ui-handler";
 import { GamepadBindingUiHandler } from "#ui/gamepad-binding-ui-handler";
 import { SettingsGamepadUiHandler } from "#ui/gamepad-settings-ui-handler";
+import { GeneralSettingsUiHandler } from "#ui/general-settings-ui-handler";
 import { KeyboardBindingUiHandler } from "#ui/keyboard-binding-ui-handler";
 import { SettingsKeyboardUiHandler } from "#ui/keyboard-settings-ui-handler";
 import { LoadingModalUiHandler } from "#ui/loading-modal-ui-handler";
@@ -48,7 +50,6 @@ import { RunHistoryUiHandler } from "#ui/run-history-ui-handler";
 import { RunInfoUiHandler } from "#ui/run-info-ui-handler";
 import { SaveSlotSelectUiHandler } from "#ui/save-slot-select-ui-handler";
 import { SavingIconContainer } from "#ui/saving-icon-handler";
-import { SettingsUiHandler } from "#ui/settings-ui-handler";
 import { StarterSelectUiHandler } from "#ui/starter-select-ui-handler";
 import { SummaryUiHandler } from "#ui/summary-ui-handler";
 import { TargetSelectUiHandler } from "#ui/target-select-ui-handler";
@@ -151,7 +152,7 @@ export class UI extends Phaser.GameObjects.Container {
       new MenuUiHandler(),
       new OptionSelectUiHandler(UiMode.MENU_OPTION_SELECT),
       // settings
-      new SettingsUiHandler(),
+      new GeneralSettingsUiHandler(),
       new SettingsDisplayUiHandler(),
       new SettingsAudioUiHandler(),
       new SettingsGamepadUiHandler(),
@@ -325,7 +326,7 @@ export class UI extends Phaser.GameObjects.Container {
     // Get localized dialogue (if available)
     let hasi18n = false;
     let text = keyOrText;
-    const genderIndex = globalScene.gameData.gender ?? PlayerGender.UNSET;
+    const genderIndex = settings.general.playerGender;
     const genderStr = PlayerGender[genderIndex].toLowerCase();
 
     if (i18next.exists(keyOrText)) {
@@ -381,7 +382,7 @@ export class UI extends Phaser.GameObjects.Container {
   shouldSkipDialogue(i18nKey: string): boolean {
     if (
       i18next.exists(i18nKey)
-      && globalScene.skipSeenDialogues
+      && settings.general.skipSeenDialogues
       && globalScene.gameData.getSeenDialogues()[i18nKey] === true
     ) {
       return true;

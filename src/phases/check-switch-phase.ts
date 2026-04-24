@@ -5,6 +5,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { SwitchType } from "#enums/switch-type";
 import { UiMode } from "#enums/ui-mode";
 import { BattlePhase } from "#phases/battle-phase";
+import { settings } from "#system/settings-manager";
 import i18next from "i18next";
 
 export class CheckSwitchPhase extends BattlePhase {
@@ -27,7 +28,7 @@ export class CheckSwitchPhase extends BattlePhase {
     // End this phase early...
 
     // ...if the user is playing in Set Mode
-    if (globalScene.battleStyle === BattleStyle.SET) {
+    if (settings.general.battleStyle === BattleStyle.SET) {
       this.end();
       return;
     }

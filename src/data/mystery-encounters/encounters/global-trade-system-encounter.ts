@@ -9,6 +9,7 @@ import type { PokemonSpecies } from "#data/pokemon-species";
 import { getTypeRgb } from "#data/type";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { ModifierTier } from "#enums/modifier-tier";
+import { MusicPreference } from "#enums/music-preference";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -36,7 +37,7 @@ import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { PartySizeRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { PokemonData } from "#system/pokemon-data";
-import { MusicPreference } from "#system/settings";
+import { settings } from "#system/settings-manager";
 import type { OptionSelectItem } from "#types/ui-types";
 import { randInt, randSeedInt, randSeedItem, randSeedShuffle } from "#utils/common";
 import { getEnumKeys } from "#utils/enums";
@@ -126,7 +127,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
 
     // Load bgm
     let bgmKey: string;
-    if (globalScene.musicPreference === MusicPreference.GENFIVE) {
+    if (settings.audio.musicPreference === MusicPreference.GEN_FIVE) {
       bgmKey = "mystery_encounter_gen_5_gts";
     } else {
       // Mixed option

@@ -21,6 +21,7 @@ import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
 import { getMoveTargets } from "#moves/move-utils";
 import { FieldPhase } from "#phases/field-phase";
+import { settings } from "#system/settings-manager";
 import type { MoveTargetSet } from "#types/move-target-set";
 import type { TurnMove } from "#types/turn-move";
 import i18next from "i18next";
@@ -48,21 +49,21 @@ export class CommandPhase extends FieldPhase {
    */
   private resetCursorIfNeeded(): void {
     const commandUiHandler = globalScene.ui.handlers[UiMode.COMMAND];
-    const { arena, commandCursorMemory, currentBattle } = globalScene;
-    const { battleType, turn } = currentBattle;
-    const { biomeId } = arena;
-
-    // If one of these conditions is true, we always reset the cursor to Command.FIGHT
-    const cursorResetEvent =
-      battleType === BattleType.MYSTERY_ENCOUNTER || battleType === BattleType.TRAINER || biomeId === BiomeId.END;
-
     if (!commandUiHandler) {
       return;
     }
-    if (
-      (turn === 1 && (!commandCursorMemory || cursorResetEvent))
-      || commandUiHandler.getCursor() === Command.POKEMON
-    ) {
+
+    const { battleCursorMemory } = settings.general;
+    const { arena, currentBattle } = globalScene;
+    const { battleType, turn } = currentBattle;
+    const { biomeId } = arena;
+
+    /** If one of these conditions is true, we always reset the cursor to `Command.FIGHT` on the first turn */
+    const cursorResetEvent =
+      battleType === BattleType.MYSTERY_ENCOUNTER || battleType === BattleType.TRAINER || biomeId === BiomeId.END;
+    const turnOneReset = turn === 1 && (!battleCursorMemory || cursorResetEvent);
+
+    if (turnOneReset || commandUiHandler.getCursor() === Command.POKEMON) {
       commandUiHandler.setCursor(Command.FIGHT);
     }
   }

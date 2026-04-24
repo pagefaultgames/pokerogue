@@ -1,5 +1,6 @@
 import { loggedInUser } from "#app/account";
 import { saveKey } from "#app/constants";
+import { GameDataType } from "#enums/game-data-type";
 import type { StarterPreferences } from "#types/save-data";
 import { AES, enc } from "crypto-js";
 
@@ -98,6 +99,34 @@ export function saveStarterPreferences(prefs: StarterPreferences): void {
     console.log("%cSaving starter preferences", "color: blue");
     localStorage.setItem(`starterPrefs_${loggedInUser?.username}`, pStr);
     savedStarterPrefs = pStr;
+  }
+}
+
+export function getDataTypeKey(dataType: GameDataType, slotId = 0): string {
+  switch (dataType) {
+    case GameDataType.SYSTEM:
+      return "data";
+    case GameDataType.SESSION: {
+      let ret = "sessionData";
+      if (slotId) {
+        ret += slotId;
+      }
+      return ret;
+    }
+    case GameDataType.SETTINGS:
+      return "settings";
+    case GameDataType.TUTORIALS:
+      return "tutorials";
+    case GameDataType.SEEN_DIALOGUES:
+      return "seenDialogues";
+    case GameDataType.RUN_HISTORY:
+      return "runHistoryData";
+    case GameDataType.MAPPING_CONFIG:
+      return "mappingConfigs";
+    case GameDataType.SETTINGS_GAMEPAD:
+      return "settingsGamepad";
+    case GameDataType.SETTINGS_KEYBOARD:
+      return "settingsKeyboard";
   }
 }
 

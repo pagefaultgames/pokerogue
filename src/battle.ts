@@ -8,6 +8,7 @@ import { BattlerIndex } from "#enums/battler-index";
 import { BiomeId } from "#enums/biome-id";
 import type { Command } from "#enums/command";
 import { MoveId } from "#enums/move-id";
+import { MusicPreference } from "#enums/music-preference";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { PokeballType } from "#enums/pokeball";
@@ -20,7 +21,7 @@ import { Trainer } from "#field/trainer";
 import { MoneyMultiplierModifier, type PokemonHeldItemModifier } from "#modifiers/modifier";
 import type { CustomModifierSettings } from "#modifiers/modifier-type";
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
-import { MusicPreference } from "#system/settings";
+import { settings } from "#system/settings-manager";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { NewBattleResolvedProps } from "#types/new-battle-props";
 import type { TurnMove } from "#types/turn-move";
@@ -254,7 +255,7 @@ export class Battle {
       if (!this.started && this.trainer?.config.encounterBgm && this.trainer.getEncounterMessages().length > 0) {
         return `encounter_${this.trainer.getEncounterBgm()}`;
       }
-      if (globalScene.musicPreference === MusicPreference.GENFIVE) {
+      if (settings.audio.musicPreference === MusicPreference.GEN_FIVE) {
         return this.trainer?.getBattleBgm() ?? null;
       }
       return this.trainer?.getMixedBattleBgm() ?? null;
@@ -281,7 +282,7 @@ export class Battle {
         || pokemon.species.mythical
         || (pokemon.species.category.startsWith("Paradox") && globalScene.arena.biomeId !== BiomeId.END)
       ) {
-        if (globalScene.musicPreference === MusicPreference.GENFIVE) {
+        if (settings.audio.musicPreference === MusicPreference.GEN_FIVE) {
           switch (pokemon.species.speciesId) {
             case SpeciesId.ARTICUNO:
             case SpeciesId.ZAPDOS:
@@ -305,7 +306,7 @@ export class Battle {
               return "battle_legendary_unova";
           }
         }
-        if (globalScene.musicPreference === MusicPreference.ALLGENS) {
+        if (settings.audio.musicPreference === MusicPreference.ALL_GENS) {
           switch (pokemon.species.speciesId) {
             case SpeciesId.ARTICUNO:
             case SpeciesId.ZAPDOS:

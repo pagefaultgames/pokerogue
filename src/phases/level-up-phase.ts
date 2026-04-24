@@ -8,6 +8,7 @@ import { getBaseLearnableMoveSource } from "#field/learnsets";
 import type { PlayerPokemon } from "#field/pokemon";
 import { PlayerPartyMemberPokemonPhase } from "#phases/player-party-member-pokemon-phase";
 import { LevelAchv } from "#system/achv";
+import { settings } from "#system/settings-manager";
 import { NumberHolder } from "#utils/common";
 import i18next from "i18next";
 
@@ -38,7 +39,7 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
     this.pokemon.calculateStats();
     this.pokemon.updateInfo();
 
-    switch (globalScene.expParty) {
+    switch (settings.general.partyExpNotificationMode) {
       case ExpNotification.DEFAULT:
         this.showLevelUpMessages(prevStats).then(() => this.end());
         return;

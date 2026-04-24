@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
-import { PlayerGender } from "#enums/player-gender";
 import { TextStyle } from "#enums/text-style";
+import { settings } from "#system/settings-manager";
 import { addTextObject } from "#ui/text";
 import i18next from "i18next";
 
@@ -15,11 +15,7 @@ export class EndCardPhase extends Phase {
     globalScene.ui.getMessageHandler().bg.setVisible(false);
     globalScene.ui.getMessageHandler().nameBoxContainer.setVisible(false);
 
-    this.endCard = globalScene.add.image(
-      0,
-      0,
-      `end_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}`,
-    );
+    this.endCard = globalScene.add.image(0, 0, `end_${settings.isPlayerFemale ? "f" : "m"}`);
     this.endCard.setOrigin(0);
     this.endCard.setScale(0.5);
     globalScene.field.add(this.endCard);

@@ -13,10 +13,11 @@ import { HealShopCostModifier, LockModifierTiersModifier, PokemonHeldItemModifie
 import type { ModifierTypeOption } from "#modifiers/modifier-type";
 import { getPlayerShopModifierTypeOptionsForWave, TmModifierType } from "#modifiers/modifier-type";
 import type { ModifierSelectCallback } from "#phases/select-modifier-phase";
+import { settings } from "#system/settings-manager";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { addTextObject, getModifierTierTextTint, getTextColor, getTextStyleOptions, getTextWithColors } from "#ui/text";
-import { formatMoney, NumberHolder } from "#utils/common";
+import { fixedInt, formatMoney, NumberHolder } from "#utils/common";
 import i18next from "i18next";
 import Phaser from "phaser";
 
@@ -263,8 +264,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     /* Force updateModifiers without pokemonSpecificModifiers */
     globalScene.getModifierBar().updateModifiers(globalScene.modifiers, true);
 
-    /* Multiplies the appearance duration by the speed parameter so that it is always constant, and avoids "flashbangs" at game speed x5 */
-    globalScene.showShopOverlay(750 * globalScene.gameSpeed);
+    globalScene.showShopOverlay(fixedInt(750));
     globalScene.updateAndShowText(750);
     globalScene.updateBiomeWaveText();
     globalScene.updateMoneyText();
@@ -367,11 +367,11 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
         // before the animations have completed, causing errors).
         Promise.allSettled([...shopAnimPromises, ...rewardAnimAllSettledPromises]).then(() => {
           const updateCursorTarget = () => {
-            if (globalScene.shopCursorTarget === ShopCursorTarget.CHECK_TEAM) {
+            if (settings.display.shopCursorTarget === ShopCursorTarget.CHECK_TEAM) {
               this.setRowCursor(0);
               this.setCursor(2);
             } else if (
-              globalScene.shopCursorTarget === ShopCursorTarget.SHOP
+              settings.display.shopCursorTarget === ShopCursorTarget.SHOP
               && (!hasShop || this.shopOptionsRows.length === 0)
             ) {
               // No shop row exists to point at (e.g. the mode has no shop, or this is a
@@ -380,7 +380,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
               this.setRowCursor(ShopCursorTarget.REWARDS);
               this.setCursor(0);
             } else {
-              this.setRowCursor(globalScene.shopCursorTarget);
+              this.setRowCursor(settings.display.shopCursorTarget);
               this.setCursor(0);
             }
           };
@@ -593,7 +593,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
 
         const cost = options[this.cursor].modifierTypeOption.cost;
         if (cost > 0) {
-          const formattedMoney = formatMoney(globalScene.moneyFormat, cost);
+          const formattedMoney = formatMoney(settings.display.moneyFormat, cost);
           const costStyleName = cost <= globalScene.money ? "MONEY" : "PARTY_RED";
           const costText = i18next.t("modifierSelectUiHandler:itemCost", { formattedMoney });
           const nameWithCost = `${type.name}\u00A0\u00A0\u00A0@[${costStyleName}]{${costText}}`;
@@ -705,7 +705,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.rerollCostText.setVisible(true);
     const canReroll = globalScene.money >= this.rerollCost;
 
-    const formattedMoney = formatMoney(globalScene.moneyFormat, this.rerollCost);
+    const formattedMoney = formatMoney(settings.display.moneyFormat, this.rerollCost);
 
     this.rerollCostText.setText(i18next.t("modifierSelectUiHandler:rerollCost", { formattedMoney }));
     this.rerollCostText.setColor(getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED));
@@ -732,8 +732,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.cursor = 0;
     this.rowCursor = 0;
 
-    /* Multiplies the fade time duration by the speed parameter so that it is always constant, and avoids "flashbangs" at game speed x5 */
-    globalScene.hideShopOverlay(750 * globalScene.gameSpeed);
+    globalScene.hideShopOverlay(fixedInt(750));
     globalScene.hideLuckText(250);
 
     /* Normally already called just after the shop, but not sure if it happens in 100% of cases */
@@ -1061,7 +1060,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
     const cost = activeOverrides.WAIVE_ROLL_FEE_OVERRIDE ? 0 : this.modifierTypeOption.cost;
     const textStyle = cost <= globalScene.money ? TextStyle.MONEY : TextStyle.PARTY_RED;
 
-    const formattedMoney = formatMoney(globalScene.moneyFormat, cost);
+    const formattedMoney = formatMoney(settings.display.moneyFormat, cost);
 
     this.itemCostText.setText(i18next.t("modifierSelectUiHandler:itemCost", { formattedMoney }));
     this.itemCostText.setColor(getTextColor(textStyle, false));

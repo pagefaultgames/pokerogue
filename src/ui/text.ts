@@ -4,6 +4,7 @@ import { EggTier } from "#enums/egg-type";
 import { ModifierTier } from "#enums/modifier-tier";
 import { TextStyle } from "#enums/text-style";
 import { UiTheme } from "#enums/ui-theme";
+import { settings } from "#system/settings-manager";
 import type { TextStyleOptions } from "#types/ui-types";
 import i18next from "i18next";
 import type Phaser from "phaser";
@@ -537,7 +538,7 @@ export function getTextWithColors(content: string, primaryStyle: TextStyle, forW
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This is a giant switch which is the best option.
 export function getTextColor(textStyle: TextStyle, shadow?: boolean): string {
-  const isLegacyTheme = globalScene.uiTheme === UiTheme.LEGACY;
+  const isLegacyTheme = settings.isLegacyTheme;
   switch (textStyle) {
     case TextStyle.MESSAGE:
       return shadow ? "#6b5a73" : "#f8f8f8";

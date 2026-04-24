@@ -23,6 +23,7 @@ import type { PokemonFormChangeItemModifier, PokemonHeldItemModifier } from "#mo
 import type { PokemonMove } from "#moves/pokemon-move";
 import type { CommandPhase } from "#phases/command-phase";
 import { getVariantTint } from "#sprites/variant";
+import { settings } from "#system/settings-manager";
 import type { TurnMove } from "#types/turn-move";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
@@ -1421,7 +1422,7 @@ export class PartyUiHandler extends MessageUiHandler {
           const allowBatonModifierSwitch = this.allowBatonModifierSwitch();
           const isBatonPassMove = this.isBatonPassMove();
 
-          if (allowBatonModifierSwitch && !isBatonPassMove && globalScene.preferBatonPass) {
+          if (allowBatonModifierSwitch && !isBatonPassMove && settings.general.preferBatonPass) {
             // the BATON modifier gives an extra switch option for
             // pokemon-command switches, allowing buffs to be optionally passed
             this.options.push(PartyOption.PASS_BATON);
@@ -1434,7 +1435,7 @@ export class PartyUiHandler extends MessageUiHandler {
             isBatonPassMove && !allowBatonModifierSwitch ? PartyOption.PASS_BATON : PartyOption.SEND_OUT,
           );
 
-          if (allowBatonModifierSwitch && !isBatonPassMove && !globalScene.preferBatonPass) {
+          if (allowBatonModifierSwitch && !isBatonPassMove && !settings.general.preferBatonPass) {
             // If Pass Baton is not preferred, place it under SEND_OUT
             this.options.push(PartyOption.PASS_BATON);
           }

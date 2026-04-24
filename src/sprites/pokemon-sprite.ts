@@ -1,10 +1,9 @@
-import type { BattleScene } from "#app/battle-scene";
-import { globalScene } from "#app/global-scene";
 import { Gender } from "#data/gender";
 import type { Pokemon } from "#field/pokemon";
 import { hasExpSprite } from "#sprites/sprite-utils";
 import type { Variant, VariantSet } from "#sprites/variant";
 import { variantColorCache, variantData } from "#sprites/variant";
+import { settings } from "#system/settings-manager";
 import { cachedFetch } from "#utils/fetch-utils";
 
 // Regex patterns
@@ -55,24 +54,28 @@ export function getSpriteAtlasPath(pokemon: Pokemon, ignoreOverride = false): st
  * @param variant - The variant to load
  * @param scene - The scene to load the assets in (defaults to the global scene)
  */
-export async function loadPokemonVariantAssets(
-  spriteKey: string,
-  fileRoot: string,
-  variant: Variant,
-  scene: BattleScene = globalScene,
-): Promise<void> {
+export async function loadPokemonVariantAssets(spriteKey: string, fileRoot: string, variant: Variant): Promise<void> {
   if (Object.hasOwn(variantColorCache, spriteKey)) {
     return;
   }
-  const useExpSprite = scene.experimentalSprites && hasExpSprite(spriteKey);
+
+  const useExpSprite = settings.expSpritesEnabled && hasExpSprite(spriteKey);
   if (useExpSprite) {
     fileRoot = `exp/${fileRoot}`;
   }
+
+  // TODO: this code is confusing
   let variantConfig = variantData;
-  fileRoot.split("/").map(p => (variantConfig ? (variantConfig = variantConfig[p]) : null));
+  fileRoot.split("/").forEach(p => {
+    if (variantConfig) {
+      variantConfig = variantConfig[p];
+    }
+  });
   const variantSet = variantConfig as VariantSet;
   if (!variantConfig || variantSet[variant] !== 1) {
     return;
   }
-  variantColorCache[spriteKey] = await cachedFetch(`./images/pokemon/variant/${fileRoot}.json`).then(res => res.json());
+
+  const response = await cachedFetch(`./images/pokemon/variant/${fileRoot}.json`);
+  variantColorCache[spriteKey] = await response.json();
 }

@@ -12,7 +12,6 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
 import { PartyMemberStrength } from "#enums/party-member-strength";
-import { PlayerGender } from "#enums/player-gender";
 import { MAX_POKEMON_TYPE } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
@@ -39,6 +38,7 @@ import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { achvs } from "#system/achv";
 import { PokemonData } from "#system/pokemon-data";
+import { settings } from "#system/settings-manager";
 import { trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyTemplate } from "#trainers/trainer-party-template";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
@@ -293,17 +293,11 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
         enemyPokemonConfigs.push(enemyConfig);
       }
 
-      const genderIndex = globalScene.gameData.gender ?? PlayerGender.UNSET;
+      const female = settings.isPlayerFemale;
       const trainerConfig =
-        trainerConfigs[
-          genderIndex === PlayerGender.FEMALE ? TrainerType.PLAYER_F_ALTERNATE : TrainerType.PLAYER_M_ALTERNATE
-        ].clone();
+        trainerConfigs[female ? TrainerType.PLAYER_F_ALTERNATE : TrainerType.PLAYER_M_ALTERNATE].clone();
       trainerConfig.setPartyTemplates(new TrainerPartyTemplate(transformations.length, PartyMemberStrength.STRONG));
-      const enemyPartyConfig: EnemyPartyConfig = {
-        trainerConfig,
-        pokemonConfigs: enemyPokemonConfigs,
-        female: genderIndex === PlayerGender.FEMALE,
-      };
+      const enemyPartyConfig: EnemyPartyConfig = { trainerConfig, pokemonConfigs: enemyPokemonConfigs, female };
 
       const onBeforeRewards = () => {
         // Before battle rewards, unlock the passive on a pokemon in the player's team for the rest of the run (not permanently)
