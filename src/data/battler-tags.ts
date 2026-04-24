@@ -133,12 +133,12 @@ export class BattlerTag implements BaseBattlerTag {
 
   //#region non-serializable fields
   // Fields that should never be serialized, as they must not change after instantiation
-  #isBatonPassable = false;
+  readonly #isBatonPassable: boolean;
   public get isBatonPassable(): boolean {
     return this.#isBatonPassable;
   }
 
-  #lapseTypes: readonly [BattlerTagLapseType, ...BattlerTagLapseType[]];
+  readonly #lapseTypes: readonly [BattlerTagLapseType, ...BattlerTagLapseType[]];
   /**
    * The set of lapse types that this tag can be automatically lapsed with.
    * If this is exclusively {@linkcode BattlerTagLapseType.CUSTOM}, then the tag can only ever be lapsed
@@ -171,7 +171,8 @@ export class BattlerTag implements BaseBattlerTag {
     this.#isBatonPassable = isBatonPassable;
   }
 
-  canAdd(_pokemon: Pokemon): boolean {
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: pseudo-abstract method
+  canAdd(pokemon: Pokemon): boolean {
     return true;
   }
 
@@ -190,13 +191,14 @@ export class BattlerTag implements BaseBattlerTag {
    *
    * @remarks
    * Generally, this involves ticking down the tag's duration. The tag also initiates the effects it is responsbile for
-   * @param _pokemon - The {@linkcode Pokemon} whom this tag belongs to.
+   * @param pokemon - The {@linkcode Pokemon} whom this tag belongs to.
    * Unused by default but can be used by subclasses.
-   * @param _lapseType - The {@linkcode BattlerTagLapseType} being lapsed.
+   * @param lapseType - The {@linkcode BattlerTagLapseType} being lapsed.
    * Unused by default but can be used by subclasses.
-   * @returns `true` if the tag should be kept (`turnCount` > 0`)
+   * @returns `true` if the tag should be kept (`turnCount > 0` by default)
    */
-  lapse(_pokemon: Pokemon, _lapseType: BattlerTagLapseType): boolean {
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: params supplied for subclasses
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     return --this.turnCount > 0;
   }
 

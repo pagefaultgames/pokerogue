@@ -78,7 +78,6 @@ import { AbilityId } from "#enums/ability-id";
 import { AiType } from "#enums/ai-type";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
-import { BattleSpec } from "#enums/battle-spec";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -216,7 +215,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   protected battleInfo: BattleInfo;
   public level: number;
   public exp: number;
-  public levelExp: number;
   public gender: Gender;
   public hp: number;
   public stats: number[];
@@ -352,7 +350,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       this.variant = variant;
     }
     this.exp = dataSource?.exp || getLevelTotalExp(this.level, species.growthRate);
-    this.levelExp = dataSource?.levelExp || 0;
 
     if (dataSource) {
       this.id = dataSource.id;
@@ -455,6 +452,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!dataSource) {
       this.calculateStats();
     }
+  }
+
+  /** The amount of EXP the Pokemon has earned within its current level */
+  public get levelExp(): number {
+    return this.exp - getLevelTotalExp(this.level, this.species.growthRate);
   }
 
   /**
@@ -2223,18 +2225,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (
       this.isEnemy()
       && !gameMode.hasChallenge(Challenges.PASSIVES)
-      && (currentBattle?.battleSpec === BattleSpec.FINAL_BOSS
+      && (currentBattle?.isClassicFinalBoss
         || gameMode.isEndlessMinorBoss(waveIndex)
         || gameMode.isEndlessMajorBoss(waveIndex))
     ) {
       return false;
     }
 
-    if (
-      globalScene.gameMode.isDaily
-      && this.customPokemonData.passive != null
-      && this.customPokemonData.passive !== -1
-    ) {
+    if (gameMode.isDaily && this.customPokemonData.passive != null && this.customPokemonData.passive !== -1) {
       return true;
     }
 
@@ -3361,7 +3359,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       console.log(initialExp, this.exp, getLevelTotalExp(this.level, this.species.growthRate));
       this.exp = Math.max(getLevelTotalExp(this.level, this.species.growthRate), initialExp);
     }
-    this.levelExp = this.exp - getLevelTotalExp(this.level, this.species.growthRate);
   }
 
   /**
@@ -3918,18 +3915,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       simulated,
       damage,
     };
-    /** Apply this Pokemon's post-calc defensive modifiers (e.g. Fur Coat) */
+    // Apply this Pokemon's post-calc defensive modifiers (e.g. Fur Coat)
     if (!ignoreAbility) {
       applyAbAttrs("ReceivedMoveDamageMultiplierAbAttr", abAttrParams);
 
       const ally = this.getAlly();
-      /** Additionally apply friend guard damage reduction if ally has it. */
-      if (globalScene.currentBattle.double && ally != null && ally.isActive(true)) {
-        applyAbAttrs("AlliedFieldDamageReductionAbAttr", {
-          ...abAttrParams,
-          // Same parameters as before, except we are applying the ally's ability
-          pokemon: ally,
-        });
+      // Additionally apply friend guard damage reduction if ally has it.
+      if (globalScene.currentBattle.double && ally?.isActive(true)) {
+        applyAbAttrs("AlliedFieldDamageReductionAbAttr", { ...abAttrParams, pokemon: ally });
       }
     }
 
@@ -3940,7 +3933,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       applyAbAttrs("PreDefendFullHpEndureAbAttr", abAttrParams);
     }
 
-    // debug message for when damage is applied (i.e. not simulated)
+    // debug message for when damage is applied
     if (!simulated) {
       console.log(`Move: ${move.name} | Attack damage: ${damage.value}`);
     }
@@ -7039,11 +7032,8 @@ export class EnemyPokemon extends Pokemon {
       );
     }
 
-    switch (globalScene.currentBattle.battleSpec) {
-      case BattleSpec.FINAL_BOSS:
-        if (!this.formIndex && this.bossSegmentIndex < 1) {
-          damage = Math.min(damage, this.hp - 1);
-        }
+    if (globalScene.currentBattle.isClassicFinalBoss && this.formIndex === 0 && this.bossSegmentIndex < 1) {
+      damage = Math.min(damage, this.hp - 1);
     }
 
     const ret = super.damage(damage, ignoreSegments, preventEndure, ignoreFaintPhase);
@@ -7062,7 +7052,7 @@ export class EnemyPokemon extends Pokemon {
   }
 
   private getMinimumSegmentIndex(): number {
-    if (globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS && !this.formIndex) {
+    if (globalScene.currentBattle.isClassicFinalBoss && !this.formIndex) {
       return 1;
     }
 

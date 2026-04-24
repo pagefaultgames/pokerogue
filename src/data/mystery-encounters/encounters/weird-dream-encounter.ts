@@ -352,7 +352,6 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
       for (const pokemon of globalScene.getPlayerParty()) {
         pokemon.level = Math.max(Math.ceil(((100 - PERCENT_LEVEL_LOSS_ON_REFUSE) / 100) * pokemon.level), 1);
         pokemon.exp = getLevelTotalExp(pokemon.level, pokemon.species.growthRate);
-        pokemon.levelExp = 0;
 
         pokemon.calculateStats();
         pokemon.getBattleInfo().setLevel(pokemon.level);

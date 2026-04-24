@@ -29,7 +29,7 @@ import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#balance/starters";
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets } from "#data/battle-anims";
 import { getDailyMysteryEncounter } from "#data/daily-seed/daily-run";
 import { allMoves, allSpecies, biomeDepths, modifierTypes } from "#data/data-lists";
-import { battleSpecDialogue } from "#data/dialogue";
+import { classicFinalBossDialogue } from "#data/dialogue";
 import type { SpeciesFormChangeTrigger } from "#data/form-change-triggers";
 import { SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger } from "#data/form-change-triggers";
 import { Gender } from "#data/gender";
@@ -37,7 +37,6 @@ import type { SpeciesFormChange } from "#data/pokemon-forms";
 import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies, PokemonSpeciesFilter } from "#data/pokemon-species";
 import { getTypeRgb } from "#data/type";
-import { BattleSpec } from "#enums/battle-spec";
 import { BattleStyle } from "#enums/battle-style";
 import { BattleType } from "#enums/battle-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -1569,7 +1568,7 @@ export class BattleScene extends SceneBase {
     const resetArenaState =
       isNewBiome
       || [BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(this.currentBattle.battleType)
-      || this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
+      || this.currentBattle.isClassicFinalBoss;
 
     for (const enemyPokemon of this.getEnemyParty()) {
       enemyPokemon.destroy();
@@ -3035,7 +3034,7 @@ export class BattleScene extends SceneBase {
 
   generateEnemyModifiers(heldModifiersConfigs?: HeldModifierConfig[][]): Promise<void> {
     return new Promise(resolve => {
-      if (this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
+      if (this.currentBattle.isClassicFinalBoss) {
         return resolve();
       }
       const difficultyWaveIndex = this.gameMode.getWaveForDifficulty(this.currentBattle.waveIndex);
@@ -3488,38 +3487,33 @@ export class BattleScene extends SceneBase {
    * @param pokemon The (enemy) pokemon
    */
   initFinalBossPhaseTwo(pokemon: Pokemon): void {
-    if (pokemon.isEnemy() && pokemon.isBoss() && !pokemon.formIndex && pokemon.bossSegmentIndex < 1) {
-      this.fadeOutBgm(fixedInt(2000), false);
-      this.ui.showDialogue(
-        battleSpecDialogue[BattleSpec.FINAL_BOSS].firstStageWin,
-        pokemon.species.name,
-        undefined,
-        () => {
-          const finalBossMBH = getModifierType(modifierTypes.MINI_BLACK_HOLE).newModifier(
-            pokemon,
-          ) as TurnHeldItemTransferModifier;
-          finalBossMBH.setTransferrableFalse();
-          this.addEnemyModifier(finalBossMBH, false, true);
-          pokemon.generateAndPopulateMoveset(false, 1);
-          this.setFieldScale(0.75);
-          this.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
-          this.currentBattle.double = true;
-          const availablePartyMembers = this.getPlayerParty().filter(p => p.isAllowedInBattle());
-          if (availablePartyMembers.length > 1) {
-            this.phaseManager.pushNew("ToggleDoublePositionPhase", true);
-            if (!availablePartyMembers[1].isOnField()) {
-              this.phaseManager.pushNew("SummonPhase", 1);
-              this.phaseManager.pushNew("PostSummonPhase", 1);
-            }
-          }
-
-          this.phaseManager.shiftPhase();
-        },
-      );
+    if (!pokemon.isEnemy() || !pokemon.isBoss() || pokemon.formIndex > 0 || pokemon.bossSegmentIndex >= 1) {
+      this.phaseManager.shiftPhase();
       return;
     }
 
-    this.phaseManager.shiftPhase();
+    this.fadeOutBgm(fixedInt(2000), false);
+    this.ui.showDialogue(classicFinalBossDialogue.firstStageWin, pokemon.species.name, undefined, () => {
+      const finalBossMBH = getModifierType(modifierTypes.MINI_BLACK_HOLE).newModifier(
+        pokemon,
+      ) as TurnHeldItemTransferModifier;
+      finalBossMBH.setTransferrableFalse();
+      this.addEnemyModifier(finalBossMBH, false, true);
+      pokemon.generateAndPopulateMoveset(false, 1);
+      this.setFieldScale(0.75);
+      this.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
+      this.currentBattle.double = true;
+      const availablePartyMembers = this.getPlayerParty().filter(p => p.isAllowedInBattle());
+      if (availablePartyMembers.length > 1) {
+        this.phaseManager.pushNew("ToggleDoublePositionPhase", true);
+        if (!availablePartyMembers[1].isOnField()) {
+          this.phaseManager.pushNew("SummonPhase", 1);
+          this.phaseManager.pushNew("PostSummonPhase", 1);
+        }
+      }
+
+      this.phaseManager.shiftPhase();
+    });
   }
 
   /**

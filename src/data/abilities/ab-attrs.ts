@@ -288,9 +288,9 @@ export abstract class PreDefendAbAttr extends AbAttr {
 export class PreDefendFullHpEndureAbAttr extends PreDefendAbAttr {
   override canApply({ pokemon, damage }: PreDefendModifyDamageAbAttrParams): boolean {
     return (
-      pokemon.isFullHp() // Checks if pokemon has wonder_guard (which forces 1hp)
-      && pokemon.getMaxHp() > 1 // Damage >= hp
-      && damage.value >= pokemon.hp // Cannot apply if the pokemon already has sturdy from some other source
+      pokemon.isFullHp()
+      && pokemon.getMaxHp() > 1
+      && damage.value >= pokemon.hp
       && !pokemon.getTag(BattlerTagType.STURDY)
     );
   }
