@@ -40,9 +40,11 @@ export const sharedConfig: UserConfigFnPromise = async ({ mode }) => {
           // TODO: This one is a bit iffy (hence why I'm disabling it for now)
           // propertyWriteSideEffects: mode === "production" ? false : "always",
         },
+        // TODO: Look into configuring more rolldown options for smaller bundle size
         output: {
-          // TODO: Look into configuring more rolldown options for smaller bundle size
           keepNames: true,
+          // Needed to prevent import timing issues with the phaser3 rex plugins
+          strictExecutionOrder: true,
           minify: {
             mangle: {
               keepNames: true,
