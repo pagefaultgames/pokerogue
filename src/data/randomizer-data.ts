@@ -24,7 +24,7 @@ function buildValidAbilityPool(): AbilityId[] {
 }
 
 function randomType(exclude?: PokemonType): PokemonType {
-  const pool = exclude !== undefined ? VALID_TYPES.filter(t => t !== exclude) : VALID_TYPES;
+  const pool = exclude === undefined ? VALID_TYPES : VALID_TYPES.filter(t => t !== exclude);
   return pool[randSeedInt(pool.length)];
 }
 
