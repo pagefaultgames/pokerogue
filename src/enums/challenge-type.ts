@@ -111,4 +111,9 @@ export enum ChallengeType {
    * @see {@linkcode Challenge.applyPermanentFaint}
    */
   PREVENT_REVIVE,
+  /**
+   * Applies randomized ability and types to a pokemon
+   * @see {@linkcode Challenge.applyPokemonRandomize}
+   */
+  POKEMON_RANDOMIZE,
 }

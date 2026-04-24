@@ -3,7 +3,9 @@ import Overrides from "#app/overrides";
 import { Phase } from "#app/phase";
 import { SpeciesFormChangeMoveLearnedTrigger } from "#data/form-change-triggers";
 import { Gender } from "#data/gender";
+import { generateRandomizerMap } from "#data/randomizer-data";
 import { ChallengeType } from "#enums/challenge-type";
+import { Challenges } from "#enums/challenges";
 import { UiMode } from "#enums/ui-mode";
 import { overrideHeldItems, overrideModifiers } from "#modifiers/modifier";
 import type { Starter } from "#types/save-data";
@@ -41,6 +43,9 @@ export class SelectStarterPhase extends Phase {
   initBattle(starters: Starter[]) {
     const party = globalScene.getPlayerParty();
     const loadPokemonAssets: Promise<void>[] = [];
+    if (globalScene.gameMode.challenges.some(c => c.id === Challenges.RANDOMIZE && c.value > 0)) {
+      generateRandomizerMap();
+    }
     starters.forEach((starter: Starter, i: number) => {
       if (!i && Overrides.STARTER_SPECIES_OVERRIDE) {
         starter.speciesId = Overrides.STARTER_SPECIES_OVERRIDE;

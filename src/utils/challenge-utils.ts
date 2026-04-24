@@ -270,6 +270,14 @@ export function applyChallenges(
  */
 export function applyChallenges(challengeType: ChallengeType.PREVENT_REVIVE, status: BooleanHolder): boolean;
 
+/**
+ * Apply all challenges that randomize a pokemon's ability and types
+ * @param challengeType - {@linkcode ChallengeType.POKEMON_RANDOMIZE}
+ * @param pokemon - The pokemon to randomize
+ * @returns `true` if any challenge was successfully applied, `false` otherwise
+ */
+export function applyChallenges(challengeType: ChallengeType.POKEMON_RANDOMIZE, pokemon: Pokemon): boolean;
+
 export function applyChallenges(challengeType: ChallengeType, ...args: any[]): boolean {
   let ret = false;
   globalScene.gameMode.challenges.forEach(c => {
@@ -343,6 +351,9 @@ export function applyChallenges(challengeType: ChallengeType, ...args: any[]): b
           break;
         case ChallengeType.PREVENT_REVIVE:
           ret ||= c.applyPreventRevive(args[0]);
+          break;
+        case ChallengeType.POKEMON_RANDOMIZE:
+          ret ||= c.applyPokemonRandomize(args[0]);
           break;
       }
     }

@@ -5,6 +5,7 @@ import { globalScene } from "#app/global-scene";
 import { defaultStarterSpeciesAndEvolutions } from "#balance/pokemon-evolutions";
 import { type StarterSpeciesId, speciesStarterCosts } from "#balance/starters";
 import type { PokemonSpecies } from "#data/pokemon-species";
+import { getRandomizerEntry } from "#data/randomizer-data";
 import { AbilityAttr } from "#enums/ability-attr";
 import { BattleType } from "#enums/battle-type";
 import { Challenges } from "#enums/challenges";
@@ -388,6 +389,15 @@ export abstract class Challenge {
    * @returns Whether this function did anything
    */
   applyPokemonAddToParty(pokemon: EnemyPokemon, isValid: BooleanHolder): boolean {
+    return false;
+  }
+
+  /**
+   * An apply function for POKEMON_RANDOMIZE. Derived classes should alter this.
+   * @param pokemon - The Pokémon to randomize
+   * @returns Whether this function did anything
+   */
+  applyPokemonRandomize(pokemon: Pokemon): boolean {
     return false;
   }
 
@@ -1232,6 +1242,36 @@ export class PassivesChallenge extends Challenge {
   }
 }
 
+export class RandomizeChallenge extends Challenge {
+  constructor() {
+    super(Challenges.RANDOMIZE, 1);
+  }
+
+  override applyStarterModify(pokemon: Pokemon): boolean {
+    return this.applyPokemonRandomize(pokemon);
+  }
+
+  override applyPokemonRandomize(pokemon: Pokemon): boolean {
+    if (pokemon.isBoss()) {
+      return false;
+    }
+    const entry = getRandomizerEntry(pokemon.species.speciesId);
+    if (!entry) {
+      return false;
+    }
+    pokemon.customPokemonData.ability = entry.ability;
+    pokemon.customPokemonData.types = entry.types.slice();
+    return true;
+  }
+
+  static override loadChallenge(source: RandomizeChallenge | any): RandomizeChallenge {
+    const newChallenge = new RandomizeChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
+}
+
 /**
  * @param source - A challenge to copy, or an object of a challenge's properties. Missing values are treated as defaults.
  * @returns The challenge in question.
@@ -1260,6 +1300,8 @@ export function copyChallenge(source: Challenge | any): Challenge {
       return HardcoreChallenge.loadChallenge(source);
     case Challenges.PASSIVES:
       return PassivesChallenge.loadChallenge(source);
+    case Challenges.RANDOMIZE:
+      return RandomizeChallenge.loadChallenge(source);
   }
   throw new Error("Unknown challenge copied");
 }
@@ -1277,5 +1319,6 @@ export function initChallenges() {
     new PassivesChallenge(),
     new InverseBattleChallenge(),
     new FlipStatChallenge(),
+    new RandomizeChallenge(),
   );
 }

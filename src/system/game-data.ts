@@ -17,10 +17,12 @@ import type { Egg } from "#data/egg";
 import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { loadPositionalTag } from "#data/positional-tags/load-positional-tag";
+import { generateRandomizerMap } from "#data/randomizer-data";
 import { TerrainType } from "#data/terrain";
 import { AbilityAttr } from "#enums/ability-attr";
 import { BattleType } from "#enums/battle-type";
 import { ChallengeType } from "#enums/challenge-type";
+import { Challenges } from "#enums/challenges";
 import { Device } from "#enums/devices";
 import { DexAttr } from "#enums/dex-attr";
 import { GameDataType } from "#enums/game-data-type";
@@ -935,6 +937,10 @@ export class GameData {
     globalScene.resetSeed();
 
     console.log("Seed:", globalScene.seed);
+
+    if (globalScene.gameMode.challenges.some(c => c.id === Challenges.RANDOMIZE && c.value > 0)) {
+      generateRandomizerMap();
+    }
 
     globalScene.gameMode.trySetCustomDailyConfig(JSON.stringify(fromSession.dailyConfig));
 

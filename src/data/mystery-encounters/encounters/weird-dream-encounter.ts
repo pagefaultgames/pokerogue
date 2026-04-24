@@ -126,7 +126,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
   MysteryEncounterType.WEIRD_DREAM,
 )
   .withEncounterTier(MysteryEncounterTier.ROGUE)
-  .withDisallowedChallenges(Challenges.SINGLE_TYPE, Challenges.SINGLE_GENERATION)
+  .withDisallowedChallenges(Challenges.SINGLE_TYPE, Challenges.SINGLE_GENERATION, Challenges.RANDOMIZE)
   .withSceneWaveRangeRequirement(30, 140)
   .withScenePartySizeRequirement(3, 6)
   .withMaxAllowedEncounters(1)

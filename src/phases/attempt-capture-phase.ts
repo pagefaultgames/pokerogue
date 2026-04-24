@@ -313,6 +313,7 @@ export class AttemptCapturePhase extends PokemonPhase {
             end();
             return;
           }
+          applyChallenges(ChallengeType.POKEMON_RANDOMIZE, pokemon);
           if (globalScene.getPlayerParty().length === PLAYER_PARTY_MAX_SIZE) {
             const promptRelease = () => {
               globalScene.ui.showText(

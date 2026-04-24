@@ -4,6 +4,7 @@ import { signatureSpecies } from "#balance/signature-species";
 import { EntryHazardTag } from "#data/arena-tag";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { ArenaTagSide } from "#enums/arena-tag-side";
+import { ChallengeType } from "#enums/challenge-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { SpeciesId } from "#enums/species-id";
 import { TeraAIMode } from "#enums/tera-ai-mode";
@@ -16,6 +17,7 @@ import type { PersistentModifier } from "#modifiers/modifier";
 import type { TrainerConfig } from "#trainers/trainer-config";
 import { trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyCompoundTemplate, type TrainerPartyTemplate } from "#trainers/trainer-party-template";
+import { applyChallenges } from "#utils/challenge-utils";
 import { randSeedInt, randSeedItem } from "#utils/common";
 import { getRandomLocaleEntry } from "#utils/i18n";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
@@ -432,6 +434,7 @@ export class Trainer extends Phaser.GameObjects.Container {
           level,
           !this.isDouble() || !(index % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER,
         );
+        applyChallenges(ChallengeType.POKEMON_RANDOMIZE, ret);
       },
       this.config.hasStaticParty
         ? this.config.getDerivedType() + ((index + 1) << 8)

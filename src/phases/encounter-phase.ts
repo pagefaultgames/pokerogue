@@ -11,6 +11,7 @@ import { BattleSpec } from "#enums/battle-spec";
 import { BattleType } from "#enums/battle-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { BiomeId } from "#enums/biome-id";
+import { ChallengeType } from "#enums/challenge-type";
 import { FieldPosition } from "#enums/field-position";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
@@ -33,6 +34,7 @@ import { doTrainerExclamation } from "#mystery-encounters/encounter-phase-utils"
 import { getGoldenBugNetSpecies } from "#mystery-encounters/encounter-pokemon-utils";
 import { BattlePhase } from "#phases/battle-phase";
 import { achvs } from "#system/achv";
+import { applyChallenges } from "#utils/challenge-utils";
 import { randSeedInt, randSeedItem } from "#utils/common";
 import i18next from "i18next";
 
@@ -123,6 +125,7 @@ export class EncounterPhase extends BattlePhase {
             TrainerSlot.NONE,
             !!globalScene.getEncounterBossSegments(battle.waveIndex, level, enemySpecies),
           );
+          applyChallenges(ChallengeType.POKEMON_RANDOMIZE, battle.enemyParty[e]);
           if (globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
             battle.enemyParty[e].ivs.fill(31);
           }
