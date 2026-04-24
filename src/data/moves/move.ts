@@ -70,7 +70,7 @@ import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { WeatherType } from "#enums/weather-type";
 import { MoveUsedEvent } from "#events/battle-scene";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
-import { type BerryHeldItem, berryTypeToHeldItem } from "#items/berry";
+import { type BerryHeldItemAttr, berryTypeToHeldItem } from "#items/berry";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import {
   invalidAssistMoves,
@@ -3382,10 +3382,10 @@ export class EatBerryAttr extends MoveEffectAttr {
    */
   protected eatBerry(consumer: Pokemon, berryOwner: Pokemon = consumer, updateHarvest = consumer === berryOwner) {
     // consumer eats berry, owner triggers unburden and similar effects
-    getBerryEffectFunc((allHeldItems[this.chosenBerry] as BerryHeldItem).berryType)(consumer);
+    getBerryEffectFunc((allHeldItems[this.chosenBerry] as BerryHeldItemAttr).berryType)(consumer);
     applyAbAttrs("PostItemLostAbAttr", { pokemon: berryOwner });
     applyAbAttrs("HealFromBerryUseAbAttr", { pokemon: consumer });
-    consumer.recordEatenBerry((allHeldItems[this.chosenBerry] as BerryHeldItem).berryType, updateHarvest);
+    consumer.recordEatenBerry((allHeldItems[this.chosenBerry] as BerryHeldItemAttr).berryType, updateHarvest);
   }
 }
 

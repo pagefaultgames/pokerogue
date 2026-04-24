@@ -1,7 +1,7 @@
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId } from "#enums/held-item-id";
 import { getStatKey, type PermanentStat, Stat } from "#enums/stat";
-import { HeldItem } from "#items/held-item";
+import { HeldItemAttr } from "#items/held-item-attr";
 import type { BaseStatParams } from "#types/held-item-parameter";
 import i18next from "i18next";
 
@@ -27,16 +27,17 @@ export const statBoostItems: Record<PermanentStat, string> = {
  * Class used for items that multiply a given base stat.
  * Used for the various Vitamin items.
  */
-export class BaseStatMultiplyHeldItem extends HeldItem<[typeof HeldItemEffect.BASE_STAT_MULTIPLY]> {
-  public readonly effects = [HeldItemEffect.BASE_STAT_MULTIPLY] as const;
-  /** The {@linkcode PermanentStat} to boost */
+export class BaseStatMultiplyHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.BASE_STAT_MULTIPLY> {
+  public override readonly effect = HeldItemEffect.BASE_STAT_MULTIPLY;
+  /** The {@linkcode PermanentStat} to boost. */
   private readonly stat: PermanentStat;
 
-  constructor(type: HeldItemId, maxStackCount: number, stat: PermanentStat) {
-    super(type, maxStackCount);
+  constructor(stat: PermanentStat) {
+    super();
     this.stat = stat;
   }
 
+  // TODO: Move to builder
   get name(): string {
     return i18next.t(`modifierType:BaseStatBoosterItem.${statBoostItems[this.stat]}`);
   }
@@ -51,10 +52,7 @@ export class BaseStatMultiplyHeldItem extends HeldItem<[typeof HeldItemEffect.BA
     return statBoostItems[this.stat];
   }
 
-  public override apply(
-    _effect: typeof HeldItemEffect.BASE_STAT_MULTIPLY,
-    { pokemon, baseStats }: BaseStatParams,
-  ): void {
+  public override apply({ pokemon, baseStats }: BaseStatParams): void {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     const { stat } = this;
     baseStats[stat] = Math.floor(baseStats[stat] * (1 + stackCount * 0.1));

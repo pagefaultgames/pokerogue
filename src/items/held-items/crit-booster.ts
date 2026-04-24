@@ -1,54 +1,45 @@
 import { HeldItemEffect } from "#enums/held-item-effect";
-import type { HeldItemId } from "#enums/held-item-id";
 import type { SpeciesId } from "#enums/species-id";
-import { HeldItem } from "#items/held-item";
+import { HeldItemAttr } from "#items/held-item-attr";
 import type { CritBoostParams } from "#types/held-item-parameter";
 
 /**
- * Modifier used for held items that apply critical-hit stage boost(s).
- * using a multiplier.
- * @see {@linkcode apply}
+ * Attribute used for held items that increase the critical hit ratio of the Pokemon's moves.
  */
-export class CritBoostHeldItem extends HeldItem<[typeof HeldItemEffect.CRIT_BOOST]> {
-  public readonly effects = [HeldItemEffect.CRIT_BOOST] as const;
+export class CritBoostHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.CRIT_BOOST> {
+  public override readonly effect = HeldItemEffect.CRIT_BOOST;
 
-  /** The amount of stages by which the held item increases the current critical-hit stage value */
-  protected stageIncrement: number;
+  /** The amount of stages to increase the critical-hit stage by */
+  protected stages: number;
 
-  constructor(type: HeldItemId, maxStackCount: number, stageIncrement: number) {
-    super(type, maxStackCount);
+  constructor(stageIncrement: number) {
+    super();
 
-    this.stageIncrement = stageIncrement;
+    this.stages = stageIncrement;
   }
 
-  /**
-   * Increases the current critical-hit stage value by {@linkcode stageIncrement}.
-   * @param _pokemon {@linkcode Pokemon} N/A
-   * @param critStage {@linkcode NumberHolder} that holds the resulting critical-hit level
-   * @returns always `true`
-   */
-  apply(_effect: typeof HeldItemEffect.CRIT_BOOST, { critStage }: CritBoostParams): void {
-    critStage.value += this.stageIncrement;
+  public override apply({ critStage }: CritBoostParams): void {
+    critStage.value += this.stages;
   }
 }
 
 /**
- * Class used for held items that apply critical-hit stage boost(s) if the holder is of a specific {@linkcode SpeciesId}.
+ * Attribute used for held items that only apply critical-hit boosts to specific species.
  */
-export class SpeciesCritBoostHeldItem extends CritBoostHeldItem {
+export class SpeciesCritBoostHeldItemAttr extends CritBoostHeldItemAttr {
   /** The species that the held item's critical-hit stage boost applies to */
   private readonly species: readonly SpeciesId[];
 
-  constructor(type: HeldItemId, maxStackCount: number, stageIncrement: number, species: readonly SpeciesId[]) {
-    super(type, maxStackCount, stageIncrement);
+  constructor(stageIncrement: number, species: readonly SpeciesId[]) {
+    super(stageIncrement);
 
     this.species = species;
   }
 
-  public override shouldApply(effect: typeof HeldItemEffect.CRIT_BOOST, params: CritBoostParams): boolean {
-    const pokemon = params.pokemon;
+  public override shouldApply(params: CritBoostParams): boolean {
+    const { pokemon } = params;
     return (
-      super.shouldApply(effect, params)
+      super.shouldApply(params)
       && (this.species.includes(pokemon.getSpeciesForm(true).speciesId)
         || (pokemon.isFusion() && this.species.includes(pokemon.getFusionSpeciesForm(true).speciesId)))
     );

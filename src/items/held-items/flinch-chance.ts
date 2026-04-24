@@ -1,6 +1,5 @@
 import { HeldItemEffect } from "#enums/held-item-effect";
-import type { HeldItemId } from "#enums/held-item-id";
-import { HeldItem } from "#items/held-item";
+import { HeldItemAttr } from "#items/held-item-attr";
 import type { FlinchChanceParams } from "#types/held-item-parameter";
 
 /**
@@ -8,30 +7,21 @@ import type { FlinchChanceParams } from "#types/held-item-parameter";
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/King%27s_Rock}
  * @sealed
  */
-export class FlinchChanceHeldItem extends HeldItem<[typeof HeldItemEffect.FLINCH_CHANCE]> {
-  public readonly effects = [HeldItemEffect.FLINCH_CHANCE] as const;
+export class FlinchChanceHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.FLINCH_CHANCE> {
+  public override readonly effect = HeldItemEffect.FLINCH_CHANCE;
   private readonly chance: number;
 
-  constructor(type: HeldItemId, maxStackCount: number, chance: number) {
-    super(type, maxStackCount);
-
+  constructor(chance: number) {
+    super();
     this.chance = chance;
   }
 
-  /**
-   * Checks if {@linkcode FlinchChanceModifier} should be applied
-   * @param _effect - Unused
-   * @param flinched {@linkcode BooleanHolder} that is `true` if the pokemon flinched
-   */
-  override shouldApply(
-    _effect: typeof HeldItemEffect.FLINCH_CHANCE,
-    { pokemon, flinched }: FlinchChanceParams,
-  ): boolean {
+  public override shouldApply({ pokemon, flinched }: FlinchChanceParams): boolean {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     return !flinched.value && pokemon.randBattleSeedInt(100) < stackCount * this.chance;
   }
 
-  apply(_effect: typeof HeldItemEffect.FLINCH_CHANCE, { flinched }: FlinchChanceParams): void {
+  public override apply({ flinched }: FlinchChanceParams): void {
     flinched.value = true;
   }
 }

@@ -13,7 +13,6 @@ import i18next from "i18next";
 abstract class EvoTrackerHeldItem extends CosmeticHeldItem {
   protected species: SpeciesId;
   protected required: number;
-  public isTransferable = false;
 
   constructor(type: HeldItemId, maxStackCount: number, species: SpeciesId, required: number) {
     super(type, maxStackCount);

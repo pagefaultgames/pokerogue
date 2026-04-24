@@ -5,11 +5,11 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import type { InstantReviveHeldItem } from "#items/instant-revive";
 import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
+// TODO: Rework and fix tests
 describe("Items - Reviver Seed", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -51,7 +51,7 @@ describe("Items - Reviver Seed", () => {
     const player = game.field.getPlayerPokemon();
     player.damageAndUpdate(player.hp - 1);
 
-    const reviverSeed = allHeldItems[HeldItemId.REVIVER_SEED] as InstantReviveHeldItem;
+    const reviverSeed = allHeldItems[HeldItemId.REVIVER_SEED];
     vi.spyOn(reviverSeed, "apply");
 
     game.move.select(MoveId.TACKLE);
@@ -67,7 +67,7 @@ describe("Items - Reviver Seed", () => {
     player.damageAndUpdate(player.hp - 1);
     player.addTag(BattlerTagType.CONFUSED, 3);
 
-    const reviverSeed = allHeldItems[HeldItemId.REVIVER_SEED] as InstantReviveHeldItem;
+    const reviverSeed = allHeldItems[HeldItemId.REVIVER_SEED];
     vi.spyOn(reviverSeed, "apply");
 
     vi.spyOn(player, "randBattleSeedInt").mockReturnValue(0); // Force confusion self-hit
@@ -119,7 +119,7 @@ describe("Items - Reviver Seed", () => {
     const player = game.field.getPlayerPokemon();
     player.damageAndUpdate(player.hp - 1);
 
-    const reviverSeed = allHeldItems[HeldItemId.REVIVER_SEED] as InstantReviveHeldItem;
+    const reviverSeed = allHeldItems[HeldItemId.REVIVER_SEED];
     vi.spyOn(reviverSeed, "apply");
 
     game.move.select(move);

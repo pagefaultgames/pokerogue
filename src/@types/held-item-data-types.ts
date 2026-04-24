@@ -1,9 +1,13 @@
+import type { HeldItemEffect } from "#enums/held-item-effect";
 import { type HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import type { RarityTier } from "#enums/reward-tier";
 import type { Pokemon } from "#field/pokemon";
 import type { AllHeldItems } from "#items/all-held-items";
-import type { CosmeticHeldItem } from "#items/held-item";
+import type { CosmeticHeldItem, HeldItem } from "#items/held-item";
 import type { InferKeys } from "#types/type-helpers";
+
+// TODO: This file is less of a _data_ types file and more of an _everything_ types file;
+// we should rename it to clarify that intent
 
 export interface HeldItemData {
   /**
@@ -98,10 +102,15 @@ type CosmeticHeldItemId = InferKeys<AllHeldItems, CosmeticHeldItem>;
 /** Union type of all `HeldItemId`s whose corresponding items can be applied. */
 export type ApplicableHeldItemId = Exclude<keyof AllHeldItems, CosmeticHeldItemId>;
 
+/** Utility type to retrieve the effects of a given {@linkcode HeldItem} based on its ID. */
+export type ExtractItemEffect<T extends ApplicableHeldItemId> =
+  AllHeldItems[T] extends HeldItem<infer Effects extends HeldItemEffect> ? Effects : never;
+
 /**
  * Dummy, TypeScript-only type to ensure that {@linkcode HeldItemId} and {@linkcode HeldItemCategoryId}
  * have 0 overlap between allowed IDs.
  *
  * ⚠️ Does not actually exist at runtime, so it must not be used!
  */
+// TODO: Fix this and other "dummy" types to actually work - the intersection with never makes this actively useless
 declare const EnsureHeldItemIDsAreDisjointFromCategories: (HeldItemId & HeldItemCategoryEntry) & never;

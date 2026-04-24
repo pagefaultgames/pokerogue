@@ -15,7 +15,7 @@ import { TrainerItemId } from "#enums/trainer-item-id";
 import { Unlockables } from "#enums/unlockables";
 import type { Pokemon } from "#field/pokemon";
 import { rewardPool } from "#items/reward-pools";
-import type { TurnEndStatusHeldItem } from "#items/turn-end-status";
+import type { TurnEndStatusHeldItemAttr } from "#items/turn-end-status";
 import type { WeightedRewardWeightFunc } from "#types/rewards";
 
 /**
@@ -110,7 +110,7 @@ function initGreatRewardPool(): void {
               && !p
                 .getHeldItems()
                 .filter(i => i === HeldItemId.TOXIC_ORB || i === HeldItemId.FLAME_ORB)
-                .some(i => (allHeldItems[i] satisfies TurnEndStatusHeldItem).effect === p.status?.effect),
+                .some(i => (allHeldItems[i] satisfies TurnEndStatusHeldItemAttr).effect === p.status?.effect),
           ).length,
           3,
         );
@@ -174,7 +174,7 @@ function initGreatRewardPool(): void {
               && !p
                 .getHeldItems()
                 .filter(i => i === HeldItemId.TOXIC_ORB || i === HeldItemId.FLAME_ORB)
-                .some(i => (allHeldItems[i] satisfies TurnEndStatusHeldItem).effect === p.status?.effect),
+                .some(i => (allHeldItems[i] satisfies TurnEndStatusHeldItemAttr).effect === p.status?.effect),
           ).length,
           3,
         );

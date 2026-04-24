@@ -1,10 +1,22 @@
-import type { HeldItemEffect } from "#enums/held-item-effect";
+import type { HeldItemEffect, HeldItemEffectNames } from "#enums/held-item-effect";
 import type { HeldItemId } from "#enums/held-item-id";
-import { ConsumableHeldItem, HeldItem } from "#items/held-item";
-import type { HeldItemAttr, HeldItemRecord } from "#items/held-item-attr";
+import { HeldItem } from "#items/held-item";
+import type { ConsumableHeldItemAttr, HeldItemAttr, HeldItemRecord } from "#items/held-item-attr";
+import type { ErrorType } from "#types/error-type";
 import type { Mutable } from "#types/type-helpers";
 import type i18next from "i18next";
 import type { Constructor } from "type-fest";
+
+/**
+ * Internal helper type to add a new attribute to a {@linkcode HeldItemBuilder}, erroring if
+ * multiple {@linkcode ConsumableHeldItemAttr}s
+ */
+type AddAttrToBuilder<Attrs extends HeldItemAttr, Effects extends HeldItemEffect, NewAttr extends HeldItemAttr> =
+  NewAttr extends ConsumableHeldItemAttr<infer E extends HeldItemEffect>
+    ? E extends Effects
+      ? ErrorType<`A held item cannot have more than one consumable attribute for a given effect, but 2 were found for HeldItemEffect.${HeldItemEffectNames[E]}!`>
+      : HeldItemBuilder<Attrs | NewAttr, Effects | E>
+    : HeldItemBuilder<Attrs | NewAttr, Effects | NewAttr["effect"]>;
 
 /**
  * Builder class for {@linkcode HeldItem} instances.
@@ -12,7 +24,9 @@ import type { Constructor } from "type-fest";
  * Accumulates {@linkcode HeldItemAttr} instances via {@linkcode HeldItemBuilder.attr | attr},
  * before transforming them into a concrete `HeldItem` subclass with {@linkcode HeldItemBuilder.build | build}.
  *
- * @typeParam A - A union of all the {@linkcode HeldItemAttr}s registered so far.
+ * @typeParam Attrs - A union of all the {@linkcode HeldItemAttr}s registered so far.
+ * @typeParam ConsumableEffects - A union of {@linkcode HeldItemEffect}s corresponding to all {@linkcode ConsumableHeldItemAttr}s registered so far;
+ * used to prevent registration of multiple consumable attributes for the same effect.
  *
  * @example
  * ```ts
@@ -22,7 +36,7 @@ import type { Constructor } from "type-fest";
  * ```
  * @sealed
  */
-export class HeldItemBuilder<A extends HeldItemAttr = never> {
+export class HeldItemBuilder<Attrs extends HeldItemAttr = never, ConsumableEffects extends HeldItemEffect = never> {
   public readonly id: HeldItemId;
   /** @defaultValue `1` */
   public readonly maxStackCount: number;
@@ -33,7 +47,7 @@ export class HeldItemBuilder<A extends HeldItemAttr = never> {
 
   private nameParams?: Parameters<typeof i18next.t>;
   private descriptionParams?: Parameters<typeof i18next.t>;
-  private iconName?: string;
+  private icon?: string;
 
   /** Internal sparse map matching effects to their corresponding attributes. */
   private readonly attrMap: Map<HeldItemEffect, HeldItemAttr[]> = new Map();
@@ -47,16 +61,20 @@ export class HeldItemBuilder<A extends HeldItemAttr = never> {
 
   /**
    * Instantiate an {@linkcode HeldItemAttr} and register it on this builder.
-   * @param attrType - The constructor of a {@linkcode HeldItemAttr} subclass
-   * @param args - Arguments forwarded to the constructor.
+   * @param attrType - The constructor of a {@linkcode HeldItemAttr} subclass to instantiate and register
+   * @param args - The arguments used to instantiate `attrType`
    * @returns `this` with `Attr` added to the effect union.
+   * @remarks
+   * If the attribute to be added is a {@linkcode ConsumableHeldItemAttr},
+   * the builder will enforce that it is the _only_ consumable attribute for its respective effects.
    */
-  public attr<Attr extends HeldItemAttr>(
-    attrType: Constructor<Attr>,
-    ...args: ConstructorParameters<Constructor<Attr>>
-  ): HeldItemBuilder<A | Attr> {
+  public attr<C extends Constructor<HeldItemAttr>>(
+    attrType: C,
+    ...args: ConstructorParameters<C>
+  ): AddAttrToBuilder<Attrs, ConsumableEffects, InstanceType<C>>;
+  public attr<C extends Constructor<HeldItemAttr>>(attrType: C, ...args: ConstructorParameters<C>): this {
     this.addAttr(new attrType(...args));
-    return this as unknown as HeldItemBuilder<A | Attr>;
+    return this;
   }
 
   /** Internal helper method to add an attribute to the builder. */
@@ -116,8 +134,8 @@ export class HeldItemBuilder<A extends HeldItemAttr = never> {
     return this;
   }
 
-  public icon(iconName: string): this {
-    this.iconName = iconName;
+  public iconName(iconName: string): this {
+    this.icon = iconName;
     return this;
   }
 
@@ -127,45 +145,28 @@ export class HeldItemBuilder<A extends HeldItemAttr = never> {
    * Build a non-consumable {@linkcode HeldItem} with the stored attributes and flags.
    * @returns A fully-typed `HeldItem` with all registered attributes.
    */
-  public build(): HeldItem<A["effect"]> {
+  public build(): HeldItem<Attrs["effect"]> {
     // @ts-expect-error - TypeScript doesn't support friend classes, so this is the closest we can get to
     // ensuring `HeldItem` is only constructed by its corresponding builder.
     // NB: The type specifier here is required due to TS resolving this as `any`
-    const item: HeldItem<A["effect"]> = new HeldItem({
+    const item: HeldItem<Attrs["effect"]> = new HeldItem({
       type: this.id,
       effects: this.buildRecord(),
       maxStackCount: this.maxStackCount,
       nameParams: this.nameParams,
       descriptionParams: this.descriptionParams,
-      iconName: this.iconName,
+      iconName: this.icon,
     });
     this.applyFlags(item);
     return item;
   }
 
-  /**
-   * Build a {@linkcode ConsumableHeldItem} that supports the {@linkcode ConsumableHeldItem.consume | consume} lifecycle.
-   * @returns A fully-typed `ConsumableHeldItem` with all registered attributes.
-   */
-  public buildConsumable(): ConsumableHeldItem<A["effect"]> {
-    // @ts-expect-error - see comment in `build` for rationale
-    const item: ConsumableHeldItem<A["effect"]> = new ConsumableHeldItem({
-      type: this.id,
-      effects: this.buildRecord(),
-      maxStackCount: this.maxStackCount,
-      nameParams: this.nameParams,
-      descriptionParams: this.descriptionParams,
-      iconName: this.iconName,
-    });
-    this.applyFlags(item);
-    return item;
+  private buildRecord(): HeldItemRecord<Attrs["effect"]> {
+    // TODO: Remove type assertion after `Object.keys` PR
+    return Object.fromEntries(this.attrMap.entries()) as unknown as HeldItemRecord<Attrs["effect"]>;
   }
 
-  private buildRecord(): HeldItemRecord<A["effect"]> {
-    return Object.fromEntries(this.attrMap.entries()) as unknown as HeldItemRecord<A["effect"]>;
-  }
-
-  private applyFlags(item: HeldItem<A["effect"]>): void {
+  private applyFlags(item: HeldItem<Attrs["effect"]>): void {
     if (!this.isTransferable) {
       item.isTransferable = false;
     }

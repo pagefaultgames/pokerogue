@@ -6,38 +6,40 @@
 import { allHeldItems } from "#data/data-lists";
 import { BerryType } from "#enums/berry-type";
 import { FormChangeItemId } from "#enums/form-change-item-id";
-import { HeldItemId } from "#enums/held-item-id";
+import type { HeldItemEffect } from "#enums/held-item-effect";
+import { HeldItemId, HeldItemNames } from "#enums/held-item-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { PERMANENT_STATS, Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
-import { AccuracyBoosterHeldItem } from "#items/accuracy-booster";
-import { AttackTypeBoosterHeldItem, attackTypeToHeldItem } from "#items/attack-type-booster";
-import { OldGateauHeldItem, ShuckleJuiceHeldItem } from "#items/base-stat-add";
-import { BaseStatMultiplyHeldItem, permanentStatToHeldItem } from "#items/base-stat-multiply";
-import { BatonHeldItem } from "#items/baton";
-import { BerryHeldItem, berryTypeToHeldItem } from "#items/berry";
-import { BypassSpeedChanceHeldItem } from "#items/bypass-speed-chance";
-import { CritBoostHeldItem, SpeciesCritBoostHeldItem } from "#items/crit-booster";
-import { DamageMoneyRewardHeldItem } from "#items/damage-money-reward";
+import { AccuracyBoosterHeldItemAttr } from "#items/accuracy-booster";
+import { AttackTypeBoostHeldItemAttr, attackTypeToHeldItem } from "#items/attack-type-booster";
+import { OldGateauHeldItemAttr, ShuckleJuiceHeldItemAttr } from "#items/base-stat-add";
+import { BaseStatMultiplyHeldItemAttr, permanentStatToHeldItem } from "#items/base-stat-multiply";
+import { BatonHeldItemAttr } from "#items/baton";
+import { BerryHeldItemAttr, berryTypeToHeldItem } from "#items/berry";
+import { BypassSpeedChanceHeldItemAttr } from "#items/bypass-speed-chance";
+import { CritBoostHeldItemAttr, SpeciesCritBoostHeldItemAttr } from "#items/crit-booster";
+import { DamageMoneyRewardHeldItemAttr } from "#items/damage-money-reward";
 import { GimmighoulEvoTrackerHeldItem } from "#items/evo-tracker";
-import { ExpBoosterHeldItem } from "#items/exp-booster";
-import { FieldEffectHeldItem } from "#items/field-effect";
-import { FlinchChanceHeldItem } from "#items/flinch-chance";
+import { ExpBoosterHeldItemAttr } from "#items/exp-booster";
+import { FieldEffectHeldItemAttr } from "#items/field-effect";
+import { FlinchChanceHeldItemAttr } from "#items/flinch-chance";
 import { FormChangeHeldItem } from "#items/form-change-item";
-import { FriendshipBoosterHeldItem } from "#items/friendship-booster";
+import { FriendshipBoosterHeldItemAttr } from "#items/friendship-booster";
 import type { CosmeticHeldItem, HeldItem } from "#items/held-item";
-import { HitHealHeldItem } from "#items/hit-heal";
-import { InstantReviveHeldItem } from "#items/instant-revive";
-import { ContactItemStealChanceHeldItem, TurnEndItemStealHeldItem } from "#items/item-steal";
-import { MachoBraceHeldItem } from "#items/macho-brace";
-import { MultiHitHeldItem } from "#items/multi-hit";
-import { NatureWeightBoosterHeldItem } from "#items/nature-weight-booster";
-import { ResetNegativeStatStageHeldItem } from "#items/reset-negative-stat-stage";
-import { EvolutionStatBoostHeldItem, SpeciesStatBoostHeldItem } from "#items/stat-boost";
-import { SurviveChanceHeldItem } from "#items/survive-chance";
-import { TurnEndHealHeldItem } from "#items/turn-end-heal";
-import { TurnEndStatusHeldItem } from "#items/turn-end-status";
+import { HeldItemBuilder } from "#items/held-item-builder";
+import { HitHealHeldItemAttr } from "#items/hit-heal";
+import { InstantReviveHeldItemAttr } from "#items/instant-revive";
+import { ContactItemStealChanceHeldItemAttr, TurnEndItemStealHeldItemAttr } from "#items/item-steal";
+import { MachoBraceHeldItemAttr } from "#items/macho-brace";
+import { MultiHitCountHeldItemAttr } from "#items/multi-hit";
+import { NatureWeightBoosterHeldItemAttr } from "#items/nature-weight-booster";
+import { ResetNegativeStatStageHeldItemAttr } from "#items/reset-negative-stat-stage";
+import { EvolutionStatBoostHeldItemAttr, SpeciesStatBoostHeldItemAttr } from "#items/stat-boost";
+import { SurviveChanceHeldItemAttr } from "#items/survive-chance";
+import { TurnEndHealHeldItemAttr } from "#items/turn-end-heal";
+import { TurnEndStatusHeldItemAttr } from "#items/turn-end-status";
 import { getEnumValues } from "#utils/enums";
 
 // #region Types
@@ -94,10 +96,12 @@ const berryItems = getEnumValues(BerryType).reduce(
     const maxStackCount = twoStackBerryTypes.includes(berry) ? 2 : 3;
     const berryId = berryTypeToHeldItem[berry];
     berryId satisfies BerryItemId;
-    ret[berryId] = new BerryHeldItem(berry, maxStackCount);
+    ret[berryId] = new HeldItemBuilder(berryId, maxStackCount) //
+      .attr(BerryHeldItemAttr, berry)
+      .build();
     return ret;
   },
-  {} as Record<BerryItemId, BerryHeldItem>,
+  {} as Record<BerryItemId, HeldItem<typeof HeldItemEffect.BERRY>>,
 );
 //#endregion Berries
 
@@ -106,12 +110,17 @@ const typeBoostHeldItems = (
   getEnumValues(PokemonType).slice(1, -1) as Exclude<PokemonType, PokemonType.UNKNOWN | PokemonType.STELLAR>[]
 ).reduce(
   (ret, type) => {
-    const id = attackTypeToHeldItem[type];
-    id satisfies TypeBoostItemId;
-    ret[id] = new AttackTypeBoosterHeldItem(id, 99, type, 0.2).unstealable().untransferable().unsuppressable();
+    const id = attackTypeToHeldItem[type] satisfies TypeBoostItemId;
+    ret[id] = new HeldItemBuilder(id, 99)
+      .attr(AttackTypeBoostHeldItemAttr, type, 0.2)
+      .unstealable()
+      .untransferable()
+      .unsuppressable()
+      .name(`modifierType:AttackTypeBoosterItem.${HeldItemNames[type].toLowerCase()}`)
+      .build();
     return ret;
   },
-  {} as Record<TypeBoostItemId, AttackTypeBoosterHeldItem>,
+  {} as Record<TypeBoostItemId, HeldItem<typeof HeldItemEffect.ATTACK_TYPE_BOOST>>,
 );
 //#endregion Type Boosters
 
@@ -120,10 +129,15 @@ const vitaminItems = PERMANENT_STATS.reduce(
   (ret, stat) => {
     const id = permanentStatToHeldItem[stat];
     id satisfies BaseStatItemId;
-    ret[stat] = new BaseStatMultiplyHeldItem(id, 30, stat).unstealable().untransferable().unsuppressable();
+    ret[stat] = new HeldItemBuilder(id, 30) //
+      .attr(BaseStatMultiplyHeldItemAttr, stat)
+      .unstealable()
+      .untransferable()
+      .unsuppressable()
+      .build();
     return ret;
   },
-  {} as Record<BaseStatItemId, BaseStatMultiplyHeldItem>,
+  {} as Record<BaseStatItemId, HeldItem<typeof HeldItemEffect.BASE_STAT_MULTIPLY>>,
 );
 
 //#endregion Vitamins
@@ -132,7 +146,7 @@ const vitaminItems = PERMANENT_STATS.reduce(
 // TODO: Do we want these in a separate object?
 const formChangeItems = Object.values(FormChangeItemId).reduce(
   (ret, id) => {
-    ret[id] = new FormChangeHeldItem(id, 1).unstealable().untransferable().unsuppressable();
+    ret[id] = new FormChangeHeldItem(id, 1);
     return ret;
   },
   {} as Record<FormChangeItemId, FormChangeHeldItem>,
@@ -140,88 +154,157 @@ const formChangeItems = Object.values(FormChangeItemId).reduce(
 //#endregion Form change items
 
 //#region Initialization
-const heldItems = Object.freeze({
+const heldItems = {
   ...berryItems,
   ...typeBoostHeldItems,
   ...vitaminItems,
   ...formChangeItems,
-  [HeldItemId.REVIVER_SEED]: new InstantReviveHeldItem(HeldItemId.REVIVER_SEED, 1),
-  [HeldItemId.WHITE_HERB]: new ResetNegativeStatStageHeldItem(HeldItemId.WHITE_HERB, 2),
+  [HeldItemId.REVIVER_SEED]: new HeldItemBuilder(HeldItemId.REVIVER_SEED, 1) //
+    .attr(InstantReviveHeldItemAttr)
+    .build(),
+  [HeldItemId.WHITE_HERB]: new HeldItemBuilder(HeldItemId.WHITE_HERB, 2) //
+    .attr(ResetNegativeStatStageHeldItemAttr)
+    .build(),
 
   // Items that boost specific stats
-  [HeldItemId.EVIOLITE]: new EvolutionStatBoostHeldItem(HeldItemId.EVIOLITE, 1, [Stat.DEF, Stat.SPDEF], 1.5),
-  [HeldItemId.LIGHT_BALL]: new SpeciesStatBoostHeldItem(HeldItemId.LIGHT_BALL, 1, [Stat.ATK, Stat.SPATK], 2, [
-    SpeciesId.PIKACHU,
-  ]),
-  [HeldItemId.THICK_CLUB]: new SpeciesStatBoostHeldItem(HeldItemId.LIGHT_BALL, 1, [Stat.ATK], 2, [
-    SpeciesId.CUBONE,
-    SpeciesId.MAROWAK,
-    SpeciesId.ALOLA_MAROWAK,
-  ]),
-  [HeldItemId.METAL_POWDER]: new SpeciesStatBoostHeldItem(HeldItemId.LIGHT_BALL, 1, [Stat.DEF], 2, [SpeciesId.DITTO]),
-  [HeldItemId.QUICK_POWDER]: new SpeciesStatBoostHeldItem(HeldItemId.LIGHT_BALL, 1, [Stat.SPD], 2, [SpeciesId.DITTO]),
-  [HeldItemId.DEEP_SEA_SCALE]: new SpeciesStatBoostHeldItem(HeldItemId.LIGHT_BALL, 1, [Stat.SPDEF], 2, [
-    SpeciesId.CLAMPERL,
-  ]),
-  [HeldItemId.DEEP_SEA_TOOTH]: new SpeciesStatBoostHeldItem(HeldItemId.LIGHT_BALL, 1, [Stat.SPATK], 2, [
-    SpeciesId.CLAMPERL,
-  ]),
+  [HeldItemId.EVIOLITE]: new HeldItemBuilder(HeldItemId.EVIOLITE, 1) //
+    .attr(EvolutionStatBoostHeldItemAttr, [Stat.DEF, Stat.SPDEF], 1.5)
+    .build(),
+  [HeldItemId.LIGHT_BALL]: new HeldItemBuilder(HeldItemId.LIGHT_BALL, 1) //
+    .attr(SpeciesStatBoostHeldItemAttr, [Stat.ATK, Stat.SPATK], 2, [SpeciesId.PIKACHU])
+    .build(),
+  [HeldItemId.THICK_CLUB]: new HeldItemBuilder(HeldItemId.THICK_CLUB, 1) //
+    .attr(SpeciesStatBoostHeldItemAttr, [Stat.ATK], 2, [SpeciesId.CUBONE, SpeciesId.MAROWAK, SpeciesId.ALOLA_MAROWAK])
+    .build(),
+  [HeldItemId.METAL_POWDER]: new HeldItemBuilder(HeldItemId.METAL_POWDER, 1) //
+    .attr(SpeciesStatBoostHeldItemAttr, [Stat.DEF], 2, [SpeciesId.DITTO])
+    .build(),
+  [HeldItemId.QUICK_POWDER]: new HeldItemBuilder(HeldItemId.QUICK_POWDER, 1) //
+    .attr(SpeciesStatBoostHeldItemAttr, [Stat.SPD], 2, [SpeciesId.DITTO])
+    .build(),
+  [HeldItemId.DEEP_SEA_SCALE]: new HeldItemBuilder(HeldItemId.DEEP_SEA_SCALE, 1) //
+    .attr(SpeciesStatBoostHeldItemAttr, [Stat.SPDEF], 2, [SpeciesId.CLAMPERL])
+    .build(),
+  [HeldItemId.DEEP_SEA_TOOTH]: new HeldItemBuilder(HeldItemId.DEEP_SEA_TOOTH, 1) //
+    .attr(SpeciesStatBoostHeldItemAttr, [Stat.SPATK], 2, [SpeciesId.CLAMPERL])
+    .build(),
 
   // crit rate boosters
-  [HeldItemId.SCOPE_LENS]: new CritBoostHeldItem(HeldItemId.SCOPE_LENS, 1, 1),
-  [HeldItemId.LEEK]: new SpeciesCritBoostHeldItem(HeldItemId.LEEK, 1, 2, [
-    SpeciesId.FARFETCHD,
-    SpeciesId.GALAR_FARFETCHD,
-    SpeciesId.SIRFETCHD,
-  ]),
+  [HeldItemId.SCOPE_LENS]: new HeldItemBuilder(HeldItemId.SCOPE_LENS, 1) //
+    .attr(CritBoostHeldItemAttr, 1)
+    .build(),
+  [HeldItemId.LEEK]: new HeldItemBuilder(HeldItemId.LEEK, 1) //
+    .attr(SpeciesCritBoostHeldItemAttr, 2, [SpeciesId.FARFETCHD, SpeciesId.GALAR_FARFETCHD, SpeciesId.SIRFETCHD])
+    .build(),
 
-  [HeldItemId.LUCKY_EGG]: new ExpBoosterHeldItem(HeldItemId.LUCKY_EGG, 99, 40),
-  [HeldItemId.GOLDEN_EGG]: new ExpBoosterHeldItem(HeldItemId.GOLDEN_EGG, 99, 100),
-  [HeldItemId.SOOTHE_BELL]: new FriendshipBoosterHeldItem(HeldItemId.SOOTHE_BELL, 3),
+  [HeldItemId.LUCKY_EGG]: new HeldItemBuilder(HeldItemId.LUCKY_EGG, 99) //
+    .attr(ExpBoosterHeldItemAttr, 40)
+    .description("modifierType:ModifierType.PokemonExpBoosterModifierType.description", { boostPercent: 40 })
+    .build(),
+  [HeldItemId.GOLDEN_EGG]: new HeldItemBuilder(HeldItemId.GOLDEN_EGG, 99) //
+    .attr(ExpBoosterHeldItemAttr, 100)
+    .description("modifierType:ModifierType.PokemonExpBoosterModifierType.description", { boostPercent: 100 })
+    .build(),
+  [HeldItemId.SOOTHE_BELL]: new HeldItemBuilder(HeldItemId.SOOTHE_BELL, 3)
+    .attr(FriendshipBoosterHeldItemAttr)
+    .description("modifierType:ModifierType.PokemonFriendshipBoosterModifierType.description")
+    .build(),
 
-  [HeldItemId.LEFTOVERS]: new TurnEndHealHeldItem(HeldItemId.LEFTOVERS, 4),
-  [HeldItemId.SHELL_BELL]: new HitHealHeldItem(HeldItemId.SHELL_BELL, 4),
+  [HeldItemId.LEFTOVERS]: new HeldItemBuilder(HeldItemId.LEFTOVERS, 4) //
+    .attr(TurnEndHealHeldItemAttr)
+    .build(),
+  [HeldItemId.SHELL_BELL]: new HeldItemBuilder(HeldItemId.SHELL_BELL, 4) //
+    .attr(HitHealHeldItemAttr)
+    .name("modifierType:ModifierType.SHELL_BELL.name")
+    .description("modifierType:ModifierType.SHELL_BELL.description")
+    .iconName("shell_bell")
+    .build(),
 
-  [HeldItemId.FOCUS_BAND]: new SurviveChanceHeldItem(HeldItemId.FOCUS_BAND, 5),
-  [HeldItemId.QUICK_CLAW]: new BypassSpeedChanceHeldItem(HeldItemId.QUICK_CLAW, 3),
-  [HeldItemId.KINGS_ROCK]: new FlinchChanceHeldItem(HeldItemId.KINGS_ROCK, 3, 10),
-  [HeldItemId.MYSTICAL_ROCK]: new FieldEffectHeldItem(HeldItemId.MYSTICAL_ROCK, 2),
-  [HeldItemId.SOUL_DEW]: new NatureWeightBoosterHeldItem(HeldItemId.SOUL_DEW, 10),
-  [HeldItemId.WIDE_LENS]: new AccuracyBoosterHeldItem(HeldItemId.WIDE_LENS, 3, 5),
-  [HeldItemId.MULTI_LENS]: new MultiHitHeldItem(HeldItemId.MULTI_LENS, 2),
-  [HeldItemId.GOLDEN_PUNCH]: new DamageMoneyRewardHeldItem(HeldItemId.GOLDEN_PUNCH, 5),
-  [HeldItemId.BATON]: new BatonHeldItem(HeldItemId.BATON, 1),
-  [HeldItemId.GRIP_CLAW]: new ContactItemStealChanceHeldItem(HeldItemId.GRIP_CLAW, 5, 10),
-  [HeldItemId.MINI_BLACK_HOLE]: new TurnEndItemStealHeldItem(HeldItemId.MINI_BLACK_HOLE, 1)
-    .unstealable()
-    .untransferable(),
-
-  [HeldItemId.FLAME_ORB]: new TurnEndStatusHeldItem(HeldItemId.FLAME_ORB, 1, StatusEffect.BURN),
-  [HeldItemId.TOXIC_ORB]: new TurnEndStatusHeldItem(HeldItemId.TOXIC_ORB, 1, StatusEffect.TOXIC),
-
-  [HeldItemId.SHUCKLE_JUICE_GOOD]: new ShuckleJuiceHeldItem(HeldItemId.SHUCKLE_JUICE_GOOD, 1, 10)
+  [HeldItemId.FOCUS_BAND]: new HeldItemBuilder(HeldItemId.FOCUS_BAND, 5).attr(SurviveChanceHeldItemAttr).build(),
+  [HeldItemId.QUICK_CLAW]: new HeldItemBuilder(HeldItemId.QUICK_CLAW, 3) //
+    .attr(BypassSpeedChanceHeldItemAttr)
+    .build(),
+  [HeldItemId.KINGS_ROCK]: new HeldItemBuilder(HeldItemId.KINGS_ROCK, 3) //
+    .attr(FlinchChanceHeldItemAttr, 10)
+    .build(),
+  [HeldItemId.MYSTICAL_ROCK]: new HeldItemBuilder(HeldItemId.MYSTICAL_ROCK, 2) //
+    .attr(FieldEffectHeldItemAttr)
+    .build(),
+  [HeldItemId.SOUL_DEW]: new HeldItemBuilder(HeldItemId.SOUL_DEW, 10) //
+    .attr(NatureWeightBoosterHeldItemAttr)
+    .build(),
+  [HeldItemId.WIDE_LENS]: new HeldItemBuilder(HeldItemId.WIDE_LENS, 3) //
+    .attr(AccuracyBoosterHeldItemAttr, 5)
+    .build(),
+  [HeldItemId.MULTI_LENS]: new HeldItemBuilder(HeldItemId.MULTI_LENS, 2) //
+    .attr(MultiHitCountHeldItemAttr)
+    .description("modifierType:ModifierType.PokemonMultiHitModifierType.description")
+    .build(),
+  [HeldItemId.GOLDEN_PUNCH]: new HeldItemBuilder(HeldItemId.GOLDEN_PUNCH, 5) //
+    .attr(DamageMoneyRewardHeldItemAttr)
+    .build(),
+  [HeldItemId.BATON]: new HeldItemBuilder(HeldItemId.BATON, 1) //
+    .attr(BatonHeldItemAttr)
+    .build(),
+  [HeldItemId.GRIP_CLAW]: new HeldItemBuilder(HeldItemId.GRIP_CLAW, 5) //
+    .attr(ContactItemStealChanceHeldItemAttr, 10)
+    .description("modifierType:ModifierType.ContactHeldItemTransferChanceModifierType.description", {
+      chancePercent: 10,
+    })
+    .build(),
+  [HeldItemId.MINI_BLACK_HOLE]: new HeldItemBuilder(HeldItemId.MINI_BLACK_HOLE, 1) //
+    .attr(TurnEndItemStealHeldItemAttr)
+    .description("modifierType:ModifierType.TurnHeldItemTransferModifierType.description")
     .unstealable()
     .untransferable()
-    .unsuppressable(),
-  [HeldItemId.SHUCKLE_JUICE_BAD]: new ShuckleJuiceHeldItem(HeldItemId.SHUCKLE_JUICE_BAD, 1, -15)
+    .build(),
+
+  [HeldItemId.FLAME_ORB]: new HeldItemBuilder(HeldItemId.FLAME_ORB, 1)
+    .attr(TurnEndStatusHeldItemAttr, StatusEffect.BURN)
+    .build(),
+  [HeldItemId.TOXIC_ORB]: new HeldItemBuilder(HeldItemId.TOXIC_ORB, 1)
+    .attr(TurnEndStatusHeldItemAttr, StatusEffect.TOXIC)
+    .build(),
+
+  [HeldItemId.SHUCKLE_JUICE_GOOD]: new HeldItemBuilder(HeldItemId.SHUCKLE_JUICE_GOOD, 1)
+    .attr(ShuckleJuiceHeldItemAttr, 10)
     .unstealable()
     .untransferable()
-    .unsuppressable(),
-  [HeldItemId.OLD_GATEAU]: new OldGateauHeldItem(HeldItemId.OLD_GATEAU, 1)
+    .unsuppressable()
+    .name("modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_GOOD.name")
+    .description("modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_GOOD.description")
+    .iconName("berry_juice_good")
+    .build(),
+  [HeldItemId.SHUCKLE_JUICE_BAD]: new HeldItemBuilder(HeldItemId.SHUCKLE_JUICE_BAD, 1)
+    .attr(ShuckleJuiceHeldItemAttr, -15)
     .unstealable()
     .untransferable()
-    .unsuppressable(),
-  [HeldItemId.MACHO_BRACE]: new MachoBraceHeldItem(HeldItemId.MACHO_BRACE, 50)
+    .unsuppressable()
+    .name("modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_BAD.name")
+    .description("modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_BAD.description")
+    .iconName("berry_juice_bad")
+    .build(),
+  [HeldItemId.OLD_GATEAU]: new HeldItemBuilder(HeldItemId.OLD_GATEAU, 1)
+    .attr(OldGateauHeldItemAttr)
     .unstealable()
     .untransferable()
-    .unsuppressable(),
+    .unsuppressable()
+    .build(),
+  [HeldItemId.MACHO_BRACE]: new HeldItemBuilder(HeldItemId.MACHO_BRACE, 50)
+    .attr(MachoBraceHeldItemAttr)
+    .unstealable()
+    .untransferable()
+    .unsuppressable()
+    .build(),
   [HeldItemId.GIMMIGHOUL_EVO_TRACKER]: new GimmighoulEvoTrackerHeldItem(
     HeldItemId.GIMMIGHOUL_EVO_TRACKER,
     999,
     SpeciesId.GIMMIGHOUL,
     10,
   ),
-} as const satisfies Readonly<Record<HeldItemId, CosmeticHeldItem | HeldItem<any>>>); // `any` typeparam used to avoid errors about individual items not accepting `HeldItemEffect`
+  // `any` type parameter used to get around `HeldItem` being invariant in `Effects`,
+  // thereby rendering all instances without an actual supertype
+} as const satisfies Readonly<Record<HeldItemId, CosmeticHeldItem | HeldItem>>;
 
 /**
  * Resolved type of {@linkcode allHeldItems}.

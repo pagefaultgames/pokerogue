@@ -1,4 +1,3 @@
-import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import type { HeldItemEffect } from "#enums/held-item-effect";
 import { type HeldItemId, HeldItemNames } from "#enums/held-item-id";
@@ -7,7 +6,6 @@ import type { HeldItemAttr, HeldItemRecord } from "#items/held-item-attr";
 import type { HeldItemBuilder } from "#items/held-item-builder";
 import type { HeldItemEffectParamMap } from "#types/held-item-parameter";
 import i18next from "i18next";
-import type { NonEmptyTuple } from "type-fest";
 
 /**
  * Base class for all held items, both functional and cosmetic.
@@ -121,9 +119,10 @@ export abstract class HeldItemBase {
  *
  * @see {@linkcode HeldItemBuilder}
  */
-export class HeldItem<Effects extends HeldItemEffect = HeldItemEffect> extends HeldItemBase {
+// NB: `any` type parameter is needed to ensure `HeldItem<1>` extends `HeldItem` despite being invariant in `Effects`
+export class HeldItem<Effects extends HeldItemEffect = any> extends HeldItemBase {
   /** An object matching each supported {@linkcode HeldItemEffect} to the attributes that implement said effect. */
-  public readonly effects: HeldItemRecord<Effects>;
+  private readonly effects: HeldItemRecord<Effects>;
 
   // #region Localization
   /**
@@ -175,25 +174,14 @@ export class HeldItem<Effects extends HeldItemEffect = HeldItemEffect> extends H
   }
 
   /**
-   * Retrieve all {@linkcode HeldItemAttr}s this item has for a given effect.
-   * @param effect - The effect to check
-   * @returns An array containing all attributes of the given type that exist on this item;
-   * will be empty if none exist
-   * @remarks
-   * The order of the attributes within the returned array is unspecified and should not be relied upon.
-   */
-  private getAttrs<E extends Effects>(effect: E): readonly HeldItemAttr<E>[] {
-    return (this.effects[effect] ?? []) as HeldItemAttr<E>[];
-  }
-
-  /**
    * Check whether this item handles the given effect at runtime.
    * Narrows the item's effect set to include `E`.
    * @param effect - The {@linkcode HeldItemEffect} to check
    * @returns Whether this item has at least 1 attribute for `effect`
+   * @sealed
    */
   public hasEffect<E extends HeldItemEffect>(effect: E): this is HeldItem<Effects | E> {
-    return (this.effects as Record<HeldItemEffect, NonEmptyTuple<HeldItemAttr> | undefined>)[effect] != null;
+    return this.effects[effect] != null;
   }
 
   /**
@@ -201,6 +189,9 @@ export class HeldItem<Effects extends HeldItemEffect = HeldItemEffect> extends H
    * {@linkcode HeldItemAttr.shouldApply | shouldApply} conditions.
    * @param effect - The {@linkcode HeldItemEffect | effect} to apply
    * @param params - The parameters to pass to the item attributes' `apply` methods
+   * @remarks
+   * The order of application of multiple attributes for the same effect is not guaranteed and should not be relied upon.
+   * For the context of {@linkcode ConsumableHeldItemAttr}s,
    * @sealed
    */
   public apply<E extends Effects>(effect: E, params: HeldItemEffectParamMap[E]): void {
@@ -210,38 +201,37 @@ export class HeldItem<Effects extends HeldItemEffect = HeldItemEffect> extends H
       }
     }
   }
-}
 
-// TODO: Make this a mixin to avoid diamond problem issues
-/** Class for all {@linkcode HeldItem}s that can be consumed during battle. */
-export class ConsumableHeldItem<Effects extends HeldItemEffect = HeldItemEffect> extends HeldItem<Effects> {
   /**
-   * Consume this item and apply relevant effects.
-   * Should be extended by any subclasses with their own on-consume effects.
-   * @param pokemon - The Pokémon consuming the item
-   * @param remove - Whether to remove the item during consumption; default `true`
-   * @param unburden - Whether to trigger item loss abilities (i.e. Unburden)  when consuming the item; default `true`
+   * Retrieve all attributes of this item pertaining to the given effect.
+   * @param effect - The {@linkcode HeldItemEffect | effect} to retrieve
+   * @returns An array containing all attributes this item has for `effect`;
+   * will be empty if none exist
+   * @remarks
+   * The order of the attributes within the returned array is not guaranteed and should not be relied upon.
    * @sealed
    */
-  public consume(pokemon: Pokemon, remove = true, unburden = true): void {
-    if (remove) {
-      pokemon.heldItemManager.remove(this.type, 1);
-      // TODO: Turn this into updateItemBar or something
-      globalScene.updateItems(pokemon.isPlayer());
-    }
-    if (unburden) {
-      applyAbAttrs("PostItemLostAbAttr", { pokemon });
-    }
+  public getAttrs<E extends Effects>(effect: E): readonly HeldItemAttr<E>[] {
+    return (this.effects[effect] ?? []) as readonly HeldItemAttr<E>[];
   }
 }
 
-/** Abstract class for all items that are purely cosmetic.
+/**
+ * Abstract class for all items that are purely cosmetic.
  * Currently coincides with the {@linkcode HeldItemBase} class.
- * Might become concrete later on if we want cosmetic items without a subclass. */
+ * Might become concrete later on if we want cosmetic items without a subclass.
+ *
+ * @remarks
+ * All cosmetic held items are innately non-stealable, non-transferable, and un-suppressable.
+ */
 export abstract class CosmeticHeldItem extends HeldItemBase {
   /**
    * This field does not exist at runtime and must not be used.
    * Its sole purpose is to ensure that typescript is able to properly differentiate cosmetic items from normal ones.
    */
   private declare _: never;
+
+  public override readonly isStealable = false;
+  public override readonly isSuppressable = false;
+  public override readonly isTransferable = false;
 }

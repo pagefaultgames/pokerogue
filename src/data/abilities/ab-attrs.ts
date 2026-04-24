@@ -41,7 +41,7 @@ import { SwitchType } from "#enums/switch-type";
 import { WeatherType } from "#enums/weather-type";
 import { BerryUsedEvent } from "#events/battle-scene";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
-import { type BerryHeldItem, berryTypeToHeldItem } from "#items/berry";
+import { type BerryHeldItemAttr, berryTypeToHeldItem } from "#items/berry";
 import { getMoveTargets } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { MoveReflectPhase } from "#phases/move-reflect-phase";
@@ -4114,7 +4114,7 @@ export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
             isItemInCategory(bm, HeldItemCategoryId.BERRY)
             && pokemon.heldItemManager.getStack(bm) < allHeldItems[bm].maxStackCount,
         )
-        .map(bm => (allHeldItems[bm] as BerryHeldItem).berryType),
+        .map(bm => (allHeldItems[bm] as BerryHeldItemAttr).berryType),
     );
 
     this.berriesUnderCap = pokemon.battleData.berriesEaten.filter(bt => !cappedBerries.has(bt));
