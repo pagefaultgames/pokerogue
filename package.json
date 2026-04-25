@@ -44,7 +44,7 @@
     "sample-movesets": "pnpm dlx vite-node scripts/gen-moveset/gen-moveset-driver.ts"
   },
   "dependencies": {
-    "@material/material-color-utilities": "^0.3.0",
+    "@material/material-color-utilities": "^0.4.0",
     "ajv": "^8.18.0",
     "compare-versions": "^6.1.1",
     "core-js": "^3.49.0",

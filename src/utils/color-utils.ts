@@ -1,3 +1,58 @@
+import { alphaFromArgb, blueFromArgb, greenFromArgb, redFromArgb } from "@material/material-color-utilities";
+
+// #region @material functions
+
+// These functions were removed from versions after `0.3.0`,
+// and are re-created to maintain compatibility with existing code
+
+/*
+ * SPDX-SnippetBegin
+ *
+ * SPDX-SnippetCopyrightText: 2021 Google LLC
+ * SPDX-SnippetCopyrightText: 2026 Pagefault Games
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/** @remarks Values should be in the range `0-255` inclusive */
+interface Rgba {
+  r: number;
+  g: number;
+  b: number;
+  a: number;
+}
+
+/**
+ * Return RGBA from a given int32 color
+ *
+ * @param argb - ARGB representation of a int32 color.
+ * @return RGBA representation of a int32 color.
+ */
+export function rgbaFromArgb(argb: number): Rgba {
+  const r = redFromArgb(argb);
+  const g = greenFromArgb(argb);
+  const b = blueFromArgb(argb);
+  const a = alphaFromArgb(argb);
+  return { r, g, b, a };
+}
+
+/**
+ * Return int32 color from a given RGBA component
+ *
+ * @param rgba - RGBA representation of a int32 color.
+ * @returns ARGB representation of a int32 color.
+ */
+export function argbFromRgba({ r, g, b, a }: Rgba): number {
+  const rValue = Phaser.Math.Clamp(r, 0, 255);
+  const gValue = Phaser.Math.Clamp(g, 0, 255);
+  const bValue = Phaser.Math.Clamp(b, 0, 255);
+  const aValue = Phaser.Math.Clamp(a, 0, 255);
+  return (aValue << 24) | (rValue << 16) | (gValue << 8) | bValue;
+}
+
+// SPDX-SnippetEnd
+
+// #endregion
+
 export function rgbToHsv(r: number, g: number, b: number) {
   const v = Math.max(r, g, b);
   const c = v - Math.min(r, g, b);
