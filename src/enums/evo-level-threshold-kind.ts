@@ -13,5 +13,5 @@ export const EvoLevelThresholdKind = Object.freeze({
   WILD: 2,
 });
 
-/** {@inheritdoc EvoLevelThresholdKind} */
+/** <!-- {@inheritDoc EvoLevelThresholdKind} --> */
 export type EvoLevelThresholdKind = (typeof EvoLevelThresholdKind)[keyof typeof EvoLevelThresholdKind];

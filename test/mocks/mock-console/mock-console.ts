@@ -124,10 +124,15 @@ export class MockConsole implements Omit<Console, "Console"> {
 
     let formatter: ChalkInstance | undefined;
 
-    if (data.some(d => typeof d === "string" && d.includes("color:"))) {
-      // Infer the color format from the arguments, then remove everything but the message.
+    if (
+      typeof data[0] === "string"
+      && data
+        .values()
+        .drop(1)
+        .some(d => typeof d === "string" && d.includes("color:"))
+    ) {
+      // Infer the color format from the arguments
       formatter = inferColorFormat(data as [string, ...unknown[]]);
-      data.splice(1);
     } else if (data[0] === "[UI]") {
       // Cyan for UI debug messages
       formatter = chalk.hex(UI_MSG_COLOR);

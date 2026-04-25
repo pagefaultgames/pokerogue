@@ -2,11 +2,14 @@ import { globalScene } from "#app/global-scene";
 import { dailyBiomeWeights } from "#balance/daily-biome-weights";
 import { pokemonStarters } from "#balance/pokemon-evolutions";
 import { speciesStarterCosts } from "#balance/starters";
+import { allChallenges } from "#data/challenge";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { BiomeId } from "#enums/biome-id";
 import type { BiomePoolTier } from "#enums/biome-pool-tier";
+import { Challenges } from "#enums/challenges";
 import { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import { MoveId } from "#enums/move-id";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import type { SpeciesId } from "#enums/species-id";
 import type { DailySeedBoss } from "#types/daily-run";
@@ -85,15 +88,12 @@ export function getDailyStartingBiome(): BiomeId {
     return eventBiome;
   }
 
-  // TODO: make an actual weighted average utility function
-  const biomes = getEnumValues(BiomeId);
+  // TODO: use weighted RNG utility function `weightedPick` from `src/utils/random.ts`
+  const biomes = Object.values(BiomeId);
   let totalWeight = 0;
   const biomeThresholds: number[] = [];
-  for (const biome of getEnumValues(BiomeId)) {
+  for (const biome of biomes) {
     const weight = dailyBiomeWeights[biome];
-    if (weight === 0) {
-      continue;
-    }
 
     // Keep track of the total weight & each biome's cumulative weight
     totalWeight += weight;
@@ -227,6 +227,11 @@ export function getDailyForcedWaveSpecies(waveIndex: number): PokemonSpecies | n
   return getPokemonSpecies(forcedWave.speciesId);
 }
 
+/**
+ * Get the biome pool tier for a forced wave for custom daily run.
+ * @param waveIndex - The wave index to check
+ * @returns The {@linkcode BiomePoolTier} to use, or `null` if there is no forced wave for the given index.
+ */
 export function getDailyForcedWaveBiomePoolTier(waveIndex: number): BiomePoolTier | null {
   if (!isDailyEventSeed()) {
     return null;
@@ -245,6 +250,11 @@ export function getDailyForcedWaveBiomePoolTier(waveIndex: number): BiomePoolTie
   return forcedWave.tier;
 }
 
+/**
+ * Check if the current wave should have the hidden ability in a custom daily run.
+ * @param waveIndex - The wave index to check
+ * @returns Whether the wave should have the hidden ability.
+ */
 export function isDailyForcedWaveHiddenAbility(): boolean {
   if (!isDailyEventSeed()) {
     return false;
@@ -266,6 +276,77 @@ export function isDailyForcedWaveHiddenAbility(): boolean {
 }
 
 /**
+ * Check if the current wave should be a trainer battle in a custom daily run.
+ * @param waveIndex - The wave index to check
+ * @returns The {@linkcode DailyTrainerManipulation} to use, or `null` if there is no forced wave for the given index.
+ */
+export function getDailyTrainerManipulation(waveIndex: number): boolean | null {
+  if (!isDailyEventSeed()) {
+    return null;
+  }
+  const trainerManipulation = globalScene.gameMode.dailyConfig?.trainerManipulations?.find(
+    w => w.waveIndex === waveIndex,
+  );
+  if (trainerManipulation == null) {
+    return null;
+  }
+
+  return trainerManipulation.isTrainer;
+}
+
+/**
+ * Starts the challenges for a custom daily run.
+ */
+export function startDailyEventChallenges(): void {
+  if (!isDailyEventSeed()) {
+    return;
+  }
+
+  const { dailyConfig } = globalScene.gameMode;
+
+  for (const dailyChallenge of dailyConfig?.challenges ?? []) {
+    if (!getEnumValues(Challenges).includes(dailyChallenge.id)) {
+      console.warn("Invalid challenge ID used for custom daily run seed:", dailyChallenge.id);
+      continue;
+    }
+    // check that the value is a valid number for the challenge type
+    const challenge = allChallenges.find(c => c.id === dailyChallenge.id);
+    if (!challenge) {
+      console.warn("Invalid challenge ID used for custom daily run seed:", dailyChallenge.id);
+      continue;
+    }
+    if (!isBetween(dailyChallenge.value, 1, challenge.maxValue)) {
+      console.warn("Invalid challenge value used for custom daily run seed:", dailyChallenge.value);
+      continue;
+    }
+    globalScene.gameMode.setChallengeValue(dailyChallenge.id, dailyChallenge.value);
+  }
+}
+
+/**
+ * Get the {@linkcode MysteryEncounterType} for a custom daily run.
+ * @param waveIndex - The wave index to check
+ * @returns The {@linkcode MysteryEncounterType} to use, or `null` if there is no forced wave for the given index.
+ */
+export function getDailyMysteryEncounter(waveIndex: number): MysteryEncounterType | null {
+  if (!isDailyEventSeed()) {
+    return null;
+  }
+
+  const mysteryEncounter = globalScene.gameMode.dailyConfig?.mysteryEncounters?.find(w => w.waveIndex === waveIndex);
+  if (mysteryEncounter == null) {
+    return null;
+  }
+
+  if (!getEnumValues(MysteryEncounterType).includes(mysteryEncounter.type)) {
+    console.warn("Invalid mystery encounter type used for custom daily run seed:", mysteryEncounter.type);
+    return null;
+  }
+
+  return mysteryEncounter.type;
+}
+
+/**
  * Sets a custom starting biome for the daily run if specified in the config.
  * @see {@linkcode CustomDailyRunConfig}
  * @returns The biome to use or `null` if no valid match.
@@ -281,7 +362,7 @@ export function getDailyEventSeedBiome(): BiomeId | null {
     return null;
   }
 
-  if (!getEnumValues(BiomeId).includes(startingBiome)) {
+  if (!Object.values(BiomeId).includes(startingBiome)) {
     console.warn("Invalid biome ID used for custom daily run seed:", startingBiome);
     return null;
   }

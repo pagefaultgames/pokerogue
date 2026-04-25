@@ -1,4 +1,3 @@
-import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type { Pokemon } from "#app/field/pokemon";
 import type { Phase } from "#app/phase";
 import type { MovePhase } from "#app/phases/move-phase";
@@ -6,7 +5,6 @@ import { MovePhasePriorityQueue } from "#app/queues/move-phase-priority-queue";
 import { PokemonPhasePriorityQueue } from "#app/queues/pokemon-phase-priority-queue";
 import { PostSummonPhasePriorityQueue } from "#app/queues/post-summon-phase-priority-queue";
 import type { PriorityQueue } from "#app/queues/priority-queue";
-import type { BattlerIndex } from "#enums/battler-index";
 import type { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import type { DynamicPhase, PhaseConditionFunc, PhaseString } from "#types/phase-types";
 
@@ -113,15 +111,6 @@ export class DynamicQueueManager {
   }
 
   /**
-   * Finds the {@linkcode MovePhase} meeting the condition and changes its move
-   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function
-   * @param move - The {@linkcode PokemonMove | move} to use in replacement
-   */
-  public setMoveForPhase(condition: PhaseConditionFunc<"MovePhase">, move: PokemonMove): void {
-    this.getMovePhaseQueue().setMoveForPhase(condition, move);
-  }
-
-  /**
    * Redirects moves which were targeted at a {@linkcode Pokemon} that has been removed
    * @param removedPokemon - The removed {@linkcode Pokemon}
    * @param allyPokemon - The ally of the removed pokemon
@@ -145,14 +134,6 @@ export class DynamicQueueManager {
    */
   public cancelMovePhase(condition: PhaseConditionFunc<"MovePhase">): void {
     this.getMovePhaseQueue().cancelMove(condition);
-  }
-
-  /**
-   * Sets the move order to a static array rather than a dynamic queue
-   * @param order - The order of {@linkcode BattlerIndex}s
-   */
-  public setMoveOrder(order: BattlerIndex[]): void {
-    this.getMovePhaseQueue().setMoveOrder(order);
   }
 
   /**

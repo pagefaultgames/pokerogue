@@ -1,4 +1,3 @@
-import { BattleSpec } from "#enums/battle-spec";
 import { TrainerType } from "#enums/trainer-type";
 import { trainerConfigs } from "#trainers/trainer-config";
 import { capitalizeFirstLetter } from "#utils/strings";
@@ -1921,12 +1920,10 @@ export const trainerTypeDialogue: TrainerTypeDialogue = {
   ],
 };
 
-export const battleSpecDialogue = {
-  [BattleSpec.FINAL_BOSS]: {
-    encounter: "battleSpecDialogue:encounter",
-    firstStageWin: "battleSpecDialogue:firstStageWin",
-    secondStageWin: "battleSpecDialogue:secondStageWin",
-  },
+export const classicFinalBossDialogue = {
+  encounter: "battleSpecDialogue:encounter",
+  firstStageWin: "battleSpecDialogue:firstStageWin",
+  secondStageWin: "battleSpecDialogue:secondStageWin",
 };
 
 export const miscDialogue = {

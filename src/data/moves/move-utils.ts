@@ -5,6 +5,7 @@ import { MoveCategory, type MoveDamageCategory } from "#enums/move-category";
 import type { MoveId } from "#enums/move-id";
 import { MoveTarget } from "#enums/move-target";
 import { PokemonType } from "#enums/pokemon-type";
+import type { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import type { Move, UserMoveConditionFunc } from "#moves/move";
@@ -79,7 +80,7 @@ export function getMoveTargets(user: Pokemon, move: MoveId, replaceTarget?: Move
     case MoveTarget.OTHER:
     case MoveTarget.ALL_NEAR_OTHERS:
     case MoveTarget.ALL_OTHERS:
-      set = ally != null ? opponents.concat([ally]) : opponents;
+      set = ally == null ? opponents : opponents.concat([ally]);
       multiple = moveTarget === MoveTarget.ALL_NEAR_OTHERS || moveTarget === MoveTarget.ALL_OTHERS;
       break;
     case MoveTarget.NEAR_ENEMY:
@@ -97,17 +98,17 @@ export function getMoveTargets(user: Pokemon, move: MoveId, replaceTarget?: Move
       return { targets: [BattlerIndex.ATTACKER], multiple: false };
     case MoveTarget.NEAR_ALLY:
     case MoveTarget.ALLY:
-      set = ally != null ? [ally] : [];
+      set = ally == null ? [] : [ally];
       break;
     case MoveTarget.USER_OR_NEAR_ALLY:
     case MoveTarget.USER_AND_ALLIES:
     case MoveTarget.USER_SIDE:
-      set = ally != null ? [user, ally] : [user];
+      set = ally == null ? [user] : [user, ally];
       multiple = moveTarget !== MoveTarget.USER_OR_NEAR_ALLY;
       break;
     case MoveTarget.ALL:
     case MoveTarget.BOTH_SIDES:
-      set = (ally != null ? [user, ally] : [user]).concat(opponents);
+      set = (ally == null ? [user] : [user, ally]).concat(opponents);
       multiple = true;
       break;
   }
@@ -150,4 +151,31 @@ export function getCounterAttackTarget(user: Pokemon, damageCategory?: MoveDamag
     }
   }
   return null;
+}
+
+/**
+ * Determine whether the move's {@linkcode Move#moveTarget | target} can target an opponent
+ * @param move - The move to check
+ * @returns Whether the move can target an opponent
+ */
+export function mayTargetOpponent(move: Move): boolean {
+  switch (move.moveTarget) {
+    case MoveTarget.NEAR_ENEMY:
+    case MoveTarget.ALL_NEAR_ENEMIES:
+    case MoveTarget.ALL_ENEMIES:
+    case MoveTarget.ENEMY_SIDE:
+    case MoveTarget.RANDOM_NEAR_ENEMY:
+    case MoveTarget.ATTACKER:
+      return true;
+  }
+  return false;
+}
+
+/**
+ * @returns Whether the move is instantly charged by the given weather
+ * @param move - The move to check
+ * @param weather - The weather to check
+ */
+export function isWeatherInstantCharge(move: Move, weather: WeatherType): boolean {
+  return !!move.findAttr(attr => attr.is("WeatherInstantChargeAttr") && attr.weatherTypes.includes(weather));
 }

@@ -531,10 +531,7 @@ export function trainerThrowPokeball(
                     }
                   },
                   onRepeat: () => {
-                    if (!pokemon.species.isObtainable()) {
-                      shakeCounter.stop();
-                      failCatch(pokemon, originalY, pokeball, pokeballType).then(() => resolve(false));
-                    } else if (shakeCount++ < 3) {
+                    if (shakeCount++ < 3) {
                       if (randSeedInt(65536) < ballTwitchRate) {
                         globalScene.playSound("se/pb_move");
                       } else {
