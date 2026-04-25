@@ -579,6 +579,9 @@ export abstract class PokemonSpeciesForm {
     const rootSpeciesId = this.getRootSpeciesId();
     for (const moveId of moveset) {
       if (Object.hasOwn(speciesEggMoves, rootSpeciesId)) {
+        // TODO: Review typing of `speciesEggMoves` - asserting `rootSpeciesId` is `keyof typeof speciesEggMoves` results in `never[]`
+        // due to incompatible tuple intersections
+
         const eggMoveIndex = speciesEggMoves[rootSpeciesId].indexOf(moveId);
         if (eggMoveIndex > -1 && eggMoves & (1 << eggMoveIndex)) {
           continue;
@@ -1079,61 +1082,63 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
   }
 
   // This could definitely be written better and more accurate to the getSpeciesForLevel logic, but it is only for generating movesets for evolved Pokemon
+  // TODO: Rework this absolutely horridly written slop
   getSimulatedEvolutionChain(
     currentLevel: number,
     forTrainer = false,
     isBoss = false,
     player = false,
   ): EvolutionLevel[] {
+    if (!Object.hasOwn(pokemonPrevolutions, this.speciesId)) {
+      return [[this.speciesId, 1]];
+    }
+
     const ret: EvolutionLevel[] = [];
-    if (Object.hasOwn(pokemonPrevolutions, this.speciesId)) {
-      const prevolutionLevels = this.getPrevolutionLevels().reverse();
-      const levelDiff = player ? 0 : forTrainer || isBoss ? (forTrainer && isBoss ? 2.5 : 5) : 10;
-      ret.push([prevolutionLevels[0][0], 1]);
-      for (let l = 1; l < prevolutionLevels.length; l++) {
-        const evolution = pokemonEvolutions[prevolutionLevels[l - 1][0]]!.find(
-          e => e.speciesId === prevolutionLevels[l][0],
-        );
-        ret.push([
-          prevolutionLevels[l][0],
-          Math.min(
-            Math.max(
-              evolution?.level!
-                + Math.round(
-                  randSeedGauss(0.5, 1 + levelDiff * 0.2)
-                    * Math.max(evolution?.evoLevelThreshold?.[EvoLevelThresholdKind.WILD] ?? 0, 0.5)
-                    * 5,
-                )
-                - 1,
-              2,
-              evolution?.level!,
-            ),
-            currentLevel - 1,
-          ),
-        ]); // TODO: are those bangs correct?
-      }
-      const lastPrevolutionLevel = ret[prevolutionLevels.length - 1][1];
-      const evolution = pokemonEvolutions[prevolutionLevels.at(-1)![0]]!.find(e => e.speciesId === this.speciesId);
+    const prevolutionLevels = this.getPrevolutionLevels().reverse();
+    const levelDiff = player ? 0 : forTrainer || isBoss ? (forTrainer && isBoss ? 2.5 : 5) : 10;
+    ret.push([prevolutionLevels[0][0], 1]);
+    for (let l = 1; l < prevolutionLevels.length; l++) {
+      const evolution = pokemonEvolutions[prevolutionLevels[l - 1][0]]!.find(
+        e => e.speciesId === prevolutionLevels[l][0],
+      );
       ret.push([
-        this.speciesId,
+        prevolutionLevels[l][0],
         Math.min(
           Math.max(
-            lastPrevolutionLevel
+            evolution?.level!
               + Math.round(
                 randSeedGauss(0.5, 1 + levelDiff * 0.2)
                   * Math.max(evolution?.evoLevelThreshold?.[EvoLevelThresholdKind.WILD] ?? 0, 0.5)
                   * 5,
-              ),
-            lastPrevolutionLevel + 1,
+              )
+              - 1,
+            2,
             evolution?.level!,
           ),
-          currentLevel,
+          currentLevel - 1,
         ),
       ]); // TODO: are those bangs correct?
-    } else {
-      ret.push([this.speciesId, 1]);
     }
 
+    const lastSpecies = ret[prevolutionLevels.length - 1][0] as keyof typeof pokemonEvolutions;
+    const evolution = pokemonEvolutions[lastSpecies].find(e => e.speciesId === this.speciesId);
+    ret.push([
+      this.speciesId,
+      Math.min(
+        Math.max(
+          evolution?.level!
+            + Math.round(
+              randSeedGauss(0.5, 1 + levelDiff * 0.2)
+                * Math.max(evolution?.evoLevelThreshold?.[EvoLevelThresholdKind.WILD] ?? 0, 0.5)
+                * 5,
+            )
+            - 1,
+          2,
+          evolution?.level!,
+        ),
+        currentLevel - 1,
+      ),
+    ]); // TODO: are those bangs correct?
     return ret;
   }
 
