@@ -6,7 +6,6 @@
 import { allHeldItems } from "#data/data-lists";
 import { BerryType } from "#enums/berry-type";
 import { FormChangeItemId } from "#enums/form-change-item-id";
-import type { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId, HeldItemNames } from "#enums/held-item-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
@@ -101,7 +100,7 @@ const berryItems = getEnumValues(BerryType).reduce(
       .build();
     return ret;
   },
-  {} as Record<BerryItemId, HeldItem<typeof HeldItemEffect.BERRY>>,
+  {} as Record<BerryItemId, HeldItem<BerryHeldItemAttr>>,
 );
 //#endregion Berries
 
@@ -120,7 +119,7 @@ const typeBoostHeldItems = (
       .build();
     return ret;
   },
-  {} as Record<TypeBoostItemId, HeldItem<typeof HeldItemEffect.ATTACK_TYPE_BOOST>>,
+  {} as Record<TypeBoostItemId, HeldItem<AttackTypeBoostHeldItemAttr>>,
 );
 //#endregion Type Boosters
 
@@ -137,7 +136,7 @@ const vitaminItems = PERMANENT_STATS.reduce(
       .build();
     return ret;
   },
-  {} as Record<BaseStatItemId, HeldItem<typeof HeldItemEffect.BASE_STAT_MULTIPLY>>,
+  {} as Record<BaseStatItemId, HeldItem<BaseStatMultiplyHeldItemAttr>>,
 );
 
 //#endregion Vitamins

@@ -113,16 +113,24 @@ export abstract class HeldItemBase {
   }
 }
 
+type HeldItemWithAttr<Attrs extends HeldItemAttr, E extends HeldItemEffect> = [Attrs] extends [HeldItemEffect]
+  ? HeldItem<HeldItemAttr<E>>
+  : HeldItem<Attrs | HeldItemAttr<E>>;
+
 /**
  * Class for all non-cosmetic held items
  * (i.e. ones that can have their effects applied during or outside of battle).
  *
+ * @typeParam Attrs - A union of {@linkcode HeldItemAttr}s that this class supports.
  * @see {@linkcode HeldItemBuilder}
+ * @privateRemarks
+ * While exposing the exact kinds of attributes this class supports technically breaks encapsulation,
+ * this is required for existing code to work without excessive type assertions.
  */
-// NB: `any` type parameter is needed to ensure `HeldItem<1>` extends `HeldItem` despite being invariant in `Effects`
-export class HeldItem<Effects extends HeldItemEffect = any> extends HeldItemBase {
+// NB: `any` type parameter is needed to ensure `HeldItem<XYZ>` extends `HeldItem` despite being invariant in `Effects`
+export class HeldItem<Attrs extends HeldItemAttr = any> extends HeldItemBase {
   /** An object matching each supported {@linkcode HeldItemEffect} to the attributes that implement said effect. */
-  private readonly effects: HeldItemRecord<Effects>;
+  private readonly effects: HeldItemRecord<Attrs>;
 
   // #region Localization
   /**
@@ -159,7 +167,7 @@ export class HeldItem<Effects extends HeldItemEffect = any> extends HeldItemBase
     iconName,
   }: {
     type: HeldItemId;
-    effects: HeldItemRecord<Effects>;
+    effects: HeldItemRecord<Attrs>;
     maxStackCount?: number;
     nameParams?: Parameters<typeof i18next.t> | undefined;
     descriptionParams?: Parameters<typeof i18next.t> | undefined;
@@ -180,7 +188,7 @@ export class HeldItem<Effects extends HeldItemEffect = any> extends HeldItemBase
    * @returns Whether this item has at least 1 attribute for `effect`
    * @sealed
    */
-  public hasEffect<E extends HeldItemEffect>(effect: E): this is HeldItem<Effects | E> {
+  public hasEffect<E extends HeldItemEffect>(effect: E): this is HeldItemWithAttr<Attrs, E> {
     return this.effects[effect] != null;
   }
 
@@ -195,8 +203,8 @@ export class HeldItem<Effects extends HeldItemEffect = any> extends HeldItemBase
    * (including other consumable attributes) is undefined behavior.
    * @sealed
    */
-  public apply<E extends Effects>(effect: E, params: HeldItemEffectParamMap[E]): void {
-    for (const attr of this.getAttrs(effect)) {
+  public apply<E extends Attrs["effect"]>(effect: E, params: HeldItemEffectParamMap[E]): void {
+    for (const attr of this.getAttrs(effect) as readonly HeldItemAttr<E>[]) {
       if (attr.shouldApply(params)) {
         attr.apply(params);
       }
@@ -206,14 +214,14 @@ export class HeldItem<Effects extends HeldItemEffect = any> extends HeldItemBase
   /**
    * Retrieve all attributes of this item pertaining to the given effect.
    * @param effect - The {@linkcode HeldItemEffect | effect} to retrieve
-   * @returns An array containing all attributes this item has for `effect`;
-   * will be empty if none exist
+   * @returns An array containing all attributes this item has for `effect`.
+   * Is guaranteed to be non-empty for properly constructed `HeldItem`s.
    * @remarks
    * The order of the attributes within the returned array is not guaranteed and should not be relied upon.
    * @sealed
    */
-  public getAttrs<E extends Effects>(effect: E): readonly HeldItemAttr<E>[] {
-    return (this.effects[effect] ?? []) as readonly HeldItemAttr<E>[];
+  public getAttrs<E extends Attrs["effect"]>(effect: E): readonly Extract<Attrs, HeldItemAttr<E>>[] {
+    return this.effects[effect] as unknown as readonly Extract<Attrs, HeldItemAttr<E>>[];
   }
 }
 

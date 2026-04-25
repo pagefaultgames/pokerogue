@@ -21,6 +21,7 @@ import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import type { BerryType } from "#enums/berry-type";
 import { Command } from "#enums/command";
+import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
 import { HitResult } from "#enums/hit-result";
 import { CommonAnim } from "#enums/move-anims-common";
@@ -41,6 +42,7 @@ import { SwitchType } from "#enums/switch-type";
 import { WeatherType } from "#enums/weather-type";
 import { BerryUsedEvent } from "#events/battle-scene";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
+import type { BerryItemId } from "#items/all-held-items";
 import { type BerryHeldItemAttr, berryTypeToHeldItem } from "#items/berry";
 import { getMoveTargets } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
@@ -4107,14 +4109,15 @@ export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
   override canApply({ pokemon }: AbAttrBaseParams): boolean {
     // Ensure we have at least 1 recoverable berry (at least 1 berry in berriesEaten is not capped)
     const cappedBerries = new Set(
-      pokemon
-        .getHeldItems()
-        .filter(
-          bm =>
-            isItemInCategory(bm, HeldItemCategoryId.BERRY)
-            && pokemon.heldItemManager.getStack(bm) < allHeldItems[bm].maxStackCount,
-        )
-        .map(bm => (allHeldItems[bm] as BerryHeldItemAttr).berryType),
+      (
+        pokemon
+          .getHeldItems()
+          .filter(
+            bm =>
+              isItemInCategory(bm, HeldItemCategoryId.BERRY)
+              && pokemon.heldItemManager.getStack(bm) < allHeldItems[bm].maxStackCount,
+          ) as BerryItemId[]
+      ).map(bm => (allHeldItems[bm].getAttrs(HeldItemEffect.BERRY)[0] as BerryHeldItemAttr).berryType),
     );
 
     this.berriesUnderCap = pokemon.battleData.berriesEaten.filter(bt => !cappedBerries.has(bt));

@@ -4,6 +4,7 @@ import type { HeldItem } from "#items/held-item";
 import { ConsumableHeldItemAttr, HeldItemAttr } from "#items/held-item-attr";
 import { HeldItemBuilder } from "#items/held-item-builder";
 import type { ErrorType } from "#types/error-type";
+import type { ExtractItemEffect } from "#types/held-item-data-types";
 import { describe, expectTypeOf, it } from "vitest";
 
 // Dummy classes
@@ -53,7 +54,10 @@ describe("HeldItemBuilder", () => {
 
   it("should convert the builder into a properly typed held item instance", () => {
     expectTypeOf(builder().build()).toEqualTypeOf<HeldItem<never>>();
-    expectTypeOf(builder().attr(NonConsumableAttr).build()).toEqualTypeOf<HeldItem<NonConsumableAttr["effect"]>>();
+    expectTypeOf(builder().attr(NonConsumableAttr).build()).toEqualTypeOf<HeldItem<NonConsumableAttr>>();
+    expectTypeOf(builder().attr(NonConsumableAttr).attr(ConsumableAttr).build()).toEqualTypeOf<
+      HeldItem<NonConsumableAttr | ConsumableAttr>
+    >();
   });
 
   describe("Errors", () => {
@@ -71,5 +75,11 @@ describe("HeldItemBuilder", () => {
         ExtractError<typeof result>
       >().toEqualTypeOf<"A held item cannot have more than one consumable attribute for a given effect, but 2 were found for HeldItemEffect.EXP_BOOSTER!">();
     });
+  });
+});
+
+describe("ExtractItemEffect", () => {
+  it("should map item IDs to effects", () => {
+    expectTypeOf<ExtractItemEffect<typeof HeldItemId.SITRUS_BERRY>>().toEqualTypeOf<typeof HeldItemEffect.BERRY>();
   });
 });

@@ -47,7 +47,7 @@ export function toHaveAppliedItem<T extends ApplicableHeldItemId, E extends Extr
     };
   }
 
-  const item = allHeldItems[id];
+  const item: HeldItem = allHeldItems[id];
   const itemName = HeldItemNames[id];
 
   // This is technically checked by the type system, but better safe than sorry

@@ -147,6 +147,7 @@ export function isCategoryId(id: number): id is HeldItemCategoryId {
   return Object.values<number>(HeldItemCategoryId).includes(id);
 }
 
+// TODO: Can we make this a type predicate?
 export function isItemInCategory(itemId: HeldItemId, category: HeldItemCategoryId): boolean {
   return getHeldItemCategory(itemId) === category;
 }

@@ -3383,9 +3383,9 @@ export class EatBerryAttr extends MoveEffectAttr {
    */
   protected eatBerry(consumer: Pokemon, berryOwner: Pokemon = consumer, updateHarvest = consumer === berryOwner) {
     // consumer eats berry, owner triggers unburden and similar effects
-    // TODO: This really should be accomplished by applying the berry with a parameter to customize its consumption
-    const berryType = (allHeldItems[this.chosenBerry].getAttrs(HeldItemEffect.BERRY) as BerryHeldItemAttr[])[0]
-      .berryType;
+    // TODO: This would ideally be accomplished by applying the berry with a parameter to customize its consumption procedure
+    // (rather than breaking encapsulation and doing it manually)
+    const { berryType } = allHeldItems[this.chosenBerry].getAttrs(HeldItemEffect.BERRY)[0] as BerryHeldItemAttr;
     getBerryEffectFunc(berryType)(consumer);
     applyAbAttrs("PostItemLostAbAttr", { pokemon: berryOwner });
     applyAbAttrs("HealFromBerryUseAbAttr", { pokemon: consumer });

@@ -145,11 +145,11 @@ export class HeldItemBuilder<Attrs extends HeldItemAttr = never, ConsumableEffec
    * Build a non-consumable {@linkcode HeldItem} with the stored attributes and flags.
    * @returns A fully-typed `HeldItem` with all registered attributes.
    */
-  public build(): HeldItem<Attrs["effect"]> {
+  public build(): HeldItem<Attrs> {
     // @ts-expect-error - TypeScript doesn't support friend classes, so this is the closest we can get to
     // ensuring `HeldItem` is only constructed by its corresponding builder.
     // NB: The type specifier here is required due to TS resolving this as `any`
-    const item: HeldItem<Attrs["effect"]> = new HeldItem({
+    const item: HeldItem<Attrs> = new HeldItem({
       type: this.id,
       effects: this.buildRecord(),
       maxStackCount: this.maxStackCount,
@@ -161,12 +161,12 @@ export class HeldItemBuilder<Attrs extends HeldItemAttr = never, ConsumableEffec
     return item;
   }
 
-  private buildRecord(): HeldItemRecord<Attrs["effect"]> {
+  private buildRecord(): HeldItemRecord<Attrs> {
     // TODO: Remove type assertion after `Object.keys` PR
-    return Object.fromEntries(this.attrMap.entries()) as unknown as HeldItemRecord<Attrs["effect"]>;
+    return Object.fromEntries(this.attrMap.entries()) as unknown as HeldItemRecord<Attrs>;
   }
 
-  private applyFlags(item: HeldItem<Attrs["effect"]>): void {
+  private applyFlags(item: HeldItem<Attrs>): void {
     if (!this.isTransferable) {
       item.isTransferable = false;
     }

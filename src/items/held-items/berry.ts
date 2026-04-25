@@ -5,12 +5,13 @@ import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId } from "#enums/held-item-id";
 import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { BerryUsedEvent } from "#events/battle-scene";
+import type { BerryItemId } from "#items/all-held-items";
 import { ConsumableHeldItemAttr } from "#items/held-item-attr";
 import type { BerryParams } from "#types/held-item-parameter";
 import { BooleanHolder } from "#utils/common";
 
 type BerryTypeToHeldItemMap = {
-  [key in BerryType]: HeldItemId;
+  [key in BerryType]: BerryItemId;
 };
 
 // TODO: Rework this to use a bitwise XOR

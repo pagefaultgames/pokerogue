@@ -1,9 +1,9 @@
-import type { HeldItemEffect } from "#enums/held-item-effect";
 import { type HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import type { RarityTier } from "#enums/reward-tier";
 import type { Pokemon } from "#field/pokemon";
 import type { AllHeldItems } from "#items/all-held-items";
 import type { CosmeticHeldItem, HeldItem } from "#items/held-item";
+import type { HeldItemAttr } from "#items/held-item-attr";
 import type { InferKeys } from "#types/type-helpers";
 
 // TODO: This file is less of a _data_ types file and more of an _everything_ types file;
@@ -45,6 +45,7 @@ export function isHeldItemSpecs(entry: unknown): entry is HeldItemSpecs {
   );
 }
 
+// TODO: Make this generic on a subset of `HeldItemId`
 export type HeldItemWeights = Partial<Record<HeldItemId, number>>;
 
 // TODO: Inline this into the sole place it is used
@@ -104,7 +105,7 @@ export type ApplicableHeldItemId = Exclude<keyof AllHeldItems, CosmeticHeldItemI
 
 /** Utility type to retrieve the effects of a given {@linkcode HeldItem} based on its ID. */
 export type ExtractItemEffect<T extends ApplicableHeldItemId> =
-  AllHeldItems[T] extends HeldItem<infer Effects extends HeldItemEffect> ? Effects : never;
+  AllHeldItems[T] extends HeldItem<infer Attr extends HeldItemAttr> ? Attr["effect"] : never;
 
 /**
  * Dummy, TypeScript-only type to ensure that {@linkcode HeldItemId} and {@linkcode HeldItemCategoryId}
