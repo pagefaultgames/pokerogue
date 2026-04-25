@@ -1,6 +1,6 @@
 import type { Stringable, Stringify, Unstringify } from "#types/strings";
 import type { PreventHoverExpansion } from "#types/type-helpers";
-import type { SetupServerApi } from "msw/node";
+import type { SetupServer } from "msw/node";
 
 // #region Object-related types
 /**
@@ -47,7 +47,7 @@ declare global {
    *
    * ⚠️ Should not be used in production code, as it is only populated during test runs!
    */
-  var server: SetupServerApi;
+  var server: SetupServer;
 
   // Overloads for `Object.keys` and company to return arrays of strongly typed keys on compatible objects.
   // NOTE: These are technically unsound due to structural typing allowing excess properties, but extremely useful nonetheless

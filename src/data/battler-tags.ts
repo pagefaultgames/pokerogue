@@ -2681,7 +2681,7 @@ export class RoostedTag extends BattlerTag {
     let modifiedTypes: PokemonType[];
     if (this.isBasePureFlying && !isCurrentlyDualType) {
       modifiedTypes = [PokemonType.NORMAL];
-    } else if (!!pokemon.getTag(RemovedTypeTag) && isOriginallyDualType && !isCurrentlyDualType) {
+    } else if (pokemon.getTag(RemovedTypeTag) && isOriginallyDualType && !isCurrentlyDualType) {
       modifiedTypes = [PokemonType.UNKNOWN];
     } else {
       modifiedTypes = currentTypes.filter(type => type !== PokemonType.FLYING);

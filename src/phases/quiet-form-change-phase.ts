@@ -4,7 +4,6 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { getSpeciesFormChangeMessage } from "#data/form-change-triggers";
 import type { SpeciesFormChange } from "#data/pokemon-forms";
 import { getTypeRgb } from "#data/type";
-import { BattleSpec } from "#enums/battle-spec";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import type { Pokemon } from "#field/pokemon";
 import { BattlePhase } from "#phases/battle-phase";
@@ -21,6 +20,7 @@ export class QuietFormChangePhase extends BattlePhase {
   public readonly pokemon: Pokemon;
   protected readonly formChange: SpeciesFormChange;
   /** The Pokemon's prior name before changing forms. */
+  // TODO: remove? it's unused
   private preName: string;
 
   constructor(pokemon: Pokemon, formChange: SpeciesFormChange) {
@@ -203,7 +203,7 @@ export class QuietFormChangePhase extends BattlePhase {
     this.pokemon.removeTag(BattlerTagType.AUTOTOMIZED);
 
     // TODO: This eternatus boss fight code should almost certainly go in its own superclass phase
-    if (globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS && this.pokemon.isEnemy()) {
+    if (globalScene.currentBattle.isClassicFinalBoss && this.pokemon.isEnemy()) {
       globalScene.playBgm();
       globalScene.phaseManager.unshiftNew(
         "PokemonHealPhase",
