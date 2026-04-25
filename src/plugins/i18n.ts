@@ -167,7 +167,6 @@ await i18next
   .use(new KoreanPostpositionProcessor())
   .init(
     {
-      showSupportNotice: false,
       fallbackLng: {
         "es-419": ["es-ES", "en"],
         default: ["en"],
