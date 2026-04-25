@@ -4,11 +4,11 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { ConditionalProtectTag } from "#data/arena-tag";
 import { MoveAnim } from "#data/battle-anims";
-import { DamageProtectedTag, ProtectedTag, SemiInvulnerableTag, SubstituteTag, TypeBoostTag } from "#data/battler-tags";
+import { ProtectedTag, SemiInvulnerableTag, SubstituteTag, TypeBoostTag } from "#data/battler-tags";
 import { SpeciesFormChangePostMoveTrigger } from "#data/form-change-triggers";
 import type { TypeDamageMultiplier } from "#data/type";
 import { ArenaTagSide } from "#enums/arena-tag-side";
-import { BattlerIndex } from "#enums/battler-index";
+import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { HitCheckResult } from "#enums/hit-check-result";
@@ -177,14 +177,15 @@ export class MoveEffectPhase extends PokemonPhase {
       this.moveHistoryEntry.result === MoveResult.SUCCESS
       || move.getAttrs("MoveEffectAttr").some(attr => attr.trigger === MoveEffectTrigger.POST_TARGET)
     ) {
-      const targetsForAnimation = this.getTargets();
+      const moveTargets = this.getTargets();
+      const targetsForAnimation = moveTargets.length > 0 ? moveTargets : [user];
       let animationsLeft = targetsForAnimation.length;
 
       for (const target of targetsForAnimation) {
         new MoveAnim(
           move.id as MoveId,
           user,
-          target?.getBattlerIndex() ?? BattlerIndex.ATTACKER,
+          target.getBattlerIndex(),
           // Some moves used in mystery encounters should be played even on an empty field
           globalScene.currentBattle?.mysteryEncounter?.hasBattleAnimationsWithoutTargets ?? false,
         ).play(move.hitsSubstitute(user, target), () => {
@@ -514,15 +515,15 @@ export class MoveEffectPhase extends PokemonPhase {
       );
     }
 
+    const protectionTags = target.findTags(t => t instanceof ProtectedTag);
+    const isStatusMove = this.move.category === MoveCategory.STATUS;
+
     // TODO: Break up this chunky boolean to make it more palatable
     return (
       ![MoveTarget.ENEMY_SIDE, MoveTarget.BOTH_SIDES].includes(this.move.moveTarget)
       && (bypassIgnoreProtect.value || !this.move.doesFlagEffectApply({ flag: MoveFlags.IGNORE_PROTECT, user, target }))
       && (hasConditionalProtectApplied.value
-        || (target.findTags(t => t instanceof DamageProtectedTag).length === 0
-          && target.findTags(t => t instanceof ProtectedTag).some(t => target.lapseTag(t.tagType)))
-        || (this.move.category !== MoveCategory.STATUS
-          && target.findTags(t => t instanceof DamageProtectedTag).some(t => target.lapseTag(t.tagType))))
+        || protectionTags.some(t => (!isStatusMove || t.blockStatus) && target.lapseTag(t.tagType)))
     );
   }
 

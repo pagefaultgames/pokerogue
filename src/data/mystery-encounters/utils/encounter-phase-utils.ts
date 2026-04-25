@@ -2,7 +2,7 @@ import type { Battle } from "#app/battle";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { BASE_HIDDEN_ABILITY_CHANCE, BASE_SHINY_CHANCE } from "#balance/rates";
+import { BASE_HIDDEN_ABILITY_RATE, BASE_SHINY_CHANCE } from "#balance/rates";
 import { initMoveAnim, loadMoveAnimAssets } from "#data/battle-anims";
 import { modifierTypes } from "#data/data-lists";
 import type { IEggOptions } from "#data/egg";
@@ -843,7 +843,7 @@ export function handleMysteryEncounterVictory(addHealPhase = false, doNotContinu
     !globalScene
       .getEnemyParty()
       .find(p =>
-        encounter.encounterMode !== MysteryEncounterMode.TRAINER_BATTLE ? p.isOnField() : !p?.isFainted(true),
+        encounter.encounterMode === MysteryEncounterMode.TRAINER_BATTLE ? !p?.isFainted(true) : p.isOnField(),
       )
   ) {
     globalScene.phaseManager.pushNew("BattleEndPhase", true);
@@ -998,7 +998,7 @@ export function getRandomEncounterPokemon(params: RandomEncounterParams): EnemyP
     shinyRerolls = 0,
     eventHiddenRerolls = 0,
     eventShinyRerolls = 0,
-    hiddenAbilityChance = BASE_HIDDEN_ABILITY_CHANCE,
+    hiddenAbilityChance = BASE_HIDDEN_ABILITY_RATE,
     shinyChance = BASE_SHINY_CHANCE,
     maxShinyChance = 0,
     speciesFilter = () => true,
@@ -1052,8 +1052,8 @@ export function getRandomEncounterPokemon(params: RandomEncounterParams): EnemyP
     shinyRerolls--;
   }
 
-  while (hiddenRerolls > 0) {
-    ret.tryRerollHiddenAbilitySeed(hiddenAbilityChance, true);
+  while (hiddenRerolls > 0 && ret.abilityIndex !== 2) {
+    ret.tryRerollHiddenAbilitySeed(hiddenAbilityChance);
     hiddenRerolls--;
   }
 

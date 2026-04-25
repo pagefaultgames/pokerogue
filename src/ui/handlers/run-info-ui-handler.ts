@@ -342,7 +342,7 @@ export class RunInfoUiHandler extends UiHandler {
         trainerName = trainerObj.getName(0, true);
       }
       const boxString = i18next
-        .t(trainerObj.variant !== TrainerVariant.DOUBLE ? "battle:trainerAppeared" : "battle:trainerAppearedDouble", {
+        .t(trainerObj.variant === TrainerVariant.DOUBLE ? "battle:trainerAppearedDouble" : "battle:trainerAppeared", {
           trainerName,
         })
         .replace(/\n/g, " ");

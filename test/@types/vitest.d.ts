@@ -77,6 +77,7 @@ declare module "vitest" {
      */
     not: NegativeAssertion<T>;
 
+    // #region Banned Chai Assertions
     // enforce consistent style by banning chai assertions at a type level (except `not` which is also in jest).
     // NB: We cannot place these in a nice interface since TS will complain about `Assertion` extending 2 interfaces with clashing types.
     // We also cannot make these anything other than `never` as TS will error about incompatible types (which prevents any custom error messages)
@@ -180,6 +181,8 @@ declare module "vitest" {
     sealed: never;
     frozen: never;
     oneOf: never;
+
+    // #endregion Banned Chai Assertions
   }
 
   type NegativeAssertion<T> = Assertion<T, true>;
@@ -430,6 +433,7 @@ interface PokemonMatchers {
    */
   toHaveUsedPP<P extends number | "all">(moveId: MoveId, ppUsed: If<IsNumericLiteral<P>, Integer<P>, P>): void;
 }
+
 // #endregion Pokemon Matchers
 
 // biome-ignore lint/complexity/noUselessEmptyExport: Prevents exporting internal types (cf. https://github.com/microsoft/TypeScript/issues/57764)

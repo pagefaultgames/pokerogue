@@ -1032,7 +1032,6 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.INFILTRATOR, 5) //
       .attr(InfiltratorAbAttr)
-      .partial() // does not bypass Mist
       .build(),
     new AbBuilder(AbilityId.MUMMY, 5) //
       .attr(PostDefendAbilityGiveAbAttr, AbilityId.MUMMY)

@@ -115,6 +115,7 @@ export interface ClearSessionSavedataRequest {
 }
 
 /** Pokerogue API response for path: `/savedata/session/clear` */
+// TODO: Why can these be nullish?
 export interface ClearSessionSavedataResponse {
   /** Contains the error message if any occured */
   error?: string;

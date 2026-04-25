@@ -80,7 +80,7 @@ export function getMoveTargets(user: Pokemon, move: MoveId, replaceTarget?: Move
     case MoveTarget.OTHER:
     case MoveTarget.ALL_NEAR_OTHERS:
     case MoveTarget.ALL_OTHERS:
-      set = ally != null ? opponents.concat([ally]) : opponents;
+      set = ally == null ? opponents : opponents.concat([ally]);
       multiple = moveTarget === MoveTarget.ALL_NEAR_OTHERS || moveTarget === MoveTarget.ALL_OTHERS;
       break;
     case MoveTarget.NEAR_ENEMY:
@@ -98,17 +98,17 @@ export function getMoveTargets(user: Pokemon, move: MoveId, replaceTarget?: Move
       return { targets: [BattlerIndex.ATTACKER], multiple: false };
     case MoveTarget.NEAR_ALLY:
     case MoveTarget.ALLY:
-      set = ally != null ? [ally] : [];
+      set = ally == null ? [] : [ally];
       break;
     case MoveTarget.USER_OR_NEAR_ALLY:
     case MoveTarget.USER_AND_ALLIES:
     case MoveTarget.USER_SIDE:
-      set = ally != null ? [user, ally] : [user];
+      set = ally == null ? [user] : [user, ally];
       multiple = moveTarget !== MoveTarget.USER_OR_NEAR_ALLY;
       break;
     case MoveTarget.ALL:
     case MoveTarget.BOTH_SIDES:
-      set = (ally != null ? [user, ally] : [user]).concat(opponents);
+      set = (ally == null ? [user] : [user, ally]).concat(opponents);
       multiple = true;
       break;
   }
