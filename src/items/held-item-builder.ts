@@ -16,7 +16,7 @@ type AddAttrToBuilder<Attrs extends HeldItemAttr, Effects extends HeldItemEffect
     ? E extends Effects
       ? ErrorType<`A held item cannot have more than one consumable attribute for a given effect, but 2 were found for HeldItemEffect.${HeldItemEffectNames[E]}!`>
       : HeldItemBuilder<Attrs | NewAttr, Effects | E>
-    : HeldItemBuilder<Attrs | NewAttr, Effects | NewAttr["effect"]>;
+    : HeldItemBuilder<Attrs | NewAttr, Effects>;
 
 /**
  * Builder class for {@linkcode HeldItem} instances.

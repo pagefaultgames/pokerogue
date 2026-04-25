@@ -70,6 +70,7 @@ import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { WeatherType } from "#enums/weather-type";
 import { MoveUsedEvent } from "#events/battle-scene";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
+import type { BerryItemId } from "#items/all-held-items";
 import { type BerryHeldItemAttr, berryTypeToHeldItem } from "#items/berry";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import {
@@ -3326,7 +3327,7 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
  * Attribute that causes targets of the move to eat a berry. Used for Teatime, Stuff Cheeks
  */
 export class EatBerryAttr extends MoveEffectAttr {
-  protected chosenBerry: HeldItemId;
+  protected chosenBerry: BerryItemId;
 
   /**
    * Causes the target to eat a berry.
@@ -3368,8 +3369,8 @@ export class EatBerryAttr extends MoveEffectAttr {
     globalScene.updateItems(target.isPlayer());
   }
 
-  protected getTargetHeldBerries(target: Pokemon): HeldItemId[] {
-    return target.getHeldItems().filter(m => isItemInCategory(m, HeldItemCategoryId.BERRY));
+  protected getTargetHeldBerries(target: Pokemon): BerryItemId[] {
+    return target.getHeldItems().filter(m => isItemInCategory(m, HeldItemCategoryId.BERRY)) as BerryItemId[];
   }
 
   /**
@@ -3382,10 +3383,13 @@ export class EatBerryAttr extends MoveEffectAttr {
    */
   protected eatBerry(consumer: Pokemon, berryOwner: Pokemon = consumer, updateHarvest = consumer === berryOwner) {
     // consumer eats berry, owner triggers unburden and similar effects
-    getBerryEffectFunc((allHeldItems[this.chosenBerry] as BerryHeldItemAttr).berryType)(consumer);
+    // TODO: This really should be accomplished by applying the berry with a parameter to customize its consumption
+    const berryType = (allHeldItems[this.chosenBerry].getAttrs(HeldItemEffect.BERRY) as BerryHeldItemAttr[])[0]
+      .berryType;
+    getBerryEffectFunc(berryType)(consumer);
     applyAbAttrs("PostItemLostAbAttr", { pokemon: berryOwner });
     applyAbAttrs("HealFromBerryUseAbAttr", { pokemon: consumer });
-    consumer.recordEatenBerry((allHeldItems[this.chosenBerry] as BerryHeldItemAttr).berryType, updateHarvest);
+    consumer.recordEatenBerry(berryType, updateHarvest);
   }
 }
 

@@ -32,7 +32,8 @@ describe("{{description}}", () => {
       .startingLevel(100)
       .enemyLevel(100);
 
-    vi.spyOn(allHeldItems[HeldItemId.WIDE_LENS], "shouldApply");
+    // replace with actual item ID in question
+    vi.spyOn(allHeldItems[HeldItemId.WIDE_LENS], "apply");
   });
 
   it("should do XYZ when applied", async () => {
@@ -58,6 +59,7 @@ describe("{{description}}", () => {
 
     feebas.heldItemManager.add(HeldItemId.WIDE_LENS);
 
+    // replace with actual logic for triggering the item
     game.move.use(MoveId.TACKLE);
     await game.phaseInterceptor.to("MoveEffectPhase");
 

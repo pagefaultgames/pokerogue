@@ -2,32 +2,38 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { allHeldItems } from "#data/data-lists";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemNames } from "#enums/held-item-id";
-import type { AllHeldItems } from "#items/all-held-items";
-import { type CosmeticHeldItem, HeldItem } from "#items/held-item";
+import { HeldItem } from "#items/held-item";
 import { getOnelineDiffStr } from "#test/utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/utils/test-utils";
-import type { ApplicableHeldItemId } from "#types/held-item-data-types";
+import type { ApplicableHeldItemId, ExtractItemEffect } from "#types/held-item-data-types";
 import type { HeldItemEffectParamMap } from "#types/held-item-parameter";
 import type { AtLeastOne } from "#types/type-helpers";
 import { enumValueToKey } from "#utils/enums";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 import { type MockInstance, vi } from "vitest";
 
+/**
+ * Internal union type containing all {@linkcode HeldItemEffect}s whose parameters
+ * solely contain `Pokemon`.
+ */
+type EffectsUsingDefaultParams = {
+  [E in HeldItemEffect]: keyof HeldItemEffectParamMap[E] extends "pokemon" ? E : never;
+}[HeldItemEffect];
+
 /** Options type for {@linkcode toHaveAppliedItem}. */
-export type ToHaveAppliedItemOptions<E extends HeldItemEffect> =
-  Omit<HeldItemEffectParamMap[E], "pokemon"> extends Record<string, never>
-    ? never
-    : AtLeastOne<Omit<HeldItemEffectParamMap[E], "pokemon">>;
+export type ToHaveAppliedItemOptions<E extends HeldItemEffect> = E extends EffectsUsingDefaultParams
+  ? never
+  : AtLeastOne<Omit<HeldItemEffectParamMap[E], "pokemon">>;
 
 /**
- * Matcher that checks if a {@linkcode Pokemon} has applied the given {@linkcode HeldItem}.
  * Used during unit tests to ensure effects were applied correctly.
+ * @param received - The object to check. Should be a {@linkcode Pokemon}
  * @param id - The {@linkcode HeldItemId} of the item being applied
  * @param effect - One of `item`'s applicable {@linkcode HeldItemEffect}s whose application will be checked
  * @param options - A partially-filled parameters object used to query the arguments `item` was called with
  * @returns Whether the matcher passed
  */
-export function toHaveAppliedItem<T extends ApplicableHeldItemId, E extends AllHeldItems[T]["effects"][number]>(
+export function toHaveAppliedItem<T extends ApplicableHeldItemId, E extends ExtractItemEffect<T>>(
   this: MatcherState,
   received: unknown,
   id: T,
@@ -41,8 +47,10 @@ export function toHaveAppliedItem<T extends ApplicableHeldItemId, E extends AllH
     };
   }
 
-  const item = allHeldItems[id] as CosmeticHeldItem | HeldItem;
+  const item = allHeldItems[id];
   const itemName = HeldItemNames[id];
+
+  // This is technically checked by the type system, but better safe than sorry
   if (!(item instanceof HeldItem)) {
     return {
       pass: this.isNot,
@@ -50,20 +58,22 @@ export function toHaveAppliedItem<T extends ApplicableHeldItemId, E extends AllH
     };
   }
 
-  if (!item.effects.includes(effect)) {
+  if (!item.hasEffect(effect)) {
     return {
       pass: this.isNot,
       message: () =>
         `Held item ${itemName}'s effects does not include HeldItemEffect.${enumValueToKey(HeldItemEffect, effect)}!`,
       expected: enumValueToKey(HeldItemEffect, effect),
-      actual: item.effects.map(e => enumValueToKey(HeldItemEffect, e)),
+      actual: (Object.keys(item["effects"]) as `${HeldItemEffect}`[]).map(e =>
+        enumValueToKey(HeldItemEffect, Number(e) as HeldItemEffect),
+      ),
     };
   }
 
-  if (!vi.isMockFunction(item.shouldApply)) {
+  if (!vi.isMockFunction(item.apply)) {
     return {
       pass: this.isNot,
-      message: () => `Held item ${itemName}'s \`shouldApply\` function is not a spy!`,
+      message: () => `Held item ${itemName}'s \`apply\` function is not a spy!`,
     };
   }
 
@@ -72,7 +82,7 @@ export function toHaveAppliedItem<T extends ApplicableHeldItemId, E extends AllH
     pokemon: received,
   } as unknown as Partial<HeldItemEffectParamMap[E]>;
 
-  const calls = (item.shouldApply as unknown as MockInstance<typeof item.shouldApply>).mock.calls;
+  const calls = (item.apply as unknown as MockInstance<typeof item.apply>).mock.calls;
   const pass = this.equals(
     calls,
     [effect, params],

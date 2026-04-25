@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import type { HeldItemEffect } from "#enums/held-item-effect";
 import { type HeldItemId, HeldItemNames } from "#enums/held-item-id";
 import type { Pokemon } from "#field/pokemon";
-import type { HeldItemAttr, HeldItemRecord } from "#items/held-item-attr";
+import type { ConsumableHeldItemAttr, HeldItemAttr, HeldItemRecord } from "#items/held-item-attr";
 import type { HeldItemBuilder } from "#items/held-item-builder";
 import type { HeldItemEffectParamMap } from "#types/held-item-parameter";
 import i18next from "i18next";
@@ -190,8 +190,9 @@ export class HeldItem<Effects extends HeldItemEffect = any> extends HeldItemBase
    * @param effect - The {@linkcode HeldItemEffect | effect} to apply
    * @param params - The parameters to pass to the item attributes' `apply` methods
    * @remarks
-   * The order of application of multiple attributes for the same effect is not guaranteed and should not be relied upon.
-   * For the context of {@linkcode ConsumableHeldItemAttr}s,
+   * The execution order of multiple attributes is not guaranteed and should not be relied upon. \
+   * Notably, this means that combining {@linkcode ConsumableHeldItemAttr}s with other attributes that depend on the item's current stack count
+   * (including other consumable attributes) is undefined behavior.
    * @sealed
    */
   public apply<E extends Effects>(effect: E, params: HeldItemEffectParamMap[E]): void {

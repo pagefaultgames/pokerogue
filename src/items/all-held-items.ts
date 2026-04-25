@@ -74,7 +74,7 @@ type TypeBoostItemId =
   | typeof HeldItemId.BLACK_GLASSES
   | typeof HeldItemId.FAIRY_FEATHER;
 
-type BerryItemId =
+export type BerryItemId =
   | typeof HeldItemId.SITRUS_BERRY
   | typeof HeldItemId.LUM_BERRY
   | typeof HeldItemId.ENIGMA_BERRY

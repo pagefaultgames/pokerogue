@@ -79,6 +79,8 @@ export abstract class HeldItemAttr<E extends HeldItemEffect = HeldItemEffect> {
  * Combining with other attributes that depend on stack count may have unexpected results.
  */
 export abstract class ConsumableHeldItemAttr<E extends HeldItemEffect = HeldItemEffect> extends HeldItemAttr<E> {
+  private declare readonly _: never;
+
   /**
    * Consume the item associated with this attribute and apply relevant effects.
    * Should be called by the attribute's `apply` method once finished.

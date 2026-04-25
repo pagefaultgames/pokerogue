@@ -21,7 +21,6 @@ import type { StatusEffect } from "#enums/status-effect";
 import type { WeatherType } from "#enums/weather-type";
 import type { Arena } from "#field/arena";
 import type { Pokemon } from "#field/pokemon";
-import type { AllHeldItems } from "#items/all-held-items";
 import type { PokemonMove } from "#moves/pokemon-move";
 import type { OneOther } from "#test/@types/test-helpers";
 import type { GameManager } from "#test/framework/game-manager";
@@ -34,7 +33,6 @@ import type { ToHaveHpOptions } from "#test/matchers/to-have-hp";
 import type { PartiallyFilledPositionalTag } from "#test/matchers/to-have-positional-tag";
 import type { PartiallyFilledStatus } from "#test/matchers/to-have-status-effect";
 import type { ToHaveTypesOptions } from "#test/matchers/to-have-types";
-import type { ApplicableHeldItemId } from "#types/held-item-data-types";
 import type { PhaseString } from "#types/phase-types";
 import type { TurnMove } from "#types/turn-move";
 import type { toDmgValue } from "#utils/common";
@@ -308,10 +306,11 @@ interface PokemonMatchers {
    * Check whether a {@linkcode Pokemon} has applied the given {@linkcode HeldItem}.
    * Used during unit tests to ensure effects were applied correctly.
    * @param id - The {@linkcode HeldItemId} of the item being applied
-   * @param effect - One of `item`'s applicable {@linkcode HeldItemEffect} to check application of
+   * @param effect - One of `item`'s applicable {@linkcode HeldItemEffect} whose application will be checked
    * @param options - A partially-filled parameters object used to query the arguments `item` was called with
    */
-  toHaveAppliedItem<T extends ApplicableHeldItemId, E extends AllHeldItems[T]["effects"][number]>(
+  // TODO: Should `options` truly be optional?
+  toHaveAppliedItem<T extends ApplicableHeldItemIdEffect, E extends ExtractItemEffect<T>>(
     id: T,
     effect: E,
     options?: ToHaveAppliedItemOptions<E>,
