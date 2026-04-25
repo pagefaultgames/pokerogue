@@ -62,6 +62,7 @@ import { StatsContainer } from "#ui/stats-container";
 import { addBBCodeTextObject, addTextObject, getTextColor, updateCandyCountTextStyle } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { applyChallenges, checkStarterValidForChallenge } from "#utils/challenge-utils";
+import { rgbHexToRgba } from "#utils/color-utils";
 import {
   BooleanHolder,
   fixedInt,
@@ -69,7 +70,6 @@ import {
   NumberHolder,
   padInt,
   randIntRange,
-  rgbHexToRgba,
   truncateString,
 } from "#utils/common";
 import type { StarterPreferences } from "#utils/data";

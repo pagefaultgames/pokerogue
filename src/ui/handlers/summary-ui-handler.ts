@@ -26,15 +26,8 @@ import { getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
 import { addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor, updateCandyCountTextStyle } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
-import {
-  fixedInt,
-  formatStat,
-  getBiomeName,
-  getLocalizedSpriteKey,
-  getShinyDescriptor,
-  padInt,
-  rgbHexToRgba,
-} from "#utils/common";
+import { rgbHexToRgba } from "#utils/color-utils";
+import { fixedInt, formatStat, getBiomeName, getLocalizedSpriteKey, getShinyDescriptor, padInt } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getDexNumber } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";

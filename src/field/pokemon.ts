@@ -165,9 +165,9 @@ import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import { PlayerBattleInfo } from "#ui/player-battle-info";
 import { coerceArray } from "#utils/array";
 import { applyChallenges } from "#utils/challenge-utils";
+import { deltaRgb, rgbaToInt, rgbHexToRgba, rgbToHsv } from "#utils/color-utils";
 import {
   BooleanHolder,
-  deltaRgb,
   fixedInt,
   getIvsFromId,
   isBetween,
@@ -176,9 +176,6 @@ import {
   randSeedInt,
   randSeedIntRange,
   randSeedItem,
-  rgbaToInt,
-  rgbHexToRgba,
-  rgbToHsv,
   toDmgValue,
 } from "#utils/common";
 import { calculateBossSegmentDamage } from "#utils/damage";
