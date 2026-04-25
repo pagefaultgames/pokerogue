@@ -198,11 +198,13 @@ export class QuietFormChangePhase extends BattlePhase {
     return sprite;
   }
 
-  end(): void {
-    // Autotomize's weight reduction is reset when form changing
-    this.pokemon.removeTag(BattlerTagType.AUTOTOMIZED);
+  public override end(): void {
+    const { pokemon } = this;
 
-    // TODO: This eternatus boss fight code should almost certainly go in its own superclass phase
+    // Autotomize's weight reduction is reset when form changing
+    pokemon.removeTag(BattlerTagType.AUTOTOMIZED);
+
+    // TODO: This eternatus boss fight code should almost certainly go in its own subclass phase
     if (globalScene.currentBattle.isClassicFinalBoss && pokemon.isEnemy()) {
       globalScene.playBgm();
       globalScene.phaseManager.unshiftNew("PokemonHealPhase", pokemon.getBattlerIndex(), pokemon.getMaxHp(), {
