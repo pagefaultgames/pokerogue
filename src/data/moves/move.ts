@@ -3972,10 +3972,12 @@ export class PartingShotAttr extends StatStageChangeAttr {
    * @param move - The {@linkcode Move} being used
    * @param args - Additional arguments for the move's execution
    * @returns `true` if the stat drop phase was successfully queued
+   * @remarks
+   * The checks for the stat drop application cannot be moved to {@linkcode getCondition} due to
+   * hiding activation messages from any effects that would prevent the stat decrease.
    */
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const statDropTriggered = super.apply(user, target, move, args);
-
     if (!statDropTriggered) {
       return false;
     }
@@ -3984,7 +3986,6 @@ export class PartingShotAttr extends StatStageChangeAttr {
       ArenaTagType.MIST,
       target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY,
     );
-
     if (isBlockedByMist) {
       return true;
     }
@@ -4021,7 +4022,6 @@ export class PartingShotAttr extends StatStageChangeAttr {
       && target.getStatStage(Stat.SPATK) + stageMod <= 6;
 
     const willDrop = canChangeAtk || canChangeSpAtk;
-
     if (!willDrop) {
       return true;
     }
@@ -4054,6 +4054,7 @@ export class PartingShotAttr extends StatStageChangeAttr {
     return score;
   }
 }
+
 /**
  * Attribute used to determine the Biome/Terrain-based secondary effect of Secret Power
  */
