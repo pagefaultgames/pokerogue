@@ -18,13 +18,18 @@ overrides:
   undici@>=7.0.0 <7.24.0: '>=7.24.0'
   yaml@>=2.0.0 <2.8.3: '>=2.8.3'
 
+patchedDependencies:
+  '@material/material-color-utilities':
+    hash: a7c4bd77eeb4f5d318cbab031556e5f87c153cb12d8788ae0bdc42f2c63cb83a
+    path: patches/@material__material-color-utilities.patch
+
 importers:
 
   .:
     dependencies:
       '@material/material-color-utilities':
         specifier: ^0.4.0
-        version: 0.4.0
+        version: 0.4.0(patch_hash=a7c4bd77eeb4f5d318cbab031556e5f87c153cb12d8788ae0bdc42f2c63cb83a)
       ajv:
         specifier: ^8.18.0
         version: 8.18.0
@@ -2439,7 +2444,7 @@ snapshots:
 
   '@ls-lint/ls-lint@2.3.1': {}
 
-  '@material/material-color-utilities@0.4.0': {}
+  '@material/material-color-utilities@0.4.0(patch_hash=a7c4bd77eeb4f5d318cbab031556e5f87c153cb12d8788ae0bdc42f2c63cb83a)': {}
 
   '@mswjs/interceptors@0.41.5':
     dependencies:
