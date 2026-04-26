@@ -45,23 +45,26 @@ export interface StatStageChangePhaseOptions {
  */
 export class StatStageChangePhase extends PokemonPhase {
   public readonly phaseName = "StatStageChangePhase";
+
   private readonly options: StatStageChangePhaseOptions;
   private readonly selfTarget: boolean;
   private isIncrease = false;
 
   constructor(options: StatStageChangePhaseOptions) {
     super(options.battlerIndex);
+
     this.options = { ...options };
     // Deep copying allows this phase to simplify operations by modifying changes in place
     this.options.changes = deepCopy(options.changes).filter(c => c.stages !== 0); // Allow changes with 0 stages to be passed as no-ops
     this.selfTarget = options.sourcePokemon != null && options.sourcePokemon === this.getPokemon();
   }
 
-  start() {
+  public override start(): void {
     const pokemon = this.getPokemon();
 
     if (!pokemon.isActive(true)) {
-      return this.end();
+      this.end();
+      return;
     }
 
     if (!this.options.processed) {
@@ -72,7 +75,8 @@ export class StatStageChangePhase extends PokemonPhase {
 
     this.isIncrease = this.options.changes.some(c => c.stages > 0);
     if (this.options.changes.length === 0) {
-      return this.end();
+      this.end();
+      return;
     }
 
     const applied = this.getAppliedChanges(pokemon);
@@ -94,15 +98,18 @@ export class StatStageChangePhase extends PokemonPhase {
     if (this.options.ignoreAbilities) {
       return;
     }
+
     const multiplier = new ValueHolder(1);
     applyAbAttrs("StatStageChangeMultiplierAbAttr", { pokemon, numStages: multiplier });
+
     for (const change of this.options.changes) {
       (change as Mutable<StatChange>).stages *= multiplier.value;
     }
   }
 
   /**
-   * Remove any negative stat changes that are blocked by field effects or abilities, updating {@linkcode StatStageChangePhaseOptions.changes | options.changes} in place.
+   * Remove any negative stat changes that are blocked by field effects or abilities,
+   * updating {@linkcode StatStageChangePhaseOptions.changes | options.changes} in place.
    *
    * @param pokemon - The Pokemon receiving the stat changes
    */
@@ -189,7 +196,8 @@ export class StatStageChangePhase extends PokemonPhase {
   }
 
   /**
-   * If both positive and negative stage changes are present, split the negative changes into a follow-up {@linkcode StatStageChangePhase}.
+   * If both positive and negative stage changes are present,
+   * split the negative changes into a follow-up {@linkcode StatStageChangePhase}.
    */
   private splitBySign(): void {
     const positive = this.options.changes.filter(c => c.stages >= 0);
@@ -208,7 +216,7 @@ export class StatStageChangePhase extends PokemonPhase {
   }
 
   /**
-   * Compute the relative change for each requested change by clamping to [-6, 6].
+   * Compute the relative change for each requested change by clamping to `[-6, 6]`.
    *
    * @param pokemon - The Pokemon receiving the stat changes
    * @returns A new array of {@linkcode StatChange}s
@@ -283,23 +291,16 @@ export class StatStageChangePhase extends PokemonPhase {
   private triggerReactionAbilities(pokemon: Pokemon): void {
     if (this.options.changes.some(c => c.stages > 0)) {
       for (const opponent of pokemon.getOpponentsGenerator()) {
-        applyAbAttrs("StatStageChangeCopyAbAttr", {
-          pokemon: opponent,
-          changes: this.options.changes,
-        });
+        applyAbAttrs("StatStageChangeCopyAbAttr", { pokemon: opponent, changes: this.options.changes });
       }
     }
 
-    applyAbAttrs("PostStatStageChangeAbAttr", {
-      pokemon,
-      changes: this.options.changes,
-      selfTarget: this.selfTarget,
-    });
+    applyAbAttrs("PostStatStageChangeAbAttr", { pokemon, changes: this.options.changes, selfTarget: this.selfTarget });
   }
 
   /**
-   * If this is the last queued {@linkcode StatStageChangePhase} for the
-   * target, consume a held White Herb (if any) to reset negative stat stages.
+   * If this is the last queued {@linkcode StatStageChangePhase} for the target,
+   * consume a held White Herb (if any) to reset negative stat stages.
    *
    * @param pokemon - The Pokemon to check
    */
