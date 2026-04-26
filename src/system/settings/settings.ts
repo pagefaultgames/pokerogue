@@ -929,7 +929,7 @@ export function setSetting(setting: string, value: number): boolean {
       globalScene.typeHints = Setting[index].options[value].value === "On";
       break;
     case SettingKeys.Prefer_Pass_Baton:
-      globalScene.preferPassBaton = Setting[index].options[value].value === "On";
+      globalScene.preferBatonPass = Setting[index].options[value].value === "On";
       break;
     case SettingKeys.Language:
       if (value && globalScene.ui) {
