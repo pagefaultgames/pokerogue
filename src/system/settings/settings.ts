@@ -388,7 +388,6 @@ export const Setting: Setting[] = [
       },
     ],
     default: 1,
-    requireReload: true,
     type: SettingType.GENERAL,
   },
   {
