@@ -1761,7 +1761,6 @@ export class BattleScene extends SceneBase {
       case SpeciesId.PUMPKABOO:
       case SpeciesId.GOURGEIST:
       case SpeciesId.ORICORIO:
-      case SpeciesId.MAGEARNA:
       case SpeciesId.ZARUDE:
       case SpeciesId.SQUAWKABILLY:
       case SpeciesId.PALDEA_TAUROS:
@@ -1792,6 +1791,7 @@ export class BattleScene extends SceneBase {
           return 0; // Don't give trainers Battle Bond Greninja, Froakie or Frogadier
         }
         return randSeedInt(2);
+      case SpeciesId.MAGEARNA:
       case SpeciesId.URSHIFU:
         return randSeedInt(2);
       case SpeciesId.TATSUGIRI:
