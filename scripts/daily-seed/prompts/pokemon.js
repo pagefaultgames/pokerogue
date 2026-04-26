@@ -18,7 +18,6 @@ import { toTitleCase, toUpperSnakeCase } from "../../helpers/casing.js";
 
 /**
  * Prompt the user to enter a speciesId.
- * @see {@linkcode SPECIES_IDS} for a list of valid `SpeciesId`s.
  * @returns {Promise<number>} A Promise that resolves with the chosen `SpeciesId`.
  */
 export async function promptSpeciesId() {
@@ -131,8 +130,6 @@ export async function promptMoveset() {
  * Prompt the user to enter an ability.
  * @param {boolean} [passive=false] (Default `false`) Whether to prompt for a passive ability.
  * @returns {Promise<number>} A Promise that resolves with the chosen ability.
- * @remarks
- * This is boss only for now, since the option for setting any ability is not yet implemented.
  */
 export async function promptAbility(passive = false) {
   const abilityName = await search({
@@ -150,16 +147,14 @@ export async function promptAbility(passive = false) {
 }
 
 /**
- * Prompt the user to enter an ability index.
- * @returns {Promise<number>} A Promise that resolves with the chosen ability index.
- * @remarks This is starter only for now.
+ * Prompt the user to enter the number of segments for the boss fight.
+ * @returns {Promise<number>} A Promise that resolves with the chosen number of segments.
  */
-// TODO: Validate the ability index & list the actual ability names based on main repo data
-export async function promptAbilityIndex() {
+export async function promptSegments() {
   return await number({
-    message: `Please enter the starter's ability index.`,
-    min: 0,
-    max: 2,
+    message: "Please enter the number of segments for the boss fight.",
+    min: 1,
+    default: 5,
     required: true,
   });
 }

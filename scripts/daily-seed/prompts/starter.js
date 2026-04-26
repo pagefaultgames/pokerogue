@@ -9,7 +9,7 @@ import { number, select } from "@inquirer/prompts";
 import { toCamelCase, toTitleCase } from "../../helpers/casing.js";
 import { STARTER_OPTIONS } from "../constants.js";
 import {
-  promptAbilityIndex,
+  promptAbility,
   promptFormIndex,
   promptMoveset,
   promptNature,
@@ -26,7 +26,8 @@ import {
  *   variant?: Variant,
  *   moveset?: number[],
  *   nature?: number,
- *   abilityIndex?: number,
+ *   ability?: number,
+ *   passive?: number
  * }} StarterConfig
  */
 
@@ -99,8 +100,11 @@ async function promptStarterOptions(starterConfig) {
     case "nature":
       starterConfig.nature = await promptNature();
       break;
-    case "abilityIndex":
-      starterConfig.abilityIndex = await promptAbilityIndex();
+    case "ability":
+      starterConfig.ability = await promptAbility();
+      break;
+    case "passive":
+      starterConfig.passive = await promptAbility(true);
       break;
     case "finish":
       // Re-add all used options for next starter

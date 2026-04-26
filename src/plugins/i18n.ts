@@ -1,10 +1,11 @@
+import { timedEventManager } from "#app/global-event-manager";
+import { namespaceMap } from "#plugins/namespace-map";
 import { getCachedUrl } from "#utils/fetch-utils";
 import { toKebabCase } from "#utils/strings";
 import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import HttpBackend from "i18next-http-backend";
-import processor from "i18next-korean-postposition-processor";
-import { namespaceMap } from "./utils-plugins";
+import { KoreanPostpositionProcessor } from "i18next-korean-postposition-processor";
 
 //#region Interfaces/Types
 
@@ -67,6 +68,7 @@ const fonts: LoadingFontFaceProperty[] = [
       "hi",
       "tl",
       "sv",
+      "eu",
       "zh",
     ],
   },
@@ -162,7 +164,7 @@ const nsEn: string[] = [];
 await i18next
   .use(HttpBackend)
   .use(LanguageDetector)
-  .use(processor)
+  .use(new KoreanPostpositionProcessor())
   .init(
     {
       fallbackLng: {
@@ -182,6 +184,7 @@ await i18next
         "ko",
         "ja",
         "ca",
+        "eu",
         "da",
         "th",
         "tr",
@@ -212,6 +215,8 @@ await i18next
       defaultNS: "menu",
       detection: {
         lookupLocalStorage: "prLang",
+        caches: ["localStorage"],
+        order: ["localStorage", "navigator"],
       },
       ns: nsEn,
       debug: import.meta.env.VITE_I18N_DEBUG === "1",
@@ -225,5 +230,23 @@ await i18next
       await initFonts(localStorage.getItem("prLang") ?? undefined);
     },
   );
+
+//#endregion
+
+//#region Event Proxy
+
+if (timedEventManager.hasEventTextReplacement()) {
+  console.warn("Event text replacements are active.");
+  i18next.t = new Proxy(i18next.t.bind(i18next), {
+    apply(target, _, args: [key: string, options?: any]) {
+      const key = timedEventManager.getEventTextReplacement(args[0]);
+      if (args[0] !== key) {
+        console.debug(`Replacing i18n key "${args[0]}" with "${key}"`);
+        args[0] = key;
+      }
+      return target(...args);
+    },
+  });
+}
 
 //#endregion

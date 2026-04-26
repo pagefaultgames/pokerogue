@@ -396,7 +396,7 @@ function adjustWeightsForTrainer(pool: Map<MoveId, number>): void {
     adjustedWeight *= move.getAttrs("StatStageChangeAttr").some(a => a.stages > 1 && a.selfTarget) ? 1.25 : 1;
 
     // Trainers get a weight decrease to multiturn moves
-    adjustedWeight *= !!move.isChargingMove() || !!move.hasAttr("RechargeAttr") ? 0.7 : 1;
+    adjustedWeight *= move.isChargingMove() || move.hasAttr("RechargeAttr") ? 0.7 : 1;
     if (adjustedWeight !== weight) {
       pool.set(moveId, adjustedWeight);
     }
@@ -1154,9 +1154,9 @@ export function generateMoveset(pokemon: Pokemon, forceRivalSignatures = false):
 
   // Step 5: Force a STAB move if no signature was generated or was not a damaging STAB move
   if (
-    forcedSignature != null
-    && forcedSignature.category !== MoveCategory.STATUS
-    && pokemon.getTypes().includes(getMoveType(forcedSignature, pokemon, willTera))
+    forcedSignature === undefined
+    || forcedSignature.category === MoveCategory.STATUS
+    || !pokemon.isOfType(getMoveType(forcedSignature, pokemon, willTera))
   ) {
     forceStabMove(baseWeights, tmPool, eggMovePool, pokemon, tmCount, eggMoveCount, willTera);
   }

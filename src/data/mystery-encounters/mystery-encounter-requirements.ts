@@ -782,7 +782,7 @@ export class CanFormChangeWithItemRequirement extends EncounterPokemonRequiremen
 
   filterByForm(pokemon, formChangeItem) {
     return (
-      pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId) // Get all form changes for this species with an item trigger, including any compound triggers
+      Object.hasOwn(pokemonFormChanges, pokemon.species.speciesId) // Get all form changes for this species with an item trigger, including any compound triggers
       && pokemonFormChanges[pokemon.species.speciesId]
         .filter(fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger))
         // Returns true if any form changes match this item

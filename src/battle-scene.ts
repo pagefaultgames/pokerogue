@@ -27,8 +27,9 @@ import { STARTING_WAVE } from "#balance/misc";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#balance/starters";
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets } from "#data/battle-anims";
+import { getDailyMysteryEncounter } from "#data/daily-seed/daily-run";
 import { allMoves, allSpecies, biomeDepths, modifierTypes } from "#data/data-lists";
-import { battleSpecDialogue } from "#data/dialogue";
+import { classicFinalBossDialogue } from "#data/dialogue";
 import type { SpeciesFormChangeTrigger } from "#data/form-change-triggers";
 import { SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger } from "#data/form-change-triggers";
 import { Gender } from "#data/gender";
@@ -36,7 +37,6 @@ import type { SpeciesFormChange } from "#data/pokemon-forms";
 import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies, PokemonSpeciesFilter } from "#data/pokemon-species";
 import { getTypeRgb } from "#data/type";
-import { BattleSpec } from "#enums/battle-spec";
 import { BattleStyle } from "#enums/battle-style";
 import { BattleType } from "#enums/battle-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -1178,8 +1178,7 @@ export class BattleScene extends SceneBase {
       this.field.remove(this.currentBattle.mysteryEncounter?.introVisuals, true);
     }
 
-    //@ts-expect-error  - allowing `null` for currentBattle causes a lot of trouble
-    this.currentBattle = null; // TODO: resolve ts-ignore
+    this.currentBattle = null!; // TODO: this should never be `null`, probably needs multiple scenes
 
     // Reset RNG after end of game or save & quit.
     // This needs to happen after clearing this.currentBattle or the seed will be affected by the last wave played
@@ -1357,15 +1356,15 @@ export class BattleScene extends SceneBase {
         battleType: BattleType.WILD,
         // Don't increment wave index when computing starting wave
         waveIndex:
-          this.currentBattle != null
-            ? this.currentBattle.waveIndex + 1
-            : (Overrides.STARTING_WAVE_OVERRIDE ?? STARTING_WAVE),
+          this.currentBattle == null
+            ? (Overrides.STARTING_WAVE_OVERRIDE ?? STARTING_WAVE)
+            : this.currentBattle.waveIndex + 1,
       };
     }
 
     const { waveIndex, battleType, trainer: trainerData, mysteryEncounterType: sessionMEType } = fromSession;
     // TODO: Remove fallback once we stop using `-1` as a default value for session data fields (which wastes space)
-    const mysteryEncounterType = sessionMEType !== -1 ? sessionMEType : undefined;
+    const mysteryEncounterType = sessionMEType === -1 ? undefined : sessionMEType;
 
     let fixedDouble: boolean;
     // make sure illegal battle types don't occur due to save data corruption (e.g. from enum shifting)
@@ -1570,7 +1569,7 @@ export class BattleScene extends SceneBase {
     const resetArenaState =
       isNewBiome
       || [BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(this.currentBattle.battleType)
-      || this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
+      || this.currentBattle.isClassicFinalBoss;
 
     for (const enemyPokemon of this.getEnemyParty()) {
       enemyPokemon.destroy();
@@ -1900,6 +1899,9 @@ export class BattleScene extends SceneBase {
     }
 
     if (this.gameMode.isDaily && this.gameMode.isWaveFinal(waveIndex)) {
+      if (this.gameMode.dailyConfig?.boss?.segments != null) {
+        return this.gameMode.dailyConfig.boss.segments;
+      }
       return 5;
     }
 
@@ -2571,6 +2573,8 @@ export class BattleScene extends SceneBase {
         return 127.489;
       case "battle_legendary_kanto": //XY Kanto Legendary Battle
         return 32.966;
+      case "battle_legendary_mew": //Emerald Mew Battle
+        return 13.284;
       case "battle_legendary_raikou": //HGSS Raikou Battle
         return 12.632;
       case "battle_legendary_entei": //HGSS Entei Battle
@@ -2655,10 +2659,14 @@ export class BattleScene extends SceneBase {
         return 17.586;
       case "battle_trainer": //BW Trainer Battle
         return 13.686;
+      case "battle_jacinthe": // Jacinthe Battle
+        return 30.188;
       case "battle_wild": //BW Wild Battle
         return 12.703;
       case "battle_wild_strong": //BW Strong Wild Battle
         return 13.94;
+      case "battle_rogue_mega": //PLZA Rogue Mega Battle
+        return 22.135;
       case "end_summit": //PMD RTDX Sky Tower Summit
         return 30.025;
       case "battle_rocket_grunt": //HGSS Team Rocket Battle
@@ -2707,20 +2715,24 @@ export class BattleScene extends SceneBase {
         return 11.42;
       case "battle_star_boss": //SV Cassiopeia Battle
         return 25.764;
-      case "mystery_encounter_gen_5_gts": // BW GTS
+      case "mystery_encounter_gen_5_gts": //BW GTS
         return 8.52;
-      case "mystery_encounter_gen_6_gts": // XY GTS
+      case "mystery_encounter_gen_6_gts": //XY GTS
         return 9.24;
-      case "mystery_encounter_fun_and_games": // EoS Guildmaster Wigglytuff
+      case "mystery_encounter_fun_and_games": //EoS Guildmaster Wigglytuff
         return 4.78;
-      case "mystery_encounter_weird_dream": // EoS Temporal Spire
+      case "mystery_encounter_weird_dream": //EoS Temporal Spire
         return 41.42;
-      case "mystery_encounter_delibirdy": // Firel Delibirdy
+      case "mystery_encounter_delibirdy": //Firel Delibirdy
         return 82.28;
-      case "title_afd": // Andr06 - PokéRogue Title Remix (AFD)
+      case "title_afd": //Andr06 - PokéRogue Title Remix (AFD)
         return 47.66;
-      case "battle_rival_3_afd": // Andr06 - Final N Battle Remix (AFD)
+      case "title_afd_2": //Andr06 - PokéRogue Title Remix 2 (AFD)
+        return 61.819;
+      case "battle_rival_3_afd": //Andr06 - Final N Battle Remix (AFD)
         return 49.147;
+      case "battle_trainer_afd": //Andr06 - PokéRogue Trainer Remix (AFD)
+        return 13.686;
     }
 
     return 0;
@@ -3023,7 +3035,7 @@ export class BattleScene extends SceneBase {
 
   generateEnemyModifiers(heldModifiersConfigs?: HeldModifierConfig[][]): Promise<void> {
     return new Promise(resolve => {
-      if (this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
+      if (this.currentBattle.isClassicFinalBoss) {
         return resolve();
       }
       const difficultyWaveIndex = this.gameMode.getWaveForDifficulty(this.currentBattle.waveIndex);
@@ -3330,7 +3342,7 @@ export class BattleScene extends SceneBase {
     delayed = false,
     modal = false,
   ): boolean {
-    if (pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId)) {
+    if (Object.hasOwn(pokemonFormChanges, pokemon.species.speciesId)) {
       // in case this is NECROZMA, determine which forms this
       const matchingFormChangeOpts = pokemonFormChanges[pokemon.species.speciesId].filter(
         fc => fc.findTrigger(formChangeTriggerType) && fc.canChange(pokemon),
@@ -3400,12 +3412,12 @@ export class BattleScene extends SceneBase {
 
   validateAchv<T extends Achv>(achv: T, args?: Parameters<T["validate"]>[0]): boolean {
     if (
-      (!this.gameData.achvUnlocks.hasOwnProperty(achv.id) || Overrides.ACHIEVEMENTS_REUNLOCK_OVERRIDE)
+      (!Object.hasOwn(this.gameData.achvUnlocks, achv.id) || Overrides.ACHIEVEMENTS_REUNLOCK_OVERRIDE)
       && achv.validate(args)
     ) {
       this.gameData.achvUnlocks[achv.id] = Date.now();
       this.ui.achvBar.showAchv(achv);
-      if (vouchers.hasOwnProperty(achv.id)) {
+      if (Object.hasOwn(vouchers, achv.id)) {
         this.validateVoucher(vouchers[achv.id]);
       }
       return true;
@@ -3415,7 +3427,7 @@ export class BattleScene extends SceneBase {
   }
 
   validateVoucher(voucher: Voucher, args?: unknown[]): boolean {
-    if (!this.gameData.voucherUnlocks.hasOwnProperty(voucher.id) && voucher.validate(args)) {
+    if (!Object.hasOwn(this.gameData.voucherUnlocks, voucher.id) && voucher.validate(args)) {
       this.gameData.voucherUnlocks[voucher.id] = Date.now();
       this.ui.achvBar.showAchv(voucher);
       this.gameData.voucherCounts[voucher.voucherType]++;
@@ -3476,38 +3488,33 @@ export class BattleScene extends SceneBase {
    * @param pokemon The (enemy) pokemon
    */
   initFinalBossPhaseTwo(pokemon: Pokemon): void {
-    if (pokemon.isEnemy() && pokemon.isBoss() && !pokemon.formIndex && pokemon.bossSegmentIndex < 1) {
-      this.fadeOutBgm(fixedInt(2000), false);
-      this.ui.showDialogue(
-        battleSpecDialogue[BattleSpec.FINAL_BOSS].firstStageWin,
-        pokemon.species.name,
-        undefined,
-        () => {
-          const finalBossMBH = getModifierType(modifierTypes.MINI_BLACK_HOLE).newModifier(
-            pokemon,
-          ) as TurnHeldItemTransferModifier;
-          finalBossMBH.setTransferrableFalse();
-          this.addEnemyModifier(finalBossMBH, false, true);
-          pokemon.generateAndPopulateMoveset(false, 1);
-          this.setFieldScale(0.75);
-          this.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
-          this.currentBattle.double = true;
-          const availablePartyMembers = this.getPlayerParty().filter(p => p.isAllowedInBattle());
-          if (availablePartyMembers.length > 1) {
-            this.phaseManager.pushNew("ToggleDoublePositionPhase", true);
-            if (!availablePartyMembers[1].isOnField()) {
-              this.phaseManager.pushNew("SummonPhase", 1);
-              this.phaseManager.pushNew("PostSummonPhase", 1);
-            }
-          }
-
-          this.phaseManager.shiftPhase();
-        },
-      );
+    if (!pokemon.isEnemy() || !pokemon.isBoss() || pokemon.formIndex > 0 || pokemon.bossSegmentIndex >= 1) {
+      this.phaseManager.shiftPhase();
       return;
     }
 
-    this.phaseManager.shiftPhase();
+    this.fadeOutBgm(fixedInt(2000), false);
+    this.ui.showDialogue(classicFinalBossDialogue.firstStageWin, pokemon.species.name, undefined, () => {
+      const finalBossMBH = getModifierType(modifierTypes.MINI_BLACK_HOLE).newModifier(
+        pokemon,
+      ) as TurnHeldItemTransferModifier;
+      finalBossMBH.setTransferrableFalse();
+      this.addEnemyModifier(finalBossMBH, false, true);
+      pokemon.generateAndPopulateMoveset(false, 1);
+      this.setFieldScale(0.75);
+      this.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
+      this.currentBattle.double = true;
+      const availablePartyMembers = this.getPlayerParty().filter(p => p.isAllowedInBattle());
+      if (availablePartyMembers.length > 1) {
+        this.phaseManager.pushNew("ToggleDoublePositionPhase", true);
+        if (!availablePartyMembers[1].isOnField()) {
+          this.phaseManager.pushNew("SummonPhase", 1);
+          this.phaseManager.pushNew("PostSummonPhase", 1);
+        }
+      }
+
+      this.phaseManager.shiftPhase();
+    });
   }
 
   /**
@@ -3639,6 +3646,9 @@ export class BattleScene extends SceneBase {
    * @returns Whether a Mystery Encounter should be generated.
    */
   private isWaveMysteryEncounter(battleType: BattleType, waveIndex: number): boolean {
+    if (getDailyMysteryEncounter(waveIndex) != null) {
+      return true;
+    }
     if (!this.isMysteryEncounterValidForWave(battleType, waveIndex)) {
       return false;
     }
@@ -3708,7 +3718,7 @@ export class BattleScene extends SceneBase {
     let encounter: MysteryEncounter | null;
     if (
       Overrides.MYSTERY_ENCOUNTER_OVERRIDE != null
-      && allMysteryEncounters.hasOwnProperty(Overrides.MYSTERY_ENCOUNTER_OVERRIDE)
+      && Object.hasOwn(allMysteryEncounters, Overrides.MYSTERY_ENCOUNTER_OVERRIDE)
     ) {
       encounter = allMysteryEncounters[Overrides.MYSTERY_ENCOUNTER_OVERRIDE];
       if (canBypass) {
@@ -3717,19 +3727,19 @@ export class BattleScene extends SceneBase {
     } else if (canBypass) {
       encounter = allMysteryEncounters[encounterType ?? -1];
       return encounter;
+    } else if (getDailyMysteryEncounter(this.currentBattle.waveIndex) == null) {
+      encounter = encounterType == null ? null : allMysteryEncounters[encounterType];
     } else {
-      encounter = encounterType != null ? allMysteryEncounters[encounterType] : null;
+      encounter = allMysteryEncounters[getDailyMysteryEncounter(this.currentBattle.waveIndex)!];
     }
 
     // Check for queued encounters first
-    if (
-      !encounter
-      && this.mysteryEncounterSaveData?.queuedEncounters
-      && this.mysteryEncounterSaveData.queuedEncounters.length > 0
-    ) {
+    // TODO: the inner `while` loop will never run, should this code be deleted or fixed?
+    const queuedEncounters = this.mysteryEncounterSaveData?.queuedEncounters ?? [];
+    if (!encounter && queuedEncounters.length > 0) {
       let i = 0;
-      while (i < this.mysteryEncounterSaveData.queuedEncounters.length && !!encounter) {
-        const candidate = this.mysteryEncounterSaveData.queuedEncounters[i];
+      while (i < queuedEncounters.length && encounter) {
+        const candidate = queuedEncounters[i];
         const forcedChance = candidate.spawnPercent;
         if (randSeedInt(100) < forcedChance) {
           encounter = allMysteryEncounters[candidate.type];
