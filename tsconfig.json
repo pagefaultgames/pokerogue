@@ -70,7 +70,7 @@
       ],
       "#package.json": ["./package.json"],
       "#phases/*": ["./src/phases/*.ts"],
-      "#plugins/*": ["./src/plugins/vite/*.ts", "./src/plugins/*.ts"],
+      "#plugins/*": ["./plugins/phaser/*.ts"],
       "#sprites/*": ["./src/sprites/*.ts"],
       "#system/*": [
         "./src/system/settings/*.ts",
