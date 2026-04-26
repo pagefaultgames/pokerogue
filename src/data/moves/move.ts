@@ -10374,7 +10374,7 @@ export function initMoves() {
       .attr(WeatherBallTypeAttr)
       .attr(MovePowerMultiplierAttr, (user, _target, _move) => {
         const weatherType = getEffectiveWeatherForUser(user);
-        return weatherType !== WeatherType.NONE ? 2 : 1;
+        return weatherType === WeatherType.NONE ? 1 : 2;
       })
       .ballBombMove(),
     new StatusMove(MoveId.AROMATHERAPY, PokemonType.GRASS, -1, 5, -1, 0, 3)
