@@ -60,7 +60,7 @@ export class Trainer extends Phaser.GameObjects.Container {
 
     this.variant = variant;
     this.partyTemplateIndex = Math.min(
-      partyTemplateIndex !== undefined ? partyTemplateIndex : randSeedItem(this.config.partyTemplates.map((_, i) => i)),
+      partyTemplateIndex === undefined ? randSeedItem(this.config.partyTemplates.map((_, i) => i)) : partyTemplateIndex,
       this.config.partyTemplates.length - 1,
     );
     // TODO: Rework this and add actual error handling for missing names

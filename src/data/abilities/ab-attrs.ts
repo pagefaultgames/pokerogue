@@ -288,9 +288,9 @@ export abstract class PreDefendAbAttr extends AbAttr {
 export class PreDefendFullHpEndureAbAttr extends PreDefendAbAttr {
   override canApply({ pokemon, damage }: PreDefendModifyDamageAbAttrParams): boolean {
     return (
-      pokemon.isFullHp() // Checks if pokemon has wonder_guard (which forces 1hp)
-      && pokemon.getMaxHp() > 1 // Damage >= hp
-      && damage.value >= pokemon.hp // Cannot apply if the pokemon already has sturdy from some other source
+      pokemon.isFullHp()
+      && pokemon.getMaxHp() > 1
+      && damage.value >= pokemon.hp
       && !pokemon.getTag(BattlerTagType.STURDY)
     );
   }
@@ -743,7 +743,7 @@ export class PostDefendStatStageChangeAbAttr extends PostDefendAbAttr {
 
     if (this.allOthers) {
       const ally = pokemon.getAlly();
-      const otherPokemon = ally != null ? pokemon.getOpponents().concat([ally]) : pokemon.getOpponents();
+      const otherPokemon = ally == null ? pokemon.getOpponents() : pokemon.getOpponents().concat([ally]);
       for (const other of otherPokemon) {
         globalScene.phaseManager.unshiftNew(
           "StatStageChangePhase",
@@ -5685,32 +5685,10 @@ class ForceSwitchOutHelper {
         return true;
       }
       /*
-       * For non-wild battles, it checks if the opposing party has any available Pokémon to switch in.
-       * If yes, the Pokémon leaves the field and a new SwitchSummonPhase is initiated.
-       */
-    } else if (globalScene.currentBattle.battleType !== BattleType.WILD) {
-      if (globalScene.getEnemyParty().filter(p => p.isAllowedInBattle() && !p.isOnField()).length === 0) {
-        return false;
-      }
-      if (switchOutTarget.hp > 0) {
-        const summonIndex = globalScene.currentBattle.trainer
-          ? globalScene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot)
-          : 0;
-        globalScene.phaseManager.queueDeferred(
-          "SwitchSummonPhase",
-          this.switchType,
-          switchOutTarget.getFieldIndex(),
-          summonIndex,
-          false,
-          false,
-        );
-        return true;
-      }
-      /*
-       * For wild Pokémon battles, the Pokémon will flee if the conditions are met (waveIndex and double battles).
+       * For wild Pokémon battles, the Pokémon will flee if the conditions are met (`waveIndex` and double battles).
        * It will not flee if it is a Mystery Encounter with fleeing disabled (checked in `getSwitchOutCondition()`) or if it is a wave 10x wild boss
        */
-    } else {
+    } else if (globalScene.currentBattle.battleType === BattleType.WILD) {
       const allyPokemon = switchOutTarget.getAlly();
 
       if (!globalScene.currentBattle.waveIndex || globalScene.currentBattle.waveIndex % 10 === 0) {
@@ -5742,6 +5720,28 @@ class ForceSwitchOutHelper {
 
           globalScene.phaseManager.pushNew("NewBattlePhase");
         }
+      }
+      /*
+       * For non-wild battles, it checks if the opposing party has any available Pokémon to switch in.
+       * If yes, the Pokémon leaves the field and a new SwitchSummonPhase is initiated.
+       */
+    } else {
+      if (globalScene.getEnemyParty().filter(p => p.isAllowedInBattle() && !p.isOnField()).length === 0) {
+        return false;
+      }
+      if (switchOutTarget.hp > 0) {
+        const summonIndex = globalScene.currentBattle.trainer
+          ? globalScene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot)
+          : 0;
+        globalScene.phaseManager.queueDeferred(
+          "SwitchSummonPhase",
+          this.switchType,
+          switchOutTarget.getFieldIndex(),
+          summonIndex,
+          false,
+          false,
+        );
+        return true;
       }
     }
     return false;

@@ -249,7 +249,7 @@ export class TitlePhase extends Phase {
           const species = getPokemonSpecies(starter.speciesId);
           const starterFormIndex = starter.formIndex;
           const starterGender =
-            species.malePercent !== null ? (starter.female ? Gender.FEMALE : Gender.MALE) : Gender.GENDERLESS;
+            species.malePercent === null ? Gender.GENDERLESS : starter.female ? Gender.FEMALE : Gender.MALE;
           const starterPokemon = globalScene.addPlayerPokemon(
             species,
             startingLevel,
@@ -337,7 +337,7 @@ export class TitlePhase extends Phase {
           });
       } else {
         // Grab first 10 chars of ISO date format (YYYY-MM-DD) and convert to base64
-        let seed: string = btoa(new Date().toISOString().substring(0, 10));
+        let seed: string = btoa(new Date().toISOString().slice(0, 10));
         if (Overrides.DAILY_RUN_SEED_OVERRIDE != null) {
           seed =
             typeof Overrides.DAILY_RUN_SEED_OVERRIDE === "string"

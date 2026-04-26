@@ -31,10 +31,11 @@ import type { Localizable } from "#types/locales";
 import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { StarterMoveset } from "#types/save-data";
 import type { EvolutionLevel, EvolutionLevelWithThreshold } from "#types/species-gen-types";
+import { argbFromRgba, rgbaFromArgb } from "#utils/color-utils";
 import { randSeedFloat, randSeedGauss } from "#utils/common";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase, toPascalCase } from "#utils/strings";
-import { argbFromRgba, QuantizerCelebi, rgbaFromArgb } from "@material/material-color-utilities";
+import { QuantizerCelebi } from "@material/material-color-utilities";
 import i18next from "i18next";
 
 export enum Region {
@@ -175,7 +176,7 @@ export abstract class PokemonSpeciesForm {
    * @returns Number of abilities
    */
   getAbilityCount(): number {
-    return this.abilityHidden !== AbilityId.NONE ? 3 : 2;
+    return this.abilityHidden === AbilityId.NONE ? 2 : 3;
   }
 
   /**
@@ -1292,6 +1293,6 @@ export class PokemonForm extends PokemonSpeciesForm {
   }
 
   getFormSpriteKey(_formIndex?: number) {
-    return this.formSpriteKey !== null ? this.formSpriteKey : this.formKey;
+    return this.formSpriteKey === null ? this.formKey : this.formSpriteKey;
   }
 }
