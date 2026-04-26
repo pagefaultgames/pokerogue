@@ -141,5 +141,6 @@ export type BattlerTagData = ObjectValues<BattlerTagDataMap>;
  * If a tag type is missing from the map, TypeScript will throw an error on this statement.
  *
  * ⚠️ Does not actually exist at runtime, so it must not be used!
+ * @internal
  */
 declare const EnsureAllBattlerTagTypesAreMapped: BattlerTagTypeMap[BattlerTagType] & never;
