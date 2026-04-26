@@ -17,9 +17,8 @@ import type { GameStats } from "#system/game-stats";
 import type { ModifierData } from "#system/modifier-data";
 import type { PokemonData } from "#system/pokemon-data";
 import type { TrainerData } from "#system/trainer-data";
-import type { SerializedDailyRunConfig } from "#types/daily-run";
-import type { DexData } from "#types/dex-data";
-import type { TupleRange } from "#types/type-helpers";
+import type { SerializedDailyRunConfig } from "./daily-run";
+import type { DexData } from "./dex-data";
 
 export interface SystemSaveData {
   trainerId: number;
@@ -84,7 +83,7 @@ export interface VoucherCounts {
   [type: string]: number;
 }
 
-export type StarterMoveset = TupleRange<1, 4, MoveId>;
+export type StarterMoveset = [MoveId] | [MoveId, MoveId] | [MoveId, MoveId, MoveId] | [MoveId, MoveId, MoveId, MoveId];
 
 export interface StarterFormMoveData {
   [key: number]: StarterMoveset;
