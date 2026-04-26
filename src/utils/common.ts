@@ -1,4 +1,4 @@
-import { pokerogueApi } from "#api/pokerogue-api";
+import { pokerogueApi } from "#api/api";
 import { bypassLogin, isDev } from "#constants/app-constants";
 import { BiomeId } from "#enums/biome-id";
 import { MoneyFormat } from "#enums/money-format";

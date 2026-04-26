@@ -1,4 +1,4 @@
-import { pokerogueApi } from "#api/pokerogue-api";
+import { pokerogueApi } from "#api/api";
 import { loggedInUser } from "#app/account";
 import { GameMode, getGameMode } from "#app/game-mode";
 import { timedEventManager } from "#app/global-event-manager";

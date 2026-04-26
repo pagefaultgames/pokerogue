@@ -1,4 +1,4 @@
-import { PokerogueAdminApi } from "#api/pokerogue-admin-api";
+import { PokerogueAdminApi } from "#api/admin-api";
 import { initServerForApiTests } from "#test/setup/test-file-initialization";
 import { getApiBaseUrl } from "#test/utils/test-utils";
 import type { DiscordRequest, GoogleRequest, SearchAccountRequest, SearchAccountResponse } from "#types/api";
