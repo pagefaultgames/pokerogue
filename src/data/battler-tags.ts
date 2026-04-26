@@ -95,6 +95,7 @@ import type {
   DamageOverTimeTagType,
   DamagingBattlerTagType,
   DamagingTrapBattlerTagType,
+  EndureTagType,
   HighestStatBoostTagType,
   MoveRestrictionBattlerTagType,
   ProtectionBattlerTagType,
