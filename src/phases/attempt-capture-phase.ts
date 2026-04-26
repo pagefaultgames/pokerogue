@@ -43,7 +43,7 @@ export class AttemptCapturePhase extends Phase {
 
   /** The type of Pokeball being thrown. */
   private readonly pokeballType: PokeballType;
-  private pokeball: Phaser.GameObjects.Sprite;
+  private pokeballSprite: Phaser.GameObjects.Sprite;
   /** The original Y-position of `pokemon`, used to ensure it returns to the proper vertical height if the capture fails. */
   private readonly originalY: number;
 
@@ -81,21 +81,22 @@ export class AttemptCapturePhase extends Phase {
 
     const [isCritical, successfulShakes, caught] = this.computeCaptureOutcome(pokemon, this.pokeballType);
 
-    // TODO: Move into separate method
+    // TODO: Move these animations into a separate method if or when we decide to de-duplicate this
+    // with the duplicated Safari Zone version
     const fpOffset = pokemon.getFieldPositionOffset();
 
     const pokeballAtlasKey = getPokeballAtlasKey(this.pokeballType);
-    this.pokeball = globalScene.addFieldSprite(16, 80, "pb", pokeballAtlasKey).setOrigin(0.5, 0.625);
-    globalScene.field.add(this.pokeball);
+    this.pokeballSprite = globalScene.addFieldSprite(16, 80, "pb", pokeballAtlasKey).setOrigin(0.5, 0.625);
+    globalScene.field.add(this.pokeballSprite);
 
     globalScene.playSound(isCritical ? "se/crit_throw" : "se/pb_throw");
     waitTime(300).then(() => {
-      globalScene.field.moveBelow<Phaser.GameObjects.GameObject>(this.pokeball, pokemon);
+      globalScene.field.moveBelow<Phaser.GameObjects.GameObject>(this.pokeballSprite, pokemon);
     });
 
     // Throw animation
     await playTween({
-      targets: this.pokeball,
+      targets: this.pokeballSprite,
       x: { value: 236 + fpOffset[0], ease: "Linear" },
       y: { value: 16 + fpOffset[1], ease: "Cubic.easeOut" },
       duration: 500,
@@ -105,7 +106,7 @@ export class AttemptCapturePhase extends Phase {
     this.animatePokeballOpen();
     globalScene.playSound("se/pb_rel");
     pokemon.tint(getPokeballTintColor(this.pokeballType));
-    globalScene.animations.addPokeballOpenParticles(this.pokeball.x, this.pokeball.y, this.pokeballType);
+    globalScene.animations.addPokeballOpenParticles(this.pokeballSprite.x, this.pokeballSprite.y, this.pokeballType);
 
     // Mon enters ball
     await playTween({
@@ -117,16 +118,20 @@ export class AttemptCapturePhase extends Phase {
     });
 
     // Ball closes
-    this.pokeball.setTexture("pb", `${pokeballAtlasKey}_opening`);
+    this.pokeballSprite.setTexture("pb", `${pokeballAtlasKey}_opening`);
     pokemon.setVisible(false);
     globalScene.playSound("se/pb_catch");
-    waitTime(17).then(() => this.pokeball.setTexture("pb", `${pokeballAtlasKey}`));
 
     // Ball bounces
     // TODO: Use async once `doPokeballBounceAnim` is promisified
-    await new Promise<void>(resolve =>
-      globalScene.time.delayedCall(250, () => doPokeballBounceAnim(this.pokeball, 16, 72, 350, resolve, isCritical)),
-    );
+    await Promise.all([
+      waitTime(17).then(() => this.pokeballSprite.setTexture("pb", `${pokeballAtlasKey}`)),
+      new Promise<void>(resolve =>
+        globalScene.time.delayedCall(250, () =>
+          doPokeballBounceAnim(this.pokeballSprite, 16, 72, 350, resolve, isCritical),
+        ),
+      ),
+    ]);
 
     // Play the wobble animations for each successful shake check.
     // Critical captures always show 1 wobble; the result is revealed after.
@@ -138,11 +143,11 @@ export class AttemptCapturePhase extends Phase {
     }
 
     globalScene.playSound("se/pb_lock");
-    globalScene.animations.addPokeballCaptureStars(this.pokeball);
+    globalScene.animations.addPokeballCaptureStars(this.pokeballSprite);
 
     const pbTint = globalScene.add
-      .sprite(this.pokeball.x, this.pokeball.y, "pb", "pb")
-      .setOrigin(this.pokeball.originX, this.pokeball.originY)
+      .sprite(this.pokeballSprite.x, this.pokeballSprite.y, "pb", "pb")
+      .setOrigin(this.pokeballSprite.originX, this.pokeballSprite.originY)
       .setTintFill(0)
       .setAlpha(0);
     globalScene.field.add(pbTint);
@@ -205,16 +210,16 @@ export class AttemptCapturePhase extends Phase {
       }
     }
 
-    // Must suceed a final 4th shake check to go inside the ball (which determines whether the ball breaks at the end).
-    // This does not produce a shake animation.
+    // The Pokemon must suceed a final 4th shake check to determine whether the ball breaks at the end or not.
+    // This does not involve a shake animation (hence why it is separated from `successfulShakes`).
     const caught = successfulShakes === maxShakeChecks && globalScene.randBattleSeedInt(65536) >= shakeProbability;
 
     if ((isBeta || isDev) && !IS_TEST) {
       console.log(
-        `Modified Catch Rate: ${modifiedCatchRate}\n`
-          + `Shake Probability: ${shakeProbability.toPrecision(2)}\n`
+        `Modified Catch Rate: ${modifiedCatchRate.toPrecision(3)}\n`
           + `Critical Catch Chance: ${criticalCaptureChance}\n`
           + `Critical Catch?: ${isCritical}\n`
+          + `Shake Probability: ${Math.floor(shakeProbability)} / 65536\n`
           + `Shake Checks Passed: ${successfulShakes}/${maxShakeChecks}\n`
           + `Caught?: ${caught}`,
       );
@@ -232,7 +237,7 @@ export class AttemptCapturePhase extends Phase {
    * All other computations remain identical to mainline games.
    */
   protected getModifiedCatchRate(pokemon: EnemyPokemon, pokeballType: PokeballType): number {
-    const hpMult = 1 - (pokemon.getHpRatio() * 2) / 3;
+    const hpMult = 1 - (pokemon.getHpRatio(true) * 2) / 3;
 
     const { catchRate } = pokemon.species;
     const ballBonus = getPokeballCatchMultiplier(pokeballType);
@@ -246,6 +251,8 @@ export class AttemptCapturePhase extends Phase {
   private computeShakeProbability(modifiedCatchRate: number): number {
     // Formula taken from gen 6 capture mechanics, albeit without the 4096-based rounding
     // (thus making the denominator 255 instead of 255*4096 = 1044480)
+    // NB: Rounding the result here (while it would make for cleaner numbers) ultimately does nothing
+    // as we solely compare it with integers
     return 65536 * Math.pow(modifiedCatchRate / 255, 0.1875);
   }
 
@@ -269,7 +276,7 @@ export class AttemptCapturePhase extends Phase {
       return;
     }
 
-    const pbX = this.pokeball.x;
+    const pbX = this.pokeballSprite.x;
     let currentShake = 0;
 
     await playNumberTween({
@@ -283,8 +290,8 @@ export class AttemptCapturePhase extends Phase {
       onUpdate: t => {
         const value = t.getValue() ?? 0;
         const directionMultiplier = currentShake % 2 === 0 ? 1 : -1;
-        this.pokeball.setX(pbX + value * 4 * directionMultiplier);
-        this.pokeball.setAngle(value * 27.5 * directionMultiplier);
+        this.pokeballSprite.setX(pbX + value * 4 * directionMultiplier);
+        this.pokeballSprite.setAngle(value * 27.5 * directionMultiplier);
       },
       onRepeat: () => {
         globalScene.playSound("se/pb_move");
@@ -338,9 +345,9 @@ export class AttemptCapturePhase extends Phase {
     const { pokeballType } = this;
 
     const pokeballAtlasKey = getPokeballAtlasKey(pokeballType);
-    this.pokeball.setTexture("pb", `${pokeballAtlasKey}_opening`);
+    this.pokeballSprite.setTexture("pb", `${pokeballAtlasKey}_opening`);
     await waitTime(17);
-    this.pokeball.setTexture("pb", `${pokeballAtlasKey}_open`);
+    this.pokeballSprite.setTexture("pb", `${pokeballAtlasKey}_open`);
   }
 
   /**
@@ -447,16 +454,16 @@ export class AttemptCapturePhase extends Phase {
    * @returns A Promise that resolves with the chosen action.
    */
   private async promptFullPartyCatchAction(): Promise<FullPartyCatchAction> {
-    return await new Promise(resolve => {
-      globalScene.ui.setMode(
-        UiMode.CONFIRM,
-        () => resolve("summary"),
-        () => resolve("pokedex"),
-        () => resolve("release"),
-        () => resolve("cancel"),
-        "fullParty",
-      );
-    });
+    const { promise, resolve } = Promise.withResolvers<FullPartyCatchAction>();
+    globalScene.ui.setMode(
+      UiMode.CONFIRM,
+      () => resolve("summary"),
+      () => resolve("pokedex"),
+      () => resolve("release"),
+      () => resolve("cancel"),
+      "fullParty",
+    );
+    return promise;
   }
 
   /**
@@ -590,12 +597,12 @@ export class AttemptCapturePhase extends Phase {
    */
   private async removePb(): Promise<void> {
     await playTween({
-      targets: this.pokeball,
+      targets: this.pokeballSprite,
       duration: 250,
       delay: 250,
       ease: "Sine.easeIn",
       alpha: 0,
     });
-    this.pokeball.destroy();
+    this.pokeballSprite.destroy();
   }
 }
