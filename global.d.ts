@@ -1,4 +1,4 @@
-import type { SetupServerApi } from "msw/node";
+import type { SetupServer } from "msw/node";
 
 declare global {
   /**
@@ -7,7 +7,7 @@ declare global {
    *
    * ⚠️ Should not be used in production code, as it is only populated during test runs!
    */
-  var server: SetupServerApi;
+  var server: SetupServer;
   // Override for `Array.isArray` to not remove `readonly`-ness from arrays known to be readonly
   interface ArrayConstructor {
     isArray<T>(arg: readonly T[]): arg is readonly T[];

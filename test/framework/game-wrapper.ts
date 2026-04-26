@@ -129,7 +129,6 @@ export class GameWrapper {
       chain: data => {
         // TODO: our mock of `chain` should have the same signature as the real one, which returns the chain
         // @ts-expect-error
-        // biome-ignore lint/suspicious/useIterableCallbackReturn: it's a mock
         data?.tweens?.forEach(tween => tween.onComplete?.());
         // @ts-expect-error
         data.onComplete?.();

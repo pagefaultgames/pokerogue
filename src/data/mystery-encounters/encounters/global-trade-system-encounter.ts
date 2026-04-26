@@ -186,9 +186,9 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
                     ? tradePokemon.species.forms[tradePokemon.formIndex].formName
                     : null;
                 const line1 = `${i18next.t("pokemonInfoContainer:ability")} ${tradePokemon.getAbility().name}${
-                  tradePokemon.getGender() !== Gender.GENDERLESS
-                    ? `     |     ${i18next.t("pokemonInfoContainer:gender")} ${getGenderSymbol(tradePokemon.getGender())}`
-                    : ""
+                  tradePokemon.getGender() === Gender.GENDERLESS
+                    ? ""
+                    : `     |     ${i18next.t("pokemonInfoContainer:gender")} ${getGenderSymbol(tradePokemon.getGender())}`
                 }`;
                 const line2 =
                   i18next.t("pokemonInfoContainer:nature")

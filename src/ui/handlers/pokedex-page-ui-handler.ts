@@ -68,12 +68,12 @@ import {
   updateCandyCountTextStyle,
 } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
-import { BooleanHolder, getLocalizedSpriteKey, padInt, rgbHexToRgba } from "#utils/common";
+import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
+import { BooleanHolder, getLocalizedSpriteKey, padInt } from "#utils/common";
 import { enumValueToKey, getEnumValues } from "#utils/enums";
 import { getDexNumber, getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import type { ValueHolder } from "#utils/value-holder";
-import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
 import type BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
@@ -1047,7 +1047,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       return true;
     }
     const species = otherSpecies ? otherSpecies : this.species;
-    const formIndex = otherFormIndex !== undefined ? otherFormIndex : this.formIndex;
+    const formIndex = otherFormIndex === undefined ? this.formIndex : otherFormIndex;
     const caughtAttr = this.isCaught(species);
 
     if (caughtAttr && (species.forms.length === 0 || species.forms.length === 1)) {
@@ -1113,7 +1113,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         }
       }
       // Set to the highest valid index found or default to 0
-      starterAttributes.variant = highestValidIndex !== -1 ? highestValidIndex : 0;
+      starterAttributes.variant = highestValidIndex === -1 ? 0 : highestValidIndex;
     }
 
     if (starterAttributes.female !== undefined) {
@@ -2030,7 +2030,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
             if (valueReduction < valueReductionMax) {
               const reductionCost = getValueReductionCandyCounts(speciesStarterCosts[this.starterId])[valueReduction];
               options.push({
-                label: `×${reductionCost} ${i18next.t("pokedexUiHandler:reduceCost")}`,
+                label: `×${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost", { newCost: globalScene.gameData.getSpeciesStarterValue(this.starterId, starterData.valueReduction + 1) })}`,
                 handler: () => {
                   if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE && candyCount < reductionCost) {
                     return false;
@@ -2830,18 +2830,18 @@ export class PokedexPageUiHandler extends MessageUiHandler {
   }
 
   private setTypeIcons(type1: PokemonType | null, type2: PokemonType | null): void {
-    if (type1 !== null) {
+    if (type1 === null) {
+      this.type1Icon.setVisible(false);
+    } else {
       this.type1Icon.setVisible(true);
       this.type1Icon.setFrame(PokemonType[type1].toLowerCase());
-    } else {
-      this.type1Icon.setVisible(false);
     }
 
-    if (type2 !== null) {
+    if (type2 === null) {
+      this.type2Icon.setVisible(false);
+    } else {
       this.type2Icon.setVisible(true);
       this.type2Icon.setFrame(PokemonType[type2].toLowerCase());
-    } else {
-      this.type2Icon.setVisible(false);
     }
   }
 

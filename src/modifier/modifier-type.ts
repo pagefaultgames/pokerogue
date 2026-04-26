@@ -205,7 +205,7 @@ export class ModifierType {
     for (const type of poolTypes) {
       const pool = getModifierPoolForType(type);
       for (const tier of getEnumValues(ModifierTier)) {
-        if (!pool.hasOwnProperty(tier)) {
+        if (!Object.hasOwn(pool, tier)) {
           continue;
         }
         if (pool[tier].find(m => (m as WeightedModifierType).modifierType.id === this.id)) {
@@ -763,7 +763,7 @@ export class TempStatStageBoosterModifierType extends ModifierType implements Ge
 
     this.stat = stat;
     this.nameKey = nameKey;
-    this.quantityKey = stat !== Stat.ACC ? "percentage" : "stage";
+    this.quantityKey = stat === Stat.ACC ? "stage" : "percentage";
   }
 
   get name(): string {
@@ -1174,7 +1174,7 @@ export class EvolutionItemModifierType extends PokemonModifierType implements Ge
       (_type, args) => new EvolutionItemModifier(this, (args[0] as PlayerPokemon).id),
       (pokemon: PlayerPokemon) => {
         if (
-          pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId)
+          Object.hasOwn(pokemonEvolutions, pokemon.species.speciesId)
           && pokemonEvolutions[pokemon.species.speciesId].filter(e => e.validate(pokemon, false, this.evolutionItem))
             .length > 0
           && pokemon.getFormKey() !== SpeciesFormKey.GIGANTAMAX
@@ -1184,7 +1184,7 @@ export class EvolutionItemModifierType extends PokemonModifierType implements Ge
         if (
           pokemon.isFusion()
           && pokemon.fusionSpecies
-          && pokemonEvolutions.hasOwnProperty(pokemon.fusionSpecies.speciesId)
+          && Object.hasOwn(pokemonEvolutions, pokemon.fusionSpecies.speciesId)
           && pokemonEvolutions[pokemon.fusionSpecies.speciesId].filter(e =>
             e.validate(pokemon, true, this.evolutionItem),
           ).length > 0
@@ -1227,7 +1227,7 @@ export class FormChangeItemModifierType extends PokemonModifierType implements G
       (pokemon: PlayerPokemon) => {
         // Make sure the Pokemon has alternate forms
         if (
-          pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId) // Get all form changes for this species with an item trigger, including any compound triggers
+          Object.hasOwn(pokemonFormChanges, pokemon.species.speciesId) // Get all form changes for this species with an item trigger, including any compound triggers
           && pokemonFormChanges[pokemon.species.speciesId]
             .filter(
               fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger) && fc.preFormKey === pokemon.getFormKey(),
@@ -1535,7 +1535,7 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
         party
           .filter(
             p =>
-              pokemonEvolutions.hasOwnProperty(p.species.speciesId)
+              Object.hasOwn(pokemonEvolutions, p.species.speciesId)
               && (!p.pauseEvolutions
                 || p.species.speciesId === SpeciesId.SLOWPOKE
                 || p.species.speciesId === SpeciesId.EEVEE
@@ -1551,7 +1551,7 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
             p =>
               p.isFusion()
               && p.fusionSpecies
-              && pokemonEvolutions.hasOwnProperty(p.fusionSpecies.speciesId)
+              && Object.hasOwn(pokemonEvolutions, p.fusionSpecies.speciesId)
               && (!p.pauseEvolutions
                 || p.fusionSpecies.speciesId === SpeciesId.SLOWPOKE
                 || p.fusionSpecies.speciesId === SpeciesId.EEVEE
@@ -1587,7 +1587,7 @@ export class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
       const formChangeItemPool = [
         ...new Set(
           party
-            .filter(p => pokemonFormChanges.hasOwnProperty(p.species.speciesId))
+            .filter(p => Object.hasOwn(pokemonFormChanges, p.species.speciesId))
             .flatMap(p => {
               const formChanges = pokemonFormChanges[p.species.speciesId];
               let formChangeItemTriggers = formChanges
@@ -2819,7 +2819,7 @@ function getNewModifierTypeOption(
     }
 
     tier += upgradeCount;
-    while (tier && (!pool.hasOwnProperty(tier) || pool[tier].length === 0)) {
+    while (tier && (!Object.hasOwn(pool, tier) || pool[tier].length === 0)) {
       tier--;
       if (upgradeCount) {
         upgradeCount--;
@@ -2830,7 +2830,7 @@ function getNewModifierTypeOption(
     if (tier < ModifierTier.MASTER && allowLuckUpgrades) {
       const partyLuckValue = getPartyLuckValue(party);
       const upgradeOdds = Math.floor(128 / ((partyLuckValue + 4) / 4));
-      while (pool.hasOwnProperty(tier + upgradeCount + 1) && pool[tier + upgradeCount + 1].length > 0) {
+      while (Object.hasOwn(pool, tier + upgradeCount + 1) && pool[tier + upgradeCount + 1].length > 0) {
         if (randSeedInt(upgradeOdds) < 4) {
           upgradeCount++;
         } else {
