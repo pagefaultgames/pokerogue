@@ -26,7 +26,6 @@ describe("StatStageChangePhase", () => {
       .enemyAbility(AbilityId.BALL_FETCH)
       .ability(AbilityId.BALL_FETCH)
       .passiveAbility(AbilityId.NO_GUARD)
-      .moveset([MoveId.SPLASH, MoveId.SWORDS_DANCE, MoveId.CLOSE_COMBAT, MoveId.GROWL])
       .enemyMoveset(MoveId.SPLASH);
   });
 
@@ -54,7 +53,8 @@ describe("StatStageChangePhase", () => {
       game.move.use(MoveId.SWORDS_DANCE);
       await game.toNextTurn();
 
-      expect(player.getStatStage(Stat.ATK)).toBe(2);
+      expect(player).toHaveStatStage(Stat.ATK, 2);
+      expect(player).toHaveStatStage(Stat.ATK, 2);
     });
 
     it("should lower multiple stats by the correct amount", async () => {
@@ -64,8 +64,8 @@ describe("StatStageChangePhase", () => {
       game.move.use(MoveId.CLOSE_COMBAT);
       await game.toEndOfTurn();
 
-      expect(player.getStatStage(Stat.DEF)).toBe(-1);
-      expect(player.getStatStage(Stat.SPDEF)).toBe(-1);
+      expect(player).toHaveStatStage(Stat.DEF, -1);
+      expect(player).toHaveStatStage(Stat.SPDEF, -1);
     });
 
     it("should accumulate across turns", async () => {
@@ -74,11 +74,11 @@ describe("StatStageChangePhase", () => {
 
       game.move.use(MoveId.GROWL);
       await game.toNextTurn();
-      expect(enemy.getStatStage(Stat.ATK)).toBe(-1);
+      expect(enemy).toHaveStatStage(Stat.ATK, -1);
 
       game.move.use(MoveId.GROWL);
       await game.toEndOfTurn();
-      expect(enemy.getStatStage(Stat.ATK)).toBe(-2);
+      expect(enemy).toHaveStatStage(Stat.ATK, -2);
     });
   });
 
@@ -92,7 +92,7 @@ describe("StatStageChangePhase", () => {
       game.move.use(MoveId.SWORDS_DANCE);
       await game.toEndOfTurn();
 
-      expect(player.getStatStage(Stat.ATK)).toBe(6);
+      expect(player).toHaveStatStage(Stat.ATK, 6);
     });
 
     it("should not drop below -6", async () => {
@@ -104,7 +104,7 @@ describe("StatStageChangePhase", () => {
       game.move.use(MoveId.GROWL);
       await game.toEndOfTurn();
 
-      expect(enemy.getStatStage(Stat.ATK)).toBe(-6);
+      expect(enemy).toHaveStatStage(Stat.ATK, -6);
     });
 
     it("should report the clamped change to the onChange callback", async () => {
@@ -126,7 +126,7 @@ describe("StatStageChangePhase", () => {
       expect(onChange).toHaveBeenCalledTimes(1);
       const applied = onChange.mock.calls[0][1];
       expect(applied).toEqual([{ stat: Stat.ATK, stages: 1 }]);
-      expect(player.getStatStage(Stat.ATK)).toBe(6);
+      expect(player).toHaveStatStage(Stat.ATK, 6);
     });
   });
 
@@ -150,8 +150,8 @@ describe("StatStageChangePhase", () => {
       await game.toEndOfTurn();
 
       expect(onChange).toHaveBeenCalledTimes(1);
-      expect(player.getStatStage(Stat.ATK)).toBe(1);
-      expect(player.getStatStage(Stat.SPATK)).toBe(2);
+      expect(player).toHaveStatStage(Stat.ATK, 1);
+      expect(player).toHaveStatStage(Stat.SPATK, 2);
     });
 
     it("should split into exactly two phases when both signs are present", async () => {
@@ -175,10 +175,10 @@ describe("StatStageChangePhase", () => {
       await game.toEndOfTurn();
 
       expect(onChange).toHaveBeenCalledTimes(2);
-      expect(player.getStatStage(Stat.ATK)).toBe(1);
-      expect(player.getStatStage(Stat.SPATK)).toBe(2);
-      expect(player.getStatStage(Stat.DEF)).toBe(-1);
-      expect(player.getStatStage(Stat.SPDEF)).toBe(-2);
+      expect(player).toHaveStatStage(Stat.ATK, 1);
+      expect(player).toHaveStatStage(Stat.SPATK, 2);
+      expect(player).toHaveStatStage(Stat.DEF, -1);
+      expect(player).toHaveStatStage(Stat.SPDEF, -2);
     });
   });
 
@@ -197,6 +197,6 @@ describe("StatStageChangePhase", () => {
     game.move.use(MoveId.SPLASH);
     await game.toEndOfTurn();
 
-    expect(player.getStatStage(Stat.ATK)).toBe(1);
+    expect(player).toHaveStatStage(Stat.ATK, 1);
   });
 });
