@@ -76,7 +76,8 @@ export class PokerogueAccountApi extends ApiBase {
   }
 
   /**
-   * Send a logout request. \
+   * Send a logout request.
+   * @remarks
    * **Always** (no matter if failed or not) removes the session cookie.
    */
   public async logout(): Promise<void> {
