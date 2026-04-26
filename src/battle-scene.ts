@@ -256,6 +256,8 @@ export class BattleScene extends SceneBase {
    */
   public typeHints = false;
 
+  public preferBatonPass = true;
+
   public disableMenu = false;
 
   public gameData: GameData;
