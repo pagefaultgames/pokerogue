@@ -724,7 +724,7 @@ export const Setting: Setting[] = [
     requireReload: false,
   },
   {
-    key: SettingKeys.Prefer_Pass_Baton,
+    key: SettingKeys.Prefer_Baton_Pass,
     label: i18next.t("settings:preferBatonPass"),
     options: OFF_ON,
     default: 1,
