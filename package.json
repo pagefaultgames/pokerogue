@@ -81,7 +81,7 @@
     "typedoc-plugin-coverage": "^4.0.3",
     "typedoc-plugin-mdn-links": "^5.1.1",
     "typedoc-plugin-missing-exports": "^4.1.3",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.3",
     "unplugin-inline-enum": "^0.7.0",
     "vite": "^8.0.10",
     "vitest": "^4.1.5",
