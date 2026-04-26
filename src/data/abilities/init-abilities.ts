@@ -185,7 +185,7 @@ import {
 import { AbBuilder, type Ability } from "#abilities/ability";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { DamageProtectedTag, GroundedTag, ProtectedTag } from "#data/battler-tags";
+import { GroundedTag, ProtectedTag } from "#data/battler-tags";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { Gender } from "#data/gender";
 import { getNonVolatileStatusEffects } from "#data/status-effect";
@@ -2168,7 +2168,7 @@ export function initAbilities() {
         0.25,
         (user, target, move) =>
           !!target
-          && target.findTags(t => t instanceof ProtectedTag || t instanceof DamageProtectedTag).length > 0
+          && target.findTags(t => t instanceof ProtectedTag).length > 0
           && move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user }),
       )
       .build(),
