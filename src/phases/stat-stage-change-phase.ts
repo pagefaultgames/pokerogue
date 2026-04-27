@@ -25,7 +25,10 @@ export interface StatStageChangePhaseOptions {
   sourcePokemon: Pokemon | undefined;
   /** If `true`, skip `StatStageChangeMultiplierAbAttr` */
   ignoreAbilities?: boolean;
-  /** Callback invoked with the applied changes. */
+  /**
+   * A callback to invoke with the applied changes.
+   * Used exclusively to allow Stockpile to track the stat stages actually applied.
+   */
   onChange?: StatStageChangeCallback;
   /** The category of effect that produced this change, if relevant */
   sourceEffect?: StatChangeSource;
@@ -38,13 +41,13 @@ export interface StatStageChangePhaseOptions {
 
 /**
  * Phase responsible for resolving, animating, and applying one or more
- * stat-stage changes to a single target Pokemon.
+ * they will be split into one phase for raises and one phase for drops.
  *
  * Changes to multiple stats may be applied at once. If both raises and drops are provided to the same phase,
  * it will be split into one phase for raises and one phase for drops.
  */
 export class StatStageChangePhase extends PokemonPhase {
-  public readonly phaseName = "StatStageChangePhase";
+  public override readonly phaseName = "StatStageChangePhase";
 
   private readonly options: StatStageChangePhaseOptions;
   private readonly selfTarget: boolean;
@@ -73,17 +76,17 @@ export class StatStageChangePhase extends PokemonPhase {
       this.splitBySign();
     }
 
-    this.isIncrease = this.options.changes.some(c => c.stages > 0);
     if (this.options.changes.length === 0) {
       this.end();
       return;
     }
+    this.isIncrease = this.options.changes.some(c => c.stages > 0);
 
     const applied = this.getAppliedChanges(pokemon);
     this.options.onChange?.(pokemon, applied);
 
     if (applied.some(c => c.stages !== 0) && globalScene.moveAnimations) {
-      this.playStatChangeAnimation(pokemon, () => this.applyStatChangesAndEnd(pokemon, applied));
+      this.playStatChangeAnimation(pokemon).then(() => this.applyStatChangesAndEnd(pokemon, applied));
     } else {
       this.applyStatChangesAndEnd(pokemon, applied);
     }
@@ -124,7 +127,7 @@ export class StatStageChangePhase extends PokemonPhase {
     }
 
     const opponent = this.options.sourcePokemon;
-    const cancelledStats: BattleStat[] = [];
+    const cancelledStats: Set<BattleStat> = new Set();
 
     globalScene.arena.applyTagsForSide(
       ArenaTagType.MIST,
@@ -136,27 +139,28 @@ export class StatStageChangePhase extends PokemonPhase {
       opponent,
     );
 
-    if (cancelledStats.length < this.options.changes.length) {
+    if (cancelledStats.size < this.options.changes.length) {
       this.checkAbilityProtection(pokemon, opponent, negative, cancelledStats);
     }
 
-    this.options.changes = this.options.changes.filter(c => !cancelledStats.includes(c.stat));
+    this.options.changes = this.options.changes.filter(c => !cancelledStats.has(c.stat));
   }
 
   /**
    * Invoke abilities that may block or reflect a set of stat drops,
-   * pushing any blocked stats into {@linkcode cancelledStats}.
+   * adding any blocked stats to {@linkcode cancelledStats}.
    *
    * @param pokemon - The Pokemon receiving the stat changes
    * @param opponentPokemon - The Pokemon that caused the change, if not self-inflicted
    * @param changes - The negative stat changes to evaluate
-   * @param cancelledStats - An array containing each {@linkcode BattleStat} whose change was cancelled; modified by this method
+   * @param opponentPokemon - The Pokemon that caused the change, if present; used to resolve the target for Mirror Armor's reflection effect.
+   * @param cancelledStats - A set containing each {@linkcode BattleStat} whose change was cancelled; will be modified by this method
    */
   private checkAbilityProtection(
     pokemon: Pokemon,
     opponentPokemon: Pokemon | undefined,
     changes: readonly StatChange[],
-    cancelledStats: BattleStat[],
+    cancelledStats: Set<BattleStat>,
   ): void {
     const abAttrParams: PreStatStageChangeAbAttrParams & ConditionalUserFieldProtectStatAbAttrParams = {
       pokemon,
@@ -166,7 +170,6 @@ export class StatStageChangePhase extends PokemonPhase {
       target: pokemon,
     };
 
-    // It is the responsibility of the ability to check if it is applicable based on `stats` and `cancelledStats`
     applyAbAttrs("ProtectStatAbAttr", abAttrParams);
     applyAbAttrs("ConditionalUserFieldProtectStatAbAttr", abAttrParams);
 
@@ -326,12 +329,12 @@ export class StatStageChangePhase extends PokemonPhase {
   }
 
   /**
-   * Play the rising stat change animation, depending on whether there were increases or decreases.
+   * Play the stat change animation, depending on whether there were increases or decreases.
    *
    * @param pokemon - The Pokemon to animate
    * @param onComplete - Callback for after the animation completes
    */
-  private playStatChangeAnimation(pokemon: Pokemon, onComplete: () => void): void {
+  private async playStatChangeAnimation(pokemon: Pokemon): Promise<void> {
     pokemon.enableMask();
 
     const scale = pokemon.getSpriteScale() * globalScene.field.scale;
@@ -344,11 +347,12 @@ export class StatStageChangePhase extends PokemonPhase {
     // On increase, show the red sprite located at ATK; on decrease, the blue sprite at SPD
     const spriteColor = this.isIncrease ? Stat[Stat.ATK].toLowerCase() : Stat[Stat.SPD].toLowerCase();
     const statSprite = globalScene.add.tileSprite(tileX, tileY, tileWidth, tileHeight, "battle_stats", spriteColor);
-    statSprite.setPipeline(globalScene.fieldSpritePipeline);
-    statSprite.setAlpha(0);
-    statSprite.setScale(6);
-    statSprite.setOrigin(0.5, 1);
-    statSprite.setMask(new Phaser.Display.Masks.BitmapMask(globalScene, pokemon.maskSprite ?? undefined));
+    statSprite
+      .setPipeline(globalScene.fieldSpritePipeline)
+      .setAlpha(0)
+      .setScale(6)
+      .setOrigin(0.5, 1)
+      .setMask(new Phaser.Display.Masks.BitmapMask(globalScene, pokemon.maskSprite ?? undefined));
 
     globalScene.playSound(`se/stat_${this.isIncrease ? "up" : "down"}`);
 
@@ -372,10 +376,9 @@ export class StatStageChangePhase extends PokemonPhase {
       y: `${this.isIncrease ? "-" : "+"}=${160 * 6}`,
     });
 
-    globalScene.time.delayedCall(1750, () => {
-      pokemon.disableMask();
-      onComplete();
-    });
+    await new Promise<void>(resolve => globalScene.time.delayedCall(1750, resolve));
+
+    pokemon.disableMask();
   }
 
   /**

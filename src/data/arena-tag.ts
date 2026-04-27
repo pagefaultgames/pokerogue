@@ -322,7 +322,7 @@ export class MistTag extends SerializableArenaTag {
     simulated: boolean,
     defender: Pokemon,
     changes: readonly StatChange[],
-    cancelledStats: BattleStat[],
+    cancelledStats: Set<BattleStat>,
     source: Pokemon | undefined,
   ): boolean {
     if (source) {
@@ -333,8 +333,13 @@ export class MistTag extends SerializableArenaTag {
       }
     }
 
-    cancelledStats.push(...changes.filter(c => c.stages < 0 && !cancelledStats.includes(c.stat)).map(c => c.stat));
-    if (cancelledStats.length === 0) {
+    for (const change of changes) {
+      if (change.stages < 0) {
+        cancelledStats.add(change.stat);
+      }
+    }
+
+    if (cancelledStats.size === 0) {
       return false;
     }
 
@@ -1052,7 +1057,7 @@ class StickyWebTag extends EntryHazardTag {
   }
 
   override activateTrap(simulated: boolean, pokemon: Pokemon): boolean {
-    const cancelledStats: BattleStat[] = [];
+    const cancelledStats: Set<BattleStat> = new Set();
     // TODO: Does this need to pass `simulated` as a parameter?
     applyAbAttrs("ProtectStatAbAttr", {
       pokemon,
@@ -1060,7 +1065,7 @@ class StickyWebTag extends EntryHazardTag {
       changes: [{ stat: Stat.SPD, stages: -1 }],
     });
 
-    if (cancelledStats.length > 0) {
+    if (cancelledStats.size > 0) {
       return false;
     }
 

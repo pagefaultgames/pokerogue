@@ -3,6 +3,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/framework/game-manager";
+import type { StatStageChangeCallback } from "#types/stat-change";
 import { groupStatChange } from "#utils/stat-change";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -111,8 +112,7 @@ describe("StatStageChangePhase", () => {
       await game.classicMode.startBattle(SpeciesId.MIGHTYENA);
       const player = game.field.getPlayerPokemon();
       player.setStatStage(Stat.ATK, 5);
-
-      const onChange = vi.fn();
+      const onChange = vi.fn<StatStageChangeCallback>();
       game.scene.phaseManager.unshiftNew("StatStageChangePhase", {
         battlerIndex: player.getBattlerIndex(),
         changes: groupStatChange([Stat.ATK], 3),
@@ -123,9 +123,7 @@ describe("StatStageChangePhase", () => {
       game.move.use(MoveId.SPLASH);
       await game.toEndOfTurn();
 
-      expect(onChange).toHaveBeenCalledTimes(1);
-      const applied = onChange.mock.calls[0][1];
-      expect(applied).toEqual([{ stat: Stat.ATK, stages: 1 }]);
+      expect(onChange).toHaveBeenCalledExactlyOnceWith(player, [{ stat: Stat.ATK, stages: 1 }]);
       expect(player).toHaveStatStage(Stat.ATK, 6);
     });
   });
@@ -135,7 +133,7 @@ describe("StatStageChangePhase", () => {
       await game.classicMode.startBattle(SpeciesId.MIGHTYENA);
       const player = game.field.getPlayerPokemon();
 
-      const onChange = vi.fn();
+      const onChange = vi.fn<StatStageChangeCallback>();
       game.scene.phaseManager.unshiftNew("StatStageChangePhase", {
         battlerIndex: player.getBattlerIndex(),
         changes: [

@@ -67,11 +67,13 @@ export class BerryPhase extends FieldPhase {
       }
       globalScene.eventTarget.dispatchEvent(new BerryUsedEvent(berryModifier));
     }
-    globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
-      battlerIndex: pokemon.getBattlerIndex(),
-      changes: pokemon.queuedBerryStatChanges,
-      sourcePokemon: pokemon,
-    });
+    if (pokemon.queuedBerryStatChanges.length > 0) {
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        changes: pokemon.queuedBerryStatChanges,
+        sourcePokemon: pokemon,
+      });
+    }
     globalScene.updateModifiers(pokemon.isPlayer());
     pokemon.queuedBerryStatChanges = [];
 

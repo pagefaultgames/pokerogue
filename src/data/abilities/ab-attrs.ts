@@ -3023,7 +3023,7 @@ export interface PreStatStageChangeAbAttrParams extends AbAttrBaseParams {
    */
   source?: Pokemon | undefined;
   /** All cancelled stat changes; a subset of {@linkcode stats}. Any stat change which the ability cancels should be added to this array */
-  cancelledStats: BattleStat[];
+  cancelledStats: Set<BattleStat>;
 }
 
 /**
@@ -3045,7 +3045,7 @@ export class ReflectStatStageChangeAbAttr extends PreStatStageChangeAbAttr {
   private reflectedChanges?: StatChange[];
 
   override canApply({ source, changes, cancelledStats }: PreStatStageChangeAbAttrParams): boolean {
-    this.reflectedChanges = changes.filter(c => !cancelledStats.includes(c.stat));
+    this.reflectedChanges = changes.filter(c => !cancelledStats.has(c.stat));
     return !!source && this.reflectedChanges.length > 0;
   }
 
@@ -3064,7 +3064,7 @@ export class ReflectStatStageChangeAbAttr extends PreStatStageChangeAbAttr {
         sourceEffect: StatChangeSource.MIRROR_ARMOR,
       });
     }
-    cancelledStats.push(...this.reflectedChanges.map(c => c.stat));
+    this.reflectedChanges.forEach(c => cancelledStats.add(c.stat));
   }
 
   getTriggerMessage({ pokemon }: PreStatStageChangeAbAttrParams, abilityName: string): string {
@@ -3095,18 +3095,17 @@ export class ProtectStatAbAttr extends PreStatStageChangeAbAttr {
 
   override canApply({ changes, cancelledStats }: PreStatStageChangeAbAttrParams): boolean {
     return changes.some(
-      s => (s.stat === this.protectedStat || this.protectedStat == null) && !cancelledStats.includes(s.stat),
+      s => (s.stat === this.protectedStat || this.protectedStat == null) && !cancelledStats.has(s.stat),
     );
   }
 
   override apply({ changes, cancelledStats }: PreStatStageChangeAbAttrParams): void {
     if (this.protectedStat == null) {
-      const statsToCancel = changes.map(c => c.stat).filter(s => !cancelledStats.includes(s));
-      cancelledStats.push(...statsToCancel);
+      changes.forEach(c => cancelledStats.add(c.stat));
       return;
     }
 
-    cancelledStats.push(this.protectedStat);
+    cancelledStats.add(this.protectedStat);
   }
 
   override getTriggerMessage({ pokemon }: PreStatStageChangeAbAttrParams, abilityName: string): string {
@@ -3286,7 +3285,7 @@ export interface ConditionalUserFieldProtectStatAbAttrParams extends AbAttrBaseP
   /** The stats being affected by the stat stage change */
   changes: readonly StatChange[];
   /** All cancelled sWat changes; a subset of {@linkcode stats}. Any stat change which the ability cancels should be added to this array */
-  cancelledStats: BattleStat[];
+  cancelledStats: Set<BattleStat>;
   // TODO: consider making this required and not inherit from PreStatStageChangeAbAttr
   /** The target of the stat stage change */
   target?: Pokemon;
@@ -3316,9 +3315,8 @@ export class ConditionalUserFieldProtectStatAbAttr extends PreStatStageChangeAbA
       return false;
     }
     return (
-      changes.some(
-        c => (c.stat === this.protectedStat || this.protectedStat == null) && !cancelledStats.includes(c.stat),
-      ) && this.condition(target)
+      changes.some(c => (c.stat === this.protectedStat || this.protectedStat == null) && !cancelledStats.has(c.stat))
+      && this.condition(target)
     );
   }
 
@@ -3327,12 +3325,11 @@ export class ConditionalUserFieldProtectStatAbAttr extends PreStatStageChangeAbA
    */
   override apply({ changes, cancelledStats }: ConditionalUserFieldProtectStatAbAttrParams): void {
     if (this.protectedStat == null) {
-      const statsToCancel = changes.map(c => c.stat).filter(s => !cancelledStats.includes(s));
-      cancelledStats.push(...statsToCancel);
+      changes.forEach(c => cancelledStats.add(c.stat));
       return;
     }
 
-    cancelledStats.push(this.protectedStat);
+    cancelledStats.add(this.protectedStat);
   }
 }
 
