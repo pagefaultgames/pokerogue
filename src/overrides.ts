@@ -297,11 +297,11 @@ class DefaultOverrides {
    * // Will have a quantity of 2 in-game
    * STARTING_MODIFIER_OVERRIDE = [{name: "EXP_SHARE", count: 2}]
    * // Will have a quantity of 1 in-game
-   * STARTING_HELD_ITEM_OVERRIDE = [{name: "LUCKY_EGG"}]
+   * STARTING_HELD_ITEMS_OVERRIDE = [{name: "LUCKY_EGG"}]
    * // Type must be given to get a specific berry
-   * STARTING_HELD_ITEM_OVERRIDE = [{name: "BERRY", type: BerryType.SITRUS}]
+   * STARTING_HELD_ITEMS_OVERRIDE = [{name: "BERRY", type: BerryType.SITRUS}]
    * // A random berry will be generated at runtime
-   * STARTING_HELD_ITEM_OVERRIDE = [{name: "BERRY"}]
+   * STARTING_HELD_ITEMS_OVERRIDE = [{name: "BERRY"}]
    * ```
    */
   readonly STARTING_MODIFIER_OVERRIDE: ModifierOverride[] = [];

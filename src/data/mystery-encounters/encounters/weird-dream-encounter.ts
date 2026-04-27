@@ -587,7 +587,7 @@ async function postProcessTransformedPokemon(
   });
 
   // For pokemon that the player owns (including ones just caught), gain a candy
-  if (!forBattle && !!globalScene.gameData.dexData[speciesRootForm].caughtAttr) {
+  if (!forBattle && globalScene.gameData.dexData[speciesRootForm].caughtAttr) {
     globalScene.gameData.addStarterCandy(speciesRootForm, 1);
   }
 
@@ -791,7 +791,7 @@ async function addEggMoveToNewPokemonMoveset(
       }
 
       // For pokemon that the player owns (including ones just caught), unlock the egg move
-      if (!forBattle && randomEggMoveIndex != null && !!globalScene.gameData.dexData[speciesRootForm].caughtAttr) {
+      if (!forBattle && randomEggMoveIndex != null && globalScene.gameData.dexData[speciesRootForm].caughtAttr) {
         await globalScene.gameData.setEggMoveUnlocked(getPokemonSpecies(speciesRootForm), randomEggMoveIndex, true);
       }
     }

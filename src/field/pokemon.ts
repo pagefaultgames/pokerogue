@@ -78,7 +78,6 @@ import { AbilityId } from "#enums/ability-id";
 import { AiType } from "#enums/ai-type";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
-import { BattleSpec } from "#enums/battle-spec";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -166,9 +165,9 @@ import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import { PlayerBattleInfo } from "#ui/player-battle-info";
 import { coerceArray } from "#utils/array";
 import { applyChallenges } from "#utils/challenge-utils";
+import { argbFromRgba, deltaRgb, rgbaFromArgb, rgbaToInt, rgbHexToRgba, rgbToHsv } from "#utils/color-utils";
 import {
   BooleanHolder,
-  deltaRgb,
   fixedInt,
   getIvsFromId,
   isBetween,
@@ -177,9 +176,6 @@ import {
   randSeedInt,
   randSeedIntRange,
   randSeedItem,
-  rgbaToInt,
-  rgbHexToRgba,
-  rgbToHsv,
   toDmgValue,
 } from "#utils/common";
 import { calculateBossSegmentDamage } from "#utils/damage";
@@ -188,7 +184,7 @@ import { cachedFetch } from "#utils/fetch-utils";
 import { getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { ValueHolder } from "#utils/value-holder";
-import { argbFromRgba, QuantizerCelebi, rgbaFromArgb } from "@material/material-color-utilities";
+import { QuantizerCelebi } from "@material/material-color-utilities";
 import i18next from "i18next";
 import Phaser from "phaser";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
@@ -2226,18 +2222,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (
       this.isEnemy()
       && !gameMode.hasChallenge(Challenges.PASSIVES)
-      && (currentBattle?.battleSpec === BattleSpec.FINAL_BOSS
+      && (currentBattle?.isClassicFinalBoss
         || gameMode.isEndlessMinorBoss(waveIndex)
         || gameMode.isEndlessMajorBoss(waveIndex))
     ) {
       return false;
     }
 
-    if (
-      globalScene.gameMode.isDaily
-      && this.customPokemonData.passive != null
-      && this.customPokemonData.passive !== -1
-    ) {
+    if (gameMode.isDaily && this.customPokemonData.passive != null && this.customPokemonData.passive !== -1) {
       return true;
     }
 
@@ -7037,11 +7029,8 @@ export class EnemyPokemon extends Pokemon {
       );
     }
 
-    switch (globalScene.currentBattle.battleSpec) {
-      case BattleSpec.FINAL_BOSS:
-        if (!this.formIndex && this.bossSegmentIndex < 1) {
-          damage = Math.min(damage, this.hp - 1);
-        }
+    if (globalScene.currentBattle.isClassicFinalBoss && this.formIndex === 0 && this.bossSegmentIndex < 1) {
+      damage = Math.min(damage, this.hp - 1);
     }
 
     const ret = super.damage(damage, ignoreSegments, preventEndure, ignoreFaintPhase);
@@ -7060,7 +7049,7 @@ export class EnemyPokemon extends Pokemon {
   }
 
   private getMinimumSegmentIndex(): number {
-    if (globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS && !this.formIndex) {
+    if (globalScene.currentBattle.isClassicFinalBoss && !this.formIndex) {
       return 1;
     }
 

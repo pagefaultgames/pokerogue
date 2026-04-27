@@ -148,7 +148,6 @@ export class TouchControl {
    * and emits the appropriate event ('input_down' or 'input_up') based on the event type.
    */
   simulateKeyboardEvent(eventType: string, key: string): boolean {
-    console.log("simulateKeyboardEvent", eventType, key);
     if (!Object.hasOwn(Button, key) || this.disabled) {
       return false;
     }

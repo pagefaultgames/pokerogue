@@ -1910,6 +1910,16 @@ export function initAbilities() {
       .attr(NoFusionAbilityAbAttr)
       .attr(PostBattleInitFormChangeAbAttr, () => 0)
       .attr(PreSwitchOutFormChangeAbAttr, pokemon => (pokemon.isFainted() ? pokemon.formIndex : 1))
+      .conditionalAttr(
+        p => p.formIndex !== 0 && p.isOnField() && zeroToHeroFormChangeMessage.get(p) !== p.battleData,
+        PostSummonMessageAbAttr,
+        (pokemon: Pokemon) => {
+          zeroToHeroFormChangeMessage.set(pokemon, pokemon.battleData);
+          return i18next.t("abilityTriggers:postSummonZeroToHero", {
+            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+          });
+        },
+      )
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.COMMANDER, 9) //
@@ -2267,6 +2277,9 @@ const sheerForceHitDisableAbCondition: AbAttrCondition = (pokemon: Pokemon): boo
 
   return !sheerForceAffected;
 };
+
+/** Tracks the `battleData` reference at the time the Zero to Hero form change message was shown. */
+const zeroToHeroFormChangeMessage = new WeakMap<Pokemon, object>();
 
 /**
  * DRY implementation for the `AIMovegenMoveStatsAbAttr` effect of harsh-sunlight summoning abilities.

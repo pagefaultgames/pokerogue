@@ -10,9 +10,9 @@ import { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import type { PlayerPokemon } from "#field/pokemon";
 import { addTextObject, updateCandyCountTextStyle } from "#ui/text";
-import { padInt, rgbHexToRgba } from "#utils/common";
+import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
+import { padInt } from "#utils/common";
 import { getDexNumber, getPokemonSpeciesForm } from "#utils/pokemon-utils";
-import { argbFromRgba } from "@material/material-color-utilities";
 import { PokemonInfoContainer } from "./pokemon-info-container";
 
 /**
