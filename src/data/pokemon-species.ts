@@ -581,7 +581,6 @@ export abstract class PokemonSpeciesForm {
       if (Object.hasOwn(speciesEggMoves, rootSpeciesId)) {
         // TODO: Review typing of `speciesEggMoves` - asserting `rootSpeciesId` is `keyof typeof speciesEggMoves` results in `never[]`
         // due to incompatible tuple intersections
-
         const eggMoveIndex = speciesEggMoves[rootSpeciesId].indexOf(moveId);
         if (eggMoveIndex > -1 && eggMoves & (1 << eggMoveIndex)) {
           continue;
