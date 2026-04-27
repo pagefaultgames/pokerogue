@@ -214,6 +214,7 @@ export const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
   MoveId.STEEL_ROLLER,
   MoveId.STORED_POWER,
   MoveId.SUPER_FANG,
+  MoveId.SUCKER_PUNCH,
   MoveId.SYNCHRONOISE,
   MoveId.UPPER_HAND,
   MoveId.WHIRLPOOL,

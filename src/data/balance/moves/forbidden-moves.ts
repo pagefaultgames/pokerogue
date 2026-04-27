@@ -62,11 +62,15 @@ export const FORBIDDEN_TM_MOVES: ReadonlySet<MoveId> = new Set([
 export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.ABSORB,
   MoveId.ACID,
+  MoveId.ASSURANCE, // Primarily a doubles move but functions as early game Dark STAB
   MoveId.ASTONISH,
   MoveId.BABY_DOLL_EYES,
   MoveId.BARRAGE,
+  MoveId.BELCH, // Too situational, high BP also makes it likely to spawn on anything random that gets it
+  MoveId.BELLY_DRUM, // Revist after AI changes, currently the AI uses it just to swap immediately out of fear
   MoveId.BIDE,
   MoveId.BIND,
+  MoveId.BLOCK, // Potentially revisit after improved learnsets, only value is on stall-eqsue builds
   MoveId.BRANCH_POKE,
   MoveId.BONE_CLUB, // Cubone gets better options
   MoveId.BUBBLE,
@@ -77,57 +81,72 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.DEFENSE_CURL,
   MoveId.DISARMING_VOICE,
   MoveId.DOUBLE_SLAP,
+  MoveId.DRAGON_BREATH,
   MoveId.DREAM_EATER,
   MoveId.EMBER,
   MoveId.FAIRY_WIND,
   MoveId.FALSE_SWIPE,
   MoveId.FEINT,
   MoveId.FLAIL,
+  MoveId.FOCUS_PUNCH, // Messy with move weighting, AI will also always try to go for it
   MoveId.FORESIGHT,
   MoveId.FURY_ATTACK,
   MoveId.FURY_SWIPES,
   MoveId.GEAR_UP,
   MoveId.GROWL,
+  MoveId.GUARD_SWAP, // Too situational, ends up benefitting the player more often than not
   MoveId.GUST,
   MoveId.HARDEN,
   MoveId.HORN_ATTACK,
-  MoveId.IMPRISON,
+  MoveId.IMPRISON, // Too situational
   MoveId.KINESIS,
+  MoveId.LAST_RESORT, // Potentially revisit after further move generation changes, too high BP causes it to spawn as random coverage and ends up being situational / unused
   MoveId.LEAFAGE,
   MoveId.LEER,
   MoveId.LICK,
   MoveId.LUCKY_CHANT,
+  MoveId.MEAN_LOOK, // Same as Block
   MoveId.MEGA_DRAIN,
-  // Long discussion with balance team about this one
   MoveId.METAL_CLAW,
-  MoveId.MIRACLE_EYE,
+  MoveId.MIRACLE_EYE, // Same as Odor Sleuth
   MoveId.MIST,
   MoveId.MUD_SPORT,
   MoveId.NIGHTMARE,
+  MoveId.ODOR_SLEUTH, // The slot this spawns in could've just been used to spawn coverage instead
   MoveId.PECK,
   MoveId.PLAY_NICE,
   MoveId.POISON_STING,
   MoveId.POUND,
   MoveId.POUNCE,
   MoveId.POWDER_SNOW,
+  MoveId.POWER_SWAP, // Same as Guard Swap
   MoveId.PSYWAVE,
+  MoveId.QUICK_ATTACK,
   MoveId.RAGE,
+  MoveId.RAZOR_LEAF,
+  MoveId.RAZOR_WIND, // Really Bad
   MoveId.ROLLING_KICK,
   MoveId.ROTOTILLER,
+  MoveId.ROUND, // Gets superceded very easily, common TM but is fine as early game coverage
   MoveId.SCRATCH,
+  MoveId.SKY_ATTACK, // Only useful with Power Herb, as of now it fluffs up a chunk of Flying type's movesets due to being high BP and high weight in generation
+  MoveId.SLAM,
   MoveId.SMOG,
   MoveId.SONIC_BOOM,
   MoveId.SPARK,
   MoveId.SPIT_UP,
   MoveId.SPIKE_CANNON, // No one who has it really cares for it
   MoveId.SPLASH,
+  MoveId.STOMP,
+  MoveId.SUBMISSION,
   MoveId.SUPERSONIC,
   MoveId.SWALLOW,
   MoveId.SWEET_SCENT,
+  MoveId.SYNCHRONOISE, // Too situational
   MoveId.TACKLE,
   MoveId.TAIL_WHIP,
+  MoveId.TAKE_DOWN,
   MoveId.TEARFUL_LOOK,
-  // Blitzy recommended
   MoveId.TELEPORT,
   MoveId.THUNDER_SHOCK,
   MoveId.TWISTER,
@@ -137,12 +156,4 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.WATER_SPORT,
   MoveId.WITHDRAW,
   MoveId.WRAP,
-  MoveId.TAKE_DOWN,
-  MoveId.STOMP,
-  MoveId.QUICK_ATTACK,
-  MoveId.SYNCHRONOISE,
-  // Really bad moves
-  MoveId.RAZOR_WIND,
-  MoveId.SLAM,
-  MoveId.SUBMISSION,
 ]);
