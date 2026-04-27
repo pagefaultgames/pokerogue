@@ -1098,7 +1098,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
     const levelDiff = player ? 0 : forTrainer || isBoss ? (forTrainer && isBoss ? 2.5 : 5) : 10;
     ret.push([prevolutionLevels[0][0], 1]);
     for (let l = 1; l < prevolutionLevels.length; l++) {
-      const evolution = pokemonEvolutions[prevolutionLevels[l - 1][0]]!.find(
+      const evolution = pokemonEvolutions[prevolutionLevels[l - 1][0] as keyof typeof pokemonEvolutions].find(
         e => e.speciesId === prevolutionLevels[l][0],
       );
       ret.push([
