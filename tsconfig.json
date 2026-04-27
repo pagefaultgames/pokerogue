@@ -13,8 +13,6 @@
       // ES2022 stdlibs
       "ES2022",
       "DOM",
-      "DOM.AsyncIterable",
-      "DOM.Iterable",
       "ScriptHost",
       "WebWorker.ImportScripts",
       // future libs

@@ -13,8 +13,10 @@ interface DoFetchConfig extends SetRequired<UndefinedOnPartialDeep<RequestInit>,
 export abstract class ApiBase {
   //#region Fields
 
+  // TODO: Make constant in outer scope
   public readonly ERR_GENERIC: string = "There was an error";
 
+  /** The base URL for HTTP requests. */
   protected readonly base: string;
 
   //#region Public
@@ -108,7 +110,7 @@ export abstract class ApiBase {
    */
   protected toUrlSearchParams(data: Record<string, any>): URLSearchParams {
     const arr = Object.entries(data)
-      .map(([key, value]) => (value !== undefined ? [key, String(value)] : [key, ""]))
+      .map(([key, value]) => [key, value === undefined ? "" : String(value)])
       .filter(([, value]) => value !== "");
 
     return new URLSearchParams(arr);
