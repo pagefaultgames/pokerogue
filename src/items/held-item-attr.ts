@@ -8,8 +8,8 @@ import type { HeldItem } from "#items/held-item";
 import type { HeldItemEffectParamMap } from "#types/held-item-parameter";
 
 /**
- * Maps each {@linkcode HeldItemEffect} to its attribute instances for a given set of effects.
- * Effects not in the `Effects` union map to `undefined`.
+ * Type matching each {@linkcode HeldItemEffect} to the subset of `Attrs` that can apply said effect. \
+ * Any effects absent from all `Attrs` will map to `undefined`.
  */
 export type HeldItemRecord<Attrs extends HeldItemAttr> = {
   [effect in HeldItemEffect]: effect extends Attrs["effect"] ? readonly Extract<Attrs, HeldItemAttr<effect>>[] : never;

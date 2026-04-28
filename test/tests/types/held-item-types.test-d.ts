@@ -53,7 +53,6 @@ describe("HeldItemBuilder", () => {
   });
 
   it("should convert the builder into a properly typed held item instance", () => {
-    expectTypeOf(builder().build()).toEqualTypeOf<HeldItem<never>>();
     expectTypeOf(builder().attr(NonConsumableAttr).build()).toEqualTypeOf<HeldItem<NonConsumableAttr>>();
     expectTypeOf(builder().attr(NonConsumableAttr).attr(ConsumableAttr).build()).toEqualTypeOf<
       HeldItem<NonConsumableAttr | ConsumableAttr>
@@ -61,6 +60,10 @@ describe("HeldItemBuilder", () => {
   });
 
   describe("Errors", () => {
+    it("should produce an ErrorType when creating an item without attributes", () => {
+      expectTypeOf(builder().build()).toEqualTypeOf<ErrorType<"Cannot create a HeldItem with no attributes!">>();
+    });
+
     it("should produce an ErrorType when adding a second consumable attr for the same effect", () => {
       const result = builder().attr(ConsumableAttr).attr(ConsumableAttr);
       expectTypeOf(result).toExtend<ErrorType<string>>();

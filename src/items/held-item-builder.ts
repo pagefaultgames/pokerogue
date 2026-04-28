@@ -142,10 +142,15 @@ export class HeldItemBuilder<Attrs extends HeldItemAttr = never, ConsumableEffec
   // #endregion Builder code
 
   /**
-   * Build a non-consumable {@linkcode HeldItem} with the stored attributes and flags.
+   * Build a new {@linkcode HeldItem} with the stored attributes and flags.
    * @returns A fully-typed `HeldItem` with all registered attributes.
+   * @remarks
+   * This will resolve to `never` if no attributes have been registered.
    */
-  public build(): HeldItem<Attrs> {
+  // TODO: Do we want to allow 0-item builds (and make them cosmetic?)
+  public build(): [Attrs] extends [never] ? ErrorType<"Cannot create a HeldItem with no attributes!"> : HeldItem<Attrs>;
+  // NB: The implementation signature needs to return a union here to satisfy TypeScript, but we never actually return one ourselves
+  public build(): ErrorType<"Cannot create a HeldItem with no attributes!"> | HeldItem<Attrs> {
     // @ts-expect-error - TypeScript doesn't support friend classes, so this is the closest we can get to
     // ensuring `HeldItem` is only constructed by its corresponding builder.
     // NB: The type specifier here is required due to TS resolving this as `any`
