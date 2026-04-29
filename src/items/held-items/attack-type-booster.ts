@@ -1,9 +1,8 @@
 import { HeldItemEffect } from "#enums/held-item-effect";
-import { HeldItemId, HeldItemNames } from "#enums/held-item-id";
+import { HeldItemId } from "#enums/held-item-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { HeldItemAttr } from "#items/held-item-attr";
 import type { AttackTypeBoostParams } from "#types/held-item-parameter";
-import i18next from "i18next";
 
 export const attackTypeToHeldItem = {
   [PokemonType.NORMAL]: HeldItemId.SILK_SCARF,
@@ -35,17 +34,6 @@ export class AttackTypeBoostHeldItemAttr extends HeldItemAttr<typeof HeldItemEff
     super();
     this.moveType = moveType;
     this.powerBoost = powerBoost;
-  }
-
-  // TODO: Move to builder
-  get name(): string {
-    return i18next.t(`modifierType:AttackTypeBoosterItem.${HeldItemNames[this.type]?.toLowerCase()}`);
-  }
-
-  get description(): string {
-    return i18next.t("modifierType:ModifierType.AttackTypeBoosterModifierType.description", {
-      moveType: i18next.t(`pokemonInfo:Type.${PokemonType[this.moveType]}`),
-    });
   }
 
   public override shouldApply({ moveType, movePower }: AttackTypeBoostParams): boolean {

@@ -2,22 +2,12 @@ import { HeldItemEffect } from "#enums/held-item-effect";
 import { Stat } from "#enums/stat";
 import { HeldItemAttr } from "#items/held-item-attr";
 import type { StatBoostParams } from "#types/held-item-parameter";
-import i18next from "i18next";
 
 /**
  * Currently used by Macho Brace item
  */
 export class MachoBraceHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.MACHO_BRACE> {
   public override readonly effect = HeldItemEffect.MACHO_BRACE;
-
-  // TODO: Move to builder
-  get name(): string {
-    return i18next.t("modifierType:ModifierType.MYSTERY_ENCOUNTER_MACHO_BRACE.name") + " (new)";
-  }
-
-  get description(): string {
-    return i18next.t("modifierType:ModifierType.MYSTERY_ENCOUNTER_MACHO_BRACE.description");
-  }
 
   public override apply({ pokemon, statHolder, stat }: StatBoostParams): void {
     const { heldItemManager: manager } = pokemon;

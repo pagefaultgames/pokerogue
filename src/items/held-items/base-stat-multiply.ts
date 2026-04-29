@@ -1,9 +1,8 @@
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId } from "#enums/held-item-id";
-import { getStatKey, type PermanentStat, Stat } from "#enums/stat";
+import { type PermanentStat, Stat } from "#enums/stat";
 import { HeldItemAttr } from "#items/held-item-attr";
 import type { BaseStatParams } from "#types/held-item-parameter";
-import i18next from "i18next";
 
 export const permanentStatToHeldItem = {
   [Stat.HP]: HeldItemId.HP_UP,
@@ -35,21 +34,6 @@ export class BaseStatMultiplyHeldItemAttr extends HeldItemAttr<typeof HeldItemEf
   constructor(stat: PermanentStat) {
     super();
     this.stat = stat;
-  }
-
-  // TODO: Move to builder
-  get name(): string {
-    return i18next.t(`modifierType:BaseStatBoosterItem.${statBoostItems[this.stat]}`);
-  }
-
-  get description(): string {
-    return i18next.t("modifierType:ModifierType.BaseStatBoosterModifierType.description", {
-      stat: i18next.t(getStatKey(this.stat)),
-    });
-  }
-
-  get iconName(): string {
-    return statBoostItems[this.stat];
   }
 
   public override apply({ pokemon, baseStats }: BaseStatParams): void {

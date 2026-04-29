@@ -16,19 +16,6 @@ import i18next from "i18next";
 export class InstantReviveHeldItemAttr extends ConsumableHeldItemAttr<typeof HeldItemEffect.INSTANT_REVIVE> {
   public override readonly effect = HeldItemEffect.INSTANT_REVIVE;
 
-  // TODO: Move to builder
-  get name(): string {
-    return i18next.t("modifierType:ModifierType.REVIVER_SEED.name");
-  }
-
-  get description(): string {
-    return i18next.t("modifierType:ModifierType.REVIVER_SEED.description");
-  }
-
-  get iconName(): string {
-    return "reviver_seed";
-  }
-
   public override apply({ pokemon }: InstantReviveParams): void {
     // TODO: Since this should be the only place `revive=true` is passed to `PokemonHealPhase`, we can remove it
     // later on
@@ -38,7 +25,7 @@ export class InstantReviveHeldItemAttr extends ConsumableHeldItemAttr<typeof Hel
         toDmgValue(pokemon.getMaxHp() / 2),
         i18next.t("modifier:pokemonInstantReviveApply", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          typeName: this.name,
+          typeName: this.item.name,
         }),
         false,
         false,

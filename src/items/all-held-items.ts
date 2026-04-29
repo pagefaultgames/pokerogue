@@ -9,12 +9,12 @@ import { FormChangeItemId } from "#enums/form-change-item-id";
 import { HeldItemId, HeldItemNames } from "#enums/held-item-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
-import { PERMANENT_STATS, Stat } from "#enums/stat";
+import { getStatKey, PERMANENT_STATS, Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { AccuracyBoosterHeldItemAttr } from "#items/accuracy-booster";
 import { AttackTypeBoostHeldItemAttr, attackTypeToHeldItem } from "#items/attack-type-booster";
 import { OldGateauHeldItemAttr, ShuckleJuiceHeldItemAttr } from "#items/base-stat-add";
-import { BaseStatMultiplyHeldItemAttr, permanentStatToHeldItem } from "#items/base-stat-multiply";
+import { BaseStatMultiplyHeldItemAttr, permanentStatToHeldItem, statBoostItems } from "#items/base-stat-multiply";
 import { BatonHeldItemAttr } from "#items/baton";
 import { BerryHeldItemAttr, berryTypeToHeldItem } from "#items/berry";
 import { BypassSpeedChanceHeldItemAttr } from "#items/bypass-speed-chance";
@@ -40,6 +40,7 @@ import { SurviveChanceHeldItemAttr } from "#items/survive-chance";
 import { TurnEndHealHeldItemAttr } from "#items/turn-end-heal";
 import { TurnEndStatusHeldItemAttr } from "#items/turn-end-status";
 import { getEnumValues } from "#utils/enums";
+import i18next from "i18next";
 
 // #region Types
 // TODO: Move these to wherever the "XYZ enum to held item id" utils are eventually placed
@@ -97,6 +98,9 @@ const berryItems = getEnumValues(BerryType).reduce(
     berryId satisfies BerryItemId;
     ret[berryId] = new HeldItemBuilder(berryId, maxStackCount) //
       .attr(BerryHeldItemAttr, berry)
+      .name(`berry:${BerryType[berry].toLowerCase()}.name`)
+      .description(`berry:${BerryType[berry].toLowerCase()}.effect`)
+      .iconName(`${BerryType[berry].toLowerCase()}_berry`)
       .build();
     return ret;
   },
@@ -108,14 +112,19 @@ const berryItems = getEnumValues(BerryType).reduce(
 const typeBoostHeldItems = (
   getEnumValues(PokemonType).slice(1, -1) as Exclude<PokemonType, PokemonType.UNKNOWN | PokemonType.STELLAR>[]
 ).reduce(
-  (ret, type) => {
-    const id = attackTypeToHeldItem[type] satisfies TypeBoostItemId;
-    ret[id] = new HeldItemBuilder(id, 99)
-      .attr(AttackTypeBoostHeldItemAttr, type, 0.2)
+  (ret, pokemonType) => {
+    const id = attackTypeToHeldItem[pokemonType] satisfies TypeBoostItemId;
+    ret[id] = new HeldItemBuilder(id, 99) //
+      .attr(AttackTypeBoostHeldItemAttr, pokemonType, 0.2)
       .unstealable()
       .untransferable()
       .unsuppressable()
-      .name(`modifierType:AttackTypeBoosterItem.${HeldItemNames[type].toLowerCase()}`)
+      .name(`modifierType:AttackTypeBoosterItem.${HeldItemNames[id].toLowerCase()}`)
+      // TODO: Rework the locales entry to use i18next's native nesting support
+      // by replacing `{{moveType}}` with "$t(pokemonInfo:Type.{{moveType}})"
+      .description("modifierType:ModifierType.AttackTypeBoosterModifierType.description", {
+        moveType: i18next.t(`pokemonInfo:Type.${PokemonType[pokemonType]}`),
+      })
       .build();
     return ret;
   },
@@ -133,6 +142,12 @@ const vitaminItems = PERMANENT_STATS.reduce(
       .unstealable()
       .untransferable()
       .unsuppressable()
+      .name(`modifierType:BaseStatBoosterItem.${statBoostItems[stat]}`)
+      // TODO: Rework the locales entry to use i18next's native nesting support
+      // by replacing `{{stat}}` with "$t({{statKey}})"
+      .description("modifierType:ModifierType.BaseStatBoosterModifierType.description", {
+        stat: i18next.t(getStatKey(stat)),
+      })
       .build();
     return ret;
   },
@@ -204,7 +219,7 @@ const heldItems = {
     .attr(ExpBoosterHeldItemAttr, 100)
     .description("modifierType:ModifierType.PokemonExpBoosterModifierType.description", { boostPercent: 100 })
     .build(),
-  [HeldItemId.SOOTHE_BELL]: new HeldItemBuilder(HeldItemId.SOOTHE_BELL, 3)
+  [HeldItemId.SOOTHE_BELL]: new HeldItemBuilder(HeldItemId.SOOTHE_BELL, 3) //
     .attr(FriendshipBoosterHeldItemAttr)
     .description("modifierType:ModifierType.PokemonFriendshipBoosterModifierType.description")
     .build(),
@@ -219,7 +234,7 @@ const heldItems = {
     .iconName("shell_bell")
     .build(),
 
-  [HeldItemId.FOCUS_BAND]: new HeldItemBuilder(HeldItemId.FOCUS_BAND, 5).attr(SurviveChanceHeldItemAttr).build(),
+  [HeldItemId.FOCUS_BAND]: new HeldItemBuilder(HeldItemId.FOCUS_BAND, 5).attr(SurviveChanceHeldItemAttr).build(), //
   [HeldItemId.QUICK_CLAW]: new HeldItemBuilder(HeldItemId.QUICK_CLAW, 3) //
     .attr(BypassSpeedChanceHeldItemAttr)
     .build(),
@@ -258,14 +273,14 @@ const heldItems = {
     .untransferable()
     .build(),
 
-  [HeldItemId.FLAME_ORB]: new HeldItemBuilder(HeldItemId.FLAME_ORB, 1)
+  [HeldItemId.FLAME_ORB]: new HeldItemBuilder(HeldItemId.FLAME_ORB, 1) //
     .attr(TurnEndStatusHeldItemAttr, StatusEffect.BURN)
     .build(),
-  [HeldItemId.TOXIC_ORB]: new HeldItemBuilder(HeldItemId.TOXIC_ORB, 1)
+  [HeldItemId.TOXIC_ORB]: new HeldItemBuilder(HeldItemId.TOXIC_ORB, 1) //
     .attr(TurnEndStatusHeldItemAttr, StatusEffect.TOXIC)
     .build(),
 
-  [HeldItemId.SHUCKLE_JUICE_GOOD]: new HeldItemBuilder(HeldItemId.SHUCKLE_JUICE_GOOD, 1)
+  [HeldItemId.SHUCKLE_JUICE_GOOD]: new HeldItemBuilder(HeldItemId.SHUCKLE_JUICE_GOOD, 1) //
     .attr(ShuckleJuiceHeldItemAttr, 10)
     .unstealable()
     .untransferable()
@@ -274,7 +289,7 @@ const heldItems = {
     .description("modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_GOOD.description")
     .iconName("berry_juice_good")
     .build(),
-  [HeldItemId.SHUCKLE_JUICE_BAD]: new HeldItemBuilder(HeldItemId.SHUCKLE_JUICE_BAD, 1)
+  [HeldItemId.SHUCKLE_JUICE_BAD]: new HeldItemBuilder(HeldItemId.SHUCKLE_JUICE_BAD, 1) //
     .attr(ShuckleJuiceHeldItemAttr, -15)
     .unstealable()
     .untransferable()
@@ -283,14 +298,17 @@ const heldItems = {
     .description("modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_BAD.description")
     .iconName("berry_juice_bad")
     .build(),
-  [HeldItemId.OLD_GATEAU]: new HeldItemBuilder(HeldItemId.OLD_GATEAU, 1)
+  [HeldItemId.OLD_GATEAU]: new HeldItemBuilder(HeldItemId.OLD_GATEAU, 1) //
     .attr(OldGateauHeldItemAttr)
     .unstealable()
     .untransferable()
     .unsuppressable()
+    .description("modifierType:ModifierType.PokemonBaseStatFlatModifierType.description")
     .build(),
-  [HeldItemId.MACHO_BRACE]: new HeldItemBuilder(HeldItemId.MACHO_BRACE, 50)
+  [HeldItemId.MACHO_BRACE]: new HeldItemBuilder(HeldItemId.MACHO_BRACE, 50) //
     .attr(MachoBraceHeldItemAttr)
+    .name("modifierType:ModifierType.MYSTERY_ENCOUNTER_MACHO_BRACE.name")
+    .description("modifierType:ModifierType.MYSTERY_ENCOUNTER_MACHO_BRACE.description")
     .unstealable()
     .untransferable()
     .unsuppressable()
@@ -301,9 +319,7 @@ const heldItems = {
     SpeciesId.GIMMIGHOUL,
     10,
   ),
-  // `any` type parameter used to get around `HeldItem` being invariant in `Effects`,
-  // thereby rendering all instances without an actual supertype
-} as const satisfies Readonly<Record<HeldItemId, CosmeticHeldItem | HeldItem<any>>>;
+} as const satisfies Readonly<Record<HeldItemId, CosmeticHeldItem | HeldItem>>;
 
 /**
  * Resolved type of {@linkcode allHeldItems}.

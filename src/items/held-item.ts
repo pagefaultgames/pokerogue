@@ -113,8 +113,6 @@ export abstract class HeldItemBase {
   }
 }
 
-type HeldItemWithAttr<Attrs extends HeldItemAttr, E extends HeldItemEffect> = HeldItem<Attrs | HeldItemAttr<E>>;
-
 /**
  * Class for all non-cosmetic held items
  * (i.e. ones that can have their effects applied during or outside of battle).
@@ -125,7 +123,7 @@ type HeldItemWithAttr<Attrs extends HeldItemAttr, E extends HeldItemEffect> = He
  * While exposing the exact kinds of attributes this class supports technically breaks encapsulation,
  * this is required for existing code to work without excessive type assertions.
  */
-export class HeldItem<out Attrs extends HeldItemAttr = HeldItemAttr> extends HeldItemBase {
+export class HeldItem<Attrs extends HeldItemAttr = HeldItemAttr> extends HeldItemBase {
   /**
    * An object matching each supported {@linkcode HeldItemEffect} to the attributes that implement said effect.
    */
@@ -184,10 +182,10 @@ export class HeldItem<out Attrs extends HeldItemAttr = HeldItemAttr> extends Hel
    * Check whether this item handles the given effect at runtime.
    * Narrows the item's effect set to include `E`.
    * @param effect - The {@linkcode HeldItemEffect} to check
-   * @returns Whether this item has at least 1 attribute for `effect`
+   * @returns Whether this item has at least 1 attribute for `effect`.
    * @sealed
    */
-  public hasEffect<E extends HeldItemEffect>(effect: E): this is HeldItemWithAttr<Attrs, E> {
+  public hasEffect<E extends HeldItemEffect>(effect: E): this is HeldItem<Attrs | HeldItemAttr<E>> {
     return this.effects[effect].length > 0;
   }
 

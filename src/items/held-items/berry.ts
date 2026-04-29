@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { getBerryEffectDescription, getBerryEffectFunc, getBerryName, getBerryPredicate } from "#data/berry";
+import { getBerryEffectFunc, getBerryPredicate } from "#data/berry";
 import { BerryType } from "#enums/berry-type";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId } from "#enums/held-item-id";
@@ -37,19 +37,6 @@ export class BerryHeldItemAttr extends ConsumableHeldItemAttr<typeof HeldItemEff
   constructor(berryType: BerryType) {
     super();
     this.berryType = berryType;
-  }
-
-  // TODO: Move to builder
-  get name(): string {
-    return getBerryName(this.berryType);
-  }
-
-  get description(): string {
-    return getBerryEffectDescription(this.berryType);
-  }
-
-  get iconName(): string {
-    return `${BerryType[this.berryType].toLowerCase()}_berry`;
   }
 
   public override shouldApply({ pokemon }: BerryParams): boolean {

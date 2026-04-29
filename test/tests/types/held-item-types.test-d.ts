@@ -5,6 +5,7 @@ import { ConsumableHeldItemAttr, HeldItemAttr } from "#items/held-item-attr";
 import { HeldItemBuilder } from "#items/held-item-builder";
 import type { ErrorType } from "#types/error-type";
 import type { ExtractItemEffect } from "#types/held-item-data-types";
+import type { IsUnion } from "type-fest";
 import { describe, expectTypeOf, it } from "vitest";
 
 // Dummy classes
@@ -78,6 +79,30 @@ describe("HeldItemBuilder", () => {
         ExtractError<typeof result>
       >().toEqualTypeOf<"A held item cannot have more than one consumable attribute for a given effect, but 2 were found for HeldItemEffect.EXP_BOOSTER!">();
     });
+  });
+});
+
+describe("HeldItem", () => {
+  it("should be covariant on Attrs", () => {
+    expectTypeOf<HeldItem<NonConsumableAttr>>().toExtend<HeldItem<NonConsumableAttr | ConsumableAttr>>();
+  });
+});
+
+declare const badAttr: HeldItemAttr<typeof HeldItemEffect.ACCURACY_BOOSTER | typeof HeldItemEffect.ATTACK_TYPE_BOOST>;
+
+describe("HeldItemAttr", () => {
+  it("should be covariant on E", () => {
+    expectTypeOf<HeldItemAttr<1>>().toExtend<HeldItemAttr<1 | 2>>();
+  });
+
+  it("should invalidate `effect` if the type parameter is a union of HeldItemEffects", () => {
+    type BadAttrTypeParam = typeof badAttr extends HeldItemAttr<infer Param> ? Param : never;
+    expectTypeOf<IsUnion<BadAttrTypeParam>>().toEqualTypeOf(true);
+    expectTypeOf<(typeof badAttr)["effect"]>().toBeNever();
+  });
+
+  it("should still type the base class's effect property as HeldItemEffect", () => {
+    expectTypeOf<HeldItemAttr["effect"]>().toEqualTypeOf<HeldItemEffect>();
   });
 });
 

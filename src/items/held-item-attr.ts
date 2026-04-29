@@ -6,10 +6,14 @@ import type { HeldItemId } from "#enums/held-item-id";
 import type { Pokemon } from "#field/pokemon";
 import type { HeldItem } from "#items/held-item";
 import type { HeldItemEffectParamMap } from "#types/held-item-parameter";
+import type { IsEqual, IsUnion } from "type-fest";
 
 /**
  * Type matching each {@linkcode HeldItemEffect} to the subset of `Attrs` that can apply said effect. \
  * Any effects absent from all `Attrs` will map to an empty array.
+ * @package
+ * @remarks
+ * We cannot outright remove mismatched attributes from the object (or set them to `undefined`/`never`) due to breaking the covariance of `HeldItem`.
  */
 export type HeldItemRecord<Attrs extends HeldItemAttr> = {
   readonly [E in HeldItemEffect]: [Extract<Attrs, HeldItemAttr<E>>] extends [never]
@@ -22,8 +26,10 @@ export type HeldItemRecord<Attrs extends HeldItemAttr> = {
  *
  * A single {@linkcode HeldItem} instance can have any number of attributes per effect,
  * in a similar manner to {@linkcode AbAttr}s and {@linkcode MoveAttr}s.
+ * @typeParam E - The {@linkcode HeldItemEffect} this attribute applies to.
+ * Should not be a union.
  */
-export abstract class HeldItemAttr<out E extends HeldItemEffect = HeldItemEffect> {
+export abstract class HeldItemAttr<E extends HeldItemEffect = HeldItemEffect> {
   /**
    * The {@linkcode HeldItemId} associated with this attribute.
    *
@@ -46,12 +52,13 @@ export abstract class HeldItemAttr<out E extends HeldItemEffect = HeldItemEffect
   }
 
   /**
-   * The {@linkcode HeldItemEffect} this attribute handles.
-   * Should not be a union.
+   * The {@linkcode HeldItemEffect} this attribute handles. \
+   * Used by {@linkcode HeldItemBuilder} to sort items by effect, and is otherwise unused.
    * @remarks
-   * Used by {@linkcode HeldItemBuilder} to sort items by effect.
+   * This will resolve to `never` if `E` is a union, which is desirable since attributes should not be able to apply to multiple effects.
    */
-  public abstract readonly effect: E;
+  // add explicit bypass for base class (since `HeldItemEffect` is itself a union)
+  public abstract readonly effect: IsEqual<E, HeldItemEffect> extends true ? E : IsUnion<E> extends true ? never : E;
 
   /**
    * Check whether this attribute's effect should be allowed to trigger.
@@ -81,8 +88,6 @@ export abstract class HeldItemAttr<out E extends HeldItemEffect = HeldItemEffect
  * Combining with other attributes that depend on stack count may have unexpected results.
  */
 export abstract class ConsumableHeldItemAttr<E extends HeldItemEffect = HeldItemEffect> extends HeldItemAttr<E> {
-  private declare readonly _: never;
-
   /**
    * Consume the item associated with this attribute and apply relevant effects.
    * Should be called by the attribute's `apply` method once finished.

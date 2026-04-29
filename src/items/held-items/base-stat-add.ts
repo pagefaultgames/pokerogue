@@ -3,7 +3,6 @@ import { Stat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
 import { HeldItemAttr } from "#items/held-item-attr";
 import type { BaseStatParams } from "#types/held-item-parameter";
-import i18next from "i18next";
 
 // TODO: Consider combining these 2 into a single base class for extensibility
 
@@ -16,10 +15,6 @@ const OLD_GATEAU_STAT_MODIFIER = 20;
  */
 export class OldGateauHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.BASE_STAT_ADD> {
   public override readonly effect = HeldItemEffect.BASE_STAT_ADD;
-
-  get description(): string {
-    return i18next.t("modifierType:ModifierType.PokemonBaseStatFlatModifierType.description");
-  }
 
   public override apply({ pokemon, baseStats }: BaseStatParams): void {
     const stats = this.getStats(pokemon);

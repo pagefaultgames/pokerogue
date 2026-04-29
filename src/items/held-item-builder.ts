@@ -123,16 +123,37 @@ export class HeldItemBuilder<Attrs extends HeldItemAttr = never, ConsumableEffec
 
   // #region Localization
 
+  /**
+   * Set this item's name localization parameters.
+   * @param params - The parameters to pass to `i18next.t` when localizing this item's name
+   * @returns `this`
+   * @remarks
+   * If this method is not called, the item will use the default localization key provided by `HeldItemBase`.
+   */
   public name(...params: Parameters<typeof i18next.t>): this {
     this.nameParams = params;
     return this;
   }
 
+  /**
+   * Set this item's description localization parameters.
+   * @param params - The parameters to pass to `i18next.t` when localizing this item's description
+   * @returns `this`
+   * @remarks
+   * If this method is not called, the item will use the default localization key provided by `HeldItemBase`.
+   */
   public description(...params: Parameters<typeof i18next.t>): this {
     this.descriptionParams = params;
     return this;
   }
 
+  /**
+   * Set this item's icon name.
+   * @param iconName - The name of the icon to use for this item
+   * @returns `this`
+   * @remarks
+   * If this method is not called, the item will use the default icon provided by `HeldItemBase`.
+   */
   public iconName(iconName: string): this {
     this.icon = iconName;
     return this;
@@ -152,7 +173,8 @@ export class HeldItemBuilder<Attrs extends HeldItemAttr = never, ConsumableEffec
   public build(): ErrorType<"Cannot create a HeldItem with no attributes!"> | HeldItem<Attrs> {
     // @ts-expect-error - TypeScript doesn't support friend classes, so this is the closest we can get to
     // ensuring `HeldItem` is only constructed by its corresponding builder.
-    // NB: The type specifier here is required due to TS resolving this as `any`
+    // NB: The type annotation here is required due to TS resolving generic private-constructor classes as `any`
+    // when instantiated by outsiders.
     const item: HeldItem<Attrs> = new HeldItem({
       type: this.id,
       effects: this.buildRecord(),
