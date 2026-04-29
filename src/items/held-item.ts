@@ -32,6 +32,8 @@ export abstract class HeldItemBase {
    */
   public isSuppressable = true;
 
+  // TODO: Remove these defaults for non-cosmetic held items (and maybe cosmetic ones as well)
+  // in favor of explicitly specifying them for each item
   public get name(): string {
     return i18next.t(`modifierType:ModifierType.${HeldItemNames[this.type]}.name`);
   }

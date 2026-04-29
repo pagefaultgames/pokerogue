@@ -40,7 +40,6 @@ import { SurviveChanceHeldItemAttr } from "#items/survive-chance";
 import { TurnEndHealHeldItemAttr } from "#items/turn-end-heal";
 import { TurnEndStatusHeldItemAttr } from "#items/turn-end-status";
 import { getEnumValues } from "#utils/enums";
-import i18next from "i18next";
 
 // #region Types
 // TODO: Move these to wherever the "XYZ enum to held item id" utils are eventually placed
@@ -120,10 +119,8 @@ const typeBoostHeldItems = (
       .untransferable()
       .unsuppressable()
       .name(`modifierType:AttackTypeBoosterItem.${HeldItemNames[id].toLowerCase()}`)
-      // TODO: Rework the locales entry to use i18next's native nesting support
-      // by replacing `{{moveType}}` with "$t(pokemonInfo:Type.{{moveType}})"
       .description("modifierType:ModifierType.AttackTypeBoosterModifierType.description", {
-        moveType: i18next.t(`pokemonInfo:Type.${PokemonType[pokemonType]}`),
+        moveType: `$t(pokemonInfo:Type.${PokemonType[pokemonType]})`,
       })
       .build();
     return ret;
@@ -143,11 +140,10 @@ const vitaminItems = PERMANENT_STATS.reduce(
       .untransferable()
       .unsuppressable()
       .name(`modifierType:BaseStatBoosterItem.${statBoostItems[stat]}`)
-      // TODO: Rework the locales entry to use i18next's native nesting support
-      // by replacing `{{stat}}` with "$t({{statKey}})"
       .description("modifierType:ModifierType.BaseStatBoosterModifierType.description", {
-        stat: i18next.t(getStatKey(stat)),
+        stat: `$t(${getStatKey(stat)})`,
       })
+      .iconName(statBoostItems[stat])
       .build();
     return ret;
   },
