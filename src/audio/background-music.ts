@@ -55,7 +55,7 @@ export class BackgroundMusic {
 
   public play(volume?: number): void {
     if (volume != null) {
-      this.howl.volume(volume);
+      this.setVolume(volume);
     }
 
     this.howl.play();
