@@ -33,7 +33,7 @@ export interface ToHaveTypesOptions {
  * @param received - The object to check. Should be a {@linkcode Pokemon}
  * @param expectedTypes - A single {@linkcode PokemonType} or array of multiple types to compare against
  * @param mode - The mode in which to perform the matching.
- * Possible values (in ascending order of strictness) are:
+ * Possible values (in descending order of strictness) are:
  * - `"ordered"`: Enforce that the {@linkcode Pokemon}'s types are identical **and in the same order**
  * - `"unordered"`: Enforce that the {@linkcode Pokemon}'s types are identical **without checking order**
  * - `"superset"`: Enforce that the {@linkcode Pokemon}'s types are **a superset of** the expected types
