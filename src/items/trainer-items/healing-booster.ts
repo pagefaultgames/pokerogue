@@ -14,7 +14,7 @@ export class HealingBoosterTrainerItemAttr extends TrainerItemAttr<typeof Traine
     this.multiplier = multiplier;
   }
 
-  public apply({ numberHolder: healingMultiplier }: NumberHolderParams, manager: TrainerItemManager) {
+  public override apply({ numberHolder: healingMultiplier }: NumberHolderParams, manager: TrainerItemManager): void {
     const stack = manager.getStack(this.type);
     healingMultiplier.value *= 1 + (this.multiplier - 1) * stack;
   }

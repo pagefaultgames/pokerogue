@@ -15,7 +15,7 @@ export class DoubleBattleChanceBoosterTrainerItemAttr extends TrainerItemAttr<
     });
   }
 
-  public override apply({ numberHolder: doubleBattleChanceThreshold }: NumberHolderParams) {
+  public override apply({ numberHolder: doubleBattleChanceThreshold }: NumberHolderParams): void {
     // This is divided because the chance is generated as a number from 0 to doubleBattleChance.value using randSeedInt
     // A double battle will initiate if the generated number is 0
     // TODO: This is emphatically a very dumb way to do this and should be reworked (alongside similar effects) later

@@ -8,8 +8,7 @@ export class HiddenAbilityChanceBoosterTrainerItemAttr extends TrainerItemAttr<
 > {
   public override readonly effect = TrainerItemEffect.HIDDEN_ABILITY_CHANCE_BOOSTER;
 
-  public apply(params: NumberHolderParams, manager: TrainerItemManager): void {
-    const boost = params.numberHolder;
+  public override apply({ numberHolder: boost }: NumberHolderParams, manager: TrainerItemManager): void {
     const stack = manager.getStack(this.type);
     boost.value *= Math.pow(2, -1 - stack);
   }

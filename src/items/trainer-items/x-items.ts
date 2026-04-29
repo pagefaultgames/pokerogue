@@ -43,7 +43,7 @@ export class StatStageBoosterTrainerItemAttr extends TrainerItemAttr<typeof Trai
     });
   }
 
-  public override apply({ numberHolder: statLevel }: NumberHolderParams) {
+  public override apply({ numberHolder: statLevel }: NumberHolderParams): void {
     statLevel.value += this.boost;
   }
 }
@@ -63,7 +63,7 @@ export class AccuracyBoosterTrainerItemAttr extends TrainerItemAttr<typeof Train
     });
   }
 
-  public override apply({ numberHolder: statLevel }: NumberHolderParams) {
+  public override apply({ numberHolder: statLevel }: NumberHolderParams): void {
     const boost = 1;
     statLevel.value += boost;
   }
@@ -79,7 +79,7 @@ export class CritBoosterTrainerItemAttr extends TrainerItemAttr<typeof TrainerIt
     });
   }
 
-  public override apply({ numberHolder: critLevel }: NumberHolderParams) {
+  public override apply({ numberHolder: critLevel }: NumberHolderParams): void {
     critLevel.value++;
   }
 }

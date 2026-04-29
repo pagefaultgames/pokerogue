@@ -9,8 +9,7 @@ export class LevelIncrementBoosterTrainerItemAttr extends TrainerItemAttr<
 > {
   public override readonly effect = TrainerItemEffect.LEVEL_INCREMENT_BOOSTER;
 
-  public override apply(params: NumberHolderParams, manager: TrainerItemManager) {
-    const count = params.numberHolder;
+  public override apply({ numberHolder: count }: NumberHolderParams, manager: TrainerItemManager): void {
     const stack = manager.getStack(this.type);
     count.value += stack;
   }

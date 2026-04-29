@@ -20,8 +20,7 @@ export class ExpBoosterTrainerItemAttr extends TrainerItemAttr<typeof TrainerIte
     });
   }
 
-  public apply(params: NumberHolderParams, manager: TrainerItemManager): void {
-    const boost = params.numberHolder;
+  public override apply({ numberHolder: boost }: NumberHolderParams, manager: TrainerItemManager): void {
     const stack = manager.getStack(this.type);
     boost.value = Math.floor(boost.value * (1 + stack * this.boostPercent * 0.01));
   }

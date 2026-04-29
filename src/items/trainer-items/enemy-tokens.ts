@@ -18,13 +18,9 @@ export class EnemyDamageBoosterTrainerItemAttr extends TrainerItemAttr<typeof Tr
     return "wl_item_drop";
   }
 
-  public override apply(params: NumberHolderParams, manager: TrainerItemManager): boolean {
+  public override apply({ numberHolder: multiplier }: NumberHolderParams, manager: TrainerItemManager): void {
     const stack = manager.getStack(this.type);
-    const multiplier = params.numberHolder;
-
     multiplier.value = toDmgValue(multiplier.value * Math.pow(this.damageBoost, stack));
-
-    return true;
   }
 
   getMaxStackCount(): number {
@@ -40,13 +36,10 @@ export class EnemyDamageReducerTrainerItemAttr extends TrainerItemAttr<typeof Tr
     return "wl_guard_spec";
   }
 
-  public override apply(params: NumberHolderParams, manager: TrainerItemManager): boolean {
+  public override apply({ numberHolder: multiplier }: NumberHolderParams, manager: TrainerItemManager): void {
     const stack = manager.getStack(this.type);
-    const multiplier = params.numberHolder;
 
     multiplier.value = toDmgValue(multiplier.value * Math.pow(this.damageReduction, stack));
-
-    return true;
   }
 
   getMaxStackCount(): number {
@@ -62,28 +55,25 @@ export class EnemyTurnHealTrainerItemAttr extends TrainerItemAttr<typeof Trainer
     return "wl_potion";
   }
 
-  public override apply(params: PokemonParams, manager: TrainerItemManager): boolean {
+  public override apply({ pokemon: enemyPokemon }: PokemonParams, manager: TrainerItemManager): void {
     const stack = manager.getStack(this.type);
-    const enemyPokemon = params.pokemon;
 
-    if (!enemyPokemon.isFullHp()) {
-      globalScene.phaseManager.unshiftNew(
-        "PokemonHealPhase",
-        enemyPokemon.getBattlerIndex(),
-        Math.max(Math.floor((enemyPokemon.getMaxHp() * this.healPercent * stack) / 100), 1),
-        i18next.t("modifier:enemyTurnHealApply", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(enemyPokemon),
-        }),
-        true,
-        false,
-        false,
-        false,
-        true,
-      );
-      return true;
+    if (enemyPokemon.isFullHp()) {
+      return;
     }
-
-    return false;
+    globalScene.phaseManager.unshiftNew(
+      "PokemonHealPhase",
+      enemyPokemon.getBattlerIndex(),
+      Math.max(Math.floor((enemyPokemon.getMaxHp() * this.healPercent * stack) / 100), 1),
+      i18next.t("modifier:enemyTurnHealApply", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(enemyPokemon),
+      }),
+      true,
+      false,
+      false,
+      false,
+      true,
+    );
   }
 }
 
@@ -100,13 +90,13 @@ export class EnemyAttackStatusEffectChanceTrainerItemAttr extends TrainerItemAtt
   }
 
   get iconName(): string {
-    if (this.effect === StatusEffect.POISON) {
+    if (this.statusEffect === StatusEffect.POISON) {
       return "wl_antidote";
     }
-    if (this.effect === StatusEffect.PARALYSIS) {
+    if (this.statusEffect === StatusEffect.PARALYSIS) {
       return "wl_paralyze_heal";
     }
-    if (this.effect === StatusEffect.BURN) {
+    if (this.statusEffect === StatusEffect.BURN) {
       return "wl_burn_heal";
     }
     return "";
@@ -115,24 +105,21 @@ export class EnemyAttackStatusEffectChanceTrainerItemAttr extends TrainerItemAtt
   get description(): string {
     return i18next.t("modifierType:ModifierType.EnemyAttackStatusEffectChanceModifierType.description", {
       chancePercent: this.getChance() * 100,
-      statusEffect: getStatusEffectDescriptor(this.effect),
+      statusEffect: getStatusEffectDescriptor(this.statusEffect),
     });
   }
 
-  public override apply(params: PokemonParams, manager: TrainerItemManager): boolean {
+  public override apply({ pokemon: enemyPokemon }: PokemonParams, manager: TrainerItemManager): void {
     const stack = manager.getStack(this.type);
-    const enemyPokemon = params.pokemon;
     const chance = this.getChance();
 
     if (randSeedFloat() <= chance * stack) {
-      return enemyPokemon.trySetStatus(this.effect);
+      enemyPokemon.trySetStatus(this.statusEffect);
     }
-
-    return false;
   }
 
   getChance(): number {
-    return 0.025 * (this.effect === StatusEffect.BURN || this.effect === StatusEffect.POISON ? 2 : 1);
+    return 0.025 * (this.statusEffect === StatusEffect.BURN || this.statusEffect === StatusEffect.POISON ? 2 : 1);
   }
 }
 
@@ -146,12 +133,11 @@ export class EnemyStatusEffectHealChanceTrainerItemAttr extends TrainerItemAttr<
     return "wl_full_heal";
   }
 
-  public override apply(params: PokemonParams, manager: TrainerItemManager): boolean {
+  public override apply({ pokemon: enemyPokemon }: PokemonParams, manager: TrainerItemManager): void {
     const stack = manager.getStack(this.type);
-    const enemyPokemon = params.pokemon;
 
     if (!enemyPokemon.status || randSeedFloat() > this.chance * stack) {
-      return false;
+      return;
     }
 
     globalScene.phaseManager.queueMessage(
@@ -159,12 +145,12 @@ export class EnemyStatusEffectHealChanceTrainerItemAttr extends TrainerItemAttr<
     );
     enemyPokemon.resetStatus();
     enemyPokemon.updateInfo();
-    return true;
   }
 }
 
 export class EnemyEndureChanceTrainerItemAttr extends TrainerItemAttr<typeof TrainerItemEffect.ENEMY_ENDURE_CHANCE> {
   public override readonly effect = TrainerItemEffect.ENEMY_ENDURE_CHANCE;
+  // TODO: MAKE THIS CONSISTENT PLEASEEEEEE
   public chance = 2;
 
   get iconName(): string {
@@ -177,19 +163,16 @@ export class EnemyEndureChanceTrainerItemAttr extends TrainerItemAttr<typeof Tra
     });
   }
 
-  public override apply(params: PokemonParams, manager: TrainerItemManager): boolean {
+  public override apply({ pokemon: target }: PokemonParams, manager: TrainerItemManager): void {
     const stack = manager.getStack(this.type);
-    const target = params.pokemon;
 
     if (target.waveData.endured || target.randBattleSeedInt(100) >= this.chance * stack) {
-      return false;
+      return;
     }
 
     target.addTag(BattlerTagType.ENDURE_TOKEN, 1);
 
     target.waveData.endured = true;
-
-    return true;
   }
 }
 
@@ -201,12 +184,10 @@ export class EnemyFusionChanceTrainerItemAttr extends TrainerItemAttr<typeof Tra
     return "wl_custom_spliced";
   }
 
-  public override apply(params: BooleanHolderParams, manager: TrainerItemManager) {
+  public override apply({ booleanHolder: isFusion }: BooleanHolderParams, manager: TrainerItemManager): void {
     const stack = manager.getStack(this.type);
-    const isFusion = params.booleanHolder;
-    if (randSeedFloat() > this.chance * stack) {
-      return false;
+    if (randSeedFloat() <= this.chance * stack) {
+      isFusion.value = true;
     }
-    isFusion.value = true;
   }
 }

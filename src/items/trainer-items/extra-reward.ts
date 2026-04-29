@@ -6,8 +6,7 @@ import type { NumberHolderParams } from "#types/trainer-item-parameter";
 export class ExtraRewardTrainerItemAttr extends TrainerItemAttr<typeof TrainerItemEffect.EXTRA_REWARD> {
   public override readonly effect = TrainerItemEffect.EXTRA_REWARD;
 
-  public apply(params: NumberHolderParams, manager: TrainerItemManager): void {
-    const count = params.numberHolder;
+  public override apply({ numberHolder: count }: NumberHolderParams, manager: TrainerItemManager): void {
     const stack = manager.getStack(this.type);
     count.value += stack;
   }
