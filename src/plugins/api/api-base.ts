@@ -13,8 +13,10 @@ interface DoFetchConfig extends SetRequired<UndefinedOnPartialDeep<RequestInit>,
 export abstract class ApiBase {
   //#region Fields
 
+  // TODO: Make constant in outer scope
   public readonly ERR_GENERIC: string = "There was an error";
 
+  /** The base URL for HTTP requests. */
   protected readonly base: string;
 
   //#region Public

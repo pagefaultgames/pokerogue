@@ -41,7 +41,8 @@ import type {
 import type { VoucherType } from "#system/voucher";
 import type { ModifierInstanceMap, ModifierString } from "#types/modifier-types";
 import { addTextObject } from "#ui/text";
-import { BooleanHolder, hslToHex, NumberHolder, randSeedFloat, toDmgValue } from "#utils/common";
+import { hslToHex } from "#utils/color-utils";
+import { BooleanHolder, NumberHolder, randSeedFloat, toDmgValue } from "#utils/common";
 import { getModifierType } from "#utils/modifier-utils";
 import i18next from "i18next";
 
@@ -2260,7 +2261,6 @@ export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
     playerPokemon.level += levelCount.value;
     if (playerPokemon.level <= globalScene.getMaxExpLevel(true)) {
       playerPokemon.exp = getLevelTotalExp(playerPokemon.level, playerPokemon.species.growthRate);
-      playerPokemon.levelExp = 0;
     }
 
     playerPokemon.addFriendship(FRIENDSHIP_GAIN_FROM_RARE_CANDY, true);
