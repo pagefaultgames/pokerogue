@@ -3,21 +3,8 @@ import { Stat, type TempBattleStat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import type { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { TrainerItemId } from "#enums/trainer-item-id";
-import {
-  CriticalCatchChanceBoosterTrainerItem,
-  ExpBoosterTrainerItem,
-  ExtraRewardTrainerItem,
-  HealingBoosterTrainerItem,
-  HealShopCostTrainerItem,
-  HiddenAbilityChanceBoosterTrainerItem,
-  LevelIncrementBoosterTrainerItem,
-  MoneyMultiplierTrainerItem,
-  PreserveBerryTrainerItem,
-  ShinyRateBoosterTrainerItem,
-  TrainerItem,
-} from "#items/trainer-item";
-import type { TrainerItemEffectParamMap } from "#types/trainer-item-parameter";
-import type { TrainerItemManager } from "./trainer-item-manager";
+import { TrainerItem } from "#items/trainer-item";
+import { CriticalCatchChanceBoosterTrainerItem } from "#items/trainer-items/critical-catch-chance-booster";
 import {
   EnemyAttackStatusEffectChanceTrainerItem,
   EnemyDamageBoosterTrainerItem,
@@ -26,14 +13,25 @@ import {
   EnemyFusionChanceTrainerItem,
   EnemyStatusEffectHealChanceTrainerItem,
   EnemyTurnHealTrainerItem,
-} from "./trainer-items/enemy-tokens";
-import { DoubleBattleChanceBoosterTrainerItem } from "./trainer-items/lure";
+} from "#items/trainer-items/enemy-tokens";
+import { ExpBoosterTrainerItem } from "#items/trainer-items/exp-booster";
+import { ExtraRewardTrainerItem } from "#items/trainer-items/extra-reward";
+import { HealShopCostTrainerItem } from "#items/trainer-items/heal-shop-cost";
+import { HealingBoosterTrainerItem } from "#items/trainer-items/healing-booster";
+import { HiddenAbilityChanceBoosterTrainerItem } from "#items/trainer-items/hidden-ability-chance-booster";
+import { LevelIncrementBoosterTrainerItem } from "#items/trainer-items/level-increment-booster";
+import { DoubleBattleChanceBoosterTrainerItem } from "#items/trainer-items/lure";
+import { MoneyMultiplierTrainerItem } from "#items/trainer-items/money-multiplier";
+import { PreserveBerryTrainerItem } from "#items/trainer-items/preserve-berry";
+import { ShinyRateBoosterTrainerItem } from "#items/trainer-items/shiny-rate-booster";
 import {
   TempAccuracyBoosterTrainerItem,
   TempCritBoosterTrainerItem,
   TempStatStageBoosterTrainerItem,
   tempStatToTrainerItem,
-} from "./trainer-items/x-items";
+} from "#items/trainer-items/x-items";
+import type { TrainerItemEffectParamMap } from "#types/trainer-item-parameter";
+import type { TrainerItemManager } from "./trainer-item-manager";
 
 export function initTrainerItems() {
   allTrainerItems[TrainerItemId.MAP] = new TrainerItem(TrainerItemId.MAP, 1);

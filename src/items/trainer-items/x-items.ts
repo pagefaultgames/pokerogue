@@ -1,8 +1,7 @@
 import { getStatKey, Stat, type TempBattleStat } from "#enums/stat";
 import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { TrainerItemId, TrainerItemNames } from "#enums/trainer-item-id";
-import { LapsingTrainerItem } from "#items/trainer-item";
-import type { TrainerItemManager } from "#items/trainer-item-manager";
+import { TrainerItemAttr } from "#items/trainer-item-attr";
 import type { NumberHolderParams } from "#types/trainer-item-parameter";
 import i18next from "i18next";
 
@@ -19,16 +18,19 @@ export const tempStatToTrainerItem: TempStatToTrainerItemMap = {
   [Stat.ACC]: TrainerItemId.X_ACCURACY,
 };
 
-export class TempStatStageBoosterTrainerItem extends LapsingTrainerItem {
-  public effects: TrainerItemEffect[] = [TrainerItemEffect.TEMP_STAT_STAGE_BOOSTER];
-  private stat: TempBattleStat;
+export class StatStageBoosterTrainerItemAttr extends TrainerItemAttr<typeof TrainerItemEffect.TEMP_STAT_STAGE_BOOSTER> {
+  public override readonly effect = TrainerItemEffect.TEMP_STAT_STAGE_BOOSTER;
+  private readonly stat: TempBattleStat;
+  private readonly boost: number;
 
-  constructor(type: TrainerItemId, stat: TempBattleStat, stackCount?: number) {
-    super(type, stackCount);
+  constructor(stat: TempBattleStat, boost: number) {
+    super();
 
     this.stat = stat;
+    this.boost = boost;
   }
 
+  // TODO move to builder
   get name(): string {
     return i18next.t(`modifierType:TempStatStageBoosterItem.${TrainerItemNames[this.type]?.toLowerCase()}`);
   }
@@ -41,15 +43,13 @@ export class TempStatStageBoosterTrainerItem extends LapsingTrainerItem {
     });
   }
 
-  apply(_manager: TrainerItemManager, params: NumberHolderParams) {
-    const statLevel = params.numberHolder;
-    const boost = 0.3;
-    statLevel.value += boost;
+  public override apply({ numberHolder: statLevel }: NumberHolderParams) {
+    statLevel.value += this.boost;
   }
 }
 
-export class TempAccuracyBoosterTrainerItem extends LapsingTrainerItem {
-  public effects: TrainerItemEffect[] = [TrainerItemEffect.TEMP_ACCURACY_BOOSTER];
+export class AccuracyBoosterTrainerItemAttr extends TrainerItemAttr<typeof TrainerItemEffect.TEMP_ACCURACY_BOOSTER> {
+  public override readonly effect = TrainerItemEffect.TEMP_ACCURACY_BOOSTER;
 
   get name(): string {
     return i18next.t(`modifierType:TempStatStageBoosterItem.${TrainerItemNames[this.type]?.toLowerCase()}`);
@@ -63,15 +63,14 @@ export class TempAccuracyBoosterTrainerItem extends LapsingTrainerItem {
     });
   }
 
-  apply(_manager: TrainerItemManager, params: NumberHolderParams) {
-    const statLevel = params.numberHolder;
+  public override apply({ numberHolder: statLevel }: NumberHolderParams) {
     const boost = 1;
     statLevel.value += boost;
   }
 }
 
-export class TempCritBoosterTrainerItem extends LapsingTrainerItem {
-  public effects: TrainerItemEffect[] = [TrainerItemEffect.TEMP_CRIT_BOOSTER];
+export class CritBoosterTrainerItemAttr extends TrainerItemAttr<typeof TrainerItemEffect.TEMP_CRIT_BOOSTER> {
+  public override readonly effect = TrainerItemEffect.TEMP_CRIT_BOOSTER;
 
   get description(): string {
     return i18next.t("modifierType:ModifierType.TempStatStageBoosterModifierType.description", {
@@ -80,8 +79,7 @@ export class TempCritBoosterTrainerItem extends LapsingTrainerItem {
     });
   }
 
-  apply(_manager: TrainerItemManager, params: NumberHolderParams) {
-    const critLevel = params.numberHolder;
+  public override apply({ numberHolder: critLevel }: NumberHolderParams) {
     critLevel.value++;
   }
 }

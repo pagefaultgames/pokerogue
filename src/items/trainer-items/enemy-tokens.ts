@@ -4,22 +4,21 @@ import { getStatusEffectDescriptor, getStatusEffectHealText } from "#data/status
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { StatusEffect } from "#enums/status-effect";
 import { TrainerItemEffect } from "#enums/trainer-item-effect";
-import type { TrainerItemId } from "#enums/trainer-item-id";
-import { TrainerItem } from "#items/trainer-item";
+import { TrainerItemAttr } from "#items/trainer-item-attr";
 import type { TrainerItemManager } from "#items/trainer-item-manager";
 import type { BooleanHolderParams, NumberHolderParams, PokemonParams } from "#types/trainer-item-parameter";
 import { randSeedFloat, toDmgValue } from "#utils/common";
 import i18next from "i18next";
 
-export class EnemyDamageBoosterTrainerItem extends TrainerItem {
-  public effects: TrainerItemEffect[] = [TrainerItemEffect.ENEMY_DAMAGE_BOOSTER];
+export class EnemyDamageBoosterTrainerItemAttr extends TrainerItemAttr<typeof TrainerItemEffect.ENEMY_DAMAGE_BOOSTER> {
+  public override readonly effect = TrainerItemEffect.ENEMY_DAMAGE_BOOSTER;
   public damageBoost = 1.05;
 
   get iconName(): string {
     return "wl_item_drop";
   }
 
-  apply(manager: TrainerItemManager, params: NumberHolderParams): boolean {
+  public override apply(params: NumberHolderParams, manager: TrainerItemManager): boolean {
     const stack = manager.getStack(this.type);
     const multiplier = params.numberHolder;
 
@@ -33,15 +32,15 @@ export class EnemyDamageBoosterTrainerItem extends TrainerItem {
   }
 }
 
-export class EnemyDamageReducerTrainerItem extends TrainerItem {
-  public effects: TrainerItemEffect[] = [TrainerItemEffect.ENEMY_DAMAGE_REDUCER];
+export class EnemyDamageReducerTrainerItemAttr extends TrainerItemAttr<typeof TrainerItemEffect.ENEMY_DAMAGE_REDUCER> {
+  public override readonly effect = TrainerItemEffect.ENEMY_DAMAGE_REDUCER;
   public damageReduction = 0.975;
 
   get iconName(): string {
     return "wl_guard_spec";
   }
 
-  apply(manager: TrainerItemManager, params: NumberHolderParams): boolean {
+  public override apply(params: NumberHolderParams, manager: TrainerItemManager): boolean {
     const stack = manager.getStack(this.type);
     const multiplier = params.numberHolder;
 
@@ -55,15 +54,15 @@ export class EnemyDamageReducerTrainerItem extends TrainerItem {
   }
 }
 
-export class EnemyTurnHealTrainerItem extends TrainerItem {
-  public effects: TrainerItemEffect[] = [TrainerItemEffect.ENEMY_HEAL];
+export class EnemyTurnHealTrainerItemAttr extends TrainerItemAttr<typeof TrainerItemEffect.ENEMY_HEAL> {
+  public override readonly effect = TrainerItemEffect.ENEMY_HEAL;
   public healPercent = 2;
 
   get iconName(): string {
     return "wl_potion";
   }
 
-  apply(manager: TrainerItemManager, params: PokemonParams): boolean {
+  public override apply(params: PokemonParams, manager: TrainerItemManager): boolean {
     const stack = manager.getStack(this.type);
     const enemyPokemon = params.pokemon;
 
@@ -71,7 +70,7 @@ export class EnemyTurnHealTrainerItem extends TrainerItem {
       globalScene.phaseManager.unshiftNew(
         "PokemonHealPhase",
         enemyPokemon.getBattlerIndex(),
-        Math.max(Math.floor(enemyPokemon.getMaxHp() / (100 / this.healPercent)) * stack, 1),
+        Math.max(Math.floor((enemyPokemon.getMaxHp() * this.healPercent * stack) / 100), 1),
         i18next.t("modifier:enemyTurnHealApply", {
           pokemonNameWithAffix: getPokemonNameWithAffix(enemyPokemon),
         }),
@@ -88,14 +87,16 @@ export class EnemyTurnHealTrainerItem extends TrainerItem {
   }
 }
 
-export class EnemyAttackStatusEffectChanceTrainerItem extends TrainerItem {
-  public effects: TrainerItemEffect[] = [TrainerItemEffect.ENEMY_ATTACK_STATUS_CHANCE];
-  public effect: StatusEffect;
+export class EnemyAttackStatusEffectChanceTrainerItemAttr extends TrainerItemAttr<
+  typeof TrainerItemEffect.ENEMY_ATTACK_STATUS_CHANCE
+> {
+  public override readonly effect = TrainerItemEffect.ENEMY_ATTACK_STATUS_CHANCE;
+  public statusEffect: StatusEffect;
 
-  constructor(type: TrainerItemId, effect: StatusEffect, stackCount?: number) {
-    super(type, stackCount);
+  constructor(statusEffect: StatusEffect) {
+    super();
 
-    this.effect = effect;
+    this.statusEffect = statusEffect;
   }
 
   get iconName(): string {
@@ -118,7 +119,7 @@ export class EnemyAttackStatusEffectChanceTrainerItem extends TrainerItem {
     });
   }
 
-  apply(manager: TrainerItemManager, params: PokemonParams): boolean {
+  public override apply(params: PokemonParams, manager: TrainerItemManager): boolean {
     const stack = manager.getStack(this.type);
     const enemyPokemon = params.pokemon;
     const chance = this.getChance();
@@ -135,15 +136,17 @@ export class EnemyAttackStatusEffectChanceTrainerItem extends TrainerItem {
   }
 }
 
-export class EnemyStatusEffectHealChanceTrainerItem extends TrainerItem {
-  public effects: TrainerItemEffect[] = [TrainerItemEffect.ENEMY_STATUS_HEAL_CHANCE];
+export class EnemyStatusEffectHealChanceTrainerItemAttr extends TrainerItemAttr<
+  typeof TrainerItemEffect.ENEMY_STATUS_HEAL_CHANCE
+> {
+  public override readonly effect = TrainerItemEffect.ENEMY_STATUS_HEAL_CHANCE;
   public chance = 0.025;
 
   get iconName(): string {
     return "wl_full_heal";
   }
 
-  apply(manager: TrainerItemManager, params: PokemonParams): boolean {
+  public override apply(params: PokemonParams, manager: TrainerItemManager): boolean {
     const stack = manager.getStack(this.type);
     const enemyPokemon = params.pokemon;
 
@@ -160,8 +163,8 @@ export class EnemyStatusEffectHealChanceTrainerItem extends TrainerItem {
   }
 }
 
-export class EnemyEndureChanceTrainerItem extends TrainerItem {
-  public effects: TrainerItemEffect[] = [TrainerItemEffect.ENEMY_ENDURE_CHANCE];
+export class EnemyEndureChanceTrainerItemAttr extends TrainerItemAttr<typeof TrainerItemEffect.ENEMY_ENDURE_CHANCE> {
+  public override readonly effect = TrainerItemEffect.ENEMY_ENDURE_CHANCE;
   public chance = 2;
 
   get iconName(): string {
@@ -174,7 +177,7 @@ export class EnemyEndureChanceTrainerItem extends TrainerItem {
     });
   }
 
-  apply(manager: TrainerItemManager, params: PokemonParams): boolean {
+  public override apply(params: PokemonParams, manager: TrainerItemManager): boolean {
     const stack = manager.getStack(this.type);
     const target = params.pokemon;
 
@@ -190,15 +193,15 @@ export class EnemyEndureChanceTrainerItem extends TrainerItem {
   }
 }
 
-export class EnemyFusionChanceTrainerItem extends TrainerItem {
-  public effects: TrainerItemEffect[] = [TrainerItemEffect.ENEMY_FUSED_CHANCE];
+export class EnemyFusionChanceTrainerItemAttr extends TrainerItemAttr<typeof TrainerItemEffect.ENEMY_FUSED_CHANCE> {
+  public override readonly effect = TrainerItemEffect.ENEMY_FUSED_CHANCE;
   public chance = 0.01;
 
   get iconName(): string {
     return "wl_custom_spliced";
   }
 
-  apply(manager: TrainerItemManager, params: BooleanHolderParams) {
+  public override apply(params: BooleanHolderParams, manager: TrainerItemManager) {
     const stack = manager.getStack(this.type);
     const isFusion = params.booleanHolder;
     if (randSeedFloat() > this.chance * stack) {

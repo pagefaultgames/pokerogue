@@ -49,3 +49,5 @@ interface TrainerItemConfigurationEntry {
 export type TrainerItemConfiguration = TrainerItemConfigurationEntry[];
 
 export type TrainerItemSaveData = TrainerItemSpecs[];
+
+// todo add applicabletraineritemid
