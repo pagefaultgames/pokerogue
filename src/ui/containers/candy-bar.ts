@@ -3,8 +3,7 @@ import { starterColors } from "#app/global-vars/starter-colors";
 import type { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { addTextObject } from "#ui/text";
-import { rgbHexToRgba } from "#utils/common";
-import { argbFromRgba } from "@material/material-color-utilities";
+import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
 
 export class CandyBar extends Phaser.GameObjects.Container {
   private bg: Phaser.GameObjects.NineSlice;

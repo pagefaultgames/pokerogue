@@ -56,6 +56,8 @@ path = [
     # Miscellaneous files of insignificant originality
     ".nvmrc",
     "RELEASE",
+    # patch files for broken packages
+    "patches/*.patch"
 ]
 SPDX-License-Identifier = "CC0-1.0"
 SPDX-FileCopyrightText = "NONE"

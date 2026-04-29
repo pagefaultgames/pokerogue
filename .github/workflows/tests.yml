@@ -82,6 +82,7 @@ jobs:
             .github/actions/setup-deps/action.yml
             test/setup
             test/reporters/custom-default-reporter.ts
+            patches
 
       - uses: ./.github/actions/setup-deps
 
