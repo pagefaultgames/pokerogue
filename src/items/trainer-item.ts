@@ -37,9 +37,9 @@ export abstract class TrainerItemBase {
   }
 
   createIcon(stackCount: number): Phaser.GameObjects.Container {
-    const container = globalScene.add.container();
-
-    container.add(globalScene.add.sprite(0, 12, "items").setFrame(this.iconName).setOrigin(0, 0.5));
+    // TODO: This could be restructured to merge these 2 code paths more, I just copied the code from `LapsingTrainerItem`
+    const item = globalScene.add.sprite(0, 12, "items").setFrame(this.iconName).setOrigin(0, 0.5);
+    const container = globalScene.add.container().add(item);
 
     const stackText = this.getIconStackText(stackCount);
     if (stackText) {
@@ -49,9 +49,25 @@ export abstract class TrainerItemBase {
     return container;
   }
 
-  public getIconStackText(stackCount: number): Phaser.GameObjects.BitmapText | null {
+  private getIconStackText(stackCount: number): Phaser.GameObjects.BitmapText | Phaser.GameObjects.Text | undefined {
+    if (this.isLapsing) {
+      // Generate the text with a linearly interpolated hue based on remaining duration
+      // Ranges from #f2dbd9 / #822017 (≈ 0% duration) to #d9f2db / #178220 (100% duration)
+      const hue = Math.floor(120 * (stackCount / this.getMaxStackCount()) + 5);
+      const typeHex = hslToHex(hue, 0.5, 0.9);
+      const strokeHex = hslToHex(hue, 0.7, 0.3);
+
+      return addTextObject(27, 0, stackCount.toString(), TextStyle.PARTY, {
+        fontSize: "66px",
+        color: typeHex,
+      })
+        .setShadow(0, 0)
+        .setStroke(strokeHex, 16)
+        .setOrigin(1, 0);
+    }
+
     if (this.getMaxStackCount() === 1 || stackCount < 1) {
-      return null;
+      return;
     }
 
     const text = globalScene.add
@@ -148,25 +164,4 @@ export abstract class TrainerItem<out Attrs extends TrainerItemAttr = TrainerIte
 // TODO: Rework to not be its own class (either make it a mixin or have `TrainerItemBase` handle things itself)
 export class LapsingTrainerItem extends TrainerItem {
   public readonly isLapsing = true;
-
-  public override createIcon(battleCount: number): Phaser.GameObjects.Container {
-    const item = globalScene.add.sprite(0, 12, "items").setFrame(this.iconName).setOrigin(0, 0.5);
-
-    // Linear interpolation on hue
-    const hue = Math.floor(120 * (battleCount / this.getMaxStackCount()) + 5);
-
-    // Generates the color hex code with a constant saturation and lightness but varying hue
-    const typeHex = hslToHex(hue, 0.5, 0.9);
-    const strokeHex = hslToHex(hue, 0.7, 0.3);
-
-    const battleCountText = addTextObject(27, 0, battleCount.toString(), TextStyle.PARTY, {
-      fontSize: "66px",
-      color: typeHex,
-    })
-      .setShadow(0, 0)
-      .setStroke(strokeHex, 16)
-      .setOrigin(1, 0);
-
-    return globalScene.add.container(0, 0, [item, battleCountText]);
-  }
 }
