@@ -254,7 +254,7 @@ export function isMobile(): boolean {
 
 /**
  * Detect if the current device is running iOS (iPhone, iPad, or iPod)
- * @returns true if the device is running iOS
+ * @returns Whether the current device is running iOS.
  */
 export function isIos(): boolean {
   const userAgent = navigator.userAgent || navigator.vendor || (window as any)["opera"];
