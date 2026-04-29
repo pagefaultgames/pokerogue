@@ -113,9 +113,7 @@ export abstract class HeldItemBase {
   }
 }
 
-type HeldItemWithAttr<Attrs extends HeldItemAttr, E extends HeldItemEffect> = [Attrs] extends [HeldItemEffect]
-  ? HeldItem<HeldItemAttr<E>>
-  : HeldItem<Attrs | HeldItemAttr<E>>;
+type HeldItemWithAttr<Attrs extends HeldItemAttr, E extends HeldItemEffect> = HeldItem<Attrs | HeldItemAttr<E>>;
 
 /**
  * Class for all non-cosmetic held items
@@ -127,9 +125,10 @@ type HeldItemWithAttr<Attrs extends HeldItemAttr, E extends HeldItemEffect> = [A
  * While exposing the exact kinds of attributes this class supports technically breaks encapsulation,
  * this is required for existing code to work without excessive type assertions.
  */
-// NB: `any` type parameter is needed to ensure `HeldItem<XYZ>` extends `HeldItem` despite being invariant in `Effects`
-export class HeldItem<Attrs extends HeldItemAttr = any> extends HeldItemBase {
-  /** An object matching each supported {@linkcode HeldItemEffect} to the attributes that implement said effect. */
+export class HeldItem<out Attrs extends HeldItemAttr = HeldItemAttr> extends HeldItemBase {
+  /**
+   * An object matching each supported {@linkcode HeldItemEffect} to the attributes that implement said effect.
+   */
   private readonly effects: HeldItemRecord<Attrs>;
 
   // #region Localization
@@ -189,7 +188,7 @@ export class HeldItem<Attrs extends HeldItemAttr = any> extends HeldItemBase {
    * @sealed
    */
   public hasEffect<E extends HeldItemEffect>(effect: E): this is HeldItemWithAttr<Attrs, E> {
-    return this.effects[effect] != null;
+    return this.effects[effect].length > 0;
   }
 
   /**
@@ -221,7 +220,7 @@ export class HeldItem<Attrs extends HeldItemAttr = any> extends HeldItemBase {
    * @sealed
    */
   public getAttrs<E extends Attrs["effect"]>(effect: E): readonly Extract<Attrs, HeldItemAttr<E>>[] {
-    return this.effects[effect] as unknown as readonly Extract<Attrs, HeldItemAttr<E>>[];
+    return this.effects[effect];
   }
 }
 

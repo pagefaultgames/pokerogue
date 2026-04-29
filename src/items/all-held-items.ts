@@ -303,7 +303,7 @@ const heldItems = {
   ),
   // `any` type parameter used to get around `HeldItem` being invariant in `Effects`,
   // thereby rendering all instances without an actual supertype
-} as const satisfies Readonly<Record<HeldItemId, CosmeticHeldItem | HeldItem>>;
+} as const satisfies Readonly<Record<HeldItemId, CosmeticHeldItem | HeldItem<any>>>;
 
 /**
  * Resolved type of {@linkcode allHeldItems}.

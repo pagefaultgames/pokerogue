@@ -1,4 +1,4 @@
-import type { HeldItemEffect, HeldItemEffectNames } from "#enums/held-item-effect";
+import { HeldItemEffect, type HeldItemEffectNames } from "#enums/held-item-effect";
 import type { HeldItemId } from "#enums/held-item-id";
 import { HeldItem } from "#items/held-item";
 import type { ConsumableHeldItemAttr, HeldItemAttr, HeldItemRecord } from "#items/held-item-attr";
@@ -9,7 +9,7 @@ import type { Constructor } from "type-fest";
 
 /**
  * Internal helper type to add a new attribute to a {@linkcode HeldItemBuilder}, erroring if
- * multiple {@linkcode ConsumableHeldItemAttr}s
+ * multiple {@linkcode ConsumableHeldItemAttr}s are added for the same effect.
  */
 type AddAttrToBuilder<Attrs extends HeldItemAttr, Effects extends HeldItemEffect, NewAttr extends HeldItemAttr> =
   NewAttr extends ConsumableHeldItemAttr<infer E extends HeldItemEffect>
@@ -49,8 +49,10 @@ export class HeldItemBuilder<Attrs extends HeldItemAttr = never, ConsumableEffec
   private descriptionParams?: Parameters<typeof i18next.t>;
   private icon?: string;
 
-  /** Internal sparse map matching effects to their corresponding attributes. */
-  private readonly attrMap: Map<HeldItemEffect, HeldItemAttr[]> = new Map();
+  /** A `Map` matching effects to their corresponding attributes. */
+  private readonly attrMap: Map<HeldItemEffect, HeldItemAttr[]> = new Map(
+    Object.values(HeldItemEffect).map(effect => [effect, []]),
+  );
 
   constructor(id: HeldItemId, maxStackCount = 1) {
     this.id = id;
@@ -81,12 +83,9 @@ export class HeldItemBuilder<Attrs extends HeldItemAttr = never, ConsumableEffec
   private addAttr(attr: HeldItemAttr): void {
     (attr as Mutable<HeldItemAttr>)["type"] = this.id;
     const { effect } = attr;
-    const existing = this.attrMap.get(effect);
-    if (existing) {
-      existing.push(attr);
-    } else {
-      this.attrMap.set(effect, [attr]);
-    }
+    // bang is safe since the constructor initializes the map with all effects set to empty arrays
+    const existing = this.attrMap.get(effect)!;
+    existing.push(attr);
   }
 
   // #endregion Attributes
@@ -167,7 +166,7 @@ export class HeldItemBuilder<Attrs extends HeldItemAttr = never, ConsumableEffec
   }
 
   private buildRecord(): HeldItemRecord<Attrs> {
-    // TODO: Remove type assertion after `Object.keys` PR
+    // TODO: Consider removing type assertion after `Object.keys` PR
     return Object.fromEntries(this.attrMap.entries()) as unknown as HeldItemRecord<Attrs>;
   }
 

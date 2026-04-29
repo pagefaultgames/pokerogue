@@ -9,19 +9,21 @@ import type { HeldItemEffectParamMap } from "#types/held-item-parameter";
 
 /**
  * Type matching each {@linkcode HeldItemEffect} to the subset of `Attrs` that can apply said effect. \
- * Any effects absent from all `Attrs` will map to `undefined`.
+ * Any effects absent from all `Attrs` will map to an empty array.
  */
 export type HeldItemRecord<Attrs extends HeldItemAttr> = {
-  [effect in HeldItemEffect]: effect extends Attrs["effect"] ? readonly Extract<Attrs, HeldItemAttr<effect>>[] : never;
+  readonly [E in HeldItemEffect]: [Extract<Attrs, HeldItemAttr<E>>] extends [never]
+    ? readonly []
+    : readonly Extract<Attrs, HeldItemAttr<E>>[];
 };
 
 /**
  * Abstract base class for held item attributes.
  *
  * A single {@linkcode HeldItem} instance can have any number of attributes per effect,
- * in a similar manner to {@linkcode AbAttr}s and {@linkcode MoveAttr}s
+ * in a similar manner to {@linkcode AbAttr}s and {@linkcode MoveAttr}s.
  */
-export abstract class HeldItemAttr<E extends HeldItemEffect = HeldItemEffect> {
+export abstract class HeldItemAttr<out E extends HeldItemEffect = HeldItemEffect> {
   /**
    * The {@linkcode HeldItemId} associated with this attribute.
    *
