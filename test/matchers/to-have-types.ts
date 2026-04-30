@@ -12,11 +12,11 @@ export interface ToHaveTypesOptions {
   /**
    * Value dictating the strength of the enforced typing match.
    *
-   * Possible values (in ascending order of strength) are:
+   * Possible values (in descending order of strictness) are:
    * - `"ordered"`: Enforce that the {@linkcode Pokemon}'s types are identical **and in the same order**
    * - `"unordered"`: Enforce that the {@linkcode Pokemon}'s types are identical **without checking order**
    * - `"superset"`: Enforce that the {@linkcode Pokemon}'s types are **a superset of** the expected types
-   * (all must be present, but extras can be there)
+   *   (all must be present, but extras can be there)
    * @defaultValue `"unordered"`
    */
   mode?: "ordered" | "unordered" | "superset";
@@ -30,12 +30,12 @@ export interface ToHaveTypesOptions {
  * Matcher that checks if a Pokemon's typing is as expected.
  * @param received - The object to check. Should be a {@linkcode Pokemon}
  * @param expectedTypes - An array of one or more {@linkcode PokemonType}s to compare against.
- * @param mode - The mode to perform the matching in.
- * Possible values (in ascending order of strength) are:
+ * @param mode - The mode in which to perform the matching.
+ * Possible values (in descending order of strictness) are:
  * - `"ordered"`: Enforce that the {@linkcode Pokemon}'s types are identical **and in the same order**
  * - `"unordered"`: Enforce that the {@linkcode Pokemon}'s types are identical **without checking order**
  * - `"superset"`: Enforce that the {@linkcode Pokemon}'s types are **a superset of** the expected types
- * (all must be present, but extras can be there)
+ *   (all must be present, but extras can be there)
  *
  * Default `unordered`
  * @param args - Extra arguments passed to {@linkcode Pokemon.getTypes}
@@ -44,7 +44,7 @@ export interface ToHaveTypesOptions {
 export function toHaveTypes(
   this: Readonly<MatcherState>,
   received: unknown,
-  expectedTypes: [PokemonType, ...PokemonType[]],
+  expectedTypes: readonly PokemonType[],
   { mode = "unordered", args = [] }: ToHaveTypesOptions = {},
 ): SyncExpectationResult {
   if (!isPokemonInstance(received)) {

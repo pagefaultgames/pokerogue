@@ -26,19 +26,11 @@ import { getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
 import { addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor, updateCandyCountTextStyle } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
-import {
-  fixedInt,
-  formatStat,
-  getBiomeName,
-  getLocalizedSpriteKey,
-  getShinyDescriptor,
-  padInt,
-  rgbHexToRgba,
-} from "#utils/common";
+import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
+import { fixedInt, formatStat, getBiomeName, getLocalizedSpriteKey, getShinyDescriptor, padInt } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getDexNumber } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
-import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 
 enum Page {
@@ -920,7 +912,7 @@ export class SummaryUiHandler extends UiHandler {
           profileContainer.add(luckText);
         }
 
-        if (globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id) && this.pokemon != null) {
+        if (Object.hasOwn(globalScene.gameData.achvUnlocks, achvs.TERASTALLIZE.id) && this.pokemon != null) {
           const teraIcon = globalScene.add.sprite(128, 26, "button_tera");
           teraIcon.setName("terastallize-icon");
           teraIcon.setFrame(PokemonType[this.pokemon.getTeraType()].toLowerCase());
@@ -1095,10 +1087,11 @@ export class SummaryUiHandler extends UiHandler {
           this.permStatsContainer.add(statLabel);
           this.ivContainer.add(ivLabel);
 
+          // TODO: are those bangs correct?
           const statValueText =
-            stat !== Stat.HP
-              ? formatStat(this.pokemon?.getStat(stat)!) // TODO: is this bang correct?
-              : `${formatStat(this.pokemon?.hp!, true)}/${formatStat(this.pokemon?.getMaxHp()!, true)}`; // TODO: are those bangs correct?
+            stat === Stat.HP
+              ? `${formatStat(this.pokemon?.hp!, true)}/${formatStat(this.pokemon?.getMaxHp()!, true)}`
+              : formatStat(this.pokemon?.getStat(stat)!);
           const ivText = `${this.pokemon?.ivs[stat]}/31`;
 
           const statValue = addTextObject(93 + 93 * colIndex, 16 * rowIndex, statValueText, TextStyle.WINDOW_ALT);
