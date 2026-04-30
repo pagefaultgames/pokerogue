@@ -188,7 +188,10 @@ class DefaultOverrides {
   readonly STARTER_SPECIES_OVERRIDE: SpeciesId | null = null;
   /** This will force your starter to be a random fusion */
   readonly STARTER_FUSION_OVERRIDE: boolean = false;
-  /** This will override the species of the fusion */
+  /**
+   * This will override the species of the fusion.
+   * Requires {@linkcode STARTER_FUSION_OVERRIDE} to be set to `true`.
+   */
   readonly STARTER_FUSION_SPECIES_OVERRIDE: SpeciesId | null = null;
   readonly ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
   readonly PASSIVE_ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
