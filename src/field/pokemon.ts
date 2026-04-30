@@ -1630,7 +1630,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     // Old Gateau
     globalScene.applyModifiers(PokemonBaseStatFlatModifier, this.isPlayer(), this, baseStats);
     if (this.isFusion()) {
-      const fusionBaseStats = this.getFusionSpeciesForm(true).baseStats;
+      const fusionBaseStats = this.getFusionSpeciesForm(true).baseStats.slice(0);
       applyChallenges(ChallengeType.FLIP_STAT, this, fusionBaseStats);
 
       for (const s of PERMANENT_STATS) {
