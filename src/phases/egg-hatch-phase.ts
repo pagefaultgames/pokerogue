@@ -88,7 +88,7 @@ export class EggHatchPhase extends Phase {
 
       globalScene.gameData.eggs.splice(eggIndex, 1);
 
-      globalScene.fadeOutBgm(undefined, false);
+      globalScene.fadeOutBgm();
 
       this.eggHatchHandler = globalScene.ui.getHandler() as EggHatchSceneUiHandler;
 
@@ -305,7 +305,7 @@ export class EggHatchPhase extends Phase {
   doHatch(): void {
     this.canSkip = false;
     this.hatched = true;
-    this.evolutionBgm?.fadeOut(100, true);
+    this.evolutionBgm?.fadeOut(100);
     for (let e = 0; e < 5; e++) {
       globalScene.time.delayedCall(fixedInt(375 * e), () =>
         globalScene.playSound("se/egg_hatch", { volume: 1 - e * 0.2 }),

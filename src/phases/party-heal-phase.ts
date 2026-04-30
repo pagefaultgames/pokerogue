@@ -19,7 +19,7 @@ export class PartyHealPhase extends BattlePhase {
 
     const bgmPlaying = globalScene.isBgmPlaying();
     if (bgmPlaying) {
-      globalScene.fadeOutBgm(1000, false);
+      globalScene.fadeOutBgm(1000);
     }
     globalScene.ui.fadeOut(1000).then(() => {
       const preventRevive = new BooleanHolder(false);

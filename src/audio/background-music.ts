@@ -2,7 +2,7 @@ import { getCachedUrl } from "#utils/fetch-utils";
 import { Howl } from "howler";
 
 /**
- * Stream background music with Howler.
+ * Class representing a single background music track being streamed from HTML5 Audio via Howler.
  *
  * This class is separate from and unrelated to Phaser's sound system.
  * @privateRemarks
@@ -17,18 +17,22 @@ import { Howl } from "howler";
 export class BackgroundMusic {
   /** The key for the audio file */
   public readonly key: string;
+  /** The underlying {@linkcode Howl} instance used to stream music. */
   private readonly howl: Howl;
+  /** Whether this BGM has been evicted from memory. */
   private destroyed = false;
 
+  /** @returns Whether this BGM is currently playing. */
   public get isPlaying(): boolean {
     return this.howl.playing();
   }
 
+  /** @returns Whether this BGM is currently paused mid-playback. */
   public get isPaused(): boolean {
     return !this.howl.playing() && (this.howl.seek() as number) > 0;
   }
 
-  constructor(key: string, loop: boolean, loopPoint = 0, onEnd?: () => void) {
+  constructor(key: string, loop: boolean, loopPoint = 0) {
     this.key = key;
     const url = getCachedUrl(`audio/bgm/${key}.mp3`);
 
@@ -41,9 +45,7 @@ export class BackgroundMusic {
       },
     });
 
-    if (onEnd != null) {
-      this.howl.on("end", onEnd);
-    } else if (loop && loopPoint > 0) {
+    if (loop) {
       this.howl.on("end", this.loopOnEnd.bind(this));
     }
   }
@@ -77,6 +79,17 @@ export class BackgroundMusic {
     this.howl.volume(Phaser.Math.Clamp(value, 0, 1));
   }
 
+  /**
+   * Add a callback to run when this track ends.
+   * @param callback - The callback to run
+   *
+   * @remarks
+   * Note that if a callback is registered to a looping track, it will run on every loop.
+   */
+  public onEnd(callback: () => void): void {
+    this.howl.on("end", callback);
+  }
+
   public destroy(): void {
     if (this.destroyed) {
       return;
@@ -85,20 +98,17 @@ export class BackgroundMusic {
     this.howl.unload();
   }
 
-  public fadeOut(duration: number, destroy: boolean): boolean {
-    if (!this.isPlaying) {
-      return false;
+  public fadeOut(duration: number): void {
+    if (!this.isPlaying || this.destroyed) {
+      return;
     }
 
-    const current = this.howl.volume();
-    this.howl.fade(current, 0, duration);
+    const currentVolume = this.howl.volume();
+    this.howl.fade(currentVolume, 0, duration);
+
     this.howl.once("fade", () => {
       this.stop();
-      if (destroy) {
-        this.destroy();
-      }
+      this.destroy();
     });
-
-    return true;
   }
 }

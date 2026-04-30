@@ -296,7 +296,7 @@ export class EvolutionPhase extends Phase {
         this.evolutionBg.setVisible(false);
       },
     });
-    this.evolutionBgm?.fadeOut(100, true);
+    this.evolutionBgm?.fadeOut(100);
   }
 
   /**
@@ -376,7 +376,7 @@ export class EvolutionPhase extends Phase {
    * Fadeout evolution music, play the cry, show the evolution completed text, and end the phase
    */
   private onEvolutionComplete(evolvedPokemon: Pokemon) {
-    this.evolutionBgm?.fadeOut(100, true);
+    this.evolutionBgm?.fadeOut(100);
     globalScene.time.delayedCall(250, () => {
       this.pokemon.cry();
       globalScene.time.delayedCall(1250, () => {

@@ -1240,7 +1240,7 @@ export class BattleScene extends SceneBase {
       // Reload variant data in case sprite set has changed
       this.initVariantData();
 
-      this.fadeOutBgm(250, false);
+      this.fadeOutBgm(250);
       this.tweens.add({
         targets: [this.uiContainer],
         alpha: 0,
@@ -2309,22 +2309,20 @@ export class BattleScene extends SceneBase {
     return this.bgm?.isPlaying ?? false;
   }
 
-  private playNewBgm(bgmName: string, loopPoint: number, callback?: () => void): void {
+  private playNewBgm(bgmName: string, loopPoint: number): void {
     this.ui.bgmBar.setBgmToBgmBar(bgmName);
 
     const previous = this.bgm;
     if (previous?.isPlaying) {
       previous.stop();
     }
-    if (previous && previous.key !== bgmName) {
-      previous.destroy();
-    }
+    previous?.destroy();
 
-    this.bgm = new BackgroundMusic(bgmName, true, loopPoint, callback);
+    this.bgm = new BackgroundMusic(bgmName, true, loopPoint);
     this.bgm.play(this.masterVolume * this.bgmVolume);
   }
 
-  public playBgm(bgmName?: string, fadeOutPrevious?: boolean, callback?: () => void): void {
+  public playBgm(bgmName?: string, fadeOutPrevious?: boolean): void {
     const resolvedName = timedEventManager.getEventBgmReplacement(
       bgmName ?? this.currentBattle?.getBgmOverride() ?? this.arena?.bgm,
     );
@@ -2346,12 +2344,12 @@ export class BattleScene extends SceneBase {
 
     if (shouldFadeOut) {
       const fadeDuration = 500;
-      this.fadeOutBgm(fadeDuration, true);
+      this.fadeOutBgm(fadeDuration);
       this.time.delayedCall(fadeDuration + 250, () => {
-        this.playNewBgm(resolvedName, loopPoint, callback);
+        this.playNewBgm(resolvedName, loopPoint);
       });
     } else {
-      this.playNewBgm(resolvedName, loopPoint, callback);
+      this.playNewBgm(resolvedName, loopPoint);
     }
   }
 
@@ -2397,18 +2395,17 @@ export class BattleScene extends SceneBase {
     }
   }
 
-  public fadeOutBgm(duration = 500, destroy = true): boolean {
-    if (!this.bgm) {
-      return false;
-    }
-    return this.bgm.fadeOut(duration, destroy);
+  public fadeOutBgm(duration = 500): void {
+    this.bgm?.fadeOut(duration);
   }
 
   /**
-   * Fade out the current bgm over `delay` ms, then start a new one.
+   * Fade out the current BGM track over `delay` ms, then start `newBgmKey` once it finishes.
+   * @param newBgmKey - The key for the next track to start
+   * @param delay - The delay to use before starting the next track
    */
-  fadeAndSwitchBgm(newBgmKey?: string, destroy = false, delay = 2000): void {
-    this.fadeOutBgm(delay, destroy);
+  fadeAndSwitchBgm(newBgmKey?: string, delay = 2000): void {
+    this.fadeOutBgm(delay);
     this.time.delayedCall(delay, () => {
       this.playBgm(newBgmKey);
     });
@@ -2445,11 +2442,14 @@ export class BattleScene extends SceneBase {
     }
   }
 
-  public replaceBgmUntilEnd(bgmName: string, callback?: () => void): BackgroundMusic {
-    const tempBgm = new BackgroundMusic(bgmName, false, 0, () => {
-      callback?.();
-      this.bgm?.resume();
-    });
+  /**
+   * Replace the current BGM track with `bgmName`, then resume it after `bgmName` finishes.
+   * @param bgmName - The key for the replacement track
+   * @returns The newly-created {@linkcode BackgroundMusic} object
+   */
+  public replaceBgmUntilEnd(bgmName: string): BackgroundMusic {
+    const tempBgm = new BackgroundMusic(bgmName, false);
+    tempBgm.onEnd(() => this.bgm?.resume());
     this.bgm?.pause();
     tempBgm.play();
 
@@ -3449,7 +3449,7 @@ export class BattleScene extends SceneBase {
       return;
     }
 
-    this.fadeOutBgm(fixedInt(2000), false);
+    this.fadeOutBgm(fixedInt(2000));
     this.ui.showDialogue(classicFinalBossDialogue.firstStageWin, pokemon.species.name, undefined, () => {
       const finalBossMBH = getModifierType(modifierTypes.MINI_BLACK_HOLE).newModifier(
         pokemon,

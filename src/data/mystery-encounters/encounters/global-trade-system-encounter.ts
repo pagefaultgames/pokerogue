@@ -719,7 +719,7 @@ function doPokemonTradeSequence(tradedPokemon: PlayerPokemon, receivedPokemon: P
       ease: "Cubic.easeInOut",
       duration: 500,
       onComplete: async () => {
-        globalScene.fadeOutBgm(1000, false);
+        globalScene.fadeOutBgm(1000);
         await showEncounterText(`${namespace}:pokemonTradeSelected`);
         tradedPokemon.cry();
         globalScene.playBgm("bw/evolution");
@@ -925,7 +925,7 @@ function doTradeReceivedSequence(
 
         globalScene.time.delayedCall(2000, () => {
           globalScene.playSound("se/pb_rel");
-          globalScene.fadeOutBgm(500, false);
+          globalScene.fadeOutBgm(500);
           receivedPokemon.cry();
           receivedPokemonTintSprite.scale = 0.25;
           receivedPokemonTintSprite.alpha = 1;
