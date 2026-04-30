@@ -37,13 +37,20 @@ export class PartyHealPhase extends BattlePhase {
         }
         pokemon.updateInfo(true);
       }
-      const healSound = globalScene.playSound("se/heal");
+
+      const healSound = this.resumeBgm
+        ? globalScene.replaceBgmUntilEnd("bw/heal")
+        : globalScene.playBgm("bw/heal", false, false);
       if (healSound == null) {
         this.end();
       } else {
-        healSound.on("complete", () => globalScene.ui.fadeIn(500).then(() => this.end()));
+        healSound.onEnd(() => this.end());
       }
     });
     globalScene.arena.playerTerasUsed = 0;
+  }
+
+  public override end() {
+    globalScene.ui.fadeIn(500).then(() => super.end());
   }
 }

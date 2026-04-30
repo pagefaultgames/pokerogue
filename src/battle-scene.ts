@@ -2309,7 +2309,7 @@ export class BattleScene extends SceneBase {
     return this.bgm?.isPlaying ?? false;
   }
 
-  private playNewBgm(bgmName: string, loopPoint: number): void {
+  private playNewBgm(bgmName: string, loop: boolean, loopPoint: number): void {
     this.ui.bgmBar.setBgmToBgmBar(bgmName);
 
     const previous = this.bgm;
@@ -2318,24 +2318,24 @@ export class BattleScene extends SceneBase {
     }
     previous?.destroy();
 
-    this.bgm = new BackgroundMusic(bgmName, true, loopPoint);
+    this.bgm = new BackgroundMusic(bgmName, loop, loopPoint);
     this.bgm.play(this.masterVolume * this.bgmVolume);
   }
 
-  public playBgm(bgmName?: string, fadeOutPrevious?: boolean): void {
+  public playBgm(bgmName?: string, fadeOutPrevious?: boolean, loop = true): BackgroundMusic | null {
     const resolvedName = timedEventManager.getEventBgmReplacement(
       bgmName ?? this.currentBattle?.getBgmOverride() ?? this.arena?.bgm,
     );
 
     if (!resolvedName) {
-      return;
+      return null;
     }
 
     if (this.bgm?.key === resolvedName) {
       if (!this.bgm.isPlaying) {
         this.bgm.play(this.masterVolume * this.bgmVolume);
       }
-      return;
+      return null;
     }
 
     const loopPoint = resolvedName === this.arena?.bgm ? this.arena.bgmLoopPoint : this.getBgmLoopPoint(resolvedName);
@@ -2346,11 +2346,13 @@ export class BattleScene extends SceneBase {
       const fadeDuration = 500;
       this.fadeOutBgm(fadeDuration);
       this.time.delayedCall(fadeDuration + 250, () => {
-        this.playNewBgm(resolvedName, loopPoint);
+        this.playNewBgm(resolvedName, loop, loopPoint);
       });
     } else {
-      this.playNewBgm(resolvedName, loopPoint);
+      this.playNewBgm(resolvedName, loop, loopPoint);
     }
+
+    return this.bgm;
   }
 
   public pauseBgm(): boolean {

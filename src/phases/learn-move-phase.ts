@@ -212,7 +212,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     if (textMessage) {
       await globalScene.ui.showTextPromise(textMessage);
     }
-    globalScene.playSound("bw/level_up_fanfare"); // Sound loaded into game as is
+    globalScene.playSound("se/level_up_fanfare"); // Sound loaded into game as is
     globalScene.ui.showText(
       learnMoveText,
       null,
