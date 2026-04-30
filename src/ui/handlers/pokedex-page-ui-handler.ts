@@ -872,7 +872,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       this.abilityHidden = form.abilityHidden === form.ability1 ? undefined : form.abilityHidden;
 
       this.evolutions = allEvolutions.filter(e => e.preFormKey === form.formKey || e.preFormKey === null);
-      this.baseStats = form.baseStats;
+      this.baseStats = form.baseStats.slice();
       this.baseTotal = form.baseTotal;
     } else {
       this.levelMoves = pokemonSpeciesLevelMoves[species.speciesId];
@@ -881,7 +881,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       this.abilityHidden = species.abilityHidden === species.ability1 ? undefined : species.abilityHidden;
 
       this.evolutions = allEvolutions;
-      this.baseStats = species.baseStats;
+      this.baseStats = species.baseStats.slice();
       this.baseTotal = species.baseTotal;
     }
 

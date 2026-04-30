@@ -91,7 +91,7 @@ export abstract class PokemonSpeciesForm {
   readonly ability2: AbilityId;
   readonly abilityHidden: AbilityId;
   readonly baseTotal: number;
-  readonly baseStats: number[];
+  readonly baseStats: readonly number[];
   readonly catchRate: number;
   /** The base amount of friendship this species has when caught, as an integer from 0-255. */
   readonly baseFriendship: number;
