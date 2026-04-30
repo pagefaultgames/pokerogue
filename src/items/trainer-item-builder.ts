@@ -11,7 +11,7 @@ import type { Constructor } from "type-fest";
  * Builder class for {@linkcode TrainerItem} instances.
  *
  * Accumulates {@linkcode TrainerItemAttr} instances via {@linkcode TrainerItemBuilder.attr | attr},
- * before transforming them into a concrete `TrainerItem` subclass with {@linkcode TrainerItemBuilder.build | build}.
+ * before transforming them into a concrete `TrainerItem` instance with {@linkcode TrainerItemBuilder.build | build}.
  *
  * @typeParam Attrs - A union of all the {@linkcode TrainerItemAttr}s registered so far.
  *
@@ -28,15 +28,12 @@ export class TrainerItemBuilder<Attrs extends TrainerItemAttr = never> {
   /** @defaultValue `1` */
   public readonly maxStackCount: number;
 
-  private isTransferable = true;
-  private isStealable = true;
-  private isSuppressable = true;
+  /** Whether the item should lapse over time, decreasing its stack count each wave until fully depleted. */
+  private isLapsing?: boolean;
 
   private nameParams?: Parameters<typeof i18next.t>;
   private descriptionParams?: Parameters<typeof i18next.t>;
   private icon?: string;
-  /** Whether the item is a `LapsingTrainerItem`. */
-  private lapsing?: boolean;
 
   /** A `Map` matching effects to their corresponding attributes. */
   private readonly attrMap: Map<TrainerItemEffect, TrainerItemAttr[]> = new Map(
@@ -77,31 +74,12 @@ export class TrainerItemBuilder<Attrs extends TrainerItemAttr = never> {
   // #endregion Attributes
 
   // #region Flags
-
   /**
-   * Prevent this item from being transferred to another {@linkcode Pokemon}.
+   * Make this item lapse over time, losing stacks once per wave until removed.
    * @returns `this`
    */
-  public untransferable(): this {
-    this.isTransferable = false;
-    return this;
-  }
-
-  /**
-   * Prevent this item from being stolen by another {@linkcode Pokemon}.
-   * @returns `this`
-   */
-  public unstealable(): this {
-    this.isStealable = false;
-    return this;
-  }
-
-  /**
-   * Prevent this item's effects from being suppressed by moves or abilities.
-   * @returns `this`
-   */
-  public unsuppressable(): this {
-    this.isSuppressable = false;
+  public lapsing(): this {
+    this.isLapsing = true;
     return this;
   }
 
@@ -150,6 +128,7 @@ export class TrainerItemBuilder<Attrs extends TrainerItemAttr = never> {
       nameParams: this.nameParams,
       descriptionParams: this.descriptionParams,
       iconName: this.icon,
+      lapsing: this.isLapsing,
     });
     return item;
   }

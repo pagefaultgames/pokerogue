@@ -9,7 +9,7 @@ import type { HeldItem } from "#items/held-item";
 import type { HeldItemBuilder } from "#items/held-item-builder";
 import type { HeldItemEffectParamMap } from "#types/held-item-parameter";
 import type { MoveAttr } from "#types/move-types";
-import type { IsEqual, IsUnion } from "type-fest";
+import type { IsEqual, IsUnion, NonEmptyTuple } from "type-fest";
 
 /**
  * Type matching each {@linkcode HeldItemEffect} to the subset of `Attrs` that can apply said effect. \
@@ -21,7 +21,7 @@ import type { IsEqual, IsUnion } from "type-fest";
 export type HeldItemRecord<Attrs extends HeldItemAttr> = {
   readonly [E in HeldItemEffect]: [Extract<Attrs, HeldItemAttr<E>>] extends [never]
     ? readonly []
-    : readonly Extract<Attrs, HeldItemAttr<E>>[];
+    : NonEmptyTuple<Extract<Attrs, HeldItemAttr<E>>>;
 };
 
 /**

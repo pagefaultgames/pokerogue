@@ -23,7 +23,7 @@ type AddAttrToBuilder<Attrs extends HeldItemAttr, Effects extends HeldItemEffect
  * Builder class for {@linkcode HeldItem} instances.
  *
  * Accumulates {@linkcode HeldItemAttr} instances via {@linkcode HeldItemBuilder.attr | attr},
- * before transforming them into a concrete `HeldItem` subclass with {@linkcode HeldItemBuilder.build | build}.
+ * before transforming them into a concrete `HeldItem` instance with {@linkcode HeldItemBuilder.build | build}.
  *
  * @typeParam Attrs - A union of all the {@linkcode HeldItemAttr}s registered so far.
  * @typeParam ConsumableEffects - A union of {@linkcode HeldItemEffect}s corresponding to all {@linkcode ConsumableHeldItemAttr}s registered so far;

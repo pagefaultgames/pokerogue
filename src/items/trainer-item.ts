@@ -3,8 +3,10 @@ import { TextStyle } from "#enums/text-style";
 import type { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { type TrainerItemId, TrainerItemNames } from "#enums/trainer-item-id";
 import type { TrainerItemAttr, TrainerItemRecord } from "#items/trainer-item-attr";
+import type { TrainerItemBuilder } from "#items/trainer-item-builder";
 import type { TrainerItemManager } from "#items/trainer-item-manager";
 import type { TrainerItemEffectParamMap } from "#types/trainer-item-parameter";
+import type { Mutable } from "#types/type-helpers";
 import { addTextObject } from "#ui/text";
 import { hslToHex } from "#utils/common";
 import i18next from "i18next";
@@ -32,13 +34,16 @@ export abstract class TrainerItemBase {
     return `${TrainerItemNames[this.type]?.toLowerCase()}`;
   }
 
+  // TODO: Remove and expose the underlying property
   getMaxStackCount(): number {
     return this.maxStackCount;
   }
 
   createIcon(stackCount: number): Phaser.GameObjects.Container {
-    // TODO: This could be restructured to merge these 2 code paths more, I just copied the code from `LapsingTrainerItem`
-    const item = globalScene.add.sprite(0, 12, "items").setFrame(this.iconName).setOrigin(0, 0.5);
+    const item = globalScene.add
+      .sprite(0, 12, "items") //
+      .setFrame(this.iconName)
+      .setOrigin(0, 0.5);
     const container = globalScene.add.container().add(item);
 
     const stackText = this.getIconStackText(stackCount);
@@ -81,6 +86,7 @@ export abstract class TrainerItemBase {
     return text;
   }
 
+  // TODO: This is unused
   getScoreMultiplier(): number {
     return 1;
   }
@@ -102,17 +108,56 @@ export abstract class TrainerItem<out Attrs extends TrainerItemAttr = TrainerIte
    */
   public readonly effects: TrainerItemRecord<Attrs>;
 
+  // #region Localization
+  /**
+   * Optional parameters used to localize this item's name.
+   * If omitted, will use the default implementation provided from {@linkcode TrainerItemBase}.
+   */
+  private readonly nameParams?: Parameters<typeof i18next.t> | undefined;
+  /**
+   * Optional parameters used to localize this item's description.
+   * If omitted, will use the default implementation provided from {@linkcode TrainerItemBase}.
+   */
+  private readonly descriptionParams?: Parameters<typeof i18next.t> | undefined;
+  public readonly customIconName?: string | undefined;
+
+  public override get name(): string {
+    return this.nameParams ? i18next.t(...this.nameParams) : super.name;
+  }
+
+  public override get description(): string {
+    return this.descriptionParams ? i18next.t(...this.descriptionParams) : super.description;
+  }
+
+  public override get iconName(): string {
+    return this.customIconName ?? super.iconName;
+  }
+  // #endregion Localization
+
   protected constructor({
     type,
     effects,
     maxStackCount = 1,
+    nameParams,
+    descriptionParams,
+    iconName,
+    lapsing = false,
   }: {
     type: TrainerItemId;
     effects: TrainerItemRecord<Attrs>;
     maxStackCount?: number;
+    nameParams?: Parameters<typeof i18next.t> | undefined;
+    descriptionParams?: Parameters<typeof i18next.t> | undefined;
+    iconName?: string | undefined;
+    lapsing?: boolean;
   }) {
     super(type, maxStackCount);
+
     this.effects = effects;
+    this.nameParams = nameParams;
+    this.descriptionParams = descriptionParams;
+    this.customIconName = iconName;
+    (this as Mutable<this>).isLapsing = lapsing;
   }
 
   /**
@@ -161,7 +206,6 @@ export abstract class TrainerItem<out Attrs extends TrainerItemAttr = TrainerIte
   }
 }
 
-// TODO: Rework to not be its own class (either make it a mixin or have `TrainerItemBase` handle things itself)
-export class LapsingTrainerItem extends TrainerItem {
-  public readonly isLapsing = true;
+export class MarkerTrainerItem extends TrainerItemBase {
+  private declare readonly _: never;
 }

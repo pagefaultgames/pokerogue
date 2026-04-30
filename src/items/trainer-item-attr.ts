@@ -4,29 +4,22 @@ import type { TrainerItemId } from "#enums/trainer-item-id";
 import type { TrainerItem } from "#items/trainer-item";
 import type { TrainerItemManager } from "#items/trainer-item-manager";
 import type { TrainerItemEffectParamMap } from "#types/trainer-item-parameter";
+import type { IsEqual, IsUnion, NonEmptyTuple } from "type-fest";
 
 /**
  * Type matching each {@linkcode TrainerItemEffect} to the subset of `Attrs` that can apply said effect. \
  * Any effects absent from all `Attrs` will map to an empty array.
+ * @package
+ * @remarks
+ * We cannot outright remove mismatched attributes from the object (or set them to `undefined`/`never`) due to breaking the covariance of `TrainerItem`.
  */
 export type TrainerItemRecord<Attrs extends TrainerItemAttr> = {
   readonly [E in TrainerItemEffect]: [Extract<Attrs, TrainerItemAttr<E>>] extends [never]
     ? readonly []
-    : readonly Extract<Attrs, TrainerItemAttr<E>>[];
+    : NonEmptyTuple<Extract<Attrs, TrainerItemAttr<E>>>;
 };
 
-export type WithManager<T extends object> = T & { readonly manager: TrainerItemManager };
-
 export abstract class TrainerItemAttr<out E extends TrainerItemEffect = TrainerItemEffect> {
-  /**
-   * The {@linkcode TrainerItemEffect} this attribute handles.
-   * Should not be a union.
-   * @remarks
-   * Used by {@linkcode TrainerItemBuilder} to sort items by effect.
-   */
-
-  public abstract readonly effect: E;
-
   /**
    * The {@linkcode TrainerItemId} associated with this attribute.
    *
@@ -45,6 +38,15 @@ export abstract class TrainerItemAttr<out E extends TrainerItemEffect = TrainerI
     // since the builder sets the attribute's `type` to the correct value at runtime.
     return allTrainerItems[this.type] as TrainerItem;
   }
+
+  /**
+   * The {@linkcode TrainerItemEffect} this attribute handles. \
+   * Used by {@linkcode TrainerItemBuilder} to sort items by effect, and is otherwise unused.
+   * @remarks
+   * This will resolve to `never` if `E` is a union, which is desirable since attributes should not be able to apply to multiple effects.
+   */
+  // add explicit bypass for base class (since `TrainerItemEffect` is itself a union)
+  public abstract readonly effect: IsEqual<E, TrainerItemEffect> extends true ? E : IsUnion<E> extends true ? never : E;
 
   /**
    * Check whether this attribute's effect should be allowed to trigger.
