@@ -7,7 +7,7 @@ import type { SettingsSaveMigrator } from "#types/save-migrators";
  * @param data - The `settings` object
  */
 const fixGameSpeed: SettingsSaveMigrator = {
-  version: "1.12.0",
+  version: "1.11.19",
   // biome-ignore lint/complexity/noBannedTypes: TODO - refactor settings
   migrate: (data: Object): void => {
     if (Object.hasOwn(data, SettingKeys.Game_Speed)) {
