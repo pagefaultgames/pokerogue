@@ -51,7 +51,15 @@ import type { IntClosedRange, TupleOf } from "type-fest";
  * }
  * ```
  */
-const overrides = {} satisfies Partial<InstanceType<OverridesType>>;
+const overrides = {
+  BATTLE_STYLE_OVERRIDE: "double",
+  ENEMY_SPECIES_OVERRIDE: SpeciesId.NINJASK,
+  ENEMY_MOVESET_OVERRIDE: [MoveId.SPLASH, MoveId.PSYCHIC_TERRAIN, MoveId.ELECTRIC_TERRAIN],
+  ENEMY_ABILITY_OVERRIDE: AbilityId.LEVITATE,
+  STARTER_SPECIES_OVERRIDE: SpeciesId.TERAPAGOS,
+  MOVESET_OVERRIDE: [MoveId.EXPANDING_FORCE, MoveId.TERA_STARSTORM, MoveId.PROTECT, MoveId.PSYCHIC_TERRAIN],
+  ITEM_REWARD_OVERRIDE: [{ name: "TERA_ORB" }],
+} satisfies Partial<InstanceType<OverridesType>>;
 
 /**
  * If you need to add Overrides values for local testing do that inside {@linkcode overrides}

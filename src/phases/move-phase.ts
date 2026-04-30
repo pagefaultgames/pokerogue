@@ -27,7 +27,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { MoveUsedEvent } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
-import { frenzyMissFunc } from "#moves/move-utils";
+import { frenzyMissFunc, getMoveTargets } from "#moves/move-utils";
 import type { PokemonMove } from "#moves/pokemon-move";
 import type { Move, PreUseInterruptAttr } from "#types/move-types";
 import type { TurnMove } from "#types/turn-move";
@@ -187,9 +187,12 @@ export class MovePhase extends PokemonPhase {
       globalScene.arena.setIgnoreAbilities(true, user.getBattlerIndex());
     }
 
-    // At this point, move's type changing and multi-target effects *should* be applied
+    // TODO: Apply move-type changing effects here for mainline consistency.
     // Pokerogue's current implementation applies these effects during the move effect phase
     // as there is not (yet) a notion of a move-in-flight for determinations to occur
+
+    // Re-evaluate variable-target moves
+    this.resolveChangeMoveTarget();
 
     this.resolveRedirectTarget();
     this.resolveCounterAttackTarget();
@@ -548,6 +551,36 @@ export class MovePhase extends PokemonPhase {
           moveName: this.move.getMove().name,
         }),
       );
+    }
+  }
+
+  /** Recompute the targets for variable-target moves. */
+  protected resolveChangeMoveTarget(): void {
+    const user = this.pokemon;
+    const moveObj = this.move.getMove();
+
+    if (!moveObj.hasAttr("VariableTargetAttr")) {
+      return;
+    }
+
+    // Apply the VariableTargetAttr to determine the new MoveTarget.
+    const variableTargetHolder = new NumberHolder(moveObj.moveTarget);
+    const selectedTarget = globalScene.getField()[this.targets[0]];
+    const attrTarget = selectedTarget ?? user.getOpponents(false)[0] ?? user;
+    applyMoveAttrs("VariableTargetAttr", user, attrTarget, moveObj, variableTargetHolder);
+    const newTargetSet = getMoveTargets(user, moveObj.id, variableTargetHolder.value);
+
+    if (newTargetSet.multiple) {
+      // move has become a spread move – adopt the full set of targets.
+      this.targets = newTargetSet.targets;
+    } else {
+      // remain single–target. Preserve whatever the player already chose, but
+      // guard against the (rare) case where the chosen battler is no longer
+      // valid by falling back to the first available option.
+      const current = this.targets[0];
+      if (!newTargetSet.targets.includes(current)) {
+        this.targets = [newTargetSet.targets[0]];
+      }
     }
   }
 

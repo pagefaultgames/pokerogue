@@ -55,10 +55,10 @@ export function isSpreadMove(move: Move): boolean {
 
 export function getMoveTargets(user: Pokemon, move: MoveId, replaceTarget?: MoveTarget): MoveTargetSet {
   const variableTarget = new NumberHolder(0);
-  user.getOpponents(false).forEach(p => applyMoveAttrs("VariableTargetAttr", user, p, allMoves[move], variableTarget));
+  user.getOpponents(false).forEach(p => applyMoveAttrs("OverrideTargetAttr", user, p, allMoves[move], variableTarget));
 
   let moveTarget: MoveTarget | undefined;
-  if (allMoves[move].hasAttr("VariableTargetAttr")) {
+  if (allMoves[move].hasAttr("OverrideTargetAttr")) {
     moveTarget = variableTarget.value;
   } else if (replaceTarget !== undefined) {
     moveTarget = replaceTarget;
