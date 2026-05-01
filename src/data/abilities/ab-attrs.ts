@@ -5074,7 +5074,7 @@ export interface IncreasePpUsedAbAttrParams extends Omit<AugmentMoveInteractionA
 /**
  * Attribute for abilities that increase the PP consumption of received attacks.
  *
- * Used by {@link https://bulbapedia.bulbagarden.net/wiki/Pressure_(Ability) | Pressure}
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Pressure_(Ability)}
  */
 export class IncreasePpUsedAbAttr extends AbAttr {
   /**
@@ -5085,6 +5085,7 @@ export class IncreasePpUsedAbAttr extends AbAttr {
 
   constructor(ppIncrease = 1) {
     super();
+
     this.ppIncrease = ppIncrease;
   }
 
