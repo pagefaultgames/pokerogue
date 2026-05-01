@@ -66,10 +66,8 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.ASTONISH,
   MoveId.BABY_DOLL_EYES,
   MoveId.BARRAGE,
-  MoveId.BELCH, // Too situational, high BP also makes it likely to spawn on anything random that gets it.
   MoveId.BIDE,
   MoveId.BIND,
-  MoveId.BLOCK, // Potentially revisit after improved learnsets and weighting, only value is on stall-eqsue builds.
   MoveId.BRANCH_POKE,
   MoveId.BONE_CLUB, // Cubone gets better options.
   MoveId.BUBBLE,
@@ -92,32 +90,25 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.FURY_SWIPES,
   MoveId.GEAR_UP,
   MoveId.GROWL,
-  MoveId.GUARD_SWAP, // Too situational, ends up benefitting the player more often than not.
   MoveId.GUST,
   MoveId.HARDEN,
   MoveId.HORN_ATTACK,
-  MoveId.IMPRISON, // Too situational.
   MoveId.KINESIS,
-  MoveId.LAST_RESORT, // Potentially revisit after further move generation changes, too high BP causes it to spawn as random coverage and ends up being situational / unused.
   MoveId.LEAFAGE,
   MoveId.LEER,
   MoveId.LICK,
   MoveId.LUCKY_CHANT,
-  MoveId.MEAN_LOOK, // Same as Block
   MoveId.MEGA_DRAIN,
   MoveId.METAL_CLAW,
-  MoveId.MIRACLE_EYE, // Same as Odor Sleuth
   MoveId.MIST,
   MoveId.MUD_SPORT,
   MoveId.NIGHTMARE,
-  MoveId.ODOR_SLEUTH, // The slot this spawns in could've just been used to spawn coverage instead
   MoveId.PECK,
   MoveId.PLAY_NICE,
   MoveId.POISON_STING,
   MoveId.POUND,
   MoveId.POUNCE,
   MoveId.POWDER_SNOW,
-  MoveId.POWER_SWAP, // Same as Guard Swap.
   MoveId.PSYWAVE,
   MoveId.QUICK_ATTACK,
   MoveId.RAGE,
@@ -140,7 +131,6 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.SUPERSONIC,
   MoveId.SWALLOW,
   MoveId.SWEET_SCENT,
-  MoveId.SYNCHRONOISE, // Too situational.
   MoveId.TACKLE,
   MoveId.TAIL_WHIP,
   MoveId.TAKE_DOWN,
@@ -155,12 +145,31 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.WITHDRAW,
   MoveId.WRAP,
 
-  // Recommended to blacklist until AI changes are made
+  // Situational Moves, potentially revisit some of these after dedicated sets / smarter moveset generation.
+
+  MoveId.BELCH, // High BP also makes it likely to spawn on anything that gets it as random coverage.
+  MoveId.IMPRISON, // Too situational.
+  MoveId.SYNCHRONOISE, // Too situational, mostly given to Psychic types which resist the move anyway.
+
+  // Blocking Moves
+  MoveId.BLOCK, // Potentially revisit after improved learnsets and weighting, only value is on stall-esque builds.
+  MoveId.MEAN_LOOK, // Same as Block
+
+  // Stat Swaps
+  MoveId.GUARD_SWAP, // Too situational, ends up benefitting the player and hurting the AI more often than not.
+  MoveId.POWER_SWAP, // Same as Guard Swap.
+  MoveId.SPEED_SWAP, // Same as the other Swaps
+
+  // Immunity ignoring moves
+  MoveId.ODOR_SLEUTH, // The slot this spawns in could've just been used to spawn coverage instead, requires a turn to use.
+  MoveId.MIRACLE_EYE, // Same as Odor Sleuth
+
+  // Recommended to blacklist until AI changes are made.
   MoveId.BELLY_DRUM, // Currently the AI uses it without considering the battle state, leading to the AI swapping out after due to the lowered HP.
   MoveId.FOCUS_PUNCH, // Messy with move weighting, AI will probably never be smart enough to use it correctly.
   MoveId.LAST_RESORT, // Potentially revisit after further move generation changes, high BP causes it to spawn as random coverage often and it ends up being situational / an unused slot.
 
-  // Recharge Moves
+  // Recharge Moves, recommended by NightKev until improved AI / Move Generation.
   MoveId.HYPER_BEAM, // Recharge moves have complications with move weighting, AI choice weighting, and AI usage in general.
   MoveId.GIGA_IMPACT,
   MoveId.BLAST_BURN,
