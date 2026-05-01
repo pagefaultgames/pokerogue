@@ -56,7 +56,7 @@ describe("Moves - Flower Shield", () => {
 
     game.move.use(MoveId.FLOWER_SHIELD);
     await game.move.forceEnemyMove(MoveId.DIG);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toEndOfTurn();
 
     expect(cherrim).toHaveStatStage(Stat.DEF, 1);

@@ -10,8 +10,8 @@ import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import type { Move, UserMoveConditionFunc } from "#moves/move";
 import type { MoveTargetSet } from "#types/move-target-set";
-import { NumberHolder } from "#utils/common";
 import { areAllies } from "#utils/pokemon-utils";
+import { ValueHolder } from "#utils/value-holder";
 
 /**
  * Return whether the move targets the field
@@ -54,7 +54,7 @@ export function isSpreadMove(move: Move): boolean {
 }
 
 export function getMoveTargets(user: Pokemon, move: MoveId, replaceTarget?: MoveTarget): MoveTargetSet {
-  const variableTarget = new NumberHolder(replaceTarget ?? allMoves[move].moveTarget);
+  const variableTarget = new ValueHolder(replaceTarget ?? allMoves[move].moveTarget);
   user.getOpponents(false).forEach(p => applyMoveAttrs("VariableTargetAttr", user, p, allMoves[move], variableTarget));
 
   const moveTarget: MoveTarget = variableTarget.value;
@@ -72,6 +72,7 @@ export function getMoveTargets(user: Pokemon, move: MoveId, replaceTarget?: Move
     // biome-ignore lint/suspicious/noFallthroughSwitchClause: intentional
     case MoveTarget.CURSE:
       // Non ghost-type Curse targets exclusively the user; ghost-type Curse targets any enemy
+      // TODO: check if the user is about to Terastallize to/from Ghost type
       if (!user.isOfType(PokemonType.GHOST, true, true)) {
         set = [user];
         break;

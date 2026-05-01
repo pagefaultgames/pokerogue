@@ -134,6 +134,7 @@ import { getEnumValues } from "#utils/enums";
 import { areAllies, canSpeciesTera, willTerastallize } from "#utils/pokemon-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { toCamelCase, toTitleCase } from "#utils/strings";
+import type { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 
 // TODO: Make these (and all condition functions actually)
@@ -6127,8 +6128,9 @@ export class TeraStarstormTypeAttr extends VariableMoveTypeAttr {
   }
 }
 
+/** @see {@link https://bulbapedia.bulbagarden.net/wiki/Revelation_Dance_(move)} */
 export class MatchUserTypeAttr extends VariableMoveTypeAttr {
-  apply(user: Pokemon, _target: Pokemon, _move: Move, args: [NumberHolder, ...any[]]): boolean {
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: [ValueHolder<PokemonType>, ...any[]]): boolean {
     const moveType = args[0];
     const userTypes = user.getTypes(true, true);
     if (userTypes.length === 0) {
@@ -7541,6 +7543,7 @@ export class RemoveTypeAttr extends MoveEffectAttr {
   }
 }
 
+/** @see {@link https://bulbapedia.bulbagarden.net/wiki/Reflect_Type_(move)} */
 export class CopyTypeAttr extends MoveEffectAttr {
   constructor() {
     super(false);
@@ -7732,6 +7735,10 @@ export class ChangeTypeAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Forest%27s_Curse_(move)}
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Trick-or-Treat_(move)}
+ */
 export class AddTypeAttr extends MoveEffectAttr {
   private readonly type: PokemonType;
 
@@ -7760,6 +7767,7 @@ export class AddTypeAttr extends MoveEffectAttr {
   }
 }
 
+/** @see {@link https://bulbapedia.bulbagarden.net/wiki/Conversion_(move)} */
 export class FirstMoveTypeAttr extends MoveEffectAttr {
   constructor() {
     super(true);

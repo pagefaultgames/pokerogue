@@ -15,12 +15,14 @@ export interface ToHaveTypesOptions {
    *
    * Possible values (in descending order of strictness) are:
    * - `"ordered"`: Enforce that the {@linkcode Pokemon}'s types are identical **and in the same order**
-   * - `"unordered"`: Enforce that the {@linkcode Pokemon}'s types are identical **without checking order**
-   * - `"superset"`: Enforce that the {@linkcode Pokemon}'s types are **a superset of** the expected types
+   * - `"unordered"`: Enforce that the Pokemon's types are identical **without checking order**
+   * - `"superset"`: Enforce that the Pokemon's types are **a superset of** the expected types
    *   (all must be present, but extras can be there)
+   * - `"oneOf"`: Enforce that the Pokemon's types include at least one of the expected types
+   *   (the existence of additional types does not matter)
    * @defaultValue `"unordered"`
    */
-  mode?: "ordered" | "unordered" | "superset";
+  mode?: "ordered" | "unordered" | "superset" | "oneOf";
   /**
    * Optional arguments to pass to {@linkcode Pokemon.getTypes}.
    */
@@ -35,11 +37,13 @@ export interface ToHaveTypesOptions {
  * @param mode - The mode in which to perform the matching.
  * Possible values (in descending order of strictness) are:
  * - `"ordered"`: Enforce that the {@linkcode Pokemon}'s types are identical **and in the same order**
- * - `"unordered"`: Enforce that the {@linkcode Pokemon}'s types are identical **without checking order**
- * - `"superset"`: Enforce that the {@linkcode Pokemon}'s types are **a superset of** the expected types
+ * - `"unordered"`: Enforce that the Pokemon's types are identical **without checking order**
+ * - `"superset"`: Enforce that the Pokemon's types are **a superset of** the expected types
  *   (all must be present, but extras can be there)
+ * - `"oneOf"`: Enforce that the Pokemon's types include at least one of the expected types
+ *   (the existence of additional types does not matter)
  *
- * Default: `unordered`
+ * Default: `"unordered"`
  * @param args - Extra arguments passed to {@linkcode Pokemon.getTypes}
  * @returns The result of the matching
  */
@@ -70,16 +74,30 @@ export function toHaveTypes(
   const actualSorted = mode === "ordered" ? received.getTypes(...args) : received.getTypes(...args).toSorted();
   const expectedSorted = mode === "ordered" ? expectedTypes : expectedTypes.toSorted();
 
+  const actualStr = stringifyEnumArray(PokemonType, actualSorted);
+  const expectedStr = stringifyEnumArray(PokemonType, expectedSorted);
+  const pkmName = getPokemonNameWithAffix(received);
+
+  if (mode === "oneOf") {
+    const pass = actualSorted.some(v => expectedSorted.includes(v));
+
+    return {
+      pass,
+      message: () =>
+        pass
+          ? `Expected ${pkmName}'s types NOT to include any of ${expectedStr}, but it did!`
+          : `Expected ${pkmName}'s types to include at least one of ${expectedStr}, but it didn't!`,
+      expected: expectedSorted,
+      actual: actualSorted,
+    };
+  }
+
   // Exact matches do not care about subset equality
   const matchers =
     mode === "superset"
       ? [...this.customTesters, this.utils.iterableEquality]
       : [...this.customTesters, this.utils.subsetEquality, this.utils.iterableEquality];
   const pass = this.equals(actualSorted, expectedSorted, matchers);
-
-  const actualStr = stringifyEnumArray(PokemonType, actualSorted);
-  const expectedStr = stringifyEnumArray(PokemonType, expectedSorted);
-  const pkmName = getPokemonNameWithAffix(received);
 
   return {
     pass,

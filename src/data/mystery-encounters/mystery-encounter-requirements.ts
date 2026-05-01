@@ -525,7 +525,7 @@ export class TypeRequirement extends EncounterPokemonRequirement {
 
   override getDialogueToken(pokemon?: PlayerPokemon): [string, string] {
     const includedType = this.requiredType.find(ty => pokemon?.isOfType(ty, false, false));
-    return ["type", includedType ? PokemonType[includedType] : ""];
+    return ["type", includedType == null ? "" : PokemonType[includedType]];
   }
 }
 

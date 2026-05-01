@@ -1992,10 +1992,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const customTypes = this.customPokemonData.types.map(t => (t === PokemonType.UNKNOWN ? undefined : t));
 
     const firstType = customTypes[0] ?? speciesForm.type1;
-    const secondCustomType = customTypes[1] ?? speciesForm.type2 ?? undefined;
+    const secondCustomType = customTypes[1] ?? speciesForm.type2;
 
     // Second type
-    let secondType: PokemonType | undefined = secondCustomType;
+    let secondType: PokemonType | null = secondCustomType;
 
     if (fusionSpeciesForm) {
       // Check if the fusion Pokemon also has permanent changes from ME when determining the fusion types
@@ -2020,11 +2020,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Check if this Pokemon's typing includes the specified type.
    * @param type - The {@linkcode PokemonType} to check
    * @param includeTeraType - Whether to use this Pokemon's tera type if Terastallized; default `true`
-   * @param returnOriginalTypesIfStellar - (Default `false`) Whether to treat this Pokemon as its original types if it is currently {@linkcode PokemonType.STELLAR | Tera Stellar}
-   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform} and similar effects; default `false`
+   * @param returnOriginalTypesIfStellar - (Default `false`)
+   *   Whether to treat this Pokemon as its original types if it is currently {@linkcode PokemonType.STELLAR | Tera Stellar}
+   * @param ignoreOverride - (Default `false`) Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform} and similar effects
    * @returns Whether this Pokemon is of the specified type.
    */
-  // TODO: Make `forDefend` default to `true`
+  // TODO: Make `returnOriginalTypesIfStellar` default to `true`
   public isOfType(
     type: PokemonType,
     includeTeraType = true,
@@ -3607,7 +3608,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns The STAB multiplier for the move used against this Pokemon
    */
   // TODO: This uses nothing from this Pokemon AT ALL, so why is this called on the defender?
-  calculateStabMultiplier(source: Pokemon, move: Move, ignoreSourceAbility: boolean, simulated: boolean): number {
+  public calculateStabMultiplier(
+    source: Pokemon,
+    move: Move,
+    ignoreSourceAbility: boolean,
+    simulated: boolean,
+  ): number {
     // If the move has the Typeless attribute, it doesn't get STAB (e.g. struggle)
     if (move.hasAttr("TypelessAttr")) {
       return 1;
