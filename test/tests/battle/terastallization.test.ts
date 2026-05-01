@@ -61,9 +61,10 @@ describe("Terastallization", () => {
     });
 
     it("should only boost the first used move of each type", () => {
-      vi.spyOn(player, "stellarTypesBoosted", "get").mockReturnValue([PokemonType.FIRE]);
+      vi.spyOn(player, "stellarTypesBoosted", "get").mockReturnValue([PokemonType.FIRE, PokemonType.WATER]);
 
       expect(enemy.calculateStabMultiplier(player, allMoves[MoveId.EMBER], true, true)).toBe(1);
+      expect(enemy.calculateStabMultiplier(player, allMoves[MoveId.WATER_GUN], true, true)).toBe(1.5);
     });
   });
 });

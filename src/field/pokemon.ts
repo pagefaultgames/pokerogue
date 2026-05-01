@@ -3614,10 +3614,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     ignoreSourceAbility: boolean,
     simulated: boolean,
   ): number {
-    // If the move has the Typeless attribute, it doesn't get STAB (e.g. struggle)
+    // Struggle cannot benefit from any STAB multipliers, even if the user is typeless
     if (move.hasAttr("TypelessAttr")) {
       return 1;
     }
+
     const sourceTypes = source.getTypes(false, false);
     const sourceTeraType = source.getTeraType();
     const moveType = source.getMoveType(move);
@@ -3635,7 +3636,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       applyAbAttrs("StabBoostAbAttr", { pokemon: source, simulated, multiplier: stabMultiplier });
     }
 
-    // Compute tera boosts
     if (source.isTerastallized) {
       stabMultiplier.value += source.getTeraTypeBoost(sourceTeraType, moveType, matchesSourceType);
     }
@@ -3648,11 +3648,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param teraType - This Pokemon's Tera Type
    * @param moveType - The type of the `Move` being used
    * @param matchesSourceType - Whether the move type matches this Pokemon's base type
-   * @returns The computed STAB bonus from terastallization.
+   * @returns The additional STAB bonus this Pokemon receives from terastallization.
+   * @remarks
+   * Unlike most other functions used during damage calculation, this is computed from the perspective of the _attacker_
+   * (given it functions entirely independently of the defender's stats, abilities, etc.).
    */
   private getTeraTypeBoost(teraType: PokemonType, moveType: PokemonType, matchesSourceType: boolean): number {
     // Non-stellar Teras give a 50% boost to their type exclusively
-    if (moveType !== PokemonType.STELLAR) {
+    if (teraType !== PokemonType.STELLAR) {
       return teraType === moveType ? 0.5 : 0;
     }
 
