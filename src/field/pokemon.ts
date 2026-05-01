@@ -6430,6 +6430,10 @@ export class PlayerPokemon extends Pokemon {
     return newMoveset;
   }
 
+  /**
+   * Display an EXP/level gain and update this Pokemon's info.
+   * @param lastLevel - The level of this Pokemon before the EXP increase
+   */
   public async showExpGain(lastLevel: number): Promise<void> {
     await this.battleInfo.updatePokemonExpDisplay(this, lastLevel);
     await this.updateInfo();
