@@ -647,7 +647,7 @@ export class MovePhase extends PokemonPhase {
     const { move, pokemon: user } = this;
     const ppHolder = new NumberHolder(1);
     this.getActiveTargetPokemon().forEach(target => {
-      applyAbAttrs("IncreasePpAbAttr", { pokemon: target, opponent: user, pp: ppHolder });
+      applyAbAttrs("IncreasePpUsedAbAttr", { pokemon: target, opponent: user, pp: ppHolder });
     });
     move.usePp(ppHolder.value);
     globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon.id, move.getMove(), move.ppUsed));

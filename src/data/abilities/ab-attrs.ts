@@ -5066,7 +5066,7 @@ export class FlinchStatStageChangeAbAttr extends FlinchEffectAbAttr {
   }
 }
 
-export interface IncreasePpAbAttrParams extends Omit<AugmentMoveInteractionAbAttrParams, "move"> {
+export interface IncreasePpUsedAbAttrParams extends Omit<AugmentMoveInteractionAbAttrParams, "move"> {
   /** Holder for the amount of PP that will be consumed; can be modified by ability application */
   readonly pp: NumberHolder;
 }
@@ -5076,7 +5076,7 @@ export interface IncreasePpAbAttrParams extends Omit<AugmentMoveInteractionAbAtt
  *
  * Used by {@link https://bulbapedia.bulbagarden.net/wiki/Pressure_(Ability) | Pressure}
  */
-export class IncreasePpAbAttr extends AbAttr {
+export class IncreasePpUsedAbAttr extends AbAttr {
   /**
    * The amount of PP to increase.
    * @defaultValue `1`
@@ -5088,11 +5088,11 @@ export class IncreasePpAbAttr extends AbAttr {
     this.ppIncrease = ppIncrease;
   }
 
-  public override canApply({ pokemon, opponent }: IncreasePpAbAttrParams): boolean {
+  public override canApply({ pokemon, opponent }: IncreasePpUsedAbAttrParams): boolean {
     return pokemon.isOpponent(opponent);
   }
 
-  public override apply({ pp }: IncreasePpAbAttrParams): void {
+  public override apply({ pp }: IncreasePpUsedAbAttrParams): void {
     pp.value += this.ppIncrease;
   }
 }
@@ -6016,7 +6016,7 @@ export const AbilityAttrs = Object.freeze({
   IllusionBreakAbAttr,
   IllusionPostBattleAbAttr,
   IllusionPreSummonAbAttr,
-  IncreasePpAbAttr,
+  IncreasePpUsedAbAttr,
   InfiltratorAbAttr,
   IntimidateImmunityAbAttr,
   LowHpMoveTypePowerBoostAbAttr,
