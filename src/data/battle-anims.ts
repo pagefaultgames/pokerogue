@@ -845,7 +845,7 @@ export abstract class BattleAnim {
       return;
     }
 
-    const targetSubstitute = !!onSubstitute && user !== target ? target.getTag(BattlerTagType.SUBSTITUTE) : null;
+    const targetSubstitute = onSubstitute && user !== target ? target.getTag(BattlerTagType.SUBSTITUTE) : null;
 
     const userSprite = user.getSprite();
     const targetSprite = targetSubstitute?.sprite ?? target.getSprite();
