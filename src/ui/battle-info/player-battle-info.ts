@@ -145,7 +145,6 @@ export class PlayerBattleInfo extends BattleInfo {
       this.setLevelDisplay(pokemon.level);
       const relLevelExp = getLevelRelExp(pokemon.level + 1, pokemon.species.growthRate);
       this.expMaskRect.x = EXP_BAR_WIDTH * (relLevelExp === 0 ? 0 : pokemon.levelExp / relLevelExp);
-      await this.updateInfo(pokemon, true);
       return;
     }
 
