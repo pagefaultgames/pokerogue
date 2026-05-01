@@ -67,6 +67,18 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
   [SpeciesId.KOMALA]: [MoveId.SUCKER_PUNCH],
   [SpeciesId.ALOLA_RATICATE]: [MoveId.SUCKER_PUNCH],
 
+  // Low BST Pokemon balanced around Quiver Dance
+  [SpeciesId.BUTTERFREE]: [MoveId.QUIVER_DANCE],
+  [SpeciesId.BELLOSSOM]: [MoveId.QUIVER_DANCE],
+  [SpeciesId.DUSTOX]: [MoveId.QUIVER_DANCE],
+  [SpeciesId.BEAUTIFLY]: [MoveId.QUIVER_DANCE],
+  [SpeciesId.MASQUERAIN]: [MoveId.QUIVER_DANCE],
+  [SpeciesId.WORMADAM]: [MoveId.QUIVER_DANCE],
+  [SpeciesId.MOTHIM]: [MoveId.QUIVER_DANCE],
+  [SpeciesId.VIVILLON]: [MoveId.QUIVER_DANCE],
+  [SpeciesId.RIBOMBEE]: [MoveId.QUIVER_DANCE],
+  [SpeciesId.FROSMOTH]: [MoveId.QUIVER_DANCE],
+
   // Starters
   [SpeciesId.HISUI_SAMUROTT]: MoveId.CEASELESS_EDGE,
   [SpeciesId.DECIDUEYE]: MoveId.SPIRIT_SHACKLE,
