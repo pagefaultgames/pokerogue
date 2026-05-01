@@ -77,8 +77,6 @@ export class PlayerBattleInfo extends BattleInfo {
     super.initInfo(pokemon);
     this.setHpNumbers(pokemon.hp, pokemon.getMaxHp());
     this.expMaskRect.x = (pokemon.levelExp / getLevelTotalExp(pokemon.level, pokemon.species.growthRate)) * 510;
-    this.lastExp = pokemon.exp;
-    this.lastLevelExp = pokemon.levelExp;
 
     this.statValuesContainer.setPosition(8, 7);
   }
@@ -133,35 +131,68 @@ export class PlayerBattleInfo extends BattleInfo {
     this.updateHpFrame();
   }
 
-  updatePokemonExp(pokemon: PlayerPokemon, instant?: boolean, levelDurationMultiplier = 1): Promise<void> {
-    const levelUp = this.lastLevel < pokemon.level;
-    const relLevelExp = getLevelRelExp(this.lastLevel + 1, pokemon.species.growthRate);
-    const levelExp = levelUp ? relLevelExp : pokemon.levelExp;
-    let ratio = relLevelExp ? levelExp / relLevelExp : 0;
-    if (this.lastLevel >= globalScene.getMaxExpLevel(true)) {
-      ratio = levelUp ? 1 : 0;
-      instant = true;
+  public async updatePokemonExpDisplay(pokemon: PlayerPokemon, lastLevel: number, lastLevelExp: number): Promise<void> {
+    const instant = globalScene.expGainsSpeed === ExpGainsSpeed.SKIP;
+    if (instant) {
+      this.setLevelDisplay(pokemon.level);
+      const relLevelExp = getLevelRelExp(pokemon.level + 1, pokemon.species.growthRate);
+      this.expMaskRect.x = 510 * (relLevelExp === 0 ? 0 : pokemon.levelExp / relLevelExp);
+      await this.updateInfo(pokemon, true);
+      return;
     }
+
+    const levelDurationMultiplier = Math.max(
+      Phaser.Tweens.Builders.GetEaseFunction("Cubic.easeIn")(1 - Math.min(pokemon.level - lastLevel, 10) / 10),
+      0.1,
+    );
+
+    for (let level = lastLevel + 1; level <= pokemon.level; ++level) {
+      await this.doUpdateExpAnimation(
+        pokemon,
+        levelDurationMultiplier,
+        level,
+        true,
+        level === lastLevel + 1 ? lastLevelExp : 0,
+        instant,
+      );
+    }
+
+    await this.doUpdateExpAnimation(
+      pokemon,
+      levelDurationMultiplier,
+      pokemon.level,
+      false,
+      pokemon.level === lastLevel ? lastLevelExp : 0,
+      instant,
+    );
+  }
+
+  public async doUpdateExpAnimation(
+    pokemon: PlayerPokemon,
+    levelDurationMultiplier: number,
+    level: number,
+    levelUp: boolean,
+    lastLevelExp: number,
+    instant: boolean,
+  ): Promise<void> {
+    const lastLevel = levelUp ? level - 1 : level;
+    const relLevelExp = getLevelRelExp(lastLevel + 1, pokemon.species.growthRate);
+    const levelExp = levelUp ? relLevelExp : pokemon.levelExp;
+    const ratio = relLevelExp === 0 ? 0 : levelExp / relLevelExp;
+    const speed = globalScene.expGainsSpeed;
+
     const durationMultiplier = Phaser.Tweens.Builders.GetEaseFunction("Sine.easeIn")(
-      1 - Math.max(this.lastLevel - 100, 0) / 150,
+      1 - Math.max(lastLevel - 100, 0) / 150,
     );
     let duration =
       this.visible && !instant
-        ? ((levelExp - this.lastLevelExp) / relLevelExp)
+        ? ((levelExp - lastLevelExp) / relLevelExp)
           * BattleInfo.EXP_GAINS_DURATION_BASE
           * durationMultiplier
           * levelDurationMultiplier
         : 0;
-    const speed = globalScene.expGainsSpeed;
     if (speed && speed >= ExpGainsSpeed.DEFAULT) {
       duration = speed >= ExpGainsSpeed.SKIP ? ExpGainsSpeed.DEFAULT : duration / Math.pow(2, speed);
-    }
-    if (ratio === 1) {
-      this.lastLevelExp = 0;
-      this.lastLevel++;
-    } else {
-      this.lastExp = pokemon.exp;
-      this.lastLevelExp = pokemon.levelExp;
     }
     if (duration) {
       globalScene.playSound("se/exp");
@@ -179,9 +210,9 @@ export class PlayerBattleInfo extends BattleInfo {
           if (duration) {
             globalScene.sound.stopByKey("se/exp");
           }
-          if (ratio === 1) {
+          if (levelUp) {
             globalScene.playSound("se/level_up");
-            this.setLevel(this.lastLevel);
+            this.setLevelDisplay(level);
             globalScene.time.delayedCall(500 * levelDurationMultiplier, () => {
               this.expMaskRect.x = 0;
               this.updateInfo(pokemon, instant).then(() => resolve());
@@ -192,30 +223,6 @@ export class PlayerBattleInfo extends BattleInfo {
         },
       });
     });
-  }
-
-  /**
-   * Updates the info on the info bar.
-   *
-   * In addition to performing all the steps of {@linkcode BattleInfo.updateInfo},
-   * it also updates the EXP Bar
-   */
-  override async updateInfo(pokemon: PlayerPokemon, instant?: boolean): Promise<void> {
-    await super.updateInfo(pokemon, instant);
-    const isLevelCapped = pokemon.level >= globalScene.getMaxExpLevel();
-    const oldLevelCapped = this.lastLevelCapped;
-    this.lastLevelCapped = isLevelCapped;
-
-    if (this.lastExp !== pokemon.exp || this.lastLevel !== pokemon.level) {
-      this.lastLevel = Math.min(this.lastLevel, pokemon.level);
-      const durationMultiplier = Math.max(
-        Phaser.Tweens.Builders.GetEaseFunction("Cubic.easeIn")(1 - Math.min(pokemon.level - this.lastLevel, 10) / 10),
-        0.1,
-      );
-      await this.updatePokemonExp(pokemon, false, durationMultiplier);
-    } else if (isLevelCapped !== oldLevelCapped) {
-      this.setLevel(pokemon.level);
-    }
   }
 
   /**
@@ -246,7 +253,7 @@ export class PlayerBattleInfo extends BattleInfo {
    * Overrides the default implementation to handle displaying level capped numbers in red.
    * @param level - The level to display
    */
-  override setLevel(level: number): void {
-    super.setLevel(level, level >= globalScene.getMaxExpLevel() ? "numbers_red" : "numbers");
+  override setLevelDisplay(level: number): void {
+    super.setLevelDisplay(level, level >= globalScene.getMaxExpLevel() ? "numbers_red" : "numbers");
   }
 }

@@ -3346,25 +3346,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Adds experience to this PlayerPokemon, subject to wave based level caps.
-   * @param exp - The amount of experience to add
-   * @param ignoreLevelCap - Whether to ignore level caps when adding experience; default `false`
-   */
-  addExp(exp: number, ignoreLevelCap = false) {
-    const maxExpLevel = globalScene.getMaxExpLevel(ignoreLevelCap);
-    const initialExp = this.exp;
-    this.exp += exp;
-    while (this.level < maxExpLevel && this.exp >= getLevelTotalExp(this.level + 1, this.species.growthRate)) {
-      this.level++;
-    }
-    if (this.level >= maxExpLevel) {
-      console.log(initialExp, this.exp, getLevelTotalExp(this.level, this.species.growthRate));
-      this.exp = Math.max(getLevelTotalExp(this.level, this.species.growthRate), initialExp);
-    }
-    this.levelExp = this.exp - getLevelTotalExp(this.level, this.species.growthRate);
-  }
-
-  /**
    * Check whether the specified Pokémon is an opponent
    * @param target - The {@linkcode Pokemon} to compare against
    * @returns `true` if the two pokemon are opponents, `false` otherwise
@@ -6447,6 +6428,35 @@ export class PlayerPokemon extends Pokemon {
     });
 
     return newMoveset;
+  }
+
+  public async showExpGain(lastLevel: number, lastLevelExp: number): Promise<void> {
+    await this.battleInfo.updatePokemonExpDisplay(this, lastLevel, lastLevelExp);
+    await this.updateInfo();
+  }
+
+  /**
+   * Adds experience to this PlayerPokemon, subject to wave based level caps.
+   * @param exp - The amount of experience to add
+   * @param ignoreLevelCap - Whether to ignore level caps when adding experience; default `false`
+   */
+  public addExp(exp: number, ignoreLevelCap = false) {
+    const maxExpLevel = globalScene.getMaxExpLevel(ignoreLevelCap);
+    const initialExp = this.exp;
+    const initialLevel = this.level;
+    this.exp += exp;
+    while (this.level < maxExpLevel && this.exp >= getLevelTotalExp(this.level + 1, this.species.growthRate)) {
+      this.level++;
+    }
+    if (this.level >= maxExpLevel) {
+      console.log(initialExp, this.exp, getLevelTotalExp(this.level, this.species.growthRate));
+      this.exp = Math.max(getLevelTotalExp(this.level, this.species.growthRate), initialExp);
+    }
+
+    if (this.level > initialLevel) {
+      this.battleInfo.last;
+    }
+    this.levelExp = this.exp - getLevelTotalExp(this.level, this.species.growthRate);
   }
 }
 

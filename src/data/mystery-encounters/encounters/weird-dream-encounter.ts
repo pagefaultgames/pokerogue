@@ -355,7 +355,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
         pokemon.levelExp = 0;
 
         pokemon.calculateStats();
-        pokemon.getBattleInfo().setLevel(pokemon.level);
+        pokemon.getBattleInfo().setLevelDisplay(pokemon.level);
         await pokemon.updateInfo();
       }
 

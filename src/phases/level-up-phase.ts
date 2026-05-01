@@ -33,7 +33,21 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
     this.pokemon.calculateStats();
     this.pokemon.updateInfo();
     if (globalScene.expParty === ExpNotification.DEFAULT) {
-      globalScene.playSound("level_up_fanfare");
+      this.showLevelUpMessages(prevStats).then(() => this.end());
+    } else if (globalScene.expParty === ExpNotification.SKIP) {
+      this.end();
+    } else {
+      // we still want to display the stats if activated
+      globalScene.ui
+        .getMessageHandler()
+        .promptLevelUpStats(this.partyMemberIndex, prevStats, false)
+        .then(() => this.end());
+    }
+  }
+
+  private showLevelUpMessages(prevStats: number[]): Promise<void> {
+    globalScene.playSound("level_up_fanfare");
+    return new Promise<void>(resolve => {
       globalScene.ui.showText(
         i18next.t("battle:levelUp", {
           pokemonName: getPokemonNameWithAffix(this.pokemon),
@@ -44,19 +58,11 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
           globalScene.ui
             .getMessageHandler()
             .promptLevelUpStats(this.partyMemberIndex, prevStats, false)
-            .then(() => this.end()),
+            .then(() => resolve()),
         null,
         true,
       );
-    } else if (globalScene.expParty === ExpNotification.SKIP) {
-      this.end();
-    } else {
-      // we still want to display the stats if activated
-      globalScene.ui
-        .getMessageHandler()
-        .promptLevelUpStats(this.partyMemberIndex, prevStats, false)
-        .then(() => this.end());
-    }
+    });
   }
 
   public override end() {
