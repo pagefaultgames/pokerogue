@@ -7,6 +7,8 @@ import type { BattleInfoParamList } from "#ui/battle-info";
 import { BattleInfo } from "#ui/battle-info";
 import { getLocalizedSpriteKey } from "#utils/common";
 
+const EXP_BAR_WIDTH = 510;
+
 export class PlayerBattleInfo extends BattleInfo {
   protected player: true = true;
   protected hpNumbersContainer: Phaser.GameObjects.Container;
@@ -76,7 +78,8 @@ export class PlayerBattleInfo extends BattleInfo {
   override initInfo(pokemon: PlayerPokemon): void {
     super.initInfo(pokemon);
     this.setHpNumbers(pokemon.hp, pokemon.getMaxHp());
-    this.expMaskRect.x = (pokemon.levelExp / getLevelTotalExp(pokemon.level, pokemon.species.growthRate)) * 510;
+    this.expMaskRect.x =
+      (pokemon.levelExp / getLevelTotalExp(pokemon.level, pokemon.species.growthRate)) * EXP_BAR_WIDTH;
 
     this.statValuesContainer.setPosition(8, 7);
   }
@@ -131,11 +134,17 @@ export class PlayerBattleInfo extends BattleInfo {
     this.updateHpFrame();
   }
 
-  public async updatePokemonExpDisplay(pokemon: PlayerPokemon, lastLevel: number, lastLevelExp: number): Promise<void> {
+  /**
+   * Update the Pokemon's level display to its current level, including EXP bar and level number.
+   * @param pokemon - The Pokemon to update
+   * @param lastLevel - The level the Pokemon was at before the update
+   * @param lastLevelExp - The relative EXP the Pokemon had within its level before the update
+   */
+  public async updatePokemonExpDisplay(pokemon: PlayerPokemon, lastLevel: number): Promise<void> {
     if (globalScene.expGainsSpeed === ExpGainsSpeed.SKIP) {
       this.setLevelDisplay(pokemon.level);
       const relLevelExp = getLevelRelExp(pokemon.level + 1, pokemon.species.growthRate);
-      this.expMaskRect.x = 510 * (relLevelExp === 0 ? 0 : pokemon.levelExp / relLevelExp);
+      this.expMaskRect.x = EXP_BAR_WIDTH * (relLevelExp === 0 ? 0 : pokemon.levelExp / relLevelExp);
       await this.updateInfo(pokemon, true);
       return;
     }
@@ -146,42 +155,42 @@ export class PlayerBattleInfo extends BattleInfo {
     );
 
     for (let level = lastLevel + 1; level <= pokemon.level; ++level) {
-      await this.doUpdateExpAnimation(
-        pokemon,
-        levelDurationMultiplier,
-        level,
-        true,
-        level === lastLevel + 1 ? lastLevelExp : 0,
-      );
+      await this.doUpdateExpAnimation(pokemon, levelDurationMultiplier, level, true);
     }
 
-    await this.doUpdateExpAnimation(
-      pokemon,
-      levelDurationMultiplier,
-      pokemon.level,
-      false,
-      pokemon.level === lastLevel ? lastLevelExp : 0,
-    );
+    await this.doUpdateExpAnimation(pokemon, levelDurationMultiplier, pokemon.level, false);
   }
 
+  /**
+   * Execute the level up animation for the Pokemon's EXP bar.
+   *
+   * A single invocation of this method allows either one level increase or
+   * an increase in EXP level without a level up.
+   * @param pokemon - The Pokemon whose level is changing
+   * @param levelDurationMultiplier - A multiplier used in calculating the duration of the level increase
+   * @param level - The level to increase to (or the current level, if not leveling up)
+   * @param levelUp - Whether this invocation is a level up
+   * @param lastLevelExp - The relative EXP in the
+   * @returns
+   */
   public async doUpdateExpAnimation(
     pokemon: PlayerPokemon,
     levelDurationMultiplier: number,
     level: number,
     levelUp: boolean,
-    lastLevelExp: number,
   ): Promise<void> {
     const lastLevel = levelUp ? level - 1 : level;
     const relLevelExp = getLevelRelExp(lastLevel + 1, pokemon.species.growthRate);
     const levelExp = levelUp ? relLevelExp : pokemon.levelExp;
     const ratio = relLevelExp === 0 ? 0 : levelExp / relLevelExp;
+    const nextWidth = ratio * EXP_BAR_WIDTH;
     const speed = globalScene.expGainsSpeed;
 
     const durationMultiplier = Phaser.Tweens.Builders.GetEaseFunction("Sine.easeIn")(
       1 - Math.max(lastLevel - 100, 0) / 150,
     );
     let duration = this.visible
-      ? ((levelExp - lastLevelExp) / relLevelExp)
+      ? ((nextWidth - this.expMaskRect.x) / EXP_BAR_WIDTH)
         * BattleInfo.EXP_GAINS_DURATION_BASE
         * durationMultiplier
         * levelDurationMultiplier
@@ -196,7 +205,7 @@ export class PlayerBattleInfo extends BattleInfo {
       globalScene.tweens.add({
         targets: this.expMaskRect,
         ease: "Sine.easeIn",
-        x: ratio * 510,
+        x: nextWidth,
         duration,
         onComplete: () => {
           if (!globalScene) {

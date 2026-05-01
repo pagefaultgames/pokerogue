@@ -6430,8 +6430,8 @@ export class PlayerPokemon extends Pokemon {
     return newMoveset;
   }
 
-  public async showExpGain(lastLevel: number, lastLevelExp: number): Promise<void> {
-    await this.battleInfo.updatePokemonExpDisplay(this, lastLevel, lastLevelExp);
+  public async showExpGain(lastLevel: number): Promise<void> {
+    await this.battleInfo.updatePokemonExpDisplay(this, lastLevel);
     await this.updateInfo();
   }
 
