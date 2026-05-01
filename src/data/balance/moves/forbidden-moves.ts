@@ -62,17 +62,16 @@ export const FORBIDDEN_TM_MOVES: ReadonlySet<MoveId> = new Set([
 export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.ABSORB,
   MoveId.ACID,
-  MoveId.ASSURANCE, // Primarily a doubles move but functions as early game Dark STAB
+  MoveId.ASSURANCE, // Primarily a doubles move but functions as early game Dark STAB.
   MoveId.ASTONISH,
   MoveId.BABY_DOLL_EYES,
   MoveId.BARRAGE,
-  MoveId.BELCH, // Too situational, high BP also makes it likely to spawn on anything random that gets it
-  MoveId.BELLY_DRUM, // Revist after AI changes, currently the AI uses it just to swap immediately out of fear
+  MoveId.BELCH, // Too situational, high BP also makes it likely to spawn on anything random that gets it.
   MoveId.BIDE,
   MoveId.BIND,
-  MoveId.BLOCK, // Potentially revisit after improved learnsets, only value is on stall-eqsue builds
+  MoveId.BLOCK, // Potentially revisit after improved learnsets and weighting, only value is on stall-eqsue builds.
   MoveId.BRANCH_POKE,
-  MoveId.BONE_CLUB, // Cubone gets better options
+  MoveId.BONE_CLUB, // Cubone gets better options.
   MoveId.BUBBLE,
   MoveId.COMET_PUNCH,
   MoveId.CONFUSION,
@@ -88,19 +87,18 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.FALSE_SWIPE,
   MoveId.FEINT,
   MoveId.FLAIL,
-  MoveId.FOCUS_PUNCH, // Messy with move weighting, AI will also always try to go for it
   MoveId.FORESIGHT,
   MoveId.FURY_ATTACK,
   MoveId.FURY_SWIPES,
   MoveId.GEAR_UP,
   MoveId.GROWL,
-  MoveId.GUARD_SWAP, // Too situational, ends up benefitting the player more often than not
+  MoveId.GUARD_SWAP, // Too situational, ends up benefitting the player more often than not.
   MoveId.GUST,
   MoveId.HARDEN,
   MoveId.HORN_ATTACK,
-  MoveId.IMPRISON, // Too situational
+  MoveId.IMPRISON, // Too situational.
   MoveId.KINESIS,
-  MoveId.LAST_RESORT, // Potentially revisit after further move generation changes, too high BP causes it to spawn as random coverage and ends up being situational / unused
+  MoveId.LAST_RESORT, // Potentially revisit after further move generation changes, too high BP causes it to spawn as random coverage and ends up being situational / unused.
   MoveId.LEAFAGE,
   MoveId.LEER,
   MoveId.LICK,
@@ -119,30 +117,30 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.POUND,
   MoveId.POUNCE,
   MoveId.POWDER_SNOW,
-  MoveId.POWER_SWAP, // Same as Guard Swap
+  MoveId.POWER_SWAP, // Same as Guard Swap.
   MoveId.PSYWAVE,
   MoveId.QUICK_ATTACK,
   MoveId.RAGE,
   MoveId.RAZOR_LEAF,
-  MoveId.RAZOR_WIND, // Really Bad
+  MoveId.RAZOR_WIND, // Really bad charge move.
   MoveId.ROLLING_KICK,
   MoveId.ROTOTILLER,
-  MoveId.ROUND, // Gets superceded very easily, common TM but is fine as early game coverage
+  MoveId.ROUND, // Gets superceded very easily, common TM but is fine as early game coverage.
   MoveId.SCRATCH,
-  MoveId.SKY_ATTACK, // Only useful with Power Herb, as of now it fluffs up a chunk of Flying type's movesets due to being high BP and high weight in generation
+  MoveId.SKY_ATTACK, // Only useful with Power Herb. As of now, it fluffs up a chunk of Flying type's movesets due to being high BP and high weight in generation.
   MoveId.SLAM,
   MoveId.SMOG,
   MoveId.SONIC_BOOM,
   MoveId.SPARK,
   MoveId.SPIT_UP,
-  MoveId.SPIKE_CANNON, // No one who has it really cares for it
+  MoveId.SPIKE_CANNON, // No one who has it really cares for it outside of early levels.
   MoveId.SPLASH,
   MoveId.STOMP,
   MoveId.SUBMISSION,
   MoveId.SUPERSONIC,
   MoveId.SWALLOW,
   MoveId.SWEET_SCENT,
-  MoveId.SYNCHRONOISE, // Too situational
+  MoveId.SYNCHRONOISE, // Too situational.
   MoveId.TACKLE,
   MoveId.TAIL_WHIP,
   MoveId.TAKE_DOWN,
@@ -156,4 +154,20 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.WATER_SPORT,
   MoveId.WITHDRAW,
   MoveId.WRAP,
+
+  // Recommended to blacklist until AI changes are made
+  MoveId.BELLY_DRUM, // Currently the AI uses it without considering the battle state, leading to the AI swapping out after due to the lowered HP.
+  MoveId.FOCUS_PUNCH, // Messy with move weighting, AI will probably never be smart enough to use it correctly.
+  MoveId.LAST_RESORT, // Potentially revisit after further move generation changes, high BP causes it to spawn as random coverage often and it ends up being situational / an unused slot.
+
+  // Recharge Moves
+  MoveId.HYPER_BEAM, // Recharge moves have complications with move weighting, AI choice weighting, and AI usage in general.
+  MoveId.GIGA_IMPACT,
+  MoveId.BLAST_BURN,
+  MoveId.FRENZY_PLANT,
+  MoveId.HYDRO_CANNON,
+  MoveId.METEOR_ASSAULT,
+  MoveId.ROCK_WRECKER,
+  MoveId.PRISMATIC_LASER,
+  MoveId.ROAR_OF_TIME,
 ]);
