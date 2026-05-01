@@ -6431,7 +6431,6 @@ export class PlayerPokemon extends Pokemon {
   public addExp(exp: number, ignoreLevelCap = false) {
     const maxExpLevel = globalScene.getMaxExpLevel(ignoreLevelCap);
     const initialExp = this.exp;
-    const initialLevel = this.level;
     this.exp += exp;
     while (this.level < maxExpLevel && this.exp >= getLevelTotalExp(this.level + 1, this.species.growthRate)) {
       this.level++;
@@ -6440,11 +6439,6 @@ export class PlayerPokemon extends Pokemon {
       console.log(initialExp, this.exp, getLevelTotalExp(this.level, this.species.growthRate));
       this.exp = Math.max(getLevelTotalExp(this.level, this.species.growthRate), initialExp);
     }
-
-    if (this.level > initialLevel) {
-      this.battleInfo.last;
-    }
-    this.levelExp = this.exp - getLevelTotalExp(this.level, this.species.growthRate);
   }
 }
 
