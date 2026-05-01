@@ -214,8 +214,8 @@ export class BattlerTag implements BaseBattlerTag {
     return false;
   }
 
-  getMoveName(): string | undefined {
-    return this.sourceMove ? allMoves[this.sourceMove]?.name : undefined;
+  getMoveName(): string | null {
+    return this.sourceMove ? allMoves[this.sourceMove].name : null;
   }
 
   /**
