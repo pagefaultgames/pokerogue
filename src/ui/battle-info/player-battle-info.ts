@@ -132,8 +132,7 @@ export class PlayerBattleInfo extends BattleInfo {
   }
 
   public async updatePokemonExpDisplay(pokemon: PlayerPokemon, lastLevel: number, lastLevelExp: number): Promise<void> {
-    const instant = globalScene.expGainsSpeed === ExpGainsSpeed.SKIP;
-    if (instant) {
+    if (globalScene.expGainsSpeed === ExpGainsSpeed.SKIP) {
       this.setLevelDisplay(pokemon.level);
       const relLevelExp = getLevelRelExp(pokemon.level + 1, pokemon.species.growthRate);
       this.expMaskRect.x = 510 * (relLevelExp === 0 ? 0 : pokemon.levelExp / relLevelExp);
@@ -153,7 +152,6 @@ export class PlayerBattleInfo extends BattleInfo {
         level,
         true,
         level === lastLevel + 1 ? lastLevelExp : 0,
-        instant,
       );
     }
 
@@ -163,7 +161,6 @@ export class PlayerBattleInfo extends BattleInfo {
       pokemon.level,
       false,
       pokemon.level === lastLevel ? lastLevelExp : 0,
-      instant,
     );
   }
 
@@ -173,7 +170,6 @@ export class PlayerBattleInfo extends BattleInfo {
     level: number,
     levelUp: boolean,
     lastLevelExp: number,
-    instant: boolean,
   ): Promise<void> {
     const lastLevel = levelUp ? level - 1 : level;
     const relLevelExp = getLevelRelExp(lastLevel + 1, pokemon.species.growthRate);
@@ -184,13 +180,12 @@ export class PlayerBattleInfo extends BattleInfo {
     const durationMultiplier = Phaser.Tweens.Builders.GetEaseFunction("Sine.easeIn")(
       1 - Math.max(lastLevel - 100, 0) / 150,
     );
-    let duration =
-      this.visible && !instant
-        ? ((levelExp - lastLevelExp) / relLevelExp)
-          * BattleInfo.EXP_GAINS_DURATION_BASE
-          * durationMultiplier
-          * levelDurationMultiplier
-        : 0;
+    let duration = this.visible
+      ? ((levelExp - lastLevelExp) / relLevelExp)
+        * BattleInfo.EXP_GAINS_DURATION_BASE
+        * durationMultiplier
+        * levelDurationMultiplier
+      : 0;
     if (speed && speed >= ExpGainsSpeed.DEFAULT) {
       duration = speed >= ExpGainsSpeed.SKIP ? ExpGainsSpeed.DEFAULT : duration / Math.pow(2, speed);
     }
@@ -215,7 +210,7 @@ export class PlayerBattleInfo extends BattleInfo {
             this.setLevelDisplay(level);
             globalScene.time.delayedCall(500 * levelDurationMultiplier, () => {
               this.expMaskRect.x = 0;
-              this.updateInfo(pokemon, instant).then(() => resolve());
+              this.updateInfo(pokemon).then(() => resolve());
             });
             return;
           }
