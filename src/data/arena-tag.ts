@@ -164,12 +164,13 @@ export abstract class ArenaTag implements BaseArenaTag {
 
   /**
    * Apply this tag's effects during a turn.
-   * @param _args - Arguments used by subclasses.
+   * @param args - Arguments used by subclasses.
    */
   // TODO: Remove all boolean return values from subclasses
   // TODO: Move all classes with `apply` triggers into a unique sub-class to prevent
   // applying effects of tags that lack effect application
-  public apply(..._args: unknown[]): void {}
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: pseudo-abstract method
+  public apply(...args: unknown[]): void {}
 
   /**
    * Trigger effects when this tag is added to the Arena.
@@ -209,12 +210,14 @@ export abstract class ArenaTag implements BaseArenaTag {
 
   /**
    * Apply effects when this Tag overlaps by creating a new instance while one is already present.
-   * @param _source - The `Pokemon` having added the tag
+   * @param source - The `Pokemon` having added the tag
    */
-  public onOverlap(_source?: Pokemon): void {}
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: pseudo-abstract method
+  public onOverlap(source?: Pokemon): void {}
 
   /**
-   * Reduce this {@linkcode ArenaTag}'s duration and apply any end-of-turn effects
+   * Reduce this {@linkcode ArenaTag}'s duration and apply any end-of-turn effects.
+   * @remarks
    * Will ignore durations of all tags with durations `<=0`.
    * @returns `true` if this tag should be kept; `false` if it should be removed.
    */
@@ -293,8 +296,8 @@ export abstract class SerializableArenaTag extends ArenaTag {
  */
 export class MistTag extends SerializableArenaTag {
   readonly tagType = ArenaTagType.MIST;
-  constructor(turnCount: number, sourceId: number | undefined, side: ArenaTagSide) {
-    super(turnCount, MoveId.MIST, sourceId, side);
+  constructor(turnCount: number, side: ArenaTagSide) {
+    super(turnCount, MoveId.MIST, undefined, side);
   }
 
   protected override get onAddMessageKey(): string {
@@ -306,31 +309,31 @@ export class MistTag extends SerializableArenaTag {
   }
 
   /**
-   * Cancels the lowering of stats
-   * @param simulated `true` if the effect should be applied quietly
-   * @param attacker the {@linkcode Pokemon} using a move into this effect.
-   * @param cancelled a {@linkcode BooleanHolder} whose value is set to `true`
-   * to flag the stat reduction as cancelled
-   * @returns `true` if a stat reduction was cancelled; `false` otherwise
+   * Attempt to block the lowering of stats.
+   * @param simulated - Whether to suppress messages and other animations from being playerd
+   * @param defender - The {@linkcode Pokemon} receiving the stat drop
+   * @param cancelled - A {@linkcode BooleanHolder} containing whether to nullify the interaction
+   * @param source - The Pokemon causing the stat drop, if applicable
    */
-  override apply(simulated: boolean, attacker: Pokemon | null, cancelled: BooleanHolder): boolean {
-    // `StatStageChangePhase` currently doesn't have a reference to the source of stat drops,
-    // so this code currently has no effect on gameplay.
-    if (attacker) {
+  override apply(
+    simulated: boolean,
+    defender: Pokemon,
+    cancelled: BooleanHolder,
+    source: Pokemon | undefined,
+  ): boolean {
+    if (source) {
       const bypassed = new BooleanHolder(false);
-      // TODO: Allow this to be simulated
-      applyAbAttrs("InfiltratorAbAttr", { pokemon: attacker, simulated: false, bypassed });
+      applyAbAttrs("InfiltratorAbAttr", { pokemon: source, simulated, bypassed });
       if (bypassed.value) {
         return false;
       }
     }
 
     cancelled.value = true;
-
     if (!simulated) {
       globalScene.phaseManager.queueMessage(
         i18next.t("arenaTag:mistApply", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(this.getSourcePokemon()),
+          pokemonNameWithAffix: getPokemonNameWithAffix(defender),
         }),
       );
     }
@@ -1220,10 +1223,19 @@ export class GravityTag extends SerializableArenaTag {
     super.onAdd(quiet);
     for (const pokemon of inSpeedOrder(ArenaTagSide.BOTH)) {
       if (pokemon !== null) {
+        const wasGrounded = pokemon.isGrounded();
+
         pokemon.removeTag(BattlerTagType.FLOATING);
         pokemon.removeTag(BattlerTagType.TELEKINESIS);
         if (pokemon.getTag(BattlerTagType.FLYING)) {
           pokemon.addTag(BattlerTagType.INTERRUPTED);
+        }
+        if (!wasGrounded) {
+          globalScene.phaseManager.queueMessage(
+            i18next.t("arenaTag:gravityGroundsPokemon", {
+              pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+            }),
+          );
         }
       }
     }
@@ -1632,10 +1644,10 @@ export class PendingHealTag extends SerializableArenaTag {
     }
   }
 
-  /** This arena tag is removed at the end of the turn if no pending healing effects are on the field */
   override lapse(): boolean {
-    for (const key in this.pendingHeals) {
-      if (this.pendingHeals[key].length > 0) {
+    for (const pendingHeal of Object.values(this.pendingHeals)) {
+      // `?` works around a bug where somehow the pending heal object can be `null` (save data corruption?)
+      if (pendingHeal?.length > 0) {
         return true;
       }
     }
@@ -1731,7 +1743,7 @@ export function getArenaTag(
 ): ArenaTag | null {
   switch (tagType) {
     case ArenaTagType.MIST:
-      return new MistTag(turnCount, sourceId, side);
+      return new MistTag(turnCount, side);
     case ArenaTagType.QUICK_GUARD:
       return new QuickGuardTag(sourceId, side);
     case ArenaTagType.WIDE_GUARD:

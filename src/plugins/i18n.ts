@@ -1,10 +1,11 @@
-import pkg from "#package.json";
+import { timedEventManager } from "#app/global-event-manager";
+import { namespaceMap } from "#plugins/namespace-map";
+import { getCachedUrl } from "#utils/fetch-utils";
 import { toKebabCase } from "#utils/strings";
 import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import HttpBackend from "i18next-http-backend";
-import processor from "i18next-korean-postposition-processor";
-import { namespaceMap } from "./utils-plugins";
+import { KoreanPostpositionProcessor } from "i18next-korean-postposition-processor";
 
 //#region Interfaces/Types
 
@@ -23,7 +24,7 @@ const unicodeRanges = {
   CJKIdeograph: "U+4E00-9FFF",
   devanagari: "U+0900-097F",
   thai: "U+0E00-0E7F",
-  specialCharacters: "U+266A,U+2605,U+2665,U+2663", //♪.★,♥,♣
+  specialCharacters: "U+266A,U+2605,U+2665,U+2663", //♪,★,♥,♣
 };
 
 const rangesByLanguage = {
@@ -36,14 +37,14 @@ const rangesByLanguage = {
 const fonts: LoadingFontFaceProperty[] = [
   // unicode (special characters)
   {
-    face: new FontFace("pkmnems", "url(./fonts/pokemon-emerald-pro.ttf)", {
+    face: new FontFace("pkmnems", `url(${getCachedUrl("./fonts/pokemon-emerald-pro.ttf")})`, {
       unicodeRange: unicodeRanges.specialCharacters,
     }),
     extraOptions: { sizeAdjust: "133%" },
   },
   // unicode (chinese)
   {
-    face: new FontFace("pkmnems", "url(./fonts/pokemon-emerald-pro.ttf)", {
+    face: new FontFace("pkmnems", `url(${getCachedUrl("./fonts/pokemon-emerald-pro.ttf")})`, {
       unicodeRange: rangesByLanguage.chinese,
     }),
     extraOptions: { sizeAdjust: "133%" },
@@ -67,32 +68,39 @@ const fonts: LoadingFontFaceProperty[] = [
       "hi",
       "tl",
       "sv",
+      "eu",
       "zh",
     ],
   },
   // japanese
   {
-    face: new FontFace("emerald", "url(./fonts/pokemon-bw.ttf)", {
+    face: new FontFace("emerald", `url(${getCachedUrl("./fonts/pokemon-bw.ttf")})`, {
       unicodeRange: rangesByLanguage.japanese,
     }),
     only: ["ja"],
   },
   // devanagari
   {
-    face: new FontFace("emerald", "url(./fonts/8-bit-devanagari.ttf)", {
+    face: new FontFace("emerald", `url(${getCachedUrl("./fonts/8-bit-devanagari.ttf")})`, {
       unicodeRange: unicodeRanges.devanagari,
     }),
   },
   {
-    face: new FontFace("pkmnems", "url(./fonts/8-bit-devanagari.ttf)", {
+    face: new FontFace("pkmnems", `url(${getCachedUrl("./fonts/8-bit-devanagari.ttf")})`, {
       unicodeRange: unicodeRanges.devanagari,
     }),
   },
   // thai
   {
-    face: new FontFace("emerald", "url(./fonts/fsrebellion.otf)", {
+    face: new FontFace("emerald", `url(${getCachedUrl("./fonts/fsrebellion.otf")})`, {
       unicodeRange: unicodeRanges.thai,
     }),
+  },
+  {
+    face: new FontFace("pkmnems", "url(./fonts/terrible-thaifix.ttf)", {
+      unicodeRange: unicodeRanges.thai,
+    }),
+    extraOptions: { sizeAdjust: "133%" },
   },
 ];
 
@@ -156,7 +164,7 @@ const nsEn: string[] = [];
 await i18next
   .use(HttpBackend)
   .use(LanguageDetector)
-  .use(processor)
+  .use(new KoreanPostpositionProcessor())
   .init(
     {
       fallbackLng: {
@@ -176,6 +184,7 @@ await i18next
         "ko",
         "ja",
         "ca",
+        "eu",
         "da",
         "th",
         "tr",
@@ -199,13 +208,15 @@ await i18next
           } else {
             fileName = toKebabCase(ns);
           }
-          // ex: "./locales/en/move-anims"
-          return `./locales/${lng}/${fileName}.json?v=${pkg.version}`;
+          // ex: "./locales/en/move-anims?t=1234567890"
+          return getCachedUrl(`./locales/${lng}/${fileName}.json`);
         },
       },
       defaultNS: "menu",
       detection: {
         lookupLocalStorage: "prLang",
+        caches: ["localStorage"],
+        order: ["localStorage", "navigator"],
       },
       ns: nsEn,
       debug: import.meta.env.VITE_I18N_DEBUG === "1",
@@ -219,5 +230,23 @@ await i18next
       await initFonts(localStorage.getItem("prLang") ?? undefined);
     },
   );
+
+//#endregion
+
+//#region Event Proxy
+
+if (timedEventManager.hasEventTextReplacement()) {
+  console.warn("Event text replacements are active.");
+  i18next.t = new Proxy(i18next.t.bind(i18next), {
+    apply(target, _, args: [key: string, options?: any]) {
+      const key = timedEventManager.getEventTextReplacement(args[0]);
+      if (args[0] !== key) {
+        console.debug(`Replacing i18n key "${args[0]}" with "${key}"`);
+        args[0] = key;
+      }
+      return target(...args);
+    },
+  });
+}
 
 //#endregion

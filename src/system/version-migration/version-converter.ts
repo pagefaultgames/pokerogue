@@ -154,7 +154,7 @@ export function applySessionVersionMigration(data: SessionSaveData) {
  */
 // biome-ignore lint/complexity/noBannedTypes: TODO - refactor settings
 export function applySettingsVersionMigration(data: Object) {
-  const prevVersion: string = data.hasOwnProperty("gameVersion") ? data["gameVersion"] : "1.0.0";
+  const prevVersion: string = Object.hasOwn(data, "gameVersion") ? data["gameVersion"] : "1.0.0";
   const isCurrentVersionHigher = compareVersions(prevVersion, LATEST_VERSION) === -1;
 
   if (isCurrentVersionHigher) {

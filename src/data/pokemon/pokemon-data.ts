@@ -32,6 +32,7 @@ export class CustomPokemonData {
   public ability: AbilityId | -1;
   public passive: AbilityId | -1;
   public nature: Nature | -1;
+  // TODO: Change default value from `PokemonType.UNKNOWN` to `null` for easier checking;
   public types: PokemonType[];
   /** Deprecated but needed for session save migration */
   // TODO: Remove this once pre-session migration is implemented
@@ -156,7 +157,7 @@ export class PokemonSummonData {
 
     // TODO: Rework this into an actual generic function for use elsewhere
     for (const [key, value] of Object.entries(source)) {
-      if (value == null && this.hasOwnProperty(key)) {
+      if (value == null && Object.hasOwn(this, key)) {
         continue;
       }
 
