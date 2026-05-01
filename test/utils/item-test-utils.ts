@@ -3,6 +3,7 @@ import { allHeldItems } from "#data/data-lists";
 import type { HeldItemEffect } from "#enums/held-item-effect";
 import { type HeldItemId, HeldItemNames } from "#enums/held-item-id";
 import type { HeldItem } from "#items/held-item";
+import type { HeldItemAttr } from "#items/held-item-attr";
 import type { ApplicableHeldItemId, ExtractItemEffect } from "#types/held-item-data-types";
 import type { HeldItemEffectParamMap } from "#types/held-item-parameter";
 import { expect } from "vitest";
@@ -25,7 +26,7 @@ export function applySingleHeldItem<T extends ApplicableHeldItemId, E extends Ex
   params: HeldItemEffectParamMap[E],
 ): void {
   const { pokemon } = params;
-  const itemObj = allHeldItems[itemId] as unknown as HeldItem<E>;
+  const itemObj = allHeldItems[itemId] as HeldItem<HeldItemAttr<E>>;
   expect(
     pokemon.heldItemManager.hasItem(itemObj.type),
     `Pokemon ${getPokemonNameWithAffix(pokemon)} lacks item of type ${HeldItemNames[itemObj.type]}`,
