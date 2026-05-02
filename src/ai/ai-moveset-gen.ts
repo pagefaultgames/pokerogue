@@ -755,17 +755,21 @@ function shouldRemoveRainDance(pokemon: Pokemon): boolean {
   if (getExistingDamageMoveTypes(pokemon, false).has(PokemonType.WATER)) {
     return false;
   }
-  for (const rainAbility of [AbilityId.RAIN_DISH, AbilityId.FORECAST, AbilityId.SWIFT_SWIM, AbilityId.DRY_SKIN]) {
+
+  const rainAbilities = [AbilityId.RAIN_DISH, AbilityId.FORECAST, AbilityId.SWIFT_SWIM, AbilityId.DRY_SKIN] as const;
+  for (const rainAbility of rainAbilities) {
     if (pokemon.hasAbility(rainAbility, false, true)) {
       return false;
     }
   }
+
   for (const pokemonMove of pokemon.moveset) {
     const move = pokemonMove.getMove();
-    if (move.findAttr(attr => attr.is("WeatherInstantChargeAttr") && attr.weatherTypes.includes(WeatherType.RAIN))) {
+    if (isWeatherInstantCharge(move, WeatherType.RAIN)) {
       return false;
     }
   }
+
   return true;
 }
 
@@ -777,20 +781,23 @@ function shouldRemoveRainDance(pokemon: Pokemon): boolean {
  */
 function shouldRemoveSunnyDay(pokemon: Pokemon): boolean {
   if (getExistingDamageMoveTypes(pokemon, false).has(PokemonType.FIRE)) {
-    return true;
+    return false;
   }
-  // Solar power depends on having a move that is specially boosted
-  for (const sunAbility of [
+
+  const sunAbilities = [
     AbilityId.CHLOROPHYLL,
     AbilityId.FLOWER_GIFT,
     AbilityId.PROTOSYNTHESIS,
     AbilityId.HARVEST,
     AbilityId.FORECAST,
-  ]) {
+  ] as const;
+  for (const sunAbility of sunAbilities) {
     if (pokemon.hasAbility(sunAbility, false, true)) {
       return false;
     }
   }
+
+  // Solar power depends on having a move that is specially boosted
   const hasSolarPower = pokemon.hasAbility(AbilityId.SOLAR_POWER, false, true);
   for (const pokemonMove of pokemon.moveset) {
     const move = pokemonMove.getMove();
@@ -803,6 +810,7 @@ function shouldRemoveSunnyDay(pokemon: Pokemon): boolean {
       return false;
     }
   }
+
   return true;
 }
 
