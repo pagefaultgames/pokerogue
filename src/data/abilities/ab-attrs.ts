@@ -4729,10 +4729,7 @@ export class ArenaTrapAbAttr extends CheckTrappedAbAttr {
   override canApply({ pokemon, opponent }: CheckTrappedAbAttrParams): boolean {
     return (
       this.arenaTrapCondition(pokemon, opponent)
-      && !(
-        opponent.getTypes(true).includes(PokemonType.GHOST)
-        || (opponent.getTypes(true).includes(PokemonType.STELLAR) && opponent.getTypes().includes(PokemonType.GHOST))
-      )
+      && !opponent.isOfType(PokemonType.GHOST, true, true)
       && !opponent.hasAbility(AbilityId.RUN_AWAY)
     );
   }

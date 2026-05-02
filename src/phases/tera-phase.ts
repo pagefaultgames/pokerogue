@@ -37,6 +37,8 @@ export class TeraPhase extends BattlePhase {
 
   end() {
     this.pokemon.isTerastallized = true;
+    // Remove added type from Forest's Curse/Trick-or-Treat
+    this.pokemon.summonData.addedType = null;
     this.pokemon.updateSpritePipelineData();
 
     globalScene.triggerPokemonFormChange(this.pokemon, SpeciesFormChangeTeraTrigger);
