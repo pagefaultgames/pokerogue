@@ -3,7 +3,7 @@ import type { PhaseMap, PhaseString } from "#types/phase-types";
 
 export abstract class Phase {
   /** Start the current phase. */
-  public start(): void {}
+  public start(this: Phase): void {}
 
   /** End the current phase and start a new one. */
   public end(): void {

@@ -12,7 +12,9 @@ import { DynamicQueueManager } from "#app/dynamic-queue-manager";
 import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
 import { PhaseTree } from "#app/phase-tree";
+import type { BattlerIndex, FieldBattlerIndex } from "#enums/battler-index";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
+import { SwitchType } from "#enums/switch-type";
 import type { Pokemon } from "#field/pokemon";
 import { AddEnemyBuffModifierPhase } from "#phases/add-enemy-buff-modifier-phase";
 import { AttemptCapturePhase } from "#phases/attempt-capture-phase";
@@ -41,7 +43,6 @@ import { GameOverModifierRewardPhase } from "#phases/game-over-modifier-reward-p
 import { GameOverPhase } from "#phases/game-over-phase";
 import { HideAbilityPhase } from "#phases/hide-ability-phase";
 import { HidePartyExpBarPhase } from "#phases/hide-party-exp-bar-phase";
-import { InitEncounterPhase } from "#phases/init-encounter-phase";
 import { LearnMovePhase } from "#phases/learn-move-phase";
 import { LevelCapPhase } from "#phases/level-cap-phase";
 import { LevelUpPhase } from "#phases/level-up-phase";
@@ -79,9 +80,9 @@ import { PostGameOverPhase } from "#phases/post-game-over-phase";
 import { PostSummonPhase } from "#phases/post-summon-phase";
 import { PostTurnStatusEffectPhase } from "#phases/post-turn-status-effect-phase";
 import { QuietFormChangePhase } from "#phases/quiet-form-change-phase";
+import { RecallPhase } from "#phases/recall-phase";
 import { ReloadSessionPhase } from "#phases/reload-session-phase";
 import { ResetStatusPhase } from "#phases/reset-status-phase";
-import { ReturnPhase } from "#phases/return-phase";
 import { RevivalBlessingPhase } from "#phases/revival-blessing-phase";
 import { RibbonModifierRewardPhase } from "#phases/ribbon-modifier-reward-phase";
 import { ScanIvsPhase } from "#phases/scan-ivs-phase";
@@ -96,11 +97,9 @@ import { ShowAbilityPhase } from "#phases/show-ability-phase";
 import { ShowPartyExpBarPhase } from "#phases/show-party-exp-bar-phase";
 import { ShowTrainerPhase } from "#phases/show-trainer-phase";
 import { StatStageChangePhase } from "#phases/stat-stage-change-phase";
-import { SummonMissingPhase } from "#phases/summon-missing-phase";
-import { SummonPhase } from "#phases/summon-phase";
+import { SummonPhase, type SummonPhaseOptions } from "#phases/summon-phase";
 import { SwitchBiomePhase } from "#phases/switch-biome-phase";
 import { SwitchPhase } from "#phases/switch-phase";
-import { SwitchSummonPhase } from "#phases/switch-summon-phase";
 import { TeraPhase } from "#phases/tera-phase";
 import { TitlePhase } from "#phases/title-phase";
 import { ToggleDoublePositionPhase } from "#phases/toggle-double-position-phase";
@@ -113,7 +112,11 @@ import { UnlockPhase } from "#phases/unlock-phase";
 import { VictoryPhase } from "#phases/victory-phase";
 import { WeatherEffectPhase } from "#phases/weather-effect-phase";
 import type { PhaseConditionFunc, PhaseMap, PhaseString } from "#types/phase-types";
+import { isEnemy } from "#utils/pokemon-utils";
+import type { queueBattlerEntrancePhases } from "#utils/switch-utils";
 import type { NonEmptyTuple } from "type-fest";
+
+//#region Constants
 
 /**
  * Object that holds all of the phase constructors.
@@ -151,7 +154,6 @@ const PHASES = Object.freeze({
   GameOverModifierRewardPhase,
   HideAbilityPhase,
   HidePartyExpBarPhase,
-  InitEncounterPhase,
   LearnMovePhase,
   LevelCapPhase,
   LevelUpPhase,
@@ -189,7 +191,7 @@ const PHASES = Object.freeze({
   QuietFormChangePhase,
   ReloadSessionPhase,
   ResetStatusPhase,
-  ReturnPhase,
+  RecallPhase,
   RevivalBlessingPhase,
   RibbonModifierRewardPhase,
   ScanIvsPhase,
@@ -204,11 +206,9 @@ const PHASES = Object.freeze({
   ShowPartyExpBarPhase,
   ShowTrainerPhase,
   StatStageChangePhase,
-  SummonMissingPhase,
   SummonPhase,
-  SwitchBiomePhase,
   SwitchPhase,
-  SwitchSummonPhase,
+  SwitchBiomePhase,
   TeraPhase,
   TitlePhase,
   ToggleDoublePositionPhase,
@@ -235,6 +235,54 @@ const turnEndPhases: readonly PhaseString[] = [
   "TurnEndPhase",
 ] as const;
 
+interface BattlerEntranceParams extends SummonPhaseOptions {
+  /**
+   * String denoting when to add the phase.
+   * Possible values are:
+   *  - `"eager"`: Adds the phase immediately via {@linkcode PhaseManager.unshiftPhase | unshiftPhase}
+   *  - `"delayed"`: Adds the phase via {@linkcode PhaseManager.pushPhase} to run after all phases finish running.
+   */
+  // TODO: Figure out a default value for this and remove it from existing callsites
+  when: "eager" | "delayed";
+
+  /**
+   * Whether to queue a {@linkcode CheckSwitchPhase} instead of a {@linkcode PostSummonPhase} after the entrance anim
+   * to ask the player if they would like to switch _BEFORE_ applying on-entrance effects. \
+   * If the switch prompt is denied, a regular {@linkcode PostSummonPhase} will be queued after said phase ends.
+   * @defaultValue `true` if the passed `BattlerIndex` corresponds to a player Pokemon.
+   */
+  // TODO: At a later date, review if we need this parameter or can instead just use its default value instead
+  checkSwitch?: boolean;
+}
+
+/** Parameter type for {@linkcode PhaseManager.queueBattlerSwitchOut}. */
+interface BattlerSwitchOutParams {
+  /**
+   * String denoting when to add the phase.
+   * Possible values are:
+   *  - `"eager"`: Adds the phase immediately via {@linkcode PhaseManager.unshiftPhase | unshiftPhase}
+   *  - `"deferred"`: Adds the phase immediately after all phases queued during this Phase have resolved. \
+   *    Used by force switching moves and abilities to queue switch outs after the current move use ends.
+   * @defaultValue `"eager"`
+   */
+  when?: "eager" | "deferred";
+
+  /**
+   * The {@linkcode SwitchType} dictating the type of switching behavior to implement.
+   * @defaultValue {@linkcode SwitchType.SWITCH}
+   */
+  switchType?: SwitchType;
+  /**
+   * The party index of the Pokemon being newly switched in.
+   * If set to `-1`, will determine the replacement during the {@linkcode SummonPhase}
+   * by showing the player party modal or prompting the enemy AI.
+   * @defaultValue `-1`
+   */
+  // TODO: Convert to IntClosedRange<0, 5> | `-1` in the wimp out code duplication PR
+  switchInIndex?: number | undefined;
+}
+//#endregion Constants
+
 /**
  * The `PhaseManager` is responsible for managing the phases in the Battle Scene.
  */
@@ -251,6 +299,8 @@ export class PhaseManager {
   /** The phase put on standby if {@linkcode overridePhase} is called */
   private standbyPhase: Phase | null = null;
 
+  // #region Phase Helper Functions
+
   /**
    * Clear all previously set phases, then add a new {@linkcode TitlePhase} to transition to the title screen.
    * @param addLogin - Whether to add a new {@linkcode LoginPhase} before the {@linkcode TitlePhase}
@@ -265,6 +315,74 @@ export class PhaseManager {
     }
     this.unshiftNew("TitlePhase");
   }
+
+  /**
+   * Queue a sequence of phases to switch out a currently on-field Pokemon with another party member.
+   * @param battlerIndex - The {@linkcode FieldBattlerIndex} of the Pokemon to switch out
+   * @param params - Parameters used to customize the switching behaviour
+   * @remarks
+   * This should not be used to queue start-of-battle entrance sequences.
+   */
+  public queueBattlerSwitchOut(
+    battlerIndex: FieldBattlerIndex,
+    { switchType = SwitchType.SWITCH, switchInIndex = -1, when = "eager" }: BattlerSwitchOutParams = {},
+  ): void {
+    const phases = [
+      this.create("RecallPhase", battlerIndex, switchType),
+      this.create("SwitchPhase", battlerIndex, switchType, switchInIndex),
+      this.create("SummonPhase", battlerIndex, { switchType }),
+      this.create("PostSummonPhase", battlerIndex),
+    ] as const;
+
+    switch (when) {
+      case "eager":
+        this.unshiftPhase(...phases);
+        break;
+      case "deferred":
+        this.phaseQueue.addPhase(phases, true);
+        break;
+    }
+  }
+
+  /**
+   * Queue a sequence of phases to add a **single** Pokemon to the field.
+   * @param battlerIndex - The {@linkcode FieldBattlerIndex} of the Pokemon to send in
+   * @param params - Parameters used to customize switching behavior
+   * @throws {Error}
+   * Throws an error if `battlerIndex` corresponds to an enemy Pokemon with `checkSwitch` set to `true`
+   * @see {@linkcode queueBattlerEntrancePhases}
+   * Alternate helper function that queues phases for multiple Pokemon entering the field on battle start.
+   */
+  public queueBattlerEntrance<T extends FieldBattlerIndex>(
+    battlerIndex: T,
+    params: T extends BattlerIndex.PLAYER | BattlerIndex.PLAYER_2
+      ? BattlerEntranceParams
+      : Omit<BattlerEntranceParams, "checkSwitch">,
+  ): void;
+  public queueBattlerEntrance(
+    battlerIndex: FieldBattlerIndex,
+    { when, checkSwitch = !isEnemy(battlerIndex), ...summonPhaseOpts }: BattlerEntranceParams,
+  ): void {
+    if (checkSwitch && isEnemy(battlerIndex)) {
+      throw new Error("Cannot queue a CheckSwitchPhase for an enemy Pokemon!");
+    }
+
+    const phases = [
+      this.create("SummonPhase", battlerIndex, summonPhaseOpts satisfies SummonPhaseOptions),
+      this.create(checkSwitch ? "CheckSwitchPhase" : "PostSummonPhase", battlerIndex),
+    ] as const;
+
+    switch (when) {
+      case "eager":
+        this.unshiftPhase(...phases);
+        break;
+      case "delayed":
+        this.pushPhase(...phases);
+        break;
+    }
+  }
+
+  // #endregion Phase Helper Functions
 
   // #region Phase Functions
 
@@ -295,8 +413,6 @@ export class PhaseManager {
    * @privateRemarks
    * Any newly-unshifted `MovePhase`s will be queued after the next `MoveEndPhase`.
    */
-  // NB: I'd like to restrict this to only allow passing 1 `MovePhase` at a time, but this causes TS to
-  // flip the hell out with `Parameters`...
   public unshiftPhase(...phases: NonEmptyTuple<Phase>): void {
     for (const phase of phases) {
       const toAdd = this.checkDynamic(phase);
@@ -529,20 +645,6 @@ export class PhaseManager {
    */
   public queueFaintPhase(...args: ConstructorParameters<PhaseConstructorMap["FaintPhase"]>): void {
     this.phaseQueue.addPhase(this.create("FaintPhase", ...args), true);
-  }
-
-  /**
-   * Create a new phase and queue it to run after all others queued by the currently running phase.
-   * @param phase - The name of the phase to create
-   * @param args - The arguments to pass to the phase constructor
-   *
-   * @deprecated Only used for switches and should be phased out eventually.
-   */
-  public queueDeferred<const T extends "SwitchPhase" | "SwitchSummonPhase">(
-    phase: T,
-    ...args: ConstructorParameters<PhaseConstructorMap[T]>
-  ): void {
-    this.phaseQueue.addPhase(this.create(phase, ...args), true);
   }
 
   /**

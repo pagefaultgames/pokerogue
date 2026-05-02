@@ -1,15 +1,25 @@
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 import { TrainerSlot } from "#enums/trainer-slot";
+import { playTween } from "#utils/anim-utils";
 
+/**
+ * Adds functions to display and hide the enemy trainer
+ */
 export abstract class BattlePhase extends Phase {
-  showEnemyTrainer(trainerSlot: TrainerSlot = TrainerSlot.NONE): void {
-    if (!globalScene.currentBattle.trainer) {
+  /** Slides the enemy trainer into view */
+  public async showEnemyTrainer(trainerSlot: TrainerSlot = TrainerSlot.NONE): Promise<void> {
+    const { trainer } = globalScene.currentBattle;
+    if (!trainer) {
       console.warn("Enemy trainer is missing!");
       return;
     }
-    const sprites = globalScene.currentBattle.trainer.getSprites();
-    const tintSprites = globalScene.currentBattle.trainer.getTintSprites();
+
+    trainer.setVisible(true);
+
+    // TODO: Do these sprites still need to be reset/made visible?
+    const sprites = trainer.getSprites();
+    const tintSprites = trainer.getTintSprites();
     for (let i = 0; i < sprites.length; i++) {
       const visible = !trainerSlot || !i === (trainerSlot === TrainerSlot.TRAINER) || sprites.length < 2;
       [sprites[i], tintSprites[i]].forEach(sprite => {
@@ -20,8 +30,9 @@ export abstract class BattlePhase extends Phase {
         sprite.clearTint();
       });
     }
-    globalScene.tweens.add({
-      targets: globalScene.currentBattle.trainer,
+
+    await playTween({
+      targets: trainer,
       x: "-=16",
       y: "+=16",
       alpha: 1,
@@ -30,14 +41,23 @@ export abstract class BattlePhase extends Phase {
     });
   }
 
-  hideEnemyTrainer(): void {
-    globalScene.tweens.add({
-      targets: globalScene.currentBattle.trainer,
+  /** Slides the enemy trainer out of view */
+  public async hideEnemyTrainer(): Promise<void> {
+    const { trainer } = globalScene.currentBattle;
+    if (!trainer) {
+      console.warn("Enemy Trainer is missing!");
+      return;
+    }
+
+    await playTween({
+      targets: trainer,
       x: "+=16",
       y: "-=16",
       alpha: 0,
       ease: "Sine.easeInOut",
       duration: 750,
     });
+
+    trainer.setVisible(false);
   }
 }

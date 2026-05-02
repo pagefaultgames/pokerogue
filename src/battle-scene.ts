@@ -39,6 +39,7 @@ import type { PokemonSpecies, PokemonSpeciesFilter } from "#data/pokemon-species
 import { getTypeRgb } from "#data/type";
 import { BattleStyle } from "#enums/battle-style";
 import { BattleType } from "#enums/battle-type";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
 import { EaseType } from "#enums/ease-type";
@@ -1336,6 +1337,10 @@ export class BattleScene extends SceneBase {
     );
     this.currentBattle.incrementTurn();
 
+    // TODO: The fact that we override `this.currentBattle` means that the length of `getPlayerField`
+    // will be incorrect during cleanup.
+    // This means any dynamic phases that are queued for pokemon 2 during doubles->singles transitions will crash due to
+    // `getPokemon` attempting to access a nonexistent slot.
     if (!fromSession?.waveIndex && lastBattle) {
       this.doPostBattleCleanup(lastBattle, maxExpLevel);
     }
@@ -1587,7 +1592,7 @@ export class BattleScene extends SceneBase {
       playerField.forEach((pokemon, index) => {
         pokemon.lapseTag(BattlerTagType.COMMANDED);
         if (pokemon.isOnField()) {
-          this.phaseManager.pushNew("ReturnPhase", index);
+          this.phaseManager.pushNew("RecallPhase", index);
         }
       });
 
@@ -3488,6 +3493,7 @@ export class BattleScene extends SceneBase {
    * Initialized the 2nd phase of the final boss (e.g. form-change for Eternatus)
    * @param pokemon The (enemy) pokemon
    */
+  // TODO: Refactor this please
   initFinalBossPhaseTwo(pokemon: Pokemon): void {
     if (!pokemon.isEnemy() || !pokemon.isBoss() || pokemon.formIndex > 0 || pokemon.bossSegmentIndex >= 1) {
       this.phaseManager.shiftPhase();
@@ -3509,8 +3515,7 @@ export class BattleScene extends SceneBase {
       if (availablePartyMembers.length > 1) {
         this.phaseManager.pushNew("ToggleDoublePositionPhase", true);
         if (!availablePartyMembers[1].isOnField()) {
-          this.phaseManager.pushNew("SummonPhase", 1);
-          this.phaseManager.pushNew("PostSummonPhase", 1);
+          this.phaseManager.queueBattlerEntrance(BattlerIndex.PLAYER_2, { when: "delayed" });
         }
       }
 

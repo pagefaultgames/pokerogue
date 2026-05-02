@@ -5672,18 +5672,14 @@ class ForceSwitchOutHelper {
       }
 
       if (switchOutTarget.hp > 0) {
-        globalScene.phaseManager.queueDeferred(
-          "SwitchPhase",
-          this.switchType,
-          switchOutTarget.getFieldIndex(),
-          true,
-          true,
-        );
-        return true;
+        globalScene.phaseManager.queueBattlerSwitchOut(switchOutTarget.getBattlerIndex(), {
+          switchType: this.switchType,
+          when: "deferred",
+        });
       }
       /*
-       * For wild Pokémon battles, the Pokémon will flee if the conditions are met (`waveIndex` and double battles).
-       * It will not flee if it is a Mystery Encounter with fleeing disabled (checked in `getSwitchOutCondition()`) or if it is a wave 10x wild boss
+       * For non-wild battles, it checks if the opposing party has any available Pokémon to switch in.
+       * If yes, the Pokémon leaves the field and a new SwitchSummonPhase is initiated.
        */
     } else if (globalScene.currentBattle.battleType === BattleType.WILD) {
       const allyPokemon = switchOutTarget.getAlly();
@@ -5730,14 +5726,11 @@ class ForceSwitchOutHelper {
         const summonIndex = globalScene.currentBattle.trainer
           ? globalScene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot)
           : 0;
-        globalScene.phaseManager.queueDeferred(
-          "SwitchSummonPhase",
-          this.switchType,
-          switchOutTarget.getFieldIndex(),
-          summonIndex,
-          false,
-          false,
-        );
+        globalScene.phaseManager.queueBattlerSwitchOut(switchOutTarget.getBattlerIndex(), {
+          switchType: this.switchType,
+          when: "deferred",
+          switchInIndex: summonIndex,
+        });
         return true;
       }
     }

@@ -1,10 +1,15 @@
 import { getGameMode } from "#app/game-mode";
+import { Phase } from "#app/phase";
 import { Status } from "#data/status-effect";
 import { AbilityId } from "#enums/ability-id";
+import { BattleType } from "#enums/battle-type";
+import { BattlerIndex } from "#enums/battler-index";
 import { GameModes } from "#enums/game-modes";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
+import { TrainerType } from "#enums/trainer-type";
 import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -23,12 +28,17 @@ describe("Double Battles", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
+    game.override
+      .enemyMoveset(MoveId.SPLASH)
+      .moveset(MoveId.SPLASH)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH);
   });
 
   // double-battle player's pokemon both fainted in same round, then revive one, and next double battle summons two player's pokemon successfully.
   // (There were bugs that either only summon one when can summon two, player stuck in switchPhase etc)
   it("3v2 edge case: player summons 2 pokemon on the next battle after being fainted and revived", async () => {
-    game.override.battleStyle("double").enemyMoveset(MoveId.SPLASH).moveset(MoveId.SPLASH);
+    game.override.battleStyle("double");
     await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARIZARD, SpeciesId.SQUIRTLE);
 
     game.move.select(MoveId.SPLASH);
@@ -61,12 +71,6 @@ describe("Double Battles", () => {
       return rngSweepProgress * (max - min) + min;
     });
 
-    game.override
-      .enemyMoveset(MoveId.SPLASH)
-      .moveset(MoveId.SPLASH)
-      .enemyAbility(AbilityId.BALL_FETCH)
-      .ability(AbilityId.BALL_FETCH);
-
     // Play through endless, waves 1 to 9, counting number of double battles from waves 2 to 9
     await game.classicMode.startBattle(SpeciesId.BULBASAUR);
     game.scene.gameMode = getGameMode(GameModes.ENDLESS);
@@ -87,5 +91,105 @@ describe("Double Battles", () => {
 
     expect(doubleCount).toBe(1);
     expect(singleCount).toBe(DOUBLE_CHANCE - 1);
+  });
+
+  it("should transition to and from double battles without crashing", async () => {
+    game.override.battleStyle("even-doubles");
+    await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARMANDER);
+
+    // Run 2 single -> double transitions and 2 double -> single transitions
+    for (let waveNumber = 1; waveNumber < 5; waveNumber++) {
+      const isDouble = waveNumber % 2 === 0;
+      expect(game.scene.currentBattle.double).toBe(isDouble);
+      expect(game.scene.currentBattle.waveIndex).toBe(waveNumber);
+
+      game.move.use(MoveId.SPLASH);
+      if (isDouble) {
+        game.move.use(MoveId.SPLASH, 1);
+      }
+      await game.doKillOpponents();
+      await game.toNextWave();
+
+      expect(game.scene.currentBattle.double).toBe(!isDouble);
+    }
+  });
+
+  // TODO: We currently queue all the switches in succession, and have no
+  it.todo("should trigger switches in speed order", async () => {
+    game.override.battleStyle("double").battleType(BattleType.TRAINER);
+
+    await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS, SpeciesId.POLITOED, SpeciesId.MILOTIC);
+
+    const [player1, player2, player3] = game.scene.getPlayerParty();
+    const [enemy1, enemy2] = game.scene.getEnemyField();
+    game.field.mockAbility(player2, AbilityId.SWIFT_SWIM);
+    game.field.mockAbility(player3, AbilityId.DRIZZLE);
+    player1.setStat(Stat.SPD, 100);
+    player2.setStat(Stat.SPD, 40);
+    player3.setStat(Stat.SPD, 10);
+    enemy1.setStat(Stat.SPD, 55);
+    enemy2.setStat(Stat.SPD, 50);
+
+    const phaseStartSpy = vi.spyOn(Phase.prototype, "start");
+
+    // switch magikarp out for politoed, and feebas out for milotic
+    // drizzle should double feebas' speed and make it move 2nd
+    game.doSwitchPokemon(2);
+    game.doSwitchPokemon(3);
+    game.forceEnemyToSwitch();
+    await game.toEndOfTurn();
+
+    // TODO: Ensure proper ordering of effects
+
+    for (const phaseName of ["RecallPhase", "SwitchPhase", "SummonPhase", "PostSummonPhase"] as const) {
+      const p1Index = phaseStartSpy.mock.contexts.findIndex(
+        phase => phase.is(phaseName) && phase["battlerIndex"] === BattlerIndex.PLAYER,
+      );
+      const p2Index = phaseStartSpy.mock.contexts.findIndex(
+        phase => phase.is(phaseName) && phase["battlerIndex"] === BattlerIndex.PLAYER_2,
+      );
+      const e1Index = phaseStartSpy.mock.contexts.findIndex(
+        phase => phase.is(phaseName) && phase["battlerIndex"] === BattlerIndex.ENEMY,
+      );
+      expect(p2Index, `player 2 ${phaseName} happened before player 1 ${phaseName}`).toBeGreaterThan(p1Index);
+      expect(p2Index, `player 2 ${phaseName} happened after enemy 1 ${phaseName}`).toBeLessThan(e1Index);
+    }
+  });
+
+  describe("Trainer Double Battles", () => {
+    beforeEach(() => {
+      game.override
+        .randomTrainer({ trainerType: TrainerType.TWINS })
+        .battleType(BattleType.TRAINER)
+        .startingLevel(1000)
+        .startingWave(12);
+    });
+
+    it.each<{ side: string; order: BattlerIndex[] }>([
+      { side: "left", order: [BattlerIndex.PLAYER, BattlerIndex.PLAYER_2] },
+      { side: "right", order: [BattlerIndex.PLAYER_2, BattlerIndex.PLAYER] },
+    ])("should advance exactly one wave if the $side opponent is defeated first", async ({ order }) => {
+      await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
+
+      game.move.use(MoveId.MOONBLAST, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+      game.move.use(MoveId.MOONBLAST, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2);
+      await game.setTurnOrder([...order, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+      await game.toNextWave();
+
+      expect(game.scene.currentBattle.waveIndex).toBe(13);
+      expect(game.phaseInterceptor.log.filter(phase => phase === "SelectModifierPhase")).toHaveLength(1);
+      expect(game.scene.phaseManager.hasPhaseOfType("SelectModifierPhase")).toBe(false);
+    });
+
+    it("should advance exactly one wave if both opponents are defeated at the same time", async () => {
+      await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+      game.move.use(MoveId.DAZZLING_GLEAM);
+      await game.toNextWave();
+
+      expect(game.scene.currentBattle.waveIndex).toBe(13);
+      expect(game.phaseInterceptor.log.filter(phase => phase === "SelectModifierPhase")).toHaveLength(1);
+      expect(game.scene.phaseManager.hasPhaseOfType("SelectModifierPhase")).toBe(false);
+    });
   });
 });

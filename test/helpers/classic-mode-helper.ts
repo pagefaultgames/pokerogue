@@ -111,7 +111,7 @@ export class ClassicModeHelper extends GameManagerHelper {
       },
       () => this.game.isCurrentPhase("CommandPhase") || this.game.isCurrentPhase("TurnInitPhase"),
     );
-    this.game.doSelectPartyPokemon(pokemonIndex);
+    this.game.doSelectPartyPokemon(pokemonIndex, "CheckSwitchPhase");
 
     await this.game.phaseInterceptor.to("CommandPhase");
     console.log("==================[New Battle (Initial Switch)]==================");
