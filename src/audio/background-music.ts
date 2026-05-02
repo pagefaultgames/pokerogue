@@ -43,6 +43,7 @@ export class BackgroundMusic {
       onload: () => {
         this.howl["_sprite"].loop = [loopPoint * 1000, this.howl.duration() * 1000 - loopPoint * 1000, true];
       },
+      onplayerror: () => this.howl.once("unlock", () => this.howl.play()),
     });
 
     if (loop) {

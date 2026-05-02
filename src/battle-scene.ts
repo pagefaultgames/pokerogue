@@ -342,8 +342,6 @@ export class BattleScene extends SceneBase {
   public spritePipeline: SpritePipeline;
 
   private bgm: BackgroundMusic | null = null;
-  private bgmResumeTimer: Phaser.Time.TimerEvent | null;
-  private readonly bgmCache: Set<string> = new Set();
   private playTimeTimer: Phaser.Time.TimerEvent;
 
   public rngSeedOverride = "";
