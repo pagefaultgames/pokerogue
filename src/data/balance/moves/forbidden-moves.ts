@@ -17,6 +17,7 @@ export const FORBIDDEN_SINGLES_MOVES: ReadonlySet<MoveId> = new Set([
   MoveId.CRAFTY_SHIELD,
   MoveId.DECORATE,
   MoveId.DRAGON_CHEER,
+  MoveId.EXPANDING_FORCE, // This needs to be adjusted to only spawn if Psychic Surge / Terrain generates with it.
   MoveId.FOLLOW_ME,
   MoveId.HEAL_PULSE,
   MoveId.HELPING_HAND,
@@ -41,10 +42,13 @@ export const FORBIDDEN_TM_MOVES: ReadonlySet<MoveId> = new Set([
   MoveId.FALSE_SWIPE,
   MoveId.FLASH,
   MoveId.FOCUS_PUNCH,
+  MoveId.GRASSY_GLIDE, // // This needs to be adjusted to only spawn if Grassy Surge / Terrain generates with it, generally a gimmick move regardless.
+  MoveId.MISTY_EXPLOSION, // This needs to be adjusted to only spawn if Misty Surge / Terrain generates with it, generally a gimmick move regardless.
   MoveId.MEGA_PUNCH,
   MoveId.NIGHT_SHADE,
   MoveId.PAY_DAY,
   MoveId.PSYCH_UP,
+  MoveId.RISING_VOLTAGE, // This needs to be adjusted to only spawn if Psychic Surge / Terrain generates with it.
   MoveId.SCARY_FACE,
   MoveId.SKILL_SWAP,
   MoveId.SLEEP_TALK,
