@@ -18,7 +18,6 @@ import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { PokemonFormChangeItemModifier, PokemonHeldItemModifier } from "#modifiers/modifier";
 import type { PokemonMove } from "#moves/pokemon-move";
-import type { CommandPhase } from "#phases/command-phase";
 import { getVariantTint } from "#sprites/variant";
 import type { TurnMove } from "#types/turn-move";
 import { MessageUiHandler } from "#ui/message-ui-handler";
@@ -907,16 +906,15 @@ export class PartyUiHandler extends MessageUiHandler {
     }
 
     // This is used when switching out using the Pokemon command (possibly holding a Baton held item). In this case there is no callback.
+    const currPhase = globalScene.phaseManager.getCurrentPhase();
+    // TODO: Figure out why this code path was being reached during check switch phase and crashing,
     if (
       (option === PartyOption.PASS_BATON || option === PartyOption.SEND_OUT)
       && this.partyUiMode === PartyUiMode.SWITCH
+      && currPhase.is("CommandPhase")
     ) {
       this.clearOptions();
-      (globalScene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(
-        Command.POKEMON,
-        this.cursor,
-        option === PartyOption.PASS_BATON,
-      );
+      currPhase.handleCommand(Command.POKEMON, this.cursor, option === PartyOption.PASS_BATON);
     }
 
     if (
