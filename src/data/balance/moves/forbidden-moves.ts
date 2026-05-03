@@ -149,6 +149,7 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
 
   MoveId.BELCH, // High BP also makes it likely to spawn on anything that gets it as random coverage.
   MoveId.IMPRISON, // Too situational.
+  MoveId.SMACK_DOWN, // Hold off until smarter move generation, ideally the Pokemon with the move already has a Ground move or it generates on a Ground specialist.
   MoveId.SYNCHRONOISE, // Too situational, mostly given to Psychic types which resist the move anyway.
 
   // Blocking Moves

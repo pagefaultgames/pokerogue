@@ -204,8 +204,8 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
   [SpeciesId.MELMETAL]: MoveId.DOUBLE_IRON_BASH,
 
   // Gen 8 Legends
-  [SpeciesId.ZACIAN]: MoveId.PLAY_ROUGH,
-  [SpeciesId.ZAMAZENTA]: MoveId.BODY_PRESS,
+  [SpeciesId.ZACIAN]: [MoveId.BEHEMOTH_BLADE, MoveId.PLAY_ROUGH],
+  [SpeciesId.ZAMAZENTA]: [MoveId.BEHEMOTH_BASH, MoveId.BODY_PRESS],
   [SpeciesId.ETERNATUS]: MoveId.DYNAMAX_CANNON,
   [SpeciesId.URSHIFU]: [MoveId.WICKED_BLOW, MoveId.SURGING_STRIKES],
   [SpeciesId.REGIDRAGO]: MoveId.DRAGON_ENERGY,
@@ -234,7 +234,7 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
   [SpeciesId.DRACOVISH]: MoveId.FISHIOUS_REND, // Benjie doesn't approve >:o
   [SpeciesId.ARCTOZOLT]: MoveId.BOLT_BEAK,
   [SpeciesId.DRACOZOLT]: MoveId.BOLT_BEAK, // Benjie prefers this be addressed outside of signature moves
-  [SpeciesId.ARIADOS]: [MoveId.TOXIC_THREAD, MoveId.SUCKER_PUNCH], // Very slow so it leans on Sucker Punch heavily
+  [SpeciesId.ARIADOS]: [MoveId.TOXIC_THREAD, MoveId.SUCKER_PUNCH], // Very slow so it relies on Sucker Punch heavily
   [SpeciesId.BLISSEY]: MoveId.SOFT_BOILED,
   [SpeciesId.MEDICHAM]: [MoveId.ZEN_HEADBUTT, MoveId.PSYCHO_CUT], // Avoids special moves on level
   [SpeciesId.LILLIGANT]: MoveId.QUIVER_DANCE,

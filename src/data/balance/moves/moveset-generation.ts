@@ -199,6 +199,7 @@ export const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
   MoveId.NATURAL_GIFT,
   MoveId.NATURES_MADNESS,
   MoveId.NIGHT_SHADE,
+  MoveId.POISON_FANG, // Functions as coverage or a chance of Toxic with slight chip damage.
   MoveId.POWER_TRIP,
   MoveId.PSYWAVE,
   MoveId.RUINATION,
