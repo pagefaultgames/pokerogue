@@ -399,7 +399,7 @@ export class MysteryEncounterBattlePhase extends Phase {
     // PostSummon and ShinySparkle phases are handled by helper function
     const availablePartyMembers = globalScene.getPlayerParty().filter(p => p.isAllowedInBattle());
 
-    // NB: we need to queue the entrance phases here because the ME version somehow doesn't do that itself?
+    // NB: we need to queue the entrance phases here because the ME encounter phase doesn't queue any animations itself somehow?
     queueBattlerEntrancePhases({
       skipEnemySummon: false,
       loaded: true,

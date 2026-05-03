@@ -1,3 +1,4 @@
+import type { DynamicQueueManager } from "#app/dynamic-queue-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { getPokeballTintColor } from "#data/pokeball";
@@ -23,6 +24,26 @@ export class RecallPhase extends PokemonPhase {
     super(battlerIndex);
 
     this.switchType = switchType;
+  }
+
+  /**
+   * @returns The {@linkcode Pokemon} at this Phase's field index, or `undefined` if no such Pokemon exists. \
+   * Unlike {@linkcode PokemonPhase.getPokemon}, this doesn't require the Pokemon to be active or on the field for it to be returned.
+   *
+   * @todo This is a bandaid fix for an issue where {@linkcode DynamicQueueManager} (and one of this Phase's methods)
+   * would both crash the game during a double -> single battle transition due to `scene.currentBattle` having been overwritten
+   * (affecting the return value of `BattleScene.getPlayerField` and causing `PokemonPhase.getPokemon` to return `undefined`).
+   * If this phase is refactored, this method should be removed in favor of a more flexible {@linkcode getPokemon}
+   * (or ideally a complete overhaul of field getters)
+   * @see {@link https://github.com/Despair-Games/poketernity/pull/1236#pullrequestreview-3046453380}
+   */
+  protected getPokemonAtFieldIndex(): Pokemon | undefined {
+    return this.getAlliedParty()[this.fieldIndex];
+  }
+
+  // Bandaid fix to prevent crashes from dynamic speed order accessing PokemonPhase.getPokemon and crashing
+  public override getPokemon() {
+    return this.getPokemonAtFieldIndex()!;
   }
 
   public override async start(): Promise<void> {
@@ -61,6 +82,7 @@ export class RecallPhase extends PokemonPhase {
           trainerName: globalScene.currentBattle.trainer?.getName(this.getTrainerSlot()),
           pokemonName: this.pokemon.getNameToRender(),
         });
+
     // TODO: check and adjust this delay if needed
     // TODO: make this use a helper
     globalScene.ui.showText(text, null, resolve, 250);

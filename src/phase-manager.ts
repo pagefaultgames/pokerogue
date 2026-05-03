@@ -12,6 +12,7 @@ import { DynamicQueueManager } from "#app/dynamic-queue-manager";
 import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
 import { PhaseTree } from "#app/phase-tree";
+import { IS_TEST } from "#constants/app-constants";
 import type { BattlerIndex, FieldBattlerIndex } from "#enums/battler-index";
 import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import { SwitchType } from "#enums/switch-type";
@@ -329,9 +330,7 @@ export class PhaseManager {
   ): void {
     const phases = [
       this.create("RecallPhase", battlerIndex, switchType),
-      this.create("SwitchPhase", battlerIndex, switchType, switchInIndex),
-      this.create("SummonPhase", battlerIndex, { switchType }),
-      this.create("PostSummonPhase", battlerIndex),
+      this.create("SwitchPhase", battlerIndex, switchType, switchInIndex, {}),
     ] as const;
 
     switch (when) {
@@ -363,8 +362,8 @@ export class PhaseManager {
     battlerIndex: FieldBattlerIndex,
     { when, checkSwitch = !isEnemy(battlerIndex), ...summonPhaseOpts }: BattlerEntranceParams,
   ): void {
-    if (checkSwitch && isEnemy(battlerIndex)) {
-      throw new Error("Cannot queue a CheckSwitchPhase for an enemy Pokemon!");
+    if (IS_TEST && checkSwitch && isEnemy(battlerIndex)) {
+      throw new Error("Attempted to queue a CheckSwitchPhase for an enemy Pokemon!");
     }
 
     const phases = [

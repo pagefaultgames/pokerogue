@@ -8,8 +8,9 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { UiMode } from "#enums/ui-mode";
 import type { Pokemon } from "#field/pokemon";
 import { PokemonPhase } from "#phases/pokemon-phase";
+import type { PostSummonPhase } from "#phases/post-summon-phase";
 import type { RecallPhase } from "#phases/recall-phase";
-import type { SummonPhase } from "#phases/summon-phase";
+import type { SummonPhase, SummonPhaseOptions } from "#phases/summon-phase";
 import { PartyOption, PartyUiMode } from "#ui/party-ui-handler";
 
 /**
@@ -21,7 +22,8 @@ export class SwitchPhase extends PokemonPhase {
 
   private switchType: SwitchType;
   private switchInIndex: number;
-  private readonly withSummon: boolean;
+  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: Biome cannot detect this being used in destructuring
+  private readonly summonPhaseOptions?: SummonPhaseOptions | undefined;
 
   /**
    * @param battlerIndex - The {@linkcode FieldBattlerIndex} of the Pokemon switching **out**
@@ -29,19 +31,28 @@ export class SwitchPhase extends PokemonPhase {
    * to perform
    * @param switchInIndex - The party index of the Pokemon switching **in**, or `-1` to prompt a switch
    * from the Player party selector or enemy AI; default `-1`
-   * @param withSummon (Default `false`) Whether to queue a `SummonPhase` immediately after this phase ends.
-   * Used exclusively for faint switches to propagate the selected switch in choice.
+   * @param summonPhaseOptions - If provided, will be used as parameters to queue a {@linkcode SummonPhase} and {@linkcode PostSummonPhase} immediately after this phase ends.
+   * Used exclusively for faint switches to send in the party member chosen by this Phase,
+   * as well as mid-battle switches (to ensure relevant phases remain grouped alongside this Phase).
    */
-  // TODO: Remove the `withSummon` parameter in favor of queueing relevant switches at turn end
-  constructor(battlerIndex: FieldBattlerIndex, switchType: SwitchType, switchInIndex = -1, withSummon = false) {
+  // TODO: Stop using the `summonPhaseOptions` parameter for faint switches in favor of queueing relevant switches at turn end
+  // (alongside the relevant selection code)
+  constructor(
+    battlerIndex: FieldBattlerIndex,
+    switchType: SwitchType,
+    switchInIndex = -1,
+    summonPhaseOptions?: Omit<SummonPhaseOptions, "switchType">,
+  ) {
     super(battlerIndex);
 
     this.switchType = switchType;
     this.switchInIndex = switchInIndex;
-    this.withSummon = withSummon;
+    this.summonPhaseOptions = summonPhaseOptions;
   }
 
   public override start(): void {
+    super.start();
+
     if (this.switchInIndex !== -1) {
       this.updatePokemonData();
       this.end();
@@ -117,8 +128,8 @@ export class SwitchPhase extends PokemonPhase {
     // (e.g. "binding" effects from Bind, Fire Spin, etc.)
     activePokemon.getOpponents().forEach(opp => opp.removeTagsBySourceId(activePokemon.id));
 
-    // Decrement the switched in pokemon's turn count so it's still considered to have just entered
-    // for the purposes of fake out-like effects
+    // Decrement the switched-in Pokemon's turn counts so it's considered to have just entered
+    // for the purposes of Fake Out and similar effects
     switchedInPokemon.tempSummonData.turnCount--;
     switchedInPokemon.tempSummonData.waveTurnCount--;
 
@@ -187,12 +198,13 @@ export class SwitchPhase extends PokemonPhase {
   }
 
   public override end(): void {
-    // TODO: This is bad for the reasons described above
-    if (this.withSummon) {
-      globalScene.phaseManager.unshiftNew("SummonPhase", this.battlerIndex, {
-        switchType: this.switchType,
+    const { battlerIndex, switchType, summonPhaseOptions } = this;
+    if (summonPhaseOptions != null) {
+      globalScene.phaseManager.unshiftNew("SummonPhase", battlerIndex, {
+        switchType,
+        ...summonPhaseOptions,
       });
-      globalScene.phaseManager.pushNew("PostSummonPhase", this.battlerIndex);
+      globalScene.phaseManager.unshiftNew("PostSummonPhase", battlerIndex);
     }
     super.end();
   }

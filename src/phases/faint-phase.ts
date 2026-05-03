@@ -177,7 +177,7 @@ export class FaintPhase extends PokemonPhase {
          * push a phase that prompts the player to summon a Pokemon from their party.
          */
         // TODO: This should go at turn end
-        globalScene.phaseManager.pushNew("SwitchPhase", this.battlerIndex, SwitchType.FAINT_SWITCH, -1, true);
+        globalScene.phaseManager.pushNew("SwitchPhase", this.battlerIndex, SwitchType.FAINT_SWITCH, -1, {});
       }
     } else {
       globalScene.phaseManager.unshiftNew("VictoryPhase", this.battlerIndex);

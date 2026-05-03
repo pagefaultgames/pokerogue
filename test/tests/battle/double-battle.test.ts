@@ -114,23 +114,31 @@ describe("Double Battles", () => {
     }
   });
 
-  // TODO: We currently queue all the switches in succession, and have no
-  it.todo("should trigger switches in speed order", async () => {
+  it("should trigger multiple switches in speed order without swapping phases", async () => {
     game.override.battleStyle("double").battleType(BattleType.TRAINER);
 
     await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.FEEBAS, SpeciesId.POLITOED, SpeciesId.MILOTIC);
 
-    const [player1, player2, player3] = game.scene.getPlayerParty();
+    const [player1, player2, player3, player4] = game.scene.getPlayerParty();
     const [enemy1, enemy2] = game.scene.getEnemyField();
     game.field.mockAbility(player2, AbilityId.SWIFT_SWIM);
     game.field.mockAbility(player3, AbilityId.DRIZZLE);
-    player1.setStat(Stat.SPD, 100);
-    player2.setStat(Stat.SPD, 40);
-    player3.setStat(Stat.SPD, 10);
-    enemy1.setStat(Stat.SPD, 55);
-    enemy2.setStat(Stat.SPD, 50);
+    vi.spyOn(player1, "getStat").mockImplementation(stat => (stat === Stat.SPD ? 100 : player1.stats[stat]));
+    vi.spyOn(player2, "getStat").mockImplementation(stat => (stat === Stat.SPD ? 40 : player2.stats[stat]));
+    vi.spyOn(player3, "getStat").mockImplementation(stat => (stat === Stat.SPD ? 10 : player3.stats[stat]));
+    vi.spyOn(enemy1, "getStat").mockImplementation(stat => (stat === Stat.SPD ? 55 : enemy1.stats[stat]));
+    vi.spyOn(enemy2, "getStat").mockImplementation(stat => (stat === Stat.SPD ? 50 : enemy2.stats[stat]));
 
-    const phaseStartSpy = vi.spyOn(Phase.prototype, "start");
+    // Mock out `Phase.start` to track all switch/recall/summon/post summon phases queued,
+    // alongside a reference to their respective pokemon.
+    // We cannot do this _post hoc_ as the `SwitchPhase`s will have rearranged the player party by turn end
+    // (thus making any BattlerIndex-based references inaccurate)
+    const phases = [] as ["RecallPhase" | "SwitchPhase" | "SummonPhase" | "PostSummonPhase", string][];
+    vi.spyOn(Phase.prototype, "start").mockImplementation(function (this: Phase) {
+      if (this.is("RecallPhase") || this.is("SwitchPhase") || this.is("SummonPhase") || this.is("PostSummonPhase")) {
+        phases.push([this.phaseName, this.getPokemon().name]);
+      }
+    });
 
     // switch magikarp out for politoed, and feebas out for milotic
     // drizzle should double feebas' speed and make it move 2nd
@@ -139,21 +147,21 @@ describe("Double Battles", () => {
     game.forceEnemyToSwitch();
     await game.toEndOfTurn();
 
-    // TODO: Ensure proper ordering of effects
-
-    for (const phaseName of ["RecallPhase", "SwitchPhase", "SummonPhase", "PostSummonPhase"] as const) {
-      const p1Index = phaseStartSpy.mock.contexts.findIndex(
-        phase => phase.is(phaseName) && phase["battlerIndex"] === BattlerIndex.PLAYER,
-      );
-      const p2Index = phaseStartSpy.mock.contexts.findIndex(
-        phase => phase.is(phaseName) && phase["battlerIndex"] === BattlerIndex.PLAYER_2,
-      );
-      const e1Index = phaseStartSpy.mock.contexts.findIndex(
-        phase => phase.is(phaseName) && phase["battlerIndex"] === BattlerIndex.ENEMY,
-      );
-      expect(p2Index, `player 2 ${phaseName} happened before player 1 ${phaseName}`).toBeGreaterThan(p1Index);
-      expect(p2Index, `player 2 ${phaseName} happened after enemy 1 ${phaseName}`).toBeLessThan(e1Index);
-    }
+    // Ensure proper ordering of effects - each pokemon should do recall -> switch -> summon -> post summon in that order
+    expect(phases).toEqual([
+      ["RecallPhase", player1.name],
+      ["SwitchPhase", player1.name],
+      ["SummonPhase", player3.name],
+      ["PostSummonPhase", player3.name],
+      ["RecallPhase", player2.name],
+      ["SwitchPhase", player2.name],
+      ["SummonPhase", player4.name],
+      ["PostSummonPhase", player4.name],
+      ["RecallPhase", enemy1.name],
+      ["SwitchPhase", enemy1.name],
+      ["SummonPhase", expect.anything()],
+      ["PostSummonPhase", expect.anything()],
+    ]);
   });
 
   describe("Trainer Double Battles", () => {

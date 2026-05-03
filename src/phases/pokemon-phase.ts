@@ -43,23 +43,6 @@ export abstract class PokemonPhase extends FieldPhase {
     return globalScene.getField()[this.battlerIndex]!;
   }
 
-  /**
-   * @returns The {@linkcode Pokemon} at this Phase's field index, or
-   * `undefined` if no such Pokemon exists. Unlike {@linkcode getPokemon}, this
-   * doesn't require the Pokemon to be active or on the field for it
-   * to be returned.
-   *
-   * @todo This is a bandaid fix for an issue where {@linkcode RecallPhase}
-   * would crash the game during a double -> single battle transition due to the prior battle having been overwritten
-   * (affecting the return value of `BattleScene.getPlayerField`.)
-   * If this phase is refactored, this method should be removed in favor of a more flexible {@linkcode getPokemon}
-   * (or ideally a complete overhaul of field getters)
-   * @see {@link https://github.com/Despair-Games/poketernity/pull/1236#pullrequestreview-3046453380}
-   */
-  protected getPokemonAtFieldIndex(): Pokemon | undefined {
-    return this.getAlliedParty()[this.fieldIndex];
-  }
-
   protected getAlliedParty(): Pokemon[] {
     return this.player ? globalScene.getPlayerParty() : globalScene.getEnemyParty();
   }
