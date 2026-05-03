@@ -21,7 +21,7 @@ export class PokerogueApi extends ApiBase {
     this.savedata = new PokerogueSavedataApi(base);
   }
 
-  /** Request game title-stats. */
+  /** Request game title stats. */
   public async getGameTitleStats(): Promise<TitleStatsResponse | null> {
     try {
       const response = await this.doGet("/game/titlestats");
