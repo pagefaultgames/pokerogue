@@ -59,6 +59,7 @@ import type { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { PokemonType } from "#enums/pokemon-type";
 import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { TextStyle } from "#enums/text-style";
 import { TimeOfDay } from "#enums/time-of-day";
@@ -156,7 +157,8 @@ import { deepMergeSpriteData } from "#utils/data";
 import { getEnumValues } from "#utils/enums";
 import { cachedFetch } from "#utils/fetch-utils";
 import { getModifierPoolForType, getModifierType } from "#utils/modifier-utils";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { decodeNickname, getPokemonSpecies } from "#utils/pokemon-utils";
+import { capitalizeFirstLetterOnly } from "#utils/strings";
 import i18next from "i18next";
 import Phaser from "phaser";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
@@ -3436,8 +3438,16 @@ export class BattleScene extends SceneBase {
     return false;
   }
 
-  updateGameInfo(): void {
+  public updateGameInfo(): void {
+    const variantMap = {
+      [0]: "Normal",
+      [1]: "Rare",
+      [2]: "Epic",
+    };
     const gameInfo = {
+      //! Make sure to update this in accordance with semver when the output is changed
+      // cf https://semver.org/
+      gameInfoVersion: "2.0.0",
       playTime: this.sessionPlayTime ?? 0,
       gameMode: this.currentBattle ? this.gameMode.getName() : "Title",
       biome: this.currentBattle ? getBiomeName(this.arena.biomeId) : "",
@@ -3445,17 +3455,66 @@ export class BattleScene extends SceneBase {
       party:
         this.party?.map(p => ({
           name: p.name,
+          nickname: p.nickname ? decodeNickname(p.nickname, p.name) : "",
+          gender: capitalizeFirstLetterOnly(Gender[p.gender]),
           form: p.getFormKey(),
-          // Ignore alterations from Transform/etc.
-          types: p.getTypes(false, false, false).map(type => PokemonType[type]),
-          teraType: PokemonType[p.getTeraType()],
+          // Does not include temporary changes, such as those from Transform, Forest's Curse, etc
+          // Ignores Tera type
+          types: p.getTypes(false, false, true, false).map(pType => capitalizeFirstLetterOnly(PokemonType[pType])),
+          // Includes temporary changes, such as those from Transform, Forest's Curse, etc
+          // Ignores Tera type
+          tempTypes:
+            p.summonData.types.length > 0 || p.summonData.addedType
+              ? p.getTypes(false, false, false, false).map(pType => capitalizeFirstLetterOnly(PokemonType[pType]))
+              : [],
+          teraType: capitalizeFirstLetterOnly(PokemonType[p.getTeraType()]),
           isTerastallized: p.isTerastallized,
           level: p.level,
           currentHP: p.hp,
           maxHP: p.getMaxHp(),
-          status: p.status?.effect ? StatusEffect[p.status.effect] : "",
-        })) ?? [], // TODO: review if this can be nullish
-      modeChain: this.ui?.getModeChain() ?? [],
+          status: p.status?.effect ? capitalizeFirstLetterOnly(StatusEffect[p.status.effect]) : "",
+          // the pokemon's actual moveset
+          moveset: p.getMoveset(true).map(move => move.getName()),
+          // the pokemon's temporary moveset, e.g. from Transform
+          // biome-ignore lint/style/useExplicitLengthCheck: doubles as a null check
+          tempMoveset: p.summonData.moveset?.length ? p.getMoveset().map(move => move.getName()) : [],
+          // the pokemon's actual ability
+          ability: p.getAbility(true).name,
+          // the pokemon's temporary ability, e.g. from Transform or Skill Swap
+          tempAbility: p.summonData.ability ? p.getAbility().name : "",
+          passiveAbility: p.getPassiveAbility().name,
+          isPassiveEnabled: p.hasPassive(),
+          nature: capitalizeFirstLetterOnly(Nature[p.getNature()]),
+          baseStats: {
+            atk: p.getStat(Stat.ATK),
+            def: p.getStat(Stat.DEF),
+            spAtk: p.getStat(Stat.SPATK),
+            spDef: p.getStat(Stat.SPDEF),
+            speed: p.getStat(Stat.SPD),
+          },
+          // e.g. from Transform
+          tempStats: p.summonData.stats.some(v => v > 0)
+            ? {
+                atk: p.getStat(Stat.ATK, false),
+                def: p.getStat(Stat.DEF, false),
+                spAtk: p.getStat(Stat.SPATK, false),
+                spDef: p.getStat(Stat.SPDEF, false),
+                speed: p.getStat(Stat.SPD, false),
+              }
+            : {},
+          statStages: {
+            atk: p.getStatStage(Stat.ATK),
+            def: p.getStatStage(Stat.DEF),
+            spAtk: p.getStatStage(Stat.SPATK),
+            spDef: p.getStatStage(Stat.SPDEF),
+            speed: p.getStatStage(Stat.SPD),
+            acc: p.getStatStage(Stat.ACC),
+            eva: p.getStatStage(Stat.EVA),
+          },
+          shiny: p.isShiny(),
+          variant: p.isShiny() ? variantMap[p.getVariant()] : "N/A",
+          isFusion: p.isFusion(),
+        })) ?? [],
     };
     // TODO: Don't store it here
     (window as any).gameInfo = gameInfo;

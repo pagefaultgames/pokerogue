@@ -181,7 +181,7 @@ import {
 import { calculateBossSegmentDamage } from "#utils/damage";
 import { getEnumValues } from "#utils/enums";
 import { cachedFetch } from "#utils/fetch-utils";
-import { getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { decodeNickname, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { ValueHolder } from "#utils/value-holder";
 import { QuantizerCelebi } from "@material/material-color-utilities";
@@ -471,25 +471,16 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     useIllusion?: boolean;
     prependFormName?: boolean;
   } = {}) {
-    const decodeNickname = (nickname: string): string => {
-      try {
-        return decodeURIComponent(escape(atob(nickname))); // TODO: this seems jank, and `escape` is deprecated
-      } catch (err) {
-        console.error(`Failed to decode nickname for ${this.name}`, err);
-        return this.name;
-      }
-    };
-
     const { illusion } = this.summonData;
     if (useIllusion && illusion) {
       if (illusion.nickname) {
-        return decodeNickname(illusion.nickname);
+        return decodeNickname(illusion.nickname, this.name);
       }
       return illusion.name;
     }
 
     if (this.nickname) {
-      return decodeNickname(this.nickname);
+      return decodeNickname(this.nickname, this.name);
     }
 
     if (prependFormName) {
