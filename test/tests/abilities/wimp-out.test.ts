@@ -212,7 +212,7 @@ describe("Abilities - Wimp Out", () => {
 
     expect(game.scene.getPlayerParty()[1]).toBe(wimpod);
     expect(wimpod.hp).toBeGreaterThan(toDmgValue(wimpod.getMaxHp() / 2));
-    expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
+    expect(game.phaseInterceptor.log).toContain("SwitchPhase");
     expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.TYRUNT);
   });
 

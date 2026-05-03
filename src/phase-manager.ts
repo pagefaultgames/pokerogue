@@ -263,7 +263,7 @@ interface BattlerSwitchOutParams {
    * Possible values are:
    *  - `"eager"`: Adds the phase immediately via {@linkcode PhaseManager.unshiftPhase | unshiftPhase}
    *  - `"deferred"`: Adds the phase immediately after all phases queued during this Phase have resolved. \
-   *    Used by force switching moves and abilities to queue switch outs after the current move use ends.
+   *    Used by force switching moves and abilities to queue switch-outs after the current move use ends.
    * @defaultValue `"eager"`
    */
   when?: "eager" | "deferred";

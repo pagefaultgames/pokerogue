@@ -106,7 +106,7 @@ export class TurnStartPhase extends FieldPhase {
     /*
      * `this.end()` will call `PhaseManager#shiftPhase()`, which dumps everything from `phaseQueuePrepend`
      * (aka everything that is queued via `unshift()`) to the front of the queue and dequeues to start the next phase.
-     * This is important since stuff like `SwitchSummonPhase`, `AttemptRunPhase`, and `AttemptCapturePhase` break the "flow" and should take precedence
+     * This is important since stuff like `SwitchPhase`, `AttemptRunPhase`, and `AttemptCapturePhase` break the "flow" and should take precedence
      */
     this.end();
   }

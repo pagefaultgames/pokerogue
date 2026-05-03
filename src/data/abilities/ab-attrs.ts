@@ -5679,7 +5679,7 @@ class ForceSwitchOutHelper {
       }
       /*
        * For non-wild battles, it checks if the opposing party has any available Pokémon to switch in.
-       * If yes, the Pokémon leaves the field and a new SwitchSummonPhase is initiated.
+       * If yes, the Pokémon leaves the field and a new SwitchPhase is initiated.
        */
     } else if (globalScene.currentBattle.battleType === BattleType.WILD) {
       const allyPokemon = switchOutTarget.getAlly();
@@ -5716,7 +5716,7 @@ class ForceSwitchOutHelper {
       }
       /*
        * For non-wild battles, it checks if the opposing party has any available Pokémon to switch in.
-       * If yes, the Pokémon leaves the field and a new SwitchSummonPhase is initiated.
+       * If yes, the Pokémon leaves the field and a new SwitchPhase is initiated.
        */
     } else {
       if (globalScene.getEnemyParty().filter(p => p.isAllowedInBattle() && !p.isOnField()).length === 0) {

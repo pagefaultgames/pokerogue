@@ -111,7 +111,7 @@ describe("Abilities - Dancer", () => {
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
+    expect(game.phaseInterceptor.log).toContain("SwitchPhase");
     expect(game.field.getPlayerPokemon()).toBe(feebas);
     expect(feebas.getStatStage(Stat.ATK)).toBe(2);
     expect(oricorio.isOnField()).toBe(false);

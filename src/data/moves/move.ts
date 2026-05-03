@@ -7134,51 +7134,67 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
     super(true);
   }
 
+  /**
+   *
+   * @param user {@linkcode Pokemon} using this move
+   * @param target {@linkcode Pokemon} target of this move
+   * @param move {@linkcode Move} being used
+   * @param args N/A
+   * @returns `true` if function succeeds.
+   */
   override apply(user: Pokemon, _target: Pokemon, _move: Move, _args: any[]): boolean {
-    const { phaseManager } = globalScene;
-
     // If user is player, checks if the user has fainted pokemon
     if (user.isPlayer()) {
-      phaseManager.unshiftNew("RevivalBlessingPhase", user);
+      globalScene.phaseManager.unshiftNew("RevivalBlessingPhase", user);
       return true;
     }
 
-    // Revive one of the user's allies selected at random.
-    // Due to the condition, this will only trigger on enemy pokemon.
-    const faintedPokemon = globalScene.getEnemyParty().filter(p => p.isFainted() && !p.isBoss());
-    const slotIndex = user.randBattleSeedInt(faintedPokemon.length);
-    const pokemon = faintedPokemon[slotIndex];
-
-    pokemon.resetStatus(true, false, false, true);
-    pokemon.heal(Math.min(toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
-    phaseManager.queueMessage(
-      i18next.t("moveTriggers:revivalBlessing", { pokemonName: getPokemonNameWithAffix(pokemon) }),
-      0,
-      true,
-    );
-
-    // Handle cases where the revived pokemon needs to get switched in on same turn
-    const allyPokemon = user.getAlly();
     if (
-      globalScene.currentBattle.double
-      && globalScene.getEnemyParty().length > 1
-      && allyPokemon != null
-      && (allyPokemon.isFainted() || allyPokemon === pokemon)
+      user.isEnemy()
+      && user.hasTrainer() // TODO: redundant due to `getCondition`
+      && globalScene.getEnemyParty().findIndex(p => p.isFainted() && !p.isBoss()) > -1
     ) {
-      // Enemy switch phase should be removed and replaced with the revived pkmn switching in
-      // TODO: This is a byproduct of `FaintPhase` scheduling replacement switch phases immediately.
-      // It should be removed afterwards
-      phaseManager.tryRemovePhase("SwitchPhase", phase => phase.fieldIndex === slotIndex);
-      // If the pokemon being revived was alive earlier in the turn, cancel its move
-      // (revived pokemon can't move in the turn they're brought back)
-      // TODO: move this to `FaintPhase` after checking for Rev Seed; to fix issues with repeated force switching
-      phaseManager.getMovePhase((phase: MovePhase) => phase.pokemon === pokemon)?.cancel();
-      if (user.fieldPosition === FieldPosition.CENTER) {
-        user.setFieldPosition(FieldPosition.LEFT);
+      // If used by an enemy trainer with at least one fainted non-boss Pokemon, this
+      // revives one of said Pokemon selected at random.
+      const faintedPokemon = globalScene.getEnemyParty().filter(p => p.isFainted() && !p.isBoss());
+      const pokemon = faintedPokemon[user.randBattleSeedInt(faintedPokemon.length)];
+      const slotIndex = globalScene.getEnemyParty().findIndex(p => pokemon.id === p.id);
+      pokemon.resetStatus(true, false, false, true);
+      pokemon.heal(Math.min(toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
+      globalScene.phaseManager.queueMessage(
+        i18next.t("moveTriggers:revivalBlessing", { pokemonName: getPokemonNameWithAffix(pokemon) }),
+        0,
+        true,
+      );
+
+      // Handle cases where revived pokemon needs to get switched in on same turn
+      const allyPokemon = user.getAlly() as EnemyPokemon | undefined;
+      if (
+        globalScene.currentBattle.double
+        && globalScene.getEnemyParty().length > 1
+        && allyPokemon != null
+        && (allyPokemon.isFainted() || allyPokemon === pokemon)
+      ) {
+        // Enemy switch phase should be removed and replaced with the revived pkmn switching in
+        // TODO: This is a byproduct of `FaintPhase` scheduling replacement switch phases immediately
+        // and should be removed afterwards
+        globalScene.phaseManager.tryRemovePhase("SwitchPhase", phase => phase.fieldIndex === slotIndex);
+        // If the pokemon being revived was alive earlier in the turn, cancel its move
+        // (revived pokemon can't move in the turn they're brought back)
+        // TODO: move this to `FaintPhase` after checking for Rev Seed; to fix issues with repeated force switching
+        // TODO: This is not how revival blessing cancels a move (it just removes it altogether w/o failure message)
+        globalScene.phaseManager.getMovePhase((phase: MovePhase) => phase.pokemon === pokemon)?.cancel();
+        if (user.fieldPosition === FieldPosition.CENTER) {
+          user.setFieldPosition(FieldPosition.LEFT);
+        }
+        globalScene.phaseManager.queueBattlerEntrance(allyPokemon.getBattlerIndex(), {
+          when: "eager",
+          playTrainerAnim: false,
+        });
       }
-      phaseManager.queueBattlerEntrance(allyPokemon.getBattlerIndex(), { when: "delayed", playTrainerAnim: false });
+      return true;
     }
-    return true;
+    return false;
   }
 
   getCondition(): MoveConditionFunc {
