@@ -2303,10 +2303,22 @@ export class BattleScene extends SceneBase {
     return randSeedItem(biomes);
   }
 
-  isBgmPlaying(): boolean {
+  // #region Audio
+  // TODO: move audio-related code out of `BattleScene`
+
+  /** @returns Whether there is an active bgm playing */
+  public isBgmPlaying(): boolean {
     return this.bgm?.isPlaying ?? false;
   }
 
+  /**
+   * Stops the previously playing bgm (if it exists) and starts playing a new bgm.
+   * @remarks
+   * Helper function used by {@linkcode BattleScene.playBgm | playBgm}.
+   * @param bgmName - The bgm to play
+   * @param loop - Whether to loop the bgm
+   * @param loopPoint - The starting point of the loop, in seconds
+   */
   private playNewBgm(bgmName: string, loop: boolean, loopPoint: number): void {
     this.ui.bgmBar.setBgmToBgmBar(bgmName);
 
@@ -2320,7 +2332,18 @@ export class BattleScene extends SceneBase {
     this.bgm.play(this.masterVolume * this.bgmVolume);
   }
 
-  public playBgm(bgmName?: string, fadeOutPrevious?: boolean, loop = true): BackgroundMusic | null {
+  /**
+   * Plays a new bgm.
+   * @param bgmName - (Optional) The bgm to play. \
+   * If not specified, will first fall back to choosing the bgm based on the current battle config,
+   * then further based on the current Biome. \
+   * Can be overridden by a currently running event.
+   * @param fadeOutPrevious - (Default `false`) Whether to fade out the previously playing bgm
+   * @param loop - (Default `true`) Whether to loop the new bgm
+   * @returns The {@linkcode BackgroundMusic} instance for the new bgm,
+   * or `null` if no valid bgm could be played or the input bgm was the same as the currently playing bgm
+   */
+  public playBgm(bgmName?: string, fadeOutPrevious = false, loop = true): BackgroundMusic | null {
     const resolvedName = timedEventManager.getEventBgmReplacement(
       bgmName ?? this.currentBattle?.getBgmOverride() ?? this.arena?.bgm,
     );
@@ -2353,6 +2376,10 @@ export class BattleScene extends SceneBase {
     return this.bgm;
   }
 
+  /**
+   * Pauses the current bgm.
+   * @returns Whether an active bgm was paused
+   */
   public pauseBgm(): boolean {
     if (this.bgm?.isPlaying) {
       this.bgm.pause();
@@ -2361,6 +2388,10 @@ export class BattleScene extends SceneBase {
     return false;
   }
 
+  /**
+   * Resumes the active bgm.
+   * @returns Whether an active bgm was resumed
+   */
   public resumeBgm(): boolean {
     if (this.bgm?.isPaused) {
       this.bgm.resume();
@@ -2369,12 +2400,13 @@ export class BattleScene extends SceneBase {
     return false;
   }
 
+  /** Updates the set volume for the audio/bgm with the user's saved config values. */
   public updateSoundVolume(): void {
+    this.bgm?.setVolume(this.masterVolume * this.bgmVolume);
+
     if (!this.sound) {
       return;
     }
-
-    this.bgm?.setVolume(this.masterVolume * this.bgmVolume);
 
     for (const sound of this.sound.getAllPlaying() as AnySound[]) {
       const [category, name] = sound.key.split("/");
@@ -2395,25 +2427,38 @@ export class BattleScene extends SceneBase {
     }
   }
 
+  /**
+   * Fades out the current bgm over `duration` ms.
+   * @param duration - (Default `500`) The amount of time the fade out should take place over, in ms
+   */
   public fadeOutBgm(duration = 500): void {
     this.bgm?.fadeOut(duration);
   }
 
   /**
    * Fade out the current BGM track over `delay` ms, then start `newBgmKey` once it finishes.
-   * @param newBgmKey - The key for the next track to start
-   * @param delay - The delay to use before starting the next track
+   * @param newBgmKey - (Optional) The key for the next track to start
+   * @param delay - (Default `2000`) The delay to use before starting the next track
    */
-  fadeAndSwitchBgm(newBgmKey?: string, delay = 2000): void {
+  public fadeAndSwitchBgm(newBgmKey?: string, delay = 2000): void {
     this.fadeOutBgm(delay);
     this.time.delayedCall(delay, () => {
       this.playBgm(newBgmKey);
     });
   }
 
-  playSound(sound: string | AnySound, config?: object): AnySound | null {
+  /**
+   * Plays a sound effect (such as a Pokemon cry, UI cursor sfx, etc)
+   * @param sound - The sound effect to play
+   * @param config - (Optional) A `Phaser` {@linkcode Phaser.Types.Sound.SoundConfig | SoundConfig}
+   * or {@linkcode Phaser.Types.Sound.SoundMarker | SoundMarker} object
+   * @returns
+   */
+  public playSound(
+    sound: string | AnySound,
+    config: Phaser.Types.Sound.SoundConfig | Phaser.Types.Sound.SoundMarker = {},
+  ): AnySound | null {
     const key = typeof sound === "string" ? sound : sound.key;
-    config = config ?? {};
     try {
       const keyDetails = key.split("/");
       config["volume"] = config["volume"] ?? 1;
@@ -2427,7 +2472,7 @@ export class BattleScene extends SceneBase {
           }
           break;
         case "ui":
-          //As of, right now this applies to the "select", "menu_open", "error" sound effects
+          // Currently, this applies to the "select", "menu_open", "error" sound effects
           config["volume"] *= this.masterVolume * this.uiVolume;
           break;
         case "se":
@@ -2451,13 +2496,13 @@ export class BattleScene extends SceneBase {
     const tempBgm = new BackgroundMusic(bgmName, false);
     tempBgm.onEnd(() => this.bgm?.resume());
     this.bgm?.pause();
-    tempBgm.play();
+    tempBgm.play(this.masterVolume * this.bgmVolume);
 
     return tempBgm;
   }
 
   /** The loop point of any given battle, mystery encounter, or title track, read as seconds and milliseconds. */
-  getBgmLoopPoint(bgmName: string): number {
+  public getBgmLoopPoint(bgmName: string): number {
     switch (bgmName) {
       case "title": //Firel PokéRogue Title
         return 46.5;
@@ -2693,6 +2738,8 @@ export class BattleScene extends SceneBase {
 
     return 0;
   }
+
+  // #endregion
 
   toggleInvert(invert: boolean): void {
     if (invert) {

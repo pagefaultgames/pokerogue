@@ -17,6 +17,7 @@ import { Howl } from "howler";
 export class BackgroundMusic {
   /** The key for the audio file */
   public readonly key: string;
+
   /** The underlying {@linkcode Howl} instance used to stream music. */
   private readonly howl: Howl;
   /** Whether this BGM has been evicted from memory. */
@@ -32,6 +33,11 @@ export class BackgroundMusic {
     return !this.howl.playing() && (this.howl.seek() as number) > 0;
   }
 
+  /**
+   * @param key - The bgm to use
+   * @param loop - Whether to loop the bgm
+   * @param loopPoint - (Default `0`) The starting point of the loop, in seconds
+   */
   constructor(key: string, loop: boolean, loopPoint = 0) {
     this.key = key;
     const url = getCachedUrl(`audio/bgm/${key}.mp3`);
