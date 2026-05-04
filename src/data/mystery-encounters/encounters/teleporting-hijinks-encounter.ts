@@ -255,8 +255,14 @@ async function animateBiomeChange(nextBiome: BiomeId): Promise<void> {
 
   const biomeKey = getBiomeKey(nextBiome);
   const bgTexture = `${biomeKey}_bg`;
-  globalScene.arenaBgTransition.setTexture(bgTexture).setAlpha(0).setVisible(true);
-  globalScene.arenaPlayerTransition.setAlpha(0).setVisible(true).setBiome(nextBiome);
+  globalScene.arenaBgTransition //
+    .setTexture(bgTexture)
+    .setAlpha(0)
+    .setVisible(true);
+  globalScene.arenaPlayerTransition //
+    .setAlpha(0)
+    .setVisible(true)
+    .setBiome(nextBiome);
 
   await playTween({
     targets: [globalScene.arenaPlayer, globalScene.arenaBgTransition, globalScene.arenaPlayerTransition],
@@ -266,8 +272,12 @@ async function animateBiomeChange(nextBiome: BiomeId): Promise<void> {
   });
 
   globalScene.arenaBg.setTexture(bgTexture);
-  globalScene.arenaPlayer.setAlpha(1).setBiome(nextBiome);
-  globalScene.arenaEnemy.setAlpha(1).setBiome(nextBiome);
+  globalScene.arenaPlayer //
+    .setAlpha(1)
+    .setBiome(nextBiome);
+  globalScene.arenaEnemy //
+    .setAlpha(1)
+    .setBiome(nextBiome);
   globalScene.arenaNextEnemy.setBiome(nextBiome);
   globalScene.arenaBgTransition.setVisible(false);
   globalScene.arenaPlayerTransition.setVisible(false);

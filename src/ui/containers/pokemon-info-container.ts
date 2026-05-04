@@ -468,7 +468,7 @@ export class PokemonInfoContainer extends Phaser.GameObjects.Container {
     this.pokemonMovesContainer.setVisible(false);
   }
 
-  async makeRoomForConfirmUi(speedMultiplier = 1, fromCatch = false): Promise<void> {
+  public async makeRoomForConfirmUi(speedMultiplier = 1, fromCatch = false): Promise<void> {
     const xPosition = this.initialX - this.infoWindowWidth - (fromCatch ? 67 : ConfirmUiHandler.windowWidth);
 
     const infoTween = globalScene.tweens.getTweensOf(this)[0];
@@ -483,7 +483,7 @@ export class PokemonInfoContainer extends Phaser.GameObjects.Container {
     });
   }
 
-  async hide(speedMultiplier = 1): Promise<void> {
+  public async hide(speedMultiplier = 1): Promise<void> {
     if (!this.visible) {
       globalScene.showEnemyModifierBar();
     }
@@ -506,7 +506,9 @@ export class PokemonInfoContainer extends Phaser.GameObjects.Container {
     ]);
 
     this.setVisible(false);
-    this.pokemonShinyIcon.off("pointerover").off("pointerout");
+    this.pokemonShinyIcon //
+      .off("pointerover")
+      .off("pointerout");
     globalScene.ui.hideTooltip();
     globalScene.showEnemyModifierBar();
   }
