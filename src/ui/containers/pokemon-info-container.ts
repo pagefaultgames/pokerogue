@@ -486,9 +486,8 @@ export class PokemonInfoContainer extends Phaser.GameObjects.Container {
   public async hide(speedMultiplier = 1): Promise<void> {
     if (!this.visible) {
       globalScene.showEnemyModifierBar();
+      return;
     }
-
-    // TODO: Wait for this to complete
 
     await Promise.all([
       playTween({
