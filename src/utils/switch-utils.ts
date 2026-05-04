@@ -6,11 +6,8 @@ import type { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
 import { IvScannerModifier } from "#modifiers/modifier";
 import type { CheckSwitchPhase } from "#phases/check-switch-phase";
 import type { PostSummonPhase } from "#phases/post-summon-phase";
-import type { RecallPhase } from "#phases/recall-phase";
 import type { ScanIvsPhase } from "#phases/scan-ivs-phase";
 import type { SummonPhase, SummonPhaseOptions } from "#phases/summon-phase";
-import type { ToggleDoublePositionPhase } from "#phases/toggle-double-position-phase";
-import type { Mutable } from "#types/type-helpers";
 import type { NonEmptyTuple } from "type-fest";
 
 /**
@@ -51,13 +48,18 @@ export function queueBattlerEntrancePhases(params: BattlerEntranceParams): void 
   const addPlayer2 = double && availablePlayerPartyMembers.length > 1;
   const addEnemy2 = double && availableEnemyPartyMembers.length > 1;
 
-  const playerMons = availablePlayerPartyMembers.slice(0, addPlayer2 ? 2 : 1);
-  const enemyMons = availableEnemyPartyMembers.slice(0, addEnemy2 ? 2 : 1);
+  // NB: Battle entrance phases use the first 2 party slots since those phases expect it
+  const playerMons = globalScene.getPlayerParty().slice(0, addPlayer2 ? 2 : 1);
+  const enemyMons = globalScene.getEnemyParty().slice(0, addEnemy2 ? 2 : 1);
 
-  const recallPhases = getPlayerRecallPhases(availablePlayerPartyMembers);
+  // If the second player mon is already on the field, recall it before toggling double battle position
+  if (!double && (playerMons[1]?.isOnField() ?? false)) {
+    globalScene.phaseManager.unshiftNew("RecallPhase", BattlerIndex.PLAYER_2);
+  }
+  globalScene.phaseManager.unshiftNew("ToggleDoublePositionPhase", double);
+
   const entrancePhases = getBattlerEntrancePhases(playerMons, enemyMons, params);
-
-  globalScene.phaseManager.unshiftPhase(...[...recallPhases, ...entrancePhases]);
+  globalScene.phaseManager.unshiftPhase(...entrancePhases);
 }
 
 // #region Helpers
@@ -79,25 +81,6 @@ function getBattlerEntrancePhases(
     throw new Error("No phases were queued for battler entrances!");
   }
   return phases as unknown as NonEmptyTuple<(typeof phases)[number]>;
-}
-
-function getPlayerRecallPhases(
-  availablePlayerPartyMembers: readonly PlayerPokemon[],
-): NonEmptyTuple<RecallPhase | ToggleDoublePositionPhase> {
-  const { phaseManager } = globalScene;
-  const { double } = globalScene.currentBattle;
-
-  const phases: Mutable<NonEmptyTuple<RecallPhase | ToggleDoublePositionPhase>> = [
-    // TODO: Consider removing the parameter in a future refactor if possible
-    phaseManager.create("ToggleDoublePositionPhase", double),
-  ];
-
-  // If going from single -> double battle, recall any prior 2nd pokemon before everything else
-  if (!double && availablePlayerPartyMembers[1]?.isOnField()) {
-    phases.unshift(phaseManager.create("RecallPhase", BattlerIndex.PLAYER_2));
-  }
-
-  return phases;
 }
 
 function getSummonPhases(
