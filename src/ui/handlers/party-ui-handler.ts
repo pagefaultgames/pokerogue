@@ -18,6 +18,7 @@ import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { PokemonFormChangeItemModifier, PokemonHeldItemModifier } from "#modifiers/modifier";
 import type { PokemonMove } from "#moves/pokemon-move";
+import type { CommandPhase } from "#phases/command-phase";
 import { getVariantTint } from "#sprites/variant";
 import type { TurnMove } from "#types/turn-move";
 import { MessageUiHandler } from "#ui/message-ui-handler";
@@ -43,8 +44,10 @@ const defaultMessage = i18next.t("partyUiHandler:choosePokemon");
  */
 export enum PartyUiMode {
   /**
-   * Indicates that the party UI is open because of a user-opted switch.  This
-   * type of switch can be cancelled.
+   * Indicates that the party UI is open because of a user-opted switch during `CommandPhase`.
+   * This type of switch can be cancelled.
+   * @remarks
+   * Using this during any other type of Phase will crash when attempting to send out the chosen pokemon.
    */
   SWITCH,
   /**
@@ -905,18 +908,6 @@ export class PartyUiHandler extends MessageUiHandler {
       return true;
     }
 
-    // This is used when switching out using the Pokemon command (possibly holding a Baton held item). In this case there is no callback.
-    const currPhase = globalScene.phaseManager.getCurrentPhase();
-    // TODO: Figure out why this code path was being reached during check switch phase and crashing,
-    if (
-      (option === PartyOption.PASS_BATON || option === PartyOption.SEND_OUT)
-      && this.partyUiMode === PartyUiMode.SWITCH
-      && currPhase.is("CommandPhase")
-    ) {
-      this.clearOptions();
-      currPhase.handleCommand(Command.POKEMON, this.cursor, option === PartyOption.PASS_BATON);
-    }
-
     if (
       [
         PartyOption.SEND_OUT, // When sending out at the start of battle, or due to an effect
@@ -937,6 +928,19 @@ export class PartyUiHandler extends MessageUiHandler {
       this.selectCallback = null;
       selectCallback(this.cursor, option);
       return true;
+    }
+
+    // This is used when switching out using the Pokemon command (possibly holding a Baton held item). In this case there is no callback.
+    if (
+      (option === PartyOption.PASS_BATON || option === PartyOption.SEND_OUT)
+      && this.partyUiMode === PartyUiMode.SWITCH
+    ) {
+      this.clearOptions();
+      (globalScene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(
+        Command.POKEMON,
+        this.cursor,
+        option === PartyOption.PASS_BATON,
+      );
     }
 
     return false;
