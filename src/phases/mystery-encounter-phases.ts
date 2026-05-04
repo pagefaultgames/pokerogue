@@ -2,7 +2,6 @@ import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 import { getCharVariantFromDialogue } from "#data/dialogue";
 import { ArenaTagSide } from "#enums/arena-tag-side";
-import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
@@ -396,8 +395,16 @@ export class MysteryEncounterBattlePhase extends Phase {
   private endBattleSetup() {
     const encounterMode = globalScene.currentBattle.mysteryEncounter!.encounterMode;
 
-    // PostSummon and ShinySparkle phases are handled by helper function
+    // PostSummon and ShinySparkle phases are handled by helper function.
+    // We still need to clear COMMANDED tags manually before those phases are queued.
     const availablePartyMembers = globalScene.getPlayerParty().filter(p => p.isAllowedInBattle());
+
+    if (!globalScene.currentBattle.double && availablePartyMembers.length > 1 && availablePartyMembers[1].isOnField()) {
+      // TODO: Can we remove this fallback? There shouldn't be any pokemon on field when this fires
+      for (const pokemon of inSpeedOrder(ArenaTagSide.PLAYER)) {
+        pokemon.lapseTag(BattlerTagType.COMMANDED);
+      }
+    }
 
     // NB: we need to queue the entrance phases here because the ME encounter phase doesn't queue any animations itself somehow?
     queueBattlerEntrancePhases({
@@ -405,19 +412,6 @@ export class MysteryEncounterBattlePhase extends Phase {
       loaded: true,
       checkSwitch: encounterMode !== MysteryEncounterMode.TRAINER_BATTLE && !this.disableSwitch,
     });
-
-    // If not a double battle, recall any prior 2nd pokemon and toggle the player mon to center.
-    // Otherwise, add the 2nd pokemon to the field (if one exists)
-    if (!globalScene.currentBattle.double) {
-      // TODO: Can we remove this fallback? There shouldn't be any pokemon on field when this fires
-      if (availablePartyMembers.length > 1 && availablePartyMembers[1].isOnField()) {
-        for (const pokemon of inSpeedOrder(ArenaTagSide.PLAYER)) {
-          pokemon.lapseTag(BattlerTagType.COMMANDED);
-        }
-        globalScene.phaseManager.unshiftNew("RecallPhase", BattlerIndex.PLAYER_2);
-      }
-      globalScene.phaseManager.unshiftNew("ToggleDoublePositionPhase", false);
-    }
 
     this.end();
   }

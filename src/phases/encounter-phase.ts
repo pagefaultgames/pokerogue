@@ -538,6 +538,7 @@ export class EncounterPhase extends BattlePhase {
 
     queueBattlerEntrancePhases({
       skipEnemySummon: !this.wasTrainer,
+      loaded: this.loaded,
       checkSwitch: battleType !== BattleType.TRAINER && (waveIndex > 1 || !gameMode.isDaily),
     });
 

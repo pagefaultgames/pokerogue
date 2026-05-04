@@ -6,6 +6,7 @@ export class ToggleDoublePositionPhase extends BattlePhase {
   public readonly phaseName = "ToggleDoublePositionPhase";
   private double: boolean;
 
+  // TODO: JUST FUCKING USE `globalScene.currentBattle.double`
   constructor(double: boolean) {
     super();
 
@@ -15,6 +16,7 @@ export class ToggleDoublePositionPhase extends BattlePhase {
   start() {
     super.start();
 
+    // TODO: Pass the pokemon in from the caller
     const playerPokemon = globalScene.getPlayerField().find(p => p.isActive(true));
     if (playerPokemon) {
       playerPokemon
