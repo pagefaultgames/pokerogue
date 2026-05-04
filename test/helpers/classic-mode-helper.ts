@@ -44,7 +44,7 @@ export class ClassicModeHelper extends GameManagerHelper {
       selectStarterPhase.initBattle(starters);
     });
 
-    await this.game.phaseInterceptor.to("EncounterPhase");
+    await this.game.phaseInterceptor.to("SummonPhase", false);
     if (overrides.ENEMY_HELD_ITEMS_OVERRIDE.length === 0 && this.game.override.removeEnemyStartingItems) {
       this.game.removeEnemyHeldItems();
     }

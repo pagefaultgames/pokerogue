@@ -53,7 +53,7 @@ export function queueBattlerEntrancePhases(params: BattlerEntranceParams): void 
   const enemyMons = globalScene.getEnemyParty().slice(0, addEnemy2 ? 2 : 1);
 
   // If the second player mon is already on the field, recall it before toggling double battle position
-  if (!double && (playerMons[1]?.isOnField() ?? false)) {
+  if (!double && (availablePlayerPartyMembers[1]?.isOnField() ?? false)) {
     globalScene.phaseManager.unshiftNew("RecallPhase", BattlerIndex.PLAYER_2);
   }
   globalScene.phaseManager.unshiftNew("ToggleDoublePositionPhase", double);

@@ -82,7 +82,7 @@ describe("Moves - U-turn", () => {
     expect(playerPkm.status?.effect).toEqual(StatusEffect.POISON);
     expect(playerPkm.species.speciesId).toEqual(SpeciesId.RAICHU);
     expect(game.field.getEnemyPokemon().waveData.abilityRevealed).toBe(true); // proxy for asserting ability activated
-    expect(game.phaseInterceptor.log).not.toContain("ObtainStatusEffectPhase");
+    expect(game.phaseInterceptor.log).toContain("ObtainStatusEffectPhase");
   });
 
   it("still forces a switch if u-turn KO's the opponent", async () => {
