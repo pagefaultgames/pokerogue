@@ -30,7 +30,6 @@ const unicodeRanges = {
 
 const rangesByLanguage = {
   chinese: [unicodeRanges.CJKCommon, unicodeRanges.fullwidth, unicodeRanges.CJKIdeograph].join(","),
-  // biome-ignore format: prevent silly formatting
 };
 
 const fonts: LoadingFontFaceProperty[] = [
