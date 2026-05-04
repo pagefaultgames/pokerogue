@@ -167,7 +167,7 @@ async function showTutorialOverlay(handler: UiHandler) {
   if (handler instanceof AwaitableUiHandler && handler.tutorialOverlay) {
     globalScene.tweens.add({
       targets: handler.tutorialOverlay,
-      alpha: 0.5,
+      alpha: 0.6,
       duration: 750,
       ease: "Sine.easeOut",
       onComplete: () => {

@@ -11,25 +11,21 @@ type DataType = "json" | "form-urlencoded";
 interface DoFetchConfig extends SetRequired<UndefinedOnPartialDeep<RequestInit>, "method"> {}
 
 export abstract class ApiBase {
-  //#region Fields
-
+  // TODO: Make constant in outer scope
   public readonly ERR_GENERIC: string = "There was an error";
 
+  /** The base URL for HTTP requests. */
   protected readonly base: string;
-
-  //#region Public
 
   constructor(base: string) {
     this.base = base;
   }
 
-  //#region Protected
-
   /**
    * Send an HTTP GET request.
    * @param path - The path to send the request to
    */
-  protected async doGet(path: string) {
+  protected async doGet(path: string): Promise<Response> {
     return this.doFetch(path, { method: "GET" });
   }
 
@@ -108,7 +104,7 @@ export abstract class ApiBase {
    */
   protected toUrlSearchParams(data: Record<string, any>): URLSearchParams {
     const arr = Object.entries(data)
-      .map(([key, value]) => (value !== undefined ? [key, String(value)] : [key, ""]))
+      .map(([key, value]) => [key, value === undefined ? "" : String(value)])
       .filter(([, value]) => value !== "");
 
     return new URLSearchParams(arr);

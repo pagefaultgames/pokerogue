@@ -1,11 +1,11 @@
 import { timedEventManager } from "#app/global-event-manager";
+import { namespaceMap } from "#app/i18n-namespace-map";
 import { getCachedUrl } from "#utils/fetch-utils";
 import { toKebabCase } from "#utils/strings";
 import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import HttpBackend from "i18next-http-backend";
-import processor from "i18next-korean-postposition-processor";
-import { namespaceMap } from "./utils-plugins";
+import { KoreanPostpositionProcessor } from "i18next-korean-postposition-processor";
 
 //#region Interfaces/Types
 
@@ -14,6 +14,8 @@ interface LoadingFontFaceProperty {
   extraOptions?: { [key: string]: any };
   only?: string[];
 }
+
+//#endregion
 
 //#region Constants
 
@@ -24,14 +26,13 @@ const unicodeRanges = {
   CJKIdeograph: "U+4E00-9FFF",
   devanagari: "U+0900-097F",
   thai: "U+0E00-0E7F",
-  specialCharacters: "U+266A,U+2605,U+2665,U+2663", //♪,★,♥,♣
+  specialCharacters: "U+266A,U+2605,U+2665,U+2663", // ♪, ★, ♥, ♣
 };
 
 const rangesByLanguage = {
   chinese: [unicodeRanges.CJKCommon, unicodeRanges.fullwidth, unicodeRanges.CJKIdeograph].join(","),
-  japanese: [unicodeRanges.CJKCommon, unicodeRanges.fullwidth, unicodeRanges.kana, unicodeRanges.CJKIdeograph].join(
-    ",",
-  ),
+  // biome-ignore format: prevent silly formatting
+  japanese: [unicodeRanges.CJKCommon, unicodeRanges.fullwidth, unicodeRanges.kana, unicodeRanges.CJKIdeograph].join(","),
 };
 
 const fonts: LoadingFontFaceProperty[] = [
@@ -97,12 +98,12 @@ const fonts: LoadingFontFaceProperty[] = [
     }),
   },
   {
-    face: new FontFace("pkmnems", "url(./fonts/terrible-thaifix.ttf)", {
-      unicodeRange: unicodeRanges.thai,
-    }),
+    face: new FontFace("pkmnems", "url(./fonts/terrible-thaifix.ttf)", { unicodeRange: unicodeRanges.thai }),
     extraOptions: { sizeAdjust: "133%" },
   },
 ];
+
+//#endregion
 
 //#region Functions
 
@@ -140,6 +141,8 @@ function i18nMoneyFormatter(amount: any): string {
 // assigned during post-processing in #app/plugins/vite/namespaces-i18n-plugin.ts
 const nsEn: string[] = [];
 
+//#endregion
+
 //#region Exports
 
 /*
@@ -164,7 +167,7 @@ const nsEn: string[] = [];
 await i18next
   .use(HttpBackend)
   .use(LanguageDetector)
-  .use(processor)
+  .use(new KoreanPostpositionProcessor())
   .init(
     {
       fallbackLng: {
@@ -215,6 +218,8 @@ await i18next
       defaultNS: "menu",
       detection: {
         lookupLocalStorage: "prLang",
+        caches: ["localStorage"],
+        order: ["localStorage", "navigator"],
       },
       ns: nsEn,
       debug: import.meta.env.VITE_I18N_DEBUG === "1",

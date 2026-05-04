@@ -8,7 +8,7 @@ import { EncounterPhase } from "#phases/encounter-phase";
 export class NextEncounterPhase extends EncounterPhase {
   public readonly phaseName = "NextEncounterPhase";
 
-  doEncounter(): void {
+  protected override doEncounter(): void {
     globalScene.playBgm(undefined, true);
 
     // Reset all player transient wave data/intel before starting a new wild encounter.
@@ -68,7 +68,9 @@ export class NextEncounterPhase extends EncounterPhase {
           globalScene.lastMysteryEncounter!.introVisuals = undefined;
         }
 
-        if (!this.tryOverrideForBattleSpec()) {
+        if (globalScene.currentBattle.isClassicFinalBoss) {
+          this.displayFinalBossDialogue();
+        } else {
           this.doEncounterCommon();
         }
       },

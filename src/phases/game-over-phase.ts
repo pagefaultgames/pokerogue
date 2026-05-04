@@ -1,4 +1,4 @@
-import { pokerogueApi } from "#api/pokerogue-api";
+import { pokerogueApi } from "#api/api";
 import { clientSessionId } from "#app/account";
 import { globalScene } from "#app/global-scene";
 import { pokemonEvolutions } from "#balance/pokemon-evolutions";
@@ -26,14 +26,15 @@ import { TrainerData } from "#system/trainer-data";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { SessionSaveData } from "#types/save-data";
 import { checkSpeciesValidForChallenge, isNuzlockeChallenge } from "#utils/challenge-utils";
-import { isLocalServerConnected } from "#utils/common";
+import { fixedInt, isLocalServerConnected } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 export class GameOverPhase extends BattlePhase {
   public readonly phaseName = "GameOverPhase";
+
   private isVictory: boolean;
-  private firstRibbons: PokemonSpecies[] = [];
+  private readonly firstRibbons: PokemonSpecies[] = [];
 
   constructor(isVictory = false) {
     super();
@@ -71,6 +72,8 @@ export class GameOverPhase extends BattlePhase {
         i18next.t("miscDialogue:endingName"),
         0,
         () => this.handleGameOver(),
+        0,
+        fixedInt(3000),
       );
     } else if (this.isVictory || !globalScene.enableRetries) {
       this.handleGameOver();
