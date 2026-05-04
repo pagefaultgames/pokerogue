@@ -1,13 +1,17 @@
 import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
 import type { PhaseManager } from "#app/phase-manager";
+import { IS_TEST } from "#constants/app-constants";
 import { BattlerIndex } from "#enums/battler-index";
 import type { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
 import { IvScannerModifier } from "#modifiers/modifier";
 import type { CheckSwitchPhase } from "#phases/check-switch-phase";
 import type { PostSummonPhase } from "#phases/post-summon-phase";
+import type { RecallPhase } from "#phases/recall-phase";
 import type { ScanIvsPhase } from "#phases/scan-ivs-phase";
+import type { ShinySparklePhase } from "#phases/shiny-sparkle-phase";
 import type { SummonPhase, SummonPhaseOptions } from "#phases/summon-phase";
+import type { ToggleDoublePositionPhase } from "#phases/toggle-double-position-phase";
 import type { NonEmptyTuple } from "type-fest";
 
 /**
@@ -24,12 +28,19 @@ interface BattlerEntranceParams extends SummonPhaseOptions {
   checkSwitch: boolean;
 
   /**
-   * Whether to skip queueing opposing {@linkcode SummonPhase}s when summoning wild enemy Pokemon.
+   * Whether to skip queueing {@linkcode SummonPhase}s when summoning wild enemy Pokemon.
    * @privateRemarks
    * Only used in `EncounterPhase` to circumvent its absolutely abhorrent code structure, as summoning wild Pokemon
-   * plays animations directly without an intermediate phase.
+   * plays animations directly without an intermediate phase (while trainers play their animation during a separate phase).
    */
   skipEnemySummon: boolean;
+
+  /**
+   * Whether to summon Pokemon and queue phases as if loading from a save file.
+   * @remarks
+   * This notably skips queueing the phases used for single->double and double->single battle transition.
+   */
+  readonly loaded?: boolean;
 }
 
 /**
@@ -48,50 +59,94 @@ export function queueBattlerEntrancePhases(params: BattlerEntranceParams): void 
   const addPlayer2 = double && availablePlayerPartyMembers.length > 1;
   const addEnemy2 = double && availableEnemyPartyMembers.length > 1;
 
-  // NB: Battle entrance phases use the first 2 party slots since those phases expect it
+  // NB: Battle entrance phases use the first 2 party slots instead of the first 2 available party members
+  // TODO: This assumption may actually be the root cause of the "invalid summon" errors in SummonPhase;
+  // we should revisit this at a later date
   const playerMons = globalScene.getPlayerParty().slice(0, addPlayer2 ? 2 : 1);
   const enemyMons = globalScene.getEnemyParty().slice(0, addEnemy2 ? 2 : 1);
 
-  // If the second player mon is already on the field, recall it before toggling double battle position
-  if (!double && (availablePlayerPartyMembers[1]?.isOnField() ?? false)) {
-    globalScene.phaseManager.unshiftNew("RecallPhase", BattlerIndex.PLAYER_2);
-  }
-  globalScene.phaseManager.unshiftNew("ToggleDoublePositionPhase", double);
-
-  const entrancePhases = getBattlerEntrancePhases(playerMons, enemyMons, params);
-  globalScene.phaseManager.unshiftPhase(...entrancePhases);
-}
-
-// #region Helpers
-
-function getBattlerEntrancePhases(
-  playerMons: readonly PlayerPokemon[],
-  enemyMons: readonly EnemyPokemon[],
-  params: BattlerEntranceParams,
-): NonEmptyTuple<Phase> {
-  // Type assertion is valid as these will always unshift at least 1 phase
+  // TODO: Consider reworking the code to use iterators instead of arrays
   const phases = [
-    ...getSummonPhases(playerMons, enemyMons, params),
+    ...getEnemySummonPhases(enemyMons, params),
+    ...getShinySparklePhases(enemyMons),
     ...getIvScannerPhases(enemyMons),
+    ...getPlayerSummonPhases(playerMons, availablePlayerPartyMembers, params),
     ...getPostSummonPhases([...playerMons, ...enemyMons], params),
   ] as const;
 
-  if (phases.length === 0) {
-    // This should never happen
+  // The above should ALWAYS unshift at least 1 phase (to summon the player party), so we throw an error in tests to ensure the invariant isn't violated
+  // (and let vite remove it during prod)
+  if (IS_TEST && phases.length === 0) {
     throw new Error("No phases were queued for battler entrances!");
   }
-  return phases as unknown as NonEmptyTuple<(typeof phases)[number]>;
+
+  globalScene.phaseManager.unshiftPhase(...(phases as unknown as NonEmptyTuple<Phase>));
 }
 
-function getSummonPhases(
-  playerMons: readonly PlayerPokemon[],
+/**
+ * Obtain the {@linkcode SummonPhase}s for all enemy Pokemon, if any.
+ * Returns an empty array when `skipEnemySummon` is set (e.g. for wild encounters where enemies are placed directly).
+ * @param enemyMons - The enemy pokemon entering battle
+ * @returns The {@linkcode SummonPhase}s to be queued for the enemy Pokemon
+ */
+function getEnemySummonPhases(
   enemyMons: readonly EnemyPokemon[],
-  { skipEnemySummon, ...rest }: BattlerEntranceParams,
+  { skipEnemySummon, ...summonPhaseOpts }: BattlerEntranceParams,
 ): SummonPhase[] {
-  const { phaseManager } = globalScene;
-  const mons: readonly (PlayerPokemon | EnemyPokemon)[] = skipEnemySummon ? playerMons : [...playerMons, ...enemyMons];
+  if (skipEnemySummon) {
+    return [];
+  }
 
-  return mons.map(p => phaseManager.create("SummonPhase", p.getBattlerIndex(), rest));
+  const { phaseManager } = globalScene;
+  return enemyMons.map(p => phaseManager.create("SummonPhase", p.getBattlerIndex(), summonPhaseOpts));
+}
+
+/**
+ * Obtain the {@linkcode SummonPhase}s (and any necessary {@linkcode RecallPhase} / {@linkcode ToggleDoublePositionPhase}s)
+ * required to bring all player Pokemon onto the field at battle start.
+ * @param playerMons - The first 1-2 pokemon in the player's party; assumed to be slated to enter the field
+ */
+function getPlayerSummonPhases(
+  playerMons: readonly PlayerPokemon[],
+  availablePlayerPartyMembers: readonly PlayerPokemon[],
+  { skipEnemySummon: _skip, checkSwitch: _cs, ...summonPhaseOpts }: BattlerEntranceParams,
+): (SummonPhase | RecallPhase | ToggleDoublePositionPhase)[] {
+  const { phaseManager } = globalScene;
+  const { loaded } = summonPhaseOpts;
+
+  const transitionPhases = loaded ? [] : getTransitionPhases(availablePlayerPartyMembers);
+
+  return [
+    phaseManager.create("SummonPhase", playerMons[0].getBattlerIndex(), summonPhaseOpts),
+    ...transitionPhases,
+    ...playerMons.slice(1).map(p => phaseManager.create("SummonPhase", p.getBattlerIndex(), summonPhaseOpts)),
+  ];
+}
+
+/**
+ * Obtain the phases to be queued to ensure proper transitions
+ */
+function getTransitionPhases(
+  availablePlayerPartyMembers: readonly PlayerPokemon[],
+): readonly (RecallPhase | ToggleDoublePositionPhase)[] {
+  const { phaseManager } = globalScene;
+  const { double } = globalScene.currentBattle;
+
+  const transitionPhases: (RecallPhase | ToggleDoublePositionPhase)[] = [];
+
+  transitionPhases.push(phaseManager.create("ToggleDoublePositionPhase", double));
+  // If the second player mon is already on the field, recall it before toggling double battle position
+  if (!double && availablePlayerPartyMembers[1]?.isOnField()) {
+    transitionPhases.push(phaseManager.create("RecallPhase", BattlerIndex.PLAYER_2));
+  }
+
+  return transitionPhases;
+}
+
+function getShinySparklePhases(enemyMons: readonly EnemyPokemon[]): ShinySparklePhase[] {
+  const { phaseManager } = globalScene;
+
+  return enemyMons.filter(p => p.isShiny()).map(p => phaseManager.create("ShinySparklePhase", p.getBattlerIndex()));
 }
 
 function getIvScannerPhases(enemyMons: readonly EnemyPokemon[]): ScanIvsPhase[] {
@@ -115,5 +170,3 @@ function getPostSummonPhases(
     phaseManager.create(p.isPlayer() && checkSwitch ? "CheckSwitchPhase" : "PostSummonPhase", p.getBattlerIndex()),
   );
 }
-
-// #endregion Helpers

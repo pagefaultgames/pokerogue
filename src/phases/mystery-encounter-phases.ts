@@ -409,7 +409,7 @@ export class MysteryEncounterBattlePhase extends Phase {
     // NB: we need to queue the entrance phases here because the ME encounter phase doesn't queue any animations itself somehow?
     queueBattlerEntrancePhases({
       skipEnemySummon: false,
-      loaded: true,
+      loaded: false,
       checkSwitch: encounterMode !== MysteryEncounterMode.TRAINER_BATTLE && !this.disableSwitch,
     });
 
