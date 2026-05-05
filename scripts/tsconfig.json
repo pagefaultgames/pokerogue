@@ -18,12 +18,20 @@
     "strict": true,
     // todo: remove once all ts files have been converted and we can use enums
     "erasableSyntaxOnly": true,
+    // Unfortunately, we have to duplicate all the paths from the original TSConfig
+    // simply to add a mapping for #utils --> scripts/utils
     "paths": {
       "#abilities/*": ["../src/data/abilities/*.ts"],
       "#api/*": ["../src/plugins/api/*.ts"],
       "#biomes/*": ["../src/data/balance/biomes/*.ts"],
+      "#balance/*": ["../src/data/balance/*.ts"],
       "#constants/*": ["../src/constants/*.ts"],
       "#enums/*": ["../src/enums/*.ts"],
+      "#events/*": ["../src/events/*.ts"],
+      "#field/*": ["../src/field/*.ts"],
+      "#init/*": ["../src/init/*.ts"],
+      "#inputs/*": ["../src/configs/inputs/*.ts"],
+      "#modifiers/*": ["../src/modifier/*.ts"],
       "#moves/*": ["../src/data/moves/*.ts"],
       "#mystery-encounters/*": [
         "../src/data/mystery-encounters/utils/*.ts",
@@ -31,8 +39,30 @@
         "../src/data/mystery-encounters/requirements/*.ts",
         "../src/data/mystery-encounters/*.ts"
       ],
+      "#package.json": ["./package.json"],
+      "#phases/*": ["../src/phases/*.ts"],
+      "#plugins/*": ["../src/plugins/vite/*.ts", "../src/plugins/*.ts"],
+      "#sprites/*": ["../src/sprites/*.ts"],
+      "#system/*": [
+        "../src/system/settings/*.ts",
+        "../src/system/version-migration/versions/*.ts",
+        "../src/system/version-migration/*.ts",
+        "../src/system/*.ts"
+      ],
+      "#trainers/*": ["../src/data/trainers/*.ts"],
       "#types/*": ["../src/@types/*.ts"],
-      "#utils/*": ["../src/utils/*.ts", "./utils/*.ts"]
+      "#ui/*": [
+        "../src/ui/battle-info/*.ts",
+        "../src/ui/containers/*.ts",
+        "../src/ui/handlers/*.ts",
+        "../src/ui/settings/*.ts",
+        "../src/ui/utils/*.ts",
+        "../src/ui/*.ts"
+      ],
+      "#utils/*": ["../src/utils/*.ts", "./utils/*.ts"],
+      "#data/*": ["../src/data/pokemon-forms/*.ts", "../src/data/pokemon/*.ts", "../src/data/*.ts"],
+      "#test/*": ["../test/*.ts"],
+      "#app/*": ["../src/*.ts"]
     }
   }
 }
