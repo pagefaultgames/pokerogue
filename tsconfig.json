@@ -13,8 +13,6 @@
       // ES2022 stdlibs
       "ES2022",
       "DOM",
-      "DOM.AsyncIterable",
-      "DOM.Iterable",
       "ScriptHost",
       "WebWorker.ImportScripts",
       // future libs
@@ -26,6 +24,7 @@
       "ESNext.Iterator",
       "ESNext.Collection"
     ],
+    "types": ["@commander-js/extra-typings"],
     // Skip typechecking `.d.ts` files for a ~20% speed boost
     // Won't be necessary if https://github.com/microsoft/TypeScript/issues/30511 is ever resolved
     "skipLibCheck": true,
@@ -57,7 +56,7 @@
     "noEmit": true,
     "paths": {
       "#abilities/*": ["./src/data/abilities/*.ts"],
-      "#api/*": ["./src/plugins/api/*.ts"],
+      "#api/*": ["./src/api/*.ts"],
       "#biomes/*": ["./src/data/balance/biomes/*.ts"],
       "#balance/*": ["./src/data/balance/*.ts"],
       "#constants/*": ["./src/constants/*.ts"],
@@ -76,7 +75,7 @@
       ],
       "#package.json": ["./package.json"],
       "#phases/*": ["./src/phases/*.ts"],
-      "#plugins/*": ["./src/plugins/vite/*.ts", "./src/plugins/*.ts"],
+      "#plugins/*": ["./plugins/phaser/*.ts"],
       "#sprites/*": ["./src/sprites/*.ts"],
       "#system/*": [
         "./src/system/settings/*.ts",

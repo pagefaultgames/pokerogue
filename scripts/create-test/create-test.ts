@@ -85,7 +85,7 @@ async function runInteractive(): Promise<void> {
   try {
     createTestFile(testType, fileNameAnswer);
   } catch (err) {
-    console.error(chalk.red("✗ Error: ", err));
+    console.error(chalk.red("✗", err));
   }
   console.groupEnd();
 }
@@ -94,6 +94,7 @@ async function runInteractive(): Promise<void> {
  * Helper function to create the test file.
  * @param testType - The type of test to create
  * @param fileNameAnswer - The name of the file to create
+ * @throws {Error} If the file to create already exists
  */
 function createTestFile(testType: TestType, fileNameAnswer: string): void {
   const fileName = toKebabCase(fileNameAnswer);
@@ -102,6 +103,10 @@ function createTestFile(testType: TestType, fileNameAnswer: string): void {
 
   const content = fs.readFileSync(getBoilerplatePath(testType), "utf8").replace("{{description}}", description);
   const filePath = getTestFileFullPath(testType, fileName);
+  if (fs.existsSync(filePath)) {
+    throw new Error(`File "${filePath}" already exists!`);
+  }
+
   writeFileSafe(filePath, content, "utf8");
 
   console.log(chalk.green.bold(`✔ File created at: ${filePath.replace(`${projectRoot}/`, "")}\n`));

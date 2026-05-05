@@ -1,4 +1,4 @@
-import { pokerogueApi } from "#api/pokerogue-api";
+import { pokerogueApi } from "#api/api";
 import { AbilityId } from "#enums/ability-id";
 import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";

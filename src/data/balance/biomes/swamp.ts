@@ -112,6 +112,5 @@ export const swampBiome: Biome = {
   trainerChance: 8,
   weatherPool,
   terrainPool,
-  bgmLoopPoint: 4.461,
   biomeLinks,
 };

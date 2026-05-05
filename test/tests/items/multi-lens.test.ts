@@ -68,7 +68,6 @@ describe("Items - Multi Lens", () => {
     const playerPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.TACKLE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
     expect(playerPokemon.turnData.hitCount).toBe(3);

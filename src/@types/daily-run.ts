@@ -1,6 +1,8 @@
 import type { AbilityId } from "#enums/ability-id";
 import type { BiomeId } from "#enums/biome-id";
 import type { BiomePoolTier } from "#enums/biome-pool-tier";
+import type { Challenges } from "#enums/challenges";
+import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { Nature } from "#enums/nature";
 import type { SpeciesId } from "#enums/species-id";
 import type { Variant } from "#sprites/variant";
@@ -19,7 +21,8 @@ export interface DailySeedStarter {
   variant?: Variant | undefined;
   moveset?: StarterMoveset | undefined;
   nature?: Nature | undefined;
-  abilityIndex?: number | undefined;
+  ability?: AbilityId | undefined;
+  passive?: AbilityId | undefined;
 }
 
 type DailySeedStarterTuple = TupleRange<1, 6, DailySeedStarter>;
@@ -38,6 +41,8 @@ export interface DailySeedBoss {
   nature?: Nature | undefined;
   ability?: AbilityId | undefined;
   passive?: AbilityId | undefined;
+  segments?: number | undefined;
+  catchable?: boolean | undefined;
 }
 
 /**
@@ -49,6 +54,9 @@ export interface DailySeedBoss {
  *   speciesId: SpeciesId.MEW,
  * };
  * ```
+ * @privateRemarks
+ * When updating this interface, also update:
+ * - `src/data/daily-seed/schema.json`
  */
 export type DailyForcedWave =
   | {
@@ -65,6 +73,39 @@ export type DailyForcedWave =
     };
 
 /**
+ * Configuration to manipulate on what waves a trainer spawns for a custom seed.
+ * @privateRemarks
+ * When updating this interface, also update:
+ * - `src/data/daily-seed/schema.json`
+ */
+export interface DailyTrainerManipulation {
+  waveIndex: number;
+  isTrainer: boolean;
+}
+
+/**
+ * Configuration for a custom daily run challenge.
+ * @privateRemarks
+ * When updating this interface, also update:
+ * - `src/data/daily-seed/schema.json`
+ */
+export interface DailyEventChallenge {
+  id: Challenges;
+  value: number;
+}
+
+/**
+ * Configuration for a custom daily run mystery encounter.
+ * @privateRemarks
+ * When updating this interface, also update:
+ * - `src/data/daily-seed/schema.json`
+ */
+export interface DailyEventMysteryEncounter {
+  waveIndex: number;
+  type: MysteryEncounterType;
+}
+
+/**
  * Configuration for a custom daily run seed.
  * @privateRemarks
  * When updating this interface, also update:
@@ -77,16 +118,25 @@ export interface CustomDailyRunConfig {
   luck?: number;
   startingMoney?: number;
   forcedWaves?: DailyForcedWave[];
+  trainerManipulations?: DailyTrainerManipulation[];
+  challenges?: DailyEventChallenge[];
+  mysteryEncounters?: DailyEventMysteryEncounter[];
   /** The actual seed used for the daily run. */
   seed: string;
 }
 
 /**
  * The daily run config as it is serialized in the save data.
+ * @privateRemarks
+ * When updating this interface, also update:
+ * `daily-seed-utils.ts` -> `getSerializedDailyRunConfig`
  */
 export interface SerializedDailyRunConfig {
   boss?: DailySeedBoss | undefined;
   luck?: number | undefined;
   forcedWaves?: DailyForcedWave[] | undefined;
+  trainerManipulations?: DailyTrainerManipulation[] | undefined;
+  challenges?: DailyEventChallenge[] | undefined;
+  mysteryEncounters?: DailyEventMysteryEncounter[] | undefined;
   seed: string;
 }

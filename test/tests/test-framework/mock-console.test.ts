@@ -1,5 +1,5 @@
 import { inferColorFormat } from "#test/mocks/mock-console/infer-color";
-import { hslToHex } from "#utils/common";
+import { hslToHex } from "#utils/color-utils";
 import chalk, { type ChalkInstance } from "chalk";
 import { describe, expect, it } from "vitest";
 import colorMap from "../../mocks/mock-console/color-map.json";

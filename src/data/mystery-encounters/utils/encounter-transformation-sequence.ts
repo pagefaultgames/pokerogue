@@ -40,7 +40,7 @@ export function doPokemonTransformationSequence(
           ? 100
           : -100;
     // Centered transformations occur at a lower y Position
-    const yOffset = screenPosition !== TransformationScreenPosition.CENTER ? -15 : 0;
+    const yOffset = screenPosition === TransformationScreenPosition.CENTER ? 0 : -15;
 
     const getPokemonSprite = () => {
       const ret = globalScene.addPokemonSprite(
