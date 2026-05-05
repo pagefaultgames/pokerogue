@@ -376,7 +376,7 @@ export function checkStarterValidForChallenge(species: PokemonSpecies, props: De
     if (checkSpeciesValidForChallenge(checkingSpecies, props, true)) {
       return true;
     }
-    if (checking && pokemonEvolutions.hasOwnProperty(checking)) {
+    if (checking && Object.hasOwn(pokemonEvolutions, checking)) {
       pokemonEvolutions[checking].forEach(e => {
         // Form check to deal with cases such as Basculin -> Basculegion
         // TODO: does this miss anything if checking forms of a stage 2 Pokémon?
@@ -400,7 +400,7 @@ export function checkStarterValidForChallenge(species: PokemonSpecies, props: De
 export function checkSpeciesValidForChallenge(species: PokemonSpecies, props: DexAttrProps, soft: boolean) {
   const isValidForChallenge = new BooleanHolder(true);
   applyChallenges(ChallengeType.STARTER_CHOICE, species, isValidForChallenge, props);
-  if (!soft || !pokemonFormChanges.hasOwnProperty(species.speciesId)) {
+  if (!soft || !Object.hasOwn(pokemonFormChanges, species.speciesId)) {
     return isValidForChallenge.value;
   }
   // If the form in props is valid, return true before checking other form changes

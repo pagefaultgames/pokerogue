@@ -396,7 +396,7 @@ function adjustWeightsForTrainer(pool: Map<MoveId, number>): void {
     adjustedWeight *= move.getAttrs("StatStageChangeAttr").some(a => a.stages > 1 && a.selfTarget) ? 1.25 : 1;
 
     // Trainers get a weight decrease to multiturn moves
-    adjustedWeight *= !!move.isChargingMove() || !!move.hasAttr("RechargeAttr") ? 0.7 : 1;
+    adjustedWeight *= move.isChargingMove() || move.hasAttr("RechargeAttr") ? 0.7 : 1;
     if (adjustedWeight !== weight) {
       pool.set(moveId, adjustedWeight);
     }

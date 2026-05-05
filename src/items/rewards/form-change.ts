@@ -22,7 +22,7 @@ export class FormChangeItemReward extends PokemonReward {
     super("", allHeldItems[formChangeItem].iconName, (pokemon: PlayerPokemon) => {
       // Make sure the Pokemon has alternate forms
       if (
-        pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId) // Get all form changes for this species with an item trigger, including any compound triggers
+        Object.hasOwn(pokemonFormChanges, pokemon.species.speciesId) // Get all form changes for this species with an item trigger, including any compound triggers
         && pokemonFormChanges[pokemon.species.speciesId]
           .filter(
             fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger) && fc.preFormKey === pokemon.getFormKey(),
@@ -85,7 +85,7 @@ export class FormChangeItemRewardGenerator extends RewardGenerator {
     const formChangeItemPool = [
       ...new Set(
         party
-          .filter(p => pokemonFormChanges.hasOwnProperty(p.species.speciesId))
+          .filter(p => Object.hasOwn(pokemonFormChanges, p.species.speciesId))
           .flatMap(p => {
             const formChanges = pokemonFormChanges[p.species.speciesId];
             let formChangeItemTriggers = formChanges

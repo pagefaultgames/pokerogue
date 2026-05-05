@@ -46,12 +46,12 @@ export class MultiHitDamageModifyHeldItemAttr extends HeldItemAttr<typeof HeldIt
     if (pokemon.turnData.hitsLeft === pokemon.turnData.hitCount) {
       // Reduce first hit by 25% for each stack count
       damageMultiplier.value *= 1 - 0.25 * stackCount;
-    } else if (pokemon.turnData.hitCount - pokemon.turnData.hitsLeft !== stackCount + 1) {
-      // Deal 25% damage for each remaining Multi Lens hit
-      damageMultiplier.value *= 0.25;
-    } else {
+    } else if (pokemon.turnData.hitCount - pokemon.turnData.hitsLeft === stackCount + 1) {
       // should be impossible due to `shouldApply` block
       // TODO: Throw an error during testing
+    } else {
+      // Deal 25% damage for each remaining Multi Lens hit
+      damageMultiplier.value *= 0.25;
     }
   }
 }

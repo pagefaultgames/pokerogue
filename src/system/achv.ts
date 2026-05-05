@@ -877,8 +877,8 @@ export const achvs = {
 };
 
 export function initAchievements() {
-  const achvKeys = Object.keys(achvs) as (keyof typeof achvs)[];
-  achvKeys.forEach((a: keyof typeof achvs, i: number) => {
+  const achvKeys = Object.keys(achvs);
+  achvKeys.forEach((a, i) => {
     achvs[a].id = a;
     if (achvs[a].hasParent) {
       achvs[a].parentId = achvKeys[i - 1];

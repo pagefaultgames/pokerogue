@@ -68,17 +68,17 @@ export class RibbonTray extends Phaser.GameObjects.Container {
         }
         break;
       case Button.LEFT:
-        if (this.trayCursor !== 0) {
-          success = this.setTrayCursor(this.trayCursor - 1);
-        } else {
+        if (this.trayCursor === 0) {
           success = this.setTrayCursor(numberOfIcons - 1);
+        } else {
+          success = this.setTrayCursor(this.trayCursor - 1);
         }
         break;
       case Button.RIGHT:
-        if (this.trayCursor !== numberOfIcons - 1) {
-          success = this.setTrayCursor(this.trayCursor + 1);
-        } else {
+        if (this.trayCursor === numberOfIcons - 1) {
           success = this.setTrayCursor(0);
+        } else {
+          success = this.setTrayCursor(this.trayCursor + 1);
         }
         break;
       case Button.CANCEL:

@@ -293,8 +293,7 @@ export class UI extends Phaser.GameObjects.Container {
     }
     if (prompt && text.indexOf("$") > -1) {
       const messagePages = text.split(/\$/g).map(m => m.trim());
-      // biome-ignore lint/complexity/useOptionalChain: optional chain would change this to be null instead of undefined.
-      let showMessageAndCallback = () => callback && callback();
+      let showMessageAndCallback = () => callback?.();
       for (let p = messagePages.length - 1; p >= 0; p--) {
         const originalFunc = showMessageAndCallback;
         messagePages[p] = messagePages[p].split(repname[0]).join(pokename[0]);

@@ -14,7 +14,7 @@ export class EvolutionItemReward extends PokemonReward {
   constructor(evolutionItem: EvolutionItem) {
     super("", EvolutionItem[evolutionItem].toLowerCase(), (pokemon: PlayerPokemon) => {
       if (
-        pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId)
+        Object.hasOwn(pokemonEvolutions, pokemon.species.speciesId)
         && pokemonEvolutions[pokemon.species.speciesId].filter(e => e.validate(pokemon, false, this.evolutionItem))
           .length > 0
         && pokemon.getFormKey() !== SpeciesFormKey.GIGANTAMAX
@@ -24,7 +24,7 @@ export class EvolutionItemReward extends PokemonReward {
       if (
         pokemon.isFusion()
         && pokemon.fusionSpecies
-        && pokemonEvolutions.hasOwnProperty(pokemon.fusionSpecies.speciesId)
+        && Object.hasOwn(pokemonEvolutions, pokemon.fusionSpecies.speciesId)
         && pokemonEvolutions[pokemon.fusionSpecies.speciesId].filter(e => e.validate(pokemon, true, this.evolutionItem))
           .length > 0
         && pokemon.getFusionFormKey() !== SpeciesFormKey.GIGANTAMAX
@@ -52,7 +52,7 @@ export class EvolutionItemReward extends PokemonReward {
    * @returns `true` if the evolution was successful
    */
   apply({ pokemon }: PokemonRewardParams): boolean {
-    let matchingEvolution = pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId)
+    let matchingEvolution = Object.hasOwn(pokemonEvolutions, pokemon.species.speciesId)
       ? pokemonEvolutions[pokemon.species.speciesId].find(
           e => e.evoItem === this.evolutionItem && e.validate(pokemon, false, e.item!),
         )
@@ -94,7 +94,7 @@ export class EvolutionItemRewardGenerator extends RewardGenerator {
       party
         .filter(
           p =>
-            pokemonEvolutions.hasOwnProperty(p.species.speciesId)
+            Object.hasOwn(pokemonEvolutions, p.species.speciesId)
             && (!p.pauseEvolutions
               || p.species.speciesId === SpeciesId.SLOWPOKE
               || p.species.speciesId === SpeciesId.EEVEE
@@ -110,7 +110,7 @@ export class EvolutionItemRewardGenerator extends RewardGenerator {
           p =>
             p.isFusion()
             && p.fusionSpecies
-            && pokemonEvolutions.hasOwnProperty(p.fusionSpecies.speciesId)
+            && Object.hasOwn(pokemonEvolutions, p.fusionSpecies.speciesId)
             && (!p.pauseEvolutions
               || p.fusionSpecies.speciesId === SpeciesId.SLOWPOKE
               || p.fusionSpecies.speciesId === SpeciesId.EEVEE

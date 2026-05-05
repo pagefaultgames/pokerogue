@@ -588,33 +588,31 @@ export class PartyUiHandler extends MessageUiHandler {
         const hasMatchingItem = matchingItems.length > 0; // checks if any items match
         // TODO: Bang is bad
         const partySlot = this.partySlots.find(m => m.getPokemon() === newPokemon)!; // this gets pokemon [p] for us
-        if (p !== this.transferCursor) {
-          // this skips adding the able/not able labels on the pokemon doing the transfer
-          if (hasMatchingItem) {
-            // if matchingModifier exists then the item exists on the new pokemon
-            ableToTransferText = i18next.t("partyUiHandler:notAble"); // start with not able
-            /**
-             * The amount of items that can be transferred in the `All` option
-             */
-            let ableAmount = 0;
-            for (const item of matchingItems) {
-              if (!newPokemon.heldItemManager.isMaxStack(item)) {
-                // if the modifier doesn't exist, or the stack count isn't at max, then we can transfer at least 1 stack
-                ableToTransferText = i18next.t("partyUiHandler:able");
-                ableAmount++;
-              }
-            }
-            // only show the amount if an item can be transferred and there are multiple items
-            ableToTransferText += ableAmount && matchingItems.length > 1 ? ` (${ableAmount})` : "";
-          } else {
-            // if no item matches, that means the pokemon doesn't have any of the item, and we need to show "Able"
-            ableToTransferText = i18next.t("partyUiHandler:able");
-            // only show the amount if there are multiple items
-            ableToTransferText += matchingItems.length > 1 ? ` (${matchingItems.length})` : "";
-          }
-        } else {
-          // this else relates to the transfer pokemon. We set the text to be blank so there's no "Able"/"Not able" text
+        if (p === this.transferCursor) {
+          // this relates to the transfer pokemon. We set the text to be blank so there's no "Able"/"Not able" text
           ableToTransferText = "";
+          // this skips adding the able/not able labels on the pokemon doing the transfer
+        } else if (hasMatchingItem) {
+          // if matchingModifier exists then the item exists on the new pokemon
+          ableToTransferText = i18next.t("partyUiHandler:notAble"); // start with not able
+          /**
+           * The amount of items that can be transferred in the `All` option
+           */
+          let ableAmount = 0;
+          for (const item of matchingItems) {
+            if (!newPokemon.heldItemManager.isMaxStack(item)) {
+              // if the modifier doesn't exist, or the stack count isn't at max, then we can transfer at least 1 stack
+              ableToTransferText = i18next.t("partyUiHandler:able");
+              ableAmount++;
+            }
+          }
+          // only show the amount if an item can be transferred and there are multiple items
+          ableToTransferText += ableAmount && matchingItems.length > 1 ? ` (${ableAmount})` : "";
+        } else {
+          // if no item matches, that means the pokemon doesn't have any of the item, and we need to show "Able"
+          ableToTransferText = i18next.t("partyUiHandler:able");
+          // only show the amount if there are multiple items
+          ableToTransferText += matchingItems.length > 1 ? ` (${matchingItems.length})` : "";
         }
         partySlot.slotHpLabel.setVisible(false);
         partySlot.slotHpBar.setVisible(false);
@@ -1387,10 +1385,10 @@ export class PartyUiHandler extends MessageUiHandler {
     this.options.push(PartyOption.RENAME);
 
     if (
-      pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId)
+      Object.hasOwn(pokemonEvolutions, pokemon.species.speciesId)
       || (pokemon.isFusion()
         && pokemon.fusionSpecies
-        && pokemonEvolutions.hasOwnProperty(pokemon.fusionSpecies.speciesId))
+        && Object.hasOwn(pokemonEvolutions, pokemon.fusionSpecies.speciesId))
     ) {
       this.options.push(PartyOption.UNPAUSE_EVOLUTION);
     }
@@ -2096,13 +2094,7 @@ class PartySlot extends Phaser.GameObjects.Container {
       this.slotDescriptionLabel,
     ]);
 
-    if (partyUiMode !== PartyUiMode.TM_REWARD) {
-      this.slotDescriptionLabel.setVisible(false);
-      this.slotHpLabel.setVisible(true);
-      this.slotHpBar.setVisible(true);
-      this.slotHpOverlay.setVisible(true);
-      this.slotHpText.setVisible(true);
-    } else {
+    if (partyUiMode === PartyUiMode.TM_REWARD) {
       this.slotHpLabel.setVisible(false);
       this.slotHpBar.setVisible(false);
       this.slotHpOverlay.setVisible(false);
@@ -2119,6 +2111,12 @@ class PartySlot extends Phaser.GameObjects.Container {
 
       this.slotDescriptionLabel.setText(slotTmText);
       this.slotDescriptionLabel.setVisible(true);
+    } else {
+      this.slotDescriptionLabel.setVisible(false);
+      this.slotHpLabel.setVisible(true);
+      this.slotHpBar.setVisible(true);
+      this.slotHpOverlay.setVisible(true);
+      this.slotHpText.setVisible(true);
     }
   }
 

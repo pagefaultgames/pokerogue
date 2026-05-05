@@ -71,6 +71,19 @@ export function capitalizeFirstLetter(str: string) {
 }
 
 /**
+ * Capitalize the first letter of a string, and make the rest lowercase.
+ * @param str - The string to transform
+ * @returns The original string with all letters lowercase except the first which is capitalized
+ * @example
+ * ```ts
+ * console.log(capitalizeFirstLetterOnly("WATER")); // prints "Water"
+ * ```
+ */
+export function capitalizeFirstLetterOnly(str: string): string {
+  return capitalizeFirstLetter(str.toLowerCase());
+}
+
+/**
  * Helper method to convert a string into `Title Case` (such as one used for console logs).
  * @param str - The string being converted
  * @returns The result of converting `str` into title case.
@@ -195,7 +208,7 @@ export function chunkString(str: string, length: number): string[] {
   const chunks = new Array(numChunks);
 
   for (let i = 0; i < numChunks; i++) {
-    chunks[i] = str.substring(i * length, (i + 1) * length);
+    chunks[i] = str.slice(i * length, (i + 1) * length);
   }
 
   return chunks;

@@ -501,10 +501,12 @@ export class Arena {
     if (timeOfDay === this.lastTimeOfDay) {
       return;
     }
-    this.pokemonPool = Object.entries(allBiomes.get(this.biomeId).pokemonPool).reduce(
+
+    const currBiome = allBiomes.get(this.biomeId);
+    this.pokemonPool = Object.entries(currBiome.pokemonPool).reduce(
       (acc, [tier, pool]) => {
-        // TODO: Remove type assertion after https://github.com/pagefaultgames/pokerogue/pull/7078 is merged
-        acc[tier as `${BiomePoolTier}`] = [...pool[TimeOfDay.ALL], ...pool[timeOfDay]];
+        tier satisfies `${BiomePoolTier}`;
+        acc[tier] = [...pool[TimeOfDay.ALL], ...pool[timeOfDay]];
         return acc;
       },
       {} as Mutable<ArenaPokemonPools>,
@@ -541,9 +543,7 @@ export class Arena {
 
     let tier: BiomePoolTier;
     const forcedTier = getDailyForcedWaveBiomePoolTier(waveIndex);
-    if (forcedTier !== null) {
-      tier = forcedTier;
-    } else {
+    if (forcedTier === null) {
       const rollMax = isBossSpecies ? 64 : 512;
 
       // Luck reduces the RNG ceiling by 0.5x for bosses or 2x otherwise
@@ -551,6 +551,8 @@ export class Arena {
 
       const rngRoll = randSeedInt(rollMax - luckModifier);
       tier = (isBossSpecies ? this.generateBossBiomeTier : this.generateNonBossBiomeTier)(rngRoll);
+    } else {
+      tier = forcedTier;
     }
 
     console.log("Starting species pool tier:", BiomePoolTier[tier]);

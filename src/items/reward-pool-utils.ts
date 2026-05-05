@@ -119,7 +119,7 @@ function getRarityUpgradeCount(pool: RewardPool, baseTier: RarityTier, party: Po
   let upgradeCount = 0;
   const partyLuckValue = getPartyLuckValue(party);
   const upgradeOdds = Math.floor(128 / ((partyLuckValue + 4) / 4));
-  while (pool.hasOwnProperty(baseTier + upgradeCount + 1) && pool[baseTier + upgradeCount + 1].length > 0) {
+  while (Object.hasOwn(pool, baseTier + upgradeCount + 1) && pool[baseTier + upgradeCount + 1].length > 0) {
     if (randSeedInt(upgradeOdds) < 4) {
       upgradeCount++;
     } else {

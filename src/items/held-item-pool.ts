@@ -159,7 +159,7 @@ export function getNewVitaminHeldItem(customWeights: HeldItemWeights = {}, targe
   const items = PERMANENT_STATS.map(s => permanentStatToHeldItem[s]);
   const weights = items.map(t => (target?.heldItemManager.isMaxStack(t) ? 0 : (customWeights[t] ?? 1)));
   const pickedIndex = pickWeightedIndex(weights);
-  return pickedIndex != null ? items[pickedIndex] : 0;
+  return pickedIndex == null ? 0 : items[pickedIndex];
 }
 
 export function getNewBerryHeldItem(customWeights: HeldItemWeights = {}, target?: Pokemon): BerryItemId {
@@ -176,7 +176,7 @@ export function getNewBerryHeldItem(customWeights: HeldItemWeights = {}, target?
   );
 
   const pickedIndex = pickWeightedIndex(weights);
-  return pickedIndex != null ? items[pickedIndex] : 0;
+  return pickedIndex == null ? 0 : items[pickedIndex];
 }
 
 export function getNewAttackTypeBoosterHeldItem(
@@ -214,7 +214,7 @@ export function getNewAttackTypeBoosterHeldItem(
   );
 
   const pickedIndex = pickWeightedIndex(weights);
-  return pickedIndex != null ? attackTypeToHeldItem[types[pickedIndex]] : 0;
+  return pickedIndex == null ? 0 : attackTypeToHeldItem[types[pickedIndex]];
 }
 
 export function getNewHeldItemFromCategory(

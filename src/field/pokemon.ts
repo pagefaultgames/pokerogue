@@ -78,7 +78,6 @@ import { AbilityId } from "#enums/ability-id";
 import { AiType } from "#enums/ai-type";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
-import { BattleSpec } from "#enums/battle-spec";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -143,7 +142,7 @@ import type { HeldItemConfiguration } from "#types/held-item-data-types";
 import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { TurnMove } from "#types/turn-move";
-import type { AbstractConstructor } from "#types/type-helpers";
+import type { AbstractConstructor, Mutable } from "#types/type-helpers";
 import { BattleInfo } from "#ui/battle-info";
 import { EnemyBattleInfo } from "#ui/enemy-battle-info";
 import type { PartyOption } from "#ui/party-ui-handler";
@@ -151,9 +150,9 @@ import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import { PlayerBattleInfo } from "#ui/player-battle-info";
 import { coerceArray } from "#utils/array";
 import { applyChallenges } from "#utils/challenge-utils";
+import { argbFromRgba, deltaRgb, rgbaFromArgb, rgbaToInt, rgbHexToRgba, rgbToHsv } from "#utils/color-utils";
 import {
   BooleanHolder,
-  deltaRgb,
   fixedInt,
   getIvsFromId,
   isBetween,
@@ -162,22 +161,20 @@ import {
   randSeedInt,
   randSeedIntRange,
   randSeedItem,
-  rgbaToInt,
-  rgbHexToRgba,
-  rgbToHsv,
   toDmgValue,
 } from "#utils/common";
 import { calculateBossSegmentDamage } from "#utils/damage";
 import { getEnumValues } from "#utils/enums";
 import { cachedFetch } from "#utils/fetch-utils";
 import { applyHeldItems } from "#utils/items";
-import { getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { decodeNickname, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { ValueHolder } from "#utils/value-holder";
-import { argbFromRgba, QuantizerCelebi, rgbaFromArgb } from "@material/material-color-utilities";
+import { QuantizerCelebi } from "@material/material-color-utilities";
 import i18next from "i18next";
 import Phaser from "phaser";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
+import type { NonEmptyTuple } from "type-fest";
 
 export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
@@ -202,7 +199,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   protected battleInfo: BattleInfo;
   public level: number;
   public exp: number;
-  public levelExp: number;
   public gender: Gender;
   public hp: number;
   public stats: number[];
@@ -251,6 +247,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /** Whether this Pokémon is currently Terastallized */
   public isTerastallized: boolean;
   /** The set of Types that have been boosted by this Pokémon's Stellar Terastallization. */
+  // TODO: Make this an actual set that is serialized to/from an array
   public stellarTypesBoosted: PokemonType[];
 
   // TODO: Create a fusionData class / interface and move all fusion-related fields there, exposed via getters
@@ -341,7 +338,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       this.variant = variant;
     }
     this.exp = dataSource?.exp || getLevelTotalExp(this.level, species.growthRate);
-    this.levelExp = dataSource?.levelExp || 0;
 
     this.heldItemManager = new HeldItemManager();
     if (heldItemConfig) {
@@ -366,7 +362,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       this.luck = dataSource.luck;
       this.metBiome = dataSource.metBiome;
       this.metSpecies =
-        dataSource.metSpecies ?? (this.metBiome !== -1 ? this.species.speciesId : this.species.getRootSpeciesId(true));
+        dataSource.metSpecies ?? (this.metBiome === -1 ? this.species.getRootSpeciesId(true) : this.species.speciesId);
       this.metWave = dataSource.metWave ?? (this.metBiome === -1 ? -1 : 0);
       this.pauseEvolutions = dataSource.pauseEvolutions;
       this.pokerus = !!dataSource.pokerus;
@@ -409,10 +405,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         this.variant = this.shiny ? this.generateShinyVariant() : 0;
       }
 
-      if (nature !== undefined) {
-        this.setNature(nature);
-      } else {
+      if (nature === undefined) {
         this.generateNature();
+      } else {
+        this.setNature(nature);
       }
 
       this.friendship = species.baseFriendship;
@@ -451,6 +447,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
+  /** The amount of EXP the Pokemon has earned within its current level */
+  public get levelExp(): number {
+    return this.exp - getLevelTotalExp(this.level, this.species.growthRate);
+  }
+
   /**
    * Return the name that will be displayed when this Pokemon is sent out into battle.
    * @param useIllusion - (Default `true`) Whether to consider this Pokemon's illusion if present
@@ -464,25 +465,16 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     useIllusion?: boolean;
     prependFormName?: boolean;
   } = {}) {
-    const decodeNickname = (nickname: string): string => {
-      try {
-        return decodeURIComponent(escape(atob(nickname))); // TODO: this seems jank, and `escape` is deprecated
-      } catch (err) {
-        console.error(`Failed to decode nickname for ${this.name}`, err);
-        return this.name;
-      }
-    };
-
     const { illusion } = this.summonData;
     if (useIllusion && illusion) {
       if (illusion.nickname) {
-        return decodeNickname(illusion.nickname);
+        return decodeNickname(illusion.nickname, this.name);
       }
       return illusion.name;
     }
 
     if (this.nickname) {
-      return decodeNickname(this.nickname);
+      return decodeNickname(this.nickname, this.name);
     }
 
     if (prependFormName) {
@@ -602,7 +594,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   public getDexAttr(): bigint {
     let ret = 0n;
     if (this.gender !== Gender.GENDERLESS) {
-      ret |= this.gender !== Gender.FEMALE ? DexAttr.MALE : DexAttr.FEMALE;
+      ret |= this.gender === Gender.FEMALE ? DexAttr.FEMALE : DexAttr.MALE;
     }
     ret |= this.shiny ? DexAttr.SHINY : DexAttr.NON_SHINY;
     ret |= this.variant >= 2 ? DexAttr.VARIANT_3 : this.variant === 1 ? DexAttr.VARIANT_2 : DexAttr.DEFAULT_VARIANT;
@@ -640,7 +632,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     // Neither RNG roll depends on the outcome of the other, so that Ability Charms do not affect RNG.
-    const regularAbility = this.species.ability2 !== this.species.ability1 ? randSeedInt(2) : 0;
+    const regularAbility = this.species.ability2 === this.species.ability1 ? 0 : randSeedInt(2);
     const useHiddenAbility = this.species.abilityHidden ? !randSeedInt(hiddenAbilityChance.value) : false;
 
     return useHiddenAbility ? 2 : regularAbility;
@@ -1620,7 +1612,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     // Items that add to the stats
     applyHeldItems(HeldItemEffect.BASE_STAT_ADD, { pokemon: this, baseStats });
     if (this.isFusion()) {
-      const fusionBaseStats = this.getFusionSpeciesForm(true).baseStats;
+      const fusionBaseStats = this.getFusionSpeciesForm(true).baseStats.slice(0);
       applyChallenges(ChallengeType.FLIP_STAT, this, fusionBaseStats);
 
       for (const s of PERMANENT_STATS) {
@@ -1639,7 +1631,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   // TODO: Convert this into a getter
   getNature(): Nature {
-    return this.customPokemonData.nature !== -1 ? this.customPokemonData.nature : this.nature;
+    return this.customPokemonData.nature === -1 ? this.nature : this.customPokemonData.nature;
   }
 
   // TODO: Convert this into a setter OR just add a listener for calculateStats...
@@ -1927,136 +1919,100 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Evaluate and return this Pokemon's typing.
-   * @param includeTeraType - (Default `false`) Whether to use this Pokemon's Tera Type if Terastallized
-   * @param forDefend - (Default `false`) Whether this Pokemon is currently receiving an attack
-   * @param ignoreOverride - (Default `false`) Whether to ignore temporary type changes (such as those caused by {@linkcode MoveId.TRANSFORM | Transform} and similar effects)
-   * @param useIllusion - (Default `false`) Whether to consider this Pokemon's illusion if active
-   * @returns An array of {@linkcode PokemonType}s corresponding to this Pokemon's typing (real or perceived).
+   * @param includeTeraType - (Default `true`) Whether to use this Pokemon's tera type if Terastallized; default `true`
+   * @param returnOriginalTypesIfStellar - (Default `false`) Whether to treat this Pokemon as its original types if it is currently {@linkcode PokemonType.STELLAR | Tera Stellar}
+   * @param ignoreOverride - (Default `false`) Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform} and similar effects; default `false`
+   * @param useIllusion - (Default `false`) Whether to consider an active illusion; default `false`
+   * @returns A non-empty array of {@linkcode PokemonType}s corresponding to this Pokemon's typing (real or perceived).
    */
   public getTypes(
-    includeTeraType = false,
-    forDefend = false,
+    includeTeraType = true,
+    returnOriginalTypesIfStellar = false,
     ignoreOverride = false,
     useIllusion = false,
-  ): PokemonType[] {
-    const types: PokemonType[] = [];
+  ): Mutable<NonEmptyTuple<PokemonType>> {
+    const teraType = this.getTeraType();
+    // Stellar tera does nothing defensively (uses original types)
+    const shouldUseTeraStellar = !(returnOriginalTypesIfStellar && teraType === PokemonType.STELLAR);
 
-    if (includeTeraType && this.isTerastallized) {
-      const teraType = this.getTeraType();
-      if (this.isTerastallized && !(forDefend && teraType === PokemonType.STELLAR)) {
-        // Stellar tera uses its original types defensively
-        types.push(teraType);
-        if (forDefend) {
-          return types;
-        }
-      }
+    if (includeTeraType && this.isTerastallized && shouldUseTeraStellar) {
+      return [teraType];
     }
-    if (types.length === 0 || !includeTeraType) {
-      if (
-        !ignoreOverride
-        && this.summonData.types
-        && this.summonData.types.length > 0
-        && (!this.summonData.illusion || !useIllusion)
-      ) {
-        types.push(...this.summonData.types);
-      } else {
-        const speciesForm = this.getSpeciesForm(ignoreOverride, useIllusion);
-        const fusionSpeciesForm = this.getFusionSpeciesForm(ignoreOverride, useIllusion);
-        const customTypes = this.customPokemonData.types?.length > 0;
 
-        // First type, checking for "permanently changed" types from ME
-        const firstType =
-          customTypes && this.customPokemonData.types[0] !== PokemonType.UNKNOWN
-            ? this.customPokemonData.types[0]
-            : speciesForm.type1;
-        types.push(firstType);
+    const types = new Set(this.getBaseTypes(ignoreOverride, useIllusion));
 
-        // Second type
-        let secondType: PokemonType = PokemonType.UNKNOWN;
+    // become UNKNOWN if no types are present, or remove it if other types are present.
+    // TODO: Move this after the added type checks once Roost is refactored to check removed types correctly
+    if (types.size === 0) {
+      types.add(PokemonType.UNKNOWN);
+    } else if (types.size > 1) {
+      types.delete(PokemonType.UNKNOWN);
+    }
 
-        if (fusionSpeciesForm) {
-          // Check if the fusion Pokemon also has permanent changes from ME when determining the fusion types
-          const fusionType1 =
-            this.fusionCustomPokemonData?.types
-            && this.fusionCustomPokemonData.types.length > 0
-            && this.fusionCustomPokemonData.types[0] !== PokemonType.UNKNOWN
-              ? this.fusionCustomPokemonData.types[0]
-              : fusionSpeciesForm.type1;
-          const fusionType2 =
-            this.fusionCustomPokemonData?.types
-            && this.fusionCustomPokemonData.types.length > 1
-            && this.fusionCustomPokemonData.types[1] !== PokemonType.UNKNOWN
-              ? this.fusionCustomPokemonData.types[1]
-              : fusionSpeciesForm.type2;
+    // check type added to Pokemon from moves like Forest's Curse or Trick Or Treat.
+    if (!ignoreOverride && this.summonData.addedType) {
+      types.add(this.summonData.addedType);
+    }
 
-          // Assign second type if the fusion can provide one
-          if (fusionType2 !== null && fusionType2 !== types[0]) {
-            secondType = fusionType2;
-          } else if (fusionType1 !== types[0]) {
-            secondType = fusionType1;
-          }
+    return Array.from(types) as Mutable<NonEmptyTuple<PokemonType>>;
+  }
 
-          if (secondType === PokemonType.UNKNOWN && fusionType2 == null) {
-            // If second pokemon was monotype and shared its primary type
-            secondType =
-              customTypes
-              && this.customPokemonData.types.length > 1
-              && this.customPokemonData.types[1] !== PokemonType.UNKNOWN
-                ? this.customPokemonData.types[1]
-                : (speciesForm.type2 ?? PokemonType.UNKNOWN);
-          }
-        } else {
-          // If not a fusion, just get the second type from the species, checking for permanent changes from ME
-          secondType =
-            customTypes
-            && this.customPokemonData.types.length > 1
-            && this.customPokemonData.types[1] !== PokemonType.UNKNOWN
-              ? this.customPokemonData.types[1]
-              : (speciesForm.type2 ?? PokemonType.UNKNOWN);
-        }
+  /**
+   * Helper to {@linkcode getTypes} that handles computing a Pokemon's normal typing.
+   */
+  private getBaseTypes(ignoreOverride = false, useIllusion = false): PokemonType[] {
+    if (!ignoreOverride && this.summonData.types.length > 0 && (!this.summonData.illusion || !useIllusion)) {
+      return this.summonData.types;
+    }
 
-        if (secondType !== PokemonType.UNKNOWN) {
-          types.push(secondType);
-        }
+    const speciesForm = this.getSpeciesForm(ignoreOverride, useIllusion);
+    const fusionSpeciesForm = this.getFusionSpeciesForm(ignoreOverride, useIllusion);
+
+    // TODO: This `map` call is only needed due to the fact that these arrays use -1 as defaults
+    const customTypes = this.customPokemonData.types.map(t => (t === PokemonType.UNKNOWN ? undefined : t));
+
+    const firstType = customTypes[0] ?? speciesForm.type1;
+    const secondCustomType = customTypes[1] ?? speciesForm.type2;
+
+    // Second type
+    let secondType: PokemonType | null = secondCustomType;
+
+    if (fusionSpeciesForm) {
+      // Check if the fusion Pokemon also has permanent changes from ME when determining the fusion types
+      const fusionCustomTypes =
+        this.fusionCustomPokemonData?.types.map(t => (t === PokemonType.UNKNOWN ? undefined : t)) ?? [];
+
+      const fusionType1 = fusionCustomTypes[0] ?? fusionSpeciesForm.type1;
+      const fusionType2 = fusionCustomTypes[1] ?? fusionSpeciesForm.type2;
+
+      // Assign second type if the fusion can provide one
+      if (fusionType2 !== null && fusionType2 !== firstType) {
+        secondType = fusionType2;
+      } else if (fusionType1 !== firstType) {
+        secondType = fusionType1;
       }
     }
 
-    // become UNKNOWN if no types are present
-    if (types.length === 0) {
-      types.push(PokemonType.UNKNOWN);
-    }
-
-    // remove UNKNOWN if other types are present
-    if (types.length > 1) {
-      const index = types.indexOf(PokemonType.UNKNOWN);
-      if (index !== -1) {
-        types.splice(index, 1);
-      }
-    }
-
-    // check type added to Pokemon from moves like Forest's Curse or Trick Or Treat
-    if (!ignoreOverride && this.summonData.addedType && !types.includes(this.summonData.addedType)) {
-      types.push(this.summonData.addedType);
-    }
-
-    // If both types are the same (can happen in weird custom typing scenarios), reduce to single type
-    if (types.length > 1 && types[0] === types[1]) {
-      types.splice(0, 1);
-    }
-
-    return types;
+    return [firstType, secondType ?? PokemonType.UNKNOWN];
   }
 
   /**
    * Check if this Pokemon's typing includes the specified type.
    * @param type - The {@linkcode PokemonType} to check
    * @param includeTeraType - Whether to use this Pokemon's tera type if Terastallized; default `true`
-   * @param forDefend - Whether this Pokemon is currently receiving an attack; default `false`
-   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform}; default `false`
+   * @param returnOriginalTypesIfStellar - (Default `false`)
+   *   Whether to treat this Pokemon as its original types if it is currently {@linkcode PokemonType.STELLAR | Tera Stellar}
+   * @param ignoreOverride - (Default `false`) Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform} and similar effects
    * @returns Whether this Pokemon is of the specified type.
    */
-  public isOfType(type: PokemonType, includeTeraType = true, forDefend = false, ignoreOverride = false): boolean {
-    return this.getTypes(includeTeraType, forDefend, ignoreOverride).includes(type);
+  // TODO: Make `returnOriginalTypesIfStellar` default to `true`
+  public isOfType(
+    type: PokemonType,
+    includeTeraType = true,
+    returnOriginalTypesIfStellar = false,
+    ignoreOverride = false,
+  ): boolean {
+    return this.getTypes(includeTeraType, returnOriginalTypesIfStellar, ignoreOverride).includes(type);
   }
 
   /**
@@ -2212,18 +2168,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (
       this.isEnemy()
       && !gameMode.hasChallenge(Challenges.PASSIVES)
-      && (currentBattle?.battleSpec === BattleSpec.FINAL_BOSS
+      && (currentBattle?.isClassicFinalBoss
         || gameMode.isEndlessMinorBoss(waveIndex)
         || gameMode.isEndlessMajorBoss(waveIndex))
     ) {
       return false;
     }
 
-    if (
-      globalScene.gameMode.isDaily
-      && this.customPokemonData.passive != null
-      && this.customPokemonData.passive !== -1
-    ) {
+    if (gameMode.isDaily && this.customPokemonData.passive != null && this.customPokemonData.passive !== -1) {
       return true;
     }
 
@@ -2718,7 +2670,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
       // Add STAB multiplier for attack type effectiveness.
       // For now, simply don't apply STAB to moves that may change type
-      if (this.getTypes(true).includes(moveType) && !move.getMove().hasAttr("VariableMoveTypeAttr")) {
+      if (this.isOfType(moveType, true) && !move.getMove().hasAttr("VariableMoveTypeAttr")) {
         thisScore *= 1.5;
       }
 
@@ -2768,7 +2720,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns The evolution this pokemon can currently evolve into, or `null` if it cannot evolve
    */
   getEvolution(): SpeciesFormEvolution | null {
-    if (pokemonEvolutions.hasOwnProperty(this.species.speciesId)) {
+    if (Object.hasOwn(pokemonEvolutions, this.species.speciesId)) {
       const evolutions = pokemonEvolutions[this.species.speciesId];
       for (const e of evolutions) {
         if (e.validate(this)) {
@@ -2777,7 +2729,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
-    if (this.isFusion() && this.fusionSpecies && pokemonEvolutions.hasOwnProperty(this.fusionSpecies.speciesId)) {
+    if (this.isFusion() && this.fusionSpecies && Object.hasOwn(pokemonEvolutions, this.fusionSpecies.speciesId)) {
       const fusionEvolutions = pokemonEvolutions[this.fusionSpecies.speciesId].map(
         e => new FusionSpeciesFormEvolution(this.species.speciesId, e),
       );
@@ -3090,7 +3042,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     // Checks if there is no variant data for both the index or index with form
     if (
       !this.shiny
-      || (!variantData.hasOwnProperty(variantDataIndex) && !variantData.hasOwnProperty(this.species.speciesId))
+      || (!Object.hasOwn(variantData, variantDataIndex) && !Object.hasOwn(variantData, this.species.speciesId))
     ) {
       return 0;
     }
@@ -3148,8 +3100,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const filter = forStarter
       ? (species: PokemonSpecies) => {
           return (
-            pokemonEvolutions.hasOwnProperty(species.speciesId)
-            && !pokemonPrevolutions.hasOwnProperty(species.speciesId)
+            Object.hasOwn(pokemonEvolutions, species.speciesId)
+            && !Object.hasOwn(pokemonPrevolutions, species.speciesId)
             && !species.subLegendary
             && !species.legendary
             && !species.mythical
@@ -3174,9 +3126,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     this.fusionAbilityIndex =
       this.fusionSpecies.abilityHidden && hasHiddenAbility
         ? 2
-        : this.fusionSpecies.ability2 !== this.fusionSpecies.ability1
-          ? randAbilityIndex
-          : 0;
+        : this.fusionSpecies.ability2 === this.fusionSpecies.ability1
+          ? 0
+          : randAbilityIndex;
     this.fusionShiny = this.shiny;
     this.fusionVariant = this.variant;
 
@@ -3350,7 +3302,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       console.log(initialExp, this.exp, getLevelTotalExp(this.level, this.species.growthRate));
       this.exp = Math.max(getLevelTotalExp(this.level, this.species.growthRate), initialExp);
     }
-    this.levelExp = this.exp - getLevelTotalExp(this.level, this.species.growthRate);
   }
 
   /**
@@ -3638,16 +3589,25 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    *
    * @returns The STAB multiplier for the move used against this Pokemon
    */
-  calculateStabMultiplier(source: Pokemon, move: Move, ignoreSourceAbility: boolean, simulated: boolean): number {
-    // If the move has the Typeless attribute, it doesn't get STAB (e.g. struggle)
+  // TODO: This uses nothing from this Pokemon AT ALL, so why is this called on the defender?
+  public calculateStabMultiplier(
+    source: Pokemon,
+    move: Move,
+    ignoreSourceAbility: boolean,
+    simulated: boolean,
+  ): number {
+    // Struggle cannot benefit from any STAB multipliers, even if the user is typeless
     if (move.hasAttr("TypelessAttr")) {
       return 1;
     }
-    const sourceTypes = source.getTypes();
+
+    const sourceTypes = source.getTypes(false, false);
     const sourceTeraType = source.getTeraType();
     const moveType = source.getMoveType(move);
     const matchesSourceType = sourceTypes.includes(source.getMoveType(move));
+
     const stabMultiplier = new NumberHolder(1);
+
     if (matchesSourceType && moveType !== PokemonType.STELLAR) {
       stabMultiplier.value += 0.5;
     }
@@ -3658,19 +3618,37 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       applyAbAttrs("StabBoostAbAttr", { pokemon: source, simulated, multiplier: stabMultiplier });
     }
 
-    if (source.isTerastallized && sourceTeraType === moveType && moveType !== PokemonType.STELLAR) {
-      stabMultiplier.value += 0.5;
-    }
-
-    if (
-      source.isTerastallized
-      && source.getTeraType() === PokemonType.STELLAR
-      && (!source.stellarTypesBoosted.includes(moveType) || source.hasSpecies(SpeciesId.TERAPAGOS))
-    ) {
-      stabMultiplier.value += matchesSourceType ? 0.5 : 0.2;
+    if (source.isTerastallized) {
+      stabMultiplier.value += source.getTeraTypeBoost(sourceTeraType, moveType, matchesSourceType);
     }
 
     return Math.min(stabMultiplier.value, 2.25);
+  }
+
+  /**
+   * Helper function to {@linkcode calculateStabMultiplier} that handles computing boosts from a Pokemon being Terastallized.
+   * @param teraType - This Pokemon's Tera Type
+   * @param moveType - The type of the `Move` being used
+   * @param matchesSourceType - Whether the move type matches this Pokemon's base type
+   * @returns The additional STAB bonus this Pokemon receives from terastallization.
+   * @remarks
+   * Unlike most other functions used during damage calculation, this is computed from the perspective of the _attacker_
+   * (given it functions entirely independently of the defender's stats, abilities, etc.).
+   */
+  private getTeraTypeBoost(teraType: PokemonType, moveType: PokemonType, matchesSourceType: boolean): number {
+    // Non-stellar Teras give a 50% boost to their type exclusively
+    if (teraType !== PokemonType.STELLAR) {
+      return teraType === moveType ? 0.5 : 0;
+    }
+
+    // TODO: Instead of ignoring terapagos' tera stellar boosts when calling this,
+    // we should avoid pushing its usages to the array altogether to reduce save data size
+    const canBoostStellar = !this.stellarTypesBoosted.includes(moveType) || this.hasSpecies(SpeciesId.TERAPAGOS);
+    if (!canBoostStellar) {
+      return 0;
+    }
+    // Stellar gives 50% to original types and 20% to others, but once per move type
+    return matchesSourceType ? 0.5 : 0.2;
   }
 
   /**
@@ -3903,18 +3881,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       simulated,
       damage,
     };
-    /** Apply this Pokemon's post-calc defensive attributes (e.g. Fur Coat) */
+    // Apply this Pokemon's post-calc defensive attributes (e.g. Fur Coat)
     if (!ignoreAbility) {
       applyAbAttrs("ReceivedMoveDamageMultiplierAbAttr", abAttrParams);
 
       const ally = this.getAlly();
-      /** Additionally apply friend guard damage reduction if ally has it. */
-      if (globalScene.currentBattle.double && ally != null && ally.isActive(true)) {
-        applyAbAttrs("AlliedFieldDamageReductionAbAttr", {
-          ...abAttrParams,
-          // Same parameters as before, except we are applying the ally's ability
-          pokemon: ally,
-        });
+      // Additionally apply friend guard damage reduction if ally has it.
+      if (globalScene.currentBattle.double && ally?.isActive(true)) {
+        applyAbAttrs("AlliedFieldDamageReductionAbAttr", { ...abAttrParams, pokemon: ally });
       }
     }
 
@@ -3925,7 +3899,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       applyAbAttrs("PreDefendFullHpEndureAbAttr", abAttrParams);
     }
 
-    // debug message for when damage is applied (i.e. not simulated)
+    // debug message for when damage is applied
     if (!simulated) {
       console.log(`Move: ${move.name} | Attack damage: ${damage.value}`);
     }
@@ -5106,7 +5080,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   public doSetStatus(
     effect: StatusEffect,
-    sleepTurnsRemaining = effect !== StatusEffect.SLEEP ? 0 : this.randBattleSeedIntRange(2, 4),
+    sleepTurnsRemaining = effect === StatusEffect.SLEEP ? this.randBattleSeedIntRange(2, 4) : 0,
   ): void {
     // Reset any pending status
     this.turnData.pendingStatus = StatusEffect.NONE;
@@ -6106,12 +6080,12 @@ export class PlayerPokemon extends Pokemon {
         const originalFusionFormIndex = this.fusionFormIndex;
         this.fusionSpecies = evolutionSpecies;
         this.fusionFormIndex =
-          evolution.evoFormKey !== null
-            ? Math.max(
+          evolution.evoFormKey === null
+            ? this.fusionFormIndex
+            : Math.max(
                 evolutionSpecies.forms.findIndex(f => f.formKey === evolution.evoFormKey),
                 0,
-              )
-            : this.fusionFormIndex;
+              );
         ret = globalScene.addPlayerPokemon(
           this.species,
           this.level,
@@ -6616,7 +6590,7 @@ export class EnemyPokemon extends Pokemon {
         ];
         break;
       case this.species.speciesId === SpeciesId.ETERNATUS:
-        this.moveset = (formIndex !== undefined ? formIndex : this.formIndex)
+        this.moveset = (formIndex === undefined ? this.formIndex : formIndex)
           ? [
               new PokemonMove(MoveId.DYNAMAX_CANNON),
               new PokemonMove(MoveId.CROSS_POISON),
@@ -7018,11 +6992,8 @@ export class EnemyPokemon extends Pokemon {
       );
     }
 
-    switch (globalScene.currentBattle.battleSpec) {
-      case BattleSpec.FINAL_BOSS:
-        if (!this.formIndex && this.bossSegmentIndex < 1) {
-          damage = Math.min(damage, this.hp - 1);
-        }
+    if (globalScene.currentBattle.isClassicFinalBoss && this.formIndex === 0 && this.bossSegmentIndex < 1) {
+      damage = Math.min(damage, this.hp - 1);
     }
 
     const ret = super.damage(damage, ignoreSegments, preventEndure, ignoreFaintPhase);
@@ -7041,7 +7012,7 @@ export class EnemyPokemon extends Pokemon {
   }
 
   private getMinimumSegmentIndex(): number {
-    if (globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS && !this.formIndex) {
+    if (globalScene.currentBattle.isClassicFinalBoss && !this.formIndex) {
       return 1;
     }
 

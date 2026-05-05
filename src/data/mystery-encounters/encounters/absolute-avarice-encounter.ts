@@ -109,7 +109,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
 
     globalScene
       .loadSe("PRSFX- Bug Bite", "battle_anims", "PRSFX- Bug Bite.wav")
-      .loadSe("Follow Me", "battle_anims", "Follow Me.mp3");
+      .loadSe("Follow Me", "battle_anims", "Follow Me.wav");
 
     // Get all berries in party, with references to the pokemon
     const berryItems = getPartyBerries();

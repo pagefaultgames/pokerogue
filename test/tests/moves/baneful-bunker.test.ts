@@ -1,5 +1,4 @@
 import { AbilityId } from "#enums/ability-id";
-import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
@@ -22,7 +21,6 @@ describe("Moves - Baneful Bunker", () => {
 
     game.override
       .battleStyle("single")
-      .moveset([MoveId.SLASH, MoveId.FLASH_CANNON])
       .enemySpecies(SpeciesId.TOXAPEX)
       .enemyAbility(AbilityId.INSOMNIA)
       .enemyMoveset(MoveId.BANEFUL_BUNKER)
@@ -31,15 +29,14 @@ describe("Moves - Baneful Bunker", () => {
   });
 
   function expectProtected() {
-    expect(game.field.getEnemyPokemon().hp).toBe(game.field.getEnemyPokemon().getMaxHp());
-    expect(game.field.getPlayerPokemon().status?.effect).toBe(StatusEffect.POISON);
+    expect(game.field.getEnemyPokemon()).toHaveFullHp();
+    expect(game.field.getPlayerPokemon()).toHaveStatusEffect(StatusEffect.POISON);
   }
 
   it("should protect the user and poison attackers that make contact", async () => {
     await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
-    game.move.select(MoveId.SLASH);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.move.use(MoveId.SLASH);
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expectProtected();
@@ -48,7 +45,7 @@ describe("Moves - Baneful Bunker", () => {
   it("should ignore accuracy checks", async () => {
     await game.classicMode.startBattle(SpeciesId.CHARIZARD);
 
-    game.move.select(MoveId.SLASH);
+    game.move.use(MoveId.SLASH);
     await game.phaseInterceptor.to("MoveEndPhase"); // baneful bunker
     await game.move.forceMiss();
 
@@ -63,10 +60,23 @@ describe("Moves - Baneful Bunker", () => {
     const charizard = game.field.getPlayerPokemon();
     const toxapex = game.field.getEnemyPokemon();
 
-    game.move.select(MoveId.FLASH_CANNON);
+    game.move.use(MoveId.FLASH_CANNON);
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(toxapex.hp).toBe(toxapex.getMaxHp());
-    expect(charizard.status?.effect).toBeUndefined();
+    expect(toxapex).toHaveFullHp();
+    expect(charizard).not.toHaveStatusEffect(StatusEffect.POISON);
+  });
+
+  it("should protect the user from status moves without poisoning attackers", async () => {
+    await game.classicMode.startBattle(SpeciesId.CHARIZARD);
+
+    const charizard = game.field.getPlayerPokemon();
+    const toxapex = game.field.getEnemyPokemon();
+
+    game.move.use(MoveId.SPORE);
+    await game.toEndOfTurn();
+
+    expect(toxapex).toHaveStatusEffect(StatusEffect.NONE);
+    expect(charizard).toHaveStatusEffect(StatusEffect.NONE);
   });
 });
