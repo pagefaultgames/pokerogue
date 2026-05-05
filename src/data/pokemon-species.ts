@@ -13,7 +13,7 @@ import { DexAttr } from "#enums/dex-attr";
 import { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import type { MoveId } from "#enums/move-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
-import type { PokemonType } from "#enums/pokemon-type";
+import type { RegularPokemonType } from "#enums/pokemon-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import type { Stat } from "#enums/stat";
@@ -75,8 +75,8 @@ export const normalForm: SpeciesId[] = [
 export type PokemonSpeciesFilter = (species: PokemonSpecies) => boolean;
 
 interface PokemonSpeciesFormConstructor {
-  type1: PokemonType;
-  type2: PokemonType | null;
+  type1: RegularPokemonType;
+  type2: RegularPokemonType | null;
   height: number;
   weight: number;
   ability1: AbilityId;
@@ -101,8 +101,8 @@ export abstract class PokemonSpeciesForm {
   protected _formIndex: number;
   protected _generation: number;
   // TODO: Make these not accept UNKNOWN or STELLAR
-  readonly type1: PokemonType;
-  readonly type2: PokemonType | null;
+  readonly type1: RegularPokemonType;
+  readonly type2: RegularPokemonType | null;
   readonly height: number;
   readonly weight: number;
   readonly ability1: AbilityId;
@@ -776,8 +776,8 @@ interface PokemonSpeciesConstructor {
   legendary?: boolean;
   mythical?: boolean;
   category: string;
-  type1: PokemonType;
-  type2: PokemonType | null;
+  type1: RegularPokemonType;
+  type2: RegularPokemonType | null;
   height: number;
   weight: number;
   ability1: AbilityId;
@@ -1227,8 +1227,8 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
 interface PokemonFormConstructor {
   formName: string;
   formKey: string;
-  type1: PokemonType;
-  type2: PokemonType | null;
+  type1: RegularPokemonType;
+  type2: RegularPokemonType | null;
   height: number;
   weight: number;
   ability1: AbilityId;
