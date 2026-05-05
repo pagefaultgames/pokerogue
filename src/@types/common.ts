@@ -7,13 +7,16 @@ export type { Constructor } from "type-fest";
 export type nil = null | undefined;
 
 /**
- * A Map that is known to have keys for every key that it can possibly have, and is thus guaranteed
+ * A Map that is known to have values for every key that it can possibly have, and is thus guaranteed
  * to always return a proper value instead of `undefined`.
  * @remarks
  * Used for maps where we know the entire structure at compile time
  * (but may sometimes only technically be populated at runtime).
+ * @example
+ * ```ts
+ * const myMap = new Map(["1", 2]) as DataMap<1, 2>;
+ * ```
  */
-// TODO: Move this to another file
 export interface DataMap<K, V> extends Map<K, V> {
   get(key: K): V;
 }
