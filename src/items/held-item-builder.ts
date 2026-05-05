@@ -1,8 +1,8 @@
 import { HeldItemEffect, type HeldItemEffectNames } from "#enums/held-item-effect";
 import type { HeldItemId } from "#enums/held-item-id";
-import type { Pokemon } from "#field/pokemon";
 import { HeldItem } from "#items/held-item";
 import type { ConsumableHeldItemAttr, HeldItemAttr, HeldItemRecord } from "#items/held-item-attr";
+import type { DataMap } from "#types/common";
 import type { ErrorType } from "#types/error-type";
 import type { Mutable } from "#types/type-helpers";
 import type i18next from "i18next";
@@ -49,11 +49,16 @@ export class HeldItemBuilder<Attrs extends HeldItemAttr = never, ConsumableEffec
   private nameParams?: Parameters<typeof i18next.t>;
   private descriptionParams?: Parameters<typeof i18next.t>;
   private icon?: string;
-
-  /** A `Map` matching effects to their corresponding attributes. */
-  private readonly attrMap: Map<HeldItemEffect, HeldItemAttr[]> = new Map(
-    Object.values(HeldItemEffect).map(effect => [effect, []]),
-  );
+  /**
+   * A `DataMap` matching effects to their corresponding (potentially empty) attribute lists.
+   * @remarks
+   * While it is not strictly necessary to populate unused effects with empty arrays, doing so ensures our runtime behaviour
+   * matches the type of `HeldItemRecord<Attrs>` (in which empty arrays are needed to preserve covariance).
+   */
+  private readonly attrMap = new Map(Object.values(HeldItemEffect).map(e => [e, []])) as DataMap<
+    HeldItemEffect,
+    HeldItemAttr[]
+  >;
 
   constructor(id: HeldItemId, maxStackCount = 1) {
     this.id = id;
@@ -191,7 +196,7 @@ export class HeldItemBuilder<Attrs extends HeldItemAttr = never, ConsumableEffec
   }
 
   private buildRecord(): HeldItemRecord<Attrs> {
-    // TODO: Consider removing type assertion after `Object.keys` PR
+    // TODO: Consider removing type assertion after `Object.keys` PR is merged (if possible, albeit likely not)
     return Object.fromEntries(this.attrMap.entries()) as unknown as HeldItemRecord<Attrs>;
   }
 
