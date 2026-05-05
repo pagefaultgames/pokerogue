@@ -1,3 +1,4 @@
+import type { AbAttr } from "#abilities/ab-attrs";
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { allHeldItems } from "#data/data-lists";
@@ -5,7 +6,9 @@ import type { HeldItemEffect } from "#enums/held-item-effect";
 import type { HeldItemId } from "#enums/held-item-id";
 import type { Pokemon } from "#field/pokemon";
 import type { HeldItem } from "#items/held-item";
+import type { HeldItemBuilder } from "#items/held-item-builder";
 import type { HeldItemEffectParamMap } from "#types/held-item-parameter";
+import type { MoveAttr } from "#types/move-types";
 import type { IsEqual, IsUnion } from "type-fest";
 
 /**

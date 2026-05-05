@@ -1,5 +1,6 @@
 import { HeldItemEffect, type HeldItemEffectNames } from "#enums/held-item-effect";
 import type { HeldItemId } from "#enums/held-item-id";
+import type { Pokemon } from "#field/pokemon";
 import { HeldItem } from "#items/held-item";
 import type { ConsumableHeldItemAttr, HeldItemAttr, HeldItemRecord } from "#items/held-item-attr";
 import type { ErrorType } from "#types/error-type";
