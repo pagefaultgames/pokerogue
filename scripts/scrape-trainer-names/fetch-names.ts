@@ -54,7 +54,7 @@ export function fetchNames(
  * Parse the table in question.
  * @param tables - The array of Elements forming the current table
  * @param isFemale - Whether the trainer is known to be female or not
- * @param trainerNames A Set containing the male trainer names
+ * @param trainerNames - A Set containing the male trainer names
  * @param femaleTrainerNames - A Set containing the female trainer names
  */
 function parseTable(

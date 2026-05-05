@@ -5,49 +5,45 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+import type { CustomSeedConfig } from "#daily-seed/main";
+import { BiomeId } from "#enums/biome-id";
+import { BiomePoolTier as BIOME_POOL_TIERS } from "#enums/biome-pool-tier";
+import { Challenges } from "#enums/challenges";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { getEnumKeys } from "#utils/enums";
+import { toTitleCase, toUpperSnakeCase } from "#utils/strings";
 import { confirm, input, number, search, select } from "@inquirer/prompts";
 import { Ajv } from "ajv";
 import chalk from "chalk";
 import customDailyRunSchema from "../../../src/data/daily-seed/schema.json" with { type: "json" };
-import { BIOMES } from "../../enums/biomes.js";
-import { CHALLENGES } from "../../enums/challenges.js";
-import { MYSTERY_ENCOUNTERS } from "../../enums/mystery-encounters.js";
-import { toTitleCase, toUpperSnakeCase } from "../../helpers/casing.js";
-import { BIOME_POOL_TIERS } from "../constants.js";
 import { promptSpeciesId } from "./pokemon.js";
 
-/**
- * @typedef {{
- *   waveIndex: number,
- *   speciesId: number,
- *   hiddenAbility?: boolean,
- * } | {
- *   waveIndex: number,
- *   tier: number,
- *   hiddenAbility?: boolean,
- * }} ForcedWaveConfig
- */
+export type ForcedWaveConfig =
+  | {
+      waveIndex: number;
+      speciesId: number;
+      hiddenAbility?: boolean | undefined;
+    }
+  | {
+      waveIndex: number;
+      tier: number;
+      hiddenAbility?: boolean | undefined;
+    };
 
-/**
- * @typedef {{
- *   waveIndex: number,
- *   isTrainer: boolean,
- * }} DailyTrainerManipulation
- */
+export type DailyTrainerManipulation = {
+  waveIndex: number;
+  isTrainer: boolean;
+};
 
-/**
- * @typedef {{
- *   id: number,
- *   value: number,
- * }} DailyEventChallenge
- */
+export type DailyEventChallenge = {
+  id: number;
+  value: number;
+};
 
-/**
- * @typedef {{
- *  waveIndex: number,
- *  type: number,
- * }} DailyEventMysteryEncounter
- */
+export type DailyEventMysteryEncounter = {
+  waveIndex: number;
+  type: number;
+};
 
 const ajv = new Ajv({
   allErrors: true,
@@ -60,9 +56,9 @@ const validate = ajv.compile(customDailyRunSchema);
 
 /**
  * Prompt the user to enter a starting money value.
- * @returns {Promise<number>} A Promise that resolves with the starting money value.
+ * @returns A Promise that resolves with the starting money value.
  */
-export async function promptMoney() {
+export async function promptMoney(): Promise<number> {
   return await number({
     message: "Please enter the starting money value to set.",
     default: 1000,
@@ -74,9 +70,9 @@ export async function promptMoney() {
 /**
  * Prompt the user to enter a starting luck value.
  * Must be a number between 0 and 14.
- * @returns {Promise<number>} A Promise that resolves with the chosen luck value.
+ * @returns A Promise that resolves with the chosen luck value.
  */
-export async function promptLuck() {
+export async function promptLuck(): Promise<number> {
   return await number({
     message: "Please enter the initial luck value to set.",
     min: 0,
@@ -87,29 +83,29 @@ export async function promptLuck() {
 
 /**
  * Prompt the user to enter a starting biome.
- * @returns {Promise<number>} A Promise that resolves with the chosen biome.
+ * @returns A Promise that resolves with the chosen biome.
  */
-export async function promptBiome() {
+export async function promptBiome(): Promise<number> {
   const biomeName = await search({
     message: "Please enter the starting biome to set.",
     source: term => {
-      const biomes = Object.keys(BIOMES).map(toTitleCase);
+      const biomes = Object.keys(BiomeId).map(toTitleCase);
       if (!term) {
         return biomes;
       }
-      return biomes.filter(id => id.toLowerCase().includes(term.toLowerCase()));
+      return ["1", "2"];
     },
   });
-  const biomeId = BIOMES[/** @type {keyof typeof BIOMES} */ (toUpperSnakeCase(biomeName))];
+  const biomeId = BiomeId[toUpperSnakeCase(biomeName) as keyof typeof BiomeId];
   return biomeId;
 }
 
 /**
  * Prompt the user to enter a custom config.
  * The input is a JSON stringified version of the {@linkcode CustomSeedConfig} object.
- * @returns {Promise<import("../main.js").CustomSeedConfig>} A Promise that resolves with the parsed {@linkcode CustomSeedConfig}.
+ * @returns A Promise that resolves with the parsed {@linkcode CustomSeedConfig}.
  */
-export async function promptEdit() {
+export async function promptEdit(): Promise<Partial<CustomSeedConfig>> {
   const config = await input({
     message: chalk.blue("Enter a custom config to use."),
     validate: value => {
@@ -142,9 +138,9 @@ export async function promptEdit() {
 /**
  * Prompt the user to enter a seed.
  * This can be anything and is used as the actual daily run seed.
- * @returns {Promise<string>} A Promise that resolves with the chosen seed.
+ * @returns A Promise that resolves with the chosen seed.
  */
-export async function promptSeed() {
+export async function promptSeed(): Promise<string> {
   return await input({
     message: "Please enter seed.",
     validate: value => {
@@ -158,11 +154,10 @@ export async function promptSeed() {
 
 /**
  * Prompt the user to enter a list of forced waves.
- * @returns {Promise<ForcedWaveConfig[] | undefined>} A Promise that resolves with the list of forced waves.
+ * @returns A Promise that resolves with the list of forced waves.
  */
-export async function promptForcedWaves() {
-  /** @type {ForcedWaveConfig[]} */
-  const forcedWaves = [];
+export async function promptForcedWaves(): Promise<ForcedWaveConfig[] | undefined> {
+  const forcedWaves: ForcedWaveConfig[] = [];
 
   async function addForcedWave() {
     const waveIndex = await number({
@@ -185,8 +180,9 @@ export async function promptForcedWaves() {
       default: false,
     });
 
-    /** @type {"Species" | "Tier"} */
-    const type = await select({
+    // TODO: Remove type parameter if or when `select`'s type parameter becomes `const Value`
+    // https://github.com/SBoudrias/Inquirer.js/issues/2101
+    const type = await select<"Species" | "Tier">({
       message: "Please select the type of wave to force.",
       choices: ["Species", "Tier"],
     });
@@ -199,12 +195,12 @@ export async function promptForcedWaves() {
       case "Tier": {
         const poolTier = await select({
           message: "Please select the pool tier to force.",
-          choices: [...Object.keys(BIOME_POOL_TIERS).map(toTitleCase)],
+          choices: [...getEnumKeys(BIOME_POOL_TIERS).map(toTitleCase)],
           pageSize: 10,
         });
         forcedWaves.push({
           waveIndex,
-          tier: BIOME_POOL_TIERS[/** @type {keyof typeof BIOME_POOL_TIERS} */ (toUpperSnakeCase(poolTier))],
+          tier: BIOME_POOL_TIERS[toUpperSnakeCase(poolTier) as keyof typeof BIOME_POOL_TIERS],
           hiddenAbility: hiddenAbility ? true : undefined,
         });
         break;
@@ -222,11 +218,10 @@ export async function promptForcedWaves() {
 
 /**
  * Prompt the user to enter a list of trainer manipulations.
- * @returns {Promise<DailyTrainerManipulation[] | undefined>} A Promise that resolves with the list of trainer manipulations.
+ * @returns A Promise that resolves with the list of trainer manipulations.
  */
-export async function promptTrainerManipulation() {
-  /** @type {DailyTrainerManipulation[]} */
-  const trainerManipulations = [];
+export async function promptTrainerManipulation(): Promise<DailyTrainerManipulation[] | undefined> {
+  const trainerManipulations: DailyTrainerManipulation[] = [];
 
   async function addTrainerManipulation() {
     const waveIndex = await number({
@@ -263,12 +258,11 @@ export async function promptTrainerManipulation() {
 
 /**
  * Prompt the user to enter a list of challenges.
- * @returns {Promise<DailyEventChallenge[] | undefined>} A Promise that resolves with the list of challenges.
+ * @returns A Promise that resolves with the list of challenges.
  */
-export async function promptChallenges() {
-  /** @type {DailyEventChallenge[]} */
-  const challenges = [];
-  const challengeNames = Object.keys(CHALLENGES).map(toTitleCase);
+export async function promptChallenges(): Promise<DailyEventChallenge[] | undefined> {
+  const challenges: DailyEventChallenge[] = [];
+  const challengeNames = getEnumKeys(Challenges).map(toTitleCase);
   challengeNames.unshift("Finish");
 
   async function addChallenge() {
@@ -291,7 +285,7 @@ export async function promptChallenges() {
       required: true,
     });
 
-    const challengeId = CHALLENGES[/** @type {keyof typeof CHALLENGES} */ (toUpperSnakeCase(challenge))];
+    const challengeId = Challenges[toUpperSnakeCase(challenge) as keyof typeof Challenges];
     challenges.push({ id: challengeId, value });
     challengeNames.splice(challengeNames.indexOf(challenge), 1);
     await addChallenge();
@@ -306,11 +300,10 @@ export async function promptChallenges() {
 
 /**
  * Prompt the user to enter a list of mystery encounters.
- * @returns {Promise<DailyEventMysteryEncounter[] | undefined>} A Promise that resolves with the list of mystery encounters.
+ * @returns A Promise that resolves with the list of mystery encounters.
  */
-export async function promptMysteryEncounters() {
-  /** @type {DailyEventMysteryEncounter[]} */
-  const mysteryEncounters = [];
+export async function promptMysteryEncounters(): Promise<DailyEventMysteryEncounter[] | undefined> {
+  const mysteryEncounters: DailyEventMysteryEncounter[] = [];
 
   async function addMysteryEncounter() {
     const waveIndex = await number({
@@ -332,15 +325,15 @@ export async function promptMysteryEncounters() {
       message: "Please select the mystery encounter to force.",
       source: term => {
         if (!term) {
-          return Object.keys(MYSTERY_ENCOUNTERS).map(toTitleCase);
+          return getEnumKeys(MysteryEncounterType).map(toTitleCase);
         }
-        return Object.keys(MYSTERY_ENCOUNTERS)
+        return getEnumKeys(MysteryEncounterType)
           .map(toTitleCase)
           .filter(id => id.toLowerCase().includes(term.toLowerCase()));
       },
     });
 
-    const typeId = MYSTERY_ENCOUNTERS[/** @type {keyof typeof MYSTERY_ENCOUNTERS} */ (toUpperSnakeCase(type))];
+    const typeId = MysteryEncounterType[toUpperSnakeCase(type) as keyof typeof MysteryEncounterType];
     mysteryEncounters.push({ waveIndex, type: typeId });
     await addMysteryEncounter();
   }

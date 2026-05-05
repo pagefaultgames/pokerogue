@@ -7,7 +7,7 @@
 {
   "extends": "../tsconfig.json",
   "files": [],
-  "include": ["*.ts", "**/*.ts", "**/*.mjs", "**/*.cjs"],
+  "include": ["**/*.ts", "../**/*.d.ts", "**/*.mjs", "**/*.cjs"],
   "exclude": ["../dist", "../node_modules", "**/*.boilerplate.ts"],
   "compilerOptions": {
     "types": ["@types/node"],
@@ -16,10 +16,9 @@
     "lib": ["ESNext"],
     "moduleResolution": "bundler", // we use vite-node
     "strict": true,
-    // todo: remove once all ts files have been converted and we can use enums
-    "erasableSyntaxOnly": true,
-    // Unfortunately, we have to duplicate all the paths from the original TSConfig
-    // simply to add a mapping for #utils --> scripts/utils
+    // NB: Since `tsc` re-typechecks everything transitively imported by any compiled files, we should ensure that any imported files
+    // have as few dependencies as possible (potentially by moving unrelated code into new files).
+    // TODO: Consider if we can remove some of these import paths to discourage relying on import-heavy folders that may slow down compilation
     "paths": {
       "#abilities/*": ["../src/data/abilities/*.ts"],
       "#api/*": ["../src/plugins/api/*.ts"],
@@ -39,7 +38,7 @@
         "../src/data/mystery-encounters/requirements/*.ts",
         "../src/data/mystery-encounters/*.ts"
       ],
-      "#package.json": ["./package.json"],
+      "#package.json": ["../package.json"],
       "#phases/*": ["../src/phases/*.ts"],
       "#plugins/*": ["../src/plugins/vite/*.ts", "../src/plugins/*.ts"],
       "#sprites/*": ["../src/sprites/*.ts"],
@@ -62,7 +61,12 @@
       "#utils/*": ["../src/utils/*.ts", "./utils/*.ts"],
       "#data/*": ["../src/data/pokemon-forms/*.ts", "../src/data/pokemon/*.ts", "../src/data/*.ts"],
       "#test/*": ["../test/*.ts"],
-      "#app/*": ["../src/*.ts"]
+      "#app/*": ["../src/*.ts"],
+
+      // new paths for script subfolders
+      "#daily-seed/*": ["./daily-seed/*.ts", "./daily-seed/prompts/*.ts"],
+      "#gen-moveset/*": ["./gen-moveset/*.ts"],
+      "#create-test/*": ["./create-test/*.ts"]
     }
   }
 }

@@ -75,7 +75,7 @@ async function getChangelog() {
     await updateDescription(output);
   } else {
     // dynamically imported to not need `@inquirer/prompts` during the workflow
-    const { writeFileSafe } = await import("../helpers/file.js");
+    const { writeFileSafe } = await import("../utils/file.js");
     writeFileSafe(CONFIG.OUTPUT_FILE, output, "utf8");
     console.log(`✔ Output written to ${CONFIG.OUTPUT_FILE} successfully!`);
   }

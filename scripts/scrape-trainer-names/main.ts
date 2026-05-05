@@ -18,7 +18,7 @@ import { format, inspect } from "node:util";
 import chalk from "chalk";
 import { JSDOM } from "jsdom";
 import { writeFileSafe } from "../utils/file.js";
-import { normalizeDiacritics } from "../utils/strings.js";
+import { normalizeDiacritics } from "../utils/unicode.js";
 import { checkGenderAndType } from "./check-gender.js";
 import { fetchNames, INVALID_URL } from "./fetch-names.js";
 import { showHelpText } from "./help-message.js";
@@ -62,7 +62,7 @@ async function main() {
 
 /**
  * Scrape the requested trainer names and format the resultant output.
- * @param classes The names of the trainer classes to retrieve
+ * @param classes - The names of the trainer classes to retrieve
  * @returns A Promise that resolves with the finished text.
  */
 async function scrapeTrainerNames(classes: string[]): Promise<string> {

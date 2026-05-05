@@ -5,10 +5,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { confirm, select } from "@inquirer/prompts";
-import chalk from "chalk";
-import { toCamelCase, toTitleCase } from "../../helpers/casing.js";
-import { BOSS_OPTIONS } from "../constants.js";
+import { BOSS_OPTIONS } from "#daily-seed/constants";
 import {
   promptAbility,
   promptFormIndex,
@@ -17,47 +14,36 @@ import {
   promptSegments,
   promptSpeciesId,
   promptVariant,
-} from "./pokemon.js";
+  type Variant,
+} from "#daily-seed/prompts/pokemon";
+import { toCamelCase, toTitleCase } from "#utils/strings";
+import { confirm, select } from "@inquirer/prompts";
+import chalk from "chalk";
 
-/** @import {Variant} from "./pokemon.js"; */
-
-/**
- * @typedef {{
- *   speciesId?: number,
- *   formIndex?: number,
- *   variant?: Variant,
- *   moveset?: number[],
- *   nature?: number,
- *   ability?: number,
- *   passive?: number,
- *   segments?: number,
- *   catchable?: boolean,
- * }} BossConfig - The config for a single boss pokemon.
- *
- */
-
-/**
- * The config for the daily run boss.
- * @type {BossConfig}
- */
-let bossConfig = {
-  speciesId: undefined,
-  formIndex: undefined,
-  variant: undefined,
-  moveset: undefined,
-  nature: undefined,
-  ability: undefined,
-  passive: undefined,
-  segments: undefined,
-  catchable: undefined,
+/** The config for a single Boss Pokemon. */
+export type BossConfig = {
+  speciesId?: number;
+  formIndex?: number;
+  variant?: Variant;
+  moveset?: number[];
+  nature?: number;
+  ability?: number;
+  passive?: number;
+  segments?: number;
+  catchable?: boolean;
 };
 
 /**
+ * The config for the daily run boss.
+ */
+let bossConfig: BossConfig = {};
+
+/**
  * Prompt the user to configure the daily run boss.
- * @returns {Promise<BossConfig>} The {@linkcode BossConfig}
+ * @returns A Promise that resolves with the updated {@linkcode BossConfig | boss configuration}.
  * @remarks The boss **must** be configured with at least a `SpeciesId`.
  */
-export async function promptBoss() {
+export async function promptBoss(): Promise<BossConfig> {
   const speciesId = await promptSpeciesId();
   bossConfig = { speciesId };
   return await promptBossOptions();
@@ -70,20 +56,18 @@ const bossOptions = [...BOSS_OPTIONS];
 
 /**
  * Prompt the user to configure the boss pokemon.
- * @returns {Promise<BossConfig>}
+ * @returns A Promise that resolves with the updated {@linkcode BossConfig | boss configuration}.
  */
-async function promptBossOptions() {
+async function promptBossOptions(): Promise<BossConfig> {
   if (bossOptions.length === 1) {
     return bossConfig;
   }
-  const option = /** @type {typeof bossOptions[number] } */ (
-    toCamelCase(
-      await select({
-        message: chalk.blue("Please select the final boss option you would like to configure."),
-        choices: [...bossOptions].map(toTitleCase),
-      }),
-    )
-  );
+  const option = toCamelCase(
+    await select({
+      message: chalk.blue("Please select the final boss option you would like to configure."),
+      choices: [...bossOptions].map(toTitleCase),
+    }),
+  ) as (typeof bossOptions)[number];
 
   switch (option) {
     case "formIndex":

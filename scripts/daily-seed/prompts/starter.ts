@@ -5,8 +5,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+import { toCamelCase, toTitleCase } from "#utils/strings";
 import { number, select } from "@inquirer/prompts";
-import { toCamelCase, toTitleCase } from "../../helpers/casing.js";
 import { STARTER_OPTIONS } from "../constants.js";
 import {
   promptAbility,
@@ -15,28 +15,25 @@ import {
   promptNature,
   promptSpeciesId,
   promptVariant,
+  type Variant,
 } from "./pokemon.js";
 
-/** @import {Variant} from "./pokemon.js"; */
-
-/**
- * @typedef {{
- *   speciesId?: number,
- *   formIndex?: number,
- *   variant?: Variant,
- *   moveset?: number[],
- *   nature?: number,
- *   ability?: number,
- *   passive?: number
- * }} StarterConfig
- */
+export type StarterConfig = {
+  speciesId?: number;
+  formIndex?: number;
+  variant?: Variant;
+  moveset?: number[];
+  nature?: number;
+  ability?: number;
+  passive?: number;
+};
 
 /**
  * Prompt the user to configure the daily run starters.
- * @returns {Promise<StarterConfig[]>} A Promise that resolves with the configured starter Pokemon.
+ * @returns A Promise that resolves with the configured starter Pokemon.
  * @remarks All 3 **must** be configured with at least a SpeciesId.
  */
-export async function promptStarters() {
+export async function promptStarters(): Promise<StarterConfig[]> {
   const numStarters = await number({
     message: "Please enter the number of starters.",
     min: 1,
@@ -45,13 +42,11 @@ export async function promptStarters() {
     default: 3,
   });
 
-  /** @type {StarterConfig[]} */
-  const starters = [];
+  const starters: StarterConfig[] = [];
 
   async function promptStarter() {
     const speciesId = await promptSpeciesId();
-    /** @type {StarterConfig} */
-    const starterConfig = { speciesId };
+    const starterConfig: StarterConfig = { speciesId };
     await promptStarterOptions(starterConfig);
     starters.push(starterConfig);
   }
@@ -70,22 +65,20 @@ const starterOptions = [...STARTER_OPTIONS];
 
 /**
  * Prompt the user to configure the individual starter pokemon
- * @param {StarterConfig} starterConfig - The starter config to configure; will be mutated in place
+ * @param starterConfig - The starter config to configure; will be mutated in place
  */
-async function promptStarterOptions(starterConfig) {
+async function promptStarterOptions(starterConfig: StarterConfig): Promise<void> {
   if (starterOptions.length === 1) {
     // Only "finish" left
     return;
   }
 
-  const option = /** @type {(typeof starterOptions)[number]} */ (
-    toCamelCase(
-      await select({
-        message: "Please select the starter option you would like to configure.",
-        choices: [...starterOptions].map(toTitleCase),
-      }),
-    )
-  );
+  const option = toCamelCase(
+    await select({
+      message: "Please select the starter option you would like to configure.",
+      choices: [...starterOptions].map(toTitleCase),
+    }),
+  ) as (typeof starterOptions)[number];
 
   switch (option) {
     case "formIndex":

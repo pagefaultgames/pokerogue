@@ -5,30 +5,12 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-/**
- * A mapping of biome pool tier names to their corresponding IDs.
- * @enum {number}
- */
-export const BIOME_POOL_TIERS = {
-  COMMON: 0,
-  UNCOMMON: 1,
-  RARE: 2,
-  SUPER_RARE: 3,
-  ULTRA_RARE: 4,
-  BOSS: 5,
-  BOSS_RARE: 6,
-  BOSS_SUPER_RARE: 7,
-  BOSS_ULTRA_RARE: 8,
-};
-
-// #endregion Constants
-
 // #region Options
 
 /**
  * All accepted options for editing the daily seed config directly.
  */
-export const EDIT_OPTIONS = /** @type {const} */ ([
+export const EDIT_OPTIONS = [
   "starters",
   "boss",
   "biome",
@@ -42,10 +24,10 @@ export const EDIT_OPTIONS = /** @type {const} */ ([
   "edit",
   "finish",
   "exit",
-]);
+] as const;
 
 /** All accepted options for configuring a boss Pokemon. */
-export const BOSS_OPTIONS = /** @type {const} */ ([
+export const BOSS_OPTIONS = [
   "formIndex",
   "variant",
   "moveset",
@@ -55,17 +37,9 @@ export const BOSS_OPTIONS = /** @type {const} */ ([
   "segments",
   "catchable",
   "finish",
-]);
+] as const;
 
 /** All accepted options for configuring a starter Pokemon. */
-export const STARTER_OPTIONS = /** @type {const} */ ([
-  "formIndex",
-  "variant",
-  "moveset",
-  "nature",
-  "ability",
-  "passive",
-  "finish",
-]);
+export const STARTER_OPTIONS = ["formIndex", "variant", "moveset", "nature", "ability", "passive", "finish"] as const;
 
 // #endregion Options

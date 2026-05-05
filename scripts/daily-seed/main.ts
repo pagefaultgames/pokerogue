@@ -10,15 +10,22 @@
  * Usage: `pnpm dailySeed:create`
  */
 
+import { EDIT_OPTIONS } from "#daily-seed/constants";
+import { promptBoss } from "#daily-seed/prompts/boss";
+import { getPropertyValue } from "#utils/arguments";
+import { promptOverwrite, writeFileSafe } from "#utils/file";
+import { toTitleCase } from "#utils/strings";
 import { existsSync } from "fs";
 import { join } from "path";
 import { select } from "@inquirer/prompts";
 import chalk from "chalk";
-import { toTitleCase } from "../../src/utils/strings";
-import { getPropertyValue } from "../helpers/arguments.js";
-import { promptOverwrite, writeFileSafe } from "../helpers/file.js";
-import { EDIT_OPTIONS } from "./constants.js";
-import { promptBoss } from "./prompts/boss.js";
+import type { BossConfig } from "./prompts/boss.js";
+import type {
+  DailyEventChallenge,
+  DailyEventMysteryEncounter,
+  DailyTrainerManipulation,
+  ForcedWaveConfig,
+} from "./prompts/general.js";
 import {
   promptBiome,
   promptChallenges,
@@ -30,43 +37,33 @@ import {
   promptSeed,
   promptTrainerManipulation,
 } from "./prompts/general.js";
+import type { StarterConfig } from "./prompts/starter.js";
 import { promptStarters } from "./prompts/starter.js";
 
 /**
  * The version of this script
- * @type {string}
  */
-const SCRIPT_VERSION = "1.0.0";
+const SCRIPT_VERSION: string = "1.0.0";
 
 const rootDir = join(import.meta.dirname, "..", "..");
 
-/**
- * @import {BossConfig} from "./prompts/boss.js"
- * @import {StarterConfig} from "./prompts/starter.js"
- * @import {ForcedWaveConfig, DailyTrainerManipulation, DailyEventChallenge} from "./prompts/general.js"
- * @import {DailyEventMysteryEncounter} from "./prompts/general.js"
- */
-
-/**
- * @typedef {Object} CustomSeedConfig
- */
+export type CustomSeedConfig = {
+  starters?: StarterConfig[] | undefined;
+  boss?: BossConfig | undefined;
+  biome?: number | undefined;
+  luck?: number | undefined;
+  forcedWaves?: ForcedWaveConfig[] | undefined;
+  trainerManipulations?: DailyTrainerManipulation[] | undefined;
+  challenges?: DailyEventChallenge[] | undefined;
+  mysteryEncounters?: DailyEventMysteryEncounter[] | undefined;
+  startingMoney?: number | undefined;
+  seed: string;
+};
 
 /**
  * The config for the custom daily run seed.
- * @type {{
- *   starters?: StarterConfig[],
- *   boss?: BossConfig,
- *   biome?: number,
- *   luck?: number,
- *   forcedWaves?: ForcedWaveConfig[],
- *   trainerManipulations?: DailyTrainerManipulation[],
- *   challenges?: DailyEventChallenge[],
- *   mysteryEncounters?: DailyEventMysteryEncounter[],
- *   startingMoney?: number,
- *   seed: string
- * }}
  */
-const customSeedConfig = {
+const customSeedConfig: CustomSeedConfig = {
   starters: undefined,
   boss: undefined,
   biome: undefined,
@@ -83,13 +80,12 @@ const customSeedConfig = {
  */
 const editOptions = [...EDIT_OPTIONS];
 
-/** @typedef {typeof editOptions[number]} EditOption */
+type EditOption = (typeof editOptions)[number];
 
 /**
  * Run the `dailySeed:create` script.
- * @returns {Promise<void>}
  */
-async function main() {
+async function main(): Promise<void> {
   // TODO: Add help text
   console.group(chalk.grey(`🌱 Daily Seed Generator - v${SCRIPT_VERSION}\n`));
 
@@ -120,15 +116,14 @@ async function promptOptions() {
     message: "Please select the option you would like to configure.",
     choices: [...editOptions].map(toTitleCase),
   });
-  await handleAnswer(/** @type {EditOption} */ (option.toLowerCase()));
+  await handleAnswer(option.toLowerCase() as EditOption);
 }
 
 /**
  * Handle the selected option from the main menu.
- * @param {EditOption} answer - The selected answer.
- * @returns {Promise<void>}
+ * @param answer - The selected answer.
  */
-async function handleAnswer(answer) {
+async function handleAnswer(answer: EditOption): Promise<void> {
   switch (answer) {
     case "finish":
       await finish();
@@ -184,7 +179,7 @@ async function handleAnswer(answer) {
   await promptOptions();
 }
 
-const OUTFILE_ALIASES = /** @type {const} */ (["-o", "--outfile", "--outFile"]);
+const OUTFILE_ALIASES = ["-o", "--outfile", "--outFile"] as const;
 
 /**
  * @returns {Promise<void>}
@@ -208,9 +203,9 @@ async function finish() {
 
 /**
  * Write the seed config to a file.
- * @param {string} outFile
+ * @param outFile
  */
-async function createOutputFile(outFile) {
+async function createOutputFile(outFile: string): Promise<void> {
   if (!outFile.endsWith(".json")) {
     outFile = `${outFile}.json`;
   }

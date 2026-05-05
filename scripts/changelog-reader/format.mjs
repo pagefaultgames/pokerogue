@@ -15,7 +15,7 @@ import { CONFIG } from "./config.mjs";
  * @typedef {{
  *  number: number
  *  title: string
- *  body?: string
+ *  body?: string | undefined
  *  labels: Label[]
  * }} PullRequest
  */

@@ -9,6 +9,7 @@
  * Usage: `pnpm decrypt-save <encrypted-file> [save-file]`
  */
 
+import { saveKey as SAVE_KEY } from "#app/constants";
 import { defaultCommanderHelpArgs } from "#utils/arguments";
 import fs from "node:fs";
 import { Command } from "@commander-js/extra-typings";
@@ -16,14 +17,12 @@ import cryptoJs from "crypto-js";
 
 const { AES, enc } = cryptoJs;
 
-const SAVE_KEY = "x0i2O7WRiANTqPmZ";
-
 const version = "1.0.0";
 
 /**
  * A map of condensed keynames to their associated full names.
- * NOTE: Update this if `src/system/game-data#systemShortKeys` ever changes!
  */
+// TODO: Move `src/system/game-data#systemShortKeys` to a new file and import it here
 const systemShortKeys = {
   seenAttr: "$sa",
   caughtAttr: "$ca",
