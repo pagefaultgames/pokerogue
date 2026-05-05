@@ -2,33 +2,21 @@ import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { HeldItemEffect } from "#enums/held-item-effect";
-import { ConsumableHeldItem } from "#items/held-item";
+import { ConsumableHeldItemAttr } from "#items/held-item-attr";
 import { PokemonHealPhase } from "#phases/pokemon-heal-phase";
 import type { InstantReviveParams } from "#types/held-item-parameter";
 import { toDmgValue } from "#utils/common";
 import i18next from "i18next";
 
 /**
- * Class used for items that revive a Pokemon when it faints to direct damage.
+ * Attributes used for items that revive a Pokemon when it faints to direct damage.
  * Used for Reviver Seed.
  * @sealed
  */
-export class InstantReviveHeldItem extends ConsumableHeldItem<[typeof HeldItemEffect.INSTANT_REVIVE]> {
-  public readonly effects = [HeldItemEffect.INSTANT_REVIVE] as const;
+export class InstantReviveHeldItemAttr extends ConsumableHeldItemAttr<typeof HeldItemEffect.INSTANT_REVIVE> {
+  public override readonly effect = HeldItemEffect.INSTANT_REVIVE;
 
-  get name(): string {
-    return i18next.t("modifierType:ModifierType.REVIVER_SEED.name");
-  }
-
-  get description(): string {
-    return i18next.t("modifierType:ModifierType.REVIVER_SEED.description");
-  }
-
-  get iconName(): string {
-    return "reviver_seed";
-  }
-
-  apply(_effect: typeof HeldItemEffect.INSTANT_REVIVE, { pokemon }: InstantReviveParams): void {
+  public override apply({ pokemon }: InstantReviveParams): void {
     // TODO: Since this should be the only place `revive=true` is passed to `PokemonHealPhase`, we can remove it
     // later on
     globalScene.phaseManager.unshiftPhase(
@@ -37,7 +25,7 @@ export class InstantReviveHeldItem extends ConsumableHeldItem<[typeof HeldItemEf
         toDmgValue(pokemon.getMaxHp() / 2),
         i18next.t("modifier:pokemonInstantReviveApply", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          typeName: this.name,
+          typeName: this.item.name,
         }),
         false,
         false,

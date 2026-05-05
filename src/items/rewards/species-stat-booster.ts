@@ -1,9 +1,10 @@
 import { globalScene } from "#app/global-scene";
 import { allHeldItems } from "#data/data-lists";
+import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId } from "#enums/held-item-id";
 import { SpeciesId } from "#enums/species-id";
 import { RewardGenerator } from "#items/reward";
-import type { SpeciesStatBoosterItemId, SpeciesStatBoostHeldItem } from "#items/stat-boost";
+import type { SpeciesStatBoosterItemId, SpeciesStatBoostHeldItemAttr } from "#items/stat-boost";
 import { randSeedInt } from "#utils/common";
 import { HeldItemReward } from "./held-item-reward";
 
@@ -39,8 +40,11 @@ export class SpeciesStatBoosterRewardGenerator extends RewardGenerator {
       // TODO: Use commented boolean when Fling is implemented
       const hasFling = false; /* p.getMoveset(true).some(m => m.moveId === MoveId.FLING) */
 
-      for (const i in tierItems) {
-        const checkedSpecies = (allHeldItems[tierItems[i]] as SpeciesStatBoostHeldItem).species;
+      for (let i = 0; i < tierItems.length; i++) {
+        // TODO: Handle this more gracefully with some semblance of encapsulation
+        const checkedSpecies = (
+          allHeldItems[tierItems[i]].getAttrs(HeldItemEffect.STAT_BOOST)[0] as SpeciesStatBoostHeldItemAttr
+        ).species;
 
         // If party member already has the item being weighted currently, skip to the next item
         const hasItem = p.heldItemManager.hasItem(tierItems[i]);

@@ -35,3 +35,10 @@ export const HeldItemEffect = {
 } as const;
 
 export type HeldItemEffect = ObjectValues<typeof HeldItemEffect>;
+
+/**
+ * Type matching held item effects to their names.
+ */
+export type HeldItemEffectNames = {
+  [k in keyof typeof HeldItemEffect as (typeof HeldItemEffect)[k]]: k;
+};

@@ -4,21 +4,20 @@ import { allHeldItems } from "#data/data-lists";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import type { HeldItemId } from "#enums/held-item-id";
 import { Pokemon } from "#field/pokemon";
-import { HeldItem } from "#items/held-item";
+import { HeldItemAttr } from "#items/held-item-attr";
 import type { ItemStealParams } from "#types/held-item-parameter";
 import { coerceArray, randSeedFloat } from "#utils/common";
 import i18next from "i18next";
-import type { NonEmptyTuple } from "type-fest";
 
 /**
  * Abstract class for held items that steal other Pokemon's items.
- * @see {@linkcode TurnEndItemStealHeldItem}
- * @see {@linkcode ContactItemStealChanceHeldItem}
+ * @see {@linkcode TurnEndItemStealHeldItemAttr}
+ * @see {@linkcode ContactItemStealChanceHeldItemAttr}
  */
-export abstract class ItemTransferHeldItem<T extends NonEmptyTuple<HeldItemEffect>> extends HeldItem<T> {
+abstract class ItemTransferHeldItemAttr<T extends HeldItemEffect> extends HeldItemAttr<T> {
   /** @sealed */
   // TODO: This works but can perhaps be done more elegantly
-  public override apply(_effect: this["effects"][number], params: ItemStealParams): void {
+  public override apply(params: ItemStealParams): void {
     const opponents = this.getTargets(params);
 
     if (opponents.length === 0) {
@@ -64,68 +63,53 @@ export abstract class ItemTransferHeldItem<T extends NonEmptyTuple<HeldItemEffec
 }
 
 /**
- * Held item that steal items from the enemy at the end of
- * each turn.
+ * Attribute for held items that steal items from the enemy at the end of each turn.
+ * @sealed
  */
-export class TurnEndItemStealHeldItem extends ItemTransferHeldItem<[typeof HeldItemEffect.TURN_END_ITEM_STEAL]> {
-  public readonly effects = [HeldItemEffect.TURN_END_ITEM_STEAL] as const;
-  isTransferable = true;
-
-  get description(): string {
-    return i18next.t("modifierType:ModifierType.TurnHeldItemTransferModifierType.description");
-  }
+export class TurnEndItemStealHeldItemAttr extends ItemTransferHeldItemAttr<typeof HeldItemEffect.TURN_END_ITEM_STEAL> {
+  public override readonly effect = HeldItemEffect.TURN_END_ITEM_STEAL;
 
   /**
    * Determines the targets to transfer items from when this applies.
    * @param pokemon the {@linkcode Pokemon} holding this item
-   * @param _args N/A
    * @returns the opponents of the source {@linkcode Pokemon}
    */
-  getTargets(params: ItemStealParams): Pokemon[] {
+  protected override getTargets(params: ItemStealParams): Pokemon[] {
     // TODO: this will always be defined, might be placeholder?
     return params.pokemon instanceof Pokemon ? params.pokemon.getOpponents() : [];
   }
 
-  getTransferredItemCount(_params: ItemStealParams): number {
+  protected override getTransferredItemCount(): number {
     return 1;
   }
 
-  getTransferMessage(params: ItemStealParams, itemId: HeldItemId): string {
+  protected override getTransferMessage({ target, pokemon }: ItemStealParams, itemId: HeldItemId): string {
     return i18next.t("modifier:turnHeldItemTransferApply", {
-      pokemonNameWithAffix: getPokemonNameWithAffix(params.target),
+      pokemonNameWithAffix: getPokemonNameWithAffix(target),
       itemName: allHeldItems[itemId].name,
-      pokemonName: params.pokemon.getNameToRender(),
-      typeName: this.name,
+      pokemonName: pokemon.getNameToRender(),
+      typeName: this.item.name,
     });
-  }
-
-  setTransferrableFalse(): void {
-    this.isTransferable = false;
   }
 }
 
 /**
- * Held item that adds a chance to steal items from the target of a
+ * Attribute for held items that add a chance to steal items from the target of a
  * successful attack.
+ * @sealed
  */
-export class ContactItemStealChanceHeldItem extends ItemTransferHeldItem<
-  [typeof HeldItemEffect.CONTACT_ITEM_STEAL_CHANCE]
+export class ContactItemStealChanceHeldItemAttr extends ItemTransferHeldItemAttr<
+  typeof HeldItemEffect.CONTACT_ITEM_STEAL_CHANCE
 > {
-  public readonly effects = [HeldItemEffect.CONTACT_ITEM_STEAL_CHANCE] as const;
+  public override readonly effect = HeldItemEffect.CONTACT_ITEM_STEAL_CHANCE;
   public readonly chancePercent: number;
   public readonly chance: number;
 
-  constructor(type: HeldItemId, maxStackCount: number, chancePercent: number) {
-    super(type, maxStackCount);
+  constructor(chancePercent: number) {
+    super();
 
     this.chancePercent = chancePercent;
     this.chance = chancePercent / 100;
-  }
-
-  get description(): string {
-    return i18next.t("modifierType:ModifierType.ContactHeldItemTransferChanceModifierType.description", {
-      chancePercent: this.chancePercent,
-    });
   }
 
   /**
@@ -134,21 +118,21 @@ export class ContactItemStealChanceHeldItem extends ItemTransferHeldItem<
    * @param targetPokemon - The {@linkcode Pokemon} the holder is targeting with an attack
    * @returns The target {@linkcode Pokemon} as array for further use in `apply` implementations
    */
-  getTargets({ target }: ItemStealParams): Pokemon[] {
+  protected override getTargets({ target }: ItemStealParams): Pokemon[] {
     return target ? coerceArray(target) : [];
   }
 
-  getTransferredItemCount({ pokemon }: ItemStealParams): number {
+  protected override getTransferredItemCount({ pokemon }: ItemStealParams): number {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     return randSeedFloat() <= this.chance * stackCount ? 1 : 0;
   }
 
-  getTransferMessage({ pokemon, target }: ItemStealParams, itemId: HeldItemId): string {
+  protected override getTransferMessage({ pokemon, target }: ItemStealParams, itemId: HeldItemId): string {
     return i18next.t("modifier:contactHeldItemTransferApply", {
       pokemonNameWithAffix: getPokemonNameWithAffix(target),
       itemName: allHeldItems[itemId].name,
       pokemonName: pokemon.getNameToRender(),
-      typeName: this.name,
+      typeName: this.item.name,
     });
   }
 }

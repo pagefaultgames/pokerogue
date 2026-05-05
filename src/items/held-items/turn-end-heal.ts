@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { HeldItemEffect } from "#enums/held-item-effect";
-import { HeldItem } from "#items/held-item";
+import { HeldItemAttr } from "#items/held-item-attr";
 import { PokemonHealPhase } from "#phases/pokemon-heal-phase";
 import type { TurnEndHealParams } from "#types/held-item-parameter";
 import { toDmgValue } from "#utils/common";
@@ -12,14 +12,14 @@ import i18next from "i18next";
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Leftovers}
  * @sealed
  */
-export class TurnEndHealHeldItem extends HeldItem<[typeof HeldItemEffect.TURN_END_HEAL]> {
-  public readonly effects = [HeldItemEffect.TURN_END_HEAL] as const;
+export class TurnEndHealHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.TURN_END_HEAL> {
+  public override readonly effect = HeldItemEffect.TURN_END_HEAL;
 
-  override shouldApply(_effect: typeof HeldItemEffect.TURN_END_HEAL, { pokemon }: TurnEndHealParams): boolean {
+  public override shouldApply({ pokemon }: TurnEndHealParams): boolean {
     return !pokemon.isFullHp();
   }
 
-  apply(_effect: typeof HeldItemEffect.TURN_END_HEAL, { pokemon }: TurnEndHealParams): void {
+  public override apply({ pokemon }: TurnEndHealParams): void {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     globalScene.phaseManager.unshiftPhase(
       new PokemonHealPhase(
@@ -27,7 +27,8 @@ export class TurnEndHealHeldItem extends HeldItem<[typeof HeldItemEffect.TURN_EN
         toDmgValue(pokemon.getMaxHp() / 16) * stackCount,
         i18next.t("modifier:turnHealApply", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          typeName: this.name,
+          // TODO: consider removing the parameter
+          typeName: this.item.name,
         }),
         true,
       ),

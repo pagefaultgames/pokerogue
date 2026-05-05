@@ -4,6 +4,7 @@ import { pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { allHeldItems, allTrainerItems } from "#data/data-lists";
 import { MAX_PER_TYPE_POKEBALLS } from "#data/pokeball";
 import { AbilityId } from "#enums/ability-id";
+import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { PokeballType } from "#enums/pokeball";
@@ -15,7 +16,7 @@ import { TrainerItemId } from "#enums/trainer-item-id";
 import { Unlockables } from "#enums/unlockables";
 import type { Pokemon } from "#field/pokemon";
 import { rewardPool } from "#items/reward-pools";
-import type { TurnEndStatusHeldItem } from "#items/turn-end-status";
+import type { TurnEndStatusHeldItemAttr } from "#items/turn-end-status";
 import type { WeightedRewardWeightFunc } from "#types/rewards";
 
 /**
@@ -108,9 +109,14 @@ function initGreatRewardPool(): void {
               p.hp > 0
               && p.status != null
               && !p
+                // TODO: This breaks encapsulation and is a chore to maintain
                 .getHeldItems()
                 .filter(i => i === HeldItemId.TOXIC_ORB || i === HeldItemId.FLAME_ORB)
-                .some(i => (allHeldItems[i] satisfies TurnEndStatusHeldItem).effect === p.status?.effect),
+                .some(i =>
+                  allHeldItems[i]
+                    .getAttrs(HeldItemEffect.TURN_END_STATUS)
+                    .some(a => (a as TurnEndStatusHeldItemAttr).statusEffect === p.status?.effect),
+                ),
           ).length,
           3,
         );
@@ -174,7 +180,11 @@ function initGreatRewardPool(): void {
               && !p
                 .getHeldItems()
                 .filter(i => i === HeldItemId.TOXIC_ORB || i === HeldItemId.FLAME_ORB)
-                .some(i => (allHeldItems[i] satisfies TurnEndStatusHeldItem).effect === p.status?.effect),
+                .some(i =>
+                  allHeldItems[i]
+                    .getAttrs(HeldItemEffect.TURN_END_STATUS)
+                    .some(a => (a as TurnEndStatusHeldItemAttr).statusEffect === p.status?.effect),
+                ),
           ).length,
           3,
         );

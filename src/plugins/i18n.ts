@@ -219,7 +219,12 @@ await i18next
       ns: nsEn,
       debug: import.meta.env.VITE_I18N_DEBUG === "1",
       interpolation: {
+        // Phaser is unable to parse the HTML escape codes produced by i18next, so turning this on results in codes like
+        // &amp; being displayed verbatim on screen.
+        // We use i18next solely for localizing values inside code anyways, so the risk of XSS from user input is virtually nonexistent.
         escapeValue: false,
+        // Interpolate variables passed to i18next.t() to allow for easier key nesting
+        skipOnVariables: false,
       },
       postProcess: ["korean-postposition"],
     },

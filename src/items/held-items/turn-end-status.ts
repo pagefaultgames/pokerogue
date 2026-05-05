@@ -1,7 +1,6 @@
 import { HeldItemEffect } from "#enums/held-item-effect";
-import type { HeldItemId } from "#enums/held-item-id";
 import type { StatusEffect } from "#enums/status-effect";
-import { HeldItem } from "#items/held-item";
+import { HeldItemAttr } from "#items/held-item-attr";
 import type { TurnEndStatusParams } from "#types/held-item-parameter";
 
 /**
@@ -10,25 +9,22 @@ import type { TurnEndStatusParams } from "#types/held-item-parameter";
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Toxic_Orb}
  * @sealed
  */
-export class TurnEndStatusHeldItem extends HeldItem<[typeof HeldItemEffect.TURN_END_STATUS]> {
-  public readonly effects = [HeldItemEffect.TURN_END_STATUS] as const;
+export class TurnEndStatusHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.TURN_END_STATUS> {
+  public readonly effect = HeldItemEffect.TURN_END_STATUS;
   /** The status effect to be applied. */
-  public readonly effect: StatusEffect;
+  public readonly statusEffect: StatusEffect;
 
-  constructor(type: HeldItemId, maxStackCount: number, effect: StatusEffect) {
-    super(type, maxStackCount);
+  constructor(statusEffect: StatusEffect) {
+    super();
 
-    this.effect = effect;
+    this.statusEffect = statusEffect;
   }
 
-  public override shouldApply(
-    _effect: typeof HeldItemEffect.TURN_END_STATUS,
-    { pokemon }: TurnEndStatusParams,
-  ): boolean {
-    return pokemon.canSetStatus(this.effect, true, false, pokemon, false);
+  public override shouldApply({ pokemon }: TurnEndStatusParams): boolean {
+    return pokemon.canSetStatus(this.statusEffect, true, false, pokemon, false);
   }
 
-  apply(_effect: typeof HeldItemEffect.TURN_END_STATUS, { pokemon }: TurnEndStatusParams): void {
-    pokemon.trySetStatus(this.effect, pokemon, undefined, this.name);
+  public override apply({ pokemon }: TurnEndStatusParams): void {
+    pokemon.trySetStatus(this.statusEffect, pokemon, undefined, this.item.name);
   }
 }

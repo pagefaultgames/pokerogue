@@ -1,25 +1,21 @@
 import { HeldItemEffect } from "#enums/held-item-effect";
-import type { HeldItemId } from "#enums/held-item-id";
-import { HeldItem } from "#items/held-item";
+import { HeldItemAttr } from "#items/held-item-attr";
 import type { AccuracyBoostParams } from "#types/held-item-parameter";
 
 /**
- * Class used for items that boost move accuracy by a flat amount.
+ * Attribute used for items that boost move accuracy by a flat amount.
  * @sealed
  */
-export class AccuracyBoosterHeldItem extends HeldItem<[typeof HeldItemEffect.ACCURACY_BOOSTER]> {
-  public readonly effects = [HeldItemEffect.ACCURACY_BOOSTER] as const;
+export class AccuracyBoosterHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.ACCURACY_BOOSTER> {
+  public override readonly effect = HeldItemEffect.ACCURACY_BOOSTER;
   private readonly accuracyAmount: number;
 
-  constructor(type: HeldItemId, maxStackCount: number, accuracy: number) {
-    super(type, maxStackCount);
-    this.accuracyAmount = accuracy;
+  constructor(accuracyAmount: number) {
+    super();
+    this.accuracyAmount = accuracyAmount;
   }
 
-  public override apply(
-    _effect: typeof HeldItemEffect.ACCURACY_BOOSTER,
-    { pokemon, moveAccuracy }: AccuracyBoostParams,
-  ): void {
+  public override apply({ pokemon, moveAccuracy }: AccuracyBoostParams): void {
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     moveAccuracy.value += this.accuracyAmount * stackCount;
   }

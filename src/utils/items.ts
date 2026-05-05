@@ -7,10 +7,10 @@ import type { HeldItemEffectParamMap } from "#types/held-item-parameter";
 
 export function applyHeldItems<T extends HeldItemEffect>(effect: T, params: HeldItemEffectParamMap[T]) {
   const { pokemon } = params;
-  for (const item of pokemon.heldItemManager.getItems()) {
-    const heldItem = allHeldItems[item] as HeldItem | CosmeticHeldItem;
-    if ("effects" in heldItem && heldItem.effects.includes(effect) && heldItem.shouldApply(effect, params)) {
-      heldItem.apply(effect, params);
+  for (const itemId of pokemon.heldItemManager.getItems()) {
+    const heldItem = allHeldItems[itemId] as HeldItem | CosmeticHeldItem;
+    if ("effects" in heldItem && heldItem.hasEffect(effect)) {
+      (heldItem satisfies HeldItem).apply(effect, params);
     }
   }
 }

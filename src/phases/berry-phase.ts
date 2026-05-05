@@ -6,7 +6,8 @@ import { HeldItemEffect } from "#enums/held-item-effect";
 import { HeldItemCategoryId, isItemInCategory } from "#enums/held-item-id";
 import { CommonAnim } from "#enums/move-anims-common";
 import type { Pokemon } from "#field/pokemon";
-import type { BerryHeldItem } from "#items/berry";
+import type { BerryItemId } from "#items/all-held-items";
+import type { BerryHeldItemAttr } from "#items/berry";
 import { FieldPhase } from "#phases/field-phase";
 import { BooleanHolder } from "#utils/common";
 import { applyHeldItems } from "#utils/items";
@@ -34,10 +35,13 @@ export class BerryPhase extends FieldPhase {
    * @param pokemon - The {@linkcode Pokemon} to check
    */
   eatBerries(pokemon: Pokemon): void {
+    // TODO: This breaks encapsulation...
     const hasUsableBerry = pokemon.getHeldItems().some(m => {
       return (
         isItemInCategory(m, HeldItemCategoryId.BERRY)
-        && (allHeldItems[m] as BerryHeldItem).shouldApply(HeldItemEffect.BERRY, { pokemon })
+        && (allHeldItems[m as BerryItemId].getAttrs(HeldItemEffect.BERRY) satisfies readonly BerryHeldItemAttr[]).some(
+          attr => attr.shouldApply({ pokemon }),
+        )
       );
     });
 

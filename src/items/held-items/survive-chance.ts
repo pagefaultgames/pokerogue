@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { HeldItemEffect } from "#enums/held-item-effect";
-import { HeldItem } from "#items/held-item";
+import { HeldItemAttr } from "#items/held-item-attr";
 import type { SurviveChanceParams } from "#types/held-item-parameter";
 import i18next from "i18next";
 
@@ -11,26 +11,20 @@ import i18next from "i18next";
  * @sealed
  */
 // TODO: Rename to "endure chance" for clarity
-export class SurviveChanceHeldItem extends HeldItem<[typeof HeldItemEffect.SURVIVE_CHANCE]> {
-  public readonly effects = [HeldItemEffect.SURVIVE_CHANCE] as const;
+export class SurviveChanceHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.SURVIVE_CHANCE> {
+  public override readonly effect = HeldItemEffect.SURVIVE_CHANCE;
 
-  public override shouldApply(
-    _effect: typeof HeldItemEffect.SURVIVE_CHANCE,
-    { pokemon, surviveDamage }: SurviveChanceParams,
-  ): boolean {
+  public override shouldApply({ pokemon, surviveDamage }: SurviveChanceParams): boolean {
     return !surviveDamage.value && pokemon.randBattleSeedInt(10) < pokemon.heldItemManager.getStack(this.type);
   }
 
-  public override apply(
-    _effect: typeof HeldItemEffect.SURVIVE_CHANCE,
-    { pokemon, surviveDamage }: SurviveChanceParams,
-  ): void {
+  public override apply({ pokemon, surviveDamage }: SurviveChanceParams): void {
     surviveDamage.value = true;
 
     globalScene.phaseManager.queueMessage(
       i18next.t("modifier:surviveDamageApply", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        typeName: this.name,
+        typeName: this.item.name,
       }),
     );
   }

@@ -1,31 +1,27 @@
 import { HeldItemEffect } from "#enums/held-item-effect";
-import type { HeldItemId } from "#enums/held-item-id";
 import { Stat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
-import { HeldItem } from "#items/held-item";
+import { HeldItemAttr } from "#items/held-item-attr";
 import type { BaseStatParams } from "#types/held-item-parameter";
-import i18next from "i18next";
+
+// TODO: Consider combining these 2 into a single base class for extensibility
+
+const OLD_GATEAU_STAT_MODIFIER = 20;
 
 /**
  * Class to add +20 base stats to the lowest of HP/Spd, lowest of Atk/SpAtk, and lowest of Def/SpDef.
  * Used for Old Gateau.
  * @sealed
  */
-export class OldGateauHeldItem extends HeldItem<[typeof HeldItemEffect.BASE_STAT_ADD]> {
-  public readonly effects = [HeldItemEffect.BASE_STAT_ADD] as const;
-  public isTransferable = false;
+export class OldGateauHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.BASE_STAT_ADD> {
+  public override readonly effect = HeldItemEffect.BASE_STAT_ADD;
 
-  get description(): string {
-    return i18next.t("modifierType:ModifierType.PokemonBaseStatFlatModifierType.description");
-  }
-
-  public override apply(_effect: typeof HeldItemEffect.BASE_STAT_ADD, { pokemon, baseStats }: BaseStatParams): void {
+  public override apply({ pokemon, baseStats }: BaseStatParams): void {
     const stats = this.getStats(pokemon);
-    const statModifier = 20;
+    // TODO: This is inefficient and clunky
     baseStats.forEach((v, i) => {
       if (stats.includes(i)) {
-        const newVal = Math.floor(v + statModifier);
-        baseStats[i] = Phaser.Math.Clamp(newVal, 1, 999999);
+        baseStats[i] = Phaser.Math.Clamp(v + OLD_GATEAU_STAT_MODIFIER, 1, 999999);
       }
     });
   }
@@ -45,36 +41,19 @@ export class OldGateauHeldItem extends HeldItem<[typeof HeldItemEffect.BASE_STAT
 }
 
 /**
- * Currently used by Shuckle Juice item
+ * Attribute for the Shuckle Juice mystery encounter items. \
+ * Adds {@linkcode statModifier} to all base stats (HP gains half the modifier).
  */
-export class ShuckleJuiceHeldItem extends HeldItem<[typeof HeldItemEffect.BASE_STAT_ADD]> {
-  public readonly effects = [HeldItemEffect.BASE_STAT_ADD] as const;
-  public isTransferable = false;
-  public statModifier: number;
+export class ShuckleJuiceHeldItemAttr extends HeldItemAttr<typeof HeldItemEffect.BASE_STAT_ADD> {
+  public override readonly effect = HeldItemEffect.BASE_STAT_ADD;
+  public readonly statModifier: number;
 
-  constructor(type: HeldItemId, maxStackCount: number, statModifier: number) {
-    super(type, maxStackCount);
+  constructor(statModifier: number) {
+    super();
     this.statModifier = statModifier;
   }
 
-  override get name(): string {
-    return this.statModifier > 0
-      ? i18next.t("modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_GOOD.name")
-      : i18next.t("modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_BAD.name");
-  }
-
-  // TODO: where is this description shown?
-  override get description(): string {
-    return this.statModifier > 0
-      ? i18next.t("modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_GOOD.description")
-      : i18next.t("modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE_BAD.description");
-  }
-
-  override get iconName(): string {
-    return this.statModifier > 0 ? "berry_juice_good" : "berry_juice_bad";
-  }
-
-  public override apply(_effect: typeof HeldItemEffect.BASE_STAT_ADD, { baseStats }: BaseStatParams): void {
+  public override apply({ baseStats }: BaseStatParams): void {
     baseStats.forEach((value, index) => {
       // HP is affected by half as much as other stats
       const mod = index === 0 ? this.statModifier / 2 : this.statModifier;

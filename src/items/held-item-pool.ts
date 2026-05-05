@@ -6,6 +6,7 @@ import { HeldItemPoolType } from "#enums/reward-pool-type";
 import { RarityTier } from "#enums/reward-tier";
 import { PERMANENT_STATS } from "#enums/stat";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
+import type { BerryItemId } from "#items/all-held-items";
 import { attackTypeToHeldItem } from "#items/attack-type-booster";
 import { permanentStatToHeldItem } from "#items/base-stat-multiply";
 import { berryTypeToHeldItem } from "#items/berry";
@@ -161,7 +162,7 @@ export function getNewVitaminHeldItem(customWeights: HeldItemWeights = {}, targe
   return pickedIndex != null ? items[pickedIndex] : 0;
 }
 
-export function getNewBerryHeldItem(customWeights: HeldItemWeights = {}, target?: Pokemon): HeldItemId {
+export function getNewBerryHeldItem(customWeights: HeldItemWeights = {}, target?: Pokemon): BerryItemId {
   const berryTypes = getEnumValues(BerryType);
   const items = berryTypes.map(b => berryTypeToHeldItem[b]);
 

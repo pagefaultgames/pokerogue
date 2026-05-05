@@ -1,21 +1,21 @@
-import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import type { HeldItemEffect } from "#enums/held-item-effect";
 import { type HeldItemId, HeldItemNames } from "#enums/held-item-id";
 import type { Pokemon } from "#field/pokemon";
+import type { ConsumableHeldItemAttr, HeldItemAttr, HeldItemRecord } from "#items/held-item-attr";
+import type { HeldItemBuilder } from "#items/held-item-builder";
 import type { HeldItemEffectParamMap } from "#types/held-item-parameter";
-import type { Mutable } from "#types/type-helpers";
 import i18next from "i18next";
-import type { NonEmptyTuple } from "type-fest";
 
 /**
  * Base class for all held items, both functional and cosmetic.
  */
 export abstract class HeldItemBase {
-  // TODO: Renme parameter to `id` or similar
+  // TODO: Rename parameter to `id` or similar
   public readonly type: HeldItemId;
   public readonly maxStackCount: number;
   // TODO: Consider converting these to a bitmask for efficiency
+
   /**
    * Whether this item can be transferred to another {@linkcode Pokemon}.
    * @defaultValue `true`
@@ -32,21 +32,23 @@ export abstract class HeldItemBase {
    */
   public isSuppressable = true;
 
-  constructor(type: HeldItemId, maxStackCount = 1) {
-    this.type = type;
-    this.maxStackCount = maxStackCount;
-  }
-
-  get name(): string {
+  // TODO: Remove these defaults for non-cosmetic held items (and maybe cosmetic ones as well)
+  // in favor of explicitly specifying them for each item
+  public get name(): string {
     return i18next.t(`modifierType:ModifierType.${HeldItemNames[this.type]}.name`);
   }
 
-  get description(): string {
+  public get description(): string {
     return i18next.t(`modifierType:ModifierType.${HeldItemNames[this.type]}.description`);
   }
 
-  get iconName(): string {
+  public get iconName(): string {
     return `${HeldItemNames[this.type]?.toLowerCase()}`;
+  }
+
+  constructor(type: HeldItemId, maxStackCount = 1) {
+    this.type = type;
+    this.maxStackCount = maxStackCount;
   }
 
   // TODO: https://github.com/pagefaultgames/pokerogue/pull/5656#discussion_r2114950716
@@ -111,91 +113,133 @@ export abstract class HeldItemBase {
   getScoreMultiplier(): number {
     return 1;
   }
+}
 
-  untransferable(): this {
-    (this as Mutable<this>).isTransferable = false;
-    return this;
+/**
+ * Class for all non-cosmetic held items
+ * (i.e. ones that can have their effects applied during or outside of battle).
+ *
+ * @typeParam Attrs - A union of {@linkcode HeldItemAttr}s that this class supports.
+ * @see {@linkcode HeldItemBuilder}
+ * @privateRemarks
+ * While exposing the exact kinds of attributes this class supports technically breaks encapsulation,
+ * this is required for existing code to work without excessive type assertions.
+ */
+export class HeldItem<Attrs extends HeldItemAttr = HeldItemAttr> extends HeldItemBase {
+  /**
+   * An object matching each supported {@linkcode HeldItemEffect} to the attributes that implement said effect.
+   */
+  private readonly effects: HeldItemRecord<Attrs>;
+
+  // #region Localization
+  /**
+   * Optional parameters used to localize this item's name.
+   * If omitted, will use the default implementation provided from {@linkcode HeldItemBase}.
+   */
+  private readonly nameParams?: Parameters<typeof i18next.t> | undefined;
+  /**
+   * Optional parameters used to localize this item's description.
+   * If omitted, will use the default implementation provided from {@linkcode HeldItemBase}.
+   */
+  private readonly descriptionParams?: Parameters<typeof i18next.t> | undefined;
+  public readonly customIconName?: string | undefined;
+
+  public override get name(): string {
+    return this.nameParams ? i18next.t(...this.nameParams) : super.name;
   }
 
-  unstealable(): this {
-    this.isStealable = false;
-    return this;
+  public override get description(): string {
+    return this.descriptionParams ? i18next.t(...this.descriptionParams) : super.description;
   }
 
-  unsuppressable(): this {
-    this.isSuppressable = false;
-    return this;
+  public override get iconName(): string {
+    return this.customIconName ?? super.iconName;
+  }
+  // #endregion Localization
+
+  protected constructor({
+    type,
+    effects,
+    maxStackCount = 1,
+    nameParams,
+    descriptionParams,
+    iconName,
+  }: {
+    type: HeldItemId;
+    effects: HeldItemRecord<Attrs>;
+    maxStackCount?: number;
+    nameParams?: Parameters<typeof i18next.t> | undefined;
+    descriptionParams?: Parameters<typeof i18next.t> | undefined;
+    iconName?: string | undefined;
+  }) {
+    super(type, maxStackCount);
+
+    this.effects = effects;
+    this.nameParams = nameParams;
+    this.descriptionParams = descriptionParams;
+    this.customIconName = iconName;
+  }
+
+  /**
+   * Check whether this item handles the given effect at runtime.
+   * Narrows the item's effect set to include `E`.
+   * @param effect - The {@linkcode HeldItemEffect} to check
+   * @returns Whether this item has at least 1 attribute for `effect`.
+   * @sealed
+   */
+  public hasEffect<E extends HeldItemEffect>(effect: E): this is HeldItem<Attrs | HeldItemAttr<E>> {
+    return this.effects[effect].length > 0;
+  }
+
+  /**
+   * Apply all of this item's attributes that pertain to the given effect, subject to their individual
+   * {@linkcode HeldItemAttr.shouldApply | shouldApply} conditions.
+   * @param effect - The {@linkcode HeldItemEffect | effect} to apply
+   * @param params - The parameters to pass to the item attributes' `apply` methods
+   * @remarks
+   * The execution order of multiple attributes is not guaranteed and should not be relied upon. \
+   * Notably, this means that combining {@linkcode ConsumableHeldItemAttr}s with other attributes that depend on the item's current stack count
+   * (including other consumable attributes) is undefined behavior.
+   * @sealed
+   */
+  public apply<E extends Attrs["effect"]>(effect: E, params: HeldItemEffectParamMap[E]): void {
+    for (const attr of this.getAttrs(effect) as readonly HeldItemAttr<E>[]) {
+      if (attr.shouldApply(params)) {
+        attr.apply(params);
+      }
+    }
+  }
+
+  /**
+   * Retrieve all attributes of this item pertaining to the given effect.
+   * @param effect - The {@linkcode HeldItemEffect | effect} to retrieve
+   * @returns An array containing all attributes this item has for `effect`.
+   * Is guaranteed to be non-empty for properly constructed `HeldItem`s.
+   * @remarks
+   * The order of the attributes within the returned array is not guaranteed and should not be relied upon.
+   * @sealed
+   */
+  public getAttrs<E extends Attrs["effect"]>(effect: E): readonly Extract<Attrs, HeldItemAttr<E>>[] {
+    return this.effects[effect];
   }
 }
 
 /**
- * Abstract class for all non-cosmetic held items
- * (i.e. ones that can have their effects applied during or outside of battle).
- */
-// TODO: Try and make items that have multiple effects more ergonomic rather than requiring dynamic dispatch
-export abstract class HeldItem<
-  T extends NonEmptyTuple<HeldItemEffect> = NonEmptyTuple<HeldItemEffect>,
-> extends HeldItemBase {
-  /**
-   * A readonly tuple containing all {@linkcode HeldItemEffect | effects} that this class can apply.
-   * @privateRemarks
-   * Please sort entries in ascending numerical order (for consistency)
-   */
-  public abstract readonly effects: Readonly<T>;
-
-  /**
-   * Check whether a given effect of this item should apply.
-   * @typeParam E - The type of one of this class' {@linkcode HeldItem.effects | effects}
-   * @param effect - The {@linkcode HeldItemEffect | effect} being applied
-   * @param args - Arguments required for the effect application
-   * @returns Whether the effect should apply.
-   * Defaults to `true` if not overridden.
-   */
-  // biome-ignore lint/correctness/noUnusedFunctionParameters: pseudo-abstract method
-  public shouldApply<E extends T[number]>(effect: E, args: HeldItemEffectParamMap[E]): boolean {
-    return true;
-  }
-
-  /**
-   * Apply the given item's effects.
-   * Called if and only if {@linkcode HeldItem.shouldApply | shouldApply} returns `true`.
-   * @typeParam E - The type of one of this class' {@linkcode HeldItem.effects | effects}
-   * @param effect - The effect being applied
-   * @param args - Arguments required for the effect application
-   */
-  public abstract apply<E extends T[number]>(effect: E, param: HeldItemEffectParamMap[E]): void;
-}
-
-// TODO: Make this a mixin to avoid diamond problem issues
-/** Abstract class for all `HeldItem`s that can be consumed during battle. */
-export abstract class ConsumableHeldItem<T extends NonEmptyTuple<HeldItemEffect>> extends HeldItem<T> {
-  /**
-   * Consume this item and apply relevant effects.
-   * Should be extended by any subclasses with their own on-consume effects.
-   * @param pokemon - The Pokémon consuming the item
-   * @param remove - Whether to remove the item during consumption; default `true`
-   * @param unburden - Whether to trigger item loss abilities (i.e. Unburden)  when consuming the item; default `true`
-   * @sealed
-   */
-  public consume(pokemon: Pokemon, remove = true, unburden = true): void {
-    if (remove) {
-      pokemon.heldItemManager.remove(this.type, 1);
-      // TODO: Turn this into updateItemBar or something
-      globalScene.updateItems(pokemon.isPlayer());
-    }
-    if (unburden) {
-      applyAbAttrs("PostItemLostAbAttr", { pokemon });
-    }
-  }
-}
-
-/** Abstract class for all items that are purely cosmetic.
+ * Abstract class for all items that are purely cosmetic.
  * Currently coincides with the {@linkcode HeldItemBase} class.
- * Might become concrete later on if we want cosmetic items without a subclass. */
+ * Might become concrete later on if we want cosmetic items without a subclass.
+ *
+ * @remarks
+ * All cosmetic held items are innately non-stealable, non-transferable, and un-suppressable.
+ */
 export abstract class CosmeticHeldItem extends HeldItemBase {
   /**
    * This field does not exist at runtime and must not be used.
    * Its sole purpose is to ensure that typescript is able to properly differentiate cosmetic items from normal ones.
    */
   private declare _: never;
+
+  public override readonly isStealable = false;
+  public override readonly isSuppressable = false;
+  public override readonly isTransferable = false;
 }

@@ -2785,6 +2785,7 @@ export class BattleScene extends SceneBase {
     if (!ignoreUpdate) {
       this.updateItems(pokemon.isPlayer());
     }
+    // TODO: Held items don't have sound names...?
     const soundName = allHeldItems[heldItemId].soundName;
     if (playSound && !this.sound.get(soundName)) {
       this.playSound(soundName);
