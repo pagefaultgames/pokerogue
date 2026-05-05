@@ -1,5 +1,5 @@
 import "vitest-canvas-mock";
-import "#plugins/i18n"; // tests don't go through `main.ts`, requiring this to be imported here as well
+import "#app/i18n"; // tests don't go through `main.ts`, requiring this to be imported here as well
 
 import { PromptHandler } from "#test/helpers/prompt-handler";
 import { MockConsole } from "#test/mocks/mock-console/mock-console";

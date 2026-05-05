@@ -363,13 +363,6 @@ export class LoadingScene extends SceneBase {
 
       .loadSe("PRSFX- Transform", "battle_anims");
 
-    // TODO: Shouldn't this be inside the middle of the code?
-    this.load.plugin(
-      "rextexteditplugin",
-      "https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rextexteditplugin.min.js",
-      true,
-    );
-
     this.loadLoadingScreen();
 
     initializeGame();

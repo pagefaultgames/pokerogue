@@ -1,4 +1,4 @@
-import { pokerogueApi } from "#api/pokerogue-api";
+import { pokerogueApi } from "#api/api";
 import { bypassLogin, isDev } from "#constants/app-constants";
 import { BiomeId } from "#enums/biome-id";
 import { MoneyFormat } from "#enums/money-format";
@@ -69,7 +69,7 @@ export function padInt(value: number, length: number, padWith?: string): string 
   if (!padWith) {
     padWith = "0";
   }
-  let valueStr = value.toString();
+  let valueStr: string = value.toString();
   while (valueStr.length < length) {
     valueStr = `${padWith}${valueStr}`;
   }

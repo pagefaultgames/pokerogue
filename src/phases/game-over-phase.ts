@@ -1,4 +1,4 @@
-import { pokerogueApi } from "#api/pokerogue-api";
+import { pokerogueApi } from "#api/api";
 import { clientSessionId } from "#app/account";
 import { globalScene } from "#app/global-scene";
 import { pokemonEvolutions } from "#balance/pokemon-evolutions";

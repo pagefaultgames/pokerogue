@@ -500,10 +500,12 @@ export class Arena {
     if (timeOfDay === this.lastTimeOfDay) {
       return;
     }
-    this.pokemonPool = Object.entries(allBiomes.get(this.biomeId).pokemonPool).reduce(
+
+    const currBiome = allBiomes.get(this.biomeId);
+    this.pokemonPool = Object.entries(currBiome.pokemonPool).reduce(
       (acc, [tier, pool]) => {
-        // TODO: Remove type assertion after https://github.com/pagefaultgames/pokerogue/pull/7078 is merged
-        acc[tier as `${BiomePoolTier}`] = [...pool[TimeOfDay.ALL], ...pool[timeOfDay]];
+        tier satisfies `${BiomePoolTier}`;
+        acc[tier] = [...pool[TimeOfDay.ALL], ...pool[timeOfDay]];
         return acc;
       },
       {} as Mutable<ArenaPokemonPools>,

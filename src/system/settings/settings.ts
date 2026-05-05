@@ -205,39 +205,23 @@ export const Setting: Setting[] = [
     label: i18next.t("settings:gameSpeed"),
     options: [
       {
-        value: "1",
-        label: i18next.t("settings:gameSpeed100x"),
-      },
-      {
-        value: "1.25",
-        label: i18next.t("settings:gameSpeed125x"),
-      },
-      {
-        value: "1.5",
-        label: i18next.t("settings:gameSpeed150x"),
-      },
-      {
         value: "2",
-        label: i18next.t("settings:gameSpeed200x"),
-      },
-      {
-        value: "2.5",
-        label: i18next.t("settings:gameSpeed250x"),
+        label: i18next.t("settings:gameSpeedSlow"),
       },
       {
         value: "3",
-        label: i18next.t("settings:gameSpeed300x"),
+        label: i18next.t("settings:gameSpeedNormal"),
       },
       {
         value: "4",
-        label: i18next.t("settings:gameSpeed400x"),
+        label: i18next.t("settings:gameSpeedFast"),
       },
       {
         value: "5",
-        label: i18next.t("settings:gameSpeed500x"),
+        label: i18next.t("settings:gameSpeedTurbo"),
       },
     ],
-    default: 3,
+    default: 1,
     type: SettingType.GENERAL,
     clamp: false,
   },
@@ -765,7 +749,7 @@ export function setSetting(setting: string, value: number): boolean {
   }
   switch (Setting[index].key) {
     case SettingKeys.Game_Speed:
-      globalScene.gameSpeed = Number.parseFloat(Setting[index].options[value].value.replace("x", ""));
+      globalScene.gameSpeed = Number.parseFloat(Setting[index].options[value].value);
       break;
     case SettingKeys.Master_Volume:
       globalScene.masterVolume = value ? Number.parseInt(Setting[index].options[value].value) * 0.01 : 0;
