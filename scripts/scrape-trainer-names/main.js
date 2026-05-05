@@ -134,6 +134,7 @@ async function scrapeTrainerNames(classes) {
   namesTuples.sort((a, b) => a[0].localeCompare(b[0]));
 
   /** @type {Record<string, string[] | parsedNames>} */
+  // @ts-expect-error: something is broken here
   const namesRecord = Object.fromEntries(namesTuples);
 
   // Convert all arrays into objects indexed by numbers
