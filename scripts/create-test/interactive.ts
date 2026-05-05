@@ -4,10 +4,10 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+import type { TestType } from "#create-test/constants";
+import { validTestTypes } from "#create-test/constants";
 import { input, select } from "@inquirer/prompts";
 import chalk from "chalk";
-import type { TestType } from "./constants.js";
-import { validTestTypes } from "./constants.js";
 
 /**
  * Prompt the user to select a test type via list.

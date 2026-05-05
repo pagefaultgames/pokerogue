@@ -10,13 +10,13 @@
  * Usage: `pnpm eggMoves:parse`
  */
 
+import { showHelpText } from "#parse-egg-moves/help-message";
+import { runInteractive } from "#parse-egg-moves/interactive";
+import { parseEggMoves } from "#parse-egg-moves/parse";
+import type { Option } from "#parse-egg-moves/types";
 import fs from "node:fs";
 import { join } from "node:path";
 import chalk from "chalk";
-import { showHelpText } from "./help-message.js";
-import { runInteractive } from "./interactive.js";
-import { parseEggMoves } from "./parse.js";
-import type { Option } from "./types.js";
 
 const version = "1.0.1";
 

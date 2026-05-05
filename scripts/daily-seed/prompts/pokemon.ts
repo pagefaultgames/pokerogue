@@ -14,6 +14,7 @@ import { getEnumKeys } from "#utils/enums";
 import { toTitleCase, toUpperSnakeCase } from "#utils/strings";
 import { number, search } from "@inquirer/prompts";
 
+// NB: We cannot import this from #sprites/variant as that file imports `Pokemon` (and 90% of `src` along with it)
 export type Variant = 0 | 1 | 2;
 
 // TODO: Change all these prompts to use objects to avoid re-mapping cases

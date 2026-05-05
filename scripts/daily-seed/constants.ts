@@ -5,8 +5,6 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-// #region Options
-
 /**
  * All accepted options for editing the daily seed config directly.
  */
@@ -41,5 +39,3 @@ export const BOSS_OPTIONS = [
 
 /** All accepted options for configuring a starter Pokemon. */
 export const STARTER_OPTIONS = ["formIndex", "variant", "moveset", "nature", "ability", "passive", "finish"] as const;
-
-// #endregion Options

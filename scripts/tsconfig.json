@@ -5,21 +5,14 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 {
+  // Separate TSConfig used for CI, typechecking the entire project alongside `scripts`-only subpath aliases.
+  // Code in `src/test` will continue to use the root tsconfig when editing (providing extra insurance against referencing `scripts` files).
+  // TODO: This is only necessary because of the `src` repo being incompatible with declaration emit.
+  // If https://github.com/microsoft/TypeScript/issues/17744 is ever resolved, we should graduate to proper project references
   "extends": "../tsconfig.json",
-  "files": [],
-  "include": ["**/*.ts", "../**/*.d.ts", "**/*.mjs", "**/*.cjs"],
-  "exclude": ["../dist", "../node_modules", "**/*.boilerplate.ts"],
   "compilerOptions": {
-    "types": ["@types/node"],
-    "target": "esnext",
-    "module": "preserve",
-    "lib": ["ESNext"],
-    "moduleResolution": "bundler", // we use vite-node
-    "strict": true,
-    // NB: Since `tsc` re-typechecks everything transitively imported by any compiled files, we should ensure that any imported files
-    // have as few dependencies as possible (potentially by moving unrelated code into new files).
-    // TODO: Consider if we can remove some of these import paths to discourage relying on import-heavy folders that may slow down compilation
     "paths": {
+      // all the main repo paths (tsc doesn't copy them over)
       "#abilities/*": ["../src/data/abilities/*.ts"],
       "#api/*": ["../src/plugins/api/*.ts"],
       "#biomes/*": ["../src/data/balance/biomes/*.ts"],
@@ -58,15 +51,16 @@
         "../src/ui/utils/*.ts",
         "../src/ui/*.ts"
       ],
-      "#utils/*": ["../src/utils/*.ts", "./utils/*.ts"],
       "#data/*": ["../src/data/pokemon-forms/*.ts", "../src/data/pokemon/*.ts", "../src/data/*.ts"],
       "#test/*": ["../test/*.ts"],
       "#app/*": ["../src/*.ts"],
 
-      // new paths for script subfolders
+      // new subpath imports for script subfolders
+      "#utils/*": ["../src/utils/*.ts", "./utils/*.ts"], // add mapping for scripting utilities
       "#daily-seed/*": ["./daily-seed/*.ts", "./daily-seed/prompts/*.ts"],
       "#gen-moveset/*": ["./gen-moveset/*.ts"],
-      "#create-test/*": ["./create-test/*.ts"]
+      "#create-test/*": ["./create-test/*.ts"],
+      "#parse-egg-moves/*": ["./parse-egg-moves/*.ts"]
     }
   }
 }

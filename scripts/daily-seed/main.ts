@@ -11,21 +11,14 @@
  */
 
 import { EDIT_OPTIONS } from "#daily-seed/constants";
+import type { BossConfig } from "#daily-seed/prompts/boss";
 import { promptBoss } from "#daily-seed/prompts/boss";
-import { getPropertyValue } from "#utils/arguments";
-import { promptOverwrite, writeFileSafe } from "#utils/file";
-import { toTitleCase } from "#utils/strings";
-import { existsSync } from "fs";
-import { join } from "path";
-import { select } from "@inquirer/prompts";
-import chalk from "chalk";
-import type { BossConfig } from "./prompts/boss.js";
 import type {
   DailyEventChallenge,
   DailyEventMysteryEncounter,
   DailyTrainerManipulation,
   ForcedWaveConfig,
-} from "./prompts/general.js";
+} from "#daily-seed/prompts/general";
 import {
   promptBiome,
   promptChallenges,
@@ -36,9 +29,16 @@ import {
   promptMysteryEncounters,
   promptSeed,
   promptTrainerManipulation,
-} from "./prompts/general.js";
-import type { StarterConfig } from "./prompts/starter.js";
-import { promptStarters } from "./prompts/starter.js";
+} from "#daily-seed/prompts/general";
+import type { StarterConfig } from "#daily-seed/prompts/starter";
+import { promptStarters } from "#daily-seed/prompts/starter";
+import { getPropertyValue } from "#utils/arguments";
+import { promptOverwrite, writeFileSafe } from "#utils/file";
+import { toTitleCase } from "#utils/strings";
+import { existsSync } from "fs";
+import { join } from "path";
+import { select } from "@inquirer/prompts";
+import chalk from "chalk";
 
 /**
  * The version of this script

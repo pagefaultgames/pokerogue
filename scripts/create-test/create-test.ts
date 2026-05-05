@@ -10,6 +10,9 @@
  * Usage: `pnpm test:create`
  */
 
+import { cliAliases, type TestType, validTestTypes } from "#create-test/constants";
+import { getBoilerplatePath, getTestFileFullPath } from "#create-test/dirs";
+import { promptFileName, promptTestType } from "#create-test/interactive";
 import { defaultCommanderHelpArgs } from "#utils/arguments";
 import { writeFileSafe } from "#utils/file";
 import { toKebabCase, toTitleCase } from "#utils/strings";
@@ -17,10 +20,6 @@ import fs from "node:fs";
 import { join } from "node:path";
 import { Command, InvalidArgumentError } from "@commander-js/extra-typings";
 import chalk from "chalk";
-import type { TestType } from "./constants.js";
-import { cliAliases, validTestTypes } from "./constants.js";
-import { getBoilerplatePath, getTestFileFullPath } from "./dirs.js";
-import { promptFileName, promptTestType } from "./interactive.js";
 
 //#region Constants
 const version = "2.1.0";

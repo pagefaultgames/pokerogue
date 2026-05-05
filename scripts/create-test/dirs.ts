@@ -4,9 +4,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+import { type TestType, testTypesToDirs } from "#create-test/constants";
 import { join } from "node:path";
-import type { TestType } from "./constants.js";
-import { testTypesToDirs } from "./constants.js";
 
 const projectRoot = join(import.meta.dirname, "..", "..");
 

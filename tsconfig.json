@@ -49,9 +49,10 @@
     "useUnknownInCatchVariables": false,
     "rootDir": ".",
     "outDir": "./build",
-    // Note: We actively CANNOT UNDER ANY CIRCUMSTANCES enable declaration emit;
-    // the main repo code contains several abstract classes fundementally incompatible with generating `.d.ts` files.
+    // Note: We actively CANNOT UNDER ANY CIRCUMSTANCES enable declaration emit, as main repo code uses
+    // mixins for classes with private/protected members (causing TS4094 errors).
     // (This also means we cannot use `composite` or project references in any capacity.)
+    // See: https://github.com/microsoft/TypeScript/issues/17744
     "noEmit": true,
     "paths": {
       "#abilities/*": ["./src/data/abilities/*.ts"],
@@ -99,7 +100,7 @@
     }
   },
   // Exclude checking for script files as those are covered by the folder's `tsconfig.json`
-  // We do not use explicit `exclude` paths to allow explicitly including
-  "include": ["*.ts", "*.d.ts", "src", "test", "./github/**/*.mts", "scripts/**/*.boilerplate.ts"],
+  // We do not use explicit `exclude` paths to allow explicitly including selected scripts files
+  "include": ["**/*.ts", "**/*.d.ts", "**/*.cts", "**/*.mts", "./github/**/*.mts"],
   "exclude": ["dist", "node_modules", "**/*.js", "**/*.cjs", "**/*.mjs"]
 }

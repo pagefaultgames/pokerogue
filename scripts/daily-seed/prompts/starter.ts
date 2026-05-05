@@ -5,9 +5,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { toCamelCase, toTitleCase } from "#utils/strings";
-import { number, select } from "@inquirer/prompts";
-import { STARTER_OPTIONS } from "../constants.js";
+import { STARTER_OPTIONS } from "#daily-seed/constants";
 import {
   promptAbility,
   promptFormIndex,
@@ -16,7 +14,9 @@ import {
   promptSpeciesId,
   promptVariant,
   type Variant,
-} from "./pokemon.js";
+} from "#daily-seed/prompts/pokemon";
+import { toCamelCase, toTitleCase } from "#utils/strings";
+import { number, select } from "@inquirer/prompts";
 
 export type StarterConfig = {
   speciesId?: number;

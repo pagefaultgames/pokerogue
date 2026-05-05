@@ -4,10 +4,11 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
+
+import { showHelpText } from "#parse-egg-moves/help-message";
+import type { Option } from "#parse-egg-moves/types";
 import fs from "node:fs";
 import { input, select } from "@inquirer/prompts";
-import { showHelpText } from "./help-message";
-import type { Option } from "./types";
 
 /**
  * Prompt the user to interactively select an option (console/file) to retrieve the egg move CSV.
