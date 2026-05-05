@@ -160,7 +160,9 @@ export class HeldItemBuilder<Attrs extends HeldItemAttr = never, ConsumableEffec
     return this;
   }
 
-  // #endregion Builder code
+  // #endregion Localization
+
+  // #region Builder code
 
   /**
    * Build a new {@linkcode HeldItem} with the stored attributes and flags.
