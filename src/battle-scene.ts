@@ -2366,7 +2366,7 @@ export class BattleScene extends SceneBase {
     if (shouldFadeOut) {
       const fadeDuration = 500;
       this.fadeOutBgm(fadeDuration);
-      this.time.delayedCall(fadeDuration + 250, () => {
+      this.time.delayedCall(fixedInt(fadeDuration + 250), () => {
         this.playNewBgm(resolvedName, loop, loopPoint);
       });
     } else {
@@ -2442,7 +2442,7 @@ export class BattleScene extends SceneBase {
    */
   public fadeAndSwitchBgm(newBgmKey?: string, delay = 2000): void {
     this.fadeOutBgm(delay);
-    this.time.delayedCall(delay, () => {
+    this.time.delayedCall(fixedInt(delay), () => {
       this.playBgm(newBgmKey);
     });
   }
@@ -2494,7 +2494,10 @@ export class BattleScene extends SceneBase {
    */
   public replaceBgmUntilEnd(bgmName: string): BackgroundMusic {
     const tempBgm = new BackgroundMusic(bgmName, false);
-    tempBgm.onEnd(() => this.bgm?.resume());
+    tempBgm.onEnd(() => {
+      this.bgm?.resume();
+      tempBgm.destroy();
+    });
     this.bgm?.pause();
     tempBgm.play(this.masterVolume * this.bgmVolume);
 
@@ -3496,7 +3499,7 @@ export class BattleScene extends SceneBase {
       return;
     }
 
-    this.fadeOutBgm(fixedInt(2000));
+    this.fadeOutBgm(2000);
     this.ui.showDialogue(classicFinalBossDialogue.firstStageWin, pokemon.species.name, undefined, () => {
       const finalBossMBH = getModifierType(modifierTypes.MINI_BLACK_HOLE).newModifier(
         pokemon,
