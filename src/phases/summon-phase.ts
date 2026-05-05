@@ -91,7 +91,7 @@ export class SummonPhase extends PokemonPhase {
     const illegalPokemon = this.getPokemon();
 
     const party = this.getAlliedParty();
-    const legalIndex = party.findIndex((p, i) => i > this.fieldIndex && p.isAllowedInBattle());
+    const legalIndex = party.findIndex((p, i) => i > this.fieldIndex && p.isAllowedInBattle() && !p.isOnField());
 
     if (legalIndex > -1) {
       // Swap positions of illegal and legal Pokemon in the party

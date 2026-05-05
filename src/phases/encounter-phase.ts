@@ -536,7 +536,6 @@ export class EncounterPhase extends BattlePhase {
     const { battleType, waveIndex } = currentBattle;
     const enemyField = globalScene.getEnemyField();
 
-    console.log("Loaded: ", this.loaded);
     queueBattlerEntrancePhases({
       skipEnemySummon: !this.wasTrainer,
       loaded: this.loaded,

@@ -58,9 +58,6 @@ export function queueBattlerEntrancePhases(params: BattlerEntranceParams): void 
   const addPlayer2 = double && availablePlayerPartyMembers.length > 1;
   const addEnemy2 = double && availableEnemyPartyMembers.length > 1;
 
-  // NB: Battle entrance phases use the first 2 party slots instead of the first 2 available party members
-  // TODO: This assumption may actually be the root cause of the "invalid summon" errors in SummonPhase;
-  // we should revisit this at a later date
   const playerMons = globalScene.getPlayerParty().slice(0, addPlayer2 ? 2 : 1);
   const enemyMons = globalScene.getEnemyParty().slice(0, addEnemy2 ? 2 : 1);
 
@@ -113,13 +110,24 @@ function getPlayerSummonPhases(
   const { phaseManager } = globalScene;
   const { loaded } = summonPhaseOpts;
 
-  const transitionPhases = loaded ? [] : getTransitionPhases(availablePlayerPartyMembers);
+  const phases: (SummonPhase | RecallPhase | ToggleDoublePositionPhase)[] = [];
 
-  return [
-    phaseManager.create("SummonPhase", playerMons[0].getBattlerIndex(), summonPhaseOpts),
-    ...transitionPhases,
-    ...playerMons.slice(1).map(p => phaseManager.create("SummonPhase", p.getBattlerIndex(), summonPhaseOpts)),
-  ];
+  // Queue switch-outs to replace any inactive/fainted pokemon currently on field.
+  // TODO: This use of raw `BattlerIndex`es as arguments (while mirroring prior behavior) is brittle and
+  // actively relies on the "invalid summon" kludge in SummonPhase to handle edge cases.
+  // We should revisit and revise this at a later date to make it more sensible
+  if (!playerMons[0].isActive(true)) {
+    phases.push(phaseManager.create("SummonPhase", BattlerIndex.PLAYER, summonPhaseOpts));
+  }
+
+  if (!loaded) {
+    phases.push(...getTransitionPhases(availablePlayerPartyMembers));
+  }
+  if (playerMons[1] != null && !playerMons[1].isActive(true)) {
+    phases.push(phaseManager.create("SummonPhase", BattlerIndex.PLAYER_2, summonPhaseOpts));
+  }
+
+  return phases;
 }
 
 /**
