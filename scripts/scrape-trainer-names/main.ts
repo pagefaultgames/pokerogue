@@ -12,17 +12,17 @@
  * Usage: `pnpm scrape-trainers`
  */
 
+import { checkGenderAndType } from "#scrape-trainer-names/check-gender";
+import { fetchNames, INVALID_URL } from "#scrape-trainer-names/fetch-names";
+import { showHelpText } from "#scrape-trainer-names/help-message";
+import type { ParsedNames } from "#scrape-trainer-names/types";
 import { getPropertyValue } from "#utils/arguments";
+import { writeFileSafe } from "#utils/file";
 import { toCamelCase, toPascalSnakeCase, toTitleCase } from "#utils/strings";
+import { normalizeDiacritics } from "#utils/unicode";
 import { format, inspect } from "node:util";
 import chalk from "chalk";
 import { JSDOM } from "jsdom";
-import { writeFileSafe } from "../utils/file.js";
-import { normalizeDiacritics } from "../utils/unicode.js";
-import { checkGenderAndType } from "./check-gender.js";
-import { fetchNames, INVALID_URL } from "./fetch-names.js";
-import { showHelpText } from "./help-message.js";
-import type { ParsedNames } from "./types.js";
 
 const version = "1.0.0";
 

@@ -1,12 +1,14 @@
 /*
- * SPDX-FileCopyrightText: 2025 Pagefault Games
+ * SPDX-FileCopyrightText: 2026 Pagefault Games
  * SPDX-FileContributor: Bertie690
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 {
-  // Separate TSConfig used for CI, typechecking the entire project alongside `scripts`-only subpath aliases.
+  // Separate TSConfig used for CI, typechecking the entire project alongside `scripts` with exclusive subpath aliases.
   // Code in `src/test` will continue to use the root tsconfig when editing (providing extra insurance against referencing `scripts` files).
+  // All other settings are preserved as TSC will lint any imported files with the provided settings
+  // (meaning we may as well check everything in 1 pass)
   // TODO: This is only necessary because of the `src` repo being incompatible with declaration emit.
   // If https://github.com/microsoft/TypeScript/issues/17744 is ever resolved, we should graduate to proper project references
   "extends": "../tsconfig.json",
@@ -60,7 +62,8 @@
       "#daily-seed/*": ["./daily-seed/*.ts", "./daily-seed/prompts/*.ts"],
       "#gen-moveset/*": ["./gen-moveset/*.ts"],
       "#create-test/*": ["./create-test/*.ts"],
-      "#parse-egg-moves/*": ["./parse-egg-moves/*.ts"]
+      "#parse-egg-moves/*": ["./parse-egg-moves/*.ts"],
+      "#scrape-trainer-names/*": ["./scrape-trainer-names/*.ts"]
     }
   }
 }
