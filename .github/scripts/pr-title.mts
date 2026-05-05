@@ -108,8 +108,8 @@ Terminology: fix(move): Future Sight no longer crashes
 
     core.info(info);
 
-    // Example usage of regex: https://regex101.com/r/FeN8jG/8
-    const regex = /^([a-z0-9]+)!?(\([a-z]+\))?: .+/;
+    // Example usage of regex: https://regex101.com/r/FeN8jG/9
+    const regex = /^([a-z0-9]+)(\([a-z]+\))?!?: .+/;
     const regexResult = regex.exec(title);
     if (!regexResult) {
       core.setFailed(`Pull Request title "${title}" failed to match - "Prefix(Scope): Subject"`);

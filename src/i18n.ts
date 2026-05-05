@@ -1,5 +1,5 @@
 import { timedEventManager } from "#app/global-event-manager";
-import { namespaceMap } from "#plugins/namespace-map";
+import { namespaceMap } from "#app/i18n-namespace-map";
 import { getCachedUrl } from "#utils/fetch-utils";
 import { toKebabCase } from "#utils/strings";
 import i18next from "i18next";
@@ -15,6 +15,8 @@ interface LoadingFontFaceProperty {
   only?: string[];
 }
 
+//#endregion
+
 //#region Constants
 
 const unicodeRanges = {
@@ -24,14 +26,13 @@ const unicodeRanges = {
   CJKIdeograph: "U+4E00-9FFF",
   devanagari: "U+0900-097F",
   thai: "U+0E00-0E7F",
-  specialCharacters: "U+266A,U+2605,U+2665,U+2663", //♪,★,♥,♣
+  specialCharacters: "U+266A,U+2605,U+2665,U+2663", // ♪, ★, ♥, ♣
 };
 
 const rangesByLanguage = {
   chinese: [unicodeRanges.CJKCommon, unicodeRanges.fullwidth, unicodeRanges.CJKIdeograph].join(","),
-  japanese: [unicodeRanges.CJKCommon, unicodeRanges.fullwidth, unicodeRanges.kana, unicodeRanges.CJKIdeograph].join(
-    ",",
-  ),
+  // biome-ignore format: prevent silly formatting
+  japanese: [unicodeRanges.CJKCommon, unicodeRanges.fullwidth, unicodeRanges.kana, unicodeRanges.CJKIdeograph].join(","),
 };
 
 const fonts: LoadingFontFaceProperty[] = [
@@ -97,12 +98,12 @@ const fonts: LoadingFontFaceProperty[] = [
     }),
   },
   {
-    face: new FontFace("pkmnems", "url(./fonts/terrible-thaifix.ttf)", {
-      unicodeRange: unicodeRanges.thai,
-    }),
+    face: new FontFace("pkmnems", "url(./fonts/terrible-thaifix.ttf)", { unicodeRange: unicodeRanges.thai }),
     extraOptions: { sizeAdjust: "133%" },
   },
 ];
+
+//#endregion
 
 //#region Functions
 
@@ -139,6 +140,8 @@ function i18nMoneyFormatter(amount: any): string {
 
 // assigned during post-processing in #app/plugins/vite/namespaces-i18n-plugin.ts
 const nsEn: string[] = [];
+
+//#endregion
 
 //#region Exports
 

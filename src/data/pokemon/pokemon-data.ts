@@ -32,6 +32,7 @@ export class CustomPokemonData {
   public ability: AbilityId | -1;
   public passive: AbilityId | -1;
   public nature: Nature | -1;
+  // TODO: Change default value from `PokemonType.UNKNOWN` to `null` for easier checking;
   public types: PokemonType[];
   /** Deprecated but needed for session save migration */
   // TODO: Remove this once pre-session migration is implemented

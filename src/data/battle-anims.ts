@@ -833,6 +833,7 @@ export abstract class BattleAnim {
     return ret;
   }
 
+  // TODO: Make this async
   play(onSubstitute?: boolean, callback?: () => void) {
     const isOppAnim = this.isOppAnim();
     const user = isOppAnim ? this.target! : this.user!;

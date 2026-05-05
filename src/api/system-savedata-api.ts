@@ -5,17 +5,14 @@ import type {
   VerifySystemSavedataRequest,
   VerifySystemSavedataResponse,
 } from "#types/api";
+import type { SystemSaveData } from "#types/save-data";
 
-/**
- * A wrapper for PokéRogue system savedata API requests.
- */
+/** A wrapper for PokéRogue system savedata API requests. */
 export class PokerogueSystemSavedataApi extends ApiBase {
-  //#region Public
-
   /**
    * Get a system savedata.
    * @param params The {@linkcode GetSystemSavedataRequest} to send
-   * @returns The system savedata as `string` or either the status code or `null` on error
+   * @returns The system savedata as `string`, or either the status code or `null` on error
    */
   public async get(params: GetSystemSavedataRequest): Promise<string | number | null> {
     try {
@@ -38,10 +35,9 @@ export class PokerogueSystemSavedataApi extends ApiBase {
    * If not the {@linkcode SystemSaveData} is returned.
    * @param params The {@linkcode VerifySystemSavedataRequest} to send
    * @returns A {@linkcode SystemSaveData} if **NOT** valid, otherwise `null`.
-   *
-   * TODO: add handling for errors
    */
-  public async verify(params: VerifySystemSavedataRequest) {
+  // TODO: add handling for errors
+  public async verify(params: VerifySystemSavedataRequest): Promise<SystemSaveData | null> {
     const urlSearchParams = this.toUrlSearchParams(params);
     const response = await this.doGet(`/savedata/system/verify?${urlSearchParams}`);
 
@@ -65,7 +61,7 @@ export class PokerogueSystemSavedataApi extends ApiBase {
    * @param rawSystemData The raw {@linkcode SystemSaveData}
    * @returns An error message if something went wrong
    */
-  public async update(params: UpdateSystemSavedataRequest, rawSystemData: string) {
+  public async update(params: UpdateSystemSavedataRequest, rawSystemData: string): Promise<string> {
     try {
       const urSearchParams = this.toUrlSearchParams(params);
       const response = await this.doPost(`/savedata/system/update?${urSearchParams}`, rawSystemData);
