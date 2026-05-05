@@ -302,20 +302,24 @@ export async function localPing(): Promise<void> {
   }
 }
 
+/**
+ * Class used to wrap numbers that should be treated as fixed values and not mutated by changes to game speed.
+ * @remarks
+ * Many `Phaser` functions are overridden in `src/system/game-speed.ts` to mutate the numbers for duration/etc \
+ * that are passed in to them by dividing by the game speed, unless a `FixedInt` object is passed in.
+ *
+ * There is no reason to use this outside of those functions.
+ */
 export class FixedInt {
   public readonly value: number;
 
   constructor(value: number) {
     this.value = value;
   }
-
-  [Symbol.toPrimitive](_hint: string): number {
-    return this.value;
-  }
 }
 
-export function fixedInt(value: number): number {
-  return new FixedInt(value) as unknown as number;
+export function fixedInt(value: number): FixedInt {
+  return new FixedInt(value);
 }
 
 /**

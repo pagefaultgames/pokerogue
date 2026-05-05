@@ -48,6 +48,7 @@ import { achvs } from "#system/achv";
 import { RibbonData } from "#system/ribbons/ribbon-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
+import type { TweenChainBuilderConfigFixedInt } from "#types/phaser.d";
 import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { Starter, StarterAttributes, StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
@@ -1499,7 +1500,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     icon.y = 2;
 
-    const tweenChain: Phaser.Types.Tweens.TweenChainBuilderConfig = {
+    const tweenChain: TweenChainBuilderConfigFixedInt = {
       targets: icon,
       paused: startPaused,
       loop: -1,
