@@ -5,7 +5,7 @@ import { TextStyle } from "#enums/text-style";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { addBBCodeTextObject } from "#ui/text";
 import { hasSpecialWrapSpace, wrapTextAtSpaces } from "#ui/utils/text-wrap";
-import { getFrameMs } from "#utils/common";
+import { type FixedInt, getFrameMs } from "#utils/common";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
 export abstract class MessageUiHandler extends AwaitableUiHandler {
@@ -72,11 +72,11 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
 
   showText(
     text: string,
-    delay?: number | null,
+    delay?: number | FixedInt | null,
     callback?: (() => void) | null,
-    callbackDelay?: number | null,
+    callbackDelay?: number | FixedInt | null,
     prompt?: boolean | null,
-    promptDelay?: number | null,
+    promptDelay?: number | FixedInt | null,
   ) {
     this.hideNameText();
     this.showTextInternal(text, delay, callback, callbackDelay, prompt, promptDelay);
@@ -85,11 +85,11 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
   showDialogue(
     text: string,
     name?: string,
-    delay?: number | null,
+    delay?: number | FixedInt | null,
     callback?: (() => void) | null,
-    callbackDelay?: number | null,
+    callbackDelay?: number | FixedInt | null,
     prompt?: boolean | null,
-    promptDelay?: number | null,
+    promptDelay?: number | FixedInt | null,
   ) {
     this.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
     if (name) {
@@ -99,11 +99,11 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
 
   private showTextInternal(
     text: string,
-    delay?: number | null,
+    delay?: number | FixedInt | null,
     callback?: (() => void) | null,
-    callbackDelay?: number | null,
+    callbackDelay?: number | FixedInt | null,
     prompt?: boolean | null,
-    promptDelay?: number | null,
+    promptDelay?: number | FixedInt | null,
   ) {
     if (delay === null || delay === undefined) {
       delay = 20;
@@ -264,7 +264,7 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
     }
   }
 
-  showPrompt(callback?: (() => void) | null, callbackDelay?: number | null) {
+  showPrompt(callback?: (() => void) | null, callbackDelay?: number | FixedInt | null) {
     const wrappedTextLines = this.message.runWordWrap(this.message.text).split(/\n/g);
     const textLinesCount = wrappedTextLines.length;
     const lastTextLine = wrappedTextLines.at(-1) ?? "";

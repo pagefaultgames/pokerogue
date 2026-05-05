@@ -10,6 +10,7 @@ import { MockGameObjectCreator } from "#test/mocks/mock-game-object-creator";
 import { MockLoader } from "#test/mocks/mock-loader";
 import { MockTextureManager } from "#test/mocks/mock-texture-manager";
 import { MockContainer } from "#test/mocks/mocks-container/mock-container";
+import type { TweenBuilderConfigFixedInt, TweenChainBuilderConfigFixedInt, TweenFixedInt } from "#types/phaser.d";
 import { PokedexMonContainer } from "#ui/pokedex-mon-container";
 import Phaser from "phaser";
 import { vi } from "vitest";
@@ -118,7 +119,16 @@ export class GameWrapper {
     // TODO: Replace this with a proper mock of phaser's TweenManager.
     this.scene.tweens = {
       // @ts-expect-error
-      add: data => {
+      add: (
+        data:
+          | TweenBuilderConfigFixedInt
+          | TweenChainBuilderConfigFixedInt
+          | TweenFixedInt
+          | Phaser.Types.Tweens.TweenBuilderConfig
+          | Phaser.Types.Tweens.TweenChainBuilderConfig
+          | Phaser.Tweens.Tween
+          | Phaser.Tweens.TweenChain,
+      ) => {
         // TODO: our mock of `add` should have the same signature as the real one, which returns the tween
         // @ts-expect-error
         data.onComplete?.();
@@ -126,7 +136,7 @@ export class GameWrapper {
       getTweensOf: () => [],
       killTweensOf: () => [] as any,
       // @ts-expect-error
-      chain: data => {
+      chain: (data: TweenChainBuilderConfigFixedInt) => {
         // TODO: our mock of `chain` should have the same signature as the real one, which returns the chain
         // @ts-expect-error
         data?.tweens?.forEach(tween => tween.onComplete?.());
@@ -134,9 +144,8 @@ export class GameWrapper {
         data.onComplete?.();
       },
       // @ts-expect-error
-      addCounter: data => {
+      addCounter: (data: NumberTweenBuilderConfigFixedInt) => {
         if (data.onComplete) {
-          // @ts-expect-error: how does this work when the parameters are missing?
           data.onComplete();
         }
       },

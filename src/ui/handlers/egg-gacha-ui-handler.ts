@@ -11,10 +11,11 @@ import { GachaType } from "#enums/gacha-types";
 import { TextStyle } from "#enums/text-style";
 import { VoucherType } from "#enums/voucher-type";
 import { getVoucherTypeIcon } from "#system/voucher";
+import type { TweenBuilderConfigFixedInt } from "#types/phaser.d";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { addTextObject, getEggTierTextTint, getTextStyleOptions } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
-import { fixedInt, randSeedShuffle } from "#utils/common";
+import { type FixedInt, fixedInt, randSeedShuffle } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import i18next from "i18next";
 
@@ -362,7 +363,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
     return fixedInt(delay);
   }
 
-  private firstDropAnims(): Phaser.Types.Tweens.TweenBuilderConfig[] {
+  private firstDropAnims(): TweenBuilderConfigFixedInt[] {
     audioManager.playSound("se/gacha_dial");
     return [
       // Tween 1 animates the gacha knob turning left
@@ -417,7 +418,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
       resolve = res;
     });
 
-    const tweens: Phaser.Types.Tweens.TweenBuilderConfig[] = count ? [] : this.firstDropAnims();
+    const tweens: TweenBuilderConfigFixedInt[] = count ? [] : this.firstDropAnims();
 
     tweens.push(
       // Tween 1 is responsible for animating the egg dropping from the gacha
@@ -665,11 +666,11 @@ export class EggGachaUiHandler extends MessageUiHandler {
 
   showText(
     text: string,
-    delay?: number,
+    delay?: number | FixedInt,
     callback?: () => void,
-    callbackDelay?: number,
+    callbackDelay?: number | FixedInt,
     prompt?: boolean,
-    promptDelay?: number,
+    promptDelay?: number | FixedInt,
   ): void {
     if (!text) {
       text = this.defaultText;
