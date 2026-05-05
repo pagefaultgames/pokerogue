@@ -9,7 +9,6 @@ import type { CheckSwitchPhase } from "#phases/check-switch-phase";
 import type { PostSummonPhase } from "#phases/post-summon-phase";
 import type { RecallPhase } from "#phases/recall-phase";
 import type { ScanIvsPhase } from "#phases/scan-ivs-phase";
-import type { ShinySparklePhase } from "#phases/shiny-sparkle-phase";
 import type { SummonPhase, SummonPhaseOptions } from "#phases/summon-phase";
 import type { ToggleDoublePositionPhase } from "#phases/toggle-double-position-phase";
 import type { NonEmptyTuple } from "type-fest";
@@ -67,10 +66,10 @@ export function queueBattlerEntrancePhases(params: BattlerEntranceParams): void 
 
   // TODO: Consider reworking the code to use iterators instead of arrays
   const phases = [
+    // NB: Any required `ShinySparklePhase`s are queued by the unshifted `SummonPhase`s
     ...getEnemySummonPhases(enemyMons, params),
-    ...getShinySparklePhases(enemyMons),
-    ...getIvScannerPhases(enemyMons),
     ...getPlayerSummonPhases(playerMons, availablePlayerPartyMembers, params),
+    ...getIvScannerPhases(enemyMons),
     ...getPostSummonPhases([...playerMons, ...enemyMons], params),
   ] as const;
 
@@ -141,12 +140,6 @@ function getTransitionPhases(
   }
 
   return transitionPhases;
-}
-
-function getShinySparklePhases(enemyMons: readonly EnemyPokemon[]): ShinySparklePhase[] {
-  const { phaseManager } = globalScene;
-
-  return enemyMons.filter(p => p.isShiny()).map(p => phaseManager.create("ShinySparklePhase", p.getBattlerIndex()));
 }
 
 function getIvScannerPhases(enemyMons: readonly EnemyPokemon[]): ScanIvsPhase[] {
