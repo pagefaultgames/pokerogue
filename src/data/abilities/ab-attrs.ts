@@ -3737,7 +3737,7 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
  * @see {@link https://www.smogon.com/dex/sv/abilities/forewarn/}
  */
 function getForewarnPower(move: Move): number {
-  if (move.is("StatusMove")) {
+  if (move.is("StatusMove") || move.is("SelfStatusMove")) {
     return 1;
   }
 
