@@ -4,7 +4,7 @@ import type { HeldItemEffect } from "#enums/held-item-effect";
 import { type HeldItemId, HeldItemNames } from "#enums/held-item-id";
 import type { HeldItem } from "#items/held-item";
 import type { HeldItemAttr } from "#items/held-item-attr";
-import type { ApplicableHeldItemId, ExtractItemEffect } from "#types/held-item-data-types";
+import type { ApplicableHeldItemId, ExtractHeldItemEffect } from "#types/held-item-data-types";
 import type { HeldItemEffectParamMap } from "#types/held-item-parameter";
 import { expect } from "vitest";
 
@@ -20,7 +20,7 @@ import { expect } from "vitest";
  * This ensures that items whose functionality depend on stack count or other properties are applied consistently
  * with how they would be during normal gameplay.
  */
-export function applySingleHeldItem<T extends ApplicableHeldItemId, E extends ExtractItemEffect<T>>(
+export function applySingleHeldItem<T extends ApplicableHeldItemId, E extends ExtractHeldItemEffect<T>>(
   itemId: T,
   effect: E,
   params: HeldItemEffectParamMap[E],

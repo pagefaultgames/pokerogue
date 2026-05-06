@@ -132,6 +132,7 @@ export class HeldItem<Attrs extends HeldItemAttr = HeldItemAttr> extends HeldIte
   private readonly effects: HeldItemRecord<Attrs>;
 
   // #region Localization
+
   /**
    * Optional parameters used to localize this item's name.
    * If omitted, will use the default implementation provided from {@linkcode HeldItemBase}.
@@ -155,6 +156,7 @@ export class HeldItem<Attrs extends HeldItemAttr = HeldItemAttr> extends HeldIte
   public override get iconName(): string {
     return this.customIconName ?? super.iconName;
   }
+
   // #endregion Localization
 
   protected constructor({

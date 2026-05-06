@@ -329,4 +329,4 @@ export function initHeldItems(): void {
   Object.freeze(allHeldItems);
 }
 
-//#endregion Initialization
+// #endregion Initialization

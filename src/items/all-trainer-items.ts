@@ -36,6 +36,7 @@ import type { Mutable } from "#types/type-helpers";
 import type { TrainerItemManager } from "./trainer-item-manager";
 
 // #region Marker items
+
 const markerItems = {
   [TrainerItemId.MAP]: new MarkerTrainerItem(TrainerItemId.MAP, 1),
   [TrainerItemId.IV_SCANNER]: new MarkerTrainerItem(TrainerItemId.IV_SCANNER, 1),
@@ -50,6 +51,10 @@ const markerItems = {
 
   [TrainerItemId.GOLDEN_BUG_NET]: new MarkerTrainerItem(TrainerItemId.GOLDEN_BUG_NET, 1),
 } as const satisfies Partial<Readonly<Record<TrainerItemId, MarkerTrainerItem>>>;
+
+// #endregion Marker items
+
+// #region X items
 
 type XItemsType = {
   [k in keyof typeof tempStatToTrainerItem as (typeof tempStatToTrainerItem)[k]]: TrainerItem<
@@ -78,9 +83,18 @@ const xItems = Object.entries(tempStatToTrainerItem)
     {} as Mutable<XItemsType>,
   );
 
+// #endregion X items
+
+// #region Initialization
+
 const trainerItems = {
   ...markerItems,
+
   ...xItems,
+  [TrainerItemId.DIRE_HIT]: new TrainerItemBuilder(TrainerItemId.DIRE_HIT, 5) //
+    .attr(CritBoosterTrainerItemAttr)
+    .lapsing()
+    .build(),
 
   [TrainerItemId.CANDY_JAR]: new TrainerItemBuilder(TrainerItemId.CANDY_JAR, 99) //
     .attr(LevelIncrementBoosterTrainerItemAttr)
@@ -106,7 +120,6 @@ const trainerItems = {
   [TrainerItemId.AMULET_COIN]: new TrainerItemBuilder(TrainerItemId.AMULET_COIN, 5) //
     .attr(MoneyMultiplierTrainerItemAttr)
     .build(),
-
   [TrainerItemId.GOLDEN_POKEBALL]: new TrainerItemBuilder(TrainerItemId.GOLDEN_POKEBALL, 3) //
     .attr(ExtraRewardTrainerItemAttr)
     .build(),
@@ -135,12 +148,6 @@ const trainerItems = {
     .attr(DoubleBattleChanceBoosterTrainerItemAttr)
     .build(),
 
-  [TrainerItemId.DIRE_HIT]: new TrainerItemBuilder(TrainerItemId.DIRE_HIT, 5) //
-    .attr(CritBoosterTrainerItemAttr)
-    .lapsing()
-    .build(),
-
-  // #region Tokens
   [TrainerItemId.ENEMY_DAMAGE_BOOSTER]: new TrainerItemBuilder(TrainerItemId.ENEMY_DAMAGE_BOOSTER) //
     .attr(EnemyDamageBoosterTrainerItemAttr)
     .build(),
@@ -162,7 +169,7 @@ const trainerItems = {
   [TrainerItemId.ENEMY_STATUS_EFFECT_HEAL_CHANCE]: new TrainerItemBuilder(
     TrainerItemId.ENEMY_STATUS_EFFECT_HEAL_CHANCE,
     10,
-  ) //
+  )
     .attr(EnemyStatusEffectHealChanceTrainerItemAttr)
     .build(),
   [TrainerItemId.ENEMY_ENDURE_CHANCE]: new TrainerItemBuilder(TrainerItemId.ENEMY_ENDURE_CHANCE, 10) //
@@ -171,26 +178,31 @@ const trainerItems = {
   [TrainerItemId.ENEMY_FUSED_CHANCE]: new TrainerItemBuilder(TrainerItemId.ENEMY_FUSED_CHANCE, 10) //
     .attr(EnemyFusionChanceTrainerItemAttr)
     .build(),
+} as const satisfies Readonly<Record<TrainerItemId, MarkerTrainerItem | TrainerItem>>;
 
-  // #endregion Tokens
-};
+/**
+ * Resolved type of {@linkcode allTrainerItems}.
+ * @privateRemarks
+ * Declared in a separate file to avoid circular imports.
+ */
+export type AllTrainerItems = typeof trainerItems;
 
 export function initTrainerItems() {
   Object.assign(allTrainerItems, trainerItems);
   Object.freeze(allTrainerItems);
 }
 
-export function applyTrainerItems<T extends TrainerItemEffect>(
-  effect: T,
+// #endregion Initialization
+
+export function applyTrainerItems<E extends TrainerItemEffect>(
+  effect: E,
   manager: TrainerItemManager,
-  params: TrainerItemEffectParamMap[T],
+  params: TrainerItemEffectParamMap[E],
 ) {
-  if (manager) {
-    for (const itemId of manager.getItems()) {
-      const item = allTrainerItems[itemId];
-      if (item.hasEffect(effect)) {
-        item.apply(effect, params, manager);
-      }
+  for (const itemId of manager.getItems()) {
+    const trainerItem = allTrainerItems[itemId] as TrainerItem | MarkerTrainerItem;
+    if ("effects" in trainerItem && trainerItem.hasEffect(effect)) {
+      trainerItem.apply(effect, params, manager);
     }
   }
 }

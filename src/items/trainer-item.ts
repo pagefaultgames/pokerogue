@@ -7,7 +7,7 @@ import type { TrainerItemBuilder } from "#items/trainer-item-builder";
 import type { TrainerItemManager } from "#items/trainer-item-manager";
 import type { TrainerItemEffectParamMap } from "#types/trainer-item-parameter";
 import { addTextObject } from "#ui/text";
-import { hslToHex } from "#utils/common";
+import { hslToHex } from "#utils/color-utils";
 import i18next from "i18next";
 
 export abstract class TrainerItemBase {
@@ -17,7 +17,7 @@ export abstract class TrainerItemBase {
    * Whether this item will be removed after a set number of turns (using its stack count as a "timer" of sorts).
    * @defaultValue `false`
    */
-  public readonly isLapsing = false;
+  public readonly isLapsing: boolean;
 
   constructor(type: TrainerItemId, maxStackCount: number, isLapsing = false) {
     this.type = type;
@@ -112,6 +112,7 @@ export abstract class TrainerItem<out Attrs extends TrainerItemAttr = TrainerIte
   public readonly effects: TrainerItemRecord<Attrs>;
 
   // #region Localization
+
   /**
    * Optional parameters used to localize this item's name.
    * If omitted, will use the default implementation provided from {@linkcode TrainerItemBase}.
@@ -135,16 +136,17 @@ export abstract class TrainerItem<out Attrs extends TrainerItemAttr = TrainerIte
   public override get iconName(): string {
     return this.customIconName ?? super.iconName;
   }
+
   // #endregion Localization
 
   protected constructor({
     type,
     effects,
+    lapsing = false,
     maxStackCount = 1,
     nameParams,
     descriptionParams,
     iconName,
-    lapsing = false,
   }: {
     type: TrainerItemId;
     effects: TrainerItemRecord<Attrs>;

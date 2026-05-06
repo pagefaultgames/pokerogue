@@ -49,6 +49,7 @@ export class HeldItemBuilder<Attrs extends HeldItemAttr = never, ConsumableEffec
   private nameParams?: Parameters<typeof i18next.t>;
   private descriptionParams?: Parameters<typeof i18next.t>;
   private icon?: string;
+
   /**
    * A `DataMap` matching effects to their corresponding (potentially empty) attribute lists.
    * @remarks
@@ -177,7 +178,7 @@ export class HeldItemBuilder<Attrs extends HeldItemAttr = never, ConsumableEffec
    */
   // TODO: Do we want to allow 0-item builds (and make them cosmetic?)
   public build(): [Attrs] extends [never] ? ErrorType<"Cannot create a HeldItem with no attributes!"> : HeldItem<Attrs>;
-  // NB: The implementation signature needs to return a union here to satisfy TypeScript, but we never actually return one ourselves
+  // NB: The implementation signature needs to return a union containing ErrorType to satisfy TypeScript, but we never actually return one ourselves
   public build(): ErrorType<"Cannot create a HeldItem with no attributes!"> | HeldItem<Attrs> {
     // @ts-expect-error - TypeScript doesn't support friend classes, so this is the closest we can get to
     // ensuring `HeldItem` is only constructed by its corresponding builder.

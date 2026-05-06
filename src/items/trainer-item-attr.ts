@@ -51,10 +51,11 @@ export abstract class TrainerItemAttr<out E extends TrainerItemEffect = TrainerI
   /**
    * Check whether this attribute's effect should be allowed to trigger.
    * @param params - The parameters for this effect
+   * @param manager - A reference to the {@linkcode TrainerItemManager} for the given side of the field; can be discarded if not needed
    * @returns Whether this attribute's effect should be applied; defaults to `true` if not overridden
    */
   // biome-ignore lint/correctness/noUnusedFunctionParameters: pseudo-abstract method
-  public shouldApply(...params: Parameters<this["apply"]>): boolean {
+  public shouldApply(...[params, manager]: Parameters<this["apply"]>): boolean {
     return true;
   }
 
@@ -62,7 +63,7 @@ export abstract class TrainerItemAttr<out E extends TrainerItemEffect = TrainerI
    * Apply this attribute's effect. \
    * Called if and only if {@linkcode shouldApply} returns `true`.
    * @param params - The parameters for this effect
-   * @param manager - A reference to the {@linkcode TrainerItemManager} for the parent item; can be discarded if not needed
+   * @param manager - A reference to the {@linkcode TrainerItemManager} for the given side of the field; can be discarded if not needed
    */
   public abstract apply(params: TrainerItemEffectParamMap[E], manager: TrainerItemManager): void;
 }

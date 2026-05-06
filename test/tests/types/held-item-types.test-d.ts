@@ -1,10 +1,10 @@
 import { HeldItemEffect } from "#enums/held-item-effect";
-import { HeldItemId } from "#enums/held-item-id";
+import { type HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
 import type { HeldItem } from "#items/held-item";
 import { ConsumableHeldItemAttr, HeldItemAttr } from "#items/held-item-attr";
 import { HeldItemBuilder } from "#items/held-item-builder";
 import type { ErrorType } from "#types/error-type";
-import type { ExtractItemEffect } from "#types/held-item-data-types";
+import type { ExtractHeldItemEffect } from "#types/held-item-data-types";
 import type { IsUnion } from "type-fest";
 import { describe, expectTypeOf, it } from "vitest";
 
@@ -25,6 +25,12 @@ class ConsumableAttr2 extends ConsumableHeldItemAttr<typeof HeldItemEffect.MACHO
 }
 
 const builder = () => new HeldItemBuilder(HeldItemId.ABOMASITE);
+
+describe("HeldItemId and HeldItemCategoryId", () => {
+  it("should be disjoint from one another", () => {
+    expectTypeOf<HeldItemId & HeldItemCategoryId>().toBeNever();
+  });
+});
 
 describe("HeldItemBuilder", () => {
   it("should start with never for both type parameters", () => {
@@ -108,6 +114,6 @@ describe("HeldItemAttr", () => {
 
 describe("ExtractItemEffect", () => {
   it("should map item IDs to effects", () => {
-    expectTypeOf<ExtractItemEffect<typeof HeldItemId.SITRUS_BERRY>>().toEqualTypeOf<typeof HeldItemEffect.BERRY>();
+    expectTypeOf<ExtractHeldItemEffect<typeof HeldItemId.SITRUS_BERRY>>().toEqualTypeOf<typeof HeldItemEffect.BERRY>();
   });
 });
