@@ -6,7 +6,6 @@ import type { TrainerItemAttr, TrainerItemRecord } from "#items/trainer-item-att
 import type { TrainerItemBuilder } from "#items/trainer-item-builder";
 import type { TrainerItemManager } from "#items/trainer-item-manager";
 import type { TrainerItemEffectParamMap } from "#types/trainer-item-parameter";
-import type { Mutable } from "#types/type-helpers";
 import { addTextObject } from "#ui/text";
 import { hslToHex } from "#utils/common";
 import i18next from "i18next";
@@ -14,12 +13,16 @@ import i18next from "i18next";
 export abstract class TrainerItemBase {
   public readonly type: TrainerItemId;
   public readonly maxStackCount: number;
-  /** Whether this item will be removed after a set number of turns (using its stack count as a "timer" of sorts). */
-  public readonly isLapsing: boolean = false;
+  /**
+   * Whether this item will be removed after a set number of turns (using its stack count as a "timer" of sorts).
+   * @defaultValue `false`
+   */
+  public readonly isLapsing = false;
 
-  constructor(type: TrainerItemId, maxStackCount = 1) {
+  constructor(type: TrainerItemId, maxStackCount: number, isLapsing = false) {
     this.type = type;
     this.maxStackCount = maxStackCount;
+    this.isLapsing = isLapsing;
   }
 
   public get name(): string {
@@ -151,13 +154,12 @@ export abstract class TrainerItem<out Attrs extends TrainerItemAttr = TrainerIte
     iconName?: string | undefined;
     lapsing?: boolean;
   }) {
-    super(type, maxStackCount);
+    super(type, maxStackCount, lapsing);
 
     this.effects = effects;
     this.nameParams = nameParams;
     this.descriptionParams = descriptionParams;
     this.customIconName = iconName;
-    (this as Mutable<this>).isLapsing = lapsing;
   }
 
   /**

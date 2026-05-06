@@ -5,25 +5,21 @@ import { TrainerItemAttr } from "#items/trainer-item-attr";
 import type { NumberHolderParams } from "#types/trainer-item-parameter";
 import i18next from "i18next";
 
-type TempStatToTrainerItemMap = {
-  [key in TempBattleStat]: TrainerItemId;
-};
-
-export const tempStatToTrainerItem: TempStatToTrainerItemMap = {
+export const tempStatToTrainerItem = {
   [Stat.ATK]: TrainerItemId.X_ATTACK,
   [Stat.DEF]: TrainerItemId.X_DEFENSE,
   [Stat.SPATK]: TrainerItemId.X_SP_ATK,
   [Stat.SPDEF]: TrainerItemId.X_SP_DEF,
   [Stat.SPD]: TrainerItemId.X_SPEED,
   [Stat.ACC]: TrainerItemId.X_ACCURACY,
-};
+} as const satisfies Record<TempBattleStat, TrainerItemId>;
 
 export class StatStageBoosterTrainerItemAttr extends TrainerItemAttr<typeof TrainerItemEffect.TEMP_STAT_STAGE_BOOSTER> {
   public override readonly effect = TrainerItemEffect.TEMP_STAT_STAGE_BOOSTER;
-  private readonly stat: TempBattleStat;
+  private readonly stat: Exclude<TempBattleStat, Stat.ACC>;
   private readonly boost: number;
 
-  constructor(stat: TempBattleStat, boost: number) {
+  constructor(stat: Exclude<TempBattleStat, Stat.ACC>, boost: number) {
     super();
 
     this.stat = stat;

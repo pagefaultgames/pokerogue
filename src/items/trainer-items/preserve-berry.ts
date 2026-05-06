@@ -4,7 +4,7 @@ import type { TrainerItemManager } from "#items/trainer-item-manager";
 import type { PreserveBerryParams } from "#types/trainer-item-parameter";
 
 // Berry Pouch
-export class PreserveBerryTrainerItem extends TrainerItemAttr<typeof TrainerItemEffect.PRESERVE_BERRY> {
+export class PreserveBerryTrainerItemAttr extends TrainerItemAttr<typeof TrainerItemEffect.PRESERVE_BERRY> {
   public override readonly effect = TrainerItemEffect.PRESERVE_BERRY;
 
   public override apply({ pokemon, doPreserve }: PreserveBerryParams, manager: TrainerItemManager): void {
