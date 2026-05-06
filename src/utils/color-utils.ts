@@ -50,8 +50,7 @@ export function argbFromRgba({ r, g, b, a }: Rgba): number {
 }
 
 // SPDX-SnippetEnd
-
-// #endregion
+// #endregion @material functions
 
 export function rgbToHsv(r: number, g: number, b: number) {
   const v = Math.max(r, g, b);

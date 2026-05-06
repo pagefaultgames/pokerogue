@@ -110,7 +110,7 @@ export class MovePhase extends PokemonPhase {
     };
   }
 
-  //#region Phase Start
+  // #region Phase Start
   public start(): void {
     super.start();
 
@@ -239,7 +239,7 @@ export class MovePhase extends PokemonPhase {
 
   //#endregion Phase Start
 
-  //#region First Failure Check
+  // #region First Failure Check
 
   /**
    * Perform the first round of move failure checks, occurring before move usage text is displayed
@@ -529,7 +529,7 @@ export class MovePhase extends PokemonPhase {
 
   //#endregion First Failure Check
 
-  //#region Second Failure Check
+  // #region Second Failure Check
 
   /**
    * Attempt to thaw the user if it successfully uses a self-thawing move.
@@ -752,7 +752,7 @@ export class MovePhase extends PokemonPhase {
 
   //#endregion Second Failure Check
 
-  //#region Move Execution
+  // #region Move Execution
 
   /**
    * Check for cancellation edge cases - no targets remaining, or `MoveId.NONE` is in the queue
@@ -932,7 +932,7 @@ export class MovePhase extends PokemonPhase {
 
   //#endregion Move Execution
 
-  //#region Helpers
+  // #region Helpers
 
   /**
    * Handles the case where the move was cancelled or failed:

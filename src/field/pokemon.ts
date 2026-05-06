@@ -933,7 +933,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.fusionSpecies.forms[this.fusionFormIndex].formKey;
   }
 
-  //#region Atlas and sprite ID methods
+  // #region Atlas and sprite ID methods
   // TODO: Add more documentation for all these attributes.
   // They may be all similar, but what each one actually _does_ is quite unclear at first glance
 
@@ -5319,7 +5319,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return (this.getSpeciesForm().getBaseExp() * this.level) / 5 + 1;
   }
 
-  //#region Sprite and Animation Methods
+  // #region Sprite and Animation Methods
   setFrameRate(frameRate: number) {
     globalScene.anims.get(this.getBattleSpriteKey()).frameRate = frameRate;
     try {

@@ -152,7 +152,7 @@ export interface SelectedDevice {
   [Device.KEYBOARD]: string;
 }
 
-//#region Button mappings
+// #region Button mappings
 /** Button keycode mappings for Dualshock controller */
 export type DualshockButtons = {
   RC_S: 0;

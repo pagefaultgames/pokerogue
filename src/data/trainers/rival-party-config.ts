@@ -3,7 +3,7 @@ import { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon } from "#field/pokemon";
 import { randSeedItem } from "#utils/common";
 
-//#region constants
+// #region constants
 
 // Levels for slots 1 and 2 do not need post-processing logic
 
@@ -31,7 +31,7 @@ const SLOT_6_FIGHT_6_LEVEL = 200;
 
 //#endregion constants
 
-//#region Slot 1
+// #region Slot 1
 
 /**
  * Set the abiltiy index to 0 and the tera type to the primary type
@@ -146,7 +146,7 @@ const SLOT_1_FINAL = [
 ];
 //#endregion slot 1
 
-//#region Slot 2
+// #region Slot 2
 /**
  * Post-process rival birds to override their sets
  *
@@ -247,7 +247,7 @@ const SLOT_2_FINAL = [
 ];
 //#endregion Slot 2
 
-//#region Slot 3
+// #region Slot 3
 /** Rival's slot 3 species pool for fight 2 */
 const SLOT_3_FIGHT_2 = [
   SpeciesId.NIDORINA,
@@ -375,7 +375,7 @@ const SLOT_3_FINAL = [
 ];
 //#endregion Slot 3
 
-//#region Slot 4
+// #region Slot 4
 
 /**
  * Post-process logic for rival slot 4, fight 4
@@ -530,7 +530,7 @@ const SLOT_4_FINAL = [
 ];
 //#endregion Slot 4
 
-//#region Slot 5
+// #region Slot 5
 /** Rival's slot 5 species pool for fight 4 and beyond */
 const SLOT_5_FINAL = [
   SpeciesId.DRAGONITE,
@@ -553,7 +553,7 @@ const SLOT_5_FINAL = [
 ];
 //#endregion Slot 5
 
-//#region Slot 6
+// #region Slot 6
 /**
  * Post-process logic for rival slot 6, fight 5
  *

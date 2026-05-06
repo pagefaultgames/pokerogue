@@ -121,8 +121,7 @@ export class Arena {
 
     return 131 / 180;
   }
-
-  // #endregion
+  // #endregion Getters
   // #region Misc Public Methods
 
   public init() {
@@ -162,8 +161,7 @@ export class Arena {
     this.resetPlayerFaintCount();
     this.removeAllTags();
   }
-
-  // #endregion
+  // #endregion Misc Public Methods
   // #region Misc Private Methods
 
   /**
@@ -221,8 +219,7 @@ export class Arena {
     }
     return BiomePoolTier.ULTRA_RARE;
   }
-
-  // #endregion
+  // #endregion Misc Private Methods
   // #region Weather
 
   /** @returns Whether or not the weather can be changed to the specified weather */
@@ -372,8 +369,7 @@ export class Arena {
     const randomWeather = weightedPick(weatherMap);
     this.trySetWeather(randomWeather);
   }
-
-  // #endregion
+  // #endregion Weather
   // #region Terrain
 
   /** @returns Whether or not the terrain can be set to the specified terrain */
@@ -470,8 +466,7 @@ export class Arena {
   public isMoveTerrainCancelled(user: Pokemon, targets: BattlerIndex[], move: Move): boolean {
     return !!this.terrain && this.terrain.isMoveTerrainCancelled(user, targets, move);
   }
-
-  // #endregion
+  // #endregion Terrain
   // #region Trainers
 
   public randomTrainerType(waveIndex: number, isBoss = false): TrainerType {
@@ -491,8 +486,7 @@ export class Arena {
     const tierPool = this.trainerPool[tier];
     return tierPool.length > 0 ? randSeedItem(tierPool) : TrainerType.BREEDER;
   }
-
-  // #endregion
+  // #endregion Trainers
   // #region Pokemon
 
   public updatePoolsForTimeOfDay(): void {
@@ -605,8 +599,7 @@ export class Arena {
       ? adjustedWave < 80 // Wave 50+ in daily (however, max Daily wave is 50 currently so not possible)
       : adjustedWave < 55; // Wave 25+ in daily
   }
-
-  // #endregion
+  // #endregion Pokemon
   // #region Arena Tags
 
   /**
@@ -873,8 +866,7 @@ export class Arena {
       this.tags.splice(0, 1);
     }
   }
-
-  // #endregion
+  // #endregion Arena Tags
   // #region Time of Day
 
   public getTimeOfDay(): TimeOfDay {
@@ -955,8 +947,7 @@ export class Arena {
 
     return [48, 48, 98];
   }
-
-  // #endregion
+  // #endregion Time of Day
 
   // TODO: replace this
   getAttackTypeMultiplier(attackType: PokemonType, grounded: boolean): number {
@@ -1013,5 +1004,4 @@ export function getBiomeHasProps(biomeId: BiomeId): boolean {
 
   return false;
 }
-
-// #endregion
+// #endregion Helper Functions

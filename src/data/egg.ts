@@ -84,6 +84,7 @@ export interface IEggOptions {
 
 export class Egg {
   ////
+
   // #region Private properties
   ////
 
@@ -103,10 +104,11 @@ export class Egg {
   private eggDescriptor?: string | undefined;
 
   ////
-  // #endregion
+  // #endregion Private properties
   ////
 
   ////
+
   // #region Public facing properties
   ////
   get id(): number {
@@ -160,7 +162,7 @@ export class Egg {
   }
 
   ////
-  // #endregion
+  // #endregion Public facing properties
   ////
 
   constructor(eggOptions?: IEggOptions) {
@@ -221,6 +223,7 @@ export class Egg {
   }
 
   ////
+
   // #region Public methods
   ////
 
@@ -353,10 +356,11 @@ export class Egg {
   }
 
   ////
-  // #endregion
+  // #endregion Public methods
   ////
 
   ////
+
   // #region Private methods
   ////
 
@@ -603,7 +607,7 @@ export class Egg {
   }
 
   ////
-  // #endregion
+  // #endregion Private methods
   ////
 }
 

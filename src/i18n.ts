@@ -7,17 +7,15 @@ import LanguageDetector from "i18next-browser-languagedetector";
 import HttpBackend from "i18next-http-backend";
 import { KoreanPostpositionProcessor } from "i18next-korean-postposition-processor";
 
-//#region Interfaces/Types
+// #region Interfaces/Types
 
 interface LoadingFontFaceProperty {
   face: FontFace;
   extraOptions?: { [key: string]: any };
   only?: string[];
 }
-
-//#endregion
-
-//#region Constants
+// #endregion Interfaces/Types
+// #region Constants
 
 const unicodeRanges = {
   fullwidth: "U+FF00-FFEF",
@@ -102,10 +100,8 @@ const fonts: LoadingFontFaceProperty[] = [
     extraOptions: { sizeAdjust: "133%" },
   },
 ];
-
-//#endregion
-
-//#region Functions
+// #endregion Constants
+// #region Functions
 
 async function initFonts(language: string | undefined) {
   const results = await Promise.allSettled(
@@ -140,10 +136,8 @@ function i18nMoneyFormatter(amount: any): string {
 
 // assigned during post-processing in #app/plugins/vite/namespaces-i18n-plugin.ts
 const nsEn: string[] = [];
-
-//#endregion
-
-//#region Exports
+// #endregion Functions
+// #region Exports
 
 /*
  * i18next is a localization library for maintaining and using translation resources.
@@ -233,10 +227,8 @@ await i18next
       await initFonts(localStorage.getItem("prLang") ?? undefined);
     },
   );
-
-//#endregion
-
-//#region Event Proxy
+// #endregion Exports
+// #region Event Proxy
 
 if (timedEventManager.hasEventTextReplacement()) {
   console.warn("Event text replacements are active.");
@@ -251,5 +243,4 @@ if (timedEventManager.hasEventTextReplacement()) {
     },
   });
 }
-
-//#endregion
+// #endregion Event Proxy

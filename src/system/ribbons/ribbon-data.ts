@@ -12,8 +12,8 @@ export class RibbonData {
   /** Internal bitfield storing the unlock state for each ribbon */
   private payload: bigint;
 
-  //#region Ribbons
-  //#region Monotype challenge ribbons
+  // #region Ribbons
+  // #region Monotype challenge ribbons
   /** Ribbon for winning the normal monotype challenge */
   public static readonly MONO_NORMAL = 0x1n as RibbonFlag;
   /** Ribbon for winning the fighting monotype challenge */
@@ -52,7 +52,7 @@ export class RibbonData {
   public static readonly MONO_FAIRY = 0x20000n as RibbonFlag;
   //#endregion Monotype ribbons
 
-  //#region Monogen ribbons
+  // #region Monogen ribbons
   /** Ribbon for winning the the mono gen 1 challenge */
   public static readonly MONO_GEN_1 = 0x40000n as RibbonFlag;
   /** Ribbon for winning the the mono gen 2 challenge */

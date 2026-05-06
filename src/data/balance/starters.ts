@@ -17,7 +17,7 @@ export const FRIENDSHIP_LOSS_FROM_FAINT = 5;
 export const TRAINER_MIN_FRIENDSHIP = 50;
 /** The wave at which enemy trainers reach the maximum friendship value of 255. */
 export const TRAINER_MAX_FRIENDSHIP_WAVE = 145;
-// #endregion
+// #endregion Friendship constants
 
 /** The numeric point cost of a starter. */
 export type StarterCost = IntClosedRange<1, 10>;

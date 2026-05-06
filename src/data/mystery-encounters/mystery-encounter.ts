@@ -95,6 +95,7 @@ export class MysteryEncounter implements IMysteryEncounter {
   encounterType: MysteryEncounterType;
   options: [MysteryEncounterOption, MysteryEncounterOption, ...MysteryEncounterOption[]];
   spriteConfigs: MysteryEncounterSpriteConfig[];
+  // #endregion Required params
 
   // #region Optional params
 
@@ -166,6 +167,7 @@ export class MysteryEncounter implements IMysteryEncounter {
    * If true, will prevent updating {@linkcode GameStats} for encountering and/or defeating Pokemon
    */
   preventGameStatsUpdates: boolean;
+  // #endregion Optional params
 
   // #region Event callback functions
 
@@ -204,6 +206,7 @@ export class MysteryEncounter implements IMysteryEncounter {
   excludePrimaryFromSupportRequirements: boolean;
   primaryPokemon: PlayerPokemon | undefined;
   secondaryPokemon: PlayerPokemon[] | undefined;
+  // #endregion Event callback functions
 
   // #region Post-construct / Auto-populated params
   localizationKey: string;
@@ -223,6 +226,7 @@ export class MysteryEncounter implements IMysteryEncounter {
    * You probably shouldn't do anything directly with this unless you have a very specific need
    */
   introVisuals: MysteryEncounterIntroVisuals | undefined;
+  // #endregion Post-construct / Auto-populated params
 
   // #region Flags
 
@@ -274,6 +278,7 @@ export class MysteryEncounter implements IMysteryEncounter {
    * You should only need to interact via getter/update methods
    */
   private seedOffset?: any;
+  // #endregion Flags
 
   constructor(encounter: IMysteryEncounter | null) {
     if (encounter != null) {

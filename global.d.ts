@@ -36,7 +36,7 @@ type FromEntries<E extends Iterable<readonly [StringableKey, unknown]>> =
       ? Record<Unstringify<K>, V>
       : never;
 
-// #endregion Object-related code
+// #endregion Object-related types
 
 // #region Declaration merges
 

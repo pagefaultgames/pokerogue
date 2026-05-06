@@ -269,8 +269,7 @@ export class Animation {
   public sin(index: number, amplitude: number): number {
     return amplitude * Math.sin(index * (Math.PI / 128));
   }
-
-  // #endregion
+  // #endregion Public Methods
   // #region Private Methods
 
   private doDefaultPbOpenParticles(x: number, y: number, radius: number): void {
@@ -588,6 +587,5 @@ export class Animation {
 
     updateParticle();
   }
-
-  // #endregion
+  // #endregion Private Methods
 }

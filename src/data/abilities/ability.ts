@@ -11,7 +11,7 @@ import type { Constructor } from "#types/common";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
-//#region Bit sets
+// #region Bit sets
 /** Bit set for an ability's `bypass faint` flag */
 const AB_FLAG_BYPASS_FAINT = 1 << 0;
 /** Bit set for an ability's `ignorable` flag */
