@@ -279,15 +279,6 @@ export function formatStat(stat: number, forHp = false): string {
   return formatLargeNumber(stat, forHp ? 100_000 : 1_000_000);
 }
 
-// TODO: Remove in place of enum utils
-export function getTypedKeys<T extends Record<number, any>, K extends number = Extract<keyof T, number>>(obj: T): K[] {
-  return Object.keys(obj).map(k => Number(k) as K);
-}
-
-export function getTypedEntries<T extends object>(obj: T): [keyof T, T[keyof T]][] {
-  return Object.entries(obj) as [keyof T, T[keyof T]][];
-}
-
 // TODO: Remove in favor of async functions
 export function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T | undefined> {
   return condition ? promiseFunc() : Promise.resolve(undefined);
