@@ -1,8 +1,8 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { getStatusEffectDescriptor, getStatusEffectHealText } from "#data/status-effect";
+import { getStatusEffectHealText } from "#data/status-effect";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { StatusEffect } from "#enums/status-effect";
+import type { StatusEffect } from "#enums/status-effect";
 import { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { TrainerItemAttr } from "#items/trainer-item-attr";
 import type { TrainerItemManager } from "#items/trainer-item-manager";
@@ -12,59 +12,84 @@ import i18next from "i18next";
 
 export class EnemyDamageBoosterTrainerItemAttr extends TrainerItemAttr<typeof TrainerItemEffect.ENEMY_DAMAGE_BOOSTER> {
   public override readonly effect = TrainerItemEffect.ENEMY_DAMAGE_BOOSTER;
-  public damageBoost = 1.05;
+  /**
+   * The extent to which the attached item should increase outbound damage, expressed as a decimal.
+   * @remarks
+   * Multiple stacks of the same item will each **multiplicatively** increase damage dealt,
+   * resulting in an overall multiplier of `(1+damageBoost)^stacks`.
+   */
+  private readonly damageBoost: number;
 
-  get iconName(): string {
-    return "wl_item_drop";
+  /**
+   * @param damageBoost - The extent to which this item should increase outbound damage, expressed as a decimal.
+   *
+   */
+  constructor(damageBoost: number) {
+    super();
+    this.damageBoost = damageBoost;
   }
-
-  public override apply({ numberHolder: multiplier }: NumberHolderParams, manager: TrainerItemManager): void {
+  public override apply({ numberHolder: damageDealt }: NumberHolderParams, manager: TrainerItemManager): void {
     const stack = manager.getStack(this.type);
-    multiplier.value = toDmgValue(multiplier.value * Math.pow(this.damageBoost, stack));
-  }
-
-  getMaxStackCount(): number {
-    return 999;
+    const multiplier = Math.pow(1 + this.damageBoost, stack);
+    damageDealt.value = toDmgValue(damageDealt.value * multiplier);
   }
 }
 
 export class EnemyDamageReducerTrainerItemAttr extends TrainerItemAttr<typeof TrainerItemEffect.ENEMY_DAMAGE_REDUCER> {
   public override readonly effect = TrainerItemEffect.ENEMY_DAMAGE_REDUCER;
-  public damageReduction = 0.975;
+  /**
+   * The extent to which each stack of this item should reduce incoming damage, expressed as a decimal.
+   * @remarks
+   * Multiple stacks of the same item will each **multiplicatively** decrease damage taken,
+   * resulting in an overall multiplier of `(1-damageReduction)^stacks`.
+   */
+  private readonly damageReduction: number;
 
-  get iconName(): string {
-    return "wl_guard_spec";
+  constructor(damageReduction: number) {
+    super();
+    this.damageReduction = damageReduction;
   }
 
-  public override apply({ numberHolder: multiplier }: NumberHolderParams, manager: TrainerItemManager): void {
-    const stack = manager.getStack(this.type);
+  public override apply({ numberHolder: damageTaken }: NumberHolderParams, manager: TrainerItemManager): void {
+    const stackCount = manager.getStack(this.type);
 
-    multiplier.value = toDmgValue(multiplier.value * Math.pow(this.damageReduction, stack));
-  }
-
-  getMaxStackCount(): number {
-    return globalScene.currentBattle.waveIndex < 2000 ? 99 : 999;
+    const multiplier = Math.pow(1 - this.damageReduction, stackCount);
+    damageTaken.value = toDmgValue(damageTaken.value * multiplier);
   }
 }
 
 export class EnemyTurnHealTrainerItemAttr extends TrainerItemAttr<typeof TrainerItemEffect.ENEMY_HEAL> {
   public override readonly effect = TrainerItemEffect.ENEMY_HEAL;
-  public healPercent = 2;
+  /**
+   * The portion of the holder's maximum HP the attached item should heal each turn, expressed as a decimal. \
+   * Multiple stacks of the same item will each add to the amount healed,
+   * resulting in an overall heal percentage of `healPercent*stacks`.
+   * Note that this effect can never heal an enemy to full HP.
+   */
+  private readonly healPercent: number;
 
-  get iconName(): string {
-    return "wl_potion";
+  /**
+   * @param healPercent - The portion of the holder's maximum HP the attached item should heal each turn, expressed as a decimal.
+   * Multiple stacks of the same item will each add to the amount healed,
+   * resulting in an overall heal percentage of `healPercent*stacks`.
+   */
+  constructor(healPercent: number) {
+    super();
+    this.healPercent = healPercent;
   }
 
   public override apply({ pokemon: enemyPokemon }: PokemonParams, manager: TrainerItemManager): void {
-    const stack = manager.getStack(this.type);
-
     if (enemyPokemon.isFullHp()) {
       return;
     }
+
+    const stack = manager.getStack(this.type);
+
     globalScene.phaseManager.unshiftNew(
       "PokemonHealPhase",
       enemyPokemon.getBattlerIndex(),
-      Math.max(Math.floor((enemyPokemon.getMaxHp() * this.healPercent * stack) / 100), 1),
+      // TODO: Do we need to round this?
+      Math.max(Math.floor(enemyPokemon.getMaxHp() * this.healPercent * stack), 1),
       i18next.t("modifier:enemyTurnHealApply", {
         pokemonNameWithAffix: getPokemonNameWithAffix(enemyPokemon),
       }),
@@ -82,44 +107,21 @@ export class EnemyAttackStatusEffectChanceTrainerItemAttr extends TrainerItemAtt
 > {
   public override readonly effect = TrainerItemEffect.ENEMY_ATTACK_STATUS_CHANCE;
   public statusEffect: StatusEffect;
+  /** The chance of this token triggering per stack, expressed as a decimal. */
+  private readonly chance: number;
 
-  constructor(statusEffect: StatusEffect) {
+  constructor(statusEffect: StatusEffect, chance: number) {
     super();
 
     this.statusEffect = statusEffect;
-  }
-
-  get iconName(): string {
-    if (this.statusEffect === StatusEffect.POISON) {
-      return "wl_antidote";
-    }
-    if (this.statusEffect === StatusEffect.PARALYSIS) {
-      return "wl_paralyze_heal";
-    }
-    if (this.statusEffect === StatusEffect.BURN) {
-      return "wl_burn_heal";
-    }
-    return "";
-  }
-
-  get description(): string {
-    return i18next.t("modifierType:ModifierType.EnemyAttackStatusEffectChanceModifierType.description", {
-      chancePercent: this.getChance() * 100,
-      statusEffect: getStatusEffectDescriptor(this.statusEffect),
-    });
+    this.chance = chance;
   }
 
   public override apply({ pokemon: enemyPokemon }: PokemonParams, manager: TrainerItemManager): void {
     const stack = manager.getStack(this.type);
-    const chance = this.getChance();
-
-    if (randSeedFloat() <= chance * stack) {
+    if (randSeedFloat() <= this.chance * stack) {
       enemyPokemon.trySetStatus(this.statusEffect);
     }
-  }
-
-  getChance(): number {
-    return 0.025 * (this.statusEffect === StatusEffect.BURN || this.statusEffect === StatusEffect.POISON ? 2 : 1);
   }
 }
 
@@ -127,10 +129,12 @@ export class EnemyStatusEffectHealChanceTrainerItemAttr extends TrainerItemAttr<
   typeof TrainerItemEffect.ENEMY_STATUS_HEAL_CHANCE
 > {
   public override readonly effect = TrainerItemEffect.ENEMY_STATUS_HEAL_CHANCE;
-  public chance = 0.025;
+  private readonly chance: number;
 
-  get iconName(): string {
-    return "wl_full_heal";
+  constructor(chance: number) {
+    super();
+
+    this.chance = chance;
   }
 
   public override apply({ pokemon: enemyPokemon }: PokemonParams, manager: TrainerItemManager): void {

@@ -1,4 +1,5 @@
 import { allTrainerItems } from "#data/data-lists";
+import { getStatusEffectDescriptor } from "#data/status-effect";
 import type { Stat, TempBattleStat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import type { TrainerItemEffect } from "#enums/trainer-item-effect";
@@ -140,37 +141,65 @@ const trainerItems = {
 
   [TrainerItemId.LURE]: new TrainerItemBuilder(TrainerItemId.LURE, 10) //
     .attr(DoubleBattleChanceBoosterTrainerItemAttr)
+    .lapsing()
+    .description("modifierType:ModifierType.DoubleBattleChanceBoosterModifierType.description", {
+      battleCount: 10,
+    })
     .build(),
   [TrainerItemId.SUPER_LURE]: new TrainerItemBuilder(TrainerItemId.SUPER_LURE, 15) //
     .attr(DoubleBattleChanceBoosterTrainerItemAttr)
+    .lapsing()
     .build(),
   [TrainerItemId.MAX_LURE]: new TrainerItemBuilder(TrainerItemId.MAX_LURE, 30) //
     .attr(DoubleBattleChanceBoosterTrainerItemAttr)
+    .lapsing()
     .build(),
 
-  [TrainerItemId.ENEMY_DAMAGE_BOOSTER]: new TrainerItemBuilder(TrainerItemId.ENEMY_DAMAGE_BOOSTER) //
-    .attr(EnemyDamageBoosterTrainerItemAttr)
+  [TrainerItemId.ENEMY_DAMAGE_BOOSTER]: new TrainerItemBuilder(TrainerItemId.ENEMY_DAMAGE_BOOSTER, 999) //
+    .attr(EnemyDamageBoosterTrainerItemAttr, 0.05)
+    .iconName("wl_item_drop")
     .build(),
-  [TrainerItemId.ENEMY_DAMAGE_REDUCTION]: new TrainerItemBuilder(TrainerItemId.ENEMY_DAMAGE_REDUCTION) //
-    .attr(EnemyDamageReducerTrainerItemAttr)
+  [TrainerItemId.ENEMY_DAMAGE_REDUCTION]: new TrainerItemBuilder(TrainerItemId.ENEMY_DAMAGE_REDUCTION, 999) //
+    .attr(EnemyDamageReducerTrainerItemAttr, 0.025)
+    .iconName("wl_guard_spec")
     .build(),
   [TrainerItemId.ENEMY_HEAL]: new TrainerItemBuilder(TrainerItemId.ENEMY_HEAL, 10) //
-    .attr(EnemyTurnHealTrainerItemAttr)
+    .attr(EnemyTurnHealTrainerItemAttr, 2)
+    .iconName("wl_potion")
     .build(),
   [TrainerItemId.ENEMY_ATTACK_POISON_CHANCE]: new TrainerItemBuilder(TrainerItemId.ENEMY_ATTACK_POISON_CHANCE, 10) //
-    .attr(EnemyAttackStatusEffectChanceTrainerItemAttr, StatusEffect.POISON)
+    .attr(EnemyAttackStatusEffectChanceTrainerItemAttr, StatusEffect.POISON, 0.05)
+    .description("modifierType:ModifierType.EnemyAttackStatusEffectChanceModifierType.description", {
+      chancePercent: 5,
+      // TODO: This needs to use key nesting
+      statusEffect: getStatusEffectDescriptor(StatusEffect.POISON),
+    })
+    .iconName("wl_antidote")
     .build(),
   [TrainerItemId.ENEMY_ATTACK_PARALYZE_CHANCE]: new TrainerItemBuilder(TrainerItemId.ENEMY_ATTACK_PARALYZE_CHANCE, 10) //
-    .attr(EnemyAttackStatusEffectChanceTrainerItemAttr, StatusEffect.PARALYSIS)
+    .attr(EnemyAttackStatusEffectChanceTrainerItemAttr, StatusEffect.PARALYSIS, 0.025)
+    .iconName("wl_paralyze_heal")
+    .description("modifierType:ModifierType.EnemyAttackStatusEffectChanceModifierType.description", {
+      chancePercent: 2.5,
+      // TODO: This needs to use key nesting
+      statusEffect: getStatusEffectDescriptor(StatusEffect.PARALYSIS),
+    })
     .build(),
   [TrainerItemId.ENEMY_ATTACK_BURN_CHANCE]: new TrainerItemBuilder(TrainerItemId.ENEMY_ATTACK_BURN_CHANCE, 10) //
-    .attr(EnemyAttackStatusEffectChanceTrainerItemAttr, StatusEffect.BURN)
+    .attr(EnemyAttackStatusEffectChanceTrainerItemAttr, StatusEffect.BURN, 0.05)
+    .iconName("wl_burn_heal")
+    .description("modifierType:ModifierType.EnemyAttackStatusEffectChanceModifierType.description", {
+      chancePercent: 5,
+      // TODO: This needs to use key nesting
+      statusEffect: getStatusEffectDescriptor(StatusEffect.BURN),
+    })
     .build(),
   [TrainerItemId.ENEMY_STATUS_EFFECT_HEAL_CHANCE]: new TrainerItemBuilder(
     TrainerItemId.ENEMY_STATUS_EFFECT_HEAL_CHANCE,
     10,
   )
-    .attr(EnemyStatusEffectHealChanceTrainerItemAttr)
+    .attr(EnemyStatusEffectHealChanceTrainerItemAttr, 0.025)
+    .iconName("wl_full_heal")
     .build(),
   [TrainerItemId.ENEMY_ENDURE_CHANCE]: new TrainerItemBuilder(TrainerItemId.ENEMY_ENDURE_CHANCE, 10) //
     .attr(EnemyEndureChanceTrainerItemAttr)

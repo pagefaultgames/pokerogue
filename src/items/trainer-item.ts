@@ -12,16 +12,29 @@ import i18next from "i18next";
 
 export abstract class TrainerItemBase {
   public readonly type: TrainerItemId;
-  public readonly maxStackCount: number;
+
+  /**
+   * Private backing property for `maxStackCount`
+   */
+  // TODO: This is added for the SOLE purpose of supporting endure tokens' dynamic max stack count.
+  readonly #maxStackCount: number | (() => number);
+  public get maxStackCount(): number {
+    return typeof this.#maxStackCount === "function" ? this.#maxStackCount() : this.#maxStackCount;
+  }
+  // TODO: Remove as we now expose the base property
+  getMaxStackCount(): number {
+    return this.maxStackCount;
+  }
+
   /**
    * Whether this item will be removed after a set number of turns (using its stack count as a "timer" of sorts).
    * @defaultValue `false`
    */
   public readonly isLapsing: boolean;
 
-  constructor(type: TrainerItemId, maxStackCount: number, isLapsing = false) {
+  constructor(type: TrainerItemId, maxStackCount: number | (() => number), isLapsing = false) {
     this.type = type;
-    this.maxStackCount = maxStackCount;
+    this.#maxStackCount = maxStackCount;
     this.isLapsing = isLapsing;
   }
 
@@ -37,12 +50,7 @@ export abstract class TrainerItemBase {
     return `${TrainerItemNames[this.type]?.toLowerCase()}`;
   }
 
-  // TODO: Remove and expose the underlying property
-  getMaxStackCount(): number {
-    return this.maxStackCount;
-  }
-
-  createIcon(stackCount: number): Phaser.GameObjects.Container {
+  public createIcon(stackCount: number): Phaser.GameObjects.Container {
     const item = globalScene.add
       .sprite(0, 12, "items") //
       .setFrame(this.iconName)
