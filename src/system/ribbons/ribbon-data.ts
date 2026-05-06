@@ -12,6 +12,8 @@ export class RibbonData {
   /** Internal bitfield storing the unlock state for each ribbon */
   private payload: bigint;
 
+  // #region Ribbons
+
   // #region Monotype ribbons
 
   /** Ribbon for winning the normal monotype challenge */
@@ -120,6 +122,8 @@ export class RibbonData {
   // Note that this has no impact on serialization as it is stored in hex.
 
   // #endregion Misc Ribbons
+
+  // #endregion Ribbons
 
   /** Create a new instance of RibbonData. Generally, {@linkcode fromJSON} is used instead. */
   constructor(value: number | bigint) {
