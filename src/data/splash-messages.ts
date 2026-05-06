@@ -348,6 +348,7 @@ const seasonalSplashMessages: Season[] = [
     ],
   },
 ];
+
 // #endregion Seasonal Messages
 
 export function getSplashMessages(): string[] {

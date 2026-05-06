@@ -111,6 +111,7 @@ export class MovePhase extends PokemonPhase {
   }
 
   // #region Phase Start
+
   public start(): void {
     super.start();
 
@@ -237,7 +238,7 @@ export class MovePhase extends PokemonPhase {
     this.end();
   }
 
-  //#endregion Phase Start
+  // #endregion Phase Start
 
   // #region First Failure Check
 
@@ -527,7 +528,7 @@ export class MovePhase extends PokemonPhase {
     return true;
   }
 
-  //#endregion First Failure Check
+  // #endregion First Failure Check
 
   // #region Second Failure Check
 
@@ -750,7 +751,7 @@ export class MovePhase extends PokemonPhase {
     return false;
   }
 
-  //#endregion Second Failure Check
+  // #endregion Second Failure Check
 
   // #region Move Execution
 
@@ -930,7 +931,7 @@ export class MovePhase extends PokemonPhase {
     super.end();
   }
 
-  //#endregion Move Execution
+  // #endregion Move Execution
 
   // #region Helpers
 
@@ -1068,5 +1069,5 @@ export class MovePhase extends PokemonPhase {
     }
   }
 
-  //#endregion Helpers
+  // #endregion Helpers
 }

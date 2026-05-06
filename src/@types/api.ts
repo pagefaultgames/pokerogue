@@ -37,7 +37,9 @@ export interface AccountChangePwRequest {
 export interface AccountChangePwResponse {
   success: boolean;
 }
+
 // #endregion Account API
+
 // #region Admin API
 
 export interface SearchAccountRequest {
@@ -70,6 +72,7 @@ export interface PokerogueAdminApiParams extends Record<AdminUiHandlerService, S
   discord: DiscordRequest;
   google: GoogleRequest;
 }
+
 // #endregion Admin API
 
 export interface UpdateAllSavedataRequest {
@@ -120,7 +123,9 @@ export interface ClearSessionSavedataResponse {
   /** Is `true` if the request was successfully processed */
   success?: boolean;
 }
+
 // #endregion Session Save API
+
 // #region System Save API
 
 export interface GetSystemSavedataRequest {
@@ -141,4 +146,5 @@ export interface VerifySystemSavedataResponse {
   valid: boolean;
   systemData: SystemSaveData;
 }
+
 // #endregion System Save API

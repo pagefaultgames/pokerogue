@@ -6,6 +6,7 @@
  */
 
 // #region Split string code
+
 // Regexps involved with splitting words in various case formats.
 // Sourced from https://www.npmjs.com/package/change-case (with slight tweaking here and there)
 
@@ -63,7 +64,8 @@ function trimFromStartAndEnd(str, charToTrim) {
   }
   return str.slice(start, end);
 }
-// #endregion Split String code
+
+// #endregion Split string code
 
 /**
  * Capitalize the first letter of a string.

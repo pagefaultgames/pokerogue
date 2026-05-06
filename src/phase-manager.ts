@@ -610,5 +610,6 @@ export class PhaseManager {
       turnEndPhase.upcomingInterlude = true;
     }
   }
+
   // #endregion Phase Functions
 }

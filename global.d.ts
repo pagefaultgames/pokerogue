@@ -3,6 +3,7 @@ import type { PreventHoverExpansion } from "#types/type-helpers";
 import type { SetupServer } from "msw/node";
 
 // #region Object-related types
+
 /**
  * A key that can be stringified.
  * @privateRemarks

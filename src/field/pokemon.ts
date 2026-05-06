@@ -934,6 +934,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   // #region Atlas and sprite ID methods
+
   // TODO: Add more documentation for all these attributes.
   // They may be all similar, but what each one actually _does_ is quite unclear at first glance
 
@@ -1062,7 +1063,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       fusionVariant,
     );
   }
-  //#endregion Atlas and sprite ID methods
+
+  // #endregion Atlas and sprite ID methods
 
   /**
    * Return this Pokemon's {@linkcode PokemonSpeciesForm | SpeciesForm}.
@@ -5320,6 +5322,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   // #region Sprite and Animation Methods
+
   setFrameRate(frameRate: number) {
     globalScene.anims.get(this.getBattleSpriteKey()).frameRate = frameRate;
     try {
@@ -5728,7 +5731,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     fusionCanvas.remove();
   }
 
-  //#endregion Sprite and Animation Methods
+  // #endregion Sprite and Animation Methods
 
   /**
    * Generate a random number using the current battle's seed, or the global seed if `globalScene.currentBattle` is falsy

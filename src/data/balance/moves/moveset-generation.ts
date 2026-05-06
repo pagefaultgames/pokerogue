@@ -38,6 +38,7 @@ import { MoveId } from "#enums/move-id";
 import type { IntRange } from "type-fest";
 
 // #region Constants
+
 /**
  * The minimum level for a Pokémon to generate with a move it can only learn
  * from a common tier TM
@@ -223,7 +224,7 @@ export const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
   MoveId.HIDDEN_POWER,
 ]);
 
-//#endregion Constants
+// #endregion Constants
 
 /**
  * Get the maximum number of TMs a Pokémon is allowed to learn based on

@@ -14,7 +14,9 @@ interface LoadingFontFaceProperty {
   extraOptions?: { [key: string]: any };
   only?: string[];
 }
+
 // #endregion Interfaces/Types
+
 // #region Constants
 
 const unicodeRanges = {
@@ -100,7 +102,9 @@ const fonts: LoadingFontFaceProperty[] = [
     extraOptions: { sizeAdjust: "133%" },
   },
 ];
+
 // #endregion Constants
+
 // #region Functions
 
 async function initFonts(language: string | undefined) {
@@ -134,10 +138,12 @@ function i18nMoneyFormatter(amount: any): string {
   return `@[MONEY]{${i18next.t("common:money", { amount })}}`;
 }
 
+// #endregion Functions
+
 // assigned during post-processing in #app/plugins/vite/namespaces-i18n-plugin.ts
 const nsEn: string[] = [];
-// #endregion Functions
-// #region Exports
+
+// #region Init
 
 /*
  * i18next is a localization library for maintaining and using translation resources.
@@ -227,7 +233,9 @@ await i18next
       await initFonts(localStorage.getItem("prLang") ?? undefined);
     },
   );
-// #endregion Exports
+
+// #endregion Init
+
 // #region Event Proxy
 
 if (timedEventManager.hasEventTextReplacement()) {
@@ -243,4 +251,5 @@ if (timedEventManager.hasEventTextReplacement()) {
     },
   });
 }
+
 // #endregion Event Proxy

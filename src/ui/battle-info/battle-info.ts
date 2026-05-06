@@ -524,8 +524,6 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
     );
   }
 
-  // #region Hp Bar Display handling
-
   /**
    * Called every time the hp frame is updated by the tween
    * @param pokemon - The pokemon object attached to this battle info
@@ -568,7 +566,6 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
     });
     this.lastMaxHp = pokemon.getMaxHp();
   }
-  // #endregion Hp Bar Display handling
 
   async updateInfo(pokemon: Pokemon, instant?: boolean): Promise<void> {
     let resolve: (r: void | PromiseLike<void>) => void = () => {};
@@ -625,8 +622,6 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
     resolve();
     await promise;
   }
-
-  // #endregion Update methods and helpers
 
   updateNameText(pokemon: Pokemon): void {
     let displayName = pokemon.getNameToRender({ prependFormName: false }).replace(/[♂♀]/g, "");
@@ -689,6 +684,8 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
       }
     }
   }
+
+  // #endregion Update methods and helpers
 
   getBaseY(): number {
     return this.baseY;
