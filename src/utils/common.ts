@@ -302,11 +302,6 @@ export async function localPing(): Promise<void> {
   }
 }
 
-// TODO: Move this to its own file
-
-/**
- * Class used to wrap numbers that should be treated as fixed values and not mutated by changes to game speed.
- */
 export class FixedInt {
   public readonly value: number;
 
@@ -314,7 +309,6 @@ export class FixedInt {
     this.value = value;
   }
 
-  // ensure this coerces to numbers if we accidentally pass it unexpectedly
   [Symbol.toPrimitive](_hint: string): number {
     return this.value;
   }
