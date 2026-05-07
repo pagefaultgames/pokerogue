@@ -49,6 +49,7 @@ type IntLiteral<T extends number> = If<IsNumericLiteral<T>, NonNegativeInteger<T
  * @internal
  */
 type NonNumericLiteral<T extends number> = If<IsNumericLiteral<T>, never, T>;
+
 // #endregion Helper Types
 
 /**
@@ -78,6 +79,7 @@ declare module "vitest" {
     not: NegativeAssertion<T>;
 
     // #region Banned Chai Assertions
+
     // enforce consistent style by banning chai assertions at a type level (except `not` which is also in jest).
     // NB: We cannot place these in a nice interface since TS will complain about `Assertion` extending 2 interfaces with clashing types.
     // We also cannot make these anything other than `never` as TS will error about incompatible types (which prevents any custom error messages)
@@ -189,6 +191,7 @@ declare module "vitest" {
 }
 
 // #region Generic Matchers
+
 interface GenericMatchers<T> {
   /**
    * Check whether an array contains EXACTLY the given items (in any order).
@@ -214,9 +217,11 @@ interface GenericMatchers<T> {
    */
   toHaveKey: T extends ReadonlyMap<infer K, infer V> ? (expectedKey: K, expectedValue?: V) => void : never;
 }
+
 // #endregion Generic Matchers
 
 // #region GameManager Matchers
+
 interface GameManagerMatchers {
   /**
    * Check whether the {@linkcode GameManager} has shown the given message at least once in the current test case.
@@ -238,9 +243,11 @@ interface GameManagerMatchers {
    */
   toBeAtPhase(expectedPhase: PhaseString): void;
 }
+
 // #endregion GameManager Matchers
 
 // #region Arena Matchers
+
 declare class ArenaMatchers implements MatchersBase<keyof ArenaMatchersCommon> {
   common: ArenaMatchersCommon;
   negative: ArenaMatchersNegative;
@@ -301,6 +308,7 @@ interface ArenaMatchersNegative {
 // #endregion Arena Matchers
 
 // #region Pokemon Matchers
+
 interface PokemonMatchers {
   /**
    * Check whether a {@linkcode Pokemon}'s current typing includes the given types.

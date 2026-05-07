@@ -337,12 +337,7 @@ export class FusionSpeciesFormEvolution extends SpeciesFormEvolution {
   }
 }
 
-interface PokemonEvolutions {
-  // TODO: Type this correctly as a SpeciesId
-  [key: string]: SpeciesFormEvolution[]
-}
-
-export const pokemonEvolutions: PokemonEvolutions = {
+export const pokemonEvolutions = Object.freeze({
   [SpeciesId.BULBASAUR]: [
     new SpeciesEvolution(SpeciesId.IVYSAUR, 16, null, null)
   ],
@@ -1869,7 +1864,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesFormEvolution(SpeciesId.GHOLDENGO, "chest", "", 1, null, {key: EvoCondKey.EVO_TREASURE_TRACKER, value: 10}, [50, 60, 70]),
     new SpeciesFormEvolution(SpeciesId.GHOLDENGO, "roaming", "", 1, null, {key: EvoCondKey.EVO_TREASURE_TRACKER, value: 10}, [50, 60, 70])
   ]
-};
+}) satisfies Readonly<Partial<Record<SpeciesId, SpeciesFormEvolution[]>>>;
 
 // TODO: Change to Partial<Record<SpeciesId, SpeciesId>>
 interface PokemonPrevolutions {
@@ -1887,7 +1882,7 @@ export function initPokemonPrevolutions(): void {
         continue;
       }
       // TODO: Remove type assertion once `pokemonEvolutions` is typed correctly with `SpeciesId` indices instead of `string`
-      pokemonPrevolutions[ev.speciesId] = Number.parseInt(pk) as SpeciesId;
+      pokemonPrevolutions[ev.speciesId] = Number.parseInt(pk) satisfies SpeciesId;
     }
   }
 }

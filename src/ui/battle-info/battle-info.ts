@@ -285,7 +285,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
     return this.statValuesContainer;
   }
 
-  //#region Initialization methods
+  // #region Initialization methods
 
   initSplicedIcon(pokemon: Pokemon, baseWidth: number) {
     this.splicedIcon.setPositionRelative(
@@ -403,7 +403,8 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
     this.lastStats = stats.join("");
     this.updateStats(stats);
   }
-  //#endregion
+
+  // #endregion Initialization methods
 
   /**
    * Return the texture name of the battle info box
@@ -433,7 +434,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
     this.baseY = this.y;
   }
 
-  //#region Update methods and helpers
+  // #region Update methods and helpers
 
   /**
    * Update the status icon to match the pokemon's current status
@@ -523,7 +524,8 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
     );
   }
 
-  //#region Hp Bar Display handling
+  // #region HP Bar Display handling
+
   /**
    * Called every time the hp frame is updated by the tween
    * @param pokemon - The pokemon object attached to this battle info
@@ -567,7 +569,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
     this.lastMaxHp = pokemon.getMaxHp();
   }
 
-  //#endregion
+  // #endregion HP Bar Display handling
 
   async updateInfo(pokemon: Pokemon, instant?: boolean): Promise<void> {
     let resolve: (r: void | PromiseLike<void>) => void = () => {};
@@ -624,7 +626,6 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
     resolve();
     await promise;
   }
-  //#endregion
 
   updateNameText(pokemon: Pokemon): void {
     let displayName = pokemon.getNameToRender({ prependFormName: false }).replace(/[♂♀]/g, "");
@@ -687,6 +688,8 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
       }
     }
   }
+
+  // #endregion Update methods and helpers
 
   getBaseY(): number {
     return this.baseY;

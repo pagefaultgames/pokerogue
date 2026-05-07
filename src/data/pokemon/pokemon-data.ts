@@ -247,7 +247,7 @@ export class PokemonSummonData {
       abilitiesApplied: [...this.abilitiesApplied.values()],
     };
     // Replace `null` with `undefined`, as `undefined` never gets serialized
-    for (const [key, value] of Object.entries(t)) {
+    for (const [key, value] of Object.entries<unknown>(t)) {
       if (value === null) {
         t[key] = undefined;
       }
@@ -318,6 +318,7 @@ export class PokemonWaveData {
  */
 export class PokemonTurnData {
   // #region Move usage-related properties
+
   // All of these properties can likely go inside a "move-in-flight" object later
 
   /** How many times the current move should hit the target(s) */

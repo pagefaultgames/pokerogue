@@ -114,6 +114,8 @@ class DefaultOverrides {
   readonly TIME_OF_DAY_OVERRIDE: Exclude<TimeOfDay, TimeOfDay.ALL> | null = null;
   /** Multiplies XP gained by this value including 0. Set to null to ignore the override. */
   readonly XP_MULTIPLIER_OVERRIDE: number | null = null;
+  /** If greater than `0`, adds candies on every instance of friendship gain. */
+  readonly IMMEDIATE_ADD_CANDY_OVERRIDE: number = 0;
   /**
    * Sets the level cap to this number during experience gain calculations.
    *

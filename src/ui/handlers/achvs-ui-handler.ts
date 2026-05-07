@@ -230,6 +230,7 @@ export class AchvsUiHandler extends MessageUiHandler {
   }
 
   // #region Input Processing
+
   /**
    * Submethod of {@linkcode processInput} that handles the action button input
    * @returns Whether the success sound should be played
@@ -354,6 +355,7 @@ export class AchvsUiHandler extends MessageUiHandler {
 
     return success;
   }
+
   // #endregion Input Processing
 
   setCursor(cursor: number, pageChange?: boolean): boolean {

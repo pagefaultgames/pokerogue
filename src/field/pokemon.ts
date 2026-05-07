@@ -933,7 +933,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.fusionSpecies.forms[this.fusionFormIndex].formKey;
   }
 
-  //#region Atlas and sprite ID methods
+  // #region Atlas and sprite ID methods
+
   // TODO: Add more documentation for all these attributes.
   // They may be all similar, but what each one actually _does_ is quite unclear at first glance
 
@@ -1062,7 +1063,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       fusionVariant,
     );
   }
-  //#endregion Atlas and sprite ID methods
+
+  // #endregion Atlas and sprite ID methods
 
   /**
    * Return this Pokemon's {@linkcode PokemonSpeciesForm | SpeciesForm}.
@@ -5319,7 +5321,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return (this.getSpeciesForm().getBaseExp() * this.level) / 5 + 1;
   }
 
-  //#region Sprite and Animation Methods
+  // #region Sprite and Animation Methods
+
   setFrameRate(frameRate: number) {
     globalScene.anims.get(this.getBattleSpriteKey()).frameRate = frameRate;
     try {
@@ -5728,7 +5731,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     fusionCanvas.remove();
   }
 
-  //#endregion Sprite and Animation Methods
+  // #endregion Sprite and Animation Methods
 
   /**
    * Generate a random number using the current battle's seed, or the global seed if `globalScene.currentBattle` is falsy
@@ -6081,6 +6084,9 @@ export class PlayerPokemon extends Pokemon {
         } else {
           sd.friendship = friendshipCap - 1;
         }
+      }
+      if (Overrides.IMMEDIATE_ADD_CANDY_OVERRIDE > 0) {
+        gameData.addStarterCandy(id, Overrides.IMMEDIATE_ADD_CANDY_OVERRIDE);
       }
     });
   }

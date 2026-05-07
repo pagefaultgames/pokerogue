@@ -131,7 +131,8 @@ export class BattlerTag implements BaseBattlerTag {
   public sourceMove?: MoveId;
   public sourceId?: number;
 
-  //#region non-serializable fields
+  // #region non-serializable fields
+
   // Fields that should never be serialized, as they must not change after instantiation
   readonly #isBatonPassable: boolean;
   public get isBatonPassable(): boolean {
@@ -147,7 +148,8 @@ export class BattlerTag implements BaseBattlerTag {
   public get lapseTypes(): readonly BattlerTagLapseType[] {
     return this.#lapseTypes;
   }
-  //#endregion non-serializable fields
+
+  // #endregion non-serializable fields
 
   constructor(
     tagType: BattlerTagType,
@@ -3126,7 +3128,8 @@ export class SubstituteTag extends SerializableBattlerTag {
   /** The substitute's remaining HP. If HP is depleted, the Substitute fades. */
   public hp: number;
 
-  //#region non-serializable properties
+  // #region non-serializable properties
+
   /** A reference to the sprite representing the Substitute doll */
   #sprite: Phaser.GameObjects.Sprite;
   /** A reference to the sprite representing the Substitute doll */
@@ -3145,7 +3148,8 @@ export class SubstituteTag extends SerializableBattlerTag {
   public set sourceInFocus(value: boolean) {
     this.#sourceInFocus = value;
   }
-  //#endregion non-serializable properties
+
+  // #endregion non-serializable properties
 
   constructor(sourceMove: MoveId, sourceId: number) {
     super(
