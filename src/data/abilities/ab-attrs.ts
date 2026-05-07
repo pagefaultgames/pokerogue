@@ -32,7 +32,7 @@ import { MoveResult } from "#enums/move-result";
 import { MoveTarget } from "#enums/move-target";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
-import { getPokemonTypeLocaleKey, PokemonType } from "#enums/pokemon-type";
+import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { BATTLE_STATS, type BattleStat, EFFECTIVE_STATS, getStatKey, Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
@@ -57,6 +57,7 @@ import type { Move, StatusEffectAttr } from "#types/move-types";
 import type { Closed, Exact, Mutable } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
 import { BooleanHolder, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
+import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
@@ -3172,7 +3173,8 @@ export class ConfusionOnStatusEffectAbAttr extends AbAttr {
 
 export interface PreSetStatusAbAttrParams extends AbAttrBaseParams {
   /** The status effect being applied */
-  effect: Exclude<StatusEffect, StatusEffect.NONE | StatusEffect.FAINT>;
+  // TODO: change to Exclude<StatusEffect, StatusEffect.NONE | StatusEffect.FAINT>
+  effect: StatusEffect;
   /** Holds whether the status effect is prevented by the ability */
   cancelled: BooleanHolder;
 }
@@ -3187,13 +3189,13 @@ export class PreSetStatusAbAttr extends AbAttr {
 
 /** Provides immunity to status effects to specified targets. */
 export class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
-  protected readonly immuneEffects: readonly Exclude<StatusEffect, StatusEffect.NONE>[];
+  protected readonly immuneEffects: readonly StatusEffect[];
 
   /**
    * @param immuneEffects - An array of {@linkcode StatusEffect}s to prevent application.
    * If none are provided, will block **all** status effects regardless of type.
    */
-  constructor(...immuneEffects: Exclude<StatusEffect, StatusEffect.NONE | StatusEffect.FAINT>[]) {
+  constructor(...immuneEffects: StatusEffect[]) {
     super();
 
     this.immuneEffects = immuneEffects;

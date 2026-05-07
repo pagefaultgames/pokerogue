@@ -58,7 +58,7 @@ import { MoveResult } from "#enums/move-result";
 import { MoveTarget } from "#enums/move-target";
 import { isVirtual, MoveUseMode } from "#enums/move-use-mode";
 import { MultiHitType } from "#enums/multi-hit-type";
-import { getPokemonTypeLocaleKey, MAX_POKEMON_TYPE, PokemonType } from "#enums/pokemon-type";
+import { MAX_POKEMON_TYPE, PokemonType } from "#enums/pokemon-type";
 import { PositionalTagType } from "#enums/positional-tag-type";
 import { SpeciesId } from "#enums/species-id";
 import { BATTLE_STATS, type BattleStat, type EffectiveStat, getStatKey, Stat } from "#enums/stat";
@@ -131,6 +131,7 @@ import {
   toDmgValue,
 } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
+import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import { areAllies, canSpeciesTera, willTerastallize } from "#utils/pokemon-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { toCamelCase, toTitleCase } from "#utils/strings";

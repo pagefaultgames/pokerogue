@@ -1,6 +1,3 @@
-import { toCamelCase } from "#utils/strings";
-import type i18next from "i18next";
-
 /**
  * A `PokemonType` represents the type of a Pokemon or its moves.
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Type}
@@ -40,14 +37,3 @@ export type RegularPokemonType = Exclude<PokemonType, PokemonType.UNKNOWN | Poke
 
 /** The largest legal value for a {@linkcode PokemonType} (includes Stellar) */
 export const MAX_POKEMON_TYPE = PokemonType.STELLAR;
-
-/**
- * Retrieve the locale key used to display the given {@linkcode PokemonType}'s localized name.
- * @param type - The `PokemonType` whose locales key should be retrieved
- * @returns The locale key used to display the name of `type`.
- * @remarks
- * Should **always** be passed directly to {@linkcode i18next.t}.
- */
-export function getPokemonTypeLocaleKey(type: PokemonType): string {
-  return `pokemonInfo:type.${toCamelCase(PokemonType[type])}`;
-}

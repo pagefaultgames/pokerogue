@@ -3,10 +3,11 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { CommonBattleAnim } from "#data/battle-anims";
 import { SpeciesFormChangeTeraTrigger } from "#data/form-change-triggers";
 import { CommonAnim } from "#enums/move-anims-common";
-import { getPokemonTypeLocaleKey, PokemonType } from "#enums/pokemon-type";
+import { PokemonType } from "#enums/pokemon-type";
 import type { Pokemon } from "#field/pokemon";
 import { BattlePhase } from "#phases/battle-phase";
 import { achvs } from "#system/achv";
+import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import i18next from "i18next";
 
 export class TeraPhase extends BattlePhase {

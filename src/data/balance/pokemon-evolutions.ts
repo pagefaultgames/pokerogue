@@ -8,7 +8,7 @@ import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
 import { Nature } from "#enums/nature";
 import { PokeballType } from "#enums/pokeball";
-import { getPokemonTypeLocaleKey, PokemonType } from "#enums/pokemon-type";
+import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
@@ -18,6 +18,7 @@ import type { SpeciesStatBoosterItem, SpeciesStatBoosterModifierType } from "#mo
 import type { EvoLevelThreshold } from "#types/species-gen-types";
 import { coerceArray } from "#utils/array";
 import { randSeedInt } from "#utils/common";
+import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
