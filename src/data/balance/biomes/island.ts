@@ -119,6 +119,5 @@ export const islandBiome: Biome = {
   trainerChance: 12,
   weatherPool,
   terrainPool,
-  bgmLoopPoint: 2.751,
   biomeLinks,
 };

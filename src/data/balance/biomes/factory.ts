@@ -108,6 +108,5 @@ export const factoryBiome: Biome = {
   trainerChance: 8,
   weatherPool,
   terrainPool,
-  bgmLoopPoint: 4.985,
   biomeLinks,
 };

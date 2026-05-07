@@ -46,8 +46,8 @@ export abstract class OAuthProvidersUiHandler extends LoginRegisterInfoContainer
       .setOrigin(0.5, 0);
     this.externalPartyBg = addWindow(0, 0, 0, 0);
 
-    this.discordImage = this.buildInteractableImage("discord", "discord-icon");
-    this.googleImage = this.buildInteractableImage("google", "google-icon");
+    this.discordImage = this.buildInteractableImage("discord_oauth", "discord-icon");
+    this.googleImage = this.buildInteractableImage("google_oauth", "google-icon");
 
     this.externalPartyContainer
       .add([this.externalPartyBg, this.externalPartyTitle, this.discordImage, this.googleImage])
@@ -89,6 +89,7 @@ export abstract class OAuthProvidersUiHandler extends LoginRegisterInfoContainer
     };
 
     this.discordImage //
+      .setDisplaySize(20, 20)
       .setPosition(externalPartyIconWidth, this.externalPartyBg.height - 40)
       .on("pointerdown", () => {
         const redirectUri = getRedirectUri("discord");
@@ -98,6 +99,7 @@ export abstract class OAuthProvidersUiHandler extends LoginRegisterInfoContainer
       });
 
     this.googleImage //
+      .setDisplaySize(20, 20)
       .setPosition(externalPartyIconWidth, this.externalPartyBg.height - 60)
       .on("pointerdown", () => {
         const redirectUri = getRedirectUri("google");

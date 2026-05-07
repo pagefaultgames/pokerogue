@@ -1,4 +1,4 @@
-import { pokerogueApi } from "#api/pokerogue-api";
+import { pokerogueApi } from "#api/api";
 import { loggedInUser } from "#app/account";
 import { FAKE_TITLE_LOGO_CHANCE } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
@@ -190,6 +190,7 @@ export class TitleUiHandler extends OptionSelectUiHandler {
     this.splashMessageText.setText(
       i18next.t(this.splashMessage, {
         count: TitleUiHandler.BATTLES_WON_FALLBACK,
+        cycleCountNoOrdinal: 5643853 + globalScene.gameData.gameStats.classicSessionsPlayed, // for `splashMessages:itsBeenTotalRuns`
       }),
     );
 

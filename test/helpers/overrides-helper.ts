@@ -68,11 +68,14 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the starting wave index
-   * @param wave - The wave to set. Classic: `1`-`200`
+   * Override the starting wave index.
+   * @param wave - The wave to set, or `null` to disable the override
    * @returns `this`
    */
-  public startingWave(wave: number): this {
+  public startingWave(wave: number | null): this {
+    if (wave != null && wave <= 0) {
+      throw new Error("Attempted to set invalid wave index: " + wave.toString());
+    }
     vi.spyOn(Overrides, "STARTING_WAVE_OVERRIDE", "get").mockReturnValue(wave);
     this.log(`Starting wave set to ${wave}!`);
     return this;
@@ -187,6 +190,7 @@ export class OverridesHelper extends GameManagerHelper {
   public starterForms(forms: Partial<Record<SpeciesId, number>>): this {
     vi.spyOn(Overrides, "STARTER_FORM_OVERRIDES", "get").mockReturnValue(forms);
     const formsStr = Object.entries(forms)
+      .filter(e => !!e)
       .map(([speciesId, formIndex]) => `${SpeciesId[speciesId]}=${formIndex}`)
       .join(", ");
     this.log(`Player Pokemon form set to: ${formsStr}!`);
@@ -738,10 +742,10 @@ export class OverridesHelper extends GameManagerHelper {
    */
   public statusActivation(activate: boolean | null): this {
     vi.spyOn(Overrides, "STATUS_ACTIVATION_OVERRIDE", "get").mockReturnValue(activate);
-    if (activate !== null) {
-      this.log(`Paralysis and Freeze forced to ${activate ? "always" : "never"} activate!`);
-    } else {
+    if (activate === null) {
       this.log("Status activation override disabled!");
+    } else {
+      this.log(`Paralysis and Freeze forced to ${activate ? "always" : "never"} activate!`);
     }
     return this;
   }
@@ -753,10 +757,10 @@ export class OverridesHelper extends GameManagerHelper {
    */
   public confusionActivation(activate: boolean | null): this {
     vi.spyOn(Overrides, "CONFUSION_ACTIVATION_OVERRIDE", "get").mockReturnValue(activate);
-    if (activate !== null) {
-      this.log(`Confusion forced to ${activate ? "always" : "never"} activate!`);
-    } else {
+    if (activate === null) {
       this.log("Confusion activation override disabled!");
+    } else {
+      this.log(`Confusion forced to ${activate ? "always" : "never"} activate!`);
     }
     return this;
   }

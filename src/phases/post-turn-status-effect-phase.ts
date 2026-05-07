@@ -3,7 +3,6 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { CommonBattleAnim } from "#data/battle-anims";
 import { getStatusEffectActivationText } from "#data/status-effect";
-import { BattleSpec } from "#enums/battle-spec";
 import type { BattlerIndex } from "#enums/battler-index";
 import { CommonAnim } from "#enums/move-anims-common";
 import { StatusEffect } from "#enums/status-effect";
@@ -63,7 +62,7 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
   }
 
   override end() {
-    if (globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
+    if (globalScene.currentBattle.isClassicFinalBoss) {
       globalScene.initFinalBossPhaseTwo(this.getPokemon());
     } else {
       super.end();

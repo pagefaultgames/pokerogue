@@ -1,6 +1,4 @@
-import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type { Pokemon } from "#app/field/pokemon";
-import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
 import type { MovePhase } from "#app/phases/move-phase";
 import { MovePhasePriorityQueue } from "#app/queues/move-phase-priority-queue";
@@ -55,9 +53,6 @@ export class DynamicQueueManager {
     for (const queue of this.dynamicPhaseMap.values()) {
       queue.clear();
     }
-    // TODO: Remove in a later PR - this is both unwieldly for tests
-    // and would force MEs to reset the turn order at start of every single turn (which is dumb)
-    globalScene.turnCommandManager.resetTurnOrder();
   }
 
   /**
@@ -113,15 +108,6 @@ export class DynamicQueueManager {
    */
   public setMoveTimingModifier(condition: PhaseConditionFunc<"MovePhase">, modifier: MovePhaseTimingModifier): void {
     this.getMovePhaseQueue().setTimingModifier(condition, modifier);
-  }
-
-  /**
-   * Finds the {@linkcode MovePhase} meeting the condition and changes its move
-   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function
-   * @param move - The {@linkcode PokemonMove | move} to use in replacement
-   */
-  public setMoveForPhase(condition: PhaseConditionFunc<"MovePhase">, move: PokemonMove): void {
-    this.getMovePhaseQueue().setMoveForPhase(condition, move);
   }
 
   /**

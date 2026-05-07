@@ -119,6 +119,5 @@ export const lakeBiome: Biome = {
   trainerChance: 6,
   weatherPool,
   terrainPool,
-  bgmLoopPoint: 7.215,
   biomeLinks,
 };

@@ -20,7 +20,7 @@ const pokemonPool: BiomePokemonPools = {
     [TimeOfDay.DAY]: [SpeciesId.SUNKERN, SpeciesId.COMBEE],
     [TimeOfDay.DUSK]: [SpeciesId.SEEDOT],
     [TimeOfDay.NIGHT]: [SpeciesId.SEEDOT],
-    [TimeOfDay.ALL]: [SpeciesId.MILTANK, SpeciesId.CHERUBI, SpeciesId.FOONGUS],
+    [TimeOfDay.ALL]: [SpeciesId.LICKITUNG, SpeciesId.MILTANK, SpeciesId.CHERUBI, SpeciesId.FOONGUS],
   },
   [BiomePoolTier.RARE]: {
     [TimeOfDay.DAWN]: [],
@@ -104,6 +104,5 @@ export const grassBiome: Biome = {
   trainerChance: 6,
   weatherPool,
   terrainPool,
-  bgmLoopPoint: 1.995,
   biomeLinks,
 };

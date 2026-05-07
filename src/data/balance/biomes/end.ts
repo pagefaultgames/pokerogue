@@ -121,6 +121,5 @@ export const endBiome: Biome = {
   trainerChance: 0,
   weatherPool,
   terrainPool,
-  bgmLoopPoint: 17.153,
   biomeLinks,
 };

@@ -129,6 +129,5 @@ export const dojoBiome: Biome = {
   trainerChance: 4,
   weatherPool,
   terrainPool,
-  bgmLoopPoint: 6.205,
   biomeLinks,
 };

@@ -109,6 +109,5 @@ export const laboratoryBiome: Biome = {
   trainerChance: 16,
   weatherPool,
   terrainPool,
-  bgmLoopPoint: 114.862,
   biomeLinks,
 };

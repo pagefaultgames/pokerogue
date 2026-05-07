@@ -183,6 +183,5 @@ export const forestBiome: Biome = {
   trainerChance: 8,
   weatherPool,
   terrainPool,
-  bgmLoopPoint: 0.341,
   biomeLinks,
 };

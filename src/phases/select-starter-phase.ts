@@ -56,7 +56,7 @@ export class SelectStarterPhase extends Phase {
       }
 
       let starterGender =
-        species.malePercent !== null ? (starter.female ? Gender.FEMALE : Gender.MALE) : Gender.GENDERLESS;
+        species.malePercent === null ? Gender.GENDERLESS : starter.female ? Gender.FEMALE : Gender.MALE;
       if (Overrides.GENDER_OVERRIDE !== null) {
         starterGender = Overrides.GENDER_OVERRIDE;
       }
@@ -88,10 +88,10 @@ export class SelectStarterPhase extends Phase {
         starterPokemon.nickname = starter.nickname;
       }
 
-      if (starter.teraType != null) {
-        starterPokemon.teraType = starter.teraType;
-      } else {
+      if (starter.teraType == null) {
         starterPokemon.teraType = starterPokemon.species.type1;
+      } else {
+        starterPokemon.teraType = starter.teraType;
       }
 
       if (globalScene.gameMode.isSplicedOnly || Overrides.STARTER_FUSION_OVERRIDE) {
