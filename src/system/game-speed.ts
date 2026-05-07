@@ -67,7 +67,7 @@ export function initGameSpeed(this: BattleScene): void {
     if (!(config instanceof Phaser.Time.TimerEvent) && config.delay) {
       config.delay = transformValue(config.delay);
     }
-    return originalAddEvent.apply(this, [config]);
+    return originalAddEvent.call(this, config);
   } satisfies typeof originalAddEvent;
 
   const originalTweensAdd = this.tweens.add;
