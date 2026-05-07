@@ -61,6 +61,7 @@ export function initGameSpeed(this: BattleScene): void {
   };
 
   // #region Method overrides
+
   const originalAddEvent = this.time.addEvent;
   this.time.addEvent = function (this: Phaser.Time.Clock, config) {
     if (!(config instanceof Phaser.Time.TimerEvent) && config.delay) {
