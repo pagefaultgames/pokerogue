@@ -8,7 +8,7 @@ import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
 import { Nature } from "#enums/nature";
 import { PokeballType } from "#enums/pokeball";
-import { PokemonType } from "#enums/pokemon-type";
+import { getPokemonTypeLocaleKey, PokemonType } from "#enums/pokemon-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
@@ -126,9 +126,9 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.TIME:
           return i18next.t(`pokemonEvolutions:timeOfDay.${toCamelCase(TimeOfDay[cond.time.at(-1)!])}`); // For Day and Night evos, the key we want goes last
         case EvoCondKey.MOVE_TYPE:
-          return i18next.t("pokemonEvolutions:moveType", {type: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[cond.pkmnType])}`)});
+          return i18next.t("pokemonEvolutions:moveType", {type: i18next.t(getPokemonTypeLocaleKey(cond.pkmnType))});
         case EvoCondKey.PARTY_TYPE:
-          return i18next.t("pokemonEvolutions:partyType", {type: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[cond.pkmnType])}`)});
+          return i18next.t("pokemonEvolutions:partyType", {type: i18next.t(getPokemonTypeLocaleKey(cond.pkmnType))});
         case EvoCondKey.GENDER:
           return i18next.t("pokemonEvolutions:gender", {gender: getGenderSymbol(cond.gender)});
         case EvoCondKey.MOVE:

@@ -16,7 +16,7 @@ import { MoveId } from "#enums/move-id";
 import type { MoveSourceType } from "#enums/move-source-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
-import { PokemonType } from "#enums/pokemon-type";
+import { getPokemonTypeLocaleKey, PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
@@ -828,7 +828,7 @@ export class SingleTypeChallenge extends Challenge {
   }
 
   getDescription(overrideValue: number = this.value): string {
-    const type = i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[overrideValue - 1])}`);
+    const type = i18next.t(getPokemonTypeLocaleKey(overrideValue - 1));
     const typeColor = `[color=${TypeColor[PokemonType[overrideValue - 1]]}][shadow=${TypeShadow[PokemonType[this.value - 1]]}]${type}[/shadow][/color]`;
     const defaultDesc = i18next.t("challenges:singleType.descDefault");
     const typeDesc = i18next.t("challenges:singleType.desc", {

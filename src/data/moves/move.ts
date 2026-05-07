@@ -58,7 +58,7 @@ import { MoveResult } from "#enums/move-result";
 import { MoveTarget } from "#enums/move-target";
 import { isVirtual, MoveUseMode } from "#enums/move-use-mode";
 import { MultiHitType } from "#enums/multi-hit-type";
-import { MAX_POKEMON_TYPE, PokemonType } from "#enums/pokemon-type";
+import { getPokemonTypeLocaleKey, MAX_POKEMON_TYPE, PokemonType } from "#enums/pokemon-type";
 import { PositionalTagType } from "#enums/positional-tag-type";
 import { SpeciesId } from "#enums/species-id";
 import { BATTLE_STATS, type BattleStat, type EffectiveStat, getStatKey, Stat } from "#enums/stat";
@@ -7606,7 +7606,7 @@ export class CopyBiomeTypeAttr extends MoveEffectAttr {
     globalScene.phaseManager.queueMessage(
       i18next.t("moveTriggers:transformedIntoType", {
         pokemonName: getPokemonNameWithAffix(user),
-        typeName: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[typeChange])}`),
+        typeName: i18next.t(getPokemonTypeLocaleKey(typeChange)),
       }),
     );
 
@@ -7719,7 +7719,7 @@ export class ChangeTypeAttr extends MoveEffectAttr {
     globalScene.phaseManager.queueMessage(
       i18next.t("moveTriggers:transformedIntoType", {
         pokemonName: getPokemonNameWithAffix(target),
-        typeName: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.type])}`),
+        typeName: i18next.t(getPokemonTypeLocaleKey(this.type)),
       }),
     );
 
@@ -7754,7 +7754,7 @@ export class AddTypeAttr extends MoveEffectAttr {
 
     globalScene.phaseManager.queueMessage(
       i18next.t("moveTriggers:addType", {
-        typeName: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.type])}`),
+        typeName: i18next.t(getPokemonTypeLocaleKey(this.type)),
         pokemonName: getPokemonNameWithAffix(target),
       }),
     );
@@ -7783,7 +7783,7 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
     globalScene.phaseManager.queueMessage(
       i18next.t("battle:transformedIntoType", {
         pokemonName: getPokemonNameWithAffix(user),
-        type: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[firstMoveType])}`),
+        type: i18next.t(getPokemonTypeLocaleKey(firstMoveType)),
       }),
     );
 

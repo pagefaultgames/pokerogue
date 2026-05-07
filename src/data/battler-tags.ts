@@ -72,7 +72,7 @@ import { MoveResult } from "#enums/move-result";
 import { MoveTarget } from "#enums/move-target";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
-import { PokemonType } from "#enums/pokemon-type";
+import { getPokemonTypeLocaleKey, PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { type BattleStat, EFFECTIVE_STATS, type EffectiveStat, getStatKey, Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
@@ -105,7 +105,6 @@ import type { Constructor } from "#types/common";
 import type { AbstractConstructor, Mutable } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
 import { BooleanHolder, getFrameMs, toDmgValue } from "#utils/common";
-import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 /** Interface containing the serializable fields of `BattlerTag` */
@@ -2444,7 +2443,7 @@ export class TypeBoostTag extends SerializableBattlerTag {
     globalScene.phaseManager.queueMessage(
       i18next.t("abilityTriggers:typeImmunityPowerBoost", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        typeName: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.boostedType])}`),
+        typeName: i18next.t(getPokemonTypeLocaleKey(this.boostedType)),
       }),
     );
   }

@@ -23,7 +23,7 @@ import { ModifierTier } from "#enums/modifier-tier";
 import { MoveId } from "#enums/move-id";
 import { Nature } from "#enums/nature";
 import { PokeballType } from "#enums/pokeball";
-import { PokemonType } from "#enums/pokemon-type";
+import { getPokemonTypeLocaleKey, PokemonType } from "#enums/pokemon-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import type { PermanentStat, TempBattleStat } from "#enums/stat";
@@ -124,7 +124,6 @@ import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, formatMoney, NumberHolder, padInt, randSeedInt, randSeedItem } from "#utils/common";
 import { getEnumKeys, getEnumValues } from "#utils/enums";
 import { getModifierPoolForType, getModifierType } from "#utils/modifier-utils";
-import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
 const outputModifierData = false;
@@ -446,13 +445,13 @@ export class TerastallizeModifierType extends PokemonModifierType {
 
   get name(): string {
     return i18next.t("modifierType:ModifierType.TerastallizeModifierType.name", {
-      teraType: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.teraType])}`),
+      teraType: i18next.t(getPokemonTypeLocaleKey(this.teraType)),
     });
   }
 
   getDescription(): string {
     return i18next.t("modifierType:ModifierType.TerastallizeModifierType.description", {
-      teraType: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.teraType])}`),
+      teraType: i18next.t(getPokemonTypeLocaleKey(this.teraType)),
     });
   }
 
@@ -857,7 +856,7 @@ export class AttackTypeBoosterModifierType
   getDescription(): string {
     // TODO: Need getTypeName?
     return i18next.t("modifierType:ModifierType.AttackTypeBoosterModifierType.description", {
-      moveType: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.moveType])}`),
+      moveType: i18next.t(getPokemonTypeLocaleKey(this.moveType)),
     });
   }
 

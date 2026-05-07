@@ -32,7 +32,7 @@ import { MoveResult } from "#enums/move-result";
 import { MoveTarget } from "#enums/move-target";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
-import { PokemonType } from "#enums/pokemon-type";
+import { getPokemonTypeLocaleKey, PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { BATTLE_STATS, type BattleStat, EFFECTIVE_STATS, getStatKey, Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
@@ -901,7 +901,7 @@ export class PostDefendTypeChangeAbAttr extends PostDefendAbAttr {
     return i18next.t("abilityTriggers:postDefendTypeChange", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       abilityName,
-      typeName: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.type])}`),
+      typeName: i18next.t(getPokemonTypeLocaleKey(this.type)),
     });
   }
 }
@@ -1424,7 +1424,7 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
   getTriggerMessage({ pokemon }: AugmentMoveInteractionAbAttrParams, _abilityName: string): string {
     return i18next.t("abilityTriggers:pokemonTypeChange", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      moveType: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.moveType])}`),
+      moveType: i18next.t(getPokemonTypeLocaleKey(this.moveType)),
     });
   }
 }
@@ -3172,13 +3172,12 @@ export class ConfusionOnStatusEffectAbAttr extends AbAttr {
 
 export interface PreSetStatusAbAttrParams extends AbAttrBaseParams {
   /** The status effect being applied */
-  effect: StatusEffect;
+  effect: Exclude<StatusEffect, StatusEffect.NONE | StatusEffect.FAINT>;
   /** Holds whether the status effect is prevented by the ability */
   cancelled: BooleanHolder;
 }
 
 export class PreSetStatusAbAttr extends AbAttr {
-  /** Return whether the ability attribute can be applied */
   canApply(_params: Closed<PreSetStatusAbAttrParams>): boolean {
     return true;
   }
@@ -3188,30 +3187,31 @@ export class PreSetStatusAbAttr extends AbAttr {
 
 /** Provides immunity to status effects to specified targets. */
 export class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
-  protected readonly immuneEffects: readonly StatusEffect[];
+  protected readonly immuneEffects: readonly Exclude<StatusEffect, StatusEffect.NONE>[];
 
   /**
    * @param immuneEffects - An array of {@linkcode StatusEffect}s to prevent application.
    * If none are provided, will block **all** status effects regardless of type.
    */
-  constructor(...immuneEffects: StatusEffect[]) {
+  constructor(...immuneEffects: Exclude<StatusEffect, StatusEffect.NONE | StatusEffect.FAINT>[]) {
     super();
 
     this.immuneEffects = immuneEffects;
   }
 
-  override canApply({ effect, cancelled }: PreSetStatusAbAttrParams): boolean {
-    return (
-      !cancelled.value
-      && ((this.immuneEffects.length === 0 && effect !== StatusEffect.FAINT) || this.immuneEffects.includes(effect))
-    );
+  public override canApply({ effect, cancelled }: PreSetStatusAbAttrParams): boolean {
+    if (cancelled.value) {
+      return false;
+    }
+
+    return this.immuneEffects.length === 0 || this.immuneEffects.includes(effect);
   }
 
-  override apply({ cancelled }: PreSetStatusAbAttrParams): void {
+  public override apply({ cancelled }: PreSetStatusAbAttrParams): void {
     cancelled.value = true;
   }
 
-  override getTriggerMessage({ pokemon, effect }: PreSetStatusAbAttrParams, abilityName: string): string {
+  public override getTriggerMessage({ pokemon, effect }: PreSetStatusAbAttrParams, abilityName: string): string {
     return this.immuneEffects.length > 0
       ? i18next.t("abilityTriggers:statusEffectImmunityWithName", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
