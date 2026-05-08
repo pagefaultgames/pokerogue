@@ -3204,9 +3204,9 @@ export class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
   public override canApply({ effect, cancelled }: PreSetStatusAbAttrParams): boolean {
     return (
       !cancelled.value
-      && ((this.immuneEffects.length === 0 && effect !== StatusEffect.FAINT) || this.immuneEffects.includes(effect)) 
-      );
-    }
+      && ((this.immuneEffects.length === 0 && effect !== StatusEffect.FAINT) || this.immuneEffects.includes(effect))
+    );
+  }
 
   public override apply({ cancelled }: PreSetStatusAbAttrParams): void {
     cancelled.value = true;
