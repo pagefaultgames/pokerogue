@@ -254,12 +254,51 @@ function normalizeKeyName(name: string | undefined): string {
   return name.replace(/^(KEY_|BUTTON_)/, "").replaceAll("_", " ");
 }
 
+function resolveKeyboardLabel(button: Button): string | undefined {
+  const inputController = globalScene?.inputController;
+  if (!inputController) {
+    return;
+  }
+  const keyboardConfig = inputController.getActiveConfig(Device.KEYBOARD);
+  const setting = KEYBOARD_BUTTON_TO_SETTING[button];
+  if (!keyboardConfig || !setting) {
+    return;
+  }
+  const primary = getKeyWithSettingName(keyboardConfig, setting);
+  if (primary) {
+    return normalizeKeyName(primary);
+  }
+  const altSetting = `ALT_${setting}` as MappingSettingName;
+  const alt = getKeyWithSettingName(keyboardConfig, altSetting as SettingKeyboard);
+  return alt ? normalizeKeyName(alt) : undefined;
+}
+
+function resolveGamepadLabel(button: Button): string | undefined {
+  const inputController = globalScene?.inputController;
+  if (!inputController) {
+    return;
+  }
+  const gamepadConfig = inputController.getActiveConfig(Device.GAMEPAD);
+  const padSetting = GAMEPAD_BUTTON_TO_SETTING[button];
+  if (!gamepadConfig || !padSetting) {
+    return;
+  }
+  const primary = getKeyWithSettingName(gamepadConfig, padSetting);
+  return primary ? normalizeKeyName(primary) : undefined;
+}
+
 /**
- * Resolve a human-readable label for the key currently bound to {@linkcode button}
- * in the active input config (keyboard primary first, then alt, then gamepad).
+ * Resolve a human-readable label for the key currently bound to {@linkcode button}.
  *
- * Returns an empty string if no binding is found - callers should fall back to
- * a generic phrase like "the action button".
+ * Prioritizes whichever device the user last interacted with (keyboard or gamepad)
+ * via `inputController.getLastSourceDevice()`, then falls back to the other device.
+ * This way a player who just pressed an Xbox A button hears "A" rather than the
+ * keyboard binding for the same Button.ACTION, and a keyboard player still hears
+ * "SPACE" / "Z" even when a gamepad is connected.
+ *
+ * Returns an empty string if no binding is found on either device - callers should
+ * fall back to a generic phrase like "the action button" via the `*NoKey` locale
+ * variants.
  */
 export function getKeyLabelForButton(button: Button): string {
   const inputController = globalScene?.inputController;
@@ -267,28 +306,9 @@ export function getKeyLabelForButton(button: Button): string {
     return "";
   }
 
-  const keyboardConfig = inputController.getActiveConfig(Device.KEYBOARD);
-  const setting = KEYBOARD_BUTTON_TO_SETTING[button];
-  if (keyboardConfig && setting) {
-    const primary = getKeyWithSettingName(keyboardConfig, setting);
-    if (primary) {
-      return normalizeKeyName(primary);
-    }
-    const altSetting = `ALT_${setting}` as MappingSettingName;
-    const alt = getKeyWithSettingName(keyboardConfig, altSetting as SettingKeyboard);
-    if (alt) {
-      return normalizeKeyName(alt);
-    }
+  const lastDevice = inputController.getLastSourceDevice();
+  if (lastDevice === Device.GAMEPAD) {
+    return resolveGamepadLabel(button) ?? resolveKeyboardLabel(button) ?? "";
   }
-
-  const gamepadConfig = inputController.getActiveConfig(Device.GAMEPAD);
-  const padSetting = GAMEPAD_BUTTON_TO_SETTING[button];
-  if (gamepadConfig && padSetting) {
-    const primary = getKeyWithSettingName(gamepadConfig, padSetting);
-    if (primary) {
-      return normalizeKeyName(primary);
-    }
-  }
-
-  return "";
+  return resolveKeyboardLabel(button) ?? resolveGamepadLabel(button) ?? "";
 }
