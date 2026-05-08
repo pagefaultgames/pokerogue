@@ -6132,7 +6132,7 @@ export class TeraStarstormTypeAttr extends VariableMoveTypeAttr {
 export class MatchUserTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, _target: Pokemon, _move: Move, args: [ValueHolder<PokemonType>, ...any[]]): boolean {
     const moveType = args[0];
-    const userTypes = user.getTypes(true, true);
+    const userTypes = user.getTypes({ returnOriginalTypesIfStellar: true });
     if (userTypes.length === 0) {
       return false;
     }
@@ -6145,11 +6145,12 @@ export class MatchUserTypeAttr extends VariableMoveTypeAttr {
     // Instead of calling apply, just return the user's primary type
     // this avoids inconsistencies when the user's type is temporarily changed
     // from tera
-    return [user.getTypes(false, true, true, false)[0] ?? move.type];
+    return [user.getTypes({ includeTeraType: false, bypassSummonData: true, ignoreThirdType: true })[0] ?? move.type];
   }
 
   override getTypeForMovegen(user: Pokemon, move: Move, willTera: boolean): PokemonType {
-    const defaultType = user.getTypes(false, true, true, false)[0] ?? move.type;
+    const defaultType =
+      user.getTypes({ includeTeraType: false, bypassSummonData: true, ignoreThirdType: true })[0] ?? move.type;
     if (willTera) {
       const type = user.getTeraType();
       if (type !== PokemonType.STELLAR) {
@@ -6282,7 +6283,7 @@ export class HitsSameTypeAttr extends MoveTypeChartOverrideAttr {
     args: [multiplier: NumberHolder, types: readonly PokemonType[], moveType: PokemonType],
   ): boolean {
     const [multiplier, oppTypes] = args;
-    const userTypes = user.getTypes(true);
+    const userTypes = user.getTypes();
     // Synchronoise is never effective if the user is typeless
     if (userTypes.includes(PokemonType.UNKNOWN)) {
       multiplier.value = 0;
@@ -6718,7 +6719,7 @@ export class JawLockAttr extends AddBattlerTagAttr {
 
 export class CurseAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, _args: any[]): boolean {
-    if (user.getTypes(true).includes(PokemonType.GHOST)) {
+    if (user.getTypes().includes(PokemonType.GHOST)) {
       if (target.getTag(BattlerTagType.CURSED)) {
         globalScene.phaseManager.queueMessage(i18next.t("battle:attackFailed"));
         return false;
@@ -7527,7 +7528,7 @@ export class RemoveTypeAttr extends MoveEffectAttr {
       return false;
     }
 
-    const userTypes = user.getTypes(true);
+    const userTypes = user.getTypes();
     const modifiedTypes = userTypes.filter(type => type !== this.removedType);
     if (modifiedTypes.length === 0) {
       modifiedTypes.push(PokemonType.UNKNOWN);
@@ -7554,7 +7555,7 @@ export class CopyTypeAttr extends MoveEffectAttr {
       return false;
     }
 
-    const targetTypes = target.getTypes(true, true);
+    const targetTypes = target.getTypes({ returnOriginalTypesIfStellar: true });
     // Replace UNKNOWN with grass type
     // TODO: `getTypes` arguably shouldn't include `UNKNOWN` if a type was added anyways,
     // and this should DEFNINITELY get its own helper function for Roost and co.
@@ -9023,7 +9024,7 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
    */
   private getTypeResistances(user: Pokemon, moveType: PokemonType): PokemonType[] {
     const resistances: PokemonType[] = [];
-    const userTypes = user.getTypes(true, true);
+    const userTypes = user.getTypes({ returnOriginalTypesIfStellar: true });
 
     for (const type of getEnumValues(PokemonType)) {
       if (userTypes.includes(type)) {

@@ -24,10 +24,9 @@ export interface ToHaveTypesOptions {
    */
   mode?: "ordered" | "unordered" | "superset" | "oneOf";
   /**
-   * Optional arguments to pass to {@linkcode Pokemon.getTypes}.
+   * (Optional) Arguments to pass to {@linkcode Pokemon.getTypes}.
    */
-  // TODO: Change this to use object spread once `Pokemon.getTypes` has its parameters coaclesced into an object
-  args?: Parameters<Pokemon["getTypes"]>;
+  args?: Parameters<Pokemon["getTypes"]>[0];
 }
 
 /**
@@ -51,7 +50,7 @@ export function toHaveTypes(
   this: Readonly<MatcherState>,
   received: unknown,
   expectedTypes: PokemonType | readonly [PokemonType, ...PokemonType[]],
-  { mode = "unordered", args = [] }: ToHaveTypesOptions = {},
+  { mode = "unordered", args = {} }: ToHaveTypesOptions = {},
 ): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
     return {
@@ -71,7 +70,7 @@ export function toHaveTypes(
   }
 
   // Avoid sorting the types if strict ordering is desired
-  const actualSorted = mode === "ordered" ? received.getTypes(...args) : received.getTypes(...args).toSorted();
+  const actualSorted = mode === "ordered" ? received.getTypes(args) : received.getTypes(args).toSorted();
   const expectedSorted = mode === "ordered" ? expectedTypes : expectedTypes.toSorted();
 
   const actualStr = stringifyEnumArray(PokemonType, actualSorted);

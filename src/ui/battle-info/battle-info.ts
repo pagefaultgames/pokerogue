@@ -396,7 +396,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
 
     this.shinyIcon.setVisible(pokemon.isShiny());
 
-    this.setTypes(pokemon.getTypes(true, false, undefined, true));
+    this.setTypes(pokemon.getTypes({ useIllusion: true }));
 
     const stats = this.statOrder.map(() => 0);
 
@@ -594,7 +594,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
 
     this.updateStatusIcon(pokemon);
 
-    this.setTypes(pokemon.getTypes(true, false, undefined, true));
+    this.setTypes(pokemon.getTypes({ useIllusion: true }));
 
     if (this.lastHp !== pokemon.hp || this.lastMaxHp !== pokemon.getMaxHp()) {
       this.updatePokemonHp(pokemon, resolve, instant);
