@@ -2469,7 +2469,10 @@ export class CritBoostTag extends SerializableBattlerTag {
     super.onAdd(pokemon);
 
     // Dragon cheer adds +2 crit stages if the pokemon is a Dragon type when the tag is added
-    if (this.tagType === BattlerTagType.DRAGON_CHEER && !pokemon.isOfType(PokemonType.DRAGON, true, true)) {
+    if (
+      this.tagType === BattlerTagType.DRAGON_CHEER
+      && !pokemon.isOfType(PokemonType.DRAGON, { returnOriginalTypesIfStellar: true })
+    ) {
       (this as Mutable<this>).critStages = 1;
     } else {
       (this as Mutable<this>).critStages = 2;

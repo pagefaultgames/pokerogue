@@ -413,7 +413,9 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.MAGNET_PULL, 3) //
-      .attr(ArenaTrapAbAttr, (_user, target) => target.isOfType(PokemonType.STEEL, true, true))
+      .attr(ArenaTrapAbAttr, (_user, target) =>
+        target.isOfType(PokemonType.STEEL, { returnOriginalTypesIfStellar: true }),
+      )
       .build(),
     new AbBuilder(AbilityId.SOUNDPROOF, 3) //
       .attr(
@@ -1128,12 +1130,19 @@ export function initAbilities() {
     new AbBuilder(AbilityId.FLOWER_VEIL, 6)
       .attr(
         ConditionalUserFieldStatusEffectImmunityAbAttr,
-        (target, source) => !!source && target.id !== source.id && target.isOfType(PokemonType.GRASS, true, true),
+        (target, source) =>
+          !!source
+          && target.id !== source.id
+          && target.isOfType(PokemonType.GRASS, { returnOriginalTypesIfStellar: true }),
       )
-      .attr(ConditionalUserFieldBattlerTagImmunityAbAttr, target => target.isOfType(PokemonType.GRASS, true, true), [
-        BattlerTagType.DROWSY,
-      ])
-      .attr(ConditionalUserFieldProtectStatAbAttr, target => target.isOfType(PokemonType.GRASS, true, true))
+      .attr(
+        ConditionalUserFieldBattlerTagImmunityAbAttr,
+        target => target.isOfType(PokemonType.GRASS, { returnOriginalTypesIfStellar: true }),
+        [BattlerTagType.DROWSY],
+      )
+      .attr(ConditionalUserFieldProtectStatAbAttr, target =>
+        target.isOfType(PokemonType.GRASS, { returnOriginalTypesIfStellar: true }),
+      )
       .ignorable()
       .ignorable()
       .build(),

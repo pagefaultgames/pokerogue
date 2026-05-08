@@ -378,7 +378,7 @@ export class MovePhase extends PokemonPhase {
     const move = this.move.getMove();
     if (
       move.findAttr(attr => attr.selfTarget && attr.is("HealStatusEffectAttr") && attr.isOfEffect(StatusEffect.FREEZE))
-      && (move.id !== MoveId.BURN_UP || pokemon.isOfType(PokemonType.FIRE, true, true))
+      && (move.id !== MoveId.BURN_UP || pokemon.isOfType(PokemonType.FIRE, { returnOriginalTypesIfStellar: true }))
     ) {
       this.thaw = true;
       return false;

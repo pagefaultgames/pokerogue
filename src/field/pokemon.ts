@@ -2032,10 +2032,17 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   // TODO: Make `returnOriginalTypesIfStellar` default to `true`
   public isOfType(
     type: PokemonType,
-    includeTeraType = true,
-    returnOriginalTypesIfStellar = false,
-    bypassSummonData = false,
-    ignoreThirdType = false,
+    {
+      includeTeraType = true,
+      returnOriginalTypesIfStellar = false,
+      bypassSummonData = false,
+      ignoreThirdType = false,
+    }: {
+      includeTeraType?: boolean;
+      returnOriginalTypesIfStellar?: boolean;
+      bypassSummonData?: boolean;
+      ignoreThirdType?: boolean;
+    } = {},
   ): boolean {
     return this.getTypes({ includeTeraType, returnOriginalTypesIfStellar, bypassSummonData, ignoreThirdType }) //
       .includes(type);
@@ -2356,7 +2363,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   public isGrounded(): boolean {
     return (
       !!this.getTag(GroundedTag)
-      || (!this.isOfType(PokemonType.FLYING, true, true)
+      || (!this.isOfType(PokemonType.FLYING, { returnOriginalTypesIfStellar: true })
         && !this.hasAbility(AbilityId.LEVITATE)
         && !this.getTag(BattlerTagType.FLOATING)
         && !this.getTag(SemiInvulnerableTag))
@@ -2696,7 +2703,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
       // Add STAB multiplier for attack type effectiveness.
       // For now, simply don't apply STAB to moves that may change type
-      if (this.isOfType(moveType, true) && !move.getMove().hasAttr("VariableMoveTypeAttr")) {
+      if (this.isOfType(moveType) && !move.getMove().hasAttr("VariableMoveTypeAttr")) {
         thisScore *= 1.5;
       }
 

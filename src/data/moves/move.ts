@@ -7579,7 +7579,8 @@ export class CopyTypeAttr extends MoveEffectAttr {
   getCondition(): MoveConditionFunc {
     return (user, target) =>
       !user.isTerastallized
-      && (!target.isOfType(PokemonType.UNKNOWN, true, true) || target.summonData.addedType !== null);
+      && (!target.isOfType(PokemonType.UNKNOWN, { returnOriginalTypesIfStellar: true })
+        || target.summonData.addedType !== null);
   }
 }
 
@@ -11278,14 +11279,18 @@ export function initMoves() {
     new StatusMove(MoveId.FLOWER_SHIELD, PokemonType.FAIRY, -1, 10, -1, 0, 6)
       .attr(StatStageChangeAttr, [Stat.DEF], 1, false, {
         condition: (_user, target) =>
-          target.isOfType(PokemonType.GRASS, true, true) && !target.getTag(SemiInvulnerableTag),
+          target.isOfType(PokemonType.GRASS, { returnOriginalTypesIfStellar: true })
+          && !target.getTag(SemiInvulnerableTag),
       })
       .target(MoveTarget.ALL)
       // fails if no non-invulnerable pokemon on field are grass-type
       .condition(() =>
         globalScene
           .getField(true)
-          .some(p => p.isOfType(PokemonType.GRASS, true, true) && !p.getTag(SemiInvulnerableTag)),
+          .some(
+            p =>
+              p.isOfType(PokemonType.GRASS, { returnOriginalTypesIfStellar: true }) && !p.getTag(SemiInvulnerableTag),
+          ),
       ),
     new StatusMove(MoveId.GRASSY_TERRAIN, PokemonType.GRASS, -1, 10, -1, 0, 6)
       .attr(TerrainChangeAttr, TerrainType.GRASSY)
@@ -11613,7 +11618,7 @@ export function initMoves() {
       .attr(PositiveStatStagePowerAttr),
     new AttackMove(MoveId.BURN_UP, PokemonType.FIRE, MoveCategory.SPECIAL, 130, 100, 5, -1, 0, 7)
       // fail if the user is not currently Fire-type (including being Terastallized to Stellar)
-      .condition(user => user.isOfType(PokemonType.FIRE, true, true), 2)
+      .condition(user => user.isOfType(PokemonType.FIRE, { returnOriginalTypesIfStellar: true }), 2)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
       .attr(AddBattlerTagAttr, BattlerTagType.BURNED_UP, true, false)
       .attr(RemoveTypeAttr, PokemonType.FIRE, user => {
@@ -12338,7 +12343,7 @@ export function initMoves() {
       .attr(TeraBlastTypeAttr)
       .attr(TeraBlastPowerAttr)
       .attr(StatStageChangeAttr, [Stat.ATK, Stat.SPATK], -1, true, {
-        condition: user => user.isTerastallized && user.isOfType(PokemonType.STELLAR, true, false),
+        condition: user => user.isTerastallized && user.isOfType(PokemonType.STELLAR),
       }),
     new SelfStatusMove(MoveId.SILK_TRAP, PokemonType.BUG, -1, 10, -1, 4, 9)
       .attr(ProtectAttr, BattlerTagType.SILK_TRAP)
@@ -12496,7 +12501,7 @@ export function initMoves() {
       .triageMove(),
     new AttackMove(MoveId.DOUBLE_SHOCK, PokemonType.ELECTRIC, MoveCategory.PHYSICAL, 120, 100, 5, -1, 0, 9)
       // Pass `true` to `isOfType` to fail if the user is terastallized to a type other than ELECTRIC
-      .condition(user => user.isOfType(PokemonType.ELECTRIC, true, true), 2)
+      .condition(user => user.isOfType(PokemonType.ELECTRIC, { returnOriginalTypesIfStellar: true }), 2)
       .attr(AddBattlerTagAttr, BattlerTagType.DOUBLE_SHOCKED, true, false)
       .attr(RemoveTypeAttr, PokemonType.ELECTRIC, user => {
         globalScene.phaseManager.queueMessage(
