@@ -3,8 +3,9 @@ import { Button } from "#enums/buttons";
 import type { Device } from "#enums/devices";
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
-import { getIconWithSettingName } from "#inputs/config-handler";
+import { getIconWithSettingName, getKeyWithSettingName } from "#inputs/config-handler";
 import type { CustomInterfaceConfig, InterfaceConfig, MappingSettingName } from "#types/configs/inputs";
+import { a11yManager, getKeyLabelForButton } from "#ui/accessibility-manager";
 import { NavigationManager, NavigationMenu } from "#ui/navigation-menu";
 import { ScrollBar } from "#ui/scroll-bar";
 import { addTextObject, getTextColor } from "#ui/text";
@@ -420,8 +421,64 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
     // Hide any tooltips that might be visible before showing the settings container.
     this.getUi().hideTooltip();
 
+    // Announce the bindings tab to screen readers using the user's bound keys.
+    const action = getKeyLabelForButton(Button.ACTION);
+    const cancel = getKeyLabelForButton(Button.CANCEL);
+    const prevTab = getKeyLabelForButton(Button.CYCLE_FORM);
+    const nextTab = getKeyLabelForButton(Button.CYCLE_SHINY);
+    a11yManager.announceContext(
+      action && cancel && prevTab && nextTab
+        ? i18next.t("accessibility:controlSettingsContext", {
+            title: this.titleSelected,
+            action,
+            cancel,
+            prevTab,
+            nextTab,
+          })
+        : i18next.t("accessibility:controlSettingsContextNoKey", { title: this.titleSelected }),
+    );
+    // Announce the row the cursor lands on by default (cursor 0).
+    this.announceCurrentSetting();
+
     // Return true to indicate the UI was successfully shown.
     return true;
+  }
+
+  /**
+   * Announce the setting row currently under the cursor to screen readers.
+   * For binding rows ("Up", "Down", "Action", ...) this reads out the bound key.
+   * For non-binding rows (e.g. Controller / Gamepad Support) this reads the current option label.
+   */
+  private announceCurrentSetting(): void {
+    const settingIndex = this.cursor + this.scrollCursor;
+    const settingNames = Object.keys(this.setting);
+    const settingName = settingNames[settingIndex];
+    if (!settingName) {
+      return;
+    }
+    const i18nKey = toCamelCase(settingName.replace(/ALT(_| )/, ""));
+    const isAlt = settingName.includes("ALT");
+    const label = i18next.t(`settings:${i18nKey}`) + (isAlt ? i18next.t("settings:alt") : "");
+
+    const mappingName = this.setting[settingName];
+    const isBinding = this.bindingSettings?.includes(mappingName) || mappingName?.includes("BUTTON_");
+
+    if (isBinding) {
+      const config = this.getActiveConfig();
+      const boundKey = config ? getKeyWithSettingName(config, mappingName) : undefined;
+      const cleanKey = boundKey?.replace(/^(KEY_|BUTTON_)/, "").replaceAll("_", " ");
+      a11yManager.announceMessage(
+        cleanKey
+          ? i18next.t("accessibility:controlSettingBinding", { label, key: cleanKey })
+          : i18next.t("accessibility:controlSettingUnbound", { label }),
+      );
+    } else {
+      // Non-binding setting (e.g. Controller, Gamepad Support) — read the current option label.
+      const cursor = this.optionCursors?.[settingIndex] ?? 0;
+      const optionsForSetting = this.settingDeviceOptions?.[mappingName];
+      const value = optionsForSetting?.[cursor] ?? "";
+      a11yManager.announceMessage(i18next.t("accessibility:controlSettingValue", { label, value }));
+    }
   }
 
   /**
@@ -611,6 +668,8 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
     // Update the position of the cursor object relative to the options background based on the current cursor and scroll positions.
     this.cursorObj.setPositionRelative(this.optionsBg, 4, 4 + (this.cursor + this.scrollCursor) * 16);
 
+    this.announceCurrentSetting();
+
     return ret; // Return the result from the parent class's setCursor method.
   }
 
@@ -673,6 +732,11 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
     // If the save flag is set, save the setting to local storage
     if (save) {
       this.saveSettingToLocalStorage(setting, cursor);
+    }
+
+    // Announce the new value so AT users hear what just changed.
+    if (settingIndex === this.cursor + this.scrollCursor) {
+      this.announceCurrentSetting();
     }
 
     return true; // Return true to indicate the cursor was successfully updated.
