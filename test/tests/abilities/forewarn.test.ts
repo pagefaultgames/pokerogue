@@ -1,6 +1,8 @@
+import { getPokemonNameWithAffix } from "#app/messages";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import { PokemonMove } from "#moves/pokemon-move";
 import { GameManager } from "#test/framework/game-manager";
 import i18next from "i18next";
 import Phaser from "phaser";
@@ -34,10 +36,13 @@ describe("Ability - Forewarn", () => {
   it("prioritizes warning of attacking moves instead of selfstatus", async () => {
     await game.classicMode.startBattle(SpeciesId.PIDGEY);
 
+    const enemy = game.field.getEnemyPokemon();
+    const drainPunch = MoveId.DRAIN_PUNCH;
+
     expect(game).toHaveShownMessage(
       i18next.t("abilityTriggers:forewarn", {
-        pokemonNameWithAffix: "Wild Pidgey",
-        moveName: "Drain Punch",
+        pokemonNameWithAffix: getPokemonNameWithAffix(enemy),
+        moveName: new PokemonMove(drainPunch).getName(),
       }),
     );
   });
