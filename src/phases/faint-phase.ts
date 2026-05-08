@@ -49,7 +49,8 @@ export class FaintPhase extends PokemonPhase {
     // (such as if the original faintee switched out via U-Turn/etc before this Phase had a chance to run).
     // TODO: This effectively bypasses the root phase ordering issue at play, and should be removed once force switching moves are fixed to work properly
     if (faintPokemon.hp > 0) {
-      return this.end();
+      this.end();
+      return;
     }
     if (this.source) {
       faintPokemon.getTag(BattlerTagType.DESTINY_BOND)?.lapse(this.source, BattlerTagLapseType.CUSTOM);
