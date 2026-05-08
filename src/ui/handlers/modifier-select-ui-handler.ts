@@ -12,7 +12,7 @@ import { HealShopCostModifier, LockModifierTiersModifier, PokemonHeldItemModifie
 import type { ModifierTypeOption } from "#modifiers/modifier-type";
 import { getPlayerShopModifierTypeOptionsForWave, TmModifierType } from "#modifiers/modifier-type";
 import type { ModifierSelectCallback } from "#phases/select-modifier-phase";
-import { AccessibilityManager } from "#ui/accessibility-manager";
+import { a11yManager, getKeyLabelForButton } from "#ui/accessibility-manager";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { addTextObject, getModifierTierTextTint, getTextColor, getTextStyleOptions } from "#ui/text";
@@ -394,8 +394,12 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     // #endregion: animation
 
     // Announce item selection context to screen readers
-    AccessibilityManager.getInstance().announceContext(
-      "Choose an item reward. Arrow keys to browse, Z or Enter to select, X to skip.",
+    const action = getKeyLabelForButton(Button.ACTION);
+    const cancel = getKeyLabelForButton(Button.CANCEL);
+    a11yManager.announceContext(
+      action && cancel
+        ? i18next.t("accessibility:modifierSelectContext", { action, cancel })
+        : i18next.t("accessibility:modifierSelectContextNoKey"),
     );
 
     return true;
@@ -587,7 +591,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
       const type = options[this.cursor].modifierTypeOption.type;
       if (type) {
         ui.showText(type.getDescription());
-        AccessibilityManager.getInstance().announceMessage(`${type.name}: ${type.getDescription()}`);
+        a11yManager.announceMessage(`${type.name}: ${type.getDescription()}`);
       }
       if (type instanceof TmModifierType) {
         // prepare the move overlay to be shown with the toggle
@@ -599,21 +603,21 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
         this.lockRarityButtonContainer.visible ? OPTION_BUTTON_YPOSITION - 8 : OPTION_BUTTON_YPOSITION + 4,
       );
       ui.showText(i18next.t("modifierSelectUiHandler:rerollDesc"));
-      AccessibilityManager.getInstance().announceMessage(i18next.t("modifierSelectUiHandler:rerollDesc"));
+      a11yManager.announceMessage(i18next.t("modifierSelectUiHandler:rerollDesc"));
     } else if (cursor === 1) {
       this.cursorObj.setPosition(
         (globalScene.game.canvas.width - this.transferButtonWidth - this.checkButtonWidth) / 6 - 30,
         OPTION_BUTTON_YPOSITION + 4,
       );
       ui.showText(i18next.t("modifierSelectUiHandler:manageItemsDesc"));
-      AccessibilityManager.getInstance().announceMessage(i18next.t("modifierSelectUiHandler:manageItemsDesc"));
+      a11yManager.announceMessage(i18next.t("modifierSelectUiHandler:manageItemsDesc"));
     } else if (cursor === 2) {
       this.cursorObj.setPosition(
         (globalScene.game.canvas.width - this.checkButtonWidth) / 6 - 10,
         OPTION_BUTTON_YPOSITION + 4,
       );
       ui.showText(i18next.t("modifierSelectUiHandler:checkTeamDesc"));
-      AccessibilityManager.getInstance().announceMessage(i18next.t("modifierSelectUiHandler:checkTeamDesc"));
+      a11yManager.announceMessage(i18next.t("modifierSelectUiHandler:checkTeamDesc"));
     } else {
       this.cursorObj.setPosition(6, OPTION_BUTTON_YPOSITION + 4);
       ui.showText(i18next.t("modifierSelectUiHandler:lockRaritiesDesc"));

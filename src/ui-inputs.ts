@@ -4,7 +4,7 @@ import { Button } from "#enums/buttons";
 import { StatusEffect } from "#enums/status-effect";
 import { UiMode } from "#enums/ui-mode";
 import { Setting, SettingKeys, settingIndex } from "#system/settings";
-import { AccessibilityManager } from "#ui/accessibility-manager";
+import { a11yManager } from "#ui/accessibility-manager";
 import type { MessageUiHandler } from "#ui/message-ui-handler";
 import { PokedexPageUiHandler } from "#ui/pokedex-page-ui-handler";
 import { PokedexUiHandler } from "#ui/pokedex-ui-handler";
@@ -174,7 +174,7 @@ export class UiInputs {
         p.status && p.status.effect !== StatusEffect.NONE ? StatusEffect[p.status.effect].toLowerCase() : "healthy";
       parts.push(`${prefix} ${p.name}, ${p.hp} of ${maxHp} HP, ${pct} percent, ${statusName}, level ${p.level}.`);
     }
-    AccessibilityManager.getInstance().announceMessage(parts.join(" "));
+    a11yManager.announceMessage(parts.join(" "));
   }
 
   buttonGoToFilter(button: Button): void {

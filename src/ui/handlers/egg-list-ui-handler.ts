@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
-import { AccessibilityManager } from "#ui/accessibility-manager";
+import { a11yManager } from "#ui/accessibility-manager";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-helper";
 import { ScrollBar } from "#ui/scroll-bar";
@@ -171,9 +171,7 @@ export class EggListUiHandler extends MessageUiHandler {
     this.eggGachaInfoText.setText(egg.getEggTypeDescriptor());
 
     // Announce egg details to screen readers
-    AccessibilityManager.getInstance().announceMessage(
-      `${i18next.t("egg:egg")} ${egg.getEggDescriptor()}, ${egg.getEggHatchWavesMessage()}`,
-    );
+    a11yManager.announceMessage(`${i18next.t("egg:egg")} ${egg.getEggDescriptor()}, ${egg.getEggHatchWavesMessage()}`);
   }
 
   processInput(button: Button): boolean {

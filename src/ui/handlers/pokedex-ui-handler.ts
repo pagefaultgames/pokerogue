@@ -35,7 +35,7 @@ import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
 import type { DexAttrProps, StarterAttributes } from "#types/save-data";
 import type { OptionSelectConfig } from "#ui/abstract-option-select-ui-handler";
-import { AccessibilityManager } from "#ui/accessibility-manager";
+import { a11yManager } from "#ui/accessibility-manager";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
 import { FilterBar } from "#ui/filter-bar";
 import { FilterText, FilterTextRow } from "#ui/filter-text";
@@ -2011,7 +2011,7 @@ export class PokedexUiHandler extends MessageUiHandler {
         this.setSpecies(species);
 
         // Announce pokemon to screen readers
-        const a11y = AccessibilityManager.getInstance();
+        const a11y = a11yManager;
         const dexEntry = globalScene.gameData.dexData[species.speciesId];
         const caught = dexEntry?.caughtAttr ? "Caught" : "Not caught";
         const type1 = PokemonType[species.type1];

@@ -9,7 +9,7 @@ import { GameDataType } from "#enums/game-data-type";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
-import { AccessibilityManager } from "#ui/accessibility-manager";
+import { a11yManager, getKeyLabelForButton } from "#ui/accessibility-manager";
 import type { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { BgmBar } from "#ui/bgm-bar";
 import { MessageUiHandler } from "#ui/message-ui-handler";
@@ -543,7 +543,13 @@ export class MenuUiHandler extends MessageUiHandler {
     this.bgmBar.toggleBgmBar(true);
 
     // Announce menu context to screen readers
-    AccessibilityManager.getInstance().announceContext("Menu. Up/Down to browse, Z or Enter to select, X to close.");
+    const action = getKeyLabelForButton(Button.ACTION);
+    const cancel = getKeyLabelForButton(Button.CANCEL);
+    a11yManager.announceContext(
+      action && cancel
+        ? i18next.t("accessibility:menuContext", { action, cancel })
+        : i18next.t("accessibility:menuContextNoKey"),
+    );
 
     return true;
   }
@@ -806,10 +812,14 @@ export class MenuUiHandler extends MessageUiHandler {
     this.cursorObj.setScale(this.scale * 6);
     this.cursorObj.setPositionRelative(this.menuBg, 7, 6 + (18 + this.cursor * 96) * this.scale);
 
-    // Announce menu option to screen readers
+    // Announce menu option and position to screen readers
     if (this.menuOptions && cursor < this.menuOptions.length) {
       const optionLabel = i18next.t(`menuUiHandler:${toCamelCase(MenuOptions[this.menuOptions[cursor]])}`);
-      AccessibilityManager.getInstance().announceMessage(optionLabel);
+      const position = i18next.t("accessibility:menuPosition", {
+        current: cursor + 1,
+        total: this.menuOptions.length,
+      });
+      a11yManager.announceMessage(`${optionLabel}. ${position}`);
     }
 
     return ret;

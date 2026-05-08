@@ -12,7 +12,7 @@ import { UiMode } from "#enums/ui-mode";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import type { PokemonMove } from "#moves/pokemon-move";
 import type { CommandPhase } from "#phases/command-phase";
-import { AccessibilityManager } from "#ui/accessibility-manager";
+import { a11yManager, getKeyLabelForButton } from "#ui/accessibility-manager";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { addTextObject, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
@@ -142,8 +142,12 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
     this.active = true;
 
     // Announce move selection context to screen readers
-    AccessibilityManager.getInstance().announceContext(
-      "Choose a move. Arrow keys to select, Z or Enter to confirm, X to go back.",
+    const action = getKeyLabelForButton(Button.ACTION);
+    const cancel = getKeyLabelForButton(Button.CANCEL);
+    a11yManager.announceContext(
+      action && cancel
+        ? i18next.t("accessibility:fightContext", { action, cancel })
+        : i18next.t("accessibility:fightContextNoKey"),
     );
 
     return true;
@@ -343,7 +347,7 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
       const powerText = power >= 0 ? `${power} power` : "Status move";
       const accuracyText = accuracy >= 0 ? `${accuracy}% accuracy` : "Can't miss";
 
-      AccessibilityManager.getInstance().announceMessage(
+      a11yManager.announceMessage(
         `${pokemonMove.getName()}, ${moveType} type, ${category}, `
           + `${powerText}, ${accuracyText}, PP ${pp} of ${maxPP}${effectivenessText}`,
       );

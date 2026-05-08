@@ -4,7 +4,7 @@ import { Device } from "#enums/devices";
 import { PlayerGender } from "#enums/player-gender";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
-import { AccessibilityManager } from "#ui/accessibility-manager";
+import { a11yManager } from "#ui/accessibility-manager";
 import { AchvBar } from "#ui/achv-bar";
 import { AchvsUiHandler } from "#ui/achvs-ui-handler";
 import { AutoCompleteUiHandler } from "#ui/autocomplete-ui-handler";
@@ -552,7 +552,7 @@ export class UI extends Phaser.GameObjects.Container {
           }
           // Announce mode transitions to screen readers (skip MESSAGE mode as it fires constantly)
           if (mode !== UiMode.MESSAGE) {
-            AccessibilityManager.getInstance().announceContext(UI.getModeLabel(mode));
+            a11yManager.announceContext(UI.getModeLabel(mode));
           }
           this.getHandler().show(args);
         }
@@ -619,7 +619,7 @@ export class UI extends Phaser.GameObjects.Container {
           touchControls.dataset.uiMode = UiMode[this.mode];
         }
         if (this.mode !== UiMode.MESSAGE) {
-          AccessibilityManager.getInstance().announceContext(UI.getModeLabel(this.mode));
+          a11yManager.announceContext(UI.getModeLabel(this.mode));
         }
         resolve(true);
       };

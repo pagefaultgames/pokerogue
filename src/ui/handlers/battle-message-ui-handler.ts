@@ -3,7 +3,7 @@ import { Button } from "#enums/buttons";
 import { getStatKey, PERMANENT_STATS } from "#enums/stat";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
-import { AccessibilityManager } from "#ui/accessibility-manager";
+import { a11yManager } from "#ui/accessibility-manager";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
@@ -193,7 +193,7 @@ export class BattleMessageUiHandler extends MessageUiHandler {
     if (name) {
       this.showNameText(name);
       // Announce dialogue with speaker name for screen readers
-      AccessibilityManager.getInstance().announceMessage(`${name}: ${text}`);
+      a11yManager.announceMessage(`${name}: ${text}`);
     }
     super.showDialogue(text, name, delay, callback, callbackDelay, prompt, promptDelay);
   }
@@ -205,12 +205,19 @@ export class BattleMessageUiHandler extends MessageUiHandler {
       }
       const newStats = globalScene.getPlayerParty()[partyMemberIndex].stats;
       let levelUpStatsValuesText = "";
+      // Build a comma-separated list of stat:value pairs for screen readers since the
+      // visual stat panel has no on-screen label / value pairing that AT can pick up.
+      const a11ySegments: string[] = [];
       for (const s of PERMANENT_STATS) {
-        levelUpStatsValuesText += `${showTotals ? newStats[s] : newStats[s] - prevStats[s]}\n`;
+        const value = showTotals ? newStats[s] : newStats[s] - prevStats[s];
+        levelUpStatsValuesText += `${value}\n`;
+        const sign = !showTotals && value > 0 ? "+" : "";
+        a11ySegments.push(`${i18next.t(getStatKey(s))} ${sign}${value}`);
       }
       this.levelUpStatsValuesContent.text = levelUpStatsValuesText;
       this.levelUpStatsIncrContent.setVisible(!showTotals);
       this.levelUpStatsContainer.setVisible(true);
+      a11yManager.announceMessage(`${i18next.t("accessibility:statChanges")} ${a11ySegments.join(", ")}.`);
       this.awaitingActionInput = true;
       this.onActionInput = () => {
         if (!showTotals) {

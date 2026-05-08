@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
-import { AccessibilityManager } from "#ui/accessibility-manager";
+import { a11yManager, getKeyLabelForButton } from "#ui/accessibility-manager";
 import { NavigationManager } from "#ui/navigation-menu";
 import { addTextObject, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
@@ -153,8 +153,14 @@ export abstract class AbstractBindingUiHandler extends UiHandler {
       this.manageAutoCloseTimer();
     }, 100);
 
-    AccessibilityManager.getInstance().announceContext(
-      `${i18next.t("settings:pressButton")} — five seconds to bind, or press X to cancel.`,
+    const cancelKey = getKeyLabelForButton(Button.CANCEL);
+    a11yManager.announceContext(
+      cancelKey
+        ? i18next.t("accessibility:bindingPressPrompt", {
+            prompt: i18next.t("settings:pressButton"),
+            cancel: cancelKey,
+          })
+        : i18next.t("accessibility:bindingPressPromptNoKey", { prompt: i18next.t("settings:pressButton") }),
     );
 
     return true;
@@ -232,14 +238,14 @@ export abstract class AbstractBindingUiHandler extends UiHandler {
       this.actionLabel.setShadowColor(getTextColor(TextStyle.SETTINGS_SELECTED, true));
       this.cancelLabel.setColor(getTextColor(TextStyle.WINDOW));
       this.cancelLabel.setShadowColor(getTextColor(TextStyle.WINDOW, true));
-      AccessibilityManager.getInstance().announceMessage(this.actionLabel.text);
+      a11yManager.announceMessage(this.actionLabel.text);
       return true;
     }
     this.actionLabel.setColor(getTextColor(TextStyle.WINDOW));
     this.actionLabel.setShadowColor(getTextColor(TextStyle.WINDOW, true));
     this.cancelLabel.setColor(getTextColor(TextStyle.SETTINGS_SELECTED));
     this.cancelLabel.setShadowColor(getTextColor(TextStyle.SETTINGS_SELECTED, true));
-    AccessibilityManager.getInstance().announceMessage(this.cancelLabel.text);
+    a11yManager.announceMessage(this.cancelLabel.text);
     return true;
   }
 
@@ -280,10 +286,15 @@ export abstract class AbstractBindingUiHandler extends UiHandler {
     }
     this.newButtonIcon.setVisible(true);
 
+    const actionKey = getKeyLabelForButton(Button.ACTION);
     const prompt = assignedButtonIcon
-      ? "Key captured. That key is already bound — left and right to choose swap or cancel, Z to confirm."
-      : "Key captured. Left and right to choose confirm or cancel, Z to confirm.";
-    AccessibilityManager.getInstance().announceContext(prompt);
+      ? actionKey
+        ? i18next.t("accessibility:bindingCaptureCollision", { action: actionKey })
+        : i18next.t("accessibility:bindingCaptureCollisionNoKey")
+      : actionKey
+        ? i18next.t("accessibility:bindingCapture", { action: actionKey })
+        : i18next.t("accessibility:bindingCaptureNoKey");
+    a11yManager.announceContext(prompt);
 
     this.setCursor(0);
     this.actionsContainer.setVisible(true);

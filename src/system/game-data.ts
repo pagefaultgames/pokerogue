@@ -1,5 +1,5 @@
 import { pokerogueApi } from "#api/pokerogue-api";
-import { clientSessionId, isGuestMode, loggedInUser, updateUserInfo } from "#app/account";
+import { clientSessionId, loggedInUser, updateUserInfo } from "#app/account";
 import { defaultStarterSpecies, saveKey } from "#app/constants";
 import { getGameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
@@ -230,7 +230,7 @@ export class GameData {
 
       localStorage.setItem(`data_${loggedInUser?.username}`, encrypt(systemData, bypassLogin));
 
-      if (bypassLogin || isGuestMode) {
+      if (bypassLogin) {
         globalScene.ui.savingIcon.hide();
 
         resolve(true);
@@ -255,11 +255,11 @@ export class GameData {
     return new Promise<boolean>(resolve => {
       console.log("Client Session:", clientSessionId);
 
-      if ((bypassLogin || isGuestMode) && !localStorage.getItem(`data_${loggedInUser?.username}`)) {
+      if (bypassLogin && !localStorage.getItem(`data_${loggedInUser?.username}`)) {
         return resolve(false);
       }
 
-      if (bypassLogin || isGuestMode) {
+      if (bypassLogin) {
         this.initSystem(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`)!, bypassLogin)).then(resolve); // TODO: is this bang correct?
       } else {
         pokerogueApi.savedata.system.get({ clientSessionId }).then(saveDataOrErr => {
@@ -537,7 +537,7 @@ export class GameData {
   }
 
   public async verify(): Promise<boolean> {
-    if (bypassLogin || isGuestMode) {
+    if (bypassLogin) {
       return true;
     }
 
@@ -556,7 +556,7 @@ export class GameData {
   }
 
   public clearLocalData(): void {
-    if (bypassLogin || isGuestMode) {
+    if (bypassLogin) {
       return;
     }
     localStorage.removeItem(`data_${loggedInUser?.username}`);
@@ -836,10 +836,10 @@ export class GameData {
     }
 
     // Check local storage for the cached session data
-    if (bypassLogin || isGuestMode || localStorage.getItem(getSaveDataLocalStorageKey(slotId))) {
+    if (bypassLogin || localStorage.getItem(getSaveDataLocalStorageKey(slotId))) {
       const sessionData = localStorage.getItem(getSaveDataLocalStorageKey(slotId));
       if (!sessionData) {
-        if (bypassLogin || isGuestMode) {
+        if (bypassLogin) {
           // Guest/offline mode has no server to fall back to; treat missing data as "empty slot".
           return;
         }
@@ -884,7 +884,7 @@ export class GameData {
     const secretId = this.secretId;
     const trainerId = this.trainerId;
 
-    if (bypassLogin || isGuestMode) {
+    if (bypassLogin) {
       localStorage.setItem(getSaveDataLocalStorageKey(slotId), encrypt(updatedDataStr, bypassLogin));
       return true;
     }
@@ -1070,7 +1070,7 @@ export class GameData {
    */
   deleteSession(slotId: number): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      if (bypassLogin || isGuestMode) {
+      if (bypassLogin) {
         localStorage.removeItem(getSaveDataLocalStorageKey(slotId));
         return resolve(true);
       }
@@ -1135,7 +1135,7 @@ export class GameData {
   async tryClearSession(slotId: number): Promise<[success: boolean, newClear: boolean]> {
     let result: [boolean, boolean] = [false, false];
 
-    if (bypassLogin || isGuestMode) {
+    if (bypassLogin) {
       localStorage.removeItem(getSaveDataLocalStorageKey(slotId));
       result = [true, true];
     } else {
@@ -1289,7 +1289,7 @@ export class GameData {
 
         console.debug("Session data saved!");
 
-        if (!bypassLogin && !isGuestMode && sync) {
+        if (!bypassLogin && sync) {
           pokerogueApi.savedata.updateAll(request).then(error => {
             if (sync) {
               globalScene.lastSavePlayTime = 0;
@@ -1334,7 +1334,7 @@ export class GameData {
         link.click();
         link.remove();
       };
-      if (!bypassLogin && !isGuestMode && dataType < GameDataType.SETTINGS) {
+      if (!bypassLogin && dataType < GameDataType.SETTINGS) {
         let promise: Promise<string | null | number> = Promise.resolve(null);
 
         if (dataType === GameDataType.SYSTEM) {
@@ -1434,7 +1434,7 @@ export class GameData {
               () => {
                 localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
 
-                if (!bypassLogin && !isGuestMode && dataType < GameDataType.SETTINGS) {
+                if (!bypassLogin && dataType < GameDataType.SETTINGS) {
                   updateUserInfo().then(success => {
                     if (!success[0]) {
                       return displayError(i18next.t("menuUiHandler:importNoServer", { dataName }));

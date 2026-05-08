@@ -2,10 +2,10 @@ import "#app/polyfills"; // All polyfills MUST be loaded first for side effects
 import "#init/init-manifest"; // initializes the manifest, must be done *before* i18n is initialized due to being used for caching
 import "#plugins/i18n"; // Initializes i18n on import
 
-import { AccessibilityManager } from "#ui/accessibility-manager";
 import { InvertPostFX } from "#app/pipelines/invert";
 import { isBeta, isDev } from "#constants/app-constants";
 import { version } from "#package.json";
+import { a11yManager } from "#ui/accessibility-manager";
 import Phaser from "phaser";
 import BBCodeTextPlugin from "phaser3-rex-plugins/plugins/bbcodetext-plugin";
 import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin";
@@ -73,7 +73,7 @@ async function startGame(): Promise<void> {
   game.sound.pauseOnBlur = false;
 
   // Initialize screen reader accessibility layer
-  AccessibilityManager.getInstance().init();
+  a11yManager.init();
 }
 
 try {

@@ -8,7 +8,7 @@
  */
 
 import { pokerogueApi } from "#api/pokerogue-api";
-import { AccessibilityManager } from "#ui/accessibility-manager";
+import { a11yManager } from "#ui/accessibility-manager";
 import i18next from "i18next";
 
 let activeOverlay: HTMLDivElement | null = null;
@@ -123,11 +123,7 @@ function createErrorEl(): HTMLDivElement {
 /**
  * Show the Login or Register choice overlay.
  */
-export function showLoginOrRegisterOverlay(
-  goToLogin: () => void,
-  goToRegister: () => void,
-  goToGuest?: () => void,
-): void {
+export function showLoginOrRegisterOverlay(goToLogin: () => void, goToRegister: () => void): void {
   const overlay = createOverlayContainer();
   const box = createFormBox("");
 
@@ -158,30 +154,17 @@ export function showLoginOrRegisterOverlay(
   topRow.appendChild(registerBtn);
   buttonContainer.appendChild(topRow);
 
-  if (goToGuest) {
-    const guestBtn = createButton("Play as Guest", false);
-    guestBtn.style.cssText += "width: 100%; margin-top: 8px;";
-    guestBtn.addEventListener("click", () => {
-      removeOverlay();
-      goToGuest();
-    });
-    buttonContainer.appendChild(guestBtn);
-
-    const note = document.createElement("p");
-    note.textContent = "Guest saves are stored in your browser only.";
-    note.style.cssText = "font-size: 11px; color: #999; margin: 4px 0 0 0; text-align: center;";
-    buttonContainer.appendChild(note);
-  }
-
   box.appendChild(buttonContainer);
   overlay.appendChild(box);
 
   // Focus the login button and announce
   setTimeout(() => {
     loginBtn.focus();
-    const guestText = goToGuest ? " Or Play as Guest." : "";
-    AccessibilityManager.getInstance().announceMessage(
-      `PokéRogue. ${i18next.t("menu:login")}, ${i18next.t("menu:register")}, or Play as Guest. Tab to switch, Enter to select.${guestText}`,
+    a11yManager.announceMessage(
+      i18next.t("accessibility:loginOrRegisterIntro", {
+        login: i18next.t("menu:login"),
+        register: i18next.t("menu:register"),
+      }),
     );
   }, 100);
 }
@@ -216,12 +199,12 @@ export function showLoginFormOverlay(onSuccess: () => void, onBack: () => void):
 
     if (!username) {
       errorEl.textContent = i18next.t("menu:emptyUsername");
-      AccessibilityManager.getInstance().announceMessage(`Error: ${errorEl.textContent}`);
+      a11yManager.announceMessage(i18next.t("accessibility:errorPrefix", { message: errorEl.textContent }));
       return;
     }
     if (!password) {
       errorEl.textContent = i18next.t("menu:invalidLoginPassword");
-      AccessibilityManager.getInstance().announceMessage(`Error: ${errorEl.textContent}`);
+      a11yManager.announceMessage(i18next.t("accessibility:errorPrefix", { message: errorEl.textContent }));
       return;
     }
 
@@ -240,7 +223,7 @@ export function showLoginFormOverlay(onSuccess: () => void, onBack: () => void):
           readableError = "Could not connect to the server. The game API may not support this domain.";
         }
         errorEl.textContent = readableError;
-        AccessibilityManager.getInstance().announceMessage(`Error: ${readableError}`);
+        a11yManager.announceMessage(i18next.t("accessibility:errorPrefix", { message: readableError }));
       } else {
         removeOverlay();
         onSuccess();
@@ -266,9 +249,7 @@ export function showLoginFormOverlay(onSuccess: () => void, onBack: () => void):
 
   setTimeout(() => {
     usernameInput.focus();
-    AccessibilityManager.getInstance().announceMessage(
-      `${i18next.t("menu:login")} form. Enter username and password, then press Enter or Tab to the Login button.`,
-    );
+    a11yManager.announceMessage(i18next.t("accessibility:loginFormIntro", { title: i18next.t("menu:login") }));
   }, 100);
 }
 
@@ -308,17 +289,17 @@ export function showRegistrationFormOverlay(onSuccess: () => void, onBack: () =>
 
     if (!username) {
       errorEl.textContent = i18next.t("menu:emptyUsername");
-      AccessibilityManager.getInstance().announceMessage(`Error: ${errorEl.textContent}`);
+      a11yManager.announceMessage(i18next.t("accessibility:errorPrefix", { message: errorEl.textContent }));
       return;
     }
     if (!password) {
       errorEl.textContent = i18next.t("menu:invalidRegisterPassword");
-      AccessibilityManager.getInstance().announceMessage(`Error: ${errorEl.textContent}`);
+      a11yManager.announceMessage(i18next.t("accessibility:errorPrefix", { message: errorEl.textContent }));
       return;
     }
     if (password !== confirmPassword) {
       errorEl.textContent = i18next.t("menu:passwordNotMatchingConfirmPassword");
-      AccessibilityManager.getInstance().announceMessage(`Error: ${errorEl.textContent}`);
+      a11yManager.announceMessage(i18next.t("accessibility:errorPrefix", { message: errorEl.textContent }));
       return;
     }
 
@@ -335,7 +316,7 @@ export function showRegistrationFormOverlay(onSuccess: () => void, onBack: () =>
           readableError = "Could not connect to the server. The game API may not support this domain.";
         }
         errorEl.textContent = readableError;
-        AccessibilityManager.getInstance().announceMessage(`Error: ${readableError}`);
+        a11yManager.announceMessage(i18next.t("accessibility:errorPrefix", { message: readableError }));
         return;
       }
       // Auto-login after successful registration
@@ -368,9 +349,7 @@ export function showRegistrationFormOverlay(onSuccess: () => void, onBack: () =>
 
   setTimeout(() => {
     usernameInput.focus();
-    AccessibilityManager.getInstance().announceMessage(
-      `${i18next.t("menu:register")} form. Enter username, password, and confirm password. Press Enter or Tab to the Register button.`,
-    );
+    a11yManager.announceMessage(i18next.t("accessibility:registerFormIntro", { title: i18next.t("menu:register") }));
   }, 100);
 }
 

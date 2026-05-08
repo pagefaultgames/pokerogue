@@ -7,7 +7,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { CommandPhase } from "#phases/command-phase";
-import { AccessibilityManager } from "#ui/accessibility-manager";
+import { a11yManager, getKeyLabelForButton } from "#ui/accessibility-manager";
 import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
@@ -100,8 +100,12 @@ export class CommandUiHandler extends UiHandler {
     messageHandler.showText(i18next.t("commandUiHandler:actionMessage", { pokemonName }), 0);
 
     // Announce battle context to screen readers
-    AccessibilityManager.getInstance().announceContext(
-      `What will ${pokemonName} do? Arrow keys to choose, Z or Enter to select, X to cancel.`,
+    const action = getKeyLabelForButton(Button.ACTION);
+    const cancel = getKeyLabelForButton(Button.CANCEL);
+    a11yManager.announceContext(
+      action && cancel
+        ? i18next.t("accessibility:commandContext", { pokemonName, action, cancel })
+        : i18next.t("accessibility:commandContextNoKey", { pokemonName }),
     );
 
     if (this.getCursor() === Command.POKEMON) {
@@ -252,7 +256,7 @@ export class CommandUiHandler extends UiHandler {
       i18next.t("commandUiHandler:run"),
       i18next.t("commandUiHandler:tera", { defaultValue: "Terastallize" }),
     ];
-    AccessibilityManager.getInstance().announceMessage(commandLabels[cursor] ?? "");
+    a11yManager.announceMessage(commandLabels[cursor] ?? "");
 
     return changed;
   }

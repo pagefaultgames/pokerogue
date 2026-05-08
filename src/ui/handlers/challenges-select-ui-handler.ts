@@ -5,7 +5,7 @@ import { Challenges } from "#enums/challenges";
 import { Color, ShadowColor } from "#enums/color";
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
-import { AccessibilityManager } from "#ui/accessibility-manager";
+import { a11yManager, getKeyLabelForButton } from "#ui/accessibility-manager";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
@@ -334,13 +334,17 @@ export class GameChallengesUiHandler extends UiHandler {
    * challenge + its value, and navigation instructions.
    */
   private announceA11y(): void {
-    const a11y = AccessibilityManager.getInstance();
-    a11y.announceContext(
-      `${i18next.t("challenges:title")}. Up and down to pick a challenge, left and right to change its value, Z to confirm, X to go back.`,
+    const action = getKeyLabelForButton(Button.ACTION);
+    const cancel = getKeyLabelForButton(Button.CANCEL);
+    const title = i18next.t("challenges:title");
+    a11yManager.announceContext(
+      action && cancel
+        ? i18next.t("accessibility:challengesContext", { title, action, cancel })
+        : i18next.t("accessibility:challengesContextNoKey", { title }),
     );
     const challenge = this.getActiveChallenge();
     if (challenge) {
-      a11y.announceMessage(`${challenge.getName()}: ${challenge.getValue()}`);
+      a11yManager.announceMessage(`${challenge.getName()}: ${challenge.getValue()}`);
     }
   }
 
@@ -348,7 +352,7 @@ export class GameChallengesUiHandler extends UiHandler {
    * Announce the start button state (selected or no challenge chosen).
    */
   private announceStartA11y(): void {
-    const a11y = AccessibilityManager.getInstance();
+    const a11y = a11yManager;
     const key = this.hasSelectedChallenge ? "common:start" : "challenges:noneSelected";
     a11y.announceMessage(i18next.t(key));
   }
@@ -395,7 +399,7 @@ export class GameChallengesUiHandler extends UiHandler {
         this.updateChallengeArrowsTint(this.startCursor.visible);
         const challenge = this.getActiveChallenge();
         if (challenge) {
-          AccessibilityManager.getInstance().announceMessage(`${challenge.getName()}: ${challenge.getValue()}`);
+          a11yManager.announceMessage(`${challenge.getName()}: ${challenge.getValue()}`);
         }
       } else {
         phaseManager.toTitleScreen();
@@ -444,7 +448,7 @@ export class GameChallengesUiHandler extends UiHandler {
             this.updateText();
             const challengeUp = this.getActiveChallenge();
             if (challengeUp) {
-              AccessibilityManager.getInstance().announceMessage(`${challengeUp.getName()}: ${challengeUp.getValue()}`);
+              a11yManager.announceMessage(`${challengeUp.getName()}: ${challengeUp.getValue()}`);
             }
           }
           break;
@@ -471,9 +475,7 @@ export class GameChallengesUiHandler extends UiHandler {
             this.updateText();
             const challengeDown = this.getActiveChallenge();
             if (challengeDown) {
-              AccessibilityManager.getInstance().announceMessage(
-                `${challengeDown.getName()}: ${challengeDown.getValue()}`,
-              );
+              a11yManager.announceMessage(`${challengeDown.getName()}: ${challengeDown.getValue()}`);
             }
           }
           break;
@@ -482,7 +484,7 @@ export class GameChallengesUiHandler extends UiHandler {
           if (success) {
             this.updateText();
             const challengeLeft = this.getActiveChallenge();
-            AccessibilityManager.getInstance().announceMessage(challengeLeft.getValue());
+            a11yManager.announceMessage(challengeLeft.getValue());
           }
           break;
         case Button.RIGHT:
@@ -490,7 +492,7 @@ export class GameChallengesUiHandler extends UiHandler {
           if (success) {
             this.updateText();
             const challengeRight = this.getActiveChallenge();
-            AccessibilityManager.getInstance().announceMessage(challengeRight.getValue());
+            a11yManager.announceMessage(challengeRight.getValue());
           }
           break;
       }

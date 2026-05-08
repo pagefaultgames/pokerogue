@@ -1,13 +1,22 @@
+import { globalScene } from "#app/global-scene";
+import { Button } from "#enums/buttons";
+import { Device } from "#enums/devices";
+import { getKeyWithSettingName } from "#inputs/config-handler";
+import { SettingGamepad } from "#system/settings-gamepad";
+import { SettingKeyboard } from "#system/settings-keyboard";
+import type { MappingSettingName } from "#types/configs/inputs";
+import i18next from "i18next";
+
 /**
  * AccessibilityManager - Provides screen reader support for the canvas-based game.
  *
  * Creates a hidden DOM layer with ARIA live regions that mirrors game state,
  * allowing NVDA and other screen readers to announce battle text, menu options,
  * and cursor changes.
+ *
+ * Use the exported {@linkcode a11yManager} singleton rather than constructing this directly.
  */
-export class AccessibilityManager {
-  private static instance: AccessibilityManager;
-
+class AccessibilityManager {
   private rootEl: HTMLElement | null = null;
   private messageEl: HTMLElement | null = null;
   private contextEl: HTMLElement | null = null;
@@ -15,13 +24,6 @@ export class AccessibilityManager {
 
   private announceCounter = 0;
   private enabled = true;
-
-  static getInstance(): AccessibilityManager {
-    if (!AccessibilityManager.instance) {
-      AccessibilityManager.instance = new AccessibilityManager();
-    }
-    return AccessibilityManager.instance;
-  }
 
   /**
    * Initialize the accessibility DOM layer inside #app.
@@ -56,7 +58,7 @@ export class AccessibilityManager {
     this.menuEl = document.createElement("div");
     this.menuEl.id = "a11y-menu";
     this.menuEl.setAttribute("role", "menu");
-    this.menuEl.setAttribute("aria-label", "Menu");
+    this.menuEl.setAttribute("aria-label", i18next.t("accessibility:menu"));
 
     this.rootEl.appendChild(this.messageEl);
     this.rootEl.appendChild(this.contextEl);
@@ -67,7 +69,7 @@ export class AccessibilityManager {
     const canvas = app.querySelector("canvas");
     if (canvas) {
       canvas.setAttribute("tabindex", "0");
-      canvas.setAttribute("aria-label", "PokéRogue game window");
+      canvas.setAttribute("aria-label", i18next.t("accessibility:gameWindow"));
     }
 
     // Also make #app focusable and auto-focus it so screen readers pick up the live regions
@@ -91,7 +93,7 @@ export class AccessibilityManager {
 
     // Toggle zero-width space to force NVDA to re-read identical consecutive messages
     this.announceCounter++;
-    this.messageEl.textContent = cleanText + "\u200B".repeat(this.announceCounter % 2);
+    this.messageEl.textContent = cleanText + "​".repeat(this.announceCounter % 2);
   }
 
   /**
@@ -193,4 +195,100 @@ export class AccessibilityManager {
       .replace(/@[cdsf]\{.*?\}/g, "") // Action patterns
       .trim();
   }
+}
+
+/**
+ * Singleton accessibility manager. Use this rather than constructing
+ * {@linkcode AccessibilityManager} directly.
+ */
+export const a11yManager = new AccessibilityManager();
+
+const KEYBOARD_BUTTON_TO_SETTING: Partial<Record<Button, SettingKeyboard>> = {
+  [Button.UP]: SettingKeyboard.BUTTON_UP,
+  [Button.DOWN]: SettingKeyboard.BUTTON_DOWN,
+  [Button.LEFT]: SettingKeyboard.BUTTON_LEFT,
+  [Button.RIGHT]: SettingKeyboard.BUTTON_RIGHT,
+  [Button.SUBMIT]: SettingKeyboard.BUTTON_SUBMIT,
+  [Button.ACTION]: SettingKeyboard.BUTTON_ACTION,
+  [Button.CANCEL]: SettingKeyboard.BUTTON_CANCEL,
+  [Button.MENU]: SettingKeyboard.BUTTON_MENU,
+  [Button.STATS]: SettingKeyboard.BUTTON_STATS,
+  [Button.CYCLE_SHINY]: SettingKeyboard.BUTTON_CYCLE_SHINY,
+  [Button.CYCLE_FORM]: SettingKeyboard.BUTTON_CYCLE_FORM,
+  [Button.CYCLE_GENDER]: SettingKeyboard.BUTTON_CYCLE_GENDER,
+  [Button.CYCLE_ABILITY]: SettingKeyboard.BUTTON_CYCLE_ABILITY,
+  [Button.CYCLE_NATURE]: SettingKeyboard.BUTTON_CYCLE_NATURE,
+  [Button.CYCLE_TERA]: SettingKeyboard.BUTTON_CYCLE_TERA,
+  [Button.SPEED_UP]: SettingKeyboard.BUTTON_SPEED_UP,
+  [Button.SLOW_DOWN]: SettingKeyboard.BUTTON_SLOW_DOWN,
+};
+
+const GAMEPAD_BUTTON_TO_SETTING: Partial<Record<Button, SettingGamepad>> = {
+  [Button.UP]: SettingGamepad.BUTTON_UP,
+  [Button.DOWN]: SettingGamepad.BUTTON_DOWN,
+  [Button.LEFT]: SettingGamepad.BUTTON_LEFT,
+  [Button.RIGHT]: SettingGamepad.BUTTON_RIGHT,
+  [Button.SUBMIT]: SettingGamepad.BUTTON_SUBMIT,
+  [Button.ACTION]: SettingGamepad.BUTTON_ACTION,
+  [Button.CANCEL]: SettingGamepad.BUTTON_CANCEL,
+  [Button.MENU]: SettingGamepad.BUTTON_MENU,
+  [Button.STATS]: SettingGamepad.BUTTON_STATS,
+  [Button.CYCLE_SHINY]: SettingGamepad.BUTTON_CYCLE_SHINY,
+  [Button.CYCLE_FORM]: SettingGamepad.BUTTON_CYCLE_FORM,
+  [Button.CYCLE_GENDER]: SettingGamepad.BUTTON_CYCLE_GENDER,
+  [Button.CYCLE_ABILITY]: SettingGamepad.BUTTON_CYCLE_ABILITY,
+  [Button.CYCLE_NATURE]: SettingGamepad.BUTTON_CYCLE_NATURE,
+  [Button.CYCLE_TERA]: SettingGamepad.BUTTON_CYCLE_TERA,
+  [Button.SPEED_UP]: SettingGamepad.BUTTON_SPEED_UP,
+  [Button.SLOW_DOWN]: SettingGamepad.BUTTON_SLOW_DOWN,
+};
+
+/**
+ * Strip the `KEY_` / `BUTTON_` prefix and replace underscores with spaces so the
+ * label reads naturally for a screen reader (e.g. `KEY_ARROW_UP` -> `ARROW UP`).
+ */
+function normalizeKeyName(name: string | undefined): string {
+  if (!name) {
+    return "";
+  }
+  return name.replace(/^(KEY_|BUTTON_)/, "").replaceAll("_", " ");
+}
+
+/**
+ * Resolve a human-readable label for the key currently bound to {@linkcode button}
+ * in the active input config (keyboard primary first, then alt, then gamepad).
+ *
+ * Returns an empty string if no binding is found - callers should fall back to
+ * a generic phrase like "the action button".
+ */
+export function getKeyLabelForButton(button: Button): string {
+  const inputController = globalScene?.inputController;
+  if (!inputController) {
+    return "";
+  }
+
+  const keyboardConfig = inputController.getActiveConfig(Device.KEYBOARD);
+  const setting = KEYBOARD_BUTTON_TO_SETTING[button];
+  if (keyboardConfig && setting) {
+    const primary = getKeyWithSettingName(keyboardConfig, setting);
+    if (primary) {
+      return normalizeKeyName(primary);
+    }
+    const altSetting = `ALT_${setting}` as MappingSettingName;
+    const alt = getKeyWithSettingName(keyboardConfig, altSetting as SettingKeyboard);
+    if (alt) {
+      return normalizeKeyName(alt);
+    }
+  }
+
+  const gamepadConfig = inputController.getActiveConfig(Device.GAMEPAD);
+  const padSetting = GAMEPAD_BUTTON_TO_SETTING[button];
+  if (gamepadConfig && padSetting) {
+    const primary = getKeyWithSettingName(gamepadConfig, padSetting);
+    if (primary) {
+      return normalizeKeyName(primary);
+    }
+  }
+
+  return "";
 }

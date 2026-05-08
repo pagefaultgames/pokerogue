@@ -4,6 +4,7 @@ import { ExpNotification } from "#enums/exp-notification";
 import type { PlayerPokemon } from "#field/pokemon";
 import { PlayerPartyMemberPokemonPhase } from "#phases/player-party-member-pokemon-phase";
 import { LevelAchv } from "#system/achv";
+import { a11yManager } from "#ui/accessibility-manager";
 import { NumberHolder } from "#utils/common";
 import i18next from "i18next";
 
@@ -32,13 +33,19 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
     const prevStats = this.pokemon.stats.slice(0);
     this.pokemon.calculateStats();
     this.pokemon.updateInfo();
+
+    // Always announce the level-up to screen readers, regardless of the visual notification setting.
+    // The visual showText path below is suppressed when expParty !== DEFAULT, which would otherwise
+    // make level-ups silent for AT users.
+    const levelUpMessage = i18next.t("battle:levelUp", {
+      pokemonName: getPokemonNameWithAffix(this.pokemon),
+      level: this.level,
+    });
+
     if (globalScene.expParty === ExpNotification.DEFAULT) {
       globalScene.playSound("level_up_fanfare");
       globalScene.ui.showText(
-        i18next.t("battle:levelUp", {
-          pokemonName: getPokemonNameWithAffix(this.pokemon),
-          level: this.level,
-        }),
+        levelUpMessage,
         null,
         () =>
           globalScene.ui
@@ -49,9 +56,11 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
         true,
       );
     } else if (globalScene.expParty === ExpNotification.SKIP) {
+      a11yManager.announceMessage(levelUpMessage);
       this.end();
     } else {
       // we still want to display the stats if activated
+      a11yManager.announceMessage(levelUpMessage);
       globalScene.ui
         .getMessageHandler()
         .promptLevelUpStats(this.partyMemberIndex, prevStats, false)

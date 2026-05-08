@@ -6,7 +6,7 @@ import type { SettingType } from "#system/settings";
 import { Setting, SettingKeys } from "#system/settings";
 import type { MappingSettingName } from "#types/configs/inputs";
 import type { InputsIcons } from "#ui/abstract-control-settings-ui-handler";
-import { AccessibilityManager } from "#ui/accessibility-manager";
+import { a11yManager, getKeyLabelForButton } from "#ui/accessibility-manager";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { NavigationManager, NavigationMenu } from "#ui/navigation-menu";
 import { ScrollBar } from "#ui/scroll-bar";
@@ -248,9 +248,19 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
 
     ui.hideTooltip();
 
-    // Announce settings context to screen readers
-    AccessibilityManager.getInstance().announceContext(
-      `${this.title}. Up/Down to browse settings, Left/Right to change values. F and R to switch tabs. X to go back.`,
+    // Announce settings context to screen readers, using the user's actual keybindings for tab switch and cancel
+    const prevTab = getKeyLabelForButton(Button.CYCLE_FORM);
+    const nextTab = getKeyLabelForButton(Button.CYCLE_SHINY);
+    const cancel = getKeyLabelForButton(Button.CANCEL);
+    a11yManager.announceContext(
+      prevTab && nextTab && cancel
+        ? i18next.t("accessibility:settingsContext", {
+            title: this.title,
+            prevTab,
+            nextTab,
+            cancel,
+          })
+        : i18next.t("accessibility:settingsContextNoKey", { title: this.title }),
     );
 
     return true;
@@ -399,7 +409,7 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
       const setting = this.settings[settingIndex];
       const currentValue = this.optionCursors[settingIndex];
       const valueLabel = setting.options[currentValue]?.label ?? "";
-      AccessibilityManager.getInstance().announceMessage(`${setting.label}: ${valueLabel}`);
+      a11yManager.announceMessage(`${setting.label}: ${valueLabel}`);
     }
 
     return ret;
@@ -435,7 +445,7 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
       .setShadowColor(getTextColor(TextStyle.SETTINGS_SELECTED, true));
 
     // Announce changed value to screen readers
-    AccessibilityManager.getInstance().announceMessage(`${setting.label}: ${setting.options[cursor]?.label ?? ""}`);
+    a11yManager.announceMessage(`${setting.label}: ${setting.options[cursor]?.label ?? ""}`);
 
     if (save) {
       const saveSetting = () => {

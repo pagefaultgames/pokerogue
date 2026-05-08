@@ -10,7 +10,7 @@ import * as Modifier from "#modifiers/modifier";
 import type { PokemonData } from "#system/pokemon-data";
 import type { SessionSaveData } from "#types/save-data";
 import type { OptionSelectConfig } from "#ui/abstract-option-select-ui-handler";
-import { AccessibilityManager } from "#ui/accessibility-manager";
+import { a11yManager, getKeyLabelForButton } from "#ui/accessibility-manager";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { RunDisplayMode } from "#ui/run-info-ui-handler";
 import { addTextObject } from "#ui/text";
@@ -103,9 +103,15 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
     this.setCursor(0);
 
     // Announce save slot context to screen readers
-    const modeLabel = this.uiMode === SaveSlotUiMode.LOAD ? "Load" : "Save";
-    AccessibilityManager.getInstance().announceContext(
-      `${modeLabel} Game. Up/Down to browse save slots, Z or Enter to select, X to cancel.`,
+    const modeLabel = i18next.t(
+      this.uiMode === SaveSlotUiMode.LOAD ? "accessibility:saveSlotModeLoad" : "accessibility:saveSlotModeSave",
+    );
+    const action = getKeyLabelForButton(Button.ACTION);
+    const cancel = getKeyLabelForButton(Button.CANCEL);
+    a11yManager.announceContext(
+      action && cancel
+        ? i18next.t("accessibility:saveSlotContext", { label: modeLabel, action, cancel })
+        : i18next.t("accessibility:saveSlotContextNoKey", { label: modeLabel }),
     );
 
     return true;
@@ -418,11 +424,9 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
       const saveData = session.saveData;
       if (hasData && saveData) {
         const modeName = GameMode.getModeName(saveData.gameMode as GameModes);
-        AccessibilityManager.getInstance().announceMessage(
-          `Slot ${cursorPosition + 1}: ${modeName}, Wave ${saveData.waveIndex}`,
-        );
+        a11yManager.announceMessage(`Slot ${cursorPosition + 1}: ${modeName}, Wave ${saveData.waveIndex}`);
       } else {
-        AccessibilityManager.getInstance().announceMessage(`Slot ${cursorPosition + 1}: Empty`);
+        a11yManager.announceMessage(i18next.t("accessibility:saveSlotEmpty", { slot: cursorPosition + 1 }));
       }
     }
     if (prevSlotIndex != null) {

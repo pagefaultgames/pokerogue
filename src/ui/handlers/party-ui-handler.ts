@@ -21,7 +21,7 @@ import type { PokemonMove } from "#moves/pokemon-move";
 import type { CommandPhase } from "#phases/command-phase";
 import { getVariantTint } from "#sprites/variant";
 import type { TurnMove } from "#types/turn-move";
-import { AccessibilityManager } from "#ui/accessibility-manager";
+import { a11yManager, getKeyLabelForButton } from "#ui/accessibility-manager";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-helper";
@@ -382,8 +382,12 @@ export class PartyUiHandler extends MessageUiHandler {
     this.setCursor(0);
 
     // Announce party context to screen readers
-    AccessibilityManager.getInstance().announceContext(
-      "Party. Up/Down to select Pokémon, Z or Enter to choose, X to cancel.",
+    const action = getKeyLabelForButton(Button.ACTION);
+    const cancel = getKeyLabelForButton(Button.CANCEL);
+    a11yManager.announceContext(
+      action && cancel
+        ? i18next.t("accessibility:partyContext", { action, cancel })
+        : i18next.t("accessibility:partyContextNoKey"),
     );
 
     return true;
@@ -1247,16 +1251,16 @@ export class PartyUiHandler extends MessageUiHandler {
           const hp = pokemon.hp;
           const maxHp = pokemon.getMaxHp();
           const status = pokemon.status ? `, ${pokemon.status.effect}` : "";
-          AccessibilityManager.getInstance().announceMessage(
+          a11yManager.announceMessage(
             `${pokemon.getNameToRender()}, Level ${pokemon.level}, HP ${hp}/${maxHp}${status}`,
           );
         }
       } else if (cursor === 6) {
         this.partyCancelButton.select();
-        AccessibilityManager.getInstance().announceMessage("Cancel");
+        a11yManager.announceMessage(i18next.t("accessibility:cancel"));
       } else if (cursor === 7) {
         this.partyDiscardModeButton.select();
-        AccessibilityManager.getInstance().announceMessage("Discard Mode");
+        a11yManager.announceMessage(i18next.t("accessibility:discardMode"));
       }
     }
     return changed;
@@ -1305,7 +1309,7 @@ export class PartyUiHandler extends MessageUiHandler {
     if (partyPokemon) {
       const optionLabel = this.getOptionLabel(this.options[this.optionsCursor], partyPokemon);
       if (optionLabel) {
-        AccessibilityManager.getInstance().announceMessage(optionLabel);
+        a11yManager.announceMessage(optionLabel);
       }
     }
 

@@ -8,7 +8,7 @@ import { TrainerVariant } from "#enums/trainer-variant";
 import { UiMode } from "#enums/ui-mode";
 import type { PokemonData } from "#system/pokemon-data";
 import type { RunEntry } from "#types/save-data";
-import { AccessibilityManager } from "#ui/accessibility-manager";
+import { a11yManager } from "#ui/accessibility-manager";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { RunDisplayMode } from "#ui/run-info-ui-handler";
 import { addTextObject } from "#ui/text";
@@ -210,10 +210,16 @@ export class RunHistoryUiHandler extends MessageUiHandler {
     // Announce run info to screen readers
     const runIndex = cursor + this.scrollCursor;
     if (this.runs && runIndex < this.runs.length) {
-      const run = this.runs[runIndex];
-      const modeName = GameModes[run.gameMode] ?? "Unknown";
-      AccessibilityManager.getInstance().announceMessage(
-        `Run ${runIndex + 1}: ${modeName}, Wave ${run.waveIndex}, ${run.isVictory ? "Victory" : "Defeat"}`,
+      const run = this.runs[runIndex].entryData;
+      const modeName = GameModes[run.entry.gameMode] ?? "";
+      const outcome = i18next.t(run.isVictory ? "accessibility:runOutcomeVictory" : "accessibility:runOutcomeDefeat");
+      a11yManager.announceMessage(
+        i18next.t("accessibility:runHistoryEntry", {
+          index: runIndex + 1,
+          mode: modeName,
+          wave: run.entry.waveIndex,
+          outcome,
+        }),
       );
     }
 

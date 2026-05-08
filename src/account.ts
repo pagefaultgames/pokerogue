@@ -7,36 +7,6 @@ export let loggedInUser: UserInfo | null = null;
 // This is a random string that is used to identify the client session - unique per session (tab or window) so that the game will only save on the one that the server is expecting
 export const clientSessionId = randomString(32);
 
-/**
- * When true, the player is using the "Play as Guest" flow: a runtime-only mode that
- * skips all server sync operations and stores saves in localStorage.
- * Used when the site is deployed somewhere the PokéRogue API is unreachable (e.g. GitHub Pages, where CORS blocks it).
- * Unlike `bypassLogin` (a build-time flag), this can be flipped on per-session without changing encryption.
- */
-export let isGuestMode = false;
-
-/**
- * Activate guest mode: mark the session as offline and seed `loggedInUser` with a "Guest" account
- * so localStorage keys (`data_${username}`, `sessionData_${username}`) resolve correctly.
- * Also probes localStorage for any existing guest save to set `lastSessionSlot`.
- */
-export function enableGuestMode(): void {
-  isGuestMode = true;
-  loggedInUser = {
-    username: "Guest",
-    lastSessionSlot: -1,
-    discordId: "",
-    googleId: "",
-    hasAdminRole: false,
-  };
-  for (let s = 0; s < 5; s++) {
-    if (localStorage.getItem(`sessionData${s || ""}_${loggedInUser.username}`)) {
-      loggedInUser.lastSessionSlot = s;
-      break;
-    }
-  }
-}
-
 export async function updateUserInfo(): Promise<[success: boolean, status: number]> {
   if (!bypassLogin) {
     const [accountInfo, status] = await pokerogueApi.account.getInfo();

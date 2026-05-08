@@ -5,7 +5,7 @@ import { Command } from "#enums/command";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { CommandPhase } from "#phases/command-phase";
-import { AccessibilityManager } from "#ui/accessibility-manager";
+import { a11yManager } from "#ui/accessibility-manager";
 import { addTextObject, getTextStyleOptions } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
@@ -136,7 +136,7 @@ export class BallUiHandler extends UiHandler {
     // Announce pokeball type and count to screen readers
     const pokeballName = getPokeballName(cursor);
     const count = globalScene.pokeballCounts[cursor] ?? 0;
-    AccessibilityManager.getInstance().announceMessage(`${pokeballName}, ${count} remaining`);
+    a11yManager.announceMessage(`${pokeballName}, ${count} remaining`);
 
     return ret;
   }

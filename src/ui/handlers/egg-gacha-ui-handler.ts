@@ -9,7 +9,7 @@ import { GachaType } from "#enums/gacha-types";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { getVoucherTypeIcon, VoucherType } from "#system/voucher";
-import { AccessibilityManager } from "#ui/accessibility-manager";
+import { a11yManager } from "#ui/accessibility-manager";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { addTextObject, getEggTierTextTint, getTextStyleOptions } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
@@ -877,7 +877,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
       i18next.t("menu:cancel"),
     ];
     if (cursor < optionLabels.length) {
-      AccessibilityManager.getInstance().announceMessage(optionLabels[cursor]);
+      a11yManager.announceMessage(optionLabels[cursor]);
     }
 
     return ret;

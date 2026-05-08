@@ -7,7 +7,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { TextStyle } from "#enums/text-style";
 import { UiTheme } from "#enums/ui-theme";
 import type { GameData } from "#system/game-data";
-import { AccessibilityManager } from "#ui/accessibility-manager";
+import { a11yManager } from "#ui/accessibility-manager";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
@@ -533,7 +533,7 @@ export class GameStatsUiHandler extends UiHandler {
       .filter(s => s)
       .join(". ");
     if (statsText) {
-      AccessibilityManager.getInstance().announceMessage(statsText);
+      a11yManager.announceMessage(statsText);
     }
 
     return true;

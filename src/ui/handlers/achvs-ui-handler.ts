@@ -8,7 +8,7 @@ import { achvs, getAchievementDescription } from "#system/achv";
 import type { Voucher } from "#system/voucher";
 import { getVoucherTypeIcon, getVoucherTypeName, vouchers } from "#system/voucher";
 import type { AchvUnlocks, VoucherUnlocks } from "#types/save-data";
-import { AccessibilityManager } from "#ui/accessibility-manager";
+import { a11yManager } from "#ui/accessibility-manager";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { ScrollBar } from "#ui/scroll-bar";
 import { addTextObject } from "#ui/text";
@@ -220,7 +220,7 @@ export class AchvsUiHandler extends MessageUiHandler {
 
     // Announce achievement to screen readers
     const statusText = unlocked ? "Unlocked" : hidden ? "Hidden" : "Locked";
-    AccessibilityManager.getInstance().announceMessage(
+    a11yManager.announceMessage(
       `${unlocked ? achv.name : "???"}, ${statusText}${hidden ? "" : `, ${achv.description}`}`,
     );
   }
