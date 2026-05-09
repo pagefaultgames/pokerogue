@@ -1,5 +1,10 @@
-# The Phase System
+<!--
+SPDX-FileCopyrightText: 2026 Pagefault Games
 
+SPDX-License-Identifier: CC-BY-NC-SA-4.0
+-->
+
+# The Phase System
 
 One of Pokerogue's most  central (and complex) abstractions is the `Phase` system, which serves as the backbone of the game's logic flow.
 Having a solid understanding of the system is useful for
