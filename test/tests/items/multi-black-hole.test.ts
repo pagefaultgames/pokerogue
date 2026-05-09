@@ -6,7 +6,7 @@ import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("Items - Multi Lens", () => {
+describe("Items - Mini Black Hole", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
