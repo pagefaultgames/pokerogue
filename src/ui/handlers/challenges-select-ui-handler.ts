@@ -334,12 +334,16 @@ export class GameChallengesUiHandler extends UiHandler {
    * challenge + its value, and navigation instructions.
    */
   private announceA11y(): void {
+    const up = getKeyLabelForButton(Button.UP);
+    const down = getKeyLabelForButton(Button.DOWN);
+    const left = getKeyLabelForButton(Button.LEFT);
+    const right = getKeyLabelForButton(Button.RIGHT);
     const action = getKeyLabelForButton(Button.ACTION);
     const cancel = getKeyLabelForButton(Button.CANCEL);
     const title = i18next.t("challenges:title");
     a11yManager.announceContext(
-      action && cancel
-        ? i18next.t("accessibility:challengesContext", { title, action, cancel })
+      up && down && left && right && action && cancel
+        ? i18next.t("accessibility:challengesContext", { title, up, down, left, right, action, cancel })
         : i18next.t("accessibility:challengesContextNoKey", { title }),
     );
     const challenge = this.getActiveChallenge();

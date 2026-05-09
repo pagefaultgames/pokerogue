@@ -227,10 +227,14 @@ export class TitleUiHandler extends OptionSelectUiHandler {
     });
 
     // Announce title screen and first menu option to screen readers
+    const up = getKeyLabelForButton(Button.UP);
+    const down = getKeyLabelForButton(Button.DOWN);
+    const left = getKeyLabelForButton(Button.LEFT);
+    const right = getKeyLabelForButton(Button.RIGHT);
     const action = getKeyLabelForButton(Button.ACTION);
     a11yManager.announceContext(
-      action
-        ? i18next.t("accessibility:titleScreenContext", { action })
+      up && down && left && right && action
+        ? i18next.t("accessibility:titleScreenContext", { up, down, left, right, action })
         : i18next.t("accessibility:titleScreenContextNoKey"),
     );
     if (this.config?.options && this.config.options.length > 0) {

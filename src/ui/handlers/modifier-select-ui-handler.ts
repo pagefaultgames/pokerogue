@@ -394,11 +394,15 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     // #endregion: animation
 
     // Announce item selection context to screen readers
+    const up = getKeyLabelForButton(Button.UP);
+    const down = getKeyLabelForButton(Button.DOWN);
+    const left = getKeyLabelForButton(Button.LEFT);
+    const right = getKeyLabelForButton(Button.RIGHT);
     const action = getKeyLabelForButton(Button.ACTION);
     const cancel = getKeyLabelForButton(Button.CANCEL);
     a11yManager.announceContext(
-      action && cancel
-        ? i18next.t("accessibility:modifierSelectContext", { action, cancel })
+      up && down && left && right && action && cancel
+        ? i18next.t("accessibility:modifierSelectContext", { up, down, left, right, action, cancel })
         : i18next.t("accessibility:modifierSelectContextNoKey"),
     );
 

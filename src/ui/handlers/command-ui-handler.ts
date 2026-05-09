@@ -100,11 +100,15 @@ export class CommandUiHandler extends UiHandler {
     messageHandler.showText(i18next.t("commandUiHandler:actionMessage", { pokemonName }), 0);
 
     // Announce battle context to screen readers
+    const up = getKeyLabelForButton(Button.UP);
+    const down = getKeyLabelForButton(Button.DOWN);
+    const left = getKeyLabelForButton(Button.LEFT);
+    const right = getKeyLabelForButton(Button.RIGHT);
     const action = getKeyLabelForButton(Button.ACTION);
     const cancel = getKeyLabelForButton(Button.CANCEL);
     a11yManager.announceContext(
-      action && cancel
-        ? i18next.t("accessibility:commandContext", { pokemonName, action, cancel })
+      up && down && left && right && action && cancel
+        ? i18next.t("accessibility:commandContext", { pokemonName, up, down, left, right, action, cancel })
         : i18next.t("accessibility:commandContextNoKey", { pokemonName }),
     );
 

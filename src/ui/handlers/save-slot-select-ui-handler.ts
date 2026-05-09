@@ -106,11 +106,13 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
     const modeLabel = i18next.t(
       this.uiMode === SaveSlotUiMode.LOAD ? "accessibility:saveSlotModeLoad" : "accessibility:saveSlotModeSave",
     );
+    const up = getKeyLabelForButton(Button.UP);
+    const down = getKeyLabelForButton(Button.DOWN);
     const action = getKeyLabelForButton(Button.ACTION);
     const cancel = getKeyLabelForButton(Button.CANCEL);
     a11yManager.announceContext(
-      action && cancel
-        ? i18next.t("accessibility:saveSlotContext", { label: modeLabel, action, cancel })
+      up && down && action && cancel
+        ? i18next.t("accessibility:saveSlotContext", { label: modeLabel, up, down, action, cancel })
         : i18next.t("accessibility:saveSlotContextNoKey", { label: modeLabel }),
     );
 

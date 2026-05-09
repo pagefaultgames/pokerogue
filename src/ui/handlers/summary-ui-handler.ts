@@ -418,10 +418,12 @@ export class SummaryUiHandler extends UiHandler {
 
     // Announce pokemon summary to screen readers
     const summaryTitle = `${this.pokemon.getNameToRender({ useIllusion: false })}, Level ${this.pokemon.level}`;
+    const left = getKeyLabelForButton(Button.LEFT);
+    const right = getKeyLabelForButton(Button.RIGHT);
     const cancelKey = getKeyLabelForButton(Button.CANCEL);
     a11yManager.announceMessage(
-      cancelKey
-        ? i18next.t("accessibility:summaryContext", { title: summaryTitle, cancel: cancelKey })
+      left && right && cancelKey
+        ? i18next.t("accessibility:summaryContext", { title: summaryTitle, left, right, cancel: cancelKey })
         : i18next.t("accessibility:summaryContextNoKey", { title: summaryTitle }),
     );
 

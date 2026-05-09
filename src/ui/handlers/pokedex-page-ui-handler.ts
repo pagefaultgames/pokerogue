@@ -822,14 +822,18 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       : this.isSeen()
         ? "accessibility:pokedexSeen"
         : "accessibility:pokedexUnknown";
+    const up = getKeyLabelForButton(Button.UP);
+    const down = getKeyLabelForButton(Button.DOWN);
     const action = getKeyLabelForButton(Button.ACTION);
     const cancel = getKeyLabelForButton(Button.CANCEL);
     a11yManager.announceContext(
-      action && cancel
+      up && down && action && cancel
         ? i18next.t("accessibility:pokedexPageContext", {
             name: this.species.name,
             type: `${type1}${type2}`,
             caught: i18next.t(caughtKey),
+            up,
+            down,
             action,
             cancel,
           })

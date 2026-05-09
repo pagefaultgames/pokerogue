@@ -1229,11 +1229,15 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
       // Announce starter select context and first pokemon to screen readers
       const firstSpecies = this.filteredStarterContainers[0]?.species;
+      const up = getKeyLabelForButton(Button.UP);
+      const down = getKeyLabelForButton(Button.DOWN);
+      const left = getKeyLabelForButton(Button.LEFT);
+      const right = getKeyLabelForButton(Button.RIGHT);
       const action = getKeyLabelForButton(Button.ACTION);
       const cancel = getKeyLabelForButton(Button.CANCEL);
       a11yManager.announceContext(
-        action && cancel
-          ? i18next.t("accessibility:starterSelectContext", { action, cancel })
+        up && down && left && right && action && cancel
+          ? i18next.t("accessibility:starterSelectContext", { up, down, left, right, action, cancel })
           : i18next.t("accessibility:starterSelectContextNoKey"),
       );
       if (firstSpecies) {
@@ -1806,13 +1810,17 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             const filterLabel = this.filterBar.getLabelText(this.filterBarCursor);
             const optText = this.filterBar.getCurrentDropDownOptionText();
             const currentOption = optText ? ` ${optText}.` : "";
+            const up = getKeyLabelForButton(Button.UP);
+            const down = getKeyLabelForButton(Button.DOWN);
             const action = getKeyLabelForButton(Button.ACTION);
             const cancel = getKeyLabelForButton(Button.CANCEL);
             a11yManager.announceMessage(
-              action && cancel
+              up && down && action && cancel
                 ? i18next.t("accessibility:filterOptionsOpened", {
                     label: filterLabel,
                     currentOption,
+                    up,
+                    down,
                     action,
                     cancel,
                   })
@@ -3597,10 +3605,15 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         this.setSpecies(null);
         this.updateInstructions();
         const label = this.filterBar.getLabelText(this.filterBarCursor);
+        const up = getKeyLabelForButton(Button.UP);
+        const down = getKeyLabelForButton(Button.DOWN);
+        const left = getKeyLabelForButton(Button.LEFT);
+        const right = getKeyLabelForButton(Button.RIGHT);
         const action = getKeyLabelForButton(Button.ACTION);
-        const baseContext = action
-          ? i18next.t("accessibility:starterFilterBarContext", { action })
-          : i18next.t("accessibility:starterFilterBarContextNoKey");
+        const baseContext =
+          up && down && left && right && action
+            ? i18next.t("accessibility:starterFilterBarContext", { up, down, left, right, action })
+            : i18next.t("accessibility:starterFilterBarContextNoKey");
         const labelSuffix = label ? ` ${i18next.t("accessibility:filterLabel", { label })}` : "";
         a11yManager.announceContext(`${baseContext}${labelSuffix}`);
       }

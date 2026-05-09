@@ -543,11 +543,13 @@ export class MenuUiHandler extends MessageUiHandler {
     this.bgmBar.toggleBgmBar(true);
 
     // Announce menu context to screen readers
+    const up = getKeyLabelForButton(Button.UP);
+    const down = getKeyLabelForButton(Button.DOWN);
     const action = getKeyLabelForButton(Button.ACTION);
     const cancel = getKeyLabelForButton(Button.CANCEL);
     a11yManager.announceContext(
-      action && cancel
-        ? i18next.t("accessibility:menuContext", { action, cancel })
+      up && down && action && cancel
+        ? i18next.t("accessibility:menuContext", { up, down, action, cancel })
         : i18next.t("accessibility:menuContextNoKey"),
     );
 

@@ -382,11 +382,13 @@ export class PartyUiHandler extends MessageUiHandler {
     this.setCursor(0);
 
     // Announce party context to screen readers
+    const up = getKeyLabelForButton(Button.UP);
+    const down = getKeyLabelForButton(Button.DOWN);
     const action = getKeyLabelForButton(Button.ACTION);
     const cancel = getKeyLabelForButton(Button.CANCEL);
     a11yManager.announceContext(
-      action && cancel
-        ? i18next.t("accessibility:partyContext", { action, cancel })
+      up && down && action && cancel
+        ? i18next.t("accessibility:partyContext", { up, down, action, cancel })
         : i18next.t("accessibility:partyContextNoKey"),
     );
 

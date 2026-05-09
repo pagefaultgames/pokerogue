@@ -422,14 +422,22 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
     this.getUi().hideTooltip();
 
     // Announce the bindings tab to screen readers using the user's bound keys.
+    const up = getKeyLabelForButton(Button.UP);
+    const down = getKeyLabelForButton(Button.DOWN);
+    const left = getKeyLabelForButton(Button.LEFT);
+    const right = getKeyLabelForButton(Button.RIGHT);
     const action = getKeyLabelForButton(Button.ACTION);
     const cancel = getKeyLabelForButton(Button.CANCEL);
     const prevTab = getKeyLabelForButton(Button.CYCLE_FORM);
     const nextTab = getKeyLabelForButton(Button.CYCLE_SHINY);
     a11yManager.announceContext(
-      action && cancel && prevTab && nextTab
+      up && down && left && right && action && cancel && prevTab && nextTab
         ? i18next.t("accessibility:controlSettingsContext", {
             title: this.titleSelected,
+            up,
+            down,
+            left,
+            right,
             action,
             cancel,
             prevTab,

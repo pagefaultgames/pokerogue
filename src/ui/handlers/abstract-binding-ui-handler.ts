@@ -287,12 +287,15 @@ export abstract class AbstractBindingUiHandler extends UiHandler {
     this.newButtonIcon.setVisible(true);
 
     const actionKey = getKeyLabelForButton(Button.ACTION);
+    const left = getKeyLabelForButton(Button.LEFT);
+    const right = getKeyLabelForButton(Button.RIGHT);
+    const hasDirectional = !!(left && right);
     const prompt = assignedButtonIcon
-      ? actionKey
-        ? i18next.t("accessibility:bindingCaptureCollision", { action: actionKey })
+      ? actionKey && hasDirectional
+        ? i18next.t("accessibility:bindingCaptureCollision", { action: actionKey, left, right })
         : i18next.t("accessibility:bindingCaptureCollisionNoKey")
-      : actionKey
-        ? i18next.t("accessibility:bindingCapture", { action: actionKey })
+      : actionKey && hasDirectional
+        ? i18next.t("accessibility:bindingCapture", { action: actionKey, left, right })
         : i18next.t("accessibility:bindingCaptureNoKey");
     a11yManager.announceContext(prompt);
 

@@ -249,13 +249,21 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
     ui.hideTooltip();
 
     // Announce settings context to screen readers, using the user's actual keybindings for tab switch and cancel
+    const up = getKeyLabelForButton(Button.UP);
+    const down = getKeyLabelForButton(Button.DOWN);
+    const left = getKeyLabelForButton(Button.LEFT);
+    const right = getKeyLabelForButton(Button.RIGHT);
     const prevTab = getKeyLabelForButton(Button.CYCLE_FORM);
     const nextTab = getKeyLabelForButton(Button.CYCLE_SHINY);
     const cancel = getKeyLabelForButton(Button.CANCEL);
     a11yManager.announceContext(
-      prevTab && nextTab && cancel
+      up && down && left && right && prevTab && nextTab && cancel
         ? i18next.t("accessibility:settingsContext", {
             title: this.title,
+            up,
+            down,
+            left,
+            right,
             prevTab,
             nextTab,
             cancel,
