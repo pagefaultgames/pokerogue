@@ -128,9 +128,8 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
         this.inputs[0]?.setFocus();
       }, 50);
 
-      // #region: Override button pointerDown
       // Override the pointerDown event for the buttonBgs to call the `submitAction` and `cancelAction`
-      // properties that we set above, allowing their behavior to change after this method terminates
+      // properties that we set above, allowing their behavior to change after this method terminates.
       // Some subclasses use this to add behavior to the submit and cancel action
 
       this.buttonBgs[0] // formatting
@@ -148,7 +147,6 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
             this.cancelAction();
           }
         });
-      //#endregion: Override pointerDown events
 
       this.modalContainer.setAlpha(0).y += 24;
 

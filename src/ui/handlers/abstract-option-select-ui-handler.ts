@@ -6,8 +6,8 @@ import { a11yManager } from "#ui/accessibility-manager";
 import { addBBCodeTextObject, getTextColor, getTextStyleOptions } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
-import { fixedInt, rgbHexToRgba } from "#utils/common";
-import { argbFromRgba } from "@material/material-color-utilities";
+import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
+import { fixedInt } from "#utils/common";
 import i18next from "i18next";
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 
@@ -186,7 +186,7 @@ export abstract class AbstractOptionSelectUiHandler extends UiHandler {
   }
 
   show(args: any[]): boolean {
-    if (args.length === 0 || !args[0].hasOwnProperty("options") || args[0].options.length === 0) {
+    if (args.length === 0 || !Object.hasOwn(args[0], "options") || args[0].options.length === 0) {
       return false;
     }
 

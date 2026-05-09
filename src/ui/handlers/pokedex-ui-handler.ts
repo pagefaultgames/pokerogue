@@ -45,13 +45,13 @@ import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/pokemon-icon-ani
 import { ScrollBar } from "#ui/scroll-bar";
 import { addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
-import { BooleanHolder, fixedInt, getLocalizedSpriteKey, padInt, randIntRange, rgbHexToRgba } from "#utils/common";
+import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
+import { BooleanHolder, fixedInt, getLocalizedSpriteKey, padInt, randIntRange } from "#utils/common";
 import type { StarterPreferences } from "#utils/data";
 import { loadStarterPreferences } from "#utils/data";
 import { enumValueToKey } from "#utils/enums";
 import { getDexNumber, getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
-import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 
 interface LanguageSetting {
@@ -1258,12 +1258,12 @@ export class PokedexUiHandler extends MessageUiHandler {
             }
             break;
           case Button.LEFT:
-            if (this.trayCursor % 9 !== 0) {
-              success = this.setTrayCursor(this.trayCursor - 1);
-            } else {
+            if (this.trayCursor % 9 === 0) {
               success = this.setTrayCursor(
                 currentTrayRow < numOfRows - 1 ? (currentTrayRow + 1) * maxColumns - 1 : numberOfForms - 1,
               );
+            } else {
+              success = this.setTrayCursor(this.trayCursor - 1);
             }
             break;
           case Button.RIGHT:
@@ -1327,13 +1327,13 @@ export class PokedexUiHandler extends MessageUiHandler {
           }
           break;
         case Button.LEFT:
-          if (this.cursor % 9 !== 0) {
-            success = this.setCursor(this.cursor - 1);
-          } else {
+          if (this.cursor % 9 === 0) {
             // LEFT from filtered pokemon, on the left edge
             this.filterTextCursor = this.filterText.getNearestFilter(this.pokemonContainers[this.cursor]);
             this.setFilterTextMode(true);
             success = true;
+          } else {
+            success = this.setCursor(this.cursor - 1);
           }
           break;
         case Button.RIGHT:
@@ -1423,8 +1423,8 @@ export class PokedexUiHandler extends MessageUiHandler {
   // Returns true if one of the forms has the requested move
   hasFormLevelMove(form: PokemonForm, selectedMove: string): boolean {
     if (
-      !pokemonFormLevelMoves.hasOwnProperty(form.speciesId)
-      || !pokemonFormLevelMoves[form.speciesId].hasOwnProperty(form.formIndex)
+      !Object.hasOwn(pokemonFormLevelMoves, form.speciesId)
+      || !Object.hasOwn(pokemonFormLevelMoves[form.speciesId], form.formIndex)
     ) {
       return false;
     }
@@ -1463,7 +1463,7 @@ export class PokedexUiHandler extends MessageUiHandler {
         & (this.gameData.dexData[this.getStarterSpeciesId(species.speciesId)]?.caughtAttr || BigInt(0))
         & species.getFullUnlocksData();
       const starterData = this.gameData.starterData[starterId];
-      const isStarterProgressable = speciesEggMoves.hasOwnProperty(starterId);
+      const isStarterProgressable = Object.hasOwn(speciesEggMoves, starterId);
 
       // Name filter
       const selectedName = this.filterText.getValue(FilterTextRow.NAME);
@@ -1564,7 +1564,8 @@ export class PokedexUiHandler extends MessageUiHandler {
         .some(type => species.isOfType((type as number) - 1));
 
       // Biome filter
-      const indexToBiome = new Map(Object.keys(BiomeId).map((key, idx) => [idx, key]));
+      // TODO: This is type unsafe and really should not be hardcoding strings here
+      const indexToBiome = new Map<number, string>(Object.keys(BiomeId).map((key, idx) => [idx, key]));
       indexToBiome.set(35, "Uncatchable");
 
       // The entire evolutionary line is processed from the point of the current species,
@@ -2015,7 +2016,7 @@ export class PokedexUiHandler extends MessageUiHandler {
         const dexEntry = globalScene.gameData.dexData[species.speciesId];
         const caught = dexEntry?.caughtAttr ? "Caught" : "Not caught";
         const type1 = PokemonType[species.type1];
-        const type2 = species.type2 !== null ? `/${PokemonType[species.type2]}` : "";
+        const type2 = species.type2 === null ? "" : `/${PokemonType[species.type2]}`;
         const category = species.category ?? "";
         const categoryText = category ? `, ${category}` : "";
         a11y.announceMessage(`${species.name}${categoryText}, ${type1}${type2} type, ${caught}`);
@@ -2371,26 +2372,27 @@ export class PokedexUiHandler extends MessageUiHandler {
   }
 
   setTypeIcons(type1: PokemonType | null, type2: PokemonType | null): void {
-    if (type1 !== null) {
+    if (type1 === null) {
+      this.type1Icon.setVisible(false);
+    } else {
       this.type1Icon.setVisible(true);
       this.type1Icon.setFrame(PokemonType[type1].toLowerCase());
-    } else {
-      this.type1Icon.setVisible(false);
     }
-    if (type2 !== null) {
+    if (type2 === null) {
+      this.type2Icon.setVisible(false);
+    } else {
       this.type2Icon.setVisible(true);
       this.type2Icon.setFrame(PokemonType[type2].toLowerCase());
-    } else {
-      this.type2Icon.setVisible(false);
     }
   }
 
+  // TODO: Dedupe from SSUI
   updateStarterValueLabel(starter: PokedexMonContainer): void {
     const speciesId = starter.species.speciesId;
     const baseStarterValue = speciesStarterCosts[speciesId];
     const starterValue = this.gameData.getSpeciesStarterValue(this.getStarterSpeciesId(speciesId));
     starter.cost = starterValue;
-    let valueStr = starterValue.toString();
+    let valueStr: string = starterValue.toString();
     if (valueStr.startsWith("0.")) {
       valueStr = valueStr.slice(1);
     }

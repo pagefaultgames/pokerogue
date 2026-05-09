@@ -134,6 +134,7 @@ import { getEnumValues } from "#utils/enums";
 import { areAllies, canSpeciesTera, willTerastallize } from "#utils/pokemon-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { toCamelCase, toTitleCase } from "#utils/strings";
+import type { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 
 // TODO: Make these (and all condition functions actually)
@@ -2635,7 +2636,7 @@ export class FlameBurstAttr extends MoveEffectAttr {
   }
 
   getTargetBenefitScore(_user: Pokemon, target: Pokemon, _move: Move): number {
-    return target.getAlly() != null ? -5 : 0;
+    return target.getAlly() == null ? 0 : -5;
   }
 }
 
@@ -2846,10 +2847,10 @@ export class HitHealAttr extends MoveEffectAttr {
 
     const healAmount = this.getHealAmount(user, target);
     let message = "";
-    if (this.healStat !== null) {
-      message = i18next.t("battle:drainMessage", { pokemonName: getPokemonNameWithAffix(target) });
-    } else {
+    if (this.healStat === null) {
       message = i18next.t("battle:regainHealth", { pokemonName: getPokemonNameWithAffix(user) });
+    } else {
+      message = i18next.t("battle:drainMessage", { pokemonName: getPokemonNameWithAffix(target) });
     }
 
     globalScene.phaseManager.unshiftNew("PokemonHealPhase", user.getBattlerIndex(), healAmount, message, false, true);
@@ -2929,7 +2930,7 @@ export class MultiHitAttr extends MoveAttr {
   constructor(multiHitType?: MultiHitType) {
     super();
 
-    this.intrinsicMultiHitType = multiHitType !== undefined ? multiHitType : MultiHitType.TWO_TO_FIVE;
+    this.intrinsicMultiHitType = multiHitType === undefined ? MultiHitType.TWO_TO_FIVE : multiHitType;
     this.multiHitType = this.intrinsicMultiHitType;
   }
 
@@ -4057,11 +4058,11 @@ export class SecretPowerAttr extends MoveEffectAttr {
     }
     let secondaryEffect: MoveEffectAttr;
     const terrain = globalScene.arena.terrainType;
-    if (terrain !== TerrainType.NONE) {
-      secondaryEffect = this.determineTerrainEffect(terrain);
-    } else {
+    if (terrain === TerrainType.NONE) {
       const biome = globalScene.arena.biomeId;
       secondaryEffect = this.determineBiomeEffect(biome);
+    } else {
+      secondaryEffect = this.determineTerrainEffect(terrain);
     }
     return secondaryEffect.apply(user, target, move, []);
   }
@@ -6127,36 +6128,29 @@ export class TeraStarstormTypeAttr extends VariableMoveTypeAttr {
   }
 }
 
+/** @see {@link https://bulbapedia.bulbagarden.net/wiki/Revelation_Dance_(move)} */
 export class MatchUserTypeAttr extends VariableMoveTypeAttr {
-  apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: [ValueHolder<PokemonType>, ...any[]]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof NumberHolder)) {
+    const userTypes = user.getTypes({ returnOriginalTypesIfStellar: true });
+    if (userTypes.length === 0) {
       return false;
     }
-    const userTypes = user.getTypes(true);
 
-    if (userTypes.includes(PokemonType.STELLAR)) {
-      // will not change to stellar type
-      const nonTeraTypes = user.getTypes();
-      moveType.value = nonTeraTypes[0];
-      return true;
-    }
-    if (userTypes.length > 0) {
-      moveType.value = userTypes[0];
-      return true;
-    }
-    return false;
+    moveType.value = userTypes[0];
+    return true;
   }
 
   override getTypesForItemSpawn(user: Pokemon, move: Move): PokemonType[] {
     // Instead of calling apply, just return the user's primary type
     // this avoids inconsistencies when the user's type is temporarily changed
     // from tera
-    return [user.getTypes(false, true, true, false)[0] ?? move.type];
+    return [user.getTypes({ includeTeraType: false, bypassSummonData: true, ignoreThirdType: true })[0] ?? move.type];
   }
 
   override getTypeForMovegen(user: Pokemon, move: Move, willTera: boolean): PokemonType {
-    const defaultType = user.getTypes(false, true, true, false)[0] ?? move.type;
+    const defaultType =
+      user.getTypes({ includeTeraType: false, bypassSummonData: true, ignoreThirdType: true })[0] ?? move.type;
     if (willTera) {
       const type = user.getTeraType();
       if (type !== PokemonType.STELLAR) {
@@ -6289,7 +6283,7 @@ export class HitsSameTypeAttr extends MoveTypeChartOverrideAttr {
     args: [multiplier: NumberHolder, types: readonly PokemonType[], moveType: PokemonType],
   ): boolean {
     const [multiplier, oppTypes] = args;
-    const userTypes = user.getTypes(true);
+    const userTypes = user.getTypes();
     // Synchronoise is never effective if the user is typeless
     if (userTypes.includes(PokemonType.UNKNOWN)) {
       multiplier.value = 0;
@@ -6725,7 +6719,7 @@ export class JawLockAttr extends AddBattlerTagAttr {
 
 export class CurseAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, _args: any[]): boolean {
-    if (user.getTypes(true).includes(PokemonType.GHOST)) {
+    if (user.getTypes().includes(PokemonType.GHOST)) {
       if (target.getTag(BattlerTagType.CURSED)) {
         globalScene.phaseManager.queueMessage(i18next.t("battle:attackFailed"));
         return false;
@@ -6929,9 +6923,9 @@ export class AddArenaTagAttr extends MoveEffectAttr {
       && user.getLastXMoves(1)[0]?.result === MoveResult.SUCCESS
     ) {
       const side =
-        (this.selfSideTarget ? user : target).isPlayer() !== (move.hasAttr("AddArenaTrapTagAttr") && target === user)
-          ? ArenaTagSide.PLAYER
-          : ArenaTagSide.ENEMY;
+        (this.selfSideTarget ? user : target).isPlayer() === (move.hasAttr("AddArenaTrapTagAttr") && target === user)
+          ? ArenaTagSide.ENEMY
+          : ArenaTagSide.PLAYER;
       globalScene.arena.addTag(this.tagType, this.turnCount, move.id, user.id, side);
       return true;
     }
@@ -6981,7 +6975,7 @@ export class RemoveArenaTagsAttr extends MoveEffectAttr {
 export class AddArenaTrapTagAttr extends AddArenaTagAttr {
   getCondition(): MoveConditionFunc {
     return (user, _target, _move) => {
-      const side = this.selfSideTarget !== user.isPlayer() ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER;
+      const side = this.selfSideTarget === user.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
       const tag = globalScene.arena.getTagOnSide(this.tagType, side) as EntryHazardTag;
       if (!tag) {
         return true;
@@ -7069,25 +7063,35 @@ export class SwapArenaTagsAttr extends MoveEffectAttr {
 
     for (const playerTag of tagPlayerTemp) {
       globalScene.arena.removeTagOnSide(playerTag.tagType, ArenaTagSide.PLAYER, true);
-      globalScene.arena.addTag(
-        playerTag.tagType,
-        playerTag.turnCount,
-        playerTag.sourceMove,
-        playerTag.sourceId!,
-        ArenaTagSide.ENEMY,
-        true,
-      ); // TODO: is the bang correct?
     }
     for (const enemyTag of tagEnemyTemp) {
       globalScene.arena.removeTagOnSide(enemyTag.tagType, ArenaTagSide.ENEMY, true);
-      globalScene.arena.addTag(
-        enemyTag.tagType,
-        enemyTag.turnCount,
-        enemyTag.sourceMove,
-        enemyTag.sourceId!,
-        ArenaTagSide.PLAYER,
-        true,
-      ); // TODO: is the bang correct?
+    }
+    for (const playerTag of tagPlayerTemp) {
+      const layers = (playerTag as EntryHazardTag)?.layers ?? 1;
+      for (let i = 0; i < layers; i++) {
+        globalScene.arena.addTag(
+          playerTag.tagType,
+          playerTag.turnCount,
+          playerTag.sourceMove,
+          playerTag.sourceId!,
+          ArenaTagSide.ENEMY,
+          true,
+        ); // TODO: is the bang correct?
+      }
+    }
+    for (const enemyTag of tagEnemyTemp) {
+      const layers = (enemyTag as EntryHazardTag)?.layers ?? 1;
+      for (let i = 0; i < layers; i++) {
+        globalScene.arena.addTag(
+          enemyTag.tagType,
+          enemyTag.turnCount,
+          enemyTag.sourceMove,
+          enemyTag.sourceId!,
+          ArenaTagSide.PLAYER,
+          true,
+        ); // TODO: is the bang correct?
+      }
     }
 
     globalScene.phaseManager.queueMessage(
@@ -7287,50 +7291,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       }
       return false;
     }
-    if (globalScene.currentBattle.battleType !== BattleType.WILD) {
-      // Switch out logic for enemy trainers
-      // Find indices of off-field Pokemon that are eligible to be switched into
-      const isPartnerTrainer = globalScene.currentBattle.trainer?.isPartner();
-      const eligibleNewIndices: number[] = [];
-      globalScene.getEnemyParty().forEach((pokemon, index) => {
-        if (
-          pokemon.isAllowedInBattle()
-          && !pokemon.isOnField()
-          && (!isPartnerTrainer || pokemon.trainerSlot === (switchOutTarget as EnemyPokemon).trainerSlot)
-        ) {
-          eligibleNewIndices.push(index);
-        }
-      });
-
-      if (eligibleNewIndices.length === 0) {
-        return false;
-      }
-
-      if (switchOutTarget.hp > 0) {
-        if (this.switchType === SwitchType.FORCE_SWITCH) {
-          const slotIndex = eligibleNewIndices[user.randBattleSeedInt(eligibleNewIndices.length)];
-          globalScene.phaseManager.queueDeferred(
-            "SwitchSummonPhase",
-            this.switchType,
-            switchOutTarget.getFieldIndex(),
-            slotIndex,
-            false,
-            false,
-          );
-        } else {
-          globalScene.phaseManager.queueDeferred(
-            "SwitchSummonPhase",
-            this.switchType,
-            switchOutTarget.getFieldIndex(),
-            globalScene.currentBattle.trainer
-              ? globalScene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot)
-              : 0,
-            false,
-            false,
-          );
-        }
-      }
-    } else {
+    if (globalScene.currentBattle.battleType === BattleType.WILD) {
       // Switch out logic for wild pokemon
       /**
        * Check if Wimp Out/Emergency Exit activates due to being hit by U-turn or Volt Switch
@@ -7372,6 +7333,49 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         }
 
         globalScene.phaseManager.pushNew("NewBattlePhase");
+      }
+    } else {
+      // Switch out logic for enemy trainers
+      // Find indices of off-field Pokemon that are eligible to be switched into
+      const isPartnerTrainer = globalScene.currentBattle.trainer?.isPartner();
+      const eligibleNewIndices: number[] = [];
+      globalScene.getEnemyParty().forEach((pokemon, index) => {
+        if (
+          pokemon.isAllowedInBattle()
+          && !pokemon.isOnField()
+          && (!isPartnerTrainer || pokemon.trainerSlot === (switchOutTarget as EnemyPokemon).trainerSlot)
+        ) {
+          eligibleNewIndices.push(index);
+        }
+      });
+
+      if (eligibleNewIndices.length === 0) {
+        return false;
+      }
+
+      if (switchOutTarget.hp > 0) {
+        if (this.switchType === SwitchType.FORCE_SWITCH) {
+          const slotIndex = eligibleNewIndices[user.randBattleSeedInt(eligibleNewIndices.length)];
+          globalScene.phaseManager.queueDeferred(
+            "SwitchSummonPhase",
+            this.switchType,
+            switchOutTarget.getFieldIndex(),
+            slotIndex,
+            false,
+            false,
+          );
+        } else {
+          globalScene.phaseManager.queueDeferred(
+            "SwitchSummonPhase",
+            this.switchType,
+            switchOutTarget.getFieldIndex(),
+            globalScene.currentBattle.trainer
+              ? globalScene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot)
+              : 0,
+            false,
+            false,
+          );
+        }
       }
     }
 
@@ -7524,7 +7528,7 @@ export class RemoveTypeAttr extends MoveEffectAttr {
       return false;
     }
 
-    const userTypes = user.getTypes(true);
+    const userTypes = user.getTypes();
     const modifiedTypes = userTypes.filter(type => type !== this.removedType);
     if (modifiedTypes.length === 0) {
       modifiedTypes.push(PokemonType.UNKNOWN);
@@ -7540,6 +7544,7 @@ export class RemoveTypeAttr extends MoveEffectAttr {
   }
 }
 
+/** @see {@link https://bulbapedia.bulbagarden.net/wiki/Reflect_Type_(move)} */
 export class CopyTypeAttr extends MoveEffectAttr {
   constructor() {
     super(false);
@@ -7550,9 +7555,13 @@ export class CopyTypeAttr extends MoveEffectAttr {
       return false;
     }
 
-    const targetTypes = target.getTypes(true);
-    if (targetTypes.includes(PokemonType.UNKNOWN) && targetTypes.indexOf(PokemonType.UNKNOWN) > -1) {
-      targetTypes[targetTypes.indexOf(PokemonType.UNKNOWN)] = PokemonType.NORMAL;
+    const targetTypes = target.getTypes({ returnOriginalTypesIfStellar: true });
+    // Replace UNKNOWN with grass type
+    // TODO: `getTypes` arguably shouldn't include `UNKNOWN` if a type was added anyways,
+    // and this should DEFNINITELY get its own helper function for Roost and co.
+    const unknownIndex = targetTypes.indexOf(PokemonType.UNKNOWN);
+    if (unknownIndex !== -1) {
+      targetTypes[unknownIndex] = PokemonType.NORMAL;
     }
     user.summonData.types = targetTypes;
     user.updateInfo();
@@ -7568,8 +7577,10 @@ export class CopyTypeAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (_user, target, _move) =>
-      target.getTypes()[0] !== PokemonType.UNKNOWN || target.summonData.addedType !== null;
+    return (user, target) =>
+      !user.isTerastallized
+      && (!target.isOfType(PokemonType.UNKNOWN, { returnOriginalTypesIfStellar: true })
+        || target.summonData.addedType !== null);
   }
 }
 
@@ -7585,10 +7596,10 @@ export class CopyBiomeTypeAttr extends MoveEffectAttr {
 
     const terrainType = globalScene.arena.terrainType;
     let typeChange: PokemonType;
-    if (terrainType !== TerrainType.NONE) {
-      typeChange = this.getTypeForTerrain(globalScene.arena.terrainType);
-    } else {
+    if (terrainType === TerrainType.NONE) {
       typeChange = this.getTypeForBiome(globalScene.arena.biomeId);
+    } else {
+      typeChange = this.getTypeForTerrain(globalScene.arena.terrainType);
     }
 
     user.summonData.types = [typeChange];
@@ -7718,7 +7729,7 @@ export class ChangeTypeAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (_user, target, _move) =>
+    return (_user, target) =>
       !target.isTerastallized
       && !target.hasAbility(AbilityId.MULTITYPE)
       && !target.hasAbility(AbilityId.RKS_SYSTEM)
@@ -7726,6 +7737,10 @@ export class ChangeTypeAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Forest%27s_Curse_(move)}
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Trick-or-Treat_(move)}
+ */
 export class AddTypeAttr extends MoveEffectAttr {
   private readonly type: PokemonType;
 
@@ -7750,10 +7765,11 @@ export class AddTypeAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (_user, target, _move) => !target.isTerastallized && !target.getTypes().includes(this.type);
+    return (_user, target) => !target.isTerastallized && !target.isOfType(this.type);
   }
 }
 
+/** @see {@link https://bulbapedia.bulbagarden.net/wiki/Conversion_(move)} */
 export class FirstMoveTypeAttr extends MoveEffectAttr {
   constructor() {
     super(true);
@@ -7764,7 +7780,7 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
       return false;
     }
 
-    const firstMoveType = target.getMoveset()[0].getMove().type;
+    const firstMoveType = user.getMoveset()[0].getMove().type;
     user.summonData.types = [firstMoveType];
     globalScene.phaseManager.queueMessage(
       i18next.t("battle:transformedIntoType", {
@@ -7774,6 +7790,10 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
     );
 
     return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return user => !user.isTerastallized && !user.isOfType(user.getMoveset()[0].getMove().type);
   }
 }
 
@@ -9005,7 +9025,7 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
    */
   private getTypeResistances(user: Pokemon, moveType: PokemonType): PokemonType[] {
     const resistances: PokemonType[] = [];
-    const userTypes = user.getTypes(true, true);
+    const userTypes = user.getTypes({ returnOriginalTypesIfStellar: true });
 
     for (const type of getEnumValues(PokemonType)) {
       if (userTypes.includes(type)) {
@@ -9022,8 +9042,8 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
 
   getCondition(): MoveConditionFunc {
     // TODO: Does this count dancer?
-    return (_user, target, _move) => {
-      return target.getLastXMoves(-1).some(tm => tm.move !== MoveId.NONE);
+    return (user, target) => {
+      return !user.isTerastallized && target.getLastXMoves(-1).some(tm => tm.move !== MoveId.NONE);
     };
   }
 }
@@ -11257,11 +11277,21 @@ export function initMoves() {
       .attr(AddArenaTagAttr, ArenaTagType.CRAFTY_SHIELD, 1, true, true)
       .condition(failIfLastCondition, 3),
     new StatusMove(MoveId.FLOWER_SHIELD, PokemonType.FAIRY, -1, 10, -1, 0, 6)
-      .target(MoveTarget.ALL)
       .attr(StatStageChangeAttr, [Stat.DEF], 1, false, {
-        condition: (_user, target, _move) =>
-          target.getTypes().includes(PokemonType.GRASS) && !target.getTag(SemiInvulnerableTag),
-      }),
+        condition: (_user, target) =>
+          target.isOfType(PokemonType.GRASS, { returnOriginalTypesIfStellar: true })
+          && !target.getTag(SemiInvulnerableTag),
+      })
+      .target(MoveTarget.ALL)
+      // fails if no non-invulnerable pokemon on field are grass-type
+      .condition(() =>
+        globalScene
+          .getField(true)
+          .some(
+            p =>
+              p.isOfType(PokemonType.GRASS, { returnOriginalTypesIfStellar: true }) && !p.getTag(SemiInvulnerableTag),
+          ),
+      ),
     new StatusMove(MoveId.GRASSY_TERRAIN, PokemonType.GRASS, -1, 10, -1, 0, 6)
       .attr(TerrainChangeAttr, TerrainType.GRASSY)
       .target(MoveTarget.BOTH_SIDES),
@@ -11587,8 +11617,8 @@ export function initMoves() {
     new AttackMove(MoveId.POWER_TRIP, PokemonType.DARK, MoveCategory.PHYSICAL, 20, 100, 10, -1, 0, 7) //
       .attr(PositiveStatStagePowerAttr),
     new AttackMove(MoveId.BURN_UP, PokemonType.FIRE, MoveCategory.SPECIAL, 130, 100, 5, -1, 0, 7)
-      // Pass `true` to `ForDefend` as it should fail if the user is terastallized to a type that is not FIRE
-      .condition(user => user.isOfType(PokemonType.FIRE, true, true), 2)
+      // fail if the user is not currently Fire-type (including being Terastallized to Stellar)
+      .condition(user => user.isOfType(PokemonType.FIRE, { returnOriginalTypesIfStellar: true }), 2)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
       .attr(AddBattlerTagAttr, BattlerTagType.BURNED_UP, true, false)
       .attr(RemoveTypeAttr, PokemonType.FIRE, user => {
@@ -11993,6 +12023,7 @@ export function initMoves() {
       .attr(HealAttr, 0.25, true, false)
       .target(MoveTarget.USER_AND_ALLIES)
       .ignoresProtect()
+      .ignoresSubstitute()
       .triageMove(),
     new SelfStatusMove(MoveId.OBSTRUCT, PokemonType.DARK, 100, 10, -1, 4, 8)
       .attr(ProtectAttr, BattlerTagType.OBSTRUCT)
@@ -12312,7 +12343,7 @@ export function initMoves() {
       .attr(TeraBlastTypeAttr)
       .attr(TeraBlastPowerAttr)
       .attr(StatStageChangeAttr, [Stat.ATK, Stat.SPATK], -1, true, {
-        condition: (user, _target, _move) => user.isTerastallized && user.isOfType(PokemonType.STELLAR),
+        condition: user => user.isTerastallized && user.isOfType(PokemonType.STELLAR),
       }),
     new SelfStatusMove(MoveId.SILK_TRAP, PokemonType.BUG, -1, 10, -1, 4, 9)
       .attr(ProtectAttr, BattlerTagType.SILK_TRAP)
@@ -12470,7 +12501,7 @@ export function initMoves() {
       .triageMove(),
     new AttackMove(MoveId.DOUBLE_SHOCK, PokemonType.ELECTRIC, MoveCategory.PHYSICAL, 120, 100, 5, -1, 0, 9)
       // Pass `true` to `isOfType` to fail if the user is terastallized to a type other than ELECTRIC
-      .condition(user => user.isOfType(PokemonType.ELECTRIC, true, true), 2)
+      .condition(user => user.isOfType(PokemonType.ELECTRIC, { returnOriginalTypesIfStellar: true }), 2)
       .attr(AddBattlerTagAttr, BattlerTagType.DOUBLE_SHOCKED, true, false)
       .attr(RemoveTypeAttr, PokemonType.ELECTRIC, user => {
         globalScene.phaseManager.queueMessage(

@@ -252,7 +252,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
       .map(option => {
         const desc = option.description.split(" ");
         if (desc[0].length < 2) {
-          desc[0] += ["zh", "ko"].includes(resolvedLanguage.substring(0, 2)) ? " " : "  ";
+          desc[0] += ["zh", "ko"].includes(resolvedLanguage.slice(0, 2)) ? " " : "  ";
         }
         if (option.multiplier === multiplierOne) {
           desc[0] += " ";
@@ -526,7 +526,6 @@ export class EggGachaUiHandler extends MessageUiHandler {
       }
       const eggSprite = globalScene.add.sprite(127, 75, "egg", `egg_${eggs[i].getKey()}`).setScale(0.5);
       gachaContainer.addAt(eggSprite, 2);
-      // biome-ignore lint/performance/noAwaitInLoops: The point of this loop is to play the animations, one after another
       await this.doPullAnim(eggSprite, i).finally(() => gachaContainer.remove(eggSprite, true));
     }
 

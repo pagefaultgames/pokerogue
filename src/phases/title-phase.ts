@@ -1,4 +1,4 @@
-import { pokerogueApi } from "#api/pokerogue-api";
+import { pokerogueApi } from "#api/api";
 import { loggedInUser } from "#app/account";
 import { GameMode, getGameMode } from "#app/game-mode";
 import { timedEventManager } from "#app/global-event-manager";
@@ -249,7 +249,7 @@ export class TitlePhase extends Phase {
           const species = getPokemonSpecies(starter.speciesId);
           const starterFormIndex = starter.formIndex;
           const starterGender =
-            species.malePercent !== null ? (starter.female ? Gender.FEMALE : Gender.MALE) : Gender.GENDERLESS;
+            species.malePercent === null ? Gender.GENDERLESS : starter.female ? Gender.FEMALE : Gender.MALE;
           const starterPokemon = globalScene.addPlayerPokemon(
             species,
             startingLevel,
@@ -337,7 +337,7 @@ export class TitlePhase extends Phase {
           });
       } else {
         // Grab first 10 chars of ISO date format (YYYY-MM-DD) and convert to base64
-        let seed: string = btoa(new Date().toISOString().substring(0, 10));
+        let seed: string = btoa(new Date().toISOString().slice(0, 10));
         if (Overrides.DAILY_RUN_SEED_OVERRIDE != null) {
           seed =
             typeof Overrides.DAILY_RUN_SEED_OVERRIDE === "string"
@@ -390,7 +390,7 @@ export class TitlePhase extends Phase {
 
     // TODO: Move this to a migrate script instead of running it on save slot load
     for (const achv of Object.keys(globalScene.gameData.achvUnlocks)) {
-      if (vouchers.hasOwnProperty(achv) && achv !== "CLASSIC_VICTORY") {
+      if (Object.hasOwn(vouchers, achv) && achv !== "CLASSIC_VICTORY") {
         globalScene.validateVoucher(vouchers[achv]);
       }
     }

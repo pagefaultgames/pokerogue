@@ -11,7 +11,7 @@ _cfg: &cfg
    .js: kebab-case
    .*.ts: kebab-case
    .*.js: kebab-case
-   .dir: kebab-case
+   .dir: kebab-case | regex:.+\.local
    .py: snake_case # python files should always use snake_case
 
 ls:

@@ -806,7 +806,7 @@ export class SingleTypeChallenge extends Challenge {
   applyPokemonInBattle(pokemon: Pokemon, valid: BooleanHolder): boolean {
     if (
       pokemon.isPlayer()
-      && !pokemon.isOfType(this.value - 1, false, false, true)
+      && !pokemon.isOfType(this.value - 1, { includeTeraType: false, bypassSummonData: true, ignoreThirdType: true })
       && !SingleTypeChallenge.TYPE_OVERRIDES.some(
         o =>
           o.type === this.value - 1

@@ -7,7 +7,7 @@
  * native Tab navigation, Enter submission, and screen reader support.
  */
 
-import { pokerogueApi } from "#api/pokerogue-api";
+import { pokerogueApi } from "#api/api";
 import { a11yManager } from "#ui/accessibility-manager";
 import i18next from "i18next";
 
