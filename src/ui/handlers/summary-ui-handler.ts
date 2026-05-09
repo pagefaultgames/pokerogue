@@ -416,12 +416,14 @@ export class SummaryUiHandler extends UiHandler {
 
     this.nameText.setText(this.pokemon.getNameToRender({ useIllusion: false }));
 
-    // Announce pokemon summary to screen readers
+    // Announce pokemon summary to screen readers. Use announceContext (polite)
+    // rather than announceMessage (assertive) so it doesn't get clobbered by the
+    // page-name announcement that setCursor() fires later in this same show() flow.
     const summaryTitle = `${this.pokemon.getNameToRender({ useIllusion: false })}, Level ${this.pokemon.level}`;
     const left = getKeyLabelForButton(Button.LEFT);
     const right = getKeyLabelForButton(Button.RIGHT);
     const cancelKey = getKeyLabelForButton(Button.CANCEL);
-    a11yManager.announceMessage(
+    a11yManager.announceContext(
       left && right && cancelKey
         ? i18next.t("accessibility:summaryContext", { title: summaryTitle, left, right, cancel: cancelKey })
         : i18next.t("accessibility:summaryContextNoKey", { title: summaryTitle }),

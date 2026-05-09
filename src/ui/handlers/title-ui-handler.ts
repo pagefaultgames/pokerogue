@@ -240,10 +240,10 @@ export class TitleUiHandler extends OptionSelectUiHandler {
     if (this.config?.options && this.config.options.length > 0) {
       const labels = this.config.options.filter(o => !o.skip).map(o => o.label);
       a11yManager.setMenu(labels, 0, i18next.t("accessibility:menu"));
-      // Delay the first option announcement slightly so NVDA reads the context first
-      setTimeout(() => {
-        a11yManager.announceMessage(labels[0]);
-      }, 500);
+      // No follow-up announceMessage here -- super.show() already routed through
+      // AbstractOptionSelectUiHandler.setCursor(0) which announces the highlighted
+      // option with position info. Adding another assertive announcement would
+      // interrupt that one before NVDA can read it.
     }
 
     return true;

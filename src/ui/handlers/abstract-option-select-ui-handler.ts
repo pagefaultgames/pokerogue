@@ -202,13 +202,13 @@ export abstract class AbstractOptionSelectUiHandler extends UiHandler {
     this.fullCursor = 0;
     this.setCursor(0);
 
-    // Build accessible menu for screen readers
+    // Build accessible menu for screen readers. Don't announce the first label
+    // here -- setCursor(0) above already fires an assertive announcement with
+    // the option label + position; a follow-up announceMessage on the same
+    // assertive region would interrupt and clobber it before NVDA can read it.
     if (this.config?.options) {
       const labels = this.config.options.filter(o => !o.skip).map(o => o.label);
       a11yManager.setMenu(labels, 0);
-      if (labels.length > 0) {
-        a11yManager.announceMessage(labels[0]);
-      }
     }
 
     if (this.config.delay) {
