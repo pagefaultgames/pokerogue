@@ -104,29 +104,6 @@ export class TouchControl {
       event.preventDefault();
       this.touchButtonUp(node, key, event.target?.["id"]);
     });
-
-    // Screen-reader / keyboard activation: TalkBack and VoiceOver double-tap and
-    // keyboard Enter/Space dispatch a synthetic `click` to the focused element
-    // rather than touch/pointer events. Treat it as a quick down-then-up so the
-    // bound input fires once.
-    node.addEventListener("click", event => {
-      event.preventDefault();
-      const targetId = (event.target as HTMLElement)?.id ?? node.id;
-      this.touchButtonDown(node, key);
-      this.touchButtonUp(node, key, targetId);
-    });
-    node.addEventListener("keydown", event => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        this.touchButtonDown(node, key);
-      }
-    });
-    node.addEventListener("keyup", event => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        this.touchButtonUp(node, key, node.id);
-      }
-    });
   }
 
   touchButtonDown(node: HTMLElement, key: string) {
