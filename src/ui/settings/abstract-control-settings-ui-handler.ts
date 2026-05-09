@@ -457,9 +457,14 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
    */
   private announceCurrentSetting(): void {
     const settingIndex = this.cursor + this.scrollCursor;
+    if (!this.setting) {
+      console.warn("[a11y][bindings] this.setting is", this.setting);
+      return;
+    }
     const settingNames = Object.keys(this.setting);
     const settingName = settingNames[settingIndex];
     if (!settingName) {
+      console.warn("[a11y][bindings] no settingName at index", settingIndex, "of", settingNames.length);
       return;
     }
     const i18nKey = toCamelCase(settingName.replace(/ALT(_| )/, ""));
@@ -469,22 +474,22 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
     const mappingName = this.setting[settingName];
     const isBinding = this.bindingSettings?.includes(mappingName) || mappingName?.includes("BUTTON_");
 
+    let announcement: string;
     if (isBinding) {
       const config = this.getActiveConfig();
       const boundKey = config ? getKeyWithSettingName(config, mappingName) : undefined;
       const cleanKey = boundKey?.replace(/^(KEY_|BUTTON_)/, "").replaceAll("_", " ");
-      a11yManager.announceMessage(
-        cleanKey
-          ? i18next.t("accessibility:controlSettingBinding", { label, key: cleanKey })
-          : i18next.t("accessibility:controlSettingUnbound", { label }),
-      );
+      announcement = cleanKey
+        ? i18next.t("accessibility:controlSettingBinding", { label, key: cleanKey })
+        : i18next.t("accessibility:controlSettingUnbound", { label });
     } else {
-      // Non-binding setting (e.g. Controller, Gamepad Support) — read the current option label.
       const cursor = this.optionCursors?.[settingIndex] ?? 0;
       const optionsForSetting = this.settingDeviceOptions?.[mappingName];
       const value = optionsForSetting?.[cursor] ?? "";
-      a11yManager.announceMessage(i18next.t("accessibility:controlSettingValue", { label, value }));
+      announcement = i18next.t("accessibility:controlSettingValue", { label, value });
     }
+    console.log("[a11y][bindings]", { settingName, mappingName, isBinding, announcement });
+    a11yManager.announceMessage(announcement);
   }
 
   /**
