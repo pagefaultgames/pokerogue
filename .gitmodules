@@ -9,5 +9,9 @@
 	branch = beta
 [submodule "locales"]
 	path = locales
-	url = https://github.com/pagefaultgames/pokerogue-locales.git
-	branch = main
+	# Pointing at MichaelJohann1's fork while feature/accessibility-namespace is in
+	# review on pokerogue-locales. Once that PR merges into upstream main, revert
+	# this URL to https://github.com/pagefaultgames/pokerogue-locales.git and bump
+	# the submodule SHA to the merged commit on upstream main.
+	url = https://github.com/MichaelJohann1/pokerogue-locales.git
+	branch = feature/accessibility-namespace
