@@ -1227,8 +1227,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
       handleTutorial(Tutorial.STARTER_SELECT);
 
-      // Announce starter select context and first pokemon to screen readers
-      const firstSpecies = this.filteredStarterContainers[0]?.species;
+      // Announce starter select context to screen readers. The grid + species
+      // announcement that fires from the setCursor(0) call above (line ~1225)
+      // already speaks the highlighted Pokémon's row/column position and stat
+      // line, so we don't repeat the species name here -- doing so would
+      // interrupt the grid announcement on assertive priority.
       const up = getKeyLabelForButton(Button.UP);
       const down = getKeyLabelForButton(Button.DOWN);
       const left = getKeyLabelForButton(Button.LEFT);
@@ -1240,10 +1243,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           ? i18next.t("accessibility:starterSelectContext", { up, down, left, right, action, cancel })
           : i18next.t("accessibility:starterSelectContextNoKey"),
       );
-      if (firstSpecies) {
-        a11yManager.announceMessage(
-          i18next.t("accessibility:starterSelectFirstSelection", { name: firstSpecies.name }),
-        );
+      // Announce the current team if any starters are already on it (e.g. the player
+      // backed out of starter select and re-entered, or imported starters from a config).
+      if (this.starterSpecies.length > 0) {
+        this.announceTeam();
       }
 
       return true;
@@ -2879,6 +2882,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       getPokemonSpeciesForm(species.speciesId, props.formIndex).cry();
     }
     this.updateInstructions();
+    this.announceTeam("accessibility:teamAdded", species.name);
   }
 
   updatePartyIcon(species: PokemonSpecies, index: number) {
@@ -3622,6 +3626,29 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
 
     return false;
+  }
+
+  /**
+   * Announce the current team roster to screen readers. Called when the player
+   * adds or removes a starter so they always know what they have without having
+   * to navigate to the party-icon row to hear it slot-by-slot.
+   */
+  private announceTeam(prefixKey?: string, prefixName?: string): void {
+    const prefix = prefixKey && prefixName ? `${i18next.t(prefixKey, { name: prefixName })} ` : "";
+    if (this.starterSpecies.length === 0) {
+      a11yManager.announceMessage(`${prefix}${i18next.t("accessibility:teamEmpty")}`);
+      return;
+    }
+    const members = this.starterSpecies
+      .map((s, i) => i18next.t("accessibility:teamMember", { slot: i + 1, name: s.name }))
+      .join(", ");
+    a11yManager.announceMessage(
+      `${prefix}${i18next.t("accessibility:teamRoster", {
+        count: this.starterSpecies.length,
+        max: PLAYER_PARTY_MAX_SIZE,
+        members,
+      })}`,
+    );
   }
 
   moveStarterIconsCursor(index: number): void {
@@ -4441,6 +4468,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   popStarter(index: number): void {
+    const removedName = this.starterSpecies[index]?.name ?? "";
     this.starterSpecies.splice(index, 1);
     this.starters.splice(index, 1);
 
@@ -4489,6 +4517,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
 
     this.tryUpdateValue();
+    this.announceTeam("accessibility:teamRemoved", removedName);
   }
 
   updateStarterValueLabel(starter: StarterContainer): void {
