@@ -43,7 +43,19 @@ The `#a11y-root` element has the CSS class `sr-only`, which visually hides it wh
 
 ## Localization
 
-All screen-reader strings live in `locales/en/accessibility.json` (the `pokerogue-locales` submodule, on branch `feature/accessibility-namespace`) and are loaded as the `accessibility` namespace via the standard i18next setup (`src/plugins/i18n.ts` + `src/plugins/vite/namespaces-i18n-plugin.ts` -- the namespace is auto-registered from the file name). Use `i18next.t("accessibility:keyName", { ...placeholders })` from any UI handler.
+All screen-reader strings live in `locales/en/accessibility.json`. While this PR is in review, that file lives on `MichaelJohann1/pokerogue-locales:feature/accessibility-namespace` -- a fork of the upstream `pagefaultgames/pokerogue-locales` submodule. `.gitmodules` points the submodule at the fork until the locales PR merges into upstream main, at which point the URL flips back to upstream and the submodule SHA bumps to the merged commit.
+
+Strings are loaded as the `accessibility` namespace via the standard i18next setup (`src/plugins/i18n.ts` + `src/plugins/vite/namespaces-i18n-plugin.ts` -- the namespace is auto-registered from the file name). Use `i18next.t("accessibility:keyName", { ...placeholders })` from any UI handler.
+
+### Multi-language support
+
+i18next falls back to English when a translation is missing for the user's selected language (configured at `src/plugins/i18n.ts:170-173` -- `fallbackLng: { default: ["en"] }`). The accessibility namespace currently only ships English keys; players on every other supported language (de, fr, ja, zh-Hans, zh-Hant, es-ES, es-419, ko, pt-BR, ru, etc. -- 24 total) hear English announcements as fallback.
+
+The project's contribution flow handles non-English translations automatically -- the [Translation Team uses Pontoon](localization.md#submitting-locales-changes) to translate any new English keys into every supported language. So:
+
+1. The English keys go into the locales PR (already done -- the fork's `feature/accessibility-namespace` branch).
+2. The Translation Team backfills `locales/<lang>/accessibility.json` for every supported language on their schedule via Pontoon.
+3. Until that happens, English fallback works -- nothing is broken, AT users on non-English UIs just hear English announcements.
 
 For strings that interpolate a key name (e.g. "Press {action} to confirm"), provide both a primary key and a `*NoKey` fallback string. The primary key is used when `getKeyLabelForButton(...)` returns a real label; the fallback is used when the input layer hasn't been initialized yet (the helper returns `""` in that case). The same pattern applies to directional placeholders. Example:
 
@@ -224,6 +236,17 @@ clear(): void {
 - If announcements are missing, verify `a11yManager.init()` has been called and that `#a11y-root` exists in the DOM.
 - Check `#a11y-form-overlay` exists when login/register screens are active.
 - If a screen sounds like it's "cutting itself off" after entry, check for two `announceMessage` calls in the `show()` flow -- the second clobbers the first on the assertive live region.
+- If NVDA reads out raw locale keys like `accessibility:menuContext`, the locales submodule isn't checked out at the fork branch with `accessibility.json`. Run `git submodule update --init --recursive` (or just `run-local.bat` / `run-local.sh`, which does it for you).
+
+### Beta integration notes
+
+The branch is currently merged with `upstream/beta` (last sync: 2026-05-09). A few file paths and rules changed in beta that affect this work:
+
+- `pokerogueApi` is imported from `#api/api` (renamed from `#api/pokerogue-api`).
+- `argbFromRgba` and `rgbHexToRgba` come from `#utils/color-utils` (new file in beta; previously they were in `#utils/common` and `@material/material-color-utilities`).
+- Biome's `lint/style/noNegationElse` rule is now strict. Use `x === null ? "" : value` instead of `x !== null ? value : ""`. The reverse pattern fails CI.
+- Beta updated the `assets` submodule pointer; the merge brought that forward.
+- Vitest 4.x reports i18next/font initialization errors during test bootstrap as "errors" but they don't fail the suite -- ignore them.
 
 ## Mobile Accessibility (Future Work)
 

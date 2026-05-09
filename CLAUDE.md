@@ -17,11 +17,17 @@ All UI is canvas-based via Phaser 3 WebGL -- there are no native DOM elements fo
 - `src/ui/settings/abstract-settings-ui-handler.ts` -- General/Display/Audio settings. Tab-switch instructions use the user's actual bound keys for `Button.CYCLE_FORM` / `Button.CYCLE_SHINY` (default F/R) and `Button.CANCEL`.
 - `src/ui/settings/abstract-control-settings-ui-handler.ts` -- Keyboard / Gamepad bindings tabs. Has its own a11y hooks (separate parent class from the general settings) that read out each binding row + bound key as the cursor moves.
 - `src/ui-inputs.ts` -- Global keyboard/gamepad input routing. `buttonStats` hooks the stats key (default `C`) to announce HP/status for all active Pokémon in battle.
-- `locales/en/accessibility.json` -- Locale namespace holding all screen-reader strings. **Lives in the `pagefaultgames/pokerogue-locales` submodule, not the main repo.** Each context-with-keybindings string has a `*NoKey` fallback used when key resolution fails (e.g. before input is initialized). All directional placeholders (`{{up}}` / `{{down}}` / `{{left}}` / `{{right}}`) and named-key placeholders (`{{action}}` / `{{cancel}}` / etc.) are filled at announce time from `getKeyLabelForButton`.
+- `locales/en/accessibility.json` -- Locale namespace holding all screen-reader strings. **Lives in the locales submodule, not the main repo.** Each context-with-keybindings string has a `*NoKey` fallback used when key resolution fails (e.g. before input is initialized). All directional placeholders (`{{up}}` / `{{down}}` / `{{left}}` / `{{right}}`) and named-key placeholders (`{{action}}` / `{{cancel}}` / etc.) are filled at announce time from `getKeyLabelForButton`.
+
+### Submodule Setup
+
+`.gitmodules` currently points the `locales` submodule at `MichaelJohann1/pokerogue-locales` on branch `feature/accessibility-namespace` -- this is the fork that holds the new `accessibility.json` namespace while the locales PR is in review. **Before final upstream merge**, the URL must flip back to `pagefaultgames/pokerogue-locales` and the submodule SHA bumped to whatever commit on `pagefaultgames/pokerogue-locales:main` ends up containing the merged accessibility namespace. Doing it any earlier breaks fresh clones because the file only exists on the fork.
 
 ### Path Aliases
 
 - `#ui/*` maps to `src/ui/**/*.ts`
+- `#api/api` (renamed in upstream/beta from `#api/pokerogue-api`) -- API client; if you grep older docs for `pokerogue-api`, update to `api/api`
+- `#utils/color-utils` (new in upstream/beta) -- holds `argbFromRgba` / `rgbHexToRgba` (these used to come from `@material/material-color-utilities` and `#utils/common`)
 
 ## Build and Run
 
@@ -75,6 +81,7 @@ a11yManager.clearMenu();
 - **Do NOT hardcode key names** like "Z" or "Enter" in announcements -- use `getKeyLabelForButton(Button.X)` and the locale variants. Provide a `*NoKey` fallback string for the case where input isn't yet initialized (the helper returns `""`). Directional words (`Up` / `Down` / `Left` / `Right`) are also dynamic via `getKeyLabelForButton(Button.UP)` etc., not hardcoded.
 - **Do NOT hardcode English text** -- add a key to `locales/en/accessibility.json` and call `i18next.t("accessibility:...")`.
 - **Do NOT pair two assertive announcements in the same `show()` flow.** `setCursor(0)` (or any equivalent) inside `show()` already fires `announceMessage(...)`. A subsequent `announceMessage` on the same flow will INTERRUPT the cursor announcement on the assertive live region and clobber its position info before NVDA reads it. Use `announceContext` (polite) for the screen-context line, and let `setCursor` own the assertive live region. This bug pattern was found and fixed in `AbstractOptionSelectUiHandler`, `TitleUiHandler`, `SummaryUiHandler`, and `StarterSelectUiHandler` -- if you add new screens, watch for it.
+- **Beta enforces `lint/style/noNegationElse` strictly.** Write `x === null ? "" : value` rather than `x !== null ? value : ""`. The reverse trips biome:ci.
 - Use `announceMessage()` (assertive) for content the user must hear immediately.
 - Use `announceContext()` (polite) for ambient status changes.
 - Strip BBCode/formatting before announcing -- `a11yManager` handles this internally via `stripFormatting()`.
@@ -119,3 +126,15 @@ a11yManager.clearMenu();
 | `a11y-form-overlay.ts` | Login/Register HTML forms (bypasses canvas modals) |
 | `ui-inputs.ts` | Stats key announces HP / max HP / percent / status / level for every active Pokémon in battle, enemies first |
 | `level-up-phase.ts` | "{Pokemon} reached level {N}" -- announced unconditionally so screen readers stay informed even when the visual notification setting suppresses the showText prompt |
+
+## PR Status
+
+This branch (`feature/screen-reader-accessibility` on `MichaelJohann1/pokerogue`) targets `pagefaultgames/pokerogue:beta`.
+
+- **Up to date with upstream/beta**: yes (merged via `git merge upstream/beta`; merge commit resolves the two real conflicts and adapts to beta's renames). 0 commits behind, 53 commits ahead. PR diff is ~51 files / +2,217 / −12.
+- **Locales PR**: needs to be opened separately at `MichaelJohann1/pokerogue-locales:feature/accessibility-namespace` -> `pagefaultgames/pokerogue-locales:main`. Once that merges, revert the `.gitmodules` URL change in this PR and bump the submodule SHA to the upstream merged commit.
+- **TypeScript**: clean (`pnpm typecheck`).
+- **Biome lint+format**: clean across all 41 changed files (`pnpm biome:ci`).
+- **Tests**: passing UI suites we touched (`pokedex.test.ts`, `starter-select.test.ts`, `rebinding-setting.test.ts`, `inputs.test.ts` -- 44 passed, 9 todo, 0 failed).
+
+A safety tag `pre-rebase-20260509` and a backup branch `backup-pre-rebase` exist locally in case you ever need to roll back to the pre-merge state.
