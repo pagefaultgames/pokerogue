@@ -23,6 +23,11 @@ export type TrainerItemRecord<Attrs extends TrainerItemAttr> = {
 
 /** 
  * Abstract base class for trainer item attributes.
+ *
+ * A single {@linkcode TrainerItem} instance can have any number of attributes per effect,
+ * in a similar manner to {@linkcode AbAttr}s and {@linkcode MoveAttr}s.
+ * @typeParam E - The {@linkcode TrainerItemEffect} this attribute applies to.
+ * Should not be a union.
  */
 export abstract class TrainerItemAttr<out E extends TrainerItemEffect = TrainerItemEffect> {
   /**
