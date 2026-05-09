@@ -9,13 +9,17 @@ import { PokemonPhase } from "#phases/pokemon-phase";
 
 export class VictoryPhase extends PokemonPhase {
   public readonly phaseName = "VictoryPhase";
-  /** If true, indicates that the phase is intended for EXP purposes only, and not to continue a battle to next phase */
+  /**
+   * If true, indicates that the phase is intended for EXP purposes only, and
+   * not to continue a battle to next phase
+   */
   isExpOnly: boolean;
+  shouldPickUpScatteredMoney: boolean;
 
-  constructor(battlerIndex: BattlerIndex | number, isExpOnly = false) {
+  constructor(battlerIndex: BattlerIndex | number, isExpOnly = false, shouldPickUpScatteredMoney = true) {
     super(battlerIndex);
-
     this.isExpOnly = isExpOnly;
+    this.shouldPickUpScatteredMoney = shouldPickUpScatteredMoney;
   }
 
   start() {
@@ -41,7 +45,7 @@ export class VictoryPhase extends PokemonPhase {
         .getEnemyParty()
         .find(p => (globalScene.currentBattle.battleType === BattleType.WILD ? p.isOnField() : !p?.isFainted(true)))
     ) {
-      globalScene.phaseManager.pushNew("BattleEndPhase", true);
+      globalScene.phaseManager.pushNew("BattleEndPhase", true, this.shouldPickUpScatteredMoney);
       if (globalScene.currentBattle.battleType === BattleType.TRAINER) {
         globalScene.phaseManager.pushNew("TrainerVictoryPhase");
       }
@@ -61,7 +65,8 @@ export class VictoryPhase extends PokemonPhase {
                 .map(r => globalScene.phaseManager.pushNew("ModifierRewardPhase", modifierTypes[r]));
               break;
             case ClassicFixedBossWaves.EVIL_BOSS_2:
-              // Should get Lock Capsule on 165 before shop phase so it can be used in the rewards shop
+              // Should get Lock Capsule on 165 before shop phase so it can be
+              // used in the rewards shop
               globalScene.phaseManager.pushNew("ModifierRewardPhase", modifierTypes.LOCK_CAPSULE);
               break;
           }
