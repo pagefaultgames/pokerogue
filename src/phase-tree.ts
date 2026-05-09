@@ -18,7 +18,7 @@ export class PhaseTree {
    * @remarks
    * This does _not_ include the currently-running Phase, which is removed prior to being run.
    * @privateRemarks
-   * This is a simple 2-D array because only one Phase may run and have "children" at a time.
+   * This is a simple 2D array because only one Phase may run and have "children" at a time.
    */
   private levels: Phase[][] = [[]];
   /** The level of the currently-running {@linkcode Phase} in the Tree. */

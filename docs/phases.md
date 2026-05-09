@@ -6,21 +6,23 @@ SPDX-License-Identifier: CC-BY-NC-SA-4.0
 
 # The Phase System
 
-One of Pokerogue's most  central (and complex) abstractions is the `Phase` system, which serves as the backbone of the game's logic flow.
-Having a solid understanding of the system is useful for
+One of PokéRogue's most central (and complex) abstractions is the `Phase` system, which forms the backbone of the game's logic flow.
+Having a solid understanding of the system is useful for those looking to contribute to the codebase, as well as for those who are just curious about how the game works under the hood.
 
 This document is intended to give a bird's-eye view of the Phase system, as well as document some of its less intuitive intricacies.
-The sections are
+The sections are structured in order from high-level to low-level, so feel free to skip around as needed.
 
 ## Anatomy of a Phase
 
-A `Phase` serves as the most basic unit of game logic, representing a discrete chunk of work that must be completed before the next one can begin. This "work" can be anything from applying a move's effects to hiding an ability flyout.
+A `Phase` serves as the most basic unit of game logic, representing a discrete chunk of work that must be completed before the next Phase can begin.
+This "work" can be anything from applying a move's effects to toggling an ability flyout or showing the login screen.
 
-At its core, a `Phase` is nothing more than a class which consists of 2 methods:
-- `start()` — Contains the phase's core logic. Called by the `PhaseManager` when it is the phase's turn to run.
-- `end()` — Signals to the `PhaseManager` that the phase is finished running and the next one should start. Phases are responsible for calling `end()` themselves (including after any async operations resolve).
-  > [!DANGER]
+`Phase`s primarily consist of 2 methods:
+- `start()` — Contains the phase's core logic. Called by the `PhaseManager` when it is the phase's turn to run. **Must call `this.end()` at some point during its execution** (either directly or indirectly) or else the game will stall indefinitely.
+- `end()` — Signals to the `PhaseManager` that the phase has finished running and the next one should start.
+  > [!CAUTION]
   >  **Attempting to call `end()` more than once from the same phase will result in unpredictable behaviour that will most likely crash the game.**
+  > Moreover, Phases that override `end()` with custom logic **must call `super.end()`** once their work is complete to ensure the next Phase starts correctly.
 
 Every concrete phase also declares a `phaseName` string, which is used for type-safe lookup and comparison in lieu of `instanceof` to avoid circular imports.
 
@@ -42,17 +44,20 @@ export class FooPhase extends Phase {
 
 ## The PhaseManager
 
-The `PhaseManager` (as its name implies) serves as the central hub for managing the Phase system. It is responsible for starting new Phases after prior ones finish, queueing new ones to run and tracking the current state of the queue.
+The `PhaseManager` (as its name implies) serves as the central hub for managing the Phase system. It is responsible for starting new Phases after prior ones finish, queueing new ones to run and managing the current state of the queue.
 
-The two primary ways to queue a phase are:
+The 3 primary ways to queue a new phase are:
 
-| Type | Behaviour |
-|--------|-----------|
-| Push | Adds the phase to the **end** of the queue, run after all already-queued phases have finished. |
-| Unshift | Queues the phase to run **immediately after** the currently-running phase finishes. Multiple calls to `unshiftPhase` during the _same phase's execution_ will queue the new phases in the order they were added. |
-| Unshift (deferred) | Inserts the Phase _below* the current level's remaining phases, queueing it to run after all Phases unshifted during this Phase finish. |
+| Type    | Behaviour |
+|---------|-----------|
+| Push               | Adds the phase to the **end** of the queue, run after all already-queued \ phases have finished. |
+| Unshift            | Queues the phase to run **immediately after** the currently-running phase finishes. Multiple calls to `unshiftPhase` during the _same phase's execution_ will queue the new phases in the order they were added. |
+| Unshift (deferred) | Queues the phase to run _immediately after_ all Phases unshifted during the current Phase have finished. Multiple deferrals during the same Phase will trigger in FIFO order among one another. |
 
 There are also helpers like `queueMessage`, `queueAbilityDisplay`, and `queueFaintPhase` for common patterns (which internally delegate to one of these methods).
+
+> [!INFO]
+> If there are ever no phases left to run in the queue, the `PhaseManager` will automatically queue a new `TurnStartPhase` to kick off the next turn.
 
 ## The PhaseTree and Execution Order
 
