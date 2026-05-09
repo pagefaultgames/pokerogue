@@ -87,7 +87,7 @@ Most issues are bugs and are labeled with their area, such as `Move`, `Ability`,
 - `P0`: Completely gamebreaking (very rare)
 - `P1`: Major - Game crash
 - `P2`: Minor - Incorrect (but non-crashing) interactions (e.g. a move that lacks or has incorrect functionality)
-- `P3`: No gameplay impact - typo, minor graphical errors, etc.
+- `P3`: No gameplay impact - typos, minor graphical errors, etc.
 
 Also under issues, you can take a look at the [List of Partial / Unimplemented Moves and Abilities](https://github.com/pagefaultgames/pokerogue/issues/3503) and the [Bug Board](https://github.com/orgs/pagefaultgames/projects/3). The latter is essentially the same as the issues page, so take your pick.
 
