@@ -101,6 +101,15 @@
   },
   // Exclude checking for script files as those are covered by the folder's `tsconfig.json`
   // We do not use explicit `exclude` paths to allow explicitly including selected scripts files
-  "include": ["**/*.ts", "**/*.d.ts", "**/*.cts", "**/*.mts", "./github/**/*.mts"],
+  "include": [
+    "*.ts",
+    "src",
+    "test",
+    "**/*.d.ts",
+    "**/*.cts",
+    "**/*.mts",
+    "./github/**/*.mts",
+    "./scripts/**/*.boilerplate.ts"
+  ],
   "exclude": ["dist", "node_modules", "**/*.js", "**/*.cjs", "**/*.mjs"]
 }
