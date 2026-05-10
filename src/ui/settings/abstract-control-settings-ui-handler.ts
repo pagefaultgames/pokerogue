@@ -26,13 +26,22 @@ import { specialIconKeys, specialIcons } from "./special-icons";
 const A11Y_DEBUG_LOG_KEY = "a11yDebugLog";
 
 function appendA11yDebugLog(line: string): void {
+  const entry = `[${new Date().toISOString()}] [a11y][bindings] ${line}\n`;
+  // Persist to localStorage as a fallback (in case the dev-server middleware isn't
+  // reachable -- e.g. running a production build).
   try {
-    const timestamp = new Date().toISOString();
     const existing = localStorage.getItem(A11Y_DEBUG_LOG_KEY) ?? "";
-    const next = `${existing}[${timestamp}] [a11y][bindings] ${line}\n`;
-    localStorage.setItem(A11Y_DEBUG_LOG_KEY, next);
+    localStorage.setItem(A11Y_DEBUG_LOG_KEY, existing + entry);
   } catch {
-    // localStorage may be full or unavailable; nothing useful to do
+    // localStorage may be full or unavailable
+  }
+  // Also POST the line to the dev-server middleware so it lands in
+  // .a11y-debug-log.txt at the repo root, where Claude can read it directly via
+  // the Read tool. Fire-and-forget; failures are ignored.
+  try {
+    void fetch("/a11y-debug-log", { method: "POST", body: entry, keepalive: true });
+  } catch {
+    // ignore
   }
 }
 
@@ -59,6 +68,11 @@ if (typeof window !== "undefined") {
   };
   window.clearA11yLog = () => {
     localStorage.removeItem(A11Y_DEBUG_LOG_KEY);
+    try {
+      void fetch("/a11y-debug-log", { method: "DELETE" });
+    } catch {
+      // ignore
+    }
   };
 }
 
