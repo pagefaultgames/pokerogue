@@ -21,7 +21,6 @@ interface LoadingFontFaceProperty {
 
 const unicodeRanges = {
   fullwidth: "U+FF00-FFEF",
-  kana: "U+3040-30FF",
   CJKCommon: "U+2E80-2EFF,U+3000-303F,U+31C0-31EF,U+3200-32FF,U+3400-4DBF,U+F900-FAFF,U+FE30-FE4F",
   CJKIdeograph: "U+4E00-9FFF",
   devanagari: "U+0900-097F",
@@ -31,8 +30,6 @@ const unicodeRanges = {
 
 const rangesByLanguage = {
   chinese: [unicodeRanges.CJKCommon, unicodeRanges.fullwidth, unicodeRanges.CJKIdeograph].join(","),
-  // biome-ignore format: prevent silly formatting
-  japanese: [unicodeRanges.CJKCommon, unicodeRanges.fullwidth, unicodeRanges.kana, unicodeRanges.CJKIdeograph].join(","),
 };
 
 const fonts: LoadingFontFaceProperty[] = [
@@ -72,13 +69,6 @@ const fonts: LoadingFontFaceProperty[] = [
       "eu",
       "zh",
     ],
-  },
-  // japanese
-  {
-    face: new FontFace("emerald", `url(${getCachedUrl("./fonts/pokemon-bw.ttf")})`, {
-      unicodeRange: rangesByLanguage.japanese,
-    }),
-    only: ["ja"],
   },
   // devanagari
   {
@@ -175,30 +165,30 @@ await i18next
         default: ["en"],
       },
       supportedLngs: [
-        "en",
-        "es-ES",
+        "en", // English
+        "es-ES", // Spanish (Spain)
         "es-419", // LATAM Spanish
-        "fr",
-        "it",
-        "de",
-        "zh-Hans",
-        "zh-Hant",
-        "pt-BR",
-        "ko",
-        "ja",
-        "ca",
-        "eu",
-        "da",
-        "th",
-        "tr",
-        "ro",
-        "ru",
-        "id",
-        "hi",
-        "tl",
-        "nb-NO",
-        "sv",
-        "uk",
+        "fr", // French
+        "it", // Italian
+        "de", // German
+        "zh-Hans", // Chinese Simplified
+        "zh-Hant", // Chinese Traditional
+        "pt-BR", // Brazilian Portuguese
+        "ko", // Korean
+        "ja", // Japanese
+        "ca", // Catalan
+        "eu", // Basque
+        "da", // Danish
+        "th", // Thai
+        "tr", // Turkish
+        "ro", // Romanian
+        "ru", // Russian
+        "id", // Indonesian
+        "hi", // Hindi
+        "tl", // Tagalog
+        "nb-NO", // Norwegian Bokmål
+        "sv", // Swedish
+        "uk", // Ukrainian
       ],
       backend: {
         loadPath(lng: string, [ns]: string[]) {
