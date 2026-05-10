@@ -275,7 +275,8 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     const { promise: tweenPromise, resolve: tweenResolve } = Promise.withResolvers<void>();
     let i = 0;
 
-    // #region: animation
+    // #region animation
+
     /** Holds promises that resolve once each reward's *upgrade animation* has finished playing */
     const rewardAnimPromises: Promise<void>[] = [];
     /** Holds promises that resolves once *all* animations for a reward have finished playing */
@@ -390,7 +391,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
       });
     });
 
-    // #endregion: animation
+    // #endregion animation
 
     return true;
   }

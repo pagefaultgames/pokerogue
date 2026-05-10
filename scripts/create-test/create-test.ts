@@ -21,12 +21,14 @@ import { join } from "node:path";
 import { Command, InvalidArgumentError } from "@commander-js/extra-typings";
 import chalk from "chalk";
 
-//#region Constants
+// #region Constants
+
 const version = "2.1.0";
 const projectRoot = join(import.meta.dirname, "..", "..");
-//#endregion
 
-//#region Argument parsers
+// #endregion Constants
+
+// #region Argument parsers
 
 function parseTestType(arg: string): TestType {
   const match = validTestTypes.find(t => t.toLowerCase() === arg.toLowerCase());
@@ -52,7 +54,7 @@ function parseFileName(arg: string): string {
   return trimmed;
 }
 
-//#endregion
+// #endregion Argument parsers
 
 console.group(chalk.grey(`🧪 Create Test - v${version}\n`));
 
@@ -68,7 +70,7 @@ const program = new Command("pnpm test:create")
 
 const [testTypeArg, fileNameArg] = program.processedArgs;
 
-//#region Main
+// #region Main
 
 /**
  * Run the interactive `test:create` CLI.
@@ -111,6 +113,6 @@ function createTestFile(testType: TestType, fileNameAnswer: string): void {
   console.log(chalk.green.bold(`✔ File created at: ${filePath.replace(`${projectRoot}/`, "")}\n`));
 }
 
-//#endregion
+// #endregion Main
 
 await runInteractive();

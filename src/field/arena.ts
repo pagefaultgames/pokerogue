@@ -122,7 +122,8 @@ export class Arena {
     return 131 / 180;
   }
 
-  // #endregion
+  // #endregion Getters
+
   // #region Misc Public Methods
 
   public init() {
@@ -163,7 +164,8 @@ export class Arena {
     this.removeAllTags();
   }
 
-  // #endregion
+  // #endregion Misc Public Methods
+
   // #region Misc Private Methods
 
   /**
@@ -222,7 +224,8 @@ export class Arena {
     return BiomePoolTier.ULTRA_RARE;
   }
 
-  // #endregion
+  // #endregion Misc Private Methods
+
   // #region Weather
 
   /** @returns Whether or not the weather can be changed to the specified weather */
@@ -373,7 +376,8 @@ export class Arena {
     this.trySetWeather(randomWeather);
   }
 
-  // #endregion
+  // #endregion Weather
+
   // #region Terrain
 
   /** @returns Whether or not the terrain can be set to the specified terrain */
@@ -471,7 +475,8 @@ export class Arena {
     return !!this.terrain && this.terrain.isMoveTerrainCancelled(user, targets, move);
   }
 
-  // #endregion
+  // #endregion Terrain
+
   // #region Trainers
 
   public randomTrainerType(waveIndex: number, isBoss = false): TrainerType {
@@ -492,7 +497,8 @@ export class Arena {
     return tierPool.length > 0 ? randSeedItem(tierPool) : TrainerType.BREEDER;
   }
 
-  // #endregion
+  // #endregion Trainers
+
   // #region Pokemon
 
   public updatePoolsForTimeOfDay(): void {
@@ -606,7 +612,8 @@ export class Arena {
       : adjustedWave < 55; // Wave 25+ in daily
   }
 
-  // #endregion
+  // #endregion Pokemon
+
   // #region Arena Tags
 
   /**
@@ -874,7 +881,8 @@ export class Arena {
     }
   }
 
-  // #endregion
+  // #endregion Arena Tags
+
   // #region Time of Day
 
   public getTimeOfDay(): TimeOfDay {
@@ -956,7 +964,7 @@ export class Arena {
     return [48, 48, 98];
   }
 
-  // #endregion
+  // #endregion Time of Day
 
   // TODO: replace this
   getAttackTypeMultiplier(attackType: PokemonType, grounded: boolean): number {
@@ -1014,4 +1022,4 @@ export function getBiomeHasProps(biomeId: BiomeId): boolean {
   return false;
 }
 
-// #endregion
+// #endregion Helper Functions

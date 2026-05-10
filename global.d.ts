@@ -3,6 +3,7 @@ import type { Stringable, Stringify, Unstringify } from "#types/strings";
 import type { SetupServer } from "msw/node";
 
 // #region Object-related types
+
 /**
  * A key that can be stringified.
  * @privateRemarks
@@ -32,7 +33,7 @@ type ObjectEntry<O extends Record<StringableKey, unknown>> = readonly [Stringify
 type FromEntries<E extends Iterable<readonly [StringableKey, unknown]>> =
   E extends Iterable<readonly [infer K extends StringableKey, infer V]> ? Record<Unstringify<K>, V> : never;
 
-// #endregion Object-related code
+// #endregion Object-related types
 
 // #region Declaration merges
 

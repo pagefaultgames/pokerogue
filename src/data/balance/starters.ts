@@ -5,6 +5,7 @@ import type { IntClosedRange } from "type-fest";
 export const POKERUS_STARTER_COUNT = 5;
 
 // #region Friendship constants
+
 /** The multiplier applied to candy friendship gain in classic mode. */
 export const CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER = 3;
 /** The base amount of friendship gained from a single battle. */
@@ -17,7 +18,8 @@ export const FRIENDSHIP_LOSS_FROM_FAINT = 5;
 export const TRAINER_MIN_FRIENDSHIP = 50;
 /** The wave at which enemy trainers reach the maximum friendship value of 255. */
 export const TRAINER_MAX_FRIENDSHIP_WAVE = 145;
-// #endregion
+
+// #endregion Friendship constants
 
 /** The numeric point cost of a starter. */
 export type StarterCost = IntClosedRange<1, 10>;

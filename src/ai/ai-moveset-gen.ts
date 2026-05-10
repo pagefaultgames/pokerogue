@@ -814,7 +814,7 @@ function shouldRemoveSunnyDay(pokemon: Pokemon): boolean {
  */
 // TODO: Extract out common functionality between this and sandstorm
 function removeSnowscapeHail(pokemon: Pokemon, willTera: boolean): boolean {
-  const types = new Set(pokemon.getTypes(willTera, true));
+  const types = new Set(pokemon.getTypes({ includeTeraType: willTera, returnOriginalTypesIfStellar: true }));
   if (types.has(PokemonType.ICE)) {
     return false;
   }
@@ -845,7 +845,7 @@ function removeSnowscapeHail(pokemon: Pokemon, willTera: boolean): boolean {
  * @returns Whether the Pokémon would benefit from Sandstorm
  */
 function shouldRemoveSandstorm(pokemon: Pokemon, willTera: boolean): boolean {
-  if (pokemon.getTypes(willTera, true).includes(PokemonType.ROCK)) {
+  if (pokemon.getTypes({ includeTeraType: willTera, returnOriginalTypesIfStellar: true }).includes(PokemonType.ROCK)) {
     return false;
   }
   if (

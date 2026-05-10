@@ -438,7 +438,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       this.luck = (this.shiny ? this.variant + 1 : 0) + (this.fusionShiny ? this.fusionVariant + 1 : 0);
       this.fusionLuck = this.luck;
 
-      this.teraType = randSeedItem(this.getTypes(false, false, true));
+      this.teraType = randSeedItem(
+        this.getTypes({ includeTeraType: false, bypassSummonData: true, ignoreThirdType: true }),
+      );
       this.isTerastallized = false;
       this.stellarTypesBoosted = [];
     }
@@ -933,7 +935,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.fusionSpecies.forms[this.fusionFormIndex].formKey;
   }
 
-  //#region Atlas and sprite ID methods
+  // #region Atlas and sprite ID methods
+
   // TODO: Add more documentation for all these attributes.
   // They may be all similar, but what each one actually _does_ is quite unclear at first glance
 
@@ -1062,7 +1065,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       fusionVariant,
     );
   }
-  //#endregion Atlas and sprite ID methods
+
+  // #endregion Atlas and sprite ID methods
 
   /**
    * Return this Pokemon's {@linkcode PokemonSpeciesForm | SpeciesForm}.
@@ -1930,18 +1934,26 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Evaluate and return this Pokemon's typing.
-   * @param includeTeraType - (Default `true`) Whether to use this Pokemon's tera type if Terastallized; default `true`
-   * @param returnOriginalTypesIfStellar - (Default `false`) Whether to treat this Pokemon as its original types if it is currently {@linkcode PokemonType.STELLAR | Tera Stellar}
-   * @param ignoreOverride - (Default `false`) Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform} and similar effects; default `false`
-   * @param useIllusion - (Default `false`) Whether to consider an active illusion; default `false`
+   * @param includeTeraType - (Default `true`) Whether to use this Pokemon's Tera type if Terastallized
+   * @param returnOriginalTypesIfStellar - (Default `false`) Whether to treat this Pokemon as its original types if it is currently Tera Stellar
+   * @param bypassSummonData - (Default `false`) Whether to ignore any overrides caused by Transform and similar effects
+   * @param useIllusion - (Default `false`) Whether to consider an active illusion
+   * @param ignoreThirdType - (Default `false`) Whether to ignore the typing added by Forest's Curse or Trick-or-Treat
    * @returns A non-empty array of {@linkcode PokemonType}s corresponding to this Pokemon's typing (real or perceived).
    */
-  public getTypes(
+  public getTypes({
     includeTeraType = true,
     returnOriginalTypesIfStellar = false,
-    ignoreOverride = false,
+    bypassSummonData = false,
     useIllusion = false,
-  ): Mutable<NonEmptyTuple<PokemonType>> {
+    ignoreThirdType = false,
+  }: {
+    includeTeraType?: boolean;
+    returnOriginalTypesIfStellar?: boolean;
+    bypassSummonData?: boolean;
+    useIllusion?: boolean;
+    ignoreThirdType?: boolean;
+  } = {}): Mutable<NonEmptyTuple<PokemonType>> {
     const teraType = this.getTeraType();
     // Stellar tera does nothing defensively (uses original types)
     const shouldUseTeraStellar = !(returnOriginalTypesIfStellar && teraType === PokemonType.STELLAR);
@@ -1950,7 +1962,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return [teraType];
     }
 
-    const types = new Set(this.getBaseTypes(ignoreOverride, useIllusion));
+    const types = new Set(this.getBaseTypes(bypassSummonData, useIllusion));
 
     // become UNKNOWN if no types are present, or remove it if other types are present.
     // TODO: Move this after the added type checks once Roost is refactored to check removed types correctly
@@ -1961,7 +1973,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     // check type added to Pokemon from moves like Forest's Curse or Trick Or Treat.
-    if (!ignoreOverride && this.summonData.addedType) {
+    if (!ignoreThirdType && this.summonData.addedType) {
       types.add(this.summonData.addedType);
     }
 
@@ -1971,13 +1983,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Helper to {@linkcode getTypes} that handles computing a Pokemon's normal typing.
    */
-  private getBaseTypes(ignoreOverride = false, useIllusion = false): PokemonType[] {
-    if (!ignoreOverride && this.summonData.types.length > 0 && (!this.summonData.illusion || !useIllusion)) {
+  private getBaseTypes(bypassSummonData = false, useIllusion = false): PokemonType[] {
+    if (!bypassSummonData && this.summonData.types.length > 0 && (!this.summonData.illusion || !useIllusion)) {
       return this.summonData.types;
     }
 
-    const speciesForm = this.getSpeciesForm(ignoreOverride, useIllusion);
-    const fusionSpeciesForm = this.getFusionSpeciesForm(ignoreOverride, useIllusion);
+    const speciesForm = this.getSpeciesForm(bypassSummonData, useIllusion);
+    const fusionSpeciesForm = this.getFusionSpeciesForm(bypassSummonData, useIllusion);
 
     // TODO: This `map` call is only needed due to the fact that these arrays use -1 as defaults
     const customTypes = this.customPokemonData.types.map(t => (t === PokemonType.UNKNOWN ? undefined : t));
@@ -2010,20 +2022,30 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Check if this Pokemon's typing includes the specified type.
    * @param type - The {@linkcode PokemonType} to check
-   * @param includeTeraType - Whether to use this Pokemon's tera type if Terastallized; default `true`
+   * @param includeTeraType - (Default `true`) Whether to use this Pokemon's tera type if Terastallized
    * @param returnOriginalTypesIfStellar - (Default `false`)
-   *   Whether to treat this Pokemon as its original types if it is currently {@linkcode PokemonType.STELLAR | Tera Stellar}
-   * @param ignoreOverride - (Default `false`) Whether to ignore any overrides caused by {@linkcode MoveId.TRANSFORM | Transform} and similar effects
+   *   Whether to treat this Pokemon as its original types if it is currently Tera Stellar
+   * @param bypassSummonData - (Default `false`) Whether to ignore any overrides caused by Transform and similar effects
+   * @param ignoreThirdType - (Default `false`) Whether to ignore the typing added by Forest's Curse or Trick-or-Treat
    * @returns Whether this Pokemon is of the specified type.
    */
   // TODO: Make `returnOriginalTypesIfStellar` default to `true`
   public isOfType(
     type: PokemonType,
-    includeTeraType = true,
-    returnOriginalTypesIfStellar = false,
-    ignoreOverride = false,
+    {
+      includeTeraType = true,
+      returnOriginalTypesIfStellar = false,
+      bypassSummonData = false,
+      ignoreThirdType = false,
+    }: {
+      includeTeraType?: boolean;
+      returnOriginalTypesIfStellar?: boolean;
+      bypassSummonData?: boolean;
+      ignoreThirdType?: boolean;
+    } = {},
   ): boolean {
-    return this.getTypes(includeTeraType, returnOriginalTypesIfStellar, ignoreOverride).includes(type);
+    return this.getTypes({ includeTeraType, returnOriginalTypesIfStellar, bypassSummonData, ignoreThirdType }) //
+      .includes(type);
   }
 
   /**
@@ -2341,7 +2363,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   public isGrounded(): boolean {
     return (
       !!this.getTag(GroundedTag)
-      || (!this.isOfType(PokemonType.FLYING, true, true)
+      || (!this.isOfType(PokemonType.FLYING, { returnOriginalTypesIfStellar: true })
         && !this.hasAbility(AbilityId.LEVITATE)
         && !this.getTag(BattlerTagType.FLOATING)
         && !this.getTag(SemiInvulnerableTag))
@@ -2461,7 +2483,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         : 1,
     );
 
-    if (this.getTypes(true, true).find(t => move.isTypeImmune(source, this, t))) {
+    if (this.getTypes({ returnOriginalTypesIfStellar: true }).find(t => move.isTypeImmune(source, this, t))) {
       typeMultiplier.value = 0;
     }
 
@@ -2542,7 +2564,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return this.isTerastallized ? 2 : 1;
     }
 
-    const types = this.getTypes(true, true, false, useIllusion);
+    const types = this.getTypes({ returnOriginalTypesIfStellar: true, useIllusion });
     const { arena } = globalScene;
 
     // Handle flying v ground type immunity without removing flying type so effective types are still effective
@@ -2640,7 +2662,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns A score value based on how favorable this Pokémon is when fighting the given Pokémon
    */
   getMatchupScore(opponent: Pokemon): number {
-    const enemyTypes = opponent.getTypes(true, false, false, true);
+    const enemyTypes = opponent.getTypes({ useIllusion: true });
     /** Is this Pokemon faster than the opponent? */
     const outspeed =
       (this.isActive(true) ? this.getEffectiveStat(Stat.SPD, opponent) : this.getStat(Stat.SPD, false))
@@ -2681,7 +2703,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
       // Add STAB multiplier for attack type effectiveness.
       // For now, simply don't apply STAB to moves that may change type
-      if (this.isOfType(moveType, true) && !move.getMove().hasAttr("VariableMoveTypeAttr")) {
+      if (this.isOfType(moveType) && !move.getMove().hasAttr("VariableMoveTypeAttr")) {
         thisScore *= 1.5;
       }
 
@@ -3610,7 +3632,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return 1;
     }
 
-    const sourceTypes = source.getTypes(false, false);
+    const sourceTypes = source.getTypes({ includeTeraType: false });
     const sourceTeraType = source.getTeraType();
     const moveType = source.getMoveType(move);
     const matchesSourceType = sourceTypes.includes(source.getMoveType(move));
@@ -4893,7 +4915,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
-    const types = this.getTypes(true, true);
+    const types = this.getTypes({ returnOriginalTypesIfStellar: true });
 
     /* Whether the target is immune to the specific status being applied. */
     let isImmune = false;
@@ -5319,7 +5341,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return (this.getSpeciesForm().getBaseExp() * this.level) / 5 + 1;
   }
 
-  //#region Sprite and Animation Methods
+  // #region Sprite and Animation Methods
+
   setFrameRate(frameRate: number) {
     globalScene.anims.get(this.getBattleSpriteKey()).frameRate = frameRate;
     try {
@@ -5728,7 +5751,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     fusionCanvas.remove();
   }
 
-  //#endregion Sprite and Animation Methods
+  // #endregion Sprite and Animation Methods
 
   /**
    * Generate a random number using the current battle's seed, or the global seed if `globalScene.currentBattle` is falsy
@@ -6081,6 +6104,9 @@ export class PlayerPokemon extends Pokemon {
         } else {
           sd.friendship = friendshipCap - 1;
         }
+      }
+      if (Overrides.IMMEDIATE_ADD_CANDY_OVERRIDE > 0) {
+        gameData.addStarterCandy(id, Overrides.IMMEDIATE_ADD_CANDY_OVERRIDE);
       }
     });
   }

@@ -3460,12 +3460,14 @@ export class BattleScene extends SceneBase {
           form: p.getFormKey(),
           // Does not include temporary changes, such as those from Transform, Forest's Curse, etc
           // Ignores Tera type
-          types: p.getTypes(false, false, true, false).map(pType => capitalizeFirstLetterOnly(PokemonType[pType])),
+          types: p
+            .getTypes({ includeTeraType: false, bypassSummonData: true, ignoreThirdType: true })
+            .map(pType => capitalizeFirstLetterOnly(PokemonType[pType])),
           // Includes temporary changes, such as those from Transform, Forest's Curse, etc
           // Ignores Tera type
           tempTypes:
             p.summonData.types.length > 0 || p.summonData.addedType
-              ? p.getTypes(false, false, false, false).map(pType => capitalizeFirstLetterOnly(PokemonType[pType]))
+              ? p.getTypes({ includeTeraType: false }).map(pType => capitalizeFirstLetterOnly(PokemonType[pType]))
               : [],
           teraType: capitalizeFirstLetterOnly(PokemonType[p.getTeraType()]),
           isTerastallized: p.isTerastallized,
