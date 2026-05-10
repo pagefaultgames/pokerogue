@@ -12,9 +12,10 @@
   // TODO: This is only necessary because of the `src` repo being incompatible with declaration emit.
   // If https://github.com/microsoft/TypeScript/issues/17744 is ever resolved, we should graduate to proper project references
   "extends": "../tsconfig.json",
-  "include": ["../**/*.ts", "../**/*.d.ts", "../**/*.cts", "../**/*.mts", ".././github/**/*.mts"],
-  "exclude": ["../node_modules", "../dist", "**/*.boilerplate.ts", "../**/*.js", "../**/*.cjs", "../**/*.mjs"],
+  "include": ["../**/*.ts", "../**/*.mts", "../.github/**/*.mts"],
+  "exclude": ["../node_modules", "../dist", "**/*.boilerplate.ts"],
   "compilerOptions": {
+    // make sure more specific paths appear before less specific paths
     "paths": {
       // all the main repo paths (tsc doesn't copy them over)
       "#abilities/*": ["../src/data/abilities/*.ts"],
@@ -56,16 +57,18 @@
         "../src/ui/*.ts"
       ],
       "#data/*": ["../src/data/pokemon-forms/*.ts", "../src/data/pokemon/*.ts", "../src/data/*.ts"],
-      "#test/*": ["../test/*.ts"],
-      "#app/*": ["../src/*.ts"],
 
       // new subpath imports for script subfolders
       "#utils/*": ["../src/utils/*.ts", "./utils/*.ts"], // add mapping for scripting utilities
-      "#daily-seed/*": ["./daily-seed/*.ts", "./daily-seed/prompts/*.ts"],
+      "#daily-seed/*": ["./daily-seed/prompts/*.ts", "./daily-seed/*.ts"],
       "#gen-moveset/*": ["./gen-moveset/*.ts"],
       "#create-test/*": ["./create-test/*.ts"],
       "#parse-egg-moves/*": ["./parse-egg-moves/*.ts"],
-      "#scrape-trainer-names/*": ["./scrape-trainer-names/*.ts"]
+      "#scrape-trainer-names/*": ["./scrape-trainer-names/*.ts"],
+
+      // these must always be last
+      "#test/*": ["../test/*.ts"],
+      "#app/*": ["../src/*.ts"]
     }
   }
 }

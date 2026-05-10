@@ -1,5 +1,5 @@
-import type { PreventHoverExpansion } from "#types/prevent-hover-expansion";
 import type { Stringable, Stringify, Unstringify } from "#types/strings";
+import type { PreventHoverExpansion } from "#types/type-helpers";
 import type { SetupServer } from "msw/node";
 
 // #region Object-related types

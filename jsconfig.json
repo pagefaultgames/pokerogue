@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 {
-  "include": ["**/*.js", "**/*.d.ts", "**/*.mjs", "**/*.cjs"],
+  "include": ["**/*.js", "**/*.d.ts", "**/*.mjs", ".dependency-cruiser.cjs"],
   "exclude": ["assets", "dist", "node_modules", "typedoc"],
   "compilerOptions": {
     "target": "esnext",

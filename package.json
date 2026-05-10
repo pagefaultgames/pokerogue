@@ -14,7 +14,7 @@
     "build:app": "vite build --mode app",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:profile": "node scripts/profiling/profiling.js",
+    "test:profile": "vite-node scripts/profiling/profiling.ts",
     "test:cov": "vitest run --silent='passed-only' --coverage",
     "test:watch": "vitest watch --silent='passed-only'",
     "test:silent": "vitest run --silent='passed-only'",
@@ -23,7 +23,7 @@
     "decrypt-save": "vite-node scripts/decrypt-save.ts",
     "eggMoves:parse": "vite-node scripts/parse-egg-moves/main.ts",
     "scrape-trainers": "vite-node scripts/scrape-trainer-names/main.ts",
-    "dailySeed:create": "node scripts/daily-seed/main.js",
+    "dailySeed:create": "vite-node scripts/daily-seed/main.ts",
     "changelog": "node scripts/changelog-reader/main.mjs",
     "typecheck": "tsc",
     "typecheck:all": "tsc -p scripts/tsconfig.json",
@@ -42,7 +42,7 @@
     "update-assets:remote": "pnpm update-submodules:remote assets",
     "update-submodules": "git submodule update --progress --init --recursive --force --depth 1",
     "update-submodules:remote": "pnpm update-submodules --remote",
-    "sample-movesets": "pnpm dlx vite-node scripts/gen-moveset/gen-moveset-driver.ts"
+    "sample-movesets": "vite-node scripts/gen-moveset/gen-moveset-driver.ts"
   },
   "dependencies": {
     "@material/material-color-utilities": "^0.4.0",

@@ -54,6 +54,7 @@
     // (This also means we cannot use `composite` or project references in any capacity.)
     // See: https://github.com/microsoft/TypeScript/issues/17744
     "noEmit": true,
+    // make sure more specific paths appear before less specific paths
     "paths": {
       "#abilities/*": ["./src/data/abilities/*.ts"],
       "#api/*": ["./src/api/*.ts"],
@@ -95,21 +96,14 @@
       ],
       "#utils/*": ["./src/utils/*.ts"],
       "#data/*": ["./src/data/pokemon-forms/*.ts", "./src/data/pokemon/*.ts", "./src/data/*.ts"],
+
+      // these must always be last
       "#test/*": ["./test/*.ts"],
       "#app/*": ["./src/*.ts"]
     }
   },
-  // Exclude checking for script files as those are covered by the folder's `tsconfig.json`
+  // `scripts/` is not listed here as that directory has its own `tsconfig.json`
   // We do not use explicit `exclude` paths to allow explicitly including selected scripts files
-  "include": [
-    "*.ts",
-    "src",
-    "test",
-    "**/*.d.ts",
-    "**/*.cts",
-    "**/*.mts",
-    "./github/**/*.mts",
-    "./scripts/**/*.boilerplate.ts"
-  ],
-  "exclude": ["dist", "node_modules", "**/*.js", "**/*.cjs", "**/*.mjs"]
+  "include": ["*.ts", "src", "test", "**/*.mts", "scripts/**/*.boilerplate.ts", ".github/**/*.mts"],
+  "exclude": ["dist", "node_modules"]
 }

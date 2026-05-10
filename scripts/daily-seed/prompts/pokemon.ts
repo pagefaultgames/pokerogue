@@ -90,7 +90,7 @@ export async function promptNature(): Promise<Nature> {
  * @returns A Promise that resolves with the chosen moveset.
  */
 export async function promptMoveset(): Promise<StarterMoveset> {
-  const moveset: number[] = [];
+  const moveset: MoveId[] = [];
 
   async function addMove() {
     const moveName = await search({

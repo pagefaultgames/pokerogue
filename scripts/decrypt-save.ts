@@ -49,6 +49,7 @@ const systemShortKeys = {
 function convertSystemDataStr(dataStr: string): string {
   const fromKeys = Object.values(systemShortKeys);
   const toKeys = Object.keys(systemShortKeys);
+  // biome-ignore lint/suspicious/useGuardForIn: `fromKeys` is a simple array
   for (const k in fromKeys) {
     dataStr = dataStr.replace(new RegExp(`${fromKeys[k].replace("$", "\\$")}`, "g"), toKeys[k]);
   }

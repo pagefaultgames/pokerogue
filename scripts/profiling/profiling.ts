@@ -80,7 +80,14 @@ async function main(): Promise<void> {
 
   const { filter, options } = parseCLI(["vitest", "run", ...testProfile.args]);
 
-  const vitest = await startVitest("test", filter, { ...options, fileParallelism: false, execArgv });
+  const vitest = await startVitest("test", filter, {
+    ...options,
+    fileParallelism: false,
+    // swap to threads to work around vitest-dev/vitest#9907;
+    // the lack of SIGTERM events on windows would otherwise prevent profiling data from being written
+    pool: "threads",
+    execArgv,
+  });
   // NB: This sets `process.exitCode` to a non-zero value if it fails
   await vitest.close();
   if (process.exitCode) {

@@ -15,7 +15,7 @@ import { toTitleCase, toUpperSnakeCase } from "#utils/strings";
 import { confirm, input, number, search, select } from "@inquirer/prompts";
 import { Ajv } from "ajv";
 import chalk from "chalk";
-import customDailyRunSchema from "../../../src/data/daily-seed/schema.json" with { type: "json" };
+import customDailyRunSchema from "../../../src/data/daily-seed/schema.json";
 import { promptSpeciesId } from "./pokemon.js";
 
 export type ForcedWaveConfig =
