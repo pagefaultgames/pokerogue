@@ -207,3 +207,12 @@ export function canTerastallize(pokemon: PlayerPokemon): boolean {
   const hasAvailableTeras = globalScene.arena.playerTerasUsed < MAX_TERAS_PER_ARENA;
   return hasAvailableTeras && canSpeciesTera(pokemon);
 }
+
+export function decodeNickname(nickname: string, pokemonName: string): string {
+  try {
+    return decodeURIComponent(escape(atob(nickname))); // TODO: this seems jank, and `escape` is deprecated
+  } catch (err) {
+    console.error(`Failed to decode nickname for ${pokemonName}!\n`, err);
+    return pokemonName;
+  }
+}

@@ -1,35 +1,28 @@
+import { PokerogueAccountApi } from "#api/account-api";
+import { PokerogueAdminApi } from "#api/admin-api";
 import { ApiBase } from "#api/api-base";
-import { PokerogueAccountApi } from "#api/pokerogue-account-api";
-import { PokerogueAdminApi } from "#api/pokerogue-admin-api";
-import { PokerogueDailyApi } from "#api/pokerogue-daily-api";
-import { PokerogueSavedataApi } from "#api/pokerogue-savedata-api";
+import { PokerogueDailyApi } from "#api/daily-api";
+import { PokerogueSavedataApi } from "#api/savedata-api";
 import type { TitleStatsResponse } from "#types/api";
 
-/**
- * A wrapper for PokéRogue API requests.
- */
+/** A wrapper for PokéRogue API requests. */
 export class PokerogueApi extends ApiBase {
-  //#region Fields∏
-
   public readonly account: PokerogueAccountApi;
   public readonly daily: PokerogueDailyApi;
   public readonly admin: PokerogueAdminApi;
   public readonly savedata: PokerogueSavedataApi;
 
-  //#region Public
-
   constructor(base: string) {
     super(base);
+
     this.account = new PokerogueAccountApi(base);
     this.daily = new PokerogueDailyApi(base);
     this.admin = new PokerogueAdminApi(base);
     this.savedata = new PokerogueSavedataApi(base);
   }
 
-  /**
-   * Request game title-stats.
-   */
-  public async getGameTitleStats() {
+  /** Request game title stats. */
+  public async getGameTitleStats(): Promise<TitleStatsResponse | null> {
     try {
       const response = await this.doGet("/game/titlestats");
       return (await response.json()) as TitleStatsResponse;
@@ -41,9 +34,9 @@ export class PokerogueApi extends ApiBase {
 
   /**
    * Unlink the currently logged in user from Discord.
-   * @returns `true` if unlinking was successful, `false` if not
+   * @returns Whether unlinking was successful
    */
-  public async unlinkDiscord() {
+  public async unlinkDiscord(): Promise<boolean> {
     try {
       const response = await this.doPost("/auth/discord/logout");
       if (response.ok) {
@@ -59,9 +52,9 @@ export class PokerogueApi extends ApiBase {
 
   /**
    * Unlink the currently logged in user from Google.
-   * @returns `true` if unlinking was successful, `false` if not
+   * @returns Whether unlinking was successful
    */
-  public async unlinkGoogle() {
+  public async unlinkGoogle(): Promise<boolean> {
     try {
       const response = await this.doPost("/auth/google/logout");
       if (response.ok) {
@@ -74,8 +67,6 @@ export class PokerogueApi extends ApiBase {
 
     return false;
   }
-
-  //#endregion
 }
 
 export const pokerogueApi = new PokerogueApi(import.meta.env.VITE_SERVER_URL ?? "http://localhost:8001");

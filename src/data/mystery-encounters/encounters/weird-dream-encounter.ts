@@ -352,7 +352,6 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
       for (const pokemon of globalScene.getPlayerParty()) {
         pokemon.level = Math.max(Math.ceil(((100 - PERCENT_LEVEL_LOSS_ON_REFUSE) / 100) * pokemon.level), 1);
         pokemon.exp = getLevelTotalExp(pokemon.level, pokemon.species.growthRate);
-        pokemon.levelExp = 0;
 
         pokemon.calculateStats();
         pokemon.getBattleInfo().setLevel(pokemon.level);
@@ -588,7 +587,7 @@ async function postProcessTransformedPokemon(
   });
 
   // For pokemon that the player owns (including ones just caught), gain a candy
-  if (!forBattle && !!globalScene.gameData.dexData[speciesRootForm].caughtAttr) {
+  if (!forBattle && globalScene.gameData.dexData[speciesRootForm].caughtAttr) {
     globalScene.gameData.addStarterCandy(speciesRootForm, 1);
   }
 
@@ -792,7 +791,7 @@ async function addEggMoveToNewPokemonMoveset(
       }
 
       // For pokemon that the player owns (including ones just caught), unlock the egg move
-      if (!forBattle && randomEggMoveIndex != null && !!globalScene.gameData.dexData[speciesRootForm].caughtAttr) {
+      if (!forBattle && randomEggMoveIndex != null && globalScene.gameData.dexData[speciesRootForm].caughtAttr) {
         await globalScene.gameData.setEggMoveUnlocked(getPokemonSpecies(speciesRootForm), randomEggMoveIndex, true);
       }
     }

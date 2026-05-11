@@ -9,12 +9,8 @@ import type {
 } from "#types/api";
 import type { SessionSaveData } from "#types/save-data";
 
-/**
- * A wrapper for PokéRogue session savedata API requests.
- */
+/** A wrapper for PokéRogue session savedata API requests. */
 export class PokerogueSessionSavedataApi extends ApiBase {
-  //#region Public
-
   /**
    * Mark a session as cleared aka "newclear". \
    * _This is **NOT** the same as {@linkcode clear | clear()}._
@@ -22,7 +18,7 @@ export class PokerogueSessionSavedataApi extends ApiBase {
    * @returns The raw savedata as `string`.
    * @throws Error if the request fails
    */
-  public async newclear(params: NewClearSessionSavedataRequest) {
+  public async newclear(params: NewClearSessionSavedataRequest): Promise<boolean> {
     try {
       const urlSearchParams = this.toUrlSearchParams(params);
       const response = await this.doGet(`/savedata/session/newclear?${urlSearchParams}`);
@@ -42,7 +38,7 @@ export class PokerogueSessionSavedataApi extends ApiBase {
    * @param params The {@linkcode GetSessionSavedataRequest} to send
    * @returns The session as `string`
    */
-  public async get(params: GetSessionSavedataRequest) {
+  public async get(params: GetSessionSavedataRequest): Promise<string | null> {
     try {
       const urlSearchParams = this.toUrlSearchParams(params);
       const response = await this.doGet(`/savedata/session/get?${urlSearchParams}`);
@@ -78,7 +74,7 @@ export class PokerogueSessionSavedataApi extends ApiBase {
    * @param params The {@linkcode DeleteSessionSavedataRequest} to send
    * @returns An error message if something went wrong
    */
-  public async delete(params: DeleteSessionSavedataRequest) {
+  public async delete(params: DeleteSessionSavedataRequest): Promise<string | null> {
     try {
       const urlSearchParams = this.toUrlSearchParams(params);
       const response = await this.doGet(`/savedata/session/delete?${urlSearchParams}`);
@@ -100,7 +96,10 @@ export class PokerogueSessionSavedataApi extends ApiBase {
    * @param params The {@linkcode ClearSessionSavedataRequest} to send
    * @param sessionData The {@linkcode SessionSaveData} object
    */
-  public async clear(params: ClearSessionSavedataRequest, sessionData: SessionSaveData) {
+  public async clear(
+    params: ClearSessionSavedataRequest,
+    sessionData: SessionSaveData,
+  ): Promise<ClearSessionSavedataResponse> {
     try {
       const urlSearchParams = this.toUrlSearchParams(params);
       const response = await this.doPost(`/savedata/session/clear?${urlSearchParams}`, sessionData);

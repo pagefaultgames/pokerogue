@@ -882,7 +882,7 @@ export class PostDefendTypeChangeAbAttr extends PostDefendAbAttr {
     }
 
     this.type = attacker.getMoveType(move);
-    if (pokemon.isOfType(this.type, true, true)) {
+    if (pokemon.isOfType(this.type, { returnOriginalTypesIfStellar: true })) {
       return false;
     }
 
@@ -4729,10 +4729,7 @@ export class ArenaTrapAbAttr extends CheckTrappedAbAttr {
   override canApply({ pokemon, opponent }: CheckTrappedAbAttrParams): boolean {
     return (
       this.arenaTrapCondition(pokemon, opponent)
-      && !(
-        opponent.getTypes(true).includes(PokemonType.GHOST)
-        || (opponent.getTypes(true).includes(PokemonType.STELLAR) && opponent.getTypes().includes(PokemonType.GHOST))
-      )
+      && !opponent.isOfType(PokemonType.GHOST, { returnOriginalTypesIfStellar: true })
       && !opponent.hasAbility(AbilityId.RUN_AWAY)
     );
   }
@@ -5628,7 +5625,7 @@ export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
         typeChange.push(PokemonType.PSYCHIC);
         break;
       default:
-        pokemon.getTypes(false, false, true).forEach(t => {
+        pokemon.getTypes({ includeTeraType: false, bypassSummonData: true, ignoreThirdType: true }).forEach(t => {
           typeChange.push(t);
         });
         break;

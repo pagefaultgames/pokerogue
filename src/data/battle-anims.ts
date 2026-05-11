@@ -833,6 +833,7 @@ export abstract class BattleAnim {
     return ret;
   }
 
+  // TODO: Make this async
   play(onSubstitute?: boolean, callback?: () => void) {
     const isOppAnim = this.isOppAnim();
     const user = isOppAnim ? this.target! : this.user!;
@@ -845,7 +846,7 @@ export abstract class BattleAnim {
       return;
     }
 
-    const targetSubstitute = !!onSubstitute && user !== target ? target.getTag(BattlerTagType.SUBSTITUTE) : null;
+    const targetSubstitute = onSubstitute && user !== target ? target.getTag(BattlerTagType.SUBSTITUTE) : null;
 
     const userSprite = user.getSprite();
     const targetSprite = targetSubstitute?.sprite ?? target.getSprite();

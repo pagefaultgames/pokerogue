@@ -26,19 +26,11 @@ import { getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
 import { addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor, updateCandyCountTextStyle } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
-import {
-  fixedInt,
-  formatStat,
-  getBiomeName,
-  getLocalizedSpriteKey,
-  getShinyDescriptor,
-  padInt,
-  rgbHexToRgba,
-} from "#utils/common";
+import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
+import { fixedInt, formatStat, getBiomeName, getLocalizedSpriteKey, getShinyDescriptor, padInt } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getDexNumber } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
-import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 
 enum Page {
@@ -894,7 +886,11 @@ export class SummaryUiHandler extends UiHandler {
           return typeIcon;
         };
 
-        const types = this.pokemon?.getTypes(false, false, true, false)!; // TODO: is this bang correct?
+        const types = this.pokemon?.getTypes({
+          includeTeraType: false,
+          bypassSummonData: true,
+          ignoreThirdType: true,
+        })!; // TODO: is this bang correct?
         profileContainer.add(getTypeIcon(0, types[0]));
         if (types.length > 1) {
           profileContainer.add(getTypeIcon(1, types[1]));

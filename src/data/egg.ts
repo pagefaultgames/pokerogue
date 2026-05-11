@@ -83,9 +83,7 @@ export interface IEggOptions {
 }
 
 export class Egg {
-  ////
   // #region Private properties
-  ////
 
   private _id: number;
   private _tier: EggTier;
@@ -102,13 +100,10 @@ export class Egg {
 
   private eggDescriptor?: string | undefined;
 
-  ////
-  // #endregion
-  ////
+  // #endregion Private properties
 
-  ////
   // #region Public facing properties
-  ////
+
   get id(): number {
     return this._id;
   }
@@ -159,9 +154,7 @@ export class Egg {
     return this._overrideHiddenAbility;
   }
 
-  ////
-  // #endregion
-  ////
+  // #endregion Public facing properties
 
   constructor(eggOptions?: IEggOptions) {
     const generateEggProperties = (eggOptions?: IEggOptions) => {
@@ -220,9 +213,7 @@ export class Egg {
     this.eggDescriptor = eggOptions?.eggDescriptor;
   }
 
-  ////
   // #region Public methods
-  ////
 
   public isManaphyEgg(): boolean {
     return (
@@ -352,13 +343,9 @@ export class Egg {
     }
   }
 
-  ////
-  // #endregion
-  ////
+  // #endregion Public methods
 
-  ////
   // #region Private methods
-  ////
 
   /**
    * Rolls which egg move slot the egg will have.
@@ -602,9 +589,7 @@ export class Egg {
     return speciesEggTiers[this.species] ?? EggTier.COMMON;
   }
 
-  ////
-  // #endregion
-  ////
+  // #endregion Private methods
 }
 
 export function getValidLegendaryGachaSpecies(): SpeciesId[] {

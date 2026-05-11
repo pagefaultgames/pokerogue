@@ -62,6 +62,7 @@ import { StatsContainer } from "#ui/stats-container";
 import { addBBCodeTextObject, addTextObject, getTextColor, updateCandyCountTextStyle } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { applyChallenges, checkStarterValidForChallenge } from "#utils/challenge-utils";
+import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
 import {
   BooleanHolder,
   fixedInt,
@@ -69,14 +70,12 @@ import {
   NumberHolder,
   padInt,
   randIntRange,
-  rgbHexToRgba,
   truncateString,
 } from "#utils/common";
 import type { StarterPreferences } from "#utils/data";
 import { deepCopy, loadStarterPreferences, saveStarterPreferences } from "#utils/data";
 import { getDexNumber, getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
-import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
@@ -4348,6 +4347,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.tryUpdateValue();
   }
 
+  // TODO: Dedupe from pokedex
   updateStarterValueLabel(starter: StarterContainer): void {
     const speciesId = starter.species.speciesId;
     const baseStarterValue = speciesStarterCosts[speciesId];
@@ -4356,7 +4356,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
     const starterValue = globalScene.gameData.getSpeciesStarterValue(speciesId);
     starter.cost = starterValue;
-    let valueStr = starterValue.toString();
+    let valueStr: string = starterValue.toString();
     if (valueStr.startsWith("0.")) {
       valueStr = valueStr.slice(1);
     }
@@ -4377,7 +4377,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     starter.label.setColor(getTextColor(textStyle)).setShadowColor(getTextColor(textStyle, true));
   }
 
-  tryUpdateValue(add?: number, addingToParty?: boolean): boolean {
+  tryUpdateValue(add = 0, addingToParty?: boolean): boolean {
     const value = this.starterSpecies
       .map(s => s.generation)
       .reduce(
@@ -4385,10 +4385,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           (total += globalScene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId)),
         0,
       );
-    const newValue = value + (add || 0);
+    const newValue = value + add;
     const valueLimit = this.getValueLimit();
     const overLimit = newValue > valueLimit;
-    let newValueStr = newValue.toString();
+    let newValueStr: string = newValue.toString();
     if (newValueStr.startsWith("0.")) {
       newValueStr = newValueStr.slice(1);
     }

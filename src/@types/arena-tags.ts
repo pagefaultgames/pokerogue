@@ -50,11 +50,12 @@ export type ArenaTagDataMap = {
 export type ArenaTagData = ObjectValues<ArenaTagDataMap>;
 
 /**
- * Dummy, typescript-only declaration to ensure that
- * {@linkcode ArenaTagTypeMap} has a map for all ArenaTagTypes.
+ * Dummy, TypeScript-only declaration to ensure that
+ * {@linkcode ArenaTagTypeMap} has an entry for all `ArenaTagType`s.
  *
- * If an arena tag is missing from the map, typescript will throw an error on this statement.
+ * If a tag type is missing from the map, TypeScript will throw an error on this statement.
  *
  * ⚠️ Does not actually exist at runtime, so it must not be used!
+ * @internal
  */
 declare const EnsureAllArenaTagTypesAreMapped: ArenaTagTypeMap[ArenaTagType] & never;
