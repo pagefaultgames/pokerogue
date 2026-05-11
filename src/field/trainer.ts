@@ -488,7 +488,7 @@ export class Trainer extends Phaser.GameObjects.Container {
     if (Object.hasOwn(pokemonPrevolutions, baseSpecies.speciesId) && ret.speciesId !== baseSpecies.speciesId) {
       retry = true;
     } else if (template.isBalanced(battle.enemyParty.length)) {
-      const partyMemberTypes = battle.enemyParty.flatMap(p => p.getTypes(true));
+      const partyMemberTypes = battle.enemyParty.flatMap(p => p.getTypes());
       if (
         partyMemberTypes.indexOf(ret.type1) > -1
         || (ret.type2 !== null && partyMemberTypes.indexOf(ret.type2) > -1)

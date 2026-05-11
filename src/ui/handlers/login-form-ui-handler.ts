@@ -1,4 +1,4 @@
-import { pokerogueApi } from "#api/pokerogue-api";
+import { pokerogueApi } from "#api/api";
 import { globalScene } from "#app/global-scene";
 import { UiMode } from "#enums/ui-mode";
 import type { InputFieldConfig } from "#ui/form-modal-ui-handler";

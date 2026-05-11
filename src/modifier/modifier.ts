@@ -3246,6 +3246,13 @@ export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
   setTransferrableFalse(): void {
     this.isTransferable = false;
   }
+
+  public override apply(pokemon: Pokemon, target?: Pokemon, ...args: unknown[]): boolean {
+    if (pokemon.isFainted()) {
+      return false;
+    }
+    return super.apply(pokemon, target, ...args);
+  }
 }
 
 /**

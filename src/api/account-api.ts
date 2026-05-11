@@ -9,12 +9,8 @@ import type {
 } from "#types/api";
 import { removeCookie, setCookie } from "#utils/cookies";
 
-/**
- * A wrapper for PokéRogue account API requests.
- */
+/** A wrapper for PokéRogue account API requests. */
 export class PokerogueAccountApi extends ApiBase {
-  //#region Public
-
   /**
    * Request the {@linkcode AccountInfoResponse | UserInfo} of the logged in user.
    * The user is identified by the {@linkcode SESSION_ID_COOKIE_NAME | session cookie}.
@@ -40,7 +36,7 @@ export class PokerogueAccountApi extends ApiBase {
    * @param registerData The {@linkcode AccountRegisterRequest} to send
    * @returns An error message if something went wrong
    */
-  public async register(registerData: AccountRegisterRequest) {
+  public async register(registerData: AccountRegisterRequest): Promise<string | null> {
     try {
       const response = await this.doPost("/account/register", registerData, "form-urlencoded");
 
@@ -61,7 +57,7 @@ export class PokerogueAccountApi extends ApiBase {
    * @param loginData The {@linkcode AccountLoginRequest} to send
    * @returns An error message if something went wrong
    */
-  public async login(loginData: AccountLoginRequest) {
+  public async login(loginData: AccountLoginRequest): Promise<string | null> {
     try {
       const response = await this.doPost("/account/login", loginData, "form-urlencoded");
 
@@ -81,9 +77,10 @@ export class PokerogueAccountApi extends ApiBase {
 
   /**
    * Send a logout request.
+   * @remarks
    * **Always** (no matter if failed or not) removes the session cookie.
    */
-  public async logout() {
+  public async logout(): Promise<void> {
     try {
       const response = await this.doGet("/account/logout");
 
@@ -97,7 +94,7 @@ export class PokerogueAccountApi extends ApiBase {
     removeCookie(SESSION_ID_COOKIE_NAME); // we are always clearing the cookie.
   }
 
-  public async changePassword(changePwData: AccountChangePwRequest) {
+  public async changePassword(changePwData: AccountChangePwRequest): Promise<string | null> {
     try {
       const response = await this.doPost("/account/changepw", changePwData, "form-urlencoded");
       if (response.ok) {

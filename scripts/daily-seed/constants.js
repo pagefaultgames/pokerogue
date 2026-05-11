@@ -5,6 +5,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+// #region Constants
+
 /**
  * A mapping of biome pool tier names to their corresponding IDs.
  * @enum {number}
