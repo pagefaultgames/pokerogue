@@ -343,6 +343,7 @@ export class BattleScene extends SceneBase {
   public spritePipeline: SpritePipeline;
 
   private bgm: BackgroundMusic | null = null;
+  private queuedBgmKey: string | null = null;
   private playTimeTimer: Phaser.Time.TimerEvent;
 
   public rngSeedOverride = "";
@@ -2335,8 +2336,11 @@ export class BattleScene extends SceneBase {
     }
     previous?.destroy();
 
-    this.bgm = new BackgroundMusic(bgmName, loop, loopPoint);
-    this.bgm.play(this.masterVolume * this.bgmVolume);
+    this.loadBgm(bgmName, () => {
+      this.bgm = new BackgroundMusic(bgmName, loop, loopPoint);
+      this.bgm.play(this.masterVolume * this.bgmVolume);
+      this.queuedBgmKey = null;
+    });
   }
 
   /**
@@ -2350,20 +2354,21 @@ export class BattleScene extends SceneBase {
    * @returns The {@linkcode BackgroundMusic} instance for the new bgm,
    * or `null` if no valid bgm could be played or the input bgm was the same as the currently playing bgm
    */
-  public playBgm(bgmName?: string, fadeOutPrevious = false, loop = true): BackgroundMusic | null {
+  public playBgm(bgmName?: string, fadeOutPrevious = false, loop = true): void {
     const resolvedName = timedEventManager.getEventBgmReplacement(
       bgmName ?? this.currentBattle?.getBgmOverride() ?? this.arena?.bgm,
     );
 
-    if (!resolvedName) {
-      return null;
+    if (!resolvedName || resolvedName === this.queuedBgmKey) {
+      return;
     }
+    this.queuedBgmKey = resolvedName;
 
     if (this.bgm?.key === resolvedName) {
       if (!this.bgm.isPlaying) {
         this.bgm.play(this.masterVolume * this.bgmVolume);
       }
-      return null;
+      return;
     }
 
     const loopPoint = resolvedName === this.arena?.bgm ? this.arena.bgmLoopPoint : this.getBgmLoopPoint(resolvedName);
@@ -2379,8 +2384,6 @@ export class BattleScene extends SceneBase {
     } else {
       this.playNewBgm(resolvedName, loop, loopPoint);
     }
-
-    return this.bgm;
   }
 
   /**
