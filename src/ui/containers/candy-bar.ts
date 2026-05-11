@@ -18,8 +18,6 @@ export class CandyBar extends Phaser.GameObjects.Container {
   private pendingCandyAdditions: { speciesId: SpeciesId; numCandiesAdded: number }[];
   private cumulativeCandiesAdded: number;
 
-  public shown: boolean;
-
   constructor() {
     super(globalScene, globalScene.scaledCanvas.width, -globalScene.scaledCanvas.height + 15);
   }
@@ -44,7 +42,6 @@ export class CandyBar extends Phaser.GameObjects.Container {
 
     this.add([this.bg, this.candyIcon, this.candyOverlayIcon, this.countText]) //
       .setVisible(false);
-    this.shown = false;
     this.isHiding = false;
     this.pendingCandyAdditions = [];
     this.cumulativeCandiesAdded = 0;
@@ -59,8 +56,8 @@ export class CandyBar extends Phaser.GameObjects.Container {
    * @param starterSpeciesId - The {@linkcode SpeciesId} of the starter to display
    * @param numCandiesAdded - The number of candies just to the starter1
    */
-  showStarterSpeciesCandy(starterSpeciesId: SpeciesId, numCandiesAdded: number): void {
-    if (this.shown) {
+  public showStarterSpeciesCandy(starterSpeciesId: SpeciesId, numCandiesAdded: number): void {
+    if (this.visible) {
       if (!this.isHiding && this.speciesId === starterSpeciesId) {
         this.cumulativeCandiesAdded += numCandiesAdded;
         this.countText.setText(
@@ -98,9 +95,7 @@ export class CandyBar extends Phaser.GameObjects.Container {
 
     globalScene.fieldUI.bringToTop(this);
 
-    if (this.tween) {
-      this.tween.stop();
-    }
+    this.tween?.stop();
 
     globalScene.playSound("se/shing");
 
@@ -116,16 +111,16 @@ export class CandyBar extends Phaser.GameObjects.Container {
     });
 
     this.setVisible(true);
-    this.shown = true;
     this.speciesId = starterSpeciesId;
   }
 
   /**
-   * Slide the candy bar off-screen. Resolves once the hide tween has finished and queues the next candy bar if pending.
+   * Slide the candy bar off-screen.
+   * Resolves once the hide tween has finished and queues the next candy bar if pending.
    */
-  hide(): Promise<void> {
+  public async hide(): Promise<void> {
     return new Promise<void>(resolve => {
-      if (!this.shown || this.isHiding) {
+      if (!this.visible || this.isHiding) {
         return resolve();
       }
 
@@ -147,7 +142,6 @@ export class CandyBar extends Phaser.GameObjects.Container {
         ease: "Sine.easeIn",
         onComplete: () => {
           this.tween = null;
-          this.shown = false;
           this.isHiding = false;
           this.setVisible(false);
           resolve();
@@ -165,7 +159,7 @@ export class CandyBar extends Phaser.GameObjects.Container {
    * @remarks
    * The wait is compressed to 500ms while {@linkcode pendingCandyAdditions} is not empty.
    */
-  resetAutoHideTimer(): void {
+  private resetAutoHideTimer(): void {
     if (this.autoHideTimer) {
       clearInterval(this.autoHideTimer);
     }
