@@ -13,27 +13,17 @@ import {
   promptNature,
   promptSpeciesId,
   promptVariant,
-  type Variant,
 } from "#daily-seed/prompts/pokemon";
+import type { DailySeedStarter, DailySeedStarterTuple } from "#types/daily-run";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import { number, select } from "@inquirer/prompts";
-
-export type StarterConfig = {
-  speciesId?: number;
-  formIndex?: number;
-  variant?: Variant;
-  moveset?: number[];
-  nature?: number;
-  ability?: number;
-  passive?: number;
-};
 
 /**
  * Prompt the user to configure the daily run starters.
  * @returns A Promise that resolves with the configured starter Pokemon.
  * @remarks All 3 **must** be configured with at least a SpeciesId.
  */
-export async function promptStarters(): Promise<StarterConfig[]> {
+export async function promptStarters(): Promise<DailySeedStarterTuple> {
   const numStarters = await number({
     message: "Please enter the number of starters.",
     min: 1,
@@ -42,11 +32,11 @@ export async function promptStarters(): Promise<StarterConfig[]> {
     default: 3,
   });
 
-  const starters: StarterConfig[] = [];
+  const starters: DailySeedStarter[] = [];
 
   async function promptStarter() {
     const speciesId = await promptSpeciesId();
-    const starterConfig: StarterConfig = { speciesId };
+    const starterConfig: DailySeedStarter = { speciesId };
     await promptStarterOptions(starterConfig);
     starters.push(starterConfig);
   }
@@ -55,7 +45,7 @@ export async function promptStarters(): Promise<StarterConfig[]> {
     await promptStarter();
   }
 
-  return starters;
+  return starters as DailySeedStarterTuple;
 }
 
 /**
@@ -67,7 +57,7 @@ const starterOptions = [...STARTER_OPTIONS];
  * Prompt the user to configure the individual starter pokemon
  * @param starterConfig - The starter config to configure; will be mutated in place
  */
-async function promptStarterOptions(starterConfig: StarterConfig): Promise<void> {
+async function promptStarterOptions(starterConfig: DailySeedStarter): Promise<void> {
   if (starterOptions.length === 1) {
     // Only "finish" left
     return;

@@ -5,11 +5,17 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import type { CustomSeedConfig } from "#daily-seed/main";
 import { BiomeId } from "#enums/biome-id";
 import { BiomePoolTier as BIOME_POOL_TIERS } from "#enums/biome-pool-tier";
 import { Challenges } from "#enums/challenges";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import type {
+  CustomDailyRunConfig,
+  DailyEventChallenge,
+  DailyEventMysteryEncounter,
+  DailyForcedWave,
+  DailyTrainerManipulation,
+} from "#types/daily-run";
 import { getEnumKeys } from "#utils/enums";
 import { toTitleCase, toUpperSnakeCase } from "#utils/strings";
 import { confirm, input, number, search, select } from "@inquirer/prompts";
@@ -17,33 +23,6 @@ import { Ajv } from "ajv";
 import chalk from "chalk";
 import customDailyRunSchema from "../../../src/data/daily-seed/schema.json";
 import { promptSpeciesId } from "./pokemon.js";
-
-export type ForcedWaveConfig =
-  | {
-      waveIndex: number;
-      speciesId: number;
-      hiddenAbility?: boolean | undefined;
-    }
-  | {
-      waveIndex: number;
-      tier: number;
-      hiddenAbility?: boolean | undefined;
-    };
-
-export type DailyTrainerManipulation = {
-  waveIndex: number;
-  isTrainer: boolean;
-};
-
-export type DailyEventChallenge = {
-  id: number;
-  value: number;
-};
-
-export type DailyEventMysteryEncounter = {
-  waveIndex: number;
-  type: number;
-};
 
 const ajv = new Ajv({
   allErrors: true,
@@ -85,7 +64,7 @@ export async function promptLuck(): Promise<number> {
  * Prompt the user to enter a starting biome.
  * @returns A Promise that resolves with the chosen biome.
  */
-export async function promptBiome(): Promise<number> {
+export async function promptBiome(): Promise<BiomeId> {
   const biomeName = await search({
     message: "Please enter the starting biome to set.",
     source: term => {
@@ -93,19 +72,19 @@ export async function promptBiome(): Promise<number> {
       if (!term) {
         return biomes;
       }
-      return ["1", "2"];
+      return biomes.filter(id => id.toLowerCase().includes(term.toLowerCase()));
     },
   });
   const biomeId = BiomeId[toUpperSnakeCase(biomeName) as keyof typeof BiomeId];
-  return biomeId;
+  return biomeId as BiomeId;
 }
 
 /**
  * Prompt the user to enter a custom config.
- * The input is a JSON stringified version of the {@linkcode CustomSeedConfig} object.
- * @returns A Promise that resolves with the parsed {@linkcode CustomSeedConfig}.
+ * The input is a JSON stringified version of the {@linkcode CustomDailyRunConfig} object.
+ * @returns A Promise that resolves with the parsed {@linkcode CustomDailyRunConfig}.
  */
-export async function promptEdit(): Promise<Partial<CustomSeedConfig>> {
+export async function promptEdit(): Promise<Partial<CustomDailyRunConfig>> {
   const config = await input({
     message: chalk.blue("Enter a custom config to use."),
     validate: value => {
@@ -156,8 +135,8 @@ export async function promptSeed(): Promise<string> {
  * Prompt the user to enter a list of forced waves.
  * @returns A Promise that resolves with the list of forced waves.
  */
-export async function promptForcedWaves(): Promise<ForcedWaveConfig[] | undefined> {
-  const forcedWaves: ForcedWaveConfig[] = [];
+export async function promptForcedWaves(): Promise<DailyForcedWave[] | undefined> {
+  const forcedWaves: DailyForcedWave[] = [];
 
   async function addForcedWave() {
     const waveIndex = await number({

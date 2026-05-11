@@ -14,39 +14,21 @@ import {
   promptSegments,
   promptSpeciesId,
   promptVariant,
-  type Variant,
 } from "#daily-seed/prompts/pokemon";
+import type { DailySeedBoss } from "#types/daily-run";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import { confirm, select } from "@inquirer/prompts";
 import chalk from "chalk";
 
-/** The config for a single Boss Pokemon. */
-export type BossConfig = {
-  speciesId?: number;
-  formIndex?: number;
-  variant?: Variant;
-  moveset?: number[];
-  nature?: number;
-  ability?: number;
-  passive?: number;
-  segments?: number;
-  catchable?: boolean;
-};
-
-/**
- * The config for the daily run boss.
- */
-let bossConfig: BossConfig = {};
-
 /**
  * Prompt the user to configure the daily run boss.
- * @returns A Promise that resolves with the updated {@linkcode BossConfig | boss configuration}.
+ * @returns A Promise that resolves with the updated {@linkcode DailySeedBoss | boss configuration}.
  * @remarks The boss **must** be configured with at least a `SpeciesId`.
  */
-export async function promptBoss(): Promise<BossConfig> {
+export async function promptBoss(): Promise<DailySeedBoss> {
   const speciesId = await promptSpeciesId();
-  bossConfig = { speciesId };
-  return await promptBossOptions();
+  const bossConfig: DailySeedBoss = { speciesId };
+  return await promptBossOptions(bossConfig);
 }
 
 /**
@@ -56,9 +38,9 @@ const bossOptions = [...BOSS_OPTIONS];
 
 /**
  * Prompt the user to configure the boss pokemon.
- * @returns A Promise that resolves with the updated {@linkcode BossConfig | boss configuration}.
+ * @returns A Promise that resolves with the updated {@linkcode DailySeedBoss | boss configuration}.
  */
-async function promptBossOptions(): Promise<BossConfig> {
+async function promptBossOptions(bossConfig: DailySeedBoss): Promise<DailySeedBoss> {
   if (bossOptions.length === 1) {
     return bossConfig;
   }
@@ -101,5 +83,5 @@ async function promptBossOptions(): Promise<BossConfig> {
       return bossConfig;
   }
   bossOptions.splice(bossOptions.indexOf(option), 1);
-  return await promptBossOptions();
+  return await promptBossOptions(bossConfig);
 }

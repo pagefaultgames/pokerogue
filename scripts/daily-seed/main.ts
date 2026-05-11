@@ -11,14 +11,7 @@
  */
 
 import { EDIT_OPTIONS } from "#daily-seed/constants";
-import type { BossConfig } from "#daily-seed/prompts/boss";
 import { promptBoss } from "#daily-seed/prompts/boss";
-import type {
-  DailyEventChallenge,
-  DailyEventMysteryEncounter,
-  DailyTrainerManipulation,
-  ForcedWaveConfig,
-} from "#daily-seed/prompts/general";
 import {
   promptBiome,
   promptChallenges,
@@ -30,8 +23,8 @@ import {
   promptSeed,
   promptTrainerManipulation,
 } from "#daily-seed/prompts/general";
-import type { StarterConfig } from "#daily-seed/prompts/starter";
 import { promptStarters } from "#daily-seed/prompts/starter";
+import type { CustomDailyRunConfig } from "#types/daily-run";
 import { getPropertyValue } from "#utils/arguments";
 import { promptOverwrite, writeFileSafe } from "#utils/file";
 import { toTitleCase } from "#utils/strings";
@@ -47,31 +40,10 @@ const SCRIPT_VERSION: string = "1.0.0";
 
 const rootDir = join(import.meta.dirname, "..", "..");
 
-export type CustomSeedConfig = {
-  starters?: StarterConfig[] | undefined;
-  boss?: BossConfig | undefined;
-  biome?: number | undefined;
-  luck?: number | undefined;
-  forcedWaves?: ForcedWaveConfig[] | undefined;
-  trainerManipulations?: DailyTrainerManipulation[] | undefined;
-  challenges?: DailyEventChallenge[] | undefined;
-  mysteryEncounters?: DailyEventMysteryEncounter[] | undefined;
-  startingMoney?: number | undefined;
-  seed: string;
-};
-
 /**
  * The config for the custom daily run seed.
  */
-const customSeedConfig: CustomSeedConfig = {
-  starters: undefined,
-  boss: undefined,
-  biome: undefined,
-  luck: undefined,
-  forcedWaves: undefined,
-  trainerManipulations: undefined,
-  challenges: undefined,
-  startingMoney: undefined,
+const customSeedConfig: CustomDailyRunConfig = {
   seed: "",
 };
 
