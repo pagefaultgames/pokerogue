@@ -38,7 +38,13 @@ pnpm build            # Production build (uses .env.production -> bypassLogin = 
 pnpm build:app        # Offline-first build (uses .env.app -> bypassLogin = true)
 ```
 
-For one-shot local testing with submodule init + dependency install + dev server in a single command, run `run-local.bat` (Windows) or `./run-local.sh` (macOS / Linux / Git Bash).
+For one-shot local testing, run `run-local.bat` (Windows) or `./run-local.sh` (macOS / Linux / Git Bash). The script does the following in order:
+
+1. Frees port 8000 by killing whatever process owns it (handles leftover dev servers from a previous run that didn't exit cleanly).
+2. Pulls latest from `origin/feature/screen-reader-accessibility` if the working tree and index are both clean (silently skipped if there are uncommitted changes, so it never clobbers work).
+3. Initializes the `assets` and `locales` submodules.
+4. Runs `pnpm install` if `node_modules` is missing.
+5. Starts the dev server with `--open` so the browser launches automatically.
 
 ## Testing with Screen Readers
 
@@ -127,14 +133,28 @@ a11yManager.clearMenu();
 | `ui-inputs.ts` | Stats key announces HP / max HP / percent / status / level for every active Pokémon in battle, enemies first |
 | `level-up-phase.ts` | "{Pokemon} reached level {N}" -- announced unconditionally so screen readers stay informed even when the visual notification setting suppresses the showText prompt |
 
+## Diagnostic Logging (TEMPORARY — remove before final PR)
+
+A diagnostic surface is currently active in `AbstractControlSettingsUiHandler` to investigate why the keyboard / gamepad bindings tab announcements aren't reading in NVDA for the maintainer. Every call to `announceCurrentSetting()` writes a timestamped line to two places:
+
+- **localStorage** under key `a11yDebugLog` (browser-side fallback).
+- **`.a11y-debug-log.txt` at the repo root**, via a POST to `/a11y-debug-log` handled by a Vite dev-server middleware (`plugins/vite/a11y-debug-log-plugin.ts`).
+
+The file is in `.gitignore`. Claude (or anyone with filesystem access) can read it directly with the Read tool while the user just plays normally -- no DevTools required.
+
+Browser-side helpers exposed on `window`:
+- `dumpA11yLog()` -- downloads the localStorage copy as a `.txt` file.
+- `clearA11yLog()` -- wipes both localStorage and the on-disk file.
+
+**Before the upstream PR is opened, the following commits must be reverted**: the `debug(a11y)` commit that adds `appendA11yDebugLog`, the Vite plugin file, and the `.gitignore` entry. Search for `appendA11yDebugLog` to find every touch.
+
 ## PR Status
 
 This branch (`feature/screen-reader-accessibility` on `MichaelJohann1/pokerogue`) targets `pagefaultgames/pokerogue:beta`.
 
-- **Up to date with upstream/beta**: yes (merged via `git merge upstream/beta`; merge commit resolves the two real conflicts and adapts to beta's renames). 0 commits behind, 53 commits ahead. PR diff is ~51 files / +2,217 / −12.
+- **Up to date with upstream/beta**: yes (merged via `git merge upstream/beta`; merge commit resolves the two real conflicts and adapts to beta's renames). 0 commits behind. PR diff is ~51 files plus the temporary diagnostic infrastructure.
 - **Locales PR**: needs to be opened separately at `MichaelJohann1/pokerogue-locales:feature/accessibility-namespace` -> `pagefaultgames/pokerogue-locales:main`. Once that merges, revert the `.gitmodules` URL change in this PR and bump the submodule SHA to the upstream merged commit.
+- **Diagnostic code**: the `debug(a11y)` commits are still on the branch and MUST be reverted before final upstream PR (see Diagnostic Logging section above).
 - **TypeScript**: clean (`pnpm typecheck`).
-- **Biome lint+format**: clean across all 41 changed files (`pnpm biome:ci`).
-- **Tests**: passing UI suites we touched (`pokedex.test.ts`, `starter-select.test.ts`, `rebinding-setting.test.ts`, `inputs.test.ts` -- 44 passed, 9 todo, 0 failed).
-
-A safety tag `pre-rebase-20260509` and a backup branch `backup-pre-rebase` exist locally in case you ever need to roll back to the pre-merge state.
+- **Biome lint+format**: clean across all changed files (`pnpm biome:ci`).
+- **Tests**: passing UI suites (`pokedex.test.ts`, `starter-select.test.ts`, `rebinding-setting.test.ts`, `inputs.test.ts` -- 44 passed, 9 todo, 0 failed).

@@ -206,7 +206,12 @@ clear(): void {
 
 ### Setup
 1. Install NVDA from https://www.nvaccess.org/download/
-2. Run `run-local.bat` (Windows) or `./run-local.sh` (macOS / Linux). The script initializes submodules, installs dependencies on first run, then starts the dev server with `--open`.
+2. Run `run-local.bat` (Windows) or `./run-local.sh` (macOS / Linux). The script:
+   1. Frees port 8000 by killing any leftover dev server from a previous run.
+   2. Fast-forward-pulls `origin/feature/screen-reader-accessibility` if the working tree and index are both clean (silently skipped if you have local edits).
+   3. Initializes the `assets` and `locales` submodules.
+   4. Runs `pnpm install` if `node_modules` is missing.
+   5. Starts the dev server with `--open`.
 3. Start NVDA if it is not already running.
 
 ### Navigation Controls (defaults; remap in Settings)
@@ -237,6 +242,32 @@ clear(): void {
 - Check `#a11y-form-overlay` exists when login/register screens are active.
 - If a screen sounds like it's "cutting itself off" after entry, check for two `announceMessage` calls in the `show()` flow -- the second clobbers the first on the assertive live region.
 - If NVDA reads out raw locale keys like `accessibility:menuContext`, the locales submodule isn't checked out at the fork branch with `accessibility.json`. Run `git submodule update --init --recursive` (or just `run-local.bat` / `run-local.sh`, which does it for you).
+
+### Diagnostic Logging (TEMPORARY — revert before upstream PR)
+
+While investigating an in-the-field issue with the keyboard / gamepad bindings tab not reading in NVDA, this branch carries a diagnostic surface:
+
+- `AbstractControlSettingsUiHandler.announceCurrentSetting()` calls `appendA11yDebugLog(...)` on every invocation.
+- That helper:
+  - Appends a timestamped line to `localStorage["a11yDebugLog"]` (browser-side, fallback).
+  - POSTs the same line to `/a11y-debug-log` on the dev server, where a tiny Vite middleware (`plugins/vite/a11y-debug-log-plugin.ts`) appends it to `.a11y-debug-log.txt` at the repo root.
+- `.a11y-debug-log.txt` is in `.gitignore` and never committed.
+- Two helpers are exposed on `window` for manual control from the DevTools console:
+  - `dumpA11yLog()` -- downloads the localStorage copy as a `.txt` file.
+  - `clearA11yLog()` -- wipes both the localStorage entry and the on-disk file.
+
+**Workflow for diagnosing announcement bugs:**
+1. Run `run-local.bat` (kills any old server, pulls latest, starts dev server).
+2. Reproduce the issue (e.g. open Settings -> Keyboard tab, arrow up/down).
+3. Read `.a11y-debug-log.txt` to see whether `announceCurrentSetting()` was called, what arguments it computed, and what string it sent to `a11yManager.announceMessage(...)`.
+
+**Before opening the upstream PR**, the diagnostic infrastructure must be reverted:
+- `src/ui/settings/abstract-control-settings-ui-handler.ts` -- remove `appendA11yDebugLog`, the `window.dumpA11yLog` / `clearA11yLog` declarations, and all call sites.
+- `plugins/vite/a11y-debug-log-plugin.ts` -- delete the file.
+- `vite.config.ts` -- remove the plugin import / registration.
+- `.gitignore` -- remove the `.a11y-debug-log.txt` line.
+
+Search for `appendA11yDebugLog` to find every reference.
 
 ### Beta integration notes
 
