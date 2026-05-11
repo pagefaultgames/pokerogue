@@ -7,7 +7,7 @@ import LanguageDetector from "i18next-browser-languagedetector";
 import HttpBackend from "i18next-http-backend";
 import { KoreanPostpositionProcessor } from "i18next-korean-postposition-processor";
 
-//#region Interfaces/Types
+// #region Interfaces/Types
 
 interface LoadingFontFaceProperty {
   face: FontFace;
@@ -15,13 +15,12 @@ interface LoadingFontFaceProperty {
   only?: string[];
 }
 
-//#endregion
+// #endregion Interfaces/Types
 
-//#region Constants
+// #region Constants
 
 const unicodeRanges = {
   fullwidth: "U+FF00-FFEF",
-  kana: "U+3040-30FF",
   CJKCommon: "U+2E80-2EFF,U+3000-303F,U+31C0-31EF,U+3200-32FF,U+3400-4DBF,U+F900-FAFF,U+FE30-FE4F",
   CJKIdeograph: "U+4E00-9FFF",
   devanagari: "U+0900-097F",
@@ -31,8 +30,6 @@ const unicodeRanges = {
 
 const rangesByLanguage = {
   chinese: [unicodeRanges.CJKCommon, unicodeRanges.fullwidth, unicodeRanges.CJKIdeograph].join(","),
-  // biome-ignore format: prevent silly formatting
-  japanese: [unicodeRanges.CJKCommon, unicodeRanges.fullwidth, unicodeRanges.kana, unicodeRanges.CJKIdeograph].join(","),
 };
 
 const fonts: LoadingFontFaceProperty[] = [
@@ -73,13 +70,6 @@ const fonts: LoadingFontFaceProperty[] = [
       "zh",
     ],
   },
-  // japanese
-  {
-    face: new FontFace("emerald", `url(${getCachedUrl("./fonts/pokemon-bw.ttf")})`, {
-      unicodeRange: rangesByLanguage.japanese,
-    }),
-    only: ["ja"],
-  },
   // devanagari
   {
     face: new FontFace("emerald", `url(${getCachedUrl("./fonts/8-bit-devanagari.ttf")})`, {
@@ -103,9 +93,9 @@ const fonts: LoadingFontFaceProperty[] = [
   },
 ];
 
-//#endregion
+// #endregion Constants
 
-//#region Functions
+// #region Functions
 
 async function initFonts(language: string | undefined) {
   const results = await Promise.allSettled(
@@ -138,12 +128,12 @@ function i18nMoneyFormatter(amount: any): string {
   return `@[MONEY]{${i18next.t("common:money", { amount })}}`;
 }
 
+// #endregion Functions
+
 // assigned during post-processing in #app/plugins/vite/namespaces-i18n-plugin.ts
 const nsEn: string[] = [];
 
-//#endregion
-
-//#region Exports
+// #region Init
 
 /*
  * i18next is a localization library for maintaining and using translation resources.
@@ -175,30 +165,30 @@ await i18next
         default: ["en"],
       },
       supportedLngs: [
-        "en",
-        "es-ES",
+        "en", // English
+        "es-ES", // Spanish (Spain)
         "es-419", // LATAM Spanish
-        "fr",
-        "it",
-        "de",
-        "zh-Hans",
-        "zh-Hant",
-        "pt-BR",
-        "ko",
-        "ja",
-        "ca",
-        "eu",
-        "da",
-        "th",
-        "tr",
-        "ro",
-        "ru",
-        "id",
-        "hi",
-        "tl",
-        "nb-NO",
-        "sv",
-        "uk",
+        "fr", // French
+        "it", // Italian
+        "de", // German
+        "zh-Hans", // Chinese Simplified
+        "zh-Hant", // Chinese Traditional
+        "pt-BR", // Brazilian Portuguese
+        "ko", // Korean
+        "ja", // Japanese
+        "ca", // Catalan
+        "eu", // Basque
+        "da", // Danish
+        "th", // Thai
+        "tr", // Turkish
+        "ro", // Romanian
+        "ru", // Russian
+        "id", // Indonesian
+        "hi", // Hindi
+        "tl", // Tagalog
+        "nb-NO", // Norwegian Bokmål
+        "sv", // Swedish
+        "uk", // Ukrainian
       ],
       backend: {
         loadPath(lng: string, [ns]: string[]) {
@@ -234,9 +224,9 @@ await i18next
     },
   );
 
-//#endregion
+// #endregion Init
 
-//#region Event Proxy
+// #region Event Proxy
 
 if (timedEventManager.hasEventTextReplacement()) {
   console.warn("Event text replacements are active.");
@@ -252,4 +242,4 @@ if (timedEventManager.hasEventTextReplacement()) {
   });
 }
 
-//#endregion
+// #endregion Event Proxy

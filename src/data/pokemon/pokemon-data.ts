@@ -318,6 +318,7 @@ export class PokemonWaveData {
  */
 export class PokemonTurnData {
   // #region Move usage-related properties
+
   // All of these properties can likely go inside a "move-in-flight" object later
 
   /** How many times the current move should hit the target(s) */

@@ -3,6 +3,7 @@ import type { PreventHoverExpansion } from "#types/type-helpers";
 import type { SetupServer } from "msw/node";
 
 // #region Object-related types
+
 /**
  * A key that can be stringified.
  * @privateRemarks
@@ -36,7 +37,7 @@ type FromEntries<E extends Iterable<readonly [StringableKey, unknown]>> =
       ? Record<Unstringify<K>, V>
       : never;
 
-// #endregion Object-related code
+// #endregion Object-related types
 
 // #region Declaration merges
 

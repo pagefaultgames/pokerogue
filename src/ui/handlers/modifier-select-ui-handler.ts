@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { allMoves } from "#data/data-lists";
 import { getPokeballAtlasKey } from "#data/pokeball";
@@ -275,7 +275,8 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     const { promise: tweenPromise, resolve: tweenResolve } = Promise.withResolvers<void>();
     let i = 0;
 
-    // #region: animation
+    // #region animation
+
     /** Holds promises that resolve once each reward's *upgrade animation* has finished playing */
     const rewardAnimPromises: Promise<void>[] = [];
     /** Holds promises that resolves once *all* animations for a reward have finished playing */
@@ -390,7 +391,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
       });
     });
 
-    // #endregion: animation
+    // #endregion animation
 
     return true;
   }
@@ -1035,7 +1036,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
   }
 
   updateCostText(): void {
-    const cost = Overrides.WAIVE_ROLL_FEE_OVERRIDE ? 0 : this.modifierTypeOption.cost;
+    const cost = activeOverrides.WAIVE_ROLL_FEE_OVERRIDE ? 0 : this.modifierTypeOption.cost;
     const textStyle = cost <= globalScene.money ? TextStyle.MONEY : TextStyle.PARTY_RED;
 
     const formattedMoney = formatMoney(globalScene.moneyFormat, cost);

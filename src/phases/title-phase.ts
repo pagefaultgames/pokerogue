@@ -3,7 +3,7 @@ import { loggedInUser } from "#app/account";
 import { GameMode, getGameMode } from "#app/game-mode";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { Phase } from "#app/phase";
 import { bypassLogin } from "#constants/app-constants";
 import { getDailyRunStarters, startDailyEventChallenges } from "#data/daily-seed/daily-run";
@@ -338,11 +338,11 @@ export class TitlePhase extends Phase {
       } else {
         // Grab first 10 chars of ISO date format (YYYY-MM-DD) and convert to base64
         let seed: string = btoa(new Date().toISOString().slice(0, 10));
-        if (Overrides.DAILY_RUN_SEED_OVERRIDE != null) {
+        if (activeOverrides.DAILY_RUN_SEED_OVERRIDE != null) {
           seed =
-            typeof Overrides.DAILY_RUN_SEED_OVERRIDE === "string"
-              ? Overrides.DAILY_RUN_SEED_OVERRIDE
-              : JSON.stringify(Overrides.DAILY_RUN_SEED_OVERRIDE);
+            typeof activeOverrides.DAILY_RUN_SEED_OVERRIDE === "string"
+              ? activeOverrides.DAILY_RUN_SEED_OVERRIDE
+              : JSON.stringify(activeOverrides.DAILY_RUN_SEED_OVERRIDE);
         }
         generateDaily(seed);
       }

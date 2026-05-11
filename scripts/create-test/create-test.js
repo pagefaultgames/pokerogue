@@ -23,13 +23,15 @@ import { HELP_FLAGS, showHelpText } from "./help-message.js";
  * @import {testType} from "./constants.js"
  */
 
-//#region Constants
+// #region Constants
+
 const version = "2.1.1";
 const __dirname = import.meta.dirname;
 const projectRoot = join(__dirname, "..", "..");
-//#endregion
 
-//#region Main
+// #endregion Constants
+
+// #region Main
 
 /**
  * Run the interactive `test:create` CLI.
@@ -85,6 +87,6 @@ function doCreateFile(testType, fileNameAnswer) {
   console.log(chalk.green.bold(`✔ File created at: ${filePath.replace(`${projectRoot}/`, "")}\n`));
 }
 
-//#endregion
+// #endregion Main
 
 await runInteractive();
