@@ -1,19 +1,13 @@
 import { ApiBase } from "#api/api-base";
-import { PokerogueSessionSavedataApi } from "#api/pokerogue-session-savedata-api";
-import { PokerogueSystemSavedataApi } from "#api/pokerogue-system-savedata-api";
+import { PokerogueSessionSavedataApi } from "#api/session-savedata-api";
+import { PokerogueSystemSavedataApi } from "#api/system-savedata-api";
 import { MAX_INT_ATTR_VALUE } from "#app/constants";
 import type { UpdateAllSavedataRequest } from "#types/api";
 
-/**
- * A wrapper for PokéRogue savedata API requests.
- */
+/** A wrapper for PokéRogue savedata API requests. */
 export class PokerogueSavedataApi extends ApiBase {
-  //#region Fields
-
   public readonly system: PokerogueSystemSavedataApi;
   public readonly session: PokerogueSessionSavedataApi;
-
-  //#region Public
 
   constructor(base: string) {
     super(base);
@@ -26,7 +20,7 @@ export class PokerogueSavedataApi extends ApiBase {
    * @param bodyData The {@linkcode UpdateAllSavedataRequest | request data} to send
    * @returns An error message if something went wrong
    */
-  public async updateAll(bodyData: UpdateAllSavedataRequest) {
+  public async updateAll(bodyData: UpdateAllSavedataRequest): Promise<string> {
     try {
       const rawBodyData = JSON.stringify(bodyData, (_k: any, v: any) =>
         typeof v === "bigint" ? (v <= MAX_INT_ATTR_VALUE ? Number(v) : v.toString()) : v,

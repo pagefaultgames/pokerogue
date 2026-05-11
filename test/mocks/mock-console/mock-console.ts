@@ -38,7 +38,7 @@ export class MockConsole implements Omit<Console, "Console"> {
    */
   private readonly console = console;
 
-  //#region Static Properties
+  // #region Static Properties
 
   /**
    * Queue a warning to be printed after all tests in the same file are finished.
@@ -58,9 +58,9 @@ export class MockConsole implements Omit<Console, "Console"> {
     MockConsole.queuedWarnings.splice(0);
   }
 
-  //#endregion Static Properties
+  // #endregion Static Properties
 
-  //#region Utilities
+  // #region Utilities
 
   /**
    * Check whether a given set of data is in the blacklist to be barred from logging.
@@ -93,9 +93,10 @@ export class MockConsole implements Omit<Console, "Console"> {
     return (data as unknown[]).map(a => color(typeof a === "function" || typeof a === "object" ? this.getStr(a) : a));
   }
 
-  //#endregion Utilities
+  // #endregion Utilities
 
-  //#region Custom wrappers
+  // #region Custom wrappers
+
   public info(...data: unknown[]) {
     return this.log(...data);
   }
@@ -160,9 +161,10 @@ export class MockConsole implements Omit<Console, "Console"> {
     this.console.error(...this.format(chalk.redBright, data));
   }
 
-  //#endregion Custom Wrappers
+  // #endregion Custom Wrappers
 
-  //#region Copy-pasted Console code
+  // #region Copy-pasted Console code
+
   // TODO: Progressively add proper coloration and support for all these methods
   public dir(...args: Parameters<(typeof console)["dir"]>): ReturnType<(typeof console)["dir"]> {
     return this.console.dir(...args);
@@ -214,5 +216,6 @@ export class MockConsole implements Omit<Console, "Console"> {
   public timeStamp(...args: Parameters<(typeof console)["timeStamp"]>): ReturnType<(typeof console)["timeStamp"]> {
     return this.console.timeStamp(...args);
   }
-  //#endregion Copy-pasted Console code
+
+  // #endregion Copy-pasted Console code
 }

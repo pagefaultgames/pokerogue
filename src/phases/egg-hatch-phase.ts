@@ -76,6 +76,9 @@ export class EggHatchPhase extends Phase {
   start() {
     super.start();
 
+    // Hide previous candy bar if it exists
+    globalScene.candyBar.hide();
+
     globalScene.ui.setModeForceTransition(UiMode.EGG_HATCH_SCENE).then(() => {
       if (!this.egg) {
         return this.end();
@@ -380,25 +383,46 @@ export class EggHatchPhase extends Phase {
 
         globalScene.playSoundWithoutBgm("evolution_fanfare");
 
+        const hatchText = i18next.t("egg:hatchFromTheEgg", {
+          pokemonName: this.pokemon.species.getExpandedSpeciesName(),
+        });
+
+        // For new starter catches, `setPokemonCaught` queues its own "added as a starter" message,
+        // so defer it until after the hatch text is dismissed to avoid interrupting it mid-display
+        const rootSpeciesId = this.pokemon.species.getRootSpeciesId();
+        const isNewStarterCatch = !globalScene.gameData.dexData[rootSpeciesId].caughtAttr;
+
+        const finishHatch = () => {
+          globalScene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex).then(value => {
+            this.eggHatchData.setEggMoveUnlocked(value);
+            globalScene.ui.showText("", 0);
+            this.end();
+          });
+        };
+
         globalScene.ui.showText(
-          i18next.t("egg:hatchFromTheEgg", {
-            pokemonName: this.pokemon.species.getExpandedSpeciesName(),
-          }),
+          hatchText,
           null,
           () => {
-            globalScene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
-            globalScene.gameData.setPokemonCaught(this.pokemon, true, true).then(() => {
-              globalScene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex).then(value => {
-                this.eggHatchData.setEggMoveUnlocked(value);
-                globalScene.ui.showText("", 0);
-                this.end();
-              });
-            });
+            if (isNewStarterCatch) {
+              globalScene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
+              globalScene.gameData.setPokemonCaught(this.pokemon, true, true).then(finishHatch);
+            } else {
+              finishHatch();
+            }
           },
           null,
           true,
           3000,
         );
+
+        if (!isNewStarterCatch) {
+          const printDuration = (hatchText.length + 1) * 20;
+          globalScene.time.delayedCall(printDuration, () => {
+            globalScene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
+            globalScene.gameData.setPokemonCaught(this.pokemon, true, true);
+          });
+        }
       });
     });
     globalScene.tweens.add({

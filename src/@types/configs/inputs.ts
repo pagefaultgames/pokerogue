@@ -152,7 +152,8 @@ export interface SelectedDevice {
   [Device.KEYBOARD]: string;
 }
 
-//#region Button mappings
+// #region Button mappings
+
 /** Button keycode mappings for Dualshock controller */
 export type DualshockButtons = {
   RC_S: 0;
@@ -345,6 +346,7 @@ export type KeyboardMapping = {
   KEY_BACKSPACE: typeof Phaser.Input.Keyboard.KeyCodes.BACKSPACE;
   KEY_ALT: typeof Phaser.Input.Keyboard.KeyCodes.ALT;
 };
-//#endregion Button mappings
+
+// #endregion Button mappings
 
 export type MappingSettingName = SettingGamepad | SettingKeyboard;

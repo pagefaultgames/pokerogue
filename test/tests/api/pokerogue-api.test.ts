@@ -1,13 +1,13 @@
-import { pokerogueApi } from "#api/pokerogue-api";
+import { pokerogueApi } from "#api/api";
 import { initServerForApiTests } from "#test/setup/test-file-initialization";
 import { getApiBaseUrl } from "#test/utils/test-utils";
 import type { TitleStatsResponse } from "#types/api";
 import { HttpResponse, http } from "msw";
-import type { SetupServerApi } from "msw/node";
+import type { SetupServer } from "msw/node";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const apiBase = getApiBaseUrl();
-let server: SetupServerApi;
+let server: SetupServer;
 
 beforeAll(async () => {
   server = await initServerForApiTests();

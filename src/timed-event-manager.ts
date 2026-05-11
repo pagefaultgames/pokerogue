@@ -47,7 +47,8 @@ export class TimedEventManager {
    * @returns Whether the April Fools event is currently active.
    */
   isAprilFoolsActive(): boolean {
-    return this.activeEvent()?.bannerKey?.startsWith("aprf") ?? false;
+    const now = new Date();
+    return now.getUTCDate() === 1 && now.getUTCMonth() === 3;
   }
 
   activeEventHasBanner(): boolean {

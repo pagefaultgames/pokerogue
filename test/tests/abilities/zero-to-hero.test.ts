@@ -1,9 +1,11 @@
+import { getPokemonNameWithAffix } from "#app/messages";
 import { Status } from "#data/status-effect";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { GameManager } from "#test/framework/game-manager";
+import i18next from "i18next";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - ZERO TO HERO", () => {
@@ -96,5 +98,80 @@ describe("Abilities - ZERO TO HERO", () => {
     await game.toNextTurn();
 
     expect(palafin.formIndex).toBe(heroForm);
+  });
+
+  it("should only trigger the transformation message once in a single wave", async () => {
+    await game.classicMode.startBattle(SpeciesId.PALAFIN, SpeciesId.FEEBAS);
+
+    const palafin = game.field.getPlayerPokemon();
+    expect(palafin.formIndex).toBe(baseForm);
+
+    const message = i18next.t("abilityTriggers:postSummonZeroToHero", {
+      pokemonNameWithAffix: getPokemonNameWithAffix(palafin),
+    });
+
+    // switch out to trigger form change to Hero Form
+    game.doSwitchPokemon(1);
+    await game.toNextTurn();
+    expect(palafin.formIndex).toBe(heroForm);
+
+    // switch back in - message should appear once
+    game.textInterceptor.clearLogs();
+    game.doSwitchPokemon(1);
+    await game.toNextTurn();
+
+    expect(game.textInterceptor.logs.filter(log => log === message)).toHaveLength(1);
+
+    // switch out and back in again - message should not appear a second time
+    game.doSwitchPokemon(1);
+    await game.toNextTurn();
+    game.textInterceptor.clearLogs();
+    game.doSwitchPokemon(1);
+    await game.toNextTurn();
+
+    expect(game.textInterceptor.logs.filter(log => log === message)).toHaveLength(0);
+  });
+
+  it("should trigger the transformation message again in a subsequent wave after battle data resets", async () => {
+    game.override.startingWave(4);
+
+    await game.classicMode.startBattle(SpeciesId.PALAFIN, SpeciesId.FEEBAS);
+
+    const palafin = game.field.getPlayerPokemon();
+    expect(palafin.formIndex).toBe(baseForm);
+
+    const message = i18next.t("abilityTriggers:postSummonZeroToHero", {
+      pokemonNameWithAffix: getPokemonNameWithAffix(palafin),
+    });
+
+    // switch out to trigger form change to Hero Form
+    game.doSwitchPokemon(1);
+    await game.toNextTurn();
+    expect(palafin.formIndex).toBe(heroForm);
+
+    // switch back in - message should appear once
+    game.textInterceptor.clearLogs();
+    game.doSwitchPokemon(1);
+    await game.toNextTurn();
+
+    expect(game.textInterceptor.logs.filter(log => log === message)).toHaveLength(1);
+
+    game.move.select(MoveId.SPLASH);
+    await game.doKillOpponents();
+    await game.toNextWave();
+
+    // reset to base form after battle data reset
+    expect(palafin.formIndex).toBe(baseForm);
+
+    // switch out and back in again - message should appear again since battle data was reset
+    game.doSwitchPokemon(1);
+    await game.toNextTurn();
+    expect(palafin.formIndex).toBe(heroForm);
+
+    game.textInterceptor.clearLogs();
+    game.doSwitchPokemon(1);
+    await game.toNextTurn();
+
+    expect(game.textInterceptor.logs.filter(log => log === message)).toHaveLength(1);
   });
 });
