@@ -45,7 +45,6 @@ describe("Abilities - Hyper Cutter", () => {
     await game.toNextTurn();
 
     expect(enemy.getStatStage(Stat.ATK)).toEqual(0);
-    // biome-ignore lint/suspicious/useIterableCallbackReturn: false positive
     [Stat.ACC, Stat.DEF, Stat.EVA, Stat.SPATK, Stat.SPDEF, Stat.SPD].forEach((stat: number) =>
       expect(enemy.getStatStage(stat)).toBeLessThan(0),
     );

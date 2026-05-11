@@ -1,20 +1,19 @@
 <!--
-SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+SPDX-FileCopyrightText: 2024-2026 Pagefault Games
 
 SPDX-License-Identifier: CC-BY-NC-SA-4.0
 -->
 
 # 🎨 Art and 🎵 Music
 
-## Head of Art
-- Firel
+## Head Artist
+- “Splash Damage” splashceles
 
 ## Team Members
 
 ### Senior Artist
 - damocleas
 - “Hanniel” hanniel.15
-- “Splash Damage” splashceles
 
 ### Artist
 - bwl626
@@ -30,6 +29,11 @@ SPDX-License-Identifier: CC-BY-NC-SA-4.0
 - redactedinlight
 - “Togepi” togepimax
 - unicorn_power
+
+## Head Composer
+- Firel
+
+## Team Members
 
 ### Composers
 - Andr06

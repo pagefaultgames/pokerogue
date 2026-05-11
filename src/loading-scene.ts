@@ -372,13 +372,6 @@ export class LoadingScene extends SceneBase {
       .loadBgm("evolution", "bw/evolution.mp3")
       .loadBgm("evolution_fanfare", "bw/evolution_fanfare.mp3");
 
-    // TODO: Shouldn't this be inside the middle of the code?
-    this.load.plugin(
-      "rextexteditplugin",
-      "https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rextexteditplugin.min.js",
-      true,
-    );
-
     this.loadLoadingScreen();
 
     initializeGame();

@@ -54,7 +54,22 @@ describe("Terrain -", () => {
 
     const typeStr = toTitleCase(PokemonType[type]);
 
-    if (terrain !== TerrainType.MISTY) {
+    if (terrain === TerrainType.MISTY) {
+      it("should cut power of grounded Dragon-type moves in half, even from ungrounded users", async () => {
+        await game.classicMode.startBattle(SpeciesId.BLISSEY);
+
+        const powerSpy = vi.spyOn(allMoves[move], "calculateBattlePower");
+
+        game.move.use(move);
+        await game.move.forceEnemyMove(move);
+        await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+        await game.toEndOfTurn();
+
+        // Enemy dragon breath got nerfed against grounded player; player dragon breath did not
+        expect(powerSpy).toHaveLastReturnedWith(allMoves[move].power);
+        expect(powerSpy).toHaveNthReturnedWith(1, allMoves[move].power * 0.5);
+      });
+    } else {
       it(`should boost power of grounded ${typeStr}-type moves by 1.3x, even against ungrounded targets`, async () => {
         await game.classicMode.startBattle(SpeciesId.BLISSEY);
 
@@ -68,20 +83,6 @@ describe("Terrain -", () => {
         // Player grounded attack got boosted while enemy ungrounded attack didn't
         expect(powerSpy).toHaveLastReturnedWith(allMoves[move].power * 1.3);
         expect(powerSpy).toHaveNthReturnedWith(1, allMoves[move].power);
-      });
-    } else {
-      it("should cut power of grounded Dragon-type moves in half, even from ungrounded users", async () => {
-        await game.classicMode.startBattle(SpeciesId.BLISSEY);
-
-        const powerSpy = vi.spyOn(allMoves[move], "calculateBattlePower");
-        game.move.use(move);
-        await game.move.forceEnemyMove(move);
-        await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-        await game.toEndOfTurn();
-
-        // Enemy dragon breath got nerfed against grounded player; player dragon breath did not
-        expect(powerSpy).toHaveLastReturnedWith(allMoves[move].power);
-        expect(powerSpy).toHaveNthReturnedWith(1, allMoves[move].power * 0.5);
       });
     }
 

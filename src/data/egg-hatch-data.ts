@@ -9,6 +9,8 @@ import type { StarterDataEntry } from "#types/save-data";
  */
 export class EggHatchData {
   /** the pokemon that hatched from the file (including shiny, IVs, ability) */
+  // TODO: Store the data in a more lightweight manner that does not require creating a PlayerPokemon object in full
+  // (all we need is the species, ability, nature, IVs and shininess/variant)
   public pokemon: PlayerPokemon;
   /** index of the egg move from the hatched pokemon (not stored in PlayerPokemon) */
   public eggMoveIndex: number;
