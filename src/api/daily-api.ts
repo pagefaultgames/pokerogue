@@ -2,15 +2,13 @@ import { ApiBase } from "#api/api-base";
 import type { GetDailyRankingsPageCountRequest, GetDailyRankingsRequest } from "#types/pokerogue-daily-api";
 import type { RankingEntry } from "#ui/daily-run-scoreboard";
 
-/**
- * A wrapper for daily-run PokéRogue API requests.
- */
+/** A wrapper for daily-run PokéRogue API requests. */
 export class PokerogueDailyApi extends ApiBase {
   /**
    * Request the daily-run seed.
    * @returns The active daily-run seed as `string`.
    */
-  public async getSeed() {
+  public async getSeed(): Promise<string | null> {
     try {
       const response = await this.doGet("/daily/seed");
       return response.text();
@@ -25,7 +23,7 @@ export class PokerogueDailyApi extends ApiBase {
    * @param params The {@linkcode GetDailyRankingsRequest} to send
    * @deprecated
    */
-  public async getRankings(params: GetDailyRankingsRequest) {
+  public async getRankings(params: GetDailyRankingsRequest): Promise<RankingEntry[] | null> {
     try {
       const urlSearchParams = this.toUrlSearchParams(params);
       const response = await this.doGet(`/daily/rankings?${urlSearchParams}`);
@@ -42,7 +40,7 @@ export class PokerogueDailyApi extends ApiBase {
    * @param params The {@linkcode GetDailyRankingsPageCountRequest} to send.
    * @deprecated
    */
-  public async getRankingsPageCount(params: GetDailyRankingsPageCountRequest) {
+  public async getRankingsPageCount(params: GetDailyRankingsPageCountRequest): Promise<number> {
     try {
       const urlSearchParams = this.toUrlSearchParams(params);
       const response = await this.doGet(`/daily/rankingpagecount?${urlSearchParams}`);

@@ -35,7 +35,7 @@ export type FormatType<T> =
 /**
  * Tail-recursive helper to stringify a tuple with an arbitrary delimiter.
  */
-type StringifyTuple<Arr extends unknown[], Delim extends string, Acc extends string = ""> = Arr extends []
+type StringifyTuple<Arr extends readonly unknown[], Delim extends string, Acc extends string = ""> = Arr extends []
   ? Acc
   : Arr extends [infer First, ...infer Rest]
     ? StringifyTuple<

@@ -28,7 +28,7 @@ describe("Move - Court Change", () => {
       .startingLevel(100)
       .battleStyle("single")
       .enemySpecies(SpeciesId.MAGIKARP)
-      .enemyMoveset(MoveId.SPLASH);
+      .enemyMoveset(MoveId.SPIKES);
   });
 
   it("should swap combined Pledge effects to the opposite side", async () => {
@@ -77,5 +77,21 @@ describe("Move - Court Change", () => {
     expect(game.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, ArenaTagSide.PLAYER)).toBeUndefined();
     expect(game.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, ArenaTagSide.ENEMY)).toBeDefined();
     expect(ninjask.status?.effect).toBe(StatusEffect.POISON);
+  });
+
+  it("should swap spikes layers to the enemy side", async () => {
+    await game.classicMode.startBattle(SpeciesId.CINDERACE);
+
+    for (let i = 0; i < 3; i++) {
+      game.move.use(MoveId.TOXIC_SPIKES);
+      await game.toNextTurn();
+    }
+
+    game.move.use(MoveId.COURT_CHANGE);
+    await game.toEndOfTurn();
+
+    // Magikarp and Cinderace should both keep the same number of layers on their respective sides
+    expect(game).toHaveArenaTag({ tagType: ArenaTagType.TOXIC_SPIKES, layers: 2, side: ArenaTagSide.PLAYER });
+    expect(game).toHaveArenaTag({ tagType: ArenaTagType.SPIKES, layers: 3, side: ArenaTagSide.ENEMY });
   });
 });

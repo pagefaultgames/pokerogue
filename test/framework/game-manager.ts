@@ -277,7 +277,7 @@ export class GameManager {
    * Will trigger during the next {@linkcode SelectTargetPhase}
    * @param targetIndex - The {@linkcode BattlerIndex} of the attack target, or `undefined` for multi-target attacks
    * @param movePosition - The 0-indexed position of the move in the pokemon's moveset array
-   * @throws Immediately fails tests
+   * @throws Immediately fails tests if `targetIndex` is defined for a non-targeted move
    */
   selectTarget(movePosition: number, targetIndex?: BattlerIndex) {
     this.onNextPrompt(
@@ -369,7 +369,7 @@ export class GameManager {
 
   /**
    * Transition to the {@linkcode TurnEndPhase | end of the current turn}.
-   * @param endTurn - Whether to run the `TurnEndPhase` or not; default `true`
+   * @param endTurn - (Default `true`) Whether to run the `TurnEndPhase` before resolving.
    * @returns A Promise that resolves once the current turn has ended.
    */
   async toEndOfTurn(endTurn = true): Promise<void> {

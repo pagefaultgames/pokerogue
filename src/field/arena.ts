@@ -122,7 +122,8 @@ export class Arena {
     return 131 / 180;
   }
 
-  // #endregion
+  // #endregion Getters
+
   // #region Misc Public Methods
 
   public init() {
@@ -163,7 +164,8 @@ export class Arena {
     this.removeAllTags();
   }
 
-  // #endregion
+  // #endregion Misc Public Methods
+
   // #region Misc Private Methods
 
   /**
@@ -222,7 +224,8 @@ export class Arena {
     return BiomePoolTier.ULTRA_RARE;
   }
 
-  // #endregion
+  // #endregion Misc Private Methods
+
   // #region Weather
 
   /** @returns Whether or not the weather can be changed to the specified weather */
@@ -373,7 +376,8 @@ export class Arena {
     this.trySetWeather(randomWeather);
   }
 
-  // #endregion
+  // #endregion Weather
+
   // #region Terrain
 
   /** @returns Whether or not the terrain can be set to the specified terrain */
@@ -471,7 +475,8 @@ export class Arena {
     return !!this.terrain && this.terrain.isMoveTerrainCancelled(user, targets, move);
   }
 
-  // #endregion
+  // #endregion Terrain
+
   // #region Trainers
 
   public randomTrainerType(waveIndex: number, isBoss = false): TrainerType {
@@ -492,7 +497,8 @@ export class Arena {
     return tierPool.length > 0 ? randSeedItem(tierPool) : TrainerType.BREEDER;
   }
 
-  // #endregion
+  // #endregion Trainers
+
   // #region Pokemon
 
   public updatePoolsForTimeOfDay(): void {
@@ -500,10 +506,12 @@ export class Arena {
     if (timeOfDay === this.lastTimeOfDay) {
       return;
     }
-    this.pokemonPool = Object.entries(allBiomes.get(this.biomeId).pokemonPool).reduce(
+
+    const currBiome = allBiomes.get(this.biomeId);
+    this.pokemonPool = Object.entries(currBiome.pokemonPool).reduce(
       (acc, [tier, pool]) => {
-        // TODO: Remove type assertion after https://github.com/pagefaultgames/pokerogue/pull/7078 is merged
-        acc[tier as `${BiomePoolTier}`] = [...pool[TimeOfDay.ALL], ...pool[timeOfDay]];
+        tier satisfies `${BiomePoolTier}`;
+        acc[tier] = [...pool[TimeOfDay.ALL], ...pool[timeOfDay]];
         return acc;
       },
       {} as Mutable<ArenaPokemonPools>,
@@ -540,9 +548,7 @@ export class Arena {
 
     let tier: BiomePoolTier;
     const forcedTier = getDailyForcedWaveBiomePoolTier(waveIndex);
-    if (forcedTier !== null) {
-      tier = forcedTier;
-    } else {
+    if (forcedTier === null) {
       const rollMax = isBossSpecies ? 64 : 512;
 
       // Luck reduces the RNG ceiling by 0.5x for bosses or 2x otherwise
@@ -550,6 +556,8 @@ export class Arena {
 
       const rngRoll = randSeedInt(rollMax - luckModifier);
       tier = (isBossSpecies ? this.generateBossBiomeTier : this.generateNonBossBiomeTier)(rngRoll);
+    } else {
+      tier = forcedTier;
     }
 
     console.log("Starting species pool tier:", BiomePoolTier[tier]);
@@ -604,7 +612,8 @@ export class Arena {
       : adjustedWave < 55; // Wave 25+ in daily
   }
 
-  // #endregion
+  // #endregion Pokemon
+
   // #region Arena Tags
 
   /**
@@ -872,7 +881,8 @@ export class Arena {
     }
   }
 
-  // #endregion
+  // #endregion Arena Tags
+
   // #region Time of Day
 
   public getTimeOfDay(): TimeOfDay {
@@ -954,7 +964,7 @@ export class Arena {
     return [48, 48, 98];
   }
 
-  // #endregion
+  // #endregion Time of Day
 
   // TODO: replace this
   getAttackTypeMultiplier(attackType: PokemonType, grounded: boolean): number {
@@ -1012,4 +1022,4 @@ export function getBiomeHasProps(biomeId: BiomeId): boolean {
   return false;
 }
 
-// #endregion
+// #endregion Helper Functions

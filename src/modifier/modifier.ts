@@ -41,7 +41,8 @@ import type {
 import type { VoucherType } from "#system/voucher";
 import type { ModifierInstanceMap, ModifierString } from "#types/modifier-types";
 import { addTextObject } from "#ui/text";
-import { BooleanHolder, hslToHex, NumberHolder, randSeedFloat, toDmgValue } from "#utils/common";
+import { hslToHex } from "#utils/color-utils";
+import { BooleanHolder, NumberHolder, randSeedFloat, toDmgValue } from "#utils/common";
 import { getModifierType } from "#utils/modifier-utils";
 import i18next from "i18next";
 
@@ -502,7 +503,7 @@ export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
     this.stat = stat;
     // Note that, because we want X Accuracy to maintain its original behavior,
     // it will increment as it did previously, directly to the stat stage.
-    this.boost = stat !== Stat.ACC ? 0.2 : 1;
+    this.boost = stat === Stat.ACC ? 1 : 0.2;
   }
 
   match(modifier: Modifier): boolean {
@@ -2260,7 +2261,6 @@ export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
     playerPokemon.level += levelCount.value;
     if (playerPokemon.level <= globalScene.getMaxExpLevel(true)) {
       playerPokemon.exp = getLevelTotalExp(playerPokemon.level, playerPokemon.species.growthRate);
-      playerPokemon.levelExp = 0;
     }
 
     playerPokemon.addFriendship(FRIENDSHIP_GAIN_FROM_RARE_CANDY, true);
@@ -2331,7 +2331,7 @@ export class EvolutionItemModifier extends ConsumablePokemonModifier {
    * @returns `true` if the evolution was successful
    */
   override apply(playerPokemon: PlayerPokemon): boolean {
-    let matchingEvolution = pokemonEvolutions.hasOwnProperty(playerPokemon.species.speciesId)
+    let matchingEvolution = Object.hasOwn(pokemonEvolutions, playerPokemon.species.speciesId)
       ? pokemonEvolutions[playerPokemon.species.speciesId].find(
           e => e.evoItem === this.type.evolutionItem && e.validate(playerPokemon, false, e.item!),
         )
@@ -3245,6 +3245,13 @@ export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
 
   setTransferrableFalse(): void {
     this.isTransferable = false;
+  }
+
+  public override apply(pokemon: Pokemon, target?: Pokemon, ...args: unknown[]): boolean {
+    if (pokemon.isFainted()) {
+      return false;
+    }
+    return super.apply(pokemon, target, ...args);
   }
 }
 
