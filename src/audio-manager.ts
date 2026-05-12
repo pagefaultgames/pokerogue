@@ -14,6 +14,9 @@ interface GameVolume {
   ui: number;
 }
 
+/**
+ * Global manager for audio operations
+ */
 export class AudioManager {
   public readonly volume: GameVolume;
   private currentBgm: BackgroundMusic | null = null;
@@ -28,6 +31,12 @@ export class AudioManager {
     };
   }
 
+  /**
+   * Get the effective volume for a given setting
+   * (the product of that volume and the main volume).
+   * @param setting
+   * @returns
+   */
   public getVolume(setting: VolumeSetting): number {
     let mul = 1;
     switch (setting) {
@@ -65,7 +74,7 @@ export class AudioManager {
     previous?.destroy();
 
     this.currentBgm = new BackgroundMusic(bgmName, loop, loopPoint);
-    this.currentBgm.play(this.volume.main * this.volume.bgm);
+    this.currentBgm.play(this.getVolume(VolumeSetting.MAIN));
   }
 
   /**
@@ -90,7 +99,7 @@ export class AudioManager {
 
     if (this.currentBgm?.key === resolvedName) {
       if (!this.currentBgm.isPlaying) {
-        this.currentBgm.play(this.volume.main * this.volume.bgm);
+        this.currentBgm.play(this.getVolume(VolumeSetting.MAIN));
       }
       return null;
     }
@@ -115,7 +124,7 @@ export class AudioManager {
 
   /** Updates the set volume for the audio/bgm with the user's saved config values. */
   public updateSoundVolume(): void {
-    this.currentBgm?.setVolume(this.volume.main * this.volume.bgm);
+    this.currentBgm?.setVolume(this.getVolume(VolumeSetting.MAIN));
 
     if (!globalScene.sound) {
       return;
@@ -127,14 +136,14 @@ export class AudioManager {
         case "battle_anims":
         case "cry":
           if (name?.startsWith("PRSFX- ")) {
-            sound.setVolume(this.volume.main * this.volume.field * 0.5);
+            sound.setVolume(this.getVolume(VolumeSetting.FIELD) * 0.5);
           } else {
-            sound.setVolume(this.volume.main * this.volume.field);
+            sound.setVolume(this.getVolume(VolumeSetting.FIELD));
           }
           break;
         case "se":
         case "ui":
-          sound.setVolume(this.volume.main * this.volume.se);
+          sound.setVolume(this.getVolume(VolumeSetting.SE));
           break;
       }
     }
@@ -172,7 +181,7 @@ export class AudioManager {
       tempBgm.destroy();
     });
     this.currentBgm?.pause();
-    tempBgm.play(this.volume.main * this.volume.bgm);
+    tempBgm.play(this.getVolume(VolumeSetting.MAIN));
 
     return tempBgm;
   }
@@ -195,7 +204,7 @@ export class AudioManager {
       switch (keyDetails[0]) {
         case "battle_anims":
         case "cry":
-          config["volume"] *= this.volume.main * this.volume.field;
+          config["volume"] *= this.getVolume(VolumeSetting.FIELD);
           //PRSFX sound files are unusually loud
           if (keyDetails[1].startsWith("PRSFX- ")) {
             config["volume"] *= 0.5;
@@ -203,10 +212,10 @@ export class AudioManager {
           break;
         case "ui":
           // Currently, this applies to the "select", "menu_open", "error" sound effects
-          config["volume"] *= this.volume.main * this.volume.ui;
+          config["volume"] *= this.getVolume(VolumeSetting.UI);
           break;
         case "se":
-          config["volume"] *= this.volume.main * this.volume.se;
+          config["volume"] *= this.getVolume(VolumeSetting.SE);
           break;
       }
       globalScene.sound.play(key, config);

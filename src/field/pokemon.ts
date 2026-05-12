@@ -4613,7 +4613,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   public cry(soundConfig?: Phaser.Types.Sound.SoundConfig, sceneOverride?: BattleScene): AnySound | null {
     const scene = sceneOverride ?? globalScene; // TODO: is `sceneOverride` needed?
     const cry = this.getSpeciesForm(undefined, true).cry(soundConfig);
-    if (!cry || audioManager.volume.main === 0 || audioManager.volume.field === 0) {
+    if (!cry || audioManager.getVolume(VolumeSetting.FIELD) === 0) {
       return cry;
     }
     let duration = cry.totalDuration * 1000;
@@ -4636,7 +4636,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
               scene,
               fusionCryInner,
               fixedInt(Math.ceil(duration * 0.2)),
-              audioManager.volume.main * audioManager.volume.field,
+              audioManager.getVolume(VolumeSetting.FIELD),
               0,
             );
           }
@@ -4671,7 +4671,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
     const cry = audioManager.playSound(key, crySoundConfig);
-    if (!cry || audioManager.volume.field === 0 || audioManager.volume.main === 0) {
+    if (!cry || audioManager.getVolume(VolumeSetting.FIELD) === 0) {
       callback();
       return;
     }
@@ -4742,7 +4742,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     let fusionCry = audioManager.playSound(fusionCryKey, {
       rate,
     });
-    if (!cry || !fusionCry || audioManager.volume.field === 0 || audioManager.volume.main === 0) {
+    if (!cry || !fusionCry || audioManager.getVolume(VolumeSetting.FIELD) === 0) {
       callback();
       return;
     }
