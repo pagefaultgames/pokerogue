@@ -2,9 +2,7 @@ import { globalScene } from "#app/global-scene";
 import type { PhaseManager } from "#app/phase-manager";
 import type { PhaseMap, PhaseString } from "#types/phase-types";
 
-/**
- * A Phase represents a discrete chunk of game logic that must be completed. \
- */
+/** A Phase represents a discrete chunk of game logic that must be completed. */
 export abstract class Phase {
   /**
    * Start the current phase.
