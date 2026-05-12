@@ -175,13 +175,11 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.LAST_RESORT, // Potentially revisit after further move generation changes, high BP causes it to spawn as random coverage often and it ends up being situational / an unused slot.
 
   // Recharge Moves, recommended by NightKev until improved AI / Move Generation.
-  MoveId.HYPER_BEAM, // Recharge moves have complications with move weighting, AI choice weighting, and AI usage in general.
+  MoveId.HYPER_BEAM, // Recharge moves have complications with move weighting, AI choice weighting, and AI usage in general. Some signature moves were omitted.
   MoveId.GIGA_IMPACT,
   MoveId.BLAST_BURN,
   MoveId.FRENZY_PLANT,
   MoveId.HYDRO_CANNON,
-  MoveId.METEOR_ASSAULT,
   MoveId.ROCK_WRECKER,
   MoveId.PRISMATIC_LASER,
-  MoveId.ROAR_OF_TIME,
 ]);

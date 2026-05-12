@@ -191,6 +191,7 @@ export const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
   MoveId.GUILLOTINE,
   MoveId.HOLD_BACK,
   MoveId.HORN_DRILL,
+  MoveId.INCINERATE, // Shouldn't be the Pokemon's main way of attacking.
   MoveId.INFESTATION,
   MoveId.LAST_RESORT,
   MoveId.METAL_BURST,
