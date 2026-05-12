@@ -50,7 +50,7 @@ The 3 primary ways to queue a new phase are:
 
 | Type    | Behaviour |
 |---------|-----------|
-| Push               | Adds the phase to the **end** of the queue, run after all already-queued \ phases have finished. |
+| Push               | Adds the phase to the **end** of the queue, run after all already-queued phases have finished. |
 | Unshift            | Queues the phase to run **immediately after** the currently-running phase finishes. Multiple calls to `unshiftPhase` during the _same phase's execution_ will queue the new phases in the order they were added. |
 | Unshift (deferred) | Queues the phase to run _immediately after_ all Phases unshifted during the current Phase have finished. Multiple deferrals during the same Phase will trigger in FIFO order among one another. |
 
