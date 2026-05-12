@@ -1,4 +1,4 @@
-import type { AnySound } from "#app/battle-scene";
+import type { AnySound } from "#app/audio-manager";
 import { globalScene } from "#app/global-scene";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 
@@ -14,18 +14,20 @@ export class BackgroundMusic {
   public readonly key: string;
 
   /** The underlying sound instance used to stream music. */
-  private readonly sound: AnySound;
+  private sound: AnySound | undefined;
   /** Whether this BGM has been evicted from memory. */
   private destroyed = false;
+  /** Allow callbacks to be queued even if the sound is not ready */
+  private readonly pendingCalls: (() => void)[] = [];
 
   /** @returns Whether this BGM is currently playing. */
   public get isPlaying(): boolean {
-    return this.sound.isPlaying;
+    return this.sound?.isPlaying ?? false;
   }
 
   /** @returns Whether this BGM is currently paused mid-playback. */
   public get isPaused(): boolean {
-    return !this.sound.isPlaying && this.sound.seek > 0;
+    return this.sound != null && !this.sound.isPlaying && this.sound.seek > 0;
   }
 
   /**
@@ -36,45 +38,53 @@ export class BackgroundMusic {
   constructor(key: string, loop: boolean, loopPoint = 0) {
     this.key = key;
 
-    this.sound = globalScene.sound.add(key, { loop });
-    if (loop) {
-      this.sound.on("looped", () => this.sound.play({ seek: loopPoint }));
-    }
+    globalScene.loadBgm(key).then(() => {
+      this.sound = globalScene.sound.add(key, { loop });
+      if (loop) {
+        this.sound.on("looped", () => this.sound?.play({ seek: loopPoint }));
+      }
+      this.pendingCalls.forEach(c => c());
+    });
   }
 
   public play(volume?: number): void {
-    if (volume != null) {
-      this.setVolume(volume);
-    }
+    this.withSound(sound => {
+      if (volume != null) {
+        this.setVolume(volume);
+      }
 
-    this.sound.play();
+      sound.play();
+    });
   }
 
   public stop(): void {
-    this.sound.stop();
+    this.withSound(sound => sound.stop());
   }
 
   public pause(): void {
-    this.sound.pause();
+    this.withSound(sound => sound.pause());
   }
 
   public resume(): void {
-    this.sound.play();
+    this.withSound(sound => sound.resume());
   }
 
   public setVolume(value: number): void {
-    this.sound.setVolume(Phaser.Math.Clamp(value, 0, 1));
+    this.withSound(sound => sound.setVolume(Phaser.Math.Clamp(value, 0, 1)));
   }
 
   /**
    * Add a callback to run when this track ends.
    * @param callback - The callback to run
-   *
-   * @remarks
-   * Note that if a callback is registered to a looping track, it will run on every loop.
    */
   public onEnd(callback: () => void): void {
-    this.sound.on("end", callback);
+    this.withSound(sound => {
+      if (sound.isPlaying) {
+        sound.on("complete", callback);
+      } else {
+        callback();
+      }
+    });
   }
 
   public destroy(): void {
@@ -82,15 +92,28 @@ export class BackgroundMusic {
       return;
     }
     this.destroyed = true;
+    this.pendingCalls.length = 0;
     globalScene.sound.removeByKey(this.key);
     globalScene.cache.audio.remove(this.key);
   }
 
   public fadeOut(duration: number): void {
-    if (!this.isPlaying || this.destroyed) {
+    this.withSound(sound => SoundFade.fadeOut(globalScene, sound, duration, true));
+  }
+
+  /**
+   * Either complete an operation immediately or defer it to when the sound is ready
+   * (which should not be long after creation)
+   * @param operation - The function to run on ready
+   */
+  private withSound(operation: (sound: AnySound) => void): void {
+    if (this.sound) {
+      operation(this.sound);
       return;
     }
 
-    SoundFade.fadeOut(globalScene, this.sound, duration, true);
+    this.pendingCalls.push(() => {
+      operation(this.sound!);
+    });
   }
 }
