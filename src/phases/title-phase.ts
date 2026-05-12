@@ -1,9 +1,9 @@
-import { pokerogueApi } from "#api/pokerogue-api";
+import { pokerogueApi } from "#api/api";
 import { loggedInUser } from "#app/account";
 import { GameMode, getGameMode } from "#app/game-mode";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { Phase } from "#app/phase";
 import { bypassLogin } from "#constants/app-constants";
 import { getDailyRunStarters, startDailyEventChallenges } from "#data/daily-seed/daily-run";
@@ -249,7 +249,7 @@ export class TitlePhase extends Phase {
           const species = getPokemonSpecies(starter.speciesId);
           const starterFormIndex = starter.formIndex;
           const starterGender =
-            species.malePercent !== null ? (starter.female ? Gender.FEMALE : Gender.MALE) : Gender.GENDERLESS;
+            species.malePercent === null ? Gender.GENDERLESS : starter.female ? Gender.FEMALE : Gender.MALE;
           const starterPokemon = globalScene.addPlayerPokemon(
             species,
             startingLevel,
@@ -337,12 +337,12 @@ export class TitlePhase extends Phase {
           });
       } else {
         // Grab first 10 chars of ISO date format (YYYY-MM-DD) and convert to base64
-        let seed: string = btoa(new Date().toISOString().substring(0, 10));
-        if (Overrides.DAILY_RUN_SEED_OVERRIDE != null) {
+        let seed: string = btoa(new Date().toISOString().slice(0, 10));
+        if (activeOverrides.DAILY_RUN_SEED_OVERRIDE != null) {
           seed =
-            typeof Overrides.DAILY_RUN_SEED_OVERRIDE === "string"
-              ? Overrides.DAILY_RUN_SEED_OVERRIDE
-              : JSON.stringify(Overrides.DAILY_RUN_SEED_OVERRIDE);
+            typeof activeOverrides.DAILY_RUN_SEED_OVERRIDE === "string"
+              ? activeOverrides.DAILY_RUN_SEED_OVERRIDE
+              : JSON.stringify(activeOverrides.DAILY_RUN_SEED_OVERRIDE);
         }
         generateDaily(seed);
       }
@@ -352,7 +352,6 @@ export class TitlePhase extends Phase {
   // TODO: Refactor this
   end(): void {
     if (!this.loaded && !globalScene.gameMode.isDaily) {
-      globalScene.loadBgm(globalScene.arena.bgm);
       globalScene.gameMode = getGameMode(this.gameMode);
       if (this.gameMode === GameModes.CHALLENGE) {
         globalScene.phaseManager.pushNew("SelectChallengePhase");
@@ -390,7 +389,7 @@ export class TitlePhase extends Phase {
 
     // TODO: Move this to a migrate script instead of running it on save slot load
     for (const achv of Object.keys(globalScene.gameData.achvUnlocks)) {
-      if (vouchers.hasOwnProperty(achv) && achv !== "CLASSIC_VICTORY") {
+      if (Object.hasOwn(vouchers, achv) && achv !== "CLASSIC_VICTORY") {
         globalScene.validateVoucher(vouchers[achv]);
       }
     }

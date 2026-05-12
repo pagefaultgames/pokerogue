@@ -171,7 +171,7 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.MOVE_TYPE:
           return pokemon.moveset.some(m => m.getMove().type === cond.pkmnType);
         case EvoCondKey.PARTY_TYPE:
-          return globalScene.getPlayerParty().some(p => p.getTypes(false, false, true).includes(cond.pkmnType));
+          return globalScene.getPlayerParty().some(p => p.isOfType(cond.pkmnType, { includeTeraType: false, bypassSummonData: true, ignoreThirdType: true }))
         case EvoCondKey.EVO_TREASURE_TRACKER:
           return pokemon.getHeldItems().some(m =>
             m.is("EvoTrackerModifier") &&
@@ -337,11 +337,7 @@ export class FusionSpeciesFormEvolution extends SpeciesFormEvolution {
   }
 }
 
-interface PokemonEvolutions {
-  [key: string]: SpeciesFormEvolution[]
-}
-
-export const pokemonEvolutions: PokemonEvolutions = {
+export const pokemonEvolutions = Object.freeze({
   [SpeciesId.BULBASAUR]: [
     new SpeciesEvolution(SpeciesId.IVYSAUR, 16, null, null)
   ],
@@ -1868,8 +1864,9 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesFormEvolution(SpeciesId.GHOLDENGO, "chest", "", 1, null, {key: EvoCondKey.EVO_TREASURE_TRACKER, value: 10}, [50, 60, 70]),
     new SpeciesFormEvolution(SpeciesId.GHOLDENGO, "roaming", "", 1, null, {key: EvoCondKey.EVO_TREASURE_TRACKER, value: 10}, [50, 60, 70])
   ]
-};
+}) satisfies Readonly<Partial<Record<SpeciesId, SpeciesFormEvolution[]>>>;
 
+// TODO: Change to Partial<Record<SpeciesId, SpeciesId>>
 interface PokemonPrevolutions {
   [key: string]: SpeciesId
 }
@@ -1877,14 +1874,15 @@ interface PokemonPrevolutions {
 export const pokemonPrevolutions: PokemonPrevolutions = {};
 
 export function initPokemonPrevolutions(): void {
-  // TODO: Why do we have empty strings in our array?
-  const megaFormKeys = [SpeciesFormKey.MEGA, "", SpeciesFormKey.MEGA_X, "", SpeciesFormKey.MEGA_Y];
+  const megaFormKeys: string[] = [SpeciesFormKey.MEGA, SpeciesFormKey.MEGA_X, SpeciesFormKey.MEGA_Y];
+
   for (const [pk, evolutions] of Object.entries(pokemonEvolutions)) {
     for (const ev of evolutions) {
-      if (ev.evoFormKey && megaFormKeys.indexOf(ev.evoFormKey) > -1) {
+      if (ev.evoFormKey && megaFormKeys.includes(ev.evoFormKey)) {
         continue;
       }
-      pokemonPrevolutions[ev.speciesId] = Number.parseInt(pk) as SpeciesId;
+      // TODO: Remove type assertion once `pokemonEvolutions` is typed correctly with `SpeciesId` indices instead of `string`
+      pokemonPrevolutions[ev.speciesId] = Number.parseInt(pk) satisfies SpeciesId;
     }
   }
 }

@@ -95,7 +95,7 @@ export function updateWindowType(windowTypeIndex: number): void {
   const windowObjects: [Phaser.GameObjects.NineSlice, WindowVariant][] = [];
   const themedObjects: (Phaser.GameObjects.Image | Phaser.GameObjects.NineSlice)[] = [];
   const traverse = (object: any) => {
-    if (object.hasOwnProperty("children") && object.children instanceof Phaser.GameObjects.DisplayList) {
+    if (Object.hasOwn(object, "children") && object.children instanceof Phaser.GameObjects.DisplayList) {
       const children = object.children as Phaser.GameObjects.DisplayList;
       for (const child of children.getAll()) {
         traverse(child);

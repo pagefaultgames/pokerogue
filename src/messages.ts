@@ -1,5 +1,4 @@
 import { globalScene } from "#app/global-scene";
-import { BattleSpec } from "#enums/battle-spec";
 import type { Pokemon } from "#field/pokemon";
 import i18next from "i18next";
 
@@ -22,7 +21,7 @@ export function getPokemonNameWithAffix(pokemon: Pokemon | undefined, useIllusio
   }
 
   // Even though the final boss is a "wild"/"trainerless" Pokemon, it uses "Foe" instead of "Wild"
-  const useFoePrefix = globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS || pokemon.hasTrainer();
+  const useFoePrefix = globalScene.currentBattle.isClassicFinalBoss || pokemon.hasTrainer();
   const i18nkey = useFoePrefix ? "battle:foePokemonWithAffix" : "battle:wildPokemonWithAffix";
   return i18next.t(i18nkey, { pokemonName });
 }

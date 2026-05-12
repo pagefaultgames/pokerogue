@@ -29,6 +29,9 @@ a07d2c57a44361f4ad48e024067c9b7638c0d84d
 # [Biome] Add and apply `lint/style/noNamespaceImport` (#5650)
 6f56dce7712c609dc78f7ff11650eb6a34f8f661
 
+# [Dev] Enable Biome checking of `pokemon.ts` (#5720)
+68dddbc4246aeedea3c8fdb506263c9c217caf08
+
 # [Test] Remove deprecated test funcs (#5906)
 a33638a7a36b01935e40ea876532c770b53f0994
 

@@ -2,15 +2,17 @@ import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
 import { UiTheme } from "#enums/ui-theme";
 import { addTextObject } from "#ui/text";
+import { playTween } from "#utils/anim-utils";
 import i18next from "i18next";
 
 const defaultBarWidth = 118;
+const defaultLegacyBarWidth = 90;
 const defaultBarHeight = 31;
 const screenLeft = 0;
 const baseY = -116;
 const textPadding = 15;
-const legacyUiPlayerTextPadding = 17;
-const legacyUiEnemyTextPadding = 5;
+const legacyUiPlayerTextPadding = 16;
+const legacyUiEnemyTextPadding = 6;
 
 export class AbilityBar extends Phaser.GameObjects.Container {
   private readonly abilityBars: (Phaser.GameObjects.Image | Phaser.GameObjects.NineSlice)[];
@@ -29,31 +31,37 @@ export class AbilityBar extends Phaser.GameObjects.Container {
     this.player = true;
     this.shown = false;
     this.isLegacyUi = globalScene.uiTheme === UiTheme.LEGACY;
-    this.currentBarWidth = defaultBarWidth;
+    this.currentBarWidth = this.isLegacyUi ? defaultLegacyBarWidth : defaultBarWidth;
   }
 
   setup(): this {
     if (this.isLegacyUi) {
       for (const key of ["ability_bar_right", "ability_bar_left"]) {
         const bar = globalScene.add
-          .nineslice(0, 0, key, undefined, defaultBarWidth, defaultBarHeight, 4, 4, 4, 4)
+          .nineslice(0, 0, key, undefined, defaultBarWidth, defaultBarHeight, 16, 16)
           .setOrigin(0)
           .setVisible(false);
         this.add(bar);
         this.abilityBars.push(bar);
       }
 
-      this.legacyUiPokemonText = addTextObject(textPadding + 2, 3, "", TextStyle.MESSAGE, { fontSize: "72px" }) //
+      this.legacyUiPokemonText = addTextObject(legacyUiPlayerTextPadding, 3, "", TextStyle.MESSAGE, {
+        fontSize: "72px",
+      }) //
         .setOrigin(0);
 
-      this.legacyUiAbilityText = addTextObject(textPadding + 2, 16, "", TextStyle.MESSAGE, { fontSize: "72px" }) //
+      this.legacyUiAbilityText = addTextObject(legacyUiPlayerTextPadding, 16, "", TextStyle.MESSAGE, {
+        fontSize: "72px",
+      }) //
         .setOrigin(0);
 
       this.legacyUiAbilityText.setColor("#484848");
       this.legacyUiAbilityText.setShadowColor("#d0d0c8");
 
-      this.add(this.legacyUiPokemonText).bringToTop(this.legacyUiPokemonText);
-      this.add(this.legacyUiAbilityText).bringToTop(this.legacyUiAbilityText);
+      this.add(this.legacyUiPokemonText) //
+        .bringToTop(this.legacyUiPokemonText);
+      this.add(this.legacyUiAbilityText) //
+        .bringToTop(this.legacyUiAbilityText);
     } else {
       for (const key of ["ability_bar_right", "ability_bar_left"]) {
         const bar = globalScene.add //
@@ -75,7 +83,7 @@ export class AbilityBar extends Phaser.GameObjects.Container {
     }
 
     this.setVisible(false) //
-      .setX(-defaultBarWidth); // start hidden (right edge of bar at x=0)
+      .setX(-this.currentBarWidth); // start hidden (right edge of bar at x=0)
 
     return this;
   }
@@ -90,12 +98,15 @@ export class AbilityBar extends Phaser.GameObjects.Container {
     if (!this.isLegacyUi) {
       return;
     }
-    this.currentBarWidth =
-      Math.max(this.legacyUiPokemonText.displayWidth, this.legacyUiAbilityText.displayWidth) + textPadding * 2;
+    const textMaxWidth = Math.max(this.legacyUiPokemonText.displayWidth, this.legacyUiAbilityText.displayWidth);
+    this.currentBarWidth = Math.max(
+      defaultLegacyBarWidth,
+      textMaxWidth + legacyUiEnemyTextPadding + legacyUiPlayerTextPadding,
+    );
     this.abilityBars[+this.player].setSize(this.currentBarWidth, defaultBarHeight);
   }
 
-  public async startTween(config: any, text?: string): Promise<void> {
+  public async startTween(config: Parameters<typeof playTween>[0], text?: string): Promise<void> {
     this.setVisible(true);
     if (text) {
       if (this.isLegacyUi) {
@@ -108,17 +119,7 @@ export class AbilityBar extends Phaser.GameObjects.Container {
         this.abilityBarText.setText(text);
       }
     }
-    return new Promise(resolve => {
-      globalScene.tweens.add({
-        ...config,
-        onComplete: () => {
-          if (config.onComplete) {
-            config.onComplete();
-          }
-          resolve();
-        },
-      });
-    });
+    await playTween(config);
   }
 
   public async showAbility(pokemonName: string, abilityName: string, passive = false, player = true): Promise<void> {
@@ -160,15 +161,13 @@ export class AbilityBar extends Phaser.GameObjects.Container {
   }
 
   public async hide(): Promise<void> {
-    return this.startTween({
+    await this.startTween({
       targets: this,
       x: this.player ? -this.currentBarWidth : this.screenRight,
       duration: 200,
       ease: "Sine.easeIn",
-      onComplete: () => {
-        this.setVisible(false);
-      },
     });
+    this.setVisible(false);
   }
 
   public isVisible(): boolean {
