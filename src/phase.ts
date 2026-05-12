@@ -10,7 +10,7 @@ export abstract class Phase {
    * Start the current phase.
    * Called automatically by the {@linkcode PhaseManager} when it is this Phase's turn to run.
    */
-  // TODO: consider if we can make this abstract
+  // TODO: make this abstract
   public start(): void {}
 
   /**
