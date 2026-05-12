@@ -1,5 +1,6 @@
 import type { AnySound } from "#app/audio-manager";
 import { globalScene } from "#app/global-scene";
+import { fixedInt } from "#utils/common";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 
 /**
@@ -97,8 +98,8 @@ export class BackgroundMusic {
     globalScene.cache.audio.remove(this.key);
   }
 
-  public fadeOut(duration: number): void {
-    this.withSound(sound => SoundFade.fadeOut(globalScene, sound, duration, true));
+  public fadeOut(duration: number, fixed = false): void {
+    this.withSound(sound => SoundFade.fadeOut(globalScene, sound, fixed ? fixedInt(duration) : duration, true));
   }
 
   /**
