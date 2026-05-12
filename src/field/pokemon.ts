@@ -2,9 +2,11 @@ import type { PreAttackModifyDamageAbAttrParams } from "#abilities/ab-attrs";
 import type { Ability } from "#abilities/ability";
 import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
 import { generateMoveset } from "#app/ai/ai-moveset-gen";
+import type { AnySound } from "#app/audio-manager";
 import type { Battle } from "#app/battle";
-import type { AnySound, BattleScene } from "#app/battle-scene";
+import type { BattleScene } from "#app/battle-scene";
 import { EVOLVE_MOVE, PLAYER_PARTY_MAX_SIZE, RARE_CANDY_FRIENDSHIP_CAP, RELEARN_MOVE } from "#app/constants";
+import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -113,6 +115,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { SwitchType } from "#enums/switch-type";
 import type { TrainerSlot } from "#enums/trainer-slot";
 import { UiMode } from "#enums/ui-mode";
+import { VolumeSetting } from "#enums/volume-setting";
 import { WeatherType } from "#enums/weather-type";
 import {
   BaseStatModifier,
@@ -738,7 +741,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     this.summonData.illusion = null;
     if (this.isOnField()) {
-      globalScene.playSound("PRSFX- Transform");
+      audioManager.playSound("PRSFX- Transform");
     }
     if (this.shiny) {
       this.initShinySparkle();
@@ -4610,7 +4613,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   public cry(soundConfig?: Phaser.Types.Sound.SoundConfig, sceneOverride?: BattleScene): AnySound | null {
     const scene = sceneOverride ?? globalScene; // TODO: is `sceneOverride` needed?
     const cry = this.getSpeciesForm(undefined, true).cry(soundConfig);
-    if (!cry || globalScene.masterVolume === 0 || globalScene.fieldVolume === 0) {
+    if (!cry || audioManager.volume.main === 0 || audioManager.volume.field === 0) {
       return cry;
     }
     let duration = cry.totalDuration * 1000;
@@ -4633,7 +4636,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
               scene,
               fusionCryInner,
               fixedInt(Math.ceil(duration * 0.2)),
-              scene.masterVolume * scene.fieldVolume,
+              audioManager.volume.main * audioManager.volume.field,
               0,
             );
           }
@@ -4667,8 +4670,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         crySoundConfig.rate = 0.7;
       }
     }
-    const cry = globalScene.playSound(key, crySoundConfig);
-    if (!cry || globalScene.fieldVolume === 0 || globalScene.masterVolume === 0) {
+    const cry = audioManager.playSound(key, crySoundConfig);
+    if (!cry || audioManager.volume.field === 0 || audioManager.volume.main === 0) {
       callback();
       return;
     }
@@ -4731,15 +4734,15 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const key = this.species.getCryKey(this.formIndex);
     let i = 0;
     let rate = 0.85;
-    const cry = globalScene.playSound(key, { rate });
+    const cry = audioManager.playSound(key, { rate });
     const sprite = this.getSprite();
     const tintSprite = this.getTintSprite();
 
     const fusionCryKey = this.fusionSpecies!.getCryKey(this.fusionFormIndex);
-    let fusionCry = globalScene.playSound(fusionCryKey, {
+    let fusionCry = audioManager.playSound(fusionCryKey, {
       rate,
     });
-    if (!cry || !fusionCry || globalScene.fieldVolume === 0 || globalScene.masterVolume === 0) {
+    if (!cry || !fusionCry || audioManager.volume.field === 0 || audioManager.volume.main === 0) {
       callback();
       return;
     }
@@ -4786,7 +4789,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         }
         if (i === transitionIndex && fusionCryKey) {
           SoundFade.fadeOut(globalScene, cry, fixedInt(Math.ceil((duration / rate) * 0.2)));
-          fusionCry = globalScene.playSound(fusionCryKey, {
+          fusionCry = audioManager.playSound(fusionCryKey, {
             // TODO: This bang is correct as this callback can only be called once, but
             // this whole block with conditionally reassigning fusionCry needs a second lock.
             seek: Math.max(fusionCry!.totalDuration * 0.4, 0),
@@ -4797,7 +4800,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
               globalScene,
               fusionCry,
               fixedInt(Math.ceil((duration / rate) * 0.2)),
-              globalScene.masterVolume * globalScene.fieldVolume,
+              audioManager.getVolume(VolumeSetting.FIELD),
               0,
             );
           }

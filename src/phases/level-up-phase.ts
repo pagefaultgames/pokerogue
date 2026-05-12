@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { ExpNotification } from "#enums/exp-notification";
@@ -33,7 +34,7 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
     this.pokemon.calculateStats();
     this.pokemon.updateInfo();
     if (globalScene.expParty === ExpNotification.DEFAULT) {
-      globalScene.playSound("se/level_up_fanfare");
+      audioManager.playSound("se/level_up_fanfare");
       globalScene.ui.showText(
         i18next.t("battle:levelUp", {
           pokemonName: getPokemonNameWithAffix(this.pokemon),

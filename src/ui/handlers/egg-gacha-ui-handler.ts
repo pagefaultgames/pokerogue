@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { activeOverrides } from "#app/overrides";
 import { handleTutorial, Tutorial } from "#app/tutorial";
@@ -357,7 +358,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
   }
 
   private firstDropAnims(): Phaser.Types.Tweens.TweenBuilderConfig[] {
-    globalScene.playSound("se/gacha_dial");
+    audioManager.playSound("se/gacha_dial");
     return [
       // Tween 1 animates the gacha knob turning left
       {
@@ -379,14 +380,14 @@ export class EggGachaUiHandler extends MessageUiHandler {
         dummy: 1,
         duration: this.getDelayValue(350),
         onStart: () => {
-          globalScene.playSound("se/gacha_running", { loop: true });
+          audioManager.playSound("se/gacha_running", { loop: true });
         },
       },
       // Tween 4 is another dummy tween that plays the gacha dispense sound
       {
         delay: this.getDelayValue(1250),
         onStart: () => {
-          globalScene.playSound("se/gacha_dispense");
+          audioManager.playSound("se/gacha_dispense");
         },
         targets: { dummy: 0 },
         dummy: 1,
@@ -424,7 +425,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
       // Tween 2 plays the catch sound and moves the egg up a bit
       {
         onStart: () => {
-          globalScene.playSound("se/pb_catch");
+          audioManager.playSound("se/pb_catch");
           this.gachaHatches[this.gachaCursor].play("open");
         },
         targets: egg,

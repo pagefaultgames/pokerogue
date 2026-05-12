@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getLevelRelExp, getLevelTotalExp } from "#data/exp";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
@@ -164,7 +165,7 @@ export class PlayerBattleInfo extends BattleInfo {
       this.lastLevelExp = pokemon.levelExp;
     }
     if (duration) {
-      globalScene.playSound("se/exp");
+      audioManager.playSound("se/exp");
     }
     return new Promise(resolve => {
       globalScene.tweens.add({
@@ -180,7 +181,7 @@ export class PlayerBattleInfo extends BattleInfo {
             globalScene.sound.stopByKey("se/exp");
           }
           if (ratio === 1) {
-            globalScene.playSound("se/level_up");
+            audioManager.playSound("se/level_up");
             this.setLevel(this.lastLevel);
             globalScene.time.delayedCall(500 * levelDurationMultiplier, () => {
               this.expMaskRect.x = 0;

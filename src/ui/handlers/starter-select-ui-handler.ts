@@ -1,5 +1,6 @@
 import type { Ability } from "#abilities/ability";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
 import { activeOverrides } from "#app/overrides";
@@ -2272,7 +2273,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                     });
                     ui.setMode(UiMode.STARTER_SELECT);
                     this.setSpeciesDetails(this.lastSpecies);
-                    globalScene.playSound("se/buy");
+                    audioManager.playSound("se/buy");
 
                     // update the passive background and icon/animation for available upgrade
                     if (starterContainer) {
@@ -2313,7 +2314,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                     });
                     this.tryUpdateValue(0);
                     ui.setMode(UiMode.STARTER_SELECT);
-                    globalScene.playSound("se/buy");
+                    audioManager.playSound("se/buy");
 
                     // update the value label and icon/animation for available upgrade
                     if (starterContainer) {
@@ -2369,7 +2370,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                     }
                   });
                   ui.setMode(UiMode.STARTER_SELECT);
-                  globalScene.playSound("se/buy");
+                  audioManager.playSound("se/buy");
 
                   // update the icon/animation for available upgrade
                   if (starterContainer) {
@@ -2469,7 +2470,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                   variant: newVariant,
                 });
 
-                globalScene.playSound("se/sparkle");
+                audioManager.playSound("se/sparkle");
                 // Cycle tint based on current sprite tint
                 const tint = getVariantTint(newVariant);
                 this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant)).setTint(tint).setVisible(true);

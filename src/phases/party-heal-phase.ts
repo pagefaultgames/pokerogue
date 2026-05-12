@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { ChallengeType } from "#enums/challenge-type";
 import { BattlePhase } from "#phases/battle-phase";
@@ -17,10 +18,7 @@ export class PartyHealPhase extends BattlePhase {
   start() {
     super.start();
 
-    const bgmPlaying = globalScene.isBgmPlaying();
-    if (bgmPlaying) {
-      globalScene.fadeOutBgm(1000);
-    }
+    audioManager.fadeOutBgm(1000);
     globalScene.ui.fadeOut(1000).then(() => {
       const preventRevive = new BooleanHolder(false);
       applyChallenges(ChallengeType.PREVENT_REVIVE, preventRevive);
@@ -39,8 +37,8 @@ export class PartyHealPhase extends BattlePhase {
       }
 
       const healSound = this.resumeBgm
-        ? globalScene.replaceBgmUntilEnd("bw/heal")
-        : globalScene.playBgm("bw/heal", false, false);
+        ? audioManager.replaceBgmUntilEnd("bw/heal")
+        : audioManager.playBgm("bw/heal", false, false);
       if (healSound == null) {
         this.end();
       } else {

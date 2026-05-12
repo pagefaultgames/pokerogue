@@ -1,5 +1,6 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { PLAYER_PARTY_MAX_SIZE, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/constants";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { activeOverrides } from "#app/overrides";
@@ -321,7 +322,7 @@ export class EncounterPhase extends BattlePhase {
   }
 
   protected doEncounter(): void {
-    globalScene.playBgm(undefined, true);
+    audioManager.playBgm(undefined, true);
     globalScene.updateModifiers(false);
     globalScene.setFieldScale(1);
 
@@ -424,7 +425,7 @@ export class EncounterPhase extends BattlePhase {
 
       const doSummon = () => {
         globalScene.currentBattle.started = true;
-        globalScene.playBgm(undefined);
+        audioManager.playBgm(undefined);
         globalScene.pbTray.showPbTray(globalScene.getPlayerParty());
         globalScene.pbTrayEnemy.showPbTray(globalScene.getEnemyParty());
         const doTrainerSummon = () => {

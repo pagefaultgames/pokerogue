@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { activeOverrides } from "#app/overrides";
 import { handleTutorial, Tutorial } from "#app/tutorial";
@@ -895,7 +896,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
           }
           const value = t.getValue()!;
           if (!bounce && value > lastValue) {
-            globalScene.playSound("se/pb_bounce_1", {
+            audioManager.playSound("se/pb_bounce_1", {
               volume: 1 / ++bounceCount,
             });
             bounce = true;
@@ -916,7 +917,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
             {
               delay: remainingDuration - 2000 * (this.modifierTypeOption.upgradeCount - (u + 1 + upgradeCountOffset)),
               onStart: () => {
-                globalScene.playSound("se/upgrade", {
+                audioManager.playSound("se/upgrade", {
                   rate: 1 + 0.25 * u,
                 });
                 this.pbTint.setPosition(this.pb.x, this.pb.y).setTintFill(0xffffff).setVisible(true).setAlpha(0);
@@ -949,7 +950,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
     globalScene.time.delayedCall(remainingDuration + 2000, () => {
       if (isReward) {
         this.pb.setTexture("pb", `${this.getPbAtlasKey(0)}_open`);
-        globalScene.playSound("se/pb_rel");
+        audioManager.playSound("se/pb_rel");
 
         const { resolve: pbResolve, promise: pbPromise } = Promise.withResolvers<void>();
 

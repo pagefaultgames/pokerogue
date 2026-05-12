@@ -82,10 +82,17 @@ export class SceneBase extends Phaser.Scene {
     return this;
   }
 
-  public loadBgm(key: string, callback: () => void): this {
+  public async loadBgm(key: string): Promise<void> {
+    if (this.cache.audio.exists(key)) {
+      return;
+    }
+
     this.load.audio(key, getCachedUrl(`audio/bgm/${key}.mp3`));
-    this.load.start();
-    this.load.once(`filecomplete-audio-${key}`, callback);
-    return this;
+    await new Promise<void>(resolve => {
+      this.load.once(`filecomplete-audio-${key}`, () => {
+        resolve();
+      });
+      this.load.start();
+    });
   }
 }
