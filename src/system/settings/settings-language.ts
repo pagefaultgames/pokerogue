@@ -106,6 +106,10 @@ export const languageOptions = [
     handler: () => changeLocaleHandler("hi"),
   },
   {
+    label: "Tiếng Việt (Needs Help)",
+    handler: () => changeLocaleHandler("vi"),
+  },
+  {
     label: "Dansk (Needs Help)",
     handler: () => changeLocaleHandler("da"),
   },

@@ -355,6 +355,7 @@ export function hasAllLocalizedSprites(lang?: string): boolean {
     case "nb-NO":
     case "sv":
     case "uk":
+    case "vi":
       return true;
     default:
       return false;
