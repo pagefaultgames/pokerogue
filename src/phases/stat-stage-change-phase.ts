@@ -50,7 +50,9 @@ export class StatStageChangePhase extends PokemonPhase {
   public override readonly phaseName = "StatStageChangePhase";
 
   private readonly options: StatStageChangePhaseOptions;
+  /** Whether the target caused its own stat changes for this phase */
   private readonly selfTarget: boolean;
+  /** Whether this phase represents a stat stage increase, set after splitting changes by sign */
   private isIncrease = false;
 
   constructor(options: StatStageChangePhaseOptions) {
@@ -120,7 +122,8 @@ export class StatStageChangePhase extends PokemonPhase {
     if (this.selfTarget) {
       return;
     }
-
+    // NB: This currently hardcodes the fact that abilities and field effects can _only_ respond to stat decreases and not increases.
+    // If any effects that can cancel stat stage increases are added, this check should be removed.
     const negative = this.options.changes.filter(c => c.stages < 0);
     if (negative.length === 0) {
       return;
@@ -227,7 +230,7 @@ export class StatStageChangePhase extends PokemonPhase {
   private getAppliedChanges(pokemon: Pokemon): StatChange[] {
     return this.options.changes.map(({ stat, stages }) => {
       const current = pokemon.getStatStage(stat);
-      const clamped = stages > 0 ? Math.min(current + stages, 6) : Math.max(current + stages, -6);
+      const clamped = Phaser.Math.Clamp(current + stages, -6, 6);
       return { stat, stages: clamped - current };
     });
   }
