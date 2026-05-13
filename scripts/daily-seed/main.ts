@@ -154,7 +154,7 @@ async function handleAnswer(answer: EditOption): Promise<void> {
 const OUTFILE_ALIASES = ["-o", "--outfile", "--outFile"] as const;
 
 /**
- * @returns {Promise<void>}
+ * Finish the daily seed configuration process.
  */
 async function finish() {
   console.groupEnd();
