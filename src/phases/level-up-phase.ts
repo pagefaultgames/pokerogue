@@ -47,7 +47,7 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
   }
 
   private showLevelUpMessages(prevStats: number[]): Promise<void> {
-    globalScene.playSound("level_up_fanfare");
+    globalScene.playSound("se/level_up_fanfare");
     return new Promise<void>(resolve => {
       globalScene.ui.showText(
         i18next.t("battle:levelUp", {

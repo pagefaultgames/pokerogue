@@ -108,7 +108,10 @@ export const failTeleportCondition = new MoveCondition(user => {
   }
   // If smoke ball / shed tail items are ever added, checks for them should be placed here
   // If a conditional "run away" ability is ever added, then we should use the apply method instead of the `hasAbility`
-  if (user.isOfType(PokemonType.GHOST, true, true) || user.hasAbilityWithAttr("RunSuccessAbAttr")) {
+  if (
+    user.isOfType(PokemonType.GHOST, { returnOriginalTypesIfStellar: true })
+    || user.hasAbilityWithAttr("RunSuccessAbAttr")
+  ) {
     return true;
   }
 

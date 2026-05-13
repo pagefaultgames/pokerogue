@@ -49,6 +49,12 @@ export class QuietFormChangePhase extends BattlePhase {
     if (this.pokemon.isActive(true)) {
       await this.playFormChangeTween();
     } else {
+      // End early if an enemy pokemon is fainted to avoid animation softlocks
+      // TODO: Might be better to avoid triggering the form change altogether...
+      if (this.pokemon.isFainted() && !this.pokemon.isPlayer()) {
+        super.end();
+        return;
+      }
       await this.doChangeForm();
       this.showFormChangeTextAndEnd();
     }

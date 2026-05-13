@@ -1,4 +1,4 @@
-import { PokerogueDailyApi } from "#api/pokerogue-daily-api";
+import { PokerogueDailyApi } from "#api/daily-api";
 import { initServerForApiTests } from "#test/setup/test-file-initialization";
 import { getApiBaseUrl } from "#test/utils/test-utils";
 import type { GetDailyRankingsPageCountRequest, GetDailyRankingsRequest } from "#types/pokerogue-daily-api";

@@ -426,7 +426,7 @@ export abstract class PokemonSpeciesForm {
     const variantDataIndex = this.getVariantDataIndex(formIndex);
     const replacement = timedEventManager.getEventPokemonSpriteReplacement(this.speciesId, formIndex);
 
-    let ret = this.speciesId.toString();
+    let ret: string = this.speciesId.toString();
 
     if (replacement) {
       ret = replacement.speciesId.toString();
@@ -507,7 +507,7 @@ export abstract class PokemonSpeciesForm {
           break;
       }
     }
-    let ret = speciesId.toString();
+    let ret: string = speciesId.toString();
     const forms = getPokemonSpecies(speciesId).forms;
     if (forms.length > 0) {
       if (formIndex !== undefined && formIndex >= forms.length) {
@@ -581,6 +581,8 @@ export abstract class PokemonSpeciesForm {
     const rootSpeciesId = this.getRootSpeciesId();
     for (const moveId of moveset) {
       if (Object.hasOwn(speciesEggMoves, rootSpeciesId)) {
+        // TODO: Review typing of `speciesEggMoves` - asserting `rootSpeciesId` is `keyof typeof speciesEggMoves` results in `never[]`
+        // due to incompatible tuple intersections
         const eggMoveIndex = speciesEggMoves[rootSpeciesId].indexOf(moveId);
         if (eggMoveIndex > -1 && eggMoves & (1 << eggMoveIndex)) {
           continue;
@@ -1021,16 +1023,14 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
 
   getEvolutionLevels(): EvolutionLevel[] {
     const evolutionLevels: EvolutionLevel[] = [];
+    const { speciesId } = this;
 
-    //console.log(Species[this.speciesId], pokemonEvolutions[this.speciesId])
-
-    if (Object.hasOwn(pokemonEvolutions, this.speciesId)) {
-      for (const e of pokemonEvolutions[this.speciesId]) {
-        const speciesId = e.speciesId;
+    if (pokemonEvolutions[speciesId] != null) {
+      for (const e of pokemonEvolutions[speciesId]) {
+        const sId = e.speciesId;
         const level = e.level;
-        evolutionLevels.push([speciesId, level]);
-        //console.log(Species[speciesId], getPokemonSpecies(speciesId), getPokemonSpecies(speciesId).getEvolutionLevels());
-        const nextEvolutionLevels = getPokemonSpecies(speciesId).getEvolutionLevels();
+        evolutionLevels.push([sId, level]);
+        const nextEvolutionLevels = getPokemonSpecies(sId).getEvolutionLevels();
         for (const npl of nextEvolutionLevels) {
           evolutionLevels.push(npl);
         }
@@ -1056,10 +1056,9 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
   ): typeof withThresholds extends false ? EvolutionLevel[] : EvolutionLevelWithThreshold[];
   getPrevolutionLevels(withThresholds = false): EvolutionLevelWithThreshold[] | EvolutionLevel[] {
     const prevolutionLevels: (EvolutionLevel | EvolutionLevelWithThreshold)[] = [];
-
     const allEvolvingPokemon = Object.keys(pokemonEvolutions);
     for (const p of allEvolvingPokemon) {
-      const speciesId = Number.parseInt(p) as SpeciesId;
+      const speciesId = Number.parseInt(p);
       for (const e of pokemonEvolutions[p]) {
         if (
           e.speciesId === this.speciesId
@@ -1084,61 +1083,63 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
   }
 
   // This could definitely be written better and more accurate to the getSpeciesForLevel logic, but it is only for generating movesets for evolved Pokemon
+  // TODO: Rework this absolutely horridly written slop
   getSimulatedEvolutionChain(
     currentLevel: number,
     forTrainer = false,
     isBoss = false,
     player = false,
   ): EvolutionLevel[] {
+    if (!Object.hasOwn(pokemonPrevolutions, this.speciesId)) {
+      return [[this.speciesId, 1]];
+    }
+
     const ret: EvolutionLevel[] = [];
-    if (Object.hasOwn(pokemonPrevolutions, this.speciesId)) {
-      const prevolutionLevels = this.getPrevolutionLevels().reverse();
-      const levelDiff = player ? 0 : forTrainer || isBoss ? (forTrainer && isBoss ? 2.5 : 5) : 10;
-      ret.push([prevolutionLevels[0][0], 1]);
-      for (let l = 1; l < prevolutionLevels.length; l++) {
-        const evolution = pokemonEvolutions[prevolutionLevels[l - 1][0]].find(
-          e => e.speciesId === prevolutionLevels[l][0],
-        );
-        ret.push([
-          prevolutionLevels[l][0],
-          Math.min(
-            Math.max(
-              evolution?.level!
-                + Math.round(
-                  randSeedGauss(0.5, 1 + levelDiff * 0.2)
-                    * Math.max(evolution?.evoLevelThreshold?.[EvoLevelThresholdKind.WILD] ?? 0, 0.5)
-                    * 5,
-                )
-                - 1,
-              2,
-              evolution?.level!,
-            ),
-            currentLevel - 1,
-          ),
-        ]); // TODO: are those bangs correct?
-      }
-      const lastPrevolutionLevel = ret[prevolutionLevels.length - 1][1];
-      const evolution = pokemonEvolutions[prevolutionLevels.at(-1)![0]].find(e => e.speciesId === this.speciesId);
+    const prevolutionLevels = this.getPrevolutionLevels().reverse();
+    const levelDiff = player ? 0 : forTrainer || isBoss ? (forTrainer && isBoss ? 2.5 : 5) : 10;
+    ret.push([prevolutionLevels[0][0], 1]);
+    for (let l = 1; l < prevolutionLevels.length; l++) {
+      const evolution = pokemonEvolutions[prevolutionLevels[l - 1][0] as keyof typeof pokemonEvolutions].find(
+        e => e.speciesId === prevolutionLevels[l][0],
+      );
       ret.push([
-        this.speciesId,
+        prevolutionLevels[l][0],
         Math.min(
           Math.max(
-            lastPrevolutionLevel
+            evolution?.level!
               + Math.round(
                 randSeedGauss(0.5, 1 + levelDiff * 0.2)
                   * Math.max(evolution?.evoLevelThreshold?.[EvoLevelThresholdKind.WILD] ?? 0, 0.5)
                   * 5,
-              ),
-            lastPrevolutionLevel + 1,
+              )
+              - 1,
+            2,
             evolution?.level!,
           ),
-          currentLevel,
+          currentLevel - 1,
         ),
       ]); // TODO: are those bangs correct?
-    } else {
-      ret.push([this.speciesId, 1]);
     }
 
+    const lastSpecies = ret[prevolutionLevels.length - 1][0] as keyof typeof pokemonEvolutions;
+    const evolution = pokemonEvolutions[lastSpecies].find(e => e.speciesId === this.speciesId);
+    ret.push([
+      this.speciesId,
+      Math.min(
+        Math.max(
+          evolution?.level!
+            + Math.round(
+              randSeedGauss(0.5, 1 + levelDiff * 0.2)
+                * Math.max(evolution?.evoLevelThreshold?.[EvoLevelThresholdKind.WILD] ?? 0, 0.5)
+                * 5,
+            )
+            - 1,
+          2,
+          evolution?.level!,
+        ),
+        currentLevel - 1,
+      ),
+    ]); // TODO: are those bangs correct?
     return ret;
   }
 

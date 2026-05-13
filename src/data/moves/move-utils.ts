@@ -73,7 +73,7 @@ export function getMoveTargets(user: Pokemon, move: MoveId, replaceTarget?: Move
     case MoveTarget.CURSE:
       // Non ghost-type Curse targets exclusively the user; ghost-type Curse targets any enemy
       // TODO: check if the user is about to Terastallize to/from Ghost type
-      if (!user.isOfType(PokemonType.GHOST, true, true)) {
+      if (!user.isOfType(PokemonType.GHOST, { returnOriginalTypesIfStellar: true })) {
         set = [user];
         break;
       }

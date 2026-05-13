@@ -152,7 +152,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
       const doBerryRewards = () => {
         const berryText = i18next.t(`${namespace}:berries`);
 
-        globalScene.playSound("item_fanfare");
+        globalScene.playSound("se/item_fanfare");
         queueEncounterMessage(
           i18next.t("battle:rewardGainCount", {
             modifierName: berryText,
@@ -211,7 +211,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
           const doBerryRewards = () => {
             const berryText = i18next.t(`${namespace}:berries`);
 
-            globalScene.playSound("item_fanfare");
+            globalScene.playSound("se/item_fanfare");
             queueEncounterMessage(
               i18next.t("battle:rewardGainCount", {
                 modifierName: berryText,
@@ -269,7 +269,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
         const doFasterBerryRewards = () => {
           const berryText = i18next.t(`${namespace}:berries`);
 
-          globalScene.playSound("item_fanfare");
+          globalScene.playSound("se/item_fanfare");
           queueEncounterMessage(
             i18next.t("battle:rewardGainCount", {
               modifierName: berryText,

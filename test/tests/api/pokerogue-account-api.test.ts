@@ -1,4 +1,4 @@
-import { PokerogueAccountApi } from "#api/pokerogue-account-api";
+import { PokerogueAccountApi } from "#api/account-api";
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
 import { initServerForApiTests } from "#test/setup/test-file-initialization";
 import { getApiBaseUrl } from "#test/utils/test-utils";

@@ -42,6 +42,7 @@ export class PokerogueAdminApi extends ApiBase {
 
     return this.ERR_GENERIC;
   }
+
   /**
    * Search an account.
    * @param params The {@linkcode SearchAccountRequest} to send
