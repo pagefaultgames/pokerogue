@@ -2302,10 +2302,6 @@ export class BattleScene extends SceneBase {
     return randSeedItem(biomes);
   }
 
-  // #region Audio
-  // TODO: move audio-related code out of `BattleScene`
-
-  // #endregion
 
   toggleInvert(invert: boolean): void {
     if (invert) {

@@ -34,8 +34,8 @@ export class AudioManager {
   /**
    * Get the effective volume for a given setting
    * (the product of that volume and the main volume).
-   * @param setting
-   * @returns
+   * @param setting - The {@linkcode VolumeSetting} to get the volume for
+   * @returns The effective volume for the given setting (between 0 and 1)
    */
   public getVolume(setting: VolumeSetting): number {
     let mul = 1;
@@ -58,12 +58,12 @@ export class AudioManager {
 
   /**
    * Stops the previously playing bgm (if it exists) and starts playing a new bgm.
-   * @remarks
-   * Helper function used by {@linkcode BattleScene.playBgm | playBgm}.
    * @param bgmName - The bgm to play
    * @param loop - Whether to loop the bgm
    * @param loopPoint - The starting point of the loop, in seconds
-   */
+   * @remarks
+   * Helper function used by {@linkcode BattleScene.playBgm | playBgm}.
+  */
   private playNewBgm(bgmName: string, loop: boolean, loopPoint: number): void {
     globalScene.ui.bgmBar.setBgmToBgmBar(bgmName);
 
@@ -191,7 +191,7 @@ export class AudioManager {
    * @param sound - The sound effect to play
    * @param config - (Optional) A `Phaser` {@linkcode Phaser.Types.Sound.SoundConfig | SoundConfig}
    * or {@linkcode Phaser.Types.Sound.SoundMarker | SoundMarker} object
-   * @returns
+   * @returns The sound object
    */
   public playSound(
     sound: string | AnySound,
