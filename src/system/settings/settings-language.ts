@@ -98,6 +98,10 @@ export const languageOptions = [
     handler: () => changeLocaleHandler("uk"),
   },
   {
+    label: "Polski (Needs Help)",
+    handler: () => changeLocaleHandler("pl"),
+  },
+  {
     label: "Bahasa Indonesia (Needs Help)",
     handler: () => changeLocaleHandler("id"),
   },

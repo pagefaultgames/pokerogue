@@ -189,6 +189,8 @@ await i18next
         "nb-NO", // Norwegian Bokmål
         "sv", // Swedish
         "uk", // Ukrainian
+        "vi", // Vietnamese
+        "pl", // Polish
       ],
       backend: {
         loadPath(lng: string, [ns]: string[]) {
