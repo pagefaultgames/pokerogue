@@ -153,7 +153,7 @@ export class PlayerBattleInfo extends BattleInfo {
       0.1,
     );
 
-    for (let level = lastLevel + 1; level <= pokemon.level; ++level) {
+    for (let level = lastLevel + 1; level <= pokemon.level; level++) {
       await this.doUpdateExpAnimation(pokemon, levelDurationMultiplier, level, true);
     }
 
@@ -169,8 +169,7 @@ export class PlayerBattleInfo extends BattleInfo {
    * @param levelDurationMultiplier - A multiplier used in calculating the duration of the level increase
    * @param level - The level to increase to (or the current level, if not leveling up)
    * @param levelUp - Whether this invocation is a level up
-   * @param lastLevelExp - The relative EXP in the
-   * @returns
+   * @returns A promise that resolves when the animation is complete
    */
   public async doUpdateExpAnimation(
     pokemon: PlayerPokemon,
