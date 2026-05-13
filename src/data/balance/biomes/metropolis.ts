@@ -114,6 +114,5 @@ export const metropolisBiome: Biome = {
   trainerChance: 4,
   weatherPool,
   terrainPool,
-  bgmLoopPoint: 141.47,
   biomeLinks,
 };

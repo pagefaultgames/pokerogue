@@ -54,13 +54,13 @@ export class Trainer extends Phaser.GameObjects.Container {
     super(globalScene, -72, 80);
     this.config =
       trainerConfigOverride
-      ?? (trainerConfigs.hasOwnProperty(trainerType)
+      ?? (Object.hasOwn(trainerConfigs, trainerType)
         ? trainerConfigs[trainerType]
         : trainerConfigs[TrainerType.ACE_TRAINER]);
 
     this.variant = variant;
     this.partyTemplateIndex = Math.min(
-      partyTemplateIndex !== undefined ? partyTemplateIndex : randSeedItem(this.config.partyTemplates.map((_, i) => i)),
+      partyTemplateIndex === undefined ? randSeedItem(this.config.partyTemplates.map((_, i) => i)) : partyTemplateIndex,
       this.config.partyTemplates.length - 1,
     );
     // TODO: Rework this and add actual error handling for missing names
@@ -321,11 +321,11 @@ export class Trainer extends Phaser.GameObjects.Container {
 
         // If the battle is not one of the named trainer doubles
         if (!(this.config.trainerTypeDouble && this.isDouble() && !this.config.doubleOnly)) {
-          if (this.config.partyMemberFuncs.hasOwnProperty(index)) {
+          if (Object.hasOwn(this.config.partyMemberFuncs, index)) {
             ret = this.config.partyMemberFuncs[index](level, strength);
             return;
           }
-          if (this.config.partyMemberFuncs.hasOwnProperty(index - template.size)) {
+          if (Object.hasOwn(this.config.partyMemberFuncs, index - template.size)) {
             ret = this.config.partyMemberFuncs[index - template.size](level, template.getStrength(index));
             return;
           }
@@ -462,7 +462,7 @@ export class Trainer extends Phaser.GameObjects.Container {
         tier = TrainerPoolTier.ULTRA_RARE;
       }
       console.log(TrainerPoolTier[tier]);
-      while (!this.config.speciesPools.hasOwnProperty(tier) || this.config.speciesPools[tier].length === 0) {
+      while (!Object.hasOwn(this.config.speciesPools, tier) || this.config.speciesPools[tier].length === 0) {
         console.log(
           `Downgraded trainer Pokemon rarity tier from ${TrainerPoolTier[tier]} to ${TrainerPoolTier[tier - 1]}`,
         );
@@ -485,10 +485,10 @@ export class Trainer extends Phaser.GameObjects.Container {
 
     console.log(ret.getName());
 
-    if (pokemonPrevolutions.hasOwnProperty(baseSpecies.speciesId) && ret.speciesId !== baseSpecies.speciesId) {
+    if (Object.hasOwn(pokemonPrevolutions, baseSpecies.speciesId) && ret.speciesId !== baseSpecies.speciesId) {
       retry = true;
     } else if (template.isBalanced(battle.enemyParty.length)) {
-      const partyMemberTypes = battle.enemyParty.flatMap(p => p.getTypes(true));
+      const partyMemberTypes = battle.enemyParty.flatMap(p => p.getTypes());
       if (
         partyMemberTypes.indexOf(ret.type1) > -1
         || (ret.type2 !== null && partyMemberTypes.indexOf(ret.type2) > -1)
@@ -536,7 +536,7 @@ export class Trainer extends Phaser.GameObjects.Container {
   checkDuplicateSpecies(baseSpecies: SpeciesId): boolean {
     const staticSpecies = (signatureSpecies[TrainerType[this.config.trainerType]] ?? []).flat(1).map(s => {
       let root = s;
-      while (pokemonPrevolutions.hasOwnProperty(root)) {
+      while (Object.hasOwn(pokemonPrevolutions, root)) {
         root = pokemonPrevolutions[root];
       }
       return root;

@@ -1,10 +1,11 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import { NextEncounterPhase } from "#phases/next-encounter-phase";
+import { EncounterPhase } from "#phases/encounter-phase";
 
-export class NewBiomeEncounterPhase extends NextEncounterPhase {
+export class NewBiomeEncounterPhase extends EncounterPhase {
   public readonly phaseName = "NewBiomeEncounterPhase";
-  doEncounter(): void {
+
+  protected override doEncounter(): void {
     globalScene.playBgm(undefined, true);
 
     // Reset all battle and wave data, perform form changes, etc.
@@ -30,7 +31,9 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
       x: "+=300",
       duration: 2000,
       onComplete: () => {
-        if (!this.tryOverrideForBattleSpec()) {
+        if (globalScene.currentBattle.isClassicFinalBoss) {
+          this.displayFinalBossDialogue();
+        } else {
           this.doEncounterCommon();
         }
       },

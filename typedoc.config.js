@@ -48,7 +48,7 @@ const config = {
     "typedoc-plugin-coverage",
     "typedoc-plugin-mdn-links",
     "typedoc-plugin-missing-exports",
-    ...globSync("./typedoc-plugins/**/*.js").map(plugin => "./" + plugin),
+    ...globSync("./plugins/typedoc/**/*.js").map(plugin => "./" + plugin),
   ],
   // Avoid emitting docs for branches other than main/beta
   emit: dryRun ? "none" : "docs",

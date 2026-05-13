@@ -37,7 +37,8 @@ describe("SelectModifierPhase", () => {
       .moveset([MoveId.FISSURE, MoveId.SPLASH])
       .ability(AbilityId.NO_GUARD)
       .startingLevel(200)
-      .enemySpecies(SpeciesId.MAGIKARP);
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .battleStyle("single");
   });
 
   it("should start a select modifier phase", async () => {

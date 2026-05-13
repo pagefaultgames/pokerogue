@@ -1,6 +1,6 @@
 import "phaser";
 
-//#region Methods/Interfaces
+// #region Methods/Interfaces
 
 /**
  * Interface representing an object that can be passed to {@linkcode setPositionRelative}.
@@ -36,9 +36,9 @@ Phaser.GameObjects.NineSlice.prototype.setPositionRelative = setPositionRelative
 Phaser.GameObjects.Text.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative;
 
-//#endregion
+// #endregion Methods/Interfaces
 
-//#region Declaration Merging
+// #region Declaration Merging
 
 interface HasSetPositionRelative {
   /**
@@ -63,4 +63,4 @@ declare module "phaser" {
   }
 }
 
-//#endregion
+// #endregion Declaration Merging

@@ -117,6 +117,5 @@ export const abyssBiome: Biome = {
   trainerChance: 16,
   weatherPool,
   terrainPool,
-  bgmLoopPoint: 20.113,
   biomeLinks,
 };

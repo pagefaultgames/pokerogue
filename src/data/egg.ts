@@ -1,6 +1,6 @@
 import type { BattleScene } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import {
   BOOSTED_RARE_EGGMOVE_RATES,
@@ -83,9 +83,7 @@ export interface IEggOptions {
 }
 
 export class Egg {
-  ////
   // #region Private properties
-  ////
 
   private _id: number;
   private _tier: EggTier;
@@ -102,13 +100,10 @@ export class Egg {
 
   private eggDescriptor?: string | undefined;
 
-  ////
-  // #endregion
-  ////
+  // #endregion Private properties
 
-  ////
   // #region Public facing properties
-  ////
+
   get id(): number {
     return this._id;
   }
@@ -159,9 +154,7 @@ export class Egg {
     return this._overrideHiddenAbility;
   }
 
-  ////
-  // #endregion
-  ////
+  // #endregion Public facing properties
 
   constructor(eggOptions?: IEggOptions) {
     const generateEggProperties = (eggOptions?: IEggOptions) => {
@@ -169,7 +162,7 @@ export class Egg {
 
       this._sourceType = eggOptions?.sourceType!; // TODO: is this bang correct?
       // Ensure _sourceType is defined before invoking rollEggTier(), as it is referenced
-      this._tier = eggOptions?.tier ?? Overrides.EGG_TIER_OVERRIDE ?? this.rollEggTier();
+      this._tier = eggOptions?.tier ?? activeOverrides.EGG_TIER_OVERRIDE ?? this.rollEggTier();
       // If egg was pulled, check if egg pity needs to override the egg tier
       if (eggOptions?.pulled) {
         // Needs this._tier and this._sourceType to work
@@ -183,8 +176,8 @@ export class Egg {
       this._timestamp = eggOptions?.timestamp ?? Date.now();
 
       // First roll shiny and variant so we can filter if species with an variant exist
-      this._isShiny = eggOptions?.isShiny ?? (Overrides.EGG_SHINY_OVERRIDE || this.rollShiny());
-      this._variantTier = eggOptions?.variantTier ?? Overrides.EGG_VARIANT_OVERRIDE ?? this.rollVariant();
+      this._isShiny = eggOptions?.isShiny ?? (activeOverrides.EGG_SHINY_OVERRIDE || this.rollShiny());
+      this._variantTier = eggOptions?.variantTier ?? activeOverrides.EGG_VARIANT_OVERRIDE ?? this.rollVariant();
       this._species = eggOptions?.species ?? this.rollSpecies()!; // TODO: Is this bang correct?
 
       this._overrideHiddenAbility = eggOptions?.overrideHiddenAbility ?? false;
@@ -220,9 +213,7 @@ export class Egg {
     this.eggDescriptor = eggOptions?.eggDescriptor;
   }
 
-  ////
   // #region Public methods
-  ////
 
   public isManaphyEgg(): boolean {
     return (
@@ -352,13 +343,9 @@ export class Egg {
     }
   }
 
-  ////
-  // #endregion
-  ////
+  // #endregion Public methods
 
-  ////
   // #region Private methods
-  ////
 
   /**
    * Rolls which egg move slot the egg will have.
@@ -456,7 +443,7 @@ export class Egg {
     let speciesPool = Object.keys(speciesEggTiers)
       .filter(s => speciesEggTiers[s] === this.tier)
       .map(s => Number.parseInt(s) as SpeciesId)
-      .filter(s => !pokemonPrevolutions.hasOwnProperty(s) && ignoredSpecies.indexOf(s) === -1);
+      .filter(s => !Object.hasOwn(pokemonPrevolutions, s) && ignoredSpecies.indexOf(s) === -1);
 
     // If this is the 10th egg without unlocking something new, attempt to force it.
     if (globalScene.gameData.unlockPity[this.tier] >= 9) {
@@ -602,9 +589,7 @@ export class Egg {
     return speciesEggTiers[this.species] ?? EggTier.COMMON;
   }
 
-  ////
-  // #endregion
-  ////
+  // #endregion Private methods
 }
 
 export function getValidLegendaryGachaSpecies(): SpeciesId[] {

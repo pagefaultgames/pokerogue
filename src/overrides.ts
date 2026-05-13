@@ -6,6 +6,8 @@ import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
 import { BerryType } from "#enums/berry-type";
 import { BiomeId } from "#enums/biome-id";
+import { BiomePoolTier } from "#enums/biome-pool-tier";
+import { Challenges } from "#enums/challenges";
 import { EggTier } from "#enums/egg-type";
 import { FormChangeItem } from "#enums/form-change-item";
 import { MoveId } from "#enums/move-id";
@@ -31,7 +33,7 @@ import type { IntClosedRange, TupleOf } from "type-fest";
 /**
  * This comment block exists to prevent IDEs from automatically removing unused imports
  * {@linkcode BerryType}, {@linkcode EvolutionItem}, {@linkcode FormChangeItem}
- * {@linkcode Stat}, {@linkcode PokemonType}
+ * {@linkcode Stat}, {@linkcode PokemonType} {@linkcode Challenges} {@linkcode BiomePoolTier}
  */
 
 /**
@@ -81,14 +83,27 @@ class DefaultOverrides {
    *
    * If `"single"`, set every non-trainer battle to be a single battle.
    *
-   * If `"double"`, set every battle (including trainer battles) to be a double battle.
+   * If `"double"`, set every battle (_including trainer battles that are normally singles-only_)
+   * to be a double battle.
    *
-   * If `"even-doubles"`, follow the `"double"` rule on even wave numbers, and follow the `"single"` rule on odd wave numbers.
+   * If `"even-doubles"`, follow the `"double"` rule on even wave numbers,
+   * and the `"single"` rule on odd wave numbers.
    *
-   * If `"odd-doubles"`, follow the `"double"` rule on odd wave numbers, and follow the `"single"` rule on even wave numbers.
+   * If `"odd-doubles"`, follow the `"double"` rule on odd wave numbers,
+   * and the `"single"` rule on even wave numbers.
+   * @defaultValue `null`
+   * @privateRemarks
+   * Prefer using {@linkcode RANDOM_TRAINER_OVERRIDE} to override trainer battles.
+   * This override's ability to force doubles trainer battles is deprecated due to not altering the spawned trainer's variant,
+   * and may be removed in a future PR.
    */
-  readonly BATTLE_STYLE_OVERRIDE: BattleStyle | null = null;
-  readonly STARTING_WAVE_OVERRIDE: number = 0;
+  readonly BATTLE_STYLE_OVERRIDE: BattleStyleOverride | null = null;
+  /**
+   * If present and non-`null`, will override the starting wave # when starting a new run.
+   * Should never be set to a negative value.
+   * @defaultValue `null`
+   */
+  readonly STARTING_WAVE_OVERRIDE: number | null = null;
   readonly STARTING_BIOME_OVERRIDE: BiomeId | null = null;
   /**
    * Overrides the Time of Day for the given biome.
@@ -99,6 +114,8 @@ class DefaultOverrides {
   readonly TIME_OF_DAY_OVERRIDE: Exclude<TimeOfDay, TimeOfDay.ALL> | null = null;
   /** Multiplies XP gained by this value including 0. Set to null to ignore the override. */
   readonly XP_MULTIPLIER_OVERRIDE: number | null = null;
+  /** If greater than `0`, adds candies on every instance of friendship gain. */
+  readonly IMMEDIATE_ADD_CANDY_OVERRIDE: number = 0;
   /**
    * Sets the level cap to this number during experience gain calculations.
    *
@@ -173,7 +190,10 @@ class DefaultOverrides {
   readonly STARTER_SPECIES_OVERRIDE: SpeciesId | null = null;
   /** This will force your starter to be a random fusion */
   readonly STARTER_FUSION_OVERRIDE: boolean = false;
-  /** This will override the species of the fusion */
+  /**
+   * This will override the species of the fusion.
+   * Requires {@linkcode STARTER_FUSION_OVERRIDE} to be set to `true`.
+   */
   readonly STARTER_FUSION_SPECIES_OVERRIDE: SpeciesId | null = null;
   readonly ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
   readonly PASSIVE_ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
@@ -282,11 +302,11 @@ class DefaultOverrides {
    * // Will have a quantity of 2 in-game
    * STARTING_MODIFIER_OVERRIDE = [{name: "EXP_SHARE", count: 2}]
    * // Will have a quantity of 1 in-game
-   * STARTING_HELD_ITEM_OVERRIDE = [{name: "LUCKY_EGG"}]
+   * STARTING_HELD_ITEMS_OVERRIDE = [{name: "LUCKY_EGG"}]
    * // Type must be given to get a specific berry
-   * STARTING_HELD_ITEM_OVERRIDE = [{name: "BERRY", type: BerryType.SITRUS}]
+   * STARTING_HELD_ITEMS_OVERRIDE = [{name: "BERRY", type: BerryType.SITRUS}]
    * // A random berry will be generated at runtime
-   * STARTING_HELD_ITEM_OVERRIDE = [{name: "BERRY"}]
+   * STARTING_HELD_ITEMS_OVERRIDE = [{name: "BERRY"}]
    * ```
    */
   readonly STARTING_MODIFIER_OVERRIDE: ModifierOverride[] = [];
@@ -313,6 +333,7 @@ class DefaultOverrides {
   readonly ITEM_REWARD_OVERRIDE: ModifierOverride[] = [];
 
   /** If `true`, disable all non-scripted opponent trainer encounters. */
+  // TODO: Merge into `BATTLE_TYPE_OVERRIDE`
   readonly DISABLE_STANDARD_TRAINERS_OVERRIDE: boolean = false;
 
   /**
@@ -328,12 +349,9 @@ class DefaultOverrides {
 
 export const defaultOverrides = new DefaultOverrides();
 
-export default {
-  ...defaultOverrides,
-  ...overrides,
-} satisfies InstanceType<typeof DefaultOverrides>;
+export const activeOverrides = { ...defaultOverrides, ...overrides } satisfies InstanceType<OverridesType>;
 
-export type BattleStyle = "double" | "single" | "even-doubles" | "odd-doubles";
+export type BattleStyleOverride = "double" | "single" | "even-doubles" | "odd-doubles";
 
 export type RandomTrainerOverride = {
   /** The Type of trainer to force */
@@ -347,4 +365,4 @@ export type RandomTrainerOverride = {
 };
 
 /** The type of the {@linkcode DefaultOverrides} class */
-export type OverridesType = typeof DefaultOverrides;
+type OverridesType = typeof DefaultOverrides;

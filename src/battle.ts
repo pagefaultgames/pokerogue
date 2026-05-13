@@ -1,7 +1,6 @@
 import type { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import { ArenaTagType } from "#enums/arena-tag-type";
-import { BattleSpec } from "#enums/battle-spec";
 import { BattleType } from "#enums/battle-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { BiomeId } from "#enums/biome-id";
@@ -21,6 +20,7 @@ import type { CustomModifierSettings } from "#modifiers/modifier-type";
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MusicPreference } from "#system/settings";
 import { trainerConfigs } from "#trainers/trainer-config";
+import type { NewBattleResolvedProps } from "#types/new-battle-props";
 import type { TurnMove } from "#types/turn-move";
 import {
   isBetween,
@@ -58,7 +58,6 @@ export class Battle {
   protected gameMode: GameMode;
   public waveIndex: number;
   public battleType: BattleType;
-  public battleSpec: BattleSpec;
   public trainer: Trainer | null;
   public enemyLevels: number[] | undefined;
   public enemyParty: EnemyPokemon[] = [];
@@ -80,6 +79,8 @@ export class Battle {
   public battleSeed: string = randomString(16, true);
   private battleSeedState: string | null = null;
   public moneyScattered = 0;
+  // TODO: These trackers are only used for Sticky Web + Mirror Armor edge cases
+  // and are abhorrently janky.
   /** Primarily for double battles, keeps track of last enemy and player pokemon that triggered its ability or used a move */
   public lastEnemyInvolved: number;
   public lastPlayerInvolved: number;
@@ -103,25 +104,26 @@ export class Battle {
    */
   public failedRunAway = false;
 
-  constructor(gameMode: GameMode, waveIndex: number, battleType: BattleType, trainer?: Trainer, double = false) {
+  constructor(
+    gameMode: GameMode,
+    { waveIndex, battleType, trainer, mysteryEncounterType, double = false }: NewBattleResolvedProps,
+  ) {
     this.gameMode = gameMode;
     this.waveIndex = waveIndex;
     this.battleType = battleType;
     this.trainer = trainer ?? null;
-    this.initBattleSpec();
-    this.enemyLevels =
-      battleType !== BattleType.TRAINER
-        ? new Array(double ? 2 : 1).fill(null).map(() => this.getLevelForWave())
-        : trainer?.getPartyLevels(this.waveIndex);
+    this.mysteryEncounterType = mysteryEncounterType;
     this.double = double;
+
+    this.enemyLevels =
+      battleType === BattleType.TRAINER
+        ? trainer?.getPartyLevels(this.waveIndex)
+        : // TODO: Remove array.fill.map
+          new Array(double ? 2 : 1).fill(null).map(() => this.getLevelForWave());
   }
 
-  private initBattleSpec(): void {
-    let spec = BattleSpec.DEFAULT;
-    if (this.gameMode.isWaveFinal(this.waveIndex) && this.gameMode.isClassic) {
-      spec = BattleSpec.FINAL_BOSS;
-    }
-    this.battleSpec = spec;
+  public get isClassicFinalBoss(): boolean {
+    return this.gameMode.isClassic && this.gameMode.isWaveFinal(this.waveIndex);
   }
 
   public getLevelForWave(): number {
@@ -131,7 +133,7 @@ export class Battle {
 
     if (this.gameMode.isBoss(this.waveIndex)) {
       const ret = Math.floor(baseLevel * bossMultiplier);
-      if (this.battleSpec === BattleSpec.FINAL_BOSS || !(this.waveIndex % 250)) {
+      if (this.isClassicFinalBoss || !(this.waveIndex % 250)) {
         return Math.ceil(ret / 25) * 25;
       }
       let levelOffset = 0;
@@ -262,7 +264,7 @@ export class Battle {
     }
     const wildOpponents = globalScene.getEnemyParty();
     for (const pokemon of wildOpponents) {
-      if (this.battleSpec === BattleSpec.FINAL_BOSS) {
+      if (this.isClassicFinalBoss) {
         if (pokemon.species.getFormSpriteKey(pokemon.formIndex) === SpeciesFormKey.ETERNAMAX) {
           return "battle_final";
         }
@@ -276,6 +278,12 @@ export class Battle {
       ) {
         if (globalScene.musicPreference === MusicPreference.GENFIVE) {
           switch (pokemon.species.speciesId) {
+            case SpeciesId.ARTICUNO:
+            case SpeciesId.ZAPDOS:
+            case SpeciesId.MOLTRES:
+            case SpeciesId.MEWTWO:
+            case SpeciesId.MEW:
+              return "battle_legendary_mew";
             case SpeciesId.REGIROCK:
             case SpeciesId.REGICE:
             case SpeciesId.REGISTEEL:
@@ -319,7 +327,10 @@ export class Battle {
               return "battle_legendary_regis_g6";
             case SpeciesId.GROUDON:
             case SpeciesId.KYOGRE:
-              return "battle_legendary_gro_kyo";
+              if (pokemon.getFormKey() === SpeciesFormKey.PRIMAL) {
+                return "battle_legendary_gro_kyo";
+              }
+              return "battle_legendary_rayquaza";
             case SpeciesId.RAYQUAZA:
               return "battle_legendary_rayquaza";
             case SpeciesId.DEOXYS:
@@ -335,7 +346,7 @@ export class Battle {
               return "battle_legendary_sinnoh";
             case SpeciesId.DIALGA:
             case SpeciesId.PALKIA:
-              if (pokemon.species.getFormSpriteKey(pokemon.formIndex) === SpeciesFormKey.ORIGIN) {
+              if (pokemon.getFormKey() === SpeciesFormKey.ORIGIN) {
                 return "battle_legendary_origin_forme";
               }
               return "battle_legendary_dia_pal";
@@ -364,6 +375,8 @@ export class Battle {
             case SpeciesId.TAPU_BULU:
             case SpeciesId.TAPU_FINI:
               return "battle_legendary_tapu";
+            case SpeciesId.COSMOG:
+            case SpeciesId.COSMOEM:
             case SpeciesId.SOLGALEO:
             case SpeciesId.LUNALA:
               return "battle_legendary_sol_lun";
@@ -500,13 +513,12 @@ export class Battle {
 
 export class FixedBattle extends Battle {
   constructor(waveIndex: number, config: FixedBattleConfig) {
-    super(
-      globalScene.gameMode,
+    super(globalScene.gameMode, {
       waveIndex,
-      config.battleType,
-      config.battleType === BattleType.TRAINER ? config.getTrainer() : undefined,
-      config.double,
-    );
+      battleType: config.battleType,
+      trainer: config.battleType === BattleType.TRAINER ? config.getTrainer() : undefined,
+      double: config.double,
+    });
     if (config.getEnemyParty) {
       this.enemyParty = config.getEnemyParty();
     }
@@ -517,14 +529,15 @@ type GetTrainerFunc = () => Trainer;
 type GetEnemyPartyFunc = () => EnemyPokemon[];
 
 export class FixedBattleConfig {
-  public battleType: BattleType;
+  // TODO: All fixed battles are currently trainer battles
+  public battleType: Exclude<BattleType, BattleType.CLEAR>;
   public double: boolean;
   public getTrainer: GetTrainerFunc;
   public getEnemyParty: GetEnemyPartyFunc;
   public seedOffsetWaveIndex: number;
   public customModifierRewardSettings?: CustomModifierSettings;
 
-  setBattleType(battleType: BattleType): FixedBattleConfig {
+  setBattleType(battleType: Exclude<BattleType, BattleType.CLEAR>): FixedBattleConfig {
     this.battleType = battleType;
     return this;
   }

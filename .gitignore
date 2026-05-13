@@ -11,6 +11,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+temp
 node_modules
 dist
 dist-ssr
@@ -32,7 +33,7 @@ desktop.ini
 *.njsproj
 *.sln
 *.sw?
-/vs
+/.vs
 
 src/data/battle-anim-raw-data*.ts
 src/data/battle-anim-data.ts

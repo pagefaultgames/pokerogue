@@ -39,7 +39,7 @@ export class VictoryPhase extends PokemonPhase {
     if (
       !globalScene
         .getEnemyParty()
-        .find(p => (globalScene.currentBattle.battleType === BattleType.WILD ? p.isOnField() : !p?.isFainted(true)))
+        .find(p => (globalScene.currentBattle.battleType === BattleType.WILD ? p.isOnField() : !p?.isFainted()))
     ) {
       globalScene.phaseManager.pushNew("BattleEndPhase", true);
       if (globalScene.currentBattle.battleType === BattleType.TRAINER) {
@@ -71,9 +71,7 @@ export class VictoryPhase extends PokemonPhase {
             "SelectModifierPhase",
             undefined,
             undefined,
-            gameMode.isFixedBattle(currentWaveIndex)
-              ? gameMode.getFixedBattle(currentWaveIndex).customModifierRewardSettings
-              : undefined,
+            gameMode.getFixedBattle(currentWaveIndex)?.customModifierRewardSettings,
           );
         } else if (gameMode.isDaily) {
           globalScene.phaseManager.pushNew("ModifierRewardPhase", modifierTypes.EXP_CHARM);

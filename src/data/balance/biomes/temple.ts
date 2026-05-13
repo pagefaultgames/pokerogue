@@ -109,6 +109,5 @@ export const templeBiome: Biome = {
   trainerChance: 16,
   weatherPool,
   terrainPool,
-  bgmLoopPoint: 2.547,
   biomeLinks,
 };

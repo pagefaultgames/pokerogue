@@ -73,7 +73,6 @@ describe("Moves - Destiny Bond", () => {
 
     // Turn 2: Player KO's the enemy before the enemy's turn
     game.move.select(moveToUse);
-    await game.setTurnOrder(playerFirst);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemyPokemon.isFainted()).toBe(true);
@@ -99,7 +98,6 @@ describe("Moves - Destiny Bond", () => {
 
     // Turn 2: Enemy should fail Destiny Bond then get KO'd
     game.move.select(moveToUse);
-    await game.setTurnOrder(enemyFirst);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemyPokemon.isFainted()).toBe(true);
@@ -144,7 +142,6 @@ describe("Moves - Destiny Bond", () => {
 
     // Turn 2: Enemy should skip a turn due to sleep, then get KO'd
     game.move.select(moveToUse);
-    await game.setTurnOrder(enemyFirst);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemyPokemon).toHaveFainted();

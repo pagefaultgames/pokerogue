@@ -104,7 +104,7 @@ export class SelectBiomePhase extends BattlePhase {
           undefined,
           undefined,
           gameMode.isFixedBattle(currentWaveIndex)
-            ? gameMode.getFixedBattle(currentWaveIndex).customModifierRewardSettings
+            ? gameMode.getFixedBattle(currentWaveIndex)?.customModifierRewardSettings
             : undefined,
         );
       }
