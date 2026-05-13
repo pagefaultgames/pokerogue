@@ -2302,7 +2302,6 @@ export class BattleScene extends SceneBase {
     return randSeedItem(biomes);
   }
 
-
   toggleInvert(invert: boolean): void {
     if (invert) {
       this.cameras.main.setPostPipeline(InvertPostFX);
