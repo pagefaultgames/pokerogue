@@ -175,7 +175,7 @@ async function finish() {
 
 /**
  * Write the seed config to a file.
- * @param outFile
+ * @param outFile - The output file path
  */
 async function createOutputFile(outFile: string): Promise<void> {
   if (!outFile.endsWith(".json")) {
