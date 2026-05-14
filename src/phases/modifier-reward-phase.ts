@@ -28,7 +28,7 @@ export class ModifierRewardPhase extends BattlePhase {
     return new Promise<void>(resolve => {
       const newModifier = this.modifierType.newModifier();
       globalScene.addModifier(newModifier);
-      globalScene.playSound("item_fanfare");
+      globalScene.playSound("se/item_fanfare");
       globalScene.ui.showText(
         i18next.t("battle:rewardGain", {
           modifierName: newModifier?.type.name,

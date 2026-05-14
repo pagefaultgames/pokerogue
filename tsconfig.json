@@ -13,8 +13,6 @@
       // ES2022 stdlibs
       "ES2022",
       "DOM",
-      "DOM.AsyncIterable",
-      "DOM.Iterable",
       "ScriptHost",
       "WebWorker.ImportScripts",
       // future libs
@@ -53,7 +51,7 @@
     "noEmit": true,
     "paths": {
       "#abilities/*": ["./src/data/abilities/*.ts"],
-      "#api/*": ["./src/plugins/api/*.ts"],
+      "#api/*": ["./src/api/*.ts"],
       "#biomes/*": ["./src/data/balance/biomes/*.ts"],
       "#balance/*": ["./src/data/balance/*.ts"],
       "#constants/*": ["./src/constants/*.ts"],
@@ -72,7 +70,7 @@
       ],
       "#package.json": ["./package.json"],
       "#phases/*": ["./src/phases/*.ts"],
-      "#plugins/*": ["./src/plugins/vite/*.ts", "./src/plugins/*.ts"],
+      "#plugins/*": ["./plugins/phaser/*.ts"],
       "#sprites/*": ["./src/sprites/*.ts"],
       "#system/*": [
         "./src/system/settings/*.ts",
@@ -97,6 +95,6 @@
     }
   },
   // Exclude checking for script JS files as those are covered by the folder's `jsconfig.json`
-  "include": ["**/*.ts", "**/*.d.ts", "**/*.mts"],
+  "include": ["**/*.ts", "**/*.d.ts", "**/*.mts", ".github/**/*.mts"],
   "exclude": ["dist", "node_modules"]
 }

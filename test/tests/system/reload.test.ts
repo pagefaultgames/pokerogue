@@ -1,4 +1,4 @@
-import { pokerogueApi } from "#api/pokerogue-api";
+import { pokerogueApi } from "#api/api";
 import { BiomeId } from "#enums/biome-id";
 import { Button } from "#enums/buttons";
 import { GameModes } from "#enums/game-modes";

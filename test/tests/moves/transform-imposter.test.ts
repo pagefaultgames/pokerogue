@@ -69,7 +69,7 @@ describe("Transforming Effects", () => {
 
       expect(ditto.getMoveset().map(m => m.moveId)).toEqual(ditto.getMoveset().map(m => m.moveId));
 
-      expect(ditto.getTypes()).toEqual(mew.getTypes());
+      expect(ditto).toHaveTypes(mew.getTypes(), { mode: "ordered" });
     });
 
     it("should copy NORMAL type if target is typeless and did not use ROOST", async () => {
@@ -110,12 +110,12 @@ describe("Transforming Effects", () => {
       const ditto = game.field.getPlayerPokemon();
       const magmar = game.field.getEnemyPokemon();
       magmar.isTerastallized = true;
-      magmar.teraType = PokemonType.DARK;
+      magmar.teraType = PokemonType.STELLAR;
 
       game.move.use(MoveId.TRANSFORM);
       await game.toEndOfTurn();
 
-      expect(ditto.getTypes(true)).toEqual([PokemonType.FIRE]);
+      expect(ditto).toHaveTypes(PokemonType.FIRE);
     });
 
     // TODO: This is not currently implemented

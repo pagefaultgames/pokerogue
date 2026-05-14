@@ -1,4 +1,4 @@
-import { pokerogueApi } from "#api/pokerogue-api";
+import { pokerogueApi } from "#api/api";
 import { loggedInUser, updateUserInfo } from "#app/account";
 import * as appConstants from "#constants/app-constants";
 import { describe, expect, it, vi } from "vitest";

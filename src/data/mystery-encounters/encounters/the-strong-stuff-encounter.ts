@@ -64,8 +64,9 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
       disableAnimation: true,
     },
     {
-      spriteKey: SpeciesId.SHUCKLE.toString(),
-      fileRoot: "pokemon",
+      species: SpeciesId.SHUCKLE,
+      spriteKey: "",
+      fileRoot: "",
       hasShadow: true,
       repeat: true,
       scale: 1.25,
@@ -73,7 +74,7 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
       y: 10,
       yShadow: 7,
     },
-  ]) // Set in onInit()
+  ])
   .withIntroDialogue([
     {
       text: `${namespace}:intro`,

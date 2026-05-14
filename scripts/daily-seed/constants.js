@@ -5,6 +5,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+// #region Constants
+
 /**
  * A mapping of biome pool tier names to their corresponding IDs.
  * @enum {number}
@@ -34,6 +36,9 @@ export const EDIT_OPTIONS = /** @type {const} */ ([
   "biome",
   "luck",
   "forced waves",
+  "trainer manipulation",
+  "challenges",
+  "mystery encounters",
   "starting money",
   "seed",
   "edit",
@@ -49,6 +54,8 @@ export const BOSS_OPTIONS = /** @type {const} */ ([
   "nature",
   "ability",
   "passive",
+  "segments",
+  "catchable",
   "finish",
 ]);
 
@@ -58,7 +65,8 @@ export const STARTER_OPTIONS = /** @type {const} */ ([
   "variant",
   "moveset",
   "nature",
-  "abilityIndex",
+  "ability",
+  "passive",
   "finish",
 ]);
 
