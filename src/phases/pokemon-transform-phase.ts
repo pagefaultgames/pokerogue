@@ -63,8 +63,10 @@ export class PokemonTransformPhase extends PokemonPhase {
     //target type falls back to the target's original typing if none are left (from Burn Up, etc.)
     const targetTypes = target.getTypes();
 
-    if (targetTypes.includes(PokemonType.UNKNOWN)) {
+    if (target.getTag(BattlerTagType.ROOSTED)) {
       user.summonData.types = target.getTypes(false, false, true); // ignoreOverride = true → get original types
+    } else if (targetTypes.includes(PokemonType.UNKNOWN)) {
+      user.summonData.types = [PokemonType.NORMAL];
     } else {
       user.summonData.types = targetTypes;
     }

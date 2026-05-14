@@ -72,7 +72,7 @@ describe("Transforming Effects", () => {
       expect(ditto.getTypes()).toEqual(mew.getTypes());
     });
 
-    it("should copy the target's original typing if target is typeless", async () => {
+    it("should copy NORMAL type if target is typeless and did not use ROOST", async () => {
       game.override.enemySpecies(SpeciesId.MAGMAR);
       await game.classicMode.startBattle(SpeciesId.DITTO);
 
@@ -85,7 +85,22 @@ describe("Transforming Effects", () => {
       await game.toEndOfTurn();
 
       expect(magmar.getTypes()).toEqual([PokemonType.UNKNOWN]);
-      expect(ditto.getTypes()).toEqual([PokemonType.FIRE]);
+      expect(ditto.getTypes()).toEqual([PokemonType.NORMAL]);
+    });
+
+    it("should copy original types if target used ROOST", async () => {
+      game.override.enemySpecies(SpeciesId.CHARIZARD);
+      await game.classicMode.startBattle(SpeciesId.DITTO);
+
+      const ditto = game.field.getPlayerPokemon();
+      const charizard = game.field.getEnemyPokemon();
+
+      game.move.use(MoveId.TRANSFORM);
+      await game.move.forceEnemyMove(MoveId.ROOST);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.toEndOfTurn();
+      expect(charizard.getTypes()).toEqual([PokemonType.FIRE, PokemonType.FLYING]);
+      expect(ditto.getTypes()).toEqual([PokemonType.FIRE, PokemonType.FLYING]);
     });
 
     it("should not consider the target's Tera Type when copying types", async () => {
