@@ -6744,6 +6744,7 @@ export class EnemyPokemon extends Pokemon {
               && moveTargets.some(p => {
                 const doesNotFail =
                   !globalScene.arena.isMoveWeatherCancelled(this, move)
+                  && !globalScene.arena.isMoveTerrainCancelled(this, [p.getBattlerIndex()], move)
                   && (move.applyConditions(this, p, -1)
                     || [MoveId.SUCKER_PUNCH, MoveId.UPPER_HAND, MoveId.THUNDERCLAP].includes(move.id));
                 return (
