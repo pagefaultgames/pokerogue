@@ -1,10 +1,12 @@
 import type { BattleScene } from "#app/battle-scene";
 import { allMoves } from "#data/data-lists";
+import { TerrainType } from "#data/terrain";
 import { AbilityId } from "#enums/ability-id";
 import { AiType } from "#enums/ai-type";
 import { MoveCategory } from "#enums/move-category";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import { WeatherType } from "#enums/weather-type";
 import type { EnemyPokemon } from "#field/pokemon";
 import { GameManager } from "#test/framework/game-manager";
 import { randSeedInt } from "#utils/common";
@@ -91,6 +93,56 @@ describe("Enemy Commands - Move Selection", () => {
 
     enemyMoveset.forEach(mv => {
       if (mv?.getMove().category === MoveCategory.STATUS || mv?.moveId === MoveId.LAST_RESORT) {
+        expect(moveChoices[mv.moveId]).toBe(0);
+      }
+    });
+  });
+
+  it("should not select a move that will fail due to weather", async () => {
+    game.override
+      .enemySpecies(SpeciesId.ARCANINE)
+      .enemyMoveset([MoveId.EXTREME_SPEED, MoveId.FIRE_FANG, MoveId.FLAMETHROWER])
+      .startingLevel(1)
+      .enemyLevel(100)
+      .weather(WeatherType.HEAVY_RAIN);
+
+    await game.classicMode.startBattle(SpeciesId.RATTATA);
+
+    const enemyPokemon = game.field.getEnemyPokemon();
+    enemyPokemon.aiType = AiType.SMART_RANDOM;
+
+    const moveChoices: MoveChoiceSet = {};
+    const enemyMoveset = enemyPokemon.getMoveset();
+    enemyMoveset.forEach(mv => (moveChoices[mv!.moveId] = 0));
+    getEnemyMoveChoices(enemyPokemon, moveChoices);
+
+    enemyMoveset.forEach(mv => {
+      if (mv?.moveId === MoveId.FIRE_FANG || mv?.moveId === MoveId.FLAMETHROWER) {
+        expect(moveChoices[mv.moveId]).toBe(0);
+      }
+    });
+  });
+
+  it("should not select a move that will fail due to terrain", async () => {
+    game.override
+      .enemySpecies(SpeciesId.ARCANINE)
+      .enemyMoveset([MoveId.EXTREME_SPEED, MoveId.FIRE_FANG, MoveId.FLAMETHROWER])
+      .startingLevel(1)
+      .enemyLevel(100)
+      .startingTerrain(TerrainType.PSYCHIC);
+
+    await game.classicMode.startBattle(SpeciesId.RATTATA);
+
+    const enemyPokemon = game.field.getEnemyPokemon();
+    enemyPokemon.aiType = AiType.SMART_RANDOM;
+
+    const moveChoices: MoveChoiceSet = {};
+    const enemyMoveset = enemyPokemon.getMoveset();
+    enemyMoveset.forEach(mv => (moveChoices[mv!.moveId] = 0));
+    getEnemyMoveChoices(enemyPokemon, moveChoices);
+
+    enemyMoveset.forEach(mv => {
+      if (mv?.moveId === MoveId.EXTREME_SPEED) {
         expect(moveChoices[mv.moveId]).toBe(0);
       }
     });
