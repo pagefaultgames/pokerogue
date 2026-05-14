@@ -134,7 +134,7 @@ import { getEnumValues } from "#utils/enums";
 import { areAllies, canSpeciesTera, willTerastallize } from "#utils/pokemon-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { toCamelCase, toTitleCase } from "#utils/strings";
-import type { ValueHolder } from "#utils/value-holder";
+import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 
 // TODO: Make these (and all condition functions actually)
@@ -1173,7 +1173,7 @@ export abstract class Move implements Localizable {
   }
 
   getPriority(user: Pokemon, simulated = true): number {
-    const priority = new NumberHolder(this.priority);
+    const priority = new ValueHolder(this.priority);
     applyMoveAttrs("IncrementMovePriorityAttr", user, null, this, priority);
     applyAbAttrs("ChangeMovePriorityAbAttr", { pokemon: user, simulated, move: this, priority });
 
