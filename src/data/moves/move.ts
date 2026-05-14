@@ -4042,14 +4042,14 @@ export class StatStageChangeAttr extends MoveEffectAttr {
 }
 
 /**
- * Attribute used for {@linkcode MoveId.PARTING_SHOT}.
  * Implements the combined effect of lowering the target's stats and switching out the user.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Parting_Shot_(move)}
  *
  * @remarks
  * Because the stat drop phase is queued and not resolved immediately, this method silently
  * simulates ability blocks and stat boundaries to accurately predict if the stat drop will succeed.
  * This custom class ensures the switch only occurs if the stat drop is not blocked
- * (e.g., by {@linkcode AbilityId.CLEAR_BODY | Clear Body} or minimum stat stages),
+ * (e.g., by {@link https://bulbapedia.bulbagarden.net/wiki/Clear_Body_(Ability) | Clear Body} or minimum stat stages),
  * and prevents the move from failing outright if the user has no eligible party members.
  */
 export class PartingShotAttr extends StatStageChangeAttr {
