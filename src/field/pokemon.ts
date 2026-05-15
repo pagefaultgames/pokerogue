@@ -6806,6 +6806,13 @@ export class EnemyPokemon extends Pokemon {
                 && ![MoveId.SUCKER_PUNCH, MoveId.UPPER_HAND, MoveId.THUNDERCLAP].includes(move.id)
               ) {
                 targetScore = -20;
+              }
+              //If the move will fail due to weather or terrain, set it's target score to -20
+              else if (
+                globalScene.arena.isMoveWeatherCancelled(this, move)
+                || globalScene.arena.isMoveTerrainCancelled(this, [mt], move)
+              ) {
+                targetScore = -20;
               } else if (move.is("AttackMove")) {
                 /**
                  * Attack moves are given extra multipliers to their base benefit score based on
