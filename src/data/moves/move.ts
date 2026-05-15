@@ -11733,9 +11733,23 @@ export function initMoves() {
       .bitingMove()
       .attr(RemoveScreensAttr, (_user, target) => (target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)),
     new AttackMove(MoveId.STOMPING_TANTRUM, PokemonType.GROUND, MoveCategory.PHYSICAL, 75, 100, 10, -1, 0, 7)
-      .attr(MovePowerMultiplierAttr, user => {
+      .attr(MovePowerMultiplierAttr, (user, target) => {
         // Stomping tantrum triggers on most failures (including sleep/freeze)
-        const lastNonDancerMove = user.getLastXMoves(2)[1] as TurnMove | undefined;
+        // Notable exceptions include after being targeted with Sky Drop and after recharging
+        let lastNonDancerMove = user.getLastXMoves(2)[1] as TurnMove | undefined;
+        const enemyLastMoveUsed = target.getLastXMoves(2)[1] as TurnMove | undefined;
+        // Checking if the last move was a recharge move
+        if (user.getLastXMoves(3)[2] && allMoves[user.getLastXMoves(3)[2].move].hasAttr("RechargeAttr")) {
+          lastNonDancerMove = user.getLastXMoves(3)[2] as TurnMove | undefined;
+        }
+        // Checking for the Sky Drop exception
+        if (enemyLastMoveUsed) {
+          return lastNonDancerMove
+            && (lastNonDancerMove.result === MoveResult.MISS || lastNonDancerMove.result === MoveResult.FAIL)
+            && !(enemyLastMoveUsed.move === MoveId.SKY_DROP && enemyLastMoveUsed.result === MoveResult.OTHER)
+            ? 2
+            : 1;
+        }
         return lastNonDancerMove
           && (lastNonDancerMove.result === MoveResult.MISS || lastNonDancerMove.result === MoveResult.FAIL)
           ? 2
