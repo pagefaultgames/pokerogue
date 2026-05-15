@@ -7,13 +7,13 @@ module.exports = {
       comment:
         "This module depends on a file that is meant to test or facilitate the testing of other source code."
         + "\nThese files should not be referenced by anything but other test code, as they will be excluded from the compiled output."
-        + "\nIf there's something inside the folder that's of use to other modules, it should be moved into `src` to make it generally available.",
+        + "\nIf there's something inside the folder that's of use to other modules, it should be moved out to make it generally available.",
       severity: "error",
       from: {
-        pathNot: ["(^|/)test"],
+        pathNot: ["(^|/)test/"],
       },
       to: {
-        path: ["(^|/)test"],
+        path: ["(^|/)test/"],
       },
     },
     {

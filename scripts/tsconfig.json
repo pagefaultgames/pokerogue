@@ -11,7 +11,7 @@
   // TODO: This is only necessary because of the `src` repo being incompatible with declaration emit.
   // If https://github.com/microsoft/TypeScript/issues/17744 is ever resolved, we should graduate to proper project references
   "extends": "../tsconfig.json",
-  "include": ["../**/*.ts", "../**/*.mts", "../.github/**/*.mts"],
+  "include": ["../**/*.ts", "../**/*.mts"], // this doesn't include the .github folder lol
   "exclude": ["../node_modules", "../dist", "**/*.boilerplate.ts"],
   "compilerOptions": {
     // make sure more specific paths appear before less specific paths

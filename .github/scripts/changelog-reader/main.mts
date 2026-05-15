@@ -35,6 +35,10 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
   timeZone: "UTC",
 });
 
+/**
+ * Start the `changelog-reader` script.
+ * @returns A Promise that resolves when the script is finished executing.
+ */
 async function main(): Promise<void> {
   console.group(`📝 Changelog Reader v${SCRIPT_VERSION}`);
   try {
@@ -43,14 +47,17 @@ async function main(): Promise<void> {
       return;
     }
 
-    await getChangelog();
+    await getAndProcessChangelog();
   } catch (error) {
     process.exitCode = 1;
     console.error(error);
   }
 }
 
-async function getChangelog(): Promise<void> {
+/**
+ * Retrieve and process the changelog
+ */
+async function getAndProcessChangelog(): Promise<void> {
   const prs = await getDiff();
   if (prs.size === 0) {
     console.log("No commits found between branches");
@@ -170,9 +177,9 @@ async function updateDescription(changelog: string): Promise<void> {
 
 /**
  * Load the configuration from the environment.
- * @returns {Promise<boolean>} Whether the config was loaded successfully.
+ * @returns A Promise that resolves with whether the config was loaded successfully.
  */
-async function loadConfig() {
+async function loadConfig(): Promise<boolean> {
   if (!process.env.GITHUB_ACTIONS) {
     CONFIG.REPO_BRANCH = "beta";
     return true;
@@ -182,6 +189,7 @@ async function loadConfig() {
     process.exitCode = 1;
     return false;
   }
+
   // Extract the "branch" part of "remote:branch"
   const branch = process.env.PR_BRANCH.split(":")[1];
   if (!branch) {
@@ -189,11 +197,13 @@ async function loadConfig() {
     process.exitCode = 1;
     return false;
   }
+
   if (branch === CONFIG.CUTOFF_BRANCH) {
     console.error("PR branch is the same as the cutoff branch.");
     process.exitCode = 1;
     return false;
   }
+
   if (branch !== "beta" && branch !== "release" && !branch.startsWith("hotfix-")) {
     console.error("PR branch must be 'beta', 'release', or start with 'hotfix-'.");
     process.exitCode = 1;
