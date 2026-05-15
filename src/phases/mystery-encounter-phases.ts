@@ -2,7 +2,6 @@ import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 import { getCharVariantFromDialogue } from "#data/dialogue";
 import { ArenaTagSide } from "#enums/arena-tag-side";
-import { BattleSpec } from "#enums/battle-spec";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
@@ -297,7 +296,7 @@ export class MysteryEncounterBattlePhase extends Phase {
     const enemyField = globalScene.getEnemyField();
     const encounterMode = globalScene.currentBattle.mysteryEncounter!.encounterMode;
 
-    if (globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
+    if (globalScene.currentBattle.isClassicFinalBoss) {
       return i18next.t("battle:bossAppeared", { bossName: enemyField[0].name });
     }
 

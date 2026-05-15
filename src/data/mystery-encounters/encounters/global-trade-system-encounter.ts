@@ -128,11 +128,9 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
     let bgmKey: string;
     if (globalScene.musicPreference === MusicPreference.GENFIVE) {
       bgmKey = "mystery_encounter_gen_5_gts";
-      globalScene.loadBgm(bgmKey, `${bgmKey}.mp3`);
     } else {
       // Mixed option
       bgmKey = "mystery_encounter_gen_6_gts";
-      globalScene.loadBgm(bgmKey, `${bgmKey}.mp3`);
     }
 
     // Load possible trade options
@@ -186,9 +184,9 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
                     ? tradePokemon.species.forms[tradePokemon.formIndex].formName
                     : null;
                 const line1 = `${i18next.t("pokemonInfoContainer:ability")} ${tradePokemon.getAbility().name}${
-                  tradePokemon.getGender() !== Gender.GENDERLESS
-                    ? `     |     ${i18next.t("pokemonInfoContainer:gender")} ${getGenderSymbol(tradePokemon.getGender())}`
-                    : ""
+                  tradePokemon.getGender() === Gender.GENDERLESS
+                    ? ""
+                    : `     |     ${i18next.t("pokemonInfoContainer:gender")} ${getGenderSymbol(tradePokemon.getGender())}`
                 }`;
                 const line2 =
                   i18next.t("pokemonInfoContainer:nature")
@@ -721,10 +719,10 @@ function doPokemonTradeSequence(tradedPokemon: PlayerPokemon, receivedPokemon: P
       ease: "Cubic.easeInOut",
       duration: 500,
       onComplete: async () => {
-        globalScene.fadeOutBgm(1000, false);
+        globalScene.fadeOutBgm(1000);
         await showEncounterText(`${namespace}:pokemonTradeSelected`);
         tradedPokemon.cry();
-        globalScene.playBgm("evolution");
+        globalScene.playBgm("bw/evolution");
         await showEncounterText(`${namespace}:pokemonTradeGoodbye`);
 
         tradedPokeball.setAlpha(0);
@@ -927,7 +925,7 @@ function doTradeReceivedSequence(
 
         globalScene.time.delayedCall(2000, () => {
           globalScene.playSound("se/pb_rel");
-          globalScene.fadeOutBgm(500, false);
+          globalScene.fadeOutBgm(500);
           receivedPokemon.cry();
           receivedPokemonTintSprite.scale = 0.25;
           receivedPokemonTintSprite.alpha = 1;

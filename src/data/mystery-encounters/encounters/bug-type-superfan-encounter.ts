@@ -280,7 +280,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
         const encounter = globalScene.currentBattle.mysteryEncounter!;
 
         // Player gets different rewards depending on the number of bug types they have
-        const numBugTypes = globalScene.getPlayerParty().filter(p => p.isOfType(PokemonType.BUG, true)).length;
+        const numBugTypes = globalScene.getPlayerParty().filter(p => p.isOfType(PokemonType.BUG)).length;
         const numBugTypesText = i18next.t(`${namespace}:numBugTypes`, {
           count: numBugTypes,
         });

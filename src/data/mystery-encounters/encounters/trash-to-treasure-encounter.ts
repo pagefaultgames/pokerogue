@@ -247,7 +247,7 @@ async function tryApplyDigRewardItems() {
     }
   }
 
-  globalScene.playSound("item_fanfare");
+  globalScene.playSound("se/item_fanfare");
   await showEncounterText(
     i18next.t("battle:rewardGainCount", {
       modifierName: leftovers.name,
@@ -272,7 +272,7 @@ async function tryApplyDigRewardItems() {
     }
   }
 
-  globalScene.playSound("item_fanfare");
+  globalScene.playSound("se/item_fanfare");
   await showEncounterText(
     i18next.t("battle:rewardGainCount", {
       modifierName: shellBell.name,

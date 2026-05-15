@@ -26,19 +26,11 @@ import { getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
 import { addBBCodeTextObject, addTextObject, getBBCodeFrag, getTextColor, updateCandyCountTextStyle } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
-import {
-  fixedInt,
-  formatStat,
-  getBiomeName,
-  getLocalizedSpriteKey,
-  getShinyDescriptor,
-  padInt,
-  rgbHexToRgba,
-} from "#utils/common";
+import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
+import { fixedInt, formatStat, getBiomeName, getLocalizedSpriteKey, getShinyDescriptor, padInt } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
 import { getDexNumber } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
-import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 
 enum Page {
@@ -848,19 +840,16 @@ export class SummaryUiHandler extends UiHandler {
             ? i18next.t("trainerNames:playerF")
             : i18next.t("trainerNames:playerM");
 
-        const profileContainerProfilTitle = globalScene.add.image(
-          7,
-          4,
-          getLocalizedSpriteKey("summary_profile_profile_title"), // Pixel text 'PROFIL'
-        );
-        profileContainerProfilTitle.setOrigin(0, 0.5);
-        profileContainer.add(profileContainerProfilTitle);
+        const profileContainerProfileTitle = globalScene.add //
+          .image(7, 4, getLocalizedSpriteKey("summary_profile_profile_title")) // Pixel text 'PROFILE'
+          .setOrigin(0, 0.5);
+        profileContainer.add(profileContainerProfileTitle);
 
         // TODO: should add field for original trainer name to Pokemon object, to support gift/traded Pokemon from MEs
         const trainerText = addBBCodeTextObject(
           7,
           12,
-          `${i18next.t("pokemonSummary:ot")}/${getBBCodeFrag(
+          `${getBBCodeFrag(`${i18next.t("pokemonSummary:ot")}/`, TextStyle.SUMMARY_ALT)}${getBBCodeFrag(
             globalScene.hideUsername
               ? usernameReplacement
               : loggedInUser?.username || i18next.t("pokemonSummary:unknown"),
@@ -897,15 +886,23 @@ export class SummaryUiHandler extends UiHandler {
           return typeIcon;
         };
 
-        const types = this.pokemon?.getTypes(false, false, true, false)!; // TODO: is this bang correct?
+        const types = this.pokemon?.getTypes({
+          includeTeraType: false,
+          bypassSummonData: true,
+          ignoreThirdType: true,
+        })!; // TODO: is this bang correct?
         profileContainer.add(getTypeIcon(0, types[0]));
         if (types.length > 1) {
           profileContainer.add(getTypeIcon(1, types[1]));
         }
 
         if (this.pokemon?.getLuck()) {
-          const luckLabelText = addTextObject(141, 28, i18next.t("common:luckIndicator"), TextStyle.SUMMARY_ALT);
-          luckLabelText.setOrigin(0, 0);
+          const luckLabelText = addTextObject(
+            141,
+            28,
+            i18next.t("common:luckIndicator"),
+            TextStyle.WINDOW_ALT,
+          ).setOrigin(0, 0);
           profileContainer.add(luckLabelText);
 
           const luckText = addTextObject(
@@ -919,7 +916,7 @@ export class SummaryUiHandler extends UiHandler {
           profileContainer.add(luckText);
         }
 
-        if (globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id) && this.pokemon != null) {
+        if (Object.hasOwn(globalScene.gameData.achvUnlocks, achvs.TERASTALLIZE.id) && this.pokemon != null) {
           const teraIcon = globalScene.add.sprite(128, 26, "button_tera");
           teraIcon.setName("terastallize-icon");
           teraIcon.setFrame(PokemonType[this.pokemon.getTeraType()].toLowerCase());
@@ -1094,10 +1091,11 @@ export class SummaryUiHandler extends UiHandler {
           this.permStatsContainer.add(statLabel);
           this.ivContainer.add(ivLabel);
 
+          // TODO: are those bangs correct?
           const statValueText =
-            stat !== Stat.HP
-              ? formatStat(this.pokemon?.getStat(stat)!) // TODO: is this bang correct?
-              : `${formatStat(this.pokemon?.hp!, true)}/${formatStat(this.pokemon?.getMaxHp()!, true)}`; // TODO: are those bangs correct?
+            stat === Stat.HP
+              ? `${formatStat(this.pokemon?.hp!, true)}/${formatStat(this.pokemon?.getMaxHp()!, true)}`
+              : formatStat(this.pokemon?.getStat(stat)!);
           const ivText = `${this.pokemon?.ivs[stat]}/31`;
 
           const statValue = addTextObject(93 + 93 * colIndex, 16 * rowIndex, statValueText, TextStyle.WINDOW_ALT);
@@ -1225,12 +1223,12 @@ export class SummaryUiHandler extends UiHandler {
             newMoveTypeIcon.setOrigin(0, 1);
             this.extraMoveRowContainer.add(newMoveTypeIcon);
           }
-          const ppOverlay = globalScene.add.image(172, -5, getLocalizedSpriteKey("summary_moves_overlay_pp")); // Pixel text 'PP'
+          const ppOverlay = globalScene.add.image(177, -5, getLocalizedSpriteKey("summary_moves_overlay_pp")); // Pixel text 'PP'
           ppOverlay.setOrigin(1, 0.5);
           this.extraMoveRowContainer.add(ppOverlay);
 
           const pp = padInt(this.newMove?.pp!, 2, "  "); // TODO: is this bang correct?
-          const ppText = addTextObject(173, 1, `${pp}/${pp}`, TextStyle.WINDOW);
+          const ppText = addTextObject(178, 1, `${pp}/${pp}`, TextStyle.WINDOW);
           ppText.setOrigin(0, 1);
           this.extraMoveRowContainer.add(ppText);
         }

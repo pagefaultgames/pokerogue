@@ -1,15 +1,15 @@
-import { PokerogueDailyApi } from "#api/pokerogue-daily-api";
+import { PokerogueDailyApi } from "#api/daily-api";
 import { initServerForApiTests } from "#test/setup/test-file-initialization";
 import { getApiBaseUrl } from "#test/utils/test-utils";
 import type { GetDailyRankingsPageCountRequest, GetDailyRankingsRequest } from "#types/pokerogue-daily-api";
 import { type RankingEntry, ScoreboardCategory } from "#ui/daily-run-scoreboard";
 import { HttpResponse, http } from "msw";
-import type { SetupServerApi } from "msw/node";
+import type { SetupServer } from "msw/node";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const apiBase = getApiBaseUrl();
 const dailyApi = new PokerogueDailyApi(apiBase);
-let server: SetupServerApi;
+let server: SetupServer;
 
 beforeAll(async () => {
   server = await initServerForApiTests();

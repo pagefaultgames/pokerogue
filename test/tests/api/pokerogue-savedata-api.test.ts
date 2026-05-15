@@ -1,14 +1,14 @@
-import { PokerogueSavedataApi } from "#api/pokerogue-savedata-api";
+import { PokerogueSavedataApi } from "#api/savedata-api";
 import { initServerForApiTests } from "#test/setup/test-file-initialization";
 import { getApiBaseUrl } from "#test/utils/test-utils";
 import type { UpdateAllSavedataRequest } from "#types/api";
 import { HttpResponse, http } from "msw";
-import type { SetupServerApi } from "msw/node";
+import type { SetupServer } from "msw/node";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const apiBase = getApiBaseUrl();
 const savedataApi = new PokerogueSavedataApi(apiBase);
-let server: SetupServerApi;
+let server: SetupServer;
 
 beforeAll(async () => {
   server = await initServerForApiTests();

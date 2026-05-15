@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { getTerrainColor } from "#data/terrain";
 import { TimeOfDay } from "#enums/time-of-day";
 import type { RGBArray } from "#types/sprite-types";
@@ -78,7 +78,7 @@ export class FieldSpritePipeline extends Phaser.Renderer.WebGL.Pipelines.MultiPi
  * @returns The overriden tint colors as an RGB array.
  */
 function overrideTint(): RGBArray {
-  switch (Overrides.TIME_OF_DAY_OVERRIDE) {
+  switch (activeOverrides.TIME_OF_DAY_OVERRIDE) {
     case TimeOfDay.DAY:
     case TimeOfDay.DAWN:
       return globalScene.arena.getDayTint();

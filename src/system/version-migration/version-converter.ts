@@ -47,11 +47,12 @@ export const settingsMigrators: readonly SettingsSaveMigrator[] = [settingsMigra
 // Add migrator imports below:
 // Example: import * as vA_B_C from "#system/vA_B_C";
 
-import * as v1_0_4 from "#system/version-migration/versions/v1_0_4";
-import * as v1_7_0 from "#system/version-migration/versions/v1_7_0";
-import * as v1_8_3 from "#system/version-migration/versions/v1_8_3";
-import * as v1_9_0 from "#system/version-migration/versions/v1_9_0";
-import * as v1_10_0 from "#system/version-migration/versions/v1_10_0";
+import * as v1_0_4 from "#system/v1_0_4";
+import * as v1_7_0 from "#system/v1_7_0";
+import * as v1_8_3 from "#system/v1_8_3";
+import * as v1_9_0 from "#system/v1_9_0";
+import * as v1_10_0 from "#system/v1_10_0";
+import * as v1_11_19 from "#system/v1_11_19";
 
 /** Current game version */
 const LATEST_VERSION = version;
@@ -80,6 +81,7 @@ sessionMigrators.push(...v1_10_0.sessionMigrators);
 /** All settings migrators */
 const settingsMigrators: SettingsSaveMigrator[] = [];
 settingsMigrators.push(...v1_0_4.settingsMigrators);
+settingsMigrators.push(...v1_11_19.settingsMigrators);
 
 /** Sorts migrators by their stated version, ensuring they are applied in order from oldest to newest */
 const sortMigrators = (migrators: SaveMigrator[]): void => {
@@ -154,7 +156,7 @@ export function applySessionVersionMigration(data: SessionSaveData) {
  */
 // biome-ignore lint/complexity/noBannedTypes: TODO - refactor settings
 export function applySettingsVersionMigration(data: Object) {
-  const prevVersion: string = data.hasOwnProperty("gameVersion") ? data["gameVersion"] : "1.0.0";
+  const prevVersion: string = Object.hasOwn(data, "gameVersion") ? data["gameVersion"] : "1.0.0";
   const isCurrentVersionHigher = compareVersions(prevVersion, LATEST_VERSION) === -1;
 
   if (isCurrentVersionHigher) {
