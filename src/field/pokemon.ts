@@ -3730,7 +3730,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const isPhysical = moveCategory === MoveCategory.PHYSICAL;
 
-    const weatherDamageMultiplier = new NumberHolder(arena.getWeatherDamageMultiplier(moveType));
+    const weatherDamageMultiplier = new ValueHolder(arena.getWeatherDamageMultiplier(moveType));
     applyMoveAttrs("OverrideWeatherMultiplierAttr", source, this, move, weatherDamageMultiplier);
 
     const isTypeImmune = typeMultiplier === 0;

@@ -2706,7 +2706,12 @@ export class OverrideWeatherMultiplierAttr extends MoveAttr {
     this.weather = weather;
   }
 
-  apply(_user: Pokemon, _target: Pokemon, _move: Move, args: [weatherMultiplier: NumberHolder, ...any[]]): boolean {
+  apply(
+    _user: Pokemon,
+    _target: Pokemon,
+    _move: Move,
+    args: [weatherMultiplier: ValueHolder<number>, ...any[]],
+  ): boolean {
     const weatherMultiplier = args[0];
     if (globalScene.arena.weatherType === this.weather) {
       weatherMultiplier.value = 1.5;
