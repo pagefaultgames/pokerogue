@@ -84,8 +84,8 @@ describe("Transforming Effects", () => {
       await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.toEndOfTurn();
 
-      expect(magmar.getTypes()).toEqual([PokemonType.UNKNOWN]);
-      expect(ditto.getTypes()).toEqual([PokemonType.NORMAL]);
+      expect(magmar).toHaveTypes(PokemonType.UNKNOWN);
+      expect(ditto).toHaveTypes(PokemonType.NORMAL);
     });
 
     it("should copy original types if target used ROOST", async () => {
@@ -97,10 +97,11 @@ describe("Transforming Effects", () => {
 
       game.move.use(MoveId.TRANSFORM);
       await game.move.forceEnemyMove(MoveId.ROOST);
-      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.toEndOfTurn();
-      expect(charizard.getTypes()).toEqual([PokemonType.FIRE, PokemonType.FLYING]);
-      expect(ditto.getTypes()).toEqual([PokemonType.FIRE, PokemonType.FLYING]);
+
+      expect(charizard).toHaveTypes([PokemonType.FIRE, PokemonType.FLYING]);
+      expect(ditto).toHaveTypes([PokemonType.FIRE, PokemonType.FLYING]);
     });
 
     it("should not consider the target's Tera Type when copying types", async () => {
