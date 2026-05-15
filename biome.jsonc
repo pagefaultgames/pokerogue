@@ -382,6 +382,7 @@
         }
       }
     },
+    // Ban imports from test files in src
     {
       "includes": ["src/**/*.ts"],
       "linter": {

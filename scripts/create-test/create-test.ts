@@ -13,8 +13,8 @@
 import { cliAliases, type TestType, validTestTypes } from "#create-test/constants";
 import { getBoilerplatePath, getTestFileFullPath } from "#create-test/dirs";
 import { promptFileName, promptTestType } from "#create-test/interactive";
-import { defaultCommanderHelpArgs } from "#utils/arguments";
-import { writeFileSafe } from "#utils/file";
+import { defaultCommanderHelpArgs } from "#script-utils/arguments";
+import { writeFileSafe } from "#script-utils/file";
 import { toKebabCase, toTitleCase } from "#utils/strings";
 import fs from "node:fs";
 import { join } from "node:path";

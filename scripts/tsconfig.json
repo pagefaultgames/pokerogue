@@ -6,9 +6,8 @@
  */
 {
   // Separate TSConfig used for CI, typechecking the entire project alongside `scripts` with exclusive subpath aliases.
-  // Code in `src/test` will continue to use the root tsconfig when editing (providing extra insurance against referencing `scripts` files).
-  // All other settings are preserved as TSC will lint any imported files with the provided settings
-  // (meaning we may as well check everything in 1 pass)
+  // Code in `src`/`test` will continue to use the root tsconfig when editing (providing extra insurance against referencing `scripts` files).
+  // We cannot change any other compilation settings from normal to prevent checking the main repo code with 2 different settings.
   // TODO: This is only necessary because of the `src` repo being incompatible with declaration emit.
   // If https://github.com/microsoft/TypeScript/issues/17744 is ever resolved, we should graduate to proper project references
   "extends": "../tsconfig.json",
@@ -57,9 +56,10 @@
         "../src/ui/*.ts"
       ],
       "#data/*": ["../src/data/pokemon-forms/*.ts", "../src/data/pokemon/*.ts", "../src/data/*.ts"],
+      "#utils/*": ["../src/utils/*.ts"],
 
-      // new subpath imports for script subfolders
-      "#utils/*": ["../src/utils/*.ts", "./utils/*.ts"], // add mapping for scripting utilities
+      // new subpath imports for script folders
+      "#script-utils/*": ["./utils/*.ts"],
       "#daily-seed/*": ["./daily-seed/prompts/*.ts", "./daily-seed/*.ts"],
       "#gen-moveset/*": ["./gen-moveset/*.ts"],
       "#create-test/*": ["./create-test/*.ts"],

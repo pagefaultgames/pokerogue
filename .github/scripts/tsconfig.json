@@ -1,0 +1,13 @@
+{
+  "include": ["**/*.mts"],
+  "compilerOptions": {
+    "module": "nodenext",
+    "target": "esnext",
+    "strict": true,
+    "erasableSyntaxOnly": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    // Node needs the .ts extensions to run properly
+    "allowImportingTsExtensions": true
+  }
+}

@@ -8,7 +8,7 @@
  * Any extra CLI arguments are passed directly to `vitest run`.
  */
 
-import { defaultCommanderHelpArgs } from "#utils/arguments";
+import { defaultCommanderHelpArgs } from "#script-utils/arguments";
 import { copyFile, glob, mkdir, mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { basename, join } from "node:path";

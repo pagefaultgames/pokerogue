@@ -138,7 +138,8 @@ export async function promptSeed(): Promise<string> {
 export async function promptForcedWaves(): Promise<DailyForcedWave[] | undefined> {
   const forcedWaves: DailyForcedWave[] = [];
 
-  async function addForcedWave() {
+  // TODO: Consider reworking this into a do while loop?
+  async function addForcedWave(): Promise<void> {
     const waveIndex = await number({
       message: "Please enter the wave to force.\nPressing ENTER will end the prompt early.",
       min: 1,
@@ -161,11 +162,11 @@ export async function promptForcedWaves(): Promise<DailyForcedWave[] | undefined
 
     // TODO: Remove type parameter if or when `select`'s type parameter becomes `const Value`
     // https://github.com/SBoudrias/Inquirer.js/issues/2101
-    const type = await select<"Species" | "Tier">({
+    const waveType = await select({
       message: "Please select the type of wave to force.",
-      choices: ["Species", "Tier"],
+      choices: ["Species", "Tier"] as const,
     });
-    switch (type) {
+    switch (waveType) {
       case "Species": {
         const speciesId = await promptSpeciesId();
         forcedWaves.push({ waveIndex, speciesId, hiddenAbility: hiddenAbility ? true : undefined });
@@ -184,6 +185,8 @@ export async function promptForcedWaves(): Promise<DailyForcedWave[] | undefined
         });
         break;
       }
+      default:
+        waveType satisfies never;
     }
     await addForcedWave();
   }

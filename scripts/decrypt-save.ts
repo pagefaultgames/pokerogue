@@ -10,7 +10,7 @@
  */
 
 import { saveKey as SAVE_KEY } from "#app/constants";
-import { defaultCommanderHelpArgs } from "#utils/arguments";
+import { defaultCommanderHelpArgs } from "#script-utils/arguments";
 import fs from "node:fs";
 import { Command } from "@commander-js/extra-typings";
 import cryptoJs from "crypto-js";
@@ -47,11 +47,8 @@ const systemShortKeys = {
  * @returns The string with shortened keynames replaced with full names
  */
 function convertSystemDataStr(dataStr: string): string {
-  const fromKeys = Object.values(systemShortKeys);
-  const toKeys = Object.keys(systemShortKeys);
-  // biome-ignore lint/suspicious/useGuardForIn: `fromKeys` is a simple array
-  for (const k in fromKeys) {
-    dataStr = dataStr.replace(new RegExp(`${fromKeys[k].replace("$", "\\$")}`, "g"), toKeys[k]);
+  for (const [fullKey, abbreviated] of Object.entries(systemShortKeys)) {
+    dataStr = dataStr.replace(new RegExp(`${abbreviated.replace("$", "\\$")}`, "g"), fullKey);
   }
   return dataStr;
 }

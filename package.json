@@ -26,6 +26,7 @@
     "dailySeed:create": "vite-node scripts/daily-seed/main.ts",
     "changelog": "node scripts/changelog-reader/main.mjs",
     "typecheck": "tsc",
+    "typecheck:github": "tsc -p .github/scripts/tsconfig.json",
     "typecheck:all": "tsc -p scripts/tsconfig.json",
     "biome": "biome check --write --changed --no-errors-on-unmatched --diagnostic-level=error",
     "biome:staged": "biome check --write --staged --no-errors-on-unmatched --diagnostic-level=error",

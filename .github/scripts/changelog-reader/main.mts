@@ -7,21 +7,15 @@
 
 import chalk from "chalk";
 import { Octokit } from "octokit";
-import { CONFIG } from "./config.mjs";
-import { formatChangelog } from "./format.mjs";
+import { CONFIG, type Label } from "./config.mts";
+import { formatChangelog, type PullRequest } from "./format.mjs";
 
 chalk.level = 2;
 
 /**
- * @import {Label} from "./config.mjs"
- * @import {PullRequest} from "./format.mjs"
- */
-
-/**
  * The version of this script
- * @type {string}
  */
-const SCRIPT_VERSION = "1.0.0";
+const SCRIPT_VERSION: string = "1.0.1";
 
 const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,
@@ -41,7 +35,7 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
   timeZone: "UTC",
 });
 
-async function main() {
+async function main(): Promise<void> {
   console.group(`📝 Changelog Reader v${SCRIPT_VERSION}`);
   try {
     const success = await loadConfig();
@@ -56,7 +50,7 @@ async function main() {
   }
 }
 
-async function getChangelog() {
+async function getChangelog(): Promise<void> {
   const prs = await getDiff();
   if (prs.size === 0) {
     console.log("No commits found between branches");
@@ -75,7 +69,7 @@ async function getChangelog() {
     await updateDescription(output);
   } else {
     // dynamically imported to not need `@inquirer/prompts` during the workflow
-    const { writeFileSafe } = await import("../utils/file.js");
+    const { writeFileSafe } = await import("../../../scripts/utils/file.ts");
     writeFileSafe(CONFIG.OUTPUT_FILE, output, "utf8");
     console.log(`✔ Output written to ${CONFIG.OUTPUT_FILE} successfully!`);
   }
@@ -83,9 +77,9 @@ async function getChangelog() {
 
 /**
  * Get a set of commit SHAs from the branch diff.
- * @returns {Promise<Set<string>>} Set of commit SHAs
+ * @returns A Promise that resolves with all commit SHAs from the branch diff.
  */
-async function getDiff() {
+async function getDiff(): Promise<Set<string>> {
   console.log(`Comparing ${CONFIG.CUTOFF_BRANCH}...${CONFIG.REPO_BRANCH}`);
 
   const commits = await octokit.paginate(
@@ -104,12 +98,11 @@ async function getDiff() {
 
 /**
  * Get the pull requests for the given commits.
- * @param {Set<string>} commits - The commit SHAs
- * @returns {Promise<PullRequest[]>} List of pull requests.
+ * @param commits - The commit SHAs
+ * @returns A Promise that resolves with the list of pull requests.
  */
-async function getPullRequests(commits) {
-  /** @type {PullRequest[]} */
-  const pullRequests = [];
+async function getPullRequests(commits: Set<string>): Promise<PullRequest[]> {
+  const pullRequests: PullRequest[] = [];
   for (const sha of commits) {
     try {
       const prs = await octokit.rest.repos.listPullRequestsAssociatedWithCommit({
@@ -122,14 +115,12 @@ async function getPullRequests(commits) {
         continue;
       }
       const section = getChangelogSection(pr.body || "");
-      /** @type {PullRequest} */
-      const pullRequest = {
+      pullRequests.push({
         number: pr.number,
         title: pr.title,
         body: section,
-        labels: pr.labels.map(l => /** @type {Label} */ (l.name)),
-      };
-      pullRequests.push(pullRequest);
+        labels: pr.labels.map(l => l.name as Label),
+      });
     } catch (error) {
       console.error(`Failed to get PR ${sha}: ${error}`);
     }
@@ -138,19 +129,21 @@ async function getPullRequests(commits) {
 }
 
 const sectionRegex = new RegExp(`${CONFIG.CHANGELOG_SECTION}([\\s\\S]*?)(?=##)`, "i");
+
 /**
- * @param {string} description - The description to get the section from
+ * @param description - The description to get the section from
  */
-function getChangelogSection(description) {
+function getChangelogSection(description: string): string | undefined {
   const match = description.match(sectionRegex);
   return match?.[0];
 }
 
 /**
  * Write the generated changelog to the PR description.
- * @param {string} changelog
+ * @param changelog - The changelog to update
+ * @returns A Promise that resolves when the description has been updated.
  */
-async function updateDescription(changelog) {
+async function updateDescription(changelog: string): Promise<void> {
   if (!process.env.PR_NUMBER) {
     console.error(chalk.red("PR_NUMBER not set. Could not update PR description."));
     process.exitCode = 1;

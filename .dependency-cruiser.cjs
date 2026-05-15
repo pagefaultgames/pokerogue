@@ -10,10 +10,10 @@ module.exports = {
         + "\nIf there's something inside the folder that's of use to other modules, it should be moved into `src` to make it generally available.",
       severity: "error",
       from: {
-        pathNot: ["^test"],
+        pathNot: ["(^|/)test"],
       },
       to: {
-        path: ["^test"],
+        path: ["(^|/)test"],
       },
     },
     {
@@ -24,10 +24,10 @@ module.exports = {
         + "\nLegitimate reasons for moving things out of scripts are few and far between; the standard solution is usually to remove the offending import.",
       severity: "error",
       from: {
-        pathNot: ["^scripts"],
+        pathNot: ["(^|/)scripts"],
       },
       to: {
-        path: ["^scripts"],
+        path: ["(^|/)scripts"],
       },
     },
     // #endregion Package Boundaries

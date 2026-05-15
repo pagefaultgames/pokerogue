@@ -9,15 +9,14 @@ import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { Nature } from "#enums/nature";
 import { SpeciesId } from "#enums/species-id";
+import type { Variant } from "#sprites/variant";
 import type { StarterMoveset } from "#types/save-data";
 import { getEnumKeys } from "#utils/enums";
 import { toTitleCase, toUpperSnakeCase } from "#utils/strings";
 import { number, search } from "@inquirer/prompts";
 
-// NB: We cannot import this from #sprites/variant as that file imports `Pokemon` (and 90% of `src` along with it)
-export type Variant = 0 | 1 | 2;
-
-// TODO: Change all these prompts to use objects to avoid re-mapping cases
+// TODO: Change all these prompts to pass `Choice` objects to inquirer to avoid re-mapping cases back and forth
+// (which would also remove the annoying type assertions)
 
 /**
  * Prompt the user to enter a speciesId.
@@ -58,10 +57,12 @@ export async function promptFormIndex(): Promise<number> {
  * This does **NOT** validate that the variant exists for the given species.
  */
 export async function promptVariant(): Promise<Variant> {
+  // NB: Type assertion here is OK as the prompt will always range from 0-2
   return (await number({
     message: "Please enter the variant to set.",
     min: 0,
     max: 2,
+    step: 1,
     required: true,
   })) as Variant;
 }
