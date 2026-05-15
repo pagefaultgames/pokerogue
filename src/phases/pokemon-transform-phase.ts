@@ -60,11 +60,19 @@ export class PokemonTransformPhase extends PokemonPhase {
       return new PokemonMove(MoveId.NONE);
     });
 
-    //target type falls back to the target's original typing if none are left (from Burn Up, etc.)
-    const targetTypes = target.getTypes();
+    // target type falls back to the target's original typing if none are left (from Burn Up, etc.)
+    const targetTypes = target.getTypes({ includeTeraType: false });
 
     if (target.getTag(BattlerTagType.ROOSTED)) {
-      user.summonData.types = target.getTypes(false, false, true); // ignoreOverride = true → get original types
+      // Transform/Imposter ignore temporary type changes caused by Roost, as well as Terastallization.
+      // Note: Due to the way that specific type change needs to be ignored, this also causes type changes that should
+      // not be ignored by Transform/Imposter to be ignored as well if the Pokemon's type was changed due to using Roost.
+      // TODO: Roost needs to be refactored to fix this bug.
+      user.summonData.types = target.getTypes({
+        includeTeraType: false,
+        bypassSummonData: true,
+        ignoreThirdType: false,
+      });
     } else if (targetTypes.includes(PokemonType.UNKNOWN)) {
       user.summonData.types = [PokemonType.NORMAL];
     } else {
