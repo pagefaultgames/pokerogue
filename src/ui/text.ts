@@ -134,6 +134,9 @@ export function getTextStyleOptions(
         case "ja":
           styleOptions.padding = { top: 2, bottom: 10 };
           break;
+        case "eu":
+          styleOptions.padding = { right: 66 };
+          break;
       }
       styleOptions.fontSize = fontSizeLabel;
       shadowXpos = 5;
@@ -255,6 +258,7 @@ export function getTextStyleOptions(
       let fontSizeValue = "96px";
       switch (lang) {
         case "ja":
+        case "id":
           fontSizeValue = "80px";
           styleOptions.padding = { top: 10 };
           break;
@@ -286,6 +290,7 @@ export function getTextStyleOptions(
       let fontSizeValue = "96px";
       switch (lang) {
         case "ja":
+        case "id":
           fontSizeValue = "80px";
           styleOptions.padding = { top: 10 };
           break;
@@ -302,6 +307,7 @@ export function getTextStyleOptions(
       let fontSizeValue = "96px";
       switch (lang) {
         case "ja":
+        case "id":
           fontSizeValue = "80px";
           styleOptions.padding = { top: 10 };
           break;

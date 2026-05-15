@@ -170,9 +170,10 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoXPos: 34,
   },
   pl: {
-    starterInfoTextSize: "56px",
+    starterInfoTextSize: "48px",
     instructionTextSize: "28px",
-    starterInfoXPos: 35,
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 40,
   },
   ro: {
     starterInfoTextSize: "56px",
@@ -192,7 +193,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   },
   id: {
     starterInfoTextSize: "48px",
-    instructionTextSize: "32px",
+    instructionTextSize: "28px",
     starterInfoYOffset: 0.5,
     starterInfoXPos: 37,
   },
@@ -645,7 +646,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       ignoreTimeTint: true,
     });
 
-    this.pokemonNumberText = addTextObject(17, 1, "0000", TextStyle.SUMMARY_DEX_NUM).setOrigin(0);
+    this.pokemonNumberText = addTextObject(41, 1, "0000", TextStyle.SUMMARY_DEX_NUM).setOrigin(1, 0);
 
     this.pokemonNameText = addTextObject(6, 112, "", TextStyle.SUMMARY).setOrigin(0);
 

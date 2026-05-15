@@ -388,8 +388,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       .setPipeline(globalScene.spritePipeline, { tone: [0.0, 0.0, 0.0, 0.0], ignoreTimeTint: true });
     this.starterSelectContainer.add(this.pokemonSprite);
 
-    this.pokemonNumberText = addTextObject(17, 1, "0000", TextStyle.SUMMARY_DEX_NUM) //
-      .setOrigin(0);
+    this.pokemonNumberText = addTextObject(41, 1, "0000", TextStyle.SUMMARY_DEX_NUM) //
+      .setOrigin(1, 0);
     this.starterSelectContainer.add(this.pokemonNumberText);
 
     this.pokemonNameText = addTextObject(6, 112, "", TextStyle.SUMMARY) //

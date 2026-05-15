@@ -161,8 +161,8 @@ export class SummaryUiHandler extends UiHandler {
     this.shinyOverlay.setVisible(false);
     this.summaryContainer.add(this.shinyOverlay);
 
-    this.numberText = addTextObject(17, -149, "0000", TextStyle.SUMMARY);
-    this.numberText.setOrigin(0, 1);
+    this.numberText = addTextObject(41, -149, "0000", TextStyle.SUMMARY_DEX_NUM);
+    this.numberText.setOrigin(1, 1);
     this.summaryContainer.add(this.numberText);
 
     this.pokemonSprite = globalScene.initPokemonSprite(
