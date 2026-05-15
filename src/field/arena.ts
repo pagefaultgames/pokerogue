@@ -497,8 +497,12 @@ export class Arena {
   }
 
   /**
+   * Compute the power multiplier applied to a grounded move from terrain.
    * @param attackType - The {@linkcode PokemonType} of the attack
-   * @returns The terrain power multiplier
+   * @returns The multiplier to apply to move power.
+   * @remarks
+   * This excludes Misty Terrain's 50% nerf to Dragon-type moves,
+   * which depends on the _target's_ groundedness (not the user's).
    */
   public getTerrainPowerMultiplier(attackType: PokemonType): number {
     if (this.terrainType === TerrainType.ELECTRIC && attackType === PokemonType.ELECTRIC) {

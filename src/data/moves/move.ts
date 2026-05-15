@@ -2693,11 +2693,11 @@ export class SacrificialFullRestoreAttr extends SacrificialAttr {
 }
 
 /**
- * Attribute used for moves which ignore type-based debuffs from weather.
+ * Attribute used for moves which override the damage multiplier from weather.
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Hydro_Steam_(move)}
  */
-export class IgnoreWeatherTypeDebuffAttr extends MoveAttr {
-  /** The {@linkcode WeatherType} this move ignores */
+export class OverrideWeatherMultiplierAttr extends MoveAttr {
+  /** The {@linkcode WeatherType} this move overrides the multiplier of */
   public readonly weather: WeatherType;
 
   constructor(weather: WeatherType) {
@@ -2706,10 +2706,10 @@ export class IgnoreWeatherTypeDebuffAttr extends MoveAttr {
     this.weather = weather;
   }
 
-  apply(_user: Pokemon, _target: Pokemon, _move: Move, args: [NumberHolder, ...any[]]): boolean {
-    const weatherModifier = args[0];
+  apply(_user: Pokemon, _target: Pokemon, _move: Move, args: [weatherMultiplier: NumberHolder, ...any[]]): boolean {
+    const weatherMultiplier = args[0];
     if (globalScene.arena.weatherType === this.weather) {
-      weatherModifier.value = 1.5;
+      weatherMultiplier.value = 1.5;
     }
     return true;
   }
@@ -9241,7 +9241,7 @@ const MoveAttrs = Object.freeze({
   PartyStatusCureAttr,
   FlameBurstAttr,
   SacrificialFullRestoreAttr,
-  IgnoreWeatherTypeDebuffAttr,
+  OverrideWeatherMultiplierAttr,
   WeatherHealAttr,
   PlantHealAttr,
   SandHealAttr,
@@ -12562,7 +12562,7 @@ export function initMoves() {
       )
       .slicingMove(),
     new AttackMove(MoveId.HYDRO_STEAM, PokemonType.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, 0, 9) //
-      .attr(IgnoreWeatherTypeDebuffAttr, WeatherType.SUNNY),
+      .attr(OverrideWeatherMultiplierAttr, WeatherType.SUNNY),
     new AttackMove(MoveId.RUINATION, PokemonType.DARK, MoveCategory.SPECIAL, -1, 90, 10, -1, 0, 9) //
       .attr(TargetHalfHpDamageAttr),
     new AttackMove(MoveId.COLLISION_COURSE, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 9) //
