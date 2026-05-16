@@ -1,4 +1,4 @@
-import type { AnySound } from "#app/battle-scene";
+import type { BackgroundMusic } from "#app/audio/background-music";
 import { EVOLVE_MOVE } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -12,7 +12,6 @@ import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { EvolutionSceneUiHandler } from "#ui/evolution-scene-ui-handler";
 import { fixedInt } from "#utils/common";
 import i18next from "i18next";
-import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 
 export class EvolutionPhase extends Phase {
   // FormChangePhase inherits from this, but EvolutionPhase is not abstract.
@@ -27,7 +26,7 @@ export class EvolutionPhase extends Phase {
 
   private evolution: SpeciesFormEvolution | null;
   private fusionSpeciesEvolved: boolean; // Whether the evolution is of the fused species
-  private evolutionBgm: AnySound | null;
+  private evolutionBgm: BackgroundMusic | null;
   private evolutionHandler: EvolutionSceneUiHandler;
 
   /** Container for all assets used by the scene. When the scene is cleared, the children within this are destroyed. */
@@ -214,7 +213,7 @@ export class EvolutionPhase extends Phase {
    */
   private playEvolutionAnimation(evolvedPokemon: Pokemon): void {
     globalScene.time.delayedCall(1000, () => {
-      this.evolutionBgm = globalScene.playSoundWithoutBgm("evolution");
+      this.evolutionBgm = globalScene.replaceBgmUntilEnd("bw/evolution");
       globalScene.tweens.add({
         targets: this.evolutionBgOverlay,
         alpha: 1,
@@ -297,9 +296,7 @@ export class EvolutionPhase extends Phase {
         this.evolutionBg.setVisible(false);
       },
     });
-    if (this.evolutionBgm) {
-      SoundFade.fadeOut(globalScene, this.evolutionBgm, 100);
-    }
+    this.evolutionBgm?.fadeOut(100);
   }
 
   /**
@@ -379,13 +376,11 @@ export class EvolutionPhase extends Phase {
    * Fadeout evolution music, play the cry, show the evolution completed text, and end the phase
    */
   private onEvolutionComplete(evolvedPokemon: Pokemon) {
-    if (this.evolutionBgm) {
-      SoundFade.fadeOut(globalScene, this.evolutionBgm, 100);
-    }
+    this.evolutionBgm?.fadeOut(100);
     globalScene.time.delayedCall(250, () => {
       this.pokemon.cry();
       globalScene.time.delayedCall(1250, () => {
-        globalScene.playSoundWithoutBgm("evolution_fanfare");
+        globalScene.replaceBgmUntilEnd("bw/evolution_fanfare");
 
         evolvedPokemon.destroy();
         globalScene.ui.showText(

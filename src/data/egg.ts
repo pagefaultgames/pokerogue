@@ -1,6 +1,6 @@
 import type { BattleScene } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import {
   BOOSTED_RARE_EGGMOVE_RATES,
@@ -162,7 +162,7 @@ export class Egg {
 
       this._sourceType = eggOptions?.sourceType!; // TODO: is this bang correct?
       // Ensure _sourceType is defined before invoking rollEggTier(), as it is referenced
-      this._tier = eggOptions?.tier ?? Overrides.EGG_TIER_OVERRIDE ?? this.rollEggTier();
+      this._tier = eggOptions?.tier ?? activeOverrides.EGG_TIER_OVERRIDE ?? this.rollEggTier();
       // If egg was pulled, check if egg pity needs to override the egg tier
       if (eggOptions?.pulled) {
         // Needs this._tier and this._sourceType to work
@@ -176,8 +176,8 @@ export class Egg {
       this._timestamp = eggOptions?.timestamp ?? Date.now();
 
       // First roll shiny and variant so we can filter if species with an variant exist
-      this._isShiny = eggOptions?.isShiny ?? (Overrides.EGG_SHINY_OVERRIDE || this.rollShiny());
-      this._variantTier = eggOptions?.variantTier ?? Overrides.EGG_VARIANT_OVERRIDE ?? this.rollVariant();
+      this._isShiny = eggOptions?.isShiny ?? (activeOverrides.EGG_SHINY_OVERRIDE || this.rollShiny());
+      this._variantTier = eggOptions?.variantTier ?? activeOverrides.EGG_VARIANT_OVERRIDE ?? this.rollVariant();
       this._species = eggOptions?.species ?? this.rollSpecies()!; // TODO: Is this bang correct?
 
       this._overrideHiddenAbility = eggOptions?.overrideHiddenAbility ?? false;

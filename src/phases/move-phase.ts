@@ -2,7 +2,7 @@ import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { MOVE_COLOR } from "#app/constants/colors";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { CenterOfAttentionTag, type EncoreTag } from "#data/battler-tags";
 import { SpeciesFormChangePreMoveTrigger } from "#data/form-change-triggers";
@@ -370,7 +370,7 @@ export class MovePhase extends PokemonPhase {
       return false;
     }
 
-    if (Overrides.STATUS_ACTIVATION_OVERRIDE) {
+    if (activeOverrides.STATUS_ACTIVATION_OVERRIDE) {
       return false;
     }
 
@@ -384,11 +384,11 @@ export class MovePhase extends PokemonPhase {
       return false;
     }
     if (
-      Overrides.STATUS_ACTIVATION_OVERRIDE === false
+      activeOverrides.STATUS_ACTIVATION_OVERRIDE === false
       || this.move
         .getMove()
         .findAttr(attr => attr.selfTarget && attr.is("HealStatusEffectAttr") && attr.isOfEffect(StatusEffect.FREEZE))
-      || (!pokemon.randBattleSeedInt(5) && Overrides.STATUS_ACTIVATION_OVERRIDE !== true)
+      || (!pokemon.randBattleSeedInt(5) && activeOverrides.STATUS_ACTIVATION_OVERRIDE !== true)
     ) {
       pokemon.cureStatus(StatusEffect.FREEZE);
       return false;
@@ -519,7 +519,7 @@ export class MovePhase extends PokemonPhase {
       return false;
     }
 
-    const proc = Overrides.STATUS_ACTIVATION_OVERRIDE ?? user.randBattleSeedInt(4) === 0;
+    const proc = activeOverrides.STATUS_ACTIVATION_OVERRIDE ?? user.randBattleSeedInt(4) === 0;
     if (!proc) {
       return false;
     }
@@ -721,7 +721,7 @@ export class MovePhase extends PokemonPhase {
    * - (on cart, not applicable to Pokerogue) Moves that fail if used ON a raid / special boss: selfdestruct/explosion/imprision/power split / guard split
    * - (on cart, not applicable to Pokerogue) Moves that fail during a "co-op" battle (like when Arven helps during raid boss): ally switch / teatime
    *
-   * After all checks, Powder causing the user to explode
+   * Powder after all other checks, causing the user to explode
    */
   protected secondFailureCheck(): boolean {
     const move = this.move.getMove();
@@ -730,7 +730,12 @@ export class MovePhase extends PokemonPhase {
     const arena = globalScene.arena;
 
     if (!move.applyConditions(user, this.getActiveTargetPokemon()[0], 2)) {
-      // TODO: Make pollen puff failing from heal block use its own message
+      if (move.hasAttr("HealOnAllyAttr")) {
+        failedText = i18next.t("battle:moveDisabledHealBlock", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(user),
+          moveName: move.name,
+        });
+      }
       this.failed = true;
     } else if (arena.isMoveWeatherCancelled(user, move)) {
       failedText = getWeatherBlockMessage(globalScene.arena.weatherType);

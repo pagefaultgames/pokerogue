@@ -3,7 +3,8 @@ import { clientSessionId, getSessionDataLocalStorageKey, loggedInUser, updateUse
 import { defaultStarterSpecies, saveKey } from "#app/constants";
 import { getGameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
+import { isIos } from "#app/touch-controls";
 import { Tutorial } from "#app/tutorial";
 import { speciesEggMoves } from "#balance/moves/egg-moves";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
@@ -211,7 +212,7 @@ export class GameData {
    * @returns `true` if the player has unlocked this `Unlockable` or an override has enabled it
    */
   public isUnlocked(unlockable: Unlockables): boolean {
-    if (Overrides.ITEM_UNLOCK_OVERRIDE.includes(unlockable)) {
+    if (activeOverrides.ITEM_UNLOCK_OVERRIDE.includes(unlockable)) {
       return true;
     }
     return this.unlocks[unlockable];
@@ -955,8 +956,8 @@ export class GameData {
     Object.keys(globalScene.pokeballCounts).forEach((key: string) => {
       globalScene.pokeballCounts[key] = fromSession.pokeballCounts[key] || 0;
     });
-    if (Overrides.POKEBALL_OVERRIDE.active) {
-      globalScene.pokeballCounts = Overrides.POKEBALL_OVERRIDE.pokeballs;
+    if (activeOverrides.POKEBALL_OVERRIDE.active) {
+      globalScene.pokeballCounts = activeOverrides.POKEBALL_OVERRIDE.pokeballs;
     }
 
     globalScene.money = Math.floor(fromSession.money || 0);
@@ -1377,8 +1378,65 @@ export class GameData {
     saveFile.id = "saveFile";
     saveFile.type = "file";
     saveFile.accept = ".prsv";
-    saveFile.style.display = "none";
+
+    // iOS requires user interaction with a visible element to trigger file input
+    if (isIos()) {
+      const uploadButton = document.createElement("button");
+      uploadButton.id = "iosUploadButton";
+      uploadButton.textContent = "Select File to Import";
+      uploadButton.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 15px 30px;
+        font-size: 18px;
+        font-family: Arial, sans-serif;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        z-index: 10000;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      `;
+
+      const overlay = document.createElement("div");
+      overlay.id = "iosUploadOverlay";
+      overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.7);
+        z-index: 9999;
+      `;
+
+      saveFile.style.display = "none";
+
+      uploadButton.onclick = () => {
+        saveFile.click();
+      };
+
+      overlay.onclick = () => {
+        overlay.remove();
+        uploadButton.remove();
+        saveFile.remove();
+      };
+
+      document.body.appendChild(overlay);
+      document.body.appendChild(uploadButton);
+    } else {
+      saveFile.style.display = "none";
+    }
+
     saveFile.addEventListener("change", e => {
+      const overlay = document.getElementById("iosUploadOverlay");
+      const button = document.getElementById("iosUploadButton");
+      overlay?.remove();
+      button?.remove();
+
       const reader = new FileReader();
 
       reader.onload = (_ => {
@@ -1480,7 +1538,10 @@ export class GameData {
 
       reader.readAsText((e.target as any).files[0]);
     });
-    saveFile.click();
+
+    if (!isIos()) {
+      saveFile.click();
+    }
   }
 
   private initDexData(): void {
@@ -1735,7 +1796,7 @@ export class GameData {
     if (!showMessage) {
       return true;
     }
-    globalScene.playSound("level_up_fanfare");
+    globalScene.playSound("se/level_up_fanfare");
 
     // TODO: Remove and replace with a simpler check if the return value is found to be unnecessary
     return new Promise(resolve =>
@@ -1837,7 +1898,7 @@ export class GameData {
     if (!showMessage) {
       return true;
     }
-    globalScene.playSound("level_up_fanfare");
+    globalScene.playSound("se/level_up_fanfare");
     const moveName = allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name;
     let message = prependSpeciesToMessage ? species.getName() + " " : "";
     message +=

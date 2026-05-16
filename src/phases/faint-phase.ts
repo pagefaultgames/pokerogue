@@ -44,7 +44,13 @@ export class FaintPhase extends PokemonPhase {
     super.start();
 
     const faintPokemon = this.getPokemon();
-
+    // Failsafe: end early if the Pokemon is somehow not fainted at this point
+    // (such as if the original faintee switched out via U-Turn/etc before this Phase had a chance to run).
+    // TODO: This effectively bypasses the root phase ordering issue at play, and should be removed once force switching moves are fixed to work properly
+    if (faintPokemon.hp > 0) {
+      this.end();
+      return;
+    }
     if (this.source) {
       faintPokemon.getTag(BattlerTagType.DESTINY_BOND)?.lapse(this.source, BattlerTagLapseType.CUSTOM);
       faintPokemon.getTag(BattlerTagType.GRUDGE)?.lapse(faintPokemon, BattlerTagLapseType.CUSTOM, this.source);
