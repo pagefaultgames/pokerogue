@@ -203,6 +203,9 @@ export function getTextStyleOptions(
           styleOptions.padding = { top: 2 };
           fontSizeLabel = "92px";
           break;
+        case "pl":
+          fontSizeLabel = "94px";
+          break;
       }
       styleOptions.fontSize = fontSizeLabel;
       break;
