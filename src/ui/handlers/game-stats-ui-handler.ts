@@ -265,7 +265,7 @@ export class GameStatsUiHandler extends UiHandler {
       "uk",
       "eu",
       "vi",
-      "pl"
+      "pl",
     ].includes(resolvedLang);
   }
   /** The number of columns used by this menu in the resolved language */
