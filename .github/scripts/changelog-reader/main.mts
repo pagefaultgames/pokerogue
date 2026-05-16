@@ -12,9 +12,7 @@ import { formatChangelog, type PullRequest } from "./format.mjs";
 
 chalk.level = 2;
 
-/**
- * The version of this script
- */
+/** The version of this script */
 const SCRIPT_VERSION: string = "1.0.1";
 
 const octokit = new Octokit({
@@ -54,9 +52,7 @@ async function main(): Promise<void> {
   }
 }
 
-/**
- * Retrieve and process the changelog
- */
+/** Retrieve and process the changelog */
 async function getAndProcessChangelog(): Promise<void> {
   const prs = await getDiff();
   if (prs.size === 0) {
@@ -75,6 +71,8 @@ async function getAndProcessChangelog(): Promise<void> {
   if (process.env.GITHUB_ACTIONS) {
     await updateDescription(output);
   } else {
+    //! Note: to run locally, a separate GitHub API token needs to be generated
+
     // dynamically imported to not need `@inquirer/prompts` during the workflow
     const { writeFileSafe } = await import("../../../scripts/utils/file.ts");
     writeFileSafe(CONFIG.OUTPUT_FILE, output, "utf8");

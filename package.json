@@ -28,6 +28,7 @@
     "typecheck": "tsc",
     "typecheck:main": "tsc -p scripts/tsconfig.json",
     "typecheck:github": "tsc -p .github/scripts/tsconfig.json",
+    "typecheck:js": "tsc -p jsconfig.json",
     "biome": "biome check --write --changed --no-errors-on-unmatched --diagnostic-level=error",
     "biome:staged": "biome check --write --staged --no-errors-on-unmatched --diagnostic-level=error",
     "biome:all": "biome check --write --no-errors-on-unmatched --diagnostic-level=error",

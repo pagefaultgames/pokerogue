@@ -21,8 +21,7 @@ export type PullRequest = {
  */
 export function formatChangelog(changelog: PullRequest[]): string {
   let output = "";
-  /** @type {Map<CategoryName, string[]>} */
-  const categories = new Map();
+  const categories = new Map<CategoryName, string[]>();
   for (const category of CONFIG.CATEGORIES) {
     categories.set(category.name, []);
   }

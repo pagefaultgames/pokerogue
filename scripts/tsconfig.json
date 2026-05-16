@@ -4,17 +4,21 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
+
+// Separate TSConfig used for CI, typechecking the entire project alongside `scripts` with exclusive subpath aliases.
+// Code in `src`/`test` will continue to use the root tsconfig when editing (providing extra insurance against referencing `scripts` files).
+// We cannot change any other compilation settings from normal to prevent checking the main repo code with 2 different settings.
+// TODO: This is only necessary because of the `src` repo being incompatible with declaration emit.
+// If https://github.com/microsoft/TypeScript/issues/17744 is ever resolved, we should graduate to proper project references
 {
-  // Separate TSConfig used for CI, typechecking the entire project alongside `scripts` with exclusive subpath aliases.
-  // Code in `src`/`test` will continue to use the root tsconfig when editing (providing extra insurance against referencing `scripts` files).
-  // We cannot change any other compilation settings from normal to prevent checking the main repo code with 2 different settings.
-  // TODO: This is only necessary because of the `src` repo being incompatible with declaration emit.
-  // If https://github.com/microsoft/TypeScript/issues/17744 is ever resolved, we should graduate to proper project references
   "extends": "../tsconfig.json",
-  "include": ["../**/*.ts", "../**/*.mts"], // this doesn't include the .github folder lol
+  // Note that by default TS ignores directories starting with `.` unless explicitly added to "include",
+  // so it's safe to use glob syntax like this as files in `.github/scripts/` won't be grabbed
+  // unless `.github/` is specifically added.
+  "include": ["../**/*.ts"],
   "exclude": ["../node_modules", "../dist", "**/*.boilerplate.ts"],
   "compilerOptions": {
-    // make sure more specific paths appear before less specific paths
+    // Note: make sure more specific paths appear before less specific paths
     "paths": {
       // all the main repo paths (tsc doesn't copy them over)
       "#abilities/*": ["../src/data/abilities/*.ts"],

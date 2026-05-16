@@ -24,10 +24,10 @@ module.exports = {
         + "\nLegitimate reasons for moving things out of scripts are few and far between; the standard solution is usually to remove the offending import.",
       severity: "error",
       from: {
-        pathNot: ["(^|/)scripts"],
+        pathNot: ["(^|/)scripts/"],
       },
       to: {
-        path: ["(^|/)scripts"],
+        path: ["(^|/)scripts/"],
       },
     },
     // #endregion Package Boundaries

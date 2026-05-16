@@ -4,6 +4,7 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
+ 
  // This is a separate TSConfig used explicitly for scripts ran via Node during CI.
  {
   "include": ["**/*.mts"],

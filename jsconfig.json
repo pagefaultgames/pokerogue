@@ -1,0 +1,27 @@
+/*
+ * SPDX-FileCopyrightText: 2025-2026 Pagefault Games
+ * SPDX-FileContributor: Bertie690
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+{
+  // these are files that cannot be converted to TS files, and so are covered by this jsconfig file
+  "include": [".dependency-cruiser.cjs", "typedoc.config.js", "assets/service-worker.js", "plugins/typedoc/**/*.js"],
+  "exclude": ["assets", "dist", "node_modules", "typedoc"],
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "types": ["node"],
+    "allowJs": true,
+    "checkJs": true,
+    "rootDir": ".",
+    "erasableSyntaxOnly": true,
+    "strict": true,
+    "noEmit": true,
+    // Forcibly disable `node_modules` recursion to prevent TSC from typechecking random JS files.
+    // This is disabled by default in `tsconfig.json`, but needs to be explicitly disabled from the default of `2`
+    "maxNodeModuleJsDepth": 0,
+    "resolveJsonModule": true
+  }
+}

@@ -43,17 +43,11 @@ export const CONFIG = {
   CUTOFF_BRANCH: "main",
   CHANGELOG_SECTION: "## What are the changes the user will see?",
   OUTPUT_FILE: "changelog.md",
-  FILTERS: ["n/a"] satisfies string[] as string[],
+  FILTERS: ["n/a"],
   CATEGORIES: [
-    {
-      name: "Bug Fixes",
-      labels: ["P0 Bug", "P1 Bug", "P2 Bug", "P3 Bug"],
-    },
+    { name: "Bug Fixes", labels: ["P0 Bug", "P1 Bug", "P2 Bug", "P3 Bug"] },
     { name: "Balance", labels: ["Game Balance", "Balance Team"] },
-    {
-      name: "Translation",
-      labels: ["Localization"],
-    },
+    { name: "Translation", labels: ["Localization"] },
     { name: "Art", labels: ["Sprite/Animation"] },
     // Used for PRs that don't fit any other category
     { name: "Miscellaneous", labels: ["Miscellaneous"] },
