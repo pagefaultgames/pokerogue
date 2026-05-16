@@ -105,7 +105,7 @@
   // which should be valid under _main repo_ settings.
   // (`scripts` has its own TSConfig with extra subpath aliases, so attempting to typecheck them would cause errors about missing modules.)
   // We also don't add the `.github/scripts/` directory here as those files
-  // need different settings to ensure they can be run by Node without issue.
+  // need different settings to ensure they can be run by Node without issues.
   "include": ["*.ts", "src", "test", "scripts/**/*.boilerplate.ts"],
   "exclude": ["dist", "node_modules"]
 }
