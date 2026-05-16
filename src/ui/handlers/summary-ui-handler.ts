@@ -863,9 +863,9 @@ export class SummaryUiHandler extends UiHandler {
         const trainerIdText = addTextObject(
           141,
           12,
-            i18next.t("pokemonSummary:idNo", {
-              idNo: idToDisplay,
-            }),
+          i18next.t("pokemonSummary:idNo", {
+            idNo: idToDisplay,
+          }),
           TextStyle.SUMMARY_ALT,
         ).setOrigin(0);
         profileContainer.add(trainerIdText);
