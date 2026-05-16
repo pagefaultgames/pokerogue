@@ -23,7 +23,7 @@ import chalk from "chalk";
 
 // #region Constants
 
-const version = "2.1.1";
+const version = "2.1.2";
 const projectRoot = join(import.meta.dirname, "..", "..");
 
 // #endregion Constants
