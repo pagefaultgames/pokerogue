@@ -382,7 +382,6 @@
         }
       }
     },
-
     {
       "includes": ["src/**/*.ts"],
       "linter": {
