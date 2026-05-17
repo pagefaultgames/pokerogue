@@ -1299,11 +1299,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   playAnim(): void {
     const customKey = this.getCustomFusionSpriteKey();
     if (customKey) {
-      // Custom fusion sprite is a single static frame — swap texture and skip animation.
-      const sprite = this.getSprite();
-      const tintSprite = this.getTintSprite();
-      sprite.setTexture(customKey);
-      tintSprite?.setTexture(customKey);
+      this.getSprite().play(customKey);
+      this.getTintSprite()?.play(customKey);
       return;
     }
     this.tryPlaySprite(this.getSprite(), this.getTintSprite()!, this.getBattleSpriteKey()); // TODO: is the bang correct?

@@ -37,6 +37,7 @@ import { EvolutionPhase } from "#phases/evolution-phase";
 import { ExpPhase } from "#phases/exp-phase";
 import { FaintPhase } from "#phases/faint-phase";
 import { FormChangePhase } from "#phases/form-change-phase";
+import { FusionUnlockSplashPhase } from "#phases/fusion-unlock-splash-phase";
 import { GameOverModifierRewardPhase } from "#phases/game-over-modifier-reward-phase";
 import { GameOverPhase } from "#phases/game-over-phase";
 import { HideAbilityPhase } from "#phases/hide-ability-phase";
@@ -146,6 +147,7 @@ const PHASES = Object.freeze({
   ExpPhase,
   FaintPhase,
   FormChangePhase,
+  FusionUnlockSplashPhase,
   GameOverPhase,
   GameOverModifierRewardPhase,
   HideAbilityPhase,

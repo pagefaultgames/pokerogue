@@ -9,6 +9,7 @@ import { allMoves, modifierTypes } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
 import { deriveFusionAbilities } from "#data/fusion-derivation";
+import { fusionSyntheticSpeciesId } from "#data/fusion-pokemon-species";
 import { MAX_PER_TYPE_POKEBALLS } from "#data/pokeball";
 import { getStatusEffectHealText } from "#data/status-effect";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -2445,6 +2446,9 @@ export class FusePokemonModifier extends ConsumablePokemonModifier {
 
     playerPokemon.fuse(playerPokemon2);
 
+    // fuse() mutates in place — reload to fetch the IF sprite for the new pair.
+    playerPokemon.loadAssets(false).then(() => playerPokemon.playAnim());
+
     // Pair is stored ordered (head, body) — reversing the splicer order is a separate unlock.
     unlockFusionStarter(pair, {
       shinyVariants,
@@ -2457,13 +2461,15 @@ export class FusePokemonModifier extends ConsumablePokemonModifier {
     // Make the new unlock immediately visible to runtime starter maps.
     globalScene.gameData.installFusionStarterMaps();
 
-    // Mirror vanilla's setPokemonCaught splash on a fresh splice.
+    // Splash runs before fuse()'s queued LearnMovePhases via unshift.
     if (!wasUnlockedBefore) {
-      globalScene.playSound("se/level_up_fanfare");
-      globalScene.phaseManager.queueMessage(
+      const syntheticId = fusionSyntheticSpeciesId(pair.headId, pair.bodyId);
+      globalScene.phaseManager.unshiftNew(
+        "FusionUnlockSplashPhase",
+        playerPokemon,
         i18next.t("battle:addedAsAStarter", { pokemonName: playerPokemon.getNameToRender() }),
-        null,
-        true,
+        globalScene.gameData.dexData[syntheticId],
+        globalScene.gameData.starterData[syntheticId],
       );
     }
     return true;

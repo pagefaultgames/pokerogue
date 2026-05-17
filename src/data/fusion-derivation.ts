@@ -1,6 +1,8 @@
 import { starterPassiveAbilities } from "#balance/passives";
+import { pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { pokemonSpeciesLevelMoves } from "#balance/pokemon-level-moves";
 import { speciesStarterCosts } from "#balance/starters";
+import { allSpecies } from "#data/data-lists";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
 import type { PokemonType } from "#enums/pokemon-type";
@@ -115,9 +117,30 @@ export function deriveFusionStarterCost(headId: SpeciesId, bodyId: SpeciesId): n
   const costs = speciesStarterCosts as Record<number, number>;
   const headCost = costs[headId] ?? 3;
   const bodyCost = costs[bodyId] ?? 3;
-  const base = Math.round((headCost + bodyCost) / 2);
-  const isMaximum = getFusionSettingValue(FusionSettingKeys.Stat_Formula) === "MAXIMUM";
-  return isMaximum ? base + 1 : base;
+  if (getFusionSettingValue(FusionSettingKeys.Stat_Formula) !== "MAXIMUM") {
+    return Math.round((headCost + bodyCost) / 2);
+  }
+  // MAXIMUM is strictly stronger than either parent — anchor to the pricier
+  // half, then bump +1 (or +2 for pseudo-legendary-tier final BST).
+  const finalHeadStats = baseStatsOf(finalEvolutionOf(headId));
+  const finalBodyStats = baseStatsOf(finalEvolutionOf(bodyId));
+  let finalBst = 0;
+  for (let i = 0; i < 6; i++) {
+    finalBst += Math.max(finalHeadStats[i] ?? 0, finalBodyStats[i] ?? 0);
+  }
+  return Math.max(headCost, bodyCost) + (finalBst >= 600 ? 2 : 1);
+}
+
+function finalEvolutionOf(id: SpeciesId): SpeciesId {
+  let cur = id;
+  while (pokemonEvolutions[cur]?.[0]) {
+    cur = pokemonEvolutions[cur][0].speciesId;
+  }
+  return cur;
+}
+
+function baseStatsOf(id: SpeciesId): readonly number[] {
+  return allSpecies.find(s => s.speciesId === id)?.baseStats ?? [0, 0, 0, 0, 0, 0];
 }
 
 // Head gets the extra on odd totals so a 1-candy charge deducts something
