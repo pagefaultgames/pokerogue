@@ -14,18 +14,23 @@ import i18next from "i18next";
 export class TrainerVictoryPhase extends BattlePhase {
   public readonly phaseName = "TrainerVictoryPhase";
   start() {
+    const trainer = globalScene.currentBattle.trainer;
+    if (!trainer) {
+      // Phase queued without a trainer present (e.g. ordering got shuffled and currentBattle is now a wild wave).
+      return this.end();
+    }
+
     globalScene.disableMenu = true;
 
-    globalScene.playBgm(globalScene.currentBattle.trainer?.config.victoryBgm);
+    globalScene.playBgm(trainer.config.victoryBgm);
 
-    globalScene.phaseManager.unshiftNew("MoneyRewardPhase", globalScene.currentBattle.trainer?.config.moneyMultiplier!); // TODO: is this bang correct?
+    globalScene.phaseManager.unshiftNew("MoneyRewardPhase", trainer.config.moneyMultiplier);
 
-    const modifierRewardFuncs = globalScene.currentBattle.trainer?.config.modifierRewardFuncs!; // TODO: is this bang correct?
-    for (const modifierRewardFunc of modifierRewardFuncs) {
+    for (const modifierRewardFunc of trainer.config.modifierRewardFuncs) {
       globalScene.phaseManager.unshiftNew("ModifierRewardPhase", modifierRewardFunc);
     }
 
-    const trainerType = globalScene.currentBattle.trainer?.config.trainerType!; // TODO: is this bang correct?
+    const trainerType = trainer.config.trainerType;
     // Validate Voucher for boss trainers
     if (
       Object.hasOwn(vouchers, TrainerType[trainerType])
