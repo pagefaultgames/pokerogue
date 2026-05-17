@@ -220,9 +220,46 @@ await i18next
     },
     async () => {
       i18next.services.formatter?.add("money", i18nMoneyFormatter);
+      injectFusionEnglishFallbacks();
       await initFonts(localStorage.getItem("prLang") ?? undefined);
     },
   );
+
+// Fusion strings live in the locales sibling repo; until they land there, ship inline English fallbacks
+// so the Fusions settings tab and folder-picker UI don't render raw key strings. `overwrite=false`
+// means real translations take precedence whenever a locale file populates these keys.
+function injectFusionEnglishFallbacks(): void {
+  i18next.addResourceBundle(
+    "en",
+    "settings",
+    {
+      fusions: "Fusions",
+      fusionStatFormula: "Stat formula",
+      fusionStatFormulaIf: "Infinite Fusion",
+      fusionStatFormulaPokerogue: "PokéRogue",
+      fusionStatFormulaMaximum: "Maximum (+1 cost)",
+      fusionShinyRecolor: "Shiny recolor",
+      fusionShinyRecolorSubtle: "Subtle",
+      fusionShinyRecolorModerate: "Moderate",
+      fusionShinyRecolorStrong: "Strong",
+      fusionSpriteSource: "Sprite source",
+      fusionSpriteSourceArtistFirst: "Artist first",
+      fusionSpriteSourceAutogenFirst: "Autogen first",
+      fusionSpriteSourceArtistOnly: "Artist only",
+      fusionTrainerFusion: "Trainer fusions",
+      fusionTrainerFusionDefault: "Default",
+      fusionTrainerFusionNone: "None",
+      fusionTrainerFusionAlways: "Always",
+      fusionFolder: "Folder",
+      fusionFolderNotSet: "Not set",
+      fusionChooseFolder: "Choose folder…",
+      fusionClearFolder: "Clear folder",
+      fusionPickerUnsupported: "Picker unsupported in this browser",
+    },
+    true,
+    false,
+  );
+}
 
 // #endregion Init
 
