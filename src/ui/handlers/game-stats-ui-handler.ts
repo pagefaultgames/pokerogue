@@ -45,28 +45,34 @@ const displayStats: DisplayStats = {
     label_key: "shinyStarters",
     sourceFunc: gameData => {
       const starterCount = gameData.getStarterCount(d => !!(d.caughtAttr & DexAttr.SHINY));
-      return `${starterCount} (${Math.floor((starterCount / Object.keys(speciesStarterCosts).length) * 1000) / 10}%)`;
+      // Exclude synthetic fusion ids from the denominator to keep the
+      // "% of starters" stat anchored to the canonical species set.
+      const total = Object.keys(speciesStarterCosts).filter(k => Number(k) < 100_000).length;
+      return `${starterCount} (${Math.floor((starterCount / total) * 1000) / 10}%)`;
     },
   },
   dexEncountered: {
     label_key: "speciesEncountered",
     sourceFunc: gameData => {
       const seenCount = gameData.getSpeciesCount(d => !!d.seenCount);
-      return `${seenCount} (${Math.floor((seenCount / Object.keys(gameData.dexData).length) * 1000) / 10}%)`;
+      const total = Object.keys(gameData.dexData).filter(k => Number(k) < 100_000).length;
+      return `${seenCount} (${Math.floor((seenCount / total) * 1000) / 10}%)`;
     },
   },
   dexSeen: {
     label_key: "speciesSeen",
     sourceFunc: gameData => {
       const seenCount = gameData.getSpeciesCount(d => !!d.seenAttr || !!d.caughtAttr);
-      return `${seenCount} (${Math.floor((seenCount / Object.keys(gameData.dexData).length) * 1000) / 10}%)`;
+      const total = Object.keys(gameData.dexData).filter(k => Number(k) < 100_000).length;
+      return `${seenCount} (${Math.floor((seenCount / total) * 1000) / 10}%)`;
     },
   },
   dexCaught: {
     label_key: "speciesCaught",
     sourceFunc: gameData => {
       const caughtCount = gameData.getSpeciesCount(d => !!d.caughtAttr);
-      return `${caughtCount} (${Math.floor((caughtCount / Object.keys(gameData.dexData).length) * 1000) / 10}%)`;
+      const total = Object.keys(gameData.dexData).filter(k => Number(k) < 100_000).length;
+      return `${caughtCount} (${Math.floor((caughtCount / total) * 1000) / 10}%)`;
     },
   },
   ribbonsOwned: {

@@ -10,6 +10,7 @@ import { PokedexUiHandler } from "#ui/pokedex-ui-handler";
 import { RunInfoUiHandler } from "#ui/run-info-ui-handler";
 import { SettingsAudioUiHandler } from "#ui/settings-audio-ui-handler";
 import { SettingsDisplayUiHandler } from "#ui/settings-display-ui-handler";
+import { SettingsFusionsUiHandler } from "#ui/settings-fusions-ui-handler";
 import { SettingsGamepadUiHandler } from "#ui/settings-gamepad-ui-handler";
 import { SettingsKeyboardUiHandler } from "#ui/settings-keyboard-ui-handler";
 import { SettingsUiHandler } from "#ui/settings-ui-handler";
@@ -220,6 +221,7 @@ export class UiInputs {
       SettingsAudioUiHandler,
       SettingsGamepadUiHandler,
       SettingsKeyboardUiHandler,
+      SettingsFusionsUiHandler,
     ];
     const uiHandler = globalScene.ui?.getHandler();
     if (whitelist.some(handler => uiHandler instanceof handler)) {

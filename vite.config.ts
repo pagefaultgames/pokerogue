@@ -83,6 +83,13 @@ export default defineConfig(async config => {
     publicDir: command === "serve" ? "assets" : false,
     server: {
       port: Number.isNaN(envPort) ? 8000 : envPort,
+      fs: {
+        // Allow serving files from outside the project root — needed for
+        // the `assets/images/Battlers` symlink that points at the user's
+        // local IF sprite pack (e.g. ~/Downloads/Battlers). Without this,
+        // Vite's strict-fs policy 404s any path resolving outside cwd.
+        strict: false,
+      },
     },
   } satisfies UserConfig;
 });

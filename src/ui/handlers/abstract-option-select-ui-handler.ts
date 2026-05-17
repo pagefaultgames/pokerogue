@@ -175,8 +175,71 @@ export abstract class AbstractOptionSelectUiHandler extends UiHandler {
           itemOverlayIcon.setPositionRelative(this.optionSelectText, 36 * this.scale, 7 + i * (114 * this.scale - 3));
 
           if (option.itemArgs) {
-            itemIcon.setTint(argbFromRgba(rgbHexToRgba(option.itemArgs[0])));
-            itemOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(option.itemArgs[1])));
+            // Split-candy form: a 4-element `itemArgs` encodes
+            // `[headBase, headOverlay, bodyBase, bodyOverlay]`. Render the
+            // base/overlay sprites cropped to the LEFT half (head colours)
+            // and add a matching pair cropped to the RIGHT half (body
+            // colours). Mirrors the fusion candy treatment in the
+            // pokedex-page / starter-select main panels — same player
+            // signal: two colours = two parents.
+            if (option.itemArgs.length >= 4) {
+              itemIcon.setTint(argbFromRgba(rgbHexToRgba(option.itemArgs[0])));
+              itemOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(option.itemArgs[1])));
+              // Phaser's `setCrop(x, y, w, h)` is relative to the
+              // un-trimmed sprite source size (32×32 for these candy
+              // frames), NOT the cut region. The actual candy pixels live
+              // at `frame.x, frame.y` offset within that 32×32 box (e.g.
+              // candy at x=7, y=11; candy_overlay at x=8, y=12). Add the
+              // trim offset before splitting in half, otherwise the crop
+              // window clips into transparent padding outside the visible
+              // candy art (which is why it rendered as a tiny top-left
+              // corner — the crop region missed the candy entirely).
+              const splitFrame = (
+                frame: Phaser.Textures.Frame,
+              ): { trimX: number; trimY: number; visW: number; visH: number; halfW: number } => ({
+                trimX: frame.x ?? 0,
+                trimY: frame.y ?? 0,
+                visW: frame.cutWidth,
+                visH: frame.cutHeight,
+                halfW: Math.ceil(frame.cutWidth / 2),
+              });
+              const baseGeom = splitFrame(itemIcon.frame);
+              const overlayGeom = splitFrame(itemOverlayIcon.frame);
+              itemIcon.setCrop(baseGeom.trimX, baseGeom.trimY, baseGeom.halfW, baseGeom.visH);
+              itemOverlayIcon.setCrop(overlayGeom.trimX, overlayGeom.trimY, overlayGeom.halfW, overlayGeom.visH);
+              // Right-half sprites: add to the container FIRST, then call
+              // `setPositionRelative` — matches the ordering used for
+              // `itemIcon` / `itemOverlayIcon` above. Doing it the other
+              // way around resolves the relative position against world
+              // coords before the sprite has a parent.
+              const rightIcon = globalScene.add.sprite(0, 0, "items", "candy");
+              rightIcon.setScale(3 * this.scale);
+              rightIcon.setTint(argbFromRgba(rgbHexToRgba(option.itemArgs[2])));
+              rightIcon.setCrop(
+                baseGeom.trimX + baseGeom.halfW,
+                baseGeom.trimY,
+                baseGeom.visW - baseGeom.halfW,
+                baseGeom.visH,
+              );
+              this.optionSelectIcons.push(rightIcon);
+              this.optionSelectTextContainer.add(rightIcon);
+              rightIcon.setPositionRelative(this.optionSelectText, 36 * this.scale, 7 + i * (114 * this.scale - 3));
+              const rightOverlay = globalScene.add.sprite(0, 0, "items", "candy_overlay");
+              rightOverlay.setScale(3 * this.scale);
+              rightOverlay.setTint(argbFromRgba(rgbHexToRgba(option.itemArgs[3])));
+              rightOverlay.setCrop(
+                overlayGeom.trimX + overlayGeom.halfW,
+                overlayGeom.trimY,
+                overlayGeom.visW - overlayGeom.halfW,
+                overlayGeom.visH,
+              );
+              this.optionSelectIcons.push(rightOverlay);
+              this.optionSelectTextContainer.add(rightOverlay);
+              rightOverlay.setPositionRelative(this.optionSelectText, 36 * this.scale, 7 + i * (114 * this.scale - 3));
+            } else {
+              itemIcon.setTint(argbFromRgba(rgbHexToRgba(option.itemArgs[0])));
+              itemOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(option.itemArgs[1])));
+            }
           }
         }
       }

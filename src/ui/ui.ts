@@ -46,6 +46,7 @@ import { SavingIconContainer } from "#ui/saving-icon-handler";
 import { SessionReloadModalUiHandler } from "#ui/session-reload-modal-ui-handler";
 import { SettingsAudioUiHandler } from "#ui/settings-audio-ui-handler";
 import { SettingsDisplayUiHandler } from "#ui/settings-display-ui-handler";
+import { SettingsFusionsUiHandler } from "#ui/settings-fusions-ui-handler";
 import { SettingsGamepadUiHandler } from "#ui/settings-gamepad-ui-handler";
 import { SettingsKeyboardUiHandler } from "#ui/settings-keyboard-ui-handler";
 import { SettingsUiHandler } from "#ui/settings-ui-handler";
@@ -91,6 +92,7 @@ const noTransitionModes = [
   UiMode.SETTINGS_DISPLAY,
   UiMode.SETTINGS_GAMEPAD,
   UiMode.SETTINGS_KEYBOARD,
+  UiMode.SETTINGS_FUSIONS,
   UiMode.ACHIEVEMENTS,
   UiMode.GAME_STATS,
   UiMode.POKEDEX_SCAN,
@@ -181,6 +183,10 @@ export class UI extends Phaser.GameObjects.Container {
       new AdminUiHandler(),
       new MysteryEncounterUiHandler(),
       new ChangePasswordFormUiHandler(),
+      // Must remain LAST and aligned to `UiMode.SETTINGS_FUSIONS` (which is
+      // the highest enum value). UI handlers are looked up by `handlers[mode]`
+      // — index alignment with the enum is load-bearing.
+      new SettingsFusionsUiHandler(),
     ];
   }
 

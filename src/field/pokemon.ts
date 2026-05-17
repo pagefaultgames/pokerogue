@@ -57,6 +57,7 @@ import {
   SpeciesFormChangeMoveLearnedTrigger,
   SpeciesFormChangePostMoveTrigger,
 } from "#data/form-change-triggers";
+import { deriveFusionBaseStatsFromArrays } from "#data/fusion-derivation";
 import { Gender } from "#data/gender";
 import { getNatureStatMultiplier } from "#data/nature";
 import {
@@ -139,6 +140,12 @@ import { applyMoveAttrs } from "#moves/apply-attrs";
 import type { Move } from "#moves/move";
 import { getMoveTargets } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
+import {
+  ensureBackSpriteFromFrontMirror,
+  ensureFusionSpriteLoaded,
+  hasLoadedFusionSprite,
+  loadedFusionSpriteKey,
+} from "#sprites/fusion-sprite-loader";
 import { loadMoveAnimations } from "#sprites/pokemon-asset-loader";
 import type { Variant } from "#sprites/variant";
 import { populateVariantColors, variantColorCache, variantData } from "#sprites/variant";
@@ -146,6 +153,7 @@ import { achvs } from "#system/achv";
 import type { PokemonData } from "#system/pokemon-data";
 import { RibbonData } from "#system/ribbons/ribbon-data";
 import { awardRibbonsToSpeciesLine } from "#system/ribbons/ribbon-methods";
+import { getPreferredFusionVariant } from "#system/unlocked-fusion-starters";
 import type { AbAttrMap, AbAttrString, TypeMultiplierAbAttrParams } from "#types/ability-types";
 import type { Constructor } from "#types/common";
 import type {
@@ -805,6 +813,25 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         this.getFusionBattleSpriteKey(true, ignoreOverride),
         this.getFusionBattleSpriteAtlasPath(true, ignoreOverride),
       );
+
+      // Speculatively queue any pre-rendered IF sprite for this pair.
+      const fusionPair = {
+        headId: this.species.speciesId,
+        bodyId: this.fusionSpecies!.speciesId,
+      };
+      const preferredVariant = getPreferredFusionVariant(fusionPair);
+      // Back sprites don't ship in IF's pack; mirror from the front after
+      // both loads settle so cleanup can't delete the mirrored canvas.
+      const frontPromise = ensureFusionSpriteLoaded(fusionPair, false, preferredVariant);
+      loadPromises.push(frontPromise.then(() => undefined));
+      if (this.isPlayer()) {
+        const backPromise = ensureFusionSpriteLoaded(fusionPair, true, preferredVariant);
+        loadPromises.push(
+          Promise.all([frontPromise, backPromise]).then(() => {
+            ensureBackSpriteFromFrontMirror(fusionPair, preferredVariant);
+          }),
+        );
+      }
     }
 
     if (this.isShiny(true)) {
@@ -978,6 +1005,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getSpriteKey(ignoreOverride?: boolean): string {
+    // Route fusions with a loaded IF sprite through the custom texture
+    // (the evolution scene calls this directly, not via playAnim).
+    const customKey = this.getCustomFusionSpriteKey(false);
+    if (customKey) {
+      return customKey;
+    }
     return this.getSpeciesForm(ignoreOverride, false).getSpriteKey(
       this.getGender(ignoreOverride) === Gender.FEMALE,
       this.formIndex,
@@ -1018,6 +1051,28 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   getFusionBattleSpriteKey(back?: boolean, ignoreOverride?: boolean): string {
     return `pkmn__${this.getFusionBattleSpriteId(back, ignoreOverride)}`;
+  }
+
+  /**
+   * Returns the loaded IF fusion sprite key for this Pokémon's pair, or null
+   * if none is cached (caller falls back to palette-swap).
+   */
+  getCustomFusionSpriteKey(back?: boolean): string | null {
+    if (!this.fusionSpecies) {
+      return null;
+    }
+    const isBack = back ?? this.isPlayer();
+    const pair = { headId: this.species.speciesId, bodyId: this.fusionSpecies.speciesId };
+    const variant = getPreferredFusionVariant(pair);
+    if (!hasLoadedFusionSprite(pair, isBack, variant)) {
+      return null;
+    }
+    // Pick whichever key is actually live — preferred variant may have 404'd.
+    return loadedFusionSpriteKey(pair, isBack, variant);
+  }
+
+  usesCustomFusionSprite(back?: boolean): boolean {
+    return this.getCustomFusionSpriteKey(back) !== null;
   }
 
   getFusionBattleSpriteAtlasPath(back?: boolean, ignoreOverride?: boolean): string {
@@ -1242,6 +1297,15 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   playAnim(): void {
+    const customKey = this.getCustomFusionSpriteKey();
+    if (customKey) {
+      // Custom fusion sprite is a single static frame — swap texture and skip animation.
+      const sprite = this.getSprite();
+      const tintSprite = this.getTintSprite();
+      sprite.setTexture(customKey);
+      tintSprite?.setTexture(customKey);
+      return;
+    }
     this.tryPlaySprite(this.getSprite(), this.getTintSprite()!, this.getBattleSpriteKey()); // TODO: is the bang correct?
   }
 
@@ -1630,8 +1694,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       const fusionBaseStats = this.getFusionSpeciesForm(true).baseStats.slice(0);
       applyChallenges(ChallengeType.FLIP_STAT, this, fusionBaseStats);
 
+      // Delegate to the shared IF derivation so in-run stats match the starter preview.
+      const derived = deriveFusionBaseStatsFromArrays(baseStats, fusionBaseStats);
       for (const s of PERMANENT_STATS) {
-        baseStats[s] = Math.ceil((baseStats[s] + fusionBaseStats[s]) / 2);
+        baseStats[s] = derived[s];
       }
     } else if (globalScene.gameMode.isSplicedOnly) {
       for (const s of PERMANENT_STATS) {
@@ -1902,6 +1968,24 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   getUnlockedEggMoves(): MoveId[] {
     const moves: MoveId[] = [];
+    // Asymmetric 2+2 egg-move pool for fusions: head bits → slots 0-1, body bits → slots 2-3.
+    if (this.fusionSpecies) {
+      const headRoot = this.species.getRootSpeciesId(true);
+      const bodyRoot = this.fusionSpecies.getRootSpeciesId(true);
+      const headEggs = speciesEggMoves[headRoot] ?? [];
+      const bodyEggs = speciesEggMoves[bodyRoot] ?? [];
+      const headBits = globalScene.gameData.starterData[headRoot]?.eggMoves ?? 0;
+      const bodyBits = globalScene.gameData.starterData[bodyRoot]?.eggMoves ?? 0;
+      for (let i = 0; i < 2; i++) {
+        if (headBits & (1 << i) && headEggs[i] !== undefined) {
+          moves.push(headEggs[i]);
+        }
+        if (bodyBits & (1 << i) && bodyEggs[i] !== undefined) {
+          moves.push(bodyEggs[i]);
+        }
+      }
+      return moves;
+    }
     const species =
       this.metSpecies in speciesEggMoves ? this.metSpecies : this.getSpeciesForm(true).getRootSpeciesId(true);
     if (species in speciesEggMoves) {
@@ -2935,10 +3019,21 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Get a list of all egg moves
+   * Get a list of all egg moves. Fusions return head's first two slots
+   * plus body's first two — otherwise the body's half is invisible mid-run.
    * @returns list of egg moves
    */
   getEggMoves(): MoveId[] | undefined {
+    if (this.fusionSpecies) {
+      const headRoot = this.species.getRootSpeciesId();
+      const bodyRoot = this.fusionSpecies.getRootSpeciesId();
+      const headEggs = speciesEggMoves[headRoot]?.slice(0, 2) ?? [];
+      const bodyEggs = speciesEggMoves[bodyRoot]?.slice(0, 2) ?? [];
+      if (headEggs.length === 0 && bodyEggs.length === 0) {
+        return;
+      }
+      return [...headEggs, ...bodyEggs];
+    }
     return speciesEggMoves[this.getSpeciesForm().getRootSpeciesId()];
   }
 
@@ -3230,8 +3325,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   tryPopulateMoveset(moveset: StarterMoveset, ignoreValidate = false): void {
     // TODO: Why do we need to re-validate starter movesets after picking them?
+    // Skip validation for fusions: head's validator rejects body-half moves.
     if (
       !ignoreValidate
+      && !this.isFusion()
       && !this.getSpeciesForm().validateStarterMoveset(
         moveset,
         globalScene.gameData.starterData[this.species.getRootSpeciesId()].eggMoves,
@@ -5346,6 +5443,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   // #region Sprite and Animation Methods
 
   setFrameRate(frameRate: number) {
+    if (this.usesCustomFusionSprite()) {
+      // Static sprite has no spritesheet animation to retime.
+      return;
+    }
     globalScene.anims.get(this.getBattleSpriteKey()).frameRate = frameRate;
     try {
       this.getSprite().play(this.getBattleSpriteKey());
@@ -5429,6 +5530,10 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   updateFusionPalette(ignoreOverride?: boolean): void {
+    if (this.usesCustomFusionSprite()) {
+      // Pre-rendered fusion sprite is already fused; palette swap would re-tint.
+      return;
+    }
     if (!this.getFusionSpeciesForm(ignoreOverride)) {
       [this.getSprite(), this.getTintSprite()]
         .filter(s => !!s)
@@ -6242,6 +6347,8 @@ export class PlayerPokemon extends Pokemon {
           globalScene.removeModifier(evotracker);
         }
       }
+      // Fusions follow vanilla's base-form-only starter rule: evolutions
+      // are visible mid-run but never enter the starter grid.
       if (!globalScene.gameMode.isDaily || this.metBiome > -1) {
         globalScene.gameData.updateSpeciesDexIvs(this.species.speciesId, this.ivs);
         globalScene.gameData.setPokemonSeen(this, false);

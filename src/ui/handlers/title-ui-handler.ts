@@ -107,7 +107,16 @@ export class TitleUiHandler extends OptionSelectUiHandler {
     this.appVersionText = addTextObject(logoX - 60, logoHeight + 4, "", TextStyle.MONEY, { fontSize: "54px" }) // formatting
       .setOrigin();
 
+    // IF-mod badge: mirrors the splash text's offset on the opposite side.
+    // Flipped horizontally and inserted before the logo so it sits behind it.
+    const splicer = globalScene.add
+      .sprite(logoX - 64, logoHeight - 8, "items", "dna_splicers")
+      .setOrigin(0.5)
+      .setScale(2)
+      .setFlipX(true);
+
     this.titleContainer.add([
+      splicer,
       logo,
       this.usernameLabel,
       this.playerCountLabel,

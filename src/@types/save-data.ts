@@ -36,6 +36,14 @@ export interface SystemSaveData {
   timestamp: number;
   eggPity: number[];
   unlockPity: number[];
+  /**
+   * IF-mod: per-pair fusion starter unlock state, serialized as the raw
+   * localStorage payload (`unlockedFusionStarters_v1`) so the export carries
+   * over to another device / browser. Optional for forward compat with saves
+   * that pre-date the mod. Synthetic species ids never bleed into
+   * `dexData` / `starterData` — those are still stripped by `stripFusionIds`.
+   */
+  fusionStarters?: Record<string, unknown>;
 }
 
 export interface SessionSaveData {

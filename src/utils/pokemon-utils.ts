@@ -8,6 +8,13 @@ import { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { randSeedItem } from "#utils/common";
 
+// Registered by fusion-pokemon-species at module init.
+let fusionRegistryLookup: ((id: number) => PokemonSpecies | undefined) | null = null;
+
+export function setFusionRegistryLookup(fn: (id: number) => PokemonSpecies | undefined): void {
+  fusionRegistryLookup = fn;
+}
+
 /**
  * Gets the {@linkcode PokemonSpecies} object associated with the {@linkcode SpeciesId} enum given
  * @param species - The {@linkcode SpeciesId} to fetch.
@@ -19,6 +26,13 @@ export function getPokemonSpecies(species: SpeciesId | SpeciesId[]): PokemonSpec
   if (Array.isArray(species)) {
     // TODO: this RNG roll should not be handled by this function
     species = species[Math.floor(Math.random() * species.length)];
+  }
+  // Synthetic fusion ids (>= 100_000) live in a runtime registry, not in `allSpecies`.
+  if (species >= 100_000 && fusionRegistryLookup) {
+    const fused = fusionRegistryLookup(species);
+    if (fused) {
+      return fused;
+    }
   }
   if (species >= 2000) {
     // the `!` is safe, `allSpecies` is static and contains all `SpeciesId`s
@@ -44,10 +58,17 @@ export function getPokerusStarters(): PokemonSpecies[] {
   const pokerusStarters: PokemonSpecies[] = [];
   const date = new Date();
   date.setUTCHours(0, 0, 0, 0);
+  // Filter out synthetic fusion ids — they're installed into
+  // `speciesStarterCosts` for runtime lookups but should never appear in
+  // the daily Pokerus rotation (vanilla intent: a hint on one of your
+  // canonical starters). The orthogonality invariant from
+  // `unlocked-fusion-starters.ts` applies here too: synthetic ids never
+  // enter wild / gacha / Pokerus pools.
+  const vanillaStarterKeys = Object.keys(speciesStarterCosts).filter(k => Number(k) < 100_000);
   globalScene.executeWithSeedOffset(
     () => {
       while (pokerusStarters.length < POKERUS_STARTER_COUNT) {
-        const randomSpeciesId = Number.parseInt(randSeedItem(Object.keys(speciesStarterCosts)), 10);
+        const randomSpeciesId = Number.parseInt(randSeedItem(vanillaStarterKeys), 10);
         const species = getPokemonSpecies(randomSpeciesId);
         if (!pokerusStarters.includes(species)) {
           pokerusStarters.push(species);
@@ -137,6 +158,11 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
 export function getPokemonSpeciesForm(species: SpeciesId, formIndex: number): PokemonSpeciesForm {
   const retSpecies: PokemonSpecies = getPokemonSpecies(species);
 
+  // Synthetic fusion ids resolve to a runtime-built FusionPokemonSpecies that
+  // has no `forms` array. Just return the species itself.
+  if (!retSpecies || !retSpecies.forms) {
+    return retSpecies;
+  }
   if (formIndex < retSpecies.forms.length) {
     return retSpecies.forms[formIndex];
   }

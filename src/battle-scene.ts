@@ -33,6 +33,7 @@ import { allMoves, allSpecies, biomeDepths, modifierTypes } from "#data/data-lis
 import { classicFinalBossDialogue } from "#data/dialogue";
 import type { SpeciesFormChangeTrigger } from "#data/form-change-triggers";
 import { SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger } from "#data/form-change-triggers";
+import { isFusionSpecies } from "#data/fusion-pokemon-species";
 import { Gender } from "#data/gender";
 import type { SpeciesFormChange } from "#data/pokemon-forms";
 import { pokemonFormChanges } from "#data/pokemon-forms";
@@ -115,6 +116,7 @@ import type { Achv } from "#system/achv";
 import { achvs, ModifierAchv, MoneyAchv } from "#system/achv";
 import { GameData } from "#system/game-data";
 import { initGameSpeed } from "#system/game-speed";
+import { restoreIfFolderHandle } from "#system/if-folder-handle";
 import type { PokemonData } from "#system/pokemon-data";
 import { MusicPreference } from "#system/settings";
 import type { Voucher } from "#system/voucher";
@@ -407,6 +409,11 @@ export class BattleScene extends SceneBase {
       initCommonAnims().then(() => loadCommonAnimAssets(true)),
       Promise.all(defaultMoves.map(m => initMoveAnim(m))).then(() => loadMoveAnimAssets(defaultMoves, true)),
       this.initStarterColors(),
+      // Restore the user-granted IF folder handle (if any) before sprites
+      // start loading. `false` keeps the silent path — browsers gate the
+      // re-permission on a user gesture, so the actual prompt happens when
+      // the user opens Settings → Fusions or interacts with a fusion.
+      restoreIfFolderHandle(false),
     ]).catch(reason => {
       throw new Error(`Unexpected error during BattleScene preLoad!\nReason: ${reason}`);
     });
@@ -876,8 +883,19 @@ export class BattleScene extends SceneBase {
     dataSource?: Pokemon | PokemonData,
     postProcess?: (playerPokemon: PlayerPokemon) => void,
   ): PlayerPokemon {
+    // When a synthetic FusionPokemonSpecies is selected as a starter, expand
+    // it into a properly-shaped vanilla fused Pokémon: `species = head`,
+    // `fusionSpecies = body`. This way vanilla mechanics — evolution of
+    // either half, unfuse via splicer, candy applies to both parents, dex
+    // sees real species — all work without further patching.
+    let effectiveSpecies = species;
+    let bodySpecies: PokemonSpecies | null = null;
+    if (isFusionSpecies(species)) {
+      effectiveSpecies = species.headSpecies;
+      bodySpecies = species.bodySpecies;
+    }
     const pokemon = new PlayerPokemon(
-      species,
+      effectiveSpecies,
       level,
       abilityIndex,
       formIndex,
@@ -888,6 +906,22 @@ export class BattleScene extends SceneBase {
       nature,
       dataSource,
     );
+    if (bodySpecies) {
+      // Set fusion fields directly — the in-run `fuse()` method does HP-
+      // averaging, item-transfer, and party-reshuffle that we don't want at
+      // starter construction time. Mirrors the field assignments in
+      // `Pokemon.fuse` minus the runtime side-effects.
+      pokemon.fusionSpecies = bodySpecies;
+      pokemon.fusionFormIndex = 0;
+      pokemon.fusionAbilityIndex = pokemon.abilityIndex;
+      pokemon.fusionShiny = pokemon.shiny;
+      pokemon.fusionVariant = pokemon.variant;
+      pokemon.fusionGender = pokemon.gender;
+      pokemon.fusionLuck = pokemon.luck;
+      pokemon.fusionCustomPokemonData = pokemon.customPokemonData;
+      pokemon.generateName();
+      pokemon.calculateStats();
+    }
 
     if (postProcess) {
       postProcess(pokemon);

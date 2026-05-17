@@ -5,6 +5,7 @@ import { pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { bypassLogin } from "#constants/app-constants";
 import { modifierTypes } from "#data/data-lists";
 import { getCharVariantFromDialogue } from "#data/dialogue";
+import { fusionSyntheticSpeciesId } from "#data/fusion-pokemon-species";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { BattleType } from "#enums/battle-type";
 import { Challenges } from "#enums/challenges";
@@ -23,6 +24,7 @@ import { PokemonData } from "#system/pokemon-data";
 import { RibbonData, type RibbonFlag } from "#system/ribbons/ribbon-data";
 import { awardRibbonsToSpeciesLine } from "#system/ribbons/ribbon-methods";
 import { TrainerData } from "#system/trainer-data";
+import { awardFusionStarterRibbons } from "#system/unlocked-fusion-starters";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { SessionSaveData } from "#types/save-data";
 import { checkSpeciesValidForChallenge, isNuzlockeChallenge } from "#utils/challenge-utils";
@@ -161,6 +163,26 @@ export class GameOverPhase extends BattlePhase {
         )
       ) {
         awardRibbonsToSpeciesLine(species.speciesId, ribbonFlags as RibbonFlag);
+        // Also award to the fusion's synthetic dex entry when this Pokemon
+        // is a fusion — keeps Classic / challenge ribbons visible against
+        // the fusion in the starter UI and ribbon counters. Bump the
+        // synthetic starterData's classicWinCount inline so the change shows
+        // immediately without waiting for the next installFusionStarterMaps.
+        if (pokemon.fusionSpecies) {
+          const pair = {
+            headId: species.speciesId,
+            bodyId: pokemon.fusionSpecies.speciesId,
+          };
+          const syntheticId = fusionSyntheticSpeciesId(pair.headId, pair.bodyId);
+          if (globalScene.gameData.dexData[syntheticId]) {
+            globalScene.gameData.dexData[syntheticId].ribbons.award(ribbonFlags as RibbonFlag);
+          }
+          if (globalScene.gameData.starterData[syntheticId] && ribbonFlags & RibbonData.CLASSIC) {
+            globalScene.gameData.starterData[syntheticId].classicWinCount =
+              (globalScene.gameData.starterData[syntheticId].classicWinCount ?? 0) + 1;
+          }
+          awardFusionStarterRibbons(pair, ribbonFlags);
+        }
       }
     }
   }
@@ -322,6 +344,24 @@ export class GameOverPhase extends BattlePhase {
     // first time classic win, award voucher
     if (speciesRibbonCount === 1) {
       this.firstRibbons.push(getPokemonSpecies(pokemon.species.getRootSpeciesId(forStarter)));
+    }
+    // Fusion-specific first-clear voucher: if this mon is a fusion, also
+    // increment + check the synthetic species so the player gets a voucher
+    // the first time they clear with that specific (head, body) pair, on top
+    // of any vouchers from the head/body species themselves.
+    if (!forStarter && pokemon.fusionSpecies) {
+      const syntheticId = fusionSyntheticSpeciesId(pokemon.species.speciesId, pokemon.fusionSpecies.speciesId);
+      const fusionSpecies = getPokemonSpecies(syntheticId);
+      if (fusionSpecies && globalScene.gameData.starterData[syntheticId]) {
+        // `incrementRibbonCount` reads `getRootSpeciesId()` to choose which
+        // starterData slot to bump. Our FusionPokemonSpecies overrides
+        // `getRootSpeciesId` to return the synthetic id itself, so the
+        // synthetic slot gets credited — independent of head/body.
+        const fusionRibbonCount = globalScene.gameData.incrementRibbonCount(fusionSpecies);
+        if (fusionRibbonCount === 1) {
+          this.firstRibbons.push(fusionSpecies);
+        }
+      }
     }
   }
 

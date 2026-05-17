@@ -35,6 +35,7 @@ export class NavigationManager {
       UiMode.SETTINGS_AUDIO,
       UiMode.SETTINGS_GAMEPAD,
       UiMode.SETTINGS_KEYBOARD,
+      UiMode.SETTINGS_FUSIONS,
     ];
     this.labels = [
       i18next.t("settings:general"),
@@ -42,6 +43,7 @@ export class NavigationManager {
       i18next.t("settings:audio"),
       i18next.t("settings:gamepad"),
       i18next.t("settings:keyboard"),
+      i18next.t("settings:fusions"),
     ];
   }
 

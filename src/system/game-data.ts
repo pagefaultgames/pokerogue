@@ -3,18 +3,31 @@ import { clientSessionId, getSessionDataLocalStorageKey, loggedInUser, updateUse
 import { defaultStarterSpecies, saveKey } from "#app/constants";
 import { getGameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
+import { starterColors } from "#app/global-vars/starter-colors";
 import { activeOverrides } from "#app/overrides";
 import { isIos } from "#app/touch-controls";
 import { Tutorial } from "#app/tutorial";
 import { speciesEggMoves } from "#balance/moves/egg-moves";
-import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
+import { starterPassiveAbilities } from "#balance/passives";
+import { pokemonPrevolutions, pokemonStarters } from "#balance/pokemon-evolutions";
+import { pokemonSpeciesLevelMoves } from "#balance/pokemon-level-moves";
 import { speciesStarterCosts } from "#balance/starters";
+import { speciesTmMoves } from "#balance/tms";
 import { bypassLogin, isBeta, isDev } from "#constants/app-constants";
 import { MAX_STARTER_CANDY_COUNT } from "#constants/game-constants";
 import { EntryHazardTag } from "#data/arena-tag";
 import { getSerializedDailyRunConfig, parseDailySeed } from "#data/daily-seed/daily-seed-utils";
-import { allMoves, allSpecies } from "#data/data-lists";
+import { allMoves, allSpecies, catchableSpecies } from "#data/data-lists";
 import type { Egg } from "#data/egg";
+import { deriveFusionLearnset, deriveFusionPassive, deriveFusionStarterCost } from "#data/fusion-derivation";
+import {
+  buildFusionSpecies,
+  fusionSyntheticSpeciesId,
+  getSyntheticFusionDexEntry,
+  getSyntheticFusionStarterDataEntry,
+  isFusionSyntheticSpeciesId,
+  registerFusionSpecies,
+} from "#data/fusion-pokemon-species";
 import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { loadPositionalTag } from "#data/positional-tags/load-positional-tag";
@@ -26,6 +39,7 @@ import { Device } from "#enums/devices";
 import { DexAttr } from "#enums/dex-attr";
 import { GameDataType } from "#enums/game-data-type";
 import { GameModes } from "#enums/game-modes";
+import { MoveId } from "#enums/move-id";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
 import { PlayerGender } from "#enums/player-gender";
@@ -55,11 +69,18 @@ import type { SettingKeyboard } from "#system/settings-keyboard";
 import { setSettingKeyboard } from "#system/settings-keyboard";
 import { TrainerData } from "#system/trainer-data";
 import {
+  advanceFusionCandyCreditTurn,
+  listUnlockedFusionStarters,
+  restoreFusionUnlocksFromSave,
+  serializeFusionUnlocks,
+} from "#system/unlocked-fusion-starters";
+import {
   applySessionVersionMigration,
   applySettingsVersionMigration,
   applySystemVersionMigration,
 } from "#system/version-migration/version-converter";
 import { VoucherType, vouchers } from "#system/voucher";
+import type { BiomeTierTimeOfDay } from "#types/biomes";
 import type { DexData, DexEntry } from "#types/dex-data";
 import type {
   AchvUnlocks,
@@ -184,15 +205,127 @@ export class GameData {
     this.unlockPity = [0, 0, 0, 0];
     this.initDexData();
     this.initStarterData();
+    this.installFusionStarterMaps();
+  }
+
+  /**
+   * Install synthetic entries for every unlocked fusion pair into the runtime
+   * dexData / starterData / speciesStarterCosts maps so vanilla call sites
+   * resolve fusion ids without per-site branching. Synthetic entries are
+   * stripped on serialization (see {@linkcode getSystemSaveData}). Idempotent.
+   */
+  public installFusionStarterMaps(): void {
+    for (const pair of listUnlockedFusionStarters()) {
+      this.installFusionPair(pair);
+    }
+  }
+
+  /**
+   * Install / refresh runtime maps for a single fusion pair. Also used by the
+   * pokedex evolution panel for preview-only pairs (not yet unlocked).
+   * Re-derives stat-formula-dependent state on every call since the formula
+   * setting can flip mid-session; preserves in-run mutable fields when an
+   * entry already exists. Idempotent.
+   */
+  public installFusionPair(pair: { headId: SpeciesId; bodyId: SpeciesId }): void {
+    const id = fusionSyntheticSpeciesId(pair.headId, pair.bodyId);
+    const learnsets = pokemonSpeciesLevelMoves as Record<number, unknown>;
+    const eggMovesTable = speciesEggMoves as Record<number, readonly number[]>;
+    const freshDex = getSyntheticFusionDexEntry(id);
+    const freshStarter = getSyntheticFusionStarterDataEntry(id);
+    const existingDex = this.dexData[id];
+    const existingStarter = this.starterData[id];
+    this.dexData[id] = freshDex;
+    if (existingDex) {
+      this.dexData[id].seenCount = existingDex.seenCount || freshDex.seenCount;
+      this.dexData[id].caughtCount = existingDex.caughtCount || freshDex.caughtCount;
+      this.dexData[id].hatchedCount = existingDex.hatchedCount || freshDex.hatchedCount;
+      if (existingDex.ribbons && existingDex.ribbons.getRibbons() > 0n) {
+        this.dexData[id].ribbons = existingDex.ribbons;
+      }
+    }
+    this.starterData[id] = freshStarter;
+    if (existingStarter) {
+      this.starterData[id].candyCount = existingStarter.candyCount;
+      this.starterData[id].friendship = existingStarter.friendship;
+      this.starterData[id].passiveAttr = existingStarter.passiveAttr;
+      if (existingStarter.moveset) {
+        this.starterData[id].moveset = existingStarter.moveset;
+      }
+    }
+    const costs = speciesStarterCosts as Record<number, number>;
+    costs[id] = deriveFusionStarterCost(pair.headId, pair.bodyId);
+    const head = getPokemonSpecies(pair.headId);
+    const body = getPokemonSpecies(pair.bodyId);
+    if (!head || !body) {
+      return;
+    }
+    const fusion = buildFusionSpecies(pair.headId, pair.bodyId);
+    if (fusion) {
+      registerFusionSpecies(fusion);
+    }
+    if (!learnsets[id]) {
+      learnsets[id] = deriveFusionLearnset(head, body);
+    }
+    // Vanilla egg-move entries only exist on root starter species, so
+    // resolve each parent to its root before lookup. Pad to the 4-element
+    // tuple the pokedex page relies on (slot 3 is read directly).
+    const rootOf = (id: number): number => (Object.hasOwn(eggMovesTable, id) ? id : (pokemonStarters[id] ?? id));
+    const pad = (src: readonly number[]) => {
+      const slice = src.slice(0, 2);
+      while (slice.length < 2) {
+        slice.push(MoveId.NONE);
+      }
+      return slice;
+    };
+    const headEggs = pad(eggMovesTable[rootOf(pair.headId)] ?? []);
+    const bodyEggs = pad(eggMovesTable[rootOf(pair.bodyId)] ?? []);
+    eggMovesTable[id] = [...headEggs, ...bodyEggs];
+    const passiveTable = starterPassiveAbilities as Record<number, Record<number, number>>;
+    if (!passiveTable[id]) {
+      passiveTable[id] = { 0: deriveFusionPassive(head) };
+    }
+    const catchableTable = catchableSpecies as unknown as Record<number, readonly BiomeTierTimeOfDay[]>;
+    if (!catchableTable[id]) {
+      catchableTable[id] = [];
+    }
+    const tmTable = speciesTmMoves as Record<number, (MoveId | [string | SpeciesId, MoveId])[]>;
+    if (!tmTable[id]) {
+      const seen = new Set<MoveId>();
+      const merged: (MoveId | [string | SpeciesId, MoveId])[] = [];
+      for (const entry of [...(tmTable[pair.headId] ?? []), ...(tmTable[pair.bodyId] ?? [])]) {
+        const moveId = Array.isArray(entry) ? entry[1] : entry;
+        if (!seen.has(moveId)) {
+          seen.add(moveId);
+          merged.push(moveId);
+        }
+      }
+      tmTable[id] = merged;
+    }
+    // Neutral grey candy tint for fusions — neither parent's palette wins.
+    if (!starterColors[id]) {
+      starterColors[id] = ["909090", "606060"];
+    }
   }
 
   public getSystemSaveData(): SystemSaveData {
+    // Synthetic fusion entries must not enter the persisted vanilla dex.
+    const stripFusionIds = <T extends Record<number, unknown>>(map: T): T => {
+      const out = {} as T;
+      for (const k of Object.keys(map)) {
+        const id = Number(k);
+        if (!isFusionSyntheticSpeciesId(id)) {
+          (out as Record<number, unknown>)[id] = map[id];
+        }
+      }
+      return out;
+    };
     return {
       trainerId: this.trainerId,
       secretId: this.secretId,
       gender: this.gender,
-      dexData: this.dexData,
-      starterData: this.starterData,
+      dexData: stripFusionIds(this.dexData),
+      starterData: stripFusionIds(this.starterData),
       gameStats: this.gameStats,
       unlocks: this.unlocks,
       achvUnlocks: this.achvUnlocks,
@@ -203,6 +336,8 @@ export class GameData {
       timestamp: Date.now(),
       eggPity: this.eggPity.slice(0),
       unlockPity: this.unlockPity.slice(0),
+      // Bundle the fusion unlock store so exported saves carry splice progress.
+      fusionStarters: serializeFusionUnlocks(),
     };
   }
 
@@ -325,7 +460,11 @@ export class GameData {
 
       this.migrateStarterAbilities(systemData, this.starterData);
 
-      const starterIds = Object.keys(this.starterData).map(s => Number.parseInt(s) as SpeciesId);
+      // Synthetic fusion ids aren't present in systemData.dexData; fusion
+      // candy rolls up through the parent species rows.
+      const starterIds = Object.keys(this.starterData)
+        .map(s => Number.parseInt(s) as SpeciesId)
+        .filter(s => s < 100_000);
       for (const s of starterIds) {
         this.starterData[s].candyCount += systemData.dexData[s].caughtCount;
         this.starterData[s].candyCount += systemData.dexData[s].hatchedCount * 2;
@@ -378,6 +517,11 @@ export class GameData {
     this.dexData = Object.assign(this.dexData, systemData.dexData);
     this.consolidateDexData(this.dexData);
     this.defaultDexData = null;
+
+    // Restore fusion unlocks before re-installing runtime maps. Absent
+    // payload preserves local fusion storage (pre-mod save imports).
+    restoreFusionUnlocksFromSave(systemData.fusionStarters);
+    this.installFusionStarterMaps();
   }
 
   public async initSystem(systemDataStr: string, cachedSystemDataStr?: string): Promise<boolean> {
@@ -1770,7 +1914,26 @@ export class GameData {
         // TODO: remove `?? 0`, `pokemon.variant` shouldn't be able to be nullish
         const shinyBonus = pokemon.isShiny() ? 5 * Math.pow(2, pokemon.variant ?? 0) : 1;
         const eggOrBossBonus = fromEgg || pokemon.isBoss() ? 2 : 1;
-        this.addStarterCandy(species.speciesId, shinyBonus * eggOrBossBonus);
+        const total = shinyBonus * eggOrBossBonus;
+        if (pokemon.isFusion() && pokemon.fusionSpecies) {
+          // Split candy between head and body, alternating the ceiling
+          // half on each call so 1-candy events strictly rotate.
+          const pair = {
+            headId: species.speciesId,
+            bodyId: pokemon.fusionSpecies.speciesId,
+          };
+          const headFirst = advanceFusionCandyCreditTurn(pair);
+          const headShare = headFirst ? Math.ceil(total / 2) : Math.floor(total / 2);
+          const bodyShare = total - headShare;
+          if (headShare > 0) {
+            this.addStarterCandy(species.speciesId, headShare);
+          }
+          if (bodyShare > 0) {
+            this.addStarterCandy(pokemon.fusionSpecies.speciesId, bodyShare);
+          }
+        } else {
+          this.addStarterCandy(species.speciesId, total);
+        }
       }
     }
 
@@ -1947,7 +2110,8 @@ export class GameData {
   }
 
   getSpeciesCount(dexEntryPredicate: (entry: DexEntry) => boolean): number {
-    const dexKeys = Object.keys(this.dexData);
+    // Exclude synthetic fusion ids from dex-completion totals.
+    const dexKeys = Object.keys(this.dexData).filter(k => Number(k) < 100_000);
     let speciesCount = 0;
     for (const s of dexKeys) {
       if (dexEntryPredicate(this.dexData[s])) {
@@ -1958,7 +2122,8 @@ export class GameData {
   }
 
   getStarterCount(dexEntryPredicate: (entry: DexEntry) => boolean): number {
-    const starterKeys = Object.keys(speciesStarterCosts);
+    // Exclude synthetic fusion ids from starter-completion totals.
+    const starterKeys = Object.keys(speciesStarterCosts).filter(k => Number(k) < 100_000);
     let starterCount = 0;
     for (const s of starterKeys) {
       const starterDexEntry = this.dexData[s];
@@ -1972,6 +2137,10 @@ export class GameData {
   getSpeciesDefaultDexAttr(species: PokemonSpecies, _forSeen = false, optimistic = false): bigint {
     let ret = 0n;
     const dexEntry = this.dexData[species.speciesId];
+    // Synthetic fusion species have no dex entry; return a sensible default.
+    if (!dexEntry) {
+      return DexAttr.NON_SHINY | DexAttr.DEFAULT_VARIANT | DexAttr.MALE | this.getFormAttr(0);
+    }
     const attr = dexEntry.caughtAttr;
     if (optimistic) {
       if (attr & DexAttr.SHINY) {
@@ -2070,9 +2239,10 @@ export class GameData {
    * `valueReduction` only needs to be provided when testing a value reduction other than the one currently unlocked
    */
   getSpeciesStarterValue(speciesId: SpeciesId, valueReduction?: number): number {
-    // TODO: is this bang correct?
-    const baseValue = speciesStarterCosts[speciesId]!;
-    const reduction = valueReduction ?? this.starterData[speciesId].valueReduction;
+    // Fallback for fusion ids if a starter-select render fires before init.
+    const baseValue = speciesStarterCosts[speciesId] ?? 3;
+    const starterEntry = this.starterData[speciesId];
+    const reduction = valueReduction ?? starterEntry?.valueReduction ?? 0;
     let value = baseValue;
 
     const decrementValue = (v: number) => {
@@ -2125,7 +2295,11 @@ export class GameData {
   }
 
   migrateStarterAbilities(systemData: SystemSaveData, initialStarterData?: StarterData): void {
-    const starterIds = Object.keys(this.starterData).map(s => Number.parseInt(s) as SpeciesId);
+    // Legacy ability migration only applies to vanilla species; fusion
+    // ability bits live on the per-pair record.
+    const starterIds = Object.keys(this.starterData)
+      .map(s => Number.parseInt(s) as SpeciesId)
+      .filter(s => s < 100_000);
     const starterData = initialStarterData || systemData.starterData;
     const dexData = systemData.dexData;
     for (const s of starterIds) {

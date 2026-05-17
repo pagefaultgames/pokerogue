@@ -23,6 +23,15 @@ import { speciesTmMoves } from "#balance/tms";
 import { allAbilities, allMoves, allSpecies, catchableSpecies } from "#data/data-lists";
 import { Egg, getEggTierForSpecies } from "#data/egg";
 import { GrowthRate, getGrowthRateColor } from "#data/exp";
+import { resolveFusionCandySpend } from "#data/fusion-derivation";
+import {
+  buildFusionSpecies,
+  decodeFusionSpeciesId,
+  fusionSyntheticSpeciesId,
+  getFusionSpeciesFromRegistry,
+  isFusionSyntheticSpeciesId,
+  registerFusionSpecies,
+} from "#data/fusion-pokemon-species";
 import { Gender, getGenderColor, getGenderSymbol } from "#data/gender";
 import { getNatureName } from "#data/nature";
 import type { SpeciesFormChange } from "#data/pokemon-forms";
@@ -46,9 +55,12 @@ import { TextStyle } from "#enums/text-style";
 import { TimeOfDay } from "#enums/time-of-day";
 import { UiMode } from "#enums/ui-mode";
 import { UiTheme } from "#enums/ui-theme";
+import { natdexToIfId } from "#sprites/if-id-map";
 import type { Variant } from "#sprites/variant";
 import { getVariantIcon, getVariantTint } from "#sprites/variant";
+import { ensureIfDexLoaded, getIfFusionDexEntry } from "#system/if-dex-entries";
 import { SettingKeyboard } from "#system/settings-keyboard";
+import { bumpFusionStarterValueReduction, setFusionStarterPassiveAttr } from "#system/unlocked-fusion-starters";
 import type { BiomeTierTimeOfDay } from "#types/biomes";
 import type { DexEntry } from "#types/dex-data";
 import type { LevelMoves } from "#types/pokemon-level-moves";
@@ -245,6 +257,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
   private pokemonUncaughtText: Phaser.GameObjects.Text;
   private pokemonCandyContainer: Phaser.GameObjects.Container;
   private pokemonCandyIcon: Phaser.GameObjects.Sprite;
+  private pokemonCandyIconRight: Phaser.GameObjects.Sprite;
+  private pokemonCandyOverlayIconRight: Phaser.GameObjects.Sprite;
   private pokemonCandyDarknessOverlay: Phaser.GameObjects.Sprite;
   private pokemonCandyOverlayIcon: Phaser.GameObjects.Sprite;
   private pokemonCandyCountText: Phaser.GameObjects.Text;
@@ -478,6 +492,21 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       .setScale(0.5)
       .setOrigin(0);
     this.pokemonCandyContainer.add(this.pokemonCandyOverlayIcon);
+
+    // Right-half candy sprites for split fusion icon; hidden for vanilla species.
+    this.pokemonCandyIconRight = globalScene.add //
+      .sprite(0, 0, "candy")
+      .setScale(0.5)
+      .setOrigin(0)
+      .setVisible(false);
+    this.pokemonCandyContainer.add(this.pokemonCandyIconRight);
+
+    this.pokemonCandyOverlayIconRight = globalScene.add //
+      .sprite(0, 0, "candy_overlay")
+      .setScale(0.5)
+      .setOrigin(0)
+      .setVisible(false);
+    this.pokemonCandyContainer.add(this.pokemonCandyOverlayIconRight);
 
     this.pokemonCandyDarknessOverlay = globalScene.add
       .sprite(0, 0, "candy")
@@ -776,6 +805,11 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     this.filteredIndices = args[2] ?? null;
     this.starterSetup();
 
+    // Kick off the IF community dex load for fusions; non-blocking.
+    if (isFusionSyntheticSpeciesId(this.species.speciesId)) {
+      void ensureIfDexLoaded();
+    }
+
     if (args[4] instanceof Function) {
       this.exitCallback = args[4];
     }
@@ -809,6 +843,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     const isSeen = this.isSeen();
     const isStarterCaught = !!this.isCaught(this.getStarterSpecies(this.species));
 
+    // Grey out Biomes for fusions (never wild) and Evolutions when neither parent has any.
+    const isFusion = isFusionSyntheticSpeciesId(this.species.speciesId);
+    const hasNoEvolutions = this.evolutions.length === 0 && this.preEvolutions.length === 0;
     return this.menuOptions
       .map(o => {
         const label = i18next.t(`pokedexUiHandler:${toCamelCase(`menu${MenuOptions[o]}`)}`);
@@ -816,6 +853,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
           !isSeen
           || (!isStarterCaught && (o === MenuOptions.NATURES || o === MenuOptions.RIBBONS))
           || (this.tmMoves.length === 0 && o === MenuOptions.TM_MOVES)
+          || (isFusion && o === MenuOptions.BIOMES)
+          || (hasNoEvolutions && o === MenuOptions.EVOLUTIONS)
           || (!globalScene.gameData.dexData[this.species.speciesId].ribbons.getRibbons()
             && o === MenuOptions.RIBBONS
             && !globalScene.showMissingRibbons
@@ -853,9 +892,51 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
     this.starterId = this.getStarterSpeciesId(this.species.speciesId);
 
-    const allEvolutions = Object.hasOwn(pokemonEvolutions, species.speciesId)
-      ? pokemonEvolutions[species.speciesId]
-      : [];
+    // Surface evolutions from both halves of a fusion; clone each entry
+    // with its speciesId rewritten to the post-evo synthetic id and
+    // eagerly register the post-evo FusionPokemonSpecies.
+    let allEvolutions: SpeciesFormEvolution[];
+    if (isFusionSyntheticSpeciesId(species.speciesId)) {
+      const pair = decodeFusionSpeciesId(species.speciesId);
+      const headEvos = pair && Object.hasOwn(pokemonEvolutions, pair.headId) ? pokemonEvolutions[pair.headId] : [];
+      const bodyEvos = pair && Object.hasOwn(pokemonEvolutions, pair.bodyId) ? pokemonEvolutions[pair.bodyId] : [];
+      const rewriteEvolution = (src: SpeciesFormEvolution, postEvoId: number): SpeciesFormEvolution => {
+        // Preserve prototype so downstream instanceof checks still resolve.
+        const clone = Object.create(Object.getPrototypeOf(src)) as SpeciesFormEvolution;
+        Object.assign(clone, src);
+        clone.speciesId = postEvoId as SpeciesId;
+        return clone;
+      };
+      const registerPostEvo = (postEvoId: number, postHead: SpeciesId, postBody: SpeciesId) => {
+        if (!getFusionSpeciesFromRegistry(postEvoId)) {
+          const built = buildFusionSpecies(postHead, postBody);
+          if (built) {
+            registerFusionSpecies(built);
+          }
+        }
+        // Install runtime maps so navigation into the post-evo finds populated entries.
+        if (!globalScene.gameData.dexData[postEvoId]) {
+          globalScene.gameData.installFusionPair({ headId: postHead, bodyId: postBody });
+        }
+      };
+      const rewrittenHead: SpeciesFormEvolution[] = pair
+        ? headEvos.map(e => {
+            const postId = fusionSyntheticSpeciesId(e.speciesId, pair.bodyId);
+            registerPostEvo(postId, e.speciesId, pair.bodyId);
+            return rewriteEvolution(e, postId);
+          })
+        : [];
+      const rewrittenBody: SpeciesFormEvolution[] = pair
+        ? bodyEvos.map(e => {
+            const postId = fusionSyntheticSpeciesId(pair.headId, e.speciesId);
+            registerPostEvo(postId, pair.headId, e.speciesId);
+            return rewriteEvolution(e, postId);
+          })
+        : [];
+      allEvolutions = [...rewrittenHead, ...rewrittenBody];
+    } else {
+      allEvolutions = Object.hasOwn(pokemonEvolutions, species.speciesId) ? pokemonEvolutions[species.speciesId] : [];
+    }
 
     if (species.forms.length > 0) {
       const form = species.forms[formIndex];
@@ -932,6 +1013,58 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       ? pokemonFormChanges[species.speciesId]
       : [];
     this.battleForms = allFormChanges.filter(f => f.preFormKey === this.species.forms[this.formIndex].formKey);
+
+    // Fusion pre-evolutions: surface a back-evolution entry per parent
+    // that has a prevolution.
+    if (isFusionSyntheticSpeciesId(species.speciesId)) {
+      const pair = decodeFusionSpeciesId(species.speciesId);
+      if (pair) {
+        const preEvos: SpeciesFormEvolution[] = [];
+        const synthesizePreEvo = (preHeadId: SpeciesId, preBodyId: SpeciesId): SpeciesFormEvolution | null => {
+          // Find the parent's evolution entry whose target matches our half.
+          const preIsHead = preHeadId !== pair.headId;
+          const sourceList = preIsHead
+            ? Object.hasOwn(pokemonEvolutions, preHeadId)
+              ? pokemonEvolutions[preHeadId]
+              : []
+            : Object.hasOwn(pokemonEvolutions, preBodyId)
+              ? pokemonEvolutions[preBodyId]
+              : [];
+          const targetSpeciesId = preIsHead ? pair.headId : pair.bodyId;
+          const match = sourceList.find(e => e.speciesId === targetSpeciesId);
+          if (!match) {
+            return null;
+          }
+          const clone = Object.create(Object.getPrototypeOf(match)) as SpeciesFormEvolution;
+          Object.assign(clone, match);
+          clone.speciesId = fusionSyntheticSpeciesId(preHeadId, preBodyId) as SpeciesId;
+          // Pre-install the predecessor pair for navigation.
+          if (!getFusionSpeciesFromRegistry(clone.speciesId)) {
+            const built = buildFusionSpecies(preHeadId, preBodyId);
+            if (built) {
+              registerFusionSpecies(built);
+            }
+          }
+          if (!globalScene.gameData.dexData[clone.speciesId]) {
+            globalScene.gameData.installFusionPair({ headId: preHeadId, bodyId: preBodyId });
+          }
+          return clone;
+        };
+        if (Object.hasOwn(pokemonPrevolutions, pair.headId)) {
+          const headPrevoEvo = synthesizePreEvo(pokemonPrevolutions[pair.headId], pair.bodyId);
+          if (headPrevoEvo) {
+            preEvos.push(headPrevoEvo);
+          }
+        }
+        if (Object.hasOwn(pokemonPrevolutions, pair.bodyId)) {
+          const bodyPrevoEvo = synthesizePreEvo(pair.headId, pokemonPrevolutions[pair.bodyId]);
+          if (bodyPrevoEvo) {
+            preEvos.push(bodyPrevoEvo);
+          }
+        }
+        this.preEvolutions = preEvos;
+      }
+    }
 
     const preSpecies = Object.hasOwn(pokemonPrevolutions, this.species.speciesId)
       ? allSpecies.find(sp => sp.speciesId === pokemonPrevolutions[this.species.speciesId])
@@ -1179,6 +1312,31 @@ export class PokedexPageUiHandler extends MessageUiHandler {
   }
 
   private getStarterSpecies(species): PokemonSpecies {
+    // Fusions: walk both halves back to their root forms (via vanilla
+    // `pokemonStarters`) and return the synthetic id for the *root* pair.
+    // Matches the vanilla mental model: an uncaught Metapod's "starter
+    // species" is Caterpie — so for an uncaught Metapod/Mewtwo, the
+    // analogous starter pair is Caterpie/Mewtwo. If that root pair has
+    // been splice-unlocked, the post-evo fusion's pokedex page should
+    // render as "seen but not caught" (vanilla's evolution-preview state)
+    // rather than the unseen silhouette.
+    if (isFusionSyntheticSpeciesId(species.speciesId)) {
+      const pair = decodeFusionSpeciesId(species.speciesId);
+      if (pair) {
+        const rootHead = Object.hasOwn(speciesStarterCosts, pair.headId)
+          ? pair.headId
+          : (pokemonStarters[pair.headId] ?? pair.headId);
+        const rootBody = Object.hasOwn(speciesStarterCosts, pair.bodyId)
+          ? pair.bodyId
+          : (pokemonStarters[pair.bodyId] ?? pair.bodyId);
+        const rootSynthetic = fusionSyntheticSpeciesId(rootHead, rootBody);
+        const rootSpecies = getFusionSpeciesFromRegistry(rootSynthetic);
+        if (rootSpecies) {
+          return rootSpecies;
+        }
+      }
+      return species;
+    }
     if (Object.hasOwn(speciesStarterCosts, species.speciesId)) {
       return species;
     }
@@ -1646,9 +1804,16 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                   });
 
                   for (const pre of this.preEvolutions) {
-                    const preSpecies = allSpecies.find(
-                      species => species.speciesId === pokemonPrevolutions[this.species.speciesId],
-                    );
+                    // For fusion pre-evos, `pre.speciesId` is the synthetic
+                    // id of the predecessor PAIR — look it up in the
+                    // fusion registry. The vanilla `allSpecies.find` path
+                    // would return undefined for those ids. The `pre.speciesId`
+                    // is the predecessor's id (we navigate TO it), not
+                    // `pokemonPrevolutions[this.species.speciesId]` (which
+                    // would be undefined for synthetic ids anyway).
+                    const preSpecies = isFusionSyntheticSpeciesId(pre.speciesId)
+                      ? getFusionSpeciesFromRegistry(pre.speciesId)
+                      : allSpecies.find(species => species.speciesId === pokemonPrevolutions[this.species.speciesId]);
                     const preFormIndex: number =
                       preSpecies?.forms.find(f => f.formKey === pre.preFormKey)?.formIndex ?? 0;
 
@@ -1661,9 +1826,13 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                       handler: () => {
                         this.previousSpecies.push(this.species);
                         this.previousStarterAttributes.push({ ...this.savedStarterAttributes });
-                        const newSpecies = allSpecies.find(
-                          species => species.speciesId === pokemonPrevolutions[pre.speciesId],
-                        );
+                        // For fusion pre-evos `pre.speciesId` IS the
+                        // target — navigate directly there. For vanilla,
+                        // walk `pokemonPrevolutions[pre.speciesId]` as
+                        // before.
+                        const newSpecies = isFusionSyntheticSpeciesId(pre.speciesId)
+                          ? getFusionSpeciesFromRegistry(pre.speciesId)
+                          : allSpecies.find(species => species.speciesId === pokemonPrevolutions[pre.speciesId]);
                         // Attempts to find the formIndex of the prevolved species
                         const newFormKey = pre.preFormKey
                           ? pre.preFormKey
@@ -1693,7 +1862,13 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                   });
 
                   for (const evo of this.evolutions) {
-                    const evoSpecies = allSpecies.find(species => species.speciesId === evo.speciesId);
+                    // Synthetic fusion ids don't live in `allSpecies`; check
+                    // the runtime registry first so the panel resolves to the
+                    // fused post-evo (e.g. "Metapod/Mewtwo") instead of the
+                    // raw head evolution.
+                    const evoSpecies = isFusionSyntheticSpeciesId(evo.speciesId)
+                      ? getFusionSpeciesFromRegistry(evo.speciesId)
+                      : allSpecies.find(species => species.speciesId === evo.speciesId);
                     const isCaughtEvo = !!this.isCaught(evoSpecies);
                     // Attempts to find the formIndex of the evolved species
                     const newFormKey = evo.evoFormKey
@@ -1998,16 +2173,21 @@ export class PokedexPageUiHandler extends MessageUiHandler {
               options.push({
                 label: `×${passiveCost} ${i18next.t("pokedexUiHandler:unlockPassive")}`,
                 handler: () => {
-                  if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE && candyCount < passiveCost) {
+                  if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE && !this.canAffordCandyCost(passiveCost)) {
                     return false;
                   }
 
                   starterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
-                  if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE) {
-                    starterData.candyCount -= passiveCost;
+                  if (isFusionSyntheticSpeciesId(this.starterId)) {
+                    const pair = decodeFusionSpeciesId(this.starterId);
+                    if (pair) {
+                      setFusionStarterPassiveAttr(pair, starterData.passiveAttr);
+                    }
                   }
-                  this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
-                  updateCandyCountTextStyle(this.pokemonCandyCountText, starterData.candyCount);
+                  if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE) {
+                    this.deductCandyCost(passiveCost);
+                  }
+                  this.refreshCandyDisplay();
                   globalScene.gameData.saveSystem().then(saveSuccess => {
                     if (!saveSuccess) {
                       return globalScene.reset(true);
@@ -2021,7 +2201,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                 },
                 style: this.isPassiveAvailable() ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
                 item: "candy",
-                itemArgs: this.isPassiveAvailable() ? starterColors[this.starterId] : ["808080", "808080"],
+                itemArgs: this.isPassiveAvailable() ? this.candyItemArgs() : ["808080", "808080"],
               });
             }
 
@@ -2032,16 +2212,21 @@ export class PokedexPageUiHandler extends MessageUiHandler {
               options.push({
                 label: `×${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost", { newCost: globalScene.gameData.getSpeciesStarterValue(this.starterId, starterData.valueReduction + 1) })}`,
                 handler: () => {
-                  if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE && candyCount < reductionCost) {
+                  if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE && !this.canAffordCandyCost(reductionCost)) {
                     return false;
                   }
 
                   starterData.valueReduction++;
-                  if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE) {
-                    starterData.candyCount -= reductionCost;
+                  if (isFusionSyntheticSpeciesId(this.starterId)) {
+                    const pair = decodeFusionSpeciesId(this.starterId);
+                    if (pair) {
+                      bumpFusionStarterValueReduction(pair);
+                    }
                   }
-                  this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
-                  updateCandyCountTextStyle(this.pokemonCandyCountText, starterData.candyCount);
+                  if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE) {
+                    this.deductCandyCost(reductionCost);
+                  }
+                  this.refreshCandyDisplay();
                   globalScene.gameData.saveSystem().then(saveSuccess => {
                     if (!saveSuccess) {
                       return globalScene.reset(true);
@@ -2054,60 +2239,62 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                 },
                 style: this.isValueReductionAvailable() ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
                 item: "candy",
-                itemArgs: this.isValueReductionAvailable() ? starterColors[this.starterId] : ["808080", "808080"],
+                itemArgs: this.isValueReductionAvailable() ? this.candyItemArgs() : ["808080", "808080"],
               });
             }
 
-            // Same species egg menu option.
-            const hatchCount = globalScene.gameData.dexData[this.starterId].hatchedCount;
-            const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarterCosts[this.starterId], hatchCount);
-            options.push({
-              label: `×${sameSpeciesEggCost} ${i18next.t("pokedexUiHandler:sameSpeciesEgg")}`,
-              handler: () => {
-                if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE && candyCount < sameSpeciesEggCost) {
-                  return false;
-                }
-
-                if (globalScene.gameData.eggs.length >= 99 && !activeOverrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
-                  // Egg list full, show error message at the top of the screen and abort
-                  this.showText(
-                    i18next.t("egg:tooManyEggs"),
-                    undefined,
-                    () => this.showText("", 0, () => (this.tutorialActive = false)),
-                    2000,
-                    false,
-                    undefined,
-                    true,
-                  );
-                  return false;
-                }
-                if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE) {
-                  starterData.candyCount -= sameSpeciesEggCost;
-                }
-                this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
-                updateCandyCountTextStyle(this.pokemonCandyCountText, starterData.candyCount);
-
-                const egg = new Egg({
-                  scene: globalScene,
-                  species: this.starterId,
-                  sourceType: EggSourceType.SAME_SPECIES_EGG,
-                });
-                egg.addEggToGameData();
-
-                globalScene.gameData.saveSystem().then(saveSuccess => {
-                  if (!saveSuccess) {
-                    return globalScene.reset(true);
+            // Fusions are splicer-only; no hatch path.
+            if (!isFusionSyntheticSpeciesId(this.starterId)) {
+              const hatchCount = globalScene.gameData.dexData[this.starterId].hatchedCount;
+              const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarterCosts[this.starterId], hatchCount);
+              options.push({
+                label: `×${sameSpeciesEggCost} ${i18next.t("pokedexUiHandler:sameSpeciesEgg")}`,
+                handler: () => {
+                  if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE && candyCount < sameSpeciesEggCost) {
+                    return false;
                   }
-                });
-                ui.setMode(UiMode.POKEDEX_PAGE, "refresh");
-                globalScene.playSound("se/buy");
 
-                return true;
-              },
-              style: this.isSameSpeciesEggAvailable() ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
-              item: "candy",
-              itemArgs: this.isSameSpeciesEggAvailable() ? starterColors[this.starterId] : ["808080", "808080"],
-            });
+                  if (globalScene.gameData.eggs.length >= 99 && !activeOverrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
+                    // Egg list full, show error message at the top of the screen and abort
+                    this.showText(
+                      i18next.t("egg:tooManyEggs"),
+                      undefined,
+                      () => this.showText("", 0, () => (this.tutorialActive = false)),
+                      2000,
+                      false,
+                      undefined,
+                      true,
+                    );
+                    return false;
+                  }
+                  if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE) {
+                    starterData.candyCount -= sameSpeciesEggCost;
+                  }
+                  this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
+                  updateCandyCountTextStyle(this.pokemonCandyCountText, starterData.candyCount);
+
+                  const egg = new Egg({
+                    scene: globalScene,
+                    species: this.starterId,
+                    sourceType: EggSourceType.SAME_SPECIES_EGG,
+                  });
+                  egg.addEggToGameData();
+
+                  globalScene.gameData.saveSystem().then(saveSuccess => {
+                    if (!saveSuccess) {
+                      return globalScene.reset(true);
+                    }
+                  });
+                  ui.setMode(UiMode.POKEDEX_PAGE, "refresh");
+                  globalScene.playSound("se/buy");
+
+                  return true;
+                },
+                style: this.isSameSpeciesEggAvailable() ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
+                item: "candy",
+                itemArgs: this.isSameSpeciesEggAvailable() ? this.candyItemArgs() : ["808080", "808080"],
+              });
+            }
             options.push({
               label: i18next.t("menu:cancel"),
               handler: () => {
@@ -2370,13 +2557,100 @@ export class PokedexPageUiHandler extends MessageUiHandler {
    * Determines if a passive upgrade is available for the current species
    * @returns Whether the user has enough candies and a passive has not been unlocked already
    */
+  /**
+   * Build the `itemArgs` color array for a candy-icon option. Vanilla
+   * species → `[base, overlay]` from `starterColors[id]`. Fusions →
+   * `[headBase, headOverlay, bodyBase, bodyOverlay]` which the shared
+   * option-select handler renders as a half-coloured candy (head left,
+   * body right).
+   */
+  private candyItemArgs(): string[] {
+    if (isFusionSyntheticSpeciesId(this.starterId)) {
+      const pair = decodeFusionSpeciesId(this.starterId);
+      const head = (pair && starterColors[pair.headId]) ?? ["909090", "606060"];
+      const body = (pair && starterColors[pair.bodyId]) ?? ["909090", "606060"];
+      return [head[0], head[1], body[0], body[1]];
+    }
+    return starterColors[this.starterId] ?? ["909090", "606060"];
+  }
+
+  /**
+   * Does the player have enough candy across all relevant pools to pay
+   * `cost`? Vanilla species draw from their own `candyCount`; fusions draw
+   * the split from head AND body via {@linkcode splitCandyCost}, requiring
+   * each parent to cover its half.
+   */
+  private canAffordCandyCost(cost: number): boolean {
+    const data = globalScene.gameData.starterData;
+    if (isFusionSyntheticSpeciesId(this.starterId)) {
+      const pair = decodeFusionSpeciesId(this.starterId);
+      if (!pair) {
+        return false;
+      }
+      // Combined-bank economy: head + body together must cover the cost;
+      // the actual split is computed at spend time so a 30-candy upgrade
+      // can be paid 15/15, 30/0, 12/18, etc.
+      const head = data[pair.headId]?.candyCount ?? 0;
+      const body = data[pair.bodyId]?.candyCount ?? 0;
+      return resolveFusionCandySpend(cost, head, body) !== null;
+    }
+    return (data[this.starterId]?.candyCount ?? 0) >= cost;
+  }
+
+  /**
+   * Deduct a candy cost. For fusions: equal split when both pools cover
+   * their half; otherwise the short side empties and the other side covers
+   * the remainder ({@linkcode resolveFusionCandySpend}).
+   */
+  private deductCandyCost(cost: number): void {
+    const data = globalScene.gameData.starterData;
+    if (isFusionSyntheticSpeciesId(this.starterId)) {
+      const pair = decodeFusionSpeciesId(this.starterId);
+      if (!pair) {
+        return;
+      }
+      const head = data[pair.headId]?.candyCount ?? 0;
+      const body = data[pair.bodyId]?.candyCount ?? 0;
+      const split = resolveFusionCandySpend(cost, head, body);
+      if (!split) {
+        return;
+      }
+      if (data[pair.headId]) {
+        data[pair.headId].candyCount -= split.fromHead;
+      }
+      if (data[pair.bodyId]) {
+        data[pair.bodyId].candyCount -= split.fromBody;
+      }
+      return;
+    }
+    if (data[this.starterId]) {
+      data[this.starterId].candyCount -= cost;
+    }
+  }
+
+  /** Refresh the candy-count text after a spend. Mirrors `setSpeciesDetails`
+   * formatting: `×<head>/<body>` for fusions; `×<count>` for vanilla. */
+  private refreshCandyDisplay(): void {
+    const data = globalScene.gameData.starterData;
+    if (isFusionSyntheticSpeciesId(this.starterId)) {
+      const pair = decodeFusionSpeciesId(this.starterId);
+      const headCount = pair ? (data[pair.headId]?.candyCount ?? 0) : 0;
+      const bodyCount = pair ? (data[pair.bodyId]?.candyCount ?? 0) : 0;
+      this.pokemonCandyCountText.setText(`×${headCount}/${bodyCount}`);
+      updateCandyCountTextStyle(this.pokemonCandyCountText, Math.min(headCount, bodyCount));
+      return;
+    }
+    const count = data[this.starterId]?.candyCount ?? 0;
+    this.pokemonCandyCountText.setText(`×${count}`);
+    updateCandyCountTextStyle(this.pokemonCandyCountText, count);
+  }
+
   private isPassiveAvailable(): boolean {
     const starterData = globalScene.gameData.starterData[this.starterId];
-
-    return (
-      starterData.candyCount >= getPassiveCandyCount(speciesStarterCosts[this.starterId])
-      && !(starterData.passiveAttr & PassiveAttr.UNLOCKED)
-    );
+    if (starterData.passiveAttr & PassiveAttr.UNLOCKED) {
+      return false;
+    }
+    return this.canAffordCandyCost(getPassiveCandyCount(speciesStarterCosts[this.starterId]));
   }
 
   /**
@@ -2385,11 +2659,11 @@ export class PokedexPageUiHandler extends MessageUiHandler {
    */
   private isValueReductionAvailable(): boolean {
     const starterData = globalScene.gameData.starterData[this.starterId];
-
-    return (
-      starterData.candyCount
-        >= getValueReductionCandyCounts(speciesStarterCosts[this.starterId])[starterData.valueReduction]
-      && starterData.valueReduction < valueReductionMax
+    if (starterData.valueReduction >= valueReductionMax) {
+      return false;
+    }
+    return this.canAffordCandyCost(
+      getValueReductionCandyCounts(speciesStarterCosts[this.starterId])[starterData.valueReduction],
     );
   }
 
@@ -2398,6 +2672,11 @@ export class PokedexPageUiHandler extends MessageUiHandler {
    * @returns Whether the user has enough candies
    */
   private isSameSpeciesEggAvailable(): boolean {
+    // Fusions have no hatch path — splicer-only obtain — so the same-species
+    // egg path is unavailable. Mirrors `starter-select-ui-handler`.
+    if (isFusionSyntheticSpeciesId(this.starterId)) {
+      return false;
+    }
     const starterData = globalScene.gameData.starterData[this.starterId];
     const hatchCount = globalScene.gameData.dexData[this.starterId].hatchedCount;
 
@@ -2638,9 +2917,28 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonNameText.setText(species ? "???" : "");
       }
 
-      // Setting the category
+      // Setting the category. For fusions with a community-authored entry in
+      // the IF folder's `Data/dex.json`, show that text instead — it's the
+      // bespoke description the IF community wrote for the pair, with the
+      // POKENAME token substituted. Falls back to head's category when the
+      // entry isn't available (folder not configured, JSON not loaded yet,
+      // or pair has no community entry).
       if (isFormCaught) {
-        this.pokemonCategoryText.setText(species.category);
+        let categoryText = species.category;
+        if (isFusionSyntheticSpeciesId(species.speciesId)) {
+          const pair = decodeFusionSpeciesId(species.speciesId);
+          if (pair) {
+            const ifHead = natdexToIfId(pair.headId);
+            const ifBody = natdexToIfId(pair.bodyId);
+            if (ifHead !== null && ifBody !== null) {
+              const entry = getIfFusionDexEntry(ifHead, ifBody, species.name);
+              if (entry) {
+                categoryText = entry.text;
+              }
+            }
+          }
+        }
+        this.pokemonCategoryText.setText(categoryText);
       } else {
         this.pokemonCategoryText.setText("");
       }
@@ -2725,15 +3023,35 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
         this.pokemonCaughtHatchedContainer.setVisible(true);
         this.pokemonCaughtHatchedContainer.setY(25);
-        this.pokemonCandyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
-        this.pokemonCandyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
-        this.pokemonCandyCountText.setText(
-          `×${species.speciesId === SpeciesId.PIKACHU ? 0 : globalScene.gameData.starterData[this.starterId].candyCount}`,
-        );
-        updateCandyCountTextStyle(
-          this.pokemonCandyCountText,
-          species.speciesId === SpeciesId.PIKACHU ? 0 : globalScene.gameData.starterData[this.starterId].candyCount,
-        );
+        // Fusion: half-coloured candy + ×head/body. Matches starter-select.
+        if (isFusionSyntheticSpeciesId(species.speciesId)) {
+          const pair = decodeFusionSpeciesId(species.speciesId);
+          const headColors = (pair && starterColors[pair.headId]) ?? ["909090", "606060"];
+          const bodyColors = (pair && starterColors[pair.bodyId]) ?? ["909090", "606060"];
+          this.pokemonCandyIcon.setTint(argbFromRgba(rgbHexToRgba(headColors[0]))).setCrop(0, 0, 8, 16);
+          this.pokemonCandyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(headColors[1]))).setCrop(0, 0, 8, 16);
+          this.pokemonCandyIconRight
+            .setTint(argbFromRgba(rgbHexToRgba(bodyColors[0])))
+            .setCrop(8, 0, 8, 16)
+            .setVisible(true);
+          this.pokemonCandyOverlayIconRight
+            .setTint(argbFromRgba(rgbHexToRgba(bodyColors[1])))
+            .setCrop(8, 0, 8, 16)
+            .setVisible(true);
+          const headCount = pair ? (globalScene.gameData.starterData[pair.headId]?.candyCount ?? 0) : 0;
+          const bodyCount = pair ? (globalScene.gameData.starterData[pair.bodyId]?.candyCount ?? 0) : 0;
+          this.pokemonCandyCountText.setText(`×${headCount}/${bodyCount}`);
+          updateCandyCountTextStyle(this.pokemonCandyCountText, Math.min(headCount, bodyCount));
+        } else {
+          this.pokemonCandyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0]))).setCrop(0, 0, 16, 16);
+          this.pokemonCandyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1]))).setCrop(0, 0, 16, 16);
+          this.pokemonCandyIconRight.setVisible(false);
+          this.pokemonCandyOverlayIconRight.setVisible(false);
+          const count =
+            species.speciesId === SpeciesId.PIKACHU ? 0 : globalScene.gameData.starterData[this.starterId].candyCount;
+          this.pokemonCandyCountText.setText(`×${count}`);
+          updateCandyCountTextStyle(this.pokemonCandyCountText, count);
+        }
         this.pokemonCandyContainer.setVisible(true);
 
         if (Object.hasOwn(pokemonPrevolutions, species.speciesId)) {

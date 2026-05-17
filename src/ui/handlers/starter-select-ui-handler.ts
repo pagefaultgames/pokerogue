@@ -18,6 +18,16 @@ import {
 import { allAbilities, allMoves, allSpecies } from "#data/data-lists";
 import { Egg, getEggTierForSpecies } from "#data/egg";
 import { GrowthRate, getGrowthRateColor } from "#data/exp";
+import { resolveFusionCandySpend } from "#data/fusion-derivation";
+import {
+  decodeFusionSpeciesId,
+  fusionSyntheticSpeciesId,
+  getFusionSpeciesFromRegistry,
+  getSyntheticFusionDexEntry,
+  getSyntheticFusionStarterDataEntry,
+  isFusionSpecies,
+  isFusionSyntheticSpeciesId,
+} from "#data/fusion-pokemon-species";
 import { Gender, getGenderColor, getGenderSymbol } from "#data/gender";
 import { getNatureName } from "#data/nature";
 import { pokemonFormChanges } from "#data/pokemon-forms";
@@ -42,11 +52,17 @@ import { UiMode } from "#enums/ui-mode";
 import { UiTheme } from "#enums/ui-theme";
 import type { CandyUpgradeNotificationChangedEvent } from "#events/battle-scene";
 import { BattleSceneEventType } from "#events/battle-scene";
+import { cycleFusionVariant } from "#sprites/fusion-variant-probe";
 import type { Variant } from "#sprites/variant";
 import { getVariantIcon, getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
 import { RibbonData } from "#system/ribbons/ribbon-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
+import {
+  bumpFusionStarterValueReduction,
+  listUnlockedFusionStarters,
+  setFusionStarterPassiveAttr,
+} from "#system/unlocked-fusion-starters";
 import type { DexEntry } from "#types/dex-data";
 import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { Starter, StarterAttributes, StarterDataEntry, StarterMoveset } from "#types/save-data";
@@ -74,7 +90,7 @@ import {
 } from "#utils/common";
 import type { StarterPreferences } from "#utils/data";
 import { deepCopy, loadStarterPreferences, saveStarterPreferences } from "#utils/data";
-import { getDexNumber, getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
+import { getDexNumber, getPokemonSpecies, getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
@@ -333,6 +349,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   private pokemonEggMoveLabels: Phaser.GameObjects.Text[];
   private pokemonCandyContainer: Phaser.GameObjects.Container;
   private pokemonCandyIcon: Phaser.GameObjects.Sprite;
+  private pokemonCandyIconRight: Phaser.GameObjects.Sprite;
+  private pokemonCandyOverlayIconRight: Phaser.GameObjects.Sprite;
   private pokemonCandyDarknessOverlay: Phaser.GameObjects.Sprite;
   private pokemonCandyOverlayIcon: Phaser.GameObjects.Sprite;
   private pokemonCandyCountText: Phaser.GameObjects.Text;
@@ -586,12 +604,19 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       new DropDownLabel(i18next.t("filterBar:pokerus"), undefined, DropDownState.OFF),
       new DropDownLabel(i18next.t("filterBar:hasPokerus"), undefined, DropDownState.ON),
     ];
+    // Tristate fusion filter matching Egg/Pokerus.
+    const fusionLabels = [
+      new DropDownLabel(i18next.t("filterBar:fusion"), undefined, DropDownState.OFF),
+      new DropDownLabel(i18next.t("filterBar:isFusion"), undefined, DropDownState.ON),
+      new DropDownLabel(i18next.t("filterBar:notFusion"), undefined, DropDownState.EXCLUDE),
+    ];
     const miscOptions = [
       new DropDownOption("FAVORITE", favoriteLabels),
       new DropDownOption("WIN", winLabels),
       new DropDownOption("HIDDEN_ABILITY", hiddenAbilityLabels),
       new DropDownOption("EGG", eggLabels),
       new DropDownOption("POKERUS", pokerusLabels),
+      new DropDownOption("FUSION", fusionLabels),
     ];
     this.filterBar.addFilter(
       DropDownColumn.MISC,
@@ -816,6 +841,20 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       starterBoxContainer.add(starterContainer);
     }
 
+    // Append unlocked fusion starters as additional grid entries.
+    for (const pair of listUnlockedFusionStarters()) {
+      const fusionSpecies = getFusionSpeciesFromRegistry(fusionSyntheticSpeciesId(pair.headId, pair.bodyId));
+      if (!fusionSpecies) {
+        continue;
+      }
+      this.speciesLoaded.set(fusionSpecies.speciesId, false);
+      this.allSpecies.push(fusionSpecies);
+      const fusionContainer = new StarterContainer(fusionSpecies).setVisible(false);
+      this.iconAnimHandler.addOrUpdate(fusionContainer.icon, PokemonIconAnimMode.NONE);
+      this.starterContainers.push(fusionContainer);
+      starterBoxContainer.add(fusionContainer);
+    }
+
     this.starterIcons = [];
     for (let i = 0; i < 6; i++) {
       const icon = globalScene.add
@@ -856,6 +895,17 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       .sprite(0, 0, "candy_overlay")
       .setScale(0.5)
       .setOrigin(0);
+    // Right-half candy sprites for the split fusion icon; hidden for vanilla species.
+    this.pokemonCandyIconRight = globalScene.add //
+      .sprite(0, 0, "candy")
+      .setScale(0.5)
+      .setOrigin(0)
+      .setVisible(false);
+    this.pokemonCandyOverlayIconRight = globalScene.add //
+      .sprite(0, 0, "candy_overlay")
+      .setScale(0.5)
+      .setOrigin(0)
+      .setVisible(false);
     this.pokemonCandyDarknessOverlay = globalScene.add //
       .sprite(0, 0, "candy")
       .setScale(0.5)
@@ -867,6 +917,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.pokemonCandyContainer.add([
       this.pokemonCandyIcon,
       this.pokemonCandyOverlayIcon,
+      this.pokemonCandyIconRight,
+      this.pokemonCandyOverlayIconRight,
       this.pokemonCandyDarknessOverlay,
       this.pokemonCandyCountText,
     ]);
@@ -1197,6 +1249,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.moveInfoOverlay.clear(); // clear this when removing a menu; the cancel button doesn't seem to trigger this automatically on controllers
     this.pokerusSpecies = getPokerusStarters();
 
+    // Ensure synthetic fusion entries exist before the grid iterates.
+    globalScene.gameData.installFusionStarterMaps();
+
     this.allowTera = Object.hasOwn(globalScene.gameData.achvUnlocks, achvs.TERASTALLIZE.id);
 
     if (args.length > 0 && args[0] instanceof Function) {
@@ -1447,11 +1502,18 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const starterData = globalScene.gameData.starterData[speciesId];
     const starterCost = speciesStarterCosts[speciesId];
 
-    return (
-      starterCost != null
-      && starterData.candyCount >= getPassiveCandyCount(starterCost)
-      && !(starterData.passiveAttr & PassiveAttr.UNLOCKED)
-    );
+    if (starterCost == null) {
+      return false;
+    }
+    if (starterData.passiveAttr & PassiveAttr.UNLOCKED) {
+      return false;
+    }
+    // Fusions pull from both parents' candy pools via the split-spend helper.
+    if (isFusionSyntheticSpeciesId(speciesId)) {
+      const species = getPokemonSpecies(speciesId);
+      return species != null && this.canAffordCandyCost(species, getPassiveCandyCount(starterCost));
+    }
+    return starterData.candyCount >= getPassiveCandyCount(starterCost);
   }
 
   /**
@@ -1464,11 +1526,15 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const starterData = globalScene.gameData.starterData[speciesId];
     const starterCost = speciesStarterCosts[speciesId];
 
-    return (
-      starterCost != null
-      && starterData.candyCount >= getValueReductionCandyCounts(starterCost)[starterData.valueReduction]
-      && starterData.valueReduction < valueReductionMax
-    );
+    if (starterCost == null || starterData.valueReduction >= valueReductionMax) {
+      return false;
+    }
+    const cost = getValueReductionCandyCounts(starterCost)[starterData.valueReduction];
+    if (isFusionSyntheticSpeciesId(speciesId)) {
+      const species = getPokemonSpecies(speciesId);
+      return species != null && this.canAffordCandyCost(species, cost);
+    }
+    return starterData.candyCount >= cost;
   }
 
   /**
@@ -1477,6 +1543,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
    * @returns true if the user has enough candies
    */
   isSameSpeciesEggAvailable(speciesId: SpeciesId): boolean {
+    // Fusions are splicer-only; no same-species egg path.
+    if (isFusionSyntheticSpeciesId(speciesId)) {
+      return false;
+    }
     const starterData = globalScene.gameData.starterData[speciesId];
     const starterCost = speciesStarterCosts[speciesId];
     const hatchedCount = globalScene.gameData.dexData[speciesId].hatchedCount;
@@ -2174,6 +2244,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
               handler: () => {
                 starterData.passiveAttr ^= PassiveAttr.ENABLED;
                 persistentStarterData.passiveAttr ^= PassiveAttr.ENABLED;
+                if (isFusionSyntheticSpeciesId(this.lastSpecies.speciesId)) {
+                  const pair = decodeFusionSpeciesId(this.lastSpecies.speciesId);
+                  if (pair) {
+                    setFusionStarterPassiveAttr(pair, persistentStarterData.passiveAttr);
+                  }
+                }
                 ui.setMode(UiMode.STARTER_SELECT);
                 this.setSpeciesDetails(this.lastSpecies);
                 return true;
@@ -2246,7 +2322,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           });
 
           // Purchases with Candy
-          const candyCount = starterData.candyCount;
           const showUseCandies = () => {
             const options: any[] = []; // TODO: add proper type
 
@@ -2256,15 +2331,23 @@ export class StarterSelectUiHandler extends MessageUiHandler {
               options.push({
                 label: `×${passiveCost} ${i18next.t("starterSelectUiHandler:unlockPassive")}`,
                 handler: () => {
-                  if (activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= passiveCost) {
+                  if (
+                    activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE
+                    || this.canAffordCandyCost(this.lastSpecies, passiveCost)
+                  ) {
                     persistentStarterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
                     starterData.passiveAttr = persistentStarterData.passiveAttr;
-                    if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE) {
-                      persistentStarterData.candyCount -= passiveCost;
-                      starterData.candyCount = persistentStarterData.candyCount;
+                    // Synthetic ids skip server save; persist locally.
+                    if (isFusionSyntheticSpeciesId(this.lastSpecies.speciesId)) {
+                      const pair = decodeFusionSpeciesId(this.lastSpecies.speciesId);
+                      if (pair) {
+                        setFusionStarterPassiveAttr(pair, persistentStarterData.passiveAttr);
+                      }
                     }
-                    this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
-                    updateCandyCountTextStyle(this.pokemonCandyCountText, starterData.candyCount);
+                    if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE) {
+                      this.deductCandyCost(this.lastSpecies, passiveCost);
+                    }
+                    this.refreshCandyDisplay(this.lastSpecies);
                     globalScene.gameData.saveSystem().then(success => {
                       if (!success) {
                         return globalScene.reset(true);
@@ -2284,7 +2367,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                   return false;
                 },
                 item: "candy",
-                itemArgs: starterColors[this.lastSpecies.speciesId],
+                itemArgs: this.candyItemArgs(this.lastSpecies),
               });
             }
 
@@ -2297,15 +2380,23 @@ export class StarterSelectUiHandler extends MessageUiHandler {
               options.push({
                 label: `×${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost", { newCost: globalScene.gameData.getSpeciesStarterValue(this.lastSpecies.speciesId, starterData.valueReduction + 1) })}`,
                 handler: () => {
-                  if (activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= reductionCost) {
+                  if (
+                    activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE
+                    || this.canAffordCandyCost(this.lastSpecies, reductionCost)
+                  ) {
                     persistentStarterData.valueReduction++;
                     starterData.valueReduction = persistentStarterData.valueReduction;
-                    if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE) {
-                      persistentStarterData.candyCount -= reductionCost;
-                      starterData.candyCount = persistentStarterData.candyCount;
+                    // Synthetic ids skip server save; persist locally.
+                    if (isFusionSyntheticSpeciesId(this.lastSpecies.speciesId)) {
+                      const pair = decodeFusionSpeciesId(this.lastSpecies.speciesId);
+                      if (pair) {
+                        bumpFusionStarterValueReduction(pair);
+                      }
                     }
-                    this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
-                    updateCandyCountTextStyle(this.pokemonCandyCountText, starterData.candyCount);
+                    if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE) {
+                      this.deductCandyCost(this.lastSpecies, reductionCost);
+                    }
+                    this.refreshCandyDisplay(this.lastSpecies);
                     globalScene.gameData.saveSystem().then(success => {
                       if (!success) {
                         return globalScene.reset(true);
@@ -2325,64 +2416,67 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                   return false;
                 },
                 item: "candy",
-                itemArgs: starterColors[this.lastSpecies.speciesId],
+                itemArgs: this.candyItemArgs(this.lastSpecies),
               });
             }
 
-            // Same species egg menu option.
+            // Same species egg menu option (hidden for splicer-only fusions).
             const lastSpeciesId = this.lastSpecies.speciesId;
-            const hatchedCount = globalScene.gameData.dexData[lastSpeciesId].hatchedCount;
-            const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarterCosts[lastSpeciesId], hatchedCount);
-            options.push({
-              label: `×${sameSpeciesEggCost} ${i18next.t("starterSelectUiHandler:sameSpeciesEgg")}`,
-              handler: () => {
-                if (activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= sameSpeciesEggCost) {
-                  if (globalScene.gameData.eggs.length >= 99 && !activeOverrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
-                    // Egg list full, show error message at the top of the screen and abort
-                    this.showText(
-                      i18next.t("egg:tooManyEggs"),
-                      undefined,
-                      () => this.showText("", 0, () => (this.tutorialActive = false)),
-                      2000,
-                      false,
-                      undefined,
-                      true,
-                    );
-                    return false;
-                  }
-                  if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE) {
-                    persistentStarterData.candyCount -= sameSpeciesEggCost;
-                    starterData.candyCount = persistentStarterData.candyCount;
-                  }
-                  this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
-                  updateCandyCountTextStyle(this.pokemonCandyCountText, starterData.candyCount);
-
-                  const egg = new Egg({
-                    species: this.lastSpecies.speciesId,
-                    sourceType: EggSourceType.SAME_SPECIES_EGG,
-                  });
-                  egg.addEggToGameData();
-
-                  globalScene.gameData.saveSystem().then(success => {
-                    if (!success) {
-                      return globalScene.reset(true);
+            if (!isFusionSyntheticSpeciesId(lastSpeciesId)) {
+              const hatchedCount = globalScene.gameData.dexData[lastSpeciesId].hatchedCount;
+              const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarterCosts[lastSpeciesId], hatchedCount);
+              options.push({
+                label: `×${sameSpeciesEggCost} ${i18next.t("starterSelectUiHandler:sameSpeciesEgg")}`,
+                handler: () => {
+                  if (
+                    activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE
+                    || this.canAffordCandyCost(this.lastSpecies, sameSpeciesEggCost)
+                  ) {
+                    if (globalScene.gameData.eggs.length >= 99 && !activeOverrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
+                      // Egg list full, show error message at the top of the screen and abort
+                      this.showText(
+                        i18next.t("egg:tooManyEggs"),
+                        undefined,
+                        () => this.showText("", 0, () => (this.tutorialActive = false)),
+                        2000,
+                        false,
+                        undefined,
+                        true,
+                      );
+                      return false;
                     }
-                  });
-                  ui.setMode(UiMode.STARTER_SELECT);
-                  globalScene.playSound("se/buy");
+                    if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE) {
+                      this.deductCandyCost(this.lastSpecies, sameSpeciesEggCost);
+                    }
+                    this.refreshCandyDisplay(this.lastSpecies);
 
-                  // update the icon/animation for available upgrade
-                  if (starterContainer) {
-                    this.updateCandyUpgradeDisplay(starterContainer);
+                    const egg = new Egg({
+                      species: this.lastSpecies.speciesId,
+                      sourceType: EggSourceType.SAME_SPECIES_EGG,
+                    });
+                    egg.addEggToGameData();
+
+                    globalScene.gameData.saveSystem().then(success => {
+                      if (!success) {
+                        return globalScene.reset(true);
+                      }
+                    });
+                    ui.setMode(UiMode.STARTER_SELECT);
+                    globalScene.playSound("se/buy");
+
+                    // update the icon/animation for available upgrade
+                    if (starterContainer) {
+                      this.updateCandyUpgradeDisplay(starterContainer);
+                    }
+
+                    return true;
                   }
-
-                  return true;
-                }
-                return false;
-              },
-              item: "candy",
-              itemArgs: starterColors[this.lastSpecies.speciesId],
-            });
+                  return false;
+                },
+                item: "candy",
+                itemArgs: this.candyItemArgs(this.lastSpecies),
+              });
+            }
             options.push({
               label: i18next.t("menu:cancel"),
               handler: () => {
@@ -2519,6 +2613,32 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             }
             break;
           case Button.CYCLE_FORM:
+            // CYCLE_FORM cycles the IF artist-alternate sprite for fusions.
+            if (isFusionSpecies(this.lastSpecies)) {
+              const fusionSp = this.lastSpecies;
+              cycleFusionVariant({
+                headId: fusionSp.headSpecies.speciesId,
+                bodyId: fusionSp.bodySpecies.speciesId,
+              }).then(next => {
+                if (next !== null) {
+                  // Force a sprite reload via setSpeciesDetails — pass
+                  // formIndex:0 (no-op for fusions) so it picks up the
+                  // new preferred variant.
+                  const currentProps = globalScene.gameData.getSpeciesDexAttrProps(
+                    this.lastSpecies,
+                    this.dexAttrCursor,
+                  );
+                  this.setSpeciesDetails(this.lastSpecies, {
+                    formIndex: 0,
+                    shiny: currentProps.shiny,
+                    variant: currentProps.variant,
+                    female: currentProps.female,
+                  });
+                }
+              });
+              success = true;
+              break;
+            }
             if (this.canCycleForm) {
               const formCount = this.lastSpecies.forms.length;
               let newFormIndex = props.formIndex;
@@ -3309,6 +3429,21 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         return false;
       });
 
+      // Fusion Filter
+      const isFusionEntry = isFusionSpecies(container.species);
+      const fitsFusion = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
+        if (misc.val === "FUSION" && misc.state === DropDownState.ON) {
+          return isFusionEntry;
+        }
+        if (misc.val === "FUSION" && misc.state === DropDownState.EXCLUDE) {
+          return !isFusionEntry;
+        }
+        if (misc.val === "FUSION" && misc.state === DropDownState.OFF) {
+          return true;
+        }
+        return false;
+      });
+
       if (
         fitsGen
         && fitsType
@@ -3320,6 +3455,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         && fitsHA
         && fitsEgg
         && fitsPokerus
+        && fitsFusion
       ) {
         this.filteredStarterContainers.push(container);
       }
@@ -3614,7 +3750,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.lastSpecies = species!; // TODO: is this bang correct?
 
     if (species && (this.speciesStarterDexEntry?.seenAttr || this.speciesStarterDexEntry?.caughtAttr)) {
-      this.pokemonNumberText.setText(padInt(getDexNumber(species.speciesId), 4));
+      // Fusion synthetic ids aren't real dex numbers — show "XXXX".
+      this.pokemonNumberText.setText(
+        isFusionSyntheticSpeciesId(species.speciesId) ? "XXXX" : padInt(getDexNumber(species.speciesId), 4),
+      );
       if (starterAttributes?.nickname) {
         const name = decodeURIComponent(escape(atob(starterAttributes.nickname)));
         this.pokemonNameText.setText(name);
@@ -3624,7 +3763,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.truncateName();
 
       if (this.speciesStarterDexEntry?.caughtAttr) {
-        const colorScheme = starterColors[species.speciesId];
+        // Fall back to head's colors for fusions.
+        const colorScheme = starterColors[species.speciesId]
+          ?? (isFusionSpecies(species) ? starterColors[species.headSpecies.speciesId] : undefined) ?? [
+            "ffffff",
+            "ffffff",
+          ];
 
         const luck = globalScene.gameData.getDexAttrLuck(this.speciesStarterDexEntry.caughtAttr);
         this.pokemonLuckText
@@ -3674,13 +3818,34 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         } else {
           this.pokemonCaughtHatchedContainer.setY(25);
           this.pokemonShinyIcon.setY(117);
-          this.pokemonCandyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
-          this.pokemonCandyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
-          this.pokemonCandyCountText.setText(`×${globalScene.gameData.starterData[species.speciesId].candyCount}`);
-          updateCandyCountTextStyle(
-            this.pokemonCandyCountText,
-            globalScene.gameData.starterData[species.speciesId].candyCount,
-          );
+          // Fusions render a split-coloured candy with `×head/body` text;
+          // non-fusions use the vanilla single-tint candy with `×count`.
+          const isFusion = isFusionSpecies(species);
+          if (isFusion) {
+            const headColors = starterColors[species.headSpecies.speciesId] ?? ["909090", "606060"];
+            const bodyColors = starterColors[species.bodySpecies.speciesId] ?? ["909090", "606060"];
+            const headTint0 = argbFromRgba(rgbHexToRgba(headColors[0]));
+            const headTint1 = argbFromRgba(rgbHexToRgba(headColors[1]));
+            const bodyTint0 = argbFromRgba(rgbHexToRgba(bodyColors[0]));
+            const bodyTint1 = argbFromRgba(rgbHexToRgba(bodyColors[1]));
+            this.pokemonCandyIcon.setTint(headTint0).setCrop(0, 0, 8, 16);
+            this.pokemonCandyOverlayIcon.setTint(headTint1).setCrop(0, 0, 8, 16);
+            this.pokemonCandyIconRight.setTint(bodyTint0).setCrop(8, 0, 8, 16).setVisible(true);
+            this.pokemonCandyOverlayIconRight.setTint(bodyTint1).setCrop(8, 0, 8, 16).setVisible(true);
+            const headCount = globalScene.gameData.starterData[species.headSpecies.speciesId]?.candyCount ?? 0;
+            const bodyCount = globalScene.gameData.starterData[species.bodySpecies.speciesId]?.candyCount ?? 0;
+            this.pokemonCandyCountText.setText(`×${headCount}/${bodyCount}`);
+            // Shade by the smaller bank — reflects the affordable spend.
+            updateCandyCountTextStyle(this.pokemonCandyCountText, Math.min(headCount, bodyCount));
+          } else {
+            this.pokemonCandyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0]))).setCrop(0, 0, 16, 16);
+            this.pokemonCandyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1]))).setCrop(0, 0, 16, 16);
+            this.pokemonCandyIconRight.setVisible(false);
+            this.pokemonCandyOverlayIconRight.setVisible(false);
+            const total = globalScene.gameData.starterData[species.speciesId].candyCount;
+            this.pokemonCandyCountText.setText(`×${total}`);
+            updateCandyCountTextStyle(this.pokemonCandyCountText, total);
+          }
           this.pokemonFormText.setY(42);
           this.pokemonHatchedIcon.setVisible(true);
           this.pokemonHatchedCountText.setVisible(true);
@@ -3851,8 +4016,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     speciesId: SpeciesId,
     applyChallenge = true,
   ): { dexEntry: DexEntry; starterDataEntry: StarterDataEntry } {
-    const dexEntry = globalScene.gameData.dexData[speciesId];
-    const starterDataEntry = globalScene.gameData.starterData[speciesId];
+    // Synthetic fusion ids return neutral default entries.
+    const isFusionId = isFusionSyntheticSpeciesId(speciesId);
+    const dexEntry = isFusionId ? getSyntheticFusionDexEntry(speciesId) : globalScene.gameData.dexData[speciesId];
+    const starterDataEntry = isFusionId
+      ? getSyntheticFusionStarterDataEntry(speciesId)
+      : globalScene.gameData.starterData[speciesId];
 
     // Unpacking to make a copy by values, not references
     const copiedDexEntry = { ...dexEntry };
@@ -3862,6 +4031,74 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       applyChallenges(ChallengeType.STARTER_SELECT_MODIFY, speciesId, copiedDexEntry, copiedStarterDataEntry);
     }
     return { dexEntry: { ...copiedDexEntry }, starterDataEntry: { ...copiedStarterDataEntry } };
+  }
+
+  /**
+   * Build the candy icon `itemArgs` array. Fusions return a 4-element
+   * `[headBase, headOverlay, bodyBase, bodyOverlay]` for split rendering;
+   * non-fusions return the vanilla 2-element pair.
+   */
+  private candyItemArgs(species: PokemonSpecies): string[] {
+    if (isFusionSpecies(species)) {
+      const head = starterColors[species.headSpecies.speciesId] ?? ["909090", "606060"];
+      const body = starterColors[species.bodySpecies.speciesId] ?? ["909090", "606060"];
+      return [head[0], head[1], body[0], body[1]];
+    }
+    return starterColors[species.speciesId] ?? ["909090", "606060"];
+  }
+
+  /**
+   * Affordability check for candy upgrades. Fusion candy is fungible
+   * across head + body banks; see {@linkcode resolveFusionCandySpend}.
+   */
+  private canAffordCandyCost(species: PokemonSpecies, cost: number): boolean {
+    const data = globalScene.gameData.starterData;
+    if (isFusionSpecies(species)) {
+      const head = data[species.headSpecies.speciesId]?.candyCount ?? 0;
+      const body = data[species.bodySpecies.speciesId]?.candyCount ?? 0;
+      return resolveFusionCandySpend(cost, head, body) !== null;
+    }
+    const pool = data[species.speciesId]?.candyCount ?? 0;
+    return pool >= cost;
+  }
+
+  /**
+   * Deduct a candy cost, splitting across head + body for fusions via
+   * {@linkcode resolveFusionCandySpend}.
+   */
+  private deductCandyCost(species: PokemonSpecies, cost: number): void {
+    const data = globalScene.gameData.starterData;
+    if (isFusionSpecies(species)) {
+      const head = data[species.headSpecies.speciesId]?.candyCount ?? 0;
+      const body = data[species.bodySpecies.speciesId]?.candyCount ?? 0;
+      const split = resolveFusionCandySpend(cost, head, body);
+      if (!split) {
+        return;
+      }
+      if (data[species.headSpecies.speciesId]) {
+        data[species.headSpecies.speciesId].candyCount -= split.fromHead;
+      }
+      if (data[species.bodySpecies.speciesId]) {
+        data[species.bodySpecies.speciesId].candyCount -= split.fromBody;
+      }
+    } else if (data[species.speciesId]) {
+      data[species.speciesId].candyCount -= cost;
+    }
+  }
+
+  /** Refresh the candy-count text for the selected species. */
+  private refreshCandyDisplay(species: PokemonSpecies): void {
+    const data = globalScene.gameData.starterData;
+    if (isFusionSpecies(species)) {
+      const headCount = data[species.headSpecies.speciesId]?.candyCount ?? 0;
+      const bodyCount = data[species.bodySpecies.speciesId]?.candyCount ?? 0;
+      this.pokemonCandyCountText.setText(`×${headCount}/${bodyCount}`);
+      updateCandyCountTextStyle(this.pokemonCandyCountText, Math.min(headCount, bodyCount));
+      return;
+    }
+    const count = data[species.speciesId]?.candyCount ?? 0;
+    this.pokemonCandyCountText.setText(`×${count}`);
+    updateCandyCountTextStyle(this.pokemonCandyCountText, count);
   }
 
   setSpeciesDetails(species: PokemonSpecies, options: SpeciesDetails = {}, save = true): void {
@@ -4059,8 +4296,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
         this.canCycleAbility = [hasAbility1, hasAbility2, hasHiddenAbility].filter(a => a).length > 1;
 
+        // Fusions reuse Cycle Form to cycle IF artist alternates; always
+        // enable the hint so the action stays discoverable.
         this.canCycleForm =
-          species.forms
+          isFusionSpecies(species)
+          || species.forms
             .filter(f => f.isStarterSelectable || !pokemonFormChanges[species.speciesId]?.find(fc => fc.formKey))
             .map((_, f) => dexEntry.caughtAttr & globalScene.gameData.getFormAttr(f))
             .filter(f => f).length > 1;

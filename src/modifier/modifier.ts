@@ -8,6 +8,7 @@ import { getBerryEffectFunc, getBerryPredicate } from "#data/berry";
 import { allMoves, modifierTypes } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
+import { deriveFusionAbilities } from "#data/fusion-derivation";
 import { MAX_PER_TYPE_POKEBALLS } from "#data/pokeball";
 import { getStatusEffectHealText } from "#data/status-effect";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -38,6 +39,7 @@ import type {
   TerastallizeModifierType,
   TmModifierType,
 } from "#modifiers/modifier-type";
+import { isFusionStarterUnlocked, unlockFusionStarter } from "#system/unlocked-fusion-starters";
 import type { VoucherType } from "#system/voucher";
 import type { ModifierInstanceMap, ModifierString } from "#types/modifier-types";
 import { addTextObject } from "#ui/text";
@@ -2383,7 +2385,87 @@ export class FusePokemonModifier extends ConsumablePokemonModifier {
    * @returns always Promise<true>
    */
   override apply(playerPokemon: PlayerPokemon, playerPokemon2: PlayerPokemon): boolean {
+    // Capture pre-fuse state — `fuse` mutates both parents.
+    const headIvs = playerPokemon.ivs;
+    const bodyIvs = playerPokemon2.ivs;
+    // Fusion inherits the per-stat max of both parents.
+    const mergedIvs: [number, number, number, number, number, number] = [
+      Math.max(headIvs[0] ?? 0, bodyIvs[0] ?? 0),
+      Math.max(headIvs[1] ?? 0, bodyIvs[1] ?? 0),
+      Math.max(headIvs[2] ?? 0, bodyIvs[2] ?? 0),
+      Math.max(headIvs[3] ?? 0, bodyIvs[3] ?? 0),
+      Math.max(headIvs[4] ?? 0, bodyIvs[4] ?? 0),
+      Math.max(headIvs[5] ?? 0, bodyIvs[5] ?? 0),
+    ];
+
+    // OR-merge each parent's shiny variant; re-splicing accumulates.
+    let shinyVariants = 0;
+    if (playerPokemon.isShiny()) {
+      shinyVariants |= 1 << (playerPokemon.variant ?? 0);
+    }
+    if (playerPokemon2.isShiny()) {
+      shinyVariants |= 1 << (playerPokemon2.variant ?? 0);
+    }
+
+    // Head's gender carries through — head dominates the fusion identity.
+    const headGender = playerPokemon.gender;
+
+    // Match each parent's current ability to a fusion slot:
+    //   head == ability1       → bit 0
+    //   body == ability2       → bit 1
+    //   head == abilityHidden  → bit 2
+    const headSpecies = playerPokemon.species;
+    const bodySpecies = playerPokemon2.species;
+    const { ability1, ability2, abilityHidden } = deriveFusionAbilities(headSpecies, bodySpecies);
+    const headAbility = headSpecies.getAbility(playerPokemon.abilityIndex);
+    const bodyAbility = bodySpecies.getAbility(playerPokemon2.abilityIndex);
+    let abilityAttr = 0;
+    if (headAbility === ability1) {
+      abilityAttr |= 1;
+    }
+    if (bodyAbility === ability2) {
+      abilityAttr |= 2;
+    }
+    if (headAbility === abilityHidden) {
+      abilityAttr |= 4;
+    }
+
+    // OR-merge both parents' current natures into the unlocked-natures mask.
+    const natureAttr = (1 << (playerPokemon.nature + 1)) | (1 << (playerPokemon2.nature + 1));
+
+    // Asymmetric egg-move composition: head bits 0-1 → slots 0-1, body bits 0-1 → slots 2-3.
+    // The reverse pair gets the opposite composition, so two opposite splices can unlock four moves.
+    const headEggMoves = globalScene.gameData.starterData[headSpecies.speciesId]?.eggMoves ?? 0;
+    const bodyEggMoves = globalScene.gameData.starterData[bodySpecies.speciesId]?.eggMoves ?? 0;
+    const eggMoves = (headEggMoves & 0b0011) | ((bodyEggMoves & 0b0011) << 2);
+
+    // Capture pre-splice unlock state for the first-time-caught splash.
+    const pair = { headId: headSpecies.speciesId, bodyId: bodySpecies.speciesId };
+    const wasUnlockedBefore = isFusionStarterUnlocked(pair);
+
     playerPokemon.fuse(playerPokemon2);
+
+    // Pair is stored ordered (head, body) — reversing the splicer order is a separate unlock.
+    unlockFusionStarter(pair, {
+      shinyVariants,
+      ivs: mergedIvs,
+      gender: headGender,
+      abilityAttr,
+      natureAttr,
+      eggMoves,
+    });
+    // Make the new unlock immediately visible to runtime starter maps.
+    globalScene.gameData.installFusionStarterMaps();
+
+    // Mirror vanilla's setPokemonCaught splash on a fresh splice.
+    if (!wasUnlockedBefore) {
+      globalScene.playSound("se/level_up_fanfare");
+      globalScene.phaseManager.queueMessage(
+        i18next.t("battle:addedAsAStarter", { pokemonName: playerPokemon.getNameToRender() }),
+        null,
+        true,
+      );
+    }
     return true;
   }
 }
