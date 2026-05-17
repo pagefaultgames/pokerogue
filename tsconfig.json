@@ -24,7 +24,6 @@
       "ESNext.Iterator",
       "ESNext.Collection"
     ],
-    "types": ["@commander-js/extra-typings"],
     // Skip typechecking `.d.ts` files for a ~20% speed boost
     // Won't be necessary if https://github.com/microsoft/TypeScript/issues/30511 is ever resolved
     "skipLibCheck": true,
@@ -32,6 +31,7 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "sourceMap": false,
+    "allowJs": false,
     "strict": false, // TODO: Enable this eventually
     "exactOptionalPropertyTypes": true,
     "strictNullChecks": true,
@@ -48,7 +48,12 @@
     "useUnknownInCatchVariables": false,
     "rootDir": ".",
     "outDir": "./build",
+    // Note: We actively CANNOT UNDER ANY CIRCUMSTANCES enable declaration emit, as main repo code uses
+    // mixins for classes with private/protected members (causing TS4094 errors).
+    // (This also means we cannot use `composite` or project references in any capacity.)
+    // See: https://github.com/microsoft/TypeScript/issues/17744
     "noEmit": true,
+    // Note: make sure more specific paths appear before less specific paths
     "paths": {
       "#abilities/*": ["./src/data/abilities/*.ts"],
       "#api/*": ["./src/api/*.ts"],
@@ -90,11 +95,17 @@
       ],
       "#utils/*": ["./src/utils/*.ts"],
       "#data/*": ["./src/data/pokemon-forms/*.ts", "./src/data/pokemon/*.ts", "./src/data/*.ts"],
+
+      // these must always be last
       "#test/*": ["./test/*.ts"],
       "#app/*": ["./src/*.ts"]
     }
   },
-  // Exclude checking for script JS files as those are covered by the folder's `jsconfig.json`
-  "include": ["**/*.ts", "**/*.d.ts", "**/*.mts", ".github/**/*.mts"],
+  // We cannot use a blanket "**/*.ts" include here excluding `scripts` because it would bar us from checking any boilerplate files,
+  // which should be valid under _main repo_ settings.
+  // (`scripts` has its own TSConfig with extra subpath aliases, so attempting to typecheck them would cause errors about missing modules.)
+  // We also don't add the `.github/scripts/` directory here as those files
+  // need different settings to ensure they can be run by Node without issues.
+  "include": ["*.ts", "src", "test", "scripts/**/*.boilerplate.ts"],
   "exclude": ["dist", "node_modules"]
 }

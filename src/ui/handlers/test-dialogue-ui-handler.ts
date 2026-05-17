@@ -6,6 +6,7 @@ import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
 import type { ModalConfig } from "#ui/modal-ui-handler";
 import i18next from "i18next";
 
+/** Handler for the i18n testing menu used by the localization team. */
 export class TestDialogueUiHandler extends FormModalUiHandler {
   keys: string[];
 

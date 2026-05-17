@@ -149,6 +149,9 @@ importers:
       vite:
         specifier: ^8.0.10
         version: 8.0.10(@types/node@24.12.2)(esbuild@0.27.3)(yaml@2.8.3)
+      vite-node:
+        specifier: ^6.0.0
+        version: 6.0.0(@types/node@24.12.2)(esbuild@0.27.3)(yaml@2.8.3)
       vitest:
         specifier: ^4.1.5
         version: 4.1.5(@types/node@24.12.2)(@vitest/coverage-v8@4.1.5)(jsdom@29.0.2)(msw@2.13.5(@types/node@24.12.2)(typescript@6.0.3))(vite@8.0.10(@types/node@24.12.2)(esbuild@0.27.3)(yaml@2.8.3))
@@ -1055,6 +1058,10 @@ packages:
     resolution: {integrity: sha512-VZznLgtwhn+Mact9tfiwx64fA9erHH/MCXEUfB/0bX/6Fz6ny5EGTXYltMocqg4xFAQZtnO3DHWWXi8RiuN7cQ==}
     engines: {node: 18 || 20 || >=22}
 
+  cac@7.0.0:
+    resolution: {integrity: sha512-tixWYgm5ZoOD+3g6UTea91eow5z6AAHaho3g0V9CNSNb45gM8SmflpAc+GRd1InC4AqN/07Unrgp56Y94N9hJQ==}
+    engines: {node: '>=20.19.0'}
+
   chai@6.2.2:
     resolution: {integrity: sha512-NUPRluOfOiTKBKvWPtSD4PhFvWCqOi0BGStNWs57X9js7XGTprSmFoz5F0tWhR4WPjNeR9jXqdC7/UpSJTnlRg==}
     engines: {node: '>=18'}
@@ -1914,6 +1921,11 @@ packages:
 
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
+
+  vite-node@6.0.0:
+    resolution: {integrity: sha512-oj4PVrT+pDh6GYf5wfUXkcZyekYS8kKPfLPXVl8qe324Ec6l4K2DUKNadRbZ3LQl0qGcDz+PyOo7ZAh00Y+JjQ==}
+    engines: {node: ^20.19.0 || >=22.12.0}
+    hasBin: true
 
   vite@8.0.10:
     resolution: {integrity: sha512-rZuUu9j6J5uotLDs+cAA4O5H4K1SfPliUlQwqa6YEwSrWDZzP4rhm00oJR5snMewjxF5V/K3D4kctsUTsIU9Mw==}
@@ -2896,6 +2908,8 @@ snapshots:
     dependencies:
       balanced-match: 4.0.4
 
+  cac@7.0.0: {}
+
   chai@6.2.2: {}
 
   chalk@4.1.2:
@@ -3729,6 +3743,27 @@ snapshots:
   until-async@3.0.2: {}
 
   util-deprecate@1.0.2: {}
+
+  vite-node@6.0.0(@types/node@24.12.2)(esbuild@0.27.3)(yaml@2.8.3):
+    dependencies:
+      cac: 7.0.0
+      es-module-lexer: 2.0.0
+      obug: 2.1.1
+      pathe: 2.0.3
+      vite: 8.0.10(@types/node@24.12.2)(esbuild@0.27.3)(yaml@2.8.3)
+    transitivePeerDependencies:
+      - '@types/node'
+      - '@vitejs/devtools'
+      - esbuild
+      - jiti
+      - less
+      - sass
+      - sass-embedded
+      - stylus
+      - sugarss
+      - terser
+      - tsx
+      - yaml
 
   vite@8.0.10(@types/node@24.12.2)(esbuild@0.27.3)(yaml@2.8.3):
     dependencies:
