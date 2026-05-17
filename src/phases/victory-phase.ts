@@ -39,7 +39,8 @@ export class VictoryPhase extends PokemonPhase {
     if (
       !globalScene
         .getEnemyParty()
-        .find(p => (globalScene.currentBattle.battleType === BattleType.WILD ? p.isOnField() : !p?.isFainted()))
+        .find(p => (globalScene.currentBattle.battleType === BattleType.WILD ? p.isOnField() : !p?.isFainted())) // When two enemies faint on the same turn, both VictoryPhases observe "all fainted" — only the first should queue the post-battle chain.
+      && !globalScene.phaseManager.hasPhaseOfType("NewBattlePhase")
     ) {
       globalScene.phaseManager.pushNew("BattleEndPhase", true);
       if (globalScene.currentBattle.battleType === BattleType.TRAINER) {
