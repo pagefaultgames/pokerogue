@@ -2,6 +2,7 @@ export const FusionSettingKeys = {
   Stat_Formula: "FUSION_STAT_FORMULA",
   Shiny_Strength: "FUSION_SHINY_STRENGTH",
   Sprite_Source: "FUSION_SPRITE_SOURCE",
+  Trainer_Fusion: "FUSION_TRAINER_FUSION",
 } as const;
 
 export type FusionSettingKey = (typeof FusionSettingKeys)[keyof typeof FusionSettingKeys];
@@ -52,6 +53,16 @@ export const FusionSettings: FusionSetting[] = [
       { value: "CUSTOM_FIRST", labelKey: "settings:fusionSpriteSourceArtistFirst" },
       { value: "AUTOGEN_FIRST", labelKey: "settings:fusionSpriteSourceAutogenFirst" },
       { value: "CUSTOM_ONLY", labelKey: "settings:fusionSpriteSourceArtistOnly" },
+    ],
+    default: 0,
+  },
+  {
+    key: FusionSettingKeys.Trainer_Fusion,
+    labelKey: "settings:fusionTrainerFusion",
+    options: [
+      { value: "DEFAULT", labelKey: "settings:fusionTrainerFusionDefault" },
+      { value: "NONE", labelKey: "settings:fusionTrainerFusionNone" },
+      { value: "ALWAYS", labelKey: "settings:fusionTrainerFusionAlways" },
     ],
     default: 0,
   },

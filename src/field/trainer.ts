@@ -13,6 +13,7 @@ import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import type { EnemyPokemon } from "#field/pokemon";
 import type { PersistentModifier } from "#modifiers/modifier";
+import { FusionSettingKeys, getFusionSettingValue } from "#system/settings/fusion-settings";
 import type { TrainerConfig } from "#trainers/trainer-config";
 import { trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyCompoundTemplate, type TrainerPartyTemplate } from "#trainers/trainer-party-template";
@@ -20,6 +21,18 @@ import { randSeedFloat, randSeedInt, randSeedItem } from "#utils/common";
 import { getRandomLocaleEntry } from "#utils/i18n";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
+
+function shouldFuseTrainerPokemon(config: TrainerConfig): boolean {
+  switch (getFusionSettingValue(FusionSettingKeys.Trainer_Fusion)) {
+    case "NONE":
+      return false;
+    case "ALWAYS":
+      return true;
+    default:
+      return randSeedFloat() < (config.hasCharSprite ? 0.25 : 0.05);
+  }
+}
+
 import i18next from "i18next";
 
 export class Trainer extends Phaser.GameObjects.Container {
@@ -433,8 +446,11 @@ export class Trainer extends Phaser.GameObjects.Container {
           !this.isDouble() || !(index % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER,
         );
 
-        if (this.config.randomFusionChance > 0 && randSeedFloat() < this.config.randomFusionChance) {
+        if (shouldFuseTrainerPokemon(this.config)) {
           ret.generateFusionSpecies();
+          if (randSeedFloat() < 0.5) {
+            ret.swapFusionRoles();
+          }
           ret.calculateStats();
         }
       },

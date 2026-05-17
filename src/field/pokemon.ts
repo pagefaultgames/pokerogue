@@ -3232,9 +3232,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Generate a fusion species and add it to this Pokémon
    * @param forStarter - Whether this fusion is being generated for a starter Pokémon; default `false`
-   * @param bodySpecies - Explicit body species; when provided, bypasses random selection and the starter/enemy fusion overrides.
    */
-  public generateFusionSpecies(forStarter?: boolean, bodySpecies?: PokemonSpecies): void {
+  public generateFusionSpecies(forStarter?: boolean): void {
     const hiddenAbilityChance = new ValueHolder(BASE_HIDDEN_ABILITY_RATE);
     if (!this.hasTrainer()) {
       globalScene.applyModifiers(HiddenAbilityRateBoosterModifier, true, hiddenAbilityChance);
@@ -3258,11 +3257,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         }
       : this.species.getCompatibleFusionSpeciesFilter();
 
-    let fusionOverride: PokemonSpecies | undefined = bodySpecies;
+    let fusionOverride: PokemonSpecies | undefined;
 
-    if (!fusionOverride && forStarter && this.isPlayer() && activeOverrides.STARTER_FUSION_SPECIES_OVERRIDE) {
+    if (forStarter && this.isPlayer() && activeOverrides.STARTER_FUSION_SPECIES_OVERRIDE) {
       fusionOverride = getPokemonSpecies(activeOverrides.STARTER_FUSION_SPECIES_OVERRIDE);
-    } else if (!fusionOverride && this.isEnemy() && activeOverrides.ENEMY_FUSION_SPECIES_OVERRIDE) {
+    } else if (this.isEnemy() && activeOverrides.ENEMY_FUSION_SPECIES_OVERRIDE) {
       fusionOverride = getPokemonSpecies(activeOverrides.ENEMY_FUSION_SPECIES_OVERRIDE);
     }
 
@@ -3298,6 +3297,28 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     this.fusionLuck = this.luck;
 
     this.generateName();
+  }
+
+  /**
+   * Swap head and body of an existing fusion. No-op if this Pokémon isn't fused. Caller is responsible
+   * for re-running {@linkcode calculateStats} and {@linkcode generateName} afterwards if needed.
+   */
+  public swapFusionRoles(): void {
+    if (!this.fusionSpecies) {
+      return;
+    }
+    const headSpecies = this.species;
+    this.species = this.fusionSpecies;
+    this.fusionSpecies = headSpecies;
+    [this.formIndex, this.fusionFormIndex] = [this.fusionFormIndex, this.formIndex];
+    [this.abilityIndex, this.fusionAbilityIndex] = [this.fusionAbilityIndex, this.abilityIndex];
+    [this.shiny, this.fusionShiny] = [this.fusionShiny, this.shiny];
+    [this.variant, this.fusionVariant] = [this.fusionVariant, this.variant];
+    [this.gender, this.fusionGender] = [this.fusionGender, this.gender];
+    [this.luck, this.fusionLuck] = [this.fusionLuck, this.luck];
+    const oldHeadCustom = this.customPokemonData;
+    this.customPokemonData = this.fusionCustomPokemonData ?? new CustomPokemonData();
+    this.fusionCustomPokemonData = oldHeadCustom;
   }
 
   /** Remove the fusion species from this Pokémon */

@@ -32,8 +32,6 @@ import {
   RIVAL_5_POOL,
   RIVAL_6_POOL,
 } from "#trainers/rival-party-config";
-import type { FusionPairSpec, TrainerFusionSlot } from "#trainers/trainer-fusion-pools";
-import { trainerFusionPools } from "#trainers/trainer-fusion-pools";
 import {
   getEvilGruntPartyTemplate,
   getGymLeaderPartyTemplate,
@@ -169,13 +167,6 @@ export class TrainerConfig {
   public specialtyType: PokemonType;
   public hasVoucher = false;
   public trainerAI: TrainerAI;
-  /**
-   * Per-slot chance (0–1) that a generated party member gets randomly fused with a compatible body species.
-   * Applied via {@linkcode Pokemon.generateFusionSpecies} after the pokemon is created. Set to a small non-zero
-   * value (e.g. 0.05) for unnamed trainers via the post-pass at the bottom of this file; named trainers with
-   * hand-picked pools keep this at 0 so only their authored fusions appear.
-   */
-  public randomFusionChance = 0;
 
   /**
    * Whether this trainer's Pokémon are allowed to generate with egg moves
@@ -510,13 +501,6 @@ export class TrainerConfig {
   setPartyMemberFunc(slotIndex: number, partyMemberFunc: PartyMemberFunc): TrainerConfig {
     this.partyMemberFuncs[slotIndex] = partyMemberFunc;
     return this;
-  }
-
-  setFusedPartyMember(slotIndex: number, fusionPool: readonly FusionPairSpec[]): TrainerConfig {
-    if (fusionPool.length === 0) {
-      return this;
-    }
-    return this.setPartyMemberFunc(slotIndex, getFusedPartyMemberFunc(fusionPool));
   }
 
   setSpeciesPools(speciesPools: TrainerTierPools | SpeciesId[]): TrainerConfig {
@@ -1028,31 +1012,6 @@ export function getRandomPartyMemberFunc(
       undefined,
       postProcess,
     );
-  };
-}
-
-export function getFusedPartyMemberFunc(
-  fusionPool: readonly FusionPairSpec[],
-  trainerSlot: TrainerSlot = TrainerSlot.TRAINER,
-): PartyMemberFunc {
-  return (level: number, strength: PartyMemberStrength) => {
-    const totalWeight = fusionPool.reduce((acc, [, , weight]) => acc + (weight ?? 1), 0);
-    let pick = randSeedInt(totalWeight);
-    let chosen: FusionPairSpec = fusionPool[0];
-    for (const pair of fusionPool) {
-      pick -= pair[2] ?? 1;
-      if (pick < 0) {
-        chosen = pair;
-        break;
-      }
-    }
-    const [headId, bodyId] = chosen;
-    const headSpecies = getPokemonSpecies(getPokemonSpecies(headId).getTrainerSpeciesForLevel(level, true, strength));
-    const bodySpecies = getPokemonSpecies(getPokemonSpecies(bodyId).getTrainerSpeciesForLevel(level, true, strength));
-    return globalScene.addEnemyPokemon(headSpecies, level, trainerSlot, undefined, false, undefined, enemy => {
-      enemy.generateFusionSpecies(false, bodySpecies);
-      enemy.calculateStats();
-    });
   };
 }
 
@@ -6827,20 +6786,3 @@ export const trainerConfigs: TrainerConfigs = {
     .setLocalizedName("Alternate Player  F")
     .setPartyTemplates(new TrainerPartyTemplate(6, PartyMemberStrength.STRONG)),
 };
-
-for (const [trainerType, slots] of Object.entries(trainerFusionPools) as [string, readonly TrainerFusionSlot[]][]) {
-  const config = trainerConfigs[Number(trainerType)];
-  if (!config) {
-    continue;
-  }
-  for (const { slotIndex, pool } of slots) {
-    config.setFusedPartyMember(slotIndex, pool);
-  }
-}
-
-const UNNAMED_TRAINER_FUSION_CHANCE = 0.05;
-for (const [trainerType, config] of Object.entries(trainerConfigs) as [string, TrainerConfig][]) {
-  if (!trainerFusionPools[Number(trainerType) as TrainerType]) {
-    config.randomFusionChance = UNNAMED_TRAINER_FUSION_CHANCE;
-  }
-}
