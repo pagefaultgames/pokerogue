@@ -2154,7 +2154,25 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       if (this.fusionCustomPokemonData?.ability != null && this.fusionCustomPokemonData.ability !== -1) {
         return allAbilities[this.fusionCustomPokemonData.ability];
       }
-      return allAbilities[this.getFusionSpeciesForm(ignoreOverride).getAbility(this.fusionAbilityIndex)];
+      // IF slot map: 0 = head.ability1, 1 = body.ability2, 2 = head.abilityHidden.
+      const head = this.getSpeciesForm(ignoreOverride);
+      const body = this.getFusionSpeciesForm(ignoreOverride);
+      let abilityId: AbilityId;
+      switch (this.abilityIndex) {
+        case 1:
+          abilityId = body.ability2 ?? body.ability1;
+          break;
+        case 2:
+          abilityId = head.abilityHidden;
+          break;
+        default:
+          abilityId = head.ability1;
+          break;
+      }
+      if (abilityId === AbilityId.NONE) {
+        abilityId = head.ability1;
+      }
+      return allAbilities[abilityId];
     }
     if (this.customPokemonData.ability != null && this.customPokemonData.ability !== -1) {
       return allAbilities[this.customPokemonData.ability];
