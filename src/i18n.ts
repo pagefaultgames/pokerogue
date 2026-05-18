@@ -83,9 +83,10 @@ const fonts: LoadingFontFaceProperty[] = [
   },
   // thai
   {
-    face: new FontFace("emerald", `url(${getCachedUrl("./fonts/fsrebellion.otf")})`, {
+    face: new FontFace("emerald", `url(${getCachedUrl("./fonts/2005_iannnnnAMD.ttf")})`, {
       unicodeRange: unicodeRanges.thai,
     }),
+    extraOptions: { sizeAdjust: "133%" },
   },
   {
     face: new FontFace("pkmnems", "url(./fonts/terrible-thaifix.ttf)", { unicodeRange: unicodeRanges.thai }),
