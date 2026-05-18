@@ -31,11 +31,7 @@ type ObjectEntry<O extends Record<StringableKey, unknown>> = readonly [Stringify
  * Unwraps types from {@linkcode ObjectEntries} to allow for round-tripping.
  */
 type FromEntries<E extends Iterable<readonly [StringableKey, unknown]>> =
-  E extends ObjectEntries<infer Base>
-    ? Base
-    : E extends Iterable<readonly [infer K extends StringableKey, infer V]>
-      ? Record<Unstringify<K>, V>
-      : never;
+  E extends Iterable<readonly [infer K extends StringableKey, infer V]> ? Record<Unstringify<K>, V> : never;
 
 // #endregion Object-related types
 
@@ -56,8 +52,8 @@ declare global {
   // TODO: Consider creating a branded type to indicate closed objects and prevent unsoundness (though it would require a lot of changes)
   interface ObjectConstructor {
     keys<K extends StringableKey>(o: Partial<Record<K, unknown>>): readonly Stringify<K>[];
-    entries<O extends Partial<Record<StringableKey, unknown>>>(o: O): ObjectEntries<O>;
-    fromEntries<E extends Iterable<readonly [StringableKey, unknown]>>(entries: E): FromEntries<E>;
+    entries<const O extends Partial<Record<StringableKey, unknown>>>(o: O): ObjectEntries<O>;
+    fromEntries<const E extends Iterable<readonly [StringableKey, unknown]>>(entries: E): FromEntries<E>;
   }
 
   // Coerce numeric strings inside `Number()` casts to their numeric equivalents, and vice versa for base-10 stringification.

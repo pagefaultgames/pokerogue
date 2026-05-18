@@ -1,0 +1,21 @@
+/*
+ * SPDX-FileCopyrightText: 2026 Pagefault Games
+ * SPDX-FileContributor: Bertie690
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+ 
+ // This is a separate TSConfig used explicitly for scripts ran via Node during CI.
+ {
+  "include": ["**/*.mts"],
+  "compilerOptions": {
+    "module": "nodenext",
+    "target": "esnext",
+    "strict": true,
+    "erasableSyntaxOnly": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    // Node needs the .ts extensions to run properly
+    "allowImportingTsExtensions": true
+  }
+}

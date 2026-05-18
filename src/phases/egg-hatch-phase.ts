@@ -1,4 +1,4 @@
-import type { AnySound } from "#app/battle-scene";
+import type { BackgroundMusic } from "#app/audio/background-music";
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 import type { Egg } from "#data/egg";
@@ -13,7 +13,6 @@ import type { EggHatchSceneUiHandler } from "#ui/egg-hatch-scene-ui-handler";
 import { PokemonInfoContainer } from "#ui/pokemon-info-container";
 import { fixedInt, getFrameMs, randInt } from "#utils/common";
 import i18next from "i18next";
-import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 
 /**
  * Class that represents egg hatching
@@ -63,7 +62,7 @@ export class EggHatchPhase extends Phase {
   private canSkip: boolean;
   private skipped: boolean;
   /** The sound effect being played when the egg is hatched */
-  private evolutionBgm: AnySound | null;
+  private evolutionBgm: BackgroundMusic | null;
   private eggLapsePhase: EggLapsePhase;
 
   constructor(hatchScene: EggLapsePhase, egg: Egg, eggsToHatchCount: number) {
@@ -92,7 +91,7 @@ export class EggHatchPhase extends Phase {
 
       globalScene.gameData.eggs.splice(eggIndex, 1);
 
-      globalScene.fadeOutBgm(undefined, false);
+      globalScene.fadeOutBgm();
 
       this.eggHatchHandler = globalScene.ui.getHandler() as EggHatchSceneUiHandler;
 
@@ -179,7 +178,7 @@ export class EggHatchPhase extends Phase {
 
         globalScene.time.delayedCall(1000, () => {
           if (!this.hatched) {
-            this.evolutionBgm = globalScene.playSoundWithoutBgm("evolution");
+            this.evolutionBgm = globalScene.replaceBgmUntilEnd("bw/evolution");
           }
         });
 
@@ -309,9 +308,7 @@ export class EggHatchPhase extends Phase {
   doHatch(): void {
     this.canSkip = false;
     this.hatched = true;
-    if (this.evolutionBgm) {
-      SoundFade.fadeOut(globalScene, this.evolutionBgm, fixedInt(100));
-    }
+    this.evolutionBgm?.fadeOut(100);
     for (let e = 0; e < 5; e++) {
       globalScene.time.delayedCall(fixedInt(375 * e), () =>
         globalScene.playSound("se/egg_hatch", { volume: 1 - e * 0.2 }),
@@ -381,7 +378,7 @@ export class EggHatchPhase extends Phase {
       globalScene.time.delayedCall(fixedInt(duration), () => {
         this.infoContainer.show(this.pokemon, false, this.skipped ? 2 : 1);
 
-        globalScene.playSoundWithoutBgm("evolution_fanfare");
+        globalScene.replaceBgmUntilEnd("bw/evolution_fanfare");
 
         const hatchText = i18next.t("egg:hatchFromTheEgg", {
           pokemonName: this.pokemon.species.getExpandedSpeciesName(),

@@ -10,7 +10,6 @@ import type { Starter } from "#types/save-data";
 import { SaveSlotUiMode } from "#ui/handlers/save-slot-select-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
-import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 
 export class SelectStarterPhase extends Phase {
   public readonly phaseName = "SelectStarterPhase";
@@ -109,8 +108,7 @@ export class SelectStarterPhase extends Phase {
     overrideModifiers();
     overrideHeldItems(party[0]);
     Promise.all(loadPokemonAssets).then(() => {
-      SoundFade.fadeOut(globalScene, globalScene.sound.get("menu"), 500, true);
-      globalScene.time.delayedCall(500, () => globalScene.playBgm());
+      globalScene.fadeAndSwitchBgm(undefined, 500);
       if (globalScene.gameMode.isClassic) {
         globalScene.gameData.gameStats.classicSessionsPlayed++;
       } else {

@@ -10,7 +10,7 @@ export class GameOverModifierRewardPhase extends ModifierRewardPhase {
       const newModifier = this.modifierType.newModifier();
       globalScene.addModifier(newModifier);
       // Sound loaded into game as is
-      globalScene.playSound("level_up_fanfare");
+      globalScene.playSound("se/level_up_fanfare");
       globalScene.ui.setMode(UiMode.MESSAGE);
       globalScene.ui.fadeIn(250).then(() => {
         globalScene.ui.showText(

@@ -1796,7 +1796,7 @@ export class GameData {
     if (!showMessage) {
       return true;
     }
-    globalScene.playSound("level_up_fanfare");
+    globalScene.playSound("se/level_up_fanfare");
 
     // TODO: Remove and replace with a simpler check if the return value is found to be unnecessary
     return new Promise(resolve =>
@@ -1898,7 +1898,7 @@ export class GameData {
     if (!showMessage) {
       return true;
     }
-    globalScene.playSound("level_up_fanfare");
+    globalScene.playSound("se/level_up_fanfare");
     const moveName = allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name;
     let message = prependSpeciesToMessage ? species.getName() + " " : "";
     message +=

@@ -1,5 +1,6 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { Animation } from "#app/animations";
+import { BackgroundMusic } from "#app/audio/background-music";
 import { Battle } from "#app/battle";
 import {
   ANTI_VARIANCE_WEIGHT_MODIFIER,
@@ -161,8 +162,6 @@ import { decodeNickname, getPokemonSpecies } from "#utils/pokemon-utils";
 import { capitalizeFirstLetterOnly } from "#utils/strings";
 import i18next from "i18next";
 import Phaser from "phaser";
-import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-
 export type PokeballCounts = Record<Exclude<PokeballType, PokeballType.LUXURY_BALL>, number>;
 
 export type AnySound = Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.NoAudioSound;
@@ -343,9 +342,7 @@ export class BattleScene extends SceneBase {
   public fieldSpritePipeline: FieldSpritePipeline;
   public spritePipeline: SpritePipeline;
 
-  private bgm: AnySound;
-  private bgmResumeTimer: Phaser.Time.TimerEvent | null;
-  private readonly bgmCache: Set<string> = new Set();
+  private bgm: BackgroundMusic | null = null;
   private playTimeTimer: Phaser.Time.TimerEvent;
 
   public rngSeedOverride = "";
@@ -1246,7 +1243,7 @@ export class BattleScene extends SceneBase {
       // Reload variant data in case sprite set has changed
       this.initVariantData();
 
-      this.fadeOutBgm(250, false);
+      this.fadeOutBgm(250);
       this.tweens.add({
         targets: [this.uiContainer],
         alpha: 0,
@@ -2313,155 +2310,166 @@ export class BattleScene extends SceneBase {
     return randSeedItem(biomes);
   }
 
-  isBgmPlaying(): boolean {
+  // #region Audio
+  // TODO: move audio-related code out of `BattleScene`
+
+  /** @returns Whether there is an active bgm playing */
+  public isBgmPlaying(): boolean {
     return this.bgm?.isPlaying ?? false;
   }
 
-  playBgm(bgmName?: string, fadeOut?: boolean): void {
-    if (bgmName === undefined) {
-      bgmName = this.currentBattle?.getBgmOverride() || this.arena?.bgm;
-    }
+  /**
+   * Stops the previously playing bgm (if it exists) and starts playing a new bgm.
+   * @remarks
+   * Helper function used by {@linkcode BattleScene.playBgm | playBgm}.
+   * @param bgmName - The bgm to play
+   * @param loop - Whether to loop the bgm
+   * @param loopPoint - The starting point of the loop, in seconds
+   */
+  private playNewBgm(bgmName: string, loop: boolean, loopPoint: number): void {
+    this.ui.bgmBar.setBgmToBgmBar(bgmName);
 
-    bgmName = timedEventManager.getEventBgmReplacement(bgmName);
+    const previous = this.bgm;
+    if (previous?.isPlaying) {
+      previous.stop();
+    }
+    previous?.destroy();
 
-    if (this.bgm && bgmName === this.bgm.key) {
-      if (!this.bgm.isPlaying) {
-        this.bgm.play({
-          volume: this.masterVolume * this.bgmVolume,
-        });
-      }
-      return;
-    }
-    if (fadeOut && !this.bgm) {
-      fadeOut = false;
-    }
-    this.bgmCache.add(bgmName);
-    this.loadBgm(bgmName);
-    let loopPoint = 0;
-    loopPoint = bgmName === this.arena.bgm ? this.arena.bgmLoopPoint : this.getBgmLoopPoint(bgmName);
-    let loaded = false;
-    const playNewBgm = () => {
-      this.ui.bgmBar.setBgmToBgmBar(bgmName);
-      if (bgmName === null && this.bgm && !this.bgm.pendingRemove) {
-        this.bgm.play({
-          volume: this.masterVolume * this.bgmVolume,
-        });
-        return;
-      }
-      if (this.bgm && !this.bgm.pendingRemove && this.bgm.isPlaying) {
-        this.bgm.stop();
-      }
-      this.bgm = this.sound.add(bgmName, { loop: true });
-      this.bgm.play({
-        volume: this.masterVolume * this.bgmVolume,
-      });
-      if (loopPoint) {
-        this.bgm.on("looped", () => this.bgm.play({ seek: loopPoint }));
-      }
-    };
-    this.load.once(Phaser.Loader.Events.COMPLETE, () => {
-      loaded = true;
-      if (!fadeOut || !this.bgm.isPlaying) {
-        playNewBgm();
-      }
-    });
-    if (fadeOut) {
-      const onBgmFaded = () => {
-        if (loaded && (!this.bgm.isPlaying || this.bgm.pendingRemove)) {
-          playNewBgm();
-        }
-      };
-      this.time.delayedCall(this.fadeOutBgm(500, true) ? 750 : 250, onBgmFaded);
-    }
-    if (!this.load.isLoading()) {
-      this.load.start();
-    }
+    this.bgm = new BackgroundMusic(bgmName, loop, loopPoint);
+    this.bgm.play(this.masterVolume * this.bgmVolume);
   }
 
-  pauseBgm(): boolean {
-    if (this.bgm && !this.bgm.pendingRemove && this.bgm.isPlaying) {
+  /**
+   * Plays a new bgm.
+   * @param bgmName - (Optional) The bgm to play. \
+   * If not specified, will first fall back to choosing the bgm based on the current battle config,
+   * then further based on the current Biome. \
+   * Can be overridden by a currently running event.
+   * @param fadeOutPrevious - (Default `false`) Whether to fade out the previously playing bgm
+   * @param loop - (Default `true`) Whether to loop the new bgm
+   * @returns The {@linkcode BackgroundMusic} instance for the new bgm,
+   * or `null` if no valid bgm could be played or the input bgm was the same as the currently playing bgm
+   */
+  public playBgm(bgmName?: string, fadeOutPrevious = false, loop = true): BackgroundMusic | null {
+    const resolvedName = timedEventManager.getEventBgmReplacement(
+      bgmName ?? this.currentBattle?.getBgmOverride() ?? this.arena?.bgm,
+    );
+
+    if (!resolvedName) {
+      return null;
+    }
+
+    if (this.bgm?.key === resolvedName) {
+      if (!this.bgm.isPlaying) {
+        this.bgm.play(this.masterVolume * this.bgmVolume);
+      }
+      return null;
+    }
+
+    const loopPoint = resolvedName === this.arena?.bgm ? this.arena.bgmLoopPoint : this.getBgmLoopPoint(resolvedName);
+
+    const shouldFadeOut = fadeOutPrevious && this.bgm?.isPlaying;
+
+    if (shouldFadeOut) {
+      const fadeDuration = 500;
+      this.fadeOutBgm(fadeDuration);
+      this.time.delayedCall(fixedInt(fadeDuration + 250), () => {
+        this.playNewBgm(resolvedName, loop, loopPoint);
+      });
+    } else {
+      this.playNewBgm(resolvedName, loop, loopPoint);
+    }
+
+    return this.bgm;
+  }
+
+  /**
+   * Pauses the current bgm.
+   * @returns Whether an active bgm was paused
+   */
+  public pauseBgm(): boolean {
+    if (this.bgm?.isPlaying) {
       this.bgm.pause();
       return true;
     }
     return false;
   }
 
-  resumeBgm(): boolean {
-    if (this.bgm && !this.bgm.pendingRemove && this.bgm.isPaused) {
+  /**
+   * Resumes the active bgm.
+   * @returns Whether an active bgm was resumed
+   */
+  public resumeBgm(): boolean {
+    if (this.bgm?.isPaused) {
       this.bgm.resume();
       return true;
     }
     return false;
   }
 
-  updateSoundVolume(): void {
-    if (this.sound) {
-      for (const sound of this.sound.getAllPlaying() as AnySound[]) {
-        if (this.bgmCache.has(sound.key)) {
-          sound.setVolume(this.masterVolume * this.bgmVolume);
-        } else {
-          const soundDetails = sound.key.split("/");
-          switch (soundDetails[0]) {
-            case "battle_anims":
-            case "cry":
-              if (soundDetails[1].startsWith("PRSFX- ")) {
-                sound.setVolume(this.masterVolume * this.fieldVolume * 0.5);
-              } else {
-                sound.setVolume(this.masterVolume * this.fieldVolume);
-              }
-              break;
-            case "se":
-            case "ui":
-              sound.setVolume(this.masterVolume * this.seVolume);
+  /** Updates the set volume for the audio/bgm with the user's saved config values. */
+  public updateSoundVolume(): void {
+    this.bgm?.setVolume(this.masterVolume * this.bgmVolume);
+
+    if (!this.sound) {
+      return;
+    }
+
+    for (const sound of this.sound.getAllPlaying() as AnySound[]) {
+      const [category, name] = sound.key.split("/");
+      switch (category) {
+        case "battle_anims":
+        case "cry":
+          if (name?.startsWith("PRSFX- ")) {
+            sound.setVolume(this.masterVolume * this.fieldVolume * 0.5);
+          } else {
+            sound.setVolume(this.masterVolume * this.fieldVolume);
           }
-        }
+          break;
+        case "se":
+        case "ui":
+          sound.setVolume(this.masterVolume * this.seVolume);
+          break;
       }
     }
   }
 
-  fadeOutBgm(duration = 500, destroy = true): boolean {
-    if (!this.bgm) {
-      return false;
-    }
-    const bgm = this.sound.getAllPlaying().find(bgm => bgm.key === this.bgm.key);
-    if (bgm) {
-      SoundFade.fadeOut(this, this.bgm, duration, destroy);
-      return true;
-    }
-
-    return false;
+  /**
+   * Fades out the current bgm over `duration` ms.
+   * @param duration - (Default `500`) The amount of time the fade out should take place over, in ms
+   */
+  public fadeOutBgm(duration = 500): void {
+    this.bgm?.fadeOut(duration);
   }
 
   /**
-   * Fades out current track for `delay` ms, then fades in new track.
-   * @param newBgmKey
-   * @param destroy
-   * @param delay
+   * Fade out the current BGM track over `delay` ms, then start `newBgmKey` once it finishes.
+   * @param newBgmKey - (Optional) The key for the next track to start
+   * @param delay - (Default `2000`) The delay to use before starting the next track
    */
-  fadeAndSwitchBgm(newBgmKey: string, destroy = false, delay = 2000) {
-    this.fadeOutBgm(delay, destroy);
-    this.time.delayedCall(delay, () => {
+  public fadeAndSwitchBgm(newBgmKey?: string, delay = 2000): void {
+    this.fadeOutBgm(delay);
+    this.time.delayedCall(fixedInt(delay), () => {
       this.playBgm(newBgmKey);
     });
   }
 
-  playSound(sound: string | AnySound, config?: object): AnySound | null {
+  /**
+   * Plays a sound effect (such as a Pokemon cry, UI cursor sfx, etc)
+   * @param sound - The sound effect to play
+   * @param config - (Optional) A `Phaser` {@linkcode Phaser.Types.Sound.SoundConfig | SoundConfig}
+   * or {@linkcode Phaser.Types.Sound.SoundMarker | SoundMarker} object
+   * @returns
+   */
+  public playSound(
+    sound: string | AnySound,
+    config: Phaser.Types.Sound.SoundConfig | Phaser.Types.Sound.SoundMarker = {},
+  ): AnySound | null {
     const key = typeof sound === "string" ? sound : sound.key;
-    config = config ?? {};
     try {
       const keyDetails = key.split("/");
       config["volume"] = config["volume"] ?? 1;
       switch (keyDetails[0]) {
-        case "level_up_fanfare":
-        case "item_fanfare":
-        case "minor_fanfare":
-        case "heal":
-        case "evolution":
-        case "evolution_fanfare":
-          // These sounds are loaded in as BGM, but played as sound effects
-          // When these sounds are updated in updateVolume(), they are treated as BGM however because they are placed in the BGM Cache through being called by playSoundWithoutBGM()
-          config["volume"] *= this.masterVolume * this.bgmVolume;
-          break;
         case "battle_anims":
         case "cry":
           config["volume"] *= this.masterVolume * this.fieldVolume;
@@ -2471,7 +2479,7 @@ export class BattleScene extends SceneBase {
           }
           break;
         case "ui":
-          //As of, right now this applies to the "select", "menu_open", "error" sound effects
+          // Currently, this applies to the "select", "menu_open", "error" sound effects
           config["volume"] *= this.masterVolume * this.uiVolume;
           break;
         case "se":
@@ -2486,28 +2494,25 @@ export class BattleScene extends SceneBase {
     }
   }
 
-  playSoundWithoutBgm(soundName: string, pauseDuration?: number): AnySound | null {
-    this.bgmCache.add(soundName);
-    const resumeBgm = this.pauseBgm();
-    this.playSound(soundName);
-    const sound = this.sound.get(soundName);
-    if (!sound) {
-      return sound;
-    }
-    if (this.bgmResumeTimer) {
-      this.bgmResumeTimer.destroy();
-    }
-    if (resumeBgm) {
-      this.bgmResumeTimer = this.time.delayedCall(pauseDuration || fixedInt(sound.totalDuration * 1000), () => {
-        this.resumeBgm();
-        this.bgmResumeTimer = null;
-      });
-    }
-    return sound as AnySound;
+  /**
+   * Replace the current BGM track with `bgmName`, then resume it after `bgmName` finishes.
+   * @param bgmName - The key for the replacement track
+   * @returns The newly-created {@linkcode BackgroundMusic} object
+   */
+  public replaceBgmUntilEnd(bgmName: string): BackgroundMusic {
+    const tempBgm = new BackgroundMusic(bgmName, false);
+    tempBgm.onEnd(() => {
+      this.bgm?.resume();
+      tempBgm.destroy();
+    });
+    this.bgm?.pause();
+    tempBgm.play(this.masterVolume * this.bgmVolume);
+
+    return tempBgm;
   }
 
   /** The loop point of any given battle, mystery encounter, or title track, read as seconds and milliseconds. */
-  getBgmLoopPoint(bgmName: string): number {
+  public getBgmLoopPoint(bgmName: string): number {
     switch (bgmName) {
       case "title": //Firel PokéRogue Title
         return 46.5;
@@ -2743,6 +2748,8 @@ export class BattleScene extends SceneBase {
 
     return 0;
   }
+
+  // #endregion
 
   toggleInvert(invert: boolean): void {
     if (invert) {
@@ -3560,7 +3567,7 @@ export class BattleScene extends SceneBase {
       return;
     }
 
-    this.fadeOutBgm(fixedInt(2000), false);
+    this.fadeOutBgm(2000);
     this.ui.showDialogue(classicFinalBossDialogue.firstStageWin, pokemon.species.name, undefined, () => {
       const finalBossMBH = getModifierType(modifierTypes.MINI_BLACK_HOLE).newModifier(
         pokemon,
