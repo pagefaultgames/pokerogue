@@ -331,7 +331,7 @@
       }
     },
     {
-      "includes": ["**/scripts/**/*.js"],
+      "includes": ["scripts/**/*"],
       "linter": {
         "rules": {
           "style": {
@@ -378,6 +378,26 @@
         "rules": {
           "style": {
             "useImportType": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/**/*.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["#test/*"],
+                    "message": "Do not import files from `test/` in `src/`."
+                  }
+                ]
+              }
+            }
           }
         }
       }
