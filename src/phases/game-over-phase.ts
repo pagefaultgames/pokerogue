@@ -1,4 +1,4 @@
-import { pokerogueApi } from "#api/pokerogue-api";
+import { pokerogueApi } from "#api/api";
 import { clientSessionId } from "#app/account";
 import { globalScene } from "#app/global-scene";
 import { pokemonEvolutions } from "#balance/pokemon-evolutions";
@@ -189,7 +189,7 @@ export class GameOverPhase extends BattlePhase {
         }
 
         const fadeDuration = this.isVictory ? 10000 : 5000;
-        globalScene.fadeOutBgm(fadeDuration, true);
+        globalScene.fadeOutBgm(fadeDuration);
         const activeBattlers = globalScene.getField().filter(p => p?.isActive(true));
         activeBattlers.map(p => p.hideInfo());
         globalScene.ui.fadeOut(fadeDuration).then(() => {

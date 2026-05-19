@@ -48,7 +48,10 @@ describe("Ability - Color Change", () => {
       return;
     }
     expect(enemy).not.toHaveAbilityApplied(AbilityId.COLOR_CHANGE);
-    expect(enemy).toHaveTypes(enemy.getTypes(true, true, true), { mode: "ordered" });
+    expect(enemy).toHaveTypes(
+      enemy.getTypes({ returnOriginalTypesIfStellar: true, bypassSummonData: true, ignoreThirdType: true }),
+      { mode: "ordered" },
+    );
   }
 
   it("should change the pokemon's type to the move's type", async () => {

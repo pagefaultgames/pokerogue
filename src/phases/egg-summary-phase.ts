@@ -26,7 +26,7 @@ export class EggSummaryPhase extends Phase {
     }
 
     await globalScene.ui.setModeForceTransition(UiMode.EGG_HATCH_SUMMARY, this.eggHatchData);
-    globalScene.fadeOutBgm(undefined, false);
+    globalScene.fadeOutBgm();
   }
 
   public override end(): void {
