@@ -77,9 +77,8 @@ describe("Abilities - Mega Sol", () => {
 
     const playerPokemon = game.field.getPlayerPokemon();
 
-    const arenaMultiplier = game.scene.arena.getAttackTypeMultiplier(
+    const arenaMultiplier = game.scene.arena.getWeatherDamageMultiplier(
       allMoves[MoveId.EMBER].type,
-      playerPokemon.isGrounded(),
       playerPokemon.getEffectiveWeatherTypeForMoves(),
     );
     expect(arenaMultiplier).toBe(1.5);
@@ -90,9 +89,8 @@ describe("Abilities - Mega Sol", () => {
 
     const playerPokemon = game.field.getPlayerPokemon();
 
-    const arenaMultiplier = game.scene.arena.getAttackTypeMultiplier(
+    const arenaMultiplier = game.scene.arena.getWeatherDamageMultiplier(
       allMoves[MoveId.SURF].type,
-      playerPokemon.isGrounded(),
       playerPokemon.getEffectiveWeatherTypeForMoves(),
     );
     expect(arenaMultiplier).toBe(0.5);
