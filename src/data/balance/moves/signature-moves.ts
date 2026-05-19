@@ -34,8 +34,7 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
   [SpeciesId.PYUKUMUKU]: [MoveId.COUNTER, MoveId.MIRROR_COAT],
 
   // Generally supportive Pokemon, prefer disruptive moves over straight damage.
-  [SpeciesId.SHUCKLE]: [MoveId.STICKY_WEB, MoveId.STEALTH_ROCK],
-  [SpeciesId.FORRETRESS]: [MoveId.SPIKES, MoveId.STEALTH_ROCK, MoveId.BODY_PRESS],
+  [SpeciesId.SHUCKLE]: [MoveId.ROCK_TOMB, MoveId.STICKY_WEB],
   [SpeciesId.CLAYDOL]: [MoveId.LIGHT_SCREEN, MoveId.REFLECT],
   [SpeciesId.SPIDOPS]: [MoveId.SILK_TRAP, MoveId.STICKY_WEB],
   [SpeciesId.SABLEYE]: [MoveId.WILL_O_WISP, MoveId.THUNDER_WAVE],
@@ -49,7 +48,6 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
   [SpeciesId.QUAGSIRE]: [MoveId.TOXIC, MoveId.YAWN],
   [SpeciesId.HYPNO]: [MoveId.LIGHT_SCREEN, MoveId.REFLECT, MoveId.HYPNOSIS],
   [SpeciesId.VOLBEAT]: [MoveId.TAIL_GLOW],
-  [SpeciesId.BASTIODON]: [MoveId.BODY_PRESS, MoveId.FOUL_PLAY],
   [SpeciesId.TOXAPEX]: [MoveId.BANEFUL_BUNKER, MoveId.TOXIC_SPIKES, MoveId.TOXIC],
   [SpeciesId.CARBINK]: [MoveId.LIGHT_SCREEN, MoveId.REFLECT],
   [SpeciesId.COFAGRIGUS]: [MoveId.WILL_O_WISP, MoveId.BODY_PRESS],
@@ -261,6 +259,7 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
   // These are here to make up for movegen jank
   [SpeciesId.HONCHKROW]: [MoveId.NIGHT_SLASH, MoveId.SUCKER_PUNCH], // Avoids special moves / works with ability
   [SpeciesId.NIHILEGO]: MoveId.POWER_GEM, // Avoids Head Smash
+  [SpeciesId.BASTIODON]: [MoveId.BODY_PRESS], // Body Press TM weighting is funky, one of the few meaningful things this Pokemon can use.
   // It always gets mega launcher
   [SpeciesId.CLAWITZER]: MoveId.WATER_PULSE,
   [SpeciesId.LUXRAY]: [MoveId.WILD_CHARGE, MoveId.SUPERCELL_SLAM],

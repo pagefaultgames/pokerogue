@@ -27,6 +27,7 @@ export const FORBIDDEN_SINGLES_MOVES: ReadonlySet<MoveId> = new Set([
   MoveId.QUASH,
   MoveId.RAGE_POWDER,
   MoveId.SPOTLIGHT,
+  MoveId.STRUGGLE_BUG,
   MoveId.PURIFY,
   // Every mon that learns these has protect already and they're not worth it over protect
   MoveId.MAT_BLOCK,
@@ -66,6 +67,7 @@ export const FORBIDDEN_TM_MOVES: ReadonlySet<MoveId> = new Set([
 export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.ABSORB,
   MoveId.ACID,
+  MoveId.AIR_CUTTER,
   MoveId.ASSURANCE, // Primarily a doubles move but functions as early game Dark STAB.
   MoveId.ASTONISH,
   MoveId.BABY_DOLL_EYES,
@@ -75,6 +77,7 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.BRANCH_POKE,
   MoveId.BONE_CLUB, // Cubone gets better options.
   MoveId.BUBBLE,
+  MoveId.CHIP_AWAY,
   MoveId.COMET_PUNCH,
   MoveId.CONFUSION,
   MoveId.CONSTRICT,
@@ -88,7 +91,11 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.FAIRY_WIND,
   MoveId.FALSE_SWIPE,
   MoveId.FEINT,
+  MoveId.FEINT_ATTACK,
   MoveId.FLAIL,
+  MoveId.FLAME_BURST,
+  MoveId.FLAME_WHEEL,
+  MoveId.FORCE_PALM,
   MoveId.FORESIGHT,
   MoveId.FURY_ATTACK,
   MoveId.FURY_SWIPES,
@@ -97,19 +104,25 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.GUST,
   MoveId.HARDEN,
   MoveId.HORN_ATTACK,
+  MoveId.KARATE_CHOP,
   MoveId.KINESIS,
   MoveId.LEAFAGE,
   MoveId.LEER,
   MoveId.LICK,
   MoveId.LUCKY_CHANT,
+  MoveId.MAGICAL_LEAF,
+  MoveId.MAGNET_BOMB,
   MoveId.MEGA_DRAIN,
   MoveId.METAL_CLAW,
   MoveId.MIST,
+  MoveId.MUD_SHOT,
   MoveId.MUD_SPORT,
+  MoveId.NEEDLE_ARM,
   MoveId.NIGHTMARE,
   MoveId.PECK,
   MoveId.PLAY_NICE,
   MoveId.POISON_STING,
+  MoveId.POISON_TAIL,
   MoveId.POUND,
   MoveId.POUNCE,
   MoveId.POWDER_SNOW,
@@ -120,10 +133,13 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.RAZOR_WIND, // Really bad charge move.
   MoveId.ROLLING_KICK,
   MoveId.ROTOTILLER,
+  MoveId.ROCK_THROW,
   MoveId.ROUND, // Gets superceded very easily, common TM but is fine as early game coverage.
   MoveId.SCRATCH,
+  MoveId.SHOCK_WAVE,
   MoveId.SKY_ATTACK, // Only useful with Power Herb. As of now, it fluffs up a chunk of Flying type's movesets due to being high BP and high weight in generation.
   MoveId.SLAM,
+  MoveId.SLUDGE,
   MoveId.SMOG,
   MoveId.SONIC_BOOM,
   MoveId.SPARK,
@@ -134,6 +150,7 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.SUBMISSION,
   MoveId.SUPERSONIC,
   MoveId.SWALLOW,
+  MoveId.SWIFT,
   MoveId.SWEET_SCENT,
   MoveId.TACKLE,
   MoveId.TAIL_WHIP,
@@ -168,6 +185,9 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   // Immunity ignoring moves
   MoveId.ODOR_SLEUTH, // The slot this spawns in could've just been used to spawn coverage instead, requires a turn to use.
   MoveId.MIRACLE_EYE, // Same as Odor Sleuth
+
+  // Works as early game coverage but needs smarter generation to be worth
+  MoveId.INCINERATE,
 
   // Recommended to blacklist until AI changes are made.
   MoveId.BELLY_DRUM, // Currently the AI uses it without considering the battle state, leading to the AI swapping out after due to the lowered HP.
