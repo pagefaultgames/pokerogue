@@ -1,5 +1,6 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { Animation } from "#app/animations";
+import { BackgroundMusic } from "#app/audio/background-music";
 import { Battle } from "#app/battle";
 import {
   ANTI_VARIANCE_WEIGHT_MODIFIER,
@@ -14,7 +15,7 @@ import { initGlobalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
 import { InputsController } from "#app/inputs-controller";
 import { LoadingScene } from "#app/loading-scene";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import type { Phase } from "#app/phase";
 import { PhaseManager } from "#app/phase-manager";
 import { FieldSpritePipeline } from "#app/pipelines/field-sprite";
@@ -59,6 +60,7 @@ import type { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { PokemonType } from "#enums/pokemon-type";
 import { ShopCursorTarget } from "#enums/shop-cursor-target";
 import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { TextStyle } from "#enums/text-style";
 import { TimeOfDay } from "#enums/time-of-day";
@@ -156,14 +158,11 @@ import { deepMergeSpriteData } from "#utils/data";
 import { getEnumValues } from "#utils/enums";
 import { cachedFetch } from "#utils/fetch-utils";
 import { getModifierPoolForType, getModifierType } from "#utils/modifier-utils";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { decodeNickname, getPokemonSpecies } from "#utils/pokemon-utils";
+import { capitalizeFirstLetterOnly } from "#utils/strings";
 import i18next from "i18next";
 import Phaser from "phaser";
-import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-
-export interface PokeballCounts {
-  [pb: string]: number;
-}
+export type PokeballCounts = Record<Exclude<PokeballType, PokeballType.LUXURY_BALL>, number>;
 
 export type AnySound = Phaser.Sound.WebAudioSound | Phaser.Sound.HTML5AudioSound | Phaser.Sound.NoAudioSound;
 
@@ -207,6 +206,7 @@ export class BattleScene extends SceneBase {
   public enableMoveInfo = true;
   public enableRetries = false;
   public hideIvs = false;
+  public hideMoveSkipConfirm = false;
   // TODO: Remove all plain numbers in place of enums or `const object` equivalents for clarity
   /**
    * Determines the condition for a notification should be shown for Candy Upgrades
@@ -342,9 +342,7 @@ export class BattleScene extends SceneBase {
   public fieldSpritePipeline: FieldSpritePipeline;
   public spritePipeline: SpritePipeline;
 
-  private bgm: AnySound;
-  private bgmResumeTimer: Phaser.Time.TimerEvent | null;
-  private readonly bgmCache: Set<string> = new Set();
+  private bgm: BackgroundMusic | null = null;
   private playTimeTimer: Phaser.Time.TimerEvent;
 
   public rngSeedOverride = "";
@@ -864,6 +862,7 @@ export class BattleScene extends SceneBase {
     return party.find(p => p.id === pokemonId);
   }
 
+  // biome-ignore lint/complexity/useMaxParams: will be fixed later
   addPlayerPokemon(
     species: PokemonSpecies,
     level: number,
@@ -894,31 +893,32 @@ export class BattleScene extends SceneBase {
       postProcess(pokemon);
     }
 
-    if (Overrides.IVS_OVERRIDE === null) {
+    if (activeOverrides.IVS_OVERRIDE === null) {
       // do nothing
-    } else if (Array.isArray(Overrides.IVS_OVERRIDE)) {
-      if (Overrides.IVS_OVERRIDE.length !== 6) {
+    } else if (Array.isArray(activeOverrides.IVS_OVERRIDE)) {
+      if (activeOverrides.IVS_OVERRIDE.length !== 6) {
         throw new Error("The Player IVs override must be an array of length 6 or a number!");
       }
-      if (Overrides.IVS_OVERRIDE.some(value => !isBetween(value, 0, 31))) {
+      if (activeOverrides.IVS_OVERRIDE.some(value => !isBetween(value, 0, 31))) {
         throw new Error("All IVs in the player IV override must be between 0 and 31!");
       }
-      pokemon.ivs = Overrides.IVS_OVERRIDE;
+      pokemon.ivs = activeOverrides.IVS_OVERRIDE;
     } else {
-      if (!isBetween(Overrides.IVS_OVERRIDE, 0, 31)) {
+      if (!isBetween(activeOverrides.IVS_OVERRIDE, 0, 31)) {
         throw new Error("The Player IV override must be a value between 0 and 31!");
       }
-      pokemon.ivs = new Array(6).fill(Overrides.IVS_OVERRIDE);
+      pokemon.ivs = new Array(6).fill(activeOverrides.IVS_OVERRIDE);
     }
 
-    if (Overrides.NATURE_OVERRIDE !== null) {
-      pokemon.nature = Overrides.NATURE_OVERRIDE;
+    if (activeOverrides.NATURE_OVERRIDE !== null) {
+      pokemon.nature = activeOverrides.NATURE_OVERRIDE;
     }
 
     pokemon.init();
     return pokemon;
   }
 
+  // biome-ignore lint/complexity/useMaxParams: will be fixed later
   addEnemyPokemon(
     species: PokemonSpecies,
     level: number,
@@ -929,17 +929,17 @@ export class BattleScene extends SceneBase {
     postProcess?: (enemyPokemon: EnemyPokemon) => void,
     forRival = false,
   ): EnemyPokemon {
-    if (Overrides.ENEMY_LEVEL_OVERRIDE > 0) {
-      level = Overrides.ENEMY_LEVEL_OVERRIDE;
+    if (activeOverrides.ENEMY_LEVEL_OVERRIDE > 0) {
+      level = activeOverrides.ENEMY_LEVEL_OVERRIDE;
     }
-    if (Overrides.ENEMY_SPECIES_OVERRIDE) {
-      species = getPokemonSpecies(Overrides.ENEMY_SPECIES_OVERRIDE);
+    if (activeOverrides.ENEMY_SPECIES_OVERRIDE) {
+      species = getPokemonSpecies(activeOverrides.ENEMY_SPECIES_OVERRIDE);
       // The fact that a Pokemon is a boss or not can change based on its Species and level
       boss = this.getEncounterBossSegments(this.currentBattle.waveIndex, level, species) > 1;
     }
 
     const pokemon = new EnemyPokemon(species, level, trainerSlot, boss, shinyLock, dataSource, forRival);
-    if (Overrides.ENEMY_FUSION_OVERRIDE) {
+    if (activeOverrides.ENEMY_FUSION_OVERRIDE) {
       pokemon.generateFusionSpecies();
     }
 
@@ -960,25 +960,25 @@ export class BattleScene extends SceneBase {
       postProcess(pokemon);
     }
 
-    if (Overrides.ENEMY_IVS_OVERRIDE === null) {
+    if (activeOverrides.ENEMY_IVS_OVERRIDE === null) {
       // do nothing
-    } else if (Array.isArray(Overrides.ENEMY_IVS_OVERRIDE)) {
-      if (Overrides.ENEMY_IVS_OVERRIDE.length !== 6) {
+    } else if (Array.isArray(activeOverrides.ENEMY_IVS_OVERRIDE)) {
+      if (activeOverrides.ENEMY_IVS_OVERRIDE.length !== 6) {
         throw new Error("The Enemy IVs override must be an array of length 6 or a number!");
       }
-      if (Overrides.ENEMY_IVS_OVERRIDE.some(value => !isBetween(value, 0, 31))) {
+      if (activeOverrides.ENEMY_IVS_OVERRIDE.some(value => !isBetween(value, 0, 31))) {
         throw new Error("All IVs in the enemy IV override must be between 0 and 31!");
       }
-      pokemon.ivs = Overrides.ENEMY_IVS_OVERRIDE;
+      pokemon.ivs = activeOverrides.ENEMY_IVS_OVERRIDE;
     } else {
-      if (!isBetween(Overrides.ENEMY_IVS_OVERRIDE, 0, 31)) {
+      if (!isBetween(activeOverrides.ENEMY_IVS_OVERRIDE, 0, 31)) {
         throw new Error("The Enemy IV override must be a value between 0 and 31!");
       }
-      pokemon.ivs = new Array(6).fill(Overrides.ENEMY_IVS_OVERRIDE);
+      pokemon.ivs = new Array(6).fill(activeOverrides.ENEMY_IVS_OVERRIDE);
     }
 
-    if (Overrides.ENEMY_NATURE_OVERRIDE !== null) {
-      pokemon.nature = Overrides.ENEMY_NATURE_OVERRIDE;
+    if (activeOverrides.ENEMY_NATURE_OVERRIDE !== null) {
+      pokemon.nature = activeOverrides.ENEMY_NATURE_OVERRIDE;
     }
 
     pokemon.init();
@@ -1149,14 +1149,16 @@ export class BattleScene extends SceneBase {
 
     this.lockModifierTiers = false;
 
-    this.pokeballCounts = Object.fromEntries(
-      getEnumValues(PokeballType)
-        .filter(p => p <= PokeballType.MASTER_BALL)
-        .map(t => [t, 0]),
-    );
-    this.pokeballCounts[PokeballType.POKEBALL] += 5;
-    if (Overrides.POKEBALL_OVERRIDE.active) {
-      this.pokeballCounts = Overrides.POKEBALL_OVERRIDE.pokeballs;
+    if (activeOverrides.POKEBALL_OVERRIDE.active) {
+      this.pokeballCounts = activeOverrides.POKEBALL_OVERRIDE.pokeballs;
+    } else {
+      // TODO: Remove unused luxury balls and remove the `filter`
+      this.pokeballCounts = Object.fromEntries(
+        getEnumValues(PokeballType)
+          .filter(pt => pt !== PokeballType.LUXURY_BALL)
+          .map(t => [t, 0]),
+      );
+      this.pokeballCounts[PokeballType.POKEBALL] = 5;
     }
 
     this.modifiers = [];
@@ -1181,7 +1183,7 @@ export class BattleScene extends SceneBase {
 
     // Reset RNG after end of game or save & quit.
     // This needs to happen after clearing this.currentBattle or the seed will be affected by the last wave played
-    this.setSeed(Overrides.SEED_OVERRIDE || randomString(24));
+    this.setSeed(activeOverrides.SEED_OVERRIDE || randomString(24));
     console.log("Seed:", this.seed);
     this.resetSeed();
 
@@ -1198,7 +1200,7 @@ export class BattleScene extends SceneBase {
       t.setVisible(false);
     });
 
-    this.newArena(Overrides.STARTING_BIOME_OVERRIDE || BiomeId.TOWN);
+    this.newArena(activeOverrides.STARTING_BIOME_OVERRIDE || BiomeId.TOWN);
 
     this.field.setVisible(true);
 
@@ -1241,7 +1243,7 @@ export class BattleScene extends SceneBase {
       // Reload variant data in case sprite set has changed
       this.initVariantData();
 
-      this.fadeOutBgm(250, false);
+      this.fadeOutBgm(250);
       this.tweens.add({
         targets: [this.uiContainer],
         alpha: 0,
@@ -1356,7 +1358,7 @@ export class BattleScene extends SceneBase {
         // Don't increment wave index when computing starting wave
         waveIndex:
           this.currentBattle == null
-            ? (Overrides.STARTING_WAVE_OVERRIDE ?? STARTING_WAVE)
+            ? (activeOverrides.STARTING_WAVE_OVERRIDE ?? STARTING_WAVE)
             : this.currentBattle.waveIndex + 1,
       };
     }
@@ -1452,16 +1454,16 @@ export class BattleScene extends SceneBase {
   private handleNonFixedBattle(resolved: NewBattleInitialProps): void {
     const { waveIndex } = resolved;
     resolved.battleType =
-      !this.gameMode.hasTrainers || Overrides.DISABLE_STANDARD_TRAINERS_OVERRIDE
+      !this.gameMode.hasTrainers || activeOverrides.DISABLE_STANDARD_TRAINERS_OVERRIDE
         ? BattleType.WILD
-        : (Overrides.BATTLE_TYPE_OVERRIDE
+        : (activeOverrides.BATTLE_TYPE_OVERRIDE
           ?? (this.gameMode.isWaveTrainer(waveIndex) ? BattleType.TRAINER : BattleType.WILD));
 
     // Check for mystery encounter
     // Can only occur in place of a standard (non-boss) wild battle, waves 10-180
     // NB: battle type checks are offloaded to `isWaveMysteryEncounter`
     // TODO: This means MEs can generate when the override is set to `BattleType.WILD`
-    if (!Overrides.BATTLE_TYPE_OVERRIDE && this.isWaveMysteryEncounter(resolved.battleType, waveIndex)) {
+    if (!activeOverrides.BATTLE_TYPE_OVERRIDE && this.isWaveMysteryEncounter(resolved.battleType, waveIndex)) {
       resolved.battleType = BattleType.MYSTERY_ENCOUNTER;
       // Reset to base spawn weight
       this.mysteryEncounterSaveData.encounterSpawnChance = BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT;
@@ -1483,7 +1485,7 @@ export class BattleScene extends SceneBase {
    * @returns The generated trainer.
    */
   private generateNewBattleTrainer(waveIndex: number): Trainer {
-    const trainerType = Overrides.RANDOM_TRAINER_OVERRIDE?.trainerType ?? this.arena.randomTrainerType(waveIndex);
+    const trainerType = activeOverrides.RANDOM_TRAINER_OVERRIDE?.trainerType ?? this.arena.randomTrainerType(waveIndex);
     const config = trainerConfigs[trainerType];
 
     let doubleTrainer: boolean;
@@ -1500,7 +1502,9 @@ export class BattleScene extends SceneBase {
       doubleTrainer = randSeedInt(this.getDoubleBattleChance(waveIndex)) === 0;
     }
 
-    const overrideVariant = doubleTrainer ? TrainerVariant.DOUBLE : Overrides.RANDOM_TRAINER_OVERRIDE?.trainerVariant;
+    const overrideVariant = doubleTrainer
+      ? TrainerVariant.DOUBLE
+      : activeOverrides.RANDOM_TRAINER_OVERRIDE?.trainerVariant;
     const variant = overrideVariant ?? (randSeedInt(2) ? TrainerVariant.FEMALE : TrainerVariant.DEFAULT);
 
     return new Trainer(trainerType, variant);
@@ -1546,7 +1550,7 @@ export class BattleScene extends SceneBase {
    * Returns `undefined` if the override is `null`.
    */
   private doCheckDoubleOverride(waveIndex: number): boolean | undefined {
-    switch (Overrides.BATTLE_STYLE_OVERRIDE) {
+    switch (activeOverrides.BATTLE_STYLE_OVERRIDE) {
       case "double":
         return true;
       case "single":
@@ -1556,7 +1560,7 @@ export class BattleScene extends SceneBase {
       case "odd-doubles":
         return waveIndex % 2 === 1;
       default:
-        Overrides.BATTLE_STYLE_OVERRIDE satisfies null;
+        activeOverrides.BATTLE_STYLE_OVERRIDE satisfies null;
         return;
     }
   }
@@ -1890,10 +1894,10 @@ export class BattleScene extends SceneBase {
   }
 
   getEncounterBossSegments(waveIndex: number, level: number, species?: PokemonSpecies, forceBoss = false): number {
-    if (Overrides.ENEMY_HEALTH_SEGMENTS_OVERRIDE > 1) {
-      return Overrides.ENEMY_HEALTH_SEGMENTS_OVERRIDE;
+    if (activeOverrides.ENEMY_HEALTH_SEGMENTS_OVERRIDE > 1) {
+      return activeOverrides.ENEMY_HEALTH_SEGMENTS_OVERRIDE;
     }
-    if (Overrides.ENEMY_HEALTH_SEGMENTS_OVERRIDE === 1) {
+    if (activeOverrides.ENEMY_HEALTH_SEGMENTS_OVERRIDE === 1) {
       // The rest of the code expects to be returned 0 and not 1 if the enemy is not a boss
       return 0;
     }
@@ -2041,28 +2045,28 @@ export class BattleScene extends SceneBase {
     this.arenaFlyout.toggleFlyout(pressed);
   }
 
-  showFieldOverlay(duration: number): Promise<void> {
-    return new Promise(resolve => {
-      this.tweens.add({
+  public async showFieldOverlay(duration: number): Promise<void> {
+    await playTween(
+      {
         targets: this.fieldOverlay,
         alpha: 0.5,
         ease: "Sine.easeOut",
         duration,
-        onComplete: () => resolve(),
-      });
-    });
+      },
+      this,
+    );
   }
 
-  hideFieldOverlay(duration: number): Promise<void> {
-    return new Promise(resolve => {
-      this.tweens.add({
+  public async hideFieldOverlay(duration: number): Promise<void> {
+    await playTween(
+      {
         targets: this.fieldOverlay,
         alpha: 0,
         duration,
         ease: "Cubic.easeIn",
-        onComplete: () => resolve(),
-      });
-    });
+      },
+      this,
+    );
   }
 
   updateShopOverlayOpacity(value: number): void {
@@ -2073,9 +2077,9 @@ export class BattleScene extends SceneBase {
     }
   }
 
-  showShopOverlay(duration: number): Promise<void> {
+  public async showShopOverlay(duration: number): Promise<void> {
     this.shopOverlayShown = true;
-    return playTween({
+    await playTween({
       targets: this.shopOverlay,
       alpha: this.shopOverlayOpacity,
       ease: "Sine.easeOut",
@@ -2083,9 +2087,9 @@ export class BattleScene extends SceneBase {
     });
   }
 
-  hideShopOverlay(duration: number): Promise<void> {
+  public async hideShopOverlay(duration: number): Promise<void> {
     this.shopOverlayShown = false;
-    return playTween({
+    await playTween({
       targets: this.shopOverlay,
       alpha: 0,
       duration,
@@ -2236,7 +2240,7 @@ export class BattleScene extends SceneBase {
   }
 
   getMaxExpLevel(ignoreLevelCap = false): number {
-    const capOverride = Overrides.LEVEL_CAP_OVERRIDE ?? 0;
+    const capOverride = activeOverrides.LEVEL_CAP_OVERRIDE ?? 0;
     if (capOverride > 0) {
       return capOverride;
     }
@@ -2307,155 +2311,166 @@ export class BattleScene extends SceneBase {
     return randSeedItem(biomes);
   }
 
-  isBgmPlaying(): boolean {
+  // #region Audio
+  // TODO: move audio-related code out of `BattleScene`
+
+  /** @returns Whether there is an active bgm playing */
+  public isBgmPlaying(): boolean {
     return this.bgm?.isPlaying ?? false;
   }
 
-  playBgm(bgmName?: string, fadeOut?: boolean): void {
-    if (bgmName === undefined) {
-      bgmName = this.currentBattle?.getBgmOverride() || this.arena?.bgm;
-    }
+  /**
+   * Stops the previously playing bgm (if it exists) and starts playing a new bgm.
+   * @remarks
+   * Helper function used by {@linkcode BattleScene.playBgm | playBgm}.
+   * @param bgmName - The bgm to play
+   * @param loop - Whether to loop the bgm
+   * @param loopPoint - The starting point of the loop, in seconds
+   */
+  private playNewBgm(bgmName: string, loop: boolean, loopPoint: number): void {
+    this.ui.bgmBar.setBgmToBgmBar(bgmName);
 
-    bgmName = timedEventManager.getEventBgmReplacement(bgmName);
+    const previous = this.bgm;
+    if (previous?.isPlaying) {
+      previous.stop();
+    }
+    previous?.destroy();
 
-    if (this.bgm && bgmName === this.bgm.key) {
-      if (!this.bgm.isPlaying) {
-        this.bgm.play({
-          volume: this.masterVolume * this.bgmVolume,
-        });
-      }
-      return;
-    }
-    if (fadeOut && !this.bgm) {
-      fadeOut = false;
-    }
-    this.bgmCache.add(bgmName);
-    this.loadBgm(bgmName);
-    let loopPoint = 0;
-    loopPoint = bgmName === this.arena.bgm ? this.arena.bgmLoopPoint : this.getBgmLoopPoint(bgmName);
-    let loaded = false;
-    const playNewBgm = () => {
-      this.ui.bgmBar.setBgmToBgmBar(bgmName);
-      if (bgmName === null && this.bgm && !this.bgm.pendingRemove) {
-        this.bgm.play({
-          volume: this.masterVolume * this.bgmVolume,
-        });
-        return;
-      }
-      if (this.bgm && !this.bgm.pendingRemove && this.bgm.isPlaying) {
-        this.bgm.stop();
-      }
-      this.bgm = this.sound.add(bgmName, { loop: true });
-      this.bgm.play({
-        volume: this.masterVolume * this.bgmVolume,
-      });
-      if (loopPoint) {
-        this.bgm.on("looped", () => this.bgm.play({ seek: loopPoint }));
-      }
-    };
-    this.load.once(Phaser.Loader.Events.COMPLETE, () => {
-      loaded = true;
-      if (!fadeOut || !this.bgm.isPlaying) {
-        playNewBgm();
-      }
-    });
-    if (fadeOut) {
-      const onBgmFaded = () => {
-        if (loaded && (!this.bgm.isPlaying || this.bgm.pendingRemove)) {
-          playNewBgm();
-        }
-      };
-      this.time.delayedCall(this.fadeOutBgm(500, true) ? 750 : 250, onBgmFaded);
-    }
-    if (!this.load.isLoading()) {
-      this.load.start();
-    }
+    this.bgm = new BackgroundMusic(bgmName, loop, loopPoint);
+    this.bgm.play(this.masterVolume * this.bgmVolume);
   }
 
-  pauseBgm(): boolean {
-    if (this.bgm && !this.bgm.pendingRemove && this.bgm.isPlaying) {
+  /**
+   * Plays a new bgm.
+   * @param bgmName - (Optional) The bgm to play. \
+   * If not specified, will first fall back to choosing the bgm based on the current battle config,
+   * then further based on the current Biome. \
+   * Can be overridden by a currently running event.
+   * @param fadeOutPrevious - (Default `false`) Whether to fade out the previously playing bgm
+   * @param loop - (Default `true`) Whether to loop the new bgm
+   * @returns The {@linkcode BackgroundMusic} instance for the new bgm,
+   * or `null` if no valid bgm could be played or the input bgm was the same as the currently playing bgm
+   */
+  public playBgm(bgmName?: string, fadeOutPrevious = false, loop = true): BackgroundMusic | null {
+    const resolvedName = timedEventManager.getEventBgmReplacement(
+      bgmName ?? this.currentBattle?.getBgmOverride() ?? this.arena?.bgm,
+    );
+
+    if (!resolvedName) {
+      return null;
+    }
+
+    if (this.bgm?.key === resolvedName) {
+      if (!this.bgm.isPlaying) {
+        this.bgm.play(this.masterVolume * this.bgmVolume);
+      }
+      return null;
+    }
+
+    const loopPoint = resolvedName === this.arena?.bgm ? this.arena.bgmLoopPoint : this.getBgmLoopPoint(resolvedName);
+
+    const shouldFadeOut = fadeOutPrevious && this.bgm?.isPlaying;
+
+    if (shouldFadeOut) {
+      const fadeDuration = 500;
+      this.fadeOutBgm(fadeDuration);
+      this.time.delayedCall(fixedInt(fadeDuration + 250), () => {
+        this.playNewBgm(resolvedName, loop, loopPoint);
+      });
+    } else {
+      this.playNewBgm(resolvedName, loop, loopPoint);
+    }
+
+    return this.bgm;
+  }
+
+  /**
+   * Pauses the current bgm.
+   * @returns Whether an active bgm was paused
+   */
+  public pauseBgm(): boolean {
+    if (this.bgm?.isPlaying) {
       this.bgm.pause();
       return true;
     }
     return false;
   }
 
-  resumeBgm(): boolean {
-    if (this.bgm && !this.bgm.pendingRemove && this.bgm.isPaused) {
+  /**
+   * Resumes the active bgm.
+   * @returns Whether an active bgm was resumed
+   */
+  public resumeBgm(): boolean {
+    if (this.bgm?.isPaused) {
       this.bgm.resume();
       return true;
     }
     return false;
   }
 
-  updateSoundVolume(): void {
-    if (this.sound) {
-      for (const sound of this.sound.getAllPlaying() as AnySound[]) {
-        if (this.bgmCache.has(sound.key)) {
-          sound.setVolume(this.masterVolume * this.bgmVolume);
-        } else {
-          const soundDetails = sound.key.split("/");
-          switch (soundDetails[0]) {
-            case "battle_anims":
-            case "cry":
-              if (soundDetails[1].startsWith("PRSFX- ")) {
-                sound.setVolume(this.masterVolume * this.fieldVolume * 0.5);
-              } else {
-                sound.setVolume(this.masterVolume * this.fieldVolume);
-              }
-              break;
-            case "se":
-            case "ui":
-              sound.setVolume(this.masterVolume * this.seVolume);
+  /** Updates the set volume for the audio/bgm with the user's saved config values. */
+  public updateSoundVolume(): void {
+    this.bgm?.setVolume(this.masterVolume * this.bgmVolume);
+
+    if (!this.sound) {
+      return;
+    }
+
+    for (const sound of this.sound.getAllPlaying() as AnySound[]) {
+      const [category, name] = sound.key.split("/");
+      switch (category) {
+        case "battle_anims":
+        case "cry":
+          if (name?.startsWith("PRSFX- ")) {
+            sound.setVolume(this.masterVolume * this.fieldVolume * 0.5);
+          } else {
+            sound.setVolume(this.masterVolume * this.fieldVolume);
           }
-        }
+          break;
+        case "se":
+        case "ui":
+          sound.setVolume(this.masterVolume * this.seVolume);
+          break;
       }
     }
   }
 
-  fadeOutBgm(duration = 500, destroy = true): boolean {
-    if (!this.bgm) {
-      return false;
-    }
-    const bgm = this.sound.getAllPlaying().find(bgm => bgm.key === this.bgm.key);
-    if (bgm) {
-      SoundFade.fadeOut(this, this.bgm, duration, destroy);
-      return true;
-    }
-
-    return false;
+  /**
+   * Fades out the current bgm over `duration` ms.
+   * @param duration - (Default `500`) The amount of time the fade out should take place over, in ms
+   */
+  public fadeOutBgm(duration = 500): void {
+    this.bgm?.fadeOut(duration);
   }
 
   /**
-   * Fades out current track for `delay` ms, then fades in new track.
-   * @param newBgmKey
-   * @param destroy
-   * @param delay
+   * Fade out the current BGM track over `delay` ms, then start `newBgmKey` once it finishes.
+   * @param newBgmKey - (Optional) The key for the next track to start
+   * @param delay - (Default `2000`) The delay to use before starting the next track
    */
-  fadeAndSwitchBgm(newBgmKey: string, destroy = false, delay = 2000) {
-    this.fadeOutBgm(delay, destroy);
-    this.time.delayedCall(delay, () => {
+  public fadeAndSwitchBgm(newBgmKey?: string, delay = 2000): void {
+    this.fadeOutBgm(delay);
+    this.time.delayedCall(fixedInt(delay), () => {
       this.playBgm(newBgmKey);
     });
   }
 
-  playSound(sound: string | AnySound, config?: object): AnySound | null {
+  /**
+   * Plays a sound effect (such as a Pokemon cry, UI cursor sfx, etc)
+   * @param sound - The sound effect to play
+   * @param config - (Optional) A `Phaser` {@linkcode Phaser.Types.Sound.SoundConfig | SoundConfig}
+   * or {@linkcode Phaser.Types.Sound.SoundMarker | SoundMarker} object
+   * @returns
+   */
+  public playSound(
+    sound: string | AnySound,
+    config: Phaser.Types.Sound.SoundConfig | Phaser.Types.Sound.SoundMarker = {},
+  ): AnySound | null {
     const key = typeof sound === "string" ? sound : sound.key;
-    config = config ?? {};
     try {
       const keyDetails = key.split("/");
       config["volume"] = config["volume"] ?? 1;
       switch (keyDetails[0]) {
-        case "level_up_fanfare":
-        case "item_fanfare":
-        case "minor_fanfare":
-        case "heal":
-        case "evolution":
-        case "evolution_fanfare":
-          // These sounds are loaded in as BGM, but played as sound effects
-          // When these sounds are updated in updateVolume(), they are treated as BGM however because they are placed in the BGM Cache through being called by playSoundWithoutBGM()
-          config["volume"] *= this.masterVolume * this.bgmVolume;
-          break;
         case "battle_anims":
         case "cry":
           config["volume"] *= this.masterVolume * this.fieldVolume;
@@ -2465,7 +2480,7 @@ export class BattleScene extends SceneBase {
           }
           break;
         case "ui":
-          //As of, right now this applies to the "select", "menu_open", "error" sound effects
+          // Currently, this applies to the "select", "menu_open", "error" sound effects
           config["volume"] *= this.masterVolume * this.uiVolume;
           break;
         case "se":
@@ -2480,28 +2495,25 @@ export class BattleScene extends SceneBase {
     }
   }
 
-  playSoundWithoutBgm(soundName: string, pauseDuration?: number): AnySound | null {
-    this.bgmCache.add(soundName);
-    const resumeBgm = this.pauseBgm();
-    this.playSound(soundName);
-    const sound = this.sound.get(soundName);
-    if (!sound) {
-      return sound;
-    }
-    if (this.bgmResumeTimer) {
-      this.bgmResumeTimer.destroy();
-    }
-    if (resumeBgm) {
-      this.bgmResumeTimer = this.time.delayedCall(pauseDuration || fixedInt(sound.totalDuration * 1000), () => {
-        this.resumeBgm();
-        this.bgmResumeTimer = null;
-      });
-    }
-    return sound as AnySound;
+  /**
+   * Replace the current BGM track with `bgmName`, then resume it after `bgmName` finishes.
+   * @param bgmName - The key for the replacement track
+   * @returns The newly-created {@linkcode BackgroundMusic} object
+   */
+  public replaceBgmUntilEnd(bgmName: string): BackgroundMusic {
+    const tempBgm = new BackgroundMusic(bgmName, false);
+    tempBgm.onEnd(() => {
+      this.bgm?.resume();
+      tempBgm.destroy();
+    });
+    this.bgm?.pause();
+    tempBgm.play(this.masterVolume * this.bgmVolume);
+
+    return tempBgm;
   }
 
   /** The loop point of any given battle, mystery encounter, or title track, read as seconds and milliseconds. */
-  getBgmLoopPoint(bgmName: string): number {
+  public getBgmLoopPoint(bgmName: string): number {
     switch (bgmName) {
       case "title": //Firel PokéRogue Title
         return 46.5;
@@ -2737,6 +2749,8 @@ export class BattleScene extends SceneBase {
 
     return 0;
   }
+
+  // #endregion
 
   toggleInvert(invert: boolean): void {
     if (invert) {
@@ -3412,7 +3426,7 @@ export class BattleScene extends SceneBase {
 
   validateAchv<T extends Achv>(achv: T, args?: Parameters<T["validate"]>[0]): boolean {
     if (
-      (!Object.hasOwn(this.gameData.achvUnlocks, achv.id) || Overrides.ACHIEVEMENTS_REUNLOCK_OVERRIDE)
+      (!Object.hasOwn(this.gameData.achvUnlocks, achv.id) || activeOverrides.ACHIEVEMENTS_REUNLOCK_OVERRIDE)
       && achv.validate(args)
     ) {
       this.gameData.achvUnlocks[achv.id] = Date.now();
@@ -3437,8 +3451,16 @@ export class BattleScene extends SceneBase {
     return false;
   }
 
-  updateGameInfo(): void {
+  public updateGameInfo(): void {
+    const variantMap = {
+      [0]: "Normal",
+      [1]: "Rare",
+      [2]: "Epic",
+    };
     const gameInfo = {
+      //! Make sure to update this in accordance with semver when the output is changed
+      // cf https://semver.org/
+      gameInfoVersion: "2.0.0",
       playTime: this.sessionPlayTime ?? 0,
       gameMode: this.currentBattle ? this.gameMode.getName() : "Title",
       biome: this.currentBattle ? getBiomeName(this.arena.biomeId) : "",
@@ -3446,17 +3468,70 @@ export class BattleScene extends SceneBase {
       party:
         this.party?.map(p => ({
           name: p.name,
+          nickname: p.nickname ? decodeNickname(p.nickname, p.name) : "",
+          gender: capitalizeFirstLetterOnly(Gender[p.gender]),
           form: p.getFormKey(),
-          types: p.getTypes().map(type => PokemonType[type]),
-          teraType: PokemonType[p.getTeraType()],
+          // Does not include temporary changes, such as those from Transform, Forest's Curse, etc
+          // Ignores Tera type
+          types: p
+            .getTypes({ includeTeraType: false, bypassSummonData: true, ignoreThirdType: true })
+            .map(pType => capitalizeFirstLetterOnly(PokemonType[pType])),
+          // Includes temporary changes, such as those from Transform, Forest's Curse, etc
+          // Ignores Tera type
+          tempTypes:
+            p.summonData.types.length > 0 || p.summonData.addedType
+              ? p.getTypes({ includeTeraType: false }).map(pType => capitalizeFirstLetterOnly(PokemonType[pType]))
+              : [],
+          teraType: capitalizeFirstLetterOnly(PokemonType[p.getTeraType()]),
           isTerastallized: p.isTerastallized,
           level: p.level,
           currentHP: p.hp,
           maxHP: p.getMaxHp(),
-          status: p.status?.effect ? StatusEffect[p.status.effect] : "",
-        })) ?? [], // TODO: review if this can be nullish
-      modeChain: this.ui?.getModeChain() ?? [],
+          status: p.status?.effect ? capitalizeFirstLetterOnly(StatusEffect[p.status.effect]) : "",
+          // the pokemon's actual moveset
+          moveset: p.getMoveset(true).map(move => move.getName()),
+          // the pokemon's temporary moveset, e.g. from Transform
+          // biome-ignore lint/style/useExplicitLengthCheck: doubles as a null check
+          tempMoveset: p.summonData.moveset?.length ? p.getMoveset().map(move => move.getName()) : [],
+          // the pokemon's actual ability
+          ability: p.getAbility(true).name,
+          // the pokemon's temporary ability, e.g. from Transform or Skill Swap
+          tempAbility: p.summonData.ability ? p.getAbility().name : "",
+          passiveAbility: p.getPassiveAbility().name,
+          isPassiveEnabled: p.hasPassive(),
+          nature: capitalizeFirstLetterOnly(Nature[p.getNature()]),
+          baseStats: {
+            atk: p.getStat(Stat.ATK),
+            def: p.getStat(Stat.DEF),
+            spAtk: p.getStat(Stat.SPATK),
+            spDef: p.getStat(Stat.SPDEF),
+            speed: p.getStat(Stat.SPD),
+          },
+          // e.g. from Transform
+          tempStats: p.summonData.stats.some(v => v > 0)
+            ? {
+                atk: p.getStat(Stat.ATK, false),
+                def: p.getStat(Stat.DEF, false),
+                spAtk: p.getStat(Stat.SPATK, false),
+                spDef: p.getStat(Stat.SPDEF, false),
+                speed: p.getStat(Stat.SPD, false),
+              }
+            : {},
+          statStages: {
+            atk: p.getStatStage(Stat.ATK),
+            def: p.getStatStage(Stat.DEF),
+            spAtk: p.getStatStage(Stat.SPATK),
+            spDef: p.getStatStage(Stat.SPDEF),
+            speed: p.getStatStage(Stat.SPD),
+            acc: p.getStatStage(Stat.ACC),
+            eva: p.getStatStage(Stat.EVA),
+          },
+          shiny: p.isShiny(),
+          variant: p.isShiny() ? variantMap[p.getVariant()] : "N/A",
+          isFusion: p.isFusion(),
+        })) ?? [],
     };
+    // TODO: Don't store it here
     (window as any).gameInfo = gameInfo;
   }
 
@@ -3493,7 +3568,7 @@ export class BattleScene extends SceneBase {
       return;
     }
 
-    this.fadeOutBgm(fixedInt(2000), false);
+    this.fadeOutBgm(2000);
     this.ui.showDialogue(classicFinalBossDialogue.firstStageWin, pokemon.species.name, undefined, () => {
       const finalBossMBH = getModifierType(modifierTypes.MINI_BLACK_HOLE).newModifier(
         pokemon,
@@ -3586,8 +3661,8 @@ export class BattleScene extends SceneBase {
         if (partyMember.pokerus) {
           expMultiplier *= 1.5;
         }
-        if (Overrides.XP_MULTIPLIER_OVERRIDE !== null) {
-          expMultiplier = Overrides.XP_MULTIPLIER_OVERRIDE;
+        if (activeOverrides.XP_MULTIPLIER_OVERRIDE !== null) {
+          expMultiplier = activeOverrides.XP_MULTIPLIER_OVERRIDE;
         }
         const pokemonExp = new NumberHolder(expValue * expMultiplier);
         this.applyModifiers(PokemonExpBoosterModifier, true, partyMember, pokemonExp);
@@ -3661,7 +3736,7 @@ export class BattleScene extends SceneBase {
 
     // MEs can only spawn 3 or more waves after the previous ME, barring overrides
     const canSpawn =
-      Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE !== null
+      activeOverrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE !== null
       || encounteredEvents.length === 0
       || waveIndex > 3 + encounteredEvents.at(-1)!.waveIndex; // Bang on `at()` is justified due to the check for length === 0
     if (!canSpawn) {
@@ -3679,7 +3754,7 @@ export class BattleScene extends SceneBase {
       sessionEncounterRate
       + Math.min(currentRunDiffFromAvg * ANTI_VARIANCE_WEIGHT_MODIFIER, MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT / 2);
 
-    const successRate = Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE ?? favoredEncounterRate;
+    const successRate = activeOverrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE ?? favoredEncounterRate;
 
     let roll = 0;
     // Always rolls the check on the same offset to ensure no RNG changes from reloading session
@@ -3717,10 +3792,10 @@ export class BattleScene extends SceneBase {
     // Loading override or session encounter
     let encounter: MysteryEncounter | null;
     if (
-      Overrides.MYSTERY_ENCOUNTER_OVERRIDE != null
-      && Object.hasOwn(allMysteryEncounters, Overrides.MYSTERY_ENCOUNTER_OVERRIDE)
+      activeOverrides.MYSTERY_ENCOUNTER_OVERRIDE != null
+      && Object.hasOwn(allMysteryEncounters, activeOverrides.MYSTERY_ENCOUNTER_OVERRIDE)
     ) {
-      encounter = allMysteryEncounters[Overrides.MYSTERY_ENCOUNTER_OVERRIDE];
+      encounter = allMysteryEncounters[activeOverrides.MYSTERY_ENCOUNTER_OVERRIDE];
       if (canBypass) {
         return encounter;
       }
@@ -3787,8 +3862,8 @@ export class BattleScene extends SceneBase {
             ? MysteryEncounterTier.ULTRA
             : MysteryEncounterTier.ROGUE;
 
-    if (Overrides.MYSTERY_ENCOUNTER_TIER_OVERRIDE != null) {
-      tier = Overrides.MYSTERY_ENCOUNTER_TIER_OVERRIDE;
+    if (activeOverrides.MYSTERY_ENCOUNTER_TIER_OVERRIDE != null) {
+      tier = activeOverrides.MYSTERY_ENCOUNTER_TIER_OVERRIDE;
     }
 
     let availableEncounters: MysteryEncounter[] = [];

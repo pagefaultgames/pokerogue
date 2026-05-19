@@ -16,7 +16,7 @@ jobs:
           sparse-checkout: |
             .nvmrc
             pnpm-lock.yaml
-            scripts
+            .github/scripts/changelog-reader
           sparse-checkout-cone-mode: false
 
       - name: Install pnpm
@@ -34,7 +34,7 @@ jobs:
         run: pnpm add chalk octokit
 
       - name: Generate Changelog
-        run: node scripts/changelog-reader/main.mjs
+        run: node .github/scripts/changelog-reader/main.mts
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.number }}

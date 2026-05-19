@@ -1,4 +1,4 @@
-import { pokerogueApi } from "#api/pokerogue-api";
+import { pokerogueApi } from "#api/api";
 import { bypassLogin } from "#constants/app-constants";
 import type { UserInfo } from "#types/api";
 import { randomString } from "#utils/common";

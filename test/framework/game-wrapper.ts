@@ -108,6 +108,9 @@ export class GameWrapper {
       key: "",
     };
 
+    this.scene.playBgm = () => null;
+    this.scene.replaceBgmUntilEnd = () => null!;
+
     this.scene.cameras = {
       main: {
         setPostPipeline: () => null!,
