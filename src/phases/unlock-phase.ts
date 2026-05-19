@@ -19,7 +19,7 @@ export class UnlockPhase extends Phase {
     globalScene.time.delayedCall(2000, () => {
       globalScene.gameData.unlocks[this.unlockable] = true;
       // Sound loaded into game as is
-      globalScene.playSound("level_up_fanfare");
+      globalScene.playSound("se/level_up_fanfare");
       globalScene.ui.setMode(UiMode.MESSAGE);
       globalScene.ui.showText(
         i18next.t("battle:unlockedSomething", {

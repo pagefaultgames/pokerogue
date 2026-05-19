@@ -965,7 +965,7 @@ export class MoveEffectPhase extends PokemonPhase {
     }
   }
 
-  // # endregion Helpers
+  // #endregion Helpers
 }
 
 /**

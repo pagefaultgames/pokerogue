@@ -1,7 +1,7 @@
 import { FixedBattleConfig } from "#app/battle";
 import { CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { allChallenges, type Challenge, copyChallenge } from "#data/challenge";
 import {
   getDailyEventSeedBoss,
@@ -136,8 +136,8 @@ export class GameMode implements GameModeConfig {
    * - 5 for all other modes
    */
   getStartingLevel(): number {
-    if (Overrides.STARTING_LEVEL_OVERRIDE > 0) {
-      return Overrides.STARTING_LEVEL_OVERRIDE;
+    if (activeOverrides.STARTING_LEVEL_OVERRIDE > 0) {
+      return activeOverrides.STARTING_LEVEL_OVERRIDE;
     }
     switch (this.modeId) {
       case GameModes.DAILY:
@@ -154,8 +154,8 @@ export class GameMode implements GameModeConfig {
    * - override from a custom daily seed
    */
   getStartingMoney(): number {
-    if (Overrides.STARTING_MONEY_OVERRIDE > 0) {
-      return Overrides.STARTING_MONEY_OVERRIDE;
+    if (activeOverrides.STARTING_MONEY_OVERRIDE > 0) {
+      return activeOverrides.STARTING_MONEY_OVERRIDE;
     }
 
     switch (this.modeId) {
@@ -178,8 +178,8 @@ export class GameMode implements GameModeConfig {
    * - Town
    */
   getStartingBiome(): BiomeId {
-    if (Overrides.STARTING_BIOME_OVERRIDE != null) {
-      return Overrides.STARTING_BIOME_OVERRIDE;
+    if (activeOverrides.STARTING_BIOME_OVERRIDE != null) {
+      return activeOverrides.STARTING_BIOME_OVERRIDE;
     }
 
     switch (this.modeId) {
