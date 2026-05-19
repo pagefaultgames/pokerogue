@@ -1496,7 +1496,7 @@ export class PartyUiHandler extends MessageUiHandler {
           const allowBatonModifierSwitch = this.allowBatonModifierSwitch();
           const isBatonPassMove = this.isBatonPassMove();
 
-          if (allowBatonModifierSwitch && !isBatonPassMove) {
+          if (allowBatonModifierSwitch && !isBatonPassMove && globalScene.preferBatonPass) {
             // the BATON modifier gives an extra switch option for
             // pokemon-command switches, allowing buffs to be optionally passed
             this.options.push(PartyOption.PASS_BATON);
@@ -1508,6 +1508,11 @@ export class PartyUiHandler extends MessageUiHandler {
           this.options.push(
             isBatonPassMove && !allowBatonModifierSwitch ? PartyOption.PASS_BATON : PartyOption.SEND_OUT,
           );
+
+          if (allowBatonModifierSwitch && !isBatonPassMove && !globalScene.preferBatonPass) {
+            // If Pass Baton is not preferred, place it under SEND_OUT
+            this.options.push(PartyOption.PASS_BATON);
+          }
         }
         this.addCommonOptions(pokemon);
         break;

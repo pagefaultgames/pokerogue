@@ -233,14 +233,14 @@ export class UiInputs {
     const settingGameSpeed = settingIndex(SettingKeys.Game_Speed);
     const settingOptions = Setting[settingGameSpeed].options;
     let currentSetting = settingOptions.findIndex(item => item.value === globalScene.gameSpeed.toString());
-    // if current setting is -1, then the current game speed is not a valid option, so default to index 5 (3x)
+    // if current setting is -1, then the current game speed is not a valid option, so default to index 1 (3x)
     if (currentSetting === -1) {
-      currentSetting = 5;
+      currentSetting = 1;
     }
     let direction: number;
     if (up && globalScene.gameSpeed < 5) {
       direction = 1;
-    } else if (!up && globalScene.gameSpeed > 1) {
+    } else if (!up && globalScene.gameSpeed > 2) {
       direction = -1;
     } else {
       return;

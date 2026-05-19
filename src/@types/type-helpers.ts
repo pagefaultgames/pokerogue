@@ -143,3 +143,15 @@ export type OnlyRequired<T extends object> = Pick<T, RequiredKeysOf<T>>;
  */
 export type TupleRange<Min extends number, Max extends number, T = unknown> =
   IntClosedRange<Min, Max> extends infer Lengths extends number ? TupleOf<Lengths, T> : never;
+
+/**
+ * Internal type helper to encourage TypeScript's language service to prefer keeping a type opaque during hover expansion.
+ *
+ * Used for clarity of intent when preventing distributive conditional types from expanding into their full definitions
+ * while still allowing them to distribute over unions as normal.
+ * Is otherwise equivalent to {@linkcode NonNullable}.
+ * @internal
+ * @privateRemarks
+ * Any uses of this type should be double-checked to ensure that IDE hover tooltips are actually improved by its addition.
+ */
+export type PreventHoverExpansion<T> = T & {};

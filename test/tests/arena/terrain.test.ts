@@ -40,9 +40,7 @@ describe("Terrain -", () => {
       .passiveAbility(AbilityId.NO_GUARD);
   });
 
-  // TODO: Terrain boosts currently apply directly to damage dealt, not base power -
-  // enable once they are refactored for mainline parity
-  describe.todo.each<{ name: string; type: PokemonType; terrain: TerrainType; move: MoveId }>([
+  describe.each<{ name: string; type: PokemonType; terrain: TerrainType; move: MoveId }>([
     { name: "Electric", type: PokemonType.ELECTRIC, terrain: TerrainType.ELECTRIC, move: MoveId.THUNDERBOLT },
     { name: "Psychic", type: PokemonType.PSYCHIC, terrain: TerrainType.PSYCHIC, move: MoveId.PSYCHIC },
     { name: "Grassy", type: PokemonType.GRASS, terrain: TerrainType.GRASSY, move: MoveId.ENERGY_BALL },
@@ -62,7 +60,7 @@ describe("Terrain -", () => {
 
         game.move.use(move);
         await game.move.forceEnemyMove(move);
-        await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+        game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
         await game.toEndOfTurn();
 
         // Enemy dragon breath got nerfed against grounded player; player dragon breath did not
@@ -77,7 +75,7 @@ describe("Terrain -", () => {
 
         game.move.use(move);
         await game.move.forceEnemyMove(move);
-        await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+        game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
         await game.toEndOfTurn();
 
         // Player grounded attack got boosted while enemy ungrounded attack didn't
@@ -96,7 +94,7 @@ describe("Terrain -", () => {
 
       game.move.use(MoveId.TERRAIN_PULSE);
       await game.move.forceEnemyMove(MoveId.TERRAIN_PULSE);
-      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.toEndOfTurn();
 
       // player grounded terrain pulse was boosted & type converted; enemy ungrounded one wasn't
@@ -169,7 +167,7 @@ describe("Terrain -", () => {
       // Turn 2: Make shuckle semi-invulnerable & hit through No Guard; 1x
       game.move.use(move);
       await game.move.forceEnemyMove(MoveId.DIG);
-      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.toEndOfTurn();
 
       expect(powerSpy).toHaveLastReturnedWith(basePower);
