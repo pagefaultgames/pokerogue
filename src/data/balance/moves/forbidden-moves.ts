@@ -27,7 +27,6 @@ export const FORBIDDEN_SINGLES_MOVES: ReadonlySet<MoveId> = new Set([
   MoveId.QUASH,
   MoveId.RAGE_POWDER,
   MoveId.SPOTLIGHT,
-  MoveId.STRUGGLE_BUG,
   MoveId.PURIFY,
   // Every mon that learns these has protect already and they're not worth it over protect
   MoveId.MAT_BLOCK,
