@@ -37,9 +37,15 @@ describe("Move - Stomping Tantrum", () => {
       .moveset([MoveId.STOMPING_TANTRUM, MoveId.GIGA_IMPACT, MoveId.SUCKER_PUNCH, MoveId.SPLASH]);
   });
 
-  it("should do normal damage if no prior move is called", async () => {
+  function setUpTest() {
     const stompingTantrum = allMoves[MoveId.STOMPING_TANTRUM];
     const powerSpy = vi.spyOn(stompingTantrum, "calculateBattlePower");
+
+    return { stompingTantrum, powerSpy };
+  }
+
+  it("should do normal damage if no prior move is called", async () => {
+    const { stompingTantrum, powerSpy } = setUpTest();
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -51,8 +57,7 @@ describe("Move - Stomping Tantrum", () => {
   });
 
   it("should do normal damage after successfully using a move", async () => {
-    const stompingTantrum = allMoves[MoveId.STOMPING_TANTRUM];
-    const powerSpy = vi.spyOn(stompingTantrum, "calculateBattlePower");
+    const { stompingTantrum, powerSpy } = setUpTest();
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
@@ -66,8 +71,7 @@ describe("Move - Stomping Tantrum", () => {
   });
 
   it("should do normal damage after using a recharge move", async () => {
-    const stompingTantrum = allMoves[MoveId.STOMPING_TANTRUM];
-    const powerSpy = vi.spyOn(stompingTantrum, "calculateBattlePower");
+    const { stompingTantrum, powerSpy } = setUpTest();
     // Guaranteeing Giga Impact hits
     vi.spyOn(allMoves[MoveId.GIGA_IMPACT], "accuracy", "get").mockReturnValue(100);
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
@@ -87,8 +91,7 @@ describe("Move - Stomping Tantrum", () => {
   });
 
   it("should do double damage after a move fails", async () => {
-    const stompingTantrum = allMoves[MoveId.STOMPING_TANTRUM];
-    const powerSpy = vi.spyOn(stompingTantrum, "calculateBattlePower");
+    const { stompingTantrum, powerSpy } = setUpTest();
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
@@ -104,8 +107,7 @@ describe("Move - Stomping Tantrum", () => {
   });
 
   it("should do normal damage after getting targeted by Sky Drop", async () => {
-    const stompingTantrum = allMoves[MoveId.STOMPING_TANTRUM];
-    const powerSpy = vi.spyOn(stompingTantrum, "calculateBattlePower");
+    const { stompingTantrum, powerSpy } = setUpTest();
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
     game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
