@@ -172,7 +172,6 @@
             }
           }
         },
-
         "useUnifiedTypeSignatures": {
           "level": "warn",
           "fix": "unsafe",
@@ -228,6 +227,16 @@
                 "match": ".*"
               }
             ]
+          }
+        },
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "paths": {
+              "node:test": {
+                "message": "Do not import from `node:test`, use `vitest`"
+              }
+            }
           }
         }
       },
