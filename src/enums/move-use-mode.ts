@@ -1,4 +1,7 @@
 import type { PostDancingMoveAbAttr } from "#abilities/ab-attrs";
+import type { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
+import type { StatusEffect } from "#enums/status-effect";
+import type { DelayedAttackAttr } from "#moves/move";
 import type { ObjectValues } from "#types/type-helpers";
 
 /**
@@ -8,12 +11,12 @@ import type { ObjectValues } from "#types/type-helpers";
  * while oddities breaking a previous trend will be listed in _italics_.
  *
  * Callers should refrain from performing non-equality checks on `MoveUseMode`s directly,
- * instead using the available helper functions
- * ({@linkcode isVirtual}, {@linkcode isIgnoreStatus}, {@linkcode isIgnorePP} and {@linkcode isReflected}).
+ * instead using the various available helper functions:
+ * ({@linkcode isVirtual}, {@linkcode isIgnoreStatus}, {@linkcode isIgnorePP}, {@linkcode isDancerCopiable} and {@linkcode isReflected}).
  */
 export const MoveUseMode = {
   /**
-   * This move was used normally (i.e. clicking on the button) or called via Instruct.
+   * This move was used normally (i.e. from normal command selection) or called via Instruct.
    * It deducts PP from the user's moveset (failing if out of PP), and interacts normally with other moves and abilities.
    */
   NORMAL: 1,
@@ -43,19 +46,19 @@ export const MoveUseMode = {
   INDIRECT: 3,
 
   /**
-    * This move was called as part of another move's effect (such as for most {@link https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_call_other_moves | Move-calling moves}).
-
-    * Follow-up moves **bypass cancellation** from all **non-volatile status conditions** and **{@linkcode BattlerTagLapseType.MOVE}-type effects**
-    * (having been checked already on the calling move).
-
-    * They are _not ignored_ by other move-calling moves and abilities (unlike {@linkcode MoveUseMode.FOLLOW_UP} and {@linkcode MoveUseMode.REFLECTED}),
-    * but still inherit the former's disregard for moveset-related effects.
-    */
+   * This move was called as part of another move's effect (such as for most {@link https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_call_other_moves | Move-calling moves}).
+   *
+   * Follow-up moves **bypass cancellation** from all **non-volatile status conditions** and **{@linkcode BattlerTagLapseType.MOVE}-type effects**
+   * (having been checked already on the calling move).
+   *
+   * They are _not ignored_ by other move-calling moves and abilities (unlike {@linkcode MoveUseMode.FOLLOW_UP} and {@linkcode MoveUseMode.REFLECTED}),
+   * but still inherit the former's disregard for moveset-related effects.
+   */
   FOLLOW_UP: 4,
 
   /**
    * This move was reflected by Magic Coat or Magic Bounce.
-
+   *
    * Reflected moves ignore all the same cancellation checks as {@linkcode MoveUseMode.INDIRECT}
    * and retain the same copy prevention as {@linkcode MoveUseMode.FOLLOW_UP}, but additionally
    * **cannot be copied by other reflecting effects or Dancer**.
@@ -187,3 +190,10 @@ export function isDancerCopiable(useMode: MoveUseMode): boolean {
     useMode !== MoveUseMode.INDIRECT && useMode !== MoveUseMode.REFLECTED && useMode !== MoveUseMode.DELAYED_ATTACK
   );
 }
+
+// #endregion Helper Functions
+
+/**
+ * Doc comment removal prevention block to prevent TS from flagging things as unused
+ * {@linkcode DelayedAttackAttr}
+ */
