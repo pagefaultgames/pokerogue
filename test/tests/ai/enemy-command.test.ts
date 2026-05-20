@@ -147,4 +147,29 @@ describe("Enemy Commands - Move Selection", () => {
       }
     });
   });
+
+  it("should not select a move that will fail due to terrain, but KOs otherwise", async () => {
+    game.override
+      .enemySpecies(SpeciesId.ARCANINE)
+      .enemyMoveset([MoveId.EXTREME_SPEED, MoveId.FIRE_FANG, MoveId.FLAMETHROWER])
+      .startingLevel(1)
+      .enemyLevel(1)
+      .startingTerrain(TerrainType.PSYCHIC);
+
+    await game.classicMode.startBattle(SpeciesId.RATTATA);
+
+    const enemyPokemon = game.field.getEnemyPokemon();
+    enemyPokemon.aiType = AiType.SMART;
+
+    const moveChoices: MoveChoiceSet = {};
+    const enemyMoveset = enemyPokemon.getMoveset();
+    enemyMoveset.forEach(mv => (moveChoices[mv!.moveId] = 0));
+    getEnemyMoveChoices(enemyPokemon, moveChoices);
+
+    enemyMoveset.forEach(mv => {
+      if (mv?.moveId === MoveId.EXTREME_SPEED) {
+        expect(moveChoices[mv.moveId]).toBe(0);
+      }
+    });
+  });
 });
