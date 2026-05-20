@@ -76,7 +76,8 @@ export const MoveUseMode = {
 
 export type MoveUseMode = ObjectValues<typeof MoveUseMode>;
 
-// # HELPER FUNCTIONS
+// #region Helper Functions
+
 // Please update the markdown tables if any new `MoveUseMode`s get added.
 
 /**
@@ -116,6 +117,7 @@ export function isVirtual(useMode: MoveUseMode): boolean {
  * | {@linkcode MoveUseMode.FOLLOW_UP}      | `true`  |
  * | {@linkcode MoveUseMode.REFLECTED}      | `true`  |
  * | {@linkcode MoveUseMode.DELAYED_ATTACK} | `true`  |
+ *
  */
 export function isIgnoreStatus(useMode: MoveUseMode): boolean {
   return useMode >= MoveUseMode.FOLLOW_UP;

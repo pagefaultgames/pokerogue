@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import type { IEggOptions } from "#data/egg";
 import { Egg, getLegendaryGachaSpeciesForTimestamp } from "#data/egg";
@@ -251,7 +251,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
       .map(option => {
         const desc = option.description.split(" ");
         if (desc[0].length < 2) {
-          desc[0] += ["zh", "ko"].includes(resolvedLanguage.substring(0, 2)) ? " " : "  ";
+          desc[0] += ["zh", "ko"].includes(resolvedLanguage.slice(0, 2)) ? " " : "  ";
         }
         if (option.multiplier === multiplierOne) {
           desc[0] += " ";
@@ -493,8 +493,8 @@ export class EggGachaUiHandler extends MessageUiHandler {
    * @param pullCount - The number of eggs to pull
    */
   async pull(pullCount = 0): Promise<void> {
-    if (Overrides.EGG_GACHA_PULL_COUNT_OVERRIDE) {
-      pullCount = Overrides.EGG_GACHA_PULL_COUNT_OVERRIDE;
+    if (activeOverrides.EGG_GACHA_PULL_COUNT_OVERRIDE) {
+      pullCount = activeOverrides.EGG_GACHA_PULL_COUNT_OVERRIDE;
     }
 
     // Set the eggs
@@ -525,7 +525,6 @@ export class EggGachaUiHandler extends MessageUiHandler {
       }
       const eggSprite = globalScene.add.sprite(127, 75, "egg", `egg_${eggs[i].getKey()}`).setScale(0.5);
       gachaContainer.addAt(eggSprite, 2);
-      // biome-ignore lint/performance/noAwaitInLoops: The point of this loop is to play the animations, one after another
       await this.doPullAnim(eggSprite, i).finally(() => gachaContainer.remove(eggSprite, true));
     }
 
@@ -739,7 +738,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
     const [voucherType, vouchersConsumed, pulls] = voucher;
 
     let errorKey: string | undefined;
-    const freePulls = Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE;
+    const freePulls = activeOverrides.EGG_FREE_GACHA_PULLS_OVERRIDE;
 
     if (!freePulls && globalScene.gameData.eggs.length + pulls > 99) {
       errorKey = "egg:tooManyEggs";

@@ -413,12 +413,9 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.MAGNET_PULL, 3) //
-      .attr(ArenaTrapAbAttr, (_user, target) => {
-        return (
-          target.getTypes(true).includes(PokemonType.STEEL)
-          || (target.getTypes(true).includes(PokemonType.STELLAR) && target.getTypes().includes(PokemonType.STEEL))
-        );
-      })
+      .attr(ArenaTrapAbAttr, (_user, target) =>
+        target.isOfType(PokemonType.STEEL, { returnOriginalTypesIfStellar: true }),
+      )
       .build(),
     new AbBuilder(AbilityId.SOUNDPROOF, 3) //
       .attr(
@@ -1037,7 +1034,6 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.INFILTRATOR, 5) //
       .attr(InfiltratorAbAttr)
-      .partial() // does not bypass Mist
       .build(),
     new AbBuilder(AbilityId.MUMMY, 5) //
       .attr(PostDefendAbilityGiveAbAttr, AbilityId.MUMMY)
@@ -1131,20 +1127,23 @@ export function initAbilities() {
       ])
       .ignorable()
       .build(),
-    new AbBuilder(AbilityId.FLOWER_VEIL, 6) //
-      .attr(ConditionalUserFieldStatusEffectImmunityAbAttr, (target: Pokemon, source: Pokemon | null) => {
-        return source ? target.getTypes().includes(PokemonType.GRASS) && target.id !== source.id : false;
-      })
+    new AbBuilder(AbilityId.FLOWER_VEIL, 6)
+      .attr(
+        ConditionalUserFieldStatusEffectImmunityAbAttr,
+        (target, source) =>
+          !!source
+          && target.id !== source.id
+          && target.isOfType(PokemonType.GRASS, { returnOriginalTypesIfStellar: true }),
+      )
       .attr(
         ConditionalUserFieldBattlerTagImmunityAbAttr,
-        (target: Pokemon) => {
-          return target.getTypes().includes(PokemonType.GRASS);
-        },
+        target => target.isOfType(PokemonType.GRASS, { returnOriginalTypesIfStellar: true }),
         [BattlerTagType.DROWSY],
       )
-      .attr(ConditionalUserFieldProtectStatAbAttr, (target: Pokemon) => {
-        return target.getTypes().includes(PokemonType.GRASS);
-      })
+      .attr(ConditionalUserFieldProtectStatAbAttr, target =>
+        target.isOfType(PokemonType.GRASS, { returnOriginalTypesIfStellar: true }),
+      )
+      .ignorable()
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.CHEEK_POUCH, 6) //
@@ -1911,6 +1910,16 @@ export function initAbilities() {
       .attr(NoFusionAbilityAbAttr)
       .attr(PostBattleInitFormChangeAbAttr, () => 0)
       .attr(PreSwitchOutFormChangeAbAttr, pokemon => (pokemon.isFainted() ? pokemon.formIndex : 1))
+      .conditionalAttr(
+        p => p.formIndex !== 0 && p.isOnField() && zeroToHeroFormChangeMessage.get(p) !== p.battleData,
+        PostSummonMessageAbAttr,
+        (pokemon: Pokemon) => {
+          zeroToHeroFormChangeMessage.set(pokemon, pokemon.battleData);
+          return i18next.t("abilityTriggers:postSummonZeroToHero", {
+            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+          });
+        },
+      )
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.COMMANDER, 9) //
@@ -2268,6 +2277,9 @@ const sheerForceHitDisableAbCondition: AbAttrCondition = (pokemon: Pokemon): boo
 
   return !sheerForceAffected;
 };
+
+/** Tracks the `battleData` reference at the time the Zero to Hero form change message was shown. */
+const zeroToHeroFormChangeMessage = new WeakMap<Pokemon, object>();
 
 /**
  * DRY implementation for the `AIMovegenMoveStatsAbAttr` effect of harsh-sunlight summoning abilities.

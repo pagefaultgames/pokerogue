@@ -84,7 +84,7 @@ export async function populateVariantColors(
     return;
   }
   const cacheKey = pokemon.getBattleSpriteKey(isBackSprite);
-  if (!variantColorCache.hasOwnProperty(cacheKey)) {
+  if (!Object.hasOwn(variantColorCache, cacheKey)) {
     await populateVariantColorCache(cacheKey, useExpSprite, battleSpritePath);
   }
 }

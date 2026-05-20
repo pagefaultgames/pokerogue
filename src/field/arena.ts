@@ -1,7 +1,7 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { NIGHT_TIME } from "#constants/game-constants";
 import type { ArenaTag, ArenaTagTypeMap } from "#data/arena-tag";
 import { EntryHazardTag, getArenaTag } from "#data/arena-tag";
@@ -27,7 +27,7 @@ import { BiomeId } from "#enums/biome-id";
 import { BiomePoolTier } from "#enums/biome-pool-tier";
 import { CommonAnim } from "#enums/move-anims-common";
 import type { MoveId } from "#enums/move-id";
-import type { PokemonType } from "#enums/pokemon-type";
+import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
@@ -36,6 +36,7 @@ import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEven
 import type { Pokemon } from "#field/pokemon";
 import { FieldEffectModifier } from "#modifiers/modifier";
 import type { Move } from "#moves/move";
+import { isFieldTargeted, isSpreadMove } from "#moves/move-utils";
 import type { ArenaPokemonPools, TrainerPools } from "#types/biomes";
 import type { Constructor } from "#types/common";
 import type { RGBArray } from "#types/sprite-types";
@@ -122,7 +123,8 @@ export class Arena {
     return 131 / 180;
   }
 
-  // #endregion
+  // #endregion Getters
+
   // #region Misc Public Methods
 
   public init() {
@@ -163,7 +165,8 @@ export class Arena {
     this.removeAllTags();
   }
 
-  // #endregion
+  // #endregion Misc Public Methods
+
   // #region Misc Private Methods
 
   /**
@@ -222,7 +225,8 @@ export class Arena {
     return BiomePoolTier.ULTRA_RARE;
   }
 
-  // #endregion
+  // #endregion Misc Private Methods
+
   // #region Weather
 
   /** @returns Whether or not the weather can be changed to the specified weather */
@@ -234,7 +238,7 @@ export class Arena {
    * Sets weather to the override specified in `overrides.ts`
    */
   private overrideWeather(): void {
-    const weather = Overrides.WEATHER_OVERRIDE;
+    const weather = activeOverrides.WEATHER_OVERRIDE;
     this.weather = new Weather(weather, 0);
     globalScene.phaseManager.unshiftNew("CommonAnimPhase", undefined, undefined, CommonAnim.SUNNY + (weather - 1));
     globalScene.phaseManager.queueMessage(getWeatherStartMessage(weather)!); // TODO: is this bang correct?
@@ -247,7 +251,7 @@ export class Arena {
    * @returns true if new weather set, false if no weather provided or attempting to set the same weather as currently in use
    */
   public trySetWeather(weather: WeatherType, user?: Pokemon): boolean {
-    if (Overrides.WEATHER_OVERRIDE) {
+    if (activeOverrides.WEATHER_OVERRIDE) {
       this.overrideWeather();
       return true;
     }
@@ -340,6 +344,17 @@ export class Arena {
     }
   }
 
+  /**
+   * @param attackType - The {@linkcode PokemonType} of the attack
+   * @returns The weather damage multiplier
+   */
+  public getWeatherDamageMultiplier(attackType: PokemonType): number {
+    if (this.weather && !this.weather.isEffectSuppressed()) {
+      return this.weather.getAttackTypeMultiplier(attackType);
+    }
+    return 1;
+  }
+
   /** Sets a random weather based on the time of day and the current biome */
   public setBiomeWeather(): void {
     let weatherPool = allBiomes.get(this.biomeId).weatherPool;
@@ -373,7 +388,8 @@ export class Arena {
     this.trySetWeather(randomWeather);
   }
 
-  // #endregion
+  // #endregion Weather
+
   // #region Terrain
 
   /** @returns Whether or not the terrain can be set to the specified terrain */
@@ -433,9 +449,9 @@ export class Arena {
     return true;
   }
 
-  /** Override the terrain to the value set inside {@linkcode Overrides.STARTING_TERRAIN_OVERRIDE}. */
+  /** Override the terrain to the value set inside {@linkcode activeOverrides.STARTING_TERRAIN_OVERRIDE}. */
   private overrideTerrain(): void {
-    const terrain = Overrides.STARTING_TERRAIN_OVERRIDE;
+    const terrain = activeOverrides.STARTING_TERRAIN_OVERRIDE;
     // TODO: Add a flag for permanent terrains
     this.terrain = new Terrain(terrain, 0);
     this.eventTarget.dispatchEvent(
@@ -452,7 +468,7 @@ export class Arena {
 
   /** Sets a random terrain based on the biome */
   public setBiomeTerrain(): void {
-    if (Overrides.STARTING_TERRAIN_OVERRIDE) {
+    if (activeOverrides.STARTING_TERRAIN_OVERRIDE) {
       this.overrideTerrain();
       return;
     }
@@ -467,11 +483,42 @@ export class Arena {
     this.trySetTerrain(randomTerrain);
   }
 
+  /** @see {@link https://bulbapedia.bulbagarden.net/wiki/Psychic_Terrain_(move)#Effect} */
   public isMoveTerrainCancelled(user: Pokemon, targets: BattlerIndex[], move: Move): boolean {
-    return !!this.terrain && this.terrain.isMoveTerrainCancelled(user, targets, move);
+    if (this.terrainType === TerrainType.PSYCHIC) {
+      return (
+        !isFieldTargeted(move)
+        && !isSpreadMove(move)
+        && move.getPriority(user) > 0
+        && user.getOpponents(true).some(o => targets.includes(o.getBattlerIndex()) && o.isGrounded())
+      );
+    }
+    return false;
   }
 
-  // #endregion
+  /**
+   * Compute the power multiplier applied to a grounded move from terrain.
+   * @param attackType - The {@linkcode PokemonType} of the attack
+   * @returns The multiplier to apply to move power.
+   * @remarks
+   * This excludes Misty Terrain's 50% nerf to Dragon-type moves,
+   * which depends on the _target's_ groundedness (not the user's).
+   */
+  public getTerrainPowerMultiplier(attackType: PokemonType): number {
+    if (this.terrainType === TerrainType.ELECTRIC && attackType === PokemonType.ELECTRIC) {
+      return 1.3;
+    }
+    if (this.terrainType === TerrainType.GRASSY && attackType === PokemonType.GRASS) {
+      return 1.3;
+    }
+    if (this.terrainType === TerrainType.PSYCHIC && attackType === PokemonType.PSYCHIC) {
+      return 1.3;
+    }
+    return 1;
+  }
+
+  // #endregion Terrain
+
   // #region Trainers
 
   public randomTrainerType(waveIndex: number, isBoss = false): TrainerType {
@@ -492,7 +539,8 @@ export class Arena {
     return tierPool.length > 0 ? randSeedItem(tierPool) : TrainerType.BREEDER;
   }
 
-  // #endregion
+  // #endregion Trainers
+
   // #region Pokemon
 
   public updatePoolsForTimeOfDay(): void {
@@ -500,10 +548,12 @@ export class Arena {
     if (timeOfDay === this.lastTimeOfDay) {
       return;
     }
-    this.pokemonPool = Object.entries(allBiomes.get(this.biomeId).pokemonPool).reduce(
+
+    const currBiome = allBiomes.get(this.biomeId);
+    this.pokemonPool = Object.entries(currBiome.pokemonPool).reduce(
       (acc, [tier, pool]) => {
-        // TODO: Remove type assertion after https://github.com/pagefaultgames/pokerogue/pull/7078 is merged
-        acc[tier as `${BiomePoolTier}`] = [...pool[TimeOfDay.ALL], ...pool[timeOfDay]];
+        tier satisfies `${BiomePoolTier}`;
+        acc[tier] = [...pool[TimeOfDay.ALL], ...pool[timeOfDay]];
         return acc;
       },
       {} as Mutable<ArenaPokemonPools>,
@@ -540,9 +590,7 @@ export class Arena {
 
     let tier: BiomePoolTier;
     const forcedTier = getDailyForcedWaveBiomePoolTier(waveIndex);
-    if (forcedTier !== null) {
-      tier = forcedTier;
-    } else {
+    if (forcedTier === null) {
       const rollMax = isBossSpecies ? 64 : 512;
 
       // Luck reduces the RNG ceiling by 0.5x for bosses or 2x otherwise
@@ -550,6 +598,8 @@ export class Arena {
 
       const rngRoll = randSeedInt(rollMax - luckModifier);
       tier = (isBossSpecies ? this.generateBossBiomeTier : this.generateNonBossBiomeTier)(rngRoll);
+    } else {
+      tier = forcedTier;
     }
 
     console.log("Starting species pool tier:", BiomePoolTier[tier]);
@@ -604,7 +654,8 @@ export class Arena {
       : adjustedWave < 55; // Wave 25+ in daily
   }
 
-  // #endregion
+  // #endregion Pokemon
+
   // #region Arena Tags
 
   /**
@@ -872,7 +923,8 @@ export class Arena {
     }
   }
 
-  // #endregion
+  // #endregion Arena Tags
+
   // #region Time of Day
 
   public getTimeOfDay(): TimeOfDay {
@@ -881,8 +933,8 @@ export class Arena {
         return TimeOfDay.NIGHT;
     }
 
-    if (Overrides.TIME_OF_DAY_OVERRIDE !== null) {
-      return Overrides.TIME_OF_DAY_OVERRIDE;
+    if (activeOverrides.TIME_OF_DAY_OVERRIDE !== null) {
+      return activeOverrides.TIME_OF_DAY_OVERRIDE;
     }
 
     const waveCycle = ((globalScene.currentBattle?.waveIndex ?? 0) + globalScene.waveCycleOffset) % 40;
@@ -954,22 +1006,7 @@ export class Arena {
     return [48, 48, 98];
   }
 
-  // #endregion
-
-  // TODO: replace this
-  getAttackTypeMultiplier(attackType: PokemonType, grounded: boolean): number {
-    let weatherMultiplier = 1;
-    if (this.weather && !this.weather.isEffectSuppressed()) {
-      weatherMultiplier = this.weather.getAttackTypeMultiplier(attackType);
-    }
-
-    let terrainMultiplier = 1;
-    if (this.terrain && grounded) {
-      terrainMultiplier = this.terrain.getAttackTypeMultiplier(attackType);
-    }
-
-    return weatherMultiplier * terrainMultiplier;
-  }
+  // #endregion Time of Day
 }
 
 // #region Helper Functions
@@ -1012,4 +1049,4 @@ export function getBiomeHasProps(biomeId: BiomeId): boolean {
   return false;
 }
 
-// #endregion
+// #endregion Helper Functions

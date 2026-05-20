@@ -115,7 +115,7 @@ export function determineEnemySpecies(
 ): SpeciesId {
   const requiredPrevo =
     tryForcePrevo
-    && pokemonPrevolutions.hasOwnProperty(species.speciesId)
+    && Object.hasOwn(pokemonPrevolutions, species.speciesId)
     && getRequiredPrevo(species, level, encounterKind);
   if (requiredPrevo) {
     return requiredPrevo;

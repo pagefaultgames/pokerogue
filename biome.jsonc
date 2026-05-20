@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.4.14/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -60,7 +60,6 @@
       }
     }
   },
-  // TODO: Remove unneeded `options` blocks once biome's JSON schema is fixed to not require them
   "linter": {
     "enabled": true,
     "rules": {
@@ -74,8 +73,7 @@
         "noVoidTypeReturn": "error",
         "noUnusedImports": {
           "level": "error",
-          "fix": "safe",
-          "options": {}
+          "fix": "safe"
         },
         "noUnusedFunctionParameters": "error",
         "noUnusedLabels": "error",
@@ -86,29 +84,22 @@
       "style": {
         "useExplicitLengthCheck": {
           "level": "error",
-          "fix": "safe",
-          "options": {}
+          "fix": "safe"
         },
         "useAtIndex": "error",
-        "noNegationElse": {
-          "level": "error",
-          "fix": "unsafe", // duplicates else blocks
-          "options": {}
-        },
+        "noNegationElse": "error",
         // TODO: Fix all instances of this and promote to `error` - this and enums are the 2 things
         // barring us from `esModuleInterop`
         "noParameterProperties": "warn",
         "useConsistentBuiltinInstantiation": {
           "level": "error",
-          "fix": "safe",
-          "options": {}
+          "fix": "safe"
         },
         "noDefaultExport": "warn", // TODO: Fix `overrides.ts` and enable
         "noShoutyConstants": "error",
         "useThrowNewError": {
           "level": "error",
-          "fix": "safe",
-          "options": {}
+          "fix": "safe"
         },
         "useThrowOnlyError": "error",
         "useTrimStartEnd": "error",
@@ -131,13 +122,11 @@
         "useDeprecatedReason": "error",
         "useConsistentArrayType": {
           "level": "error",
-          "fix": "safe",
-          "options": {}
+          "fix": "safe"
         },
         "useShorthandAssign": {
           "level": "error",
-          "fix": "safe",
-          "options": {}
+          "fix": "safe"
         },
         "noSubstr": "error",
         "noYodaExpression": "error",
@@ -145,8 +134,7 @@
         "useEnumInitializers": "off", // large enums like MoveId/SpeciesId would make this cumbersome
         "useBlockStatements": {
           "level": "error",
-          "fix": "safe",
-          "options": {}
+          "fix": "safe"
         },
         "useConst": "error",
         "useImportType": "error",
@@ -157,13 +145,11 @@
           // TODO: Fix spots in the codebase where this flag would be triggered
           // and then set to "error" and re-enable the fixer
           "level": "warn",
-          "fix": "none",
-          "options": {}
+          "fix": "none"
         },
         "useSingleVarDeclarator": {
           "level": "error",
-          "fix": "safe",
-          "options": {}
+          "fix": "safe"
         },
         // TODO: Consider enabling
         "useNodejsImportProtocol": "off",
@@ -186,7 +172,6 @@
             }
           }
         },
-
         "useUnifiedTypeSignatures": {
           "level": "warn",
           "fix": "unsafe",
@@ -243,6 +228,16 @@
               }
             ]
           }
+        },
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "paths": {
+              "node:test": {
+                "message": "Do not import from `node:test`, use `vitest`"
+              }
+            }
+          }
         }
       },
       "suspicious": {
@@ -258,10 +253,7 @@
         // This can likely be enabled for all non-utils files once these are eventually reworked, but until then we leave it off.
         "noExplicitAny": "off",
         "noAssignInExpressions": "info", // TODO: Increase to "error" once all instances are fixed
-        "noPrototypeBuiltins": {
-          "level": "warn", // TODO: Add type guard global augment, fix errors and promote (adding a polyfill if needed)
-          "fix": "unsafe"
-        },
+        "noPrototypeBuiltins": "error",
         "noFallthroughSwitchClause": "error", // Prevents accidental automatic fallthroughs in switch cases (use disable comment if needed)
         "noRedeclare": "info", // TODO: Refactor and make this an error
         "noGlobalIsNan": "error",
@@ -348,7 +340,7 @@
       }
     },
     {
-      "includes": ["**/scripts/**/*.js"],
+      "includes": ["scripts/**/*"],
       "linter": {
         "rules": {
           "style": {
@@ -395,6 +387,26 @@
         "rules": {
           "style": {
             "useImportType": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/**/*.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["#test/*"],
+                    "message": "Do not import files from `test/` in `src/`."
+                  }
+                ]
+              }
+            }
           }
         }
       }

@@ -1,5 +1,5 @@
 import { allMoves } from "#data/data-lists";
-import type { BattlerIndex } from "#enums/battler-index";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveCategory, type MoveDamageCategory } from "#enums/move-category";
 import type { MoveId } from "#enums/move-id";
@@ -10,8 +10,8 @@ import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import type { Move, UserMoveConditionFunc } from "#moves/move";
 import type { MoveTargetSet } from "#types/move-target-set";
-import { NumberHolder } from "#utils/common";
 import { areAllies } from "#utils/pokemon-utils";
+import { ValueHolder } from "#utils/value-holder";
 
 /**
  * Return whether the move targets the field
@@ -54,35 +54,34 @@ export function isSpreadMove(move: Move): boolean {
 }
 
 export function getMoveTargets(user: Pokemon, move: MoveId, replaceTarget?: MoveTarget): MoveTargetSet {
-  const variableTarget = new NumberHolder(0);
+  const variableTarget = new ValueHolder(replaceTarget ?? allMoves[move].moveTarget);
   user.getOpponents(false).forEach(p => applyMoveAttrs("VariableTargetAttr", user, p, allMoves[move], variableTarget));
 
-  let moveTarget: MoveTarget | undefined;
-  if (allMoves[move].hasAttr("VariableTargetAttr")) {
-    moveTarget = variableTarget.value;
-  } else if (replaceTarget !== undefined) {
-    moveTarget = replaceTarget;
-  } else if (move) {
-    moveTarget = allMoves[move].moveTarget;
-  } else if (move === undefined) {
-    moveTarget = MoveTarget.NEAR_ENEMY;
-  }
+  const moveTarget: MoveTarget = variableTarget.value;
   const opponents = user.getOpponents(false);
 
   let set: Pokemon[] = [];
   let multiple = false;
   const ally: Pokemon | undefined = user.getAlly();
-
   switch (moveTarget) {
     case MoveTarget.USER:
     case MoveTarget.PARTY:
       set = [user];
       break;
+
+    // biome-ignore lint/suspicious/noFallthroughSwitchClause: intentional
+    case MoveTarget.CURSE:
+      // Non ghost-type Curse targets exclusively the user; ghost-type Curse targets any enemy
+      // TODO: check if the user is about to Terastallize to/from Ghost type
+      if (!user.isOfType(PokemonType.GHOST, { returnOriginalTypesIfStellar: true })) {
+        set = [user];
+        break;
+      }
     case MoveTarget.NEAR_OTHER:
     case MoveTarget.OTHER:
     case MoveTarget.ALL_NEAR_OTHERS:
     case MoveTarget.ALL_OTHERS:
-      set = ally != null ? opponents.concat([ally]) : opponents;
+      set = ally == null ? opponents : opponents.concat([ally]);
       multiple = moveTarget === MoveTarget.ALL_NEAR_OTHERS || moveTarget === MoveTarget.ALL_OTHERS;
       break;
     case MoveTarget.NEAR_ENEMY:
@@ -96,27 +95,22 @@ export function getMoveTargets(user: Pokemon, move: MoveId, replaceTarget?: Move
       set = [opponents[user.randBattleSeedInt(opponents.length)]];
       break;
     case MoveTarget.ATTACKER:
-      return { targets: [-1 as BattlerIndex], multiple: false };
+      // TODO: Remove MoveTarget.ATTACKER and BattlerIndex.ATTACKER
+      return { targets: [BattlerIndex.ATTACKER], multiple: false };
     case MoveTarget.NEAR_ALLY:
     case MoveTarget.ALLY:
-      set = ally != null ? [ally] : [];
+      set = ally == null ? [] : [ally];
       break;
     case MoveTarget.USER_OR_NEAR_ALLY:
     case MoveTarget.USER_AND_ALLIES:
     case MoveTarget.USER_SIDE:
-      set = ally != null ? [user, ally] : [user];
+      set = ally == null ? [user] : [user, ally];
       multiple = moveTarget !== MoveTarget.USER_OR_NEAR_ALLY;
       break;
     case MoveTarget.ALL:
     case MoveTarget.BOTH_SIDES:
-      set = (ally != null ? [user, ally] : [user]).concat(opponents);
+      set = (ally == null ? [user] : [user, ally]).concat(opponents);
       multiple = true;
-      break;
-    case MoveTarget.CURSE:
-      {
-        const extraTargets = ally != null ? [ally] : [];
-        set = user.getTypes(true).includes(PokemonType.GHOST) ? opponents.concat(extraTargets) : [user];
-      }
       break;
   }
 

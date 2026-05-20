@@ -12,8 +12,7 @@ import { EnemyPokemon } from "#field/pokemon";
 import { GameManager } from "#test/framework/game-manager";
 import { NumberHolder } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
-import { afterEach } from "node:test";
-import { beforeAll, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
 /**
  * Parameters for {@linkcode createTestablePokemon}
@@ -159,7 +158,6 @@ describe("Unit Tests - ai-moveset-gen.ts", () => {
 
   // Unit tests for methods that require a game context
   describe("", () => {
-    //#region boilerplate
     let phaserGame: Phaser.Game;
     /**A pokemon object that will be cleaned up after every test */
     let pokemon: EnemyPokemon | null = null;
@@ -178,8 +176,6 @@ describe("Unit Tests - ai-moveset-gen.ts", () => {
     afterEach(() => {
       pokemon?.destroy();
     });
-
-    //#endregion boilerplate
 
     function createCharmander(_ = pokemon): asserts _ is EnemyPokemon {
       pokemon?.destroy();
@@ -243,7 +239,6 @@ describe("Unit Tests - ai-moveset-gen.ts", () => {
 });
 
 describe("Regression Tests - ai-moveset-gen.ts", () => {
-  //#region boilerplate
   let phaserGame: Phaser.Game;
   let game: GameManager;
   /**A pokemon object that will be cleaned up after every test */
@@ -263,8 +258,6 @@ describe("Regression Tests - ai-moveset-gen.ts", () => {
   afterEach(() => {
     pokemon?.destroy();
   });
-
-  //#endregion boilerplate
 
   describe("getTmPoolForSpecies", () => {
     const { getTmPoolForSpecies } = __INTERNAL_TEST_EXPORTS;
