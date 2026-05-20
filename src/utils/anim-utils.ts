@@ -32,14 +32,24 @@ export async function playTween(config: PlayTweenConfig, scene: SceneBase = glob
   );
 }
 
+/**
+ * Argument type for {@linkcode playNumberTween},
+ * containing all attributes of {@linkcode Phaser.Types.Tweens.NumberTweenBuilderConfig | NumberTweenBuilderConfig}
+ * save for ones related to the `onComplete` callback.
+ * @internal
+ */
 interface PlayNumberTweenConfig
-  extends OmitWithoutIndex<Phaser.Types.Tweens.NumberTweenBuilderConfig, "onComplete" | "onCompleteParams"> {}
+  extends Except<
+    Phaser.Types.Tweens.NumberTweenBuilderConfig,
+    "onComplete" | "onCompleteParams",
+    { requireExactProps: true }
+  > {}
 
 /**
  * Play a NumberTween and wait for it to complete.
- * @param config - The config for a single Tween
- * @param scene - (Default {@linkcode globalScene}) The {@linkcode SceneBase} on which the Tween plays
- * @returns A Promise that resolves once the Tween has finished playing.
+ * @param config - The config for a single NumberTween
+ * @param scene - (Default {@linkcode globalScene}) The {@linkcode SceneBase} on which the NumberTween should play
+ * @returns A Promise that resolves once the NumberTween has finished playing.
  */
 export async function playNumberTween(config: PlayNumberTweenConfig, scene: SceneBase = globalScene): Promise<void> {
   await new Promise(resolve =>
