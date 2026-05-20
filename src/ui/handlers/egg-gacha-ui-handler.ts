@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import type { IEggOptions } from "#data/egg";
 import { Egg, getLegendaryGachaSpeciesForTimestamp } from "#data/egg";
@@ -81,7 +81,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
     let pokemonIconX = -20;
     let pokemonIconY = 6;
 
-    if (["de", "es-ES", "es-419", "fr", "ko", "pt-BR", "ja", "ru", "uk", "tr"].includes(currentLanguage)) {
+    if (["de", "es-ES", "es-419", "fr", "ko", "pt-BR", "ja", "ru", "uk", "tr", "eu"].includes(currentLanguage)) {
       gachaTextStyle = TextStyle.SMALLER_WINDOW_ALT;
       gachaX = 2;
       gachaY = 2;
@@ -89,7 +89,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
 
     let legendaryLabelX = gachaX;
     let legendaryLabelY = gachaY;
-    if (["de", "es-ES", "es-419", "tr"].includes(currentLanguage)) {
+    if (["de", "es-ES", "es-419", "tr", "eu"].includes(currentLanguage)) {
       pokemonIconX = -25;
       pokemonIconY = 10;
       legendaryLabelX = -6;
@@ -102,7 +102,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
     switch (gachaType as GachaType) {
       case GachaType.LEGENDARY:
         {
-          if (["de", "es-ES"].includes(currentLanguage)) {
+          if (["de", "es-ES", "eu"].includes(currentLanguage)) {
             gachaUpLabel.setAlign("center");
           }
           let xOffset = 0;
@@ -119,7 +119,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
         }
         break;
       case GachaType.MOVE:
-        if (["de", "es-ES", "fr", "pt-BR", "ru", "uk", "tr"].includes(currentLanguage)) {
+        if (["de", "es-ES", "fr", "pt-BR", "ru", "uk", "tr", "eu"].includes(currentLanguage)) {
           gachaUpLabel.setAlign("center").setY(0);
         }
 
@@ -251,7 +251,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
       .map(option => {
         const desc = option.description.split(" ");
         if (desc[0].length < 2) {
-          desc[0] += ["zh", "ko"].includes(resolvedLanguage.substring(0, 2)) ? " " : "  ";
+          desc[0] += ["zh", "ko"].includes(resolvedLanguage.slice(0, 2)) ? " " : "  ";
         }
         if (option.multiplier === multiplierOne) {
           desc[0] += " ";
@@ -493,8 +493,8 @@ export class EggGachaUiHandler extends MessageUiHandler {
    * @param pullCount - The number of eggs to pull
    */
   async pull(pullCount = 0): Promise<void> {
-    if (Overrides.EGG_GACHA_PULL_COUNT_OVERRIDE) {
-      pullCount = Overrides.EGG_GACHA_PULL_COUNT_OVERRIDE;
+    if (activeOverrides.EGG_GACHA_PULL_COUNT_OVERRIDE) {
+      pullCount = activeOverrides.EGG_GACHA_PULL_COUNT_OVERRIDE;
     }
 
     // Set the eggs
@@ -525,7 +525,6 @@ export class EggGachaUiHandler extends MessageUiHandler {
       }
       const eggSprite = globalScene.add.sprite(127, 75, "egg", `egg_${eggs[i].getKey()}`).setScale(0.5);
       gachaContainer.addAt(eggSprite, 2);
-      // biome-ignore lint/performance/noAwaitInLoops: The point of this loop is to play the animations, one after another
       await this.doPullAnim(eggSprite, i).finally(() => gachaContainer.remove(eggSprite, true));
     }
 
@@ -739,7 +738,7 @@ export class EggGachaUiHandler extends MessageUiHandler {
     const [voucherType, vouchersConsumed, pulls] = voucher;
 
     let errorKey: string | undefined;
-    const freePulls = Overrides.EGG_FREE_GACHA_PULLS_OVERRIDE;
+    const freePulls = activeOverrides.EGG_FREE_GACHA_PULLS_OVERRIDE;
 
     if (!freePulls && globalScene.gameData.eggs.length + pulls > 99) {
       errorKey = "egg:tooManyEggs";

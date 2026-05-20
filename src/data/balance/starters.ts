@@ -1,9 +1,11 @@
 import { IS_TEST } from "#constants/app-constants";
 import { SpeciesId } from "#enums/species-id";
+import type { IntClosedRange } from "type-fest";
 
 export const POKERUS_STARTER_COUNT = 5;
 
 // #region Friendship constants
+
 /** The multiplier applied to candy friendship gain in classic mode. */
 export const CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER = 3;
 /** The base amount of friendship gained from a single battle. */
@@ -16,14 +18,18 @@ export const FRIENDSHIP_LOSS_FROM_FAINT = 5;
 export const TRAINER_MIN_FRIENDSHIP = 50;
 /** The wave at which enemy trainers reach the maximum friendship value of 255. */
 export const TRAINER_MAX_FRIENDSHIP_WAVE = 145;
-// #endregion
+
+// #endregion Friendship constants
+
+/** The numeric point cost of a starter. */
+export type StarterCost = IntClosedRange<1, 10>;
 
 /**
  * Function to get the cumulative friendship threshold at which a candy is earned
  * @param starterCost - The cost of the starter, found in {@linkcode speciesStarterCosts}
  * @returns aforementioned threshold
  */
-export function getStarterValueFriendshipCap(starterCost: number): number {
+export function getStarterValueFriendshipCap(starterCost: StarterCost): number {
   switch (starterCost) {
     case 1:
       return 25;
@@ -42,7 +48,8 @@ export function getStarterValueFriendshipCap(starterCost: number): number {
     case 8:
     case 9:
       return 450;
-    default:
+    case 10:
+    default: // fallback for invalid starter costs (should never happen, but just in case)
       return 600;
   }
 }
@@ -626,7 +633,7 @@ export const speciesStarterCosts = {
   [SpeciesId.PALDEA_TAUROS]: 5,
   [SpeciesId.PALDEA_WOOPER]: 3,
   [SpeciesId.BLOODMOON_URSALUNA]: 5,
-};
+} satisfies Partial<Record<SpeciesId, StarterCost>>;
 
 /**
  * Type for the valid species ids that can be used as starters, based on the keys of {@linkcode speciesStarterCosts}

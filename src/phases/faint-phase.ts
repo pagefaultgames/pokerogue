@@ -3,10 +3,9 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { FRIENDSHIP_LOSS_FROM_FAINT } from "#balance/starters";
 import { allMoves } from "#data/data-lists";
-import { battleSpecDialogue } from "#data/dialogue";
+import { classicFinalBossDialogue } from "#data/dialogue";
 import { SpeciesFormChangeActiveTrigger } from "#data/form-change-triggers";
 import { ArenaTagSide } from "#enums/arena-tag-side";
-import { BattleSpec } from "#enums/battle-spec";
 import { BattleType } from "#enums/battle-type";
 import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
@@ -26,13 +25,13 @@ export class FaintPhase extends PokemonPhase {
   /**
    * Whether or not instant revive should be prevented
    */
-  private preventInstantRevive: boolean;
+  private readonly preventInstantRevive: boolean;
 
   /**
    * The source Pokemon that dealt fatal damage; only present for faints triggered by a move.
    */
   // TODO: This should be handled by a move in flight object/similar
-  private source?: Pokemon | undefined;
+  private readonly source?: Pokemon | undefined;
 
   constructor(battlerIndex: BattlerIndex, preventInstantRevive = false, source?: Pokemon) {
     super(battlerIndex);
@@ -41,11 +40,17 @@ export class FaintPhase extends PokemonPhase {
     this.source = source;
   }
 
-  start() {
+  public override start(): void {
     super.start();
 
     const faintPokemon = this.getPokemon();
-
+    // Failsafe: end early if the Pokemon is somehow not fainted at this point
+    // (such as if the original faintee switched out via U-Turn/etc before this Phase had a chance to run).
+    // TODO: This effectively bypasses the root phase ordering issue at play, and should be removed once force switching moves are fixed to work properly
+    if (faintPokemon.hp > 0) {
+      this.end();
+      return;
+    }
     if (this.source) {
       faintPokemon.getTag(BattlerTagType.DESTINY_BOND)?.lapse(this.source, BattlerTagLapseType.CUSTOM);
       faintPokemon.getTag(BattlerTagType.GRUDGE)?.lapse(faintPokemon, BattlerTagLapseType.CUSTOM, this.source);
@@ -63,7 +68,8 @@ export class FaintPhase extends PokemonPhase {
       if (instantReviveModifier) {
         faintPokemon.loseHeldItem(instantReviveModifier);
         globalScene.updateModifiers(this.player);
-        return this.end();
+        this.end();
+        return;
       }
     }
 
@@ -79,12 +85,14 @@ export class FaintPhase extends PokemonPhase {
       }
     }
 
-    if (!this.tryOverrideForBattleSpec()) {
+    if (globalScene.currentBattle.isClassicFinalBoss && !this.player) {
+      this.handleFinalBossFaint();
+    } else {
       this.doFaint();
     }
   }
 
-  doFaint(): void {
+  private doFaint(): void {
     const pokemon = this.getPokemon();
 
     // Track total times pokemon have been KO'd for Last Respects/Supreme Overlord
@@ -220,28 +228,18 @@ export class FaintPhase extends PokemonPhase {
     });
   }
 
-  tryOverrideForBattleSpec(): boolean {
-    switch (globalScene.currentBattle.battleSpec) {
-      case BattleSpec.FINAL_BOSS:
-        if (!this.player) {
-          const enemy = this.getPokemon();
-          if (enemy.formIndex) {
-            globalScene.ui.showDialogue(
-              battleSpecDialogue[BattleSpec.FINAL_BOSS].secondStageWin,
-              enemy.species.name,
-              null,
-              () => this.doFaint(),
-            );
-          } else {
-            // Final boss' HP threshold has been bypassed; cancel faint and force check for 2nd phase
-            enemy.hp++;
-            globalScene.phaseManager.unshiftNew("DamageAnimPhase", enemy.getBattlerIndex(), 0, HitResult.INDIRECT);
-            this.end();
-          }
-          return true;
-        }
+  private handleFinalBossFaint(): void {
+    const { phaseManager, ui } = globalScene;
+    const enemy = this.getPokemon();
+
+    if (enemy.formIndex > 0) {
+      ui.showDialogue(classicFinalBossDialogue.secondStageWin, enemy.species.name, null, () => this.doFaint());
+      return;
     }
 
-    return false;
+    // Final boss' HP threshold has been bypassed; cancel faint and force check for 2nd phase
+    enemy.hp++;
+    phaseManager.unshiftNew("DamageAnimPhase", enemy.getBattlerIndex(), 0, HitResult.INDIRECT);
+    this.end();
   }
 }

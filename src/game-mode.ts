@@ -1,13 +1,14 @@
 import { FixedBattleConfig } from "#app/battle";
 import { CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { allChallenges, type Challenge, copyChallenge } from "#data/challenge";
 import {
   getDailyEventSeedBoss,
   getDailyForcedWaveSpecies,
   getDailyStartingBiome,
   getDailyStartingMoney,
+  getDailyTrainerManipulation,
 } from "#data/daily-seed/daily-run";
 import { parseDailySeed } from "#data/daily-seed/daily-seed-utils";
 import { allSpecies } from "#data/data-lists";
@@ -135,8 +136,8 @@ export class GameMode implements GameModeConfig {
    * - 5 for all other modes
    */
   getStartingLevel(): number {
-    if (Overrides.STARTING_LEVEL_OVERRIDE > 0) {
-      return Overrides.STARTING_LEVEL_OVERRIDE;
+    if (activeOverrides.STARTING_LEVEL_OVERRIDE > 0) {
+      return activeOverrides.STARTING_LEVEL_OVERRIDE;
     }
     switch (this.modeId) {
       case GameModes.DAILY:
@@ -153,8 +154,8 @@ export class GameMode implements GameModeConfig {
    * - override from a custom daily seed
    */
   getStartingMoney(): number {
-    if (Overrides.STARTING_MONEY_OVERRIDE > 0) {
-      return Overrides.STARTING_MONEY_OVERRIDE;
+    if (activeOverrides.STARTING_MONEY_OVERRIDE > 0) {
+      return activeOverrides.STARTING_MONEY_OVERRIDE;
     }
 
     switch (this.modeId) {
@@ -177,8 +178,8 @@ export class GameMode implements GameModeConfig {
    * - Town
    */
   getStartingBiome(): BiomeId {
-    if (Overrides.STARTING_BIOME_OVERRIDE != null) {
-      return Overrides.STARTING_BIOME_OVERRIDE;
+    if (activeOverrides.STARTING_BIOME_OVERRIDE != null) {
+      return activeOverrides.STARTING_BIOME_OVERRIDE;
     }
 
     switch (this.modeId) {
@@ -208,6 +209,10 @@ export class GameMode implements GameModeConfig {
 
     // Daily spawns trainers on floors 5, 15, 20, 25, 30, 35, 40, and 45
     if (this.isDaily) {
+      const trainerManipulation = getDailyTrainerManipulation(waveIndex);
+      if (trainerManipulation != null) {
+        return trainerManipulation;
+      }
       return waveIndex % 10 === 5 || (!(waveIndex % 10) && waveIndex > 10 && !this.isWaveFinal(waveIndex));
     }
     if (waveIndex % 30 === (offsetGym ? 0 : 20) && !this.isWaveFinal(waveIndex)) {
@@ -352,7 +357,7 @@ export class GameMode implements GameModeConfig {
   isFixedBattle(waveIndex: number): boolean {
     const dummyConfig = new FixedBattleConfig();
     return (
-      this.battleConfig.hasOwnProperty(waveIndex)
+      Object.hasOwn(this.battleConfig, waveIndex)
       || applyChallenges(ChallengeType.FIXED_BATTLES, waveIndex, dummyConfig)
     );
   }

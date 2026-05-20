@@ -603,33 +603,29 @@ export class PartyUiHandler extends MessageUiHandler {
         }
         const hasMatchingModifier = matchingModifiers.some(m => m !== undefined); // checks if any items match
         const partySlot = this.partySlots.find(m => m.getPokemon() === newPokemon)!; // this gets pokemon [p] for us
-        if (p !== this.transferCursor) {
-          // this skips adding the able/not able labels on the pokemon doing the transfer
-          if (hasMatchingModifier) {
-            // if matchingModifier exists then the item exists on the new pokemon
-            ableToTransferText = i18next.t("partyUiHandler:notAble"); // start with not able
-            /**
-             * The amount of items that can be transferred in the `All` option
-             */
-            let ableAmount = 0;
-            for (const modifier of matchingModifiers) {
-              if (!modifier || modifier.getCountUnderMax() > 0) {
-                // if the modifier doesn't exist, or the stack count isn't at max, then we can transfer at least 1 stack
-                ableToTransferText = i18next.t("partyUiHandler:able");
-                ableAmount++;
-              }
-            }
-            // only show the amount if an item can be transferred and there are multiple items
-            ableToTransferText += ableAmount && matchingModifiers.length > 1 ? ` (${ableAmount})` : "";
-          } else {
-            // if no item matches, that means the pokemon doesn't have any of the item, and we need to show "Able"
-            ableToTransferText = i18next.t("partyUiHandler:able");
-            // only show the amount if there are multiple items
-            ableToTransferText += matchingModifiers.length > 1 ? ` (${matchingModifiers.length})` : "";
-          }
-        } else {
-          // this else relates to the transfer pokemon. We set the text to be blank so there's no "Able"/"Not able" text
+        if (p === this.transferCursor) {
+          // this relates to the transfer pokemon. We set the text to be blank so there's no "Able"/"Not able" text
           ableToTransferText = "";
+          // this skips adding the able/not able labels on the pokemon doing the transfer
+        } else if (hasMatchingModifier) {
+          // if matchingModifier exists then the item exists on the new pokemon
+          ableToTransferText = i18next.t("partyUiHandler:notAble"); // start with not able
+          /** The amount of items that can be transferred in the `All` option */
+          let ableAmount = 0;
+          for (const modifier of matchingModifiers) {
+            if (!modifier || modifier.getCountUnderMax() > 0) {
+              // if the modifier doesn't exist, or the stack count isn't at max, then we can transfer at least 1 stack
+              ableToTransferText = i18next.t("partyUiHandler:able");
+              ableAmount++;
+            }
+          }
+          // only show the amount if an item can be transferred and there are multiple items
+          ableToTransferText += ableAmount && matchingModifiers.length > 1 ? ` (${ableAmount})` : "";
+        } else {
+          // if no item matches, that means the pokemon doesn't have any of the item, and we need to show "Able"
+          ableToTransferText = i18next.t("partyUiHandler:able");
+          // only show the amount if there are multiple items
+          ableToTransferText += matchingModifiers.length > 1 ? ` (${matchingModifiers.length})` : "";
         }
         partySlot.slotHpLabel.setVisible(false);
         partySlot.slotHpBar.setVisible(false);
@@ -1425,10 +1421,10 @@ export class PartyUiHandler extends MessageUiHandler {
     this.options.push(PartyOption.RENAME);
 
     if (
-      pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId)
+      Object.hasOwn(pokemonEvolutions, pokemon.species.speciesId)
       || (pokemon.isFusion()
         && pokemon.fusionSpecies
-        && pokemonEvolutions.hasOwnProperty(pokemon.fusionSpecies.speciesId))
+        && Object.hasOwn(pokemonEvolutions, pokemon.fusionSpecies.speciesId))
     ) {
       this.options.push(PartyOption.UNPAUSE_EVOLUTION);
     }
@@ -1500,7 +1496,7 @@ export class PartyUiHandler extends MessageUiHandler {
           const allowBatonModifierSwitch = this.allowBatonModifierSwitch();
           const isBatonPassMove = this.isBatonPassMove();
 
-          if (allowBatonModifierSwitch && !isBatonPassMove) {
+          if (allowBatonModifierSwitch && !isBatonPassMove && globalScene.preferBatonPass) {
             // the BATON modifier gives an extra switch option for
             // pokemon-command switches, allowing buffs to be optionally passed
             this.options.push(PartyOption.PASS_BATON);
@@ -1512,6 +1508,11 @@ export class PartyUiHandler extends MessageUiHandler {
           this.options.push(
             isBatonPassMove && !allowBatonModifierSwitch ? PartyOption.PASS_BATON : PartyOption.SEND_OUT,
           );
+
+          if (allowBatonModifierSwitch && !isBatonPassMove && !globalScene.preferBatonPass) {
+            // If Pass Baton is not preferred, place it under SEND_OUT
+            this.options.push(PartyOption.PASS_BATON);
+          }
         }
         this.addCommonOptions(pokemon);
         break;
@@ -2141,13 +2142,7 @@ class PartySlot extends Phaser.GameObjects.Container {
       this.slotDescriptionLabel,
     ]);
 
-    if (partyUiMode !== PartyUiMode.TM_MODIFIER) {
-      this.slotDescriptionLabel.setVisible(false);
-      this.slotHpLabel.setVisible(true);
-      this.slotHpBar.setVisible(true);
-      this.slotHpOverlay.setVisible(true);
-      this.slotHpText.setVisible(true);
-    } else {
+    if (partyUiMode === PartyUiMode.TM_MODIFIER) {
       this.slotHpLabel.setVisible(false);
       this.slotHpBar.setVisible(false);
       this.slotHpOverlay.setVisible(false);
@@ -2164,6 +2159,12 @@ class PartySlot extends Phaser.GameObjects.Container {
 
       this.slotDescriptionLabel.setText(slotTmText);
       this.slotDescriptionLabel.setVisible(true);
+    } else {
+      this.slotDescriptionLabel.setVisible(false);
+      this.slotHpLabel.setVisible(true);
+      this.slotHpBar.setVisible(true);
+      this.slotHpOverlay.setVisible(true);
+      this.slotHpText.setVisible(true);
     }
   }
 

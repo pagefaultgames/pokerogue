@@ -137,7 +137,7 @@ export function getRandomStatusEffect(statusEffectA: StatusEffect, statusEffectB
     return statusEffectA;
   }
 
-  return randIntRange(0, 2) ? statusEffectA : statusEffectB;
+  return randIntRange(0, 1) ? statusEffectA : statusEffectB;
 }
 
 /**
@@ -153,7 +153,7 @@ export function getRandomStatus(statusA: Status | null, statusB: Status | null):
     return statusA;
   }
 
-  return randIntRange(0, 2) ? statusA : statusB;
+  return randIntRange(0, 1) ? statusA : statusB;
 }
 
 /**

@@ -46,6 +46,7 @@ type MatcherInterface<K extends string> = Record<K, AnyFn<never, void>>;
  * @example
  * ```
  * // #region MyCustomMatchers
+ *
  * declare class MyCustomMatchers implements MatchersBase<keyof MyCustomMatchersCommon> {
  *   common: MyCustomMatchersCommon,
  *   positive: MyCustomMatchersPositive,
