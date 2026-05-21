@@ -452,14 +452,6 @@ export function getBiomeName(biome: BiomeId | -1) {
   if (biome === -1) {
     return i18next.t("biome:unknownLocation");
   }
-  switch (biome) {
-    case BiomeId.GRASS:
-      return i18next.t("biome:grass");
-    case BiomeId.RUINS:
-      return i18next.t("biome:ruins");
-    case BiomeId.END:
-      return i18next.t("biome:end");
-    default:
-      return i18next.t(`biome:${toCamelCase(enumValueToKey(BiomeId, biome))}`);
-  }
+
+  return i18next.t(`biome:${toCamelCase(enumValueToKey(BiomeId, biome))}`);
 }

@@ -2025,11 +2025,8 @@ export class EnduringTag extends BattlerTag {
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.CUSTOM) {
-      globalScene.phaseManager.queueMessage(
-        i18next.t("battlerTags:enduringLapse", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        }),
-      );
+      const pokemonNameWithAffix = getPokemonNameWithAffix(pokemon);
+      globalScene.phaseManager.queueMessage(i18next.t("battlerTags:enduringLapse", { pokemonNameWithAffix }));
       return true;
     }
 
@@ -2045,12 +2042,9 @@ export class SturdyTag extends BattlerTag {
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.CUSTOM) {
-      globalScene.phaseManager.queueMessage(
-        i18next.t("battlerTags:sturdyLapse", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        }),
-      );
-      return true;
+      const pokemonNameWithAffix = getPokemonNameWithAffix(pokemon);
+      globalScene.phaseManager.queueMessage(i18next.t("battlerTags:sturdyLapse", { pokemonNameWithAffix }));
+      return false;
     }
 
     return super.lapse(pokemon, lapseType);
