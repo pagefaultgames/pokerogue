@@ -74,7 +74,7 @@ export class AudioManager {
     previous?.destroy();
 
     this.currentBgm = new BackgroundMusic(bgmName, loop, loopPoint);
-    this.currentBgm.play(this.getVolume(VolumeSetting.MAIN));
+    this.currentBgm.play(this.getVolume(VolumeSetting.BGM));
   }
 
   /**
@@ -99,7 +99,7 @@ export class AudioManager {
 
     if (this.currentBgm?.key === resolvedName) {
       if (!this.currentBgm.isPlaying) {
-        this.currentBgm.play(this.getVolume(VolumeSetting.MAIN));
+        this.currentBgm.play(this.getVolume(VolumeSetting.BGM));
       }
       return null;
     }
@@ -124,7 +124,7 @@ export class AudioManager {
 
   /** Updates the set volume for the audio/bgm with the user's saved config values. */
   public updateSoundVolume(): void {
-    this.currentBgm?.setVolume(this.getVolume(VolumeSetting.MAIN));
+    this.currentBgm?.setVolume(this.getVolume(VolumeSetting.BGM));
 
     if (!globalScene.sound) {
       return;
@@ -182,7 +182,7 @@ export class AudioManager {
       tempBgm.destroy();
     });
     this.currentBgm?.pause();
-    tempBgm.play(this.getVolume(VolumeSetting.MAIN));
+    tempBgm.play(this.getVolume(VolumeSetting.BGM));
 
     return tempBgm;
   }
