@@ -783,15 +783,15 @@ export function setSetting(setting: string, value: number): boolean {
       break;
     case SettingKeys.BGM_Volume:
       audioManager.volume.bgm = value ? Number.parseInt(Setting[index].options[value].value) * 0.01 : 0;
-      audioManager.updateSoundVolume;
+      audioManager.updateSoundVolume();
       break;
     case SettingKeys.Field_Volume:
       audioManager.volume.field = value ? Number.parseInt(Setting[index].options[value].value) * 0.01 : 0;
-      audioManager.updateSoundVolume;
+      audioManager.updateSoundVolume();
       break;
     case SettingKeys.SE_Volume:
       audioManager.volume.se = value ? Number.parseInt(Setting[index].options[value].value) * 0.01 : 0;
-      audioManager.updateSoundVolume;
+      audioManager.updateSoundVolume();
       break;
     case SettingKeys.UI_Volume:
       audioManager.volume.ui = value ? Number.parseInt(Setting[index].options[value].value) * 0.01 : 0;
