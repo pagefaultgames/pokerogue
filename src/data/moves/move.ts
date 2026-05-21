@@ -134,7 +134,7 @@ import { getEnumValues } from "#utils/enums";
 import { areAllies, canSpeciesTera, willTerastallize } from "#utils/pokemon-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { toCamelCase, toTitleCase } from "#utils/strings";
-import type { ValueHolder } from "#utils/value-holder";
+import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 
 // TODO: Make these (and all condition functions actually)
@@ -1084,8 +1084,8 @@ export abstract class Move implements Localizable {
   /**
    * Calculates the power of a move in battle based on various conditions and attributes.
    *
-   * @param source {@linkcode Pokemon} The Pokémon using the move.
-   * @param target {@linkcode Pokemon} The Pokémon being targeted by the move.
+   * @param source - The {@linkcode Pokemon} using the move
+   * @param target - The Pokémon being targeted by the move
    * @returns The calculated power of the move.
    */
   calculateBattlePower(source: Pokemon, target: Pokemon, simulated = false): number {
@@ -1097,7 +1097,7 @@ export abstract class Move implements Localizable {
 
     applyMoveAttrs("VariablePowerAttr", source, target, this, power);
 
-    const typeChangeHolder = new NumberHolder(this.type);
+    const typeChangeHolder = new ValueHolder(this.type);
 
     applyAbAttrs("MoveTypeChangeAbAttr", {
       pokemon: source,
@@ -1168,6 +1168,18 @@ export abstract class Move implements Localizable {
     }
 
     power.value *= (source.getTag(BattlerTagType.SUPREME_OVERLORD) as SupremeOverlordTag | undefined)?.getBoost() ?? 1;
+
+    if (source.isGrounded()) {
+      power.value *= globalScene.arena.getTerrainPowerMultiplier(source.getMoveType(this));
+    }
+
+    if (
+      target.isGrounded()
+      && globalScene.arena.terrainType === TerrainType.MISTY
+      && typeChangeHolder.value === PokemonType.DRAGON
+    ) {
+      power.value *= 0.5;
+    }
 
     return power.value;
   }
@@ -1308,8 +1320,8 @@ export abstract class Move implements Localizable {
 
   /**
    * Check whether this Move can be given additional strikes from enhancing effects.
-   * Currently used for {@link https://bulbapedia.bulbagarden.net/wiki/Parental_Bond_(Ability) | Parental Bond}
-   * and {@linkcode PokemonMultiHitModifier | Multi Lens}.
+   * @see {@link https://bulbapedia.bulbagarden.net/wiki/Parental_Bond_(Ability) | Parental Bond (Bulbapedia)}
+   * and {@linkcode PokemonMultiHitModifier | Multi Lens}
    * @param user - The {@linkcode Pokemon} using the move
    * @param restrictSpread - (Default `false`) Whether the enhancing effect should ignore multi-target moves
    * @param target - (Optional) The targeted pokemon, used for Pollen Puff
@@ -2681,30 +2693,28 @@ export class SacrificialFullRestoreAttr extends SacrificialAttr {
 }
 
 /**
- * Attribute used for moves which ignore type-based debuffs from weather, namely Hydro Steam.
- * Called during damage calculation after getting said debuff from getAttackTypeMultiplier in the Pokemon class.
+ * Attribute used for moves which override the damage multiplier from weather.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Hydro_Steam_(move)}
  */
-export class IgnoreWeatherTypeDebuffAttr extends MoveAttr {
-  /** The {@linkcode WeatherType} this move ignores */
-  public weather: WeatherType;
+export class OverrideWeatherMultiplierAttr extends MoveAttr {
+  /** The {@linkcode WeatherType} this move overrides the multiplier of */
+  public readonly weather: WeatherType;
 
   constructor(weather: WeatherType) {
     super();
+
     this.weather = weather;
   }
-  /**
-   * Changes the type-based weather modifier if this move's power would be reduced by it
-   * @param user {@linkcode Pokemon} that used the move
-   * @param target N/A
-   * @param move {@linkcode Move} with this attribute
-   * @param args [0] {@linkcode NumberHolder} for arenaAttackTypeMultiplier
-   * @returns true if the function succeeds
-   */
-  apply(_user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
-    const weatherModifier = args[0] as NumberHolder;
-    //If the type-based attack power modifier due to weather (e.g. Water moves in Sun) is below 1, set it to 1
-    if (globalScene.arena.weather?.weatherType === this.weather) {
-      weatherModifier.value = Math.max(weatherModifier.value, 1);
+
+  apply(
+    _user: Pokemon,
+    _target: Pokemon,
+    _move: Move,
+    args: [weatherMultiplier: ValueHolder<number>, ...any[]],
+  ): boolean {
+    const weatherMultiplier = args[0];
+    if (globalScene.arena.weatherType === this.weather) {
+      weatherMultiplier.value = 1.5;
     }
     return true;
   }
@@ -4038,6 +4048,116 @@ export class StatStageChangeAttr extends MoveEffectAttr {
       ret += levels * 4 + (levels > 0 ? -2 : 2);
     }
     return ret;
+  }
+}
+
+/**
+ * Implements the combined effect of lowering the target's stats and switching out the user.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Parting_Shot_(move)}
+ *
+ * @remarks
+ * Because the stat drop phase is queued and not resolved immediately, this method silently
+ * simulates ability blocks and stat boundaries to accurately predict if the stat drop will succeed.
+ * This custom class ensures the switch only occurs if the stat drop is not blocked
+ * (e.g., by {@link https://bulbapedia.bulbagarden.net/wiki/Clear_Body_(Ability) | Clear Body} or minimum stat stages),
+ * and prevents the move from failing outright if the user has no eligible party members.
+ */
+export class PartingShotAttr extends StatStageChangeAttr {
+  private readonly switchAttr: ForceSwitchOutAttr;
+
+  constructor() {
+    super([Stat.ATK, Stat.SPATK], -1, false, { trigger: MoveEffectTrigger.PRE_APPLY });
+    this.switchAttr = new ForceSwitchOutAttr(true);
+  }
+
+  /**
+   * Attempts to apply the stat drop, and if successful, conditionally triggers the user to switch out.
+   *
+   * @param user - The {@linkcode Pokemon} using the move
+   * @param target - The {@linkcode Pokemon} targeted by the move
+   * @param move - The {@linkcode Move} being used
+   * @param args - Additional arguments for the move's execution
+   * @returns `true` if the stat drop phase was successfully queued
+   * @remarks
+   * The checks for the stat drop application cannot be moved to {@linkcode getCondition} due to
+   * hiding activation messages from any effects that would prevent the stat decrease.
+   */
+  override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const statDropTriggered = super.apply(user, target, move, args);
+    if (!statDropTriggered) {
+      return false;
+    }
+
+    const isBlockedByMist = !!globalScene.arena.getTagOnSide(
+      ArenaTagType.MIST,
+      target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY,
+    );
+    if (isBlockedByMist) {
+      return true;
+    }
+
+    // TODO: Rework this to not duplicate checks during stat stage application
+    const hasContrary = target.hasAbility(AbilityId.CONTRARY);
+    const stageMod = hasContrary ? 1 : -1;
+
+    // Silently simulate immunities to predict if the stat drop will be blocked
+    const cancelledAtk = new BooleanHolder(false);
+    applyAbAttrs("ProtectStatAbAttr", {
+      pokemon: target,
+      stat: Stat.ATK,
+      stages: -1,
+      cancelled: cancelledAtk,
+      simulated: true,
+    });
+    const canChangeAtk =
+      !cancelledAtk.value
+      && target.getStatStage(Stat.ATK) + stageMod >= -6
+      && target.getStatStage(Stat.ATK) + stageMod <= 6;
+
+    const cancelledSpAtk = new BooleanHolder(false);
+    applyAbAttrs("ProtectStatAbAttr", {
+      pokemon: target,
+      stat: Stat.SPATK,
+      stages: -1,
+      cancelled: cancelledSpAtk,
+      simulated: true,
+    });
+    const canChangeSpAtk =
+      !cancelledSpAtk.value
+      && target.getStatStage(Stat.SPATK) + stageMod >= -6
+      && target.getStatStage(Stat.SPATK) + stageMod <= 6;
+
+    const willDrop = canChangeAtk || canChangeSpAtk;
+    if (!willDrop) {
+      return true;
+    }
+
+    if (this.switchAttr.getSwitchOutCondition()(user, target, move)) {
+      this.switchAttr.apply(user, target, move, args);
+    }
+
+    return true;
+  }
+
+  /**
+   * Computes the benefit score for the AI to use this move, combining both the stat drop
+   * and the potential tactical advantage of switching out.
+   *
+   * @param user - The {@linkcode Pokemon} using the move
+   * @param target - The {@linkcode Pokemon} targeted by the move
+   * @param move - The {@linkcode Move} being evaluated
+   * @returns The evaluated score for using this move
+   */
+  override getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
+    let score = super.getUserBenefitScore(user, target, move);
+
+    if (this.switchAttr.getSwitchOutCondition()(user, target, move)) {
+      const switchScore = this.switchAttr.getUserBenefitScore(user, target, move);
+      if (switchScore > 0) {
+        score += switchScore;
+      }
+    }
+    return score;
   }
 }
 
@@ -9126,7 +9246,7 @@ const MoveAttrs = Object.freeze({
   PartyStatusCureAttr,
   FlameBurstAttr,
   SacrificialFullRestoreAttr,
-  IgnoreWeatherTypeDebuffAttr,
+  OverrideWeatherMultiplierAttr,
   WeatherHealAttr,
   PlantHealAttr,
   SandHealAttr,
@@ -9306,6 +9426,7 @@ const MoveAttrs = Object.freeze({
   ForceLastAttr,
   ResistLastMoveTypeAttr,
   ExposedMoveAttr,
+  PartingShotAttr,
 });
 
 /** Map of of move attribute names to their constructors */
@@ -11269,8 +11390,7 @@ export function initMoves() {
       .soundBased()
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new StatusMove(MoveId.PARTING_SHOT, PokemonType.DARK, 100, 20, -1, 0, 6)
-      .attr(StatStageChangeAttr, [Stat.ATK, Stat.SPATK], -1, false, { trigger: MoveEffectTrigger.PRE_APPLY })
-      .attr(ForceSwitchOutAttr, true)
+      .attr(PartingShotAttr)
       .soundBased()
       .reflectable(),
     new StatusMove(MoveId.TOPSY_TURVY, PokemonType.DARK, -1, 20, -1, 0, 6) //
@@ -12446,17 +12566,8 @@ export function initMoves() {
         globalScene.arena.terrainType === TerrainType.ELECTRIC && user.isGrounded() ? 1.5 : 1,
       )
       .slicingMove(),
-    new AttackMove(MoveId.HYDRO_STEAM, PokemonType.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, 0, 9)
-      .attr(IgnoreWeatherTypeDebuffAttr, WeatherType.SUNNY)
-      .attr(MovePowerMultiplierAttr, (_user, _target, _move) => {
-        const weather = globalScene.arena.weather;
-        if (!weather) {
-          return 1;
-        }
-        return [WeatherType.SUNNY, WeatherType.HARSH_SUN].includes(weather.weatherType) && !weather.isEffectSuppressed()
-          ? 1.5
-          : 1;
-      }),
+    new AttackMove(MoveId.HYDRO_STEAM, PokemonType.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, 0, 9) //
+      .attr(OverrideWeatherMultiplierAttr, WeatherType.SUNNY),
     new AttackMove(MoveId.RUINATION, PokemonType.DARK, MoveCategory.SPECIAL, -1, 90, 10, -1, 0, 9) //
       .attr(TargetHalfHpDamageAttr),
     new AttackMove(MoveId.COLLISION_COURSE, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 100, 100, 5, -1, 0, 9) //
