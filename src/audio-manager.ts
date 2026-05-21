@@ -111,7 +111,7 @@ export class AudioManager {
 
     if (shouldFadeOut) {
       const fadeDuration = 500;
-      this.fadeOutBgm(fadeDuration);
+      this.fadeOutBgm(fadeDuration, true);
       globalScene.time.delayedCall(fixedInt(fadeDuration + 250), () => {
         this.playNewBgm(resolvedName, loop, loopPoint);
       });
@@ -152,9 +152,10 @@ export class AudioManager {
   /**
    * Fades out the current bgm over `duration` ms.
    * @param duration - (Default `500`) The amount of time the fade out should take place over, in ms
+   * @param fixed - (Default `false`) Whether the duration should ignore game speed
    */
-  public fadeOutBgm(duration = 500): void {
-    this.currentBgm?.fadeOut(duration);
+  public fadeOutBgm(duration = 500, fixed = false): void {
+    this.currentBgm?.fadeOut(duration, fixed);
   }
 
   /**
@@ -163,7 +164,7 @@ export class AudioManager {
    * @param delay - (Default `2000`) The delay to use before starting the next track
    */
   public fadeAndSwitchBgm(newBgmKey?: string, delay = 2000): void {
-    this.fadeOutBgm(delay);
+    this.fadeOutBgm(delay, true);
     globalScene.time.delayedCall(fixedInt(delay), () => {
       this.playBgm(newBgmKey);
     });

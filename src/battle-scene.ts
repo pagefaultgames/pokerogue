@@ -3118,7 +3118,7 @@ export class BattleScene extends SceneBase {
       return;
     }
 
-    audioManager.fadeOutBgm(2000);
+    audioManager.fadeOutBgm(2000, true);
     this.ui.showDialogue(classicFinalBossDialogue.firstStageWin, pokemon.species.name, undefined, () => {
       const finalBossMBH = getModifierType(modifierTypes.MINI_BLACK_HOLE).newModifier(
         pokemon,
