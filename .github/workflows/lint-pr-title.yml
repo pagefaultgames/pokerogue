@@ -44,6 +44,6 @@ jobs:
         run: pnpm add @actions/core @actions/github
 
       - name: Lint PR title
-        run: node ./.github/scripts/pr-title.mts
+        run: node .github/scripts/pr-title.mts
         env:
           INPUT_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -136,7 +136,7 @@ import {
   TempStatStageBoosterModifier,
 } from "#modifiers/modifier";
 import { applyMoveAttrs } from "#moves/apply-attrs";
-import type { Move } from "#moves/move";
+import type { HitsTagAttr, Move } from "#moves/move";
 import { getMoveTargets } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import { loadMoveAnimations } from "#sprites/pokemon-asset-loader";
@@ -3537,7 +3537,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Calculates the base damage of the given move against this Pokemon when attacked by the given source.
+   * Calculates the base damage of the given move against this Pokemon when attacked by the given source. \
    * Used during damage calculation and for Shell Side Arm's forecasting effect.
    * @param __namedParameters.source - Needed for proper typedoc rendering
    * @returns The move's base damage against this Pokemon when used by the source Pokemon.
@@ -3701,6 +3701,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     simulated = true,
     effectiveness,
   }: GetAttackDamageParams): DamageCalculationResult {
+    const { arena } = globalScene;
+
     const damage = new NumberHolder(0);
     const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
@@ -3715,24 +3717,23 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const cancelled = new BooleanHolder(false);
 
     /**
-     * The effectiveness of the move being used. Along with type matchups, this
-     * accounts for changes in effectiveness from the move's attributes and the
-     * abilities of both the source and this Pokemon.
+     * The effectiveness of the move being used.
      *
-     * Note that the source's abilities are not ignored here
+     * Along with type matchups,
+     * this accounts for changes in effectiveness from the move's attributes
+     * and the abilities of both the source and this Pokemon.
+     *
+     * Note that the source's abilities are not ignored here.
      */
     const typeMultiplier =
       effectiveness ?? this.getMoveEffectiveness(source, move, ignoreAbility, simulated, cancelled);
 
     const isPhysical = moveCategory === MoveCategory.PHYSICAL;
 
-    /** Combined damage multiplier from field effects such as weather, terrain, etc. */
-    const arenaAttackTypeMultiplier = new NumberHolder(
-      globalScene.arena.getAttackTypeMultiplier(moveType, source.isGrounded()),
-    );
-    applyMoveAttrs("IgnoreWeatherTypeDebuffAttr", source, this, move, arenaAttackTypeMultiplier);
+    const weatherDamageMultiplier = new ValueHolder(arena.getWeatherDamageMultiplier(moveType));
+    applyMoveAttrs("OverrideWeatherMultiplierAttr", source, this, move, weatherDamageMultiplier);
 
-    const isTypeImmune = typeMultiplier * arenaAttackTypeMultiplier.value === 0;
+    const isTypeImmune = typeMultiplier === 0;
 
     if (cancelled.value || isTypeImmune) {
       return {
@@ -3856,10 +3857,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     /**
-     * For each {@linkcode HitsTagAttr} the move has, doubles the damage of the move if:
-     * The target has a {@linkcode BattlerTagType} that this move interacts with
-     * AND
-     * The move doubles damage when used against that tag
+     * For each {@linkcode HitsTagAttr} the move has, doubles the damage of the move if both:
+     * - The target has a {@linkcode BattlerTagType} that this move interacts with, and
+     * - The move doubles damage when used against that tag
      */
     const hitsTagMultiplier = new NumberHolder(1);
     move
@@ -3871,19 +3871,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         }
       });
 
-    /** Halves damage if this Pokemon is grounded in Misty Terrain against a Dragon-type attack */
-    const mistyTerrainMultiplier =
-      globalScene.arena.terrain?.terrainType === TerrainType.MISTY
-      && this.isGrounded()
-      && moveType === PokemonType.DRAGON
-        ? 0.5
-        : 1;
-
     damage.value = toDmgValue(
       baseDamage
         * targetMultiplier
         * multiStrikeEnhancementMultiplier.value
-        * arenaAttackTypeMultiplier.value
+        * weatherDamageMultiplier.value
         * glaiveRushMultiplier.value
         * criticalMultiplier.value
         * randomMultiplier
@@ -3891,8 +3883,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         * typeMultiplier
         * burnMultiplier
         * screenMultiplier.value
-        * hitsTagMultiplier.value
-        * mistyTerrainMultiplier,
+        * hitsTagMultiplier.value,
     );
 
     if (!ignoreSourceAbility) {
@@ -3998,32 +3989,36 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Submethod called by {@linkcode damageAndUpdate} to apply damage to this Pokemon and adjust its HP.
    * @param damage - The damage to deal
-   * @param _ignoreSegments - Whether to ignore boss segments; default `false`
-   * @param preventEndure - Whether to allow the damage to bypass an Endure/Sturdy effect
-   * @param ignoreFaintPhase - Whether to ignore adding a FaintPhase if this damage causes a faint
+   * @param ignoreSegments - (Default `false`) Whether to ignore boss segments
+   * @param preventEndure - (Default `false`) Whether to allow the damage to bypass an Endure/Sturdy effect
+   * @param ignoreFaintPhase - (Default `false`) Whether to ignore adding a FaintPhase if this damage causes a faint
    * @returns The actual damage dealt
    */
   // TODO: Rework this to use an object for the optional parameters
   // TODO: Remove uses of this outside of the `Pokemon` class and subclasses and change to `protected`
   // Known violators: Pain Split, Status effect code
-  damage(damage: number, _ignoreSegments = false, preventEndure = false, ignoreFaintPhase = false): number {
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: param used by subclass
+  damage(damage: number, ignoreSegments = false, preventEndure = false, ignoreFaintPhase = false): number {
     if (this.isFainted()) {
       return 0;
     }
-    const surviveDamage = new BooleanHolder(false);
 
-    // check for endure and other abilities that would prevent us from death
     if (!preventEndure && this.hp - damage <= 0) {
+      const surviveDamage = new ValueHolder(false);
+
       if (this.hp >= 1 && this.getTag(BattlerTagType.ENDURING)) {
         surviveDamage.value = this.lapseTag(BattlerTagType.ENDURING);
-      } else if (this.hp > 1 && this.getTag(BattlerTagType.STURDY)) {
-        surviveDamage.value = this.lapseTag(BattlerTagType.STURDY);
+      } else if (this.hp === this.getMaxHp() && this.getTag(BattlerTagType.STURDY)) {
+        surviveDamage.value = true;
+        this.lapseTag(BattlerTagType.STURDY);
       } else if (this.hp >= 1 && this.getTag(BattlerTagType.ENDURE_TOKEN)) {
         surviveDamage.value = this.lapseTag(BattlerTagType.ENDURE_TOKEN);
       }
+
       if (!surviveDamage.value) {
         globalScene.applyModifiers(SurviveDamageModifier, this.isPlayer(), this, surviveDamage);
       }
+
       if (surviveDamage.value) {
         damage = this.hp - 1;
       }
@@ -4031,11 +4026,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     damage = Math.min(damage, this.hp);
     this.hp -= damage;
+
     if (this.isFainted() && !ignoreFaintPhase) {
       globalScene.phaseManager.queueFaintPhase(this.getBattlerIndex(), preventEndure);
       this.destroySubstitute();
       this.lapseTag(BattlerTagType.COMMANDED);
     }
+
     return damage;
   }
 
@@ -7018,10 +7015,6 @@ export class EnemyPokemon extends Pokemon {
     return 0;
   }
 
-  /**
-   * @inheritdoc
-   * @param ignoreSegments - Whether to ignore boss segments when applying damage
-   */
   public damage(damage: number, ignoreSegments = false, preventEndure = false, ignoreFaintPhase = false): number {
     if (this.isFainted()) {
       return 0;

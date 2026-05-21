@@ -12,8 +12,7 @@ import { EnemyPokemon } from "#field/pokemon";
 import { GameManager } from "#test/framework/game-manager";
 import { NumberHolder } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
-import { afterEach } from "node:test";
-import { beforeAll, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
 /**
  * Parameters for {@linkcode createTestablePokemon}
