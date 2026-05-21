@@ -62,7 +62,7 @@ export class AudioManager {
    * @param loop - Whether to loop the bgm
    * @param loopPoint - The starting point of the loop, in seconds
    * @remarks
-   * Helper function used by {@linkcode BattleScene.playBgm | playBgm}.
+   * Helper function used by {@linkcode AudioManager.playBgm}.
    */
   private playNewBgm(bgmName: string, loop: boolean, loopPoint: number): void {
     globalScene.ui.bgmBar.setBgmToBgmBar(bgmName);
