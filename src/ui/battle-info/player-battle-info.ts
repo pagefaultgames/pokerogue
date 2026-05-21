@@ -148,16 +148,25 @@ export class PlayerBattleInfo extends BattleInfo {
       return;
     }
 
-    const levelDurationMultiplier = Math.max(
-      Phaser.Tweens.Builders.GetEaseFunction("Cubic.easeIn")(1 - Math.min(pokemon.level - lastLevel, 10) / 10),
-      0.1,
-    );
-
     for (let level = lastLevel + 1; level <= pokemon.level; level++) {
-      await this.doUpdateExpAnimation(pokemon, levelDurationMultiplier, level, true);
+      await this.doUpdateExpAnimation(pokemon, level, true);
     }
 
-    await this.doUpdateExpAnimation(pokemon, levelDurationMultiplier, pokemon.level, false);
+    await this.doUpdateExpAnimation(pokemon, pokemon.level, false);
+  }
+
+  /**
+   * Calculate the duration multiplier for the EXP bar animation based on the current and final levels.
+   * The smaller the difference, the greater the multiplier (i.e. the longer the animation).
+   * @param currentLevel - The visible level on the Pokemon before this animation
+   * @param finalLevel - The final level of the Pokemon after all EXP has been applied
+   * @returns The numerical multiplier
+   */
+  private getLevelDurationMultiplier(currentLevel: number, finalLevel: number): number {
+    return Math.max(
+      Phaser.Tweens.Builders.GetEaseFunction("Cubic.easeIn")(1 - Math.min(finalLevel - currentLevel, 10) / 10),
+      0.1,
+    );
   }
 
   /**
@@ -171,12 +180,7 @@ export class PlayerBattleInfo extends BattleInfo {
    * @param levelUp - Whether this invocation is a level up
    * @returns A promise that resolves when the animation is complete
    */
-  public async doUpdateExpAnimation(
-    pokemon: PlayerPokemon,
-    levelDurationMultiplier: number,
-    level: number,
-    levelUp: boolean,
-  ): Promise<void> {
+  public async doUpdateExpAnimation(pokemon: PlayerPokemon, level: number, levelUp: boolean): Promise<void> {
     const lastLevel = levelUp ? level - 1 : level;
     const relLevelExp = getLevelRelExp(lastLevel + 1, pokemon.species.growthRate);
     const levelExp = levelUp ? relLevelExp : pokemon.levelExp;
@@ -187,6 +191,8 @@ export class PlayerBattleInfo extends BattleInfo {
     const durationMultiplier = Phaser.Tweens.Builders.GetEaseFunction("Sine.easeIn")(
       1 - Math.max(lastLevel - 100, 0) / 150,
     );
+
+    const levelDurationMultiplier = this.getLevelDurationMultiplier(lastLevel, pokemon.level);
     let duration = this.visible
       ? ((nextWidth - this.expMaskRect.x) / EXP_BAR_WIDTH)
         * BattleInfo.EXP_GAINS_DURATION_BASE
