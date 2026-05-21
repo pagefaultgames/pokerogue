@@ -255,7 +255,7 @@ export class PlayerBattleInfo extends BattleInfo {
    * Overrides the default implementation to handle displaying level capped numbers in red.
    * @param level - The level to display
    */
-  override setLevelDisplay(level: number): void {
+  public override setLevelDisplay(level: number): void {
     super.setLevelDisplay(level, level >= globalScene.getMaxExpLevel() ? "numbers_red" : "numbers");
   }
 }

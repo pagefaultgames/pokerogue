@@ -661,7 +661,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
    * @param level - The level to display
    * @param textureKey - The texture key for the level numbers
    */
-  setLevelDisplay(level: number, textureKey: "numbers" | "numbers_red" = "numbers"): void {
+  public setLevelDisplay(level: number, textureKey: "numbers" | "numbers_red" = "numbers"): void {
     this.levelNumbersContainer.removeAll(true);
     const levelStr = level.toString();
     for (let i = 0; i < levelStr.length; i++) {

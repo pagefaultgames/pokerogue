@@ -6440,19 +6440,20 @@ export class PlayerPokemon extends Pokemon {
   }
 
   /**
-   * Adds experience to this PlayerPokemon, subject to wave based level caps.
+   * Adds experience to this Pokemon, subject to wave based level caps.
    * @param exp - The amount of experience to add
-   * @param ignoreLevelCap - Whether to ignore level caps when adding experience; default `false`
+   * @param ignoreLevelCap - (Default `false`) Whether to ignore level caps when adding experience
    */
-  public addExp(exp: number, ignoreLevelCap = false) {
+  public addExp(exp: number, ignoreLevelCap = false): void {
     const maxExpLevel = globalScene.getMaxExpLevel(ignoreLevelCap);
     const initialExp = this.exp;
     this.exp += exp;
     while (this.level < maxExpLevel && this.exp >= getLevelTotalExp(this.level + 1, this.species.growthRate)) {
       this.level++;
     }
+    // The exp value can exceed what is necessary to reach the level cap when gaining exp,
+    // so it's reduced here to match the level cap if that happens.
     if (this.level >= maxExpLevel) {
-      console.log(initialExp, this.exp, getLevelTotalExp(this.level, this.species.growthRate));
       this.exp = Math.max(getLevelTotalExp(this.level, this.species.growthRate), initialExp);
     }
   }
