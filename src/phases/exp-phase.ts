@@ -1,16 +1,18 @@
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
+import type { PlayerPokemon } from "#field/pokemon";
 import { ExpBoosterModifier } from "#modifiers/modifier";
 import { PlayerPartyMemberPokemonPhase } from "#phases/player-party-member-pokemon-phase";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 
 /**
- * Phase to update the EXP value and play corresponding messages for a {@linkcode PlayerPokemon} which is on the field.
+ * Phase to update the EXP value and play corresponding messages
+ * for a {@linkcode PlayerPokemon} which is on the field.
  */
 export class ExpPhase extends PlayerPartyMemberPokemonPhase {
   public readonly phaseName = "ExpPhase";
-  private expValue: number;
+  private readonly expValue: number;
 
   constructor(partyMemberIndex: number, expValue: number) {
     super(partyMemberIndex);
@@ -18,7 +20,7 @@ export class ExpPhase extends PlayerPartyMemberPokemonPhase {
     this.expValue = expValue;
   }
 
-  start() {
+  public override start(): void {
     super.start();
 
     const pokemon = this.getPlayerPokemon();
