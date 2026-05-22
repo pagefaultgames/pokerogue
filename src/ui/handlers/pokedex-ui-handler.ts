@@ -33,6 +33,7 @@ import { getVariantIcon, getVariantTint } from "#sprites/variant";
 import type { GameData } from "#system/game-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
+import type { TweenChainBuilderConfigFixedInt } from "#types/phaser.d";
 import type { DexAttrProps, StarterAttributes } from "#types/save-data";
 import type { OptionSelectConfig } from "#ui/abstract-option-select-ui-handler";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
@@ -969,7 +970,7 @@ export class PokedexUiHandler extends MessageUiHandler {
 
     icon.y = 2;
 
-    const tweenChain: Phaser.Types.Tweens.TweenChainBuilderConfig = {
+    const tweenChain: TweenChainBuilderConfigFixedInt = {
       targets: icon,
       loop: -1,
       paused: startPaused,

@@ -6,6 +6,7 @@ import { UiMode } from "#enums/ui-mode";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
+import type { FixedInt } from "#utils/common";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
@@ -170,11 +171,11 @@ export class BattleMessageUiHandler extends MessageUiHandler {
 
   showText(
     text: string,
-    delay?: number | null,
+    delay?: number | FixedInt | null,
     callback?: (() => void) | null,
-    callbackDelay?: number | null,
+    callbackDelay?: number | FixedInt | null,
     prompt?: boolean | null,
-    promptDelay?: number | null,
+    promptDelay?: number | FixedInt | null,
   ) {
     this.hideNameText();
     super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
@@ -183,11 +184,11 @@ export class BattleMessageUiHandler extends MessageUiHandler {
   showDialogue(
     text: string,
     name?: string,
-    delay?: number | null,
+    delay?: number | FixedInt | null,
     callback?: () => void,
-    callbackDelay?: number,
+    callbackDelay?: number | FixedInt,
     prompt?: boolean,
-    promptDelay?: number,
+    promptDelay?: number | FixedInt,
   ) {
     if (name) {
       this.showNameText(name);

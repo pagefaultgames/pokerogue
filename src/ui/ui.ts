@@ -58,7 +58,7 @@ import { TitleUiHandler } from "#ui/title-ui-handler";
 import type { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { UnavailableModalUiHandler } from "#ui/unavailable-modal-ui-handler";
-import { executeIf } from "#utils/common";
+import { executeIf, type FixedInt } from "#utils/common";
 import i18next from "i18next";
 import { AdminUiHandler } from "./handlers/admin-ui-handler";
 import { RenameRunFormUiHandler } from "./handlers/rename-run-ui-handler";
@@ -279,11 +279,11 @@ export class UI extends Phaser.GameObjects.Container {
 
   showText(
     text: string,
-    delay?: number | null,
+    delay?: number | FixedInt | null,
     callback?: (() => void) | null,
-    callbackDelay?: number | null,
+    callbackDelay?: number | FixedInt | null,
     prompt?: boolean | null,
-    promptDelay?: number | null,
+    promptDelay?: number | FixedInt | null,
   ): void {
     const pokename: string[] = [];
     const repname = ["#POKEMON1", "#POKEMON2"];
@@ -317,10 +317,10 @@ export class UI extends Phaser.GameObjects.Container {
   showDialogue(
     keyOrText: string,
     name: string | undefined,
-    delay: number | null = 0,
+    delay: number | FixedInt | null = 0,
     callback: () => void,
-    callbackDelay?: number,
-    promptDelay?: number,
+    callbackDelay?: number | FixedInt,
+    promptDelay?: number | FixedInt,
   ): void {
     // Get localized dialogue (if available)
     let hasi18n = false;

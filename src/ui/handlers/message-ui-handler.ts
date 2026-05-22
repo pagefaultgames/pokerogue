@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import type { UiMode } from "#enums/ui-mode";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
-import { getFrameMs } from "#utils/common";
+import { type FixedInt, getFrameMs } from "#utils/common";
 
 export abstract class MessageUiHandler extends AwaitableUiHandler {
   protected textTimer: Phaser.Time.TimerEvent | null;
@@ -36,11 +36,11 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
 
   showText(
     text: string,
-    delay?: number | null,
+    delay?: number | FixedInt | null,
     callback?: (() => void) | null,
-    callbackDelay?: number | null,
+    callbackDelay?: number | FixedInt | null,
     prompt?: boolean | null,
-    promptDelay?: number | null,
+    promptDelay?: number | FixedInt | null,
   ) {
     this.showTextInternal(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
@@ -48,22 +48,22 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
   showDialogue(
     text: string,
     _name?: string,
-    delay?: number | null,
+    delay?: number | FixedInt | null,
     callback?: (() => void) | null,
-    callbackDelay?: number | null,
+    callbackDelay?: number | FixedInt | null,
     prompt?: boolean | null,
-    promptDelay?: number | null,
+    promptDelay?: number | FixedInt | null,
   ) {
     this.showTextInternal(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
   private showTextInternal(
     text: string,
-    delay?: number | null,
+    delay?: number | FixedInt | null,
     callback?: (() => void) | null,
-    callbackDelay?: number | null,
+    callbackDelay?: number | FixedInt | null,
     prompt?: boolean | null,
-    promptDelay?: number | null,
+    promptDelay?: number | FixedInt | null,
   ) {
     if (delay === null || delay === undefined) {
       delay = 20;
@@ -219,7 +219,7 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
     }
   }
 
-  showPrompt(callback?: (() => void) | null, callbackDelay?: number | null) {
+  showPrompt(callback?: (() => void) | null, callbackDelay?: number | FixedInt | null) {
     const wrappedTextLines = this.message.runWordWrap(this.message.text).split(/\n/g);
     const textLinesCount = wrappedTextLines.length;
     const lastTextLine = wrappedTextLines.at(-1) ?? "";
