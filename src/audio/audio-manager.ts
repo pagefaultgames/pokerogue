@@ -77,7 +77,7 @@ export class AudioManager {
     }
 
     if (this.currentBgm && this.currentBgm.key === resolvedName) {
-      this.currentBgm.play(this.getVolume(VolumeSetting.BGM)); // nop if already playing
+      this.currentBgm.play(this.getVolume(VolumeSetting.BGM)); // no-op if already playing
       return null;
     }
 
