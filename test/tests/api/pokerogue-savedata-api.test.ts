@@ -1,4 +1,4 @@
-import { PokerogueSavedataApi } from "#api/pokerogue-savedata-api";
+import { PokerogueSavedataApi } from "#api/savedata-api";
 import { initServerForApiTests } from "#test/setup/test-file-initialization";
 import { getApiBaseUrl } from "#test/utils/test-utils";
 import type { UpdateAllSavedataRequest } from "#types/api";

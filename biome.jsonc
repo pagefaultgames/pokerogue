@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.13/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.4.14/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -172,7 +172,6 @@
             }
           }
         },
-
         "useUnifiedTypeSignatures": {
           "level": "warn",
           "fix": "unsafe",
@@ -228,6 +227,16 @@
                 "match": ".*"
               }
             ]
+          }
+        },
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "paths": {
+              "node:test": {
+                "message": "Do not import from `node:test`, use `vitest`"
+              }
+            }
           }
         }
       },
@@ -331,7 +340,7 @@
       }
     },
     {
-      "includes": ["**/scripts/**/*.js"],
+      "includes": ["scripts/**/*"],
       "linter": {
         "rules": {
           "style": {
@@ -378,6 +387,26 @@
         "rules": {
           "style": {
             "useImportType": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/**/*.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["#test/*"],
+                    "message": "Do not import files from `test/` in `src/`."
+                  }
+                ]
+              }
+            }
           }
         }
       }

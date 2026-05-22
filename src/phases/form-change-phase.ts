@@ -85,7 +85,7 @@ export class FormChangePhase extends EvolutionPhase {
         }
 
         const delay = playEvolutionFanfare ? 4000 : 1750;
-        globalScene.playSoundWithoutBgm(playEvolutionFanfare ? "evolution_fanfare" : "minor_fanfare");
+        globalScene.replaceBgmUntilEnd(playEvolutionFanfare ? "bw/evolution_fanfare" : "bw/minor_fanfare");
         transformedPokemon.destroy();
         globalScene.ui.showText(
           getSpeciesFormChangeMessage(this.pokemon, this.formChange, preName),

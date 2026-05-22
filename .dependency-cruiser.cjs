@@ -1,6 +1,36 @@
 /** @type {import('dependency-cruiser').IConfiguration} */
 module.exports = {
   forbidden: [
+    // #region Package Boundaries
+    {
+      name: "not-to-test",
+      comment:
+        "This module depends on a file that is meant to test or facilitate the testing of other source code."
+        + "\nThese files should not be referenced by anything but other test code, as they will be excluded from the compiled output."
+        + "\nIf there's something inside the folder that's of use to other modules, it should be moved out to make it generally available.",
+      severity: "error",
+      from: {
+        pathNot: ["(^|/)test/"],
+      },
+      to: {
+        path: ["(^|/)test/"],
+      },
+    },
+    {
+      name: "not-to-scripts",
+      comment:
+        "This module depends on a file in `scripts`, which contains external helpers not included in the compiled output."
+        + "\nIn addition to running via Node (instead of a browser), these files use additional subpath imports between each other that will break typechecks of main repo code."
+        + "\nLegitimate reasons for moving things out of scripts are few and far between; the standard solution is usually to remove the offending import.",
+      severity: "error",
+      from: {
+        pathNot: ["(^|/)scripts/"],
+      },
+      to: {
+        path: ["(^|/)scripts/"],
+      },
+    },
+    // #endregion Package Boundaries
     {
       name: "no-non-type-@type-exports",
       severity: "error",

@@ -3,8 +3,11 @@ import type { UiMode } from "#enums/ui-mode";
 import type { ModalConfig } from "#ui/modal-ui-handler";
 import { ModalUiHandler } from "#ui/modal-ui-handler";
 import { addTextObject } from "#ui/text";
+import i18next from "i18next";
 
 export class SessionReloadModalUiHandler extends ModalUiHandler {
+  private label: Phaser.GameObjects.Text;
+
   constructor(mode: UiMode | null = null) {
     super(mode);
   }
@@ -32,22 +35,25 @@ export class SessionReloadModalUiHandler extends ModalUiHandler {
   setup(): void {
     super.setup();
 
-    const label = addTextObject(
+    this.label = addTextObject(
       this.getWidth() / 2,
       this.getHeight() / 2,
-      "Your session is out of date.\nYour data will be reloaded…",
+      i18next.t("gameData:reloadSaveData"),
       TextStyle.WINDOW,
       { fontSize: "48px", align: "center" },
-    );
-    label.setOrigin(0.5, 0.5);
+    ) //
+      .setOrigin(0.5, 0.5);
 
-    this.modalContainer.add(label);
+    this.modalContainer.add(this.label);
   }
 
-  show(_args: any[]): boolean {
-    const config: ModalConfig = {
-      buttonActions: [],
-    };
+  show(args: any[]): boolean {
+    const config: ModalConfig = { buttonActions: [] };
+    const local: boolean = args[0];
+
+    if (local) {
+      this.label.setText(i18next.t("gameData:reloadSaveDataLocal"));
+    }
 
     return super.show([config]);
   }

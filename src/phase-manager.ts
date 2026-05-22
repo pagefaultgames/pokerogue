@@ -82,7 +82,6 @@ import { PostSummonPhase } from "#phases/post-summon-phase";
 import { PostTurnStatusEffectPhase } from "#phases/post-turn-status-effect-phase";
 import { QuietFormChangePhase } from "#phases/quiet-form-change-phase";
 import { RecallPhase } from "#phases/recall-phase";
-import { ReloadSessionPhase } from "#phases/reload-session-phase";
 import { ResetStatusPhase } from "#phases/reset-status-phase";
 import { RevivalBlessingPhase } from "#phases/revival-blessing-phase";
 import { RibbonModifierRewardPhase } from "#phases/ribbon-modifier-reward-phase";
@@ -190,7 +189,6 @@ const PHASES = Object.freeze({
   PostSummonPhase,
   PostTurnStatusEffectPhase,
   QuietFormChangePhase,
-  ReloadSessionPhase,
   ResetStatusPhase,
   RecallPhase,
   RevivalBlessingPhase,
@@ -711,5 +709,6 @@ export class PhaseManager {
       turnEndPhase.upcomingInterlude = true;
     }
   }
+
   // #endregion Phase Functions
 }

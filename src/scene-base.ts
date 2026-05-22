@@ -81,9 +81,4 @@ export class SceneBase extends Phaser.Scene {
     }
     return this;
   }
-
-  public loadBgm(key: string, filename = `${key}.mp3`): this {
-    this.load.audio(key, getCachedUrl(`audio/bgm/${filename}`));
-    return this;
-  }
 }

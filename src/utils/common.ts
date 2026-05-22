@@ -1,4 +1,4 @@
-import { pokerogueApi } from "#api/pokerogue-api";
+import { pokerogueApi } from "#api/api";
 import { bypassLogin, isDev } from "#constants/app-constants";
 import { BiomeId } from "#enums/biome-id";
 import { MoneyFormat } from "#enums/money-format";
@@ -69,7 +69,7 @@ export function padInt(value: number, length: number, padWith?: string): string 
   if (!padWith) {
     padWith = "0";
   }
-  let valueStr = value.toString();
+  let valueStr: string = value.toString();
   while (valueStr.length < length) {
     valueStr = `${padWith}${valueStr}`;
   }
@@ -453,14 +453,6 @@ export function getBiomeName(biome: BiomeId | -1) {
   if (biome === -1) {
     return i18next.t("biome:unknownLocation");
   }
-  switch (biome) {
-    case BiomeId.GRASS:
-      return i18next.t("biome:grass");
-    case BiomeId.RUINS:
-      return i18next.t("biome:ruins");
-    case BiomeId.END:
-      return i18next.t("biome:end");
-    default:
-      return i18next.t(`biome:${toCamelCase(enumValueToKey(BiomeId, biome))}`);
-  }
+
+  return i18next.t(`biome:${toCamelCase(enumValueToKey(BiomeId, biome))}`);
 }
