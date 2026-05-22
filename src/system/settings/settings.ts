@@ -184,6 +184,7 @@ export const SettingKeys = {
   Show_Missing_Ribbons: "SHOW_MISSING_RIBBONS",
   Move_Touch_Controls: "MOVE_TOUCH_CONTROLS",
   Shop_Overlay_Opacity: "SHOP_OVERLAY_OPACITY",
+  Prefer_Baton_Pass: "PREFER_BATON_PASS",
 };
 
 export enum MusicPreference {
@@ -723,6 +724,13 @@ export const Setting: Setting[] = [
     type: SettingType.DISPLAY,
     requireReload: false,
   },
+  {
+    key: SettingKeys.Prefer_Baton_Pass,
+    label: i18next.t("settings:preferBatonPass"),
+    options: OFF_ON,
+    default: 1,
+    type: SettingType.DISPLAY,
+  },
 ];
 
 if (isDev) {
@@ -923,6 +931,9 @@ export function setSetting(setting: string, value: number): boolean {
       break;
     case SettingKeys.Type_Hints:
       globalScene.typeHints = Setting[index].options[value].value === "On";
+      break;
+    case SettingKeys.Prefer_Baton_Pass:
+      globalScene.preferBatonPass = Setting[index].options[value].value === "On";
       break;
     case SettingKeys.Language:
       if (value && globalScene.ui) {

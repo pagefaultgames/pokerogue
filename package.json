@@ -24,7 +24,7 @@
     "eggMoves:parse": "vite-node scripts/parse-egg-moves/main.ts",
     "scrape-trainers": "vite-node scripts/scrape-trainer-names/main.ts",
     "dailySeed:create": "vite-node scripts/daily-seed/main.ts",
-    "changelog": "node scripts/changelog-reader/main.mjs",
+    "changelog": "node .github/scripts/changelog-reader/main.mts",
     "typecheck": "tsc",
     "typecheck:main": "tsc -p scripts/tsconfig.json",
     "typecheck:github": "tsc -p .github/scripts/tsconfig.json",
