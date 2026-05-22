@@ -163,7 +163,6 @@ export class BackgroundMusic {
 
   /**
    * Run an operation immediately, or defer it until the sound has loaded.
-   * Always short-circuits if the BGM has been destroyed.
    * @param operation - The function to run on ready
    */
   private withSound(operation: (sound: AnySound) => void): void {
