@@ -3,7 +3,7 @@ import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { ExpNotification } from "#enums/exp-notification";
 import { ExpBoosterModifier } from "#modifiers/modifier";
 import { PlayerPartyMemberPokemonPhase } from "#phases/player-party-member-pokemon-phase";
-import { NumberHolder } from "#utils/common";
+import { ValueHolder } from "#utils/value-holder";
 
 export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
   public readonly phaseName = "ShowPartyExpBarPhase";
@@ -15,11 +15,11 @@ export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
     this.expValue = expValue;
   }
 
-  start() {
+  public override start(): void {
     super.start();
 
-    const pokemon = this.getPokemon();
-    const exp = new NumberHolder(this.expValue);
+    const pokemon = this.getPlayerPokemon();
+    const exp = new ValueHolder(this.expValue);
     globalScene.applyModifiers(ExpBoosterModifier, true, exp);
     exp.value = Math.floor(exp.value);
 
