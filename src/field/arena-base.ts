@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { activeOverrides } from "#app/overrides";
 import type { BiomeId } from "#enums/biome-id";
 import { getBiomeHasProps, getBiomeKey } from "#field/arena";
 import { randSeedInt } from "#utils/common";
@@ -64,7 +65,9 @@ export class ArenaBase extends Phaser.GameObjects.Container {
     if (!this.player) {
       globalScene.executeWithSeedOffset(
         () => {
-          this.propValue = propValue === undefined ? (hasProps ? randSeedInt(8) : 0) : propValue;
+          this.propValue = propValue === undefined
+              ? (hasProps ? (activeOverrides.ALL_BIOME_PROPS_OVERRIDE ? 7 : randSeedInt(8)) : 0)
+              : propValue;
           this.props.forEach((prop, p) => {
             const propKey = `${biomeKey}_b${hasProps ? `_${p + 1}` : ""}`;
             prop.setTexture(propKey);
