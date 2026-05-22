@@ -57,27 +57,6 @@ export class AudioManager {
   }
 
   /**
-   * Stops the previously playing bgm (if it exists) and starts playing a new bgm.
-   * @param bgmName - The bgm to play
-   * @param loop - Whether to loop the bgm
-   * @param loopPoint - The starting point of the loop, in seconds
-   * @remarks
-   * Helper function used by {@linkcode AudioManager.playBgm}.
-   */
-  private playNewBgm(bgmName: string, loop: boolean, loopPoint: number): void {
-    globalScene.ui.bgmBar.setBgmToBgmBar(bgmName);
-
-    const previous = this.currentBgm;
-    if (previous?.isPlaying) {
-      previous.stop();
-    }
-    previous?.destroy();
-
-    this.currentBgm = new BackgroundMusic(bgmName, loop, loopPoint);
-    this.currentBgm.play(this.getVolume(VolumeSetting.BGM));
-  }
-
-  /**
    * Plays a new bgm.
    * @param bgmName - (Optional) The bgm to play. \
    * If not specified, will first fall back to choosing the bgm based on the current battle config,
@@ -97,29 +76,32 @@ export class AudioManager {
       return null;
     }
 
-    if (this.currentBgm?.key === resolvedName) {
-      if (!this.currentBgm.isPlaying) {
-        this.currentBgm.play(this.getVolume(VolumeSetting.BGM));
-      }
+    if (this.currentBgm && this.currentBgm.key === resolvedName) {
+      this.currentBgm.play(this.getVolume(VolumeSetting.BGM)); // nop if already playing
       return null;
     }
 
     const loopPoint =
       resolvedName === globalScene.arena?.bgm ? globalScene.arena.bgmLoopPoint : this.getBgmLoopPoint(resolvedName);
 
-    const shouldFadeOut = fadeOutPrevious && this.currentBgm?.isPlaying;
+    const previous = this.currentBgm;
+    const newBgm = new BackgroundMusic(resolvedName, loop, loopPoint);
+    this.currentBgm = newBgm;
 
-    if (shouldFadeOut) {
+    globalScene.ui.bgmBar.setBgmToBgmBar(resolvedName);
+
+    const volume = this.getVolume(VolumeSetting.BGM);
+
+    if (fadeOutPrevious && previous?.isPlaying) {
       const fadeDuration = 500;
-      this.fadeOutBgm(fadeDuration, true);
-      globalScene.time.delayedCall(fixedInt(fadeDuration + 250), () => {
-        this.playNewBgm(resolvedName, loop, loopPoint);
-      });
+      previous.fadeOut(fadeDuration, true);
+      newBgm.playAfterDelay(fixedInt(fadeDuration + 250), volume);
     } else {
-      this.playNewBgm(resolvedName, loop, loopPoint);
+      previous?.destroy();
+      newBgm.play(volume);
     }
 
-    return this.currentBgm;
+    return newBgm;
   }
 
   /** Updates the set volume for the audio/bgm with the user's saved config values. */
@@ -156,6 +138,7 @@ export class AudioManager {
    */
   public fadeOutBgm(duration = 500, fixed = false): void {
     this.currentBgm?.fadeOut(duration, fixed);
+    this.currentBgm = null;
   }
 
   /**
