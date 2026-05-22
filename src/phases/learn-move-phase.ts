@@ -21,18 +21,21 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   private messageMode: UiMode;
   private readonly learnMoveType: LearnMoveType;
   private readonly cost: number;
+  private readonly replaceMoveId: MoveId | null;
 
   constructor(
     partyMemberIndex: number,
     moveId: MoveId,
     learnMoveType: LearnMoveType = LearnMoveType.LEARN_MOVE,
     cost = -1,
+    replaceMoveId: MoveId | null = null,
   ) {
     super(partyMemberIndex);
 
     this.moveId = moveId;
     this.learnMoveType = learnMoveType;
     this.cost = cost;
+    this.replaceMoveId = replaceMoveId;
   }
 
   public override start(): void {
@@ -50,6 +53,22 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     const hasMoveAlready = currentMoveset.some(m => m.moveId === move.id) && this.moveId !== MoveId.SKETCH;
     if (hasMoveAlready) {
       this.end();
+      return;
+    }
+
+    if (this.learnMoveType === LearnMoveType.FORM_CHANGE) {
+      this.messageMode =
+        globalScene.ui.getHandler() instanceof EvolutionSceneUiHandler ? UiMode.EVOLUTION_SCENE : UiMode.MESSAGE;
+      globalScene.ui.setMode(this.messageMode);
+
+      const replaceIndex =
+        this.replaceMoveId === null ? -1 : currentMoveset.findIndex(m => m?.moveId === this.replaceMoveId);
+      const targetIndex = replaceIndex === -1 ? (currentMoveset.length < 4 ? currentMoveset.length : -1) : replaceIndex;
+      if (targetIndex === -1) {
+        this.replaceMoveCheck(move, pokemon);
+      } else {
+        this.learnMove(targetIndex, move, pokemon);
+      }
       return;
     }
 

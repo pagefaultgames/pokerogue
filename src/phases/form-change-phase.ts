@@ -1,10 +1,13 @@
 import type { Animation } from "#app/animations";
 import { audioManager } from "#app/global-audio-manager";
+import { EVOLVE_MOVE } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { getSpeciesFormChangeMessage } from "#data/form-change-triggers";
 import type { SpeciesFormChange } from "#data/pokemon-forms";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { LearnMoveSituation } from "#enums/learn-move-situation";
+import { LearnMoveType } from "#enums/learn-move-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
@@ -17,6 +20,8 @@ export class FormChangePhase extends EvolutionPhase {
   public readonly phaseName = "FormChangePhase";
   private formChange: SpeciesFormChange;
   private modal: boolean;
+  /** Move de assinatura da forma anterior (o que vai ser substituído), se existir */
+  private preFormMoveIds: number[] = [];
 
   constructor(pokemon: PlayerPokemon, formChange: SpeciesFormChange, modal: boolean) {
     super(pokemon, null, 0);
@@ -114,6 +119,9 @@ export class FormChangePhase extends EvolutionPhase {
     this.pokemonEvoSprite.setVisible(true);
     globalScene.animations.doCircleInward(this.evolutionBaseBg, this.evolutionContainer);
     globalScene.time.delayedCall(900, () => {
+      // Guarda o EVOLVE_MOVE da forma actual antes de mudar (será o move a substituir)
+      this.preFormMoveIds = this.pokemon.moveset.map(m => m?.moveId ?? -1);
+
       this.pokemon.changeForm(this.formChange).then(() => {
         if (!this.modal) {
           globalScene.phaseManager.unshiftNew("EndEvolutionPhase");
@@ -195,6 +203,36 @@ export class FormChangePhase extends EvolutionPhase {
 
   end(): void {
     this.pokemon.findAndRemoveTags(t => t.tagType === BattlerTagType.AUTOTOMIZED);
+
+    // Após a mudança de forma, verifica se há moves de assinatura novos a aprender
+    const levelMoves = this.pokemon
+      .getLevelMoves(1, true, false, false, LearnMoveSituation.EVOLUTION)
+      .filter(lm => lm[0] === EVOLVE_MOVE);
+
+    for (const lm of levelMoves) {
+      const moveId = lm[1];
+      const alreadyKnows = this.pokemon.moveset.some(m => m?.moveId === moveId);
+      if (!alreadyKnows) {
+        // Procura no learnset da forma nova outros moves que o Pokémon tinha antes
+        // O move a substituir é o que existia no moveset anterior e ainda existe
+        // no learnset da forma nova a nível > 0 (i.e. não é um EVOLVE_MOVE)
+        const newFormAllMoves = this.pokemon
+          .getLevelMoves(1, true, false, false, LearnMoveSituation.EVOLUTION)
+          .map(lm2 => lm2[1]);
+        const replaceMoveId =
+          this.preFormMoveIds.find(id => id !== -1 && newFormAllMoves.includes(id) && id !== moveId) ?? null;
+
+        globalScene.phaseManager.unshiftNew(
+          "LearnMovePhase",
+          globalScene.getPlayerParty().indexOf(this.pokemon),
+          moveId,
+          LearnMoveType.FORM_CHANGE,
+          -1,
+          replaceMoveId,
+        );
+      }
+    }
+
     if (this.modal) {
       globalScene.ui.revertMode().then(() => {
         if (globalScene.ui.getMode() === UiMode.PARTY) {
@@ -202,7 +240,6 @@ export class FormChangePhase extends EvolutionPhase {
           partyUiHandler.clearPartySlots();
           partyUiHandler.populatePartySlots();
         }
-
         super.end();
       });
     } else {
