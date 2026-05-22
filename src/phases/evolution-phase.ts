@@ -1,9 +1,9 @@
-import type { BackgroundMusic } from "#app/audio/background-music";
 import { EVOLVE_MOVE } from "#app/constants";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { Phase } from "#app/phase";
+import type { BackgroundMusic } from "#audio/background-music";
 import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { FusionSpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { getTypeRgb } from "#data/type";

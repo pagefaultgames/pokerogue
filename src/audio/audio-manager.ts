@@ -1,6 +1,6 @@
-import { BackgroundMusic } from "#app/audio/background-music";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
+import { BackgroundMusic } from "#audio/background-music";
 import { VolumeSetting } from "#enums/volume-setting";
 import { fixedInt } from "#utils/common";
 

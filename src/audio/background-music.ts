@@ -1,5 +1,5 @@
-import type { AnySound } from "#app/audio-manager";
 import { globalScene } from "#app/global-scene";
+import type { AnySound } from "#audio/audio-manager";
 import { fixedInt } from "#utils/common";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 

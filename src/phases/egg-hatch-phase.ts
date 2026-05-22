@@ -1,7 +1,7 @@
-import type { BackgroundMusic } from "#app/audio/background-music";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
+import type { BackgroundMusic } from "#audio/background-music";
 import type { Egg } from "#data/egg";
 import type { EggHatchData } from "#data/egg-hatch-data";
 import { UiMode } from "#enums/ui-mode";

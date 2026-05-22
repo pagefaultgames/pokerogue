@@ -1,3 +1,3 @@
-import { AudioManager } from "#app/audio-manager";
+import { AudioManager } from "#audio/audio-manager";
 
 export const audioManager = new AudioManager();
