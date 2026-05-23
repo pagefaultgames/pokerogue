@@ -199,6 +199,5 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.BLAST_BURN,
   MoveId.FRENZY_PLANT,
   MoveId.HYDRO_CANNON,
-  MoveId.ROCK_WRECKER,
   MoveId.PRISMATIC_LASER,
 ]);

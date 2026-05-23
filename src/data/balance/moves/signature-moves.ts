@@ -202,8 +202,8 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
   [SpeciesId.MELMETAL]: MoveId.DOUBLE_IRON_BASH,
 
   // Gen 8 Legends
-  [SpeciesId.ZACIAN]: [MoveId.BEHEMOTH_BLADE, MoveId.PLAY_ROUGH],
-  [SpeciesId.ZAMAZENTA]: [MoveId.BEHEMOTH_BASH, MoveId.BODY_PRESS],
+  [SpeciesId.ZACIAN]: [MoveId.BEHEMOTH_BLADE, MoveId.PLAY_ROUGH], // Adjust to Iron Head once form change related functionality is added for Crowned Zacian / Zamazenta.
+  [SpeciesId.ZAMAZENTA]: [MoveId.BEHEMOTH_BASH, MoveId.BODY_PRESS], // ^^
   [SpeciesId.ETERNATUS]: MoveId.DYNAMAX_CANNON,
   [SpeciesId.URSHIFU]: [MoveId.WICKED_BLOW, MoveId.SURGING_STRIKES],
   [SpeciesId.REGIDRAGO]: MoveId.DRAGON_ENERGY,
