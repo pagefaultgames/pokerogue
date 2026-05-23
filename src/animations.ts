@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import type { BattleAnim } from "#data/battle-anims";
 import { PokeballType } from "#enums/pokeball";
@@ -259,7 +260,7 @@ export class Animation {
 
     // Play the animation
     sparkleSprite.play(animationKey);
-    globalScene.playSound("se/sparkle");
+    audioManager.playSound("se/sparkle");
   }
 
   public cos(index: number, amplitude: number): number {

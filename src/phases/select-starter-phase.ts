@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { activeOverrides } from "#app/overrides";
 import { Phase } from "#app/phase";
@@ -16,7 +17,7 @@ export class SelectStarterPhase extends Phase {
   start() {
     super.start();
 
-    globalScene.playBgm("menu");
+    audioManager.playBgm("menu");
 
     globalScene.ui.setMode(UiMode.STARTER_SELECT, (starters: Starter[]) => {
       globalScene.ui.clearText();
@@ -108,7 +109,7 @@ export class SelectStarterPhase extends Phase {
     overrideModifiers();
     overrideHeldItems(party[0]);
     Promise.all(loadPokemonAssets).then(() => {
-      globalScene.fadeAndSwitchBgm(undefined, 500);
+      audioManager.fadeAndSwitchBgm(undefined, 500);
       if (globalScene.gameMode.isClassic) {
         globalScene.gameData.gameStats.classicSessionsPlayed++;
       } else {

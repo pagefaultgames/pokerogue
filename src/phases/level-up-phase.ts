@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { ExpNotification } from "#enums/exp-notification";
@@ -53,7 +54,7 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
   }
 
   private async showLevelUpMessages(prevStats: number[]): Promise<void> {
-    globalScene.playSound("se/level_up_fanfare");
+    audioManager.playSound("se/level_up_fanfare");
 
     const { promise, resolve } = Promise.withResolvers<void>();
 

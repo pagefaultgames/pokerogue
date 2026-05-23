@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
 import { activeOverrides } from "#app/overrides";
@@ -1873,7 +1874,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                 variant: newVariant,
               });
 
-              globalScene.playSound("se/sparkle");
+              audioManager.playSound("se/sparkle");
 
               starterAttributes.shiny = true;
               this.savedStarterAttributes.shiny = starterAttributes.shiny;
@@ -2014,7 +2015,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                     }
                   });
                   this.setSpeciesDetails(this.species);
-                  globalScene.playSound("se/buy");
+                  audioManager.playSound("se/buy");
                   ui.setMode(UiMode.POKEDEX_PAGE, "refresh");
 
                   return true;
@@ -2048,7 +2049,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                     }
                   });
                   ui.setMode(UiMode.POKEDEX_PAGE, "refresh");
-                  globalScene.playSound("se/buy");
+                  audioManager.playSound("se/buy");
 
                   return true;
                 },
@@ -2100,7 +2101,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                   }
                 });
                 ui.setMode(UiMode.POKEDEX_PAGE, "refresh");
-                globalScene.playSound("se/buy");
+                audioManager.playSound("se/buy");
 
                 return true;
               },
