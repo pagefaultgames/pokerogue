@@ -161,8 +161,8 @@ export class SummaryUiHandler extends UiHandler {
     this.shinyOverlay.setVisible(false);
     this.summaryContainer.add(this.shinyOverlay);
 
-    this.numberText = addTextObject(17, -149, "0000", TextStyle.SUMMARY);
-    this.numberText.setOrigin(0, 1);
+    this.numberText = addTextObject(41, -149, "0000", TextStyle.SUMMARY_DEX_NUM);
+    this.numberText.setOrigin(1, 1);
     this.summaryContainer.add(this.numberText);
 
     this.pokemonSprite = globalScene.initPokemonSprite(
@@ -863,7 +863,7 @@ export class SummaryUiHandler extends UiHandler {
         const trainerIdText = addTextObject(
           141,
           12,
-          `${i18next.t("pokemonSummary:idNo")}${idToDisplay}`,
+          i18next.t("pokemonSummary:idNo", { idNo: idToDisplay }),
           TextStyle.SUMMARY_ALT,
         ).setOrigin(0);
         profileContainer.add(trainerIdText);

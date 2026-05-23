@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import type { BattlerIndex } from "#enums/battler-index";
 import { HitResult } from "#enums/hit-result";
@@ -51,15 +52,15 @@ export class DamageAnimPhase extends PokemonPhase {
     switch (this.damageResult) {
       case HitResult.EFFECTIVE:
       case HitResult.CONFUSION:
-        globalScene.playSound("se/hit");
+        audioManager.playSound("se/hit");
         break;
       case HitResult.SUPER_EFFECTIVE:
       case HitResult.INDIRECT_KO:
       case HitResult.ONE_HIT_KO:
-        globalScene.playSound("se/hit_strong");
+        audioManager.playSound("se/hit_strong");
         break;
       case HitResult.NOT_VERY_EFFECTIVE:
-        globalScene.playSound("se/hit_weak");
+        audioManager.playSound("se/hit_weak");
         break;
     }
 

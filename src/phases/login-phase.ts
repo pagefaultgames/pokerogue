@@ -1,4 +1,5 @@
 import { updateUserInfo } from "#app/account";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 import { handleTutorial, Tutorial } from "#app/tutorial";
@@ -93,7 +94,7 @@ export class LoginPhase extends Phase {
       ui.showText(i18next.t("menu:logInOrCreateAccount"));
     }
 
-    globalScene.playSound("ui/menu_open");
+    audioManager.playSound("ui/menu_open");
 
     ui.setMode(UiMode.LOGIN_OR_REGISTER, { buttonActions: [goToLoginButton, goToRegistrationButton] });
   }
@@ -125,7 +126,7 @@ export class LoginPhase extends Phase {
       await gameData.loadSystem();
       this.end();
     };
-    globalScene.playSound("ui/menu_open");
+    audioManager.playSound("ui/menu_open");
 
     ui.setMode(UiMode.LOGIN_FORM, { buttonActions: [loginButton, backButton] });
   }
@@ -145,7 +146,7 @@ export class LoginPhase extends Phase {
       }
       this.end();
     };
-    globalScene.playSound("ui/menu_open");
+    audioManager.playSound("ui/menu_open");
 
     ui.setMode(UiMode.REGISTRATION_FORM, { buttonActions: [registerButton, backButton] });
   }

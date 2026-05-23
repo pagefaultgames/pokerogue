@@ -1,4 +1,5 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { modifierTypes } from "#data/data-lists";
 import { BattlerIndex } from "#enums/battler-index";
@@ -207,7 +208,7 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
         const modifier = blackSludge?.newModifier();
         if (modifier) {
           await globalScene.addModifier(modifier, false, false, false, true);
-          globalScene.playSound("battle_anims/PRSFX- Venom Drench", {
+          audioManager.playSound("battle_anims/PRSFX- Venom Drench", {
             volume: 2,
           });
           await showEncounterText(
@@ -247,7 +248,7 @@ async function tryApplyDigRewardItems() {
     }
   }
 
-  globalScene.playSound("se/item_fanfare");
+  audioManager.playSound("se/item_fanfare");
   await showEncounterText(
     i18next.t("battle:rewardGainCount", {
       modifierName: leftovers.name,
@@ -272,7 +273,7 @@ async function tryApplyDigRewardItems() {
     }
   }
 
-  globalScene.playSound("se/item_fanfare");
+  audioManager.playSound("se/item_fanfare");
   await showEncounterText(
     i18next.t("battle:rewardGainCount", {
       modifierName: shellBell.name,
@@ -285,12 +286,12 @@ async function tryApplyDigRewardItems() {
 }
 
 function doGarbageDig() {
-  globalScene.playSound("battle_anims/PRSFX- Dig2");
+  audioManager.playSound("battle_anims/PRSFX- Dig2");
   globalScene.time.delayedCall(SOUND_EFFECT_WAIT_TIME, () => {
-    globalScene.playSound("battle_anims/PRSFX- Dig2");
-    globalScene.playSound("battle_anims/PRSFX- Venom Drench", { volume: 2 });
+    audioManager.playSound("battle_anims/PRSFX- Dig2");
+    audioManager.playSound("battle_anims/PRSFX- Venom Drench", { volume: 2 });
   });
   globalScene.time.delayedCall(SOUND_EFFECT_WAIT_TIME * 2, () => {
-    globalScene.playSound("battle_anims/PRSFX- Dig2");
+    audioManager.playSound("battle_anims/PRSFX- Dig2");
   });
 }
