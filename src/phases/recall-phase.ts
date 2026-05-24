@@ -1,4 +1,5 @@
 import type { DynamicQueueManager } from "#app/dynamic-queue-manager";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { getPokeballTintColor } from "#data/pokeball";
@@ -98,7 +99,7 @@ export class RecallPhase extends PokemonPhase {
   private async playRecallAnimation(): Promise<void> {
     const promises: Promise<void>[] = [];
 
-    globalScene.playSound("se/pb_rel");
+    audioManager.playSound("se/pb_rel");
     promises.push(this.pokemon.hideInfo());
     this.pokemon.tint(getPokeballTintColor(this.pokemon.pokeball), 1, 250, "Sine.easeIn");
 

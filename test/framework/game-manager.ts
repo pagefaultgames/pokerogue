@@ -541,7 +541,7 @@ export class GameManager {
    */
   // TODO: Move to `FieldHelper`
   // TODO: Bulk-remove `await`s from existing test files in a follow-up PR
-  public setTurnOrder(order: BattlerIndex[]): void {
+  public setTurnOrder(order: readonly BattlerIndex[]): void {
     expect(order, "Turn order passed to `setTurnOrder` lacked values for one or more Pokemon!").toEqualUnsorted(
       this.scene.getField(true).map(p => p.getBattlerIndex()),
     );
