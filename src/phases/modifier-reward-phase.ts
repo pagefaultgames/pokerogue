@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import type { ModifierType } from "#modifiers/modifier-type";
 import { BattlePhase } from "#phases/battle-phase";
@@ -28,7 +29,7 @@ export class ModifierRewardPhase extends BattlePhase {
     return new Promise<void>(resolve => {
       const newModifier = this.modifierType.newModifier();
       globalScene.addModifier(newModifier);
-      globalScene.playSound("se/item_fanfare");
+      audioManager.playSound("se/item_fanfare");
       globalScene.ui.showText(
         i18next.t("battle:rewardGain", {
           modifierName: newModifier?.type.name,

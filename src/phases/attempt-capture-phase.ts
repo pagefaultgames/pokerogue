@@ -1,4 +1,5 @@
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
+import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
@@ -89,7 +90,7 @@ export class AttemptCapturePhase extends Phase {
     this.pokeballSprite = globalScene.addFieldSprite(16, 80, "pb", pokeballAtlasKey).setOrigin(0.5, 0.625);
     globalScene.field.add(this.pokeballSprite);
 
-    globalScene.playSound(isCritical ? "se/crit_throw" : "se/pb_throw");
+    audioManager.playSound(isCritical ? "se/crit_throw" : "se/pb_throw");
     waitTime(300).then(() => {
       globalScene.field.moveBelow<Phaser.GameObjects.GameObject>(this.pokeballSprite, pokemon);
     });
@@ -104,7 +105,7 @@ export class AttemptCapturePhase extends Phase {
 
     // Ball opens
     this.animatePokeballOpen();
-    globalScene.playSound("se/pb_rel");
+    audioManager.playSound("se/pb_rel");
     pokemon.tint(getPokeballTintColor(this.pokeballType));
     globalScene.animations.addPokeballOpenParticles(this.pokeballSprite.x, this.pokeballSprite.y, this.pokeballType);
 
@@ -120,7 +121,7 @@ export class AttemptCapturePhase extends Phase {
     // Ball closes
     this.pokeballSprite.setTexture("pb", `${pokeballAtlasKey}_opening`);
     pokemon.setVisible(false);
-    globalScene.playSound("se/pb_catch");
+    audioManager.playSound("se/pb_catch");
 
     // Ball bounces
     // TODO: Use async once `doPokeballBounceAnim` is promisified
@@ -142,7 +143,7 @@ export class AttemptCapturePhase extends Phase {
       return;
     }
 
-    globalScene.playSound("se/pb_lock");
+    audioManager.playSound("se/pb_lock");
     globalScene.animations.addPokeballCaptureStars(this.pokeballSprite);
 
     const pbTint = globalScene.add
@@ -294,7 +295,7 @@ export class AttemptCapturePhase extends Phase {
         this.pokeballSprite.setAngle(value * 27.5 * directionMultiplier);
       },
       onRepeat: () => {
-        globalScene.playSound("se/pb_move");
+        audioManager.playSound("se/pb_move");
         currentShake++;
       },
     });
@@ -309,7 +310,7 @@ export class AttemptCapturePhase extends Phase {
   private async failCatch(): Promise<void> {
     const { pokemon, pokeballType } = this;
 
-    globalScene.playSound("se/pb_rel");
+    audioManager.playSound("se/pb_rel");
     pokemon.setY(this.originalY);
     if (pokemon.status?.effect !== StatusEffect.SLEEP) {
       pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
