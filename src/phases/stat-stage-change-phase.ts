@@ -14,6 +14,7 @@ import { PokemonPhase } from "#phases/pokemon-phase";
 import type { ConditionalUserFieldProtectStatAbAttrParams, PreStatStageChangeAbAttrParams } from "#types/ability-types";
 import type { StatChange, StatStageChangeCallback } from "#types/stat-change";
 import type { Mutable } from "#types/type-helpers";
+import { playTween } from "#utils/anim-utils";
 import { deepCopy } from "#utils/data";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
@@ -31,10 +32,12 @@ export interface StatStageChangePhaseOptions {
    */
   onChange?: StatStageChangeCallback;
   /** The category of effect that produced this change, if relevant */
-  sourceEffect?: StatChangeSource;
+  sourceEffectType?: StatChangeSource;
   /**
    * When `true`, pre-processing (multipliers, protection checks, sign-splitting)
    * is skipped because it was already performed by the phase that queued this one.
+   * @remarks
+   * Should not be passed by anything other than this phase.
    */
   processed?: boolean;
 }
@@ -59,7 +62,8 @@ export class StatStageChangePhase extends PokemonPhase {
     super(options.battlerIndex);
 
     this.options = { ...options };
-    // Deep copying allows this phase to simplify operations by modifying changes in place
+    // TODO: Change this once `getPokemon`'s return type is fixed
+    this.selfTarget = options.sourcePokemon != null && options.sourcePokemon === this.getPokemon();
     this.options.changes = deepCopy(options.changes).filter(c => c.stages !== 0); // Allow changes with 0 stages to be passed as no-ops
     this.selfTarget = options.sourcePokemon != null && options.sourcePokemon === this.getPokemon();
   }
@@ -186,7 +190,7 @@ export class StatStageChangePhase extends PokemonPhase {
     // Octolock tag.
     if (
       opponentPokemon == null
-      || this.options.sourceEffect === StatChangeSource.MIRROR_ARMOR
+      || this.options.sourceEffectType === StatChangeSource.MIRROR_ARMOR
       || pokemon.findTag(t => t instanceof OctolockTag)
     ) {
       return;
@@ -359,27 +363,23 @@ export class StatStageChangePhase extends PokemonPhase {
 
     globalScene.playSound(`se/stat_${this.isIncrease ? "up" : "down"}`);
 
-    globalScene.tweens.add({
+    await playTween({
       targets: statSprite,
       duration: 250,
       alpha: 0.8375,
-      onComplete: () => {
-        globalScene.tweens.add({
-          targets: statSprite,
-          delay: 1000,
-          duration: 250,
-          alpha: 0,
-        });
-      },
     });
 
-    globalScene.tweens.add({
+    await playTween({
       targets: statSprite,
       duration: 1500,
       y: `${this.isIncrease ? "-" : "+"}=${160 * 6}`,
     });
 
-    await new Promise<void>(resolve => globalScene.time.delayedCall(1750, resolve));
+    await playTween({
+      targets: statSprite,
+      duration: 250,
+      alpha: 0,
+    });
 
     pokemon.disableMask();
   }

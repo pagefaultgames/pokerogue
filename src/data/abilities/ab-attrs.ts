@@ -3061,7 +3061,7 @@ export class ReflectStatStageChangeAbAttr extends PreStatStageChangeAbAttr {
         // if necessary later, pass the ability user through here
         sourcePokemon: undefined,
         ignoreAbilities: false,
-        sourceEffect: StatChangeSource.MIRROR_ARMOR,
+        sourceEffectType: StatChangeSource.MIRROR_ARMOR,
       });
     }
     this.reflectedChanges.forEach(c => cancelledStats.add(c.stat));
@@ -4583,7 +4583,7 @@ export class StatStageChangeCopyAbAttr extends AbAttr {
         changes,
         sourcePokemon: pokemon,
         ignoreAbilities: false,
-        sourceEffect: StatChangeSource.OPPORTUNIST,
+        sourceEffectType: StatChangeSource.OPPORTUNIST,
       });
     }
   }

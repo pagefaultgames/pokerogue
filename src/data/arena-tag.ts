@@ -1083,7 +1083,7 @@ class StickyWebTag extends EntryHazardTag {
       battlerIndex: pokemon.getBattlerIndex(),
       changes: [{ stat: Stat.SPD, stages: -1 }],
       sourcePokemon: this.getSourcePokemon(),
-      sourceEffect: StatChangeSource.STICKY_WEB,
+      sourceEffectType: StatChangeSource.STICKY_WEB,
     });
     return true;
   }
