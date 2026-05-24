@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { SpeciesFormChangeActiveTrigger } from "#data/form-change-triggers";
@@ -252,7 +253,7 @@ export class SummonPhase extends PokemonPhase {
     );
     await Promise.allSettled([pokeBallXAnimation, pokeBallYAnimation]);
 
-    globalScene.playSound("se/pb_rel");
+    audioManager.playSound("se/pb_rel");
     pokeball.destroy();
     add.existing(pokemon);
     field.add(pokemon);

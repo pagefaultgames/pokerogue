@@ -1,6 +1,7 @@
 import { pokerogueApi } from "#api/api";
 import { loggedInUser } from "#app/account";
 import { GameMode, getGameMode } from "#app/game-mode";
+import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { activeOverrides } from "#app/overrides";
@@ -39,9 +40,9 @@ export class TitlePhase extends Phase {
 
     const now = new Date();
     if (now.getMonth() === 11 || (now.getMonth() === 0 && now.getDate() <= 15)) {
-      globalScene.playBgm("winter_title", true);
+      audioManager.playBgm("winter_title", true);
     } else {
-      globalScene.playBgm("title", true);
+      audioManager.playBgm("title", true);
     }
 
     const lastSlot = await this.checkLastSaveSlot();
@@ -309,7 +310,7 @@ export class TitlePhase extends Phase {
         globalScene.updateModifiers(true, true);
 
         Promise.all(loadPokemonAssets).then(() => {
-          globalScene.time.delayedCall(500, () => globalScene.playBgm());
+          globalScene.time.delayedCall(500, () => audioManager.playBgm());
           globalScene.gameData.gameStats.dailyRunSessionsPlayed++;
           globalScene.newArena(globalScene.gameMode.getStartingBiome());
           globalScene.newBattle();
@@ -359,7 +360,7 @@ export class TitlePhase extends Phase {
       }
       globalScene.newArena(globalScene.gameMode.getStartingBiome());
     } else {
-      globalScene.playBgm();
+      audioManager.playBgm();
     }
 
     globalScene.phaseManager.pushNew("EncounterPhase", this.loaded);

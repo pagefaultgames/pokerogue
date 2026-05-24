@@ -17,6 +17,7 @@ export const FORBIDDEN_SINGLES_MOVES: ReadonlySet<MoveId> = new Set([
   MoveId.CRAFTY_SHIELD,
   MoveId.DECORATE,
   MoveId.DRAGON_CHEER,
+  MoveId.EXPANDING_FORCE, // This needs to be adjusted to only spawn if Psychic Surge / Terrain generates with it.
   MoveId.FOLLOW_ME,
   MoveId.HEAL_PULSE,
   MoveId.HELPING_HAND,
@@ -41,10 +42,13 @@ export const FORBIDDEN_TM_MOVES: ReadonlySet<MoveId> = new Set([
   MoveId.FALSE_SWIPE,
   MoveId.FLASH,
   MoveId.FOCUS_PUNCH,
+  MoveId.GRASSY_GLIDE, // // This needs to be adjusted to only spawn if Grassy Surge / Terrain generates with it, generally a gimmick move regardless.
+  MoveId.MISTY_EXPLOSION, // This needs to be adjusted to only spawn if Misty Surge / Terrain generates with it, generally a gimmick move regardless.
   MoveId.MEGA_PUNCH,
   MoveId.NIGHT_SHADE,
   MoveId.PAY_DAY,
   MoveId.PSYCH_UP,
+  MoveId.RISING_VOLTAGE, // This needs to be adjusted to only spawn if Psychic Surge / Terrain generates with it.
   MoveId.SCARY_FACE,
   MoveId.SKILL_SWAP,
   MoveId.SLEEP_TALK,
@@ -62,14 +66,17 @@ export const FORBIDDEN_TM_MOVES: ReadonlySet<MoveId> = new Set([
 export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.ABSORB,
   MoveId.ACID,
+  MoveId.AIR_CUTTER,
+  MoveId.ASSURANCE, // Primarily a doubles move but functions as early game Dark STAB.
   MoveId.ASTONISH,
   MoveId.BABY_DOLL_EYES,
   MoveId.BARRAGE,
   MoveId.BIDE,
   MoveId.BIND,
   MoveId.BRANCH_POKE,
-  MoveId.BONE_CLUB, // Cubone gets better options
+  MoveId.BONE_CLUB, // Cubone gets better options.
   MoveId.BUBBLE,
+  MoveId.CHIP_AWAY,
   MoveId.COMET_PUNCH,
   MoveId.CONFUSION,
   MoveId.CONSTRICT,
@@ -77,12 +84,17 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.DEFENSE_CURL,
   MoveId.DISARMING_VOICE,
   MoveId.DOUBLE_SLAP,
+  MoveId.DRAGON_BREATH,
   MoveId.DREAM_EATER,
   MoveId.EMBER,
   MoveId.FAIRY_WIND,
   MoveId.FALSE_SWIPE,
   MoveId.FEINT,
+  MoveId.FEINT_ATTACK,
   MoveId.FLAIL,
+  MoveId.FLAME_BURST,
+  MoveId.FLAME_WHEEL,
+  MoveId.FORCE_PALM,
   MoveId.FORESIGHT,
   MoveId.FURY_ATTACK,
   MoveId.FURY_SWIPES,
@@ -91,43 +103,58 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.GUST,
   MoveId.HARDEN,
   MoveId.HORN_ATTACK,
-  MoveId.IMPRISON,
+  MoveId.KARATE_CHOP,
   MoveId.KINESIS,
   MoveId.LEAFAGE,
   MoveId.LEER,
   MoveId.LICK,
   MoveId.LUCKY_CHANT,
+  MoveId.MAGICAL_LEAF,
+  MoveId.MAGNET_BOMB,
   MoveId.MEGA_DRAIN,
-  // Long discussion with balance team about this one
   MoveId.METAL_CLAW,
-  MoveId.MIRACLE_EYE,
   MoveId.MIST,
+  MoveId.MUD_SHOT,
   MoveId.MUD_SPORT,
+  MoveId.NEEDLE_ARM,
   MoveId.NIGHTMARE,
   MoveId.PECK,
   MoveId.PLAY_NICE,
   MoveId.POISON_STING,
+  MoveId.POISON_TAIL,
   MoveId.POUND,
   MoveId.POUNCE,
   MoveId.POWDER_SNOW,
   MoveId.PSYWAVE,
+  MoveId.QUICK_ATTACK,
   MoveId.RAGE,
+  MoveId.RAZOR_LEAF,
+  MoveId.RAZOR_WIND, // Really bad charge move.
   MoveId.ROLLING_KICK,
   MoveId.ROTOTILLER,
+  MoveId.ROCK_THROW,
+  MoveId.ROUND, // Gets superceded very easily, common TM but is fine as early game coverage.
   MoveId.SCRATCH,
+  MoveId.SHOCK_WAVE,
+  MoveId.SKY_ATTACK, // Only useful with Power Herb. As of now, it fluffs up a chunk of Flying type's movesets due to being high BP and high weight in generation.
+  MoveId.SLAM,
+  MoveId.SLUDGE,
   MoveId.SMOG,
   MoveId.SONIC_BOOM,
   MoveId.SPARK,
   MoveId.SPIT_UP,
-  MoveId.SPIKE_CANNON, // No one who has it really cares for it
+  MoveId.SPIKE_CANNON, // No one who has it really cares for it outside of early levels.
   MoveId.SPLASH,
+  MoveId.STOMP,
+  MoveId.SUBMISSION,
   MoveId.SUPERSONIC,
   MoveId.SWALLOW,
+  MoveId.SWIFT,
   MoveId.SWEET_SCENT,
   MoveId.TACKLE,
   MoveId.TAIL_WHIP,
+  MoveId.TAKE_DOWN,
   MoveId.TEARFUL_LOOK,
-  // Blitzy recommended
   MoveId.TELEPORT,
   MoveId.THUNDER_SHOCK,
   MoveId.TWISTER,
@@ -137,12 +164,40 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.WATER_SPORT,
   MoveId.WITHDRAW,
   MoveId.WRAP,
-  MoveId.TAKE_DOWN,
-  MoveId.STOMP,
-  MoveId.QUICK_ATTACK,
-  MoveId.SYNCHRONOISE,
-  // Really bad moves
-  MoveId.RAZOR_WIND,
-  MoveId.SLAM,
-  MoveId.SUBMISSION,
+
+  // Situational Moves, potentially revisit some of these after dedicated sets / smarter moveset generation.
+
+  MoveId.BELCH, // High BP also makes it likely to spawn on anything that gets it as random coverage.
+  MoveId.IMPRISON, // Too situational.
+  MoveId.SMACK_DOWN, // Hold off until smarter move generation, ideally the Pokemon with the move already has a Ground move or it generates on a Ground specialist.
+  MoveId.SYNCHRONOISE, // Too situational, mostly given to Psychic types which resist the move anyway.
+
+  // Blocking Moves
+  MoveId.BLOCK, // Potentially revisit after improved learnsets and weighting, only value is on stall-esque builds.
+  MoveId.MEAN_LOOK, // Same as Block
+
+  // Stat Swaps
+  MoveId.GUARD_SWAP, // Too situational, ends up benefitting the player and hurting the AI more often than not.
+  MoveId.POWER_SWAP, // Same as Guard Swap.
+  MoveId.SPEED_SWAP, // Same as the other Swaps
+
+  // Immunity ignoring moves
+  MoveId.ODOR_SLEUTH, // The slot this spawns in could've just been used to spawn coverage instead, requires a turn to use.
+  MoveId.MIRACLE_EYE, // Same as Odor Sleuth
+
+  // Works as early game coverage but needs smarter generation to be worth
+  MoveId.INCINERATE,
+
+  // Recommended to blacklist until AI changes are made.
+  MoveId.BELLY_DRUM, // Currently the AI uses it without considering the battle state, leading to the AI swapping out after due to the lowered HP.
+  MoveId.FOCUS_PUNCH, // Messy with move weighting, AI will probably never be smart enough to use it correctly.
+  MoveId.LAST_RESORT, // Potentially revisit after further move generation changes, high BP causes it to spawn as random coverage often and it ends up being situational / an unused slot.
+
+  // Recharge Moves, recommended by NightKev until improved AI / Move Generation.
+  MoveId.HYPER_BEAM, // Recharge moves have complications with move weighting, AI choice weighting, and AI usage in general. Some signature moves were omitted.
+  MoveId.GIGA_IMPACT,
+  MoveId.BLAST_BURN,
+  MoveId.FRENZY_PLANT,
+  MoveId.HYDRO_CANNON,
+  MoveId.PRISMATIC_LASER,
 ]);

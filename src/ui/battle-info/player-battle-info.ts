@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getLevelRelExp, getLevelTotalExp } from "#data/exp";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
@@ -203,7 +204,7 @@ export class PlayerBattleInfo extends BattleInfo {
       duration = speed >= ExpGainsSpeed.SKIP ? ExpGainsSpeed.DEFAULT : duration / Math.pow(2, speed);
     }
     if (duration) {
-      globalScene.playSound("se/exp");
+      audioManager.playSound("se/exp");
     }
     return new Promise(resolve => {
       globalScene.tweens.add({
@@ -219,7 +220,7 @@ export class PlayerBattleInfo extends BattleInfo {
             globalScene.sound.stopByKey("se/exp");
           }
           if (levelUp) {
-            globalScene.playSound("se/level_up");
+            audioManager.playSound("se/level_up");
             this.setLevelDisplay(level);
             globalScene.time.delayedCall(500 * levelDurationMultiplier, () => {
               this.expMaskRect.x = 0;

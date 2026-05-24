@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 import { getCharVariantFromDialogue } from "#data/dialogue";
@@ -331,7 +332,7 @@ export class MysteryEncounterBattlePhase extends Phase {
     if (encounterMode === MysteryEncounterMode.WILD_BATTLE || encounterMode === MysteryEncounterMode.BOSS_BATTLE) {
       // Summons the wild/boss Pokemon
       if (encounterMode === MysteryEncounterMode.BOSS_BATTLE) {
-        globalScene.playBgm();
+        audioManager.playBgm();
       }
 
       if (globalScene.currentBattle.mysteryEncounter?.hideBattleIntroMessage) {
@@ -343,7 +344,7 @@ export class MysteryEncounterBattlePhase extends Phase {
       this.showEnemyTrainer();
       const doSummon = () => {
         globalScene.currentBattle.started = true;
-        globalScene.playBgm();
+        audioManager.playBgm();
         globalScene.pbTray.showPbTray(globalScene.getPlayerParty());
         globalScene.pbTrayEnemy.showPbTray(globalScene.getEnemyParty());
         const doTrainerSummon = () => {

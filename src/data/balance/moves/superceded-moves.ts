@@ -580,6 +580,9 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
   ],
   [MoveId.WING_ATTACK]: [MoveId.DRILL_PECK, MoveId.AERIAL_ACE, MoveId.PLUCK, MoveId.FLOATY_FALL],
 
+  // Superpower is more detrimental to the user over Hammer Arm or Close Combat
+  [MoveId.SUPERPOWER]: [MoveId.HAMMER_ARM, MoveId.CLOSE_COMBAT],
+
   // Setup Moves
   // Technically, defense curl is better than harden because it boosts rollout and ice ball, though not added here
   [MoveId.HARDEN]: SINGLE_STAGE_DEF_BOOST_REPLACEMENTS,
