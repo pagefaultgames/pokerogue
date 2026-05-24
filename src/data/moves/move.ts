@@ -4090,29 +4090,26 @@ export class PartingShotAttr extends StatStageChangeAttr {
     const stageMod = hasContrary ? 1 : -1;
 
     // Silently simulate immunities to predict if the stat drop will be blocked
-    const cancelledAtk = new BooleanHolder(false);
+    const cancelledStats = new Set<BattleStat>();
     applyAbAttrs("ProtectStatAbAttr", {
       pokemon: target,
-      stat: Stat.ATK,
-      stages: -1,
-      cancelled: cancelledAtk,
+      changes: [{ stat: Stat.ATK, stages: -1 }],
+      cancelledStats,
       simulated: true,
     });
     const canChangeAtk =
-      !cancelledAtk.value
+      !cancelledStats.has(Stat.ATK)
       && target.getStatStage(Stat.ATK) + stageMod >= -6
       && target.getStatStage(Stat.ATK) + stageMod <= 6;
 
-    const cancelledSpAtk = new BooleanHolder(false);
     applyAbAttrs("ProtectStatAbAttr", {
       pokemon: target,
-      stat: Stat.SPATK,
-      stages: -1,
-      cancelled: cancelledSpAtk,
+      changes: [{ stat: Stat.SPATK, stages: -1 }],
+      cancelledStats,
       simulated: true,
     });
     const canChangeSpAtk =
-      !cancelledSpAtk.value
+      !cancelledStats.has(Stat.SPATK)
       && target.getStatStage(Stat.SPATK) + stageMod >= -6
       && target.getStatStage(Stat.SPATK) + stageMod <= 6;
 
