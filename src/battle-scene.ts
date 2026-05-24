@@ -173,7 +173,7 @@ type BattlerIndexToPokemon<B extends BattlerIndex> = B extends BattlerIndex.ENEM
     ? PlayerPokemon
     : Pokemon;
 
-    // TODO: Move this elsewhere
+// TODO: Move this elsewhere
 export interface InfoToggle {
   toggleInfo(force?: boolean): void;
   isActive(): boolean;
