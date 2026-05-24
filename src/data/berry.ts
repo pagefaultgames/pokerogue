@@ -29,7 +29,7 @@ export function getBerryPredicate(berryType: BerryType): BerryPredicate {
     case BerryType.ENIGMA:
       return (pokemon: Pokemon) =>
         pokemon.turnData.attacksReceived.some(
-          a => a.result === HitResult.SUPER_EFFECTIVE || a.result === HitResult.EXTREMELY_EFFECTIVE
+          a => a.result === HitResult.SUPER_EFFECTIVE || a.result === HitResult.EXTREMELY_EFFECTIVE,
         );
     case BerryType.LIECHI:
     case BerryType.GANLON:
