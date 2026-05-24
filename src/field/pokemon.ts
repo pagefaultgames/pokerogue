@@ -161,7 +161,7 @@ import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { StatChange } from "#types/stat-change";
 import type { TurnMove } from "#types/turn-move";
-import type { AbstractConstructor, Mutable, Mutable } from "#types/type-helpers";
+import type { AbstractConstructor, Mutable } from "#types/type-helpers";
 import { BattleInfo } from "#ui/battle-info";
 import { EnemyBattleInfo } from "#ui/enemy-battle-info";
 import type { PartyOption } from "#ui/party-ui-handler";
