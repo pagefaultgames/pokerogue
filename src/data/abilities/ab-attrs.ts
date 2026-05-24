@@ -5487,8 +5487,10 @@ export class PostDefendIllusionBreakAbAttr extends PostDefendAbAttr {
     // and store it somewhere globally accessible
     const damagingHitResults: ReadonlySet<HitResult> = new Set([
       HitResult.EFFECTIVE,
+      HitResult.EXTREMELY_EFFECTIVE,
       HitResult.SUPER_EFFECTIVE,
       HitResult.NOT_VERY_EFFECTIVE,
+      HitResult.MOSTLY_INEFFECTIVE,
       HitResult.ONE_HIT_KO,
     ]);
     return damagingHitResults.has(hitResult) && pokemon.summonData.illusion != null;
