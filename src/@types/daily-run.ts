@@ -25,7 +25,7 @@ export interface DailySeedStarter {
   passive?: AbilityId | undefined;
 }
 
-type DailySeedStarterTuple = TupleRange<1, 6, DailySeedStarter>;
+export type DailySeedStarterTuple = TupleRange<1, 6, DailySeedStarter>;
 
 /**
  * Configuration for a custom daily run boss Pokémon.
@@ -112,15 +112,15 @@ export interface DailyEventMysteryEncounter {
  * - `src/data/daily-seed/schema.json`
  */
 export interface CustomDailyRunConfig {
-  starters?: DailySeedStarterTuple;
-  boss?: DailySeedBoss;
-  biome?: BiomeId;
-  luck?: number;
-  startingMoney?: number;
-  forcedWaves?: DailyForcedWave[];
-  trainerManipulations?: DailyTrainerManipulation[];
-  challenges?: DailyEventChallenge[];
-  mysteryEncounters?: DailyEventMysteryEncounter[];
+  starters?: DailySeedStarterTuple | undefined;
+  boss?: DailySeedBoss | undefined;
+  biome?: BiomeId | undefined;
+  luck?: number | undefined;
+  startingMoney?: number | undefined;
+  forcedWaves?: DailyForcedWave[] | undefined;
+  trainerManipulations?: DailyTrainerManipulation[] | undefined;
+  challenges?: DailyEventChallenge[] | undefined;
+  mysteryEncounters?: DailyEventMysteryEncounter[] | undefined;
   /** The actual seed used for the daily run. */
   seed: string;
 }

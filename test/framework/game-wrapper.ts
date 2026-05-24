@@ -1,4 +1,5 @@
 import { BattleScene } from "#app/battle-scene";
+import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 // biome-ignore lint/performance/noNamespaceImport: Necessary in order to mock the var
 import * as appConstants from "#constants/app-constants";
@@ -107,6 +108,9 @@ export class GameWrapper {
       on: (_evt, callback) => callback(),
       key: "",
     };
+
+    audioManager.playBgm = () => null;
+    audioManager.replaceBgmUntilEnd = () => null!;
 
     this.scene.cameras = {
       main: {

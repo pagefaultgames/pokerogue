@@ -1,0 +1,79 @@
+/*
+ * SPDX-FileCopyrightText: 2026 Pagefault Games
+ * SPDX-FileContributor: Bertie690
+ *
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
+// Separate TSConfig used for CI, typechecking the entire project alongside `scripts` with exclusive subpath aliases.
+// Code in `src`/`test` will continue to use the root tsconfig when editing (providing extra insurance against referencing `scripts` files).
+// We cannot change any other compilation settings from normal to prevent checking the main repo code with 2 different settings.
+// TODO: This is only necessary because of the `src` repo being incompatible with declaration emit.
+// If https://github.com/microsoft/TypeScript/issues/17744 is ever resolved, we should graduate to proper project references
+{
+  "extends": "../tsconfig.json",
+  // Note that by default TS ignores directories starting with `.` unless explicitly added to "include",
+  // so it's safe to use glob syntax like this as files in `.github/scripts/` won't be grabbed
+  // unless `.github/` is specifically added.
+  "include": ["../**/*.ts"],
+  "exclude": ["../node_modules", "../dist", "**/*.boilerplate.ts"],
+  "compilerOptions": {
+    // Note: make sure more specific paths appear before less specific paths
+    "paths": {
+      // all the main repo paths (tsc doesn't copy them over)
+      "#abilities/*": ["../src/data/abilities/*.ts"],
+      "#api/*": ["../src/api/*.ts"],
+      "#audio/*": ["../src/audio/*.ts"],
+      "#biomes/*": ["../src/data/balance/biomes/*.ts"],
+      "#balance/*": ["../src/data/balance/*.ts"],
+      "#constants/*": ["../src/constants/*.ts"],
+      "#enums/*": ["../src/enums/*.ts"],
+      "#events/*": ["../src/events/*.ts"],
+      "#field/*": ["../src/field/*.ts"],
+      "#init/*": ["../src/init/*.ts"],
+      "#inputs/*": ["../src/configs/inputs/*.ts"],
+      "#modifiers/*": ["../src/modifier/*.ts"],
+      "#moves/*": ["../src/data/moves/*.ts"],
+      "#mystery-encounters/*": [
+        "../src/data/mystery-encounters/utils/*.ts",
+        "../src/data/mystery-encounters/encounters/*.ts",
+        "../src/data/mystery-encounters/requirements/*.ts",
+        "../src/data/mystery-encounters/*.ts"
+      ],
+      "#package.json": ["../package.json"],
+      "#phases/*": ["../src/phases/*.ts"],
+      "#plugins/*": ["../plugins/phaser/*.ts"],
+      "#sprites/*": ["../src/sprites/*.ts"],
+      "#system/*": [
+        "../src/system/settings/*.ts",
+        "../src/system/version-migration/versions/*.ts",
+        "../src/system/version-migration/*.ts",
+        "../src/system/*.ts"
+      ],
+      "#trainers/*": ["../src/data/trainers/*.ts"],
+      "#types/*": ["../src/@types/*.ts"],
+      "#ui/*": [
+        "../src/ui/battle-info/*.ts",
+        "../src/ui/containers/*.ts",
+        "../src/ui/handlers/*.ts",
+        "../src/ui/settings/*.ts",
+        "../src/ui/utils/*.ts",
+        "../src/ui/*.ts"
+      ],
+      "#data/*": ["../src/data/pokemon-forms/*.ts", "../src/data/pokemon/*.ts", "../src/data/*.ts"],
+      "#utils/*": ["../src/utils/*.ts"],
+
+      // new subpath imports for script folders
+      "#script-utils/*": ["./utils/*.ts"],
+      "#daily-seed/*": ["./daily-seed/prompts/*.ts", "./daily-seed/*.ts"],
+      "#gen-moveset/*": ["./gen-moveset/*.ts"],
+      "#create-test/*": ["./create-test/*.ts"],
+      "#parse-egg-moves/*": ["./parse-egg-moves/*.ts"],
+      "#scrape-trainer-names/*": ["./scrape-trainer-names/*.ts"],
+
+      // these must always be last
+      "#test/*": ["../test/*.ts"],
+      "#app/*": ["../src/*.ts"]
+    }
+  }
+}

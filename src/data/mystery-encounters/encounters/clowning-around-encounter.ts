@@ -373,7 +373,11 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
         // Randomize the second type of all player's pokemon
         // If the pokemon does not normally have a second type, it will gain 1
         for (const pokemon of globalScene.getPlayerParty()) {
-          const originalTypes = pokemon.getTypes(false, false, true);
+          const originalTypes = pokemon.getTypes({
+            includeTeraType: false,
+            bypassSummonData: true,
+            ignoreThirdType: true,
+          });
 
           // If the Pokemon has non-status moves that don't match the Pokemon's type, prioritizes those as the new type
           // Makes the "randomness" of the shuffle slightly less punishing

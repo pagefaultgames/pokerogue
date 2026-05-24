@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { modifierTypes } from "#data/data-lists";
 import { BattlerIndex } from "#enums/battler-index";
@@ -401,7 +402,7 @@ function doGreedentSpriteSteal() {
 
   const greedentSprites = globalScene.currentBattle.mysteryEncounter!.introVisuals?.getSpriteAtIndex(1);
 
-  globalScene.playSound("battle_anims/Follow Me");
+  audioManager.playSound("battle_anims/Follow Me");
   globalScene.tweens.chain({
     targets: greedentSprites,
     tweens: [
@@ -492,11 +493,11 @@ function doGreedentEatBerries() {
     y: "-=8",
     loop: 5,
     onStart: () => {
-      globalScene.playSound("battle_anims/PRSFX- Bug Bite");
+      audioManager.playSound("battle_anims/PRSFX- Bug Bite");
     },
     onLoop: () => {
       if (index % 2 === 0) {
-        globalScene.playSound("battle_anims/PRSFX- Bug Bite");
+        audioManager.playSound("battle_anims/PRSFX- Bug Bite");
       }
       index++;
     },

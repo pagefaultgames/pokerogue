@@ -1,4 +1,5 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { handleTutorial, Tutorial } from "#app/tutorial";
@@ -361,7 +362,7 @@ export class StatStageChangePhase extends PokemonPhase {
       .setOrigin(0.5, 1)
       .setMask(new Phaser.Display.Masks.BitmapMask(globalScene, pokemon.maskSprite ?? undefined));
 
-    globalScene.playSound(`se/stat_${this.isIncrease ? "up" : "down"}`);
+    audioManager.playSound(`se/stat_${this.isIncrease ? "up" : "down"}`);
 
     await playTween({
       targets: statSprite,

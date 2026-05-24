@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { PokeballType } from "#enums/pokeball";
 import { NumberHolder } from "#utils/common";
@@ -134,7 +135,7 @@ export function doPokeballBounceAnim(
       duration: bouncePower * baseBounceDuration,
       ease: "Cubic.easeIn",
       onComplete: () => {
-        globalScene.playSound("se/pb_bounce_1", { volume: bouncePower });
+        audioManager.playSound("se/pb_bounce_1", { volume: bouncePower });
 
         bouncePower = bouncePower > 0.01 ? bouncePower * 0.5 : 0;
 

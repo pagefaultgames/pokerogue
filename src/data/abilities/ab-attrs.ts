@@ -39,7 +39,7 @@ import { StatChangeSource } from "#enums/stat-change-source";
 import { StatusEffect } from "#enums/status-effect";
 import { SwitchType } from "#enums/switch-type";
 import { WeatherType } from "#enums/weather-type";
-import { BerryUsedEvent } from "#events/battle-scene";
+import { BerryUsedEvent, MoveUsedEvent } from "#events/battle-scene";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#modifiers/modifier";
 import { BerryModifierType } from "#modifiers/modifier-type";
@@ -873,7 +873,7 @@ export class PostDefendTypeChangeAbAttr extends PostDefendAbAttr {
     }
 
     this.type = attacker.getMoveType(move);
-    if (pokemon.isOfType(this.type, true, true)) {
+    if (pokemon.isOfType(this.type, { returnOriginalTypesIfStellar: true })) {
       return false;
     }
 
@@ -1422,8 +1422,8 @@ export interface AddSecondStrikeAbAttrParams extends Omit<AugmentMoveInteraction
  * @see {@linkcode MoveId.PARENTAL_BOND | Parental Bond}
  */
 export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
-  override canApply({ pokemon, opponent, move }: AddSecondStrikeAbAttrParams): boolean {
-    return move.canBeMultiStrikeEnhanced(pokemon, true, opponent);
+  override canApply({ pokemon, opponent: target, move }: AddSecondStrikeAbAttrParams): boolean {
+    return move.canBeMultiStrikeEnhanced(pokemon, true, target);
   }
 
   override apply({ hitCount }: AddSecondStrikeAbAttrParams): void {
@@ -3679,10 +3679,9 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
     }
 
     let maxPowerSeen = 0;
-    const movesAtMaxPower: string[] = [];
+    const movesAtMaxPower: [pokemon: Pokemon, move: PokemonMove][] = [];
 
     // Record all moves in all opponents' movesets seen at our max power threshold, clearing it if a new "highest power" is found
-    // TODO: Change to `pokemon.getOpponents().flatMap(p => p.getMoveset())` if or when we upgrade to ES2025
     for (const opp of pokemon.getOpponents()) {
       for (const oppMove of opp.getMoveset()) {
         const move = oppMove.getMove();
@@ -3693,27 +3692,31 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
 
         // Another move at current max found; add to tiebreaker array
         if (movePower === maxPowerSeen) {
-          movesAtMaxPower.push(move.name);
+          movesAtMaxPower.push([opp, oppMove]);
           continue;
         }
 
         // New max reached; clear prior results and update tracker
         maxPowerSeen = movePower;
-        movesAtMaxPower.splice(0, movesAtMaxPower.length, move.name);
+        movesAtMaxPower.splice(0, movesAtMaxPower.length, [opp, oppMove]);
       }
     }
 
-    // Pick a random move in our list.
     if (movesAtMaxPower.length === 0) {
       return;
     }
-    const chosenMove = movesAtMaxPower[pokemon.randBattleSeedInt(movesAtMaxPower.length)];
+
+    // Pick a random move in our list
+    const [opponent, chosenMove] = movesAtMaxPower[pokemon.randBattleSeedInt(movesAtMaxPower.length)];
     globalScene.phaseManager.queueMessage(
       i18next.t("abilityTriggers:forewarn", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        moveName: chosenMove,
+        moveName: chosenMove.getMove().name,
       }),
     );
+
+    // TODO: Update callsite in https://github.com/pagefaultgames/pokerogue/pull/6143
+    globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(opponent.id, chosenMove.getMove(), chosenMove.ppUsed));
   }
 }
 
@@ -3732,7 +3735,8 @@ function getForewarnPower(move: Move): number {
     return 150;
   }
 
-  // NB: Mainline doesn't count Comeuppance in its "counter move exceptions" list, which is dumb
+  // NB: Mainline doesn't count Comeuppance in its "counter move exceptions" list, which is inconsistent.
+  // We diverge from mainline here by giving it a simulated BP of 120 instead of 80.
   if (move.hasAttr("CounterDamageAttr")) {
     return 120;
   }
@@ -3741,6 +3745,7 @@ function getForewarnPower(move: Move): number {
   if (move.power === -1) {
     return 80;
   }
+
   return move.power;
 }
 
@@ -4722,10 +4727,7 @@ export class ArenaTrapAbAttr extends CheckTrappedAbAttr {
   override canApply({ pokemon, opponent }: CheckTrappedAbAttrParams): boolean {
     return (
       this.arenaTrapCondition(pokemon, opponent)
-      && !(
-        opponent.getTypes(true).includes(PokemonType.GHOST)
-        || (opponent.getTypes(true).includes(PokemonType.STELLAR) && opponent.getTypes().includes(PokemonType.GHOST))
-      )
+      && !opponent.isOfType(PokemonType.GHOST, { returnOriginalTypesIfStellar: true })
       && !opponent.hasAbility(AbilityId.RUN_AWAY)
     );
   }
@@ -5617,7 +5619,7 @@ export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
         typeChange.push(PokemonType.PSYCHIC);
         break;
       default:
-        pokemon.getTypes(false, false, true).forEach(t => {
+        pokemon.getTypes({ includeTeraType: false, bypassSummonData: true, ignoreThirdType: true }).forEach(t => {
           typeChange.push(t);
         });
         break;
