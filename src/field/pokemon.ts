@@ -2039,15 +2039,23 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       includeTeraType = true,
       returnOriginalTypesIfStellar = false,
       bypassSummonData = false,
+      useIllusion = false,
       ignoreThirdType = false,
     }: {
       includeTeraType?: boolean;
       returnOriginalTypesIfStellar?: boolean;
       bypassSummonData?: boolean;
+      useIllusion?: boolean;
       ignoreThirdType?: boolean;
     } = {},
   ): boolean {
-    return this.getTypes({ includeTeraType, returnOriginalTypesIfStellar, bypassSummonData, ignoreThirdType }) //
+    return this.getTypes({
+      includeTeraType,
+      returnOriginalTypesIfStellar,
+      bypassSummonData,
+      ignoreThirdType,
+      useIllusion,
+    }) //
       .includes(type);
   }
 
@@ -2380,6 +2388,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param useIllusion - (Default `false`) Whether to use this Pokemon's illusion for typing-related calculations
    * @returns Whether this Pokemon is currently grounded, as described above.
    */
+  // TODO: Make sure callers propagate `useIllusion` correctly
   public isGrounded(ignoreSemiInvulnerable = false, useIllusion = false): boolean {
     const forceGrounded = this.isForciblyGrounded();
     if (forceGrounded !== undefined) {
@@ -2388,7 +2397,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     // Flying-type and semi-invuln are the only remaining things that can make the user ungrounded
     const semiInvuln = !ignoreSemiInvulnerable && !!this.getTag(SemiInvulnerableTag);
-    return !semiInvuln && !this.isOfType(PokemonType.FLYING, { returnOriginalTypesIfStellar: true });
+    return !semiInvuln && !this.isOfType(PokemonType.FLYING, { returnOriginalTypesIfStellar: true, useIllusion });
   }
 
   /**
@@ -2422,6 +2431,16 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * to effects from moves and/or abilities.
    * @param trappedAbMessages - If defined, ability trigger messages
    * (e.g. from Shadow Tag) are forwarded through this array.
+   * @param simulated - If `true`, applies abilities via simulated calls.
+   * @returns `true` if the pokemon is trapped
+   */
+  public isTrapped(trappedAbMessages: string[] = [], simulated = true): boolean {
+    const commandedTag = this.getTag(BattlerTagType.COMMANDED);
+    if (commandedTag?.getSourcePokemon()?.isActive(true)) {
+      return true;
+    }
+
+    if (this.isOfType(PokemonType.GHOST)) {
       return false;
     }
 
