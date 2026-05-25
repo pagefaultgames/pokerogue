@@ -186,7 +186,8 @@ describe("UI - Pokedex", () => {
     }
   }
 
-  // #endregion
+  // #endregion Helper Functions
+
   // #region Filter Tests
 
   it("should filter to show only the pokemon with an ability when filtering by ability", async () => {
@@ -444,7 +445,8 @@ describe("UI - Pokedex", () => {
     expect(filteredPokemon, "not shiny").not.toContain(SpeciesId.EKANS);
   });
 
-  // #endregion
+  // #endregion Filter Tests
+
   // #region UI Input Tests
 
   // TODO: fix cursor wrapping
@@ -470,7 +472,8 @@ describe("UI - Pokedex", () => {
     expect(selectedPokemon).toEqual(pokedexHandler["lastSpeciesId"].speciesId);
   });
 
-  // #endregion
+  // #endregion UI Input Tests
+
   // #region Pokedex Pages Tests
 
   it("should show caught battle form as caught", async () => {
@@ -481,8 +484,8 @@ describe("UI - Pokedex", () => {
 
     expect(pageHandler["formIndex"]).toEqual(1);
 
-    expect(pageHandler.isFormCaught()).toEqual(true);
-    expect(pageHandler.isSeen()).toEqual(true);
+    expect(pageHandler["isFormCaught"]()).toEqual(true);
+    expect(pageHandler["isSeen"]()).toEqual(true);
   });
 
   // TODO: check tint of the sprite
@@ -494,9 +497,9 @@ describe("UI - Pokedex", () => {
 
     expect(pageHandler["formIndex"]).toEqual(2);
 
-    expect(pageHandler.isFormCaught()).toEqual(false);
-    expect(pageHandler.isSeen()).toEqual(true);
+    expect(pageHandler["isFormCaught"]()).toEqual(false);
+    expect(pageHandler["isSeen"]()).toEqual(true);
   });
 
-  // #endregion
+  // #endregion Pokedex Pages Tests
 });

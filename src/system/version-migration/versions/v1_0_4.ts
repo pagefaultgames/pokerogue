@@ -106,7 +106,7 @@ const fixRerollTarget: SettingsSaveMigrator = {
   version: "1.0.4",
   // biome-ignore lint/complexity/noBannedTypes: TODO - refactor settings
   migrate: (data: Object): void => {
-    if (data.hasOwnProperty("REROLL_TARGET") && !data.hasOwnProperty(SettingKeys.Shop_Cursor_Target)) {
+    if (Object.hasOwn(data, "REROLL_TARGET") && !Object.hasOwn(data, SettingKeys.Shop_Cursor_Target)) {
       data[SettingKeys.Shop_Cursor_Target] = data["REROLL_TARGET"];
       // biome-ignore lint/performance/noDelete: intentional
       delete data["REROLL_TARGET"];
@@ -135,7 +135,13 @@ const migrateModifiers: SessionSaveMigrator = {
       } else if (m.className === "TempBattleStatBoosterModifier") {
         const maxBattles = 5;
         // Dire Hit no longer a part of the TempBattleStatBoosterModifierTypeGenerator
-        if (m.typeId !== "DIRE_HIT") {
+        if (m.typeId === "DIRE_HIT") {
+          m.className = "TempCritBoosterModifier";
+          m.typePregenArgs = [];
+
+          // From [ stat, battlesLeft ] to [ maxBattles, battleCount ]
+          m.args = [maxBattles, Math.min(m.args[1], maxBattles)];
+        } else {
           m.className = "TempStatStageBoosterModifier";
           m.typeId = "TEMP_STAT_STAGE_BOOSTER";
 
@@ -145,12 +151,6 @@ const migrateModifiers: SessionSaveMigrator = {
 
           // From [ stat, battlesLeft ] to [ stat, maxBattles, battleCount ]
           m.args = [newStat, maxBattles, Math.min(m.args[1], maxBattles)];
-        } else {
-          m.className = "TempCritBoosterModifier";
-          m.typePregenArgs = [];
-
-          // From [ stat, battlesLeft ] to [ maxBattles, battleCount ]
-          m.args = [maxBattles, Math.min(m.args[1], maxBattles)];
         }
       } else if (m.className === "DoubleBattleChanceBoosterModifier" && m.args.length === 1) {
         let maxBattles: number;

@@ -148,6 +148,11 @@ export class SpeciesEvolutionCondition {
           return i18next.t("pokemonEvolutions:caught", {species: getPokemonSpecies(cond.speciesCaught).name});
         case EvoCondKey.HELD_ITEM:
           return i18next.t(`pokemonEvolutions:heldItem.${toCamelCase(cond.itemKey)}`);
+        case EvoCondKey.RANDOM_FORM:
+          return null;
+        default:
+          cond satisfies never;
+          return null;
       }
     }).filter(s => s != null); // Filter out stringless conditions
     return this.desc;
@@ -166,7 +171,7 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.MOVE_TYPE:
           return pokemon.moveset.some(m => m.getMove().type === cond.pkmnType);
         case EvoCondKey.PARTY_TYPE:
-          return globalScene.getPlayerParty().some(p => p.getTypes(false, false, true).includes(cond.pkmnType))
+          return globalScene.getPlayerParty().some(p => p.isOfType(cond.pkmnType, { includeTeraType: false, bypassSummonData: true, ignoreThirdType: true }))
         case EvoCondKey.EVO_TREASURE_TRACKER:
           return pokemon.getHeldItems().some(m =>
             m.is("EvoTrackerModifier") &&
@@ -195,7 +200,10 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.SPECIES_CAUGHT:
           return !!globalScene.gameData.dexData[cond.speciesCaught].caughtAttr;
         case EvoCondKey.HELD_ITEM:
-          return pokemon.getHeldItems().some(m => m.is("SpeciesStatBoosterModifier") && (m.type as SpeciesStatBoosterModifierType).key === cond.itemKey)
+          return pokemon.getHeldItems().some(m => m.is("SpeciesStatBoosterModifier") && (m.type as SpeciesStatBoosterModifierType).key === cond.itemKey);
+        default:
+          cond satisfies never;
+          return false;
       }
     });
   }
@@ -329,11 +337,7 @@ export class FusionSpeciesFormEvolution extends SpeciesFormEvolution {
   }
 }
 
-interface PokemonEvolutions {
-  [key: string]: SpeciesFormEvolution[]
-}
-
-export const pokemonEvolutions: PokemonEvolutions = {
+export const pokemonEvolutions = Object.freeze({
   [SpeciesId.BULBASAUR]: [
     new SpeciesEvolution(SpeciesId.IVYSAUR, 16, null, null)
   ],
@@ -1860,8 +1864,9 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesFormEvolution(SpeciesId.GHOLDENGO, "chest", "", 1, null, {key: EvoCondKey.EVO_TREASURE_TRACKER, value: 10}, [50, 60, 70]),
     new SpeciesFormEvolution(SpeciesId.GHOLDENGO, "roaming", "", 1, null, {key: EvoCondKey.EVO_TREASURE_TRACKER, value: 10}, [50, 60, 70])
   ]
-};
+}) satisfies Readonly<Partial<Record<SpeciesId, SpeciesFormEvolution[]>>>;
 
+// TODO: Change to Partial<Record<SpeciesId, SpeciesId>>
 interface PokemonPrevolutions {
   [key: string]: SpeciesId
 }
@@ -1869,14 +1874,15 @@ interface PokemonPrevolutions {
 export const pokemonPrevolutions: PokemonPrevolutions = {};
 
 export function initPokemonPrevolutions(): void {
-  // TODO: Why do we have empty strings in our array?
-  const megaFormKeys = [SpeciesFormKey.MEGA, "", SpeciesFormKey.MEGA_X, "", SpeciesFormKey.MEGA_Y];
+  const megaFormKeys: string[] = [SpeciesFormKey.MEGA, SpeciesFormKey.MEGA_X, SpeciesFormKey.MEGA_Y];
+
   for (const [pk, evolutions] of Object.entries(pokemonEvolutions)) {
     for (const ev of evolutions) {
-      if (ev.evoFormKey && megaFormKeys.indexOf(ev.evoFormKey) > -1) {
+      if (ev.evoFormKey && megaFormKeys.includes(ev.evoFormKey)) {
         continue;
       }
-      pokemonPrevolutions[ev.speciesId] = Number.parseInt(pk) as SpeciesId;
+      // TODO: Remove type assertion once `pokemonEvolutions` is typed correctly with `SpeciesId` indices instead of `string`
+      pokemonPrevolutions[ev.speciesId] = Number.parseInt(pk) satisfies SpeciesId;
     }
   }
 }
@@ -1885,23 +1891,48 @@ export function initPokemonPrevolutions(): void {
 // TODO: This may cause funny business for double starters such as Pichu/Pikachu
 export const pokemonStarters: PokemonPrevolutions = {};
 
-/**
- * The default species and all their evolutions
- */
-export const defaultStarterSpeciesAndEvolutions: SpeciesId[] = defaultStarterSpecies.flatMap(id => {
-  const stage2ids = pokemonEvolutions[id]?.map(e => e.speciesId) ?? [];
-  const stage3ids = stage2ids.flatMap(s2id => pokemonEvolutions[s2id]?.map(e => e.speciesId) ?? []);
-  return [id, ...stage2ids, ...stage3ids];
-});
+/** The default starters and their evolution lines */
+export const defaultStarterSpeciesAndEvolutions: SpeciesId[] = defaultStarterSpecies.flatMap(sId => [sId, ...getEvolutions(sId).values()]);
 
 export function initPokemonStarters(): void {
   const starterKeys = Object.keys(pokemonPrevolutions);
   starterKeys.forEach(pk => {
     const prevolution = pokemonPrevolutions[pk];
-    if (speciesStarterCosts.hasOwnProperty(prevolution)) {
+    if (Object.hasOwn(speciesStarterCosts, prevolution)) {
       pokemonStarters[pk] = prevolution;
     } else {
       pokemonStarters[pk] = pokemonPrevolutions[prevolution];
     }
   });
+}
+
+/**
+ * @param speciesId - The ID of the species to get the evolutions of
+ * @returns A set containing all the {@linkcode SpeciesId}s the input species can evolve into
+ */
+export function getEvolutions(speciesId: SpeciesId): Set<SpeciesId> {
+  const evolutionIds: Set<SpeciesId> = new Set();
+  const recurseEvolutions = (sId: SpeciesId): void => {
+    const evolutions = pokemonEvolutions[sId] ?? [];
+    for (const evoSpecies of evolutions) {
+      evolutionIds.add(evoSpecies.speciesId);
+      recurseEvolutions(evoSpecies.speciesId);
+    }
+  };
+  recurseEvolutions(speciesId);
+  return evolutionIds;
+}
+
+/**
+ * @param speciesId - The ID of the species to get the pre-evolutions of
+ * @returns An array containing all the {@linkcode SpeciesId}s that can evolve into the input species
+ */
+export function getPreEvolutions(speciesId: SpeciesId): SpeciesId[] {
+  const preEvoSpecies: SpeciesId[] = [];
+  let preEvoSpeciesId = pokemonPrevolutions[speciesId];
+  while (preEvoSpeciesId) {
+    preEvoSpecies.push(preEvoSpeciesId);
+    preEvoSpeciesId = pokemonPrevolutions[preEvoSpeciesId];
+  }
+  return preEvoSpecies;
 }

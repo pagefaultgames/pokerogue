@@ -38,10 +38,13 @@ import { BATTLE_STATS, type BattleStat, EFFECTIVE_STATS, getStatKey, Stat } from
 import { StatusEffect } from "#enums/status-effect";
 import { SwitchType } from "#enums/switch-type";
 import { WeatherType } from "#enums/weather-type";
+import { MovesetChangedEvent } from "#events/battle-scene";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#modifiers/modifier";
 import { BerryModifierType } from "#modifiers/modifier-type";
-import type { PokemonMove } from "#moves/pokemon-move";
+import { getMoveTargets } from "#moves/move-utils";
+import { PokemonMove } from "#moves/pokemon-move";
+import type { MoveReflectPhase } from "#phases/move-reflect-phase";
 import type {
   AbAttrCondition,
   AbAttrMap,
@@ -285,9 +288,9 @@ export abstract class PreDefendAbAttr extends AbAttr {
 export class PreDefendFullHpEndureAbAttr extends PreDefendAbAttr {
   override canApply({ pokemon, damage }: PreDefendModifyDamageAbAttrParams): boolean {
     return (
-      pokemon.isFullHp() // Checks if pokemon has wonder_guard (which forces 1hp)
-      && pokemon.getMaxHp() > 1 // Damage >= hp
-      && damage.value >= pokemon.hp // Cannot apply if the pokemon already has sturdy from some other source
+      pokemon.isFullHp()
+      && pokemon.getMaxHp() > 1
+      && damage.value >= pokemon.hp
       && !pokemon.getTag(BattlerTagType.STURDY)
     );
   }
@@ -555,12 +558,13 @@ export interface FieldPriorityMoveImmunityAbAttrParams extends AugmentMoveIntera
 }
 
 export class FieldPriorityMoveImmunityAbAttr extends PreDefendAbAttr {
-  override canApply({ move, opponent: attacker, cancelled }: FieldPriorityMoveImmunityAbAttrParams): boolean {
+  override canApply({ move, opponent: attacker, cancelled, pokemon }: FieldPriorityMoveImmunityAbAttrParams): boolean {
     return (
       !cancelled.value
-      && !(move.moveTarget === MoveTarget.USER || move.moveTarget === MoveTarget.NEAR_ALLY)
       && move.getPriority(attacker) > 0
+      && !move.isAllyTarget()
       && !move.isMultiTarget()
+      && attacker.isOpponent(pokemon)
     );
   }
 
@@ -739,7 +743,7 @@ export class PostDefendStatStageChangeAbAttr extends PostDefendAbAttr {
 
     if (this.allOthers) {
       const ally = pokemon.getAlly();
-      const otherPokemon = ally != null ? pokemon.getOpponents().concat([ally]) : pokemon.getOpponents();
+      const otherPokemon = ally == null ? pokemon.getOpponents() : pokemon.getOpponents().concat([ally]);
       for (const other of otherPokemon) {
         globalScene.phaseManager.unshiftNew(
           "StatStageChangePhase",
@@ -878,7 +882,7 @@ export class PostDefendTypeChangeAbAttr extends PostDefendAbAttr {
     }
 
     this.type = attacker.getMoveType(move);
-    if (pokemon.isOfType(this.type, true, true)) {
+    if (pokemon.isOfType(this.type, { returnOriginalTypesIfStellar: true })) {
       return false;
     }
 
@@ -1438,8 +1442,8 @@ export interface AddSecondStrikeAbAttrParams extends Omit<AugmentMoveInteraction
  * @see {@linkcode MoveId.PARENTAL_BOND | Parental Bond}
  */
 export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
-  override canApply({ pokemon, opponent, move }: AddSecondStrikeAbAttrParams): boolean {
-    return move.canBeMultiStrikeEnhanced(pokemon, true, opponent);
+  override canApply({ pokemon, opponent: target, move }: AddSecondStrikeAbAttrParams): boolean {
+    return move.canBeMultiStrikeEnhanced(pokemon, true, target);
   }
 
   override apply({ hitCount }: AddSecondStrikeAbAttrParams): void {
@@ -2369,7 +2373,6 @@ export class PostSummonRemoveBattlerTagAbAttr extends PostSummonRemoveEffectAbAt
   }
 
   public override apply({ pokemon }: AbAttrBaseParams): void {
-    // biome-ignore lint/suspicious/useIterableCallbackReturn: the return type of `removeTag` is `void`
     this.immuneTags.forEach(tagType => pokemon.removeTag(tagType));
   }
 }
@@ -3689,10 +3692,9 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
     }
 
     let maxPowerSeen = 0;
-    const movesAtMaxPower: string[] = [];
+    const movesAtMaxPower: [pokemon: Pokemon, move: PokemonMove][] = [];
 
     // Record all moves in all opponents' movesets seen at our max power threshold, clearing it if a new "highest power" is found
-    // TODO: Change to `pokemon.getOpponents().flatMap(p => p.getMoveset())` if or when we upgrade to ES2025
     for (const opp of pokemon.getOpponents()) {
       for (const oppMove of opp.getMoveset()) {
         const move = oppMove.getMove();
@@ -3703,27 +3705,30 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
 
         // Another move at current max found; add to tiebreaker array
         if (movePower === maxPowerSeen) {
-          movesAtMaxPower.push(move.name);
+          movesAtMaxPower.push([opp, oppMove]);
           continue;
         }
 
         // New max reached; clear prior results and update tracker
         maxPowerSeen = movePower;
-        movesAtMaxPower.splice(0, movesAtMaxPower.length, move.name);
+        movesAtMaxPower.splice(0, movesAtMaxPower.length, [opp, oppMove]);
       }
     }
 
-    // Pick a random move in our list.
     if (movesAtMaxPower.length === 0) {
       return;
     }
-    const chosenMove = movesAtMaxPower[pokemon.randBattleSeedInt(movesAtMaxPower.length)];
+
+    // Pick a random move in our list
+    const [opponent, chosenMove] = movesAtMaxPower[pokemon.randBattleSeedInt(movesAtMaxPower.length)];
     globalScene.phaseManager.queueMessage(
       i18next.t("abilityTriggers:forewarn", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        moveName: chosenMove,
+        moveName: chosenMove.getMove().name,
       }),
     );
+
+    globalScene.eventTarget.dispatchEvent(new MovesetChangedEvent(opponent.id, chosenMove));
   }
 }
 
@@ -3742,7 +3747,8 @@ function getForewarnPower(move: Move): number {
     return 150;
   }
 
-  // NB: Mainline doesn't count Comeuppance in its "counter move exceptions" list, which is dumb
+  // NB: Mainline doesn't count Comeuppance in its "counter move exceptions" list, which is inconsistent.
+  // We diverge from mainline here by giving it a simulated BP of 120 instead of 80.
   if (move.hasAttr("CounterDamageAttr")) {
     return 120;
   }
@@ -3751,6 +3757,7 @@ function getForewarnPower(move: Move): number {
   if (move.power === -1) {
     return 80;
   }
+
   return move.power;
 }
 
@@ -4724,10 +4731,7 @@ export class ArenaTrapAbAttr extends CheckTrappedAbAttr {
   override canApply({ pokemon, opponent }: CheckTrappedAbAttrParams): boolean {
     return (
       this.arenaTrapCondition(pokemon, opponent)
-      && !(
-        opponent.getTypes(true).includes(PokemonType.GHOST)
-        || (opponent.getTypes(true).includes(PokemonType.STELLAR) && opponent.getTypes().includes(PokemonType.GHOST))
-      )
+      && !opponent.isOfType(PokemonType.GHOST, { returnOriginalTypesIfStellar: true })
       && !opponent.hasAbility(AbilityId.RUN_AWAY)
     );
   }
@@ -5197,13 +5201,25 @@ export class InfiltratorAbAttr extends AbAttr {
 
 /**
  * Attribute implementing the effects of {@link https://bulbapedia.bulbagarden.net/wiki/Magic_Bounce_(ability) | Magic Bounce}.
+ *
  * Allows the source to bounce back {@linkcode MoveFlags.REFLECTABLE | Reflectable}
- *  moves as if the user had used {@linkcode MoveId.MAGIC_COAT | Magic Coat}.
- * @sealed
- * @todo Make reflection a part of this ability's effects
+ * moves as if the user had used {@linkcode MoveId.MAGIC_COAT | Magic Coat}.
+ *
+ * The calling {@linkcode MoveEffectPhase} will "skip" targets with a reflection effect active,
+ * showing the flyout and activating this ability during the queued {@linkcode MoveReflectPhase}.
  */
-export class ReflectStatusMoveAbAttr extends AbAttr {
-  private declare readonly _: never;
+export class ReflectStatusMoveAbAttr extends PreDefendAbAttr {
+  override apply({ pokemon, opponent, move }: AugmentMoveInteractionAbAttrParams): void {
+    const newTargets = move.isMultiTarget() ? getMoveTargets(pokemon, move.id).targets : [opponent.getBattlerIndex()];
+    globalScene.phaseManager.unshiftNew(
+      "MovePhase",
+      pokemon,
+      newTargets,
+      new PokemonMove(move.id),
+      MoveUseMode.REFLECTED,
+      MovePhaseTimingModifier.FIRST,
+    );
+  }
 }
 
 // TODO: Make these ability attributes be flags instead of dummy attributes
@@ -5611,7 +5627,7 @@ export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
         typeChange.push(PokemonType.PSYCHIC);
         break;
       default:
-        pokemon.getTypes(false, false, true).forEach(t => {
+        pokemon.getTypes({ includeTeraType: false, bypassSummonData: true, ignoreThirdType: true }).forEach(t => {
           typeChange.push(t);
         });
         break;
@@ -5668,32 +5684,10 @@ class ForceSwitchOutHelper {
         return true;
       }
       /*
-       * For non-wild battles, it checks if the opposing party has any available Pokémon to switch in.
-       * If yes, the Pokémon leaves the field and a new SwitchSummonPhase is initiated.
-       */
-    } else if (globalScene.currentBattle.battleType !== BattleType.WILD) {
-      if (globalScene.getEnemyParty().filter(p => p.isAllowedInBattle() && !p.isOnField()).length === 0) {
-        return false;
-      }
-      if (switchOutTarget.hp > 0) {
-        const summonIndex = globalScene.currentBattle.trainer
-          ? globalScene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot)
-          : 0;
-        globalScene.phaseManager.queueDeferred(
-          "SwitchSummonPhase",
-          this.switchType,
-          switchOutTarget.getFieldIndex(),
-          summonIndex,
-          false,
-          false,
-        );
-        return true;
-      }
-      /*
-       * For wild Pokémon battles, the Pokémon will flee if the conditions are met (waveIndex and double battles).
+       * For wild Pokémon battles, the Pokémon will flee if the conditions are met (`waveIndex` and double battles).
        * It will not flee if it is a Mystery Encounter with fleeing disabled (checked in `getSwitchOutCondition()`) or if it is a wave 10x wild boss
        */
-    } else {
+    } else if (globalScene.currentBattle.battleType === BattleType.WILD) {
       const allyPokemon = switchOutTarget.getAlly();
 
       if (!globalScene.currentBattle.waveIndex || globalScene.currentBattle.waveIndex % 10 === 0) {
@@ -5725,6 +5719,28 @@ class ForceSwitchOutHelper {
 
           globalScene.phaseManager.pushNew("NewBattlePhase");
         }
+      }
+      /*
+       * For non-wild battles, it checks if the opposing party has any available Pokémon to switch in.
+       * If yes, the Pokémon leaves the field and a new SwitchSummonPhase is initiated.
+       */
+    } else {
+      if (globalScene.getEnemyParty().filter(p => p.isAllowedInBattle() && !p.isOnField()).length === 0) {
+        return false;
+      }
+      if (switchOutTarget.hp > 0) {
+        const summonIndex = globalScene.currentBattle.trainer
+          ? globalScene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot)
+          : 0;
+        globalScene.phaseManager.queueDeferred(
+          "SwitchSummonPhase",
+          this.switchType,
+          switchOutTarget.getFieldIndex(),
+          summonIndex,
+          false,
+          false,
+        );
+        return true;
       }
     }
     return false;

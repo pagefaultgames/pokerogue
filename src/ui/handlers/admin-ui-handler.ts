@@ -1,4 +1,4 @@
-import { pokerogueApi } from "#api/pokerogue-api";
+import { pokerogueApi } from "#api/api";
 import { globalScene } from "#app/global-scene";
 import { bypassLogin } from "#constants/app-constants";
 import { AdminMode } from "#enums/admin-mode";

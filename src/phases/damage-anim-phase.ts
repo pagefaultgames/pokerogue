@@ -1,5 +1,5 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
-import { BattleSpec } from "#enums/battle-spec";
 import type { BattlerIndex } from "#enums/battler-index";
 import { HitResult } from "#enums/hit-result";
 import { PokemonPhase } from "#phases/pokemon-phase";
@@ -8,9 +8,10 @@ import { fixedInt } from "#utils/common";
 
 export class DamageAnimPhase extends PokemonPhase {
   public readonly phaseName = "DamageAnimPhase";
+
   private amount: number;
-  private damageResult: DamageResult;
-  private critical: boolean;
+  private readonly damageResult: DamageResult;
+  private readonly critical: boolean;
 
   constructor(
     battlerIndex: BattlerIndex,
@@ -42,23 +43,24 @@ export class DamageAnimPhase extends PokemonPhase {
     this.applyDamage();
   }
 
-  updateAmount(amount: number): void {
+  // TODO: this is silly, just make `amount` `public`
+  public updateAmount(amount: number): void {
     this.amount = amount;
   }
 
-  applyDamage() {
+  private applyDamage() {
     switch (this.damageResult) {
       case HitResult.EFFECTIVE:
       case HitResult.CONFUSION:
-        globalScene.playSound("se/hit");
+        audioManager.playSound("se/hit");
         break;
       case HitResult.SUPER_EFFECTIVE:
       case HitResult.INDIRECT_KO:
       case HitResult.ONE_HIT_KO:
-        globalScene.playSound("se/hit_strong");
+        audioManager.playSound("se/hit_strong");
         break;
       case HitResult.NOT_VERY_EFFECTIVE:
-        globalScene.playSound("se/hit_weak");
+        audioManager.playSound("se/hit_weak");
         break;
     }
 
@@ -89,8 +91,8 @@ export class DamageAnimPhase extends PokemonPhase {
     }
   }
 
-  override end() {
-    if (globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
+  public override end() {
+    if (globalScene.currentBattle.isClassicFinalBoss) {
       globalScene.initFinalBossPhaseTwo(this.getPokemon());
     } else {
       super.end();

@@ -1,8 +1,9 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { ChallengeType } from "#enums/challenge-type";
 import { BattlePhase } from "#phases/battle-phase";
 import { applyChallenges } from "#utils/challenge-utils";
-import { BooleanHolder, fixedInt } from "#utils/common";
+import { BooleanHolder } from "#utils/common";
 
 export class PartyHealPhase extends BattlePhase {
   public readonly phaseName = "PartyHealPhase";
@@ -17,10 +18,7 @@ export class PartyHealPhase extends BattlePhase {
   start() {
     super.start();
 
-    const bgmPlaying = globalScene.isBgmPlaying();
-    if (bgmPlaying) {
-      globalScene.fadeOutBgm(1000, false);
-    }
+    audioManager.fadeOutBgm(1000);
     globalScene.ui.fadeOut(1000).then(() => {
       const preventRevive = new BooleanHolder(false);
       applyChallenges(ChallengeType.PREVENT_REVIVE, preventRevive);
@@ -37,17 +35,20 @@ export class PartyHealPhase extends BattlePhase {
         }
         pokemon.updateInfo(true);
       }
-      const healSong = globalScene.playSoundWithoutBgm("heal");
-      if (healSong) {
-        globalScene.time.delayedCall(fixedInt(healSong.totalDuration * 1000), () => {
-          healSong.destroy();
-          if (this.resumeBgm && bgmPlaying) {
-            globalScene.playBgm();
-          }
-          globalScene.ui.fadeIn(500).then(() => this.end());
-        });
+
+      const healSound = this.resumeBgm
+        ? audioManager.replaceBgmUntilEnd("bw/heal")
+        : audioManager.playBgm("bw/heal", false, false);
+      if (healSound == null) {
+        this.end();
+      } else {
+        healSound.onEnd(() => this.end());
       }
     });
     globalScene.arena.playerTerasUsed = 0;
+  }
+
+  public override end() {
+    globalScene.ui.fadeIn(500).then(() => super.end());
   }
 }

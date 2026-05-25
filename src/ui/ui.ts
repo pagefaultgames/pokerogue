@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import type { Button } from "#enums/buttons";
 import { Device } from "#enums/devices";
@@ -293,8 +294,7 @@ export class UI extends Phaser.GameObjects.Container {
     }
     if (prompt && text.indexOf("$") > -1) {
       const messagePages = text.split(/\$/g).map(m => m.trim());
-      // biome-ignore lint/complexity/useOptionalChain: optional chain would change this to be null instead of undefined.
-      let showMessageAndCallback = () => callback && callback();
+      let showMessageAndCallback = () => callback?.();
       for (let p = messagePages.length - 1; p >= 0; p--) {
         const originalFunc = showMessageAndCallback;
         messagePages[p] = messagePages[p].split(repname[0]).join(pokename[0]);
@@ -478,11 +478,11 @@ export class UI extends Phaser.GameObjects.Container {
   }
 
   playSelect(): void {
-    globalScene.playSound("ui/select");
+    audioManager.playSound("ui/select");
   }
 
   playError(): void {
-    globalScene.playSound("ui/error");
+    audioManager.playSound("ui/error");
   }
 
   fadeOut(duration: number): Promise<void> {

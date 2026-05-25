@@ -21,11 +21,13 @@ export class EnemyBattleInfo extends BattleInfo {
   protected hpBarSegmentDividers: GameObjects.Rectangle[] = [];
 
   // #region Type effectiveness hint objects
+
   protected effectivenessContainer: Phaser.GameObjects.Container;
   protected effectivenessWindow: Phaser.GameObjects.NineSlice;
   protected effectivenessText: Phaser.GameObjects.Text;
   protected currentEffectiveness?: string | undefined;
-  // #endregion
+
+  // #endregion Type effectiveness hint objects
 
   override get statOrder(): Stat[] {
     return [Stat.HP, Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.ACC, Stat.EVA, Stat.SPD];
