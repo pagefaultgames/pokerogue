@@ -326,7 +326,7 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
             if (
               rootFusionSpecies != null
               && Object.hasOwn(speciesStarterCosts, rootFusionSpecies)
-              && !!globalScene.gameData.dexData[rootFusionSpecies].caughtAttr
+              && globalScene.gameData.dexData[rootFusionSpecies].caughtAttr
             ) {
               globalScene.gameData.starterData[rootFusionSpecies].abilityAttr |=
                 playerPokemon.fusionAbilityIndex !== 1 || playerPokemon.fusionSpecies?.ability2

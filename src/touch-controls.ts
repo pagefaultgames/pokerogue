@@ -148,7 +148,6 @@ export class TouchControl {
    * and emits the appropriate event ('input_down' or 'input_up') based on the event type.
    */
   simulateKeyboardEvent(eventType: string, key: string): boolean {
-    console.log("simulateKeyboardEvent", eventType, key);
     if (!Object.hasOwn(Button, key) || this.disabled) {
       return false;
     }
@@ -250,4 +249,16 @@ export function isMobile(): boolean {
     }
   })(navigator.userAgent || navigator.vendor || window["opera"]);
   return ret;
+}
+
+/**
+ * Detect if the current device is running iOS (iPhone, iPad, or iPod)
+ * @returns Whether the current device is running iOS.
+ */
+export function isIos(): boolean {
+  const userAgent = navigator.userAgent || navigator.vendor || (window as any)["opera"];
+  // Check for iPhone, iPad, or iPod
+  const userAgentCheck = /iPad|iPhone|iPod/.test(userAgent) && !(window as any).MSStream;
+  const iPadSpecificCheck = navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
+  return userAgentCheck || iPadSpecificCheck;
 }

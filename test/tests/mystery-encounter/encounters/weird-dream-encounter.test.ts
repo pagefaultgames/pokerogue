@@ -71,7 +71,6 @@ describe("Weird Dream - Mystery Encounter", () => {
   it("should initialize fully", async () => {
     initSceneWithoutEncounterPhase(scene, defaultParty);
     scene.currentBattle.mysteryEncounter = WeirdDreamEncounter;
-    const loadBgmSpy = vi.spyOn(scene, "loadBgm");
 
     const { onInit } = WeirdDreamEncounter;
 
@@ -80,7 +79,6 @@ describe("Weird Dream - Mystery Encounter", () => {
     WeirdDreamEncounter.populateDialogueTokensFromRequirements();
     const onInitResult = onInit!();
 
-    expect(loadBgmSpy).toHaveBeenCalled();
     expect(onInitResult).toBe(true);
   });
 

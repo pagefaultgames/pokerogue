@@ -1,6 +1,7 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { speciesEggMoves } from "#balance/moves/egg-moves";
 import { starterPassiveAbilities } from "#balance/passives";
 import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
@@ -68,12 +69,12 @@ import {
   updateCandyCountTextStyle,
 } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
-import { BooleanHolder, getLocalizedSpriteKey, padInt, rgbHexToRgba } from "#utils/common";
+import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
+import { BooleanHolder, getLocalizedSpriteKey, padInt } from "#utils/common";
 import { enumValueToKey, getEnumValues } from "#utils/enums";
 import { getDexNumber, getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import type { ValueHolder } from "#utils/value-holder";
-import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
 import type BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
@@ -388,8 +389,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       .setPipeline(globalScene.spritePipeline, { tone: [0.0, 0.0, 0.0, 0.0], ignoreTimeTint: true });
     this.starterSelectContainer.add(this.pokemonSprite);
 
-    this.pokemonNumberText = addTextObject(17, 1, "0000", TextStyle.SUMMARY_DEX_NUM) //
-      .setOrigin(0);
+    this.pokemonNumberText = addTextObject(41, 1, "0000", TextStyle.SUMMARY_DEX_NUM) //
+      .setOrigin(1, 0);
     this.starterSelectContainer.add(this.pokemonNumberText);
 
     this.pokemonNameText = addTextObject(6, 112, "", TextStyle.SUMMARY) //
@@ -872,7 +873,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       this.abilityHidden = form.abilityHidden === form.ability1 ? undefined : form.abilityHidden;
 
       this.evolutions = allEvolutions.filter(e => e.preFormKey === form.formKey || e.preFormKey === null);
-      this.baseStats = form.baseStats;
+      this.baseStats = form.baseStats.slice();
       this.baseTotal = form.baseTotal;
     } else {
       this.levelMoves = pokemonSpeciesLevelMoves[species.speciesId];
@@ -881,7 +882,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       this.abilityHidden = species.abilityHidden === species.ability1 ? undefined : species.abilityHidden;
 
       this.evolutions = allEvolutions;
-      this.baseStats = species.baseStats;
+      this.baseStats = species.baseStats.slice();
       this.baseTotal = species.baseTotal;
     }
 
@@ -1873,7 +1874,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                 variant: newVariant,
               });
 
-              globalScene.playSound("se/sparkle");
+              audioManager.playSound("se/sparkle");
 
               starterAttributes.shiny = true;
               this.savedStarterAttributes.shiny = starterAttributes.shiny;
@@ -1998,12 +1999,12 @@ export class PokedexPageUiHandler extends MessageUiHandler {
               options.push({
                 label: `×${passiveCost} ${i18next.t("pokedexUiHandler:unlockPassive")}`,
                 handler: () => {
-                  if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE && candyCount < passiveCost) {
+                  if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE && candyCount < passiveCost) {
                     return false;
                   }
 
                   starterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
-                  if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
+                  if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE) {
                     starterData.candyCount -= passiveCost;
                   }
                   this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
@@ -2014,7 +2015,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                     }
                   });
                   this.setSpeciesDetails(this.species);
-                  globalScene.playSound("se/buy");
+                  audioManager.playSound("se/buy");
                   ui.setMode(UiMode.POKEDEX_PAGE, "refresh");
 
                   return true;
@@ -2032,12 +2033,12 @@ export class PokedexPageUiHandler extends MessageUiHandler {
               options.push({
                 label: `×${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost", { newCost: globalScene.gameData.getSpeciesStarterValue(this.starterId, starterData.valueReduction + 1) })}`,
                 handler: () => {
-                  if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE && candyCount < reductionCost) {
+                  if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE && candyCount < reductionCost) {
                     return false;
                   }
 
                   starterData.valueReduction++;
-                  if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
+                  if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE) {
                     starterData.candyCount -= reductionCost;
                   }
                   this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
@@ -2048,7 +2049,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                     }
                   });
                   ui.setMode(UiMode.POKEDEX_PAGE, "refresh");
-                  globalScene.playSound("se/buy");
+                  audioManager.playSound("se/buy");
 
                   return true;
                 },
@@ -2064,11 +2065,11 @@ export class PokedexPageUiHandler extends MessageUiHandler {
             options.push({
               label: `×${sameSpeciesEggCost} ${i18next.t("pokedexUiHandler:sameSpeciesEgg")}`,
               handler: () => {
-                if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE && candyCount < sameSpeciesEggCost) {
+                if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE && candyCount < sameSpeciesEggCost) {
                   return false;
                 }
 
-                if (globalScene.gameData.eggs.length >= 99 && !Overrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
+                if (globalScene.gameData.eggs.length >= 99 && !activeOverrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
                   // Egg list full, show error message at the top of the screen and abort
                   this.showText(
                     i18next.t("egg:tooManyEggs"),
@@ -2081,7 +2082,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                   );
                   return false;
                 }
-                if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
+                if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE) {
                   starterData.candyCount -= sameSpeciesEggCost;
                 }
                 this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
@@ -2100,7 +2101,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                   }
                 });
                 ui.setMode(UiMode.POKEDEX_PAGE, "refresh");
-                globalScene.playSound("se/buy");
+                audioManager.playSound("se/buy");
 
                 return true;
               },

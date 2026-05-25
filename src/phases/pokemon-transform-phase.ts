@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { BattlerIndex } from "#enums/battler-index";
@@ -60,12 +61,12 @@ export class PokemonTransformPhase extends PokemonPhase {
     });
 
     // TODO: This should fallback to the target's original typing if none are left (from Burn Up, etc.)
-    user.summonData.types = target.getTypes();
+    user.summonData.types = target.getTypes({ includeTeraType: false });
 
     const promises = [user.updateInfo()];
 
     if (this.playSound) {
-      globalScene.playSound("battle_anims/PRSFX- Transform");
+      audioManager.playSound("battle_anims/PRSFX- Transform");
     }
 
     globalScene.phaseManager.queueMessage(

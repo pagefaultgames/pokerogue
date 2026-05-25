@@ -97,7 +97,7 @@ class DefaultOverrides {
    * This override's ability to force doubles trainer battles is deprecated due to not altering the spawned trainer's variant,
    * and may be removed in a future PR.
    */
-  readonly BATTLE_STYLE_OVERRIDE: BattleStyle | null = null;
+  readonly BATTLE_STYLE_OVERRIDE: BattleStyleOverride | null = null;
   /**
    * If present and non-`null`, will override the starting wave # when starting a new run.
    * Should never be set to a negative value.
@@ -114,6 +114,8 @@ class DefaultOverrides {
   readonly TIME_OF_DAY_OVERRIDE: Exclude<TimeOfDay, TimeOfDay.ALL> | null = null;
   /** Multiplies XP gained by this value including 0. Set to null to ignore the override. */
   readonly XP_MULTIPLIER_OVERRIDE: number | null = null;
+  /** If greater than `0`, adds candies on every instance of friendship gain. */
+  readonly IMMEDIATE_ADD_CANDY_OVERRIDE: number = 0;
   /**
    * Sets the level cap to this number during experience gain calculations.
    *
@@ -188,7 +190,10 @@ class DefaultOverrides {
   readonly STARTER_SPECIES_OVERRIDE: SpeciesId | null = null;
   /** This will force your starter to be a random fusion */
   readonly STARTER_FUSION_OVERRIDE: boolean = false;
-  /** This will override the species of the fusion */
+  /**
+   * This will override the species of the fusion.
+   * Requires {@linkcode STARTER_FUSION_OVERRIDE} to be set to `true`.
+   */
   readonly STARTER_FUSION_SPECIES_OVERRIDE: SpeciesId | null = null;
   readonly ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
   readonly PASSIVE_ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
@@ -297,11 +302,11 @@ class DefaultOverrides {
    * // Will have a quantity of 2 in-game
    * STARTING_MODIFIER_OVERRIDE = [{name: "EXP_SHARE", count: 2}]
    * // Will have a quantity of 1 in-game
-   * STARTING_HELD_ITEM_OVERRIDE = [{name: "LUCKY_EGG"}]
+   * STARTING_HELD_ITEMS_OVERRIDE = [{name: "LUCKY_EGG"}]
    * // Type must be given to get a specific berry
-   * STARTING_HELD_ITEM_OVERRIDE = [{name: "BERRY", type: BerryType.SITRUS}]
+   * STARTING_HELD_ITEMS_OVERRIDE = [{name: "BERRY", type: BerryType.SITRUS}]
    * // A random berry will be generated at runtime
-   * STARTING_HELD_ITEM_OVERRIDE = [{name: "BERRY"}]
+   * STARTING_HELD_ITEMS_OVERRIDE = [{name: "BERRY"}]
    * ```
    */
   readonly STARTING_MODIFIER_OVERRIDE: ModifierOverride[] = [];
@@ -344,12 +349,9 @@ class DefaultOverrides {
 
 export const defaultOverrides = new DefaultOverrides();
 
-export default {
-  ...defaultOverrides,
-  ...overrides,
-} satisfies InstanceType<typeof DefaultOverrides>;
+export const activeOverrides = { ...defaultOverrides, ...overrides } satisfies InstanceType<OverridesType>;
 
-export type BattleStyle = "double" | "single" | "even-doubles" | "odd-doubles";
+export type BattleStyleOverride = "double" | "single" | "even-doubles" | "odd-doubles";
 
 export type RandomTrainerOverride = {
   /** The Type of trainer to force */
@@ -363,4 +365,4 @@ export type RandomTrainerOverride = {
 };
 
 /** The type of the {@linkcode DefaultOverrides} class */
-export type OverridesType = typeof DefaultOverrides;
+type OverridesType = typeof DefaultOverrides;
