@@ -6,7 +6,7 @@ export class ToggleDoublePositionPhase extends BattlePhase {
   public readonly phaseName = "ToggleDoublePositionPhase";
   private double: boolean;
 
-  // TODO: JUST FUCKING USE `globalScene.currentBattle.double`
+  // TODO: JUST USE `globalScene.currentBattle.double`
   constructor(double: boolean) {
     super();
 

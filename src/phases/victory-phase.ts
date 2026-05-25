@@ -39,7 +39,8 @@ export class VictoryPhase extends PokemonPhase {
     if (
       !globalScene
         .getEnemyParty()
-        .find(p => (globalScene.currentBattle.battleType === BattleType.WILD ? p.isOnField() : !p?.isFainted()))
+        .find(p => (globalScene.currentBattle.battleType === BattleType.WILD ? p.isOnField() : !p?.isFainted())) // TODO: Remove this kludge once this phase stops being used for both faints and end-of-battle operations
+      && !globalScene.phaseManager.hasPhaseOfType("BattleEndPhase")
     ) {
       globalScene.phaseManager.pushNew("BattleEndPhase", true);
       if (globalScene.currentBattle.battleType === BattleType.TRAINER) {
