@@ -1,135 +1,237 @@
 import { allTrainerItems } from "#data/data-lists";
-import { Stat, type TempBattleStat } from "#enums/stat";
+import { getStatusEffectDescriptor } from "#data/status-effect";
+import type { Stat, TempBattleStat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import type { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { TrainerItemId } from "#enums/trainer-item-id";
+import { MarkerTrainerItem, type TrainerItem } from "#items/trainer-item";
+import { TrainerItemBuilder } from "#items/trainer-item-builder";
+import { CriticalCatchChanceBoosterTrainerItemAttr } from "#items/trainer-items/critical-catch-chance-booster";
 import {
-  CriticalCatchChanceBoosterTrainerItem,
-  ExpBoosterTrainerItem,
-  ExtraRewardTrainerItem,
-  HealingBoosterTrainerItem,
-  HealShopCostTrainerItem,
-  HiddenAbilityChanceBoosterTrainerItem,
-  LevelIncrementBoosterTrainerItem,
-  MoneyMultiplierTrainerItem,
-  PreserveBerryTrainerItem,
-  ShinyRateBoosterTrainerItem,
-  TrainerItem,
-} from "#items/trainer-item";
-import type { TrainerItemEffectParamMap } from "#types/trainer-item-parameter";
-import type { TrainerItemManager } from "./trainer-item-manager";
+  EnemyAttackStatusEffectChanceTrainerItemAttr,
+  EnemyDamageBoosterTrainerItemAttr,
+  EnemyDamageReducerTrainerItemAttr,
+  EnemyEndureChanceTrainerItemAttr,
+  EnemyFusionChanceTrainerItemAttr,
+  EnemyStatusEffectHealChanceTrainerItemAttr,
+  EnemyTurnHealTrainerItemAttr,
+} from "#items/trainer-items/enemy-tokens";
+import { ExpBoosterTrainerItemAttr } from "#items/trainer-items/exp-booster";
+import { ExtraRewardTrainerItemAttr } from "#items/trainer-items/extra-reward";
+import { HealShopCostTrainerItemAttr } from "#items/trainer-items/heal-shop-cost";
+import { HealingBoosterTrainerItemAttr } from "#items/trainer-items/healing-booster";
+import { HiddenAbilityChanceBoosterTrainerItemAttr } from "#items/trainer-items/hidden-ability-chance-booster";
+import { LevelIncrementBoosterTrainerItemAttr } from "#items/trainer-items/level-increment-booster";
+import { DoubleBattleChanceBoosterTrainerItemAttr } from "#items/trainer-items/lure";
+import { MoneyMultiplierTrainerItemAttr } from "#items/trainer-items/money-multiplier";
+import { PreserveBerryTrainerItemAttr } from "#items/trainer-items/preserve-berry";
+import { ShinyRateBoosterTrainerItemAttr } from "#items/trainer-items/shiny-rate-booster";
 import {
-  EnemyAttackStatusEffectChanceTrainerItem,
-  EnemyDamageBoosterTrainerItem,
-  EnemyDamageReducerTrainerItem,
-  EnemyEndureChanceTrainerItem,
-  EnemyFusionChanceTrainerItem,
-  EnemyStatusEffectHealChanceTrainerItem,
-  EnemyTurnHealTrainerItem,
-} from "./trainer-items/enemy-tokens";
-import { DoubleBattleChanceBoosterTrainerItem } from "./trainer-items/lure";
-import {
-  TempAccuracyBoosterTrainerItem,
-  TempCritBoosterTrainerItem,
-  TempStatStageBoosterTrainerItem,
+  AccuracyBoosterTrainerItemAttr,
+  CritBoosterTrainerItemAttr,
+  StatStageBoosterTrainerItemAttr,
   tempStatToTrainerItem,
-} from "./trainer-items/x-items";
+} from "#items/trainer-items/x-items";
+import type { TrainerItemEffectParamMap } from "#types/trainer-item-parameter";
+import type { Mutable } from "#types/type-helpers";
+import type { TrainerItemManager } from "./trainer-item-manager";
 
-export function initTrainerItems() {
-  allTrainerItems[TrainerItemId.MAP] = new TrainerItem(TrainerItemId.MAP, 1);
-  allTrainerItems[TrainerItemId.IV_SCANNER] = new TrainerItem(TrainerItemId.IV_SCANNER, 1);
-  allTrainerItems[TrainerItemId.LOCK_CAPSULE] = new TrainerItem(TrainerItemId.LOCK_CAPSULE, 1);
-  allTrainerItems[TrainerItemId.MEGA_BRACELET] = new TrainerItem(TrainerItemId.MEGA_BRACELET, 1);
-  allTrainerItems[TrainerItemId.DYNAMAX_BAND] = new TrainerItem(TrainerItemId.DYNAMAX_BAND, 1);
-  allTrainerItems[TrainerItemId.TERA_ORB] = new TrainerItem(TrainerItemId.TERA_ORB, 1);
+// #region Marker items
 
-  allTrainerItems[TrainerItemId.OVAL_CHARM] = new TrainerItem(TrainerItemId.OVAL_CHARM, 5);
-  allTrainerItems[TrainerItemId.EXP_SHARE] = new TrainerItem(TrainerItemId.EXP_SHARE, 5);
-  allTrainerItems[TrainerItemId.EXP_BALANCE] = new TrainerItem(TrainerItemId.EXP_BALANCE, 4);
+const markerItems = {
+  [TrainerItemId.MAP]: new MarkerTrainerItem(TrainerItemId.MAP, 1),
+  [TrainerItemId.IV_SCANNER]: new MarkerTrainerItem(TrainerItemId.IV_SCANNER, 1),
+  [TrainerItemId.LOCK_CAPSULE]: new MarkerTrainerItem(TrainerItemId.LOCK_CAPSULE, 1),
+  [TrainerItemId.MEGA_BRACELET]: new MarkerTrainerItem(TrainerItemId.MEGA_BRACELET, 1),
+  [TrainerItemId.DYNAMAX_BAND]: new MarkerTrainerItem(TrainerItemId.DYNAMAX_BAND, 1),
+  [TrainerItemId.TERA_ORB]: new MarkerTrainerItem(TrainerItemId.TERA_ORB, 1),
 
-  allTrainerItems[TrainerItemId.CANDY_JAR] = new LevelIncrementBoosterTrainerItem(TrainerItemId.CANDY_JAR, 99);
-  allTrainerItems[TrainerItemId.BERRY_POUCH] = new PreserveBerryTrainerItem(TrainerItemId.BERRY_POUCH, 3);
+  [TrainerItemId.OVAL_CHARM]: new MarkerTrainerItem(TrainerItemId.OVAL_CHARM, 5),
+  [TrainerItemId.EXP_SHARE]: new MarkerTrainerItem(TrainerItemId.EXP_SHARE, 5),
+  [TrainerItemId.EXP_BALANCE]: new MarkerTrainerItem(TrainerItemId.EXP_BALANCE, 4),
 
-  allTrainerItems[TrainerItemId.HEALING_CHARM] = new HealingBoosterTrainerItem(TrainerItemId.HEALING_CHARM, 0.1, 5);
-  allTrainerItems[TrainerItemId.EXP_CHARM] = new ExpBoosterTrainerItem(TrainerItemId.EXP_CHARM, 25, 99);
-  allTrainerItems[TrainerItemId.SUPER_EXP_CHARM] = new ExpBoosterTrainerItem(TrainerItemId.SUPER_EXP_CHARM, 60, 30);
-  allTrainerItems[TrainerItemId.GOLDEN_EXP_CHARM] = new ExpBoosterTrainerItem(TrainerItemId.GOLDEN_EXP_CHARM, 100, 10);
-  allTrainerItems[TrainerItemId.AMULET_COIN] = new MoneyMultiplierTrainerItem(TrainerItemId.AMULET_COIN, 5);
+  [TrainerItemId.GOLDEN_BUG_NET]: new MarkerTrainerItem(TrainerItemId.GOLDEN_BUG_NET, 1),
+} as const satisfies Partial<Readonly<Record<TrainerItemId, MarkerTrainerItem>>>;
 
-  allTrainerItems[TrainerItemId.ABILITY_CHARM] = new HiddenAbilityChanceBoosterTrainerItem(
-    TrainerItemId.ABILITY_CHARM,
-    4,
+// #endregion Marker items
+
+// #region X items
+
+type XItemsType = {
+  [k in keyof typeof tempStatToTrainerItem as (typeof tempStatToTrainerItem)[k]]: TrainerItem<
+    k extends Stat.ACC ? AccuracyBoosterTrainerItemAttr : StatStageBoosterTrainerItemAttr
+  >;
+};
+
+const xItems = Object.entries(tempStatToTrainerItem)
+  .values()
+  .reduce(
+    (acc, [statKey, trainerItemType]) => {
+      const stat = Number(statKey) satisfies TempBattleStat;
+      if (trainerItemType === TrainerItemId.X_ACCURACY) {
+        acc[trainerItemType] = new TrainerItemBuilder(TrainerItemId.X_ACCURACY, 5) //
+          .attr(AccuracyBoosterTrainerItemAttr)
+          .lapsing()
+          .build();
+      } else {
+        acc[trainerItemType] = new TrainerItemBuilder(trainerItemType, 5) //
+          .attr(StatStageBoosterTrainerItemAttr, stat as Exclude<TempBattleStat, Stat.ACC>, 0.3)
+          .lapsing()
+          .build();
+      }
+      return acc;
+    },
+    {} as Mutable<XItemsType>,
   );
-  allTrainerItems[TrainerItemId.GOLDEN_POKEBALL] = new ExtraRewardTrainerItem(TrainerItemId.GOLDEN_POKEBALL, 3);
-  allTrainerItems[TrainerItemId.SHINY_CHARM] = new ShinyRateBoosterTrainerItem(TrainerItemId.SHINY_CHARM, 4);
-  allTrainerItems[TrainerItemId.CATCHING_CHARM] = new CriticalCatchChanceBoosterTrainerItem(
-    TrainerItemId.CATCHING_CHARM,
-    3,
-  );
 
-  allTrainerItems[TrainerItemId.BLACK_SLUDGE] = new HealShopCostTrainerItem(TrainerItemId.BLACK_SLUDGE, 2.5, 1);
-  allTrainerItems[TrainerItemId.GOLDEN_BUG_NET] = new TrainerItem(TrainerItemId.GOLDEN_BUG_NET, 1);
+// #endregion X items
 
-  allTrainerItems[TrainerItemId.LURE] = new DoubleBattleChanceBoosterTrainerItem(TrainerItemId.LURE, 10);
-  allTrainerItems[TrainerItemId.SUPER_LURE] = new DoubleBattleChanceBoosterTrainerItem(TrainerItemId.SUPER_LURE, 15);
-  allTrainerItems[TrainerItemId.MAX_LURE] = new DoubleBattleChanceBoosterTrainerItem(TrainerItemId.MAX_LURE, 30);
+// #region Initialization
 
-  for (const [statKey, trainerItemType] of Object.entries(tempStatToTrainerItem)) {
-    const stat = Number(statKey) as TempBattleStat;
-    if (stat === Stat.ACC) {
-      allTrainerItems[trainerItemType] = new TempAccuracyBoosterTrainerItem(trainerItemType, 5);
-    } else {
-      allTrainerItems[trainerItemType] = new TempStatStageBoosterTrainerItem(trainerItemType, stat, 5);
-    }
-  }
-  allTrainerItems[TrainerItemId.DIRE_HIT] = new TempCritBoosterTrainerItem(TrainerItemId.DIRE_HIT, 5);
+const trainerItems = {
+  ...markerItems,
 
-  allTrainerItems[TrainerItemId.ENEMY_DAMAGE_BOOSTER] = new EnemyDamageBoosterTrainerItem(
-    TrainerItemId.ENEMY_DAMAGE_BOOSTER,
-  );
-  allTrainerItems[TrainerItemId.ENEMY_DAMAGE_REDUCTION] = new EnemyDamageReducerTrainerItem(
-    TrainerItemId.ENEMY_DAMAGE_REDUCTION,
-  );
-  allTrainerItems[TrainerItemId.ENEMY_HEAL] = new EnemyTurnHealTrainerItem(TrainerItemId.ENEMY_HEAL, 10);
-  allTrainerItems[TrainerItemId.ENEMY_ATTACK_POISON_CHANCE] = new EnemyAttackStatusEffectChanceTrainerItem(
-    TrainerItemId.ENEMY_ATTACK_POISON_CHANCE,
-    StatusEffect.POISON,
-    10,
-  );
-  allTrainerItems[TrainerItemId.ENEMY_ATTACK_PARALYZE_CHANCE] = new EnemyAttackStatusEffectChanceTrainerItem(
-    TrainerItemId.ENEMY_ATTACK_PARALYZE_CHANCE,
-    StatusEffect.PARALYSIS,
-    10,
-  );
-  allTrainerItems[TrainerItemId.ENEMY_ATTACK_BURN_CHANCE] = new EnemyAttackStatusEffectChanceTrainerItem(
-    TrainerItemId.ENEMY_ATTACK_BURN_CHANCE,
-    StatusEffect.BURN,
-    10,
-  );
-  allTrainerItems[TrainerItemId.ENEMY_STATUS_EFFECT_HEAL_CHANCE] = new EnemyStatusEffectHealChanceTrainerItem(
+  ...xItems,
+  [TrainerItemId.DIRE_HIT]: new TrainerItemBuilder(TrainerItemId.DIRE_HIT, 5) //
+    .attr(CritBoosterTrainerItemAttr)
+    .lapsing()
+    .build(),
+
+  [TrainerItemId.CANDY_JAR]: new TrainerItemBuilder(TrainerItemId.CANDY_JAR, 99) //
+    .attr(LevelIncrementBoosterTrainerItemAttr)
+    .build(),
+  [TrainerItemId.BERRY_POUCH]: new TrainerItemBuilder(TrainerItemId.BERRY_POUCH, 3) //
+    .attr(PreserveBerryTrainerItemAttr)
+    .build(),
+
+  [TrainerItemId.HEALING_CHARM]: new TrainerItemBuilder(TrainerItemId.HEALING_CHARM, 5) //
+    .attr(HealingBoosterTrainerItemAttr, 0.1)
+    .build(),
+
+  [TrainerItemId.EXP_CHARM]: new TrainerItemBuilder(TrainerItemId.EXP_CHARM, 99) //
+    .attr(ExpBoosterTrainerItemAttr, 25)
+    .build(),
+  [TrainerItemId.SUPER_EXP_CHARM]: new TrainerItemBuilder(TrainerItemId.SUPER_EXP_CHARM, 30) //
+    .attr(ExpBoosterTrainerItemAttr, 60)
+    .build(),
+  [TrainerItemId.GOLDEN_EXP_CHARM]: new TrainerItemBuilder(TrainerItemId.GOLDEN_EXP_CHARM, 10) //
+    .attr(ExpBoosterTrainerItemAttr, 100)
+    .build(),
+
+  [TrainerItemId.AMULET_COIN]: new TrainerItemBuilder(TrainerItemId.AMULET_COIN, 5) //
+    .attr(MoneyMultiplierTrainerItemAttr)
+    .build(),
+  [TrainerItemId.GOLDEN_POKEBALL]: new TrainerItemBuilder(TrainerItemId.GOLDEN_POKEBALL, 3) //
+    .attr(ExtraRewardTrainerItemAttr)
+    .build(),
+
+  [TrainerItemId.ABILITY_CHARM]: new TrainerItemBuilder(TrainerItemId.ABILITY_CHARM, 4) //
+    .attr(HiddenAbilityChanceBoosterTrainerItemAttr)
+    .build(),
+  [TrainerItemId.SHINY_CHARM]: new TrainerItemBuilder(TrainerItemId.SHINY_CHARM, 4) //
+    .attr(ShinyRateBoosterTrainerItemAttr)
+    .build(),
+  [TrainerItemId.CATCHING_CHARM]: new TrainerItemBuilder(TrainerItemId.CATCHING_CHARM, 3) //
+    .attr(CriticalCatchChanceBoosterTrainerItemAttr)
+    .build(),
+
+  [TrainerItemId.BLACK_SLUDGE]: new TrainerItemBuilder(TrainerItemId.BLACK_SLUDGE, 1) //
+    .attr(HealShopCostTrainerItemAttr, 2.5)
+    .build(),
+
+  [TrainerItemId.LURE]: new TrainerItemBuilder(TrainerItemId.LURE, 10) //
+    .attr(DoubleBattleChanceBoosterTrainerItemAttr)
+    .lapsing()
+    .description("modifierType:ModifierType.DoubleBattleChanceBoosterModifierType.description", {
+      battleCount: 10,
+    })
+    .build(),
+  [TrainerItemId.SUPER_LURE]: new TrainerItemBuilder(TrainerItemId.SUPER_LURE, 15) //
+    .attr(DoubleBattleChanceBoosterTrainerItemAttr)
+    .lapsing()
+    .build(),
+  [TrainerItemId.MAX_LURE]: new TrainerItemBuilder(TrainerItemId.MAX_LURE, 30) //
+    .attr(DoubleBattleChanceBoosterTrainerItemAttr)
+    .lapsing()
+    .build(),
+
+  [TrainerItemId.ENEMY_DAMAGE_BOOSTER]: new TrainerItemBuilder(TrainerItemId.ENEMY_DAMAGE_BOOSTER, 999) //
+    .attr(EnemyDamageBoosterTrainerItemAttr, 0.05)
+    .iconName("wl_item_drop")
+    .build(),
+  [TrainerItemId.ENEMY_DAMAGE_REDUCTION]: new TrainerItemBuilder(TrainerItemId.ENEMY_DAMAGE_REDUCTION, 999) //
+    .attr(EnemyDamageReducerTrainerItemAttr, 0.025)
+    .iconName("wl_guard_spec")
+    .build(),
+  [TrainerItemId.ENEMY_HEAL]: new TrainerItemBuilder(TrainerItemId.ENEMY_HEAL, 10) //
+    .attr(EnemyTurnHealTrainerItemAttr, 2)
+    .iconName("wl_potion")
+    .build(),
+  [TrainerItemId.ENEMY_ATTACK_POISON_CHANCE]: new TrainerItemBuilder(TrainerItemId.ENEMY_ATTACK_POISON_CHANCE, 10) //
+    .attr(EnemyAttackStatusEffectChanceTrainerItemAttr, StatusEffect.POISON, 0.05)
+    .description("modifierType:ModifierType.EnemyAttackStatusEffectChanceModifierType.description", {
+      chancePercent: 5,
+      // TODO: This needs to use key nesting
+      statusEffect: getStatusEffectDescriptor(StatusEffect.POISON),
+    })
+    .iconName("wl_antidote")
+    .build(),
+  [TrainerItemId.ENEMY_ATTACK_PARALYZE_CHANCE]: new TrainerItemBuilder(TrainerItemId.ENEMY_ATTACK_PARALYZE_CHANCE, 10) //
+    .attr(EnemyAttackStatusEffectChanceTrainerItemAttr, StatusEffect.PARALYSIS, 0.025)
+    .iconName("wl_paralyze_heal")
+    .description("modifierType:ModifierType.EnemyAttackStatusEffectChanceModifierType.description", {
+      chancePercent: 2.5,
+      // TODO: This needs to use key nesting
+      statusEffect: getStatusEffectDescriptor(StatusEffect.PARALYSIS),
+    })
+    .build(),
+  [TrainerItemId.ENEMY_ATTACK_BURN_CHANCE]: new TrainerItemBuilder(TrainerItemId.ENEMY_ATTACK_BURN_CHANCE, 10) //
+    .attr(EnemyAttackStatusEffectChanceTrainerItemAttr, StatusEffect.BURN, 0.05)
+    .iconName("wl_burn_heal")
+    .description("modifierType:ModifierType.EnemyAttackStatusEffectChanceModifierType.description", {
+      chancePercent: 5,
+      // TODO: This needs to use key nesting
+      statusEffect: getStatusEffectDescriptor(StatusEffect.BURN),
+    })
+    .build(),
+  [TrainerItemId.ENEMY_STATUS_EFFECT_HEAL_CHANCE]: new TrainerItemBuilder(
     TrainerItemId.ENEMY_STATUS_EFFECT_HEAL_CHANCE,
     10,
-  );
-  allTrainerItems[TrainerItemId.ENEMY_ENDURE_CHANCE] = new EnemyEndureChanceTrainerItem(
-    TrainerItemId.ENEMY_ENDURE_CHANCE,
-    10,
-  );
-  allTrainerItems[TrainerItemId.ENEMY_FUSED_CHANCE] = new EnemyFusionChanceTrainerItem(
-    TrainerItemId.ENEMY_FUSED_CHANCE,
-    10,
-  );
+  )
+    .attr(EnemyStatusEffectHealChanceTrainerItemAttr, 0.025)
+    .iconName("wl_full_heal")
+    .build(),
+  [TrainerItemId.ENEMY_ENDURE_CHANCE]: new TrainerItemBuilder(TrainerItemId.ENEMY_ENDURE_CHANCE, 10) //
+    .attr(EnemyEndureChanceTrainerItemAttr)
+    .build(),
+  [TrainerItemId.ENEMY_FUSED_CHANCE]: new TrainerItemBuilder(TrainerItemId.ENEMY_FUSED_CHANCE, 10) //
+    .attr(EnemyFusionChanceTrainerItemAttr)
+    .build(),
+} as const satisfies Readonly<Record<TrainerItemId, MarkerTrainerItem | TrainerItem>>;
+
+/**
+ * Resolved type of {@linkcode allTrainerItems}.
+ * @privateRemarks
+ * Declared in a separate file to avoid circular imports.
+ */
+export type AllTrainerItems = typeof trainerItems;
+
+export function initTrainerItems() {
+  Object.assign(allTrainerItems, trainerItems);
+  Object.freeze(allTrainerItems);
 }
 
-export function applyTrainerItems<T extends TrainerItemEffect>(
-  effect: T,
+// #endregion Initialization
+
+export function applyTrainerItems<E extends TrainerItemEffect>(
+  effect: E,
   manager: TrainerItemManager,
-  params: TrainerItemEffectParamMap[T],
+  params: TrainerItemEffectParamMap[E],
 ) {
-  if (manager) {
-    for (const item of manager.items.keys()) {
-      if (allTrainerItems[item].effects.includes(effect)) {
-        allTrainerItems[item].apply(manager, params);
-      }
+  for (const itemId of manager.getItems()) {
+    const trainerItem = allTrainerItems[itemId] as TrainerItem | MarkerTrainerItem;
+    if ("effects" in trainerItem && trainerItem.hasEffect(effect)) {
+      trainerItem.apply(effect, params, manager);
     }
   }
 }

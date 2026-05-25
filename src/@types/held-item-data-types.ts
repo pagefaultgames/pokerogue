@@ -104,14 +104,5 @@ type CosmeticHeldItemId = InferKeys<AllHeldItems, CosmeticHeldItem>;
 export type ApplicableHeldItemId = Exclude<keyof AllHeldItems, CosmeticHeldItemId>;
 
 /** Utility type to retrieve the effects of a given {@linkcode HeldItem} based on its ID. */
-export type ExtractItemEffect<T extends ApplicableHeldItemId> =
+export type ExtractHeldItemEffect<T extends ApplicableHeldItemId> =
   AllHeldItems[T] extends HeldItem<infer Attr extends HeldItemAttr> ? Attr["effect"] : never;
-
-/**
- * Dummy, TypeScript-only type to ensure that {@linkcode HeldItemId} and {@linkcode HeldItemCategoryId}
- * have 0 overlap between allowed IDs.
- *
- * ⚠️ Does not actually exist at runtime, so it must not be used!
- */
-// TODO: Fix this and other "dummy" types to actually work - the intersection with never makes this actively useless
-declare const EnsureHeldItemIDsAreDisjointFromCategories: (HeldItemId & HeldItemCategoryEntry) & never;

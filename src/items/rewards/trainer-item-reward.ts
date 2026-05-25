@@ -31,6 +31,7 @@ export class TrainerItemReward extends Reward {
   }
 }
 
+// TODO: This probably shouldn't need to be its own class...
 export class LapsingTrainerItemReward extends TrainerItemReward {
   apply(): boolean {
     return globalScene.trainerItems.add(this.itemId, allTrainerItems[this.itemId].getMaxStackCount());

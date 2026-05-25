@@ -98,6 +98,7 @@ export function getStatusEffectDescriptor(statusEffect: StatusEffect): string {
     return "";
   }
   const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.description` as ParseKeys;
+  // TODO: Use i18next key nesting instead
   return i18next.t(i18nKey);
 }
 

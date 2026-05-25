@@ -80,9 +80,10 @@ import { EnemyPokemon, PlayerPokemon } from "#field/pokemon";
 import { PokemonSpriteSparkleHandler } from "#field/pokemon-sprite-sparkle-handler";
 import { Trainer } from "#field/trainer";
 import { applyTrainerItems } from "#items/all-trainer-items";
-import type { EnemyAttackStatusEffectChanceTrainerItem } from "#items/enemy-tokens";
+import type { EnemyAttackStatusEffectChanceTrainerItemAttr } from "#items/enemy-tokens";
 import { assignEnemyHeldItemsForWave, assignItemsFromConfiguration } from "#items/held-item-pool";
 import type { MatchExact, Reward } from "#items/reward";
+import type { TrainerItem } from "#items/trainer-item";
 import { TrainerItemManager } from "#items/trainer-item-manager";
 import { getNewTrainerItemFromPool } from "#items/trainer-item-pool";
 import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
@@ -3037,6 +3038,7 @@ export class BattleScene extends SceneBase {
     });
   }
 
+  // TODO: This is extraordinarily scuffed
   applyShuffledStatusTokens(pokemon: Pokemon) {
     let tokens = [
       TrainerItemId.ENEMY_ATTACK_BURN_CHANCE,
@@ -3056,14 +3058,13 @@ export class BattleScene extends SceneBase {
         };
         tokens = shuffleTokens(tokens);
       },
-      this.currentBattle.turn << 4,
+      this.currentBattle.turn << 4, // TODO: I HATE RANDOM SEED OFFSETS LIKE THIS
       this.waveSeed,
     );
 
-    for (const t in tokens) {
-      (allTrainerItems[t] as EnemyAttackStatusEffectChanceTrainerItem).apply(this.enemyTrainerItems, {
-        pokemon,
-      });
+    for (const t of tokens) {
+      const item = allTrainerItems[t] satisfies TrainerItem<EnemyAttackStatusEffectChanceTrainerItemAttr>;
+      item.apply(TrainerItemEffect.ENEMY_ATTACK_STATUS_CHANCE, { pokemon }, this.enemyTrainerItems);
     }
   }
 

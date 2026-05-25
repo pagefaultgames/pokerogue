@@ -1,25 +1,41 @@
 import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
-import { TrainerItemEffect } from "#enums/trainer-item-effect";
+import type { TrainerItemEffect } from "#enums/trainer-item-effect";
 import { type TrainerItemId, TrainerItemNames } from "#enums/trainer-item-id";
+import type { TrainerItemAttr, TrainerItemRecord } from "#items/trainer-item-attr";
+import type { TrainerItemBuilder } from "#items/trainer-item-builder";
 import type { TrainerItemManager } from "#items/trainer-item-manager";
-import type { NumberHolderParams, PreserveBerryParams } from "#types/trainer-item-parameter";
+import type { TrainerItemEffectParamMap } from "#types/trainer-item-parameter";
 import { addTextObject } from "#ui/text";
-import { hslToHex } from "#utils/common";
+import { hslToHex } from "#utils/color-utils";
 import i18next from "i18next";
 
-// TODO: Give this the subclass treatment for `HeldItem` - splitting it into "marker" held items and ones that can be applied
-// (this would resolve some type errors)
-export class TrainerItem {
-  //  public pokemonId: number;
+export abstract class TrainerItemBase {
   public readonly type: TrainerItemId;
-  public readonly maxStackCount: number;
-  public readonly isLapsing: boolean = false;
-  public readonly effects: readonly TrainerItemEffect[] = [];
 
-  constructor(type: TrainerItemId, maxStackCount = 1) {
+  /**
+   * Private backing property for `maxStackCount`
+   */
+  // TODO: This is added for the SOLE purpose of supporting endure tokens' dynamic max stack count.
+  readonly #maxStackCount: number | (() => number);
+  public get maxStackCount(): number {
+    return typeof this.#maxStackCount === "function" ? this.#maxStackCount() : this.#maxStackCount;
+  }
+  // TODO: Remove as we now expose the base property
+  getMaxStackCount(): number {
+    return this.maxStackCount;
+  }
+
+  /**
+   * Whether this item will be removed after a set number of turns (using its stack count as a "timer" of sorts).
+   * @defaultValue `false`
+   */
+  public readonly isLapsing: boolean;
+
+  constructor(type: TrainerItemId, maxStackCount: number | (() => number), isLapsing = false) {
     this.type = type;
-    this.maxStackCount = maxStackCount;
+    this.#maxStackCount = maxStackCount;
+    this.isLapsing = isLapsing;
   }
 
   public get name(): string {
@@ -34,14 +50,12 @@ export class TrainerItem {
     return `${TrainerItemNames[this.type]?.toLowerCase()}`;
   }
 
-  getMaxStackCount(): number {
-    return this.maxStackCount;
-  }
-
-  createIcon(stackCount: number): Phaser.GameObjects.Container {
-    const container = globalScene.add.container();
-
-    container.add(globalScene.add.sprite(0, 12, "items").setFrame(this.iconName).setOrigin(0, 0.5));
+  public createIcon(stackCount: number): Phaser.GameObjects.Container {
+    const item = globalScene.add
+      .sprite(0, 12, "items") //
+      .setFrame(this.iconName)
+      .setOrigin(0, 0.5);
+    const container = globalScene.add.container().add(item);
 
     const stackText = this.getIconStackText(stackCount);
     if (stackText) {
@@ -51,9 +65,25 @@ export class TrainerItem {
     return container;
   }
 
-  public getIconStackText(stackCount: number): Phaser.GameObjects.BitmapText | null {
+  private getIconStackText(stackCount: number): Phaser.GameObjects.BitmapText | Phaser.GameObjects.Text | undefined {
+    if (this.isLapsing) {
+      // Generate the text with a linearly interpolated hue based on remaining duration
+      // Ranges from #f2dbd9 / #822017 (≈ 0% duration) to #d9f2db / #178220 (100% duration)
+      const hue = Math.floor(120 * (stackCount / this.getMaxStackCount()) + 5);
+      const typeHex = hslToHex(hue, 0.5, 0.9);
+      const strokeHex = hslToHex(hue, 0.7, 0.3);
+
+      return addTextObject(27, 0, stackCount.toString(), TextStyle.PARTY, {
+        fontSize: "66px",
+        color: typeHex,
+      })
+        .setShadow(0, 0)
+        .setStroke(strokeHex, 16)
+        .setOrigin(1, 0);
+    }
+
     if (this.getMaxStackCount() === 1 || stackCount < 1) {
-      return null;
+      return;
     }
 
     const text = globalScene.add
@@ -67,161 +97,127 @@ export class TrainerItem {
     return text;
   }
 
+  // TODO: This is unused
   getScoreMultiplier(): number {
     return 1;
   }
 }
 
-export class LapsingTrainerItem extends TrainerItem {
-  public readonly isLapsing = true;
+/**
+ * Class for all non-marker trainer items
+ * (i.e. ones that can have their effects applied during or outside of battle).
+ *
+ * @typeParam Attrs - A union of {@linkcode TrainerItemAttr}s that this class supports.
+ * @see {@linkcode TrainerItemBuilder}
+ * @privateRemarks
+ * While exposing the exact kinds of attributes this class supports technically breaks encapsulation,
+ * this is required for existing code to work without excessive type assertions.
+ */
+export abstract class TrainerItem<out Attrs extends TrainerItemAttr = TrainerItemAttr> extends TrainerItemBase {
+  /**
+   * An object matching each supported {@linkcode TrainerItemEffect} to the attributes that implement said effect.
+   */
+  public readonly effects: TrainerItemRecord<Attrs>;
 
-  public createIcon(battleCount: number): Phaser.GameObjects.Container {
-    const item = globalScene.add.sprite(0, 12, "items").setFrame(this.iconName).setOrigin(0, 0.5);
+  // #region Localization
 
-    // Linear interpolation on hue
-    const hue = Math.floor(120 * (battleCount / this.getMaxStackCount()) + 5);
+  /**
+   * Optional parameters used to localize this item's name.
+   * If omitted, will use the default implementation provided from {@linkcode TrainerItemBase}.
+   */
+  private readonly nameParams?: Parameters<typeof i18next.t> | undefined;
+  /**
+   * Optional parameters used to localize this item's description.
+   * If omitted, will use the default implementation provided from {@linkcode TrainerItemBase}.
+   */
+  private readonly descriptionParams?: Parameters<typeof i18next.t> | undefined;
+  public readonly customIconName?: string | undefined;
 
-    // Generates the color hex code with a constant saturation and lightness but varying hue
-    const typeHex = hslToHex(hue, 0.5, 0.9);
-    const strokeHex = hslToHex(hue, 0.7, 0.3);
+  public override get name(): string {
+    return this.nameParams ? i18next.t(...this.nameParams) : super.name;
+  }
 
-    const battleCountText = addTextObject(27, 0, battleCount.toString(), TextStyle.PARTY, {
-      fontSize: "66px",
-      color: typeHex,
-    })
-      .setShadow(0, 0)
-      .setStroke(strokeHex, 16)
-      .setOrigin(1, 0);
+  public override get description(): string {
+    return this.descriptionParams ? i18next.t(...this.descriptionParams) : super.description;
+  }
 
-    return globalScene.add.container(0, 0, [item, battleCountText]);
+  public override get iconName(): string {
+    return this.customIconName ?? super.iconName;
+  }
+
+  // #endregion Localization
+
+  protected constructor({
+    type,
+    effects,
+    lapsing = false,
+    maxStackCount = 1,
+    nameParams,
+    descriptionParams,
+    iconName,
+  }: {
+    type: TrainerItemId;
+    effects: TrainerItemRecord<Attrs>;
+    maxStackCount?: number;
+    nameParams?: Parameters<typeof i18next.t> | undefined;
+    descriptionParams?: Parameters<typeof i18next.t> | undefined;
+    iconName?: string | undefined;
+    lapsing?: boolean;
+  }) {
+    super(type, maxStackCount, lapsing);
+
+    this.effects = effects;
+    this.nameParams = nameParams;
+    this.descriptionParams = descriptionParams;
+    this.customIconName = iconName;
+  }
+
+  /**
+   * Check whether this item handles the given effect at runtime.
+   * Narrows the item's effect set to include `E`.
+   * @param effect - The {@linkcode TrainerItemEffect} to check
+   * @returns Whether this item has at least 1 attribute for `effect`
+   * @sealed
+   */
+  public hasEffect<E extends TrainerItemEffect>(effect: E): this is TrainerItem<Attrs | TrainerItemAttr<E>> {
+    return this.effects[effect].length > 0;
+  }
+
+  /**
+   * Apply all of this item's attributes that pertain to the given effect, subject to their individual
+   * {@linkcode TrainerItemAttr.shouldApply | shouldApply} conditions.
+   * @param effect - The {@linkcode TrainerItemEffect | effect} to apply
+   * @param params - The parameters to pass to the item attributes' `apply` methods
+   * @remarks
+   * The execution order of multiple attributes is not guaranteed and should not be relied upon.
+   * @sealed
+   */
+  public apply<E extends Attrs["effect"]>(
+    effect: E,
+    params: TrainerItemEffectParamMap[E],
+    manager: TrainerItemManager,
+  ): void {
+    for (const attr of this.getAttrs(effect) as readonly TrainerItemAttr<E>[]) {
+      if (attr.shouldApply(params, manager)) {
+        attr.apply(params, manager);
+      }
+    }
+  }
+
+  /**
+   * Retrieve all attributes of this item pertaining to the given effect.
+   * @param effect - The {@linkcode TrainerItemEffect | effect} to retrieve
+   * @returns An array containing all attributes this item has for `effect`.
+   * Is guaranteed to be non-empty for properly constructed `TrainerItem`s.
+   * @remarks
+   * The order of the attributes within the returned array is not guaranteed and should not be relied upon.
+   * @sealed
+   */
+  public getAttrs<E extends Attrs["effect"]>(effect: E): readonly Extract<Attrs, TrainerItemAttr<E>>[] {
+    return this.effects[effect];
   }
 }
 
-// Candy Jar
-export class LevelIncrementBoosterTrainerItem extends TrainerItem {
-  public effects: TrainerItemEffect[] = [TrainerItemEffect.LEVEL_INCREMENT_BOOSTER];
-
-  apply(manager: TrainerItemManager, params: NumberHolderParams) {
-    const count = params.numberHolder;
-    const stack = manager.getStack(this.type);
-    count.value += stack;
-  }
-}
-
-// Berry Pouch
-export class PreserveBerryTrainerItem extends TrainerItem {
-  public effects: TrainerItemEffect[] = [TrainerItemEffect.PRESERVE_BERRY];
-
-  public apply(manager: TrainerItemManager, params: PreserveBerryParams) {
-    const stack = manager.getStack(this.type);
-    params.doPreserve.value ||= params.pokemon.randBattleSeedInt(10) < stack * 3;
-  }
-}
-
-// Healing Charm
-export class HealingBoosterTrainerItem extends TrainerItem {
-  public effects: readonly TrainerItemEffect[] = [TrainerItemEffect.HEALING_BOOSTER];
-  private readonly multiplier: number;
-
-  constructor(type: TrainerItemId, multiplier: number, stackCount?: number) {
-    super(type, stackCount);
-
-    this.multiplier = multiplier;
-  }
-
-  public apply(manager: TrainerItemManager, params: NumberHolderParams) {
-    const healingMultiplier = params.numberHolder;
-    const stack = manager.getStack(this.type);
-    healingMultiplier.value *= 1 + (this.multiplier - 1) * stack;
-  }
-}
-
-// Exp Booster
-export class ExpBoosterTrainerItem extends TrainerItem {
-  public effects: TrainerItemEffect[] = [TrainerItemEffect.EXP_BOOSTER];
-  private readonly boostPercent: number;
-
-  constructor(type: TrainerItemId, boostPercent: number, stackCount?: number) {
-    super(type, stackCount);
-
-    this.boostPercent = boostPercent;
-  }
-
-  public get description(): string {
-    return i18next.t("modifierType:ModifierType.ExpBoosterModifierType.description", {
-      boostPercent: this.boostPercent,
-    });
-  }
-
-  public apply(manager: TrainerItemManager, params: NumberHolderParams): void {
-    const boost = params.numberHolder;
-    const stack = manager.getStack(this.type);
-    boost.value = Math.floor(boost.value * (1 + stack * this.boostPercent * 0.01));
-  }
-}
-
-export class MoneyMultiplierTrainerItem extends TrainerItem {
-  public effects: readonly TrainerItemEffect[] = [TrainerItemEffect.MONEY_MULTIPLIER];
-
-  apply(manager: TrainerItemManager, params: NumberHolderParams): void {
-    const moneyMultiplier = params.numberHolder;
-    const stack = manager.getStack(this.type);
-    moneyMultiplier.value += Math.floor(moneyMultiplier.value * 0.2 * stack);
-  }
-}
-
-export class HiddenAbilityChanceBoosterTrainerItem extends TrainerItem {
-  public effects: TrainerItemEffect[] = [TrainerItemEffect.HIDDEN_ABILITY_CHANCE_BOOSTER];
-
-  public apply(manager: TrainerItemManager, params: NumberHolderParams): void {
-    const boost = params.numberHolder;
-    const stack = manager.getStack(this.type);
-    boost.value *= Math.pow(2, -1 - stack);
-  }
-}
-
-export class ShinyRateBoosterTrainerItem extends TrainerItem {
-  public effects: TrainerItemEffect[] = [TrainerItemEffect.SHINY_RATE_BOOSTER];
-
-  public apply(manager: TrainerItemManager, params: NumberHolderParams): void {
-    const boost = params.numberHolder;
-    const stack = manager.getStack(this.type);
-    boost.value *= Math.pow(2, 1 + stack);
-  }
-}
-
-export class CriticalCatchChanceBoosterTrainerItem extends TrainerItem {
-  public effects: TrainerItemEffect[] = [TrainerItemEffect.CRITICAL_CATCH_CHANCE_BOOSTER];
-
-  public apply(manager: TrainerItemManager, params: NumberHolderParams): void {
-    const boost = params.numberHolder;
-    const stack = manager.getStack(this.type);
-    boost.value *= 1.5 + stack / 2;
-  }
-}
-
-export class ExtraRewardTrainerItem extends TrainerItem {
-  public effects: TrainerItemEffect[] = [TrainerItemEffect.EXTRA_REWARD];
-
-  public apply(manager: TrainerItemManager, params: NumberHolderParams): void {
-    const count = params.numberHolder;
-    const stack = manager.getStack(this.type);
-    count.value += stack;
-  }
-}
-
-export class HealShopCostTrainerItem extends TrainerItem {
-  public effects: TrainerItemEffect[] = [TrainerItemEffect.HEAL_SHOP_COST];
-  public readonly shopMultiplier: number;
-
-  constructor(type: TrainerItemId, shopMultiplier: number, stackCount?: number) {
-    super(type, stackCount);
-
-    this.shopMultiplier = shopMultiplier;
-  }
-
-  apply(_manager: TrainerItemManager, params: NumberHolderParams): void {
-    const moneyCost = params.numberHolder;
-    moneyCost.value = Math.floor(moneyCost.value * this.shopMultiplier);
-  }
+export class MarkerTrainerItem extends TrainerItemBase {
+  private declare readonly _: never;
 }

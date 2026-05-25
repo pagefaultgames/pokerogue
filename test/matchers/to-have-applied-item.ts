@@ -5,7 +5,7 @@ import { HeldItemNames } from "#enums/held-item-id";
 import { HeldItem } from "#items/held-item";
 import { getOnelineDiffStr } from "#test/utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/utils/test-utils";
-import type { ApplicableHeldItemId, ExtractItemEffect } from "#types/held-item-data-types";
+import type { ApplicableHeldItemId, ExtractHeldItemEffect } from "#types/held-item-data-types";
 import type { HeldItemEffectParamMap } from "#types/held-item-parameter";
 import type { AtLeastOne } from "#types/type-helpers";
 import { enumValueToKey } from "#utils/enums";
@@ -33,7 +33,7 @@ export type ToHaveAppliedItemOptions<E extends HeldItemEffect> = E extends Effec
  * @param options - A partially-filled parameters object used to query the arguments `item` was called with
  * @returns Whether the matcher passed
  */
-export function toHaveAppliedItem<T extends ApplicableHeldItemId, E extends ExtractItemEffect<T>>(
+export function toHaveAppliedItem<T extends ApplicableHeldItemId, E extends ExtractHeldItemEffect<T>>(
   this: MatcherState,
   received: unknown,
   id: T,

@@ -1,6 +1,4 @@
 export const TrainerItemId = {
-  NONE: 0x0000,
-
   MAP: 0x1001,
   IV_SCANNER: 0x1002,
   LOCK_CAPSULE: 0x1003,
