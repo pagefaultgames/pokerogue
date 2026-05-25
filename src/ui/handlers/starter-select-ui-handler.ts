@@ -1,8 +1,9 @@
 import type { Ability } from "#abilities/ability";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { speciesEggMoves } from "#balance/moves/egg-moves";
 import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
@@ -62,6 +63,7 @@ import { StatsContainer } from "#ui/stats-container";
 import { addBBCodeTextObject, addTextObject, getTextColor, updateCandyCountTextStyle } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { applyChallenges, checkStarterValidForChallenge } from "#utils/challenge-utils";
+import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
 import {
   BooleanHolder,
   fixedInt,
@@ -69,14 +71,12 @@ import {
   NumberHolder,
   padInt,
   randIntRange,
-  rgbHexToRgba,
   truncateString,
 } from "#utils/common";
 import type { StarterPreferences } from "#utils/data";
 import { deepCopy, loadStarterPreferences, saveStarterPreferences } from "#utils/data";
 import { getDexNumber, getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
-import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
@@ -170,6 +170,12 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: "28px",
     starterInfoXPos: 34,
   },
+  pl: {
+    starterInfoTextSize: "48px",
+    instructionTextSize: "28px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 40,
+  },
   ro: {
     starterInfoTextSize: "56px",
     instructionTextSize: "28px",
@@ -188,13 +194,18 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   },
   id: {
     starterInfoTextSize: "48px",
-    instructionTextSize: "32px",
+    instructionTextSize: "28px",
     starterInfoYOffset: 0.5,
     starterInfoXPos: 37,
   },
   hi: {
     starterInfoTextSize: "56px",
     instructionTextSize: "28px",
+  },
+  vi: {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "28px",
+    starterInfoXPos: 35,
   },
   tl: {
     starterInfoTextSize: "56px",
@@ -636,7 +647,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       ignoreTimeTint: true,
     });
 
-    this.pokemonNumberText = addTextObject(17, 1, "0000", TextStyle.SUMMARY_DEX_NUM).setOrigin(0);
+    this.pokemonNumberText = addTextObject(41, 1, "0000", TextStyle.SUMMARY_DEX_NUM).setOrigin(1, 0);
 
     this.pokemonNameText = addTextObject(6, 112, "", TextStyle.SUMMARY).setOrigin(0);
 
@@ -2257,10 +2268,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
               options.push({
                 label: `×${passiveCost} ${i18next.t("starterSelectUiHandler:unlockPassive")}`,
                 handler: () => {
-                  if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= passiveCost) {
+                  if (activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= passiveCost) {
                     persistentStarterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
                     starterData.passiveAttr = persistentStarterData.passiveAttr;
-                    if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
+                    if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE) {
                       persistentStarterData.candyCount -= passiveCost;
                       starterData.candyCount = persistentStarterData.candyCount;
                     }
@@ -2273,7 +2284,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                     });
                     ui.setMode(UiMode.STARTER_SELECT);
                     this.setSpeciesDetails(this.lastSpecies);
-                    globalScene.playSound("se/buy");
+                    audioManager.playSound("se/buy");
 
                     // update the passive background and icon/animation for available upgrade
                     if (starterContainer) {
@@ -2298,10 +2309,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
               options.push({
                 label: `×${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost", { newCost: globalScene.gameData.getSpeciesStarterValue(this.lastSpecies.speciesId, starterData.valueReduction + 1) })}`,
                 handler: () => {
-                  if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= reductionCost) {
+                  if (activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= reductionCost) {
                     persistentStarterData.valueReduction++;
                     starterData.valueReduction = persistentStarterData.valueReduction;
-                    if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
+                    if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE) {
                       persistentStarterData.candyCount -= reductionCost;
                       starterData.candyCount = persistentStarterData.candyCount;
                     }
@@ -2314,7 +2325,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                     });
                     this.tryUpdateValue(0);
                     ui.setMode(UiMode.STARTER_SELECT);
-                    globalScene.playSound("se/buy");
+                    audioManager.playSound("se/buy");
 
                     // update the value label and icon/animation for available upgrade
                     if (starterContainer) {
@@ -2337,8 +2348,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             options.push({
               label: `×${sameSpeciesEggCost} ${i18next.t("starterSelectUiHandler:sameSpeciesEgg")}`,
               handler: () => {
-                if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= sameSpeciesEggCost) {
-                  if (globalScene.gameData.eggs.length >= 99 && !Overrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
+                if (activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= sameSpeciesEggCost) {
+                  if (globalScene.gameData.eggs.length >= 99 && !activeOverrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
                     // Egg list full, show error message at the top of the screen and abort
                     this.showText(
                       i18next.t("egg:tooManyEggs"),
@@ -2351,7 +2362,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                     );
                     return false;
                   }
-                  if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
+                  if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE) {
                     persistentStarterData.candyCount -= sameSpeciesEggCost;
                     starterData.candyCount = persistentStarterData.candyCount;
                   }
@@ -2370,7 +2381,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                     }
                   });
                   ui.setMode(UiMode.STARTER_SELECT);
-                  globalScene.playSound("se/buy");
+                  audioManager.playSound("se/buy");
 
                   // update the icon/animation for available upgrade
                   if (starterContainer) {
@@ -2470,7 +2481,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                   variant: newVariant,
                 });
 
-                globalScene.playSound("se/sparkle");
+                audioManager.playSound("se/sparkle");
                 // Cycle tint based on current sprite tint
                 const tint = getVariantTint(newVariant);
                 this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant)).setTint(tint).setVisible(true);
@@ -4348,6 +4359,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.tryUpdateValue();
   }
 
+  // TODO: Dedupe from pokedex
   updateStarterValueLabel(starter: StarterContainer): void {
     const speciesId = starter.species.speciesId;
     const baseStarterValue = speciesStarterCosts[speciesId];
@@ -4356,7 +4368,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
     const starterValue = globalScene.gameData.getSpeciesStarterValue(speciesId);
     starter.cost = starterValue;
-    let valueStr = starterValue.toString();
+    let valueStr: string = starterValue.toString();
     if (valueStr.startsWith("0.")) {
       valueStr = valueStr.slice(1);
     }
@@ -4377,7 +4389,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     starter.label.setColor(getTextColor(textStyle)).setShadowColor(getTextColor(textStyle, true));
   }
 
-  tryUpdateValue(add?: number, addingToParty?: boolean): boolean {
+  tryUpdateValue(add = 0, addingToParty?: boolean): boolean {
     const value = this.starterSpecies
       .map(s => s.generation)
       .reduce(
@@ -4385,10 +4397,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           (total += globalScene.gameData.getSpeciesStarterValue(this.starterSpecies[i].speciesId)),
         0,
       );
-    const newValue = value + (add || 0);
+    const newValue = value + add;
     const valueLimit = this.getValueLimit();
     const overLimit = newValue > valueLimit;
-    let newValueStr = newValue.toString();
+    let newValueStr: string = newValue.toString();
     if (newValueStr.startsWith("0.")) {
       newValueStr = newValueStr.slice(1);
     }
