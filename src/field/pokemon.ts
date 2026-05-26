@@ -88,6 +88,7 @@ import { BiomeId } from "#enums/biome-id";
 import { ChallengeType } from "#enums/challenge-type";
 import { Challenges } from "#enums/challenges";
 import { DexAttr } from "#enums/dex-attr";
+import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { FieldPosition } from "#enums/field-position";
 import { HitResult } from "#enums/hit-result";
 import { LearnMoveSituation } from "#enums/learn-move-situation";
@@ -6438,7 +6439,7 @@ export class PlayerPokemon extends Pokemon {
    * @param lastLevel - The level of this Pokemon before the EXP increase
    */
   public async showExpGain(lastLevel: number): Promise<void> {
-    await this.battleInfo.updatePokemonExpDisplay(this, lastLevel);
+    await this.battleInfo.updatePokemonExpDisplay(this, lastLevel, globalScene.expGainsSpeed === ExpGainsSpeed.SKIP);
     await this.updateInfo();
   }
 
