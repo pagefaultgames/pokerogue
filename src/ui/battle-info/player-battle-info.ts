@@ -195,10 +195,7 @@ export class PlayerBattleInfo extends BattleInfo {
 
     const levelDurationMultiplier = this.getLevelDurationMultiplier(lastLevel, pokemon.level);
     let duration = this.visible
-      ? ((nextWidth - this.expMaskRect.x) / EXP_BAR_WIDTH)
-        * BattleInfo.EXP_GAINS_DURATION_BASE
-        * durationMultiplier
-        * levelDurationMultiplier
+      ? ratio * BattleInfo.EXP_GAINS_DURATION_BASE * durationMultiplier * levelDurationMultiplier
       : 0;
     if (speed && speed >= ExpGainsSpeed.DEFAULT) {
       duration = speed >= ExpGainsSpeed.SKIP ? ExpGainsSpeed.DEFAULT : duration / Math.pow(2, speed);
