@@ -7,11 +7,13 @@ export class BattleEndPhase extends BattlePhase {
   public readonly phaseName = "BattleEndPhase";
   /** If true, will increment battles won */
   isVictory: boolean;
+  shouldPickUpScatteredMoney: boolean;
 
-  constructor(isVictory: boolean) {
+  constructor(isVictory: boolean, shouldPickUpScatteredMoney = isVictory) {
     super();
 
     this.isVictory = isVictory;
+    this.shouldPickUpScatteredMoney = shouldPickUpScatteredMoney;
   }
 
   start() {
@@ -51,7 +53,11 @@ export class BattleEndPhase extends BattlePhase {
     }
 
     if (globalScene.currentBattle.moneyScattered) {
-      globalScene.currentBattle.pickUpScatteredMoney();
+      if (this.shouldPickUpScatteredMoney) {
+        globalScene.currentBattle.pickUpScatteredMoney();
+      } else {
+        globalScene.currentBattle.moneyScattered = 0;
+      }
     }
 
     globalScene.clearEnemyHeldItemModifiers();

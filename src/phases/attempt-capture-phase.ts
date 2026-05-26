@@ -128,7 +128,8 @@ export class AttemptCapturePhase extends PokemonPhase {
             globalScene.time.delayedCall(17, () => this.pokeball.setTexture("pb", `${pokeballAtlasKey}`));
 
             const doShake = () => {
-              // After the overall catch rate check, the game does 3 shake checks before confirming the catch.
+              // After the overall catch rate check, the game does 3 shake
+              // checks before confirming the catch.
               let shakeCount = 0;
               const pbX = this.pokeball.x;
               const shakeCounter = globalScene.tweens.addCounter({
@@ -149,7 +150,8 @@ export class AttemptCapturePhase extends PokemonPhase {
                 },
                 onRepeat: () => {
                   if (shakeCount++ < (isCritical ? 1 : 3)) {
-                    // Shake check (skip check for critical or guaranteed captures, but still play the sound)
+                    // Shake check (skip check for critical or guaranteed
+                    // captures, but still play the sound)
                     if (
                       pokeballMultiplier === -1
                       || isCritical
@@ -162,7 +164,8 @@ export class AttemptCapturePhase extends PokemonPhase {
                       this.failCatch(shakeCount);
                     }
                   } else if (isCritical && pokemon.randBattleSeedInt(65536) >= shakeProbability) {
-                    // Above, perform the one shake check for critical captures after the ball shakes once
+                    // Above, perform the one shake check for critical captures
+                    // after the ball shakes once
                     shakeCounter.stop();
                     this.failCatch(shakeCount);
                   } else {
@@ -279,7 +282,7 @@ export class AttemptCapturePhase extends PokemonPhase {
       null,
       () => {
         const end = () => {
-          globalScene.phaseManager.unshiftNew("VictoryPhase", this.battlerIndex);
+          globalScene.phaseManager.unshiftNew("VictoryPhase", this.battlerIndex, false, false);
           globalScene.pokemonInfoContainer.hide();
           this.removePb();
           this.end();
