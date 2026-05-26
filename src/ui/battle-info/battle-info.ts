@@ -611,6 +611,8 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
       this.fusionShinyIcon.setTint(getVariantTint(pokemon.fusionVariant));
     }
 
+    this.setLevelDisplay(pokemon.level);
+
     resolve();
     await promise;
   }

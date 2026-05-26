@@ -224,7 +224,7 @@ export class PlayerBattleInfo extends BattleInfo {
             this.setLevelDisplay(level);
             globalScene.time.delayedCall(500 * levelDurationMultiplier, () => {
               this.expMaskRect.x = 0;
-              this.updateInfo(pokemon).then(() => resolve());
+              resolve();
             });
             return;
           }
