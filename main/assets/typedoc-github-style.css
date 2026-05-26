@@ -368,9 +368,9 @@ footer {
 	border-radius: 6px;
 }
 
-.tsd-panel > h1,
-.tsd-panel > h2,
-.tsd-panel > h3 {
+.tsd-panel:not(.tsd-typography) > h1,
+.tsd-panel:not(.tsd-typography) > h2,
+.tsd-panel:not(.tsd-typography) > h3 {
 	margin-top: 0px;
 }
 
@@ -398,6 +398,116 @@ footer {
 
 .tsd-full-hierarchy:not(:last-child) {
 	border-bottom: var(--color-accent);
+}
+
+/*
+ * Typography (all markdown content)
+ */
+
+.tsd-typography {
+	line-height: 1.5;
+}
+
+/* Underline plain links; TypeDoc adds classes to code refs and anchor icons */
+.tsd-typography a:not([class]),
+.tsd-typography a.external {
+	text-decoration: underline;
+}
+
+.tsd-typography code {
+	margin: 0;
+}
+
+.tsd-typography ul {
+	list-style: disc;
+}
+
+.tsd-typography ul ul {
+	list-style: circle;
+}
+
+.tsd-typography ul ul ul {
+	list-style: square;
+}
+
+.tsd-typography ul,
+.tsd-typography ol {
+	padding-left: 32px;
+}
+
+.tsd-typography pre {
+	padding: 16px;
+	overflow: auto;
+}
+
+.tsd-typography strong {
+	font-weight: 600;
+}
+
+/*
+ * Typography headings (document pages only)
+ *
+ * Heading styles are scoped to .tsd-panel.tsd-typography to avoid affecting
+ * JSDoc comment prose (.tsd-comment.tsd-typography) on API pages.
+ */
+
+/* Override heading margin for the first element (matches GitHub's markdown-body) */
+.tsd-panel.tsd-typography > :first-child {
+	margin-top: 0 !important;
+}
+
+.tsd-panel.tsd-typography h1,
+.tsd-panel.tsd-typography h2,
+.tsd-panel.tsd-typography h3,
+.tsd-panel.tsd-typography h4,
+.tsd-panel.tsd-typography h5,
+.tsd-panel.tsd-typography h6 {
+	margin-top: 24px;
+	margin-bottom: 16px;
+	font-weight: 600;
+	line-height: 1.25;
+}
+
+.tsd-panel.tsd-typography h1 {
+	font-size: 2em;
+	padding-bottom: 0.3em;
+	border-bottom: 1px solid var(--color-accent);
+}
+
+.tsd-panel.tsd-typography h2 {
+	font-size: 1.5em;
+	padding-bottom: 0.3em;
+	border-bottom: 1px solid var(--color-accent);
+}
+
+.tsd-panel.tsd-typography h3 {
+	font-size: 1.25em;
+}
+
+.tsd-panel.tsd-typography h4 {
+	font-size: 1em;
+}
+
+.tsd-panel.tsd-typography h5 {
+	font-size: 0.875em;
+}
+
+.tsd-panel.tsd-typography h6 {
+	font-size: 0.85em;
+	color: var(--color-text-aside);
+}
+
+.tsd-panel.tsd-typography > h1,
+.tsd-panel.tsd-typography > h2,
+.tsd-panel.tsd-typography > h3 {
+	margin-left: 0;
+	margin-right: 0;
+	padding: 0;
+}
+
+.tsd-panel.tsd-typography > h1,
+.tsd-panel.tsd-typography > h2 {
+	padding-bottom: 0.3em;
 }
 
 /*

@@ -1,0 +1,198 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>CONTRIBUTING | PokéRogue</title><link rel="icon" href="../assets/favicon.ico"/><meta name="description" content="Documentation for PokéRogue"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script><link rel="stylesheet" href="../assets/typedoc-github-style.css"/></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><a href="../index.html" class="title">PokéRogue</a><div id="tsd-toolbar-links"><a href="https://github.com/pagefaultgames/pokerogue">GitHub</a><a href="https://pagefaultgames.github.io/pokerogue/beta">Switch to Beta</a></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/><ul role="listbox" id="tsd-search-results"></ul><div id="tsd-search-status" aria-live="polite" aria-atomic="true"><div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><ul class="tsd-breadcrumb" aria-label="Breadcrumb"><li><a href="" aria-current="page">CONTRIBUTING</a></li></ul></div><div class="tsd-panel tsd-typography"><!--
+SPDX-FileCopyrightText: 2024-2026 Pagefault Games
+
+SPDX-License-Identifier: CC-BY-NC-SA-4.0
+-->
+<h1 id="contributing-to-pokérogue" class="tsd-anchor-link">Contributing to PokéRogue<a href="#contributing-to-pokérogue" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h1>
+<p>Thank you for taking the time to contribute; every little bit helps! This project is entirely open-source and unmonetized - community contributions are what keep it alive!</p>
+<p>Please make sure you understand everything relevant to your changes from the <a href="#-table-of-contents">Table of Contents</a>, and absolutely <em>feel free to reach out in the <strong>#pokerogue-dev</strong> channel on <a href="https://discord.gg/pokerogue">Discord</a></em>.
+We are here to help and the better you understand what you're working on, the easier it will be for it to find its way into the game.</p>
+<div class="tsd-alert tsd-alert-note"><div class="tsd-alert-title"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use href="../assets/icons.svg#icon-alertNote"></use></svg><span>Note</span></div><p>
+As per GitHub's <a href="https://docs.github.com/en/site-policy/github-terms/github-terms-of-service#6-contributions-under-repository-license">terms of service</a>, any contributions made to this repository will be licensed under this repository's terms.
+If you use any external code, please make sure to follow its licensing information. Please make use of <a href="https://reuse.software/spec-3.3/#in-line-snippet-comments">SPDX snippets</a> for any portion of the file that is licensed differently.</p>
+</div>
+<h2 id="📄-table-of-contents" class="tsd-anchor-link">📄 Table of Contents<a href="#📄-table-of-contents" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<ul>
+<li><a href="#%EF%B8%8F-development-basics">Development Basics</a></li>
+<li><a href="#-environment-setup">Environment Setup</a></li>
+<li><a href="#-getting-started">Getting Started</a></li>
+<li><a href="#-documentation">Documentation</a></li>
+<li><a href="#-testing-your-changes">Testing Your Changes</a></li>
+<li><a href="#-development-save-file">Development Save File (Unlock Everything)</a></li>
+<li><a href="#-submitting-a-pull-request">Submitting a Pull Request</a></li>
+</ul>
+<h2 id="🛠️-development-basics" class="tsd-anchor-link">🛠️ Development Basics<a href="#🛠️-development-basics" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>PokéRogue is built with <a href="https://www.typescriptlang.org/docs/handbook/intro.html">TypeScript</a>, using the <a href="https://github.com/phaserjs/phaser">Phaser</a> game framework.</p>
+<p>If you have the motivation and experience with TypeScript/JavaScript (or are willing to learn), you can contribute by forking the repository and making pull requests with contributions.</p>
+<h2 id="💻-environment-setup" class="tsd-anchor-link">💻 Environment Setup<a href="#💻-environment-setup" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<h3 id="codespacesdevcontainer-environment" class="tsd-anchor-link">Codespaces/Devcontainer Environment<a href="#codespacesdevcontainer-environment" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Arguably the easiest way to get started is by using the prepared development environment.</p>
+<p>We have a <code>.devcontainer/devcontainer.json</code> file, meaning we are compatible with:</p>
+<ul>
+<li><a href="https://github.com/codespaces/new?hide_repo_select=true&amp;repo=620476224&amp;ref=beta"><img src="https://github.com/codespaces/badge.svg" alt="Open in GitHub Codespaces"></a>, or</li>
+<li>the <a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers">Visual Studio Code Remote - Containers</a> extension.</li>
+</ul>
+<p>This Linux environment comes with all required dependencies needed to start working on the project.</p>
+<div class="tsd-alert tsd-alert-important"><div class="tsd-alert-title"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use href="../assets/icons.svg#icon-alertImportant"></use></svg><span>Important</span></div><p>
+Due to quirks of devcontainer port forwarding, <strong>you must use <code>pnpm start:podman</code></strong> to start a local dev server from within a devcontainer.
+<em>All other instructions remain the same as local development</em>.</p>
+</div>
+<h3 id="podman" class="tsd-anchor-link">Podman<a href="#podman" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>For those who prefer Docker containers, see <a href="docs_podman.html">this instructions page</a> for information on how to setup a development environment with Podman.</p>
+<h3 id="local-development" class="tsd-anchor-link">Local Development<a href="#local-development" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<h4 id="prerequisites" class="tsd-anchor-link">Prerequisites<a href="#prerequisites" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<ul>
+<li>node: &gt;=24.9.0 - <a href="https://pnpm.io/cli/env">manage with pnpm</a> | <a href="https://github.com/Schniz/fnm">manage with fnm</a> | <a href="https://github.com/nvm-sh/nvm">manage with nvm</a> | <a href="https://volta.sh/">manage with volta.sh</a></li>
+<li>pnpm: 10.x - <a href="https://pnpm.io/installation">how to install</a> (not recommended to install via <code>npm</code> on Windows native) | <a href="https://volta.sh/">alternate method - volta.sh</a></li>
+<li>The repository <a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo">forked</a> and <a href="https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository">cloned</a> locally on your device</li>
+</ul>
+<h4 id="running-locally" class="tsd-anchor-link">Running Locally<a href="#running-locally" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<ol>
+<li>Run <code>pnpm install</code> from the repository root
+<ul>
+<li><em>if you run into any errors, reach out in the <strong>#pokerogue-dev</strong> channel on Discord</em></li>
+</ul>
+</li>
+<li>Run <code>pnpm start:dev</code> to locally run the project at <code>localhost:8000</code></li>
+</ol>
+<h2 id="🚀-getting-started" class="tsd-anchor-link">🚀 Getting Started<a href="#🚀-getting-started" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>A great way to develop an understanding of how the project works is to look at test cases (located in <a href="../media/test">the <code>test</code> folder</a>).
+Tests show you both how things are supposed to work and the expected &quot;flow&quot; to get from point A to point B in battles.</p>
+<p><em>This is a big project and you will be confused at times - never be afraid to reach out and ask questions in <strong>#pokerogue-dev</strong></em>!</p>
+<h3 id="where-to-look" class="tsd-anchor-link">Where to Look<a href="#where-to-look" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>Once you have your feet under you, check out the <a href="https://github.com/pagefaultgames/pokerogue/issues">Issues</a> page to see how you can help us!
+Most issues are bugs and are labeled with their area, such as <code>Move</code>, <code>Ability</code>, <code>UI/UX</code>, etc. There are also priority labels:</p>
+<ul>
+<li><code>P0</code>: Completely gamebreaking (very rare)</li>
+<li><code>P1</code>: Major - Game crash</li>
+<li><code>P2</code>: Minor - Incorrect (but non-crashing) move/ability/interaction</li>
+<li><code>P3</code>: No gameplay impact - typo, minor graphical error, etc.</li>
+</ul>
+<p>Also under issues, you can take a look at the <a href="https://github.com/pagefaultgames/pokerogue/issues/3503">List of Partial / Unimplemented Moves and Abilities</a> and the <a href="https://github.com/orgs/pagefaultgames/projects/3">Bug Board</a>. The latter is essentially the same as the issues page, so take your pick.</p>
+<p>You are free to comment on any issue so that you may be assigned to it and we can avoid multiple people working on the same thing.</p>
+<h2 id="📚-documentation" class="tsd-anchor-link">📚 Documentation<a href="#📚-documentation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>You can find the auto-generated API documentation <a href="https://pagefaultgames.github.io/pokerogue/beta/index.html">here</a>. It can be incomplete at times (as many methods lack documentation comments), but it's a great way to get a look at the overall structure of the codebase and find particular methods or classes you may be looking for.</p>
+<p>Additionally, the <a href="../media/docs">docs folder</a> contains a variety of in-depth documents and guides useful for aspiring contributors. <br>
+Notable topics include:</p>
+<ul>
+<li><a href="docs_comments.html">Commenting your code</a></li>
+<li><a href="docs_linting.html">Linting &amp; Formatting</a></li>
+<li><a href="docs_localization.html">Localization</a></li>
+<li><a href="docs_enemy-ai.html">Enemy AI move selection</a></li>
+<li><a href="docs_podman.html">Running with Podman</a></li>
+</ul>
+<p>Again, please feel free to ask any questions you may have!</p>
+<h2 id="🧪-testing-your-changes" class="tsd-anchor-link">🧪 Testing Your Changes<a href="#🧪-testing-your-changes" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>You've just made a change - how can you check if it works? <br>
+You have two areas to hit:</p>
+<h3 id="1-manual-testing" class="tsd-anchor-link">1 - Manual Testing<a href="#1-manual-testing" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<blockquote>
+<p>This will likely be your first stop. After making a change, you'll want to spin the game up and make sure everything is as you expect. To do this, you will need a way to manipulate the game to produce the situation you're looking to test.</p>
+</blockquote>
+<p><a href="../modules/src_overrides.html">src/overrides.ts</a> contains overrides for most values you'll need to change for testing, controlled through the <code>overrides</code> object.
+There are a variety of overrides available, ranging from changing movesets and abilities to modifying battle conditions and forcing specific scenarios.
+For example, here is how you could test a scenario where the player Pokemon has the ability Drought and the enemy Pokemon has the move Water Gun:</p>
+<pre><code class="typescript"><span class="hl-2">const</span><span class="hl-5"> </span><span class="hl-10">overrides</span><span class="hl-5"> = {</span><br/><span class="hl-5">  </span><span class="hl-3">ABILITY_OVERRIDE:</span><span class="hl-5"> </span><span class="hl-3">AbilityId</span><span class="hl-5">.</span><span class="hl-10">DROUGHT</span><span class="hl-5">,</span><br/><span class="hl-5">  </span><span class="hl-3">ENEMY_MOVESET_OVERRIDE:</span><span class="hl-5"> </span><span class="hl-3">MoveId</span><span class="hl-5">.</span><span class="hl-10">WATER_GUN</span><span class="hl-5">,</span><br/><span class="hl-5">} </span><span class="hl-4">satisfies</span><span class="hl-5"> </span><span class="hl-1">Partial</span><span class="hl-5">&lt;</span><span class="hl-1">InstanceType</span><span class="hl-5">&lt;</span><span class="hl-2">typeof</span><span class="hl-5"> </span><span class="hl-3">DefaultOverrides</span><span class="hl-5">&gt;&gt;;</span>
+</code><button type="button">Copy</button></pre>
+
+<div class="tsd-alert tsd-alert-note"><div class="tsd-alert-title"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use href="../assets/icons.svg#icon-alertNote"></use></svg><span>Note</span></div><p>
+If the situation you're trying to test can't be created using existing overrides (or with the <a href="#-development-save-file">Dev Save</a>), reach out in <strong>#pokerogue-dev</strong>.
+You can get help testing your specific changes, and you might have found a new override that needs to be created!</p>
+</div>
+<h3 id="2-automatic-testing" class="tsd-anchor-link">2 - Automatic Testing<a href="#2-automatic-testing" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<!-- TODO: Consider moving this to a separate document. There's tons more we could (and should) expand on here, like the `test:create` script, all of the test utils/etc, project conventions, etc etc.-->
+<p>PokéRogue uses <a href="https://vitest.dev/">Vitest</a> for automated testing.
+Checking out existing tests in the <a href="../media/test">test</a> folder is a great way to understand how the existing system works, as well as familiarizing yourself with the project as a whole.</p>
+<h4 id="writing-tests" class="tsd-anchor-link">Writing tests<a href="#writing-tests" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<p>Most non-trivial changes (<em>especially bug fixes</em>) should be accompanied by one or more new automated test cases.</p>
+<p>To create a new test file, run <code>pnpm test:create</code> and follow the on-screen prompts.
+If the move/ability/etc. you're modifying already has tests, you can add new cases to the test file or edit existing ones.</p>
+<p>Ensure that new test cases:</p>
+<ul>
+<li>Are deterministic. In other words, the test should never pass or fail when it shouldn't due to randomness. Among other things, this involves ensuring that abilities and moves are never randomly selected.</li>
+<li>Do not test multiple separate things in the same test case. If you have made two distinct changes, they should be tested in two separate cases.</li>
+<li>Cover as many edge cases as possible. A good strategy is to think of edge cases beforehand and create tests for them using <code>it.todo</code>. Once the edge case has been handled, you can remove the <code>todo</code> marker.</li>
+</ul>
+<div class="tsd-alert tsd-alert-caution"><div class="tsd-alert-title"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use href="../assets/icons.svg#icon-alertCaution"></use></svg><span>Caution</span></div><p>
+Testing UI-related code within the automated test harness is <em>usually</em> a bad idea. <br>
+While it can be done, such tests tend to be boilerplate-heavy, hard to maintain and prone to randomly breaking/timing out.
+If your change is primarily UI-related, it's usually best to test it manually and only use automated tests for the underlying logic (if applicable).</p>
+</div>
+<!-- TODO: Decide on and suggest a specific placement hierarchy for test cases involving interactions between different moves/abilities/etc., and enforce said placement if feasible -->
+<div class="tsd-alert tsd-alert-note"><div class="tsd-alert-title"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use href="../assets/icons.svg#icon-alertNote"></use></svg><span>Note</span></div><p>
+While Vitest does support both Jest and Chai syntax for assertions, our project exclusively uses Jest-style assertions (<code>...toBe()</code>, <code>...toEqual()</code>, etc.) for internal consistency. (The Chai variants have been blacklisted via TypeScript declaration merging, ensuring they aren't accidentally used by mistake.)</p>
+</div>
+<h4 id="running-tests" class="tsd-anchor-link">Running tests<a href="#running-tests" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<p>To make sure your changes didn't break any existing test cases, run <code>pnpm test:silent &lt;files&gt;</code> in your terminal to run test files associated with your changes. <br>
+You can provide additional arguments to the command to alter its behavior;
+a full list of supported arguments can be found on <a href="https://vitest.dev/guide/cli.html">Vitest's website</a>.</p>
+<div class="tsd-alert tsd-alert-caution"><div class="tsd-alert-title"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use href="../assets/icons.svg#icon-alertCaution"></use></svg><span>Caution</span></div><p>
+Passing all test cases does <strong>not</strong> guarantee that everything is working properly.
+The project does not have complete regression testing, so manual verification is still advised for most changes.</p>
+</div>
+<h2 id="💾-development-save-file" class="tsd-anchor-link">💾 Development Save File<a href="#💾-development-save-file" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<blockquote>
+<p>Some issues may require you to have unlocks on your save file which go beyond normal overrides.
+For this reason, the repository contains a <a href="../media/everything.prsv">save file</a> with <em>everything</em> unlocked (including things not legitimately obtainable, like unreleased variant shinies).</p>
+</blockquote>
+<ol>
+<li>Start the game up locally and navigate to <code>Menu -&gt; Manage Data -&gt; Import Data</code></li>
+<li>Select <a href="../media/everything.prsv">everything.prsv</a> (<code>test/utils/saves/everything.prsv</code>) and hit &quot;Confirm&quot;.</li>
+<li>The page will reload with everything unlocked! You can now test your changes with this save file.</li>
+</ol>
+<h2 id="✅-submitting-a-pull-request" class="tsd-anchor-link">✅ Submitting a Pull Request<a href="#✅-submitting-a-pull-request" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>Most information related to submitting a pull request is contained within comments inside the <a href="../media/pull_request_template.md">default pull request template</a>. <br>
+This section serves to elaborate on particular parts of the PR creation workflow that cannot fit fully inside the margins.</p>
+<h3 id="pr-title-format" class="tsd-anchor-link">PR Title Format<a href="#pr-title-format" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>This repository follows the <a href="https://www.conventionalcommits.org/en/v1.0.0/">Conventional Commits</a> standard for PR titles, enforced by an automated GitHub Actions workflow.</p>
+<p>Each PR must contain a valid prefix (and optionally a valid scope), followed by a colon and then the PR's subject line. \</p>
+<pre><code><span class="hl-6">fix</span><span class="hl-5">(</span><span class="hl-3">move</span><span class="hl-5">): </span><span class="hl-3">Future</span><span class="hl-5"> </span><span class="hl-3">Sight</span><span class="hl-5"> </span><span class="hl-3">no</span><span class="hl-5"> </span><span class="hl-3">longer</span><span class="hl-5"> </span><span class="hl-3">crashes</span><br/><span class="hl-5">^   ^      ^</span><br/><span class="hl-5">|   |      |</span><span class="hl-3">__</span><span class="hl-5"> </span><span class="hl-3">Subject</span><br/><span class="hl-5">|   |</span><span class="hl-3">_________</span><span class="hl-5"> </span><span class="hl-6">Scope</span><span class="hl-5"> (</span><span class="hl-3">optional</span><span class="hl-5">)</span><br/><span class="hl-5">|</span><span class="hl-3">_____________</span><span class="hl-5"> </span><span class="hl-3">Prefix</span>
+</code><button>Copy</button></pre>
+
+<div class="tsd-alert tsd-alert-important"><div class="tsd-alert-title"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use href="../assets/icons.svg#icon-alertImportant"></use></svg><span>Important</span></div><p>
+If a save migrator, version increase or other breaking change is part of the PR, a <code>!</code> must be added before the <code>:</code>.</p>
+</div>
+<p>Try to keep the title under 72 characters, as GitHub cuts off commit titles longer than this length.</p>
+<h4 id="examples" class="tsd-anchor-link">Examples<a href="#examples" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<p><code>refactor(data)!: improve serialization of Pokemon save data</code></p>
+<p><code>balance: update TM compatibility lists</code>
+<code>fix(move): Retaliate now saves power boost between waves</code>
+<code>test: preserve text output of original shards</code></p>
+<h4 id="list-of-valid-prefixes" class="tsd-anchor-link">List of valid prefixes<a href="#list-of-valid-prefixes" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<ul>
+<li>&quot;balance&quot; - Changes related to game balance</li>
+<li>&quot;chore&quot; - Misc project upkeep (e.g. updating submodules, updating dependencies, reverting a bad commit) not covered by other prefixes</li>
+<li>&quot;dev&quot; - Improving the developer experience (such as by modifying lint rules or creating cli scripts)</li>
+<li>&quot;docs&quot; - Primarily adding/updating documentation</li>
+<li>&quot;feat&quot; - Adding a new feature (e.g. adding a new implementation of a move) or redesigning an existing feature</li>
+<li>&quot;fix&quot; - Fixing a bug</li>
+<li>&quot;github&quot; - Updating the CI pipeline or otherwise modifying something in the <code>./github/**</code> directory</li>
+<li>&quot;i18n&quot; - Adding/modifying translation keys, etc</li>
+<li>&quot;misc&quot; - A change that doesn't fit any other prefix</li>
+<li>&quot;perf&quot; - A refactor aimed at improving performance</li>
+<li>&quot;refactor&quot; - A change that doesn't impact functionality or fix any bugs (except incidentally)</li>
+<li>&quot;test&quot; - Primarily adding/updating tests or modifying the test framework</li>
+</ul>
+<h4 id="list-of-valid-scopes" class="tsd-anchor-link">List of valid scopes<a href="#list-of-valid-scopes" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
+<ul>
+<li>&quot;ability&quot;</li>
+<li>&quot;ai&quot;</li>
+<li>&quot;audio&quot;</li>
+<li>&quot;battle&quot; - Relating to the general battle engine</li>
+<li>&quot;biomes&quot;</li>
+<li>&quot;challenge&quot;</li>
+<li>&quot;encounter&quot; - Mystery Encounters</li>
+<li>&quot;event&quot; - e.g. adding a Christmas event to the game</li>
+<li>&quot;graphics&quot; - Anything related to art/graphics (adding new sprites, fixing a sprite that isn't displaying properly, etc)</li>
+<li>&quot;item&quot;</li>
+<li>&quot;move&quot;</li>
+<li>&quot;ui&quot; - UI/UX</li>
+</ul>
+<div class="tsd-alert tsd-alert-important"><div class="tsd-alert-title"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use href="../assets/icons.svg#icon-alertImportant"></use></svg><span>Important</span></div><p>
+All scopes are valid when using the &quot;docs&quot;, &quot;feat&quot;, &quot;fix&quot;, &quot;refactor&quot; and &quot;test&quot; prefixes. <br>
+All scopes except &quot;audio&quot;, &quot;battle&quot;, &quot;graphics&quot;, and &quot;ui&quot; are valid when using the &quot;balance&quot; prefix. <br>
+No other prefixes have valid scopes.</p>
+<p>There is a special &quot;beta&quot; scope for the &quot;fix&quot; prefix,
+for fixing bugs that only existed on the <code>beta</code> branch that never made it onto <code>main</code>.</p>
+</div>
+</div></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h3>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-private" name="private"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Private</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div><div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div><details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h3>On This Page</h3></summary><div class="tsd-accordion-details"><a href="#contributing-to-pokérogue"><span>Contributing to <wbr/>Poké<wbr/>Rogue</span></a><ul><li><a href="#📄-table-of-contents"><span>📄 <wbr/>Table of <wbr/>Contents</span></a></li><li><a href="#🛠️-development-basics"><span>🛠️ <wbr/>Development <wbr/>Basics</span></a></li><li><a href="#💻-environment-setup"><span>💻 <wbr/>Environment <wbr/>Setup</span></a></li><li><ul><li><a href="#codespacesdevcontainer-environment"><span>Codespaces/<wbr/>Devcontainer <wbr/>Environment</span></a></li><li><a href="#podman"><span>Podman</span></a></li><li><a href="#local-development"><span>Local <wbr/>Development</span></a></li><li><ul><li><a href="#prerequisites"><span>Prerequisites</span></a></li><li><a href="#running-locally"><span>Running <wbr/>Locally</span></a></li></ul></li></ul></li><li><a href="#🚀-getting-started"><span>🚀 <wbr/>Getting <wbr/>Started</span></a></li><li><ul><li><a href="#where-to-look"><span>Where to <wbr/>Look</span></a></li></ul></li><li><a href="#📚-documentation"><span>📚 <wbr/>Documentation</span></a></li><li><a href="#🧪-testing-your-changes"><span>🧪 <wbr/>Testing <wbr/>Your <wbr/>Changes</span></a></li><li><ul><li><a href="#1-manual-testing"><span>1 -<wbr/> <wbr/>Manual <wbr/>Testing</span></a></li><li><a href="#2-automatic-testing"><span>2 -<wbr/> <wbr/>Automatic <wbr/>Testing</span></a></li><li><ul><li><a href="#writing-tests"><span>Writing tests</span></a></li><li><a href="#running-tests"><span>Running tests</span></a></li></ul></li></ul></li><li><a href="#💾-development-save-file"><span>💾 <wbr/>Development <wbr/>Save <wbr/>File</span></a></li><li><a href="#✅-submitting-a-pull-request"><span>✅ <wbr/>Submitting a <wbr/>Pull <wbr/>Request</span></a></li><li><ul><li><a href="#pr-title-format"><span>PR <wbr/>Title <wbr/>Format</span></a></li><li><ul><li><a href="#examples"><span>Examples</span></a></li><li><a href="#list-of-valid-prefixes"><span>List of valid prefixes</span></a></li><li><a href="#list-of-valid-scopes"><span>List of valid scopes</span></a></li></ul></li></ul></li></ul></div></details></div><div class="site-menu"><nav id="tsd-sidebar-links" class="tsd-navigation"><a href="https://github.com/pagefaultgames/pokerogue" class="tsd-nav-link">GitHub</a><a href="https://pagefaultgames.github.io/pokerogue/beta" class="tsd-nav-link">Switch to Beta</a></nav><nav class="tsd-navigation"><a href="../modules.html">PokéRogue</a><ul class="tsd-small-nested-navigation" id="tsd-nav-container"><li>Loading...</li></ul></nav></div></div></div><footer><p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a> with <a href="https://github.com/JulianWowra/typedoc-github-theme" target="_blank">typedoc-github-theme</a></p><p>Copyright <strong>Pagefault Games</strong> 2025 - 2026</p></footer><div class="overlay"></div></body></html>

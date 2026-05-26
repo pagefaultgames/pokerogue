@@ -1,0 +1,139 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>docs/localization | PokéRogue</title><link rel="icon" href="../assets/favicon.ico"/><meta name="description" content="Documentation for PokéRogue"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script><link rel="stylesheet" href="../assets/typedoc-github-style.css"/></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><a href="../index.html" class="title">PokéRogue</a><div id="tsd-toolbar-links"><a href="https://github.com/pagefaultgames/pokerogue">GitHub</a><a href="https://pagefaultgames.github.io/pokerogue/beta">Switch to Beta</a></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-search"></use></svg></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/><ul role="listbox" id="tsd-search-results"></ul><div id="tsd-search-status" aria-live="polite" aria-atomic="true"><div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-menu"></use></svg></a></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><ul class="tsd-breadcrumb" aria-label="Breadcrumb"><li><a href="" aria-current="page">docs/localization</a></li></ul></div><div class="tsd-panel tsd-typography"><!--
+SPDX-FileCopyrightText: 2024-2026 Pagefault Games
+
+SPDX-License-Identifier: CC-BY-NC-SA-4.0
+-->
+<h1 id="localization-101" class="tsd-anchor-link">Localization 101<a href="#localization-101" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h1>
+<p>PokéRogue's localization team puts immense effort into making the game accessible around the world, supporting over 12 different languages at the time of writing this document. <br>
+As a developer, it's important to help maintain global accessibility by effectively coordinating with the Translation Team on any new features or enhancements.</p>
+<p>This document aims to cover everything you need to know to help keep the integration process for localization smooth and simple.</p>
+<h1 id="prerequisites" class="tsd-anchor-link">Prerequisites<a href="#prerequisites" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h1>
+<p>Before you continue, this document assumes:</p>
+<ul>
+<li>You have already forked the repository and set up a development environment according to <a href="CONTRIBUTING.html">CONTRIBUTING.md</a>.</li>
+<li>You have a basic level of familiarity with Git commands and GitHub repositories.</li>
+<li>You have joined the <a href="https://discord.gg/pokerogue">community Discord</a> and have access to <code>#pokerogue-dev</code> and related channels via <strong><a href="https://discord.com/channels/1125469663833370665/1194825607738052621">#select-roles</a></strong>.
+This is the easiest way to keep in touch with both the Translation Team and other like-minded contributors!</li>
+</ul>
+<h1 id="about-the-submodule" class="tsd-anchor-link">About the <code>pokerogue-locales</code> submodule<a href="#about-the-submodule" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h1>
+<p>PokéRogue's translations are managed under a separate dedicated repository, <a href="https://github.com/pagefaultgames/pokerogue-locales/"><code>pokerogue-locales</code></a>.
+This repository is integrated into the main one as a <a href="https://git-scm.com/book/en/v2/Git-Tools-Submodules">git submodule</a> within the <code>locales</code> folder.</p>
+<h2 id="what-is-a-submodule" class="tsd-anchor-link">What Is a Submodule?<a href="#what-is-a-submodule" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>In essence, a submodule is a way for one repository (i.e. <code>pokerogue</code>) to use another repository (i.e. <code>pokerogue-locales</code>) internally.
+The parent repo (the &quot;superproject&quot;) houses a cloned version of the 2nd repository (the &quot;submodule&quot;) inside it, making locales effectively a &quot;repository within a repository&quot;, so to speak.</p>
+<div class="tsd-alert tsd-alert-tip"><div class="tsd-alert-title"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use href="../assets/icons.svg#icon-alertTip"></use></svg><span>Tip</span></div><p>
+Many popular IDEs have integrated <code>git</code> support with special handling around submodules:</p>
+<p><img src="https://github.com/user-attachments/assets/00674c3f-72ee-42f7-8b09-4008d466b263" alt="Image showing Visual Studio Code's  integration in the File Explorer. A blue &quot;S&quot; in the top right hand corner indicates the  folder is a submodule." title="What the `locales` submodule looks like in VS Code's File Explorer"></p>
+<p><img src="https://github.com/user-attachments/assets/8b4d3f64-aec1-4474-91df-03dc1252a2fa" alt="Image showing Visual Studio Code's Source Control tab. A separate dropdown can be seen for each individual submodule." title="Making commits on submodules without even changing directories!"></p>
+</div>
+<h2 id="fetching-changes-from-submodules" class="tsd-anchor-link">Fetching Changes from Submodules<a href="#fetching-changes-from-submodules" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>The following command will initialize your branch's <code>assets</code> and <code>locales</code> repository and update its HEAD:</p>
+<pre><code class="bash">pnpm update-locales
+</code><button type="button">Copy</button></pre>
+
+<div class="tsd-alert tsd-alert-tip"><div class="tsd-alert-title"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use href="../assets/icons.svg#icon-alertTip"></use></svg><span>Tip</span></div><p>
+This command is run <em>automatically</em> after cloning, merging or changing branches, so you should rarely have to run it manually.</p>
+</div>
+<div class="tsd-alert tsd-alert-important"><div class="tsd-alert-title"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use href="../assets/icons.svg#icon-alertImportant"></use></svg><span>Important</span></div><p>
+If you EVER run into issues with the <code>locales</code> submodule, try deleting the <code>.git/modules/locales</code> and <code>locales</code> folders before re-initializing it again.</p>
+</div>
+<h2 id="how-are-translations-integrated" class="tsd-anchor-link">How Are Translations Integrated?<a href="#how-are-translations-integrated" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>This project uses the <a href="https://www.i18next.com/">i18next library</a> to integrate translations from <code>locales</code> into the source code.
+The basic process for fetching translated text goes roughly as follows:</p>
+<ol>
+<li>The source code fetches text by a given key.<pre><code class="ts"><span class="hl-3">globalScene</span><span class="hl-5">.</span><span class="hl-3">phaseManager</span><span class="hl-5">.</span><span class="hl-6">queueMessage</span><span class="hl-5">(</span><br/><span class="hl-5">  </span><span class="hl-3">i18next</span><span class="hl-5">.</span><span class="hl-6">t</span><span class="hl-5">(</span><span class="hl-8">&quot;fileName:keyName&quot;</span><span class="hl-5">, { </span><span class="hl-3">arg1:</span><span class="hl-5"> </span><span class="hl-8">&quot;Hello&quot;</span><span class="hl-5">, </span><span class="hl-3">arg2:</span><span class="hl-5"> </span><span class="hl-8">&quot;an example&quot;</span><span class="hl-5">, ... })</span><br/><span class="hl-5">);</span>
+</code><button type="button">Copy</button></pre>
+
+</li>
+<li>The game looks up the key in the corresponding JSON file for the user's language.<pre><code class="jsonc"><span class="hl-0">// from &quot;en/file-name.json&quot;...</span><br/><span class="hl-5">{</span><br/><span class="hl-5">  </span><span class="hl-9">&quot;keyName&quot;</span><span class="hl-5">: </span><span class="hl-8">&quot;{{arg1}}! This is {{arg2}} of translated text!&quot;</span><br/><span class="hl-5">}</span>
+</code><button type="button">Copy</button></pre>
+
+If the key doesn't exist for the given language, the game will default to an appropriate fallback (usually the corresponding English key).</li>
+<li>The game shows the translated text to the user.<pre><code class="ts"><span class="hl-8">&quot;Hello! This is an example of translated text!&quot;</span>
+</code><button type="button">Copy</button></pre>
+
+</li>
+</ol>
+<h1 id="submitting-locales-changes" class="tsd-anchor-link">Submitting Locales Changes<a href="#submitting-locales-changes" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h1>
+<p>If you have a feature or enhancement that requires additions or changes to in-game text, you will need to make a fork of the <code>pokerogue-locales</code> repo and submit your text changes as a pull request <em>in addition</em> to your pull request to the main project. <br>
+Since these two PRs aren't <em>technically</em> linked, it's important to coordinate with the Translation Team to ensure that both PRs are integrated safely into the project.</p>
+<div class="tsd-alert tsd-alert-caution"><div class="tsd-alert-title"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use href="../assets/icons.svg#icon-alertCaution"></use></svg><span>Caution</span></div><p>
+<strong>DO NOT HARDCODE PLAYER-FACING TEXT INTO THE CODE!</strong></p>
+</div>
+<h2 id="making-changes" class="tsd-anchor-link">Making Changes<a href="#making-changes" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>One perk of submodules is you don't actually <em>need</em> to clone the locales repository to start contributing - <code>git</code> already does that for you on initialization.</p>
+<p>Given <code>pokerogue-locales</code> is a full-fledged <code>git</code> repository <em>inside</em> <code>pokerogue</code>, making changes is roughly the same as normal, merely using <code>locales</code> as your root directory.</p>
+<div class="tsd-alert tsd-alert-warning"><div class="tsd-alert-title"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use href="../assets/icons.svg#icon-alertWarning"></use></svg><span>Warning</span></div><p>
+Make sure to checkout or rebase onto <code>upstream/main</code> (<code>pnpm update-locales:remote</code>) <strong>BEFORE</strong> creating a locales PR!
+The checked-out commit is based on the superproject's SHA-1 by default, so hastily making changes may see you basing your commits on last week's <code>HEAD</code>.</p>
+</div>
+<h2 id="requirements-for-adding-translated-text" class="tsd-anchor-link">Requirements for Adding Translated Text<a href="#requirements-for-adding-translated-text" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>When a new feature or enhancement requires adding a new locales key <strong>without changing text in existing keys</strong>, we have the following workflow with regards to localization:</p>
+<ol>
+<li>You (the developer) make a pull request to the main repository for your new feature.
+If this feature requires new text, the text should be integrated into the code with a new <code>i18next</code> key pointing to where you plan to add it into the locales repository.</li>
+<li>You then make another pull request — this time to the <code>pokerogue-locales</code> repository — adding a new entry with text for each key you added to your main PR.
+<ul>
+<li>You must add the corresponding <strong>English keys</strong> while making the PR; the Translation Team can take care of the rest[^2].</li>
+<li>For any feature pulled from the mainline Pokémon games (e.g. a Move or Ability implementation), it's best practice to include a source link for any added text. <br>
+<a href="https://abcboy101.github.io/poke-corpus/">Poké Corpus</a> is a great resource for finding text from the mainline games; otherwise, a video/picture showing the text being displayed should suffice.</li>
+<li>You should also <a href="#notifying-translation">notify the current Head of Translation</a> to ensure a fast response.</li>
+</ul>
+</li>
+<li>At this point, you may begin <a href="#documenting-locales-changes">testing locales integration in your main PR</a>.</li>
+<li>The Translation Team will approve the locales PR (after corrections, if necessary), then merge it into <code>pokerogue-locales</code>.</li>
+<li>The Dev Team will approve your main PR for your feature, then merge it into PokéRogue's beta environment.</li>
+</ol>
+<p>[^2]: For those wondering, the reason for choosing English specifically is due to it being the master language set in Pontoon (the program used by the Translation Team to perform locale updates).
+If a key is present in any language <em>except</em> the master language, it won't appear anywhere else in the translation tool, rendering missing English keys quite a hassle.</p>
+<div class="tsd-alert tsd-alert-important"><div class="tsd-alert-title"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use href="../assets/icons.svg#icon-alertImportant"></use></svg><span>Important</span></div><p>
+The Dev and Translation teams have strict requirements for ensuring consistency of newly added locales entries.
+PRs failing these requirements <strong>will not be mergeable into <code>locales</code></strong>!</p>
+<ul>
+<li>File names should be in <code>kebab-case</code>. Example: <code>trainer-names.json</code></li>
+<li>Key names should be in <code>camelCase</code>. Example: <code>aceTrainer</code></li>
+<li>Keys making use of i18next's inbuilt <a href="https://www.i18next.com/translation-function/context">context support</a> must use <code>snake_case</code> for the context extension[^3]. Example: <code>aceTrainer_male</code></li>
+</ul>
+</div>
+<p>[^3]: If your PR introduces a new context extension not already used in the codebase, the validation workflow will be unable to detect it and flag it as invalid. <br>
+To fix this, update the <a href="https://github.com/pagefaultgames/pokerogue-locales/blob/main/.github/scripts/locales-format-checker/constants.js#L30"><code>i18nextKeyExtensions</code></a> array with the new entries.</p>
+<h3 id="requirements-for-modifying-translated-text" class="tsd-anchor-link">Requirements for Modifying Translated Text<a href="#requirements-for-modifying-translated-text" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<p>PRs that modify existing text have different risks with respect to coordination between development and translation, so their requirements are slightly different:</p>
+<ul>
+<li>As above, you set up 2 PRs: one for the feature itself in the main repo, and another for the associated locales changes in the locale repo.</li>
+<li>Now, however, you need to have your main PR be approved by the Dev Team <strong>before</strong> your corresponding locale changes are merged in.</li>
+<li>After your main PR is approved, you may update the submodule and post video evidence of integration into the <strong>locales PR</strong>.</li>
+<li>A Lead or Senior Translator from the Translation Team will then approve your main PR (if all is well), clearing your feature for merging into <code>beta</code>.</li>
+</ul>
+<h2 id="documenting-locales-changes" class="tsd-anchor-link">Documenting Locales Changes<a href="#documenting-locales-changes" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>After making a PR involving any outwards-facing behavior (but <em>especially</em> locales-related ones), it's generally considered good practice to attach proof of those changes working in-game.</p>
+<p>The basic procedure is roughly as follows:</p>
+<ol>
+<li>Update your locales submodule to point to <strong>the branch you used to make the locales PR</strong>. <br>
+Many IDEs with <code>git</code> integration support doing this from the GUI, <br>
+or you can simply do it via command-line:<pre><code class="bash">cd locales
+git checkout your-branch-name-here
+</code><button type="button">Copy</button></pre>
+
+</li>
+<li>Set some of the <a href="CONTRIBUTING.html#1---manual-testing">in-game overrides</a> inside <code>overrides.ts</code> to values corresponding to the interactions being tested.</li>
+<li>Start a local dev server (<code>pnpm start:dev</code>) and open localhost in your browser.</li>
+<li>Take screenshots or record a video of the locales changes being displayed in-game using the software of your choice[^4].</li>
+</ol>
+<p>[^4]: For those lacking a dedicated screen capture software, <a href="https://obsproject.com">OBS Studio</a> is a popular open-source option, available on all major OSes.</p>
+<div class="tsd-alert tsd-alert-note"><div class="tsd-alert-title"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use href="../assets/icons.svg#icon-alertNote"></use></svg><span>Note</span></div><p>
+For those aiming to film their changes, bear in mind that GitHub has a hard <strong>10mB limit</strong> on uploaded media content.
+If your video is too large, consider making it shorter or downscaling the quality.</p>
+</div>
+<h2 id="notifying-translation" class="tsd-anchor-link">Notifying Translation<a href="#notifying-translation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
+<p>Put simply, stating that a PR exists makes it much easier to review and merge.</p>
+<p>The easiest way to do this is by <strong>pinging the current Head of Translation</strong> in the <a href="https://discord.gg/pokerogue">community Discord</a> (ideally in <code>#pokerogue-dev</code> or similar).</p>
+<!-- Remember to update this everytime the head of translation changes! -->
+<div class="tsd-alert tsd-alert-important"><div class="tsd-alert-title"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><use href="../assets/icons.svg#icon-alertImportant"></use></svg><span>Important</span></div><p>
+The current Head of Translation is: <br>
+<code>@lugiadrien</code> (@Adri1 on GitHub)</p>
+</div>
+<h1 id="closing-remarks" class="tsd-anchor-link">Closing Remarks<a href="#closing-remarks" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h1>
+<p>If you have any questions about the developer process for localization, don't hesitate to ask!
+Feel free to contact us on Discord - the Dev Team and Translation Team will be happy to answer any questions.</p>
+</div></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-navigation settings"><details class="tsd-accordion"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h3>Settings</h3></summary><div class="tsd-accordion-details"><div class="tsd-filter-visibility"><span class="settings-label">Member Visibility</span><ul id="tsd-filter-options"><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-protected" name="protected"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Protected</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-private" name="private"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Private</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li><li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-external" name="external"/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>External</span></label></li></ul></div><div class="tsd-theme-toggle"><label class="settings-label" for="tsd-theme">Theme</label><select id="tsd-theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div><details open class="tsd-accordion tsd-page-navigation"><summary class="tsd-accordion-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h3>On This Page</h3></summary><div class="tsd-accordion-details"><a href="#localization-101"><span>Localization 101</span></a><a href="#prerequisites"><span>Prerequisites</span></a><a href="#about-the-submodule"><span>About the  submodule</span></a><ul><li><a href="#what-is-a-submodule"><span>What <wbr/>Is a <wbr/>Submodule?</span></a></li><li><a href="#fetching-changes-from-submodules"><span>Fetching <wbr/>Changes from <wbr/>Submodules</span></a></li><li><a href="#how-are-translations-integrated"><span>How <wbr/>Are <wbr/>Translations <wbr/>Integrated?</span></a></li></ul><a href="#submitting-locales-changes"><span>Submitting <wbr/>Locales <wbr/>Changes</span></a><ul><li><a href="#making-changes"><span>Making <wbr/>Changes</span></a></li><li><a href="#requirements-for-adding-translated-text"><span>Requirements for <wbr/>Adding <wbr/>Translated <wbr/>Text</span></a></li><li><ul><li><a href="#requirements-for-modifying-translated-text"><span>Requirements for <wbr/>Modifying <wbr/>Translated <wbr/>Text</span></a></li></ul></li><li><a href="#documenting-locales-changes"><span>Documenting <wbr/>Locales <wbr/>Changes</span></a></li><li><a href="#notifying-translation"><span>Notifying <wbr/>Translation</span></a></li></ul><a href="#closing-remarks"><span>Closing <wbr/>Remarks</span></a></div></details></div><div class="site-menu"><nav id="tsd-sidebar-links" class="tsd-navigation"><a href="https://github.com/pagefaultgames/pokerogue" class="tsd-nav-link">GitHub</a><a href="https://pagefaultgames.github.io/pokerogue/beta" class="tsd-nav-link">Switch to Beta</a></nav><nav class="tsd-navigation"><a href="../modules.html">PokéRogue</a><ul class="tsd-small-nested-navigation" id="tsd-nav-container"><li>Loading...</li></ul></nav></div></div></div><footer><p class="tsd-generator">Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a> with <a href="https://github.com/JulianWowra/typedoc-github-theme" target="_blank">typedoc-github-theme</a></p><p>Copyright <strong>Pagefault Games</strong> 2025 - 2026</p></footer><div class="overlay"></div></body></html>
