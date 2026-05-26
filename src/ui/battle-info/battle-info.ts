@@ -57,7 +57,6 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
   protected lastHp: number;
   protected lastMaxHp: number;
   protected lastHpFrame: string | null;
-  protected lastLevelCapped: boolean;
   protected lastStats: string;
 
   protected box: Phaser.GameObjects.Sprite;
