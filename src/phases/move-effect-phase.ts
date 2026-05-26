@@ -629,6 +629,10 @@ export class MoveEffectPhase extends PokemonPhase {
    * @returns A {@linkcode MoveDamageTuple} containing the results of damage application.
    */
   protected applyMoveDamage(user: Pokemon, target: Pokemon, effectiveness: TypeDamageMultiplier): MoveDamageTuple {
+    if (this.move.hasAttr("HealOnAllyAttr")) {
+      return [HitCheckResult.HIT, 0, false];
+    }
+
     const isCritical = target.getCriticalHitResult(user, this.move);
 
     /*
