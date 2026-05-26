@@ -21,7 +21,11 @@ export class LevelCapPhase extends FieldPhase {
         null,
         true,
       );
-      this.executeForAll(pokemon => pokemon.updateInfo(true));
+      this.executeForAll(pokemon => {
+        pokemon.updateInfo(true);
+        // Update level display to remove red coloring after cap increase
+        pokemon.getBattleInfo().setLevelDisplay(pokemon.level);
+      });
     });
   }
 }
