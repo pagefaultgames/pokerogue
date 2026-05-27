@@ -1,6 +1,7 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { initMoveAnim, loadMoveAnimAssets } from "#data/battle-anims";
 import { allMoves } from "#data/data-lists";
 import { SpeciesFormChangeMoveLearnedTrigger } from "#data/form-change-triggers";
@@ -139,6 +140,20 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * @param Pokemon The Pokemon learning the move
    */
   async rejectMoveAndEnd(move: Move, pokemon: Pokemon) {
+    if (globalScene.hideMoveSkipConfirm) {
+      globalScene.ui.setMode(this.messageMode);
+      globalScene.ui
+        .showTextPromise(
+          i18next.t("battle:learnMoveNotLearned", {
+            pokemonName: getPokemonNameWithAffix(pokemon),
+            moveName: move.name,
+          }),
+          undefined,
+          true,
+        )
+        .then(() => this.end());
+      return;
+    }
     await globalScene.ui.showTextPromise(
       i18next.t("battle:learnMoveStopTeaching", { moveName: move.name }),
       undefined,
@@ -189,15 +204,15 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
       pokemon.usedTMs.push(this.moveId);
       globalScene.phaseManager.tryRemovePhase("SelectModifierPhase");
     } else if (this.learnMoveType === LearnMoveType.MEMORY) {
-      if (this.cost !== -1) {
-        if (!Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
+      if (this.cost === -1) {
+        globalScene.phaseManager.tryRemovePhase("SelectModifierPhase");
+      } else {
+        if (!activeOverrides.WAIVE_ROLL_FEE_OVERRIDE) {
           globalScene.money -= this.cost;
           globalScene.updateMoneyText();
           globalScene.animateMoneyChanged(false);
         }
-        globalScene.playSound("se/buy");
-      } else {
-        globalScene.phaseManager.tryRemovePhase("SelectModifierPhase");
+        audioManager.playSound("se/buy");
       }
     }
     pokemon.setMove(index, this.moveId);
@@ -212,7 +227,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     if (textMessage) {
       await globalScene.ui.showTextPromise(textMessage);
     }
-    globalScene.playSound("level_up_fanfare"); // Sound loaded into game as is
+    audioManager.playSound("se/level_up_fanfare"); // Sound loaded into game as is
     globalScene.ui.showText(
       learnMoveText,
       null,

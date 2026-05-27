@@ -43,15 +43,16 @@ const ALL_SCOPES = [
   "ui", // UI/UX
 ] as const;
 
-type AllScopes = (typeof ALL_SCOPES)[number];
+type AllScopes = (typeof ALL_SCOPES)[number] | "beta";
 
-const PREFIX_SCOPE_MAP = {
+const PREFIX_SCOPE_MAP: Readonly<Record<Prefixes, readonly AllScopes[]>> = {
   balance: ["ability", "ai", "biomes", "challenge", "encounter", "event", "item", "move"],
   chore: [],
   dev: [],
   docs: ALL_SCOPES,
   feat: ALL_SCOPES,
-  fix: ALL_SCOPES,
+  // Add special scope for fixing bugs that only existed on the beta branch
+  fix: [...ALL_SCOPES, "beta"],
   github: [],
   i18n: [],
   misc: [],
@@ -59,10 +60,7 @@ const PREFIX_SCOPE_MAP = {
   refactor: ALL_SCOPES,
   revert: [],
   test: ALL_SCOPES,
-} as const satisfies Record<Prefixes, readonly AllScopes[]>;
-
-// @ts-expect-error: Add special scope for fixing bugs that only existed on the beta branch
-PREFIX_SCOPE_MAP.fix = [...ALL_SCOPES, "beta"];
+} as const;
 
 async function run(): Promise<void> {
   try {
@@ -73,15 +71,19 @@ async function run(): Promise<void> {
       core.setFailed(`Invalid event: ${eventName}`);
       return;
     }
+    if (!github.context.payload.pull_request) {
+      core.setFailed("Error parsing pull request data!");
+      return;
+    }
 
     const client = github.getOctokit(authToken);
     // The pull request info on the context isn't up to date.
     // When the user updates the title and re-runs the workflow, it would be outdated.
     // Therefore fetch the pull request via the REST API to ensure we use the current title.
     const { data: pullRequest } = await client.rest.pulls.get({
-      owner: github.context.payload.pull_request!.base.user.login,
-      repo: github.context.payload.pull_request!.base.repo.name,
-      pull_number: github.context.payload.pull_request!.number,
+      owner: github.context.payload.pull_request.base.user.login,
+      repo: github.context.payload.pull_request.base.repo.name,
+      pull_number: github.context.payload.pull_request.number,
     });
 
     const { title } = pullRequest;
@@ -104,32 +106,32 @@ Terminology: fix(move): Future Sight no longer crashes
              |_____________ Prefix
 `;
 
-    core.info(info.trim());
+    core.info(info);
 
-    // Example usage of regex: https://regex101.com/r/FeN8jG/8
-    const regex = /^([a-z0-9]+)!?(\([a-z]+\))?: .+/;
-    if (!regex.test(title)) {
+    // Example usage of regex: https://regex101.com/r/FeN8jG/9
+    const regex = /^([a-z0-9]+)(\([a-z]+\))?!?: .+/;
+    const regexResult = regex.exec(title);
+    if (!regexResult) {
       core.setFailed(`Pull Request title "${title}" failed to match - "Prefix(Scope): Subject"`);
       return;
     }
 
-    const regexResult = regex.exec(title);
     const prefix = regexResult[1];
-    const scope = regexResult[2]?.replace(/[()]/g, "");
+    const scope = regexResult[2]?.replace(/[()]/g, "") as AllScopes | undefined;
 
-    if (!PREFIXES.some(p => p === prefix)) {
+    if (!(PREFIXES as readonly string[]).includes(prefix)) {
       core.setFailed(`Pull Request title "${title}" did not match any of the prefixes: [${PREFIXES}]`);
       return;
     }
 
     // biome-ignore lint/style/useExplicitLengthCheck: doubles as a nullish check for `scope`
-    if (scope?.length && !PREFIX_SCOPE_MAP[prefix].includes(scope)) {
+    if (scope?.length && !PREFIX_SCOPE_MAP[prefix as Prefixes].includes(scope)) {
       core.setFailed(`Pull Request title "${title}" has an invalid prefix (${prefix}) + scope (${scope}) combination!`);
       return;
     }
   } catch (error) {
-    core.setFailed(error.message);
+    core.setFailed((error as Error).message);
   }
 }
 
-run();
+await run();

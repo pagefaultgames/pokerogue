@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { speciesStarterCosts } from "#balance/starters";
 import { modifierTypes } from "#data/data-lists";
@@ -162,8 +163,9 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
           : SpeciesId.CLEFABLE;
     encounter.spriteConfigs = [
       {
-        spriteKey: cleffaSpecies.toString(),
-        fileRoot: "pokemon",
+        species: cleffaSpecies,
+        spriteKey: "",
+        fileRoot: "",
         hasShadow: true,
         repeat: true,
         x: 14,
@@ -323,14 +325,14 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
             text: `${namespace}:outro`,
           },
         ];
-        if (encounter.dialogueTokens.hasOwnProperty("pokemon1CommonEggs")) {
+        if (Object.hasOwn(encounter.dialogueTokens, "pokemon1CommonEggs")) {
           encounter.dialogue.outro.push({
             text: i18next.t(`${namespace}:gainedEggs`, {
               numEggs: encounter.dialogueTokens["pokemon1CommonEggs"],
             }),
           });
         }
-        if (encounter.dialogueTokens.hasOwnProperty("pokemon1RareEggs")) {
+        if (Object.hasOwn(encounter.dialogueTokens, "pokemon1RareEggs")) {
           encounter.dialogue.outro.push({
             text: i18next.t(`${namespace}:gainedEggs`, {
               numEggs: encounter.dialogueTokens["pokemon1RareEggs"],
@@ -382,14 +384,14 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
             text: `${namespace}:outro`,
           },
         ];
-        if (encounter.dialogueTokens.hasOwnProperty("pokemon2CommonEggs")) {
+        if (Object.hasOwn(encounter.dialogueTokens, "pokemon2CommonEggs")) {
           encounter.dialogue.outro.push({
             text: i18next.t(`${namespace}:gainedEggs`, {
               numEggs: encounter.dialogueTokens["pokemon2CommonEggs"],
             }),
           });
         }
-        if (encounter.dialogueTokens.hasOwnProperty("pokemon2RareEggs")) {
+        if (Object.hasOwn(encounter.dialogueTokens, "pokemon2RareEggs")) {
           encounter.dialogue.outro.push({
             text: i18next.t(`${namespace}:gainedEggs`, {
               numEggs: encounter.dialogueTokens["pokemon2RareEggs"],
@@ -441,14 +443,14 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
             text: `${namespace}:outro`,
           },
         ];
-        if (encounter.dialogueTokens.hasOwnProperty("pokemon3CommonEggs")) {
+        if (Object.hasOwn(encounter.dialogueTokens, "pokemon3CommonEggs")) {
           encounter.dialogue.outro.push({
             text: i18next.t(`${namespace}:gainedEggs`, {
               numEggs: encounter.dialogueTokens["pokemon3CommonEggs"],
             }),
           });
         }
-        if (encounter.dialogueTokens.hasOwnProperty("pokemon3RareEggs")) {
+        if (Object.hasOwn(encounter.dialogueTokens, "pokemon3RareEggs")) {
           encounter.dialogue.outro.push({
             text: i18next.t(`${namespace}:gainedEggs`, {
               numEggs: encounter.dialogueTokens["pokemon3RareEggs"],
@@ -603,7 +605,7 @@ function calculateEggRewardsForPokemon(pokemon: PlayerPokemon): [number, number]
   const rootSpecies = pokemon.species.getRootSpeciesId();
   let pointsFromStarterTier = 0;
   // 2 points for every 1 below 7 that the pokemon's starter tier is (max 12, min 0)
-  if (speciesStarterCosts.hasOwnProperty(rootSpecies)) {
+  if (Object.hasOwn(speciesStarterCosts, rootSpecies)) {
     const starterTier = speciesStarterCosts[rootSpecies];
     pointsFromStarterTier = Math.min(Math.max(Math.floor(7 - starterTier) * 2, 0), 12);
   }
@@ -698,7 +700,7 @@ function onGameOver() {
   encounter.misc.encounterFailed = true;
 
   // Revert BGM
-  globalScene.playBgm(globalScene.arena.bgm);
+  audioManager.playBgm(globalScene.arena.bgm);
 
   // Clear any leftover battle phases
   globalScene.phaseManager.clearPhaseQueue();
@@ -706,7 +708,7 @@ function onGameOver() {
   // Return enemy Pokemon
   const pokemon = globalScene.getEnemyPokemon();
   if (pokemon) {
-    globalScene.playSound("se/pb_rel");
+    audioManager.playSound("se/pb_rel");
     pokemon.hideInfo();
     pokemon.tint(getPokeballTintColor(pokemon.pokeball), 1, 250, "Sine.easeIn");
     globalScene.tweens.add({

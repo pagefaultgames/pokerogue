@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { Phase } from "#app/phase";
 import type { Egg } from "#data/egg";
 import { EGG_SEED } from "#data/egg";
@@ -21,7 +21,7 @@ export class EggLapsePhase extends Phase {
   start() {
     super.start();
     const eggsToHatch: Egg[] = globalScene.gameData.eggs.filter((egg: Egg) => {
-      return Overrides.EGG_IMMEDIATE_HATCH_OVERRIDE ? true : --egg.hatchWaves < 1;
+      return activeOverrides.EGG_IMMEDIATE_HATCH_OVERRIDE ? true : --egg.hatchWaves < 1;
     });
     const eggsToHatchCount: number = eggsToHatch.length;
     this.eggHatchData = [];

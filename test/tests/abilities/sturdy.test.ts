@@ -3,7 +3,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
-import { beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Sturdy", () => {
   let phaserGame: Phaser.Game;
@@ -19,39 +19,66 @@ describe("Abilities - Sturdy", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
+      .criticalHits(false)
       .startingLevel(100)
-      .moveset([MoveId.CLOSE_COMBAT, MoveId.FISSURE])
+      .ability(AbilityId.NO_GUARD)
       .enemySpecies(SpeciesId.ARON)
+      .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(5)
       .enemyAbility(AbilityId.STURDY);
   });
 
-  test("Sturdy activates when user is at full HP", async () => {
+  it("activates when user is at full HP", async () => {
     await game.classicMode.startBattle(SpeciesId.LUCARIO);
-    game.move.select(MoveId.CLOSE_COMBAT);
-    await game.phaseInterceptor.to("MoveEndPhase");
-    expect(game.field.getEnemyPokemon().hp).toBe(1);
+
+    game.move.use(MoveId.CLOSE_COMBAT);
+    await game.toEndOfTurn();
+
+    expect(game.field.getEnemyPokemon()).toHaveHp(1);
   });
 
-  test("Sturdy doesn't activate when user is not at full HP", async () => {
+  it("doesn't activate when user is not at full HP", async () => {
     await game.classicMode.startBattle(SpeciesId.LUCARIO);
 
     const enemyPokemon = game.field.getEnemyPokemon();
     enemyPokemon.hp = enemyPokemon.getMaxHp() - 1;
 
-    game.move.select(MoveId.CLOSE_COMBAT);
-    await game.phaseInterceptor.to("DamageAnimPhase");
+    game.move.use(MoveId.CLOSE_COMBAT);
+    await game.toEndOfTurn();
 
-    expect(enemyPokemon.hp).toBe(0);
-    expect(enemyPokemon.isFainted()).toBe(true);
+    expect(enemyPokemon).toHaveFainted();
   });
 
-  test("Sturdy pokemon should be immune to OHKO moves", async () => {
+  it("protects from OHKO moves", async () => {
     await game.classicMode.startBattle(SpeciesId.LUCARIO);
-    game.move.select(MoveId.FISSURE);
-    await game.phaseInterceptor.to("MoveEndPhase");
 
-    const enemyPokemon = game.field.getEnemyPokemon();
-    expect(enemyPokemon.isFullHp()).toBe(true);
+    game.move.use(MoveId.FISSURE);
+    await game.toEndOfTurn();
+
+    expect(game.field.getEnemyPokemon()).toHaveFullHp();
+  });
+
+  it("doesn't incorrectly activate on the second hit of a multi-hit if the damage from the first hit is reduced by boss bars", async () => {
+    game.override.startingWave(10);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+    const enemy = game.field.getEnemyPokemon();
+    // the minimum code is mocked out so all effects are properly triggered
+    vi.spyOn(enemy, "getMoveEffectiveness").mockReturnValue(1);
+    vi.spyOn(enemy, "getBaseDamage").mockReturnValue(enemy.getMaxHp());
+
+    const damageSpy = vi.spyOn(enemy, "getAttackDamage");
+
+    game.move.use(MoveId.DOUBLE_KICK);
+    await game.phaseInterceptor.to("MoveEffectPhase");
+
+    expect(enemy).not.toHaveFainted();
+    expect(enemy).toHaveHp(Math.ceil(enemy.getMaxHp() / 2));
+    expect(damageSpy.mock.results[0].type).toBe("return");
+    expect(damageSpy.mock.results[0].value.damage).toBeGreaterThanOrEqual(enemy.getMaxHp());
+
+    await game.toEndOfTurn();
+
+    expect(enemy).toHaveFainted();
   });
 });

@@ -1,4 +1,4 @@
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { AbilityId } from "#enums/ability-id";
 import { Command } from "#enums/command";
 import { MoveId } from "#enums/move-id";
@@ -96,7 +96,7 @@ describe("Abilities - Speed Boost", () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle(SpeciesId.SHUCKLE);
 
-    vi.spyOn(Overrides, "RUN_SUCCESS_OVERRIDE", "get").mockReturnValue(false);
+    vi.spyOn(activeOverrides, "RUN_SUCCESS_OVERRIDE", "get").mockReturnValue(false);
 
     const commandPhase = game.scene.phaseManager.getCurrentPhase() as CommandPhase;
     commandPhase.handleCommand(Command.RUN, 0);

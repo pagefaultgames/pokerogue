@@ -1,7 +1,9 @@
 import { determineEnemySpecies } from "#app/ai/ai-species-gen";
-import type { AnySound } from "#app/battle-scene";
 import type { GameMode } from "#app/game-mode";
+import { audioManager } from "#app/global-audio-manager";
+import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
+import type { AnySound } from "#audio/audio-manager";
 import { speciesEggMoves } from "#balance/moves/egg-moves";
 import { starterPassiveAbilities } from "#balance/passives";
 import { pokemonEvolutions, pokemonPrevolutions } from "#balance/pokemon-evolutions";
@@ -30,10 +32,11 @@ import type { Localizable } from "#types/locales";
 import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { StarterMoveset } from "#types/save-data";
 import type { EvolutionLevel, EvolutionLevelWithThreshold } from "#types/species-gen-types";
+import { argbFromRgba, rgbaFromArgb } from "#utils/color-utils";
 import { randSeedFloat, randSeedGauss } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase, toPascalCase } from "#utils/strings";
-import { argbFromRgba, QuantizerCelebi, rgbaFromArgb } from "@material/material-color-utilities";
+import { QuantizerCelebi } from "@material/material-color-utilities";
 import i18next from "i18next";
 
 export enum Region {
@@ -81,6 +84,7 @@ export abstract class PokemonSpeciesForm {
   public speciesId: SpeciesId;
   protected _formIndex: number;
   protected _generation: number;
+  // TODO: Make these not accept UNKNOWN or STELLAR
   readonly type1: PokemonType;
   readonly type2: PokemonType | null;
   readonly height: number;
@@ -89,7 +93,7 @@ export abstract class PokemonSpeciesForm {
   readonly ability2: AbilityId;
   readonly abilityHidden: AbilityId;
   readonly baseTotal: number;
-  readonly baseStats: number[];
+  readonly baseStats: readonly number[];
   readonly catchRate: number;
   /** The base amount of friendship this species has when caught, as an integer from 0-255. */
   readonly baseFriendship: number;
@@ -143,7 +147,7 @@ export abstract class PokemonSpeciesForm {
    */
   getRootSpeciesId(forStarter = false): SpeciesId {
     let ret = this.speciesId;
-    while (pokemonPrevolutions.hasOwnProperty(ret) && (!forStarter || !speciesStarterCosts.hasOwnProperty(ret))) {
+    while (Object.hasOwn(pokemonPrevolutions, ret) && (!forStarter || !Object.hasOwn(speciesStarterCosts, ret))) {
       ret = pokemonPrevolutions[ret];
     }
     return ret;
@@ -174,7 +178,7 @@ export abstract class PokemonSpeciesForm {
    * @returns Number of abilities
    */
   getAbilityCount(): number {
-    return this.abilityHidden !== AbilityId.NONE ? 3 : 2;
+    return this.abilityHidden === AbilityId.NONE ? 2 : 3;
   }
 
   /**
@@ -206,7 +210,7 @@ export abstract class PokemonSpeciesForm {
       !(starterSpeciesId in starterPassiveAbilities)
       || !(formIndex in starterPassiveAbilities[starterSpeciesId])
     ) {
-      if (pokemonPrevolutions.hasOwnProperty(starterSpeciesId)) {
+      if (Object.hasOwn(pokemonPrevolutions, starterSpeciesId)) {
         starterSpeciesId = pokemonPrevolutions[starterSpeciesId];
       } else {
         // If we've reached the base species and still haven't found a matching ability, use form 0 if possible
@@ -222,8 +226,8 @@ export abstract class PokemonSpeciesForm {
 
   getLevelMoves(): LevelMoves {
     if (
-      pokemonSpeciesFormLevelMoves.hasOwnProperty(this.speciesId)
-      && pokemonSpeciesFormLevelMoves[this.speciesId].hasOwnProperty(this.formIndex)
+      Object.hasOwn(pokemonSpeciesFormLevelMoves, this.speciesId)
+      && Object.hasOwn(pokemonSpeciesFormLevelMoves[this.speciesId], this.formIndex)
     ) {
       return pokemonSpeciesFormLevelMoves[this.speciesId][this.formIndex].slice(0);
     }
@@ -338,7 +342,23 @@ export abstract class PokemonSpeciesForm {
       && female
       && ![SpeciesFormKey.MEGA, SpeciesFormKey.GIGANTAMAX].includes(formSpriteKey as SpeciesFormKey);
 
-    return `${showGenderDiffs ? "female__" : ""}${this.speciesId}${formSpriteKey ? `-${formSpriteKey}` : ""}`;
+    let spriteKey = `${showGenderDiffs ? "female__" : ""}${this.speciesId}${formSpriteKey ? `-${formSpriteKey}` : ""}`;
+
+    const replacement = timedEventManager.getEventPokemonSpriteReplacement(this.speciesId, formIndex);
+    if (replacement) {
+      const replacementFormSpriteKey = getPokemonSpecies(replacement.speciesId).forms[
+        replacement.formIndex
+      ]?.getFormSpriteKey(replacement.formIndex);
+
+      const replacementShowGenderDiffs =
+        getPokemonSpecies(replacement.speciesId).genderDiffs
+        && female
+        && ![SpeciesFormKey.MEGA, SpeciesFormKey.GIGANTAMAX].includes(replacementFormSpriteKey as SpeciesFormKey);
+
+      spriteKey = `${replacementShowGenderDiffs ? "female__" : ""}${replacement.speciesId}${replacementFormSpriteKey ? `-${replacementFormSpriteKey}` : ""}`;
+    }
+
+    return spriteKey;
   }
 
   /** Compute the sprite ID of the pokemon form. */
@@ -363,7 +383,7 @@ export abstract class PokemonSpeciesForm {
    * @param formIndex optional form index for pokemon with different forms
    * @returns species id if no additional forms, index with formkey if a pokemon with a form
    */
-  getVariantDataIndex(formIndex?: number) {
+  getVariantDataIndex(formIndex?: number): string | number {
     let formkey: string | null = null;
     let variantDataIndex: number | string = this.speciesId;
     const species = getPokemonSpecies(this.speciesId);
@@ -373,6 +393,17 @@ export abstract class PokemonSpeciesForm {
         variantDataIndex = `${this.speciesId}-${formkey}`;
       }
     }
+
+    const replacement = timedEventManager.getEventPokemonSpriteReplacement(this.speciesId, formIndex);
+    if (replacement) {
+      formkey = species.forms[replacement.formIndex]?.getFormSpriteKey(replacement.formIndex);
+      if (formkey) {
+        variantDataIndex = `${replacement.speciesId}-${formkey}`;
+      } else {
+        variantDataIndex = replacement.speciesId;
+      }
+    }
+
     return variantDataIndex;
   }
 
@@ -380,7 +411,12 @@ export abstract class PokemonSpeciesForm {
     const variantDataIndex = this.getVariantDataIndex(formIndex);
     const isVariant =
       shiny && variantData[variantDataIndex] && variant !== undefined && variantData[variantDataIndex][variant];
-    return `pokemon_icons_${this.generation}${isVariant ? "v" : ""}`;
+
+    const replacementSpecies = timedEventManager.getEventPokemonSpriteReplacement(this.speciesId, formIndex);
+    const generation = replacementSpecies
+      ? getPokemonSpeciesForm(replacementSpecies.speciesId, replacementSpecies.formIndex).generation
+      : this.generation;
+    return `pokemon_icons_${generation}${isVariant ? "v" : ""}`;
   }
 
   getIconId(female: boolean, formIndex?: number, shiny?: boolean, variant?: number): string {
@@ -389,8 +425,13 @@ export abstract class PokemonSpeciesForm {
     }
 
     const variantDataIndex = this.getVariantDataIndex(formIndex);
+    const replacement = timedEventManager.getEventPokemonSpriteReplacement(this.speciesId, formIndex);
 
-    let ret = this.speciesId.toString();
+    let ret: string = this.speciesId.toString();
+
+    if (replacement) {
+      ret = replacement.speciesId.toString();
+    }
 
     const isVariant =
       shiny && variantData[variantDataIndex] && variant !== undefined && variantData[variantDataIndex][variant];
@@ -417,6 +458,11 @@ export abstract class PokemonSpeciesForm {
     }
 
     let formSpriteKey = this.getFormSpriteKey(formIndex);
+    if (replacement) {
+      formSpriteKey = getPokemonSpeciesForm(replacement.speciesId, replacement.formIndex).getFormSpriteKey(
+        replacement.formIndex,
+      );
+    }
     if (formSpriteKey) {
       switch (this.speciesId) {
         case SpeciesId.DUDUNSPARCE:
@@ -442,8 +488,15 @@ export abstract class PokemonSpeciesForm {
 
   getCryKey(formIndex?: number): string {
     let speciesId = this.speciesId;
-    if (this.speciesId > 2000) {
-      switch (this.speciesId) {
+
+    const override = timedEventManager.getEventPokemonSpriteReplacement(this.speciesId, formIndex);
+    if (override) {
+      speciesId = override.speciesId;
+      formIndex = override.formIndex;
+    }
+
+    if (speciesId > 2000) {
+      switch (speciesId) {
         case SpeciesId.GALAR_SLOWPOKE:
           break;
         case SpeciesId.ETERNAL_FLOETTE:
@@ -455,7 +508,7 @@ export abstract class PokemonSpeciesForm {
           break;
       }
     }
-    let ret = speciesId.toString();
+    let ret: string = speciesId.toString();
     const forms = getPokemonSpecies(speciesId).forms;
     if (forms.length > 0) {
       if (formIndex !== undefined && formIndex >= forms.length) {
@@ -528,15 +581,17 @@ export abstract class PokemonSpeciesForm {
   validateStarterMoveset(moveset: StarterMoveset, eggMoves: number): boolean {
     const rootSpeciesId = this.getRootSpeciesId();
     for (const moveId of moveset) {
-      if (speciesEggMoves.hasOwnProperty(rootSpeciesId)) {
+      if (Object.hasOwn(speciesEggMoves, rootSpeciesId)) {
+        // TODO: Review typing of `speciesEggMoves` - asserting `rootSpeciesId` is `keyof typeof speciesEggMoves` results in `never[]`
+        // due to incompatible tuple intersections
         const eggMoveIndex = speciesEggMoves[rootSpeciesId].indexOf(moveId);
         if (eggMoveIndex > -1 && eggMoves & (1 << eggMoveIndex)) {
           continue;
         }
       }
       if (
-        pokemonFormLevelMoves.hasOwnProperty(this.speciesId)
-        && pokemonFormLevelMoves[this.speciesId].hasOwnProperty(this.formIndex)
+        Object.hasOwn(pokemonFormLevelMoves, this.speciesId)
+        && Object.hasOwn(pokemonFormLevelMoves[this.speciesId], this.formIndex)
       ) {
         if (!pokemonFormLevelMoves[this.speciesId][this.formIndex].find(lm => lm[0] <= 5 && lm[1] === moveId)) {
           return false;
@@ -569,7 +624,7 @@ export abstract class PokemonSpeciesForm {
       baseSpriteKey = "back__" + baseSpriteKey;
     }
 
-    if (variantColorCache.hasOwnProperty(baseSpriteKey)) {
+    if (Object.hasOwn(variantColorCache, baseSpriteKey)) {
       // Variant colors have already been loaded
       return;
     }
@@ -647,7 +702,7 @@ export abstract class PokemonSpeciesForm {
     if (cry?.pendingRemove) {
       cry = null;
     }
-    cry = globalScene.playSound(cry ?? cryKey, soundConfig);
+    cry = audioManager.playSound(cry ?? cryKey, soundConfig);
     if (cry && ignorePlay) {
       cry.stop();
     }
@@ -969,16 +1024,14 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
 
   getEvolutionLevels(): EvolutionLevel[] {
     const evolutionLevels: EvolutionLevel[] = [];
+    const { speciesId } = this;
 
-    //console.log(Species[this.speciesId], pokemonEvolutions[this.speciesId])
-
-    if (pokemonEvolutions.hasOwnProperty(this.speciesId)) {
-      for (const e of pokemonEvolutions[this.speciesId]) {
-        const speciesId = e.speciesId;
+    if (pokemonEvolutions[speciesId] != null) {
+      for (const e of pokemonEvolutions[speciesId]) {
+        const sId = e.speciesId;
         const level = e.level;
-        evolutionLevels.push([speciesId, level]);
-        //console.log(Species[speciesId], getPokemonSpecies(speciesId), getPokemonSpecies(speciesId).getEvolutionLevels());
-        const nextEvolutionLevels = getPokemonSpecies(speciesId).getEvolutionLevels();
+        evolutionLevels.push([sId, level]);
+        const nextEvolutionLevels = getPokemonSpecies(sId).getEvolutionLevels();
         for (const npl of nextEvolutionLevels) {
           evolutionLevels.push(npl);
         }
@@ -1004,10 +1057,9 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
   ): typeof withThresholds extends false ? EvolutionLevel[] : EvolutionLevelWithThreshold[];
   getPrevolutionLevels(withThresholds = false): EvolutionLevelWithThreshold[] | EvolutionLevel[] {
     const prevolutionLevels: (EvolutionLevel | EvolutionLevelWithThreshold)[] = [];
-
     const allEvolvingPokemon = Object.keys(pokemonEvolutions);
     for (const p of allEvolvingPokemon) {
-      const speciesId = Number.parseInt(p) as SpeciesId;
+      const speciesId = Number.parseInt(p);
       for (const e of pokemonEvolutions[p]) {
         if (
           e.speciesId === this.speciesId
@@ -1032,67 +1084,69 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
   }
 
   // This could definitely be written better and more accurate to the getSpeciesForLevel logic, but it is only for generating movesets for evolved Pokemon
+  // TODO: Rework this absolutely horridly written slop
   getSimulatedEvolutionChain(
     currentLevel: number,
     forTrainer = false,
     isBoss = false,
     player = false,
   ): EvolutionLevel[] {
+    if (!Object.hasOwn(pokemonPrevolutions, this.speciesId)) {
+      return [[this.speciesId, 1]];
+    }
+
     const ret: EvolutionLevel[] = [];
-    if (pokemonPrevolutions.hasOwnProperty(this.speciesId)) {
-      const prevolutionLevels = this.getPrevolutionLevels().reverse();
-      const levelDiff = player ? 0 : forTrainer || isBoss ? (forTrainer && isBoss ? 2.5 : 5) : 10;
-      ret.push([prevolutionLevels[0][0], 1]);
-      for (let l = 1; l < prevolutionLevels.length; l++) {
-        const evolution = pokemonEvolutions[prevolutionLevels[l - 1][0]].find(
-          e => e.speciesId === prevolutionLevels[l][0],
-        );
-        ret.push([
-          prevolutionLevels[l][0],
-          Math.min(
-            Math.max(
-              evolution?.level!
-                + Math.round(
-                  randSeedGauss(0.5, 1 + levelDiff * 0.2)
-                    * Math.max(evolution?.evoLevelThreshold?.[EvoLevelThresholdKind.WILD] ?? 0, 0.5)
-                    * 5,
-                )
-                - 1,
-              2,
-              evolution?.level!,
-            ),
-            currentLevel - 1,
-          ),
-        ]); // TODO: are those bangs correct?
-      }
-      const lastPrevolutionLevel = ret[prevolutionLevels.length - 1][1];
-      const evolution = pokemonEvolutions[prevolutionLevels.at(-1)![0]].find(e => e.speciesId === this.speciesId);
+    const prevolutionLevels = this.getPrevolutionLevels().reverse();
+    const levelDiff = player ? 0 : forTrainer || isBoss ? (forTrainer && isBoss ? 2.5 : 5) : 10;
+    ret.push([prevolutionLevels[0][0], 1]);
+    for (let l = 1; l < prevolutionLevels.length; l++) {
+      const evolution = pokemonEvolutions[prevolutionLevels[l - 1][0] as keyof typeof pokemonEvolutions].find(
+        e => e.speciesId === prevolutionLevels[l][0],
+      );
       ret.push([
-        this.speciesId,
+        prevolutionLevels[l][0],
         Math.min(
           Math.max(
-            lastPrevolutionLevel
+            evolution?.level!
               + Math.round(
                 randSeedGauss(0.5, 1 + levelDiff * 0.2)
                   * Math.max(evolution?.evoLevelThreshold?.[EvoLevelThresholdKind.WILD] ?? 0, 0.5)
                   * 5,
-              ),
-            lastPrevolutionLevel + 1,
+              )
+              - 1,
+            2,
             evolution?.level!,
           ),
-          currentLevel,
+          currentLevel - 1,
         ),
       ]); // TODO: are those bangs correct?
-    } else {
-      ret.push([this.speciesId, 1]);
     }
 
+    const lastSpecies = ret[prevolutionLevels.length - 1][0] as keyof typeof pokemonEvolutions;
+    const evolution = pokemonEvolutions[lastSpecies].find(e => e.speciesId === this.speciesId);
+    ret.push([
+      this.speciesId,
+      Math.min(
+        Math.max(
+          evolution?.level!
+            + Math.round(
+              randSeedGauss(0.5, 1 + levelDiff * 0.2)
+                * Math.max(evolution?.evoLevelThreshold?.[EvoLevelThresholdKind.WILD] ?? 0, 0.5)
+                * 5,
+            )
+            - 1,
+          2,
+          evolution?.level!,
+        ),
+        currentLevel - 1,
+      ),
+    ]); // TODO: are those bangs correct?
     return ret;
   }
 
   getCompatibleFusionSpeciesFilter(): PokemonSpeciesFilter {
-    const hasEvolution = pokemonEvolutions.hasOwnProperty(this.speciesId);
-    const hasPrevolution = pokemonPrevolutions.hasOwnProperty(this.speciesId);
+    const hasEvolution = Object.hasOwn(pokemonEvolutions, this.speciesId);
+    const hasPrevolution = Object.hasOwn(pokemonPrevolutions, this.speciesId);
     const subLegendary = this.subLegendary;
     const legendary = this.legendary;
     const mythical = this.mythical;
@@ -1101,8 +1155,8 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
         (subLegendary
           || legendary
           || mythical
-          || (pokemonEvolutions.hasOwnProperty(species.speciesId) === hasEvolution
-            && pokemonPrevolutions.hasOwnProperty(species.speciesId) === hasPrevolution))
+          || (Object.hasOwn(pokemonEvolutions, species.speciesId) === hasEvolution
+            && Object.hasOwn(pokemonPrevolutions, species.speciesId) === hasPrevolution))
         && species.subLegendary === subLegendary
         && species.legendary === legendary
         && species.mythical === mythical
@@ -1120,7 +1174,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
         variantDataIndex = `${variantDataIndex}-${formKey}`;
       }
     }
-    return variantData.hasOwnProperty(variantDataIndex) || variantData.hasOwnProperty(this.speciesId);
+    return Object.hasOwn(variantData, variantDataIndex) || Object.hasOwn(variantData, this.speciesId);
   }
 
   getFormSpriteKey(formIndex?: number) {
@@ -1242,6 +1296,6 @@ export class PokemonForm extends PokemonSpeciesForm {
   }
 
   getFormSpriteKey(_formIndex?: number) {
-    return this.formSpriteKey !== null ? this.formSpriteKey : this.formKey;
+    return this.formSpriteKey === null ? this.formKey : this.formSpriteKey;
   }
 }

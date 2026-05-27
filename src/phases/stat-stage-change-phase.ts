@@ -1,9 +1,9 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import type { ArenaTag } from "#data/arena-tag";
-import { MistTag } from "#data/arena-tag";
 import { OctolockTag } from "#data/battler-tags";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -130,13 +130,13 @@ export class StatStageChangePhase extends PokemonPhase {
       const cancelled = new BooleanHolder(false);
 
       if (!this.selfTarget && stages.value < 0) {
-        // TODO: add a reference to the source of the stat change to fix Infiltrator interaction
         globalScene.arena.applyTagsForSide(
-          MistTag,
+          ArenaTagType.MIST,
           pokemon.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY,
           false,
-          null,
+          pokemon,
           cancelled,
+          opponentPokemon,
         );
       }
 
@@ -261,7 +261,7 @@ export class StatStageChangePhase extends PokemonPhase {
       statSprite.setScale(6);
       statSprite.setOrigin(0.5, 1);
 
-      globalScene.playSound(`se/stat_${stages.value >= 1 ? "up" : "down"}`);
+      audioManager.playSound(`se/stat_${stages.value >= 1 ? "up" : "down"}`);
 
       statSprite.setMask(new Phaser.Display.Masks.BitmapMask(globalScene, pokemonMaskSprite ?? undefined));
 
@@ -297,7 +297,7 @@ export class StatStageChangePhase extends PokemonPhase {
   getStatStageChangeMessages(stats: readonly BattleStat[], stages: number, relStages: number[]): string[] {
     const messages: string[] = [];
 
-    const relStageStatIndexes = {};
+    const relStageStatIndexes: Record<number, number[]> = {};
     for (let rl = 0; rl < relStages.length; rl++) {
       const relStage = relStages[rl];
       if (!relStageStatIndexes[relStage]) {

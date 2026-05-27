@@ -1,5 +1,6 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { Phase } from "#app/phase";
 import { SpeciesFormChangeMoveLearnedTrigger } from "#data/form-change-triggers";
 import { Gender } from "#data/gender";
@@ -10,14 +11,13 @@ import type { Starter } from "#types/save-data";
 import { SaveSlotUiMode } from "#ui/handlers/save-slot-select-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
-import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 
 export class SelectStarterPhase extends Phase {
   public readonly phaseName = "SelectStarterPhase";
   start() {
     super.start();
 
-    globalScene.playBgm("menu");
+    audioManager.playBgm("menu");
 
     globalScene.ui.setMode(UiMode.STARTER_SELECT, (starters: Starter[]) => {
       globalScene.ui.clearText();
@@ -42,23 +42,23 @@ export class SelectStarterPhase extends Phase {
     const party = globalScene.getPlayerParty();
     const loadPokemonAssets: Promise<void>[] = [];
     starters.forEach((starter: Starter, i: number) => {
-      if (!i && Overrides.STARTER_SPECIES_OVERRIDE) {
-        starter.speciesId = Overrides.STARTER_SPECIES_OVERRIDE;
+      if (!i && activeOverrides.STARTER_SPECIES_OVERRIDE) {
+        starter.speciesId = activeOverrides.STARTER_SPECIES_OVERRIDE;
       }
       const species = getPokemonSpecies(starter.speciesId);
       let starterFormIndex = starter.formIndex;
       if (
-        starter.speciesId in Overrides.STARTER_FORM_OVERRIDES
-        && Overrides.STARTER_FORM_OVERRIDES[starter.speciesId] != null
-        && species.forms[Overrides.STARTER_FORM_OVERRIDES[starter.speciesId]!]
+        starter.speciesId in activeOverrides.STARTER_FORM_OVERRIDES
+        && activeOverrides.STARTER_FORM_OVERRIDES[starter.speciesId] != null
+        && species.forms[activeOverrides.STARTER_FORM_OVERRIDES[starter.speciesId]!]
       ) {
-        starterFormIndex = Overrides.STARTER_FORM_OVERRIDES[starter.speciesId]!;
+        starterFormIndex = activeOverrides.STARTER_FORM_OVERRIDES[starter.speciesId]!;
       }
 
       let starterGender =
-        species.malePercent !== null ? (starter.female ? Gender.FEMALE : Gender.MALE) : Gender.GENDERLESS;
-      if (Overrides.GENDER_OVERRIDE !== null) {
-        starterGender = Overrides.GENDER_OVERRIDE;
+        species.malePercent === null ? Gender.GENDERLESS : starter.female ? Gender.FEMALE : Gender.MALE;
+      if (activeOverrides.GENDER_OVERRIDE !== null) {
+        starterGender = activeOverrides.GENDER_OVERRIDE;
       }
       const starterPokemon = globalScene.addPlayerPokemon(
         species,
@@ -88,13 +88,13 @@ export class SelectStarterPhase extends Phase {
         starterPokemon.nickname = starter.nickname;
       }
 
-      if (starter.teraType != null) {
-        starterPokemon.teraType = starter.teraType;
-      } else {
+      if (starter.teraType == null) {
         starterPokemon.teraType = starterPokemon.species.type1;
+      } else {
+        starterPokemon.teraType = starter.teraType;
       }
 
-      if (globalScene.gameMode.isSplicedOnly || Overrides.STARTER_FUSION_OVERRIDE) {
+      if (globalScene.gameMode.isSplicedOnly || activeOverrides.STARTER_FUSION_OVERRIDE) {
         starterPokemon.generateFusionSpecies(true);
       }
       starterPokemon.setVisible(false);
@@ -109,8 +109,7 @@ export class SelectStarterPhase extends Phase {
     overrideModifiers();
     overrideHeldItems(party[0]);
     Promise.all(loadPokemonAssets).then(() => {
-      SoundFade.fadeOut(globalScene, globalScene.sound.get("menu"), 500, true);
-      globalScene.time.delayedCall(500, () => globalScene.playBgm());
+      audioManager.fadeAndSwitchBgm(undefined, 500);
       if (globalScene.gameMode.isClassic) {
         globalScene.gameData.gameStats.classicSessionsPlayed++;
       } else {

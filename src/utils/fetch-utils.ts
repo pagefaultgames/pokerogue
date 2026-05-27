@@ -6,7 +6,8 @@ export function getCachedUrl(url: string): string {
     return url;
   }
 
-  const timestamp = manifest[`/${url.replace("./", "")}`];
+  const normalizedUrl = `/${url.replace("./", "")}`;
+  const timestamp = manifest[normalizedUrl];
   if (timestamp) {
     url += `?t=${timestamp}`;
   }

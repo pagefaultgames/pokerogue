@@ -51,8 +51,9 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
   .withFleeAllowed(false)
   .withIntroSpriteConfigs([
     {
-      spriteKey: SpeciesId.SNORLAX.toString(),
-      fileRoot: "pokemon",
+      species: SpeciesId.SNORLAX,
+      spriteKey: "",
+      fileRoot: "",
       hasShadow: true,
       tint: 0.25,
       scale: 1.25,
