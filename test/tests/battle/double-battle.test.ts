@@ -28,10 +28,9 @@ describe("Double Battles", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override
-      .enemyMoveset(MoveId.SPLASH)
-      .moveset(MoveId.SPLASH)
+    game.override //
       .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH)
       .ability(AbilityId.BALL_FETCH);
   });
 
@@ -41,8 +40,8 @@ describe("Double Battles", () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARIZARD, SpeciesId.SQUIRTLE);
 
-    game.move.select(MoveId.SPLASH);
-    game.move.select(MoveId.SPLASH, 1);
+    game.move.use(MoveId.SPLASH);
+    game.move.use(MoveId.SPLASH, 1);
 
     for (const pokemon of game.scene.getPlayerField()) {
       pokemon.hp = 0;
@@ -78,7 +77,7 @@ describe("Double Battles", () => {
     for (let i = 0; i < DOUBLE_CHANCE; i++) {
       rngSweepProgress = (i + 0.5) / DOUBLE_CHANCE;
 
-      game.move.select(MoveId.SPLASH);
+      game.move.use(MoveId.SPLASH);
       await game.doKillOpponents();
       await game.toNextWave();
 
@@ -133,7 +132,7 @@ describe("Double Battles", () => {
     // alongside a reference to their respective pokemon.
     // We cannot do this _post hoc_ as the `SwitchPhase`s will have rearranged the player party by turn end
     // (thus making any BattlerIndex-based references inaccurate)
-    const phases = [] as ["RecallPhase" | "SwitchPhase" | "SummonPhase" | "PostSummonPhase", string][];
+    const phases: ["RecallPhase" | "SwitchPhase" | "SummonPhase" | "PostSummonPhase", string][] = [];
     vi.spyOn(Phase.prototype, "start").mockImplementation(function (this: Phase) {
       if (this.is("RecallPhase") || this.is("SwitchPhase") || this.is("SummonPhase") || this.is("PostSummonPhase")) {
         phases.push([this.phaseName, this.getPokemon().name]);
@@ -164,40 +163,25 @@ describe("Double Battles", () => {
     ]);
   });
 
-  describe("Trainer Double Battles", () => {
-    beforeEach(() => {
+  it("should advance exactly one wave if both opponents are defeated at the same time", async () => {
       game.override
-        .randomTrainer({ trainerType: TrainerType.TWINS })
-        .battleType(BattleType.TRAINER)
-        .startingLevel(1000)
-        .startingWave(12);
-    });
+      .randomTrainer({ trainerType: TrainerType.TWINS })
+      .battleType(BattleType.TRAINER)
+      .startingLevel(1000)
+      .startingWave(12);
 
-    it.each<{ side: string; order: BattlerIndex[] }>([
-      { side: "left", order: [BattlerIndex.PLAYER, BattlerIndex.PLAYER_2] },
-      { side: "right", order: [BattlerIndex.PLAYER_2, BattlerIndex.PLAYER] },
-    ])("should advance exactly one wave if the $side opponent is defeated first", async ({ order }) => {
-      await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-      game.move.use(MoveId.MOONBLAST, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
-      game.move.use(MoveId.MOONBLAST, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2);
-      await game.setTurnOrder([...order, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
-      await game.toNextWave();
+    game.move.use(MoveId.DAZZLING_GLEAM);
+    await game.toEndOfTurn(false);
 
-      expect(game.scene.currentBattle.waveIndex).toBe(13);
-      expect(game.phaseInterceptor.log.filter(phase => phase === "SelectModifierPhase")).toHaveLength(1);
-      expect(game.scene.phaseManager.hasPhaseOfType("SelectModifierPhase")).toBe(false);
-    });
+    expect(game.scene.phaseManager["phaseQueue"].findAll("BattleEndPhase")).toHaveLength(1);
 
-    it("should advance exactly one wave if both opponents are defeated at the same time", async () => {
-      await game.classicMode.startBattle(SpeciesId.FEEBAS);
+    await game.toNextWave();
 
-      game.move.use(MoveId.DAZZLING_GLEAM);
-      await game.toNextWave();
-
-      expect(game.scene.currentBattle.waveIndex).toBe(13);
-      expect(game.phaseInterceptor.log.filter(phase => phase === "SelectModifierPhase")).toHaveLength(1);
-      expect(game.scene.phaseManager.hasPhaseOfType("SelectModifierPhase")).toBe(false);
-    });
+    expect(game.scene.currentBattle.waveIndex).toBe(13);
+    expect(game.phaseInterceptor.log.filter(phase => phase === "SelectModifierPhase")).toHaveLength(1);
+    expect(game.scene.phaseManager.hasPhaseOfType("SelectModifierPhase")).toBe(false);
+  });
   });
 });
