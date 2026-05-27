@@ -1,4 +1,4 @@
-import { EVOLVE_MOVE, RELEARN_MOVE } from "#app/constants";
+import { EVOLVE_MOVE, FORGET_MOVE, RELEARN_MOVE } from "#app/constants";
 import { LearnMoveSituation } from "#enums/learn-move-situation";
 import { LearnableMoveSource } from "#enums/learnable-move-source";
 import type { MoveId } from "#enums/move-id";
@@ -26,10 +26,12 @@ function getRegularLevelMoves(
   fromFusion = false,
 ): LevelMovesWithSource {
   const ret: LevelMovesWithSource = [];
-  const moves = (fromFusion ? pokemon.getFusionSpeciesForm(true) : pokemon.getSpeciesForm(true)).getLevelMoves();
+  const moves = (fromFusion ? pokemon.getFusionSpeciesForm(true) : pokemon.getSpeciesForm(true)).getLevelMoves(
+    fromFusion ? (pokemon.getFusionFormKey() ?? undefined) : pokemon.getFormKey()
+  );
   for (const [level, move] of moves) {
     if (
-      (includeEvolutionMoves && level === EVOLVE_MOVE)
+      (includeEvolutionMoves && (level === EVOLVE_MOVE || level === FORGET_MOVE))
       || (includeRelearnerMoves && level === RELEARN_MOVE)
       || level > 0
     ) {
@@ -39,6 +41,9 @@ function getRegularLevelMoves(
           moveSource = LearnableMoveSource.RELEARN;
           break;
         case EVOLVE_MOVE:
+          moveSource = LearnableMoveSource.EVOLUTION;
+          break;
+        case FORGET_MOVE:
           moveSource = LearnableMoveSource.EVOLUTION;
           break;
         default:
@@ -91,7 +96,7 @@ function getPrevolutionMoves(
       if (includeRelearnerMoves && level === RELEARN_MOVE) {
         const source = isPrevo ? LearnableMoveSource.PREVO : LearnableMoveSource.RELEARN;
         ret.push([level, move, (source + +fromFusion) as LearnableMoveSource]);
-      } else if (includeEvolutionMoves && level === EVOLVE_MOVE) {
+      } else if (includeEvolutionMoves && (level === EVOLVE_MOVE || level === FORGET_MOVE)) {
         const source = isPrevo ? LearnableMoveSource.PREVO : LearnableMoveSource.EVOLUTION;
         ret.push([level, move, (source + +fromFusion) as LearnableMoveSource]);
       } else if (includeLevelOne && (!isPrevo || level <= pokemon.level)) {
@@ -186,9 +191,9 @@ function filterAndSortLevelMoves(
   levelMoves = levelMoves.filter(lm => {
     const [level, move, source] = lm;
     const isRelearner = level < startingLevel;
-    const allowedEvolutionMove = level === 0 && includeEvolutionMoves;
+    const allowedEvolutionMove = (level === EVOLVE_MOVE || level === FORGET_MOVE) && includeEvolutionMoves;
     const isLevelMoveSource = source === LearnableMoveSource.LEVEL || source === LearnableMoveSource.FUSION_LEVEL;
-    const isOwnMoveFromNonLevelSource = ownMoves.has(move) && !isLevelMoveSource;
+    const isOwnMoveFromNonLevelSource = ownMoves.has(move) && !isLevelMoveSource && level !== EVOLVE_MOVE && level !== FORGET_MOVE;
     const isLockedPrevoMove =
       levelMovesAboveCurrentLevel.has(move)
       && (source === LearnableMoveSource.PREVO || source === LearnableMoveSource.FUSION_PREVO);

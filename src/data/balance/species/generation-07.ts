@@ -1,4 +1,4 @@
-import { EVOLVE_MOVE, RELEARN_MOVE } from "#app/constants";
+import { EVOLVE_MOVE, RELEARN_MOVE, FORGET_MOVE } from "#app/constants";
 import { EvoCondKey, EvolutionItem, SpeciesEvolution, SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { GrowthRate } from "#data/exp";
 import { SpeciesFormChangeAbilityTrigger, SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
@@ -9011,6 +9011,20 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.ULTRANECROZIUM_Z),
         conditions: [],
       }),
+      new SpeciesFormChange({
+        speciesId: SpeciesId.NECROZMA,
+        preFormKey: "dusk-mane",
+        evoFormKey: "",
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.N_SOLARIZER, false),
+        conditions: [],
+      }),
+      new SpeciesFormChange({
+        speciesId: SpeciesId.NECROZMA,
+        preFormKey: "dawn-wings",
+        evoFormKey: "",
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.N_LUNARIZER, false),
+        conditions: [],
+      }),
     ],
     eggTier: EggTier.LEGENDARY,
     passives: {
@@ -9042,12 +9056,24 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       [79, MoveId.PRISMATIC_LASER],
     ],
     formLevelMoves: {
-      "dusk-mane": [[EVOLVE_MOVE, MoveId.SUNSTEEL_STRIKE]],
-      ultra: [
+      "": [
+        [EVOLVE_MOVE, MoveId.CONFUSION],
+        [FORGET_MOVE, MoveId.SUNSTEEL_STRIKE],   
+        [FORGET_MOVE, MoveId.MOONGEIST_BEAM],
+        [1, MoveId.MIRROR_SHOT]
+      ],
+      "dusk-mane": [
+        [EVOLVE_MOVE, MoveId.SUNSTEEL_STRIKE],
+        [FORGET_MOVE, MoveId.MOONGEIST_BEAM],
+      ],
+      "dawn-wings": [
+        [EVOLVE_MOVE, MoveId.MOONGEIST_BEAM],
+        [FORGET_MOVE, MoveId.SUNSTEEL_STRIKE],
+      ],
+      "ultra": [
         [EVOLVE_MOVE, MoveId.SUNSTEEL_STRIKE],
         [EVOLVE_MOVE, MoveId.MOONGEIST_BEAM],
       ],
-      "dawn-wings": [[EVOLVE_MOVE, MoveId.MOONGEIST_BEAM]],
     },
     tms: [
       MoveId.SWORDS_DANCE,

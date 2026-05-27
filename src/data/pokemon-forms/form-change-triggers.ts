@@ -79,6 +79,15 @@ export class SpeciesFormChangeItemTrigger extends SpeciesFormChangeTrigger {
   }
 
   canChange(pokemon: Pokemon): boolean {
+    if (!this.active) {
+      // Some form changes require the item to be removed, so we check if there is an active modifier with the item,
+      // and if there isn't, then the Pokemon can change form
+      return !globalScene.findModifier(r => {
+        const m = r as PokemonFormChangeItemModifier;
+        return "formChangeItem" in m && m.pokemonId === pokemon.id && m.formChangeItem === this.item && m.active;
+      });
+    }
+
     return !!globalScene.findModifier(r => {
       // Assume that if m has the `formChangeItem` property, then it is a PokemonFormChangeItemModifier
       const m = r as PokemonFormChangeItemModifier;

@@ -14565,6 +14565,20 @@ export function initGenerationFive(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.LIGHT_STONE),
         conditions: [getSpeciesDependentFormChangeCondition(SpeciesId.RESHIRAM)],
       }),
+      new SpeciesFormChange({
+        speciesId: SpeciesId.KYUREM,
+        preFormKey: "black",
+        evoFormKey: "",
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.DARK_STONE, false),
+        conditions: [getSpeciesDependentFormChangeCondition(SpeciesId.RESHIRAM)],
+      }),
+      new SpeciesFormChange({
+        speciesId: SpeciesId.KYUREM,
+        preFormKey: "white",
+        evoFormKey: "",
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.LIGHT_STONE, false),
+        conditions: [getSpeciesDependentFormChangeCondition(SpeciesId.RESHIRAM)],
+      }),
     ],
     eggTier: EggTier.LEGENDARY,
     passives: {

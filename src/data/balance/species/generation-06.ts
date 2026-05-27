@@ -9748,6 +9748,13 @@ export function initGenerationSix(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.PRISON_BOTTLE),
         conditions: [],
       }),
+      new SpeciesFormChange({
+        speciesId: SpeciesId.HOOPA,
+        preFormKey: "unbound",
+        evoFormKey: "",
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.PRISON_BOTTLE, false),
+        conditions: [],
+      }),
     ],
     eggTier: EggTier.EPIC,
     passives: {

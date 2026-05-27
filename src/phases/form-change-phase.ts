@@ -1,6 +1,7 @@
 import type { Animation } from "#app/animations";
 import { audioManager } from "#app/global-audio-manager";
-import { EVOLVE_MOVE } from "#app/constants";
+import { EVOLVE_MOVE, FORGET_MOVE } from "#app/constants";
+import { formChangeSignatureMoves } from "#app/data/form-change-signature-moves";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { getSpeciesFormChangeMessage } from "#data/form-change-triggers";
@@ -8,6 +9,7 @@ import type { SpeciesFormChange } from "#data/pokemon-forms";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { LearnMoveSituation } from "#enums/learn-move-situation";
 import { LearnMoveType } from "#enums/learn-move-type";
+import { MoveId } from "#enums/move-id";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
@@ -204,10 +206,38 @@ export class FormChangePhase extends EvolutionPhase {
   end(): void {
     this.pokemon.findAndRemoveTags(t => t.tagType === BattlerTagType.AUTOTOMIZED);
 
-    // Após a mudança de forma, verifica se há moves de assinatura novos a aprender
+    console.log("FormChangePhase.end() - formKey:", this.pokemon.getFormKey());
+  const allLevelMoves = this.pokemon.getLevelMoves(1, true, false, false, LearnMoveSituation.EVOLUTION);
+  console.log("All level moves with EVOLVE/FORGET:", allLevelMoves.filter(lm => lm[0] <= 0));
+
+    const forgetMoves = this.pokemon
+      .getLevelMoves(1, true, false, false, LearnMoveSituation.EVOLUTION)
+      .filter(lm => lm[0] === FORGET_MOVE);
+
+    for (const fm of forgetMoves) {
+      const moveId = fm[1];
+      const moveIndex = this.pokemon.moveset.findIndex(m => m?.moveId === moveId);
+      if (moveIndex !== -1) {
+        this.pokemon.moveset.splice(moveIndex, 1);
+      }
+    }
+
+    // For cases where the Pokemon has no moves left after forgetting
+    if (forgetMoves.length > 0 && this.pokemon.moveset.length === 0) {
+      globalScene.phaseManager.unshiftNew(
+        "LearnMovePhase",
+        globalScene.getPlayerParty().indexOf(this.pokemon),
+        MoveId.CONFUSION,
+        LearnMoveType.FORM_CHANGE,
+      );
+    }
+
+    // After form change, checks if there are any signature moves to be learned
     const levelMoves = this.pokemon
       .getLevelMoves(1, true, false, false, LearnMoveSituation.EVOLUTION)
       .filter(lm => lm[0] === EVOLVE_MOVE);
+
+    const formRules = formChangeSignatureMoves[this.pokemon.species.speciesId]?.[this.pokemon.getFormKey()] ?? [];
 
     for (const lm of levelMoves) {
       const moveId = lm[1];
@@ -216,11 +246,37 @@ export class FormChangePhase extends EvolutionPhase {
         // Procura no learnset da forma nova outros moves que o Pokémon tinha antes
         // O move a substituir é o que existia no moveset anterior e ainda existe
         // no learnset da forma nova a nível > 0 (i.e. não é um EVOLVE_MOVE)
-        const newFormAllMoves = this.pokemon
-          .getLevelMoves(1, true, false, false, LearnMoveSituation.EVOLUTION)
-          .map(lm2 => lm2[1]);
+        /*const newFormAllMoves = this.pokemon
+          .getLevelMoves(
+            1, 
+            true, 
+            false, 
+            false, 
+            LearnMoveSituation.EVOLUTION)
+          .map(lm2 => lm2[1]);*/
+        /*const replaceMoveId =
+          this.preFormMoveIds.find(
+            id => id !== -1 && !newFormAllMoves.includes(id) && id !== moveId && !evolveMoveIds.includes(id)
+          ) ?? null;*/
+
+        /*const explicitReplaceId = lm[2];
+        const replaceMoveId = explicitReplaceId !== undefined && this.preFormMoveIds.includes(explicitReplaceId)
+              ? explicitReplaceId
+              : null;
+
+        if (explicitReplaceId !== undefined && replaceMoveId === null) {
+          continue;
+        }*/
+        const rules = formRules.filter(r => r.learn === moveId);
+
         const replaceMoveId =
-          this.preFormMoveIds.find(id => id !== -1 && newFormAllMoves.includes(id) && id !== moveId) ?? null;
+          rules.map(r => r.replace).find(move => move !== undefined && this.preFormMoveIds.includes(move)) ?? null;
+
+        const hasExplicitReplace = rules.some(r => r.replace !== undefined);
+
+        if (hasExplicitReplace && replaceMoveId === null) {
+          continue;
+        }
 
         globalScene.phaseManager.unshiftNew(
           "LearnMovePhase",
