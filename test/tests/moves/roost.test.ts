@@ -76,7 +76,7 @@ describe("Moves - Roost", () => {
     await game.toEndOfTurn(false);
 
     // Should remain flying type
-    expect(pidgeot).toHaveTypes([PokemonType.FLYING], { args: [true] });
+    expect(pidgeot).toHaveTypes([PokemonType.FLYING], {});
     expect(pidgeot.isGrounded()).toBe(false);
   });
 
