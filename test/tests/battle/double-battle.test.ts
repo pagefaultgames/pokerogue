@@ -3,7 +3,6 @@ import { Phase } from "#app/phase";
 import { Status } from "#data/status-effect";
 import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
-import { BattlerIndex } from "#enums/battler-index";
 import { GameModes } from "#enums/game-modes";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -164,7 +163,7 @@ describe("Double Battles", () => {
   });
 
   it("should advance exactly one wave if both opponents are defeated at the same time", async () => {
-      game.override
+    game.override
       .randomTrainer({ trainerType: TrainerType.TWINS })
       .battleType(BattleType.TRAINER)
       .startingLevel(1000)
@@ -182,6 +181,5 @@ describe("Double Battles", () => {
     expect(game.scene.currentBattle.waveIndex).toBe(13);
     expect(game.phaseInterceptor.log.filter(phase => phase === "SelectModifierPhase")).toHaveLength(1);
     expect(game.scene.phaseManager.hasPhaseOfType("SelectModifierPhase")).toBe(false);
-  });
   });
 });
