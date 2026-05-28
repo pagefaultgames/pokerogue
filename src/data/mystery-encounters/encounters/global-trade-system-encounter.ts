@@ -1,4 +1,5 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { Gender, getGenderSymbol } from "#data/gender";
@@ -145,7 +146,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
     return true;
   })
   .withOnVisualsStart(() => {
-    globalScene.fadeAndSwitchBgm(globalScene.currentBattle.mysteryEncounter!.misc.bgmKey);
+    audioManager.fadeAndSwitchBgm(globalScene.currentBattle.mysteryEncounter!.misc.bgmKey);
     return true;
   })
   .withOption(
@@ -246,7 +247,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
         await showTradeBackground();
         await doPokemonTradeSequence(tradedPokemon, newPlayerPokemon);
         await showEncounterText(`${namespace}:tradeReceived`, null, 0, true, 4000);
-        globalScene.playBgm(encounter.misc.bgmKey);
+        audioManager.playBgm(encounter.misc.bgmKey);
         await addPokemonDataToDexAndValidateAchievements(newPlayerPokemon);
         await hideTradeBackground();
         tradedPokemon.destroy();
@@ -350,7 +351,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
         await showTradeBackground();
         await doPokemonTradeSequence(tradedPokemon, newPlayerPokemon);
         await showEncounterText(`${namespace}:tradeReceived`, null, 0, true, 4000);
-        globalScene.playBgm(encounter.misc.bgmKey);
+        audioManager.playBgm(encounter.misc.bgmKey);
         await addPokemonDataToDexAndValidateAchievements(newPlayerPokemon);
         await hideTradeBackground();
         tradedPokemon.destroy();
@@ -719,10 +720,10 @@ function doPokemonTradeSequence(tradedPokemon: PlayerPokemon, receivedPokemon: P
       ease: "Cubic.easeInOut",
       duration: 500,
       onComplete: async () => {
-        globalScene.fadeOutBgm(1000);
+        audioManager.fadeOutBgm(1000);
         await showEncounterText(`${namespace}:pokemonTradeSelected`);
         tradedPokemon.cry();
-        globalScene.playBgm("bw/evolution");
+        audioManager.playBgm("bw/evolution");
         await showEncounterText(`${namespace}:pokemonTradeGoodbye`);
 
         tradedPokeball.setAlpha(0);
@@ -735,7 +736,7 @@ function doPokemonTradeSequence(tradedPokemon: PlayerPokemon, receivedPokemon: P
           onComplete: () => {
             tradedPokeball.setTexture("pb", `${tradedPbAtlasKey}_opening`);
             globalScene.time.delayedCall(17, () => tradedPokeball.setTexture("pb", `${tradedPbAtlasKey}_open`));
-            globalScene.playSound("se/pb_rel");
+            audioManager.playSound("se/pb_rel");
             tradedPokemonTintSprite.setVisible(true);
 
             // TODO: need to add particles to fieldUI instead of field
@@ -750,7 +751,7 @@ function doPokemonTradeSequence(tradedPokemon: PlayerPokemon, receivedPokemon: P
                 tradedPokemonSprite.setVisible(false);
                 tradedPokeball.setTexture("pb", `${tradedPbAtlasKey}_opening`);
                 tradedPokemonTintSprite.setVisible(false);
-                globalScene.playSound("se/pb_catch");
+                audioManager.playSound("se/pb_catch");
                 globalScene.time.delayedCall(17, () => tradedPokeball.setTexture("pb", `${tradedPbAtlasKey}`));
 
                 globalScene.tweens.add({
@@ -760,7 +761,7 @@ function doPokemonTradeSequence(tradedPokemon: PlayerPokemon, receivedPokemon: P
                   delay: 250,
                   ease: "Cubic.easeIn",
                   onComplete: () => {
-                    globalScene.playSound("se/pb_bounce_1");
+                    audioManager.playSound("se/pb_bounce_1");
 
                     globalScene.tweens.add({
                       targets: tradedPokeball,
@@ -769,7 +770,7 @@ function doPokemonTradeSequence(tradedPokemon: PlayerPokemon, receivedPokemon: P
                       delay: 1000,
                       ease: "Cubic.easeInOut",
                       onStart: () => {
-                        globalScene.playSound("se/pb_throw");
+                        audioManager.playSound("se/pb_throw");
                       },
                       onComplete: async () => {
                         await doPokemonTradeFlyBySequence(tradedPokemonSprite, receivedPokemonSprite);
@@ -913,19 +914,19 @@ function doTradeReceivedSequence(
     const BASE_ANIM_DURATION = 1000;
 
     // Pokeball falls to the screen
-    globalScene.playSound("se/pb_throw");
+    audioManager.playSound("se/pb_throw");
     globalScene.tweens.add({
       targets: receivedPokeballSprite,
       y: "+=100",
       ease: "Cubic.easeInOut",
       duration: BASE_ANIM_DURATION,
       onComplete: () => {
-        globalScene.playSound("se/pb_bounce_1");
-        globalScene.time.delayedCall(100, () => globalScene.playSound("se/pb_bounce_1"));
+        audioManager.playSound("se/pb_bounce_1");
+        globalScene.time.delayedCall(100, () => audioManager.playSound("se/pb_bounce_1"));
 
         globalScene.time.delayedCall(2000, () => {
-          globalScene.playSound("se/pb_rel");
-          globalScene.fadeOutBgm(500);
+          audioManager.playSound("se/pb_rel");
+          audioManager.fadeOutBgm(500);
           receivedPokemon.cry();
           receivedPokemonTintSprite.scale = 0.25;
           receivedPokemonTintSprite.alpha = 1;

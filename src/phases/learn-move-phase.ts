@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { activeOverrides } from "#app/overrides";
@@ -211,7 +212,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
           globalScene.updateMoneyText();
           globalScene.animateMoneyChanged(false);
         }
-        globalScene.playSound("se/buy");
+        audioManager.playSound("se/buy");
       }
     }
     pokemon.setMove(index, this.moveId);
@@ -226,7 +227,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     if (textMessage) {
       await globalScene.ui.showTextPromise(textMessage);
     }
-    globalScene.playSound("se/level_up_fanfare"); // Sound loaded into game as is
+    audioManager.playSound("se/level_up_fanfare"); // Sound loaded into game as is
     globalScene.ui.showText(
       learnMoveText,
       null,

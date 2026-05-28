@@ -2194,7 +2194,9 @@ export class PokedexUiHandler extends MessageUiHandler {
       && (this.speciesStarterDexEntry?.seenAttr || this.speciesStarterDexEntry?.caughtAttr || globalScene.dexForDevs)
     ) {
       this.pokemonNumberText.setText(
-        i18next.t("pokedexUiHandler:pokemonNumber") + padInt(getDexNumber(species.speciesId), 4),
+        i18next.t("pokedexUiHandler:pokemonNumber", {
+          dexNo: padInt(getDexNumber(species.speciesId), 4),
+        }),
       );
 
       this.pokemonNameText.setText(species.name);

@@ -1,4 +1,5 @@
 import type { Battle } from "#app/battle";
+import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -78,7 +79,7 @@ export function doTrainerExclamation(): void {
     },
   });
 
-  globalScene.playSound("battle_anims/GEN8- Exclaim", { volume: 0.7 });
+  audioManager.playSound("battle_anims/GEN8- Exclaim", { volume: 0.7 });
 }
 
 export interface EnemyPokemonConfig {
@@ -471,7 +472,7 @@ export function updatePlayerMoney(moneyAmount: number, playSound = true, showMes
   globalScene.animateMoneyChanged(isIncrease);
 
   if (playSound) {
-    globalScene.playSound("se/buy");
+    audioManager.playSound("se/buy");
   }
 
   if (showMessage) {

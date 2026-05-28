@@ -1,9 +1,10 @@
 import { determineEnemySpecies } from "#app/ai/ai-species-gen";
-import type { AnySound } from "#app/battle-scene";
 import type { GameMode } from "#app/game-mode";
+import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
+import type { AnySound } from "#audio/audio-manager";
 import { speciesEggMoves } from "#balance/moves/egg-moves";
 import type { GrowthRate } from "#data/exp";
 import { Gender } from "#data/gender";
@@ -696,7 +697,7 @@ export abstract class PokemonSpeciesForm {
     if (cry?.pendingRemove) {
       cry = null;
     }
-    cry = globalScene.playSound(cry ?? cryKey, soundConfig);
+    cry = audioManager.playSound(cry ?? cryKey, soundConfig);
     if (cry && ignorePlay) {
       cry.stop();
     }

@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import type { EggHatchData } from "#data/egg-hatch-data";
@@ -175,7 +176,7 @@ export class EggSummaryUiHandler extends MessageUiHandler {
     this.updatePokemonIcons();
     this.setCursor(0);
 
-    globalScene.replaceBgmUntilEnd("bw/evolution_fanfare");
+    audioManager.replaceBgmUntilEnd("bw/evolution_fanfare");
 
     // Prevent exiting the egg summary for 2 seconds if the egg hatching
     // was skipped automatically and for 1 second otherwise

@@ -162,8 +162,8 @@ export class SummaryUiHandler extends UiHandler {
     this.shinyOverlay.setVisible(false);
     this.summaryContainer.add(this.shinyOverlay);
 
-    this.numberText = addTextObject(17, -149, "0000", TextStyle.SUMMARY);
-    this.numberText.setOrigin(0, 1);
+    this.numberText = addTextObject(41, -149, "0000", TextStyle.SUMMARY_DEX_NUM);
+    this.numberText.setOrigin(1, 1);
     this.summaryContainer.add(this.numberText);
 
     this.pokemonSprite = globalScene.initPokemonSprite(
@@ -866,7 +866,7 @@ export class SummaryUiHandler extends UiHandler {
         const trainerIdText = addTextObject(
           141,
           12,
-          `${i18next.t("pokemonSummary:idNo")}${idToDisplay}`,
+          i18next.t("pokemonSummary:idNo", { idNo: idToDisplay }),
           TextStyle.SUMMARY_ALT,
         ).setOrigin(0);
         profileContainer.add(trainerIdText);
@@ -1035,9 +1035,9 @@ export class SummaryUiHandler extends UiHandler {
       case Page.STATS: {
         this.statsContainer = globalScene.add.container(0, -pageBg.height);
         pageContainer.add(this.statsContainer);
-        this.permStatsContainer = globalScene.add.container(27, 56);
+        this.permStatsContainer = globalScene.add.container(27, 64);
         this.statsContainer.add(this.permStatsContainer);
-        this.ivContainer = globalScene.add.container(27, 56);
+        this.ivContainer = globalScene.add.container(27, 64);
         this.statsContainer.add(this.ivContainer);
         this.statsContainer.setVisible(true);
 
@@ -1047,19 +1047,19 @@ export class SummaryUiHandler extends UiHandler {
 
         this.statsContainerStatsTitle = globalScene.add.image(
           16,
-          51,
+          59,
           getLocalizedSpriteKey("summary_stats_stats_title"), // Pixel text 'STATS'
         );
         this.statsContainerStatsTitle.setOrigin(0, 0.5);
         this.statsContainer.add(this.statsContainerStatsTitle);
 
-        this.statsContainerExpTitle = globalScene.add.image(7, 107, getLocalizedSpriteKey("summary_stats_exp_title")); // Pixel text 'EXP.'
+        this.statsContainerExpTitle = globalScene.add.image(7, 115, getLocalizedSpriteKey("summary_stats_exp_title")); // Pixel text 'EXP.'
         this.statsContainerExpTitle.setOrigin(0, 0.5);
         this.statsContainer.add(this.statsContainerExpTitle);
 
         this.statsContainerExpBarTitle = globalScene.add.image(
           126,
-          144,
+          152,
           getLocalizedSpriteKey("summary_stats_expbar_title"), // Pixel mini text 'EXP'
         );
         this.statsContainerExpBarTitle.setOrigin(0, 0);
@@ -1120,7 +1120,7 @@ export class SummaryUiHandler extends UiHandler {
         itemModifiers.forEach((item, i) => {
           const icon = item.getIcon(true);
 
-          icon.setPosition((i % 17) * 12 + 3, 14 * Math.floor(i / 17) + 15);
+          icon.setPosition((i % 17) * 12 + 3, 14 * Math.floor(i / 17) + 10);
           this.statsContainer.add(icon);
 
           icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 32), Phaser.Geom.Rectangle.Contains);
@@ -1135,25 +1135,25 @@ export class SummaryUiHandler extends UiHandler {
         const relLvExp = getLevelRelExp(pkmLvl + 1, pkmSpeciesGrowthRate);
         const expRatio = pkmLvl < globalScene.getMaxExpLevel() ? pkmLvlExp / relLvExp : 0;
 
-        const expLabel = addTextObject(6, 112, i18next.t("pokemonSummary:expPoints"), TextStyle.SUMMARY);
+        const expLabel = addTextObject(6, 120, i18next.t("pokemonSummary:expPoints"), TextStyle.SUMMARY);
         expLabel.setOrigin(0, 0);
         this.statsContainer.add(expLabel);
 
-        const nextLvExpLabel = addTextObject(6, 128, i18next.t("pokemonSummary:nextLv"), TextStyle.SUMMARY);
+        const nextLvExpLabel = addTextObject(6, 136, i18next.t("pokemonSummary:nextLv"), TextStyle.SUMMARY);
         nextLvExpLabel.setOrigin(0, 0);
         this.statsContainer.add(nextLvExpLabel);
 
-        const expText = addTextObject(213, 112, pkmExp.toString(), TextStyle.WINDOW_ALT);
+        const expText = addTextObject(213, 120, pkmExp.toString(), TextStyle.WINDOW_ALT);
         expText.setOrigin(1, 0);
         this.statsContainer.add(expText);
 
         const nextLvExp =
           pkmLvl < globalScene.getMaxExpLevel() ? getLevelTotalExp(pkmLvl + 1, pkmSpeciesGrowthRate) - pkmExp : 0;
-        const nextLvExpText = addTextObject(213, 128, nextLvExp.toString(), TextStyle.WINDOW_ALT);
+        const nextLvExpText = addTextObject(213, 136, nextLvExp.toString(), TextStyle.WINDOW_ALT);
         nextLvExpText.setOrigin(1, 0);
         this.statsContainer.add(nextLvExpText);
 
-        const expOverlay = globalScene.add.image(140, 145, "summary_stats_overlay_exp");
+        const expOverlay = globalScene.add.image(140, 153, "summary_stats_overlay_exp");
         expOverlay.setOrigin(0, 0);
         this.statsContainer.add(expOverlay);
 
@@ -1171,7 +1171,7 @@ export class SummaryUiHandler extends UiHandler {
           0,
           globalScene.inputController?.gamepadSupport ? "summary_profile_prompt_a" : "summary_profile_prompt_z",
         );
-        this.abilityPrompt.setPosition(8, 47);
+        this.abilityPrompt.setPosition(8, 55);
         this.abilityPrompt.setVisible(true);
         this.abilityPrompt.setOrigin(0, 0);
         this.statsContainer.add(this.abilityPrompt);

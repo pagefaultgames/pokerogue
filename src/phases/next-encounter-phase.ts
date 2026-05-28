@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { EncounterPhase } from "#phases/encounter-phase";
 
@@ -9,7 +10,7 @@ export class NextEncounterPhase extends EncounterPhase {
   public readonly phaseName = "NextEncounterPhase";
 
   protected override doEncounter(): void {
-    globalScene.playBgm(undefined, true);
+    audioManager.playBgm(undefined, true);
 
     // Reset all player transient wave data/intel before starting a new wild encounter.
     // We exclusively reset wave data here as wild waves are considered one continuous "battle"

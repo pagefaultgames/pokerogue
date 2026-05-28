@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { modifierTypes } from "#data/data-lists";
@@ -166,7 +167,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
     return true;
   })
   .withOnVisualsStart(() => {
-    globalScene.fadeAndSwitchBgm("mystery_encounter_weird_dream");
+    audioManager.fadeAndSwitchBgm("mystery_encounter_weird_dream");
     return true;
   })
   .withOption(
@@ -353,7 +354,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
         pokemon.exp = getLevelTotalExp(pokemon.level, pokemon.species.growthRate);
 
         pokemon.calculateStats();
-        pokemon.getBattleInfo().setLevel(pokemon.level);
+        pokemon.getBattleInfo().setLevelDisplay(pokemon.level);
         await pokemon.updateInfo();
       }
 
@@ -495,7 +496,7 @@ async function doNewTeamPostProcess(transformations: PokemonTransformation[]) {
 
   // If at least one new starter was unlocked, play 1 fanfare
   if (atLeastOneNewStarter) {
-    globalScene.playSound("se/level_up_fanfare");
+    audioManager.playSound("se/level_up_fanfare");
   }
 }
 

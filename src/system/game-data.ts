@@ -2,6 +2,7 @@ import { pokerogueApi } from "#api/api";
 import { clientSessionId, getSessionDataLocalStorageKey, loggedInUser, updateUserInfo } from "#app/account";
 import { defaultStarterSpecies, saveKey } from "#app/constants";
 import { getGameMode } from "#app/game-mode";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { activeOverrides } from "#app/overrides";
@@ -1791,7 +1792,7 @@ export class GameData {
     if (!showMessage) {
       return true;
     }
-    globalScene.playSound("se/level_up_fanfare");
+    audioManager.playSound("se/level_up_fanfare");
 
     // TODO: Remove and replace with a simpler check if the return value is found to be unnecessary
     return new Promise(resolve =>
@@ -1893,7 +1894,7 @@ export class GameData {
     if (!showMessage) {
       return true;
     }
-    globalScene.playSound("se/level_up_fanfare");
+    audioManager.playSound("se/level_up_fanfare");
     const moveName = allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name;
     let message = prependSpeciesToMessage ? species.getName() + " " : "";
     message +=

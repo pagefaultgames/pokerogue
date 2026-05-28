@@ -1,4 +1,5 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { EncounterPhase } from "#phases/encounter-phase";
 
@@ -6,7 +7,7 @@ export class NewBiomeEncounterPhase extends EncounterPhase {
   public readonly phaseName = "NewBiomeEncounterPhase";
 
   protected override doEncounter(): void {
-    globalScene.playBgm(undefined, true);
+    audioManager.playBgm(undefined, true);
 
     // Reset all battle and wave data, perform form changes, etc.
     // We do this because new biomes are considered "arena transitions" akin to MEs and trainer battles

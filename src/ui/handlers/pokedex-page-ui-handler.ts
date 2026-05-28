@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { starterColors } from "#app/global-vars/starter-colors";
@@ -377,8 +378,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       .setPipeline(globalScene.spritePipeline, { tone: [0.0, 0.0, 0.0, 0.0], ignoreTimeTint: true });
     this.starterSelectContainer.add(this.pokemonSprite);
 
-    this.pokemonNumberText = addTextObject(17, 1, "0000", TextStyle.SUMMARY_DEX_NUM) //
-      .setOrigin(0);
+    this.pokemonNumberText = addTextObject(41, 1, "0000", TextStyle.SUMMARY_DEX_NUM) //
+      .setOrigin(1, 0);
     this.starterSelectContainer.add(this.pokemonNumberText);
 
     this.pokemonNameText = addTextObject(6, 112, "", TextStyle.SUMMARY) //
@@ -1823,7 +1824,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                 variant: newVariant,
               });
 
-              globalScene.playSound("se/sparkle");
+              audioManager.playSound("se/sparkle");
 
               starterAttributes.shiny = true;
               this.savedStarterAttributes.shiny = starterAttributes.shiny;
@@ -1964,7 +1965,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                     }
                   });
                   this.setSpeciesDetails(this.species);
-                  globalScene.playSound("se/buy");
+                  audioManager.playSound("se/buy");
                   ui.setMode(UiMode.POKEDEX_PAGE, "refresh");
 
                   return true;
@@ -2000,7 +2001,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                     }
                   });
                   ui.setMode(UiMode.POKEDEX_PAGE, "refresh");
-                  globalScene.playSound("se/buy");
+                  audioManager.playSound("se/buy");
 
                   return true;
                 },
@@ -2055,7 +2056,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                   }
                 });
                 ui.setMode(UiMode.POKEDEX_PAGE, "refresh");
-                globalScene.playSound("se/buy");
+                audioManager.playSound("se/buy");
 
                 return true;
               },

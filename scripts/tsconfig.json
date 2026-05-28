@@ -23,6 +23,7 @@
       // all the main repo paths (tsc doesn't copy them over)
       "#abilities/*": ["../src/data/abilities/*.ts"],
       "#api/*": ["../src/api/*.ts"],
+      "#audio/*": ["../src/audio/*.ts"],
       "#biomes/*": ["../src/data/balance/biomes/*.ts"],
       "#balance/*": ["../src/data/balance/species/*.ts", "../src/data/balance/*.ts"],
       "#constants/*": ["../src/constants/*.ts"],
