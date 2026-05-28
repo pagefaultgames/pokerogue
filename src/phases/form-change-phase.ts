@@ -243,30 +243,6 @@ export class FormChangePhase extends EvolutionPhase {
       const moveId = lm[1];
       const alreadyKnows = this.pokemon.moveset.some(m => m?.moveId === moveId);
       if (!alreadyKnows) {
-        // Procura no learnset da forma nova outros moves que o Pokémon tinha antes
-        // O move a substituir é o que existia no moveset anterior e ainda existe
-        // no learnset da forma nova a nível > 0 (i.e. não é um EVOLVE_MOVE)
-        /*const newFormAllMoves = this.pokemon
-          .getLevelMoves(
-            1, 
-            true, 
-            false, 
-            false, 
-            LearnMoveSituation.EVOLUTION)
-          .map(lm2 => lm2[1]);*/
-        /*const replaceMoveId =
-          this.preFormMoveIds.find(
-            id => id !== -1 && !newFormAllMoves.includes(id) && id !== moveId && !evolveMoveIds.includes(id)
-          ) ?? null;*/
-
-        /*const explicitReplaceId = lm[2];
-        const replaceMoveId = explicitReplaceId !== undefined && this.preFormMoveIds.includes(explicitReplaceId)
-              ? explicitReplaceId
-              : null;
-
-        if (explicitReplaceId !== undefined && replaceMoveId === null) {
-          continue;
-        }*/
         const rules = formRules.filter(r => r.learn === moveId);
 
         const replaceMoveId =

@@ -25,4 +25,28 @@ export const formChangeSignatureMoves: Partial<Record<SpeciesId, Partial<Record<
       "ice": [{ learn: MoveId.GLACIAL_LANCE }],
       "shadow": [{ learn: MoveId.ASTRAL_BARRAGE }],
     },
+    [SpeciesId.ZACIAN]: {
+      "hero-of-many-battles": [{ learn: MoveId.IRON_HEAD, replace: MoveId.BEHEMOTH_BLADE }],
+      "crowned": [{ learn: MoveId.BEHEMOTH_BLADE, replace: MoveId.IRON_HEAD }],
+    },
+    [SpeciesId.HOOPA]: {
+      "": [{ learn: MoveId.HYPERSPACE_HOLE, replace: MoveId.HYPERSPACE_FURY }],
+      "unbound": [{ learn: MoveId.HYPERSPACE_FURY, replace: MoveId.HYPERSPACE_HOLE }],
+    },
+    [SpeciesId.KYUREM]: {
+      "": [
+        { learn: MoveId.SCARY_FACE, replace: MoveId.FUSION_BOLT },
+        { learn: MoveId.SCARY_FACE, replace: MoveId.FUSION_FLARE },
+        { learn: MoveId.GLACIATE, replace: MoveId.FREEZE_SHOCK },
+        { learn: MoveId.GLACIATE, replace: MoveId.ICE_BURN },
+      ],
+      "black": [
+        { learn: MoveId.FUSION_BOLT, replace: MoveId.SCARY_FACE },
+        { learn: MoveId.FREEZE_SHOCK, replace: MoveId.GLACIATE },
+      ],
+      "white": [
+        { learn: MoveId.FUSION_FLARE, replace: MoveId.SCARY_FACE },
+        { learn: MoveId.ICE_BURN, replace: MoveId.GLACIATE },
+      ],
+    },
   };

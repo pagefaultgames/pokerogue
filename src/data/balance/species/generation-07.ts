@@ -9058,8 +9058,6 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
     formLevelMoves: {
       "": [
         [EVOLVE_MOVE, MoveId.CONFUSION],
-        [FORGET_MOVE, MoveId.SUNSTEEL_STRIKE],   
-        [FORGET_MOVE, MoveId.MOONGEIST_BEAM],
         [1, MoveId.MIRROR_SHOT]
       ],
       "dusk-mane": [

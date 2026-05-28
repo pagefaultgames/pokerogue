@@ -8464,6 +8464,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
     ],
     formLevelMoves: {
       crowned: [[EVOLVE_MOVE, MoveId.BEHEMOTH_BLADE]],
+      "hero-of-many-battles": [[EVOLVE_MOVE, MoveId.IRON_HEAD]],
     },
     tms: [
       MoveId.SWORDS_DANCE,
@@ -8644,14 +8645,8 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       [99, MoveId.GIGA_IMPACT],
     ],
     formLevelMoves: {
-      crowned: [
-        [EVOLVE_MOVE, MoveId.BEHEMOTH_BASH],
-        [FORGET_MOVE, MoveId.IRON_HEAD],
-      ],
-      "hero-of-many-battles": [
-        [EVOLVE_MOVE, MoveId.IRON_HEAD],
-        [FORGET_MOVE, MoveId.BEHEMOTH_BASH],
-      ],
+      crowned: [[EVOLVE_MOVE, MoveId.BEHEMOTH_BASH]],
+      "hero-of-many-battles": [[EVOLVE_MOVE, MoveId.IRON_HEAD]],
     },
     tms: [
       MoveId.BODY_SLAM,

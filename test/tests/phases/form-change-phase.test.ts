@@ -59,20 +59,78 @@ describe("Form Change Phase", () => {
     expect(zacian.calculateBaseStats()).toStrictEqual([92, 150, 115, 80, 115, 148]);
   });
 
-  it("Zamazenta should change to Crowned Shield form and learn Behemoth Bash", async () => {
+  it("Zacian should change to Crowned Sword form and learn Behemoth Blade if it knows Iron Head", async () => {
     game.override.moveset([MoveId.IRON_HEAD, MoveId.SLASH, MoveId.CRUNCH, MoveId.HOWL]);
-    await game.classicMode.startBattle(SpeciesId.ZAMAZENTA);
+    await game.classicMode.startBattle(SpeciesId.ZACIAN);
 
-    const zamazenta = game.field.getPlayerPokemon();
-    expect(zamazenta.getFormKey()).toBe("hero-of-many-battles");
+    // Before the form change: Should be Hero form
+    const zacian = game.field.getPlayerPokemon();
+    expect(zacian.getFormKey()).toBe("hero-of-many-battles");
 
-    const itemType = new FormChangeItemModifierType(FormChangeItem.RUSTED_SHIELD);
-    const item = itemType.newModifier(zamazenta);
-    await game.scene.addModifier(item);
+    // Give Zacian a Rusted Sword
+    const rustedSwordType = new FormChangeItemModifierType(FormChangeItem.RUSTED_SWORD);
+    const rustedSword = rustedSwordType.newModifier(zacian);
+    await game.scene.addModifier(rustedSword);
 
     game.move.select(MoveId.IRON_HEAD);
     await game.phaseInterceptor.to("LearnMovePhase");
 
+    // After the form change: Should be Crowned form and have Behemoth Blade instead of Iron Head
+    expect(zacian.getFormKey()).toBe("crowned");
+    expect(zacian.moveset.some(m => m?.moveId === MoveId.BEHEMOTH_BLADE)).toBe(true);
+    expect(zacian.moveset.some(m => m?.moveId === MoveId.IRON_HEAD)).toBe(false);
+  });
+
+  it("Zacian should revert to default form and learn Iron Head if it knows Behemoth Blade", async () => {
+    game.override
+      .moveset([MoveId.BEHEMOTH_BLADE, MoveId.SLASH, MoveId.CRUNCH, MoveId.HOWL])
+      .enemySpecies(SpeciesId.BLISSEY)
+      .enemyLevel(100);
+    await game.classicMode.startBattle(SpeciesId.ZACIAN);
+
+    const zacian = game.field.getPlayerPokemon();
+
+    const rustedSwordType = new FormChangeItemModifierType(FormChangeItem.RUSTED_SWORD);
+    const rustedSword = rustedSwordType.newModifier(zacian);
+    await game.scene.addModifier(rustedSword);
+
+    // Changed to Crowned form
+    game.move.select(MoveId.BEHEMOTH_BLADE);
+    await game.phaseInterceptor.to("TurnInitPhase");
+    expect(zacian.getFormKey()).toBe("crowned");
+
+    // Remove the item to revert to Hero form
+    const newRustedSword = game.scene.findModifiers(
+      m => m instanceof PokemonFormChangeItemModifier,
+    )[0] as PokemonFormChangeItemModifier;
+    game.scene.removeModifier(newRustedSword);
+
+    game.move.select(MoveId.BEHEMOTH_BLADE);
+    await game.phaseInterceptor.to("LearnMovePhase");
+
+    // After the form change: Should be Hero form and have Iron Head instead of Behemoth Blade
+    expect(zacian.getFormKey()).toBe("hero-of-many-battles");
+    expect(zacian.moveset.some(m => m?.moveId === MoveId.IRON_HEAD)).toBe(true);
+    expect(zacian.moveset.some(m => m?.moveId === MoveId.BEHEMOTH_BLADE)).toBe(false);
+  });
+
+  it("Zamazenta should change to Crowned Shield form and learn Behemoth Bash", async () => {
+    game.override.moveset([MoveId.IRON_HEAD, MoveId.SLASH, MoveId.CRUNCH, MoveId.HOWL]);
+    await game.classicMode.startBattle(SpeciesId.ZAMAZENTA);
+
+    // Before the form change: Should be Hero form
+    const zamazenta = game.field.getPlayerPokemon();
+    expect(zamazenta.getFormKey()).toBe("hero-of-many-battles");
+
+    // Give Zamazenta a Rusted Shield
+    const rustedShieldType = new FormChangeItemModifierType(FormChangeItem.RUSTED_SHIELD);
+    const rustedShield = rustedShieldType.newModifier(zamazenta);
+    await game.scene.addModifier(rustedShield);
+
+    game.move.select(MoveId.IRON_HEAD);
+    await game.phaseInterceptor.to("LearnMovePhase");
+
+    // After the form change: Should be Crowned form and have Behemoth Bash instead of Iron Head
     expect(zamazenta.getFormKey()).toBe("crowned");
     expect(zamazenta.moveset.some(m => m?.moveId === MoveId.BEHEMOTH_BASH)).toBe(true);
     expect(zamazenta.moveset.some(m => m?.moveId === MoveId.IRON_HEAD)).toBe(false);
@@ -81,28 +139,31 @@ describe("Form Change Phase", () => {
   it("Zamazenta should revert to default form and learn Iron Head if it knows Behemoth Bash", async () => {
     game.override
       .moveset([MoveId.BEHEMOTH_BASH, MoveId.SLASH, MoveId.CRUNCH, MoveId.HOWL])
-      .enemySpecies(SpeciesId.BLISSEY) // can survive a lot of rounds
+      .enemySpecies(SpeciesId.BLISSEY)
       .enemyLevel(100);
     await game.classicMode.startBattle(SpeciesId.ZAMAZENTA);
 
     const zamazenta = game.field.getPlayerPokemon();
 
-    const itemType = new FormChangeItemModifierType(FormChangeItem.RUSTED_SHIELD);
-    const item = itemType.newModifier(zamazenta);
-    await game.scene.addModifier(item);
+    const rustedShieldType = new FormChangeItemModifierType(FormChangeItem.RUSTED_SHIELD);
+    const rustedShield = rustedShieldType.newModifier(zamazenta);
+    await game.scene.addModifier(rustedShield);
 
+    // Change to Crowned form
     game.move.select(MoveId.BEHEMOTH_BASH);
     await game.phaseInterceptor.to("TurnInitPhase");
     expect(zamazenta.getFormKey()).toBe("crowned");
 
-    const rustedShield = game.scene.findModifiers(
+    // Remove the item to revert to Hero form
+    const newRustedShield = game.scene.findModifiers(
       m => m instanceof PokemonFormChangeItemModifier,
     )[0] as PokemonFormChangeItemModifier;
-    game.scene.removeModifier(rustedShield);
+    game.scene.removeModifier(newRustedShield);
 
     game.move.select(MoveId.BEHEMOTH_BASH);
     await game.phaseInterceptor.to("LearnMovePhase");
 
+    // After the form change: Should be Hero form and have Iron Head instead of Behemoth Bash
     expect(zamazenta.getFormKey()).toBe("hero-of-many-battles");
     expect(zamazenta.moveset.some(m => m?.moveId === MoveId.IRON_HEAD)).toBe(true);
     expect(zamazenta.moveset.some(m => m?.moveId === MoveId.BEHEMOTH_BASH)).toBe(false);
@@ -112,18 +173,21 @@ describe("Form Change Phase", () => {
     game.override.moveset([MoveId.CONFUSION, MoveId.METAL_CLAW, MoveId.SLASH, MoveId.NIGHT_SLASH]);
     await game.classicMode.startBattle(SpeciesId.NECROZMA, SpeciesId.SOLGALEO);
 
+    // Before the form change: Should be base form
     const necrozma = game.field.getPlayerPokemon();
     expect(necrozma.getFormKey()).toBe("");
 
     game.scene.gameData.dexData[SpeciesId.SOLGALEO].caughtAttr = BigInt(1);
 
-    const itemType = new FormChangeItemModifierType(FormChangeItem.N_SOLARIZER);
-    const item = itemType.newModifier(necrozma);
-    await game.scene.addModifier(item);
+    // Give Necrozma an N-Solarizer
+    const nSolarizerType = new FormChangeItemModifierType(FormChangeItem.N_SOLARIZER);
+    const nSolarizer = nSolarizerType.newModifier(necrozma);
+    await game.scene.addModifier(nSolarizer);
 
     game.move.select(MoveId.CONFUSION);
     await game.phaseInterceptor.to("LearnMovePhase");
 
+    // After the form change: Should be Dusk-Mane form and have Sunsteel Strike instead of Confusion
     expect(necrozma.getFormKey()).toBe("dusk-mane");
     expect(necrozma.moveset.some(m => m?.moveId === MoveId.SUNSTEEL_STRIKE)).toBe(true);
     expect(necrozma.moveset.some(m => m?.moveId === MoveId.CONFUSION)).toBe(false);
@@ -133,18 +197,21 @@ describe("Form Change Phase", () => {
     game.override.moveset([MoveId.CONFUSION, MoveId.METAL_CLAW, MoveId.SLASH, MoveId.NIGHT_SLASH]);
     await game.classicMode.startBattle(SpeciesId.NECROZMA, SpeciesId.LUNALA);
 
+    // Before the form change: Should be base form
     const necrozma = game.field.getPlayerPokemon();
     expect(necrozma.getFormKey()).toBe("");
 
     game.scene.gameData.dexData[SpeciesId.LUNALA].caughtAttr = BigInt(1);
 
-    const itemType = new FormChangeItemModifierType(FormChangeItem.N_LUNARIZER);
-    const item = itemType.newModifier(necrozma);
-    await game.scene.addModifier(item);
+    // Give Necrozma an N-Lunarizer
+    const nLunarizerType = new FormChangeItemModifierType(FormChangeItem.N_LUNARIZER);
+    const nLunarizer = nLunarizerType.newModifier(necrozma);
+    await game.scene.addModifier(nLunarizer);
 
     game.move.select(MoveId.CONFUSION);
     await game.phaseInterceptor.to("LearnMovePhase");
 
+    // After the form change: Should be Dawn-Wings form and have Moongeist Beam instead of Confusion
     expect(necrozma.getFormKey()).toBe("dawn-wings");
     expect(necrozma.moveset.some(m => m?.moveId === MoveId.MOONGEIST_BEAM)).toBe(true);
     expect(necrozma.moveset.some(m => m?.moveId === MoveId.CONFUSION)).toBe(false);
@@ -171,6 +238,7 @@ describe("Form Change Phase", () => {
     );
     game.scene.modifiers.push(nSolarizerModifier);
 
+    // Change to Ultra form and select Night Slash to be replaced by Moongeist Beam
     const ultraType = new FormChangeItemModifierType(FormChangeItem.ULTRANECROZIUM_Z);
     await game.scene.addModifier(ultraType.newModifier(necrozma));
 
@@ -184,6 +252,7 @@ describe("Form Change Phase", () => {
 
     await game.phaseInterceptor.to("LearnMovePhase");
 
+    // After form change: Should be Ultra form and have both Sunsteel Strike and Moongeist Beam
     expect(necrozma.getFormKey()).toBe("ultra");
     expect(necrozma.moveset.some(m => m?.moveId === MoveId.MOONGEIST_BEAM)).toBe(true);
     expect(necrozma.moveset.some(m => m?.moveId === MoveId.SUNSTEEL_STRIKE)).toBe(true);
@@ -210,6 +279,7 @@ describe("Form Change Phase", () => {
     );
     game.scene.modifiers.push(nLunarizerModifier);
 
+    // Change to Ultra form and select Night Slash to be replaced by Sunsteel Strike
     const ultraType = new FormChangeItemModifierType(FormChangeItem.ULTRANECROZIUM_Z);
     await game.scene.addModifier(ultraType.newModifier(necrozma));
 
@@ -223,6 +293,7 @@ describe("Form Change Phase", () => {
 
     await game.phaseInterceptor.to("LearnMovePhase");
 
+    // After form change: Should be Ultra form and have both Sunsteel Strike and Moongeist Beam
     expect(necrozma.getFormKey()).toBe("ultra");
     expect(necrozma.moveset.some(m => m?.moveId === MoveId.MOONGEIST_BEAM)).toBe(true);
     expect(necrozma.moveset.some(m => m?.moveId === MoveId.SUNSTEEL_STRIKE)).toBe(true);
@@ -239,7 +310,6 @@ describe("Form Change Phase", () => {
     // Define moveset with Sunsteel Strike
     game.move.changeMoveset(necrozma, [MoveId.SUNSTEEL_STRIKE, MoveId.METAL_CLAW, MoveId.SLASH, MoveId.NIGHT_SLASH]);
 
-    // Adds Solarizer modifier to change to Dusk-Mane
     const nSolarizerType = new FormChangeItemModifierType(FormChangeItem.N_SOLARIZER);
     await game.scene.addModifier(nSolarizerType.newModifier(necrozma));
 
@@ -248,16 +318,16 @@ describe("Form Change Phase", () => {
     await game.phaseInterceptor.to("TurnInitPhase");
     expect(necrozma.getFormKey()).toBe("dusk-mane");
 
-    // Remove the item to rever to base form
+    // Remove the item to revert to base form
     const nSolarizer = game.scene.findModifiers(
       m => m instanceof PokemonFormChangeItemModifier,
     )[0] as PokemonFormChangeItemModifier;
     game.scene.removeModifier(nSolarizer);
 
-    // Replace Sunsteel Strike with Confusion when trying to select it in base form
     game.move.select(MoveId.SUNSTEEL_STRIKE);
     await game.phaseInterceptor.to("LearnMovePhase");
 
+    // After form change: Should be base form and have Confusion instead of Sunsteel Strike
     expect(necrozma.getFormKey()).toBe("");
     expect(necrozma.moveset.some(m => m?.moveId === MoveId.CONFUSION)).toBe(true);
     expect(necrozma.moveset.some(m => m?.moveId === MoveId.SUNSTEEL_STRIKE)).toBe(false);
@@ -273,25 +343,24 @@ describe("Form Change Phase", () => {
     // Define moveset with Moongeist Beam
     game.move.changeMoveset(necrozma, [MoveId.MOONGEIST_BEAM, MoveId.METAL_CLAW, MoveId.SLASH, MoveId.NIGHT_SLASH]);
 
-    // Adds Lunarizer modifier to change to Dusk-Mane
     const nLunarizerType = new FormChangeItemModifierType(FormChangeItem.N_LUNARIZER);
     await game.scene.addModifier(nLunarizerType.newModifier(necrozma));
 
-    // Change toDawn-Wings
+    // Change to Dawn-Wings
     game.move.select(MoveId.MOONGEIST_BEAM);
     await game.phaseInterceptor.to("TurnInitPhase");
     expect(necrozma.getFormKey()).toBe("dawn-wings");
 
-    // Remove the item
+    // Remove the item to revert to base form
     const nLunarizer = game.scene.findModifiers(
       m => m instanceof PokemonFormChangeItemModifier,
     )[0] as PokemonFormChangeItemModifier;
     game.scene.removeModifier(nLunarizer);
 
-    // Replace Moongeist Beam with Confusion when trying to select it in base form
     game.move.select(MoveId.MOONGEIST_BEAM);
     await game.phaseInterceptor.to("LearnMovePhase");
 
+    // After form change: Should be base form and have Confusion instead of Moongeist Beam
     expect(necrozma.getFormKey()).toBe("");
     expect(necrozma.moveset.some(m => m?.moveId === MoveId.CONFUSION)).toBe(true);
     expect(necrozma.moveset.some(m => m?.moveId === MoveId.MOONGEIST_BEAM)).toBe(false);
@@ -334,6 +403,7 @@ describe("Form Change Phase", () => {
 
     await game.phaseInterceptor.to("FormChangePhase");
 
+    // After form change: Should be Dusk-Mane form and have Sunsteel Strike but not Moongeist Beam
     expect(necrozma.getFormKey()).toBe("dusk-mane");
     expect(necrozma.moveset.some(m => m?.moveId === MoveId.SUNSTEEL_STRIKE)).toBe(true);
     expect(necrozma.moveset.some(m => m?.moveId === MoveId.MOONGEIST_BEAM)).toBe(false);
@@ -376,6 +446,7 @@ describe("Form Change Phase", () => {
 
     await game.phaseInterceptor.to("FormChangePhase");
 
+    // After form change: Should be Dawn-Wings form and have Moongeist Beam but not Sunsteel Strike
     expect(necrozma.getFormKey()).toBe("dawn-wings");
     expect(necrozma.moveset.some(m => m?.moveId === MoveId.SUNSTEEL_STRIKE)).toBe(false);
     expect(necrozma.moveset.some(m => m?.moveId === MoveId.MOONGEIST_BEAM)).toBe(true);
@@ -385,14 +456,16 @@ describe("Form Change Phase", () => {
     game.override.moveset([MoveId.POUND, MoveId.TACKLE, MoveId.STOMP, MoveId.SWORDS_DANCE]);
     await game.classicMode.runToSummon(SpeciesId.CALYREX, SpeciesId.GLASTRIER);
 
+    // Before the form change: Should be base form
     const calyrex = game.field.getPlayerPokemon();
     expect(calyrex.getFormKey()).toBe("");
 
     game.scene.gameData.dexData[SpeciesId.GLASTRIER].caughtAttr = BigInt(1);
 
-    const itemType = new FormChangeItemModifierType(FormChangeItem.ICY_REINS_OF_UNITY);
-    const item = itemType.newModifier(calyrex);
-    await game.scene.addModifier(item);
+    // Give Calyrex Icy Reins of Unity
+    const icyReinsType = new FormChangeItemModifierType(FormChangeItem.ICY_REINS_OF_UNITY);
+    const icyReins = icyReinsType.newModifier(calyrex);
+    await game.scene.addModifier(icyReins);
 
     game.onNextPrompt("LearnMovePhase", UiMode.CONFIRM, () => {
       game.scene.ui.processInput(Button.ACTION);
@@ -404,6 +477,7 @@ describe("Form Change Phase", () => {
 
     await game.phaseInterceptor.to("LearnMovePhase");
 
+    // After the form change: Should be Ice Rider form and have Glacial Lance instead of Pound
     expect(calyrex.getFormKey()).toBe("ice");
     expect(calyrex.moveset.some(m => m?.moveId === MoveId.GLACIAL_LANCE)).toBe(true);
     expect(calyrex.moveset.some(m => m?.moveId === MoveId.POUND)).toBe(false);
@@ -413,14 +487,16 @@ describe("Form Change Phase", () => {
     game.override.moveset([MoveId.POUND, MoveId.TACKLE, MoveId.STOMP, MoveId.SWORDS_DANCE]);
     await game.classicMode.runToSummon(SpeciesId.CALYREX, SpeciesId.SPECTRIER);
 
+    // Before the form change: Should be base form
     const calyrex = game.field.getPlayerPokemon();
     expect(calyrex.getFormKey()).toBe("");
 
     game.scene.gameData.dexData[SpeciesId.SPECTRIER].caughtAttr = BigInt(1);
 
-    const itemType = new FormChangeItemModifierType(FormChangeItem.SHADOW_REINS_OF_UNITY);
-    const item = itemType.newModifier(calyrex);
-    await game.scene.addModifier(item);
+    // Give Calyrex Shadow Reins of Unity
+    const shadowReinsType = new FormChangeItemModifierType(FormChangeItem.SHADOW_REINS_OF_UNITY);
+    const shadowReins = shadowReinsType.newModifier(calyrex);
+    await game.scene.addModifier(shadowReins);
 
     game.onNextPrompt("LearnMovePhase", UiMode.CONFIRM, () => {
       game.scene.ui.processInput(Button.ACTION);
@@ -432,6 +508,7 @@ describe("Form Change Phase", () => {
 
     await game.phaseInterceptor.to("LearnMovePhase");
 
+    // After the form change: Should be Shadow Rider form and have Astral Barrage instead of Pound
     expect(calyrex.getFormKey()).toBe("shadow");
     expect(calyrex.moveset.some(m => m?.moveId === MoveId.ASTRAL_BARRAGE)).toBe(true);
     expect(calyrex.moveset.some(m => m?.moveId === MoveId.POUND)).toBe(false);
@@ -448,24 +525,24 @@ describe("Form Change Phase", () => {
     game.scene.gameData.dexData[SpeciesId.GLASTRIER].caughtAttr = BigInt(1);
 
     // Change to Ice Rider form
-    const itemType = new FormChangeItemModifierType(FormChangeItem.ICY_REINS_OF_UNITY);
-    const item = itemType.newModifier(calyrex);
-    await game.scene.addModifier(item);
+    const icyReinsType = new FormChangeItemModifierType(FormChangeItem.ICY_REINS_OF_UNITY);
+    const icyReins = icyReinsType.newModifier(calyrex);
+    await game.scene.addModifier(icyReins);
 
     game.move.select(MoveId.GLACIAL_LANCE);
     await game.phaseInterceptor.to("TurnInitPhase");
     expect(calyrex.getFormKey()).toBe("ice");
 
     // Remove the item to revert to base form
-    const icyReins = game.scene.findModifiers(
+    const newIcyReins = game.scene.findModifiers(
       m => m instanceof PokemonFormChangeItemModifier,
     )[0] as PokemonFormChangeItemModifier;
-    game.scene.removeModifier(icyReins);
+    game.scene.removeModifier(newIcyReins);
 
-    // Revert to base form, GLACIAL_LANCE should be removed and not replaced with anything since there are still other moves left
     game.move.select(MoveId.GLACIAL_LANCE);
     await game.phaseInterceptor.to("FormChangePhase");
 
+    // After form change: Should be base form and have Pound but not Glacial Lance
     expect(calyrex.getFormKey()).toBe("");
     expect(calyrex.moveset.some(m => m?.moveId === MoveId.GLACIAL_LANCE)).toBe(false);
     expect(calyrex.moveset.some(m => m?.moveId === MoveId.POUND)).toBe(true);
@@ -480,27 +557,204 @@ describe("Form Change Phase", () => {
 
     game.move.changeMoveset(calyrex, [MoveId.GLACIAL_LANCE]);
 
-    // Changes to Ice Rider form
-    const itemType = new FormChangeItemModifierType(FormChangeItem.ICY_REINS_OF_UNITY);
-    const item = itemType.newModifier(calyrex);
-    await game.scene.addModifier(item);
+    // Change to Ice Rider form
+    const icyReinsType = new FormChangeItemModifierType(FormChangeItem.ICY_REINS_OF_UNITY);
+    const icyReins = icyReinsType.newModifier(calyrex);
+    await game.scene.addModifier(icyReins);
 
     game.move.select(MoveId.GLACIAL_LANCE);
     await game.phaseInterceptor.to("TurnInitPhase");
     expect(calyrex.getFormKey()).toBe("ice");
 
     // Remove the item to revert to base form
-    const icyReins = game.scene.findModifiers(
+    const newIcyReins = game.scene.findModifiers(
       m => m instanceof PokemonFormChangeItemModifier,
     )[0] as PokemonFormChangeItemModifier;
-    game.scene.removeModifier(icyReins);
+    game.scene.removeModifier(newIcyReins);
 
-    // Revert to base form, GLACIAL_LANCE should be removed and replaced with CONFUSION since there are no moves left
     game.move.select(MoveId.GLACIAL_LANCE);
     await game.phaseInterceptor.to("LearnMovePhase");
 
+    // After form change: Should be base form and have Confusion since there are no moves left, and not have Glacial Lance
     expect(calyrex.getFormKey()).toBe("");
     expect(calyrex.moveset.some(m => m?.moveId === MoveId.CONFUSION)).toBe(true);
     expect(calyrex.moveset.some(m => m?.moveId === MoveId.GLACIAL_LANCE)).toBe(false);
+  });
+
+  it("Hoopa should change to Unbound form and learn Hyperspace Fury if it knows Hyperspace Hole", async () => {
+    game.override.moveset([MoveId.HYPERSPACE_HOLE, MoveId.CONFUSION, MoveId.LIGHT_SCREEN, MoveId.DARK_PULSE]);
+    await game.classicMode.startBattle(SpeciesId.HOOPA);
+
+    // Before the form change: Should be base form
+    const hoopa = game.field.getPlayerPokemon();
+    expect(hoopa.getFormKey()).toBe("");
+
+    // Give Hoopa a Prison Bottle
+    const prisonBottleType = new FormChangeItemModifierType(FormChangeItem.PRISON_BOTTLE);
+    const prisonBottle = prisonBottleType.newModifier(hoopa);
+    await game.scene.addModifier(prisonBottle);
+
+    game.move.select(MoveId.HYPERSPACE_HOLE);
+    await game.phaseInterceptor.to("LearnMovePhase");
+
+    // After the form change: Should be Unbound form
+    expect(hoopa.getFormKey()).toBe("unbound");
+    expect(hoopa.moveset.some(m => m?.moveId === MoveId.HYPERSPACE_FURY)).toBe(true);
+    expect(hoopa.moveset.some(m => m?.moveId === MoveId.HYPERSPACE_HOLE)).toBe(false);
+  });
+
+  it("Hoopa should revert to default form and learn Hyperspace Hole if it knows Hyperspace Fury", async () => {
+    game.override
+      .moveset([MoveId.HYPERSPACE_FURY, MoveId.CONFUSION, MoveId.LIGHT_SCREEN, MoveId.DARK_PULSE])
+      .enemySpecies(SpeciesId.BLISSEY)
+      .enemyLevel(100);
+    await game.classicMode.startBattle(SpeciesId.HOOPA);
+
+    const hoopa = game.field.getPlayerPokemon();
+
+    const prisonBottleType = new FormChangeItemModifierType(FormChangeItem.PRISON_BOTTLE);
+    const prisonType = prisonBottleType.newModifier(hoopa);
+    await game.scene.addModifier(prisonType);
+
+    // Change to Unbound form
+    game.move.select(MoveId.HYPERSPACE_FURY);
+    await game.phaseInterceptor.to("TurnInitPhase");
+    expect(hoopa.getFormKey()).toBe("unbound");
+
+    // Remove the item to revert to base form
+    const newPrisonBottle = game.scene.findModifiers(
+      m => m instanceof PokemonFormChangeItemModifier,
+    )[0] as PokemonFormChangeItemModifier;
+    game.scene.removeModifier(newPrisonBottle);
+
+    game.move.select(MoveId.HYPERSPACE_FURY);
+    await game.phaseInterceptor.to("LearnMovePhase");
+
+    // After the form change: Should be base form
+    expect(hoopa.getFormKey()).toBe("");
+    expect(hoopa.moveset.some(m => m?.moveId === MoveId.HYPERSPACE_HOLE)).toBe(true);
+    expect(hoopa.moveset.some(m => m?.moveId === MoveId.HYPERSPACE_FURY)).toBe(false);
+  });
+
+  it("Kyurem should change to Black form and learn Fusion Bolt and Freeze Shock replacing Scary Face and Glaciate", async () => {
+    await game.classicMode.startBattle(SpeciesId.KYUREM, SpeciesId.ZEKROM);
+
+    // Before the form change: Should be base form
+    const kyurem = game.field.getPlayerPokemon();
+    game.scene.gameData.dexData[SpeciesId.ZEKROM].caughtAttr = BigInt(1);
+    expect(kyurem.getFormKey()).toBe("");
+
+    game.move.changeMoveset(kyurem, [MoveId.SCARY_FACE, MoveId.GLACIATE, MoveId.BLIZZARD, MoveId.DRAGON_BREATH]);
+
+    // Give Kyurem a Dark Stone
+    const darkStoneType = new FormChangeItemModifierType(FormChangeItem.DARK_STONE);
+    const darkStone = darkStoneType.newModifier(kyurem);
+    await game.scene.addModifier(darkStone);
+
+    game.move.select(MoveId.SCARY_FACE);
+    await game.phaseInterceptor.to("TurnInitPhase");
+
+    // After the form change: Should be Black form
+    expect(kyurem.getFormKey()).toBe("black");
+    expect(kyurem.moveset.some(m => m?.moveId === MoveId.FUSION_BOLT)).toBe(true);
+    expect(kyurem.moveset.some(m => m?.moveId === MoveId.FREEZE_SHOCK)).toBe(true);
+    expect(kyurem.moveset.some(m => m?.moveId === MoveId.SCARY_FACE)).toBe(false);
+    expect(kyurem.moveset.some(m => m?.moveId === MoveId.GLACIATE)).toBe(false);
+  });
+
+  it("Kyurem should change to White form and learn Fusion Flare and Ice Burn replacing Scary Face and Glaciate", async () => {
+    await game.classicMode.startBattle(SpeciesId.KYUREM, SpeciesId.RESHIRAM);
+
+    // Before the form change: Should be base form
+    const kyurem = game.field.getPlayerPokemon();
+    game.scene.gameData.dexData[SpeciesId.RESHIRAM].caughtAttr = BigInt(1);
+    expect(kyurem.getFormKey()).toBe("");
+
+    game.move.changeMoveset(kyurem, [MoveId.SCARY_FACE, MoveId.GLACIATE, MoveId.BLIZZARD, MoveId.DRAGON_BREATH]);
+
+    // Give Kyurem a Light Stone
+    const lightStoneType = new FormChangeItemModifierType(FormChangeItem.LIGHT_STONE);
+    const lightStone = lightStoneType.newModifier(kyurem);
+    await game.scene.addModifier(lightStone);
+
+    game.move.select(MoveId.SCARY_FACE);
+    await game.phaseInterceptor.to("TurnInitPhase");
+
+    // After the form change: Should be White form
+    expect(kyurem.getFormKey()).toBe("white");
+    expect(kyurem.moveset.some(m => m?.moveId === MoveId.FUSION_FLARE)).toBe(true);
+    expect(kyurem.moveset.some(m => m?.moveId === MoveId.ICE_BURN)).toBe(true);
+    expect(kyurem.moveset.some(m => m?.moveId === MoveId.SCARY_FACE)).toBe(false);
+    expect(kyurem.moveset.some(m => m?.moveId === MoveId.GLACIATE)).toBe(false);
+  });
+
+  it("Black Kyurem should revert to default form and learn Scary Face and Glaciate", async () => {
+    game.override.enemySpecies(SpeciesId.BLISSEY).enemyLevel(100);
+    await game.classicMode.startBattle(SpeciesId.KYUREM, SpeciesId.ZEKROM);
+
+    const kyurem = game.field.getPlayerPokemon();
+    game.scene.gameData.dexData[SpeciesId.ZEKROM].caughtAttr = BigInt(1);
+
+    const darkStoneType = new FormChangeItemModifierType(FormChangeItem.DARK_STONE);
+    const darkStone = darkStoneType.newModifier(kyurem);
+    await game.scene.addModifier(darkStone);
+
+    game.move.changeMoveset(kyurem, [MoveId.FUSION_BOLT, MoveId.FREEZE_SHOCK, MoveId.ICY_WIND, MoveId.DRAGON_BREATH]);
+
+    // Change to Black form
+    game.move.select(MoveId.FUSION_BOLT);
+    await game.phaseInterceptor.to("TurnInitPhase");
+    expect(kyurem.getFormKey()).toBe("black");
+
+    // Remove the item to revert to base form
+    const newDarkStone = game.scene.findModifiers(
+      m => m instanceof PokemonFormChangeItemModifier,
+    )[0] as PokemonFormChangeItemModifier;
+    game.scene.removeModifier(newDarkStone);
+
+    game.move.select(MoveId.FUSION_BOLT);
+    await game.phaseInterceptor.to("TurnInitPhase");
+
+    // After the form change: Should be base form
+    expect(kyurem.getFormKey()).toBe("");
+    expect(kyurem.moveset.some(m => m?.moveId === MoveId.SCARY_FACE)).toBe(true);
+    expect(kyurem.moveset.some(m => m?.moveId === MoveId.GLACIATE)).toBe(true);
+    expect(kyurem.moveset.some(m => m?.moveId === MoveId.FUSION_BOLT)).toBe(false);
+    expect(kyurem.moveset.some(m => m?.moveId === MoveId.FREEZE_SHOCK)).toBe(false);
+  });
+
+  it("White Kyurem should revert to default form and learn Scary Face and Glaciate", async () => {
+    game.override.enemySpecies(SpeciesId.BLISSEY).enemyLevel(100);
+    await game.classicMode.startBattle(SpeciesId.KYUREM, SpeciesId.RESHIRAM);
+
+    const kyurem = game.field.getPlayerPokemon();
+    game.scene.gameData.dexData[SpeciesId.RESHIRAM].caughtAttr = BigInt(1);
+
+    const lightStoneType = new FormChangeItemModifierType(FormChangeItem.LIGHT_STONE);
+    const lightStone = lightStoneType.newModifier(kyurem);
+    await game.scene.addModifier(lightStone);
+
+    game.move.changeMoveset(kyurem, [MoveId.FUSION_FLARE, MoveId.ICE_BURN, MoveId.ICY_WIND, MoveId.DRAGON_BREATH]);
+
+    // Change to White form
+    game.move.select(MoveId.FUSION_FLARE);
+    await game.phaseInterceptor.to("TurnInitPhase");
+    expect(kyurem.getFormKey()).toBe("white");
+
+    // Remove the item to revert to base form
+    const newLightStone = game.scene.findModifiers(
+      m => m instanceof PokemonFormChangeItemModifier,
+    )[0] as PokemonFormChangeItemModifier;
+    game.scene.removeModifier(newLightStone);
+
+    game.move.select(MoveId.FUSION_FLARE);
+    await game.phaseInterceptor.to("TurnInitPhase");
+
+    // After the form change: Should be base form
+    expect(kyurem.getFormKey()).toBe("");
+    expect(kyurem.moveset.some(m => m?.moveId === MoveId.SCARY_FACE)).toBe(true);
+    expect(kyurem.moveset.some(m => m?.moveId === MoveId.GLACIATE)).toBe(true);
+    expect(kyurem.moveset.some(m => m?.moveId === MoveId.FUSION_FLARE)).toBe(false);
+    expect(kyurem.moveset.some(m => m?.moveId === MoveId.ICE_BURN)).toBe(false);
   });
 });
