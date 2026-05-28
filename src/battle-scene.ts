@@ -1647,11 +1647,11 @@ export class BattleScene extends SceneBase {
       this.loadImage(`${btKey}_bg`, "arenas");
 
       if (isBaseAnimated) {
-        this.loadAtlas(baseAKey, "arenas");
-        this.loadAtlas(baseBKey, "arenas");
+        this.loadAtlas(baseAKey, "arenas") //
+          .loadAtlas(baseBKey, "arenas");
       } else {
-        this.loadImage(baseAKey, "arenas");
-        this.loadImage(baseBKey, "arenas");
+        this.loadImage(baseAKey, "arenas") //
+          .loadImage(baseBKey, "arenas");
       }
 
       if (getBiomeHasProps(biome)) {
