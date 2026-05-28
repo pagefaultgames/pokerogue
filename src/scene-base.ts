@@ -88,10 +88,18 @@ export class SceneBase extends Phaser.Scene {
     }
 
     this.load.audio(key, getCachedUrl(`audio/bgm/${key}.mp3`));
-    await new Promise<void>(resolve => {
+    await new Promise<void>((resolve, reject) => {
+      const onError = (file: Phaser.Loader.File) => {
+        if (file.key === key) {
+          this.load.off(Phaser.Loader.Events.FILE_LOAD_ERROR, onError);
+          reject(new Error(`Failed to load BGM: ${key}`));
+        }
+      };
       this.load.once(`filecomplete-audio-${key}`, () => {
+        this.load.off(Phaser.Loader.Events.FILE_LOAD_ERROR, onError);
         resolve();
       });
+      this.load.on(Phaser.Loader.Events.FILE_LOAD_ERROR, onError);
       this.load.start();
     });
   }

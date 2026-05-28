@@ -47,22 +47,26 @@ export class BackgroundMusic {
   constructor(key: string, loop: boolean, loopPoint = 0) {
     this.key = key;
 
-    globalScene.loadBgm(key).then(() => {
-      if (this.destroyed) {
-        return;
-      }
-      this.sound = globalScene.sound.add(key, { loop });
-      if (loop) {
-        this.sound.on("looped", () => {
-          if (!this.destroyed) {
-            this.sound?.play({ seek: loopPoint });
-          }
-        });
-      } else {
-        this.sound.once("complete", () => this.triggerEnd());
-      }
-      this.runPendingCalls();
-    });
+    globalScene
+      .loadBgm(key)
+      .then(() => {
+        if (this.destroyed) {
+          return;
+        }
+        this.sound = globalScene.sound.add(key, { loop });
+        if (loop) {
+          this.sound.on("looped", () => {
+            if (!this.destroyed) {
+              this.sound?.play({ seek: loopPoint });
+            }
+          });
+        } else {
+          this.sound.once("complete", () => this.triggerEnd());
+          this.sound.once("stop", () => this.triggerEnd());
+        }
+        this.runPendingCalls();
+      })
+      .catch(() => this.triggerEnd());
   }
 
   public play(volume?: number): void {
@@ -99,7 +103,16 @@ export class BackgroundMusic {
   }
 
   public resume(): void {
-    this.withSound(sound => sound.resume());
+    this.withSound(sound => {
+      if (sound.isPlaying) {
+        return;
+      }
+      if (sound.isPaused) {
+        sound.resume();
+      } else {
+        sound.play();
+      }
+    });
   }
 
   public setVolume(value: number): void {
