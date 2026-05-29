@@ -34,6 +34,7 @@ export class StatStageChangePhase extends PokemonPhase {
   private readonly onChange: StatStageChangeCallback | null;
   private readonly comingFromMirrorArmorUser: boolean;
   private readonly comingFromStickyWeb: boolean;
+  private readonly statDropProtectionShown: BooleanHolder | null;
 
   constructor(
     battlerIndex: BattlerIndex,
@@ -46,6 +47,7 @@ export class StatStageChangePhase extends PokemonPhase {
     onChange: StatStageChangeCallback | null = null,
     comingFromMirrorArmorUser = false,
     comingFromStickyWeb = false,
+    statDropProtectionShown: BooleanHolder | null = null,
   ) {
     super(battlerIndex);
 
@@ -58,11 +60,15 @@ export class StatStageChangePhase extends PokemonPhase {
     this.onChange = onChange;
     this.comingFromMirrorArmorUser = comingFromMirrorArmorUser;
     this.comingFromStickyWeb = comingFromStickyWeb;
+    this.statDropProtectionShown = statDropProtectionShown;
   }
 
   start() {
-    // Check if multiple stats are being changed at the same time, then run SSCPhase for each of them
+    // Check if multiple stats are being changed at the same time, then run
+    // SSCPhase for each of them
     if (this.stats.length > 1) {
+      const statDropProtectionShown = new BooleanHolder(false);
+
       for (const stat of this.stats) {
         globalScene.phaseManager.unshiftNew(
           "StatStageChangePhase",
@@ -75,6 +81,8 @@ export class StatStageChangePhase extends PokemonPhase {
           this.canBeCopied,
           this.onChange,
           this.comingFromMirrorArmorUser,
+          this.comingFromStickyWeb,
+          statDropProtectionShown,
         );
       }
       return this.end();
@@ -83,11 +91,20 @@ export class StatStageChangePhase extends PokemonPhase {
     const pokemon = this.getPokemon();
     let opponentPokemon: Pokemon | undefined;
 
-    /** Gets the position of last enemy or player pokemon that used ability or move, primarily for double battles involving Mirror Armor */
+    /**
+     * Gets the position of last enemy or player pokemon that used ability or
+     * move, primarily for double battles involving Mirror Armor
+     */
     if (pokemon.isPlayer()) {
-      /** If this SSCP is not from sticky web, then we find the opponent pokemon that last did something */
+      /**
+       * If this SSCP is not from sticky web, then we find the opponent pokemon
+       * that last did something
+       */
       if (this.comingFromStickyWeb) {
-        /** If this SSCP is from sticky web, then check if pokemon that last sucessfully used sticky web is on field */
+        /**
+         * If this SSCP is from sticky web, then check if pokemon that last
+         * sucessfully used sticky web is on field
+         */
         const stickyTagID = globalScene.arena.findTagsOnSide(
           (t: ArenaTag) => t.tagType === ArenaTagType.STICKY_WEB,
           ArenaTagSide.PLAYER,
@@ -129,15 +146,21 @@ export class StatStageChangePhase extends PokemonPhase {
     const filteredStats = this.stats.filter(stat => {
       const cancelled = new BooleanHolder(false);
 
+      const suppressStatProtectionMessage = simulate || this.statDropProtectionShown?.value === true;
+
       if (!this.selfTarget && stages.value < 0) {
         globalScene.arena.applyTagsForSide(
           ArenaTagType.MIST,
           pokemon.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY,
-          false,
+          suppressStatProtectionMessage,
           pokemon,
           cancelled,
           opponentPokemon,
         );
+
+        if (cancelled.value) {
+          this.statDropProtectionShown && (this.statDropProtectionShown.value = true);
+        }
       }
 
       if (!cancelled.value && !this.selfTarget && stages.value < 0) {
@@ -145,21 +168,29 @@ export class StatStageChangePhase extends PokemonPhase {
           pokemon,
           stat,
           cancelled,
-          simulated: simulate,
+          simulated: suppressStatProtectionMessage,
           target: pokemon,
           stages: this.stages,
         };
+
         applyAbAttrs("ProtectStatAbAttr", abAttrParams);
         applyAbAttrs("ConditionalUserFieldProtectStatAbAttr", abAttrParams);
-        // TODO: Consider skipping this call if `cancelled` is false.
+
         const ally = pokemon.getAlly();
+
         if (ally != null) {
-          applyAbAttrs("ConditionalUserFieldProtectStatAbAttr", { ...abAttrParams, pokemon: ally });
+          applyAbAttrs("ConditionalUserFieldProtectStatAbAttr", {
+            ...abAttrParams,
+            pokemon: ally,
+          });
         }
 
-        /** Potential stat reflection due to Mirror Armor, does not apply to Octolock end of turn effect */
+        if (cancelled.value) {
+          this.statDropProtectionShown && (this.statDropProtectionShown.value = true);
+        }
+
         if (
-          opponentPokemon !== undefined // TODO: investigate whether this is stoping mirror armor from applying to non-octolock // reasons for stat drops if the user has the Octolock tag
+          opponentPokemon !== undefined
           && !pokemon.findTag(t => t instanceof OctolockTag)
           && !this.comingFromMirrorArmorUser
         ) {
@@ -174,7 +205,6 @@ export class StatStageChangePhase extends PokemonPhase {
         }
       }
 
-      // If one stat stage decrease is cancelled, simulate the rest of the applications
       if (cancelled.value) {
         simulate = true;
       }
@@ -222,7 +252,8 @@ export class StatStageChangePhase extends PokemonPhase {
         selfTarget: this.selfTarget,
       });
 
-      // Look for any other stat change phases; if this is the last one, do White Herb check
+      // Look for any other stat change phases; if this is the last one, do
+      // White Herb check
       if (!globalScene.phaseManager.hasPhaseOfType("StatStageChangePhase", p => p.battlerIndex === this.battlerIndex)) {
         // Apply White Herb if needed
         const whiteHerb = globalScene.applyModifier(
@@ -319,8 +350,11 @@ export class StatStageChangePhase extends PokemonPhase {
                 .map(s => i18next.t(getStatKey(s)))
                 .join(
                   ", ",
-                  // Bang is justified as we explicitly check for the existence of 2+ args
-                )}${relStageStats.length > 2 ? "," : ""} ${i18next.t("battle:statsAnd")} ${i18next.t(getStatKey(relStageStats.at(-1)!))}`;
+                  // Bang is justified as we explicitly check for the
+                  // existence of 2+ args
+                )}${relStageStats.length > 2 ? "," : ""} ${i18next.t("battle:statsAnd")} ${i18next.t(
+                getStatKey(relStageStats.at(-1)!),
+              )}`;
         messages.push(
           i18next.t(getStatStageChangeDescriptionKey(Math.abs(Number.parseInt(rl)), stages >= 1), {
             pokemonNameWithAffix: getPokemonNameWithAffix(this.getPokemon()),
