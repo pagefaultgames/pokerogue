@@ -62,6 +62,7 @@ export class BackgroundMusic {
           });
         } else {
           this.sound.once("complete", () => this.triggerEnd());
+          // Defensive, "complete" should be the right event but Phaser docs aren't very clear
           this.sound.once("stop", () => this.triggerEnd());
         }
         this.runPendingCalls();
