@@ -120,4 +120,40 @@ describe("Move - Stomping Tantrum", () => {
 
     expect(powerSpy).toHaveLastReturnedWith(stompingTantrum.power);
   });
+
+  it("should check both Pokemon for exceptions in a double battle", async () => {
+    const { stompingTantrum, powerSpy } = setUpTest();
+    game.override.battleStyle("double");
+    await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.WEEDLE);
+
+    // First enemy uses Sky Drop, causing Feebas' move to fail
+    game.move.use(MoveId.TACKLE);
+    game.move.use(MoveId.TACKLE, 1);
+    await game.move.forceEnemyMove(MoveId.SKY_DROP, BattlerIndex.PLAYER);
+    await game.move.forceEnemyMove(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    await game.toEndOfTurn();
+
+    // Targeting the enemy that didn't use Sky Drop with Stomping Tantrum
+    game.move.use(MoveId.STOMPING_TANTRUM, 0, 3);
+    game.move.use(MoveId.TACKLE, 1);
+    await game.toEndOfTurn();
+
+    expect(powerSpy).toHaveLastReturnedWith(stompingTantrum.power);
+  });
+
+  // TODO: Activate this test when Stomping Tantrum correctly checks for move failure caused by Protect-like moves
+  it.todo("should do normal damage after a move fails because of Protect", async () => {
+    const { stompingTantrum, powerSpy } = setUpTest();
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+    game.move.use(MoveId.TACKLE);
+    await game.move.forceEnemyMove(MoveId.PROTECT);
+    await game.toEndOfTurn();
+
+    game.move.use(MoveId.STOMPING_TANTRUM);
+    await game.move.forceEnemyMove(MoveId.SPLASH);
+    await game.toEndOfTurn();
+
+    expect(powerSpy).toHaveLastReturnedWith(stompingTantrum.power);
+  });
 });

@@ -135,6 +135,7 @@ import { areAllies, canSpeciesTera, willTerastallize } from "#utils/pokemon-util
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import type { ValueHolder } from "#utils/value-holder";
+import { stat } from "fs";
 import i18next from "i18next";
 
 // TODO: Make these (and all condition functions actually)
@@ -4541,6 +4542,28 @@ export class MovePowerMultiplierAttr extends VariablePowerAttr {
     return true;
   }
 }
+
+/**
+ * Helper function to check for exceptions that shouldn't boost Stomping Tantrum's power.
+ * @param user The Pokemon using Stomping Tantrum.
+ * @param target The enemy Pokemon.
+ * @returns Whether a relevant exception case is present.
+ * @todo Implement a check for whether move failure was due to the target using a Protect-like move
+ */
+const isStompingTantrumExceptionFunc = (user: Pokemon, target: Pokemon): boolean => {
+  const enemyLastMoveUsed = target.getLastXMoves(2)[1] as TurnMove | undefined;
+  const isLastEnemyMoveSkyDrop =
+    enemyLastMoveUsed
+    && (enemyLastMoveUsed.targets[0] === user.getBattlerIndex()
+      || enemyLastMoveUsed.targets[1] === user.getBattlerIndex())
+    && enemyLastMoveUsed.move === MoveId.SKY_DROP
+    && enemyLastMoveUsed.result === MoveResult.OTHER;
+
+  if (isLastEnemyMoveSkyDrop) {
+    return true;
+  }
+  return false;
+};
 
 /**
  * Helper function to calculate the the base power of an ally's hit when using Beat Up.
@@ -11740,14 +11763,16 @@ export function initMoves() {
         if (user.getLastXMoves(3)[2] && allMoves[user.getLastXMoves(3)[2].move].hasAttr("RechargeAttr")) {
           lastNonDancerMove = user.getLastXMoves(3)[2] as TurnMove | undefined;
         }
-        const enemyLastMoveUsed = target.getLastXMoves(2)[1] as TurnMove | undefined;
-        const isLastEnemyMoveSkyDrop =
-          enemyLastMoveUsed
-          && enemyLastMoveUsed.move === MoveId.SKY_DROP
-          && enemyLastMoveUsed.result === MoveResult.OTHER;
+        const enemyIsException = isStompingTantrumExceptionFunc(user, target);
+        let enemyTwoIsException = false;
+        const enemyTwo = target.getAlly();
+        if (enemyTwo) {
+          enemyTwoIsException = isStompingTantrumExceptionFunc(user, enemyTwo);
+        }
         return lastNonDancerMove
           && (lastNonDancerMove.result === MoveResult.MISS || lastNonDancerMove.result === MoveResult.FAIL)
-          && !isLastEnemyMoveSkyDrop
+          && !enemyIsException
+          && !enemyTwoIsException
           ? 2
           : 1;
       })
