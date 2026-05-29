@@ -1,4 +1,5 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { SpeciesFormChangeActiveTrigger } from "#data/form-change-triggers";
@@ -164,7 +165,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
           angle: 1440,
           y: (this.player ? 132 : 86) + fpOffset[1],
           onComplete: () => {
-            globalScene.playSound("se/pb_rel");
+            audioManager.playSound("se/pb_rel");
             pokeball.destroy();
             globalScene.add.existing(pokemon);
             globalScene.field.add(pokemon);

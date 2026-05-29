@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 import type { EggHatchData } from "#data/egg-hatch-data";
@@ -26,7 +27,7 @@ export class EggSummaryPhase extends Phase {
     }
 
     await globalScene.ui.setModeForceTransition(UiMode.EGG_HATCH_SUMMARY, this.eggHatchData);
-    globalScene.fadeOutBgm();
+    audioManager.fadeOutBgm();
   }
 
   public override end(): void {

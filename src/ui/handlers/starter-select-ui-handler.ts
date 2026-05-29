@@ -1,5 +1,6 @@
 import type { Ability } from "#abilities/ability";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
 import { activeOverrides } from "#app/overrides";
@@ -169,6 +170,12 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: "28px",
     starterInfoXPos: 34,
   },
+  pl: {
+    starterInfoTextSize: "48px",
+    instructionTextSize: "28px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 40,
+  },
   ro: {
     starterInfoTextSize: "56px",
     instructionTextSize: "28px",
@@ -187,13 +194,18 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   },
   id: {
     starterInfoTextSize: "48px",
-    instructionTextSize: "32px",
+    instructionTextSize: "28px",
     starterInfoYOffset: 0.5,
     starterInfoXPos: 37,
   },
   hi: {
     starterInfoTextSize: "56px",
     instructionTextSize: "28px",
+  },
+  vi: {
+    starterInfoTextSize: "56px",
+    instructionTextSize: "28px",
+    starterInfoXPos: 35,
   },
   tl: {
     starterInfoTextSize: "56px",
@@ -635,7 +647,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       ignoreTimeTint: true,
     });
 
-    this.pokemonNumberText = addTextObject(17, 1, "0000", TextStyle.SUMMARY_DEX_NUM).setOrigin(0);
+    this.pokemonNumberText = addTextObject(41, 1, "0000", TextStyle.SUMMARY_DEX_NUM).setOrigin(1, 0);
 
     this.pokemonNameText = addTextObject(6, 112, "", TextStyle.SUMMARY).setOrigin(0);
 
@@ -2272,7 +2284,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                     });
                     ui.setMode(UiMode.STARTER_SELECT);
                     this.setSpeciesDetails(this.lastSpecies);
-                    globalScene.playSound("se/buy");
+                    audioManager.playSound("se/buy");
 
                     // update the passive background and icon/animation for available upgrade
                     if (starterContainer) {
@@ -2313,7 +2325,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                     });
                     this.tryUpdateValue(0);
                     ui.setMode(UiMode.STARTER_SELECT);
-                    globalScene.playSound("se/buy");
+                    audioManager.playSound("se/buy");
 
                     // update the value label and icon/animation for available upgrade
                     if (starterContainer) {
@@ -2369,7 +2381,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                     }
                   });
                   ui.setMode(UiMode.STARTER_SELECT);
-                  globalScene.playSound("se/buy");
+                  audioManager.playSound("se/buy");
 
                   // update the icon/animation for available upgrade
                   if (starterContainer) {
@@ -2469,7 +2481,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                   variant: newVariant,
                 });
 
-                globalScene.playSound("se/sparkle");
+                audioManager.playSound("se/sparkle");
                 // Cycle tint based on current sprite tint
                 const tint = getVariantTint(newVariant);
                 this.pokemonShinyIcon.setFrame(getVariantIcon(newVariant)).setTint(tint).setVisible(true);

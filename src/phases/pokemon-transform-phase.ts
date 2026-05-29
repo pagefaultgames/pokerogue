@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { BattlerIndex } from "#enums/battler-index";
@@ -65,7 +66,7 @@ export class PokemonTransformPhase extends PokemonPhase {
     const promises = [user.updateInfo()];
 
     if (this.playSound) {
-      globalScene.playSound("battle_anims/PRSFX- Transform");
+      audioManager.playSound("battle_anims/PRSFX- Transform");
     }
 
     globalScene.phaseManager.queueMessage(

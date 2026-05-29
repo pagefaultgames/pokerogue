@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { speciesStarterCosts } from "#balance/starters";
 import { modifierTypes } from "#data/data-lists";
@@ -699,7 +700,7 @@ function onGameOver() {
   encounter.misc.encounterFailed = true;
 
   // Revert BGM
-  globalScene.playBgm(globalScene.arena.bgm);
+  audioManager.playBgm(globalScene.arena.bgm);
 
   // Clear any leftover battle phases
   globalScene.phaseManager.clearPhaseQueue();
@@ -707,7 +708,7 @@ function onGameOver() {
   // Return enemy Pokemon
   const pokemon = globalScene.getEnemyPokemon();
   if (pokemon) {
-    globalScene.playSound("se/pb_rel");
+    audioManager.playSound("se/pb_rel");
     pokemon.hideInfo();
     pokemon.tint(getPokeballTintColor(pokemon.pokeball), 1, 250, "Sine.easeIn");
     globalScene.tweens.add({

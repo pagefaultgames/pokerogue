@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { hasTouchscreen } from "#app/touch-controls";
 import { isDev } from "#constants/app-constants";
@@ -777,23 +778,23 @@ export function setSetting(setting: string, value: number): boolean {
       globalScene.gameSpeed = Number.parseFloat(Setting[index].options[value].value);
       break;
     case SettingKeys.Master_Volume:
-      globalScene.masterVolume = value ? Number.parseInt(Setting[index].options[value].value) * 0.01 : 0;
-      globalScene.updateSoundVolume();
+      audioManager.volume.main = value ? Number.parseInt(Setting[index].options[value].value) * 0.01 : 0;
+      audioManager.updateSoundVolume();
       break;
     case SettingKeys.BGM_Volume:
-      globalScene.bgmVolume = value ? Number.parseInt(Setting[index].options[value].value) * 0.01 : 0;
-      globalScene.updateSoundVolume();
+      audioManager.volume.bgm = value ? Number.parseInt(Setting[index].options[value].value) * 0.01 : 0;
+      audioManager.updateSoundVolume();
       break;
     case SettingKeys.Field_Volume:
-      globalScene.fieldVolume = value ? Number.parseInt(Setting[index].options[value].value) * 0.01 : 0;
-      globalScene.updateSoundVolume();
+      audioManager.volume.field = value ? Number.parseInt(Setting[index].options[value].value) * 0.01 : 0;
+      audioManager.updateSoundVolume();
       break;
     case SettingKeys.SE_Volume:
-      globalScene.seVolume = value ? Number.parseInt(Setting[index].options[value].value) * 0.01 : 0;
-      globalScene.updateSoundVolume();
+      audioManager.volume.se = value ? Number.parseInt(Setting[index].options[value].value) * 0.01 : 0;
+      audioManager.updateSoundVolume();
       break;
     case SettingKeys.UI_Volume:
-      globalScene.uiVolume = value ? Number.parseInt(Setting[index].options[value].value) * 0.01 : 0;
+      audioManager.volume.ui = value ? Number.parseInt(Setting[index].options[value].value) * 0.01 : 0;
       break;
     case SettingKeys.Battle_Music:
       globalScene.musicPreference = value;
