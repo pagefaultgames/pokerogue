@@ -2,6 +2,7 @@ import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { Command } from "#enums/command";
 import { MoveId } from "#enums/move-id";
+import { PokeballType } from "#enums/pokeball";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import type { CommandPhase } from "#phases/command-phase";
@@ -56,6 +57,25 @@ describe("Move - Pay Day", () => {
 
     game.promptHandler.addToNextPrompt("CommandPhase", UiMode.COMMAND, () => {
       (game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.RUN, 0);
+    });
+
+    await game.toNextTurn();
+
+    expect(game.scene.money).toBe(startingMoney);
+  }, 60000);
+
+  it("should not award scattered money after capturing the wild Pokémon", async () => {
+    game.override.enemyLevel(100);
+
+    await game.classicMode.startBattle(SpeciesId.MEOWTH);
+
+    const startingMoney = game.scene.money;
+
+    game.move.use(MoveId.PAY_DAY);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+
+    game.promptHandler.addToNextPrompt("CommandPhase", UiMode.COMMAND, () => {
+      (game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.BALL, PokeballType.MASTER_BALL);
     });
 
     await game.toNextTurn();
