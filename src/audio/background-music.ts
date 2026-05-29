@@ -67,7 +67,7 @@ export class BackgroundMusic {
         }
         this.runPendingCalls();
       })
-      .catch(() => this.triggerEnd());
+      .catch(() => this.destroy());
   }
 
   public play(volume?: number): void {
