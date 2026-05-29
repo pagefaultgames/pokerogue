@@ -29,6 +29,8 @@ export class EggGachaUiHandler extends MessageUiHandler {
   private gachaInfoContainers: Phaser.GameObjects.Container[];
   private eggGachaOverlay: Phaser.GameObjects.Rectangle;
   private eggGachaSummaryContainer: Phaser.GameObjects.Container;
+  private speakerBox: Phaser.GameObjects.NineSlice;
+  private speakerText: Phaser.GameObjects.Text;
 
   private voucherCountLabels: Phaser.GameObjects.Text[];
 
@@ -315,6 +317,10 @@ export class EggGachaUiHandler extends MessageUiHandler {
       maxLines: 2,
     }).setOrigin(0);
     gachaMessageBoxContainer.add(gachaMessageText);
+
+    this.speakerBox = addWindow(4, -22, 100, 26).setOrigin(0).setVisible(false);
+    this.speakerText = addTextObject(12, -18, "", TextStyle.WINDOW).setOrigin(0).setVisible(false);
+    gachaMessageBoxContainer.add([this.speakerBox, this.speakerText]);
 
     this.message = gachaMessageText;
 
@@ -924,5 +930,72 @@ export class EggGachaUiHandler extends MessageUiHandler {
       this.playTimeTimer = null;
     }
     this.eggGachaContainer.setActive(false);
+  }
+
+  // Constants added to remove magic numbers
+  private readonly SPEAKER_BOX_WIDTH_PADDING = 16;
+  private readonly SPEAKER_BOX_HEIGHT = 26;
+  private readonly GACHA_SPEAKER_BOX_OFFSET_Y = -26;
+  private readonly GACHA_SPEAKER_TEXT_OFFSET_Y = -22;
+
+  /**
+   * Displays a dialogue message inside the Egg Gacha overlay with an optional speaker name.
+   *
+   * @remarks
+   * This local implementation is required because the Gacha overlay intercepts player inputs.
+   * It natively handles text pagination (via the `$` delimiter) and dynamic Y-positioning.
+   *
+   * @param text - The dialogue text to display
+   * @param name - The speaker's name to display in the label box. If undefined, the box is hidden.
+   * @param delay - (Default `0`) The delay in milliseconds before showing the text
+   * @param callback - The function to execute after the dialogue is closed by the player
+   */
+  showDialogue(text: string, name?: string, delay?: number, callback?: () => void): void {
+    if (text.indexOf("$") > -1) {
+      const messagePages = text.split(/\$/g).map(m => m.trim());
+      let showMessageAndCallback = () => callback?.();
+      for (let p = messagePages.length - 1; p >= 0; p--) {
+        const originalFunc = showMessageAndCallback;
+        showMessageAndCallback = () => this.showDialogue(messagePages[p], name, delay, originalFunc);
+      }
+      showMessageAndCallback();
+      return;
+    }
+
+    // Fix for race condition: Calculate the dynamic Y-position before calling showText
+    // The gacha box adjusts its Y position to -14 if the text has a newline.
+    const hasNewline = text.indexOf("\n") !== -1;
+    const baseY = hasNewline ? -14 : 0;
+
+    // Render and position the speaker box dynamically
+    if (name) {
+      this.speakerText.setText(name);
+      this.speakerBox.setSize(this.speakerText.displayWidth + this.SPEAKER_BOX_WIDTH_PADDING, this.SPEAKER_BOX_HEIGHT);
+
+      // Note: Offset differs slightly from MenuUiHandler due to container anchor constraints
+      this.speakerBox.setY(baseY + this.GACHA_SPEAKER_BOX_OFFSET_Y);
+      this.speakerText.setY(baseY + this.GACHA_SPEAKER_TEXT_OFFSET_Y);
+
+      this.speakerBox.setVisible(true);
+      this.speakerText.setVisible(true);
+    } else {
+      this.speakerBox.setVisible(false);
+      this.speakerText.setVisible(false);
+    }
+
+    // Show the text
+    this.showText(
+      text,
+      delay ?? 0,
+      () => {
+        this.speakerBox.setVisible(false);
+        this.speakerText.setVisible(false);
+        if (callback) {
+          callback();
+        }
+      },
+      undefined,
+      true,
+    );
   }
 }

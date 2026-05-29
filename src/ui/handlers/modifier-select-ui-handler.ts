@@ -22,7 +22,8 @@ import Phaser from "phaser";
 export const SHOP_OPTIONS_ROW_LIMIT = 7;
 const SINGLE_SHOP_ROW_YOFFSET = 12;
 const DOUBLE_SHOP_ROW_YOFFSET = 24;
-const OPTION_BUTTON_YPOSITION = -62;
+// Shifted Y-position by 3 pixels (from -62 to -65) to accommodate the new speaker box label above the window.
+const OPTION_BUTTON_YPOSITION = -65;
 
 export class ModifierSelectUiHandler extends AwaitableUiHandler {
   private modifierContainer: Phaser.GameObjects.Container;

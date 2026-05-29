@@ -46,6 +46,8 @@ export class MenuUiHandler extends MessageUiHandler {
 
   private menuContainer: Phaser.GameObjects.Container;
   private menuMessageBoxContainer: Phaser.GameObjects.Container;
+  private speakerBox: Phaser.GameObjects.NineSlice;
+  private speakerText: Phaser.GameObjects.Text;
   private menuOverlay: Phaser.GameObjects.Rectangle;
 
   private menuBg: Phaser.GameObjects.NineSlice;
@@ -190,7 +192,9 @@ export class MenuUiHandler extends MessageUiHandler {
     menuMessageText.setName("menu-message");
     menuMessageText.setOrigin(0, 0);
     this.menuMessageBoxContainer.add(menuMessageText);
-
+    this.speakerBox = addWindow(4, -22, 100, 26).setOrigin(0).setVisible(false);
+    this.speakerText = addTextObject(12, -18, "", TextStyle.WINDOW).setOrigin(0).setVisible(false);
+    this.menuMessageBoxContainer.add([this.speakerBox, this.speakerText]);
     this.initTutorialOverlay(this.menuContainer);
     this.initPromptSprite(this.menuMessageBoxContainer);
 
@@ -802,6 +806,64 @@ export class MenuUiHandler extends MessageUiHandler {
       this.cursorObj.destroy();
     }
     this.cursorObj = null;
+  }
+
+  // Constants added to remove magic numbers
+  private readonly SPEAKER_BOX_WIDTH_PADDING = 16;
+  private readonly SPEAKER_BOX_HEIGHT = 26;
+  private readonly MENU_SPEAKER_BOX_OFFSET_Y = -22;
+  private readonly MENU_SPEAKER_TEXT_OFFSET_Y = -18;
+
+  /**
+   * Displays a dialogue message inside the menu overlay with an optional speaker name.
+   *
+   * @remarks
+   * This local implementation is required because the Menu overlay intercepts player inputs.
+   * Calling the global MessageUiHandler.showDialogue would cause the game to soft-lock.
+   */
+  showDialogue(text: string, name?: string, delay?: number, callback?: () => void): void {
+    if (text.indexOf("$") > -1) {
+      const messagePages = text.split(/\$/g).map(m => m.trim());
+      let showMessageAndCallback = () => callback?.();
+      for (let p = messagePages.length - 1; p >= 0; p--) {
+        const originalFunc = showMessageAndCallback;
+        showMessageAndCallback = () => this.showDialogue(messagePages[p], name, delay, originalFunc);
+      }
+      showMessageAndCallback();
+      return;
+    }
+
+    // Render and position the speaker box dynamically based on the message box location.
+    // MenuMessageBox Y is generally static at 0.
+    const baseY = this.menuMessageBox ? this.menuMessageBox.y : 0;
+
+    if (name) {
+      this.speakerText.setText(name);
+      this.speakerBox.setSize(this.speakerText.displayWidth + this.SPEAKER_BOX_WIDTH_PADDING, this.SPEAKER_BOX_HEIGHT);
+
+      this.speakerBox.setY(baseY + this.MENU_SPEAKER_BOX_OFFSET_Y);
+      this.speakerText.setY(baseY + this.MENU_SPEAKER_TEXT_OFFSET_Y);
+
+      this.speakerBox.setVisible(true);
+      this.speakerText.setVisible(true);
+    } else {
+      this.speakerBox.setVisible(false);
+      this.speakerText.setVisible(false);
+    }
+
+    this.showText(
+      text,
+      delay ?? 0,
+      () => {
+        this.speakerBox.setVisible(false);
+        this.speakerText.setVisible(false);
+        if (callback) {
+          callback();
+        }
+      },
+      undefined,
+      true,
+    );
   }
 }
 
