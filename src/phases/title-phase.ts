@@ -70,7 +70,7 @@ export class TitlePhase extends Phase {
       // Set the BG texture to the last save's current biome
       const biomeKey = getBiomeKey(sessionData.arena.biome);
       const bgTexture = `${biomeKey}_bg`;
-      await globalScene.loadBiomeAssetsIfNeeded(sessionData.arena.biome);
+      await globalScene.loadBiomeAssets(sessionData.arena.biome);
       globalScene.arenaBg.setTexture(bgTexture);
       return loggedInUser.lastSessionSlot;
     } catch (err) {
@@ -316,7 +316,7 @@ export class TitlePhase extends Phase {
           globalScene.gameData.gameStats.dailyRunSessionsPlayed++;
           const startingBiome = globalScene.gameMode.getStartingBiome();
 
-          await globalScene.loadBiomeAssetsIfNeeded(startingBiome);
+          await globalScene.loadBiomeAssets(startingBiome);
           globalScene.newArena(startingBiome);
           globalScene.newBattle();
           globalScene.arena.init();

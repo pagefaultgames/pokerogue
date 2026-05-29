@@ -1631,7 +1631,13 @@ export class BattleScene extends SceneBase {
     return this.arena;
   }
 
-  public async loadBiomeAssetsIfNeeded(biome: BiomeId): Promise<void> {
+  /**
+   * Loads the visual assets for a given biome, including background, arena layers, and props.
+   * If the assets are already in the texture cache, it resolves immediately.
+   * @param biome The ID of the biome to load assets for.
+   * @returns A promise that resolves when the assets have finished loading.
+   */
+  public async loadBiomeAssets(biome: BiomeId): Promise<void> {
     const btKey = getBiomeKey(biome);
 
     // Already in texture cache — nothing to load
@@ -1671,6 +1677,11 @@ export class BattleScene extends SceneBase {
     });
   }
 
+  /**
+   * Clears the visual assets for a given biome from the texture cache to free up memory.
+   * The "TOWN" biome is exempt from clearing as it is the base biome.
+   * @param biome The ID of the biome to clear assets for.
+   */
   public clearBiomeAssets(biome: BiomeId): void {
     const btKey = getBiomeKey(biome);
 

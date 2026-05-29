@@ -547,12 +547,7 @@ export class LoadingScene extends SceneBase {
 
   private loadBiomeImages(startingBiome: BiomeId = BiomeId.TOWN): this {
     const biomesToLoad = new Set([BiomeId.TOWN, startingBiome]);
-    Object.values(BiomeId).forEach(bt => {
-      // Skip all biomes except TOWN (and the starting biome, if it's different).
-      // Other biomes will be loaded on demand when the arena transitions.
-      if (!biomesToLoad.has(bt)) {
-        return;
-      }
+    biomesToLoad.forEach(bt => {
       const btKey = enumValueToKey(BiomeId, bt).toLowerCase();
       const isBaseAnimated = btKey === "end";
       const baseAKey = `${btKey}_a`;
