@@ -15,6 +15,7 @@ path = [
     "test/**/*.json",
     "src/**/*.jsonc",
     "global.d.ts",
+    "plugins/**/*",
     # HTML / CSS at the top level, or in `tests`
     "*.html",
     "*.css",

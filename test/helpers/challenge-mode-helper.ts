@@ -1,4 +1,4 @@
-import overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import type { Challenge } from "#data/challenge";
 import { copyChallenge } from "#data/challenge";
 import { BattleStyle } from "#enums/battle-style";
@@ -54,7 +54,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
     });
 
     await this.game.phaseInterceptor.to("EncounterPhase");
-    if (overrides.ENEMY_HELD_ITEMS_OVERRIDE.length === 0 && this.game.override.removeEnemyStartingItems) {
+    if (activeOverrides.ENEMY_HELD_ITEMS_OVERRIDE.length === 0 && this.game.override.removeEnemyStartingItems) {
       this.game.removeEnemyHeldItems();
     }
   }

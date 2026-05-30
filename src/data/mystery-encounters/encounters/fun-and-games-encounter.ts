@@ -1,4 +1,5 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { modifierTypes } from "#data/data-lists";
@@ -86,12 +87,11 @@ export const FunAndGamesEncounter: MysteryEncounter = MysteryEncounterBuilder.wi
   .withQuery(`${namespace}:query`)
   .withOnInit(() => {
     const encounter = globalScene.currentBattle.mysteryEncounter!;
-    globalScene.loadBgm("mystery_encounter_fun_and_games", "mystery_encounter_fun_and_games.mp3");
     encounter.setDialogueToken("wobbuffetName", getPokemonSpecies(SpeciesId.WOBBUFFET).getName());
     return true;
   })
   .withOnVisualsStart(() => {
-    globalScene.fadeAndSwitchBgm("mystery_encounter_fun_and_games");
+    audioManager.fadeAndSwitchBgm("mystery_encounter_fun_and_games");
     return true;
   })
   .withOption(
@@ -381,7 +381,7 @@ function summonPlayerPokemonAnimation(pokemon: PlayerPokemon): Promise<void> {
           angle: 1440,
           y: 132 + fpOffset[1],
           onComplete: () => {
-            globalScene.playSound("se/pb_rel");
+            audioManager.playSound("se/pb_rel");
             pokeball.destroy();
             globalScene.add.existing(pokemon);
             globalScene.field.add(pokemon);

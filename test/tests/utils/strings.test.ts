@@ -50,7 +50,6 @@ describe("Utils - Strings", () => {
   });
 
   describe("Test Enum Utils", () => {
-    //#region boilerplate
     enum TestEnumNum {
       TEST_N1 = 1,
       TEST_N2 = 2,
@@ -70,8 +69,6 @@ describe("Utils - Strings", () => {
       ABCD: 0xabcd,
       FFFD: 0xfffd,
     } as const;
-
-    //#endregion boilerplate
 
     describe("stringifyEnumArray", () => {
       const cases = [

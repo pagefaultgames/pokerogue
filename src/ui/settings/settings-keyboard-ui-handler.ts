@@ -143,13 +143,13 @@ export class SettingsKeyboardUiHandler extends AbstractControlSettingsUiHandler 
       // Check if the current setting corresponds to the layout setting.
       if (setting === this.setting.Default_Layout) {
         // Iterate over all layouts excluding the 'noGamepads' special case.
-        for (const _key of Object.keys(this.layout)) {
-          if (_key === "noKeyboard") {
+        for (const layoutKey of this.layout.keys()) {
+          if (layoutKey === "noKeyboard") {
             continue;
           } // Skip updating the no gamepad layout.
           // Update the text of the first option label under the current setting to the name of the chosen gamepad,
           // truncating the name to 30 characters if necessary.
-          this.layout[_key].optionValueLabels[index][0].setText(
+          this.layout[layoutKey].optionValueLabels[index][0].setText(
             truncateString(globalScene.inputController.selectedDevice[Device.KEYBOARD], 22),
           );
         }
