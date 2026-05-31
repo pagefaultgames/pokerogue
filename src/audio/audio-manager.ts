@@ -67,6 +67,7 @@ export class AudioManager {
    * @param fadeDuration - (Default `500`) How long, in ms, the fade out of the previous bgm should take
    * @returns The {@linkcode BackgroundMusic} instance for the new bgm,
    * or `null` if no valid bgm could be played or the input bgm was the same as the currently playing bgm
+   * todo group the fade parameters next to each other
    */
   public playBgm(bgmName?: string, fadeOutPrevious = false, loop = true, fadeDuration = 500): BackgroundMusic | null {
     const resolvedName = timedEventManager.getEventBgmReplacement(
