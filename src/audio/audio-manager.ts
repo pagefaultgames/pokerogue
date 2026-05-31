@@ -135,7 +135,7 @@ export class AudioManager {
    * Fades out the current bgm over `duration` ms.
    * @param duration - (Default `500`) The amount of time the fade out should take place over, in ms
    * @param fixed - (Default `false`) Whether the duration should ignore game speed
-   * @param destroy - (Default `true`) `true` to destroy after fading, `false` to pause instead
+   * @param destroy - (Default `true`) Whether to destroy the bgm after fading out, or just pause it
    */
   public fadeOutBgm(duration = 500, fixed = false, destroy = true): void {
     this.currentBgm?.fadeOut(duration, fixed, destroy);

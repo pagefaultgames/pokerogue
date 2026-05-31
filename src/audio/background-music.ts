@@ -16,8 +16,9 @@ import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
  */
 export class BackgroundMusic {
   /**
-   * Maps the number of active BGM objects for a particular key
-   * this will almost always be 1, but with i.e. paused/resumed music it may be more.
+   * Maps the number of active BGM objects for a particular key.
+   *
+   * This will almost always be 1, but with i.e. paused/resumed music it may be more.
    */
   private static readonly refCounts = new Map<string, number>();
 
@@ -118,7 +119,7 @@ export class BackgroundMusic {
       if (sound.isPaused) {
         sound.resume();
       } else {
-        this.play();
+        sound.play();
       }
     });
   }
@@ -185,7 +186,7 @@ export class BackgroundMusic {
    * Fade the volume to zero over `duration` ms.
    * @param duration - Fade time in milliseconds
    * @param fixed - (Default `false`) Whether duration should ignore game speed
-   * @param destroy - (Default `true`) `true` to destroy after fading, `false` to pause instead
+   * @param destroy - (Default `true`) Whether to destroy the bgm after fading out, or just pause it
    */
   public fadeOut(duration: number, fixed = false, destroy = true): void {
     const realDuration = fixed ? fixedInt(duration) : duration;
