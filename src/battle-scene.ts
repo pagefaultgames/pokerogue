@@ -1638,43 +1638,45 @@ export class BattleScene extends SceneBase {
    * @returns A promise that resolves when the assets have finished loading
    */
   public async loadBiomeAssets(biome: BiomeId): Promise<void> {
+    const { promise, resolve } = Promise.withResolvers<void>();
     const btKey = getBiomeKey(biome);
 
     // Already in texture cache — nothing to load
     if (this.textures.exists(`${btKey}_bg`)) {
-      return Promise.resolve();
+      resolve();
+      return promise;
     }
 
-    return new Promise(resolve => {
-      const isBaseAnimated = btKey === "end";
-      const baseAKey = `${btKey}_a`;
-      const baseBKey = `${btKey}_b`;
+    const isBaseAnimated = btKey === "end";
+    const baseAKey = `${btKey}_a`;
+    const baseBKey = `${btKey}_b`;
 
-      this.loadImage(`${btKey}_bg`, "arenas");
+    this.loadImage(`${btKey}_bg`, "arenas");
 
-      if (isBaseAnimated) {
-        this.loadAtlas(baseAKey, "arenas") //
-          .loadAtlas(baseBKey, "arenas");
-      } else {
-        this.loadImage(baseAKey, "arenas") //
-          .loadImage(baseBKey, "arenas");
-      }
+    if (isBaseAnimated) {
+      this.loadAtlas(baseAKey, "arenas") //
+        .loadAtlas(baseBKey, "arenas");
+    } else {
+      this.loadImage(baseAKey, "arenas") //
+        .loadImage(baseBKey, "arenas");
+    }
 
-      if (getBiomeHasProps(biome)) {
-        for (let p = 1; p <= 3; p++) {
-          const isPropAnimated = p === 3 && ["power_plant", "end"].includes(btKey);
-          const propKey = `${btKey}_b_${p}`;
-          if (isPropAnimated) {
-            this.loadAtlas(propKey, "arenas");
-          } else {
-            this.loadImage(propKey, "arenas");
-          }
+    if (getBiomeHasProps(biome)) {
+      for (let p = 1; p <= 3; p++) {
+        const isPropAnimated = p === 3 && ["power_plant", "end"].includes(btKey);
+        const propKey = `${btKey}_b_${p}`;
+        if (isPropAnimated) {
+          this.loadAtlas(propKey, "arenas");
+        } else {
+          this.loadImage(propKey, "arenas");
         }
       }
+    }
 
-      this.load.once(Phaser.Loader.Events.COMPLETE, resolve);
-      this.load.start();
-    });
+    this.load.once(Phaser.Loader.Events.COMPLETE, resolve);
+    this.load.start();
+
+    return promise;
   }
 
   /**
