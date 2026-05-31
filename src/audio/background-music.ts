@@ -15,6 +15,12 @@ import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
  * of if the music is able to start and stop cleanly.
  */
 export class BackgroundMusic {
+  /**
+   * Maps the number of active BGM objects for a particular key
+   * this will almost always be 1, but with i.e. paused/resumed music it may be more.
+   */
+  private static readonly refCounts = new Map<string, number>();
+
   /** The key for the audio file */
   public readonly key: string;
 
@@ -46,6 +52,7 @@ export class BackgroundMusic {
    */
   constructor(key: string, loop: boolean, loopPoint = 0) {
     this.key = key;
+    BackgroundMusic.refCounts.set(key, (BackgroundMusic.refCounts.get(key) ?? 0) + 1);
 
     globalScene
       .loadBgm(key)
@@ -111,7 +118,7 @@ export class BackgroundMusic {
       if (sound.isPaused) {
         sound.resume();
       } else {
-        sound.play();
+        this.play();
       }
     });
   }
@@ -159,18 +166,40 @@ export class BackgroundMusic {
     if (this.sound?.isPlaying) {
       this.sound.stop();
     }
-    globalScene.sound.removeByKey(this.key);
-    globalScene.cache.audio.remove(this.key);
+
+    if (this.sound != null) {
+      globalScene.sound.remove(this.sound);
+      this.sound = undefined;
+    }
+
+    const remaining = (BackgroundMusic.refCounts.get(this.key) ?? 1) - 1;
+    if (remaining <= 0) {
+      BackgroundMusic.refCounts.delete(this.key);
+      globalScene.cache.audio.remove(this.key);
+    } else {
+      BackgroundMusic.refCounts.set(this.key, remaining);
+    }
   }
 
-  public fadeOut(duration: number, fixed = false): void {
+  /**
+   * Fade the volume to zero over `duration` ms.
+   * @param duration - Fade time in milliseconds
+   * @param fixed - (Default `false`) Whether duration should ignore game speed
+   * @param destroy - (Default `true`) `true` to destroy after fading, `false` to pause instead
+   */
+  public fadeOut(duration: number, fixed = false, destroy = true): void {
     const realDuration = fixed ? fixedInt(duration) : duration;
     this.withSound(sound => {
-      SoundFade.fadeOut(globalScene, sound, realDuration, true);
+      SoundFade.fadeOut(globalScene, sound, realDuration, false);
     });
-    globalScene.time.delayedCall(realDuration, () => {
-      if (!this.destroyed) {
+    globalScene.time.delayedCall(realDuration + 100, () => {
+      if (this.destroyed) {
+        return;
+      }
+      if (destroy) {
         this.destroy();
+      } else if (this.sound) {
+        this.sound.pause();
       }
     });
   }
