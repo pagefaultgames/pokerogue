@@ -351,10 +351,11 @@ export class SpeciesDataRegistry {
   public getPrevolution(speciesId: SpeciesId, getSpecies: true): PokemonSpecies | null;
   public getPrevolution(speciesId: SpeciesId, getSpecies = false): SpeciesId | PokemonSpecies | null {
     const speciesData = this.getSpeciesData(speciesId);
-    if (getSpecies) {
-      return speciesData.prevolution === null ? null : this.getSpecies(speciesData.prevolution);
+    const { prevolution } = speciesData;
+    if (prevolution == null) {
+      return null;
     }
-    return speciesData.prevolution;
+    return getSpecies ? this.getSpecies(prevolution) : prevolution;
   }
 
   /**
