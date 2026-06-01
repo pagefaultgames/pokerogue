@@ -21,6 +21,9 @@ import { SpeciesFormKey } from "#enums/species-form-key";
 import type { SpeciesId } from "#enums/species-id";
 import type { LevelMoves, PokemonSpeciesData, SpeciesDataMap } from "#types/pokemon-species";
 
+/**
+ * The SpeciesDataRegistry is a singleton class responsible for managing and querying species-related information.
+ */
 export class SpeciesDataRegistry {
   private readonly _data: SpeciesDataMap;
 
@@ -47,7 +50,7 @@ export class SpeciesDataRegistry {
     this.initReverseFormChanges();
   }
 
-  // #region Initializations
+  // #region Initialization
 
   /**
    * Initialize the `prevolution` field for all species.
@@ -102,7 +105,7 @@ export class SpeciesDataRegistry {
     }
   }
 
-  // #endregion Initializations
+  // #endregion Initialization
 
   /**
    * Get the species data for a given species.
@@ -296,8 +299,7 @@ export class SpeciesDataRegistry {
    * @returns An array of {@linkcode SpeciesFormEvolution}s
    */
   public getEvolutions(speciesId: SpeciesId): SpeciesFormEvolution[] {
-    const speciesData = this.getSpeciesData(speciesId);
-    return speciesData.evolutions;
+    return this.getSpeciesData(speciesId).evolutions;
   }
 
   /**
@@ -322,8 +324,7 @@ export class SpeciesDataRegistry {
    * @returns whether the species has any evolutions
    */
   public hasEvolutions(speciesId: SpeciesId): boolean {
-    const speciesData = this.getSpeciesData(speciesId);
-    return speciesData.evolutions.length > 0;
+    return this.getEvolutions(speciesId).length > 0;
   }
 
   /**
@@ -397,7 +398,7 @@ export class SpeciesDataRegistry {
   /**
    * Checks if a given species has any form changes.
    * @param speciesId - The {@linkcode SpeciesId} of the species to check
-   * @returns whether the species has any form changes
+   * @returns Whether the species has any form changes
    */
   public hasFormChanges(speciesId: SpeciesId): boolean {
     const speciesData = this.getSpeciesData(speciesId);
@@ -416,21 +417,17 @@ export class SpeciesDataRegistry {
    */
   private getFormKey(speciesId: SpeciesId, form?: string | number): string {
     const speciesData = this.getSpeciesData(speciesId);
-    if (typeof form === "string") {
-      if (speciesData.species.forms.some(f => f.formKey === form)) {
-        return form;
-      }
-      form = undefined;
+    const forms = speciesData.species.forms;
+
+    if (typeof form === "string" && forms.some(f => f.formKey === form)) {
+      return form;
     }
-    if (typeof form === "number" && (form < 0 || form >= speciesData.species.forms.length)) {
-      form = undefined;
+    if (typeof form === "number" && form >= 0 && form < forms.length) {
+      return forms[form].formKey;
     }
-    if (!form) {
-      // using formIndex here instead of `""` because some species don't have a form with `""` as their key.
-      // mainly species with "male" and "female" forms
-      form = 0;
-    }
-    return speciesData.species.forms[form]?.formKey ?? "";
+
+    console.warn(`Invalid form index ${form} for species ${speciesId}, falling back to base form`);
+    return forms[0]?.formKey ?? "";
   }
 
   /**
@@ -440,19 +437,18 @@ export class SpeciesDataRegistry {
    * @returns The form index
    */
   private getFormIndex(speciesId: SpeciesId, form: string | number): number {
-    const speciesData = this.getSpeciesData(speciesId);
+    const forms = this.getSpeciesData(speciesId).species.forms;
 
-    if (typeof form === "number" && form >= 0 && form < speciesData.species.forms.length) {
+    if (typeof form === "number" && form >= 0 && form < forms.length) {
       return form;
     }
 
-    if (typeof form === "string") {
-      const formIndex = speciesData.species.forms.findIndex(f => f.formKey === form);
-      if (formIndex !== -1) {
-        return formIndex;
-      }
+    const formIndex = forms.findIndex(f => f.formKey === form);
+    if (typeof form === "string" && formIndex !== -1) {
+      return formIndex;
     }
 
+    console.warn(`Invalid form ${form} for species ${speciesId}, falling back to base form`);
     return 0;
   }
 

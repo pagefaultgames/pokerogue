@@ -607,8 +607,7 @@ function calculateEggRewardsForPokemon(pokemon: PlayerPokemon): [number, number]
   // 2 points for every 1 below 7 that the pokemon's starter tier is (max 12, min 0)
   const starterCost = speciesDataRegistry.getStarterCost(rootSpecies);
   if (starterCost !== undefined) {
-    const starterTier = starterCost;
-    pointsFromStarterTier = Math.min(Math.max(Math.floor(7 - starterTier) * 2, 0), 12);
+    pointsFromStarterTier = Math.min(Math.max(Math.floor(7 - starterCost) * 2, 0), 12);
   }
 
   // Maximum of 30 points
