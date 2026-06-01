@@ -1635,55 +1635,57 @@ export class BattleScene extends SceneBase {
   }
 
   /**
-   * Loads the visual assets for a given biome, including background, arena layers, and props.
+   * Loads the visual assets for a given biome, including background, arena layers, and props. \
    * If the assets are already in the texture cache, it resolves immediately.
-   * @param biome The ID of the biome to load assets for.
-   * @returns A promise that resolves when the assets have finished loading.
+   * @param biome - The {@linkcode BiomeId} of the biome to load assets for
+   * @returns A promise that resolves when the assets have finished loading
    */
   public async loadBiomeAssets(biome: BiomeId): Promise<void> {
+    const { promise, resolve } = Promise.withResolvers<void>();
     const btKey = getBiomeKey(biome);
 
     // Already in texture cache — nothing to load
     if (this.textures.exists(`${btKey}_bg`)) {
-      return Promise.resolve();
+      resolve();
+      return promise;
     }
 
-    return new Promise(resolve => {
-      const isBaseAnimated = btKey === "end";
-      const baseAKey = `${btKey}_a`;
-      const baseBKey = `${btKey}_b`;
+    const isBaseAnimated = btKey === "end";
+    const baseAKey = `${btKey}_a`;
+    const baseBKey = `${btKey}_b`;
 
-      this.loadImage(`${btKey}_bg`, "arenas");
+    this.loadImage(`${btKey}_bg`, "arenas");
 
-      if (isBaseAnimated) {
-        this.loadAtlas(baseAKey, "arenas") //
-          .loadAtlas(baseBKey, "arenas");
-      } else {
-        this.loadImage(baseAKey, "arenas") //
-          .loadImage(baseBKey, "arenas");
-      }
+    if (isBaseAnimated) {
+      this.loadAtlas(baseAKey, "arenas") //
+        .loadAtlas(baseBKey, "arenas");
+    } else {
+      this.loadImage(baseAKey, "arenas") //
+        .loadImage(baseBKey, "arenas");
+    }
 
-      if (getBiomeHasProps(biome)) {
-        for (let p = 1; p <= 3; p++) {
-          const isPropAnimated = p === 3 && ["power_plant", "end"].includes(btKey);
-          const propKey = `${btKey}_b_${p}`;
-          if (isPropAnimated) {
-            this.loadAtlas(propKey, "arenas");
-          } else {
-            this.loadImage(propKey, "arenas");
-          }
+    if (getBiomeHasProps(biome)) {
+      for (let p = 1; p <= 3; p++) {
+        const isPropAnimated = p === 3 && ["power_plant", "end"].includes(btKey);
+        const propKey = `${btKey}_b_${p}`;
+        if (isPropAnimated) {
+          this.loadAtlas(propKey, "arenas");
+        } else {
+          this.loadImage(propKey, "arenas");
         }
       }
+    }
 
-      this.load.once(Phaser.Loader.Events.COMPLETE, resolve);
-      this.load.start();
-    });
+    this.load.once(Phaser.Loader.Events.COMPLETE, resolve);
+    this.load.start();
+
+    return promise;
   }
 
   /**
-   * Clears the visual assets for a given biome from the texture cache to free up memory.
+   * Clears the visual assets for a given biome from the texture cache to free up memory. \
    * The "TOWN" biome is exempt from clearing as it is the base biome.
-   * @param biome The ID of the biome to clear assets for.
+   * @param biome - The {@linkcode BiomeId} of the biome to clear assets for
    */
   public clearBiomeAssets(biome: BiomeId): void {
     const btKey = getBiomeKey(biome);

@@ -1158,7 +1158,7 @@ export class SummaryUiHandler extends UiHandler {
         expMaskRect.setScale(6);
         expMaskRect.fillStyle(0xffffff);
         expMaskRect.beginPath();
-        expMaskRect.fillRect(140 + pageContainer.x, 145 + pageContainer.y + 21, Math.floor(expRatio * 64), 3);
+        expMaskRect.fillRect(140 + pageContainer.x, 152 + pageContainer.y + 22, Math.floor(expRatio * 64), 3);
 
         const expMask = expMaskRect.createGeometryMask();
 
