@@ -1,7 +1,7 @@
 import type { Animation } from "#app/animations";
-import { audioManager } from "#app/global-audio-manager";
 import { EVOLVE_MOVE, FORGET_MOVE } from "#app/constants";
 import { formChangeSignatureMoves } from "#app/data/form-change-signature-moves";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { getSpeciesFormChangeMessage } from "#data/form-change-triggers";
@@ -22,7 +22,6 @@ export class FormChangePhase extends EvolutionPhase {
   public readonly phaseName = "FormChangePhase";
   private formChange: SpeciesFormChange;
   private modal: boolean;
-  /** Move de assinatura da forma anterior (o que vai ser substituído), se existir */
   private preFormMoveIds: number[] = [];
 
   constructor(pokemon: PlayerPokemon, formChange: SpeciesFormChange, modal: boolean) {
@@ -121,7 +120,6 @@ export class FormChangePhase extends EvolutionPhase {
     this.pokemonEvoSprite.setVisible(true);
     globalScene.animations.doCircleInward(this.evolutionBaseBg, this.evolutionContainer);
     globalScene.time.delayedCall(900, () => {
-      // Guarda o EVOLVE_MOVE da forma actual antes de mudar (será o move a substituir)
       this.preFormMoveIds = this.pokemon.moveset.map(m => m?.moveId ?? -1);
 
       this.pokemon.changeForm(this.formChange).then(() => {
@@ -272,6 +270,7 @@ export class FormChangePhase extends EvolutionPhase {
           partyUiHandler.clearPartySlots();
           partyUiHandler.populatePartySlots();
         }
+
         super.end();
       });
     } else {
