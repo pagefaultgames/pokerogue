@@ -436,15 +436,18 @@ export class BattleScene extends SceneBase {
 
   // TODO: Split this up into multiple sub-methods
   launchBattle() {
+    const biome = activeOverrides.STARTING_BIOME_OVERRIDE || BiomeId.TOWN;
+    const biomeKey = getBiomeKey(biome);
+
     this.arenaBg = this.add
-      .sprite(0, 0, "plains_bg")
+      .sprite(0, 0, `${biomeKey}_bg`)
       .setName("sprite-arena-bg")
       .setPipeline(this.fieldSpritePipeline)
       .setScale(6)
       .setOrigin(0)
       .setSize(320, 240);
     this.arenaBgTransition = this.add
-      .sprite(0, 0, "plains_bg")
+      .sprite(0, 0, `${biomeKey}_bg`)
       .setName("sprite-arena-bg-transition")
       .setPipeline(this.fieldSpritePipeline)
       .setScale(6)

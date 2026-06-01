@@ -1,6 +1,7 @@
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { initializeGame } from "#app/init/init";
+import { activeOverrides } from "#app/overrides";
 import { SceneBase } from "#app/scene-base";
 import { isMobile } from "#app/touch-controls";
 import { BiomeId } from "#enums/biome-id";
@@ -26,7 +27,7 @@ export class LoadingScene extends SceneBase {
 
   preload() {
     localPing();
-    const startingBiome = globalScene?.arena?.biomeId ?? BiomeId.TOWN;
+    const startingBiome = activeOverrides.STARTING_BIOME_OVERRIDE ?? globalScene?.arena?.biomeId ?? BiomeId.TOWN;
     // TODO: Categorize these into sub-methods that make sense
     // I'm 99.9% sure the order doesn't matter here,
     // so we should organize these based on type more strongly
