@@ -161,6 +161,7 @@ export function getTextStyleOptions(
         case "zh-Hans":
         case "zh-Hant":
         case "id":
+        case "vi":
           styleOptions.padding = { top: 2, bottom: 10 };
           fontSizeLabel = "90px";
           break;
