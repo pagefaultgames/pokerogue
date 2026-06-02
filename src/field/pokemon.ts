@@ -6807,7 +6807,7 @@ export class EnemyPokemon extends Pokemon {
               ) {
                 targetScore = -20;
               }
-              //If the move will fail due to weather or terrain, set its target score to -20
+              // exclude moves that cannot be used due to weather or terrain
               else if (
                 globalScene.arena.isMoveWeatherCancelled(this, move)
                 || globalScene.arena.isMoveTerrainCancelled(this, [mt], move)
