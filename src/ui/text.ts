@@ -103,11 +103,6 @@ export function getTextStyleOptions(
   switch (style) {
     case TextStyle.SUMMARY: {
       const fontSizeLabel = "96px";
-      switch (lang) {
-        case "ja":
-          styleOptions.padding = { top: 6, bottom: 4 };
-          break;
-      }
       styleOptions.fontSize = fontSizeLabel;
       break;
     }
@@ -118,6 +113,8 @@ export function getTextStyleOptions(
       let fontSizeLabel = "96px";
       switch (lang) {
         case "ja":
+        case "zh-Hans":
+        case "zh-Hant":
           styleOptions.padding = { bottom: 7 };
           fontSizeLabel = "80px";
           break;
@@ -155,6 +152,24 @@ export function getTextStyleOptions(
       shadowYpos = 5;
       break;
     }
+    case TextStyle.SUMMARY_STATS:
+    case TextStyle.SUMMARY_STATS_BLUE:
+    case TextStyle.SUMMARY_STATS_PINK:
+    case TextStyle.SUMMARY_STATS_GOLD: {
+      let fontSizeLabel = "96px";
+      switch (lang) {
+        case "zh-Hans":
+        case "zh-Hant":
+        case "id":
+          styleOptions.padding = { top: 2, bottom: 10 };
+          fontSizeLabel = "90px";
+          break;
+      }
+      styleOptions.fontSize = fontSizeLabel;
+      shadowXpos = 5;
+      shadowYpos = 5;
+      break;
+    }
     case TextStyle.SUMMARY_ALT:
     case TextStyle.SUMMARY_BLUE:
     case TextStyle.SUMMARY_RED:
@@ -162,10 +177,6 @@ export function getTextStyleOptions(
     case TextStyle.SUMMARY_GOLD:
     case TextStyle.SUMMARY_GRAY:
     case TextStyle.SUMMARY_GREEN:
-    case TextStyle.SUMMARY_STATS:
-    case TextStyle.SUMMARY_STATS_BLUE:
-    case TextStyle.SUMMARY_STATS_PINK:
-    case TextStyle.SUMMARY_STATS_GOLD:
     case TextStyle.WINDOW:
     case TextStyle.WINDOW_ALT:
     case TextStyle.ME_OPTION_DEFAULT:

@@ -173,7 +173,7 @@ export class SummaryUiHandler extends UiHandler {
     );
     this.summaryContainer.add(this.pokemonSprite);
 
-    this.nameText = addTextObject(6, -54, "", TextStyle.SUMMARY);
+    this.nameText = addTextObject(6, -53, "", TextStyle.SUMMARY);
     this.nameText.setOrigin(0, 0);
     this.summaryContainer.add(this.nameText);
 
@@ -1117,7 +1117,7 @@ export class SummaryUiHandler extends UiHandler {
         itemModifiers.forEach((item, i) => {
           const icon = item.getIcon(true);
 
-          icon.setPosition((i % 17) * 12 + 3, 14 * Math.floor(i / 17) + 10);
+          icon.setPosition((i % 17) * 12 + 3, 14 * Math.floor(i / 17) + 11);
           this.statsContainer.add(icon);
 
           icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 32), Phaser.Geom.Rectangle.Contains);
