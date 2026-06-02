@@ -436,7 +436,7 @@ export class BattleScene extends SceneBase {
 
   // TODO: Split this up into multiple sub-methods
   launchBattle() {
-    const biome = activeOverrides.STARTING_BIOME_OVERRIDE || BiomeId.TOWN;
+    const biome = activeOverrides.STARTING_BIOME_OVERRIDE || BiomeId.PLAINS;
     const biomeKey = getBiomeKey(biome);
 
     this.arenaBg = this.add
