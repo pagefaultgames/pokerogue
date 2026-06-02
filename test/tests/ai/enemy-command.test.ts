@@ -98,7 +98,7 @@ describe("Enemy Commands - Move Selection", () => {
     });
   });
 
-  it("should not select a move that will fail due to weather, but KOs otherwise", async () => {
+  it("should not select a move that will fail due to weather", async () => {
     game.override
       .enemySpecies(SpeciesId.ARCANINE)
       .enemyMoveset([MoveId.EXTREME_SPEED, MoveId.FIRE_FANG, MoveId.FLAMETHROWER])
