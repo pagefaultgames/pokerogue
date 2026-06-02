@@ -6664,7 +6664,7 @@ export class EnemyPokemon extends Pokemon {
               new PokemonMove(MoveId.COSMIC_POWER),
             ];
         if (globalScene.gameMode.hasChallenge(Challenges.INVERSE_BATTLE)) {
-          this.moveset[2] = new PokemonMove(MoveId.THUNDERBOLT);
+          this.moveset[2] = new PokemonMove(MoveId.EARTH_POWER);
         }
         break;
       default:
