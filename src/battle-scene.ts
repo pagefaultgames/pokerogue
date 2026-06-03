@@ -69,7 +69,7 @@ import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
 import { UiTheme } from "#enums/ui-theme";
 import { NewArenaEvent } from "#events/battle-scene";
-import { Arena } from "#field/arena";
+import { Arena, getBiomeHasProps, getBiomeKey } from "#field/arena";
 import { ArenaBase } from "#field/arena-base";
 import { DamageNumberHandler } from "#field/damage-number-handler";
 import type { Pokemon } from "#field/pokemon";
@@ -436,15 +436,18 @@ export class BattleScene extends SceneBase {
 
   // TODO: Split this up into multiple sub-methods
   launchBattle() {
+    const biome = activeOverrides.STARTING_BIOME_OVERRIDE || BiomeId.PLAINS;
+    const biomeKey = getBiomeKey(biome);
+
     this.arenaBg = this.add
-      .sprite(0, 0, "plains_bg")
+      .sprite(0, 0, `${biomeKey}_bg`)
       .setName("sprite-arena-bg")
       .setPipeline(this.fieldSpritePipeline)
       .setScale(6)
       .setOrigin(0)
       .setSize(320, 240);
     this.arenaBgTransition = this.add
-      .sprite(0, 0, "plains_bg")
+      .sprite(0, 0, `${biomeKey}_bg`)
       .setName("sprite-arena-bg-transition")
       .setPipeline(this.fieldSpritePipeline)
       .setScale(6)
@@ -1631,6 +1634,81 @@ export class BattleScene extends SceneBase {
     return this.arena;
   }
 
+  /**
+   * Loads the visual assets for a given biome, including background, arena layers, and props. \
+   * If the assets are already in the texture cache, it resolves immediately.
+   * @param biome - The {@linkcode BiomeId} of the biome to load assets for
+   * @returns A promise that resolves when the assets have finished loading
+   */
+  public async loadBiomeAssets(biome: BiomeId): Promise<void> {
+    const { promise, resolve } = Promise.withResolvers<void>();
+    const btKey = getBiomeKey(biome);
+
+    // Already in texture cache — nothing to load
+    if (this.textures.exists(`${btKey}_bg`)) {
+      resolve();
+      return promise;
+    }
+
+    const isBaseAnimated = btKey === "end";
+    const baseAKey = `${btKey}_a`;
+    const baseBKey = `${btKey}_b`;
+
+    this.loadImage(`${btKey}_bg`, "arenas");
+
+    if (isBaseAnimated) {
+      this.loadAtlas(baseAKey, "arenas") //
+        .loadAtlas(baseBKey, "arenas");
+    } else {
+      this.loadImage(baseAKey, "arenas") //
+        .loadImage(baseBKey, "arenas");
+    }
+
+    if (getBiomeHasProps(biome)) {
+      for (let p = 1; p <= 3; p++) {
+        const isPropAnimated = p === 3 && ["power_plant", "end"].includes(btKey);
+        const propKey = `${btKey}_b_${p}`;
+        if (isPropAnimated) {
+          this.loadAtlas(propKey, "arenas");
+        } else {
+          this.loadImage(propKey, "arenas");
+        }
+      }
+    }
+
+    this.load.once(Phaser.Loader.Events.COMPLETE, resolve);
+    this.load.start();
+
+    return promise;
+  }
+
+  /**
+   * Clears the visual assets for a given biome from the texture cache to free up memory. \
+   * The "TOWN" biome is exempt from clearing as it is the base biome.
+   * @param biome - The {@linkcode BiomeId} of the biome to clear assets for
+   */
+  public clearBiomeAssets(biome: BiomeId): void {
+    const btKey = getBiomeKey(biome);
+
+    // Don't clear TOWN — it's the starting biome
+    if (btKey === "town") {
+      return;
+    }
+
+    const keysToClear = [`${btKey}_bg`, `${btKey}_a`, `${btKey}_b`];
+
+    if (getBiomeHasProps(biome)) {
+      for (let p = 1; p <= 3; p++) {
+        keysToClear.push(`${btKey}_b_${p}`);
+      }
+    }
+
+    for (const key of keysToClear) {
+      if (this.textures.exists(key)) {
+        this.textures.remove(key);
+      }
+    }
+  }
   updateFieldScale(): Promise<void> {
     return new Promise(resolve => {
       const fieldScale =
