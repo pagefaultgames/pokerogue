@@ -166,7 +166,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
     return true;
   })
   .withOnVisualsStart(() => {
-    audioManager.fadeAndSwitchBgm("mystery_encounter_weird_dream");
+    audioManager.playBgm("mystery_encounter_weird_dream", true);
     return true;
   })
   .withOption(
