@@ -146,7 +146,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
     return true;
   })
   .withOnVisualsStart(() => {
-    audioManager.fadeAndSwitchBgm(globalScene.currentBattle.mysteryEncounter!.misc.bgmKey);
+    audioManager.playBgm(globalScene.currentBattle.mysteryEncounter!.misc.bgmKey, true);
     return true;
   })
   .withOption(

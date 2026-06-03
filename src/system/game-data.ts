@@ -909,7 +909,7 @@ export class GameData {
     if (!sessionData) {
       return false;
     }
-    this.initSessionFromData(sessionData);
+    await this.initSessionFromData(sessionData);
     return true;
   }
 
@@ -970,7 +970,7 @@ export class GameData {
     globalScene.updateScoreText();
 
     globalScene.mysteryEncounterSaveData = new MysteryEncounterSaveData(fromSession.mysteryEncounterSaveData);
-
+    await globalScene.loadBiomeAssets(fromSession.arena.biome);
     globalScene.newArena(fromSession.arena.biome, fromSession.playerFaints);
 
     const battle = globalScene.newBattle(fromSession);

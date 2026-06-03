@@ -870,7 +870,7 @@ export class MovePhase extends PokemonPhase {
     const failedDueToTerrain = arena.isMoveTerrainCancelled(user, this.targets, move);
     let failed = failsConditions || failedDueToTerrain;
 
-    if (!failed && user.isOpponent(targets[0])) {
+    if (!failed && targets[0] != null && user.isOpponent(targets[0])) {
       const defendingSidePlayField = user.isPlayer() ? globalScene.getEnemyField() : globalScene.getPlayerField();
       const cancelled = new ValueHolder(false);
       defendingSidePlayField.forEach((pokemon: Pokemon) => {

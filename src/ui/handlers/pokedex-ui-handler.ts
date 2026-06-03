@@ -2222,7 +2222,11 @@ export class PokedexUiHandler extends MessageUiHandler {
       }
     } else {
       this.pokemonNumberText.setText(
-        species ? i18next.t("pokedexUiHandler:pokemonNumber") + padInt(getDexNumber(species.speciesId), 4) : "",
+        species
+          ? i18next.t("pokedexUiHandler:pokemonNumber", {
+              dexNo: padInt(getDexNumber(species.speciesId), 4),
+            })
+          : "",
       );
       this.pokemonNameText.setText(species ? "???" : "");
       this.pokemonFormText.setText("");

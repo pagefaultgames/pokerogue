@@ -13,12 +13,16 @@ export class SwitchBiomePhase extends BattlePhase {
     this.nextBiome = nextBiome;
   }
 
-  start() {
+  async start() {
     super.start();
 
     if (this.nextBiome === undefined) {
       return this.end();
     }
+
+    // Kick off biome asset loading in parallel with the 2000ms slide-out
+    // tween. By the time onComplete fires, assets will be ready.
+    const biomeLoadPromise = globalScene.loadBiomeAssets(this.nextBiome);
 
     // Before switching biomes, make sure to set the last encounter for other phases that need it too.
     globalScene.lastEnemyTrainer = globalScene.currentBattle?.trainer ?? null;
@@ -28,9 +32,14 @@ export class SwitchBiomePhase extends BattlePhase {
       targets: [globalScene.arenaEnemy, globalScene.lastEnemyTrainer],
       x: "+=300",
       duration: 2000,
-      onComplete: () => {
-        globalScene.arenaEnemy.setX(globalScene.arenaEnemy.x - 600);
+      onComplete: async () => {
+        // Wait for biome assets before proceeding — will usually
+        // already be resolved since the tween took 2000ms
+        await biomeLoadPromise;
 
+        globalScene.arenaEnemy.setX(globalScene.arenaEnemy.x - 600);
+        // Capture BEFORE newArena overwrites globalScene.arena
+        const previousBiome = globalScene.arena.biomeId;
         globalScene.newArena(this.nextBiome);
 
         const biomeKey = getBiomeKey(this.nextBiome);
@@ -60,7 +69,8 @@ export class SwitchBiomePhase extends BattlePhase {
             if (globalScene.lastEnemyTrainer) {
               globalScene.lastEnemyTrainer.destroy();
             }
-
+            // Clear previous biome textures now that the transition is complete
+            globalScene.clearBiomeAssets(previousBiome);
             this.end();
           },
         });
