@@ -148,6 +148,8 @@ export class GameData {
   public eggPity: number[];
   public unlockPity: number[];
 
+  public biomeCheckpoint?: Omit<SessionSaveData, "biomeCheckpoint">;
+
   /**
    * @param fromRaw - If true, will skip initialization of fields that are normally randomized on new game start. Used for the admin panel; default `false`
    */
@@ -824,6 +826,7 @@ export class GameData {
       mysteryEncounterType: globalScene.currentBattle.mysteryEncounter?.encounterType ?? -1,
       mysteryEncounterSaveData: globalScene.mysteryEncounterSaveData,
       playerFaints: globalScene.arena.playerFaints,
+      biomeCheckpoint: this.biomeCheckpoint,
     } as SessionSaveData;
   }
 
@@ -2146,5 +2149,38 @@ export class GameData {
         }
       }
     }
+  }
+
+  /**
+   * Saves the session state at the start of every current biome.
+   */
+  public saveBiomeCheckpoint(): void {
+    const sessionData = this.getSessionSaveData();
+    // Strip any existing checkpoint to avoid nesting
+    const { biomeCheckpoint: _, ...checkpointData } = sessionData;
+    // Deep clone the checkpoint to prevent live references (e.g. Pokemon stats arrays) from being mutated
+    const clonedCheckpoint = JSON.parse(JSON.stringify(checkpointData));
+    sessionData.biomeCheckpoint = clonedCheckpoint;
+    this.biomeCheckpoint = clonedCheckpoint;
+    const sessionDataStr = encrypt(JSON.stringify(sessionData), bypassLogin);
+    localStorage.setItem(getSessionDataLocalStorageKey(globalScene.sessionSlotId), sessionDataStr);
+  }
+
+  /**
+   * Restores the session to the state saved at the start of the current biome.
+   * @returns A promise resolving to `true` if the checkpoint was found and loaded, `false` otherwise.
+   */
+  public async loadBiomeCheckpoint(): Promise<boolean> {
+    const sessionData = await this.getSession(globalScene.sessionSlotId);
+    if (!sessionData?.biomeCheckpoint) {
+      return false;
+    }
+    const checkpointStr = JSON.stringify(sessionData.biomeCheckpoint);
+    const restoredSession = this.parseSessionData(checkpointStr);
+    // Preserve the checkpoint into the restored session so retries remain available
+    restoredSession.biomeCheckpoint = sessionData.biomeCheckpoint;
+    await this.initSessionFromData(restoredSession);
+    await this.saveAll(true, true);
+    return true;
   }
 }

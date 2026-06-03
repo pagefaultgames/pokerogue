@@ -292,6 +292,10 @@ export class EncounterPhase extends BattlePhase {
           // Set weather and terrain before session gets saved
           this.trySetWeatherIfNewBiome();
           this.trySetTerrainIfNewBiome();
+          // Save biome checkpoint in all X1 waves, if Enable Retries is active
+          if (globalScene.enableRetries && globalScene.gameMode.isDaily && battle.waveIndex % 10 === 1) {
+            globalScene.gameData.saveBiomeCheckpoint();
+          }
           // Game syncs to server on waves X1 and X6 (As of 1.2.0)
           globalScene.gameData
             .saveAll(true, battle.waveIndex % 5 === 1 || (globalScene.lastSavePlayTime ?? 0) >= 300)
