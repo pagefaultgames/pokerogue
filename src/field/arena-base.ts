@@ -65,9 +65,10 @@ export class ArenaBase extends Phaser.GameObjects.Container {
     if (!this.player) {
       globalScene.executeWithSeedOffset(
         () => {
-          this.propValue = propValue === undefined
-              ? (hasProps ? (activeOverrides.ALL_BIOME_PROPS_OVERRIDE ? 7 : randSeedInt(8)) : 0)
-              : propValue;
+          if (activeOverrides.ALL_BIOME_PROPS_OVERRIDE) {
+            propValue = 7;
+          }
+          this.propValue = propValue === undefined ? (hasProps ? randSeedInt(8) : 0) : propValue;
           this.props.forEach((prop, p) => {
             const propKey = `${biomeKey}_b${hasProps ? `_${p + 1}` : ""}`;
             prop.setTexture(propKey);
