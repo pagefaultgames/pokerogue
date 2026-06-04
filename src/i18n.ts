@@ -59,7 +59,6 @@ const fonts: LoadingFontFaceProperty[] = [
       "da",
       "tr",
       "th",
-      "ro",
       "ru",
       "uk",
       "id",
@@ -182,12 +181,10 @@ await i18next
         "da", // Danish
         "th", // Thai
         "tr", // Turkish
-        "ro", // Romanian
         "ru", // Russian
         "id", // Indonesian
         "hi", // Hindi
         "tl", // Tagalog
-        "nb-NO", // Norwegian Bokmål
         "sv", // Swedish
         "uk", // Ukrainian
         "vi", // Vietnamese
