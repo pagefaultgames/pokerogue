@@ -68,8 +68,8 @@ export function initSpecies() {
     ),
     new PokemonSpecies(SpeciesId.RAICHU, 1, false, false, false, "Mouse Pokémon", PokemonType.ELECTRIC, null, 0.8, 30, AbilityId.STATIC, AbilityId.NONE, AbilityId.LIGHTNING_ROD, 485, 60, 90, 55, 90, 80, 110, 75, 50, 243, GrowthRate.MEDIUM_FAST, 50, true, true,
       new PokemonForm("Normal", "", PokemonType.ELECTRIC, null, 0.8, 30, AbilityId.STATIC, AbilityId.NONE, AbilityId.LIGHTNING_ROD, 485, 60, 90, 55, 90, 80, 110, 75, 50, 243, true, null, true),
-      new PokemonForm("Mega X", SpeciesFormKey.MEGA_X, PokemonType.ELECTRIC, null, 1.2, 38, AbilityId.LEVITATE, AbilityId.LEVITATE, AbilityId.LEVITATE, 585, 60, 135, 95, 90, 95, 110, 75, 50, 243, true, ""),
-      new PokemonForm("Mega Y", SpeciesFormKey.MEGA_Y, PokemonType.ELECTRIC, null, 1, 26, AbilityId.LIGHTNING_ROD, AbilityId.LIGHTNING_ROD, AbilityId.LIGHTNING_ROD, 585, 60, 100, 55, 160, 80, 130, 75, 50, 243, true, "")
+      new PokemonForm("Mega X", SpeciesFormKey.MEGA_X, PokemonType.ELECTRIC, null, 1.2, 38, AbilityId.ELECTRIC_SURGE, AbilityId.ELECTRIC_SURGE, AbilityId.ELECTRIC_SURGE, 585, 60, 135, 95, 90, 95, 110, 75, 50, 243, true, ""),
+      new PokemonForm("Mega Y", SpeciesFormKey.MEGA_Y, PokemonType.ELECTRIC, null, 1, 26, AbilityId.NO_GUARD, AbilityId.NO_GUARD, AbilityId.NO_GUARD, 585, 60, 100, 55, 160, 80, 130, 75, 50, 243, true, "")
     ),
     new PokemonSpecies(SpeciesId.SANDSHREW, 1, false, false, false, "Mouse Pokémon", PokemonType.GROUND, null, 0.6, 12, AbilityId.SAND_VEIL, AbilityId.NONE, AbilityId.SAND_RUSH, 300, 50, 75, 85, 20, 30, 40, 255, 50, 60, GrowthRate.MEDIUM_FAST, 50, false),
     new PokemonSpecies(SpeciesId.SANDSLASH, 1, false, false, false, "Mouse Pokémon", PokemonType.GROUND, null, 1, 29.5, AbilityId.SAND_VEIL, AbilityId.NONE, AbilityId.SAND_RUSH, 450, 75, 100, 110, 45, 55, 65, 90, 50, 158, GrowthRate.MEDIUM_FAST, 50, false),
