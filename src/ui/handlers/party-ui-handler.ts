@@ -864,6 +864,7 @@ export class PartyUiHandler extends MessageUiHandler {
       const modifier = formChangeItemModifiers[option - PartyOption.FORM_CHANGE_ITEM];
       modifier.active = !modifier.active;
       globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeItemTrigger, false, true);
+      this.clearOptions();
     }
 
     // This is processed before the filter result since releasing does not depend on status.
