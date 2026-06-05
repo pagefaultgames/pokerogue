@@ -848,7 +848,7 @@ export class SummaryUiHandler extends UiHandler {
         // TODO: should add field for original trainer name to Pokemon object, to support gift/traded Pokemon from MEs
         const trainerText = addBBCodeTextObject(
           7,
-          12,
+          10,
           `${getBBCodeFrag(`${i18next.t("pokemonSummary:ot")}/`, TextStyle.SUMMARY_ALT)}${getBBCodeFrag(
             globalScene.hideUsername
               ? usernameReplacement
@@ -862,21 +862,21 @@ export class SummaryUiHandler extends UiHandler {
         const idToDisplay = globalScene.hideUsername ? "*****" : globalScene.gameData.trainerId.toString();
         const trainerIdText = addTextObject(
           141,
-          12,
+          10,
           i18next.t("pokemonSummary:idNo", { idNo: idToDisplay }),
           TextStyle.SUMMARY_ALT,
         ).setOrigin(0);
         profileContainer.add(trainerIdText);
 
-        const typeLabel = addTextObject(7, 28, `${i18next.t("pokemonSummary:type")}/`, TextStyle.WINDOW_ALT);
+        const typeLabel = addTextObject(7, 27, `${i18next.t("pokemonSummary:type")}/`, TextStyle.WINDOW_ALT);
         typeLabel.setOrigin(0, 0);
         profileContainer.add(typeLabel);
 
         const getTypeIcon = (index: number, type: PokemonType, tera = false) => {
           const xCoord = typeLabel.width * typeLabel.scale + 9 + 34 * index;
           const typeIcon = tera
-            ? globalScene.add.sprite(xCoord, 42, "type_tera")
-            : globalScene.add.sprite(xCoord, 42, getLocalizedSpriteKey("types"), PokemonType[type].toLowerCase());
+            ? globalScene.add.sprite(xCoord, 41, "type_tera")
+            : globalScene.add.sprite(xCoord, 41, getLocalizedSpriteKey("types"), PokemonType[type].toLowerCase());
           if (tera) {
             typeIcon.setScale(0.5);
             const typeRgb = getTypeRgb(type);
@@ -899,7 +899,7 @@ export class SummaryUiHandler extends UiHandler {
         if (this.pokemon?.getLuck()) {
           const luckLabelText = addTextObject(
             141,
-            28,
+            27,
             i18next.t("common:luckIndicator"),
             TextStyle.WINDOW_ALT,
           ).setOrigin(0, 0);
@@ -907,7 +907,7 @@ export class SummaryUiHandler extends UiHandler {
 
           const luckText = addTextObject(
             141 + luckLabelText.displayWidth + 2,
-            28,
+            27,
             this.pokemon.getLuck().toString(),
             TextStyle.LUCK_VALUE,
           );
@@ -974,7 +974,7 @@ export class SummaryUiHandler extends UiHandler {
           descriptionTextMaskRect.setScale(6);
           descriptionTextMaskRect.fillStyle(0xffffff);
           descriptionTextMaskRect.beginPath();
-          descriptionTextMaskRect.fillRect(110, 90.5, 206, 31);
+          descriptionTextMaskRect.fillRect(110, 90, 206, 31);
 
           const abilityDescriptionTextMask = descriptionTextMaskRect.createGeometryMask();
 
