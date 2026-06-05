@@ -216,7 +216,7 @@ export class SummaryUiHandler extends UiHandler {
     this.candyShadow.setInteractive(new Phaser.Geom.Rectangle(0, 0, 30, 16), Phaser.Geom.Rectangle.Contains);
     this.summaryContainer.add(this.candyShadow);
 
-    this.candyCountText = addTextObject(20, -146, "x0", TextStyle.WINDOW_ALT, {
+    this.candyCountText = addTextObject(20, -146, "×0", TextStyle.WINDOW_ALT, {
       fontSize: "76px",
     });
     this.candyCountText.setOrigin(0, 0);
@@ -237,7 +237,7 @@ export class SummaryUiHandler extends UiHandler {
     this.friendshipShadow.setInteractive(new Phaser.Geom.Rectangle(0, 0, 50, 16), Phaser.Geom.Rectangle.Contains);
     this.summaryContainer.add(this.friendshipShadow);
 
-    this.friendshipText = addTextObject(20, -66, "x0", TextStyle.WINDOW_ALT, {
+    this.friendshipText = addTextObject(20, -66, "×0", TextStyle.WINDOW_ALT, {
       fontSize: "76px",
     });
     this.friendshipText.setOrigin(0, 0);
@@ -697,7 +697,7 @@ export class SummaryUiHandler extends UiHandler {
       const selectedMove = this.getSelectedMove();
 
       if (selectedMove) {
-        this.moveDescriptionText.setY(84);
+        this.moveDescriptionText.setY(74);
         this.movePowerText.setText(selectedMove.power >= 0 ? selectedMove.power.toString() : "---");
         this.moveAccuracyText.setText(selectedMove.accuracy >= 0 ? selectedMove.accuracy.toString() : "---");
         this.moveCategoryIcon.setFrame(MoveCategory[selectedMove.category].toLowerCase());
@@ -714,14 +714,14 @@ export class SummaryUiHandler extends UiHandler {
         this.descriptionScrollTween = null;
       }
 
-      if (moveDescriptionLineCount > 3) {
+      if (moveDescriptionLineCount > 4) {
         this.descriptionScrollTween = globalScene.tweens.add({
           targets: this.moveDescriptionText,
           delay: fixedInt(2000),
           loop: -1,
           hold: fixedInt(2000),
-          duration: fixedInt((moveDescriptionLineCount - 3) * 2000),
-          y: `-=${14.83 * (moveDescriptionLineCount - 3)}`,
+          duration: fixedInt((moveDescriptionLineCount - 4) * 2000),
+          y: `-=${14.83 * (moveDescriptionLineCount - 4)}`,
         });
       }
 
@@ -1186,14 +1186,6 @@ export class SummaryUiHandler extends UiHandler {
         this.movesContainerMovesTitle.setOrigin(0, 0.5);
         this.movesContainer.add(this.movesContainerMovesTitle);
 
-        this.movesContainerDescriptionsTitle = globalScene.add.image(
-          2,
-          78,
-          getLocalizedSpriteKey("summary_moves_descriptions_title"),
-        ); // Pixel text 'DESCRIPTIONS'
-        this.movesContainerDescriptionsTitle.setOrigin(0, 0.5);
-        this.movesContainer.add(this.movesContainerDescriptionsTitle);
-
         this.extraMoveRowContainer = globalScene.add.container(0, 64);
         this.extraMoveRowContainer.setVisible(false);
         this.movesContainer.add(this.extraMoveRowContainer);
@@ -1201,6 +1193,14 @@ export class SummaryUiHandler extends UiHandler {
         const extraRowOverlay = globalScene.add.image(-2, 1, "summary_moves_overlay_row");
         extraRowOverlay.setOrigin(0, 1);
         this.extraMoveRowContainer.add(extraRowOverlay);
+
+        this.movesContainerDescriptionsTitle = globalScene.add.image(
+          2,
+          69,
+          getLocalizedSpriteKey("summary_moves_descriptions_title"),
+        ); // Pixel text 'DESCRIPTIONS'
+        this.movesContainerDescriptionsTitle.setOrigin(0, 0.5);
+        this.movesContainer.add(this.movesContainerDescriptionsTitle);
 
         const extraRowText = addTextObject(
           35,
@@ -1270,14 +1270,14 @@ export class SummaryUiHandler extends UiHandler {
           moveRowContainer.add(ppText);
         }
 
-        this.moveDescriptionText = addTextObject(2, 84, "", TextStyle.WINDOW_ALT, { wordWrap: { width: 1212 } });
+        this.moveDescriptionText = addTextObject(1, 84, "", TextStyle.WINDOW_ALT, { wordWrap: { width: 1252 } });
         this.movesContainer.add(this.moveDescriptionText);
 
         const moveDescriptionTextMaskRect = globalScene.make.graphics({});
         moveDescriptionTextMaskRect.setScale(6);
         moveDescriptionTextMaskRect.fillStyle(0xffffff);
         moveDescriptionTextMaskRect.beginPath();
-        moveDescriptionTextMaskRect.fillRect(112, 130, 202, 46);
+        moveDescriptionTextMaskRect.fillRect(112, 121, 205, 59);
 
         const moveDescriptionTextMask = moveDescriptionTextMaskRect.createGeometryMask();
 
