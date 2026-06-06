@@ -4,7 +4,13 @@ import { Button } from "#enums/buttons";
 import { Device } from "#enums/devices";
 import { UiMode } from "#enums/ui-mode";
 import { CFG_KEYBOARD_QWERTY } from "#inputs/cfg-keyboard-qwerty";
-import { assign, getButtonWithKeycode, getIconForLatestInput, swap } from "#inputs/config-handler";
+import {
+  assign,
+  getButtonWithKeycode,
+  getIconForLatestInput,
+  getKeyWithSettingName,
+  swap,
+} from "#inputs/config-handler";
 import { PAD_DUALSHOCK } from "#inputs/pad-dualshock";
 import { PAD_GENERIC } from "#inputs/pad-generic";
 import { PAD_PROCON } from "#inputs/pad-procon";
@@ -591,6 +597,9 @@ export class InputsController {
   assignBinding(config: CustomInterfaceConfig, settingName: MappingSettingName, pressedButton: number): boolean {
     this.deactivatePressedKey();
     if (config.padType === "keyboard") {
+      return assign(config, settingName, pressedButton);
+    }
+    if (!getKeyWithSettingName(config, settingName)) {
       return assign(config, settingName, pressedButton);
     }
     return swap(config, settingName, pressedButton);

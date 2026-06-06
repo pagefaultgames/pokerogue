@@ -56,6 +56,7 @@ export const PAD_PROCON: PadConfig<ProconButtons> = {
     [SettingGamepad.BUTTON_CYCLE_TERA]: Button.CYCLE_TERA,
     [SettingGamepad.BUTTON_MENU]: Button.MENU,
     [SettingGamepad.BUTTON_STATS]: Button.STATS,
+    [SettingGamepad.BUTTON_SWAP_POKEMON]: Button.SWAP_POKEMON,
     [SettingGamepad.BUTTON_CYCLE_FORM]: Button.CYCLE_FORM,
     [SettingGamepad.BUTTON_CYCLE_SHINY]: Button.CYCLE_SHINY,
     [SettingGamepad.BUTTON_CYCLE_GENDER]: Button.CYCLE_GENDER,

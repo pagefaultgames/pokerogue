@@ -11,7 +11,7 @@ import type { GameMode } from "#app/game-mode";
 import { getGameMode } from "#app/game-mode";
 import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
-import { initGlobalScene } from "#app/global-scene";
+import { globalScene, initGlobalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
 import { InputsController } from "#app/inputs-controller";
 import { LoadingScene } from "#app/loading-scene";
@@ -1307,6 +1307,8 @@ export class BattleScene extends SceneBase {
     }
     resolved.double = this.checkIsDouble(resolved as NewBattleConstructedProps);
 
+    globalScene.phaseManager.unshiftNew("PartyReorderSwitchPhase", 0);
+
     const lastBattle: Battle | null = this.currentBattle;
     const maxExpLevel = this.getMaxExpLevel();
 
@@ -1412,6 +1414,7 @@ export class BattleScene extends SceneBase {
     const battleConfig = this.gameMode.getFixedBattle(waveIndex)!;
     resolved.double = battleConfig.double;
     resolved.battleType = battleConfig.battleType;
+    globalScene.phaseManager.unshiftNew("PartyReorderSwitchPhase", 0);
 
     // `!` tells TS this will always be defined; necessary due to block scoping from using `executeWithSeedOffset`
     let trainer!: Trainer;
@@ -1459,6 +1462,7 @@ export class BattleScene extends SceneBase {
     // TODO: This means MEs can generate when the override is set to `BattleType.WILD`
     if (!activeOverrides.BATTLE_TYPE_OVERRIDE && this.isWaveMysteryEncounter(resolved.battleType, waveIndex)) {
       resolved.battleType = BattleType.MYSTERY_ENCOUNTER;
+      globalScene.phaseManager.unshiftNew("PartyReorderSwitchPhase", 0);
       // Reset to base spawn weight
       this.mysteryEncounterSaveData.encounterSpawnChance = BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT;
       return;

@@ -97,6 +97,7 @@ export class UiInputs {
       [Button.CYCLE_ABILITY]: () => this.buttonCycleOption(Button.CYCLE_ABILITY),
       [Button.CYCLE_NATURE]: () => this.buttonCycleOption(Button.CYCLE_NATURE),
       [Button.CYCLE_TERA]: () => this.buttonCycleOption(Button.CYCLE_TERA),
+      [Button.SWAP_POKEMON]: () => globalScene.ui.processInput(Button.SWAP_POKEMON),
       [Button.SPEED_UP]: () => this.buttonSpeedChange(),
       [Button.SLOW_DOWN]: () => this.buttonSpeedChange(false),
       [Button.DEV_CUSTOM]: () => {
@@ -125,6 +126,7 @@ export class UiInputs {
       [Button.CYCLE_ABILITY]: () => {},
       [Button.CYCLE_NATURE]: () => {},
       [Button.CYCLE_TERA]: () => this.buttonInfo(false),
+      [Button.SWAP_POKEMON]: () => {},
       [Button.SPEED_UP]: () => {},
       [Button.SLOW_DOWN]: () => {},
       [Button.DEV_CUSTOM]: () => {},
