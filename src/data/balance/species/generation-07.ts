@@ -8742,7 +8742,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
     formLevelMoves: {
       "": [[1, MoveId.MIRROR_SHOT]],
       "dusk-mane": [[EVOLVE_MOVE, MoveId.SUNSTEEL_STRIKE]],
-      "dusk-wings": [[EVOLVE_MOVE, MoveId.MOONGEIST_BEAM]],
+      "dawn-wings": [[EVOLVE_MOVE, MoveId.MOONGEIST_BEAM]],
       ultra: [
         [EVOLVE_MOVE, MoveId.SUNSTEEL_STRIKE],
         [EVOLVE_MOVE, MoveId.MOONGEIST_BEAM],

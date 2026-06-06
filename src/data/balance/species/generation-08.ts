@@ -9916,7 +9916,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
     ],
     formTms: {
-      normal: [MoveId.BODY_PRESS],
+      "": [MoveId.BODY_PRESS],
       ice: [
         MoveId.SWORDS_DANCE,
         MoveId.BODY_SLAM,
