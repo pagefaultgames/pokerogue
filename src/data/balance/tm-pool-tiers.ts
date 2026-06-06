@@ -1,82 +1,8 @@
-import { tmSpecies } from "#balance/tm-species-map";
 import { ModifierTier } from "#enums/modifier-tier";
 import { MoveId } from "#enums/move-id";
-import type { SpeciesId } from "#enums/species-id";
-
-export type TmSpeciesValue = Array<SpeciesId | Array<SpeciesId | string>>;
-
-export interface TmSpecies {
-    [key: number]: Array<SpeciesId | Array<SpeciesId | string>>
-}
-
-export const reverseCompatibleTms: MoveId[] = [];/*[
-    MoveId.TAKE_DOWN,
-    MoveId.TOXIC,
-    MoveId.RAGE,
-    MoveId.MIMIC,
-    MoveId.DOUBLE_TEAM,
-    MoveId.BIDE,
-    MoveId.REST,
-    MoveId.SUBSTITUTE,
-    MoveId.SNORE,
-    MoveId.PROTECT,
-    MoveId.ENDURE,
-    MoveId.SWAGGER,
-    MoveId.ATTRACT,
-    MoveId.SLEEP_TALK,
-    MoveId.RETURN,
-    MoveId.FRUSTRATION,
-    MoveId.HIDDEN_POWER,
-    MoveId.FACADE,
-    MoveId.SECRET_POWER,
-    MoveId.NATURAL_GIFT,
-    MoveId.CAPTIVATE,
-    MoveId.ROUND
-];*/
-
-
-interface SpeciesTmMoves {
-  [key: number]: (MoveId | [string | SpeciesId, MoveId])[];
-}
-
-function transposeTmSpecies(): SpeciesTmMoves {
-  const flipped: SpeciesTmMoves = {};
-
-  for (const move in tmSpecies) {
-    const moveKey = Number(move);
-    const speciesList = tmSpecies[move];
-
-    for (const species of speciesList) {
-
-      if (Array.isArray(species)) {
-        // Extract base species and all associated forms
-        const [ baseSpecies, ...forms ] = species;
-        const speciesKey = Number(baseSpecies);
-
-        if (!flipped[speciesKey]) {
-          flipped[speciesKey] = [];
-        }
-
-        for (const form of forms) {
-          flipped[speciesKey].push([ form, moveKey ]);
-        }
-
-      } else {
-        const speciesKey = Number(species);
-        if (!flipped[speciesKey]) {
-          flipped[speciesKey] = [];
-        }
-        flipped[speciesKey].push(moveKey);
-      }
-    }
-  }
-  return flipped;
-}
-
-export const speciesTmMoves: SpeciesTmMoves = transposeTmSpecies();
 
 interface TmPoolTiers {
-    [key: number]: Exclude<ModifierTier, ModifierTier.ROGUE | ModifierTier.MASTER | ModifierTier.LUXURY>;
+  [key: number]: Exclude<ModifierTier, ModifierTier.ROGUE | ModifierTier.MASTER | ModifierTier.LUXURY>;
 }
 
 export const tmPoolTiers: TmPoolTiers = {

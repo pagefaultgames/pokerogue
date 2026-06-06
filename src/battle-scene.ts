@@ -12,6 +12,7 @@ import { getGameMode } from "#app/game-mode";
 import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { initGlobalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { starterColors } from "#app/global-vars/starter-colors";
 import { InputsController } from "#app/inputs-controller";
 import { LoadingScene } from "#app/loading-scene";
@@ -25,17 +26,15 @@ import { SceneBase } from "#app/scene-base";
 import { TurnCommandManager } from "#app/turn-command-manager";
 import { UiInputs } from "#app/ui-inputs";
 import { STARTING_WAVE } from "#balance/misc";
-import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#balance/starters";
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets } from "#data/battle-anims";
 import { getDailyMysteryEncounter } from "#data/daily-seed/daily-run";
-import { allMoves, allSpecies, biomeDepths, modifierTypes } from "#data/data-lists";
+import { allMoves, biomeDepths, modifierTypes } from "#data/data-lists";
 import { classicFinalBossDialogue } from "#data/dialogue";
 import type { SpeciesFormChangeTrigger } from "#data/form-change-triggers";
 import { SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger } from "#data/form-change-triggers";
 import { Gender } from "#data/gender";
 import type { SpeciesFormChange } from "#data/pokemon-forms";
-import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies, PokemonSpeciesFilter } from "#data/pokemon-species";
 import { getTypeRgb } from "#data/type";
 import { BattleStyle } from "#enums/battle-style";
@@ -1220,7 +1219,7 @@ export class BattleScene extends SceneBase {
 
     if (reloadI18n) {
       const localizable: Localizable[] = [
-        ...allSpecies,
+        ...speciesDataRegistry.getAllSpecies(),
         ...allMoves,
         ...getEnumValues(ModifierPoolType)
           .map(mpt => getModifierPoolForType(mpt))
@@ -2341,19 +2340,21 @@ export class BattleScene extends SceneBase {
     const filteredSpecies = speciesFilter
       ? [
           ...new Set(
-            allSpecies
+            speciesDataRegistry
+              .getAllSpecies()
               .filter(s => s.isCatchable() && speciesFilter(s))
               .map(s => {
                 if (!filterAllEvolutions) {
-                  while (Object.hasOwn(pokemonPrevolutions, s.speciesId)) {
-                    s = getPokemonSpecies(pokemonPrevolutions[s.speciesId]);
+                  while (speciesDataRegistry.hasPrevolution(s.speciesId)) {
+                    s = getPokemonSpecies(speciesDataRegistry.getPrevolution(s.speciesId)!);
                   }
                 }
                 return s;
               }),
           ),
         ]
-      : allSpecies.filter(s => s.isCatchable());
+      : // TODO: Why is `filterAllEvolutions` only checked if there is a speciesFilter?
+        speciesDataRegistry.getAllSpecies().filter(s => s.isCatchable());
     return randSeedItem(filteredSpecies);
   }
 
@@ -2986,11 +2987,11 @@ export class BattleScene extends SceneBase {
     delayed = false,
     modal = false,
   ): boolean {
-    if (Object.hasOwn(pokemonFormChanges, pokemon.species.speciesId)) {
+    if (speciesDataRegistry.hasFormChanges(pokemon.species.speciesId)) {
       // in case this is NECROZMA, determine which forms this
-      const matchingFormChangeOpts = pokemonFormChanges[pokemon.species.speciesId].filter(
-        fc => fc.findTrigger(formChangeTriggerType) && fc.canChange(pokemon),
-      );
+      const matchingFormChangeOpts = speciesDataRegistry
+        .getFormChanges(pokemon.species.speciesId)
+        .filter(fc => fc.findTrigger(formChangeTriggerType) && fc.canChange(pokemon));
       let matchingFormChange: SpeciesFormChange | null;
       if (pokemon.species.speciesId === SpeciesId.NECROZMA && matchingFormChangeOpts.length > 1) {
         // Ultra Necrozma is changing its form back, so we need to figure out into which form it devolves.

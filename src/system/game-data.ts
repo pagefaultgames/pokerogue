@@ -4,19 +4,17 @@ import { defaultStarterSpecies, saveKey } from "#app/constants";
 import { getGameMode } from "#app/game-mode";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { activeOverrides } from "#app/overrides";
 import { isIos } from "#app/touch-controls";
 import { Tutorial } from "#app/tutorial";
 import { speciesEggMoves } from "#balance/moves/egg-moves";
-import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
-import { speciesStarterCosts } from "#balance/starters";
 import { bypassLogin, isBeta, isDev } from "#constants/app-constants";
 import { MAX_STARTER_CANDY_COUNT } from "#constants/game-constants";
 import { EntryHazardTag } from "#data/arena-tag";
 import { getSerializedDailyRunConfig, parseDailySeed } from "#data/daily-seed/daily-seed-utils";
-import { allMoves, allSpecies } from "#data/data-lists";
+import { allMoves } from "#data/data-lists";
 import type { Egg } from "#data/egg";
-import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { loadPositionalTag } from "#data/positional-tags/load-positional-tag";
 import { TerrainType } from "#data/terrain";
@@ -1548,7 +1546,7 @@ export class GameData {
   private initDexData(): void {
     const data: DexData = {};
 
-    for (const species of allSpecies) {
+    for (const species of speciesDataRegistry.getAllSpecies()) {
       data[species.speciesId] = {
         seenAttr: 0n,
         caughtAttr: 0n,
@@ -1594,8 +1592,7 @@ export class GameData {
   private initStarterData(): void {
     const starterData: StarterData = {};
 
-    const starterSpeciesIds = Object.keys(speciesStarterCosts).map(k => Number.parseInt(k) as SpeciesId);
-
+    const starterSpeciesIds = speciesDataRegistry.getAllStarters();
     for (const speciesId of starterSpeciesIds) {
       starterData[speciesId] = {
         moveset: null,
@@ -1713,9 +1710,7 @@ export class GameData {
           dexEntry.caughtAttr |= globalScene.gameData.getFormAttr(3);
         }
       } else {
-        const allFormChanges = Object.hasOwn(pokemonFormChanges, species.speciesId)
-          ? pokemonFormChanges[species.speciesId]
-          : [];
+        const allFormChanges = speciesDataRegistry.getFormChanges(species.speciesId);
         const toCurrentFormChanges = allFormChanges.filter(f => f.formKey === formKey);
         if (toCurrentFormChanges.length > 0) {
           // Needs to do this or Castform can unlock the wrong form, etc.
@@ -1725,7 +1720,7 @@ export class GameData {
     }
 
     // Unlock ability
-    if (Object.hasOwn(speciesStarterCosts, species.speciesId)) {
+    if (speciesDataRegistry.isStarter(species.speciesId)) {
       this.starterData[species.speciesId].abilityAttr |=
         pokemon.abilityIndex !== 1 || pokemon.species.ability2 ? 1 << pokemon.abilityIndex : AbilityAttr.ABILITY_HIDDEN;
     }
@@ -1733,7 +1728,7 @@ export class GameData {
     // Unlock nature
     dexEntry.natureAttr |= 1 << (pokemon.nature + 1);
 
-    const prevolution = pokemonPrevolutions[species.speciesId];
+    const prevolution = speciesDataRegistry.getPrevolution(species.speciesId);
     const hasPrevolution = prevolution != null;
     const newCatch = !caughtAttr;
     const hasNewAttr = (caughtAttr & dexAttr) !== dexAttr;
@@ -1788,7 +1783,7 @@ export class GameData {
       );
     };
 
-    if (!newCatch || !Object.hasOwn(speciesStarterCosts, species.speciesId)) {
+    if (!newCatch || !speciesDataRegistry.isStarter(species.speciesId)) {
       return await checkPrevolution(false);
     }
     // TODO: This will skip unlocking a pre-evolution if the player catches an evolved form that is itself a starter.
@@ -1928,7 +1923,7 @@ export class GameData {
     let { speciesId } = species;
     do {
       this.dexData[speciesId].natureAttr |= 1 << (nature + 1);
-      speciesId = pokemonPrevolutions[speciesId];
+      speciesId = speciesDataRegistry.getPrevolution(speciesId)!;
     } while (speciesId != null);
   }
 
@@ -1943,7 +1938,7 @@ export class GameData {
       if (dexIvs.every(iv => iv === 31)) {
         globalScene.validateAchv(achvs.PERFECT_IVS);
       }
-      speciesId = pokemonPrevolutions[speciesId];
+      speciesId = speciesDataRegistry.getPrevolution(speciesId)!;
     } while (speciesId != null);
   }
 
@@ -1959,7 +1954,7 @@ export class GameData {
   }
 
   getStarterCount(dexEntryPredicate: (entry: DexEntry) => boolean): number {
-    const starterKeys = Object.keys(speciesStarterCosts);
+    const starterKeys = speciesDataRegistry.getAllStarters();
     let starterCount = 0;
     for (const s of starterKeys) {
       const starterDexEntry = this.dexData[s];
@@ -2071,10 +2066,9 @@ export class GameData {
    * `valueReduction` only needs to be provided when testing a value reduction other than the one currently unlocked
    */
   getSpeciesStarterValue(speciesId: SpeciesId, valueReduction?: number): number {
-    // TODO: is this bang correct?
-    const baseValue = speciesStarterCosts[speciesId]!;
+    const baseValue = speciesDataRegistry.getStarterCost(speciesId);
     const reduction = valueReduction ?? this.starterData[speciesId].valueReduction;
-    let value = baseValue;
+    let value = baseValue as number;
 
     const decrementValue = (v: number) => {
       if (v > 1) {

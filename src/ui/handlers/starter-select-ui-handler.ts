@@ -2,26 +2,23 @@ import type { Ability } from "#abilities/ability";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { starterColors } from "#app/global-vars/starter-colors";
 import { activeOverrides } from "#app/overrides";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { speciesEggMoves } from "#balance/moves/egg-moves";
-import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
-import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#balance/pokemon-level-moves";
 import {
   getPassiveCandyCount,
   getSameSpeciesEggCandyCounts,
   getStarterValueFriendshipCap,
   getValueReductionCandyCounts,
   POKERUS_STARTER_COUNT,
-  speciesStarterCosts,
 } from "#balance/starters";
-import { allAbilities, allMoves, allSpecies } from "#data/data-lists";
-import { Egg, getEggTierForSpecies } from "#data/egg";
+import { allAbilities, allMoves } from "#data/data-lists";
+import { Egg } from "#data/egg";
 import { GrowthRate, getGrowthRateColor } from "#data/exp";
 import { Gender, getGenderColor, getGenderSymbol } from "#data/gender";
 import { getNatureName } from "#data/nature";
-import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { AbilityAttr } from "#enums/ability-attr";
 import { AbilityId } from "#enums/ability-id";
@@ -49,7 +46,7 @@ import { achvs } from "#system/achv";
 import { RibbonData } from "#system/ribbons/ribbon-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
-import type { LevelMoves } from "#types/pokemon-level-moves";
+import type { LevelMoves } from "#types/pokemon-species";
 import type { Starter, StarterAttributes, StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
@@ -805,13 +802,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     starterBoxContainer.add(this.cursorObj);
 
     // TODO: Apply the same logic done in the pokedex to only have 81 containers whose sprites are cycled
-    for (const species of allSpecies) {
-      if (!Object.hasOwn(speciesStarterCosts, species.speciesId)) {
-        continue;
-      }
-
-      starterSpecies.push(species.speciesId);
-      this.speciesLoaded.set(species.speciesId, false);
+    for (const speciesId of speciesDataRegistry.getAllStarters()) {
+      starterSpecies.push(speciesId);
+      this.speciesLoaded.set(speciesId, false);
+      const species = speciesDataRegistry.getSpecies(speciesId);
       this.allSpecies.push(species);
 
       const starterContainer = new StarterContainer(species).setVisible(false);
@@ -1449,7 +1443,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   isPassiveAvailable(speciesId: SpeciesId): boolean {
     // Get this species ID's starter data
     const starterData = globalScene.gameData.starterData[speciesId];
-    const starterCost = speciesStarterCosts[speciesId];
+    const starterCost = speciesDataRegistry.getStarterCost(speciesId);
 
     return (
       starterCost != null
@@ -1466,7 +1460,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   isValueReductionAvailable(speciesId: SpeciesId): boolean {
     // Get this species ID's starter data
     const starterData = globalScene.gameData.starterData[speciesId];
-    const starterCost = speciesStarterCosts[speciesId];
+    const starterCost = speciesDataRegistry.getStarterCost(speciesId);
 
     return (
       starterCost != null
@@ -1482,7 +1476,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
    */
   isSameSpeciesEggAvailable(speciesId: SpeciesId): boolean {
     const starterData = globalScene.gameData.starterData[speciesId];
-    const starterCost = speciesStarterCosts[speciesId];
+    const starterCost = speciesDataRegistry.getStarterCost(speciesId);
     const hatchedCount = globalScene.gameData.dexData[speciesId].hatchedCount;
 
     return starterCost != null && starterData.candyCount >= getSameSpeciesEggCandyCounts(starterCost, hatchedCount);
@@ -2256,7 +2250,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
             // Unlock passive option
             if (!(passiveAttr & PassiveAttr.UNLOCKED) && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START)) {
-              const passiveCost = getPassiveCandyCount(speciesStarterCosts[this.lastSpecies.speciesId]);
+              const passiveCost = getPassiveCandyCount(speciesDataRegistry.getStarterCost(this.lastSpecies.speciesId));
               options.push({
                 label: `×${passiveCost} ${i18next.t("starterSelectUiHandler:unlockPassive")}`,
                 handler: () => {
@@ -2295,9 +2289,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             // Reduce cost option
             const valueReduction = starterData.valueReduction;
             if (valueReduction < valueReductionMax && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START)) {
-              const reductionCost = getValueReductionCandyCounts(speciesStarterCosts[this.lastSpecies.speciesId])[
-                valueReduction
-              ];
+              const reductionCost = getValueReductionCandyCounts(
+                speciesDataRegistry.getStarterCost(this.lastSpecies.speciesId),
+              )[valueReduction];
               options.push({
                 label: `×${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost", { newCost: globalScene.gameData.getSpeciesStarterValue(this.lastSpecies.speciesId, starterData.valueReduction + 1) })}`,
                 handler: () => {
@@ -2336,7 +2330,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             // Same species egg menu option.
             const lastSpeciesId = this.lastSpecies.speciesId;
             const hatchedCount = globalScene.gameData.dexData[lastSpeciesId].hatchedCount;
-            const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarterCosts[lastSpeciesId], hatchedCount);
+            const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(
+              speciesDataRegistry.getStarterCost(lastSpeciesId),
+              hatchedCount,
+            );
             options.push({
               label: `×${sameSpeciesEggCost} ${i18next.t("starterSelectUiHandler:sameSpeciesEgg")}`,
               handler: () => {
@@ -2425,7 +2422,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
               return true;
             },
           });
-          if (!Object.hasOwn(pokemonPrevolutions, this.lastSpecies.speciesId)) {
+          if (!speciesDataRegistry.hasPrevolution(this.lastSpecies.speciesId)) {
             options.push({
               label: i18next.t("starterSelectUiHandler:useCandies"),
               handler: () => {
@@ -2879,7 +2876,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const formIndex = globalScene.gameData.getSpeciesDexAttrProps(this.lastSpecies, this.dexAttrCursor).formIndex;
     const starterDataEntry = globalScene.gameData.starterData[speciesId];
     // species has different forms
-    if (Object.hasOwn(pokemonFormLevelMoves, speciesId)) {
+    if (speciesDataRegistry.hasFormLevelMoves(speciesId)) {
       // Species has forms with different movesets
       if (!starterDataEntry.moveset || Array.isArray(starterDataEntry.moveset)) {
         starterDataEntry.moveset = {};
@@ -3547,7 +3544,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       currentFriendship = 0;
     }
 
-    const friendshipCap = getStarterValueFriendshipCap(speciesStarterCosts[speciesId]);
+    const friendshipCap = getStarterValueFriendshipCap(speciesDataRegistry.getStarterCost(speciesId));
 
     return { currentFriendship, friendshipCap };
   }
@@ -3656,7 +3653,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         if (species.speciesId === SpeciesId.MANAPHY || species.speciesId === SpeciesId.PHIONE) {
           this.pokemonHatchedIcon.setFrame("manaphy");
         } else {
-          this.pokemonHatchedIcon.setFrame(getEggTierForSpecies(species));
+          this.pokemonHatchedIcon.setFrame(speciesDataRegistry.getEggTier(species.speciesId));
         }
         this.pokemonHatchedCountText.setText(`${this.speciesStarterDexEntry.hatchedCount}`);
 
@@ -3668,7 +3665,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonCaughtHatchedContainer.setVisible(true);
         this.pokemonFormText.setVisible(true);
 
-        if (Object.hasOwn(pokemonPrevolutions, species.speciesId)) {
+        if (speciesDataRegistry.hasPrevolution(species.speciesId)) {
           this.pokemonCaughtHatchedContainer.setY(16);
           this.pokemonShinyIcon.setY(135).setFrame(getVariantIcon(variant));
           [this.pokemonCandyContainer, this.pokemonHatchedIcon, this.pokemonHatchedCountText].map(c =>
@@ -4065,7 +4062,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
         this.canCycleForm =
           species.forms
-            .filter(f => f.isStarterSelectable || !pokemonFormChanges[species.speciesId]?.find(fc => fc.formKey))
+            .filter(
+              f =>
+                f.isStarterSelectable || !speciesDataRegistry.getFormChanges(species.speciesId)?.find(fc => fc.formKey),
+            )
             .map((_, f) => dexEntry.caughtAttr & globalScene.gameData.getFormAttr(f))
             .filter(f => f).length > 1;
         this.canCycleNature = globalScene.gameData.getNaturesForAttr(dexEntry.natureAttr).length > 1;
@@ -4168,16 +4168,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
         this.pokemonNatureText.setText(getNatureName(natureIndex as unknown as Nature, true, true, false));
 
-        let levelMoves: LevelMoves;
-        if (
-          Object.hasOwn(pokemonFormLevelMoves, species.speciesId)
-          && formIndex
-          && Object.hasOwn(pokemonFormLevelMoves[species.speciesId], formIndex)
-        ) {
-          levelMoves = pokemonFormLevelMoves[species.speciesId][formIndex];
-        } else {
-          levelMoves = pokemonSpeciesLevelMoves[species.speciesId];
-        }
+        const formKey = species.forms?.[formIndex ?? 0]?.formKey;
+        const levelMoves: LevelMoves = species.getLevelMoves(formKey);
         this.speciesStarterMoves.push(...levelMoves.filter(lm => lm[0] > 0 && lm[0] <= 5).map(lm => lm[1]));
         if (Object.hasOwn(speciesEggMoves, species.speciesId)) {
           for (let em = 0; em < 4; em++) {
@@ -4354,7 +4346,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   // TODO: Dedupe from pokedex
   updateStarterValueLabel(starter: StarterContainer): void {
     const speciesId = starter.species.speciesId;
-    const baseStarterValue = speciesStarterCosts[speciesId];
+    const baseStarterValue = speciesDataRegistry.getStarterCost(speciesId);
     if (baseStarterValue == null) {
       return;
     }
