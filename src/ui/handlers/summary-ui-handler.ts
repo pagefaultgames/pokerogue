@@ -289,7 +289,7 @@ export class SummaryUiHandler extends UiHandler {
     this.moveEffectContainerTitle.setOrigin(0, 0.5);
     this.moveEffectContainer.add(this.moveEffectContainerTitle);
 
-    const moveEffectLabels = addTextObject(8, 12, i18next.t("pokemonSummary:powerAccuracyCategory"), TextStyle.SUMMARY);
+    const moveEffectLabels = addTextObject(8, 13, i18next.t("pokemonSummary:powerAccuracyCategory"), TextStyle.SUMMARY);
     moveEffectLabels.setLineSpacing(9);
     moveEffectLabels.setOrigin(0, 0);
 
