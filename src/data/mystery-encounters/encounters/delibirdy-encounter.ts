@@ -34,7 +34,7 @@ import {
   HeldItemRequirement,
   MoneyRequirement,
 } from "#mystery-encounters/mystery-encounter-requirements";
-import type { OptionSelectItem } from "#ui/base-option-select-ui-handler";
+import type { OptionSelectItem } from "#types/ui-types";
 import { randSeedItem } from "#utils/common";
 import i18next from "i18next";
 

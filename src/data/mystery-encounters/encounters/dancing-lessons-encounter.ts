@@ -38,7 +38,7 @@ import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encou
 import { MoveRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { DANCING_MOVES } from "#mystery-encounters/requirement-groups";
 import { PokemonData } from "#system/pokemon-data";
-import type { OptionSelectItem } from "#ui/base-option-select-ui-handler";
+import type { OptionSelectItem } from "#types/ui-types";
 import { groupStatChange } from "#utils/stat-change";
 import i18next from "i18next";
 

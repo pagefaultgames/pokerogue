@@ -43,7 +43,7 @@ import type { BiomeTierTimeOfDay } from "#types/biomes";
 import type { DexEntry } from "#types/dex-data";
 import type { LevelMoves } from "#types/pokemon-species";
 import type { StarterAttributes } from "#types/save-data";
-import type { OptionSelectItem } from "#ui/base-option-select-ui-handler";
+import type { OptionSelectItem } from "#types/ui-types";
 import { BaseStatsOverlay } from "#ui/base-stats-overlay";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";

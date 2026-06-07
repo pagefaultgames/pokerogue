@@ -20,7 +20,7 @@ import { getBiomeKey } from "#field/arena";
 import type { Modifier } from "#modifiers/modifier";
 import { getDailyRunStarterModifiers, regenerateModifierPoolThresholds } from "#modifiers/modifier-type";
 import { vouchers } from "#system/voucher";
-import type { OptionSelectConfig, OptionSelectItem } from "#ui/base-option-select-ui-handler";
+import type { OptionSelectConfig, OptionSelectItem } from "#types/ui-types";
 import { SaveSlotUiMode } from "#ui/save-slot-select-ui-handler";
 import { isLocalServerConnected } from "#utils/common";
 import i18next from "i18next";
