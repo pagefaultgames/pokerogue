@@ -107,20 +107,21 @@ describe("Move - Heal Block", () => {
     expect(chansey).not.toHaveFullHp();
     expect(snorlax).toHaveUsedMove({ move: MoveId.POLLEN_PUFF, result: MoveResult.SUCCESS });
 
-    // TODO: Pollen Puff should show a unique message for its failure
-    // expect(game).toHaveShownMessage(
-    //   i18next.t("battle:moveDisabledHealBlock", {
-    //     pokemonNameWithAffix: getPokemonNameWithAffix(blissey),
-    //     moveName: allMoves[MoveId.POLLEN_PUFF].name,
-    //   }),
-    // );
+    expect(game).toHaveShownMessage(
+      i18next.t("battle:moveDisabledHealBlock", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(blissey),
+        moveName: allMoves[MoveId.POLLEN_PUFF].name,
+      }),
+    );
+
     expect(game).not.toHaveShownMessage(
       i18next.t("battle:moveDisabledHealBlock", {
         pokemonNameWithAffix: getPokemonNameWithAffix(snorlax),
         moveName: allMoves[MoveId.POLLEN_PUFF].name,
       }),
     );
-    // nobody got actually healed
+
+    // nobody actually got healed
     expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
   });
 

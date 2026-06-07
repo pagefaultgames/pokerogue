@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { UiMode } from "#enums/ui-mode";
 import { ModifierRewardPhase } from "#phases/modifier-reward-phase";
@@ -10,7 +11,7 @@ export class GameOverModifierRewardPhase extends ModifierRewardPhase {
       const newModifier = this.modifierType.newModifier();
       globalScene.addModifier(newModifier);
       // Sound loaded into game as is
-      globalScene.playSound("level_up_fanfare");
+      audioManager.playSound("se/level_up_fanfare");
       globalScene.ui.setMode(UiMode.MESSAGE);
       globalScene.ui.fadeIn(250).then(() => {
         globalScene.ui.showText(

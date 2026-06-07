@@ -1,5 +1,5 @@
+import { pokerogueApi } from "#api/api";
 import * as account from "#app/account";
-import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import * as appConstants from "#constants/app-constants";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";

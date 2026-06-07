@@ -1,6 +1,7 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
@@ -29,7 +30,7 @@ export class AttemptRunPhase extends FieldPhase {
     if (escapeRoll < escapeChance.value) {
       enemyField.forEach(pokemon => applyAbAttrs("PreLeaveFieldAbAttr", { pokemon }));
 
-      globalScene.playSound("se/flee");
+      audioManager.playSound("se/flee");
       globalScene.phaseManager.queueMessage(i18next.t("battle:runAwaySuccess"), null, true, 500);
 
       globalScene.tweens.add({
@@ -74,8 +75,8 @@ export class AttemptRunPhase extends FieldPhase {
    */
   public calculateEscapeChance(escapeAttempts: number): number {
     //   Check for override, guaranteeing or forbidding random flee attempts as applicable.
-    if (Overrides.RUN_SUCCESS_OVERRIDE !== null) {
-      return Overrides.RUN_SUCCESS_OVERRIDE ? 100 : 0;
+    if (activeOverrides.RUN_SUCCESS_OVERRIDE !== null) {
+      return activeOverrides.RUN_SUCCESS_OVERRIDE ? 100 : 0;
     }
 
     const enemyField = globalScene.getEnemyField();

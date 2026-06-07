@@ -37,7 +37,8 @@ import type { FORCED_SIGNATURE_MOVES } from "#balance/moves/signature-moves";
 import { MoveId } from "#enums/move-id";
 import type { IntRange } from "type-fest";
 
-//#region Constants
+// #region Constants
+
 /**
  * The minimum level for a Pokémon to generate with a move it can only learn
  * from a common tier TM
@@ -179,9 +180,11 @@ export const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
   MoveId.DRAGON_RAGE,
   MoveId.DRAGON_TAIL,
   MoveId.DREAM_EATER,
+  MoveId.ELECTROWEB,
   MoveId.ENDEAVOR,
   MoveId.EXPLOSION,
   MoveId.FAKE_OUT,
+  MoveId.FELL_STINGER,
   MoveId.FIRE_SPIN,
   MoveId.FIRST_IMPRESSION,
   MoveId.FISSURE,
@@ -199,6 +202,7 @@ export const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
   MoveId.NATURAL_GIFT,
   MoveId.NATURES_MADNESS,
   MoveId.NIGHT_SHADE,
+  MoveId.POISON_FANG, // Functions as coverage or a chance of Toxic with slight chip damage.
   MoveId.POWER_TRIP,
   MoveId.PSYWAVE,
   MoveId.RUINATION,
@@ -214,6 +218,7 @@ export const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
   MoveId.STEEL_ROLLER,
   MoveId.STORED_POWER,
   MoveId.SUPER_FANG,
+  MoveId.SUCKER_PUNCH,
   MoveId.SYNCHRONOISE,
   MoveId.UPPER_HAND,
   MoveId.WHIRLPOOL,
@@ -223,7 +228,7 @@ export const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
   MoveId.HIDDEN_POWER,
 ]);
 
-//#endregion Constants
+// #endregion Constants
 
 /**
  * Get the maximum number of TMs a Pokémon is allowed to learn based on
