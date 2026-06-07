@@ -1,0 +1,57 @@
+name: Auto Create Hotfix PR
+
+on:
+  create:
+  push:
+    branches:
+      - hotfix-*
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  create-hotfix-pr:
+    if: github.repository == 'pagefaultgames/pokerogue' && (github.event.ref_type == 'branch' && startsWith(github.event.ref, 'hotfix-'))
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          submodules: false
+          sparse-checkout: .nvmrc
+          sparse-checkout-cone-mode: false
+
+      - name: Check if PR already exists
+        id: check_pr
+        run: |
+          BRANCH="${{ github.event.ref }}"
+          EXISTING_COUNT=$(gh pr list \
+            --repo "${GITHUB_REPOSITORY}" \
+            --state open \
+            --head "${BRANCH}" \
+            --base "main" \
+            --json number \
+            --jq 'length')
+
+          if [ "${EXISTING_COUNT}" -gt 0 ]; then
+            echo "exists=true" >> "${GITHUB_OUTPUT}"
+          else
+            echo "exists=false" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Create Pull Request
+        if: steps.check_pr.outputs.exists == 'false'
+        run: |
+          BRANCH="${{ github.event.ref }}"
+          HOTFIX_NAME="${BRANCH#hotfix-}"
+
+          gh pr create \
+            --repo "${GITHUB_REPOSITORY}" \
+            --head "${BRANCH}" \
+            --base "main" \
+            --title "chore!: Hotfix ${HOTFIX_NAME} to main" \
+            --body "" \
+            --draft

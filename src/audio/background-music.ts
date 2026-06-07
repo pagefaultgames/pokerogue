@@ -15,6 +15,13 @@ import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
  * of if the music is able to start and stop cleanly.
  */
 export class BackgroundMusic {
+  /**
+   * Maps the number of active BGM objects for a particular key.
+   *
+   * This will almost always be 1, but with i.e. paused/resumed music it may be more.
+   */
+  private static readonly refCounts = new Map<string, number>();
+
   /** The key for the audio file */
   public readonly key: string;
 
@@ -46,23 +53,29 @@ export class BackgroundMusic {
    */
   constructor(key: string, loop: boolean, loopPoint = 0) {
     this.key = key;
+    BackgroundMusic.refCounts.set(key, (BackgroundMusic.refCounts.get(key) ?? 0) + 1);
 
-    globalScene.loadBgm(key).then(() => {
-      if (this.destroyed) {
-        return;
-      }
-      this.sound = globalScene.sound.add(key, { loop });
-      if (loop) {
-        this.sound.on("looped", () => {
-          if (!this.destroyed) {
-            this.sound?.play({ seek: loopPoint });
-          }
-        });
-      } else {
-        this.sound.once("complete", () => this.triggerEnd());
-      }
-      this.runPendingCalls();
-    });
+    globalScene
+      .loadBgm(key)
+      .then(() => {
+        if (this.destroyed) {
+          return;
+        }
+        this.sound = globalScene.sound.add(key, { loop });
+        if (loop) {
+          this.sound.on("looped", () => {
+            if (!this.destroyed) {
+              this.sound?.play({ seek: loopPoint });
+            }
+          });
+        } else {
+          this.sound.once("complete", () => this.triggerEnd());
+          // Defensive, "complete" should be the right event but Phaser docs aren't very clear
+          this.sound.once("stop", () => this.triggerEnd());
+        }
+        this.runPendingCalls();
+      })
+      .catch(() => this.destroy());
   }
 
   public play(volume?: number): void {
@@ -99,7 +112,16 @@ export class BackgroundMusic {
   }
 
   public resume(): void {
-    this.withSound(sound => sound.resume());
+    this.withSound(sound => {
+      if (sound.isPlaying) {
+        return;
+      }
+      if (sound.isPaused) {
+        sound.resume();
+      } else {
+        sound.play();
+      }
+    });
   }
 
   public setVolume(value: number): void {
@@ -145,18 +167,40 @@ export class BackgroundMusic {
     if (this.sound?.isPlaying) {
       this.sound.stop();
     }
-    globalScene.sound.removeByKey(this.key);
-    globalScene.cache.audio.remove(this.key);
+
+    if (this.sound != null) {
+      globalScene.sound.remove(this.sound);
+      this.sound = undefined;
+    }
+
+    const remaining = (BackgroundMusic.refCounts.get(this.key) ?? 1) - 1;
+    if (remaining <= 0) {
+      BackgroundMusic.refCounts.delete(this.key);
+      globalScene.cache.audio.remove(this.key);
+    } else {
+      BackgroundMusic.refCounts.set(this.key, remaining);
+    }
   }
 
-  public fadeOut(duration: number, fixed = false): void {
+  /**
+   * Fade the volume to zero over `duration` ms.
+   * @param duration - Fade time in milliseconds
+   * @param fixed - (Default `false`) Whether duration should ignore game speed
+   * @param destroy - (Default `true`) Whether to destroy the bgm after fading out, or just pause it
+   */
+  public fadeOut(duration: number, fixed = false, destroy = true): void {
     const realDuration = fixed ? fixedInt(duration) : duration;
     this.withSound(sound => {
-      SoundFade.fadeOut(globalScene, sound, realDuration, true);
+      SoundFade.fadeOut(globalScene, sound, realDuration, false);
     });
-    globalScene.time.delayedCall(realDuration, () => {
-      if (!this.destroyed) {
+    globalScene.time.delayedCall(realDuration + 100, () => {
+      if (this.destroyed) {
+        return;
+      }
+      if (destroy) {
         this.destroy();
+      } else if (this.sound) {
+        this.sound.pause();
       }
     });
   }
