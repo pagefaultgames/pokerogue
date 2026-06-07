@@ -265,8 +265,7 @@ describe("Moves - Healing Moves", () => {
         expect(game.phaseInterceptor.log).not.toContain("PokemonHealPhase");
       });
 
-      // TODO: The interaction from beta is broken
-      it.fails("should not heal an ally multiple times if the user has a source of multi-hit", async () => {
+      it("should not heal an ally multiple times if the user has a source of multi-hit", async () => {
         game.override.battleStyle("double").ability(AbilityId.PARENTAL_BOND);
         await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.OMANYTE);
 
