@@ -4646,6 +4646,8 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.EXPANDING_FORCE,
       MoveId.TERA_BLAST,
       MoveId.PSYCHIC_NOISE,
+      MoveId.CHARM,
+      MoveId.SHADOW_BALL,
     ],
   };
   generationSixSpeciesData[SpeciesId.MEOWSTIC] = {
@@ -5496,6 +5498,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.EXPANDING_FORCE,
       MoveId.LASH_OUT,
       MoveId.TERA_BLAST,
+      MoveId.SWIFT,
     ],
   };
   generationSixSpeciesData[SpeciesId.MALAMAR] = {
@@ -9599,6 +9602,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.TRAILBLAZE,
       MoveId.CHILLING_WATER,
       MoveId.ALLURING_VOICE,
+      MoveId.SYNTHESIS,
     ],
   };
   return generationSixSpeciesData;
