@@ -158,8 +158,7 @@ export function getTextStyleOptions(
     case TextStyle.SUMMARY_STATS_GOLD: {
       let fontSizeLabel = "96px";
       switch (lang) {
-        case "zh-Hans":
-        case "zh-Hant":
+        case "pt-BR":
         case "id":
         case "vi":
           styleOptions.padding = { top: 2, bottom: 10 };
