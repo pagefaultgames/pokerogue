@@ -789,6 +789,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.LOW_KICK,
       MoveId.DARK_PULSE,
       MoveId.GUNK_SHOT,
+      MoveId.FLIP_TURN,//ZA
     ],
   };
   generationSixSpeciesData[SpeciesId.GRENINJA] = {
@@ -1129,6 +1130,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.BRUTAL_SWING,
       MoveId.STOMPING_TANTRUM,
       MoveId.SCORCHING_SANDS,
+      MoveId.TRAILBLAZE,//ZA
     ],
   };
   generationSixSpeciesData[SpeciesId.FLETCHLING] = {
@@ -1277,6 +1279,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.FIRE_BLAST,
       MoveId.INCINERATE,
       MoveId.TEMPER_FLARE,
+      MoveId.BLAZE_KICK,//ZA
     ],
   };
   generationSixSpeciesData[SpeciesId.TALONFLAME] = {
@@ -4518,6 +4521,12 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.SNARL,
       MoveId.CONFIDE,
       MoveId.TERA_BLAST,
+      MoveId.DOUBLE_EDGE,//ZA
+      MoveId.ENDURE,//ZA
+      MoveId.FIRE_FANG,//ZA
+      MoveId.ICE_FANG,//ZA
+      MoveId.PSYCHIC_FANGS,//ZA
+      MoveId.THUNDER_FANG,//ZA
     ],
   };
   generationSixSpeciesData[SpeciesId.ESPURR] = {
@@ -6723,6 +6732,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.ALLURING_VOICE,
+      MoveId.MUD_SLAP,
     ],
   };
   generationSixSpeciesData[SpeciesId.HAWLUCHA] = {
@@ -7257,6 +7267,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.BLIZZARD,
       MoveId.THUNDER,
       MoveId.ACID_SPRAY,
+      MoveId.GIGA_DRAIN,
     ],
   };
   generationSixSpeciesData[SpeciesId.GOODRA] = {
@@ -7445,6 +7456,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.STEEL_BEAM,
       MoveId.SKITTER_SMACK,
       MoveId.TERA_BLAST,
+      MoveId.FUTURE_SIGHT,
     ],
   };
   generationSixSpeciesData[SpeciesId.PHANTUMP] = {
@@ -7857,6 +7869,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.SKITTER_SMACK,
       MoveId.POLTERGEIST,
       MoveId.TERA_BLAST,
+      MoveId.SELF_DESTRUCT,
     ],
   };
   generationSixSpeciesData[SpeciesId.GOURGEIST] = {
@@ -9603,6 +9616,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.CHILLING_WATER,
       MoveId.ALLURING_VOICE,
       MoveId.SYNTHESIS,
+      MoveId.HYPER_BEAM,
     ],
   };
   return generationSixSpeciesData;

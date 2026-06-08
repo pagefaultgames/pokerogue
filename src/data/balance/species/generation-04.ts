@@ -3982,6 +3982,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.GIGA_IMPACT,
       MoveId.ACROBATICS,
       MoveId.BRUTAL_SWING,
+      MoveId.SWORDS_DANCE,
     ],
   };
   generationFourSpeciesData[SpeciesId.MISMAGIUS] = {
@@ -4518,6 +4519,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.DAZZLING_GLEAM,
       MoveId.TERA_BLAST,
       MoveId.PSYCHIC_NOISE,
+      MoveId.SELF_DESTRUCT,//ZA
     ],
   };
   generationFourSpeciesData[SpeciesId.STUNKY] = {
@@ -9761,6 +9763,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.SNOWSCAPE,
       MoveId.TRAILBLAZE,
       MoveId.CHILLING_WATER,
+      MoveId.NASTY_PLOT,//ZA
     ],
   };
   generationFourSpeciesData[SpeciesId.ROTOM] = {

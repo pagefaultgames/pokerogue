@@ -171,9 +171,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       [45, MoveId.POWER_WHIP],
       [50, MoveId.SOLAR_BEAM],
     ],
-    tms: [
-      ...generationOneSpeciesData[SpeciesId.BULBASAUR].tms,
-      MoveId.ROAR],
+    tms: [...generationOneSpeciesData[SpeciesId.BULBASAUR].tms,MoveId.ROAR],
   };
   generationOneSpeciesData[SpeciesId.VENUSAUR] = {
     species: new PokemonSpecies({
@@ -806,6 +804,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.ICE_SPINNER,
       MoveId.CHILLING_WATER,
+      MoveId.IRON_HEAD, //ZA
     ],
   };
   generationOneSpeciesData[SpeciesId.WARTORTLE] = {
@@ -1505,6 +1504,8 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.THROAT_CHOP,
       MoveId.BRUTAL_SWING,
       MoveId.TERA_BLAST,
+      MoveId.DUAL_WINGBEAT,
+      MoveId.IRON_DEFENSE,
     ],
   };
   generationOneSpeciesData[SpeciesId.PIDGEY] = {
@@ -1598,6 +1599,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.HURRICANE,
       MoveId.CONFIDE,
       MoveId.TERA_BLAST,
+      MoveId.DUAL_WINGBEAT,//ZA
     ],
   };
   generationOneSpeciesData[SpeciesId.PIDGEOTTO] = {
@@ -2761,6 +2763,8 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.GIGA_IMPACT,
       MoveId.SPEED_SWAP,
       MoveId.BRUTAL_SWING,
+      MoveId.DAZZLING_GLEAM,//ZA
+      MoveId.DRAIN_PUNCH,//ZA
     ],
   };
   generationOneSpeciesData[SpeciesId.SANDSHREW] = {
@@ -6464,6 +6468,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.POWER_UP_PUNCH,
       MoveId.COACHING,
       MoveId.TERA_BLAST,
+      MoveId.DRAIN_PUNCH,
     ],
   };
   generationOneSpeciesData[SpeciesId.MACHOKE] = {
@@ -11772,6 +11777,8 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.DAZZLING_GLEAM,
       MoveId.FLIP_TURN,
       MoveId.TERA_BLAST,
+      MoveId.SAFEGUARD,//ZA
+      MoveId.SELF_DESTRUCT,//ZA
     ],
   };
   generationOneSpeciesData[SpeciesId.STARMIE] = {
@@ -11891,6 +11898,11 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.ALLY_SWITCH,
       MoveId.EXPANDING_FORCE,
       MoveId.METEOR_BEAM,
+      MoveId.BULK_UP,//ZA
+      MoveId.CHARGE_BEAM,//ZA
+      MoveId.CHILLING_WATER,//ZA
+      MoveId.LIQUIDATION,//ZA
+      MoveId.ZEN_HEADBUTT,//ZA
     ],
   };
   generationOneSpeciesData[SpeciesId.MR_MIME] = {
@@ -12732,6 +12744,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.THROAT_CHOP,
       MoveId.BRUTAL_SWING,
       MoveId.TERA_BLAST,
+      MoveId.AERIAL_ACE,//ZA
     ],
   };
   generationOneSpeciesData[SpeciesId.TAUROS] = {

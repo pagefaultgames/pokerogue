@@ -2548,6 +2548,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.EXPANDING_FORCE,
       MoveId.METEOR_BEAM,
       MoveId.SCORCHING_SANDS,
+      MoveId.HYPER_BEAM,
     ],
   };
   generationNineSpeciesData[SpeciesId.CERULEDGE] = {
@@ -2631,6 +2632,8 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.SOLAR_BLADE,
       MoveId.THROAT_CHOP,
       MoveId.POLTERGEIST,
+      MoveId.GIGA_IMPACT,
+
     ],
   };
   generationNineSpeciesData[SpeciesId.TADBULB] = {
@@ -3778,6 +3781,10 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.BURNING_JEALOUSY,
       MoveId.LASH_OUT,
       MoveId.TEMPER_FLARE,
+      MoveId.FIRE_SPIN,
+      MoveId.FLARE_BLITZ,
+      MoveId.SWAGGER,
+      MoveId.THUNDER_FANG,
     ],
   };
   generationNineSpeciesData[SpeciesId.RELLOR] = {
@@ -11859,6 +11866,12 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.LASH_OUT,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
+      MoveId.IRON_TAIL,
+      MoveId.MEGAHORN,
+      MoveId.ROUND,
+      MoveId.SNORE,
+      MoveId.THROAT_CHOP,
+      MoveId.UPROAR,
     ],
     formTms: {
       combat: [MoveId.SURF, MoveId.SUNNY_DAY, MoveId.ASSURANCE],

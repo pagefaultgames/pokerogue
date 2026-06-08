@@ -116,6 +116,8 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TAKE_DOWN,
       MoveId.CHARM,
       MoveId.FAKE_TEARS,
+      MoveId.DAZZLING_GLEAM,//ZA
+      MoveId.EARTH_POWER,//ZA
     ],
   };
   generationTwoSpeciesData[SpeciesId.BAYLEEF] = {
@@ -4283,6 +4285,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TRAILBLAZE,
       MoveId.ALLURING_VOICE,
       MoveId.PSYCHIC_NOISE,
+      MoveId.SAFEGUARD,//ZA
     ],
   };
   generationTwoSpeciesData[SpeciesId.UMBREON] = {
@@ -4710,6 +4713,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.CHILLING_WATER,
       MoveId.PSYCHIC_NOISE,
       MoveId.COUNTER,
+      MoveId.HELPING_HAND,
     ],
   };
   generationTwoSpeciesData[SpeciesId.MISDREAVUS] = {

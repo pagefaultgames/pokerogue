@@ -4657,6 +4657,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.LASH_OUT,
       MoveId.POLTERGEIST,
       MoveId.TERA_BLAST,
+      MoveId.SAFEGUARD,//ZA
     ],
   };
   generationThreeSpeciesData[SpeciesId.MAWILE] = {
@@ -5430,6 +5431,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.AURA_SPHERE,
       MoveId.ENERGY_BALL,
       MoveId.GIGA_IMPACT,
+      MoveId.BLAZE_KICK,//ZA
     ],
   };
   generationThreeSpeciesData[SpeciesId.ELECTRIKE] = {
@@ -10203,6 +10205,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.POLTERGEIST,
       MoveId.TERA_BLAST,
       MoveId.POUNCE,
+      MoveId.ZEN_HEADBUTT,//ZA
     ],
   };
   generationThreeSpeciesData[SpeciesId.BANETTE] = {
@@ -10760,6 +10763,8 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.EXPANDING_FORCE,
       MoveId.TERA_BLAST,
       MoveId.PSYCHIC_NOISE,
+      MoveId.FLASH_CANNON,//ZA
+      MoveId.SELF_DESTRUCT,//ZA
     ],
   };
   generationThreeSpeciesData[SpeciesId.ABSOL] = {

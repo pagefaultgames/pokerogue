@@ -1514,6 +1514,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.ICE_SPINNER,
       MoveId.SNOWSCAPE,
       MoveId.HARD_PRESS,
+      MoveId.ICICLE_SPEAR,
     ],
   };
   generationSevenSpeciesData[SpeciesId.ORICORIO] = {
@@ -6639,6 +6640,9 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.SCALE_SHOT,
       MoveId.LASH_OUT,
       MoveId.TERA_BLAST,
+      MoveId.BODY_SLAM,
+      MoveId.EARTH_POWER,//ZA
+      MoveId.TRI_ATTACK,//ZA
     ],
   };
   generationSevenSpeciesData[SpeciesId.DHELMISE] = {
@@ -10256,6 +10260,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.ALLURING_VOICE,
       MoveId.PSYCHIC_NOISE,
       MoveId.UPPER_HAND,
+      MoveId.DAZZLING_GLEAM,
     ],
   };
   generationSevenSpeciesData[SpeciesId.ALOLA_SANDSHREW] = {
