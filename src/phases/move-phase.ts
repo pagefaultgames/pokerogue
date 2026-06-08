@@ -383,12 +383,14 @@ export class MovePhase extends PokemonPhase {
       this.thaw = true;
       return false;
     }
+    pokemon.status.incrementTurn();
     if (
       activeOverrides.STATUS_ACTIVATION_OVERRIDE === false
       || this.move
         .getMove()
         .findAttr(attr => attr.selfTarget && attr.is("HealStatusEffectAttr") && attr.isOfEffect(StatusEffect.FREEZE))
-      || (!pokemon.randBattleSeedInt(5) && activeOverrides.STATUS_ACTIVATION_OVERRIDE !== true)
+      || ((!pokemon.randBattleSeedInt(4) || (pokemon.status.freezeTurnsRemaining ?? 0) <= 0)
+        && activeOverrides.STATUS_ACTIVATION_OVERRIDE !== true)
     ) {
       pokemon.cureStatus(StatusEffect.FREEZE);
       return false;
@@ -519,7 +521,7 @@ export class MovePhase extends PokemonPhase {
       return false;
     }
 
-    const proc = activeOverrides.STATUS_ACTIVATION_OVERRIDE ?? user.randBattleSeedInt(4) === 0;
+    const proc = activeOverrides.STATUS_ACTIVATION_OVERRIDE ?? user.randBattleSeedInt(8) === 0;
     if (!proc) {
       return false;
     }
