@@ -110,7 +110,7 @@ export const languageOptions = [
     handler: () => changeLocaleHandler("hi"),
   },
   {
-    label: "Tiếng Việt (Needs Help)",
+    label: "Tiếng Việt",
     handler: () => changeLocaleHandler("vi"),
   },
   {

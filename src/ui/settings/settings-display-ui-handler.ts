@@ -144,7 +144,7 @@ export class SettingsDisplayUiHandler extends AbstractSettingsUiHandler {
         case "vi":
           this.settings[languageIndex].options[0] = {
             value: "Tiếng Việt",
-            label: "Tiếng Việt (Needs Help)",
+            label: "Tiếng Việt",
           };
           break;
         case "da":
