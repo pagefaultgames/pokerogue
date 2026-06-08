@@ -5060,7 +5060,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Set this Pokemon's {@linkcode status | non-volatile status condition} to the specified effect.
    * @param effect - {@linkcode StatusEffect.SLEEP}
-   * @param sleepTurnsRemaining - The number of turns to inflict sleep for; defaults to a random number between 2 and 4
+   * @param sleepTurnsRemaining - (Optional) The number of turns to inflict sleep for (the actual number of sleep turns is 1 less than the input value). \
+   *   If not specified, defaults to `1/3` chance of 1 turn of sleep, `2/3` chance of 2 turns of sleep.
    * @remarks
    * Clears this pokemon's `pendingStatus` in its {@linkcode Pokemon#turnData}.
    *
@@ -5070,8 +5071,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Set this Pokemon's {@linkcode status | non-volatile status condition} to the specified effect.
    * @param effect - The {@linkcode StatusEffect} to set
-   * @param sleepTurnsRemaining - The number of turns to inflict sleep for; defaults to a random number between 2 and 4
-   * and is unused for all non-sleep Statuses
+   * @param sleepTurnsRemaining - (Optional) The number of turns to inflict sleep for (the actual number of sleep turns is 1 less than the input value). \
+   *   If not specified, defaults to `1/3` chance of 1 turn of sleep, `2/3` chance of 2 turns of sleep. \
+   *   Has no effect if the status effect being inflicted is not sleep.
    * @remarks
    * Clears this pokemon's `pendingStatus` in its {@linkcode Pokemon#turnData}.
    *
@@ -5081,17 +5083,18 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Set this Pokemon's {@linkcode status | non-volatile status condition} to the specified effect.
    * @param effect - The {@linkcode StatusEffect} to set
-   * @param sleepTurnsRemaining - The number of turns to inflict sleep for; defaults to a random number between 2 and 4
-   * and is unused for all non-sleep Statuses
+   * @param sleepTurnsRemaining - (Optional) The number of turns to inflict sleep for (the actual number of sleep turns is 1 less than the input value). \
+   *   If not specified, defaults to `1/3` chance of 1 turn of sleep, `2/3` chance of 2 turns of sleep. \
+   *   Has no effect if the status effect being inflicted is not sleep.
    * @remarks
    * Clears this pokemon's `pendingStatus` in its {@linkcode Pokemon#turnData}.
    *
    * ⚠️ This method does **not** check for feasibility; that is the responsibility of the caller.
-   * @todo Make this and all related fields private and change tests to use a field-based helper or similar
    */
+  // TODO: Make this and all related fields private and change tests to use a field-based helper or similar
   public doSetStatus(
     effect: StatusEffect,
-    sleepTurnsRemaining = effect === StatusEffect.SLEEP ? this.randBattleSeedIntRange(2, 4) : 0,
+    sleepTurnsRemaining = effect === StatusEffect.SLEEP ? (this.randBattleSeedInt(3) === 0 ? 2 : 3) : 0,
   ): void {
     // Reset any pending status
     this.turnData.pendingStatus = StatusEffect.NONE;
@@ -5134,7 +5137,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         break;
     }
 
-    this.status = new Status(effect, 0, sleepTurnsRemaining);
+    this.status = new Status(effect, 0, sleepTurnsRemaining, effect === StatusEffect.FREEZE ? 3 : undefined);
   }
 
   /**
