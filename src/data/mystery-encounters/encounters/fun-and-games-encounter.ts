@@ -91,7 +91,7 @@ export const FunAndGamesEncounter: MysteryEncounter = MysteryEncounterBuilder.wi
     return true;
   })
   .withOnVisualsStart(() => {
-    audioManager.fadeAndSwitchBgm("mystery_encounter_fun_and_games");
+    audioManager.playBgm("mystery_encounter_fun_and_games", true);
     return true;
   })
   .withOption(

@@ -141,7 +141,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
     return true;
   })
   .withOnVisualsStart(() => {
-    audioManager.fadeAndSwitchBgm("mystery_encounter_delibirdy");
+    audioManager.playBgm("mystery_encounter_delibirdy", true);
     return true;
   })
   .withOption(

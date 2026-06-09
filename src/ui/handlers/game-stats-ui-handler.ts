@@ -1,6 +1,6 @@
 import { loggedInUser } from "#app/account";
 import { globalScene } from "#app/global-scene";
-import { speciesStarterCosts } from "#balance/starters";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { Button } from "#enums/buttons";
 import { DexAttr } from "#enums/dex-attr";
 import { PlayerGender } from "#enums/player-gender";
@@ -38,14 +38,14 @@ const displayStats: DisplayStats = {
     label_key: "starters",
     sourceFunc: gameData => {
       const starterCount = gameData.getStarterCount(d => !!d.caughtAttr);
-      return `${starterCount} (${Math.floor((starterCount / Object.keys(speciesStarterCosts).length) * 1000) / 10}%)`;
+      return `${starterCount} (${Math.floor((starterCount / speciesDataRegistry.getAllStarters().length) * 1000) / 10}%)`;
     },
   },
   shinyStartersUnlocked: {
     label_key: "shinyStarters",
     sourceFunc: gameData => {
       const starterCount = gameData.getStarterCount(d => !!(d.caughtAttr & DexAttr.SHINY));
-      return `${starterCount} (${Math.floor((starterCount / Object.keys(speciesStarterCosts).length) * 1000) / 10}%)`;
+      return `${starterCount} (${Math.floor((starterCount / speciesDataRegistry.getAllStarters().length) * 1000) / 10}%)`;
     },
   },
   dexEncountered: {
