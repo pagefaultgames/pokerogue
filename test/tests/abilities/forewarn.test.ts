@@ -23,7 +23,6 @@ describe("Ability - Forewarn", () => {
     game.override
       .ability(AbilityId.BALL_FETCH)
       .enemySpecies(SpeciesId.MAGIKARP)
-      .moveset([MoveId.AGILITY, MoveId.DRAIN_PUNCH, MoveId.HONE_CLAWS, MoveId.MINIMIZE])
       .battleStyle("single")
       .criticalHits(false)
       .enemySpecies(SpeciesId.PIDGEY)
@@ -33,16 +32,19 @@ describe("Ability - Forewarn", () => {
       .enemyLevel(100);
   });
 
-  it("prioritizes warning of attacking moves instead of selfstatus", async () => {
+  // TODO: write more tests
+
+
+  it("should prioritize warning attacking moves over status moves", async () => {
+    game.override.moveset([MoveId.AGILITY, MoveId.DRAIN_PUNCH, MoveId.HONE_CLAWS, MoveId.MINIMIZE])
     await game.classicMode.startBattle(SpeciesId.PIDGEY);
 
     const enemy = game.field.getEnemyPokemon();
-    const drainPunch = MoveId.DRAIN_PUNCH;
 
     expect(game).toHaveShownMessage(
       i18next.t("abilityTriggers:forewarn", {
         pokemonNameWithAffix: getPokemonNameWithAffix(enemy),
-        moveName: new PokemonMove(drainPunch).getName(),
+        moveName: allMoves[MoveId.DRAIN_PUNCH].name,
       }),
     );
   });
