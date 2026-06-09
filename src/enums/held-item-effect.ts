@@ -1,7 +1,7 @@
 import type { ObjectValues } from "#types/type-helpers";
 
 /**
- * Enum representing the various "classes" of item effects that can be applied.
+ * Enum representing the various "categories" of item effects that can be applied.
  */
 export const HeldItemEffect = {
   ATTACK_TYPE_BOOST: 1,
@@ -9,7 +9,7 @@ export const HeldItemEffect = {
   HIT_HEAL: 3,
   RESET_NEGATIVE_STAT_STAGE: 4,
   EXP_BOOSTER: 5,
-  // Should we actually distinguish different berry effects?
+  // TODO: Should we actually distinguish different berry effects?
   BERRY: 6,
   BASE_STAT_MULTIPLY: 7,
   INSTANT_REVIVE: 8,

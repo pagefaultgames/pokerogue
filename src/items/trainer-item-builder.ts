@@ -4,7 +4,6 @@ import { TrainerItem } from "#items/trainer-item";
 import type { TrainerItemAttr, TrainerItemRecord } from "#items/trainer-item-attr";
 import type { DataMap } from "#types/common";
 import type { ErrorType } from "#types/error-type";
-import type { Mutable } from "#types/type-helpers";
 import type i18next from "i18next";
 import type { Constructor } from "type-fest";
 
@@ -78,10 +77,10 @@ export class TrainerItemBuilder<Attrs extends TrainerItemAttr = never> {
 
   /** Internal helper method to add an attribute to the builder. */
   private addAttr(attr: TrainerItemAttr): void {
-    (attr as Mutable<TrainerItemAttr>)["type"] = this.id;
+    // @ts-expect-error - property is readonly (can't cast to Mutable as it would remove protected members)
+    attr["type"] = this.id;
     const { effect } = attr;
-    // bang is safe since the constructor initializes the map with all effects set to empty arrays
-    const existing = this.attrMap.get(effect)!;
+    const existing = this.attrMap.get(effect);
     existing.push(attr);
   }
 
@@ -146,6 +145,7 @@ export class TrainerItemBuilder<Attrs extends TrainerItemAttr = never> {
    * @remarks
    * This will resolve to `never` if no attributes have been registered.
    */
+  // TODO: Do we want to allow 0-effect builds (and make them markers?)
   public build(): [Attrs] extends [never]
     ? ErrorType<"Cannot create a TrainerItem with no attributes!">
     : TrainerItem<Attrs>;
@@ -166,8 +166,10 @@ export class TrainerItemBuilder<Attrs extends TrainerItemAttr = never> {
     return item;
   }
 
+  /**
+   * Convert the builder's internal map of attributes into a {@linkcode TrainerItemRecord} for use in the built `TrainerItem`.
+   */
   private buildRecord(): TrainerItemRecord<Attrs> {
-    // TODO: Consider removing type assertion after `Object.keys` PR
     return Object.fromEntries(this.attrMap.entries()) as unknown as TrainerItemRecord<Attrs>;
   }
   // #endregion Builder code

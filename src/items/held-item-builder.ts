@@ -4,13 +4,13 @@ import { HeldItem } from "#items/held-item";
 import type { ConsumableHeldItemAttr, HeldItemAttr, HeldItemRecord } from "#items/held-item-attr";
 import type { DataMap } from "#types/common";
 import type { ErrorType } from "#types/error-type";
-import type { Mutable } from "#types/type-helpers";
 import type i18next from "i18next";
 import type { Constructor } from "type-fest";
 
 /**
- * Internal helper type to add a new attribute to a {@linkcode HeldItemBuilder}, erroring if
+ * Helper type to add a new attribute to a {@linkcode HeldItemBuilder}, erroring if
  * multiple {@linkcode ConsumableHeldItemAttr}s are added for the same effect.
+ * @internal
  */
 type AddAttrToBuilder<Attrs extends HeldItemAttr, Effects extends HeldItemEffect, NewAttr extends HeldItemAttr> =
   NewAttr extends ConsumableHeldItemAttr<infer E extends HeldItemEffect>
@@ -88,10 +88,10 @@ export class HeldItemBuilder<Attrs extends HeldItemAttr = never, ConsumableEffec
 
   /** Internal helper method to add an attribute to the builder. */
   private addAttr(attr: HeldItemAttr): void {
-    (attr as Mutable<HeldItemAttr>)["type"] = this.id;
+    // @ts-expect-error - property is readonly (can't cast to Mutable as it would remove protected members)
+    attr["type"] = this.id;
     const { effect } = attr;
-    // bang is safe since the constructor initializes the map with all effects set to empty arrays
-    const existing = this.attrMap.get(effect)!;
+    const existing = this.attrMap.get(effect);
     existing.push(attr);
   }
 
@@ -176,7 +176,7 @@ export class HeldItemBuilder<Attrs extends HeldItemAttr = never, ConsumableEffec
    * @remarks
    * This will resolve to `never` if no attributes have been registered.
    */
-  // TODO: Do we want to allow 0-item builds (and make them cosmetic?)
+  // TODO: Do we want to allow 0-effect builds (and make them cosmetic?)
   public build(): [Attrs] extends [never] ? ErrorType<"Cannot create a HeldItem with no attributes!"> : HeldItem<Attrs>;
   // NB: The implementation signature needs to return a union containing ErrorType to satisfy TypeScript, but we never actually return one ourselves
   public build(): ErrorType<"Cannot create a HeldItem with no attributes!"> | HeldItem<Attrs> {
@@ -196,8 +196,10 @@ export class HeldItemBuilder<Attrs extends HeldItemAttr = never, ConsumableEffec
     return item;
   }
 
+  /**
+   * Convert the builder's internal map of attributes into a {@linkcode HeldItemRecord} for use in the built `HeldItem`.
+   */
   private buildRecord(): HeldItemRecord<Attrs> {
-    // TODO: Consider removing type assertion after `Object.keys` PR is merged (if possible, albeit likely not)
     return Object.fromEntries(this.attrMap.entries()) as unknown as HeldItemRecord<Attrs>;
   }
 
