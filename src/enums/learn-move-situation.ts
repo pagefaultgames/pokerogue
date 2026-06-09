@@ -5,4 +5,6 @@ export enum LearnMoveSituation {
   EVOLUTION,
   EVOLUTION_FUSED, // If fusionSpecies has Evolved
   EVOLUTION_FUSED_BASE,
+  TRAINER_MOVEGEN,
+  WILD_MOVEGEN,
 }

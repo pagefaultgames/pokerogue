@@ -161,6 +161,67 @@ export class SpeciesDataRegistry {
     return Array.from(levelMoves);
   }
 
+  public getPrevoMoves(speciesId: SpeciesId, form?: string | number): LevelMoves {
+    const speciesData = this.getSpeciesData(speciesId);
+    const formKey = this.getFormKey(speciesId, form);
+    let levelMoves = [...speciesData.levelMoves, ...(speciesData.formLevelMoves?.[formKey] ?? [])];
+    const allMoves = new Set(levelMoves.map(lm => lm[1]));
+    levelMoves = [];
+    if (formKey.length > 0) {
+      const prevos = this.getPrevolutionChainWithForms(speciesId, formKey);
+      prevos.forEach(p => {
+        this.getLevelMoves(p[0], p[1]).forEach(lm => {
+          if (!allMoves.has(lm[1])) {
+            levelMoves.push(lm);
+            allMoves.add(lm[1]);
+          }
+        });
+      });
+    } else {
+      const prevos = this.getPrevolutionChain(speciesId);
+      prevos.forEach(p => {
+        this.getLevelMoves(p).forEach(lm => {
+          if (!allMoves.has(lm[1])) {
+            levelMoves.push(lm);
+            allMoves.add(lm[1]);
+          }
+        });
+      });
+    }
+    levelMoves = Array.from(new Set(levelMoves));
+    return levelMoves;
+  }
+
+  public getEvoChainLevelMoves(speciesId: SpeciesId, form?: string | number): LevelMoves {
+    const speciesData = this.getSpeciesData(speciesId);
+    const formKey = this.getFormKey(speciesId, form);
+    let levelMoves = [...speciesData.levelMoves, ...(speciesData.formLevelMoves?.[formKey] ?? [])];
+    const allMoves = new Set(levelMoves.map(lm => lm[1]));
+    if (formKey.length > 0) {
+      const prevos = this.getPrevolutionChainWithForms(speciesId, formKey);
+      prevos.forEach(p => {
+        this.getLevelMoves(p[0], p[1]).forEach(lm => {
+          if (!allMoves.has(lm[1])) {
+            levelMoves.push(lm);
+            allMoves.add(lm[1]);
+          }
+        });
+      });
+    } else {
+      const prevos = this.getPrevolutionChain(speciesId);
+      prevos.forEach(p => {
+        this.getLevelMoves(p).forEach(lm => {
+          if (!allMoves.has(lm[1])) {
+            levelMoves.push(lm);
+            allMoves.add(lm[1]);
+          }
+        });
+      });
+    }
+    levelMoves = Array.from(new Set(levelMoves));
+    return levelMoves;
+  }
+
   /**
    * Checks if a given species has any form specific level moves.
    * @param speciesId - The {@linkcode SpeciesId} of the species to check
@@ -370,6 +431,29 @@ export class SpeciesDataRegistry {
     let preEvoSpeciesId = this.getPrevolution(speciesId);
     while (preEvoSpeciesId) {
       preEvoSpecies.push(preEvoSpeciesId);
+      preEvoSpeciesId = this.getPrevolution(preEvoSpeciesId);
+    }
+    return preEvoSpecies;
+  }
+
+  /**
+   * Get all species in the prevolution chain for a given species.
+   * Does NOT include the given species itself.
+   * @param speciesId - The {@linkcode SpeciesId} of the species to get the prevolution chain for
+   * @returns An array of {@linkcode SpeciesId}s representing the prevolution chain
+   */
+  public getPrevolutionChainWithForms(speciesId: SpeciesId, formKey: string): [SpeciesId, string][] {
+    const preEvoSpecies: [SpeciesId, string][] = [];
+    let preEvoSpeciesId = this.getPrevolution(speciesId);
+    while (preEvoSpeciesId) {
+      const evo = this.getEvolutions(preEvoSpeciesId).find(
+        e => e.speciesId === speciesId && (e.evoFormKey === formKey || formKey.length === 0),
+      );
+      if (!evo) {
+        break;
+      }
+      formKey = evo.preFormKey ?? "";
+      preEvoSpecies.push([preEvoSpeciesId, formKey]);
       preEvoSpeciesId = this.getPrevolution(preEvoSpeciesId);
     }
     return preEvoSpecies;

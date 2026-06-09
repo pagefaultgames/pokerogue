@@ -78,7 +78,12 @@ function getAndWeightLevelMoves(pokemon: Pokemon): Map<MoveId, number> {
   let allLevelMoves: [number, MoveId][];
   // TODO: Investigate why there needs to be error handling here
   try {
-    allLevelMoves = pokemon.getLevelMoves(1, true, true, pokemon.hasTrainer());
+    allLevelMoves = pokemon.getLevelMoves({
+      startingLevel: 1,
+      simulateEvolutionChain: pokemon.hasTrainer(),
+      includeEvolutionMoves: true,
+      includeRelearnerMoves: pokemon.hasTrainer(),
+    });
   } catch (e) {
     console.warn("Error encountered trying to generate moveset for %s: %s", pokemon.species.name, e);
     return movePool;

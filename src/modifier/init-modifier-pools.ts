@@ -296,6 +296,8 @@ function initGreatModifierPool() {
         if (!party.find(p => p.getLearnableLevelMoves().length)) {
           return 0;
         }
+        // Clear learnableLevelMoves array since it's not guaranteed it will be used and thus cleared.
+        party.forEach(p => (p.learnableLevelMoves = []));
         const highestPartyLevel = party
           .map(p => p.level)
           .reduce((highestLevel: number, level: number) => Math.max(highestLevel, level), 1);

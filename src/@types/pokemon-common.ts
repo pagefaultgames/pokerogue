@@ -1,4 +1,7 @@
 import type { PokemonSpecies, PokemonSpeciesFilter } from "#data/pokemon-species";
+import type { LearnMoveSituation } from "#enums/learn-move-situation";
+import type { LearnableMoveSource } from "#enums/learnable-move-source";
+import type { MoveId } from "#enums/move-id";
 import type { SpeciesId } from "#enums/species-id";
 import type { BooleanHolder } from "#utils/common";
 
@@ -96,3 +99,15 @@ export interface RandomEncounterParams {
   /** An optional {@linkcode BooleanHolder} used to let the caller know if it pulled from an event. */
   isEventEncounter?: BooleanHolder;
 }
+
+export interface MovesetRetrieveContext {
+  startingLevel?: number;
+  endLevel?: number;
+  simulateEvolutionChain?: boolean;
+  includeEvolutionMoves?: boolean;
+  includeRelearnerMoves?: boolean;
+  includePrevoMoves?: boolean;
+  learnSituation?: LearnMoveSituation;
+}
+
+export type RelearnOption = [number, MoveId, LearnableMoveSource];

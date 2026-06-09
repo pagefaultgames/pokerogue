@@ -11,6 +11,7 @@ import { Command } from "#enums/command";
 import { FormChangeItem } from "#enums/form-change-item";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
+import { PartyUiMode } from "#enums/party-ui-mode";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { TextStyle } from "#enums/text-style";
@@ -28,6 +29,7 @@ import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, getLocalizedSpriteKey, randInt } from "#utils/common";
+import { getPartyOptionColors } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
@@ -38,83 +40,6 @@ const DISCARD_BUTTON_Y = -73;
 const DISCARD_BUTTON_Y_DOUBLES = -58;
 
 const defaultMessage = i18next.t("partyUiHandler:choosePokemon");
-
-/**
- * Indicates the reason why the party UI is being opened.
- */
-export enum PartyUiMode {
-  /**
-   * Indicates that the party UI is open because of a user-opted switch.  This
-   * type of switch can be cancelled.
-   */
-  SWITCH,
-  /**
-   * Indicates that the party UI is open because of a faint or other forced
-   * switch (eg, move effect). This type of switch cannot be cancelled.
-   */
-  FAINT_SWITCH,
-  /**
-   * Indicates that the party UI is open because of a start-of-encounter optional
-   * switch. This type of switch can be cancelled.
-   */
-  // TODO: Rename to PRE_BATTLE_SWITCH
-  POST_BATTLE_SWITCH,
-  /**
-   * Indicates that the party UI is open because of the move Revival Blessing.
-   * This selection cannot be cancelled.
-   */
-  REVIVAL_BLESSING,
-  /**
-   * Indicates that the party UI is open to select a mon to apply a modifier to.
-   * This type of selection can be cancelled.
-   */
-  MODIFIER,
-  /**
-   * Indicates that the party UI is open to select a mon to apply a move
-   * modifier to (such as an Ether or PP Up).  This type of selection can be cancelled.
-   */
-  MOVE_MODIFIER,
-  /**
-   * Indicates that the party UI is open to select a mon to teach a TM.  This
-   * type of selection can be cancelled.
-   */
-  TM_MODIFIER,
-  /**
-   * Indicates that the party UI is open to select a mon to remember a move.
-   * This type of selection can be cancelled.
-   */
-  REMEMBER_MOVE_MODIFIER,
-  /**
-   * Indicates that the party UI is open to transfer items between mons.  This
-   * type of selection can be cancelled.
-   */
-  MODIFIER_TRANSFER,
-  /**
-   * Indicates that the party UI is open because of a DNA Splicer.  This
-   * type of selection can be cancelled.
-   */
-  SPLICE,
-  /**
-   * Indicates that the party UI is open to release a party member.  This
-   * type of selection can be cancelled.
-   */
-  RELEASE,
-  /**
-   * Indicates that the party UI is open to check the team.  This
-   * type of selection can be cancelled.
-   */
-  CHECK,
-  /**
-   * Indicates that the party UI is open to select a party member for an arbitrary effect.
-   * This is generally used in for Mystery Encounter or special effects that require the player to select a Pokemon
-   */
-  SELECT,
-  /**
-   * Indicates that the party UI is open to select a party member from which items will be discarded.
-   * This type of selection can be cancelled.
-   */
-  DISCARD,
-}
 
 export enum PartyOption {
   CANCEL = -1,
@@ -775,7 +700,7 @@ export class PartyUiHandler extends MessageUiHandler {
     // show move description
     const option = this.options[this.optionsCursor];
     const pokemon = globalScene.getPlayerParty()[this.cursor];
-    const move = allMoves[pokemon.getLearnableLevelMoves()[option]];
+    const move = allMoves[pokemon.learnableLevelMoves[option][1]];
     if (move) {
       this.moveInfoOverlay.show(move);
     } else {
@@ -1394,7 +1319,7 @@ export class PartyUiHandler extends MessageUiHandler {
     }
     if (learnableMoves?.length > 0) {
       // show the move overlay with info for the first move
-      this.moveInfoOverlay.show(allMoves[learnableMoves[0]]);
+      this.moveInfoOverlay.show(allMoves[learnableMoves[0][1]]);
     }
   }
 
@@ -1616,7 +1541,7 @@ export class PartyUiHandler extends MessageUiHandler {
     // TODO: Refactor this iteration to not be fucking bizarre
     for (let o = 0; o < this.options.length; o++) {
       const option = this.options.at(-(o + 1))!;
-      let altText = false;
+      let altText = 0;
       let optionName: string;
       if (option === PartyOption.SCROLL_UP) {
         optionName = "↑";
@@ -1659,13 +1584,10 @@ export class PartyUiHandler extends MessageUiHandler {
           }
         }
       } else if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER) {
-        const learnableLevelMoves = pokemon.getLearnableLevelMoves();
-        const move = learnableLevelMoves[option];
+        const learnableLevelMoves = pokemon.learnableLevelMoves;
+        const move = learnableLevelMoves[option][1];
         optionName = allMoves[move].name;
-        altText = !pokemon
-          .getSpeciesForm()
-          .getLevelMoves()
-          .find(plm => plm[1] === move);
+        altText = learnableLevelMoves[option][2];
       } else if (option === PartyOption.ALL) {
         optionName = i18next.t("partyUiHandler:all");
         // add the number of items to the `all` option
@@ -1678,9 +1600,14 @@ export class PartyUiHandler extends MessageUiHandler {
 
       const yCoord = -6 - 16 * o;
       const optionText = addBBCodeTextObject(0, yCoord - 16, optionName, TextStyle.WINDOW, { maxLines: 1 });
-      if (altText) {
-        optionText.setColor("#40c8f8");
-        optionText.setShadowColor("#006090");
+      if (altText > 0) {
+        const optionColors = getPartyOptionColors(this.partyUiMode, altText);
+        if (optionColors[0].length === 7) {
+          optionText.setColor(optionColors[0]);
+        }
+        if (optionColors[1].length === 7) {
+          optionText.setShadowColor(optionColors[1]);
+        }
       }
       optionText.setOrigin(0);
 

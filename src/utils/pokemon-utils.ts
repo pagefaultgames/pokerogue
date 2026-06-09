@@ -4,6 +4,8 @@ import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { POKERUS_STARTER_COUNT } from "#balance/starters";
 import type { PokemonSpecies, PokemonSpeciesForm } from "#data/pokemon-species";
 import { BattlerIndex } from "#enums/battler-index";
+import { LearnableMoveSource } from "#enums/learnable-move-source";
+import { PartyUiMode } from "#enums/party-ui-mode";
 import { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { randSeedItem } from "#utils/common";
@@ -213,4 +215,38 @@ export function decodeNickname(nickname: string, pokemonName: string): string {
     console.error(`Failed to decode nickname for ${pokemonName}!\n`, err);
     return pokemonName;
   }
+}
+
+export function getPartyOptionColors(mode: PartyUiMode, val = 0): [string, string] {
+  if (mode === PartyUiMode.REMEMBER_MOVE_MODIFIER) {
+    switch (val) {
+      case LearnableMoveSource.FUSION_LEVEL:
+        return ["#40c8f8", "#006090"];
+      case LearnableMoveSource.RELEARN:
+        return ["#f56f81", "#7e6043"];
+      case LearnableMoveSource.FUSION_RELEARN:
+        return ["#40c8f8", "#006090"];
+      case LearnableMoveSource.EVOLUTION:
+        return ["#689b85", "#00904d"];
+      case LearnableMoveSource.FUSION_EVOLUTION:
+        return ["#40c8f8", "#006090"];
+      case LearnableMoveSource.PREVO:
+        return ["#c0a4bb", "#6e527c"];
+      case LearnableMoveSource.FUSION_PREVO:
+        return ["#40c8f8", "#006090"];
+      case LearnableMoveSource.TM:
+        return ["#40c8f8", "#006090"];
+      case LearnableMoveSource.FUSION_TM:
+        return ["#40c8f8", "#006090"];
+      case LearnableMoveSource.EGG:
+        return ["#eff840", "#905600"];
+      case LearnableMoveSource.FUSION_EGG:
+        return ["#40c8f8", "#006090"];
+    }
+    return ["#40c8f8", "#006090"];
+  }
+  if (val > 0) {
+    return ["#40c8f8", "#006090"];
+  }
+  return ["", ""];
 }

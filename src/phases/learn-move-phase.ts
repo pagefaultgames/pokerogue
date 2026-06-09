@@ -228,6 +228,8 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
       await globalScene.ui.showTextPromise(textMessage);
     }
     audioManager.playSound("se/level_up_fanfare"); // Sound loaded into game as is
+    // Clear learnableLevelMoves so they're not sitting around in memory
+    globalScene.getPlayerParty().forEach(p => (p.learnableLevelMoves = []));
     globalScene.ui.showText(
       learnMoveText,
       null,
