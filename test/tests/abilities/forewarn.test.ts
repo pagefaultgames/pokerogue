@@ -1,8 +1,8 @@
 import { getPokemonNameWithAffix } from "#app/messages";
+import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
-import { PokemonMove } from "#moves/pokemon-move";
 import { GameManager } from "#test/framework/game-manager";
 import i18next from "i18next";
 import Phaser from "phaser";
