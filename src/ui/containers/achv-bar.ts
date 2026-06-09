@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import type { PlayerGender } from "#enums/player-gender";
 import { TextStyle } from "#enums/text-style";
@@ -96,7 +97,7 @@ export class AchvBar extends Phaser.GameObjects.Container {
     );
     this.icon.y = this.bg.height / 2 - this.icon.height / 2;
 
-    globalScene.playSound("se/achv");
+    audioManager.playSound("se/achv");
 
     globalScene.tweens.add({
       targets: this,

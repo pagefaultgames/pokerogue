@@ -1,4 +1,5 @@
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
+import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { IS_TEST, isBeta, isDev } from "#constants/app-constants";
@@ -92,7 +93,7 @@ export class AttemptCapturePhase extends PokemonPhase {
     this.pokeball.setOrigin(0.5, 0.625);
     globalScene.field.add(this.pokeball);
 
-    globalScene.playSound(isCritical ? "se/crit_throw" : "se/pb_throw");
+    audioManager.playSound(isCritical ? "se/crit_throw" : "se/pb_throw");
     globalScene.time.delayedCall(300, () => {
       globalScene.field.moveBelow(this.pokeball as Phaser.GameObjects.GameObject, pokemon);
     });
@@ -107,7 +108,7 @@ export class AttemptCapturePhase extends PokemonPhase {
         // Ball opens
         this.pokeball.setTexture("pb", `${pokeballAtlasKey}_opening`);
         globalScene.time.delayedCall(17, () => this.pokeball.setTexture("pb", `${pokeballAtlasKey}_open`));
-        globalScene.playSound("se/pb_rel");
+        audioManager.playSound("se/pb_rel");
         pokemon.tint(getPokeballTintColor(this.pokeballType));
 
         globalScene.animations.addPokeballOpenParticles(this.pokeball.x, this.pokeball.y, this.pokeballType);
@@ -123,7 +124,7 @@ export class AttemptCapturePhase extends PokemonPhase {
             // Ball closes
             this.pokeball.setTexture("pb", `${pokeballAtlasKey}_opening`);
             pokemon.setVisible(false);
-            globalScene.playSound("se/pb_catch");
+            audioManager.playSound("se/pb_catch");
             globalScene.time.delayedCall(17, () => this.pokeball.setTexture("pb", `${pokeballAtlasKey}`));
 
             const doShake = () => {
@@ -155,7 +156,7 @@ export class AttemptCapturePhase extends PokemonPhase {
                       || modifiedCatchRate >= 255
                       || pokemon.randBattleSeedInt(65536) < shakeProbability
                     ) {
-                      globalScene.playSound("se/pb_move");
+                      audioManager.playSound("se/pb_move");
                     } else {
                       shakeCounter.stop();
                       this.failCatch(shakeCount);
@@ -165,7 +166,7 @@ export class AttemptCapturePhase extends PokemonPhase {
                     shakeCounter.stop();
                     this.failCatch(shakeCount);
                   } else {
-                    globalScene.playSound("se/pb_lock");
+                    audioManager.playSound("se/pb_lock");
                     globalScene.animations.addPokeballCaptureStars(this.pokeball);
 
                     const pbTint = globalScene.add.sprite(this.pokeball.x, this.pokeball.y, "pb", "pb");
@@ -209,7 +210,7 @@ export class AttemptCapturePhase extends PokemonPhase {
   failCatch(_shakeCount: number) {
     const pokemon = this.getPokemon();
 
-    globalScene.playSound("se/pb_rel");
+    audioManager.playSound("se/pb_rel");
     pokemon.setY(this.originalY);
     if (pokemon.status?.effect !== StatusEffect.SLEEP) {
       pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });

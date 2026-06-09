@@ -2025,11 +2025,8 @@ export class EnduringTag extends BattlerTag {
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.CUSTOM) {
-      globalScene.phaseManager.queueMessage(
-        i18next.t("battlerTags:enduringLapse", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        }),
-      );
+      const pokemonNameWithAffix = getPokemonNameWithAffix(pokemon);
+      globalScene.phaseManager.queueMessage(i18next.t("battlerTags:enduringLapse", { pokemonNameWithAffix }));
       return true;
     }
 
@@ -2045,12 +2042,9 @@ export class SturdyTag extends BattlerTag {
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.CUSTOM) {
-      globalScene.phaseManager.queueMessage(
-        i18next.t("battlerTags:sturdyLapse", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        }),
-      );
-      return true;
+      const pokemonNameWithAffix = getPokemonNameWithAffix(pokemon);
+      globalScene.phaseManager.queueMessage(i18next.t("battlerTags:sturdyLapse", { pokemonNameWithAffix }));
+      return false;
     }
 
     return super.lapse(pokemon, lapseType);
@@ -2544,7 +2538,7 @@ export class SaltCuredTag extends SerializableBattlerTag {
 
       if (!cancelled.value) {
         const pokemonSteelOrWater = pokemon.isOfType(PokemonType.STEEL) || pokemon.isOfType(PokemonType.WATER);
-        pokemon.damageAndUpdate(toDmgValue(pokemonSteelOrWater ? pokemon.getMaxHp() / 4 : pokemon.getMaxHp() / 8), {
+        pokemon.damageAndUpdate(toDmgValue(pokemonSteelOrWater ? pokemon.getMaxHp() / 8 : pokemon.getMaxHp() / 16), {
           result: HitResult.INDIRECT,
         });
 

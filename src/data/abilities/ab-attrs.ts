@@ -1,5 +1,6 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { EntryHazardTag, SuppressAbilitiesTag } from "#data/arena-tag";
 import { type BattlerTag, CritBoostTag } from "#data/battler-tags";
@@ -7,7 +8,6 @@ import { getBerryEffectFunc } from "#data/berry";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { SpeciesFormChangeAbilityTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
 import { getPokeballName } from "#data/pokeball";
-import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { getStatusEffectDescriptor, getStatusEffectHealText } from "#data/status-effect";
 import { TerrainType } from "#data/terrain";
@@ -2845,9 +2845,9 @@ export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
    * Determine if the pokemon has a forme change that is triggered by the weather
    */
   override canApply({ pokemon }: AbAttrBaseParams): boolean {
-    return !!pokemonFormChanges[pokemon.species.speciesId]?.some(
-      fc => fc.findTrigger(SpeciesFormChangeWeatherTrigger) && fc.canChange(pokemon),
-    );
+    return speciesDataRegistry
+      .getFormChanges(pokemon.species.speciesId)
+      .some(fc => fc.findTrigger(SpeciesFormChangeWeatherTrigger) && fc.canChange(pokemon));
   }
 
   /**

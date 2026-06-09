@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { allMoves } from "#data/data-lists";
 import type { BattlerIndex } from "#enums/battler-index";
@@ -292,7 +293,7 @@ class AnimTimedSoundEvent extends AnimTimedEvent {
     const soundConfig = { rate: this.pitch * 0.01, volume: this.volume * 0.01 };
     if (this.resourceName) {
       try {
-        globalScene.playSound(`battle_anims/${this.resourceName}`, soundConfig);
+        audioManager.playSound(`battle_anims/${this.resourceName}`, soundConfig);
       } catch (err) {
         console.error(err);
       }

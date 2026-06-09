@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { activeOverrides } from "#app/overrides";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
@@ -202,7 +203,7 @@ export class SelectModifierPhase extends BattlePhase {
       globalScene.updateMoneyText();
       globalScene.animateMoneyChanged(false);
     }
-    globalScene.playSound("se/buy");
+    audioManager.playSound("se/buy");
     return true;
   }
 
@@ -281,7 +282,7 @@ export class SelectModifierPhase extends BattlePhase {
           globalScene.updateMoneyText();
           globalScene.animateMoneyChanged(false);
         }
-        globalScene.playSound("se/buy");
+        audioManager.playSound("se/buy");
         (globalScene.ui.getHandler() as ModifierSelectUiHandler).updateCostText();
       } else {
         globalScene.ui.playError();

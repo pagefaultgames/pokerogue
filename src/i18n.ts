@@ -83,9 +83,10 @@ const fonts: LoadingFontFaceProperty[] = [
   },
   // thai
   {
-    face: new FontFace("emerald", `url(${getCachedUrl("./fonts/fsrebellion.otf")})`, {
+    face: new FontFace("emerald", `url(${getCachedUrl("./fonts/rogue-thai.ttf")})`, {
       unicodeRange: unicodeRanges.thai,
     }),
+    extraOptions: { sizeAdjust: "40%" },
   },
   {
     face: new FontFace("pkmnems", "url(./fonts/terrible-thaifix.ttf)", { unicodeRange: unicodeRanges.thai }),
@@ -189,6 +190,8 @@ await i18next
         "nb-NO", // Norwegian Bokmål
         "sv", // Swedish
         "uk", // Ukrainian
+        "vi", // Vietnamese
+        "pl", // Polish
       ],
       backend: {
         loadPath(lng: string, [ns]: string[]) {

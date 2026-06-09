@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { pokemonEvolutions } from "#balance/pokemon-evolutions";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import type { Challenge } from "#data/challenge";
 import {
   FlipStatChallenge,
@@ -865,7 +865,7 @@ export const achvs = {
     "unevolvedClassicVictory.description",
     "eviolite",
     50,
-    () => globalScene.getPlayerParty().some(p => p.getSpeciesForm(true).speciesId in pokemonEvolutions),
+    () => globalScene.getPlayerParty().some(p => speciesDataRegistry.hasEvolutions(p.getSpeciesForm(true).speciesId)),
   ),
   FLIP_INVERSE: new ChallengeAchv(
     "flipInverse",

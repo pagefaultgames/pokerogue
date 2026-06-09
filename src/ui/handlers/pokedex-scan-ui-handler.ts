@@ -1,4 +1,5 @@
-import { allAbilities, allMoves, allSpecies } from "#data/data-lists";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
+import { allAbilities, allMoves } from "#data/data-lists";
 import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
 import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
@@ -20,7 +21,7 @@ export class PokedexScanUiHandler extends FormModalUiHandler {
   setup() {
     super.setup();
 
-    this.nameKeys = allSpecies.map(a => a.name).filter((value, index, self) => self.indexOf(value) === index);
+    this.nameKeys = [...new Set(speciesDataRegistry.getAllSpecies().map(s => s.name))];
     this.moveKeys = allMoves.map(a => a.name);
     this.abilityKeys = allAbilities.map(a => a.name);
   }

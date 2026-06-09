@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { starterColors } from "#app/global-vars/starter-colors";
 import type { SpeciesId } from "#enums/species-id";
@@ -102,7 +103,7 @@ export class CandyBar extends Phaser.GameObjects.Container {
       this.tween.stop();
     }
 
-    globalScene.playSound("se/shing");
+    audioManager.playSound("se/shing");
 
     this.tween = globalScene.tweens.add({
       targets: this,
