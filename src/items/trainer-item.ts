@@ -9,6 +9,7 @@ import type { TrainerItemEffectParamMap } from "#types/trainer-item-parameter";
 import { addTextObject } from "#ui/text";
 import { hslToHex } from "#utils/color-utils";
 import i18next from "i18next";
+import type { NonEmptyTuple } from "type-fest";
 
 export abstract class TrainerItemBase {
   public readonly type: TrainerItemId;
@@ -213,8 +214,8 @@ export abstract class TrainerItem<out Attrs extends TrainerItemAttr = TrainerIte
    * The order of the attributes within the returned array is not guaranteed and should not be relied upon.
    * @sealed
    */
-  public getAttrs<E extends Attrs["effect"]>(effect: E): readonly Extract<Attrs, TrainerItemAttr<E>>[] {
-    return this.effects[effect];
+  public getAttrs<E extends Attrs["effect"]>(effect: E): NonEmptyTuple<Extract<Attrs, TrainerItemAttr<E>>> {
+    return this.effects[effect] as NonEmptyTuple<Extract<Attrs, TrainerItemAttr<E>>>;
   }
 }
 

@@ -10,6 +10,7 @@ import { MoveId } from "#enums/move-id";
 import type { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
+import { PokeballType } from "#enums/pokeball";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { TrainerType } from "#enums/trainer-type";
@@ -153,9 +154,17 @@ export class OverridesHelper extends GameManagerHelper {
    * @param items - The items to hold
    * @returns `this`
    */
-  public startingPokeballs(pokeballs: PokeballCounts): this {
-    vi.spyOn(Overrides, "POKEBALL_OVERRIDE", "get").mockReturnValue({ active: true, pokeballs });
-    this.log("Player starting pokeball counts set to:", { active: true, pokeballs });
+  public startingPokeballs(pokeballs: Partial<PokeballCounts>): this {
+    const newPokeballs = {
+      [PokeballType.POKEBALL]: 5,
+      [PokeballType.GREAT_BALL]: 0,
+      [PokeballType.ULTRA_BALL]: 0,
+      [PokeballType.ROGUE_BALL]: 0,
+      [PokeballType.MASTER_BALL]: 0,
+      ...pokeballs,
+    };
+    vi.spyOn(Overrides, "POKEBALL_OVERRIDE", "get").mockReturnValue({ active: true, pokeballs: newPokeballs });
+    this.log("Player starting pokeball counts set to: ", pokeballs);
     return this;
   }
 

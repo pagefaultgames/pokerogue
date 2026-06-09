@@ -6,6 +6,7 @@ import type { ConsumableHeldItemAttr, HeldItemAttr, HeldItemRecord } from "#item
 import type { HeldItemBuilder } from "#items/held-item-builder";
 import type { HeldItemEffectParamMap } from "#types/held-item-parameter";
 import i18next from "i18next";
+import type { NonEmptyTuple } from "type-fest";
 
 /**
  * Base class for all held items, both functional and cosmetic.
@@ -221,8 +222,8 @@ export class HeldItem<Attrs extends HeldItemAttr = HeldItemAttr> extends HeldIte
    * The order of the attributes within the returned array is not guaranteed and should not be relied upon.
    * @sealed
    */
-  public getAttrs<E extends Attrs["effect"]>(effect: E): readonly Extract<Attrs, HeldItemAttr<E>>[] {
-    return this.effects[effect];
+  public getAttrs<E extends Attrs["effect"]>(effect: E): NonEmptyTuple<Extract<Attrs, HeldItemAttr<E>>> {
+    return this.effects[effect] as NonEmptyTuple<Extract<Attrs, HeldItemAttr<E>>>;
   }
 }
 
