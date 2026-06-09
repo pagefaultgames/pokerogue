@@ -98,18 +98,53 @@ describe("Enemy Commands - Move Selection", () => {
     });
   });
 
-  it("should not select a move that will fail due to weather", async () => {
+  it.each<{
+    enemyLvl?: number;
+    terrain?: TerrainType;
+    aiType: AiType;
+    weather?: WeatherType;
+    condition: string;
+  }>([
+    {
+      terrain: TerrainType.PSYCHIC,
+      aiType: AiType.SMART,
+      condition: "terrain if AI is smart",
+    },
+    {
+      weather: WeatherType.HEAVY_RAIN,
+      aiType: AiType.SMART,
+      condition: "weather if AI is smart",
+    },
+    {
+      enemyLvl: 100,
+      terrain: TerrainType.PSYCHIC,
+      aiType: AiType.SMART_RANDOM,
+      condition: "terrain",
+    },
+    {
+      enemyLvl: 100,
+      weather: WeatherType.HEAVY_RAIN,
+      aiType: AiType.SMART_RANDOM,
+      condition: "weather",
+    },
+  ])("should not select a move that will fail due to $condition", async ({
+    enemyLvl = 1,
+    terrain = TerrainType.NONE,
+    weather = WeatherType.NONE,
+    aiType = AiType.SMART,
+  }) => {
     game.override
       .enemySpecies(SpeciesId.ARCANINE)
       .enemyMoveset([MoveId.EXTREME_SPEED, MoveId.FIRE_FANG, MoveId.FLAMETHROWER])
       .startingLevel(1)
-      .enemyLevel(100)
-      .weather(WeatherType.HEAVY_RAIN);
+      .enemyLevel(enemyLvl)
+      .startingTerrain(terrain)
+      .weather(weather);
 
     await game.classicMode.startBattle(SpeciesId.RATTATA);
 
     const enemyPokemon = game.field.getEnemyPokemon();
-    enemyPokemon.aiType = AiType.SMART_RANDOM;
+    enemyPokemon.aiType = aiType;
 
     const moveChoices: MoveChoiceSet = {};
     const enemyMoveset = enemyPokemon.getMoveset();
@@ -117,57 +152,12 @@ describe("Enemy Commands - Move Selection", () => {
     getEnemyMoveChoices(enemyPokemon, moveChoices);
 
     enemyMoveset.forEach(mv => {
-      if (mv?.moveId === MoveId.FIRE_FANG || mv?.moveId === MoveId.FLAMETHROWER) {
+      if (mv?.moveId === MoveId.EXTREME_SPEED && terrain === TerrainType.PSYCHIC) {
         expect(moveChoices[mv.moveId]).toBe(0);
-      }
-    });
-  });
-
-  it("should not select a move that will fail due to terrain", async () => {
-    game.override
-      .enemySpecies(SpeciesId.ARCANINE)
-      .enemyMoveset([MoveId.EXTREME_SPEED, MoveId.FIRE_FANG, MoveId.FLAMETHROWER])
-      .startingLevel(1)
-      .enemyLevel(100)
-      .startingTerrain(TerrainType.PSYCHIC);
-
-    await game.classicMode.startBattle(SpeciesId.RATTATA);
-
-    const enemyPokemon = game.field.getEnemyPokemon();
-    enemyPokemon.aiType = AiType.SMART_RANDOM;
-
-    const moveChoices: MoveChoiceSet = {};
-    const enemyMoveset = enemyPokemon.getMoveset();
-    enemyMoveset.forEach(mv => (moveChoices[mv!.moveId] = 0));
-    getEnemyMoveChoices(enemyPokemon, moveChoices);
-
-    enemyMoveset.forEach(mv => {
-      if (mv?.moveId === MoveId.EXTREME_SPEED) {
-        expect(moveChoices[mv.moveId]).toBe(0);
-      }
-    });
-  });
-
-  it("should not select a move that will fail due to terrain if AI type is smart", async () => {
-    game.override
-      .enemySpecies(SpeciesId.ARCANINE)
-      .enemyMoveset([MoveId.EXTREME_SPEED, MoveId.FIRE_FANG, MoveId.FLAMETHROWER])
-      .startingLevel(1)
-      .enemyLevel(1)
-      .startingTerrain(TerrainType.PSYCHIC);
-
-    await game.classicMode.startBattle(SpeciesId.RATTATA);
-
-    const enemyPokemon = game.field.getEnemyPokemon();
-    enemyPokemon.aiType = AiType.SMART;
-
-    const moveChoices: MoveChoiceSet = {};
-    const enemyMoveset = enemyPokemon.getMoveset();
-    enemyMoveset.forEach(mv => (moveChoices[mv!.moveId] = 0));
-    getEnemyMoveChoices(enemyPokemon, moveChoices);
-
-    enemyMoveset.forEach(mv => {
-      if (mv?.moveId === MoveId.EXTREME_SPEED) {
+      } else if (
+        (mv?.moveId === MoveId.FIRE_FANG || mv?.moveId === MoveId.FLAMETHROWER)
+        && weather === WeatherType.HEAVY_RAIN
+      ) {
         expect(moveChoices[mv.moveId]).toBe(0);
       }
     });
