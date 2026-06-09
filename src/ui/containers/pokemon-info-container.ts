@@ -31,8 +31,8 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   },
   de: {
     infoContainerTextSize: "60px",
-    infoContainerLabelXPos: -15,
-    infoContainerTextXPos: -13,
+    infoContainerLabelXPos: -16,
+    infoContainerTextXPos: -14,
   },
   pt: {
     infoContainerTextSize: "60px",
