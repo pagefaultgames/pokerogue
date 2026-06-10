@@ -90,7 +90,7 @@ export const EvoCondKey = {
   HELD_ITEM: 15, // Currently checks only for species stat booster items
 } as const;
 
-type EvolutionConditionData =
+export type EvolutionConditionData =
   {key: typeof EvoCondKey.FRIENDSHIP | typeof EvoCondKey.RANDOM_FORM | typeof EvoCondKey.EVO_TREASURE_TRACKER, value: number} |
   {key: typeof EvoCondKey.MOVE, move: MoveId} |
   {key: typeof EvoCondKey.TIME, time: TimeOfDay[]} |
