@@ -79,6 +79,7 @@ sessionMigrators.push(...v1_0_4.sessionMigrators);
 sessionMigrators.push(...v1_7_0.sessionMigrators);
 sessionMigrators.push(...v1_9_0.sessionMigrators);
 sessionMigrators.push(...v1_10_0.sessionMigrators);
+sessionMigrators.push(...v1_12_0.sessionMigrators);
 
 /** All settings migrators */
 const settingsMigrators: SettingsSaveMigrator[] = [];
