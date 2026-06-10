@@ -1932,6 +1932,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       learnSituation: LearnMoveSituation.RELEARN,
     },
   ): RelearnOption[] {
+    // TODO: remove
     /*let levelMoves = this.getLevelMoves({
       startingLevel: 1,
       includeEvolutionMoves: true,
@@ -1949,34 +1950,33 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return levelMoves;*/
     let ret: RelearnOption[] = [];
     const levelMoves: LevelMoves = speciesDataRegistry.getLevelMoves(this.species.speciesId, this.formIndex);
-    const levelOptions: RelearnOption[] = levelMoves
-      .filter(
-        lm =>
-          lm[0] <= this.level
-          && (includeRelearnerMoves || lm[0] !== RELEARN_MOVE)
-          && (includeEvolutionMoves || lm[0] !== EVOLVE_MOVE),
-      )
-      .map(lm => [
-        lm[0],
-        lm[1],
-        lm[0] === RELEARN_MOVE
-          ? LearnableMoveSource.RELEARN
-          : lm[0] === EVOLVE_MOVE
-            ? LearnableMoveSource.EVOLUTION
-            : LearnableMoveSource.LEVEL,
-      ]);
-    ret.push(...levelOptions);
+    for (const lm of levelMoves) {
+      if (
+        lm[0] <= this.level
+        && (includeRelearnerMoves || lm[0] !== RELEARN_MOVE)
+        && (includeEvolutionMoves || lm[0] !== EVOLVE_MOVE)
+      ) {
+        const moveSource =
+          lm[0] === RELEARN_MOVE
+            ? LearnableMoveSource.RELEARN
+            : lm[0] === EVOLVE_MOVE
+              ? LearnableMoveSource.EVOLUTION
+              : LearnableMoveSource.LEVEL;
+
+        ret.push([lm[0], lm[1], moveSource]);
+      }
+    }
     if (includePrevoMoves) {
       const prevoMoves = speciesDataRegistry.getPrevoMoves(this.species.speciesId, this.formIndex);
-      const prevoOptions: RelearnOption[] = prevoMoves
-        .filter(
-          lm =>
-            lm[0] <= this.level
-            && (includeRelearnerMoves || lm[0] !== RELEARN_MOVE)
-            && (includeEvolutionMoves || lm[0] !== EVOLVE_MOVE),
-        )
-        .map(lm => [lm[0], lm[1], LearnableMoveSource.PREVO]);
-      ret.push(...prevoOptions);
+      for (const lm of prevoMoves) {
+        if (
+          lm[0] <= this.level
+          && (includeRelearnerMoves || lm[0] !== RELEARN_MOVE)
+          && (includeEvolutionMoves || lm[0] !== EVOLVE_MOVE)
+        ) {
+          ret.push([lm[0], lm[1], LearnableMoveSource.PREVO]);
+        }
+      }
     }
     if (this.isFusion()) {
       // For fusion evolutions, get ONLY the moves of the component mon that evolved
@@ -1984,34 +1984,33 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         this.fusionSpecies!.speciesId,
         this.fusionFormIndex,
       );
-      const fusionOptions: RelearnOption[] = fusionMoves
-        .filter(
-          lm =>
-            lm[0] <= this.level
-            && (includeRelearnerMoves || lm[0] !== RELEARN_MOVE)
-            && (includeEvolutionMoves || lm[0] !== EVOLVE_MOVE),
-        )
-        .map(lm => [
-          lm[0],
-          lm[1],
-          lm[0] === RELEARN_MOVE
-            ? LearnableMoveSource.FUSION_RELEARN
-            : lm[0] === EVOLVE_MOVE
-              ? LearnableMoveSource.FUSION_EVOLUTION
-              : LearnableMoveSource.FUSION_LEVEL,
-        ]);
-      ret.push(...fusionOptions);
+      for (const lm of fusionMoves) {
+        if (
+          lm[0] <= this.level
+          && (includeRelearnerMoves || lm[0] !== RELEARN_MOVE)
+          && (includeEvolutionMoves || lm[0] !== EVOLVE_MOVE)
+        ) {
+          const moveSource =
+            lm[0] === RELEARN_MOVE
+              ? LearnableMoveSource.FUSION_RELEARN
+              : lm[0] === EVOLVE_MOVE
+                ? LearnableMoveSource.FUSION_EVOLUTION
+                : LearnableMoveSource.FUSION_LEVEL;
+
+          ret.push([lm[0], lm[1], moveSource]);
+        }
+      }
       if (includePrevoMoves) {
         const prevoMoves = speciesDataRegistry.getPrevoMoves(this.fusionSpecies!.speciesId, this.fusionFormIndex);
-        const prevoOptions: RelearnOption[] = prevoMoves
-          .filter(
-            lm =>
-              lm[0] <= this.level
-              && (includeRelearnerMoves || lm[0] !== RELEARN_MOVE)
-              && (includeEvolutionMoves || lm[0] !== EVOLVE_MOVE),
-          )
-          .map(lm => [lm[0], lm[1], LearnableMoveSource.FUSION_PREVO]);
-        ret.push(...prevoOptions);
+        for (const lm of prevoMoves) {
+          if (
+            lm[0] <= this.level
+            && (includeRelearnerMoves || lm[0] !== RELEARN_MOVE)
+            && (includeEvolutionMoves || lm[0] !== EVOLVE_MOVE)
+          ) {
+            ret.push([lm[0], lm[1], LearnableMoveSource.FUSION_PREVO]);
+          }
+        }
       }
     }
     ret.sort((lma: RelearnOption, lmb: RelearnOption) => (lma[0] > lmb[0] ? 1 : lma[0] < lmb[0] ? -1 : 0));
@@ -3056,6 +3055,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
+  // TODO: add docs
   private static getUniqueRelearnOptions(levelMoves: RelearnOption[], ret: RelearnOption[]): void {
     const uniqueMoves = new Set<MoveId>();
     for (const lm of levelMoves) {
