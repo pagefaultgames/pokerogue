@@ -1,0 +1,1262 @@
+[
+  {
+    "move": "MEGA_PUNCH",
+    "tier": "GREAT"
+  },
+  {
+    "move": "PAY_DAY",
+    "tier": "COMMON"
+  },
+  {
+    "move": "FIRE_PUNCH",
+    "tier": "GREAT"
+  },
+  {
+    "move": "ICE_PUNCH",
+    "tier": "GREAT"
+  },
+  {
+    "move": "THUNDER_PUNCH",
+    "tier": "GREAT"
+  },
+  {
+    "move": "SWORDS_DANCE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "FLY",
+    "tier": "GREAT"
+  },
+  {
+    "move": "MEGA_KICK",
+    "tier": "GREAT"
+  },
+  {
+    "move": "BODY_SLAM",
+    "tier": "GREAT"
+  },
+  {
+    "move": "TAKE_DOWN",
+    "tier": "GREAT"
+  },
+  {
+    "move": "DOUBLE_EDGE",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "PIN_MISSILE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "ROAR",
+    "tier": "COMMON"
+  },
+  {
+    "move": "FLAMETHROWER",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "HYDRO_PUMP",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "SURF",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "ICE_BEAM",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "BLIZZARD",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "PSYBEAM",
+    "tier": "COMMON"
+  },
+  {
+    "move": "HYPER_BEAM",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "LOW_KICK",
+    "tier": "GREAT"
+  },
+  {
+    "move": "COUNTER",
+    "tier": "COMMON"
+  },
+  {
+    "move": "STRENGTH",
+    "tier": "GREAT"
+  },
+  {
+    "move": "SOLAR_BEAM",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "FIRE_SPIN",
+    "tier": "COMMON"
+  },
+  {
+    "move": "THUNDERBOLT",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "THUNDER_WAVE",
+    "tier": "COMMON"
+  },
+  {
+    "move": "THUNDER",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "EARTHQUAKE",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "DIG",
+    "tier": "GREAT"
+  },
+  {
+    "move": "TOXIC",
+    "tier": "GREAT"
+  },
+  {
+    "move": "PSYCHIC",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "AGILITY",
+    "tier": "GREAT"
+  },
+  {
+    "move": "NIGHT_SHADE",
+    "tier": "COMMON"
+  },
+  {
+    "move": "SCREECH",
+    "tier": "GREAT"
+  },
+  {
+    "move": "DOUBLE_TEAM",
+    "tier": "COMMON"
+  },
+  {
+    "move": "CONFUSE_RAY",
+    "tier": "COMMON"
+  },
+  {
+    "move": "LIGHT_SCREEN",
+    "tier": "COMMON"
+  },
+  {
+    "move": "HAZE",
+    "tier": "COMMON"
+  },
+  {
+    "move": "REFLECT",
+    "tier": "COMMON"
+  },
+  {
+    "move": "FOCUS_ENERGY",
+    "tier": "COMMON"
+  },
+  {
+    "move": "METRONOME",
+    "tier": "COMMON"
+  },
+  {
+    "move": "SELF_DESTRUCT",
+    "tier": "GREAT"
+  },
+  {
+    "move": "FIRE_BLAST",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "WATERFALL",
+    "tier": "GREAT"
+  },
+  {
+    "move": "SWIFT",
+    "tier": "COMMON"
+  },
+  {
+    "move": "AMNESIA",
+    "tier": "GREAT"
+  },
+  {
+    "move": "DREAM_EATER",
+    "tier": "GREAT"
+  },
+  {
+    "move": "LEECH_LIFE",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "FLASH",
+    "tier": "COMMON"
+  },
+  {
+    "move": "EXPLOSION",
+    "tier": "GREAT"
+  },
+  {
+    "move": "REST",
+    "tier": "COMMON"
+  },
+  {
+    "move": "ROCK_SLIDE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "TRI_ATTACK",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "SUPER_FANG",
+    "tier": "COMMON"
+  },
+  {
+    "move": "SUBSTITUTE",
+    "tier": "COMMON"
+  },
+  {
+    "move": "THIEF",
+    "tier": "GREAT"
+  },
+  {
+    "move": "SNORE",
+    "tier": "COMMON"
+  },
+  {
+    "move": "CURSE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "REVERSAL",
+    "tier": "COMMON"
+  },
+  {
+    "move": "SPITE",
+    "tier": "COMMON"
+  },
+  {
+    "move": "PROTECT",
+    "tier": "COMMON"
+  },
+  {
+    "move": "SCARY_FACE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "SLUDGE_BOMB",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "MUD_SLAP",
+    "tier": "COMMON"
+  },
+  {
+    "move": "SPIKES",
+    "tier": "COMMON"
+  },
+  {
+    "move": "ICY_WIND",
+    "tier": "GREAT"
+  },
+  {
+    "move": "OUTRAGE",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "SANDSTORM",
+    "tier": "COMMON"
+  },
+  {
+    "move": "GIGA_DRAIN",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "ENDURE",
+    "tier": "COMMON"
+  },
+  {
+    "move": "CHARM",
+    "tier": "COMMON"
+  },
+  {
+    "move": "FALSE_SWIPE",
+    "tier": "COMMON"
+  },
+  {
+    "move": "SWAGGER",
+    "tier": "COMMON"
+  },
+  {
+    "move": "STEEL_WING",
+    "tier": "GREAT"
+  },
+  {
+    "move": "ATTRACT",
+    "tier": "COMMON"
+  },
+  {
+    "move": "SLEEP_TALK",
+    "tier": "COMMON"
+  },
+  {
+    "move": "HEAL_BELL",
+    "tier": "COMMON"
+  },
+  {
+    "move": "RETURN",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "SAFEGUARD",
+    "tier": "COMMON"
+  },
+  {
+    "move": "PAIN_SPLIT",
+    "tier": "COMMON"
+  },
+  {
+    "move": "MEGAHORN",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "BATON_PASS",
+    "tier": "COMMON"
+  },
+  {
+    "move": "ENCORE",
+    "tier": "COMMON"
+  },
+  {
+    "move": "IRON_TAIL",
+    "tier": "GREAT"
+  },
+  {
+    "move": "METAL_CLAW",
+    "tier": "COMMON"
+  },
+  {
+    "move": "SYNTHESIS",
+    "tier": "GREAT"
+  },
+  {
+    "move": "HIDDEN_POWER",
+    "tier": "GREAT"
+  },
+  {
+    "move": "RAIN_DANCE",
+    "tier": "COMMON"
+  },
+  {
+    "move": "SUNNY_DAY",
+    "tier": "COMMON"
+  },
+  {
+    "move": "CRUNCH",
+    "tier": "GREAT"
+  },
+  {
+    "move": "PSYCH_UP",
+    "tier": "COMMON"
+  },
+  {
+    "move": "SHADOW_BALL",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "FUTURE_SIGHT",
+    "tier": "GREAT"
+  },
+  {
+    "move": "ROCK_SMASH",
+    "tier": "COMMON"
+  },
+  {
+    "move": "WHIRLPOOL",
+    "tier": "COMMON"
+  },
+  {
+    "move": "BEAT_UP",
+    "tier": "COMMON"
+  },
+  {
+    "move": "UPROAR",
+    "tier": "GREAT"
+  },
+  {
+    "move": "HEAT_WAVE",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "HAIL",
+    "tier": "COMMON"
+  },
+  {
+    "move": "TORMENT",
+    "tier": "COMMON"
+  },
+  {
+    "move": "WILL_O_WISP",
+    "tier": "COMMON"
+  },
+  {
+    "move": "FACADE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "FOCUS_PUNCH",
+    "tier": "GREAT"
+  },
+  {
+    "move": "NATURE_POWER",
+    "tier": "GREAT"
+  },
+  {
+    "move": "CHARGE",
+    "tier": "COMMON"
+  },
+  {
+    "move": "TAUNT",
+    "tier": "COMMON"
+  },
+  {
+    "move": "HELPING_HAND",
+    "tier": "COMMON"
+  },
+  {
+    "move": "TRICK",
+    "tier": "COMMON"
+  },
+  {
+    "move": "SUPERPOWER",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "RECYCLE",
+    "tier": "COMMON"
+  },
+  {
+    "move": "REVENGE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "BRICK_BREAK",
+    "tier": "GREAT"
+  },
+  {
+    "move": "KNOCK_OFF",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "ENDEAVOR",
+    "tier": "COMMON"
+  },
+  {
+    "move": "SKILL_SWAP",
+    "tier": "COMMON"
+  },
+  {
+    "move": "IMPRISON",
+    "tier": "COMMON"
+  },
+  {
+    "move": "SECRET_POWER",
+    "tier": "GREAT"
+  },
+  {
+    "move": "DIVE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "FEATHER_DANCE",
+    "tier": "COMMON"
+  },
+  {
+    "move": "BLAZE_KICK",
+    "tier": "GREAT"
+  },
+  {
+    "move": "HYPER_VOICE",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "BLAST_BURN",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "HYDRO_CANNON",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "WEATHER_BALL",
+    "tier": "COMMON"
+  },
+  {
+    "move": "FAKE_TEARS",
+    "tier": "GREAT"
+  },
+  {
+    "move": "AIR_CUTTER",
+    "tier": "COMMON"
+  },
+  {
+    "move": "OVERHEAT",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "ROCK_TOMB",
+    "tier": "GREAT"
+  },
+  {
+    "move": "METAL_SOUND",
+    "tier": "GREAT"
+  },
+  {
+    "move": "COSMIC_POWER",
+    "tier": "GREAT"
+  },
+  {
+    "move": "SIGNAL_BEAM",
+    "tier": "GREAT"
+  },
+  {
+    "move": "SAND_TOMB",
+    "tier": "COMMON"
+  },
+  {
+    "move": "MUDDY_WATER",
+    "tier": "GREAT"
+  },
+  {
+    "move": "BULLET_SEED",
+    "tier": "GREAT"
+  },
+  {
+    "move": "AERIAL_ACE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "ICICLE_SPEAR",
+    "tier": "GREAT"
+  },
+  {
+    "move": "IRON_DEFENSE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "DRAGON_CLAW",
+    "tier": "GREAT"
+  },
+  {
+    "move": "FRENZY_PLANT",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "BULK_UP",
+    "tier": "GREAT"
+  },
+  {
+    "move": "BOUNCE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "MUD_SHOT",
+    "tier": "GREAT"
+  },
+  {
+    "move": "POISON_TAIL",
+    "tier": "COMMON"
+  },
+  {
+    "move": "COVET",
+    "tier": "GREAT"
+  },
+  {
+    "move": "MAGICAL_LEAF",
+    "tier": "GREAT"
+  },
+  {
+    "move": "CALM_MIND",
+    "tier": "GREAT"
+  },
+  {
+    "move": "LEAF_BLADE",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "DRAGON_DANCE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "ROCK_BLAST",
+    "tier": "GREAT"
+  },
+  {
+    "move": "SHOCK_WAVE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "WATER_PULSE",
+    "tier": "COMMON"
+  },
+  {
+    "move": "ROOST",
+    "tier": "GREAT"
+  },
+  {
+    "move": "GRAVITY",
+    "tier": "COMMON"
+  },
+  {
+    "move": "GYRO_BALL",
+    "tier": "COMMON"
+  },
+  {
+    "move": "BRINE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "PLUCK",
+    "tier": "GREAT"
+  },
+  {
+    "move": "TAILWIND",
+    "tier": "GREAT"
+  },
+  {
+    "move": "U_TURN",
+    "tier": "GREAT"
+  },
+  {
+    "move": "CLOSE_COMBAT",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "PAYBACK",
+    "tier": "COMMON"
+  },
+  {
+    "move": "ASSURANCE",
+    "tier": "COMMON"
+  },
+  {
+    "move": "EMBARGO",
+    "tier": "COMMON"
+  },
+  {
+    "move": "FLING",
+    "tier": "COMMON"
+  },
+  {
+    "move": "GASTRO_ACID",
+    "tier": "GREAT"
+  },
+  {
+    "move": "POWER_SWAP",
+    "tier": "COMMON"
+  },
+  {
+    "move": "GUARD_SWAP",
+    "tier": "COMMON"
+  },
+  {
+    "move": "WORRY_SEED",
+    "tier": "GREAT"
+  },
+  {
+    "move": "TOXIC_SPIKES",
+    "tier": "GREAT"
+  },
+  {
+    "move": "FLARE_BLITZ",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "AURA_SPHERE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "ROCK_POLISH",
+    "tier": "GREAT"
+  },
+  {
+    "move": "POISON_JAB",
+    "tier": "GREAT"
+  },
+  {
+    "move": "DARK_PULSE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "AQUA_TAIL",
+    "tier": "GREAT"
+  },
+  {
+    "move": "SEED_BOMB",
+    "tier": "GREAT"
+  },
+  {
+    "move": "AIR_SLASH",
+    "tier": "GREAT"
+  },
+  {
+    "move": "X_SCISSOR",
+    "tier": "GREAT"
+  },
+  {
+    "move": "BUG_BUZZ",
+    "tier": "GREAT"
+  },
+  {
+    "move": "DRAGON_PULSE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "POWER_GEM",
+    "tier": "GREAT"
+  },
+  {
+    "move": "DRAIN_PUNCH",
+    "tier": "GREAT"
+  },
+  {
+    "move": "VACUUM_WAVE",
+    "tier": "COMMON"
+  },
+  {
+    "move": "FOCUS_BLAST",
+    "tier": "GREAT"
+  },
+  {
+    "move": "ENERGY_BALL",
+    "tier": "GREAT"
+  },
+  {
+    "move": "BRAVE_BIRD",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "EARTH_POWER",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "GIGA_IMPACT",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "NASTY_PLOT",
+    "tier": "GREAT"
+  },
+  {
+    "move": "AVALANCHE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "SHADOW_CLAW",
+    "tier": "GREAT"
+  },
+  {
+    "move": "THUNDER_FANG",
+    "tier": "GREAT"
+  },
+  {
+    "move": "ICE_FANG",
+    "tier": "GREAT"
+  },
+  {
+    "move": "FIRE_FANG",
+    "tier": "GREAT"
+  },
+  {
+    "move": "PSYCHO_CUT",
+    "tier": "GREAT"
+  },
+  {
+    "move": "ZEN_HEADBUTT",
+    "tier": "GREAT"
+  },
+  {
+    "move": "FLASH_CANNON",
+    "tier": "GREAT"
+  },
+  {
+    "move": "ROCK_CLIMB",
+    "tier": "GREAT"
+  },
+  {
+    "move": "DEFOG",
+    "tier": "COMMON"
+  },
+  {
+    "move": "TRICK_ROOM",
+    "tier": "COMMON"
+  },
+  {
+    "move": "DRACO_METEOR",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "LEAF_STORM",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "POWER_WHIP",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "CROSS_POISON",
+    "tier": "GREAT"
+  },
+  {
+    "move": "GUNK_SHOT",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "IRON_HEAD",
+    "tier": "GREAT"
+  },
+  {
+    "move": "STONE_EDGE",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "STEALTH_ROCK",
+    "tier": "COMMON"
+  },
+  {
+    "move": "GRASS_KNOT",
+    "tier": "GREAT"
+  },
+  {
+    "move": "BUG_BITE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "CHARGE_BEAM",
+    "tier": "GREAT"
+  },
+  {
+    "move": "HONE_CLAWS",
+    "tier": "COMMON"
+  },
+  {
+    "move": "WONDER_ROOM",
+    "tier": "COMMON"
+  },
+  {
+    "move": "PSYSHOCK",
+    "tier": "GREAT"
+  },
+  {
+    "move": "VENOSHOCK",
+    "tier": "GREAT"
+  },
+  {
+    "move": "MAGIC_ROOM",
+    "tier": "COMMON"
+  },
+  {
+    "move": "SMACK_DOWN",
+    "tier": "COMMON"
+  },
+  {
+    "move": "SLUDGE_WAVE",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "HEAVY_SLAM",
+    "tier": "GREAT"
+  },
+  {
+    "move": "ELECTRO_BALL",
+    "tier": "GREAT"
+  },
+  {
+    "move": "FLAME_CHARGE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "LOW_SWEEP",
+    "tier": "GREAT"
+  },
+  {
+    "move": "ACID_SPRAY",
+    "tier": "COMMON"
+  },
+  {
+    "move": "FOUL_PLAY",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "ROUND",
+    "tier": "COMMON"
+  },
+  {
+    "move": "ECHOED_VOICE",
+    "tier": "COMMON"
+  },
+  {
+    "move": "STORED_POWER",
+    "tier": "GREAT"
+  },
+  {
+    "move": "ALLY_SWITCH",
+    "tier": "COMMON"
+  },
+  {
+    "move": "SCALD",
+    "tier": "GREAT"
+  },
+  {
+    "move": "HEX",
+    "tier": "GREAT"
+  },
+  {
+    "move": "SKY_DROP",
+    "tier": "COMMON"
+  },
+  {
+    "move": "INCINERATE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "QUASH",
+    "tier": "COMMON"
+  },
+  {
+    "move": "ACROBATICS",
+    "tier": "GREAT"
+  },
+  {
+    "move": "RETALIATE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "WATER_PLEDGE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "FIRE_PLEDGE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "GRASS_PLEDGE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "VOLT_SWITCH",
+    "tier": "GREAT"
+  },
+  {
+    "move": "STRUGGLE_BUG",
+    "tier": "COMMON"
+  },
+  {
+    "move": "BULLDOZE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "FROST_BREATH",
+    "tier": "GREAT"
+  },
+  {
+    "move": "DRAGON_TAIL",
+    "tier": "GREAT"
+  },
+  {
+    "move": "WORK_UP",
+    "tier": "COMMON"
+  },
+  {
+    "move": "ELECTROWEB",
+    "tier": "GREAT"
+  },
+  {
+    "move": "WILD_CHARGE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "DRILL_RUN",
+    "tier": "GREAT"
+  },
+  {
+    "move": "RAZOR_SHELL",
+    "tier": "GREAT"
+  },
+  {
+    "move": "HEAT_CRASH",
+    "tier": "GREAT"
+  },
+  {
+    "move": "TAIL_SLAP",
+    "tier": "GREAT"
+  },
+  {
+    "move": "HURRICANE",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "SNARL",
+    "tier": "COMMON"
+  },
+  {
+    "move": "PHANTOM_FORCE",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "PETAL_BLIZZARD",
+    "tier": "GREAT"
+  },
+  {
+    "move": "DISARMING_VOICE",
+    "tier": "COMMON"
+  },
+  {
+    "move": "DRAINING_KISS",
+    "tier": "GREAT"
+  },
+  {
+    "move": "GRASSY_TERRAIN",
+    "tier": "COMMON"
+  },
+  {
+    "move": "MISTY_TERRAIN",
+    "tier": "COMMON"
+  },
+  {
+    "move": "PLAY_ROUGH",
+    "tier": "GREAT"
+  },
+  {
+    "move": "CONFIDE",
+    "tier": "COMMON"
+  },
+  {
+    "move": "MYSTICAL_FIRE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "EERIE_IMPULSE",
+    "tier": "COMMON"
+  },
+  {
+    "move": "VENOM_DRENCH",
+    "tier": "COMMON"
+  },
+  {
+    "move": "ELECTRIC_TERRAIN",
+    "tier": "COMMON"
+  },
+  {
+    "move": "DAZZLING_GLEAM",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "INFESTATION",
+    "tier": "COMMON"
+  },
+  {
+    "move": "POWER_UP_PUNCH",
+    "tier": "GREAT"
+  },
+  {
+    "move": "DARKEST_LARIAT",
+    "tier": "GREAT"
+  },
+  {
+    "move": "HIGH_HORSEPOWER",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "SOLAR_BLADE",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "THROAT_CHOP",
+    "tier": "GREAT"
+  },
+  {
+    "move": "POLLEN_PUFF",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "PSYCHIC_TERRAIN",
+    "tier": "COMMON"
+  },
+  {
+    "move": "LUNGE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "SPEED_SWAP",
+    "tier": "COMMON"
+  },
+  {
+    "move": "SMART_STRIKE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "BRUTAL_SWING",
+    "tier": "COMMON"
+  },
+  {
+    "move": "AURORA_VEIL",
+    "tier": "COMMON"
+  },
+  {
+    "move": "PSYCHIC_FANGS",
+    "tier": "GREAT"
+  },
+  {
+    "move": "STOMPING_TANTRUM",
+    "tier": "GREAT"
+  },
+  {
+    "move": "LIQUIDATION",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "BODY_PRESS",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "BREAKING_SWIPE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "STEEL_BEAM",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "EXPANDING_FORCE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "STEEL_ROLLER",
+    "tier": "GREAT"
+  },
+  {
+    "move": "SCALE_SHOT",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "METEOR_BEAM",
+    "tier": "GREAT"
+  },
+  {
+    "move": "MISTY_EXPLOSION",
+    "tier": "GREAT"
+  },
+  {
+    "move": "GRASSY_GLIDE",
+    "tier": "COMMON"
+  },
+  {
+    "move": "RISING_VOLTAGE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "TERRAIN_PULSE",
+    "tier": "COMMON"
+  },
+  {
+    "move": "SKITTER_SMACK",
+    "tier": "GREAT"
+  },
+  {
+    "move": "BURNING_JEALOUSY",
+    "tier": "GREAT"
+  },
+  {
+    "move": "LASH_OUT",
+    "tier": "GREAT"
+  },
+  {
+    "move": "POLTERGEIST",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "CORROSIVE_GAS",
+    "tier": "COMMON"
+  },
+  {
+    "move": "COACHING",
+    "tier": "COMMON"
+  },
+  {
+    "move": "FLIP_TURN",
+    "tier": "COMMON"
+  },
+  {
+    "move": "TRIPLE_AXEL",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "DUAL_WINGBEAT",
+    "tier": "GREAT"
+  },
+  {
+    "move": "SCORCHING_SANDS",
+    "tier": "GREAT"
+  },
+  {
+    "move": "TERA_BLAST",
+    "tier": "GREAT"
+  },
+  {
+    "move": "ICE_SPINNER",
+    "tier": "GREAT"
+  },
+  {
+    "move": "SNOWSCAPE",
+    "tier": "COMMON"
+  },
+  {
+    "move": "POUNCE",
+    "tier": "COMMON"
+  },
+  {
+    "move": "TRAILBLAZE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "CHILLING_WATER",
+    "tier": "COMMON"
+  },
+  {
+    "move": "HARD_PRESS",
+    "tier": "GREAT"
+  },
+  {
+    "move": "DRAGON_CHEER",
+    "tier": "COMMON"
+  },
+  {
+    "move": "ALLURING_VOICE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "TEMPER_FLARE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "SUPERCELL_SLAM",
+    "tier": "ULTRA"
+  },
+  {
+    "move": "PSYCHIC_NOISE",
+    "tier": "GREAT"
+  },
+  {
+    "move": "UPPER_HAND",
+    "tier": "COMMON"
+  }
+]
