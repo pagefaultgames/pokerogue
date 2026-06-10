@@ -952,7 +952,6 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
       || this.speciesId === SpeciesId.BATTLE_BOND_GRENINJA
     ) {
       // More special cases can be added here
-      console.log(speciesName, formText);
       const i18key = `pokemonForm:${speciesName}${formText}`;
       if (i18next.exists(i18key)) {
         ret = i18next.t(i18key);
