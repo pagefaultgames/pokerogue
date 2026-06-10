@@ -2029,18 +2029,24 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     const learnableSet = new Set(this.learnableLevelMoves.map(lm => lm[1]));
     if (Array.isArray(this.usedTMs) && this.usedTMs.length > 0) {
-      const tms: RelearnOption[] = this.usedTMs
-        .filter(m => !learnableSet.has(m) && !this.moveset.some(pm => pm.moveId === m))
-        .map(m => [0, m, LearnableMoveSource.TM]);
-      tms.forEach(e => learnableSet.add(e[1]));
+      const tms: RelearnOption[] = [];
+      for (const tm of this.usedTMs) {
+        if (!learnableSet.has(tm) && !this.moveset.some(pm => pm.moveId === tm)) {
+          learnableSet.add(tm);
+          tms.push([0, tm, LearnableMoveSource.TM]);
+        }
+      }
       this.learnableLevelMoves = tms.concat(this.learnableLevelMoves);
     }
     if (this.metBiome === -1 && !globalScene.gameMode.isFreshStartChallenge() && !globalScene.gameMode.isDaily) {
-      const eggs: RelearnOption[] = this.getUnlockedEggMoves()
-        .filter(m => !learnableSet.has(m) && !this.moveset.some(pm => pm.moveId === m))
-        .map(m => [0, m, LearnableMoveSource.EGG]);
-      eggs.forEach(e => learnableSet.add(e[1]));
-      this.learnableLevelMoves = eggs.concat(this.learnableLevelMoves);
+      const eggMoves: RelearnOption[] = [];
+      for (const em of this.getUnlockedEggMoves()) {
+        if (!learnableSet.has(em) && !this.moveset.some(pm => pm.moveId === em)) {
+          learnableSet.add(em);
+          eggMoves.push([0, em, LearnableMoveSource.EGG]);
+        }
+      }
+      this.learnableLevelMoves = eggMoves.concat(this.learnableLevelMoves);
     }
 
     console.log(this.learnableLevelMoves);
