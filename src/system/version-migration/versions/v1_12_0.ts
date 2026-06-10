@@ -1,4 +1,3 @@
-import { DexAttr } from "#enums/dex-attr";
 import { SpeciesId } from "#enums/species-id";
 import { RibbonData } from "#system/ribbons/ribbon-data";
 import type { DexEntry } from "#types/dex-data";
@@ -45,6 +44,7 @@ const migrateGreninjaBattleBondForm: SystemSaveMigrator = {
       valueReduction: 0,
       classicWinCount: 0,
     };
+
     const froakieData = data.dexData[SpeciesId.FROAKIE];
 
     const newDexData: DexEntry = {
@@ -58,21 +58,18 @@ const migrateGreninjaBattleBondForm: SystemSaveMigrator = {
       ribbons: RibbonData.fromJSON("0"),
     };
 
-    // If seen attr has battle bond flag (128n), copy over seenAttr
-
-    const battleBondData = data.dexData[SpeciesId.BATTLE_BOND_GRENINJA];
-
     // If the battle bond form data already exists....
     if (froakieData.seenAttr & BATTLE_BOND_FORM_FLAG) {
-      data.dexData[SpeciesId.BATTLE_BOND_GRENINJA].seenAttr = froakieData.seenAttr & (BATTLE_BOND_FORM_FLAG - 1n);
+      newDexData.seenAttr = froakieData.seenAttr & (BATTLE_BOND_FORM_FLAG - 1n);
       froakieData.seenAttr &= BATTLE_BOND_FORM_FLAG - 1n;
     }
 
     if (froakieData.caughtAttr & BATTLE_BOND_FORM_FLAG) {
-      data.dexData[SpeciesId.BATTLE_BOND_GRENINJA].caughtAttr = froakieData.caughtAttr & (BATTLE_BOND_FORM_FLAG - 1n);
+      newDexData.caughtAttr = froakieData.caughtAttr & (BATTLE_BOND_FORM_FLAG - 1n);
       froakieData.caughtAttr &= BATTLE_BOND_FORM_FLAG - 1n;
     }
 
+    data.dexData[SpeciesId.BATTLE_BOND_GRENINJA] = newDexData;
     // Must clear out the battle bond form data from the species line entries
     clearOldBattleBondFormData(data.dexData[SpeciesId.FROGADIER]);
     clearOldBattleBondFormData(data.dexData[SpeciesId.GRENINJA]);
