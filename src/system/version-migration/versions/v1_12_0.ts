@@ -88,6 +88,7 @@ const migrateGreninjaBattleBondFormSession: SessionSaveMigrator = {
         && pokemon.formIndex !== 0
       ) {
         pokemon.species = SpeciesId.BATTLE_BOND_GRENINJA;
+        pokemon.formIndex = 0;
         pokemon.abilityIndex = 0;
       }
       if (

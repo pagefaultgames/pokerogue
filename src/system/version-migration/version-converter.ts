@@ -131,10 +131,14 @@ export function applySystemVersionMigration(data: SystemSaveData) {
  * Note that no transforms act on the {@linkcode data} if its version matches
  * the current version or if there are no migrations made between its version up
  * to the current version.
- * @param data {@linkcode SessionSaveData}
+ * @param data - Raw data that is assumed to be session save data.
  * @see {@link SessionVersionConverter}
  */
-export function applySessionVersionMigration(data: SessionSaveData) {
+export function applySessionVersionMigration(data: any) {
+  if (!data || typeof data !== "object" || !("gameVersion" in data) || typeof data.gameVersion !== "string") {
+    console.warn("Session data is missing a valid gameVersion. Skipping migration.");
+    return;
+  }
   const prevVersion = data.gameVersion;
   const isCurrentVersionHigher = compareVersions(prevVersion, LATEST_VERSION) === -1;
 
