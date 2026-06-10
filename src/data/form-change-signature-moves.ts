@@ -10,7 +10,7 @@ export const formChangeSignatureMoves: Partial<Record<SpeciesId, Partial<Record<
   {
     [SpeciesId.ZAMAZENTA]: {
       "hero-of-many-battles": [{ learn: MoveId.IRON_HEAD, replace: MoveId.BEHEMOTH_BASH }],
-      "crowned": [{ learn: MoveId.BEHEMOTH_BASH, replace: MoveId.IRON_HEAD }],
+      crowned: [{ learn: MoveId.BEHEMOTH_BASH, replace: MoveId.IRON_HEAD }],
     },
     [SpeciesId.NECROZMA]: {
       "": [
@@ -19,19 +19,19 @@ export const formChangeSignatureMoves: Partial<Record<SpeciesId, Partial<Record<
       ],
       "dusk-mane": [{ learn: MoveId.SUNSTEEL_STRIKE, replace: MoveId.CONFUSION }],
       "dawn-wings": [{ learn: MoveId.MOONGEIST_BEAM, replace: MoveId.CONFUSION }],
-      "ultra": [{ learn: MoveId.SUNSTEEL_STRIKE }, { learn: MoveId.MOONGEIST_BEAM }],
+      ultra: [{ learn: MoveId.SUNSTEEL_STRIKE }, { learn: MoveId.MOONGEIST_BEAM }],
     },
     [SpeciesId.CALYREX]: {
-      "ice": [{ learn: MoveId.GLACIAL_LANCE }],
-      "shadow": [{ learn: MoveId.ASTRAL_BARRAGE }],
+      ice: [{ learn: MoveId.GLACIAL_LANCE }],
+      shadow: [{ learn: MoveId.ASTRAL_BARRAGE }],
     },
     [SpeciesId.ZACIAN]: {
       "hero-of-many-battles": [{ learn: MoveId.IRON_HEAD, replace: MoveId.BEHEMOTH_BLADE }],
-      "crowned": [{ learn: MoveId.BEHEMOTH_BLADE, replace: MoveId.IRON_HEAD }],
+      crowned: [{ learn: MoveId.BEHEMOTH_BLADE, replace: MoveId.IRON_HEAD }],
     },
     [SpeciesId.HOOPA]: {
       "": [{ learn: MoveId.HYPERSPACE_HOLE, replace: MoveId.HYPERSPACE_FURY }],
-      "unbound": [{ learn: MoveId.HYPERSPACE_FURY, replace: MoveId.HYPERSPACE_HOLE }],
+      unbound: [{ learn: MoveId.HYPERSPACE_FURY, replace: MoveId.HYPERSPACE_HOLE }],
     },
     [SpeciesId.KYUREM]: {
       "": [
@@ -40,11 +40,11 @@ export const formChangeSignatureMoves: Partial<Record<SpeciesId, Partial<Record<
         { learn: MoveId.GLACIATE, replace: MoveId.FREEZE_SHOCK },
         { learn: MoveId.GLACIATE, replace: MoveId.ICE_BURN },
       ],
-      "black": [
+      black: [
         { learn: MoveId.FUSION_BOLT, replace: MoveId.SCARY_FACE },
         { learn: MoveId.FREEZE_SHOCK, replace: MoveId.GLACIATE },
       ],
-      "white": [
+      white: [
         { learn: MoveId.FUSION_FLARE, replace: MoveId.SCARY_FACE },
         { learn: MoveId.ICE_BURN, replace: MoveId.GLACIATE },
       ],

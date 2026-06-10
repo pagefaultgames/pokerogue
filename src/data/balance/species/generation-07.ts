@@ -1,4 +1,4 @@
-import { EVOLVE_MOVE, RELEARN_MOVE, FORGET_MOVE } from "#app/constants";
+import { EVOLVE_MOVE, FORGET_MOVE, RELEARN_MOVE } from "#app/constants";
 import { EvoCondKey, EvolutionItem, SpeciesEvolution, SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { GrowthRate } from "#data/exp";
 import { SpeciesFormChangeAbilityTrigger, SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
@@ -9058,7 +9058,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
     formLevelMoves: {
       "": [
         [EVOLVE_MOVE, MoveId.CONFUSION],
-        [1, MoveId.MIRROR_SHOT]
+        [1, MoveId.MIRROR_SHOT],
       ],
       "dusk-mane": [
         [EVOLVE_MOVE, MoveId.SUNSTEEL_STRIKE],
@@ -9068,7 +9068,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
         [EVOLVE_MOVE, MoveId.MOONGEIST_BEAM],
         [FORGET_MOVE, MoveId.SUNSTEEL_STRIKE],
       ],
-      "ultra": [
+      ultra: [
         [EVOLVE_MOVE, MoveId.SUNSTEEL_STRIKE],
         [EVOLVE_MOVE, MoveId.MOONGEIST_BEAM],
       ],

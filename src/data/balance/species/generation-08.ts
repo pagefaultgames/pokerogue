@@ -1,4 +1,4 @@
-import { EVOLVE_MOVE, RELEARN_MOVE, FORGET_MOVE } from "#app/constants";
+import { EVOLVE_MOVE, FORGET_MOVE, RELEARN_MOVE } from "#app/constants";
 import { EvoCondKey, EvolutionItem, SpeciesEvolution, SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { GrowthRate } from "#data/exp";
 import {
