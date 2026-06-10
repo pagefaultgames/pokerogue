@@ -91,7 +91,7 @@ const migrateGreninjaBattleBondFormSession: SessionSaveMigrator = {
         pokemon.abilityIndex = 0;
       }
       if (
-        [SpeciesId.FROAKIE, SpeciesId.FROGADIER, SpeciesId.GRENINJA].includes(pokemon.species)
+        [SpeciesId.FROAKIE, SpeciesId.FROGADIER, SpeciesId.GRENINJA].includes(pokemon.fusionSpecies)
         && pokemon.fusionFormIndex !== 0
       ) {
         pokemon.fusionFormIndex = 0;
