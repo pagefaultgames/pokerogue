@@ -1,4 +1,5 @@
 import { BattleScene } from "#app/battle-scene";
+import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 // biome-ignore lint/performance/noNamespaceImport: Necessary in order to mock the var
 import * as appConstants from "#constants/app-constants";
@@ -108,6 +109,9 @@ export class GameWrapper {
       key: "",
     };
 
+    audioManager.playBgm = () => null;
+    audioManager.replaceBgmUntilEnd = () => null!;
+
     this.scene.cameras = {
       main: {
         setPostPipeline: () => null!,
@@ -129,7 +133,6 @@ export class GameWrapper {
       chain: data => {
         // TODO: our mock of `chain` should have the same signature as the real one, which returns the chain
         // @ts-expect-error
-        // biome-ignore lint/suspicious/useIterableCallbackReturn: it's a mock
         data?.tweens?.forEach(tween => tween.onComplete?.());
         // @ts-expect-error
         data.onComplete?.();

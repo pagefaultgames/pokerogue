@@ -353,7 +353,6 @@ export class MockText implements MockGameObject {
     return this.runWordWrap(this.text).split("\n");
   }
 
-  // biome-ignore lint/complexity/noBannedTypes: This matches the signature of the class this mocks
   on(_event: string | symbol, _fn: () => void, _context?: any) {}
 
   setActive(_active: boolean): this {

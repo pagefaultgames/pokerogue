@@ -1,11 +1,13 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
-import { NextEncounterPhase } from "#phases/next-encounter-phase";
+import { EncounterPhase } from "#phases/encounter-phase";
 
-export class NewBiomeEncounterPhase extends NextEncounterPhase {
+export class NewBiomeEncounterPhase extends EncounterPhase {
   public readonly phaseName = "NewBiomeEncounterPhase";
-  doEncounter(): void {
-    globalScene.playBgm(undefined, true);
+
+  protected override doEncounter(): void {
+    audioManager.playBgm(undefined, true);
 
     // Reset all battle and wave data, perform form changes, etc.
     // We do this because new biomes are considered "arena transitions" akin to MEs and trainer battles
@@ -30,7 +32,9 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
       x: "+=300",
       duration: 2000,
       onComplete: () => {
-        if (!this.tryOverrideForBattleSpec()) {
+        if (globalScene.currentBattle.isClassicFinalBoss) {
+          this.displayFinalBossDialogue();
+        } else {
           this.doEncounterCommon();
         }
       },

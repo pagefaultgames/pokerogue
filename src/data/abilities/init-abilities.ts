@@ -183,7 +183,7 @@ import {
 import { AbBuilder, type Ability } from "#abilities/ability";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { GroundedTag } from "#data/battler-tags";
+import { GroundedTag, ProtectedTag } from "#data/battler-tags";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { Gender } from "#data/gender";
 import { getNonVolatileStatusEffects } from "#data/status-effect";
@@ -253,7 +253,7 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.SAND_VEIL, 3) //
-      .attr(StatMultiplierAbAttr, Stat.EVA, 1.2)
+      .attr(StatMultiplierAbAttr, Stat.EVA, 1.25)
       .attr(BlockWeatherDamageAttr, WeatherType.SANDSTORM)
       .condition(getWeatherCondition(WeatherType.SANDSTORM))
       .ignorable()
@@ -413,12 +413,9 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.MAGNET_PULL, 3) //
-      .attr(ArenaTrapAbAttr, (_user, target) => {
-        return (
-          target.getTypes(true).includes(PokemonType.STEEL)
-          || (target.getTypes(true).includes(PokemonType.STELLAR) && target.getTypes().includes(PokemonType.STEEL))
-        );
-      })
+      .attr(ArenaTrapAbAttr, (_user, target) =>
+        target.isOfType(PokemonType.STEEL, { returnOriginalTypesIfStellar: true }),
+      )
       .build(),
     new AbBuilder(AbilityId.SOUNDPROOF, 3) //
       .attr(
@@ -521,7 +518,7 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.SHED_SKIN, 3) //
-      .conditionalAttr(_pokemon => !randSeedInt(3), PostTurnResetStatusAbAttr)
+      .conditionalAttr(_pokemon => randSeedInt(10) < 3, PostTurnResetStatusAbAttr)
       .build(),
     new AbBuilder(AbilityId.GUTS, 3) //
       .attr(BypassBurnDamageReductionAbAttr)
@@ -623,7 +620,7 @@ export function initAbilities() {
       .attr(FlinchStatStageChangeAbAttr, [Stat.SPD], 1)
       .build(),
     new AbBuilder(AbilityId.SNOW_CLOAK, 4) //
-      .attr(StatMultiplierAbAttr, Stat.EVA, 1.2)
+      .attr(StatMultiplierAbAttr, Stat.EVA, 1.25)
       .attr(BlockWeatherDamageAttr, WeatherType.HAIL)
       .condition(getWeatherCondition(WeatherType.HAIL, WeatherType.SNOW))
       .ignorable()
@@ -912,7 +909,7 @@ export function initAbilities() {
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.HEALER, 5) //
-      .conditionalAttr(pokemon => pokemon.getAlly() != null && randSeedInt(10) < 3, PostTurnResetStatusAbAttr, true)
+      .conditionalAttr(pokemon => pokemon.getAlly() != null && randSeedInt(2) === 1, PostTurnResetStatusAbAttr, true)
       .build(),
     new AbBuilder(AbilityId.FRIEND_GUARD, 5) //
       .attr(AlliedFieldDamageReductionAbAttr, 0.75)
@@ -1037,7 +1034,6 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.INFILTRATOR, 5) //
       .attr(InfiltratorAbAttr)
-      .partial() // does not bypass Mist
       .build(),
     new AbBuilder(AbilityId.MUMMY, 5) //
       .attr(PostDefendAbilityGiveAbAttr, AbilityId.MUMMY)
@@ -1072,9 +1068,6 @@ export function initAbilities() {
     new AbBuilder(AbilityId.MAGIC_BOUNCE, 5) //
       .attr(ReflectStatusMoveAbAttr)
       .ignorable()
-      // Interactions with stomping tantrum, instruct, encore, and probably other moves that
-      // rely on move history
-      .edgeCase()
       .build(),
     new AbBuilder(AbilityId.SAP_SIPPER, 5) //
       .attr(TypeImmunityStatStageChangeAbAttr, PokemonType.GRASS, Stat.ATK, 1)
@@ -1130,23 +1123,27 @@ export function initAbilities() {
         BattlerTagType.DISABLED,
         BattlerTagType.TORMENT,
         BattlerTagType.HEAL_BLOCK,
+        BattlerTagType.ENCORE,
       ])
       .ignorable()
       .build(),
-    new AbBuilder(AbilityId.FLOWER_VEIL, 6) //
-      .attr(ConditionalUserFieldStatusEffectImmunityAbAttr, (target: Pokemon, source: Pokemon | null) => {
-        return source ? target.getTypes().includes(PokemonType.GRASS) && target.id !== source.id : false;
-      })
+    new AbBuilder(AbilityId.FLOWER_VEIL, 6)
+      .attr(
+        ConditionalUserFieldStatusEffectImmunityAbAttr,
+        (target, source) =>
+          !!source
+          && target.id !== source.id
+          && target.isOfType(PokemonType.GRASS, { returnOriginalTypesIfStellar: true }),
+      )
       .attr(
         ConditionalUserFieldBattlerTagImmunityAbAttr,
-        (target: Pokemon) => {
-          return target.getTypes().includes(PokemonType.GRASS);
-        },
+        target => target.isOfType(PokemonType.GRASS, { returnOriginalTypesIfStellar: true }),
         [BattlerTagType.DROWSY],
       )
-      .attr(ConditionalUserFieldProtectStatAbAttr, (target: Pokemon) => {
-        return target.getTypes().includes(PokemonType.GRASS);
-      })
+      .attr(ConditionalUserFieldProtectStatAbAttr, target =>
+        target.isOfType(PokemonType.GRASS, { returnOriginalTypesIfStellar: true }),
+      )
+      .ignorable()
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.CHEEK_POUCH, 6) //
@@ -1804,6 +1801,14 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.UNSEEN_FIST, 8) //
       .attr(IgnoreProtectOnContactAbAttr)
+      .attr(
+        MoveDamageBoostAbAttr,
+        0.25,
+        (user, target, move) =>
+          !!target
+          && target.findTags(t => t instanceof ProtectedTag).length > 0
+          && move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user }),
+      )
       .build(),
     new AbBuilder(AbilityId.CURIOUS_MEDICINE, 8) //
       .attr(PostSummonClearAllyStatStagesAbAttr)
@@ -1913,6 +1918,16 @@ export function initAbilities() {
       .attr(NoFusionAbilityAbAttr)
       .attr(PostBattleInitFormChangeAbAttr, () => 0)
       .attr(PreSwitchOutFormChangeAbAttr, pokemon => (pokemon.isFainted() ? pokemon.formIndex : 1))
+      .conditionalAttr(
+        p => p.formIndex !== 0 && p.isOnField() && zeroToHeroFormChangeMessage.get(p) !== p.battleData,
+        PostSummonMessageAbAttr,
+        (pokemon: Pokemon) => {
+          zeroToHeroFormChangeMessage.set(pokemon, pokemon.battleData);
+          return i18next.t("abilityTriggers:postSummonZeroToHero", {
+            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+          });
+        },
+      )
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.COMMANDER, 9) //
@@ -2270,6 +2285,9 @@ const sheerForceHitDisableAbCondition: AbAttrCondition = (pokemon: Pokemon): boo
 
   return !sheerForceAffected;
 };
+
+/** Tracks the `battleData` reference at the time the Zero to Hero form change message was shown. */
+const zeroToHeroFormChangeMessage = new WeakMap<Pokemon, object>();
 
 /**
  * DRY implementation for the `AIMovegenMoveStatsAbAttr` effect of harsh-sunlight summoning abilities.

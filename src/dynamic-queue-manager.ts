@@ -1,13 +1,12 @@
-import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type { Pokemon } from "#app/field/pokemon";
 import type { Phase } from "#app/phase";
 import type { MovePhase } from "#app/phases/move-phase";
 import { MovePhasePriorityQueue } from "#app/queues/move-phase-priority-queue";
-import { PokemonPhasePriorityQueue } from "#app/queues/pokemon-phase-priority-queue";
+import { DynamicPhasePriorityQueue } from "#app/queues/pokemon-phase-priority-queue";
 import { PostSummonPhasePriorityQueue } from "#app/queues/post-summon-phase-priority-queue";
 import type { PriorityQueue } from "#app/queues/priority-queue";
 import type { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
-import type { DynamicPhase, PhaseConditionFunc, PhaseString } from "#types/phase-types";
+import type { DynamicPhase, PhaseConditionFunc, PhaseMap, PhaseString } from "#types/phase-types";
 
 // TODO: might be easier to define which phases should be dynamic instead
 /** All phases which have defined a `getPokemon` method but should not be sorted dynamically */
@@ -39,7 +38,7 @@ const nonDynamicPokemonPhases: readonly PhaseString[] = [
  * This is mostly used in redirection, cancellation, etc. of {@linkcode MovePhase}s.
  */
 export class DynamicQueueManager {
-  /** A Map matching `Phase` names to their corresponding priority queuess */
+  /** A Map matching `Phase` names to their corresponding priority queues. */
   private readonly dynamicPhaseMap: Map<PhaseString, PriorityQueue<Phase>>;
 
   constructor() {
@@ -61,15 +60,15 @@ export class DynamicQueueManager {
    * @param phase - The {@linkcode Phase} to add
    * @returns `true` if the phase was added, or `false` if it is not dynamic
    */
-  public queueDynamicPhase(phase: Phase): boolean {
+  public queueDynamicPhase(phase: Phase): phase is DynamicPhase {
     if (!this.isDynamicPhase(phase)) {
       return false;
     }
 
     if (!this.dynamicPhaseMap.has(phase.phaseName)) {
-      this.dynamicPhaseMap.set(phase.phaseName, new PokemonPhasePriorityQueue());
+      this.dynamicPhaseMap.set(phase.phaseName, new DynamicPhasePriorityQueue());
     }
-    this.dynamicPhaseMap.get(phase.phaseName)?.push(phase);
+    this.dynamicPhaseMap.get(phase.phaseName)!.push(phase);
     return true;
   }
 
@@ -89,7 +88,7 @@ export class DynamicQueueManager {
    * @returns Whether a matching phase exists
    */
   public exists<T extends PhaseString>(name: T, condition: PhaseConditionFunc<T> = () => true): boolean {
-    return !!this.dynamicPhaseMap.get(name)?.has(condition as (phase: Phase) => boolean);
+    return !!(this.dynamicPhaseMap.get(name) as PriorityQueue<PhaseMap[T]> | undefined)?.has(condition);
   }
 
   /**
@@ -99,7 +98,7 @@ export class DynamicQueueManager {
    * @returns Whether a removal occurred
    */
   public removePhase<T extends PhaseString>(name: T, condition: PhaseConditionFunc<T> = () => true): boolean {
-    return !!this.dynamicPhaseMap.get(name)?.remove(condition as (phase: Phase) => boolean);
+    return !!(this.dynamicPhaseMap.get(name) as PriorityQueue<PhaseMap[T]> | undefined)?.remove(condition);
   }
 
   /**
@@ -109,15 +108,6 @@ export class DynamicQueueManager {
    */
   public setMoveTimingModifier(condition: PhaseConditionFunc<"MovePhase">, modifier: MovePhaseTimingModifier): void {
     this.getMovePhaseQueue().setTimingModifier(condition, modifier);
-  }
-
-  /**
-   * Finds the {@linkcode MovePhase} meeting the condition and changes its move
-   * @param phaseCondition - The {@linkcode PhaseConditionFunc | condition} function
-   * @param move - The {@linkcode PokemonMove | move} to use in replacement
-   */
-  public setMoveForPhase(condition: PhaseConditionFunc<"MovePhase">, move: PokemonMove): void {
-    this.getMovePhaseQueue().setMoveForPhase(condition, move);
   }
 
   /**

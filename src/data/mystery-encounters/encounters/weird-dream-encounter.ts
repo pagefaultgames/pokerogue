@@ -1,5 +1,7 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
-import { allSpecies, modifierTypes } from "#data/data-lists";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
+import { modifierTypes } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
@@ -154,8 +156,6 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
   .withDescription(`${namespace}:description`)
   .withQuery(`${namespace}:query`)
   .withOnInit(() => {
-    globalScene.loadBgm("mystery_encounter_weird_dream", "mystery_encounter_weird_dream.mp3");
-
     // Calculate all the newly transformed Pokemon and begin asset load
     const teamTransformations = getTeamTransformations();
     const loadAssets = teamTransformations.map(t => (t.newPokemon as PlayerPokemon).loadAssets());
@@ -167,7 +167,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
     return true;
   })
   .withOnVisualsStart(() => {
-    globalScene.fadeAndSwitchBgm("mystery_encounter_weird_dream");
+    audioManager.playBgm("mystery_encounter_weird_dream", true);
     return true;
   })
   .withOption(
@@ -249,7 +249,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
       ],
     },
     async () => {
-      // Battle your "future" team for some item rewards
+      // Battle your "alternate" team for some item rewards
       const transformations: PokemonTransformation[] =
         globalScene.currentBattle.mysteryEncounter!.misc.teamTransformations;
 
@@ -296,7 +296,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
       const genderIndex = globalScene.gameData.gender ?? PlayerGender.UNSET;
       const trainerConfig =
         trainerConfigs[
-          genderIndex === PlayerGender.FEMALE ? TrainerType.FUTURE_SELF_F : TrainerType.FUTURE_SELF_M
+          genderIndex === PlayerGender.FEMALE ? TrainerType.PLAYER_F_ALTERNATE : TrainerType.PLAYER_M_ALTERNATE
         ].clone();
       trainerConfig.setPartyTemplates(new TrainerPartyTemplate(transformations.length, PartyMemberStrength.STRONG));
       const enemyPartyConfig: EnemyPartyConfig = {
@@ -352,10 +352,9 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
       for (const pokemon of globalScene.getPlayerParty()) {
         pokemon.level = Math.max(Math.ceil(((100 - PERCENT_LEVEL_LOSS_ON_REFUSE) / 100) * pokemon.level), 1);
         pokemon.exp = getLevelTotalExp(pokemon.level, pokemon.species.growthRate);
-        pokemon.levelExp = 0;
 
         pokemon.calculateStats();
-        pokemon.getBattleInfo().setLevel(pokemon.level);
+        pokemon.getBattleInfo().setLevelDisplay(pokemon.level);
         await pokemon.updateInfo();
       }
 
@@ -497,7 +496,7 @@ async function doNewTeamPostProcess(transformations: PokemonTransformation[]) {
 
   // If at least one new starter was unlocked, play 1 fanfare
   if (atLeastOneNewStarter) {
-    globalScene.playSound("level_up_fanfare");
+    audioManager.playSound("se/level_up_fanfare");
   }
 }
 
@@ -588,7 +587,7 @@ async function postProcessTransformedPokemon(
   });
 
   // For pokemon that the player owns (including ones just caught), gain a candy
-  if (!forBattle && !!globalScene.gameData.dexData[speciesRootForm].caughtAttr) {
+  if (!forBattle && globalScene.gameData.dexData[speciesRootForm].caughtAttr) {
     globalScene.gameData.addStarterCandy(speciesRootForm, 1);
   }
 
@@ -640,7 +639,7 @@ function getTransformedSpecies(
     const bstMin = Math.max(originalBst + bstSearchRange[0], 0);
 
     // Get any/all species that fall within the Bst range requirements
-    let validSpecies = allSpecies.filter(s => {
+    let validSpecies = speciesDataRegistry.getAllSpecies().filter(s => {
       const speciesBst = s.getBaseStatTotal();
       const bstInRange = speciesBst >= bstMin && speciesBst <= bstCap;
       // Checks that a Pokemon has not already been added in the +600 or 570-600 slots;
@@ -772,12 +771,12 @@ async function addEggMoveToNewPokemonMoveset(
   if (eggMoves) {
     const eggMoveIndices = randSeedShuffle([0, 1, 2, 3]);
     let randomEggMoveIndex = eggMoveIndices.pop();
-    let randomEggMove = randomEggMoveIndex != null ? eggMoves[randomEggMoveIndex] : null;
+    let randomEggMove = randomEggMoveIndex == null ? null : eggMoves[randomEggMoveIndex];
     let retries = 0;
     while (retries < 3 && (!randomEggMove || newPokemon.moveset.some(m => m.moveId === randomEggMove))) {
       // If Pokemon already knows this move, roll for another egg move
       randomEggMoveIndex = eggMoveIndices.pop();
-      randomEggMove = randomEggMoveIndex != null ? eggMoves[randomEggMoveIndex] : null;
+      randomEggMove = randomEggMoveIndex == null ? null : eggMoves[randomEggMoveIndex];
       retries++;
     }
 
@@ -792,7 +791,7 @@ async function addEggMoveToNewPokemonMoveset(
       }
 
       // For pokemon that the player owns (including ones just caught), unlock the egg move
-      if (!forBattle && randomEggMoveIndex != null && !!globalScene.gameData.dexData[speciesRootForm].caughtAttr) {
+      if (!forBattle && randomEggMoveIndex != null && globalScene.gameData.dexData[speciesRootForm].caughtAttr) {
         await globalScene.gameData.setEggMoveUnlocked(getPokemonSpecies(speciesRootForm), randomEggMoveIndex, true);
       }
     }

@@ -104,10 +104,10 @@ export async function runSelectMysteryEncounterOption(
       break;
   }
 
-  if (secondaryOptionSelect?.pokemonNo != null) {
-    await handleSecondaryOptionSelect(game, secondaryOptionSelect.pokemonNo, secondaryOptionSelect.optionNo);
-  } else {
+  if (secondaryOptionSelect?.pokemonNo == null) {
     uiHandler.processInput(Button.ACTION);
+  } else {
+    await handleSecondaryOptionSelect(game, secondaryOptionSelect.pokemonNo, secondaryOptionSelect.optionNo);
   }
 }
 

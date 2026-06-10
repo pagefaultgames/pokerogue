@@ -134,16 +134,33 @@ export class FieldHelper extends GameManagerHelper {
    * @throws {Error}
    * Fails test if `pokemon` cannot have its Tera Type changed
    * (such as being part of a species with fixed Tera Types).
+   * @returns The newly created {@linkcode MockInstance} objects
+   * used to override {@linkcode Pokemon.isTerastallized} and {@linkcode Pokemon.teraType}.
    */
-  public forceTera(pokemon: Pokemon, teraType?: Exclude<PokemonType, PokemonType.UNKNOWN>): void;
-  public forceTera(pokemon: Pokemon, teraType: PokemonType = pokemon.getSpeciesForm(true).type1): void {
+  public forceTera(
+    pokemon: Pokemon,
+    teraType?: Exclude<PokemonType, PokemonType.UNKNOWN>,
+  ): [
+    isTerastallizedMock: MockInstance<() => Pokemon["isTerastallized"]>,
+    teraTypeMock: MockInstance<() => Pokemon["teraType"]>,
+  ];
+  public forceTera(
+    pokemon: Pokemon,
+    teraType: PokemonType = pokemon.getSpeciesForm(true).type1,
+  ): [
+    isTerastallizedMock: MockInstance<() => Pokemon["isTerastallized"]>,
+    teraTypeMock: MockInstance<() => Pokemon["teraType"]>,
+  ] {
     if (pokemon.getTeraType() !== pokemon.teraType) {
       expect.fail(
         `Cannot alter the Tera Type of fixed-tera Pokemon ${pokemon.name}!`
           + `\nTera Type: ${getEnumStr(PokemonType, pokemon.getTeraType())}`,
       );
     }
-    vi.spyOn(pokemon, "isTerastallized", "get").mockReturnValue(true);
-    vi.spyOn(pokemon, "teraType", "get").mockReturnValue(teraType);
+
+    const isTerastallizedMock = vi.spyOn(pokemon, "isTerastallized", "get").mockReturnValue(true);
+    const teraTypeMock = vi.spyOn(pokemon, "teraType", "get").mockReturnValue(teraType);
+
+    return [isTerastallizedMock, teraTypeMock];
   }
 }

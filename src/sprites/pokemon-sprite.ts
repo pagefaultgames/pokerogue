@@ -61,7 +61,7 @@ export async function loadPokemonVariantAssets(
   variant: Variant,
   scene: BattleScene = globalScene,
 ): Promise<void> {
-  if (variantColorCache.hasOwnProperty(spriteKey)) {
+  if (Object.hasOwn(variantColorCache, spriteKey)) {
     return;
   }
   const useExpSprite = scene.experimentalSprites && hasExpSprite(spriteKey);
