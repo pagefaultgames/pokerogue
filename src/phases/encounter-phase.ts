@@ -292,10 +292,8 @@ export class EncounterPhase extends BattlePhase {
           // Set weather and terrain before session gets saved
           this.trySetWeatherIfNewBiome();
           this.trySetTerrainIfNewBiome();
-          // Save biome checkpoint in all X1 waves, if Enable Retries is active
-          if (globalScene.enableRetries && globalScene.gameMode.isDaily && battle.waveIndex % 10 === 1) {
-            globalScene.gameData.saveBiomeCheckpoint();
-          }
+          this.trySaveBiomeCheckpointIfNewBiome();
+
           // Game syncs to server on waves X1 and X6 (As of 1.2.0)
           globalScene.gameData
             .saveAll(true, battle.waveIndex % 5 === 1 || (globalScene.lastSavePlayTime ?? 0) >= 300)
@@ -671,5 +669,18 @@ export class EncounterPhase extends BattlePhase {
    */
   protected trySetTerrainIfNewBiome(): void {
     globalScene.arena.setBiomeTerrain();
+  }
+
+  /**
+   * Save a biome checkpoint if and only if this encounter is the start of a new biome.
+   * @remarks
+   * By using function overrides, this should happen if and only if this phase
+   * is exactly a `NewBiomeEncounterPhase` or an `EncounterPhase` (to account for
+   * Wave 1 of a Daily Run), but NOT `NextEncounterPhase`.
+   */
+  protected trySaveBiomeCheckpointIfNewBiome(): void {
+    if (globalScene.enableRetries && globalScene.gameMode.isDaily) {
+      globalScene.gameData.saveBiomeCheckpoint();
+    }
   }
 }

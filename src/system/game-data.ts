@@ -148,7 +148,7 @@ export class GameData {
   public eggPity: number[];
   public unlockPity: number[];
 
-  public biomeCheckpoint?: Omit<SessionSaveData, "biomeCheckpoint">;
+  public biomeCheckpoint?: Omit<SessionSaveData, "biomeCheckpoint"> | undefined;
 
   /**
    * @param fromRaw - If true, will skip initialization of fields that are normally randomized on new game start. Used for the admin panel; default `false`
@@ -943,6 +943,8 @@ export class GameData {
 
     globalScene.sessionPlayTime = fromSession.playTime || 0;
     globalScene.lastSavePlayTime = 0;
+
+    this.biomeCheckpoint = fromSession.biomeCheckpoint;
 
     const loadPokemonAssets: Promise<void>[] = [];
 
