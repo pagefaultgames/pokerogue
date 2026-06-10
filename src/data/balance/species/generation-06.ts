@@ -549,9 +549,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
     starterCost: 4,
     evolutions: [new SpeciesEvolution({ speciesId: SpeciesId.FROGADIER, level: 16 })],
     eggTier: EggTier.COMMON,
-    passives: {
-      0: AbilityId.STAKEOUT,
-    },
+    passives: AbilityId.STAKEOUT,
     levelMoves: [
       [1, MoveId.POUND],
       [1, MoveId.GROWL],
@@ -659,10 +657,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
     }),
     starter: SpeciesId.FROAKIE,
     evolutions: [new SpeciesEvolution({ speciesId: SpeciesId.GRENINJA, level: 36 })],
-    passives: {
-      0: AbilityId.STAKEOUT,
-      1: AbilityId.STAKEOUT,
-    },
+    passives: AbilityId.STAKEOUT,
     levelMoves: [
       [1, MoveId.POUND],
       [1, MoveId.GROWL],
@@ -716,10 +711,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
     }),
     starter: SpeciesId.FROAKIE,
     evolutions: [],
-    passives: {
-      0: AbilityId.STAKEOUT,
-      1: AbilityId.SUPER_LUCK,
-    },
+    passives: AbilityId.STAKEOUT,
     levelMoves: [
       [EVOLVE_MOVE, MoveId.WATER_SHURIKEN],
       [1, MoveId.POUND],
@@ -834,6 +826,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       ],
     }),
     starter: SpeciesId.BATTLE_BOND_GRENINJA,
+    starterCost: 5,
     evolutions: [],
     formChanges: [
       new SpeciesFormChange({
