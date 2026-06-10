@@ -35,6 +35,7 @@ describe("Moves - Make It Rain", () => {
 
     game.move.select(MoveId.MAKE_IT_RAIN);
     game.move.select(MoveId.SPLASH, 1);
+    await game.move.forceHit();
 
     await game.phaseInterceptor.to("MoveEndPhase");
 
@@ -52,6 +53,7 @@ describe("Moves - Make It Rain", () => {
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.MAKE_IT_RAIN);
+    await game.move.forceHit();
 
     await game.phaseInterceptor.to("StatStageChangePhase");
 
@@ -69,6 +71,7 @@ describe("Moves - Make It Rain", () => {
 
     game.move.select(MoveId.MAKE_IT_RAIN);
     game.move.select(MoveId.SPLASH, 1);
+    await game.move.forceHit();
 
     await game.phaseInterceptor.to("StatStageChangePhase");
 
@@ -83,6 +86,7 @@ describe("Moves - Make It Rain", () => {
 
     game.move.select(MoveId.MAKE_IT_RAIN);
     game.move.select(MoveId.SPLASH, 1);
+    await game.move.forceHit();
 
     // Make Make It Rain miss the first target
     await game.move.forceMiss(true);

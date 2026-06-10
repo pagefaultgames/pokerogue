@@ -106,7 +106,12 @@ export class PokemonData {
     this.nature = source.nature ?? Nature.HARDY;
     this.moveset = source.moveset?.map((m: any) => PokemonMove.loadMove(m)) ?? [];
     this.status = source.status
-      ? new Status(source.status.effect, source.status.toxicTurnCount, source.status.sleepTurnsRemaining)
+      ? new Status(
+          source.status.effect,
+          source.status.toxicTurnCount,
+          source.status.sleepTurnsRemaining,
+          source.status.freezeTurnsRemaining,
+        )
       : null;
     this.friendship = source.friendship ?? getPokemonSpecies(this.species).baseFriendship;
     this.metLevel = source.metLevel || 5;

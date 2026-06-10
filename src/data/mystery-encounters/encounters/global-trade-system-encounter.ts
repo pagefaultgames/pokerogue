@@ -1,7 +1,7 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
-import { allSpecies } from "#data/data-lists";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { Gender, getGenderSymbol } from "#data/gender";
 import { getNatureName } from "#data/nature";
 import { getPokeballAtlasKey, getPokeballTintColor } from "#data/pokeball";
@@ -146,7 +146,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
     return true;
   })
   .withOnVisualsStart(() => {
-    audioManager.fadeAndSwitchBgm(globalScene.currentBattle.mysteryEncounter!.misc.bgmKey);
+    audioManager.playBgm(globalScene.currentBattle.mysteryEncounter!.misc.bgmKey, true);
     return true;
   })
   .withOption(
@@ -519,7 +519,7 @@ function generateTradeOption(alreadyUsedSpecies: PokemonSpecies[], originalBst?:
   }
   while (newSpecies == null) {
     // Get all non-legendary species that fall within the Bst range requirements
-    let validSpecies = allSpecies.filter(s => {
+    let validSpecies = speciesDataRegistry.getAllSpecies().filter(s => {
       const isLegendaryOrMythical = s.legendary || s.subLegendary || s.mythical;
       const speciesBst = s.getBaseStatTotal();
       const bstInRange = speciesBst >= bstMin && speciesBst <= bstCap;

@@ -1,6 +1,6 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { speciesStarterCosts } from "#balance/starters";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { modifierTypes } from "#data/data-lists";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -85,7 +85,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter = MysteryEncounterB
     const pokemon = getHighestStatTotalPlayerPokemon(true, true);
 
     const baseSpecies = pokemon.getSpeciesForm().getRootSpeciesId();
-    const starterValue: number = speciesStarterCosts[baseSpecies] ?? 1;
+    const starterValue: number = speciesDataRegistry.getStarterCost(baseSpecies) ?? 1;
     const multiplier = Math.max((MONEY_MAXIMUM_MULTIPLIER / 10) * starterValue, MONEY_MINIMUM_MULTIPLIER);
     const price = globalScene.getWaveMoneyAmount(multiplier);
 

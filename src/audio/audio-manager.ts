@@ -64,10 +64,12 @@ export class AudioManager {
    * Can be overridden by a currently running event.
    * @param fadeOutPrevious - (Default `false`) Whether to fade out the previously playing bgm
    * @param loop - (Default `true`) Whether to loop the new bgm
+   * @param fadeDuration - (Default `500`) How long, in ms, the fade out of the previous bgm should take
    * @returns The {@linkcode BackgroundMusic} instance for the new bgm,
    * or `null` if no valid bgm could be played or the input bgm was the same as the currently playing bgm
    */
-  public playBgm(bgmName?: string, fadeOutPrevious = false, loop = true): BackgroundMusic | null {
+  // TODO: use object params
+  public playBgm(bgmName?: string, fadeOutPrevious = false, loop = true, fadeDuration = 500): BackgroundMusic | null {
     const resolvedName = timedEventManager.getEventBgmReplacement(
       bgmName ?? globalScene.currentBattle?.getBgmOverride() ?? globalScene.arena?.bgm,
     );
@@ -93,7 +95,6 @@ export class AudioManager {
     const volume = this.getVolume(VolumeSetting.BGM);
 
     if (fadeOutPrevious && previous?.isPlaying) {
-      const fadeDuration = 500;
       previous.fadeOut(fadeDuration, true);
       newBgm.playAfterDelay(fixedInt(fadeDuration + 250), volume);
     } else {
@@ -135,22 +136,13 @@ export class AudioManager {
    * Fades out the current bgm over `duration` ms.
    * @param duration - (Default `500`) The amount of time the fade out should take place over, in ms
    * @param fixed - (Default `false`) Whether the duration should ignore game speed
+   * @param destroy - (Default `true`) Whether to destroy the bgm after fading out, or just pause it
    */
-  public fadeOutBgm(duration = 500, fixed = false): void {
-    this.currentBgm?.fadeOut(duration, fixed);
-    this.currentBgm = null;
-  }
-
-  /**
-   * Fade out the current BGM track over `delay` ms, then start `newBgmKey` once it finishes.
-   * @param newBgmKey - (Optional) The key for the next track to start
-   * @param delay - (Default `2000`) The delay to use before starting the next track
-   */
-  public fadeAndSwitchBgm(newBgmKey?: string, delay = 2000): void {
-    this.fadeOutBgm(delay, true);
-    globalScene.time.delayedCall(fixedInt(delay), () => {
-      this.playBgm(newBgmKey);
-    });
+  public fadeOutBgm(duration = 500, fixed = false, destroy = true): void {
+    this.currentBgm?.fadeOut(duration, fixed, destroy);
+    if (destroy) {
+      this.currentBgm = null;
+    }
   }
 
   /**

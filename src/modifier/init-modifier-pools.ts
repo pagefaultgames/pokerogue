@@ -1,6 +1,6 @@
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { pokemonEvolutions } from "#balance/pokemon-evolutions";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { modifierTypes } from "#data/data-lists";
 import { MAX_PER_TYPE_POKEBALLS } from "#data/pokeball";
 import { AbilityId } from "#enums/ability-id";
@@ -367,8 +367,8 @@ function initUltraModifierPool() {
           // Check if Pokemon's species (or fusion species, if applicable) can evolve or if they're G-Max'd
           if (
             !p.isMax()
-            && (p.getSpeciesForm(true).speciesId in pokemonEvolutions
-              || (p.isFusion() && p.getFusionSpeciesForm(true).speciesId in pokemonEvolutions))
+            && (speciesDataRegistry.hasEvolutions(p.getSpeciesForm(true).speciesId)
+              || (p.isFusion() && speciesDataRegistry.hasEvolutions(p.getFusionSpeciesForm(true).speciesId)))
           ) {
             // Check if Pokemon is already holding an Eviolite
             return !p.getHeldItems().some(i => i.type.id === "EVIOLITE");
