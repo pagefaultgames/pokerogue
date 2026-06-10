@@ -44,6 +44,12 @@ export class PartyReorderSwitchPhase extends BattlePhase {
       return;
     }
 
+    // No Pokemon on the field yet; EncounterPhase will queue the initial SummonPhase(s).
+    if (!party.some(pokemon => pokemon.isOnField())) {
+      this.end();
+      return;
+    }
+
     const leavingPokemon = party.filter(pokemon => pokemon.isOnField() && !desiredField.includes(pokemon));
 
     const enteringIndexes = desiredField.reduce<number[]>((acc, pokemon, index) => {
