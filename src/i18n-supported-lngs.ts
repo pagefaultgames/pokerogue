@@ -15,12 +15,10 @@ export const supportedLngs = [
   "da", // Danish
   "th", // Thai
   "tr", // Turkish
-  "ro", // Romanian
   "ru", // Russian
   "id", // Indonesian
   "hi", // Hindi
   "tl", // Tagalog
-  "nb-NO", // Norwegian Bokmål
   "sv", // Swedish
   "uk", // Ukrainian
   "vi", // Vietnamese
