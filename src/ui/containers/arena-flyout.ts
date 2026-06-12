@@ -61,8 +61,6 @@ interface ArenaTagInfo {
   duration: number;
   /** The tag's {@linkcode ArenaTagType}. */
   readonly tagType: ArenaTagType;
-  /** Whether the tag is currently suppressed. */
-  suppressed?: boolean;
 }
 
 // #endregion Interfaces
