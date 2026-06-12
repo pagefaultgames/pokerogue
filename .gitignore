@@ -47,7 +47,3 @@ coverage
 # Script outputs
 *.csv
 
-# Temporary a11y bindings-tab debug log (written by the dev server when running
-# the diagnostic build of feature/screen-reader-accessibility)
-.a11y-debug-log.txt
-

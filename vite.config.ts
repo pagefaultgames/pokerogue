@@ -67,7 +67,6 @@ export const sharedConfig: UserConfigFnPromise = async ({ mode }) => {
       (await import("./plugins/vite/vite-minify-json-plugin")).minifyPublicJsonFiles(),
       (await import("./plugins/vite/namespaces-i18n-plugin")).LocaleNamespace(),
       (await import("unplugin-inline-enum/vite")).default({ scanDir: "src" }),
-      (await import("./plugins/vite/a11y-debug-log-plugin")).a11yDebugLogPlugin(),
     ];
   }
   return opts;

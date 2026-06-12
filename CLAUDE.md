@@ -133,28 +133,12 @@ a11yManager.clearMenu();
 | `ui-inputs.ts` | Stats key announces HP / max HP / percent / status / level for every active Pokémon in battle, enemies first |
 | `level-up-phase.ts` | "{Pokemon} reached level {N}" -- announced unconditionally so screen readers stay informed even when the visual notification setting suppresses the showText prompt |
 
-## Diagnostic Logging (TEMPORARY — remove before final PR)
-
-A diagnostic surface is currently active in `AbstractControlSettingsUiHandler` to investigate why the keyboard / gamepad bindings tab announcements aren't reading in NVDA for the maintainer. Every call to `announceCurrentSetting()` writes a timestamped line to two places:
-
-- **localStorage** under key `a11yDebugLog` (browser-side fallback).
-- **`.a11y-debug-log.txt` at the repo root**, via a POST to `/a11y-debug-log` handled by a Vite dev-server middleware (`plugins/vite/a11y-debug-log-plugin.ts`).
-
-The file is in `.gitignore`. Claude (or anyone with filesystem access) can read it directly with the Read tool while the user just plays normally -- no DevTools required.
-
-Browser-side helpers exposed on `window`:
-- `dumpA11yLog()` -- downloads the localStorage copy as a `.txt` file.
-- `clearA11yLog()` -- wipes both localStorage and the on-disk file.
-
-**Before the upstream PR is opened, the following commits must be reverted**: the `debug(a11y)` commit that adds `appendA11yDebugLog`, the Vite plugin file, and the `.gitignore` entry. Search for `appendA11yDebugLog` to find every touch.
-
 ## PR Status
 
 This branch (`feature/screen-reader-accessibility` on `MichaelJohann1/pokerogue`) targets `pagefaultgames/pokerogue:beta`.
 
-- **Up to date with upstream/beta**: yes (merged via `git merge upstream/beta`; merge commit resolves the two real conflicts and adapts to beta's renames). 0 commits behind. PR diff is ~51 files plus the temporary diagnostic infrastructure.
+- **Upstream sync**: previously merged up to `upstream/beta` (merge commit resolves the two real conflicts and adapts to beta's renames). Beta has advanced since that sync, so a re-merge may be required before final merge. PR diff is ~51 files.
 - **Locales PR**: needs to be opened separately at `MichaelJohann1/pokerogue-locales:feature/accessibility-namespace` -> `pagefaultgames/pokerogue-locales:main`. Once that merges, revert the `.gitmodules` URL change in this PR and bump the submodule SHA to the upstream merged commit.
-- **Diagnostic code**: the `debug(a11y)` commits are still on the branch and MUST be reverted before final upstream PR (see Diagnostic Logging section above).
 - **TypeScript**: clean (`pnpm typecheck`).
 - **Biome lint+format**: clean across all changed files (`pnpm biome:ci`).
 - **Tests**: passing UI suites (`pokedex.test.ts`, `starter-select.test.ts`, `rebinding-setting.test.ts`, `inputs.test.ts` -- 44 passed, 9 todo, 0 failed).

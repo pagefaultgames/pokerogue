@@ -15,67 +15,6 @@ import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 import { specialIconKeys, specialIcons } from "./special-icons";
 
-/**
- * Temporary diagnostic for the keyboard/gamepad bindings tab a11y announcements.
- * Appends each log line to localStorage under "a11yDebugLog" so the user can
- * navigate the bindings tab with NVDA running and then download the captured
- * log later via `window.dumpA11yLog()` (called from the DevTools console).
- *
- * Will be removed once the underlying issue is identified.
- */
-const A11Y_DEBUG_LOG_KEY = "a11yDebugLog";
-
-function appendA11yDebugLog(line: string): void {
-  const entry = `[${new Date().toISOString()}] [a11y][bindings] ${line}\n`;
-  // Persist to localStorage as a fallback (in case the dev-server middleware isn't
-  // reachable -- e.g. running a production build).
-  try {
-    const existing = localStorage.getItem(A11Y_DEBUG_LOG_KEY) ?? "";
-    localStorage.setItem(A11Y_DEBUG_LOG_KEY, existing + entry);
-  } catch {
-    // localStorage may be full or unavailable
-  }
-  // Also POST the line to the dev-server middleware so it lands in
-  // .a11y-debug-log.txt at the repo root, where Claude can read it directly via
-  // the Read tool. Fire-and-forget; failures are ignored.
-  try {
-    void fetch("/a11y-debug-log", { method: "POST", body: entry, keepalive: true });
-  } catch {
-    // ignore
-  }
-}
-
-// Expose a download helper on the window so the user can save the log as a file.
-// Type via index access to avoid `any`.
-declare global {
-  interface Window {
-    dumpA11yLog?: () => void;
-    clearA11yLog?: () => void;
-  }
-}
-if (typeof window !== "undefined") {
-  window.dumpA11yLog = () => {
-    const log = localStorage.getItem(A11Y_DEBUG_LOG_KEY) ?? "(empty — no log entries captured yet)";
-    const blob = new Blob([log], { type: "text/plain;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `a11y-bindings-debug-${new Date().toISOString().replace(/[:.]/g, "-")}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
-  window.clearA11yLog = () => {
-    localStorage.removeItem(A11Y_DEBUG_LOG_KEY);
-    try {
-      void fetch("/a11y-debug-log", { method: "DELETE" });
-    } catch {
-      // ignore
-    }
-  };
-}
-
 // TODO: Strongly type the index signature aside from simply being `string`
 export interface InputsIcons {
   [key: string]: Phaser.GameObjects.Sprite;
@@ -519,13 +458,11 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
   private announceCurrentSetting(): void {
     const settingIndex = this.cursor + this.scrollCursor;
     if (!this.setting) {
-      appendA11yDebugLog(`this.setting is ${String(this.setting)}`);
       return;
     }
     const settingNames = Object.keys(this.setting);
     const settingName = settingNames[settingIndex];
     if (!settingName) {
-      appendA11yDebugLog(`no settingName at index ${settingIndex} of ${settingNames.length}`);
       return;
     }
     const i18nKey = toCamelCase(settingName.replace(/ALT(_| )/, ""));
@@ -549,9 +486,6 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
       const value = optionsForSetting?.[cursor] ?? "";
       announcement = i18next.t("accessibility:controlSettingValue", { label, value });
     }
-    appendA11yDebugLog(
-      `settingName=${settingName} mappingName=${String(mappingName)} isBinding=${isBinding} announcement=${announcement}`,
-    );
     a11yManager.announceMessage(announcement);
   }
 
