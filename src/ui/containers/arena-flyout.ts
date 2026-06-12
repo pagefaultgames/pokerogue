@@ -9,7 +9,7 @@ import { TextStyle } from "#enums/text-style";
 import { WeatherType } from "#enums/weather-type";
 import type { ArenaTagAddedEvent, ArenaTagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#events/arena";
 import { BattleSceneEventType } from "#events/battle-scene";
-import { addBBCodeTextObject, addTextObject } from "#ui/text";
+import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { TimeOfDayWidget } from "#ui/time-of-day-widget";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import { fixedInt } from "#utils/common";
@@ -162,9 +162,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     this.flyoutTextHeaderPlayer = addTextObject(6, 5, i18next.t("arenaFlyout:player"), TextStyle.SUMMARY_BLUE)
       .setFontSize(54)
       .setAlign("left")
-      .setOrigin(1, 0);
-
-    this.flyoutContainer.add(this.flyoutTextHeaderPlayer);
+      .setOrigin(0);
 
     this.flyoutTextHeaderField = addTextObject(
       FLYOUT_WIDTH / 2,
@@ -190,14 +188,14 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
       .setLineSpacing(-1)
       .setFontSize(48)
       .setAlign("left")
-      .setOrigin(0, 0);
+      .setOrigin(0);
 
     this.flyoutTextField = addBBCodeTextObject(FLYOUT_WIDTH / 2, 13, "", TextStyle.BATTLE_INFO)
       .setLineSpacing(-1)
       .setFontSize(48)
       .setAlign("center")
-      .setOrigin(0.5, 0);
-    // .setStrikethrough(getTextColor(TextStyle.BATTLE_INFO), 5, 10);
+      .setOrigin(0.5, 0)
+      .setStrikethrough(getTextColor(TextStyle.BATTLE_INFO), 4, -10);
 
     this.flyoutTextEnemy = addTextObject(FLYOUT_WIDTH - 6, 13, "", TextStyle.BATTLE_INFO)
       .setLineSpacing(-1)
