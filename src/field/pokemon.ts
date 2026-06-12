@@ -65,6 +65,7 @@ import { getRandomStatus, getStatusEffectHealText, getStatusEffectOverlapText, S
 import { getTerrainBlockMessage, TerrainType } from "#data/terrain";
 import type { TypeDamageMultiplier } from "#data/type";
 import { getTypeDamageMultiplier, getTypeRgb } from "#data/type";
+import { isWeatherSuppressed } from "#data/weather";
 import { AbilityId } from "#enums/ability-id";
 import { AiType } from "#enums/ai-type";
 import { ArenaTagSide } from "#enums/arena-tag-side";
@@ -2597,7 +2598,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (
       !ignoreStrongWinds
       && arena.weatherType === WeatherType.STRONG_WINDS
-      && !arena.weather?.isEffectSuppressed()
+      && !isWeatherSuppressed()
       && this.isOfType(PokemonType.FLYING)
       && getTypeDamageMultiplier(moveType, PokemonType.FLYING) === 2
     ) {

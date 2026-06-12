@@ -107,6 +107,7 @@ import { coerceArray } from "#utils/array";
 import { BooleanHolder, getFrameMs, toDmgValue } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
+import { isWeatherSuppressed } from "./weather";
 
 /** Interface containing the serializable fields of `BattlerTag` */
 interface BaseBattlerTag {
@@ -1197,7 +1198,7 @@ export class PowderTag extends BattlerTag {
     const weather = globalScene.arena.weather;
     if (
       pokemon.getMoveType(move) !== PokemonType.FIRE
-      || (weather?.weatherType === WeatherType.HEAVY_RAIN && !weather.isEffectSuppressed()) // Since gen 7, Heavy rain takes priority over powder
+      || (weather?.weatherType === WeatherType.HEAVY_RAIN && !isWeatherSuppressed()) // Since gen 7, Heavy rain takes priority over powder
     ) {
       return true;
     }

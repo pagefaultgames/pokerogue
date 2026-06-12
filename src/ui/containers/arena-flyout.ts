@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import type { ArenaTag } from "#data/arena-tag";
 import { type Terrain, TerrainType } from "#data/terrain";
-import type { Weather } from "#data/weather";
+import { isWeatherSuppressed, type Weather } from "#data/weather";
 import { ArenaEventType } from "#enums/arena-event-type";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -9,12 +9,13 @@ import { TextStyle } from "#enums/text-style";
 import { WeatherType } from "#enums/weather-type";
 import type { ArenaTagAddedEvent, ArenaTagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#events/arena";
 import { BattleSceneEventType } from "#events/battle-scene";
-import { addTextObject } from "#ui/text";
+import { addBBCodeTextObject, addTextObject } from "#ui/text";
 import { TimeOfDayWidget } from "#ui/time-of-day-widget";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import { fixedInt } from "#utils/common";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
+import type BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 
 // #region Interfaces
 
@@ -28,6 +29,8 @@ interface WeatherInfo {
   duration: number;
   /** The current {@linkcode WeatherType}. */
   readonly weatherType: WeatherType;
+  /** Whether the weather is currently suppressed. */
+  suppressed?: boolean;
 }
 
 /** Base container for info about the currently active {@linkcode Terrain}. */
@@ -58,6 +61,8 @@ interface ArenaTagInfo {
   duration: number;
   /** The tag's {@linkcode ArenaTagType}. */
   readonly tagType: ArenaTagType;
+  /** Whether the tag is currently suppressed. */
+  suppressed?: boolean;
 }
 
 // #endregion Interfaces
@@ -106,7 +111,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
   /** The {@linkcode Phaser.GameObjects.Text} used to indicate the enemy's effects */
   private readonly flyoutTextEnemy: Phaser.GameObjects.Text;
   /** The {@linkcode Phaser.GameObjects.Text} used to indicate field effects */
-  private readonly flyoutTextField: Phaser.GameObjects.Text;
+  private readonly flyoutTextField: BBCodeText;
 
   /** Holds info about the current active {@linkcode Weather}, if any are active. */
   private weatherInfo?: WeatherInfo | undefined;
@@ -159,7 +164,9 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     this.flyoutTextHeaderPlayer = addTextObject(6, 5, i18next.t("arenaFlyout:player"), TextStyle.SUMMARY_BLUE)
       .setFontSize(54)
       .setAlign("left")
-      .setOrigin(0, 0);
+      .setOrigin(1, 0);
+
+    this.flyoutContainer.add(this.flyoutTextHeaderPlayer);
 
     this.flyoutTextHeaderField = addTextObject(
       FLYOUT_WIDTH / 2,
@@ -187,11 +194,12 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
       .setAlign("left")
       .setOrigin(0, 0);
 
-    this.flyoutTextField = addTextObject(FLYOUT_WIDTH / 2, 13, "", TextStyle.BATTLE_INFO)
+    this.flyoutTextField = addBBCodeTextObject(FLYOUT_WIDTH / 2, 13, "", TextStyle.BATTLE_INFO)
       .setLineSpacing(-1)
       .setFontSize(48)
       .setAlign("center")
       .setOrigin(0.5, 0);
+    // .setStrikethrough(getTextColor(TextStyle.BATTLE_INFO), 5, 10);
 
     this.flyoutTextEnemy = addTextObject(FLYOUT_WIDTH - 6, 13, "", TextStyle.BATTLE_INFO)
       .setLineSpacing(-1)
@@ -229,12 +237,13 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
 
     eventTarget.addEventListener(ArenaEventType.WEATHER_CHANGED, this.#onWeatherChanged);
     eventTarget.addEventListener(ArenaEventType.TERRAIN_CHANGED, this.#onTerrainChanged);
+
     eventTarget.addEventListener(ArenaEventType.ARENA_TAG_ADDED, this.#onArenaTagAdded);
     eventTarget.addEventListener(ArenaEventType.ARENA_TAG_REMOVED, this.#onArenaTagRemoved);
   };
 
   /**
-   * Iterate through all currently present tags effects and decrement their durations, removing all tags expiring in this manner..
+   * Iterate through all currently present tags effects and decrement their durations, removing all tags expiring in this manner.
    */
   readonly #onTurnEnd = (): void => {
     this.arenaTags = this.arenaTags.filter(info => info.maxDuration === 0 || --info.duration >= 0);
@@ -340,6 +349,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
       maxDuration: event.maxDuration,
       duration: event.duration,
       weatherType: event.weatherType,
+      suppressed: isWeatherSuppressed(),
     };
 
     this.updateFieldText();
@@ -385,6 +395,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     this.clearText();
 
     if (this.weatherInfo) {
+      this.weatherInfo.suppressed = isWeatherSuppressed();
       this.flyoutTextField.text += this.getTagText(this.weatherInfo);
     }
     if (this.terrainInfo) {
@@ -410,6 +421,10 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
     }
 
     text += "\n";
+    // Cast is OK here as the info types that don't have a `suppressed` property will simply have it as `undefined`
+    if ((info as WeatherInfo).suppressed) {
+      text = "[s]" + text + "[/s]";
+    }
     return text;
   }
 
@@ -418,7 +433,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
    * @param side - The {@linkcode ArenaTagSide} of the tag being updated
    * @returns The {@linkcode Phaser.GameObjects.Text} to be updated.
    */
-  private getArenaTagTargetObj(side: ArenaTagSide): Phaser.GameObjects.Text {
+  private getArenaTagTargetObj(side: ArenaTagSide): Phaser.GameObjects.Text | BBCodeText {
     switch (side) {
       case ArenaTagSide.PLAYER:
         return this.flyoutTextPlayer;

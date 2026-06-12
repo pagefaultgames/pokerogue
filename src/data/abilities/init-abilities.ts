@@ -277,7 +277,7 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.CLOUD_NINE, 3) //
-      .attr(SuppressWeatherEffectAbAttr, true)
+      .attr(SuppressWeatherEffectAbAttr)
       .attr(PostSummonUnnamedMessageAbAttr, i18next.t("abilityTriggers:weatherEffectDisappeared"))
       .attr(PostSummonWeatherSuppressedFormChangeAbAttr)
       .attr(PostFaintUnsuppressedWeatherFormChangeAbAttr)
@@ -588,7 +588,7 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.AIR_LOCK, 3) //
-      .attr(SuppressWeatherEffectAbAttr, true)
+      .attr(SuppressWeatherEffectAbAttr)
       .attr(PostSummonUnnamedMessageAbAttr, i18next.t("abilityTriggers:weatherEffectDisappeared"))
       .attr(PostSummonWeatherSuppressedFormChangeAbAttr)
       .attr(PostFaintUnsuppressedWeatherFormChangeAbAttr)
