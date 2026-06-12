@@ -391,7 +391,7 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
             priorityTypes = randSeedShuffle(priorityTypes);
           }
 
-          const newTypes: (RegularPokemonType | undefined)[] = [undefined];
+          const newTypes: (RegularPokemonType | null)[] = [null];
           let secondType: RegularPokemonType | undefined;
           while (secondType == null || originalTypes.includes(secondType)) {
             if (priorityTypes.length > 0) {

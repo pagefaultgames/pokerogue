@@ -25,15 +25,12 @@ import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
  */
 export class CustomPokemonData {
   // TODO: Change the default value for all these from -1 to something a bit more sensible
-  /**
-   * The scale at which to render this Pokemon's sprite.
-   */
+  /** The scale at which to render this Pokemon's sprite. */
   public spriteScale = -1;
   public ability: AbilityId | -1;
   public passive: AbilityId | -1;
   public nature: Nature | -1;
-  // TODO: Change default value from `PokemonType.UNKNOWN` to `null` for easier checking;
-  public types: (RegularPokemonType | undefined)[];
+  public types: (RegularPokemonType | null)[];
   /** Deprecated but needed for session save migration */
   // TODO: Remove this once pre-session migration is implemented
   public hitsRecCount: number | null = null;

@@ -605,7 +605,7 @@ async function postProcessTransformedPokemon(
 
   // Randomize the second type of the pokemon
   // If the pokemon does not normally have a second type, it will gain 1
-  newPokemon.customPokemonData.types = [undefined, getRandomRegularPokemonType()];
+  newPokemon.customPokemonData.types = [null, getRandomRegularPokemonType()];
 
   // Enable passive if previous had it
   newPokemon.passive = previousPokemon.passive;
