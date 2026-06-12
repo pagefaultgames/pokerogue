@@ -254,7 +254,8 @@ export class Arena {
    */
   // TODO: make this apply at the start of a new biome like the terrain one - this would be a lot more useful for tests
   private overrideWeather(): void {
-    // the `as` cast is OK here, as the method is only called if `activeOverrides.WEATHER_OVERRIDE` is truthy, and
+    // the `as` cast is OK here, as the method is only called if `activeOverrides.WEATHER_OVERRIDE` is truthy
+    // and WeatherType.NONE is nonzero.
     const weather = activeOverrides.WEATHER_OVERRIDE as Exclude<WeatherType, WeatherType.NONE>;
 
     this.weather = new Weather(weather, 0);
