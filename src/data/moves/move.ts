@@ -3728,7 +3728,7 @@ export class WeatherInstantChargeAttr extends InstantChargeAttr {
       if (currentWeather?.weatherType == null) {
         return false;
       }
-      return !isWeatherSuppressed() && this.weatherTypes.includes(currentWeather.weatherType);
+      return this.weatherTypes.includes(currentWeather.weatherType) && !isWeatherSuppressed();
     });
 
     this.weatherTypes = weatherTypes;
@@ -5039,7 +5039,7 @@ export class MagnitudePowerAttr extends VariablePowerAttr {
 
 export class AntiSunlightPowerDecreaseAttr extends VariablePowerAttr {
   apply(_user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
-    if (isWeatherSuppressed()) {
+    if (!isWeatherSuppressed()) {
       const power = args[0] as NumberHolder;
       const weatherType = globalScene.arena.weather?.weatherType || WeatherType.NONE;
       switch (weatherType) {
