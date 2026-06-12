@@ -36,3 +36,4 @@ ignore:
    - dist
    - .devcontainer
    - "LICENSES"
+   - .idea

@@ -2,8 +2,7 @@ import type { FixedBattleConfig } from "#app/battle";
 import { getRandomTrainerFunc } from "#app/battle";
 import type { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
-import { defaultStarterSpeciesAndEvolutions } from "#balance/pokemon-evolutions";
-import { type StarterSpeciesId, speciesStarterCosts } from "#balance/starters";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { AbilityAttr } from "#enums/ability-attr";
 import { BattleType } from "#enums/battle-type";
@@ -235,7 +234,7 @@ export abstract class Challenge {
    * @param cost - Holder for the cost of the starter Pokémon
    * @returns Whether this function did anything.
    */
-  applyStarterCost(speciesId: StarterSpeciesId, cost: NumberHolder): boolean {
+  applyStarterCost(speciesId: SpeciesId, cost: NumberHolder): boolean {
     return false;
   }
 
@@ -855,15 +854,15 @@ export class FreshStartChallenge extends Challenge {
   }
 
   applyStarterChoice(species: PokemonSpecies, isValid: BooleanHolder): boolean {
-    if (this.value === 1 && !defaultStarterSpeciesAndEvolutions.includes(species.speciesId)) {
+    if (this.value === 1 && !speciesDataRegistry.getDefaultStartersAndEvolutions().includes(species.speciesId)) {
       isValid.value = false;
       return true;
     }
     return false;
   }
 
-  applyStarterCost(speciesId: StarterSpeciesId, cost: NumberHolder): boolean {
-    cost.value = speciesStarterCosts[speciesId];
+  applyStarterCost(speciesId: SpeciesId, cost: NumberHolder): boolean {
+    cost.value = speciesDataRegistry.getStarterCost(speciesId);
     return true;
   }
 
@@ -1045,7 +1044,7 @@ export class LowerStarterMaxCostChallenge extends Challenge {
   }
 
   applyStarterChoice(species: PokemonSpecies, isValid: BooleanHolder): boolean {
-    if (speciesStarterCosts[species.speciesId] > DEFAULT_PARTY_MAX_COST - this.value) {
+    if (speciesDataRegistry.getStarterCost(species.speciesId) > DEFAULT_PARTY_MAX_COST - this.value) {
       isValid.value = false;
       return true;
     }

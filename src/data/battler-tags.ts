@@ -52,7 +52,7 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { CommonBattleAnim, MoveChargeAnim } from "#data/battle-anims";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { SpeciesFormChangeAbilityTrigger } from "#data/form-change-triggers";
@@ -883,7 +883,7 @@ export class ConfusedTag extends SerializableBattlerTag {
     phaseManager.unshiftNew("CommonAnimPhase", pokemon.getBattlerIndex(), undefined, CommonAnim.CONFUSION);
 
     // 1/3 chance of hitting self with a 40 base power move
-    if (pokemon.randBattleSeedInt(3) === 0 || Overrides.CONFUSION_ACTIVATION_OVERRIDE === true) {
+    if (pokemon.randBattleSeedInt(3) === 0 || activeOverrides.CONFUSION_ACTIVATION_OVERRIDE === true) {
       const atk = pokemon.getEffectiveStat(Stat.ATK);
       const def = pokemon.getEffectiveStat(Stat.DEF);
       const damage = toDmgValue(
@@ -2025,11 +2025,8 @@ export class EnduringTag extends BattlerTag {
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.CUSTOM) {
-      globalScene.phaseManager.queueMessage(
-        i18next.t("battlerTags:enduringLapse", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        }),
-      );
+      const pokemonNameWithAffix = getPokemonNameWithAffix(pokemon);
+      globalScene.phaseManager.queueMessage(i18next.t("battlerTags:enduringLapse", { pokemonNameWithAffix }));
       return true;
     }
 
@@ -2045,12 +2042,9 @@ export class SturdyTag extends BattlerTag {
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.CUSTOM) {
-      globalScene.phaseManager.queueMessage(
-        i18next.t("battlerTags:sturdyLapse", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        }),
-      );
-      return true;
+      const pokemonNameWithAffix = getPokemonNameWithAffix(pokemon);
+      globalScene.phaseManager.queueMessage(i18next.t("battlerTags:sturdyLapse", { pokemonNameWithAffix }));
+      return false;
     }
 
     return super.lapse(pokemon, lapseType);
@@ -2544,7 +2538,7 @@ export class SaltCuredTag extends SerializableBattlerTag {
 
       if (!cancelled.value) {
         const pokemonSteelOrWater = pokemon.isOfType(PokemonType.STEEL) || pokemon.isOfType(PokemonType.WATER);
-        pokemon.damageAndUpdate(toDmgValue(pokemonSteelOrWater ? pokemon.getMaxHp() / 4 : pokemon.getMaxHp() / 8), {
+        pokemon.damageAndUpdate(toDmgValue(pokemonSteelOrWater ? pokemon.getMaxHp() / 8 : pokemon.getMaxHp() / 16), {
           result: HitResult.INDIRECT,
         });
 

@@ -134,6 +134,9 @@ export function getTextStyleOptions(
         case "ja":
           styleOptions.padding = { top: 2, bottom: 10 };
           break;
+        case "eu":
+          styleOptions.padding = { right: 66 };
+          break;
       }
       styleOptions.fontSize = fontSizeLabel;
       shadowXpos = 5;
@@ -196,9 +199,12 @@ export function getTextStyleOptions(
     case TextStyle.WINDOW_BATTLE_COMMAND: {
       let fontSizeLabel = "96px";
       switch (lang) {
-        case "ja":
+        case "ko":
           styleOptions.padding = { top: 2 };
           fontSizeLabel = "92px";
+          break;
+        case "pl":
+          fontSizeLabel = "94px";
           break;
       }
       styleOptions.fontSize = fontSizeLabel;
@@ -255,6 +261,7 @@ export function getTextStyleOptions(
       let fontSizeValue = "96px";
       switch (lang) {
         case "ja":
+        case "id":
           fontSizeValue = "80px";
           styleOptions.padding = { top: 10 };
           break;
@@ -286,6 +293,7 @@ export function getTextStyleOptions(
       let fontSizeValue = "96px";
       switch (lang) {
         case "ja":
+        case "id":
           fontSizeValue = "80px";
           styleOptions.padding = { top: 10 };
           break;
@@ -302,6 +310,7 @@ export function getTextStyleOptions(
       let fontSizeValue = "96px";
       switch (lang) {
         case "ja":
+        case "id":
           fontSizeValue = "80px";
           styleOptions.padding = { top: 10 };
           break;

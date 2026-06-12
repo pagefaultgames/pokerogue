@@ -97,7 +97,7 @@ class DefaultOverrides {
    * This override's ability to force doubles trainer battles is deprecated due to not altering the spawned trainer's variant,
    * and may be removed in a future PR.
    */
-  readonly BATTLE_STYLE_OVERRIDE: BattleStyle | null = null;
+  readonly BATTLE_STYLE_OVERRIDE: BattleStyleOverride | null = null;
   /**
    * If present and non-`null`, will override the starting wave # when starting a new run.
    * Should never be set to a negative value.
@@ -349,12 +349,9 @@ class DefaultOverrides {
 
 export const defaultOverrides = new DefaultOverrides();
 
-export default {
-  ...defaultOverrides,
-  ...overrides,
-} satisfies InstanceType<typeof DefaultOverrides>;
+export const activeOverrides = { ...defaultOverrides, ...overrides } satisfies InstanceType<OverridesType>;
 
-export type BattleStyle = "double" | "single" | "even-doubles" | "odd-doubles";
+export type BattleStyleOverride = "double" | "single" | "even-doubles" | "odd-doubles";
 
 export type RandomTrainerOverride = {
   /** The Type of trainer to force */
@@ -368,4 +365,4 @@ export type RandomTrainerOverride = {
 };
 
 /** The type of the {@linkcode DefaultOverrides} class */
-export type OverridesType = typeof DefaultOverrides;
+type OverridesType = typeof DefaultOverrides;

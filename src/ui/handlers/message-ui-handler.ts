@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import type { UiMode } from "#enums/ui-mode";
@@ -172,7 +173,7 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
               globalScene.charSprite.setVariant(charVar);
             }
             if (charSound) {
-              globalScene.playSound(charSound);
+              audioManager.playSound(charSound);
             }
             if (callback && !this.textTimer?.repeatCount) {
               if (callbackDelay && !prompt) {

@@ -183,7 +183,7 @@ import {
 import { AbBuilder, type Ability } from "#abilities/ability";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { GroundedTag } from "#data/battler-tags";
+import { GroundedTag, ProtectedTag } from "#data/battler-tags";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { Gender } from "#data/gender";
 import { getNonVolatileStatusEffects } from "#data/status-effect";
@@ -253,7 +253,7 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.SAND_VEIL, 3) //
-      .attr(StatMultiplierAbAttr, Stat.EVA, 1.2)
+      .attr(StatMultiplierAbAttr, Stat.EVA, 1.25)
       .attr(BlockWeatherDamageAttr, WeatherType.SANDSTORM)
       .condition(getWeatherCondition(WeatherType.SANDSTORM))
       .ignorable()
@@ -518,7 +518,7 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.SHED_SKIN, 3) //
-      .conditionalAttr(_pokemon => !randSeedInt(3), PostTurnResetStatusAbAttr)
+      .conditionalAttr(_pokemon => randSeedInt(10) < 3, PostTurnResetStatusAbAttr)
       .build(),
     new AbBuilder(AbilityId.GUTS, 3) //
       .attr(BypassBurnDamageReductionAbAttr)
@@ -620,7 +620,7 @@ export function initAbilities() {
       .attr(FlinchStatStageChangeAbAttr, [Stat.SPD], 1)
       .build(),
     new AbBuilder(AbilityId.SNOW_CLOAK, 4) //
-      .attr(StatMultiplierAbAttr, Stat.EVA, 1.2)
+      .attr(StatMultiplierAbAttr, Stat.EVA, 1.25)
       .attr(BlockWeatherDamageAttr, WeatherType.HAIL)
       .condition(getWeatherCondition(WeatherType.HAIL, WeatherType.SNOW))
       .ignorable()
@@ -909,7 +909,7 @@ export function initAbilities() {
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.HEALER, 5) //
-      .conditionalAttr(pokemon => pokemon.getAlly() != null && randSeedInt(10) < 3, PostTurnResetStatusAbAttr, true)
+      .conditionalAttr(pokemon => pokemon.getAlly() != null && randSeedInt(2) === 1, PostTurnResetStatusAbAttr, true)
       .build(),
     new AbBuilder(AbilityId.FRIEND_GUARD, 5) //
       .attr(AlliedFieldDamageReductionAbAttr, 0.75)
@@ -1801,6 +1801,14 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.UNSEEN_FIST, 8) //
       .attr(IgnoreProtectOnContactAbAttr)
+      .attr(
+        MoveDamageBoostAbAttr,
+        0.25,
+        (user, target, move) =>
+          !!target
+          && target.findTags(t => t instanceof ProtectedTag).length > 0
+          && move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user }),
+      )
       .build(),
     new AbBuilder(AbilityId.CURIOUS_MEDICINE, 8) //
       .attr(PostSummonClearAllyStatStagesAbAttr)

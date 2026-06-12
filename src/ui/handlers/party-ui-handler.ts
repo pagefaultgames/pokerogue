@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { allMoves } from "#data/data-lists";
 import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
 import { Gender, getGenderColor, getGenderSymbol } from "#data/gender";
@@ -1454,10 +1454,10 @@ export class PartyUiHandler extends MessageUiHandler {
     this.options.push(PartyOption.RENAME);
 
     if (
-      Object.hasOwn(pokemonEvolutions, pokemon.species.speciesId)
+      speciesDataRegistry.hasEvolutions(pokemon.species.speciesId)
       || (pokemon.isFusion()
         && pokemon.fusionSpecies
-        && Object.hasOwn(pokemonEvolutions, pokemon.fusionSpecies.speciesId))
+        && speciesDataRegistry.hasEvolutions(pokemon.fusionSpecies.speciesId))
     ) {
       this.options.push(PartyOption.UNPAUSE_EVOLUTION);
     }
@@ -1529,7 +1529,7 @@ export class PartyUiHandler extends MessageUiHandler {
           const allowBatonModifierSwitch = this.allowBatonModifierSwitch();
           const isBatonPassMove = this.isBatonPassMove();
 
-          if (allowBatonModifierSwitch && !isBatonPassMove) {
+          if (allowBatonModifierSwitch && !isBatonPassMove && globalScene.preferBatonPass) {
             // the BATON modifier gives an extra switch option for
             // pokemon-command switches, allowing buffs to be optionally passed
             this.options.push(PartyOption.PASS_BATON);
@@ -1541,6 +1541,11 @@ export class PartyUiHandler extends MessageUiHandler {
           this.options.push(
             isBatonPassMove && !allowBatonModifierSwitch ? PartyOption.PASS_BATON : PartyOption.SEND_OUT,
           );
+
+          if (allowBatonModifierSwitch && !isBatonPassMove && !globalScene.preferBatonPass) {
+            // If Pass Baton is not preferred, place it under SEND_OUT
+            this.options.push(PartyOption.PASS_BATON);
+          }
         }
         this.addCommonOptions(pokemon);
         break;
@@ -2197,12 +2202,12 @@ class PartySlot extends Phaser.GameObjects.Container {
       this.slotHpText.setVisible(false);
       let slotTmText: string;
 
-      if (this.pokemon.getMoveset().filter(m => m.moveId === tmMoveId).length > 0) {
+      if (this.pokemon.getMoveset().some(m => m.moveId === tmMoveId)) {
         slotTmText = i18next.t("partyUiHandler:learned");
-      } else if (this.pokemon.compatibleTms.indexOf(tmMoveId) === -1) {
-        slotTmText = i18next.t("partyUiHandler:notAble");
-      } else {
+      } else if (this.pokemon.isTmCompatible(tmMoveId)) {
         slotTmText = i18next.t("partyUiHandler:able");
+      } else {
+        slotTmText = i18next.t("partyUiHandler:notAble");
       }
 
       this.slotDescriptionLabel.setText(slotTmText);

@@ -1,32 +1,22 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { starterColors } from "#app/global-vars/starter-colors";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { speciesEggMoves } from "#balance/moves/egg-moves";
-import { starterPassiveAbilities } from "#balance/passives";
 import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
-import {
-  getEvolutions,
-  getPreEvolutions,
-  pokemonEvolutions,
-  pokemonPrevolutions,
-  pokemonStarters,
-} from "#balance/pokemon-evolutions";
-import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#balance/pokemon-level-moves";
 import {
   getPassiveCandyCount,
   getSameSpeciesEggCandyCounts,
   getStarterValueFriendshipCap,
   getValueReductionCandyCounts,
-  speciesStarterCosts,
 } from "#balance/starters";
-import { speciesTmMoves } from "#balance/tms";
-import { allAbilities, allMoves, allSpecies, catchableSpecies } from "#data/data-lists";
-import { Egg, getEggTierForSpecies } from "#data/egg";
+import { allAbilities, allMoves, catchableSpecies } from "#data/data-lists";
+import { Egg } from "#data/egg";
 import { GrowthRate, getGrowthRateColor } from "#data/exp";
 import { Gender, getGenderColor, getGenderSymbol } from "#data/gender";
 import { getNatureName } from "#data/nature";
 import type { SpeciesFormChange } from "#data/pokemon-forms";
-import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { normalForm } from "#data/pokemon-species";
 import { AbilityAttr } from "#enums/ability-attr";
@@ -51,7 +41,7 @@ import { getVariantIcon, getVariantTint } from "#sprites/variant";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { BiomeTierTimeOfDay } from "#types/biomes";
 import type { DexEntry } from "#types/dex-data";
-import type { LevelMoves } from "#types/pokemon-level-moves";
+import type { LevelMoves } from "#types/pokemon-species";
 import type { StarterAttributes } from "#types/save-data";
 import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
 import { a11yManager, getKeyLabelForButton } from "#ui/accessibility-manager";
@@ -389,8 +379,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       .setPipeline(globalScene.spritePipeline, { tone: [0.0, 0.0, 0.0, 0.0], ignoreTimeTint: true });
     this.starterSelectContainer.add(this.pokemonSprite);
 
-    this.pokemonNumberText = addTextObject(17, 1, "0000", TextStyle.SUMMARY_DEX_NUM) //
-      .setOrigin(0);
+    this.pokemonNumberText = addTextObject(41, 1, "0000", TextStyle.SUMMARY_DEX_NUM) //
+      .setOrigin(1, 0);
     this.starterSelectContainer.add(this.pokemonNumberText);
 
     this.pokemonNameText = addTextObject(6, 112, "", TextStyle.SUMMARY) //
@@ -424,12 +414,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
     const starterBoxContainer = globalScene.add.container(speciesContainerX + 6, 9); // 115
 
-    for (const species of allSpecies) {
-      if (!Object.hasOwn(speciesStarterCosts, species.speciesId)) {
-        continue;
-      }
-
-      this.speciesLoaded.set(species.speciesId, false);
+    for (const speciesId of speciesDataRegistry.getAllStarters()) {
+      this.speciesLoaded.set(speciesId, false);
+      const species = speciesDataRegistry.getSpecies(speciesId);
       this.allSpecies.push(species);
     }
 
@@ -850,7 +837,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
   private getMenuText(): string {
     const isSeen = this.isSeen();
-    const isStarterCaught = !!this.isCaught(this.getStarterSpecies(this.species));
+    const isStarterCaught = !!this.isCaught(speciesDataRegistry.getStarter(this.species.speciesId, true));
 
     return this.menuOptions
       .map(o => {
@@ -896,20 +883,13 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
     this.starterId = this.getStarterSpeciesId(this.species.speciesId);
 
-    const allEvolutions = Object.hasOwn(pokemonEvolutions, species.speciesId)
-      ? pokemonEvolutions[species.speciesId]
-      : [];
+    const allEvolutions = speciesDataRegistry.getEvolutions(this.species.speciesId);
 
     if (species.forms.length > 0) {
       const form = species.forms[formIndex];
 
       // If this form has a specific set of moves, we get them.
-      this.levelMoves =
-        formIndex > 0
-        && Object.hasOwn(pokemonFormLevelMoves, species.speciesId)
-        && Object.hasOwn(pokemonFormLevelMoves[species.speciesId], formIndex)
-          ? pokemonFormLevelMoves[species.speciesId][formIndex]
-          : pokemonSpeciesLevelMoves[species.speciesId];
+      this.levelMoves = species.getLevelMoves(formKey);
       this.ability1 = form.ability1;
       this.ability2 = form.ability2 === form.ability1 ? undefined : form.ability2;
       this.abilityHidden = form.abilityHidden === form.ability1 ? undefined : form.abilityHidden;
@@ -918,7 +898,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       this.baseStats = form.baseStats.slice();
       this.baseTotal = form.baseTotal;
     } else {
-      this.levelMoves = pokemonSpeciesLevelMoves[species.speciesId];
+      this.levelMoves = species.getLevelMoves(formKey);
       this.ability1 = species.ability1;
       this.ability2 = species.ability2 === species.ability1 ? undefined : species.ability2;
       this.abilityHidden = species.abilityHidden === species.ability1 ? undefined : species.abilityHidden;
@@ -934,19 +914,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       (_, em) => (globalScene.gameData.starterData[this.starterId].eggMoves & (1 << em)) !== 0,
     );
 
-    this.tmMoves =
-      speciesTmMoves[species.speciesId]
-        ?.filter(m => (Array.isArray(m) ? m[0] === formKey : true))
-        .map(m => (Array.isArray(m) ? m[1] : m))
-        .sort((a, b) => (allMoves[a].name > allMoves[b].name ? 1 : -1)) ?? [];
+    this.tmMoves = species.getTms(formKey).sort((a, b) => (allMoves[a].name > allMoves[b].name ? 1 : -1));
 
-    const passiveId = Object.hasOwn(starterPassiveAbilities, species.speciesId)
-      ? species.speciesId
-      : Object.hasOwn(starterPassiveAbilities, this.starterId)
-        ? this.starterId
-        : pokemonPrevolutions[this.starterId];
-    const passives = starterPassiveAbilities[passiveId];
-    this.passive = this.formIndex in passives ? passives[formIndex] : passives[0];
+    this.passive = speciesDataRegistry.getPassive(species.speciesId, this.formIndex);
 
     const starterData = globalScene.gameData.starterData[this.starterId];
     const abilityAttr = starterData.abilityAttr;
@@ -960,8 +930,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
     const evoLine: Set<SpeciesId> = new Set([
       species.speciesId,
-      ...getPreEvolutions(species.speciesId),
-      ...getEvolutions(species.speciesId).values(),
+      ...speciesDataRegistry.getPrevolutionChain(species.speciesId),
+      ...speciesDataRegistry.getEvolutionChain(species.speciesId),
     ]);
     const speciesBiomes: Set<BiomeTierTimeOfDay> = new Set();
     for (const sId of evoLine) {
@@ -971,18 +941,13 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     }
     this.biomes = this.filterBiomeFormIndexes(speciesBiomes, species.speciesId);
 
-    const allFormChanges = Object.hasOwn(pokemonFormChanges, species.speciesId)
-      ? pokemonFormChanges[species.speciesId]
-      : [];
+    const allFormChanges = speciesDataRegistry.getFormChanges(species.speciesId);
     this.battleForms = allFormChanges.filter(f => f.preFormKey === this.species.forms[this.formIndex].formKey);
 
-    const preSpecies = Object.hasOwn(pokemonPrevolutions, this.species.speciesId)
-      ? allSpecies.find(sp => sp.speciesId === pokemonPrevolutions[this.species.speciesId])
-      : null;
-    if (preSpecies) {
-      const preEvolutions = Object.hasOwn(pokemonEvolutions, preSpecies.speciesId)
-        ? pokemonEvolutions[preSpecies.speciesId]
-        : [];
+    const preSpeciesId = speciesDataRegistry.getPrevolution(species.speciesId);
+    if (preSpeciesId) {
+      const preSpecies = speciesDataRegistry.getSpecies(preSpeciesId);
+      const preEvolutions = speciesDataRegistry.getEvolutions(preSpecies.speciesId);
       this.preEvolutions = preEvolutions.filter(
         e =>
           e.speciesId === species.speciesId
@@ -1106,7 +1071,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     if (this.speciesStarterDexEntry?.seenAttr) {
       return true;
     }
-    const starterCaughtAttr = this.isCaught(this.getStarterSpecies(this.species));
+    const starterCaughtAttr = this.isCaught(speciesDataRegistry.getStarter(this.species.speciesId, true));
     return !!starterCaughtAttr;
   }
 
@@ -1208,24 +1173,14 @@ export class PokedexPageUiHandler extends MessageUiHandler {
    * @param speciesId the id of the species to check
    * @returns the id of the corresponding starter
    */
-  private getStarterSpeciesId(speciesId: SpeciesId): number {
+  private getStarterSpeciesId(speciesId: SpeciesId): SpeciesId {
     if (speciesId === SpeciesId.PIKACHU) {
       if ([0, 1, 8].includes(this.formIndex)) {
         return SpeciesId.PICHU;
       }
       return SpeciesId.PIKACHU;
     }
-    if (Object.hasOwn(speciesStarterCosts, speciesId)) {
-      return speciesId;
-    }
-    return pokemonStarters[speciesId];
-  }
-
-  private getStarterSpecies(species): PokemonSpecies {
-    if (Object.hasOwn(speciesStarterCosts, species.speciesId)) {
-      return species;
-    }
-    return allSpecies.find(sp => sp.speciesId === pokemonStarters[species.speciesId]) ?? species;
+    return speciesDataRegistry.getSpeciesData(speciesId).starter;
   }
 
   public override processInput(button: Button): boolean {
@@ -1241,7 +1196,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     const isCaught = this.isCaught();
     const isFormCaught = this.isFormCaught();
     const isSeen = this.isSeen();
-    const isStarterCaught = !!this.isCaught(this.getStarterSpecies(this.species));
+    const isStarterCaught = !!this.isCaught(speciesDataRegistry.getStarter(this.species.speciesId, true));
 
     if (this.isRibbonTrayOpen) {
       if (button === Button.CANCEL) {
@@ -1689,9 +1644,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                   });
 
                   for (const pre of this.preEvolutions) {
-                    const preSpecies = allSpecies.find(
-                      species => species.speciesId === pokemonPrevolutions[this.species.speciesId],
-                    );
+                    const preSpecies = speciesDataRegistry.getPrevolution(pre.speciesId, true);
                     const preFormIndex: number =
                       preSpecies?.forms.find(f => f.formKey === pre.preFormKey)?.formIndex ?? 0;
 
@@ -1704,9 +1657,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                       handler: () => {
                         this.previousSpecies.push(this.species);
                         this.previousStarterAttributes.push({ ...this.savedStarterAttributes });
-                        const newSpecies = allSpecies.find(
-                          species => species.speciesId === pokemonPrevolutions[pre.speciesId],
-                        );
+                        const newSpecies = speciesDataRegistry.getPrevolution(pre.speciesId, true);
                         // Attempts to find the formIndex of the prevolved species
                         const newFormKey = pre.preFormKey
                           ? pre.preFormKey
@@ -1736,7 +1687,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                   });
 
                   for (const evo of this.evolutions) {
-                    const evoSpecies = allSpecies.find(species => species.speciesId === evo.speciesId);
+                    const evoSpecies = speciesDataRegistry.getSpecies(evo.speciesId);
                     const isCaughtEvo = !!this.isCaught(evoSpecies);
                     // Attempts to find the formIndex of the evolved species
                     const newFormKey = evo.evoFormKey
@@ -1916,7 +1867,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                 variant: newVariant,
               });
 
-              globalScene.playSound("se/sparkle");
+              audioManager.playSound("se/sparkle");
 
               starterAttributes.shiny = true;
               this.savedStarterAttributes.shiny = starterAttributes.shiny;
@@ -2037,16 +1988,16 @@ export class PokedexPageUiHandler extends MessageUiHandler {
             const candyCount = starterData.candyCount;
 
             if (!(passiveAttr & PassiveAttr.UNLOCKED)) {
-              const passiveCost = getPassiveCandyCount(speciesStarterCosts[this.starterId]);
+              const passiveCost = getPassiveCandyCount(speciesDataRegistry.getStarterCost(this.starterId));
               options.push({
                 label: `×${passiveCost} ${i18next.t("pokedexUiHandler:unlockPassive")}`,
                 handler: () => {
-                  if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE && candyCount < passiveCost) {
+                  if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE && candyCount < passiveCost) {
                     return false;
                   }
 
                   starterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
-                  if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
+                  if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE) {
                     starterData.candyCount -= passiveCost;
                   }
                   this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
@@ -2057,7 +2008,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                     }
                   });
                   this.setSpeciesDetails(this.species);
-                  globalScene.playSound("se/buy");
+                  audioManager.playSound("se/buy");
                   ui.setMode(UiMode.POKEDEX_PAGE, "refresh");
 
                   return true;
@@ -2071,16 +2022,18 @@ export class PokedexPageUiHandler extends MessageUiHandler {
             // Reduce cost option
             const valueReduction = starterData.valueReduction;
             if (valueReduction < valueReductionMax) {
-              const reductionCost = getValueReductionCandyCounts(speciesStarterCosts[this.starterId])[valueReduction];
+              const reductionCost = getValueReductionCandyCounts(speciesDataRegistry.getStarterCost(this.starterId))[
+                valueReduction
+              ];
               options.push({
                 label: `×${reductionCost} ${i18next.t("starterSelectUiHandler:reduceCost", { newCost: globalScene.gameData.getSpeciesStarterValue(this.starterId, starterData.valueReduction + 1) })}`,
                 handler: () => {
-                  if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE && candyCount < reductionCost) {
+                  if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE && candyCount < reductionCost) {
                     return false;
                   }
 
                   starterData.valueReduction++;
-                  if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
+                  if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE) {
                     starterData.candyCount -= reductionCost;
                   }
                   this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
@@ -2091,7 +2044,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                     }
                   });
                   ui.setMode(UiMode.POKEDEX_PAGE, "refresh");
-                  globalScene.playSound("se/buy");
+                  audioManager.playSound("se/buy");
 
                   return true;
                 },
@@ -2103,15 +2056,18 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
             // Same species egg menu option.
             const hatchCount = globalScene.gameData.dexData[this.starterId].hatchedCount;
-            const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(speciesStarterCosts[this.starterId], hatchCount);
+            const sameSpeciesEggCost = getSameSpeciesEggCandyCounts(
+              speciesDataRegistry.getStarterCost(this.starterId),
+              hatchCount,
+            );
             options.push({
               label: `×${sameSpeciesEggCost} ${i18next.t("pokedexUiHandler:sameSpeciesEgg")}`,
               handler: () => {
-                if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE && candyCount < sameSpeciesEggCost) {
+                if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE && candyCount < sameSpeciesEggCost) {
                   return false;
                 }
 
-                if (globalScene.gameData.eggs.length >= 99 && !Overrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
+                if (globalScene.gameData.eggs.length >= 99 && !activeOverrides.UNLIMITED_EGG_COUNT_OVERRIDE) {
                   // Egg list full, show error message at the top of the screen and abort
                   this.showText(
                     i18next.t("egg:tooManyEggs"),
@@ -2124,7 +2080,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                   );
                   return false;
                 }
-                if (!Overrides.FREE_CANDY_UPGRADE_OVERRIDE) {
+                if (!activeOverrides.FREE_CANDY_UPGRADE_OVERRIDE) {
                   starterData.candyCount -= sameSpeciesEggCost;
                 }
                 this.pokemonCandyCountText.setText(`×${starterData.candyCount}`);
@@ -2143,7 +2099,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                   }
                 });
                 ui.setMode(UiMode.POKEDEX_PAGE, "refresh");
-                globalScene.playSound("se/buy");
+                audioManager.playSound("se/buy");
 
                 return true;
               },
@@ -2200,6 +2156,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                 const newIndex = index <= 0 ? this.filteredIndices.length - 1 : index - 1;
                 newSpecies = getPokemonSpecies(this.filteredIndices[newIndex]);
               } else {
+                const allSpecies = speciesDataRegistry.getAllSpecies();
                 const index = allSpecies.findIndex(species => species.speciesId === this.species.speciesId);
                 const newIndex = index <= 0 ? allSpecies.length - 1 : index - 1;
                 newSpecies = allSpecies[newIndex];
@@ -2239,6 +2196,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                 const newIndex = index >= this.filteredIndices.length - 1 ? 0 : index + 1;
                 newSpecies = getPokemonSpecies(this.filteredIndices[newIndex]);
               } else {
+                const allSpecies = speciesDataRegistry.getAllSpecies();
                 const index = allSpecies.findIndex(species => species.speciesId === this.species.speciesId);
                 const newIndex = index >= allSpecies.length - 1 ? 0 : index + 1;
                 newSpecies = allSpecies[newIndex];
@@ -2416,7 +2374,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       currentFriendship = 0;
     }
 
-    const friendshipCap = getStarterValueFriendshipCap(speciesStarterCosts[this.starterId]);
+    const friendshipCap = getStarterValueFriendshipCap(speciesDataRegistry.getStarterCost(this.starterId));
 
     return { currentFriendship, friendshipCap };
   }
@@ -2429,7 +2387,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     const starterData = globalScene.gameData.starterData[this.starterId];
 
     return (
-      starterData.candyCount >= getPassiveCandyCount(speciesStarterCosts[this.starterId])
+      starterData.candyCount >= getPassiveCandyCount(speciesDataRegistry.getStarterCost(this.starterId))
       && !(starterData.passiveAttr & PassiveAttr.UNLOCKED)
     );
   }
@@ -2443,7 +2401,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
     return (
       starterData.candyCount
-        >= getValueReductionCandyCounts(speciesStarterCosts[this.starterId])[starterData.valueReduction]
+        >= getValueReductionCandyCounts(speciesDataRegistry.getStarterCost(this.starterId))[starterData.valueReduction]
       && starterData.valueReduction < valueReductionMax
     );
   }
@@ -2456,7 +2414,10 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     const starterData = globalScene.gameData.starterData[this.starterId];
     const hatchCount = globalScene.gameData.dexData[this.starterId].hatchedCount;
 
-    return starterData.candyCount >= getSameSpeciesEggCandyCounts(speciesStarterCosts[this.starterId], hatchCount);
+    return (
+      starterData.candyCount
+      >= getSameSpeciesEggCandyCounts(speciesDataRegistry.getStarterCost(this.starterId), hatchCount)
+    );
   }
 
   private setSpecies(): void {
@@ -2754,7 +2715,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         if (species.speciesId === SpeciesId.MANAPHY || species.speciesId === SpeciesId.PHIONE) {
           this.pokemonHatchedIcon.setFrame("manaphy");
         } else {
-          this.pokemonHatchedIcon.setFrame(getEggTierForSpecies(species));
+          this.pokemonHatchedIcon.setFrame(speciesDataRegistry.getEggTier(species.speciesId));
         }
         this.pokemonHatchedCountText.setText(`${this.speciesStarterDexEntry?.hatchedCount}`);
 
@@ -2791,7 +2752,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         );
         this.pokemonCandyContainer.setVisible(true);
 
-        if (Object.hasOwn(pokemonPrevolutions, species.speciesId)) {
+        if (speciesDataRegistry.hasPrevolution(species.speciesId)) {
           this.pokemonHatchedIcon.setVisible(false);
           this.pokemonHatchedCountText.setVisible(false);
           this.pokemonFormText.setY(36);
@@ -2877,7 +2838,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
    */
   private getCurrentDexProps(speciesId: SpeciesId): bigint {
     let props = 0n;
-    const species = allSpecies.find(sp => sp.speciesId === speciesId);
+    const species = speciesDataRegistry.getSpecies(speciesId);
     const caughtAttr =
       globalScene.gameData.dexData[speciesId].caughtAttr
       & globalScene.gameData.dexData[this.getStarterSpeciesId(speciesId)].caughtAttr
