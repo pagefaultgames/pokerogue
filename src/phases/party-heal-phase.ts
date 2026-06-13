@@ -18,7 +18,7 @@ export class PartyHealPhase extends BattlePhase {
   start() {
     super.start();
 
-    audioManager.fadeOutBgm(1000);
+    audioManager.fadeOutBgm(1000, false, !this.resumeBgm);
     globalScene.ui.fadeOut(1000).then(() => {
       const preventRevive = new BooleanHolder(false);
       applyChallenges(ChallengeType.PREVENT_REVIVE, preventRevive);

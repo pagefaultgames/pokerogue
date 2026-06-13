@@ -1,8 +1,9 @@
 import type { Ability } from "#abilities/ability";
 import { loggedInUser } from "#app/account";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { starterColors } from "#app/global-vars/starter-colors";
-import { getStarterValueFriendshipCap, speciesStarterCosts } from "#balance/starters";
+import { getStarterValueFriendshipCap } from "#balance/starters";
 import { getLevelRelExp, getLevelTotalExp } from "#data/exp";
 import { getGenderColor, getGenderSymbol } from "#data/gender";
 import { getNatureName, getNatureStatMultiplier } from "#data/nature";
@@ -436,7 +437,9 @@ export class SummaryUiHandler extends UiHandler {
       currentFriendship = 0;
     }
 
-    const friendshipCap = getStarterValueFriendshipCap(speciesStarterCosts[this.pokemon.species.getRootSpeciesId()]);
+    const friendshipCap = getStarterValueFriendshipCap(
+      speciesDataRegistry.getStarterCost(this.pokemon.species.getRootSpeciesId()),
+    );
     const candyCropY = 16 - 16 * (currentFriendship / friendshipCap);
 
     if (this.candyShadow.visible) {
@@ -1158,7 +1161,7 @@ export class SummaryUiHandler extends UiHandler {
         expMaskRect.setScale(6);
         expMaskRect.fillStyle(0xffffff);
         expMaskRect.beginPath();
-        expMaskRect.fillRect(140 + pageContainer.x, 145 + pageContainer.y + 21, Math.floor(expRatio * 64), 3);
+        expMaskRect.fillRect(140 + pageContainer.x, 152 + pageContainer.y + 22, Math.floor(expRatio * 64), 3);
 
         const expMask = expMaskRect.createGeometryMask();
 
