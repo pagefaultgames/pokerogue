@@ -37,9 +37,9 @@ import type { IntClosedRange, TupleOf } from "type-fest";
  */
 
 /**
- * Overrides that are using when testing different in game situations
+ * Overrides that are applied to aid in testing different in-game situations.
  *
- * Any override added here will be used instead of the value in {@linkcode DefaultOverrides}
+ * Any override added here will be used instead of the value in {@linkcode DefaultOverrides}.
  *
  * If an override name starts with "STARTING", it will only apply when a new run begins.
  *

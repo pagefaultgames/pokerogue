@@ -109,7 +109,7 @@ export class SelectStarterPhase extends Phase {
     overrideModifiers();
     overrideHeldItems(party[0]);
     Promise.all(loadPokemonAssets).then(() => {
-      audioManager.fadeAndSwitchBgm(undefined, 500);
+      audioManager.playBgm(undefined, true);
       if (globalScene.gameMode.isClassic) {
         globalScene.gameData.gameStats.classicSessionsPlayed++;
       } else {

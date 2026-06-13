@@ -1,13 +1,13 @@
 import type { Pokemon } from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import type { MovePhase } from "#app/phases/move-phase";
-import { PokemonPhasePriorityQueue } from "#app/queues/pokemon-phase-priority-queue";
+import { DynamicPhasePriorityQueue } from "#app/queues/pokemon-phase-priority-queue";
 import type { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 import type { MovePriorityInBracket } from "#enums/move-priority-in-bracket";
 import type { PhaseConditionFunc } from "#types/phase-types";
 
 /** A priority queue responsible for the ordering of {@linkcode MovePhase}s */
-export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase> {
+export class MovePhasePriorityQueue extends DynamicPhasePriorityQueue<MovePhase> {
   private lastTurnOrder: Pokemon[] = [];
 
   protected override reorder(): void {

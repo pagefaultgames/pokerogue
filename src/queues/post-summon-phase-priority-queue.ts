@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { PostSummonActivateAbilityPhase } from "#app/phases/post-summon-activate-ability-phase";
 import type { PostSummonPhase } from "#app/phases/post-summon-phase";
-import { PokemonPhasePriorityQueue } from "#app/queues/pokemon-phase-priority-queue";
+import { DynamicPhasePriorityQueue } from "#app/queues/pokemon-phase-priority-queue";
 import { sortInSpeedOrder } from "#app/utils/speed-order";
 
 /**
@@ -9,7 +9,7 @@ import { sortInSpeedOrder } from "#app/utils/speed-order";
  *
  * Orders phases first by ability priority, then by the {@linkcode Pokemon}'s effective speed
  */
-export class PostSummonPhasePriorityQueue extends PokemonPhasePriorityQueue<PostSummonPhase> {
+export class PostSummonPhasePriorityQueue extends DynamicPhasePriorityQueue<PostSummonPhase> {
   protected override reorder(): void {
     this.queue = sortInSpeedOrder(this.queue);
     this.queue.sort((phaseA, phaseB) => phaseB.getPriority() - phaseA.getPriority());

@@ -39,6 +39,11 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     infoContainerLabelXPos: -27,
     infoContainerTextXPos: -25,
   },
+  pl: {
+    infoContainerTextSize: "54px",
+    infoContainerLabelXPos: -20,
+    infoContainerTextXPos: -17,
+  },
 };
 
 export class PokemonInfoContainer extends Phaser.GameObjects.Container {

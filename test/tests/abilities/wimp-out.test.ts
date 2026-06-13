@@ -294,7 +294,7 @@ describe("Abilities - Wimp Out", () => {
   it("Wimp Out will activate due to salt cure damage", async () => {
     game.override.enemySpecies(SpeciesId.NACLI).enemyMoveset([MoveId.SALT_CURE]).enemyLevel(1);
     await game.classicMode.startBattle(SpeciesId.WIMPOD, SpeciesId.TYRUNT);
-    game.field.getPlayerPokemon().hp *= 0.7;
+    game.field.getPlayerPokemon().hp *= 0.6;
 
     game.move.select(MoveId.SPLASH);
     game.doSelectPartyPokemon(1);
