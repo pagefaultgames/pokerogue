@@ -1,6 +1,6 @@
 import { EVOLVE_MOVE, RELEARN_MOVE } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { EvoCondKey, EvolutionItem, SpeciesEvolution, SpeciesFormEvolution } from "#balance/pokemon-evolutions";
+import { EvoCondKey, EvolutionItem, SpeciesEvolution } from "#balance/pokemon-evolutions";
 import { GrowthRate } from "#data/exp";
 import {
   MeloettaFormChangePostMoveTrigger,
@@ -8,7 +8,6 @@ import {
   SpeciesFormChangeItemTrigger,
   SpeciesFormChangeMoveLearnedTrigger,
 } from "#data/form-change-triggers";
-import { Gender } from "#data/gender";
 import {
   getSpeciesDependentFormChangeCondition,
   SpeciesFormChange,
@@ -4714,58 +4713,15 @@ export function initGenerationFive(): SpeciesDataMapConfig {
           formSpriteKey: null,
           isStarterSelectable: true,
         }),
-        new PokemonForm({
-          formName: "White-Striped Form",
-          formKey: "white-striped",
-          type1: PokemonType.WATER,
-          type2: null,
-          height: 1,
-          weight: 18,
-          ability1: AbilityId.RATTLED,
-          ability2: AbilityId.ADAPTABILITY,
-          abilityHidden: AbilityId.MOLD_BREAKER,
-          baseTotal: 460,
-          baseHp: 70,
-          baseAtk: 92,
-          baseDef: 65,
-          baseSpatk: 80,
-          baseSpdef: 55,
-          baseSpd: 98,
-          catchRate: 190,
-          baseFriendship: 50,
-          baseExp: 161,
-          genderDiffs: false,
-          formSpriteKey: null,
-          isStarterSelectable: true,
-        }),
       ],
     }),
     starter: SpeciesId.BASCULIN,
-    starterCost: 4,
-    evolutions: [
-      // TODO: Uncomment evo delay when different evo condition is implemented
-      new SpeciesFormEvolution({
-        speciesId: SpeciesId.BASCULEGION,
-        preFormKey: "white-striped",
-        evoFormKey: "female",
-        level: 40,
-        condition: [{ key: EvoCondKey.GENDER, gender: Gender.FEMALE }],
-        /* evoDelay: [45, 65, 85] */
-      }),
-      new SpeciesFormEvolution({
-        speciesId: SpeciesId.BASCULEGION,
-        preFormKey: "white-striped",
-        evoFormKey: "male",
-        level: 40,
-        condition: [{ key: EvoCondKey.GENDER, gender: Gender.MALE }],
-        /* evoDelay: [45, 65, 85] */
-      }),
-    ],
+    starterCost: 3,
+    evolutions: [],
     eggTier: EggTier.RARE,
     passives: {
       0: AbilityId.ROCK_HEAD,
       1: AbilityId.RECKLESS,
-      2: AbilityId.SUPREME_OVERLORD,
     },
     levelMoves: [
       [1, MoveId.TAIL_WHIP],
@@ -4779,16 +4735,12 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [28, MoveId.SOAK],
       [32, MoveId.CRUNCH],
       [36, MoveId.TAKE_DOWN],
+      [40, MoveId.FINAL_GAMBIT],
       [44, MoveId.WAVE_CRASH],
       [48, MoveId.THRASH],
       [52, MoveId.DOUBLE_EDGE],
       [56, MoveId.HEAD_SMASH],
     ],
-    formLevelMoves: {
-      "red-striped": [[40, MoveId.FINAL_GAMBIT]],
-      "blue-striped": [[40, MoveId.FINAL_GAMBIT]],
-      "white-striped": [[40, MoveId.UPROAR]],
-    },
     tms: [
       MoveId.TAKE_DOWN,
       MoveId.DOUBLE_EDGE,

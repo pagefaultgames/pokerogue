@@ -2145,6 +2145,8 @@ export enum SpeciesId {
   HISUI_SAMUROTT = 6503,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Lilligant_(Pokémon) | Source} */
   HISUI_LILLIGANT = 6549,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Basculin_(Pokémon) | Source} */
+  HISUI_BASCULIN = 6550,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Zorua_(Pokémon) | Source} */
   HISUI_ZORUA = 6570,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Zoroark_(Pokémon) | Source} */

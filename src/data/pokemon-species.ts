@@ -94,6 +94,15 @@ interface PokemonSpeciesFormConstructor {
   isStarterSelectable: boolean;
 }
 
+/**
+ * Overrides the local key for species with "fake" forms.
+ */
+const CUSTOM_FORM_NAMES: Partial<Record<SpeciesId, string>> = {
+  [SpeciesId.BLOODMOON_URSALUNA]: "ursalunaBloodmoon",
+  [SpeciesId.ETERNAL_FLOETTE]: "floetteEternalFlower",
+  [SpeciesId.HISUI_BASCULIN]: "basculinWhiteStriped",
+};
+
 export abstract class PokemonSpeciesForm {
   public speciesId: SpeciesId;
   protected _formIndex: number;
@@ -963,12 +972,8 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
     } else if (append) {
       // Everything beyond this has an expanded name
       return this.getExpandedSpeciesName();
-    } else if (this.speciesId === SpeciesId.ETERNAL_FLOETTE) {
-      // Not a real form, so the key is made up
-      return i18next.t("pokemonForm:floetteEternalFlower");
-    } else if (this.speciesId === SpeciesId.BLOODMOON_URSALUNA) {
-      // Not a real form, so the key is made up
-      return i18next.t("pokemonForm:ursalunaBloodmoon");
+    } else if (CUSTOM_FORM_NAMES[this.speciesId]) {
+      return i18next.t(`pokemonForm:${CUSTOM_FORM_NAMES[this.speciesId]}`);
     } else {
       // Only regional forms should be left at this point
       return i18next.t(`pokemonForm:regionalForm.${toCamelCase(Region[region])}`);
