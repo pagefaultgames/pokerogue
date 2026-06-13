@@ -29,7 +29,7 @@ import { STARTING_WAVE } from "#balance/misc";
 import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#balance/starters";
 import { initCommonAnims, initMoveAnim, loadCommonAnimAssets, loadMoveAnimAssets } from "#data/battle-anims";
 import { getDailyMysteryEncounter } from "#data/daily-seed/daily-run";
-import { allMoves, biomeDepths, modifierTypes } from "#data/data-lists";
+import { biomeDepths, modifierTypes } from "#data/data-lists";
 import { classicFinalBossDialogue } from "#data/dialogue";
 import type { SpeciesFormChangeTrigger } from "#data/form-change-triggers";
 import { SpeciesFormChangeManualTrigger, SpeciesFormChangeTimeOfDayTrigger } from "#data/form-change-triggers";
@@ -121,7 +121,6 @@ import { vouchers } from "#system/voucher";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { Constructor } from "#types/common";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
-import type { Localizable } from "#types/locales";
 import type {
   NewBattleConstructedProps,
   NewBattleInitialProps,
@@ -1218,18 +1217,18 @@ export class BattleScene extends SceneBase {
     this.updateGameInfo();
 
     if (reloadI18n) {
-      const localizable: Localizable[] = [
-        ...speciesDataRegistry.getAllSpecies(),
-        ...allMoves,
-        ...getEnumValues(ModifierPoolType)
-          .map(mpt => getModifierPoolForType(mpt))
-          .flatMap(mp =>
-            Object.values(mp)
-              .flat()
-              .map(mt => mt.modifierType)
-              .filter((mt): mt is ModifierType & Localizable => "localize" in mt && typeof mt.localize === "function"),
-          ),
-      ];
+      // TODO: remove this stuff once the modifier type happens
+      const localizable = getEnumValues(ModifierPoolType)
+        .map(mpt => getModifierPoolForType(mpt))
+        .flatMap(mp =>
+          Object.values(mp)
+            .flat()
+            .map(mt => mt.modifierType)
+            .filter(
+              (mt): mt is ModifierType & { localize: () => void } =>
+                "localize" in mt && typeof mt.localize === "function",
+            ),
+        );
       for (const item of localizable) {
         item.localize();
       }

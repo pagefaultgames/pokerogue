@@ -108,7 +108,6 @@ import { frenzyMissFunc, getCounterAttackTarget, getMoveTargets } from "#moves/m
 import { PokemonMove } from "#moves/pokemon-move";
 import type { MovePhase } from "#phases/move-phase";
 import type { Constructor } from "#types/common";
-import type { Localizable } from "#types/locales";
 import type {
   ChargingMove,
   MoveAttrMap,
@@ -151,16 +150,25 @@ type GetRemoveArenaTagSideFunc = (user: Pokemon, target: Pokemon) => ArenaTagSid
 export type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
 export type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;
 
-export abstract class Move implements Localizable {
+export abstract class Move {
   public id: MoveId;
-  public name: string;
+  public get name(): string {
+    return this.id === MoveId.NONE ? "" : `${i18next.t(`move:${toCamelCase(MoveId[this.id])}.name`)}${this.nameAppend}`;
+  }
+
   private readonly _type: PokemonType;
+  // TODO: just make the underlying property public readonly
   private readonly _category: MoveCategory;
   public moveTarget: MoveTarget;
   public power: number;
   public accuracy: number;
   public pp: number;
-  public effect: string;
+
+  public get effect(): string {
+    return this.id === MoveId.NONE
+      ? ""
+      : `${i18next.t(`move:${toCamelCase(MoveId[this.id])}.effect`)}${this.nameAppend}`;
+  }
   /** The chance of a move's secondary effects activating */
   public chance: number;
   public priority: number;
@@ -275,8 +283,6 @@ export abstract class Move implements Localizable {
     if (category === MoveCategory.PHYSICAL) {
       this.setFlag(MoveFlags.MAKES_CONTACT, true);
     }
-
-    this.localize();
   }
 
   get type() {
@@ -284,19 +290,6 @@ export abstract class Move implements Localizable {
   }
   get category() {
     return this._category;
-  }
-
-  localize(): void {
-    const i18nKey = toCamelCase(MoveId[this.id]);
-
-    if (this.id === MoveId.NONE) {
-      this.name = "";
-      this.effect = "";
-      return;
-    }
-
-    this.name = `${i18next.t(`move:${i18nKey}.name`)}${this.nameAppend}`;
-    this.effect = `${i18next.t(`move:${i18nKey}.effect`)}${this.nameAppend}`;
   }
 
   /**

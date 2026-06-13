@@ -22,7 +22,6 @@ import { loadPokemonVariantAssets } from "#sprites/pokemon-sprite";
 import { hasExpSprite } from "#sprites/sprite-utils";
 import type { Variant, VariantSet } from "#sprites/variant";
 import { populateVariantColorCache, variantColorCache, variantData } from "#sprites/variant";
-import type { Localizable } from "#types/locales";
 import type { LevelMoves } from "#types/pokemon-species";
 import type { StarterMoveset } from "#types/save-data";
 import type { EvolutionLevel, EvolutionLevelWithThreshold } from "#types/species-gen-types";
@@ -775,6 +774,7 @@ interface PokemonSpeciesConstructor {
   subLegendary?: boolean;
   legendary?: boolean;
   mythical?: boolean;
+  // TODO: Remove (it's unused)
   category: string;
   type1: PokemonType;
   type2: PokemonType | null;
@@ -800,12 +800,16 @@ interface PokemonSpeciesConstructor {
   forms?: PokemonForm[];
 }
 
-export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
-  public name: string;
+export class PokemonSpecies extends PokemonSpeciesForm {
+  public get name(): string {
+    return i18next.t(`pokemon:${toCamelCase(SpeciesId[this.speciesId])}`);
+  }
+  public get category(): string {
+    return i18next.t(`pokemonCategory:${toCamelCase(SpeciesId[this.speciesId])}Category`);
+  }
   readonly subLegendary: boolean;
   readonly legendary: boolean;
   readonly mythical: boolean;
-  public category: string;
   readonly growthRate: GrowthRate;
   /** The chance (as a decimal) for this Species to be male, or `null` for genderless species */
   readonly malePercent: number | null;
@@ -841,14 +845,11 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
     this.subLegendary = data.subLegendary ?? false;
     this.legendary = data.legendary ?? false;
     this.mythical = data.mythical ?? false;
-    this.category = data.category;
     this.growthRate = data.growthRate;
     this.malePercent = data.malePercent;
     this.genderDiffs = data.genderDiffs;
     this.canChangeForm = !!data.canChangeForm;
     this.forms = data.forms || [];
-
-    this.localize();
 
     this.forms.forEach((form, f) => {
       form.speciesId = data.id;
@@ -978,11 +979,6 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
           formName: ret,
         })
       : ret;
-  }
-
-  localize(): void {
-    this.name = i18next.t(`pokemon:${toCamelCase(SpeciesId[this.speciesId])}`);
-    this.category = i18next.t(`pokemonCategory:${toCamelCase(SpeciesId[this.speciesId])}Category`);
   }
 
   getWildSpeciesForLevel(level: number, allowEvolving: boolean, isBoss: boolean, gameMode: GameMode): SpeciesId {
