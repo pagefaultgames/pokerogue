@@ -4545,8 +4545,8 @@ export class MovePowerMultiplierAttr extends VariablePowerAttr {
 
 /**
  * Helper function to check for exceptions that shouldn't boost Stomping Tantrum's power.
- * @param user The Pokemon using Stomping Tantrum.
- * @param target The enemy Pokemon.
+ * @param user - The Pokemon using Stomping Tantrum.
+ * @param target - The enemy Pokemon.
  * @returns Whether a relevant exception case is present.
  * @todo Implement a check for whether move failure was due to the target using a Protect-like move
  */
