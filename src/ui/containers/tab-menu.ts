@@ -41,7 +41,6 @@ export class TabMenu extends Phaser.GameObjects.Container {
     this.navigationIcons["BUTTON_CYCLE_SHINY"] = iconNextTab;
 
     let currentX = 24;
-
     for (const label of this.labels) {
       const labelText = addTextObject(currentX, 4, label, TextStyle.SETTINGS_LABEL_NAVBAR).setOrigin(0, 0);
 
@@ -69,7 +68,7 @@ export class TabMenu extends Phaser.GameObjects.Container {
         this.navigationIcons[settingName].setTexture("keyboard").setFrame(specialIcons[settingName]).setAlpha(1);
         continue;
       }
-      const inputController = globalScene.inputController;
+      const { inputController } = globalScene;
       const icon = inputController?.getIconForLatestInputRecorded(settingName as MappingSettingName);
       const type = inputController?.getLastSourceType();
       if (icon != null && type != null) {
