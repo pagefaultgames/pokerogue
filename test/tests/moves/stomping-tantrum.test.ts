@@ -62,7 +62,7 @@ describe("Move - Stomping Tantrum", () => {
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     game.move.use(MoveId.TACKLE);
-    await game.toEndOfTurn();
+    await game.toNextTurn();
 
     game.move.use(MoveId.STOMPING_TANTRUM);
     await game.toEndOfTurn();
@@ -77,11 +77,11 @@ describe("Move - Stomping Tantrum", () => {
 
     game.move.use(MoveId.GIGA_IMPACT);
     await game.move.forceHit();
-    await game.toEndOfTurn();
+    await game.toNextTurn();
 
     // Recharge turn
     game.move.use(MoveId.SPLASH);
-    await game.toEndOfTurn();
+    await game.toNextTurn();
 
     game.move.use(MoveId.STOMPING_TANTRUM);
     await game.toEndOfTurn();
@@ -97,7 +97,7 @@ describe("Move - Stomping Tantrum", () => {
     // Intentionally failing Sucker Punch
     game.move.use(MoveId.SUCKER_PUNCH);
     await game.move.forceEnemyMove(MoveId.SPLASH);
-    await game.toEndOfTurn();
+    await game.toNextTurn();
 
     game.move.use(MoveId.STOMPING_TANTRUM);
     await game.toEndOfTurn();
@@ -112,7 +112,7 @@ describe("Move - Stomping Tantrum", () => {
 
     game.move.use(MoveId.TACKLE);
     await game.move.forceEnemyMove(MoveId.SKY_DROP);
-    await game.toEndOfTurn();
+    await game.toNextTurn();
 
     game.move.use(MoveId.STOMPING_TANTRUM);
     await game.toEndOfTurn();
@@ -130,7 +130,7 @@ describe("Move - Stomping Tantrum", () => {
     game.move.use(MoveId.TACKLE, 1);
     await game.move.forceEnemyMove(MoveId.SKY_DROP, BattlerIndex.PLAYER);
     await game.move.forceEnemyMove(MoveId.SPLASH, BattlerIndex.PLAYER_2);
-    await game.toEndOfTurn();
+    await game.toNextTurn();
 
     // Targeting the enemy that didn't use Sky Drop with Stomping Tantrum
     game.move.use(MoveId.STOMPING_TANTRUM, 0, 3);
@@ -147,7 +147,7 @@ describe("Move - Stomping Tantrum", () => {
 
     game.move.use(MoveId.TACKLE);
     await game.move.forceEnemyMove(MoveId.PROTECT);
-    await game.toEndOfTurn();
+    await game.toNextTurn();
 
     game.move.use(MoveId.STOMPING_TANTRUM);
     await game.move.forceEnemyMove(MoveId.SPLASH);
