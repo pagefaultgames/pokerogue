@@ -118,10 +118,9 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: "28px",
   },
   "pt-BR": {
-    starterInfoTextSize: "48px",
-    instructionTextSize: "32px",
-    starterInfoYOffset: 0.5,
-    starterInfoXPos: 33,
+    starterInfoTextSize: "54px",
+    instructionTextSize: "28px",
+    starterInfoXPos: 37,
   },
   zh: {
     starterInfoTextSize: "56px",
