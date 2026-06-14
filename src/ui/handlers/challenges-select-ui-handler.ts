@@ -39,7 +39,7 @@ export class GameChallengesUiHandler extends UiHandler {
   private descriptionTextBaseY: number;
   private descriptionTextMaxHeight: number;
   private descriptionTextMaskRect: Phaser.GameObjects.Graphics | null;
-  private homeKey: Phaser.Input.Keyboard.Key | null;
+  private homeKey?: Phaser.Input.Keyboard.Key;
 
   private readonly challengeLabels: ChallengeLabel[] = [];
   private monoTypeValue: Phaser.GameObjects.Sprite;
@@ -69,7 +69,7 @@ export class GameChallengesUiHandler extends UiHandler {
     const ui = this.getUi();
     const { width: canvasWidth, height: canvasHeight } = globalScene.scaledCanvas;
 
-    this.homeKey = globalScene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.HOME) ?? null;
+    this.homeKey = globalScene.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.HOME);
     this.homeKey?.on("up", this.onHomeDown, this);
 
     this.challengesContainer = globalScene.add //
@@ -661,7 +661,7 @@ export class GameChallengesUiHandler extends UiHandler {
     super.destroy();
 
     this.homeKey?.off("up", this.onHomeDown, this);
-    this.homeKey = null;
+    this.homeKey = undefined;
 
     if (this.descriptionScrollTween) {
       this.descriptionScrollTween.remove();
