@@ -72,8 +72,6 @@ describe("Move - Stomping Tantrum", () => {
 
   it("should do normal damage after using a recharge move", async () => {
     const { stompingTantrum, powerSpy } = setUpTest();
-    // Guaranteeing Giga Impact hits
-    vi.spyOn(allMoves[MoveId.GIGA_IMPACT], "accuracy", "get").mockReturnValue(100);
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
