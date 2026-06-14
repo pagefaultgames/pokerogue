@@ -14,10 +14,15 @@ export class TabMenu extends Phaser.GameObjects.Container {
   public selectedIndex = 0;
   private labels: string[];
   private headerTitles: Phaser.GameObjects.Text[] = [];
-  private navigationIcons: Record<string, Phaser.GameObjects.Sprite> = {};
-  private onChangeCallback: (index: number) => void;
+  private navigationIcons: Partial<Record<MappingSettingName, Phaser.GameObjects.Sprite>> = {};
+  
+  /**
+   * Callback executed whenever the user navigates to a new tab.
+   * @param tabIndex The index of the newly selected tab.
+   */
+  private onChangeCallback: (tabIndex: number) => void;
 
-  constructor(x: number, y: number, width: number, labels: string[], onChange: (index: number) => void) {
+  constructor(x: number, y: number, width: number, labels: string[], onChange: (tabIndex: number) => void) {
     super(globalScene, x, y);
     this.labels = labels;
     this.onChangeCallback = onChange;
@@ -52,7 +57,7 @@ export class TabMenu extends Phaser.GameObjects.Container {
     this.updateTabs();
   }
 
-  public updateTabs(): void {
+  private updateTabs(): void {
     for (const [index, title] of this.headerTitles.entries()) {
       setTextStyle(title, index === this.selectedIndex ? TextStyle.SETTINGS_SELECTED : TextStyle.SETTINGS_LABEL_NAVBAR);
     }
