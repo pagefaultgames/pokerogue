@@ -11760,8 +11760,9 @@ export function initMoves() {
         // Stomping tantrum triggers on most failures (including sleep/freeze)
         // Exceptions include after being targeted with Sky Drop and after recharging
         let lastNonDancerMove = user.getLastXMoves(2)[1] as TurnMove | undefined;
-        if (user.getLastXMoves(3)[2] && allMoves[user.getLastXMoves(3)[2].move].hasAttr("RechargeAttr")) {
-          lastNonDancerMove = user.getLastXMoves(3)[2] as TurnMove | undefined;
+        const thirdMostRecentMove = user.getLastXMoves(3)[2] as TurnMove | undefined;
+        if (thirdMostRecentMove && allMoves[thirdMostRecentMove.move].hasAttr("RechargeAttr")) {
+          lastNonDancerMove = thirdMostRecentMove;
         }
         const enemyIsException = isStompingTantrumExceptionFunc(user, target);
         let enemyTwoIsException = false;
