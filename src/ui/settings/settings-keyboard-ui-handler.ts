@@ -85,9 +85,7 @@ export class SettingsKeyboardUiHandler extends AbstractControlSettingsUiHandler 
       return;
     }
     globalScene.gameData.resetMappingToFactory();
-    if (this.tabMenu) {
-      this.tabMenu.updateIcons();
-    }
+      this.tabMenu?.updateIcons();
   }
 
   /**
@@ -106,9 +104,7 @@ export class SettingsKeyboardUiHandler extends AbstractControlSettingsUiHandler 
     if (success) {
       this.saveCustomKeyboardMappingToLocalStorage(activeConfig);
       this.updateBindings();
-      if (this.tabMenu) {
-        this.tabMenu.updateIcons();
-      }
+      this.tabMenu?.updateIcons();
     }
   }
 

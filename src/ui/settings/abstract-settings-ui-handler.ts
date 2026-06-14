@@ -76,8 +76,8 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
 
     const menuWidth = globalScene.scaledCanvas.width;
 
-    this.tabMenu = new TabMenu(0, 0, menuWidth, tabLabels, _newIndex => {
-      globalScene.ui.setMode(this.settingsTabs[_newIndex].mode);
+    this.tabMenu = new TabMenu(0, 0, menuWidth, tabLabels, newIndex => {
+      globalScene.ui.setMode(this.settingsTabs[newIndex].mode);
     });
 
     const activeIndex = this.settingsTabs.findIndex(tab => tab.mode === this.getUi().getMode());
@@ -233,9 +233,7 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
         this.navigationIcons[settingName].alpha = 0;
       }
     }
-    if (this.tabMenu) {
-      this.tabMenu.updateIcons();
-    }
+      this.tabMenu?.updateIcons();
   }
 
   /**
