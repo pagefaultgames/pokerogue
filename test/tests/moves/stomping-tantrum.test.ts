@@ -76,6 +76,7 @@ describe("Move - Stomping Tantrum", () => {
     game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     game.move.use(MoveId.GIGA_IMPACT);
+    await game.move.forceHit();
     await game.toEndOfTurn();
 
     // Recharge turn
