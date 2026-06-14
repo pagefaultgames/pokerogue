@@ -135,7 +135,6 @@ import { areAllies, canSpeciesTera, willTerastallize } from "#utils/pokemon-util
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import type { ValueHolder } from "#utils/value-holder";
-import { stat } from "fs";
 import i18next from "i18next";
 
 // TODO: Make these (and all condition functions actually)
