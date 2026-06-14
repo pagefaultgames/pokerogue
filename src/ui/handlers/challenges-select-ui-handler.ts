@@ -106,20 +106,15 @@ export class GameChallengesUiHandler extends UiHandler {
       this.updateText();
     });
 
-    const footerHeight = 22;
+    const startBgHeight = 24;
     const contentY = headerBg.height + this.tabMenu.height;
 
     this.optionsWidth = canvasWidth * 0.6;
-    this.optionsBg = addWindow(0, contentY, this.optionsWidth, canvasHeight - contentY - footerHeight)
+    this.optionsBg = addWindow(0, contentY, this.optionsWidth, canvasHeight - contentY - startBgHeight)
       .setName("window-options-bg")
       .setOrigin(0);
 
-    const descriptionBg = addWindow(
-      0,
-      contentY,
-      canvasWidth - this.optionsWidth,
-      canvasHeight - contentY - footerHeight - 24,
-    )
+    const descriptionBg = addWindow(0, contentY, canvasWidth - this.optionsWidth, canvasHeight - contentY)
       .setName("window-desc-bg")
       .setOrigin(0)
       .setPositionRelative(this.optionsBg, this.optionsBg.width, 0);
@@ -139,22 +134,18 @@ export class GameChallengesUiHandler extends UiHandler {
     this.descriptionTextBaseY = this.descriptionText.y;
     this.descriptionTextMaxHeight = descriptionBg.height - 8;
 
-    this.descriptionTextMaskRect = globalScene.make.graphics({})
+    this.descriptionTextMaskRect = globalScene.make
+      .graphics({})
       .setScale(6)
       .fillStyle(0xffffff)
       .beginPath()
-      .fillRect(
-        descriptionBg.x + 6,
-        descriptionBg.y + 4,
-        descriptionBg.width - 12,
-        this.descriptionTextMaxHeight,
-      );
+      .fillRect(descriptionBg.x + 6, descriptionBg.y + 4, descriptionBg.width - 12, this.descriptionTextMaxHeight);
     this.descriptionText.setMask(this.descriptionTextMaskRect.createGeometryMask());
 
-    this.startBg = addWindow(0, 0, descriptionBg.width, 24)
+    this.startBg = addWindow(0, 0, this.optionsWidth, startBgHeight)
       .setName("window-start-bg")
       .setOrigin(0)
-      .setPositionRelative(descriptionBg, 0, descriptionBg.height);
+      .setPositionRelative(this.optionsBg, 0, this.optionsBg.height);
 
     this.startText = addTextObject(0, 0, i18next.t("challenges:noneSelected"), TextStyle.SETTINGS_LABEL)
       .setName("text-start")
@@ -168,15 +159,15 @@ export class GameChallengesUiHandler extends UiHandler {
       .setPositionRelative(this.startBg, 4, 5)
       .setVisible(false);
 
-    const footerBg = addWindow(0, canvasHeight - footerHeight, canvasWidth, footerHeight)
-      .setName("window-reset-bg")
-      .setOrigin(0);
-    const iconReset = globalScene.add.sprite(0, 0, "keyboard").setFrame("HOME.png");
-    iconReset.setOrigin(0, -0.1);
-    iconReset.setPositionRelative(footerBg, 8, 4);
-
     const resetText = addTextObject(0, 0, i18next.t("settings:reset"), TextStyle.SETTINGS_LABEL);
     resetText.setOrigin(0, 0.15);
+
+    const iconReset = globalScene.add.sprite(0, 0, "keyboard").setFrame("HOME.png");
+    iconReset.setOrigin(0, -0.1);
+
+    const resetGroupWidth = 26 + resetText.displayWidth;
+
+    iconReset.setPositionRelative(headerBg, headerBg.width - resetGroupWidth - 8, 5);
     resetText.setPositionRelative(iconReset, 26, 0);
 
     this.valuesContainer = globalScene.add //
@@ -231,7 +222,6 @@ export class GameChallengesUiHandler extends UiHandler {
       this.startBg,
       this.startText,
       this.startCursor,
-      footerBg,
       iconReset,
       resetText,
       this.valuesContainer,
