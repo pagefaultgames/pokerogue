@@ -98,16 +98,16 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoXPos: 35,
   },
   "es-ES": {
-    starterInfoTextSize: "50px",
+    starterInfoTextSize: "52px",
     instructionTextSize: "28px",
     starterInfoYOffset: 0.5,
-    starterInfoXPos: 38,
+    starterInfoXPos: 39,
   },
   "es-419": {
     starterInfoTextSize: "50px",
     instructionTextSize: "28px",
     starterInfoYOffset: 0.5,
-    starterInfoXPos: 38,
+    starterInfoXPos: 37,
   },
   fr: {
     starterInfoTextSize: "54px",
