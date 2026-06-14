@@ -6,6 +6,10 @@ import { specialIconKeys, specialIcons } from "#ui/settings/special-icons";
 import { addTextObject, setTextStyle } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 
+/**
+ * A reusable UI container that manages tab-based navigation.
+ * It supports button navigation (e.g., CYCLE_FORM/CYCLE_SHINY) and updates the visual state of the tabs.
+ */
 export class TabMenu extends Phaser.GameObjects.Container {
   public selectedIndex = 0;
   private labels: string[];
