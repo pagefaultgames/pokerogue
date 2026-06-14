@@ -139,16 +139,16 @@ export class GameChallengesUiHandler extends UiHandler {
     this.descriptionTextBaseY = this.descriptionText.y;
     this.descriptionTextMaxHeight = descriptionBg.height - 8;
 
-    this.descriptionTextMaskRect = globalScene.make.graphics({});
-    this.descriptionTextMaskRect.setScale(6);
-    this.descriptionTextMaskRect.fillStyle(0xffffff);
-    this.descriptionTextMaskRect.beginPath();
-    this.descriptionTextMaskRect.fillRect(
-      descriptionBg.x + 6,
-      descriptionBg.y + 4,
-      descriptionBg.width - 12,
-      this.descriptionTextMaxHeight,
-    );
+    this.descriptionTextMaskRect = globalScene.make.graphics({})
+      .setScale(6)
+      .fillStyle(0xffffff)
+      .beginPath()
+      .fillRect(
+        descriptionBg.x + 6,
+        descriptionBg.y + 4,
+        descriptionBg.width - 12,
+        this.descriptionTextMaxHeight,
+      );
     this.descriptionText.setMask(this.descriptionTextMaskRect.createGeometryMask());
 
     this.startBg = addWindow(0, 0, descriptionBg.width, 24)
