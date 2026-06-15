@@ -11,6 +11,7 @@ import { initGenerationEight } from "#balance/generation-08";
 import { initGenerationNine } from "#balance/generation-09";
 import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import type { StarterCost } from "#balance/starters";
+import { IS_TEST } from "#constants/app-constants";
 import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
 import { SpeciesFormChange } from "#data/pokemon-forms";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -423,7 +424,10 @@ export class SpeciesDataRegistry {
     }
 
     if (form == null) {
-      console.debug(`No form requested for ${speciesId} (${this.getSpecies(speciesId).name}), returning base form.`);
+      !IS_TEST
+        && console.debug(
+          `No form requested for ${speciesId} (${this.getSpecies(speciesId).name}), returning base form.`,
+        );
       return forms[0].formKey;
     }
 
@@ -434,7 +438,7 @@ export class SpeciesDataRegistry {
       return forms[form].formKey;
     }
 
-    console.warn(`Invalid form index ${form} for species ${speciesId}, falling back to base form`);
+    !IS_TEST && console.warn(`Invalid form index ${form} for species ${speciesId}, falling back to base form`);
     return forms[0].formKey;
   }
 
@@ -460,7 +464,7 @@ export class SpeciesDataRegistry {
       return formIndex;
     }
 
-    console.warn(`Invalid form ${form} for species ${speciesId}, falling back to base form`);
+    !IS_TEST && console.warn(`Invalid form ${form} for species ${speciesId}, falling back to base form`);
     return 0;
   }
 
