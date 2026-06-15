@@ -146,12 +146,12 @@ export class StatsContainer extends Phaser.GameObjects.Container {
       text.setText(`[shadow]${label}[/shadow]`);
     });
 
-    const newColor = ivs.every(iv => iv === 31) ? Number.parseInt(perfectIVColor.substr(1), 16) : 0x98d8a0;
+    const newColor = ivs.every(iv => iv === 31) ? Number.parseInt(perfectIVColor.slice(1), 16) : 0x98d8a0;
     const oldColor = this.ivChart.fillColor;
     const interpolateColor =
-      oldColor !== newColor
-        ? [Phaser.Display.Color.IntegerToColor(oldColor), Phaser.Display.Color.IntegerToColor(newColor)]
-        : null;
+      oldColor === newColor
+        ? null
+        : [Phaser.Display.Color.IntegerToColor(oldColor), Phaser.Display.Color.IntegerToColor(newColor)];
 
     globalScene.tweens.addCounter({
       from: 0,

@@ -1,5 +1,5 @@
-import Overrides from "#app/overrides";
-import { allSpecies } from "#data/data-lists";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
+import {activeOverrides} from "#app/overrides";
 import { AbilityId } from "#enums/ability-id";
 import { BiomeId } from "#enums/biome-id";
 import { Command } from "#enums/command";
@@ -54,7 +54,7 @@ describe("Phase - Battle Phase", () => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
     }).length;
-    expect(caughtCount).toBe(Object.keys(allSpecies).length);
+    expect(caughtCount).toBe(speciesDataRegistry.getAllSpecies().length);
   });
 
   it("start battle with selected team", async () => {
@@ -188,7 +188,7 @@ describe("Phase - Battle Phase", () => {
     game.override.enemySpecies(SpeciesId.MAGIKARP).enemyMoveset([MoveId.SPLASH]).battleStyle("single");
     await game.classicMode.startBattle(SpeciesId.MAGIKARP);
 
-    vi.spyOn(Overrides, "RUN_SUCCESS_OVERRIDE", "get").mockReturnValue(true);
+    vi.spyOn(activeOverrides, "RUN_SUCCESS_OVERRIDE", "get").mockReturnValue(true);
 
     const commandPhase = game.scene.phaseManager.getCurrentPhase() as CommandPhase;
     commandPhase.handleCommand(Command.RUN, 0);

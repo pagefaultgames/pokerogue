@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
 import { UiTheme } from "#enums/ui-theme";
 import { addTextObject } from "#ui/text";
+import { playTween } from "#utils/anim-utils";
 import i18next from "i18next";
 
 const defaultBarWidth = 118;
@@ -105,7 +106,7 @@ export class AbilityBar extends Phaser.GameObjects.Container {
     this.abilityBars[+this.player].setSize(this.currentBarWidth, defaultBarHeight);
   }
 
-  public async startTween(config: any, text?: string): Promise<void> {
+  public async startTween(config: Parameters<typeof playTween>[0], text?: string): Promise<void> {
     this.setVisible(true);
     if (text) {
       if (this.isLegacyUi) {
@@ -118,17 +119,7 @@ export class AbilityBar extends Phaser.GameObjects.Container {
         this.abilityBarText.setText(text);
       }
     }
-    return new Promise(resolve => {
-      globalScene.tweens.add({
-        ...config,
-        onComplete: () => {
-          if (config.onComplete) {
-            config.onComplete();
-          }
-          resolve();
-        },
-      });
-    });
+    await playTween(config);
   }
 
   public async showAbility(pokemonName: string, abilityName: string, passive = false, player = true): Promise<void> {
@@ -170,15 +161,13 @@ export class AbilityBar extends Phaser.GameObjects.Container {
   }
 
   public async hide(): Promise<void> {
-    return this.startTween({
+    await this.startTween({
       targets: this,
       x: this.player ? -this.currentBarWidth : this.screenRight,
       duration: 200,
       ease: "Sine.easeIn",
-      onComplete: () => {
-        this.setVisible(false);
-      },
     });
+    this.setVisible(false);
   }
 
   public isVisible(): boolean {

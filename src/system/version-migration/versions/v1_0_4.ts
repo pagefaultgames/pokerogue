@@ -1,5 +1,5 @@
 import { defaultStarterSpecies } from "#app/constants";
-import { allSpecies } from "#data/data-lists";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { CustomPokemonData } from "#data/pokemon-data";
 import { AbilityAttr } from "#enums/ability-attr";
 import { DexAttr } from "#enums/dex-attr";
@@ -39,7 +39,8 @@ const fixLegendaryStats: SystemSaveMigrator = {
       data.gameStats.subLegendaryPokemonSeen = 0;
       data.gameStats.subLegendaryPokemonCaught = 0;
       data.gameStats.subLegendaryPokemonHatched = 0;
-      allSpecies
+      speciesDataRegistry
+        .getAllSpecies()
         .filter(s => s.subLegendary)
         .forEach(s => {
           const dexEntry = data.dexData[s.speciesId];
@@ -135,7 +136,13 @@ const migrateModifiers: SessionSaveMigrator = {
       } else if (m.className === "TempBattleStatBoosterModifier") {
         const maxBattles = 5;
         // Dire Hit no longer a part of the TempBattleStatBoosterModifierTypeGenerator
-        if (m.typeId !== "DIRE_HIT") {
+        if (m.typeId === "DIRE_HIT") {
+          m.className = "TempCritBoosterModifier";
+          m.typePregenArgs = [];
+
+          // From [ stat, battlesLeft ] to [ maxBattles, battleCount ]
+          m.args = [maxBattles, Math.min(m.args[1], maxBattles)];
+        } else {
           m.className = "TempStatStageBoosterModifier";
           m.typeId = "TEMP_STAT_STAGE_BOOSTER";
 
@@ -145,12 +152,6 @@ const migrateModifiers: SessionSaveMigrator = {
 
           // From [ stat, battlesLeft ] to [ stat, maxBattles, battleCount ]
           m.args = [newStat, maxBattles, Math.min(m.args[1], maxBattles)];
-        } else {
-          m.className = "TempCritBoosterModifier";
-          m.typePregenArgs = [];
-
-          // From [ stat, battlesLeft ] to [ maxBattles, battleCount ]
-          m.args = [maxBattles, Math.min(m.args[1], maxBattles)];
         }
       } else if (m.className === "DoubleBattleChanceBoosterModifier" && m.args.length === 1) {
         let maxBattles: number;

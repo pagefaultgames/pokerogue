@@ -52,7 +52,7 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { CommonBattleAnim, MoveChargeAnim } from "#data/battle-anims";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { SpeciesFormChangeAbilityTrigger } from "#data/form-change-triggers";
@@ -131,14 +131,15 @@ export class BattlerTag implements BaseBattlerTag {
   public sourceMove?: MoveId;
   public sourceId?: number;
 
-  //#region non-serializable fields
+  // #region non-serializable fields
+
   // Fields that should never be serialized, as they must not change after instantiation
-  #isBatonPassable = false;
+  readonly #isBatonPassable: boolean;
   public get isBatonPassable(): boolean {
     return this.#isBatonPassable;
   }
 
-  #lapseTypes: readonly [BattlerTagLapseType, ...BattlerTagLapseType[]];
+  readonly #lapseTypes: readonly [BattlerTagLapseType, ...BattlerTagLapseType[]];
   /**
    * The set of lapse types that this tag can be automatically lapsed with.
    * If this is exclusively {@linkcode BattlerTagLapseType.CUSTOM}, then the tag can only ever be lapsed
@@ -147,7 +148,8 @@ export class BattlerTag implements BaseBattlerTag {
   public get lapseTypes(): readonly BattlerTagLapseType[] {
     return this.#lapseTypes;
   }
-  //#endregion non-serializable fields
+
+  // #endregion non-serializable fields
 
   constructor(
     tagType: BattlerTagType,
@@ -171,7 +173,8 @@ export class BattlerTag implements BaseBattlerTag {
     this.#isBatonPassable = isBatonPassable;
   }
 
-  canAdd(_pokemon: Pokemon): boolean {
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: pseudo-abstract method
+  canAdd(pokemon: Pokemon): boolean {
     return true;
   }
 
@@ -190,13 +193,14 @@ export class BattlerTag implements BaseBattlerTag {
    *
    * @remarks
    * Generally, this involves ticking down the tag's duration. The tag also initiates the effects it is responsbile for
-   * @param _pokemon - The {@linkcode Pokemon} whom this tag belongs to.
+   * @param pokemon - The {@linkcode Pokemon} whom this tag belongs to.
    * Unused by default but can be used by subclasses.
-   * @param _lapseType - The {@linkcode BattlerTagLapseType} being lapsed.
+   * @param lapseType - The {@linkcode BattlerTagLapseType} being lapsed.
    * Unused by default but can be used by subclasses.
-   * @returns `true` if the tag should be kept (`turnCount` > 0`)
+   * @returns `true` if the tag should be kept (`turnCount > 0` by default)
    */
-  lapse(_pokemon: Pokemon, _lapseType: BattlerTagLapseType): boolean {
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: params supplied for subclasses
+  lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     return --this.turnCount > 0;
   }
 
@@ -879,7 +883,7 @@ export class ConfusedTag extends SerializableBattlerTag {
     phaseManager.unshiftNew("CommonAnimPhase", pokemon.getBattlerIndex(), undefined, CommonAnim.CONFUSION);
 
     // 1/3 chance of hitting self with a 40 base power move
-    if (pokemon.randBattleSeedInt(3) === 0 || Overrides.CONFUSION_ACTIVATION_OVERRIDE === true) {
+    if (pokemon.randBattleSeedInt(3) === 0 || activeOverrides.CONFUSION_ACTIVATION_OVERRIDE === true) {
       const atk = pokemon.getEffectiveStat(Stat.ATK);
       const def = pokemon.getEffectiveStat(Stat.DEF);
       const damage = toDmgValue(
@@ -2021,11 +2025,8 @@ export class EnduringTag extends BattlerTag {
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.CUSTOM) {
-      globalScene.phaseManager.queueMessage(
-        i18next.t("battlerTags:enduringLapse", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        }),
-      );
+      const pokemonNameWithAffix = getPokemonNameWithAffix(pokemon);
+      globalScene.phaseManager.queueMessage(i18next.t("battlerTags:enduringLapse", { pokemonNameWithAffix }));
       return true;
     }
 
@@ -2041,12 +2042,9 @@ export class SturdyTag extends BattlerTag {
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.CUSTOM) {
-      globalScene.phaseManager.queueMessage(
-        i18next.t("battlerTags:sturdyLapse", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        }),
-      );
-      return true;
+      const pokemonNameWithAffix = getPokemonNameWithAffix(pokemon);
+      globalScene.phaseManager.queueMessage(i18next.t("battlerTags:sturdyLapse", { pokemonNameWithAffix }));
+      return false;
     }
 
     return super.lapse(pokemon, lapseType);
@@ -2465,7 +2463,10 @@ export class CritBoostTag extends SerializableBattlerTag {
     super.onAdd(pokemon);
 
     // Dragon cheer adds +2 crit stages if the pokemon is a Dragon type when the tag is added
-    if (this.tagType === BattlerTagType.DRAGON_CHEER && !pokemon.getTypes(true, true).includes(PokemonType.DRAGON)) {
+    if (
+      this.tagType === BattlerTagType.DRAGON_CHEER
+      && !pokemon.isOfType(PokemonType.DRAGON, { returnOriginalTypesIfStellar: true })
+    ) {
       (this as Mutable<this>).critStages = 1;
     } else {
       (this as Mutable<this>).critStages = 2;
@@ -2537,7 +2538,7 @@ export class SaltCuredTag extends SerializableBattlerTag {
 
       if (!cancelled.value) {
         const pokemonSteelOrWater = pokemon.isOfType(PokemonType.STEEL) || pokemon.isOfType(PokemonType.WATER);
-        pokemon.damageAndUpdate(toDmgValue(pokemonSteelOrWater ? pokemon.getMaxHp() / 4 : pokemon.getMaxHp() / 8), {
+        pokemon.damageAndUpdate(toDmgValue(pokemonSteelOrWater ? pokemon.getMaxHp() / 8 : pokemon.getMaxHp() / 16), {
           result: HitResult.INDIRECT,
         });
 
@@ -2645,8 +2646,9 @@ export class RoostedTag extends BattlerTag {
 
   onRemove(pokemon: Pokemon): void {
     const currentTypes = pokemon.getTypes();
-    const baseTypes = pokemon.getTypes(false, false, true);
+    const baseTypes = pokemon.getTypes({ includeTeraType: false, bypassSummonData: true, ignoreThirdType: true });
 
+    // TODO: this is very wrong
     const forestsCurseApplied: boolean =
       currentTypes.includes(PokemonType.GRASS) && !baseTypes.includes(PokemonType.GRASS);
     const trickOrTreatApplied: boolean =
@@ -2670,7 +2672,7 @@ export class RoostedTag extends BattlerTag {
 
   onAdd(pokemon: Pokemon): void {
     const currentTypes = pokemon.getTypes();
-    const baseTypes = pokemon.getTypes(false, false, true);
+    const baseTypes = pokemon.getTypes({ includeTeraType: false, bypassSummonData: true, ignoreThirdType: true });
 
     const isOriginallyDualType = baseTypes.length === 2;
     const isCurrentlyDualType = currentTypes.length === 2;
@@ -2679,7 +2681,7 @@ export class RoostedTag extends BattlerTag {
     let modifiedTypes: PokemonType[];
     if (this.isBasePureFlying && !isCurrentlyDualType) {
       modifiedTypes = [PokemonType.NORMAL];
-    } else if (!!pokemon.getTag(RemovedTypeTag) && isOriginallyDualType && !isCurrentlyDualType) {
+    } else if (pokemon.getTag(RemovedTypeTag) && isOriginallyDualType && !isCurrentlyDualType) {
       modifiedTypes = [PokemonType.UNKNOWN];
     } else {
       modifiedTypes = currentTypes.filter(type => type !== PokemonType.FLYING);
@@ -3124,7 +3126,8 @@ export class SubstituteTag extends SerializableBattlerTag {
   /** The substitute's remaining HP. If HP is depleted, the Substitute fades. */
   public hp: number;
 
-  //#region non-serializable properties
+  // #region non-serializable properties
+
   /** A reference to the sprite representing the Substitute doll */
   #sprite: Phaser.GameObjects.Sprite;
   /** A reference to the sprite representing the Substitute doll */
@@ -3143,7 +3146,8 @@ export class SubstituteTag extends SerializableBattlerTag {
   public set sourceInFocus(value: boolean) {
     this.#sourceInFocus = value;
   }
-  //#endregion non-serializable properties
+
+  // #endregion non-serializable properties
 
   constructor(sourceMove: MoveId, sourceId: number) {
     super(

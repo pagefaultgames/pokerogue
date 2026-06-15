@@ -2,6 +2,7 @@ export enum TrainerType {
   UNKNOWN,
 
   // #region Generic Trainers
+
   ACE_TRAINER,
   AROMA_LADY,
   ARTIST,
@@ -65,9 +66,11 @@ export enum TrainerType {
   WORKER,
   YOUNG_COUPLE,
   YOUNGSTER,
-  // #endregion
+
+  // #endregion Generic Trainers
 
   // #region Evil Teams
+
   ROCKET_GRUNT,
   ARCHER,
   ARIANA,
@@ -113,9 +116,11 @@ export enum TrainerType {
   ATTICUS,
   ORTEGA,
   ERI,
-  // #endregion
+
+  // #endregion Evil Teams
 
   // #region Evil Team Bosses
+
   ROCKET_BOSS_GIOVANNI_1,
   ROCKET_BOSS_GIOVANNI_2,
   MAXIE,
@@ -136,9 +141,11 @@ export enum TrainerType {
   ROSE_2,
   PENNY,
   PENNY_2,
-  // #endregion
+
+  // #endregion Evil Team Bosses
 
   // #region ME trainers
+
   BUCK,
   CHERYL,
   MARLEY,
@@ -153,9 +160,11 @@ export enum TrainerType {
   EXPERT_POKEMON_BREEDER,
   PLAYER_M_ALTERNATE,
   PLAYER_F_ALTERNATE,
-  // #endregion
+
+  // #endregion ME trainers
 
   // #region Gym Leaders
+
   BROCK = 200,
   MISTY,
   LT_SURGE,
@@ -230,9 +239,11 @@ export enum TrainerType {
   RYME,
   TULIP,
   GRUSHA,
-  // #endregion
+
+  // #endregion Gym Leaders
 
   // #region Elite Four
+
   LORELEI = 300,
   BRUNO,
   AGATHA,
@@ -275,9 +286,11 @@ export enum TrainerType {
   AMARYS,
   LACEY,
   DRAYTON,
-  // #endregion
+
+  // #endregion Elite Four
 
   // #region Champions
+
   BLUE = 350,
   RED,
   LANCE_CHAMPION,
@@ -294,14 +307,17 @@ export enum TrainerType {
   GEETA,
   NEMONA,
   KIERAN,
-  // #endregion
+
+  // #endregion Champions
 
   // #region Rivals
+
   RIVAL = 375,
   RIVAL_2,
   RIVAL_3,
   RIVAL_4,
   RIVAL_5,
   RIVAL_6,
-  // #endregion
+
+  // #endregion Rivals
 }

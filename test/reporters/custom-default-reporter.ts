@@ -2,8 +2,7 @@ import { relative } from "node:path";
 import { parseStacktrace } from "@vitest/utils/source-map";
 import chalk from "chalk";
 import type { UserConsoleLog } from "vitest";
-import type { TestState } from "vitest/node";
-import { DefaultReporter } from "vitest/reporters";
+import { DefaultReporter, type TestState } from "vitest/node";
 
 const IGNORE_STACKTRACE: boolean = true;
 
