@@ -6,6 +6,7 @@ import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import HttpBackend from "i18next-http-backend";
 import { KoreanPostpositionProcessor } from "i18next-korean-postposition-processor";
+import { supportedLngs } from "./i18n-supported-lngs";
 
 // #region Interfaces/Types
 
@@ -165,34 +166,7 @@ await i18next
         "es-419": ["es-ES", "en"],
         default: ["en"],
       },
-      supportedLngs: [
-        "en", // English
-        "es-ES", // Spanish (Spain)
-        "es-419", // LATAM Spanish
-        "fr", // French
-        "it", // Italian
-        "de", // German
-        "zh-Hans", // Chinese Simplified
-        "zh-Hant", // Chinese Traditional
-        "pt-BR", // Brazilian Portuguese
-        "ko", // Korean
-        "ja", // Japanese
-        "ca", // Catalan
-        "eu", // Basque
-        "da", // Danish
-        "th", // Thai
-        "tr", // Turkish
-        "ro", // Romanian
-        "ru", // Russian
-        "id", // Indonesian
-        "hi", // Hindi
-        "tl", // Tagalog
-        "nb-NO", // Norwegian Bokmål
-        "sv", // Swedish
-        "uk", // Ukrainian
-        "vi", // Vietnamese
-        "pl", // Polish
-      ],
+      supportedLngs,
       backend: {
         loadPath(lng: string, [ns]: string[]) {
           // Use namespace maps where required

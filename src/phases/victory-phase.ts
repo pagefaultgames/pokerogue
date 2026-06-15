@@ -9,8 +9,9 @@ import { PokemonPhase } from "#phases/pokemon-phase";
 
 export class VictoryPhase extends PokemonPhase {
   public readonly phaseName = "VictoryPhase";
+
   /** If true, indicates that the phase is intended for EXP purposes only, and not to continue a battle to next phase */
-  isExpOnly: boolean;
+  private readonly isExpOnly: boolean;
 
   constructor(battlerIndex: BattlerIndex | number, isExpOnly = false) {
     super(battlerIndex);
@@ -18,7 +19,7 @@ export class VictoryPhase extends PokemonPhase {
     this.isExpOnly = isExpOnly;
   }
 
-  start() {
+  public override start(): void {
     super.start();
 
     const isMysteryEncounter = globalScene.currentBattle.isBattleMysteryEncounter();
@@ -33,13 +34,16 @@ export class VictoryPhase extends PokemonPhase {
 
     if (isMysteryEncounter) {
       handleMysteryEncounterVictory(false, this.isExpOnly);
-      return this.end();
+      this.end();
+      return;
     }
 
+    // TODO: clean this up a bit - this shouldn't use `.find`; invert conditional and use early return
     if (
       !globalScene
         .getEnemyParty()
         .find(p => (globalScene.currentBattle.battleType === BattleType.WILD ? p.isOnField() : !p?.isFainted()))
+      && !globalScene.phaseManager.hasPhaseOfType("TrainerVictoryPhase") // temporary hotfix
     ) {
       globalScene.phaseManager.pushNew("BattleEndPhase", true);
       if (globalScene.currentBattle.battleType === BattleType.TRAINER) {
