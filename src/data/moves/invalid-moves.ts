@@ -1,5 +1,6 @@
 /**
- * Contains various move-related banlists and related constants.
+ * File containing various banlists for various moves, abilities and other effects,
+ * alongside various related constants.
  *
  * @remarks
  * Note that PokéRogue intentionally diverges from the mainline games in these lists, as follows:
@@ -10,6 +11,8 @@
 
 import type { HealBlockTag } from "#data/battler-tags";
 import { MoveId } from "#enums/move-id";
+
+// #region Move-Calling Move Banlists
 
 /**
  * Array containing all move-calling moves, used for DRY when writing move banlists.
@@ -325,6 +328,8 @@ export const invalidEncoreMoves: ReadonlySet<MoveId> = new Set([
   // NB: Add Max/G-Max/Z-Move blockage if or when they are implemented
 ]);
 
+// #endregion Move-Calling Move Banlists
+
 /** Set of all moves that cannot be repeated by {@linkcode MoveId.INSTRUCT}. */
 export const invalidInstructMoves: ReadonlySet<MoveId> = new Set([
   // Locking/Continually Executed moves
@@ -381,4 +386,23 @@ export const invalidInstructMoves: ReadonlySet<MoveId> = new Set([
   MoveId.MIMIC,
   MoveId.STRUGGLE,
   // NB: Add Max/G-Max/Z-Move blockage if or when they are implemented
+]);
+
+/**
+ * Set of all moves that cannot cause
+ * {@link https://bulbapedia.bulbagarden.net/wiki/Wimp_Out_(ability) | Wimp Out } and
+ * {@link https://bulbapedia.bulbagarden.net/wiki/Emergency_Exit_(ability) | Emergency Exit}
+ * to switch out upon dealing damage.
+ * @remarks
+ * Includes both HP cutting moves and other force-switching moves (which normally trigger before the ability activates).
+ */
+export const invalidWimpOutMoves: ReadonlySet<MoveId> = new Set<MoveId>([
+  MoveId.CURSE,
+  MoveId.BELLY_DRUM,
+  MoveId.SUBSTITUTE,
+  MoveId.PAIN_SPLIT,
+  MoveId.CLANGOROUS_SOUL,
+  MoveId.FILLET_AWAY,
+  MoveId.DRAGON_TAIL,
+  MoveId.CIRCLE_THROW,
 ]);

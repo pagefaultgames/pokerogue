@@ -22,3 +22,6 @@ export enum SwitchType {
  * to leave the field.
  */
 export const effectPreservingSwitchTypes: readonly SwitchType[] = [SwitchType.BATON_PASS, SwitchType.SHED_TAIL];
+
+/** Union type of all "normal" switch types that can be used by switching moves and abilities. */
+export type NormalSwitchType = Exclude<SwitchType, SwitchType.INITIAL_SWITCH>;

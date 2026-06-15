@@ -16,8 +16,9 @@ import type { AttackMoveResult } from "#types/attack-move-result";
 import type { IllusionData } from "#types/illusion-data";
 import type { SerializedSpeciesForm } from "#types/pokemon-common";
 import type { TurnMove } from "#types/turn-move";
-import type { CoerceNullPropertiesToUndefined } from "#types/type-helpers";
+import type { CoerceNullPropertiesToUndefined, Mutable } from "#types/type-helpers";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import type { TupleOf } from "type-fest";
 
 /**
  * Permanent data that can customize a Pokemon in non-standard ways from its Species.
@@ -330,6 +331,18 @@ export class PokemonTurnData {
    * @defaultValue `-1`
    */
   public hitsLeft = -1;
+  /**
+   * The total amount of damage dealt by this Pokemon's last attack against each of its targets,
+   * indexed by their respective `BattlerIndex`es. \
+   * Does NOT count hits to a Pokemon's substitute.
+   *
+   * Reset to an empty array upon attempting to use a move, and is used to ensure correct U-Turn + Wimp Out interactions.
+   */
+  public lastMoveDamageDealt: Mutable<TupleOf<4, number>> = [0, 0, 0, 0];
+  /**
+   * The total amount of damage dealt by this Pokemon's last attack.
+   * TODO: Reset this after each attack
+   */
   public totalDamageDealt = 0;
   public singleHitDamageDealt = 0;
   public damageTaken = 0;

@@ -61,26 +61,24 @@ describe("Moves - Chilly Reception", () => {
   it("should still switch out even if weather cannot be changed", async () => {
     await game.classicMode.startBattle(SpeciesId.SLOWKING, SpeciesId.MEOWTH);
 
-    expect(game.scene.arena.weather?.weatherType).not.toBe(WeatherType.SNOW);
-
     const [slowking, meowth] = game.scene.getPlayerParty();
 
-    game.move.select(MoveId.SNOWSCAPE);
+    game.move.use(MoveId.SNOWSCAPE);
     await game.toNextTurn();
 
-    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SNOW);
+    expect(game).toHaveWeather(WeatherType.SNOW);
 
-    game.move.select(MoveId.CHILLY_RECEPTION);
+    game.move.use(MoveId.CHILLY_RECEPTION);
     game.doSelectPartyPokemon(1);
-    // TODO: Uncomment lines once wimp out PR fixes force switches to not reset summon data immediately
-    //  await game.phaseInterceptor.to("SwitchPhase", false);
-    //  expect(slowking.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+
+    await game.phaseInterceptor.to("SwitchPhase", false);
+    expect(slowking).toHaveUsedMove({ move: MoveId.CHILLY_RECEPTION, result: MoveResult.SUCCESS });
 
     await game.toEndOfTurn();
 
-    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SNOW);
-    expect(game.phaseInterceptor.log).toContain("SwitchPhase");
-    expect(game.field.getPlayerPokemon()).toBe(meowth);
+    expect(game).toHaveWeather(WeatherType.SNOW);
+    expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
+    expect(meowth.isOnField()).toBe(true);
     expect(slowking.isOnField()).toBe(false);
   });
 

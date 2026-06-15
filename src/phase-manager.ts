@@ -111,6 +111,7 @@ import { UnavailablePhase } from "#phases/unavailable-phase";
 import { UnlockPhase } from "#phases/unlock-phase";
 import { VictoryPhase } from "#phases/victory-phase";
 import { WeatherEffectPhase } from "#phases/weather-effect-phase";
+import type { PartyMemberIndex } from "#types/party-member-index";
 import type { PhaseConditionFunc, PhaseMap, PhaseString } from "#types/phase-types";
 import { isEnemy } from "#utils/pokemon-utils";
 import type { queueBattlerEntrancePhases } from "#utils/switch-utils";
@@ -277,8 +278,8 @@ interface BattlerSwitchOutParams {
    * by showing the player party modal or prompting the enemy AI.
    * @defaultValue `-1`
    */
-  // TODO: Convert to IntClosedRange<0, 5> | `-1` in the wimp out code duplication PR
-  switchInIndex?: number | undefined;
+  // TODO: Change default fallback value to `undefined`
+  switchInIndex?: PartyMemberIndex | -1 | undefined;
 }
 //#endregion Constants
 

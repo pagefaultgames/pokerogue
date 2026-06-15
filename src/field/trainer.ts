@@ -16,6 +16,7 @@ import type { PersistentModifier } from "#modifiers/modifier";
 import type { TrainerConfig } from "#trainers/trainer-config";
 import { trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyCompoundTemplate, type TrainerPartyTemplate } from "#trainers/trainer-party-template";
+import type { PartyMemberIndex } from "#types/party-member-index";
 import { randSeedInt, randSeedItem } from "#utils/common";
 import { getRandomLocaleEntry } from "#utils/i18n";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
@@ -598,29 +599,29 @@ export class Trainer extends Phaser.GameObjects.Container {
   getNextSummonIndex(
     trainerSlot: TrainerSlot = TrainerSlot.NONE,
     partyMemberScores: [number, number][] = this.getPartyMemberMatchupScores(trainerSlot),
-  ): number {
+  ): PartyMemberIndex {
     if (trainerSlot && !this.isDouble()) {
       trainerSlot = TrainerSlot.NONE;
     }
 
     const sortedPartyMemberScores = this.getSortedPartyMemberMatchupScores(partyMemberScores);
 
+    // TODO: I could spend an hour rewriting this code to fix the type issues... or i could do better things with my life
     const maxScorePartyMemberIndexes = partyMemberScores
       .filter(pms => pms[1] === sortedPartyMemberScores[0][1])
-      .map(pms => pms[0]);
+      .map(pms => pms[0]) as PartyMemberIndex[];
 
-    if (maxScorePartyMemberIndexes.length > 1) {
-      let rand: number;
-      // TODO: should this use `randSeedItem`?
-
-      globalScene.executeWithSeedOffset(
-        () => (rand = randSeedInt(maxScorePartyMemberIndexes.length)),
-        globalScene.currentBattle.turn << 2,
-      );
-      return maxScorePartyMemberIndexes[rand!];
+    if (maxScorePartyMemberIndexes.length <= 1) {
+      // TODO: better edge case handling?
+      return maxScorePartyMemberIndexes[0];
     }
 
-    return maxScorePartyMemberIndexes[0];
+    let index!: PartyMemberIndex;
+
+    globalScene.executeWithSeedOffset(() => {
+      index = randSeedItem(maxScorePartyMemberIndexes);
+    }, globalScene.currentBattle.turn << 2);
+    return index;
   }
 
   getPartyMemberModifierChanceMultiplier(index: number): number {

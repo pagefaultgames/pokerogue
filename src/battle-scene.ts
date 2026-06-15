@@ -130,6 +130,7 @@ import type {
   NewBattleResolvedProps,
   NewBattleSavedProps,
 } from "#types/new-battle-props";
+import type { PartyMemberIndex } from "#types/party-member-index";
 import type { SessionSaveData } from "#types/save-data";
 import { AbilityBar } from "#ui/ability-bar";
 import { ArenaFlyout } from "#ui/arena-flyout";
@@ -789,6 +790,54 @@ export class BattleScene extends SceneBase {
     return party
       .slice(0, Math.min(party.length, this.currentBattle?.double ? 2 : 1))
       .filter(p => !active || p.isActive());
+  }
+
+  /**
+   * Return the party positions of all {@linkcode Pokemon} that are **not** currently {@linkcode Pokemon.isOnField | on field}
+   * but are still {@linkcode Pokemon.isAllowedInBattle | allowed in battle}.
+   *
+   * Used for switch out logic checks.
+   * @param pokemon - A {@linkcode Pokemon} on the desired side of the field, used to infer the side and trainer slot (as applicable)
+   * @returns An array containing the indices of all {@linkcode Pokemon} in reserve able to be switched into.
+   */
+  public getBackupPartyMemberIndices(pokemon: Pokemon): PartyMemberIndex[];
+  /**
+   * Return the party positions of all {@linkcode Pokemon} that are **not** currently {@linkcode Pokemon.isOnField | on field}
+   * but are still {@linkcode Pokemon.isAllowedInBattle | allowed in battle}.
+   *
+   * Used for switch out logic checks.
+   * @param player - Whether to search the player or enemy party; default `true`
+   * @returns An array containing the indices of all {@linkcode Pokemon} in reserve able to be switched into.
+   */
+  public getBackupPartyMemberIndices(player: true): PartyMemberIndex[];
+  /**
+   * Return the party positions of all {@linkcode Pokemon} that are **not** currently {@linkcode Pokemon.isOnField | on field}
+   * but are still {@linkcode Pokemon.isAllowedInBattle | allowed in battle}.
+   *
+   * Used for switch out logic checks.
+   * @param player - Whether to search the player or enemy party; default `true`
+   * @param trainerSlot - The {@linkcode TrainerSlot | trainer slot} to check against for enemy trainers;
+   * used to verify ownership in multi battles and is unused for player Pokemon.
+   * @returns An array containing the indices of all {@linkcode Pokemon} in reserve able to be switched into.
+   */
+  public getBackupPartyMemberIndices(player: false, trainerSlot: TrainerSlot): PartyMemberIndex[];
+  public getBackupPartyMemberIndices(player: boolean | Pokemon, trainerSlot?: TrainerSlot): PartyMemberIndex[] {
+    // Note: We return the indices instead of the actual Pokemon because `SummonPhase` and co. take an index instead of a pokemon.
+    // If this is ever changed, this can be replaced with a simpler version involving `filter` and conditional type annotations.
+    if (typeof player === "object") {
+      // Marginally faster than using a ternary
+      trainerSlot = (player as Partial<Pick<EnemyPokemon, "trainerSlot">>).trainerSlot;
+      player = player.isPlayer();
+    }
+
+    const indices: PartyMemberIndex[] = [];
+    const party: Pokemon[] = player ? this.getPlayerParty() : this.getEnemyParty();
+    party.forEach((p, i) => {
+      if (p.isAllowedInBattle() && !p.isOnField() && (player || (p as EnemyPokemon).trainerSlot === trainerSlot)) {
+        indices.push(i as PartyMemberIndex);
+      }
+    });
+    return indices;
   }
 
   /**
