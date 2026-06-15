@@ -36,7 +36,7 @@ import {
 } from "#balance/moves/moveset-generation";
 import { FORCED_RIVAL_SIGNATURE_MOVES, FORCED_SIGNATURE_MOVES } from "#balance/moves/signature-moves";
 import { SUPERCEDED_MOVES } from "#balance/moves/superceded-moves";
-import { speciesTmMoves, tmPoolTiers } from "#balance/tms";
+import { tmPoolTiers } from "#balance/tm-pool-tiers";
 import { IS_TEST, isBeta, isDev } from "#constants/app-constants";
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
@@ -55,7 +55,7 @@ import { isWeatherInstantCharge } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { Move, StatStageChangeAttr } from "#types/move-types";
 import { NumberHolder, randSeedInt, randSeedItem } from "#utils/common";
-import { willTerastallize } from "#utils/pokemon-utils";
+import { getPokemonSpecies, willTerastallize } from "#utils/pokemon-utils";
 import { ValueHolder } from "#utils/value-holder";
 
 /**
@@ -155,36 +155,21 @@ function getTmPoolForSpecies(
   allowedTiers = getAllowedTmTiers(level),
 ): void {
   const [allowCommon, allowGreat, allowUltra] = allowedTiers;
-  const tms = speciesTmMoves[speciesId];
-  // Species with no learnable TMs (e.g. Ditto) don't have entries in the `speciesTmMoves` object,
-  // so this is needed to avoid iterating over `undefined`
-  if (tms == null) {
-    return;
-  }
+  const tms = getPokemonSpecies(speciesId).getTms(formKey);
 
-  let moveId: MoveId;
   for (const tm of tms) {
-    if (Array.isArray(tm)) {
-      if (tm[0] !== formKey) {
-        continue;
-      }
-      moveId = tm[1];
-    } else {
-      moveId = tm;
-    }
-
-    if (FORBIDDEN_TM_MOVES.has(moveId) || levelPool.has(moveId) || eggPool.has(moveId) || tmPool.has(moveId)) {
+    if (FORBIDDEN_TM_MOVES.has(tm) || levelPool.has(tm) || eggPool.has(tm) || tmPool.has(tm)) {
       continue;
     }
-    switch (tmPoolTiers[moveId]) {
+    switch (tmPoolTiers[tm]) {
       case ModifierTier.COMMON:
-        allowCommon && tmPool.set(moveId, COMMON_TM_MOVESET_WEIGHT);
+        allowCommon && tmPool.set(tm, COMMON_TM_MOVESET_WEIGHT);
         break;
       case ModifierTier.GREAT:
-        allowGreat && tmPool.set(moveId, GREAT_TM_MOVESET_WEIGHT);
+        allowGreat && tmPool.set(tm, GREAT_TM_MOVESET_WEIGHT);
         break;
       case ModifierTier.ULTRA:
-        allowUltra && tmPool.set(moveId, ULTRA_TM_MOVESET_WEIGHT);
+        allowUltra && tmPool.set(tm, ULTRA_TM_MOVESET_WEIGHT);
         break;
     }
   }

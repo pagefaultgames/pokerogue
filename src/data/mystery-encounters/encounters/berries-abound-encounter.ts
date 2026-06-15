@@ -1,4 +1,5 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { modifierTypes } from "#data/data-lists";
@@ -152,7 +153,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
       const doBerryRewards = () => {
         const berryText = i18next.t(`${namespace}:berries`);
 
-        globalScene.playSound("se/item_fanfare");
+        audioManager.playSound("se/item_fanfare");
         queueEncounterMessage(
           i18next.t("battle:rewardGainCount", {
             modifierName: berryText,
@@ -211,7 +212,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
           const doBerryRewards = () => {
             const berryText = i18next.t(`${namespace}:berries`);
 
-            globalScene.playSound("se/item_fanfare");
+            audioManager.playSound("se/item_fanfare");
             queueEncounterMessage(
               i18next.t("battle:rewardGainCount", {
                 modifierName: berryText,
@@ -269,7 +270,7 @@ export const BerriesAboundEncounter: MysteryEncounter = MysteryEncounterBuilder.
         const doFasterBerryRewards = () => {
           const berryText = i18next.t(`${namespace}:berries`);
 
-          globalScene.playSound("se/item_fanfare");
+          audioManager.playSound("se/item_fanfare");
           queueEncounterMessage(
             i18next.t("battle:rewardGainCount", {
               modifierName: berryText,
