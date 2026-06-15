@@ -3083,24 +3083,21 @@ export class BattleScene extends SceneBase {
   }
 
   public updateGameInfo(): void {
+    /** @since 1.0.0 */
     type GameInfo = {
       /** @since 2.0.0 */
       gameInfoVersion: string;
       /** @since 1.1.0 */
       playTime: number;
-      /** @since 1.0.0 */
       gameMode: string;
-      /** @since 1.0.0 */
       biome: string;
-      /** @since 1.0.0 */
       wave: number;
       /** @since 2.1.0 */
       luck: number;
-      /** @since 1.0.0 */
       party: PartyInfo[];
     };
+    /** @since 1.0.0 */
     type PartyInfo = {
-      /** @since 1.0.0 */
       name: string;
       /** @since 2.0.0 */
       nickname: string;
@@ -3116,7 +3113,6 @@ export class BattleScene extends SceneBase {
       teraType: string;
       /** @since 1.3.0 */
       isTerastallized: boolean;
-      /** @since 1.0.0 */
       level: number;
       /** @since 1.2.0 */
       currentHP: number;
@@ -3140,29 +3136,19 @@ export class BattleScene extends SceneBase {
       nature: string;
       /** @since 2.0.0 */
       baseStats: {
-        /** @since 2.0.0 */
         atk: number;
-        /** @since 2.0.0 */
         def: number;
-        /** @since 2.0.0 */
         spAtk: number;
-        /** @since 2.0.0 */
         spDef: number;
-        /** @since 2.0.0 */
         speed: number;
       };
       /** @since 2.0.0 */
       tempStats:
         | {
-            /** @since 2.0.0 */
             atk: number;
-            /** @since 2.0.0 */
             def: number;
-            /** @since 2.0.0 */
             spAtk: number;
-            /** @since 2.0.0 */
             spDef: number;
-            /** @since 2.0.0 */
             speed: number;
           }
         | {
@@ -3174,19 +3160,12 @@ export class BattleScene extends SceneBase {
           };
       /** @since 2.0.0 */
       statStages: {
-        /** @since 2.0.0 */
         atk: number;
-        /** @since 2.0.0 */
         def: number;
-        /** @since 2.0.0 */
         spAtk: number;
-        /** @since 2.0.0 */
         spDef: number;
-        /** @since 2.0.0 */
         speed: number;
-        /** @since 2.0.0 */
         acc: number;
-        /** @since 2.0.0 */
         eva: number;
       };
       /** @since 2.0.0 */
