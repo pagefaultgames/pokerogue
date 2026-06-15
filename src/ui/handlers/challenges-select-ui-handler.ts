@@ -39,7 +39,7 @@ export class GameChallengesUiHandler extends UiHandler {
   private descriptionTextBaseY: number;
   private descriptionTextMaxHeight: number;
   private descriptionTextMaskRect: Phaser.GameObjects.Graphics | null;
-  private homeKey?: Phaser.Input.Keyboard.Key;
+  private homeKey: Phaser.Input.Keyboard.Key | undefined;
 
   private readonly challengeLabels: ChallengeLabel[] = [];
   private monoTypeValue: Phaser.GameObjects.Sprite;
