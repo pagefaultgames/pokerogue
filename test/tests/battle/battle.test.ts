@@ -1,5 +1,5 @@
 import { speciesDataRegistry } from "#app/global-species-data-registry";
-import {activeOverrides} from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { AbilityId } from "#enums/ability-id";
 import { BiomeId } from "#enums/biome-id";
 import { Command } from "#enums/command";
