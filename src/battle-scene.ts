@@ -3188,10 +3188,7 @@ export class BattleScene extends SceneBase {
       gameMode: this.currentBattle ? this.gameMode.getName() : "Title",
       biome: this.currentBattle ? getBiomeName(this.arena.biomeId) : "",
       wave: this.currentBattle?.waveIndex ?? 0,
-      luck: Math.min(
-        this.currentBattle ? (this.party?.map(p => p.getLuck()).reduce((total, cur) => total + cur, 0) ?? -1) : -1,
-        14,
-      ),
+      luck: this.currentBattle ? getPartyLuckValue(this.party) : -1,
       party:
         this.party?.map(
           p =>
