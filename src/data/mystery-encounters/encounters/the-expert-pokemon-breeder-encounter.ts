@@ -136,7 +136,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
   .withEncounterTier(MysteryEncounterTier.ULTRA)
   .withDisallowedChallenges(Challenges.HARDCORE)
   .withSceneWaveRangeRequirement(25, 180)
-  .withScenePartySizeRequirement(4, 6, true) // Must have at least 4 legal pokemon in party
+  .withScenePartySizeRequirement(4)
   .withIntroSpriteConfigs([]) // These are set in onInit()
   .withIntroDialogue([
     {

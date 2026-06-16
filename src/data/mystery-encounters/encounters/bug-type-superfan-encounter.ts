@@ -174,7 +174,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
   )
   .withMaxAllowedEncounters(1)
   .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
-  .withScenePartySizeRequirement(3, 6)
+  .withScenePartySizeRequirement(3)
   .withMaxAllowedEncounters(1)
   .withIntroSpriteConfigs([
     {
