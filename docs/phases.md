@@ -56,7 +56,7 @@ The 3 primary ways to queue a new phase are:
 
 There are also helpers like `queueMessage`, `queueAbilityDisplay`, and `queueFaintPhase` for common patterns (which internally delegate to one of these methods).
 
-> [!INFO]
+> [!NOTE]
 > If there are ever no phases left to run in the queue, the `PhaseManager` will automatically queue a new `TurnStartPhase` to kick off the next turn.
 
 ## The PhaseTree and Execution Order
