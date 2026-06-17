@@ -2380,6 +2380,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.FLING,
       MoveId.AVALANCHE,
       MoveId.HARD_PRESS,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationNineSpeciesData[SpeciesId.CHARCADET] = {
@@ -6354,6 +6355,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TORMENT,
       MoveId.STORM_THROW,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationNineSpeciesData[SpeciesId.CLODSIRE] = {

@@ -3858,6 +3858,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.POWER_UP_PUNCH,
       MoveId.TRIPLE_AXEL,
       MoveId.TERA_BLAST,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationFourSpeciesData[SpeciesId.LOPUNNY] = {
@@ -6647,6 +6648,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.CHILLING_WATER,
       MoveId.UPPER_HAND,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationFourSpeciesData[SpeciesId.TOXICROAK] = {
@@ -7695,6 +7697,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.STEEL_ROLLER,
       MoveId.TERRAIN_PULSE,
       MoveId.TERA_BLAST,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationFourSpeciesData[SpeciesId.RHYPERIOR] = {
@@ -7852,6 +7855,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.SUPERCELL_SLAM,
       MoveId.COUNTER,
       MoveId.METAL_CLAW,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationFourSpeciesData[SpeciesId.TANGROWTH] = {
@@ -8102,6 +8106,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.TAKE_DOWN,
       MoveId.EERIE_IMPULSE,
       MoveId.COUNTER,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationFourSpeciesData[SpeciesId.MAGMORTAR] = {
@@ -8231,6 +8236,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.TEMPER_FLARE,
       MoveId.TAKE_DOWN,
       MoveId.COUNTER,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationFourSpeciesData[SpeciesId.TOGEKISS] = {
@@ -9496,6 +9502,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.HARD_PRESS,
       MoveId.SUPERCELL_SLAM,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationFourSpeciesData[SpeciesId.DUSKNOIR] = {
@@ -9633,6 +9640,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.POLTERGEIST,
       MoveId.TERA_BLAST,
       MoveId.HARD_PRESS,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationFourSpeciesData[SpeciesId.FROSLASS] = {

@@ -142,6 +142,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.TRAILBLAZE,
       MoveId.UPPER_HAND,
       MoveId.TAKE_DOWN,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationThreeSpeciesData[SpeciesId.GROVYLE] = {
@@ -517,6 +518,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.LOW_SWEEP,
       MoveId.POWER_UP_PUNCH,
       MoveId.COACHING,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationThreeSpeciesData[SpeciesId.BLAZIKEN] = {
@@ -761,6 +763,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.CHILLING_WATER,
       MoveId.ROAR,
       MoveId.MUD_SHOT,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationThreeSpeciesData[SpeciesId.MARSHTOMP] = {
@@ -1812,6 +1815,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.DRAIN_PUNCH,
       MoveId.HONE_CLAWS,
       MoveId.POWER_UP_PUNCH,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationThreeSpeciesData[SpeciesId.LUDICOLO] = {
@@ -3140,6 +3144,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.BULLDOZE,
       MoveId.WORK_UP,
       MoveId.POWER_UP_PUNCH,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationThreeSpeciesData[SpeciesId.SLAKOTH] = {
@@ -3260,6 +3265,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.CHILLING_WATER,
       MoveId.DOUBLE_EDGE,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationThreeSpeciesData[SpeciesId.VIGOROTH] = {
@@ -3725,6 +3731,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.DISARMING_VOICE,
       MoveId.CONFIDE,
       MoveId.TERA_BLAST,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationThreeSpeciesData[SpeciesId.LOUDRED] = {
@@ -3981,6 +3988,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.CHILLING_WATER,
       MoveId.UPPER_HAND,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationThreeSpeciesData[SpeciesId.HARIYAMA] = {
@@ -4266,6 +4274,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.STEEL_BEAM,
       MoveId.METEOR_BEAM,
       MoveId.TERA_BLAST,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationThreeSpeciesData[SpeciesId.SKITTY] = {
@@ -4660,6 +4669,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.POLTERGEIST,
       MoveId.TERA_BLAST,
       MoveId.SAFEGUARD, //ZA
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationThreeSpeciesData[SpeciesId.MAWILE] = {
@@ -4853,6 +4863,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.PSYCHIC_FANGS,
       MoveId.STEEL_BEAM,
       MoveId.TERA_BLAST,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationThreeSpeciesData[SpeciesId.ARON] = {
@@ -5175,6 +5186,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.SMART_STRIKE,
       MoveId.BRUTAL_SWING,
       MoveId.METEOR_BEAM,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationThreeSpeciesData[SpeciesId.MEDITITE] = {
@@ -5312,6 +5324,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.UPPER_HAND,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationThreeSpeciesData[SpeciesId.MEDICHAM] = {
@@ -5767,6 +5780,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.ALLURING_VOICE,
       MoveId.EERIE_IMPULSE,
       MoveId.ELECTRIC_TERRAIN,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationThreeSpeciesData[SpeciesId.MINUN] = {
@@ -5949,6 +5963,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.TRAILBLAZE,
       MoveId.CHILLING_WATER,
       MoveId.ELECTRIC_TERRAIN,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationThreeSpeciesData[SpeciesId.ILLUMISE] = {
@@ -6228,6 +6243,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.POWER_UP_PUNCH,
       MoveId.TERA_BLAST,
       MoveId.VENOM_DRENCH,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationThreeSpeciesData[SpeciesId.SWALOT] = {
@@ -7154,6 +7170,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.SNOWSCAPE,
       MoveId.TRAILBLAZE,
       MoveId.CHILLING_WATER,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationThreeSpeciesData[SpeciesId.GRUMPIG] = {
@@ -7353,6 +7370,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.POWER_UP_PUNCH,
       MoveId.STOMPING_TANTRUM,
       MoveId.TERA_BLAST,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationThreeSpeciesData[SpeciesId.TRAPINCH] = {
@@ -7736,6 +7754,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.SKITTER_SMACK,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationThreeSpeciesData[SpeciesId.CACTURNE] = {
@@ -8203,6 +8222,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.THROAT_CHOP,
       MoveId.TERA_BLAST,
       MoveId.UPPER_HAND,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationThreeSpeciesData[SpeciesId.SEVIPER] = {
@@ -10089,6 +10109,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.CONFIDE,
       MoveId.POWER_UP_PUNCH,
       MoveId.TERA_BLAST,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationThreeSpeciesData[SpeciesId.SHUPPET] = {
@@ -10520,6 +10541,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.GIGA_IMPACT,
       MoveId.BULLDOZE,
       MoveId.POWER_UP_PUNCH,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationThreeSpeciesData[SpeciesId.TROPIUS] = {
@@ -12452,6 +12474,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.PSYCHIC_FANGS,
       MoveId.STOMPING_TANTRUM,
       MoveId.BODY_PRESS,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationThreeSpeciesData[SpeciesId.REGIROCK] = {
@@ -12576,6 +12599,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.HARD_PRESS,
       MoveId.TAKE_DOWN,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationThreeSpeciesData[SpeciesId.REGICE] = {
@@ -12698,6 +12722,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.ICE_SPINNER,
       MoveId.SNOWSCAPE,
       MoveId.TAKE_DOWN,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationThreeSpeciesData[SpeciesId.REGISTEEL] = {
@@ -12826,6 +12851,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.ICE_SPINNER,
       MoveId.HARD_PRESS,
       MoveId.TAKE_DOWN,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationThreeSpeciesData[SpeciesId.LATIAS] = {
@@ -13618,6 +13644,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.BODY_PRESS,
       MoveId.SCORCHING_SANDS,
       MoveId.TERA_BLAST,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationThreeSpeciesData[SpeciesId.RAYQUAZA] = {
@@ -13966,6 +13993,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.PSYCHIC_NOISE,
       MoveId.PSYBEAM,
       MoveId.FAKE_TEARS,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationThreeSpeciesData[SpeciesId.DEOXYS] = {
@@ -14267,7 +14295,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       normal: [MoveId.SWIFT, MoveId.ICY_WIND, MoveId.COSMIC_POWER],
       attack: [MoveId.MEGA_PUNCH, MoveId.MEGA_KICK, MoveId.SUPERPOWER, MoveId.COSMIC_POWER],
       defense: [MoveId.MEGA_PUNCH, MoveId.MEGA_KICK, MoveId.AMNESIA, MoveId.SPIKES, MoveId.IRON_DEFENSE],
-      speed: [MoveId.MEGA_PUNCH, MoveId.MEGA_KICK, MoveId.AGILITY, MoveId.SWIFT, MoveId.ICY_WIND],
+      speed: [MoveId.MEGA_PUNCH, MoveId.MEGA_KICK, MoveId.AGILITY, MoveId.SWIFT, MoveId.ICY_WIND, MoveId.DYNAMIC_PUNCH],
     },
   };
   return generationThreeSpeciesData;

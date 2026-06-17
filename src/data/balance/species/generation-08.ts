@@ -8890,6 +8890,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.WORK_UP,
       MoveId.COACHING,
       MoveId.TERA_BLAST,
+      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationEightSpeciesData[SpeciesId.URSHIFU] = {

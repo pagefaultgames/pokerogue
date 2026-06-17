@@ -87,6 +87,7 @@ export const tmPoolTiers: TmPoolTiers = {
   [MoveId.RETURN]: ModifierTier.ULTRA,
   [MoveId.SAFEGUARD]: ModifierTier.COMMON,
   [MoveId.PAIN_SPLIT]: ModifierTier.COMMON,
+  [MoveId.DYNAMIC_PUNCH]: ModifierTier.GREAT,
   [MoveId.MEGAHORN]: ModifierTier.ULTRA,
   [MoveId.BATON_PASS]: ModifierTier.COMMON,
   [MoveId.ENCORE]: ModifierTier.COMMON,
