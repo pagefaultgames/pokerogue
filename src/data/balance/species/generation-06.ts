@@ -4800,11 +4800,8 @@ export function initGenerationSix(): SpeciesDataMapConfig {
     },
     levelMoves: [
       [RELEARN_MOVE, MoveId.TELEPORT],
-      [EVOLVE_MOVE, MoveId.HELPING_HAND],
       [1, MoveId.SCRATCH],
       [1, MoveId.LEER],
-      [1, MoveId.MEAN_LOOK],
-      [1, MoveId.HEAL_BLOCK],
       [3, MoveId.FAKE_OUT],
       [6, MoveId.DISARMING_VOICE],
       [9, MoveId.CONFUSION],
@@ -4814,15 +4811,9 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       [19, MoveId.COVET],
       [22, MoveId.REFLECT],
       [25, MoveId.PSYSHOCK],
-      [28, MoveId.CHARM],
-      [31, MoveId.MIRACLE_EYE],
       [35, MoveId.ROLE_PLAY],
       [40, MoveId.PSYCHIC],
-      [45, MoveId.IMPRISON],
       [48, MoveId.SUCKER_PUNCH],
-      [50, MoveId.MISTY_TERRAIN],
-      [53, MoveId.QUICK_GUARD],
-      [56, MoveId.WISH],
     ],
     formLevelMoves: {
       male: [

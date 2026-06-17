@@ -2221,12 +2221,8 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       2: AbilityId.STAKEOUT,
     },
     levelMoves: [
-      [RELEARN_MOVE, MoveId.ACCELEROCK],
-      [EVOLVE_MOVE, MoveId.SUCKER_PUNCH],
       [1, MoveId.TACKLE],
       [1, MoveId.LEER],
-      [1, MoveId.QUICK_ATTACK],
-      [1, MoveId.QUICK_GUARD],
       [4, MoveId.SAND_ATTACK],
       [7, MoveId.BITE],
       [10, MoveId.DOUBLE_TEAM],
@@ -2241,7 +2237,6 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       [46, MoveId.SCARY_FACE],
       [53, MoveId.ROCK_CLIMB],
       [57, MoveId.STONE_EDGE],
-      [64, MoveId.ACCELEROCK],
     ],
     formLevelMoves: {
       "": [
