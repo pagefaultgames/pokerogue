@@ -38,7 +38,8 @@ export interface AccountChangePwResponse {
   success: boolean;
 }
 
-// #endregion
+// #endregion Account API
+
 // #region Admin API
 
 export interface SearchAccountRequest {
@@ -72,7 +73,7 @@ export interface PokerogueAdminApiParams extends Record<AdminUiHandlerService, S
   google: GoogleRequest;
 }
 
-// #endregion
+// #endregion Admin API
 
 export interface UpdateAllSavedataRequest {
   system: SystemSaveData;
@@ -115,6 +116,7 @@ export interface ClearSessionSavedataRequest {
 }
 
 /** Pokerogue API response for path: `/savedata/session/clear` */
+// TODO: Why can these be nullish?
 export interface ClearSessionSavedataResponse {
   /** Contains the error message if any occured */
   error?: string;
@@ -122,7 +124,8 @@ export interface ClearSessionSavedataResponse {
   success?: boolean;
 }
 
-// #endregion
+// #endregion Session Save API
+
 // #region System Save API
 
 export interface GetSystemSavedataRequest {
@@ -144,4 +147,4 @@ export interface VerifySystemSavedataResponse {
   systemData: SystemSaveData;
 }
 
-// #endregion
+// #endregion System Save API

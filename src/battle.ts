@@ -1,7 +1,8 @@
+import { DAILY_BOSS_LEVEL } from "#app/constants";
 import type { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
+import { isDailyFinalBoss } from "#data/daily-seed/daily-seed-utils";
 import { ArenaTagType } from "#enums/arena-tag-type";
-import { BattleSpec } from "#enums/battle-spec";
 import { BattleType } from "#enums/battle-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { BiomeId } from "#enums/biome-id";
@@ -59,7 +60,6 @@ export class Battle {
   protected gameMode: GameMode;
   public waveIndex: number;
   public battleType: BattleType;
-  public battleSpec: BattleSpec;
   public trainer: Trainer | null;
   public enemyLevels: number[] | undefined;
   public enemyParty: EnemyPokemon[] = [];
@@ -117,7 +117,6 @@ export class Battle {
     this.mysteryEncounterType = mysteryEncounterType;
     this.double = double;
 
-    this.initBattleSpec();
     this.enemyLevels =
       battleType === BattleType.TRAINER
         ? trainer?.getPartyLevels(this.waveIndex)
@@ -125,22 +124,21 @@ export class Battle {
           new Array(double ? 2 : 1).fill(null).map(() => this.getLevelForWave());
   }
 
-  private initBattleSpec(): void {
-    let spec = BattleSpec.DEFAULT;
-    if (this.gameMode.isWaveFinal(this.waveIndex) && this.gameMode.isClassic) {
-      spec = BattleSpec.FINAL_BOSS;
-    }
-    this.battleSpec = spec;
+  public get isClassicFinalBoss(): boolean {
+    return this.gameMode.isClassic && this.gameMode.isWaveFinal(this.waveIndex);
   }
 
   public getLevelForWave(): number {
+    if (isDailyFinalBoss(this.waveIndex)) {
+      return DAILY_BOSS_LEVEL;
+    }
     const levelWaveIndex = this.gameMode.getWaveForDifficulty(this.waveIndex);
     const baseLevel = 1 + levelWaveIndex / 2 + Math.pow(levelWaveIndex / 25, 2);
     const bossMultiplier = 1.2;
 
     if (this.gameMode.isBoss(this.waveIndex)) {
       const ret = Math.floor(baseLevel * bossMultiplier);
-      if (this.battleSpec === BattleSpec.FINAL_BOSS || !(this.waveIndex % 250)) {
+      if (this.isClassicFinalBoss || !(this.waveIndex % 250)) {
         return Math.ceil(ret / 25) * 25;
       }
       let levelOffset = 0;
@@ -271,7 +269,7 @@ export class Battle {
     }
     const wildOpponents = globalScene.getEnemyParty();
     for (const pokemon of wildOpponents) {
-      if (this.battleSpec === BattleSpec.FINAL_BOSS) {
+      if (this.isClassicFinalBoss) {
         if (pokemon.species.getFormSpriteKey(pokemon.formIndex) === SpeciesFormKey.ETERNAMAX) {
           return "battle_final";
         }

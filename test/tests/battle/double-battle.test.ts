@@ -1,10 +1,13 @@
 import { getGameMode } from "#app/game-mode";
 import { Status } from "#data/status-effect";
 import { AbilityId } from "#enums/ability-id";
+import { BattleType } from "#enums/battle-type";
 import { GameModes } from "#enums/game-modes";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
+import { TrainerType } from "#enums/trainer-type";
+import { TrainerVariant } from "#enums/trainer-variant";
 import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -23,16 +26,20 @@ describe("Double Battles", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
+    game.override //
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH)
+      .ability(AbilityId.BALL_FETCH);
   });
 
   // double-battle player's pokemon both fainted in same round, then revive one, and next double battle summons two player's pokemon successfully.
   // (There were bugs that either only summon one when can summon two, player stuck in switchPhase etc)
   it("3v2 edge case: player summons 2 pokemon on the next battle after being fainted and revived", async () => {
-    game.override.battleStyle("double").enemyMoveset(MoveId.SPLASH).moveset(MoveId.SPLASH);
+    game.override.battleStyle("double");
     await game.classicMode.startBattle(SpeciesId.BULBASAUR, SpeciesId.CHARIZARD, SpeciesId.SQUIRTLE);
 
-    game.move.select(MoveId.SPLASH);
-    game.move.select(MoveId.SPLASH, 1);
+    game.move.use(MoveId.SPLASH);
+    game.move.use(MoveId.SPLASH, 1);
 
     for (const pokemon of game.scene.getPlayerField()) {
       pokemon.hp = 0;
@@ -61,12 +68,6 @@ describe("Double Battles", () => {
       return rngSweepProgress * (max - min) + min;
     });
 
-    game.override
-      .enemyMoveset(MoveId.SPLASH)
-      .moveset(MoveId.SPLASH)
-      .enemyAbility(AbilityId.BALL_FETCH)
-      .ability(AbilityId.BALL_FETCH);
-
     // Play through endless, waves 1 to 9, counting number of double battles from waves 2 to 9
     await game.classicMode.startBattle(SpeciesId.BULBASAUR);
     game.scene.gameMode = getGameMode(GameModes.ENDLESS);
@@ -74,7 +75,7 @@ describe("Double Battles", () => {
     for (let i = 0; i < DOUBLE_CHANCE; i++) {
       rngSweepProgress = (i + 0.5) / DOUBLE_CHANCE;
 
-      game.move.select(MoveId.SPLASH);
+      game.move.use(MoveId.SPLASH);
       await game.doKillOpponents();
       await game.toNextWave();
 
@@ -87,5 +88,22 @@ describe("Double Battles", () => {
 
     expect(doubleCount).toBe(1);
     expect(singleCount).toBe(DOUBLE_CHANCE - 1);
+  });
+
+  it("won't queue multiple `BattleEndPhase`s/etc if the last 2 enemy Pokemon are defeated simultaneously in a trainer battle", async () => {
+    game.override //
+      .battleType(BattleType.TRAINER)
+      .randomTrainer({ trainerType: TrainerType.YOUNGSTER, trainerVariant: TrainerVariant.DOUBLE })
+      .startingLevel(200);
+
+    await game.classicMode.startBattle(SpeciesId.FEEBAS);
+
+    expect(game.field.getEnemyParty()).toHaveLength(2);
+    expect(game.scene.getEnemyField()).toHaveLength(2);
+
+    game.move.use(MoveId.SURF);
+    await game.toEndOfTurn(false);
+
+    expect(game.scene.phaseManager["phaseQueue"].findAll("BattleEndPhase")).toHaveLength(1);
   });
 });

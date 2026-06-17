@@ -14,11 +14,16 @@ import InputText from "phaser3-rex-plugins/plugins/inputtext";
 let wasInitialized = false;
 
 /** Run initialization code upon starting a new file, both per-suite and per-instance ones. */
-export function initTests(): void {
+export async function initTests(): Promise<void> {
   setupStubs();
   if (!wasInitialized) {
-    initializeGame();
+    await initializeGame();
     wasInitialized = true;
+    // this needs to be done after `audioManager` is assigned to in `initializeGame()`
+    // TODO: modify data export script so `initGlobalAudioManager()` is no longer necessary?
+    const { audioManager } = await import("#app/global-audio-manager");
+    audioManager.playBgm = () => null;
+    audioManager.replaceBgmUntilEnd = () => null!;
   }
 
   manageListeners();

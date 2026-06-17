@@ -1,10 +1,11 @@
 import { __INTERNAL_TEST_EXPORTS, generateMoveset } from "#app/ai/ai-moveset-gen";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import {
   COMMON_TIER_TM_LEVEL_REQUIREMENT,
   GREAT_TIER_TM_LEVEL_REQUIREMENT,
   ULTRA_TIER_TM_LEVEL_REQUIREMENT,
 } from "#balance/moves/moveset-generation";
-import { allMoves, allSpecies } from "#data/data-lists";
+import { allMoves } from "#data/data-lists";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerSlot } from "#enums/trainer-slot";
@@ -12,8 +13,7 @@ import { EnemyPokemon } from "#field/pokemon";
 import { GameManager } from "#test/framework/game-manager";
 import { NumberHolder } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
-import { afterEach } from "node:test";
-import { beforeAll, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
 /**
  * Parameters for {@linkcode createTestablePokemon}
@@ -41,18 +41,18 @@ interface MockPokemonParams {
 
 /**
  * Construct an `EnemyPokemon` that can be used for testing
- * @param species - The species ID of the pokemon to create
+ * @param speciesId - The species ID of the pokemon to create
  * @returns The newly created `EnemyPokemon`.
  * @todo Move this to a dedicated unit test util folder if more tests come to rely on it
  */
 function createTestablePokemon(
-  species: SpeciesId,
+  speciesId: SpeciesId,
   { level, trainerSlot = TrainerSlot.NONE, boss = false, formIndex = 0 }: MockPokemonParams,
 ): EnemyPokemon {
-  const pokemon = new EnemyPokemon(allSpecies[species], level, trainerSlot, boss);
+  const pokemon = new EnemyPokemon(speciesDataRegistry.getSpecies(speciesId), level, trainerSlot, boss);
   if (formIndex !== 0) {
-    const formIndexLength = getPokemonSpecies(species)?.forms.length;
-    const name = allSpecies[species]?.name;
+    const formIndexLength = getPokemonSpecies(speciesId)?.forms.length;
+    const name = speciesDataRegistry.getSpecies(speciesId).name;
     expect(formIndex, `${name} does not have a form with index ${formIndex}`).toBeLessThan(formIndexLength);
     pokemon.formIndex = formIndex;
   }
@@ -159,7 +159,6 @@ describe("Unit Tests - ai-moveset-gen.ts", () => {
 
   // Unit tests for methods that require a game context
   describe("", () => {
-    //#region boilerplate
     let phaserGame: Phaser.Game;
     /**A pokemon object that will be cleaned up after every test */
     let pokemon: EnemyPokemon | null = null;
@@ -178,8 +177,6 @@ describe("Unit Tests - ai-moveset-gen.ts", () => {
     afterEach(() => {
       pokemon?.destroy();
     });
-
-    //#endregion boilerplate
 
     function createCharmander(_ = pokemon): asserts _ is EnemyPokemon {
       pokemon?.destroy();
@@ -243,7 +240,6 @@ describe("Unit Tests - ai-moveset-gen.ts", () => {
 });
 
 describe("Regression Tests - ai-moveset-gen.ts", () => {
-  //#region boilerplate
   let phaserGame: Phaser.Game;
   let game: GameManager;
   /**A pokemon object that will be cleaned up after every test */
@@ -263,8 +259,6 @@ describe("Regression Tests - ai-moveset-gen.ts", () => {
   afterEach(() => {
     pokemon?.destroy();
   });
-
-  //#endregion boilerplate
 
   describe("getTmPoolForSpecies", () => {
     const { getTmPoolForSpecies } = __INTERNAL_TEST_EXPORTS;

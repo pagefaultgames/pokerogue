@@ -2,7 +2,7 @@ import { updateUserInfo } from "#app/account";
 import { BattleScene } from "#app/battle-scene";
 import { getGameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
-import overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { modifierTypes } from "#data/data-lists";
 import { BattlerIndex } from "#enums/battler-index";
 import { Button } from "#enums/buttons";
@@ -220,7 +220,7 @@ export class GameManager {
     // This will consider all battle entry dialog as seens and skip them
     vi.spyOn(this.scene.ui, "shouldSkipDialogue").mockReturnValue(true);
 
-    if (overrides.ENEMY_HELD_ITEMS_OVERRIDE.length === 0) {
+    if (activeOverrides.ENEMY_HELD_ITEMS_OVERRIDE.length === 0) {
       this.removeEnemyHeldItems();
     }
 
@@ -277,7 +277,7 @@ export class GameManager {
    * Will trigger during the next {@linkcode SelectTargetPhase}
    * @param targetIndex - The {@linkcode BattlerIndex} of the attack target, or `undefined` for multi-target attacks
    * @param movePosition - The 0-indexed position of the move in the pokemon's moveset array
-   * @throws Immediately fails tests
+   * @throws Immediately fails tests if `targetIndex` is defined for a non-targeted move
    */
   selectTarget(movePosition: number, targetIndex?: BattlerIndex) {
     this.onNextPrompt(

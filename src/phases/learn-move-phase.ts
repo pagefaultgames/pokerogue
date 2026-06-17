@@ -1,6 +1,7 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { initMoveAnim, loadMoveAnimAssets } from "#data/battle-anims";
 import { allMoves } from "#data/data-lists";
 import { SpeciesFormChangeMoveLearnedTrigger } from "#data/form-change-triggers";
@@ -16,10 +17,10 @@ import i18next from "i18next";
 
 export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   public readonly phaseName = "LearnMovePhase";
-  private moveId: MoveId;
+  private readonly moveId: MoveId;
   private messageMode: UiMode;
-  private learnMoveType: LearnMoveType;
-  private cost: number;
+  private readonly learnMoveType: LearnMoveType;
+  private readonly cost: number;
 
   constructor(
     partyMemberIndex: number,
@@ -28,29 +29,33 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     cost = -1,
   ) {
     super(partyMemberIndex);
+
     this.moveId = moveId;
     this.learnMoveType = learnMoveType;
     this.cost = cost;
   }
 
-  start() {
+  public override start(): void {
     super.start();
 
     const pokemon = this.getPokemon();
     const move = allMoves[this.moveId];
     const currentMoveset = pokemon.getMoveset();
 
-    // The game first checks if the Pokemon already has the move and ends the phase if it does.
+    if (move.name.endsWith(" (N)")) {
+      this.end();
+      return;
+    }
+
     const hasMoveAlready = currentMoveset.some(m => m.moveId === move.id) && this.moveId !== MoveId.SKETCH;
     if (hasMoveAlready) {
-      return this.end();
+      this.end();
+      return;
     }
 
     this.messageMode =
       globalScene.ui.getHandler() instanceof EvolutionSceneUiHandler ? UiMode.EVOLUTION_SCENE : UiMode.MESSAGE;
     globalScene.ui.setMode(this.messageMode);
-    // If the Pokemon has less than 4 moves, the new move is added to the largest empty moveset index
-    // If it has 4 moves, the phase then checks if the player wants to replace the move itself.
     if (currentMoveset.length < 4) {
       this.learnMove(currentMoveset.length, move, pokemon);
     } else {
@@ -139,6 +144,20 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * @param Pokemon The Pokemon learning the move
    */
   async rejectMoveAndEnd(move: Move, pokemon: Pokemon) {
+    if (globalScene.hideMoveSkipConfirm) {
+      globalScene.ui.setMode(this.messageMode);
+      globalScene.ui
+        .showTextPromise(
+          i18next.t("battle:learnMoveNotLearned", {
+            pokemonName: getPokemonNameWithAffix(pokemon),
+            moveName: move.name,
+          }),
+          undefined,
+          true,
+        )
+        .then(() => this.end());
+      return;
+    }
     await globalScene.ui.showTextPromise(
       i18next.t("battle:learnMoveStopTeaching", { moveName: move.name }),
       undefined,
@@ -189,15 +208,15 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
       pokemon.usedTMs.push(this.moveId);
       globalScene.phaseManager.tryRemovePhase("SelectModifierPhase");
     } else if (this.learnMoveType === LearnMoveType.MEMORY) {
-      if (this.cost !== -1) {
-        if (!Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
+      if (this.cost === -1) {
+        globalScene.phaseManager.tryRemovePhase("SelectModifierPhase");
+      } else {
+        if (!activeOverrides.WAIVE_ROLL_FEE_OVERRIDE) {
           globalScene.money -= this.cost;
           globalScene.updateMoneyText();
           globalScene.animateMoneyChanged(false);
         }
-        globalScene.playSound("se/buy");
-      } else {
-        globalScene.phaseManager.tryRemovePhase("SelectModifierPhase");
+        audioManager.playSound("se/buy");
       }
     }
     pokemon.setMove(index, this.moveId);
@@ -212,7 +231,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     if (textMessage) {
       await globalScene.ui.showTextPromise(textMessage);
     }
-    globalScene.playSound("level_up_fanfare"); // Sound loaded into game as is
+    audioManager.playSound("se/level_up_fanfare"); // Sound loaded into game as is
     globalScene.ui.showText(
       learnMoveText,
       null,

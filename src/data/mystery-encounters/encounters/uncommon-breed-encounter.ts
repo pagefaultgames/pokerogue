@@ -1,4 +1,5 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -150,7 +151,7 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
       onComplete: () => encounter.introVisuals?.playShinySparkles(),
     });
 
-    globalScene.time.delayedCall(500, () => globalScene.playSound("battle_anims/PRSFX- Spotlight2"));
+    globalScene.time.delayedCall(500, () => audioManager.playSound("battle_anims/PRSFX- Spotlight2"));
     return true;
   })
   .setLocalizationKey(`${namespace}`)

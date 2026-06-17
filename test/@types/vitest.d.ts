@@ -49,6 +49,7 @@ type IntLiteral<T extends number> = If<IsNumericLiteral<T>, NonNegativeInteger<T
  * @internal
  */
 type NonNumericLiteral<T extends number> = If<IsNumericLiteral<T>, never, T>;
+
 // #endregion Helper Types
 
 /**
@@ -76,6 +77,8 @@ declare module "vitest" {
      * ```
      */
     not: NegativeAssertion<T>;
+
+    // #region Banned Chai Assertions
 
     // enforce consistent style by banning chai assertions at a type level (except `not` which is also in jest).
     // NB: We cannot place these in a nice interface since TS will complain about `Assertion` extending 2 interfaces with clashing types.
@@ -180,12 +183,15 @@ declare module "vitest" {
     sealed: never;
     frozen: never;
     oneOf: never;
+
+    // #endregion Banned Chai Assertions
   }
 
   type NegativeAssertion<T> = Assertion<T, true>;
 }
 
 // #region Generic Matchers
+
 interface GenericMatchers<T> {
   /**
    * Check whether an array contains EXACTLY the given items (in any order).
@@ -211,9 +217,11 @@ interface GenericMatchers<T> {
    */
   toHaveKey: T extends ReadonlyMap<infer K, infer V> ? (expectedKey: K, expectedValue?: V) => void : never;
 }
+
 // #endregion Generic Matchers
 
 // #region GameManager Matchers
+
 interface GameManagerMatchers {
   /**
    * Check whether the {@linkcode GameManager} has shown the given message at least once in the current test case.
@@ -235,9 +243,11 @@ interface GameManagerMatchers {
    */
   toBeAtPhase(expectedPhase: PhaseString): void;
 }
+
 // #endregion GameManager Matchers
 
 // #region Arena Matchers
+
 declare class ArenaMatchers implements MatchersBase<keyof ArenaMatchersCommon> {
   common: ArenaMatchersCommon;
   negative: ArenaMatchersNegative;
@@ -298,15 +308,18 @@ interface ArenaMatchersNegative {
 // #endregion Arena Matchers
 
 // #region Pokemon Matchers
+
 interface PokemonMatchers {
   /**
    * Check whether a {@linkcode Pokemon}'s current typing includes the given types.
-   * @param expectedTypes - The expected {@linkcode PokemonType}s to check against; must have length `>0`
+   * @param expectedTypes - The expected {@linkcode PokemonType}(s) to check against (single or array); must be non-empty
    * @param options - The {@linkcode ToHaveTypesOptions | options} passed to the matcher
    */
-  // TODO: Update typing to a non empty tuple once pokemon-related typing funcs are updated to return non-empty tuples.
-  // The actual functions guarantee that the end result will never be empty at runtime, but the types do not reflect that at compile-time.
-  toHaveTypes(expectedTypes: readonly PokemonType[], options?: ToHaveTypesOptions): void;
+  // TODO: Ban passing a literal single-element array to the matcher for consistency
+  toHaveTypes(
+    expectedTypes: PokemonType | readonly [PokemonType, ...PokemonType[]],
+    options?: ToHaveTypesOptions,
+  ): void;
 
   /**
    * Check whether a {@linkcode Pokemon} has used a move matching the given criteria.
@@ -428,6 +441,7 @@ interface PokemonMatchers {
    */
   toHaveUsedPP<P extends number | "all">(moveId: MoveId, ppUsed: If<IsNumericLiteral<P>, Integer<P>, P>): void;
 }
+
 // #endregion Pokemon Matchers
 
 // biome-ignore lint/complexity/noUselessEmptyExport: Prevents exporting internal types (cf. https://github.com/microsoft/TypeScript/issues/57764)

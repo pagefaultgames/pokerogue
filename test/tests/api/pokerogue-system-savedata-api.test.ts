@@ -1,4 +1,4 @@
-import { PokerogueSystemSavedataApi } from "#api/pokerogue-system-savedata-api";
+import { PokerogueSystemSavedataApi } from "#api/system-savedata-api";
 import { initServerForApiTests } from "#test/setup/test-file-initialization";
 import { getApiBaseUrl } from "#test/utils/test-utils";
 import type {
@@ -9,13 +9,13 @@ import type {
 } from "#types/api";
 import type { SystemSaveData } from "#types/save-data";
 import { HttpResponse, http } from "msw";
-import type { SetupServerApi } from "msw/node";
+import type { SetupServer } from "msw/node";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const apiBase = getApiBaseUrl();
 const systemSavedataApi = new PokerogueSystemSavedataApi(getApiBaseUrl());
 
-let server: SetupServerApi;
+let server: SetupServer;
 
 beforeAll(async () => {
   server = await initServerForApiTests();

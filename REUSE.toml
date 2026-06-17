@@ -15,6 +15,7 @@ path = [
     "test/**/*.json",
     "src/**/*.jsonc",
     "global.d.ts",
+    "plugins/**/*",
     # HTML / CSS at the top level, or in `tests`
     "*.html",
     "*.css",
@@ -56,6 +57,8 @@ path = [
     # Miscellaneous files of insignificant originality
     ".nvmrc",
     "RELEASE",
+    # patch files for broken packages
+    "patches/*.patch"
 ]
 SPDX-License-Identifier = "CC0-1.0"
 SPDX-FileCopyrightText = "NONE"

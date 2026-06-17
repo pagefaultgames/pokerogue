@@ -1,4 +1,5 @@
 import type { Animation } from "#app/animations";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { getSpeciesFormChangeMessage } from "#data/form-change-triggers";
@@ -85,7 +86,7 @@ export class FormChangePhase extends EvolutionPhase {
         }
 
         const delay = playEvolutionFanfare ? 4000 : 1750;
-        globalScene.playSoundWithoutBgm(playEvolutionFanfare ? "evolution_fanfare" : "minor_fanfare");
+        audioManager.replaceBgmUntilEnd(playEvolutionFanfare ? "bw/evolution_fanfare" : "bw/minor_fanfare");
         transformedPokemon.destroy();
         globalScene.ui.showText(
           getSpeciesFormChangeMessage(this.pokemon, this.formChange, preName),
@@ -95,7 +96,7 @@ export class FormChangePhase extends EvolutionPhase {
           true,
           fixedInt(delay),
         );
-        globalScene.time.delayedCall(fixedInt(delay + 250), () => globalScene.playBgm());
+        globalScene.time.delayedCall(fixedInt(delay + 250), () => audioManager.playBgm());
       },
     });
   }
@@ -109,7 +110,7 @@ export class FormChangePhase extends EvolutionPhase {
    * @param transformedPokemon - The Pokemon being transformed into
    */
   private afterCycle(preName: string, transformedPokemon: Pokemon): void {
-    globalScene.playSound("se/sparkle");
+    audioManager.playSound("se/sparkle");
     this.pokemonEvoSprite.setVisible(true);
     globalScene.animations.doCircleInward(this.evolutionBaseBg, this.evolutionContainer);
     globalScene.time.delayedCall(900, () => {
@@ -117,7 +118,7 @@ export class FormChangePhase extends EvolutionPhase {
         if (!this.modal) {
           globalScene.phaseManager.unshiftNew("EndEvolutionPhase");
         }
-        globalScene.playSound("se/shine");
+        audioManager.playSound("se/shine");
         globalScene.animations.doSpray(this.evolutionBaseBg, this.evolutionContainer);
         this.postFormChangeTweens(transformedPokemon, preName);
       });
@@ -158,7 +159,7 @@ export class FormChangePhase extends EvolutionPhase {
           alpha: { from: 0, to: 1 },
           duration: 2000,
           onStart: () => {
-            globalScene.playSound("se/charge");
+            audioManager.playSound("se/charge");
             globalScene.animations.doSpiralUpward(this.evolutionBaseBg, this.evolutionContainer);
           },
           onComplete: () => {
@@ -170,7 +171,7 @@ export class FormChangePhase extends EvolutionPhase {
       // Step 3: Commence the form change animation via doCycle then continue the animation chain with afterCycle
       completeDelay: 1100,
       onComplete: () => {
-        globalScene.playSound("se/beam");
+        audioManager.playSound("se/beam");
         globalScene.animations.doArcDownward(this.evolutionBaseBg, this.evolutionContainer);
         globalScene.time.delayedCall(1000, () => {
           this.pokemonEvoTintSprite.setScale(0.25).setVisible(true);
