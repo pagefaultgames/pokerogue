@@ -45,7 +45,7 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
 )
   .withEncounterTier(MysteryEncounterTier.ULTRA)
   .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
-  .withScenePartySizeRequirement(2, 6, true) // Must have at least 2 unfainted pokemon in party
+  .withScenePartySizeRequirement(2)
   .withFleeAllowed(false)
   .withHideWildIntroMessage(true)
   .withPreventGameStatsUpdates(true) // Do not count the Pokemon as seen or defeated since it is ours
