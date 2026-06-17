@@ -20,9 +20,10 @@ This "work" can be anything from applying a move's effects to toggling an abilit
 `Phase`s primarily consist of 2 methods:
 - `start()` — Contains the phase's core logic. Called by the `PhaseManager` when it is the phase's turn to run. **Must call `this.end()` at some point during its execution** (either directly or indirectly) or else the game will stall indefinitely.
 - `end()` — Signals to the `PhaseManager` that the phase has finished running and the next one should start.
-  > [!CAUTION]
-  >  **Attempting to call `end()` more than once from the same phase will result in unpredictable behaviour that will most likely crash the game.**
-  > Moreover, Phases that override `end()` with custom logic **must call `super.end()`** once their work is complete to ensure the next Phase starts correctly.
+
+> [!CAUTION]
+>  **Attempting to call `end()` more than once from the same phase will result in unpredictable behaviour that will most likely crash the game.**
+> Moreover, Phases that override `end()` with custom logic **must call `super.end()`** once their work is complete to ensure the next Phase starts correctly.
 
 Every concrete phase also declares a `phaseName` string, which is used for type-safe lookup and comparison in lieu of `instanceof` to avoid circular imports.
 
