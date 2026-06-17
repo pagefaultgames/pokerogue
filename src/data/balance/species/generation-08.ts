@@ -4826,11 +4826,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       [46, MoveId.PLAY_ROUGH],
       [52, MoveId.FOUL_PLAY],
     ],
-    tms: [
-      ...generationEightSpeciesData[SpeciesId.IMPIDIMP].tms,
-      MoveId.IMPRISON,
-      MoveId.SHADOW_CLAW,
-    ],
+    tms: [...generationEightSpeciesData[SpeciesId.IMPIDIMP].tms, MoveId.IMPRISON, MoveId.SHADOW_CLAW],
   };
   generationEightSpeciesData[SpeciesId.GRIMMSNARL] = {
     species: new PokemonSpecies({
@@ -6363,6 +6359,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.UPPER_HAND,
+      MoveId.SEED_BOMB,
     ],
   };
   generationEightSpeciesData[SpeciesId.PINCURCHIN] = {
@@ -10728,6 +10725,8 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.CHILLING_WATER,
       MoveId.WATER_PULSE,
+      MoveId.SELF_DESTRUCT,
+      MoveId.HEX,
     ],
   };
   generationEightSpeciesData[SpeciesId.ENAMORUS] = {
@@ -13476,6 +13475,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.LASH_OUT,
       MoveId.TERA_BLAST,
       MoveId.CHILLING_WATER,
+      MoveId.SELF_DESTRUCT,
     ],
   };
   generationEightSpeciesData[SpeciesId.HISUI_SNEASEL] = {

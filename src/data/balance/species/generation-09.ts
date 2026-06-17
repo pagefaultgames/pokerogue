@@ -2633,7 +2633,6 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.THROAT_CHOP,
       MoveId.POLTERGEIST,
       MoveId.GIGA_IMPACT,
-
     ],
   };
   generationNineSpeciesData[SpeciesId.TADBULB] = {
@@ -5557,6 +5556,8 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.STOMPING_TANTRUM,
       MoveId.POLTERGEIST,
       MoveId.TERA_BLAST,
+      MoveId.SWAGGER,
+      MoveId.ZEN_HEADBUTT,
     ],
   };
   generationNineSpeciesData[SpeciesId.HOUNDSTONE] = {
@@ -6351,6 +6352,8 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.LASH_OUT,
       MoveId.COACHING,
       MoveId.TERA_BLAST,
+      MoveId.TORMENT,
+      MoveId.STORM_THROW,
     ],
   };
   generationNineSpeciesData[SpeciesId.CLODSIRE] = {
@@ -8588,6 +8591,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.DAZZLING_GLEAM,
       MoveId.STEEL_BEAM,
       MoveId.POLTERGEIST,
+      MoveId.SURF,
     ],
   };
   generationNineSpeciesData[SpeciesId.WO_CHIEN] = {
