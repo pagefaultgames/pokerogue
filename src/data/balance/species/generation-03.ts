@@ -14150,13 +14150,13 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       [5, MoveId.REST],
       [7, MoveId.SWIFT],
       [11, MoveId.HELPING_HAND],
-      [14, MoveId.PSYBEAM], //Custom, TM
+      [14, MoveId.PSYBEAM],
       [18, MoveId.LIFE_DEW],
       [21, MoveId.REFRESH],
       [25, MoveId.GRAVITY],
       [28, MoveId.ZEN_HEADBUTT],
       [30, MoveId.REST],
-      [35, MoveId.FLASH_CANNON], //Custom, TM
+      [35, MoveId.FLASH_CANNON],
       [42, MoveId.PSYCHIC],
       [49, MoveId.METEOR_MASH],
       [56, MoveId.HEALING_WISH],
@@ -14415,19 +14415,19 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       [7, MoveId.SWIFT],
       [10, MoveId.NIGHT_SHADE],
       [13, MoveId.TELEPORT],
-      [16, MoveId.PSYBEAM], //Custom, TM
+      [16, MoveId.PSYBEAM],
       [19, MoveId.PURSUIT],
       [22, MoveId.TOXIC_SPIKES],
       [25, MoveId.PSYSHOCK],
       [28, MoveId.KNOCK_OFF],
       [31, MoveId.PSYCHIC],
-      [34, MoveId.METEOR_MASH], //Custom, Event
+      [34, MoveId.METEOR_MASH],
       [40, MoveId.SKILL_SWAP],
       [49, MoveId.ZEN_HEADBUTT],
       [52, MoveId.PSYCHO_SHIFT],
       [61, MoveId.RECOVER],
       [67, MoveId.PSYCHO_BOOST],
-      [73, MoveId.NASTY_PLOT], //Custom, TM
+      [73, MoveId.NASTY_PLOT],
       [79, MoveId.HYPER_BEAM],
     ],
     formLevelMoves: {
@@ -14436,7 +14436,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
         [43, MoveId.SWITCHEROO],
         [46, MoveId.SNATCH],
         [55, MoveId.COSMIC_POWER],
-        [70, MoveId.DARK_PULSE], //Custom, TM
+        [70, MoveId.DARK_PULSE],
       ],
       attack: [
         [37, MoveId.SUPERPOWER],
