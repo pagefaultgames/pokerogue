@@ -2184,14 +2184,39 @@ export function initAbilities() {
       .attr(MoveTypeChangeAbAttr, PokemonType.DRAGON, normalTypeMoveConversionCondition)
       .attr(MovePowerBoostAbAttr, normalTypeMoveConversionCondition, 1.2)
       .build(),
-    // TODO: Unknown abilities, ID 313 & 314
-    new AbBuilder(AbilityId.ABILITY_313, 9).unimplemented().build(),
+    new AbBuilder(AbilityId.EELEVATE, 9) //
+      .attr(
+        AttackTypeImmunityAbAttr,
+        PokemonType.GROUND,
+        (pokemon: Pokemon) => !pokemon.getTag(GroundedTag) && !globalScene.arena.getTag(ArenaTagType.GRAVITY),
+      )
+      .attr(
+        PostVictoryStatStageChangeAbAttr,
+        p => {
+          let highestStat: EffectiveStat;
+          let highestValue = 0;
+          for (const s of EFFECTIVE_STATS) {
+            const value = p.getStat(s, false);
+            if (value > highestValue) {
+              highestStat = s;
+              highestValue = value;
+            }
+          }
+          return highestStat!;
+        },
+        1,
+      )
+      .ignorable()
+      .build(),
+    // TODO: Unknown ability, ID 314
     new AbBuilder(AbilityId.ABILITY_314, 9).unimplemented().build(),
     new AbBuilder(AbilityId.MEGA_SOL, 9) //
       .attr(PreAttackWeatherOverrideAbAttr, WeatherType.SUNNY)
       .build(),
-    // TODO: Unknown abilities, ID 316 & 317
-    new AbBuilder(AbilityId.ABILITY_316, 9).unimplemented().build(),
+    new AbBuilder(AbilityId.FIRE_MANE, 9) //
+      .attr(MoveTypePowerBoostAbAttr, PokemonType.FIRE)
+      .build(),
+    // TODO: Unknown ability, ID 317
     new AbBuilder(AbilityId.ABILITY_317, 9).unimplemented().build(),
     new AbBuilder(AbilityId.SPICY_SPRAY, 9) //
       .attr(PostDefendApplyStatusEffectAbAttr, 100, StatusEffect.BURN)
