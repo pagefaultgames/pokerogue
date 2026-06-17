@@ -6,7 +6,7 @@ import type { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
 import type { Nature } from "#enums/nature";
 import { PokeballType } from "#enums/pokeball";
-import { PokemonType } from "#enums/pokemon-type";
+import type { PokemonType } from "#enums/pokemon-type";
 import type { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
 import type { WeatherType } from "#enums/weather-type";
