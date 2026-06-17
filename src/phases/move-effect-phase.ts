@@ -910,7 +910,7 @@ export class MoveEffectPhase extends PokemonPhase {
       }
 
       // Avoid creating unneeded phases if the ability in question cannot apply.
-      // This does duplicate the relevant checks slightly, but the overahead is likely minimal
+      // This does duplicate the relevant checks slightly, but the overhead is likely minimal
       const newParams: PostMoveUsedAbAttrParams = { ...params, pokemon };
       const attrs = pokemon.getAbilityAttrs("PostMoveUsedAbAttr");
       if (attrs.length === 0 || !attrs.some(attr => attr.canApply(newParams))) {
