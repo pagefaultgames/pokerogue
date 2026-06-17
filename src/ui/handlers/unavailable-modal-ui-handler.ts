@@ -1,4 +1,5 @@
 import { updateUserInfo } from "#app/account";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
@@ -62,7 +63,7 @@ export class UnavailableModalUiHandler extends ModalUiHandler {
     updateUserInfo().then(response => {
       if (response[0] || [200, 400].includes(response[1])) {
         this.reconnectDuration = this.minTime;
-        globalScene.playSound("se/pb_bounce_1");
+        audioManager.playSound("se/pb_bounce_1");
         this.reconnectCallback();
       } else if (response[1] === 401) {
         removeCookie(sessionIdKey);

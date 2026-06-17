@@ -1,4 +1,5 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { modifierTypes } from "#data/data-lists";
@@ -198,7 +199,7 @@ async function doBiomeTransitionDialogueAndBattleInit() {
   await showEncounterText(`${namespace}:transport`);
   await Promise.all([animateBiomeChange(newBiome), transitionMysteryEncounterIntroVisuals()]);
   globalScene.updateBiomeWaveText();
-  globalScene.playBgm();
+  audioManager.playBgm();
   await showEncounterText(`${namespace}:attacked`);
 
   // Init enemy
@@ -251,6 +252,8 @@ async function animateBiomeChange(nextBiome: BiomeId): Promise<void> {
     duration: 2000,
   });
 
+  const previousBiome = globalScene.arena.biomeId;
+  await globalScene.loadBiomeAssets(nextBiome);
   globalScene.newArena(nextBiome);
 
   const biomeKey = getBiomeKey(nextBiome);
@@ -284,6 +287,8 @@ async function animateBiomeChange(nextBiome: BiomeId): Promise<void> {
   if (globalScene.lastEnemyTrainer) {
     globalScene.lastEnemyTrainer.destroy();
   }
+
+  globalScene.clearBiomeAssets(previousBiome);
 
   // TODO: This is floating
   playTween({

@@ -6,6 +6,7 @@ import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import HttpBackend from "i18next-http-backend";
 import { KoreanPostpositionProcessor } from "i18next-korean-postposition-processor";
+import { supportedLngs } from "./i18n-supported-lngs";
 
 // #region Interfaces/Types
 
@@ -21,7 +22,6 @@ interface LoadingFontFaceProperty {
 
 const unicodeRanges = {
   fullwidth: "U+FF00-FFEF",
-  kana: "U+3040-30FF",
   CJKCommon: "U+2E80-2EFF,U+3000-303F,U+31C0-31EF,U+3200-32FF,U+3400-4DBF,U+F900-FAFF,U+FE30-FE4F",
   CJKIdeograph: "U+4E00-9FFF",
   devanagari: "U+0900-097F",
@@ -31,8 +31,6 @@ const unicodeRanges = {
 
 const rangesByLanguage = {
   chinese: [unicodeRanges.CJKCommon, unicodeRanges.fullwidth, unicodeRanges.CJKIdeograph].join(","),
-  // biome-ignore format: prevent silly formatting
-  japanese: [unicodeRanges.CJKCommon, unicodeRanges.fullwidth, unicodeRanges.kana, unicodeRanges.CJKIdeograph].join(","),
 };
 
 const fonts: LoadingFontFaceProperty[] = [
@@ -73,13 +71,6 @@ const fonts: LoadingFontFaceProperty[] = [
       "zh",
     ],
   },
-  // japanese
-  {
-    face: new FontFace("emerald", `url(${getCachedUrl("./fonts/pokemon-bw.ttf")})`, {
-      unicodeRange: rangesByLanguage.japanese,
-    }),
-    only: ["ja"],
-  },
   // devanagari
   {
     face: new FontFace("emerald", `url(${getCachedUrl("./fonts/8-bit-devanagari.ttf")})`, {
@@ -93,9 +84,10 @@ const fonts: LoadingFontFaceProperty[] = [
   },
   // thai
   {
-    face: new FontFace("emerald", `url(${getCachedUrl("./fonts/fsrebellion.otf")})`, {
+    face: new FontFace("emerald", `url(${getCachedUrl("./fonts/rogue-thai.ttf")})`, {
       unicodeRange: unicodeRanges.thai,
     }),
+    extraOptions: { sizeAdjust: "40%" },
   },
   {
     face: new FontFace("pkmnems", "url(./fonts/terrible-thaifix.ttf)", { unicodeRange: unicodeRanges.thai }),
@@ -174,32 +166,7 @@ await i18next
         "es-419": ["es-ES", "en"],
         default: ["en"],
       },
-      supportedLngs: [
-        "en",
-        "es-ES",
-        "es-419", // LATAM Spanish
-        "fr",
-        "it",
-        "de",
-        "zh-Hans",
-        "zh-Hant",
-        "pt-BR",
-        "ko",
-        "ja",
-        "ca",
-        "eu",
-        "da",
-        "th",
-        "tr",
-        "ro",
-        "ru",
-        "id",
-        "hi",
-        "tl",
-        "nb-NO",
-        "sv",
-        "uk",
-      ],
+      supportedLngs,
       backend: {
         loadPath(lng: string, [ns]: string[]) {
           // Use namespace maps where required

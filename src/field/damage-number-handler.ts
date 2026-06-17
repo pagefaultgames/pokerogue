@@ -41,10 +41,12 @@ export class DamageNumberHandler {
     let [textColor, shadowColor]: TextAndShadowArr = [null, null];
 
     switch (result) {
+      case HitResult.EXTREMELY_EFFECTIVE:
       case HitResult.SUPER_EFFECTIVE:
         [textColor, shadowColor] = ["#f8d030", "#b8a038"];
         break;
       case HitResult.NOT_VERY_EFFECTIVE:
+      case HitResult.MOSTLY_INEFFECTIVE:
         [textColor, shadowColor] = ["#f08030", "#c03028"];
         break;
       case HitResult.INDIRECT_KO:
