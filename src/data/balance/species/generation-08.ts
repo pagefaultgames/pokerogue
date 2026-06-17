@@ -13803,7 +13803,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
     species: new PokemonSpecies({
       id: SpeciesId.HISUI_BASCULIN,
       generation: 8,
-      category: "Hostile Pokémon",
+      category: "Mellow Pokémon",
       type1: PokemonType.WATER,
       type2: null,
       height: 1,
