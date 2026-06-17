@@ -8582,7 +8582,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       [1, MoveId.BITE],
       [1, MoveId.QUICK_ATTACK],
       [1, MoveId.METAL_CLAW],
-      [1, MoveId.REVENGE],
+      [1, MoveId.ROCK_SMASH],
       [1, MoveId.WIDE_GUARD],
       [8, MoveId.HOWL],
       [11, MoveId.SLASH],
@@ -8783,10 +8783,6 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       [88, MoveId.ETERNABEAM],
       [96, MoveId.OUTRAGE],
     ],
-    formLevelMoves: {
-      "": [[88, MoveId.OUTRAGE]],
-      [SpeciesFormKey.ETERNAMAX]: [[88, MoveId.ETERNABEAM]],
-    },
     tms: [
       MoveId.FLY,
       MoveId.BODY_SLAM,
@@ -10757,7 +10753,6 @@ export function initGenerationEight(): SpeciesDataMapConfig {
     evolutions: [],
     passives: AbilityId.MERCILESS,
     levelMoves: [
-      [RELEARN_MOVE, MoveId.MORTAL_SPIN],
       [1, MoveId.TACKLE],
       [1, MoveId.POISON_STING],
       [1, MoveId.WATER_GUN],

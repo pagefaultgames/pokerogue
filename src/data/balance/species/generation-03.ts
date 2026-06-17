@@ -821,6 +821,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
     passives: AbilityId.REGENERATOR,
     levelMoves: [
       [EVOLVE_MOVE, MoveId.MUD_SHOT],
+      [1, MoveId.AQUA_RING],
       [1, MoveId.TACKLE],
       [1, MoveId.GROWL],
       [1, MoveId.WHIRLPOOL],
@@ -953,8 +954,9 @@ export function initGenerationThree(): SpeciesDataMapConfig {
     },
     levelMoves: [
       [RELEARN_MOVE, MoveId.SURF],
-      [RELEARN_MOVE, MoveId.SLUDGE_WAVE],
+      [RELEARN_MOVE, MoveId.SLUDGE_BOMB],
       [EVOLVE_MOVE, MoveId.MUDDY_WATER],
+      [1, MoveId.AQUA_RING],
       [1, MoveId.TACKLE],
       [1, MoveId.GROWL],
       [1, MoveId.WHIRLPOOL],
@@ -978,6 +980,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       [51, MoveId.EARTHQUAKE],
       [56, MoveId.HAMMER_ARM],
       [63, MoveId.HYDRO_PUMP],
+      [66, MoveId.WAVE_CRASH],
     ],
     tms: [
       ...generationThreeSpeciesData[SpeciesId.MARSHTOMP].tms,

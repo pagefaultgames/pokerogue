@@ -8607,6 +8607,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       [28, MoveId.METAL_SOUND],
       [35, MoveId.SHADOW_BALL],
       [42, MoveId.RECOVER],
+      [45, MoveId.FLASH_CANNON],
       [49, MoveId.POWER_GEM],
       [56, MoveId.MAKE_IT_RAIN],
       [63, MoveId.NASTY_PLOT],

@@ -63,8 +63,8 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [1, MoveId.CONFUSION],
       [1, MoveId.QUICK_ATTACK],
       [1, MoveId.FOCUS_ENERGY],
-      [1, MoveId.ENDURE],
       [1, MoveId.FLAME_CHARGE],
+      [1, MoveId.ENDURE],
       [7, MoveId.WORK_UP],
       [14, MoveId.INCINERATE],
       [21, MoveId.STORED_POWER],
@@ -4313,7 +4313,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     evolutions: [new SpeciesEvolution({ speciesId: SpeciesId.SCOLIPEDE, level: 30 })],
     passives: AbilityId.STAMINA,
     levelMoves: [
-      [RELEARN_MOVE, MoveId.MORTAL_SPIN],
       [EVOLVE_MOVE, MoveId.IRON_DEFENSE],
       [1, MoveId.DEFENSE_CURL],
       [1, MoveId.ROLLOUT],
@@ -4365,7 +4364,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     evolutions: [],
     passives: AbilityId.STAMINA,
     levelMoves: [
-      [RELEARN_MOVE, MoveId.MORTAL_SPIN],
       [EVOLVE_MOVE, MoveId.BATON_PASS],
       [1, MoveId.DEFENSE_CURL],
       [1, MoveId.ROLLOUT],
@@ -11612,6 +11610,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [54, MoveId.EARTHQUAKE],
       [61, MoveId.HAMMER_ARM],
       [68, MoveId.FOCUS_PUNCH],
+      [75, MoveId.HEADLONG_RUSH],
     ],
     tms: [
       ...generationFiveSpeciesData[SpeciesId.GOLETT].tms,

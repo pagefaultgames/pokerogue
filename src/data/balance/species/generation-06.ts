@@ -3116,7 +3116,6 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       [20, MoveId.TAKE_DOWN],
       [23, MoveId.FIRE_FANG],
       [28, MoveId.ENDEAVOR],
-      [30, MoveId.EARTH_POWER],
       [33, MoveId.ECHOED_VOICE],
       [36, MoveId.FLAMETHROWER],
       [39, MoveId.CRUNCH],
@@ -3227,7 +3226,6 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       [20, MoveId.TAKE_DOWN],
       [23, MoveId.FIRE_FANG],
       [28, MoveId.ENDEAVOR],
-      [30, MoveId.EARTH_POWER],
       [33, MoveId.ECHOED_VOICE],
       [38, MoveId.FLAMETHROWER],
       [42, MoveId.CRUNCH],
@@ -5834,6 +5832,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       [54, MoveId.CROSS_CHOP],
       [60, MoveId.STONE_EDGE],
       [65, MoveId.SKULL_BASH],
+      [70, MoveId.CLOSE_COMBAT],
     ],
     tms: [
       ...generationSixSpeciesData[SpeciesId.BINACLE].tms,
