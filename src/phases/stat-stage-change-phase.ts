@@ -6,45 +6,21 @@ import { handleTutorial, Tutorial } from "#app/tutorial";
 import { OctolockTag } from "#data/battler-tags";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
-import type { BattlerIndex } from "#enums/battler-index";
 import { type BattleStat, getStatKey, getStatStageChangeDescriptionKey, Stat } from "#enums/stat";
 import { StatChangeSource } from "#enums/stat-change-source";
 import type { Pokemon } from "#field/pokemon";
 import { ResetNegativeStatStageModifier } from "#modifiers/modifier";
 import { PokemonPhase } from "#phases/pokemon-phase";
 import type { ConditionalUserFieldProtectStatAbAttrParams, PreStatStageChangeAbAttrParams } from "#types/ability-types";
-import type { StatChange, StatStageChangeCallback } from "#types/stat-change";
+import type { StatChange, StatStageChangePhaseOptions } from "#types/stat-change";
 import type { Mutable } from "#types/type-helpers";
 import { playTween } from "#utils/anim-utils";
 import { deepCopy } from "#utils/data";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 
-export interface StatStageChangePhaseOptions {
-  battlerIndex: BattlerIndex | number;
-  changes: readonly StatChange[];
-  /** The Pokemon who caused these stat changes (may be the same as the Pokemon this Phase is applied to). */
-  sourcePokemon: Pokemon | undefined;
-  /** If `true`, skip `StatStageChangeMultiplierAbAttr` */
-  ignoreAbilities?: boolean;
-  /**
-   * A callback to invoke with the applied changes.
-   * Used exclusively to allow Stockpile to track the stat stages actually applied.
-   */
-  onChange?: StatStageChangeCallback;
-  /** The category of effect that produced this change, if relevant */
-  sourceEffectType?: StatChangeSource;
-  /**
-   * When `true`, pre-processing (multipliers, protection checks, sign-splitting)
-   * is skipped because it was already performed by the phase that queued this one.
-   * @remarks
-   * Should not be passed by anything other than this phase.
-   */
-  processed?: boolean;
-}
-
 /**
- * Phase responsible for resolving, animating, and applying one or more
+ * Phase responsible for resolving, animating, and applying one or more stat changes.
  * they will be split into one phase for raises and one phase for drops.
  *
  * Changes to multiple stats may be applied at once. If both raises and drops are provided to the same phase,
@@ -66,7 +42,6 @@ export class StatStageChangePhase extends PokemonPhase {
     // TODO: Change this once `getPokemon`'s return type is fixed
     this.selfTarget = options.sourcePokemon != null && options.sourcePokemon === this.getPokemon();
     this.options.changes = deepCopy(options.changes).filter(c => c.stages !== 0); // Allow changes with 0 stages to be passed as no-ops
-    this.selfTarget = options.sourcePokemon != null && options.sourcePokemon === this.getPokemon();
   }
 
   public override start(): void {
@@ -159,9 +134,8 @@ export class StatStageChangePhase extends PokemonPhase {
    * adding any blocked stats to {@linkcode cancelledStats}.
    *
    * @param pokemon - The Pokemon receiving the stat changes
-   * @param opponentPokemon - The Pokemon that caused the change, if not self-inflicted
-   * @param changes - The negative stat changes to evaluate
    * @param opponentPokemon - The Pokemon that caused the change, if present; used to resolve the target for Mirror Armor's reflection effect.
+   * @param changes - The negative stat changes to evaluate
    * @param cancelledStats - A set containing each {@linkcode BattleStat} whose change was cancelled; will be modified by this method
    */
   private checkAbilityProtection(
@@ -389,8 +363,6 @@ export class StatStageChangePhase extends PokemonPhase {
    * Build a stat change message for a group of changes that share the same magnitude.
    *
    * @param changes - The changes described by this message (all sharing one {@linkcode StatChange.stages | stages} value)
-   * @param isIncrease - Whether the intended direction was positive (used
-   *   when the clamped change is `0` to distinguish "won't go any higher" from "won't go any lower")
    * @returns The localised message string
    */
   private buildStatStageChangeMessage(changes: readonly StatChange[]): string {

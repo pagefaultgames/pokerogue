@@ -55,7 +55,6 @@ describe("StatStageChangePhase", () => {
       await game.toNextTurn();
 
       expect(player).toHaveStatStage(Stat.ATK, 2);
-      expect(player).toHaveStatStage(Stat.ATK, 2);
     });
 
     it("should lower multiple stats by the correct amount", async () => {

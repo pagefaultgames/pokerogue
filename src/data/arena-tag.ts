@@ -315,7 +315,8 @@ export class MistTag extends SerializableArenaTag {
    * Attempt to block the lowering of stats.
    * @param simulated - Whether to suppress messages and other animations from being playerd
    * @param defender - The {@linkcode Pokemon} receiving the stat drop
-   * @param cancelled - A {@linkcode BooleanHolder} containing whether to nullify the interaction
+   * @param changes - The stat changes being attempted
+   * @param cancelledStats - The set of cancelled stat changes, added to by this method
    * @param source - The Pokemon causing the stat drop, if applicable
    */
   override apply(
