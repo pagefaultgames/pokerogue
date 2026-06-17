@@ -39,7 +39,7 @@ describe("Moves - Make It Rain", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-1);
+    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-2);
   });
 
   it("should apply effects even if the target faints", async () => {
@@ -58,7 +58,7 @@ describe("Moves - Make It Rain", () => {
     await game.phaseInterceptor.to("StatStageChangePhase");
 
     expect(enemyPokemon.isFainted()).toBe(true);
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-1);
+    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-2);
   });
 
   it("should reduce Sp. Atk. once after KOing two enemies", async () => {
@@ -76,7 +76,7 @@ describe("Moves - Make It Rain", () => {
     await game.phaseInterceptor.to("StatStageChangePhase");
 
     enemyPokemon.forEach(p => expect(p.isFainted()).toBe(true));
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-1);
+    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-2);
   });
 
   it("should lower SPATK stat stage by 1 if it only hits the second target", async () => {

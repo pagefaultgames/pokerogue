@@ -12705,8 +12705,8 @@ export function initMoves() {
     new AttackMove(MoveId.HARD_PRESS, PokemonType.STEEL, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 9) //
       .attr(OpponentHighHpPowerAttr, 100),
     new StatusMove(MoveId.DRAGON_CHEER, PokemonType.DRAGON, -1, 15, -1, 0, 9)
-      .attr(AddBattlerTagAttr, BattlerTagType.DRAGON_CHEER, false, true)
-      // TODO: Remove once dragon cheer & focus energy are merged into 1 tag
+      .attr(AddBattlerTagAttr, BattlerTagType.DRAGON_CHEER, false, true) // TODO: Remove once dragon cheer & focus energy are merged into 1 tag
+      .soundBased()
       .condition((_user, target) => !target.getTag(BattlerTagType.CRIT_BOOST))
       .target(MoveTarget.NEAR_ALLY),
     new AttackMove(MoveId.ALLURING_VOICE, PokemonType.FAIRY, MoveCategory.SPECIAL, 80, 100, 10, 100, 0, 9)
