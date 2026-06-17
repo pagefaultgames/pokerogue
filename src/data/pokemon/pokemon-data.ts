@@ -12,6 +12,7 @@ import type { PokemonType } from "#enums/pokemon-type";
 import type { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import type { Pokemon } from "#field/pokemon";
+import type { ObtainStatusEffectPhase } from "#phases/obtain-status-effect-phase";
 import type { AttackMoveResult } from "#types/attack-move-result";
 import type { IllusionData } from "#types/illusion-data";
 import type { SerializedSpeciesForm } from "#types/pokemon-common";
@@ -34,7 +35,7 @@ export class CustomPokemonData {
   public nature: Nature | -1;
   // TODO: Change default value from `PokemonType.UNKNOWN` to `null` for easier checking;
   public types: PokemonType[];
-  /** Deprecated but needed for session save migration */
+  /** @deprecated Left in for save migration save migration, do not use */
   // TODO: Remove this once pre-session migration is implemented
   public hitsRecCount: number | null = null;
 
@@ -117,6 +118,12 @@ export class PokemonSummonData {
   public tags: BattlerTag[] = [];
   public abilitySuppressed = false;
   public abilitiesApplied: Set<AbilityId> = new Set();
+
+  /**
+   * Counts the number of hits this Pokemon has taken since switching in
+   * @see {@link https://bulbapedia.bulbagarden.net/wiki/Rage_Fist_(move)}
+   */
+  public hitCount = 0;
 
   // Overrides for transform and company.
   // TODO: Move these into a separate class & add rage fist hit count
@@ -256,34 +263,40 @@ export class PokemonSummonData {
   }
 }
 
-// TODO: Merge this inside `summmonData` but exclude from save if/when a save data serializer is added
+// TODO: Merge this inside `PokemonSummmonData` and exclude from save via `toJSON`
 export class PokemonTempSummonData {
   /**
    * The number of turns this pokemon has spent without switching out.
+   * @remarks
    * Only currently used for positioning the battle cursor.
    */
   turnCount = 1;
   /**
-   * The number of turns this pokemon has spent in the active position since the start of the wave
-   * without switching out.
-   * Reset on switch and new wave, but not stored in `SummonData` to avoid being written to the save file.
-
-   * Used to evaluate "first turn only" conditions such as
-   * {@linkcode MoveId.FAKE_OUT | Fake Out} and {@linkcode MoveId.FIRST_IMPRESSION | First Impression}).
+   * The number of turns this pokemon has spent in the active position
+   * since the start of the wave without switching out.
+   * @remarks
+   * Used to evaluate "first turn only" condition moves such as Fake Out and First Impression.
    */
   waveTurnCount = 1;
 }
 
 /**
  * Persistent data for a {@linkcode Pokemon}.
+ *
  * Resets at the start of a new battle (but not on switch).
  */
 export class PokemonBattleData {
-  /** Counter tracking direct hits this Pokemon has received during this battle; used for {@linkcode MoveId.RAGE_FIST} */
+  /** @deprecated Left in for save migration; use {@linkcode PokemonSummonData.hitCount} */
   public hitCount = 0;
-  /** Whether this Pokemon has eaten a berry this battle; used for {@linkcode MoveId.BELCH} */
+  /**
+   * Whether this Pokemon has eaten a berry this battle
+   * @see {@link https://bulbapedia.bulbagarden.net/wiki/Belch_(move)}
+   */
   public hasEatenBerry = false;
-  /** Array containing all berries eaten and not yet recovered during this current battle; used by {@linkcode AbilityId.HARVEST} */
+  /**
+   * Array containing all berries eaten and not yet recovered during this current battle
+   * @see {@link https://bulbapedia.bulbagarden.net/wiki/Harvest_(Ability)}
+   */
   public berriesEaten: BerryType[] = [];
 
   constructor(source?: PokemonBattleData | Partial<PokemonBattleData>) {
@@ -297,13 +310,15 @@ export class PokemonBattleData {
 
 /**
  * Temporary data for a {@linkcode Pokemon}.
+ *
  * Resets on new wave/battle start (but not on switch).
  */
 export class PokemonWaveData {
-  /** Whether the pokemon has endured due to a {@linkcode BattlerTagType.ENDURE_TOKEN} */
+  /** Whether the pokemon has endured due to an Endure Token */
   public endured = false;
   /**
    * A set of all the abilities this {@linkcode Pokemon} has used in this wave.
+   *
    * Used to track once per battle conditions, as well as (hopefully) by the updated AI for move effectiveness.
    */
   public abilitiesApplied: Set<AbilityId> = new Set<AbilityId>();
@@ -314,6 +329,7 @@ export class PokemonWaveData {
 
 /**
  * Temporary data for a {@linkcode Pokemon}.
+ *
  * Resets at the start of a new turn, as well as on switch.
  */
 export class PokemonTurnData {
@@ -333,9 +349,7 @@ export class PokemonTurnData {
   public totalDamageDealt = 0;
   public singleHitDamageDealt = 0;
   public damageTaken = 0;
-  /**
-   * An array containing data about attacks received this turn, in FIFO order.
-   */
+  /** An array containing data about attacks received this turn, in FIFO order. */
   public attacksReceived: AttackMoveResult[] = [];
   public statStagesIncreased = false;
   public statStagesDecreased = false;
@@ -348,12 +362,11 @@ export class PokemonTurnData {
 
   public acted = false;
   public order: number;
-  /** The Pokemon was brought in this turn by a switch action (not an intial encounter/summon) */
+  /** Whether the Pokemon was brought in this turn by a switch action (not an intial encounter/summon) */
   public switchedInThisTurn = false;
   public summonedThisTurn = false;
 
-  // TODO: This effectively only exists for castform/cherrim and is really ugly;
-  // revisit after form change rework
+  // TODO: This effectively only exists for castform/cherrim and is really ugly; revisit after form change rework
   /**
    * Tracker for what abilities have been applied due to form changes during this turn. \
    * Used to prevent infinite loops from form change abilities triggering their own transformation conditions.
@@ -364,7 +377,7 @@ export class PokemonTurnData {
    * Tracker for a pending status effect.
    *
    * @remarks
-   * Set whenever {@linkcode Pokemon#trySetStatus} succeeds in order to prevent subsequent status effects
+   * Set whenever {@linkcode Pokemon.trySetStatus} succeeds in order to prevent subsequent status effects
    * from being applied. \
    * Necessary because the status is not actually set until the {@linkcode ObtainStatusEffectPhase} runs,
    * which may not happen before another status effect is attempted to be applied.
@@ -373,7 +386,7 @@ export class PokemonTurnData {
   public pendingStatus: StatusEffect = StatusEffect.NONE;
   /**
    * All berries eaten by this pokemon in this turn.
-   * Saved into {@linkcode PokemonSummonData | SummonData} by {@linkcode AbilityId.CUD_CHEW} on turn end.
+   * Saved into {@linkcode PokemonSummonData} by Cud Chew on turn end.
    * @see {@linkcode PokemonSummonData.berriesEatenLast}
    */
   public berriesEaten: BerryType[] = [];
