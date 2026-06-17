@@ -15562,6 +15562,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       [1, MoveId.EMBER],
       [5, MoveId.LEER],
       [8, MoveId.SAFEGUARD],
+      [12, MoveId.WILL_O_WISP],
       [15, MoveId.WING_ATTACK],
       [19, MoveId.AGILITY],
       [22, MoveId.ANCIENT_POWER],
