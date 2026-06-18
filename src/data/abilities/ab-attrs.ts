@@ -57,6 +57,7 @@ import type { Move, StatusEffectAttr } from "#types/move-types";
 import type { Closed, Exact, Mutable } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
 import { BooleanHolder, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
+import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
@@ -901,7 +902,7 @@ export class PostDefendTypeChangeAbAttr extends PostDefendAbAttr {
     return i18next.t("abilityTriggers:postDefendTypeChange", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       abilityName,
-      typeName: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.type])}`),
+      typeName: i18next.t(getPokemonTypeLocaleKey(this.type)),
     });
   }
 }
@@ -1424,7 +1425,7 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
   getTriggerMessage({ pokemon }: AugmentMoveInteractionAbAttrParams, _abilityName: string): string {
     return i18next.t("abilityTriggers:pokemonTypeChange", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      moveType: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.moveType])}`),
+      moveType: i18next.t(getPokemonTypeLocaleKey(this.moveType)),
     });
   }
 }
@@ -3172,13 +3173,13 @@ export class ConfusionOnStatusEffectAbAttr extends AbAttr {
 
 export interface PreSetStatusAbAttrParams extends AbAttrBaseParams {
   /** The status effect being applied */
+  // TODO: change to Exclude<StatusEffect, StatusEffect.NONE | StatusEffect.FAINT>
   effect: StatusEffect;
   /** Holds whether the status effect is prevented by the ability */
   cancelled: BooleanHolder;
 }
 
 export class PreSetStatusAbAttr extends AbAttr {
-  /** Return whether the ability attribute can be applied */
   canApply(_params: Closed<PreSetStatusAbAttrParams>): boolean {
     return true;
   }
@@ -3200,18 +3201,18 @@ export class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
     this.immuneEffects = immuneEffects;
   }
 
-  override canApply({ effect, cancelled }: PreSetStatusAbAttrParams): boolean {
+  public override canApply({ effect, cancelled }: PreSetStatusAbAttrParams): boolean {
     return (
       !cancelled.value
       && ((this.immuneEffects.length === 0 && effect !== StatusEffect.FAINT) || this.immuneEffects.includes(effect))
     );
   }
 
-  override apply({ cancelled }: PreSetStatusAbAttrParams): void {
+  public override apply({ cancelled }: PreSetStatusAbAttrParams): void {
     cancelled.value = true;
   }
 
-  override getTriggerMessage({ pokemon, effect }: PreSetStatusAbAttrParams, abilityName: string): string {
+  public override getTriggerMessage({ pokemon, effect }: PreSetStatusAbAttrParams, abilityName: string): string {
     return this.immuneEffects.length > 0
       ? i18next.t("abilityTriggers:statusEffectImmunityWithName", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
