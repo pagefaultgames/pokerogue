@@ -443,6 +443,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.ZEN_HEADBUTT,
       MoveId.WONDER_ROOM,
       MoveId.ALLY_SWITCH,
+      MoveId.SILVER_WIND,
     ],
   };
   generationSixSpeciesData[SpeciesId.DELPHOX] = {
@@ -3040,6 +3041,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.INFESTATION,
       MoveId.POLLEN_PUFF,
       MoveId.SKITTER_SMACK,
+      MoveId.SILVER_WIND,
     ],
   };
   generationSixSpeciesData[SpeciesId.LITLEO] = {
@@ -3621,7 +3623,13 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       [51, MoveId.PETAL_DANCE],
       [58, MoveId.SOLAR_BEAM],
     ],
-    tms: [...generationSixSpeciesData[SpeciesId.FLABEBE].tms, MoveId.METRONOME, MoveId.TRICK, MoveId.SKILL_SWAP],
+    tms: [
+      ...generationSixSpeciesData[SpeciesId.FLABEBE].tms,
+      MoveId.METRONOME,
+      MoveId.TRICK,
+      MoveId.SKILL_SWAP,
+      MoveId.SILVER_WIND,
+    ],
   };
   generationSixSpeciesData[SpeciesId.FLORGES] = {
     species: new PokemonSpecies({
@@ -5238,6 +5246,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.DRAIN_PUNCH,
       MoveId.GIGA_IMPACT,
       MoveId.PSYSHOCK,
+      MoveId.SILVER_WIND,
     ],
   };
   generationSixSpeciesData[SpeciesId.SWIRLIX] = {
@@ -5395,6 +5404,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.METRONOME,
       MoveId.DRAIN_PUNCH,
       MoveId.GIGA_IMPACT,
+      MoveId.SILVER_WIND,
     ],
   };
   generationSixSpeciesData[SpeciesId.INKAY] = {
@@ -8039,6 +8049,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.POWER_WHIP,
       MoveId.PHANTOM_FORCE,
       MoveId.BRUTAL_SWING,
+      MoveId.SILVER_WIND,
     ],
   };
   generationSixSpeciesData[SpeciesId.BERGMITE] = {
@@ -8580,6 +8591,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.MISTY_EXPLOSION,
       MoveId.TERRAIN_PULSE,
       MoveId.TERA_BLAST,
+      MoveId.SILVER_WIND,
     ],
   };
   generationSixSpeciesData[SpeciesId.YVELTAL] = {
@@ -9178,6 +9190,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.SCORCHING_SANDS,
       MoveId.TERA_BLAST,
       MoveId.SNOWSCAPE,
+      MoveId.SILVER_WIND,
     ],
   };
   generationSixSpeciesData[SpeciesId.HOOPA] = {
@@ -9383,6 +9396,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.LASH_OUT,
       MoveId.TERA_BLAST,
       MoveId.PSYCHIC_NOISE,
+      MoveId.SILVER_WIND,
     ],
   };
   generationSixSpeciesData[SpeciesId.VOLCANION] = {
@@ -9622,6 +9636,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.ALLURING_VOICE,
       MoveId.SYNTHESIS,
       MoveId.HYPER_BEAM,
+      MoveId.SILVER_WIND,
     ],
   };
   return generationSixSpeciesData;

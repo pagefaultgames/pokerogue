@@ -1493,6 +1493,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.STRUGGLE_BUG,
       MoveId.CONFIDE,
       MoveId.INFESTATION,
+      MoveId.SILVER_WIND,
     ],
   };
   generationThreeSpeciesData[SpeciesId.CASCOON] = {
@@ -1632,6 +1633,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.STRUGGLE_BUG,
       MoveId.CONFIDE,
       MoveId.INFESTATION,
+      MoveId.SILVER_WIND,
     ],
   };
   generationThreeSpeciesData[SpeciesId.LOTAD] = {
@@ -2157,6 +2159,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.THROAT_CHOP,
       MoveId.BRUTAL_SWING,
       MoveId.UPPER_HAND,
+      MoveId.SILVER_WIND,
     ],
   };
   generationThreeSpeciesData[SpeciesId.TAILLOW] = {
@@ -2962,6 +2965,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.FOUL_PLAY,
       MoveId.HURRICANE,
       MoveId.DUAL_WINGBEAT,
+      MoveId.SILVER_WIND,
     ],
   };
   generationThreeSpeciesData[SpeciesId.SHROOMISH] = {
@@ -3494,6 +3498,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.CONFIDE,
       MoveId.SKITTER_SMACK,
       MoveId.TERA_BLAST,
+      MoveId.SILVER_WIND,
     ],
   };
   generationThreeSpeciesData[SpeciesId.NINJASK] = {
@@ -5965,6 +5970,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.CHILLING_WATER,
       MoveId.ELECTRIC_TERRAIN,
       MoveId.DYNAMIC_PUNCH,
+      MoveId.SILVER_WIND,
     ],
   };
   generationThreeSpeciesData[SpeciesId.ILLUMISE] = {
@@ -7548,6 +7554,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.AERIAL_ACE,
       MoveId.DRAGON_CLAW,
       MoveId.GIGA_IMPACT,
+      MoveId.SILVER_WIND,
     ],
   };
   generationThreeSpeciesData[SpeciesId.FLYGON] = {
@@ -8067,6 +8074,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.BREAKING_SWIPE,
       MoveId.SNOWSCAPE,
       MoveId.ALLURING_VOICE,
+      MoveId.SILVER_WIND,
     ],
   };
   generationThreeSpeciesData[SpeciesId.ZANGOOSE] = {
@@ -10665,6 +10673,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
+      MoveId.SILVER_WIND,
     ],
   };
   generationThreeSpeciesData[SpeciesId.CHIMECHO] = {

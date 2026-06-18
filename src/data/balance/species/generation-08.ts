@@ -3791,6 +3791,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.ELECTROWEB,
     ],
     formTms: {
+      amped: [MoveId.ZAP_CANNON],
       lowkey: [MoveId.VENOM_DRENCH],
     },
   };
@@ -10216,6 +10217,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.POUNCE,
       MoveId.TRAILBLAZE,
       MoveId.RAIN_DANCE,
+      MoveId.SILVER_WIND,
     ],
   };
   generationEightSpeciesData[SpeciesId.URSALUNA] = {

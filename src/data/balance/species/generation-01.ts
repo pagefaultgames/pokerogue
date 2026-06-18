@@ -1259,6 +1259,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.INFESTATION,
       MoveId.POLLEN_PUFF,
       MoveId.DUAL_WINGBEAT,
+      MoveId.SILVER_WIND,
     ],
   };
   generationOneSpeciesData[SpeciesId.WEEDLE] = {
@@ -1509,6 +1510,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.DUAL_WINGBEAT,
       MoveId.IRON_DEFENSE,
+      MoveId.SILVER_WIND,
     ],
   };
   generationOneSpeciesData[SpeciesId.PIDGEY] = {
@@ -4828,6 +4830,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.DEFOG,
       MoveId.SLUDGE_WAVE,
       MoveId.ACROBATICS,
+      MoveId.SILVER_WIND,
     ],
   };
   generationOneSpeciesData[SpeciesId.DIGLETT] = {
@@ -12225,6 +12228,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.POUNCE,
       MoveId.TRAILBLAZE,
+      MoveId.SILVER_WIND,
     ],
   };
   generationOneSpeciesData[SpeciesId.JYNX] = {
@@ -16122,6 +16126,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.UPPER_HAND,
       MoveId.DYNAMIC_PUNCH,
       MoveId.ZAP_CANNON,
+      MoveId.SILVER_WIND,
     ],
   };
   return generationOneSpeciesData;

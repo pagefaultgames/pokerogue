@@ -2071,6 +2071,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.EXPANDING_FORCE,
       MoveId.TERA_BLAST,
       MoveId.CHARM,
+      MoveId.SILVER_WIND,
     ],
   };
   generationFiveSpeciesData[SpeciesId.MUSHARNA] = {
@@ -3992,6 +3993,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.POUNCE,
       MoveId.TRAILBLAZE,
+      MoveId.SILVER_WIND,
     ],
   };
   generationFiveSpeciesData[SpeciesId.SWADLOON] = {
@@ -12688,6 +12690,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.HURRICANE,
       MoveId.MYSTICAL_FIRE,
       MoveId.DUAL_WINGBEAT,
+      MoveId.SILVER_WIND,
     ],
   };
   generationFiveSpeciesData[SpeciesId.COBALION] = {

@@ -137,6 +137,7 @@ export const tmPoolTiers: TmPoolTiers = {
   [MoveId.AIR_CUTTER]: ModifierTier.COMMON,
   [MoveId.OVERHEAT]: ModifierTier.ULTRA,
   [MoveId.ROCK_TOMB]: ModifierTier.GREAT,
+  [MoveId.SILVER_WIND]: ModifierTier.COMMON,
   [MoveId.METAL_SOUND]: ModifierTier.GREAT,
   [MoveId.COSMIC_POWER]: ModifierTier.GREAT,
   [MoveId.SIGNAL_BEAM]: ModifierTier.GREAT,

@@ -1834,6 +1834,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.POUNCE,
       MoveId.TRAILBLAZE,
       MoveId.SKITTER_SMACK,
+      MoveId.SILVER_WIND,
     ],
   };
   generationSevenSpeciesData[SpeciesId.RIBOMBEE] = {
@@ -8170,6 +8171,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.COACHING,
       MoveId.TRIPLE_AXEL,
       MoveId.TERA_BLAST,
+      MoveId.SILVER_WIND,
     ],
   };
   generationSevenSpeciesData[SpeciesId.XURKITREE] = {

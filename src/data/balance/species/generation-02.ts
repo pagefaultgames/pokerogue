@@ -1027,6 +1027,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.CONFIDE,
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
+      MoveId.SILVER_WIND,
     ],
   };
   generationTwoSpeciesData[SpeciesId.NOCTOWL] = {
@@ -1192,6 +1193,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.POWER_UP_PUNCH,
       MoveId.TERA_BLAST,
       MoveId.DYNAMIC_PUNCH,
+      MoveId.SILVER_WIND,
     ],
   };
   generationTwoSpeciesData[SpeciesId.LEDIAN] = {
@@ -2334,6 +2336,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.RETALIATE,
       MoveId.SMART_STRIKE,
       MoveId.DUAL_WINGBEAT,
+      MoveId.SILVER_WIND,
     ],
   };
   generationTwoSpeciesData[SpeciesId.NATU] = {
@@ -2449,6 +2452,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.EXPANDING_FORCE,
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
+      MoveId.SILVER_WIND,
     ],
   };
   generationTwoSpeciesData[SpeciesId.XATU] = {
@@ -3462,6 +3466,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.LUNGE,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
+      MoveId.SILVER_WIND,
     ],
   };
   generationTwoSpeciesData[SpeciesId.SKIPLOOM] = {
@@ -3981,6 +3986,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.POUNCE,
       MoveId.PSYCHIC_NOISE,
       MoveId.PSYCH_UP,
+      MoveId.SILVER_WIND,
     ],
   };
   generationTwoSpeciesData[SpeciesId.WOOPER] = {
@@ -7022,6 +7028,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TRAILBLAZE,
       MoveId.HARD_PRESS,
       MoveId.COUNTER,
+      MoveId.SILVER_WIND,
     ],
   };
   generationTwoSpeciesData[SpeciesId.SHUCKLE] = {
@@ -7321,6 +7328,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.POUNCE,
       MoveId.TRAILBLAZE,
       MoveId.UPPER_HAND,
+      MoveId.SILVER_WIND,
     ],
   };
   generationTwoSpeciesData[SpeciesId.SNEASEL] = {
@@ -11402,6 +11410,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.GRASSY_GLIDE,
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
+      MoveId.SILVER_WIND,
     ],
   };
   return generationTwoSpeciesData;
