@@ -3910,10 +3910,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     let hitResult: HitResult;
-    if (typeMultiplier < 1) {
-      hitResult = HitResult.NOT_VERY_EFFECTIVE;
-    } else if (typeMultiplier > 1) {
+    if (typeMultiplier >= 4) {
+      hitResult = HitResult.EXTREMELY_EFFECTIVE;
+    } else if (typeMultiplier >= 2) {
       hitResult = HitResult.SUPER_EFFECTIVE;
+    } else if (typeMultiplier <= 0.25) {
+      hitResult = HitResult.MOSTLY_INEFFECTIVE;
+    } else if (typeMultiplier <= 0.5) {
+      hitResult = HitResult.NOT_VERY_EFFECTIVE;
     } else {
       hitResult = HitResult.EFFECTIVE;
     }

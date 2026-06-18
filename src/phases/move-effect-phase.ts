@@ -734,11 +734,17 @@ export class MoveEffectPhase extends PokemonPhase {
   protected queueHitResultMessage(result: HitResult) {
     let msg: string | undefined;
     switch (result) {
+      case HitResult.EXTREMELY_EFFECTIVE:
+        msg = i18next.t("battle:hitResultExtremelyEffective");
+        break;
       case HitResult.SUPER_EFFECTIVE:
         msg = i18next.t("battle:hitResultSuperEffective");
         break;
       case HitResult.NOT_VERY_EFFECTIVE:
         msg = i18next.t("battle:hitResultNotVeryEffective");
+        break;
+      case HitResult.MOSTLY_INEFFECTIVE:
+        msg = i18next.t("battle:hitResultMostlyIneffective");
         break;
       case HitResult.ONE_HIT_KO:
         msg = i18next.t("battle:hitResultOneHitKo");
@@ -787,8 +793,10 @@ export class MoveEffectPhase extends PokemonPhase {
     /** Does {@linkcode hitResult} indicate that damage was dealt to the target? */
     const dealsDamage = [
       HitResult.EFFECTIVE,
+      HitResult.EXTREMELY_EFFECTIVE,
       HitResult.SUPER_EFFECTIVE,
       HitResult.NOT_VERY_EFFECTIVE,
+      HitResult.MOSTLY_INEFFECTIVE,
       HitResult.ONE_HIT_KO,
     ].includes(hitResult);
 

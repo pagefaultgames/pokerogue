@@ -408,7 +408,7 @@ export class SpeciesDataRegistry {
   // #region Helpers
 
   /**
-   * Helper to get the form key for a given species and formIndex or formKey.
+   * Helper to get the form key for a given species and formIndex or formKey. \
    * Also validates that the form exists and falls back to the base form if it doesn't.
    * @param speciesId - The {@linkcode SpeciesId} of the species to get the form key for
    * @param form - (Optional) The `formIndex` or `formKey` of the form to get the form key for.
@@ -416,8 +416,16 @@ export class SpeciesDataRegistry {
    * @returns The formKey
    */
   private getFormKey(speciesId: SpeciesId, form?: string | number): string {
-    const speciesData = this.getSpeciesData(speciesId);
-    const forms = speciesData.species.forms;
+    const forms = this.getSpeciesData(speciesId).species.forms;
+
+    if (forms.length === 0) {
+      return "";
+    }
+
+    if (form == null) {
+      console.debug(`No form requested for ${speciesId} (${this.getSpecies(speciesId).name}), returning base form.`);
+      return forms[0].formKey;
+    }
 
     if (typeof form === "string" && forms.some(f => f.formKey === form)) {
       return form;
@@ -427,7 +435,7 @@ export class SpeciesDataRegistry {
     }
 
     console.warn(`Invalid form index ${form} for species ${speciesId}, falling back to base form`);
-    return forms[0]?.formKey ?? "";
+    return forms[0].formKey;
   }
 
   /**
@@ -438,6 +446,10 @@ export class SpeciesDataRegistry {
    */
   private getFormIndex(speciesId: SpeciesId, form: string | number): number {
     const forms = this.getSpeciesData(speciesId).species.forms;
+
+    if (forms.length === 0) {
+      return 0;
+    }
 
     if (typeof form === "number" && form >= 0 && form < forms.length) {
       return form;

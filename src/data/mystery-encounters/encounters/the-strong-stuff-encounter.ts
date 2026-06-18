@@ -47,7 +47,7 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
 )
   .withEncounterTier(MysteryEncounterTier.COMMON)
   .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
-  .withScenePartySizeRequirement(3, 6) // Must have at least 3 pokemon in party
+  .withScenePartySizeRequirement(3)
   .withMaxAllowedEncounters(1)
   .withHideWildIntroMessage(true)
   .withAutoHideIntroVisuals(false)
