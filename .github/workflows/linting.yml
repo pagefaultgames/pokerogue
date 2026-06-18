@@ -32,34 +32,19 @@ jobs:
       all: ${{ steps.filter.outputs.all }}
       ts-files: ${{ steps.filter.outputs.ts-files }}
       js-files: ${{ steps.filter.outputs.js-files }}
+      github-scripts: ${{ steps.filter.outputs.github-scripts }}
+      local-scripts: ${{ steps.filter.outputs.local-scripts }}
     steps:
-      # ensure the correct commit is detected on push workflow
       - name: Checkout GitHub repository
         uses: actions/checkout@v6
         with:
           sparse-checkout: |
-            .nvmrc
+            .github/lint-filters.yml
 
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
         id: filter
         with:
-          filters: |
-            all:
-              - "package.json"
-              - ".nvmrc"
-              - ".env*"
-              - ".github/workflows/linting.yml"
-            ts-files:
-              - "{src,test,.github}/**/*.{ts,mts}"
-              - "global.d.ts"
-              - "vite.config.ts"
-              - "vitest.config.ts"
-              - "tsconfig.json"
-            js-files:
-              - "scripts/**/*.{js,mjs}"
-              - ".dependency-cruiser.cjs"
-              - "typedoc.config.js"
-              - "jsconfig.json"
+          filters: .github/lint-filters.yml
 
   run-linters:
     name: Run all linters
@@ -74,26 +59,50 @@ jobs:
           submodules: "recursive"
 
       - uses: ./.github/actions/setup-deps
-        if: ${{ needs.linting-path-filter.outputs.all == 'true' || needs.linting-path-filter.outputs.ts-files == 'true' || needs.linting-path-filter.outputs.js-files == 'true' }}
+        if: |
+          needs.linting-path-filter.outputs.all == 'true' ||
+          needs.linting-path-filter.outputs.ts-files == 'true' ||
+          needs.linting-path-filter.outputs.js-files == 'true' ||
+          needs.linting-path-filter.outputs.github-scripts == 'true' ||
+          needs.linting-path-filter.outputs.local-scripts == 'true'
 
       # Lint files with Biome-Lint - https://biomejs.dev/linter/
       - name: Lint with Biome
         run: pnpm biome:ci
-        if: ${{ !cancelled() && (needs.linting-path-filter.outputs.all == 'true' || needs.linting-path-filter.outputs.ts-files == 'true' || needs.linting-path-filter.outputs.js-files == 'true') }}
+        if: >-
+          ${{ !cancelled() &&
+            (
+              needs.linting-path-filter.outputs.all == 'true' ||
+              needs.linting-path-filter.outputs.ts-files == 'true' ||
+              needs.linting-path-filter.outputs.js-files == 'true' ||
+              needs.linting-path-filter.outputs.github-scripts == 'true' ||
+              needs.linting-path-filter.outputs.local-scripts == 'true'
+            ) }}
 
       # Validate dependencies with dependency-cruiser - https://github.com/sverweij/dependency-cruiser
       - name: Run Dependency Cruiser
         run: pnpm depcruise
-        if: ${{ !cancelled() && (needs.linting-path-filter.outputs.all == 'true' || needs.linting-path-filter.outputs.ts-files == 'true' || needs.linting-path-filter.outputs.js-files == 'true') }}
+        if: >-
+          ${{ !cancelled() &&
+            (
+              needs.linting-path-filter.outputs.all == 'true' ||
+              needs.linting-path-filter.outputs.ts-files == 'true' ||
+              needs.linting-path-filter.outputs.js-files == 'true' ||
+              needs.linting-path-filter.outputs.github-scripts == 'true' ||
+              needs.linting-path-filter.outputs.local-scripts == 'true'
+            ) }}
 
       # Validate types with tsc - https://www.typescriptlang.org/docs/handbook/compiler-options.html#using-the-cli
-      - name: Run Typecheck (TS files)
-        run: pnpm typecheck
-        id: typecheck
-        if: ${{ !cancelled() && (needs.linting-path-filter.outputs.all == 'true' || needs.linting-path-filter.outputs.ts-files == 'true') }}
+      - name: Run Typecheck (Main Repo + Scripts)
+        run: pnpm typecheck:main
+        id: typecheck-main
+        if: ${{ !cancelled() && (needs.linting-path-filter.outputs.all == 'true' || needs.linting-path-filter.outputs.ts-files == 'true' || needs.linting-path-filter.outputs.local-scripts == 'true') }}
 
-      # Run tsc again on all JS files.
-      # Required in order to use separate rules for different types of files
+      - name: Run Typecheck (Github Scripts)
+        run: pnpm typecheck:github
+        id: typecheck-github
+        if: ${{ !cancelled() && (needs.linting-path-filter.outputs.all == 'true' || needs.linting-path-filter.outputs.github-scripts == 'true') }}
+
       - name: Run Typecheck (JS files)
         run: pnpm typecheck:js
         id: typecheck-js

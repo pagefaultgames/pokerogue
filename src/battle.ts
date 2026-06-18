@@ -1,5 +1,7 @@
+import { DAILY_BOSS_LEVEL } from "#app/constants";
 import type { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
+import { isDailyFinalBoss } from "#data/daily-seed/daily-seed-utils";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleType } from "#enums/battle-type";
 import { BattlerIndex } from "#enums/battler-index";
@@ -127,6 +129,9 @@ export class Battle {
   }
 
   public getLevelForWave(): number {
+    if (isDailyFinalBoss(this.waveIndex)) {
+      return DAILY_BOSS_LEVEL;
+    }
     const levelWaveIndex = this.gameMode.getWaveForDifficulty(this.waveIndex);
     const baseLevel = 1 + levelWaveIndex / 2 + Math.pow(levelWaveIndex / 25, 2);
     const bossMultiplier = 1.2;

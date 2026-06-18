@@ -1,5 +1,7 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
-import { allSpecies, modifierTypes } from "#data/data-lists";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
+import { modifierTypes } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
@@ -128,7 +130,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
   .withEncounterTier(MysteryEncounterTier.ROGUE)
   .withDisallowedChallenges(Challenges.SINGLE_TYPE, Challenges.SINGLE_GENERATION)
   .withSceneWaveRangeRequirement(30, 140)
-  .withScenePartySizeRequirement(3, 6)
+  .withScenePartySizeRequirement(3)
   .withMaxAllowedEncounters(1)
   .withIntroSpriteConfigs([
     {
@@ -154,8 +156,6 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
   .withDescription(`${namespace}:description`)
   .withQuery(`${namespace}:query`)
   .withOnInit(() => {
-    globalScene.loadBgm("mystery_encounter_weird_dream", "mystery_encounter_weird_dream.mp3");
-
     // Calculate all the newly transformed Pokemon and begin asset load
     const teamTransformations = getTeamTransformations();
     const loadAssets = teamTransformations.map(t => (t.newPokemon as PlayerPokemon).loadAssets());
@@ -167,7 +167,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
     return true;
   })
   .withOnVisualsStart(() => {
-    globalScene.fadeAndSwitchBgm("mystery_encounter_weird_dream");
+    audioManager.playBgm("mystery_encounter_weird_dream", true);
     return true;
   })
   .withOption(
@@ -354,7 +354,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
         pokemon.exp = getLevelTotalExp(pokemon.level, pokemon.species.growthRate);
 
         pokemon.calculateStats();
-        pokemon.getBattleInfo().setLevel(pokemon.level);
+        pokemon.getBattleInfo().setLevelDisplay(pokemon.level);
         await pokemon.updateInfo();
       }
 
@@ -496,7 +496,7 @@ async function doNewTeamPostProcess(transformations: PokemonTransformation[]) {
 
   // If at least one new starter was unlocked, play 1 fanfare
   if (atLeastOneNewStarter) {
-    globalScene.playSound("level_up_fanfare");
+    audioManager.playSound("se/level_up_fanfare");
   }
 }
 
@@ -639,7 +639,7 @@ function getTransformedSpecies(
     const bstMin = Math.max(originalBst + bstSearchRange[0], 0);
 
     // Get any/all species that fall within the Bst range requirements
-    let validSpecies = allSpecies.filter(s => {
+    let validSpecies = speciesDataRegistry.getAllSpecies().filter(s => {
       const speciesBst = s.getBaseStatTotal();
       const bstInRange = speciesBst >= bstMin && speciesBst <= bstCap;
       // Checks that a Pokemon has not already been added in the +600 or 570-600 slots;

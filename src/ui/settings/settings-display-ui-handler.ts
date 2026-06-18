@@ -123,6 +123,12 @@ export class SettingsDisplayUiHandler extends AbstractSettingsUiHandler {
             label: "Українська (Needs Help)",
           };
           break;
+        case "pl":
+          this.settings[languageIndex].options[0] = {
+            value: "Polski",
+            label: "Polski (Needs Help)",
+          };
+          break;
         case "id":
           this.settings[languageIndex].options[0] = {
             value: "Bahasa Indonesia",
@@ -133,6 +139,12 @@ export class SettingsDisplayUiHandler extends AbstractSettingsUiHandler {
           this.settings[languageIndex].options[0] = {
             value: "हिन्दी",
             label: "हिन्दी (Needs Help)",
+          };
+          break;
+        case "vi":
+          this.settings[languageIndex].options[0] = {
+            value: "Tiếng Việt",
+            label: "Tiếng Việt (Needs Help)",
           };
           break;
         case "da":

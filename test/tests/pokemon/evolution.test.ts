@@ -1,4 +1,4 @@
-import { pokemonEvolutions } from "#balance/pokemon-evolutions";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -34,10 +34,10 @@ describe("Evolution", () => {
     eevee.abilityIndex = 2;
     trapinch.abilityIndex = 2;
 
-    await eevee.evolve(pokemonEvolutions[SpeciesId.EEVEE][6], eevee.getSpeciesForm());
+    await eevee.evolve(speciesDataRegistry.getEvolutions(SpeciesId.EEVEE)[6], eevee.getSpeciesForm());
     expect(eevee.abilityIndex).toBe(2);
 
-    await trapinch.evolve(pokemonEvolutions[SpeciesId.TRAPINCH][0], trapinch.getSpeciesForm());
+    await trapinch.evolve(speciesDataRegistry.getEvolutions(SpeciesId.TRAPINCH)[0], trapinch.getSpeciesForm());
     expect(trapinch.abilityIndex).toBe(1);
   });
 
@@ -48,10 +48,10 @@ describe("Evolution", () => {
     bulbasaur.abilityIndex = 0;
     charmander.abilityIndex = 1;
 
-    await bulbasaur.evolve(pokemonEvolutions[SpeciesId.BULBASAUR][0], bulbasaur.getSpeciesForm());
+    await bulbasaur.evolve(speciesDataRegistry.getEvolutions(SpeciesId.BULBASAUR)[0], bulbasaur.getSpeciesForm());
     expect(bulbasaur.abilityIndex).toBe(0);
 
-    await charmander.evolve(pokemonEvolutions[SpeciesId.CHARMANDER][0], charmander.getSpeciesForm());
+    await charmander.evolve(speciesDataRegistry.getEvolutions(SpeciesId.CHARMANDER)[0], charmander.getSpeciesForm());
     expect(charmander.abilityIndex).toBe(1);
   });
 
@@ -61,7 +61,7 @@ describe("Evolution", () => {
     const squirtle = game.field.getPlayerPokemon();
     squirtle.abilityIndex = 5;
 
-    await squirtle.evolve(pokemonEvolutions[SpeciesId.SQUIRTLE][0], squirtle.getSpeciesForm());
+    await squirtle.evolve(speciesDataRegistry.getEvolutions(SpeciesId.SQUIRTLE)[0], squirtle.getSpeciesForm());
     expect(squirtle.abilityIndex).toBe(0);
   });
 
@@ -73,7 +73,7 @@ describe("Evolution", () => {
     nincada.metBiome = -1;
     nincada.gender = 1;
 
-    await nincada.evolve(pokemonEvolutions[SpeciesId.NINCADA][0], nincada.getSpeciesForm());
+    await nincada.evolve(speciesDataRegistry.getEvolutions(SpeciesId.NINCADA)[0], nincada.getSpeciesForm());
     const [ninjask, shedinja] = game.scene.getPlayerParty();
     expect(ninjask.abilityIndex).toBe(2);
     expect(shedinja.abilityIndex).toBe(1);
