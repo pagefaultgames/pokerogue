@@ -1648,6 +1648,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.ELECTROWEB,
       MoveId.EERIE_IMPULSE,
       MoveId.ELECTRIC_TERRAIN,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.LANTURN] = {
@@ -1876,6 +1877,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.COUNTER,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.CLEFFA] = {
@@ -2004,6 +2006,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.CHILLING_WATER,
       MoveId.ALLURING_VOICE,
       MoveId.COUNTER,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.IGGLYBUFF] = {
@@ -2126,6 +2129,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TRAILBLAZE,
       MoveId.ALLURING_VOICE,
       MoveId.COUNTER,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.TOGEPI] = {
@@ -2254,6 +2258,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.MYSTICAL_FIRE,
       MoveId.DAZZLING_GLEAM,
       MoveId.TERA_BLAST,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.TOGETIC] = {
@@ -2603,6 +2608,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.DAZZLING_GLEAM,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.FLAAFFY] = {
@@ -3703,6 +3709,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.COUNTER,
       MoveId.THROAT_CHOP,
       MoveId.DYNAMIC_PUNCH,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.SUNKERN] = {
@@ -4296,6 +4303,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.ALLURING_VOICE,
       MoveId.PSYCHIC_NOISE,
       MoveId.SAFEGUARD, //ZA
+      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.UMBREON] = {
@@ -4431,6 +4439,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.ALLURING_VOICE,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.MURKROW] = {
@@ -4725,6 +4734,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.COUNTER,
       MoveId.HELPING_HAND,
       MoveId.DYNAMIC_PUNCH,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.MISDREAVUS] = {
@@ -4863,6 +4873,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.SNOWSCAPE,
       MoveId.PSYCHIC_NOISE,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.UNOWN] = {
@@ -5793,6 +5804,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.PSYCHIC_NOISE,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.PINECO] = {
@@ -5906,6 +5918,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.ICE_SPINNER,
       MoveId.POUNCE,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.FORRETRESS] = {
@@ -6140,6 +6153,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.ICE_SPINNER,
       MoveId.POUNCE,
       MoveId.CHILLING_WATER,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.GLIGAR] = {
@@ -6627,6 +6641,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.UPROAR,
       MoveId.STOMPING_TANTRUM,
       MoveId.DYNAMIC_PUNCH,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.GRANBULL] = {
@@ -7575,6 +7590,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.DYNAMIC_PUNCH,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.URSARING] = {
@@ -9277,6 +9293,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.CHARGE,
       MoveId.TAKE_DOWN,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.STANTLER] = {
@@ -9875,6 +9892,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.EERIE_IMPULSE,
       MoveId.ELECTRIC_TERRAIN,
       MoveId.DYNAMIC_PUNCH,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.MAGBY] = {
@@ -10109,6 +10127,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.STEEL_ROLLER,
       MoveId.TERA_BLAST,
       MoveId.DYNAMIC_PUNCH,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.BLISSEY] = {
@@ -10266,6 +10285,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.ALLURING_VOICE,
       MoveId.COUNTER,
       MoveId.DYNAMIC_PUNCH,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.RAIKOU] = {
@@ -10389,6 +10409,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TAKE_DOWN,
       MoveId.SCARY_FACE,
       MoveId.ELECTROWEB,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.ENTEI] = {
@@ -11112,6 +11133,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.PSYCHIC_NOISE,
       MoveId.TAKE_DOWN,
       MoveId.SCARY_FACE,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.HO_OH] = {
@@ -11246,6 +11268,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.SCORCHING_SANDS,
       MoveId.TERA_BLAST,
       MoveId.TAKE_DOWN,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.CELEBI] = {

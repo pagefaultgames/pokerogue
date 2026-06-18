@@ -9365,6 +9365,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.STEEL_ROLLER,
       MoveId.RISING_VOLTAGE,
       MoveId.TERA_BLAST,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationFiveSpeciesData[SpeciesId.KLANG] = {
@@ -9612,6 +9613,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.THROAT_CHOP,
       MoveId.LUNGE,
       MoveId.ELECTROWEB,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationFiveSpeciesData[SpeciesId.EELEKTROSS] = {
@@ -14780,6 +14782,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.INFESTATION,
       MoveId.STEEL_BEAM,
       MoveId.TERA_BLAST,
+      MoveId.ZAP_CANNON,
     ],
   };
   return generationFiveSpeciesData;

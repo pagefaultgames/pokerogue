@@ -2725,6 +2725,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.ELECTRIC_TERRAIN,
       MoveId.TERA_BLAST,
       MoveId.CHILLING_WATER,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationNineSpeciesData[SpeciesId.BELLIBOLT] = {
@@ -6595,6 +6596,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.TRAILBLAZE,
       MoveId.PSYCHIC_NOISE,
       MoveId.FUTURE_SIGHT,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationNineSpeciesData[SpeciesId.DUDUNSPARCE] = {
@@ -6785,6 +6787,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.ICE_SPINNER,
       MoveId.POUNCE,
       MoveId.CHILLING_WATER,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationNineSpeciesData[SpeciesId.KINGAMBIT] = {
@@ -7540,6 +7543,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.SCORCHING_SANDS,
       MoveId.TERA_BLAST,
       MoveId.SUPERCELL_SLAM,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationNineSpeciesData[SpeciesId.IRON_TREADS] = {
@@ -11194,6 +11198,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.DRAGON_CHEER,
       MoveId.SUPERCELL_SLAM,
       MoveId.HYPER_BEAM,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationNineSpeciesData[SpeciesId.IRON_BOULDER] = {
@@ -12124,6 +12129,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.CHARM,
       MoveId.CLOSE_COMBAT,
       MoveId.PAYBACK,
+      MoveId.ZAP_CANNON,
     ],
   };
   //#endregion Regional Variants

@@ -3557,6 +3557,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.CHILLING_WATER,
       MoveId.UPPER_HAND,
       MoveId.COUNTER,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationFourSpeciesData[SpeciesId.DRIFLOON] = {
@@ -4122,6 +4123,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.SNOWSCAPE,
       MoveId.PSYCHIC_NOISE,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationFourSpeciesData[SpeciesId.HONCHKROW] = {
@@ -7563,6 +7565,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.HARD_PRESS,
       MoveId.SUPERCELL_SLAM,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationFourSpeciesData[SpeciesId.LICKILICKY] = {
@@ -7856,6 +7859,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.COUNTER,
       MoveId.METAL_CLAW,
       MoveId.DYNAMIC_PUNCH,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationFourSpeciesData[SpeciesId.TANGROWTH] = {
@@ -8107,6 +8111,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.EERIE_IMPULSE,
       MoveId.COUNTER,
       MoveId.DYNAMIC_PUNCH,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationFourSpeciesData[SpeciesId.MAGMORTAR] = {
@@ -9130,6 +9135,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.CHARGE,
       MoveId.TAKE_DOWN,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationFourSpeciesData[SpeciesId.GALLADE] = {
@@ -9503,6 +9509,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.HARD_PRESS,
       MoveId.SUPERCELL_SLAM,
       MoveId.DYNAMIC_PUNCH,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationFourSpeciesData[SpeciesId.DUSKNOIR] = {

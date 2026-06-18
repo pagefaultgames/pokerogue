@@ -4275,6 +4275,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.METEOR_BEAM,
       MoveId.TERA_BLAST,
       MoveId.DYNAMIC_PUNCH,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationThreeSpeciesData[SpeciesId.SKITTY] = {
@@ -12600,6 +12601,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.HARD_PRESS,
       MoveId.TAKE_DOWN,
       MoveId.DYNAMIC_PUNCH,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationThreeSpeciesData[SpeciesId.REGICE] = {
@@ -12723,6 +12725,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.SNOWSCAPE,
       MoveId.TAKE_DOWN,
       MoveId.DYNAMIC_PUNCH,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationThreeSpeciesData[SpeciesId.REGISTEEL] = {
@@ -12852,6 +12855,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       MoveId.HARD_PRESS,
       MoveId.TAKE_DOWN,
       MoveId.DYNAMIC_PUNCH,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationThreeSpeciesData[SpeciesId.LATIAS] = {
@@ -14293,7 +14297,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
     ],
     formTms: {
       normal: [MoveId.SWIFT, MoveId.ICY_WIND, MoveId.COSMIC_POWER],
-      attack: [MoveId.MEGA_PUNCH, MoveId.MEGA_KICK, MoveId.SUPERPOWER, MoveId.COSMIC_POWER],
+      attack: [MoveId.MEGA_PUNCH, MoveId.MEGA_KICK, MoveId.SUPERPOWER, MoveId.COSMIC_POWER, MoveId.ZAP_CANNON],
       defense: [MoveId.MEGA_PUNCH, MoveId.MEGA_KICK, MoveId.AMNESIA, MoveId.SPIKES, MoveId.IRON_DEFENSE],
       speed: [MoveId.MEGA_PUNCH, MoveId.MEGA_KICK, MoveId.AGILITY, MoveId.SWIFT, MoveId.ICY_WIND, MoveId.DYNAMIC_PUNCH],
     },

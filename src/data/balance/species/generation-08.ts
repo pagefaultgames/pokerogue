@@ -9392,6 +9392,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.RISING_VOLTAGE,
       MoveId.TERA_BLAST,
       MoveId.SUPERCELL_SLAM,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationEightSpeciesData[SpeciesId.REGIDRAGO] = {
@@ -10345,6 +10346,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.ROAR,
       MoveId.UPROAR,
       MoveId.SMACK_DOWN,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationEightSpeciesData[SpeciesId.BASCULEGION] = {
@@ -11602,6 +11604,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.MISTY_EXPLOSION,
       MoveId.CORROSIVE_GAS,
       MoveId.TERA_BLAST,
+      MoveId.ZAP_CANNON,
     ],
   };
   generationEightSpeciesData[SpeciesId.GALAR_MR_MIME] = {

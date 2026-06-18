@@ -72,6 +72,7 @@ export const tmPoolTiers: TmPoolTiers = {
   [MoveId.SLUDGE_BOMB]: ModifierTier.ULTRA,
   [MoveId.MUD_SLAP]: ModifierTier.COMMON,
   [MoveId.SPIKES]: ModifierTier.COMMON,
+  [MoveId.ZAP_CANNON]: ModifierTier.GREAT,
   [MoveId.ICY_WIND]: ModifierTier.GREAT,
   [MoveId.OUTRAGE]: ModifierTier.ULTRA,
   [MoveId.SANDSTORM]: ModifierTier.COMMON,
