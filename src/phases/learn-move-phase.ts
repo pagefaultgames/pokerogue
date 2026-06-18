@@ -17,10 +17,10 @@ import i18next from "i18next";
 
 export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   public readonly phaseName = "LearnMovePhase";
-  private moveId: MoveId;
+  private readonly moveId: MoveId;
   private messageMode: UiMode;
-  private learnMoveType: LearnMoveType;
-  private cost: number;
+  private readonly learnMoveType: LearnMoveType;
+  private readonly cost: number;
 
   constructor(
     partyMemberIndex: number,
@@ -29,29 +29,33 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     cost = -1,
   ) {
     super(partyMemberIndex);
+
     this.moveId = moveId;
     this.learnMoveType = learnMoveType;
     this.cost = cost;
   }
 
-  start() {
+  public override start(): void {
     super.start();
 
     const pokemon = this.getPokemon();
     const move = allMoves[this.moveId];
     const currentMoveset = pokemon.getMoveset();
 
-    // The game first checks if the Pokemon already has the move and ends the phase if it does.
+    if (move.name.endsWith(" (N)")) {
+      this.end();
+      return;
+    }
+
     const hasMoveAlready = currentMoveset.some(m => m.moveId === move.id) && this.moveId !== MoveId.SKETCH;
     if (hasMoveAlready) {
-      return this.end();
+      this.end();
+      return;
     }
 
     this.messageMode =
       globalScene.ui.getHandler() instanceof EvolutionSceneUiHandler ? UiMode.EVOLUTION_SCENE : UiMode.MESSAGE;
     globalScene.ui.setMode(this.messageMode);
-    // If the Pokemon has less than 4 moves, the new move is added to the largest empty moveset index
-    // If it has 4 moves, the phase then checks if the player wants to replace the move itself.
     if (currentMoveset.length < 4) {
       this.learnMove(currentMoveset.length, move, pokemon);
     } else {

@@ -206,10 +206,10 @@ export abstract class PokemonSpeciesForm {
 
   /**
    * Get a list of all level moves for this species, including form specific moves.
-   * @param formKey - (Optional) The key for the form to be checked. Uses the base form if not specified.
+   * @param formKey - (Optional) The key for the form to be checked. Uses the base form if not specified
    * @returns A list of all level moves that can be learned by this species
    */
-  getLevelMoves(formKey?: string): LevelMoves {
+  public getLevelMoves(formKey?: string): LevelMoves {
     const levelMoves = speciesDataRegistry.getLevelMoves(this.speciesId, formKey);
     return levelMoves.sort((a, b) => a[0] - b[0]);
   }
@@ -1305,5 +1305,14 @@ export class PokemonForm extends PokemonSpeciesForm {
 
   getFormKey(): string {
     return this.formKey;
+  }
+
+  /**
+   * Get a list of all level moves for this species, including form specific moves.
+   * @param formKey - (Optional) The key for the form to be checked. Uses this form if not specified
+   * @returns A list of all level moves that can be learned by this species
+   */
+  public override getLevelMoves(formKey?: string): LevelMoves {
+    return super.getLevelMoves(formKey ?? this.getFormKey());
   }
 }
