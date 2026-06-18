@@ -34,8 +34,8 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
   [SpeciesId.PYUKUMUKU]: [MoveId.COUNTER, MoveId.MIRROR_COAT],
 
   // Generally supportive Pokemon, prefer disruptive moves over straight damage.
-  [SpeciesId.SHUCKLE]: [MoveId.INFESTATION, MoveId.STEALTH_ROCK],
-  [SpeciesId.FORRETRESS]: [MoveId.SPIKES, MoveId.STEALTH_ROCK, MoveId.BODY_PRESS],
+  [SpeciesId.SHUCKLE]: [MoveId.ROCK_TOMB, MoveId.STICKY_WEB],
+  [SpeciesId.CLAYDOL]: [MoveId.LIGHT_SCREEN, MoveId.REFLECT],
   [SpeciesId.SPIDOPS]: [MoveId.SILK_TRAP, MoveId.STICKY_WEB],
   [SpeciesId.SABLEYE]: [MoveId.WILL_O_WISP, MoveId.THUNDER_WAVE],
   [SpeciesId.KLEFKI]: [MoveId.LIGHT_SCREEN, MoveId.REFLECT],
@@ -44,19 +44,41 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
   [SpeciesId.CLODSIRE]: [MoveId.TOXIC, MoveId.TOXIC_SPIKES],
   [SpeciesId.MANDIBUZZ]: [MoveId.TOXIC, MoveId.KNOCK_OFF],
   [SpeciesId.LEDIAN]: [MoveId.LIGHT_SCREEN, MoveId.REFLECT],
-  [SpeciesId.ORTHWORM]: [MoveId.STEALTH_ROCK, MoveId.SHED_TAIL],
+  [SpeciesId.ORTHWORM]: [MoveId.SHED_TAIL],
   [SpeciesId.QUAGSIRE]: [MoveId.TOXIC, MoveId.YAWN],
   [SpeciesId.HYPNO]: [MoveId.LIGHT_SCREEN, MoveId.REFLECT, MoveId.HYPNOSIS],
   [SpeciesId.VOLBEAT]: [MoveId.TAIL_GLOW],
-  [SpeciesId.BASTIODON]: [MoveId.BODY_PRESS, MoveId.FOUL_PLAY],
   [SpeciesId.TOXAPEX]: [MoveId.BANEFUL_BUNKER, MoveId.TOXIC_SPIKES, MoveId.TOXIC],
   [SpeciesId.CARBINK]: [MoveId.LIGHT_SCREEN, MoveId.REFLECT],
   [SpeciesId.COFAGRIGUS]: [MoveId.WILL_O_WISP, MoveId.BODY_PRESS],
   [SpeciesId.NACLSTACK]: MoveId.SALT_CURE,
   [SpeciesId.GARGANACL]: MoveId.SALT_CURE,
 
+  // Slow and Frail Pokemon reliant on priority to do anything meaningful
+  [SpeciesId.SHIFTRY]: [MoveId.SUCKER_PUNCH],
+  [SpeciesId.KECLEON]: [MoveId.SUCKER_PUNCH],
+  [SpeciesId.MAWILE]: [MoveId.SUCKER_PUNCH],
+  [SpeciesId.SPINDA]: [MoveId.SUCKER_PUNCH],
+  [SpeciesId.CACTURNE]: [MoveId.SUCKER_PUNCH],
+  [SpeciesId.BANETTE]: [MoveId.SUCKER_PUNCH],
+  [SpeciesId.TOXICROAK]: [MoveId.SUCKER_PUNCH],
+  [SpeciesId.KOMALA]: [MoveId.SUCKER_PUNCH],
+  [SpeciesId.ALOLA_RATICATE]: [MoveId.SUCKER_PUNCH],
+
+  // Low BST Pokemon balanced around Quiver Dance
+  [SpeciesId.BUTTERFREE]: [MoveId.QUIVER_DANCE],
+  [SpeciesId.BELLOSSOM]: [MoveId.QUIVER_DANCE],
+  [SpeciesId.DUSTOX]: [MoveId.QUIVER_DANCE],
+  [SpeciesId.BEAUTIFLY]: [MoveId.QUIVER_DANCE],
+  [SpeciesId.MASQUERAIN]: [MoveId.QUIVER_DANCE],
+  [SpeciesId.WORMADAM]: [MoveId.QUIVER_DANCE],
+  [SpeciesId.MOTHIM]: [MoveId.QUIVER_DANCE],
+  [SpeciesId.VIVILLON]: [MoveId.QUIVER_DANCE],
+  [SpeciesId.RIBOMBEE]: [MoveId.QUIVER_DANCE],
+  [SpeciesId.FROSMOTH]: [MoveId.QUIVER_DANCE],
+
   // Starters
-  [SpeciesId.HISUI_SAMUROTT]: [MoveId.RAZOR_SHELL, MoveId.CEASELESS_EDGE],
+  [SpeciesId.HISUI_SAMUROTT]: MoveId.CEASELESS_EDGE,
   [SpeciesId.DECIDUEYE]: MoveId.SPIRIT_SHACKLE,
   [SpeciesId.HISUI_DECIDUEYE]: MoveId.TRIPLE_ARROWS,
   [SpeciesId.CINDERACE]: MoveId.PYRO_BALL,
@@ -74,6 +96,7 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
 
   // Spores
   [SpeciesId.PARASECT]: MoveId.SPORE,
+  [SpeciesId.BRELOOM]: MoveId.SPORE,
   [SpeciesId.AMOONGUSS]: [MoveId.SPORE, MoveId.TOXIC],
   [SpeciesId.BRUTE_BONNET]: MoveId.SPORE,
   [SpeciesId.SHIINOTIC]: MoveId.SPORE,
@@ -82,10 +105,12 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
   // Misc sig moves
   [SpeciesId.VESPIQUEN]: [MoveId.ATTACK_ORDER, MoveId.DEFEND_ORDER, MoveId.HEAL_ORDER],
   [SpeciesId.CHATOT]: MoveId.CHATTER,
+  [SpeciesId.HEATMOR]: MoveId.FIRE_LASH,
   [SpeciesId.KLINK]: MoveId.GEAR_GRIND,
   [SpeciesId.KLANG]: MoveId.GEAR_GRIND,
   [SpeciesId.KLINKLANG]: MoveId.GEAR_GRIND,
   [SpeciesId.BOUFFALANT]: MoveId.HEAD_CHARGE,
+  [SpeciesId.ZOROARK]: MoveId.NIGHT_DAZE,
   [SpeciesId.VOLCARONA]: MoveId.FIERY_DANCE,
   [SpeciesId.TOUCANNON]: MoveId.BEAK_BLAST,
   [SpeciesId.GOLISOPOD]: MoveId.FIRST_IMPRESSION,
@@ -97,6 +122,7 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
   [SpeciesId.TINKATON]: MoveId.GIGATON_HAMMER,
   [SpeciesId.PALAFIN]: MoveId.JET_PUNCH,
   [SpeciesId.GHOLDENGO]: MoveId.MAKE_IT_RAIN,
+  [SpeciesId.DUDUNSPARCE]: MoveId.HYPER_DRILL,
   [SpeciesId.SINISTCHA]: MoveId.MATCHA_GOTCHA,
   [SpeciesId.MALAMAR]: MoveId.TOPSY_TURVY,
   [SpeciesId.TOGEDEMARU]: MoveId.ZING_ZAP,
@@ -114,7 +140,9 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
   // Regionals and whatnot
   [SpeciesId.ALOLA_MAROWAK]: MoveId.SHADOW_BONE,
   [SpeciesId.GALAR_SLOWBRO]: MoveId.SHELL_SIDE_ARM,
+  [SpeciesId.GALAR_STUNFISK]: MoveId.SNAP_TRAP,
   [SpeciesId.HISUI_BRAVIARY]: MoveId.ESPER_WING,
+  [SpeciesId.HISUI_AVALUGG]: MoveId.MOUNTAIN_GALE,
   [SpeciesId.OBSTAGOON]: MoveId.OBSTRUCT,
   [SpeciesId.WYRDEER]: MoveId.PSYSHIELD_BASH,
   [SpeciesId.SNEASLER]: MoveId.DIRE_CLAW,
@@ -174,8 +202,8 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
   [SpeciesId.MELMETAL]: MoveId.DOUBLE_IRON_BASH,
 
   // Gen 8 Legends
-  [SpeciesId.ZACIAN]: MoveId.PLAY_ROUGH,
-  [SpeciesId.ZAMAZENTA]: MoveId.BODY_PRESS,
+  [SpeciesId.ZACIAN]: [MoveId.BEHEMOTH_BLADE, MoveId.PLAY_ROUGH], // Adjust to Iron Head once form change related functionality is added for Crowned Zacian / Zamazenta.
+  [SpeciesId.ZAMAZENTA]: [MoveId.BEHEMOTH_BASH, MoveId.BODY_PRESS], // ^^
   [SpeciesId.ETERNATUS]: MoveId.DYNAMAX_CANNON,
   [SpeciesId.URSHIFU]: [MoveId.WICKED_BLOW, MoveId.SURGING_STRIKES],
   [SpeciesId.REGIDRAGO]: MoveId.DRAGON_ENERGY,
@@ -204,7 +232,7 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
   [SpeciesId.DRACOVISH]: MoveId.FISHIOUS_REND, // Benjie doesn't approve >:o
   [SpeciesId.ARCTOZOLT]: MoveId.BOLT_BEAK,
   [SpeciesId.DRACOZOLT]: MoveId.BOLT_BEAK, // Benjie prefers this be addressed outside of signature moves
-  [SpeciesId.ARIADOS]: MoveId.TOXIC_THREAD,
+  [SpeciesId.ARIADOS]: [MoveId.TOXIC_THREAD, MoveId.SUCKER_PUNCH], // Very slow so it relies on Sucker Punch heavily
   [SpeciesId.BLISSEY]: MoveId.SOFT_BOILED,
   [SpeciesId.MEDICHAM]: [MoveId.ZEN_HEADBUTT, MoveId.PSYCHO_CUT], // Avoids special moves on level
   [SpeciesId.LILLIGANT]: MoveId.QUIVER_DANCE,
@@ -231,6 +259,7 @@ export const FORCED_SIGNATURE_MOVES: Partial<Record<SpeciesId, MoveId | MoveId[]
   // These are here to make up for movegen jank
   [SpeciesId.HONCHKROW]: [MoveId.NIGHT_SLASH, MoveId.SUCKER_PUNCH], // Avoids special moves / works with ability
   [SpeciesId.NIHILEGO]: MoveId.POWER_GEM, // Avoids Head Smash
+  [SpeciesId.BASTIODON]: [MoveId.BODY_PRESS], // Body Press TM weighting is funky, one of the few meaningful things this Pokemon can use.
   // It always gets mega launcher
   [SpeciesId.CLAWITZER]: MoveId.WATER_PULSE,
   [SpeciesId.LUXRAY]: [MoveId.WILD_CHARGE, MoveId.SUPERCELL_SLAM],

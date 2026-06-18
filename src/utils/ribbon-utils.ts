@@ -1,4 +1,4 @@
-import { pokemonEvolutions } from "#balance/pokemon-evolutions";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { PokemonType } from "#enums/pokemon-type";
 import { RibbonData, type RibbonFlag } from "#system/ribbons/ribbon-data";
@@ -73,8 +73,8 @@ export function getAvailableRibbons(species: PokemonSpecies): RibbonFlag[] {
       }
     }
 
-    if (checking && Object.hasOwn(pokemonEvolutions, checking)) {
-      pokemonEvolutions[checking].forEach(e => {
+    if (speciesDataRegistry.hasEvolutions(checking)) {
+      speciesDataRegistry.getEvolutions(checking).forEach(e => {
         speciesToCheck.push(e.speciesId);
       });
     }

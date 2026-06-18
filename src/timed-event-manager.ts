@@ -1,6 +1,6 @@
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { SHINY_CATCH_RATE_MULTIPLIER } from "#balance/rates";
 import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER } from "#balance/starters";
-import { allSpecies } from "#data/data-lists";
 import type { PokemonSpeciesFilter } from "#data/pokemon-species";
 import type { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -261,7 +261,7 @@ export class TimedEventManager {
     }
     this.cachedReplacementMap = new Map();
     const allPairs: { speciesId: SpeciesId; formIndex: number }[] = [];
-    for (const species of allSpecies) {
+    for (const species of speciesDataRegistry.getAllSpecies()) {
       const formCount = species.forms.length || 1;
       for (let f = 0; f < formCount; f++) {
         allPairs.push({ speciesId: species.speciesId, formIndex: f });

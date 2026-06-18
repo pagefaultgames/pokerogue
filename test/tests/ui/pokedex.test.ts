@@ -1,4 +1,5 @@
-import { allAbilities, allSpecies } from "#data/data-lists";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
+import { allAbilities } from "#data/data-lists";
 import type { PokemonForm, PokemonSpecies } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
 import { Button } from "#enums/buttons";
@@ -102,7 +103,7 @@ describe("UI - Pokedex", () => {
    */
   function getSpeciesWithAbility(ability: AbilityId): Set<SpeciesId> {
     const speciesSet = new Set<SpeciesId>();
-    for (const pkmn of allSpecies) {
+    for (const pkmn of speciesDataRegistry.getAllSpecies()) {
       if (
         [pkmn.ability1, pkmn.ability2, pkmn.getPassiveAbility(), pkmn.abilityHidden].includes(ability)
         || pkmn.forms.some(form =>
@@ -126,7 +127,7 @@ describe("UI - Pokedex", () => {
     const tySet = new Set<PokemonType>(types);
 
     // get the pokemon and its forms
-    outer: for (const pkmn of allSpecies) {
+    outer: for (const pkmn of speciesDataRegistry.getAllSpecies()) {
       // @ts-expect-error We know that type2 might be null.
       if (tySet.has(pkmn.type1) || tySet.has(pkmn.type2)) {
         speciesSet.add(pkmn.speciesId);

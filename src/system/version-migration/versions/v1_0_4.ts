@@ -1,5 +1,5 @@
 import { defaultStarterSpecies } from "#app/constants";
-import { allSpecies } from "#data/data-lists";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { CustomPokemonData } from "#data/pokemon-data";
 import { AbilityAttr } from "#enums/ability-attr";
 import { DexAttr } from "#enums/dex-attr";
@@ -39,7 +39,8 @@ const fixLegendaryStats: SystemSaveMigrator = {
       data.gameStats.subLegendaryPokemonSeen = 0;
       data.gameStats.subLegendaryPokemonCaught = 0;
       data.gameStats.subLegendaryPokemonHatched = 0;
-      allSpecies
+      speciesDataRegistry
+        .getAllSpecies()
         .filter(s => s.subLegendary)
         .forEach(s => {
           const dexEntry = data.dexData[s.speciesId];
