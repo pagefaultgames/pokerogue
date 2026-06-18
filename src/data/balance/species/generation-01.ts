@@ -11149,9 +11149,9 @@ export function initGenerationOne(): SpeciesDataMapConfig {
     evolutions: [
       new SpeciesEvolution({
         speciesId: SpeciesId.TANGROWTH,
-        level: 34,
+        level: 33,
         condition: { key: EvoCondKey.MOVE, move: MoveId.ANCIENT_POWER },
-        evoDelay: [29, 37, 45],
+        evoDelay: [33, 39, 45],
       }),
     ],
     eggTier: EggTier.COMMON,
