@@ -466,7 +466,7 @@ export async function trainerThrowPokeball(
   audioManager.playSound("se/pb_throw");
 
   // Trainer throw frames
-  // TODO: There should be a better way of queueing these lol
+  // TODO: Find a better way of queueing these.
   globalScene.trainer.setFrame("2");
   waitTime(256).then(() => {
     globalScene.trainer.setFrame("3");
