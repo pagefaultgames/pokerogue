@@ -35,7 +35,7 @@ export class CustomPokemonData {
   public nature: Nature | -1;
   // TODO: Change default value from `PokemonType.UNKNOWN` to `null` for easier checking;
   public types: PokemonType[];
-  /** @deprecated Left in for save migration save migration, do not use */
+  /** @deprecated Left in for save migration, do not use */
   // TODO: Remove this once pre-session migration is implemented
   public hitsRecCount: number | null = null;
 
