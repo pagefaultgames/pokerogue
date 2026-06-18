@@ -2258,6 +2258,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.STOMPING_TANTRUM,
       MoveId.METEOR_BEAM,
       MoveId.TERA_BLAST,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationNineSpeciesData[SpeciesId.NACLSTACK] = {
@@ -3631,6 +3632,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.TEMPER_FLARE,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationNineSpeciesData[SpeciesId.CAPSAKID] = {
@@ -5396,6 +5398,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.DAZZLING_GLEAM,
       MoveId.METEOR_BEAM,
       MoveId.TERA_BLAST,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationNineSpeciesData[SpeciesId.GLIMMORA] = {
@@ -6219,6 +6222,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.CHILLING_WATER,
       MoveId.DRAGON_CHEER,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationNineSpeciesData[SpeciesId.ANNIHILAPE] = {
@@ -6790,6 +6794,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.POUNCE,
       MoveId.CHILLING_WATER,
       MoveId.ZAP_CANNON,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationNineSpeciesData[SpeciesId.KINGAMBIT] = {
@@ -9397,6 +9402,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.DRAGON_CHEER,
       MoveId.TEMPER_FLARE,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationNineSpeciesData[SpeciesId.MIRAIDON] = {
@@ -11095,6 +11101,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.TEMPER_FLARE,
       MoveId.HYPER_BEAM,
       MoveId.DRAGON_TAIL,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationNineSpeciesData[SpeciesId.RAGING_BOLT] = {
@@ -11202,6 +11209,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.SUPERCELL_SLAM,
       MoveId.HYPER_BEAM,
       MoveId.ZAP_CANNON,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationNineSpeciesData[SpeciesId.IRON_BOULDER] = {
@@ -11608,6 +11616,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.SCORCHING_SANDS,
       MoveId.ICE_SPINNER,
       MoveId.SUPERCELL_SLAM,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationNineSpeciesData[SpeciesId.PECHARUNT] = {

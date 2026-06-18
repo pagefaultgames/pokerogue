@@ -100,6 +100,7 @@ export const tmPoolTiers: TmPoolTiers = {
   [MoveId.SUNNY_DAY]: ModifierTier.COMMON,
   [MoveId.CRUNCH]: ModifierTier.GREAT,
   [MoveId.PSYCH_UP]: ModifierTier.COMMON,
+  [MoveId.ANCIENT_POWER]: ModifierTier.COMMON,
   [MoveId.SHADOW_BALL]: ModifierTier.ULTRA,
   [MoveId.FUTURE_SIGHT]: ModifierTier.GREAT,
   [MoveId.ROCK_SMASH]: ModifierTier.COMMON,

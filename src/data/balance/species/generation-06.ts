@@ -5706,6 +5706,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.LIQUIDATION,
       MoveId.TERA_BLAST,
       MoveId.WATERFALL,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationSixSpeciesData[SpeciesId.BARBARACLE] = {
@@ -6389,6 +6390,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.METEOR_BEAM,
       MoveId.LASH_OUT,
       MoveId.TERA_BLAST,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationSixSpeciesData[SpeciesId.TYRANTRUM] = {
@@ -6574,6 +6576,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.METEOR_BEAM,
       MoveId.TERA_BLAST,
       MoveId.SNOWSCAPE,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationSixSpeciesData[SpeciesId.AURORUS] = {
@@ -7123,6 +7126,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.MISTY_EXPLOSION,
       MoveId.TERRAIN_PULSE,
       MoveId.TERA_BLAST,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationSixSpeciesData[SpeciesId.GOOMY] = {
@@ -9199,6 +9203,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.SNOWSCAPE,
       MoveId.SILVER_WIND,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationSixSpeciesData[SpeciesId.HOOPA] = {

@@ -4431,6 +4431,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.CHILLING_WATER,
       MoveId.OMINOUS_WIND,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationSevenSpeciesData[SpeciesId.PALOSSAND] = {
@@ -5874,6 +5875,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.METEOR_BEAM,
       MoveId.SCORCHING_SANDS,
       MoveId.TERA_BLAST,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationSevenSpeciesData[SpeciesId.KOMALA] = {
@@ -10767,6 +10769,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.STEEL_BEAM,
       MoveId.SCORCHING_SANDS,
       MoveId.TERA_BLAST,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationSevenSpeciesData[SpeciesId.ALOLA_DUGTRIO] = {
@@ -11592,6 +11595,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.PSYCHIC_NOISE,
       MoveId.TAKE_DOWN,
       MoveId.PSYBEAM,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationSevenSpeciesData[SpeciesId.ALOLA_MAROWAK] = {
@@ -11738,6 +11742,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.SCORCHING_SANDS,
       MoveId.TERA_BLAST,
       MoveId.DOUBLE_EDGE,
+      MoveId.ANCIENT_POWER,
     ],
   };
   //#endregion Regional Variants

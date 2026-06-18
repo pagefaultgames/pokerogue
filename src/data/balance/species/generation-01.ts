@@ -123,6 +123,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.GRASSY_GLIDE,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.IVYSAUR] = {
@@ -450,6 +451,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TEMPER_FLARE,
       MoveId.DYNAMIC_PUNCH,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.CHARMELEON] = {
@@ -4947,6 +4949,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.STOMPING_TANTRUM,
       MoveId.SCORCHING_SANDS,
       MoveId.TERA_BLAST,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.DUGTRIO] = {
@@ -7175,6 +7178,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.STOMPING_TANTRUM,
       MoveId.TERA_BLAST,
       MoveId.DYNAMIC_PUNCH,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.GRAVELER] = {
@@ -7728,6 +7732,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.RAZOR_SHELL,
       MoveId.BODY_PRESS,
       MoveId.PSYCHIC_NOISE,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.MAGNEMITE] = {
@@ -9179,6 +9184,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.METEOR_BEAM,
       MoveId.SCORCHING_SANDS,
       MoveId.TERA_BLAST,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.DROWZEE] = {
@@ -9479,6 +9485,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.CONFIDE,
       MoveId.LIQUIDATION,
       MoveId.TERA_BLAST,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.KINGLER] = {
@@ -9880,6 +9887,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.PSYCHIC_NOISE,
       MoveId.DOUBLE_EDGE,
       MoveId.ZEN_HEADBUTT,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.EXEGGUTOR] = {
@@ -10087,6 +10095,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.SCORCHING_SANDS,
       MoveId.TERA_BLAST,
       MoveId.DYNAMIC_PUNCH,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.MAROWAK] = {
@@ -10859,6 +10868,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.SUPERCELL_SLAM,
       MoveId.ZAP_CANNON,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.RHYDON] = {
@@ -11218,6 +11228,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.INFESTATION,
       MoveId.GRASSY_GLIDE,
       MoveId.TERA_BLAST,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.KANGASKHAN] = {
@@ -11958,6 +11969,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.CHILLING_WATER, //ZA
       MoveId.LIQUIDATION, //ZA
       MoveId.ZEN_HEADBUTT, //ZA
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.MR_MIME] = {
@@ -13358,6 +13370,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.PSYCHIC_NOISE,
       MoveId.DISARMING_VOICE,
       MoveId.ZAP_CANNON,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.DITTO] = {
@@ -14235,6 +14248,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.CONFIDE,
       MoveId.METEOR_BEAM,
       MoveId.TERA_BLAST,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.OMASTAR] = {
@@ -14403,6 +14417,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.LIQUIDATION,
       MoveId.METEOR_BEAM,
       MoveId.TERA_BLAST,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.KABUTOPS] = {
@@ -14657,6 +14672,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
       MoveId.OMINOUS_WIND,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.SNORLAX] = {
@@ -14998,6 +15014,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.ICE_SPINNER,
       MoveId.SNOWSCAPE,
       MoveId.OMINOUS_WIND,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.ZAPDOS] = {
@@ -15119,6 +15136,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.SUPERCELL_SLAM,
       MoveId.ZAP_CANNON,
       MoveId.OMINOUS_WIND,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.MOLTRES] = {
@@ -15235,6 +15253,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TEMPER_FLARE,
       MoveId.OMINOUS_WIND,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.DRATINI] = {
@@ -15776,6 +15795,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.PSYCHIC_NOISE,
       MoveId.DYNAMIC_PUNCH,
       MoveId.ZAP_CANNON,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.MEW] = {
@@ -16144,6 +16164,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.ZAP_CANNON,
       MoveId.SILVER_WIND,
       MoveId.OMINOUS_WIND,
+      MoveId.ANCIENT_POWER,
     ],
   };
   return generationOneSpeciesData;

@@ -5970,6 +5970,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.EXPANDING_FORCE,
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationFiveSpeciesData[SpeciesId.YAMASK] = {
@@ -6253,6 +6254,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.METEOR_BEAM,
       MoveId.TERA_BLAST,
       MoveId.CURSE,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationFiveSpeciesData[SpeciesId.CARRACOSTA] = {
@@ -6429,6 +6431,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.LASH_OUT,
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationFiveSpeciesData[SpeciesId.ARCHEOPS] = {
@@ -6717,6 +6720,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.SMACK_DOWN,
       MoveId.STOMPING_TANTRUM,
       MoveId.BODY_PRESS,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationFiveSpeciesData[SpeciesId.ZORUA] = {
@@ -10636,6 +10640,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.ICE_SPINNER,
       MoveId.SNOWSCAPE,
       MoveId.CHILLING_WATER,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationFiveSpeciesData[SpeciesId.SHELMET] = {
@@ -13571,6 +13576,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.DRAGON_CHEER,
       MoveId.TAKE_DOWN,
       MoveId.SCARY_FACE,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationFiveSpeciesData[SpeciesId.ZEKROM] = {
@@ -13709,6 +13715,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.TAKE_DOWN,
       MoveId.SCARY_FACE,
       MoveId.ELECTRIC_TERRAIN,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationFiveSpeciesData[SpeciesId.LANDORUS] = {
@@ -14120,6 +14127,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.SNOWSCAPE,
       MoveId.DRAGON_CHEER,
       MoveId.TAKE_DOWN,
+      MoveId.ANCIENT_POWER,
     ],
   };
   generationFiveSpeciesData[SpeciesId.KELDEO] = {
@@ -14791,6 +14799,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.STEEL_BEAM,
       MoveId.TERA_BLAST,
       MoveId.ZAP_CANNON,
+      MoveId.ANCIENT_POWER,
     ],
   };
   return generationFiveSpeciesData;
