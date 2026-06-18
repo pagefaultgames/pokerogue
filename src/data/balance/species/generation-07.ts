@@ -132,6 +132,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
+      MoveId.OMINOUS_WIND,
     ],
   };
   generationSevenSpeciesData[SpeciesId.DARTRIX] = {
@@ -4429,6 +4430,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.SCORCHING_SANDS,
       MoveId.TERA_BLAST,
       MoveId.CHILLING_WATER,
+      MoveId.OMINOUS_WIND,
     ],
   };
   generationSevenSpeciesData[SpeciesId.PALOSSAND] = {
@@ -9228,6 +9230,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.POLTERGEIST,
       MoveId.COACHING,
       MoveId.TERA_BLAST,
+      MoveId.OMINOUS_WIND,
     ],
   };
   generationSevenSpeciesData[SpeciesId.POIPOLE] = {

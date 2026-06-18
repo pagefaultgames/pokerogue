@@ -847,6 +847,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.CONFIDE,
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
+      MoveId.OMINOUS_WIND,
     ],
   };
   generationFourSpeciesData[SpeciesId.STARAVIA] = {
@@ -2472,6 +2473,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.INFESTATION,
       MoveId.LUNGE,
       MoveId.SILVER_WIND,
+      MoveId.OMINOUS_WIND,
     ],
   };
   generationFourSpeciesData[SpeciesId.COMBEE] = {
@@ -2532,6 +2534,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.SKITTER_SMACK,
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
+      MoveId.OMINOUS_WIND,
     ],
   };
   generationFourSpeciesData[SpeciesId.VESPIQUEN] = {
@@ -3685,6 +3688,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TEMPER_FLARE,
       MoveId.SILVER_WIND,
+      MoveId.OMINOUS_WIND,
     ],
   };
   generationFourSpeciesData[SpeciesId.DRIFBLIM] = {
@@ -4129,6 +4133,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.SNOWSCAPE,
       MoveId.PSYCHIC_NOISE,
       MoveId.ZAP_CANNON,
+      MoveId.OMINOUS_WIND,
     ],
   };
   generationFourSpeciesData[SpeciesId.HONCHKROW] = {
@@ -4532,6 +4537,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.PSYCHIC_NOISE,
       MoveId.SELF_DESTRUCT, //ZA
+      MoveId.OMINOUS_WIND,
     ],
   };
   generationFourSpeciesData[SpeciesId.STUNKY] = {
@@ -5358,6 +5364,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.WORK_UP,
       MoveId.CONFIDE,
       MoveId.TERA_BLAST,
+      MoveId.OMINOUS_WIND,
     ],
   };
   generationFourSpeciesData[SpeciesId.SPIRITOMB] = {
@@ -5477,6 +5484,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.POLTERGEIST,
       MoveId.TERA_BLAST,
       MoveId.SILVER_WIND,
+      MoveId.OMINOUS_WIND,
     ],
   };
   generationFourSpeciesData[SpeciesId.GIBLE] = {
@@ -6916,6 +6924,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.CHILLING_WATER,
       MoveId.ALLURING_VOICE,
       MoveId.SILVER_WIND,
+      MoveId.OMINOUS_WIND,
     ],
   };
   generationFourSpeciesData[SpeciesId.LUMINEON] = {
@@ -8396,6 +8405,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.DOUBLE_EDGE,
       MoveId.SILVER_WIND,
+      MoveId.OMINOUS_WIND,
     ],
   };
   generationFourSpeciesData[SpeciesId.YANMEGA] = {
@@ -8506,6 +8516,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.POUNCE,
       MoveId.PSYCHIC_NOISE,
       MoveId.SILVER_WIND,
+      MoveId.OMINOUS_WIND,
     ],
   };
   generationFourSpeciesData[SpeciesId.LEAFEON] = {
@@ -9145,6 +9156,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.CHARGE,
       MoveId.TAKE_DOWN,
       MoveId.ZAP_CANNON,
+      MoveId.OMINOUS_WIND,
     ],
   };
   generationFourSpeciesData[SpeciesId.GALLADE] = {
@@ -9657,6 +9669,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.HARD_PRESS,
       MoveId.DYNAMIC_PUNCH,
+      MoveId.OMINOUS_WIND,
     ],
   };
   generationFourSpeciesData[SpeciesId.FROSLASS] = {
@@ -9792,6 +9805,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.TRAILBLAZE,
       MoveId.CHILLING_WATER,
       MoveId.NASTY_PLOT, //ZA
+      MoveId.OMINOUS_WIND,
     ],
   };
   generationFourSpeciesData[SpeciesId.ROTOM] = {
@@ -10059,6 +10073,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.RISING_VOLTAGE,
       MoveId.POLTERGEIST,
       MoveId.TERA_BLAST,
+      MoveId.OMINOUS_WIND,
     ],
     formTms: {
       heat: [MoveId.OVERHEAT],
@@ -11338,6 +11353,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
       MoveId.SILVER_WIND,
+      MoveId.OMINOUS_WIND,
     ],
   };
   generationFourSpeciesData[SpeciesId.CRESSELIA] = {
@@ -11803,6 +11819,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.SCARY_FACE,
       MoveId.HEX,
+      MoveId.OMINOUS_WIND,
     ],
   };
   generationFourSpeciesData[SpeciesId.SHAYMIN] = {
@@ -11976,6 +11993,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.BATON_PASS,
       MoveId.DISARMING_VOICE,
       MoveId.GRASSY_TERRAIN,
+      MoveId.OMINOUS_WIND,
     ],
   };
   generationFourSpeciesData[SpeciesId.ARCEUS] = {
@@ -12742,6 +12760,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       MoveId.CHILLING_WATER,
       MoveId.SUPERCELL_SLAM,
       MoveId.SILVER_WIND,
+      MoveId.OMINOUS_WIND,
     ],
   };
   return generationFourSpeciesData;

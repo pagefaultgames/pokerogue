@@ -2072,6 +2072,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.CHARM,
       MoveId.SILVER_WIND,
+      MoveId.OMINOUS_WIND,
     ],
   };
   generationFiveSpeciesData[SpeciesId.MUSHARNA] = {
@@ -6075,6 +6076,8 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.POLTERGEIST,
       MoveId.TERA_BLAST,
       MoveId.SELF_DESTRUCT,
+      MoveId.OMINOUS_WIND,
+      MoveId.OMINOUS_WIND,
     ],
   };
   generationFiveSpeciesData[SpeciesId.COFAGRIGUS] = {
@@ -8790,6 +8793,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.DAZZLING_GLEAM,
       MoveId.POLTERGEIST,
       MoveId.TERA_BLAST,
+      MoveId.OMINOUS_WIND,
     ],
   };
   generationFiveSpeciesData[SpeciesId.JELLICENT] = {
@@ -10042,7 +10046,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [58, MoveId.OVERHEAT],
       [64, MoveId.MEMENTO],
     ],
-    tms: [...generationFiveSpeciesData[SpeciesId.LITWICK].tms, MoveId.LASH_OUT],
+    tms: [...generationFiveSpeciesData[SpeciesId.LITWICK].tms, MoveId.LASH_OUT, MoveId.OMINOUS_WIND],
   };
   generationFiveSpeciesData[SpeciesId.CHANDELURE] = {
     species: new PokemonSpecies({
@@ -11823,6 +11827,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.CONFIDE,
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
+      MoveId.OMINOUS_WIND,
     ],
   };
   generationFiveSpeciesData[SpeciesId.BRAVIARY] = {

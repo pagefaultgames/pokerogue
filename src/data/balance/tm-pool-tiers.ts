@@ -220,6 +220,7 @@ export const tmPoolTiers: TmPoolTiers = {
   [MoveId.GRASS_KNOT]: ModifierTier.GREAT,
   [MoveId.BUG_BITE]: ModifierTier.GREAT,
   [MoveId.CHARGE_BEAM]: ModifierTier.GREAT,
+  [MoveId.OMINOUS_WIND]: ModifierTier.COMMON,
   [MoveId.HONE_CLAWS]: ModifierTier.COMMON,
   [MoveId.WONDER_ROOM]: ModifierTier.COMMON,
   [MoveId.PSYSHOCK]: ModifierTier.GREAT,

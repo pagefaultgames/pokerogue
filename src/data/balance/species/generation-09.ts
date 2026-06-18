@@ -2466,6 +2466,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.FLAME_CHARGE,
       MoveId.INCINERATE,
       MoveId.TERA_BLAST,
+      MoveId.OMINOUS_WIND,
     ],
   };
   generationNineSpeciesData[SpeciesId.ARMAROUGE] = {
@@ -5560,6 +5561,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.SWAGGER,
       MoveId.ZEN_HEADBUTT,
+      MoveId.OMINOUS_WIND,
     ],
   };
   generationNineSpeciesData[SpeciesId.HOUNDSTONE] = {
@@ -8598,6 +8600,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.STEEL_BEAM,
       MoveId.POLTERGEIST,
       MoveId.SURF,
+      MoveId.OMINOUS_WIND,
     ],
   };
   generationNineSpeciesData[SpeciesId.WO_CHIEN] = {
