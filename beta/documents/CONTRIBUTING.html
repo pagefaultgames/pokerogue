@@ -48,12 +48,23 @@ Due to quirks of devcontainer port forwarding, <strong>you must use <code>pnpm s
 </ul>
 <h4 id="running-locally" class="tsd-anchor-link">Running Locally<a href="#running-locally" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4>
 <ol>
-<li>Run <code>pnpm install</code> from the repository root
+<li>If you haven't already, clone the repository: <code>git clone -v --depth 1 --recurse-submodules --shallow-submodules &quot;https://github.com/pagefaultgames/pokerogue.git&quot; .</code>
 <ul>
-<li><em>if you run into any errors, reach out in the <strong>#pokerogue-dev</strong> channel on Discord</em></li>
+<li><code>--depth 1</code> is recommended if you don't need the full history (you probably don't), since it'll save on bandwidth and disk space by not copying the entire repo history.</li>
+<li>If you need branches other than <code>beta</code> (which you probably don't, that's the primary branch that all development is based on), <br>
+add <code>--no-single-branch</code>.</li>
 </ul>
 </li>
-<li>Run <code>pnpm start:dev</code> to locally run the project at <code>localhost:8000</code></li>
+<li>Run <code>pnpm install</code> from the repository root
+<ul>
+<li><em>If you run into any errors, reach out in the <strong>#pokerogue-dev</strong> channel on Discord</em></li>
+</ul>
+</li>
+<li>Run <code>pnpm start:dev</code> to start the game, it'll be accessible in your browser at <code>localhost:8000</code>
+<ul>
+<li>If you encounter errors related to missing files in <code>locales/</code> or <code>assets/</code>, you'll need to run <code>pnpm update-submodules</code> first.</li>
+</ul>
+</li>
 </ol>
 <h2 id="🚀-getting-started" class="tsd-anchor-link">🚀 Getting Started<a href="#🚀-getting-started" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2>
 <p>A great way to develop an understanding of how the project works is to look at test cases (located in <a href="../media/test">the <code>test</code> folder</a>).
