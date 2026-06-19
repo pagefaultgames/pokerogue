@@ -3284,7 +3284,7 @@ export class ConditionalUserFieldStatusEffectImmunityAbAttr extends UserFieldSta
 export interface ConditionalUserFieldProtectStatAbAttrParams extends AbAttrBaseParams {
   /** The stats being affected by the stat stage change */
   changes: readonly StatChange[];
-  /** All cancelled sWat changes; a subset of {@linkcode stats}. Any stat change which the ability cancels should be added to this array */
+  /** All cancelled stat changes; a subset of {@linkcode stats}. Any stat change which the ability cancels should be added to this set */
   cancelledStats: Set<BattleStat>;
   // TODO: consider making this required and not inherit from PreStatStageChangeAbAttr
   /** The target of the stat stage change */
