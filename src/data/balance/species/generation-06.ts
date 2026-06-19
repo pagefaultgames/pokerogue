@@ -5510,7 +5510,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
     evolutions: [
       new SpeciesEvolution({
         speciesId: SpeciesId.MALAMAR,
-        level: 30,
+        level: 30, //30 > 29 because it looks nicer in the dex, it cannot evolve earlier than this anyways
         condition: { key: EvoCondKey.MOVE, move: MoveId.TOPSY_TURVY },
       }),
     ],
