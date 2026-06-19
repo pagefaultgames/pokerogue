@@ -5004,7 +5004,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
     evolutions: [
       new SpeciesEvolution({
         speciesId: SpeciesId.SUDOWOODO,
-        level: 1,
+        level: 16,
         condition: { key: EvoCondKey.MOVE, move: MoveId.MIMIC },
         evoDelay: [19, 24, 24],
       }),
@@ -5117,7 +5117,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
     evolutions: [
       new SpeciesEvolution({
         speciesId: SpeciesId.GALAR_MR_MIME,
-        level: 1,
+        level: 18,
         condition: [
           { key: EvoCondKey.MOVE, move: MoveId.MIMIC },
           { key: EvoCondKey.TIME, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT] },
@@ -5126,7 +5126,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       }),
       new SpeciesEvolution({
         speciesId: SpeciesId.MR_MIME,
-        level: 1,
+        level: 18,
         condition: [
           { key: EvoCondKey.MOVE, move: MoveId.MIMIC },
           { key: EvoCondKey.TIME, time: [TimeOfDay.DAWN, TimeOfDay.DAY] },

@@ -6795,6 +6795,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       1: AbilityId.NEUTRALIZING_GAS,
     },
     levelMoves: [
+      [RELEARN_MOVE, MoveId.HARD_PRESS],
       [1, MoveId.POUND],
       [1, MoveId.POISON_GAS],
       [1, MoveId.METAL_CLAW],

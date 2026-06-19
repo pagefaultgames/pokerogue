@@ -1835,7 +1835,7 @@ export class BerryModifier extends PokemonHeldItemModifier {
     this.consumed = !preserve.value;
 
     // munch the berry and trigger unburden-like effects
-    getBerryEffectFunc(this.berryType)(pokemon);
+    getBerryEffectFunc(this.berryType, true)(pokemon);
     applyAbAttrs("PostItemLostAbAttr", { pokemon });
 
     // Update berry eaten trackers for Belch, Harvest, Cud Chew, etc.

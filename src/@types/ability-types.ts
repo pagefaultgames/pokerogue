@@ -1,8 +1,8 @@
 import type { AbAttrConstructorMap } from "#abilities/ab-attrs";
 import type { applyAbAttrs } from "#abilities/apply-ab-attrs";
-import type { BattleStat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
 import type { Move } from "#moves/move";
+import type { StatChange } from "./stat-change";
 
 // intentionally re-export all types from ab-attrs to have this be the centralized place to import ability types
 export type * from "#abilities/ab-attrs";
@@ -10,11 +10,7 @@ export type * from "#abilities/ab-attrs";
 export type AbAttrCondition = (pokemon: Pokemon) => boolean;
 export type PokemonAttackCondition = (user: Pokemon, target: Pokemon | null, move: Move) => boolean;
 export type PokemonDefendCondition = (target: Pokemon, user: Pokemon, move: Move) => boolean;
-export type PokemonStatStageChangeCondition = (
-  target: Pokemon,
-  statsChanged: readonly BattleStat[],
-  stages: number,
-) => boolean;
+export type PokemonStatStageChangeFunc = (target: Pokemon, changes: readonly StatChange[]) => StatChange;
 
 /**
  * Union type of all ability attribute class names as strings

@@ -4054,7 +4054,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
         speciesId: SpeciesId.GRAPPLOCT,
         level: 35,
         condition: { key: EvoCondKey.MOVE, move: MoveId.TAUNT },
-      }), // todo: Once Taunt is implemented, change evo level to 1 and delay to LONG
+      }),
     ],
     eggTier: EggTier.COMMON,
     passives: AbilityId.WATER_BUBBLE,
@@ -13554,7 +13554,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
     evolutions: [
       new SpeciesEvolution({
         speciesId: SpeciesId.OVERQWIL,
-        level: 28,
+        level: 32,
         condition: { key: EvoCondKey.MOVE, move: MoveId.BARB_BARRAGE },
         evoDelay: [38, 48, 58],
       }),
