@@ -70,6 +70,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
     tms: [
       MoveId.SWORDS_DANCE,
       MoveId.BODY_SLAM,
+      MoveId.TAKE_DOWN,
       MoveId.DOUBLE_EDGE,
       MoveId.COUNTER,
       MoveId.SOLAR_BEAM,
@@ -86,6 +87,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.MUD_SLAP,
       MoveId.GIGA_DRAIN,
       MoveId.ENDURE,
+      MoveId.CHARM,
       MoveId.SWAGGER,
       MoveId.ATTRACT,
       MoveId.SLEEP_TALK,
@@ -96,15 +98,18 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.SYNTHESIS,
       MoveId.HIDDEN_POWER,
       MoveId.SUNNY_DAY,
+      MoveId.ANCIENT_POWER,
       MoveId.FACADE,
       MoveId.NATURE_POWER,
       MoveId.HELPING_HAND,
       MoveId.SECRET_POWER,
+      MoveId.FAKE_TEARS,
       MoveId.BULLET_SEED,
       MoveId.MAGICAL_LEAF,
       MoveId.WORRY_SEED,
       MoveId.SEED_BOMB,
       MoveId.ENERGY_BALL,
+      MoveId.EARTH_POWER,
       MoveId.LEAF_STORM,
       MoveId.GRASS_KNOT,
       MoveId.ROUND,
@@ -113,16 +118,11 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.WORK_UP,
       MoveId.GRASSY_TERRAIN,
       MoveId.CONFIDE,
+      MoveId.DAZZLING_GLEAM,
       MoveId.SOLAR_BLADE,
       MoveId.GRASSY_GLIDE,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
-      MoveId.TAKE_DOWN,
-      MoveId.CHARM,
-      MoveId.FAKE_TEARS,
-      MoveId.DAZZLING_GLEAM, //ZA
-      MoveId.EARTH_POWER, //ZA
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationTwoSpeciesData[SpeciesId.BAYLEEF] = {
@@ -175,7 +175,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       [54, MoveId.SOLAR_BEAM],
     ],
     tms: [
-      ...generationTwoSpeciesData[SpeciesId.CHIKORITA].tms, // - Grassy Terrain
+      ...generationTwoSpeciesData[SpeciesId.CHIKORITA].tms,
       MoveId.STRENGTH,
       MoveId.ROCK_SMASH,
       MoveId.KNOCK_OFF,
@@ -566,6 +566,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.SWORDS_DANCE,
       MoveId.MEGA_KICK,
       MoveId.BODY_SLAM,
+      MoveId.TAKE_DOWN,
       MoveId.DOUBLE_EDGE,
       MoveId.HYDRO_PUMP,
       MoveId.SURF,
@@ -599,6 +600,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.HIDDEN_POWER,
       MoveId.RAIN_DANCE,
       MoveId.CRUNCH,
+      MoveId.ANCIENT_POWER,
       MoveId.WHIRLPOOL,
       MoveId.UPROAR,
       MoveId.HAIL,
@@ -633,9 +635,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.CHILLING_WATER,
-      MoveId.TAKE_DOWN,
-
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationTwoSpeciesData[SpeciesId.CROCONAW] = {
@@ -690,7 +689,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       [59, MoveId.OUTRAGE],
     ],
     tms: [
-      ...generationTwoSpeciesData[SpeciesId.TOTODILE].tms, // - metal claw, fake tears
+      ...generationTwoSpeciesData[SpeciesId.TOTODILE].tms,
       MoveId.ROAR,
       MoveId.STRENGTH,
       MoveId.ROCK_SMASH,
@@ -1056,6 +1055,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.FEATHER_DANCE,
       MoveId.HYPER_VOICE,
       MoveId.AIR_CUTTER,
+      MoveId.SILVER_WIND,
       MoveId.AERIAL_ACE,
       MoveId.CALM_MIND,
       MoveId.ROOST,
@@ -1066,6 +1066,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.NASTY_PLOT,
       MoveId.ZEN_HEADBUTT,
       MoveId.DEFOG,
+      MoveId.OMINOUS_WIND,
       MoveId.ROUND,
       MoveId.ECHOED_VOICE,
       MoveId.STORED_POWER,
@@ -1075,8 +1076,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.CONFIDE,
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
-      MoveId.SILVER_WIND,
-      MoveId.OMINOUS_WIND,
     ],
   };
   generationTwoSpeciesData[SpeciesId.NOCTOWL] = {
@@ -1232,6 +1231,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.KNOCK_OFF,
       MoveId.SECRET_POWER,
       MoveId.AIR_CUTTER,
+      MoveId.SILVER_WIND,
       MoveId.AERIAL_ACE,
       MoveId.ROOST,
       MoveId.TAILWIND,
@@ -1241,6 +1241,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.BUG_BUZZ,
       MoveId.DRAIN_PUNCH,
       MoveId.BUG_BITE,
+      MoveId.OMINOUS_WIND,
       MoveId.ROUND,
       MoveId.ACROBATICS,
       MoveId.STRUGGLE_BUG,
@@ -1248,9 +1249,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.INFESTATION,
       MoveId.POWER_UP_PUNCH,
       MoveId.TERA_BLAST,
-
-      MoveId.SILVER_WIND,
-      MoveId.OMINOUS_WIND,
     ],
   };
   generationTwoSpeciesData[SpeciesId.LEDIAN] = {
@@ -1301,7 +1299,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       [47, MoveId.DOUBLE_EDGE],
     ],
     tms: [
-      ...generationTwoSpeciesData[SpeciesId.LEDYBA].tms, // - psybeam, screech
+      ...generationTwoSpeciesData[SpeciesId.LEDYBA].tms,
       MoveId.HYPER_BEAM,
       MoveId.STRENGTH,
       MoveId.ROCK_SMASH,
@@ -1485,15 +1483,15 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       [59, MoveId.TOXIC_THREAD],
     ],
     tms: [
-      ...generationTwoSpeciesData[SpeciesId.SPINARAK].tms, // - psybeam
+      ...generationTwoSpeciesData[SpeciesId.SPINARAK].tms,
       MoveId.SWORDS_DANCE,
       MoveId.HYPER_BEAM,
       MoveId.FOCUS_ENERGY,
       MoveId.GIGA_IMPACT,
+      MoveId.VENOM_DRENCH,
       MoveId.THROAT_CHOP,
       MoveId.SMART_STRIKE,
       MoveId.STOMPING_TANTRUM,
-      MoveId.VENOM_DRENCH,
     ],
   };
   generationTwoSpeciesData[SpeciesId.CROBAT] = {
@@ -1605,6 +1603,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.ZEN_HEADBUTT,
       MoveId.DEFOG,
       MoveId.CROSS_POISON,
+      MoveId.OMINOUS_WIND,
       MoveId.VENOSHOCK,
       MoveId.ROUND,
       MoveId.HEX,
@@ -1614,7 +1613,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.VENOM_DRENCH,
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
-      MoveId.OMINOUS_WIND,
     ],
   };
   generationTwoSpeciesData[SpeciesId.CHINCHOU] = {
@@ -1690,6 +1688,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.SNORE,
       MoveId.CURSE,
       MoveId.PROTECT,
+      MoveId.ZAP_CANNON,
       MoveId.ICY_WIND,
       MoveId.ENDURE,
       MoveId.SWAGGER,
@@ -1716,18 +1715,17 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.ROUND,
       MoveId.SCALD,
       MoveId.VOLT_SWITCH,
+      MoveId.ELECTROWEB,
       MoveId.WILD_CHARGE,
       MoveId.CONFIDE,
+      MoveId.EERIE_IMPULSE,
+      MoveId.ELECTRIC_TERRAIN,
       MoveId.DAZZLING_GLEAM,
       MoveId.LIQUIDATION,
       MoveId.RISING_VOLTAGE,
       MoveId.FLIP_TURN,
       MoveId.TERA_BLAST,
       MoveId.CHILLING_WATER,
-      MoveId.ELECTROWEB,
-      MoveId.EERIE_IMPULSE,
-      MoveId.ELECTRIC_TERRAIN,
-      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.LANTURN] = {
@@ -1782,12 +1780,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       [51, MoveId.HYDRO_PUMP],
       [54, MoveId.ION_DELUGE],
     ],
-    tms: [
-      ...generationTwoSpeciesData[SpeciesId.CHINCHOU].tms, // - psybeam
-      MoveId.HYPER_BEAM,
-      MoveId.AQUA_TAIL,
-      MoveId.GIGA_IMPACT,
-    ],
+    tms: [...generationTwoSpeciesData[SpeciesId.CHINCHOU].tms, MoveId.HYPER_BEAM, MoveId.AQUA_TAIL, MoveId.GIGA_IMPACT],
   };
   generationTwoSpeciesData[SpeciesId.PICHU] = {
     species: new PokemonSpecies({
@@ -1910,6 +1903,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TAKE_DOWN,
       MoveId.DOUBLE_EDGE,
       MoveId.SURF,
+      MoveId.COUNTER,
       MoveId.THUNDERBOLT,
       MoveId.THUNDER_WAVE,
       MoveId.THUNDER,
@@ -1926,6 +1920,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.REVERSAL,
       MoveId.PROTECT,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.ENDURE,
       MoveId.CHARM,
       MoveId.SWAGGER,
@@ -1960,8 +1955,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.ELECTRIC_TERRAIN,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
-      MoveId.COUNTER,
-      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.CLEFFA] = {
@@ -2021,6 +2014,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.DOUBLE_EDGE,
       MoveId.FLAMETHROWER,
       MoveId.PSYBEAM,
+      MoveId.COUNTER,
       MoveId.SOLAR_BEAM,
       MoveId.THUNDER_WAVE,
       MoveId.DIG,
@@ -2041,6 +2035,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.CURSE,
       MoveId.PROTECT,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.ICY_WIND,
       MoveId.ENDURE,
       MoveId.CHARM,
@@ -2091,8 +2086,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.CHILLING_WATER,
       MoveId.ALLURING_VOICE,
-      MoveId.COUNTER,
-      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.IGGLYBUFF] = {
@@ -2151,6 +2144,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TAKE_DOWN,
       MoveId.DOUBLE_EDGE,
       MoveId.FLAMETHROWER,
+      MoveId.COUNTER,
       MoveId.SOLAR_BEAM,
       MoveId.THUNDER_WAVE,
       MoveId.DIG,
@@ -2170,6 +2164,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.CURSE,
       MoveId.PROTECT,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.ICY_WIND,
       MoveId.ENDURE,
       MoveId.CHARM,
@@ -2215,8 +2210,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.ALLURING_VOICE,
-      MoveId.COUNTER,
-      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.TOGEPI] = {
@@ -2303,6 +2296,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.CURSE,
       MoveId.PROTECT,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.ENDURE,
       MoveId.CHARM,
       MoveId.SWAGGER,
@@ -2317,6 +2311,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.RAIN_DANCE,
       MoveId.SUNNY_DAY,
       MoveId.PSYCH_UP,
+      MoveId.ANCIENT_POWER,
       MoveId.SHADOW_BALL,
       MoveId.FUTURE_SIGHT,
       MoveId.ROCK_SMASH,
@@ -2348,8 +2343,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.MYSTICAL_FIRE,
       MoveId.DAZZLING_GLEAM,
       MoveId.TERA_BLAST,
-      MoveId.ZAP_CANNON,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationTwoSpeciesData[SpeciesId.TOGETIC] = {
@@ -2420,17 +2413,17 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.BRICK_BREAK,
       MoveId.IMPRISON,
       MoveId.AIR_CUTTER,
+      MoveId.SILVER_WIND,
       MoveId.MAGICAL_LEAF,
       MoveId.ROOST,
       MoveId.TAILWIND,
       MoveId.DRAIN_PUNCH,
       MoveId.GIGA_IMPACT,
       MoveId.DEFOG,
+      MoveId.OMINOUS_WIND,
       MoveId.RETALIATE,
       MoveId.SMART_STRIKE,
       MoveId.DUAL_WINGBEAT,
-      MoveId.SILVER_WIND,
-      MoveId.OMINOUS_WIND,
     ],
   };
   generationTwoSpeciesData[SpeciesId.NATU] = {
@@ -2526,6 +2519,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.SECRET_POWER,
       MoveId.FEATHER_DANCE,
       MoveId.AIR_CUTTER,
+      MoveId.SILVER_WIND,
       MoveId.COSMIC_POWER,
       MoveId.SIGNAL_BEAM,
       MoveId.AERIAL_ACE,
@@ -2540,6 +2534,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.ZEN_HEADBUTT,
       MoveId.TRICK_ROOM,
       MoveId.GRASS_KNOT,
+      MoveId.OMINOUS_WIND,
       MoveId.PSYSHOCK,
       MoveId.MAGIC_ROOM,
       MoveId.ROUND,
@@ -2550,8 +2545,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.EXPANDING_FORCE,
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
-      MoveId.SILVER_WIND,
-      MoveId.OMINOUS_WIND,
     ],
   };
   generationTwoSpeciesData[SpeciesId.XATU] = {
@@ -2685,6 +2678,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.SNORE,
       MoveId.CURSE,
       MoveId.PROTECT,
+      MoveId.ZAP_CANNON,
       MoveId.ENDURE,
       MoveId.SWAGGER,
       MoveId.ATTRACT,
@@ -2717,7 +2711,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.DAZZLING_GLEAM,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
-      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.FLAAFFY] = {
@@ -2769,7 +2762,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       [56, MoveId.THUNDER],
     ],
     tms: [
-      ...generationTwoSpeciesData[SpeciesId.MAREEP].tms, // - screech
+      ...generationTwoSpeciesData[SpeciesId.MAREEP].tms,
       MoveId.MEGA_PUNCH,
       MoveId.FIRE_PUNCH,
       MoveId.ICE_PUNCH,
@@ -3412,6 +3405,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.BLIZZARD,
       MoveId.HYPER_BEAM,
       MoveId.LOW_KICK,
+      MoveId.COUNTER,
       MoveId.STRENGTH,
       MoveId.EARTHQUAKE,
       MoveId.DIG,
@@ -3473,7 +3467,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.LIQUIDATION,
       MoveId.TERA_BLAST,
       MoveId.CHILLING_WATER,
-      MoveId.COUNTER,
     ],
   };
   generationTwoSpeciesData[SpeciesId.HOPPIP] = {
@@ -3564,6 +3557,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.FACADE,
       MoveId.HELPING_HAND,
       MoveId.SECRET_POWER,
+      MoveId.SILVER_WIND,
       MoveId.BULLET_SEED,
       MoveId.AERIAL_ACE,
       MoveId.BOUNCE,
@@ -3586,7 +3580,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.LUNGE,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
-      MoveId.SILVER_WIND,
     ],
   };
   generationTwoSpeciesData[SpeciesId.SKIPLOOM] = {
@@ -3640,10 +3633,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       [48, MoveId.WORRY_SEED],
       [52, MoveId.MEMENTO],
     ],
-    tms: [
-      ...generationTwoSpeciesData[SpeciesId.HOPPIP].tms, // - Amnesia, Rain dance
-      MoveId.ENDEAVOR,
-    ],
+    tms: [...generationTwoSpeciesData[SpeciesId.HOPPIP].tms, MoveId.ENDEAVOR],
   };
   generationTwoSpeciesData[SpeciesId.JUMPLUFF] = {
     species: new PokemonSpecies({
@@ -3762,6 +3752,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TAKE_DOWN,
       MoveId.DOUBLE_EDGE,
       MoveId.LOW_KICK,
+      MoveId.COUNTER,
       MoveId.STRENGTH,
       MoveId.SOLAR_BEAM,
       MoveId.THUNDERBOLT,
@@ -3783,6 +3774,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.SPITE,
       MoveId.PROTECT,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.ENDURE,
       MoveId.SWAGGER,
       MoveId.ATTRACT,
@@ -3831,14 +3823,11 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TAIL_SLAP,
       MoveId.CONFIDE,
       MoveId.POWER_UP_PUNCH,
+      MoveId.THROAT_CHOP,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.CHILLING_WATER,
       MoveId.UPPER_HAND,
-      MoveId.COUNTER,
-      MoveId.THROAT_CHOP,
-
-      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.SUNKERN] = {
@@ -4096,11 +4085,14 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.RETURN,
       MoveId.HIDDEN_POWER,
       MoveId.SUNNY_DAY,
+      MoveId.PSYCH_UP,
+      MoveId.ANCIENT_POWER,
       MoveId.SHADOW_BALL,
       MoveId.UPROAR,
       MoveId.FACADE,
       MoveId.SECRET_POWER,
       MoveId.AIR_CUTTER,
+      MoveId.SILVER_WIND,
       MoveId.SIGNAL_BEAM,
       MoveId.AERIAL_ACE,
       MoveId.ROOST,
@@ -4110,6 +4102,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.BUG_BUZZ,
       MoveId.DEFOG,
       MoveId.BUG_BITE,
+      MoveId.OMINOUS_WIND,
       MoveId.ROUND,
       MoveId.STRUGGLE_BUG,
       MoveId.CONFIDE,
@@ -4118,10 +4111,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.POUNCE,
       MoveId.PSYCHIC_NOISE,
-      MoveId.PSYCH_UP,
-      MoveId.SILVER_WIND,
-      MoveId.OMINOUS_WIND,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationTwoSpeciesData[SpeciesId.WOOPER] = {
@@ -4211,6 +4200,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.IRON_TAIL,
       MoveId.HIDDEN_POWER,
       MoveId.RAIN_DANCE,
+      MoveId.ANCIENT_POWER,
       MoveId.ROCK_SMASH,
       MoveId.WHIRLPOOL,
       MoveId.HAIL,
@@ -4243,8 +4233,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.SNOWSCAPE,
       MoveId.TRAILBLAZE,
       MoveId.CHILLING_WATER,
-
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationTwoSpeciesData[SpeciesId.QUAGSIRE] = {
@@ -4385,6 +4373,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.CURSE,
       MoveId.PROTECT,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.ENDURE,
       MoveId.CHARM,
       MoveId.SWAGGER,
@@ -4392,6 +4381,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.SLEEP_TALK,
       MoveId.HEAL_BELL,
       MoveId.RETURN,
+      MoveId.SAFEGUARD,
       MoveId.BATON_PASS,
       MoveId.IRON_TAIL,
       MoveId.HIDDEN_POWER,
@@ -4439,8 +4429,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TRAILBLAZE,
       MoveId.ALLURING_VOICE,
       MoveId.PSYCHIC_NOISE,
-      MoveId.SAFEGUARD, //ZA
-      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.UMBREON] = {
@@ -4523,6 +4511,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.PROTECT,
       MoveId.SCARY_FACE,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.ENDURE,
       MoveId.CHARM,
       MoveId.SWAGGER,
@@ -4555,6 +4544,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.GUARD_SWAP,
       MoveId.DARK_PULSE,
       MoveId.GIGA_IMPACT,
+      MoveId.OMINOUS_WIND,
       MoveId.WONDER_ROOM,
       MoveId.FOUL_PLAY,
       MoveId.ROUND,
@@ -4569,8 +4559,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.ALLURING_VOICE,
-      MoveId.ZAP_CANNON,
-      MoveId.OMINOUS_WIND,
     ],
   };
   generationTwoSpeciesData[SpeciesId.MURKROW] = {
@@ -4689,6 +4677,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.GIGA_IMPACT,
       MoveId.NASTY_PLOT,
       MoveId.DEFOG,
+      MoveId.OMINOUS_WIND,
       MoveId.FOUL_PLAY,
       MoveId.ROUND,
       MoveId.HEX,
@@ -4702,7 +4691,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
       MoveId.PSYCHIC_NOISE,
-      MoveId.OMINOUS_WIND,
     ],
   };
   generationTwoSpeciesData[SpeciesId.SLOWKING] = {
@@ -4778,6 +4766,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.BLIZZARD,
       MoveId.PSYBEAM,
       MoveId.HYPER_BEAM,
+      MoveId.COUNTER,
       MoveId.STRENGTH,
       MoveId.THUNDER_WAVE,
       MoveId.EARTHQUAKE,
@@ -4802,6 +4791,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.CURSE,
       MoveId.PROTECT,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.ICY_WIND,
       MoveId.ENDURE,
       MoveId.SWAGGER,
@@ -4814,6 +4804,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.RAIN_DANCE,
       MoveId.SUNNY_DAY,
       MoveId.PSYCH_UP,
+      MoveId.ANCIENT_POWER,
       MoveId.SHADOW_BALL,
       MoveId.FUTURE_SIGHT,
       MoveId.ROCK_SMASH,
@@ -4821,6 +4812,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.HAIL,
       MoveId.FACADE,
       MoveId.FOCUS_PUNCH,
+      MoveId.HELPING_HAND,
       MoveId.TRICK,
       MoveId.RECYCLE,
       MoveId.BRICK_BREAK,
@@ -4870,11 +4862,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.SNOWSCAPE,
       MoveId.CHILLING_WATER,
       MoveId.PSYCHIC_NOISE,
-      MoveId.COUNTER,
-      MoveId.HELPING_HAND,
-
-      MoveId.ZAP_CANNON,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationTwoSpeciesData[SpeciesId.MISDREAVUS] = {
@@ -4956,6 +4943,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.SPITE,
       MoveId.PROTECT,
       MoveId.SCARY_FACE,
+      MoveId.ZAP_CANNON,
       MoveId.ICY_WIND,
       MoveId.ENDURE,
       MoveId.CHARM,
@@ -4997,6 +4985,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TRICK_ROOM,
       MoveId.GRASS_KNOT,
       MoveId.CHARGE_BEAM,
+      MoveId.OMINOUS_WIND,
       MoveId.WONDER_ROOM,
       MoveId.PSYSHOCK,
       MoveId.MAGIC_ROOM,
@@ -5015,8 +5004,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.SNOWSCAPE,
       MoveId.PSYCHIC_NOISE,
-      MoveId.ZAP_CANNON,
-      MoveId.OMINOUS_WIND,
     ],
   };
   generationTwoSpeciesData[SpeciesId.UNOWN] = {
@@ -5882,6 +5869,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.CURSE,
       MoveId.PROTECT,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.ENDURE,
       MoveId.SWAGGER,
       MoveId.ATTRACT,
@@ -5941,7 +5929,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.PSYCHIC_NOISE,
-      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.PINECO] = {
@@ -6019,6 +6006,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.REVERSAL,
       MoveId.PROTECT,
       MoveId.SPIKES,
+      MoveId.ZAP_CANNON,
       MoveId.SANDSTORM,
       MoveId.GIGA_DRAIN,
       MoveId.ENDURE,
@@ -6058,7 +6046,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.ICE_SPINNER,
       MoveId.POUNCE,
-      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.FORRETRESS] = {
@@ -6245,6 +6232,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.PROTECT,
       MoveId.SCARY_FACE,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.SANDSTORM,
       MoveId.ENDURE,
       MoveId.SWAGGER,
@@ -6258,6 +6246,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.RAIN_DANCE,
       MoveId.SUNNY_DAY,
       MoveId.PSYCH_UP,
+      MoveId.ANCIENT_POWER,
       MoveId.SHADOW_BALL,
       MoveId.ROCK_SMASH,
       MoveId.UPROAR,
@@ -6304,8 +6293,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.ICE_SPINNER,
       MoveId.POUNCE,
       MoveId.CHILLING_WATER,
-      MoveId.ZAP_CANNON,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationTwoSpeciesData[SpeciesId.GLIGAR] = {
@@ -6455,10 +6442,10 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.PSYCHIC_FANGS,
       MoveId.BREAKING_SWIPE,
       MoveId.SCALE_SHOT,
+      MoveId.SCALE_SHOT,
       MoveId.SKITTER_SMACK,
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
-      MoveId.SCALE_SHOT,
     ],
   };
   generationTwoSpeciesData[SpeciesId.STEELIX] = {
@@ -6612,6 +6599,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.SUNNY_DAY,
       MoveId.CRUNCH,
       MoveId.PSYCH_UP,
+      MoveId.ANCIENT_POWER,
       MoveId.ROCK_SMASH,
       MoveId.TORMENT,
       MoveId.FACADE,
@@ -6657,7 +6645,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.METEOR_BEAM,
       MoveId.SCORCHING_SANDS,
       MoveId.TERA_BLAST,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationTwoSpeciesData[SpeciesId.SNUBBULL] = {
@@ -6744,10 +6731,12 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.SNORE,
       MoveId.CURSE,
       MoveId.REVERSAL,
+      MoveId.SPITE,
       MoveId.PROTECT,
       MoveId.SCARY_FACE,
       MoveId.SLUDGE_BOMB,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.ENDURE,
       MoveId.CHARM,
       MoveId.SWAGGER,
@@ -6762,6 +6751,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.CRUNCH,
       MoveId.SHADOW_BALL,
       MoveId.ROCK_SMASH,
+      MoveId.UPROAR,
       MoveId.TORMENT,
       MoveId.FACADE,
       MoveId.FOCUS_PUNCH,
@@ -6796,15 +6786,11 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.DAZZLING_GLEAM,
       MoveId.POWER_UP_PUNCH,
       MoveId.PSYCHIC_FANGS,
+      MoveId.STOMPING_TANTRUM,
       MoveId.LASH_OUT,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.TEMPER_FLARE,
-      MoveId.SPITE,
-      MoveId.UPROAR,
-      MoveId.STOMPING_TANTRUM,
-
-      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.GRANBULL] = {
@@ -6859,7 +6845,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       [67, MoveId.OUTRAGE],
     ],
     tms: [
-      ...generationTwoSpeciesData[SpeciesId.SNUBBULL].tms, // - Fake tears
+      ...generationTwoSpeciesData[SpeciesId.SNUBBULL].tms,
       MoveId.HYPER_BEAM,
       MoveId.ROCK_SLIDE,
       MoveId.OUTRAGE,
@@ -7125,6 +7111,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TAKE_DOWN,
       MoveId.DOUBLE_EDGE,
       MoveId.HYPER_BEAM,
+      MoveId.COUNTER,
       MoveId.STRENGTH,
       MoveId.TOXIC,
       MoveId.AGILITY,
@@ -7162,6 +7149,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.KNOCK_OFF,
       MoveId.SECRET_POWER,
       MoveId.AIR_CUTTER,
+      MoveId.SILVER_WIND,
       MoveId.SAND_TOMB,
       MoveId.AERIAL_ACE,
       MoveId.IRON_DEFENSE,
@@ -7182,6 +7170,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.CROSS_POISON,
       MoveId.IRON_HEAD,
       MoveId.BUG_BITE,
+      MoveId.OMINOUS_WIND,
       MoveId.VENOSHOCK,
       MoveId.ROUND,
       MoveId.ACROBATICS,
@@ -7196,9 +7185,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.POUNCE,
       MoveId.TRAILBLAZE,
       MoveId.HARD_PRESS,
-      MoveId.COUNTER,
-      MoveId.SILVER_WIND,
-      MoveId.OMINOUS_WIND,
     ],
   };
   generationTwoSpeciesData[SpeciesId.SHUCKLE] = {
@@ -7281,6 +7267,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.ENCORE,
       MoveId.HIDDEN_POWER,
       MoveId.SUNNY_DAY,
+      MoveId.ANCIENT_POWER,
       MoveId.ROCK_SMASH,
       MoveId.FACADE,
       MoveId.HELPING_HAND,
@@ -7311,7 +7298,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.METEOR_BEAM,
       MoveId.SKITTER_SMACK,
       MoveId.TERA_BLAST,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationTwoSpeciesData[SpeciesId.HERACROSS] = {
@@ -7472,6 +7458,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.ENDEAVOR,
       MoveId.SECRET_POWER,
       MoveId.ROCK_TOMB,
+      MoveId.SILVER_WIND,
       MoveId.BULLET_SEED,
       MoveId.AERIAL_ACE,
       MoveId.IRON_DEFENSE,
@@ -7506,7 +7493,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.POUNCE,
       MoveId.TRAILBLAZE,
       MoveId.UPPER_HAND,
-      MoveId.SILVER_WIND,
     ],
   };
   generationTwoSpeciesData[SpeciesId.SNEASEL] = {
@@ -7736,6 +7722,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.CURSE,
       MoveId.PROTECT,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.ENDURE,
       MoveId.CHARM,
       MoveId.SWAGGER,
@@ -7781,8 +7768,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.POWER_UP_PUNCH,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
-
-      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.URSARING] = {
@@ -7842,7 +7827,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       [64, MoveId.HAMMER_ARM],
     ],
     tms: [
-      ...generationTwoSpeciesData[SpeciesId.TEDDIURSA].tms, // - Focus energy
+      ...generationTwoSpeciesData[SpeciesId.TEDDIURSA].tms,
       MoveId.HYPER_BEAM,
       MoveId.SCARY_FACE,
       MoveId.FOCUS_BLAST,
@@ -7933,6 +7918,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.PAIN_SPLIT,
       MoveId.HIDDEN_POWER,
       MoveId.SUNNY_DAY,
+      MoveId.ANCIENT_POWER,
       MoveId.ROCK_SMASH,
       MoveId.HEAT_WAVE,
       MoveId.WILL_O_WISP,
@@ -7960,7 +7946,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.HIGH_HORSEPOWER,
       MoveId.TERA_BLAST,
       MoveId.TEMPER_FLARE,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationTwoSpeciesData[SpeciesId.MAGCARGO] = {
@@ -8013,7 +7998,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       [58, MoveId.EARTH_POWER],
     ],
     tms: [
-      ...generationTwoSpeciesData[SpeciesId.SLUGMA].tms, // - High horsepower
+      ...generationTwoSpeciesData[SpeciesId.SLUGMA].tms,
       MoveId.HYPER_BEAM,
       MoveId.STRENGTH,
       MoveId.SOLAR_BEAM,
@@ -8111,6 +8096,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.RETURN,
       MoveId.HIDDEN_POWER,
       MoveId.RAIN_DANCE,
+      MoveId.ANCIENT_POWER,
       MoveId.ROCK_SMASH,
       MoveId.HAIL,
       MoveId.FACADE,
@@ -8135,7 +8121,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.SNOWSCAPE,
       MoveId.TRAILBLAZE,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationTwoSpeciesData[SpeciesId.PILOSWINE] = {
@@ -8289,6 +8274,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.HIDDEN_POWER,
       MoveId.RAIN_DANCE,
       MoveId.SUNNY_DAY,
+      MoveId.ANCIENT_POWER,
       MoveId.SHADOW_BALL,
       MoveId.ROCK_SMASH,
       MoveId.WHIRLPOOL,
@@ -8318,7 +8304,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.LIQUIDATION,
       MoveId.METEOR_BEAM,
       MoveId.TERA_BLAST,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationTwoSpeciesData[SpeciesId.REMORAID] = {
@@ -8795,6 +8780,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
     tms: [
       MoveId.SWORDS_DANCE,
       MoveId.FLY,
+      MoveId.TAKE_DOWN,
       MoveId.DOUBLE_EDGE,
       MoveId.ROAR,
       MoveId.HYPER_BEAM,
@@ -8851,6 +8837,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.DEFOG,
       MoveId.IRON_HEAD,
       MoveId.STEALTH_ROCK,
+      MoveId.OMINOUS_WIND,
       MoveId.ROUND,
       MoveId.SKY_DROP,
       MoveId.DRILL_RUN,
@@ -8860,8 +8847,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.STEEL_BEAM,
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
-      MoveId.TAKE_DOWN,
-      MoveId.OMINOUS_WIND,
     ],
   };
   generationTwoSpeciesData[SpeciesId.HOUNDOUR] = {
@@ -9172,6 +9157,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
     ],
     tms: [
       MoveId.BODY_SLAM,
+      MoveId.TAKE_DOWN,
       MoveId.DOUBLE_EDGE,
       MoveId.HYDRO_PUMP,
       MoveId.SURF,
@@ -9189,6 +9175,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.SNORE,
       MoveId.CURSE,
       MoveId.PROTECT,
+      MoveId.SCARY_FACE,
       MoveId.ICY_WIND,
       MoveId.OUTRAGE,
       MoveId.ENDURE,
@@ -9225,10 +9212,8 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.SCALE_SHOT,
       MoveId.FLIP_TURN,
       MoveId.TERA_BLAST,
-      MoveId.CHILLING_WATER,
-      MoveId.TAKE_DOWN,
-      MoveId.SCARY_FACE,
       MoveId.SNOWSCAPE,
+      MoveId.CHILLING_WATER,
     ],
   };
   generationTwoSpeciesData[SpeciesId.PHANPY] = {
@@ -9310,6 +9295,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.HIDDEN_POWER,
       MoveId.RAIN_DANCE,
       MoveId.SUNNY_DAY,
+      MoveId.ANCIENT_POWER,
       MoveId.ROCK_SMASH,
       MoveId.FACADE,
       MoveId.HELPING_HAND,
@@ -9338,7 +9324,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.STOMPING_TANTRUM,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationTwoSpeciesData[SpeciesId.DONPHAN] = {
@@ -9391,7 +9376,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       [50, MoveId.GIGA_IMPACT],
     ],
     tms: [
-      ...generationTwoSpeciesData[SpeciesId.PHANPY].tms, // - focus energy
+      ...generationTwoSpeciesData[SpeciesId.PHANPY].tms,
       MoveId.HYPER_BEAM,
       MoveId.SCARY_FACE,
       MoveId.IRON_DEFENSE,
@@ -9470,6 +9455,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       [64, MoveId.HYPER_BEAM],
     ],
     tms: [
+      MoveId.TAKE_DOWN,
       MoveId.DOUBLE_EDGE,
       MoveId.ICE_BEAM,
       MoveId.BLIZZARD,
@@ -9493,6 +9479,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.SNORE,
       MoveId.CURSE,
       MoveId.PROTECT,
+      MoveId.ZAP_CANNON,
       MoveId.ICY_WIND,
       MoveId.ENDURE,
       MoveId.SWAGGER,
@@ -9506,6 +9493,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.PSYCH_UP,
       MoveId.SHADOW_BALL,
       MoveId.FACADE,
+      MoveId.CHARGE,
       MoveId.TRICK,
       MoveId.RECYCLE,
       MoveId.SECRET_POWER,
@@ -9529,9 +9517,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.EERIE_IMPULSE,
       MoveId.SPEED_SWAP,
       MoveId.TERA_BLAST,
-      MoveId.CHARGE,
-      MoveId.TAKE_DOWN,
-      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.STANTLER] = {
@@ -9637,6 +9622,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.SUNNY_DAY,
       MoveId.PSYCH_UP,
       MoveId.SHADOW_BALL,
+      MoveId.FUTURE_SIGHT,
       MoveId.UPROAR,
       MoveId.FACADE,
       MoveId.HELPING_HAND,
@@ -9668,7 +9654,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.LUNGE,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
-      MoveId.FUTURE_SIGHT,
     ],
   };
   generationTwoSpeciesData[SpeciesId.SMEARGLE] = {
@@ -9783,8 +9768,10 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.MEGA_PUNCH,
       MoveId.MEGA_KICK,
       MoveId.BODY_SLAM,
+      MoveId.TAKE_DOWN,
       MoveId.DOUBLE_EDGE,
       MoveId.LOW_KICK,
+      MoveId.COUNTER,
       MoveId.STRENGTH,
       MoveId.EARTHQUAKE,
       MoveId.TOXIC,
@@ -9825,8 +9812,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.CONFIDE,
       MoveId.TERA_BLAST,
       MoveId.UPPER_HAND,
-      MoveId.TAKE_DOWN,
-      MoveId.COUNTER,
     ],
   };
   generationTwoSpeciesData[SpeciesId.HITMONTOP] = {
@@ -9883,7 +9868,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       [48, MoveId.ENDEAVOR],
     ],
     tms: [
-      ...generationTwoSpeciesData[SpeciesId.TYROGUE].tms, // - ally switch
+      ...generationTwoSpeciesData[SpeciesId.TYROGUE].tms,
       MoveId.DIG,
       MoveId.AGILITY,
       MoveId.REVERSAL,
@@ -9962,6 +9947,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.DOUBLE_EDGE,
       MoveId.ICE_BEAM,
       MoveId.BLIZZARD,
+      MoveId.COUNTER,
       MoveId.TOXIC,
       MoveId.PSYCHIC,
       MoveId.DOUBLE_TEAM,
@@ -10021,7 +10007,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.CONFIDE,
       MoveId.AURORA_VEIL,
       MoveId.TERA_BLAST,
-      MoveId.COUNTER,
     ],
   };
   generationTwoSpeciesData[SpeciesId.ELEKID] = {
@@ -10079,8 +10064,10 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.THUNDER_PUNCH,
       MoveId.MEGA_KICK,
       MoveId.BODY_SLAM,
+      MoveId.TAKE_DOWN,
       MoveId.DOUBLE_EDGE,
       MoveId.LOW_KICK,
+      MoveId.COUNTER,
       MoveId.THUNDERBOLT,
       MoveId.THUNDER_WAVE,
       MoveId.THUNDER,
@@ -10098,6 +10085,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.CURSE,
       MoveId.PROTECT,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.ENDURE,
       MoveId.SWAGGER,
       MoveId.ATTRACT,
@@ -10110,6 +10098,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.FACADE,
       MoveId.FOCUS_PUNCH,
       MoveId.CHARGE,
+      MoveId.TAUNT,
       MoveId.HELPING_HAND,
       MoveId.BRICK_BREAK,
       MoveId.KNOCK_OFF,
@@ -10119,6 +10108,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.COVET,
       MoveId.SHOCK_WAVE,
       MoveId.FLING,
+      MoveId.FOCUS_BLAST,
       MoveId.CHARGE_BEAM,
       MoveId.ELECTRO_BALL,
       MoveId.ROUND,
@@ -10126,18 +10116,12 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.ELECTROWEB,
       MoveId.WILD_CHARGE,
       MoveId.CONFIDE,
+      MoveId.EERIE_IMPULSE,
+      MoveId.ELECTRIC_TERRAIN,
       MoveId.POWER_UP_PUNCH,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.SUPERCELL_SLAM,
-      MoveId.TAKE_DOWN,
-      MoveId.COUNTER,
-      MoveId.TAUNT,
-      MoveId.FOCUS_BLAST,
-      MoveId.EERIE_IMPULSE,
-      MoveId.ELECTRIC_TERRAIN,
-
-      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.MAGBY] = {
@@ -10196,9 +10180,11 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.THUNDER_PUNCH,
       MoveId.MEGA_KICK,
       MoveId.BODY_SLAM,
+      MoveId.TAKE_DOWN,
       MoveId.DOUBLE_EDGE,
       MoveId.FLAMETHROWER,
       MoveId.LOW_KICK,
+      MoveId.COUNTER,
       MoveId.FIRE_SPIN,
       MoveId.TOXIC,
       MoveId.PSYCHIC,
@@ -10244,11 +10230,9 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.INCINERATE,
       MoveId.CONFIDE,
       MoveId.POWER_UP_PUNCH,
+      MoveId.BURNING_JEALOUSY,
       MoveId.TERA_BLAST,
       MoveId.TEMPER_FLARE,
-      MoveId.TAKE_DOWN,
-      MoveId.COUNTER,
-      MoveId.BURNING_JEALOUSY,
     ],
   };
   generationTwoSpeciesData[SpeciesId.MILTANK] = {
@@ -10331,6 +10315,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.REVERSAL,
       MoveId.PROTECT,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.ICY_WIND,
       MoveId.SANDSTORM,
       MoveId.ENDURE,
@@ -10377,8 +10362,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.BODY_PRESS,
       MoveId.STEEL_ROLLER,
       MoveId.TERA_BLAST,
-
-      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.BLISSEY] = {
@@ -10446,6 +10429,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.ICE_BEAM,
       MoveId.BLIZZARD,
       MoveId.HYPER_BEAM,
+      MoveId.COUNTER,
       MoveId.STRENGTH,
       MoveId.SOLAR_BEAM,
       MoveId.THUNDERBOLT,
@@ -10470,6 +10454,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.CURSE,
       MoveId.PROTECT,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.ICY_WIND,
       MoveId.SANDSTORM,
       MoveId.ENDURE,
@@ -10535,9 +10520,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TRAILBLAZE,
       MoveId.CHILLING_WATER,
       MoveId.ALLURING_VOICE,
-      MoveId.COUNTER,
-
-      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.RAIKOU] = {
@@ -10597,6 +10579,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
     ],
     tms: [
       MoveId.BODY_SLAM,
+      MoveId.TAKE_DOWN,
       MoveId.DOUBLE_EDGE,
       MoveId.ROAR,
       MoveId.HYPER_BEAM,
@@ -10617,7 +10600,9 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.SNORE,
       MoveId.CURSE,
       MoveId.PROTECT,
+      MoveId.SCARY_FACE,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.SANDSTORM,
       MoveId.ENDURE,
       MoveId.SWAGGER,
@@ -10651,6 +10636,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.QUASH,
       MoveId.VOLT_SWITCH,
       MoveId.BULLDOZE,
+      MoveId.ELECTROWEB,
       MoveId.WILD_CHARGE,
       MoveId.SNARL,
       MoveId.CONFIDE,
@@ -10661,10 +10647,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.SUPERCELL_SLAM,
-      MoveId.TAKE_DOWN,
-      MoveId.SCARY_FACE,
-      MoveId.ELECTROWEB,
-      MoveId.ZAP_CANNON,
     ],
   };
   generationTwoSpeciesData[SpeciesId.ENTEI] = {
@@ -10724,6 +10706,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
     ],
     tms: [
       MoveId.BODY_SLAM,
+      MoveId.TAKE_DOWN,
       MoveId.DOUBLE_EDGE,
       MoveId.ROAR,
       MoveId.FLAMETHROWER,
@@ -10785,7 +10768,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.SCORCHING_SANDS,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
-      MoveId.TAKE_DOWN,
     ],
   };
   generationTwoSpeciesData[SpeciesId.SUICUNE] = {
@@ -10845,6 +10827,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
     ],
     tms: [
       MoveId.BODY_SLAM,
+      MoveId.TAKE_DOWN,
       MoveId.DOUBLE_EDGE,
       MoveId.ROAR,
       MoveId.HYDRO_PUMP,
@@ -10897,6 +10880,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.ICE_FANG,
       MoveId.ROCK_CLIMB,
       MoveId.IRON_HEAD,
+      MoveId.OMINOUS_WIND,
       MoveId.ROUND,
       MoveId.SCALD,
       MoveId.QUASH,
@@ -10908,8 +10892,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.SNOWSCAPE,
       MoveId.TRAILBLAZE,
       MoveId.CHILLING_WATER,
-      MoveId.TAKE_DOWN,
-      MoveId.OMINOUS_WIND,
     ],
   };
   generationTwoSpeciesData[SpeciesId.LARVITAR] = {
@@ -10995,6 +10977,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.RAIN_DANCE,
       MoveId.SUNNY_DAY,
       MoveId.CRUNCH,
+      MoveId.ANCIENT_POWER,
       MoveId.ROCK_SMASH,
       MoveId.UPROAR,
       MoveId.TORMENT,
@@ -11029,7 +11012,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.POWER_UP_PUNCH,
       MoveId.STOMPING_TANTRUM,
       MoveId.TERA_BLAST,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationTwoSpeciesData[SpeciesId.PUPITAR] = {
@@ -11245,12 +11227,12 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.HONE_CLAWS,
       MoveId.HEAVY_SLAM,
       MoveId.FOUL_PLAY,
+      MoveId.INCINERATE,
       MoveId.DRAGON_TAIL,
       MoveId.BRUTAL_SWING,
       MoveId.BODY_PRESS,
       MoveId.BREAKING_SWIPE,
       MoveId.HARD_PRESS,
-      MoveId.INCINERATE,
     ],
   };
   generationTwoSpeciesData[SpeciesId.LUGIA] = {
@@ -11310,6 +11292,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
     tms: [
       MoveId.FLY,
       MoveId.BODY_SLAM,
+      MoveId.TAKE_DOWN,
       MoveId.DOUBLE_EDGE,
       MoveId.ROAR,
       MoveId.HYDRO_PUMP,
@@ -11336,7 +11319,9 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.SNORE,
       MoveId.CURSE,
       MoveId.PROTECT,
+      MoveId.SCARY_FACE,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.ICY_WIND,
       MoveId.SANDSTORM,
       MoveId.GIGA_DRAIN,
@@ -11351,6 +11336,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.RAIN_DANCE,
       MoveId.SUNNY_DAY,
       MoveId.PSYCH_UP,
+      MoveId.ANCIENT_POWER,
       MoveId.SHADOW_BALL,
       MoveId.FUTURE_SIGHT,
       MoveId.ROCK_SMASH,
@@ -11386,6 +11372,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.DEFOG,
       MoveId.IRON_HEAD,
       MoveId.CHARGE_BEAM,
+      MoveId.OMINOUS_WIND,
       MoveId.WONDER_ROOM,
       MoveId.PSYSHOCK,
       MoveId.ROUND,
@@ -11402,11 +11389,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.CHILLING_WATER,
       MoveId.PSYCHIC_NOISE,
-      MoveId.TAKE_DOWN,
-      MoveId.SCARY_FACE,
-      MoveId.ZAP_CANNON,
-      MoveId.OMINOUS_WIND,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationTwoSpeciesData[SpeciesId.HO_OH] = {
@@ -11468,6 +11450,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
     tms: [
       MoveId.FLY,
       MoveId.BODY_SLAM,
+      MoveId.TAKE_DOWN,
       MoveId.DOUBLE_EDGE,
       MoveId.ROAR,
       MoveId.FLAMETHROWER,
@@ -11494,6 +11477,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.CURSE,
       MoveId.PROTECT,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.SANDSTORM,
       MoveId.GIGA_DRAIN,
       MoveId.ENDURE,
@@ -11506,6 +11490,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.RAIN_DANCE,
       MoveId.SUNNY_DAY,
       MoveId.PSYCH_UP,
+      MoveId.ANCIENT_POWER,
       MoveId.SHADOW_BALL,
       MoveId.FUTURE_SIGHT,
       MoveId.ROCK_SMASH,
@@ -11535,6 +11520,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.DEFOG,
       MoveId.IRON_HEAD,
       MoveId.CHARGE_BEAM,
+      MoveId.OMINOUS_WIND,
       MoveId.FLAME_CHARGE,
       MoveId.ROUND,
       MoveId.ECHOED_VOICE,
@@ -11547,10 +11533,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.DUAL_WINGBEAT,
       MoveId.SCORCHING_SANDS,
       MoveId.TERA_BLAST,
-      MoveId.TAKE_DOWN,
-      MoveId.ZAP_CANNON,
-      MoveId.OMINOUS_WIND,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationTwoSpeciesData[SpeciesId.CELEBI] = {
@@ -11643,6 +11625,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.RAIN_DANCE,
       MoveId.SUNNY_DAY,
       MoveId.PSYCH_UP,
+      MoveId.ANCIENT_POWER,
       MoveId.SHADOW_BALL,
       MoveId.FUTURE_SIGHT,
       MoveId.UPROAR,
@@ -11654,6 +11637,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.IMPRISON,
       MoveId.SECRET_POWER,
       MoveId.WEATHER_BALL,
+      MoveId.SILVER_WIND,
       MoveId.SIGNAL_BEAM,
       MoveId.AERIAL_ACE,
       MoveId.MAGICAL_LEAF,
@@ -11692,8 +11676,6 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       MoveId.GRASSY_GLIDE,
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
-      MoveId.SILVER_WIND,
-      MoveId.ANCIENT_POWER,
     ],
   };
   return generationTwoSpeciesData;

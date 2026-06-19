@@ -99,6 +99,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.SYNTHESIS,
       MoveId.HIDDEN_POWER,
       MoveId.SUNNY_DAY,
+      MoveId.ANCIENT_POWER,
       MoveId.ROCK_SMASH,
       MoveId.FACADE,
       MoveId.NATURE_POWER,
@@ -125,7 +126,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.GRASSY_GLIDE,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.IVYSAUR] = {
@@ -425,6 +425,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.HIDDEN_POWER,
       MoveId.SUNNY_DAY,
       MoveId.CRUNCH,
+      MoveId.ANCIENT_POWER,
       MoveId.ROCK_SMASH,
       MoveId.BEAT_UP,
       MoveId.HEAT_WAVE,
@@ -461,7 +462,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.BREAKING_SWIPE,
       MoveId.TERA_BLAST,
       MoveId.TEMPER_FLARE,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.CHARMELEON] = {
@@ -700,6 +700,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.AIR_SLASH,
       MoveId.GIGA_IMPACT,
       MoveId.DEFOG,
+      MoveId.OMINOUS_WIND,
       MoveId.SKY_DROP,
       MoveId.BULLDOZE,
       MoveId.HEAT_CRASH,
@@ -710,7 +711,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.DUAL_WINGBEAT,
       MoveId.SCORCHING_SANDS,
       MoveId.DRAGON_CHEER,
-      MoveId.OMINOUS_WIND,
     ],
   };
   generationOneSpeciesData[SpeciesId.SQUIRTLE] = {
@@ -790,6 +790,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.CURSE,
       MoveId.PROTECT,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.ICY_WIND,
       MoveId.OUTRAGE,
       MoveId.ENDURE,
@@ -823,6 +824,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.AQUA_TAIL,
       MoveId.DRAGON_PULSE,
       MoveId.ZEN_HEADBUTT,
+      MoveId.IRON_HEAD,
       MoveId.ROUND,
       MoveId.SCALD,
       MoveId.WATER_PLEDGE,
@@ -834,8 +836,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.ICE_SPINNER,
       MoveId.CHILLING_WATER,
-      MoveId.IRON_HEAD, //ZA
-      MoveId.ZAP_CANNON,
     ],
   };
   generationOneSpeciesData[SpeciesId.WARTORTLE] = {
@@ -1122,10 +1122,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       [EVOLVE_MOVE, MoveId.HARDEN],
       [1, MoveId.HARDEN],
     ],
-    tms: [
-      ...generationOneSpeciesData[SpeciesId.CATERPIE].tms, // - snore
-      MoveId.IRON_DEFENSE,
-    ],
+    tms: [...generationOneSpeciesData[SpeciesId.CATERPIE].tms, MoveId.IRON_DEFENSE],
   };
   generationOneSpeciesData[SpeciesId.BUTTERFREE] = {
     species: new PokemonSpecies({
@@ -1272,6 +1269,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.SKILL_SWAP,
       MoveId.SECRET_POWER,
       MoveId.AIR_CUTTER,
+      MoveId.SILVER_WIND,
       MoveId.SIGNAL_BEAM,
       MoveId.AERIAL_ACE,
       MoveId.ROOST,
@@ -1282,6 +1280,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.ENERGY_BALL,
       MoveId.GIGA_IMPACT,
       MoveId.DEFOG,
+      MoveId.OMINOUS_WIND,
       MoveId.VENOSHOCK,
       MoveId.ROUND,
       MoveId.ACROBATICS,
@@ -1292,8 +1291,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.INFESTATION,
       MoveId.POLLEN_PUFF,
       MoveId.DUAL_WINGBEAT,
-      MoveId.SILVER_WIND,
-      MoveId.OMINOUS_WIND,
     ],
   };
   generationOneSpeciesData[SpeciesId.WEEDLE] = {
@@ -1517,7 +1514,9 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.ENDEAVOR,
       MoveId.SECRET_POWER,
       MoveId.AIR_CUTTER,
+      MoveId.SILVER_WIND,
       MoveId.AERIAL_ACE,
+      MoveId.IRON_DEFENSE,
       MoveId.ROOST,
       MoveId.TAILWIND,
       MoveId.U_TURN,
@@ -1529,6 +1528,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.GIGA_IMPACT,
       MoveId.DEFOG,
       MoveId.BUG_BITE,
+      MoveId.OMINOUS_WIND,
       MoveId.VENOSHOCK,
       MoveId.ROUND,
       MoveId.ACROBATICS,
@@ -1539,11 +1539,8 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.INFESTATION,
       MoveId.THROAT_CHOP,
       MoveId.BRUTAL_SWING,
-      MoveId.TERA_BLAST,
       MoveId.DUAL_WINGBEAT,
-      MoveId.IRON_DEFENSE,
-      MoveId.SILVER_WIND,
-      MoveId.OMINOUS_WIND,
+      MoveId.TERA_BLAST,
     ],
   };
   generationOneSpeciesData[SpeciesId.PIDGEY] = {
@@ -1635,13 +1632,13 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.AIR_SLASH,
       MoveId.BRAVE_BIRD,
       MoveId.DEFOG,
+      MoveId.OMINOUS_WIND,
       MoveId.ROUND,
       MoveId.WORK_UP,
       MoveId.HURRICANE,
       MoveId.CONFIDE,
+      MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
-      MoveId.DUAL_WINGBEAT, //ZA
-      MoveId.OMINOUS_WIND,
     ],
   };
   generationOneSpeciesData[SpeciesId.PIDGEOTTO] = {
@@ -1965,7 +1962,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       [44, MoveId.ENDEAVOR],
     ],
     tms: [
-      ...generationOneSpeciesData[SpeciesId.RATTATA].tms, // - screech
+      ...generationOneSpeciesData[SpeciesId.RATTATA].tms,
       MoveId.SWORDS_DANCE,
       MoveId.ROAR,
       MoveId.HYPER_BEAM,
@@ -2063,13 +2060,13 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.U_TURN,
       MoveId.ASSURANCE,
       MoveId.DEFOG,
+      MoveId.OMINOUS_WIND,
       MoveId.ROUND,
       MoveId.ECHOED_VOICE,
       MoveId.WORK_UP,
       MoveId.DRILL_RUN,
       MoveId.CONFIDE,
       MoveId.TERA_BLAST,
-      MoveId.OMINOUS_WIND,
     ],
   };
   generationOneSpeciesData[SpeciesId.FEAROW] = {
@@ -2119,7 +2116,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       [45, MoveId.DRILL_RUN],
     ],
     tms: [
-      ...generationOneSpeciesData[SpeciesId.SPEAROW].tms, // - scary face
+      ...generationOneSpeciesData[SpeciesId.SPEAROW].tms,
       MoveId.HYPER_BEAM,
       MoveId.GIGA_IMPACT,
       MoveId.THROAT_CHOP,
@@ -2721,6 +2718,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.REVERSAL,
       MoveId.PROTECT,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.ENDURE,
       MoveId.CHARM,
       MoveId.SWAGGER,
@@ -2770,7 +2768,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.TRAILBLAZE,
       MoveId.ALLURING_VOICE,
       MoveId.UPPER_HAND,
-      MoveId.ZAP_CANNON,
     ],
   };
   generationOneSpeciesData[SpeciesId.RAICHU] = {
@@ -2827,15 +2824,15 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       [99, MoveId.VOLT_TACKLE],
     ],
     tms: [
-      ...generationOneSpeciesData[SpeciesId.PIKACHU].tms, // - Focus Energy, Beat up, Fake tears, Mud shot, poison tail
+      ...generationOneSpeciesData[SpeciesId.PIKACHU].tms,
       MoveId.HYPER_BEAM,
       MoveId.SAFEGUARD,
+      MoveId.DRAIN_PUNCH,
       MoveId.FOCUS_BLAST,
       MoveId.GIGA_IMPACT,
+      MoveId.DAZZLING_GLEAM,
       MoveId.SPEED_SWAP,
       MoveId.BRUTAL_SWING,
-      MoveId.DAZZLING_GLEAM, //ZA
-      MoveId.DRAIN_PUNCH, //ZA
     ],
   };
   generationOneSpeciesData[SpeciesId.SANDSHREW] = {
@@ -3185,10 +3182,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       [58, MoveId.SUPER_FANG],
       [65, MoveId.EARTH_POWER],
     ],
-    tms: [
-      ...generationOneSpeciesData[SpeciesId.NIDORAN_F].tms, // - Poison tail
-      MoveId.STOMPING_TANTRUM,
-    ],
+    tms: [...generationOneSpeciesData[SpeciesId.NIDORAN_F].tms, MoveId.STOMPING_TANTRUM],
   };
   generationOneSpeciesData[SpeciesId.NIDOQUEEN] = {
     species: new PokemonSpecies({
@@ -3455,10 +3449,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       [58, MoveId.SUPER_FANG],
       [65, MoveId.EARTH_POWER],
     ],
-    tms: [
-      ...generationOneSpeciesData[SpeciesId.NIDORAN_M].tms, // - Poison tail
-      MoveId.STOMPING_TANTRUM,
-    ],
+    tms: [...generationOneSpeciesData[SpeciesId.NIDORAN_M].tms, MoveId.STOMPING_TANTRUM],
   };
   generationOneSpeciesData[SpeciesId.NIDOKING] = {
     species: new PokemonSpecies({
@@ -3669,6 +3660,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.CURSE,
       MoveId.PROTECT,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.ICY_WIND,
       MoveId.ENDURE,
       MoveId.CHARM,
@@ -3739,7 +3731,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.CHILLING_WATER,
       MoveId.ALLURING_VOICE,
-      MoveId.ZAP_CANNON,
     ],
   };
   generationOneSpeciesData[SpeciesId.CLEFABLE] = {
@@ -3922,6 +3913,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.ENERGY_BALL,
       MoveId.NASTY_PLOT,
       MoveId.ZEN_HEADBUTT,
+      MoveId.OMINOUS_WIND,
       MoveId.FLAME_CHARGE,
       MoveId.FOUL_PLAY,
       MoveId.ROUND,
@@ -3933,7 +3925,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.MYSTICAL_FIRE,
       MoveId.BURNING_JEALOUSY,
       MoveId.TERA_BLAST,
-      MoveId.OMINOUS_WIND,
     ],
   };
   generationOneSpeciesData[SpeciesId.NINETALES] = {
@@ -4109,6 +4100,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.CURSE,
       MoveId.PROTECT,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.ICY_WIND,
       MoveId.SANDSTORM,
       MoveId.ENDURE,
@@ -4182,7 +4174,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.CHILLING_WATER,
       MoveId.ALLURING_VOICE,
       MoveId.PSYCHIC_NOISE,
-      MoveId.ZAP_CANNON,
     ],
   };
   generationOneSpeciesData[SpeciesId.WIGGLYTUFF] = {
@@ -4351,6 +4342,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.NASTY_PLOT,
       MoveId.ZEN_HEADBUTT,
       MoveId.DEFOG,
+      MoveId.OMINOUS_WIND,
       MoveId.VENOSHOCK,
       MoveId.ROUND,
       MoveId.ACROBATICS,
@@ -4358,7 +4350,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.VENOM_DRENCH,
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
-      MoveId.OMINOUS_WIND,
     ],
   };
   generationOneSpeciesData[SpeciesId.GOLBAT] = {
@@ -4803,12 +4794,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       [51, MoveId.RAGE_POWDER],
       [59, MoveId.LEECH_LIFE],
     ],
-    tms: [
-      ...generationOneSpeciesData[SpeciesId.PARAS].tms, // - psybeam, agility, metal claw, grassy terrain
-      MoveId.HYPER_BEAM,
-      MoveId.GIGA_IMPACT,
-      MoveId.THROAT_CHOP,
-    ],
+    tms: [...generationOneSpeciesData[SpeciesId.PARAS].tms, MoveId.HYPER_BEAM, MoveId.GIGA_IMPACT, MoveId.THROAT_CHOP],
   };
   generationOneSpeciesData[SpeciesId.VENONAT] = {
     species: new PokemonSpecies({
@@ -4974,6 +4960,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.HYPER_BEAM,
       MoveId.DREAM_EATER,
       MoveId.AIR_CUTTER,
+      MoveId.SILVER_WIND,
       MoveId.AERIAL_ACE,
       MoveId.ROOST,
       MoveId.TAILWIND,
@@ -4981,10 +4968,9 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.AIR_SLASH,
       MoveId.GIGA_IMPACT,
       MoveId.DEFOG,
+      MoveId.OMINOUS_WIND,
       MoveId.SLUDGE_WAVE,
       MoveId.ACROBATICS,
-      MoveId.SILVER_WIND,
-      MoveId.OMINOUS_WIND,
     ],
   };
   generationOneSpeciesData[SpeciesId.DIGLETT] = {
@@ -5066,6 +5052,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.RETURN,
       MoveId.HIDDEN_POWER,
       MoveId.SUNNY_DAY,
+      MoveId.ANCIENT_POWER,
       MoveId.ROCK_SMASH,
       MoveId.BEAT_UP,
       MoveId.UPROAR,
@@ -5096,7 +5083,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.STOMPING_TANTRUM,
       MoveId.SCORCHING_SANDS,
       MoveId.TERA_BLAST,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.DUGTRIO] = {
@@ -5152,7 +5138,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       [53, MoveId.FISSURE],
     ],
     tms: [
-      ...generationOneSpeciesData[SpeciesId.DIGLETT].tms, // - Helping hand
+      ...generationOneSpeciesData[SpeciesId.DIGLETT].tms,
       MoveId.HYPER_BEAM,
       MoveId.TRI_ATTACK,
       MoveId.GIGA_IMPACT,
@@ -5302,6 +5288,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.SPITE,
       MoveId.PROTECT,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.ICY_WIND,
       MoveId.ENDURE,
       MoveId.CHARM,
@@ -5355,7 +5342,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.CHILLING_WATER,
-      MoveId.ZAP_CANNON,
     ],
   };
   generationOneSpeciesData[SpeciesId.PERSIAN] = {
@@ -5725,6 +5711,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.ROCK_SMASH,
       MoveId.BEAT_UP,
       MoveId.UPROAR,
+      MoveId.TORMENT,
       MoveId.FACADE,
       MoveId.FOCUS_PUNCH,
       MoveId.TAUNT,
@@ -5754,6 +5741,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.STONE_EDGE,
       MoveId.HONE_CLAWS,
       MoveId.SMACK_DOWN,
+      MoveId.STORM_THROW,
       MoveId.LOW_SWEEP,
       MoveId.ROUND,
       MoveId.ACROBATICS,
@@ -5766,8 +5754,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.STOMPING_TANTRUM,
       MoveId.LASH_OUT,
       MoveId.TERA_BLAST,
-      MoveId.TORMENT,
-      MoveId.STORM_THROW,
     ],
   };
   generationOneSpeciesData[SpeciesId.PRIMEAPE] = {
@@ -6358,6 +6344,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.SNORE,
       MoveId.CURSE,
       MoveId.PROTECT,
+      MoveId.ZAP_CANNON,
       MoveId.ENDURE,
       MoveId.SWAGGER,
       MoveId.ATTRACT,
@@ -6405,7 +6392,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.PSYCHIC_TERRAIN,
       MoveId.SPEED_SWAP,
       MoveId.TERA_BLAST,
-      MoveId.ZAP_CANNON,
     ],
   };
   generationOneSpeciesData[SpeciesId.KADABRA] = {
@@ -6709,6 +6695,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.PAYBACK,
       MoveId.FLING,
       MoveId.POISON_JAB,
+      MoveId.DRAIN_PUNCH,
       MoveId.VACUUM_WAVE,
       MoveId.FOCUS_BLAST,
       MoveId.ROCK_CLIMB,
@@ -6724,7 +6711,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.POWER_UP_PUNCH,
       MoveId.COACHING,
       MoveId.TERA_BLAST,
-      MoveId.DRAIN_PUNCH,
     ],
   };
   generationOneSpeciesData[SpeciesId.MACHOKE] = {
@@ -7407,6 +7393,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.RETURN,
       MoveId.HIDDEN_POWER,
       MoveId.SUNNY_DAY,
+      MoveId.ANCIENT_POWER,
       MoveId.ROCK_SMASH,
       MoveId.FACADE,
       MoveId.FOCUS_PUNCH,
@@ -7434,7 +7421,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.HIGH_HORSEPOWER,
       MoveId.STOMPING_TANTRUM,
       MoveId.TERA_BLAST,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.GRAVELER] = {
@@ -7824,6 +7810,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.CURSE,
       MoveId.PROTECT,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.ICY_WIND,
       MoveId.ENDURE,
       MoveId.SWAGGER,
@@ -7875,7 +7862,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.SNOWSCAPE,
       MoveId.CHILLING_WATER,
-      MoveId.ZAP_CANNON,
     ],
   };
   generationOneSpeciesData[SpeciesId.SLOWBRO] = {
@@ -7996,6 +7982,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.MEGA_KICK,
       MoveId.HYPER_BEAM,
       MoveId.METRONOME,
+      MoveId.ANCIENT_POWER,
       MoveId.ROCK_SMASH,
       MoveId.FOCUS_PUNCH,
       MoveId.BRICK_BREAK,
@@ -8010,7 +7997,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.RAZOR_SHELL,
       MoveId.BODY_PRESS,
       MoveId.PSYCHIC_NOISE,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.MAGNEMITE] = {
@@ -8087,6 +8073,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.SNORE,
       MoveId.CURSE,
       MoveId.PROTECT,
+      MoveId.ZAP_CANNON,
       MoveId.SANDSTORM,
       MoveId.ENDURE,
       MoveId.SWAGGER,
@@ -8122,7 +8109,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.STEEL_BEAM,
       MoveId.RISING_VOLTAGE,
       MoveId.TERA_BLAST,
-      MoveId.ZAP_CANNON,
     ],
   };
   generationOneSpeciesData[SpeciesId.MAGNETON] = {
@@ -8302,6 +8288,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.AIR_SLASH,
       MoveId.BRAVE_BIRD,
       MoveId.DEFOG,
+      MoveId.OMINOUS_WIND,
       MoveId.ROUND,
       MoveId.ACROBATICS,
       MoveId.RETALIATE,
@@ -8312,7 +8299,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.BRUTAL_SWING,
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
-      MoveId.OMINOUS_WIND,
     ],
   };
   generationOneSpeciesData[SpeciesId.DODUO] = {
@@ -8472,7 +8458,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       [56, MoveId.THRASH],
     ],
     tms: [
-      ...generationOneSpeciesData[SpeciesId.DODUO].tms, // - Assurance
+      ...generationOneSpeciesData[SpeciesId.DODUO].tms,
       MoveId.HYPER_BEAM,
       MoveId.SCARY_FACE,
       MoveId.TORMENT,
@@ -8747,6 +8733,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.SCARY_FACE,
       MoveId.SLUDGE_BOMB,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.SANDSTORM,
       MoveId.GIGA_DRAIN,
       MoveId.ENDURE,
@@ -8785,7 +8772,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.INFESTATION,
       MoveId.POWER_UP_PUNCH,
       MoveId.TERA_BLAST,
-      MoveId.ZAP_CANNON,
     ],
   };
   generationOneSpeciesData[SpeciesId.MUK] = {
@@ -9113,6 +9099,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.PROTECT,
       MoveId.SCARY_FACE,
       MoveId.SLUDGE_BOMB,
+      MoveId.ZAP_CANNON,
       MoveId.ICY_WIND,
       MoveId.GIGA_DRAIN,
       MoveId.ENDURE,
@@ -9144,6 +9131,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.NASTY_PLOT,
       MoveId.TRICK_ROOM,
       MoveId.GUNK_SHOT,
+      MoveId.OMINOUS_WIND,
       MoveId.WONDER_ROOM,
       MoveId.VENOSHOCK,
       MoveId.SLUDGE_WAVE,
@@ -9159,8 +9147,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.POLTERGEIST,
       MoveId.CORROSIVE_GAS,
       MoveId.TERA_BLAST,
-      MoveId.ZAP_CANNON,
-      MoveId.OMINOUS_WIND,
     ],
   };
   generationOneSpeciesData[SpeciesId.HAUNTER] = {
@@ -9487,6 +9473,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.HIDDEN_POWER,
       MoveId.SUNNY_DAY,
       MoveId.PSYCH_UP,
+      MoveId.ANCIENT_POWER,
       MoveId.ROCK_SMASH,
       MoveId.TORMENT,
       MoveId.FACADE,
@@ -9522,7 +9509,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.METEOR_BEAM,
       MoveId.SCORCHING_SANDS,
       MoveId.TERA_BLAST,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.DROWZEE] = {
@@ -9608,6 +9594,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.SNORE,
       MoveId.CURSE,
       MoveId.PROTECT,
+      MoveId.ZAP_CANNON,
       MoveId.ENDURE,
       MoveId.SWAGGER,
       MoveId.ATTRACT,
@@ -9661,7 +9648,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.PSYCHIC_NOISE,
-      MoveId.ZAP_CANNON,
     ],
   };
   generationOneSpeciesData[SpeciesId.HYPNO] = {
@@ -9717,7 +9703,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       [57, MoveId.FUTURE_SIGHT],
     ],
     tms: [
-      ...generationOneSpeciesData[SpeciesId.DROWZEE].tms, // - Guard swap
+      ...generationOneSpeciesData[SpeciesId.DROWZEE].tms,
       MoveId.HYPER_BEAM,
       MoveId.CONFUSE_RAY,
       MoveId.SCARY_FACE,
@@ -9810,6 +9796,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.METAL_CLAW,
       MoveId.HIDDEN_POWER,
       MoveId.RAIN_DANCE,
+      MoveId.ANCIENT_POWER,
       MoveId.ROCK_SMASH,
       MoveId.WHIRLPOOL,
       MoveId.HAIL,
@@ -9834,7 +9821,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.CONFIDE,
       MoveId.LIQUIDATION,
       MoveId.TERA_BLAST,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.KINGLER] = {
@@ -10032,6 +10018,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.SNORE,
       MoveId.CURSE,
       MoveId.PROTECT,
+      MoveId.ZAP_CANNON,
       MoveId.ENDURE,
       MoveId.SWAGGER,
       MoveId.SLEEP_TALK,
@@ -10060,7 +10047,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.EERIE_IMPULSE,
       MoveId.ELECTRIC_TERRAIN,
       MoveId.TERA_BLAST,
-      MoveId.ZAP_CANNON,
     ],
   };
   generationOneSpeciesData[SpeciesId.ELECTRODE] = {
@@ -10192,6 +10178,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
     tms: [
       MoveId.SWORDS_DANCE,
       MoveId.TAKE_DOWN,
+      MoveId.DOUBLE_EDGE,
       MoveId.PSYBEAM,
       MoveId.STRENGTH,
       MoveId.SOLAR_BEAM,
@@ -10221,6 +10208,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.HIDDEN_POWER,
       MoveId.SUNNY_DAY,
       MoveId.PSYCH_UP,
+      MoveId.ANCIENT_POWER,
       MoveId.UPROAR,
       MoveId.FACADE,
       MoveId.NATURE_POWER,
@@ -10235,6 +10223,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.WORRY_SEED,
       MoveId.SEED_BOMB,
       MoveId.ENERGY_BALL,
+      MoveId.ZEN_HEADBUTT,
       MoveId.TRICK_ROOM,
       MoveId.LEAF_STORM,
       MoveId.GRASS_KNOT,
@@ -10247,9 +10236,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.GRASSY_GLIDE,
       MoveId.TERA_BLAST,
       MoveId.PSYCHIC_NOISE,
-      MoveId.DOUBLE_EDGE,
-      MoveId.ZEN_HEADBUTT,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.EXEGGUTOR] = {
@@ -10313,7 +10299,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       [57, MoveId.POWER_WHIP],
     ],
     tms: [
-      ...generationOneSpeciesData[SpeciesId.EXEGGCUTE].tms, // - Psybeam
+      ...generationOneSpeciesData[SpeciesId.EXEGGCUTE].tms,
       MoveId.BODY_SLAM,
       MoveId.HYPER_BEAM,
       MoveId.LOW_KICK,
@@ -10440,6 +10426,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.IRON_TAIL,
       MoveId.HIDDEN_POWER,
       MoveId.SUNNY_DAY,
+      MoveId.ANCIENT_POWER,
       MoveId.ROCK_SMASH,
       MoveId.UPROAR,
       MoveId.FACADE,
@@ -10468,7 +10455,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.STOMPING_TANTRUM,
       MoveId.SCORCHING_SANDS,
       MoveId.TERA_BLAST,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.MAROWAK] = {
@@ -10618,6 +10604,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.CURSE,
       MoveId.REVERSAL,
       MoveId.PROTECT,
+      MoveId.SCARY_FACE,
       MoveId.MUD_SLAP,
       MoveId.ENDURE,
       MoveId.SWAGGER,
@@ -10667,7 +10654,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.COACHING,
       MoveId.TERA_BLAST,
       MoveId.UPPER_HAND,
-      MoveId.SCARY_FACE,
     ],
   };
   generationOneSpeciesData[SpeciesId.HITMONCHAN] = {
@@ -10755,6 +10741,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.CURSE,
       MoveId.REVERSAL,
       MoveId.PROTECT,
+      MoveId.SCARY_FACE,
       MoveId.MUD_SLAP,
       MoveId.ENDURE,
       MoveId.SWAGGER,
@@ -10802,7 +10789,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
       MoveId.UPPER_HAND,
-      MoveId.SCARY_FACE,
     ],
   };
   generationOneSpeciesData[SpeciesId.LICKITUNG] = {
@@ -11039,6 +11025,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.PROTECT,
       MoveId.SCARY_FACE,
       MoveId.SLUDGE_BOMB,
+      MoveId.ZAP_CANNON,
       MoveId.ENDURE,
       MoveId.SWAGGER,
       MoveId.ATTRACT,
@@ -11072,7 +11059,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.INFESTATION,
       MoveId.CORROSIVE_GAS,
       MoveId.TERA_BLAST,
-      MoveId.ZAP_CANNON,
     ],
   };
   generationOneSpeciesData[SpeciesId.WEEZING] = {
@@ -11205,6 +11191,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.PROTECT,
       MoveId.SCARY_FACE,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.ICY_WIND,
       MoveId.SANDSTORM,
       MoveId.ENDURE,
@@ -11218,6 +11205,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.RAIN_DANCE,
       MoveId.SUNNY_DAY,
       MoveId.CRUNCH,
+      MoveId.ANCIENT_POWER,
       MoveId.ROCK_SMASH,
       MoveId.UPROAR,
       MoveId.FACADE,
@@ -11254,8 +11242,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.SCORCHING_SANDS,
       MoveId.TERA_BLAST,
       MoveId.SUPERCELL_SLAM,
-      MoveId.ZAP_CANNON,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.RHYDON] = {
@@ -11442,6 +11428,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.CURSE,
       MoveId.PROTECT,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.ICY_WIND,
       MoveId.SANDSTORM,
       MoveId.ENDURE,
@@ -11504,7 +11491,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.SNOWSCAPE,
       MoveId.TRAILBLAZE,
       MoveId.CHILLING_WATER,
-      MoveId.ZAP_CANNON,
     ],
   };
   generationOneSpeciesData[SpeciesId.TANGELA] = {
@@ -11597,6 +11583,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.HIDDEN_POWER,
       MoveId.SUNNY_DAY,
       MoveId.PSYCH_UP,
+      MoveId.ANCIENT_POWER,
       MoveId.ROCK_SMASH,
       MoveId.FACADE,
       MoveId.NATURE_POWER,
@@ -11619,7 +11606,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.INFESTATION,
       MoveId.GRASSY_GLIDE,
       MoveId.TERA_BLAST,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.KANGASKHAN] = {
@@ -11773,6 +11759,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.SPITE,
       MoveId.PROTECT,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.ICY_WIND,
       MoveId.OUTRAGE,
       MoveId.SANDSTORM,
@@ -11822,7 +11809,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.POWER_UP_PUNCH,
       MoveId.TERRAIN_PULSE,
       MoveId.TERA_BLAST,
-      MoveId.ZAP_CANNON,
     ],
   };
   generationOneSpeciesData[SpeciesId.HORSEA] = {
@@ -11893,6 +11879,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.SNORE,
       MoveId.CURSE,
       MoveId.PROTECT,
+      MoveId.SCARY_FACE,
       MoveId.ICY_WIND,
       MoveId.OUTRAGE,
       MoveId.ENDURE,
@@ -11923,9 +11910,8 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.SCALE_SHOT,
       MoveId.FLIP_TURN,
       MoveId.TERA_BLAST,
-      MoveId.CHILLING_WATER,
-      MoveId.SCARY_FACE,
       MoveId.SNOWSCAPE,
+      MoveId.CHILLING_WATER,
     ],
   };
   generationOneSpeciesData[SpeciesId.SEADRA] = {
@@ -12216,6 +12202,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.CONFUSE_RAY,
       MoveId.LIGHT_SCREEN,
       MoveId.REFLECT,
+      MoveId.SELF_DESTRUCT,
       MoveId.WATERFALL,
       MoveId.SWIFT,
       MoveId.FLASH,
@@ -12225,12 +12212,14 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.SNORE,
       MoveId.CURSE,
       MoveId.PROTECT,
+      MoveId.ZAP_CANNON,
       MoveId.ICY_WIND,
       MoveId.ENDURE,
       MoveId.SWAGGER,
       MoveId.ATTRACT,
       MoveId.SLEEP_TALK,
       MoveId.RETURN,
+      MoveId.SAFEGUARD,
       MoveId.PAIN_SPLIT,
       MoveId.HIDDEN_POWER,
       MoveId.RAIN_DANCE,
@@ -12255,9 +12244,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.DAZZLING_GLEAM,
       MoveId.FLIP_TURN,
       MoveId.TERA_BLAST,
-      MoveId.SAFEGUARD, //ZA
-      MoveId.SELF_DESTRUCT, //ZA
-      MoveId.ZAP_CANNON,
     ],
   };
   generationOneSpeciesData[SpeciesId.STARMIE] = {
@@ -12372,24 +12358,24 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.HYPER_BEAM,
       MoveId.AGILITY,
       MoveId.DREAM_EATER,
+      MoveId.ANCIENT_POWER,
       MoveId.TRICK,
       MoveId.SKILL_SWAP,
+      MoveId.BULK_UP,
       MoveId.GIGA_IMPACT,
       MoveId.AVALANCHE,
       MoveId.PSYCHO_CUT,
+      MoveId.ZEN_HEADBUTT,
       MoveId.TRICK_ROOM,
       MoveId.GRASS_KNOT,
+      MoveId.CHARGE_BEAM,
       MoveId.WONDER_ROOM,
       MoveId.PSYSHOCK,
       MoveId.ALLY_SWITCH,
+      MoveId.LIQUIDATION,
       MoveId.EXPANDING_FORCE,
       MoveId.METEOR_BEAM,
-      MoveId.BULK_UP, //ZA
-      MoveId.CHARGE_BEAM, //ZA
-      MoveId.CHILLING_WATER, //ZA
-      MoveId.LIQUIDATION, //ZA
-      MoveId.ZEN_HEADBUTT, //ZA
-      MoveId.ANCIENT_POWER,
+      MoveId.CHILLING_WATER,
     ],
   };
   generationOneSpeciesData[SpeciesId.MR_MIME] = {
@@ -12484,6 +12470,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.CURSE,
       MoveId.PROTECT,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.ICY_WIND,
       MoveId.ENDURE,
       MoveId.CHARM,
@@ -12547,7 +12534,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.PSYCHIC_TERRAIN,
       MoveId.EXPANDING_FORCE,
       MoveId.TERA_BLAST,
-      MoveId.ZAP_CANNON,
     ],
   };
   generationOneSpeciesData[SpeciesId.SCYTHER] = {
@@ -12656,6 +12642,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.KNOCK_OFF,
       MoveId.SECRET_POWER,
       MoveId.AIR_CUTTER,
+      MoveId.SILVER_WIND,
       MoveId.AERIAL_ACE,
       MoveId.ROOST,
       MoveId.TAILWIND,
@@ -12671,6 +12658,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.DEFOG,
       MoveId.CROSS_POISON,
       MoveId.BUG_BITE,
+      MoveId.OMINOUS_WIND,
       MoveId.ROUND,
       MoveId.ACROBATICS,
       MoveId.STRUGGLE_BUG,
@@ -12682,8 +12670,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.POUNCE,
       MoveId.TRAILBLAZE,
-      MoveId.SILVER_WIND,
-      MoveId.OMINOUS_WIND,
     ],
   };
   generationOneSpeciesData[SpeciesId.JYNX] = {
@@ -12913,6 +12899,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.CURSE,
       MoveId.PROTECT,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.ENDURE,
       MoveId.SWAGGER,
       MoveId.ATTRACT,
@@ -12948,14 +12935,13 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.ELECTROWEB,
       MoveId.WILD_CHARGE,
       MoveId.CONFIDE,
+      MoveId.EERIE_IMPULSE,
+      MoveId.ELECTRIC_TERRAIN,
       MoveId.POWER_UP_PUNCH,
       MoveId.RISING_VOLTAGE,
       MoveId.TERA_BLAST,
-      MoveId.SUPERCELL_SLAM,
-      MoveId.EERIE_IMPULSE,
-      MoveId.ELECTRIC_TERRAIN,
       MoveId.TRAILBLAZE,
-      MoveId.ZAP_CANNON,
+      MoveId.SUPERCELL_SLAM,
     ],
   };
   generationOneSpeciesData[SpeciesId.MAGMAR] = {
@@ -13078,13 +13064,13 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.ACID_SPRAY,
       MoveId.ROUND,
       MoveId.INCINERATE,
+      MoveId.HEAT_CRASH,
       MoveId.CONFIDE,
       MoveId.POWER_UP_PUNCH,
       MoveId.BURNING_JEALOUSY,
       MoveId.SCORCHING_SANDS,
       MoveId.TERA_BLAST,
       MoveId.TEMPER_FLARE,
-      MoveId.HEAT_CRASH,
     ],
   };
   generationOneSpeciesData[SpeciesId.PINSIR] = {
@@ -13238,6 +13224,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.KNOCK_OFF,
       MoveId.SECRET_POWER,
       MoveId.ROCK_TOMB,
+      MoveId.AERIAL_ACE,
       MoveId.IRON_DEFENSE,
       MoveId.BULK_UP,
       MoveId.CLOSE_COMBAT,
@@ -13258,7 +13245,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.THROAT_CHOP,
       MoveId.BRUTAL_SWING,
       MoveId.TERA_BLAST,
-      MoveId.AERIAL_ACE, //ZA
     ],
   };
   generationOneSpeciesData[SpeciesId.TAUROS] = {
@@ -13342,6 +13328,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.SPITE,
       MoveId.PROTECT,
       MoveId.SCARY_FACE,
+      MoveId.ZAP_CANNON,
       MoveId.ICY_WIND,
       MoveId.OUTRAGE,
       MoveId.SANDSTORM,
@@ -13389,7 +13376,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.LASH_OUT,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
-      MoveId.ZAP_CANNON,
     ],
   };
   generationOneSpeciesData[SpeciesId.MAGIKARP] = {
@@ -13573,6 +13559,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.SPITE,
       MoveId.PROTECT,
       MoveId.SCARY_FACE,
+      MoveId.ZAP_CANNON,
       MoveId.ICY_WIND,
       MoveId.OUTRAGE,
       MoveId.SANDSTORM,
@@ -13626,7 +13613,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.CHILLING_WATER,
       MoveId.DRAGON_CHEER,
       MoveId.TEMPER_FLARE,
-      MoveId.ZAP_CANNON,
     ],
   };
   generationOneSpeciesData[SpeciesId.LAPRAS] = {
@@ -13769,6 +13755,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.SNORE,
       MoveId.CURSE,
       MoveId.PROTECT,
+      MoveId.ZAP_CANNON,
       MoveId.ICY_WIND,
       MoveId.OUTRAGE,
       MoveId.ENDURE,
@@ -13783,6 +13770,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.IRON_TAIL,
       MoveId.HIDDEN_POWER,
       MoveId.RAIN_DANCE,
+      MoveId.ANCIENT_POWER,
       MoveId.FUTURE_SIGHT,
       MoveId.ROCK_SMASH,
       MoveId.WHIRLPOOL,
@@ -13811,6 +13799,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.BULLDOZE,
       MoveId.FROST_BREATH,
       MoveId.DRILL_RUN,
+      MoveId.DISARMING_VOICE,
       MoveId.CONFIDE,
       MoveId.SMART_STRIKE,
       MoveId.LIQUIDATION,
@@ -13821,9 +13810,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.DRAGON_CHEER,
       MoveId.ALLURING_VOICE,
       MoveId.PSYCHIC_NOISE,
-      MoveId.DISARMING_VOICE,
-      MoveId.ZAP_CANNON,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.DITTO] = {
@@ -14382,6 +14368,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.AGILITY,
       MoveId.LIGHT_SCREEN,
       MoveId.FLASH,
+      MoveId.ZAP_CANNON,
       MoveId.FALSE_SWIPE,
       MoveId.ROCK_SMASH,
       MoveId.CHARGE,
@@ -14393,12 +14380,11 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.CHARGE_BEAM,
       MoveId.ELECTRO_BALL,
       MoveId.VOLT_SWITCH,
+      MoveId.ELECTROWEB,
       MoveId.WILD_CHARGE,
       MoveId.EERIE_IMPULSE,
       MoveId.ELECTRIC_TERRAIN,
       MoveId.RISING_VOLTAGE,
-      MoveId.ELECTROWEB,
-      MoveId.ZAP_CANNON,
     ],
   };
   generationOneSpeciesData[SpeciesId.FLAREON] = {
@@ -14460,6 +14446,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.FIRE_SPIN,
       MoveId.FIRE_BLAST,
       MoveId.SCARY_FACE,
+      MoveId.ZAP_CANNON,
       MoveId.ROCK_SMASH,
       MoveId.HEAT_WAVE,
       MoveId.WILL_O_WISP,
@@ -14475,7 +14462,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.BURNING_JEALOUSY,
       MoveId.SCORCHING_SANDS,
       MoveId.TEMPER_FLARE,
-      MoveId.ZAP_CANNON,
     ],
   };
   generationOneSpeciesData[SpeciesId.PORYGON] = {
@@ -14563,6 +14549,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.SNORE,
       MoveId.CURSE,
       MoveId.PROTECT,
+      MoveId.ZAP_CANNON,
       MoveId.ICY_WIND,
       MoveId.ENDURE,
       MoveId.SWAGGER,
@@ -14576,6 +14563,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.PSYCH_UP,
       MoveId.SHADOW_BALL,
       MoveId.FACADE,
+      MoveId.CHARGE,
       MoveId.TRICK,
       MoveId.RECYCLE,
       MoveId.SECRET_POWER,
@@ -14599,8 +14587,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.EERIE_IMPULSE,
       MoveId.SPEED_SWAP,
       MoveId.TERA_BLAST,
-      MoveId.CHARGE,
-      MoveId.ZAP_CANNON,
     ],
   };
   generationOneSpeciesData[SpeciesId.OMANYTE] = {
@@ -14685,6 +14671,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.RETURN,
       MoveId.HIDDEN_POWER,
       MoveId.RAIN_DANCE,
+      MoveId.ANCIENT_POWER,
       MoveId.ROCK_SMASH,
       MoveId.WHIRLPOOL,
       MoveId.HAIL,
@@ -14710,7 +14697,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.CONFIDE,
       MoveId.METEOR_BEAM,
       MoveId.TERA_BLAST,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.OMASTAR] = {
@@ -14862,6 +14848,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.RETURN,
       MoveId.HIDDEN_POWER,
       MoveId.RAIN_DANCE,
+      MoveId.ANCIENT_POWER,
       MoveId.ROCK_SMASH,
       MoveId.WHIRLPOOL,
       MoveId.HAIL,
@@ -14888,7 +14875,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.LIQUIDATION,
       MoveId.METEOR_BEAM,
       MoveId.TERA_BLAST,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.KABUTOPS] = {
@@ -15114,6 +15100,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.RAIN_DANCE,
       MoveId.SUNNY_DAY,
       MoveId.CRUNCH,
+      MoveId.ANCIENT_POWER,
       MoveId.ROCK_SMASH,
       MoveId.HEAT_WAVE,
       MoveId.TORMENT,
@@ -15142,6 +15129,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.IRON_HEAD,
       MoveId.STONE_EDGE,
       MoveId.STEALTH_ROCK,
+      MoveId.OMINOUS_WIND,
       MoveId.HONE_CLAWS,
       MoveId.SMACK_DOWN,
       MoveId.ROUND,
@@ -15155,8 +15143,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.METEOR_BEAM,
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
-      MoveId.OMINOUS_WIND,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.SNORLAX] = {
@@ -15320,6 +15306,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.CURSE,
       MoveId.PROTECT,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.ICY_WIND,
       MoveId.OUTRAGE,
       MoveId.SANDSTORM,
@@ -15382,7 +15369,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.CHILLING_WATER,
       MoveId.HARD_PRESS,
       MoveId.SUPERCELL_SLAM,
-      MoveId.ZAP_CANNON,
     ],
   };
   generationOneSpeciesData[SpeciesId.ARTICUNO] = {
@@ -15471,6 +15457,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.HIDDEN_POWER,
       MoveId.RAIN_DANCE,
       MoveId.SUNNY_DAY,
+      MoveId.ANCIENT_POWER,
       MoveId.ROCK_SMASH,
       MoveId.HAIL,
       MoveId.FACADE,
@@ -15492,6 +15479,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.GIGA_IMPACT,
       MoveId.AVALANCHE,
       MoveId.DEFOG,
+      MoveId.OMINOUS_WIND,
       MoveId.ROUND,
       MoveId.SKY_DROP,
       MoveId.FROST_BREATH,
@@ -15503,8 +15491,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.ICE_SPINNER,
       MoveId.SNOWSCAPE,
-      MoveId.OMINOUS_WIND,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.ZAPDOS] = {
@@ -15582,6 +15568,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.CURSE,
       MoveId.PROTECT,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.SANDSTORM,
       MoveId.ENDURE,
       MoveId.SWAGGER,
@@ -15592,6 +15579,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.HIDDEN_POWER,
       MoveId.RAIN_DANCE,
       MoveId.SUNNY_DAY,
+      MoveId.ANCIENT_POWER,
       MoveId.ROCK_SMASH,
       MoveId.HEAT_WAVE,
       MoveId.HAIL,
@@ -15613,6 +15601,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.GIGA_IMPACT,
       MoveId.DEFOG,
       MoveId.CHARGE_BEAM,
+      MoveId.OMINOUS_WIND,
       MoveId.ELECTRO_BALL,
       MoveId.ROUND,
       MoveId.SKY_DROP,
@@ -15627,9 +15616,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
       MoveId.SUPERCELL_SLAM,
-      MoveId.ZAP_CANNON,
-      MoveId.OMINOUS_WIND,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.MOLTRES] = {
@@ -15717,6 +15703,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.HIDDEN_POWER,
       MoveId.RAIN_DANCE,
       MoveId.SUNNY_DAY,
+      MoveId.ANCIENT_POWER,
       MoveId.ROCK_SMASH,
       MoveId.HEAT_WAVE,
       MoveId.WILL_O_WISP,
@@ -15736,6 +15723,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.BRAVE_BIRD,
       MoveId.GIGA_IMPACT,
       MoveId.DEFOG,
+      MoveId.OMINOUS_WIND,
       MoveId.FLAME_CHARGE,
       MoveId.ROUND,
       MoveId.SKY_DROP,
@@ -15749,8 +15737,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.SCORCHING_SANDS,
       MoveId.TERA_BLAST,
       MoveId.TEMPER_FLARE,
-      MoveId.OMINOUS_WIND,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.DRATINI] = {
@@ -15830,6 +15816,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.SNORE,
       MoveId.CURSE,
       MoveId.PROTECT,
+      MoveId.ZAP_CANNON,
       MoveId.ICY_WIND,
       MoveId.OUTRAGE,
       MoveId.ENDURE,
@@ -15865,7 +15852,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.CHILLING_WATER,
       MoveId.DRAGON_CHEER,
-      MoveId.ZAP_CANNON,
     ],
   };
   generationOneSpeciesData[SpeciesId.DRAGONAIR] = {
@@ -16009,6 +15995,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.FOCUS_BLAST,
       MoveId.DEFOG,
       MoveId.STONE_EDGE,
+      MoveId.OMINOUS_WIND,
       MoveId.HONE_CLAWS,
       MoveId.SKY_DROP,
       MoveId.BULLDOZE,
@@ -16019,7 +16006,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.DUAL_WINGBEAT,
       MoveId.ICE_SPINNER,
       MoveId.SNOWSCAPE,
-      MoveId.OMINOUS_WIND,
     ],
   };
   generationOneSpeciesData[SpeciesId.MEWTWO] = {
@@ -16222,6 +16208,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.PROTECT,
       MoveId.SCARY_FACE,
       MoveId.MUD_SLAP,
+      MoveId.ZAP_CANNON,
       MoveId.ICY_WIND,
       MoveId.SANDSTORM,
       MoveId.ENDURE,
@@ -16234,6 +16221,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.RAIN_DANCE,
       MoveId.SUNNY_DAY,
       MoveId.PSYCH_UP,
+      MoveId.ANCIENT_POWER,
       MoveId.SHADOW_BALL,
       MoveId.FUTURE_SIGHT,
       MoveId.ROCK_SMASH,
@@ -16309,8 +16297,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.TRAILBLAZE,
       MoveId.CHILLING_WATER,
       MoveId.PSYCHIC_NOISE,
-      MoveId.ZAP_CANNON,
-      MoveId.ANCIENT_POWER,
     ],
   };
   generationOneSpeciesData[SpeciesId.MEW] = {
@@ -16433,6 +16419,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.SLUDGE_BOMB,
       MoveId.MUD_SLAP,
       MoveId.SPIKES,
+      MoveId.ZAP_CANNON,
       MoveId.ICY_WIND,
       MoveId.OUTRAGE,
       MoveId.SANDSTORM,
@@ -16459,6 +16446,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.SUNNY_DAY,
       MoveId.CRUNCH,
       MoveId.PSYCH_UP,
+      MoveId.ANCIENT_POWER,
       MoveId.SHADOW_BALL,
       MoveId.FUTURE_SIGHT,
       MoveId.ROCK_SMASH,
@@ -16496,6 +16484,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.AIR_CUTTER,
       MoveId.OVERHEAT,
       MoveId.ROCK_TOMB,
+      MoveId.SILVER_WIND,
       MoveId.METAL_SOUND,
       MoveId.COSMIC_POWER,
       MoveId.SIGNAL_BEAM,
@@ -16578,6 +16567,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.GRASS_KNOT,
       MoveId.BUG_BITE,
       MoveId.CHARGE_BEAM,
+      MoveId.OMINOUS_WIND,
       MoveId.HONE_CLAWS,
       MoveId.WONDER_ROOM,
       MoveId.PSYSHOCK,
@@ -16682,10 +16672,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.SUPERCELL_SLAM,
       MoveId.PSYCHIC_NOISE,
       MoveId.UPPER_HAND,
-      MoveId.ZAP_CANNON,
-      MoveId.SILVER_WIND,
-      MoveId.OMINOUS_WIND,
-      MoveId.ANCIENT_POWER,
     ],
   };
   return generationOneSpeciesData;
