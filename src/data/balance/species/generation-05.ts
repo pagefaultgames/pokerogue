@@ -3431,7 +3431,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.BRUTAL_SWING,
       MoveId.COACHING,
       MoveId.TERA_BLAST,
-      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationFiveSpeciesData[SpeciesId.GURDURR] = {
@@ -3887,7 +3886,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.STOMPING_TANTRUM,
       MoveId.COACHING,
       MoveId.TERA_BLAST,
-      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationFiveSpeciesData[SpeciesId.SAWK] = {
@@ -4003,7 +4001,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.THROAT_CHOP,
       MoveId.COACHING,
       MoveId.TERA_BLAST,
-      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationFiveSpeciesData[SpeciesId.SEWADDLE] = {
@@ -5944,7 +5941,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.TAKE_DOWN,
       MoveId.UPROAR,
       MoveId.THROAT_CHOP,
-      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationFiveSpeciesData[SpeciesId.SCRAFTY] = {
@@ -11642,7 +11638,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.DOUBLE_EDGE,
       MoveId.IRON_HEAD, //ZA
-      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationFiveSpeciesData[SpeciesId.GOLURK] = {

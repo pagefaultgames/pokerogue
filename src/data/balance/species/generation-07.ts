@@ -1484,7 +1484,6 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.TERA_BLAST,
       MoveId.CHILLING_WATER,
       MoveId.UPPER_HAND,
-      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationSevenSpeciesData[SpeciesId.CRABOMINABLE] = {
@@ -8191,7 +8190,6 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.COACHING,
       MoveId.DUAL_WINGBEAT,
       MoveId.TERA_BLAST,
-      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationSevenSpeciesData[SpeciesId.PHEROMOSA] = {
@@ -9920,7 +9918,6 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.RISING_VOLTAGE,
       MoveId.COACHING,
       MoveId.TERA_BLAST,
-      MoveId.DYNAMIC_PUNCH,
     ],
   };
   generationSevenSpeciesData[SpeciesId.MELTAN] = {
@@ -10124,7 +10121,6 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.BRUTAL_SWING,
       MoveId.BODY_PRESS,
       MoveId.STEEL_ROLLER,
-      MoveId.DYNAMIC_PUNCH,
     ],
   };
   //#region Regional Variants
@@ -10443,7 +10439,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       MoveId.PSYCHIC_NOISE,
       MoveId.UPPER_HAND,
       MoveId.DAZZLING_GLEAM,
-      MoveId.DYNAMIC_PUNCH,
+
       MoveId.ZAP_CANNON,
     ],
   };
