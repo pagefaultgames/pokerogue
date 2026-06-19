@@ -119,7 +119,7 @@ export function applySystemVersionMigration(data: SystemSaveData) {
  * to the current version.
  * @param data - The {@linkcode SessionSaveData} to migrate
  */
-export function applySessionVersionMigration(data: any) {
+export function applySessionVersionMigration(data: SessionSaveData) {
   if (!data || typeof data !== "object" || !("gameVersion" in data) || typeof data.gameVersion !== "string") {
     console.warn("Session data is missing a valid gameVersion. Skipping migration.");
     return;
