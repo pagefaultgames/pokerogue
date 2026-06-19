@@ -2192,22 +2192,18 @@ export function initAbilities() {
         PokemonType.GROUND,
         (pokemon: Pokemon) => !pokemon.getTag(GroundedTag) && !globalScene.arena.getTag(ArenaTagType.GRAVITY),
       )
-      .attr(
-        PostVictoryStatStageChangeAbAttr,
-        p => {
-          let highestStat: EffectiveStat;
-          let highestValue = 0;
-          for (const s of EFFECTIVE_STATS) {
-            const value = p.getStat(s, false);
-            if (value > highestValue) {
-              highestStat = s;
-              highestValue = value;
-            }
+      .attr(PostVictoryStatStageChangeAbAttr, (p: Pokemon) => {
+        let highestStat: EffectiveStat;
+        let highestValue = 0;
+        for (const s of EFFECTIVE_STATS) {
+          const value = p.getStat(s, false);
+          if (value > highestValue) {
+            highestStat = s;
+            highestValue = value;
           }
-          return highestStat!;
-        },
-        1,
-      )
+        }
+        return [{ stat: highestStat!, stages: 1 }];
+      })
       .ignorable()
       .build(),
     // TODO: Unknown ability, ID 314
