@@ -4867,6 +4867,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.SURF,
       MoveId.ICE_BEAM,
       MoveId.BLIZZARD,
+      MoveId.HYPER_BEAM,
       MoveId.TOXIC,
       MoveId.AGILITY,
       MoveId.DOUBLE_TEAM,
@@ -4875,6 +4876,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.REST,
       MoveId.SUBSTITUTE,
       MoveId.SNORE,
+      MoveId.REVERSAL,
       MoveId.PROTECT,
       MoveId.SCARY_FACE,
       MoveId.ICY_WIND,
@@ -4902,6 +4904,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.WATER_PULSE,
       MoveId.BRINE,
       MoveId.ASSURANCE,
+      MoveId.GIGA_IMPACT,
       MoveId.ICE_FANG,
       MoveId.ZEN_HEADBUTT,
       MoveId.ROUND,
@@ -4915,10 +4918,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.SNOWSCAPE,
       MoveId.CHILLING_WATER,
     ],
-    formTms: {
-      "red-striped": [MoveId.HYPER_BEAM, MoveId.REVERSAL, MoveId.GIGA_IMPACT],
-      "blue-striped": [MoveId.HYPER_BEAM, MoveId.REVERSAL, MoveId.GIGA_IMPACT],
-    },
   };
   generationFiveSpeciesData[SpeciesId.SANDILE] = {
     species: new PokemonSpecies({
