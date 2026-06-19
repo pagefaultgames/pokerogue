@@ -105,8 +105,8 @@ import type { StatChange, StatStageChangeCallback } from "#types/stat-change";
 import type { AbstractConstructor, Mutable } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
 import { BooleanHolder, getFrameMs, toDmgValue } from "#utils/common";
-import { groupStatChange } from "#utils/stat-change";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
+import { groupStatChange } from "#utils/stat-change";
 import i18next from "i18next";
 
 /** Interface containing the serializable fields of `BattlerTag` */
