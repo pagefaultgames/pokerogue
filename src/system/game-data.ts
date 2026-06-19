@@ -1237,6 +1237,7 @@ export class GameData {
    * Save all data related to the current session to {@linkcode localStorage} and/or the backend server.
    * @param skipVerification - (Default `false`) Whether to skip verifying user info before saving
    * @param sync - (Default `false`) Whether to sync data to the server
+   * @param reset - (Default `false`) Whether to bypass the server's wave-index rollback protection
    * @param useCachedSession - (Default `false`) Whether to use cached session data from `localStorage` instead of generating new session data
    * @param useCachedSystem - (Default `false`) Whether to use cached system data from `localStorage` instead of generating new system data
    * @returns A Promise that resolves with whether the save operation succeeded.
@@ -1246,6 +1247,7 @@ export class GameData {
   async saveAll(
     skipVerification = false,
     sync = false,
+    reset = false,
     useCachedSession = false,
     useCachedSystem = false,
   ): Promise<boolean> {
@@ -1302,7 +1304,7 @@ export class GameData {
       return verified;
     }
 
-    const saveError = await pokerogueApi.savedata.updateAll(request);
+    const saveError = await pokerogueApi.savedata.updateAll(request, reset);
     if (sync) {
       globalScene.lastSavePlayTime = 0;
       globalScene.ui.savingIcon.hide();
@@ -2182,7 +2184,7 @@ export class GameData {
     // Preserve the checkpoint into the restored session so retries remain available
     restoredSession.biomeCheckpoint = sessionData.biomeCheckpoint;
     await this.initSessionFromData(restoredSession);
-    await this.saveAll(true, true);
+    await this.saveAll(true, true, true);
     return true;
   }
 }
