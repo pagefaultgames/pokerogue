@@ -10775,7 +10775,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
     evolutions: [
       new SpeciesEvolution({
         speciesId: SpeciesId.LICKILICKY,
-        level: 32,
+        level: 33,
         condition: { key: EvoCondKey.MOVE, move: MoveId.ROLLOUT },
         evoDelay: [33, 38, 48],
       }),
@@ -11473,7 +11473,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
     evolutions: [
       new SpeciesEvolution({
         speciesId: SpeciesId.TANGROWTH,
-        level: 34,
+        level: 33,
         condition: { key: EvoCondKey.MOVE, move: MoveId.ANCIENT_POWER },
         evoDelay: [29, 37, 45],
       }),
