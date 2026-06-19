@@ -46,9 +46,6 @@ We have a `.devcontainer/devcontainer.json` file, meaning we are compatible with
 
 This Linux environment comes with all required dependencies needed to start working on the project.
 
-> [!NOTE]
-> If you use GitHub codespaces, you'll need to run `pnpm update-submodules` on first init.
-
 > [!IMPORTANT]
 > Due to quirks of devcontainer port forwarding, **you must use `pnpm start:podman`** to start a local dev server from within a devcontainer.
 > _All other instructions remain the same as local development_.
