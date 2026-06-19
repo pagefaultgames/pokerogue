@@ -3083,21 +3083,24 @@ export class BattleScene extends SceneBase {
   }
 
   public updateGameInfo(): void {
-    /** @since 1.0.0 */
     type GameInfo = {
       /** @since 2.0.0 */
       gameInfoVersion: string;
       /** @since 1.1.0 */
       playTime: number;
+      /** @since 1.0.0 */
       gameMode: string;
+      /** @since 1.0.0 */
       biome: string;
+      /** @since 1.0.0 */
       wave: number;
       /** @since 2.1.0 */
       luck: number;
+      /** @since 1.0.0 */
       party: PartyInfo[];
     };
-    /** @since 1.0.0 */
     type PartyInfo = {
+      /** @since 1.0.0 */
       name: string;
       /** @since 2.0.0 */
       nickname: string;
@@ -3113,6 +3116,7 @@ export class BattleScene extends SceneBase {
       teraType: string;
       /** @since 1.3.0 */
       isTerastallized: boolean;
+      /** @since 1.0.0 */
       level: number;
       /** @since 1.2.0 */
       currentHP: number;
