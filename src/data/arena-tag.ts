@@ -45,10 +45,10 @@
  */
 
 import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
-import type { BattlerTag } from "#app/data/battler-tags";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { CommonBattleAnim } from "#data/battle-anims";
+import type { BattlerTag } from "#data/battler-tags";
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
@@ -64,6 +64,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { type BattleStat, Stat } from "#enums/stat";
 import { StatChangeSource } from "#enums/stat-change-source";
 import { StatusEffect } from "#enums/status-effect";
+import { ArenaTagAddedEvent } from "#events/arena";
 import type { Arena } from "#field/arena";
 import type { Pokemon } from "#field/pokemon";
 import { isSpreadMove } from "#moves/move-utils";
@@ -800,6 +801,7 @@ export abstract class EntryHazardTag extends SerializableArenaTag {
   /**
    * Check if the maximum number of layers for this tag has been reached.
    * @returns Whether this tag can have another layer added to it.
+   * @sealed
    */
   public canAdd(): boolean {
     return this.layers < this.maxLayers;
@@ -808,13 +810,16 @@ export abstract class EntryHazardTag extends SerializableArenaTag {
   /**
    * Add a new layer to this tag upon overlap, triggering the tag's normal {@linkcode onAdd} effects upon doing so.
    */
-  override onOverlap(): void {
+  public override onOverlap(): void {
     if (!this.canAdd()) {
       return;
     }
-    (this as Mutable<this>).layers++;
 
+    (this as Mutable<this>).layers++;
     this.onAdd();
+    globalScene.arena.eventTarget.dispatchEvent(
+      new ArenaTagAddedEvent(this.tagType, this.side, 0, [this.layers, this.maxLayers]),
+    );
   }
 
   /**

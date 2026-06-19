@@ -251,6 +251,8 @@ async function animateBiomeChange(nextBiome: BiomeId): Promise<void> {
     duration: 2000,
   });
 
+  const previousBiome = globalScene.arena.biomeId;
+  await globalScene.loadBiomeAssets(nextBiome);
   globalScene.newArena(nextBiome);
 
   const biomeKey = getBiomeKey(nextBiome);
@@ -284,6 +286,8 @@ async function animateBiomeChange(nextBiome: BiomeId): Promise<void> {
   if (globalScene.lastEnemyTrainer) {
     globalScene.lastEnemyTrainer.destroy();
   }
+
+  globalScene.clearBiomeAssets(previousBiome);
 
   // TODO: This is floating
   playTween({

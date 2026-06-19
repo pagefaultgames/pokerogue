@@ -106,7 +106,7 @@ import type { AbstractConstructor, Mutable } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
 import { BooleanHolder, getFrameMs, toDmgValue } from "#utils/common";
 import { groupStatChange } from "#utils/stat-change";
-import { toCamelCase } from "#utils/strings";
+import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import i18next from "i18next";
 
 /** Interface containing the serializable fields of `BattlerTag` */
@@ -2435,7 +2435,7 @@ export class TypeBoostTag extends SerializableBattlerTag {
     globalScene.phaseManager.queueMessage(
       i18next.t("abilityTriggers:typeImmunityPowerBoost", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        typeName: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.boostedType])}`),
+        typeName: i18next.t(getPokemonTypeLocaleKey(this.boostedType)),
       }),
     );
   }
@@ -2535,7 +2535,7 @@ export class SaltCuredTag extends SerializableBattlerTag {
 
       if (!cancelled.value) {
         const pokemonSteelOrWater = pokemon.isOfType(PokemonType.STEEL) || pokemon.isOfType(PokemonType.WATER);
-        pokemon.damageAndUpdate(toDmgValue(pokemonSteelOrWater ? pokemon.getMaxHp() / 4 : pokemon.getMaxHp() / 8), {
+        pokemon.damageAndUpdate(toDmgValue(pokemonSteelOrWater ? pokemon.getMaxHp() / 8 : pokemon.getMaxHp() / 16), {
           result: HitResult.INDIRECT,
         });
 

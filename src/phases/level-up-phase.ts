@@ -33,7 +33,6 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
     const prevStats = this.pokemon.stats.slice(0);
 
     this.pokemon.calculateStats();
-    this.pokemon.getBattleInfo().setLevelDisplay(this.pokemon.level);
     this.pokemon.updateInfo();
 
     switch (globalScene.expParty) {

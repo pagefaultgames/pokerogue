@@ -1,9 +1,10 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { activeOverrides } from "#app/overrides";
-import { FusionSpeciesFormEvolution, pokemonEvolutions } from "#balance/pokemon-evolutions";
+import { FusionSpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#balance/starters";
 import { getBerryEffectFunc, getBerryPredicate } from "#data/berry";
 import { allMoves, modifierTypes } from "#data/data-lists";
@@ -1216,9 +1217,12 @@ export class EvolutionStatBoosterModifier extends StatBoosterModifier {
    * @see shouldApply
    */
   override apply(pokemon: Pokemon, stat: Stat, statValue: NumberHolder): boolean {
-    const isUnevolved = pokemon.getSpeciesForm(true).speciesId in pokemonEvolutions;
+    const isUnevolved = speciesDataRegistry.hasEvolutions(pokemon.getSpeciesForm(true).speciesId);
 
-    if (pokemon.isFusion() && pokemon.getFusionSpeciesForm(true).speciesId in pokemonEvolutions !== isUnevolved) {
+    if (
+      pokemon.isFusion()
+      && speciesDataRegistry.hasEvolutions(pokemon.getFusionSpeciesForm(true).speciesId) !== isUnevolved
+    ) {
       // Half boost applied if pokemon is fused and either part of fusion is fully evolved
       statValue.value *= 1 + (this.multiplier - 1) / 2;
       return true;
@@ -2332,16 +2336,16 @@ export class EvolutionItemModifier extends ConsumablePokemonModifier {
    * @returns `true` if the evolution was successful
    */
   override apply(playerPokemon: PlayerPokemon): boolean {
-    let matchingEvolution = Object.hasOwn(pokemonEvolutions, playerPokemon.species.speciesId)
-      ? pokemonEvolutions[playerPokemon.species.speciesId].find(
-          e => e.evoItem === this.type.evolutionItem && e.validate(playerPokemon, false, e.item!),
-        )
+    let matchingEvolution = speciesDataRegistry.hasEvolutions(playerPokemon.species.speciesId)
+      ? speciesDataRegistry
+          .getEvolutions(playerPokemon.species.speciesId)
+          .find(e => e.evoItem === this.type.evolutionItem && e.validate(playerPokemon, false, e.item!))
       : null;
 
     if (!matchingEvolution && playerPokemon.isFusion()) {
-      matchingEvolution = pokemonEvolutions[playerPokemon.fusionSpecies!.speciesId].find(
-        e => e.evoItem === this.type.evolutionItem && e.validate(playerPokemon, true, e.item!),
-      );
+      matchingEvolution = speciesDataRegistry
+        .getEvolutions(playerPokemon.fusionSpecies!.speciesId)
+        .find(e => e.evoItem === this.type.evolutionItem && e.validate(playerPokemon, true, e.item!));
       if (matchingEvolution) {
         matchingEvolution = new FusionSpeciesFormEvolution(playerPokemon.species.speciesId, matchingEvolution);
       }

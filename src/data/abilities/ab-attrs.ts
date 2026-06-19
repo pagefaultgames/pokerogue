@@ -1,5 +1,6 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { EntryHazardTag, SuppressAbilitiesTag } from "#data/arena-tag";
 import { type BattlerTag, CritBoostTag } from "#data/battler-tags";
@@ -7,7 +8,6 @@ import { getBerryEffectFunc } from "#data/berry";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { SpeciesFormChangeAbilityTrigger, SpeciesFormChangeWeatherTrigger } from "#data/form-change-triggers";
 import { getPokeballName } from "#data/pokeball";
-import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { getStatusEffectDescriptor, getStatusEffectHealText } from "#data/status-effect";
 import { TerrainType } from "#data/terrain";
@@ -59,6 +59,7 @@ import type { StatChange } from "#types/stat-change";
 import type { Closed, Exact, Mutable } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
 import { BooleanHolder, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
+import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { groupStatChange } from "#utils/stat-change";
 import { toCamelCase } from "#utils/strings";
@@ -892,7 +893,7 @@ export class PostDefendTypeChangeAbAttr extends PostDefendAbAttr {
     return i18next.t("abilityTriggers:postDefendTypeChange", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       abilityName,
-      typeName: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.type])}`),
+      typeName: i18next.t(getPokemonTypeLocaleKey(this.type)),
     });
   }
 }
@@ -1404,7 +1405,7 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
   getTriggerMessage({ pokemon }: AugmentMoveInteractionAbAttrParams, _abilityName: string): string {
     return i18next.t("abilityTriggers:pokemonTypeChange", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      moveType: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.moveType])}`),
+      moveType: i18next.t(getPokemonTypeLocaleKey(this.moveType)),
     });
   }
 }
@@ -2821,9 +2822,9 @@ export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
    * Determine if the pokemon has a forme change that is triggered by the weather
    */
   override canApply({ pokemon }: AbAttrBaseParams): boolean {
-    return !!pokemonFormChanges[pokemon.species.speciesId]?.some(
-      fc => fc.findTrigger(SpeciesFormChangeWeatherTrigger) && fc.canChange(pokemon),
-    );
+    return speciesDataRegistry
+      .getFormChanges(pokemon.species.speciesId)
+      .some(fc => fc.findTrigger(SpeciesFormChangeWeatherTrigger) && fc.canChange(pokemon));
   }
 
   /**
@@ -3151,13 +3152,13 @@ export class ConfusionOnStatusEffectAbAttr extends AbAttr {
 
 export interface PreSetStatusAbAttrParams extends AbAttrBaseParams {
   /** The status effect being applied */
+  // TODO: change to Exclude<StatusEffect, StatusEffect.NONE | StatusEffect.FAINT>
   effect: StatusEffect;
   /** Holds whether the status effect is prevented by the ability */
   cancelled: BooleanHolder;
 }
 
 export class PreSetStatusAbAttr extends AbAttr {
-  /** Return whether the ability attribute can be applied */
   canApply(_params: Closed<PreSetStatusAbAttrParams>): boolean {
     return true;
   }
@@ -3179,18 +3180,18 @@ export class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
     this.immuneEffects = immuneEffects;
   }
 
-  override canApply({ effect, cancelled }: PreSetStatusAbAttrParams): boolean {
+  public override canApply({ effect, cancelled }: PreSetStatusAbAttrParams): boolean {
     return (
       !cancelled.value
       && ((this.immuneEffects.length === 0 && effect !== StatusEffect.FAINT) || this.immuneEffects.includes(effect))
     );
   }
 
-  override apply({ cancelled }: PreSetStatusAbAttrParams): void {
+  public override apply({ cancelled }: PreSetStatusAbAttrParams): void {
     cancelled.value = true;
   }
 
-  override getTriggerMessage({ pokemon, effect }: PreSetStatusAbAttrParams, abilityName: string): string {
+  public override getTriggerMessage({ pokemon, effect }: PreSetStatusAbAttrParams, abilityName: string): string {
     return this.immuneEffects.length > 0
       ? i18next.t("abilityTriggers:statusEffectImmunityWithName", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
@@ -5476,8 +5477,10 @@ export class PostDefendIllusionBreakAbAttr extends PostDefendAbAttr {
     // and store it somewhere globally accessible
     const damagingHitResults: ReadonlySet<HitResult> = new Set([
       HitResult.EFFECTIVE,
+      HitResult.EXTREMELY_EFFECTIVE,
       HitResult.SUPER_EFFECTIVE,
       HitResult.NOT_VERY_EFFECTIVE,
+      HitResult.MOSTLY_INEFFECTIVE,
       HitResult.ONE_HIT_KO,
     ]);
     return damagingHitResults.has(hitResult) && pokemon.summonData.illusion != null;
