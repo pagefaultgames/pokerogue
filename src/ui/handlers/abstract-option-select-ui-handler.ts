@@ -2,11 +2,13 @@ import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
+import { a11yManager } from "#ui/accessibility-manager";
 import { addBBCodeTextObject, getTextColor, getTextStyleOptions } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
 import { fixedInt } from "#utils/common";
+import i18next from "i18next";
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 
 export interface OptionSelectConfig {
@@ -199,6 +201,15 @@ export abstract class AbstractOptionSelectUiHandler extends UiHandler {
     this.scrollCursor = 0;
     this.fullCursor = 0;
     this.setCursor(0);
+
+    // Build accessible menu for screen readers. Don't announce the first label
+    // here -- setCursor(0) above already fires an assertive announcement with
+    // the option label + position; a follow-up announceMessage on the same
+    // assertive region would interrupt and clobber it before NVDA can read it.
+    if (this.config?.options) {
+      const labels = this.config.options.filter(o => !o.skip).map(o => o.label);
+      a11yManager.setMenu(labels, 0);
+    }
 
     if (this.config.delay) {
       this.blockInput = true;
@@ -412,6 +423,18 @@ export abstract class AbstractOptionSelectUiHandler extends UiHandler {
       102 * this.scale + this.cursor * (114 * this.scale - 3),
     );
 
+    // Announce selected option and position to screen readers
+    if (changed && this.config?.options) {
+      const currentOption = this.config.options[this.unskippedIndices[this.fullCursor]];
+      if (currentOption) {
+        const position = i18next.t("accessibility:menuPosition", {
+          current: this.fullCursor + 1,
+          total: this.unskippedIndices.length,
+        });
+        a11yManager.announceMessage(`${currentOption.label}. ${position}`);
+      }
+    }
+
     return changed;
   }
 
@@ -422,6 +445,7 @@ export abstract class AbstractOptionSelectUiHandler extends UiHandler {
     this.fullCursor = 0;
     this.scrollCursor = 0;
     this.eraseCursor();
+    a11yManager.clearMenu();
   }
 
   eraseCursor() {

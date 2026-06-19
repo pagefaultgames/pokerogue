@@ -7,6 +7,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { CommandPhase } from "#phases/command-phase";
+import { a11yManager, getKeyLabelForButton } from "#ui/accessibility-manager";
 import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
@@ -97,6 +98,19 @@ export class CommandUiHandler extends UiHandler {
     messageHandler.movesWindowContainer.setVisible(false);
     messageHandler.message.setWordWrapWidth(this.canTera() ? 910 : 1110);
     messageHandler.showText(i18next.t("commandUiHandler:actionMessage", { pokemonName }), 0);
+
+    // Announce battle context to screen readers
+    const up = getKeyLabelForButton(Button.UP);
+    const down = getKeyLabelForButton(Button.DOWN);
+    const left = getKeyLabelForButton(Button.LEFT);
+    const right = getKeyLabelForButton(Button.RIGHT);
+    const action = getKeyLabelForButton(Button.ACTION);
+    const cancel = getKeyLabelForButton(Button.CANCEL);
+    a11yManager.announceContext(
+      up && down && left && right && action && cancel
+        ? i18next.t("accessibility:commandContext", { pokemonName, up, down, left, right, action, cancel })
+        : i18next.t("accessibility:commandContextNoKey", { pokemonName }),
+    );
 
     if (this.getCursor() === Command.POKEMON) {
       this.setCursor(Command.FIGHT);
@@ -237,6 +251,16 @@ export class CommandUiHandler extends UiHandler {
       this.cursorObj.setPosition(-5 + (cursor % 2 === 1 ? 56 : 0), 8 + (cursor >= 2 ? 16 : 0));
       this.cursorObj.setVisible(true);
     }
+
+    // Announce selected command to screen readers
+    const commandLabels = [
+      i18next.t("commandUiHandler:fight"),
+      i18next.t("commandUiHandler:ball"),
+      i18next.t("commandUiHandler:pokemon"),
+      i18next.t("commandUiHandler:run"),
+      i18next.t("commandUiHandler:tera", { defaultValue: "Terastallize" }),
+    ];
+    a11yManager.announceMessage(commandLabels[cursor] ?? "");
 
     return changed;
   }

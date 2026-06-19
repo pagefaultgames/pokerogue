@@ -6,6 +6,7 @@ import type { SettingType } from "#system/settings";
 import { Setting, SettingKeys } from "#system/settings";
 import type { MappingSettingName } from "#types/configs/inputs";
 import type { InputsIcons } from "#ui/abstract-control-settings-ui-handler";
+import { a11yManager, getKeyLabelForButton } from "#ui/accessibility-manager";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { NavigationManager, NavigationMenu } from "#ui/navigation-menu";
 import { ScrollBar } from "#ui/scroll-bar";
@@ -247,6 +248,29 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
 
     ui.hideTooltip();
 
+    // Announce settings context to screen readers, using the user's actual keybindings for tab switch and cancel
+    const up = getKeyLabelForButton(Button.UP);
+    const down = getKeyLabelForButton(Button.DOWN);
+    const left = getKeyLabelForButton(Button.LEFT);
+    const right = getKeyLabelForButton(Button.RIGHT);
+    const prevTab = getKeyLabelForButton(Button.CYCLE_FORM);
+    const nextTab = getKeyLabelForButton(Button.CYCLE_SHINY);
+    const cancel = getKeyLabelForButton(Button.CANCEL);
+    a11yManager.announceContext(
+      up && down && left && right && prevTab && nextTab && cancel
+        ? i18next.t("accessibility:settingsContext", {
+            title: this.title,
+            up,
+            down,
+            left,
+            right,
+            prevTab,
+            nextTab,
+            cancel,
+          })
+        : i18next.t("accessibility:settingsContextNoKey", { title: this.title }),
+    );
+
     return true;
   }
 
@@ -387,6 +411,15 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
 
     this.cursorObj.setPositionRelative(this.optionsBg, 4, 4 + (this.cursor + this.scrollCursor) * 16);
 
+    // Announce setting name and current value to screen readers
+    const settingIndex = this.cursor + this.scrollCursor;
+    if (settingIndex < this.settings.length) {
+      const setting = this.settings[settingIndex];
+      const currentValue = this.optionCursors[settingIndex];
+      const valueLabel = setting.options[currentValue]?.label ?? "";
+      a11yManager.announceMessage(`${setting.label}: ${valueLabel}`);
+    }
+
     return ret;
   }
 
@@ -418,6 +451,9 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
     this.optionValueLabels[settingIndex][cursor]
       .setColor(getTextColor(TextStyle.SETTINGS_SELECTED))
       .setShadowColor(getTextColor(TextStyle.SETTINGS_SELECTED, true));
+
+    // Announce changed value to screen readers
+    a11yManager.announceMessage(`${setting.label}: ${setting.options[cursor]?.label ?? ""}`);
 
     if (save) {
       const saveSetting = () => {

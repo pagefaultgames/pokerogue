@@ -79,7 +79,7 @@ export default defineConfig(async config => {
 
   return {
     ...(await sharedConfig(config)),
-    base: "",
+    base: process.env.BASE_PATH || "",
     publicDir: command === "serve" ? "assets" : false,
     server: {
       port: Number.isNaN(envPort) ? 8000 : envPort,

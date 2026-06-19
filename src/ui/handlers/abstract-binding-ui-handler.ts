@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
+import { a11yManager, getKeyLabelForButton } from "#ui/accessibility-manager";
 import { NavigationManager } from "#ui/navigation-menu";
 import { addTextObject, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
@@ -151,6 +152,17 @@ export abstract class AbstractBindingUiHandler extends UiHandler {
       this.listening = true;
       this.manageAutoCloseTimer();
     }, 100);
+
+    const cancelKey = getKeyLabelForButton(Button.CANCEL);
+    a11yManager.announceContext(
+      cancelKey
+        ? i18next.t("accessibility:bindingPressPrompt", {
+            prompt: i18next.t("settings:pressButton"),
+            cancel: cancelKey,
+          })
+        : i18next.t("accessibility:bindingPressPromptNoKey", { prompt: i18next.t("settings:pressButton") }),
+    );
+
     return true;
   }
 
@@ -226,12 +238,14 @@ export abstract class AbstractBindingUiHandler extends UiHandler {
       this.actionLabel.setShadowColor(getTextColor(TextStyle.SETTINGS_SELECTED, true));
       this.cancelLabel.setColor(getTextColor(TextStyle.WINDOW));
       this.cancelLabel.setShadowColor(getTextColor(TextStyle.WINDOW, true));
+      a11yManager.announceMessage(this.actionLabel.text);
       return true;
     }
     this.actionLabel.setColor(getTextColor(TextStyle.WINDOW));
     this.actionLabel.setShadowColor(getTextColor(TextStyle.WINDOW, true));
     this.cancelLabel.setColor(getTextColor(TextStyle.SETTINGS_SELECTED));
     this.cancelLabel.setShadowColor(getTextColor(TextStyle.SETTINGS_SELECTED, true));
+    a11yManager.announceMessage(this.cancelLabel.text);
     return true;
   }
 
@@ -271,6 +285,20 @@ export abstract class AbstractBindingUiHandler extends UiHandler {
       this.swapText.setVisible(true);
     }
     this.newButtonIcon.setVisible(true);
+
+    const actionKey = getKeyLabelForButton(Button.ACTION);
+    const left = getKeyLabelForButton(Button.LEFT);
+    const right = getKeyLabelForButton(Button.RIGHT);
+    const hasDirectional = !!(left && right);
+    const prompt = assignedButtonIcon
+      ? actionKey && hasDirectional
+        ? i18next.t("accessibility:bindingCaptureCollision", { action: actionKey, left, right })
+        : i18next.t("accessibility:bindingCaptureCollisionNoKey")
+      : actionKey && hasDirectional
+        ? i18next.t("accessibility:bindingCapture", { action: actionKey, left, right })
+        : i18next.t("accessibility:bindingCaptureNoKey");
+    a11yManager.announceContext(prompt);
+
     this.setCursor(0);
     this.actionsContainer.setVisible(true);
   }

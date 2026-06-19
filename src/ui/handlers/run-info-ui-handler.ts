@@ -21,6 +21,7 @@ import { getVariantTint } from "#sprites/variant";
 import type { PokemonData } from "#system/pokemon-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { SessionSaveData } from "#types/save-data";
+import { a11yManager, getKeyLabelForButton } from "#ui/accessibility-manager";
 import { addBBCodeTextObject, addTextObject, getTextColor, RAINBOW_TINT } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
@@ -165,7 +166,47 @@ export class RunInfoUiHandler extends UiHandler {
 
     this.getUi().hideTooltip();
 
+    this.announceA11y();
+
     return true;
+  }
+
+  /**
+   * Announce the run summary + page-cycling shortcuts to screen readers.
+   * The run-info page is a static read-only display with no cursor navigation,
+   * so we announce all the salient details up front: outcome, wave, biome,
+   * game mode, and which keys flip between Main / Hall of Fame / Ending Art.
+   */
+  private announceA11y(): void {
+    const wave = this.runInfo.waveIndex;
+    const biome = getBiomeName(this.runInfo.arena.biome);
+    const mode = GameModes[this.runInfo.gameMode] ?? "";
+    const cancel = getKeyLabelForButton(Button.CANCEL);
+    const cycleForm = getKeyLabelForButton(Button.CYCLE_FORM);
+    const cycleShiny = getKeyLabelForButton(Button.CYCLE_SHINY);
+    const cycleAbility = getKeyLabelForButton(Button.CYCLE_ABILITY);
+
+    if (this.isVictory && cancel && cycleForm && cycleShiny && cycleAbility) {
+      a11yManager.announceContext(
+        i18next.t("accessibility:runInfoContextVictory", {
+          wave,
+          biome,
+          mode,
+          cycleForm,
+          cycleShiny,
+          cycleAbility,
+          cancel,
+        }),
+      );
+    } else if (!this.isVictory && cancel && cycleAbility) {
+      a11yManager.announceContext(
+        i18next.t("accessibility:runInfoContextDefeat", { wave, biome, mode, cycleAbility, cancel }),
+      );
+    } else {
+      // Input not yet initialized -- fall back to a key-free summary
+      const outcome = i18next.t(this.isVictory ? "accessibility:runOutcomeVictory" : "accessibility:runOutcomeDefeat");
+      a11yManager.announceContext(i18next.t("accessibility:runInfoContextNoKey", { outcome, wave, biome, mode }));
+    }
   }
 
   /**
@@ -1131,10 +1172,12 @@ export class RunInfoUiHandler extends UiHandler {
             this.endCardContainer.setVisible(true);
             this.runContainer.add(this.endCardContainer);
             this.pageMode = RunInfoUiMode.ENDING_ART;
+            a11yManager.announceMessage(i18next.t("accessibility:runInfoPageEndingArt"));
           } else {
             this.endCardContainer.setVisible(false);
             this.runContainer.remove(this.endCardContainer);
             this.pageMode = RunInfoUiMode.MAIN;
+            a11yManager.announceMessage(i18next.t("accessibility:runInfoPageMain"));
           }
         }
         break;
@@ -1143,9 +1186,11 @@ export class RunInfoUiHandler extends UiHandler {
           if (this.hallofFameContainer.visible) {
             this.hallofFameContainer.setVisible(false);
             this.pageMode = RunInfoUiMode.MAIN;
+            a11yManager.announceMessage(i18next.t("accessibility:runInfoPageMain"));
           } else {
             this.hallofFameContainer.setVisible(true);
             this.pageMode = RunInfoUiMode.HALL_OF_FAME;
+            a11yManager.announceMessage(i18next.t("accessibility:runInfoPageHallOfFame"));
           }
         }
         break;

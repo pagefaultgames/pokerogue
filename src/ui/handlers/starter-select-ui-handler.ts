@@ -49,6 +49,7 @@ import type { DexEntry } from "#types/dex-data";
 import type { LevelMoves } from "#types/pokemon-species";
 import type { Starter, StarterAttributes, StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import { a11yManager, getKeyLabelForButton } from "#ui/accessibility-manager";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
 import { FilterBar } from "#ui/filter-bar";
 import { MessageUiHandler } from "#ui/message-ui-handler";
@@ -1258,6 +1259,28 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
       handleTutorial(Tutorial.STARTER_SELECT);
 
+      // Announce starter select context to screen readers. The grid + species
+      // announcement that fires from the setCursor(0) call above (line ~1225)
+      // already speaks the highlighted Pokémon's row/column position and stat
+      // line, so we don't repeat the species name here -- doing so would
+      // interrupt the grid announcement on assertive priority.
+      const up = getKeyLabelForButton(Button.UP);
+      const down = getKeyLabelForButton(Button.DOWN);
+      const left = getKeyLabelForButton(Button.LEFT);
+      const right = getKeyLabelForButton(Button.RIGHT);
+      const action = getKeyLabelForButton(Button.ACTION);
+      const cancel = getKeyLabelForButton(Button.CANCEL);
+      a11yManager.announceContext(
+        up && down && left && right && action && cancel
+          ? i18next.t("accessibility:starterSelectContext", { up, down, left, right, action, cancel })
+          : i18next.t("accessibility:starterSelectContextNoKey"),
+      );
+      // Announce the current team if any starters are already on it (e.g. the player
+      // backed out of starter select and re-entered, or imported starters from a config).
+      if (this.starterSpecies.length > 0) {
+        this.announceTeam();
+      }
+
       return true;
     }
 
@@ -1651,6 +1674,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       if (this.filterMode && this.filterBar.openDropDown) {
         // CANCEL with a filter menu open > close it
         this.filterBar.toggleDropDown(this.filterBarCursor);
+        const filterLabel = this.filterBar.getLabelText(this.filterBarCursor);
+        a11yManager.announceMessage(i18next.t("accessibility:filterOptionsClosed", { label: filterLabel }));
         success = true;
       } else if (
         this.filterMode
@@ -1705,6 +1730,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             // TODO: how can we get here if start button can't be selected? this appears to be redundant
             this.startCursorObj.setVisible(false);
             this.randomCursorObj.setVisible(true);
+            this.announceRandomButtonFocus();
           }
           success = true;
           break;
@@ -1751,14 +1777,20 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         case Button.UP:
           if (this.filterBar.openDropDown) {
             success = this.filterBar.decDropDownCursor();
+            const optText = this.filterBar.getCurrentDropDownOptionText();
+            if (optText) {
+              a11yManager.announceMessage(optText);
+            }
           } else if (this.filterBarCursor === this.filterBar.numFilters - 1) {
             // UP from the last filter, move to start button
             this.setFilterMode(false);
             this.cursorObj.setVisible(false);
             if (this.starterSpecies.length > 0) {
               this.startCursorObj.setVisible(true);
+              this.announceStartButtonFocus();
             } else {
               this.randomCursorObj.setVisible(true);
+              this.announceRandomButtonFocus();
             }
             success = true;
           } else if (numberOfStarters > 0) {
@@ -1779,11 +1811,16 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         case Button.DOWN:
           if (this.filterBar.openDropDown) {
             success = this.filterBar.incDropDownCursor();
+            const optText = this.filterBar.getCurrentDropDownOptionText();
+            if (optText) {
+              a11yManager.announceMessage(optText);
+            }
           } else if (this.filterBarCursor === this.filterBar.numFilters - 1) {
             // DOWN from the last filter, move to random selection label
             this.setFilterMode(false);
             this.cursorObj.setVisible(false);
             this.randomCursorObj.setVisible(true);
+            this.announceRandomButtonFocus();
             success = true;
           } else if (numberOfStarters > 0) {
             // DOWN from filter bar to top of Pokemon list
@@ -1799,8 +1836,34 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         case Button.ACTION:
           if (this.filterBar.openDropDown) {
             this.filterBar.toggleOptionState();
+            const optText = this.filterBar.getCurrentDropDownOptionText();
+            if (optText) {
+              a11yManager.announceMessage(i18next.t("accessibility:filterToggled", { label: optText }));
+            }
           } else {
             this.filterBar.toggleDropDown(this.filterBarCursor);
+            const filterLabel = this.filterBar.getLabelText(this.filterBarCursor);
+            const optText = this.filterBar.getCurrentDropDownOptionText();
+            const currentOption = optText ? ` ${optText}.` : "";
+            const up = getKeyLabelForButton(Button.UP);
+            const down = getKeyLabelForButton(Button.DOWN);
+            const action = getKeyLabelForButton(Button.ACTION);
+            const cancel = getKeyLabelForButton(Button.CANCEL);
+            a11yManager.announceMessage(
+              up && down && action && cancel
+                ? i18next.t("accessibility:filterOptionsOpened", {
+                    label: filterLabel,
+                    currentOption,
+                    up,
+                    down,
+                    action,
+                    cancel,
+                  })
+                : i18next.t("accessibility:filterOptionsOpenedNoKey", {
+                    label: filterLabel,
+                    currentOption,
+                  }),
+            );
           }
           success = true;
           break;
@@ -2640,6 +2703,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 this.starterIconsCursorObj.setVisible(false);
                 this.setSpecies(null);
                 this.randomCursorObj.setVisible(true);
+                this.announceRandomButtonFocus();
               } else {
                 this.starterIconsCursorIndex--;
                 this.moveStarterIconsCursor(this.starterIconsCursorIndex);
@@ -2666,6 +2730,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 this.starterIconsCursorObj.setVisible(false);
                 this.setSpecies(null);
                 this.startCursorObj.setVisible(true);
+                this.announceStartButtonFocus();
               }
               success = true;
             } else if (currentRow < numOfRows - 1) {
@@ -2696,6 +2761,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                   // from the first row of starters we go to the random selection
                   this.cursorObj.setVisible(false);
                   this.randomCursorObj.setVisible(true);
+                  this.announceRandomButtonFocus();
                 } else if (this.starterSpecies.length === 0) {
                   // no starter in team and not on first row > wrap around to the last column
                   success = this.setCursor(this.cursor + Math.min(8, numberOfStarters - this.cursor));
@@ -2712,6 +2778,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                   this.cursorObj.setVisible(false);
                   this.setSpecies(null);
                   this.startCursorObj.setVisible(true);
+                  this.announceStartButtonFocus();
                 }
                 success = true;
               } else {
@@ -2740,6 +2807,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                   // from the first row of starters we go to the random selection
                   this.cursorObj.setVisible(false);
                   this.randomCursorObj.setVisible(true);
+                  this.announceRandomButtonFocus();
                 } else if (this.starterSpecies.length === 0) {
                   // no selected starter in team > wrap around to the first column
                   success = this.setCursor(this.cursor - Math.min(8, this.cursor % 9));
@@ -2756,6 +2824,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                   this.cursorObj.setVisible(false);
                   this.setSpecies(null);
                   this.startCursorObj.setVisible(true);
+                  this.announceStartButtonFocus();
                 }
                 success = true;
               }
@@ -2848,6 +2917,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       getPokemonSpeciesForm(species.speciesId, props.formIndex).cry();
     }
     this.updateInstructions();
+    this.announceTeam("accessibility:teamAdded", species.name);
   }
 
   updatePartyIcon(species: PokemonSpecies, index: number) {
@@ -3487,6 +3557,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.filterBarCursor = cursor;
 
       this.filterBar.setCursor(cursor);
+
+      if (changed) {
+        const label = this.filterBar.getLabelText(cursor);
+        if (label) {
+          a11yManager.announceMessage(i18next.t("accessibility:filterLabel", { label }));
+        }
+      }
     } else {
       cursor = Math.max(Math.min(this.filteredStarterContainers.length - 1, cursor), 0);
       changed = super.setCursor(cursor);
@@ -3507,6 +3584,47 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonShinyIcon.setFrame(getVariantIcon(variant)).setTint(tint);
         this.setSpecies(species);
         this.updateInstructions();
+
+        // Announce selected starter to screen readers
+        const dexEntry: DexEntry | undefined = globalScene.gameData.dexData[species.speciesId];
+        const cost = globalScene.gameData.getSpeciesStarterValue(species.speciesId);
+        const type1 = PokemonType[species.type1];
+        const type2 = species.type2 === null ? "" : `/${PokemonType[species.type2]}`;
+        const ability = allAbilities[species.ability1]?.name ?? "";
+        const hiddenAbility =
+          species.abilityHidden === species.ability1 ? null : allAbilities[species.abilityHidden]?.name;
+        const hiddenAbilityText = hiddenAbility
+          ? i18next.t("accessibility:starterHidden", { name: hiddenAbility })
+          : "";
+        const [hp, atk, def, spa, spd, spe] = species.baseStats;
+        const caughtText = dexEntry?.caughtAttr ? "" : i18next.t("accessibility:starterNotCaught");
+        // Grid position: starters are laid out in a 9-column grid.
+        const STARTER_COLS = 9;
+        const totalRows = Math.max(1, Math.ceil(this.filteredStarterContainers.length / STARTER_COLS));
+        const row = Math.floor(cursor / STARTER_COLS) + 1;
+        const col = (cursor % STARTER_COLS) + 1;
+        const position = i18next.t("accessibility:gridPosition", {
+          row,
+          rows: totalRows,
+          col,
+          cols: STARTER_COLS,
+        });
+        a11yManager.announceMessage(
+          `${position} ${i18next.t("accessibility:starterStatLine", {
+            name: species.name,
+            type: `${type1}${type2}`,
+            ability,
+            hiddenAbility: hiddenAbilityText,
+            hp,
+            atk,
+            def,
+            spa,
+            spd,
+            spe,
+            cost,
+            caught: caughtText,
+          })}`,
+        );
       }
     }
 
@@ -3523,12 +3641,47 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       if (filterMode) {
         this.setSpecies(null);
         this.updateInstructions();
+        const label = this.filterBar.getLabelText(this.filterBarCursor);
+        const up = getKeyLabelForButton(Button.UP);
+        const down = getKeyLabelForButton(Button.DOWN);
+        const left = getKeyLabelForButton(Button.LEFT);
+        const right = getKeyLabelForButton(Button.RIGHT);
+        const action = getKeyLabelForButton(Button.ACTION);
+        const baseContext =
+          up && down && left && right && action
+            ? i18next.t("accessibility:starterFilterBarContext", { up, down, left, right, action })
+            : i18next.t("accessibility:starterFilterBarContextNoKey");
+        const labelSuffix = label ? ` ${i18next.t("accessibility:filterLabel", { label })}` : "";
+        a11yManager.announceContext(`${baseContext}${labelSuffix}`);
       }
 
       return true;
     }
 
     return false;
+  }
+
+  /**
+   * Announce the current team roster to screen readers. Called when the player
+   * adds or removes a starter so they always know what they have without having
+   * to navigate to the party-icon row to hear it slot-by-slot.
+   */
+  private announceTeam(prefixKey?: string, prefixName?: string): void {
+    const prefix = prefixKey && prefixName ? `${i18next.t(prefixKey, { name: prefixName })} ` : "";
+    if (this.starterSpecies.length === 0) {
+      a11yManager.announceMessage(`${prefix}${i18next.t("accessibility:teamEmpty")}`);
+      return;
+    }
+    const members = this.starterSpecies
+      .map((s, i) => i18next.t("accessibility:teamMember", { slot: i + 1, name: s.name }))
+      .join(", ");
+    a11yManager.announceMessage(
+      `${prefix}${i18next.t("accessibility:teamRoster", {
+        count: this.starterSpecies.length,
+        max: PLAYER_PARTY_MAX_SIZE,
+        members,
+      })}`,
+    );
   }
 
   moveStarterIconsCursor(index: number): void {
@@ -3540,10 +3693,52 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     if (this.starterSpecies.length > 0) {
       this.starterIconsCursorObj.setVisible(true);
       this.setSpecies(this.starterSpecies[index]);
+      // Announce the party slot the cursor landed on. setSpecies() updates on-screen info
+      // but does not produce a screen-reader announcement on its own.
+      const species = this.starterSpecies[index];
+      if (species) {
+        const cancel = getKeyLabelForButton(Button.CANCEL);
+        a11yManager.announceMessage(
+          cancel
+            ? i18next.t("accessibility:partySlotInfo", {
+                current: index + 1,
+                total: this.starterSpecies.length,
+                name: species.name,
+                cancel,
+              })
+            : i18next.t("accessibility:partySlotInfoNoKey", {
+                current: index + 1,
+                total: this.starterSpecies.length,
+                name: species.name,
+              }),
+        );
+      }
     } else {
       this.starterIconsCursorObj.setVisible(false);
       this.setSpecies(null);
     }
+  }
+
+  /** Announce the Start Run button when the cursor lands on it. */
+  private announceStartButtonFocus(): void {
+    const action = getKeyLabelForButton(Button.ACTION);
+    const label = i18next.t("common:start");
+    a11yManager.announceMessage(
+      action
+        ? i18next.t("accessibility:startButtonFocus", { label, action })
+        : i18next.t("accessibility:startButtonFocusNoKey", { label }),
+    );
+  }
+
+  /** Announce the Random Select button when the cursor lands on it. */
+  private announceRandomButtonFocus(): void {
+    const action = getKeyLabelForButton(Button.ACTION);
+    const label = i18next.t("starterSelectUiHandler:randomize");
+    a11yManager.announceMessage(
+      action
+        ? i18next.t("accessibility:randomButtonFocus", { label, action })
+        : i18next.t("accessibility:randomButtonFocusNoKey", { label }),
+    );
   }
 
   getFriendship(speciesId: number) {
@@ -4301,6 +4496,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   popStarter(index: number): void {
+    const removedName = this.starterSpecies[index]?.name ?? "";
     this.starterSpecies.splice(index, 1);
     this.starters.splice(index, 1);
 
@@ -4349,6 +4545,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
 
     this.tryUpdateValue();
+    this.announceTeam("accessibility:teamRemoved", removedName);
   }
 
   // TODO: Dedupe from pokedex

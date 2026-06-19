@@ -10,6 +10,7 @@ import * as Modifier from "#modifiers/modifier";
 import type { PokemonData } from "#system/pokemon-data";
 import type { SessionSaveData } from "#types/save-data";
 import type { OptionSelectConfig } from "#ui/abstract-option-select-ui-handler";
+import { a11yManager, getKeyLabelForButton } from "#ui/accessibility-manager";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { RunDisplayMode } from "#ui/run-info-ui-handler";
 import { addTextObject } from "#ui/text";
@@ -100,6 +101,21 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
 
     this.setScrollCursor(0);
     this.setCursor(0);
+
+    // Announce save slot context to screen readers
+    const modeLabel = i18next.t(
+      this.uiMode === SaveSlotUiMode.LOAD ? "accessibility:saveSlotModeLoad" : "accessibility:saveSlotModeSave",
+    );
+    const up = getKeyLabelForButton(Button.UP);
+    const down = getKeyLabelForButton(Button.DOWN);
+    const action = getKeyLabelForButton(Button.ACTION);
+    const cancel = getKeyLabelForButton(Button.CANCEL);
+    a11yManager.announceContext(
+      up && down && action && cancel
+        ? i18next.t("accessibility:saveSlotContext", { label: modeLabel, up, down, action, cancel })
+        : i18next.t("accessibility:saveSlotContextNoKey", { label: modeLabel }),
+    );
+
     return true;
   }
 
@@ -405,6 +421,15 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
         this.sessionSlots[cursorPosition].setPosition(0, cursorIncrement);
       }
       this.setArrowVisibility(hasData);
+
+      // Announce save slot info to screen readers
+      const saveData = session.saveData;
+      if (hasData && saveData) {
+        const modeName = GameMode.getModeName(saveData.gameMode as GameModes);
+        a11yManager.announceMessage(`Slot ${cursorPosition + 1}: ${modeName}, Wave ${saveData.waveIndex}`);
+      } else {
+        a11yManager.announceMessage(i18next.t("accessibility:saveSlotEmpty", { slot: cursorPosition + 1 }));
+      }
     }
     if (prevSlotIndex != null) {
       this.revertSessionSlot(prevSlotIndex);

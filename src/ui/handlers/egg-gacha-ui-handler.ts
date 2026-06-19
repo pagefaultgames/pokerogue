@@ -10,6 +10,7 @@ import { GachaType } from "#enums/gacha-types";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { getVoucherTypeIcon, VoucherType } from "#system/voucher";
+import { a11yManager } from "#ui/accessibility-manager";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { addTextObject, getEggTierTextTint, getTextStyleOptions } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
@@ -882,6 +883,18 @@ export class EggGachaUiHandler extends MessageUiHandler {
 
     this.cursorObj.setScale(this.scale * 6);
     this.cursorObj.setPositionRelative(this.eggGachaOptionSelectBg, 10, 9 + (48 + this.cursor * 96) * this.scale);
+
+    // Announce gacha option to screen readers
+    const optionLabels = [
+      `1x, 10 ${i18next.t("egg:pulls")}`,
+      `1x, 5 ${i18next.t("egg:pulls")}`,
+      `1x, 10 ${i18next.t("egg:pulls")}`,
+      `1x, 25 ${i18next.t("egg:pulls")}`,
+      i18next.t("menu:cancel"),
+    ];
+    if (cursor < optionLabels.length) {
+      a11yManager.announceMessage(optionLabels[cursor]);
+    }
 
     return ret;
   }

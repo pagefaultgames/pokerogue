@@ -1,8 +1,11 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { Button } from "#enums/buttons";
 import type { UiMode } from "#enums/ui-mode";
+import { a11yManager, getKeyLabelForButton } from "#ui/accessibility-manager";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { getFrameMs } from "#utils/common";
+import i18next from "i18next";
 
 export abstract class MessageUiHandler extends AwaitableUiHandler {
   protected textTimer: Phaser.Time.TimerEvent | null;
@@ -129,6 +132,11 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
       text = newText;
     }
 
+    // Announce full text to screen readers immediately (before character-by-character animation)
+    if (text) {
+      a11yManager.announceMessage(text);
+    }
+
     if (this.textTimer) {
       this.textTimer.remove();
       if (this.textCallbackTimer) {
@@ -236,6 +244,15 @@ export abstract class MessageUiHandler extends AwaitableUiHandler {
     }
     this.pendingPrompt = false;
     this.awaitingActionInput = true;
+
+    // Announce prompt to screen readers using the user's actual keybinding for the action button
+    const actionKey = getKeyLabelForButton(Button.ACTION);
+    a11yManager.announceMessage(
+      actionKey
+        ? i18next.t("accessibility:pressKeyToContinue", { key: actionKey })
+        : i18next.t("accessibility:pressActionToContinue"),
+    );
+
     this.onActionInput = () => {
       if (this.prompt) {
         this.prompt.anims.stop();

@@ -8,6 +8,7 @@ import { achvs, getAchievementDescription } from "#system/achv";
 import type { Voucher } from "#system/voucher";
 import { getVoucherTypeIcon, getVoucherTypeName, vouchers } from "#system/voucher";
 import type { AchvUnlocks, VoucherUnlocks } from "#types/save-data";
+import { a11yManager } from "#ui/accessibility-manager";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { ScrollBar } from "#ui/scroll-bar";
 import { addTextObject } from "#ui/text";
@@ -215,6 +216,12 @@ export class AchvsUiHandler extends MessageUiHandler {
     this.scoreText.setText(`${achv.score}pt`);
     this.unlockText.setText(
       unlocked ? new Date(achvUnlocks[achv.id]).toLocaleDateString() : i18next.t("achv:locked.name"),
+    );
+
+    // Announce achievement to screen readers
+    const statusText = unlocked ? "Unlocked" : hidden ? "Hidden" : "Locked";
+    a11yManager.announceMessage(
+      `${unlocked ? achv.name : "???"}, ${statusText}${hidden ? "" : `, ${achv.description}`}`,
     );
   }
 

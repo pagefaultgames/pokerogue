@@ -12,6 +12,7 @@ import { UiMode } from "#enums/ui-mode";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import type { PokemonMove } from "#moves/pokemon-move";
 import type { CommandPhase } from "#phases/command-phase";
+import { a11yManager, getKeyLabelForButton } from "#ui/accessibility-manager";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { addTextObject, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
@@ -139,6 +140,20 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
     this.displayMoves();
     this.toggleInfo(false); // in case cancel was pressed while info toggle is active
     this.active = true;
+
+    // Announce move selection context to screen readers
+    const up = getKeyLabelForButton(Button.UP);
+    const down = getKeyLabelForButton(Button.DOWN);
+    const left = getKeyLabelForButton(Button.LEFT);
+    const right = getKeyLabelForButton(Button.RIGHT);
+    const action = getKeyLabelForButton(Button.ACTION);
+    const cancel = getKeyLabelForButton(Button.CANCEL);
+    a11yManager.announceContext(
+      up && down && left && right && action && cancel
+        ? i18next.t("accessibility:fightContext", { up, down, left, right, action, cancel })
+        : i18next.t("accessibility:fightContextNoKey"),
+    );
+
     return true;
   }
 
@@ -306,6 +321,41 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
     }
 
     this.setMoveInfo(cursor);
+
+    // Announce move details to screen readers
+    const pokemon = (globalScene.phaseManager.getCurrentPhase() as CommandPhase).getPokemon();
+    const moveset = pokemon.getMoveset();
+    if (cursor < moveset.length) {
+      const pokemonMove = moveset[cursor];
+      const moveType = PokemonType[pokemon.getMoveType(pokemonMove.getMove())];
+      const maxPP = pokemonMove.getMovePp();
+      const pp = maxPP - pokemonMove.ppUsed;
+      const power = pokemonMove.getMove().power;
+      const accuracy = pokemonMove.getMove().accuracy;
+      const category = MoveCategory[pokemonMove.getMove().category];
+
+      // Get effectiveness against opponents
+      let effectivenessText = "";
+      const opponents = pokemon.getOpponents();
+      if (opponents.length > 0 && pokemonMove.getMove().category !== MoveCategory.STATUS) {
+        const effectiveness = this.getEffectivenessText(pokemon, opponents[0], pokemonMove);
+        if (effectiveness === "0x") {
+          effectivenessText = ", No effect";
+        } else if (effectiveness === "0.25x" || effectiveness === "0.5x") {
+          effectivenessText = ", Not very effective";
+        } else if (effectiveness === "2x" || effectiveness === "4x") {
+          effectivenessText = ", Super effective";
+        }
+      }
+
+      const powerText = power >= 0 ? `${power} power` : "Status move";
+      const accuracyText = accuracy >= 0 ? `${accuracy}% accuracy` : "Can't miss";
+
+      a11yManager.announceMessage(
+        `${pokemonMove.getName()}, ${moveType} type, ${category}, `
+          + `${powerText}, ${accuracyText}, PP ${pp} of ${maxPP}${effectivenessText}`,
+      );
+    }
 
     if (!this.cursorObj) {
       const isTera = this.fromCommand === Command.TERA;

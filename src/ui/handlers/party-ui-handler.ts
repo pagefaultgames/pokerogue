@@ -21,6 +21,7 @@ import type { PokemonMove } from "#moves/pokemon-move";
 import type { CommandPhase } from "#phases/command-phase";
 import { getVariantTint } from "#sprites/variant";
 import type { TurnMove } from "#types/turn-move";
+import { a11yManager, getKeyLabelForButton } from "#ui/accessibility-manager";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-helper";
@@ -379,6 +380,17 @@ export class PartyUiHandler extends MessageUiHandler {
     }
     this.showPartyText();
     this.setCursor(0);
+
+    // Announce party context to screen readers
+    const up = getKeyLabelForButton(Button.UP);
+    const down = getKeyLabelForButton(Button.DOWN);
+    const action = getKeyLabelForButton(Button.ACTION);
+    const cancel = getKeyLabelForButton(Button.CANCEL);
+    a11yManager.announceContext(
+      up && down && action && cancel
+        ? i18next.t("accessibility:partyContext", { up, down, action, cancel })
+        : i18next.t("accessibility:partyContextNoKey"),
+    );
 
     return true;
   }
@@ -1231,10 +1243,22 @@ export class PartyUiHandler extends MessageUiHandler {
       }
       if (cursor < 6) {
         this.partySlots[cursor].select();
+        // Announce pokemon info to screen readers
+        const pokemon = globalScene.getPlayerParty()[cursor];
+        if (pokemon) {
+          const hp = pokemon.hp;
+          const maxHp = pokemon.getMaxHp();
+          const status = pokemon.status ? `, ${pokemon.status.effect}` : "";
+          a11yManager.announceMessage(
+            `${pokemon.getNameToRender()}, Level ${pokemon.level}, HP ${hp}/${maxHp}${status}`,
+          );
+        }
       } else if (cursor === 6) {
         this.partyCancelButton.select();
+        a11yManager.announceMessage(i18next.t("accessibility:cancel"));
       } else if (cursor === 7) {
         this.partyDiscardModeButton.select();
+        a11yManager.announceMessage(i18next.t("accessibility:discardMode"));
       }
     }
     return changed;
@@ -1277,6 +1301,15 @@ export class PartyUiHandler extends MessageUiHandler {
       8 - this.optionsBg.displayWidth,
       -19 - 16 * (this.options.length - 1 - this.optionsCursor),
     );
+
+    // Announce selected option to screen readers
+    const partyPokemon = globalScene.getPlayerParty()[this.cursor];
+    if (partyPokemon) {
+      const optionLabel = this.getOptionLabel(this.options[this.optionsCursor], partyPokemon);
+      if (optionLabel) {
+        a11yManager.announceMessage(optionLabel);
+      }
+    }
 
     return changed;
   }
@@ -1600,6 +1633,26 @@ export class PartyUiHandler extends MessageUiHandler {
     // Generic, these are applied to all Modes
     this.addCancelAndScrollOptions();
     this.updateOptionsWindow();
+  }
+
+  /**
+   * Get a human-readable label for a party option, used for screen reader announcements.
+   */
+  private getOptionLabel(option: PartyOption, pokemon: PlayerPokemon): string {
+    if (option === PartyOption.SCROLL_UP || option === PartyOption.SCROLL_DOWN) {
+      return "";
+    }
+    if (option >= PartyOption.MOVE_1 && option <= PartyOption.MOVE_4) {
+      const move = pokemon.moveset[option - PartyOption.MOVE_1];
+      return move ? move.getName() : "";
+    }
+    if (this.localizedOptions.includes(option)) {
+      return i18next.t(`partyUiHandler:${toCamelCase(PartyOption[option])}`);
+    }
+    if (option === PartyOption.ALL) {
+      return i18next.t("partyUiHandler:all");
+    }
+    return toTitleCase(PartyOption[option] ?? "");
   }
 
   private updateOptionsWindow(): void {

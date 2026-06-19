@@ -7,6 +7,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { TextStyle } from "#enums/text-style";
 import { UiTheme } from "#enums/ui-theme";
 import type { GameData } from "#system/game-data";
+import { a11yManager } from "#ui/accessibility-manager";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
@@ -536,6 +537,19 @@ export class GameStatsUiHandler extends UiHandler {
     // NOTE: Do not toggle the arrows' "active" property here, as this would cause their animations to desync
     this.arrowUp.setVisible(this.cursor > 0);
     this.arrowDown.setVisible(this.cursor < this.maxCursorPos);
+
+    // Announce visible stats to screen readers
+    const statsText = this.statLabels
+      .map((label, i) => {
+        const name = label.text;
+        const value = this.statValues[i]?.text;
+        return name ? `${name}: ${value}` : "";
+      })
+      .filter(s => s)
+      .join(". ");
+    if (statsText) {
+      a11yManager.announceMessage(statsText);
+    }
 
     return true;
   }

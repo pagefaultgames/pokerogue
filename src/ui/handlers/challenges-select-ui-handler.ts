@@ -5,6 +5,7 @@ import { Challenges } from "#enums/challenges";
 import { Color, ShadowColor } from "#enums/color";
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
+import { a11yManager, getKeyLabelForButton } from "#ui/accessibility-manager";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
@@ -323,7 +324,41 @@ export class GameChallengesUiHandler extends UiHandler {
 
     this.getUi().hideTooltip();
 
+    this.announceA11y();
+
     return true;
+  }
+
+  /**
+   * Announce the challenges screen to screen readers: context, the current
+   * challenge + its value, and navigation instructions.
+   */
+  private announceA11y(): void {
+    const up = getKeyLabelForButton(Button.UP);
+    const down = getKeyLabelForButton(Button.DOWN);
+    const left = getKeyLabelForButton(Button.LEFT);
+    const right = getKeyLabelForButton(Button.RIGHT);
+    const action = getKeyLabelForButton(Button.ACTION);
+    const cancel = getKeyLabelForButton(Button.CANCEL);
+    const title = i18next.t("challenges:title");
+    a11yManager.announceContext(
+      up && down && left && right && action && cancel
+        ? i18next.t("accessibility:challengesContext", { title, up, down, left, right, action, cancel })
+        : i18next.t("accessibility:challengesContextNoKey", { title }),
+    );
+    const challenge = this.getActiveChallenge();
+    if (challenge) {
+      a11yManager.announceMessage(`${challenge.getName()}: ${challenge.getValue()}`);
+    }
+  }
+
+  /**
+   * Announce the start button state (selected or no challenge chosen).
+   */
+  private announceStartA11y(): void {
+    const a11y = a11yManager;
+    const key = this.hasSelectedChallenge ? "common:start" : "challenges:noneSelected";
+    a11y.announceMessage(i18next.t(key));
   }
 
   private updateChallengeArrowsTint(tinted: boolean): void {
@@ -366,6 +401,10 @@ export class GameChallengesUiHandler extends UiHandler {
         this.startCursor.setVisible(false);
         this.cursorObj?.setVisible(true);
         this.updateChallengeArrowsTint(this.startCursor.visible);
+        const challenge = this.getActiveChallenge();
+        if (challenge) {
+          a11yManager.announceMessage(`${challenge.getName()}: ${challenge.getValue()}`);
+        }
       } else {
         phaseManager.toTitleScreen();
         phaseManager.getCurrentPhase().end();
@@ -380,6 +419,7 @@ export class GameChallengesUiHandler extends UiHandler {
           this.startCursor.setVisible(true);
           this.cursorObj?.setVisible(false);
           this.updateChallengeArrowsTint(this.startCursor.visible);
+          this.announceStartA11y();
         }
         success = true;
       } else {
@@ -410,6 +450,10 @@ export class GameChallengesUiHandler extends UiHandler {
           }
           if (success) {
             this.updateText();
+            const challengeUp = this.getActiveChallenge();
+            if (challengeUp) {
+              a11yManager.announceMessage(`${challengeUp.getName()}: ${challengeUp.getValue()}`);
+            }
           }
           break;
         case Button.DOWN:
@@ -433,18 +477,26 @@ export class GameChallengesUiHandler extends UiHandler {
           }
           if (success) {
             this.updateText();
+            const challengeDown = this.getActiveChallenge();
+            if (challengeDown) {
+              a11yManager.announceMessage(`${challengeDown.getName()}: ${challengeDown.getValue()}`);
+            }
           }
           break;
         case Button.LEFT:
           success = this.getActiveChallenge().decreaseValue();
           if (success) {
             this.updateText();
+            const challengeLeft = this.getActiveChallenge();
+            a11yManager.announceMessage(challengeLeft.getValue());
           }
           break;
         case Button.RIGHT:
           success = this.getActiveChallenge().increaseValue();
           if (success) {
             this.updateText();
+            const challengeRight = this.getActiveChallenge();
+            a11yManager.announceMessage(challengeRight.getValue());
           }
           break;
       }

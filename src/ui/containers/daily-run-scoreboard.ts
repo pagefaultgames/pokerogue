@@ -1,6 +1,7 @@
 import { pokerogueApi } from "#api/api";
 import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
+import { a11yManager } from "#ui/accessibility-manager";
 import { addTextObject } from "#ui/text";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import { executeIf } from "#utils/common";
@@ -194,6 +195,32 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
       entryContainer.setY((i + 1) * 9);
       this.rankingsContainer.add(entryContainer);
     });
+
+    // Announce rankings to screen readers. The visual entries are canvas text
+    // with no semantic structure, so AT users only get this assertive readout.
+    const categoryLabel = i18next.t(`menu:${ScoreboardCategory[this.category].toLowerCase()}Rankings`);
+    a11yManager.announceMessage(
+      i18next.t("accessibility:scoreboardSummary", {
+        category: categoryLabel,
+        page: this.page,
+        pageCount: this.pageCount ?? 1,
+        count: rankings.length,
+      }),
+    );
+    const entryKey =
+      this.category === ScoreboardCategory.WEEKLY
+        ? "accessibility:scoreboardEntryWeekly"
+        : "accessibility:scoreboardEntry";
+    rankings.forEach(r => {
+      a11yManager.announceMessage(
+        i18next.t(entryKey, {
+          rank: r.rank,
+          username: r.username,
+          score: r.score,
+          wave: r.wave,
+        }),
+      );
+    });
   }
 
   /**
@@ -224,6 +251,14 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
       this.page = page;
     }
 
+    // Announce the loading state so AT users hear the category they just switched to
+    // before the network round-trip completes.
+    a11yManager.announceMessage(
+      i18next.t("accessibility:scoreboardLoading", {
+        category: i18next.t(`menu:${ScoreboardCategory[category].toLowerCase()}Rankings`),
+      }),
+    );
+
     executeIf(category !== this.category || this.pageCount === undefined, () =>
       pokerogueApi.daily.getRankingsPageCount({ category }).then(count => (this.pageCount = count)),
     )
@@ -240,6 +275,11 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
               this.updateRankings(rankings);
             } else {
               this.loadingLabel.setText(i18next.t("menu:noRankings"));
+              a11yManager.announceMessage(
+                i18next.t("accessibility:scoreboardEmpty", {
+                  category: i18next.t(`menu:${ScoreboardCategory[category].toLowerCase()}Rankings`),
+                }),
+              );
             }
           })
           .finally(() => {

@@ -5,6 +5,7 @@ import "#app/i18n"; // Initializes i18n on import
 import { InvertPostFX } from "#app/pipelines/invert";
 import { isBeta, isDev } from "#constants/app-constants";
 import { version } from "#package.json";
+import { a11yManager } from "#ui/accessibility-manager";
 import Phaser from "phaser";
 import BBCodeTextPlugin from "phaser3-rex-plugins/plugins/bbcodetext-plugin";
 import InputTextPlugin from "phaser3-rex-plugins/plugins/inputtext-plugin";
@@ -70,6 +71,9 @@ async function startGame(): Promise<void> {
     version,
   });
   game.sound.pauseOnBlur = false;
+
+  // Initialize screen reader accessibility layer
+  a11yManager.init();
 }
 
 try {

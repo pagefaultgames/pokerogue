@@ -44,6 +44,7 @@ import type { DexEntry } from "#types/dex-data";
 import type { LevelMoves } from "#types/pokemon-species";
 import type { StarterAttributes } from "#types/save-data";
 import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import { a11yManager, getKeyLabelForButton } from "#ui/accessibility-manager";
 import { BaseStatsOverlay } from "#ui/base-stats-overlay";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
@@ -789,7 +790,49 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
     this.setCursor(0);
 
+    this.announcePageContext();
+
     return true;
+  }
+
+  /**
+   * Announce the species + section-menu context to screen readers when the
+   * pokédex detail page is opened. Setting `setCursor(0)` above already
+   * speaks the highlighted menu option, so this announcement focuses on the
+   * species itself + navigation hints.
+   */
+  private announcePageContext(): void {
+    if (!this.species) {
+      return;
+    }
+    const type1 = PokemonType[this.species.type1];
+    const type2 = this.species.type2 === null ? "" : `/${PokemonType[this.species.type2]}`;
+    const caughtKey = this.isCaught()
+      ? "accessibility:pokedexCaught"
+      : this.isSeen()
+        ? "accessibility:pokedexSeen"
+        : "accessibility:pokedexUnknown";
+    const up = getKeyLabelForButton(Button.UP);
+    const down = getKeyLabelForButton(Button.DOWN);
+    const action = getKeyLabelForButton(Button.ACTION);
+    const cancel = getKeyLabelForButton(Button.CANCEL);
+    a11yManager.announceContext(
+      up && down && action && cancel
+        ? i18next.t("accessibility:pokedexPageContext", {
+            name: this.species.name,
+            type: `${type1}${type2}`,
+            caught: i18next.t(caughtKey),
+            up,
+            down,
+            action,
+            cancel,
+          })
+        : i18next.t("accessibility:pokedexPageContextNoKey", {
+            name: this.species.name,
+            type: `${type1}${type2}`,
+            caught: i18next.t(caughtKey),
+          }),
+    );
   }
 
   private getMenuText(): string {
@@ -2308,6 +2351,18 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       ui.showText(this.menuDescriptions[cursor]);
     } else {
       ui.showText("");
+    }
+
+    // Announce the highlighted section + position to screen readers.
+    // ui.showText above only fires for caught / seen species; we want the cursor
+    // to speak even on unknown species so the user can navigate the menu.
+    if (this.menuOptions && cursor < this.menuOptions.length) {
+      const sectionLabel = i18next.t(`pokedexUiHandler:${toCamelCase(`menu${MenuOptions[this.menuOptions[cursor]]}`)}`);
+      const position = i18next.t("accessibility:menuPosition", {
+        current: cursor + 1,
+        total: this.menuOptions.length,
+      });
+      a11yManager.announceMessage(`${sectionLabel}. ${position}`);
     }
 
     return ret;

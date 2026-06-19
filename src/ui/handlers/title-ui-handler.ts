@@ -5,11 +5,13 @@ import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { isBeta, isDev } from "#constants/app-constants";
 import { getSplashMessages } from "#data/splash-messages";
+import { Button } from "#enums/buttons";
 import { PlayerGender } from "#enums/player-gender";
 import type { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { version } from "#package.json";
+import { a11yManager, getKeyLabelForButton } from "#ui/accessibility-manager";
 import { TimedEventDisplay } from "#ui/event-display";
 import { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
 import { addTextObject } from "#ui/text";
@@ -224,6 +226,26 @@ export class TitleUiHandler extends OptionSelectUiHandler {
       alpha: (target: any) => (target === this.titleContainer ? 1 : 0),
       ease: "Sine.easeInOut",
     });
+
+    // Announce title screen and first menu option to screen readers
+    const up = getKeyLabelForButton(Button.UP);
+    const down = getKeyLabelForButton(Button.DOWN);
+    const left = getKeyLabelForButton(Button.LEFT);
+    const right = getKeyLabelForButton(Button.RIGHT);
+    const action = getKeyLabelForButton(Button.ACTION);
+    a11yManager.announceContext(
+      up && down && left && right && action
+        ? i18next.t("accessibility:titleScreenContext", { up, down, left, right, action })
+        : i18next.t("accessibility:titleScreenContextNoKey"),
+    );
+    if (this.config?.options && this.config.options.length > 0) {
+      const labels = this.config.options.filter(o => !o.skip).map(o => o.label);
+      a11yManager.setMenu(labels, 0, i18next.t("accessibility:menu"));
+      // No follow-up announceMessage here -- super.show() already routed through
+      // AbstractOptionSelectUiHandler.setCursor(0) which announces the highlighted
+      // option with position info. Adding another assertive announcement would
+      // interrupt that one before NVDA can read it.
+    }
 
     return true;
   }

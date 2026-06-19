@@ -5,6 +5,7 @@ import { Device } from "#enums/devices";
 import { PlayerGender } from "#enums/player-gender";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
+import { a11yManager } from "#ui/accessibility-manager";
 import { AchvBar } from "#ui/achv-bar";
 import { AchvsUiHandler } from "#ui/achvs-ui-handler";
 import { AutoCompleteUiHandler } from "#ui/autocomplete-ui-handler";
@@ -549,6 +550,10 @@ export class UI extends Phaser.GameObjects.Container {
           if (touchControls) {
             touchControls.dataset.uiMode = UiMode[mode];
           }
+          // Announce mode transitions to screen readers (skip MESSAGE mode as it fires constantly)
+          if (mode !== UiMode.MESSAGE) {
+            a11yManager.announceContext(UI.getModeLabel(mode));
+          }
           this.getHandler().show(args);
         }
         resolve();
@@ -613,6 +618,9 @@ export class UI extends Phaser.GameObjects.Container {
         if (touchControls) {
           touchControls.dataset.uiMode = UiMode[this.mode];
         }
+        if (this.mode !== UiMode.MESSAGE) {
+          a11yManager.announceContext(UI.getModeLabel(this.mode));
+        }
         resolve(true);
       };
 
@@ -640,6 +648,56 @@ export class UI extends Phaser.GameObjects.Container {
 
   public getModeChain(): UiMode[] {
     return this.modeChain;
+  }
+
+  /**
+   * Get a human-readable label for a UI mode, used for screen reader announcements.
+   */
+  static getModeLabel(mode: UiMode): string {
+    const labels: Partial<Record<UiMode, string>> = {
+      [UiMode.MESSAGE]: "Battle",
+      [UiMode.TITLE]: "Title Screen",
+      [UiMode.COMMAND]: "Battle Command",
+      [UiMode.FIGHT]: "Move Selection",
+      [UiMode.BALL]: "Ball Selection",
+      [UiMode.TARGET_SELECT]: "Target Selection",
+      [UiMode.MODIFIER_SELECT]: "Item Selection",
+      [UiMode.SAVE_SLOT]: "Save Slot",
+      [UiMode.PARTY]: "Party",
+      [UiMode.SUMMARY]: "Summary",
+      [UiMode.STARTER_SELECT]: "Starter Selection",
+      [UiMode.EVOLUTION_SCENE]: "Evolution",
+      [UiMode.EGG_HATCH_SCENE]: "Egg Hatching",
+      [UiMode.EGG_HATCH_SUMMARY]: "Egg Hatch Summary",
+      [UiMode.CONFIRM]: "Confirm",
+      [UiMode.OPTION_SELECT]: "Options",
+      [UiMode.MENU]: "Menu",
+      [UiMode.MENU_OPTION_SELECT]: "Menu Options",
+      [UiMode.SETTINGS]: "Settings",
+      [UiMode.SETTINGS_DISPLAY]: "Display Settings",
+      [UiMode.SETTINGS_AUDIO]: "Audio Settings",
+      [UiMode.SETTINGS_GAMEPAD]: "Gamepad Settings",
+      [UiMode.GAMEPAD_BINDING]: "Gamepad Binding",
+      [UiMode.SETTINGS_KEYBOARD]: "Keyboard Settings",
+      [UiMode.KEYBOARD_BINDING]: "Keyboard Binding",
+      [UiMode.ACHIEVEMENTS]: "Achievements",
+      [UiMode.GAME_STATS]: "Game Stats",
+      [UiMode.EGG_LIST]: "Egg List",
+      [UiMode.EGG_GACHA]: "Egg Gacha",
+      [UiMode.POKEDEX]: "Pokédex",
+      [UiMode.POKEDEX_SCAN]: "Pokédex Scan",
+      [UiMode.POKEDEX_PAGE]: "Pokédex Entry",
+      [UiMode.LOGIN_OR_REGISTER]: "Login or Register",
+      [UiMode.LOGIN_FORM]: "Login",
+      [UiMode.REGISTRATION_FORM]: "Registration",
+      [UiMode.LOADING]: "Loading",
+      [UiMode.CHALLENGE_SELECT]: "Challenge Selection",
+      [UiMode.RENAME_POKEMON]: "Rename Pokémon",
+      [UiMode.RUN_HISTORY]: "Run History",
+      [UiMode.RUN_INFO]: "Run Info",
+      [UiMode.MYSTERY_ENCOUNTER]: "Mystery Encounter",
+    };
+    return labels[mode] ?? UiMode[mode].replace(/_/g, " ").toLowerCase();
   }
 
   /**

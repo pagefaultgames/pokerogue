@@ -836,6 +836,10 @@ export class GameData {
     if (bypassLogin || localStorage.getItem(getSessionDataLocalStorageKey(slotId))) {
       const sessionData = localStorage.getItem(getSessionDataLocalStorageKey(slotId));
       if (!sessionData) {
+        if (bypassLogin) {
+          // Guest/offline mode has no server to fall back to; treat missing data as "empty slot".
+          return;
+        }
         console.error("No session data found!");
         return;
       }
