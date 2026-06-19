@@ -6145,8 +6145,8 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       [23, MoveId.GLARE],
       [26, MoveId.TAKE_DOWN],
       [28, MoveId.DIG],
-      [31, MoveId.ENDURE],
-      [33, MoveId.HYPER_DRILL],
+      [30, MoveId.ENDURE],
+      [32, MoveId.HYPER_DRILL],
       [36, MoveId.ROOST],
       [38, MoveId.AIR_SLASH],
       [41, MoveId.DRAGON_RUSH],
@@ -8093,7 +8093,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
     evolutions: [
       new SpeciesEvolution({
         speciesId: SpeciesId.MAMOSWINE,
-        level: 1,
+        level: 33,
         condition: { key: EvoCondKey.MOVE, move: MoveId.ANCIENT_POWER },
         evoDelay: [48, 56, 64],
       }),
@@ -9480,7 +9480,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
     evolutions: [
       new SpeciesEvolution({
         speciesId: SpeciesId.WYRDEER,
-        level: 25,
+        level: 31,
         condition: { key: EvoCondKey.MOVE, move: MoveId.PSYSHIELD_BASH },
         evoDelay: [35, 45, 55],
       }),
