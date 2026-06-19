@@ -179,7 +179,7 @@ function applyMigrators(migrators: readonly SaveMigrator[], data: SaveData, save
  * @throws An error if the version string is not valid (of the form "#.#.#[.#]")
  * @example
  * ```ts
- * extractVersion("1.2.3"); // output: [1, 2, 3]
+ * extractVersion("1.2.3"); // output: [1, 2, 3, 0]
  * extractVersion("1.2.3.4"); // output: [1, 2, 3, 4]
  * extractVersion("1..2.3"); // throws error
  * extractVersion("1.2.3.4.5"); // throws error
@@ -192,7 +192,11 @@ function extractVersion(versionString: string): number[] {
     throw new Error(`Invalid version string (${versionString}) in version migrator!`);
   }
 
-  return versionString.split(".").map(v => Number.parseInt(v));
+  const versionArray = versionString.split(".").map(v => Number.parseInt(v));
+  if (versionArray.length === 3) {
+    versionArray.push(0);
+  }
+  return versionArray;
 }
 
 /**
@@ -200,20 +204,23 @@ function extractVersion(versionString: string): number[] {
  * @param versionA - The first version to compare
  * @param versionB - The second version to compare
  * @returns The result of the comparison:
- * - `1`: `versionB` is newer
- * - `-1`: `versionA` is newer
+ * - `1`: `versionA` is newer
+ * - `-1`: `versionB` is newer
  * - `0`: The versions are equal
  */
 function compareVersions(versionA: string, versionB: string): -1 | 0 | 1 {
   const a = extractVersion(versionA);
   const b = extractVersion(versionB);
 
-  if (a > b) {
-    return 1;
+  for (let i = 0; i < 4; i++) {
+    if (a[i] > b[i]) {
+      return 1;
+    }
+    if (a[i] < b[i]) {
+      return -1;
+    }
   }
-  if (a < b) {
-    return -1;
-  }
+
   return 0;
 }
 
