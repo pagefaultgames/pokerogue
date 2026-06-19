@@ -27317,14 +27317,14 @@
     "dexNum": 206,
     "id": "DUNSPARCE",
     "form": null,
-    "level": 31,
+    "level": 30,
     "move": "ENDURE"
   },
   {
     "dexNum": 206,
     "id": "DUNSPARCE",
     "form": null,
-    "level": 33,
+    "level": 32,
     "move": "HYPER_DRILL"
   },
   {
@@ -73426,6 +73426,13 @@
     "dexNum": 569,
     "id": "GARBODOR",
     "form": null,
+    "level": "RELEARN_MOVE",
+    "move": "HARD_PRESS"
+  },
+  {
+    "dexNum": 569,
+    "id": "GARBODOR",
+    "form": null,
     "level": 1,
     "move": "POUND"
   },
@@ -88246,21 +88253,14 @@
     "id": "INKAY",
     "form": null,
     "level": 29,
+    "move": "TOPSY_TURVY"
+  },
+  {
+    "dexNum": 686,
+    "id": "INKAY",
+    "form": null,
+    "level": 31,
     "move": "PSYCHO_CUT"
-  },
-  {
-    "dexNum": 686,
-    "id": "INKAY",
-    "form": null,
-    "level": 31,
-    "move": "LIGHT_SCREEN"
-  },
-  {
-    "dexNum": 686,
-    "id": "INKAY",
-    "form": null,
-    "level": 31,
-    "move": "REFLECT"
   },
   {
     "dexNum": 686,
@@ -88281,7 +88281,14 @@
     "id": "INKAY",
     "form": null,
     "level": 39,
-    "move": "TOPSY_TURVY"
+    "move": "LIGHT_SCREEN"
+  },
+  {
+    "dexNum": 686,
+    "id": "INKAY",
+    "form": null,
+    "level": 39,
+    "move": "REFLECT"
   },
   {
     "dexNum": 686,
@@ -88289,6 +88296,13 @@
     "form": null,
     "level": 42,
     "move": "SUPERPOWER"
+  },
+  {
+    "dexNum": 687,
+    "id": "MALAMAR",
+    "form": null,
+    "level": 1,
+    "move": "REVERSAL"
   },
   {
     "dexNum": 687,
@@ -88310,13 +88324,6 @@
     "form": null,
     "level": 1,
     "move": "CONSTRICT"
-  },
-  {
-    "dexNum": 687,
-    "id": "MALAMAR",
-    "form": null,
-    "level": 1,
-    "move": "REVERSAL"
   },
   {
     "dexNum": 687,
@@ -88393,21 +88400,14 @@
     "id": "MALAMAR",
     "form": null,
     "level": 29,
+    "move": "TOPSY_TURVY"
+  },
+  {
+    "dexNum": 687,
+    "id": "MALAMAR",
+    "form": null,
+    "level": 31,
     "move": "PSYCHO_CUT"
-  },
-  {
-    "dexNum": 687,
-    "id": "MALAMAR",
-    "form": null,
-    "level": 31,
-    "move": "LIGHT_SCREEN"
-  },
-  {
-    "dexNum": 687,
-    "id": "MALAMAR",
-    "form": null,
-    "level": 31,
-    "move": "REFLECT"
   },
   {
     "dexNum": 687,
@@ -88428,7 +88428,14 @@
     "id": "MALAMAR",
     "form": null,
     "level": 42,
-    "move": "TOPSY_TURVY"
+    "move": "LIGHT_SCREEN"
+  },
+  {
+    "dexNum": 687,
+    "id": "MALAMAR",
+    "form": null,
+    "level": 42,
+    "move": "REFLECT"
   },
   {
     "dexNum": 687,
@@ -122230,14 +122237,14 @@
     "dexNum": 982,
     "id": "DUDUNSPARCE",
     "form": null,
-    "level": 31,
+    "level": 30,
     "move": "ENDURE"
   },
   {
     "dexNum": 982,
     "id": "DUDUNSPARCE",
     "form": null,
-    "level": 33,
+    "level": 32,
     "move": "HYPER_DRILL"
   },
   {
@@ -135181,14 +135188,21 @@
     "id": "BLOODMOON_URSALUNA",
     "form": null,
     "level": 1,
-    "move": "SCRATCH"
+    "move": "ROUND"
   },
   {
     "dexNum": 8901,
     "id": "BLOODMOON_URSALUNA",
     "form": null,
     "level": 1,
-    "move": "LEER"
+    "move": "MUD_SLAP"
+  },
+  {
+    "dexNum": 8901,
+    "id": "BLOODMOON_URSALUNA",
+    "form": null,
+    "level": 1,
+    "move": "SCRATCH"
   },
   {
     "dexNum": 8901,
@@ -135201,8 +135215,22 @@
     "dexNum": 8901,
     "id": "BLOODMOON_URSALUNA",
     "form": null,
+    "level": 1,
+    "move": "LEER"
+  },
+  {
+    "dexNum": 8901,
+    "id": "BLOODMOON_URSALUNA",
+    "form": null,
     "level": 8,
     "move": "FURY_SWIPES"
+  },
+  {
+    "dexNum": 8901,
+    "id": "BLOODMOON_URSALUNA",
+    "form": null,
+    "level": 11,
+    "move": "MUD_SHOT"
   },
   {
     "dexNum": 8901,
@@ -135244,7 +135272,7 @@
     "id": "BLOODMOON_URSALUNA",
     "form": null,
     "level": 29,
-    "move": "MOONBLAST"
+    "move": "PLAY_ROUGH"
   },
   {
     "dexNum": 8901,
@@ -135278,8 +135306,15 @@
     "dexNum": 8901,
     "id": "BLOODMOON_URSALUNA",
     "form": null,
-    "level": 56,
+    "level": 52,
     "move": "HEADLONG_RUSH"
+  },
+  {
+    "dexNum": 8901,
+    "id": "BLOODMOON_URSALUNA",
+    "form": null,
+    "level": 56,
+    "move": "MOONBLAST"
   },
   {
     "dexNum": 8901,
