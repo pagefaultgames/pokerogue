@@ -4842,6 +4842,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       1: AbilityId.RECKLESS,
     },
     levelMoves: [
+      [RELEARN_MOVE, MoveId.UPROAR],
       [1, MoveId.TAIL_WHIP],
       [1, MoveId.WATER_GUN],
       [3, MoveId.TACKLE],
