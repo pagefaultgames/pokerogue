@@ -86,8 +86,8 @@ Once you have your feet under you, check out the [Issues](https://github.com/pag
 Most issues are bugs and are labeled with their area, such as `Move`, `Ability`, `UI/UX`, etc. There are also priority labels:
 - `P0`: Completely gamebreaking (very rare)
 - `P1`: Major - Game crash
-- `P2`: Minor - Incorrect (but non-crashing) move/ability/interaction
-- `P3`: No gameplay impact - typo, minor graphical error, etc.
+- `P2`: Minor - Incorrect (but non-crashing) interactions (e.g. a move that lacks or has incorrect functionality)
+- `P3`: No gameplay impact - typos, minor graphical errors, etc.
 
 Also under issues, you can take a look at the [List of Partial / Unimplemented Moves and Abilities](https://github.com/pagefaultgames/pokerogue/issues/3503) and the [Bug Board](https://github.com/orgs/pagefaultgames/projects/3). The latter is essentially the same as the issues page, so take your pick.
 
@@ -102,6 +102,7 @@ Notable topics include:
 - [Commenting your code](./docs/comments.md)
 - [Linting & Formatting](./docs/linting.md)
 - [Localization](./docs/localization.md)
+- [The Phase System](./docs/phases.md)
 - [Enemy AI move selection](./docs/enemy-ai.md)
 - [Running with Podman](./docs/podman.md)
 

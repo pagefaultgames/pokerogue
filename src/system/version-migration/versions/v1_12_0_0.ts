@@ -119,7 +119,7 @@ function migrateSystemHisuiBasculin(data: SystemSaveData): void {
  * The migrator will copy over
  */
 const migrateSpeciesSplitSystem: SystemSaveMigrator = {
-  version: "1.12.0",
+  version: "1.12.0.0",
   migrate: (data: SystemSaveData): void => {
     if (!data.starterData || !data.dexData) {
       console.warn("Missing starterData or dexData, skipping battle bond Greninja migration");
@@ -185,10 +185,10 @@ function migrateSessionHisuiBasculin(pokemon: PokemonData, replaceSpecies: boole
 
 /**
  * Migrator for battle bond froakie line and hisui basculin form, both of which
- * split into their own species in 1.12.0.
+ * split into their own species in 1.12.0.0
  */
 const migrateSpeciesSplitSession: SessionSaveMigrator = {
-  version: "1.12.0",
+  version: "1.12.0.0",
   migrate: (data: SessionSaveData): void => {
     // Grab the mono-gen challenge number, used to avoid replacing species
     // which could potentially brick existing monogen runs.

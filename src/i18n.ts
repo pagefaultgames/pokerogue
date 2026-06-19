@@ -191,7 +191,15 @@ await i18next
       ns: nsEn,
       debug: import.meta.env.VITE_I18N_DEBUG === "1",
       interpolation: {
+        // Phaser is unable to parse the HTML escape codes produced by i18next, so turning this on results in codes like
+        // &amp; being displayed verbatim on screen.
+        // We use i18next solely for localizing values inside code anyways, so the risk of XSS from user input is virtually nonexistent.
         escapeValue: false,
+        // While using the `$t()` string syntax can allow nested locale keys to lazily look up interpolated text in the current chosen language,
+        // the fact that we reload the page after a language change renders this entirely moot - any nested lookups will be re-evaluated anyway.
+        // Moreover, this means of passing nested keys lacks the type-safety of calling `i18next.t` directly,
+        // which will be important once we get said strong typing set up correctly.
+        skipOnVariables: true,
       },
       postProcess: ["korean-postposition"],
     },

@@ -6,7 +6,7 @@ import type { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
 import type { Nature } from "#enums/nature";
 import { PokeballType } from "#enums/pokeball";
-import { PokemonType } from "#enums/pokemon-type";
+import type { PokemonType } from "#enums/pokemon-type";
 import type { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
 import type { WeatherType } from "#enums/weather-type";
@@ -15,6 +15,7 @@ import type { SpeciesStatBoosterItem, SpeciesStatBoosterModifierType } from "#mo
 import type { EvoLevelThreshold } from "#types/species-gen-types";
 import { coerceArray } from "#utils/array";
 import { randSeedInt } from "#utils/common";
+import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
@@ -123,9 +124,9 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.TIME:
           return i18next.t(`pokemonEvolutions:timeOfDay.${toCamelCase(TimeOfDay[cond.time.at(-1)!])}`); // For Day and Night evos, the key we want goes last
         case EvoCondKey.MOVE_TYPE:
-          return i18next.t("pokemonEvolutions:moveType", {type: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[cond.pkmnType])}`)});
+          return i18next.t("pokemonEvolutions:moveType", {type: i18next.t(getPokemonTypeLocaleKey(cond.pkmnType))});
         case EvoCondKey.PARTY_TYPE:
-          return i18next.t("pokemonEvolutions:partyType", {type: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[cond.pkmnType])}`)});
+          return i18next.t("pokemonEvolutions:partyType", {type: i18next.t(getPokemonTypeLocaleKey(cond.pkmnType))});
         case EvoCondKey.GENDER:
           return i18next.t("pokemonEvolutions:gender", {gender: getGenderSymbol(cond.gender)});
         case EvoCondKey.MOVE:

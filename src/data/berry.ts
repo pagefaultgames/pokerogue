@@ -66,7 +66,7 @@ export function getBerryPredicate(berryType: BerryType): BerryPredicate {
 
 export type BerryEffectFunc = (consumer: Pokemon) => void;
 
-export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
+export function getBerryEffectFunc(berryType: BerryType, berryPhase = false): BerryEffectFunc {
   return (consumer: Pokemon) => {
     // Apply an effect pertaining to what berry we're using
     switch (berryType) {
@@ -108,13 +108,20 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
           const stat: BattleStat = berryType - BerryType.ENIGMA;
           const statStages = new NumberHolder(1);
           applyAbAttrs("DoubleBerryEffectAbAttr", { pokemon: consumer, effectValue: statStages });
-          globalScene.phaseManager.unshiftNew(
-            "StatStageChangePhase",
-            consumer.getBattlerIndex(),
-            true,
-            [stat],
-            statStages.value,
-          );
+          if (berryPhase) {
+            const queuedChange = consumer.queuedBerryStatChanges.find(c => c.stat === stat);
+            if (queuedChange == null) {
+              consumer.queuedBerryStatChanges.push({ stat, stages: statStages.value });
+            } else {
+              queuedChange.stages += statStages.value;
+            }
+          } else {
+            globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+              battlerIndex: consumer.getBattlerIndex(),
+              changes: [{ stat, stages: statStages.value }],
+              sourcePokemon: consumer,
+            });
+          }
         }
         break;
 
@@ -129,13 +136,20 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
           const randStat = randSeedInt(Stat.SPD, Stat.ATK);
           const stages = new NumberHolder(2);
           applyAbAttrs("DoubleBerryEffectAbAttr", { pokemon: consumer, effectValue: stages });
-          globalScene.phaseManager.unshiftNew(
-            "StatStageChangePhase",
-            consumer.getBattlerIndex(),
-            true,
-            [randStat],
-            stages.value,
-          );
+          if (berryPhase) {
+            const queuedChange = consumer.queuedBerryStatChanges.find(c => c.stat === randStat);
+            if (queuedChange == null) {
+              consumer.queuedBerryStatChanges.push({ stat: randStat, stages: stages.value });
+            } else {
+              queuedChange.stages += stages.value;
+            }
+          } else {
+            globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+              battlerIndex: consumer.getBattlerIndex(),
+              changes: [{ stat: randStat, stages: stages.value }],
+              sourcePokemon: consumer,
+            });
+          }
         }
         break;
 

@@ -9389,7 +9389,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
     evolutions: [
       new SpeciesEvolution({
         speciesId: SpeciesId.NAGANADEL,
-        level: 1,
+        level: 29,
         condition: { key: EvoCondKey.MOVE, move: MoveId.DRAGON_PULSE },
         evoDelay: [53, 59, 61],
       }),
