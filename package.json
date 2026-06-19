@@ -1,7 +1,7 @@
 {
   "name": "pokemon-rogue-battle",
   "private": true,
-  "version": "1.12.0",
+  "version": "1.12.0.0",
   "type": "module",
   "scripts": {
     "start:prod": "vite --mode production",
@@ -36,8 +36,6 @@
     "typedoc": "typedoc",
     "depcruise": "depcruise src test",
     "postinstall": "lefthook install; git config --local fetch.recurseSubmodules true; git config --local blame.ignoreRevsFile .git-blame-ignore-revs",
-    "update-version:patch": "pnpm version patch --force --no-git-tag-version",
-    "update-version:minor": "pnpm version minor --force --no-git-tag-version",
     "update-locales": "pnpm update-submodules locales",
     "update-locales:remote": "pnpm update-submodules:remote locales",
     "update-assets": "pnpm update-submodules assets",
