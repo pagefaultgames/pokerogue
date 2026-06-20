@@ -130,7 +130,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
   .withEncounterTier(MysteryEncounterTier.ROGUE)
   .withDisallowedChallenges(Challenges.SINGLE_TYPE, Challenges.SINGLE_GENERATION)
   .withSceneWaveRangeRequirement(30, 140)
-  .withScenePartySizeRequirement(3, 6)
+  .withScenePartySizeRequirement(3)
   .withMaxAllowedEncounters(1)
   .withIntroSpriteConfigs([
     {

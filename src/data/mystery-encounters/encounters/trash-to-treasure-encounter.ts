@@ -49,7 +49,7 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
 )
   .withEncounterTier(MysteryEncounterTier.ULTRA)
   .withSceneWaveRangeRequirement(100, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
-  .withScenePartySizeRequirement(3, 6)
+  .withScenePartySizeRequirement(3)
   .withMaxAllowedEncounters(1)
   .withFleeAllowed(false)
   .withIntroSpriteConfigs([

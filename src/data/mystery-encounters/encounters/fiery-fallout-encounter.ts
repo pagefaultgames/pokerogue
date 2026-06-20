@@ -47,6 +47,7 @@ import {
 import { FIRE_RESISTANT_ABILITIES } from "#mystery-encounters/requirement-groups";
 import { randSeedInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { groupStatChange } from "#utils/stat-change";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/fieryFallout";
@@ -91,13 +92,11 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
           gender: Gender.MALE,
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-            globalScene.phaseManager.unshiftNew(
-              "StatStageChangePhase",
-              pokemon.getBattlerIndex(),
-              true,
-              [Stat.SPDEF, Stat.SPD],
-              1,
-            );
+            globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+              battlerIndex: pokemon.getBattlerIndex(),
+              changes: groupStatChange([Stat.SPDEF, Stat.SPD], 1),
+              sourcePokemon: pokemon,
+            });
           },
         },
         {
@@ -106,13 +105,11 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
           gender: Gender.FEMALE,
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-            globalScene.phaseManager.unshiftNew(
-              "StatStageChangePhase",
-              pokemon.getBattlerIndex(),
-              true,
-              [Stat.SPDEF, Stat.SPD],
-              1,
-            );
+            globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+              battlerIndex: pokemon.getBattlerIndex(),
+              changes: groupStatChange([Stat.SPDEF, Stat.SPD], 1),
+              sourcePokemon: pokemon,
+            });
           },
         },
       ],

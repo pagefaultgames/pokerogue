@@ -61,7 +61,8 @@ import { MoveCategory } from "#enums/move-category";
 import { MoveId } from "#enums/move-id";
 import { MoveTarget } from "#enums/move-target";
 import { PokemonType } from "#enums/pokemon-type";
-import { Stat } from "#enums/stat";
+import { type BattleStat, Stat } from "#enums/stat";
+import { StatChangeSource } from "#enums/stat-change-source";
 import { StatusEffect } from "#enums/status-effect";
 import { ArenaTagAddedEvent } from "#events/arena";
 import type { Arena } from "#field/arena";
@@ -74,9 +75,11 @@ import type {
   RoomArenaTagType,
   SerializableArenaTagType,
 } from "#types/arena-tags";
+import type { StatChange } from "#types/stat-change";
 import type { Mutable } from "#types/type-helpers";
 import { BooleanHolder, type NumberHolder, toDmgValue } from "#utils/common";
 import { inSpeedOrder } from "#utils/speed-order-generator";
+import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 
 /** Interface containing the serializable fields of ArenaTagData. */
@@ -313,24 +316,35 @@ export class MistTag extends SerializableArenaTag {
    * Attempt to block the lowering of stats.
    * @param simulated - Whether to suppress messages and other animations from being playerd
    * @param defender - The {@linkcode Pokemon} receiving the stat drop
-   * @param cancelled - A {@linkcode BooleanHolder} containing whether to nullify the interaction
+   * @param changes - The stat changes being attempted
+   * @param cancelledStats - The set of cancelled stat changes, added to by this method
    * @param source - The Pokemon causing the stat drop, if applicable
    */
   override apply(
     simulated: boolean,
     defender: Pokemon,
-    cancelled: BooleanHolder,
+    changes: readonly StatChange[],
+    cancelledStats: Set<BattleStat>,
     source: Pokemon | undefined,
   ): boolean {
     if (source) {
-      const bypassed = new BooleanHolder(false);
+      const bypassed = new ValueHolder(false);
       applyAbAttrs("InfiltratorAbAttr", { pokemon: source, simulated, bypassed });
       if (bypassed.value) {
         return false;
       }
     }
 
-    cancelled.value = true;
+    for (const change of changes) {
+      if (change.stages < 0) {
+        cancelledStats.add(change.stat);
+      }
+    }
+
+    if (cancelledStats.size === 0) {
+      return false;
+    }
+
     if (!simulated) {
       globalScene.phaseManager.queueMessage(
         i18next.t("arenaTag:mistApply", {
@@ -1049,16 +1063,15 @@ class StickyWebTag extends EntryHazardTag {
   }
 
   override activateTrap(simulated: boolean, pokemon: Pokemon): boolean {
-    const cancelled = new BooleanHolder(false);
+    const cancelledStats: Set<BattleStat> = new Set();
     // TODO: Does this need to pass `simulated` as a parameter?
     applyAbAttrs("ProtectStatAbAttr", {
       pokemon,
-      cancelled,
-      stat: Stat.SPD,
-      stages: -1,
+      cancelledStats,
+      changes: [{ stat: Stat.SPD, stages: -1 }],
     });
 
-    if (cancelled.value) {
+    if (cancelledStats.size > 0) {
       return false;
     }
 
@@ -1072,19 +1085,12 @@ class StickyWebTag extends EntryHazardTag {
       }),
     );
 
-    globalScene.phaseManager.unshiftNew(
-      "StatStageChangePhase",
-      pokemon.getBattlerIndex(),
-      false,
-      [Stat.SPD],
-      -1,
-      true,
-      false,
-      true,
-      null,
-      false,
-      true,
-    );
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+      battlerIndex: pokemon.getBattlerIndex(),
+      changes: [{ stat: Stat.SPD, stages: -1 }],
+      sourcePokemon: this.getSourcePokemon(),
+      sourceEffectType: StatChangeSource.STICKY_WEB,
+    });
     return true;
   }
 }
@@ -1291,14 +1297,11 @@ class TailwindTag extends SerializableArenaTag {
       // TODO: Ability displays should be handled by the ability
       if (pokemon.hasAbility(AbilityId.WIND_RIDER)) {
         globalScene.phaseManager.queueAbilityDisplay(pokemon, false, true);
-        globalScene.phaseManager.unshiftNew(
-          "StatStageChangePhase",
-          pokemon.getBattlerIndex(),
-          true,
-          [Stat.ATK],
-          1,
-          true,
-        );
+        globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+          battlerIndex: pokemon.getBattlerIndex(),
+          changes: [{ stat: Stat.ATK, stages: 1 }],
+          sourcePokemon: pokemon,
+        });
         globalScene.phaseManager.queueAbilityDisplay(pokemon, false, false);
       }
     }

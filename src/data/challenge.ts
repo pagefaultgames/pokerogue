@@ -29,6 +29,7 @@ import type { DexEntry } from "#types/dex-data";
 import type { DexAttrProps, StarterDataEntry } from "#types/save-data";
 import { type BooleanHolder, isBetween, type NumberHolder, randSeedItem } from "#utils/common";
 import { deepCopy } from "#utils/data";
+import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
@@ -827,7 +828,7 @@ export class SingleTypeChallenge extends Challenge {
   }
 
   getDescription(overrideValue: number = this.value): string {
-    const type = i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[overrideValue - 1])}`);
+    const type = i18next.t(getPokemonTypeLocaleKey(overrideValue - 1));
     const typeColor = `[color=${TypeColor[PokemonType[overrideValue - 1]]}][shadow=${TypeShadow[PokemonType[this.value - 1]]}]${type}[/shadow][/color]`;
     const defaultDesc = i18next.t("challenges:singleType.descDefault");
     const typeDesc = i18next.t("challenges:singleType.desc", {

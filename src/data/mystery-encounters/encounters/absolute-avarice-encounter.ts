@@ -39,6 +39,7 @@ import { PersistentModifierRequirement } from "#mystery-encounters/mystery-encou
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import { randInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { groupStatChange } from "#utils/stat-change";
 import i18next from "i18next";
 
 /** the i18n namespace for this encounter */
@@ -240,13 +241,11 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
             queueEncounterMessage(`${namespace}:option.1.bossEnraged`);
-            globalScene.phaseManager.unshiftNew(
-              "StatStageChangePhase",
-              pokemon.getBattlerIndex(),
-              true,
-              statChangesForBattle,
-              1,
-            );
+            globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+              battlerIndex: pokemon.getBattlerIndex(),
+              changes: groupStatChange(statChangesForBattle, 1),
+              sourcePokemon: pokemon,
+            });
           },
         },
       ],
