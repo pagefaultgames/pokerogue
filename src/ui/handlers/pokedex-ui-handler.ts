@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
-import { starterColors } from "#app/global-vars/starter-colors";
+import { getStarterColor } from "#app/global-vars/starter-colors";
 import { speciesEggMoves } from "#balance/moves/egg-moves";
 import {
   getPassiveCandyCount,
@@ -1941,17 +1941,12 @@ export class PokedexUiHandler extends MessageUiHandler {
 
           // 'Candy Icon' mode
           if (globalScene.candyUpgradeDisplay === 0) {
-            if (!starterColors[this.getStarterSpeciesId(speciesId)]) {
-              // Default to white if no colors are found
-              starterColors[this.getStarterSpeciesId(speciesId)] = ["ffffff", "ffffff"];
-            }
-
             // Set the candy colors
             container.candyUpgradeIcon.setTint(
-              argbFromRgba(rgbHexToRgba(starterColors[this.getStarterSpeciesId(speciesId)][0])),
+              argbFromRgba(rgbHexToRgba(getStarterColor(this.getStarterSpeciesId(speciesId))[0])),
             );
             container.candyUpgradeOverlayIcon.setTint(
-              argbFromRgba(rgbHexToRgba(starterColors[this.getStarterSpeciesId(speciesId)][1])),
+              argbFromRgba(rgbHexToRgba(getStarterColor(this.getStarterSpeciesId(speciesId))[1])),
             );
           } else if (globalScene.candyUpgradeDisplay === 1) {
             container.candyUpgradeIcon.setVisible(false);
