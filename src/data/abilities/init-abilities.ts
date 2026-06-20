@@ -1563,18 +1563,7 @@ export function initAbilities() {
       .uncopiable()
       .build(),
     new AbBuilder(AbilityId.BEAST_BOOST, 7) //
-      .attr(PostVictoryStatStageChangeAbAttr, (p: Pokemon) => {
-        let highestStat: EffectiveStat;
-        let highestValue = 0;
-        for (const s of EFFECTIVE_STATS) {
-          const value = p.getStat(s, false);
-          if (value > highestValue) {
-            highestStat = s;
-            highestValue = value;
-          }
-        }
-        return [{ stat: highestStat!, stages: 1 }];
-      })
+      .attr(PostVictoryStatStageChangeAbAttr, beastBoostHighestStatCalc)
       .build(),
     new AbBuilder(AbilityId.RKS_SYSTEM, 7) //
       .attr(NoFusionAbilityAbAttr)
@@ -2191,18 +2180,7 @@ export function initAbilities() {
         PokemonType.GROUND,
         (pokemon: Pokemon) => !pokemon.getTag(GroundedTag) && !globalScene.arena.getTag(ArenaTagType.GRAVITY),
       )
-      .attr(PostVictoryStatStageChangeAbAttr, (p: Pokemon) => {
-        let highestStat: EffectiveStat;
-        let highestValue = 0;
-        for (const s of EFFECTIVE_STATS) {
-          const value = p.getStat(s, false);
-          if (value > highestValue) {
-            highestStat = s;
-            highestValue = value;
-          }
-        }
-        return [{ stat: highestStat!, stages: 1 }];
-      })
+      .attr(PostVictoryStatStageChangeAbAttr, beastBoostHighestStatCalc)
       .ignorable()
       .build(),
     // TODO: Unknown ability, ID 314
@@ -2394,4 +2372,27 @@ function droughtAiMovegenEffect({ move, powerMult, accMult, instantCharge }: AiM
   ) {
     instantCharge.value = true;
   }
+}
+
+/**
+ * DRY implementation for the `PostVictoryStatStageChangeAbAttr`
+ * abilities that boost the highest stat on victory.
+ *
+ * @remarks Used for {@link https://bulbapedia.bulbagarden.net/wiki/Beast_Boost_(Ability) | Beast Boost}
+ * and {@link https://bulbapedia.bulbagarden.net/wiki/Eelevate_(Ability) | Beast Boost}
+ *
+ * @param pokemon - The Pokémon under consideration
+ */
+function beastBoostHighestStatCalc(pokemon: Pokemon) {
+  let highestStat: EffectiveStat;
+  let highestValue = 0;
+  for (const s of EFFECTIVE_STATS) {
+    const value = pokemon.getStat(s, false);
+    if (value > highestValue) {
+      highestStat = s;
+      highestValue = value;
+    }
+  }
+  // Bang is safe here as for loop ensuers highestStat is assigned.
+  return [{ stat: highestStat!, stages: 1 }];
 }
