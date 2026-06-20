@@ -47,7 +47,7 @@ import type { TrainerConfig } from "#trainers/trainer-config";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import type { RandomEncounterParams } from "#types/pokemon-common";
-import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import type { OptionSelectConfig, OptionSelectItem } from "#ui/base-option-select-ui-handler";
 import type { PartyOption, PokemonSelectFilter } from "#ui/party-ui-handler";
 import { PartyUiMode } from "#ui/party-ui-handler";
 import { coerceArray } from "#utils/array";

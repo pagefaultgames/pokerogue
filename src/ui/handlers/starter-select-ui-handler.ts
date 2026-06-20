@@ -48,7 +48,7 @@ import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
 import type { LevelMoves } from "#types/pokemon-species";
 import type { Starter, StarterAttributes, StarterDataEntry, StarterMoveset } from "#types/save-data";
-import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import type { OptionSelectItem } from "#ui/base-option-select-ui-handler";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
 import { FilterBar } from "#ui/filter-bar";
 import { MessageUiHandler } from "#ui/message-ui-handler";
