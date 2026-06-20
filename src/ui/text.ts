@@ -4,7 +4,7 @@ import { EggTier } from "#enums/egg-type";
 import { ModifierTier } from "#enums/modifier-tier";
 import { TextStyle } from "#enums/text-style";
 import { UiTheme } from "#enums/ui-theme";
-import type { TextStyleOptions } from "#types/ui";
+import type { TextStyleOptions } from "#types/ui-types";
 import i18next from "i18next";
 import type Phaser from "phaser";
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";

@@ -1,8 +1,8 @@
 import type { UiMode } from "#enums/ui-mode";
 import { SettingType } from "#system/settings";
-import { AbstractSettingsUiHandler } from "#ui/abstract-settings-ui-handler";
+import { BaseSettingsUiHandler } from "#ui/base-settings-ui-handler";
 
-export class SettingsAudioUiHandler extends AbstractSettingsUiHandler {
+export class SettingsAudioUiHandler extends BaseSettingsUiHandler {
   /**
    * Creates an instance of SettingsAudioUiHandler.
    *

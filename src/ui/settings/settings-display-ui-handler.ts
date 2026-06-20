@@ -1,8 +1,8 @@
 import type { UiMode } from "#enums/ui-mode";
 import { SettingKeys, SettingType } from "#system/settings";
-import { AbstractSettingsUiHandler } from "#ui/abstract-settings-ui-handler";
+import { BaseSettingsUiHandler } from "#ui/base-settings-ui-handler";
 
-export class SettingsDisplayUiHandler extends AbstractSettingsUiHandler {
+export class SettingsDisplayUiHandler extends BaseSettingsUiHandler {
   /**
    * Creates an instance of SettingsGamepadUiHandler.
    *
