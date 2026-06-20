@@ -34,6 +34,7 @@ import {
   ULTRA_TIER_TM_LEVEL_REQUIREMENT,
   ULTRA_TM_MOVESET_WEIGHT,
 } from "#balance/moves/moveset-generation";
+import { WORSE_OFFENSIVE_STAT_SPECIES_DENYLIST } from "#balance/moves/off-stat-denylist";
 import { FORCED_RIVAL_SIGNATURE_MOVES, FORCED_SIGNATURE_MOVES } from "#balance/moves/signature-moves";
 import { SUPERCEDED_MOVES } from "#balance/moves/superceded-moves";
 import { tmPoolTiers } from "#balance/tm-pool-tiers";
@@ -346,6 +347,11 @@ function filterMovePool(pool: Map<MoveId, number>, isBoss: boolean, hasTrainer: 
   const blockTerrainSettingMoves = pokemon.hasAbilityWithAttr("PostSummonTerrainChangeAbAttr");
   // Block status moves if pokemon has Gorilla Tactics
   const hasGorillaTactics = pokemon.hasAbilityWithAttr("GorillaTacticsAbAttr");
+  const worseOffensiveStatDenylist =
+    WORSE_OFFENSIVE_STAT_SPECIES_DENYLIST.get(pokemon.species.speciesId)
+    ?? WORSE_OFFENSIVE_STAT_SPECIES_DENYLIST.get([pokemon.species.speciesId, pokemon.formIndex])
+    ?? null;
+
   for (const [moveId, weight] of pool) {
     const move = allMoves[moveId];
     if (
@@ -357,6 +363,9 @@ function filterMovePool(pool: Map<MoveId, number>, isBoss: boolean, hasTrainer: 
       || ((isBoss || hasTrainer) // Following conditions do not apply to normal wild pokemon
         && ((isSingles && FORBIDDEN_SINGLES_MOVES.has(moveId)) // forbid doubles only moves in singles
           || (level >= LEVEL_BASED_DENYLIST_THRESHOLD && LEVEL_BASED_DENYLIST.has(moveId)) // forbid level based denylist moves
+          || (move.category !== MoveCategory.STATUS
+            && worseOffensiveStatDenylist
+            && doesMoveMatchOffensiveCategory(move, worseOffensiveStatDenylist))
           || (move.hasAttr("WeatherChangeAttr") && blockWeatherSettingMoves) // Forbid weather setting moves if the pokemon has a weather summoning or suppressing ability
           || (move.hasAttr("TerrainChangeAttr") && blockTerrainSettingMoves) // Forbid terrain setting moves if the pokemon has a terrain summoning ability
           || (hasGorillaTactics && move.category === MoveCategory.STATUS))) // Forbid status moves if pokemon has Gorilla Tactics
@@ -693,6 +702,17 @@ function getExistingDamageMoveTypes(pokemon: Pokemon, willTera: boolean): Set<Po
   return existingMoveTypes;
 }
 
+function doesMoveMatchOffensiveCategory(move: Move, category: MoveCategory): boolean {
+  return (
+    move.category === category
+    && !move.hasAttr("FixedDamageAttr") // Fixed damage moves don't benefit from offensive boosts
+    && !move.hasAttr("DefAtkAttr") // Body press uses def stat
+    && !move.hasAttr("PhotonGeyserCategoryAttr") // Photon Geyser uses higher stat
+    && !move.hasAttr("ShellSideArmCategoryAttr") // Shell side arm uses higher stat
+    && !move.hasAttr("TargetAtkUserAtkAttr") // Foul play uses the target's attack stat
+  );
+}
+
 /**
  * Determine whether there is a move in the moveset that benefits from boosting the specified offensive stat.
  * @param moveset - The moveset to check against
@@ -717,13 +737,7 @@ function removeSelfStatBoost(pokemon: Pokemon, attr: StatStageChangeAttr | undef
   // If any damging move matches the category, boost is not wasted.
   for (const pokemonMove of pokemon.moveset) {
     const move = pokemonMove.getMove();
-    if (
-      move.category === category
-      && !move.hasAttr("FixedDamageAttr") // Fixed damage moves don't benefit from offensive boosts
-      && !move.hasAttr("DefAtkAttr") // Body press doesn't benefit from offensive boosts
-      && !move.hasAttr("PhotonGeyserCategoryAttr") // Photon Geyser benefits from either offesive boost
-      && !move.hasAttr("ShellSideArmCategoryAttr") // Shell Side Arm benefits from either offensive boost
-    ) {
+    if (doesMoveMatchOffensiveCategory(move, category)) {
       return false;
     }
   }
@@ -888,6 +902,22 @@ function hasSleepInducingMove(pokemon: Pokemon, targetSelf = false): boolean {
 }
 
 /**
+ * @returns Whether the Pokémon's set would allow solar beam-like moves to
+ * charge instantly, via either an ability or a move in the moveset
+ * @param pokemon - The Pokémon under examination
+ */
+function hasSunInstantCharge(pokemon: Pokemon): boolean {
+  // Sun-summoning ability
+  return (
+    pokemon.moveset.some(m => m.moveId === MoveId.SUNNY_DAY)
+    || pokemon
+      .getAbilityAttrs("PostSummonWeatherChangeAbAttr")
+      .some(a => [WeatherType.SUNNY, WeatherType.HARSH_SUN].includes(a.weatherType))
+    //TODO: once mega sol is added, add its attribute as an exclusion here as well
+  );
+}
+
+/**
  * Filter a Pokémon's moveset, removing moves that are only useful in combination
  * with other moves/abilities that the Pokémon does not have.
  * @param pokemon - The Pokémon to filter the moveset of
@@ -917,6 +947,7 @@ function filterUselessMoves(pokemon: Pokemon, willTera: boolean): boolean {
           pokemon.hasAbility(AbilityId.SNOW_WARNING, false, true)
           || moveset.some(m => [MoveId.HAIL, MoveId.SNOWSCAPE].includes(m.moveId))
         ))
+      || ([MoveId.SOLAR_BEAM, MoveId.SOLAR_BLADE].includes(move.id) && !hasSunInstantCharge(pokemon))
       // TODO: Add condition for venom drench
     ) {
       moveset.splice(i, 1);
