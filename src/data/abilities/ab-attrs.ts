@@ -63,6 +63,7 @@ import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { groupStatChange } from "#utils/stat-change";
 import { toCamelCase } from "#utils/strings";
+import type { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 import type { NonEmptyTuple } from "type-fest";
 
@@ -1608,6 +1609,10 @@ export class FieldMoveTypePowerBoostAbAttr extends PreAttackFieldMoveTypePowerBo
 /** Boosts the power of a specific type of move for the user and its allies. */
 export class UserFieldMoveTypePowerBoostAbAttr extends PreAttackFieldMoveTypePowerBoostAbAttr {}
 
+export interface AbAttrParamsWithWeather extends AbAttrBaseParams {
+  weatherHolder: ValueHolder<WeatherType>;
+}
+
 /**
  * Causes moves used by the Pokemon to behave as if the weather is set to a specific {@linkcode WeatherType}.
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Mega_Sol_(Ability) | Mega Sol (Bulbapedia)}
@@ -1618,6 +1623,14 @@ export class PreAttackWeatherOverrideAbAttr extends PreAttackAbAttr {
   constructor(weatherType: WeatherType) {
     super(false);
     this.weatherType = weatherType;
+  }
+
+  override canApply({ weatherHolder: weatherTypeHolder }: AbAttrParamsWithWeather): boolean {
+    return weatherTypeHolder.value !== this.weatherType;
+  }
+
+  override apply({ weatherHolder: weatherTypeHolder }: AbAttrParamsWithWeather): void {
+    weatherTypeHolder.value = this.weatherType;
   }
 }
 

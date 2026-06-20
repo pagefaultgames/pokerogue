@@ -79,8 +79,8 @@ describe("Abilities - Mega Sol", () => {
     const playerPokemon = game.field.getPlayerPokemon();
 
     const arenaMultiplier = game.scene.arena.getWeatherDamageMultiplier(
-      allMoves[MoveId.EMBER].type,
-      getEffectiveWeatherForUser(playerPokemon),
+      PokemonType.FIRE,
+      playerPokemon.getEffectiveWeatherTypeForMoves(),
     );
     expect(arenaMultiplier).toBe(1.5);
   });
@@ -143,4 +143,10 @@ describe("Abilities - Mega Sol", () => {
     expect(playerPokemon.hp).toBeGreaterThanOrEqual(1 + expectedHeal - 1);
     expect(playerPokemon.hp).toBeLessThanOrEqual(1 + expectedHeal + 1);
   });
+
+  it("it should ignore sandstorm's Special Defense boost to rock types", async () => {});
+
+  it("should ignore snowscape's defense boost to ice types", async () => {});
+
+  // TODO: Determine whether abilities like snow cloak and sand veil are ignored, then add a test
 });

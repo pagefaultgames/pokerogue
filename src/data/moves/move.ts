@@ -35,6 +35,7 @@ import { SpeciesFormChangeRevertWeatherFormTrigger } from "#data/form-change-tri
 import { getNonVolatileStatusEffects, getStatusEffectHealText, isNonVolatileStatusEffect } from "#data/status-effect";
 import { TerrainType } from "#data/terrain";
 import { getTypeDamageMultiplier } from "#data/type";
+import { getEffectiveWeatherForMove } from "#data/weather";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -2695,7 +2696,8 @@ export class SacrificialFullRestoreAttr extends SacrificialAttr {
 }
 
 /**
- * Attribute used for moves which override the damage multiplier from weather.
+ * Attribute used for moves that that get the weather boost without being the
+ * corresponding weather type
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Hydro_Steam_(move)}
  */
 export class OverrideWeatherMultiplierAttr extends MoveAttr {
@@ -2708,18 +2710,26 @@ export class OverrideWeatherMultiplierAttr extends MoveAttr {
     this.weather = weather;
   }
 
+  /**
+   * Note: This shouldn't be invoked; use `getWeatherMultiplierForMove` which
+   * handles the logic for adjusting the multiplier.
+   * @param _user
+   * @param _target
+   * @param _move
+   * @param param3
+   * @returns
+   */
   apply(
-    user: Pokemon,
+    _user: Pokemon,
     _target: Pokemon,
     _move: Move,
-    args: [weatherMultiplier: ValueHolder<number>, ...any[]],
+    [weatherMultiplier, weatherType]: [weatherMultiplier: ValueHolder<number>, weatherType: WeatherType],
   ): boolean {
-    const weatherMultiplier = args[0];
-    const weatherType = getEffectiveWeatherForUser(user);
     if (weatherType === this.weather) {
       weatherMultiplier.value = 1.5;
+      return true;
     }
-    return true;
+    return false;
   }
 }
 
@@ -2729,7 +2739,7 @@ export abstract class WeatherHealAttr extends HealAttr {
   }
 
   apply(user: Pokemon, _target: Pokemon, _move: Move, _args: any[]): boolean {
-    const weatherType = getEffectiveWeatherForUser(user);
+    const weatherType = getEffectiveWeatherForMove(user);
     const healRatio = this.getWeatherHealRatio(weatherType);
     this.addHealPhase(user, healRatio);
     return true;
@@ -3722,7 +3732,7 @@ export class WeatherInstantChargeAttr extends InstantChargeAttr {
   public readonly weatherTypes: WeatherType[];
   constructor(weatherTypes: WeatherType[]) {
     super((user: Pokemon) => {
-      const effectiveWeather = getEffectiveWeatherForUser(user);
+      const effectiveWeather = getEffectiveWeatherForMove(user);
       return this.weatherTypes.includes(effectiveWeather);
     });
 
@@ -4334,7 +4344,7 @@ export class GrowthStatStageChangeAttr extends StatStageChangeAttr {
   }
 
   getLevels(user: Pokemon): number {
-    const weatherType = getEffectiveWeatherForUser(user);
+    const weatherType = getEffectiveWeatherForMove(user);
     if (weatherType === WeatherType.SUNNY || weatherType === WeatherType.HARSH_SUN) {
       return this.stages + 1;
     }
@@ -5014,7 +5024,7 @@ export class MagnitudePowerAttr extends VariablePowerAttr {
 
 export class AntiSunlightPowerDecreaseAttr extends VariablePowerAttr {
   apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
-    const weatherType = getEffectiveWeatherForUser(user);
+    const weatherType = getEffectiveWeatherForMove(user);
     if (weatherType !== WeatherType.NONE) {
       const power = args[0] as NumberHolder;
       switch (weatherType) {
@@ -5530,7 +5540,7 @@ export class VariableAccuracyAttr extends MoveAttr {
  */
 export class ThunderAccuracyAttr extends VariableAccuracyAttr {
   apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
-    const weatherType = getEffectiveWeatherForUser(user);
+    const weatherType = getEffectiveWeatherForMove(user);
     if (weatherType !== WeatherType.NONE) {
       const accuracy = args[0] as NumberHolder;
       switch (weatherType) {
@@ -5556,7 +5566,7 @@ export class ThunderAccuracyAttr extends VariableAccuracyAttr {
  */
 export class StormAccuracyAttr extends VariableAccuracyAttr {
   apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
-    const weatherType = getEffectiveWeatherForUser(user);
+    const weatherType = getEffectiveWeatherForMove(user);
     if (weatherType !== WeatherType.NONE) {
       const accuracy = args[0] as NumberHolder;
       switch (weatherType) {
@@ -5610,7 +5620,7 @@ export class ToxicAccuracyAttr extends VariableAccuracyAttr {
 
 export class BlizzardAccuracyAttr extends VariableAccuracyAttr {
   apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
-    const weatherType = getEffectiveWeatherForUser(user);
+    const weatherType = getEffectiveWeatherForMove(user);
     if (weatherType === WeatherType.HAIL || weatherType === WeatherType.SNOW) {
       const accuracy = args[0] as NumberHolder;
       accuracy.value = -1;
@@ -5966,7 +5976,7 @@ export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
       return false;
     }
 
-    const weatherType = getEffectiveWeatherForUser(user);
+    const weatherType = getEffectiveWeatherForMove(user);
     switch (weatherType) {
       case WeatherType.SUNNY:
       case WeatherType.HARSH_SUN:
@@ -9218,32 +9228,6 @@ export class ExposedMoveAttr extends AddBattlerTagAttr {
 }
 
 /**
- * Get the effective weather type for this Pokemon's moves, accounting for
- * the `PreAttackWeatherOverrideAbAttr` ability attribute.
- *
- * If the Pokemon has an ability that overrides the weather for its moves,
- * the overridden weather type is returned regardless of the actual arena weather.
- * Otherwise, the current arena weather type is returned (or {@linkcode WeatherType.NONE}
- * if weather is absent or suppressed).
- *
- * @param user - The Pokemon using the move
- * @returns The effective weather type for the user's moves
- */
-export function getEffectiveWeatherForUser(user: Pokemon | null): WeatherType {
-  if (user) {
-    const overrideAttrs = user.getAbilityAttrs("PreAttackWeatherOverrideAbAttr", false);
-    if (overrideAttrs.length > 0) {
-      return overrideAttrs[0].weatherType;
-    }
-  }
-  const weather = globalScene.arena.weather;
-  if (!weather || weather.isEffectSuppressed()) {
-    return WeatherType.NONE;
-  }
-  return weather.weatherType;
-}
-
-/**
  * Map of Move attributes to their respective classes. Used for instanceof checks.
  */
 const MoveAttrs = Object.freeze({
@@ -10510,7 +10494,7 @@ export function initMoves() {
     new AttackMove(MoveId.WEATHER_BALL, PokemonType.NORMAL, MoveCategory.SPECIAL, 50, 100, 10, -1, 0, 3)
       .attr(WeatherBallTypeAttr)
       .attr(MovePowerMultiplierAttr, (user, _target, _move) => {
-        const weatherType = getEffectiveWeatherForUser(user);
+        const weatherType = getEffectiveWeatherForMove(user);
         return weatherType === WeatherType.NONE ? 1 : 2;
       })
       .ballBombMove(),
@@ -11827,7 +11811,7 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new StatusMove(MoveId.AURORA_VEIL, PokemonType.ICE, -1, 20, -1, 0, 7)
       .condition(user => {
-        const weatherType = getEffectiveWeatherForUser(user);
+        const weatherType = getEffectiveWeatherForMove(user);
         return weatherType === WeatherType.HAIL || weatherType === WeatherType.SNOW;
       }, 3)
       .attr(AddArenaTagAttr, ArenaTagType.AURORA_VEIL, 5, true)

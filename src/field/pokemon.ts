@@ -65,6 +65,7 @@ import { getRandomStatus, getStatusEffectHealText, getStatusEffectOverlapText, S
 import { getTerrainBlockMessage, TerrainType } from "#data/terrain";
 import type { TypeDamageMultiplier } from "#data/type";
 import { getTypeDamageMultiplier, getTypeRgb } from "#data/type";
+import { getEffectiveWeatherForMove, getWeatherMultiplierForMove } from "#data/weather";
 import { AbilityId } from "#enums/ability-id";
 import { AiType } from "#enums/ai-type";
 import { ArenaTagSide } from "#enums/arena-tag-side";
@@ -1520,6 +1521,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       });
     }
 
+    const effectiveWeather =
+      ignoreOppAbility || opponent == null ? globalScene.arena.weatherType : getEffectiveWeatherForMove(opponent);
+
     let ret =
       statVal.value
       * this.getStatStageMultiplier(stat, opponent, move, ignoreOppAbility, isCritical, simulated, ignoreHeldItems);
@@ -1531,14 +1535,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         }
         break;
       case Stat.DEF:
-        if (this.isOfType(PokemonType.ICE) && globalScene.arena.weather?.weatherType === WeatherType.SNOW) {
+        if (this.isOfType(PokemonType.ICE) && effectiveWeather === WeatherType.SNOW) {
           ret *= 1.5;
         }
         break;
       case Stat.SPATK:
         break;
       case Stat.SPDEF:
-        if (this.isOfType(PokemonType.ROCK) && globalScene.arena.weather?.weatherType === WeatherType.SANDSTORM) {
+        if (this.isOfType(PokemonType.ROCK) && effectiveWeather === WeatherType.SANDSTORM) {
           ret *= 1.5;
         }
         break;
@@ -3681,17 +3685,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     simulated = true,
     effectiveness,
   }: GetAttackDamageParams): DamageCalculationResult {
-    const { arena } = globalScene;
-
     const damage = new NumberHolder(0);
     const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
     const variableCategory = new NumberHolder(move.category);
     applyMoveAttrs("VariableMoveCategoryAttr", source, this, move, variableCategory);
     const moveCategory = variableCategory.value as MoveCategory;
-
-    /** The move's type after type-changing effects are applied */
-    const moveType = source.getMoveType(move);
 
     /** If `value` is `true`, cancels the move and suppresses "No Effect" messages */
     const cancelled = new BooleanHolder(false);
@@ -3707,11 +3706,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
      */
     const typeMultiplier =
       effectiveness ?? this.getMoveEffectiveness(source, move, ignoreAbility, simulated, cancelled);
-
-    const isPhysical = moveCategory === MoveCategory.PHYSICAL;
-
-    const weatherDamageMultiplier = new ValueHolder(arena.getWeatherDamageMultiplier(moveType));
-    applyMoveAttrs("OverrideWeatherMultiplierAttr", source, this, move, weatherDamageMultiplier);
 
     const isTypeImmune = typeMultiplier === 0;
 
@@ -3772,6 +3766,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       simulated,
     });
 
+    const weatherDamageMultiplier = getWeatherMultiplierForMove(source, move);
+
     /** 25% damage debuff on moves hitting more than one non-fainted target (regardless of immunities) */
     const { targets, multiple } = getMoveTargets(source, move.id);
     const numTargets = multiple ? targets.length : 1;
@@ -3810,7 +3806,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     /** Halves damage if the attacker is using a physical attack while burned */
     let burnMultiplier = 1;
     if (
-      isPhysical
+      moveCategory === MoveCategory.PHYSICAL
       && source.status
       && source.status.effect === StatusEffect.BURN
       && !move.hasAttr("BypassBurnDamageReductionAttr")
@@ -3855,7 +3851,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       baseDamage
         * targetMultiplier
         * multiStrikeEnhancementMultiplier.value
-        * weatherDamageMultiplier.value
+        * weatherDamageMultiplier
         * glaiveRushMultiplier.value
         * criticalMultiplier.value
         * randomMultiplier
