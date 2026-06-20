@@ -90,7 +90,6 @@ import {
   PostDefendApplyArenaTrapTagAbAttr,
   PostDefendApplyBattlerTagAbAttr,
   PostDefendApplyStatusEffectAbAttr,
-  PostDefendContactApplyStatusEffectAbAttr,
   PostDefendContactApplyTagChanceAbAttr,
   PostDefendContactDamageAbAttr,
   PostDefendHpGatedStatStageChangeAbAttr,
@@ -262,7 +261,7 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.STATIC, 3) //
-      .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.PARALYSIS)
+      .attr(PostDefendApplyStatusEffectAbAttr, 30, true, StatusEffect.PARALYSIS)
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.VOLT_ABSORB, 3) //
@@ -397,7 +396,7 @@ export function initAbilities() {
       })
       .build(),
     new AbBuilder(AbilityId.POISON_POINT, 3) //
-      .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.POISON)
+      .attr(PostDefendApplyStatusEffectAbAttr, 30, true, StatusEffect.POISON)
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.INNER_FOCUS, 3) //
@@ -449,7 +448,7 @@ export function initAbilities() {
       .attr(ReduceStatusEffectDurationAbAttr, StatusEffect.SLEEP)
       .build(),
     new AbBuilder(AbilityId.FLAME_BODY, 3) //
-      .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.BURN)
+      .attr(PostDefendApplyStatusEffectAbAttr, 30, true, StatusEffect.BURN)
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.RUN_AWAY, 3) //
@@ -2217,7 +2216,7 @@ export function initAbilities() {
     // TODO: Unknown ability, ID 317
     new AbBuilder(AbilityId.ABILITY_317, 9).unimplemented().build(),
     new AbBuilder(AbilityId.SPICY_SPRAY, 9) //
-      .attr(PostDefendApplyStatusEffectAbAttr, 100, StatusEffect.BURN)
+      .attr(PostDefendApplyStatusEffectAbAttr, 100, false, StatusEffect.BURN)
       .bypassFaint()
       .build(),
   );

@@ -918,14 +918,22 @@ export class PostDefendTerrainChangeAbAttr extends PostDefendAbAttr {
   }
 }
 
-export class PostDefendContactApplyStatusEffectAbAttr extends PostDefendAbAttr {
+/**
+ * Applies a status effect to the attacker when the Pokemon is hit by an attacking move.
+ *
+ * Contact boolean defaults to `true`. If set to `false`, the status effect will be applied
+ * regardless of whether the move makes contact.
+ */
+export class PostDefendApplyStatusEffectAbAttr extends PostDefendAbAttr {
   private readonly chance: number;
+  private readonly contactRequired: boolean;
   private readonly effects: readonly StatusEffect[];
 
-  constructor(chance: number, ...effects: StatusEffect[]) {
+  constructor(chance: number, contactRequired = true, ...effects: StatusEffect[]) {
     super(true);
 
     this.chance = chance;
+    this.contactRequired = contactRequired;
     this.effects = effects;
   }
 
@@ -933,7 +941,9 @@ export class PostDefendContactApplyStatusEffectAbAttr extends PostDefendAbAttr {
     const effect =
       this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randBattleSeedInt(this.effects.length)];
     return (
-      move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon })
+      (this.contactRequired
+        ? move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon })
+        : move.category !== MoveCategory.STATUS)
       && !attacker.status
       && (this.chance === -1 || pokemon.randBattleSeedInt(100) < this.chance)
       && attacker.canSetStatus(effect, true, false, pokemon)
@@ -948,42 +958,9 @@ export class PostDefendContactApplyStatusEffectAbAttr extends PostDefendAbAttr {
   }
 }
 
-/**
- * Applies a status effect to the attacker when the Pokemon is hit by an attacking move.
- * Unlike {@linkcode PostDefendContactApplyStatusEffectAbAttr}, this does not require the move to make contact.
- */
-export class PostDefendApplyStatusEffectAbAttr extends PostDefendAbAttr {
-  private readonly chance: number;
-  private readonly effects: readonly StatusEffect[];
-
-  constructor(chance: number, ...effects: StatusEffect[]) {
-    super(true);
-
-    this.chance = chance;
-    this.effects = effects;
-  }
-
-  override canApply({ pokemon, move, opponent: attacker }: PostMoveInteractionAbAttrParams): boolean {
-    const effect =
-      this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randBattleSeedInt(this.effects.length)];
-    return (
-      move.category !== MoveCategory.STATUS
-      && !attacker.status
-      && (this.chance === -1 || pokemon.randBattleSeedInt(100) < this.chance)
-      && attacker.canSetStatus(effect, true, false, pokemon)
-    );
-  }
-
-  override apply({ opponent: attacker, pokemon }: PostMoveInteractionAbAttrParams): void {
-    const effect =
-      this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randBattleSeedInt(this.effects.length)];
-    attacker.trySetStatus(effect, pokemon);
-  }
-}
-
-export class EffectSporeAbAttr extends PostDefendContactApplyStatusEffectAbAttr {
+export class EffectSporeAbAttr extends PostDefendApplyStatusEffectAbAttr {
   constructor() {
-    super(10, StatusEffect.POISON, StatusEffect.PARALYSIS, StatusEffect.SLEEP);
+    super(10, true, StatusEffect.POISON, StatusEffect.PARALYSIS, StatusEffect.SLEEP);
   }
 
   override canApply(params: PostMoveInteractionAbAttrParams): boolean {
@@ -6172,7 +6149,6 @@ export const AbilityAttrs = Object.freeze({
   PostDefendApplyArenaTrapTagAbAttr,
   PostDefendApplyBattlerTagAbAttr,
   PostDefendApplyStatusEffectAbAttr,
-  PostDefendContactApplyStatusEffectAbAttr,
   PostDefendContactApplyTagChanceAbAttr,
   PostDefendContactDamageAbAttr,
   PostDefendHpGatedStatStageChangeAbAttr,
