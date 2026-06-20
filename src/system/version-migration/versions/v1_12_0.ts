@@ -10,15 +10,14 @@ const shiftFormChangeItems: SessionSaveMigrator = {
   migrate: (data: SessionSaveData) => {
     // Shifting these up by 50 will work for now, but a more permanent solution will be desired in the future
     const shiftAmount = 50;
-    for (let i = 0; i < data.modifiers.length; ) {
-      if (data.modifiers[i].className === "PokemonFormChangeItemModifier") {
-        if (typeof data.modifiers[i].args[1] === "number" && data.modifiers[i].args[1] >= 50) {
-          data.modifiers[i].args[1] += shiftAmount;
+    for (const modifier of data.modifiers) {
+      if (modifier.className === "PokemonFormChangeItemModifier") {
+        if (typeof modifier.args[1] === "number" && modifier.args[1] >= 50) {
+          modifier.args[1] += shiftAmount;
         }
-        if (typeof data.modifiers[i].typePregenArgs[0] === "number" && data.modifiers[i].typePregenArgs[0] >= 50) {
-          data.modifiers[i].typePregenArgs[0] += shiftAmount;
+        if (typeof modifier.typePregenArgs[0] === "number" && modifier.typePregenArgs[0] >= 50) {
+          modifier.typePregenArgs[0] += shiftAmount;
         }
-        i++;
       }
     }
   },
