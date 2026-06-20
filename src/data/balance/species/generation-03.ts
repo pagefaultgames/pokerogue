@@ -14630,7 +14630,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       normal: [MoveId.SWIFT, MoveId.ICY_WIND, MoveId.COSMIC_POWER],
       attack: [MoveId.MEGA_PUNCH, MoveId.MEGA_KICK, MoveId.ZAP_CANNON, MoveId.SUPERPOWER, MoveId.COSMIC_POWER],
       defense: [MoveId.MEGA_PUNCH, MoveId.MEGA_KICK, MoveId.AMNESIA, MoveId.SPIKES, MoveId.IRON_DEFENSE],
-      speed: [MoveId.MEGA_PUNCH, MoveId.MEGA_KICK, MoveId.AGILITY, MoveId.SWIFT, MoveId.ICY_WIND, MoveId.DYNAMIC_PUNCH],
+      speed: [MoveId.MEGA_PUNCH, MoveId.MEGA_KICK, MoveId.AGILITY, MoveId.SWIFT, MoveId.ICY_WIND],
     },
   };
   return generationThreeSpeciesData;

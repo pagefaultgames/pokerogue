@@ -5741,7 +5741,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       MoveId.STONE_EDGE,
       MoveId.HONE_CLAWS,
       MoveId.SMACK_DOWN,
-      MoveId.STORM_THROW,
       MoveId.LOW_SWEEP,
       MoveId.ROUND,
       MoveId.ACROBATICS,
