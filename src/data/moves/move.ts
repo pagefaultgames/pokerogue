@@ -9218,12 +9218,18 @@ export class ExposedMoveAttr extends AddBattlerTagAttr {
 }
 
 /**
- * Get the effective weather type for a user Pokemon's moves, accounting for
- * `PreAttackWeatherOverrideAbAttr` ability attribute.
+ * Get the effective weather type for this Pokemon's moves, accounting for
+ * the `PreAttackWeatherOverrideAbAttr` ability attribute.
+ *
+ * If the Pokemon has an ability that overrides the weather for its moves,
+ * the overridden weather type is returned regardless of the actual arena weather.
+ * Otherwise, the current arena weather type is returned (or {@linkcode WeatherType.NONE}
+ * if weather is absent or suppressed).
+ *
  * @param user - The Pokemon using the move
  * @returns The effective weather type for the user's moves
  */
-function getEffectiveWeatherForUser(user: Pokemon | null): WeatherType {
+export function getEffectiveWeatherForUser(user: Pokemon | null): WeatherType {
   if (user) {
     const overrideAttrs = user.getAbilityAttrs("PreAttackWeatherOverrideAbAttr", false);
     if (overrideAttrs.length > 0) {

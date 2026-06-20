@@ -1,4 +1,5 @@
 import { allMoves } from "#data/data-lists";
+import { getEffectiveWeatherForUser } from "#data/moves/move";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
@@ -79,7 +80,7 @@ describe("Abilities - Mega Sol", () => {
 
     const arenaMultiplier = game.scene.arena.getWeatherDamageMultiplier(
       allMoves[MoveId.EMBER].type,
-      playerPokemon.getEffectiveWeatherTypeForMoves(),
+      getEffectiveWeatherForUser(playerPokemon),
     );
     expect(arenaMultiplier).toBe(1.5);
   });
@@ -91,7 +92,7 @@ describe("Abilities - Mega Sol", () => {
 
     const arenaMultiplier = game.scene.arena.getWeatherDamageMultiplier(
       allMoves[MoveId.SURF].type,
-      playerPokemon.getEffectiveWeatherTypeForMoves(),
+      getEffectiveWeatherForUser(playerPokemon),
     );
     expect(arenaMultiplier).toBe(0.5);
   });
