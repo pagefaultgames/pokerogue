@@ -34450,7 +34450,7 @@
     "generation": 6,
     "spriteKey": "658-ash",
     "formKey": "ash",
-    "hasVariants": true,
+    "hasVariants": false,
     "category": "Ninja Pokémon",
     "type1": "WATER",
     "type2": "DARK",
