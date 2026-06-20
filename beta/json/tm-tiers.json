@@ -264,6 +264,10 @@
     "tier": "COMMON"
   },
   {
+    "move": "ZAP_CANNON",
+    "tier": "GREAT"
+  },
+  {
     "move": "ICY_WIND",
     "tier": "GREAT"
   },
@@ -365,6 +369,10 @@
   },
   {
     "move": "PSYCH_UP",
+    "tier": "COMMON"
+  },
+  {
+    "move": "ANCIENT_POWER",
     "tier": "COMMON"
   },
   {
@@ -516,6 +524,10 @@
     "tier": "GREAT"
   },
   {
+    "move": "SILVER_WIND",
+    "tier": "COMMON"
+  },
+  {
     "move": "METAL_SOUND",
     "tier": "GREAT"
   },
@@ -581,7 +593,7 @@
   },
   {
     "move": "MAGICAL_LEAF",
-    "tier": "GREAT"
+    "tier": "COMMON"
   },
   {
     "move": "CALM_MIND",
@@ -601,7 +613,7 @@
   },
   {
     "move": "SHOCK_WAVE",
-    "tier": "GREAT"
+    "tier": "COMMON"
   },
   {
     "move": "WATER_PULSE",
@@ -842,6 +854,10 @@
   {
     "move": "CHARGE_BEAM",
     "tier": "GREAT"
+  },
+  {
+    "move": "OMINOUS_WIND",
+    "tier": "COMMON"
   },
   {
     "move": "HONE_CLAWS",

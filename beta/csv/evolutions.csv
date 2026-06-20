@@ -76,7 +76,7 @@ dexNum,id,evoDexNum,evoId,prevoKey,evoKey,levelNeeded,evoItems,evoDelay,timeOfDa
 111,RHYHORN,112,RHYDON,,,42,,,,,,,,,,,,,,,,,,
 112,RHYDON,464,RHYPERIOR,,,1,PROTECTOR,72|82|92,,,,,,,,,,,,,,,,
 113,CHANSEY,242,BLISSEY,,,1,,40|45|45,,,,,,180,,,,,,,,,,
-114,TANGELA,465,TANGROWTH,,,33,,29|37|45,,,,,ANCIENT_POWER,,,,,,,,,,,
+114,TANGELA,465,TANGROWTH,,,33,,33|39|45,,,,,ANCIENT_POWER,,,,,,,,,,,
 116,HORSEA,117,SEADRA,,,32,,,,,,,,,,,,,,,,,,
 117,SEADRA,230,KINGDRA,,,1,DRAGON_SCALE,42|52|62,,,,,,,,,,,,,,,,
 118,GOLDEEN,119,SEAKING,,,33,,,,,,,,,,,,,,,,,,
