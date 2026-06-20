@@ -105,8 +105,7 @@ export const systemMigrators: readonly SystemSaveMigrator[] = [
  */
 const fixRerollTarget: SettingsSaveMigrator = {
   version: "1.0.4",
-  // biome-ignore lint/complexity/noBannedTypes: TODO - refactor settings
-  migrate: (data: Object): void => {
+  migrate: (data: object): void => {
     if (Object.hasOwn(data, "REROLL_TARGET") && !Object.hasOwn(data, SettingKeys.Shop_Cursor_Target)) {
       data[SettingKeys.Shop_Cursor_Target] = data["REROLL_TARGET"];
       // biome-ignore lint/performance/noDelete: intentional

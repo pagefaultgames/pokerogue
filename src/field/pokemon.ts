@@ -149,6 +149,7 @@ import type {
 import type { DamageCalculationResult, DamageResult } from "#types/damage-result";
 import type { LevelMoves } from "#types/pokemon-species";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
+import type { StatChange } from "#types/stat-change";
 import type { TurnMove } from "#types/turn-move";
 import type { AbstractConstructor, Mutable } from "#types/type-helpers";
 import { BattleInfo } from "#ui/battle-info";
@@ -175,6 +176,7 @@ import { calculateBossSegmentDamage } from "#utils/damage";
 import { getEnumValues } from "#utils/enums";
 import { cachedFetch } from "#utils/fetch-utils";
 import { decodeNickname, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { weightedPick } from "#utils/random";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { ValueHolder } from "#utils/value-holder";
 import { QuantizerCelebi } from "@material/material-color-utilities";
@@ -305,6 +307,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   public usedTMs: MoveId[];
 
   private shinySparkle: Phaser.GameObjects.Sprite;
+
+  /** Stat stages queued by berry eating to be run in a single phase */
+  public queuedBerryStatChanges: Mutable<StatChange>[] = []; // todo Doing it this way to touch modifiers as little as possible, may not be ideal permanent solution
 
   // TODO: Rework this eventually
   constructor(
@@ -7070,8 +7075,9 @@ export class EnemyPokemon extends Pokemon {
    * For Pokemon with 5 health segments or more, breaking the last two shields give +2 each
    * @param segmentIndex - index of the segment to get down to (0 = no shield left, 1 = 1 shield left, etc.)
    */
-  handleBossSegmentCleared(segmentIndex: number): void {
+  private handleBossSegmentCleared(segmentIndex: number): void {
     let doStatBoost = !this.hasTrainer();
+    const changes: StatChange[] = [];
     // TODO: Rewrite this bespoke logic to improve clarity
     while (this.bossSegmentIndex > 0 && segmentIndex - 1 < this.bossSegmentIndex) {
       this.bossSegmentIndex--;
@@ -7080,27 +7086,11 @@ export class EnemyPokemon extends Pokemon {
       if (!doStatBoost) {
         continue;
       }
-      let boostedStat: EffectiveStat | undefined;
       // Filter out already maxed out stat stages and weigh the rest based on existing stats
-      const leftoverStats = EFFECTIVE_STATS.filter((s: EffectiveStat) => this.getStatStage(s) < 6);
-      const statWeights = leftoverStats.map((s: EffectiveStat) => this.getStat(s, false));
-
-      const statThresholds: number[] = [];
-      let totalWeight = 0;
-
-      for (const i in statWeights) {
-        totalWeight += statWeights[i];
-        statThresholds.push(totalWeight);
-      }
-
-      // Pick a random stat from the leftover stats to increase its stages
-      const randInt = randSeedInt(totalWeight);
-      for (const i in statThresholds) {
-        if (randInt < statThresholds[i]) {
-          boostedStat = leftoverStats[i];
-          break;
-        }
-      }
+      const leftoverStats = EFFECTIVE_STATS.filter(
+        (s: EffectiveStat) => this.getStatStage(s) + (changes.find(c => c.stat === s)?.stages ?? 0) < 6,
+      );
+      const boostedStat = weightedPick(new Map(leftoverStats.map(s => [s, this.getStat(s, false)])));
 
       if (boostedStat === undefined) {
         doStatBoost = false;
@@ -7117,17 +7107,15 @@ export class EnemyPokemon extends Pokemon {
       if (this.bossSegments >= 5 && this.bossSegmentIndex === 1) {
         stages++;
       }
-
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        this.getBattlerIndex(),
-        true,
-        [boostedStat],
-        stages,
-        true,
-        true,
-      );
+      changes.push({ stat: boostedStat, stages });
     }
+
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+      battlerIndex: this.getBattlerIndex(),
+      changes,
+      sourcePokemon: this,
+      ignoreAbilities: true,
+    });
   }
 
   public getFieldIndex(): number {
