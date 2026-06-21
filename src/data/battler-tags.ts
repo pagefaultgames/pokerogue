@@ -85,7 +85,6 @@ import { getMoveTargets } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { MoveEffectPhase } from "#phases/move-effect-phase";
 import type { MovePhase } from "#phases/move-phase";
-import type { StatStageChangeCallback } from "#phases/stat-stage-change-phase";
 import type {
   AbilityBattlerTagType,
   BattlerTagData,
@@ -102,10 +101,12 @@ import type {
   TypeBoostTagType,
 } from "#types/battler-tags";
 import type { Constructor } from "#types/common";
+import type { StatChange, StatStageChangeCallback } from "#types/stat-change";
 import type { AbstractConstructor, Mutable } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
 import { BooleanHolder, getFrameMs, toDmgValue } from "#utils/common";
-import { toCamelCase } from "#utils/strings";
+import { getPokemonTypeLocaleKey } from "#utils/i18n";
+import { groupStatChange } from "#utils/stat-change";
 import i18next from "i18next";
 
 /** Interface containing the serializable fields of `BattlerTag` */
@@ -1492,13 +1493,11 @@ export class OctolockTag extends TrappedTag {
     const shouldLapse = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
 
     if (shouldLapse) {
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        pokemon.getBattlerIndex(),
-        false,
-        [Stat.DEF, Stat.SPDEF],
-        -1,
-      );
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        changes: groupStatChange([Stat.DEF, Stat.SPDEF], -1),
+        sourcePokemon: this.getSourcePokemon(),
+      });
       return true;
     }
 
@@ -1993,13 +1992,11 @@ export class ContactStatStageChangeProtectedTag extends ContactProtectedTag {
    * @param user - The pokemon that is being attacked and has the tag
    */
   override onContact(attacker: Pokemon, _user: Pokemon): void {
-    globalScene.phaseManager.unshiftNew(
-      "StatStageChangePhase",
-      attacker.getBattlerIndex(),
-      false,
-      [this.#stat],
-      this.#levels,
-    );
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+      battlerIndex: attacker.getBattlerIndex(),
+      changes: [{ stat: this.#stat, stages: this.#levels }],
+      sourcePokemon: this.getSourcePokemon(),
+    });
   }
 }
 
@@ -2438,7 +2435,7 @@ export class TypeBoostTag extends SerializableBattlerTag {
     globalScene.phaseManager.queueMessage(
       i18next.t("abilityTriggers:typeImmunityPowerBoost", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        typeName: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.boostedType])}`),
+        typeName: i18next.t(getPokemonTypeLocaleKey(this.boostedType)),
       }),
     );
   }
@@ -2707,13 +2704,11 @@ export class CommandedTag extends SerializableBattlerTag {
   /** Caches the Tatsugiri's form key and sharply boosts the tagged Pokemon's stats */
   override onAdd(pokemon: Pokemon): void {
     (this as Mutable<this>).tatsugiriFormKey = this.getSourcePokemon()?.getFormKey() ?? "curly";
-    globalScene.phaseManager.unshiftNew(
-      "StatStageChangePhase",
-      pokemon.getBattlerIndex(),
-      true,
-      [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD],
-      2,
-    );
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+      battlerIndex: pokemon.getBattlerIndex(),
+      changes: groupStatChange([Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD], 2),
+      sourcePokemon: pokemon,
+    });
   }
 
   /** Triggers an {@linkcode PokemonAnimType | animation} of the tagged Pokemon "spitting out" Tatsugiri */
@@ -2752,9 +2747,9 @@ export class StockpilingTag extends SerializableBattlerTag {
     super(BattlerTagType.STOCKPILING, BattlerTagLapseType.CUSTOM, 1, sourceMove);
   }
 
-  private onStatStagesChanged(_: Pokemon | null, statsChanged: BattleStat[], statChanges: number[]) {
-    const defChange = statChanges[statsChanged.indexOf(Stat.DEF)] ?? 0;
-    const spDefChange = statChanges[statsChanged.indexOf(Stat.SPDEF)] ?? 0;
+  private onStatStagesChanged(_: Pokemon | null, changed: readonly StatChange[]) {
+    const defChange = changed.find(c => c.stat === Stat.DEF && c.stages > 0) != null;
+    const spDefChange = changed.find(c => c.stat === Stat.SPDEF && c.stages > 0) != null;
 
     if (defChange) {
       this.statChangeCounts[Stat.DEF]++;
@@ -2797,17 +2792,12 @@ export class StockpilingTag extends SerializableBattlerTag {
       );
 
       // Attempt to increase DEF and SPDEF by one stage, keeping track of successful changes.
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        pokemon.getBattlerIndex(),
-        true,
-        [Stat.SPDEF, Stat.DEF],
-        1,
-        true,
-        false,
-        true,
-        this.onStatStagesChanged.bind(this),
-      );
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        changes: groupStatChange([Stat.SPDEF, Stat.DEF], 1),
+        sourcePokemon: pokemon,
+        onChange: this.onStatStagesChanged.bind(this),
+      });
     }
   }
 
@@ -2823,30 +2813,15 @@ export class StockpilingTag extends SerializableBattlerTag {
     const defChange = this.statChangeCounts[Stat.DEF];
     const spDefChange = this.statChangeCounts[Stat.SPDEF];
 
-    if (defChange) {
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        pokemon.getBattlerIndex(),
-        true,
-        [Stat.DEF],
-        -defChange,
-        true,
-        false,
-        true,
-      );
-    }
-
-    if (spDefChange) {
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        pokemon.getBattlerIndex(),
-        true,
-        [Stat.SPDEF],
-        -spDefChange,
-        true,
-        false,
-        true,
-      );
+    if (defChange > 0 || spDefChange > 0) {
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        changes: [
+          { stat: Stat.DEF, stages: -defChange },
+          { stat: Stat.SPDEF, stages: -spDefChange },
+        ],
+        sourcePokemon: pokemon,
+      });
     }
   }
 }
@@ -2885,7 +2860,11 @@ export class GulpMissileTag extends SerializableBattlerTag {
       }
 
       if (this.tagType === BattlerTagType.GULP_MISSILE_ARROKUDA) {
-        globalScene.phaseManager.unshiftNew("StatStageChangePhase", attacker.getBattlerIndex(), false, [Stat.DEF], -1);
+        globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+          battlerIndex: attacker.getBattlerIndex(),
+          changes: [{ stat: Stat.DEF, stages: -1 }],
+          sourcePokemon: pokemon,
+        });
       } else {
         attacker.trySetStatus(StatusEffect.PARALYSIS, pokemon);
       }
@@ -3521,16 +3500,11 @@ export class SyrupBombTag extends SerializableBattlerTag {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       }),
     );
-    globalScene.phaseManager.unshiftNew(
-      "StatStageChangePhase",
-      pokemon.getBattlerIndex(),
-      true,
-      [Stat.SPD],
-      -1,
-      true,
-      false,
-      true,
-    );
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+      battlerIndex: pokemon.getBattlerIndex(),
+      changes: [{ stat: Stat.SPD, stages: -1 }],
+      sourcePokemon: pokemon,
+    });
     return super.lapse(pokemon, _lapseType);
   }
 }

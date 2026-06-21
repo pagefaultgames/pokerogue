@@ -35,6 +35,7 @@ import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { BATTLE_STATS, type BattleStat, EFFECTIVE_STATS, getStatKey, Stat } from "#enums/stat";
+import { StatChangeSource } from "#enums/stat-change-source";
 import { StatusEffect } from "#enums/status-effect";
 import { SwitchType } from "#enums/switch-type";
 import { WeatherType } from "#enums/weather-type";
@@ -51,13 +52,16 @@ import type {
   AbAttrString,
   PokemonAttackCondition,
   PokemonDefendCondition,
-  PokemonStatStageChangeCondition,
+  PokemonStatStageChangeFunc,
 } from "#types/ability-types";
 import type { Move, StatusEffectAttr } from "#types/move-types";
+import type { StatChange } from "#types/stat-change";
 import type { Closed, Exact, Mutable } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
 import { BooleanHolder, NumberHolder, randSeedFloat, randSeedInt, randSeedItem, toDmgValue } from "#utils/common";
+import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import { inSpeedOrder } from "#utils/speed-order-generator";
+import { groupStatChange } from "#utils/stat-change";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 import type { NonEmptyTuple } from "type-fest";
@@ -472,13 +476,11 @@ export class TypeImmunityStatStageChangeAbAttr extends TypeImmunityAbAttr {
     super.apply(params);
     cancelled.value = true; // Suppresses "No Effect" message
     if (!simulated) {
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        pokemon.getBattlerIndex(),
-        true,
-        [this.stat],
-        this.stages,
-      );
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        changes: [{ stat: this.stat, stages: this.stages }],
+        sourcePokemon: pokemon,
+      });
     }
   }
 }
@@ -644,13 +646,11 @@ export class MoveImmunityStatStageChangeAbAttr extends MoveImmunityAbAttr {
   override apply(params: MoveImmunityAbAttrParams): void {
     super.apply(params);
     // TODO: We probably should not unshift the phase if this is simulated
-    globalScene.phaseManager.unshiftNew(
-      "StatStageChangePhase",
-      params.pokemon.getBattlerIndex(),
-      true,
-      [this.stat],
-      this.stages,
-    );
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+      battlerIndex: params.pokemon.getBattlerIndex(),
+      changes: [{ stat: this.stat, stages: this.stages }],
+      sourcePokemon: params.pokemon,
+    });
   }
 }
 
@@ -745,38 +745,32 @@ export class PostDefendStatStageChangeAbAttr extends PostDefendAbAttr {
       const ally = pokemon.getAlly();
       const otherPokemon = ally == null ? pokemon.getOpponents() : pokemon.getOpponents().concat([ally]);
       for (const other of otherPokemon) {
-        globalScene.phaseManager.unshiftNew(
-          "StatStageChangePhase",
-          other.getBattlerIndex(),
-          false,
-          [this.stat],
-          this.stages,
-        );
+        globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+          battlerIndex: other.getBattlerIndex(),
+          changes: [{ stat: this.stat, stages: this.stages }],
+          sourcePokemon: pokemon,
+        });
       }
     } else {
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        (this.selfTarget ? pokemon : attacker).getBattlerIndex(),
-        this.selfTarget,
-        [this.stat],
-        this.stages,
-      );
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: (this.selfTarget ? pokemon : attacker).getBattlerIndex(),
+        changes: [{ stat: this.stat, stages: this.stages }],
+        sourcePokemon: pokemon,
+      });
     }
   }
 }
 
 export class PostDefendHpGatedStatStageChangeAbAttr extends PostDefendAbAttr {
   private readonly hpGate: number;
-  private readonly stats: readonly BattleStat[];
-  private readonly stages: number;
+  private readonly changes: readonly StatChange[];
   private readonly selfTarget: boolean;
 
-  constructor(hpGate: number, stats: BattleStat[], stages: number, selfTarget = true) {
+  constructor(hpGate: number, changes: readonly StatChange[], selfTarget = true) {
     super(true);
 
     this.hpGate = hpGate;
-    this.stats = stats;
-    this.stages = stages;
+    this.changes = changes;
     this.selfTarget = selfTarget;
   }
 
@@ -794,13 +788,11 @@ export class PostDefendHpGatedStatStageChangeAbAttr extends PostDefendAbAttr {
 
   override apply({ simulated, pokemon, opponent }: PostMoveInteractionAbAttrParams): void {
     if (!simulated) {
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        (this.selfTarget ? pokemon : opponent).getBattlerIndex(),
-        true,
-        this.stats,
-        this.stages,
-      );
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: (this.selfTarget ? pokemon : opponent).getBattlerIndex(),
+        changes: this.changes,
+        sourcePokemon: pokemon,
+      });
     }
   }
 }
@@ -901,7 +893,7 @@ export class PostDefendTypeChangeAbAttr extends PostDefendAbAttr {
     return i18next.t("abilityTriggers:postDefendTypeChange", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       abilityName,
-      typeName: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.type])}`),
+      typeName: i18next.t(getPokemonTypeLocaleKey(this.type)),
     });
   }
 }
@@ -1017,13 +1009,11 @@ export class PostReceiveCritStatStageChangeAbAttr extends AbAttr {
 
   override apply({ simulated, pokemon }: PostMoveInteractionAbAttrParams): void {
     if (!simulated) {
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        pokemon.getBattlerIndex(),
-        true,
-        [this.stat],
-        this.stages,
-      );
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        changes: [{ stat: this.stat, stages: this.stages }],
+        sourcePokemon: pokemon,
+      });
     }
   }
 }
@@ -1200,10 +1190,7 @@ export class PostDefendMoveDisableAbAttr extends PostDefendAbAttr {
 }
 
 export interface PostStatStageChangeAbAttrParams extends AbAttrBaseParams {
-  /** The stats that were changed */
-  stats: readonly BattleStat[];
-  /** The amount of stages that the stats changed by */
-  stages: number;
+  changes: readonly StatChange[];
   /** Whether the source of the stat stages were from the user's own move */
   selfTarget: boolean;
 }
@@ -1219,31 +1206,25 @@ export class PostStatStageChangeAbAttr extends AbAttr {
 }
 
 export class PostStatStageChangeStatStageChangeAbAttr extends PostStatStageChangeAbAttr {
-  private readonly condition: PokemonStatStageChangeCondition;
-  private readonly statsToChange: readonly BattleStat[];
-  private readonly stages: number;
+  private readonly changeFunc: PokemonStatStageChangeFunc;
 
-  constructor(condition: PokemonStatStageChangeCondition, statsToChange: BattleStat[], stages: number) {
+  constructor(changeFunc: PokemonStatStageChangeFunc) {
     super(true);
 
-    this.condition = condition;
-    this.statsToChange = statsToChange;
-    this.stages = stages;
+    this.changeFunc = changeFunc;
   }
 
-  override canApply({ pokemon, stats, stages, selfTarget }: PostStatStageChangeAbAttrParams): boolean {
-    return this.condition(pokemon, stats, stages) && !selfTarget;
+  override canApply({ pokemon, changes, selfTarget }: PostStatStageChangeAbAttrParams): boolean {
+    return !selfTarget && this.changeFunc(pokemon, changes).stages !== 0;
   }
 
-  override apply({ simulated, pokemon }: PostStatStageChangeAbAttrParams): void {
+  override apply({ simulated, pokemon, changes }: PostStatStageChangeAbAttrParams): void {
     if (!simulated) {
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        pokemon.getBattlerIndex(),
-        true,
-        this.statsToChange,
-        this.stages,
-      );
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        changes: [this.changeFunc(pokemon, changes)],
+        sourcePokemon: pokemon,
+      });
     }
   }
 }
@@ -1424,7 +1405,7 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
   getTriggerMessage({ pokemon }: AugmentMoveInteractionAbAttrParams, _abilityName: string): string {
     return i18next.t("abilityTriggers:pokemonTypeChange", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      moveType: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.moveType])}`),
+      moveType: i18next.t(getPokemonTypeLocaleKey(this.moveType)),
     });
   }
 }
@@ -2036,27 +2017,24 @@ export class PostVictoryAbAttr extends AbAttr {
   apply(_params: Closed<AbAttrBaseParams>): void {}
 }
 
-type StatOrStatArray = BattleStat | NonEmptyTuple<BattleStat>;
-type PostVictoryStatStageChangeStats = StatOrStatArray | ((p: Pokemon) => StatOrStatArray);
-
 export class PostVictoryStatStageChangeAbAttr extends PostVictoryAbAttr {
-  private readonly stats: PostVictoryStatStageChangeStats;
-  private readonly stages: number;
-
-  constructor(stats: PostVictoryStatStageChangeStats, stages: number) {
+  private readonly changes: readonly StatChange[] | ((p: Pokemon) => readonly StatChange[]);
+  constructor(changes: readonly StatChange[] | ((p: Pokemon) => readonly StatChange[])) {
     super();
 
-    this.stats = stats;
-    this.stages = stages;
+    this.changes = changes;
   }
 
   override apply({ pokemon, simulated }: AbAttrBaseParams): void {
     if (simulated) {
       return;
     }
-
-    const stats = coerceArray(typeof this.stats === "function" ? this.stats(pokemon) : this.stats);
-    globalScene.phaseManager.unshiftNew("StatStageChangePhase", pokemon.getBattlerIndex(), true, stats, this.stages);
+    const changes = typeof this.changes === "function" ? this.changes(pokemon) : this.changes;
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+      battlerIndex: pokemon.getBattlerIndex(),
+      changes,
+      sourcePokemon: pokemon,
+    });
   }
 }
 
@@ -2116,7 +2094,11 @@ export class PostKnockOutStatStageChangeAbAttr extends PostKnockOutAbAttr {
   override apply({ pokemon, simulated }: PostKnockOutAbAttrParams): void {
     const stat = typeof this.stat === "function" ? this.stat(pokemon) : this.stat;
     if (!simulated) {
-      globalScene.phaseManager.unshiftNew("StatStageChangePhase", pokemon.getBattlerIndex(), true, [stat], this.stages);
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        changes: [{ stat, stages: this.stages }],
+        sourcePokemon: pokemon,
+      });
     }
   }
 }
@@ -2186,26 +2168,22 @@ export class IntimidateImmunityAbAttr extends CancelInteractionAbAttr {
 }
 
 export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
-  private readonly stats: readonly BattleStat[];
-  private readonly stages: number;
+  private readonly changes: readonly StatChange[];
   private readonly overwrites: boolean;
 
-  constructor(stats: readonly BattleStat[], stages: number, overwrites?: boolean) {
+  constructor(changes: readonly StatChange[], overwrites?: boolean) {
     super(true);
-    this.stats = stats;
-    this.stages = stages;
+    this.changes = changes;
     this.overwrites = !!overwrites;
   }
 
   override apply({ pokemon, simulated, cancelled }: AbAttrParamsWithCancel): void {
     if (!simulated) {
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        pokemon.getBattlerIndex(),
-        false,
-        this.stats,
-        this.stages,
-      );
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        changes: this.changes,
+        sourcePokemon: pokemon,
+      });
     }
     cancelled.value = this.overwrites;
   }
@@ -2378,16 +2356,14 @@ export class PostSummonRemoveBattlerTagAbAttr extends PostSummonRemoveEffectAbAt
 }
 
 export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
-  private readonly stats: readonly BattleStat[];
-  private readonly stages: number;
+  private readonly changes: readonly StatChange[];
   private readonly selfTarget: boolean;
   private readonly intimidate: boolean;
 
-  constructor(stats: readonly BattleStat[], stages: number, selfTarget = false, intimidate = false) {
+  constructor(changes: readonly StatChange[], selfTarget = false, intimidate = false) {
     super(true);
 
-    this.stats = stats;
-    this.stages = stages;
+    this.changes = changes;
     this.selfTarget = selfTarget;
     this.intimidate = intimidate;
   }
@@ -2400,13 +2376,12 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
     if (this.selfTarget) {
       // we unshift the StatStageChangePhase to put it right after the showAbility and not at the end of the
       // phase list (which could be after CommandPhase for example)
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        pokemon.getBattlerIndex(),
-        true,
-        this.stats,
-        this.stages,
-      );
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        changes: this.changes,
+        sourcePokemon: pokemon,
+      });
+
       return;
     }
 
@@ -2422,13 +2397,11 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
         }
       }
       if (!cancelled.value) {
-        globalScene.phaseManager.unshiftNew(
-          "StatStageChangePhase",
-          opponent.getBattlerIndex(),
-          false,
-          this.stats,
-          this.stages,
-        );
+        globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+          battlerIndex: opponent.getBattlerIndex(),
+          changes: this.changes,
+          sourcePokemon: pokemon,
+        });
       }
     }
   }
@@ -2525,7 +2498,11 @@ export class DownloadAbAttr extends PostSummonAbAttr {
     }
 
     if (!simulated) {
-      globalScene.phaseManager.unshiftNew("StatStageChangePhase", pokemon.getBattlerIndex(), false, this.stats, 1);
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        changes: groupStatChange(this.stats, 1),
+        sourcePokemon: pokemon,
+      });
     }
   }
 }
@@ -3038,10 +3015,7 @@ export class PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr extends PreLeaveFi
 }
 
 export interface PreStatStageChangeAbAttrParams extends AbAttrBaseParams {
-  /** The stat being affected by the stat stage change */
-  stat: BattleStat;
-  /** The amount of stages to change by (negative if the stat is being decreased) */
-  stages: number;
+  changes: readonly StatChange[];
   /**
    * The source of the stat stage drop. May be omitted if the source of the stat drop is the user itself.
    *
@@ -3049,8 +3023,8 @@ export interface PreStatStageChangeAbAttrParams extends AbAttrBaseParams {
    * Currently, only used by {@linkcode ReflectStatStageChangeAbAttr} in order to reflect the stat stage change
    */
   source?: Pokemon | undefined;
-  /** Holder that will be set to true if the stat stage change should be cancelled due to the ability */
-  cancelled: BooleanHolder;
+  /** All cancelled stat changes; a subset of {@linkcode stats}. Any stat change which the ability cancels should be added to this array */
+  cancelledStats: Set<BattleStat>;
 }
 
 /**
@@ -3069,40 +3043,39 @@ export abstract class PreStatStageChangeAbAttr extends AbAttr {
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Mirror_Armor_(Ability) | Mirror Armor (Bulbapedia)}
  */
 export class ReflectStatStageChangeAbAttr extends PreStatStageChangeAbAttr {
-  /** The stat to reflect */
-  private reflectedStat?: BattleStat;
+  private reflectedChanges?: StatChange[];
 
-  override canApply({ source, cancelled }: PreStatStageChangeAbAttrParams): boolean {
-    return !!source && !cancelled.value;
+  override canApply({ source, changes, cancelledStats }: PreStatStageChangeAbAttrParams): boolean {
+    this.reflectedChanges = changes.filter(c => !cancelledStats.has(c.stat));
+    return !!source && this.reflectedChanges.length > 0;
   }
 
-  override apply({ source, cancelled, stat, simulated, stages }: PreStatStageChangeAbAttrParams): void {
-    if (!source) {
+  override apply({ source, cancelledStats, simulated }: PreStatStageChangeAbAttrParams): void {
+    // Defensive programming; these should never be undefined here
+    if (!source || !this.reflectedChanges) {
       return;
     }
-    this.reflectedStat = stat;
     if (!simulated) {
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        source.getBattlerIndex(),
-        false,
-        [stat],
-        stages,
-        true,
-        false,
-        true,
-        null,
-        true,
-      );
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: source.getBattlerIndex(),
+        changes: this.reflectedChanges,
+        // if necessary later, pass the ability user through here
+        sourcePokemon: undefined,
+        ignoreAbilities: false,
+        sourceEffectType: StatChangeSource.MIRROR_ARMOR,
+      });
     }
-    cancelled.value = true;
+    this.reflectedChanges.forEach(c => cancelledStats.add(c.stat));
   }
 
   getTriggerMessage({ pokemon }: PreStatStageChangeAbAttrParams, abilityName: string): string {
     return i18next.t("abilityTriggers:protectStat", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       abilityName,
-      statName: this.reflectedStat ? i18next.t(getStatKey(this.reflectedStat)) : i18next.t("battle:stats"),
+      statName:
+        this.reflectedChanges?.length === 1
+          ? i18next.t(getStatKey(this.reflectedChanges[0].stat))
+          : i18next.t("battle:stats"),
     });
   }
 }
@@ -3121,12 +3094,19 @@ export class ProtectStatAbAttr extends PreStatStageChangeAbAttr {
     }
   }
 
-  override canApply({ stat, cancelled }: PreStatStageChangeAbAttrParams): boolean {
-    return !cancelled.value && (this.protectedStat == null || stat === this.protectedStat);
+  override canApply({ changes, cancelledStats }: PreStatStageChangeAbAttrParams): boolean {
+    return changes.some(
+      s => (s.stat === this.protectedStat || this.protectedStat == null) && !cancelledStats.has(s.stat),
+    );
   }
 
-  override apply({ cancelled }: PreStatStageChangeAbAttrParams): void {
-    cancelled.value = true;
+  override apply({ changes, cancelledStats }: PreStatStageChangeAbAttrParams): void {
+    if (this.protectedStat == null) {
+      changes.forEach(c => cancelledStats.add(c.stat));
+      return;
+    }
+
+    cancelledStats.add(this.protectedStat);
   }
 
   override getTriggerMessage({ pokemon }: PreStatStageChangeAbAttrParams, abilityName: string): string {
@@ -3172,13 +3152,13 @@ export class ConfusionOnStatusEffectAbAttr extends AbAttr {
 
 export interface PreSetStatusAbAttrParams extends AbAttrBaseParams {
   /** The status effect being applied */
+  // TODO: change to Exclude<StatusEffect, StatusEffect.NONE | StatusEffect.FAINT>
   effect: StatusEffect;
   /** Holds whether the status effect is prevented by the ability */
   cancelled: BooleanHolder;
 }
 
 export class PreSetStatusAbAttr extends AbAttr {
-  /** Return whether the ability attribute can be applied */
   canApply(_params: Closed<PreSetStatusAbAttrParams>): boolean {
     return true;
   }
@@ -3200,18 +3180,18 @@ export class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
     this.immuneEffects = immuneEffects;
   }
 
-  override canApply({ effect, cancelled }: PreSetStatusAbAttrParams): boolean {
+  public override canApply({ effect, cancelled }: PreSetStatusAbAttrParams): boolean {
     return (
       !cancelled.value
       && ((this.immuneEffects.length === 0 && effect !== StatusEffect.FAINT) || this.immuneEffects.includes(effect))
     );
   }
 
-  override apply({ cancelled }: PreSetStatusAbAttrParams): void {
+  public override apply({ cancelled }: PreSetStatusAbAttrParams): void {
     cancelled.value = true;
   }
 
-  override getTriggerMessage({ pokemon, effect }: PreSetStatusAbAttrParams, abilityName: string): string {
+  public override getTriggerMessage({ pokemon, effect }: PreSetStatusAbAttrParams, abilityName: string): string {
     return this.immuneEffects.length > 0
       ? i18next.t("abilityTriggers:statusEffectImmunityWithName", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
@@ -3303,10 +3283,10 @@ export class ConditionalUserFieldStatusEffectImmunityAbAttr extends UserFieldSta
 }
 
 export interface ConditionalUserFieldProtectStatAbAttrParams extends AbAttrBaseParams {
-  /** The stat being affected by the stat stage change */
-  stat: BattleStat;
-  /** Holds whether the stat stage change is prevented by the ability */
-  cancelled: BooleanHolder;
+  /** The stats being affected by the stat stage change */
+  changes: readonly StatChange[];
+  /** All cancelled stat changes; a subset of {@linkcode stats}. Any stat change which the ability cancels should be added to this set */
+  cancelledStats: Set<BattleStat>;
   // TODO: consider making this required and not inherit from PreStatStageChangeAbAttr
   /** The target of the stat stage change */
   target?: Pokemon;
@@ -3331,18 +3311,26 @@ export class ConditionalUserFieldProtectStatAbAttr extends PreStatStageChangeAbA
   /**
    * @returns Whether the ability can be used to cancel the stat stage change.
    */
-  override canApply({ stat, cancelled, target }: ConditionalUserFieldProtectStatAbAttrParams): boolean {
+  override canApply({ changes, cancelledStats, target }: ConditionalUserFieldProtectStatAbAttrParams): boolean {
     if (!target) {
       return false;
     }
-    return !cancelled.value && (this.protectedStat == null || stat === this.protectedStat) && this.condition(target);
+    return (
+      changes.some(c => (c.stat === this.protectedStat || this.protectedStat == null) && !cancelledStats.has(c.stat))
+      && this.condition(target)
+    );
   }
 
   /**
    * Apply the {@linkcode ConditionalUserFieldStatusEffectImmunityAbAttr} to an interaction
    */
-  override apply({ cancelled }: ConditionalUserFieldProtectStatAbAttrParams): void {
-    cancelled.value = true;
+  override apply({ changes, cancelledStats }: ConditionalUserFieldProtectStatAbAttrParams): void {
+    if (this.protectedStat == null) {
+      changes.forEach(c => cancelledStats.add(c.stat));
+      return;
+    }
+
+    cancelledStats.add(this.protectedStat);
   }
 }
 
@@ -4276,11 +4264,19 @@ export class MoodyAbAttr extends PostTurnAbAttr {
       if (canRaise.length > 0) {
         const raisedStat = canRaise[pokemon.randBattleSeedInt(canRaise.length)];
         canLower = canLower.filter(s => s !== raisedStat);
-        globalScene.phaseManager.unshiftNew("StatStageChangePhase", pokemon.getBattlerIndex(), true, [raisedStat], 2);
+        globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+          battlerIndex: pokemon.getBattlerIndex(),
+          changes: [{ stat: raisedStat, stages: 2 }],
+          sourcePokemon: pokemon,
+        });
       }
       if (canLower.length > 0) {
         const loweredStat = canLower[pokemon.randBattleSeedInt(canLower.length)];
-        globalScene.phaseManager.unshiftNew("StatStageChangePhase", pokemon.getBattlerIndex(), true, [loweredStat], -1);
+        globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+          battlerIndex: pokemon.getBattlerIndex(),
+          changes: [{ stat: loweredStat, stages: -1 }],
+          sourcePokemon: pokemon,
+        });
       }
     }
   }
@@ -4298,7 +4294,11 @@ export class SpeedBoostAbAttr extends PostTurnAbAttr {
   }
 
   override apply({ pokemon }: AbAttrBaseParams): void {
-    globalScene.phaseManager.unshiftNew("StatStageChangePhase", pokemon.getBattlerIndex(), true, [Stat.SPD], 1);
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+      battlerIndex: pokemon.getBattlerIndex(),
+      changes: [{ stat: Stat.SPD, stages: 1 }],
+      sourcePokemon: pokemon,
+    });
   }
 }
 
@@ -4578,25 +4578,19 @@ export class StatStageChangeMultiplierAbAttr extends AbAttr {
 }
 
 export interface StatStageChangeCopyAbAttrParams extends AbAttrBaseParams {
-  /** The stats to change */
-  stats: readonly BattleStat[];
-  /** The number of stages that were changed by the original */
-  numStages: number;
+  changes: readonly StatChange[];
 }
 
 export class StatStageChangeCopyAbAttr extends AbAttr {
-  override apply({ pokemon, stats, numStages, simulated }: StatStageChangeCopyAbAttrParams): void {
+  override apply({ pokemon, changes, simulated }: StatStageChangeCopyAbAttrParams): void {
     if (!simulated) {
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        pokemon.getBattlerIndex(),
-        true,
-        stats,
-        numStages,
-        true,
-        false,
-        false,
-      );
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        changes,
+        sourcePokemon: pokemon,
+        ignoreAbilities: false,
+        sourceEffectType: StatChangeSource.OPPORTUNIST,
+      });
     }
   }
 }
@@ -5052,25 +5046,21 @@ export abstract class FlinchEffectAbAttr extends AbAttr {
 }
 
 export class FlinchStatStageChangeAbAttr extends FlinchEffectAbAttr {
-  private readonly stats: readonly BattleStat[];
-  private readonly stages: number;
+  private readonly changes: readonly StatChange[];
 
-  constructor(stats: readonly BattleStat[], stages: number) {
+  constructor(changes: readonly StatChange[]) {
     super();
 
-    this.stats = stats;
-    this.stages = stages;
+    this.changes = changes;
   }
 
   override apply({ simulated, pokemon }: AbAttrBaseParams): void {
     if (!simulated) {
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        pokemon.getBattlerIndex(),
-        true,
-        this.stats,
-        this.stages,
-      );
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        changes: this.changes,
+        sourcePokemon: pokemon,
+      });
     }
   }
 }
@@ -5332,7 +5322,7 @@ export class PostSummonStatStageChangeOnArenaAbAttr extends PostSummonStatStageC
    * @param tagType - The type of arena tag to check for.
    */
   constructor(tagType: ArenaTagType) {
-    super([Stat.ATK], 1, true, false);
+    super([{ stat: Stat.ATK, stages: 1 }], true, false);
     this.arenaTagType = tagType;
   }
 
@@ -5487,8 +5477,10 @@ export class PostDefendIllusionBreakAbAttr extends PostDefendAbAttr {
     // and store it somewhere globally accessible
     const damagingHitResults: ReadonlySet<HitResult> = new Set([
       HitResult.EFFECTIVE,
+      HitResult.EXTREMELY_EFFECTIVE,
       HitResult.SUPER_EFFECTIVE,
       HitResult.NOT_VERY_EFFECTIVE,
+      HitResult.MOSTLY_INEFFECTIVE,
       HitResult.ONE_HIT_KO,
     ]);
     return damagingHitResults.has(hitResult) && pokemon.summonData.illusion != null;

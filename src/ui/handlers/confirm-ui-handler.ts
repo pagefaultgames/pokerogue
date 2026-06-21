@@ -1,11 +1,11 @@
 import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { UiMode } from "#enums/ui-mode";
-import type { OptionSelectConfig } from "#ui/abstract-option-select-ui-handler";
-import { AbstractOptionSelectUiHandler } from "#ui/abstract-option-select-ui-handler";
+import type { OptionSelectConfig } from "#ui/base-option-select-ui-handler";
+import { BaseOptionSelectUiHandler } from "#ui/base-option-select-ui-handler";
 import i18next from "i18next";
 
-export class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
+export class ConfirmUiHandler extends BaseOptionSelectUiHandler {
   public static readonly windowWidth: number = 48;
 
   private switchCheck: boolean;

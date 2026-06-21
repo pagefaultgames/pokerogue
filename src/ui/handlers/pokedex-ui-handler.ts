@@ -31,7 +31,7 @@ import type { GameData } from "#system/game-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
 import type { DexAttrProps, StarterAttributes } from "#types/save-data";
-import type { OptionSelectConfig } from "#ui/abstract-option-select-ui-handler";
+import type { OptionSelectConfig } from "#ui/base-option-select-ui-handler";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
 import { FilterBar } from "#ui/filter-bar";
 import { FilterText, FilterTextRow } from "#ui/filter-text";
@@ -137,10 +137,6 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: "28px",
     starterInfoXPos: 34,
   },
-  ro: {
-    starterInfoTextSize: "56px",
-    instructionTextSize: "28px",
-  },
   ru: {
     starterInfoTextSize: "46px",
     instructionTextSize: "28px",
@@ -164,10 +160,6 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: "28px",
   },
   tl: {
-    starterInfoTextSize: "56px",
-    instructionTextSize: "28px",
-  },
-  "nb-NO": {
     starterInfoTextSize: "56px",
     instructionTextSize: "28px",
   },

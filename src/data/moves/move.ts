@@ -131,8 +131,10 @@ import {
   toDmgValue,
 } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
+import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import { areAllies, canSpeciesTera, willTerastallize } from "#utils/pokemon-utils";
 import { inSpeedOrder } from "#utils/speed-order-generator";
+import { groupStatChange } from "#utils/stat-change";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
@@ -3918,8 +3920,6 @@ export class AwaitCombinedPledgeAttr extends OverrideMoveEffectAttr {
 interface StatStageChangeAttrOptions extends MoveEffectAttrOptions {
   /** If defined, needs to be met in order for the stat change to apply */
   condition?: MoveConditionFunc;
-  /** `true` to display a message */
-  showMessage?: boolean;
 }
 
 /**
@@ -3955,14 +3955,6 @@ export class StatStageChangeAttr extends MoveEffectAttr {
   }
 
   /**
-   * `true` to display a message for the stat change.
-   * @defaultValue `true`
-   */
-  private get showMessage() {
-    return this.options?.showMessage ?? true;
-  }
-
-  /**
    * Attempts to change stats of the user or target (depending on value of selfTarget) if conditions are met
    * @param user {@linkcode Pokemon} the user of the move
    * @param target {@linkcode Pokemon} the target of the move
@@ -3978,14 +3970,12 @@ export class StatStageChangeAttr extends MoveEffectAttr {
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget, true);
     if (moveChance < 0 || moveChance === 100 || user.randBattleSeedInt(100) < moveChance) {
       const stages = this.getLevels(user);
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        (this.selfTarget ? user : target).getBattlerIndex(),
-        this.selfTarget,
-        this.stats,
-        stages,
-        this.showMessage,
-      );
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: (this.selfTarget ? user : target).getBattlerIndex(),
+        changes: groupStatChange(this.stats, stages),
+        sourcePokemon: user,
+      });
+
       return true;
     }
 
@@ -4101,29 +4091,26 @@ export class PartingShotAttr extends StatStageChangeAttr {
     const stageMod = hasContrary ? 1 : -1;
 
     // Silently simulate immunities to predict if the stat drop will be blocked
-    const cancelledAtk = new BooleanHolder(false);
+    const cancelledStats = new Set<BattleStat>();
     applyAbAttrs("ProtectStatAbAttr", {
       pokemon: target,
-      stat: Stat.ATK,
-      stages: -1,
-      cancelled: cancelledAtk,
+      changes: [{ stat: Stat.ATK, stages: -1 }],
+      cancelledStats,
       simulated: true,
     });
     const canChangeAtk =
-      !cancelledAtk.value
+      !cancelledStats.has(Stat.ATK)
       && target.getStatStage(Stat.ATK) + stageMod >= -6
       && target.getStatStage(Stat.ATK) + stageMod <= 6;
 
-    const cancelledSpAtk = new BooleanHolder(false);
     applyAbAttrs("ProtectStatAbAttr", {
       pokemon: target,
-      stat: Stat.SPATK,
-      stages: -1,
-      cancelled: cancelledSpAtk,
+      changes: [{ stat: Stat.SPATK, stages: -1 }],
+      cancelledStats,
       simulated: true,
     });
     const canChangeSpAtk =
-      !cancelledSpAtk.value
+      !cancelledStats.has(Stat.SPATK)
       && target.getStatStage(Stat.SPATK) + stageMod >= -6
       && target.getStatStage(Stat.SPATK) + stageMod <= 6;
 
@@ -4335,13 +4322,12 @@ export class AcupressureStatStageChangeAttr extends MoveEffectAttr {
     const randStats = BATTLE_STATS.filter(s => target.getStatStage(s) < 6);
     if (randStats.length > 0) {
       const boostStat = [randStats[user.randBattleSeedInt(randStats.length)]];
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        target.getBattlerIndex(),
-        this.selfTarget,
-        boostStat,
-        2,
-      );
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: target.getBattlerIndex(),
+        changes: groupStatChange(boostStat, 2),
+        sourcePokemon: user,
+      });
+
       return true;
     }
     return false;
@@ -4422,14 +4408,12 @@ export class OrderUpStatBoostAttr extends MoveEffectAttr {
         increasedStat = Stat.SPD;
         break;
     }
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+      battlerIndex: user.getBattlerIndex(),
+      changes: [{ stat: increasedStat, stages: 1 }],
+      sourcePokemon: user,
+    });
 
-    globalScene.phaseManager.unshiftNew(
-      "StatStageChangePhase",
-      user.getBattlerIndex(),
-      this.selfTarget,
-      [increasedStat],
-      1,
-    );
     return true;
   }
 }
@@ -5484,14 +5468,12 @@ export class SpectralThiefAttr extends StatChangeBeforeDmgCalcAttr {
          * Only value of up to 6 can be stolen (stat stages don't exceed 6)
          */
         const availableToSteal = Math.min(statStageValueTarget, 6 - statStageValueUser);
+        globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+          battlerIndex: user.getBattlerIndex(),
+          changes: [{ stat: s, stages: availableToSteal }],
+          sourcePokemon: user,
+        });
 
-        globalScene.phaseManager.unshiftNew(
-          "StatStageChangePhase",
-          user.getBattlerIndex(),
-          this.selfTarget,
-          [s],
-          availableToSteal,
-        );
         target.setStatStage(s, statStageValueTarget - availableToSteal);
       }
     }
@@ -6834,8 +6816,16 @@ export class CurseAttr extends MoveEffectAttr {
       target.addTag(BattlerTagType.CURSED, 0, move.id, user.id);
       return true;
     }
-    globalScene.phaseManager.unshiftNew("StatStageChangePhase", user.getBattlerIndex(), true, [Stat.ATK, Stat.DEF], 1);
-    globalScene.phaseManager.unshiftNew("StatStageChangePhase", user.getBattlerIndex(), true, [Stat.SPD], -1);
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+      battlerIndex: user.getBattlerIndex(),
+      changes: groupStatChange([Stat.ATK, Stat.DEF], 1),
+      sourcePokemon: user,
+    });
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+      battlerIndex: user.getBattlerIndex(),
+      changes: [{ stat: Stat.SPD, stages: -1 }],
+      sourcePokemon: user,
+    });
     return true;
   }
 }
@@ -7706,7 +7696,7 @@ export class CopyBiomeTypeAttr extends MoveEffectAttr {
     globalScene.phaseManager.queueMessage(
       i18next.t("moveTriggers:transformedIntoType", {
         pokemonName: getPokemonNameWithAffix(user),
-        typeName: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[typeChange])}`),
+        typeName: i18next.t(getPokemonTypeLocaleKey(typeChange)),
       }),
     );
 
@@ -7819,7 +7809,7 @@ export class ChangeTypeAttr extends MoveEffectAttr {
     globalScene.phaseManager.queueMessage(
       i18next.t("moveTriggers:transformedIntoType", {
         pokemonName: getPokemonNameWithAffix(target),
-        typeName: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.type])}`),
+        typeName: i18next.t(getPokemonTypeLocaleKey(this.type)),
       }),
     );
 
@@ -7854,7 +7844,7 @@ export class AddTypeAttr extends MoveEffectAttr {
 
     globalScene.phaseManager.queueMessage(
       i18next.t("moveTriggers:addType", {
-        typeName: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.type])}`),
+        typeName: i18next.t(getPokemonTypeLocaleKey(this.type)),
         pokemonName: getPokemonNameWithAffix(target),
       }),
     );
@@ -7883,7 +7873,7 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
     globalScene.phaseManager.queueMessage(
       i18next.t("battle:transformedIntoType", {
         pokemonName: getPokemonNameWithAffix(user),
-        type: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[firstMoveType])}`),
+        type: i18next.t(getPokemonTypeLocaleKey(firstMoveType)),
       }),
     );
 
@@ -12563,7 +12553,7 @@ export function initMoves() {
       .attr(RemoveScreensAttr, (_user, target) => (target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY)),
     new AttackMove(MoveId.MAKE_IT_RAIN, PokemonType.STEEL, MoveCategory.SPECIAL, 120, 95, 5, -1, 0, 9)
       .attr(MoneyAttr)
-      .attr(StatStageChangeAttr, [Stat.SPATK], -1, true, { firstTargetOnly: true })
+      .attr(StatStageChangeAttr, [Stat.SPATK], -2, true, { firstTargetOnly: true })
       .target(MoveTarget.ALL_NEAR_ENEMIES),
     new AttackMove(MoveId.PSYBLADE, PokemonType.PSYCHIC, MoveCategory.PHYSICAL, 80, 100, 15, -1, 0, 9)
       .attr(MovePowerMultiplierAttr, (user, _target, _move) =>
@@ -12705,8 +12695,8 @@ export function initMoves() {
     new AttackMove(MoveId.HARD_PRESS, PokemonType.STEEL, MoveCategory.PHYSICAL, -1, 100, 10, -1, 0, 9) //
       .attr(OpponentHighHpPowerAttr, 100),
     new StatusMove(MoveId.DRAGON_CHEER, PokemonType.DRAGON, -1, 15, -1, 0, 9)
-      .attr(AddBattlerTagAttr, BattlerTagType.DRAGON_CHEER, false, true)
-      // TODO: Remove once dragon cheer & focus energy are merged into 1 tag
+      .attr(AddBattlerTagAttr, BattlerTagType.DRAGON_CHEER, false, true) // TODO: Remove once dragon cheer & focus energy are merged into 1 tag
+      .soundBased()
       .condition((_user, target) => !target.getTag(BattlerTagType.CRIT_BOOST))
       .target(MoveTarget.NEAR_ALLY),
     new AttackMove(MoveId.ALLURING_VOICE, PokemonType.FAIRY, MoveCategory.SPECIAL, 80, 100, 10, 100, 0, 9)
