@@ -48,7 +48,7 @@ import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
 import type { LevelMoves } from "#types/pokemon-species";
 import type { Starter, StarterAttributes, StarterDataEntry, StarterMoveset } from "#types/save-data";
-import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import type { OptionSelectItem } from "#ui/base-option-select-ui-handler";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
 import { FilterBar } from "#ui/filter-bar";
 import { MessageUiHandler } from "#ui/message-ui-handler";
@@ -98,16 +98,16 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoXPos: 35,
   },
   "es-ES": {
-    starterInfoTextSize: "50px",
+    starterInfoTextSize: "52px",
     instructionTextSize: "28px",
     starterInfoYOffset: 0.5,
-    starterInfoXPos: 38,
+    starterInfoXPos: 39,
   },
   "es-419": {
     starterInfoTextSize: "50px",
     instructionTextSize: "28px",
     starterInfoYOffset: 0.5,
-    starterInfoXPos: 38,
+    starterInfoXPos: 37,
   },
   fr: {
     starterInfoTextSize: "54px",
@@ -118,10 +118,9 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: "28px",
   },
   "pt-BR": {
-    starterInfoTextSize: "48px",
-    instructionTextSize: "32px",
-    starterInfoYOffset: 0.5,
-    starterInfoXPos: 33,
+    starterInfoTextSize: "54px",
+    instructionTextSize: "28px",
+    starterInfoXPos: 37,
   },
   zh: {
     starterInfoTextSize: "56px",
@@ -172,10 +171,6 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: "28px",
     starterInfoYOffset: 0.5,
   },
-  ro: {
-    starterInfoTextSize: "56px",
-    instructionTextSize: "28px",
-  },
   ru: {
     starterInfoTextSize: "46px",
     instructionTextSize: "28px",
@@ -205,10 +200,6 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoXPos: 34,
   },
   tl: {
-    starterInfoTextSize: "56px",
-    instructionTextSize: "28px",
-  },
-  "nb-NO": {
     starterInfoTextSize: "56px",
     instructionTextSize: "28px",
   },
@@ -2289,8 +2280,11 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                   }
                   return false;
                 },
+                style: this.isPassiveAvailable(this.lastSpecies.speciesId) ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
                 item: "candy",
-                itemArgs: starterColors[this.lastSpecies.speciesId],
+                itemArgs: this.isPassiveAvailable(this.lastSpecies.speciesId)
+                  ? starterColors[this.lastSpecies.speciesId]
+                  : ["808080", "808080"],
               });
             }
 
@@ -2330,8 +2324,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                   }
                   return false;
                 },
+                style: this.isValueReductionAvailable(this.lastSpecies.speciesId)
+                  ? TextStyle.WINDOW
+                  : TextStyle.SHADOW_TEXT,
                 item: "candy",
-                itemArgs: starterColors[this.lastSpecies.speciesId],
+                itemArgs: this.isValueReductionAvailable(this.lastSpecies.speciesId)
+                  ? starterColors[this.lastSpecies.speciesId]
+                  : ["808080", "808080"],
               });
             }
 
@@ -2389,8 +2388,13 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                 }
                 return false;
               },
+              style: this.isSameSpeciesEggAvailable(this.lastSpecies.speciesId)
+                ? TextStyle.WINDOW
+                : TextStyle.SHADOW_TEXT,
               item: "candy",
-              itemArgs: starterColors[this.lastSpecies.speciesId],
+              itemArgs: this.isSameSpeciesEggAvailable(this.lastSpecies.speciesId)
+                ? starterColors[this.lastSpecies.speciesId]
+                : ["808080", "808080"],
             });
             options.push({
               label: i18next.t("menu:cancel"),

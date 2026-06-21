@@ -60,7 +60,6 @@ const fonts: LoadingFontFaceProperty[] = [
       "da",
       "tr",
       "th",
-      "ro",
       "ru",
       "uk",
       "id",
