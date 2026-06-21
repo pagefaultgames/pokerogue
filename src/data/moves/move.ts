@@ -118,6 +118,7 @@ import type {
   MoveKindString,
   MoveMessageFunc,
 } from "#types/move-types";
+import type { GetEffectiveStatParams } from "#types/pokemon-common";
 import type { TurnMove } from "#types/turn-move";
 import type { AbstractConstructor } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
@@ -1419,8 +1420,8 @@ export class AttackMove extends Move {
     attackScore = Math.pow(effectiveness - 1, 2) * (effectiveness < 1 ? -2 : 2);
     const [thisStat, offStat]: EffectiveStat[] =
       this.category === MoveCategory.PHYSICAL ? [Stat.ATK, Stat.SPATK] : [Stat.SPATK, Stat.ATK];
-    const statHolder = new NumberHolder(user.getEffectiveStat(thisStat, target));
-    const offStatValue = user.getEffectiveStat(offStat, target);
+    const statHolder = new NumberHolder(user.getEffectiveStat(thisStat, { opponent: target }));
+    const offStatValue = user.getEffectiveStat(offStat, { opponent: target });
     applyMoveAttrs("VariableAtkAttr", user, target, move, statHolder);
     const statRatio = offStatValue / statHolder.value;
     if (statRatio <= 0.75) {
@@ -5497,14 +5498,14 @@ export class VariableAtkAttr extends MoveAttr {
 
 export class TargetAtkUserAtkAttr extends VariableAtkAttr {
   apply(_user: Pokemon, target: Pokemon, _move: Move, args: any[]): boolean {
-    (args[0] as NumberHolder).value = target.getEffectiveStat(Stat.ATK, target);
+    (args[0] as NumberHolder).value = target.getEffectiveStat(Stat.ATK, { opponent: target });
     return true;
   }
 }
 
 export class DefAtkAttr extends VariableAtkAttr {
   apply(user: Pokemon, target: Pokemon, _move: Move, args: any[]): boolean {
-    (args[0] as NumberHolder).value = user.getEffectiveStat(Stat.DEF, target);
+    (args[0] as NumberHolder).value = user.getEffectiveStat(Stat.DEF, { opponent: target });
     return true;
   }
 }
@@ -5518,7 +5519,7 @@ export class VariableDefAttr extends MoveAttr {
 
 export class DefDefAttr extends VariableDefAttr {
   apply(user: Pokemon, target: Pokemon, _move: Move, args: any[]): boolean {
-    (args[0] as NumberHolder).value = target.getEffectiveStat(Stat.DEF, user);
+    (args[0] as NumberHolder).value = target.getEffectiveStat(Stat.DEF, { opponent: user });
     return true;
   }
 }
@@ -5636,7 +5637,10 @@ export class PhotonGeyserCategoryAttr extends VariableMoveCategoryAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const category = args[0] as NumberHolder;
 
-    if (user.getEffectiveStat(Stat.ATK, target, move) > user.getEffectiveStat(Stat.SPATK, target, move)) {
+    if (
+      user.getEffectiveStat(Stat.ATK, { opponent: target, move })
+      > user.getEffectiveStat(Stat.SPATK, { opponent: target, move })
+    ) {
       category.value = MoveCategory.PHYSICAL;
       return true;
     }
@@ -5654,11 +5658,17 @@ export class PhotonGeyserCategoryAttr extends VariableMoveCategoryAttr {
 export class TeraMoveCategoryAttr extends VariableMoveCategoryAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const category = args[0] as NumberHolder;
-
+    const effectiveStatParams: GetEffectiveStatParams = {
+      opponent: target,
+      move,
+      ignoreAbility: true,
+      ignoreOppAbility: true,
+      ignoreAllyAbility: true,
+      ignoreHeldItems: true,
+    };
     if (
       user.isTerastallized
-      && user.getEffectiveStat(Stat.ATK, target, move, true, true, false, false, true)
-        > user.getEffectiveStat(Stat.SPATK, target, move, true, true, false, false, true)
+      && user.getEffectiveStat(Stat.ATK, effectiveStatParams) > user.getEffectiveStat(Stat.SPATK, effectiveStatParams)
     ) {
       category.value = MoveCategory.PHYSICAL;
       return true;

@@ -5912,7 +5912,11 @@ export class SummonTerrainAiMovegenMoveStatsAbAttr extends AiMovegenMoveStatsAbA
    */
   constructor(moveType: PokemonType, boostedMove?: [boostedMove: MoveId, boostAmount: number]) {
     super(({ pokemon, move, powerMult }: AiMovegenMoveStatsAbAttrParams) => {
-      if (pokemon.hasAbility(AbilityId.LEVITATE) || pokemon.isOfType(PokemonType.FLYING)) {
+      if (
+        pokemon.hasAbility(AbilityId.LEVITATE)
+        || pokemon.hasAbility(AbilityId.EELEVATE)
+        || pokemon.isOfType(PokemonType.FLYING)
+      ) {
         return;
       }
       if (move.type === moveType) {

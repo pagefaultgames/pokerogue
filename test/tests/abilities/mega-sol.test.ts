@@ -9,6 +9,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { WeatherType } from "#enums/weather-type";
 import { GameManager } from "#test/framework/game-manager";
+import type { GetEffectiveStatParams } from "#types/pokemon-common";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -136,9 +137,62 @@ describe("Abilities - Mega Sol", () => {
     expect(playerPokemon.hp).toBeLessThanOrEqual(1 + expectedHeal + 1);
   });
 
-  it("it should ignore sandstorm's Special Defense boost to rock types", async () => {});
+  // TODO: This interaction needs to be verified in game; Bulbapedia may be incorrect
+  it("should ignore sandstorm's Special Defense boost to rock types", async () => {
+    game.override.enemySpecies(SpeciesId.GEODUDE).weather(WeatherType.SANDSTORM);
+    await game.classicMode.startBattle(SpeciesId.MEGANIUM);
 
-  it("should ignore snowscape's defense boost to ice types", async () => {});
+    const enemyPokemon = game.field.getEnemyPokemon();
+    enemyPokemon.stats[Stat.SPDEF] = 100;
+    // Override enemy stats to read as 100
+    vi.spyOn(enemyPokemon, "getStat").mockReturnValue(100);
+    const playerPokemon = game.field.getPlayerPokemon();
 
-  // TODO: Determine whether abilities like snow cloak and sand veil are ignored, then add a test
+    const params: GetEffectiveStatParams = {
+      opponent: playerPokemon,
+      move: allMoves[MoveId.DISARMING_VOICE],
+      forDefend: true,
+      // Ignore mega sol to test stat boost WITHOUT factoring in opponent's mega sol
+      ignoreOppAbility: true,
+      // the extra ignores defensively avoid modifications that are inconsequential to the test
+      ignoreAllyAbility: true,
+      ignoreAbility: true,
+      ignoreHeldItems: true,
+    };
+
+    // Ensure sandstorm boost is applied (otherwise we are testing nothing)
+    expect(enemyPokemon.getEffectiveStat(Stat.SPDEF, params)).toBe(150);
+
+    params.ignoreOppAbility = false; // test with mega sol factored in
+    expect(enemyPokemon.getEffectiveStat(Stat.SPDEF, params)).toBe(100);
+  });
+
+  it("should ignore snowscape's defense boost to ice types", async () => {
+    game.override.enemySpecies(SpeciesId.SNORUNT).weather(WeatherType.SNOW);
+    await game.classicMode.startBattle(SpeciesId.MEGANIUM);
+
+    const enemyPokemon = game.field.getEnemyPokemon();
+    enemyPokemon.stats[Stat.DEF] = 100;
+    // Override enemy's defense to be 100
+    vi.spyOn(enemyPokemon, "getStat").mockReturnValue(100);
+    const playerPokemon = game.field.getPlayerPokemon();
+
+    const params: GetEffectiveStatParams = {
+      opponent: playerPokemon,
+      move: allMoves[MoveId.TACKLE],
+      forDefend: true,
+      // Ignore mega sol to test stat boost WITHOUT factoring in opponent's mega sol
+      ignoreOppAbility: true,
+      // the extra ignores defensively avoid modifications that are inconsequential to the test
+      ignoreAllyAbility: true,
+      ignoreAbility: true,
+      ignoreHeldItems: true,
+    };
+
+    // Ensure snowscape boost is applied (otherwise nothing is tested)
+    expect(enemyPokemon.getEffectiveStat(Stat.DEF, params)).toBe(150);
+
+    params.ignoreOppAbility = false; // test with mega sol factored in
+    expect(enemyPokemon.getEffectiveStat(Stat.DEF, params)).toBe(100);
+  });
 });

@@ -1591,7 +1591,11 @@ export function initAbilities() {
         if (move.type === PokemonType.DRAGON) {
           powerMult.value *= 0.5;
         }
-        if (pokemon.hasAbility(AbilityId.LEVITATE) || pokemon.isOfType(PokemonType.FLYING)) {
+        if (
+          pokemon.hasAbility(AbilityId.LEVITATE)
+          || pokemon.hasAbility(AbilityId.EELEVATE)
+          || pokemon.isOfType(PokemonType.FLYING)
+        ) {
           return;
         }
         if (move.id === MoveId.MISTY_EXPLOSION) {
@@ -2187,6 +2191,9 @@ export function initAbilities() {
     new AbBuilder(AbilityId.ABILITY_314, 9).unimplemented().build(),
     new AbBuilder(AbilityId.MEGA_SOL, 9) //
       .attr(PreAttackWeatherOverrideAbAttr, WeatherType.SUNNY)
+      // Interactions with sand veil / snow cloak (which need to be tested)
+      // Flyout conformity (needs investigation)
+      .edgeCase()
       .build(),
     new AbBuilder(AbilityId.FIRE_MANE, 9) //
       .attr(MoveTypePowerBoostAbAttr, PokemonType.FIRE)

@@ -148,6 +148,7 @@ import type {
   GetBaseDamageParams,
 } from "#types/damage-params";
 import type { DamageCalculationResult, DamageResult } from "#types/damage-result";
+import type { GetEffectiveStatParams } from "#types/pokemon-common";
 import type { LevelMoves } from "#types/pokemon-species";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { StatChange } from "#types/stat-change";
@@ -1451,29 +1452,25 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Calculates and retrieves the final value of a stat considering any held
    * items, move effects, opponent abilities, and whether there was a critical
    * hit.
-   * @param stat - The desired {@linkcode EffectiveStat | Stat} to check.
-   * @param opponent - The {@linkcode Pokemon} being targeted, if applicable.
-   * @param move - The {@linkcode Move} being used, if any. Used to check ability ignoring effects and similar.
-   * @param ignoreAbility - Whether to ignore ability effects of the user; default `false`.
-   * @param ignoreOppAbility - Whether to ignore ability effects of the target; default `false`.
-   * @param ignoreAllyAbility - Whether to ignore ability effects of the user's allies; default `false`.
-   * @param isCritical - Whether a critical hit has occurred or not; default `false`.
-   * If `true`, will nullify offensive stat drops or defensive stat boosts.
-   * @param simulated - Whether to nullify any effects that produce changes to game state during calculations; default `true`
-   * @param ignoreHeldItems - Whether to ignore the user's held items during stat calculation; default `false`.
+   *
+   * @param stat - The desired stat to check
+   * @param __namedParameters.opponent - Needed for proper typedoc rendering
    * @returns The final in-battle value for the given stat.
    */
   // TODO: Replace the optional parameters with an object to make calling this method less cumbersome
   getEffectiveStat(
     stat: EffectiveStat,
-    opponent?: Pokemon,
-    move?: Move,
-    ignoreAbility = false,
-    ignoreOppAbility = false,
-    ignoreAllyAbility = false,
-    isCritical = false,
-    simulated = true,
-    ignoreHeldItems = false,
+    {
+      opponent,
+      move,
+      ignoreAbility = false,
+      ignoreOppAbility = false,
+      ignoreAllyAbility = false,
+      isCritical = false,
+      simulated = true,
+      ignoreHeldItems = false,
+      forDefend = false,
+    }: GetEffectiveStatParams = {},
   ): number {
     const statVal = new NumberHolder(this.getStat(stat, false));
     if (!ignoreHeldItems) {
@@ -1522,7 +1519,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     const effectiveWeather =
-      ignoreOppAbility || opponent == null ? globalScene.arena.weatherType : getEffectiveWeatherForMove(opponent);
+      !forDefend || ignoreOppAbility || opponent == null
+        ? globalScene.arena.weatherType
+        : getEffectiveWeatherForMove(opponent);
 
     let ret =
       statVal.value
@@ -2667,8 +2666,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const enemyTypes = opponent.getTypes({ useIllusion: true });
     /** Is this Pokemon faster than the opponent? */
     const outspeed =
-      (this.isActive(true) ? this.getEffectiveStat(Stat.SPD, opponent) : this.getStat(Stat.SPD, false))
-      >= opponent.getEffectiveStat(Stat.SPD, this);
+      (this.isActive(true) ? this.getEffectiveStat(Stat.SPD, { opponent }) : this.getStat(Stat.SPD, false))
+      >= opponent.getEffectiveStat(Stat.SPD, { opponent: this });
 
     /**
      * Based on how effectively this Pokemon defends against the opponent's types.
@@ -3547,17 +3546,15 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
      * The attacker's offensive stat for the given move's category.
      * Critical hits cause negative stat stages to be ignored.
      */
-    const sourceAtk = new NumberHolder(
-      source.getEffectiveStat(
-        isPhysical ? Stat.ATK : Stat.SPATK,
-        this,
-        undefined,
-        ignoreSourceAbility,
+    const sourceAtk = new ValueHolder(
+      source.getEffectiveStat(isPhysical ? Stat.ATK : Stat.SPATK, {
+        opponent: this,
+        ignoreOppAbility: ignoreSourceAbility,
         ignoreAbility,
         ignoreAllyAbility,
         isCritical,
         simulated,
-      ),
+      }),
     );
     applyMoveAttrs("VariableAtkAttr", source, this, move, sourceAtk);
 
@@ -3565,17 +3562,17 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
      * This Pokemon's defensive stat for the given move's category.
      * Critical hits cause positive stat stages to be ignored.
      */
-    const targetDef = new NumberHolder(
-      this.getEffectiveStat(
-        isPhysical ? Stat.DEF : Stat.SPDEF,
-        source,
+    const targetDef = new ValueHolder(
+      this.getEffectiveStat(isPhysical ? Stat.DEF : Stat.SPDEF, {
+        opponent: source,
         move,
         ignoreAbility,
-        ignoreSourceAbility,
-        ignoreSourceAllyAbility,
+        ignoreOppAbility: ignoreSourceAbility,
+        ignoreAllyAbility: ignoreSourceAllyAbility,
         isCritical,
         simulated,
-      ),
+        forDefend: true,
+      }),
     );
     applyMoveAttrs("VariableDefAttr", source, this, move, targetDef);
 

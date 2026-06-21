@@ -2236,7 +2236,12 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
 
     const highestStat = EFFECTIVE_STATS.reduce(
       (curr: [EffectiveStat, number], stat: EffectiveStat) => {
-        const value = pokemon.getEffectiveStat(stat, undefined, undefined, true, true, true, false, true, true);
+        const value = pokemon.getEffectiveStat(stat, {
+          ignoreAbility: true,
+          ignoreOppAbility: true,
+          ignoreAllyAbility: true,
+          ignoreHeldItems: true,
+        });
         if (value > curr[1]) {
           curr[0] = stat;
           curr[1] = value;
