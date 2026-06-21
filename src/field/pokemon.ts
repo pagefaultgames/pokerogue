@@ -1991,8 +1991,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const speciesForm = this.getSpeciesForm(bypassSummonData, useIllusion);
     const fusionSpeciesForm = this.getFusionSpeciesForm(bypassSummonData, useIllusion);
 
-    // TODO: This `map` call is only needed due to the fact that these arrays use -1 as defaults
-    const customTypes = this.customPokemonData.types.map(t => (t === PokemonType.UNKNOWN ? undefined : t));
+    const customTypes = this.customPokemonData.types;
 
     const firstType = customTypes[0] ?? speciesForm.type1;
     const secondCustomType = customTypes[1] ?? speciesForm.type2;
@@ -2002,8 +2001,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     if (fusionSpeciesForm) {
       // Check if the fusion Pokemon also has permanent changes from ME when determining the fusion types
-      const fusionCustomTypes =
-        this.fusionCustomPokemonData?.types.map(t => (t === PokemonType.UNKNOWN ? undefined : t)) ?? [];
+      const fusionCustomTypes = this.fusionCustomPokemonData?.types ?? [];
 
       const fusionType1 = fusionCustomTypes[0] ?? fusionSpeciesForm.type1;
       const fusionType2 = fusionCustomTypes[1] ?? fusionSpeciesForm.type2;
