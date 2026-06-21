@@ -1187,7 +1187,7 @@ export abstract class Move implements Localizable {
   }
 
   getPriority(user: Pokemon, simulated = true): number {
-    const priority = new NumberHolder(this.priority);
+    const priority = new ValueHolder(this.priority);
     applyMoveAttrs("IncrementMovePriorityAttr", user, null, this, priority);
     applyAbAttrs("ChangeMovePriorityAbAttr", { pokemon: user, simulated, move: this, priority });
 

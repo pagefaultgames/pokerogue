@@ -6748,6 +6748,7 @@ export class EnemyPokemon extends Pokemon {
               && moveTargets.some(p => {
                 const doesNotFail =
                   !globalScene.arena.isMoveWeatherCancelled(this, move)
+                  && !globalScene.arena.isMoveTerrainCancelled(this, [p.getBattlerIndex()], move)
                   && (move.applyConditions(this, p, -1)
                     || [MoveId.SUCKER_PUNCH, MoveId.UPPER_HAND, MoveId.THUNDERCLAP].includes(move.id));
                 return (
@@ -6807,6 +6808,13 @@ export class EnemyPokemon extends Pokemon {
               if (
                 (move.name.endsWith(" (N)") || !move.applyConditions(this, target, -1))
                 && ![MoveId.SUCKER_PUNCH, MoveId.UPPER_HAND, MoveId.THUNDERCLAP].includes(move.id)
+              ) {
+                targetScore = -20;
+              }
+              // exclude moves that cannot be used due to weather or terrain
+              else if (
+                globalScene.arena.isMoveWeatherCancelled(this, move)
+                || globalScene.arena.isMoveTerrainCancelled(this, [mt], move)
               ) {
                 targetScore = -20;
               } else if (move.is("AttackMove")) {
