@@ -16,7 +16,7 @@ import {
 } from "#balance/starters";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { Egg } from "#data/egg";
-import { getGrowthRateColor, GrowthRate } from "#data/exp";
+import { GrowthRate, getGrowthRateColor } from "#data/exp";
 import { Gender, getGenderColor, getGenderSymbol } from "#data/gender";
 import { getNatureName } from "#data/nature";
 import type { PokemonSpecies } from "#data/pokemon-species";

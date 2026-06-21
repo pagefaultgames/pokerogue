@@ -3,11 +3,11 @@ import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getStarterColors } from "#app/global-vars/starter-colors";
 import { speciesEggMoves } from "#balance/moves/egg-moves";
 import {
-    getPassiveCandyCount,
-    getSameSpeciesEggCandyCounts,
-    getStarterValueFriendshipCap,
-    getValueReductionCandyCounts,
-    POKERUS_STARTER_COUNT,
+  getPassiveCandyCount,
+  getSameSpeciesEggCandyCounts,
+  getStarterValueFriendshipCap,
+  getValueReductionCandyCounts,
+  POKERUS_STARTER_COUNT,
 } from "#balance/starters";
 import { allAbilities, allMoves, catchableSpecies } from "#data/data-lists";
 import type { PokemonForm, PokemonSpecies } from "#data/pokemon-species";

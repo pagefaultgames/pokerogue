@@ -6,10 +6,10 @@ import { activeOverrides } from "#app/overrides";
 import { speciesEggMoves } from "#balance/moves/egg-moves";
 import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import {
-    getPassiveCandyCount,
-    getSameSpeciesEggCandyCounts,
-    getStarterValueFriendshipCap,
-    getValueReductionCandyCounts,
+  getPassiveCandyCount,
+  getSameSpeciesEggCandyCounts,
+  getStarterValueFriendshipCap,
+  getValueReductionCandyCounts,
 } from "#balance/starters";
 import { allAbilities, allMoves, catchableSpecies } from "#data/data-lists";
 import { Egg } from "#data/egg";
@@ -51,11 +51,11 @@ import { PokedexInfoOverlay } from "#ui/pokedex-info-overlay";
 import { RibbonTray } from "#ui/ribbon-tray-container";
 import { StatsContainer } from "#ui/stats-container";
 import {
-    addBBCodeTextObject,
-    addTextObject,
-    getTextColor,
-    getTextStyleOptions,
-    updateCandyCountTextStyle,
+  addBBCodeTextObject,
+  addTextObject,
+  getTextColor,
+  getTextStyleOptions,
+  updateCandyCountTextStyle,
 } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
