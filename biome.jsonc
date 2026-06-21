@@ -278,7 +278,7 @@
         "noDuplicateDependencies": "error",
         "noImportCycles": "error",
         "noProto": "error",
-        "noShadow": "warn"
+        "noShadow": "warn" // TODO: refactor and make "error"
       },
       "complexity": {
         "useWhile": "error",
