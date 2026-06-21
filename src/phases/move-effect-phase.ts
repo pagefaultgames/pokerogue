@@ -707,7 +707,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
     user.turnData.totalDamageDealt += finalDmg;
     user.turnData.singleHitDamageDealt = finalDmg;
-    target.battleData.hitCount++;
+    target.summonData.hitCount++;
     target.turnData.damageTaken += finalDmg;
 
     target.turnData.attacksReceived.unshift({
