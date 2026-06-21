@@ -35,6 +35,7 @@ import { SpeciesFormChangeRevertWeatherFormTrigger } from "#data/form-change-tri
 import { getNonVolatileStatusEffects, getStatusEffectHealText, isNonVolatileStatusEffect } from "#data/status-effect";
 import { TerrainType } from "#data/terrain";
 import { getTypeDamageMultiplier } from "#data/type";
+import { isWeatherSuppressed } from "#data/weather";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -2729,7 +2730,7 @@ export abstract class WeatherHealAttr extends HealAttr {
 
   apply(user: Pokemon, _target: Pokemon, _move: Move, _args: any[]): boolean {
     let healRatio = 0.5;
-    if (!globalScene.arena.weather?.isEffectSuppressed()) {
+    if (!isWeatherSuppressed()) {
       const weatherType = globalScene.arena.weather?.weatherType || WeatherType.NONE;
       healRatio = this.getWeatherHealRatio(weatherType);
     }
@@ -3729,7 +3730,7 @@ export class WeatherInstantChargeAttr extends InstantChargeAttr {
       if (currentWeather?.weatherType == null) {
         return false;
       }
-      return !currentWeather.isEffectSuppressed() && this.weatherTypes.includes(currentWeather.weatherType);
+      return this.weatherTypes.includes(currentWeather.weatherType) && !isWeatherSuppressed();
     });
 
     this.weatherTypes = weatherTypes;
@@ -4340,7 +4341,7 @@ export class GrowthStatStageChangeAttr extends StatStageChangeAttr {
   }
 
   getLevels(_user: Pokemon): number {
-    if (!globalScene.arena.weather?.isEffectSuppressed()) {
+    if (!isWeatherSuppressed()) {
       const weatherType = globalScene.arena.weather?.weatherType;
       if (weatherType === WeatherType.SUNNY || weatherType === WeatherType.HARSH_SUN) {
         return this.stages + 1;
@@ -5022,7 +5023,7 @@ export class MagnitudePowerAttr extends VariablePowerAttr {
 
 export class AntiSunlightPowerDecreaseAttr extends VariablePowerAttr {
   apply(_user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
-    if (!globalScene.arena.weather?.isEffectSuppressed()) {
+    if (!isWeatherSuppressed()) {
       const power = args[0] as NumberHolder;
       const weatherType = globalScene.arena.weather?.weatherType || WeatherType.NONE;
       switch (weatherType) {
@@ -5538,7 +5539,7 @@ export class VariableAccuracyAttr extends MoveAttr {
  */
 export class ThunderAccuracyAttr extends VariableAccuracyAttr {
   apply(_user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
-    if (!globalScene.arena.weather?.isEffectSuppressed()) {
+    if (!isWeatherSuppressed()) {
       const accuracy = args[0] as NumberHolder;
       const weatherType = globalScene.arena.weather?.weatherType || WeatherType.NONE;
       switch (weatherType) {
@@ -5564,7 +5565,7 @@ export class ThunderAccuracyAttr extends VariableAccuracyAttr {
  */
 export class StormAccuracyAttr extends VariableAccuracyAttr {
   apply(_user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
-    if (!globalScene.arena.weather?.isEffectSuppressed()) {
+    if (!isWeatherSuppressed()) {
       const accuracy = args[0] as NumberHolder;
       const weatherType = globalScene.arena.weather?.weatherType || WeatherType.NONE;
       switch (weatherType) {
@@ -5618,7 +5619,7 @@ export class ToxicAccuracyAttr extends VariableAccuracyAttr {
 
 export class BlizzardAccuracyAttr extends VariableAccuracyAttr {
   apply(_user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
-    if (!globalScene.arena.weather?.isEffectSuppressed()) {
+    if (!isWeatherSuppressed()) {
       const accuracy = args[0] as NumberHolder;
       const weatherType = globalScene.arena.weather?.weatherType || WeatherType.NONE;
       if (weatherType === WeatherType.HAIL || weatherType === WeatherType.SNOW) {
@@ -5976,7 +5977,7 @@ export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
       return false;
     }
 
-    if (!globalScene.arena.weather?.isEffectSuppressed()) {
+    if (!isWeatherSuppressed()) {
       switch (globalScene.arena.weather?.weatherType) {
         case WeatherType.SUNNY:
         case WeatherType.HARSH_SUN:
@@ -10481,7 +10482,7 @@ export function initMoves() {
           WeatherType.HEAVY_RAIN,
           WeatherType.HARSH_SUN,
         ];
-        if (weatherTypes.includes(weather.weatherType) && !weather.isEffectSuppressed()) {
+        if (weatherTypes.includes(weather.weatherType) && !isWeatherSuppressed()) {
           return 2;
         }
         return 1;
@@ -11797,11 +11798,11 @@ export function initMoves() {
       .target(MoveTarget.ALL_NEAR_OTHERS),
     new StatusMove(MoveId.AURORA_VEIL, PokemonType.ICE, -1, 20, -1, 0, 7)
       .condition(() => {
-        const weather = globalScene.arena.weather;
-        if (weather == null || weather.isEffectSuppressed()) {
+        const weatherType = globalScene.arena.weather?.weatherType;
+        if (weatherType == null || isWeatherSuppressed()) {
           return false;
         }
-        return weather.weatherType === WeatherType.HAIL || weather.weatherType === WeatherType.SNOW;
+        return weatherType === WeatherType.HAIL || weatherType === WeatherType.SNOW;
       }, 3)
       .attr(AddArenaTagAttr, ArenaTagType.AURORA_VEIL, 5, true)
       .target(MoveTarget.USER_SIDE),

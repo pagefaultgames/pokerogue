@@ -65,6 +65,7 @@ import { getRandomStatus, getStatusEffectHealText, getStatusEffectOverlapText, S
 import { getTerrainBlockMessage, TerrainType } from "#data/terrain";
 import type { TypeDamageMultiplier } from "#data/type";
 import { getTypeDamageMultiplier, getTypeRgb } from "#data/type";
+import { isWeatherSuppressed } from "#data/weather";
 import { AbilityId } from "#enums/ability-id";
 import { AiType } from "#enums/ai-type";
 import { ArenaTagSide } from "#enums/arena-tag-side";
@@ -2293,10 +2294,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns Whether this Pokemon has an ability with the given {@linkcode AbAttr}.
    */
   public hasAbilityWithAttr(attrType: AbAttrString, canApply = true, ignoreOverride = false): boolean {
-    if ((!canApply || this.canApplyAbility()) && this.getAbility(ignoreOverride).hasAttr(attrType)) {
+    // n.b. Check if the ability has attribute *first*. This prevents recursion issues for some functions,
+    // like `isWeatherSuppressed`, that invoke this method, while the `canApplyAbility` check has some
+    // abilities that in turn call `isWeatherSuppressed` as part of their conditions.
+    if (this.getAbility(ignoreOverride).hasAttr(attrType) && (!canApply || this.canApplyAbility())) {
       return true;
     }
-    return this.hasPassive() && (!canApply || this.canApplyAbility(true)) && this.getPassiveAbility().hasAttr(attrType);
+    return this.hasPassive() && this.getPassiveAbility().hasAttr(attrType) && (!canApply || this.canApplyAbility(true));
   }
 
   /**
@@ -2602,7 +2606,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (
       !ignoreStrongWinds
       && arena.weatherType === WeatherType.STRONG_WINDS
-      && !arena.weather?.isEffectSuppressed()
+      && !isWeatherSuppressed()
       && this.isOfType(PokemonType.FLYING)
       && getTypeDamageMultiplier(moveType, PokemonType.FLYING) === 2
     ) {

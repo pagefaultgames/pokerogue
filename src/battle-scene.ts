@@ -795,7 +795,7 @@ export class BattleScene extends SceneBase {
   /**
    * Returns an array of Pokemon on both sides of the battle - player first, then enemy.
    * Does not actually check if the pokemon are on the field or not, and always has length 4 regardless of battle type.
-   * @param activeOnly - Whether to consider only active pokemon (as described by {@linkcode Pokemon.isActive()}); default `false`.
+   * @param activeOnly - Whether to consider only active pokemon (as described by {@linkcode Pokemon#isActive()}); default `false`.
    * If `true`, will also remove all `null` values from the array.
    * @returns An array of {@linkcode Pokemon}, as described above.
    *
