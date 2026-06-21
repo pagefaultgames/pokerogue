@@ -4802,13 +4802,7 @@ export const trainerConfigs: TrainerConfigs = {
     .initForChampion(true)
     .setBattleBgm("battle_johto_champion")
     .setMixedBattleBgm("battle_johto_champion")
-    .setPartyMemberFunc(
-      0,
-      getRandomPartyMemberFunc([SpeciesId.AERODACTYL], TrainerSlot.TRAINER, true, p => {
-        p.abilityIndex = 0; // Rock Head
-        p.generateAndPopulateMoveset();
-      }),
-    )
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc([SpeciesId.AERODACTYL]))
     .setPartyMemberFunc(
       1,
       getRandomPartyMemberFunc([SpeciesId.GYARADOS, SpeciesId.KINGDRA], TrainerSlot.TRAINER, true, p => {
@@ -4925,9 +4919,12 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setInstantTera(4) // Tera Rock Regirock / Ice Regice / Steel Registeel
     .setGenModifiersFunc(party => {
-      // Mystical Rock Gigalith
       const weather = party[0];
-      return [modifierTypes.MYSTICAL_ROCK().newModifier(weather)];
+      const mysticalRock = modifierTypes.MYSTICAL_ROCK().withIdFromFunc(modifierTypes.MYSTICAL_ROCK);
+      return [
+        mysticalRock.newModifier(weather),
+        mysticalRock.newModifier(weather), // second stack
+      ];
     }),
   [TrainerType.WALLACE]: new TrainerConfig(++t)
     .initForChampion(true)
@@ -4982,9 +4979,12 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setInstantTera(5) // Tera Water Milotic
     .setGenModifiersFunc(party => {
-      // Mystical Rock Pelipper
       const weather = party[0];
-      return [modifierTypes.MYSTICAL_ROCK().newModifier(weather)];
+      const mysticalRock = modifierTypes.MYSTICAL_ROCK().withIdFromFunc(modifierTypes.MYSTICAL_ROCK);
+      return [
+        mysticalRock.newModifier(weather),
+        mysticalRock.newModifier(weather), // second stack
+      ];
     }),
   [TrainerType.CYNTHIA]: new TrainerConfig(++t)
     .initForChampion(false)
@@ -5135,6 +5135,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.RESHIRAM], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.MASTER_BALL;
+        replaceInMoveset(p.moveset, MoveId.FIRE_BLAST, MoveId.BLUE_FLARE); // Blue Flare overall better if wanting an inaccurate option
       }),
     )
     .setPartyMemberFunc(
