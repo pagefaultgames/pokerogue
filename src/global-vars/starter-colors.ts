@@ -10,7 +10,7 @@ export const starterColors: {
  * @param speciesId - The {@linkcode SpeciesId} of the Pokémon to get the starter color for
  * @returns A tuple of the starter color
  */
-export function getStarterColor(speciesId: SpeciesId): [string, string] {
+export function getStarterColors(speciesId: SpeciesId): [string, string] {
   if (!starterColors[speciesId]) {
     // Default to white if no colors are found
     starterColors[speciesId] = ["#FFFFFF", "#FFFFFF"];
