@@ -255,3 +255,5 @@ export const sessionMigrators: readonly SessionSaveMigrator[] = [
   shiftFormChangeItems,
   migrateSpeciesSplitSession,
 ] as const;
+
+export const systemMigrators: readonly SystemSaveMigrator[] = [migrateSpeciesSplitSystem] as const;
