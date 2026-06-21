@@ -6389,8 +6389,6 @@ export function initGenerationEight(): SpeciesDataMapConfig {
           catchRate: 45,
           baseFriendship: 50,
           baseExp: 165,
-          genderDiffs: false,
-          formSpriteKey: "",
         }),
       ],
     }),

@@ -1,6 +1,8 @@
 export enum FormChangeItem {
   NONE,
 
+  // #region Mega Stones
+
   ABOMASITE,
   ABSOLITE,
   AERODACTYLITE,
@@ -97,6 +99,10 @@ export enum FormChangeItem {
   TATSUGIRINITE,
   BAXCALIBRITE,
 
+  // #endregion Mega Stones
+
+  // #region Rare Form Change Items
+
   BLUE_ORB = 100,
   RED_ORB,
   ADAMANT_CRYSTAL,
@@ -112,6 +118,10 @@ export enum FormChangeItem {
   ICY_REINS_OF_UNITY,
   SHADOW_REINS_OF_UNITY,
   ULTRANECROZIUM_Z,
+
+  // #endregion Rare Form Change Items
+
+  // #region Form Change Items
 
   SHARP_METEORITE = 150,
   HARD_METEORITE,
@@ -163,4 +173,6 @@ export enum FormChangeItem {
   DARK_MEMORY,
   FAIRY_MEMORY,
   NORMAL_MEMORY,
+
+  // #endregion Form Change Items
 }
