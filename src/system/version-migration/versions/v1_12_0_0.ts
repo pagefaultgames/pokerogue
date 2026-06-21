@@ -51,7 +51,7 @@ function migrateSystemGreninjaBattleBondForm(data: SystemSaveData): void {
     seenCount: 0,
     caughtCount: 0,
     hatchedCount: 0,
-    ivs: [15, 15, 15, 15, 15, 15],
+    ivs: data.dexData[SpeciesId.FROAKIE].ivs ?? [15, 15, 15, 15, 15, 15],
     ribbons: RibbonData.fromJSON("0"),
   };
 
