@@ -5085,14 +5085,15 @@ export class FriendshipPowerAttr extends VariablePowerAttr {
  * Self-inflicted confusion damage and hits taken by a Subsitute are ignored.
  */
 export class RageFistPowerAttr extends VariablePowerAttr {
-  apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
-    /* Reasons this works correctly:
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: [ValueHolder<number>, ...any[]]): boolean {
+    /*
+     * Reasons this works correctly:
      * Confusion calls user.damageAndUpdate() directly (no counter increment),
      * Substitute hits call user.damageAndUpdate() with a damage value of 0, also causing
-      no counter increment
-    */
-    const hitCount = user.battleData.hitCount;
-    const basePower: NumberHolder = args[0];
+     * no counter increment
+     */
+    const hitCount = user.summonData.hitCount;
+    const basePower = args[0];
 
     basePower.value = 50 * (1 + Math.min(hitCount, 6));
     return true;
