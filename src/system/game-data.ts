@@ -1145,7 +1145,6 @@ export class GameData {
 
   parseSessionData(dataStr: string): SessionSaveData {
     // TODO: Add `null`/`undefined` to the corresponding type signatures for this
-
     // (or prevent them from being null)
     // If the value is able to *not exist*, it should say so in the code
     const rawData = JSON.parse(dataStr);

@@ -117,7 +117,7 @@ function migrateSystemHisuiBasculin(data: SystemSaveData): void {
 
 /**
  * Version 1.12 split battle bond greninja into its own species.
- * The migrator will copy over
+ * The migrator will copy over some of the data.
  */
 const migrateSpeciesSplitSystem: SystemSaveMigrator = {
   version: "1.12.0.0",
