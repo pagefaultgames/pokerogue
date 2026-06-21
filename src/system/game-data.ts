@@ -24,7 +24,6 @@ import { Device } from "#enums/devices";
 import { DexAttr } from "#enums/dex-attr";
 import { GameDataType } from "#enums/game-data-type";
 import { GameModes } from "#enums/game-modes";
-import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
 import { PlayerGender } from "#enums/player-gender";
 import { SpeciesId } from "#enums/species-id";
@@ -1148,7 +1147,11 @@ export class GameData {
     // TODO: Add `null`/`undefined` to the corresponding type signatures for this
     // (or prevent them from being null)
     // If the value is able to *not exist*, it should say so in the code
-    const sessionData = JSON.parse(dataStr, (k: string, v: any) => {
+    const rawData = JSON.parse(dataStr);
+    applySessionVersionMigration(rawData);
+
+    // TODO: With save migrator rework, remove round-trip of JSON.
+    for (const [k, v] of Object.entries(rawData)) {
       // TODO: Move this to occur _after_ migrate scripts (and refactor all non-assignment duties into migrate scripts)
       // This should ideally be just a giant assign block
       switch (k) {
@@ -1158,11 +1161,13 @@ export class GameData {
           for (const pd of v ?? []) {
             ret.push(new PokemonData(pd));
           }
-          return ret;
+          rawData[k] = ret;
+          continue;
         }
 
         case "trainer":
-          return v ? new TrainerData(v) : null;
+          rawData[k] = v ? new TrainerData(v) : null;
+          continue;
 
         case "modifiers":
         case "enemyModifiers": {
@@ -1184,38 +1189,34 @@ export class GameData {
 
             ret.push(new PersistentModifierData(md, k === "modifiers"));
           }
-          return ret;
+          rawData[k] = ret;
+          continue;
         }
 
         case "arena":
-          return new ArenaData(v as SerializedArenaData);
+          rawData[k] = new ArenaData(v as SerializedArenaData);
+          continue;
 
         case "challenges": {
           const ret: ChallengeData[] = [];
           for (const c of v ?? []) {
             ret.push(new ChallengeData(c));
           }
-          return ret;
+          rawData[k] = ret;
+          continue;
         }
 
-        case "mysteryEncounterType":
-          return v as MysteryEncounterType;
-
         case "mysteryEncounterSaveData":
-          return new MysteryEncounterSaveData(v);
-
+          rawData[k] = new MysteryEncounterSaveData(v);
+          continue;
         case "dailyConfig":
           // make sure the config is valid
-          return parseDailySeed(JSON.stringify(v));
-
-        default:
-          return v;
+          rawData[k] = parseDailySeed(JSON.stringify(v));
+          continue;
       }
-    }) as SessionSaveData;
+    }
 
-    applySessionVersionMigration(sessionData);
-
-    return sessionData;
+    return rawData;
   }
 
   /**

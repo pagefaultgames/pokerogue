@@ -1,7 +1,7 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
-import { starterColors } from "#app/global-vars/starter-colors";
+import { getStarterColors } from "#app/global-vars/starter-colors";
 import { activeOverrides } from "#app/overrides";
 import { speciesEggMoves } from "#balance/moves/egg-moves";
 import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
@@ -1964,7 +1964,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                 },
                 style: this.isPassiveAvailable() ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
                 item: "candy",
-                itemArgs: this.isPassiveAvailable() ? starterColors[this.starterId] : ["808080", "808080"],
+                itemArgs: this.isPassiveAvailable() ? getStarterColors(this.starterId) : ["808080", "808080"],
               });
             }
 
@@ -1999,7 +1999,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                 },
                 style: this.isValueReductionAvailable() ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
                 item: "candy",
-                itemArgs: this.isValueReductionAvailable() ? starterColors[this.starterId] : ["808080", "808080"],
+                itemArgs: this.isValueReductionAvailable() ? getStarterColors(this.starterId) : ["808080", "808080"],
               });
             }
 
@@ -2054,7 +2054,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
               },
               style: this.isSameSpeciesEggAvailable() ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
               item: "candy",
-              itemArgs: this.isSameSpeciesEggAvailable() ? starterColors[this.starterId] : ["808080", "808080"],
+              itemArgs: this.isSameSpeciesEggAvailable() ? getStarterColors(this.starterId) : ["808080", "808080"],
             });
             options.push({
               label: i18next.t("menu:cancel"),
@@ -2645,7 +2645,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
       // Caught and hatched
       if (isFormCaught) {
-        const colorScheme = starterColors[this.starterId];
+        const colorScheme = getStarterColors(this.starterId);
 
         this.pokemonUncaughtText.setVisible(false);
         this.pokemonCaughtCountText.setText(`${this.speciesStarterDexEntry?.caughtCount}`);

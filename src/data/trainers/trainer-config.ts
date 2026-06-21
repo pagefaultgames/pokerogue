@@ -1607,6 +1607,7 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.BASCULIN,
         SpeciesId.FRILLISH,
         SpeciesId.INKAY,
+        SpeciesId.HISUI_BASCULIN,
       ],
       [TrainerPoolTier.RARE]: [
         SpeciesId.CHINCHOU,
@@ -2165,7 +2166,7 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.HISUI_QWILFISH,
       ],
       [TrainerPoolTier.SUPER_RARE]: [
-        SpeciesId.BASCULIN,
+        SpeciesId.HISUI_BASCULIN,
         SpeciesId.WISHIWASHI,
         SpeciesId.WIMPOD,
         SpeciesId.DHELMISE,

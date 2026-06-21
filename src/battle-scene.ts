@@ -1861,13 +1861,6 @@ export class BattleScene extends SceneBase {
           return 0; // No Partner Eevee for Wave 12 Preschoolers
         }
         return randSeedInt(2);
-      case SpeciesId.FROAKIE:
-      case SpeciesId.FROGADIER:
-      case SpeciesId.GRENINJA:
-        if (isTrainerBattle && !isEggPhase) {
-          return 0; // Don't give trainers Battle Bond Greninja, Froakie or Frogadier
-        }
-        return randSeedInt(2);
       case SpeciesId.URSHIFU:
         return randSeedInt(2);
       case SpeciesId.ZYGARDE:

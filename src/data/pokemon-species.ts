@@ -60,9 +60,7 @@ export const normalForm: SpeciesId[] = [
   SpeciesId.PALKIA,
   SpeciesId.KYUREM,
   SpeciesId.GENESECT,
-  SpeciesId.FROAKIE,
-  SpeciesId.FROGADIER,
-  SpeciesId.GRENINJA,
+  SpeciesId.BATTLE_BOND_GRENINJA,
   SpeciesId.ROCKRUFF,
   SpeciesId.NECROZMA,
   SpeciesId.MAGEARNA,
@@ -95,6 +93,15 @@ interface PokemonSpeciesFormConstructor {
   genderDiffs: boolean;
   isStarterSelectable: boolean;
 }
+
+/**
+ * Overrides the local key for species with "fake" forms.
+ */
+const CUSTOM_FORM_NAMES: Partial<Record<SpeciesId, string>> = {
+  [SpeciesId.BLOODMOON_URSALUNA]: "ursalunaBloodmoon",
+  [SpeciesId.ETERNAL_FLOETTE]: "floetteEternalFlower",
+  [SpeciesId.HISUI_BASCULIN]: "basculinWhiteStriped",
+};
 
 export abstract class PokemonSpeciesForm {
   public speciesId: SpeciesId;
@@ -281,7 +288,9 @@ export abstract class PokemonSpeciesForm {
   }
 
   isTrainerForbidden(): boolean {
-    return [SpeciesId.ETERNAL_FLOETTE, SpeciesId.BLOODMOON_URSALUNA].includes(this.speciesId);
+    return [SpeciesId.ETERNAL_FLOETTE, SpeciesId.BLOODMOON_URSALUNA, SpeciesId.BATTLE_BOND_GRENINJA].includes(
+      this.speciesId,
+    );
   }
 
   isRareRegional(): boolean {
@@ -496,7 +505,7 @@ export abstract class PokemonSpeciesForm {
       formIndex = override.formIndex;
     }
 
-    if (speciesId > 2000) {
+    if (speciesId >= 2000) {
       switch (speciesId) {
         case SpeciesId.GALAR_SLOWPOKE:
           break;
@@ -949,6 +958,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
       region === Region.NORMAL
       || (this.speciesId === SpeciesId.GALAR_DARMANITAN && formIndex > 0)
       || this.speciesId === SpeciesId.PALDEA_TAUROS
+      || this.speciesId === SpeciesId.BATTLE_BOND_GRENINJA
     ) {
       // More special cases can be added here
       const i18key = `pokemonForm:${speciesName}${formText}`;
@@ -962,12 +972,8 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
     } else if (append) {
       // Everything beyond this has an expanded name
       return this.getExpandedSpeciesName();
-    } else if (this.speciesId === SpeciesId.ETERNAL_FLOETTE) {
-      // Not a real form, so the key is made up
-      return i18next.t("pokemonForm:floetteEternalFlower");
-    } else if (this.speciesId === SpeciesId.BLOODMOON_URSALUNA) {
-      // Not a real form, so the key is made up
-      return i18next.t("pokemonForm:ursalunaBloodmoon");
+    } else if (CUSTOM_FORM_NAMES[this.speciesId]) {
+      return i18next.t(`pokemonForm:${CUSTOM_FORM_NAMES[this.speciesId]}`);
     } else {
       // Only regional forms should be left at this point
       return i18next.t(`pokemonForm:regionalForm.${toCamelCase(Region[region])}`);

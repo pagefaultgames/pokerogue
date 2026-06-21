@@ -67,6 +67,7 @@ const systemMigrators: SystemSaveMigrator[] = [
   ...v1_0_4.systemMigrators,
   ...v1_7_0.systemMigrators,
   ...v1_8_3.systemMigrators,
+  ...v1_12_0_0.systemMigrators,
 ];
 
 /** All session save migrators */
@@ -119,6 +120,10 @@ export function applySystemVersionMigration(data: SystemSaveData) {
  * @param data - The {@linkcode SessionSaveData} to migrate
  */
 export function applySessionVersionMigration(data: SessionSaveData) {
+  if (!data || typeof data !== "object" || !("gameVersion" in data) || typeof data.gameVersion !== "string") {
+    console.warn("Session data is missing a valid gameVersion. Skipping migration.");
+    return;
+  }
   const prevVersion = data.gameVersion;
   const isCurrentVersionHigher = compareVersions(prevVersion, LATEST_VERSION) === -1;
 
