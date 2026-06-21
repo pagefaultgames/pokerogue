@@ -4920,6 +4920,7 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setInstantTera(4) // Tera Rock Regirock / Ice Regice / Steel Registeel
     .setGenModifiersFunc(party => {
+      // 1 Stack Mystical Rock Gigalith
       const weather = party[0];
       const mysticalRock = modifierTypes.MYSTICAL_ROCK().withIdFromFunc(modifierTypes.MYSTICAL_ROCK);
       return [mysticalRock.newModifier(weather)];
@@ -4970,6 +4971,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.MILOTIC], TrainerSlot.TRAINER, true, p => {
+        p.abilityIndex = 0; // Marvel Scale
         p.setBoss(true, 2);
         p.generateAndPopulateMoveset();
         p.gender = Gender.FEMALE;
@@ -4977,9 +4979,22 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setInstantTera(5) // Tera Water Milotic
     .setGenModifiersFunc(party => {
+      // 1 Stack Mystical Rock Pelipper, Toxic Orb Milotic
+      const modifiers: PokemonHeldItemModifier[] = [];
       const weather = party[0];
       const mysticalRock = modifierTypes.MYSTICAL_ROCK().withIdFromFunc(modifierTypes.MYSTICAL_ROCK);
-      return [mysticalRock.newModifier(weather)];
+      modifiers.push(mysticalRock.newModifier(weather));
+      const milotic = party[5];
+      if (milotic?.hasAbility(AbilityId.MARVEL_SCALE, false, true)) {
+        const modifier = modifierTypes
+          .TOXIC_ORB()
+          .withIdFromFunc(modifierTypes.TOXIC_ORB)
+          .newModifier(milotic) as PokemonHeldItemModifier;
+        if (modifier) {
+          modifiers.push(modifier);
+        }
+      }
+      return modifiers;
     }),
   [TrainerType.CYNTHIA]: new TrainerConfig(++t)
     .initForChampion(false)
@@ -6376,7 +6391,7 @@ export const trainerConfigs: TrainerConfigs = {
       }),
     )
     .setGenModifiersFunc(party => {
-      const gliscor = party[3];
+      const gliscor = party[4];
       const modifiers: PokemonHeldItemModifier[] = [];
       if (gliscor?.hasAbility(AbilityId.POISON_HEAL, false, true)) {
         // If Gliscor spawned with Poison Heal, give it Toxic Orb
