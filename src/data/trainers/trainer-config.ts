@@ -4820,6 +4820,7 @@ export const trainerConfigs: TrainerConfigs = {
           p.generateAndPopulateMoveset();
           p.teraType = PokemonType.DRAGON;
           if (p.species.speciesId === SpeciesId.FERALIGATR) {
+            // If Feraligatr, check for Dragon Claw and replace if missing. Else, Dragon Pulse.
             if (!p.moveset.some(move => move.moveId === MoveId.DRAGON_CLAW)) {
               p.moveset[2] = new PokemonMove(MoveId.DRAGON_CLAW);
             }
@@ -4860,7 +4861,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.gender = Gender.MALE;
       }),
     )
-    .setInstantTera(2), // Tera Dragon Dragonite
+    .setInstantTera(2), // Tera Dragon Charizard / Feraligatr / Sceptile
   [TrainerType.STEVEN]: new TrainerConfig(++t)
     .initForChampion(true)
     .setBattleBgm("battle_hoenn_champion_g5")
@@ -4921,10 +4922,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setGenModifiersFunc(party => {
       const weather = party[0];
       const mysticalRock = modifierTypes.MYSTICAL_ROCK().withIdFromFunc(modifierTypes.MYSTICAL_ROCK);
-      return [
-        mysticalRock.newModifier(weather),
-        mysticalRock.newModifier(weather), // second stack
-      ];
+      return [mysticalRock.newModifier(weather)];
     }),
   [TrainerType.WALLACE]: new TrainerConfig(++t)
     .initForChampion(true)
@@ -4981,10 +4979,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setGenModifiersFunc(party => {
       const weather = party[0];
       const mysticalRock = modifierTypes.MYSTICAL_ROCK().withIdFromFunc(modifierTypes.MYSTICAL_ROCK);
-      return [
-        mysticalRock.newModifier(weather),
-        mysticalRock.newModifier(weather), // second stack
-      ];
+      return [mysticalRock.newModifier(weather)];
     }),
   [TrainerType.CYNTHIA]: new TrainerConfig(++t)
     .initForChampion(false)
@@ -5073,12 +5068,12 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       3,
       getRandomPartyMemberFunc([SpeciesId.KELDEO], TrainerSlot.TRAINER, true, p => {
-        p.formIndex = 1; // Resolute Form
         p.generateAndPopulateMoveset();
         if (!p.moveset.some(move => move.moveId === MoveId.SECRET_SWORD)) {
           // Check if Secret Sword is in the moveset, if not, replace the third move with Secret Sword.
           p.moveset[2] = new PokemonMove(MoveId.SECRET_SWORD);
         }
+        p.formIndex = 1; // Resolute Form
         p.pokeball = PokeballType.ROGUE_BALL;
       }),
     )
@@ -5404,7 +5399,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       3,
       getRandomPartyMemberFunc([SpeciesId.KINGAMBIT], TrainerSlot.TRAINER, true, p => {
-        p.abilityIndex = 1; // Supreme Overlord
+        p.abilityIndex = 0; // Defiant
         p.teraType = PokemonType.FLYING;
         p.generateAndPopulateMoveset();
         if (!p.moveset.some(move => move.moveId === MoveId.TERA_BLAST)) {
@@ -6311,7 +6306,6 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.GOLISOPOD], TrainerSlot.TRAINER, true, p => {
-        p.formIndex = 1; // Mega
         p.setBoss(true, 2);
         p.gender = Gender.MALE;
         p.generateAndPopulateMoveset();
