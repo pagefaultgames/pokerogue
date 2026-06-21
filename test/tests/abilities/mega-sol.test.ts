@@ -1,5 +1,5 @@
 import { allMoves } from "#data/data-lists";
-import { getEffectiveWeatherForUser } from "#data/moves/move";
+import { getWeatherMultiplierForMove } from "#data/weather";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
@@ -78,11 +78,7 @@ describe("Abilities - Mega Sol", () => {
 
     const playerPokemon = game.field.getPlayerPokemon();
 
-    const arenaMultiplier = game.scene.arena.getWeatherDamageMultiplier(
-      PokemonType.FIRE,
-      playerPokemon.getEffectiveWeatherTypeForMoves(),
-    );
-    expect(arenaMultiplier).toBe(1.5);
+    expect(getWeatherMultiplierForMove(playerPokemon, allMoves[MoveId.EMBER])).toBe(1.5);
   });
 
   it("should reduce Water-type move damage as if sunny", async () => {
@@ -90,11 +86,7 @@ describe("Abilities - Mega Sol", () => {
 
     const playerPokemon = game.field.getPlayerPokemon();
 
-    const arenaMultiplier = game.scene.arena.getWeatherDamageMultiplier(
-      allMoves[MoveId.SURF].type,
-      getEffectiveWeatherForUser(playerPokemon),
-    );
-    expect(arenaMultiplier).toBe(0.5);
+    expect(getWeatherMultiplierForMove(playerPokemon, allMoves[MoveId.WATER_GUN])).toBe(0.5);
   });
 
   it("should double Growth stat stage changes as if sunny", async () => {
