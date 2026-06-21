@@ -33,7 +33,7 @@ import {
   HeldItemRequirement,
   MoneyRequirement,
 } from "#mystery-encounters/mystery-encounter-requirements";
-import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import type { OptionSelectItem } from "#ui/base-option-select-ui-handler";
 import { randSeedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
