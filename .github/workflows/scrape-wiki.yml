@@ -1,0 +1,68 @@
+name: Species Data Exporter
+
+on:
+  push:
+    branches:
+      - main
+      - beta
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  export-species-data:
+    name: Species Data Exporter
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      BRANCH: ${{ github.ref_name}}
+      OUTPUT_BRANCH: species-data
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+          submodules: recursive
+
+      - uses: ./.github/actions/setup-deps
+
+      - name: Run species data exporter (CSV)
+        run: pnpm species-data:export ${{ runner.debug == '1' && '--debug' || '' }}
+
+      - name: Run species data exporter (JSON)
+        run: pnpm species-data:export --json --no-clean ${{ runner.debug == '1' && '--debug' || '' }}
+
+      - name: Checkout or create output branch
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code --heads origin "$OUTPUT_BRANCH" > /dev/null; then
+            git fetch --no-tags --depth=1 origin "$OUTPUT_BRANCH:$OUTPUT_BRANCH"
+            git checkout "$OUTPUT_BRANCH"
+          else
+            git checkout --orphan "$OUTPUT_BRANCH"
+            git rm -rf .
+          fi
+
+      - name: Copy output files
+        run: |
+          rm -rf ${BRANCH}/csv ${BRANCH}/json
+          mkdir -p ${BRANCH}/csv
+          mkdir -p ${BRANCH}/json
+          cp -r species-output/*.csv ${BRANCH}/csv/
+          cp -r species-output/*.json ${BRANCH}/json/
+
+      - name: Commit and push changes
+        run: |
+          git add ${BRANCH}/csv/*.csv
+          git add ${BRANCH}/json/*.json
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update species data for ${BRANCH}"
+            git push origin "$OUTPUT_BRANCH"
+          fi
+
+      - name: Checkout original branch # Have to switch back, so the post actions/setup-deps action doesn't fail due to missing files
+        run: git checkout ${{ github.ref_name }}

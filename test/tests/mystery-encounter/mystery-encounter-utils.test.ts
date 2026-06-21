@@ -1,5 +1,5 @@
 import type { BattleScene } from "#app/battle-scene";
-import { speciesStarterCosts } from "#balance/starters";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
@@ -217,7 +217,7 @@ describe("Mystery Encounter Utils", () => {
       const pokeSpecies = getPokemonSpecies(result);
 
       expect(pokeSpecies.speciesId).toBe(result);
-      expect(speciesStarterCosts[result]).toBe(5);
+      expect(speciesDataRegistry.getStarterCost(result)).toBe(5);
     });
 
     it("gets species for a starter tier range", () => {
@@ -225,8 +225,8 @@ describe("Mystery Encounter Utils", () => {
       const pokeSpecies = getPokemonSpecies(result);
 
       expect(pokeSpecies.speciesId).toBe(result);
-      expect(speciesStarterCosts[result]).toBeGreaterThanOrEqual(5);
-      expect(speciesStarterCosts[result]).toBeLessThanOrEqual(8);
+      expect(speciesDataRegistry.getStarterCost(result)).toBeGreaterThanOrEqual(5);
+      expect(speciesDataRegistry.getStarterCost(result)).toBeLessThanOrEqual(8);
     });
 
     it("excludes species from search", () => {

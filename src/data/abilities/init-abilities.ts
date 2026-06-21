@@ -183,7 +183,7 @@ import {
 import { AbBuilder, type Ability } from "#abilities/ability";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { GroundedTag } from "#data/battler-tags";
+import { GroundedTag, ProtectedTag } from "#data/battler-tags";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { Gender } from "#data/gender";
 import { getNonVolatileStatusEffects } from "#data/status-effect";
@@ -208,6 +208,7 @@ import { failIfDampCondition } from "#moves/move-condition";
 import type { AbAttrCondition, AiMovegenMoveStatsAbAttrParams, PokemonAttackCondition } from "#types/ability-types";
 import type { Move } from "#types/move-types";
 import { NumberHolder, randSeedInt } from "#utils/common";
+import { groupStatChange } from "#utils/stat-change";
 import i18next from "i18next";
 
 export function initAbilities() {
@@ -253,7 +254,7 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.SAND_VEIL, 3) //
-      .attr(StatMultiplierAbAttr, Stat.EVA, 1.2)
+      .attr(StatMultiplierAbAttr, Stat.EVA, 1.25)
       .attr(BlockWeatherDamageAttr, WeatherType.SANDSTORM)
       .condition(getWeatherCondition(WeatherType.SANDSTORM))
       .ignorable()
@@ -323,7 +324,7 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.INTIMIDATE, 3) //
-      .attr(PostSummonStatStageChangeAbAttr, [Stat.ATK], -1, false, true)
+      .attr(PostSummonStatStageChangeAbAttr, [{ stat: Stat.ATK, stages: -1 }], false, true)
       .build(),
     new AbBuilder(AbilityId.SHADOW_TAG, 3) //
       .attr(ArenaTrapAbAttr, (_user, target) => !target.hasAbility(AbilityId.SHADOW_TAG))
@@ -518,7 +519,7 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.SHED_SKIN, 3) //
-      .conditionalAttr(_pokemon => !randSeedInt(3), PostTurnResetStatusAbAttr)
+      .conditionalAttr(_pokemon => randSeedInt(10) < 3, PostTurnResetStatusAbAttr)
       .build(),
     new AbBuilder(AbilityId.GUTS, 3) //
       .attr(BypassBurnDamageReductionAbAttr)
@@ -617,10 +618,10 @@ export function initAbilities() {
       )
       .build(),
     new AbBuilder(AbilityId.STEADFAST, 4) //
-      .attr(FlinchStatStageChangeAbAttr, [Stat.SPD], 1)
+      .attr(FlinchStatStageChangeAbAttr, [{ stat: Stat.SPD, stages: 1 }])
       .build(),
     new AbBuilder(AbilityId.SNOW_CLOAK, 4) //
-      .attr(StatMultiplierAbAttr, Stat.EVA, 1.2)
+      .attr(StatMultiplierAbAttr, Stat.EVA, 1.25)
       .attr(BlockWeatherDamageAttr, WeatherType.HAIL)
       .condition(getWeatherCondition(WeatherType.HAIL, WeatherType.SNOW))
       .ignorable()
@@ -897,7 +898,10 @@ export function initAbilities() {
       .attr(PreventBerryUseAbAttr)
       .build(),
     new AbBuilder(AbilityId.DEFIANT, 5) //
-      .attr(PostStatStageChangeStatStageChangeAbAttr, (_target, _statsChanged, stages) => stages < 0, [Stat.ATK], 2)
+      .attr(PostStatStageChangeStatStageChangeAbAttr, (_target, changes) => ({
+        stat: Stat.ATK,
+        stages: changes[0].stages < 0 ? 2 * changes.length : 0,
+      }))
       .build(),
     new AbBuilder(AbilityId.DEFEATIST, 5) //
       .attr(StatMultiplierAbAttr, Stat.ATK, 0.5)
@@ -909,7 +913,7 @@ export function initAbilities() {
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.HEALER, 5) //
-      .conditionalAttr(pokemon => pokemon.getAlly() != null && randSeedInt(10) < 3, PostTurnResetStatusAbAttr, true)
+      .conditionalAttr(pokemon => pokemon.getAlly() != null && randSeedInt(2) === 1, PostTurnResetStatusAbAttr, true)
       .build(),
     new AbBuilder(AbilityId.FRIEND_GUARD, 5) //
       .attr(AlliedFieldDamageReductionAbAttr, 0.75)
@@ -1040,7 +1044,7 @@ export function initAbilities() {
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.MOXIE, 5) //
-      .attr(PostVictoryStatStageChangeAbAttr, Stat.ATK, 1)
+      .attr(PostVictoryStatStageChangeAbAttr, [{ stat: Stat.ATK, stages: 1 }])
       .build(),
     new AbBuilder(AbilityId.JUSTIFIED, 5) //
       .attr(
@@ -1063,7 +1067,7 @@ export function initAbilities() {
         Stat.SPD,
         1,
       )
-      .attr(PostIntimidateStatStageChangeAbAttr, [Stat.SPD], 1)
+      .attr(PostIntimidateStatStageChangeAbAttr, [{ stat: Stat.SPD, stages: 1 }])
       .build(),
     new AbBuilder(AbilityId.MAGIC_BOUNCE, 5) //
       .attr(ReflectStatusMoveAbAttr)
@@ -1170,7 +1174,10 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.COMPETITIVE, 6) //
-      .attr(PostStatStageChangeStatStageChangeAbAttr, (_target, _statsChanged, stages) => stages < 0, [Stat.SPATK], 2)
+      .attr(PostStatStageChangeStatStageChangeAbAttr, (_target, changes) => ({
+        stat: Stat.SPATK,
+        stages: changes[0].stages < 0 ? 2 * changes.length : 0,
+      }))
       .build(),
     new AbBuilder(AbilityId.STRONG_JAW, 6) //
       .attr(MovePowerBoostAbAttr, (_user, _target, move) => move.hasFlag(MoveFlags.BITING_MOVE), 1.5)
@@ -1378,7 +1385,7 @@ export function initAbilities() {
       .attr(MoveTypePowerBoostAbAttr, PokemonType.STEEL)
       .build(),
     new AbBuilder(AbilityId.BERSERK, 7) //
-      .attr(PostDefendHpGatedStatStageChangeAbAttr, 0.5, [Stat.SPATK], 1)
+      .attr(PostDefendHpGatedStatStageChangeAbAttr, 0.5, [{ stat: Stat.SPATK, stages: 1 }])
       .condition(sheerForceHitDisableAbCondition)
       // Should trigger after the last strike of multi-strike moves, not in the middle
       .edgeCase()
@@ -1449,8 +1456,7 @@ export function initAbilities() {
       .conditionalAttr(
         p => !p.hasSpecies(SpeciesId.GRENINJA) && !p.summonData.abilitiesApplied.has(AbilityId.BATTLE_BOND),
         PostVictoryStatStageChangeAbAttr,
-        [Stat.ATK, Stat.SPATK, Stat.SPD],
-        1,
+        groupStatChange([Stat.ATK, Stat.SPATK, Stat.SPD], 1),
       )
       .uncopiable()
       .unreplaceable()
@@ -1556,22 +1562,18 @@ export function initAbilities() {
       .uncopiable()
       .build(),
     new AbBuilder(AbilityId.BEAST_BOOST, 7) //
-      .attr(
-        PostVictoryStatStageChangeAbAttr,
-        p => {
-          let highestStat: EffectiveStat;
-          let highestValue = 0;
-          for (const s of EFFECTIVE_STATS) {
-            const value = p.getStat(s, false);
-            if (value > highestValue) {
-              highestStat = s;
-              highestValue = value;
-            }
+      .attr(PostVictoryStatStageChangeAbAttr, (p: Pokemon) => {
+        let highestStat: EffectiveStat;
+        let highestValue = 0;
+        for (const s of EFFECTIVE_STATS) {
+          const value = p.getStat(s, false);
+          if (value > highestValue) {
+            highestStat = s;
+            highestValue = value;
           }
-          return highestStat!;
-        },
-        1,
-      )
+        }
+        return [{ stat: highestStat!, stages: 1 }];
+      })
       .build(),
     new AbBuilder(AbilityId.RKS_SYSTEM, 7) //
       .attr(NoFusionAbilityAbAttr)
@@ -1631,7 +1633,7 @@ export function initAbilities() {
       .attr(MovePowerBoostAbAttr, (user, target, move) => (target?.getMoveEffectiveness(user, move) ?? 1) >= 2, 1.25)
       .build(),
     new AbBuilder(AbilityId.INTREPID_SWORD, 8) //
-      .attr(PostSummonStatStageChangeAbAttr, [Stat.ATK], 1, true)
+      .attr(PostSummonStatStageChangeAbAttr, [{ stat: Stat.ATK, stages: 1 }], true)
       .attr(AiMovegenMoveStatsAbAttr, ({ move, powerMult }) => {
         if (move.category === MoveCategory.PHYSICAL && !move.hasAttr("DefAtkAttr")) {
           powerMult.value *= 1.5;
@@ -1639,7 +1641,7 @@ export function initAbilities() {
       })
       .build(),
     new AbBuilder(AbilityId.DAUNTLESS_SHIELD, 8) //
-      .attr(PostSummonStatStageChangeAbAttr, [Stat.DEF], 1, true)
+      .attr(PostSummonStatStageChangeAbAttr, [{ stat: Stat.DEF, stages: 1 }], true)
       .attr(AiMovegenMoveStatsAbAttr, ({ move, powerMult }) => {
         if (move.hasAttr("DefAtkAttr")) {
           powerMult.value *= 1.5;
@@ -1801,6 +1803,14 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.UNSEEN_FIST, 8) //
       .attr(IgnoreProtectOnContactAbAttr)
+      .attr(
+        MoveDamageBoostAbAttr,
+        0.25,
+        (user, target, move) =>
+          !!target
+          && target.findTags(t => t instanceof ProtectedTag).length > 0
+          && move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user }),
+      )
       .build(),
     new AbBuilder(AbilityId.CURIOUS_MEDICINE, 8) //
       .attr(PostSummonClearAllyStatStagesAbAttr)
@@ -1812,10 +1822,10 @@ export function initAbilities() {
       .attr(MoveTypePowerBoostAbAttr, PokemonType.DRAGON)
       .build(),
     new AbBuilder(AbilityId.CHILLING_NEIGH, 8) //
-      .attr(PostVictoryStatStageChangeAbAttr, Stat.ATK, 1)
+      .attr(PostVictoryStatStageChangeAbAttr, [{ stat: Stat.ATK, stages: 1 }])
       .build(),
     new AbBuilder(AbilityId.GRIM_NEIGH, 8) //
-      .attr(PostVictoryStatStageChangeAbAttr, Stat.SPATK, 1)
+      .attr(PostVictoryStatStageChangeAbAttr, [{ stat: Stat.SPATK, stages: 1 }])
       .build(),
     new AbBuilder(AbilityId.AS_ONE_GLASTRIER, 8, 1) //
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) =>
@@ -1824,7 +1834,7 @@ export function initAbilities() {
         }),
       )
       .attr(PreventBerryUseAbAttr)
-      .attr(PostVictoryStatStageChangeAbAttr, Stat.ATK, 1)
+      .attr(PostVictoryStatStageChangeAbAttr, [{ stat: Stat.ATK, stages: 1 }])
       .uncopiable()
       .unreplaceable()
       .unsuppressable()
@@ -1836,7 +1846,7 @@ export function initAbilities() {
         }),
       )
       .attr(PreventBerryUseAbAttr)
-      .attr(PostVictoryStatStageChangeAbAttr, Stat.SPATK, 1)
+      .attr(PostVictoryStatStageChangeAbAttr, [{ stat: Stat.SPATK, stages: 1 }])
       .uncopiable()
       .unreplaceable()
       .unsuppressable()
@@ -1861,8 +1871,8 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.ANGER_SHELL, 9) //
-      .attr(PostDefendHpGatedStatStageChangeAbAttr, 0.5, [Stat.ATK, Stat.SPATK, Stat.SPD], 1)
-      .attr(PostDefendHpGatedStatStageChangeAbAttr, 0.5, [Stat.DEF, Stat.SPDEF], -1)
+      .attr(PostDefendHpGatedStatStageChangeAbAttr, 0.5, groupStatChange([Stat.ATK, Stat.SPATK, Stat.SPD], 1))
+      .attr(PostDefendHpGatedStatStageChangeAbAttr, 0.5, groupStatChange([Stat.DEF, Stat.SPDEF], -1))
       .condition(sheerForceHitDisableAbCondition)
       // Should trigger after the last strike of multi-strike moves, not in the middle
       .edgeCase()
@@ -1888,7 +1898,7 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.GUARD_DOG, 9) //
-      .attr(PostIntimidateStatStageChangeAbAttr, [Stat.ATK], 1, true)
+      .attr(PostIntimidateStatStageChangeAbAttr, [{ stat: Stat.ATK, stages: 1 }], true)
       .attr(ForceSwitchOutImmunityAbAttr)
       .ignorable()
       .build(),
@@ -2105,7 +2115,7 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.SUPERSWEET_SYRUP, 9) //
-      .attr(PostSummonStatStageChangeAbAttr, [Stat.EVA], -1)
+      .attr(PostSummonStatStageChangeAbAttr, [{ stat: Stat.EVA, stages: -1 }])
       .build(),
     new AbBuilder(AbilityId.HOSPITALITY, 9, -2) //
       .attr(PostSummonAllyHealAbAttr, 4, true)
@@ -2114,25 +2124,25 @@ export function initAbilities() {
       .attr(PostAttackApplyStatusEffectAbAttr, false, 30, StatusEffect.TOXIC)
       .build(),
     new AbBuilder(AbilityId.EMBODY_ASPECT_TEAL, 9) //
-      .attr(PostSummonStatStageChangeAbAttr, [Stat.SPD], 1, true)
+      .attr(PostSummonStatStageChangeAbAttr, [{ stat: Stat.SPD, stages: 1 }], true)
       .uncopiable()
       .unreplaceable() // TODO is this true?
       .attr(NoTransformAbilityAbAttr)
       .build(),
     new AbBuilder(AbilityId.EMBODY_ASPECT_WELLSPRING, 9) //
-      .attr(PostSummonStatStageChangeAbAttr, [Stat.SPDEF], 1, true)
+      .attr(PostSummonStatStageChangeAbAttr, [{ stat: Stat.SPDEF, stages: 1 }], true)
       .uncopiable()
       .unreplaceable()
       .attr(NoTransformAbilityAbAttr)
       .build(),
     new AbBuilder(AbilityId.EMBODY_ASPECT_HEARTHFLAME, 9) //
-      .attr(PostSummonStatStageChangeAbAttr, [Stat.ATK], 1, true)
+      .attr(PostSummonStatStageChangeAbAttr, [{ stat: Stat.ATK, stages: 1 }], true)
       .uncopiable()
       .unreplaceable()
       .attr(NoTransformAbilityAbAttr)
       .build(),
     new AbBuilder(AbilityId.EMBODY_ASPECT_CORNERSTONE, 9) //
-      .attr(PostSummonStatStageChangeAbAttr, [Stat.DEF], 1, true)
+      .attr(PostSummonStatStageChangeAbAttr, [{ stat: Stat.DEF, stages: 1 }], true)
       .uncopiable()
       .unreplaceable()
       .attr(NoTransformAbilityAbAttr)

@@ -50,14 +50,14 @@ describe("Abilities - Contrary", () => {
     });
 
     it("should block negative effects", async () => {
-      game.override.enemyPassiveAbility(AbilityId.CLEAR_BODY).enemyMoveset(MoveId.HOWL).moveset([MoveId.SPLASH]);
+      game.override.enemyPassiveAbility(AbilityId.CLEAR_BODY);
       await game.classicMode.startBattle(SpeciesId.SLOWBRO);
 
       const enemyPokemon = game.field.getEnemyPokemon();
 
       expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
 
-      game.move.select(MoveId.SPLASH);
+      game.move.use(MoveId.DECORATE);
       await game.phaseInterceptor.to("TurnEndPhase");
 
       expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);

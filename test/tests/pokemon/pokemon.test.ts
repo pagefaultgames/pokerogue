@@ -1,7 +1,8 @@
 import type { BattleScene } from "#app/battle-scene";
 import { RARE_CANDY_FRIENDSHIP_CAP } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { getStarterValueFriendshipCap, speciesStarterCosts } from "#balance/starters";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
+import { getStarterValueFriendshipCap } from "#balance/starters";
 import { CustomPokemonData } from "#data/pokemon-data";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
@@ -71,8 +72,8 @@ describe("Spec - Pokemon", () => {
 
     const fanRotom = game.field.getPlayerPokemon();
 
-    expect(fanRotom.compatibleTms).not.toContain(MoveId.BLIZZARD);
-    expect(fanRotom.compatibleTms).toContain(MoveId.AIR_SLASH);
+    expect(fanRotom.isTmCompatible(MoveId.BLIZZARD)).toBe(false);
+    expect(fanRotom.isTmCompatible(MoveId.AIR_SLASH)).toBe(true);
   });
 
   describe("Get correct fusion type", () => {
@@ -278,7 +279,7 @@ describe("Spec - Pokemon", () => {
       pokemonData.friendship = 15;
       pokemonData.candyCount = 0;
 
-      const cap = getStarterValueFriendshipCap(speciesStarterCosts[SpeciesId.FEEBAS]);
+      const cap = getStarterValueFriendshipCap(speciesDataRegistry.getStarterCost(SpeciesId.FEEBAS));
       expect(cap).toBeLessThan(2015);
 
       feebas.addFriendship(2000, true);
