@@ -27,7 +27,7 @@
     "sv": "Vid aktivering av Venusaurit",
     "uk": "Activating Венузаврит",
     "vi": "Kích hoạt Venusaurite",
-    "pl": "Activating Venusaurite"
+    "pl": "Activating Venusauryt"
   },
   {
     "dexNum": 3,
@@ -56,7 +56,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -87,7 +87,7 @@
     "sv": "Vid avaktivering av Venusaurit",
     "uk": "Deactivating Венузаврит",
     "vi": "Vô Hiệu Hoá Venusaurite",
-    "pl": "Deactivating Venusaurite"
+    "pl": "Deactivating Venusauryt"
   },
   {
     "dexNum": 3,
@@ -116,7 +116,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -134,7 +134,7 @@
     "zh-Hant": "活化了噴火龍進化石Ｘ",
     "pt-BR": "Ativando Charizardita X",
     "ko": "리자몽나이트 X[[를]] 통해 폼체인지",
-    "ja": "リザードナイトXを 有効に すれば",
+    "ja": "リザードナイトＸを 有効に すれば",
     "ca": "Activant Charizardite X",
     "eu": "Activating Charizardite X",
     "da": "Activating Charizardite X",
@@ -146,7 +146,7 @@
     "tl": "Activating Charizardite X",
     "sv": "Vid aktivering av Charizardit X",
     "uk": "Activating Чарізардит X",
-    "vi": "Kích hoạt Charizardite X",
+    "vi": "Kích hoạt Charizardite X",
     "pl": "Activating Charizardyt X"
   },
   {
@@ -164,7 +164,7 @@
     "zh-Hant": "活化了噴火龍進化石Ｙ",
     "pt-BR": "Ativando Charizardita Y",
     "ko": "리자몽나이트 Y[[를]] 통해 폼체인지",
-    "ja": "リザードナイトYを 有効に すれば",
+    "ja": "リザードナイトＹを 有効に すれば",
     "ca": "Activant Charizardite Y",
     "eu": "Activating Charizardite Y",
     "da": "Activating Charizardite Y",
@@ -176,7 +176,7 @@
     "tl": "Activating Charizardite Y",
     "sv": "Vid aktivering av Charizardit Y",
     "uk": "Activating Чарізардит Y",
-    "vi": "Kích hoạt Charizardite Y",
+    "vi": "Kích hoạt Charizardite Y",
     "pl": "Activating Charizardyt Y"
   },
   {
@@ -206,7 +206,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -224,7 +224,7 @@
     "zh-Hant": "禁用了噴火龍進化石Ｘ",
     "pt-BR": "Desativando Charizardita X",
     "ko": "리자몽나이트 X[[를]] 통해 비활성화",
-    "ja": "リザードナイトXを 無効に すれば",
+    "ja": "リザードナイトＸを 無効に すれば",
     "ca": "Desactivant Charizardite X",
     "eu": "Deactivating Charizardite X",
     "da": "Deactivating Charizardite X",
@@ -236,7 +236,7 @@
     "tl": "Deactivating Charizardite X",
     "sv": "Vid avaktivering av Charizardit X",
     "uk": "Deactivating Чарізардит X",
-    "vi": "Vô Hiệu Hoá Charizardite X",
+    "vi": "Vô Hiệu Hoá Charizardite X",
     "pl": "Deactivating Charizardyt X"
   },
   {
@@ -254,7 +254,7 @@
     "zh-Hant": "禁用了噴火龍進化石Ｙ",
     "pt-BR": "Desativando Charizardita Y",
     "ko": "리자몽나이트 Y[[를]] 통해 비활성화",
-    "ja": "リザードナイトYを 無効に すれば",
+    "ja": "リザードナイトＹを 無効に すれば",
     "ca": "Desactivant Charizardite Y",
     "eu": "Deactivating Charizardite Y",
     "da": "Deactivating Charizardite Y",
@@ -266,7 +266,7 @@
     "tl": "Deactivating Charizardite Y",
     "sv": "Vid avaktivering av Charizardit Y",
     "uk": "Deactivating Чарізардит Y",
-    "vi": "Vô Hiệu Hoá Charizardite Y",
+    "vi": "Vô Hiệu Hoá Charizardite Y",
     "pl": "Deactivating Charizardyt Y"
   },
   {
@@ -296,7 +296,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -356,7 +356,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -416,7 +416,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -446,7 +446,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -476,7 +476,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -626,7 +626,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -656,7 +656,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -686,7 +686,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -716,7 +716,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -734,7 +734,7 @@
     "zh-Hant": "活化了雷超進化石Ｘ",
     "pt-BR": "Ativando Raichunita X",
     "ko": "라이츄나이트 X[[를]] 통해 폼체인지",
-    "ja": "ライチュウナイトXを 有効に すれば",
+    "ja": "ライチュウナイトＸを 有効に すれば",
     "ca": "Activant Raichunite X",
     "eu": "Activating Raichunite X",
     "da": "Activating Raichunite X",
@@ -746,8 +746,8 @@
     "tl": "Activating Raichunite X",
     "sv": "Vid aktivering av Raichunit X",
     "uk": "Activating Raichunite X",
-    "vi": "Kích hoạt Raichunite X",
-    "pl": "Activating Raichunite X"
+    "vi": "Kích hoạt Raichunite X",
+    "pl": "Activating Raichunit X"
   },
   {
     "dexNum": 26,
@@ -764,7 +764,7 @@
     "zh-Hant": "活化了雷超進化石Ｙ",
     "pt-BR": "Ativando Raichunita Y",
     "ko": "라이츄나이트 Y[[를]] 통해 폼체인지",
-    "ja": "ライチュウナイトYを 有効に すれば",
+    "ja": "ライチュウナイトＹを 有効に すれば",
     "ca": "Activant Raichunite Y",
     "eu": "Activating Raichunite Y",
     "da": "Activating Raichunite Y",
@@ -776,8 +776,8 @@
     "tl": "Activating Raichunite Y",
     "sv": "Vid aktivering av Raichunit Y",
     "uk": "Activating Raichunite Y",
-    "vi": "Kích hoạt Raichunite Y",
-    "pl": "Activating Raichunite Y"
+    "vi": "Kích hoạt Raichunite Y",
+    "pl": "Activating Raichunit Y"
   },
   {
     "dexNum": 26,
@@ -794,7 +794,7 @@
     "zh-Hant": "禁用了雷超進化石Ｘ",
     "pt-BR": "Desativando Raichunita X",
     "ko": "라이츄나이트 X[[를]] 통해 비활성화",
-    "ja": "ライチュウナイトXを 無効に すれば",
+    "ja": "ライチュウナイトＸを 無効に すれば",
     "ca": "Desactivant Raichunite X",
     "eu": "Deactivating Raichunite X",
     "da": "Deactivating Raichunite X",
@@ -806,8 +806,8 @@
     "tl": "Deactivating Raichunite X",
     "sv": "Vid avaktivering av Raichunit X",
     "uk": "Deactivating Raichunite X",
-    "vi": "Vô Hiệu Hoá Raichunite X",
-    "pl": "Deactivating Raichunite X"
+    "vi": "Vô Hiệu Hoá Raichunite X",
+    "pl": "Deactivating Raichunit X"
   },
   {
     "dexNum": 26,
@@ -824,7 +824,7 @@
     "zh-Hant": "禁用了雷超進化石Ｙ",
     "pt-BR": "Desativando Raichunita Y",
     "ko": "라이츄나이트 Y[[를]] 통해 비활성화",
-    "ja": "ライチュウナイトYを 無効に すれば",
+    "ja": "ライチュウナイトＹを 無効に すれば",
     "ca": "Desactivant Raichunite Y",
     "eu": "Deactivating Raichunite Y",
     "da": "Deactivating Raichunite Y",
@@ -836,8 +836,8 @@
     "tl": "Deactivating Raichunite Y",
     "sv": "Vid avaktivering av Raichunit Y",
     "uk": "Deactivating Raichunite Y",
-    "vi": "Vô Hiệu Hoá Raichunite Y",
-    "pl": "Deactivating Raichunite Y"
+    "vi": "Vô Hiệu Hoá Raichunite Y",
+    "pl": "Deactivating Raichunit Y"
   },
   {
     "dexNum": 36,
@@ -867,7 +867,7 @@
     "sv": "Vid aktivering av Clefablit",
     "uk": "Activating Клефабліт",
     "vi": "Kích hoạt Clefablite",
-    "pl": "Activating Clefablite"
+    "pl": "Activating Clefablit"
   },
   {
     "dexNum": 36,
@@ -897,7 +897,7 @@
     "sv": "Vid avaktivering av Clefablit",
     "uk": "Deactivating Клефабліт",
     "vi": "Vô Hiệu Hoá Clefablite",
-    "pl": "Deactivating Clefablite"
+    "pl": "Deactivating Clefablit"
   },
   {
     "dexNum": 52,
@@ -926,7 +926,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -956,7 +956,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -1046,7 +1046,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -1076,7 +1076,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -1107,7 +1107,7 @@
     "sv": "Vid aktivering av Victreebelit",
     "uk": "Activating Віктрибеліт",
     "vi": "Kích hoạt Victreebelite",
-    "pl": "Activating Victreebelite"
+    "pl": "Activating Victreebelit"
   },
   {
     "dexNum": 71,
@@ -1137,7 +1137,7 @@
     "sv": "Vid avaktivering av Victreebelit",
     "uk": "Deactivating Віктрибеліт",
     "vi": "Vô Hiệu Hoá Victreebelite",
-    "pl": "Deactivating Victreebelite"
+    "pl": "Deactivating Victreebelit"
   },
   {
     "dexNum": 80,
@@ -1167,7 +1167,7 @@
     "sv": "Vid aktivering av Slowbronit",
     "uk": "Activating Слоуброніт",
     "vi": "Kích hoạt Slowbronite",
-    "pl": "Activating Slowbronite"
+    "pl": "Activating Slowbronit"
   },
   {
     "dexNum": 80,
@@ -1197,7 +1197,7 @@
     "sv": "Vid avaktivering av Slowbronit",
     "uk": "Deactivating Слоуброніт",
     "vi": "Vô Hiệu Hoá Slowbronite",
-    "pl": "Deactivating Slowbronite"
+    "pl": "Deactivating Slowbronit"
   },
   {
     "dexNum": 94,
@@ -1256,7 +1256,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -1316,7 +1316,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -1346,7 +1346,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -1376,7 +1376,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -1467,7 +1467,7 @@
     "sv": "Vid aktivering av Starminit",
     "uk": "Activating Стармініт",
     "vi": "Kích hoạt Starminite",
-    "pl": "Activating Starminite"
+    "pl": "Activating Starminit"
   },
   {
     "dexNum": 121,
@@ -1497,7 +1497,7 @@
     "sv": "Vid avaktivering av Starminit",
     "uk": "Deactivating Стармініт",
     "vi": "Vô Hiệu Hoá Starminite",
-    "pl": "Deactivating Starminite"
+    "pl": "Deactivating Starminit"
   },
   {
     "dexNum": 127,
@@ -1646,7 +1646,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -1676,7 +1676,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -1706,7 +1706,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -1736,7 +1736,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -1766,7 +1766,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -1796,7 +1796,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -1886,7 +1886,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -1916,7 +1916,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -1947,7 +1947,7 @@
     "sv": "Vid aktivering av Dragoninit",
     "uk": "Activating Драгонініт",
     "vi": "Kích hoạt Dragoninite",
-    "pl": "Activating Dragoninite"
+    "pl": "Activating Dragonityt"
   },
   {
     "dexNum": 149,
@@ -1977,7 +1977,7 @@
     "sv": "Vid avaktivering av Dragoninit",
     "uk": "Deactivating Драгонініт",
     "vi": "Vô Hiệu Hoá Dragoninite",
-    "pl": "Deactivating Dragoninite"
+    "pl": "Deactivating Dragonityt"
   },
   {
     "dexNum": 150,
@@ -1994,7 +1994,7 @@
     "zh-Hant": "活化了超夢進化石Ｘ",
     "pt-BR": "Ativando Mewtwonita X",
     "ko": "뮤츠나이트 X[[를]] 통해 폼체인지",
-    "ja": "ミュウツナイトXを 有効に すれば",
+    "ja": "ミュウツナイトＸを 有効に すれば",
     "ca": "Activant Mewtwonite X",
     "eu": "Activating Mewtwonite X",
     "da": "Activating Mewtwonite X",
@@ -2006,7 +2006,7 @@
     "tl": "Activating Mewtwonite X",
     "sv": "Vid aktivering av Mewtwonit X",
     "uk": "Activating М’туніт X",
-    "vi": "Kích hoạt Mewtwonite X",
+    "vi": "Kích hoạt Mewtwonite X",
     "pl": "Activating Mewtwonit X"
   },
   {
@@ -2024,7 +2024,7 @@
     "zh-Hant": "活化了超夢進化石Ｙ",
     "pt-BR": "Ativando Mewtwonita Y",
     "ko": "뮤츠나이트 Y[[를]] 통해 폼체인지",
-    "ja": "ミュウツナイトYを 有効に すれば",
+    "ja": "ミュウツナイトＹを 有効に すれば",
     "ca": "Activant Mewtwonite Y",
     "eu": "Activating Mewtwonite Y",
     "da": "Activating Mewtwonite Y",
@@ -2036,7 +2036,7 @@
     "tl": "Activating Mewtwonite Y",
     "sv": "Vid aktivering av Mewtwonit Y",
     "uk": "Activating М’туніт Y",
-    "vi": "Kích hoạt Mewtwonite Y",
+    "vi": "Kích hoạt Mewtwonite Y",
     "pl": "Activating Mewtwonit Y"
   },
   {
@@ -2054,7 +2054,7 @@
     "zh-Hant": "禁用了超夢進化石Ｘ",
     "pt-BR": "Desativando Mewtwonita X",
     "ko": "뮤츠나이트 X[[를]] 통해 비활성화",
-    "ja": "ミュウツナイトXを 無効に すれば",
+    "ja": "ミュウツナイトＸを 無効に すれば",
     "ca": "Desactivant Mewtwonite X",
     "eu": "Deactivating Mewtwonite X",
     "da": "Deactivating Mewtwonite X",
@@ -2066,7 +2066,7 @@
     "tl": "Deactivating Mewtwonite X",
     "sv": "Vid avaktivering av Mewtwonit X",
     "uk": "Deactivating М’туніт X",
-    "vi": "Vô Hiệu Hoá Mewtwonite X",
+    "vi": "Vô Hiệu Hoá Mewtwonite X",
     "pl": "Deactivating Mewtwonit X"
   },
   {
@@ -2084,7 +2084,7 @@
     "zh-Hant": "禁用了超夢進化石Ｙ",
     "pt-BR": "Desativando Mewtwonita Y",
     "ko": "뮤츠나이트 Y[[를]] 통해 비활성화",
-    "ja": "ミュウツナイトYを 無効に すれば",
+    "ja": "ミュウツナイトＹを 無効に すれば",
     "ca": "Desactivant Mewtwonite Y",
     "eu": "Deactivating Mewtwonite Y",
     "da": "Deactivating Mewtwonite Y",
@@ -2096,7 +2096,7 @@
     "tl": "Deactivating Mewtwonite Y",
     "sv": "Vid avaktivering av Mewtwonit Y",
     "uk": "Deactivating М’туніт Y",
-    "vi": "Vô Hiệu Hoá Mewtwonite Y",
+    "vi": "Vô Hiệu Hoá Mewtwonite Y",
     "pl": "Deactivating Mewtwonit Y"
   },
   {
@@ -2127,7 +2127,7 @@
     "sv": "Vid aktivering av Meganiumit",
     "uk": "Activating Меганіуміт",
     "vi": "Kích hoạt Meganiumite",
-    "pl": "Activating Meganiumite"
+    "pl": "Activating Meganiumit"
   },
   {
     "dexNum": 154,
@@ -2157,7 +2157,7 @@
     "sv": "Vid avaktivering av Meganiumit",
     "uk": "Deactivating Меганіуміт",
     "vi": "Vô Hiệu Hoá Meganiumite",
-    "pl": "Deactivating Meganiumite"
+    "pl": "Deactivating Meganiumit"
   },
   {
     "dexNum": 160,
@@ -2187,7 +2187,7 @@
     "sv": "Vid aktivering av Feraligit",
     "uk": "Activating Фералігіт",
     "vi": "Kích hoạt Feraligite",
-    "pl": "Activating Feraligite"
+    "pl": "Activating Feraligatryt"
   },
   {
     "dexNum": 160,
@@ -2217,7 +2217,7 @@
     "sv": "Vid avaktivering av Feraligit",
     "uk": "Deactivating Фералігіт",
     "vi": "Vô Hiệu Hoá Feraligite",
-    "pl": "Deactivating Feraligite"
+    "pl": "Deactivating Feraligatryt"
   },
   {
     "dexNum": 181,
@@ -2307,7 +2307,7 @@
     "sv": "Vid aktivering av Steelixit",
     "uk": "Activating Стиліксит",
     "vi": "Kích hoạt Steelixite",
-    "pl": "Activating Steelixite"
+    "pl": "Activating Steelixyt"
   },
   {
     "dexNum": 208,
@@ -2337,7 +2337,7 @@
     "sv": "Vid avaktivering av Steelixit",
     "uk": "Deactivating Стиліксит",
     "vi": "Vô Hiệu Hoá Steelixite",
-    "pl": "Deactivating Steelixite"
+    "pl": "Deactivating Steelixyt"
   },
   {
     "dexNum": 212,
@@ -2487,7 +2487,7 @@
     "sv": "Vid aktivering av Skarmorit",
     "uk": "Activating Скарморит",
     "vi": "Kích hoạt Skarmorite",
-    "pl": "Activating Skarmorite"
+    "pl": "Activating Skarmoryt"
   },
   {
     "dexNum": 227,
@@ -2517,7 +2517,7 @@
     "sv": "Vid avaktivering av Skarmorit",
     "uk": "Deactivating Скарморит",
     "vi": "Vô Hiệu Hoá Skarmorite",
-    "pl": "Deactivating Skarmorite"
+    "pl": "Deactivating Skarmoryt"
   },
   {
     "dexNum": 229,
@@ -2607,7 +2607,7 @@
     "sv": "Vid aktivering av Tyranitarit",
     "uk": "Activating Тиранітарит",
     "vi": "Kích hoạt Tyranitarite",
-    "pl": "Activating Tyranitarite"
+    "pl": "Activating Tyranitaryt"
   },
   {
     "dexNum": 248,
@@ -2637,7 +2637,7 @@
     "sv": "Vid avaktivering av Tyranitarit",
     "uk": "Deactivating Тиранітарит",
     "vi": "Vô Hiệu Hoá Tyranitarite",
-    "pl": "Deactivating Tyranitarite"
+    "pl": "Deactivating Tyranitaryt"
   },
   {
     "dexNum": 254,
@@ -2787,7 +2787,7 @@
     "sv": "Vid aktivering av Swampertit",
     "uk": "Activating Свампертит",
     "vi": "Kích hoạt Swampertite",
-    "pl": "Activating Swampertite"
+    "pl": "Activating Swamperyt"
   },
   {
     "dexNum": 260,
@@ -2817,7 +2817,7 @@
     "sv": "Vid avaktivering av Swampertit",
     "uk": "Deactivating Свампертит",
     "vi": "Vô Hiệu Hoá Swampertite",
-    "pl": "Deactivating Swampertite"
+    "pl": "Deactivating Swamperyt"
   },
   {
     "dexNum": 282,
@@ -3207,7 +3207,7 @@
     "sv": "Vid aktivering av Sharpedonit",
     "uk": "Activating Шарпедоніт",
     "vi": "Kích hoạt Sharpedonite",
-    "pl": "Activating Sharpedonite"
+    "pl": "Activating Sharpedonit"
   },
   {
     "dexNum": 319,
@@ -3237,7 +3237,7 @@
     "sv": "Vid avaktivering av Sharpedonit",
     "uk": "Deactivating Шарпедоніт",
     "vi": "Vô Hiệu Hoá Sharpedonite",
-    "pl": "Deactivating Sharpedonite"
+    "pl": "Deactivating Sharpedonit"
   },
   {
     "dexNum": 323,
@@ -3387,7 +3387,7 @@
     "sv": "I rätt väder",
     "uk": "When the weather is right",
     "vi": "Khi thời tiết hợp với Pokémon",
-    "pl": "When the weather is right"
+    "pl": "Przy dobrej pogodzie"
   },
   {
     "dexNum": 351,
@@ -3417,7 +3417,7 @@
     "sv": "I rätt väder",
     "uk": "When the weather is right",
     "vi": "Khi thời tiết hợp với Pokémon",
-    "pl": "When the weather is right"
+    "pl": "Przy dobrej pogodzie"
   },
   {
     "dexNum": 351,
@@ -3447,7 +3447,7 @@
     "sv": "I rätt väder",
     "uk": "When the weather is right",
     "vi": "Khi thời tiết hợp với Pokémon",
-    "pl": "When the weather is right"
+    "pl": "Przy dobrej pogodzie"
   },
   {
     "dexNum": 351,
@@ -3477,7 +3477,7 @@
     "sv": "I rätt väder",
     "uk": "When the weather is right",
     "vi": "Khi thời tiết hợp với Pokémon",
-    "pl": "When the weather is right"
+    "pl": "Przy dobrej pogodzie"
   },
   {
     "dexNum": 351,
@@ -3507,7 +3507,7 @@
     "sv": "I rätt väder",
     "uk": "When the weather is right",
     "vi": "Khi thời tiết hợp với Pokémon",
-    "pl": "When the weather is right"
+    "pl": "Przy dobrej pogodzie"
   },
   {
     "dexNum": 351,
@@ -3537,7 +3537,7 @@
     "sv": "I rätt väder",
     "uk": "When the weather is right",
     "vi": "Khi thời tiết hợp với Pokémon",
-    "pl": "When the weather is right"
+    "pl": "Przy dobrej pogodzie"
   },
   {
     "dexNum": 351,
@@ -3567,7 +3567,7 @@
     "sv": "I rätt väder",
     "uk": "When the weather is right",
     "vi": "Khi thời tiết hợp với Pokémon",
-    "pl": "When the weather is right"
+    "pl": "Przy dobrej pogodzie"
   },
   {
     "dexNum": 351,
@@ -3597,7 +3597,7 @@
     "sv": "I rätt väder",
     "uk": "When the weather is right",
     "vi": "Khi thời tiết hợp với Pokémon",
-    "pl": "When the weather is right"
+    "pl": "Przy dobrej pogodzie"
   },
   {
     "dexNum": 351,
@@ -3627,7 +3627,7 @@
     "sv": "I rätt väder",
     "uk": "When the weather is right",
     "vi": "Khi thời tiết hợp với Pokémon",
-    "pl": "When the weather is right"
+    "pl": "Przy dobrej pogodzie"
   },
   {
     "dexNum": 351,
@@ -3657,7 +3657,7 @@
     "sv": "När vädret ändras",
     "uk": "When the weather changes",
     "vi": "Khi thời tiết thay đổi",
-    "pl": "When the weather changes"
+    "pl": "Przy zmianie pogody"
   },
   {
     "dexNum": 351,
@@ -3687,7 +3687,7 @@
     "sv": "När vädret ändras",
     "uk": "When the weather changes",
     "vi": "Khi thời tiết thay đổi",
-    "pl": "When the weather changes"
+    "pl": "Przy zmianie pogody"
   },
   {
     "dexNum": 351,
@@ -3717,7 +3717,7 @@
     "sv": "När vädret ändras",
     "uk": "When the weather changes",
     "vi": "Khi thời tiết thay đổi",
-    "pl": "When the weather changes"
+    "pl": "Przy zmianie pogody"
   },
   {
     "dexNum": 351,
@@ -3897,7 +3897,7 @@
     "sv": "Vid aktivering av Chimechit",
     "uk": "Activating Chimechite",
     "vi": "Kích hoạt Chimechite",
-    "pl": "Activating Chimechite"
+    "pl": "Activating Chimechotyt"
   },
   {
     "dexNum": 358,
@@ -3927,7 +3927,7 @@
     "sv": "Vid avaktivering av Chimechit",
     "uk": "Deactivating Chimechite",
     "vi": "Vô Hiệu Hoá Chimechite",
-    "pl": "Deactivating Chimechite"
+    "pl": "Deactivating Chimechotyt"
   },
   {
     "dexNum": 359,
@@ -3974,7 +3974,7 @@
     "zh-Hant": "活化了阿勃梭魯進化石Z",
     "pt-BR": "Ativando Absolita Z",
     "ko": "앱솔나이트Z[[를]] 통해 폼체인지",
-    "ja": "アブソルナイトZを 有効に すれば",
+    "ja": "アブソルナイトＺを 有効に すれば",
     "ca": "Activant Absolite Z",
     "eu": "Activating Absolite Z",
     "da": "Activating Absolite Z",
@@ -3986,8 +3986,8 @@
     "tl": "Activating Absolite Z",
     "sv": "Vid aktivering av Absolit Z",
     "uk": "Activating Absolite Z",
-    "vi": "Kích hoạt Absolite Z",
-    "pl": "Activating Absolite Z"
+    "vi": "Kích hoạt Absolite Z",
+    "pl": "Activating Absolit Z"
   },
   {
     "dexNum": 359,
@@ -4034,7 +4034,7 @@
     "zh-Hant": "禁用了阿勃梭魯進化石Z",
     "pt-BR": "Desativando Absolita Z",
     "ko": "앱솔나이트Z[[를]] 통해 비활성화",
-    "ja": "アブソルナイトZを 無効に すれば",
+    "ja": "アブソルナイトＺを 無効に すれば",
     "ca": "Desactivant Absolite Z",
     "eu": "Deactivating Absolite Z",
     "da": "Deactivating Absolite Z",
@@ -4046,8 +4046,8 @@
     "tl": "Deactivating Absolite Z",
     "sv": "Vid avaktivering av Absolit Z",
     "uk": "Deactivating Absolite Z",
-    "vi": "Vô Hiệu Hoá Absolite Z",
-    "pl": "Deactivating Absolite Z"
+    "vi": "Vô Hiệu Hoá Absolite Z",
+    "pl": "Deactivating Absolit Z"
   },
   {
     "dexNum": 362,
@@ -4376,7 +4376,7 @@
     "tl": "Activating Blue Orb",
     "sv": "Vid aktivering av Indigoklot",
     "uk": "Activating Blue Orb",
-    "vi": "Kích hoạt Blue Orb",
+    "vi": "Kích hoạt Thủy Lam Cầu",
     "pl": "Activating Blue Orb"
   },
   {
@@ -4406,7 +4406,7 @@
     "tl": "Deactivating Blue Orb",
     "sv": "Vid avaktivering av Indigoklot",
     "uk": "Deactivating Blue Orb",
-    "vi": "Vô Hiệu Hoá Blue Orb",
+    "vi": "Vô Hiệu Hoá Thủy Lam Cầu",
     "pl": "Deactivating Blue Orb"
   },
   {
@@ -4436,7 +4436,7 @@
     "tl": "Activating Red Orb",
     "sv": "Vid aktivering av Karmosinklot",
     "uk": "Activating Red Orb",
-    "vi": "Kích hoạt Red Orb",
+    "vi": "Kích hoạt Thổ Hồng Cầu",
     "pl": "Activating Red Orb"
   },
   {
@@ -4466,7 +4466,7 @@
     "tl": "Deactivating Red Orb",
     "sv": "Vid avaktivering av Karmosinklot",
     "uk": "Deactivating Red Orb",
-    "vi": "Vô Hiệu Hoá Red Orb",
+    "vi": "Vô Hiệu Hoá Thổ Hồng Cầu",
     "pl": "Deactivating Red Orb"
   },
   {
@@ -4556,7 +4556,7 @@
     "tl": "Activating Sharp Meteorite",
     "sv": "Vid aktivering av Vass meteorit",
     "uk": "Activating Sharp Meteorite",
-    "vi": "Kích hoạt Sharp Meteorite",
+    "vi": "Kích hoạt Thiên Thạch Sắc Nhọn",
     "pl": "Activating Sharp Meteorite"
   },
   {
@@ -4586,7 +4586,7 @@
     "tl": "Activating Hard Meteorite",
     "sv": "Vid aktivering av Hård meteorit",
     "uk": "Activating Hard Meteorite",
-    "vi": "Kích hoạt Hard Meteorite",
+    "vi": "Kích hoạt Thiên Thạch Cứng Cáp",
     "pl": "Activating Hard Meteorite"
   },
   {
@@ -4616,7 +4616,7 @@
     "tl": "Activating Smooth Meteorite",
     "sv": "Vid aktivering av Slät meteorit",
     "uk": "Activating Smooth Meteorite",
-    "vi": "Kích hoạt Smooth Meteorite",
+    "vi": "Kích hoạt Thiên Thạch Mềm Mại",
     "pl": "Activating Smooth Meteorite"
   },
   {
@@ -4646,7 +4646,7 @@
     "tl": "Deactivating Sharp Meteorite",
     "sv": "Vid avaktivering av Vass meteorit",
     "uk": "Deactivating Sharp Meteorite",
-    "vi": "Vô Hiệu Hoá Sharp Meteorite",
+    "vi": "Vô Hiệu Hoá Thiên Thạch Sắc Nhọn",
     "pl": "Deactivating Sharp Meteorite"
   },
   {
@@ -4676,7 +4676,7 @@
     "tl": "Deactivating Hard Meteorite",
     "sv": "Vid avaktivering av Hård meteorit",
     "uk": "Deactivating Hard Meteorite",
-    "vi": "Vô Hiệu Hoá Hard Meteorite",
+    "vi": "Vô Hiệu Hoá Thiên Thạch Cứng Cáp",
     "pl": "Deactivating Hard Meteorite"
   },
   {
@@ -4706,7 +4706,7 @@
     "tl": "Deactivating Smooth Meteorite",
     "sv": "Vid avaktivering av Slät meteorit",
     "uk": "Deactivating Smooth Meteorite",
-    "vi": "Vô Hiệu Hoá Smooth Meteorite",
+    "vi": "Vô Hiệu Hoá Thiên Thạch Mềm Mại",
     "pl": "Deactivating Smooth Meteorite"
   },
   {
@@ -4737,7 +4737,7 @@
     "sv": "Vid aktivering av Staraptit",
     "uk": "Activating Staraptite",
     "vi": "Kích hoạt Staraptite",
-    "pl": "Activating Staraptite"
+    "pl": "Activating Staraptyt"
   },
   {
     "dexNum": 398,
@@ -4767,7 +4767,7 @@
     "sv": "Vid avaktivering av Staraptit",
     "uk": "Deactivating Staraptite",
     "vi": "Vô Hiệu Hoá Staraptite",
-    "pl": "Deactivating Staraptite"
+    "pl": "Deactivating Staraptyt"
   },
   {
     "dexNum": 421,
@@ -4797,7 +4797,7 @@
     "sv": "I rätt väder",
     "uk": "When the weather is right",
     "vi": "Khi thời tiết hợp với Pokémon",
-    "pl": "When the weather is right"
+    "pl": "Przy dobrej pogodzie"
   },
   {
     "dexNum": 421,
@@ -4827,7 +4827,7 @@
     "sv": "När vädret ändras",
     "uk": "When the weather changes",
     "vi": "Khi thời tiết thay đổi",
-    "pl": "When the weather changes"
+    "pl": "Przy zmianie pogody"
   },
   {
     "dexNum": 421,
@@ -4964,7 +4964,7 @@
     "zh-Hant": "活化了烈咬陸鯊進化石Z",
     "pt-BR": "Ativando Garchompita Z",
     "ko": "한카리아스나이트Z[[를]] 통해 폼체인지",
-    "ja": "ガブリアスナイトZを 有効に すれば",
+    "ja": "ガブリアスナイトＺを 有効に すれば",
     "ca": "Activant Garchompite Z",
     "eu": "Activating Garchompite Z",
     "da": "Activating Garchompite Z",
@@ -4976,8 +4976,8 @@
     "tl": "Activating Garchompite Z",
     "sv": "Vid aktivering av Garchompit Z",
     "uk": "Activating Garchompite Z",
-    "vi": "Kích hoạt Garchompite Z",
-    "pl": "Activating Garchompite Z"
+    "vi": "Kích hoạt Garchompite Z",
+    "pl": "Activating Garchompit Z"
   },
   {
     "dexNum": 445,
@@ -5024,7 +5024,7 @@
     "zh-Hant": "禁用了烈咬陸鯊進化石Z",
     "pt-BR": "Desativando Garchompita Z",
     "ko": "한카리아스나이트Z[[를]] 통해 비활성화",
-    "ja": "ガブリアスナイトZを 無効に すれば",
+    "ja": "ガブリアスナイトＺを 無効に すれば",
     "ca": "Desactivant Garchompite Z",
     "eu": "Deactivating Garchompite Z",
     "da": "Deactivating Garchompite Z",
@@ -5036,8 +5036,8 @@
     "tl": "Deactivating Garchompite Z",
     "sv": "Vid avaktivering av Garchompit Z",
     "uk": "Deactivating Garchompite Z",
-    "vi": "Vô Hiệu Hoá Garchompite Z",
-    "pl": "Deactivating Garchompite Z"
+    "vi": "Vô Hiệu Hoá Garchompite Z",
+    "pl": "Deactivating Garchompit Z"
   },
   {
     "dexNum": 448,
@@ -5084,7 +5084,7 @@
     "zh-Hant": "活化了路卡利歐進化石Z",
     "pt-BR": "Ativando Lucarionita Z",
     "ko": "루카리오나이트Z[[를]] 통해 폼체인지",
-    "ja": "ルカリオナイトZを 有効に すれば",
+    "ja": "ルカリオナイトＺを 有効に すれば",
     "ca": "Activant Lucarionite Z",
     "eu": "Activating Lucarionite Z",
     "da": "Activating Lucarionite Z",
@@ -5096,8 +5096,8 @@
     "tl": "Activating Lucarionite Z",
     "sv": "Vid aktivering av Lucarionit Z",
     "uk": "Activating Lucarionite Z",
-    "vi": "Kích hoạt Lucarionite Z",
-    "pl": "Activating Lucarionite Z"
+    "vi": "Kích hoạt Lucarionite Z",
+    "pl": "Activating Lucarionit Z"
   },
   {
     "dexNum": 448,
@@ -5144,7 +5144,7 @@
     "zh-Hant": "禁用了路卡利歐進化石Z",
     "pt-BR": "Desativando Lucarionita Z",
     "ko": "루카리오나이트Z[[를]] 통해 비활성화",
-    "ja": "ルカリオナイトZを 無効に すれば",
+    "ja": "ルカリオナイトＺを 無効に すれば",
     "ca": "Desactivant Lucarionite Z",
     "eu": "Deactivating Lucarionite Z",
     "da": "Deactivating Lucarionite Z",
@@ -5156,8 +5156,8 @@
     "tl": "Deactivating Lucarionite Z",
     "sv": "Vid avaktivering av Lucarionit Z",
     "uk": "Deactivating Lucarionite Z",
-    "vi": "Vô Hiệu Hoá Lucarionite Z",
-    "pl": "Deactivating Lucarionite Z"
+    "vi": "Vô Hiệu Hoá Lucarionite Z",
+    "pl": "Deactivating Lucarionit Z"
   },
   {
     "dexNum": 460,
@@ -5187,7 +5187,7 @@
     "sv": "Vid aktivering av Abomasit",
     "uk": "Activating Абомасит",
     "vi": "Kích hoạt Abomasite",
-    "pl": "Activating Abomasite"
+    "pl": "Activating Abomasnonit"
   },
   {
     "dexNum": 460,
@@ -5217,7 +5217,7 @@
     "sv": "Vid avaktivering av Abomasit",
     "uk": "Deactivating Абомасит",
     "vi": "Vô Hiệu Hoá Abomasite",
-    "pl": "Deactivating Abomasite"
+    "pl": "Deactivating Abomasnonit"
   },
   {
     "dexNum": 475,
@@ -5307,7 +5307,7 @@
     "sv": "Vid aktivering av Froslassit",
     "uk": "Activating Фрослассіт",
     "vi": "Kích hoạt Froslassite",
-    "pl": "Activating Froslassite"
+    "pl": "Activating Froslassyt"
   },
   {
     "dexNum": 478,
@@ -5337,7 +5337,7 @@
     "sv": "Vid avaktivering av Froslassit",
     "uk": "Deactivating Фрослассіт",
     "vi": "Vô Hiệu Hoá Froslassite",
-    "pl": "Deactivating Froslassite"
+    "pl": "Deactivating Froslassyt"
   },
   {
     "dexNum": 483,
@@ -5366,7 +5366,7 @@
     "tl": "Activating Adamant Crystal",
     "sv": "Vid aktivering av Adamantkristall",
     "uk": "Activating Adamant Crystal",
-    "vi": "Kích hoạt Adamant Crystal",
+    "vi": "Kích hoạt Đá Bất Khuất",
     "pl": "Activating Adamant Crystal"
   },
   {
@@ -5396,7 +5396,7 @@
     "tl": "Deactivating Adamant Crystal",
     "sv": "Vid avaktivering av Adamantkristall",
     "uk": "Deactivating Adamant Crystal",
-    "vi": "Vô Hiệu Hoá Adamant Crystal",
+    "vi": "Vô Hiệu Hoá Đá Bất Khuất",
     "pl": "Deactivating Adamant Crystal"
   },
   {
@@ -5426,7 +5426,7 @@
     "tl": "Activating Lustrous Globe",
     "sv": "Vid aktivering av Bländvit juvel",
     "uk": "Activating Lustrous Globe",
-    "vi": "Kích hoạt Lustrous Globe",
+    "vi": "Kích hoạt Cầu Huỳnh Quang",
     "pl": "Activating Lustrous Globe"
   },
   {
@@ -5456,7 +5456,7 @@
     "tl": "Deactivating Lustrous Globe",
     "sv": "Vid avaktivering av Bländvit juvel",
     "uk": "Deactivating Lustrous Globe",
-    "vi": "Vô Hiệu Hoá Lustrous Globe",
+    "vi": "Vô Hiệu Hoá Cầu Huỳnh Quang",
     "pl": "Deactivating Lustrous Globe"
   },
   {
@@ -5487,7 +5487,7 @@
     "sv": "Vid aktivering av Heatranit",
     "uk": "Activating Heatranite",
     "vi": "Kích hoạt Heatranite",
-    "pl": "Activating Heatranite"
+    "pl": "Activating Heatranit"
   },
   {
     "dexNum": 485,
@@ -5517,7 +5517,7 @@
     "sv": "Vid avaktivering av Heatranit",
     "uk": "Deactivating Heatranite",
     "vi": "Vô Hiệu Hoá Heatranite",
-    "pl": "Deactivating Heatranite"
+    "pl": "Deactivating Heatranit"
   },
   {
     "dexNum": 487,
@@ -5546,7 +5546,7 @@
     "tl": "Activating Griseous Core",
     "sv": "Vid aktivering av Ädelmetallskärna",
     "uk": "Activating Griseous Core",
-    "vi": "Kích hoạt Griseous Core",
+    "vi": "Kích hoạt Lõi Xám Đục",
     "pl": "Activating Griseous Core"
   },
   {
@@ -5576,7 +5576,7 @@
     "tl": "Deactivating Griseous Core",
     "sv": "Vid avaktivering av Ädelmetallskärna",
     "uk": "Deactivating Griseous Core",
-    "vi": "Vô Hiệu Hoá Griseous Core",
+    "vi": "Vô Hiệu Hoá Lõi Xám Đục",
     "pl": "Deactivating Griseous Core"
   },
   {
@@ -5607,7 +5607,7 @@
     "sv": "Vid aktivering av Darkranit",
     "uk": "Activating Darkranite",
     "vi": "Kích hoạt Darkranite",
-    "pl": "Activating Darkranite"
+    "pl": "Activating Darkrainit"
   },
   {
     "dexNum": 491,
@@ -5637,7 +5637,7 @@
     "sv": "Vid avaktivering av Darkranit",
     "uk": "Deactivating Darkranite",
     "vi": "Vô Hiệu Hoá Darkranite",
-    "pl": "Deactivating Darkranite"
+    "pl": "Deactivating Darkrainit"
   },
   {
     "dexNum": 492,
@@ -5666,7 +5666,7 @@
     "tl": "Activating Gracidea",
     "sv": "Vid aktivering av Gracidea",
     "uk": "Activating Gracidea",
-    "vi": "Kích hoạt Gracidea",
+    "vi": "Kích hoạt Hoa Thanh Nhã",
     "pl": "Activating Gracidea"
   },
   {
@@ -5696,7 +5696,7 @@
     "tl": "Deactivating Gracidea",
     "sv": "Vid avaktivering av Gracidea",
     "uk": "Deactivating Gracidea",
-    "vi": "Vô Hiệu Hoá Gracidea",
+    "vi": "Vô Hiệu Hoá Hoa Thanh Nhã",
     "pl": "Deactivating Gracidea"
   },
   {
@@ -5726,7 +5726,7 @@
     "tl": "Activating Fist Plate",
     "sv": "Vid aktivering av Nävplatta",
     "uk": "Activating Fist Plate",
-    "vi": "Kích hoạt Fist Plate",
+    "vi": "Kích hoạt Bản Nắm Đấm",
     "pl": "Activating Fist Plate"
   },
   {
@@ -5756,7 +5756,7 @@
     "tl": "Activating Sky Plate",
     "sv": "Vid aktivering av Skyplatta",
     "uk": "Activating Sky Plate",
-    "vi": "Kích hoạt Sky Plate",
+    "vi": "Kích hoạt Bản Nắm Đấm",
     "pl": "Activating Sky Plate"
   },
   {
@@ -5786,7 +5786,7 @@
     "tl": "Activating Toxic Plate",
     "sv": "Vid aktivering av Pestplatta",
     "uk": "Activating Toxic Plate",
-    "vi": "Kích hoạt Toxic Plate",
+    "vi": "Kích hoạt Bản Độc Hại",
     "pl": "Activating Toxic Plate"
   },
   {
@@ -5816,7 +5816,7 @@
     "tl": "Activating Earth Plate",
     "sv": "Vid aktivering av Markplatta",
     "uk": "Activating Earth Plate",
-    "vi": "Kích hoạt Earth Plate",
+    "vi": "Kích hoạt Bản Địa Chất",
     "pl": "Activating Earth Plate"
   },
   {
@@ -5846,7 +5846,7 @@
     "tl": "Activating Stone Plate",
     "sv": "Vid aktivering av Bergplatta",
     "uk": "Activating Stone Plate",
-    "vi": "Kích hoạt Stone Plate",
+    "vi": "Kích hoạt Bản Sỏi Đá",
     "pl": "Activating Stone Plate"
   },
   {
@@ -5876,7 +5876,7 @@
     "tl": "Activating Insect Plate",
     "sv": "Vid aktivering av Krypplatta",
     "uk": "Activating Insect Plate",
-    "vi": "Kích hoạt Insect Plate",
+    "vi": "Kích hoạt Bản Côn Trùng",
     "pl": "Activating Insect Plate"
   },
   {
@@ -5906,7 +5906,7 @@
     "tl": "Activating Spooky Plate",
     "sv": "Vid aktivering av Vålnadsplatta",
     "uk": "Activating Spooky Plate",
-    "vi": "Kích hoạt Spooky Plate",
+    "vi": "Kích hoạt Bản Hù Doạ",
     "pl": "Activating Spooky Plate"
   },
   {
@@ -5936,7 +5936,7 @@
     "tl": "Activating Iron Plate",
     "sv": "Vid aktivering av Plåtplatta",
     "uk": "Activating Iron Plate",
-    "vi": "Kích hoạt Iron Plate",
+    "vi": "Kích hoạt Bản Sắt Thép",
     "pl": "Activating Iron Plate"
   },
   {
@@ -5966,7 +5966,7 @@
     "tl": "Activating Flame Plate",
     "sv": "Vid aktivering av Flamplatta",
     "uk": "Activating Flame Plate",
-    "vi": "Kích hoạt Flame Plate",
+    "vi": "Kích hoạt Bản Bùng Lửa",
     "pl": "Activating Flame Plate"
   },
   {
@@ -5996,7 +5996,7 @@
     "tl": "Activating Splash Plate",
     "sv": "Vid aktivering av Plaskplatta",
     "uk": "Activating Splash Plate",
-    "vi": "Kích hoạt Splash Plate",
+    "vi": "Kích hoạt Bản Té Nước",
     "pl": "Activating Splash Plate"
   },
   {
@@ -6026,7 +6026,7 @@
     "tl": "Activating Meadow Plate",
     "sv": "Vid aktivering av Ängplatta",
     "uk": "Activating Meadow Plate",
-    "vi": "Kích hoạt Meadow Plate",
+    "vi": "Kích hoạt Bản Đồng Cỏ",
     "pl": "Activating Meadow Plate"
   },
   {
@@ -6056,7 +6056,7 @@
     "tl": "Activating Zap Plate",
     "sv": "Vid aktivering av Tordönplatta",
     "uk": "Activating Zap Plate",
-    "vi": "Kích hoạt Zap Plate",
+    "vi": "Kích hoạt Bản Tê Liệt",
     "pl": "Activating Zap Plate"
   },
   {
@@ -6086,7 +6086,7 @@
     "tl": "Activating Mind Plate",
     "sv": "Vid aktivering av Sinnesplatta",
     "uk": "Activating Mind Plate",
-    "vi": "Kích hoạt Mind Plate",
+    "vi": "Kích hoạt Bản Tâm Trí",
     "pl": "Activating Mind Plate"
   },
   {
@@ -6116,7 +6116,7 @@
     "tl": "Activating Icicle Plate",
     "sv": "Vid aktivering av Glaciärplatta",
     "uk": "Activating Icicle Plate",
-    "vi": "Kích hoạt Icicle Plate",
+    "vi": "Kích hoạt Bản Lạnh Lẽo",
     "pl": "Activating Icicle Plate"
   },
   {
@@ -6146,7 +6146,7 @@
     "tl": "Activating Draco Plate",
     "sv": "Vid aktivering av Skräcködleplatta",
     "uk": "Activating Draco Plate",
-    "vi": "Kích hoạt Draco Plate",
+    "vi": "Kích hoạt Bản Long Vương",
     "pl": "Activating Draco Plate"
   },
   {
@@ -6176,7 +6176,7 @@
     "tl": "Activating Dread Plate",
     "sv": "Vid aktivering av Dunkelplatta",
     "uk": "Activating Dread Plate",
-    "vi": "Kích hoạt Dread Plate",
+    "vi": "Kích hoạt Bản Sợ Hãi",
     "pl": "Activating Dread Plate"
   },
   {
@@ -6206,7 +6206,7 @@
     "tl": "Activating Pixie Plate",
     "sv": "Vid aktivering av Älvplatta",
     "uk": "Activating Pixie Plate",
-    "vi": "Kích hoạt Pixie Plate",
+    "vi": "Kích hoạt Bản Đáng Yêu",
     "pl": "Activating Pixie Plate"
   },
   {
@@ -6236,7 +6236,7 @@
     "tl": "Deactivating Fist Plate",
     "sv": "Vid avaktivering av Nävplatta",
     "uk": "Deactivating Fist Plate",
-    "vi": "Vô Hiệu Hoá Fist Plate",
+    "vi": "Vô Hiệu Hoá Bản Nắm Đấm",
     "pl": "Deactivating Fist Plate"
   },
   {
@@ -6266,7 +6266,7 @@
     "tl": "Deactivating Sky Plate",
     "sv": "Vid avaktivering av Skyplatta",
     "uk": "Deactivating Sky Plate",
-    "vi": "Vô Hiệu Hoá Sky Plate",
+    "vi": "Vô Hiệu Hoá Bản Nắm Đấm",
     "pl": "Deactivating Sky Plate"
   },
   {
@@ -6296,7 +6296,7 @@
     "tl": "Deactivating Toxic Plate",
     "sv": "Vid avaktivering av Pestplatta",
     "uk": "Deactivating Toxic Plate",
-    "vi": "Vô Hiệu Hoá Toxic Plate",
+    "vi": "Vô Hiệu Hoá Bản Độc Hại",
     "pl": "Deactivating Toxic Plate"
   },
   {
@@ -6326,7 +6326,7 @@
     "tl": "Deactivating Earth Plate",
     "sv": "Vid avaktivering av Markplatta",
     "uk": "Deactivating Earth Plate",
-    "vi": "Vô Hiệu Hoá Earth Plate",
+    "vi": "Vô Hiệu Hoá Bản Địa Chất",
     "pl": "Deactivating Earth Plate"
   },
   {
@@ -6356,7 +6356,7 @@
     "tl": "Deactivating Stone Plate",
     "sv": "Vid avaktivering av Bergplatta",
     "uk": "Deactivating Stone Plate",
-    "vi": "Vô Hiệu Hoá Stone Plate",
+    "vi": "Vô Hiệu Hoá Bản Sỏi Đá",
     "pl": "Deactivating Stone Plate"
   },
   {
@@ -6386,7 +6386,7 @@
     "tl": "Deactivating Insect Plate",
     "sv": "Vid avaktivering av Krypplatta",
     "uk": "Deactivating Insect Plate",
-    "vi": "Vô Hiệu Hoá Insect Plate",
+    "vi": "Vô Hiệu Hoá Bản Côn Trùng",
     "pl": "Deactivating Insect Plate"
   },
   {
@@ -6416,7 +6416,7 @@
     "tl": "Deactivating Spooky Plate",
     "sv": "Vid avaktivering av Vålnadsplatta",
     "uk": "Deactivating Spooky Plate",
-    "vi": "Vô Hiệu Hoá Spooky Plate",
+    "vi": "Vô Hiệu Hoá Bản Hù Doạ",
     "pl": "Deactivating Spooky Plate"
   },
   {
@@ -6446,7 +6446,7 @@
     "tl": "Deactivating Iron Plate",
     "sv": "Vid avaktivering av Plåtplatta",
     "uk": "Deactivating Iron Plate",
-    "vi": "Vô Hiệu Hoá Iron Plate",
+    "vi": "Vô Hiệu Hoá Bản Sắt Thép",
     "pl": "Deactivating Iron Plate"
   },
   {
@@ -6476,7 +6476,7 @@
     "tl": "Deactivating Flame Plate",
     "sv": "Vid avaktivering av Flamplatta",
     "uk": "Deactivating Flame Plate",
-    "vi": "Vô Hiệu Hoá Flame Plate",
+    "vi": "Vô Hiệu Hoá Bản Bùng Lửa",
     "pl": "Deactivating Flame Plate"
   },
   {
@@ -6506,7 +6506,7 @@
     "tl": "Deactivating Splash Plate",
     "sv": "Vid avaktivering av Plaskplatta",
     "uk": "Deactivating Splash Plate",
-    "vi": "Vô Hiệu Hoá Splash Plate",
+    "vi": "Vô Hiệu Hoá Bản Té Nước",
     "pl": "Deactivating Splash Plate"
   },
   {
@@ -6536,7 +6536,7 @@
     "tl": "Deactivating Meadow Plate",
     "sv": "Vid avaktivering av Ängplatta",
     "uk": "Deactivating Meadow Plate",
-    "vi": "Vô Hiệu Hoá Meadow Plate",
+    "vi": "Vô Hiệu Hoá Bản Đồng Cỏ",
     "pl": "Deactivating Meadow Plate"
   },
   {
@@ -6566,7 +6566,7 @@
     "tl": "Deactivating Zap Plate",
     "sv": "Vid avaktivering av Tordönplatta",
     "uk": "Deactivating Zap Plate",
-    "vi": "Vô Hiệu Hoá Zap Plate",
+    "vi": "Vô Hiệu Hoá Bản Tê Liệt",
     "pl": "Deactivating Zap Plate"
   },
   {
@@ -6596,7 +6596,7 @@
     "tl": "Deactivating Mind Plate",
     "sv": "Vid avaktivering av Sinnesplatta",
     "uk": "Deactivating Mind Plate",
-    "vi": "Vô Hiệu Hoá Mind Plate",
+    "vi": "Vô Hiệu Hoá Bản Tâm Trí",
     "pl": "Deactivating Mind Plate"
   },
   {
@@ -6626,7 +6626,7 @@
     "tl": "Deactivating Icicle Plate",
     "sv": "Vid avaktivering av Glaciärplatta",
     "uk": "Deactivating Icicle Plate",
-    "vi": "Vô Hiệu Hoá Icicle Plate",
+    "vi": "Vô Hiệu Hoá Bản Lạnh Lẽo",
     "pl": "Deactivating Icicle Plate"
   },
   {
@@ -6656,7 +6656,7 @@
     "tl": "Deactivating Draco Plate",
     "sv": "Vid avaktivering av Skräcködleplatta",
     "uk": "Deactivating Draco Plate",
-    "vi": "Vô Hiệu Hoá Draco Plate",
+    "vi": "Vô Hiệu Hoá Bản Long Vương",
     "pl": "Deactivating Draco Plate"
   },
   {
@@ -6686,7 +6686,7 @@
     "tl": "Deactivating Dread Plate",
     "sv": "Vid avaktivering av Dunkelplatta",
     "uk": "Deactivating Dread Plate",
-    "vi": "Vô Hiệu Hoá Dread Plate",
+    "vi": "Vô Hiệu Hoá Bản Sợ Hãi",
     "pl": "Deactivating Dread Plate"
   },
   {
@@ -6716,7 +6716,7 @@
     "tl": "Deactivating Pixie Plate",
     "sv": "Vid avaktivering av Älvplatta",
     "uk": "Deactivating Pixie Plate",
-    "vi": "Vô Hiệu Hoá Pixie Plate",
+    "vi": "Vô Hiệu Hoá Bản Đáng Yêu",
     "pl": "Deactivating Pixie Plate"
   },
   {
@@ -6747,7 +6747,7 @@
     "sv": "Vid aktivering av Emboarit",
     "uk": "Activating Емборит",
     "vi": "Kích hoạt Emboarite",
-    "pl": "Activating Emboarite"
+    "pl": "Activating Emboaryt"
   },
   {
     "dexNum": 500,
@@ -6777,7 +6777,7 @@
     "sv": "Vid avaktivering av Emboarit",
     "uk": "Deactivating Емборит",
     "vi": "Vô Hiệu Hoá Emboarite",
-    "pl": "Deactivating Emboarite"
+    "pl": "Deactivating Emboaryt"
   },
   {
     "dexNum": 530,
@@ -6807,7 +6807,7 @@
     "sv": "Vid aktivering av Excadrit",
     "uk": "Activating Excadrite",
     "vi": "Kích hoạt Excadrite",
-    "pl": "Activating Excadrite"
+    "pl": "Activating Excadrilyt"
   },
   {
     "dexNum": 530,
@@ -6837,7 +6837,7 @@
     "sv": "Vid avaktivering av Excadrit",
     "uk": "Deactivating Excadrite",
     "vi": "Vô Hiệu Hoá Excadrite",
-    "pl": "Deactivating Excadrite"
+    "pl": "Deactivating Excadrilyt"
   },
   {
     "dexNum": 531,
@@ -6927,7 +6927,7 @@
     "sv": "Vid aktivering av Scolipit",
     "uk": "Activating Scolipite",
     "vi": "Kích hoạt Scolipite",
-    "pl": "Activating Scolipite"
+    "pl": "Activating Scolipedyt"
   },
   {
     "dexNum": 545,
@@ -6957,7 +6957,7 @@
     "sv": "Vid avaktivering av Scolipit",
     "uk": "Deactivating Scolipite",
     "vi": "Vô Hiệu Hoá Scolipite",
-    "pl": "Deactivating Scolipite"
+    "pl": "Deactivating Scolipedyt"
   },
   {
     "dexNum": 555,
@@ -7047,7 +7047,7 @@
     "sv": "Vid aktivering av Scraftinit",
     "uk": "Activating Scraftinite",
     "vi": "Kích hoạt Scraftinite",
-    "pl": "Activating Scraftinite"
+    "pl": "Activating Scraftynit"
   },
   {
     "dexNum": 560,
@@ -7077,7 +7077,7 @@
     "sv": "Vid avaktivering av Scraftinit",
     "uk": "Deactivating Scraftinite",
     "vi": "Vô Hiệu Hoá Scraftinite",
-    "pl": "Deactivating Scraftinite"
+    "pl": "Deactivating Scraftynit"
   },
   {
     "dexNum": 569,
@@ -7106,7 +7106,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -7136,7 +7136,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -7167,7 +7167,7 @@
     "sv": "Vid aktivering av Eelektrossit",
     "uk": "Activating Eelektrossite",
     "vi": "Kích hoạt Eelektrossite",
-    "pl": "Activating Eelektrossite"
+    "pl": "Activating Elektrossyt"
   },
   {
     "dexNum": 604,
@@ -7197,7 +7197,7 @@
     "sv": "Vid avaktivering av Eelektrossit",
     "uk": "Deactivating Eelektrossite",
     "vi": "Vô Hiệu Hoá Eelektrossite",
-    "pl": "Deactivating Eelektrossite"
+    "pl": "Deactivating Elektrossyt"
   },
   {
     "dexNum": 609,
@@ -7227,7 +7227,7 @@
     "sv": "Vid aktivering av Chandelurit",
     "uk": "Activating Chandelurite",
     "vi": "Kích hoạt Chandelurite",
-    "pl": "Activating Chandelurite"
+    "pl": "Activating Chandeluryt"
   },
   {
     "dexNum": 609,
@@ -7257,7 +7257,7 @@
     "sv": "Vid avaktivering av Chandelurit",
     "uk": "Deactivating Chandelurite",
     "vi": "Vô Hiệu Hoá Chandelurite",
-    "pl": "Deactivating Chandelurite"
+    "pl": "Deactivating Chandeluryt"
   },
   {
     "dexNum": 623,
@@ -7287,7 +7287,7 @@
     "sv": "Vid aktivering av Golurkit",
     "uk": "Activating Golurkite",
     "vi": "Kích hoạt Golurkite",
-    "pl": "Activating Golurkite"
+    "pl": "Activating Golurktyt"
   },
   {
     "dexNum": 623,
@@ -7317,7 +7317,7 @@
     "sv": "Vid avaktivering av Golurkit",
     "uk": "Deactivating Golurkite",
     "vi": "Vô Hiệu Hoá Golurkite",
-    "pl": "Deactivating Golurkite"
+    "pl": "Deactivating Golurktyt"
   },
   {
     "dexNum": 641,
@@ -7346,7 +7346,7 @@
     "tl": "Activating Reveal Glass",
     "sv": "Vid aktivering av Sanningspegel",
     "uk": "Activating Reveal Glass",
-    "vi": "Kích hoạt Reveal Glass",
+    "vi": "Kích hoạt Gương Phản Chiếu",
     "pl": "Activating Reveal Glass"
   },
   {
@@ -7376,7 +7376,7 @@
     "tl": "Deactivating Reveal Glass",
     "sv": "Vid avaktivering av Sanningspegel",
     "uk": "Deactivating Reveal Glass",
-    "vi": "Vô Hiệu Hoá Reveal Glass",
+    "vi": "Vô Hiệu Hoá Gương Phản Chiếu",
     "pl": "Deactivating Reveal Glass"
   },
   {
@@ -7406,7 +7406,7 @@
     "tl": "Activating Reveal Glass",
     "sv": "Vid aktivering av Sanningspegel",
     "uk": "Activating Reveal Glass",
-    "vi": "Kích hoạt Reveal Glass",
+    "vi": "Kích hoạt Gương Phản Chiếu",
     "pl": "Activating Reveal Glass"
   },
   {
@@ -7436,7 +7436,7 @@
     "tl": "Deactivating Reveal Glass",
     "sv": "Vid avaktivering av Sanningspegel",
     "uk": "Deactivating Reveal Glass",
-    "vi": "Vô Hiệu Hoá Reveal Glass",
+    "vi": "Vô Hiệu Hoá Gương Phản Chiếu",
     "pl": "Deactivating Reveal Glass"
   },
   {
@@ -7466,7 +7466,7 @@
     "tl": "Activating Reveal Glass",
     "sv": "Vid aktivering av Sanningspegel",
     "uk": "Activating Reveal Glass",
-    "vi": "Kích hoạt Reveal Glass",
+    "vi": "Kích hoạt Gương Phản Chiếu",
     "pl": "Activating Reveal Glass"
   },
   {
@@ -7496,7 +7496,7 @@
     "tl": "Deactivating Reveal Glass",
     "sv": "Vid avaktivering av Sanningspegel",
     "uk": "Deactivating Reveal Glass",
-    "vi": "Vô Hiệu Hoá Reveal Glass",
+    "vi": "Vô Hiệu Hoá Gương Phản Chiếu",
     "pl": "Deactivating Reveal Glass"
   },
   {
@@ -7526,7 +7526,7 @@
     "tl": "Activating Dark Stone",
     "sv": "Vid aktivering av Svärtans sten",
     "uk": "Activating Dark Stone",
-    "vi": "Kích hoạt Dark Stone",
+    "vi": "Kích hoạt Hắc Thạch",
     "pl": "Activating Dark Stone"
   },
   {
@@ -7556,7 +7556,7 @@
     "tl": "Activating Light Stone",
     "sv": "Vid aktivering av Vithetens sten",
     "uk": "Activating Light Stone",
-    "vi": "Kích hoạt Light Stone",
+    "vi": "Kích hoạt Quang Thạch",
     "pl": "Activating Light Stone"
   },
   {
@@ -7586,7 +7586,7 @@
     "tl": "Deactivating Dark Stone",
     "sv": "Vid avaktivering av Svärtans sten",
     "uk": "Deactivating Dark Stone",
-    "vi": "Vô Hiệu Hoá Dark Stone",
+    "vi": "Vô Hiệu Hoá Hắc Thạch",
     "pl": "Deactivating Dark Stone"
   },
   {
@@ -7616,7 +7616,7 @@
     "tl": "Deactivating Light Stone",
     "sv": "Vid avaktivering av Vithetens sten",
     "uk": "Deactivating Light Stone",
-    "vi": "Vô Hiệu Hoá Light Stone",
+    "vi": "Vô Hiệu Hoá Quang Thạch",
     "pl": "Deactivating Light Stone"
   },
   {
@@ -7707,7 +7707,7 @@
     "sv": "Efter att den använt särskilda tekniker",
     "uk": "After using certain moves",
     "vi": "Sau khi sử dụng chiêu thức nhất định",
-    "pl": "After using certain moves"
+    "pl": "Po użyciu danych ataków"
   },
   {
     "dexNum": 648,
@@ -7737,7 +7737,7 @@
     "sv": "Efter att den använt särskilda tekniker",
     "uk": "After using certain moves",
     "vi": "Sau khi sử dụng chiêu thức nhất định",
-    "pl": "After using certain moves"
+    "pl": "Po użyciu danych ataków"
   },
   {
     "dexNum": 649,
@@ -7766,7 +7766,7 @@
     "tl": "Activating Shock Drive",
     "sv": "Vid aktivering av Åskassett",
     "uk": "Activating Shock Drive",
-    "vi": "Kích hoạt Shock Drive",
+    "vi": "Kích hoạt Đĩa Điện",
     "pl": "Activating Shock Drive"
   },
   {
@@ -7796,7 +7796,7 @@
     "tl": "Activating Burn Drive",
     "sv": "Vid aktivering av Flamkassett",
     "uk": "Activating Burn Drive",
-    "vi": "Kích hoạt Burn Drive",
+    "vi": "Kích hoạt Đĩa Lửa",
     "pl": "Activating Burn Drive"
   },
   {
@@ -7826,7 +7826,7 @@
     "tl": "Activating Chill Drive",
     "sv": "Vid aktivering av Frostkassett",
     "uk": "Activating Chill Drive",
-    "vi": "Kích hoạt Chill Drive",
+    "vi": "Kích hoạt Đĩa Băng",
     "pl": "Activating Chill Drive"
   },
   {
@@ -7856,7 +7856,7 @@
     "tl": "Activating Douse Drive",
     "sv": "Vid aktivering av Akvakassett",
     "uk": "Activating Douse Drive",
-    "vi": "Kích hoạt Douse Drive",
+    "vi": "Kích hoạt Đĩa Thủy",
     "pl": "Activating Douse Drive"
   },
   {
@@ -7886,7 +7886,7 @@
     "tl": "Deactivating Shock Drive",
     "sv": "Vid avaktivering av Åskassett",
     "uk": "Deactivating Shock Drive",
-    "vi": "Vô Hiệu Hoá Shock Drive",
+    "vi": "Vô Hiệu Hoá Đĩa Điện",
     "pl": "Deactivating Shock Drive"
   },
   {
@@ -7916,7 +7916,7 @@
     "tl": "Deactivating Burn Drive",
     "sv": "Vid avaktivering av Flamkassett",
     "uk": "Deactivating Burn Drive",
-    "vi": "Vô Hiệu Hoá Burn Drive",
+    "vi": "Vô Hiệu Hoá Đĩa Lửa",
     "pl": "Deactivating Burn Drive"
   },
   {
@@ -7946,7 +7946,7 @@
     "tl": "Deactivating Chill Drive",
     "sv": "Vid avaktivering av Frostkassett",
     "uk": "Deactivating Chill Drive",
-    "vi": "Vô Hiệu Hoá Chill Drive",
+    "vi": "Vô Hiệu Hoá Đĩa Băng",
     "pl": "Deactivating Chill Drive"
   },
   {
@@ -7976,7 +7976,7 @@
     "tl": "Deactivating Douse Drive",
     "sv": "Vid avaktivering av Akvakassett",
     "uk": "Deactivating Douse Drive",
-    "vi": "Vô Hiệu Hoá Douse Drive",
+    "vi": "Vô Hiệu Hoá Đĩa Thủy",
     "pl": "Deactivating Douse Drive"
   },
   {
@@ -8007,7 +8007,7 @@
     "sv": "Vid aktivering av Chesnaughtit",
     "uk": "Activating Chesnaughtite",
     "vi": "Kích hoạt Chesnaughtite",
-    "pl": "Activating Chesnaughtite"
+    "pl": "Activating Chenaughtyt"
   },
   {
     "dexNum": 652,
@@ -8037,7 +8037,7 @@
     "sv": "Vid avaktivering av Chesnaughtit",
     "uk": "Deactivating Chesnaughtite",
     "vi": "Vô Hiệu Hoá Chesnaughtite",
-    "pl": "Deactivating Chesnaughtite"
+    "pl": "Deactivating Chenaughtyt"
   },
   {
     "dexNum": 655,
@@ -8067,7 +8067,7 @@
     "sv": "Vid aktivering av Delphoxit",
     "uk": "Activating Delphoxite",
     "vi": "Kích hoạt Delphoxite",
-    "pl": "Activating Delphoxite"
+    "pl": "Activating Delphoxyt"
   },
   {
     "dexNum": 655,
@@ -8097,7 +8097,7 @@
     "sv": "Vid avaktivering av Delphoxit",
     "uk": "Deactivating Delphoxite",
     "vi": "Vô Hiệu Hoá Delphoxite",
-    "pl": "Deactivating Delphoxite"
+    "pl": "Deactivating Delphoxyt"
   },
   {
     "dexNum": 658,
@@ -8127,7 +8127,7 @@
     "sv": "Vid aktivering av Greninjit",
     "uk": "Activating Greninjite",
     "vi": "Kích hoạt Greninjite",
-    "pl": "Activating Greninjite"
+    "pl": "Activating Greninjyt"
   },
   {
     "dexNum": 658,
@@ -8157,7 +8157,7 @@
     "sv": "Vid avaktivering av Greninjit",
     "uk": "Deactivating Greninjite",
     "vi": "Vô Hiệu Hoá Greninjite",
-    "pl": "Deactivating Greninjite"
+    "pl": "Deactivating Greninjyt"
   },
   {
     "dexNum": 668,
@@ -8187,7 +8187,7 @@
     "sv": "Vid aktivering av Pyroarit",
     "uk": "Activating Pyroarite",
     "vi": "Kích hoạt Pyroarite",
-    "pl": "Activating Pyroarite"
+    "pl": "Activating Pyroaryt"
   },
   {
     "dexNum": 668,
@@ -8217,7 +8217,7 @@
     "sv": "Vid avaktivering av Pyroarit",
     "uk": "Deactivating Pyroarite",
     "vi": "Vô Hiệu Hoá Pyroarite",
-    "pl": "Deactivating Pyroarite"
+    "pl": "Deactivating Pyroaryt"
   },
   {
     "dexNum": 678,
@@ -8247,7 +8247,7 @@
     "sv": "Vid aktivering av Meowsticit",
     "uk": "Activating Meowsticite",
     "vi": "Kích hoạt Meowsticite",
-    "pl": "Activating Meowsticite"
+    "pl": "Activating Meowstictyt"
   },
   {
     "dexNum": 678,
@@ -8277,7 +8277,7 @@
     "sv": "Vid aktivering av Meowsticit",
     "uk": "Activating Meowsticite",
     "vi": "Kích hoạt Meowsticite",
-    "pl": "Activating Meowsticite"
+    "pl": "Activating Meowstictyt"
   },
   {
     "dexNum": 678,
@@ -8307,7 +8307,7 @@
     "sv": "Vid avaktivering av Meowsticit",
     "uk": "Deactivating Meowsticite",
     "vi": "Vô Hiệu Hoá Meowsticite",
-    "pl": "Deactivating Meowsticite"
+    "pl": "Deactivating Meowstictyt"
   },
   {
     "dexNum": 678,
@@ -8337,7 +8337,7 @@
     "sv": "Vid avaktivering av Meowsticit",
     "uk": "Deactivating Meowsticite",
     "vi": "Vô Hiệu Hoá Meowsticite",
-    "pl": "Deactivating Meowsticite"
+    "pl": "Deactivating Meowstictyt"
   },
   {
     "dexNum": 681,
@@ -8367,7 +8367,7 @@
     "sv": "Innan den använder särskilda tekniker",
     "uk": "Before using certain moves",
     "vi": "Trước khi dùng một chiêu thức nhất định",
-    "pl": "Before using certain moves"
+    "pl": "Przed użyciem danych ataków"
   },
   {
     "dexNum": 681,
@@ -8397,7 +8397,7 @@
     "sv": "Innan den använder särskilda tekniker",
     "uk": "Before using certain moves",
     "vi": "Trước khi dùng một chiêu thức nhất định",
-    "pl": "Before using certain moves"
+    "pl": "Przed użyciem danych ataków"
   },
   {
     "dexNum": 681,
@@ -8457,7 +8457,7 @@
     "sv": "Vid aktivering av Malamarit",
     "uk": "Activating Malamarite",
     "vi": "Kích hoạt Malamarite",
-    "pl": "Activating Malamarite"
+    "pl": "Activating Malamaryt"
   },
   {
     "dexNum": 687,
@@ -8487,7 +8487,7 @@
     "sv": "Vid avaktivering av Malamarit",
     "uk": "Deactivating Malamarite",
     "vi": "Vô Hiệu Hoá Malamarite",
-    "pl": "Deactivating Malamarite"
+    "pl": "Deactivating Malamaryt"
   },
   {
     "dexNum": 689,
@@ -8517,7 +8517,7 @@
     "sv": "Vid aktivering av Barbaracit",
     "uk": "Activating Barbaracite",
     "vi": "Kích hoạt Barbaracite",
-    "pl": "Activating Barbaracite"
+    "pl": "Activating Barbaracyt"
   },
   {
     "dexNum": 689,
@@ -8547,7 +8547,7 @@
     "sv": "Vid avaktivering av Barbaracit",
     "uk": "Deactivating Barbaracite",
     "vi": "Vô Hiệu Hoá Barbaracite",
-    "pl": "Deactivating Barbaracite"
+    "pl": "Deactivating Barbaracyt"
   },
   {
     "dexNum": 691,
@@ -8577,7 +8577,7 @@
     "sv": "Vid aktivering av Dragalgit",
     "uk": "Activating Dragalgite",
     "vi": "Kích hoạt Dragalgite",
-    "pl": "Activating Dragalgite"
+    "pl": "Activating Dragalgit"
   },
   {
     "dexNum": 691,
@@ -8607,7 +8607,7 @@
     "sv": "Vid avaktivering av Dragalgit",
     "uk": "Deactivating Dragalgite",
     "vi": "Vô Hiệu Hoá Dragalgite",
-    "pl": "Deactivating Dragalgite"
+    "pl": "Deactivating Dragalgit"
   },
   {
     "dexNum": 701,
@@ -8637,7 +8637,7 @@
     "sv": "Vid aktivering av Hawluchanit",
     "uk": "Activating Hawluchanite",
     "vi": "Kích hoạt Hawluchanite",
-    "pl": "Activating Hawluchanite"
+    "pl": "Activating Hawluchanit"
   },
   {
     "dexNum": 701,
@@ -8667,7 +8667,7 @@
     "sv": "Vid avaktivering av Hawluchanit",
     "uk": "Deactivating Hawluchanite",
     "vi": "Vô Hiệu Hoá Hawluchanite",
-    "pl": "Deactivating Hawluchanite"
+    "pl": "Deactivating Hawluchanit"
   },
   {
     "dexNum": 716,
@@ -8877,7 +8877,7 @@
     "sv": "Vid aktivering av Zygardit",
     "uk": "Activating Zygardite",
     "vi": "Kích hoạt Zygardite",
-    "pl": "Activating Zygardite"
+    "pl": "Activating Zygardyt"
   },
   {
     "dexNum": 718,
@@ -8907,7 +8907,7 @@
     "sv": "Vid aktivering av Zygardit",
     "uk": "Activating Zygardite",
     "vi": "Kích hoạt Zygardite",
-    "pl": "Activating Zygardite"
+    "pl": "Activating Zygardyt"
   },
   {
     "dexNum": 718,
@@ -8937,7 +8937,7 @@
     "sv": "Vid avaktivering av Zygardit",
     "uk": "Deactivating Zygardite",
     "vi": "Vô Hiệu Hoá Zygardite",
-    "pl": "Deactivating Zygardite"
+    "pl": "Deactivating Zygardyt"
   },
   {
     "dexNum": 718,
@@ -8967,7 +8967,7 @@
     "sv": "Vid avaktivering av Zygardit",
     "uk": "Deactivating Zygardite",
     "vi": "Vô Hiệu Hoá Zygardite",
-    "pl": "Deactivating Zygardite"
+    "pl": "Deactivating Zygardyt"
   },
   {
     "dexNum": 719,
@@ -9056,7 +9056,7 @@
     "tl": "Activating Prison Bottle",
     "sv": "Vid aktivering av Fängslande flaska",
     "uk": "Activating Prison Bottle",
-    "vi": "Kích hoạt Prison Bottle",
+    "vi": "Kích hoạt Lọ Phong Ấn",
     "pl": "Activating Prison Bottle"
   },
   {
@@ -9086,7 +9086,7 @@
     "tl": "Deactivating Prison Bottle",
     "sv": "Vid avaktivering av Fängslande flaska",
     "uk": "Deactivating Prison Bottle",
-    "vi": "Vô Hiệu Hoá Prison Bottle",
+    "vi": "Vô Hiệu Hoá Lọ Phong Ấn",
     "pl": "Deactivating Prison Bottle"
   },
   {
@@ -9117,7 +9117,7 @@
     "sv": "Vid aktivering av Crabominit",
     "uk": "Activating Crabominite",
     "vi": "Kích hoạt Crabominite",
-    "pl": "Activating Crabominite"
+    "pl": "Activating Crabominyt"
   },
   {
     "dexNum": 740,
@@ -9147,7 +9147,7 @@
     "sv": "Vid avaktivering av Crabominit",
     "uk": "Deactivating Crabominite",
     "vi": "Vô Hiệu Hoá Crabominite",
-    "pl": "Deactivating Crabominite"
+    "pl": "Deactivating Crabominyt"
   },
   {
     "dexNum": 746,
@@ -9237,7 +9237,7 @@
     "sv": "Vid aktivering av Golisopit",
     "uk": "Activating Golisopite",
     "vi": "Kích hoạt Golisopite",
-    "pl": "Activating Golisopite"
+    "pl": "Activating Golisopodyt"
   },
   {
     "dexNum": 768,
@@ -9267,7 +9267,7 @@
     "sv": "Vid avaktivering av Golisopit",
     "uk": "Deactivating Golisopite",
     "vi": "Vô Hiệu Hoá Golisopite",
-    "pl": "Deactivating Golisopite"
+    "pl": "Deactivating Golisopodyt"
   },
   {
     "dexNum": 773,
@@ -9296,7 +9296,7 @@
     "tl": "Activating Fighting Memory",
     "sv": "Vid aktivering av Minnesdisk: FAJT",
     "uk": "Activating Fighting Memory",
-    "vi": "Kích hoạt Fighting Memory",
+    "vi": "Kích hoạt Kí Ức Giác Đấu",
     "pl": "Activating Fighting Memory"
   },
   {
@@ -9326,7 +9326,7 @@
     "tl": "Activating Flying Memory",
     "sv": "Vid aktivering av Minnesdisk: FLYG",
     "uk": "Activating Flying Memory",
-    "vi": "Kích hoạt Flying Memory",
+    "vi": "Kích hoạt Kí Ức Bay",
     "pl": "Activating Flying Memory"
   },
   {
@@ -9356,7 +9356,7 @@
     "tl": "Activating Poison Memory",
     "sv": "Vid aktivering av Minnesdisk: GIFT",
     "uk": "Activating Poison Memory",
-    "vi": "Kích hoạt Poison Memory",
+    "vi": "Kích hoạt Kí Ức Độc",
     "pl": "Activating Poison Memory"
   },
   {
@@ -9386,7 +9386,7 @@
     "tl": "Activating Ground Memory",
     "sv": "Vid aktivering av Minnesdisk: JORD",
     "uk": "Activating Ground Memory",
-    "vi": "Kích hoạt Ground Memory",
+    "vi": "Kích hoạt Kí Ức Đất",
     "pl": "Activating Ground Memory"
   },
   {
@@ -9416,7 +9416,7 @@
     "tl": "Activating Rock Memory",
     "sv": "Vid aktivering av Minnesdisk: STEN",
     "uk": "Activating Rock Memory",
-    "vi": "Kích hoạt Rock Memory",
+    "vi": "Kích hoạt Kí Ức Đá",
     "pl": "Activating Rock Memory"
   },
   {
@@ -9446,7 +9446,7 @@
     "tl": "Activating Bug Memory",
     "sv": "Vid aktivering av Minnesdisk: KRYP",
     "uk": "Activating Bug Memory",
-    "vi": "Kích hoạt Bug Memory",
+    "vi": "Kích hoạt Kí Ức Côn Trùng",
     "pl": "Activating Bug Memory"
   },
   {
@@ -9476,7 +9476,7 @@
     "tl": "Activating Ghost Memory",
     "sv": "Vid aktivering av Minnesdisk: ANDE",
     "uk": "Activating Ghost Memory",
-    "vi": "Kích hoạt Ghost Memory",
+    "vi": "Kích hoạt Kí Ức Ma",
     "pl": "Activating Ghost Memory"
   },
   {
@@ -9506,7 +9506,7 @@
     "tl": "Activating Steel Memory",
     "sv": "Vid aktivering av Minnesdisk: STÅL",
     "uk": "Activating Steel Memory",
-    "vi": "Kích hoạt Steel Memory",
+    "vi": "Kích hoạt Kí Ức Thép",
     "pl": "Activating Steel Memory"
   },
   {
@@ -9536,7 +9536,7 @@
     "tl": "Activating Fire Memory",
     "sv": "Vid aktivering av Minnesdisk: VARM",
     "uk": "Activating Fire Memory",
-    "vi": "Kích hoạt Fire Memory",
+    "vi": "Kích hoạt Kí Ức Lửa",
     "pl": "Activating Fire Memory"
   },
   {
@@ -9566,7 +9566,7 @@
     "tl": "Activating Water Memory",
     "sv": "Vid aktivering av Minnesdisk: BLÖT",
     "uk": "Activating Water Memory",
-    "vi": "Kích hoạt Water Memory",
+    "vi": "Kích hoạt Kí Ức Nước",
     "pl": "Activating Water Memory"
   },
   {
@@ -9596,7 +9596,7 @@
     "tl": "Activating Grass Memory",
     "sv": "Vid aktivering av Minnesdisk: GRÄS",
     "uk": "Activating Grass Memory",
-    "vi": "Kích hoạt Grass Memory",
+    "vi": "Kích hoạt Kí Ức Cỏ",
     "pl": "Activating Grass Memory"
   },
   {
@@ -9626,7 +9626,7 @@
     "tl": "Activating Electric Memory",
     "sv": "Vid aktivering av Minnesdisk: ÅSKA",
     "uk": "Activating Electric Memory",
-    "vi": "Kích hoạt Electric Memory",
+    "vi": "Kích hoạt Kí Ức Điện",
     "pl": "Activating Electric Memory"
   },
   {
@@ -9656,7 +9656,7 @@
     "tl": "Activating Psychic Memory",
     "sv": "Vid aktivering av Minnesdisk: PSYK",
     "uk": "Activating Psychic Memory",
-    "vi": "Kích hoạt Psychic Memory",
+    "vi": "Kích hoạt Kí Ức Tâm Linh",
     "pl": "Activating Psychic Memory"
   },
   {
@@ -9686,7 +9686,7 @@
     "tl": "Activating Ice Memory",
     "sv": "Vid aktivering av Minnesdisk: FRYS",
     "uk": "Activating Ice Memory",
-    "vi": "Kích hoạt Ice Memory",
+    "vi": "Kích hoạt Kí Ức Băng",
     "pl": "Activating Ice Memory"
   },
   {
@@ -9716,7 +9716,7 @@
     "tl": "Activating Dragon Memory",
     "sv": "Vid aktivering av Minnesdisk: ÖDLA",
     "uk": "Activating Dragon Memory",
-    "vi": "Kích hoạt Dragon Memory",
+    "vi": "Kích hoạt Kí Ức Rồng",
     "pl": "Activating Dragon Memory"
   },
   {
@@ -9746,7 +9746,7 @@
     "tl": "Activating Dark Memory",
     "sv": "Vid aktivering av Minnesdisk: MÖRK",
     "uk": "Activating Dark Memory",
-    "vi": "Kích hoạt Dark Memory",
+    "vi": "Kích hoạt Kí Ức Bóng Tối",
     "pl": "Activating Dark Memory"
   },
   {
@@ -9776,7 +9776,7 @@
     "tl": "Activating Fairy Memory",
     "sv": "Vid aktivering av Minnesdisk: ÄLVA",
     "uk": "Activating Fairy Memory",
-    "vi": "Kích hoạt Fairy Memory",
+    "vi": "Kích hoạt Kí Ức Tiên",
     "pl": "Activating Fairy Memory"
   },
   {
@@ -9806,7 +9806,7 @@
     "tl": "Deactivating Fighting Memory",
     "sv": "Vid avaktivering av Minnesdisk: FAJT",
     "uk": "Deactivating Fighting Memory",
-    "vi": "Vô Hiệu Hoá Fighting Memory",
+    "vi": "Vô Hiệu Hoá Kí Ức Giác Đấu",
     "pl": "Deactivating Fighting Memory"
   },
   {
@@ -9836,7 +9836,7 @@
     "tl": "Deactivating Flying Memory",
     "sv": "Vid avaktivering av Minnesdisk: FLYG",
     "uk": "Deactivating Flying Memory",
-    "vi": "Vô Hiệu Hoá Flying Memory",
+    "vi": "Vô Hiệu Hoá Kí Ức Bay",
     "pl": "Deactivating Flying Memory"
   },
   {
@@ -9866,7 +9866,7 @@
     "tl": "Deactivating Poison Memory",
     "sv": "Vid avaktivering av Minnesdisk: GIFT",
     "uk": "Deactivating Poison Memory",
-    "vi": "Vô Hiệu Hoá Poison Memory",
+    "vi": "Vô Hiệu Hoá Kí Ức Độc",
     "pl": "Deactivating Poison Memory"
   },
   {
@@ -9896,7 +9896,7 @@
     "tl": "Deactivating Ground Memory",
     "sv": "Vid avaktivering av Minnesdisk: JORD",
     "uk": "Deactivating Ground Memory",
-    "vi": "Vô Hiệu Hoá Ground Memory",
+    "vi": "Vô Hiệu Hoá Kí Ức Đất",
     "pl": "Deactivating Ground Memory"
   },
   {
@@ -9926,7 +9926,7 @@
     "tl": "Deactivating Rock Memory",
     "sv": "Vid avaktivering av Minnesdisk: STEN",
     "uk": "Deactivating Rock Memory",
-    "vi": "Vô Hiệu Hoá Rock Memory",
+    "vi": "Vô Hiệu Hoá Kí Ức Đá",
     "pl": "Deactivating Rock Memory"
   },
   {
@@ -9956,7 +9956,7 @@
     "tl": "Deactivating Bug Memory",
     "sv": "Vid avaktivering av Minnesdisk: KRYP",
     "uk": "Deactivating Bug Memory",
-    "vi": "Vô Hiệu Hoá Bug Memory",
+    "vi": "Vô Hiệu Hoá Kí Ức Côn Trùng",
     "pl": "Deactivating Bug Memory"
   },
   {
@@ -9986,7 +9986,7 @@
     "tl": "Deactivating Ghost Memory",
     "sv": "Vid avaktivering av Minnesdisk: ANDE",
     "uk": "Deactivating Ghost Memory",
-    "vi": "Vô Hiệu Hoá Ghost Memory",
+    "vi": "Vô Hiệu Hoá Kí Ức Ma",
     "pl": "Deactivating Ghost Memory"
   },
   {
@@ -10016,7 +10016,7 @@
     "tl": "Deactivating Steel Memory",
     "sv": "Vid avaktivering av Minnesdisk: STÅL",
     "uk": "Deactivating Steel Memory",
-    "vi": "Vô Hiệu Hoá Steel Memory",
+    "vi": "Vô Hiệu Hoá Kí Ức Thép",
     "pl": "Deactivating Steel Memory"
   },
   {
@@ -10046,7 +10046,7 @@
     "tl": "Deactivating Fire Memory",
     "sv": "Vid avaktivering av Minnesdisk: VARM",
     "uk": "Deactivating Fire Memory",
-    "vi": "Vô Hiệu Hoá Fire Memory",
+    "vi": "Vô Hiệu Hoá Kí Ức Lửa",
     "pl": "Deactivating Fire Memory"
   },
   {
@@ -10076,7 +10076,7 @@
     "tl": "Deactivating Water Memory",
     "sv": "Vid avaktivering av Minnesdisk: BLÖT",
     "uk": "Deactivating Water Memory",
-    "vi": "Vô Hiệu Hoá Water Memory",
+    "vi": "Vô Hiệu Hoá Kí Ức Nước",
     "pl": "Deactivating Water Memory"
   },
   {
@@ -10106,7 +10106,7 @@
     "tl": "Deactivating Grass Memory",
     "sv": "Vid avaktivering av Minnesdisk: GRÄS",
     "uk": "Deactivating Grass Memory",
-    "vi": "Vô Hiệu Hoá Grass Memory",
+    "vi": "Vô Hiệu Hoá Kí Ức Cỏ",
     "pl": "Deactivating Grass Memory"
   },
   {
@@ -10136,7 +10136,7 @@
     "tl": "Deactivating Electric Memory",
     "sv": "Vid avaktivering av Minnesdisk: ÅSKA",
     "uk": "Deactivating Electric Memory",
-    "vi": "Vô Hiệu Hoá Electric Memory",
+    "vi": "Vô Hiệu Hoá Kí Ức Điện",
     "pl": "Deactivating Electric Memory"
   },
   {
@@ -10166,7 +10166,7 @@
     "tl": "Deactivating Psychic Memory",
     "sv": "Vid avaktivering av Minnesdisk: PSYK",
     "uk": "Deactivating Psychic Memory",
-    "vi": "Vô Hiệu Hoá Psychic Memory",
+    "vi": "Vô Hiệu Hoá Kí Ức Tâm Linh",
     "pl": "Deactivating Psychic Memory"
   },
   {
@@ -10196,7 +10196,7 @@
     "tl": "Deactivating Ice Memory",
     "sv": "Vid avaktivering av Minnesdisk: FRYS",
     "uk": "Deactivating Ice Memory",
-    "vi": "Vô Hiệu Hoá Ice Memory",
+    "vi": "Vô Hiệu Hoá Kí Ức Băng",
     "pl": "Deactivating Ice Memory"
   },
   {
@@ -10226,7 +10226,7 @@
     "tl": "Deactivating Dragon Memory",
     "sv": "Vid avaktivering av Minnesdisk: ÖDLA",
     "uk": "Deactivating Dragon Memory",
-    "vi": "Vô Hiệu Hoá Dragon Memory",
+    "vi": "Vô Hiệu Hoá Kí Ức Rồng",
     "pl": "Deactivating Dragon Memory"
   },
   {
@@ -10256,7 +10256,7 @@
     "tl": "Deactivating Dark Memory",
     "sv": "Vid avaktivering av Minnesdisk: MÖRK",
     "uk": "Deactivating Dark Memory",
-    "vi": "Vô Hiệu Hoá Dark Memory",
+    "vi": "Vô Hiệu Hoá Kí Ức Bóng Tối",
     "pl": "Deactivating Dark Memory"
   },
   {
@@ -10286,7 +10286,7 @@
     "tl": "Deactivating Fairy Memory",
     "sv": "Vid avaktivering av Minnesdisk: ÄLVA",
     "uk": "Deactivating Fairy Memory",
-    "vi": "Vô Hiệu Hoá Fairy Memory",
+    "vi": "Vô Hiệu Hoá Kí Ức Tiên",
     "pl": "Deactivating Fairy Memory"
   },
   {
@@ -10797,7 +10797,7 @@
     "sv": "Vid aktivering av Drampanit",
     "uk": "Activating Drampanite",
     "vi": "Kích hoạt Drampanite",
-    "pl": "Activating Drampanite"
+    "pl": "Activating Drampanit"
   },
   {
     "dexNum": 780,
@@ -10827,7 +10827,7 @@
     "sv": "Vid avaktivering av Drampanit",
     "uk": "Deactivating Drampanite",
     "vi": "Vô Hiệu Hoá Drampanite",
-    "pl": "Deactivating Drampanite"
+    "pl": "Deactivating Drampanit"
   },
   {
     "dexNum": 800,
@@ -10856,7 +10856,7 @@
     "tl": "Activating N Lunarizer",
     "sv": "Vid aktivering av Necro-Luna",
     "uk": "Activating N Lunarizer",
-    "vi": "Kích hoạt N Lunarizer",
+    "vi": "Kích hoạt Máy Nguyệt Ấn",
     "pl": "Activating N Lunarizer"
   },
   {
@@ -10886,7 +10886,7 @@
     "tl": "Activating N Solarizer",
     "sv": "Vid aktivering av Necro-Sol",
     "uk": "Activating N Solarizer",
-    "vi": "Kích hoạt N Solarizer",
+    "vi": "Kích hoạt Máy Quang Ấn",
     "pl": "Activating N Solarizer"
   },
   {
@@ -10904,7 +10904,7 @@
     "zh-Hant": "活化了究極奈克洛Z",
     "pt-BR": "Ativando Ultranecrozium Z",
     "ko": "울트라네크로Z[[를]] 통해 폼체인지",
-    "ja": "ウルトラネクロZを 有効に すれば",
+    "ja": "ウルトラネクロＺを 有効に すれば",
     "ca": "Activant Ultranecrozium Z",
     "eu": "Activating Ultranecrozium Z",
     "da": "Activating Ultranecrozium Z",
@@ -10916,7 +10916,7 @@
     "tl": "Activating Ultranecrozium Z",
     "sv": "Vid aktivering av Ultranecrozium Z",
     "uk": "Activating Ultranecrozium Z",
-    "vi": "Kích hoạt Ultranecrozium Z",
+    "vi": "Kích hoạt Ultranecrozium Z",
     "pl": "Activating Ultranecrozium Z"
   },
   {
@@ -10934,7 +10934,7 @@
     "zh-Hant": "活化了究極奈克洛Z",
     "pt-BR": "Ativando Ultranecrozium Z",
     "ko": "울트라네크로Z[[를]] 통해 폼체인지",
-    "ja": "ウルトラネクロZを 有効に すれば",
+    "ja": "ウルトラネクロＺを 有効に すれば",
     "ca": "Activant Ultranecrozium Z",
     "eu": "Activating Ultranecrozium Z",
     "da": "Activating Ultranecrozium Z",
@@ -10946,7 +10946,7 @@
     "tl": "Activating Ultranecrozium Z",
     "sv": "Vid aktivering av Ultranecrozium Z",
     "uk": "Activating Ultranecrozium Z",
-    "vi": "Kích hoạt Ultranecrozium Z",
+    "vi": "Kích hoạt Ultranecrozium Z",
     "pl": "Activating Ultranecrozium Z"
   },
   {
@@ -10976,7 +10976,7 @@
     "tl": "Deactivating N Lunarizer",
     "sv": "Vid avaktivering av Necro-Luna",
     "uk": "Deactivating N Lunarizer",
-    "vi": "Vô Hiệu Hoá N Lunarizer",
+    "vi": "Vô Hiệu Hoá Máy Nguyệt Ấn",
     "pl": "Deactivating N Lunarizer"
   },
   {
@@ -11006,7 +11006,7 @@
     "tl": "Deactivating N Solarizer",
     "sv": "Vid avaktivering av Necro-Sol",
     "uk": "Deactivating N Solarizer",
-    "vi": "Vô Hiệu Hoá N Solarizer",
+    "vi": "Vô Hiệu Hoá Máy Quang Ấn",
     "pl": "Deactivating N Solarizer"
   },
   {
@@ -11024,7 +11024,7 @@
     "zh-Hant": "禁用了究極奈克洛Z",
     "pt-BR": "Desativando Ultranecrozium Z",
     "ko": "울트라네크로Z[[를]] 통해 비활성화",
-    "ja": "ウルトラネクロZを 無効に すれば",
+    "ja": "ウルトラネクロＺを 無効に すれば",
     "ca": "Desactivant Ultranecrozium Z",
     "eu": "Deactivating Ultranecrozium Z",
     "da": "Deactivating Ultranecrozium Z",
@@ -11036,7 +11036,7 @@
     "tl": "Deactivating Ultranecrozium Z",
     "sv": "Vid avaktivering av Ultranecrozium Z",
     "uk": "Deactivating Ultranecrozium Z",
-    "vi": "Vô Hiệu Hoá Ultranecrozium Z",
+    "vi": "Vô Hiệu Hoá Ultranecrozium Z",
     "pl": "Deactivating Ultranecrozium Z"
   },
   {
@@ -11054,7 +11054,7 @@
     "zh-Hant": "禁用了究極奈克洛Z",
     "pt-BR": "Desativando Ultranecrozium Z",
     "ko": "울트라네크로Z[[를]] 통해 비활성화",
-    "ja": "ウルトラネクロZを 無効に すれば",
+    "ja": "ウルトラネクロＺを 無効に すれば",
     "ca": "Desactivant Ultranecrozium Z",
     "eu": "Deactivating Ultranecrozium Z",
     "da": "Deactivating Ultranecrozium Z",
@@ -11066,7 +11066,7 @@
     "tl": "Deactivating Ultranecrozium Z",
     "sv": "Vid avaktivering av Ultranecrozium Z",
     "uk": "Deactivating Ultranecrozium Z",
-    "vi": "Vô Hiệu Hoá Ultranecrozium Z",
+    "vi": "Vô Hiệu Hoá Ultranecrozium Z",
     "pl": "Deactivating Ultranecrozium Z"
   },
   {
@@ -11097,7 +11097,7 @@
     "sv": "Vid aktivering av Magearnit",
     "uk": "Activating Magearnite",
     "vi": "Kích hoạt Magearnite",
-    "pl": "Activating Magearnite"
+    "pl": "Activating Magearnit"
   },
   {
     "dexNum": 801,
@@ -11127,7 +11127,7 @@
     "sv": "Vid aktivering av Magearnit",
     "uk": "Activating Magearnite",
     "vi": "Kích hoạt Magearnite",
-    "pl": "Activating Magearnite"
+    "pl": "Activating Magearnit"
   },
   {
     "dexNum": 801,
@@ -11157,7 +11157,7 @@
     "sv": "Vid avaktivering av Magearnit",
     "uk": "Deactivating Magearnite",
     "vi": "Vô Hiệu Hoá Magearnite",
-    "pl": "Deactivating Magearnite"
+    "pl": "Deactivating Magearnit"
   },
   {
     "dexNum": 801,
@@ -11187,7 +11187,7 @@
     "sv": "Vid avaktivering av Magearnit",
     "uk": "Deactivating Magearnite",
     "vi": "Vô Hiệu Hoá Magearnite",
-    "pl": "Deactivating Magearnite"
+    "pl": "Deactivating Magearnit"
   },
   {
     "dexNum": 807,
@@ -11217,7 +11217,7 @@
     "sv": "Vid aktivering av Zeraorit",
     "uk": "Activating Zeraorite",
     "vi": "Kích hoạt Zeraorite",
-    "pl": "Activating Zeraorite"
+    "pl": "Activating Zeraoratyt"
   },
   {
     "dexNum": 807,
@@ -11247,7 +11247,7 @@
     "sv": "Vid avaktivering av Zeraorit",
     "uk": "Deactivating Zeraorite",
     "vi": "Vô Hiệu Hoá Zeraorite",
-    "pl": "Deactivating Zeraorite"
+    "pl": "Deactivating Zeraoratyt"
   },
   {
     "dexNum": 809,
@@ -11276,7 +11276,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -11306,7 +11306,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -11336,7 +11336,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -11366,7 +11366,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -11396,7 +11396,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -11426,7 +11426,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -11456,7 +11456,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -11486,7 +11486,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -11516,7 +11516,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -11546,7 +11546,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -11576,7 +11576,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -11606,7 +11606,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -11636,7 +11636,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -11666,7 +11666,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -11696,7 +11696,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -11726,7 +11726,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -11756,7 +11756,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -11786,7 +11786,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -11816,7 +11816,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -11846,7 +11846,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -11876,7 +11876,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -11906,7 +11906,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -12116,7 +12116,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -12146,7 +12146,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -12176,7 +12176,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -12206,7 +12206,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -12236,7 +12236,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -12266,7 +12266,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -12296,7 +12296,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -12326,7 +12326,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -12356,7 +12356,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -12386,7 +12386,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -12416,7 +12416,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -12446,7 +12446,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -12476,7 +12476,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -12506,7 +12506,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -12536,7 +12536,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -12566,7 +12566,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -12596,7 +12596,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -12626,7 +12626,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -12656,7 +12656,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -12686,7 +12686,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -12716,7 +12716,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -12746,7 +12746,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -12776,7 +12776,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -12806,7 +12806,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -12836,7 +12836,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -12866,7 +12866,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -12896,7 +12896,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -12926,7 +12926,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -12957,7 +12957,7 @@
     "sv": "Vid aktivering av Falinksit",
     "uk": "Activating Falinksite",
     "vi": "Kích hoạt Falinksite",
-    "pl": "Activating Falinksite"
+    "pl": "Activating Falinksyt"
   },
   {
     "dexNum": 870,
@@ -12987,7 +12987,7 @@
     "sv": "Vid avaktivering av Falinksit",
     "uk": "Deactivating Falinksite",
     "vi": "Vô Hiệu Hoá Falinksite",
-    "pl": "Deactivating Falinksite"
+    "pl": "Deactivating Falinksyt"
   },
   {
     "dexNum": 875,
@@ -13136,7 +13136,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -13166,7 +13166,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -13196,7 +13196,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -13226,7 +13226,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -13256,7 +13256,7 @@
     "tl": "Activating Rusted Sword",
     "sv": "Vid aktivering av Rostigt svärd",
     "uk": "Activating Rusted Sword",
-    "vi": "Kích hoạt Rusted Sword",
+    "vi": "Kích hoạt Kiếm Rỉ Sét",
     "pl": "Activating Zardzewiały Miecz"
   },
   {
@@ -13286,7 +13286,7 @@
     "tl": "Deactivating Rusted Sword",
     "sv": "Vid avaktivering av Rostigt svärd",
     "uk": "Deactivating Rusted Sword",
-    "vi": "Vô Hiệu Hoá Rusted Sword",
+    "vi": "Vô Hiệu Hoá Kiếm Rỉ Sét",
     "pl": "Deactivating Zardzewiały Miecz"
   },
   {
@@ -13316,7 +13316,7 @@
     "tl": "Activating Rusted Shield",
     "sv": "Vid aktivering av Rostig sköld",
     "uk": "Activating Rusted Shield",
-    "vi": "Kích hoạt Rusted Shield",
+    "vi": "Kích hoạt Khiên Rỉ Sét",
     "pl": "Activating Zardzewiała Tarcza"
   },
   {
@@ -13346,7 +13346,7 @@
     "tl": "Deactivating Rusted Shield",
     "sv": "Vid avaktivering av Rostig sköld",
     "uk": "Deactivating Rusted Shield",
-    "vi": "Vô Hiệu Hoá Rusted Shield",
+    "vi": "Vô Hiệu Hoá Khiên Rỉ Sét",
     "pl": "Deactivating Zardzewiała Tarcza"
   },
   {
@@ -13406,7 +13406,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -13436,7 +13436,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -13466,7 +13466,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -13496,7 +13496,7 @@
     "tl": "Activating Max Mushrooms",
     "sv": "Vid aktivering av Maxsvampar",
     "uk": "Activating Max Mushrooms",
-    "vi": "Kích hoạt Max Mushrooms",
+    "vi": "Kích hoạt Nấm Max",
     "pl": "Activating Max Mushrooms"
   },
   {
@@ -13526,7 +13526,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -13556,7 +13556,7 @@
     "tl": "Deactivating Max Mushrooms",
     "sv": "Vid avaktivering av Maxsvampar",
     "uk": "Deactivating Max Mushrooms",
-    "vi": "Vô Hiệu Hoá Max Mushrooms",
+    "vi": "Vô Hiệu Hoá Nấm Max",
     "pl": "Deactivating Max Mushrooms"
   },
   {
@@ -13586,7 +13586,7 @@
     "tl": "Activating Icy Reins of Unity",
     "sv": "Vid aktivering av Förbindande istyglar",
     "uk": "Activating Icy Reins of Unity",
-    "vi": "Kích hoạt Icy Reins of Unity",
+    "vi": "Kích hoạt Dây Cưỡi Băng Giá",
     "pl": "Activating Icy Reins of Unity"
   },
   {
@@ -13616,7 +13616,7 @@
     "tl": "Activating Shadow Reins of Unity",
     "sv": "Vid aktivering av Förbindande skuggtyglar",
     "uk": "Activating Shadow Reins of Unity",
-    "vi": "Kích hoạt Shadow Reins of Unity",
+    "vi": "Kích hoạt Dây Cưỡi Bóng Đêm",
     "pl": "Activating Shadow Reins of Unity"
   },
   {
@@ -13646,7 +13646,7 @@
     "tl": "Deactivating Icy Reins of Unity",
     "sv": "Vid avaktivering av Förbindande istyglar",
     "uk": "Deactivating Icy Reins of Unity",
-    "vi": "Vô Hiệu Hoá Icy Reins of Unity",
+    "vi": "Vô Hiệu Hoá Dây Cưỡi Băng Giá",
     "pl": "Deactivating Icy Reins of Unity"
   },
   {
@@ -13676,7 +13676,7 @@
     "tl": "Deactivating Shadow Reins of Unity",
     "sv": "Vid avaktivering av Förbindande skuggtyglar",
     "uk": "Deactivating Shadow Reins of Unity",
-    "vi": "Vô Hiệu Hoá Shadow Reins of Unity",
+    "vi": "Vô Hiệu Hoá Dây Cưỡi Bóng Đêm",
     "pl": "Deactivating Shadow Reins of Unity"
   },
   {
@@ -13706,7 +13706,7 @@
     "tl": "Activating Reveal Glass",
     "sv": "Vid aktivering av Sanningspegel",
     "uk": "Activating Reveal Glass",
-    "vi": "Kích hoạt Reveal Glass",
+    "vi": "Kích hoạt Gương Phản Chiếu",
     "pl": "Activating Reveal Glass"
   },
   {
@@ -13736,7 +13736,7 @@
     "tl": "Deactivating Reveal Glass",
     "sv": "Vid avaktivering av Sanningspegel",
     "uk": "Deactivating Reveal Glass",
-    "vi": "Vô Hiệu Hoá Reveal Glass",
+    "vi": "Vô Hiệu Hoá Gương Phản Chiếu",
     "pl": "Deactivating Reveal Glass"
   },
   {
@@ -13767,7 +13767,7 @@
     "sv": "Vid aktivering av Scovillainit",
     "uk": "Activating Scovillainite",
     "vi": "Kích hoạt Scovillainite",
-    "pl": "Activating Scovillainite"
+    "pl": "Activating Scovillainit"
   },
   {
     "dexNum": 952,
@@ -13797,7 +13797,7 @@
     "sv": "Vid avaktivering av Scovillainit",
     "uk": "Deactivating Scovillainite",
     "vi": "Vô Hiệu Hoá Scovillainite",
-    "pl": "Deactivating Scovillainite"
+    "pl": "Deactivating Scovillainit"
   },
   {
     "dexNum": 964,
@@ -13887,7 +13887,7 @@
     "sv": "Vid aktivering av Glimmoranit",
     "uk": "Activating Glimmoranite",
     "vi": "Kích hoạt Glimmoranite",
-    "pl": "Activating Glimmoranite"
+    "pl": "Activating Glimmoranit"
   },
   {
     "dexNum": 970,
@@ -13917,7 +13917,7 @@
     "sv": "Vid avaktivering av Glimmoranit",
     "uk": "Deactivating Glimmoranite",
     "vi": "Vô Hiệu Hoá Glimmoranite",
-    "pl": "Deactivating Glimmoranite"
+    "pl": "Deactivating Glimmoranit"
   },
   {
     "dexNum": 978,
@@ -13947,7 +13947,7 @@
     "sv": "Vid aktivering av Tatsugirinit",
     "uk": "Activating Tatsugirinite",
     "vi": "Kích hoạt Tatsugirinite",
-    "pl": "Activating Tatsugirinite"
+    "pl": "Activating Tatsugiryt"
   },
   {
     "dexNum": 978,
@@ -13977,7 +13977,7 @@
     "sv": "Vid aktivering av Tatsugirinit",
     "uk": "Activating Tatsugirinite",
     "vi": "Kích hoạt Tatsugirinite",
-    "pl": "Activating Tatsugirinite"
+    "pl": "Activating Tatsugiryt"
   },
   {
     "dexNum": 978,
@@ -14007,7 +14007,7 @@
     "sv": "Vid aktivering av Tatsugirinit",
     "uk": "Activating Tatsugirinite",
     "vi": "Kích hoạt Tatsugirinite",
-    "pl": "Activating Tatsugirinite"
+    "pl": "Activating Tatsugiryt"
   },
   {
     "dexNum": 978,
@@ -14037,7 +14037,7 @@
     "sv": "Vid avaktivering av Tatsugirinit",
     "uk": "Deactivating Tatsugirinite",
     "vi": "Vô Hiệu Hoá Tatsugirinite",
-    "pl": "Deactivating Tatsugirinite"
+    "pl": "Deactivating Tatsugiryt"
   },
   {
     "dexNum": 978,
@@ -14067,7 +14067,7 @@
     "sv": "Vid avaktivering av Tatsugirinit",
     "uk": "Deactivating Tatsugirinite",
     "vi": "Vô Hiệu Hoá Tatsugirinite",
-    "pl": "Deactivating Tatsugirinite"
+    "pl": "Deactivating Tatsugiryt"
   },
   {
     "dexNum": 978,
@@ -14097,7 +14097,7 @@
     "sv": "Vid avaktivering av Tatsugirinit",
     "uk": "Deactivating Tatsugirinite",
     "vi": "Vô Hiệu Hoá Tatsugirinite",
-    "pl": "Deactivating Tatsugirinite"
+    "pl": "Deactivating Tatsugiryt"
   },
   {
     "dexNum": 998,
@@ -14127,7 +14127,7 @@
     "sv": "Vid aktivering av Baxcalibrit",
     "uk": "Activating Baxcalibrite",
     "vi": "Kích hoạt Baxcalibrite",
-    "pl": "Activating Baxcalibrite"
+    "pl": "Activating Baxcalibryt"
   },
   {
     "dexNum": 998,
@@ -14157,7 +14157,7 @@
     "sv": "Vid avaktivering av Baxcalibrit",
     "uk": "Deactivating Baxcalibrite",
     "vi": "Vô Hiệu Hoá Baxcalibrite",
-    "pl": "Deactivating Baxcalibrite"
+    "pl": "Deactivating Baxcalibryt"
   },
   {
     "dexNum": 1017,
@@ -14186,7 +14186,7 @@
     "tl": "Activating Wellspring Mask",
     "sv": "Vid aktivering av Källans mask",
     "uk": "Activating Wellspring Mask",
-    "vi": "Kích hoạt Wellspring Mask",
+    "vi": "Kích hoạt Mặt Nạ Thủy Tinh",
     "pl": "Activating Wellspring Mask"
   },
   {
@@ -14216,7 +14216,7 @@
     "tl": "Activating Hearthflame Mask",
     "sv": "Vid aktivering av Härdens mask",
     "uk": "Activating Hearthflame Mask",
-    "vi": "Kích hoạt Hearthflame Mask",
+    "vi": "Kích hoạt Mặt Nạ Hoả Tinh",
     "pl": "Activating Hearthflame Mask"
   },
   {
@@ -14246,7 +14246,7 @@
     "tl": "Activating Cornerstone Mask",
     "sv": "Vid aktivering av Hörnstenens mask",
     "uk": "Activating Cornerstone Mask",
-    "vi": "Kích hoạt Cornerstone Mask",
+    "vi": "Kích hoạt Mặt Nạ Sơn Tinh",
     "pl": "Activating Cornerstone Mask"
   },
   {
@@ -14277,7 +14277,7 @@
     "sv": "Genom terastallisering",
     "uk": "By Terastallizing",
     "vi": "Bằng cách Terastallizing",
-    "pl": "By Terastallizing"
+    "pl": "Podczas Terastalizacji"
   },
   {
     "dexNum": 1017,
@@ -14307,7 +14307,7 @@
     "sv": "När terastalliseringen tar slut",
     "uk": "When Terastallization runs out",
     "vi": "Khi Terastallization hết tác dụng",
-    "pl": "When Terastallization runs out"
+    "pl": "Gdy skończy się Terastalizacja"
   },
   {
     "dexNum": 1017,
@@ -14337,7 +14337,7 @@
     "sv": "Genom terastallisering",
     "uk": "By Terastallizing",
     "vi": "Bằng cách Terastallizing",
-    "pl": "By Terastallizing"
+    "pl": "Podczas Terastalizacji"
   },
   {
     "dexNum": 1017,
@@ -14367,7 +14367,7 @@
     "sv": "När terastalliseringen tar slut",
     "uk": "When Terastallization runs out",
     "vi": "Khi Terastallization hết tác dụng",
-    "pl": "When Terastallization runs out"
+    "pl": "Gdy skończy się Terastalizacja"
   },
   {
     "dexNum": 1017,
@@ -14397,7 +14397,7 @@
     "sv": "Genom terastallisering",
     "uk": "By Terastallizing",
     "vi": "Bằng cách Terastallizing",
-    "pl": "By Terastallizing"
+    "pl": "Podczas Terastalizacji"
   },
   {
     "dexNum": 1017,
@@ -14427,7 +14427,7 @@
     "sv": "När terastalliseringen tar slut",
     "uk": "When Terastallization runs out",
     "vi": "Khi Terastallization hết tác dụng",
-    "pl": "When Terastallization runs out"
+    "pl": "Gdy skończy się Terastalizacja"
   },
   {
     "dexNum": 1017,
@@ -14457,7 +14457,7 @@
     "sv": "Genom terastallisering",
     "uk": "By Terastallizing",
     "vi": "Bằng cách Terastallizing",
-    "pl": "By Terastallizing"
+    "pl": "Podczas Terastalizacji"
   },
   {
     "dexNum": 1017,
@@ -14487,7 +14487,7 @@
     "sv": "När terastalliseringen tar slut",
     "uk": "When Terastallization runs out",
     "vi": "Khi Terastallization hết tác dụng",
-    "pl": "When Terastallization runs out"
+    "pl": "Gdy skończy się Terastalizacja"
   },
   {
     "dexNum": 1017,
@@ -14516,7 +14516,7 @@
     "tl": "Deactivating Wellspring Mask",
     "sv": "Vid avaktivering av Källans mask",
     "uk": "Deactivating Wellspring Mask",
-    "vi": "Vô Hiệu Hoá Wellspring Mask",
+    "vi": "Vô Hiệu Hoá Mặt Nạ Thủy Tinh",
     "pl": "Deactivating Wellspring Mask"
   },
   {
@@ -14546,7 +14546,7 @@
     "tl": "Deactivating Hearthflame Mask",
     "sv": "Vid avaktivering av Härdens mask",
     "uk": "Deactivating Hearthflame Mask",
-    "vi": "Vô Hiệu Hoá Hearthflame Mask",
+    "vi": "Vô Hiệu Hoá Mặt Nạ Hoả Tinh",
     "pl": "Deactivating Hearthflame Mask"
   },
   {
@@ -14576,7 +14576,7 @@
     "tl": "Deactivating Cornerstone Mask",
     "sv": "Vid avaktivering av Hörnstenens mask",
     "uk": "Deactivating Cornerstone Mask",
-    "vi": "Vô Hiệu Hoá Cornerstone Mask",
+    "vi": "Vô Hiệu Hoá Mặt Nạ Sơn Tinh",
     "pl": "Deactivating Cornerstone Mask"
   },
   {
@@ -14637,7 +14637,7 @@
     "sv": "Genom terastallisering",
     "uk": "By Terastallizing",
     "vi": "Bằng cách Terastallizing",
-    "pl": "By Terastallizing"
+    "pl": "Podczas Terastalizacji"
   },
   {
     "dexNum": 1024,
@@ -14667,7 +14667,7 @@
     "sv": "När terastalliseringen tar slut",
     "uk": "When Terastallization runs out",
     "vi": "Khi Terastallization hết tác dụng",
-    "pl": "When Terastallization runs out"
+    "pl": "Gdy skończy się Terastalizacja"
   },
   {
     "dexNum": 2658,
@@ -14757,7 +14757,7 @@
     "sv": "Vid aktivering av Floettit",
     "uk": "Activating Floettite",
     "vi": "Kích hoạt Floettite",
-    "pl": "Activating Floettite"
+    "pl": "Activating Floettyt"
   },
   {
     "dexNum": 2670,
@@ -14787,7 +14787,7 @@
     "sv": "Vid avaktivering av Floettit",
     "uk": "Deactivating Floettite",
     "vi": "Vô Hiệu Hoá Floettite",
-    "pl": "Deactivating Floettite"
+    "pl": "Deactivating Floettyt"
   },
   {
     "dexNum": 4555,
