@@ -12361,6 +12361,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
         conditions: [],
       }),
     ],
+    eggTier: EggTier.EPIC,
     passives: {
       0: AbilityId.STAKEOUT,
       1: AbilityId.SUPER_LUCK,
