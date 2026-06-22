@@ -188,7 +188,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
     }),
     starter: SpeciesId.CHESPIN,
     evolutions: [new SpeciesEvolution({ speciesId: SpeciesId.CHESNAUGHT, level: 36 })],
-    passives: AbilityId.DAUNTLESS_SHIELD,
+    passives: AbilityId.ROUGH_SKIN,
     levelMoves: [
       [EVOLVE_MOVE, MoveId.NEEDLE_ARM],
       [1, MoveId.TACKLE],
@@ -293,7 +293,10 @@ export function initGenerationSix(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.CHESNAUGHTITE),
       }),
     ],
-    passives: AbilityId.DAUNTLESS_SHIELD,
+    passives: {
+      0: AbilityId.ROUGH_SKIN,
+      1: AbilityId.ROUGH_SKIN,
+    },
     levelMoves: [
       [RELEARN_MOVE, MoveId.BELLY_DRUM],
       [RELEARN_MOVE, MoveId.HAMMER_ARM],
@@ -368,7 +371,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
     starterCost: 3,
     evolutions: [new SpeciesEvolution({ speciesId: SpeciesId.BRAIXEN, level: 16 })],
     eggTier: EggTier.COMMON,
-    passives: AbilityId.FLUFFY,
+    passives: AbilityId.NEUROFORCE,
     levelMoves: [
       [1, MoveId.SCRATCH],
       [1, MoveId.TAIL_WHIP],
@@ -481,7 +484,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
     }),
     starter: SpeciesId.FENNEKIN,
     evolutions: [new SpeciesEvolution({ speciesId: SpeciesId.DELPHOX, level: 36 })],
-    passives: AbilityId.PSYCHIC_SURGE,
+    passives: AbilityId.NEUROFORCE,
     levelMoves: [
       [1, MoveId.SCRATCH],
       [1, MoveId.TAIL_WHIP],
@@ -597,7 +600,10 @@ export function initGenerationSix(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.DELPHOXITE),
       }),
     ],
-    passives: AbilityId.PSYCHIC_SURGE,
+    passives: {
+      0: AbilityId.NEUROFORCE,
+      1: AbilityId.NEUROFORCE,
+    },
     levelMoves: [
       [RELEARN_MOVE, MoveId.SHADOW_BALL],
       [RELEARN_MOVE, MoveId.FUTURE_SIGHT],
@@ -895,7 +901,10 @@ export function initGenerationSix(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.GRENINJITE),
       }),
     ],
-    passives: AbilityId.STAKEOUT,
+    passives: {
+      0: AbilityId.STAKEOUT,
+      1: AbilityId.LEVITATE,
+    },
     levelMoves: [
       [RELEARN_MOVE, MoveId.HAZE],
       [RELEARN_MOVE, MoveId.NIGHT_SLASH],
@@ -3078,7 +3087,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
     starterCost: 2,
     evolutions: [new SpeciesEvolution({ speciesId: SpeciesId.PYROAR, level: 35 })],
     eggTier: EggTier.COMMON,
-    passives: AbilityId.DROUGHT,
+    passives: AbilityId.BLAZE,
     levelMoves: [
       [1, MoveId.TACKLE],
       [1, MoveId.LEER],
@@ -3244,7 +3253,10 @@ export function initGenerationSix(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.PYROARITE),
       }),
     ],
-    passives: AbilityId.DROUGHT,
+    passives: {
+      0: AbilityId.BEAST_BOOST,
+      1: AbilityId.INTIMIDATE,
+    },
     levelMoves: [
       [RELEARN_MOVE, MoveId.HYPER_BEAM],
       [1, MoveId.TACKLE],
@@ -4680,7 +4692,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       }),
     ],
     eggTier: EggTier.COMMON,
-    passives: AbilityId.PRANKSTER,
+    passives: AbilityId.FLUFFY,
     levelMoves: [
       [RELEARN_MOVE, MoveId.TELEPORT],
       [1, MoveId.SCRATCH],
@@ -4897,6 +4909,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
     passives: {
       0: AbilityId.FUR_COAT,
       1: AbilityId.NEUROFORCE,
+      2: AbilityId.PSYCHIC_SURGE,
     },
     levelMoves: [
       [RELEARN_MOVE, MoveId.TELEPORT],
@@ -5212,7 +5225,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       }),
     ],
     passives: {
-      0: AbilityId.SHARPNESS,
+      0: AbilityId.BATTLE_ARMOR,
       1: AbilityId.SHARPNESS,
     },
     levelMoves: [
@@ -5622,7 +5635,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       }),
     ],
     eggTier: EggTier.COMMON,
-    passives: AbilityId.SHADOW_SHIELD,
+    passives: AbilityId.GOOEY,
     levelMoves: [
       [1, MoveId.TACKLE],
       [1, MoveId.PECK],
@@ -5794,7 +5807,10 @@ export function initGenerationSix(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.MALAMARITE),
       }),
     ],
-    passives: AbilityId.SHADOW_SHIELD,
+    passives: {
+      0: AbilityId.PSYCHIC_SURGE,
+      1: AbilityId.PSYCHIC_SURGE,
+    },
     levelMoves: [
       [1, MoveId.REVERSAL],
       [1, MoveId.TACKLE],
@@ -6039,7 +6055,10 @@ export function initGenerationSix(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.BARBARACITE),
       }),
     ],
-    passives: AbilityId.SAP_SIPPER,
+    passives: {
+      0: AbilityId.SAP_SIPPER,
+      1: AbilityId.NO_GUARD,
+    },
     levelMoves: [
       [1, MoveId.SCRATCH],
       [1, MoveId.SAND_ATTACK],
@@ -6276,7 +6295,10 @@ export function initGenerationSix(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.DRAGALGITE),
       }),
     ],
-    passives: AbilityId.REGENERATOR,
+    passives: {
+      0: AbilityId.TOXIC_CHAIN,
+      1: AbilityId.ADAPTABILITY,
+    },
     levelMoves: [
       [EVOLVE_MOVE, MoveId.TWISTER],
       [1, MoveId.TACKLE],
@@ -6337,7 +6359,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
     starterCost: 3,
     evolutions: [new SpeciesEvolution({ speciesId: SpeciesId.CLAWITZER, level: 37 })],
     eggTier: EggTier.COMMON,
-    passives: AbilityId.PROTEAN,
+    passives: AbilityId.QUICK_DRAW,
     levelMoves: [
       [1, MoveId.WATER_GUN],
       [1, MoveId.SPLASH],
@@ -6442,7 +6464,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
     }),
     starter: SpeciesId.CLAUNCHER,
     evolutions: [],
-    passives: AbilityId.PROTEAN,
+    passives: AbilityId.DRAGONS_MAW,
     levelMoves: [
       [RELEARN_MOVE, MoveId.DRAGON_PULSE],
       [1, MoveId.WATER_GUN],
@@ -6514,7 +6536,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       }),
     ],
     eggTier: EggTier.COMMON,
-    passives: AbilityId.PROTEAN,
+    passives: AbilityId.FLARE_BOOST,
     levelMoves: [
       [1, MoveId.TAIL_WHIP],
       [1, MoveId.MUD_SLAP],
@@ -6614,7 +6636,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
     }),
     starter: SpeciesId.HELIOPTILE,
     evolutions: [],
-    passives: AbilityId.PROTEAN,
+    passives: AbilityId.FLARE_BOOST,
     levelMoves: [
       [RELEARN_MOVE, MoveId.SHED_TAIL],
       [1, MoveId.TAIL_WHIP],
@@ -6694,7 +6716,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       }),
     ],
     eggTier: EggTier.RARE,
-    passives: AbilityId.SHEER_FORCE,
+    passives: AbilityId.DRAGONIZE,
     levelMoves: [
       [1, MoveId.TACKLE],
       [1, MoveId.TAIL_WHIP],
@@ -6809,7 +6831,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
     }),
     starter: SpeciesId.TYRUNT,
     evolutions: [],
-    passives: AbilityId.SHEER_FORCE,
+    passives: AbilityId.DRAGONIZE,
     levelMoves: [
       [1, MoveId.TACKLE],
       [1, MoveId.TAIL_WHIP],
@@ -7233,7 +7255,10 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       }),
     ],
     eggTier: EggTier.RARE,
-    passives: AbilityId.MOXIE,
+    passives: {
+      0: AbilityId.STAMINA,
+      1: AbilityId.STAMINA,
+    },
     levelMoves: [
       [1, MoveId.TACKLE],
       [1, MoveId.DETECT],
@@ -9455,6 +9480,8 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       3: AbilityId.TERAFORM_ZERO,
       4: AbilityId.TERAFORM_ZERO,
       5: AbilityId.TERAFORM_ZERO,
+      6: AbilityId.MOLD_BREAKER,
+      7: AbilityId.MOLD_BREAKER,
     },
     levelMoves: [
       [RELEARN_MOVE, MoveId.CAMOUFLAGE],
@@ -10161,7 +10188,10 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       }),
     ],
     eggTier: EggTier.EPIC,
-    passives: AbilityId.MAGIC_GUARD,
+    passives: {
+      0: AbilityId.MAGIC_GUARD,
+      1: AbilityId.MAGIC_GUARD,
+    },
     levelMoves: [
       [1, MoveId.VINE_WHIP],
       [1, MoveId.TACKLE],

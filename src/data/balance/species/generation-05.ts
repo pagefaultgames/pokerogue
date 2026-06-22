@@ -651,7 +651,10 @@ export function initGenerationFive(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.EMBOARITE),
       }),
     ],
-    passives: AbilityId.ROCK_HEAD,
+    passives: {
+      0: AbilityId.ROCK_HEAD,
+      1: AbilityId.MAGIC_GUARD,
+    },
     levelMoves: [
       [RELEARN_MOVE, MoveId.HAMMER_ARM],
       [1, MoveId.TACKLE],
@@ -3177,7 +3180,10 @@ export function initGenerationFive(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.EXCADRITE),
       }),
     ],
-    passives: AbilityId.STURDY,
+    passives: {
+      0: AbilityId.STURDY,
+      1: AbilityId.MOLD_BREAKER,
+    },
     levelMoves: [
       [RELEARN_MOVE, MoveId.ROTOTILLER],
       [EVOLVE_MOVE, MoveId.HORN_DRILL],
@@ -4552,7 +4558,10 @@ export function initGenerationFive(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.SCOLIPITE),
       }),
     ],
-    passives: AbilityId.STAMINA,
+    passives: {
+      0: AbilityId.STAMINA,
+      1: AbilityId.SPEED_BOOST,
+    },
     levelMoves: [
       [EVOLVE_MOVE, MoveId.BATON_PASS],
       [1, MoveId.DEFENSE_CURL],
@@ -5032,8 +5041,8 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     evolutions: [],
     eggTier: EggTier.RARE,
     passives: {
-      0: AbilityId.ROCK_HEAD,
-      1: AbilityId.RECKLESS,
+      0: AbilityId.MOXIE,
+      1: AbilityId.MOXIE,
     },
     levelMoves: [
       [RELEARN_MOVE, MoveId.UPROAR],
@@ -6123,7 +6132,10 @@ export function initGenerationFive(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.SCRAFTINITE),
       }),
     ],
-    passives: AbilityId.UNBURDEN,
+    passives: {
+      0: AbilityId.UNBURDEN,
+      1: AbilityId.MOXIE,
+    },
     levelMoves: [
       [RELEARN_MOVE, MoveId.PROTECT],
       [1, MoveId.HEADBUTT],
@@ -10109,7 +10121,10 @@ export function initGenerationFive(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.EELEKTROSSITE),
       }),
     ],
-    passives: AbilityId.POISON_HEAL,
+    passives: {
+      0: AbilityId.POISON_HEAL,
+      1: AbilityId.POISON_HEAL,
+    },
     levelMoves: [
       [1, MoveId.HEADBUTT],
       [1, MoveId.ION_DELUGE],
@@ -10598,7 +10613,10 @@ export function initGenerationFive(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.CHANDELURITE),
       }),
     ],
-    passives: AbilityId.SHADOW_TAG,
+    passives: {
+      0: AbilityId.SHADOW_TAG,
+      1: AbilityId.SHADOW_TAG,
+    },
     levelMoves: [
       [1, MoveId.EMBER],
       [1, MoveId.ASTONISH],
@@ -10656,7 +10674,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     starterCost: 4,
     evolutions: [new SpeciesEvolution({ speciesId: SpeciesId.FRAXURE, level: 38 })],
     eggTier: EggTier.RARE,
-    passives: AbilityId.OWN_TEMPO,
+    passives: AbilityId.SHARPNESS,
     levelMoves: [
       [RELEARN_MOVE, MoveId.FOCUS_ENERGY],
       [RELEARN_MOVE, MoveId.LASER_FOCUS],
@@ -10777,7 +10795,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     }),
     starter: SpeciesId.AXEW,
     evolutions: [new SpeciesEvolution({ speciesId: SpeciesId.HAXORUS, level: 48 })],
-    passives: AbilityId.OWN_TEMPO,
+    passives: AbilityId.SHARPNESS,
     levelMoves: [
       [RELEARN_MOVE, MoveId.FOCUS_ENERGY],
       [RELEARN_MOVE, MoveId.LASER_FOCUS],
@@ -10831,7 +10849,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     }),
     starter: SpeciesId.AXEW,
     evolutions: [],
-    passives: AbilityId.OWN_TEMPO,
+    passives: AbilityId.SHARPNESS,
     levelMoves: [
       [RELEARN_MOVE, MoveId.FOCUS_ENERGY],
       [RELEARN_MOVE, MoveId.LASER_FOCUS],
@@ -11300,7 +11318,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     }),
     starter: SpeciesId.SHELMET,
     evolutions: [],
-    passives: AbilityId.PROTEAN,
+    passives: AbilityId.TINTED_LENS,
     levelMoves: [
       [RELEARN_MOVE, MoveId.ME_FIRST],
       [1, MoveId.ABSORB],
@@ -11370,7 +11388,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     starterCost: 3,
     evolutions: [],
     eggTier: EggTier.COMMON,
-    passives: AbilityId.STORM_DRAIN,
+    passives: AbilityId.WATER_ABSORB,
     levelMoves: [
       [1, MoveId.TACKLE],
       [1, MoveId.WATER_GUN],
@@ -11668,7 +11686,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     starterCost: 4,
     evolutions: [],
     eggTier: EggTier.RARE,
-    passives: AbilityId.INTIMIDATE,
+    passives: AbilityId.DRAGONIZE,
     levelMoves: [
       [1, MoveId.SCRATCH],
       [1, MoveId.LEER],
@@ -11987,7 +12005,10 @@ export function initGenerationFive(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.GOLURKITE),
       }),
     ],
-    passives: AbilityId.SHADOW_SHIELD,
+    passives: {
+      0: AbilityId.SHADOW_SHIELD,
+      1: AbilityId.SHADOW_SHIELD,
+    },
     levelMoves: [
       [EVOLVE_MOVE, MoveId.HEAVY_SLAM],
       [1, MoveId.POUND],
@@ -12718,7 +12739,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     starterCost: 3,
     evolutions: [],
     eggTier: EggTier.RARE,
-    passives: AbilityId.CONTRARY,
+    passives: AbilityId.SPICY_SPRAY,
     levelMoves: [
       [1, MoveId.BIND],
       [1, MoveId.TACKLE],
@@ -15370,11 +15391,11 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     ],
     eggTier: EggTier.EPIC,
     passives: {
-      0: AbilityId.PROTEAN,
-      1: AbilityId.PROTEAN,
-      2: AbilityId.PROTEAN,
-      3: AbilityId.PROTEAN,
-      4: AbilityId.PROTEAN,
+      0: AbilityId.HEATPROOF,
+      1: AbilityId.HEATPROOF,
+      2: AbilityId.HEATPROOF,
+      3: AbilityId.HEATPROOF,
+      4: AbilityId.HEATPROOF,
     },
     levelMoves: [
       [RELEARN_MOVE, MoveId.FELL_STINGER],

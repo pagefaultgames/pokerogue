@@ -267,7 +267,10 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.MEGANIUMITE),
       }),
     ],
-    passives: AbilityId.THICK_FAT,
+    passives: {
+      0: AbilityId.THICK_FAT,
+      1: AbilityId.THICK_FAT,
+    },
     levelMoves: [
       [RELEARN_MOVE, MoveId.PETAL_BLIZZARD],
       [EVOLVE_MOVE, MoveId.PETAL_DANCE],
@@ -837,7 +840,10 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.FERALIGITE),
       }),
     ],
-    passives: AbilityId.STRONG_JAW,
+    passives: {
+      0: AbilityId.STRONG_JAW,
+      1: AbilityId.STRONG_JAW,
+    },
     levelMoves: [
       [1, MoveId.SCRATCH],
       [1, MoveId.LEER],
@@ -1994,7 +2000,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
     ],
     eggTier: EggTier.RARE,
     passives: {
-      0: AbilityId.ELECTRIC_SURGE,
+      0: AbilityId.TRANSISTOR,
       1: AbilityId.STURDY,
     },
     levelMoves: [
@@ -8921,7 +8927,10 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       }),
     ],
     eggTier: EggTier.RARE,
-    passives: AbilityId.TOUGH_CLAWS,
+    passives: {
+      0: AbilityId.TOUGH_CLAWS,
+      1: AbilityId.TOUGH_CLAWS,
+    },
     levelMoves: [
       [1, MoveId.LEER],
       [1, MoveId.PECK],

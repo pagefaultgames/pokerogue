@@ -4284,8 +4284,8 @@ export function initGenerationEight(): SpeciesDataMapConfig {
     ],
     eggTier: EggTier.COMMON,
     passives: {
-      0: AbilityId.SHADOW_SHIELD,
-      1: AbilityId.SHADOW_SHIELD,
+      0: AbilityId.WATER_ABSORB,
+      1: AbilityId.STURDY,
     },
     levelMoves: [
       [1, MoveId.ABSORB],
@@ -4427,8 +4427,8 @@ export function initGenerationEight(): SpeciesDataMapConfig {
     starter: SpeciesId.SINISTEA,
     evolutions: [],
     passives: {
-      0: AbilityId.SHADOW_SHIELD,
-      1: AbilityId.SHADOW_SHIELD,
+      0: AbilityId.WATER_ABSORB,
+      1: AbilityId.STURDY,
     },
     levelMoves: [
       [EVOLVE_MOVE, MoveId.TEATIME],
@@ -6405,7 +6405,10 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       }),
     ],
     eggTier: EggTier.RARE,
-    passives: AbilityId.DAUNTLESS_SHIELD,
+    passives: {
+      0: AbilityId.DAUNTLESS_SHIELD,
+      1: AbilityId.DAUNTLESS_SHIELD,
+    },
     levelMoves: [
       [1, MoveId.TACKLE],
       [1, MoveId.PROTECT],
@@ -12233,7 +12236,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
     starterCost: 6,
     evolutions: [],
     eggTier: EggTier.EPIC,
-    passives: AbilityId.DARK_AURA,
+    passives: AbilityId.SHADOW_SHIELD,
     levelMoves: [
       [1, MoveId.GUST],
       [1, MoveId.PAYBACK],
@@ -14155,7 +14158,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
     }),
     starter: SpeciesId.HISUI_BASCULIN,
     starterCost: 4,
-    passives: AbilityId.SUPREME_OVERLORD,
+    passives: AbilityId.RECKLESS,
     evolutions: [
       // TODO: Uncomment evo delay when different evo condition is implemented
       new SpeciesFormEvolution({
@@ -14883,7 +14886,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
     }),
     starter: SpeciesId.ROWLET,
     evolutions: [],
-    passives: AbilityId.SNIPER,
+    passives: AbilityId.SUPER_LUCK,
     levelMoves: [
       [RELEARN_MOVE, MoveId.U_TURN],
       [RELEARN_MOVE, MoveId.LEAF_STORM],

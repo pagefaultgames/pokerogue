@@ -984,7 +984,10 @@ export function initGenerationFour(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.STARAPTITE),
       }),
     ],
-    passives: AbilityId.ROCK_HEAD,
+    passives: {
+      0: AbilityId.ROCK_HEAD,
+      1: AbilityId.ROCK_HEAD,
+    },
     levelMoves: [
       [EVOLVE_MOVE, MoveId.CLOSE_COMBAT],
       [1, MoveId.TACKLE],
@@ -4084,7 +4087,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
     ],
     passives: {
       0: AbilityId.ADAPTABILITY,
-      1: AbilityId.ADAPTABILITY,
+      1: AbilityId.SUPER_LUCK,
     },
     levelMoves: [
       [RELEARN_MOVE, MoveId.MACH_PUNCH],
@@ -5925,7 +5928,8 @@ export function initGenerationFour(): SpeciesDataMapConfig {
     ],
     passives: {
       0: AbilityId.ARENA_TRAP,
-      1: AbilityId.SAND_RUSH,
+      1: AbilityId.MOLD_BREAKER,
+      2: AbilityId.LEVITATE,
     },
     levelMoves: [
       [RELEARN_MOVE, MoveId.DRAGON_PULSE],
@@ -6358,6 +6362,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
     passives: {
       0: AbilityId.MINDS_EYE,
       1: AbilityId.MINDS_EYE,
+      2: AbilityId.MEGA_LAUNCHER,
     },
     levelMoves: [
       [RELEARN_MOVE, MoveId.DARK_PULSE],
@@ -10036,7 +10041,10 @@ export function initGenerationFour(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.FROSLASSITE),
       }),
     ],
-    passives: AbilityId.SNOW_WARNING,
+    passives: {
+      0: AbilityId.DAZZLING,
+      1: AbilityId.QUEENLY_MAJESTY,
+    },
     levelMoves: [
       [RELEARN_MOVE, MoveId.ICE_BEAM],
       [EVOLVE_MOVE, MoveId.HEX],
@@ -11343,7 +11351,10 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       }),
     ],
     eggTier: EggTier.EPIC,
-    passives: AbilityId.FILTER,
+    passives: {
+      0: AbilityId.FILTER,
+      1: AbilityId.FILTER,
+    },
     levelMoves: [
       [1, MoveId.LEER],
       [1, MoveId.FIRE_SPIN],
@@ -12204,7 +12215,10 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       }),
     ],
     eggTier: EggTier.EPIC,
-    passives: AbilityId.UNNERVE,
+    passives: {
+      0: AbilityId.UNNERVE,
+      1: AbilityId.UNNERVE,
+    },
     levelMoves: [
       [1, MoveId.DISABLE],
       [1, MoveId.CONFUSION],

@@ -1323,7 +1323,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
     starterCost: 1,
     evolutions: [new SpeciesEvolution({ speciesId: SpeciesId.KAKUNA, level: 7 })],
     eggTier: EggTier.COMMON,
-    passives: AbilityId.POISON_TOUCH,
+    passives: AbilityId.POISON_POINT,
     levelMoves: [
       [1, MoveId.POISON_STING],
       [1, MoveId.STRING_SHOT],
@@ -1573,7 +1573,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
     starterCost: 1,
     evolutions: [new SpeciesEvolution({ speciesId: SpeciesId.PIDGEOTTO, level: 18 })],
     eggTier: EggTier.COMMON,
-    passives: AbilityId.SHEER_FORCE,
+    passives: AbilityId.GALE_WINGS,
     levelMoves: [
       [1, MoveId.TACKLE],
       [1, MoveId.GROWL],
@@ -1669,7 +1669,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
     }),
     starter: SpeciesId.PIDGEY,
     evolutions: [new SpeciesEvolution({ speciesId: SpeciesId.PIDGEOT, level: 36 })],
-    passives: AbilityId.SHEER_FORCE,
+    passives: AbilityId.GALE_WINGS,
     levelMoves: [
       [1, MoveId.TACKLE],
       [1, MoveId.GROWL],
@@ -2609,7 +2609,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       }),
     ],
     passives: {
-      0: AbilityId.ELECTRIC_SURGE,
+      0: AbilityId.TRANSISTOR,
       1: AbilityId.STURDY,
       2: AbilityId.COSTAR,
       3: AbilityId.IRON_FIST,
@@ -2883,7 +2883,11 @@ export function initGenerationOne(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.RAICHUNITE_Y),
       }),
     ],
-    passives: AbilityId.ELECTRIC_SURGE,
+    passives: {
+      0: AbilityId.TRANSISTOR,
+      1: AbilityId.MAGIC_GUARD,
+      2: AbilityId.TERAVOLT,
+    },
     levelMoves: [
       [EVOLVE_MOVE, MoveId.THUNDER_PUNCH],
       [1, MoveId.TAIL_WHIP],
@@ -2950,7 +2954,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
     starterCost: 2,
     evolutions: [new SpeciesEvolution({ speciesId: SpeciesId.SANDSLASH, level: 22 })],
     eggTier: EggTier.COMMON,
-    passives: AbilityId.TOUGH_CLAWS,
+    passives: AbilityId.SAND_STREAM,
     levelMoves: [
       [1, MoveId.SCRATCH],
       [1, MoveId.DEFENSE_CURL],
@@ -3074,7 +3078,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
     }),
     starter: SpeciesId.SANDSHREW,
     evolutions: [],
-    passives: AbilityId.TOUGH_CLAWS,
+    passives: AbilityId.SAND_STREAM,
     levelMoves: [
       [EVOLVE_MOVE, MoveId.CRUSH_CLAW],
       [1, MoveId.SCRATCH],
@@ -3902,7 +3906,10 @@ export function initGenerationOne(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.CLEFABLITE),
       }),
     ],
-    passives: AbilityId.ANALYTIC,
+    passives: {
+      0: AbilityId.NEUROFORCE,
+      1: AbilityId.UNAWARE,
+    },
     levelMoves: [
       [EVOLVE_MOVE, MoveId.DISARMING_VOICE],
       [1, MoveId.POUND],
@@ -7285,7 +7292,10 @@ export function initGenerationOne(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.VICTREEBELITE),
       }),
     ],
-    passives: AbilityId.FLOWER_GIFT,
+    passives: {
+      0: AbilityId.FLOWER_GIFT,
+      1: AbilityId.TOXIC_DEBRIS,
+    },
     levelMoves: [
       [RELEARN_MOVE, MoveId.SWORDS_DANCE],
       [RELEARN_MOVE, MoveId.TOXIC_SPIKES],
@@ -7777,7 +7787,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
     starterCost: 2,
     evolutions: [new SpeciesEvolution({ speciesId: SpeciesId.RAPIDASH, level: 40 })],
     eggTier: EggTier.COMMON,
-    passives: AbilityId.MAGIC_GUARD,
+    passives: AbilityId.FIRE_MANE,
     levelMoves: [
       [1, MoveId.TACKLE],
       [1, MoveId.GROWL],
@@ -7874,7 +7884,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
     }),
     starter: SpeciesId.PONYTA,
     evolutions: [],
-    passives: AbilityId.MAGIC_GUARD,
+    passives: AbilityId.FIRE_MANE,
     levelMoves: [
       [RELEARN_MOVE, MoveId.MEGAHORN],
       [EVOLVE_MOVE, MoveId.SMART_STRIKE],
@@ -11024,7 +11034,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       }),
     ],
     eggTier: EggTier.RARE,
-    passives: AbilityId.CHEEK_POUCH,
+    passives: AbilityId.POISON_HEAL,
     levelMoves: [
       [1, MoveId.ACID],
       [1, MoveId.LICK],
@@ -12526,7 +12536,10 @@ export function initGenerationOne(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.STARMINITE),
       }),
     ],
-    passives: AbilityId.REGENERATOR,
+    passives: {
+      0: AbilityId.REGENERATOR,
+      1: AbilityId.REGENERATOR,
+    },
     levelMoves: [
       [1, MoveId.TACKLE],
       [1, MoveId.HARDEN],
@@ -16188,7 +16201,10 @@ export function initGenerationOne(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.DRAGONINITE),
       }),
     ],
-    passives: AbilityId.AERILATE,
+    passives: {
+      0: AbilityId.AERILATE,
+      1: AbilityId.AERILATE,
+    },
     levelMoves: [
       [RELEARN_MOVE, MoveId.FIRE_PUNCH],
       [RELEARN_MOVE, MoveId.THUNDER_PUNCH],

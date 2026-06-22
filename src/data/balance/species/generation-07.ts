@@ -233,7 +233,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
     }),
     starter: SpeciesId.ROWLET,
     evolutions: [],
-    passives: AbilityId.SNIPER,
+    passives: AbilityId.TINTED_LENS,
     levelMoves: [
       [RELEARN_MOVE, MoveId.SPITE],
       [RELEARN_MOVE, MoveId.U_TURN],
@@ -1400,7 +1400,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       }),
     ],
     eggTier: EggTier.COMMON,
-    passives: AbilityId.WATER_BUBBLE,
+    passives: AbilityId.OPPORTUNIST,
     levelMoves: [
       [RELEARN_MOVE, MoveId.SLAM],
       [1, MoveId.VISE_GRIP],
@@ -1570,7 +1570,10 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.CRABOMINITE),
       }),
     ],
-    passives: AbilityId.WATER_BUBBLE,
+    passives: {
+      0: AbilityId.TOUGH_CLAWS,
+      1: AbilityId.TOUGH_CLAWS,
+    },
     levelMoves: [
       [RELEARN_MOVE, MoveId.SLAM],
       [EVOLVE_MOVE, MoveId.ICE_PUNCH],
@@ -2283,7 +2286,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
     passives: {
       0: AbilityId.STURDY,
       1: AbilityId.INTIMIDATE,
-      2: AbilityId.STAKEOUT,
+      2: AbilityId.DEFIANT,
     },
     levelMoves: [
       [1, MoveId.TACKLE],
@@ -4450,7 +4453,10 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.GOLISOPITE),
       }),
     ],
-    passives: AbilityId.REGENERATOR,
+    passives: {
+      0: AbilityId.REGENERATOR,
+      1: AbilityId.REGENERATOR,
+    },
     levelMoves: [
       [EVOLVE_MOVE, MoveId.FIRST_IMPRESSION],
       [1, MoveId.SAND_ATTACK],
@@ -6820,7 +6826,10 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       }),
     ],
     eggTier: EggTier.RARE,
-    passives: AbilityId.THICK_FAT,
+    passives: {
+      0: AbilityId.FLUFFY,
+      1: AbilityId.ADAPTABILITY,
+    },
     levelMoves: [
       [RELEARN_MOVE, MoveId.AMNESIA],
       [1, MoveId.ECHOED_VOICE],
@@ -8273,7 +8282,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
     starterCost: 6,
     evolutions: [],
     eggTier: EggTier.EPIC,
-    passives: AbilityId.MOXIE,
+    passives: AbilityId.IRON_FIST,
     levelMoves: [
       [RELEARN_MOVE, MoveId.ICE_PUNCH],
       [RELEARN_MOVE, MoveId.THUNDER_PUNCH],
@@ -9055,7 +9064,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       0: AbilityId.BEAST_BOOST,
       1: AbilityId.FULL_METAL_BODY,
       2: AbilityId.SHADOW_SHIELD,
-      3: AbilityId.UNNERVE,
+      3: AbilityId.DAZZLING,
     },
     levelMoves: [
       [RELEARN_MOVE, MoveId.MORNING_SUN],
@@ -9309,6 +9318,8 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
     passives: {
       0: AbilityId.MIRROR_ARMOR,
       1: AbilityId.MIRROR_ARMOR,
+      2: AbilityId.MIRROR_ARMOR,
+      3: AbilityId.MIRROR_ARMOR,
     },
     levelMoves: [
       [RELEARN_MOVE, MoveId.TRICK],
@@ -10102,7 +10113,10 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       }),
     ],
     eggTier: EggTier.EPIC,
-    passives: AbilityId.TOUGH_CLAWS,
+    passives: {
+      0: AbilityId.IRON_FIST,
+      1: AbilityId.IRON_FIST,
+    },
     levelMoves: [
       [1, MoveId.SCRATCH],
       [1, MoveId.SPARK],
@@ -10604,7 +10618,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
     }),
     starter: SpeciesId.PIKACHU,
     evolutions: [],
-    passives: AbilityId.ELECTRIC_SURGE,
+    passives: AbilityId.TRANSISTOR,
     levelMoves: [
       [EVOLVE_MOVE, MoveId.PSYCHIC],
       [1, MoveId.TAIL_WHIP],
