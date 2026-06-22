@@ -720,7 +720,7 @@ function doesMoveMatchOffensiveCategory(move: Move, category: MoveCategory): boo
  * @returns Whether no moves in the moveset would benefit from the stat stage change described by `attr`
  */
 function removeSelfStatBoost(pokemon: Pokemon, attr: StatStageChangeAttr | undefined, moveId: MoveId): boolean {
-  // Allow attr to be undefined to make the invocation site
+  // Allow attr to be undefined to make the invocation site cleaner
   if (attr == null) {
     return false;
   }
