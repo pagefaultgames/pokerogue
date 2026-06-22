@@ -216,12 +216,12 @@ const convertCustomPokemonDataTypes: SessionSaveMigrator = {
   version: "1.12.0.0",
   migrate: (data: SessionSaveData): void => {
     for (const p of data.party) {
-      if (p.customPokemonData.types.length > 0) {
+      if (p.customPokemonData?.types?.length > 0) {
         p.customPokemonData.types = p.customPokemonData.types.map(t =>
           (t as PokemonType) === PokemonType.UNKNOWN ? null : t,
         );
       }
-      if (p.fusionCustomPokemonData.types.length > 0) {
+      if (p.fusionCustomPokemonData?.types?.length > 0) {
         p.fusionCustomPokemonData.types = p.fusionCustomPokemonData.types.map(t =>
           (t as PokemonType) === PokemonType.UNKNOWN ? null : t,
         );
