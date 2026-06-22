@@ -4921,9 +4921,13 @@ export const trainerConfigs: TrainerConfigs = {
     .setInstantTera(4) // Tera Rock Regirock / Ice Regice / Steel Registeel
     .setGenModifiersFunc(party => {
       // 1 Stack Mystical Rock Gigalith
-      const weather = party[0];
-      const mysticalRock = modifierTypes.MYSTICAL_ROCK().withIdFromFunc(modifierTypes.MYSTICAL_ROCK);
-      return [mysticalRock.newModifier(weather)];
+      const gigalith = party[0];
+      return [
+        modifierTypes
+          .MYSTICAL_ROCK()
+          .withIdFromFunc(modifierTypes.MYSTICAL_ROCK)
+          .newModifier(gigalith) as PokemonHeldItemModifier,
+      ];
     }),
   [TrainerType.WALLACE]: new TrainerConfig(++t)
     .initForChampion(true)
@@ -4980,18 +4984,23 @@ export const trainerConfigs: TrainerConfigs = {
     .setInstantTera(5) // Tera Water Milotic
     .setGenModifiersFunc(party => {
       // 1 Stack Mystical Rock Pelipper, Toxic Orb Milotic
-      const modifiers: PokemonHeldItemModifier[] = [];
-      const weather = party[0];
-      const mysticalRock = modifierTypes.MYSTICAL_ROCK().withIdFromFunc(modifierTypes.MYSTICAL_ROCK);
-      modifiers.push(mysticalRock.newModifier(weather));
+      const pelipper = party[0];
       const milotic = party[5];
+      const modifiers: PokemonHeldItemModifier[] = [];
+      const pelipperRock = modifierTypes
+        .MYSTICAL_ROCK()
+        .withIdFromFunc(modifierTypes.MYSTICAL_ROCK)
+        .newModifier(pelipper) as PokemonHeldItemModifier;
+      if (pelipperRock) {
+        modifiers.push(pelipperRock);
+      }
       if (milotic?.hasAbility(AbilityId.MARVEL_SCALE, false, true)) {
-        const modifier = modifierTypes
+        const miloticOrb = modifierTypes
           .TOXIC_ORB()
           .withIdFromFunc(modifierTypes.TOXIC_ORB)
           .newModifier(milotic) as PokemonHeldItemModifier;
-        if (modifier) {
-          modifiers.push(modifier);
+        if (miloticOrb) {
+          modifiers.push(miloticOrb);
         }
       }
       return modifiers;
@@ -5789,8 +5798,6 @@ export const trainerConfigs: TrainerConfigs = {
           if (p.species.speciesId === SpeciesId.ARTICUNO) {
             // They set up their own weather, this covers their level up to prevent inaccurate Hurricanes or certain Physical Attacks
             replaceInMoveset(p.moveset, MoveId.HURRICANE, MoveId.AIR_SLASH);
-          } else if (p.species.speciesId === SpeciesId.ZAPDOS) {
-            replaceInMoveset(p.moveset, MoveId.DRILL_PECK, MoveId.HURRICANE);
           } else if (p.species.speciesId === SpeciesId.MOLTRES) {
             replaceInMoveset(p.moveset, MoveId.HURRICANE, MoveId.AIR_SLASH);
             replaceInMoveset(p.moveset, MoveId.WING_ATTACK, MoveId.AIR_SLASH);
