@@ -6184,10 +6184,10 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.ZYGARDE], TrainerSlot.TRAINER, true, p => {
+        p.formIndex = 0; // 50% Forme, Aura Break
         p.setBoss(true, 2);
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.MASTER_BALL;
-        p.formIndex = 0; // 50% Forme, Aura Break
       }),
     ),
   [TrainerType.LUSAMINE]: new TrainerConfig(++t)
@@ -6198,6 +6198,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc([SpeciesId.CLEFABLE], TrainerSlot.TRAINER, true, p => {
+        p.abilityIndex = 2; // Unaware
         p.generateAndPopulateMoveset();
         p.gender = Gender.FEMALE;
         p.pokeball = PokeballType.ULTRA_BALL;
