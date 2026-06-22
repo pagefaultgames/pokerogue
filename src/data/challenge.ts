@@ -15,7 +15,7 @@ import { MoveId } from "#enums/move-id";
 import type { MoveSourceType } from "#enums/move-source-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
-import { PokemonType } from "#enums/pokemon-type";
+import { PokemonType, type RegularPokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
@@ -752,7 +752,7 @@ interface MonotypeOverride {
   /** The species to override */
   species: SpeciesId;
   /** The type to count as */
-  type: PokemonType;
+  type: RegularPokemonType;
   /** If part of a fusion, should we check the fused species instead of the base species? */
   fusion: boolean;
 }

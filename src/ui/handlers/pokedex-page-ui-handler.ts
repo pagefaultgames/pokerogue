@@ -1,7 +1,7 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
-import { starterColors } from "#app/global-vars/starter-colors";
+import { getStarterColors } from "#app/global-vars/starter-colors";
 import { activeOverrides } from "#app/overrides";
 import { speciesEggMoves } from "#balance/moves/egg-moves";
 import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
@@ -1964,7 +1964,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                 },
                 style: this.isPassiveAvailable() ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
                 item: "candy",
-                itemArgs: this.isPassiveAvailable() ? starterColors[this.starterId] : ["808080", "808080"],
+                itemArgs: this.isPassiveAvailable() ? getStarterColors(this.starterId) : ["808080", "808080"],
               });
             }
 
@@ -1999,7 +1999,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                 },
                 style: this.isValueReductionAvailable() ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
                 item: "candy",
-                itemArgs: this.isValueReductionAvailable() ? starterColors[this.starterId] : ["808080", "808080"],
+                itemArgs: this.isValueReductionAvailable() ? getStarterColors(this.starterId) : ["808080", "808080"],
               });
             }
 
@@ -2054,7 +2054,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
               },
               style: this.isSameSpeciesEggAvailable() ? TextStyle.WINDOW : TextStyle.SHADOW_TEXT,
               item: "candy",
-              itemArgs: this.isSameSpeciesEggAvailable() ? starterColors[this.starterId] : ["808080", "808080"],
+              itemArgs: this.isSameSpeciesEggAvailable() ? getStarterColors(this.starterId) : ["808080", "808080"],
             });
             options.push({
               label: i18next.t("menu:cancel"),
@@ -2594,6 +2594,38 @@ export class PokedexPageUiHandler extends MessageUiHandler {
       // Setting the category
       if (isFormCaught) {
         this.pokemonCategoryText.setText(species.category);
+        switch (species.speciesId) {
+          case SpeciesId.FERALIGATR:
+          case SpeciesId.DARKRAI:
+          case SpeciesId.MEOWSTIC:
+          case SpeciesId.DRAMPA:
+            if (this.species.forms[this.formIndex].formKey === "mega") {
+              this.pokemonCategoryText.setText(
+                i18next.t(`pokemonCategory:mega${toTitleCase(SpeciesId[species.speciesId])}Category`),
+              );
+            }
+            break;
+          case SpeciesId.HOOPA:
+            if (this.formIndex === 1) {
+              this.pokemonCategoryText.setText(i18next.t("pokemonCategory:hoopaUnboundCategory"));
+            }
+            break;
+          case SpeciesId.CALYREX:
+            if (this.formIndex > 0) {
+              this.pokemonCategoryText.setText(i18next.t("pokemonCategory:calyrexRiderCategory"));
+            }
+            break;
+          case SpeciesId.PALAFIN:
+            if (this.formIndex === 1) {
+              this.pokemonCategoryText.setText(i18next.t("pokemonCategory:palafinHeroCategory"));
+            }
+            break;
+          case SpeciesId.GIMMIGHOUL:
+            if (this.formIndex === 1) {
+              this.pokemonCategoryText.setText(i18next.t("pokemonCategory:gimmighoulRoamingCategory"));
+            }
+            break;
+        }
       } else {
         this.pokemonCategoryText.setText("");
       }
@@ -2645,7 +2677,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
       // Caught and hatched
       if (isFormCaught) {
-        const colorScheme = starterColors[this.starterId];
+        const colorScheme = getStarterColors(this.starterId);
 
         this.pokemonUncaughtText.setVisible(false);
         this.pokemonCaughtCountText.setText(`${this.speciesStarterDexEntry?.caughtCount}`);

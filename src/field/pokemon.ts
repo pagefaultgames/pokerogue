@@ -65,6 +65,7 @@ import { getRandomStatus, getStatusEffectHealText, getStatusEffectOverlapText, S
 import { getTerrainBlockMessage, TerrainType } from "#data/terrain";
 import type { TypeDamageMultiplier } from "#data/type";
 import { getTypeDamageMultiplier, getTypeRgb } from "#data/type";
+import { getEffectiveWeatherForMove, getWeatherMultiplierForMove } from "#data/weather";
 import { AbilityId } from "#enums/ability-id";
 import { AiType } from "#enums/ai-type";
 import { ArenaTagSide } from "#enums/arena-tag-side";
@@ -147,6 +148,7 @@ import type {
   GetBaseDamageParams,
 } from "#types/damage-params";
 import type { DamageCalculationResult, DamageResult } from "#types/damage-result";
+import type { GetEffectiveStatParams } from "#types/pokemon-common";
 import type { LevelMoves } from "#types/pokemon-species";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { StatChange } from "#types/stat-change";
@@ -1450,29 +1452,25 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    * Calculates and retrieves the final value of a stat considering any held
    * items, move effects, opponent abilities, and whether there was a critical
    * hit.
-   * @param stat - The desired {@linkcode EffectiveStat | Stat} to check.
-   * @param opponent - The {@linkcode Pokemon} being targeted, if applicable.
-   * @param move - The {@linkcode Move} being used, if any. Used to check ability ignoring effects and similar.
-   * @param ignoreAbility - Whether to ignore ability effects of the user; default `false`.
-   * @param ignoreOppAbility - Whether to ignore ability effects of the target; default `false`.
-   * @param ignoreAllyAbility - Whether to ignore ability effects of the user's allies; default `false`.
-   * @param isCritical - Whether a critical hit has occurred or not; default `false`.
-   * If `true`, will nullify offensive stat drops or defensive stat boosts.
-   * @param simulated - Whether to nullify any effects that produce changes to game state during calculations; default `true`
-   * @param ignoreHeldItems - Whether to ignore the user's held items during stat calculation; default `false`.
+   *
+   * @param stat - The desired stat to check
+   * @param __namedParameters.opponent - Needed for proper typedoc rendering
    * @returns The final in-battle value for the given stat.
    */
   // TODO: Replace the optional parameters with an object to make calling this method less cumbersome
   getEffectiveStat(
     stat: EffectiveStat,
-    opponent?: Pokemon,
-    move?: Move,
-    ignoreAbility = false,
-    ignoreOppAbility = false,
-    ignoreAllyAbility = false,
-    isCritical = false,
-    simulated = true,
-    ignoreHeldItems = false,
+    {
+      opponent,
+      move,
+      ignoreAbility = false,
+      ignoreOppAbility = false,
+      ignoreAllyAbility = false,
+      isCritical = false,
+      simulated = true,
+      ignoreHeldItems = false,
+      forDefend = false,
+    }: GetEffectiveStatParams = {},
   ): number {
     const statVal = new NumberHolder(this.getStat(stat, false));
     if (!ignoreHeldItems) {
@@ -1520,6 +1518,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       });
     }
 
+    const effectiveWeather =
+      !forDefend || ignoreOppAbility || opponent == null
+        ? globalScene.arena.weatherType
+        : getEffectiveWeatherForMove(opponent);
+
     let ret =
       statVal.value
       * this.getStatStageMultiplier(stat, opponent, move, ignoreOppAbility, isCritical, simulated, ignoreHeldItems);
@@ -1531,14 +1534,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         }
         break;
       case Stat.DEF:
-        if (this.isOfType(PokemonType.ICE) && globalScene.arena.weather?.weatherType === WeatherType.SNOW) {
+        if (this.isOfType(PokemonType.ICE) && effectiveWeather === WeatherType.SNOW) {
           ret *= 1.5;
         }
         break;
       case Stat.SPATK:
         break;
       case Stat.SPDEF:
-        if (this.isOfType(PokemonType.ROCK) && globalScene.arena.weather?.weatherType === WeatherType.SANDSTORM) {
+        if (this.isOfType(PokemonType.ROCK) && effectiveWeather === WeatherType.SANDSTORM) {
           ret *= 1.5;
         }
         break;
@@ -1991,8 +1994,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const speciesForm = this.getSpeciesForm(bypassSummonData, useIllusion);
     const fusionSpeciesForm = this.getFusionSpeciesForm(bypassSummonData, useIllusion);
 
-    // TODO: This `map` call is only needed due to the fact that these arrays use -1 as defaults
-    const customTypes = this.customPokemonData.types.map(t => (t === PokemonType.UNKNOWN ? undefined : t));
+    const customTypes = this.customPokemonData.types;
 
     const firstType = customTypes[0] ?? speciesForm.type1;
     const secondCustomType = customTypes[1] ?? speciesForm.type2;
@@ -2002,8 +2004,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
     if (fusionSpeciesForm) {
       // Check if the fusion Pokemon also has permanent changes from ME when determining the fusion types
-      const fusionCustomTypes =
-        this.fusionCustomPokemonData?.types.map(t => (t === PokemonType.UNKNOWN ? undefined : t)) ?? [];
+      const fusionCustomTypes = this.fusionCustomPokemonData?.types ?? [];
 
       const fusionType1 = fusionCustomTypes[0] ?? fusionSpeciesForm.type1;
       const fusionType2 = fusionCustomTypes[1] ?? fusionSpeciesForm.type2;
@@ -2665,8 +2666,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const enemyTypes = opponent.getTypes({ useIllusion: true });
     /** Is this Pokemon faster than the opponent? */
     const outspeed =
-      (this.isActive(true) ? this.getEffectiveStat(Stat.SPD, opponent) : this.getStat(Stat.SPD, false))
-      >= opponent.getEffectiveStat(Stat.SPD, this);
+      (this.isActive(true) ? this.getEffectiveStat(Stat.SPD, { opponent }) : this.getStat(Stat.SPD, false))
+      >= opponent.getEffectiveStat(Stat.SPD, { opponent: this });
 
     /**
      * Based on how effectively this Pokemon defends against the opponent's types.
@@ -3545,17 +3546,15 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
      * The attacker's offensive stat for the given move's category.
      * Critical hits cause negative stat stages to be ignored.
      */
-    const sourceAtk = new NumberHolder(
-      source.getEffectiveStat(
-        isPhysical ? Stat.ATK : Stat.SPATK,
-        this,
-        undefined,
-        ignoreSourceAbility,
+    const sourceAtk = new ValueHolder(
+      source.getEffectiveStat(isPhysical ? Stat.ATK : Stat.SPATK, {
+        opponent: this,
+        ignoreOppAbility: ignoreSourceAbility,
         ignoreAbility,
         ignoreAllyAbility,
         isCritical,
         simulated,
-      ),
+      }),
     );
     applyMoveAttrs("VariableAtkAttr", source, this, move, sourceAtk);
 
@@ -3563,17 +3562,17 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
      * This Pokemon's defensive stat for the given move's category.
      * Critical hits cause positive stat stages to be ignored.
      */
-    const targetDef = new NumberHolder(
-      this.getEffectiveStat(
-        isPhysical ? Stat.DEF : Stat.SPDEF,
-        source,
+    const targetDef = new ValueHolder(
+      this.getEffectiveStat(isPhysical ? Stat.DEF : Stat.SPDEF, {
+        opponent: source,
         move,
         ignoreAbility,
-        ignoreSourceAbility,
-        ignoreSourceAllyAbility,
+        ignoreOppAbility: ignoreSourceAbility,
+        ignoreAllyAbility: ignoreSourceAllyAbility,
         isCritical,
         simulated,
-      ),
+        forDefend: true,
+      }),
     );
     applyMoveAttrs("VariableDefAttr", source, this, move, targetDef);
 
@@ -3681,17 +3680,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     simulated = true,
     effectiveness,
   }: GetAttackDamageParams): DamageCalculationResult {
-    const { arena } = globalScene;
-
     const damage = new NumberHolder(0);
     const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
     const variableCategory = new NumberHolder(move.category);
     applyMoveAttrs("VariableMoveCategoryAttr", source, this, move, variableCategory);
     const moveCategory = variableCategory.value as MoveCategory;
-
-    /** The move's type after type-changing effects are applied */
-    const moveType = source.getMoveType(move);
 
     /** If `value` is `true`, cancels the move and suppresses "No Effect" messages */
     const cancelled = new BooleanHolder(false);
@@ -3707,11 +3701,6 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
      */
     const typeMultiplier =
       effectiveness ?? this.getMoveEffectiveness(source, move, ignoreAbility, simulated, cancelled);
-
-    const isPhysical = moveCategory === MoveCategory.PHYSICAL;
-
-    const weatherDamageMultiplier = new ValueHolder(arena.getWeatherDamageMultiplier(moveType));
-    applyMoveAttrs("OverrideWeatherMultiplierAttr", source, this, move, weatherDamageMultiplier);
 
     const isTypeImmune = typeMultiplier === 0;
 
@@ -3772,6 +3761,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       simulated,
     });
 
+    const weatherDamageMultiplier = getWeatherMultiplierForMove(source, move);
+
     /** 25% damage debuff on moves hitting more than one non-fainted target (regardless of immunities) */
     const { targets, multiple } = getMoveTargets(source, move.id);
     const numTargets = multiple ? targets.length : 1;
@@ -3810,7 +3801,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     /** Halves damage if the attacker is using a physical attack while burned */
     let burnMultiplier = 1;
     if (
-      isPhysical
+      moveCategory === MoveCategory.PHYSICAL
       && source.status
       && source.status.effect === StatusEffect.BURN
       && !move.hasAttr("BypassBurnDamageReductionAttr")
@@ -3855,7 +3846,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       baseDamage
         * targetMultiplier
         * multiStrikeEnhancementMultiplier.value
-        * weatherDamageMultiplier.value
+        * weatherDamageMultiplier
         * glaiveRushMultiplier.value
         * criticalMultiplier.value
         * randomMultiplier
@@ -4115,6 +4106,11 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       SpeciesFormKey.MEGA,
       SpeciesFormKey.MEGA_X,
       SpeciesFormKey.MEGA_Y,
+      SpeciesFormKey.MEGA_Z,
+      SpeciesFormKey.MEGA_ORIGINAL,
+      SpeciesFormKey.MEGA_CURLY,
+      SpeciesFormKey.MEGA_DROOPY,
+      SpeciesFormKey.MEGA_STRETCHY,
       SpeciesFormKey.PRIMAL,
     ] as string[];
     return (

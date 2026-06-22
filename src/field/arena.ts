@@ -358,17 +358,6 @@ export class Arena {
     }
   }
 
-  /**
-   * @param attackType - The {@linkcode PokemonType} of the attack
-   * @returns The weather damage multiplier
-   */
-  public getWeatherDamageMultiplier(attackType: PokemonType): number {
-    if (this.weather && !this.weather.isEffectSuppressed()) {
-      return this.weather.getAttackTypeMultiplier(attackType);
-    }
-    return 1;
-  }
-
   /** Sets a random weather based on the time of day and the current biome */
   public setBiomeWeather(): void {
     let weatherPool = allBiomes.get(this.biomeId).weatherPool;

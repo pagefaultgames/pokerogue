@@ -1,33 +1,10 @@
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { EffectiveStat } from "#enums/stat";
 import type { Pokemon } from "#field/pokemon";
-import type { Move } from "#moves/move";
 import { getStatName } from "#test/utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/utils/test-utils";
+import type { GetEffectiveStatParams } from "#types/pokemon-common";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
-
-/**
- * Options type for {@linkcode toHaveEffectiveStat}.
- * @see {@linkcode Pokemon.getEffectiveStat}
- * @sealed
- */
-// TODO: Rework to simply use whatever config object is used for `Pokemon#getEffectiveStat`
-// once that has its params consolidated
-export interface ToHaveEffectiveStatOptions {
-  /**
-   * The target {@linkcode Pokemon}
-   */
-  enemy?: Pokemon;
-  /**
-   * The {@linkcode Move} being used
-   */
-  move?: Move;
-  /**
-   * Whether a critical hit occurred or not
-   * @defaultValue `false`
-   */
-  isCritical?: boolean;
-}
 
 /**
  * Matcher that checks if a {@linkcode Pokemon}'s effective stat equals a certain value.
@@ -42,7 +19,7 @@ export function toHaveEffectiveStat(
   received: unknown,
   stat: EffectiveStat,
   expectedValue: number,
-  { enemy, move, isCritical = false }: ToHaveEffectiveStatOptions = {},
+  options?: GetEffectiveStatParams,
 ): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
     return {
@@ -51,8 +28,8 @@ export function toHaveEffectiveStat(
     };
   }
 
-  // TODO: Change once getEffectiveStat is refactored to take an object literal
-  const actualValue = received.getEffectiveStat(stat, enemy, move, undefined, undefined, undefined, isCritical);
+  // Bangs are safe here since they will just
+  const actualValue = received.getEffectiveStat(stat, options);
   const pass = actualValue === expectedValue;
 
   const pkmName = getPokemonNameWithAffix(received);

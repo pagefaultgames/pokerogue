@@ -13,7 +13,7 @@ import { DexAttr } from "#enums/dex-attr";
 import { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import type { MoveId } from "#enums/move-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
-import type { PokemonType } from "#enums/pokemon-type";
+import type { RegularPokemonType } from "#enums/pokemon-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import type { Stat } from "#enums/stat";
@@ -60,9 +60,7 @@ export const normalForm: SpeciesId[] = [
   SpeciesId.PALKIA,
   SpeciesId.KYUREM,
   SpeciesId.GENESECT,
-  SpeciesId.FROAKIE,
-  SpeciesId.FROGADIER,
-  SpeciesId.GRENINJA,
+  SpeciesId.BATTLE_BOND_GRENINJA,
   SpeciesId.ROCKRUFF,
   SpeciesId.NECROZMA,
   SpeciesId.MAGEARNA,
@@ -75,8 +73,8 @@ export const normalForm: SpeciesId[] = [
 export type PokemonSpeciesFilter = (species: PokemonSpecies) => boolean;
 
 interface PokemonSpeciesFormConstructor {
-  type1: PokemonType;
-  type2: PokemonType | null;
+  type1: RegularPokemonType;
+  type2: RegularPokemonType | null;
   height: number;
   weight: number;
   ability1: AbilityId;
@@ -96,13 +94,22 @@ interface PokemonSpeciesFormConstructor {
   isStarterSelectable: boolean;
 }
 
+/**
+ * Overrides the local key for species with "fake" forms.
+ */
+const CUSTOM_FORM_NAMES: Partial<Record<SpeciesId, string>> = {
+  [SpeciesId.BLOODMOON_URSALUNA]: "ursalunaBloodmoon",
+  [SpeciesId.ETERNAL_FLOETTE]: "floetteEternalFlower",
+  [SpeciesId.HISUI_BASCULIN]: "basculinWhiteStriped",
+};
+
 export abstract class PokemonSpeciesForm {
   public speciesId: SpeciesId;
   protected _formIndex: number;
   protected _generation: number;
   // TODO: Make these not accept UNKNOWN or STELLAR
-  readonly type1: PokemonType;
-  readonly type2: PokemonType | null;
+  readonly type1: RegularPokemonType;
+  readonly type2: RegularPokemonType | null;
   readonly height: number;
   readonly weight: number;
   readonly ability1: AbilityId;
@@ -281,7 +288,9 @@ export abstract class PokemonSpeciesForm {
   }
 
   isTrainerForbidden(): boolean {
-    return [SpeciesId.ETERNAL_FLOETTE, SpeciesId.BLOODMOON_URSALUNA].includes(this.speciesId);
+    return [SpeciesId.ETERNAL_FLOETTE, SpeciesId.BLOODMOON_URSALUNA, SpeciesId.BATTLE_BOND_GRENINJA].includes(
+      this.speciesId,
+    );
   }
 
   isRareRegional(): boolean {
@@ -316,6 +325,11 @@ export abstract class PokemonSpeciesForm {
       case SpeciesFormKey.MEGA:
       case SpeciesFormKey.MEGA_X:
       case SpeciesFormKey.MEGA_Y:
+      case SpeciesFormKey.MEGA_Z:
+      case SpeciesFormKey.MEGA_ORIGINAL:
+      case SpeciesFormKey.MEGA_CURLY:
+      case SpeciesFormKey.MEGA_DROOPY:
+      case SpeciesFormKey.MEGA_STRETCHY:
       case SpeciesFormKey.PRIMAL:
       case SpeciesFormKey.GIGANTAMAX:
       case SpeciesFormKey.ETERNAMAX:
@@ -496,7 +510,7 @@ export abstract class PokemonSpeciesForm {
       formIndex = override.formIndex;
     }
 
-    if (speciesId > 2000) {
+    if (speciesId >= 2000) {
       switch (speciesId) {
         case SpeciesId.GALAR_SLOWPOKE:
           break;
@@ -523,6 +537,7 @@ export abstract class PokemonSpeciesForm {
         case SpeciesFormKey.MEGA:
         case SpeciesFormKey.MEGA_X:
         case SpeciesFormKey.MEGA_Y:
+        case SpeciesFormKey.MEGA_Z:
         case SpeciesFormKey.PRIMAL:
         case SpeciesFormKey.GIGANTAMAX:
         case SpeciesFormKey.GIGANTAMAX_SINGLE:
@@ -560,6 +575,12 @@ export abstract class PokemonSpeciesForm {
         case "dusk-mane":
         case "ultra":
           ret += `-${formKey}`;
+          break;
+        case SpeciesFormKey.MEGA_ORIGINAL:
+        case SpeciesFormKey.MEGA_CURLY:
+        case SpeciesFormKey.MEGA_DROOPY:
+        case SpeciesFormKey.MEGA_STRETCHY:
+          ret += `-${SpeciesFormKey.MEGA}`;
           break;
       }
       switch (this.speciesId) {
@@ -776,8 +797,8 @@ interface PokemonSpeciesConstructor {
   legendary?: boolean;
   mythical?: boolean;
   category: string;
-  type1: PokemonType;
-  type2: PokemonType | null;
+  type1: RegularPokemonType;
+  type2: RegularPokemonType | null;
   height: number;
   weight: number;
   ability1: AbilityId;
@@ -867,7 +888,14 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
         case SpeciesFormKey.ETERNAMAX:
         case SpeciesFormKey.MEGA_X:
         case SpeciesFormKey.MEGA_Y:
+        case SpeciesFormKey.MEGA_Z:
           key = form.formKey;
+          break;
+        case SpeciesFormKey.MEGA_ORIGINAL:
+        case SpeciesFormKey.MEGA_CURLY:
+        case SpeciesFormKey.MEGA_DROOPY:
+        case SpeciesFormKey.MEGA_STRETCHY:
+          key = "mega";
           break;
         default:
           if (form.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1) {
@@ -935,6 +963,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
         SpeciesFormKey.MEGA,
         SpeciesFormKey.MEGA_X,
         SpeciesFormKey.MEGA_Y,
+        SpeciesFormKey.MEGA_Z,
         SpeciesFormKey.PRIMAL,
         SpeciesFormKey.GIGANTAMAX,
         SpeciesFormKey.GIGANTAMAX_RAPID,
@@ -946,9 +975,21 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
         ? i18next.t(`battlePokemonForm:${toCamelCase(formKey)}`, { pokemonName: this.name })
         : i18next.t(`pokemonForm:battleForm.${toCamelCase(formKey)}`);
     } else if (
+      [
+        SpeciesFormKey.MEGA_ORIGINAL,
+        SpeciesFormKey.MEGA_CURLY,
+        SpeciesFormKey.MEGA_DROOPY,
+        SpeciesFormKey.MEGA_STRETCHY,
+      ].includes(formKey as SpeciesFormKey)
+    ) {
+      return append
+        ? i18next.t(`battlePokemonForm:${toCamelCase(SpeciesFormKey.MEGA)}`, { pokemonName: this.name })
+        : i18next.t(`pokemonForm:battleForm.${toCamelCase(SpeciesFormKey.MEGA)}`);
+    } else if (
       region === Region.NORMAL
       || (this.speciesId === SpeciesId.GALAR_DARMANITAN && formIndex > 0)
       || this.speciesId === SpeciesId.PALDEA_TAUROS
+      || this.speciesId === SpeciesId.BATTLE_BOND_GRENINJA
     ) {
       // More special cases can be added here
       const i18key = `pokemonForm:${speciesName}${formText}`;
@@ -962,12 +1003,8 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
     } else if (append) {
       // Everything beyond this has an expanded name
       return this.getExpandedSpeciesName();
-    } else if (this.speciesId === SpeciesId.ETERNAL_FLOETTE) {
-      // Not a real form, so the key is made up
-      return i18next.t("pokemonForm:floetteEternalFlower");
-    } else if (this.speciesId === SpeciesId.BLOODMOON_URSALUNA) {
-      // Not a real form, so the key is made up
-      return i18next.t("pokemonForm:ursalunaBloodmoon");
+    } else if (CUSTOM_FORM_NAMES[this.speciesId]) {
+      return i18next.t(`pokemonForm:${CUSTOM_FORM_NAMES[this.speciesId]}`);
     } else {
       // Only regional forms should be left at this point
       return i18next.t(`pokemonForm:regionalForm.${toCamelCase(Region[region])}`);
@@ -1227,8 +1264,8 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
 interface PokemonFormConstructor {
   formName: string;
   formKey: string;
-  type1: PokemonType;
-  type2: PokemonType | null;
+  type1: RegularPokemonType;
+  type2: RegularPokemonType | null;
   height: number;
   weight: number;
   ability1: AbilityId;

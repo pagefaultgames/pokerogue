@@ -4,9 +4,10 @@ import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { POKERUS_STARTER_COUNT } from "#balance/starters";
 import type { PokemonSpecies, PokemonSpeciesForm } from "#data/pokemon-species";
 import { BattlerIndex } from "#enums/battler-index";
+import { MAX_REGULAR_POKEMON_TYPE, MIN_REGULAR_POKEMON_TYPE, type RegularPokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
-import { randSeedItem } from "#utils/common";
+import { randSeedIntRange, randSeedItem } from "#utils/common";
 
 /**
  * Gets the {@linkcode PokemonSpecies} object associated with the {@linkcode SpeciesId} enum given
@@ -213,4 +214,9 @@ export function decodeNickname(nickname: string, pokemonName: string): string {
     console.error(`Failed to decode nickname for ${pokemonName}!\n`, err);
     return pokemonName;
   }
+}
+
+/** @returns A random {@linkcode RegularPokemonType} */
+export function getRandomRegularPokemonType(): RegularPokemonType {
+  return randSeedIntRange(MIN_REGULAR_POKEMON_TYPE, MAX_REGULAR_POKEMON_TYPE) as RegularPokemonType;
 }
