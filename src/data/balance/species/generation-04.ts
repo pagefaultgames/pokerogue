@@ -970,6 +970,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
           catchRate: 45,
           baseFriendship: 70,
           baseExp: 243,
+          genderDiffs: false,
         }),
       ],
     }),
@@ -5879,6 +5880,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
           catchRate: 45,
           baseFriendship: 50,
           baseExp: 300,
+          genderDiffs: false,
         }),
         new PokemonForm({
           formName: "Mega Z",
@@ -5900,6 +5902,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
           catchRate: 45,
           baseFriendship: 50,
           baseExp: 300,
+          genderDiffs: false,
         }),
       ],
     }),
