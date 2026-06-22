@@ -714,7 +714,9 @@ function doesMoveMatchOffensiveCategory(move: Move, category: MoveCategory): boo
 }
 
 /**
- * Determine whether there is a move in the moveset that benefits from boosting the specified offensive stat.
+ * Determine whether there is a move in the moveset that benefits from boosting
+ * the specified offensive stat.
+ *
  * @param moveset - The moveset to check against
  * @param attr - The sole `StatStageChangeAttr` from the move being considered; if undefined, this method returns false
  * @returns Whether no moves in the moveset would benefit from the stat stage change described by `attr`
