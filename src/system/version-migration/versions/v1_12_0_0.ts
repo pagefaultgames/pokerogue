@@ -193,7 +193,7 @@ const migrateSpeciesSplitSession: SessionSaveMigrator = {
   migrate: (data: SessionSaveData): void => {
     // Grab the mono-gen challenge number, used to avoid replacing species
     // which could potentially brick existing monogen runs.
-    const monoGenChallenge = data.challenges?.find(c => c.id === 0)?.severity;
+    const monoGenChallenge = data.challenges?.find(c => c.id === 0)?.value;
 
     for (const pokemon of [...data.party, ...data.enemyParty]) {
       // NB: Due to fusions, the two migrators are not mutually exclusive
