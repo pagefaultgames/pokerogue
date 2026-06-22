@@ -719,21 +719,39 @@ function doesMoveMatchOffensiveCategory(move: Move, category: MoveCategory): boo
  * @param attr - The sole `StatStageChangeAttr` from the move being considered; if undefined, this method returns false
  * @returns Whether no moves in the moveset would benefit from the stat stage change described by `attr`
  */
-function removeSelfStatBoost(pokemon: Pokemon, attr: StatStageChangeAttr | undefined): boolean {
-  if (attr == null || attr.stats.length !== 1) {
+function removeSelfStatBoost(pokemon: Pokemon, attr: StatStageChangeAttr | undefined, moveId: MoveId): boolean {
+  // Allow attr to be undefined to make the invocation site
+  if (attr == null) {
     return false;
   }
+
   let category: MoveCategory;
-  switch (attr.stats[0]) {
-    case Stat.ATK:
+  switch (moveId) {
+    case MoveId.CURSE:
+    case MoveId.BULK_UP:
+    case MoveId.HONE_CLAWS:
       category = MoveCategory.PHYSICAL;
       break;
-    case Stat.SPATK:
+    case MoveId.CALM_MIND:
+    case MoveId.TAKE_HEART:
       category = MoveCategory.SPECIAL;
       break;
     default:
-      return false;
+      if (attr.stats.length !== 1) {
+        return false;
+      }
+      switch (attr.stats[0]) {
+        case Stat.ATK:
+          category = MoveCategory.PHYSICAL;
+          break;
+        case Stat.SPATK:
+          category = MoveCategory.SPECIAL;
+          break;
+        default:
+          return false;
+      }
   }
+
   // If any damging move matches the category, boost is not wasted.
   for (const pokemonMove of pokemon.moveset) {
     const move = pokemonMove.getMove();
@@ -939,7 +957,7 @@ function filterUselessMoves(pokemon: Pokemon, willTera: boolean): boolean {
       || (move.id === MoveId.SANDSTORM && shouldRemoveSandstorm(pokemon, willTera))
       || (move.is("SelfStatusMove") // Check if this is a stat boosting move that only boosts one stat
         && move.attrs.length === 1
-        && removeSelfStatBoost(pokemon, move.getAttrs("StatStageChangeAttr")[0]))
+        && removeSelfStatBoost(pokemon, move.getAttrs("StatStageChangeAttr")[0], move.id))
       || (move.hasCondition(targetSleptOrComatoseCondition) && !hasSleepInducingMove(pokemon))
       || (move.hasCondition(userSleptOrComatoseCondition) && !hasSleepInducingMove(pokemon, true))
       || (move.id === MoveId.AURORA_VEIL // Aurora veil without hail / snowscape
