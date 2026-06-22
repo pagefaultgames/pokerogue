@@ -1,6 +1,8 @@
 import { globalScene } from "#app/global-scene";
 import { DexAttr } from "#enums/dex-attr";
-import type { SessionSaveData, SystemSaveData } from "#types/save-data";
+import type { SpeciesId } from "#enums/species-id";
+import { validateIsArrayOfObjects } from "#system/migrator-utils";
+import type { SystemSaveData } from "#types/save-data";
 import type { SessionSaveMigrator, SystemSaveMigrator } from "#types/save-migrators";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
@@ -36,14 +38,30 @@ const migrateUnselectableForms: SystemSaveMigrator = {
 
 export const systemMigrators: readonly SystemSaveMigrator[] = [migrateUnselectableForms] as const;
 
+function isArrayOfLengthTwo(arr: unknown): arr is [unknown, unknown] {
+  return Array.isArray(arr) && arr.length === 2;
+}
+
 const migrateTera: SessionSaveMigrator = {
   version: "1.7.0",
-  migrate: (data: SessionSaveData): void => {
+  migrate: data => {
+    if (!validateIsArrayOfObjects(data.modifiers) || !validateIsArrayOfObjects(data.party)) {
+      console.warn("Malformed modifiers/party in save data, skipping tera type migrator");
+      return;
+    }
     for (let i = 0; i < data.modifiers.length; ) {
       if (data.modifiers[i].className === "TerastallizeModifier") {
+        // Assert the modifier has the expected args structure
+        const modifierArgs = data.modifiers[i].args;
+        // Just remove malformed modifier...
+        if (!isArrayOfLengthTwo(modifierArgs)) {
+          data.modifiers.splice(i, 1);
+          continue;
+        }
+        modifierArgs;
         data.party.forEach(p => {
-          if (p.id === data.modifiers[i].args[0]) {
-            p.teraType = data.modifiers[i].args[1];
+          if (p.id === modifierArgs[0]) {
+            p.teraType = modifierArgs[1];
           }
         });
         data.modifiers.splice(i, 1);
@@ -52,8 +70,21 @@ const migrateTera: SessionSaveMigrator = {
       }
     }
 
+    data.party.forEach(p => {
+      if (p.teraType == null) {
+        p.teraType = getPokemonSpeciesForm(p.species as SpeciesId, p.formIndex as number).type1;
+      }
+    });
+
+    if (!validateIsArrayOfObjects(data.enemyModifiers) || !validateIsArrayOfObjects(data.enemyParty)) {
+      console.warn("Malformed enemy modifiers/party in save data, skipping tera type migrator for enemy party");
+      return;
+    }
+
     for (let i = 0; i < data.enemyModifiers.length; ) {
       if (data.enemyModifiers[i].className === "TerastallizeModifier") {
+        // Assert the modifier has the expected args structure
+        const modifierArgs = data.modifiers[i].args;
         data.enemyParty.forEach(p => {
           if (p.id === data.enemyModifiers[i].args[0]) {
             p.teraType = data.enemyModifiers[i].args[1];
@@ -65,15 +96,9 @@ const migrateTera: SessionSaveMigrator = {
       }
     }
 
-    data.party.forEach(p => {
-      if (p.teraType == null) {
-        p.teraType = getPokemonSpeciesForm(p.species, p.formIndex).type1;
-      }
-    });
-
     data.enemyParty.forEach(p => {
       if (p.teraType == null) {
-        p.teraType = getPokemonSpeciesForm(p.species, p.formIndex).type1;
+        p.teraType = getPokemonSpeciesForm(p.species as SpeciesId, p.formIndex as number).type1;
       }
     });
   },

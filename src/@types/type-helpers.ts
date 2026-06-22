@@ -155,3 +155,5 @@ export type TupleRange<Min extends number, Max extends number, T = unknown> =
  * Any uses of this type should be double-checked to ensure that IDE hover tooltips are actually improved by its addition.
  */
 export type PreventHoverExpansion<T> = T & {};
+
+export type StringKeyedObject = { [key: string]: unknown };

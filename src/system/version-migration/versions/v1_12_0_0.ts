@@ -1,5 +1,6 @@
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
+import { validateIsArrayOfObjects } from "#system/migrator-utils";
 import type { PokemonData } from "#system/pokemon-data";
 import { RibbonData } from "#system/ribbons/ribbon-data";
 import type { DexEntry } from "#types/dex-data";
@@ -233,9 +234,13 @@ const convertCustomPokemonDataTypes: SessionSaveMigrator = {
 /** Shift the form change item values upward to account for newly added Mega Stones. */
 const shiftFormChangeItems: SessionSaveMigrator = {
   version: "1.12.0.0",
-  migrate: (data: SessionSaveData) => {
+  migrate: data => {
     // Shifting these up by 50 will work for now, but a more permanent solution will be desired in the future
     const shiftAmount = 50;
+    if (!validateIsArrayOfObjects(data.modifiers)) {
+      console.warn("Malformed modifiers in save data, skipping form change item migrator");
+      return;
+    }
     for (const modifier of data.modifiers ?? []) {
       if (modifier.className === "PokemonFormChangeItemModifier") {
         if (typeof modifier.args[1] === "number" && modifier.args[1] >= 50) {
