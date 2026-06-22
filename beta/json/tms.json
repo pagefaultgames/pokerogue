@@ -223719,6 +223719,12 @@
     "dexNum": 550,
     "id": "BASCULIN",
     "form": null,
+    "move": "HYPER_BEAM"
+  },
+  {
+    "dexNum": 550,
+    "id": "BASCULIN",
+    "form": null,
     "move": "TOXIC"
   },
   {
@@ -223762,6 +223768,12 @@
     "id": "BASCULIN",
     "form": null,
     "move": "SNORE"
+  },
+  {
+    "dexNum": 550,
+    "id": "BASCULIN",
+    "form": null,
+    "move": "REVERSAL"
   },
   {
     "dexNum": 550,
@@ -223929,6 +223941,12 @@
     "dexNum": 550,
     "id": "BASCULIN",
     "form": null,
+    "move": "GIGA_IMPACT"
+  },
+  {
+    "dexNum": 550,
+    "id": "BASCULIN",
+    "form": null,
     "move": "ICE_FANG"
   },
   {
@@ -223996,42 +224014,6 @@
     "id": "BASCULIN",
     "form": null,
     "move": "CHILLING_WATER"
-  },
-  {
-    "dexNum": 550,
-    "id": "BASCULIN",
-    "form": "red-striped",
-    "move": "HYPER_BEAM"
-  },
-  {
-    "dexNum": 550,
-    "id": "BASCULIN",
-    "form": "red-striped",
-    "move": "REVERSAL"
-  },
-  {
-    "dexNum": 550,
-    "id": "BASCULIN",
-    "form": "red-striped",
-    "move": "GIGA_IMPACT"
-  },
-  {
-    "dexNum": 550,
-    "id": "BASCULIN",
-    "form": "blue-striped",
-    "move": "HYPER_BEAM"
-  },
-  {
-    "dexNum": 550,
-    "id": "BASCULIN",
-    "form": "blue-striped",
-    "move": "REVERSAL"
-  },
-  {
-    "dexNum": 550,
-    "id": "BASCULIN",
-    "form": "blue-striped",
-    "move": "GIGA_IMPACT"
   },
   {
     "dexNum": 551,
@@ -392796,6 +392778,456 @@
     "move": "TERA_BLAST"
   },
   {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "TAKE_DOWN"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "HYDRO_PUMP"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "SURF"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "ICE_BEAM"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "BLIZZARD"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "COUNTER"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "STRENGTH"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "DIG"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "TOXIC"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "DOUBLE_TEAM"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "WATERFALL"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "SWIFT"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "REST"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "ROCK_SLIDE"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "SUBSTITUTE"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "THIEF"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "SNORE"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "SPITE"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "PROTECT"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "MUD_SLAP"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "SPIKES"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "ICY_WIND"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "ENDURE"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "FALSE_SWIPE"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "SWAGGER"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "ATTRACT"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "SLEEP_TALK"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "RETURN"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "HIDDEN_POWER"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "RAIN_DANCE"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "ROCK_SMASH"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "FACADE"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "TAUNT"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "HELPING_HAND"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "SECRET_POWER"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "DIVE"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "ROCK_TOMB"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "AERIAL_ACE"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "BOUNCE"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "MUD_SHOT"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "WATER_PULSE"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "U_TURN"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "FLING"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "TOXIC_SPIKES"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "GRASS_KNOT"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "SMACK_DOWN"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "ROUND"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "ECHOED_VOICE"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "SCALD"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "ACROBATICS"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "RETALIATE"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "WATER_PLEDGE"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "WORK_UP"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "CONFIDE"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "POWER_UP_PUNCH"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "LIQUIDATION"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "SNOWSCAPE"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "TRAILBLAZE"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "CHILLING_WATER"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "ICE_PUNCH"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "SWORDS_DANCE"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "LOW_KICK"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "DARK_PULSE"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "GUNK_SHOT"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "HYPER_BEAM"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "HAZE"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "BRICK_BREAK"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "HYDRO_CANNON"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "WEATHER_BALL"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "GIGA_IMPACT"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "SLUDGE_WAVE"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "LOW_SWEEP"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "BRUTAL_SWING"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "move": "UPPER_HAND"
+  },
+  {
     "dexNum": 2670,
     "id": "ETERNAL_FLOETTE",
     "form": null,
@@ -403618,6 +404050,330 @@
     "id": "HISUI_LILLIGANT",
     "form": null,
     "move": "UPPER_HAND"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "TAKE_DOWN"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "AGILITY"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "SCARY_FACE"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "PROTECT"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "ICE_FANG"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "WATER_PULSE"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "CHILLING_WATER"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "FACADE"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "SWIFT"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "ICY_WIND"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "MUD_SHOT"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "ENDURE"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "RAIN_DANCE"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "SNOWSCAPE"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "HAIL"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "ZEN_HEADBUTT"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "PSYCHIC_FANGS"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "SLEEP_TALK"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "WATERFALL"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "REST"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "TAUNT"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "SUBSTITUTE"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "CRUNCH"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "LIQUIDATION"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "SURF"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "REVERSAL"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "ICE_BEAM"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "HYDRO_PUMP"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "BLIZZARD"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "GIGA_IMPACT"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "HYPER_BEAM"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "FLIP_TURN"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "SCALE_SHOT"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "DOUBLE_EDGE"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "ENDEAVOR"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "WHIRLPOOL"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "MUDDY_WATER"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "SWAGGER"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "ATTRACT"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "RETURN"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "FRUSTRATION"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "REVENGE"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "DIVE"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "HIDDEN_POWER"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "SECRET_POWER"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "BOUNCE"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "BRINE"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "ASSURANCE"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "SCALD"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "CONFIDE"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "SUPERPOWER"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "UPROAR"
+  },
+  {
+    "dexNum": 6550,
+    "id": "HISUI_BASCULIN",
+    "form": null,
+    "move": "SNORE"
   },
   {
     "dexNum": 6570,
