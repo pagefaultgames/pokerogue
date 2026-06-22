@@ -5722,8 +5722,6 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       4,
       getRandomPartyMemberFunc([SpeciesId.KANGASKHAN], TrainerSlot.TRAINER, true, p => {
-        p.formIndex = 1; // Mega Kangaskhan
-        p.generateName();
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
       }),
@@ -5791,13 +5789,10 @@ export const trainerConfigs: TrainerConfigs = {
           if (p.species.speciesId === SpeciesId.ARTICUNO) {
             // They set up their own weather, this covers their level up to prevent inaccurate Hurricanes or certain Physical Attacks
             replaceInMoveset(p.moveset, MoveId.HURRICANE, MoveId.AIR_SLASH);
-            replaceInMoveset(p.moveset, MoveId.SKY_ATTACK, MoveId.AIR_SLASH);
           } else if (p.species.speciesId === SpeciesId.ZAPDOS) {
             replaceInMoveset(p.moveset, MoveId.DRILL_PECK, MoveId.HURRICANE);
-            replaceInMoveset(p.moveset, MoveId.SKY_ATTACK, MoveId.HURRICANE);
           } else if (p.species.speciesId === SpeciesId.MOLTRES) {
             replaceInMoveset(p.moveset, MoveId.HURRICANE, MoveId.AIR_SLASH);
-            replaceInMoveset(p.moveset, MoveId.SKY_ATTACK, MoveId.AIR_SLASH);
             replaceInMoveset(p.moveset, MoveId.WING_ATTACK, MoveId.AIR_SLASH);
           }
         },
@@ -5836,9 +5831,8 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.CAMERUPT], TrainerSlot.TRAINER, true, p => {
+        p.abilityIndex = 1; // Solid Rock
         p.setBoss(true, 2);
-        p.formIndex = 1; // Mega Camerupt
-        p.generateName();
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
         p.gender = Gender.MALE;
@@ -5926,9 +5920,8 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.SHARPEDO], TrainerSlot.TRAINER, true, p => {
+        p.abilityIndex = 0; // Speed Boost
         p.setBoss(true, 2);
-        p.formIndex = 1; // Mega Sharpedo
-        p.generateName();
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
         p.gender = Gender.MALE;
@@ -6139,10 +6132,9 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.GYARADOS], TrainerSlot.TRAINER, true, p => {
+        p.abilityIndex = 2; // Moxie
         p.setBoss(true, 2);
-        p.formIndex = 1; // Mega Gyarados
         p.generateAndPopulateMoveset();
-        p.generateName();
         p.gender = Gender.MALE;
         p.pokeball = PokeballType.ULTRA_BALL;
       }),
@@ -6199,14 +6191,22 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.CLEFABLE], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
         p.gender = Gender.FEMALE;
+        p.pokeball = PokeballType.ULTRA_BALL;
       }),
     )
-    .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.LILLIGANT]))
+    .setPartyMemberFunc(
+      1,
+      getRandomPartyMemberFunc([SpeciesId.LILLIGANT], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
+      }),
+    )
     .setPartyMemberFunc(
       2,
       getRandomPartyMemberFunc([SpeciesId.MILOTIC], TrainerSlot.TRAINER, true, p => {
         p.abilityIndex = 2; // Cute Charm
         p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
       }),
     )
     .setPartyMemberFunc(
@@ -6214,6 +6214,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.BEWEAR], TrainerSlot.TRAINER, true, p => {
         p.abilityIndex = 0; // Fluffy
         p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
       }),
     )
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.GALAR_SLOWBRO, SpeciesId.GALAR_SLOWKING]))
@@ -6237,6 +6238,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.formIndex = 1; // Mega
         p.setBoss(true, 2);
         p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
         p.gender = Gender.FEMALE;
       }),
     )
@@ -6245,6 +6247,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.MILOTIC, SpeciesId.LILLIGANT], TrainerSlot.TRAINER, true, p => {
         p.abilityIndex = p.species.speciesId === SpeciesId.MILOTIC ? 2 : 1; // Cute Charm Milotic, Own Tempo Lilligant
         p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
       }),
     )
     .setPartyMemberFunc(
@@ -6296,6 +6299,7 @@ export const trainerConfigs: TrainerConfigs = {
       0,
       getRandomPartyMemberFunc([SpeciesId.YANMEGA, SpeciesId.LOKIX], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
       }),
     )
     .setPartyMemberFunc(
@@ -6303,11 +6307,24 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.SCIZOR, SpeciesId.KLEAVOR], TrainerSlot.TRAINER, true, p => {
         p.abilityIndex = p.species.speciesId === SpeciesId.SCIZOR ? 1 : 2; // Technician Scizor, Sharpness Kleavor
         p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
         p.gender = Gender.MALE;
       }),
     )
-    .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.PINSIR, SpeciesId.HERACROSS]))
-    .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.VIKAVOLT]))
+    .setPartyMemberFunc(
+      2,
+      getRandomPartyMemberFunc([SpeciesId.PINSIR, SpeciesId.HERACROSS], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
+      }),
+    )
+    .setPartyMemberFunc(
+      3,
+      getRandomPartyMemberFunc([SpeciesId.VIKAVOLT], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+        p.pokeball = PokeballType.ULTRA_BALL;
+      }),
+    )
     .setPartyMemberFunc(
       4,
       getRandomPartyMemberFunc([SpeciesId.ARAQUANID], TrainerSlot.TRAINER, true, p => {
@@ -6323,6 +6340,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.GOLISOPOD], TrainerSlot.TRAINER, true, p => {
         p.setBoss(true, 2);
         p.gender = Gender.MALE;
+        p.pokeball = PokeballType.ULTRA_BALL;
         p.generateAndPopulateMoveset();
         if (!p.moveset.some(move => move.moveId === MoveId.FIRST_IMPRESSION)) {
           // Check if First Impression is in the moveset, if not, replace the third move with First Impression.
@@ -6341,6 +6359,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.formIndex = 1; // Mega
         p.setBoss(true, 2);
         p.gender = Gender.MALE;
+        p.pokeball = PokeballType.ULTRA_BALL;
         p.generateName();
         p.generateAndPopulateMoveset();
         if (!p.moveset.some(move => move.moveId === MoveId.FIRST_IMPRESSION)) {
@@ -6448,10 +6467,9 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([SpeciesId.COPPERAJAH], TrainerSlot.TRAINER, true, p => {
+        p.abilityIndex = 0; // Sheer Force
         p.setBoss(true, 2);
-        p.formIndex = 1; // G-Max Copperajah
         p.generateAndPopulateMoveset();
-        p.generateName();
         p.pokeball = PokeballType.ULTRA_BALL;
         p.gender = Gender.FEMALE;
       }),
