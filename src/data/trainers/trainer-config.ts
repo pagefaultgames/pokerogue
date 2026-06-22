@@ -4970,6 +4970,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.formIndex = 1; // Mega Swampert
         p.generateAndPopulateMoveset();
         p.generateName();
+        replaceInMoveset(p.moveset, MoveId.MUD_BOMB, MoveId.EARTHQUAKE);
       }),
     )
     .setPartyMemberFunc(
