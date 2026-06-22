@@ -43,7 +43,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       genderDiffs: false,
     }),
     starter: SpeciesId.CHIKORITA,
-    starterCost: 2,
+    starterCost: 3,
     evolutions: [new SpeciesEvolution({ speciesId: SpeciesId.BAYLEEF, level: 16 })],
     eggTier: EggTier.COMMON,
     passives: AbilityId.CUTE_CHARM,
@@ -6441,7 +6441,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       genderDiffs: true,
     }),
     starter: SpeciesId.GLIGAR,
-    starterCost: 3,
+    starterCost: 4,
     evolutions: [
       new SpeciesEvolution({
         speciesId: SpeciesId.GLISCOR,

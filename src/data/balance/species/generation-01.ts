@@ -1570,7 +1570,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       genderDiffs: false,
     }),
     starter: SpeciesId.PIDGEY,
-    starterCost: 1,
+    starterCost: 2,
     evolutions: [new SpeciesEvolution({ speciesId: SpeciesId.PIDGEOTTO, level: 18 })],
     eggTier: EggTier.COMMON,
     passives: AbilityId.GALE_WINGS,
@@ -6001,7 +6001,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       genderDiffs: false,
     }),
     starter: SpeciesId.GROWLITHE,
-    starterCost: 4,
+    starterCost: 3,
     evolutions: [
       new SpeciesEvolution({
         speciesId: SpeciesId.ARCANINE,

@@ -9995,7 +9995,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       genderDiffs: false,
     }),
     starter: SpeciesId.VOLCANION,
-    starterCost: 7,
+    starterCost: 6,
     evolutions: [],
     eggTier: EggTier.EPIC,
     passives: AbilityId.NEUTRALIZING_GAS,
@@ -10177,7 +10177,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       ],
     }),
     starter: SpeciesId.ETERNAL_FLOETTE,
-    starterCost: 4,
+    starterCost: 6,
     evolutions: [],
     formChanges: [
       new SpeciesFormChange({

@@ -5039,7 +5039,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     starter: SpeciesId.BASCULIN,
     starterCost: 3,
     evolutions: [],
-    eggTier: EggTier.RARE,
+    eggTier: EggTier.COMMON,
     passives: {
       0: AbilityId.MOXIE,
       1: AbilityId.MOXIE,
@@ -10388,7 +10388,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     starter: SpeciesId.LITWICK,
     starterCost: 3,
     evolutions: [new SpeciesEvolution({ speciesId: SpeciesId.LAMPENT, level: 41 })],
-    eggTier: EggTier.COMMON,
+    eggTier: EggTier.RARE,
     passives: AbilityId.SHADOW_TAG,
     levelMoves: [
       [1, MoveId.EMBER],
@@ -15357,7 +15357,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       ],
     }),
     starter: SpeciesId.GENESECT,
-    starterCost: 6,
+    starterCost: 7,
     evolutions: [],
     formChanges: [
       new SpeciesFormChange({

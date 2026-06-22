@@ -8639,7 +8639,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       ],
     }),
     starter: SpeciesId.ZAMAZENTA,
-    starterCost: 8,
+    starterCost: 9,
     evolutions: [],
     formChanges: [
       new SpeciesFormChange({
@@ -9339,7 +9339,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       ],
     }),
     starter: SpeciesId.ZARUDE,
-    starterCost: 5,
+    starterCost: 6,
     evolutions: [],
     eggTier: EggTier.EPIC,
     passives: {
@@ -14158,6 +14158,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
     }),
     starter: SpeciesId.HISUI_BASCULIN,
     starterCost: 4,
+    eggTier: EggTier.RARE,
     passives: AbilityId.RECKLESS,
     evolutions: [
       // TODO: Uncomment evo delay when different evo condition is implemented
@@ -14178,7 +14179,6 @@ export function initGenerationEight(): SpeciesDataMapConfig {
         /* evoDelay: [45, 65, 85] */
       }),
     ],
-    eggTier: EggTier.RARE,
     levelMoves: [
       [1, MoveId.TAIL_WHIP],
       [1, MoveId.WATER_GUN],

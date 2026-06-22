@@ -9298,7 +9298,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       ],
     }),
     starter: SpeciesId.MAGEARNA,
-    starterCost: 7,
+    starterCost: 8,
     evolutions: [],
     formChanges: [
       new SpeciesFormChange({
@@ -10102,7 +10102,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       ],
     }),
     starter: SpeciesId.ZERAORA,
-    starterCost: 6,
+    starterCost: 7,
     evolutions: [],
     formChanges: [
       new SpeciesFormChange({
