@@ -3724,17 +3724,17 @@ export function initGenerationEight(): SpeciesDataMapConfig {
     },
     levelMoves: [
       [EVOLVE_MOVE, MoveId.SPARK],
-      [1, MoveId.LEER],
       [1, MoveId.GROWL],
       [1, MoveId.ACID],
-      [1, MoveId.THUNDER_SHOCK],
       [1, MoveId.FLAIL],
-      [1, MoveId.ACID_SPRAY],
       [1, MoveId.BELCH],
-      [1, MoveId.NOBLE_ROAR],
-      [1, MoveId.EERIE_IMPULSE],
       [1, MoveId.NUZZLE],
       [1, MoveId.TEARFUL_LOOK],
+      [1, MoveId.EERIE_IMPULSE],
+      [1, MoveId.THUNDER_SHOCK],
+      [1, MoveId.LEER],
+      [1, MoveId.NOBLE_ROAR],
+      [1, MoveId.ACID_SPRAY],
       [4, MoveId.CHARGE],
       [8, MoveId.SHOCK_WAVE],
       [12, MoveId.SCARY_FACE],
@@ -3748,21 +3748,22 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       [48, MoveId.BOOMBURST],
     ],
     formLevelMoves: {
-      "": [
+      amped: [
         [20, MoveId.VENOSHOCK],
         [52, MoveId.SHIFT_GEAR],
         [60, MoveId.ZAP_CANNON],
       ],
+      lowkey: [
+        [20, MoveId.VENOM_DRENCH],
+        [52, MoveId.MAGNETIC_FLUX],
+        [60, MoveId.PARABOLIC_CHARGE],
+      ],
       [SpeciesFormKey.GIGANTAMAX]: [
+        [20, MoveId.VENOSHOCK],
         [20, MoveId.VENOM_DRENCH],
         [52, MoveId.SHIFT_GEAR],
         [52, MoveId.MAGNETIC_FLUX],
         [60, MoveId.ZAP_CANNON],
-        [60, MoveId.PARABOLIC_CHARGE],
-      ],
-      lowkey: [
-        [20, MoveId.VENOM_DRENCH],
-        [52, MoveId.MAGNETIC_FLUX],
         [60, MoveId.PARABOLIC_CHARGE],
       ],
     },
@@ -9180,7 +9181,6 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       3: AbilityId.IRON_FIST,
     },
     levelMoves: [
-      [EVOLVE_MOVE, MoveId.WICKED_BLOW],
       [1, MoveId.LEER],
       [1, MoveId.FOCUS_ENERGY],
       [1, MoveId.ENDURE],
@@ -14168,7 +14168,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
         evoFormKey: "female",
         level: 40,
         condition: [{ key: EvoCondKey.GENDER, gender: Gender.FEMALE }],
-        /* evoDelay: [45, 65, 85] */
+        evoDelay: [45, 65, 85],
       }),
       new SpeciesFormEvolution({
         speciesId: SpeciesId.BASCULEGION,
@@ -14176,7 +14176,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
         evoFormKey: "male",
         level: 40,
         condition: [{ key: EvoCondKey.GENDER, gender: Gender.MALE }],
-        /* evoDelay: [45, 65, 85] */
+        evoDelay: [45, 65, 85],
       }),
     ],
     levelMoves: [

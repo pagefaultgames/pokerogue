@@ -1216,7 +1216,6 @@ export function initGenerationOne(): SpeciesDataMapConfig {
     },
     levelMoves: [
       [EVOLVE_MOVE, MoveId.GUST],
-      [1, MoveId.GUST],
       [11, MoveId.CONFUSION],
       [13, MoveId.POISON_POWDER],
       [13, MoveId.STUN_SPORE],
