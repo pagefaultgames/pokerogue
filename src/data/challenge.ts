@@ -898,19 +898,8 @@ export class FreshStartChallenge extends Challenge {
     dexEntry.caughtAttr &= ~(DexAttr.VARIANT_2 | DexAttr.VARIANT_3);
 
     // Remove unlocked forms for specific species
-    if (speciesId === SpeciesId.ZYGARDE) {
-      // Sets ability from power construct to aura break
-      const formMask = (DexAttr.DEFAULT_FORM << 2n) - 1n;
-      dexEntry.caughtAttr &= formMask;
-    } else if (
-      [
-        SpeciesId.PIKACHU,
-        SpeciesId.EEVEE,
-        SpeciesId.PICHU,
-        SpeciesId.ROTOM,
-        SpeciesId.MELOETTA,
-        SpeciesId.FROAKIE,
-      ].includes(speciesId)
+    if (
+      [SpeciesId.PIKACHU, SpeciesId.EEVEE, SpeciesId.PICHU, SpeciesId.ROTOM, SpeciesId.MELOETTA].includes(speciesId)
     ) {
       const formMask = (DexAttr.DEFAULT_FORM << 1n) - 1n; // These mons are set to form 0 because they're meant to be unlocks or mid-run form changes
       dexEntry.caughtAttr &= formMask;
@@ -937,18 +926,11 @@ export class FreshStartChallenge extends Challenge {
     pokemon.luck = 0; // No luck
     pokemon.shiny = false; // Not shiny
     pokemon.variant = 0; // Not shiny
-    if (pokemon.species.speciesId === SpeciesId.ZYGARDE && pokemon.formIndex >= 2) {
-      pokemon.formIndex -= 2; // Sets 10%-PC to 10%-AB and 50%-PC to 50%-AB
-    } else if (
+    if (
       pokemon.formIndex > 0
-      && [
-        SpeciesId.PIKACHU,
-        SpeciesId.EEVEE,
-        SpeciesId.PICHU,
-        SpeciesId.ROTOM,
-        SpeciesId.MELOETTA,
-        SpeciesId.FROAKIE,
-      ].includes(pokemon.species.speciesId)
+      && [SpeciesId.PIKACHU, SpeciesId.EEVEE, SpeciesId.PICHU, SpeciesId.ROTOM, SpeciesId.MELOETTA].includes(
+        pokemon.species.speciesId,
+      )
     ) {
       pokemon.formIndex = 0; // These mons are set to form 0 because they're meant to be unlocks or mid-run form changes
     }
