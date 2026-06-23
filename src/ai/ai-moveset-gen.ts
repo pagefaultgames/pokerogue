@@ -841,7 +841,7 @@ function shouldRemoveSunnyDay(pokemon: Pokemon): boolean {
  * @returns Whether the Pokémon would benefit from Snow/Hail
  */
 // TODO: Extract out common functionality between this and sandstorm
-function removeSnowscapeHail(pokemon: Pokemon, willTera: boolean): boolean {
+function shouldRemoveSnowscapeHail(pokemon: Pokemon, willTera: boolean): boolean {
   const types = new Set(pokemon.getTypes({ includeTeraType: willTera, returnOriginalTypesIfStellar: true }));
   if (types.has(PokemonType.ICE)) {
     return false;
@@ -1014,7 +1014,7 @@ function filterUselessMoves(pokemon: Pokemon, willTera: boolean): boolean {
     if (
       (moveId === MoveId.RAIN_DANCE && shouldRemoveRainDance(pokemon))
       || (moveId === MoveId.SUNNY_DAY && shouldRemoveSunnyDay(pokemon))
-      || ((moveId === MoveId.SNOWSCAPE || moveId === MoveId.HAIL) && removeSnowscapeHail(pokemon, willTera))
+      || ((moveId === MoveId.SNOWSCAPE || moveId === MoveId.HAIL) && shouldRemoveSnowscapeHail(pokemon, willTera))
       || (moveId === MoveId.SANDSTORM && shouldRemoveSandstorm(pokemon, willTera))
       || (move.is("SelfStatusMove") // Check if this is a stat boosting move that only boosts one stat
         && move.attrs.length === 1
