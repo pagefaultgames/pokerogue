@@ -1,12 +1,8 @@
 import { MoveId } from "#enums/move-id";
 import { PokemonMove } from "#moves/pokemon-move";
-import { validateIsArrayOfObjects } from "#system/migrator-utils";
 import type { SessionSaveMigrator } from "#types/save-migrators";
 
-function updatePokemonMoveset(data: { [key: string]: unknown }): void {
-  if (typeof data !== "object" || data === null) {
-    return;
-  }
+function updatePokemonMoveset(data: Record<string, unknown>): void {
   if ("moveset" in data && Array.isArray(data.moveset)) {
     data.moveset = data.moveset.filter(m => !!m).map(m => PokemonMove.loadMove(m));
   } else {
@@ -36,18 +32,8 @@ function updatePokemonMoveset(data: { [key: string]: unknown }): void {
 const migratePartyData: SessionSaveMigrator = {
   version: "1.9.0",
   migrate: data => {
-    const party = data.party;
-    if (validateIsArrayOfObjects(party)) {
-      for (const pkmnData of party) {
-        updatePokemonMoveset(pkmnData);
-      }
-    }
-    const enemyParty = data.enemyParty;
-    if (validateIsArrayOfObjects(enemyParty)) {
-      for (const pkmnData of enemyParty) {
-        updatePokemonMoveset(pkmnData);
-      }
-    }
+    data.party.forEach(updatePokemonMoveset);
+    data.enemyParty.forEach(updatePokemonMoveset);
   },
 };
 

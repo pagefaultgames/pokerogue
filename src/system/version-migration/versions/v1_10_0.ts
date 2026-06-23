@@ -2,9 +2,9 @@ import type { BattlerIndex } from "#enums/battler-index";
 import type { MoveId } from "#enums/move-id";
 import type { MoveResult } from "#enums/move-result";
 import { MoveUseMode } from "#enums/move-use-mode";
-import { validateIsArrayOfObjects } from "#system/migrator-utils";
 import type { SessionSaveMigrator } from "#types/save-migrators";
 import type { TurnMove } from "#types/turn-move";
+import { ensurePropertyIsObject, validateIsArrayOfObjects } from "#utils/migrator-utils";
 
 /** Prior signature of `TurnMove`; used to ensure parity */
 interface OldTurnMove {
@@ -27,7 +27,7 @@ function mapTurnMove(tm: OldTurnMove): TurnMove {
   };
 }
 
-function migrateSummonData(summonData: unknown): void {
+function migrateSummonData(summonData: Record<string, unknown>): void {
   if (typeof summonData !== "object" || summonData === null) {
     return;
   }
@@ -51,14 +51,15 @@ function migrateSummonData(summonData: unknown): void {
 const fixMoveHistory: SessionSaveMigrator = {
   version: "1.10.0",
   migrate: data => {
-    const party = data.party;
-    if (validateIsArrayOfObjects(party)) {
-      party.forEach(pkmn => migrateSummonData(pkmn.summonData));
-    }
+    data.party.forEach(pkmn => {
+      ensurePropertyIsObject(pkmn, "summonData");
+      migrateSummonData(pkmn.summonData);
+    });
 
     const enemyParty = data.enemyParty;
     if (validateIsArrayOfObjects(enemyParty)) {
       enemyParty.forEach(pkmn => {
+        ensurePropertyIsObject(pkmn, "summonData");
         migrateSummonData(pkmn.summonData);
       });
     }

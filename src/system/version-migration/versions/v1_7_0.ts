@@ -1,9 +1,9 @@
 import { globalScene } from "#app/global-scene";
 import { DexAttr } from "#enums/dex-attr";
 import type { SpeciesId } from "#enums/species-id";
-import { validateIsArrayOfObjects } from "#system/migrator-utils";
 import type { SystemSaveData } from "#types/save-data";
 import type { SessionSaveMigrator, SystemSaveMigrator } from "#types/save-migrators";
+import { validateIsArrayOfObjects } from "#utils/migrator-utils";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 /**
@@ -45,8 +45,8 @@ function isArrayOfLengthTwo(arr: unknown): arr is [unknown, unknown] {
 const migrateTera: SessionSaveMigrator = {
   version: "1.7.0",
   migrate: data => {
-    if (!validateIsArrayOfObjects(data.modifiers) || !validateIsArrayOfObjects(data.party)) {
-      console.warn("Malformed modifiers/party in save data, skipping tera type migrator");
+    if (!validateIsArrayOfObjects(data.modifiers)) {
+      console.warn("Malformed modifiers in save data, skipping tera type migrator");
       return;
     }
     for (let i = 0; i < data.modifiers.length; ) {
@@ -58,7 +58,6 @@ const migrateTera: SessionSaveMigrator = {
           data.modifiers.splice(i, 1);
           continue;
         }
-        modifierArgs;
         data.party.forEach(p => {
           if (p.id === modifierArgs[0]) {
             p.teraType = modifierArgs[1];
@@ -76,7 +75,7 @@ const migrateTera: SessionSaveMigrator = {
       }
     });
 
-    if (!validateIsArrayOfObjects(data.enemyModifiers) || !validateIsArrayOfObjects(data.enemyParty)) {
+    if (!validateIsArrayOfObjects(data.enemyModifiers)) {
       console.warn("Malformed enemy modifiers/party in save data, skipping tera type migrator for enemy party");
       return;
     }
@@ -84,12 +83,19 @@ const migrateTera: SessionSaveMigrator = {
     for (let i = 0; i < data.enemyModifiers.length; ) {
       if (data.enemyModifiers[i].className === "TerastallizeModifier") {
         // Assert the modifier has the expected args structure
-        const modifierArgs = data.modifiers[i].args;
+        const modifierArgs = data.enemyModifiers[i].args;
+
+        if (!isArrayOfLengthTwo(modifierArgs)) {
+          data.enemyModifiers.splice(i, 1);
+          continue;
+        }
+
         data.enemyParty.forEach(p => {
-          if (p.id === data.enemyModifiers[i].args[0]) {
-            p.teraType = data.enemyModifiers[i].args[1];
+          if (p.id === modifierArgs[0]) {
+            p.teraType = modifierArgs[1];
           }
         });
+
         data.enemyModifiers.splice(i, 1);
       } else {
         i++;

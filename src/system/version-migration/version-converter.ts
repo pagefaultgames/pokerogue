@@ -2,7 +2,12 @@
 
 import { version } from "#package.json";
 import type { SessionSaveData, SystemSaveData } from "#types/save-data";
-import type { SessionSaveMigrator, SettingsSaveMigrator, SystemSaveMigrator } from "#types/save-migrators";
+import type {
+  SessionSaveMigrator,
+  SessionSaveMigratorIn,
+  SettingsSaveMigrator,
+  SystemSaveMigrator,
+} from "#types/save-migrators";
 
 /*
 // template for save migrator creation
@@ -43,7 +48,7 @@ export const settingsMigrators: readonly SettingsSaveMigrator[] = [settingsMigra
 */
 
 type SaveMigrator = SystemSaveMigrator | SessionSaveMigrator | SettingsSaveMigrator;
-type SaveData = SystemSaveData | SessionSaveData | object;
+type SaveData = SystemSaveData | SessionSaveMigratorIn | object;
 
 /** Current game version */
 const LATEST_VERSION = version;
@@ -52,6 +57,7 @@ const LATEST_VERSION = version;
 
 // Add migrator imports below
 
+import { SessionMigrationError } from "#system/migration-errors";
 import * as v1_0_4 from "#system/v1_0_4";
 import * as v1_7_0 from "#system/v1_7_0";
 import * as v1_8_3 from "#system/v1_8_3";
@@ -59,6 +65,7 @@ import * as v1_9_0 from "#system/v1_9_0";
 import * as v1_10_0 from "#system/v1_10_0";
 import * as v1_11_19 from "#system/v1_11_19";
 import * as v1_12_0_0 from "#system/v1_12_0_0";
+import { validateIsArrayOfObjects } from "#utils/migrator-utils";
 
 // To add a new set of migrators, add them to the appropriate array of migrators
 
@@ -119,7 +126,9 @@ export function applySystemVersionMigration(data: SystemSaveData) {
  * to the current version.
  * @param data - The {@linkcode SessionSaveData} to migrate
  */
-export function applySessionVersionMigration(data: SessionSaveData) {
+export function applySessionVersionMigration(
+  data: Record<string, unknown>,
+): asserts data is { gameVersion: string; party: Record<string, unknown>[]; enemyParty: Record<string, unknown>[] } {
   if (!data || typeof data !== "object" || !("gameVersion" in data) || typeof data.gameVersion !== "string") {
     console.warn("Session data is missing a valid gameVersion. Skipping migration.");
     return;
@@ -129,7 +138,15 @@ export function applySessionVersionMigration(data: SessionSaveData) {
 
   if (isCurrentVersionHigher) {
     // Always sanitize money as a safeguard
-    data.money = Math.floor(data.money);
+    data.money = Math.floor(data.money as number);
+
+    if (!validateIsArrayOfObjects(data.party)) {
+      throw new SessionMigrationError("Session data is missing a valid party array. Cannot migrate.");
+    }
+
+    if (!validateIsArrayOfObjects(data.enemyParty)) {
+      throw new SessionMigrationError("Session data is missing a valid enemyParty array. Cannot migrate.");
+    }
 
     applyMigrators(sessionMigrators, data, prevVersion);
     console.log(`Session data successfully migrated to v${LATEST_VERSION}!`);

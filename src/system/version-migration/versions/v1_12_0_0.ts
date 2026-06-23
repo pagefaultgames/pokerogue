@@ -1,11 +1,10 @@
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
-import { validateIsArrayOfObjects } from "#system/migrator-utils";
-import type { PokemonData } from "#system/pokemon-data";
 import { RibbonData } from "#system/ribbons/ribbon-data";
 import type { DexEntry } from "#types/dex-data";
-import type { SessionSaveData, SystemSaveData } from "#types/save-data";
+import type { SystemSaveData } from "#types/save-data";
 import type { SessionSaveMigrator, SystemSaveMigrator } from "#types/save-migrators";
+import { ensurePropertyIsObject, isPropertyAnObject, validateIsArrayOfObjects } from "#utils/migrator-utils";
 
 const FORM_0_FLAG = 256n;
 
@@ -137,10 +136,11 @@ const migrateSpeciesSplitSystem: SystemSaveMigrator = {
  * @param pokemon - The pokemon object to migrate; will be updated in place
  * @param replaceSpecies - Whether to replace a matching species with battle bond greninja (or keep original species and set to default form)
  */
-function migrateSessionGreninjaBattleBondForm(pokemon: PokemonData, replaceSpecies: boolean): void {
+function migrateSessionGreninjaBattleBondForm(pokemon: Record<string, unknown>, replaceSpecies: boolean): void {
   console.log("Migrating pokemon with species %d and form index %d", pokemon.species, pokemon.formIndex);
   if (
-    [SpeciesId.FROAKIE, SpeciesId.FROGADIER, SpeciesId.GRENINJA].includes(pokemon.species)
+    // Cast is safe because if it's not a number, the check will merely fail
+    [SpeciesId.FROAKIE, SpeciesId.FROGADIER, SpeciesId.GRENINJA].includes(pokemon.species as SpeciesId)
     && pokemon.formIndex !== 0
   ) {
     if (replaceSpecies) {
@@ -151,7 +151,8 @@ function migrateSessionGreninjaBattleBondForm(pokemon: PokemonData, replaceSpeci
   }
 
   if (
-    [SpeciesId.FROAKIE, SpeciesId.FROGADIER, SpeciesId.GRENINJA].includes(pokemon.fusionSpecies)
+    // Cast is as above
+    [SpeciesId.FROAKIE, SpeciesId.FROGADIER, SpeciesId.GRENINJA].includes(pokemon.fusionSpecies as SpeciesId)
     && pokemon.fusionFormIndex !== 0
   ) {
     pokemon.fusionFormIndex = 0;
@@ -169,7 +170,7 @@ function migrateSessionGreninjaBattleBondForm(pokemon: PokemonData, replaceSpeci
  * Migrate a pokemon entry that may have had hisui basculin form
  * @param pokemon - The pokemon object to migrate; will be updated in place
  */
-function migrateSessionHisuiBasculin(pokemon: PokemonData, replaceSpecies: boolean): void {
+function migrateSessionHisuiBasculin(pokemon: Record<string, unknown>, replaceSpecies: boolean): void {
   if (pokemon.species === SpeciesId.BASCULIN && pokemon.formIndex === 2) {
     if (replaceSpecies) {
       pokemon.species = SpeciesId.HISUI_BASCULIN;
@@ -191,10 +192,23 @@ function migrateSessionHisuiBasculin(pokemon: PokemonData, replaceSpecies: boole
  */
 const migrateSpeciesSplitSession: SessionSaveMigrator = {
   version: "1.12.0.0",
-  migrate: (data: SessionSaveData): void => {
+  migrate: data => {
     // Grab the mono-gen challenge number, used to avoid replacing species
     // which could potentially brick existing monogen runs.
-    const monoGenChallenge = data.challenges?.find(c => c.id === 0)?.value;
+    let monoGenChallenge: number | undefined;
+    const challenges = data.challenges;
+    if (validateIsArrayOfObjects(challenges)) {
+      // For the purpose of this migrator, the cast to number is harmless.
+      // If it isn't a number, the guard below merely fails.
+      monoGenChallenge = challenges.find(c => c.id === 0)?.value as number;
+    }
+
+    if (!validateIsArrayOfObjects(data.party) || !validateIsArrayOfObjects(data.enemyParty)) {
+      console.warn(
+        "Malformed party/enemyParty in save data, skipping battle bond Greninja and hisui basculin migrator",
+      );
+      return;
+    }
 
     for (const pokemon of [...data.party, ...data.enemyParty]) {
       // NB: Due to fusions, the two migrators are not mutually exclusive
@@ -206,23 +220,25 @@ const migrateSpeciesSplitSession: SessionSaveMigrator = {
 
 const migrateRageFistHitCount: SessionSaveMigrator = {
   version: "1.12.0.0",
-  migrate: (data: SessionSaveData): void => {
+  migrate: data => {
     for (const p of data.party.concat(data.enemyParty)) {
-      p.summonData.hitCount = p.battleData.hitCount;
+      ensurePropertyIsObject(p, "summonData");
+      p.summonData.hitCount = (p.battleData as { hitCount?: number })?.hitCount;
     }
   },
 };
 
 const convertCustomPokemonDataTypes: SessionSaveMigrator = {
   version: "1.12.0.0",
-  migrate: (data: SessionSaveData): void => {
+  migrate: data => {
     for (const p of data.party) {
-      if (p.customPokemonData?.types?.length > 0) {
+      // If `customPokemonData.types` exists and is an array, convert unknown types to null.
+      if (isPropertyAnObject(p, "customPokemonData") && Array.isArray(p.customPokemonData.types)) {
         p.customPokemonData.types = p.customPokemonData.types.map(t =>
           (t as PokemonType) === PokemonType.UNKNOWN ? null : t,
         );
       }
-      if (p.fusionCustomPokemonData?.types?.length > 0) {
+      if (isPropertyAnObject(p, "fusionCustomPokemonData") && Array.isArray(p.fusionCustomPokemonData.types)) {
         p.fusionCustomPokemonData.types = p.fusionCustomPokemonData.types.map(t =>
           (t as PokemonType) === PokemonType.UNKNOWN ? null : t,
         );
@@ -231,25 +247,35 @@ const convertCustomPokemonDataTypes: SessionSaveMigrator = {
   },
 };
 
+function shiftFormChangeModifier(modifier: Record<string, unknown>): void {
+  if (modifier.className === "PokemonFormChangeItemModifier") {
+    if (Array.isArray(modifier.args) && typeof modifier.args[1] === "number" && modifier.args[1] >= 50) {
+      modifier.args[1] += 50;
+    }
+    if (
+      Array.isArray(modifier.typePregenArgs)
+      && typeof modifier.typePregenArgs[0] === "number"
+      && modifier.typePregenArgs[0] >= 50
+    ) {
+      modifier.typePregenArgs[0] += 50;
+    }
+  }
+}
+
 /** Shift the form change item values upward to account for newly added Mega Stones. */
 const shiftFormChangeItems: SessionSaveMigrator = {
   version: "1.12.0.0",
   migrate: data => {
-    // Shifting these up by 50 will work for now, but a more permanent solution will be desired in the future
-    const shiftAmount = 50;
-    if (!validateIsArrayOfObjects(data.modifiers)) {
+    if (validateIsArrayOfObjects(data.modifiers)) {
+      data.modifiers.forEach(shiftFormChangeModifier);
+    } else {
       console.warn("Malformed modifiers in save data, skipping form change item migrator");
-      return;
     }
-    for (const modifier of data.modifiers ?? []) {
-      if (modifier.className === "PokemonFormChangeItemModifier") {
-        if (typeof modifier.args[1] === "number" && modifier.args[1] >= 50) {
-          modifier.args[1] += shiftAmount;
-        }
-        if (typeof modifier.typePregenArgs[0] === "number" && modifier.typePregenArgs[0] >= 50) {
-          modifier.typePregenArgs[0] += shiftAmount;
-        }
-      }
+
+    if (validateIsArrayOfObjects(data.enemyModifiers)) {
+      data.enemyModifiers.forEach(shiftFormChangeModifier);
+    } else {
+      console.warn("Malformed enemy modifiers in save data, skipping form change item migrator for enemy party");
     }
   },
 };

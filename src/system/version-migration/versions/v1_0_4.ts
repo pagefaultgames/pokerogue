@@ -1,12 +1,11 @@
 import { defaultStarterSpecies } from "#app/constants";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
-import { CustomPokemonData } from "#data/pokemon-data";
 import { AbilityAttr } from "#enums/ability-attr";
 import { DexAttr } from "#enums/dex-attr";
-import { validateIsArrayOfObjects } from "#system/migrator-utils";
 import { SettingKeys } from "#system/settings";
 import type { SessionSaveData, SystemSaveData } from "#types/save-data";
 import type { SessionSaveMigrator, SettingsSaveMigrator, SystemSaveMigrator } from "#types/save-migrators";
+import { validateIsArrayOfObjects } from "#utils/migrator-utils";
 
 /**
  * Migrate ability starter data if empty for caught species.
@@ -194,22 +193,16 @@ const migrateModifiers: SessionSaveMigrator = {
 const migrateCustomPokemonData: SessionSaveMigrator = {
   version: "1.0.4",
   migrate: data => {
-    // Fix Pokemon nature overrides and custom data migration
-    if (!validateIsArrayOfObjects(data.party)) {
-      console.warn("Malformed party in save data, skipping custom Pokemon data migrator");
-      return;
-    }
-
     for (const pokemon of data.party) {
-      if (pokemon["mysteryEncounterPokemonData"]) {
+      if (pokemon.mysteryEncounterPokemonData) {
         pokemon.customPokemonData = pokemon.mysteryEncounterPokemonData;
         // biome-ignore lint/performance/noDelete: intentional
-        delete pokemon["mysteryEncounterPokemonData"];
+        delete pokemon.mysteryEncounterPokemonData;
       }
-      if (pokemon["fusionMysteryEncounterPokemonData"]) {
-        pokemon.fusionCustomPokemonData = new CustomPokemonData(pokemon["fusionMysteryEncounterPokemonData"]);
+      if (pokemon.fusionMysteryEncounterPokemonData) {
+        pokemon.fusionCustomPokemonData = pokemon.fusionMysteryEncounterPokemonData;
         // biome-ignore lint/performance/noDelete: intentional
-        delete pokemon["fusionMysteryEncounterPokemonData"];
+        delete pokemon.fusionMysteryEncounterPokemonData;
       }
 
       pokemon.customPokemonData ??= {};
