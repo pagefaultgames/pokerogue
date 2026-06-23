@@ -24546,7 +24546,7 @@
     "ability1": "OWN_TEMPO",
     "ability2": "OBLIVIOUS",
     "hiddenAbility": "CLOUD_NINE",
-    "passive": "CHEEK_POUCH",
+    "passive": "POISON_HEAL",
     "bst": 515,
     "hp": 110,
     "atk": 85,
