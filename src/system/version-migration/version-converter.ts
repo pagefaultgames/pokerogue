@@ -1,6 +1,7 @@
 // biome-ignore-all lint/performance/noNamespaceImport: Convenience (there's no need to worry about tree-shaking/etc here)
 
 import { version } from "#package.json";
+import { SessionMigrationError } from "#system/migration-errors";
 import type { SessionSaveData, SystemSaveData } from "#types/save-data";
 import type {
   SessionSaveMigrator,
@@ -8,6 +9,7 @@ import type {
   SettingsSaveMigrator,
   SystemSaveMigrator,
 } from "#types/save-migrators";
+import { validateIsArrayOfObjects } from "#utils/migrator-utils";
 
 /*
 // template for save migrator creation
@@ -21,7 +23,7 @@ import type {
 
 const systemMigratorA: SystemSaveMigrator = {
   version: "A.B.C",
-  migrate: (data: SystemSaveData): void => {
+  migrate: (data): void => {
     // migration code goes here
   },
 };
@@ -30,7 +32,7 @@ export const systemMigrators: readonly SystemSaveMigrator[] = [systemMigratorA] 
 
 const sessionMigratorA: SessionSaveMigrator = {
   version: "A.B.C",
-  migrate: (data: SessionSaveData): void => {
+  migrate: (data): void => {
     // migration code goes here
   },
 };
@@ -39,7 +41,7 @@ export const sessionMigrators: readonly SessionSaveMigrator[] = [sessionMigrator
 
 const settingsMigratorA: SettingsSaveMigrator = {
   version: "A.B.C",
-  migrate: (data: object): void => {
+  migrate: (data): void => {
     // migration code goes here
   },
 };
@@ -57,7 +59,6 @@ const LATEST_VERSION = version;
 
 // Add migrator imports below
 
-import { SessionMigrationError } from "#system/migration-errors";
 import * as v1_0_4 from "#system/v1_0_4";
 import * as v1_7_0 from "#system/v1_7_0";
 import * as v1_8_3 from "#system/v1_8_3";
@@ -65,7 +66,6 @@ import * as v1_9_0 from "#system/v1_9_0";
 import * as v1_10_0 from "#system/v1_10_0";
 import * as v1_11_19 from "#system/v1_11_19";
 import * as v1_12_0_0 from "#system/v1_12_0_0";
-import { validateIsArrayOfObjects } from "#utils/migrator-utils";
 
 // To add a new set of migrators, add them to the appropriate array of migrators
 
