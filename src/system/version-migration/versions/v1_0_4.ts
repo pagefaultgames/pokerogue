@@ -128,7 +128,7 @@ const migrateModifiers: SessionSaveMigrator = {
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: necessary?
   migrate: data => {
     if (!validateIsArrayOfObjects(data.modifiers)) {
-      console.warn("Malformed modifiers in save data, skipping form change item migrator");
+      console.warn("Malformed modifiers in save data, skipping 1.0.4 item migrator");
       return;
     }
     for (const m of data.modifiers) {
