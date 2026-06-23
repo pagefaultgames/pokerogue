@@ -973,14 +973,15 @@ function hasSunInstantCharge(pokemon: Pokemon): boolean {
  */
 function canInflictPoison(pokemon: Pokemon): boolean {
   // Has a move that can inflict poison
-  // TODO: Add check for sheer force here once it uses move flags
+  const noSheerForce = !pokemon.hasAbility(AbilityId.SHEER_FORCE, false, true);
   if (
     pokemon.moveset.some(m => {
       const move = m.getMove();
       return (
-        // Hard coding baneful bunker; checking for battler tag is needlessly cumbersom
+        // Hard coding baneful bunker; checking for battler tag is needlessly cumbersome
         move.id === MoveId.BANEFUL_BUNKER
-        || move.getAttrs("StatusEffectAttr").some(a => [StatusEffect.POISON, StatusEffect.TOXIC].includes(a.effect))
+        || (move.getAttrs("StatusEffectAttr").some(a => [StatusEffect.POISON, StatusEffect.TOXIC].includes(a.effect))
+          && (noSheerForce || move.chance < 0))
       );
     })
   ) {
