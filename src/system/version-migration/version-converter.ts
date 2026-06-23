@@ -1,8 +1,15 @@
 // biome-ignore-all lint/performance/noNamespaceImport: Convenience (there's no need to worry about tree-shaking/etc here)
 
 import { version } from "#package.json";
+import { SessionMigrationError } from "#system/migration-errors";
 import type { SessionSaveData, SystemSaveData } from "#types/save-data";
-import type { SessionSaveMigrator, SettingsSaveMigrator, SystemSaveMigrator } from "#types/save-migrators";
+import type {
+  SessionSaveMigrator,
+  SessionSaveMigratorIn,
+  SettingsSaveMigrator,
+  SystemSaveMigrator,
+} from "#types/save-migrators";
+import { validateIsArrayOfObjects } from "#utils/migrator-utils";
 
 /*
 // template for save migrator creation
@@ -16,7 +23,7 @@ import type { SessionSaveMigrator, SettingsSaveMigrator, SystemSaveMigrator } fr
 
 const systemMigratorA: SystemSaveMigrator = {
   version: "A.B.C",
-  migrate: (data: SystemSaveData): void => {
+  migrate: (data): void => {
     // migration code goes here
   },
 };
@@ -25,7 +32,7 @@ export const systemMigrators: readonly SystemSaveMigrator[] = [systemMigratorA] 
 
 const sessionMigratorA: SessionSaveMigrator = {
   version: "A.B.C",
-  migrate: (data: SessionSaveData): void => {
+  migrate: (data): void => {
     // migration code goes here
   },
 };
@@ -34,7 +41,7 @@ export const sessionMigrators: readonly SessionSaveMigrator[] = [sessionMigrator
 
 const settingsMigratorA: SettingsSaveMigrator = {
   version: "A.B.C",
-  migrate: (data: object): void => {
+  migrate: (data): void => {
     // migration code goes here
   },
 };
@@ -43,7 +50,7 @@ export const settingsMigrators: readonly SettingsSaveMigrator[] = [settingsMigra
 */
 
 type SaveMigrator = SystemSaveMigrator | SessionSaveMigrator | SettingsSaveMigrator;
-type SaveData = SystemSaveData | SessionSaveData | object;
+type SaveData = SystemSaveData | SessionSaveMigratorIn | object;
 
 /** Current game version */
 const LATEST_VERSION = version;
@@ -100,7 +107,7 @@ sortMigrators(settingsMigrators);
  * to the current version.
  * @param data - The {@linkcode SystemSaveData} to migrate
  */
-export function applySystemVersionMigration(data: SystemSaveData) {
+export function applySystemVersionMigration(data: SystemSaveData): void {
   const prevVersion = data.gameVersion;
   const isCurrentVersionHigher = compareVersions(prevVersion, LATEST_VERSION) === -1;
 
@@ -119,7 +126,7 @@ export function applySystemVersionMigration(data: SystemSaveData) {
  * to the current version.
  * @param data - The {@linkcode SessionSaveData} to migrate
  */
-export function applySessionVersionMigration(data: SessionSaveData) {
+export function applySessionVersionMigration(data: Record<string, unknown>): void {
   if (!data || typeof data !== "object" || !("gameVersion" in data) || typeof data.gameVersion !== "string") {
     console.warn("Session data is missing a valid gameVersion. Skipping migration.");
     return;
@@ -129,7 +136,19 @@ export function applySessionVersionMigration(data: SessionSaveData) {
 
   if (isCurrentVersionHigher) {
     // Always sanitize money as a safeguard
-    data.money = Math.floor(data.money);
+    data.money = Math.floor(data.money as number);
+
+    if (!validateIsArrayOfObjects(data.party)) {
+      throw new SessionMigrationError("Session data is missing a valid party array. Cannot migrate.");
+    }
+
+    // Enemy party can be null due to some mystery encounters. Coerce to empty array before continuing
+    if (data.enemyParty == null) {
+      console.debug("Converting null enemyParty to empty array for migration.");
+      data.enemyParty = [];
+    } else if (!validateIsArrayOfObjects(data.enemyParty)) {
+      throw new SessionMigrationError("Session data has an invalid enemyParty array. Cannot migrate.");
+    }
 
     applyMigrators(sessionMigrators, data, prevVersion);
     console.log(`Session data successfully migrated to v${LATEST_VERSION}!`);
@@ -145,7 +164,7 @@ export function applySessionVersionMigration(data: SessionSaveData) {
  * to the current version.
  * @param data - The settings data object to migrate
  */
-export function applySettingsVersionMigration(data: object) {
+export function applySettingsVersionMigration(data: object): void {
   const prevVersion: string = Object.hasOwn(data, "gameVersion") ? data["gameVersion"] : "1.0.0";
   const isCurrentVersionHigher = compareVersions(prevVersion, LATEST_VERSION) === -1;
 

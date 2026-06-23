@@ -9233,8 +9233,26 @@ export class ExposedMoveAttr extends AddBattlerTagAttr {
 }
 
 /**
- * Map of Move attributes to their respective classes. Used for instanceof checks.
+ * Attribute to apply the effects of the move Rage.
+ *
+ * If the user is attacked while rage is active, they will gain +1 atk boost.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Rage_(move)}
  */
+export class RageAttr extends MoveEffectAttr {
+  constructor() {
+    super(true, { trigger: MoveEffectTrigger.PRE_APPLY });
+  }
+
+  public override apply(user: Pokemon, _target: Pokemon, move: Move): boolean {
+    globalScene.phaseManager.queueMessage(
+      i18next.t("moveTriggers:rageIsBuilding", { pokemonName: getPokemonNameWithAffix(user) }),
+    );
+    user.addTag(BattlerTagType.RAGE, undefined, move.id, user.id);
+    return true;
+  }
+}
+
+/** Map of Move attributes to their respective classes. Used for instanceof checks. */
 const MoveAttrs = Object.freeze({
   MoveEffectAttr,
   MoveHeaderAttr,
@@ -9449,6 +9467,7 @@ const MoveAttrs = Object.freeze({
   ResistLastMoveTypeAttr,
   ExposedMoveAttr,
   PartingShotAttr,
+  RageAttr,
 });
 
 /** Map of of move attribute names to their constructors */
@@ -9744,7 +9763,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [Stat.SPD], 2, true),
     new AttackMove(MoveId.QUICK_ATTACK, PokemonType.NORMAL, MoveCategory.PHYSICAL, 40, 100, 30, -1, 1, 1),
     new AttackMove(MoveId.RAGE, PokemonType.NORMAL, MoveCategory.PHYSICAL, 20, 100, 20, -1, 0, 1) //
-      .partial(), // No effect implemented
+      .attr(RageAttr),
     new SelfStatusMove(MoveId.TELEPORT, PokemonType.PSYCHIC, -1, 20, -1, -6, 1)
       .attr(ForceSwitchOutAttr, true)
       .hidesUser()

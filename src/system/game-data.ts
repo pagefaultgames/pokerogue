@@ -1150,15 +1150,13 @@ export class GameData {
     const rawData = JSON.parse(dataStr);
     applySessionVersionMigration(rawData);
 
-    // TODO: With save migrator rework, remove round-trip of JSON.
     for (const [k, v] of Object.entries(rawData)) {
-      // TODO: Move this to occur _after_ migrate scripts (and refactor all non-assignment duties into migrate scripts)
-      // This should ideally be just a giant assign block
       switch (k) {
         case "party":
         case "enemyParty": {
           const ret: PokemonData[] = [];
           for (const pd of v ?? []) {
+            // TODO: Consider invoking a dedicated deserialization method instead of the constructor
             ret.push(new PokemonData(pd));
           }
           rawData[k] = ret;

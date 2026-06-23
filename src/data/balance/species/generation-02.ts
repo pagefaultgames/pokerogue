@@ -7973,7 +7973,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
       genderDiffs: false,
     }),
     starter: SpeciesId.DELIBIRD,
-    starterCost: 2,
+    starterCost: 1,
     evolutions: [],
     eggTier: EggTier.COMMON,
     passives: AbilityId.HUGE_POWER,

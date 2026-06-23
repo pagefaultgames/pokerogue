@@ -5476,8 +5476,6 @@ export function initGenerationNine(): SpeciesDataMapConfig {
           catchRate: 25,
           baseFriendship: 50,
           baseExp: 184,
-          genderDiffs: false,
-          formSpriteKey: "",
         }),
       ],
     }),
