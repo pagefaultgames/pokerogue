@@ -19,7 +19,7 @@ const DENY_PHYSICAL_MOVES = 0;
  *
  * @remarks
  * If a species (or species, form index combination) is on this list
- * moves will not be generated for it. Putting a form here will block moves of
+ * moves will not be generated for it. Putting a species here will block moves of
  * the category for all forms. To only block for a specific form, use
  * the tuple of the form `[speciesId, formIndex]` as the key.
  *
@@ -193,6 +193,14 @@ export const WORSE_OFFENSIVE_STAT_SPECIES_DENYLIST = new Map<
   //#endregion special deny list
 ]);
 
+/**
+ * Moves in this list will not be excluded from generating
+ * on Pokémon that match this worse offensive stat.
+ *
+ * @remarks
+ * Intended to be used for damaging moves that have useful utility,
+ * like volt switch, stone-axe, etc.
+ */
 export const EXCLUDED_MOVES_FOR_WORSE_OFFENSIVE_STAT = new Set([
   MoveId.VOLT_SWITCH,
   MoveId.U_TURN,
