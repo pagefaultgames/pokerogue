@@ -253,6 +253,7 @@ export function initGenerationTwo(): SpeciesDataMapConfig {
           catchRate: 45,
           baseFriendship: 70,
           baseExp: 263,
+          genderDiffs: false,
         }),
       ],
     }),

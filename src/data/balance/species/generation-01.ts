@@ -2841,6 +2841,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
           catchRate: 75,
           baseFriendship: 50,
           baseExp: 243,
+          genderDiffs: false,
         }),
         new PokemonForm({
           formName: "Mega Y",
@@ -2862,6 +2863,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
           catchRate: 75,
           baseFriendship: 50,
           baseExp: 243,
+          genderDiffs: false,
         }),
       ],
     }),
