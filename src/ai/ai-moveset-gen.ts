@@ -44,6 +44,7 @@ import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { ModifierTier } from "#enums/modifier-tier";
 import { MoveCategory } from "#enums/move-category";
+import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
 import type { SpeciesId } from "#enums/species-id";
@@ -840,7 +841,7 @@ function shouldRemoveSunnyDay(pokemon: Pokemon): boolean {
  * @returns Whether the Pokémon would benefit from Snow/Hail
  */
 // TODO: Extract out common functionality between this and sandstorm
-function removeSnowscapeHail(pokemon: Pokemon, willTera: boolean): boolean {
+function shouldRemoveSnowscapeHail(pokemon: Pokemon, willTera: boolean): boolean {
   const types = new Set(pokemon.getTypes({ includeTeraType: willTera, returnOriginalTypesIfStellar: true }));
   if (types.has(PokemonType.ICE)) {
     return false;
@@ -940,6 +941,61 @@ function hasSunInstantCharge(pokemon: Pokemon): boolean {
 }
 
 /**
+ * Determine whether the pokemon's set would allow it to poison a target, either
+ * via a move in the moveset or an ability.
+ *
+ * @remarks
+ * As this method is written for movegen, Dire Claw is intentionally
+ * ignored as a possible source of poison due to its possibility
+ * of inflicting several status ailments.
+ * @param pokemon - The Pokémon under examination
+ */
+function canInflictPoison(pokemon: Pokemon): boolean {
+  // Has a move that can inflict poison
+  // TODO: Add check for sheer force here once sheer force is added to move flags
+  if (
+    pokemon.moveset.some(m => {
+      const move = m.getMove();
+      return (
+        // Hard coding baneful bunker; checking for battler tag is needlessly cumbersom
+        move.id === MoveId.BANEFUL_BUNKER
+        || move.getAttrs("StatusEffectAttr").some(a => [StatusEffect.POISON, StatusEffect.TOXIC].includes(a.effect))
+      );
+    })
+  ) {
+    return true;
+  }
+
+  // Has ability that inflicts poison on attackers
+  if (
+    pokemon
+      .getAbilityAttrs("PostDefendApplyStatusEffectAbAttr")
+      .some(a => a.effects.includes(StatusEffect.POISON) || a.effects.includes(StatusEffect.TOXIC))
+  ) {
+    return true;
+  }
+
+  // Has ability that inflicts poison on attack (respecting contact requirements)
+  const canMakeContact =
+    pokemon.moveset.some(m => m.getMove().hasFlag(MoveFlags.MAKES_CONTACT))
+    && !pokemon.hasAbilityWithAttr("IgnoreContactAbAttr");
+  if (
+    canMakeContact
+    && pokemon
+      .getAbilityAttrs("PostAttackApplyStatusEffectAbAttr")
+      .some(
+        a =>
+          a.effects.includes(StatusEffect.POISON)
+          || (a.effects.includes(StatusEffect.TOXIC) && (canMakeContact || !a.contactRequired)),
+      )
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
+/**
  * Filter a Pokémon's moveset, removing moves that are only useful in combination
  * with other moves/abilities that the Pokémon does not have.
  * @param pokemon - The Pokémon to filter the moveset of
@@ -954,23 +1010,24 @@ function filterUselessMoves(pokemon: Pokemon, willTera: boolean): boolean {
     if (move.hasAttr("WeatherChangeAttr")) {
       numWeatherMoves++;
     }
+    const moveId = move.id;
     if (
-      (move.id === MoveId.RAIN_DANCE && shouldRemoveRainDance(pokemon))
-      || (move.id === MoveId.SUNNY_DAY && shouldRemoveSunnyDay(pokemon))
-      || ((move.id === MoveId.SNOWSCAPE || move.id === MoveId.HAIL) && removeSnowscapeHail(pokemon, willTera))
-      || (move.id === MoveId.SANDSTORM && shouldRemoveSandstorm(pokemon, willTera))
+      (moveId === MoveId.RAIN_DANCE && shouldRemoveRainDance(pokemon))
+      || (moveId === MoveId.SUNNY_DAY && shouldRemoveSunnyDay(pokemon))
+      || ((moveId === MoveId.SNOWSCAPE || moveId === MoveId.HAIL) && shouldRemoveSnowscapeHail(pokemon, willTera))
+      || (moveId === MoveId.SANDSTORM && shouldRemoveSandstorm(pokemon, willTera))
       || (move.is("SelfStatusMove") // Check if this is a stat boosting move that only boosts one stat
         && move.attrs.length === 1
-        && removeSelfStatBoost(pokemon, move.getAttrs("StatStageChangeAttr")[0], move.id))
+        && removeSelfStatBoost(pokemon, move.getAttrs("StatStageChangeAttr")[0], moveId))
       || (move.hasCondition(targetSleptOrComatoseCondition) && !hasSleepInducingMove(pokemon))
       || (move.hasCondition(userSleptOrComatoseCondition) && !hasSleepInducingMove(pokemon, true))
-      || (move.id === MoveId.AURORA_VEIL // Aurora veil without hail / snowscape
+      || (moveId === MoveId.AURORA_VEIL // Aurora veil without hail / snowscape
         && !(
           pokemon.hasAbility(AbilityId.SNOW_WARNING, false, true)
           || moveset.some(m => [MoveId.HAIL, MoveId.SNOWSCAPE].includes(m.moveId))
         ))
-      || ([MoveId.SOLAR_BEAM, MoveId.SOLAR_BLADE].includes(move.id) && !hasSunInstantCharge(pokemon))
-      // TODO: Add condition for venom drench
+      || ([MoveId.SOLAR_BEAM, MoveId.SOLAR_BLADE].includes(moveId) && !hasSunInstantCharge(pokemon))
+      || (moveId === MoveId.VENOM_DRENCH && !canInflictPoison(pokemon))
     ) {
       moveset.splice(i, 1);
       return true;
