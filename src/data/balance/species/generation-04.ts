@@ -7388,7 +7388,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
     }),
     starter: SpeciesId.LICKITUNG,
     evolutions: [],
-    passives: AbilityId.CHEEK_POUCH,
+    passives: AbilityId.POISON_HEAL,
     levelMoves: [
       [1, MoveId.ACID],
       [1, MoveId.LICK],
