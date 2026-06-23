@@ -107,7 +107,7 @@ sortMigrators(settingsMigrators);
  * to the current version.
  * @param data - The {@linkcode SystemSaveData} to migrate
  */
-export function applySystemVersionMigration(data: SystemSaveData) {
+export function applySystemVersionMigration(data: SystemSaveData): void {
   const prevVersion = data.gameVersion;
   const isCurrentVersionHigher = compareVersions(prevVersion, LATEST_VERSION) === -1;
 
@@ -126,9 +126,7 @@ export function applySystemVersionMigration(data: SystemSaveData) {
  * to the current version.
  * @param data - The {@linkcode SessionSaveData} to migrate
  */
-export function applySessionVersionMigration(
-  data: Record<string, unknown>,
-): asserts data is { gameVersion: string; party: Record<string, unknown>[]; enemyParty: Record<string, unknown>[] } {
+export function applySessionVersionMigration(data: Record<string, unknown>): void {
   if (!data || typeof data !== "object" || !("gameVersion" in data) || typeof data.gameVersion !== "string") {
     console.warn("Session data is missing a valid gameVersion. Skipping migration.");
     return;
@@ -162,7 +160,7 @@ export function applySessionVersionMigration(
  * to the current version.
  * @param data - The settings data object to migrate
  */
-export function applySettingsVersionMigration(data: object) {
+export function applySettingsVersionMigration(data: object): void {
   const prevVersion: string = Object.hasOwn(data, "gameVersion") ? data["gameVersion"] : "1.0.0";
   const isCurrentVersionHigher = compareVersions(prevVersion, LATEST_VERSION) === -1;
 
