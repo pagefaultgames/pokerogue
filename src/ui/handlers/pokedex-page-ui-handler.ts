@@ -1245,7 +1245,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                     .map(m => {
                       const levelNumber = m[0] > 0 ? String(m[0]) : "";
                       const option: OptionSelectItem = {
-                        label: levelNumber.padEnd(4, " ") + allMoves[m[1]].name,
+                        label: levelNumber.padStart(3, "\u2007") + " " + allMoves[m[1]].name,
                         handler: () => {
                           return false;
                         },

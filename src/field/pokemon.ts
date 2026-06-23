@@ -4,7 +4,7 @@ import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities
 import { generateMoveset } from "#app/ai/ai-moveset-gen";
 import type { Battle } from "#app/battle";
 import type { BattleScene } from "#app/battle-scene";
-import { EVOLVE_MOVE, PLAYER_PARTY_MAX_SIZE, RARE_CANDY_FRIENDSHIP_CAP, RELEARN_MOVE } from "#app/constants";
+import { PLAYER_PARTY_MAX_SIZE, RARE_CANDY_FRIENDSHIP_CAP } from "#app/constants";
 import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
@@ -82,12 +82,14 @@ import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { FieldPosition } from "#enums/field-position";
 import { HitResult } from "#enums/hit-result";
 import { LearnMoveSituation } from "#enums/learn-move-situation";
+import { LearnableMoveSource } from "#enums/learnable-move-source";
 import { MoveCategory } from "#enums/move-category";
 import { MoveFlags } from "#enums/move-flags";
 import { MoveId } from "#enums/move-id";
 import { MoveTarget } from "#enums/move-target";
 import { isIgnorePP, isVirtual, MoveUseMode } from "#enums/move-use-mode";
 import { Nature } from "#enums/nature";
+import { PartyUiMode } from "#enums/party-ui-mode";
 import { PokeballType } from "#enums/pokeball";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { PokemonType } from "#enums/pokemon-type";
@@ -149,7 +151,7 @@ import type {
 } from "#types/damage-params";
 import type { DamageCalculationResult, DamageResult } from "#types/damage-result";
 import type { GetEffectiveStatParams } from "#types/pokemon-common";
-import type { LevelMoves } from "#types/pokemon-species";
+import type { LevelMovesWithSource } from "#types/pokemon-species";
 import type { StarterDataEntry, StarterMoveset } from "#types/save-data";
 import type { StatChange } from "#types/stat-change";
 import type { TurnMove } from "#types/turn-move";
@@ -157,7 +159,7 @@ import type { AbstractConstructor, Mutable } from "#types/type-helpers";
 import { BattleInfo } from "#ui/battle-info";
 import { EnemyBattleInfo } from "#ui/enemy-battle-info";
 import type { PartyOption } from "#ui/party-ui-handler";
-import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
+import { PartyUiHandler } from "#ui/party-ui-handler";
 import { PlayerBattleInfo } from "#ui/player-battle-info";
 import { coerceArray } from "#utils/array";
 import { applyChallenges } from "#utils/challenge-utils";
@@ -177,7 +179,7 @@ import {
 import { calculateBossSegmentDamage } from "#utils/damage";
 import { getEnumValues } from "#utils/enums";
 import { cachedFetch } from "#utils/fetch-utils";
-import { decodeNickname, getFusedSpeciesName, getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { decodeNickname, getFusedSpeciesName, getPokemonSpecies } from "#utils/pokemon-utils";
 import { weightedPick } from "#utils/random";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { ValueHolder } from "#utils/value-holder";
@@ -186,6 +188,7 @@ import i18next from "i18next";
 import Phaser from "phaser";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import type { NonEmptyTuple } from "type-fest";
+import { getBaseLearnableMoveSource, getLevelMoves } from "./learnsets";
 
 export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
@@ -1921,18 +1924,38 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    *
    * Available egg moves are only included if the {@linkcode Pokemon} was
    * in the starting party of the run and if Fresh Start is not active.
-   * @returns An array of {@linkcode MoveId}s, as described above.
+   * @returns A tuple of the Level (or `null` for non level moves), {@linkcode MoveId} and their corresponding {@linkcode LearnableMoveSource}, as described above.
    */
-  public getLearnableLevelMoves(): MoveId[] {
-    let levelMoves = this.getLevelMoves(1, true, false, true).map(lm => lm[1]);
+  // TODO: move into `#region LevelMoves`
+  public getLearnableLevelMoves(): [number | null, MoveId, LearnableMoveSource][] {
+    let learnableMoves: [number | null, MoveId, LearnableMoveSource][] = [];
+    learnableMoves = this.getLevelMoves(1, true, true, true);
     if (this.metBiome === -1 && !globalScene.gameMode.isFreshStartChallenge() && !globalScene.gameMode.isDaily) {
-      levelMoves = this.getUnlockedEggMoves().concat(levelMoves);
+      const eggMoves: [number | null, MoveId, LearnableMoveSource][] = this.getUnlockedEggMoves().map(em => [
+        null,
+        em,
+        LearnableMoveSource.EGG,
+      ]);
+      learnableMoves.push(...eggMoves);
     }
     if (Array.isArray(this.usedTMs) && this.usedTMs.length > 0) {
-      levelMoves = this.usedTMs.filter(m => !levelMoves.includes(m)).concat(levelMoves);
+      const tmMoves: [number | null, MoveId, LearnableMoveSource][] = this.usedTMs.map(tm => [
+        null,
+        tm,
+        LearnableMoveSource.TM,
+      ]);
+      learnableMoves.push(...tmMoves.filter(tm => !learnableMoves.some(lm => lm[1] === tm[1])));
     }
-    levelMoves = levelMoves.filter(lm => !this.moveset.some(m => m.moveId === lm));
-    return levelMoves;
+    learnableMoves = learnableMoves.filter(lm => !this.moveset.some(m => m.moveId === lm[1]));
+
+    // Sort by source in descending order, so the moves with a species prefix will be at the top
+    learnableMoves.sort((a, b) => {
+      const sourceA = getBaseLearnableMoveSource(a[2]);
+      const sourceB = getBaseLearnableMoveSource(b[2]);
+      return sourceB - sourceA;
+    });
+
+    return learnableMoves;
   }
 
   /**
@@ -2777,161 +2800,38 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     return null;
   }
 
+  //#region LevelMoves
+
   /**
    * Get all level up moves in a given range for a particular pokemon.
    * @param startingLevel - Don't include moves below this level
    * @param includeEvolutionMoves - Whether to include evolution moves
-   * @param simulateEvolutionChain - Whether to include moves from prior evolutions
+   * @param includePrevolutionMoves - Whether to include moves from prior evolutions
    * @param includeRelearnerMoves - Whether to include moves that would require a relearner. Note the move relearner inherently allows evolution moves
-   * @returns A list of moves and the levels they can be learned at
+   * @returns A list of moves and the levels they can be learned at, along with the source of the move
    */
-  getLevelMoves(
+  // TODO: convert to use object param
+  public getLevelMoves(
     startingLevel?: number,
     includeEvolutionMoves = false,
-    simulateEvolutionChain = false,
+    includePrevolutionMoves = false,
     includeRelearnerMoves = false,
     learnSituation: LearnMoveSituation = LearnMoveSituation.MISC,
-  ): LevelMoves {
-    const ret: LevelMoves = [];
-    let levelMoves: LevelMoves = [];
+  ): LevelMovesWithSource {
     if (!startingLevel) {
       startingLevel = this.level;
     }
-    if (learnSituation === LearnMoveSituation.EVOLUTION_FUSED && this.fusionSpecies) {
-      // For fusion evolutions, get ONLY the moves of the component mon that evolved
-      levelMoves = this.getFusionSpeciesForm(true)
-        .getLevelMoves()
-        .filter(
-          lm =>
-            (includeEvolutionMoves && lm[0] === EVOLVE_MOVE)
-            || (includeRelearnerMoves && lm[0] === RELEARN_MOVE)
-            || lm[0] > 0,
-        );
-    } else {
-      if (simulateEvolutionChain) {
-        const evolutionChain = this.species.getSimulatedEvolutionChain(
-          this.level,
-          this.hasTrainer(),
-          this.isBoss(),
-          this.isPlayer(),
-        );
-        for (let e = 0; e < evolutionChain.length; e++) {
-          // TODO: Might need to pass specific form index in simulated evolution chain
-          const speciesLevelMoves = getPokemonSpeciesForm(evolutionChain[e][0], this.formIndex).getLevelMoves();
-          if (includeRelearnerMoves) {
-            levelMoves.push(...speciesLevelMoves);
-          } else {
-            levelMoves.push(
-              ...speciesLevelMoves.filter(
-                lm =>
-                  (includeEvolutionMoves && lm[0] === EVOLVE_MOVE)
-                  || ((!e || lm[0] > 1) && (e === evolutionChain.length - 1 || lm[0] <= evolutionChain[e + 1][1])),
-              ),
-            );
-          }
-        }
-      } else {
-        levelMoves = this.getSpeciesForm(true)
-          .getLevelMoves()
-          .filter(
-            lm =>
-              (includeEvolutionMoves && lm[0] === EVOLVE_MOVE)
-              || (includeRelearnerMoves && lm[0] === RELEARN_MOVE)
-              || lm[0] > 0,
-          );
-      }
-      if (this.fusionSpecies && learnSituation !== LearnMoveSituation.EVOLUTION_FUSED_BASE) {
-        // For fusion evolutions, get ONLY the moves of the component mon that evolved
-        if (simulateEvolutionChain) {
-          const fusionEvolutionChain = this.fusionSpecies.getSimulatedEvolutionChain(
-            this.level,
-            this.hasTrainer(),
-            this.isBoss(),
-            this.isPlayer(),
-          );
-          for (let e = 0; e < fusionEvolutionChain.length; e++) {
-            // TODO: Might need to pass specific form index in simulated evolution chain
-            const speciesLevelMoves = getPokemonSpeciesForm(
-              fusionEvolutionChain[e][0],
-              this.fusionFormIndex,
-            ).getLevelMoves();
-            if (includeRelearnerMoves) {
-              levelMoves.push(
-                ...speciesLevelMoves.filter(
-                  lm => (includeEvolutionMoves && lm[0] === EVOLVE_MOVE) || lm[0] !== EVOLVE_MOVE,
-                ),
-              );
-            } else {
-              levelMoves.push(
-                ...speciesLevelMoves.filter(
-                  lm =>
-                    (includeEvolutionMoves && lm[0] === EVOLVE_MOVE)
-                    || ((!e || lm[0] > 1)
-                      && (e === fusionEvolutionChain.length - 1 || lm[0] <= fusionEvolutionChain[e + 1][1])),
-                ),
-              );
-            }
-          }
-        } else {
-          levelMoves.push(
-            ...this.getFusionSpeciesForm(true)
-              .getLevelMoves()
-              .filter(
-                lm =>
-                  (includeEvolutionMoves && lm[0] === EVOLVE_MOVE)
-                  || (includeRelearnerMoves && lm[0] === RELEARN_MOVE)
-                  || lm[0] > 0,
-              ),
-          );
-        }
-      }
-    }
-    levelMoves.sort((lma: [number, number], lmb: [number, number]) => (lma[0] > lmb[0] ? 1 : lma[0] < lmb[0] ? -1 : 0));
-
-    /**
-     * Filter out moves not within the correct level range(s)
-     * Includes moves below startingLevel, or of specifically level 0 if
-     * includeRelearnerMoves or includeEvolutionMoves are true respectively
-     */
-    levelMoves = levelMoves.filter(lm => {
-      const level = lm[0];
-      const isRelearner = level < startingLevel;
-      const allowedEvolutionMove = level === 0 && includeEvolutionMoves;
-
-      return !(level > this.level) && (includeRelearnerMoves || !isRelearner || allowedEvolutionMove);
-    });
-
-    /**
-     * This must be done AFTER filtering by level, else if the same move shows up
-     * in levelMoves multiple times all but the lowest level one will be skipped.
-     * This causes problems when there are intentional duplicates (i.e. Smeargle with Sketch)
-     */
-    if (levelMoves) {
-      Pokemon.getUniqueMoves(levelMoves, ret);
-    }
-
-    return ret;
+    return getLevelMoves(
+      this,
+      startingLevel,
+      includeEvolutionMoves,
+      includePrevolutionMoves,
+      includeRelearnerMoves,
+      learnSituation,
+    );
   }
 
-  /**
-   * Helper function for getLevelMoves
-   *
-   * @remarks
-   * Finds all non-duplicate items from the input, and pushes them into the output.
-   * Two items count as duplicate if they have the same Move, regardless of level.
-   *
-   * @param levelMoves - The input array to search for non-duplicates from
-   * @param ret - The output array to be pushed into.
-   */
-  private static getUniqueMoves(levelMoves: LevelMoves, ret: LevelMoves): void {
-    const uniqueMoves: MoveId[] = [];
-    for (const lm of levelMoves) {
-      if (!uniqueMoves.find(m => m === lm[1])) {
-        uniqueMoves.push(lm[1]);
-        ret.push(lm);
-      }
-    }
-  }
+  //#endregion LevelMoves
 
   /**
    * Get a list of all egg moves
