@@ -933,7 +933,9 @@ function hasSunInstantCharge(pokemon: Pokemon): boolean {
     || pokemon
       .getAbilityAttrs("PostSummonWeatherChangeAbAttr")
       .some(a => [WeatherType.SUNNY, WeatherType.HARSH_SUN].includes(a.weatherType))
-    //TODO: once mega sol is added, add its attribute as an exclusion here as well
+    || pokemon
+      .getAbilityAttrs("PreAttackWeatherOverrideAbAttr")
+      .some(a => [WeatherType.SUNNY, WeatherType.HARSH_SUN].includes(a.weatherType))
   );
 }
 
