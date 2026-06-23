@@ -1,4 +1,5 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { FRIENDSHIP_LOSS_FROM_FAINT } from "#balance/starters";
@@ -204,7 +205,7 @@ export class FaintPhase extends PokemonPhase {
         pokemon.addFriendship(-FRIENDSHIP_LOSS_FROM_FAINT);
       }
       pokemon.hideInfo();
-      globalScene.playSound("se/faint");
+      audioManager.playSound("se/faint");
       globalScene.tweens.add({
         targets: pokemon,
         duration: 500,

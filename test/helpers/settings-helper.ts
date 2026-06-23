@@ -1,4 +1,5 @@
 import { SETTINGS_COLOR } from "#app/constants/colors";
+import { audioManager } from "#app/global-audio-manager";
 import { BattleStyle } from "#enums/battle-style";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { ExpNotification } from "#enums/exp-notification";
@@ -31,7 +32,7 @@ export class SettingsHelper extends GameManagerHelper {
     this.game.scene.enableTutorials = false;
     this.game.scene.battleStyle = BattleStyle.SET;
     this.game.scene.gameData.gender = PlayerGender.MALE; // set initial player gender;
-    this.game.scene.fieldVolume = 0;
+    audioManager.volume.field = 0;
   }
 
   /**

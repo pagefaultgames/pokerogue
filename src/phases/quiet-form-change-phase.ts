@@ -1,4 +1,5 @@
 import { applyOnLoseAbAttrs, applyPostFormChangeAbAttrs } from "#abilities/apply-ab-attrs";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { getSpeciesFormChangeMessage } from "#data/form-change-triggers";
@@ -121,7 +122,7 @@ export class QuietFormChangePhase extends BattlePhase {
       .setVisible(false)
       .setTintFill(0xffffff);
 
-    globalScene.playSound("battle_anims/PRSFX- Transform");
+    audioManager.playSound("battle_anims/PRSFX- Transform");
 
     await playTween({
       targets: pokemonTintSprite,
@@ -210,7 +211,7 @@ export class QuietFormChangePhase extends BattlePhase {
 
     // TODO: This eternatus boss fight code should almost certainly go in its own superclass phase
     if (globalScene.currentBattle.isClassicFinalBoss && this.pokemon.isEnemy()) {
-      globalScene.playBgm();
+      audioManager.playBgm();
       globalScene.phaseManager.unshiftNew(
         "PokemonHealPhase",
         this.pokemon.getBattlerIndex(),

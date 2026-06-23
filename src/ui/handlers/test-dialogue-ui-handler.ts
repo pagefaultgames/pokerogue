@@ -1,11 +1,12 @@
 import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
-import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import type { OptionSelectItem } from "#ui/base-option-select-ui-handler";
 import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
 import type { ModalConfig } from "#ui/modal-ui-handler";
 import i18next from "i18next";
 
+/** Handler for the i18n testing menu used by the localization team. */
 export class TestDialogueUiHandler extends FormModalUiHandler {
   keys: string[];
 
