@@ -766,10 +766,24 @@ function removeSelfStatBoost(pokemon: Pokemon, attr: StatStageChangeAttr | undef
 }
 
 /**
+ * @returns Whether the Pokémon has a weather summoning or suppressing ability
+ * that would make weather setting moves redundant.
+ * @param pokemon - The Pokémon under examination
+ */
+function overridesOrIgnoresWeather(pokemon: Pokemon): boolean {
+  // Return true if the pokemon has a weather summoning or suppressing ability.
+  return (
+    pokemon.hasAbilityWithAttr("PostSummonWeatherChangeAbAttr")
+    || pokemon.hasAbilityWithAttr("SuppressWeatherEffectAbAttr")
+    || pokemon.hasAbilityWithAttr("PreAttackWeatherOverrideAbAttr")
+  );
+}
+
+/**
  * Determine whether the Pokémon would benefit from Rain Dance based on its
  * current moveset and abilities.
  * @param pokemon - The Pokémon under examination
- * @returns Whether the Pokémon would benefit from Rain Dance
+ * @returns Whether Rain Dance is effectively useless
  */
 function shouldRemoveRainDance(pokemon: Pokemon): boolean {
   if (getExistingDamageMoveTypes(pokemon, false).has(PokemonType.WATER)) {
@@ -797,7 +811,7 @@ function shouldRemoveRainDance(pokemon: Pokemon): boolean {
  * Determine whether the Pokémon would benefit from Sunny Day based on its
  * current moveset and abilities.
  * @param pokemon - The Pokémon under examination
- * @returns Whether the Pokémon would benefit from Sunny Day
+ * @returns Whether Sunny Day is effectively useless
  */
 function shouldRemoveSunnyDay(pokemon: Pokemon): boolean {
   if (getExistingDamageMoveTypes(pokemon, false).has(PokemonType.FIRE)) {
@@ -838,12 +852,15 @@ function shouldRemoveSunnyDay(pokemon: Pokemon): boolean {
  * Determine whether the Pokémon would benefit from Snow/Hail based on its
  * current moveset and abilities.
  * @param pokemon - The Pokémon under examination
- * @returns Whether the Pokémon would benefit from Snow/Hail
+ * @returns Whether Snow/Hail is effectively useless
  */
 // TODO: Extract out common functionality between this and sandstorm
 function shouldRemoveSnowscapeHail(pokemon: Pokemon, willTera: boolean): boolean {
-  const types = new Set(pokemon.getTypes({ includeTeraType: willTera, returnOriginalTypesIfStellar: true }));
-  if (types.has(PokemonType.ICE)) {
+  const types = new Set(pokemon.getTypes({ includeTeraType: false }));
+  if (
+    types.has(PokemonType.ICE)
+    && (!willTera || [PokemonType.STELLAR, PokemonType.ICE].includes(pokemon.getTeraType()))
+  ) {
     return false;
   }
   for (const snowAbility of [
@@ -870,10 +887,14 @@ function shouldRemoveSnowscapeHail(pokemon: Pokemon, willTera: boolean): boolean
  * Determine whether the Pokémon would benefit from Sandstorm based on its
  * current moveset and abilities.
  * @param pokemon - The Pokémon under examination
- * @returns Whether the Pokémon would benefit from Sandstorm
+ * @returns Whether Sandstorm is effectively useless
  */
 function shouldRemoveSandstorm(pokemon: Pokemon, willTera: boolean): boolean {
-  if (pokemon.getTypes({ includeTeraType: willTera, returnOriginalTypesIfStellar: true }).includes(PokemonType.ROCK)) {
+  const types = new Set(pokemon.getTypes({ includeTeraType: false }));
+  if (
+    types.has(PokemonType.ROCK)
+    && (!willTera || [PokemonType.STELLAR, PokemonType.ROCK].includes(pokemon.getTeraType()))
+  ) {
     return false;
   }
   if (
@@ -952,7 +973,7 @@ function hasSunInstantCharge(pokemon: Pokemon): boolean {
  */
 function canInflictPoison(pokemon: Pokemon): boolean {
   // Has a move that can inflict poison
-  // TODO: Add check for sheer force here once sheer force is added to move flags
+  // TODO: Add check for sheer force here once it uses move flags
   if (
     pokemon.moveset.some(m => {
       const move = m.getMove();
@@ -1012,7 +1033,8 @@ function filterUselessMoves(pokemon: Pokemon, willTera: boolean): boolean {
     }
     const moveId = move.id;
     if (
-      (moveId === MoveId.RAIN_DANCE && shouldRemoveRainDance(pokemon))
+      (move.hasAttr("WeatherChangeAttr") && overridesOrIgnoresWeather(pokemon))
+      || (moveId === MoveId.RAIN_DANCE && shouldRemoveRainDance(pokemon))
       || (moveId === MoveId.SUNNY_DAY && shouldRemoveSunnyDay(pokemon))
       || ((moveId === MoveId.SNOWSCAPE || moveId === MoveId.HAIL) && shouldRemoveSnowscapeHail(pokemon, willTera))
       || (moveId === MoveId.SANDSTORM && shouldRemoveSandstorm(pokemon, willTera))
