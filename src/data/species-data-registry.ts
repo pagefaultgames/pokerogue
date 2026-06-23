@@ -152,8 +152,14 @@ export class SpeciesDataRegistry {
   public getTms(speciesId: SpeciesId, form?: string | number): MoveId[] {
     const speciesData = this.getSpeciesData(speciesId);
     const formKey = this.getFormKey(speciesId, form);
-    const tms = new Set([...speciesData.tms, ...(speciesData.formTms?.[formKey] ?? [])]);
-    return Array.from(tms);
+    const tms = [...speciesData.tms, ...(speciesData.formTms?.[formKey] ?? [])];
+    const prevo = this.getPrevolution(speciesId);
+    if (prevo !== null) {
+      const prevoTms = this.getTms(prevo, formKey);
+      tms.push(...prevoTms);
+    }
+
+    return Array.from(new Set(tms));
   }
 
   /**

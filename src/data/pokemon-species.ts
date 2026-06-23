@@ -355,7 +355,18 @@ export abstract class PokemonSpeciesForm {
     const showGenderDiffs =
       this.genderDiffs
       && female
-      && ![SpeciesFormKey.MEGA, SpeciesFormKey.GIGANTAMAX].includes(formSpriteKey as SpeciesFormKey);
+      && ![
+        SpeciesFormKey.MEGA,
+        SpeciesFormKey.MEGA_X,
+        SpeciesFormKey.MEGA_Y,
+        SpeciesFormKey.MEGA_Z,
+        SpeciesFormKey.MEGA_ORIGINAL,
+        SpeciesFormKey.MEGA_CURLY,
+        SpeciesFormKey.MEGA_DROOPY,
+        SpeciesFormKey.MEGA_STRETCHY,
+        SpeciesFormKey.PRIMAL,
+        SpeciesFormKey.GIGANTAMAX,
+      ].includes(formSpriteKey as SpeciesFormKey);
 
     let spriteKey = `${showGenderDiffs ? "female__" : ""}${this.speciesId}${formSpriteKey ? `-${formSpriteKey}` : ""}`;
 
@@ -368,7 +379,18 @@ export abstract class PokemonSpeciesForm {
       const replacementShowGenderDiffs =
         getPokemonSpecies(replacement.speciesId).genderDiffs
         && female
-        && ![SpeciesFormKey.MEGA, SpeciesFormKey.GIGANTAMAX].includes(replacementFormSpriteKey as SpeciesFormKey);
+        && ![
+          SpeciesFormKey.MEGA,
+          SpeciesFormKey.MEGA_X,
+          SpeciesFormKey.MEGA_Y,
+          SpeciesFormKey.MEGA_Z,
+          SpeciesFormKey.MEGA_ORIGINAL,
+          SpeciesFormKey.MEGA_CURLY,
+          SpeciesFormKey.MEGA_DROOPY,
+          SpeciesFormKey.MEGA_STRETCHY,
+          SpeciesFormKey.PRIMAL,
+          SpeciesFormKey.GIGANTAMAX,
+        ].includes(replacementFormSpriteKey as SpeciesFormKey);
 
       spriteKey = `${replacementShowGenderDiffs ? "female__" : ""}${replacement.speciesId}${replacementFormSpriteKey ? `-${replacementFormSpriteKey}` : ""}`;
     }

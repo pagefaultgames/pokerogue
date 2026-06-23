@@ -35,9 +35,13 @@ export interface PokemonSpeciesData {
   eggTier?: EggTier;
   /** The passive ability of the species or a mapping of its formIndex to a passive ability */
   passives: AbilityId | PokemonSpeciesPassives;
+  /** An array of level moves shared across **all** forms */
   levelMoves: LevelMoves;
+  /** Form specific level moves. Record of formKey to an array of level moves */
   formLevelMoves?: SpeciesFormLevelMoves;
+  /** An array of TM moves shared across **all** forms */
   tms: MoveId[];
+  /** Form specific TM moves. Record of `formKey` to an array of TM moves */
   formTms?: SpeciesFormTmMoves;
 }
 
