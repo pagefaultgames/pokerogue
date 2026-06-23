@@ -1200,13 +1200,6 @@
     "dexNum": 12,
     "id": "BUTTERFREE",
     "form": null,
-    "level": 1,
-    "move": "GUST"
-  },
-  {
-    "dexNum": 12,
-    "id": "BUTTERFREE",
-    "form": null,
     "level": 11,
     "move": "CONFUSION"
   },
@@ -20604,6 +20597,13 @@
     "dexNum": 153,
     "id": "BAYLEEF",
     "form": null,
+    "level": "EVOLVE_MOVE",
+    "move": "MAGICAL_LEAF"
+  },
+  {
+    "dexNum": 153,
+    "id": "BAYLEEF",
+    "form": null,
     "level": 1,
     "move": "TACKLE"
   },
@@ -20654,13 +20654,6 @@
     "id": "BAYLEEF",
     "form": null,
     "level": 22,
-    "move": "MAGICAL_LEAF"
-  },
-  {
-    "dexNum": 153,
-    "id": "BAYLEEF",
-    "form": null,
-    "level": 24,
     "move": "NATURAL_GIFT"
   },
   {
@@ -20730,6 +20723,13 @@
     "dexNum": 154,
     "id": "MEGANIUM",
     "form": null,
+    "level": "EVOLVE_MOVE",
+    "move": "PETAL_DANCE"
+  },
+  {
+    "dexNum": 154,
+    "id": "MEGANIUM",
+    "form": null,
     "level": "RELEARN_MOVE",
     "move": "PETAL_BLIZZARD"
   },
@@ -20737,8 +20737,8 @@
     "dexNum": 154,
     "id": "MEGANIUM",
     "form": null,
-    "level": "EVOLVE_MOVE",
-    "move": "PETAL_DANCE"
+    "level": 1,
+    "move": "MAGICAL_LEAF"
   },
   {
     "dexNum": 154,
@@ -20788,13 +20788,6 @@
     "form": null,
     "level": 18,
     "move": "REFLECT"
-  },
-  {
-    "dexNum": 154,
-    "id": "MEGANIUM",
-    "form": null,
-    "level": 22,
-    "move": "MAGICAL_LEAF"
   },
   {
     "dexNum": 154,
@@ -20926,7 +20919,7 @@
     "dexNum": 155,
     "id": "CYNDAQUIL",
     "form": null,
-    "level": 19,
+    "level": 17,
     "move": "FLAME_WHEEL"
   },
   {
@@ -21045,7 +21038,7 @@
     "dexNum": 156,
     "id": "QUILAVA",
     "form": null,
-    "level": 20,
+    "level": 18,
     "move": "FLAME_WHEEL"
   },
   {
@@ -21059,7 +21052,7 @@
     "dexNum": 156,
     "id": "QUILAVA",
     "form": null,
-    "level": 31,
+    "level": 29,
     "move": "SWIFT"
   },
   {
@@ -21130,6 +21123,13 @@
     "id": "TYPHLOSION",
     "form": null,
     "level": 1,
+    "move": "GYRO_BALL"
+  },
+  {
+    "dexNum": 157,
+    "id": "TYPHLOSION",
+    "form": null,
+    "level": 1,
     "move": "TACKLE"
   },
   {
@@ -21138,13 +21138,6 @@
     "form": null,
     "level": 1,
     "move": "LEER"
-  },
-  {
-    "dexNum": 157,
-    "id": "TYPHLOSION",
-    "form": null,
-    "level": 1,
-    "move": "GYRO_BALL"
   },
   {
     "dexNum": 157,
@@ -21171,7 +21164,7 @@
     "dexNum": 157,
     "id": "TYPHLOSION",
     "form": null,
-    "level": 20,
+    "level": 18,
     "move": "FLAME_WHEEL"
   },
   {
@@ -21185,7 +21178,7 @@
     "dexNum": 157,
     "id": "TYPHLOSION",
     "form": null,
-    "level": 31,
+    "level": 29,
     "move": "SWIFT"
   },
   {
@@ -21395,6 +21388,13 @@
     "dexNum": 159,
     "id": "CROCONAW",
     "form": null,
+    "level": "EVOLVE_MOVE",
+    "move": "BUBBLE_BEAM"
+  },
+  {
+    "dexNum": 159,
+    "id": "CROCONAW",
+    "form": null,
     "level": 1,
     "move": "SCRATCH"
   },
@@ -21536,6 +21536,20 @@
     "id": "FERALIGATR",
     "form": null,
     "level": 1,
+    "move": "BUBBLE_BEAM"
+  },
+  {
+    "dexNum": 160,
+    "id": "FERALIGATR",
+    "form": null,
+    "level": 1,
+    "move": "AGILITY"
+  },
+  {
+    "dexNum": 160,
+    "id": "FERALIGATR",
+    "form": null,
+    "level": 1,
     "move": "SCRATCH"
   },
   {
@@ -21544,13 +21558,6 @@
     "form": null,
     "level": 1,
     "move": "LEER"
-  },
-  {
-    "dexNum": 160,
-    "id": "FERALIGATR",
-    "form": null,
-    "level": 1,
-    "move": "AGILITY"
   },
   {
     "dexNum": 160,
@@ -87234,6 +87241,132 @@
     "move": "DARK_PULSE"
   },
   {
+    "dexNum": 678,
+    "id": "MEOWSTIC",
+    "form": "mega",
+    "level": 1,
+    "move": "HELPING_HAND"
+  },
+  {
+    "dexNum": 678,
+    "id": "MEOWSTIC",
+    "form": "mega",
+    "level": 1,
+    "move": "EXTRASENSORY"
+  },
+  {
+    "dexNum": 678,
+    "id": "MEOWSTIC",
+    "form": "mega",
+    "level": 1,
+    "move": "MEAN_LOOK"
+  },
+  {
+    "dexNum": 678,
+    "id": "MEOWSTIC",
+    "form": "mega",
+    "level": 1,
+    "move": "HEAL_BLOCK"
+  },
+  {
+    "dexNum": 678,
+    "id": "MEOWSTIC",
+    "form": "mega",
+    "level": 1,
+    "move": "MAGICAL_LEAF"
+  },
+  {
+    "dexNum": 678,
+    "id": "MEOWSTIC",
+    "form": "mega",
+    "level": 1,
+    "move": "ME_FIRST"
+  },
+  {
+    "dexNum": 678,
+    "id": "MEOWSTIC",
+    "form": "mega",
+    "level": 28,
+    "move": "CHARM"
+  },
+  {
+    "dexNum": 678,
+    "id": "MEOWSTIC",
+    "form": "mega",
+    "level": 28,
+    "move": "CHARGE_BEAM"
+  },
+  {
+    "dexNum": 678,
+    "id": "MEOWSTIC",
+    "form": "mega",
+    "level": 31,
+    "move": "MIRACLE_EYE"
+  },
+  {
+    "dexNum": 678,
+    "id": "MEOWSTIC",
+    "form": "mega",
+    "level": 31,
+    "move": "SHADOW_BALL"
+  },
+  {
+    "dexNum": 678,
+    "id": "MEOWSTIC",
+    "form": "mega",
+    "level": 45,
+    "move": "IMPRISON"
+  },
+  {
+    "dexNum": 678,
+    "id": "MEOWSTIC",
+    "form": "mega",
+    "level": 45,
+    "move": "SIGNAL_BEAM"
+  },
+  {
+    "dexNum": 678,
+    "id": "MEOWSTIC",
+    "form": "mega",
+    "level": 50,
+    "move": "MISTY_TERRAIN"
+  },
+  {
+    "dexNum": 678,
+    "id": "MEOWSTIC",
+    "form": "mega",
+    "level": 50,
+    "move": "FUTURE_SIGHT"
+  },
+  {
+    "dexNum": 678,
+    "id": "MEOWSTIC",
+    "form": "mega",
+    "level": 53,
+    "move": "QUICK_GUARD"
+  },
+  {
+    "dexNum": 678,
+    "id": "MEOWSTIC",
+    "form": "mega",
+    "level": 53,
+    "move": "STORED_POWER"
+  },
+  {
+    "dexNum": 678,
+    "id": "MEOWSTIC",
+    "form": "mega",
+    "level": 56,
+    "move": "WISH"
+  },
+  {
+    "dexNum": 678,
+    "id": "MEOWSTIC",
+    "form": "mega",
+    "level": 56,
+    "move": "DARK_PULSE"
+  },
+  {
     "dexNum": 679,
     "id": "HONEDGE",
     "form": null,
@@ -88785,14 +88918,14 @@
     "id": "SKRELP",
     "form": null,
     "level": 42,
-    "move": "DRAGON_PULSE"
+    "move": "HYDRO_PUMP"
   },
   {
     "dexNum": 690,
     "id": "SKRELP",
     "form": null,
     "level": 49,
-    "move": "HYDRO_PUMP"
+    "move": "DRAGON_PULSE"
   },
   {
     "dexNum": 691,
@@ -88904,21 +89037,21 @@
     "id": "DRAGALGE",
     "form": null,
     "level": 42,
-    "move": "DRAGON_PULSE"
+    "move": "HYDRO_PUMP"
   },
   {
     "dexNum": 691,
     "id": "DRAGALGE",
     "form": null,
     "level": 53,
-    "move": "DRAGON_TAIL"
+    "move": "DRAGON_PULSE"
   },
   {
     "dexNum": 691,
     "id": "DRAGALGE",
     "form": null,
     "level": 59,
-    "move": "HYDRO_PUMP"
+    "move": "DRAGON_TAIL"
   },
   {
     "dexNum": 691,
@@ -92285,7 +92418,7 @@
     "id": "ZYGARDE",
     "form": null,
     "level": 1,
-    "move": "BIND"
+    "move": "DRAGON_BREATH"
   },
   {
     "dexNum": 718,
@@ -92299,14 +92432,7 @@
     "id": "ZYGARDE",
     "form": null,
     "level": 1,
-    "move": "SAFEGUARD"
-  },
-  {
-    "dexNum": 718,
-    "id": "ZYGARDE",
-    "form": null,
-    "level": 1,
-    "move": "DRAGON_BREATH"
+    "move": "BIND"
   },
   {
     "dexNum": 718,
@@ -92314,6 +92440,13 @@
     "form": null,
     "level": 1,
     "move": "BULLDOZE"
+  },
+  {
+    "dexNum": 718,
+    "id": "ZYGARDE",
+    "form": null,
+    "level": 1,
+    "move": "SAFEGUARD"
   },
   {
     "dexNum": 718,
@@ -92711,15 +92844,22 @@
     "dexNum": 720,
     "id": "HOOPA",
     "form": null,
+    "level": 64,
+    "move": "NASTY_PLOT"
+  },
+  {
+    "dexNum": 720,
+    "id": "HOOPA",
+    "form": "",
     "level": 60,
     "move": "HYPERSPACE_HOLE"
   },
   {
     "dexNum": 720,
     "id": "HOOPA",
-    "form": null,
-    "level": 64,
-    "move": "NASTY_PLOT"
+    "form": "unbound",
+    "level": 60,
+    "move": "HYPERSPACE_FURY"
   },
   {
     "dexNum": 721,
@@ -95622,35 +95762,35 @@
   {
     "dexNum": 745,
     "id": "LYCANROC",
-    "form": "",
+    "form": "midday",
     "level": "RELEARN_MOVE",
     "move": "ACCELEROCK"
   },
   {
     "dexNum": 745,
     "id": "LYCANROC",
-    "form": "",
+    "form": "midday",
     "level": "EVOLVE_MOVE",
     "move": "SUCKER_PUNCH"
   },
   {
     "dexNum": 745,
     "id": "LYCANROC",
-    "form": "",
+    "form": "midday",
     "level": 1,
     "move": "QUICK_ATTACK"
   },
   {
     "dexNum": 745,
     "id": "LYCANROC",
-    "form": "",
+    "form": "midday",
     "level": 1,
     "move": "QUICK_GUARD"
   },
   {
     "dexNum": 745,
     "id": "LYCANROC",
-    "form": "",
+    "form": "midday",
     "level": 64,
     "move": "ACCELEROCK"
   },
@@ -106607,13 +106747,6 @@
     "id": "TOXTRICITY",
     "form": null,
     "level": 1,
-    "move": "LEER"
-  },
-  {
-    "dexNum": 849,
-    "id": "TOXTRICITY",
-    "form": null,
-    "level": 1,
     "move": "GROWL"
   },
   {
@@ -106628,13 +106761,6 @@
     "id": "TOXTRICITY",
     "form": null,
     "level": 1,
-    "move": "THUNDER_SHOCK"
-  },
-  {
-    "dexNum": 849,
-    "id": "TOXTRICITY",
-    "form": null,
-    "level": 1,
     "move": "FLAIL"
   },
   {
@@ -106642,28 +106768,7 @@
     "id": "TOXTRICITY",
     "form": null,
     "level": 1,
-    "move": "ACID_SPRAY"
-  },
-  {
-    "dexNum": 849,
-    "id": "TOXTRICITY",
-    "form": null,
-    "level": 1,
     "move": "BELCH"
-  },
-  {
-    "dexNum": 849,
-    "id": "TOXTRICITY",
-    "form": null,
-    "level": 1,
-    "move": "NOBLE_ROAR"
-  },
-  {
-    "dexNum": 849,
-    "id": "TOXTRICITY",
-    "form": null,
-    "level": 1,
-    "move": "EERIE_IMPULSE"
   },
   {
     "dexNum": 849,
@@ -106678,6 +106783,41 @@
     "form": null,
     "level": 1,
     "move": "TEARFUL_LOOK"
+  },
+  {
+    "dexNum": 849,
+    "id": "TOXTRICITY",
+    "form": null,
+    "level": 1,
+    "move": "EERIE_IMPULSE"
+  },
+  {
+    "dexNum": 849,
+    "id": "TOXTRICITY",
+    "form": null,
+    "level": 1,
+    "move": "THUNDER_SHOCK"
+  },
+  {
+    "dexNum": 849,
+    "id": "TOXTRICITY",
+    "form": null,
+    "level": 1,
+    "move": "LEER"
+  },
+  {
+    "dexNum": 849,
+    "id": "TOXTRICITY",
+    "form": null,
+    "level": 1,
+    "move": "NOBLE_ROAR"
+  },
+  {
+    "dexNum": 849,
+    "id": "TOXTRICITY",
+    "form": null,
+    "level": 1,
+    "move": "ACID_SPRAY"
   },
   {
     "dexNum": 849,
@@ -106759,77 +106899,84 @@
   {
     "dexNum": 849,
     "id": "TOXTRICITY",
-    "form": "",
+    "form": "amped",
     "level": 20,
     "move": "VENOSHOCK"
   },
   {
     "dexNum": 849,
     "id": "TOXTRICITY",
-    "form": "",
+    "form": "amped",
     "level": 52,
     "move": "SHIFT_GEAR"
   },
   {
     "dexNum": 849,
     "id": "TOXTRICITY",
-    "form": "",
+    "form": "amped",
     "level": 60,
     "move": "ZAP_CANNON"
   },
   {
     "dexNum": 849,
     "id": "TOXTRICITY",
-    "form": "gigantamax",
+    "form": "lowkey",
     "level": 20,
     "move": "VENOM_DRENCH"
   },
   {
     "dexNum": 849,
     "id": "TOXTRICITY",
-    "form": "gigantamax",
-    "level": 52,
-    "move": "SHIFT_GEAR"
-  },
-  {
-    "dexNum": 849,
-    "id": "TOXTRICITY",
-    "form": "gigantamax",
+    "form": "lowkey",
     "level": 52,
     "move": "MAGNETIC_FLUX"
   },
   {
     "dexNum": 849,
     "id": "TOXTRICITY",
-    "form": "gigantamax",
-    "level": 60,
-    "move": "ZAP_CANNON"
-  },
-  {
-    "dexNum": 849,
-    "id": "TOXTRICITY",
-    "form": "gigantamax",
+    "form": "lowkey",
     "level": 60,
     "move": "PARABOLIC_CHARGE"
   },
   {
     "dexNum": 849,
     "id": "TOXTRICITY",
-    "form": "lowkey",
+    "form": "gigantamax",
+    "level": 20,
+    "move": "VENOSHOCK"
+  },
+  {
+    "dexNum": 849,
+    "id": "TOXTRICITY",
+    "form": "gigantamax",
     "level": 20,
     "move": "VENOM_DRENCH"
   },
   {
     "dexNum": 849,
     "id": "TOXTRICITY",
-    "form": "lowkey",
+    "form": "gigantamax",
+    "level": 52,
+    "move": "SHIFT_GEAR"
+  },
+  {
+    "dexNum": 849,
+    "id": "TOXTRICITY",
+    "form": "gigantamax",
     "level": 52,
     "move": "MAGNETIC_FLUX"
   },
   {
     "dexNum": 849,
     "id": "TOXTRICITY",
-    "form": "lowkey",
+    "form": "gigantamax",
+    "level": 60,
+    "move": "ZAP_CANNON"
+  },
+  {
+    "dexNum": 849,
+    "id": "TOXTRICITY",
+    "form": "gigantamax",
     "level": 60,
     "move": "PARABOLIC_CHARGE"
   },
@@ -111382,13 +111529,6 @@
     "form": null,
     "level": 52,
     "move": "FOCUS_PUNCH"
-  },
-  {
-    "dexNum": 892,
-    "id": "URSHIFU",
-    "form": null,
-    "level": "EVOLVE_MOVE",
-    "move": "WICKED_BLOW"
   },
   {
     "dexNum": 892,
@@ -129896,21 +130036,14 @@
     "id": "BATTLE_BOND_GRENINJA",
     "form": null,
     "level": "RELEARN_MOVE",
-    "move": "HAZE"
+    "move": "BUBBLE"
   },
   {
     "dexNum": 2658,
     "id": "BATTLE_BOND_GRENINJA",
     "form": null,
-    "level": "RELEARN_MOVE",
-    "move": "NIGHT_SLASH"
-  },
-  {
-    "dexNum": 2658,
-    "id": "BATTLE_BOND_GRENINJA",
-    "form": null,
-    "level": "EVOLVE_MOVE",
-    "move": "WATER_SHURIKEN"
+    "level": 1,
+    "move": "MAT_BLOCK"
   },
   {
     "dexNum": 2658,
@@ -129930,50 +130063,8 @@
     "dexNum": 2658,
     "id": "BATTLE_BOND_GRENINJA",
     "form": null,
-    "level": 1,
-    "move": "ROLE_PLAY"
-  },
-  {
-    "dexNum": 2658,
-    "id": "BATTLE_BOND_GRENINJA",
-    "form": null,
-    "level": 1,
-    "move": "BOUNCE"
-  },
-  {
-    "dexNum": 2658,
-    "id": "BATTLE_BOND_GRENINJA",
-    "form": null,
-    "level": 1,
-    "move": "FLING"
-  },
-  {
-    "dexNum": 2658,
-    "id": "BATTLE_BOND_GRENINJA",
-    "form": null,
-    "level": 1,
-    "move": "SMACK_DOWN"
-  },
-  {
-    "dexNum": 2658,
-    "id": "BATTLE_BOND_GRENINJA",
-    "form": null,
-    "level": 1,
-    "move": "ROUND"
-  },
-  {
-    "dexNum": 2658,
-    "id": "BATTLE_BOND_GRENINJA",
-    "form": null,
-    "level": 1,
-    "move": "MAT_BLOCK"
-  },
-  {
-    "dexNum": 2658,
-    "id": "BATTLE_BOND_GRENINJA",
-    "form": null,
     "level": 5,
-    "move": "BUBBLE"
+    "move": "WATER_SHURIKEN"
   },
   {
     "dexNum": 2658,
@@ -130000,6 +130091,13 @@
     "dexNum": 2658,
     "id": "BATTLE_BOND_GRENINJA",
     "form": null,
+    "level": 16,
+    "move": "ROUND"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
     "level": 19,
     "move": "SMOKESCREEN"
   },
@@ -130014,6 +130112,13 @@
     "dexNum": 2658,
     "id": "BATTLE_BOND_GRENINJA",
     "form": null,
+    "level": 25,
+    "move": "FLING"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
     "level": 28,
     "move": "SPIKES"
   },
@@ -130021,8 +130126,22 @@
     "dexNum": 2658,
     "id": "BATTLE_BOND_GRENINJA",
     "form": null,
+    "level": 30,
+    "move": "SMACK_DOWN"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
     "level": 33,
     "move": "AERIAL_ACE"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "level": 36,
+    "move": "ROLE_PLAY"
   },
   {
     "dexNum": 2658,
@@ -130037,6 +130156,13 @@
     "form": null,
     "level": 42,
     "move": "SUBSTITUTE"
+  },
+  {
+    "dexNum": 2658,
+    "id": "BATTLE_BOND_GRENINJA",
+    "form": null,
+    "level": 45,
+    "move": "BOUNCE"
   },
   {
     "dexNum": 2658,
