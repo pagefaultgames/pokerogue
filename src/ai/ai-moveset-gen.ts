@@ -366,7 +366,7 @@ function filterMovePool(pool: Map<MoveId, number>, isBoss: boolean, hasTrainer: 
         && ((isSingles && FORBIDDEN_SINGLES_MOVES.has(moveId)) // forbid doubles only moves in singles
           || (level >= LEVEL_BASED_DENYLIST_THRESHOLD && LEVEL_BASED_DENYLIST.has(moveId)) // forbid level based denylist moves
           || (move.category !== MoveCategory.STATUS
-            && worseOffensiveStatDenylist
+            && worseOffensiveStatDenylist != null
             && doesMoveMatchOffensiveCategory(move, worseOffensiveStatDenylist))
           || (move.hasAttr("WeatherChangeAttr") && blockWeatherSettingMoves) // Forbid weather setting moves if the pokemon has a weather summoning or suppressing ability
           || (move.hasAttr("TerrainChangeAttr") && blockTerrainSettingMoves) // Forbid terrain setting moves if the pokemon has a terrain summoning ability
@@ -950,7 +950,6 @@ function hasSleepInducingMove(pokemon: Pokemon, targetSelf = false): boolean {
  * @param pokemon - The Pokémon under examination
  */
 function hasSunInstantCharge(pokemon: Pokemon): boolean {
-  // Sun-summoning ability
   return (
     pokemon.moveset.some(m => m.moveId === MoveId.SUNNY_DAY)
     || pokemon
