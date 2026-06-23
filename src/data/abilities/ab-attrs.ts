@@ -928,7 +928,7 @@ export class PostDefendTerrainChangeAbAttr extends PostDefendAbAttr {
 export class PostDefendApplyStatusEffectAbAttr extends PostDefendAbAttr {
   private readonly chance: number;
   private readonly contactRequired: boolean;
-  private readonly effects: readonly StatusEffect[];
+  public readonly effects: readonly StatusEffect[];
 
   constructor(chance: number, contactRequired = true, ...effects: StatusEffect[]) {
     super(true);
@@ -1847,9 +1847,9 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
 }
 
 export class PostAttackApplyStatusEffectAbAttr extends PostAttackAbAttr {
-  private readonly contactRequired: boolean;
+  public readonly contactRequired: boolean;
   private readonly chance: number;
-  private readonly effects: readonly StatusEffect[];
+  public readonly effects: readonly StatusEffect[];
 
   constructor(contactRequired: boolean, chance: number, ...effects: StatusEffect[]) {
     super();
