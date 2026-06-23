@@ -13701,7 +13701,6 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       MoveId.SWAGGER,
       MoveId.ATTRACT,
       MoveId.RETURN,
-      MoveId.FRUSTRATION,
       MoveId.REVENGE,
       MoveId.DIVE,
       MoveId.HIDDEN_POWER,
