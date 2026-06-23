@@ -1,4 +1,5 @@
 import type { StringLiteral } from "#types/type-helpers";
+
 /**
  * Determine whether the object is an array of non-null objects.
  */
@@ -7,12 +8,12 @@ export function validateIsArrayOfObjects(data: unknown): data is Record<string, 
 }
 
 /**
- * Ensure `data.property` exists and is an object.
- * `data` must be a non-null object
- * If `summonData` does not exist on the object or is not a non-null object, it
+ * Ensure `data.property` exists and is a non-null object.
+ *
+ * If `property` does not exist on the object or is not a non-null object, it
  * will be initialized to an empty object.
- * @param data - The object to ensure has a `summonData` property; may be modified
- *   to add the property if it does not exist or is not an object.
+ *
+ * @param data - The object to ensure has a specific property. Must be a non-null object.
  * @param property - **String literal** of the property in question
  *
  * @typeParam T - The string literal type of the property
@@ -27,13 +28,12 @@ export function ensurePropertyIsObject<const T extends string>(
 }
 
 /**
- * Determine whether `data.property` exists and is an object.
- * `data` must be a non-null object
- * If `summonData` does not exist on the object or is not a non-null object, it
- * will be initialized to an empty object.
- * @param data - The object to ensure has a `summonData` property.
+ * Determine whether `data.property` exists and is a non-null an object.
+ *
+ * @param data - The object to ensure has a specific property. Must be a non-null object.
  * @param property - **String literal** of the property in question
- * @returns `true` if the property exists and is an object, `false` otherwise.
+ *
+ * @returns Whether the property exists and is a non-null object
  *
  * @typeParam T - The string literal type of the property
  */
