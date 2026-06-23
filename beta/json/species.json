@@ -61085,7 +61085,7 @@
     "type2": "DARK",
     "ability1": "BATTLE_BOND",
     "ability2": "BATTLE_BOND",
-    "hiddenAbility": "BATTLE_BOND",
+    "hiddenAbility": "NONE",
     "passive": "STAKEOUT",
     "bst": 530,
     "hp": 72,
