@@ -75,7 +75,7 @@ export class PokemonData {
    * @param source The {@linkcode Pokemon} to convert into data (or a JSON object representing one)
    */
   // TODO: Remove any from type signature in favor of 2 separate method funcs
-  // TODO: change the source to `any` and/or create a method explicitly for converting from raw JSON data
+  // TODO: change the source to `unknown` or create a method explicitly for converting from raw JSON data
   constructor(source: Pokemon | any) {
     const sourcePokemon = source instanceof Pokemon ? source : undefined;
 

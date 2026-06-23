@@ -45,38 +45,40 @@ function isArrayOfLengthTwo(arr: unknown): arr is [unknown, unknown] {
 const migrateTera: SessionSaveMigrator = {
   version: "1.7.0",
   migrate: data => {
+    // biome-ignore lint/style/noNegationElse: Improves readability
     if (!validateIsArrayOfObjects(data.modifiers)) {
-      console.warn("Malformed modifiers in save data, skipping tera type migrator");
-      return;
-    }
-    for (let i = 0; i < data.modifiers.length; ) {
-      if (data.modifiers[i].className === "TerastallizeModifier") {
-        // Assert the modifier has the expected args structure
-        const modifierArgs = data.modifiers[i].args;
-        // Just remove malformed modifier...
-        if (!isArrayOfLengthTwo(modifierArgs)) {
-          data.modifiers.splice(i, 1);
-          continue;
-        }
-        data.party.forEach(p => {
-          if (p.id === modifierArgs[0]) {
-            p.teraType = modifierArgs[1];
+      console.warn("Malformed player modifiers in save data, skipping tera type migrator");
+    } else {
+      for (let i = 0; i < data.modifiers.length; ) {
+        if (data.modifiers[i].className === "TerastallizeModifier") {
+          // Assert the modifier has the expected args structure
+          const modifierArgs = data.modifiers[i].args;
+          // Skip malformed modifiers (it is not the migrator's responsibility to fix/remove)
+          if (!isArrayOfLengthTwo(modifierArgs)) {
+            continue;
           }
-        });
-        data.modifiers.splice(i, 1);
-      } else {
-        i++;
+          data.party.forEach(p => {
+            if (p.id === modifierArgs[0]) {
+              p.teraType = modifierArgs[1];
+            }
+          });
+          data.modifiers.splice(i, 1);
+        } else {
+          i++;
+        }
       }
-    }
 
-    data.party.forEach(p => {
-      if (p.teraType == null) {
-        p.teraType = getPokemonSpeciesForm(p.species as SpeciesId, p.formIndex as number).type1;
-      }
-    });
+      data.party.forEach(p => {
+        if (p.teraType == null) {
+          p.teraType = getPokemonSpeciesForm(p.species as SpeciesId, p.formIndex as number).type1;
+        }
+      });
+    }
 
     if (!validateIsArrayOfObjects(data.enemyModifiers)) {
-      console.warn("Malformed enemy modifiers/party in save data, skipping tera type migrator for enemy party");
+      if (data.enemyModifiers != null) {
+        console.warn("Malformed enemy modifiers/party in save data, skipping tera type migrator for enemy party");
+      }
       return;
     }
 

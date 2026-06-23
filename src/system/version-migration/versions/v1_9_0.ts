@@ -1,14 +1,6 @@
-import { MoveId } from "#enums/move-id";
-import { PokemonMove } from "#moves/pokemon-move";
 import type { SessionSaveMigrator } from "#types/save-migrators";
 
 function updatePokemonMoveset(data: Record<string, unknown>): void {
-  if ("moveset" in data && Array.isArray(data.moveset)) {
-    data.moveset = data.moveset.filter(m => !!m).map(m => PokemonMove.loadMove(m));
-  } else {
-    data["moveset"] = [new PokemonMove(MoveId.TACKLE), new PokemonMove(MoveId.GROWL)];
-  }
-
   if (typeof data.customPokemonData !== "object" || data.customPokemonData === null) {
     data.customPokemonData = {};
   }
@@ -25,7 +17,8 @@ function updatePokemonMoveset(data: Record<string, unknown>): void {
 }
 
 /**
- * Migrate all lingering rage fist data inside `CustomPokemonData`,
+    // biome-ignore lint/performance/noDelete: intentional, the field doesn't exist anymore
+    delete data.customPokemonData["hitsRecCount"];
  * as well as enforcing default values across the board.
  * @param data - {@linkcode SystemSaveData}
  */

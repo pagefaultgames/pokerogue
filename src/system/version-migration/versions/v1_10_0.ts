@@ -28,9 +28,6 @@ function mapTurnMove(tm: OldTurnMove): TurnMove {
 }
 
 function migrateSummonData(summonData: Record<string, unknown>): void {
-  if (typeof summonData !== "object" || summonData === null) {
-    return;
-  }
   if ("moveHistory" in summonData && Array.isArray(summonData.moveHistory)) {
     summonData.moveHistory = summonData.moveHistory.map(mapTurnMove);
   } else {

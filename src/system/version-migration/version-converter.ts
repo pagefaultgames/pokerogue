@@ -142,8 +142,12 @@ export function applySessionVersionMigration(data: Record<string, unknown>): voi
       throw new SessionMigrationError("Session data is missing a valid party array. Cannot migrate.");
     }
 
-    if (!validateIsArrayOfObjects(data.enemyParty)) {
-      throw new SessionMigrationError("Session data is missing a valid enemyParty array. Cannot migrate.");
+    // Enemy party can be null due to some mystery encounters. Coerce to empty array before continuing
+    if (data.enemyParty == null) {
+      console.debug("Converting null enemyParty to empty array for migration.");
+      data.enemyParty = [];
+    } else if (!validateIsArrayOfObjects(data.enemyParty)) {
+      throw new SessionMigrationError("Session data has an invalid enemyParty array. Cannot migrate.");
     }
 
     applyMigrators(sessionMigrators, data, prevVersion);
