@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { allAbilities, allHeldItems } from "#data/data-lists";
 import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
-import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { AbilityId } from "#enums/ability-id";
 import type { FormChangeItemId } from "#enums/form-change-item-id";
 import { getHeldItemCategory, type HeldItemCategoryId, type HeldItemId } from "#enums/held-item-id";
@@ -483,14 +483,18 @@ export class TypeRequirement extends EncounterPokemonRequirement {
 
   override queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
     if (!this.invertQuery) {
-      return partyPokemon.filter(pokemon => this.requiredType.some(type => pokemon.isOfType(type, false, false)));
+      return partyPokemon.filter(pokemon =>
+        this.requiredType.some(type => pokemon.isOfType(type, { includeTeraType: false })),
+      );
     }
     // for an inverted query, we only want to get the pokemon that don't have ANY of the listed types
-    return partyPokemon.filter(pokemon => this.requiredType.every(type => !pokemon.isOfType(type, false, false)));
+    return partyPokemon.filter(pokemon =>
+      this.requiredType.every(type => !pokemon.isOfType(type, { includeTeraType: false })),
+    );
   }
 
   override getDialogueToken(pokemon?: PlayerPokemon): [string, string] {
-    const includedType = this.requiredType.find(ty => pokemon?.isOfType(ty, false, false));
+    const includedType = this.requiredType.find(ty => pokemon?.isOfType(ty, { includeTeraType: false }));
     return ["type", includedType == null ? "" : PokemonType[includedType]];
   }
 }
@@ -575,26 +579,14 @@ export class CompatibleMoveRequirement extends EncounterPokemonRequirement {
 
   override queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
     if (!this.invertQuery) {
-      return partyPokemon.filter(
-        pokemon =>
-          this.requiredMoves.filter(learnableMove =>
-            pokemon.compatibleTms.filter(tm => !pokemon.moveset.find(m => m.moveId === tm)).includes(learnableMove),
-          ).length > 0,
-      );
+      return partyPokemon.filter(pokemon => this.requiredMoves.some(m => pokemon.isTmCompatible(m, true)));
     }
     // for an inverted query, we only want to get the pokemon that don't have ANY of the listed learnableMoves
-    return partyPokemon.filter(
-      pokemon =>
-        this.requiredMoves.filter(learnableMove =>
-          pokemon.compatibleTms.filter(tm => !pokemon.moveset.find(m => m.moveId === tm)).includes(learnableMove),
-        ).length === 0,
-    );
+    return partyPokemon.filter(pokemon => !this.requiredMoves.some(m => pokemon.isTmCompatible(m, true)));
   }
 
   override getDialogueToken(pokemon?: PlayerPokemon): [string, string] {
-    const includedCompatMoves = this.requiredMoves.filter(reqMove =>
-      pokemon?.compatibleTms.filter(tm => !pokemon.moveset.find(m => m.moveId === tm)).includes(reqMove),
-    );
+    const includedCompatMoves = this.requiredMoves.filter(reqMove => pokemon?.isTmCompatible(reqMove, true));
     if (includedCompatMoves.length > 0) {
       return ["compatibleMove", MoveId[includedCompatMoves[0]]];
     }
@@ -745,8 +737,9 @@ export class CanFormChangeWithItemRequirement extends EncounterPokemonRequiremen
 
   filterByForm(pokemon, formChangeItem) {
     return (
-      Object.hasOwn(pokemonFormChanges, pokemon.species.speciesId) // Get all form changes for this species with an item trigger, including any compound triggers
-      && pokemonFormChanges[pokemon.species.speciesId]
+      speciesDataRegistry.hasFormChanges(pokemon.species.speciesId) // Get all form changes for this species with an item trigger, including any compound triggers
+      && speciesDataRegistry
+        .getFormChanges(pokemon.species.speciesId)
         .filter(fc => fc.trigger.hasTriggerType(SpeciesFormChangeItemTrigger))
         // Returns true if any form changes match this item
         .flatMap(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger)

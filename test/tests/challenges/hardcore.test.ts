@@ -1,3 +1,4 @@
+import { allMoves } from "#data/data-lists";
 import { Status } from "#data/status-effect";
 import { AbilityId } from "#enums/ability-id";
 import { Button } from "#enums/buttons";
@@ -9,6 +10,7 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/framework/game-manager";
+import type { CallMoveAttrWithBanlist, MoveAttrString } from "#types/move-types";
 import { RewardSelectUiHandler } from "#ui/reward-select-ui-handler";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -53,6 +55,21 @@ describe("Challenges - Hardcore", () => {
     expect(game.field.getEnemyPokemon()).toHaveUsedMove(MoveId.REVIVAL_BLESSING);
   });
 
+  it.each<{ name: string; move: MoveId; attrName: MoveAttrString }>([
+    { name: "Metronome", move: MoveId.METRONOME, attrName: "RandomMoveAttr" },
+    { name: "Sleep Talk", move: MoveId.SLEEP_TALK, attrName: "RandomMovesetMoveAttr" },
+    { name: "Assist", move: MoveId.ASSIST, attrName: "RandomMovesetMoveAttr" },
+    { name: "Mirror Move", move: MoveId.MIRROR_MOVE, attrName: "CopyMoveAttr" },
+    { name: "Copycat", move: MoveId.COPYCAT, attrName: "CopyMoveAttr" },
+  ])("should prevent $name from calling Revival Blessing", async ({ move, attrName }) => {
+    await game.challengeMode.startBattle(SpeciesId.FEEBAS);
+
+    const attr = allMoves[move].getAttrs(attrName)[0] as CallMoveAttrWithBanlist;
+    expect(attr).toBeDefined();
+
+    expect(attr["isMoveAllowed"](MoveId.REVIVAL_BLESSING)).toBe(false);
+  });
+
   it("prevents REVIVE items in shop and in wave rewards", async () => {
     game.override.startingWave(181).startingLevel(200);
     await game.challengeMode.startBattle(SpeciesId.FEEBAS);
@@ -87,7 +104,7 @@ describe("Challenges - Hardcore", () => {
   });
 
   // TODO: Couldn't figure out how to select party Pokémon
-  it.skip("prevents fusion with a fainted Pokémon", async () => {
+  it.todo("prevents fusion with a fainted Pokémon", async () => {
     game.override.itemRewards([RewardId.DNA_SPLICERS]);
     await game.challengeMode.startBattle(SpeciesId.NUZLEAF, SpeciesId.WHISMUR);
 
@@ -124,7 +141,7 @@ describe("Challenges - Hardcore", () => {
   });
 
   // TODO: Couldn't figure out how to select party Pokémon
-  it.skip("prevents fainted Pokémon from being revived", async () => {
+  it.todo("prevents fainted Pokémon from being revived", async () => {
     game.override.itemRewards([RewardId.MAX_REVIVE]);
     await game.challengeMode.startBattle(SpeciesId.NUZLEAF, SpeciesId.WHISMUR);
 

@@ -1,5 +1,6 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { SpeciesFormChangeAbilityTrigger } from "#data/form-change-triggers";
 import { AbilityId } from "#enums/ability-id";
@@ -44,7 +45,7 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter = MysteryEncounter
 )
   .withEncounterTier(MysteryEncounterTier.ROGUE)
   .withSceneWaveRangeRequirement(100, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
-  .withScenePartySizeRequirement(3, 6)
+  .withScenePartySizeRequirement(3)
   .withMaxAllowedEncounters(1)
   .withIntroSpriteConfigs([
     {
@@ -161,9 +162,10 @@ async function spawnNextTrainerOrEndEncounter() {
     await showEncounterDialogue(`${namespace}:victory`, `${namespace}:speaker`);
 
     // Give 10x Voucher
+    // TODO: Fix
     const reward = generateRewardOptionFromId(RewardId.VOUCHER_PREMIUM).type;
     globalScene.applyReward(reward as Reward, {});
-    globalScene.playSound("item_fanfare");
+    audioManager.playSound("item_fanfare");
     await showEncounterText(i18next.t("battle:rewardGain", { modifierName: (reward as Reward).name }));
 
     await showEncounterDialogue(`${namespace}:victory2`, `${namespace}:speaker`);

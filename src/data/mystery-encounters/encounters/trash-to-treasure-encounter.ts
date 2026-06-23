@@ -1,4 +1,5 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { allHeldItems, allTrainerItems } from "#data/data-lists";
 import { BattlerIndex } from "#enums/battler-index";
@@ -47,7 +48,7 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
 )
   .withEncounterTier(MysteryEncounterTier.ULTRA)
   .withSceneWaveRangeRequirement(100, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
-  .withScenePartySizeRequirement(3, 6)
+  .withScenePartySizeRequirement(3)
   .withMaxAllowedEncounters(1)
   .withFleeAllowed(false)
   .withIntroSpriteConfigs([
@@ -174,7 +175,7 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
 
         const blackSludge = globalScene.trainerItems.add(TrainerItemId.BLACK_SLUDGE);
         if (blackSludge) {
-          globalScene.playSound("battle_anims/PRSFX- Venom Drench", {
+          audioManager.playSound("battle_anims/PRSFX- Venom Drench", {
             volume: 2,
           });
           await showEncounterText(
@@ -202,7 +203,7 @@ async function tryApplyDigRewardItems() {
   // Second leftovers
   assignItemToFirstFreePokemon(HeldItemId.LEFTOVERS, party);
 
-  globalScene.playSound("item_fanfare");
+  audioManager.playSound("se/item_fanfare");
   await showEncounterText(
     i18next.t("battle:rewardGainCount", {
       modifierName: allHeldItems[HeldItemId.LEFTOVERS].name,
@@ -216,7 +217,7 @@ async function tryApplyDigRewardItems() {
   // Only Shell bell
   assignItemToFirstFreePokemon(HeldItemId.SHELL_BELL, party);
 
-  globalScene.playSound("item_fanfare");
+  audioManager.playSound("se/item_fanfare");
   await showEncounterText(
     i18next.t("battle:rewardGainCount", {
       modifierName: allHeldItems[HeldItemId.SHELL_BELL].name,
@@ -229,12 +230,12 @@ async function tryApplyDigRewardItems() {
 }
 
 function doGarbageDig() {
-  globalScene.playSound("battle_anims/PRSFX- Dig2");
+  audioManager.playSound("battle_anims/PRSFX- Dig2");
   globalScene.time.delayedCall(SOUND_EFFECT_WAIT_TIME, () => {
-    globalScene.playSound("battle_anims/PRSFX- Dig2");
-    globalScene.playSound("battle_anims/PRSFX- Venom Drench", { volume: 2 });
+    audioManager.playSound("battle_anims/PRSFX- Dig2");
+    audioManager.playSound("battle_anims/PRSFX- Venom Drench", { volume: 2 });
   });
   globalScene.time.delayedCall(SOUND_EFFECT_WAIT_TIME * 2, () => {
-    globalScene.playSound("battle_anims/PRSFX- Dig2");
+    audioManager.playSound("battle_anims/PRSFX- Dig2");
   });
 }

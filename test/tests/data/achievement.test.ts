@@ -1,18 +1,18 @@
 import type { BattleScene } from "#app/battle-scene";
-import { allSpecies } from "#data/data-lists";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { HeldItemId } from "#enums/held-item-id";
 import { SpeciesId } from "#enums/species-id";
 import { PlayerPokemon } from "#field/pokemon";
 import {
-  Achv,
-  AchvTier,
-  achvs,
-  DamageAchv,
-  HealAchv,
-  HeldItemAchv,
-  LevelAchv,
-  MoneyAchv,
-  RibbonAchv,
+    Achv,
+    AchvTier,
+    achvs,
+    DamageAchv,
+    HealAchv,
+    HeldItemAchv,
+    LevelAchv,
+    MoneyAchv,
+    RibbonAchv,
 } from "#system/achv";
 import { GameManager } from "#test/framework/game-manager";
 import { NumberHolder } from "#utils/common";
@@ -201,7 +201,7 @@ describe("HeldItemAchv", () => {
 
   it("should validate the mini black hole achievement", () => {
     const heldItemAchv = achvs.MINI_BLACK_HOLE;
-    const pokemon = new PlayerPokemon(allSpecies[SpeciesId.BULBASAUR], 1);
+    const pokemon = new PlayerPokemon(speciesDataRegistry.getSpecies(SpeciesId.BULBASAUR), 1);
     expect(heldItemAchv.validate([pokemon])).toBe(false);
     pokemon.heldItemManager.add(HeldItemId.MINI_BLACK_HOLE);
     expect(heldItemAchv.validate([pokemon])).toBe(true);

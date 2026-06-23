@@ -1,4 +1,5 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -35,6 +36,7 @@ import { CHARMING_MOVES } from "#mystery-encounters/requirement-groups";
 import { PokemonData } from "#system/pokemon-data";
 import type { HeldItemSpecs } from "#types/held-item-data-types";
 import { pickWeightedIndex, randSeedInt } from "#utils/common";
+import { groupStatChange } from "#utils/stat-change";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/uncommonBreed";
@@ -105,13 +107,11 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
             queueEncounterMessage(`${namespace}:option.1.statBoost`);
-            globalScene.phaseManager.unshiftNew(
-              "StatStageChangePhase",
-              pokemon.getBattlerIndex(),
-              true,
-              statChangesForBattle,
-              1,
-            );
+            globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+              battlerIndex: pokemon.getBattlerIndex(),
+              changes: groupStatChange(statChangesForBattle, 1),
+              sourcePokemon: pokemon,
+            });
           },
         },
       ],
@@ -152,7 +152,7 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
       onComplete: () => encounter.introVisuals?.playShinySparkles(),
     });
 
-    globalScene.time.delayedCall(500, () => globalScene.playSound("battle_anims/PRSFX- Spotlight2"));
+    globalScene.time.delayedCall(500, () => audioManager.playSound("battle_anims/PRSFX- Spotlight2"));
     return true;
   })
   .setLocalizationKey(`${namespace}`)

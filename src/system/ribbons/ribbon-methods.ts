@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import type { SpeciesId } from "#enums/species-id";
 import { RibbonData, type RibbonFlag } from "#system/ribbons/ribbon-data";
 
@@ -13,7 +13,11 @@ export function awardRibbonsToSpeciesLine(id: SpeciesId, ribbons: RibbonFlag): v
   const dexData = globalScene.gameData.dexData;
   dexData[id].ribbons.award(ribbons);
   // Mark all pre-evolutions of the Pokémon with the same ribbon flags.
-  for (let prevoId = pokemonPrevolutions[id]; prevoId != null; prevoId = pokemonPrevolutions[prevoId]) {
+  for (
+    let prevoId = speciesDataRegistry.getPrevolution(id);
+    prevoId != null;
+    prevoId = speciesDataRegistry.getPrevolution(prevoId)
+  ) {
     dexData[prevoId].ribbons.award(ribbons);
   }
 }

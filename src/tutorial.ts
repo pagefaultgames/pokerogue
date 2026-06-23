@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { UiMode } from "#enums/ui-mode";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import type { UiHandler } from "#ui/ui-handler";
@@ -127,11 +127,11 @@ const tutorialHandlers = {
  * @returns a promise with result `true` if the tutorial was run and finished, `false` otherwise
  */
 export async function handleTutorial(tutorial: Tutorial): Promise<boolean> {
-  if (!globalScene.enableTutorials && !Overrides.BYPASS_TUTORIAL_SKIP_OVERRIDE) {
+  if (!globalScene.enableTutorials && !activeOverrides.BYPASS_TUTORIAL_SKIP_OVERRIDE) {
     return false;
   }
 
-  if (globalScene.gameData.getTutorialFlags()[tutorial] && !Overrides.BYPASS_TUTORIAL_SKIP_OVERRIDE) {
+  if (globalScene.gameData.getTutorialFlags()[tutorial] && !activeOverrides.BYPASS_TUTORIAL_SKIP_OVERRIDE) {
     return false;
   }
 

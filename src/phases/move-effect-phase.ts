@@ -623,6 +623,11 @@ export class MoveEffectPhase extends PokemonPhase {
    * @returns A {@linkcode MoveDamageTuple} containing the results of damage application.
    */
   protected applyMoveDamage(user: Pokemon, target: Pokemon, effectiveness: TypeDamageMultiplier): MoveDamageTuple {
+    // TODO: make sure this doesn't break anything, possibly find better solution
+    if (this.move.hasAttr("HealOnAllyAttr") && target === user.getAlly()) {
+      return [HitCheckResult.HIT, 0, false];
+    }
+
     const isCritical = target.getCriticalHitResult(user, this.move);
 
     /*
@@ -696,7 +701,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
     user.turnData.totalDamageDealt += finalDmg;
     user.turnData.singleHitDamageDealt = finalDmg;
-    target.battleData.hitCount++;
+    target.summonData.hitCount++;
     target.turnData.damageTaken += finalDmg;
 
     target.turnData.attacksReceived.unshift({
@@ -723,11 +728,17 @@ export class MoveEffectPhase extends PokemonPhase {
   protected queueHitResultMessage(result: HitResult) {
     let msg: string | undefined;
     switch (result) {
+      case HitResult.EXTREMELY_EFFECTIVE:
+        msg = i18next.t("battle:hitResultExtremelyEffective");
+        break;
       case HitResult.SUPER_EFFECTIVE:
         msg = i18next.t("battle:hitResultSuperEffective");
         break;
       case HitResult.NOT_VERY_EFFECTIVE:
         msg = i18next.t("battle:hitResultNotVeryEffective");
+        break;
+      case HitResult.MOSTLY_INEFFECTIVE:
+        msg = i18next.t("battle:hitResultMostlyIneffective");
         break;
       case HitResult.ONE_HIT_KO:
         msg = i18next.t("battle:hitResultOneHitKo");
@@ -776,8 +787,10 @@ export class MoveEffectPhase extends PokemonPhase {
     /** Does {@linkcode hitResult} indicate that damage was dealt to the target? */
     const dealsDamage = [
       HitResult.EFFECTIVE,
+      HitResult.EXTREMELY_EFFECTIVE,
       HitResult.SUPER_EFFECTIVE,
       HitResult.NOT_VERY_EFFECTIVE,
+      HitResult.MOSTLY_INEFFECTIVE,
       HitResult.ONE_HIT_KO,
     ].includes(hitResult);
 
@@ -959,7 +972,7 @@ export class MoveEffectPhase extends PokemonPhase {
     }
   }
 
-  // # endregion Helpers
+  // #endregion Helpers
 }
 
 /**

@@ -1,4 +1,5 @@
 import type { Battle } from "#app/battle";
+import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -37,7 +38,7 @@ import type { TrainerConfig } from "#trainers/trainer-config";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { HeldItemConfiguration } from "#types/held-item-data-types";
 import type { RandomEncounterParams } from "#types/pokemon-common";
-import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import type { OptionSelectConfig, OptionSelectItem } from "#ui/base-option-select-ui-handler";
 import type { PartyOption, PokemonSelectFilter } from "#ui/party-ui-handler";
 import { PartyUiMode } from "#ui/party-ui-handler";
 import { coerceArray } from "#utils/array";
@@ -70,7 +71,7 @@ export function doTrainerExclamation(): void {
     },
   });
 
-  globalScene.playSound("battle_anims/GEN8- Exclaim", { volume: 0.7 });
+  audioManager.playSound("battle_anims/GEN8- Exclaim", { volume: 0.7 });
 }
 
 export interface EnemyPokemonConfig {
@@ -458,7 +459,7 @@ export function updatePlayerMoney(moneyAmount: number, playSound = true, showMes
   globalScene.animateMoneyChanged(isIncrease);
 
   if (playSound) {
-    globalScene.playSound("se/buy");
+    audioManager.playSound("se/buy");
   }
 
   if (showMessage) {

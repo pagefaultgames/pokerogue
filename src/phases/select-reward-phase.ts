@@ -1,5 +1,6 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import type { MoveId } from "#enums/move-id";
 import { RewardPoolType } from "#enums/reward-pool-type";
 import type { RarityTier } from "#enums/reward-tier";
@@ -35,8 +36,8 @@ export type RewardSelectCallback = (rowCursor: number, cursor: number) => boolea
 export class SelectRewardPhase extends BattlePhase {
   public readonly phaseName = "SelectRewardPhase";
   private rerollCount: number;
-  private rarityTiers?: RarityTier[];
-  private customRewardSettings?: CustomRewardSettings;
+  private rarityTiers?: RarityTier[] | undefined;
+  private customRewardSettings?: CustomRewardSettings | undefined;
   private isCopy: boolean;
 
   private typeOptions: RewardOption[];
@@ -153,7 +154,7 @@ export class SelectRewardPhase extends BattlePhase {
     globalScene.applyPlayerItems(TrainerItemEffect.HEAL_SHOP_COST, { numberHolder: healingItemCost });
     const cost = healingItemCost.value;
 
-    if (globalScene.money < cost && !Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
+    if (globalScene.money < cost && !activeOverrides.WAIVE_ROLL_FEE_OVERRIDE) {
       globalScene.ui.playError();
       return false;
     }
@@ -193,12 +194,12 @@ export class SelectRewardPhase extends BattlePhase {
     );
     globalScene.ui.clearText();
     globalScene.ui.setMode(UiMode.MESSAGE).then(() => super.end());
-    if (!Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
+    if (!activeOverrides.WAIVE_ROLL_FEE_OVERRIDE) {
       globalScene.money -= rerollCost;
       globalScene.updateMoneyText();
       globalScene.animateMoneyChanged(false);
     }
-    globalScene.playSound("se/buy");
+    audioManager.playSound("se/buy");
     return true;
   }
 
@@ -349,12 +350,12 @@ export class SelectRewardPhase extends BattlePhase {
 
     if (cost !== -1 && !(reward instanceof RememberMoveReward)) {
       if (result) {
-        if (!Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
+        if (!activeOverrides.WAIVE_ROLL_FEE_OVERRIDE) {
           globalScene.money -= cost;
           globalScene.updateMoneyText();
           globalScene.animateMoneyChanged(false);
         }
-        globalScene.playSound("se/buy");
+        audioManager.playSound("se/buy");
         (globalScene.ui.getHandler() as RewardSelectUiHandler).updateCostText();
       } else {
         globalScene.ui.playError();
@@ -410,7 +411,7 @@ export class SelectRewardPhase extends BattlePhase {
 
   getRerollCost(lockRarities: boolean): number {
     let baseValue = 0;
-    if (Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
+    if (activeOverrides.WAIVE_ROLL_FEE_OVERRIDE) {
       return baseValue;
     }
     if (lockRarities) {
@@ -464,7 +465,7 @@ export class SelectRewardPhase extends BattlePhase {
       this.rarityTiers,
       {
         guaranteedRewardOptions: this.typeOptions,
-        rerollMultiplier: this.customRewardSettings?.rerollMultiplier,
+        rerollMultiplier: this.customRewardSettings?.rerollMultiplier ?? 1,
         allowLuckUpgrades: false,
       },
       true,

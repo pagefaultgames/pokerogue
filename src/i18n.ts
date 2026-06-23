@@ -6,8 +6,9 @@ import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import HttpBackend from "i18next-http-backend";
 import { KoreanPostpositionProcessor } from "i18next-korean-postposition-processor";
+import { supportedLngs } from "./i18n-supported-lngs";
 
-//#region Interfaces/Types
+// #region Interfaces/Types
 
 interface LoadingFontFaceProperty {
   face: FontFace;
@@ -15,13 +16,12 @@ interface LoadingFontFaceProperty {
   only?: string[];
 }
 
-//#endregion
+// #endregion Interfaces/Types
 
-//#region Constants
+// #region Constants
 
 const unicodeRanges = {
   fullwidth: "U+FF00-FFEF",
-  kana: "U+3040-30FF",
   CJKCommon: "U+2E80-2EFF,U+3000-303F,U+31C0-31EF,U+3200-32FF,U+3400-4DBF,U+F900-FAFF,U+FE30-FE4F",
   CJKIdeograph: "U+4E00-9FFF",
   devanagari: "U+0900-097F",
@@ -31,8 +31,6 @@ const unicodeRanges = {
 
 const rangesByLanguage = {
   chinese: [unicodeRanges.CJKCommon, unicodeRanges.fullwidth, unicodeRanges.CJKIdeograph].join(","),
-  // biome-ignore format: prevent silly formatting
-  japanese: [unicodeRanges.CJKCommon, unicodeRanges.fullwidth, unicodeRanges.kana, unicodeRanges.CJKIdeograph].join(","),
 };
 
 const fonts: LoadingFontFaceProperty[] = [
@@ -62,7 +60,6 @@ const fonts: LoadingFontFaceProperty[] = [
       "da",
       "tr",
       "th",
-      "ro",
       "ru",
       "uk",
       "id",
@@ -72,13 +69,6 @@ const fonts: LoadingFontFaceProperty[] = [
       "eu",
       "zh",
     ],
-  },
-  // japanese
-  {
-    face: new FontFace("emerald", `url(${getCachedUrl("./fonts/pokemon-bw.ttf")})`, {
-      unicodeRange: rangesByLanguage.japanese,
-    }),
-    only: ["ja"],
   },
   // devanagari
   {
@@ -93,9 +83,10 @@ const fonts: LoadingFontFaceProperty[] = [
   },
   // thai
   {
-    face: new FontFace("emerald", `url(${getCachedUrl("./fonts/fsrebellion.otf")})`, {
+    face: new FontFace("emerald", `url(${getCachedUrl("./fonts/rogue-thai.ttf")})`, {
       unicodeRange: unicodeRanges.thai,
     }),
+    extraOptions: { sizeAdjust: "40%" },
   },
   {
     face: new FontFace("pkmnems", "url(./fonts/terrible-thaifix.ttf)", { unicodeRange: unicodeRanges.thai }),
@@ -103,9 +94,9 @@ const fonts: LoadingFontFaceProperty[] = [
   },
 ];
 
-//#endregion
+// #endregion Constants
 
-//#region Functions
+// #region Functions
 
 async function initFonts(language: string | undefined) {
   const results = await Promise.allSettled(
@@ -138,12 +129,12 @@ function i18nMoneyFormatter(amount: any): string {
   return `@[MONEY]{${i18next.t("common:money", { amount })}}`;
 }
 
+// #endregion Functions
+
 // assigned during post-processing in #app/plugins/vite/namespaces-i18n-plugin.ts
 const nsEn: string[] = [];
 
-//#endregion
-
-//#region Exports
+// #region Init
 
 /*
  * i18next is a localization library for maintaining and using translation resources.
@@ -174,32 +165,7 @@ await i18next
         "es-419": ["es-ES", "en"],
         default: ["en"],
       },
-      supportedLngs: [
-        "en",
-        "es-ES",
-        "es-419", // LATAM Spanish
-        "fr",
-        "it",
-        "de",
-        "zh-Hans",
-        "zh-Hant",
-        "pt-BR",
-        "ko",
-        "ja",
-        "ca",
-        "eu",
-        "da",
-        "th",
-        "tr",
-        "ro",
-        "ru",
-        "id",
-        "hi",
-        "tl",
-        "nb-NO",
-        "sv",
-        "uk",
-      ],
+      supportedLngs,
       backend: {
         loadPath(lng: string, [ns]: string[]) {
           // Use namespace maps where required
@@ -228,8 +194,11 @@ await i18next
         // &amp; being displayed verbatim on screen.
         // We use i18next solely for localizing values inside code anyways, so the risk of XSS from user input is virtually nonexistent.
         escapeValue: false,
-        // Interpolate variables passed to i18next.t() to allow for easier key nesting
-        skipOnVariables: false,
+        // While using the `$t()` string syntax can allow nested locale keys to lazily look up interpolated text in the current chosen language,
+        // the fact that we reload the page after a language change renders this entirely moot - any nested lookups will be re-evaluated anyway.
+        // Moreover, this means of passing nested keys lacks the type-safety of calling `i18next.t` directly,
+        // which will be important once we get said strong typing set up correctly.
+        skipOnVariables: true,
       },
       postProcess: ["korean-postposition"],
     },
@@ -239,9 +208,9 @@ await i18next
     },
   );
 
-//#endregion
+// #endregion Init
 
-//#region Event Proxy
+// #region Event Proxy
 
 if (timedEventManager.hasEventTextReplacement()) {
   console.warn("Event text replacements are active.");
@@ -257,4 +226,4 @@ if (timedEventManager.hasEventTextReplacement()) {
   });
 }
 
-//#endregion
+// #endregion Event Proxy

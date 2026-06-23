@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { RewardPoolType } from "#enums/reward-pool-type";
 import { RarityTier } from "#enums/reward-tier";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
@@ -289,9 +289,9 @@ function getNewRewardOption(
  * @param options Array of naturally rolled {@linkcode RewardOption}s
  */
 export function overridePlayerRewardOptions(options: RewardOption[]) {
-  const minLength = Math.min(options.length, Overrides.REWARD_OVERRIDE.length);
+  const minLength = Math.min(options.length, activeOverrides.REWARD_OVERRIDE.length);
   for (let i = 0; i < minLength; i++) {
-    const specs: RewardSpecs = Overrides.REWARD_OVERRIDE[i];
+    const specs: RewardSpecs = activeOverrides.REWARD_OVERRIDE[i];
     const rewardOption = generateRewardOptionFromId(specs);
     if (rewardOption) {
       options[i] = rewardOption;

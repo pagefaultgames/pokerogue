@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import type { InputsController } from "#app/inputs-controller";
 import { isDev } from "#constants/app-constants";
@@ -202,7 +203,7 @@ export class UiInputs {
         break;
       case UiMode.MENU:
         globalScene.ui.revertMode();
-        globalScene.playSound("ui/select");
+        audioManager.playSound("ui/select");
         break;
       default:
         return;

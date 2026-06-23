@@ -1,7 +1,8 @@
 import { FixedBattleConfig } from "#app/battle";
 import { CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import Overrides from "#app/overrides";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
+import { activeOverrides } from "#app/overrides";
 import { allChallenges, type Challenge, copyChallenge } from "#data/challenge";
 import {
   getDailyEventSeedBoss,
@@ -11,7 +12,6 @@ import {
   getDailyTrainerManipulation,
 } from "#data/daily-seed/daily-run";
 import { parseDailySeed } from "#data/daily-seed/daily-seed-utils";
-import { allSpecies } from "#data/data-lists";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { BiomeId } from "#enums/biome-id";
 import { ChallengeType } from "#enums/challenge-type";
@@ -136,8 +136,8 @@ export class GameMode implements GameModeConfig {
    * - 5 for all other modes
    */
   getStartingLevel(): number {
-    if (Overrides.STARTING_LEVEL_OVERRIDE > 0) {
-      return Overrides.STARTING_LEVEL_OVERRIDE;
+    if (activeOverrides.STARTING_LEVEL_OVERRIDE > 0) {
+      return activeOverrides.STARTING_LEVEL_OVERRIDE;
     }
     switch (this.modeId) {
       case GameModes.DAILY:
@@ -154,8 +154,8 @@ export class GameMode implements GameModeConfig {
    * - override from a custom daily seed
    */
   getStartingMoney(): number {
-    if (Overrides.STARTING_MONEY_OVERRIDE > 0) {
-      return Overrides.STARTING_MONEY_OVERRIDE;
+    if (activeOverrides.STARTING_MONEY_OVERRIDE > 0) {
+      return activeOverrides.STARTING_MONEY_OVERRIDE;
     }
 
     switch (this.modeId) {
@@ -178,8 +178,8 @@ export class GameMode implements GameModeConfig {
    * - Town
    */
   getStartingBiome(): BiomeId {
-    if (Overrides.STARTING_BIOME_OVERRIDE != null) {
-      return Overrides.STARTING_BIOME_OVERRIDE;
+    if (activeOverrides.STARTING_BIOME_OVERRIDE != null) {
+      return activeOverrides.STARTING_BIOME_OVERRIDE;
     }
 
     switch (this.modeId) {
@@ -274,13 +274,14 @@ export class GameMode implements GameModeConfig {
         return getPokemonSpecies(eventBoss.speciesId);
       }
 
-      const allFinalBossSpecies = allSpecies.filter(
-        s =>
+      const allFinalBossSpecies = speciesDataRegistry.getAllSpecies().filter(s => {
+        return (
           (s.subLegendary || s.legendary || s.mythical)
           && s.baseTotal >= 600
           && s.speciesId !== SpeciesId.ETERNATUS
-          && s.speciesId !== SpeciesId.ARCEUS,
-      );
+          && s.speciesId !== SpeciesId.ARCEUS
+        );
+      });
       return randSeedItem(allFinalBossSpecies);
     }
 

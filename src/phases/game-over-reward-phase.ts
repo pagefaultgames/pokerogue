@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { UiMode } from "#enums/ui-mode";
 import { RewardPhase } from "#phases/reward-phase";
@@ -9,7 +10,7 @@ export class GameOverRewardPhase extends RewardPhase {
     return new Promise<void>(resolve => {
       globalScene.applyReward(this.reward, {});
       // Sound loaded into game as is
-      globalScene.playSound("level_up_fanfare");
+      audioManager.playSound("se/level_up_fanfare");
       globalScene.ui.setMode(UiMode.MESSAGE);
       globalScene.ui.fadeIn(250).then(() => {
         globalScene.ui.showText(

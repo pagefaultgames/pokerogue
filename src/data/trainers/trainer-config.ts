@@ -2,7 +2,6 @@ import { getRandomRivalPartyMemberFunc } from "#app/ai/rival-team-gen";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { signatureSpecies } from "#balance/signature-species";
-import { tmSpecies } from "#balance/tm-species-map";
 import { doubleBattleDialogue } from "#data/double-battle-dialogue";
 import { Gender } from "#data/gender";
 import type { PokemonSpecies, PokemonSpeciesFilter } from "#data/pokemon-species";
@@ -196,7 +195,7 @@ export class TrainerConfig {
     this.name = toTitleCase(TrainerType[this.getDerivedType()]);
     this.battleBgm = "battle_trainer";
     this.mixedBattleBgm = "battle_trainer";
-    this.victoryBgm = "victory_trainer";
+    this.victoryBgm = "bw/victory_trainer";
     this.partyTemplates = [trainerPartyTemplates.TWO_AVG];
     this.speciesFilter = species =>
       (allowLegendaries || (!species.legendary && !species.subLegendary && !species.mythical))
@@ -596,7 +595,7 @@ export class TrainerConfig {
     this.setBoss();
     this.setStaticParty();
     this.setBattleBgm("battle_plasma_boss");
-    this.setVictoryBgm("victory_team_plasma");
+    this.setVictoryBgm("bw/victory_team_plasma");
 
     return this;
   }
@@ -617,7 +616,7 @@ export class TrainerConfig {
 
     // TODO: replace with more suitable music?
     this.setBattleBgm("battle_trainer");
-    this.setVictoryBgm("victory_trainer");
+    this.setVictoryBgm("bw/victory_trainer");
 
     return this;
   }
@@ -649,7 +648,7 @@ export class TrainerConfig {
     this.setStaticParty();
     this.setHasVoucher(true);
     this.setBattleBgm("battle_plasma_boss");
-    this.setVictoryBgm("victory_team_plasma");
+    this.setVictoryBgm("bw/victory_team_plasma");
 
     return this;
   }
@@ -699,7 +698,7 @@ export class TrainerConfig {
     this.setStaticParty();
     this.setHasVoucher(true);
     this.setBattleBgm("battle_unova_gym");
-    this.setVictoryBgm("victory_gym");
+    this.setVictoryBgm("bw/victory_gym");
     this.setRandomTeraType(
       () => (ignoreMinTeraWave || globalScene.currentBattle.waveIndex >= GYM_LEADER_TERA_WAVE ? 1 : 0),
       teraSlot,
@@ -755,9 +754,8 @@ export class TrainerConfig {
     this.setStaticParty();
     this.setHasVoucher(true);
     this.setBattleBgm("battle_unova_elite");
-    this.setVictoryBgm("victory_gym");
+    this.setVictoryBgm("bw/victory_gym");
     this.setRandomTeraType(() => 1, teraSlot);
-
     return this;
   }
 
@@ -787,7 +785,7 @@ export class TrainerConfig {
     this.setStaticParty();
     this.setHasVoucher(true);
     this.setBattleBgm("battle_champion_alder");
-    this.setVictoryBgm("victory_champion");
+    this.setVictoryBgm("bw/victory_champion");
 
     return this;
   }
@@ -1604,6 +1602,7 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.BASCULIN,
         SpeciesId.FRILLISH,
         SpeciesId.INKAY,
+        SpeciesId.HISUI_BASCULIN,
       ],
       [TrainerPoolTier.RARE]: [
         SpeciesId.CHINCHOU,
@@ -1625,7 +1624,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setSpeciesFilter(s => s.isOfType(PokemonType.ELECTRIC)),
   [TrainerType.HARLEQUIN]: new TrainerConfig(++t)
     .setEncounterBgm(TrainerType.PSYCHIC)
-    .setSpeciesFilter(s => tmSpecies[MoveId.TRICK_ROOM].indexOf(s.speciesId) > -1),
+    .setSpeciesFilter(s => s.canLearnTm(MoveId.TRICK_ROOM)),
   [TrainerType.HEX_MANIAC]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
     .setEncounterBgm(TrainerType.PSYCHIC)
@@ -1821,7 +1820,7 @@ export const trainerConfigs: TrainerConfigs = {
       trainerPartyTemplates.TWO_AVG,
       trainerPartyTemplates.THREE_AVG,
     )
-    .setSpeciesFilter(s => tmSpecies[MoveId.FLY].indexOf(s.speciesId) > -1),
+    .setSpeciesFilter(s => s.canLearnTm(MoveId.FLY)),
   [TrainerType.POKEFAN]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.4)
     .setName("Pokéfan")
@@ -1834,7 +1833,7 @@ export const trainerConfigs: TrainerConfigs = {
       trainerPartyTemplates.ONE_STRONG,
       trainerPartyTemplates.FIVE_WEAK,
     )
-    .setSpeciesFilter(s => tmSpecies[MoveId.HELPING_HAND].indexOf(s.speciesId) > -1),
+    .setSpeciesFilter(s => s.canLearnTm(MoveId.HELPING_HAND)),
   [TrainerType.PRESCHOOLER]: new TrainerConfig(++t)
     .setMoneyMultiplier(0.2)
     .setEncounterBgm(TrainerType.YOUNGSTER)
@@ -2162,7 +2161,7 @@ export const trainerConfigs: TrainerConfigs = {
         SpeciesId.HISUI_QWILFISH,
       ],
       [TrainerPoolTier.SUPER_RARE]: [
-        SpeciesId.BASCULIN,
+        SpeciesId.HISUI_BASCULIN,
         SpeciesId.WISHIWASHI,
         SpeciesId.WIMPOD,
         SpeciesId.DHELMISE,
@@ -2384,7 +2383,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_rocket_grunt")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [
@@ -2435,7 +2434,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_rocket_grunt")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.ELECTRODE]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.MAGMAR]))
@@ -2452,7 +2451,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_rocket_grunt")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.VILEPLUME]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.HONCHKROW]))
@@ -2469,7 +2468,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_rocket_grunt")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.MUK]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.ELECTIVIRE]))
@@ -2485,7 +2484,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_rocket_grunt")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.RATICATE]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.GALAR_WEEZING]))
@@ -2503,7 +2502,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_aqua_magma_grunt")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [
@@ -2540,7 +2539,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_aqua_magma_grunt")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.TORKOAL]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.FLYGON]))
@@ -2557,7 +2556,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_aqua_magma_grunt")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.NINETALES]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.CLAYDOL]))
@@ -2576,7 +2575,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_aqua_magma_grunt")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [
@@ -2617,7 +2616,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_aqua_magma_grunt")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.AZUMARILL]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.HUNTAIL]))
@@ -2633,7 +2632,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_aqua_magma_grunt")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.CRAWDAUNT]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.GOREBYSS]))
@@ -2651,7 +2650,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_galactic_grunt")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [
@@ -2690,7 +2689,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_galactic_admin")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.TANGROWTH]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.BRONZONG]))
@@ -2706,7 +2705,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_galactic_admin")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.YANMEGA]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.BRONZONG]))
@@ -2723,7 +2722,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_galactic_admin")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.ALAKAZAM]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.BRONZONG]))
@@ -2742,7 +2741,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_plasma_grunt")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [
@@ -2784,7 +2783,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_plasma_grunt")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.CRYOGONAL]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.VANILLUXE]))
@@ -2800,7 +2799,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_colress")
     .setMixedBattleBgm("battle_colress")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.MAGNEZONE]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.BEHEEYEM]))
@@ -2819,7 +2818,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_flare_grunt")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [
@@ -2861,7 +2860,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_flare_grunt")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.LIEPARD]))
     .setPartyMemberFunc(
@@ -2876,7 +2875,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_flare_grunt")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.CROBAT]))
     .setPartyMemberFunc(
@@ -2892,7 +2891,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_flare_grunt")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.MIGHTYENA]))
     .setPartyMemberFunc(
@@ -2907,7 +2906,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_flare_grunt")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.MANECTRIC]))
     .setPartyMemberFunc(
@@ -2922,7 +2921,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_flare_grunt")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.HOUNDOOM]))
     .setPartyMemberFunc(
@@ -2940,7 +2939,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_aether_grunt")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [
@@ -2989,7 +2988,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_aether_grunt")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.BRUXISH]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.ALOLA_RAICHU]))
@@ -3008,7 +3007,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_skull_grunt")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [
@@ -3052,7 +3051,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_skull_admin")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.TOXAPEX]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.ALOLA_MUK]))
@@ -3070,7 +3069,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_macro_grunt")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [
@@ -3113,7 +3112,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_oleana")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.MILOTIC]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.TSAREENA]))
@@ -3132,7 +3131,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_star_grunt")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [
@@ -3189,7 +3188,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_star_admin")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.MABOSSTIFF]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.KINGAMBIT]))
@@ -3216,7 +3215,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_star_admin")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.SCOVILLAIN]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.ARMAROUGE]))
@@ -3243,7 +3242,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_star_admin")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.GRAFAIAI]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.REVAVROOM]))
@@ -3270,7 +3269,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_star_admin")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.TINKATON]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.DACHSBUN]))
@@ -3297,7 +3296,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setEncounterBgm(TrainerType.PLASMA_GRUNT)
     .setBattleBgm("battle_plasma_grunt")
     .setMixedBattleBgm("battle_star_admin")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([SpeciesId.FLAMIGO]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([SpeciesId.ANNIHILAPE]))
@@ -5560,7 +5559,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Giovanni")
     .initForEvilTeamLeader("Rocket Boss", [])
     .setMixedBattleBgm("battle_rocket_boss")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc([SpeciesId.PERSIAN], TrainerSlot.TRAINER, true, p => {
@@ -5593,7 +5592,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Giovanni")
     .initForEvilTeamLeader("Rocket Boss", [])
     .setMixedBattleBgm("battle_rocket_boss")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc([SpeciesId.RHYPERIOR], TrainerSlot.TRAINER, true, p => {
@@ -5667,7 +5666,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Maxie")
     .initForEvilTeamLeader("Magma Boss", [])
     .setMixedBattleBgm("battle_aqua_magma_boss")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc([SpeciesId.TORKOAL], TrainerSlot.TRAINER, true, p => {
@@ -5700,7 +5699,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Maxie")
     .initForEvilTeamLeader("Magma Boss", [])
     .setMixedBattleBgm("battle_aqua_magma_boss")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc([SpeciesId.TYPHLOSION, SpeciesId.SOLROCK], TrainerSlot.TRAINER, true, p => {
@@ -5757,7 +5756,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Archie")
     .initForEvilTeamLeader("Aqua Boss", [])
     .setMixedBattleBgm("battle_aqua_magma_boss")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc([SpeciesId.PELIPPER], TrainerSlot.TRAINER, true, p => {
@@ -5790,7 +5789,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Archie")
     .initForEvilTeamLeader("Aqua Boss", [])
     .setMixedBattleBgm("battle_aqua_magma_boss")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc([SpeciesId.LUDICOLO, SpeciesId.EMPOLEON], TrainerSlot.TRAINER, true, p => {
@@ -5841,7 +5840,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Cyrus")
     .initForEvilTeamLeader("Galactic Boss", [])
     .setMixedBattleBgm("battle_galactic_boss")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([SpeciesId.GYARADOS]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.CROBAT, SpeciesId.HONCHKROW]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.MAGNEZONE]))
@@ -5866,7 +5865,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Cyrus")
     .initForEvilTeamLeader("Galactic Boss", [])
     .setMixedBattleBgm("battle_galactic_boss")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc([SpeciesId.CROBAT, SpeciesId.HONCHKROW], TrainerSlot.TRAINER, true, p => {
@@ -5912,7 +5911,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Ghetsis")
     .initForEvilTeamLeader("Plasma Boss", [])
     .setMixedBattleBgm("battle_plasma_boss")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([SpeciesId.COFAGRIGUS]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.SEISMITOAD]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.GALVANTULA, SpeciesId.EELEKTROSS]))
@@ -5932,7 +5931,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Ghetsis")
     .initForEvilTeamLeader("Plasma Boss", [])
     .setMixedBattleBgm("battle_plasma_boss")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc([SpeciesId.RUNERIGUS], TrainerSlot.TRAINER, true, p => {
@@ -5982,7 +5981,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Lysandre")
     .initForEvilTeamLeader("Flare Boss", [])
     .setMixedBattleBgm("battle_flare_boss")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([SpeciesId.MIENSHAO]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.HONCHKROW, SpeciesId.TALONFLAME]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.MALAMAR]))
@@ -6009,7 +6008,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Lysandre")
     .initForEvilTeamLeader("Flare Boss", [])
     .setMixedBattleBgm("battle_flare_boss")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc([SpeciesId.PYROAR], TrainerSlot.TRAINER, true, p => {
@@ -6051,7 +6050,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Lusamine")
     .initForEvilTeamLeader("Aether Boss", [])
     .setMixedBattleBgm("battle_aether_boss")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc([SpeciesId.CLEFABLE], TrainerSlot.TRAINER, true, p => {
@@ -6076,7 +6075,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Lusamine")
     .initForEvilTeamLeader("Aether Boss", [])
     .setMixedBattleBgm("battle_aether_boss")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc([SpeciesId.CLEFABLE], TrainerSlot.TRAINER, true, p => {
@@ -6130,7 +6129,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Guzma")
     .initForEvilTeamLeader("Skull Boss", [])
     .setMixedBattleBgm("battle_skull_boss")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc([SpeciesId.YANMEGA, SpeciesId.LOKIX], TrainerSlot.TRAINER, true, p => {
@@ -6178,7 +6177,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Guzma")
     .initForEvilTeamLeader("Skull Boss", [])
     .setMixedBattleBgm("battle_skull_boss")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc([SpeciesId.GOLISOPOD], TrainerSlot.TRAINER, true, p => {
@@ -6245,7 +6244,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Rose")
     .initForEvilTeamLeader("Macro Boss", [])
     .setMixedBattleBgm("battle_macro_boss")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc([SpeciesId.ARCHALUDON], TrainerSlot.TRAINER, true, p => {
@@ -6296,7 +6295,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Rose")
     .initForEvilTeamLeader("Macro Boss", [])
     .setMixedBattleBgm("battle_macro_boss")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc([SpeciesId.ARCHALUDON], TrainerSlot.TRAINER, true, p => {
@@ -6349,7 +6348,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Cassiopeia")
     .initForEvilTeamLeader("Star Boss", [])
     .setMixedBattleBgm("battle_star_boss")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([SpeciesId.ESPEON]))
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.UMBREON]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.LEAFEON, SpeciesId.GLACEON]))
@@ -6382,7 +6381,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setName("Cassiopeia")
     .initForEvilTeamLeader("Star Boss", [])
     .setMixedBattleBgm("battle_star_boss")
-    .setVictoryBgm("victory_team_plasma")
+    .setVictoryBgm("bw/victory_team_plasma")
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc([SpeciesId.SYLVEON], TrainerSlot.TRAINER, true, p => {

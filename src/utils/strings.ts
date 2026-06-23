@@ -190,7 +190,8 @@ export function toPascalSnakeCase(str: string) {
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join("_");
 }
-// #endregion Split String code
+
+// #endregion Split string code
 
 /**
  * Chunk a string into an array, creating a new element every `length` characters.

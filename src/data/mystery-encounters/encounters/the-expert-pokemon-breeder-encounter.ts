@@ -1,5 +1,6 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
-import { speciesStarterCosts } from "#balance/starters";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import type { IEggOptions } from "#data/egg";
 import { getPokeballTintColor } from "#data/pokeball";
 import { BiomeId } from "#enums/biome-id";
@@ -133,7 +134,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
   .withEncounterTier(MysteryEncounterTier.ULTRA)
   .withDisallowedChallenges(Challenges.HARDCORE)
   .withSceneWaveRangeRequirement(25, 180)
-  .withScenePartySizeRequirement(4, 6, true) // Must have at least 4 legal pokemon in party
+  .withScenePartySizeRequirement(4)
   .withIntroSpriteConfigs([]) // These are set in onInit()
   .withIntroDialogue([
     {
@@ -602,9 +603,9 @@ function calculateEggRewardsForPokemon(pokemon: PlayerPokemon): [number, number]
   const rootSpecies = pokemon.species.getRootSpeciesId();
   let pointsFromStarterTier = 0;
   // 2 points for every 1 below 7 that the pokemon's starter tier is (max 12, min 0)
-  if (Object.hasOwn(speciesStarterCosts, rootSpecies)) {
-    const starterTier = speciesStarterCosts[rootSpecies];
-    pointsFromStarterTier = Math.min(Math.max(Math.floor(7 - starterTier) * 2, 0), 12);
+  const starterCost = speciesDataRegistry.getStarterCost(rootSpecies);
+  if (starterCost !== undefined) {
+    pointsFromStarterTier = Math.min(Math.max(Math.floor(7 - starterCost) * 2, 0), 12);
   }
 
   // Maximum of 30 points
@@ -689,7 +690,7 @@ function onGameOver() {
   encounter.misc.encounterFailed = true;
 
   // Revert BGM
-  globalScene.playBgm(globalScene.arena.bgm);
+  audioManager.playBgm(globalScene.arena.bgm);
 
   // Clear any leftover battle phases
   globalScene.phaseManager.clearPhaseQueue();
@@ -697,7 +698,7 @@ function onGameOver() {
   // Return enemy Pokemon
   const pokemon = globalScene.getEnemyPokemon();
   if (pokemon) {
-    globalScene.playSound("se/pb_rel");
+    audioManager.playSound("se/pb_rel");
     pokemon.hideInfo();
     pokemon.tint(getPokeballTintColor(pokemon.pokeball), 1, 250, "Sine.easeIn");
     globalScene.tweens.add({

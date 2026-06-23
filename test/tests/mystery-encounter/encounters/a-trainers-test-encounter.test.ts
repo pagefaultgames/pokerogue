@@ -133,16 +133,6 @@ describe("A Trainer's Test - Mystery Encounter", () => {
   });
 
   describe("Option 2 - Decline the Challenge", () => {
-    beforeEach(() => {
-      // Mock sound object
-      vi.spyOn(scene, "playSoundWithoutBgm").mockImplementation(() => {
-        return {
-          totalDuration: 1,
-          destroy: () => null,
-        } as any;
-      });
-    });
-
     it("should have the correct properties", () => {
       const option = ATrainersTestEncounter.options[1];
       expect(option.optionMode).toBe(MysteryEncounterOptionMode.DEFAULT);

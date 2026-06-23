@@ -96,6 +96,8 @@ export class MysteryEncounter implements IMysteryEncounter {
   options: [MysteryEncounterOption, MysteryEncounterOption, ...MysteryEncounterOption[]];
   spriteConfigs: MysteryEncounterSpriteConfig[];
 
+  // #endregion Required params
+
   // #region Optional params
 
   encounterTier: MysteryEncounterTier;
@@ -167,6 +169,8 @@ export class MysteryEncounter implements IMysteryEncounter {
    */
   preventGameStatsUpdates: boolean;
 
+  // #endregion Optional params
+
   // #region Event callback functions
 
   /** Event when Encounter is first loaded, use it for data conditioning */
@@ -205,7 +209,10 @@ export class MysteryEncounter implements IMysteryEncounter {
   primaryPokemon: PlayerPokemon | undefined;
   secondaryPokemon: PlayerPokemon[] | undefined;
 
+  // #endregion Event callback functions
+
   // #region Post-construct / Auto-populated params
+
   localizationKey: string;
   /**
    * Dialogue object containing all the dialogue, messages, tooltips, etc. for an encounter
@@ -223,6 +230,8 @@ export class MysteryEncounter implements IMysteryEncounter {
    * You probably shouldn't do anything directly with this unless you have a very specific need
    */
   introVisuals: MysteryEncounterIntroVisuals | undefined;
+
+  // #endregion Post-construct / Auto-populated params
 
   // #region Flags
 
@@ -274,6 +283,8 @@ export class MysteryEncounter implements IMysteryEncounter {
    * You should only need to interact via getter/update methods
    */
   private seedOffset?: any;
+
+  // #endregion Flags
 
   constructor(encounter: IMysteryEncounter | null) {
     if (encounter != null) {
@@ -843,17 +854,17 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   /**
    * Specifies a party size requirement for an encounter.
    *
-   * @param min min wave (or exact size if only min is given)
-   * @param max optional max size. If not given, defaults to min => exact wave
-   * @param excludeDisallowedPokemon if true, only counts allowed (legal in Challenge/unfainted) mons
-   * @returns
+   * @param min - The minimum number of Pokemon required to be in the player's party
+   * @param max - (Default `6`) The maximum number of Pokemon that can be in the player's party
+   * @param excludeDisallowedPokemon - (Default `true`) Whether to exclude fainted and challenge-illegal Pokemon
+   * @returns `this`
    */
   withScenePartySizeRequirement(
     min: number,
-    max?: number,
-    excludeDisallowedPokemon = false,
+    max = 6,
+    excludeDisallowedPokemon = true,
   ): this & Required<Pick<IMysteryEncounter, "requirements">> {
-    return this.withSceneRequirement(new PartySizeRequirement([min, max ?? min], excludeDisallowedPokemon));
+    return this.withSceneRequirement(new PartySizeRequirement([min, max], excludeDisallowedPokemon));
   }
 
   /**

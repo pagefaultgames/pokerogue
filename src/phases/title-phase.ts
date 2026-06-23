@@ -1,8 +1,9 @@
 import { pokerogueApi } from "#api/api";
 import { loggedInUser } from "#app/account";
 import { GameMode, getGameMode } from "#app/game-mode";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { Phase } from "#app/phase";
 import { bypassLogin } from "#constants/app-constants";
 import { getDailyRunStarters, startDailyEventChallenges } from "#data/daily-seed/daily-run";
@@ -15,7 +16,7 @@ import { Unlockables } from "#enums/unlockables";
 import { getBiomeKey } from "#field/arena";
 import { assignDailyRunStarterHeldItems } from "#items/held-item-pool";
 import { vouchers } from "#system/voucher";
-import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import type { OptionSelectConfig, OptionSelectItem } from "#ui/base-option-select-ui-handler";
 import { SaveSlotUiMode } from "#ui/save-slot-select-ui-handler";
 import { isLocalServerConnected } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
@@ -37,9 +38,9 @@ export class TitlePhase extends Phase {
 
     const now = new Date();
     if (now.getMonth() === 11 || (now.getMonth() === 0 && now.getDate() <= 15)) {
-      globalScene.playBgm("winter_title", true);
+      audioManager.playBgm("winter_title", true);
     } else {
-      globalScene.playBgm("title", true);
+      audioManager.playBgm("title", true);
     }
 
     const lastSlot = await this.checkLastSaveSlot();
@@ -66,6 +67,7 @@ export class TitlePhase extends Phase {
       // Set the BG texture to the last save's current biome
       const biomeKey = getBiomeKey(sessionData.arena.biome);
       const bgTexture = `${biomeKey}_bg`;
+      await globalScene.loadBiomeAssets(sessionData.arena.biome);
       globalScene.arenaBg.setTexture(bgTexture);
       return loggedInUser.lastSessionSlot;
     } catch (err) {
@@ -287,10 +289,13 @@ export class TitlePhase extends Phase {
 
         globalScene.updateItems(true);
 
-        Promise.all(loadPokemonAssets).then(() => {
-          globalScene.time.delayedCall(500, () => globalScene.playBgm());
+        Promise.all(loadPokemonAssets).then(async () => {
+          globalScene.time.delayedCall(500, () => audioManager.playBgm());
           globalScene.gameData.gameStats.dailyRunSessionsPlayed++;
-          globalScene.newArena(globalScene.gameMode.getStartingBiome());
+          const startingBiome = globalScene.gameMode.getStartingBiome();
+
+          await globalScene.loadBiomeAssets(startingBiome);
+          globalScene.newArena(startingBiome);
           globalScene.newBattle();
           globalScene.arena.init();
           globalScene.sessionPlayTime = 0;
@@ -316,11 +321,11 @@ export class TitlePhase extends Phase {
       } else {
         // Grab first 10 chars of ISO date format (YYYY-MM-DD) and convert to base64
         let seed: string = btoa(new Date().toISOString().slice(0, 10));
-        if (Overrides.DAILY_RUN_SEED_OVERRIDE != null) {
+        if (activeOverrides.DAILY_RUN_SEED_OVERRIDE != null) {
           seed =
-            typeof Overrides.DAILY_RUN_SEED_OVERRIDE === "string"
-              ? Overrides.DAILY_RUN_SEED_OVERRIDE
-              : JSON.stringify(Overrides.DAILY_RUN_SEED_OVERRIDE);
+            typeof activeOverrides.DAILY_RUN_SEED_OVERRIDE === "string"
+              ? activeOverrides.DAILY_RUN_SEED_OVERRIDE
+              : JSON.stringify(activeOverrides.DAILY_RUN_SEED_OVERRIDE);
         }
         generateDaily(seed);
       }
@@ -330,7 +335,6 @@ export class TitlePhase extends Phase {
   // TODO: Refactor this
   end(): void {
     if (!this.loaded && !globalScene.gameMode.isDaily) {
-      globalScene.loadBgm(globalScene.arena.bgm);
       globalScene.gameMode = getGameMode(this.gameMode);
       if (this.gameMode === GameModes.CHALLENGE) {
         globalScene.phaseManager.pushNew("SelectChallengePhase");
@@ -339,7 +343,7 @@ export class TitlePhase extends Phase {
       }
       globalScene.newArena(globalScene.gameMode.getStartingBiome());
     } else {
-      globalScene.playBgm();
+      audioManager.playBgm();
     }
 
     globalScene.phaseManager.pushNew("EncounterPhase", this.loaded);

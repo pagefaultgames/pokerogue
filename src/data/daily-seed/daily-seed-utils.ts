@@ -80,8 +80,13 @@ export function getSerializedDailyRunConfig(): SerializedDailyRunConfig | undefi
   } satisfies SerializedDailyRunConfig;
 }
 
-export function isDailyFinalBoss() {
-  return globalScene.gameMode.isDaily && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex);
+/**
+ * Checks if the current wave is the final boss of a daily run.
+ * @param wave - (Default: current battle's wave index) The wave to check
+ * @returns Whether the given wave is the final boss of a daily run.
+ */
+export function isDailyFinalBoss(wave = globalScene.currentBattle?.waveIndex): boolean {
+  return globalScene.gameMode.isDaily && globalScene.gameMode.isWaveFinal(wave);
 }
 
 /**

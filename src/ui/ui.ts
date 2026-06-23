@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import type { Button } from "#enums/buttons";
 import { Device } from "#enums/devices";
@@ -477,11 +478,11 @@ export class UI extends Phaser.GameObjects.Container {
   }
 
   playSelect(): void {
-    globalScene.playSound("ui/select");
+    audioManager.playSound("ui/select");
   }
 
   playError(): void {
-    globalScene.playSound("ui/error");
+    audioManager.playSound("ui/error");
   }
 
   fadeOut(duration: number): Promise<void> {

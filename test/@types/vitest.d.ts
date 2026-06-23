@@ -1,6 +1,4 @@
 import "vitest";
-
-import type Overrides from "#app/overrides";
 import type { Phase } from "#app/phase";
 import type { ArenaTag } from "#data/arena-tag";
 import type { BattlerTag, BattlerTagTypeMap } from "#data/battler-tags";
@@ -52,6 +50,7 @@ type IntLiteral<T extends number> = If<IsNumericLiteral<T>, NonNegativeInteger<T
  * @internal
  */
 type NonNumericLiteral<T extends number> = If<IsNumericLiteral<T>, never, T>;
+
 // #endregion Helper Types
 
 /**
@@ -81,6 +80,7 @@ declare module "vitest" {
     not: NegativeAssertion<T>;
 
     // #region Banned Chai Assertions
+
     // enforce consistent style by banning chai assertions at a type level (except `not` which is also in jest).
     // NB: We cannot place these in a nice interface since TS will complain about `Assertion` extending 2 interfaces with clashing types.
     // We also cannot make these anything other than `never` as TS will error about incompatible types (which prevents any custom error messages)
@@ -192,6 +192,7 @@ declare module "vitest" {
 }
 
 // #region Generic Matchers
+
 interface GenericMatchers<T> {
   /**
    * Check whether an array contains EXACTLY the given items (in any order).
@@ -217,9 +218,11 @@ interface GenericMatchers<T> {
    */
   toHaveKey: T extends ReadonlyMap<infer K, infer V> ? (expectedKey: K, expectedValue?: V) => void : never;
 }
+
 // #endregion Generic Matchers
 
 // #region GameManager Matchers
+
 interface GameManagerMatchers {
   /**
    * Check whether the {@linkcode GameManager} has shown the given message at least once in the current test case.
@@ -241,9 +244,11 @@ interface GameManagerMatchers {
    */
   toBeAtPhase(expectedPhase: PhaseString): void;
 }
+
 // #endregion GameManager Matchers
 
 // #region Arena Matchers
+
 declare class ArenaMatchers implements MatchersBase<keyof ArenaMatchersCommon> {
   common: ArenaMatchersCommon;
   negative: ArenaMatchersNegative;
@@ -304,6 +309,7 @@ interface ArenaMatchersNegative {
 // #endregion Arena Matchers
 
 // #region Pokemon Matchers
+
 interface PokemonMatchers {
   /**
    * Check whether a {@linkcode Pokemon} has applied the given {@linkcode HeldItem}.
@@ -445,7 +451,7 @@ interface PokemonMatchers {
    * @param ppUsed - The amount of PP that should have been consumed,
    * or `all` to indicate the move should be _out_ of PP
    * @throws {Error}
-   * Fails test if the Pokemon's moveset has been set via {@linkcode Overrides.MOVESET_OVERRIDE}/{@linkcode Overrides.ENEMY_MOVESET_OVERRIDE}
+   * Fails test if the Pokemon's moveset has been set via {@linkcodeactiveOverrides.MOVESET_OVERRIDE}/{@linkcodeactiveOverrides.ENEMY_MOVESET_OVERRIDE}
    * or does not contain exactly one copy of `moveId`.
    */
   toHaveUsedPP<P extends number | "all">(moveId: MoveId, ppUsed: If<IsNumericLiteral<P>, Integer<P>, P>): void;

@@ -36,7 +36,7 @@ import {
 } from "#balance/moves/moveset-generation";
 import { FORCED_RIVAL_SIGNATURE_MOVES, FORCED_SIGNATURE_MOVES } from "#balance/moves/signature-moves";
 import { SUPERCEDED_MOVES } from "#balance/moves/superceded-moves";
-import { speciesTmMoves, tmPoolTiers } from "#balance/tms";
+import { tmPoolTiers } from "#balance/tm-pool-tiers";
 import { IS_TEST, isBeta, isDev } from "#constants/app-constants";
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
@@ -55,7 +55,7 @@ import { isWeatherInstantCharge } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { Move, StatStageChangeAttr } from "#types/move-types";
 import { NumberHolder, randSeedInt, randSeedItem } from "#utils/common";
-import { willTerastallize } from "#utils/pokemon-utils";
+import { getPokemonSpecies, willTerastallize } from "#utils/pokemon-utils";
 import { ValueHolder } from "#utils/value-holder";
 
 /**
@@ -155,36 +155,21 @@ function getTmPoolForSpecies(
   allowedTiers = getAllowedTmTiers(level),
 ): void {
   const [allowCommon, allowGreat, allowUltra] = allowedTiers;
-  const tms = speciesTmMoves[speciesId];
-  // Species with no learnable TMs (e.g. Ditto) don't have entries in the `speciesTmMoves` object,
-  // so this is needed to avoid iterating over `undefined`
-  if (tms == null) {
-    return;
-  }
+  const tms = getPokemonSpecies(speciesId).getTms(formKey);
 
-  let moveId: MoveId;
   for (const tm of tms) {
-    if (Array.isArray(tm)) {
-      if (tm[0] !== formKey) {
-        continue;
-      }
-      moveId = tm[1];
-    } else {
-      moveId = tm;
-    }
-
-    if (FORBIDDEN_TM_MOVES.has(moveId) || levelPool.has(moveId) || eggPool.has(moveId) || tmPool.has(moveId)) {
+    if (FORBIDDEN_TM_MOVES.has(tm) || levelPool.has(tm) || eggPool.has(tm) || tmPool.has(tm)) {
       continue;
     }
-    switch (tmPoolTiers[moveId]) {
+    switch (tmPoolTiers[tm]) {
       case RarityTier.COMMON:
-        allowCommon && tmPool.set(moveId, COMMON_TM_MOVESET_WEIGHT);
+        allowCommon && tmPool.set(tm, COMMON_TM_MOVESET_WEIGHT);
         break;
       case RarityTier.GREAT:
-        allowGreat && tmPool.set(moveId, GREAT_TM_MOVESET_WEIGHT);
+        allowGreat && tmPool.set(tm, GREAT_TM_MOVESET_WEIGHT);
         break;
       case RarityTier.ULTRA:
-        allowUltra && tmPool.set(moveId, ULTRA_TM_MOVESET_WEIGHT);
+        allowUltra && tmPool.set(tm, ULTRA_TM_MOVESET_WEIGHT);
         break;
     }
   }
@@ -755,17 +740,21 @@ function shouldRemoveRainDance(pokemon: Pokemon): boolean {
   if (getExistingDamageMoveTypes(pokemon, false).has(PokemonType.WATER)) {
     return false;
   }
-  for (const rainAbility of [AbilityId.RAIN_DISH, AbilityId.FORECAST, AbilityId.SWIFT_SWIM, AbilityId.DRY_SKIN]) {
+
+  const rainAbilities = [AbilityId.RAIN_DISH, AbilityId.FORECAST, AbilityId.SWIFT_SWIM, AbilityId.DRY_SKIN] as const;
+  for (const rainAbility of rainAbilities) {
     if (pokemon.hasAbility(rainAbility, false, true)) {
       return false;
     }
   }
+
   for (const pokemonMove of pokemon.moveset) {
     const move = pokemonMove.getMove();
-    if (move.findAttr(attr => attr.is("WeatherInstantChargeAttr") && attr.weatherTypes.includes(WeatherType.RAIN))) {
+    if (isWeatherInstantCharge(move, WeatherType.RAIN)) {
       return false;
     }
   }
+
   return true;
 }
 
@@ -777,20 +766,23 @@ function shouldRemoveRainDance(pokemon: Pokemon): boolean {
  */
 function shouldRemoveSunnyDay(pokemon: Pokemon): boolean {
   if (getExistingDamageMoveTypes(pokemon, false).has(PokemonType.FIRE)) {
-    return true;
+    return false;
   }
-  // Solar power depends on having a move that is specially boosted
-  for (const sunAbility of [
+
+  const sunAbilities = [
     AbilityId.CHLOROPHYLL,
     AbilityId.FLOWER_GIFT,
     AbilityId.PROTOSYNTHESIS,
     AbilityId.HARVEST,
     AbilityId.FORECAST,
-  ]) {
+  ] as const;
+  for (const sunAbility of sunAbilities) {
     if (pokemon.hasAbility(sunAbility, false, true)) {
       return false;
     }
   }
+
+  // Solar power depends on having a move that is specially boosted
   const hasSolarPower = pokemon.hasAbility(AbilityId.SOLAR_POWER, false, true);
   for (const pokemonMove of pokemon.moveset) {
     const move = pokemonMove.getMove();
@@ -803,6 +795,7 @@ function shouldRemoveSunnyDay(pokemon: Pokemon): boolean {
       return false;
     }
   }
+
   return true;
 }
 
@@ -814,7 +807,7 @@ function shouldRemoveSunnyDay(pokemon: Pokemon): boolean {
  */
 // TODO: Extract out common functionality between this and sandstorm
 function removeSnowscapeHail(pokemon: Pokemon, willTera: boolean): boolean {
-  const types = new Set(pokemon.getTypes(willTera, true));
+  const types = new Set(pokemon.getTypes({ includeTeraType: willTera, returnOriginalTypesIfStellar: true }));
   if (types.has(PokemonType.ICE)) {
     return false;
   }
@@ -845,7 +838,7 @@ function removeSnowscapeHail(pokemon: Pokemon, willTera: boolean): boolean {
  * @returns Whether the Pokémon would benefit from Sandstorm
  */
 function shouldRemoveSandstorm(pokemon: Pokemon, willTera: boolean): boolean {
-  if (pokemon.getTypes(willTera, true).includes(PokemonType.ROCK)) {
+  if (pokemon.getTypes({ includeTeraType: willTera, returnOriginalTypesIfStellar: true }).includes(PokemonType.ROCK)) {
     return false;
   }
   if (

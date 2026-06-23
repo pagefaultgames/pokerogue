@@ -1,4 +1,5 @@
-import type { AbAttr } from "#abilities/ab-attrs";import { allTrainerItems } from "#data/data-lists";
+import type { AbAttr } from "#abilities/ab-attrs";
+import { allTrainerItems } from "#data/data-lists";
 import type { TrainerItemEffect } from "#enums/trainer-item-effect";
 import type { TrainerItemId } from "#enums/trainer-item-id";
 import type { TrainerItem } from "#items/trainer-item";
@@ -6,7 +7,6 @@ import type { TrainerItemManager } from "#items/trainer-item-manager";
 import type { MoveAttr } from "#types/move-types";
 import type { TrainerItemEffectParamMap } from "#types/trainer-item-parameter";
 import type { IsEqual, IsUnion, NonEmptyTuple } from "type-fest";
-
 
 /**
  * Type matching each {@linkcode TrainerItemEffect} to the subset of `Attrs` that can apply said effect. \
@@ -21,7 +21,7 @@ export type TrainerItemRecord<Attrs extends TrainerItemAttr> = {
     : NonEmptyTuple<Extract<Attrs, TrainerItemAttr<E>>>;
 };
 
-/** 
+/**
  * Abstract base class for trainer item attributes.
  *
  * A single {@linkcode TrainerItem} instance can have any number of attributes per effect,

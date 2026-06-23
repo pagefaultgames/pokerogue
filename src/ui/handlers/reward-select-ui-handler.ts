@@ -1,5 +1,6 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { allMoves } from "#data/data-lists";
 import { getPokeballAtlasKey } from "#data/pokeball";
@@ -277,7 +278,8 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
     const { promise: tweenPromise, resolve: tweenResolve } = Promise.withResolvers<void>();
     let i = 0;
 
-    // #region: animation
+    // #region animation
+
     /** Holds promises that resolve once each reward's *upgrade animation* has finished playing */
     const rewardAnimPromises: Promise<void>[] = [];
     /** Holds promises that resolves once *all* animations for a reward have finished playing */
@@ -392,7 +394,7 @@ export class RewardSelectUiHandler extends AwaitableUiHandler {
       });
     });
 
-    // #endregion: animation
+    // #endregion animation
 
     return true;
   }
@@ -900,7 +902,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
           }
           const value = t.getValue()!;
           if (!bounce && value > lastValue) {
-            globalScene.playSound("se/pb_bounce_1", {
+            audioManager.playSound("se/pb_bounce_1", {
               volume: 1 / ++bounceCount,
             });
             bounce = true;
@@ -921,7 +923,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
             {
               delay: remainingDuration - 2000 * (this.rewardOption.upgradeCount - (u + 1 + upgradeCountOffset)),
               onStart: () => {
-                globalScene.playSound("se/upgrade", {
+                audioManager.playSound("se/upgrade", {
                   rate: 1 + 0.25 * u,
                 });
                 this.pbTint.setPosition(this.pb.x, this.pb.y).setTintFill(0xffffff).setVisible(true).setAlpha(0);
@@ -954,7 +956,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
     globalScene.time.delayedCall(remainingDuration + 2000, () => {
       if (isReward) {
         this.pb.setTexture("pb", `${this.getPbAtlasKey(0)}_open`);
-        globalScene.playSound("se/pb_rel");
+        audioManager.playSound("se/pb_rel");
 
         const { resolve: pbResolve, promise: pbPromise } = Promise.withResolvers<void>();
 
@@ -1041,7 +1043,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
   }
 
   updateCostText(): void {
-    const cost = Overrides.WAIVE_ROLL_FEE_OVERRIDE ? 0 : this.rewardOption.cost;
+    const cost = activeOverrides.WAIVE_ROLL_FEE_OVERRIDE ? 0 : this.rewardOption.cost;
     const textStyle = cost <= globalScene.money ? TextStyle.MONEY : TextStyle.PARTY_RED;
 
     const formattedMoney = formatMoney(globalScene.moneyFormat, cost);

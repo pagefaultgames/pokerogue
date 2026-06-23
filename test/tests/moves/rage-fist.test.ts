@@ -1,6 +1,5 @@
 import { allMoves } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { BattleType } from "#enums/battle-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -39,7 +38,7 @@ describe("Moves - Rage Fist", () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.select(MoveId.RAGE_FIST);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(move.calculateBattlePower).toHaveLastReturnedWith(150);
@@ -57,11 +56,11 @@ describe("Moves - Rage Fist", () => {
     await game.toNextTurn();
 
     game.move.select(MoveId.RAGE_FIST);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     // hit 8 times, but nothing else
-    expect(game.field.getPlayerPokemon().battleData.hitCount).toBe(8);
+    expect(game.field.getPlayerPokemon().summonData.hitCount).toBe(8);
     expect(move.calculateBattlePower).toHaveLastReturnedWith(350);
   });
 
@@ -72,11 +71,11 @@ describe("Moves - Rage Fist", () => {
 
     game.move.select(MoveId.SUBSTITUTE);
     await game.move.selectEnemyMove(MoveId.DOUBLE_KICK);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
     // no increase due to substitute
-    expect(game.field.getPlayerPokemon().battleData.hitCount).toBe(0);
+    expect(game.field.getPlayerPokemon().summonData.hitCount).toBe(0);
 
     // remove substitute and get confused
     game.move.select(MoveId.TIDY_UP);
@@ -89,103 +88,6 @@ describe("Moves - Rage Fist", () => {
     await game.toNextTurn();
 
     // didn't go up from hitting ourself
-    expect(game.field.getPlayerPokemon().battleData.hitCount).toBe(0);
-  });
-
-  it("should maintain hits received between wild waves", async () => {
-    await game.classicMode.startBattle(SpeciesId.FEEBAS);
-
-    game.move.use(MoveId.RAGE_FIST);
-    await game.move.forceEnemyMove(MoveId.TACKLE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.toEndOfTurn();
-
-    const feebas = game.field.getPlayerPokemon();
-    expect(feebas.battleData.hitCount).toBe(1);
-
-    await game.toNextWave();
-
-    expect(game.scene.currentBattle.waveIndex).toBe(2);
-    expect(feebas.battleData.hitCount).toBe(1);
-  });
-
-  it("should reset hits received before trainer battles", async () => {
-    await game.classicMode.startBattle(SpeciesId.FEEBAS);
-
-    const feebas = game.field.getPlayerPokemon();
-
-    game.move.use(MoveId.RAGE_FIST);
-    await game.move.forceEnemyMove(MoveId.DOUBLE_KICK);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.toEndOfTurn();
-
-    expect(game.isVictory()).toBe(true);
-    expect(feebas.battleData.hitCount).toBe(2);
-    expect(move.calculateBattlePower).toHaveLastReturnedWith(150);
-
-    game.override.battleType(BattleType.TRAINER);
-    await game.toNextWave();
-
-    expect(game.scene.currentBattle.waveIndex).toBe(2);
-    expect(feebas.battleData.hitCount).toBe(0);
-  });
-
-  it("should reset hits received before new biome", async () => {
-    game.override.startingWave(10);
-    await game.classicMode.startBattle(SpeciesId.FEEBAS);
-
-    const feebas = game.field.getPlayerPokemon();
-    game.move.use(MoveId.RAGE_FIST);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.toNextTurn();
-
-    expect(game.scene.currentBattle.waveIndex).toBe(11);
-    expect(feebas.battleData.hitCount).toBe(0);
-  });
-
-  it("should not reset if switched out or on reload", async () => {
-    game.override.enemyMoveset(MoveId.TACKLE);
-
-    const getPartyHitCount = () =>
-      game.scene
-        .getPlayerParty()
-        .filter(p => !!p)
-        .map(m => m.battleData.hitCount);
-
-    await game.classicMode.startBattle(SpeciesId.CHARIZARD, SpeciesId.BLASTOISE);
-
-    // Charizard hit
-    game.move.select(MoveId.SPLASH);
-    await game.toNextTurn();
-    expect(getPartyHitCount()).toEqual([1, 0]);
-
-    // blastoise switched in & hit
-    game.doSwitchPokemon(1);
-    await game.toNextTurn();
-    expect(getPartyHitCount()).toEqual([1, 1]);
-
-    // charizard switched in & hit
-    game.doSwitchPokemon(1);
-    await game.toNextTurn();
-    expect(getPartyHitCount()).toEqual([2, 1]);
-
-    // Charizard rage fist
-    game.move.select(MoveId.RAGE_FIST);
-    await game.phaseInterceptor.to("MoveEndPhase");
-
-    const charizard = game.field.getPlayerPokemon();
-    expect(charizard).toBeDefined();
-    expect(charizard.species.speciesId).toBe(SpeciesId.CHARIZARD);
-    expect(move.calculateBattlePower).toHaveLastReturnedWith(150);
-
-    // go to new wave, reload game and beat up another poor sap
-    await game.toNextWave();
-
-    await game.reload.reloadSession();
-
-    // outsped and oneshot means power rmains same as prior
-    game.move.select(MoveId.RAGE_FIST);
-    await game.phaseInterceptor.to("MoveEndPhase");
-    expect(move.calculateBattlePower).toHaveLastReturnedWith(150);
+    expect(game.field.getPlayerPokemon().summonData.hitCount).toBe(0);
   });
 });

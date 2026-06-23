@@ -8,14 +8,14 @@ import { initTests } from "#test/setup/test-file-initialization";
 import fs from "node:fs";
 import { afterAll, afterEach, beforeAll, beforeEach, vi } from "vitest";
 
-//#region Mocking
+// #region Mocking
 
 // Mock the override import to always return default values, ignoring any custom overrides.
 vi.mock(import("#app/overrides"), async importOriginal => {
   const { defaultOverrides } = await importOriginal();
 
   return {
-    default: defaultOverrides,
+    activeOverrides: defaultOverrides,
     // Export `defaultOverrides` as a *copy*.
     // This ensures we can easily reset `overrides` back to its default values after modifying it.
     defaultOverrides: { ...defaultOverrides },
@@ -104,12 +104,12 @@ vi.mock(import("#utils/fetch-utils"), async importOriginal => {
   return { cachedFetch, getCachedUrl } satisfies typeof import("#utils/fetch-utils");
 });
 
-//#endregion Mocking
+// #endregion Mocking
 
-//#region Hooks
+// #region Hooks
 
-beforeAll(() => {
-  initTests();
+beforeAll(async () => {
+  await initTests();
 });
 
 afterAll(() => {
@@ -127,4 +127,4 @@ afterEach(context => {
   PromptHandler.runInterval = undefined;
 });
 
-//#endregion Hooks
+// #endregion Hooks

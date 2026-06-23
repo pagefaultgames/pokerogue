@@ -1,5 +1,4 @@
 import type { Ability } from "#abilities/ability";
-import type { PokemonSpecies } from "#data/pokemon-species";
 import type { BiomeId } from "#enums/biome-id";
 import type { HeldItemId } from "#enums/held-item-id";
 import type { AllHeldItems } from "#items/all-held-items";
@@ -10,7 +9,6 @@ import type { DataMap } from "#types/common";
 
 export const allAbilities: readonly Ability[] = [];
 export const allMoves: readonly Move[] = [];
-export const allSpecies: readonly PokemonSpecies[] = [];
 
 export const allTrainerItems: AllTrainerItems = {} as AllTrainerItems;
 

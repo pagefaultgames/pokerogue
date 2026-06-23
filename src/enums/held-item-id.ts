@@ -2,7 +2,7 @@ import type { ObjectValues } from "#types/type-helpers";
 import { FormChangeItemId } from "./form-change-item-id";
 import type { TrainerItemId } from "./trainer-item-id";
 
-// TODO: make category the lower 2 bytes
+// TODO: make category the lower 2 bytes - makes it easier to add more items (and/or change category to first nibble)
 // TODO: Create subsets of HeldItemId for different types of items
 export const HeldItemId = {
   // Berries
@@ -115,7 +115,7 @@ export const HeldItemNames = Object.freeze(
       acc[value] = key;
       return acc;
     },
-    {},
+    {} as Record<HeldItemId, HeldItemName>,
   ),
 ) as HeldItemNameMap;
 
@@ -126,6 +126,7 @@ export const HeldItemCategoryId = {
   TYPE_ATTACK_BOOSTER: 0x0300,
   SPECIES_STAT_BOOSTER: 0x0400,
   CRIT_BOOSTER: 0x0500,
+  // TODO: improve naming or generalize
   GAIN_INCREASE: 0x0600,
   UNIQUE: 0x0700,
   VITAMIN: 0x0800,

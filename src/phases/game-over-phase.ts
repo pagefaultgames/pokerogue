@@ -1,7 +1,8 @@
 import { pokerogueApi } from "#api/api";
 import { clientSessionId } from "#app/account";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
-import { pokemonEvolutions } from "#balance/pokemon-evolutions";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { bypassLogin } from "#constants/app-constants";
 import { getCharVariantFromDialogue } from "#data/dialogue";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -188,7 +189,7 @@ export class GameOverPhase extends BattlePhase {
         }
 
         const fadeDuration = this.isVictory ? 10000 : 5000;
-        globalScene.fadeOutBgm(fadeDuration, true);
+        audioManager.fadeOutBgm(fadeDuration);
         const activeBattlers = globalScene.getField().filter(p => p?.isActive(true));
         activeBattlers.map(p => p.hideInfo());
         globalScene.ui.fadeOut(fadeDuration).then(() => {
@@ -308,7 +309,7 @@ export class GameOverPhase extends BattlePhase {
       }
       if (
         !globalScene.gameData.unlocks[Unlockables.EVIOLITE]
-        && globalScene.getPlayerParty().some(p => p.getSpeciesForm(true).speciesId in pokemonEvolutions)
+        && globalScene.getPlayerParty().some(p => speciesDataRegistry.hasEvolutions(p.getSpeciesForm(true).speciesId))
       ) {
         globalScene.phaseManager.unshiftNew("UnlockPhase", Unlockables.EVIOLITE);
       }

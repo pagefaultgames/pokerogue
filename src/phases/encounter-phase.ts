@@ -1,8 +1,9 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { PLAYER_PARTY_MAX_SIZE, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/constants";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { initEncounterAnims, loadEncounterAnimAssets } from "#data/battle-anims";
 import { getCharVariantFromDialogue } from "#data/dialogue";
@@ -215,7 +216,7 @@ export class EncounterPhase extends BattlePhase {
         }),
       );
     } else {
-      const overridedBossSegments = Overrides.ENEMY_HEALTH_SEGMENTS_OVERRIDE > 1;
+      const overridedBossSegments = activeOverrides.ENEMY_HEALTH_SEGMENTS_OVERRIDE > 1;
       // for double battles, reduce the health segments for boss Pokemon unless there is an override
       if (!overridedBossSegments && battle.enemyParty.filter(p => p.isBoss()).length > 1) {
         for (const enemyPokemon of battle.enemyParty) {
@@ -310,7 +311,7 @@ export class EncounterPhase extends BattlePhase {
   }
 
   protected doEncounter(): void {
-    globalScene.playBgm(undefined, true);
+    audioManager.playBgm(undefined, true);
     globalScene.updateItems(false);
     globalScene.setFieldScale(1);
 
@@ -414,7 +415,7 @@ export class EncounterPhase extends BattlePhase {
 
       const doSummon = () => {
         globalScene.currentBattle.started = true;
-        globalScene.playBgm(undefined);
+        audioManager.playBgm(undefined);
         globalScene.pbTray.showPbTray(globalScene.getPlayerParty());
         globalScene.pbTrayEnemy.showPbTray(globalScene.getEnemyParty());
         const doTrainerSummon = () => {

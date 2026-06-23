@@ -1,11 +1,10 @@
 import type { ObjectValues } from "#types/type-helpers";
 
 /**
- * Ids from 0x0B01 to 0x0BFF reserved for rare form change items
- * Ids from 0x0C01 to 0x0CFF reserved for less rare form change items
+ * Enum representing all form change items.
  */
 export const FormChangeItemId = {
-  // Mega Stones
+  // #region Mega Stones (0BXX)
   ABOMASITE: 0x0b01,
   ABSOLITE: 0x0b02,
   AERODACTYLITE: 0x0b03,
@@ -55,24 +54,80 @@ export const FormChangeItemId = {
   TYRANITARITE: 0x0b2f,
   VENUSAURITE: 0x0b30,
 
-  // Other rare form change items
-  BLUE_ORB: 0x0b51,
-  RED_ORB: 0x0b52,
-  ADAMANT_CRYSTAL: 0x0b53,
-  LUSTROUS_GLOBE: 0x0b54,
-  GRISEOUS_CORE: 0x0b55,
-  REVEAL_GLASS: 0x0b56,
-  MAX_MUSHROOMS: 0x0b57,
-  DARK_STONE: 0x0b58,
-  LIGHT_STONE: 0x0b59,
-  PRISON_BOTTLE: 0x0b5a,
-  RUSTED_SWORD: 0x0b5b,
-  RUSTED_SHIELD: 0x0b5c,
-  ICY_REINS_OF_UNITY: 0x0b5d,
-  SHADOW_REINS_OF_UNITY: 0x0b5e,
-  ULTRANECROZIUM_Z: 0x0b5f,
+  // legends Z-A Megas
 
-  // less rare form change items
+  CLEFABLITE: 0x0b31,
+  VICTREEBELITE: 0x0b32,
+  STARMINITE: 0x0b33,
+  DRAGONINITE: 0x0b34,
+  MEGANIUMITE: 0x0b35,
+  FERALIGITE: 0x0b36,
+  SKARMORITE: 0x0b37,
+  FROSLASSITE: 0x0b38,
+  EMBOARITE: 0x0b39,
+  EXCADRITE: 0x0b3a,
+  SCOLIPITE: 0x0b3b,
+  SCRAFTINITE: 0x0b3c,
+  EELEKTROSSITE: 0x0b3d,
+  CHANDELURITE: 0x0b3e,
+  CHESNAUGHTITE: 0x0b3f,
+  DELPHOXITE: 0x0b40,
+  GRENINJITE: 0x0b41,
+  PYROARITE: 0x0b42,
+  FLOETTITE: 0x0b43,
+  MALAMARITE: 0x0b44,
+  BARBARACITE: 0x0b45,
+  DRAGALGITE: 0x0b46,
+  HAWLUCHANITE: 0x0b47,
+  ZYGARDITE: 0x0b48,
+  DRAMPANITE: 0x0b49,
+  FALINKSITE: 0x0b4a,
+
+  RAICHUNITE_X: 0x0b4b,
+  RAICHUNITE_Y: 0x0b4c,
+  CHIMECHITE: 0x0b4d,
+  ABSOLITE_Z: 0x0b4e,
+  STARAPTITE: 0x0b4f,
+  GARCHOMPITE_Z: 0x0b50,
+  LUCARIONITE_Z: 0x0b51,
+  HEATRANITE: 0x0b52,
+  DARKRANITE: 0x0b53,
+  GOLURKITE: 0x0b54,
+  MEOWSTICITE: 0x0b55,
+  CRABOMINITE: 0x0b56,
+  GOLISOPITE: 0x0b57,
+  MAGEARNITE: 0x0b58,
+  ZERAORITE: 0x0b59,
+  SCOVILLAINITE: 0x0b5a,
+  GLIMMORANITE: 0x0b5b,
+  TATSUGIRINITE: 0x0b5c,
+  BAXCALIBRITE: 0x0b5d,
+
+  // technically not mega stones _per se_, but close enough
+
+  BLUE_ORB: 0x0b5e,
+  RED_ORB: 0x0b5f,
+
+  // #endregion Mega Stones (0BXX)
+
+  // #region Other rare form change items (0BXX from back)
+  ADAMANT_CRYSTAL: 0x0bff,
+  LUSTROUS_GLOBE: 0x0bfe,
+  GRISEOUS_CORE: 0x0bfd,
+  REVEAL_GLASS: 0x0bfc,
+  MAX_MUSHROOMS: 0x0bfb,
+  DARK_STONE: 0x0bfa,
+  LIGHT_STONE: 0x0bf9,
+  PRISON_BOTTLE: 0x0bf8,
+  RUSTED_SWORD: 0x0bf7,
+  RUSTED_SHIELD: 0x0bf6,
+  ICY_REINS_OF_UNITY: 0x0bf5,
+  SHADOW_REINS_OF_UNITY: 0x0bf4,
+  ULTRANECROZIUM_Z: 0x0bf3,
+
+  // #endregion Other rare form change items (0BXX)
+
+  // #region Less rare form change items (0DXX)
   SHARP_METEORITE: 0x0c01,
   HARD_METEORITE: 0x0c02,
   SMOOTH_METEORITE: 0x0c03,

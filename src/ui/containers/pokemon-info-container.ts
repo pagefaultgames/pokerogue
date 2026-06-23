@@ -27,17 +27,32 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   en: {
     infoContainerTextSize: "64px",
     infoContainerLabelXPos: -20,
-    infoContainerTextXPos: -17,
+    infoContainerTextXPos: -18,
+  },
+  de: {
+    infoContainerTextSize: "60px",
+    infoContainerLabelXPos: -16,
+    infoContainerTextXPos: -14,
   },
   pt: {
     infoContainerTextSize: "60px",
     infoContainerLabelXPos: -15,
-    infoContainerTextXPos: -12,
+    infoContainerTextXPos: -13,
   },
   ja: {
     infoContainerTextSize: "64px",
     infoContainerLabelXPos: -27,
     infoContainerTextXPos: -25,
+  },
+  pl: {
+    infoContainerTextSize: "54px",
+    infoContainerLabelXPos: -20,
+    infoContainerTextXPos: -18,
+  },
+  vi: {
+    infoContainerTextSize: "60px",
+    infoContainerLabelXPos: -15,
+    infoContainerTextXPos: -13,
   },
 };
 

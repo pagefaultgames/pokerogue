@@ -74,7 +74,8 @@ export const MoveUseMode = {
 
 export type MoveUseMode = ObjectValues<typeof MoveUseMode>;
 
-// # HELPER FUNCTIONS
+// #region Helper Functions
+
 // Please update the markdown tables if any new `MoveUseMode`s get added.
 
 /**
@@ -162,3 +163,5 @@ export function isIgnorePP(useMode: MoveUseMode): boolean {
 export function isReflected(useMode: MoveUseMode): boolean {
   return useMode === MoveUseMode.REFLECTED;
 }
+
+// #endregion Helper Functions

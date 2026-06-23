@@ -1,6 +1,7 @@
-import type { AnySound } from "#app/battle-scene";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
+import type { BackgroundMusic } from "#audio/background-music";
 import type { Egg } from "#data/egg";
 import type { EggHatchData } from "#data/egg-hatch-data";
 import { UiMode } from "#enums/ui-mode";
@@ -13,7 +14,6 @@ import type { EggHatchSceneUiHandler } from "#ui/egg-hatch-scene-ui-handler";
 import { PokemonInfoContainer } from "#ui/pokemon-info-container";
 import { fixedInt, getFrameMs, randInt } from "#utils/common";
 import i18next from "i18next";
-import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 
 /**
  * Class that represents egg hatching
@@ -63,7 +63,7 @@ export class EggHatchPhase extends Phase {
   private canSkip: boolean;
   private skipped: boolean;
   /** The sound effect being played when the egg is hatched */
-  private evolutionBgm: AnySound | null;
+  private evolutionBgm: BackgroundMusic | null;
   private eggLapsePhase: EggLapsePhase;
 
   constructor(hatchScene: EggLapsePhase, egg: Egg, eggsToHatchCount: number) {
@@ -75,6 +75,9 @@ export class EggHatchPhase extends Phase {
 
   start() {
     super.start();
+
+    // Hide previous candy bar if it exists
+    globalScene.candyBar.hide();
 
     globalScene.ui.setModeForceTransition(UiMode.EGG_HATCH_SCENE).then(() => {
       if (!this.egg) {
@@ -89,7 +92,7 @@ export class EggHatchPhase extends Phase {
 
       globalScene.gameData.eggs.splice(eggIndex, 1);
 
-      globalScene.fadeOutBgm(undefined, false);
+      audioManager.fadeOutBgm();
 
       this.eggHatchHandler = globalScene.ui.getHandler() as EggHatchSceneUiHandler;
 
@@ -176,7 +179,7 @@ export class EggHatchPhase extends Phase {
 
         globalScene.time.delayedCall(1000, () => {
           if (!this.hatched) {
-            this.evolutionBgm = globalScene.playSoundWithoutBgm("evolution");
+            this.evolutionBgm = audioManager.replaceBgmUntilEnd("bw/evolution");
           }
         });
 
@@ -205,7 +208,7 @@ export class EggHatchPhase extends Phase {
                   if (this.hatched) {
                     return;
                   }
-                  globalScene.playSound("se/egg_crack");
+                  audioManager.playSound("se/egg_crack");
                   this.doSpray(4);
                   this.eggCrackSprite.setFrame("3");
                   globalScene.time.delayedCall(125, () => this.eggCrackSprite.setFrame("4"));
@@ -248,7 +251,7 @@ export class EggHatchPhase extends Phase {
       if (count === undefined) {
         count = 0;
       }
-      globalScene.playSound("se/pb_move");
+      audioManager.playSound("se/pb_move");
       globalScene.tweens.add({
         targets: this.eggContainer,
         x: `-=${intensity / (count ? 1 : 2)}`,
@@ -306,12 +309,10 @@ export class EggHatchPhase extends Phase {
   doHatch(): void {
     this.canSkip = false;
     this.hatched = true;
-    if (this.evolutionBgm) {
-      SoundFade.fadeOut(globalScene, this.evolutionBgm, fixedInt(100));
-    }
+    this.evolutionBgm?.fadeOut(100, true);
     for (let e = 0; e < 5; e++) {
       globalScene.time.delayedCall(fixedInt(375 * e), () =>
-        globalScene.playSound("se/egg_hatch", { volume: 1 - e * 0.2 }),
+        audioManager.playSound("se/egg_hatch", { volume: 1 - e * 0.2 }),
       );
     }
     this.eggLightraysOverlay.setVisible(true);
@@ -378,27 +379,48 @@ export class EggHatchPhase extends Phase {
       globalScene.time.delayedCall(fixedInt(duration), () => {
         this.infoContainer.show(this.pokemon, false, this.skipped ? 2 : 1);
 
-        globalScene.playSoundWithoutBgm("evolution_fanfare");
+        audioManager.replaceBgmUntilEnd("bw/evolution_fanfare");
+
+        const hatchText = i18next.t("egg:hatchFromTheEgg", {
+          pokemonName: this.pokemon.species.getExpandedSpeciesName(),
+        });
+
+        // For new starter catches, `setPokemonCaught` queues its own "added as a starter" message,
+        // so defer it until after the hatch text is dismissed to avoid interrupting it mid-display
+        const rootSpeciesId = this.pokemon.species.getRootSpeciesId();
+        const isNewStarterCatch = !globalScene.gameData.dexData[rootSpeciesId].caughtAttr;
+
+        const finishHatch = () => {
+          globalScene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex).then(value => {
+            this.eggHatchData.setEggMoveUnlocked(value);
+            globalScene.ui.showText("", 0);
+            this.end();
+          });
+        };
 
         globalScene.ui.showText(
-          i18next.t("egg:hatchFromTheEgg", {
-            pokemonName: this.pokemon.species.getExpandedSpeciesName(),
-          }),
+          hatchText,
           null,
           () => {
-            globalScene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
-            globalScene.gameData.setPokemonCaught(this.pokemon, true, true).then(() => {
-              globalScene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex).then(value => {
-                this.eggHatchData.setEggMoveUnlocked(value);
-                globalScene.ui.showText("", 0);
-                this.end();
-              });
-            });
+            if (isNewStarterCatch) {
+              globalScene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
+              globalScene.gameData.setPokemonCaught(this.pokemon, true, true).then(finishHatch);
+            } else {
+              finishHatch();
+            }
           },
           null,
           true,
           3000,
         );
+
+        if (!isNewStarterCatch) {
+          const printDuration = (hatchText.length + 1) * 20;
+          globalScene.time.delayedCall(printDuration, () => {
+            globalScene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
+            globalScene.gameData.setPokemonCaught(this.pokemon, true, true);
+          });
+        }
       });
     });
     globalScene.tweens.add({
