@@ -9443,7 +9443,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       ],
     }),
     starter: SpeciesId.ZYGARDE,
-    starterCost: 8,
+    starterCost: 9,
     evolutions: [],
     formChanges: [
       // TODO: A form change condition for 50% and 10% Complete Forms will be needed for Mega Zygarde

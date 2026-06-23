@@ -236,6 +236,7 @@ describe("Mystery Encounter Utils", () => {
         SpeciesId.GROUDON,
         SpeciesId.RAYQUAZA,
         SpeciesId.ARCEUS,
+        SpeciesId.ZYGARDE,
         SpeciesId.KORAIDON,
         SpeciesId.MIRAIDON,
         SpeciesId.TERAPAGOS,
