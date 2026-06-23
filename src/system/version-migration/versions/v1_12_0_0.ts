@@ -2,7 +2,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { RibbonData } from "#system/ribbons/ribbon-data";
 import type { DexEntry } from "#types/dex-data";
-import type { SystemSaveData } from "#types/save-data";
+import type { StarterDataEntry, SystemSaveData } from "#types/save-data";
 import type { SessionSaveMigrator, SystemSaveMigrator } from "#types/save-migrators";
 import { ensurePropertyIsObject, isPropertyAnObject, validateIsArrayOfObjects } from "#utils/migrator-utils";
 
@@ -31,7 +31,10 @@ function clearOldBattleBondFormData(dexData: DexEntry): void {
 }
 
 function migrateSystemGreninjaBattleBondForm(data: SystemSaveData): void {
-  data.starterData[SpeciesId.BATTLE_BOND_GRENINJA] = {
+  const froakieStarterData = data.starterData[SpeciesId.FROAKIE];
+
+  // init data
+  const newStarterData: StarterDataEntry = {
     moveset: null,
     eggMoves: 0,
     candyCount: 0,
@@ -42,32 +45,44 @@ function migrateSystemGreninjaBattleBondForm(data: SystemSaveData): void {
     classicWinCount: 0,
   };
 
-  const froakieData = data.dexData[SpeciesId.FROAKIE];
+  const froakieDexData = data.dexData[SpeciesId.FROAKIE];
 
+  // init data
   const newDexData: DexEntry = {
     seenAttr: 0n,
     caughtAttr: 0n,
-    natureAttr: data.dexData[SpeciesId.FROAKIE].natureAttr,
+    natureAttr: 0,
     seenCount: 0,
     caughtCount: 0,
     hatchedCount: 0,
-    ivs: data.dexData[SpeciesId.FROAKIE].ivs ?? [15, 15, 15, 15, 15, 15],
+    ivs: [0, 0, 0, 0, 0, 0],
     ribbons: RibbonData.fromJSON("0"),
   };
 
   // If the battle bond form data already exists....
-  if (froakieData.seenAttr & BATTLE_BOND_FORM_FLAG) {
-    console.log("Migrating battle bond form seen data for froakie");
-    newDexData.seenAttr = froakieData.seenAttr & (BATTLE_BOND_FORM_FLAG - 1n);
-    froakieData.seenAttr &= BATTLE_BOND_FORM_FLAG - 1n;
+  if (froakieDexData.seenAttr & BATTLE_BOND_FORM_FLAG) {
+    console.debug("Migrating battle bond form seen data for froakie");
+    newDexData.seenAttr = froakieDexData.seenAttr & (BATTLE_BOND_FORM_FLAG - 1n);
+    froakieDexData.seenAttr &= BATTLE_BOND_FORM_FLAG - 1n;
   }
 
-  if (froakieData.caughtAttr & BATTLE_BOND_FORM_FLAG) {
-    console.log("Migrating battle bond form caught data for froakie");
-    newDexData.caughtAttr = froakieData.caughtAttr & (BATTLE_BOND_FORM_FLAG - 1n);
-    froakieData.caughtAttr &= BATTLE_BOND_FORM_FLAG - 1n;
+  if (froakieDexData.caughtAttr & BATTLE_BOND_FORM_FLAG) {
+    console.debug("Migrating battle bond form caught data for froakie");
+    newDexData.caughtAttr = froakieDexData.caughtAttr & (BATTLE_BOND_FORM_FLAG - 1n);
+    froakieDexData.caughtAttr &= BATTLE_BOND_FORM_FLAG - 1n;
+
+    newStarterData.eggMoves = froakieStarterData.eggMoves;
+    newStarterData.candyCount = froakieStarterData.candyCount;
+    newStarterData.friendship = froakieStarterData.friendship;
+    newStarterData.passiveAttr = froakieStarterData.passiveAttr;
+    newStarterData.valueReduction = froakieStarterData.valueReduction;
+
+    newDexData.natureAttr = froakieDexData.natureAttr;
+    newDexData.caughtCount = 1;
+    newDexData.ivs = froakieDexData.ivs;
   }
 
+  data.starterData[SpeciesId.BATTLE_BOND_GRENINJA] = newStarterData;
   data.dexData[SpeciesId.BATTLE_BOND_GRENINJA] = newDexData;
   // Must clear out the battle bond form data from the species line entries
   clearOldBattleBondFormData(data.dexData[SpeciesId.FROGADIER]);
@@ -76,42 +91,58 @@ function migrateSystemGreninjaBattleBondForm(data: SystemSaveData): void {
 
 function migrateSystemHisuiBasculin(data: SystemSaveData): void {
   const basculinStarterData = data.starterData[SpeciesId.BASCULIN];
-  const basculinData = data.dexData[SpeciesId.BASCULIN];
-  data.starterData[SpeciesId.HISUI_BASCULIN] = {
+
+  // init data
+  const newStarterData: StarterDataEntry = {
     moveset: null,
-    eggMoves: basculinStarterData.eggMoves ?? 0,
-    candyCount: basculinStarterData.candyCount ?? 0,
+    eggMoves: 0,
+    candyCount: 0,
     friendship: 0,
-    abilityAttr: basculinStarterData.abilityAttr ?? 1,
-    passiveAttr: basculinStarterData.passiveAttr ?? 0,
-    valueReduction: basculinStarterData.valueReduction ?? 0,
+    abilityAttr: 0,
+    passiveAttr: 0,
+    valueReduction: 0,
     classicWinCount: 0,
   };
 
+  const basculinDexData = data.dexData[SpeciesId.BASCULIN];
+
+  // init data
   const newDexData: DexEntry = {
     seenAttr: 0n,
     caughtAttr: 0n,
-    natureAttr: data.dexData[SpeciesId.BASCULIN].natureAttr,
+    natureAttr: 0,
     seenCount: 0,
     caughtCount: 0,
     hatchedCount: 0,
-    ivs: data.dexData[SpeciesId.BASCULIN].ivs ?? [15, 15, 15, 15, 15, 15],
+    ivs: [0, 0, 0, 0, 0, 0],
     ribbons: RibbonData.fromJSON("0"),
   };
 
   // If the white stripe form data already exists....
-  if (basculinData.seenAttr & WHITE_STRIPE_FORM_FLAG) {
+  if (basculinDexData.seenAttr & WHITE_STRIPE_FORM_FLAG) {
     // 255 is bitflag for all bits below 8th
-    newDexData.seenAttr = basculinData.seenAttr & 255n;
+    newDexData.seenAttr = basculinDexData.seenAttr & 255n;
     // Unset white stripe seen flag
-    basculinData.seenAttr &= WHITE_STRIPE_FORM_FLAG - 1n;
+    basculinDexData.seenAttr &= WHITE_STRIPE_FORM_FLAG - 1n;
   }
 
-  if (basculinData.caughtAttr & WHITE_STRIPE_FORM_FLAG) {
-    newDexData.caughtAttr = basculinData.caughtAttr & 255n;
-    basculinData.caughtAttr &= WHITE_STRIPE_FORM_FLAG - 1n;
+  if (basculinDexData.caughtAttr & WHITE_STRIPE_FORM_FLAG) {
+    newDexData.caughtAttr = basculinDexData.caughtAttr & 255n;
+    basculinDexData.caughtAttr &= WHITE_STRIPE_FORM_FLAG - 1n;
+
+    newStarterData.eggMoves = basculinStarterData.eggMoves;
+    newStarterData.candyCount = basculinStarterData.candyCount;
+    newStarterData.friendship = basculinStarterData.friendship;
+    newStarterData.abilityAttr = basculinStarterData.abilityAttr;
+    newStarterData.passiveAttr = basculinStarterData.passiveAttr;
+    newStarterData.valueReduction = basculinStarterData.valueReduction;
+
+    newDexData.natureAttr = basculinDexData.natureAttr;
+    newDexData.caughtCount = 1;
+    newDexData.ivs = basculinDexData.ivs;
   }
 
+  data.starterData[SpeciesId.HISUI_BASCULIN] = newStarterData;
   data.dexData[SpeciesId.HISUI_BASCULIN] = newDexData;
 }
 
@@ -137,7 +168,7 @@ const migrateSpeciesSplitSystem: SystemSaveMigrator = {
  * @param replaceSpecies - Whether to replace a matching species with battle bond greninja (or keep original species and set to default form)
  */
 function migrateSessionGreninjaBattleBondForm(pokemon: Record<string, unknown>, replaceSpecies: boolean): void {
-  console.log("Migrating pokemon with species %d and form index %d", pokemon.species, pokemon.formIndex);
+  console.debug("Migrating pokemon with species %d and form index %d", pokemon.species, pokemon.formIndex);
   if (
     // Cast is safe because if it's not a number, the check will merely fail
     [SpeciesId.FROAKIE, SpeciesId.FROGADIER, SpeciesId.GRENINJA].includes(pokemon.species as SpeciesId)
