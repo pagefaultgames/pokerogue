@@ -53,7 +53,6 @@ export class AlertModalUiHandler extends ModalUiHandler {
    * @param args - The message that will be displayed in the alert box.
    */
   show(args: [message: string]): boolean {
-    console.error("AlertModalUiHandler.show called with args:", args);
     const config: ModalConfig = { buttonActions: [] };
 
     const msg = args[0];
