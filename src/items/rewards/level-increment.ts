@@ -14,9 +14,9 @@ function incrementLevelWithCandy(pokemon: Pokemon): boolean {
   globalScene.applyPlayerItems(TrainerItemEffect.LEVEL_INCREMENT_BOOSTER, { numberHolder: levelCount });
 
   pokemon.level += levelCount.value;
+  // TODO: Is this check correct?
   if (pokemon.level <= globalScene.getMaxExpLevel(true)) {
     pokemon.exp = getLevelTotalExp(pokemon.level, pokemon.species.growthRate);
-    pokemon.levelExp = 0;
   }
 
   if (pokemon.isPlayer()) {

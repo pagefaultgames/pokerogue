@@ -43,7 +43,7 @@ function restorePokemonHp(
   // Apply HealingCharm
   const hpRestoreMultiplier = new NumberHolder(1);
   if (!fainted) {
-    this.applyPlayerItems(TrainerItemEffect.HEALING_BOOSTER, { numberHolder: hpRestoreMultiplier });
+    globalScene.applyPlayerItems(TrainerItemEffect.HEALING_BOOSTER, { numberHolder: hpRestoreMultiplier });
   }
   const restorePoints = toDmgValue(pointsToRestore * hpRestoreMultiplier.value);
   const restorePercent = toDmgValue((percentToRestore / 100) * hpRestoreMultiplier.value * pokemon.getMaxHp());

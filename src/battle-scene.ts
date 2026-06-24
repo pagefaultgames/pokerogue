@@ -2495,9 +2495,10 @@ export class BattleScene extends SceneBase {
       this.updateItems(source.isPlayer());
     }
 
+    // TODO: held items don't have sounds
     const soundName = allHeldItems[heldItemId].soundName;
-    if (playSound && !this.sound.get(soundName)) {
-      this.playSound(soundName);
+    if (playSound) {
+      audioManager.playSound(soundName);
     }
 
     return true;

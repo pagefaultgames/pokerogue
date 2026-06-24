@@ -13,6 +13,7 @@ import { PokemonForm, PokemonSpecies } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
 import { EggTier } from "#enums/egg-type";
 import { FormChangeItemId } from "#enums/form-change-item-id";
+import { HeldItemId } from "#enums/held-item-id";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
@@ -11880,14 +11881,14 @@ export function initGenerationThree(): SpeciesDataMapConfig {
         speciesId: SpeciesId.HUNTAIL,
         level: 1,
         item: EvolutionItem.LINKING_CORD,
-        condition: { key: EvoCondKey.HELD_ITEM, itemKey: "DEEP_SEA_TOOTH" },
+        condition: { key: EvoCondKey.HELD_ITEM, itemKey: HeldItemId.DEEP_SEA_TOOTH },
         evoDelay: [40, 40, 50],
       }),
       new SpeciesEvolution({
         speciesId: SpeciesId.GOREBYSS,
         level: 1,
         item: EvolutionItem.LINKING_CORD,
-        condition: { key: EvoCondKey.HELD_ITEM, itemKey: "DEEP_SEA_SCALE" },
+        condition: { key: EvoCondKey.HELD_ITEM, itemKey: HeldItemId.DEEP_SEA_SCALE },
         evoDelay: [40, 40, 50],
       }),
     ],

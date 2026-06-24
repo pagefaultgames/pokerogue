@@ -1,4 +1,4 @@
-import { pokemonEvolutions } from "#balance/pokemon-evolutions";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { HeldItemEffect } from "#enums/held-item-effect";
 import type { HeldItemId } from "#enums/held-item-id";
 import type { SpeciesId } from "#enums/species-id";
@@ -51,19 +51,19 @@ export class EvolutionStatBoostHeldItemAttr extends StatBoostHeldItemAttr {
       return false;
     }
     const { pokemon } = params;
-    const isUnevolved = Object.hasOwn(pokemonEvolutions, pokemon.getSpeciesForm(true).speciesId);
+    const isUnevolved = speciesDataRegistry.hasEvolutions(pokemon.getSpeciesForm(true).speciesId);
     if (isUnevolved) {
       // Dynamax/G-Max pokemon can never benefit from eviolite, even if their root species is unevolved
       return !pokemon.isMax();
     }
 
     // check for fusion that has eviolite
-    return pokemon.isFusion() && Object.hasOwn(pokemonEvolutions, pokemon.getFusionSpeciesForm(true).speciesId);
+    return pokemon.isFusion() && speciesDataRegistry.hasEvolutions(pokemon.getFusionSpeciesForm(true).speciesId);
   }
 
   public override apply({ pokemon, statHolder }: StatBoostParams): void {
-    const isUnevolved = Object.hasOwn(pokemonEvolutions, pokemon.getSpeciesForm(true).speciesId);
-    const isFusionUnevolved = Object.hasOwn(pokemonEvolutions, pokemon.getFusionSpeciesForm(true).speciesId);
+    const isUnevolved = speciesDataRegistry.hasEvolutions(pokemon.getSpeciesForm(true).speciesId);
+    const isFusionUnevolved = speciesDataRegistry.hasEvolutions(pokemon.getFusionSpeciesForm(true).speciesId);
 
     let boost = this.multiplier - 1;
     if (pokemon.isFusion() && isFusionUnevolved !== isUnevolved) {
