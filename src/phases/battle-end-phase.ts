@@ -80,7 +80,7 @@ export class BattleEndPhase extends BattlePhase {
     if (!this.isVictory && !globalScene.phaseManager.hasPhaseOfType("SelectModifierPhase")) {
       if (globalScene.currentBattle.enemyFaints > 0) {
         globalScene.phaseManager.unshiftNew("SelectModifierPhase");
-      } else {
+      } else if (!globalScene.currentBattle.successfulRun) {
         globalScene.phaseManager.unshiftNew("SelectModifierPhase", 0, undefined, {
           fillRemaining: false,
           rerollMultiplier: -1,

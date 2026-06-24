@@ -124,7 +124,7 @@ describe("Double Battles", () => {
     expect(handler.options.length).toBe(0);
   });
 
-  it("should offer partial rewards when one opponent is defeated and the other flees", async () => {
+  it("should offer normal rewards when one opponent is defeated and the other flees", async () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle(SpeciesId.MAGIKARP, SpeciesId.MAGIKARP);
 

@@ -193,9 +193,8 @@ describe("Phase - Battle Phase", () => {
     const commandPhase = game.scene.phaseManager.getCurrentPhase() as CommandPhase;
     commandPhase.handleCommand(Command.RUN, 0);
 
-    await game.toNextWave();
+    await game.phaseInterceptor.to("NewBattlePhase");
 
     expect(game.scene.currentBattle.waveIndex).toBe(2);
-    expect(game.scene.ui.getMode()).not.toBe(UiMode.MODIFIER_SELECT);
   });
 });

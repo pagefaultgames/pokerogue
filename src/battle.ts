@@ -104,6 +104,8 @@ export class Battle {
    */
   public failedRunAway = false;
 
+  public successfulRun = false;
+
   constructor(
     gameMode: GameMode,
     { waveIndex, battleType, trainer, mysteryEncounterType, double = false }: NewBattleResolvedProps,
