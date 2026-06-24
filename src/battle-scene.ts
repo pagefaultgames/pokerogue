@@ -221,7 +221,7 @@ export class BattleScene extends SceneBase {
   public moveAnimations = true;
   public expGainsSpeed: ExpGainsSpeed = ExpGainsSpeed.DEFAULT;
   public skipSeenDialogues = false;
-  public alwaysPromptMessages = false;
+  public manualMessageClear = false;
   /**
    * Determines if the egg hatching animation should be skipped
    * - 0 = Never (never skip animation)

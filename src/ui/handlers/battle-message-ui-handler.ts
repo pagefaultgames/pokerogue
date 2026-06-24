@@ -177,7 +177,7 @@ export class BattleMessageUiHandler extends MessageUiHandler {
     promptDelay?: number | null,
   ) {
     this.hideNameText();
-    super.showText(text, delay, callback, callbackDelay, globalScene.alwaysPromptMessages || prompt, promptDelay);
+    super.showText(text, delay, callback, callbackDelay, prompt, promptDelay);
   }
 
   showDialogue(
