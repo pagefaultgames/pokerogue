@@ -30,7 +30,6 @@ const fixDexData: SystemSaveMigrator = {
 
       const hasStarterData =
         starterEntry.abilityAttr > 1
-        || starterEntry.classicWinCount > 0
         || starterEntry.eggMoves > 0
         || starterEntry.moveset != null
         || starterEntry.passiveAttr > 0
