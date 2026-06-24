@@ -4,6 +4,7 @@ import type { Pokemon } from "#field/pokemon";
 import { getStatName } from "#test/utils/string-utils";
 import { isPokemonInstance, receivedStr } from "#test/utils/test-utils";
 import type { GetEffectiveStatParams } from "#types/pokemon-common";
+import type { AtLeastOne } from "#types/type-helpers";
 import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
 
 /**
@@ -11,7 +12,7 @@ import type { MatcherState, SyncExpectationResult } from "@vitest/expect";
  * @param received - The object to check. Should be a {@linkcode Pokemon}
  * @param stat - The {@linkcode EffectiveStat} to check
  * @param expectedValue - The expected value of `stat`; must be a non-negative integer
- * @param options - The {@linkcode ToHaveEffectiveStatOptions}
+ * @param options - The {@linkcode GetEffectiveStatParams | options} passed to the matcher
  * @returns Whether the matcher passed
  */
 export function toHaveEffectiveStat(
@@ -19,7 +20,7 @@ export function toHaveEffectiveStat(
   received: unknown,
   stat: EffectiveStat,
   expectedValue: number,
-  options?: GetEffectiveStatParams,
+  options?: AtLeastOne<GetEffectiveStatParams>,
 ): SyncExpectationResult {
   if (!isPokemonInstance(received)) {
     return {
