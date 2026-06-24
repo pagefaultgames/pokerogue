@@ -6086,7 +6086,7 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       [47, MoveId.COVET],
       [50, MoveId.INFESTATION],
     ],
-    tms:  [
+    tms: [
       MoveId.MEGA_PUNCH,
       MoveId.ICE_PUNCH,
       MoveId.THUNDER_PUNCH,
