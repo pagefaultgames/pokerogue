@@ -18,11 +18,14 @@
     "includes": [
       "**",
       "!src/data/balance/**",
+      "src/data/balance/species/**",
       "src/data/balance/moves/forbidden-moves.ts",
+      "src/data/balance/moves/off-stat-denylist.ts",
       "src/data/balance/moves/signature-moves.ts",
       "src/data/balance/moves/superceded-moves.ts",
       "src/data/balance/biomes/**",
-      "src/data/balance/timed-events.ts"
+      "src/data/balance/timed-events.ts",
+      "src/data/balance/tm-pool-tiers.ts"
     ], // TODO: enable formatting of balance folder
     "lineWidth": 120
   },
