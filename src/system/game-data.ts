@@ -74,7 +74,7 @@ import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { fixedInt, NumberHolder, randInt, randSeedItem } from "#utils/common";
 import { decrypt, encrypt } from "#utils/data";
-import { getEnumKeys } from "#utils/enums";
+import { getEnumKeys, getEnumValues } from "#utils/enums";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import { AES, enc } from "crypto-js";
@@ -218,41 +218,49 @@ export class GameData {
    * @returns Whether the system data is valid
    */
   private validateSystemData(data: SystemSaveData): boolean {
-    // biome-ignore lint/suspicious/useGuardForIn: this should be safe
-    for (const index in data.starterData) {
-      const idx = Number.parseInt(index);
-      const entry = data.starterData[index];
-      if (entry == null) {
-        console.error("Missing starter entry for", index);
+    if (data.starterData == null) {
+      console.error("Starter data missing!");
+      return false;
+    }
+
+    for (const speciesId of getEnumValues(SpeciesId)) {
+      if (!speciesDataRegistry.isStarter(speciesId) || defaultStarterSpecies.includes(speciesId)) {
         continue;
       }
-      if (
-        entry.abilityAttr > 1
-        || entry.classicWinCount > 0
-        || entry.eggMoves > 0
-        || entry.moveset != null
-        || entry.passiveAttr > 0
-        || entry.valueReduction > 0
-      ) {
-        const dexEntry = data.dexData[index];
-        if (dexEntry == null) {
-          console.error("Missing dex entry for", index);
-          continue;
-        }
-        if (
-          dexEntry.caughtCount === 0
-          && dexEntry.hatchedCount === 0
-          && !defaultStarterSpecies.includes(idx)
-          && speciesDataRegistry.isStarter(idx)
-        ) {
-          console.error("Corrupt save data detected, save rejected!");
-          console.warn("Species:", SpeciesId[idx]);
-          console.warn(entry);
-          console.warn(dexEntry);
-          return false;
-        }
+
+      const starterEntry = data.starterData[speciesId];
+      const dexEntry = data.dexData[speciesId];
+
+      const species = SpeciesId[speciesId];
+
+      if (starterEntry == null) {
+        console.error("Missing starter data for %s (%d)!", species, speciesId);
+        return false;
+      }
+      if (dexEntry == null) {
+        console.error("Missing dex data for %s (%d)!", species, speciesId);
+        return false;
+      }
+
+      const hasStarterData =
+        starterEntry.abilityAttr > 1
+        || starterEntry.classicWinCount > 0
+        || starterEntry.eggMoves > 0
+        || starterEntry.moveset != null
+        || starterEntry.passiveAttr > 0
+        || starterEntry.valueReduction > 0;
+
+      const noDexData = dexEntry.caughtCount === 0 && dexEntry.hatchedCount === 0 && dexEntry.caughtAttr === 0n;
+
+      if (hasStarterData && noDexData) {
+        console.error("Corrupt save data detected, save rejected!");
+        console.warn("Species: %s (%d)", species, speciesId);
+        console.warn(starterEntry);
+        console.warn(dexEntry);
+        return false;
       }
     }
+
     return true;
   }
 
