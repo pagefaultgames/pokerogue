@@ -285,7 +285,6 @@ export class GameData {
     const data = this.getSystemSaveData();
 
     if (!this.validateSystemData(data)) {
-      globalScene.ui.savingIcon.hide();
       return this.showInvalidSaveModal(false);
     }
     globalScene.ui.savingIcon.show();
