@@ -7,6 +7,7 @@ import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { AchvBar } from "#ui/achv-bar";
 import { AchvsUiHandler } from "#ui/achvs-ui-handler";
+import { AlertModalUiHandler } from "#ui/alert-modal-ui-handler";
 import { AutoCompleteUiHandler } from "#ui/autocomplete-ui-handler";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { BallUiHandler } from "#ui/ball-ui-handler";
@@ -108,6 +109,7 @@ const noTransitionModes = [
   UiMode.MYSTERY_ENCOUNTER,
   UiMode.RUN_INFO,
   UiMode.CHANGE_PASSWORD_FORM,
+  UiMode.ALERT_MODAL,
 ];
 
 // biome-ignore lint/style/useNamingConvention: a unique case (only 2 letters)
@@ -182,6 +184,7 @@ export class UI extends Phaser.GameObjects.Container {
       new AdminUiHandler(),
       new MysteryEncounterUiHandler(),
       new ChangePasswordFormUiHandler(),
+      new AlertModalUiHandler(),
     ];
   }
 

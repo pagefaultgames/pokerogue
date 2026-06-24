@@ -263,14 +263,32 @@ export class GameData {
     return true;
   }
 
+  private async showInvalidSaveModal<const T>(returnValue: T): Promise<T> {
+    const { promise, resolve } = Promise.withResolvers<T>();
+    await globalScene.ui.setMode(UiMode.ALERT_MODAL, i18next.t("gameData:failedSaveValidation"));
+    // TODO: This is a temporary hacky solution to ensure the modal displays when saving
+    // on the starter select UI, which change the UI mode without awaiting this async call..
+    globalScene.time.delayedCall(fixedInt(1000), () => {
+      // on the pokedex page, which changes the UiMode after calling this so the
+      // user never sees the alert modal.
+      if (globalScene.ui.getMode() === UiMode.ALERT_MODAL) {
+        globalScene.time.delayedCall(fixedInt(4000), () => resolve(returnValue));
+      } else {
+        globalScene.ui.setMode(UiMode.ALERT_MODAL, i18next.t("gameData:failedSaveValidation"));
+        globalScene.time.delayedCall(fixedInt(4000), () => resolve(returnValue));
+      }
+    });
+    return promise;
+  }
+
   public async saveSystem(): Promise<boolean> {
-    globalScene.ui.savingIcon.show();
     const data = this.getSystemSaveData();
 
     if (!this.validateSystemData(data)) {
       globalScene.ui.savingIcon.hide();
-      return false;
+      return this.showInvalidSaveModal(false);
     }
+    globalScene.ui.savingIcon.show();
 
     const maxIntAttrValue = 0x80000000;
     const systemData = JSON.stringify(data, (_k: any, v: any) =>
@@ -1294,10 +1312,6 @@ export class GameData {
       }
     }
 
-    if (sync) {
-      globalScene.ui.savingIcon.show();
-    }
-
     const sessionData = useCachedSession
       ? this.parseSessionData(
           decrypt(localStorage.getItem(getSessionDataLocalStorageKey(globalScene.sessionSlotId))!, bypassLogin),
@@ -1311,10 +1325,12 @@ export class GameData {
       : this.getSystemSaveData(); // TODO: is this bang correct?
 
     if (!this.validateSystemData(systemData)) {
-      if (sync) {
-        globalScene.ui.savingIcon.hide();
-      }
-      return false;
+      return this.showInvalidSaveModal(false);
+    }
+
+    // Saving icon should go after validation to avoid confusing users.
+    if (sync) {
+      globalScene.ui.savingIcon.show();
     }
 
     const request = {
