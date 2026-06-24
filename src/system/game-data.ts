@@ -214,9 +214,56 @@ export class GameData {
     return this.unlocks[unlockable];
   }
 
+  /**
+   * @returns Whether the system data is valid
+   */
+  private validateSystemData(data: SystemSaveData): boolean {
+    // biome-ignore lint/suspicious/useGuardForIn: this should be safe
+    for (const index in data.starterData) {
+      const idx = Number.parseInt(index);
+      const entry = data.starterData[index];
+      if (entry == null) {
+        console.error("Missing starter entry for", index);
+        continue;
+      }
+      if (
+        entry.abilityAttr > 1
+        || entry.classicWinCount > 0
+        || entry.eggMoves > 0
+        || entry.moveset != null
+        || entry.passiveAttr > 0
+        || entry.valueReduction > 0
+      ) {
+        const dexEntry = data.dexData[index];
+        if (dexEntry == null) {
+          console.error("Missing dex entry for", index);
+          continue;
+        }
+        if (
+          dexEntry.caughtCount === 0
+          && dexEntry.hatchedCount === 0
+          && !defaultStarterSpecies.includes(idx)
+          && speciesDataRegistry.isStarter(idx)
+        ) {
+          console.error("Corrupt save data detected, save rejected!");
+          console.warn("Species:", SpeciesId[idx]);
+          console.warn(entry);
+          console.warn(dexEntry);
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   public async saveSystem(): Promise<boolean> {
     globalScene.ui.savingIcon.show();
     const data = this.getSystemSaveData();
+
+    if (!this.validateSystemData(data)) {
+      globalScene.ui.savingIcon.hide();
+      return false;
+    }
 
     const maxIntAttrValue = 0x80000000;
     const systemData = JSON.stringify(data, (_k: any, v: any) =>
@@ -1255,6 +1302,13 @@ export class GameData {
     const systemData = useCachedSystem
       ? GameData.parseSystemData(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`)!, bypassLogin))
       : this.getSystemSaveData(); // TODO: is this bang correct?
+
+    if (!this.validateSystemData(systemData)) {
+      if (sync) {
+        globalScene.ui.savingIcon.hide();
+      }
+      return false;
+    }
 
     const request = {
       system: systemData,
