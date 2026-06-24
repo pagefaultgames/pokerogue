@@ -8097,6 +8097,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       [23, MoveId.THUNDER_WAVE],
       [26, MoveId.RECOVER],
       [29, MoveId.SIGNAL_BEAM],
+      [32, MoveId.CONVERSION_2],
       [36, MoveId.EMBARGO],
       [40, MoveId.DISCHARGE],
       [44, MoveId.MAGIC_COAT],
