@@ -1,10 +1,10 @@
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
-import type { PokemonData } from "#system/pokemon-data";
 import { RibbonData } from "#system/ribbons/ribbon-data";
 import type { DexEntry } from "#types/dex-data";
-import type { SessionSaveData, SystemSaveData } from "#types/save-data";
+import type { StarterDataEntry, SystemSaveData } from "#types/save-data";
 import type { SessionSaveMigrator, SystemSaveMigrator } from "#types/save-migrators";
+import { ensurePropertyIsObject, isPropertyAnObject, validateIsArrayOfObjects } from "#utils/migrator-utils";
 
 const FORM_0_FLAG = 256n;
 
@@ -31,7 +31,10 @@ function clearOldBattleBondFormData(dexData: DexEntry): void {
 }
 
 function migrateSystemGreninjaBattleBondForm(data: SystemSaveData): void {
-  data.starterData[SpeciesId.BATTLE_BOND_GRENINJA] = {
+  const froakieStarterData = data.starterData[SpeciesId.FROAKIE];
+
+  // init data
+  const newStarterData: StarterDataEntry = {
     moveset: null,
     eggMoves: 0,
     candyCount: 0,
@@ -42,32 +45,44 @@ function migrateSystemGreninjaBattleBondForm(data: SystemSaveData): void {
     classicWinCount: 0,
   };
 
-  const froakieData = data.dexData[SpeciesId.FROAKIE];
+  const froakieDexData = data.dexData[SpeciesId.FROAKIE];
 
+  // init data
   const newDexData: DexEntry = {
     seenAttr: 0n,
     caughtAttr: 0n,
-    natureAttr: data.dexData[SpeciesId.FROAKIE].natureAttr,
+    natureAttr: 0,
     seenCount: 0,
     caughtCount: 0,
     hatchedCount: 0,
-    ivs: data.dexData[SpeciesId.FROAKIE].ivs ?? [15, 15, 15, 15, 15, 15],
+    ivs: [0, 0, 0, 0, 0, 0],
     ribbons: RibbonData.fromJSON("0"),
   };
 
   // If the battle bond form data already exists....
-  if (froakieData.seenAttr & BATTLE_BOND_FORM_FLAG) {
-    console.log("Migrating battle bond form seen data for froakie");
-    newDexData.seenAttr = froakieData.seenAttr & (BATTLE_BOND_FORM_FLAG - 1n);
-    froakieData.seenAttr &= BATTLE_BOND_FORM_FLAG - 1n;
+  if (froakieDexData.seenAttr & BATTLE_BOND_FORM_FLAG) {
+    console.debug("Migrating battle bond form seen data for froakie");
+    newDexData.seenAttr = froakieDexData.seenAttr & (BATTLE_BOND_FORM_FLAG - 1n);
+    froakieDexData.seenAttr &= BATTLE_BOND_FORM_FLAG - 1n;
   }
 
-  if (froakieData.caughtAttr & BATTLE_BOND_FORM_FLAG) {
-    console.log("Migrating battle bond form caught data for froakie");
-    newDexData.caughtAttr = froakieData.caughtAttr & (BATTLE_BOND_FORM_FLAG - 1n);
-    froakieData.caughtAttr &= BATTLE_BOND_FORM_FLAG - 1n;
+  if (froakieDexData.caughtAttr & BATTLE_BOND_FORM_FLAG) {
+    console.debug("Migrating battle bond form caught data for froakie");
+    newDexData.caughtAttr = froakieDexData.caughtAttr & (BATTLE_BOND_FORM_FLAG - 1n);
+    froakieDexData.caughtAttr &= BATTLE_BOND_FORM_FLAG - 1n;
+
+    newStarterData.eggMoves = froakieStarterData.eggMoves;
+    newStarterData.candyCount = froakieStarterData.candyCount;
+    newStarterData.friendship = froakieStarterData.friendship;
+    newStarterData.passiveAttr = froakieStarterData.passiveAttr;
+    newStarterData.valueReduction = froakieStarterData.valueReduction;
+
+    newDexData.natureAttr = froakieDexData.natureAttr;
+    newDexData.caughtCount = 1;
+    newDexData.ivs = froakieDexData.ivs;
   }
 
+  data.starterData[SpeciesId.BATTLE_BOND_GRENINJA] = newStarterData;
   data.dexData[SpeciesId.BATTLE_BOND_GRENINJA] = newDexData;
   // Must clear out the battle bond form data from the species line entries
   clearOldBattleBondFormData(data.dexData[SpeciesId.FROGADIER]);
@@ -76,42 +91,58 @@ function migrateSystemGreninjaBattleBondForm(data: SystemSaveData): void {
 
 function migrateSystemHisuiBasculin(data: SystemSaveData): void {
   const basculinStarterData = data.starterData[SpeciesId.BASCULIN];
-  const basculinData = data.dexData[SpeciesId.BASCULIN];
-  data.starterData[SpeciesId.HISUI_BASCULIN] = {
+
+  // init data
+  const newStarterData: StarterDataEntry = {
     moveset: null,
-    eggMoves: basculinStarterData.eggMoves ?? 0,
-    candyCount: basculinStarterData.candyCount ?? 0,
+    eggMoves: 0,
+    candyCount: 0,
     friendship: 0,
-    abilityAttr: basculinStarterData.abilityAttr ?? 1,
-    passiveAttr: basculinStarterData.passiveAttr ?? 0,
-    valueReduction: basculinStarterData.valueReduction ?? 0,
+    abilityAttr: 0,
+    passiveAttr: 0,
+    valueReduction: 0,
     classicWinCount: 0,
   };
 
+  const basculinDexData = data.dexData[SpeciesId.BASCULIN];
+
+  // init data
   const newDexData: DexEntry = {
     seenAttr: 0n,
     caughtAttr: 0n,
-    natureAttr: data.dexData[SpeciesId.BASCULIN].natureAttr,
+    natureAttr: 0,
     seenCount: 0,
     caughtCount: 0,
     hatchedCount: 0,
-    ivs: data.dexData[SpeciesId.BASCULIN].ivs ?? [15, 15, 15, 15, 15, 15],
+    ivs: [0, 0, 0, 0, 0, 0],
     ribbons: RibbonData.fromJSON("0"),
   };
 
   // If the white stripe form data already exists....
-  if (basculinData.seenAttr & WHITE_STRIPE_FORM_FLAG) {
+  if (basculinDexData.seenAttr & WHITE_STRIPE_FORM_FLAG) {
     // 255 is bitflag for all bits below 8th
-    newDexData.seenAttr = basculinData.seenAttr & 255n;
+    newDexData.seenAttr = basculinDexData.seenAttr & 255n;
     // Unset white stripe seen flag
-    basculinData.seenAttr &= WHITE_STRIPE_FORM_FLAG - 1n;
+    basculinDexData.seenAttr &= WHITE_STRIPE_FORM_FLAG - 1n;
   }
 
-  if (basculinData.caughtAttr & WHITE_STRIPE_FORM_FLAG) {
-    newDexData.caughtAttr = basculinData.caughtAttr & 255n;
-    basculinData.caughtAttr &= WHITE_STRIPE_FORM_FLAG - 1n;
+  if (basculinDexData.caughtAttr & WHITE_STRIPE_FORM_FLAG) {
+    newDexData.caughtAttr = basculinDexData.caughtAttr & 255n;
+    basculinDexData.caughtAttr &= WHITE_STRIPE_FORM_FLAG - 1n;
+
+    newStarterData.eggMoves = basculinStarterData.eggMoves;
+    newStarterData.candyCount = basculinStarterData.candyCount;
+    newStarterData.friendship = basculinStarterData.friendship;
+    newStarterData.abilityAttr = basculinStarterData.abilityAttr;
+    newStarterData.passiveAttr = basculinStarterData.passiveAttr;
+    newStarterData.valueReduction = basculinStarterData.valueReduction;
+
+    newDexData.natureAttr = basculinDexData.natureAttr;
+    newDexData.caughtCount = 1;
+    newDexData.ivs = basculinDexData.ivs;
   }
 
+  data.starterData[SpeciesId.HISUI_BASCULIN] = newStarterData;
   data.dexData[SpeciesId.HISUI_BASCULIN] = newDexData;
 }
 
@@ -136,10 +167,11 @@ const migrateSpeciesSplitSystem: SystemSaveMigrator = {
  * @param pokemon - The pokemon object to migrate; will be updated in place
  * @param replaceSpecies - Whether to replace a matching species with battle bond greninja (or keep original species and set to default form)
  */
-function migrateSessionGreninjaBattleBondForm(pokemon: PokemonData, replaceSpecies: boolean): void {
-  console.log("Migrating pokemon with species %d and form index %d", pokemon.species, pokemon.formIndex);
+function migrateSessionGreninjaBattleBondForm(pokemon: Record<string, unknown>, replaceSpecies: boolean): void {
+  console.debug("Migrating pokemon with species %d and form index %d", pokemon.species, pokemon.formIndex);
   if (
-    [SpeciesId.FROAKIE, SpeciesId.FROGADIER, SpeciesId.GRENINJA].includes(pokemon.species)
+    // Cast is safe because if it's not a number, the check will merely fail
+    [SpeciesId.FROAKIE, SpeciesId.FROGADIER, SpeciesId.GRENINJA].includes(pokemon.species as SpeciesId)
     && pokemon.formIndex !== 0
   ) {
     if (replaceSpecies) {
@@ -150,7 +182,8 @@ function migrateSessionGreninjaBattleBondForm(pokemon: PokemonData, replaceSpeci
   }
 
   if (
-    [SpeciesId.FROAKIE, SpeciesId.FROGADIER, SpeciesId.GRENINJA].includes(pokemon.fusionSpecies)
+    // Cast is as above
+    [SpeciesId.FROAKIE, SpeciesId.FROGADIER, SpeciesId.GRENINJA].includes(pokemon.fusionSpecies as SpeciesId)
     && pokemon.fusionFormIndex !== 0
   ) {
     pokemon.fusionFormIndex = 0;
@@ -168,7 +201,7 @@ function migrateSessionGreninjaBattleBondForm(pokemon: PokemonData, replaceSpeci
  * Migrate a pokemon entry that may have had hisui basculin form
  * @param pokemon - The pokemon object to migrate; will be updated in place
  */
-function migrateSessionHisuiBasculin(pokemon: PokemonData, replaceSpecies: boolean): void {
+function migrateSessionHisuiBasculin(pokemon: Record<string, unknown>, replaceSpecies: boolean): void {
   if (pokemon.species === SpeciesId.BASCULIN && pokemon.formIndex === 2) {
     if (replaceSpecies) {
       pokemon.species = SpeciesId.HISUI_BASCULIN;
@@ -190,10 +223,26 @@ function migrateSessionHisuiBasculin(pokemon: PokemonData, replaceSpecies: boole
  */
 const migrateSpeciesSplitSession: SessionSaveMigrator = {
   version: "1.12.0.0",
-  migrate: (data: SessionSaveData): void => {
+  migrate: data => {
     // Grab the mono-gen challenge number, used to avoid replacing species
     // which could potentially brick existing monogen runs.
-    const monoGenChallenge = data.challenges?.find(c => c.id === 0)?.value;
+    let monoGenChallenge: number | undefined;
+    const challenges = data.challenges;
+    if (validateIsArrayOfObjects(challenges)) {
+      // For the purpose of this migrator, the cast to number is harmless.
+      // If it isn't a number, the guard below merely fails.
+      monoGenChallenge = challenges.find(c => c.id === 0)?.value as number;
+    }
+
+    if (data.enemyParty == null) {
+      data.enemyParty = [];
+    }
+    if (!validateIsArrayOfObjects(data.party) || !validateIsArrayOfObjects(data.enemyParty)) {
+      console.warn(
+        "Malformed party/enemyParty in save data, skipping battle bond Greninja and hisui basculin migrator",
+      );
+      return;
+    }
 
     for (const pokemon of [...data.party, ...data.enemyParty]) {
       // NB: Due to fusions, the two migrators are not mutually exclusive
@@ -205,23 +254,25 @@ const migrateSpeciesSplitSession: SessionSaveMigrator = {
 
 const migrateRageFistHitCount: SessionSaveMigrator = {
   version: "1.12.0.0",
-  migrate: (data: SessionSaveData): void => {
+  migrate: data => {
     for (const p of data.party.concat(data.enemyParty)) {
-      p.summonData.hitCount = p.battleData.hitCount;
+      ensurePropertyIsObject(p, "summonData");
+      p.summonData.hitCount = (p.battleData as { hitCount?: number })?.hitCount;
     }
   },
 };
 
 const convertCustomPokemonDataTypes: SessionSaveMigrator = {
   version: "1.12.0.0",
-  migrate: (data: SessionSaveData): void => {
+  migrate: data => {
     for (const p of data.party) {
-      if (p.customPokemonData?.types?.length > 0) {
+      // If `customPokemonData.types` exists and is an array, convert unknown types to null.
+      if (isPropertyAnObject(p, "customPokemonData") && Array.isArray(p.customPokemonData.types)) {
         p.customPokemonData.types = p.customPokemonData.types.map(t =>
           (t as PokemonType) === PokemonType.UNKNOWN ? null : t,
         );
       }
-      if (p.fusionCustomPokemonData?.types?.length > 0) {
+      if (isPropertyAnObject(p, "fusionCustomPokemonData") && Array.isArray(p.fusionCustomPokemonData.types)) {
         p.fusionCustomPokemonData.types = p.fusionCustomPokemonData.types.map(t =>
           (t as PokemonType) === PokemonType.UNKNOWN ? null : t,
         );
@@ -230,21 +281,35 @@ const convertCustomPokemonDataTypes: SessionSaveMigrator = {
   },
 };
 
+function shiftFormChangeModifier(modifier: Record<string, unknown>): void {
+  if (modifier.className === "PokemonFormChangeItemModifier") {
+    if (Array.isArray(modifier.args) && typeof modifier.args[1] === "number" && modifier.args[1] >= 50) {
+      modifier.args[1] += 50;
+    }
+    if (
+      Array.isArray(modifier.typePregenArgs)
+      && typeof modifier.typePregenArgs[0] === "number"
+      && modifier.typePregenArgs[0] >= 50
+    ) {
+      modifier.typePregenArgs[0] += 50;
+    }
+  }
+}
+
 /** Shift the form change item values upward to account for newly added Mega Stones. */
 const shiftFormChangeItems: SessionSaveMigrator = {
   version: "1.12.0.0",
-  migrate: (data: SessionSaveData) => {
-    // Shifting these up by 50 will work for now, but a more permanent solution will be desired in the future
-    const shiftAmount = 50;
-    for (const modifier of data.modifiers ?? []) {
-      if (modifier.className === "PokemonFormChangeItemModifier") {
-        if (typeof modifier.args[1] === "number" && modifier.args[1] >= 50) {
-          modifier.args[1] += shiftAmount;
-        }
-        if (typeof modifier.typePregenArgs[0] === "number" && modifier.typePregenArgs[0] >= 50) {
-          modifier.typePregenArgs[0] += shiftAmount;
-        }
-      }
+  migrate: data => {
+    if (validateIsArrayOfObjects(data.modifiers)) {
+      data.modifiers.forEach(shiftFormChangeModifier);
+    } else {
+      console.warn("Malformed modifiers in save data, skipping form change item migrator");
+    }
+
+    if (validateIsArrayOfObjects(data.enemyModifiers)) {
+      data.enemyModifiers.forEach(shiftFormChangeModifier);
+    } else {
+      console.warn("Malformed enemy modifiers in save data, skipping form change item migrator for enemy party");
     }
   },
 };

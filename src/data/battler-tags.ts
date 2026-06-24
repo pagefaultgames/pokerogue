@@ -3735,6 +3735,31 @@ export class SupremeOverlordTag extends AbilityBattlerTag {
   }
 }
 
+/** BattlerTag representing the rage effect where a Pokemon will gain +1 attack for each time it is hit */
+export class RageTag extends SerializableBattlerTag {
+  constructor() {
+    super(BattlerTagType.RAGE, [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.AFTER_HIT], 1, MoveId.RAGE);
+  }
+
+  public override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    if (lapseType !== BattlerTagLapseType.AFTER_HIT) {
+      return super.lapse(pokemon, lapseType);
+    }
+
+    const lastAttackReceived = pokemon.turnData.attacksReceived.at(-1);
+    const damageReceived = lastAttackReceived?.damage ?? 0;
+    if (damageReceived > 0) {
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        sourcePokemon: pokemon,
+        changes: [{ stat: Stat.ATK, stages: 1 }],
+      });
+    }
+
+    return true;
+  }
+}
+
 /**
  * Retrieves a {@linkcode BattlerTag} based on the provided tag type, turn count, source move, and source ID.
  * @param sourceId - The ID of the pokemon adding the tag
@@ -3933,6 +3958,8 @@ export function getBattlerTag(
       return new SupremeOverlordTag();
     case BattlerTagType.BYPASS_SPEED:
       return new BypassSpeedTag();
+    case BattlerTagType.RAGE:
+      return new RageTag();
   }
 }
 
@@ -4066,6 +4093,7 @@ export type BattlerTagTypeMap = {
   [BattlerTagType.MAGIC_COAT]: MagicCoatTag;
   [BattlerTagType.SUPREME_OVERLORD]: SupremeOverlordTag;
   [BattlerTagType.BYPASS_SPEED]: BypassSpeedTag;
+  [BattlerTagType.RAGE]: RageTag;
 };
 
 /**

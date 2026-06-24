@@ -100,6 +100,7 @@ interface PokemonSpeciesFormConstructor {
 const CUSTOM_FORM_NAMES: Partial<Record<SpeciesId, string>> = {
   [SpeciesId.BLOODMOON_URSALUNA]: "ursalunaBloodmoon",
   [SpeciesId.ETERNAL_FLOETTE]: "floetteEternalFlower",
+  [SpeciesId.BATTLE_BOND_GRENINJA]: "battleBondGreninja",
   [SpeciesId.HISUI_BASCULIN]: "basculinWhiteStriped",
 };
 
@@ -1011,7 +1012,6 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
       region === Region.NORMAL
       || (this.speciesId === SpeciesId.GALAR_DARMANITAN && formIndex > 0)
       || this.speciesId === SpeciesId.PALDEA_TAUROS
-      || this.speciesId === SpeciesId.BATTLE_BOND_GRENINJA
     ) {
       // More special cases can be added here
       const i18key = `pokemonForm:${speciesName}${formText}`;

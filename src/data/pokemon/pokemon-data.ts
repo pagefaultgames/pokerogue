@@ -32,9 +32,6 @@ export class CustomPokemonData {
   public passive: AbilityId | -1;
   public nature: Nature | -1;
   public types: (RegularPokemonType | null)[];
-  /** @deprecated Left in for save migration, do not use */
-  // TODO: Remove this once pre-session migration is implemented
-  public hitsRecCount: number | null = null;
 
   constructor(data?: CustomPokemonData | Partial<CustomPokemonData>) {
     this.spriteScale = data?.spriteScale ?? -1;
@@ -42,7 +39,6 @@ export class CustomPokemonData {
     this.passive = data?.passive ?? -1;
     this.nature = data?.nature ?? -1;
     this.types = data?.types ?? [];
-    this.hitsRecCount = data?.hitsRecCount ?? null;
   }
 }
 
@@ -284,8 +280,6 @@ export class PokemonTempSummonData {
  * Resets at the start of a new battle (but not on switch).
  */
 export class PokemonBattleData {
-  /** @deprecated Left in for save migration; use {@linkcode PokemonSummonData.hitCount} */
-  public hitCount = 0;
   /**
    * Whether this Pokemon has eaten a berry this battle
    * @see {@link https://bulbapedia.bulbagarden.net/wiki/Belch_(move)}
@@ -299,7 +293,6 @@ export class PokemonBattleData {
 
   constructor(source?: PokemonBattleData | Partial<PokemonBattleData>) {
     if (source != null) {
-      this.hitCount = source.hitCount ?? 0;
       this.hasEatenBerry = source.hasEatenBerry ?? false;
       this.berriesEaten = source.berriesEaten ?? [];
     }
