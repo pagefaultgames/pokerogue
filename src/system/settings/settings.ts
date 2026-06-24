@@ -835,7 +835,7 @@ export function setSetting(setting: string, value: number): boolean {
       globalScene.skipSeenDialogues = Setting[index].options[value].value === "On";
       break;
     case SettingKeys.Manual_Message_Clear:
-      globalScene.manualMessageClear = Setting[index].options[value].value === "On";
+      globalScene.alwaysPromptMessages = Setting[index].options[value].value === "On";
       break;
     case SettingKeys.Egg_Skip:
       globalScene.eggSkipPreference = value;
