@@ -6363,7 +6363,7 @@
     "passive": "REGENERATOR",
     "bst": 660,
     "hp": 60,
-    "atk": 140,
+    "atk": 100,
     "def": 105,
     "spatk": 130,
     "spdef": 105,
