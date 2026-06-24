@@ -12049,7 +12049,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
           abilityHidden: AbilityId.HUGE_POWER,
           baseTotal: 660,
           baseHp: 60,
-          baseAtk: 140,
+          baseAtk: 100,
           baseDef: 105,
           baseSpatk: 130,
           baseSpdef: 105,
