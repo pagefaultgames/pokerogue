@@ -12,10 +12,16 @@ import { SwitchType } from "#enums/switch-type";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type { Pokemon } from "#field/pokemon";
 import { SwitchEffectTransferModifier } from "#modifiers/modifier";
-import { SELF_SWITCH_MOVE_ATTRS } from "#moves/move";
 import { SummonPhase } from "#phases/summon-phase";
+import type { MoveAttrString } from "#types/move-types";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import i18next from "i18next";
+
+/**
+ * Unique attributes that signal a pokemon has been switched out.
+ * Any attribute extending these attributes does not need to be added to this list.
+ */
+const SELF_SWITCH_MOVE_ATTRS = ["ForceSwitchOutAttr", "PartingShotAttr"] as const satisfies readonly MoveAttrString[];
 
 export class SwitchSummonPhase extends SummonPhase {
   public readonly phaseName: "SwitchSummonPhase" | "ReturnPhase" = "SwitchSummonPhase";

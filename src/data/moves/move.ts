@@ -9233,15 +9233,6 @@ export class ExposedMoveAttr extends AddBattlerTagAttr {
 }
 
 /**
- * Unique attributes that signal a pokemon has been switched out.
- * Any attribute extending these attributes does not need to be added to this list.
- */
-export const SELF_SWITCH_MOVE_ATTRS = [
-  "ForceSwitchOutAttr",
-  "PartingShotAttr",
-] as const satisfies readonly MoveAttrString[];
-
-/**
  * Attribute to apply the effects of the move Rage.
  *
  * If the user is attacked while rage is active, they will gain +1 atk boost.
