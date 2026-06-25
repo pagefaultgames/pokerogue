@@ -1163,44 +1163,54 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
       const evolution = speciesDataRegistry
         .getEvolutions(prevolutionLevels[l - 1][0])
         .find(e => e.speciesId === prevolutionLevels[l][0]);
-      ret.push([
-        prevolutionLevels[l][0],
-        Math.min(
-          Math.max(
-            evolution?.level!
-              + Math.round(
-                randSeedGauss(0.5, 1 + levelDiff * 0.2)
-                  * Math.max(evolution?.evoLevelThreshold?.[EvoLevelThresholdKind.WILD] ?? 0, 0.5)
-                  * 5,
-              )
-              - 1,
-            2,
-            evolution?.level!,
+      if (player) {
+        ret.push([prevolutionLevels[l][0], Math.min(Math.max(evolution?.level!, 2), currentLevel - 1)]); // TODO: are those bangs correct?
+      } else {
+        ret.push([
+          prevolutionLevels[l][0],
+          Math.min(
+            player
+              ? evolution?.level!
+              : Math.max(
+                  evolution?.level!
+                    + Math.round(
+                      randSeedGauss(0.5, 1 + levelDiff * 0.2)
+                        * Math.max(evolution?.evoLevelThreshold?.[EvoLevelThresholdKind.WILD] ?? 0, 0.5)
+                        * 5,
+                    )
+                    - 1,
+                  2,
+                  evolution?.level!,
+                ),
+            currentLevel - 1,
           ),
-          currentLevel - 1,
-        ),
-      ]); // TODO: are those bangs correct?
+        ]); // TODO: are those bangs correct?
+      }
     }
     const lastPrevolutionLevel = ret[prevolutionLevels.length - 1][1];
     const evolution = speciesDataRegistry
       .getEvolutions(prevolutionLevels.at(-1)![0])
       .find(e => e.speciesId === this.speciesId);
-    ret.push([
-      this.speciesId,
-      Math.min(
-        Math.max(
-          lastPrevolutionLevel
-            + Math.round(
-              randSeedGauss(0.5, 1 + levelDiff * 0.2)
-                * Math.max(evolution?.evoLevelThreshold?.[EvoLevelThresholdKind.WILD] ?? 0, 0.5)
-                * 5,
-            ),
-          lastPrevolutionLevel + 1,
-          evolution?.level!,
+    if (player) {
+      ret.push([this.speciesId, Math.min(Math.max(lastPrevolutionLevel + 1, evolution?.level!), currentLevel)]); // TODO: are those bangs correct?
+    } else {
+      ret.push([
+        this.speciesId,
+        Math.min(
+          Math.max(
+            lastPrevolutionLevel
+              + Math.round(
+                randSeedGauss(0.5, 1 + levelDiff * 0.2)
+                  * Math.max(evolution?.evoLevelThreshold?.[EvoLevelThresholdKind.WILD] ?? 0, 0.5)
+                  * 5,
+              ),
+            lastPrevolutionLevel + 1,
+            evolution?.level!,
+          ),
+          currentLevel,
         ),
-        currentLevel,
-      ),
-    ]); // TODO: are those bangs correct?
+      ]); // TODO: are those bangs correct?
+    }
 
     return ret;
   }
