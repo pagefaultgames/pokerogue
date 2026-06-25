@@ -293,9 +293,6 @@ function initGreatModifierPool() {
     new WeightedModifierType(
       modifierTypes.MEMORY_MUSHROOM,
       (party: Pokemon[]) => {
-        if (!party.find(p => p.getLearnableLevelMoves().length)) {
-          return 0;
-        }
         const highestPartyLevel = party
           .map(p => p.level)
           .reduce((highestLevel: number, level: number) => Math.max(highestLevel, level), 1);
