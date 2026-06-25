@@ -292,11 +292,11 @@ function initGreatModifierPool() {
     new WeightedModifierType(modifierTypes.TM_GREAT, 3),
     new WeightedModifierType(
       modifierTypes.MEMORY_MUSHROOM,
-      (party: Pokemon[]) => {
-        const highestPartyLevel = party
-          .map(p => p.level)
-          .reduce((highestLevel: number, level: number) => Math.max(highestLevel, level), 1);
-        return Math.min(Math.ceil(highestPartyLevel / 20), 4);
+      () => {
+        return Math.min(
+          Math.floor(globalScene.gameMode.getWaveForDifficulty(globalScene.currentBattle.waveIndex, true) / 25),
+          4,
+        );
       },
       4,
     ),
