@@ -85,7 +85,7 @@ export class SettingsKeyboardUiHandler extends AbstractControlSettingsUiHandler 
       return;
     }
     globalScene.gameData.resetMappingToFactory();
-      this.tabMenu?.updateIcons();
+    this.tabMenu?.updateIcons();
   }
 
   /**
