@@ -233,7 +233,7 @@ export class AbstractSettingsUiHandler extends MessageUiHandler {
         this.navigationIcons[settingName].alpha = 0;
       }
     }
-      this.tabMenu?.updateIcons();
+    this.tabMenu?.updateIcons();
   }
 
   /**
