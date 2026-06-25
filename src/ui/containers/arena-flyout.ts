@@ -238,8 +238,10 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
    * removing any that have expired.
    */
   readonly #onTurnEnd = (): void => {
-    const shouldPersist = (info: ArenaTagInfo | WeatherInfo | TerrainInfo): boolean =>
-      info.maxDuration === 0 || --info.duration > 0;
+    const shouldPersist = (info: ArenaTagInfo | WeatherInfo | TerrainInfo): boolean => {
+      return info.maxDuration === 0 || --info.duration > 0;
+    }
+
     this.arenaTags = this.arenaTags.filter(shouldPersist);
 
     if (this.weatherInfo && !shouldPersist(this.weatherInfo)) {
