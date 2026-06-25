@@ -18336,6 +18336,13 @@
     "dexNum": 137,
     "id": "PORYGON",
     "form": null,
+    "level": 32,
+    "move": "CONVERSION_2"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
     "level": 36,
     "move": "RECYCLE"
   },
@@ -30917,6 +30924,13 @@
     "form": null,
     "level": 29,
     "move": "SIGNAL_BEAM"
+  },
+  {
+    "dexNum": 233,
+    "id": "PORYGON2",
+    "form": null,
+    "level": 32,
+    "move": "CONVERSION_2"
   },
   {
     "dexNum": 233,
@@ -61311,6 +61325,13 @@
     "form": null,
     "level": 29,
     "move": "SIGNAL_BEAM"
+  },
+  {
+    "dexNum": 474,
+    "id": "PORYGON_Z",
+    "form": null,
+    "level": 32,
+    "move": "CONVERSION_2"
   },
   {
     "dexNum": 474,
