@@ -600,7 +600,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
     ],
     passives: {
       0: AbilityId.NEUROFORCE,
-      1: AbilityId.NEUROFORCE,
+      1: AbilityId.MAGICIAN,
     },
     levelMoves: [
       [RELEARN_MOVE, MoveId.SHADOW_BALL],

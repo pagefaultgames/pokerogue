@@ -12009,6 +12009,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
     species: new PokemonSpecies({
       id: SpeciesId.BATTLE_BOND_GRENINJA,
       generation: 7,
+      subLegendary: true,
       category: "Ninja Pokémon",
       type1: PokemonType.WATER,
       type2: PokemonType.DARK,
