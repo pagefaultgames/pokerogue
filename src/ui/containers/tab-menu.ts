@@ -15,7 +15,7 @@ export class TabMenu extends Phaser.GameObjects.Container {
   private labels: string[];
   private headerTitles: Phaser.GameObjects.Text[] = [];
   private navigationIcons: Partial<Record<MappingSettingName, Phaser.GameObjects.Sprite>> = {};
-  
+
   /**
    * Callback executed whenever the user navigates to a new tab.
    * @param tabIndex The index of the newly selected tab.
