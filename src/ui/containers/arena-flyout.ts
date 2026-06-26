@@ -240,7 +240,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
   readonly #onTurnEnd = (): void => {
     const shouldPersist = (info: ArenaTagInfo | WeatherInfo | TerrainInfo): boolean => {
       return info.maxDuration === 0 || --info.duration > 0;
-    }
+    };
 
     this.arenaTags = this.arenaTags.filter(shouldPersist);
 
