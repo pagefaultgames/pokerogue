@@ -7390,6 +7390,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
     evolutions: [],
     passives: AbilityId.POISON_HEAL,
     levelMoves: [
+      [1, MoveId.TACKLE],
       [1, MoveId.ACID],
       [1, MoveId.LICK],
       [5, MoveId.SUPERSONIC],
@@ -8097,6 +8098,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
       [23, MoveId.THUNDER_WAVE],
       [26, MoveId.RECOVER],
       [29, MoveId.SIGNAL_BEAM],
+      [32, MoveId.CONVERSION_2],
       [36, MoveId.EMBARGO],
       [40, MoveId.DISCHARGE],
       [44, MoveId.MAGIC_COAT],

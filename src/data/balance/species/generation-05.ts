@@ -10297,6 +10297,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     levelMoves: [
       [1, MoveId.EMBER],
       [1, MoveId.ASTONISH],
+      [3, MoveId.SMOG],
       [5, MoveId.MINIMIZE],
       [7, MoveId.FIRE_SPIN],
       [10, MoveId.CONFUSE_RAY],
@@ -10414,6 +10415,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     levelMoves: [
       [1, MoveId.EMBER],
       [1, MoveId.ASTONISH],
+      [3, MoveId.SMOG],
       [5, MoveId.MINIMIZE],
       [7, MoveId.FIRE_SPIN],
       [10, MoveId.CONFUSE_RAY],
@@ -10524,6 +10526,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     levelMoves: [
       [1, MoveId.EMBER],
       [1, MoveId.ASTONISH],
+      [3, MoveId.SMOG],
       [5, MoveId.MINIMIZE],
       [7, MoveId.FIRE_SPIN],
       [10, MoveId.CONFUSE_RAY],
