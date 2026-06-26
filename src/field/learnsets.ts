@@ -1,4 +1,5 @@
 import { EVOLVE_MOVE, RELEARN_MOVE } from "#app/constants";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { LearnMoveSituation } from "#enums/learn-move-situation";
 import { LearnableMoveSource } from "#enums/learnable-move-source";
 import type { MoveId } from "#enums/move-id";
@@ -71,23 +72,21 @@ function getPrevolutionMoves(
 ): LevelMovesWithSource {
   const ret: LevelMovesWithSource = [];
   const speciesBase = fromFusion ? pokemon.fusionSpecies! : pokemon.species;
+
   if (!speciesBase && fromFusion) {
-    // TODO: Find a better way to handle fromFusion=true without being a fusion
-    console.warn("getPrevolutionMoves was called with fromFusion=true but the pokemon is not a fusion");
+    // TODO: Find a better way to handle `fromFusion=true` without being a fusion
+    console.warn("`getPrevolutionMoves` was called with `fromFusion=true` but the pokemon is not a fusion!");
     return ret;
   }
-  const evolutionChain = speciesBase.getSimulatedEvolutionChain(
-    pokemon.level,
-    pokemon.hasTrainer(),
-    pokemon.isBoss(),
-    pokemon.isPlayer(),
-  );
-  for (let e = 0; e < evolutionChain.length; e++) {
-    const isPrevo = e < evolutionChain.length - 1;
-    // TODO: Might need to pass specific form index in simulated evolution chain
-    const speciesLevelMoves = getPokemonSpeciesForm(evolutionChain[e][0], pokemon.formIndex).getLevelMoves();
+
+  const evolutionLine = [...speciesDataRegistry.getPrevolutionChain(speciesBase.speciesId), speciesBase.speciesId];
+  for (let index = 0; index < evolutionLine.length; index++) {
+    const isPrevo = index < evolutionLine.length - 1;
+    const speciesLevelMoves = getPokemonSpeciesForm(evolutionLine[index], pokemon.formIndex).getLevelMoves();
+
     for (const [level, move] of speciesLevelMoves) {
-      const includeLevelOne = !e || level > 1 || includeRelearnerMoves;
+      const includeLevelOne = !index || level > 1 || includeRelearnerMoves;
+
       if (includeRelearnerMoves && level === RELEARN_MOVE) {
         const source = isPrevo ? LearnableMoveSource.PREVO : LearnableMoveSource.RELEARN;
         ret.push([level, move, (source + +fromFusion) as LearnableMoveSource]);
