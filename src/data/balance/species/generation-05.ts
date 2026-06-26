@@ -14800,7 +14800,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [61, MoveId.CLOSE_COMBAT],
       [67, MoveId.AIR_SLASH],
       [73, MoveId.EARTH_POWER],
-      [79, MoveId.MEGAHORN],      
+      [79, MoveId.MEGAHORN],
     ],
     tms: [
       MoveId.SWORDS_DANCE,
