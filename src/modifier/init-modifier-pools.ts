@@ -294,7 +294,7 @@ function initGreatModifierPool() {
       modifierTypes.MEMORY_MUSHROOM,
       () => {
         return Math.min(
-          Math.floor(globalScene.gameMode.getWaveForDifficulty(globalScene.currentBattle.waveIndex, true) / 25),
+          1 + Math.floor(globalScene.gameMode.getWaveForDifficulty(globalScene.currentBattle.waveIndex, true) / 30),
           4,
         );
       },
