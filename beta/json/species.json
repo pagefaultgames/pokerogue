@@ -6361,7 +6361,7 @@
     "ability2": "HUGE_POWER",
     "hiddenAbility": "HUGE_POWER",
     "passive": "REGENERATOR",
-    "bst": 660,
+    "bst": 620,
     "hp": 60,
     "atk": 100,
     "def": 105,

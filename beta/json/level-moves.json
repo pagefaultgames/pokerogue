@@ -14361,6 +14361,13 @@
     "id": "LICKITUNG",
     "form": null,
     "level": 1,
+    "move": "TACKLE"
+  },
+  {
+    "dexNum": 108,
+    "id": "LICKITUNG",
+    "form": null,
+    "level": 1,
     "move": "ACID"
   },
   {
@@ -17097,8 +17104,15 @@
     "dexNum": 128,
     "id": "TAUROS",
     "form": null,
-    "level": 30,
+    "level": 29,
     "move": "ZEN_HEADBUTT"
+  },
+  {
+    "dexNum": 128,
+    "id": "TAUROS",
+    "form": null,
+    "level": 32,
+    "move": "REST"
   },
   {
     "dexNum": 128,
@@ -17112,41 +17126,34 @@
     "id": "TAUROS",
     "form": null,
     "level": 41,
-    "move": "REST"
-  },
-  {
-    "dexNum": 128,
-    "id": "TAUROS",
-    "form": null,
-    "level": 48,
     "move": "SWAGGER"
   },
   {
     "dexNum": 128,
     "id": "TAUROS",
     "form": null,
-    "level": 50,
+    "level": 48,
     "move": "THRASH"
   },
   {
     "dexNum": 128,
     "id": "TAUROS",
     "form": null,
-    "level": 63,
+    "level": 55,
     "move": "DOUBLE_EDGE"
   },
   {
     "dexNum": 128,
     "id": "TAUROS",
     "form": null,
-    "level": 71,
+    "level": 63,
     "move": "GIGA_IMPACT"
   },
   {
     "dexNum": 128,
     "id": "TAUROS",
     "form": null,
-    "level": 80,
+    "level": 71,
     "move": "OUTRAGE"
   },
   {
@@ -59637,6 +59644,13 @@
     "id": "LICKILICKY",
     "form": null,
     "level": 1,
+    "move": "TACKLE"
+  },
+  {
+    "dexNum": 463,
+    "id": "LICKILICKY",
+    "form": null,
+    "level": 1,
     "move": "ACID"
   },
   {
@@ -78067,6 +78081,13 @@
     "dexNum": 607,
     "id": "LITWICK",
     "form": null,
+    "level": 3,
+    "move": "SMOG"
+  },
+  {
+    "dexNum": 607,
+    "id": "LITWICK",
+    "form": null,
     "level": 5,
     "move": "MINIMIZE"
   },
@@ -78193,6 +78214,13 @@
     "dexNum": 608,
     "id": "LAMPENT",
     "form": null,
+    "level": 3,
+    "move": "SMOG"
+  },
+  {
+    "dexNum": 608,
+    "id": "LAMPENT",
+    "form": null,
     "level": 5,
     "move": "MINIMIZE"
   },
@@ -78314,6 +78342,13 @@
     "form": null,
     "level": 1,
     "move": "ASTONISH"
+  },
+  {
+    "dexNum": 609,
+    "id": "CHANDELURE",
+    "form": null,
+    "level": 3,
+    "move": "SMOG"
   },
   {
     "dexNum": 609,
@@ -135390,13 +135425,6 @@
     "dexNum": 8128,
     "id": "PALDEA_TAUROS",
     "form": null,
-    "level": 16,
-    "move": "ASSURANCE"
-  },
-  {
-    "dexNum": 8128,
-    "id": "PALDEA_TAUROS",
-    "form": null,
     "level": 19,
     "move": "HEADBUTT"
   },
@@ -135418,8 +135446,15 @@
     "dexNum": 8128,
     "id": "PALDEA_TAUROS",
     "form": null,
-    "level": 30,
+    "level": 29,
     "move": "ZEN_HEADBUTT"
+  },
+  {
+    "dexNum": 8128,
+    "id": "PALDEA_TAUROS",
+    "form": null,
+    "level": 32,
+    "move": "REST"
   },
   {
     "dexNum": 8128,
@@ -135433,20 +135468,13 @@
     "id": "PALDEA_TAUROS",
     "form": null,
     "level": 41,
-    "move": "REST"
-  },
-  {
-    "dexNum": 8128,
-    "id": "PALDEA_TAUROS",
-    "form": null,
-    "level": 48,
     "move": "SWAGGER"
   },
   {
     "dexNum": 8128,
     "id": "PALDEA_TAUROS",
     "form": null,
-    "level": 50,
+    "level": 48,
     "move": "THRASH"
   },
   {
@@ -135454,27 +135482,20 @@
     "id": "PALDEA_TAUROS",
     "form": null,
     "level": 63,
-    "move": "DOUBLE_EDGE"
-  },
-  {
-    "dexNum": 8128,
-    "id": "PALDEA_TAUROS",
-    "form": null,
-    "level": 71,
     "move": "CLOSE_COMBAT"
   },
   {
     "dexNum": 8128,
     "id": "PALDEA_TAUROS",
     "form": null,
-    "level": 80,
+    "level": 71,
     "move": "OUTRAGE"
   },
   {
     "dexNum": 8128,
     "id": "PALDEA_TAUROS",
     "form": "combat",
-    "level": 15,
+    "level": 16,
     "move": "ASSURANCE"
   },
   {
@@ -135488,7 +135509,7 @@
     "dexNum": 8128,
     "id": "PALDEA_TAUROS",
     "form": "blaze",
-    "level": 15,
+    "level": 16,
     "move": "FLAME_CHARGE"
   },
   {
@@ -135502,7 +135523,7 @@
     "dexNum": 8128,
     "id": "PALDEA_TAUROS",
     "form": "aqua",
-    "level": 15,
+    "level": 16,
     "move": "AQUA_JET"
   },
   {
