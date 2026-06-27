@@ -1,8 +1,7 @@
 import { pokerogueApi } from "#api/api";
 import { globalScene } from "#app/global-scene";
 import { UiMode } from "#enums/ui-mode";
-import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
-import type { ModalConfig } from "#ui/modal-ui-handler";
+import type { FormModalConfig, InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { OAuthProvidersUiHandler } from "#ui/oauth-providers-ui-handler";
 import i18next from "i18next";
 
@@ -66,11 +65,11 @@ export class LoginFormUiHandler extends OAuthProvidersUiHandler {
     return inputFieldConfigs;
   }
 
-  public override show(args: any[]): boolean {
+  public override show(args: [FormModalConfig]): boolean {
     if (!super.show(args)) {
       return false;
     }
-    const config = args[0] as ModalConfig;
+    const config = args[0];
     this.processExternalProvider();
     this.showInfoContainer(config);
     const originalLoginAction = this.submitAction;

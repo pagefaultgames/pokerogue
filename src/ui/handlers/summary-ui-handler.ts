@@ -57,6 +57,29 @@ interface AbilityContainer {
   descriptionText: Phaser.GameObjects.Text | null;
 }
 
+type SummaryUiConfig =
+  | [
+      pokemon: PlayerPokemon,
+      uiMode?: SummaryUiMode.DEFAULT,
+      startPage?: Page,
+      selectCallback?: (cursor: number) => void,
+      player?: boolean,
+    ]
+  | [
+      pokemon: PlayerPokemon,
+      uiMode: SummaryUiMode.LEARN_MOVE,
+      move?: Move,
+      moveSelectCallback?: (cursor: number) => void,
+      player?: boolean,
+    ]
+  | [
+      pokemon: PlayerPokemon,
+      uiMode?: SummaryUiMode,
+      startPage?: Page | Move,
+      callback?: (cursor: number) => void,
+      player?: boolean,
+    ];
+
 export class SummaryUiHandler extends UiHandler {
   private summaryUiMode: SummaryUiMode;
 
@@ -329,44 +352,18 @@ export class SummaryUiHandler extends UiHandler {
     return `summary_${Page[page].toLowerCase()}`;
   }
 
-  show(
-    args: [
-      pokemon: PlayerPokemon,
-      uiMode?: SummaryUiMode.DEFAULT,
-      startPage?: Page,
-      selectCallback?: (cursor: number) => void,
-      player?: boolean,
-    ],
-  ): boolean;
-  show(
-    args: [
-      pokemon: PlayerPokemon,
-      uiMode: SummaryUiMode.LEARN_MOVE,
-      move?: Move,
-      moveSelectCallback?: (cursor: number) => void,
-      player?: boolean,
-    ],
-  ): boolean;
-  show(
-    args: [
-      pokemon: PlayerPokemon,
-      uiMode?: SummaryUiMode,
-      startPage?: Page | Move,
-      callback?: (cursor: number) => void,
-      player?: boolean,
-    ],
-  ): boolean {
-    super.show(args);
+  /* args[] information
+   * args[0] : the Pokemon displayed in the Summary-UI
+   * args[1] : the summaryUiMode (defaults to 0)
+   * args[2] : the start page (defaults to Page.PROFILE), or the move being selected
+   * args[3] : contains the function executed when the user exits out of Summary UI
+   * args[4] : optional boolean used to determine if the Pokemon is part of the player's party or not (defaults to true, necessary for PR #2921 to display all relevant information)
+   */
+  show(args: SummaryUiConfig): boolean {
+    super.show();
 
-    /* args[] information
-     * args[0] : the Pokemon displayed in the Summary-UI
-     * args[1] : the summaryUiMode (defaults to 0)
-     * args[2] : the start page (defaults to Page.PROFILE), or the move being selected
-     * args[3] : contains the function executed when the user exits out of Summary UI
-     * args[4] : optional boolean used to determine if the Pokemon is part of the player's party or not (defaults to true, necessary for PR #2921 to display all relevant information)
-     */
-    this.pokemon = args[0] as PlayerPokemon;
-    this.summaryUiMode = (args[1] as SummaryUiMode) ?? SummaryUiMode.DEFAULT;
+    this.pokemon = args[0];
+    this.summaryUiMode = args[1] ?? SummaryUiMode.DEFAULT;
     this.playerParty = args[4] ?? true;
     globalScene.ui.bringToTop(this.summaryContainer);
 

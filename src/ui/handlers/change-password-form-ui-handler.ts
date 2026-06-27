@@ -1,9 +1,8 @@
 import { pokerogueApi } from "#api/api";
 import { globalScene } from "#app/global-scene";
 import { UiMode } from "#enums/ui-mode";
-import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
+import type { FormModalConfig, InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
-import type { ModalConfig } from "#ui/modal-ui-handler";
 import i18next from "i18next";
 
 export class ChangePasswordFormUiHandler extends FormModalUiHandler {
@@ -19,19 +18,19 @@ export class ChangePasswordFormUiHandler extends FormModalUiHandler {
     super.setup();
   }
 
-  override getModalTitle(_config?: ModalConfig): string {
+  override getModalTitle(_config?: FormModalConfig): string {
     return i18next.t("menu:changePassword");
   }
 
-  override getWidth(_config?: ModalConfig): number {
+  override getWidth(_config?: FormModalConfig): number {
     return 160;
   }
 
-  override getMargin(_config?: ModalConfig): [number, number, number, number] {
+  override getMargin(_config?: FormModalConfig): [number, number, number, number] {
     return [0, 0, 48, 0];
   }
 
-  override getButtonLabels(_config?: ModalConfig): string[] {
+  override getButtonLabels(_config?: FormModalConfig): string[] {
     return [i18next.t("settings:buttonSubmit"), i18next.t("menu:cancel")];
   }
 
@@ -65,7 +64,7 @@ export class ChangePasswordFormUiHandler extends FormModalUiHandler {
     return inputFieldConfigs;
   }
 
-  override show(args: [ModalConfig, ...any]): boolean {
+  override show(args: [FormModalConfig]): boolean {
     if (super.show(args)) {
       const config = args[0];
       const originalSubmitAction = this.submitAction;

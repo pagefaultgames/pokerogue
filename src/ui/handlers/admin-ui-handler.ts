@@ -13,7 +13,15 @@ import type { ModalConfig } from "#ui/modal-ui-handler";
 import { getTextColor } from "#ui/text";
 import { toTitleCase } from "#utils/strings";
 
-export class AdminUiHandler extends FormModalUiHandler {
+type AdminUiConfig = [
+  ModalConfig,
+  AdminMode,
+  // labels for doc
+  AdminResult: SearchAccountResponse,
+  IsMessageError: boolean,
+];
+
+export class AdminUiHandler extends FormModalUiHandler<AdminUiConfig> {
   private adminMode: AdminMode;
   private adminResult: SearchAccountResponse;
   private config: ModalConfig;
@@ -98,9 +106,9 @@ export class AdminUiHandler extends FormModalUiHandler {
     return false;
   }
 
-  show(args: any[]): boolean {
-    this.config = args[0] as ModalConfig; // config
-    this.adminMode = args[1] as AdminMode; // admin mode
+  show(args: AdminUiConfig): boolean {
+    this.config = args[0]; // config
+    this.adminMode = args[1]; // admin mode
     this.adminResult = args[2] ?? {
       username: "",
       discordId: "",

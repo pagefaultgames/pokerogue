@@ -67,6 +67,7 @@ export class KeyboardBindingUiHandler extends BaseBindingUiHandler {
     if (
       activeConfig != null
       && this.buttonPressed != null
+      && this.target != null
       && globalScene.inputController.assignBinding(activeConfig, this.target, this.buttonPressed)
     ) {
       globalScene.gameData.saveMappingConfigs(this.getSelectedDevice(), activeConfig);

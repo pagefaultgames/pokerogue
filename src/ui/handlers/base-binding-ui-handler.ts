@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
+import type { MappingSettingName } from "#types/configs/inputs";
 import { NavigationManager } from "#ui/navigation-menu";
 import { addTextObject, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
@@ -9,6 +10,11 @@ import { addWindow } from "#ui/ui-theme";
 import i18next from "i18next";
 
 type CancelFn = (success?: boolean) => boolean;
+
+interface BingdingUiConfig {
+  cancelHandler: CancelFn;
+  target: MappingSettingName;
+}
 
 /**
  * Abstract class for handling UI elements related to button bindings.
@@ -45,7 +51,7 @@ export abstract class BaseBindingUiHandler extends UiHandler {
   protected countdownTimer;
 
   // The specific setting being modified.
-  protected target;
+  protected target: MappingSettingName | null;
 
   constructor(mode: UiMode | null = null) {
     super(mode);
@@ -127,7 +133,7 @@ export abstract class BaseBindingUiHandler extends UiHandler {
    * @param args - Arguments to be passed to the show method.
    * @returns `true` if successful.
    */
-  public override show(args: any[]): boolean {
+  public override show(args: [BingdingUiConfig]): boolean {
     super.show(args);
     this.buttonPressed = null;
     this.timeLeftAutoClose = 5;

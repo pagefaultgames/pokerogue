@@ -210,6 +210,10 @@ enum MenuOptions {
   EVOLUTIONS,
 }
 
+type PokedexPageUiConfig =
+  | [PokemonSpecies, StarterAttributes, SpeciesId[], null | undefined, ExitCallBack: (() => void) | null]
+  | ["refresh"];
+
 export class PokedexPageUiHandler extends MessageUiHandler {
   private starterSelectContainer: Phaser.GameObjects.Container;
   private shinyOverlay: Phaser.GameObjects.Image;
@@ -735,13 +739,13 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     this.previousStarterAttributes = [];
   }
 
-  public override show(args: any[]): boolean {
+  public override show(args: PokedexPageUiConfig): boolean {
     // Allow the use of candies if we are in one of the whitelisted phases
     this.canUseCandies = ["TitlePhase", "SelectStarterPhase", "CommandPhase"].includes(
       globalScene.phaseManager.getCurrentPhase().phaseName,
     );
 
-    if (args.length > 0 && args[0] === "refresh") {
+    if (args.length === 1 && args[0] === "refresh") {
       return false;
     }
     this.species = args[0];
@@ -762,7 +766,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     this.moveInfoOverlay.clear(); // clear this when removing a menu; the cancel button doesn't seem to trigger this automatically on controllers
     this.infoOverlay.clear();
 
-    super.show(args);
+    super.show();
 
     this.starterSelectContainer.setVisible(true);
     this.getUi().bringToTop(this.starterSelectContainer);

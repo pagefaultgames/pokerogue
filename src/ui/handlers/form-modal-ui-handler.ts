@@ -13,7 +13,7 @@ export interface FormModalConfig extends ModalConfig {
   errorMessage?: string;
 }
 
-export abstract class FormModalUiHandler extends ModalUiHandler {
+export abstract class FormModalUiHandler<Config = [FormModalConfig]> extends ModalUiHandler<Config> {
   protected editing = false;
   protected inputContainers: Phaser.GameObjects.Container[] = [];
   protected inputs: InputText[] = [];
@@ -112,13 +112,13 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
     }
   }
 
-  public override show(args: any[]): boolean {
+  public override show(args: Config): boolean {
     if (super.show(args)) {
       for (const ic of this.inputContainers) {
         ic.setActive(true).setVisible(true);
       }
 
-      const config = args[0] as FormModalConfig;
+      const config = args[0];
       const buttonActions = config.buttonActions ?? [];
 
       [this.submitAction, this.cancelAction] = buttonActions;
@@ -179,11 +179,11 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
     }
   }
 
-  public override updateContainer(config?: ModalConfig): void {
+  public override updateContainer(config: FormModalConfig): void {
     super.updateContainer(config);
 
     this.errorMessage
-      .setText(this.getReadableErrorMessage((config as FormModalConfig)?.errorMessage || ""))
+      .setText(this.getReadableErrorMessage(config.errorMessage || ""))
       .setVisible(!!this.errorMessage.text);
   }
 

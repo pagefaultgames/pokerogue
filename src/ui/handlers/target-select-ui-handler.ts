@@ -12,6 +12,13 @@ import { fixedInt } from "#utils/common";
 
 export type TargetSelectCallback = (targets: BattlerIndex[]) => void;
 
+type TargetSelectUiConfig = [
+  fieldIndex: number,
+  moveId: MoveId,
+  callback: TargetSelectCallback,
+  defaultTargets?: BattlerIndex[],
+];
+
 export class TargetSelectUiHandler extends UiHandler {
   private fieldIndex: number;
   private move: MoveId;
@@ -34,14 +41,12 @@ export class TargetSelectUiHandler extends UiHandler {
 
   setup(): void {}
 
-  show(
-    args: [fieldIndex: number, moveId: MoveId, callback: TargetSelectCallback, defaultTargets?: BattlerIndex[]],
-  ): boolean {
+  show(args: TargetSelectUiConfig): boolean {
     if (args.length < 3) {
       return false;
     }
 
-    super.show(args);
+    super.show();
 
     [this.fieldIndex, this.move, this.targetSelectCallback] = args;
     const user = globalScene.getPlayerField()[this.fieldIndex];

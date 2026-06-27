@@ -34,7 +34,7 @@ export interface OptionSelectItem {
 const scrollUpLabel = "↑";
 const scrollDownLabel = "↓";
 
-export abstract class BaseOptionSelectUiHandler extends UiHandler {
+export abstract class BaseOptionSelectUiHandler<Config = [OptionSelectConfig]> extends UiHandler {
   protected optionSelectContainer: Phaser.GameObjects.Container;
   protected optionSelectTextContainer: Phaser.GameObjects.Container;
   protected optionSelectBg: Phaser.GameObjects.NineSlice;
@@ -183,14 +183,15 @@ export abstract class BaseOptionSelectUiHandler extends UiHandler {
     });
   }
 
-  public override show(args: any[]): boolean {
-    if (args.length === 0 || !Object.hasOwn(args[0], "options") || args[0].options.length === 0) {
+  public override show(args: Config): boolean {
+    const config = args[0];
+    if (!isOptionSelectConfig(config)) {
       return false;
     }
 
     super.show(args);
+    this.config = config;
 
-    this.config = args[0] as OptionSelectConfig;
     this.setupOptions();
 
     globalScene.ui.bringToTop(this.optionSelectContainer);
@@ -207,9 +208,9 @@ export abstract class BaseOptionSelectUiHandler extends UiHandler {
       globalScene.time.delayedCall(fixedInt(this.config.delay), () => this.unblockInput());
     }
 
-    if (this.config?.supportHover) {
+    if (this.config.supportHover) {
       // handle hover code if the element supports hover-handlers and the option has the optional hover-handler set.
-      this.config?.options[this.unskippedIndices[this.fullCursor]]?.onHover?.();
+      this.config.options[this.unskippedIndices[this.fullCursor]]?.onHover?.();
     }
 
     return true;
@@ -430,4 +431,8 @@ export abstract class BaseOptionSelectUiHandler extends UiHandler {
     }
     this.cursorObj = null;
   }
+}
+
+export function isOptionSelectConfig(obj): obj is OptionSelectConfig {
+  return typeof obj === "object" && Object.hasOwn(obj, "options") && obj.options.length > 0;
 }

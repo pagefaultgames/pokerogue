@@ -69,7 +69,7 @@ export class GamepadBindingUiHandler extends BaseBindingUiHandler {
       return;
     }
     this.buttonPressed = button.index;
-    const assignedButtonIcon = getIconWithSettingName(activeConfig, this.target);
+    const assignedButtonIcon = getIconWithSettingName(activeConfig, this.target ?? undefined);
     // Bang is safe, we already check for buttonIcon above.
     this.onInputDown(buttonIcon, assignedButtonIcon!, type);
   }
@@ -81,6 +81,7 @@ export class GamepadBindingUiHandler extends BaseBindingUiHandler {
       activeConfig != null
       && this.buttonPressed != null
       && selectedDevice != null
+      && this.target != null
       && globalScene.inputController.assignBinding(activeConfig, this.target, this.buttonPressed)
     ) {
       globalScene.gameData.saveMappingConfigs(selectedDevice, activeConfig);

@@ -27,6 +27,8 @@ export enum SaveSlotUiMode {
 
 export type SaveSlotSelectCallback = (cursor: number) => void;
 
+type SaveSlotSelectConfig = [SaveSlotUiMode, SaveSlotSelectCallback];
+
 export class SaveSlotSelectUiHandler extends MessageUiHandler {
   private saveSlotSelectContainer: Phaser.GameObjects.Container;
   private sessionSlotsContainer: Phaser.GameObjects.Container;
@@ -85,15 +87,15 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
     this.sessionSlots = [];
   }
 
-  show(args: any[]): boolean {
+  show(args: SaveSlotSelectConfig): boolean {
     if (args.length < 2 || !(args[1] instanceof Function)) {
       return false;
     }
 
-    super.show(args);
+    super.show();
 
-    this.uiMode = args[0] as SaveSlotUiMode;
-    this.saveSlotSelectCallback = args[1] as SaveSlotSelectCallback;
+    this.uiMode = args[0];
+    this.saveSlotSelectCallback = args[1];
 
     this.saveSlotSelectContainer.setVisible(true);
     this.populateSessionSlots();

@@ -32,8 +32,8 @@ export class EggHatchSceneUiHandler extends UiHandler {
     }
   }
 
-  show(_args: any[]): boolean {
-    super.show(_args);
+  show(): boolean {
+    super.show();
 
     this.getUi().showText("", 0);
 

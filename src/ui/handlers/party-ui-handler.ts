@@ -84,6 +84,18 @@ export type PokemonModifierTransferSelectFilter = (
 ) => string | null;
 export type PokemonMoveSelectFilter = (pokemonMove: PokemonMove) => string | null;
 
+type PartyUiConfig = [
+  // TODO: Make this mandatory once legacy 'any' calls are fully refactored.
+  // Temporarily optional to bypass strict length checks.
+  PartyUiMode?,
+  fieldIndex?: number,
+  (PartySelectCallback | PartyModifierTransferSelectCallback)?,
+  PokemonSelectFilter?,
+  PokemonMoveSelectFilter?,
+  MoveId?,
+  ShowMovePp?: boolean,
+];
+
 export class PartyUiHandler extends MessageUiHandler {
   private partyUiMode: PartyUiMode;
   private fieldIndex: number;
@@ -269,29 +281,25 @@ export class PartyUiHandler extends MessageUiHandler {
     this.partySlots = [];
   }
 
-  show(args: any[]): boolean {
+  show(args: PartyUiConfig): boolean {
     if (args.length === 0 || this.active) {
       return false;
     }
 
-    super.show(args);
+    super.show();
 
     // reset the infoOverlay
     this.moveInfoOverlay.clear();
 
-    this.partyUiMode = args[0] as PartyUiMode;
+    this.partyUiMode = args[0]!;
 
-    this.fieldIndex = args.length > 1 ? (args[1] as number) : -1;
+    this.fieldIndex = args.length > 1 && typeof args[1] === "number" ? args[1] : -1;
 
-    this.selectCallback = args.length > 2 && args[2] instanceof Function ? args[2] : undefined;
-    this.selectFilter =
-      args.length > 3 && args[3] instanceof Function ? (args[3] as PokemonSelectFilter) : PartyUiHandler.FilterAll;
-    this.moveSelectFilter =
-      args.length > 4 && args[4] instanceof Function
-        ? (args[4] as PokemonMoveSelectFilter)
-        : PartyUiHandler.FilterAllMoves;
+    this.selectCallback = args.length > 2 && args[2] instanceof Function ? args[2] : null;
+    this.selectFilter = args.length > 3 && args[3] instanceof Function ? args[3] : PartyUiHandler.FilterAll;
+    this.moveSelectFilter = args.length > 4 && args[4] instanceof Function ? args[4] : PartyUiHandler.FilterAllMoves;
     this.tmMoveId = args.length > 5 && args[5] ? args[5] : MoveId.NONE;
-    this.showMovePp = args.length > 6 && args[6];
+    this.showMovePp = args.length > 6 && typeof args[6] === "boolean" && args[6];
 
     this.partyContainer.setVisible(true);
     if (this.isItemManageMode()) {

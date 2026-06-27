@@ -16,6 +16,7 @@ import { addTextObject } from "#ui/text";
 import { fixedInt, randInt, randItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
+import type { OptionSelectConfig } from "./base-option-select-ui-handler";
 
 export class TitleUiHandler extends OptionSelectUiHandler {
   /** If the stats can not be retrieved, use this fallback value */
@@ -161,7 +162,7 @@ export class TitleUiHandler extends OptionSelectUiHandler {
     }
   }
 
-  show(args: any[]): boolean {
+  show(args: [OptionSelectConfig]): boolean {
     const ret = super.show(args);
 
     if (!ret) {

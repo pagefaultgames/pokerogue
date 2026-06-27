@@ -25,6 +25,8 @@ const SINGLE_SHOP_ROW_YOFFSET = 12;
 const DOUBLE_SHOP_ROW_YOFFSET = 24;
 const OPTION_BUTTON_YPOSITION = -62;
 
+type ModifierSelectConfig = [player: boolean, ModifierTypeOption[], ModifierSelectCallback, rerrolCost?: number];
+
 export class ModifierSelectUiHandler extends AwaitableUiHandler {
   private modifierContainer: Phaser.GameObjects.Container;
   private rerollButtonContainer: Phaser.GameObjects.Container;
@@ -159,7 +161,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     globalScene.addInfoToggle(this.moveInfoOverlay);
   }
 
-  show(args: any[]): boolean {
+  show(args: ModifierSelectConfig): boolean {
     globalScene.disableMenu = false;
 
     if (this.active) {
@@ -171,11 +173,16 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
       return false;
     }
 
-    if (args.length !== 4 || !Array.isArray(args[1]) || !(args[2] instanceof Function)) {
+    if (
+      args.length !== 4
+      || !Array.isArray(args[1])
+      || !(args[2] instanceof Function)
+      || !(typeof args[3] === "number")
+    ) {
       return false;
     }
 
-    super.show(args);
+    super.show();
 
     this.getUi().clearText();
 
@@ -203,11 +210,11 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     this.rerollButtonContainer.setPositionRelative(this.lockRarityButtonContainer, 0, canLockRarities ? -12 : 0);
 
-    this.rerollCost = args[3] as number;
+    this.rerollCost = args[3];
 
     this.updateRerollCostText();
 
-    const typeOptions = args[1] as ModifierTypeOption[];
+    const typeOptions = args[1];
     const hasShop = globalScene.gameMode.getShopStatus();
     const baseShopCost = new NumberHolder(globalScene.getWaveMoneyAmount(1));
     globalScene.applyModifier(HealShopCostModifier, true, baseShopCost);

@@ -210,6 +210,8 @@ interface SpeciesDetails {
   natureIndex?: number | undefined;
 }
 
+type PokedexUiConfig = ["refresh" | GameData, ExitCallback: () => void];
+
 export class PokedexUiHandler extends MessageUiHandler {
   private starterSelectContainer: Phaser.GameObjects.Container;
   private starterSelectScrollBar: ScrollBar;
@@ -680,7 +682,7 @@ export class PokedexUiHandler extends MessageUiHandler {
     this.starterSelectContainer.bringToTop(this.pokemonFormText);
   }
 
-  show(args: any[]): boolean {
+  show(args: PokedexUiConfig): boolean {
     if (!this.starterPreferences) {
       this.starterPreferences = loadStarterPreferences();
     }

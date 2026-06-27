@@ -223,8 +223,8 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
    * @param args - Arguments to be passed to the show method.
    * @returns `true` if successful.
    */
-  public override show(args: any[]): boolean {
-    super.show(args);
+  public override show(): boolean {
+    super.show();
     this.updateBindings();
 
     const settings: object = Object.hasOwn(localStorage, this.localStorageKey)

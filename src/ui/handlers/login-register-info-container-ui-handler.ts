@@ -2,8 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { UiMode } from "#enums/ui-mode";
 import { languageOptions } from "#system/settings-language";
 import type { OptionSelectItem } from "#ui/base-option-select-ui-handler";
-import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
-import type { ModalConfig } from "#ui/modal-ui-handler";
+import { type FormModalConfig, FormModalUiHandler } from "#ui/form-modal-ui-handler";
 import { fixedInt } from "#utils/common";
 import i18next from "i18next";
 import JSZip from "jszip";
@@ -93,7 +92,7 @@ export abstract class LoginRegisterInfoContainerUiHandler extends FormModalUiHan
     this.getUi().add(this.infoContainer);
   }
 
-  protected showInfoContainer(config: ModalConfig) {
+  protected showInfoContainer(config: FormModalConfig) {
     this.infoContainer //
       .setPosition(5, -76)
       .setVisible(true);
@@ -134,7 +133,7 @@ export abstract class LoginRegisterInfoContainerUiHandler extends FormModalUiHan
    * Up to {@linkcode MAX_SAVES_FOR_USERNAME_PANEL} usernames are shown, otherwise P02 is triggered
    * @param config - The modal configuration
    */
-  private showUsernames(config: ModalConfig): void {
+  private showUsernames(config: FormModalConfig): void {
     if (globalScene.tweens.getTweensOf(this.infoContainer).length > 0) {
       return;
     }
@@ -178,7 +177,7 @@ export abstract class LoginRegisterInfoContainerUiHandler extends FormModalUiHan
    * Used as the `pointerDown` callback for the save download image
    * @param config - The modal configuration
    */
-  private async downloadSaves(config: ModalConfig): Promise<void> {
+  private async downloadSaves(config: FormModalConfig): Promise<void> {
     // find all data_ and sessionData keys, put them in a .txt file and download everything in a single zip
     const localStorageKeys = Object.keys(localStorage);
     const keyToFind = "data_";
@@ -211,7 +210,7 @@ export abstract class LoginRegisterInfoContainerUiHandler extends FormModalUiHan
     URL.revokeObjectURL(url);
   }
 
-  private onFail(error: string, config: ModalConfig): void {
+  private onFail(error: string, config: FormModalConfig): void {
     const ui = globalScene.ui;
     ui.setMode(UiMode.LOADING, { buttonActions: [] });
     ui.setModeForceTransition(UiMode.LOGIN_OR_REGISTER, Object.assign(config, { errorMessage: error?.trim() }));

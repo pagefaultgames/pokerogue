@@ -75,8 +75,8 @@ export class RunHistoryUiHandler extends MessageUiHandler {
       .loadAtlas("rival_m", "trainer");
   }
 
-  override show(args: any[]): boolean {
-    super.show(args);
+  override show(): boolean {
+    super.show();
 
     this.getUi().bringToTop(this.runSelectContainer);
     this.runSelectContainer.setVisible(true);

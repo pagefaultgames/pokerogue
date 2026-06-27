@@ -20,7 +20,7 @@ import { getLuckString, getLuckTextTint } from "#modifiers/modifier-type";
 import { getVariantTint } from "#sprites/variant";
 import type { PokemonData } from "#system/pokemon-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
-import type { SessionSaveData } from "#types/save-data";
+import type { RunEntry, SessionSaveData } from "#types/save-data";
 import { addBBCodeTextObject, addTextObject, getTextColor, RAINBOW_TINT } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
@@ -44,6 +44,8 @@ export enum RunDisplayMode {
   RUN_HISTORY,
   SESSION_PREVIEW,
 }
+
+type RunInforUiConfig = [RunEntry | SessionSaveData, RunDisplayMode];
 
 /**
  * Some variables are protected because this UI class will most likely be extended in the future to display more information.
@@ -83,7 +85,7 @@ export class RunInfoUiHandler extends UiHandler {
 
   /**
    * This takes a run's RunEntry and uses the information provided to display essential information about the player's run.
-   * @param args[0] : a RunEntry object
+   * @param args[0]: a {@link RunEntry} or {@link SessionSaveData} object
    *
    * show() creates these UI objects in order -
    * A solid-color background used to hide RunHistoryUiHandler
@@ -92,8 +94,8 @@ export class RunInfoUiHandler extends UiHandler {
    * Party Container:
    * this.isVictory === true --> Hall of Fame Container:
    */
-  override show(args: any[]): boolean {
-    super.show(args);
+  override show(args: RunInforUiConfig): boolean {
+    super.show();
 
     const gameStatsBg = globalScene.add.rectangle(
       0,
@@ -107,11 +109,11 @@ export class RunInfoUiHandler extends UiHandler {
 
     const run = args[0];
     this.runDisplayMode = args[1];
-    if (this.runDisplayMode === RunDisplayMode.RUN_HISTORY) {
+    if (typeof run === "object" && "entry" in run && this.runDisplayMode === RunDisplayMode.RUN_HISTORY) {
       this.runInfo = globalScene.gameData.parseSessionData(JSON.stringify(run.entry));
       this.isVictory = run.isVictory ?? false;
     } else if (this.runDisplayMode === RunDisplayMode.SESSION_PREVIEW) {
-      this.runInfo = args[0];
+      this.runInfo = args[0] as SessionSaveData;
     }
     // Assigning information necessary for the UI's creation
 

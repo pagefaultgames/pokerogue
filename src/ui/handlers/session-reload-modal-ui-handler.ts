@@ -5,7 +5,9 @@ import { ModalUiHandler } from "#ui/modal-ui-handler";
 import { addTextObject } from "#ui/text";
 import i18next from "i18next";
 
-export class SessionReloadModalUiHandler extends ModalUiHandler {
+type SessionReloadModalConfig = [Local: boolean];
+
+export class SessionReloadModalUiHandler extends ModalUiHandler<SessionReloadModalConfig> {
   private label: Phaser.GameObjects.Text;
 
   constructor(mode: UiMode | null = null) {
@@ -47,14 +49,14 @@ export class SessionReloadModalUiHandler extends ModalUiHandler {
     this.modalContainer.add(this.label);
   }
 
-  show(args: any[]): boolean {
+  show(args: SessionReloadModalConfig): boolean {
     const config: ModalConfig = { buttonActions: [] };
-    const local: boolean = args[0];
+    const local = args[0];
 
     if (local) {
       this.label.setText(i18next.t("gameData:reloadSaveDataLocal"));
     }
 
-    return super.show([config]);
+    return super.show([config] as unknown as SessionReloadModalConfig);
   }
 }

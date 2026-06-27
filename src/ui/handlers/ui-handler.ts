@@ -19,7 +19,10 @@ export abstract class UiHandler {
 
   abstract setup(): void;
 
-  show(_args: any[]): boolean {
+  /**
+   * @argument _args: Bypass arguments for extended classes
+   */
+  show(_args?: unknown): boolean {
     this.active = true;
 
     return true;
