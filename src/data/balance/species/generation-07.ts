@@ -12127,7 +12127,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       [45, MoveId.BOUNCE],
       [49, MoveId.EXTRASENSORY],
       [56, MoveId.DOUBLE_TEAM],
-      [65, MoveId.NIGHT_SLASH],      
+      [65, MoveId.NIGHT_SLASH],
       [68, MoveId.HYDRO_PUMP],
       [70, MoveId.HAZE],
       [77, MoveId.DARK_PULSE],
