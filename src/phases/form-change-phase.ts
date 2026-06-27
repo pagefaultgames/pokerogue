@@ -204,10 +204,6 @@ export class FormChangePhase extends EvolutionPhase {
   end(): void {
     this.pokemon.findAndRemoveTags(t => t.tagType === BattlerTagType.AUTOTOMIZED);
 
-    console.log("FormChangePhase.end() - formKey:", this.pokemon.getFormKey());
-  const allLevelMoves = this.pokemon.getLevelMoves(1, true, false, false, LearnMoveSituation.EVOLUTION);
-  console.log("All level moves with EVOLVE/FORGET:", allLevelMoves.filter(lm => lm[0] <= 0));
-
     const forgetMoves = this.pokemon
       .getLevelMoves(1, true, false, false, LearnMoveSituation.EVOLUTION)
       .filter(lm => lm[0] === FORGET_MOVE);

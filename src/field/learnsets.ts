@@ -27,7 +27,7 @@ function getRegularLevelMoves(
 ): LevelMovesWithSource {
   const ret: LevelMovesWithSource = [];
   const moves = (fromFusion ? pokemon.getFusionSpeciesForm(true) : pokemon.getSpeciesForm(true)).getLevelMoves(
-    fromFusion ? (pokemon.getFusionFormKey() ?? undefined) : pokemon.getFormKey()
+    fromFusion ? (pokemon.getFusionFormKey() ?? undefined) : pokemon.getFormKey(),
   );
   for (const [level, move] of moves) {
     if (
@@ -193,7 +193,8 @@ function filterAndSortLevelMoves(
     const isRelearner = level < startingLevel;
     const allowedEvolutionMove = (level === EVOLVE_MOVE || level === FORGET_MOVE) && includeEvolutionMoves;
     const isLevelMoveSource = source === LearnableMoveSource.LEVEL || source === LearnableMoveSource.FUSION_LEVEL;
-    const isOwnMoveFromNonLevelSource = ownMoves.has(move) && !isLevelMoveSource && level !== EVOLVE_MOVE && level !== FORGET_MOVE;
+    const isOwnMoveFromNonLevelSource =
+      ownMoves.has(move) && !isLevelMoveSource && level !== EVOLVE_MOVE && level !== FORGET_MOVE;
     const isLockedPrevoMove =
       levelMovesAboveCurrentLevel.has(move)
       && (source === LearnableMoveSource.PREVO || source === LearnableMoveSource.FUSION_PREVO);

@@ -4,13 +4,7 @@ import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities
 import { generateMoveset } from "#app/ai/ai-moveset-gen";
 import type { Battle } from "#app/battle";
 import type { BattleScene } from "#app/battle-scene";
-import {
-  EVOLVE_MOVE,
-  FORGET_MOVE,
-  PLAYER_PARTY_MAX_SIZE,
-  RARE_CANDY_FRIENDSHIP_CAP,
-  RELEARN_MOVE,
-} from "#app/constants";
+import { PLAYER_PARTY_MAX_SIZE, RARE_CANDY_FRIENDSHIP_CAP } from "#app/constants";
 import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";

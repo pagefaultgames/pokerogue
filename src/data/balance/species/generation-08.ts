@@ -9965,8 +9965,8 @@ export function initGenerationEight(): SpeciesDataMapConfig {
     ],
     formLevelMoves: {
       "": [
-        [FORGET_MOVE, MoveId.GLACIAL_LANCE ],
-        [FORGET_MOVE, MoveId.ASTRAL_BARRAGE ],
+        [FORGET_MOVE, MoveId.GLACIAL_LANCE],
+        [FORGET_MOVE, MoveId.ASTRAL_BARRAGE],
         [40, MoveId.PSYCHIC_TERRAIN],
         [1, MoveId.POUND],
         [36, MoveId.ZEN_HEADBUTT],
@@ -9975,8 +9975,8 @@ export function initGenerationEight(): SpeciesDataMapConfig {
         [80, MoveId.FUTURE_SIGHT],
       ],
       ice: [
-        [RELEARN_MOVE, MoveId.TORMENT ],
-        [EVOLVE_MOVE, MoveId.GLACIAL_LANCE ],
+        [RELEARN_MOVE, MoveId.TORMENT],
+        [EVOLVE_MOVE, MoveId.GLACIAL_LANCE],
         [1, MoveId.SWORDS_DANCE],
         [1, MoveId.STOMP],
         [1, MoveId.DOUBLE_KICK],
