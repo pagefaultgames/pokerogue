@@ -38,7 +38,7 @@ const migrateUnselectableForms: SystemSaveMigrator = {
 
 export const systemMigrators: readonly SystemSaveMigrator[] = [migrateUnselectableForms] as const;
 
-function isArrayOfLengthThree(arr: unknown): arr is [unknown, unknown] {
+function isArrayOfLengthThree(arr: unknown): arr is [unknown, unknown, unknown] {
   return Array.isArray(arr) && arr.length === 3;
 }
 
