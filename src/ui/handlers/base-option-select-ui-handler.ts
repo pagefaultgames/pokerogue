@@ -34,7 +34,7 @@ export interface OptionSelectItem {
 const scrollUpLabel = "↑";
 const scrollDownLabel = "↓";
 
-export abstract class AbstractOptionSelectUiHandler extends UiHandler {
+export abstract class BaseOptionSelectUiHandler extends UiHandler {
   protected optionSelectContainer: Phaser.GameObjects.Container;
   protected optionSelectTextContainer: Phaser.GameObjects.Container;
   protected optionSelectBg: Phaser.GameObjects.NineSlice;
@@ -57,13 +57,13 @@ export abstract class AbstractOptionSelectUiHandler extends UiHandler {
   protected defaultTextStyle: TextStyle = TextStyle.WINDOW;
   protected textContent: string;
 
-  abstract getWindowWidth(): number;
+  protected abstract getWindowWidth(): number;
 
-  getWindowHeight(): number {
+  protected getWindowHeight(): number {
     return (Math.min((this.config?.options || []).length, this.config?.maxOptions || 99) + 1) * 96 * this.scale;
   }
 
-  setup() {
+  public override setup(): void {
     const ui = this.getUi();
 
     this.optionSelectContainer = globalScene.add.container(globalScene.scaledCanvas.width - 1, -48);
@@ -86,7 +86,7 @@ export abstract class AbstractOptionSelectUiHandler extends UiHandler {
     this.setCursor(0);
   }
 
-  protected setupOptions() {
+  protected setupOptions(): void {
     const configOptions = this.config?.options ?? [];
 
     const options: OptionSelectItem[] = configOptions;
@@ -183,7 +183,7 @@ export abstract class AbstractOptionSelectUiHandler extends UiHandler {
     });
   }
 
-  show(args: any[]): boolean {
+  public override show(args: any[]): boolean {
     if (args.length === 0 || !Object.hasOwn(args[0], "options") || args[0].options.length === 0) {
       return false;
     }
@@ -215,7 +215,7 @@ export abstract class AbstractOptionSelectUiHandler extends UiHandler {
     return true;
   }
 
-  processInput(button: Button): boolean {
+  public override processInput(button: Button): boolean {
     const ui = this.getUi();
 
     let success = false;
@@ -290,7 +290,7 @@ export abstract class AbstractOptionSelectUiHandler extends UiHandler {
     return success;
   }
 
-  unblockInput(): void {
+  protected unblockInput(): void {
     if (!this.blockInput) {
       return;
     }
@@ -300,7 +300,7 @@ export abstract class AbstractOptionSelectUiHandler extends UiHandler {
     this.cursorObj?.setAlpha(1);
   }
 
-  getOptionsWithScroll(): OptionSelectItem[] {
+  public getOptionsWithScroll(): OptionSelectItem[] {
     if (!this.config) {
       return [];
     }
@@ -343,14 +343,14 @@ export abstract class AbstractOptionSelectUiHandler extends UiHandler {
     return options;
   }
 
-  getUnskippedIndices(options: OptionSelectItem[]) {
+  private getUnskippedIndices(options: OptionSelectItem[]): number[] {
     const unskippedIndices = options
       .map((option, index) => (option.skip ? null : index)) // Map to index or null if skipped
       .filter(index => index !== null) as number[];
     return unskippedIndices;
   }
 
-  setCursor(fullCursor: number): boolean {
+  public override setCursor(fullCursor: number): boolean {
     const changed = this.fullCursor !== fullCursor;
 
     if (changed && this.config?.maxOptions && this.config.options.length > this.config.maxOptions) {
@@ -415,7 +415,7 @@ export abstract class AbstractOptionSelectUiHandler extends UiHandler {
     return changed;
   }
 
-  clear() {
+  public override clear(): void {
     super.clear();
     this.config = null;
     this.optionSelectContainer.setVisible(false);
@@ -424,7 +424,7 @@ export abstract class AbstractOptionSelectUiHandler extends UiHandler {
     this.eraseCursor();
   }
 
-  eraseCursor() {
+  private eraseCursor(): void {
     if (this.cursorObj) {
       this.cursorObj.destroy();
     }

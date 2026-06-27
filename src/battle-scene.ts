@@ -1836,10 +1836,8 @@ export class BattleScene extends SceneBase {
       case SpeciesId.PUMPKABOO:
       case SpeciesId.GOURGEIST:
       case SpeciesId.ORICORIO:
-      case SpeciesId.MAGEARNA:
       case SpeciesId.ZARUDE:
       case SpeciesId.SQUAWKABILLY:
-      case SpeciesId.TATSUGIRI:
       case SpeciesId.PALDEA_TAUROS:
         return randSeedInt(species.forms.length);
       case SpeciesId.SINISTEA:
@@ -1861,15 +1859,11 @@ export class BattleScene extends SceneBase {
           return 0; // No Partner Eevee for Wave 12 Preschoolers
         }
         return randSeedInt(2);
-      case SpeciesId.FROAKIE:
-      case SpeciesId.FROGADIER:
-      case SpeciesId.GRENINJA:
-        if (isTrainerBattle && !isEggPhase) {
-          return 0; // Don't give trainers Battle Bond Greninja, Froakie or Frogadier
-        }
-        return randSeedInt(2);
+      case SpeciesId.MAGEARNA:
       case SpeciesId.URSHIFU:
         return randSeedInt(2);
+      case SpeciesId.TATSUGIRI:
+        return randSeedInt(3);
       case SpeciesId.ZYGARDE:
         return randSeedInt(4);
       case SpeciesId.MINIOR:
@@ -3083,87 +3077,187 @@ export class BattleScene extends SceneBase {
   }
 
   public updateGameInfo(): void {
+    type GameInfo = {
+      /** @since 2.0.0 */
+      gameInfoVersion: string;
+      /** @since 1.1.0 */
+      playTime: number;
+      /** @since 1.0.0 */
+      gameMode: string;
+      /** @since 1.0.0 */
+      biome: string;
+      /** @since 1.0.0 */
+      wave: number;
+      /** @since 2.1.0 */
+      luck: number;
+      /** @since 1.0.0 */
+      party: PartyInfo[];
+    };
+    type PartyInfo = {
+      /** @since 1.0.0 */
+      name: string;
+      /** @since 2.0.0 */
+      nickname: string;
+      /** @since 2.0.0 */
+      gender: string;
+      /** @since 1.2.0 */
+      form: string;
+      /** @since 1.2.0 */
+      types: string[];
+      /** @since 2.0.0 */
+      tempTypes: string[];
+      /** @since 1.2.0 */
+      teraType: string;
+      /** @since 1.3.0 */
+      isTerastallized: boolean;
+      /** @since 1.0.0 */
+      level: number;
+      /** @since 1.2.0 */
+      currentHP: number;
+      /** @since 1.2.0 */
+      maxHP: number;
+      /** @since 1.2.0 */
+      status: string;
+      /** @since 2.0.0 */
+      moveset: string[];
+      /** @since 2.0.0 */
+      tempMoveset: string[];
+      /** @since 2.0.0 */
+      ability: string;
+      /** @since 2.0.0 */
+      tempAbility: string;
+      /** @since 2.0.0 */
+      passiveAbility: string;
+      /** @since 2.0.0 */
+      isPassiveEnabled: boolean;
+      /** @since 2.0.0 */
+      nature: string;
+      /** @since 2.0.0 */
+      baseStats: {
+        atk: number;
+        def: number;
+        spAtk: number;
+        spDef: number;
+        speed: number;
+      };
+      /** @since 2.0.0 */
+      tempStats:
+        | {
+            atk: number;
+            def: number;
+            spAtk: number;
+            spDef: number;
+            speed: number;
+          }
+        | {
+            atk?: never;
+            def?: never;
+            spAtk?: never;
+            spDef?: never;
+            speed?: never;
+          };
+      /** @since 2.0.0 */
+      statStages: {
+        atk: number;
+        def: number;
+        spAtk: number;
+        spDef: number;
+        speed: number;
+        acc: number;
+        eva: number;
+      };
+      /** @since 2.0.0 */
+      shiny: boolean;
+      /** @since 2.0.0 */
+      variant: string;
+      /** @since 2.0.0 */
+      isFusion: boolean;
+    };
     const variantMap = {
       [0]: "Normal",
       [1]: "Rare",
       [2]: "Epic",
     };
-    const gameInfo = {
+    const gameInfo: GameInfo = {
       //! Make sure to update this in accordance with semver when the output is changed
       // cf https://semver.org/
-      gameInfoVersion: "2.0.0",
+      gameInfoVersion: "2.1.0",
       playTime: this.sessionPlayTime ?? 0,
       gameMode: this.currentBattle ? this.gameMode.getName() : "Title",
       biome: this.currentBattle ? getBiomeName(this.arena.biomeId) : "",
       wave: this.currentBattle?.waveIndex ?? 0,
+      luck: this.currentBattle ? getPartyLuckValue(this.party) : -1,
       party:
-        this.party?.map(p => ({
-          name: p.name,
-          nickname: p.nickname ? decodeNickname(p.nickname, p.name) : "",
-          gender: capitalizeFirstLetterOnly(Gender[p.gender]),
-          form: p.getFormKey(),
-          // Does not include temporary changes, such as those from Transform, Forest's Curse, etc
-          // Ignores Tera type
-          types: p
-            .getTypes({ includeTeraType: false, bypassSummonData: true, ignoreThirdType: true })
-            .map(pType => capitalizeFirstLetterOnly(PokemonType[pType])),
-          // Includes temporary changes, such as those from Transform, Forest's Curse, etc
-          // Ignores Tera type
-          tempTypes:
-            p.summonData.types.length > 0 || p.summonData.addedType
-              ? p.getTypes({ includeTeraType: false }).map(pType => capitalizeFirstLetterOnly(PokemonType[pType]))
-              : [],
-          teraType: capitalizeFirstLetterOnly(PokemonType[p.getTeraType()]),
-          isTerastallized: p.isTerastallized,
-          level: p.level,
-          currentHP: p.hp,
-          maxHP: p.getMaxHp(),
-          status: p.status?.effect ? capitalizeFirstLetterOnly(StatusEffect[p.status.effect]) : "",
-          // the pokemon's actual moveset
-          moveset: p.getMoveset(true).map(move => move.getName()),
-          // the pokemon's temporary moveset, e.g. from Transform
-          // biome-ignore lint/style/useExplicitLengthCheck: doubles as a null check
-          tempMoveset: p.summonData.moveset?.length ? p.getMoveset().map(move => move.getName()) : [],
-          // the pokemon's actual ability
-          ability: p.getAbility(true).name,
-          // the pokemon's temporary ability, e.g. from Transform or Skill Swap
-          tempAbility: p.summonData.ability ? p.getAbility().name : "",
-          passiveAbility: p.getPassiveAbility().name,
-          isPassiveEnabled: p.hasPassive(),
-          nature: capitalizeFirstLetterOnly(Nature[p.getNature()]),
-          baseStats: {
-            atk: p.getStat(Stat.ATK),
-            def: p.getStat(Stat.DEF),
-            spAtk: p.getStat(Stat.SPATK),
-            spDef: p.getStat(Stat.SPDEF),
-            speed: p.getStat(Stat.SPD),
-          },
-          // e.g. from Transform
-          tempStats: p.summonData.stats.some(v => v > 0)
-            ? {
-                atk: p.getStat(Stat.ATK, false),
-                def: p.getStat(Stat.DEF, false),
-                spAtk: p.getStat(Stat.SPATK, false),
-                spDef: p.getStat(Stat.SPDEF, false),
-                speed: p.getStat(Stat.SPD, false),
-              }
-            : {},
-          statStages: {
-            atk: p.getStatStage(Stat.ATK),
-            def: p.getStatStage(Stat.DEF),
-            spAtk: p.getStatStage(Stat.SPATK),
-            spDef: p.getStatStage(Stat.SPDEF),
-            speed: p.getStatStage(Stat.SPD),
-            acc: p.getStatStage(Stat.ACC),
-            eva: p.getStatStage(Stat.EVA),
-          },
-          shiny: p.isShiny(),
-          variant: p.isShiny() ? variantMap[p.getVariant()] : "N/A",
-          isFusion: p.isFusion(),
-        })) ?? [],
+        this.party?.map(
+          p =>
+            ({
+              name: p.name,
+              nickname: p.nickname ? decodeNickname(p.nickname, p.name) : "",
+              gender: capitalizeFirstLetterOnly(Gender[p.gender]),
+              form: p.getFormKey(),
+              // Does not include temporary changes, such as those from Transform, Forest's Curse, etc
+              // Ignores Tera type
+              types: p
+                .getTypes({ includeTeraType: false, bypassSummonData: true, ignoreThirdType: true })
+                .map(pType => capitalizeFirstLetterOnly(PokemonType[pType])),
+              // Includes temporary changes, such as those from Transform, Forest's Curse, etc
+              // Ignores Tera type
+              tempTypes:
+                p.summonData.types.length > 0 || p.summonData.addedType
+                  ? p.getTypes({ includeTeraType: false }).map(pType => capitalizeFirstLetterOnly(PokemonType[pType]))
+                  : [],
+              teraType: capitalizeFirstLetterOnly(PokemonType[p.getTeraType()]),
+              isTerastallized: p.isTerastallized,
+              level: p.level,
+              currentHP: p.hp,
+              maxHP: p.getMaxHp(),
+              status: p.status?.effect ? capitalizeFirstLetterOnly(StatusEffect[p.status.effect]) : "",
+              // the pokemon's actual moveset
+              moveset: p.getMoveset(true).map(move => move.getName()),
+              // the pokemon's temporary moveset, e.g. from Transform
+              // biome-ignore lint/style/useExplicitLengthCheck: doubles as a null check
+              tempMoveset: p.summonData.moveset?.length ? p.getMoveset().map(move => move.getName()) : [],
+              // the pokemon's actual ability
+              ability: p.getAbility(true).name,
+              // the pokemon's temporary ability, e.g. from Transform or Skill Swap
+              tempAbility: p.summonData.ability ? p.getAbility().name : "",
+              passiveAbility: p.getPassiveAbility().name,
+              isPassiveEnabled: p.hasPassive(),
+              nature: capitalizeFirstLetterOnly(Nature[p.getNature()]),
+              baseStats: {
+                atk: p.getStat(Stat.ATK),
+                def: p.getStat(Stat.DEF),
+                spAtk: p.getStat(Stat.SPATK),
+                spDef: p.getStat(Stat.SPDEF),
+                speed: p.getStat(Stat.SPD),
+              },
+              // e.g. from Transform
+              tempStats: p.summonData.stats.some(v => v > 0)
+                ? {
+                    atk: p.getStat(Stat.ATK, false),
+                    def: p.getStat(Stat.DEF, false),
+                    spAtk: p.getStat(Stat.SPATK, false),
+                    spDef: p.getStat(Stat.SPDEF, false),
+                    speed: p.getStat(Stat.SPD, false),
+                  }
+                : {},
+              statStages: {
+                atk: p.getStatStage(Stat.ATK),
+                def: p.getStatStage(Stat.DEF),
+                spAtk: p.getStatStage(Stat.SPATK),
+                spDef: p.getStatStage(Stat.SPDEF),
+                speed: p.getStatStage(Stat.SPD),
+                acc: p.getStatStage(Stat.ACC),
+                eva: p.getStatStage(Stat.EVA),
+              },
+              shiny: p.isShiny(),
+              variant: p.isShiny() ? variantMap[p.getVariant()] : "N/A",
+              isFusion: p.isFusion(),
+            }) as PartyInfo satisfies PartyInfo,
+        ) ?? [],
     };
     // TODO: Don't store it here
-    (window as any).gameInfo = gameInfo;
+    window["gameInfo"] = gameInfo;
   }
 
   /**

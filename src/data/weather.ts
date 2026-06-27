@@ -1,10 +1,12 @@
-import type { SuppressWeatherEffectAbAttr } from "#abilities/ab-attrs";
+import type { PreAttackWeatherOverrideAbAttr, SuppressWeatherEffectAbAttr } from "#abilities/ab-attrs";
+import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { PokemonType } from "#enums/pokemon-type";
 import { WeatherType } from "#enums/weather-type";
 import type { Pokemon } from "#field/pokemon";
 import type { Move } from "#moves/move";
+import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 
 export interface SerializedWeather {
@@ -70,31 +72,6 @@ export class Weather {
     }
 
     return false;
-  }
-
-  getAttackTypeMultiplier(attackType: PokemonType): number {
-    switch (this.weatherType) {
-      case WeatherType.SUNNY:
-      case WeatherType.HARSH_SUN:
-        if (attackType === PokemonType.FIRE) {
-          return 1.5;
-        }
-        if (attackType === PokemonType.WATER) {
-          return 0.5;
-        }
-        break;
-      case WeatherType.RAIN:
-      case WeatherType.HEAVY_RAIN:
-        if (attackType === PokemonType.FIRE) {
-          return 0.5;
-        }
-        if (attackType === PokemonType.WATER) {
-          return 1.5;
-        }
-        break;
-    }
-
-    return 1;
   }
 
   isMoveWeatherCancelled(user: Pokemon, move: Move): boolean {
@@ -243,4 +220,72 @@ export function getWeatherBlockMessage(weatherType: WeatherType): string {
       return i18next.t("weather:heavyRainEffectMessage");
   }
   return i18next.t("weather:defaultEffectMessage");
+}
+
+/**
+ * Determine the effective weather type for moves that the user will use
+ *
+ * @param user - The Pokemon using the move
+ * @returns The effective weather type for the user's moves
+ *
+ * @see {@linkcode PreAttackWeatherOverrideAbAttr}
+ */
+export function getEffectiveWeatherForMove(user: Pokemon): WeatherType {
+  const weatherHolder = new ValueHolder(WeatherType.NONE);
+  applyAbAttrs("PreAttackWeatherOverrideAbAttr", {
+    pokemon: user,
+    weatherHolder,
+  });
+
+  // Weather override supercedes weather suppression.
+  if (weatherHolder.value !== WeatherType.NONE) {
+    return weatherHolder.value;
+  }
+
+  const weather = globalScene.arena.weather;
+  if (!weather || weather.isEffectSuppressed()) {
+    return WeatherType.NONE;
+  }
+  return weather.weatherType;
+}
+
+/**
+ * Compute the damage multiplier for a move based on the current weather,
+ * respecting relevant abilities and move attributes.
+ * @param user - The Pokémon using the move
+ * @param move - The move being invoked
+ * @returns The damage multiplier to apply
+ */
+export function getWeatherMultiplierForMove(user: Pokemon, move: Move): number {
+  const weatherType = getEffectiveWeatherForMove(user);
+  const attackType = user.getMoveType(move);
+
+  for (const weatherMultiplierAttr of move.getAttrs("OverrideWeatherMultiplierAttr")) {
+    if (weatherMultiplierAttr.weather === weatherType) {
+      return 1.5;
+    }
+  }
+
+  switch (weatherType) {
+    case WeatherType.SUNNY:
+    case WeatherType.HARSH_SUN:
+      if (attackType === PokemonType.FIRE) {
+        return 1.5;
+      }
+      if (attackType === PokemonType.WATER) {
+        return 0.5;
+      }
+      break;
+    case WeatherType.RAIN:
+    case WeatherType.HEAVY_RAIN:
+      if (attackType === PokemonType.FIRE) {
+        return 0.5;
+      }
+      if (attackType === PokemonType.WATER) {
+        return 1.5;
+      }
+      break;
+  }
+
+  return 1;
 }

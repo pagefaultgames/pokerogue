@@ -45,7 +45,7 @@ import {
 } from "#mystery-encounters/mystery-encounter-requirements";
 import { getRandomPartyMemberFunc, trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#trainers/trainer-party-template";
-import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import type { OptionSelectItem } from "#ui/base-option-select-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
 import { randSeedInt, randSeedShuffle } from "#utils/common";
 import i18next from "i18next";

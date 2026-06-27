@@ -1,6 +1,6 @@
 import { EVOLVE_MOVE, RELEARN_MOVE } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { EvoCondKey, EvolutionItem, SpeciesEvolution, SpeciesFormEvolution } from "#balance/pokemon-evolutions";
+import { EvoCondKey, EvolutionItem, SpeciesEvolution } from "#balance/pokemon-evolutions";
 import { GrowthRate } from "#data/exp";
 import {
   MeloettaFormChangePostMoveTrigger,
@@ -8,7 +8,6 @@ import {
   SpeciesFormChangeItemTrigger,
   SpeciesFormChangeMoveLearnedTrigger,
 } from "#data/form-change-triggers";
-import { Gender } from "#data/gender";
 import {
   getSpeciesDependentFormChangeCondition,
   SpeciesFormChange,
@@ -86,6 +85,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.FIRE_PUNCH,
       MoveId.THUNDER_PUNCH,
       MoveId.MEGA_KICK,
+      MoveId.DOUBLE_EDGE,
       MoveId.FLAMETHROWER,
       MoveId.HYPER_BEAM,
       MoveId.SOLAR_BEAM,
@@ -215,12 +215,14 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     ],
     tms: [
       MoveId.SWORDS_DANCE,
+      MoveId.TAKE_DOWN,
       MoveId.DOUBLE_EDGE,
       MoveId.SOLAR_BEAM,
       MoveId.TOXIC,
       MoveId.DOUBLE_TEAM,
       MoveId.LIGHT_SCREEN,
       MoveId.REFLECT,
+      MoveId.SWIFT,
       MoveId.FLASH,
       MoveId.REST,
       MoveId.SUBSTITUTE,
@@ -315,9 +317,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [48, MoveId.GASTRO_ACID],
       [52, MoveId.LEAF_STORM],
     ],
-    tms: [
-      ...generationFiveSpeciesData[SpeciesId.SNIVY].tms, // - Magical leaf, grassy terrain
-    ],
+    tms: [],
   };
   generationFiveSpeciesData[SpeciesId.SERPERIOR] = {
     species: new PokemonSpecies({
@@ -367,10 +367,10 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [62, MoveId.LEAF_STORM],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.SERVINE].tms,
       MoveId.BODY_SLAM,
       MoveId.HYPER_BEAM,
       MoveId.STRENGTH,
+      MoveId.SCARY_FACE,
       MoveId.OUTRAGE,
       MoveId.ROCK_SMASH,
       MoveId.FRENZY_PLANT,
@@ -432,6 +432,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [43, MoveId.FLARE_BLITZ],
     ],
     tms: [
+      MoveId.FIRE_PUNCH,
       MoveId.BODY_SLAM,
       MoveId.TAKE_DOWN,
       MoveId.DOUBLE_EDGE,
@@ -449,6 +450,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.SNORE,
       MoveId.CURSE,
       MoveId.PROTECT,
+      MoveId.MUD_SLAP,
       MoveId.ENDURE,
       MoveId.SWAGGER,
       MoveId.ATTRACT,
@@ -541,12 +543,11 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [52, MoveId.FLARE_BLITZ],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.TEPIG].tms,
-      MoveId.FIRE_PUNCH,
       MoveId.THUNDER_PUNCH,
       MoveId.LOW_KICK,
       MoveId.ROCK_SLIDE,
       MoveId.REVERSAL,
+      MoveId.SCARY_FACE,
       MoveId.FOCUS_PUNCH,
       MoveId.BRICK_BREAK,
       MoveId.KNOCK_OFF,
@@ -589,10 +590,69 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       growthRate: GrowthRate.MEDIUM_SLOW,
       malePercent: 87.5,
       genderDiffs: false,
+      canChangeForm: true,
+      forms: [
+        new PokemonForm({
+          formName: "Normal",
+          formKey: "",
+          type1: PokemonType.FIRE,
+          type2: PokemonType.FIGHTING,
+          height: 1.6,
+          weight: 150,
+          ability1: AbilityId.BLAZE,
+          ability2: AbilityId.NONE,
+          abilityHidden: AbilityId.RECKLESS,
+          baseTotal: 528,
+          baseHp: 110,
+          baseAtk: 123,
+          baseDef: 65,
+          baseSpatk: 100,
+          baseSpdef: 65,
+          baseSpd: 65,
+          catchRate: 45,
+          baseFriendship: 70,
+          baseExp: 264,
+          genderDiffs: false,
+          formSpriteKey: null,
+          isStarterSelectable: true,
+        }),
+        new PokemonForm({
+          formName: "Mega",
+          formKey: SpeciesFormKey.MEGA,
+          type1: PokemonType.FIRE,
+          type2: PokemonType.FIGHTING,
+          height: 1.8,
+          weight: 180.3,
+          ability1: AbilityId.MOLD_BREAKER,
+          ability2: AbilityId.NONE,
+          abilityHidden: AbilityId.MOLD_BREAKER,
+          baseTotal: 628,
+          baseHp: 110,
+          baseAtk: 148,
+          baseDef: 75,
+          baseSpatk: 110,
+          baseSpdef: 110,
+          baseSpd: 75,
+          catchRate: 75,
+          baseFriendship: 50,
+          baseExp: 168,
+        }),
+      ],
     }),
     starter: SpeciesId.TEPIG,
     evolutions: [],
-    passives: AbilityId.ROCK_HEAD,
+    formChanges: [
+      new SpeciesFormChange({
+        speciesId: SpeciesId.EMBOAR,
+        preFormKey: "",
+        evoFormKey: SpeciesFormKey.MEGA,
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.EMBOARITE),
+      }),
+    ],
+    passives: {
+      0: AbilityId.ROCK_HEAD,
+      1: AbilityId.MAGIC_GUARD,
+    },
     levelMoves: [
       [RELEARN_MOVE, MoveId.HAMMER_ARM],
       [1, MoveId.TACKLE],
@@ -616,7 +676,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [70, MoveId.HAMMER_ARM],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.PIGNITE].tms,
       MoveId.HYPER_BEAM,
       MoveId.EARTHQUAKE,
       MoveId.BLAST_BURN,
@@ -624,6 +683,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.IRON_HEAD,
       MoveId.SMACK_DOWN,
       MoveId.SCALD,
+      MoveId.SOLAR_BLADE,
       MoveId.BODY_PRESS,
       MoveId.HARD_PRESS,
     ],
@@ -808,11 +868,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [50, MoveId.SWORDS_DANCE],
       [53, MoveId.HYDRO_PUMP],
     ],
-    tms: [
-      ...generationFiveSpeciesData[SpeciesId.OSHAWOTT].tms, // - Screech, brine, assurance
-      MoveId.BRICK_BREAK,
-      MoveId.VACUUM_WAVE,
-    ],
+    tms: [MoveId.BRICK_BREAK, MoveId.VACUUM_WAVE],
   };
   generationFiveSpeciesData[SpeciesId.SAMUROTT] = {
     species: new PokemonSpecies({
@@ -866,7 +922,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [70, MoveId.MEGAHORN],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.DEWOTT].tms,
       MoveId.BODY_SLAM,
       MoveId.HYPER_BEAM,
       MoveId.STRENGTH,
@@ -946,6 +1001,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.SUBSTITUTE,
       MoveId.SNORE,
       MoveId.PROTECT,
+      MoveId.ENDURE,
       MoveId.SWAGGER,
       MoveId.ATTRACT,
       MoveId.SLEEP_TALK,
@@ -963,6 +1019,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.ENDEAVOR,
       MoveId.SECRET_POWER,
       MoveId.BULLET_SEED,
+      MoveId.MUD_SHOT,
       MoveId.COVET,
       MoveId.SHOCK_WAVE,
       MoveId.ASSURANCE,
@@ -1035,10 +1092,10 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [51, MoveId.DOUBLE_EDGE],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.PATRAT].tms, // - Screech, assurance
       MoveId.FIRE_PUNCH,
       MoveId.ICE_PUNCH,
       MoveId.THUNDER_PUNCH,
+      MoveId.DOUBLE_EDGE,
       MoveId.FLAMETHROWER,
       MoveId.HYPER_BEAM,
       MoveId.STRENGTH,
@@ -1204,11 +1261,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [60, MoveId.LAST_RESORT],
       [66, MoveId.GIGA_IMPACT],
     ],
-    tms: [
-      ...generationFiveSpeciesData[SpeciesId.LILLIPUP].tms, // - Mud slap
-      MoveId.SURF,
-      MoveId.STRENGTH,
-    ],
+    tms: [MoveId.SURF, MoveId.STRENGTH],
   };
   generationFiveSpeciesData[SpeciesId.STOUTLAND] = {
     species: new PokemonSpecies({
@@ -1259,14 +1312,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [70, MoveId.LAST_RESORT],
       [78, MoveId.GIGA_IMPACT],
     ],
-    tms: [
-      ...generationFiveSpeciesData[SpeciesId.HERDIER].tms,
-      MoveId.HYPER_BEAM,
-      MoveId.THUNDER,
-      MoveId.SUPERPOWER,
-      MoveId.IRON_HEAD,
-      MoveId.STOMPING_TANTRUM,
-    ],
+    tms: [MoveId.HYPER_BEAM, MoveId.THUNDER, MoveId.SUPERPOWER, MoveId.IRON_HEAD, MoveId.STOMPING_TANTRUM],
   };
   generationFiveSpeciesData[SpeciesId.PURRLOIN] = {
     species: new PokemonSpecies({
@@ -1432,12 +1478,16 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [58, MoveId.PLAY_ROUGH],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.PURRLOIN].tms,
       MoveId.HYPER_BEAM,
+      MoveId.CRUNCH,
       MoveId.ROCK_SMASH,
       MoveId.GIGA_IMPACT,
+      MoveId.THUNDER_FANG,
+      MoveId.ICE_FANG,
+      MoveId.FIRE_FANG,
       MoveId.PSYCHO_CUT,
       MoveId.THROAT_CHOP,
+      MoveId.PSYCHIC_FANGS,
       MoveId.SKITTER_SMACK,
       MoveId.BURNING_JEALOUSY,
     ],
@@ -1514,6 +1564,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.SNORE,
       MoveId.PROTECT,
       MoveId.GIGA_DRAIN,
+      MoveId.ENDURE,
       MoveId.SWAGGER,
       MoveId.ATTRACT,
       MoveId.SLEEP_TALK,
@@ -1559,6 +1610,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.DISARMING_VOICE,
       MoveId.CONFIDE,
       MoveId.TERA_BLAST,
+      MoveId.TRAILBLAZE,
     ],
   };
   generationFiveSpeciesData[SpeciesId.SIMISAGE] = {
@@ -1612,7 +1664,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [49, MoveId.FOCUS_BLAST],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.PANSAGE].tms, // - magical leaf, disarming voice
       MoveId.HYPER_BEAM,
       MoveId.ROCK_SLIDE,
       MoveId.SUPERPOWER,
@@ -1620,6 +1671,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.FOCUS_BLAST,
       MoveId.GIGA_IMPACT,
       MoveId.POWER_UP_PUNCH,
+      MoveId.SOLAR_BLADE,
       MoveId.THROAT_CHOP,
     ],
   };
@@ -1698,6 +1750,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.THIEF,
       MoveId.SNORE,
       MoveId.PROTECT,
+      MoveId.ENDURE,
       MoveId.SWAGGER,
       MoveId.ATTRACT,
       MoveId.SLEEP_TALK,
@@ -1794,15 +1847,16 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [49, MoveId.FOCUS_BLAST],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.PANSEAR].tms, // - crunch, disarming voice
       MoveId.HYPER_BEAM,
       MoveId.ROCK_SLIDE,
       MoveId.SUPERPOWER,
       MoveId.BRICK_BREAK,
+      MoveId.BLAZE_KICK,
       MoveId.FOCUS_BLAST,
       MoveId.GIGA_IMPACT,
       MoveId.POWER_UP_PUNCH,
       MoveId.THROAT_CHOP,
+      MoveId.SCORCHING_SANDS,
     ],
   };
   generationFiveSpeciesData[SpeciesId.PANPOUR] = {
@@ -1882,6 +1936,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.SNORE,
       MoveId.PROTECT,
       MoveId.ICY_WIND,
+      MoveId.ENDURE,
       MoveId.SWAGGER,
       MoveId.ATTRACT,
       MoveId.SLEEP_TALK,
@@ -1924,7 +1979,9 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.WORK_UP,
       MoveId.DISARMING_VOICE,
       MoveId.CONFIDE,
+      MoveId.FLIP_TURN,
       MoveId.TERA_BLAST,
+      MoveId.CHILLING_WATER,
     ],
   };
   generationFiveSpeciesData[SpeciesId.SIMIPOUR] = {
@@ -1979,7 +2036,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [49, MoveId.FOCUS_BLAST],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.PANPOUR].tms, // - brine, disarming voice
       MoveId.HYPER_BEAM,
       MoveId.ROCK_SLIDE,
       MoveId.SUPERPOWER,
@@ -1988,6 +2044,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.GIGA_IMPACT,
       MoveId.POWER_UP_PUNCH,
       MoveId.THROAT_CHOP,
+      MoveId.LIQUIDATION,
     ],
   };
   generationFiveSpeciesData[SpeciesId.MUNNA] = {
@@ -2070,6 +2127,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.CURSE,
       MoveId.PROTECT,
       MoveId.ENDURE,
+      MoveId.CHARM,
       MoveId.SWAGGER,
       MoveId.ATTRACT,
       MoveId.SLEEP_TALK,
@@ -2091,6 +2149,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.IMPRISON,
       MoveId.SECRET_POWER,
       MoveId.ROCK_TOMB,
+      MoveId.SILVER_WIND,
       MoveId.SIGNAL_BEAM,
       MoveId.CALM_MIND,
       MoveId.SHOCK_WAVE,
@@ -2103,6 +2162,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.ZEN_HEADBUTT,
       MoveId.TRICK_ROOM,
       MoveId.CHARGE_BEAM,
+      MoveId.OMINOUS_WIND,
       MoveId.WONDER_ROOM,
       MoveId.PSYSHOCK,
       MoveId.ROUND,
@@ -2167,13 +2227,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [49, MoveId.SYNCHRONOISE],
       [53, MoveId.WONDER_ROOM],
     ],
-    tms: [
-      ...generationFiveSpeciesData[SpeciesId.MUNNA].tms,
-      MoveId.HYPER_BEAM,
-      MoveId.GIGA_IMPACT,
-      MoveId.PSYCHIC_TERRAIN,
-      MoveId.MISTY_EXPLOSION,
-    ],
+    tms: [MoveId.HYPER_BEAM, MoveId.GIGA_IMPACT, MoveId.PSYCHIC_TERRAIN, MoveId.MISTY_EXPLOSION],
   };
   generationFiveSpeciesData[SpeciesId.PIDOVE] = {
     species: new PokemonSpecies({
@@ -2311,7 +2365,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [50, MoveId.TAILWIND],
       [54, MoveId.SKY_ATTACK],
     ],
-    tms: [...generationFiveSpeciesData[SpeciesId.PIDOVE].tms],
+    tms: [],
   };
   generationFiveSpeciesData[SpeciesId.UNFEZANT] = {
     species: new PokemonSpecies({
@@ -2359,14 +2413,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [55, MoveId.FACADE],
       [60, MoveId.SKY_ATTACK],
     ],
-    tms: [
-      ...generationFiveSpeciesData[SpeciesId.TRANQUILL].tms,
-      MoveId.HYPER_BEAM,
-      MoveId.PSYCH_UP,
-      MoveId.BRAVE_BIRD,
-      MoveId.GIGA_IMPACT,
-      MoveId.HURRICANE,
-    ],
+    tms: [MoveId.HYPER_BEAM, MoveId.PSYCH_UP, MoveId.BRAVE_BIRD, MoveId.GIGA_IMPACT, MoveId.HURRICANE],
   };
   generationFiveSpeciesData[SpeciesId.BLITZLE] = {
     species: new PokemonSpecies({
@@ -2427,6 +2474,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.SCREECH,
       MoveId.DOUBLE_TEAM,
       MoveId.LIGHT_SCREEN,
+      MoveId.SWIFT,
       MoveId.FLASH,
       MoveId.REST,
       MoveId.SUBSTITUTE,
@@ -2441,6 +2489,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.HIDDEN_POWER,
       MoveId.RAIN_DANCE,
       MoveId.SUNNY_DAY,
+      MoveId.UPROAR,
       MoveId.FACADE,
       MoveId.CHARGE,
       MoveId.HELPING_HAND,
@@ -2454,8 +2503,11 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.FLAME_CHARGE,
       MoveId.ROUND,
       MoveId.VOLT_SWITCH,
+      MoveId.ELECTROWEB,
       MoveId.WILD_CHARGE,
       MoveId.CONFIDE,
+      MoveId.EERIE_IMPULSE,
+      MoveId.ELECTRIC_TERRAIN,
       MoveId.SMART_STRIKE,
       MoveId.TERA_BLAST,
       MoveId.TRAILBLAZE,
@@ -2508,7 +2560,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [58, MoveId.ION_DELUGE],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.BLITZLE].tms, // - take down, screech, endure
       MoveId.ROAR,
       MoveId.HYPER_BEAM,
       MoveId.ROCK_SMASH,
@@ -2663,11 +2714,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [48, MoveId.STONE_EDGE],
       [54, MoveId.EXPLOSION],
     ],
-    tms: [
-      ...generationFiveSpeciesData[SpeciesId.ROGGENROLA].tms, // - take down
-      MoveId.POWER_GEM,
-      MoveId.STOMPING_TANTRUM,
-    ],
+    tms: [MoveId.POWER_GEM, MoveId.STOMPING_TANTRUM],
   };
   generationFiveSpeciesData[SpeciesId.GIGALITH] = {
     species: new PokemonSpecies({
@@ -2715,7 +2762,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [54, MoveId.EXPLOSION],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.BOLDORE].tms,
       MoveId.HYPER_BEAM,
       MoveId.SOLAR_BEAM,
       MoveId.SELF_DESTRUCT,
@@ -2906,12 +2952,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [50, MoveId.FUTURE_SIGHT],
       [55, MoveId.SIMPLE_BEAM],
     ],
-    tms: [
-      ...generationFiveSpeciesData[SpeciesId.WOOBAT].tms,
-      MoveId.HYPER_BEAM,
-      MoveId.GIGA_IMPACT,
-      MoveId.PSYCHIC_FANGS,
-    ],
+    tms: [MoveId.HYPER_BEAM, MoveId.GIGA_IMPACT, MoveId.PSYCHIC_FANGS],
   };
   generationFiveSpeciesData[SpeciesId.DRILBUR] = {
     species: new PokemonSpecies({
@@ -2965,6 +3006,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     tms: [
       MoveId.SWORDS_DANCE,
       MoveId.BODY_SLAM,
+      MoveId.TAKE_DOWN,
       MoveId.DOUBLE_EDGE,
       MoveId.HYDRO_PUMP,
       MoveId.STRENGTH,
@@ -3013,6 +3055,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.DRILL_RUN,
       MoveId.CONFIDE,
       MoveId.HIGH_HORSEPOWER,
+      MoveId.STOMPING_TANTRUM,
       MoveId.SCORCHING_SANDS,
       MoveId.TERA_BLAST,
     ],
@@ -3042,10 +3085,69 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       growthRate: GrowthRate.MEDIUM_FAST,
       malePercent: 50,
       genderDiffs: false,
+      canChangeForm: true,
+      forms: [
+        new PokemonForm({
+          formName: "Normal",
+          formKey: "",
+          type1: PokemonType.GROUND,
+          type2: PokemonType.STEEL,
+          height: 0.7,
+          weight: 40.4,
+          ability1: AbilityId.SAND_RUSH,
+          ability2: AbilityId.SAND_FORCE,
+          abilityHidden: AbilityId.MOLD_BREAKER,
+          baseTotal: 508,
+          baseHp: 110,
+          baseAtk: 135,
+          baseDef: 60,
+          baseSpatk: 50,
+          baseSpdef: 65,
+          baseSpd: 88,
+          catchRate: 60,
+          baseFriendship: 50,
+          baseExp: 178,
+          genderDiffs: false,
+          formSpriteKey: null,
+          isStarterSelectable: true,
+        }),
+        new PokemonForm({
+          formName: "Mega",
+          formKey: SpeciesFormKey.MEGA,
+          type1: PokemonType.GROUND,
+          type2: PokemonType.STEEL,
+          height: 0.9,
+          weight: 60,
+          ability1: AbilityId.PIERCING_DRILL,
+          ability2: AbilityId.PIERCING_DRILL,
+          abilityHidden: AbilityId.PIERCING_DRILL,
+          baseTotal: 608,
+          baseHp: 110,
+          baseAtk: 165,
+          baseDef: 100,
+          baseSpatk: 65,
+          baseSpdef: 65,
+          baseSpd: 103,
+          catchRate: 60,
+          baseFriendship: 50,
+          baseExp: 178,
+        }),
+      ],
     }),
     starter: SpeciesId.DRILBUR,
     evolutions: [],
-    passives: AbilityId.STURDY,
+    formChanges: [
+      new SpeciesFormChange({
+        speciesId: SpeciesId.EXCADRILL,
+        preFormKey: "",
+        evoFormKey: SpeciesFormKey.MEGA,
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.EXCADRITE),
+      }),
+    ],
+    passives: {
+      0: AbilityId.STURDY,
+      1: AbilityId.MOLD_BREAKER,
+    },
     levelMoves: [
       [RELEARN_MOVE, MoveId.ROTOTILLER],
       [EVOLVE_MOVE, MoveId.HORN_DRILL],
@@ -3068,8 +3170,8 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [68, MoveId.FISSURE],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.DRILBUR].tms,
       MoveId.HYPER_BEAM,
+      MoveId.SCARY_FACE,
       MoveId.ROCK_BLAST,
       MoveId.FOCUS_BLAST,
       MoveId.GIGA_IMPACT,
@@ -3077,7 +3179,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.THROAT_CHOP,
       MoveId.SMART_STRIKE,
       MoveId.BRUTAL_SWING,
-      MoveId.STOMPING_TANTRUM,
       MoveId.STEEL_BEAM,
     ],
   };
@@ -3204,6 +3305,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.MEGA_KICK,
       MoveId.BODY_SLAM,
       MoveId.TAKE_DOWN,
+      MoveId.DOUBLE_EDGE,
       MoveId.FLAMETHROWER,
       MoveId.SURF,
       MoveId.ICE_BEAM,
@@ -3452,7 +3554,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [54, MoveId.SUPERPOWER],
       [60, MoveId.FOCUS_PUNCH],
     ],
-    tms: [...generationFiveSpeciesData[SpeciesId.TIMBURR].tms, MoveId.HIGH_HORSEPOWER],
+    tms: [MoveId.HIGH_HORSEPOWER],
   };
   generationFiveSpeciesData[SpeciesId.CONKELDURR] = {
     species: new PokemonSpecies({
@@ -3503,7 +3605,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [60, MoveId.FOCUS_PUNCH],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.GURDURR].tms,
       MoveId.BODY_SLAM,
       MoveId.HYPER_BEAM,
       MoveId.EARTHQUAKE,
@@ -3652,7 +3753,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [60, MoveId.HYDRO_PUMP],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.TYMPOLE].tms, // - Mud slap
       MoveId.ROCK_SMASH,
       MoveId.FOCUS_PUNCH,
       MoveId.GASTRO_ACID,
@@ -3710,7 +3810,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [70, MoveId.HYDRO_PUMP],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.PALPITOAD].tms,
       MoveId.MEGA_PUNCH,
       MoveId.ICE_PUNCH,
       MoveId.MEGA_KICK,
@@ -4039,6 +4138,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.FACADE,
       MoveId.NATURE_POWER,
       MoveId.SECRET_POWER,
+      MoveId.SILVER_WIND,
       MoveId.SIGNAL_BEAM,
       MoveId.IRON_DEFENSE,
       MoveId.MAGICAL_LEAF,
@@ -4113,9 +4213,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [36, MoveId.BUG_BUZZ],
       [43, MoveId.FLAIL],
     ],
-    tms: [
-      ...generationFiveSpeciesData[SpeciesId.SEWADDLE].tms, // - agility
-    ],
+    tms: [],
   };
   generationFiveSpeciesData[SpeciesId.LEAVANNY] = {
     species: new PokemonSpecies({
@@ -4163,13 +4261,13 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [50, MoveId.LEAF_STORM],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.SWADLOON].tms,
       MoveId.SWORDS_DANCE,
       MoveId.HYPER_BEAM,
       MoveId.LOW_KICK,
       MoveId.REFLECT,
       MoveId.FALSE_SWIPE,
       MoveId.STEEL_WING,
+      MoveId.HEAL_BELL,
       MoveId.HELPING_HAND,
       MoveId.KNOCK_OFF,
       MoveId.BULLET_SEED,
@@ -4239,6 +4337,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     ],
     tms: [
       MoveId.TAKE_DOWN,
+      MoveId.DOUBLE_EDGE,
       MoveId.PIN_MISSILE,
       MoveId.SOLAR_BEAM,
       MoveId.TOXIC,
@@ -4332,7 +4431,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [50, MoveId.ROCK_CLIMB],
       [55, MoveId.DOUBLE_EDGE],
     ],
-    tms: [...generationFiveSpeciesData[SpeciesId.VENIPEDE].tms],
+    tms: [],
   };
   generationFiveSpeciesData[SpeciesId.SCOLIPEDE] = {
     species: new PokemonSpecies({
@@ -4359,10 +4458,69 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       growthRate: GrowthRate.MEDIUM_SLOW,
       malePercent: 50,
       genderDiffs: false,
+      canChangeForm: true,
+      forms: [
+        new PokemonForm({
+          formName: "Normal",
+          formKey: "",
+          type1: PokemonType.BUG,
+          type2: PokemonType.POISON,
+          height: 2.5,
+          weight: 200.5,
+          ability1: AbilityId.POISON_POINT,
+          ability2: AbilityId.SWARM,
+          abilityHidden: AbilityId.SPEED_BOOST,
+          baseTotal: 485,
+          baseHp: 60,
+          baseAtk: 100,
+          baseDef: 89,
+          baseSpatk: 55,
+          baseSpdef: 69,
+          baseSpd: 112,
+          catchRate: 45,
+          baseFriendship: 50,
+          baseExp: 243,
+          genderDiffs: false,
+          formSpriteKey: null,
+          isStarterSelectable: true,
+        }),
+        new PokemonForm({
+          formName: "Mega",
+          formKey: SpeciesFormKey.MEGA,
+          type1: PokemonType.BUG,
+          type2: PokemonType.POISON,
+          height: 3.2,
+          weight: 230.5,
+          ability1: AbilityId.SHELL_ARMOR,
+          ability2: AbilityId.SHELL_ARMOR,
+          abilityHidden: AbilityId.SHELL_ARMOR,
+          baseTotal: 585,
+          baseHp: 60,
+          baseAtk: 140,
+          baseDef: 149,
+          baseSpatk: 75,
+          baseSpdef: 99,
+          baseSpd: 62,
+          catchRate: 45,
+          baseFriendship: 50,
+          baseExp: 243,
+        }),
+      ],
     }),
     starter: SpeciesId.VENIPEDE,
     evolutions: [],
-    passives: AbilityId.STAMINA,
+    formChanges: [
+      new SpeciesFormChange({
+        speciesId: SpeciesId.SCOLIPEDE,
+        preFormKey: "",
+        evoFormKey: SpeciesFormKey.MEGA,
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.SCOLIPITE),
+      }),
+    ],
+    passives: {
+      0: AbilityId.STAMINA,
+      1: AbilityId.SPEED_BOOST,
+    },
     levelMoves: [
       [EVOLVE_MOVE, MoveId.BATON_PASS],
       [1, MoveId.DEFENSE_CURL],
@@ -4387,12 +4545,12 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [74, MoveId.MEGAHORN],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.WHIRLIPEDE].tms,
       MoveId.SWORDS_DANCE,
       MoveId.HYPER_BEAM,
       MoveId.STRENGTH,
       MoveId.EARTHQUAKE,
       MoveId.DIG,
+      MoveId.LEECH_LIFE,
       MoveId.ROCK_SLIDE,
       MoveId.MEGAHORN,
       MoveId.BATON_PASS,
@@ -4404,10 +4562,14 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.X_SCISSOR,
       MoveId.GIGA_IMPACT,
       MoveId.CROSS_POISON,
+      MoveId.GUNK_SHOT,
+      MoveId.ACID_SPRAY,
       MoveId.BULLDOZE,
       MoveId.THROAT_CHOP,
       MoveId.SMART_STRIKE,
       MoveId.STOMPING_TANTRUM,
+      MoveId.POUNCE,
+      MoveId.TRAILBLAZE,
     ],
   };
   generationFiveSpeciesData[SpeciesId.COTTONEE] = {
@@ -4568,7 +4730,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [48, MoveId.MOONBLAST],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.COTTONEE].tms,
       MoveId.HYPER_BEAM,
       MoveId.PSYCHIC,
       MoveId.LIGHT_SCREEN,
@@ -4741,7 +4902,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [45, MoveId.PETAL_BLIZZARD],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.PETILIL].tms,
       MoveId.SWORDS_DANCE,
       MoveId.HYPER_BEAM,
       MoveId.LIGHT_SCREEN,
@@ -4830,60 +4990,18 @@ export function initGenerationFive(): SpeciesDataMapConfig {
           formSpriteKey: null,
           isStarterSelectable: true,
         }),
-        new PokemonForm({
-          formName: "White-Striped Form",
-          formKey: "white-striped",
-          type1: PokemonType.WATER,
-          type2: null,
-          height: 1,
-          weight: 18,
-          ability1: AbilityId.RATTLED,
-          ability2: AbilityId.ADAPTABILITY,
-          abilityHidden: AbilityId.MOLD_BREAKER,
-          baseTotal: 460,
-          baseHp: 70,
-          baseAtk: 92,
-          baseDef: 65,
-          baseSpatk: 80,
-          baseSpdef: 55,
-          baseSpd: 98,
-          catchRate: 190,
-          baseFriendship: 50,
-          baseExp: 161,
-          genderDiffs: false,
-          formSpriteKey: null,
-          isStarterSelectable: true,
-        }),
       ],
     }),
     starter: SpeciesId.BASCULIN,
-    starterCost: 4,
-    evolutions: [
-      // TODO: Uncomment evo delay when different evo condition is implemented
-      new SpeciesFormEvolution({
-        speciesId: SpeciesId.BASCULEGION,
-        preFormKey: "white-striped",
-        evoFormKey: "female",
-        level: 40,
-        condition: [{ key: EvoCondKey.GENDER, gender: Gender.FEMALE }],
-        /* evoDelay: [45, 65, 85] */
-      }),
-      new SpeciesFormEvolution({
-        speciesId: SpeciesId.BASCULEGION,
-        preFormKey: "white-striped",
-        evoFormKey: "male",
-        level: 40,
-        condition: [{ key: EvoCondKey.GENDER, gender: Gender.MALE }],
-        /* evoDelay: [45, 65, 85] */
-      }),
-    ],
-    eggTier: EggTier.RARE,
+    starterCost: 3,
+    evolutions: [],
+    eggTier: EggTier.COMMON,
     passives: {
-      0: AbilityId.ROCK_HEAD,
-      1: AbilityId.RECKLESS,
-      2: AbilityId.SUPREME_OVERLORD,
+      0: AbilityId.MOXIE,
+      1: AbilityId.MOXIE,
     },
     levelMoves: [
+      [RELEARN_MOVE, MoveId.UPROAR],
       [1, MoveId.TAIL_WHIP],
       [1, MoveId.WATER_GUN],
       [3, MoveId.TACKLE],
@@ -4897,22 +5015,12 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [28, MoveId.SOAK],
       [32, MoveId.CRUNCH],
       [36, MoveId.TAKE_DOWN],
+      [40, MoveId.FINAL_GAMBIT],
       [44, MoveId.WAVE_CRASH],
       [48, MoveId.THRASH],
       [52, MoveId.DOUBLE_EDGE],
       [56, MoveId.HEAD_SMASH],
     ],
-    formLevelMoves: {
-      "": [
-        [RELEARN_MOVE, MoveId.UPROAR],
-        [40, MoveId.FINAL_GAMBIT],
-      ],
-      "blue-striped": [
-        [RELEARN_MOVE, MoveId.UPROAR],
-        [40, MoveId.FINAL_GAMBIT],
-      ],
-      "white-striped": [[40, MoveId.UPROAR]],
-    },
     tms: [
       MoveId.TAKE_DOWN,
       MoveId.DOUBLE_EDGE,
@@ -4920,6 +5028,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.SURF,
       MoveId.ICE_BEAM,
       MoveId.BLIZZARD,
+      MoveId.HYPER_BEAM,
       MoveId.TOXIC,
       MoveId.AGILITY,
       MoveId.DOUBLE_TEAM,
@@ -4928,6 +5037,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.REST,
       MoveId.SUBSTITUTE,
       MoveId.SNORE,
+      MoveId.REVERSAL,
       MoveId.PROTECT,
       MoveId.SCARY_FACE,
       MoveId.ICY_WIND,
@@ -4955,6 +5065,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.WATER_PULSE,
       MoveId.BRINE,
       MoveId.ASSURANCE,
+      MoveId.GIGA_IMPACT,
       MoveId.ICE_FANG,
       MoveId.ZEN_HEADBUTT,
       MoveId.ROUND,
@@ -4968,10 +5079,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.SNOWSCAPE,
       MoveId.CHILLING_WATER,
     ],
-    formTms: {
-      "red-striped": [MoveId.HYPER_BEAM, MoveId.REVERSAL, MoveId.GIGA_IMPACT],
-      "blue-striped": [MoveId.HYPER_BEAM, MoveId.REVERSAL, MoveId.GIGA_IMPACT],
-    },
   };
   generationFiveSpeciesData[SpeciesId.SANDILE] = {
     species: new PokemonSpecies({
@@ -5147,7 +5254,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [52, MoveId.THRASH],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.SANDILE].tms,
       MoveId.MEGA_PUNCH,
       MoveId.MEGA_KICK,
       MoveId.LOW_KICK,
@@ -5219,7 +5325,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [60, MoveId.OUTRAGE],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.KROKOROK].tms,
       MoveId.HYPER_BEAM,
       MoveId.OUTRAGE,
       MoveId.SUPERPOWER,
@@ -5229,6 +5334,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.FOCUS_BLAST,
       MoveId.GIGA_IMPACT,
       MoveId.GUNK_SHOT,
+      MoveId.IRON_HEAD,
       MoveId.SMACK_DOWN,
       MoveId.DARKEST_LARIAT,
       MoveId.HIGH_HORSEPOWER,
@@ -5465,7 +5571,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [62, MoveId.OVERHEAT],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.DARUMAKA].tms, // - take down
       MoveId.BODY_SLAM,
       MoveId.HYPER_BEAM,
       MoveId.EARTHQUAKE,
@@ -5743,7 +5848,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [56, MoveId.ROCK_WRECKER],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.DWEBBLE].tms,
       MoveId.HYPER_BEAM,
       MoveId.GIGA_IMPACT,
       MoveId.HEAVY_SLAM,
@@ -5811,6 +5915,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.ICE_PUNCH,
       MoveId.THUNDER_PUNCH,
       MoveId.MEGA_KICK,
+      MoveId.TAKE_DOWN,
       MoveId.DOUBLE_EDGE,
       MoveId.ROAR,
       MoveId.LOW_KICK,
@@ -5844,6 +5949,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.CRUNCH,
       MoveId.ROCK_SMASH,
       MoveId.BEAT_UP,
+      MoveId.UPROAR,
       MoveId.TORMENT,
       MoveId.FACADE,
       MoveId.FOCUS_PUNCH,
@@ -5886,6 +5992,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.SNARL,
       MoveId.CONFIDE,
       MoveId.POWER_UP_PUNCH,
+      MoveId.THROAT_CHOP,
       MoveId.LASH_OUT,
       MoveId.COACHING,
       MoveId.TERA_BLAST,
@@ -5918,10 +6025,69 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       growthRate: GrowthRate.MEDIUM_FAST,
       malePercent: 50,
       genderDiffs: false,
+      canChangeForm: true,
+      forms: [
+        new PokemonForm({
+          formName: "Normal",
+          formKey: "",
+          type1: PokemonType.DARK,
+          type2: PokemonType.FIGHTING,
+          height: 1.1,
+          weight: 30,
+          ability1: AbilityId.SHED_SKIN,
+          ability2: AbilityId.MOXIE,
+          abilityHidden: AbilityId.INTIMIDATE,
+          baseTotal: 488,
+          baseHp: 65,
+          baseAtk: 90,
+          baseDef: 115,
+          baseSpatk: 45,
+          baseSpdef: 115,
+          baseSpd: 58,
+          catchRate: 90,
+          baseFriendship: 50,
+          baseExp: 171,
+          genderDiffs: false,
+          formSpriteKey: null,
+          isStarterSelectable: true,
+        }),
+        new PokemonForm({
+          formName: "Mega",
+          formKey: SpeciesFormKey.MEGA,
+          type1: PokemonType.DARK,
+          type2: PokemonType.FIGHTING,
+          height: 1.1,
+          weight: 31,
+          ability1: AbilityId.INTIMIDATE,
+          ability2: AbilityId.INTIMIDATE,
+          abilityHidden: AbilityId.INTIMIDATE,
+          baseTotal: 588,
+          baseHp: 65,
+          baseAtk: 130,
+          baseDef: 135,
+          baseSpatk: 55,
+          baseSpdef: 135,
+          baseSpd: 68,
+          catchRate: 90,
+          baseFriendship: 50,
+          baseExp: 171,
+        }),
+      ],
     }),
     starter: SpeciesId.SCRAGGY,
     evolutions: [],
-    passives: AbilityId.UNBURDEN,
+    formChanges: [
+      new SpeciesFormChange({
+        speciesId: SpeciesId.SCRAFTY,
+        preFormKey: "",
+        evoFormKey: SpeciesFormKey.MEGA,
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.SCRAFTINITE),
+      }),
+    ],
+    passives: {
+      0: AbilityId.UNBURDEN,
+      1: AbilityId.MOXIE,
+    },
     levelMoves: [
       [RELEARN_MOVE, MoveId.PROTECT],
       [1, MoveId.HEADBUTT],
@@ -5944,10 +6110,10 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [65, MoveId.HEAD_SMASH],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.SCRAGGY].tms,
       MoveId.SWORDS_DANCE,
       MoveId.BODY_SLAM,
       MoveId.HYPER_BEAM,
+      MoveId.METRONOME,
       MoveId.REVERSAL,
       MoveId.OUTRAGE,
       MoveId.GIGA_IMPACT,
@@ -6037,6 +6203,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.HIDDEN_POWER,
       MoveId.RAIN_DANCE,
       MoveId.PSYCH_UP,
+      MoveId.ANCIENT_POWER,
       MoveId.SHADOW_BALL,
       MoveId.FUTURE_SIGHT,
       MoveId.HEAT_WAVE,
@@ -6138,6 +6305,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.NIGHT_SHADE,
       MoveId.DOUBLE_TEAM,
       MoveId.HAZE,
+      MoveId.SELF_DESTRUCT,
       MoveId.DREAM_EATER,
       MoveId.FLASH,
       MoveId.REST,
@@ -6177,6 +6345,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.NASTY_PLOT,
       MoveId.ZEN_HEADBUTT,
       MoveId.TRICK_ROOM,
+      MoveId.OMINOUS_WIND,
       MoveId.WONDER_ROOM,
       MoveId.ROUND,
       MoveId.ALLY_SWITCH,
@@ -6242,9 +6411,9 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [62, MoveId.DESTINY_BOND],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.YAMASK].tms,
       MoveId.HYPER_BEAM,
       MoveId.SCARY_FACE,
+      MoveId.GIGA_DRAIN,
       MoveId.REVENGE,
       MoveId.POWER_SWAP,
       MoveId.GUARD_SWAP,
@@ -6323,6 +6492,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.ROCK_SLIDE,
       MoveId.SUBSTITUTE,
       MoveId.SNORE,
+      MoveId.CURSE,
       MoveId.PROTECT,
       MoveId.ICY_WIND,
       MoveId.SANDSTORM,
@@ -6335,6 +6505,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.HIDDEN_POWER,
       MoveId.RAIN_DANCE,
       MoveId.CRUNCH,
+      MoveId.ANCIENT_POWER,
       MoveId.ROCK_SMASH,
       MoveId.WHIRLPOOL,
       MoveId.FACADE,
@@ -6416,7 +6587,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [51, MoveId.SHELL_SMASH],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.TIRTOUGA].tms,
       MoveId.HYPER_BEAM,
       MoveId.LOW_KICK,
       MoveId.SUPERPOWER,
@@ -6502,6 +6672,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.IRON_TAIL,
       MoveId.HIDDEN_POWER,
       MoveId.CRUNCH,
+      MoveId.ANCIENT_POWER,
       MoveId.ROCK_SMASH,
       MoveId.UPROAR,
       MoveId.HEAT_WAVE,
@@ -6595,7 +6766,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [51, MoveId.ENDEAVOR],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.ARCHEN].tms,
       MoveId.FLY,
       MoveId.HYPER_BEAM,
       MoveId.OUTRAGE,
@@ -6687,9 +6857,11 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.FACADE,
       MoveId.RECYCLE,
       MoveId.SECRET_POWER,
+      MoveId.MUD_SHOT,
       MoveId.ROCK_BLAST,
       MoveId.PAYBACK,
       MoveId.TOXIC_SPIKES,
+      MoveId.POISON_JAB,
       MoveId.DARK_PULSE,
       MoveId.SEED_BOMB,
       MoveId.DRAIN_PUNCH,
@@ -6818,7 +6990,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [48, MoveId.EXPLOSION],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.TRUBBISH].tms,
       MoveId.BODY_SLAM,
       MoveId.HYPER_BEAM,
       MoveId.SOLAR_BEAM,
@@ -6826,6 +6997,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.PSYCHIC,
       MoveId.SCREECH,
       MoveId.METAL_CLAW,
+      MoveId.ANCIENT_POWER,
       MoveId.FLING,
       MoveId.ROCK_POLISH,
       MoveId.FOCUS_BLAST,
@@ -7010,7 +7182,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [63, MoveId.FOUL_PLAY],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.ZORUA].tms,
       MoveId.MEGA_PUNCH,
       MoveId.MEGA_KICK,
       MoveId.BODY_SLAM,
@@ -7085,6 +7256,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [49, MoveId.AFTER_YOU],
     ],
     tms: [
+      MoveId.TAKE_DOWN,
       MoveId.THUNDERBOLT,
       MoveId.THUNDER_WAVE,
       MoveId.DIG,
@@ -7196,7 +7368,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [49, MoveId.AFTER_YOU],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.MINCCINO].tms, // - mud slap
       MoveId.DOUBLE_EDGE,
       MoveId.HYPER_BEAM,
       MoveId.THUNDER,
@@ -7381,7 +7552,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [50, MoveId.HEAL_BLOCK],
       [53, MoveId.MAGIC_ROOM],
     ],
-    tms: [...generationFiveSpeciesData[SpeciesId.GOTHITA].tms, MoveId.METRONOME],
+    tms: [MoveId.METRONOME],
   };
   generationFiveSpeciesData[SpeciesId.GOTHITELLE] = {
     species: new PokemonSpecies({
@@ -7434,7 +7605,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [59, MoveId.MAGIC_ROOM],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.GOTHORITA].tms,
       MoveId.BODY_SLAM,
       MoveId.HYPER_BEAM,
       MoveId.BRICK_BREAK,
@@ -7509,6 +7679,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.CONFUSE_RAY,
       MoveId.LIGHT_SCREEN,
       MoveId.REFLECT,
+      MoveId.SWIFT,
       MoveId.DREAM_EATER,
       MoveId.FLASH,
       MoveId.EXPLOSION,
@@ -7617,9 +7788,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [50, MoveId.HEAL_BLOCK],
       [53, MoveId.WONDER_ROOM],
     ],
-    tms: [
-      ...generationFiveSpeciesData[SpeciesId.SOLOSIS].tms, // - sunny day
-    ],
+    tms: [],
   };
   generationFiveSpeciesData[SpeciesId.REUNICLUS] = {
     species: new PokemonSpecies({
@@ -7675,7 +7844,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [59, MoveId.WONDER_ROOM],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.DUOSION].tms,
       MoveId.MEGA_PUNCH,
       MoveId.FIRE_PUNCH,
       MoveId.ICE_PUNCH,
@@ -7842,7 +8010,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [55, MoveId.HURRICANE],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.DUCKLETT].tms,
       MoveId.HYDRO_PUMP,
       MoveId.HYPER_BEAM,
       MoveId.KNOCK_OFF,
@@ -7990,7 +8157,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [50, MoveId.BLIZZARD],
       [56, MoveId.SHEER_COLD],
     ],
-    tms: [...generationFiveSpeciesData[SpeciesId.VANILLITE].tms],
+    tms: [],
   };
   generationFiveSpeciesData[SpeciesId.VANILLUXE] = {
     species: new PokemonSpecies({
@@ -8042,13 +8209,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [52, MoveId.BLIZZARD],
       [60, MoveId.SHEER_COLD],
     ],
-    tms: [
-      ...generationFiveSpeciesData[SpeciesId.VANILLISH].tms,
-      MoveId.HYPER_BEAM,
-      MoveId.BEAT_UP,
-      MoveId.WEATHER_BALL,
-      MoveId.GIGA_IMPACT,
-    ],
+    tms: [MoveId.HYPER_BEAM, MoveId.BEAT_UP, MoveId.WEATHER_BALL, MoveId.GIGA_IMPACT, MoveId.CHILLING_WATER],
   };
   generationFiveSpeciesData[SpeciesId.DEERLING] = {
     species: new PokemonSpecies({
@@ -8418,7 +8579,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [60, MoveId.SOLAR_BEAM],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.DEERLING].tms,
       MoveId.SWORDS_DANCE,
       MoveId.HYPER_BEAM,
       MoveId.CURSE,
@@ -8602,6 +8762,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     tms: [
       MoveId.SWORDS_DANCE,
       MoveId.TAKE_DOWN,
+      MoveId.DOUBLE_EDGE,
       MoveId.COUNTER,
       MoveId.TOXIC,
       MoveId.SCREECH,
@@ -8693,7 +8854,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [60, MoveId.FELL_STINGER],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.KARRABLAST].tms,
       MoveId.HYPER_BEAM,
       MoveId.AGILITY,
       MoveId.REVERSAL,
@@ -8848,14 +9008,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [48, MoveId.SOLAR_BEAM],
       [54, MoveId.SPORE],
     ],
-    tms: [
-      ...generationFiveSpeciesData[SpeciesId.FOONGUS].tms,
-      MoveId.HYPER_BEAM,
-      MoveId.SCARY_FACE,
-      MoveId.GIGA_IMPACT,
-      MoveId.HEX,
-      MoveId.STOMPING_TANTRUM,
-    ],
+    tms: [MoveId.HYPER_BEAM, MoveId.SCARY_FACE, MoveId.GIGA_IMPACT, MoveId.HEX, MoveId.STOMPING_TANTRUM],
   };
   generationFiveSpeciesData[SpeciesId.FRILLISH] = {
     species: new PokemonSpecies({
@@ -8955,6 +9108,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.DARK_PULSE,
       MoveId.ENERGY_BALL,
       MoveId.TRICK_ROOM,
+      MoveId.OMINOUS_WIND,
       MoveId.SLUDGE_WAVE,
       MoveId.ROUND,
       MoveId.SCALD,
@@ -9015,12 +9169,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [55, MoveId.WRING_OUT],
       [61, MoveId.WATER_SPOUT],
     ],
-    tms: [
-      ...generationFiveSpeciesData[SpeciesId.FRILLISH].tms,
-      MoveId.HYPER_BEAM,
-      MoveId.MUDDY_WATER,
-      MoveId.GIGA_IMPACT,
-    ],
+    tms: [MoveId.HYPER_BEAM, MoveId.MUDDY_WATER, MoveId.GIGA_IMPACT],
   };
   generationFiveSpeciesData[SpeciesId.ALOMOMOLA] = {
     species: new PokemonSpecies({
@@ -9187,6 +9336,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.PIN_MISSILE,
       MoveId.THUNDERBOLT,
       MoveId.THUNDER_WAVE,
+      MoveId.THUNDER,
       MoveId.TOXIC,
       MoveId.AGILITY,
       MoveId.SCREECH,
@@ -9236,6 +9386,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.RISING_VOLTAGE,
       MoveId.SKITTER_SMACK,
       MoveId.TERA_BLAST,
+      MoveId.POUNCE,
     ],
   };
   generationFiveSpeciesData[SpeciesId.GALVANTULA] = {
@@ -9287,13 +9438,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [50, MoveId.GASTRO_ACID],
       [56, MoveId.BUG_BUZZ],
     ],
-    tms: [
-      ...generationFiveSpeciesData[SpeciesId.JOLTIK].tms, // - lunge
-      MoveId.HYPER_BEAM,
-      MoveId.THUNDER,
-      MoveId.GIGA_IMPACT,
-      MoveId.THROAT_CHOP,
-    ],
+    tms: [MoveId.HYPER_BEAM, MoveId.CHARGE, MoveId.GIGA_IMPACT, MoveId.THROAT_CHOP],
   };
   generationFiveSpeciesData[SpeciesId.FERROSEED] = {
     species: new PokemonSpecies({
@@ -9448,7 +9593,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [67, MoveId.EXPLOSION],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.FERROSEED].tms,
       MoveId.SWORDS_DANCE,
       MoveId.HYPER_BEAM,
       MoveId.STRENGTH,
@@ -9524,6 +9668,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.SUBSTITUTE,
       MoveId.SNORE,
       MoveId.PROTECT,
+      MoveId.ZAP_CANNON,
       MoveId.SANDSTORM,
       MoveId.ENDURE,
       MoveId.SWAGGER,
@@ -9602,7 +9747,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [54, MoveId.ZAP_CANNON],
       [60, MoveId.HYPER_BEAM],
     ],
-    tms: [...generationFiveSpeciesData[SpeciesId.KLINK].tms, MoveId.ALLY_SWITCH],
+    tms: [MoveId.ALLY_SWITCH],
   };
   generationFiveSpeciesData[SpeciesId.KLINKLANG] = {
     species: new PokemonSpecies({
@@ -9653,13 +9798,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [64, MoveId.ELECTRIC_TERRAIN],
       [72, MoveId.HYPER_BEAM],
     ],
-    tms: [
-      ...generationFiveSpeciesData[SpeciesId.KLANG].tms,
-      MoveId.THUNDER,
-      MoveId.GIGA_IMPACT,
-      MoveId.TRICK_ROOM,
-      MoveId.ELECTRIC_TERRAIN,
-    ],
+    tms: [MoveId.THUNDER, MoveId.GIGA_IMPACT, MoveId.TRICK_ROOM, MoveId.ELECTRIC_TERRAIN],
   };
   generationFiveSpeciesData[SpeciesId.TYNAMO] = {
     species: new PokemonSpecies({
@@ -9755,7 +9894,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [74, MoveId.THRASH],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.TYNAMO].tms,
       MoveId.BODY_SLAM,
       MoveId.TAKE_DOWN,
       MoveId.THUNDERBOLT,
@@ -9770,6 +9908,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.SNORE,
       MoveId.PROTECT,
       MoveId.SCARY_FACE,
+      MoveId.ZAP_CANNON,
       MoveId.GIGA_DRAIN,
       MoveId.ENDURE,
       MoveId.SWAGGER,
@@ -9795,6 +9934,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.ROUND,
       MoveId.ACROBATICS,
       MoveId.VOLT_SWITCH,
+      MoveId.ELECTROWEB,
       MoveId.WILD_CHARGE,
       MoveId.CONFIDE,
       MoveId.EERIE_IMPULSE,
@@ -9828,10 +9968,69 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       growthRate: GrowthRate.SLOW,
       malePercent: 50,
       genderDiffs: false,
+      canChangeForm: true,
+      forms: [
+        new PokemonForm({
+          formName: "Normal",
+          formKey: "",
+          type1: PokemonType.ELECTRIC,
+          type2: null,
+          height: 2.1,
+          weight: 80.5,
+          ability1: AbilityId.LEVITATE,
+          ability2: AbilityId.NONE,
+          abilityHidden: AbilityId.NONE,
+          baseTotal: 515,
+          baseHp: 85,
+          baseAtk: 115,
+          baseDef: 80,
+          baseSpatk: 105,
+          baseSpdef: 80,
+          baseSpd: 50,
+          catchRate: 30,
+          baseFriendship: 70,
+          baseExp: 258,
+          genderDiffs: false,
+          formSpriteKey: null,
+          isStarterSelectable: true,
+        }),
+        new PokemonForm({
+          formName: "Mega",
+          formKey: SpeciesFormKey.MEGA,
+          type1: PokemonType.ELECTRIC,
+          type2: null,
+          height: 3,
+          weight: 180,
+          ability1: AbilityId.EELEVATE,
+          ability2: AbilityId.NONE,
+          abilityHidden: AbilityId.NONE,
+          baseTotal: 615,
+          baseHp: 85,
+          baseAtk: 145,
+          baseDef: 80,
+          baseSpatk: 135,
+          baseSpdef: 90,
+          baseSpd: 80,
+          catchRate: 30,
+          baseFriendship: 70,
+          baseExp: 258,
+        }),
+      ],
     }),
     starter: SpeciesId.TYNAMO,
     evolutions: [],
-    passives: AbilityId.POISON_HEAL,
+    formChanges: [
+      new SpeciesFormChange({
+        speciesId: SpeciesId.EELEKTROSS,
+        preFormKey: "",
+        evoFormKey: SpeciesFormKey.MEGA,
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.EELEKTROSSITE),
+      }),
+    ],
+    passives: {
+      0: AbilityId.POISON_HEAL,
+      1: AbilityId.POISON_HEAL,
+    },
     levelMoves: [
       [1, MoveId.HEADBUTT],
       [1, MoveId.ION_DELUGE],
@@ -9847,7 +10046,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [74, MoveId.THRASH],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.EELEKTRIK].tms,
       MoveId.FIRE_PUNCH,
       MoveId.THUNDER_PUNCH,
       MoveId.ROAR,
@@ -9855,6 +10053,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.HYPER_BEAM,
       MoveId.STRENGTH,
       MoveId.CONFUSE_RAY,
+      MoveId.WATERFALL,
       MoveId.SWIFT,
       MoveId.ROCK_SLIDE,
       MoveId.OUTRAGE,
@@ -9864,6 +10063,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.SUPERPOWER,
       MoveId.BRICK_BREAK,
       MoveId.ROCK_TOMB,
+      MoveId.MUDDY_WATER,
       MoveId.DRAGON_CLAW,
       MoveId.BULK_UP,
       MoveId.CLOSE_COMBAT,
@@ -9878,9 +10078,11 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.BULLDOZE,
       MoveId.DRAGON_TAIL,
       MoveId.POWER_UP_PUNCH,
+      MoveId.PSYCHIC_FANGS,
       MoveId.STOMPING_TANTRUM,
       MoveId.LIQUIDATION,
       MoveId.BODY_PRESS,
+      MoveId.RISING_VOLTAGE,
       MoveId.SUPERCELL_SLAM,
     ],
   };
@@ -10053,7 +10255,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [68, MoveId.WONDER_ROOM],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.ELGYEM].tms,
       MoveId.HYPER_BEAM,
       MoveId.TRI_ATTACK,
       MoveId.FUTURE_SIGHT,
@@ -10091,11 +10292,12 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     starter: SpeciesId.LITWICK,
     starterCost: 3,
     evolutions: [new SpeciesEvolution({ speciesId: SpeciesId.LAMPENT, level: 41 })],
-    eggTier: EggTier.COMMON,
+    eggTier: EggTier.RARE,
     passives: AbilityId.SHADOW_TAG,
     levelMoves: [
       [1, MoveId.EMBER],
       [1, MoveId.ASTONISH],
+      [3, MoveId.SMOG],
       [5, MoveId.MINIMIZE],
       [7, MoveId.FIRE_SPIN],
       [10, MoveId.CONFUSE_RAY],
@@ -10213,6 +10415,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     levelMoves: [
       [1, MoveId.EMBER],
       [1, MoveId.ASTONISH],
+      [3, MoveId.SMOG],
       [5, MoveId.MINIMIZE],
       [7, MoveId.FIRE_SPIN],
       [10, MoveId.CONFUSE_RAY],
@@ -10230,7 +10433,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [58, MoveId.OVERHEAT],
       [64, MoveId.MEMENTO],
     ],
-    tms: [...generationFiveSpeciesData[SpeciesId.LITWICK].tms, MoveId.LASH_OUT],
+    tms: [MoveId.OMINOUS_WIND, MoveId.LASH_OUT],
   };
   generationFiveSpeciesData[SpeciesId.CHANDELURE] = {
     species: new PokemonSpecies({
@@ -10257,13 +10460,73 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       growthRate: GrowthRate.MEDIUM_SLOW,
       malePercent: 50,
       genderDiffs: false,
+      canChangeForm: true,
+      forms: [
+        new PokemonForm({
+          formName: "Normal",
+          formKey: "",
+          type1: PokemonType.GHOST,
+          type2: PokemonType.FIRE,
+          height: 1,
+          weight: 34.3,
+          ability1: AbilityId.FLASH_FIRE,
+          ability2: AbilityId.FLAME_BODY,
+          abilityHidden: AbilityId.INFILTRATOR,
+          baseTotal: 520,
+          baseHp: 60,
+          baseAtk: 55,
+          baseDef: 90,
+          baseSpatk: 145,
+          baseSpdef: 90,
+          baseSpd: 80,
+          catchRate: 45,
+          baseFriendship: 50,
+          baseExp: 260,
+          genderDiffs: false,
+          formSpriteKey: null,
+          isStarterSelectable: true,
+        }),
+        new PokemonForm({
+          formName: "Mega",
+          formKey: SpeciesFormKey.MEGA,
+          type1: PokemonType.GHOST,
+          type2: PokemonType.FIRE,
+          height: 2.5,
+          weight: 69.6,
+          ability1: AbilityId.INFILTRATOR,
+          ability2: AbilityId.INFILTRATOR,
+          abilityHidden: AbilityId.INFILTRATOR,
+          baseTotal: 620,
+          baseHp: 60,
+          baseAtk: 75,
+          baseDef: 110,
+          baseSpatk: 175,
+          baseSpdef: 110,
+          baseSpd: 90,
+          catchRate: 45,
+          baseFriendship: 50,
+          baseExp: 260,
+        }),
+      ],
     }),
     starter: SpeciesId.LITWICK,
     evolutions: [],
-    passives: AbilityId.SHADOW_TAG,
+    formChanges: [
+      new SpeciesFormChange({
+        speciesId: SpeciesId.CHANDELURE,
+        preFormKey: "",
+        evoFormKey: SpeciesFormKey.MEGA,
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.CHANDELURITE),
+      }),
+    ],
+    passives: {
+      0: AbilityId.SHADOW_TAG,
+      1: AbilityId.SHADOW_TAG,
+    },
     levelMoves: [
       [1, MoveId.EMBER],
       [1, MoveId.ASTONISH],
+      [3, MoveId.SMOG],
       [5, MoveId.MINIMIZE],
       [7, MoveId.FIRE_SPIN],
       [10, MoveId.CONFUSE_RAY],
@@ -10281,12 +10544,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [58, MoveId.OVERHEAT],
       [64, MoveId.MEMENTO],
     ],
-    tms: [
-      ...generationFiveSpeciesData[SpeciesId.LAMPENT].tms,
-      MoveId.HYPER_BEAM,
-      MoveId.GIGA_IMPACT,
-      MoveId.TRAILBLAZE,
-    ],
+    tms: [MoveId.HYPER_BEAM, MoveId.GIGA_IMPACT, MoveId.TRAILBLAZE],
   };
   generationFiveSpeciesData[SpeciesId.AXEW] = {
     species: new PokemonSpecies({
@@ -10318,7 +10576,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     starterCost: 4,
     evolutions: [new SpeciesEvolution({ speciesId: SpeciesId.FRAXURE, level: 38 })],
     eggTier: EggTier.RARE,
-    passives: AbilityId.OWN_TEMPO,
+    passives: AbilityId.SHARPNESS,
     levelMoves: [
       [RELEARN_MOVE, MoveId.FOCUS_ENERGY],
       [RELEARN_MOVE, MoveId.LASER_FOCUS],
@@ -10439,7 +10697,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     }),
     starter: SpeciesId.AXEW,
     evolutions: [new SpeciesEvolution({ speciesId: SpeciesId.HAXORUS, level: 48 })],
-    passives: AbilityId.OWN_TEMPO,
+    passives: AbilityId.SHARPNESS,
     levelMoves: [
       [RELEARN_MOVE, MoveId.FOCUS_ENERGY],
       [RELEARN_MOVE, MoveId.LASER_FOCUS],
@@ -10463,7 +10721,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [58, MoveId.GUILLOTINE],
       [64, MoveId.GIGA_IMPACT],
     ],
-    tms: [...generationFiveSpeciesData[SpeciesId.AXEW].tms, MoveId.LOW_KICK],
+    tms: [MoveId.LOW_KICK],
   };
   generationFiveSpeciesData[SpeciesId.HAXORUS] = {
     species: new PokemonSpecies({
@@ -10493,7 +10751,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     }),
     starter: SpeciesId.AXEW,
     evolutions: [],
-    passives: AbilityId.OWN_TEMPO,
+    passives: AbilityId.SHARPNESS,
     levelMoves: [
       [RELEARN_MOVE, MoveId.FOCUS_ENERGY],
       [RELEARN_MOVE, MoveId.LASER_FOCUS],
@@ -10518,7 +10776,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [70, MoveId.GIGA_IMPACT],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.FRAXURE].tms,
       MoveId.BODY_SLAM,
       MoveId.HYPER_BEAM,
       MoveId.EARTHQUAKE,
@@ -10706,7 +10963,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [51, MoveId.SUPERPOWER],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.CUBCHOO].tms,
       MoveId.SWORDS_DANCE,
       MoveId.DOUBLE_EDGE,
       MoveId.ROAR,
@@ -10808,6 +11064,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.RETURN,
       MoveId.HIDDEN_POWER,
       MoveId.RAIN_DANCE,
+      MoveId.ANCIENT_POWER,
       MoveId.HAIL,
       MoveId.FACADE,
       MoveId.KNOCK_OFF,
@@ -10892,6 +11149,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     ],
     tms: [
       MoveId.BODY_SLAM,
+      MoveId.DOUBLE_EDGE,
       MoveId.TOXIC,
       MoveId.DOUBLE_TEAM,
       MoveId.LEECH_LIFE,
@@ -10960,7 +11218,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     }),
     starter: SpeciesId.SHELMET,
     evolutions: [],
-    passives: AbilityId.PROTEAN,
+    passives: AbilityId.TINTED_LENS,
     levelMoves: [
       [RELEARN_MOVE, MoveId.ME_FIRST],
       [1, MoveId.ABSORB],
@@ -10983,7 +11241,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [60, MoveId.ME_FIRST],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.SHELMET].tms, // - mud slap
       MoveId.HYPER_BEAM,
       MoveId.COUNTER,
       MoveId.AGILITY,
@@ -11030,7 +11287,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     starterCost: 3,
     evolutions: [],
     eggTier: EggTier.COMMON,
-    passives: AbilityId.STORM_DRAIN,
+    passives: AbilityId.WATER_ABSORB,
     levelMoves: [
       [1, MoveId.TACKLE],
       [1, MoveId.WATER_GUN],
@@ -11286,7 +11543,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [70, MoveId.AURA_SPHERE],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.MIENFOO].tms,
       MoveId.DOUBLE_EDGE,
       MoveId.HYPER_BEAM,
       MoveId.BLAZE_KICK,
@@ -11328,7 +11584,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     starterCost: 4,
     evolutions: [],
     eggTier: EggTier.RARE,
-    passives: AbilityId.INTIMIDATE,
+    passives: AbilityId.DRAGONIZE,
     levelMoves: [
       [1, MoveId.SCRATCH],
       [1, MoveId.LEER],
@@ -11543,6 +11799,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.FOCUS_BLAST,
       MoveId.EARTH_POWER,
       MoveId.FLASH_CANNON,
+      MoveId.IRON_HEAD,
       MoveId.STEALTH_ROCK,
       MoveId.GRASS_KNOT,
       MoveId.SMACK_DOWN,
@@ -11586,10 +11843,69 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       growthRate: GrowthRate.MEDIUM_FAST,
       malePercent: null,
       genderDiffs: false,
+      canChangeForm: true,
+      forms: [
+        new PokemonForm({
+          formName: "Normal",
+          formKey: "",
+          type1: PokemonType.GROUND,
+          type2: PokemonType.GHOST,
+          height: 2.8,
+          weight: 330,
+          ability1: AbilityId.IRON_FIST,
+          ability2: AbilityId.KLUTZ,
+          abilityHidden: AbilityId.NO_GUARD,
+          baseTotal: 483,
+          baseHp: 89,
+          baseAtk: 124,
+          baseDef: 80,
+          baseSpatk: 55,
+          baseSpdef: 80,
+          baseSpd: 55,
+          catchRate: 90,
+          baseFriendship: 50,
+          baseExp: 169,
+          genderDiffs: false,
+          formSpriteKey: null,
+          isStarterSelectable: true,
+        }),
+        new PokemonForm({
+          formName: "Mega",
+          formKey: SpeciesFormKey.MEGA,
+          type1: PokemonType.GROUND,
+          type2: PokemonType.GHOST,
+          height: 4,
+          weight: 330,
+          ability1: AbilityId.UNSEEN_FIST,
+          ability2: AbilityId.UNSEEN_FIST,
+          abilityHidden: AbilityId.UNSEEN_FIST,
+          baseTotal: 583,
+          baseHp: 89,
+          baseAtk: 159,
+          baseDef: 105,
+          baseSpatk: 70,
+          baseSpdef: 105,
+          baseSpd: 55,
+          catchRate: 90,
+          baseFriendship: 50,
+          baseExp: 169,
+        }),
+      ],
     }),
     starter: SpeciesId.GOLETT,
     evolutions: [],
-    passives: AbilityId.SHADOW_SHIELD,
+    formChanges: [
+      new SpeciesFormChange({
+        speciesId: SpeciesId.GOLURK,
+        preFormKey: "",
+        evoFormKey: SpeciesFormKey.MEGA,
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.GOLURKITE),
+      }),
+    ],
+    passives: {
+      0: AbilityId.SHADOW_SHIELD,
+      1: AbilityId.SHADOW_SHIELD,
+    },
     levelMoves: [
       [EVOLVE_MOVE, MoveId.HEAVY_SLAM],
       [1, MoveId.POUND],
@@ -11614,7 +11930,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [75, MoveId.HEADLONG_RUSH],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.GOLETT].tms,
       MoveId.FLY,
       MoveId.HYPER_BEAM,
       MoveId.SOLAR_BEAM,
@@ -11808,14 +12123,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [64, MoveId.SWORDS_DANCE],
       [71, MoveId.GUILLOTINE],
     ],
-    tms: [
-      ...generationFiveSpeciesData[SpeciesId.PAWNIARD].tms,
-      MoveId.HYPER_BEAM,
-      MoveId.REVERSAL,
-      MoveId.FOCUS_BLAST,
-      MoveId.GIGA_IMPACT,
-      MoveId.THROAT_CHOP,
-    ],
+    tms: [MoveId.HYPER_BEAM, MoveId.REVERSAL, MoveId.FOCUS_BLAST, MoveId.GIGA_IMPACT, MoveId.THROAT_CHOP],
   };
   generationFiveSpeciesData[SpeciesId.BOUFFALANT] = {
     species: new PokemonSpecies({
@@ -12041,6 +12349,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.SHADOW_CLAW,
       MoveId.ZEN_HEADBUTT,
       MoveId.DEFOG,
+      MoveId.OMINOUS_WIND,
       MoveId.HONE_CLAWS,
       MoveId.ROUND,
       MoveId.SKY_DROP,
@@ -12103,14 +12412,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [70, MoveId.BRAVE_BIRD],
       [76, MoveId.SKY_ATTACK],
     ],
-    tms: [
-      ...generationFiveSpeciesData[SpeciesId.RUFFLET].tms,
-      MoveId.HYPER_BEAM,
-      MoveId.REVERSAL,
-      MoveId.METAL_CLAW,
-      MoveId.GIGA_IMPACT,
-      MoveId.IRON_HEAD,
-    ],
+    tms: [MoveId.HYPER_BEAM, MoveId.REVERSAL, MoveId.METAL_CLAW, MoveId.GIGA_IMPACT, MoveId.IRON_HEAD],
   };
   generationFiveSpeciesData[SpeciesId.VULLABY] = {
     species: new PokemonSpecies({
@@ -12280,14 +12582,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [70, MoveId.BRAVE_BIRD],
       [76, MoveId.MIRROR_MOVE],
     ],
-    tms: [
-      ...generationFiveSpeciesData[SpeciesId.VULLABY].tms,
-      MoveId.HYPER_BEAM,
-      MoveId.SANDSTORM,
-      MoveId.GIGA_IMPACT,
-      MoveId.ACROBATICS,
-      MoveId.HURRICANE,
-    ],
+    tms: [MoveId.HYPER_BEAM, MoveId.SANDSTORM, MoveId.GIGA_IMPACT, MoveId.ACROBATICS, MoveId.HURRICANE],
   };
   generationFiveSpeciesData[SpeciesId.HEATMOR] = {
     species: new PokemonSpecies({
@@ -12319,7 +12614,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     starterCost: 3,
     evolutions: [],
     eggTier: EggTier.RARE,
-    passives: AbilityId.CONTRARY,
+    passives: AbilityId.SPICY_SPRAY,
     levelMoves: [
       [1, MoveId.BIND],
       [1, MoveId.TACKLE],
@@ -12669,13 +12964,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [60, MoveId.NASTY_PLOT],
       [66, MoveId.OUTRAGE],
     ],
-    tms: [
-      ...generationFiveSpeciesData[SpeciesId.DEINO].tms,
-      MoveId.BEAT_UP,
-      MoveId.HELPING_HAND,
-      MoveId.STOMPING_TANTRUM,
-      MoveId.LASH_OUT,
-    ],
+    tms: [MoveId.BEAT_UP, MoveId.HELPING_HAND, MoveId.STOMPING_TANTRUM, MoveId.LASH_OUT],
   };
   generationFiveSpeciesData[SpeciesId.HYDREIGON] = {
     species: new PokemonSpecies({
@@ -12730,7 +13019,6 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [76, MoveId.HYPER_BEAM],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.ZWEILOUS].tms,
       MoveId.FLY,
       MoveId.FLAMETHROWER,
       MoveId.HYDRO_PUMP,
@@ -12924,11 +13212,11 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       [100, MoveId.FIERY_DANCE],
     ],
     tms: [
-      ...generationFiveSpeciesData[SpeciesId.LARVESTA].tms,
       MoveId.FLY,
       MoveId.HYPER_BEAM,
       MoveId.RAIN_DANCE,
       MoveId.AIR_CUTTER,
+      MoveId.SILVER_WIND,
       MoveId.AERIAL_ACE,
       MoveId.ROOST,
       MoveId.TAILWIND,
@@ -12974,22 +13262,24 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     eggTier: EggTier.EPIC,
     passives: AbilityId.INTREPID_SWORD,
     levelMoves: [
-      [1, MoveId.DOUBLE_KICK],
-      [1, MoveId.LEER],
       [1, MoveId.QUICK_ATTACK],
+      [1, MoveId.LEER],
+      [1, MoveId.DOUBLE_KICK],
       [1, MoveId.HELPING_HAND],
       [7, MoveId.METAL_CLAW],
-      [13, MoveId.TAKE_DOWN],
-      [19, MoveId.RETALIATE],
-      [25, MoveId.WORK_UP],
-      [31, MoveId.METAL_BURST],
+      [14, MoveId.TAKE_DOWN],
+      [19, MoveId.WORK_UP],
+      [25, MoveId.RETALIATE],
+      [31, MoveId.AURA_SPHERE],
+      [34, MoveId.HEAVY_SLAM],
       [37, MoveId.SWORDS_DANCE],
       [42, MoveId.SACRED_SWORD],
-      [45, MoveId.QUICK_GUARD],
+      [49, MoveId.QUICK_GUARD],
       [55, MoveId.IRON_HEAD],
       [61, MoveId.CLOSE_COMBAT],
-      [67, MoveId.HEAVY_SLAM],
-      [73, MoveId.MEGAHORN],
+      [67, MoveId.BOUNCE],
+      [73, MoveId.METAL_BURST],
+      [79, MoveId.MEGAHORN],
     ],
     tms: [
       MoveId.SWORDS_DANCE,
@@ -13098,22 +13388,24 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     eggTier: EggTier.EPIC,
     passives: AbilityId.ROCKY_PAYLOAD,
     levelMoves: [
-      [1, MoveId.DOUBLE_KICK],
-      [1, MoveId.LEER],
       [1, MoveId.QUICK_ATTACK],
+      [1, MoveId.LEER],
+      [1, MoveId.DOUBLE_KICK],
       [1, MoveId.HELPING_HAND],
       [7, MoveId.SMACK_DOWN],
-      [13, MoveId.TAKE_DOWN],
-      [19, MoveId.RETALIATE],
-      [25, MoveId.WORK_UP],
-      [31, MoveId.ROCK_SLIDE],
+      [14, MoveId.TAKE_DOWN],
+      [19, MoveId.WORK_UP],
+      [25, MoveId.RETALIATE],
+      [31, MoveId.AURA_SPHERE],
+      [34, MoveId.ROCK_SLIDE],
       [37, MoveId.SWORDS_DANCE],
       [42, MoveId.SACRED_SWORD],
-      [45, MoveId.QUICK_GUARD],
+      [49, MoveId.QUICK_GUARD],
       [55, MoveId.STONE_EDGE],
       [61, MoveId.CLOSE_COMBAT],
-      [67, MoveId.HEAD_SMASH],
-      [73, MoveId.MEGAHORN],
+      [67, MoveId.HEAVY_SLAM],
+      [73, MoveId.HEAD_SMASH],
+      [79, MoveId.MEGAHORN],
     ],
     tms: [
       MoveId.SWORDS_DANCE,
@@ -13217,23 +13509,25 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     eggTier: EggTier.EPIC,
     passives: AbilityId.SHARPNESS,
     levelMoves: [
-      [1, MoveId.DOUBLE_KICK],
-      [1, MoveId.LEER],
       [1, MoveId.QUICK_ATTACK],
+      [1, MoveId.LEER],
+      [1, MoveId.DOUBLE_KICK],
       [1, MoveId.SYNTHESIS],
       [1, MoveId.HELPING_HAND],
       [7, MoveId.MAGICAL_LEAF],
-      [13, MoveId.TAKE_DOWN],
-      [19, MoveId.RETALIATE],
-      [25, MoveId.WORK_UP],
-      [31, MoveId.GIGA_DRAIN],
+      [14, MoveId.TAKE_DOWN],
+      [19, MoveId.WORK_UP],
+      [25, MoveId.RETALIATE],
+      [31, MoveId.AURA_SPHERE],
+      [34, MoveId.GIGA_DRAIN],
       [37, MoveId.SWORDS_DANCE],
       [42, MoveId.SACRED_SWORD],
-      [45, MoveId.QUICK_GUARD],
+      [49, MoveId.QUICK_GUARD],
       [55, MoveId.LEAF_BLADE],
       [61, MoveId.CLOSE_COMBAT],
-      [67, MoveId.HORN_LEECH],
-      [73, MoveId.MEGAHORN],
+      [67, MoveId.AIR_SLASH],
+      [73, MoveId.HORN_LEECH],
+      [79, MoveId.MEGAHORN],
     ],
     tms: [
       MoveId.SWORDS_DANCE,
@@ -13255,6 +13549,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.SNORE,
       MoveId.REVERSAL,
       MoveId.PROTECT,
+      MoveId.SCARY_FACE,
       MoveId.GIGA_DRAIN,
       MoveId.ENDURE,
       MoveId.FALSE_SWIPE,
@@ -13748,6 +14043,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     tms: [
       MoveId.FLY,
       MoveId.BODY_SLAM,
+      MoveId.TAKE_DOWN,
       MoveId.DOUBLE_EDGE,
       MoveId.ROAR,
       MoveId.FLAMETHROWER,
@@ -13767,6 +14063,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.SUBSTITUTE,
       MoveId.SNORE,
       MoveId.PROTECT,
+      MoveId.SCARY_FACE,
       MoveId.OUTRAGE,
       MoveId.ENDURE,
       MoveId.SWAGGER,
@@ -13778,6 +14075,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.RAIN_DANCE,
       MoveId.SUNNY_DAY,
       MoveId.CRUNCH,
+      MoveId.ANCIENT_POWER,
       MoveId.SHADOW_BALL,
       MoveId.ROCK_SMASH,
       MoveId.HEAT_WAVE,
@@ -13880,6 +14178,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.THUNDER_PUNCH,
       MoveId.FLY,
       MoveId.BODY_SLAM,
+      MoveId.TAKE_DOWN,
       MoveId.DOUBLE_EDGE,
       MoveId.ROAR,
       MoveId.HYPER_BEAM,
@@ -13900,6 +14199,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.SUBSTITUTE,
       MoveId.SNORE,
       MoveId.PROTECT,
+      MoveId.SCARY_FACE,
       MoveId.OUTRAGE,
       MoveId.ENDURE,
       MoveId.SWAGGER,
@@ -13911,6 +14211,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.RAIN_DANCE,
       MoveId.SUNNY_DAY,
       MoveId.CRUNCH,
+      MoveId.ANCIENT_POWER,
       MoveId.SHADOW_BALL,
       MoveId.ROCK_SMASH,
       MoveId.FACADE,
@@ -13951,6 +14252,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.DRAGON_TAIL,
       MoveId.WILD_CHARGE,
       MoveId.CONFIDE,
+      MoveId.ELECTRIC_TERRAIN,
       MoveId.BRUTAL_SWING,
       MoveId.BODY_PRESS,
       MoveId.BREAKING_SWIPE,
@@ -14304,6 +14606,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     tms: [
       MoveId.FLY,
       MoveId.BODY_SLAM,
+      MoveId.TAKE_DOWN,
       MoveId.ROAR,
       MoveId.ICE_BEAM,
       MoveId.BLIZZARD,
@@ -14332,6 +14635,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.HIDDEN_POWER,
       MoveId.RAIN_DANCE,
       MoveId.SUNNY_DAY,
+      MoveId.ANCIENT_POWER,
       MoveId.SHADOW_BALL,
       MoveId.ROCK_SMASH,
       MoveId.HAIL,
@@ -14478,23 +14782,25 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       1: AbilityId.GRIM_NEIGH,
     },
     levelMoves: [
-      [1, MoveId.DOUBLE_KICK],
-      [1, MoveId.LEER],
-      [1, MoveId.HELPING_HAND],
       [1, MoveId.AQUA_JET],
+      [1, MoveId.LEER],
+      [1, MoveId.DOUBLE_KICK],
+      [1, MoveId.HELPING_HAND],
       [7, MoveId.BUBBLE_BEAM],
       [13, MoveId.TAKE_DOWN],
-      [19, MoveId.RETALIATE],
-      [25, MoveId.WORK_UP],
-      [31, MoveId.AQUA_TAIL],
+      [19, MoveId.WORK_UP],
+      [25, MoveId.RETALIATE],
+      [31, MoveId.AURA_SPHERE],
+      [34, MoveId.AQUA_TAIL],
       [37, MoveId.SWORDS_DANCE],
       [42, MoveId.SACRED_SWORD],
-      [45, MoveId.QUICK_GUARD],
+      [49, MoveId.QUICK_GUARD],
       [50, MoveId.SECRET_SWORD],
       [55, MoveId.HYDRO_PUMP],
       [61, MoveId.CLOSE_COMBAT],
-      [67, MoveId.EARTH_POWER],
-      [73, MoveId.MEGAHORN],
+      [67, MoveId.AIR_SLASH],
+      [73, MoveId.EARTH_POWER],
+      [79, MoveId.MEGAHORN],
     ],
     tms: [
       MoveId.SWORDS_DANCE,
@@ -14926,7 +15232,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       ],
     }),
     starter: SpeciesId.GENESECT,
-    starterCost: 6,
+    starterCost: 7,
     evolutions: [],
     formChanges: [
       new SpeciesFormChange({
@@ -14960,11 +15266,11 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     ],
     eggTier: EggTier.EPIC,
     passives: {
-      0: AbilityId.PROTEAN,
-      1: AbilityId.PROTEAN,
-      2: AbilityId.PROTEAN,
-      3: AbilityId.PROTEAN,
-      4: AbilityId.PROTEAN,
+      0: AbilityId.HEATPROOF,
+      1: AbilityId.HEATPROOF,
+      2: AbilityId.HEATPROOF,
+      3: AbilityId.HEATPROOF,
+      4: AbilityId.HEATPROOF,
     },
     levelMoves: [
       [RELEARN_MOVE, MoveId.FELL_STINGER],
@@ -15016,6 +15322,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.SUBSTITUTE,
       MoveId.SNORE,
       MoveId.PROTECT,
+      MoveId.ZAP_CANNON,
       MoveId.GIGA_DRAIN,
       MoveId.ENDURE,
       MoveId.SWAGGER,
@@ -15023,6 +15330,7 @@ export function initGenerationFive(): SpeciesDataMapConfig {
       MoveId.RETURN,
       MoveId.METAL_CLAW,
       MoveId.HIDDEN_POWER,
+      MoveId.ANCIENT_POWER,
       MoveId.FACADE,
       MoveId.RECYCLE,
       MoveId.SECRET_POWER,

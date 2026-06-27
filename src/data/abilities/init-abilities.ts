@@ -89,7 +89,7 @@ import {
   PostDefendAbilitySwapAbAttr,
   PostDefendApplyArenaTrapTagAbAttr,
   PostDefendApplyBattlerTagAbAttr,
-  PostDefendContactApplyStatusEffectAbAttr,
+  PostDefendApplyStatusEffectAbAttr,
   PostDefendContactApplyTagChanceAbAttr,
   PostDefendContactDamageAbAttr,
   PostDefendHpGatedStatStageChangeAbAttr,
@@ -141,6 +141,7 @@ import {
   PostWeatherChangeFormChangeAbAttr,
   PostWeatherLapseDamageAbAttr,
   PostWeatherLapseHealAbAttr,
+  PreAttackWeatherOverrideAbAttr,
   PreDefendFullHpEndureAbAttr,
   PreLeaveFieldClearWeatherAbAttr,
   PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr,
@@ -260,7 +261,7 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.STATIC, 3) //
-      .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.PARALYSIS)
+      .attr(PostDefendApplyStatusEffectAbAttr, 30, true, StatusEffect.PARALYSIS)
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.VOLT_ABSORB, 3) //
@@ -395,7 +396,7 @@ export function initAbilities() {
       })
       .build(),
     new AbBuilder(AbilityId.POISON_POINT, 3) //
-      .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.POISON)
+      .attr(PostDefendApplyStatusEffectAbAttr, 30, true, StatusEffect.POISON)
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.INNER_FOCUS, 3) //
@@ -447,7 +448,7 @@ export function initAbilities() {
       .attr(ReduceStatusEffectDurationAbAttr, StatusEffect.SLEEP)
       .build(),
     new AbBuilder(AbilityId.FLAME_BODY, 3) //
-      .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.BURN)
+      .attr(PostDefendApplyStatusEffectAbAttr, 30, true, StatusEffect.BURN)
       .bypassFaint()
       .build(),
     new AbBuilder(AbilityId.RUN_AWAY, 3) //
@@ -1439,22 +1440,22 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.BATTLE_BOND, 7) //
       .conditionalAttr(
-        p => p.species.speciesId === SpeciesId.GRENINJA && !p.isFusion(),
+        p => p.species.speciesId === SpeciesId.BATTLE_BOND_GRENINJA && !p.isFusion(),
         PostVictoryFormChangeAbAttr,
-        () => 2,
+        () => 1,
       )
       .conditionalAttr(
-        p => p.species.speciesId === SpeciesId.GRENINJA && !p.isFusion(),
+        p => p.species.speciesId === SpeciesId.BATTLE_BOND_GRENINJA && !p.isFusion(),
         PostBattleInitFormChangeAbAttr,
-        () => 1,
+        () => 0,
       )
       .conditionalAttr(
-        p => p.species.speciesId === SpeciesId.GRENINJA && !p.isFusion(),
+        p => p.species.speciesId === SpeciesId.BATTLE_BOND_GRENINJA && !p.isFusion(),
         PostFaintFormChangeAbAttr,
-        () => 1,
+        () => 0,
       )
       .conditionalAttr(
-        p => !p.hasSpecies(SpeciesId.GRENINJA) && !p.summonData.abilitiesApplied.has(AbilityId.BATTLE_BOND),
+        p => !p.hasSpecies(SpeciesId.BATTLE_BOND_GRENINJA) && !p.summonData.abilitiesApplied.has(AbilityId.BATTLE_BOND),
         PostVictoryStatStageChangeAbAttr,
         groupStatChange([Stat.ATK, Stat.SPATK, Stat.SPD], 1),
       )
@@ -1562,18 +1563,7 @@ export function initAbilities() {
       .uncopiable()
       .build(),
     new AbBuilder(AbilityId.BEAST_BOOST, 7) //
-      .attr(PostVictoryStatStageChangeAbAttr, (p: Pokemon) => {
-        let highestStat: EffectiveStat;
-        let highestValue = 0;
-        for (const s of EFFECTIVE_STATS) {
-          const value = p.getStat(s, false);
-          if (value > highestValue) {
-            highestStat = s;
-            highestValue = value;
-          }
-        }
-        return [{ stat: highestStat!, stages: 1 }];
-      })
+      .attr(PostVictoryStatStageChangeAbAttr, beastBoostHighestStatCalc)
       .build(),
     new AbBuilder(AbilityId.RKS_SYSTEM, 7) //
       .attr(NoFusionAbilityAbAttr)
@@ -1601,7 +1591,11 @@ export function initAbilities() {
         if (move.type === PokemonType.DRAGON) {
           powerMult.value *= 0.5;
         }
-        if (pokemon.hasAbility(AbilityId.LEVITATE) || pokemon.isOfType(PokemonType.FLYING)) {
+        if (
+          pokemon.hasAbility(AbilityId.LEVITATE)
+          || pokemon.hasAbility(AbilityId.EELEVATE)
+          || pokemon.isOfType(PokemonType.FLYING)
+        ) {
           return;
         }
         if (move.id === MoveId.MISTY_EXPLOSION) {
@@ -2169,6 +2163,47 @@ export function initAbilities() {
       .uncopiable()
       .attr(ConfusionOnStatusEffectAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
       .build(),
+    new AbBuilder(AbilityId.PIERCING_DRILL, 9) //
+      .attr(IgnoreProtectOnContactAbAttr)
+      .attr(
+        MoveDamageBoostAbAttr,
+        0.25,
+        (user, target, move) =>
+          !!target
+          && target.findTags(t => t instanceof ProtectedTag).length > 0
+          && move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user }),
+      )
+      .build(),
+    new AbBuilder(AbilityId.DRAGONIZE, 9) //
+      .attr(MoveTypeChangeAbAttr, PokemonType.DRAGON, normalTypeMoveConversionCondition)
+      .attr(MovePowerBoostAbAttr, normalTypeMoveConversionCondition, 1.2)
+      .build(),
+    new AbBuilder(AbilityId.EELEVATE, 9) //
+      .attr(
+        AttackTypeImmunityAbAttr,
+        PokemonType.GROUND,
+        (pokemon: Pokemon) => !pokemon.getTag(GroundedTag) && !globalScene.arena.getTag(ArenaTagType.GRAVITY),
+      )
+      .attr(PostVictoryStatStageChangeAbAttr, beastBoostHighestStatCalc)
+      .ignorable()
+      .build(),
+    // TODO: Unknown ability, ID 314
+    new AbBuilder(AbilityId.ABILITY_314, 9).unimplemented().build(),
+    new AbBuilder(AbilityId.MEGA_SOL, 9) //
+      .attr(PreAttackWeatherOverrideAbAttr, WeatherType.SUNNY)
+      // Interactions with sand veil / snow cloak (which need to be tested)
+      // Flyout conformity (needs investigation)
+      .edgeCase()
+      .build(),
+    new AbBuilder(AbilityId.FIRE_MANE, 9) //
+      .attr(MoveTypePowerBoostAbAttr, PokemonType.FIRE)
+      .build(),
+    // TODO: Unknown ability, ID 317
+    new AbBuilder(AbilityId.ABILITY_317, 9).unimplemented().build(),
+    new AbBuilder(AbilityId.SPICY_SPRAY, 9) //
+      .attr(PostDefendApplyStatusEffectAbAttr, 100, false, StatusEffect.BURN)
+      .bypassFaint()
+      .build(),
   );
 }
 
@@ -2344,4 +2379,27 @@ function droughtAiMovegenEffect({ move, powerMult, accMult, instantCharge }: AiM
   ) {
     instantCharge.value = true;
   }
+}
+
+/**
+ * DRY implementation for the `PostVictoryStatStageChangeAbAttr`
+ * abilities that boost the highest stat on victory.
+ *
+ * @remarks Used for {@link https://bulbapedia.bulbagarden.net/wiki/Beast_Boost_(Ability) | Beast Boost}
+ * and {@link https://bulbapedia.bulbagarden.net/wiki/Eelevate_(Ability) | Beast Boost}
+ *
+ * @param pokemon - The Pokémon under consideration
+ */
+function beastBoostHighestStatCalc(pokemon: Pokemon) {
+  let highestStat: EffectiveStat;
+  let highestValue = 0;
+  for (const s of EFFECTIVE_STATS) {
+    const value = pokemon.getStat(s, false);
+    if (value > highestValue) {
+      highestStat = s;
+      highestValue = value;
+    }
+  }
+  // Bang is safe here as for loop ensuers highestStat is assigned.
+  return [{ stat: highestStat!, stages: 1 }];
 }

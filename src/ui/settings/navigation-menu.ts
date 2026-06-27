@@ -3,7 +3,7 @@ import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { MappingSettingName } from "#types/configs/inputs";
-import type { InputsIcons } from "#ui/abstract-control-settings-ui-handler";
+import type { InputsIcons } from "#ui/base-control-settings-ui-handler";
 import { addTextObject, setTextStyle } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import i18next from "i18next";
