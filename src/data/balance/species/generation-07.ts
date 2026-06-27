@@ -12081,7 +12081,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       ],
     }),
     starter: SpeciesId.BATTLE_BOND_GRENINJA,
-    starterCost: 5,
+    starterCost: 6,
     evolutions: [],
     formChanges: [
       new SpeciesFormChange({
@@ -12107,11 +12107,10 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       1: AbilityId.SUPER_LUCK,
     },
     levelMoves: [
-      [RELEARN_MOVE, MoveId.BUBBLE],
       [1, MoveId.MAT_BLOCK],
       [1, MoveId.POUND],
       [1, MoveId.GROWL],
-      [5, MoveId.WATER_SHURIKEN],
+      [5, MoveId.BUBBLE],
       [8, MoveId.QUICK_ATTACK],
       [10, MoveId.LICK],
       [14, MoveId.WATER_PULSE],
@@ -12122,18 +12121,19 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       [28, MoveId.SPIKES],
       [30, MoveId.SMACK_DOWN],
       [33, MoveId.AERIAL_ACE],
-      [36, MoveId.ROLE_PLAY],
+      [36, MoveId.WATER_SHURIKEN],
       [38, MoveId.FEINT_ATTACK],
       [42, MoveId.SUBSTITUTE],
       [45, MoveId.BOUNCE],
       [49, MoveId.EXTRASENSORY],
       [56, MoveId.DOUBLE_TEAM],
+      [65, MoveId.NIGHT_SLASH],
       [68, MoveId.HYDRO_PUMP],
       [70, MoveId.HAZE],
-      [77, MoveId.NIGHT_SLASH],
+      [77, MoveId.DARK_PULSE],
     ],
     tms: [
-      // Froaki
+      // Froakie
       MoveId.TAKE_DOWN,
       MoveId.HYDRO_PUMP,
       MoveId.SURF,

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.14/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.0/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -66,7 +66,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "correctness": {
         "noUndeclaredVariables": "error",
         // we virtually always use base 10 number conversion
@@ -241,7 +241,9 @@
               }
             }
           }
-        }
+        },
+        "noMultiAssign": "error",
+        "noMultilineString": "error"
       },
       "suspicious": {
         "noExtraNonNullAssertion": "error",
@@ -274,7 +276,9 @@
         },
         "noNonNullAssertedOptionalChain": "warn", // TODO: Refactor and change to error
         "noDuplicateDependencies": "error",
-        "noImportCycles": "error"
+        "noImportCycles": "error",
+        "noProto": "error",
+        "noShadow": "warn" // TODO: refactor and make "error"
       },
       "complexity": {
         "useWhile": "error",
@@ -294,7 +298,8 @@
         "useMaxParams": {
           "level": "info", // TODO: Change to "error"... eventually...
           "options": { "max": 7 }
-        }
+        },
+        "useArrayFind": "error"
       },
       "performance": {
         "noNamespaceImport": "error",
@@ -304,11 +309,6 @@
       "nursery": {
         // TODO: Fix violations then enable this
         "useAwaitThenable": "off",
-        "noMultiAssign": "error",
-        "noMultiStr": "error",
-        "noProto": "error",
-        "useFind": "error",
-        "noShadow": "warn", // TODO: refactor and make "error"
         // TODO: Change to error once promises are used properly
         "noMisusedPromises": "info"
       }
