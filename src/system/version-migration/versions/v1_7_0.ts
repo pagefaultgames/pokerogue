@@ -38,8 +38,8 @@ const migrateUnselectableForms: SystemSaveMigrator = {
 
 export const systemMigrators: readonly SystemSaveMigrator[] = [migrateUnselectableForms] as const;
 
-function isArrayOfLengthThree(arr: unknown): arr is [unknown, unknown, unknown] {
-  return Array.isArray(arr) && arr.length === 3;
+function isArrayOfAtLeastTwo(arr: unknown): arr is unknown[] {
+  return Array.isArray(arr) && arr.length >= 2;
 }
 
 const migrateTera: SessionSaveMigrator = {
@@ -54,7 +54,7 @@ const migrateTera: SessionSaveMigrator = {
           // Assert the modifier has the expected args structure
           const modifierArgs = data.modifiers[i].args;
           // Skip malformed modifiers (it is not the migrator's responsibility to fix/remove)
-          if (!isArrayOfLengthThree(modifierArgs)) {
+          if (!isArrayOfAtLeastTwo(modifierArgs)) {
             continue;
           }
           data.party.forEach(p => {
@@ -87,7 +87,7 @@ const migrateTera: SessionSaveMigrator = {
         // Assert the modifier has the expected args structure
         const modifierArgs = data.enemyModifiers[i].args;
 
-        if (!isArrayOfLengthThree(modifierArgs)) {
+        if (!isArrayOfAtLeastTwo(modifierArgs)) {
           data.enemyModifiers.splice(i, 1);
           continue;
         }
