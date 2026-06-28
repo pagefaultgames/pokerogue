@@ -10,20 +10,14 @@ import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { randSeedIntRange, randSeedItem } from "#utils/common";
 
 /**
- * Gets the {@linkcode PokemonSpecies} object associated with the {@linkcode SpeciesId} enum given
- * @param species - The {@linkcode SpeciesId} to fetch.
- * If an array of `SpeciesId`s is passed (such as for named trainer spawn pools),
- * one will be selected at random.
+ * Gets the `PokemonSpecies` object associated with the given `SpeciesId`
+ * @param speciesId - The {@linkcode SpeciesId} to fetch.
  * @returns The associated {@linkcode PokemonSpecies} object
  * @deprecated Use {@linkcode speciesDataRegistry.getSpecies}
  */
 // TODO: remove this function
-export function getPokemonSpecies(species: SpeciesId | SpeciesId[]): PokemonSpecies {
-  if (Array.isArray(species)) {
-    // TODO: this RNG roll should not be handled by this function
-    species = species[Math.floor(Math.random() * species.length)];
-  }
-  return speciesDataRegistry.getSpecies(species);
+export function getPokemonSpecies(speciesId: SpeciesId): PokemonSpecies {
+  return speciesDataRegistry.getSpecies(speciesId);
 }
 
 /**

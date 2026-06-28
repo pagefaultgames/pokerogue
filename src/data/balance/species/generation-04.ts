@@ -4102,7 +4102,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
     starterCost: 2,
     evolutions: [new SpeciesEvolution({ speciesId: SpeciesId.PURUGLY, level: 38 })],
     eggTier: EggTier.COMMON,
-    passives: AbilityId.INTIMIDATE,
+    passives: AbilityId.PICKUP,
     levelMoves: [
       [1, MoveId.FAKE_OUT],
       [5, MoveId.SCRATCH],
@@ -4204,7 +4204,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
     }),
     starter: SpeciesId.GLAMEOW,
     evolutions: [],
-    passives: AbilityId.INTIMIDATE,
+    passives: AbilityId.FUR_COAT,
     levelMoves: [
       [EVOLVE_MOVE, MoveId.SWAGGER],
       [1, MoveId.FAKE_OUT],
