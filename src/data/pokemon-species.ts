@@ -492,6 +492,7 @@ export abstract class PokemonSpeciesForm {
         break;
       case SpeciesId.MEGANIUM:
       case SpeciesId.BLAZIKEN:
+      case SpeciesId.GARCHOMP:
       case SpeciesId.PYROAR:
         if (this.getFormKey() !== SpeciesFormKey.MEGA) {
           ret += female ? "-f" : "";
