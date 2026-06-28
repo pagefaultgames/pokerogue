@@ -483,6 +483,8 @@ export abstract class PokemonSpeciesForm {
       case SpeciesId.DODRIO:
       case SpeciesId.TORCHIC:
       case SpeciesId.COMBUSKEN:
+      case SpeciesId.GIBLE:
+      case SpeciesId.GABITE:
       case SpeciesId.HIPPOPOTAS:
       case SpeciesId.HIPPOWDON:
       case SpeciesId.UNFEZANT:
