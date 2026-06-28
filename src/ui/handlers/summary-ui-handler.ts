@@ -539,7 +539,7 @@ export class SummaryUiHandler extends UiHandler {
     }
 
     const ui = this.getUi();
-    const fromPartyMode = ui.handlers[UiMode.PARTY].active;
+    const fromPartyMode = ui.handlers[UiMode.PARTY]!.active;
     let success = false;
     let error = false;
 

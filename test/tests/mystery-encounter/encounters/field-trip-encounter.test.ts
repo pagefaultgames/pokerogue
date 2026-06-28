@@ -11,7 +11,6 @@ import { FieldTripEncounter } from "#mystery-encounters/field-trip-encounter";
 import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
 import { GameManager } from "#test/framework/game-manager";
 import { runMysteryEncounterToEnd } from "#test/utils/encounter-test-utils";
-import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import i18next from "i18next";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -83,9 +82,7 @@ describe("Field Trip - Mystery Encounter", () => {
       await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
+      const modifierSelectHandler = game.scene.ui.handlers[UiMode.MODIFIER_SELECT]!;
       expect(modifierSelectHandler.options.length).toEqual(0);
     });
 
@@ -95,9 +92,7 @@ describe("Field Trip - Mystery Encounter", () => {
       await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
+      const modifierSelectHandler = game.scene.ui.handlers[UiMode.MODIFIER_SELECT]!;
       expect(modifierSelectHandler.options.length).toEqual(5);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.name).toBe(
         i18next.t("modifierType:TempStatStageBoosterItem.x_attack"),
@@ -144,9 +139,7 @@ describe("Field Trip - Mystery Encounter", () => {
       await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
+      const modifierSelectHandler = game.scene.ui.handlers[UiMode.MODIFIER_SELECT]!;
       expect(modifierSelectHandler.options.length).toEqual(0);
     });
 
@@ -156,9 +149,7 @@ describe("Field Trip - Mystery Encounter", () => {
       await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
+      const modifierSelectHandler = game.scene.ui.handlers[UiMode.MODIFIER_SELECT]!;
       expect(modifierSelectHandler.options.length).toEqual(5);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.name).toBe(
         i18next.t("modifierType:TempStatStageBoosterItem.x_sp_atk"),
@@ -205,9 +196,7 @@ describe("Field Trip - Mystery Encounter", () => {
       await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
+      const modifierSelectHandler = game.scene.ui.handlers[UiMode.MODIFIER_SELECT]!;
       expect(modifierSelectHandler.options.length).toEqual(0);
     });
 
@@ -218,9 +207,7 @@ describe("Field Trip - Mystery Encounter", () => {
       await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
+      const modifierSelectHandler = game.scene.ui.handlers[UiMode.MODIFIER_SELECT]!;
       expect(modifierSelectHandler.options.length).toEqual(5);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.name).toBe(
         i18next.t("modifierType:TempStatStageBoosterItem.x_accuracy"),

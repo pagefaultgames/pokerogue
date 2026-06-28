@@ -10,7 +10,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/framework/game-manager";
 import type { CallMoveAttrWithBanlist, MoveAttrString } from "#types/move-types";
-import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
+import type { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -78,9 +78,7 @@ describe("Challenges - Hardcore", () => {
 
     await game.phaseInterceptor.to("SelectModifierPhase");
     expect(game.scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
-    const modifierSelectHandler = game.scene.ui.handlers.find(
-      h => h instanceof ModifierSelectUiHandler,
-    ) as ModifierSelectUiHandler;
+    const modifierSelectHandler = game.scene.ui.handlers[UiMode.MODIFIER_SELECT]!;
     expect(
       modifierSelectHandler.options.find(reward => reward.modifierTypeOption.type.group === "revive"),
     ).toBeUndefined();

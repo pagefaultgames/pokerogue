@@ -18,7 +18,6 @@ import {
   runSelectMysteryEncounterOption,
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/utils/encounter-test-utils";
-import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/dancingLessons";
@@ -124,9 +123,7 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
+      const modifierSelectHandler = game.scene.ui.handlers[UiMode.MODIFIER_SELECT]!;
       expect(modifierSelectHandler.options.length).toEqual(3); // Should fill remaining
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toContain("BATON");
     });

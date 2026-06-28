@@ -20,7 +20,6 @@ import { VictoryPhase } from "#phases/victory-phase";
 import { GameManager } from "#test/framework/game-manager";
 import { runMysteryEncounterToEnd } from "#test/utils/encounter-test-utils";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
-import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -293,9 +292,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
       await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
+      const modifierSelectHandler = game.scene.ui.handlers[UiMode.MODIFIER_SELECT]!;
       expect(modifierSelectHandler.options.length).toEqual(1);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toBe("MYSTERY_ENCOUNTER_MACHO_BRACE");
     });
@@ -335,9 +332,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
       await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
+      const modifierSelectHandler = game.scene.ui.handlers[UiMode.MODIFIER_SELECT]!;
       expect(modifierSelectHandler.options.length).toEqual(1);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toBe("RARER_CANDY");
     });
@@ -351,7 +346,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
  */
 async function skipBattleToNextBattle(game: GameManager, isFinalBattle = false) {
   game.scene.phaseManager.clearPhaseQueue();
-  const commandUiHandler = game.scene.ui.handlers[UiMode.COMMAND];
+  const commandUiHandler = game.scene.ui.handlers[UiMode.COMMAND]!;
   commandUiHandler.clear();
   game.scene.getEnemyParty().forEach(p => {
     p.hp = 0;

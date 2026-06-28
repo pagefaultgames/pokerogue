@@ -112,11 +112,66 @@ const noTransitionModes = [
   UiMode.ALERT_MODAL,
 ];
 
+const handlers = () => ({
+  [UiMode.MESSAGE]: new BattleMessageUiHandler(),
+  [UiMode.TITLE]: new TitleUiHandler(),
+  [UiMode.COMMAND]: new CommandUiHandler(),
+  [UiMode.FIGHT]: new FightUiHandler(),
+  [UiMode.BALL]: new BallUiHandler(),
+  [UiMode.TARGET_SELECT]: new TargetSelectUiHandler(),
+  [UiMode.MODIFIER_SELECT]: new ModifierSelectUiHandler(),
+  [UiMode.SAVE_SLOT]: new SaveSlotSelectUiHandler(),
+  [UiMode.PARTY]: new PartyUiHandler(),
+  [UiMode.SUMMARY]: new SummaryUiHandler(),
+  [UiMode.STARTER_SELECT]: new StarterSelectUiHandler(),
+  [UiMode.EVOLUTION_SCENE]: new EvolutionSceneUiHandler(),
+  [UiMode.EGG_HATCH_SCENE]: new EggHatchSceneUiHandler(),
+  [UiMode.EGG_HATCH_SUMMARY]: new EggSummaryUiHandler(),
+  [UiMode.CONFIRM]: new ConfirmUiHandler(),
+  [UiMode.OPTION_SELECT]: new OptionSelectUiHandler(),
+  [UiMode.MENU]: new MenuUiHandler(),
+  [UiMode.MENU_OPTION_SELECT]: new OptionSelectUiHandler(UiMode.MENU_OPTION_SELECT),
+  // settings
+  [UiMode.SETTINGS]: new SettingsUiHandler(),
+  [UiMode.SETTINGS_DISPLAY]: new SettingsDisplayUiHandler(),
+  [UiMode.SETTINGS_AUDIO]: new SettingsAudioUiHandler(),
+  [UiMode.SETTINGS_GAMEPAD]: new SettingsGamepadUiHandler(),
+  [UiMode.GAMEPAD_BINDING]: new GamepadBindingUiHandler(),
+  [UiMode.SETTINGS_KEYBOARD]: new SettingsKeyboardUiHandler(),
+  [UiMode.KEYBOARD_BINDING]: new KeyboardBindingUiHandler(),
+  [UiMode.ACHIEVEMENTS]: new AchvsUiHandler(),
+  [UiMode.GAME_STATS]: new GameStatsUiHandler(),
+  [UiMode.EGG_LIST]: new EggListUiHandler(),
+  [UiMode.EGG_GACHA]: new EggGachaUiHandler(),
+  [UiMode.POKEDEX]: new PokedexUiHandler(),
+  [UiMode.POKEDEX_SCAN]: new PokedexScanUiHandler(UiMode.TEST_DIALOGUE),
+  [UiMode.POKEDEX_PAGE]: new PokedexPageUiHandler(),
+  [UiMode.LOGIN_OR_REGISTER]: new LoginOrRegisterUiHandler(),
+  [UiMode.LOGIN_FORM]: new LoginFormUiHandler(),
+  [UiMode.REGISTRATION_FORM]: new RegistrationFormUiHandler(),
+  [UiMode.LOADING]: new LoadingModalUiHandler(),
+  [UiMode.SESSION_RELOAD]: new SessionReloadModalUiHandler(),
+  [UiMode.UNAVAILABLE]: new UnavailableModalUiHandler(),
+  [UiMode.CHALLENGE_SELECT]: new GameChallengesUiHandler(),
+  [UiMode.RENAME_POKEMON]: new RenameFormUiHandler(),
+  [UiMode.RENAME_RUN]: new RenameRunFormUiHandler(),
+  [UiMode.RUN_HISTORY]: new RunHistoryUiHandler(),
+  [UiMode.RUN_INFO]: new RunInfoUiHandler(),
+  [UiMode.TEST_DIALOGUE]: new TestDialogueUiHandler(UiMode.TEST_DIALOGUE),
+  [UiMode.AUTO_COMPLETE]: new AutoCompleteUiHandler(),
+  [UiMode.ADMIN]: new AdminUiHandler(),
+  [UiMode.MYSTERY_ENCOUNTER]: new MysteryEncounterUiHandler(),
+  [UiMode.CHANGE_PASSWORD_FORM]: new ChangePasswordFormUiHandler(),
+  [UiMode.ALERT_MODAL]: new AlertModalUiHandler()
+});
+
+type Handlers = ReturnType<typeof handlers>;
+
 // biome-ignore lint/style/useNamingConvention: a unique case (only 2 letters)
 export class UI extends Phaser.GameObjects.Container {
   private mode: UiMode;
   private modeChain: UiMode[];
-  public handlers: UiHandler[];
+  public handlers: Handlers | [];
   private overlay: Phaser.GameObjects.Rectangle;
   public achvBar: AchvBar;
   public bgmBar: BgmBar;
@@ -134,63 +189,12 @@ export class UI extends Phaser.GameObjects.Container {
 
     this.mode = UiMode.MESSAGE;
     this.modeChain = [];
-    this.handlers = [
-      new BattleMessageUiHandler(),
-      new TitleUiHandler(),
-      new CommandUiHandler(),
-      new FightUiHandler(),
-      new BallUiHandler(),
-      new TargetSelectUiHandler(),
-      new ModifierSelectUiHandler(),
-      new SaveSlotSelectUiHandler(),
-      new PartyUiHandler(),
-      new SummaryUiHandler(),
-      new StarterSelectUiHandler(),
-      new EvolutionSceneUiHandler(),
-      new EggHatchSceneUiHandler(),
-      new EggSummaryUiHandler(),
-      new ConfirmUiHandler(),
-      new OptionSelectUiHandler(),
-      new MenuUiHandler(),
-      new OptionSelectUiHandler(UiMode.MENU_OPTION_SELECT),
-      // settings
-      new SettingsUiHandler(),
-      new SettingsDisplayUiHandler(),
-      new SettingsAudioUiHandler(),
-      new SettingsGamepadUiHandler(),
-      new GamepadBindingUiHandler(),
-      new SettingsKeyboardUiHandler(),
-      new KeyboardBindingUiHandler(),
-      new AchvsUiHandler(),
-      new GameStatsUiHandler(),
-      new EggListUiHandler(),
-      new EggGachaUiHandler(),
-      new PokedexUiHandler(),
-      new PokedexScanUiHandler(UiMode.TEST_DIALOGUE),
-      new PokedexPageUiHandler(),
-      new LoginOrRegisterUiHandler(),
-      new LoginFormUiHandler(),
-      new RegistrationFormUiHandler(),
-      new LoadingModalUiHandler(),
-      new SessionReloadModalUiHandler(),
-      new UnavailableModalUiHandler(),
-      new GameChallengesUiHandler(),
-      new RenameFormUiHandler(),
-      new RenameRunFormUiHandler(),
-      new RunHistoryUiHandler(),
-      new RunInfoUiHandler(),
-      new TestDialogueUiHandler(UiMode.TEST_DIALOGUE),
-      new AutoCompleteUiHandler(),
-      new AdminUiHandler(),
-      new MysteryEncounterUiHandler(),
-      new ChangePasswordFormUiHandler(),
-      new AlertModalUiHandler(),
-    ];
+    this.handlers = handlers();
   }
 
   setup(): void {
     this.setName(`ui-${UiMode[this.mode]}`);
-    for (const handler of this.handlers) {
+    for (const handler of Object.values(this.handlers)) {
       handler.setup();
     }
     this.overlay = globalScene.add.rectangle(0, 0, globalScene.scaledCanvas.width, globalScene.scaledCanvas.height, 0);
@@ -235,7 +239,7 @@ export class UI extends Phaser.GameObjects.Container {
     globalScene.uiContainer.add(this.tooltipContainer);
   }
 
-  getHandler<H extends UiHandler = UiHandler>(): H {
+  getHandler<H extends Handlers[UiMode] | UiHandler = UiHandler>(): H {
     return this.handlers[this.mode] as H;
   }
 
@@ -665,7 +669,7 @@ export class UI extends Phaser.GameObjects.Container {
    * and clears menus from {@linkcode NavigationManager} to prepare for reset
    */
   public freeUIData(): void {
-    this.handlers.forEach(h => h.destroy());
+    Object.values(this.handlers).forEach(h => h.destroy());
     this.handlers = [];
     NavigationManager.getInstance().clearNavigationMenus();
   }
