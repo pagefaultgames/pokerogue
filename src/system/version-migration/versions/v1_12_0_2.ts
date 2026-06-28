@@ -42,7 +42,7 @@ function pullEggs(pullCount: number, ownedStarters: SpeciesId[]): EggData[] {
     const eggOptions: IEggOptions = {
       pulled: false,
       sourceType: EggSourceType.EVENT,
-      hatchWaves: ((i % 81) + 1) * 5,
+      hatchWaves: (Math.floor(i / 81) + 1) * 5,
       species,
       isShiny: true,
     };
