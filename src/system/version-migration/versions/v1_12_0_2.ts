@@ -98,6 +98,8 @@ const shinyCompensationMigrator: SystemSaveMigrator = {
       0,
       seed.toString(),
     );
+
+    globalScene.ui.showText("Do you like eggs?", null, null, null, true);
   },
 };
 
@@ -106,14 +108,14 @@ const voucherCompensationMigrator: SystemSaveMigrator = {
   migrate: (data): void => {
     if (
       !data?.voucherCounts
-      || data.voucherCounts[VoucherType.PREMIUM] == null
+      || data.voucherCounts[VoucherType.PLUS] == null
       || data.voucherCounts[VoucherType.GOLDEN] == null
     ) {
       console.warn("Missing voucherCounts in system save data.");
       return;
     }
     console.log("Applying voucher compensation");
-    data.voucherCounts[VoucherType.PREMIUM] += 5;
+    data.voucherCounts[VoucherType.PLUS] += 5;
     data.voucherCounts[VoucherType.GOLDEN] += 1;
   },
 };
