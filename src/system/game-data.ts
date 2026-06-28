@@ -620,7 +620,11 @@ export class GameData {
   private async reinitializeSaveData(systemDataStr?: string): Promise<void> {
     const { promise, resolve } = Promise.withResolvers<void>();
 
-    await globalScene.ui.setMode(UiMode.SESSION_RELOAD, !!systemDataStr);
+    const alertMessage = systemDataStr
+      ? i18next.t("gameData:reloadSaveDataLocal")
+      : i18next.t("gameData:reloadSaveData");
+
+    await globalScene.ui.setMode(UiMode.ALERT_MODAL, alertMessage);
 
     this.clearLocalData();
 
