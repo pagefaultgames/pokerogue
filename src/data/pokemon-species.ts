@@ -481,17 +481,21 @@ export abstract class PokemonSpeciesForm {
     switch (this.speciesId) {
       case SpeciesId.DODUO:
       case SpeciesId.DODRIO:
-      case SpeciesId.MEGANIUM:
       case SpeciesId.TORCHIC:
       case SpeciesId.COMBUSKEN:
-      case SpeciesId.BLAZIKEN:
       case SpeciesId.HIPPOPOTAS:
       case SpeciesId.HIPPOWDON:
       case SpeciesId.UNFEZANT:
       case SpeciesId.FRILLISH:
       case SpeciesId.JELLICENT:
-      case SpeciesId.PYROAR:
         ret += female ? "-f" : "";
+        break;
+      case SpeciesId.MEGANIUM:
+      case SpeciesId.BLAZIKEN:
+      case SpeciesId.PYROAR:
+        if (this.getFormKey() !== SpeciesFormKey.MEGA) {
+          ret += female ? "-f" : "";
+        }
         break;
     }
 
