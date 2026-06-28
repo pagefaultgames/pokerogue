@@ -98,8 +98,6 @@ const shinyCompensationMigrator: SystemSaveMigrator = {
       0,
       seed.toString(),
     );
-
-    globalScene.ui.showText("Do you like eggs?", null, null, null, true);
   },
 };
 
