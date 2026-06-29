@@ -44,10 +44,15 @@ export class StatStageChangePhase extends PokemonPhase {
     this.options.changes = deepCopy(options.changes).filter(c => c.stages !== 0); // Allow changes with 0 stages to be passed as no-ops
   }
 
+  // @ts-expect-error: TODO: the return type of `PokemonPhase#getPokemon` is wrong
+  public override getPokemon(): Pokemon | undefined {
+    return super.getPokemon();
+  }
+
   public override start(): void {
     const pokemon = this.getPokemon();
 
-    if (!pokemon.isActive(true)) {
+    if (!pokemon?.isActive(true)) {
       this.end();
       return;
     }
