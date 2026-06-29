@@ -495,11 +495,13 @@ export abstract class PokemonSpeciesForm {
       case SpeciesId.MEGANIUM:
       case SpeciesId.BLAZIKEN:
       case SpeciesId.GARCHOMP:
-      case SpeciesId.PYROAR:
-        if (this.getFormKey() !== SpeciesFormKey.MEGA) {
+      case SpeciesId.PYROAR: {
+        const formKey = this.getFormKey();
+        if (formKey !== SpeciesFormKey.MEGA && formKey !== SpeciesFormKey.MEGA_Z) {
           ret += female ? "-f" : "";
         }
         break;
+      }
     }
 
     let formSpriteKey = this.getFormSpriteKey(formIndex);
