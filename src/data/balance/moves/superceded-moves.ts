@@ -389,6 +389,7 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
     MoveId.ANCHOR_SHOT,
     MoveId.SMART_STRIKE,
   ],
+  [MoveId.MIRROR_SHOT]: [MoveId.FLASH_CANNON, MoveId.TACHYON_CUTTER],
   [MoveId.NEEDLE_ARM]: [
     MoveId.LEAF_BLADE,
     MoveId.SEED_BOMB,
