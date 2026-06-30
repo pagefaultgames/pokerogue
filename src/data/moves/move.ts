@@ -6572,7 +6572,19 @@ export class FrenzyAttr extends MoveEffectAttr {
     if (!user.getTag(BattlerTagType.FRENZY) && user.getMoveQueue().length === 0) {
       const turnCount = user.randBattleSeedIntRange(1, 2); // excludes initial use
       for (let i = 0; i < turnCount; i++) {
-        user.pushMoveQueue({ move: move.id, targets: [target.getBattlerIndex()], useMode: MoveUseMode.IGNORE_PP });
+        // Re-roll a random target for each queued turn, rather than reusing the
+        // turn this move was first used against. Fixes frenzy moves always hitting
+        // the same target for their full duration in battles with multiple enemies.
+        //
+        // Note: this picks targets for all frenzy turns right away, when frenzy starts.
+        // If an enemy faints or switches out partway through, that change won't
+        // affect targets that were already picked for the remaining turns.
+        const { targets: candidateTargets } = getMoveTargets(user, move.id, MoveTarget.NEAR_ENEMY);
+        const frenzyTarget =
+          candidateTargets.length > 0
+            ? candidateTargets[user.randBattleSeedInt(candidateTargets.length)]
+            : target.getBattlerIndex();
+        user.pushMoveQueue({ move: move.id, targets: [frenzyTarget], useMode: MoveUseMode.IGNORE_PP });
       }
       user.addTag(BattlerTagType.FRENZY, turnCount, move.id, user.id);
     } else {
