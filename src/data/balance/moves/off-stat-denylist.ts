@@ -199,18 +199,18 @@ const WORSE_OFFENSIVE_STAT_SPECIES_DENYLIST: Readonly<Partial<Record<SpeciesId, 
  * If the species is not on the denylst,
  * @param species - The species under consideration
  * @param formIndex - The form index of the species
- * @returns The offensive stat category that should be denied, or `null` if there is none.
+ * @returns The offensive stat category that should be denied, or `undefined` if there is none.
  * @see {@linkcode WORSE_OFFENSIVE_STAT_SPECIES_DENYLIST}
  */
 export function getSpeciesDeniedOffensiveStat(
   species: SpeciesId,
   formIndex: number,
-): typeof DENY_PHYSICAL_MOVES | typeof DENY_SPECIAL_MOVES | null {
+): typeof DENY_PHYSICAL_MOVES | typeof DENY_SPECIAL_MOVES | undefined {
   const denyList = WORSE_OFFENSIVE_STAT_SPECIES_DENYLIST[species];
-  if (typeof denyList === "object" && denyList !== null) {
-    return denyList[formIndex] ?? null;
+  if (typeof denyList === "object") {
+    return denyList[formIndex];
   }
-  return denyList ?? null;
+  return denyList;
 }
 
 /**
