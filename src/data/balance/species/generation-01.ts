@@ -2796,7 +2796,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
         }),
       ],
     }),
-    starter: SpeciesId.PIKACHU, // TODO: Check if this can be changed to Pichu without problems
+    starter: SpeciesId.PICHU,
     evolutions: [],
     formChanges: [
       new SpeciesFormChange({
