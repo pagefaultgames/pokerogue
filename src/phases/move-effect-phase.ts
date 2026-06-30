@@ -7,6 +7,7 @@ import { MoveAnim } from "#data/battle-anims";
 import { ProtectedTag, SemiInvulnerableTag, SubstituteTag, TypeBoostTag } from "#data/battler-tags";
 import { SpeciesFormChangePostMoveTrigger } from "#data/form-change-triggers";
 import type { TypeDamageMultiplier } from "#data/type";
+import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
@@ -166,6 +167,25 @@ export class MoveEffectPhase extends PokemonPhase {
     };
 
     const fieldMove = isFieldTargeted(move);
+
+    // Dragon Darts dart-1 pre-hit immunity redirect.
+    // If the chosen target is immune (Fairy type, protected, or semi-invulnerable) and the other
+    // opponent is not, redirect dart 1 to the non-immune opponent.
+    if (this.move.id === MoveId.DRAGON_DARTS && user.turnData.hitsLeft === user.turnData.hitCount) {
+      const activeOpponents = user.getOpponents(false).filter(p => p.isActive());
+      if (activeOpponents.length === 2) {
+        const currentTarget = activeOpponents.find(p => p.getBattlerIndex() === this.targets[0]);
+        const otherTarget = activeOpponents.find(p => p.getBattlerIndex() !== this.targets[0]);
+        if (
+          currentTarget
+          && otherTarget
+          && this.isDragonDartsImmune(currentTarget, user)
+          && !this.isDragonDartsImmune(otherTarget, user)
+        ) {
+          this.targets = [otherTarget.getBattlerIndex()];
+        }
+      }
+    }
 
     const targets = this.conductHitChecks(user, fieldMove);
 
@@ -408,9 +428,10 @@ export class MoveEffectPhase extends PokemonPhase {
     const moveAccuracy = move.calculateBattleAccuracy(user, target);
 
     // Strikes after the first in a multi-strike move are guaranteed to hit,
-    // unless the move is flagged to check all hits and the user does not have Skill Link.
+    // unless the move is flagged to check all hits and the user does not have Skill Link, or the move is Dragon Darts (which can redirect to another target)
     if (
-      user.turnData.hitsLeft < user.turnData.hitCount
+      this.move.id !== MoveId.DRAGON_DARTS
+      && user.turnData.hitsLeft < user.turnData.hitCount
       && (!move.hasFlag(MoveFlags.CHECK_ALL_HITS) || user.hasAbilityWithAttr("MaxMultiHitAbAttr"))
     ) {
       return [HitCheckResult.HIT, effectiveness];
@@ -610,7 +631,11 @@ export class MoveEffectPhase extends PokemonPhase {
 
     const result = this.applyMoveDamage(user, target, effectiveness);
 
-    if (user.turnData.hitsLeft === 1 || target.isFainted()) {
+    if (
+      user.turnData.hitsLeft === 1
+      || target.isFainted()
+      || (this.move.id === MoveId.DRAGON_DARTS && result[0] === HitResult.NO_EFFECT)
+    ) {
       this.queueHitResultMessage(result[0]);
     }
 
@@ -769,9 +794,15 @@ export class MoveEffectPhase extends PokemonPhase {
     // Force `lastHit` to be true if this is a multi hit move with hits left
     // `hitsLeft` must be left as-is in order for the message displaying the number of hits
     // to display the proper number.
-    // Note: When Dragon Darts' smart targeting is implemented, this logic may need to be adjusted.
+    // Exception: Dragon Darts in a double battle can redirect its second dart to the
+    // other opponent even when the first target faints, so we must not cut it short.
     if (!this.lastHit && user.turnData.hitsLeft > 1) {
-      this.lastHit = true;
+      const canRedirectToDartsTarget =
+        this.move.id === MoveId.DRAGON_DARTS
+        && user.getOpponents(false).some(p => p.isActive() && p.getBattlerIndex() !== target.getBattlerIndex());
+      if (!canRedirectToDartsTarget) {
+        this.lastHit = true;
+      }
     }
   }
 
@@ -877,10 +908,22 @@ export class MoveEffectPhase extends PokemonPhase {
      * If this phase isn't for the invoked move's last strike (and we still have something to hit),
      * unshift another MoveEffectPhase for the next strike before ending this phase.
      */
-    if (--user.turnData.hitsLeft >= 1 && this.getFirstTarget()) {
-      this.addNextHitPhase();
-      super.end();
-      return;
+    if (--user.turnData.hitsLeft >= 1) {
+      if (this.move.id === MoveId.DRAGON_DARTS) {
+        // Dragon Darts uses smart targeting: in a double battle the second dart
+        // targets the opponent not hit by the first dart (or the sole remaining
+        // opponent if the first target fainted or only one was ever active).
+        const nextTargets = this.getDragonDartsNextTargets(user);
+        if (nextTargets.length > 0) {
+          this.addNextHitPhase(nextTargets);
+          super.end();
+          return;
+        }
+      } else if (this.getFirstTarget()) {
+        this.addNextHitPhase();
+        super.end();
+        return;
+      }
     }
 
     /**
@@ -961,9 +1004,102 @@ export class MoveEffectPhase extends PokemonPhase {
   /**
    * Unshifts a new `MoveEffectPhase` with the same properties as this phase.
    * Used to queue the next hit of multi-strike moves.
+   * @param targets - Optional override for the next phase's target list.
+   *   Defaults to this phase's current targets when not provided.
    */
-  protected addNextHitPhase(): void {
-    globalScene.phaseManager.unshiftNew("MoveEffectPhase", this.battlerIndex, this.targets, this.move, this.useMode);
+  protected addNextHitPhase(targets?: BattlerIndex[]): void {
+    globalScene.phaseManager.unshiftNew(
+      "MoveEffectPhase",
+      this.battlerIndex,
+      targets ?? this.targets,
+      this.move,
+      this.useMode,
+    );
+  }
+
+  /**
+   * Compute the target(s) for the second strike of Dragon Darts.
+   *
+   * In a double battle with two active opponents, the second dart targets the
+   * opponent **not** hit by the first dart. If only one opponent is active
+   * (single battle, or the first target just fainted), the second dart retargets
+   * that surviving opponent. Returns an empty array when no valid target exists.
+   *
+   * @param user - The {@linkcode Pokemon} using Dragon Darts
+   * @returns The {@linkcode BattlerIndex} array to pass to the next hit phase
+   */
+  private getDragonDartsNextTargets(user: Pokemon): BattlerIndex[] {
+    const activeOpponents = user.getOpponents(false).filter(p => p.isActive());
+    if (activeOpponents.length === 0) {
+      return [];
+    }
+
+    const centerOfAttentionTarget = activeOpponents.find(opponent => {
+      const redirectTag = opponent.getTag(BattlerTagType.CENTER_OF_ATTENTION);
+      if (!redirectTag) {
+        return false;
+      }
+
+      // Rage Powder redirection does not affect Grass-types or Overcoat holders.
+      return !redirectTag.powder || (!user.isOfType(PokemonType.GRASS) && !user.hasAbility(AbilityId.OVERCOAT));
+    });
+    if (centerOfAttentionTarget) {
+      return [centerOfAttentionTarget.getBattlerIndex()];
+    }
+
+    if (activeOpponents.length === 1) {
+      // Single battle or only one opponent still active: hit the same target
+      return [activeOpponents[0].getBattlerIndex()];
+    }
+
+    // Two active opponents: prefer the one not hit by the first dart
+    const firstTargetIndex = this.targets[0];
+    const otherOpponent = activeOpponents.find(p => p.getBattlerIndex() !== firstTargetIndex);
+    const preferredTarget = otherOpponent ?? activeOpponents[0];
+
+    // Pre-hit immunity redirect: if the preferred dart-2 target is immune (Fairy type, protected,
+    // or semi-invulnerable) but the dart-1 target is not, redirect dart 2 to the dart-1 target.
+    // If both are immune, only one immunity is acknowledged and standard targeting continues.
+    if (this.isDragonDartsImmune(preferredTarget, user)) {
+      const firstTarget = activeOpponents.find(p => p.getBattlerIndex() === firstTargetIndex);
+      if (firstTarget && !this.isDragonDartsImmune(firstTarget, user)) {
+        return [firstTarget.getBattlerIndex()];
+      }
+    }
+
+    return [preferredTarget.getBattlerIndex()];
+  }
+
+  /**
+   * Check whether a target should be avoided by Dragon Darts due to pre-hit immunity.
+   * Returns `true` if the target is a Fairy type (immune to Dragon moves), has Wonder Guard and
+   * is not weak to Dragon, is protected by a protection move, or is in a semi-invulnerable state
+   * that this move cannot bypass.
+   * @param user - The attacking {@linkcode Pokemon}
+   * @param target - The opposing {@linkcode Pokemon} to check
+   */
+  private isDragonDartsImmune(target: Pokemon, user: Pokemon): boolean {
+    if (target.isOfType(PokemonType.FAIRY)) {
+      return true;
+    }
+
+    if (target.hasAbility(AbilityId.WONDER_GUARD)) {
+      const moveType = user.getMoveType(this.move);
+      const typeEffectiveness = target.getAttackTypeEffectiveness(moveType, {
+        source: user,
+        simulated: false,
+        move: this.move,
+      });
+      if (typeEffectiveness <= 1) {
+        return true;
+      }
+    }
+
+    if (target.findTags(t => t instanceof ProtectedTag).length > 0) {
+      return true;
+    }
+    const semiInvulnTag = target.getTag(SemiInvulnerableTag);
+    return !!semiInvulnTag && !this.checkBypassSemiInvuln(semiInvulnTag);
   }
 
   /** Remove all substitutes that were broken by this phase's invoked move. */
