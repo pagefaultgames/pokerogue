@@ -34,7 +34,7 @@ import {
   ULTRA_TIER_TM_LEVEL_REQUIREMENT,
   ULTRA_TM_MOVESET_WEIGHT,
 } from "#balance/moves/moveset-generation";
-import { WORSE_OFFENSIVE_STAT_SPECIES_DENYLIST } from "#balance/moves/off-stat-denylist";
+import { getSpeciesDeniedOffensiveStat } from "#balance/moves/off-stat-denylist";
 import { FORCED_RIVAL_SIGNATURE_MOVES, FORCED_SIGNATURE_MOVES } from "#balance/moves/signature-moves";
 import { SUPERCEDED_MOVES } from "#balance/moves/superceded-moves";
 import { tmPoolTiers } from "#balance/tm-pool-tiers";
@@ -349,10 +349,7 @@ function filterMovePool(pool: Map<MoveId, number>, isBoss: boolean, hasTrainer: 
   const blockTerrainSettingMoves = pokemon.hasAbilityWithAttr("PostSummonTerrainChangeAbAttr");
   // Block status moves if pokemon has Gorilla Tactics
   const hasGorillaTactics = pokemon.hasAbilityWithAttr("GorillaTacticsAbAttr");
-  const worseOffensiveStatDenylist =
-    WORSE_OFFENSIVE_STAT_SPECIES_DENYLIST.get(pokemon.species.speciesId)
-    ?? WORSE_OFFENSIVE_STAT_SPECIES_DENYLIST.get([pokemon.species.speciesId, pokemon.formIndex])
-    ?? null;
+  const worseOffensiveStatDenylist = getSpeciesDeniedOffensiveStat(pokemon.species.speciesId, pokemon.formIndex);
 
   for (const [moveId, weight] of pool) {
     const move = allMoves[moveId];
