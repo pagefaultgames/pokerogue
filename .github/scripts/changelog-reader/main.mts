@@ -73,7 +73,7 @@ async function getAndProcessChangelog(): Promise<void> {
   } else {
     //! Note: to run locally, a separate GitHub API token needs to be generated
 
-    // dynamically imported to not need `@inquirer/prompts` during the workflow
+    // dynamically imported to not need the checkout of the helper file during the workflow
     const { writeFileSafe } = await import("../../../scripts/utils/file.ts");
     writeFileSafe(CONFIG.OUTPUT_FILE, output, "utf8");
     console.log(`✔ Output written to ${CONFIG.OUTPUT_FILE} successfully!`);
@@ -115,7 +115,7 @@ async function getPullRequests(commits: Set<string>): Promise<PullRequest[]> {
         repo: CONFIG.REPO_NAME,
         commit_sha: sha,
       });
-      const pr = prs.data[0];
+      const pr = prs.data.find(p => p.merged_at != null && p.base.ref === CONFIG.REPO_BRANCH);
       if (!pr) {
         continue;
       }
@@ -179,7 +179,8 @@ async function updateDescription(changelog: string): Promise<void> {
  */
 async function loadConfig(): Promise<boolean> {
   if (!process.env.GITHUB_ACTIONS) {
-    CONFIG.REPO_BRANCH = "beta";
+    const branch = process.argv[2] || "beta";
+    CONFIG.REPO_BRANCH = branch;
     return true;
   }
   if (!process.env.PR_BRANCH) {

@@ -17,7 +17,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
-import { PokemonType } from "#enums/pokemon-type";
+import type { RegularPokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import { UiMode } from "#enums/ui-mode";
@@ -45,9 +45,9 @@ import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#trainers/trainer-party-template";
-import type { OptionSelectConfig } from "#ui/abstract-option-select-ui-handler";
+import type { OptionSelectConfig } from "#ui/base-option-select-ui-handler";
 import { randSeedInt, randSeedShuffle } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { getPokemonSpecies, getRandomRegularPokemonType } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 /** the i18n namespace for the encounter */
@@ -383,22 +383,21 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
           // Makes the "randomness" of the shuffle slightly less punishing
           let priorityTypes = pokemon.moveset
             .filter(
-              move =>
-                move && !originalTypes.includes(move.getMove().type) && move.getMove().category !== MoveCategory.STATUS,
+              move => !originalTypes.includes(move.getMove().type) && move.getMove().category !== MoveCategory.STATUS,
             )
-            .map(move => move!.getMove().type);
+            .map(move => move.getMove().type) as RegularPokemonType[];
           if (priorityTypes?.length > 0) {
             priorityTypes = [...new Set(priorityTypes)].sort();
             priorityTypes = randSeedShuffle(priorityTypes);
           }
 
-          const newTypes = [PokemonType.UNKNOWN];
-          let secondType: PokemonType | null = null;
-          while (secondType === null || secondType === newTypes[0] || originalTypes.includes(secondType)) {
+          const newTypes: (RegularPokemonType | null)[] = [null];
+          let secondType: RegularPokemonType | undefined;
+          while (secondType == null || originalTypes.includes(secondType)) {
             if (priorityTypes.length > 0) {
-              secondType = priorityTypes.pop() ?? null;
+              secondType = priorityTypes.pop();
             } else {
-              secondType = randSeedInt(18) as PokemonType;
+              secondType = getRandomRegularPokemonType();
             }
           }
           newTypes.push(secondType);

@@ -1,4 +1,5 @@
 import type { Battle } from "#app/battle";
+import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -20,6 +21,7 @@ import { ModifierPoolType } from "#enums/modifier-pool-type";
 import type { MoveId } from "#enums/move-id";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import type { Nature } from "#enums/nature";
+import { PartyUiMode } from "#enums/party-ui-mode";
 import { PokemonType } from "#enums/pokemon-type";
 import { StatusEffect } from "#enums/status-effect";
 import { TrainerSlot } from "#enums/trainer-slot";
@@ -46,9 +48,8 @@ import type { TrainerConfig } from "#trainers/trainer-config";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import type { RandomEncounterParams } from "#types/pokemon-common";
-import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import type { OptionSelectConfig, OptionSelectItem } from "#ui/base-option-select-ui-handler";
 import type { PartyOption, PokemonSelectFilter } from "#ui/party-ui-handler";
-import { PartyUiMode } from "#ui/party-ui-handler";
 import { coerceArray } from "#utils/array";
 import { BooleanHolder, randSeedInt, randSeedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
@@ -78,7 +79,7 @@ export function doTrainerExclamation(): void {
     },
   });
 
-  globalScene.playSound("battle_anims/GEN8- Exclaim", { volume: 0.7 });
+  audioManager.playSound("battle_anims/GEN8- Exclaim", { volume: 0.7 });
 }
 
 export interface EnemyPokemonConfig {
@@ -471,7 +472,7 @@ export function updatePlayerMoney(moneyAmount: number, playSound = true, showMes
   globalScene.animateMoneyChanged(isIncrease);
 
   if (playSound) {
-    globalScene.playSound("se/buy");
+    audioManager.playSound("se/buy");
   }
 
   if (showMessage) {

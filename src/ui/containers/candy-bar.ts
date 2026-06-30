@@ -1,5 +1,6 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
-import { starterColors } from "#app/global-vars/starter-colors";
+import { getStarterColors } from "#app/global-vars/starter-colors";
 import type { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { addTextObject } from "#ui/text";
@@ -84,7 +85,7 @@ export class CandyBar extends Phaser.GameObjects.Container {
       return;
     }
 
-    const colorScheme = starterColors[starterSpeciesId];
+    const colorScheme = getStarterColors(starterSpeciesId);
 
     this.candyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
     this.candyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
@@ -102,7 +103,7 @@ export class CandyBar extends Phaser.GameObjects.Container {
       this.tween.stop();
     }
 
-    globalScene.playSound("se/shing");
+    audioManager.playSound("se/shing");
 
     this.tween = globalScene.tweens.add({
       targets: this,

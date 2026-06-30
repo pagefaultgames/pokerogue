@@ -236,7 +236,7 @@ describe("Moves - Pledge Moves", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(ironHeadFlinchAttr.getMoveChance).toHaveLastReturnedWith(60);
+    expect(ironHeadFlinchAttr.getMoveChance).toHaveLastReturnedWith(40);
   });
 
   it("Pledge Moves - should have no effect when the second ally's move is cancelled", async () => {

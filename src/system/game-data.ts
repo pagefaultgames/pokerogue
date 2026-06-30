@@ -2,23 +2,21 @@ import { pokerogueApi } from "#api/api";
 import { clientSessionId, getSessionDataLocalStorageKey, loggedInUser, updateUserInfo } from "#app/account";
 import { defaultStarterSpecies, saveKey } from "#app/constants";
 import { getGameMode } from "#app/game-mode";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { activeOverrides } from "#app/overrides";
 import { isIos } from "#app/touch-controls";
 import { Tutorial } from "#app/tutorial";
 import { speciesEggMoves } from "#balance/moves/egg-moves";
-import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
-import { speciesStarterCosts } from "#balance/starters";
 import { bypassLogin, isBeta, isDev } from "#constants/app-constants";
 import { MAX_STARTER_CANDY_COUNT } from "#constants/game-constants";
 import { EntryHazardTag } from "#data/arena-tag";
 import { getSerializedDailyRunConfig, parseDailySeed } from "#data/daily-seed/daily-seed-utils";
-import { allMoves, allSpecies } from "#data/data-lists";
+import { allMoves } from "#data/data-lists";
 import type { Egg } from "#data/egg";
-import { pokemonFormChanges } from "#data/pokemon-forms";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { loadPositionalTag } from "#data/positional-tags/load-positional-tag";
-import { TerrainType } from "#data/terrain";
 import { AbilityAttr } from "#enums/ability-attr";
 import { BattleType } from "#enums/battle-type";
 import { ChallengeType } from "#enums/challenge-type";
@@ -26,7 +24,6 @@ import { Device } from "#enums/devices";
 import { DexAttr } from "#enums/dex-attr";
 import { GameDataType } from "#enums/game-data-type";
 import { GameModes } from "#enums/game-modes";
-import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
 import { PlayerGender } from "#enums/player-gender";
 import { SpeciesId } from "#enums/species-id";
@@ -34,8 +31,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { TrainerVariant } from "#enums/trainer-variant";
 import { UiMode } from "#enums/ui-mode";
 import { Unlockables } from "#enums/unlockables";
-import { WeatherType } from "#enums/weather-type";
-import { TagAddedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#events/arena";
+import { ArenaTagAddedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#events/arena";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 // biome-ignore lint/performance/noNamespaceImport: Something weird is going on here and I don't want to touch it
 import * as Modifier from "#modifiers/modifier";
@@ -78,7 +74,7 @@ import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { fixedInt, NumberHolder, randInt, randSeedItem } from "#utils/common";
 import { decrypt, encrypt } from "#utils/data";
-import { getEnumKeys } from "#utils/enums";
+import { getEnumKeys, getEnumValues } from "#utils/enums";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import { AES, enc } from "crypto-js";
@@ -218,9 +214,80 @@ export class GameData {
     return this.unlocks[unlockable];
   }
 
+  /**
+   * @returns Whether the system data is valid
+   */
+  private validateSystemData(data: SystemSaveData): boolean {
+    if (data.starterData == null) {
+      console.error("Starter data missing!");
+      return false;
+    }
+
+    for (const speciesId of getEnumValues(SpeciesId)) {
+      if (!speciesDataRegistry.isStarter(speciesId) || defaultStarterSpecies.includes(speciesId)) {
+        continue;
+      }
+
+      const starterEntry = data.starterData[speciesId];
+      const dexEntry = data.dexData[speciesId];
+
+      const species = SpeciesId[speciesId];
+
+      if (starterEntry == null) {
+        console.error("Missing starter data for %s (%d)!", species, speciesId);
+        return false;
+      }
+      if (dexEntry == null) {
+        console.error("Missing dex data for %s (%d)!", species, speciesId);
+        return false;
+      }
+
+      const hasStarterData =
+        starterEntry.abilityAttr > 1
+        || starterEntry.eggMoves > 0
+        || starterEntry.moveset != null
+        || starterEntry.passiveAttr > 0
+        || starterEntry.valueReduction > 0;
+
+      const noDexData = dexEntry.caughtCount === 0 && dexEntry.hatchedCount === 0 && dexEntry.caughtAttr === 0n;
+
+      if (hasStarterData && noDexData) {
+        console.error("Corrupt save data detected, save rejected!");
+        console.warn("Species: %s (%d)", species, speciesId);
+        console.warn(starterEntry);
+        console.warn(dexEntry);
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  private async showInvalidSaveModal<const T>(returnValue: T): Promise<T> {
+    const { promise, resolve } = Promise.withResolvers<T>();
+    await globalScene.ui.setMode(UiMode.ALERT_MODAL, i18next.t("gameData:failedSaveValidation"));
+    // TODO: This is a temporary hacky solution to ensure the modal displays when saving
+    // on the starter select UI, which change the UI mode without awaiting this async call..
+    globalScene.time.delayedCall(fixedInt(1000), () => {
+      // on the pokedex page, which changes the UiMode after calling this so the
+      // user never sees the alert modal.
+      if (globalScene.ui.getMode() === UiMode.ALERT_MODAL) {
+        globalScene.time.delayedCall(fixedInt(4000), () => resolve(returnValue));
+      } else {
+        globalScene.ui.setMode(UiMode.ALERT_MODAL, i18next.t("gameData:failedSaveValidation"));
+        globalScene.time.delayedCall(fixedInt(4000), () => resolve(returnValue));
+      }
+    });
+    return promise;
+  }
+
   public async saveSystem(): Promise<boolean> {
-    globalScene.ui.savingIcon.show();
     const data = this.getSystemSaveData();
+
+    if (!this.validateSystemData(data)) {
+      return this.showInvalidSaveModal(false);
+    }
+    globalScene.ui.savingIcon.show();
 
     const maxIntAttrValue = 0x80000000;
     const systemData = JSON.stringify(data, (_k: any, v: any) =>
@@ -910,7 +977,7 @@ export class GameData {
     if (!sessionData) {
       return false;
     }
-    this.initSessionFromData(sessionData);
+    await this.initSessionFromData(sessionData);
     return true;
   }
 
@@ -971,7 +1038,7 @@ export class GameData {
     globalScene.updateScoreText();
 
     globalScene.mysteryEncounterSaveData = new MysteryEncounterSaveData(fromSession.mysteryEncounterSaveData);
-
+    await globalScene.loadBiomeAssets(fromSession.arena.biome);
     globalScene.newArena(fromSession.arena.biome, fromSession.playerFaints);
 
     const battle = globalScene.newBattle(fromSession);
@@ -994,45 +1061,38 @@ export class GameData {
       loadPokemonAssets.push(enemyPokemon.loadAssets());
     });
 
-    globalScene.arena.weather = fromSession.arena.weather;
-    globalScene.arena.eventTarget.dispatchEvent(
-      new WeatherChangedEvent(
-        WeatherType.NONE,
-        globalScene.arena.weather?.weatherType!,
-        globalScene.arena.weather?.turnsLeft!,
-        globalScene.arena.weather?.maxDuration!,
-      ),
-    ); // TODO: is this bang correct?
+    // #region Arena stuff
+    const { weather, terrain, playerTerasUsed, tags, positionalTags } = fromSession.arena;
 
-    globalScene.arena.terrain = fromSession.arena.terrain;
-    globalScene.arena.eventTarget.dispatchEvent(
-      new TerrainChangedEvent(
-        TerrainType.NONE,
-        globalScene.arena.terrain?.terrainType!,
-        globalScene.arena.terrain?.turnsLeft!,
-        globalScene.arena.terrain?.maxDuration!,
-      ),
-    ); // TODO: is this bang correct?
-
-    globalScene.arena.playerTerasUsed = fromSession.arena.playerTerasUsed;
-
-    globalScene.arena.tags = fromSession.arena.tags;
-    if (globalScene.arena.tags) {
-      for (const tag of globalScene.arena.tags) {
-        if (tag instanceof EntryHazardTag) {
-          const { tagType, side, turnCount, maxDuration, layers, maxLayers } = tag as EntryHazardTag;
-          globalScene.arena.eventTarget.dispatchEvent(
-            new TagAddedEvent(tagType, side, turnCount, maxDuration, layers, maxLayers),
-          );
-        } else {
-          globalScene.arena.eventTarget.dispatchEvent(
-            new TagAddedEvent(tag.tagType, tag.side, tag.turnCount, tag.maxDuration),
-          );
-        }
-      }
+    if (weather) {
+      globalScene.arena.weather = weather;
+      globalScene.arena.eventTarget.dispatchEvent(
+        new WeatherChangedEvent(weather.weatherType, weather.turnsLeft, weather.maxDuration),
+      );
     }
 
-    globalScene.arena.positionalTagManager.tags = fromSession.arena.positionalTags.map(tag => loadPositionalTag(tag));
+    if (terrain) {
+      globalScene.arena.terrain = terrain;
+      globalScene.arena.eventTarget.dispatchEvent(
+        new TerrainChangedEvent(terrain.terrainType, terrain.turnsLeft, terrain.maxDuration),
+      );
+    }
+
+    globalScene.arena.playerTerasUsed = playerTerasUsed;
+
+    globalScene.arena.tags = tags;
+    for (const tag of tags) {
+      const { tagType, side, turnCount, maxDuration } = tag;
+      const layers: [number, number] | undefined =
+        tag instanceof EntryHazardTag ? [tag.layers, tag.maxLayers] : undefined;
+      globalScene.arena.eventTarget.dispatchEvent(
+        new ArenaTagAddedEvent(tagType, side, turnCount, layers, maxDuration),
+      );
+    }
+
+    globalScene.arena.positionalTagManager.tags = positionalTags.map(tag => loadPositionalTag(tag));
+
+    // #endregion Arena stuff
 
     if (globalScene.modifiers.length > 0) {
       console.warn("Existing modifiers not cleared on session load, deleting...");
@@ -1158,21 +1218,25 @@ export class GameData {
     // TODO: Add `null`/`undefined` to the corresponding type signatures for this
     // (or prevent them from being null)
     // If the value is able to *not exist*, it should say so in the code
-    const sessionData = JSON.parse(dataStr, (k: string, v: any) => {
-      // TODO: Move this to occur _after_ migrate scripts (and refactor all non-assignment duties into migrate scripts)
-      // This should ideally be just a giant assign block
+    const rawData = JSON.parse(dataStr);
+    applySessionVersionMigration(rawData);
+
+    for (const [k, v] of Object.entries(rawData)) {
       switch (k) {
         case "party":
         case "enemyParty": {
           const ret: PokemonData[] = [];
           for (const pd of v ?? []) {
+            // TODO: Consider invoking a dedicated deserialization method instead of the constructor
             ret.push(new PokemonData(pd));
           }
-          return ret;
+          rawData[k] = ret;
+          continue;
         }
 
         case "trainer":
-          return v ? new TrainerData(v) : null;
+          rawData[k] = v ? new TrainerData(v) : null;
+          continue;
 
         case "modifiers":
         case "enemyModifiers": {
@@ -1194,38 +1258,34 @@ export class GameData {
 
             ret.push(new PersistentModifierData(md, k === "modifiers"));
           }
-          return ret;
+          rawData[k] = ret;
+          continue;
         }
 
         case "arena":
-          return new ArenaData(v as SerializedArenaData);
+          rawData[k] = new ArenaData(v as SerializedArenaData);
+          continue;
 
         case "challenges": {
           const ret: ChallengeData[] = [];
           for (const c of v ?? []) {
             ret.push(new ChallengeData(c));
           }
-          return ret;
+          rawData[k] = ret;
+          continue;
         }
 
-        case "mysteryEncounterType":
-          return v as MysteryEncounterType;
-
         case "mysteryEncounterSaveData":
-          return new MysteryEncounterSaveData(v);
-
+          rawData[k] = new MysteryEncounterSaveData(v);
+          continue;
         case "dailyConfig":
           // make sure the config is valid
-          return parseDailySeed(JSON.stringify(v));
-
-        default:
-          return v;
+          rawData[k] = parseDailySeed(JSON.stringify(v));
+          continue;
       }
-    }) as SessionSaveData;
+    }
 
-    applySessionVersionMigration(sessionData);
-
-    return sessionData;
+    return rawData;
   }
 
   /**
@@ -1251,10 +1311,6 @@ export class GameData {
       }
     }
 
-    if (sync) {
-      globalScene.ui.savingIcon.show();
-    }
-
     const sessionData = useCachedSession
       ? this.parseSessionData(
           decrypt(localStorage.getItem(getSessionDataLocalStorageKey(globalScene.sessionSlotId))!, bypassLogin),
@@ -1266,6 +1322,15 @@ export class GameData {
     const systemData = useCachedSystem
       ? GameData.parseSystemData(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`)!, bypassLogin))
       : this.getSystemSaveData(); // TODO: is this bang correct?
+
+    if (!this.validateSystemData(systemData)) {
+      return this.showInvalidSaveModal(false);
+    }
+
+    // Saving icon should go after validation to avoid confusing users.
+    if (sync) {
+      globalScene.ui.savingIcon.show();
+    }
 
     const request = {
       system: systemData,
@@ -1547,7 +1612,7 @@ export class GameData {
   private initDexData(): void {
     const data: DexData = {};
 
-    for (const species of allSpecies) {
+    for (const species of speciesDataRegistry.getAllSpecies()) {
       data[species.speciesId] = {
         seenAttr: 0n,
         caughtAttr: 0n,
@@ -1593,8 +1658,7 @@ export class GameData {
   private initStarterData(): void {
     const starterData: StarterData = {};
 
-    const starterSpeciesIds = Object.keys(speciesStarterCosts).map(k => Number.parseInt(k) as SpeciesId);
-
+    const starterSpeciesIds = speciesDataRegistry.getAllStarters();
     for (const speciesId of starterSpeciesIds) {
       starterData[speciesId] = {
         moveset: null,
@@ -1712,9 +1776,7 @@ export class GameData {
           dexEntry.caughtAttr |= globalScene.gameData.getFormAttr(3);
         }
       } else {
-        const allFormChanges = Object.hasOwn(pokemonFormChanges, species.speciesId)
-          ? pokemonFormChanges[species.speciesId]
-          : [];
+        const allFormChanges = speciesDataRegistry.getFormChanges(species.speciesId);
         const toCurrentFormChanges = allFormChanges.filter(f => f.formKey === formKey);
         if (toCurrentFormChanges.length > 0) {
           // Needs to do this or Castform can unlock the wrong form, etc.
@@ -1724,7 +1786,7 @@ export class GameData {
     }
 
     // Unlock ability
-    if (Object.hasOwn(speciesStarterCosts, species.speciesId)) {
+    if (speciesDataRegistry.isStarter(species.speciesId)) {
       this.starterData[species.speciesId].abilityAttr |=
         pokemon.abilityIndex !== 1 || pokemon.species.ability2 ? 1 << pokemon.abilityIndex : AbilityAttr.ABILITY_HIDDEN;
     }
@@ -1732,7 +1794,7 @@ export class GameData {
     // Unlock nature
     dexEntry.natureAttr |= 1 << (pokemon.nature + 1);
 
-    const prevolution = pokemonPrevolutions[species.speciesId];
+    const prevolution = speciesDataRegistry.getPrevolution(species.speciesId);
     const hasPrevolution = prevolution != null;
     const newCatch = !caughtAttr;
     const hasNewAttr = (caughtAttr & dexAttr) !== dexAttr;
@@ -1787,7 +1849,7 @@ export class GameData {
       );
     };
 
-    if (!newCatch || !Object.hasOwn(speciesStarterCosts, species.speciesId)) {
+    if (!newCatch || !speciesDataRegistry.isStarter(species.speciesId)) {
       return await checkPrevolution(false);
     }
     // TODO: This will skip unlocking a pre-evolution if the player catches an evolved form that is itself a starter.
@@ -1796,7 +1858,7 @@ export class GameData {
     if (!showMessage) {
       return true;
     }
-    globalScene.playSound("se/level_up_fanfare");
+    audioManager.playSound("se/level_up_fanfare");
 
     // TODO: Remove and replace with a simpler check if the return value is found to be unnecessary
     return new Promise(resolve =>
@@ -1898,7 +1960,7 @@ export class GameData {
     if (!showMessage) {
       return true;
     }
-    globalScene.playSound("se/level_up_fanfare");
+    audioManager.playSound("se/level_up_fanfare");
     const moveName = allMoves[speciesEggMoves[speciesId][eggMoveIndex]].name;
     let message = prependSpeciesToMessage ? species.getName() + " " : "";
     message +=
@@ -1927,7 +1989,7 @@ export class GameData {
     let { speciesId } = species;
     do {
       this.dexData[speciesId].natureAttr |= 1 << (nature + 1);
-      speciesId = pokemonPrevolutions[speciesId];
+      speciesId = speciesDataRegistry.getPrevolution(speciesId)!;
     } while (speciesId != null);
   }
 
@@ -1942,7 +2004,7 @@ export class GameData {
       if (dexIvs.every(iv => iv === 31)) {
         globalScene.validateAchv(achvs.PERFECT_IVS);
       }
-      speciesId = pokemonPrevolutions[speciesId];
+      speciesId = speciesDataRegistry.getPrevolution(speciesId)!;
     } while (speciesId != null);
   }
 
@@ -1958,7 +2020,7 @@ export class GameData {
   }
 
   getStarterCount(dexEntryPredicate: (entry: DexEntry) => boolean): number {
-    const starterKeys = Object.keys(speciesStarterCosts);
+    const starterKeys = speciesDataRegistry.getAllStarters();
     let starterCount = 0;
     for (const s of starterKeys) {
       const starterDexEntry = this.dexData[s];
@@ -2070,10 +2132,9 @@ export class GameData {
    * `valueReduction` only needs to be provided when testing a value reduction other than the one currently unlocked
    */
   getSpeciesStarterValue(speciesId: SpeciesId, valueReduction?: number): number {
-    // TODO: is this bang correct?
-    const baseValue = speciesStarterCosts[speciesId]!;
+    const baseValue = speciesDataRegistry.getStarterCost(speciesId);
     const reduction = valueReduction ?? this.starterData[speciesId].valueReduction;
-    let value = baseValue;
+    let value = baseValue as number;
 
     const decrementValue = (v: number) => {
       if (v > 1) {

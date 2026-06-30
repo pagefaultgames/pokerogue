@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import type { Button } from "#enums/buttons";
 import { Device } from "#enums/devices";
@@ -6,6 +7,7 @@ import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { AchvBar } from "#ui/achv-bar";
 import { AchvsUiHandler } from "#ui/achvs-ui-handler";
+import { AlertModalUiHandler } from "#ui/alert-modal-ui-handler";
 import { AutoCompleteUiHandler } from "#ui/autocomplete-ui-handler";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { BallUiHandler } from "#ui/ball-ui-handler";
@@ -106,6 +108,7 @@ const noTransitionModes = [
   UiMode.MYSTERY_ENCOUNTER,
   UiMode.RUN_INFO,
   UiMode.CHANGE_PASSWORD_FORM,
+  UiMode.ALERT_MODAL,
 ];
 
 // biome-ignore lint/style/useNamingConvention: a unique case (only 2 letters)
@@ -180,6 +183,7 @@ export class UI extends Phaser.GameObjects.Container {
       new AdminUiHandler(),
       new MysteryEncounterUiHandler(),
       new ChangePasswordFormUiHandler(),
+      new AlertModalUiHandler(),
     ];
   }
 
@@ -476,11 +480,11 @@ export class UI extends Phaser.GameObjects.Container {
   }
 
   playSelect(): void {
-    globalScene.playSound("ui/select");
+    audioManager.playSound("ui/select");
   }
 
   playError(): void {
-    globalScene.playSound("ui/error");
+    audioManager.playSound("ui/error");
   }
 
   fadeOut(duration: number): Promise<void> {

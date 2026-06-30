@@ -342,7 +342,6 @@ export function hasAllLocalizedSprites(lang?: string): boolean {
     case "zh-Hans":
     case "zh-Hant":
     case "pt-BR":
-    case "ro":
     case "th":
     case "tr":
     case "ko":
@@ -352,9 +351,10 @@ export function hasAllLocalizedSprites(lang?: string): boolean {
     case "id":
     case "hi":
     case "tl":
-    case "nb-NO":
     case "sv":
     case "uk":
+    case "vi":
+    case "pl":
       return true;
     default:
       return false;

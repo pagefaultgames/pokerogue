@@ -85,7 +85,6 @@ import { getMoveTargets } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { MoveEffectPhase } from "#phases/move-effect-phase";
 import type { MovePhase } from "#phases/move-phase";
-import type { StatStageChangeCallback } from "#phases/stat-stage-change-phase";
 import type {
   AbilityBattlerTagType,
   BattlerTagData,
@@ -102,10 +101,12 @@ import type {
   TypeBoostTagType,
 } from "#types/battler-tags";
 import type { Constructor } from "#types/common";
+import type { StatChange, StatStageChangeCallback } from "#types/stat-change";
 import type { AbstractConstructor, Mutable } from "#types/type-helpers";
 import { coerceArray } from "#utils/array";
 import { BooleanHolder, getFrameMs, toDmgValue } from "#utils/common";
-import { toCamelCase } from "#utils/strings";
+import { getPokemonTypeLocaleKey } from "#utils/i18n";
+import { groupStatChange } from "#utils/stat-change";
 import i18next from "i18next";
 
 /** Interface containing the serializable fields of `BattlerTag` */
@@ -1492,13 +1493,11 @@ export class OctolockTag extends TrappedTag {
     const shouldLapse = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
 
     if (shouldLapse) {
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        pokemon.getBattlerIndex(),
-        false,
-        [Stat.DEF, Stat.SPDEF],
-        -1,
-      );
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        changes: groupStatChange([Stat.DEF, Stat.SPDEF], -1),
+        sourcePokemon: this.getSourcePokemon(),
+      });
       return true;
     }
 
@@ -1993,13 +1992,11 @@ export class ContactStatStageChangeProtectedTag extends ContactProtectedTag {
    * @param user - The pokemon that is being attacked and has the tag
    */
   override onContact(attacker: Pokemon, _user: Pokemon): void {
-    globalScene.phaseManager.unshiftNew(
-      "StatStageChangePhase",
-      attacker.getBattlerIndex(),
-      false,
-      [this.#stat],
-      this.#levels,
-    );
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+      battlerIndex: attacker.getBattlerIndex(),
+      changes: [{ stat: this.#stat, stages: this.#levels }],
+      sourcePokemon: this.getSourcePokemon(),
+    });
   }
 }
 
@@ -2239,7 +2236,12 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
 
     const highestStat = EFFECTIVE_STATS.reduce(
       (curr: [EffectiveStat, number], stat: EffectiveStat) => {
-        const value = pokemon.getEffectiveStat(stat, undefined, undefined, true, true, true, false, true, true);
+        const value = pokemon.getEffectiveStat(stat, {
+          ignoreAbility: true,
+          ignoreOppAbility: true,
+          ignoreAllyAbility: true,
+          ignoreHeldItems: true,
+        });
         if (value > curr[1]) {
           curr[0] = stat;
           curr[1] = value;
@@ -2438,7 +2440,7 @@ export class TypeBoostTag extends SerializableBattlerTag {
     globalScene.phaseManager.queueMessage(
       i18next.t("abilityTriggers:typeImmunityPowerBoost", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        typeName: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.boostedType])}`),
+        typeName: i18next.t(getPokemonTypeLocaleKey(this.boostedType)),
       }),
     );
   }
@@ -2538,7 +2540,7 @@ export class SaltCuredTag extends SerializableBattlerTag {
 
       if (!cancelled.value) {
         const pokemonSteelOrWater = pokemon.isOfType(PokemonType.STEEL) || pokemon.isOfType(PokemonType.WATER);
-        pokemon.damageAndUpdate(toDmgValue(pokemonSteelOrWater ? pokemon.getMaxHp() / 4 : pokemon.getMaxHp() / 8), {
+        pokemon.damageAndUpdate(toDmgValue(pokemonSteelOrWater ? pokemon.getMaxHp() / 8 : pokemon.getMaxHp() / 16), {
           result: HitResult.INDIRECT,
         });
 
@@ -2707,13 +2709,11 @@ export class CommandedTag extends SerializableBattlerTag {
   /** Caches the Tatsugiri's form key and sharply boosts the tagged Pokemon's stats */
   override onAdd(pokemon: Pokemon): void {
     (this as Mutable<this>).tatsugiriFormKey = this.getSourcePokemon()?.getFormKey() ?? "curly";
-    globalScene.phaseManager.unshiftNew(
-      "StatStageChangePhase",
-      pokemon.getBattlerIndex(),
-      true,
-      [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD],
-      2,
-    );
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+      battlerIndex: pokemon.getBattlerIndex(),
+      changes: groupStatChange([Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD], 2),
+      sourcePokemon: pokemon,
+    });
   }
 
   /** Triggers an {@linkcode PokemonAnimType | animation} of the tagged Pokemon "spitting out" Tatsugiri */
@@ -2752,9 +2752,9 @@ export class StockpilingTag extends SerializableBattlerTag {
     super(BattlerTagType.STOCKPILING, BattlerTagLapseType.CUSTOM, 1, sourceMove);
   }
 
-  private onStatStagesChanged(_: Pokemon | null, statsChanged: BattleStat[], statChanges: number[]) {
-    const defChange = statChanges[statsChanged.indexOf(Stat.DEF)] ?? 0;
-    const spDefChange = statChanges[statsChanged.indexOf(Stat.SPDEF)] ?? 0;
+  private onStatStagesChanged(_: Pokemon | null, changed: readonly StatChange[]) {
+    const defChange = changed.find(c => c.stat === Stat.DEF && c.stages > 0) != null;
+    const spDefChange = changed.find(c => c.stat === Stat.SPDEF && c.stages > 0) != null;
 
     if (defChange) {
       this.statChangeCounts[Stat.DEF]++;
@@ -2797,17 +2797,12 @@ export class StockpilingTag extends SerializableBattlerTag {
       );
 
       // Attempt to increase DEF and SPDEF by one stage, keeping track of successful changes.
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        pokemon.getBattlerIndex(),
-        true,
-        [Stat.SPDEF, Stat.DEF],
-        1,
-        true,
-        false,
-        true,
-        this.onStatStagesChanged.bind(this),
-      );
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        changes: groupStatChange([Stat.SPDEF, Stat.DEF], 1),
+        sourcePokemon: pokemon,
+        onChange: this.onStatStagesChanged.bind(this),
+      });
     }
   }
 
@@ -2823,30 +2818,15 @@ export class StockpilingTag extends SerializableBattlerTag {
     const defChange = this.statChangeCounts[Stat.DEF];
     const spDefChange = this.statChangeCounts[Stat.SPDEF];
 
-    if (defChange) {
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        pokemon.getBattlerIndex(),
-        true,
-        [Stat.DEF],
-        -defChange,
-        true,
-        false,
-        true,
-      );
-    }
-
-    if (spDefChange) {
-      globalScene.phaseManager.unshiftNew(
-        "StatStageChangePhase",
-        pokemon.getBattlerIndex(),
-        true,
-        [Stat.SPDEF],
-        -spDefChange,
-        true,
-        false,
-        true,
-      );
+    if (defChange > 0 || spDefChange > 0) {
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        changes: [
+          { stat: Stat.DEF, stages: -defChange },
+          { stat: Stat.SPDEF, stages: -spDefChange },
+        ],
+        sourcePokemon: pokemon,
+      });
     }
   }
 }
@@ -2885,7 +2865,11 @@ export class GulpMissileTag extends SerializableBattlerTag {
       }
 
       if (this.tagType === BattlerTagType.GULP_MISSILE_ARROKUDA) {
-        globalScene.phaseManager.unshiftNew("StatStageChangePhase", attacker.getBattlerIndex(), false, [Stat.DEF], -1);
+        globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+          battlerIndex: attacker.getBattlerIndex(),
+          changes: [{ stat: Stat.DEF, stages: -1 }],
+          sourcePokemon: pokemon,
+        });
       } else {
         attacker.trySetStatus(StatusEffect.PARALYSIS, pokemon);
       }
@@ -3521,16 +3505,11 @@ export class SyrupBombTag extends SerializableBattlerTag {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       }),
     );
-    globalScene.phaseManager.unshiftNew(
-      "StatStageChangePhase",
-      pokemon.getBattlerIndex(),
-      true,
-      [Stat.SPD],
-      -1,
-      true,
-      false,
-      true,
-    );
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+      battlerIndex: pokemon.getBattlerIndex(),
+      changes: [{ stat: Stat.SPD, stages: -1 }],
+      sourcePokemon: pokemon,
+    });
     return super.lapse(pokemon, _lapseType);
   }
 }
@@ -3756,6 +3735,31 @@ export class SupremeOverlordTag extends AbilityBattlerTag {
   }
 }
 
+/** BattlerTag representing the rage effect where a Pokemon will gain +1 attack for each time it is hit */
+export class RageTag extends SerializableBattlerTag {
+  constructor() {
+    super(BattlerTagType.RAGE, [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.AFTER_HIT], 1, MoveId.RAGE);
+  }
+
+  public override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
+    if (lapseType !== BattlerTagLapseType.AFTER_HIT) {
+      return super.lapse(pokemon, lapseType);
+    }
+
+    const lastAttackReceived = pokemon.turnData.attacksReceived.at(-1);
+    const damageReceived = lastAttackReceived?.damage ?? 0;
+    if (damageReceived > 0) {
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+        battlerIndex: pokemon.getBattlerIndex(),
+        sourcePokemon: pokemon,
+        changes: [{ stat: Stat.ATK, stages: 1 }],
+      });
+    }
+
+    return true;
+  }
+}
+
 /**
  * Retrieves a {@linkcode BattlerTag} based on the provided tag type, turn count, source move, and source ID.
  * @param sourceId - The ID of the pokemon adding the tag
@@ -3954,6 +3958,8 @@ export function getBattlerTag(
       return new SupremeOverlordTag();
     case BattlerTagType.BYPASS_SPEED:
       return new BypassSpeedTag();
+    case BattlerTagType.RAGE:
+      return new RageTag();
   }
 }
 
@@ -4087,6 +4093,7 @@ export type BattlerTagTypeMap = {
   [BattlerTagType.MAGIC_COAT]: MagicCoatTag;
   [BattlerTagType.SUPREME_OVERLORD]: SupremeOverlordTag;
   [BattlerTagType.BYPASS_SPEED]: BypassSpeedTag;
+  [BattlerTagType.RAGE]: RageTag;
 };
 
 /**

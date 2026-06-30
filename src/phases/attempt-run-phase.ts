@@ -1,4 +1,5 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { activeOverrides } from "#app/overrides";
 import { ArenaTagSide } from "#enums/arena-tag-side";
@@ -29,7 +30,7 @@ export class AttemptRunPhase extends FieldPhase {
     if (escapeRoll < escapeChance.value) {
       enemyField.forEach(pokemon => applyAbAttrs("PreLeaveFieldAbAttr", { pokemon }));
 
-      globalScene.playSound("se/flee");
+      audioManager.playSound("se/flee");
       globalScene.phaseManager.queueMessage(i18next.t("battle:runAwaySuccess"), null, true, 500);
 
       globalScene.tweens.add({

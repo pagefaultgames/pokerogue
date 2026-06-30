@@ -1,82 +1,8 @@
-import { tmSpecies } from "#balance/tm-species-map";
 import { ModifierTier } from "#enums/modifier-tier";
 import { MoveId } from "#enums/move-id";
-import type { SpeciesId } from "#enums/species-id";
-
-export type TmSpeciesValue = Array<SpeciesId | Array<SpeciesId | string>>;
-
-export interface TmSpecies {
-    [key: number]: Array<SpeciesId | Array<SpeciesId | string>>
-}
-
-export const reverseCompatibleTms: MoveId[] = [];/*[
-    MoveId.TAKE_DOWN,
-    MoveId.TOXIC,
-    MoveId.RAGE,
-    MoveId.MIMIC,
-    MoveId.DOUBLE_TEAM,
-    MoveId.BIDE,
-    MoveId.REST,
-    MoveId.SUBSTITUTE,
-    MoveId.SNORE,
-    MoveId.PROTECT,
-    MoveId.ENDURE,
-    MoveId.SWAGGER,
-    MoveId.ATTRACT,
-    MoveId.SLEEP_TALK,
-    MoveId.RETURN,
-    MoveId.FRUSTRATION,
-    MoveId.HIDDEN_POWER,
-    MoveId.FACADE,
-    MoveId.SECRET_POWER,
-    MoveId.NATURAL_GIFT,
-    MoveId.CAPTIVATE,
-    MoveId.ROUND
-];*/
-
-
-interface SpeciesTmMoves {
-  [key: number]: (MoveId | [string | SpeciesId, MoveId])[];
-}
-
-function transposeTmSpecies(): SpeciesTmMoves {
-  const flipped: SpeciesTmMoves = {};
-
-  for (const move in tmSpecies) {
-    const moveKey = Number(move);
-    const speciesList = tmSpecies[move];
-
-    for (const species of speciesList) {
-
-      if (Array.isArray(species)) {
-        // Extract base species and all associated forms
-        const [ baseSpecies, ...forms ] = species;
-        const speciesKey = Number(baseSpecies);
-
-        if (!flipped[speciesKey]) {
-          flipped[speciesKey] = [];
-        }
-
-        for (const form of forms) {
-          flipped[speciesKey].push([ form, moveKey ]);
-        }
-
-      } else {
-        const speciesKey = Number(species);
-        if (!flipped[speciesKey]) {
-          flipped[speciesKey] = [];
-        }
-        flipped[speciesKey].push(moveKey);
-      }
-    }
-  }
-  return flipped;
-}
-
-export const speciesTmMoves: SpeciesTmMoves = transposeTmSpecies();
 
 interface TmPoolTiers {
-    [key: number]: Exclude<ModifierTier, ModifierTier.ROGUE | ModifierTier.MASTER | ModifierTier.LUXURY>;
+  [key: number]: Exclude<ModifierTier, ModifierTier.ROGUE | ModifierTier.MASTER | ModifierTier.LUXURY>;
 }
 
 export const tmPoolTiers: TmPoolTiers = {
@@ -146,6 +72,7 @@ export const tmPoolTiers: TmPoolTiers = {
   [MoveId.SLUDGE_BOMB]: ModifierTier.ULTRA,
   [MoveId.MUD_SLAP]: ModifierTier.COMMON,
   [MoveId.SPIKES]: ModifierTier.COMMON,
+  [MoveId.ZAP_CANNON]: ModifierTier.GREAT,
   [MoveId.ICY_WIND]: ModifierTier.GREAT,
   [MoveId.OUTRAGE]: ModifierTier.ULTRA,
   [MoveId.SANDSTORM]: ModifierTier.COMMON,
@@ -172,6 +99,7 @@ export const tmPoolTiers: TmPoolTiers = {
   [MoveId.SUNNY_DAY]: ModifierTier.COMMON,
   [MoveId.CRUNCH]: ModifierTier.GREAT,
   [MoveId.PSYCH_UP]: ModifierTier.COMMON,
+  [MoveId.ANCIENT_POWER]: ModifierTier.COMMON,
   [MoveId.SHADOW_BALL]: ModifierTier.ULTRA,
   [MoveId.FUTURE_SIGHT]: ModifierTier.GREAT,
   [MoveId.ROCK_SMASH]: ModifierTier.COMMON,
@@ -209,6 +137,7 @@ export const tmPoolTiers: TmPoolTiers = {
   [MoveId.AIR_CUTTER]: ModifierTier.COMMON,
   [MoveId.OVERHEAT]: ModifierTier.ULTRA,
   [MoveId.ROCK_TOMB]: ModifierTier.GREAT,
+  [MoveId.SILVER_WIND]: ModifierTier.COMMON,
   [MoveId.METAL_SOUND]: ModifierTier.GREAT,
   [MoveId.COSMIC_POWER]: ModifierTier.GREAT,
   [MoveId.SIGNAL_BEAM]: ModifierTier.GREAT,
@@ -225,12 +154,12 @@ export const tmPoolTiers: TmPoolTiers = {
   [MoveId.MUD_SHOT]: ModifierTier.GREAT,
   [MoveId.POISON_TAIL]: ModifierTier.COMMON,
   [MoveId.COVET]: ModifierTier.GREAT,
-  [MoveId.MAGICAL_LEAF]: ModifierTier.GREAT,
+  [MoveId.MAGICAL_LEAF]: ModifierTier.COMMON,
   [MoveId.CALM_MIND]: ModifierTier.GREAT,
   [MoveId.LEAF_BLADE]: ModifierTier.ULTRA,
   [MoveId.DRAGON_DANCE]: ModifierTier.GREAT,
   [MoveId.ROCK_BLAST]: ModifierTier.GREAT,
-  [MoveId.SHOCK_WAVE]: ModifierTier.GREAT,
+  [MoveId.SHOCK_WAVE]: ModifierTier.COMMON,
   [MoveId.WATER_PULSE]: ModifierTier.COMMON,
   [MoveId.ROOST]: ModifierTier.GREAT,
   [MoveId.GRAVITY]: ModifierTier.COMMON,
@@ -291,6 +220,7 @@ export const tmPoolTiers: TmPoolTiers = {
   [MoveId.GRASS_KNOT]: ModifierTier.GREAT,
   [MoveId.BUG_BITE]: ModifierTier.GREAT,
   [MoveId.CHARGE_BEAM]: ModifierTier.GREAT,
+  [MoveId.OMINOUS_WIND]: ModifierTier.COMMON,
   [MoveId.HONE_CLAWS]: ModifierTier.COMMON,
   [MoveId.WONDER_ROOM]: ModifierTier.COMMON,
   [MoveId.PSYSHOCK]: ModifierTier.GREAT,
