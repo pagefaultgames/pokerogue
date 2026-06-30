@@ -5161,7 +5161,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.summonData.speciesForm) {
       this.summonData.speciesForm = null;
       this.updateFusionPalette();
-      // this.loadAssets(false);
+      this.loadAssets(false);
     }
     this.summonData = new PokemonSummonData();
     this.tempSummonData = new PokemonTempSummonData();
