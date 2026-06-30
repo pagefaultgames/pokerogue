@@ -34,9 +34,8 @@ describe("Ability - Forewarn", () => {
 
   // TODO: write more tests
 
-
   it("should prioritize warning attacking moves over status moves", async () => {
-    game.override.moveset([MoveId.AGILITY, MoveId.DRAIN_PUNCH, MoveId.HONE_CLAWS, MoveId.MINIMIZE])
+    game.override.moveset([MoveId.AGILITY, MoveId.DRAIN_PUNCH, MoveId.HONE_CLAWS, MoveId.MINIMIZE]);
     await game.classicMode.startBattle(SpeciesId.PIDGEY);
 
     const enemy = game.field.getEnemyPokemon();
