@@ -51,6 +51,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
       .mysteryEncounterChance(100)
       .startingWave(defaultWave)
       .startingBiome(defaultBiome)
+      .startingLevel(100)
       .disableTrainerWaves()
       .moveset([MoveId.PAYBACK, MoveId.THUNDERBOLT]); // Required for attack type booster item generation
 

@@ -15,7 +15,7 @@ import { MoveId } from "#enums/move-id";
 import type { MoveSourceType } from "#enums/move-source-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
-import { PokemonType } from "#enums/pokemon-type";
+import { PokemonType, type RegularPokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
@@ -29,6 +29,7 @@ import type { DexEntry } from "#types/dex-data";
 import type { DexAttrProps, StarterDataEntry } from "#types/save-data";
 import { type BooleanHolder, isBetween, type NumberHolder, randSeedItem } from "#utils/common";
 import { deepCopy } from "#utils/data";
+import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
@@ -751,7 +752,7 @@ interface MonotypeOverride {
   /** The species to override */
   species: SpeciesId;
   /** The type to count as */
-  type: PokemonType;
+  type: RegularPokemonType;
   /** If part of a fusion, should we check the fused species instead of the base species? */
   fusion: boolean;
 }
@@ -827,7 +828,7 @@ export class SingleTypeChallenge extends Challenge {
   }
 
   getDescription(overrideValue: number = this.value): string {
-    const type = i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[overrideValue - 1])}`);
+    const type = i18next.t(getPokemonTypeLocaleKey(overrideValue - 1));
     const typeColor = `[color=${TypeColor[PokemonType[overrideValue - 1]]}][shadow=${TypeShadow[PokemonType[this.value - 1]]}]${type}[/shadow][/color]`;
     const defaultDesc = i18next.t("challenges:singleType.descDefault");
     const typeDesc = i18next.t("challenges:singleType.desc", {
@@ -897,19 +898,8 @@ export class FreshStartChallenge extends Challenge {
     dexEntry.caughtAttr &= ~(DexAttr.VARIANT_2 | DexAttr.VARIANT_3);
 
     // Remove unlocked forms for specific species
-    if (speciesId === SpeciesId.ZYGARDE) {
-      // Sets ability from power construct to aura break
-      const formMask = (DexAttr.DEFAULT_FORM << 2n) - 1n;
-      dexEntry.caughtAttr &= formMask;
-    } else if (
-      [
-        SpeciesId.PIKACHU,
-        SpeciesId.EEVEE,
-        SpeciesId.PICHU,
-        SpeciesId.ROTOM,
-        SpeciesId.MELOETTA,
-        SpeciesId.FROAKIE,
-      ].includes(speciesId)
+    if (
+      [SpeciesId.PIKACHU, SpeciesId.EEVEE, SpeciesId.PICHU, SpeciesId.ROTOM, SpeciesId.MELOETTA].includes(speciesId)
     ) {
       const formMask = (DexAttr.DEFAULT_FORM << 1n) - 1n; // These mons are set to form 0 because they're meant to be unlocks or mid-run form changes
       dexEntry.caughtAttr &= formMask;
@@ -936,18 +926,11 @@ export class FreshStartChallenge extends Challenge {
     pokemon.luck = 0; // No luck
     pokemon.shiny = false; // Not shiny
     pokemon.variant = 0; // Not shiny
-    if (pokemon.species.speciesId === SpeciesId.ZYGARDE && pokemon.formIndex >= 2) {
-      pokemon.formIndex -= 2; // Sets 10%-PC to 10%-AB and 50%-PC to 50%-AB
-    } else if (
+    if (
       pokemon.formIndex > 0
-      && [
-        SpeciesId.PIKACHU,
-        SpeciesId.EEVEE,
-        SpeciesId.PICHU,
-        SpeciesId.ROTOM,
-        SpeciesId.MELOETTA,
-        SpeciesId.FROAKIE,
-      ].includes(pokemon.species.speciesId)
+      && [SpeciesId.PIKACHU, SpeciesId.EEVEE, SpeciesId.PICHU, SpeciesId.ROTOM, SpeciesId.MELOETTA].includes(
+        pokemon.species.speciesId,
+      )
     ) {
       pokemon.formIndex = 0; // These mons are set to form 0 because they're meant to be unlocks or mid-run form changes
     }

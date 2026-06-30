@@ -13,7 +13,7 @@ import { DexAttr } from "#enums/dex-attr";
 import { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import type { MoveId } from "#enums/move-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
-import type { PokemonType } from "#enums/pokemon-type";
+import type { RegularPokemonType } from "#enums/pokemon-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import type { Stat } from "#enums/stat";
@@ -26,7 +26,7 @@ import type { LevelMoves } from "#types/pokemon-species";
 import type { StarterMoveset } from "#types/save-data";
 import type { EvolutionLevel, EvolutionLevelWithThreshold } from "#types/species-gen-types";
 import { argbFromRgba, rgbaFromArgb } from "#utils/color-utils";
-import { randSeedFloat, randSeedGauss } from "#utils/common";
+import { randSeedFloat } from "#utils/common";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase, toPascalCase } from "#utils/strings";
 import { QuantizerCelebi } from "@material/material-color-utilities";
@@ -59,9 +59,7 @@ export const normalForm: SpeciesId[] = [
   SpeciesId.PALKIA,
   SpeciesId.KYUREM,
   SpeciesId.GENESECT,
-  SpeciesId.FROAKIE,
-  SpeciesId.FROGADIER,
-  SpeciesId.GRENINJA,
+  SpeciesId.BATTLE_BOND_GRENINJA,
   SpeciesId.ROCKRUFF,
   SpeciesId.NECROZMA,
   SpeciesId.MAGEARNA,
@@ -74,8 +72,8 @@ export const normalForm: SpeciesId[] = [
 export type PokemonSpeciesFilter = (species: PokemonSpecies) => boolean;
 
 interface PokemonSpeciesFormConstructor {
-  type1: PokemonType;
-  type2: PokemonType | null;
+  type1: RegularPokemonType;
+  type2: RegularPokemonType | null;
   height: number;
   weight: number;
   ability1: AbilityId;
@@ -95,13 +93,23 @@ interface PokemonSpeciesFormConstructor {
   isStarterSelectable: boolean;
 }
 
+/**
+ * Overrides the local key for species with "fake" forms.
+ */
+const CUSTOM_FORM_NAMES: Partial<Record<SpeciesId, string>> = {
+  [SpeciesId.BLOODMOON_URSALUNA]: "ursalunaBloodmoon",
+  [SpeciesId.ETERNAL_FLOETTE]: "floetteEternalFlower",
+  [SpeciesId.BATTLE_BOND_GRENINJA]: "battleBondGreninja",
+  [SpeciesId.HISUI_BASCULIN]: "basculinWhiteStriped",
+};
+
 export abstract class PokemonSpeciesForm {
   public speciesId: SpeciesId;
   protected _formIndex: number;
   protected _generation: number;
   // TODO: Make these not accept UNKNOWN or STELLAR
-  readonly type1: PokemonType;
-  readonly type2: PokemonType | null;
+  readonly type1: RegularPokemonType;
+  readonly type2: RegularPokemonType | null;
   readonly height: number;
   readonly weight: number;
   readonly ability1: AbilityId;
@@ -205,10 +213,10 @@ export abstract class PokemonSpeciesForm {
 
   /**
    * Get a list of all level moves for this species, including form specific moves.
-   * @param formKey - (Optional) The key for the form to be checked. Uses the base form if not specified.
+   * @param formKey - (Optional) The key for the form to be checked. Uses the base form if not specified
    * @returns A list of all level moves that can be learned by this species
    */
-  getLevelMoves(formKey?: string): LevelMoves {
+  public getLevelMoves(formKey?: string): LevelMoves {
     const levelMoves = speciesDataRegistry.getLevelMoves(this.speciesId, formKey);
     return levelMoves.sort((a, b) => a[0] - b[0]);
   }
@@ -280,7 +288,9 @@ export abstract class PokemonSpeciesForm {
   }
 
   isTrainerForbidden(): boolean {
-    return [SpeciesId.ETERNAL_FLOETTE, SpeciesId.BLOODMOON_URSALUNA].includes(this.speciesId);
+    return [SpeciesId.ETERNAL_FLOETTE, SpeciesId.BLOODMOON_URSALUNA, SpeciesId.BATTLE_BOND_GRENINJA].includes(
+      this.speciesId,
+    );
   }
 
   isRareRegional(): boolean {
@@ -315,6 +325,11 @@ export abstract class PokemonSpeciesForm {
       case SpeciesFormKey.MEGA:
       case SpeciesFormKey.MEGA_X:
       case SpeciesFormKey.MEGA_Y:
+      case SpeciesFormKey.MEGA_Z:
+      case SpeciesFormKey.MEGA_ORIGINAL:
+      case SpeciesFormKey.MEGA_CURLY:
+      case SpeciesFormKey.MEGA_DROOPY:
+      case SpeciesFormKey.MEGA_STRETCHY:
       case SpeciesFormKey.PRIMAL:
       case SpeciesFormKey.GIGANTAMAX:
       case SpeciesFormKey.ETERNAMAX:
@@ -340,7 +355,18 @@ export abstract class PokemonSpeciesForm {
     const showGenderDiffs =
       this.genderDiffs
       && female
-      && ![SpeciesFormKey.MEGA, SpeciesFormKey.GIGANTAMAX].includes(formSpriteKey as SpeciesFormKey);
+      && ![
+        SpeciesFormKey.MEGA,
+        SpeciesFormKey.MEGA_X,
+        SpeciesFormKey.MEGA_Y,
+        SpeciesFormKey.MEGA_Z,
+        SpeciesFormKey.MEGA_ORIGINAL,
+        SpeciesFormKey.MEGA_CURLY,
+        SpeciesFormKey.MEGA_DROOPY,
+        SpeciesFormKey.MEGA_STRETCHY,
+        SpeciesFormKey.PRIMAL,
+        SpeciesFormKey.GIGANTAMAX,
+      ].includes(formSpriteKey as SpeciesFormKey);
 
     let spriteKey = `${showGenderDiffs ? "female__" : ""}${this.speciesId}${formSpriteKey ? `-${formSpriteKey}` : ""}`;
 
@@ -353,7 +379,18 @@ export abstract class PokemonSpeciesForm {
       const replacementShowGenderDiffs =
         getPokemonSpecies(replacement.speciesId).genderDiffs
         && female
-        && ![SpeciesFormKey.MEGA, SpeciesFormKey.GIGANTAMAX].includes(replacementFormSpriteKey as SpeciesFormKey);
+        && ![
+          SpeciesFormKey.MEGA,
+          SpeciesFormKey.MEGA_X,
+          SpeciesFormKey.MEGA_Y,
+          SpeciesFormKey.MEGA_Z,
+          SpeciesFormKey.MEGA_ORIGINAL,
+          SpeciesFormKey.MEGA_CURLY,
+          SpeciesFormKey.MEGA_DROOPY,
+          SpeciesFormKey.MEGA_STRETCHY,
+          SpeciesFormKey.PRIMAL,
+          SpeciesFormKey.GIGANTAMAX,
+        ].includes(replacementFormSpriteKey as SpeciesFormKey);
 
       spriteKey = `${replacementShowGenderDiffs ? "female__" : ""}${replacement.speciesId}${replacementFormSpriteKey ? `-${replacementFormSpriteKey}` : ""}`;
     }
@@ -495,7 +532,7 @@ export abstract class PokemonSpeciesForm {
       formIndex = override.formIndex;
     }
 
-    if (speciesId > 2000) {
+    if (speciesId >= 2000) {
       switch (speciesId) {
         case SpeciesId.GALAR_SLOWPOKE:
           break;
@@ -522,6 +559,7 @@ export abstract class PokemonSpeciesForm {
         case SpeciesFormKey.MEGA:
         case SpeciesFormKey.MEGA_X:
         case SpeciesFormKey.MEGA_Y:
+        case SpeciesFormKey.MEGA_Z:
         case SpeciesFormKey.PRIMAL:
         case SpeciesFormKey.GIGANTAMAX:
         case SpeciesFormKey.GIGANTAMAX_SINGLE:
@@ -559,6 +597,12 @@ export abstract class PokemonSpeciesForm {
         case "dusk-mane":
         case "ultra":
           ret += `-${formKey}`;
+          break;
+        case SpeciesFormKey.MEGA_ORIGINAL:
+        case SpeciesFormKey.MEGA_CURLY:
+        case SpeciesFormKey.MEGA_DROOPY:
+        case SpeciesFormKey.MEGA_STRETCHY:
+          ret += `-${SpeciesFormKey.MEGA}`;
           break;
       }
       switch (this.speciesId) {
@@ -776,8 +820,8 @@ interface PokemonSpeciesConstructor {
   mythical?: boolean;
   // TODO: Remove (it's unused)
   category: string;
-  type1: PokemonType;
-  type2: PokemonType | null;
+  type1: RegularPokemonType;
+  type2: RegularPokemonType | null;
   height: number;
   weight: number;
   ability1: AbilityId;
@@ -868,7 +912,14 @@ export class PokemonSpecies extends PokemonSpeciesForm {
         case SpeciesFormKey.ETERNAMAX:
         case SpeciesFormKey.MEGA_X:
         case SpeciesFormKey.MEGA_Y:
+        case SpeciesFormKey.MEGA_Z:
           key = form.formKey;
+          break;
+        case SpeciesFormKey.MEGA_ORIGINAL:
+        case SpeciesFormKey.MEGA_CURLY:
+        case SpeciesFormKey.MEGA_DROOPY:
+        case SpeciesFormKey.MEGA_STRETCHY:
+          key = "mega";
           break;
         default:
           if (form.formKey.indexOf(SpeciesFormKey.GIGANTAMAX) > -1) {
@@ -936,6 +987,7 @@ export class PokemonSpecies extends PokemonSpeciesForm {
         SpeciesFormKey.MEGA,
         SpeciesFormKey.MEGA_X,
         SpeciesFormKey.MEGA_Y,
+        SpeciesFormKey.MEGA_Z,
         SpeciesFormKey.PRIMAL,
         SpeciesFormKey.GIGANTAMAX,
         SpeciesFormKey.GIGANTAMAX_RAPID,
@@ -946,6 +998,17 @@ export class PokemonSpecies extends PokemonSpeciesForm {
       return append
         ? i18next.t(`battlePokemonForm:${toCamelCase(formKey)}`, { pokemonName: this.name })
         : i18next.t(`pokemonForm:battleForm.${toCamelCase(formKey)}`);
+    } else if (
+      [
+        SpeciesFormKey.MEGA_ORIGINAL,
+        SpeciesFormKey.MEGA_CURLY,
+        SpeciesFormKey.MEGA_DROOPY,
+        SpeciesFormKey.MEGA_STRETCHY,
+      ].includes(formKey as SpeciesFormKey)
+    ) {
+      return append
+        ? i18next.t(`battlePokemonForm:${toCamelCase(SpeciesFormKey.MEGA)}`, { pokemonName: this.name })
+        : i18next.t(`pokemonForm:battleForm.${toCamelCase(SpeciesFormKey.MEGA)}`);
     } else if (
       region === Region.NORMAL
       || (this.speciesId === SpeciesId.GALAR_DARMANITAN && formIndex > 0)
@@ -963,12 +1026,8 @@ export class PokemonSpecies extends PokemonSpeciesForm {
     } else if (append) {
       // Everything beyond this has an expanded name
       return this.getExpandedSpeciesName();
-    } else if (this.speciesId === SpeciesId.ETERNAL_FLOETTE) {
-      // Not a real form, so the key is made up
-      return i18next.t("pokemonForm:floetteEternalFlower");
-    } else if (this.speciesId === SpeciesId.BLOODMOON_URSALUNA) {
-      // Not a real form, so the key is made up
-      return i18next.t("pokemonForm:ursalunaBloodmoon");
+    } else if (CUSTOM_FORM_NAMES[this.speciesId]) {
+      return i18next.t(`pokemonForm:${CUSTOM_FORM_NAMES[this.speciesId]}`);
     } else {
       // Only regional forms should be left at this point
       return i18next.t(`pokemonForm:regionalForm.${toCamelCase(Region[region])}`);
@@ -1080,68 +1139,6 @@ export class PokemonSpecies extends PokemonSpeciesForm {
     return prevolutionLevels;
   }
 
-  // This could definitely be written better and more accurate to the getSpeciesForLevel logic, but it is only for generating movesets for evolved Pokemon
-  // TODO: Rework this absolutely horridly written slop
-  getSimulatedEvolutionChain(
-    currentLevel: number,
-    forTrainer = false,
-    isBoss = false,
-    player = false,
-  ): EvolutionLevel[] {
-    if (!speciesDataRegistry.hasPrevolution(this.speciesId)) {
-      return [[this.speciesId, 1]];
-    }
-
-    const ret: EvolutionLevel[] = [];
-    const prevolutionLevels = this.getPrevolutionLevels(false).reverse();
-    const levelDiff = player ? 0 : forTrainer || isBoss ? (forTrainer && isBoss ? 2.5 : 5) : 10;
-    ret.push([prevolutionLevels[0][0], 1]);
-    for (let l = 1; l < prevolutionLevels.length; l++) {
-      const evolution = speciesDataRegistry
-        .getEvolutions(prevolutionLevels[l - 1][0])
-        .find(e => e.speciesId === prevolutionLevels[l][0]);
-      ret.push([
-        prevolutionLevels[l][0],
-        Math.min(
-          Math.max(
-            evolution?.level!
-              + Math.round(
-                randSeedGauss(0.5, 1 + levelDiff * 0.2)
-                  * Math.max(evolution?.evoLevelThreshold?.[EvoLevelThresholdKind.WILD] ?? 0, 0.5)
-                  * 5,
-              )
-              - 1,
-            2,
-            evolution?.level!,
-          ),
-          currentLevel - 1,
-        ),
-      ]); // TODO: are those bangs correct?
-    }
-    const lastPrevolutionLevel = ret[prevolutionLevels.length - 1][1];
-    const evolution = speciesDataRegistry
-      .getEvolutions(prevolutionLevels.at(-1)![0])
-      .find(e => e.speciesId === this.speciesId);
-    ret.push([
-      this.speciesId,
-      Math.min(
-        Math.max(
-          lastPrevolutionLevel
-            + Math.round(
-              randSeedGauss(0.5, 1 + levelDiff * 0.2)
-                * Math.max(evolution?.evoLevelThreshold?.[EvoLevelThresholdKind.WILD] ?? 0, 0.5)
-                * 5,
-            ),
-          lastPrevolutionLevel + 1,
-          evolution?.level!,
-        ),
-        currentLevel,
-      ),
-    ]); // TODO: are those bangs correct?
-
-    return ret;
-  }
-
   getCompatibleFusionSpeciesFilter(): PokemonSpeciesFilter {
     const hasEvolution = speciesDataRegistry.hasEvolutions(this.speciesId);
     const hasPrevolution = speciesDataRegistry.hasPrevolution(this.speciesId);
@@ -1223,8 +1220,8 @@ export class PokemonSpecies extends PokemonSpeciesForm {
 interface PokemonFormConstructor {
   formName: string;
   formKey: string;
-  type1: PokemonType;
-  type2: PokemonType | null;
+  type1: RegularPokemonType;
+  type2: RegularPokemonType | null;
   height: number;
   weight: number;
   ability1: AbilityId;
@@ -1301,5 +1298,14 @@ export class PokemonForm extends PokemonSpeciesForm {
 
   getFormKey(): string {
     return this.formKey;
+  }
+
+  /**
+   * Get a list of all level moves for this species, including form specific moves.
+   * @param formKey - (Optional) The key for the form to be checked. Uses this form if not specified
+   * @returns A list of all level moves that can be learned by this species
+   */
+  public override getLevelMoves(formKey?: string): LevelMoves {
+    return super.getLevelMoves(formKey ?? this.getFormKey());
   }
 }

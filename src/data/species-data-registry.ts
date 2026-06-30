@@ -57,7 +57,16 @@ export class SpeciesDataRegistry {
    * Initialize the `prevolution` field for all species.
    */
   private initPreEvolutions(): void {
-    const megaFormKeys = [SpeciesFormKey.MEGA, SpeciesFormKey.MEGA_X, SpeciesFormKey.MEGA_Y];
+    const megaFormKeys = [
+      SpeciesFormKey.MEGA,
+      SpeciesFormKey.MEGA_X,
+      SpeciesFormKey.MEGA_Y,
+      SpeciesFormKey.MEGA_Z,
+      SpeciesFormKey.MEGA_ORIGINAL,
+      SpeciesFormKey.MEGA_CURLY,
+      SpeciesFormKey.MEGA_DROOPY,
+      SpeciesFormKey.MEGA_STRETCHY,
+    ];
 
     const setPrevo = (speciesId: SpeciesId): void => {
       const evolutions = this.getEvolutions(speciesId);
@@ -144,8 +153,14 @@ export class SpeciesDataRegistry {
   public getTms(speciesId: SpeciesId, form?: string | number): MoveId[] {
     const speciesData = this.getSpeciesData(speciesId);
     const formKey = this.getFormKey(speciesId, form);
-    const tms = new Set([...speciesData.tms, ...(speciesData.formTms?.[formKey] ?? [])]);
-    return Array.from(tms);
+    const tms = [...speciesData.tms, ...(speciesData.formTms?.[formKey] ?? [])];
+    const prevo = this.getPrevolution(speciesId);
+    if (prevo !== null) {
+      const prevoTms = this.getTms(prevo, form ? formKey : undefined);
+      tms.push(...prevoTms);
+    }
+
+    return Array.from(new Set(tms));
   }
 
   /**
@@ -424,10 +439,6 @@ export class SpeciesDataRegistry {
     }
 
     if (form == null) {
-      !IS_TEST
-        && console.debug(
-          `No form requested for ${speciesId} (${this.getSpecies(speciesId).name}), returning base form.`,
-        );
       return forms[0].formKey;
     }
 

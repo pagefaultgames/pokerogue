@@ -4,7 +4,14 @@
 
 // biome-ignore assist/source/organizeImports: temporary until re-exports are removed
 import type { AbAttr } from "#abilities/ab-attrs";
-import type { IntClosedRange, NegativeInfinity, PositiveInfinity, RequiredKeysOf, TupleOf } from "type-fest";
+import type {
+  IntClosedRange,
+  NegativeInfinity,
+  PositiveInfinity,
+  RequiredKeysOf,
+  TupleOf,
+  IsStringLiteral,
+} from "type-fest";
 
 // Re-export a bunch of stuff from type-fest
 // TODO: Once the modifier rework makes merge conflicts less of a priority, remove these re-exports and change callsites to import directly from `type-fest`
@@ -155,3 +162,21 @@ export type TupleRange<Min extends number, Max extends number, T = unknown> =
  * Any uses of this type should be double-checked to ensure that IDE hover tooltips are actually improved by its addition.
  */
 export type PreventHoverExpansion<T> = T & {};
+
+export type StringLiteral<T extends string> = IsStringLiteral<T> extends true ? T : never;
+
+/**
+ * Renders all properties of `T` as `unknown`, while keeping the same keys.
+ *
+ * @remarks
+ * The purpose of this is merely to provide a hint as to what the
+ * properties of an object _might_ be, without any risk of accidentally using
+ * said properties improperly.
+ *
+ * Designed to be used for data migration.
+ *
+ * Allows for autocomplete to populate fields of the object with candidates.
+ */
+export type CoercePropertiesToUnknown<T extends object> = {
+  [K in keyof T]: unknown;
+};

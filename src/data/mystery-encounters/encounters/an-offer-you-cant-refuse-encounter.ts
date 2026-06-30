@@ -46,7 +46,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter = MysteryEncounterB
 )
   .withEncounterTier(MysteryEncounterTier.GREAT)
   .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
-  .withScenePartySizeRequirement(2, 6, true) // Must have at least 2 pokemon in party
+  .withScenePartySizeRequirement(2)
   .withIntroSpriteConfigs([
     {
       species: SpeciesId.LIEPARD,
