@@ -47120,6 +47120,13 @@
     "dexNum": 358,
     "id": "CHIMECHO",
     "form": null,
+    "level": "EVOLVE_MOVE",
+    "move": "PSYBEAM"
+  },
+  {
+    "dexNum": 358,
+    "id": "CHIMECHO",
+    "form": null,
     "level": "RELEARN_MOVE",
     "move": "HEALING_WISH"
   },
@@ -47134,8 +47141,8 @@
     "dexNum": 358,
     "id": "CHIMECHO",
     "form": null,
-    "level": "EVOLVE_MOVE",
-    "move": "PSYBEAM"
+    "level": "RELEARN_MOVE",
+    "move": "FLASH_CANNON"
   },
   {
     "dexNum": 358,
@@ -114896,97 +114903,6 @@
     "form": null,
     "level": 1,
     "move": "TAIL_WHIP"
-  },
-  {
-    "dexNum": 916,
-    "id": "OINKOLOGNE",
-    "form": null,
-    "level": 5,
-    "move": "DISARMING_VOICE"
-  },
-  {
-    "dexNum": 916,
-    "id": "OINKOLOGNE",
-    "form": null,
-    "level": 8,
-    "move": "ECHOED_VOICE"
-  },
-  {
-    "dexNum": 916,
-    "id": "OINKOLOGNE",
-    "form": null,
-    "level": 12,
-    "move": "MUD_SHOT"
-  },
-  {
-    "dexNum": 916,
-    "id": "OINKOLOGNE",
-    "form": null,
-    "level": 15,
-    "move": "COVET"
-  },
-  {
-    "dexNum": 916,
-    "id": "OINKOLOGNE",
-    "form": null,
-    "level": 17,
-    "move": "DIG"
-  },
-  {
-    "dexNum": 916,
-    "id": "OINKOLOGNE",
-    "form": null,
-    "level": 23,
-    "move": "HEADBUTT"
-  },
-  {
-    "dexNum": 916,
-    "id": "OINKOLOGNE",
-    "form": null,
-    "level": 26,
-    "move": "TAKE_DOWN"
-  },
-  {
-    "dexNum": 916,
-    "id": "OINKOLOGNE",
-    "form": null,
-    "level": 27,
-    "move": "YAWN"
-  },
-  {
-    "dexNum": 916,
-    "id": "OINKOLOGNE",
-    "form": null,
-    "level": 34,
-    "move": "WORK_UP"
-  },
-  {
-    "dexNum": 916,
-    "id": "OINKOLOGNE",
-    "form": null,
-    "level": 38,
-    "move": "UPROAR"
-  },
-  {
-    "dexNum": 916,
-    "id": "OINKOLOGNE",
-    "form": null,
-    "level": 42,
-    "move": "DOUBLE_EDGE"
-  },
-  {
-    "dexNum": 916,
-    "id": "OINKOLOGNE",
-    "form": null,
-    "level": 48,
-    "move": "EARTH_POWER"
-  },
-  {
-    "dexNum": 916,
-    "id": "OINKOLOGNE",
-    "form": null,
-    "level": 54,
-    "move": "BELCH"
   },
   {
     "dexNum": 916,
