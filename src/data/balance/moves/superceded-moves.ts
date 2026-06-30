@@ -633,6 +633,8 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
 
   // Reliable Healing
   [MoveId.REST]: [
+    MoveId.RECOVER,
+    MoveId.ROOST,
     MoveId.MORNING_SUN,
     MoveId.SYNTHESIS,
     MoveId.MOONLIGHT,
@@ -642,5 +644,20 @@ export const SUPERCEDED_MOVES: Partial<Record<MoveId, readonly MoveId[]>> = {
     MoveId.SLACK_OFF,
     MoveId.SOFT_BOILED,
     MoveId.STRENGTH_SAP,
+  ],
+  [MoveId.LIFE_DEW]: [
+    MoveId.RECOVER,
+    MoveId.ROOST,
+    MoveId.MORNING_SUN,
+    MoveId.SYNTHESIS,
+    MoveId.MOONLIGHT,
+    MoveId.HEAL_ORDER,
+    MoveId.SHORE_UP,
+    MoveId.MILK_DRINK,
+    MoveId.SLACK_OFF,
+    MoveId.SOFT_BOILED,
+    MoveId.STRENGTH_SAP,
+    MoveId.LUNAR_BLESSING,
+    MoveId.JUNGLE_HEALING,
   ],
 };
