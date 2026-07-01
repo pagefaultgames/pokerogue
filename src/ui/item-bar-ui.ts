@@ -3,7 +3,6 @@ import { allHeldItems, allTrainerItems } from "#data/data-lists";
 import type { HeldItemId } from "#enums/held-item-id";
 import type { TrainerItemId } from "#enums/trainer-item-id";
 import type { Pokemon } from "#field/pokemon";
-import { heldItemSortFunc, trainerItemSortFunc } from "#items/item-utility";
 import type { TrainerItemManager } from "#items/trainer-item-manager";
 
 const iconOverflowIndex = 24;
@@ -28,10 +27,10 @@ export class ItemBar extends Phaser.GameObjects.Container {
   updateItems(trainerItems: TrainerItemManager, pokemonA?: Pokemon, pokemonB?: Pokemon) {
     this.removeAll(true);
 
-    const sortedTrainerItems = trainerItems.getItems().sort(trainerItemSortFunc);
+    const sortedTrainerItems = trainerItems.getItems().sort((a, b) => a - b);
 
-    const heldItemsA = pokemonA ? pokemonA.getHeldItems().sort(heldItemSortFunc) : [];
-    const heldItemsB = pokemonB ? pokemonB.getHeldItems().sort(heldItemSortFunc) : [];
+    const heldItemsA = pokemonA ? pokemonA.getHeldItems().sort((a, b) => a - b) : [];
+    const heldItemsB = pokemonB ? pokemonB.getHeldItems().sort((a, b) => a - b) : [];
 
     this.totalVisibleLength = sortedTrainerItems.length + heldItemsA.length + heldItemsB.length;
 

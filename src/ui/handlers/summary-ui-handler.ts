@@ -20,7 +20,6 @@ import { StatusEffect } from "#enums/status-effect";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
-import { heldItemSortFunc } from "#items/item-utility";
 import type { Move } from "#moves/move";
 import type { PokemonMove } from "#moves/pokemon-move";
 import type { Variant } from "#sprites/variant";
@@ -1111,7 +1110,7 @@ export class SummaryUiHandler extends UiHandler {
         });
         this.ivContainer.setVisible(false);
 
-        const heldItems = this.pokemon?.getHeldItems().sort(heldItemSortFunc);
+        const heldItems = this.pokemon?.getHeldItems().sort((a, b) => a - b);
 
         heldItems?.forEach((itemKey, i) => {
           const heldItem = allHeldItems[itemKey];
