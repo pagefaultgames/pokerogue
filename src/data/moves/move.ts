@@ -2605,7 +2605,7 @@ export class VariableHealAttr extends HealAttr {
 export class HealOnAllyAttr extends HealAttr {
   public override canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     // Don't trigger if not targeting an ally
-    return target === user.getAlly() && super.canApply(user, target, _move, _args);
+    return target === user.getAlly() && super.canApply(user, target, move, args);
   }
 
   public override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
