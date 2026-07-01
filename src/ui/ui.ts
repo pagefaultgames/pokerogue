@@ -62,6 +62,7 @@ import { addWindow } from "#ui/ui-theme";
 import { UnavailableModalUiHandler } from "#ui/unavailable-modal-ui-handler";
 import { executeIf } from "#utils/common";
 import i18next from "i18next";
+import type { UnknownArray } from "type-fest";
 import { AdminUiHandler } from "./handlers/admin-ui-handler";
 import { RenameRunFormUiHandler } from "./handlers/rename-run-ui-handler";
 
@@ -166,6 +167,7 @@ const handlers = () => ({
 });
 
 type Handlers = ReturnType<typeof handlers>;
+type OptionalRestArgs<T> = T extends UnknownArray ? T : [];
 
 // biome-ignore lint/style/useNamingConvention: a unique case (only 2 letters)
 export class UI extends Phaser.GameObjects.Container {
@@ -529,13 +531,13 @@ export class UI extends Phaser.GameObjects.Container {
     });
   }
 
-  private setModeInternal(
+  private setModeInternal<Mode extends UiMode>(
     this: UI,
-    mode: UiMode,
+    mode: Mode,
     clear: boolean,
     forceTransition: boolean,
     chainMode: boolean,
-    args: any[],
+    args: OptionalRestArgs<Parameters<Handlers[Mode]["show"]>[0]>,
   ): Promise<void> {
     return new Promise(resolve => {
       if (this.mode === mode && !forceTransition) {
@@ -583,19 +585,31 @@ export class UI extends Phaser.GameObjects.Container {
     return this.mode;
   }
 
-  setMode(mode: UiMode, ...args: any[]): Promise<void> {
+  setMode<Mode extends UiMode>(
+    mode: Mode,
+    ...args: OptionalRestArgs<Parameters<Handlers[Mode]["show"]>[0]>
+  ): Promise<void> {
     return this.setModeInternal(mode, true, false, false, args);
   }
 
-  setModeForceTransition(mode: UiMode, ...args: any[]): Promise<void> {
+  setModeForceTransition<Mode extends UiMode>(
+    mode: Mode,
+    ...args: OptionalRestArgs<Parameters<Handlers[Mode]["show"]>[0]>
+  ): Promise<void> {
     return this.setModeInternal(mode, true, true, false, args);
   }
 
-  setModeWithoutClear(mode: UiMode, ...args: any[]): Promise<void> {
+  setModeWithoutClear<Mode extends UiMode>(
+    mode: Mode,
+    ...args: OptionalRestArgs<Parameters<Handlers[Mode]["show"]>[0]>
+  ): Promise<void> {
     return this.setModeInternal(mode, false, false, false, args);
   }
 
-  setOverlayMode(mode: UiMode, ...args: any[]): Promise<void> {
+  setOverlayMode<Mode extends UiMode>(
+    mode: Mode,
+    ...args: OptionalRestArgs<Parameters<Handlers[Mode]["show"]>[0]>
+  ): Promise<void> {
     return this.setModeInternal(mode, false, false, true, args);
   }
 

@@ -5,12 +5,20 @@ import type { OptionSelectConfig } from "#ui/base-option-select-ui-handler";
 import { BaseOptionSelectUiHandler, isOptionSelectConfig } from "#ui/base-option-select-ui-handler";
 import i18next from "i18next";
 
-type OnNo = () => void;
-type OnYes = () => void;
+type OnDeny = () => void;
+type OnConfirm = () => void;
 type OnPokedex = () => void;
 type OnSummary = () => void;
-type FullPartyCase = [OnSummary, OnPokedex, OnYes, OnNo, "fullParty", boolean?, number?, number?, number?];
-type SecondCase = [OnYes, OnNo, boolean?, number?, number?, number?, boolean?];
+type FullPartyCase = [OnSummary, OnPokedex, OnConfirm, OnDeny, "fullParty", boolean?, number?, number?, number?];
+type SecondCase = [
+  OnConfirm,
+  OnDeny,
+  SwitchCheck?: boolean,
+  xOffset?: number | null,
+  yOffset?: number | null,
+  delay?: number,
+  noCancel?: boolean,
+];
 
 type ConfirmConfig = FullPartyCase | SecondCase;
 

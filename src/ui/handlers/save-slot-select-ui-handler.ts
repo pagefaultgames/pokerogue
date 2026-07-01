@@ -137,33 +137,29 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
                   label: i18next.t("saveSlotSelectUiHandler:renameRun"),
                   handler: () => {
                     globalScene.ui.revertMode();
-                    ui.setOverlayMode(
-                      UiMode.RENAME_RUN,
-                      {
-                        buttonActions: [
-                          (sanitizedName: string) => {
-                            const name = decodeURIComponent(atob(sanitizedName));
-                            globalScene.gameData.renameSession(cursor, name).then(response => {
-                              if (response[0] === false) {
-                                globalScene.reset(true);
-                              } else {
-                                this.clearSessionSlots();
-                                this.cursorObj = null;
-                                this.populateSessionSlots();
-                                this.setScrollCursor(0);
-                                this.setCursor(0);
-                                ui.revertMode();
-                                ui.showText("", 0);
-                              }
-                            });
-                          },
-                          () => {
-                            ui.revertMode();
-                          },
-                        ],
-                      },
-                      "",
-                    );
+                    ui.setOverlayMode(UiMode.RENAME_RUN, {
+                      buttonActions: [
+                        (sanitizedName: string) => {
+                          const name = decodeURIComponent(atob(sanitizedName));
+                          globalScene.gameData.renameSession(cursor, name).then(response => {
+                            if (response[0] === false) {
+                              globalScene.reset(true);
+                            } else {
+                              this.clearSessionSlots();
+                              this.cursorObj = null;
+                              this.populateSessionSlots();
+                              this.setScrollCursor(0);
+                              this.setCursor(0);
+                              ui.revertMode();
+                              ui.showText("", 0);
+                            }
+                          });
+                        },
+                        () => {
+                          ui.revertMode();
+                        },
+                      ],
+                    });
                     return true;
                   },
                 });

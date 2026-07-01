@@ -295,7 +295,7 @@ interface SpeciesDetails {
   teraType?: PokemonType | undefined;
 }
 
-type StarterSelectUiConfig = [StarterSelectCallback];
+type StarterSelectUiConfig = [StarterSelectCallback?];
 
 export class StarterSelectUiHandler extends MessageUiHandler {
   private starterSelectContainer: Phaser.GameObjects.Container;
@@ -4500,7 +4500,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           globalScene.phaseManager.getCurrentPhase().end();
         },
         cancel,
-        null,
+        false,
         null,
         19,
       );
@@ -4540,7 +4540,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             startRun();
           },
           cancel,
-          null,
+          false,
           null,
           19,
         );

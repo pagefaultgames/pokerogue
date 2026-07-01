@@ -211,7 +211,13 @@ enum MenuOptions {
 }
 
 type PokedexPageUiConfig =
-  | [PokemonSpecies, StarterAttributes, SpeciesId[], null | undefined, ExitCallBack: (() => void) | null]
+  | [
+      (PokemonSpecies | null | undefined)?,
+      (StarterAttributes | null | undefined)?,
+      (SpeciesId[] | null)?,
+      null?,
+      ExitCallBack?: (() => void) | null,
+    ]
   | ["refresh"];
 
 export class PokedexPageUiHandler extends MessageUiHandler {
@@ -748,7 +754,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     if (args.length === 1 && args[0] === "refresh") {
       return false;
     }
-    this.species = args[0];
+    this.species = args[0]!;
     this.savedStarterAttributes = args[1] ?? {
       shiny: false,
       female: true,
@@ -1186,7 +1192,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         success = true;
       } else if (this.previousSpecies.length > 0) {
         this.blockInput = true;
-        ui.setModeWithoutClear(UiMode.OPTION_SELECT).then(() => {
+
+        // TODO: setMode NoOp, option select never shown, see show #ui/base-option-select-ui-handler.ts
+        ui.setModeWithoutClear(UiMode.OPTION_SELECT, { options: [] }).then(() => {
           const species = this.previousSpecies.pop();
           const starterAttributes = this.previousStarterAttributes.pop();
           this.moveInfoOverlay.clear();
@@ -2097,7 +2105,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
               return true;
             }
             this.blockInput = true;
-            ui.setModeWithoutClear(UiMode.OPTION_SELECT).then(() => {
+
+            // TODO: setMode NoOp, option select never shown, see show #ui/base-option-select-ui-handler.ts
+            ui.setModeWithoutClear(UiMode.OPTION_SELECT, { options: [] }).then(() => {
               // Always go back to first selection after scrolling around
               if (this.previousSpecies.length === 0) {
                 this.previousSpecies.push(this.species);
@@ -2137,7 +2147,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
               this.blockInput = false;
               return true;
             }
-            ui.setModeWithoutClear(UiMode.OPTION_SELECT).then(() => {
+            // TODO: setMode NoOp, option select never shown, see show #ui/base-option-select-ui-handler.ts
+            ui.setModeWithoutClear(UiMode.OPTION_SELECT, { options: [] }).then(() => {
               // Always go back to first selection after scrolling around
               if (this.previousSpecies.length === 0) {
                 this.previousSpecies.push(this.species);

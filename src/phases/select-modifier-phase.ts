@@ -215,7 +215,7 @@ export class SelectModifierPhase extends BattlePhase {
       UiMode.PARTY,
       PartyUiMode.MODIFIER_TRANSFER,
       -1,
-      (fromSlotIndex: number, itemIndex: number, itemQuantity: number, toSlotIndex: number) => {
+      (fromSlotIndex: number, itemIndex: number, itemQuantity?: number, toSlotIndex?: number) => {
         if (
           toSlotIndex !== undefined
           && fromSlotIndex < 6
@@ -313,7 +313,7 @@ export class SelectModifierPhase extends BattlePhase {
           && spliceSlotIndex < 6
           && fromSlotIndex !== spliceSlotIndex
         ) {
-          globalScene.ui.setMode(UiMode.MODIFIER_SELECT, this.isPlayer()).then(() => {
+          globalScene.ui.setMode(UiMode.MODIFIER_SELECT).then(() => {
             const modifier = modifierType.newModifier(party[fromSlotIndex], party[spliceSlotIndex])!; //TODO: is the bang correct?
             this.applyModifier(modifier, cost, true);
           });
@@ -352,7 +352,7 @@ export class SelectModifierPhase extends BattlePhase {
       -1,
       (slotIndex: number, option: PartyOption) => {
         if (slotIndex < 6) {
-          globalScene.ui.setMode(UiMode.MODIFIER_SELECT, this.isPlayer()).then(() => {
+          globalScene.ui.setMode(UiMode.MODIFIER_SELECT).then(() => {
             const modifier = isMoveModifier
               ? modifierType.newModifier(party[slotIndex], option - PartyOption.MOVE_1)
               : isRememberMoveModifier

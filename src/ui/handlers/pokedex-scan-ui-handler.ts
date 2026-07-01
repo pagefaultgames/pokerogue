@@ -1,7 +1,7 @@
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { UiMode } from "#enums/ui-mode";
-import type { PlayerPokemon } from "#field/pokemon";
+import { type PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { OptionSelectItem } from "#ui/base-option-select-ui-handler";
 import { FilterTextRow } from "#ui/filter-text";
 import type { FormModalConfig, InputFieldConfig } from "#ui/form-modal-ui-handler";
@@ -9,7 +9,7 @@ import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
 import type { ModalConfig } from "#ui/modal-ui-handler";
 import i18next from "i18next";
 
-type PokedexScanUiConfig = [FormModalConfig, PlayerPokemon, FilterTextRow];
+type PokedexScanUiConfig = [FormModalConfig, PlayerPokemon | string, FilterTextRow];
 
 export class PokedexScanUiHandler extends FormModalUiHandler<PokedexScanUiConfig> {
   keys: string[];
@@ -162,10 +162,10 @@ export class PokedexScanUiHandler extends FormModalUiHandler<PokedexScanUiConfig
       // TODO: Figure out what the type of `this.inputContainers.list` is
       this.inputContainers[0].list[0]["width"] = inputWidth;
 
-      if (args[1]) {
+      if (args[1] instanceof Pokemon) {
         this.inputs[0].text = args[1].getNameToRender();
       } else {
-        this.inputs[0].text = "";
+        this.inputs[0].text = args[1];
       }
       this.submitAction = () => {
         if (ui.getMode() === UiMode.POKEDEX_SCAN) {

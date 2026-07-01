@@ -89,8 +89,8 @@ type PartyUiConfig = [
   // Temporarily optional to bypass strict length checks.
   PartyUiMode?,
   fieldIndex?: number,
-  (PartySelectCallback | PartyModifierTransferSelectCallback)?,
-  PokemonSelectFilter?,
+  (PartySelectCallback | PartyModifierTransferSelectCallback | null)?,
+  (PokemonSelectFilter | PokemonModifierTransferSelectFilter)?,
   PokemonMoveSelectFilter?,
   MoveId?,
   ShowMovePp?: boolean,
@@ -321,7 +321,7 @@ export class PartyUiHandler extends MessageUiHandler {
     return true;
   }
 
-  private processSummaryOption(pokemon: Pokemon): boolean {
+  private processSummaryOption(pokemon: PlayerPokemon): boolean {
     const ui = this.getUi();
     ui.playSelect();
     ui.setModeWithoutClear(UiMode.SUMMARY, pokemon).then(() => this.clearOptions());

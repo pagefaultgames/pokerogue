@@ -127,6 +127,9 @@ export const languageOptions = [
   },
   {
     label: i18next.t("settings:back"),
-    handler: () => cancelHandler(),
+    handler: () => {
+      cancelHandler();
+      return true;
+    },
   },
 ];

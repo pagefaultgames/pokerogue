@@ -17,8 +17,8 @@ type AdminUiConfig = [
   ModalConfig,
   AdminMode,
   // labels for doc
-  AdminResult: SearchAccountResponse,
-  IsMessageError: boolean,
+  AdminResult?: SearchAccountResponse,
+  IsMessageError?: boolean,
 ];
 
 export class AdminUiHandler extends FormModalUiHandler<AdminUiConfig> {

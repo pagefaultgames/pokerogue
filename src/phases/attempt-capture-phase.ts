@@ -341,8 +341,8 @@ export class AttemptCapturePhase extends PokemonPhase {
                       globalScene.ui.setMode(
                         UiMode.SUMMARY,
                         newPokemon,
-                        0,
                         SummaryUiMode.DEFAULT,
+                        null,
                         () => {
                           globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
                             promptRelease();

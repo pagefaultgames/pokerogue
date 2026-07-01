@@ -1,12 +1,12 @@
 import { UiMode } from "#enums/ui-mode";
-import type { PlayerPokemon } from "#field/pokemon";
+import { type PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { OptionSelectItem } from "#ui/base-option-select-ui-handler";
 import type { FormModalConfig, InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
 import type { ModalConfig } from "#ui/modal-ui-handler";
 import i18next from "i18next";
 
-type TestDialogueUiConfig = [FormModalConfig, PlayerPokemon];
+type TestDialogueUiConfig = [FormModalConfig, PlayerPokemon | string];
 
 /** Handler for the i18n testing menu used by the localization team. */
 export class TestDialogueUiHandler extends FormModalUiHandler<TestDialogueUiConfig> {
@@ -139,10 +139,10 @@ export class TestDialogueUiHandler extends FormModalUiHandler<TestDialogueUiConf
       // TODO: Figure out what the type of `this.inputContainers.list` is
       this.inputContainers[0].list[0]["width"] = 200;
 
-      if (args[1]) {
+      if (args[1] instanceof Pokemon) {
         this.inputs[0].text = args[1].getNameToRender();
       } else {
-        this.inputs[0].text = "";
+        this.inputs[0].text = args[1];
       }
       this.submitAction = () => {
         if (ui.getMode() === UiMode.TEST_DIALOGUE) {

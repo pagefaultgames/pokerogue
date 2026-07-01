@@ -442,7 +442,7 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
         const confirmationMessage =
           setting.options[cursor].confirmationMessage ?? i18next.t("settings:defaultConfirmMessage");
         globalScene.ui.showText(confirmationMessage, null, () => {
-          globalScene.ui.setOverlayMode(UiMode.CONFIRM, confirmUpdateSetting, cancelUpdateSetting, null, null, 1, 750);
+          globalScene.ui.setOverlayMode(UiMode.CONFIRM, confirmUpdateSetting, cancelUpdateSetting, false, null, 1, 750);
         });
       } else {
         saveSetting();

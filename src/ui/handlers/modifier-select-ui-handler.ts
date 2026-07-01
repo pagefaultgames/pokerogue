@@ -25,7 +25,7 @@ const SINGLE_SHOP_ROW_YOFFSET = 12;
 const DOUBLE_SHOP_ROW_YOFFSET = 24;
 const OPTION_BUTTON_YPOSITION = -62;
 
-type ModifierSelectConfig = [player: boolean, ModifierTypeOption[], ModifierSelectCallback, rerrolCost?: number];
+type ModifierSelectConfig = [player: boolean, ModifierTypeOption[], ModifierSelectCallback, rerrolCost: number];
 
 export class ModifierSelectUiHandler extends AwaitableUiHandler {
   private modifierContainer: Phaser.GameObjects.Container;
@@ -161,11 +161,11 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     globalScene.addInfoToggle(this.moveInfoOverlay);
   }
 
-  show(args: ModifierSelectConfig): boolean {
+  show(args?: ModifierSelectConfig): boolean {
     globalScene.disableMenu = false;
 
     if (this.active) {
-      if (args.length >= 3) {
+      if (args && args.length >= 3) {
         this.awaitingActionInput = true;
         this.onActionInput = args[2];
       }
@@ -174,10 +174,12 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     }
 
     if (
-      args.length !== 4
-      || !Array.isArray(args[1])
-      || !(args[2] instanceof Function)
-      || !(typeof args[3] === "number")
+      (args
+        && (args.length !== 4
+          || !Array.isArray(args[1])
+          || !(args[2] instanceof Function)
+          || !(typeof args[3] === "number")))
+      || !args
     ) {
       return false;
     }

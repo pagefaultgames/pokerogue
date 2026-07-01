@@ -28,7 +28,7 @@ export interface OptionSelectItem {
   overrideSound?: boolean;
   style?: TextStyle;
   item?: string;
-  itemArgs?: any[];
+  itemArgs?: [string, string];
 }
 
 const scrollUpLabel = "↑";

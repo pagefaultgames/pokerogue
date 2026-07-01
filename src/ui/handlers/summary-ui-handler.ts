@@ -61,7 +61,7 @@ type SummaryUiConfig =
   | [
       pokemon: PlayerPokemon,
       uiMode?: SummaryUiMode.DEFAULT,
-      startPage?: Page,
+      startPage?: Page | null | undefined,
       selectCallback?: (cursor: number) => void,
       player?: boolean,
     ]
