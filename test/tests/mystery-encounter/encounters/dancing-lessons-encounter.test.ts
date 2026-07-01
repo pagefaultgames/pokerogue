@@ -123,7 +123,7 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = game.scene.ui.handlers[UiMode.MODIFIER_SELECT]!;
+      const modifierSelectHandler = game.scene.ui.handlers[UiMode.MODIFIER_SELECT];
       expect(modifierSelectHandler.options.length).toEqual(3); // Should fill remaining
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toContain("BATON");
     });

@@ -78,7 +78,7 @@ describe("Challenges - Hardcore", () => {
 
     await game.phaseInterceptor.to("SelectModifierPhase");
     expect(game.scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
-    const modifierSelectHandler = game.scene.ui.handlers[UiMode.MODIFIER_SELECT]!;
+    const modifierSelectHandler = game.scene.ui.handlers[UiMode.MODIFIER_SELECT];
     expect(
       modifierSelectHandler.options.find(reward => reward.modifierTypeOption.type.group === "revive"),
     ).toBeUndefined();

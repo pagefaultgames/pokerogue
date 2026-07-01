@@ -132,7 +132,7 @@ describe("Weird Dream - Mystery Encounter", () => {
       await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = game.scene.ui.handlers[UiMode.MODIFIER_SELECT]!;
+      const modifierSelectHandler = game.scene.ui.handlers[UiMode.MODIFIER_SELECT];
       expect(modifierSelectHandler.options.length).toEqual(6);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toEqual("MEMORY_MUSHROOM");
       expect(modifierSelectHandler.options[1].modifierTypeOption.type.id).toEqual("ROGUE_BALL");
@@ -187,7 +187,7 @@ describe("Weird Dream - Mystery Encounter", () => {
       await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = game.scene.ui.handlers[UiMode.MODIFIER_SELECT]!;
+      const modifierSelectHandler = game.scene.ui.handlers[UiMode.MODIFIER_SELECT];
       expect(modifierSelectHandler.options.length).toEqual(6);
       expect(
         modifierSelectHandler.options[0].modifierTypeOption.type.tier

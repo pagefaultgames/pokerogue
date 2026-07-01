@@ -224,7 +224,7 @@ describe("Global Trade System - Mystery Encounter", () => {
       await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = game.scene.ui.handlers[UiMode.MODIFIER_SELECT]!;
+      const modifierSelectHandler = game.scene.ui.handlers[UiMode.MODIFIER_SELECT];
       expect(modifierSelectHandler.options.length).toEqual(1);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.tier).toBe(ModifierTier.MASTER);
       const soulDewAfter = scene.findModifier(m => m instanceof PokemonNatureWeightModifier);

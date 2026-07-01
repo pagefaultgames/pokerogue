@@ -57,7 +57,6 @@ import { TargetSelectUiHandler } from "#ui/target-select-ui-handler";
 import { TestDialogueUiHandler } from "#ui/test-dialogue-ui-handler";
 import { addTextObject } from "#ui/text";
 import { TitleUiHandler } from "#ui/title-ui-handler";
-import type { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { UnavailableModalUiHandler } from "#ui/unavailable-modal-ui-handler";
 import { executeIf } from "#utils/common";
@@ -173,7 +172,7 @@ type OptionalRestArgs<T> = T extends UnknownArray ? T : [];
 export class UI extends Phaser.GameObjects.Container {
   private mode: UiMode;
   private modeChain: UiMode[];
-  public handlers: Handlers | [];
+  public handlers: Handlers;
   private overlay: Phaser.GameObjects.Rectangle;
   public achvBar: AchvBar;
   public bgmBar: BgmBar;
@@ -241,12 +240,12 @@ export class UI extends Phaser.GameObjects.Container {
     globalScene.uiContainer.add(this.tooltipContainer);
   }
 
-  getHandler<H extends Handlers[UiMode] | UiHandler = UiHandler>(): H {
+  getHandler<H extends Handlers[UiMode]>(): H {
     return this.handlers[this.mode] as H;
   }
 
   getMessageHandler(): BattleMessageUiHandler {
-    return this.handlers[UiMode.MESSAGE] as BattleMessageUiHandler;
+    return this.handlers[UiMode.MESSAGE];
   }
 
   processInfoButton(pressed: boolean) {
@@ -317,7 +316,14 @@ export class UI extends Phaser.GameObjects.Container {
         text = text.split(repname[p]).join(pokename[p]);
       }
       if (handler instanceof MessageUiHandler) {
-        (handler as MessageUiHandler).showText(text, delay, callback, callbackDelay, prompt, promptDelay);
+        handler.showText(
+          text,
+          delay ?? undefined,
+          callback ?? undefined,
+          callbackDelay ?? undefined,
+          prompt ?? undefined,
+          promptDelay ?? undefined,
+        );
       } else {
         this.getMessageHandler().showText(text, delay, callback, callbackDelay, prompt, promptDelay);
       }
@@ -365,15 +371,7 @@ export class UI extends Phaser.GameObjects.Container {
     } else {
       const handler = this.getHandler();
       if (handler instanceof MessageUiHandler) {
-        (handler as MessageUiHandler).showDialogue(
-          text,
-          name,
-          delay,
-          showMessageAndCallback,
-          callbackDelay,
-          true,
-          promptDelay,
-        );
+        handler.showDialogue(text, name, delay, showMessageAndCallback, callbackDelay, true, promptDelay);
       } else {
         this.getMessageHandler().showDialogue(
           text,
@@ -471,7 +469,7 @@ export class UI extends Phaser.GameObjects.Container {
   clearText(): void {
     const handler = this.getHandler();
     if (handler instanceof MessageUiHandler) {
-      (handler as MessageUiHandler).clearText();
+      handler.clearText();
     } else {
       this.getMessageHandler().clearText();
     }
@@ -558,7 +556,7 @@ export class UI extends Phaser.GameObjects.Container {
           if (touchControls) {
             touchControls.dataset.uiMode = UiMode[mode];
           }
-          this.getHandler().show(args);
+          this.getHandler().show(args as any);
         }
         resolve();
       };
@@ -684,7 +682,10 @@ export class UI extends Phaser.GameObjects.Container {
    */
   public freeUIData(): void {
     Object.values(this.handlers).forEach(h => h.destroy());
-    this.handlers = [];
+
+    // Handlers are immediately re-initialized.
+    // TODO: Is this necessary if the only caller re-initializes it?
+    this.handlers = {} as Handlers;
     NavigationManager.getInstance().clearNavigationMenus();
   }
 }
