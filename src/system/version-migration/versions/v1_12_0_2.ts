@@ -80,6 +80,7 @@ function pullEggs(pullCount: number, ownedStarters: SpeciesId[]): EggData[] {
         hatchWaves: (Math.floor(pulledCount / 81) + 1) * 5,
         species: species.speciesId,
         isShiny: true,
+        tier: eggTier, // needed as it break the id generation if not set
       };
       pulledCount++;
 
