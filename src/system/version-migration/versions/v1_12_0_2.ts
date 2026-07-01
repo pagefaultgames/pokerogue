@@ -6,11 +6,12 @@ import { DexAttr } from "#enums/dex-attr";
 import { EggSourceType } from "#enums/egg-source-types";
 import { EggTier } from "#enums/egg-type";
 import type { SpeciesId } from "#enums/species-id";
+import { UiMode } from "#enums/ui-mode";
 import { EggData } from "#system/egg-data";
 import { VoucherType } from "#system/voucher";
 import type { DexData, DexEntry } from "#types/dex-data";
 import type { SystemSaveMigrator } from "#types/save-migrators";
-import { randSeedItem } from "#utils/common";
+import { fixedInt, randSeedItem } from "#utils/common";
 
 const LEGENDARY_RATIO = 0.02;
 const EPIC_RATIO = 0.08;
@@ -83,6 +84,19 @@ function pullEggs(pullCount: number, ownedStarters: SpeciesId[]): EggData[] {
       eggs.push(new EggData(eggOptions));
     }
   }
+
+  globalScene.time.delayedCall(fixedInt(2000), () => {
+    globalScene.ui.setOverlayMode(
+      UiMode.ALERT_MODAL,
+      `You were affected by a save data loss bug in v1.12.0.0 that deleted all shiny Pokémon.\nAs a compensation you have received ${eggs.length} eggs containing a guaranteed shiny Pokémon.`,
+    );
+    globalScene.time.delayedCall(fixedInt(15000), () => {
+      if (globalScene.ui.getMode() === UiMode.ALERT_MODAL) {
+        globalScene.ui.revertMode();
+      }
+    });
+  });
+
   return eggs;
 }
 
