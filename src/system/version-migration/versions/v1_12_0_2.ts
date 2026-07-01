@@ -2,14 +2,20 @@ import { defaultStarterSpecies } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import type { IEggOptions } from "#data/egg";
+import type { PokemonSpecies } from "#data/pokemon-species";
 import { DexAttr } from "#enums/dex-attr";
 import { EggSourceType } from "#enums/egg-source-types";
+import { EggTier } from "#enums/egg-type";
 import type { SpeciesId } from "#enums/species-id";
 import { EggData } from "#system/egg-data";
 import { VoucherType } from "#system/voucher";
 import type { DexData, DexEntry } from "#types/dex-data";
 import type { SystemSaveMigrator } from "#types/save-migrators";
-import { randSeedItem } from "#utils/common";
+import { randSeedInt, randSeedItem } from "#utils/common";
+
+const LEGENDARY_CHANCE = 2;
+const EPIC_CHANCE = 8;
+const RARE_CHANCE = 20;
 
 function getStarters(
   dexData: DexData | undefined,
@@ -35,15 +41,55 @@ function getStarters(
   return starters;
 }
 
+function rollTier(): EggTier {
+  const rand = randSeedInt(100);
+  let threshold = 0;
+
+  const tiers: [number, EggTier][] = [
+    [LEGENDARY_CHANCE, EggTier.LEGENDARY],
+    [EPIC_CHANCE, EggTier.EPIC],
+    [RARE_CHANCE, EggTier.RARE],
+  ];
+
+  for (const [chance, tier] of tiers) {
+    threshold += chance;
+    if (rand < threshold) {
+      return tier;
+    }
+  }
+
+  return EggTier.COMMON;
+}
+
 function pullEggs(pullCount: number, ownedStarters: SpeciesId[]): EggData[] {
   const eggs: EggData[] = [];
   for (let i = 1; i <= pullCount; i++) {
-    const species = randSeedItem(ownedStarters);
+    let tier = rollTier();
+    let ownedTierStarters: PokemonSpecies[] = [];
+
+    while (tier >= EggTier.COMMON) {
+      ownedTierStarters = speciesDataRegistry
+        .getSpeciesForEggTier(tier)
+        .filter(ps => ownedStarters.includes(ps.speciesId));
+
+      if (ownedTierStarters.length > 0) {
+        break;
+      }
+
+      tier--;
+    }
+
+    if (ownedTierStarters.length === 0) {
+      console.warn("Comp: No available starters"); // should be impossible
+      break;
+    }
+
+    const species = randSeedItem(ownedTierStarters);
     const eggOptions: IEggOptions = {
       pulled: false,
       sourceType: EggSourceType.EVENT,
       hatchWaves: (Math.floor(i / 81) + 1) * 5,
-      species,
+      species: species.speciesId,
       isShiny: true,
     };
 
@@ -85,7 +131,7 @@ const shinyCompensationMigrator: SystemSaveMigrator = {
 
     // set seed to avoid save scumming eggs
     // coalesced values are an abundance of caution but will never be used on a well-formatted save
-    const seed = (data.trainerId.toString() ?? "EGGS") + (data.secretId.toString() ?? "EGGS") + "EGGS";
+    const seed = (data.trainerId?.toString() ?? "EGGS") + (data.secretId?.toString() ?? "EGGS") + "EGGS";
 
     globalScene.executeWithSeedOffset(
       () => {
