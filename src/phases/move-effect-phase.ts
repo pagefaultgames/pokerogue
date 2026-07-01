@@ -169,8 +169,8 @@ export class MoveEffectPhase extends PokemonPhase {
     const fieldMove = isFieldTargeted(move);
 
     // Dragon Darts dart-1 pre-hit immunity redirect.
-    // If the chosen target is immune (Fairy type, protected, or semi-invulnerable) and the other
-    // opponent is not, redirect dart 1 to the non-immune opponent.
+    // If the chosen target cannot take damage from this strike and the other opponent can,
+    // redirect dart 1 to the damageable opponent.
     if (this.move.id === MoveId.DRAGON_DARTS && user.turnData.hitsLeft === user.turnData.hitCount) {
       const activeOpponents = user.getOpponents(false).filter(p => p.isActive());
       if (activeOpponents.length === 2) {
@@ -179,8 +179,8 @@ export class MoveEffectPhase extends PokemonPhase {
         if (
           currentTarget
           && otherTarget
-          && this.isDragonDartsImmune(currentTarget, user)
-          && !this.isDragonDartsImmune(otherTarget, user)
+          && this.isDragonDartsDamageImmune(currentTarget, user)
+          && !this.isDragonDartsDamageImmune(otherTarget, user)
         ) {
           this.targets = [otherTarget.getBattlerIndex()];
         }
@@ -1057,12 +1057,12 @@ export class MoveEffectPhase extends PokemonPhase {
     const otherOpponent = activeOpponents.find(p => p.getBattlerIndex() !== firstTargetIndex);
     const preferredTarget = otherOpponent ?? activeOpponents[0];
 
-    // Pre-hit immunity redirect: if the preferred dart-2 target is immune (Fairy type, protected,
-    // or semi-invulnerable) but the dart-1 target is not, redirect dart 2 to the dart-1 target.
-    // If both are immune, only one immunity is acknowledged and standard targeting continues.
-    if (this.isDragonDartsImmune(preferredTarget, user)) {
+    // Pre-hit immunity redirect: if the preferred dart-2 target cannot take damage from this strike
+    // but the dart-1 target can, redirect dart 2 to the dart-1 target.
+    // If both are immune, standard targeting continues.
+    if (this.isDragonDartsDamageImmune(preferredTarget, user)) {
       const firstTarget = activeOpponents.find(p => p.getBattlerIndex() === firstTargetIndex);
-      if (firstTarget && !this.isDragonDartsImmune(firstTarget, user)) {
+      if (firstTarget && !this.isDragonDartsDamageImmune(firstTarget, user)) {
         return [firstTarget.getBattlerIndex()];
       }
     }
@@ -1071,35 +1071,29 @@ export class MoveEffectPhase extends PokemonPhase {
   }
 
   /**
-   * Check whether a target should be avoided by Dragon Darts due to pre-hit immunity.
-   * Returns `true` if the target is a Fairy type (immune to Dragon moves), has Wonder Guard and
-   * is not weak to Dragon, is protected by a protection move, or is in a semi-invulnerable state
-   * that this move cannot bypass.
-   * @param user - The attacking {@linkcode Pokemon}
+   * Check whether Dragon Darts should avoid `target` due to pre-hit damage immunity.
+   *
+   * This intentionally mirrors the damage-immunity portion of hit checking without
+   * side effects. It catches cases where this strike would deal no damage, including
+   * protection, unbypassed semi-invulnerability, and move-effectiveness immunities
+   * (typing, Wonder Guard when active, and similar effects).
    * @param target - The opposing {@linkcode Pokemon} to check
+   * @param user - The attacking {@linkcode Pokemon}
    */
-  private isDragonDartsImmune(target: Pokemon, user: Pokemon): boolean {
-    if (target.isOfType(PokemonType.FAIRY)) {
-      return true;
-    }
-
-    if (target.hasAbility(AbilityId.WONDER_GUARD)) {
-      const moveType = user.getMoveType(this.move);
-      const typeEffectiveness = target.getAttackTypeEffectiveness(moveType, {
-        source: user,
-        simulated: false,
-        move: this.move,
-      });
-      if (typeEffectiveness <= 1) {
-        return true;
-      }
-    }
-
+  private isDragonDartsDamageImmune(target: Pokemon, user: Pokemon): boolean {
+    // Keep this side-effect free: do not call protectedCheck() here because it lapses tags.
     if (target.findTags(t => t instanceof ProtectedTag).length > 0) {
       return true;
     }
+
     const semiInvulnTag = target.getTag(SemiInvulnerableTag);
-    return !!semiInvulnTag && !this.checkBypassSemiInvuln(semiInvulnTag);
+    if (semiInvulnTag && !this.checkBypassSemiInvuln(semiInvulnTag)) {
+      return true;
+    }
+
+    const cancelNoEffectMessage = new BooleanHolder(false);
+    const effectiveness = target.getMoveEffectiveness(user, this.move, false, false, cancelNoEffectMessage);
+    return effectiveness === 0;
   }
 
   /** Remove all substitutes that were broken by this phase's invoked move. */

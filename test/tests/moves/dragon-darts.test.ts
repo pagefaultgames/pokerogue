@@ -173,13 +173,8 @@ describe("Moves - Dragon Darts", () => {
       await game.classicMode.startBattle(SpeciesId.DRAGAPULT, SpeciesId.DRATINI);
 
       const [enemy1, enemy2] = game.scene.getEnemyField();
-
-      const enemy1HasAbility = enemy1.hasAbility.bind(enemy1);
-      vi.spyOn(enemy1, "hasAbility").mockImplementation((ability, ignoreOverride, ignoreSuppressed, simulated) => {
-        return (
-          ability === AbilityId.WONDER_GUARD || enemy1HasAbility(ability, ignoreOverride, ignoreSuppressed, simulated)
-        );
-      });
+      // Force only enemy1 to have Wonder Guard so Dragon Darts should avoid it when Dragon is not super-effective.
+      enemy1.summonData.ability = AbilityId.WONDER_GUARD;
 
       game.move.select(MoveId.DRAGON_DARTS, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
       game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
