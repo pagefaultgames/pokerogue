@@ -509,7 +509,7 @@
     "sv": "Använd förmålet Ljussten (Super)",
     "uk": "Use the Близкучий Камінь (Great)",
     "vi": "Sử dụng vật phẩm Huy Quang Thạch (Great)",
-    "pl": "Use the Shiny Stone (Great)"
+    "pl": "Używając: Shiny Stone (Super)"
   },
   {
     "preDexNum": 25,
@@ -541,7 +541,7 @@
     "sv": "Använd förmålet Ljussten (Super)",
     "uk": "Use the Близкучий Камінь (Great)",
     "vi": "Sử dụng vật phẩm Huy Quang Thạch (Great)",
-    "pl": "Use the Shiny Stone (Great)"
+    "pl": "Używając: Shiny Stone (Super)"
   },
   {
     "preDexNum": 25,
@@ -573,7 +573,7 @@
     "sv": "Använd förmålet Åsksten (Super)",
     "uk": "Use the Електро-Камінь (Great)",
     "vi": "Sử dụng vật phẩm Lôi Thạch (Great)",
-    "pl": "Use the Thunder Stone (Great)"
+    "pl": "Używając: Thunder Stone (Super)"
   },
   {
     "preDexNum": 25,
@@ -605,7 +605,7 @@
     "sv": "Använd förmålet Åsksten (Super)",
     "uk": "Use the Електро-Камінь (Great)",
     "vi": "Sử dụng vật phẩm Lôi Thạch (Great)",
-    "pl": "Use the Thunder Stone (Great)"
+    "pl": "Używając: Thunder Stone (Super)"
   },
   {
     "preDexNum": 27,
@@ -701,7 +701,7 @@
     "sv": "Använd förmålet Månsten (Super)",
     "uk": "Use the Місячний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Nguyệt Quang Thạch (Great)",
-    "pl": "Use the Moon Stone (Great)"
+    "pl": "Używając: Moon Stone (Super)"
   },
   {
     "preDexNum": 32,
@@ -765,7 +765,7 @@
     "sv": "Använd förmålet Månsten (Super)",
     "uk": "Use the Місячний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Nguyệt Quang Thạch (Great)",
-    "pl": "Use the Moon Stone (Great)"
+    "pl": "Używając: Moon Stone (Super)"
   },
   {
     "preDexNum": 35,
@@ -797,7 +797,7 @@
     "sv": "Använd förmålet Månsten (Super)",
     "uk": "Use the Місячний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Nguyệt Quang Thạch (Great)",
-    "pl": "Use the Moon Stone (Great)"
+    "pl": "Używając: Moon Stone (Super)"
   },
   {
     "preDexNum": 37,
@@ -829,7 +829,7 @@
     "sv": "Använd förmålet Eldsten (Super)",
     "uk": "Use the Вогняний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Hoả Thạch (Great)",
-    "pl": "Use the Fire Stone (Great)"
+    "pl": "Używając: Fire Stone (Super)"
   },
   {
     "preDexNum": 39,
@@ -861,7 +861,7 @@
     "sv": "Använd förmålet Månsten (Super)",
     "uk": "Use the Місячний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Nguyệt Quang Thạch (Great)",
-    "pl": "Use the Moon Stone (Great)"
+    "pl": "Używając: Moon Stone (Super)"
   },
   {
     "preDexNum": 41,
@@ -989,7 +989,7 @@
     "sv": "Använd förmålet Lövsten (Super)",
     "uk": "Use the Листовий Камінь (Great)",
     "vi": "Sử dụng vật phẩm Thảo Thạch (Great)",
-    "pl": "Use the Leaf Stone (Great)"
+    "pl": "Używając: Leaf Stone (Super)"
   },
   {
     "preDexNum": 44,
@@ -1021,7 +1021,7 @@
     "sv": "Använd förmålet Solsten (Super)",
     "uk": "Use the Сонячний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Thái Dương Thạch (Great)",
-    "pl": "Use the Sun Stone (Great)"
+    "pl": "Używając: Sun Stone (Super)"
   },
   {
     "preDexNum": 46,
@@ -1245,7 +1245,7 @@
     "sv": "När den kan tekniken Aggnäve|Vid nivå 35",
     "uk": "While knowing the move Rage Fist|At Level 35",
     "vi": "Khi đã học chiêu thức Rage Fist|Ở Cấp 35",
-    "pl": "While knowing the move Rage Fist|Na Poziomie 35"
+    "pl": "Po nauczeniu się ataku Rage Fist|Na Poziomie 35"
   },
   {
     "preDexNum": 58,
@@ -1277,7 +1277,7 @@
     "sv": "Använd förmålet Eldsten (Super)",
     "uk": "Use the Вогняний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Hoả Thạch (Great)",
-    "pl": "Use the Fire Stone (Great)"
+    "pl": "Używając: Fire Stone (Super)"
   },
   {
     "preDexNum": 60,
@@ -1341,7 +1341,7 @@
     "sv": "Använd förmålet Vattensten (Super)",
     "uk": "Use the Водний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Thủy Thạch (Great)",
-    "pl": "Use the Water Stone (Great)"
+    "pl": "Używając: Water Stone (Super)"
   },
   {
     "preDexNum": 61,
@@ -1373,7 +1373,7 @@
     "sv": "Använd förmålet Länkande lina (Super)",
     "uk": "Use the З’єднувальний Шнур (Great)",
     "vi": "Sử dụng vật phẩm Cáp Trao Đổi (Great)",
-    "pl": "Use the Linking Cord (Great)"
+    "pl": "Używając: Linking Cord (Super)"
   },
   {
     "preDexNum": 63,
@@ -1437,7 +1437,7 @@
     "sv": "Använd förmålet Länkande lina (Super)",
     "uk": "Use the З’єднувальний Шнур (Great)",
     "vi": "Sử dụng vật phẩm Cáp Trao Đổi (Great)",
-    "pl": "Use the Linking Cord (Great)"
+    "pl": "Używając: Linking Cord (Super)"
   },
   {
     "preDexNum": 66,
@@ -1501,7 +1501,7 @@
     "sv": "Använd förmålet Länkande lina (Super)",
     "uk": "Use the З’єднувальний Шнур (Great)",
     "vi": "Sử dụng vật phẩm Cáp Trao Đổi (Great)",
-    "pl": "Use the Linking Cord (Great)"
+    "pl": "Używając: Linking Cord (Super)"
   },
   {
     "preDexNum": 69,
@@ -1565,7 +1565,7 @@
     "sv": "Använd förmålet Lövsten (Super)",
     "uk": "Use the Листовий Камінь (Great)",
     "vi": "Sử dụng vật phẩm Thảo Thạch (Great)",
-    "pl": "Use the Leaf Stone (Great)"
+    "pl": "Używając: Leaf Stone (Super)"
   },
   {
     "preDexNum": 72,
@@ -1661,7 +1661,7 @@
     "sv": "Använd förmålet Länkande lina (Super)",
     "uk": "Use the З’єднувальний Шнур (Great)",
     "vi": "Sử dụng vật phẩm Cáp Trao Đổi (Great)",
-    "pl": "Use the Linking Cord (Great)"
+    "pl": "Używając: Linking Cord (Super)"
   },
   {
     "preDexNum": 77,
@@ -1757,7 +1757,7 @@
     "sv": "Använd förmålet Länkande lina (Super)",
     "uk": "Use the З’єднувальний Шнур (Great)",
     "vi": "Sử dụng vật phẩm Cáp Trao Đổi (Great)",
-    "pl": "Use the Linking Cord (Great)"
+    "pl": "Używając: Linking Cord (Super)"
   },
   {
     "preDexNum": 81,
@@ -1821,7 +1821,7 @@
     "sv": "Använd förmålet Åsksten (Super)",
     "uk": "Use the Електро-Камінь (Great)",
     "vi": "Sử dụng vật phẩm Lôi Thạch (Great)",
-    "pl": "Use the Thunder Stone (Great)"
+    "pl": "Używając: Thunder Stone (Super)"
   },
   {
     "preDexNum": 84,
@@ -1949,7 +1949,7 @@
     "sv": "Använd förmålet Vattensten (Super)",
     "uk": "Use the Водний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Thủy Thạch (Great)",
-    "pl": "Use the Water Stone (Great)"
+    "pl": "Używając: Water Stone (Super)"
   },
   {
     "preDexNum": 92,
@@ -2013,7 +2013,7 @@
     "sv": "Använd förmålet Länkande lina (Super)",
     "uk": "Use the З’єднувальний Шнур (Great)",
     "vi": "Sử dụng vật phẩm Cáp Trao Đổi (Great)",
-    "pl": "Use the Linking Cord (Great)"
+    "pl": "Używając: Linking Cord (Super)"
   },
   {
     "preDexNum": 95,
@@ -2045,7 +2045,7 @@
     "sv": "När den kan en teknik av typen Stål|Använd förmålet Länkande lina (Super)",
     "uk": "While knowing a Стальний-type move|Use the З’єднувальний Шнур (Great)",
     "vi": "Khi đã học 1 chiêu thức hệ Thép|Sử dụng vật phẩm Cáp Trao Đổi (Great)",
-    "pl": "While knowing a Stalowy-type move|Use the Linking Cord (Great)"
+    "pl": "Znając atak typu: Stalowy|Używając: Linking Cord (Super)"
   },
   {
     "preDexNum": 96,
@@ -2173,7 +2173,7 @@
     "sv": "Använd förmålet Solsten (Super)",
     "uk": "Use the Сонячний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Thái Dương Thạch (Great)",
-    "pl": "Use the Sun Stone (Great)"
+    "pl": "Używając: Sun Stone (Super)"
   },
   {
     "preDexNum": 102,
@@ -2205,7 +2205,7 @@
     "sv": "Använd förmålet Lövsten (Super)",
     "uk": "Use the Листовий Камінь (Great)",
     "vi": "Sử dụng vật phẩm Thảo Thạch (Great)",
-    "pl": "Use the Leaf Stone (Great)"
+    "pl": "Używając: Leaf Stone (Super)"
   },
   {
     "preDexNum": 104,
@@ -2237,7 +2237,7 @@
     "sv": "På natten eller skymningen|Vid nivå 28",
     "uk": "During Night or Dusk|At Level 28",
     "vi": "Vào Ban Đêm hoặc Hoàng Hôn|Ở Cấp 28",
-    "pl": "During Night or Dusk|Na Poziomie 28"
+    "pl": "W Nocy lub o Zmierzchu|Na Poziomie 28"
   },
   {
     "preDexNum": 104,
@@ -2301,7 +2301,7 @@
     "sv": "När den kan tekniken Bumlingsrull|Vid nivå 33",
     "uk": "While knowing the move Rollout|At Level 33",
     "vi": "Khi đã học chiêu thức Rollout|Ở Cấp 33",
-    "pl": "While knowing the move Rollout|Na Poziomie 33"
+    "pl": "Po nauczeniu się ataku Rollout|Na Poziomie 33"
   },
   {
     "preDexNum": 109,
@@ -2333,7 +2333,7 @@
     "sv": "På natten eller skymningen|Vid nivå 35",
     "uk": "During Night or Dusk|At Level 35",
     "vi": "Vào Ban Đêm hoặc Hoàng Hôn|Ở Cấp 35",
-    "pl": "During Night or Dusk|Na Poziomie 35"
+    "pl": "W Nocy lub o Zmierzchu|Na Poziomie 35"
   },
   {
     "preDexNum": 109,
@@ -2429,7 +2429,7 @@
     "sv": "Använd förmålet Skyddsplattor (Super)",
     "uk": "Use the Захисник (Great)",
     "vi": "Sử dụng vật phẩm Áo Bảo Hộ (Great)",
-    "pl": "Use the Protector (Great)"
+    "pl": "Używając: Protector (Super)"
   },
   {
     "preDexNum": 113,
@@ -2493,7 +2493,7 @@
     "sv": "När den kan tekniken Urkraft|Vid nivå 33",
     "uk": "While knowing the move Ancient Power|At Level 33",
     "vi": "Khi đã học chiêu thức Ancient Power|Ở Cấp 33",
-    "pl": "While knowing the move Ancient Power|Na Poziomie 33"
+    "pl": "Po nauczeniu się ataku Ancient Power|Na Poziomie 33"
   },
   {
     "preDexNum": 116,
@@ -2557,7 +2557,7 @@
     "sv": "Använd förmålet Drakfjäll (Super)",
     "uk": "Use the Луска Дракона (Great)",
     "vi": "Sử dụng vật phẩm Vảy Rồng (Great)",
-    "pl": "Use the Smocza Łuska (Great)"
+    "pl": "Używając: Smocza Łuska (Super)"
   },
   {
     "preDexNum": 118,
@@ -2621,7 +2621,7 @@
     "sv": "Använd förmålet Vattensten (Super)",
     "uk": "Use the Водний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Thủy Thạch (Great)",
-    "pl": "Use the Water Stone (Great)"
+    "pl": "Używając: Water Stone (Super)"
   },
   {
     "preDexNum": 123,
@@ -2653,7 +2653,7 @@
     "sv": "När den kan en teknik av typen Stål|Använd förmålet Länkande lina (Super)",
     "uk": "While knowing a Стальний-type move|Use the З’єднувальний Шнур (Great)",
     "vi": "Khi đã học 1 chiêu thức hệ Thép|Sử dụng vật phẩm Cáp Trao Đổi (Great)",
-    "pl": "While knowing a Stalowy-type move|Use the Linking Cord (Great)"
+    "pl": "Znając atak typu: Stalowy|Używając: Linking Cord (Super)"
   },
   {
     "preDexNum": 123,
@@ -2685,7 +2685,7 @@
     "sv": "Använd förmålet Svart augit (Ultra)",
     "uk": "Use the Чорний Аугурит (Ultra)",
     "vi": "Sử dụng vật phẩm Mảnh Đá Đen (Ultra)",
-    "pl": "Use the Black Augurite (Ultra)"
+    "pl": "Używając: Black Augurite (Ultra)"
   },
   {
     "preDexNum": 125,
@@ -2717,7 +2717,7 @@
     "sv": "Använd förmålet Elektriserare (Super)",
     "uk": "Use the Електризатор (Great)",
     "vi": "Sử dụng vật phẩm Ắc Quy Điện (Great)",
-    "pl": "Use the Electirizer (Great)"
+    "pl": "Używając: Electirizer (Super)"
   },
   {
     "preDexNum": 126,
@@ -2749,7 +2749,7 @@
     "sv": "Använd förmålet Magamariserare (Super)",
     "uk": "Use the Магмарайзер (Great)",
     "vi": "Sử dụng vật phẩm Lõi Mắc Ma (Great)",
-    "pl": "Use the Magmarizer (Great)"
+    "pl": "Używając: Magmarizer (Super)"
   },
   {
     "preDexNum": 129,
@@ -2813,7 +2813,7 @@
     "sv": "Med hög vänskap|När den kan en teknik av typen Fe",
     "uk": "With high friendship|While knowing a Чарівний-type move",
     "vi": "Với điểm tình bạn cao|Khi đã học 1 chiêu thức hệ Tiên",
-    "pl": "With high friendship|While knowing a Baśniowy-type move"
+    "pl": "With high friendship|Znając atak typu: Baśniowy"
   },
   {
     "preDexNum": 133,
@@ -2845,7 +2845,7 @@
     "sv": "Med hög vänskap|När den kan en teknik av typen Fe",
     "uk": "With high friendship|While knowing a Чарівний-type move",
     "vi": "Với điểm tình bạn cao|Khi đã học 1 chiêu thức hệ Tiên",
-    "pl": "With high friendship|While knowing a Baśniowy-type move"
+    "pl": "With high friendship|Znając atak typu: Baśniowy"
   },
   {
     "preDexNum": 133,
@@ -2941,7 +2941,7 @@
     "sv": "Med hög vänskap|På natten eller skymningen",
     "uk": "With high friendship|During Night or Dusk",
     "vi": "Với điểm tình bạn cao|Vào Ban Đêm hoặc Hoàng Hôn",
-    "pl": "With high friendship|During Night or Dusk"
+    "pl": "With high friendship|W Nocy lub o Zmierzchu"
   },
   {
     "preDexNum": 133,
@@ -2973,7 +2973,7 @@
     "sv": "Med hög vänskap|På natten eller skymningen",
     "uk": "With high friendship|During Night or Dusk",
     "vi": "Với điểm tình bạn cao|Vào Ban Đêm hoặc Hoàng Hôn",
-    "pl": "With high friendship|During Night or Dusk"
+    "pl": "With high friendship|W Nocy lub o Zmierzchu"
   },
   {
     "preDexNum": 133,
@@ -3005,7 +3005,7 @@
     "sv": "Använd förmålet Vattensten (Super)",
     "uk": "Use the Водний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Thủy Thạch (Great)",
-    "pl": "Use the Water Stone (Great)"
+    "pl": "Używając: Water Stone (Super)"
   },
   {
     "preDexNum": 133,
@@ -3037,7 +3037,7 @@
     "sv": "Använd förmålet Vattensten (Super)",
     "uk": "Use the Водний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Thủy Thạch (Great)",
-    "pl": "Use the Water Stone (Great)"
+    "pl": "Używając: Water Stone (Super)"
   },
   {
     "preDexNum": 133,
@@ -3069,7 +3069,7 @@
     "sv": "Använd förmålet Åsksten (Super)",
     "uk": "Use the Електро-Камінь (Great)",
     "vi": "Sử dụng vật phẩm Lôi Thạch (Great)",
-    "pl": "Use the Thunder Stone (Great)"
+    "pl": "Używając: Thunder Stone (Super)"
   },
   {
     "preDexNum": 133,
@@ -3101,7 +3101,7 @@
     "sv": "Använd förmålet Åsksten (Super)",
     "uk": "Use the Електро-Камінь (Great)",
     "vi": "Sử dụng vật phẩm Lôi Thạch (Great)",
-    "pl": "Use the Thunder Stone (Great)"
+    "pl": "Używając: Thunder Stone (Super)"
   },
   {
     "preDexNum": 133,
@@ -3133,7 +3133,7 @@
     "sv": "Använd förmålet Eldsten (Super)",
     "uk": "Use the Вогняний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Hoả Thạch (Great)",
-    "pl": "Use the Fire Stone (Great)"
+    "pl": "Używając: Fire Stone (Super)"
   },
   {
     "preDexNum": 133,
@@ -3165,7 +3165,7 @@
     "sv": "Använd förmålet Eldsten (Super)",
     "uk": "Use the Вогняний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Hoả Thạch (Great)",
-    "pl": "Use the Fire Stone (Great)"
+    "pl": "Używając: Fire Stone (Super)"
   },
   {
     "preDexNum": 133,
@@ -3197,7 +3197,7 @@
     "sv": "Använd förmålet Lövsten (Super)",
     "uk": "Use the Листовий Камінь (Great)",
     "vi": "Sử dụng vật phẩm Thảo Thạch (Great)",
-    "pl": "Use the Leaf Stone (Great)"
+    "pl": "Używając: Leaf Stone (Super)"
   },
   {
     "preDexNum": 133,
@@ -3229,7 +3229,7 @@
     "sv": "Använd förmålet Lövsten (Super)",
     "uk": "Use the Листовий Камінь (Great)",
     "vi": "Sử dụng vật phẩm Thảo Thạch (Great)",
-    "pl": "Use the Leaf Stone (Great)"
+    "pl": "Używając: Leaf Stone (Super)"
   },
   {
     "preDexNum": 133,
@@ -3261,7 +3261,7 @@
     "sv": "Använd förmålet Issten (Super)",
     "uk": "Use the Ледяний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Băng Thạch (Great)",
-    "pl": "Use the Ice Stone (Great)"
+    "pl": "Używając: Ice Stone (Super)"
   },
   {
     "preDexNum": 133,
@@ -3293,7 +3293,7 @@
     "sv": "Använd förmålet Issten (Super)",
     "uk": "Use the Ледяний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Băng Thạch (Great)",
-    "pl": "Use the Ice Stone (Great)"
+    "pl": "Używając: Ice Stone (Super)"
   },
   {
     "preDexNum": 137,
@@ -3325,7 +3325,7 @@
     "sv": "Använd förmålet Uppgradering (Super)",
     "uk": "Use the Покращення (Great)",
     "vi": "Sử dụng vật phẩm Nâng Cấp (Great)",
-    "pl": "Use the Aktualizacja (Great)"
+    "pl": "Używając: Aktualizacja (Super)"
   },
   {
     "preDexNum": 138,
@@ -3581,7 +3581,7 @@
     "sv": "På natten eller skymningen|Vid nivå 36",
     "uk": "During Night or Dusk|At Level 36",
     "vi": "Vào Ban Đêm hoặc Hoàng Hôn|Ở Cấp 36",
-    "pl": "During Night or Dusk|Na Poziomie 36"
+    "pl": "W Nocy lub o Zmierzchu|Na Poziomie 36"
   },
   {
     "preDexNum": 156,
@@ -4029,7 +4029,7 @@
     "sv": "Använd förmålet Ljussten (Super)",
     "uk": "Use the Близкучий Камінь (Great)",
     "vi": "Sử dụng vật phẩm Huy Quang Thạch (Great)",
-    "pl": "Use the Shiny Stone (Great)"
+    "pl": "Używając: Shiny Stone (Super)"
   },
   {
     "preDexNum": 177,
@@ -4253,7 +4253,7 @@
     "sv": "När den kan tekniken Dubbelsmocka|Vid nivå 32",
     "uk": "While knowing the move Double Hit|At Level 32",
     "vi": "Khi đã học chiêu thức Double Hit|Ở Cấp 32",
-    "pl": "While knowing the move Double Hit|Na Poziomie 32"
+    "pl": "Po nauczeniu się ataku Double Hit|Na Poziomie 32"
   },
   {
     "preDexNum": 191,
@@ -4285,7 +4285,7 @@
     "sv": "Använd förmålet Solsten (Super)",
     "uk": "Use the Сонячний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Thái Dương Thạch (Great)",
-    "pl": "Use the Sun Stone (Great)"
+    "pl": "Używając: Sun Stone (Super)"
   },
   {
     "preDexNum": 193,
@@ -4317,7 +4317,7 @@
     "sv": "När den kan tekniken Urkraft|Vid nivå 33",
     "uk": "While knowing the move Ancient Power|At Level 33",
     "vi": "Khi đã học chiêu thức Ancient Power|Ở Cấp 33",
-    "pl": "While knowing the move Ancient Power|Na Poziomie 33"
+    "pl": "Po nauczeniu się ataku Ancient Power|Na Poziomie 33"
   },
   {
     "preDexNum": 194,
@@ -4381,7 +4381,7 @@
     "sv": "Använd förmålet Skuggsten (Super)",
     "uk": "Use the Сутінковий Камінь (Great)",
     "vi": "Sử dụng vật phẩm Hôn Vãn Thạch (Great)",
-    "pl": "Use the Dusk Stone (Great)"
+    "pl": "Używając: Dusk Stone (Super)"
   },
   {
     "preDexNum": 200,
@@ -4413,7 +4413,7 @@
     "sv": "Använd förmålet Skuggsten (Super)",
     "uk": "Use the Сутінковий Камінь (Great)",
     "vi": "Sử dụng vật phẩm Hôn Vãn Thạch (Great)",
-    "pl": "Use the Dusk Stone (Great)"
+    "pl": "Używając: Dusk Stone (Super)"
   },
   {
     "preDexNum": 203,
@@ -4445,7 +4445,7 @@
     "sv": "När den kan tekniken Tvillingstråle|Vid nivå 32",
     "uk": "While knowing the move Twin Beam|At Level 32",
     "vi": "Khi đã học chiêu thức Twin Beam|Ở Cấp 32",
-    "pl": "While knowing the move Twin Beam|Na Poziomie 32"
+    "pl": "Po nauczeniu się ataku Twin Beam|Na Poziomie 32"
   },
   {
     "preDexNum": 204,
@@ -4509,7 +4509,7 @@
     "sv": "När den kan tekniken Hyperborr|Vid nivå 32",
     "uk": "While knowing the move Hyper Drill|At Level 32",
     "vi": "Khi đã học chiêu thức Hyper Drill|Ở Cấp 32",
-    "pl": "While knowing the move Hyper Drill|Na Poziomie 32"
+    "pl": "Po nauczeniu się ataku Hyper Drill|Na Poziomie 32"
   },
   {
     "preDexNum": 206,
@@ -4541,7 +4541,7 @@
     "sv": "När den kan tekniken Hyperborr|Vid nivå 32",
     "uk": "While knowing the move Hyper Drill|At Level 32",
     "vi": "Khi đã học chiêu thức Hyper Drill|Ở Cấp 32",
-    "pl": "While knowing the move Hyper Drill|Na Poziomie 32"
+    "pl": "Po nauczeniu się ataku Hyper Drill|Na Poziomie 32"
   },
   {
     "preDexNum": 207,
@@ -4573,7 +4573,7 @@
     "sv": "På natten eller skymningen|Använd förmålet Spetsig tand (Super)",
     "uk": "During Night or Dusk|Use the Гострий Ікло (Great)",
     "vi": "Vào Ban Đêm hoặc Hoàng Hôn|Sử dụng vật phẩm Nanh Sắc Nhọn (Great)",
-    "pl": "During Night or Dusk|Use the Razor Fang (Great)"
+    "pl": "W Nocy lub o Zmierzchu|Używając: Razor Fang (Super)"
   },
   {
     "preDexNum": 209,
@@ -4637,7 +4637,7 @@
     "sv": "På natten eller skymningen|Använd förmålet Slipad klo (Super)",
     "uk": "During Night or Dusk|Use the Гострий Кіготь (Great)",
     "vi": "Vào Ban Đêm hoặc Hoàng Hôn|Sử dụng vật phẩm Vuốt Sắc Nhọn (Great)",
-    "pl": "During Night or Dusk|Use the Razor Claw (Great)"
+    "pl": "W Nocy lub o Zmierzchu|Używając: Razor Claw (Super)"
   },
   {
     "preDexNum": 216,
@@ -4701,7 +4701,7 @@
     "sv": "Använd förmålet Torvblock (Ultra)",
     "uk": "Use the Торф’яний Блок (Ultra)",
     "vi": "Sử dụng vật phẩm Khối Bùn Khô (Ultra)",
-    "pl": "Use the Peat Block (Ultra)"
+    "pl": "Używając: Peat Block (Ultra)"
   },
   {
     "preDexNum": 218,
@@ -4797,7 +4797,7 @@
     "sv": "När den kan tekniken Urkraft|Vid nivå 33",
     "uk": "While knowing the move Ancient Power|At Level 33",
     "vi": "Khi đã học chiêu thức Ancient Power|Ở Cấp 33",
-    "pl": "While knowing the move Ancient Power|Na Poziomie 33"
+    "pl": "Po nauczeniu się ataku Ancient Power|Na Poziomie 33"
   },
   {
     "preDexNum": 223,
@@ -4925,7 +4925,7 @@
     "sv": "Använd förmålet Opålitligt program (Super)",
     "uk": "Use the Дивний Диск (Great)",
     "vi": "Sử dụng vật phẩm Đĩa Kì Bí (Great)",
-    "pl": "Use the Dubious Disc (Great)"
+    "pl": "Używając: Dubious Disc (Super)"
   },
   {
     "preDexNum": 234,
@@ -4957,7 +4957,7 @@
     "sv": "När den kan tekniken Psykosköldstöt|Vid nivå 31",
     "uk": "While knowing the move Psyshield Bash|At Level 31",
     "vi": "Khi đã học chiêu thức Psyshield Bash|Ở Cấp 31",
-    "pl": "While knowing the move Psyshield Bash|Na Poziomie 31"
+    "pl": "Po nauczeniu się ataku Psyshield Bash|Na Poziomie 31"
   },
   {
     "preDexNum": 236,
@@ -4989,7 +4989,7 @@
     "sv": "När den kan tekniken Låg svepspark|Vid nivå 20",
     "uk": "While knowing the move Low Sweep|At Level 20",
     "vi": "Khi đã học chiêu thức Low Sweep|Ở Cấp 20",
-    "pl": "While knowing the move Low Sweep|Na Poziomie 20"
+    "pl": "Po nauczeniu się ataku Low Sweep|Na Poziomie 20"
   },
   {
     "preDexNum": 236,
@@ -5021,7 +5021,7 @@
     "sv": "När den kan tekniken Machnäve|Vid nivå 20",
     "uk": "While knowing the move Mach Punch|At Level 20",
     "vi": "Khi đã học chiêu thức Mach Punch|Ở Cấp 20",
-    "pl": "While knowing the move Mach Punch|Na Poziomie 20"
+    "pl": "Po nauczeniu się ataku Mach Punch|Na Poziomie 20"
   },
   {
     "preDexNum": 236,
@@ -5053,7 +5053,7 @@
     "sv": "När den kan tekniken Spurtskruvare|Vid nivå 20",
     "uk": "While knowing the move Rapid Spin|At Level 20",
     "vi": "Khi đã học chiêu thức Rapid Spin|Ở Cấp 20",
-    "pl": "While knowing the move Rapid Spin|Na Poziomie 20"
+    "pl": "Po nauczeniu się ataku Rapid Spin|Na Poziomie 20"
   },
   {
     "preDexNum": 238,
@@ -5533,7 +5533,7 @@
     "sv": "På natten eller skymningen|Vid nivå 7",
     "uk": "During Night or Dusk|At Level 7",
     "vi": "Vào Ban Đêm hoặc Hoàng Hôn|Ở Cấp 7",
-    "pl": "During Night or Dusk|Na Poziomie 7"
+    "pl": "W Nocy lub o Zmierzchu|Na Poziomie 7"
   },
   {
     "preDexNum": 266,
@@ -5661,7 +5661,7 @@
     "sv": "Använd förmålet Vattensten (Super)",
     "uk": "Use the Водний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Thủy Thạch (Great)",
-    "pl": "Use the Water Stone (Great)"
+    "pl": "Używając: Water Stone (Super)"
   },
   {
     "preDexNum": 273,
@@ -5725,7 +5725,7 @@
     "sv": "Använd förmålet Lövsten (Super)",
     "uk": "Use the Листовий Камінь (Great)",
     "vi": "Sử dụng vật phẩm Thảo Thạch (Great)",
-    "pl": "Use the Leaf Stone (Great)"
+    "pl": "Używając: Leaf Stone (Super)"
   },
   {
     "preDexNum": 276,
@@ -5885,7 +5885,7 @@
     "sv": "(Endast ♂)|Använd förmålet Vaknadsten (Super)",
     "uk": "(♂ only)|Use the Камінь Світанка (Great)",
     "vi": "(chỉ ♂)|Sử dụng vật phẩm Triều Minh Thạch (Great)",
-    "pl": "(Tylko ♂)|Use the Dawn Stone (Great)"
+    "pl": "(Tylko ♂)|Używając: Dawn Stone (Super)"
   },
   {
     "preDexNum": 283,
@@ -6077,7 +6077,7 @@
     "sv": "När det finns en tom plats i ditt lag|Vid nivå 20",
     "uk": "If there is an empty space in the party|At Level 20",
     "vi": "Nếu còn chỗ trống trong tổ đội|Ở Cấp 20",
-    "pl": "If there is an empty space in the party|Na Poziomie 20"
+    "pl": "Gdy w twojej drużynie jest wolne miejsce|Na Poziomie 20"
   },
   {
     "preDexNum": 293,
@@ -6237,7 +6237,7 @@
     "sv": "Använd förmålet Åsksten (Super)",
     "uk": "Use the Електро-Камінь (Great)",
     "vi": "Sử dụng vật phẩm Lôi Thạch (Great)",
-    "pl": "Use the Thunder Stone (Great)"
+    "pl": "Używając: Thunder Stone (Super)"
   },
   {
     "preDexNum": 300,
@@ -6269,7 +6269,7 @@
     "sv": "Använd förmålet Månsten (Super)",
     "uk": "Use the Місячний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Nguyệt Quang Thạch (Great)",
-    "pl": "Use the Moon Stone (Great)"
+    "pl": "Używając: Moon Stone (Super)"
   },
   {
     "preDexNum": 304,
@@ -6429,7 +6429,7 @@
     "sv": "Använd förmålet Ljussten (Super)",
     "uk": "Use the Близкучий Камінь (Great)",
     "vi": "Sử dụng vật phẩm Huy Quang Thạch (Great)",
-    "pl": "Use the Shiny Stone (Great)"
+    "pl": "Używając: Shiny Stone (Super)"
   },
   {
     "preDexNum": 316,
@@ -6909,7 +6909,7 @@
     "sv": "Använd förmålet Prismafjäll (Super)",
     "uk": "Use the Райдужна Луска (Great)",
     "vi": "Sử dụng vật phẩm Vảy Lăng Kính (Great)",
-    "pl": "Use the Prism Scale (Great)"
+    "pl": "Używając: Prism Scale (Super)"
   },
   {
     "preDexNum": 353,
@@ -7005,7 +7005,7 @@
     "sv": "Använd förmålet Andevärldstrasa (Super)",
     "uk": "Use the Тканина Женця (Great)",
     "vi": "Sử dụng vật phẩm Vải Tử Thần (Great)",
-    "pl": "Use the Reaper Cloth (Great)"
+    "pl": "Używając: Reaper Cloth (Super)"
   },
   {
     "preDexNum": 360,
@@ -7101,7 +7101,7 @@
     "sv": "(Endast ♀)|Använd förmålet Vaknadsten (Super)",
     "uk": "(♀ only)|Use the Камінь Світанка (Great)",
     "vi": "(chỉ ♀)|Sử dụng vật phẩm Triều Minh Thạch (Great)",
-    "pl": "(Tylko ♀)|Use the Dawn Stone (Great)"
+    "pl": "(Tylko ♀)|Używając: Dawn Stone (Super)"
   },
   {
     "preDexNum": 363,
@@ -7197,7 +7197,7 @@
     "sv": "Om den bär en Djuphavstand|Använd förmålet Länkande lina (Super)",
     "uk": "While holding the Deep Sea Tooth|Use the З’єднувальний Шнур (Great)",
     "vi": "Khi đang cầm vật phẩm \"Xỉ Sâu Hải\"|Sử dụng vật phẩm Cáp Trao Đổi (Great)",
-    "pl": "While holding the Deep Sea Tooth|Use the Linking Cord (Great)"
+    "pl": "While holding the Deep Sea Tooth|Używając: Linking Cord (Super)"
   },
   {
     "preDexNum": 366,
@@ -7229,7 +7229,7 @@
     "sv": "Om den bär en Djuphavsfjäll|Använd förmålet Länkande lina (Super)",
     "uk": "While holding the Deep Sea Scale|Use the З’єднувальний Шнур (Great)",
     "vi": "Khi đang cầm vật phẩm \"Vảy Sâu Hải\"|Sử dụng vật phẩm Cáp Trao Đổi (Great)",
-    "pl": "While holding the Deep Sea Scale|Use the Linking Cord (Great)"
+    "pl": "While holding the Deep Sea Scale|Używając: Linking Cord (Super)"
   },
   {
     "preDexNum": 371,
@@ -8157,7 +8157,7 @@
     "sv": "Med hög vänskap|På natten eller skymningen",
     "uk": "With high friendship|During Night or Dusk",
     "vi": "Với điểm tình bạn cao|Vào Ban Đêm hoặc Hoàng Hôn",
-    "pl": "With high friendship|During Night or Dusk"
+    "pl": "With high friendship|W Nocy lub o Zmierzchu"
   },
   {
     "preDexNum": 434,
@@ -8253,7 +8253,7 @@
     "sv": "När den kan tekniken Härmning|Vid nivå 16",
     "uk": "While knowing the move Mimic|At Level 16",
     "vi": "Khi đã học chiêu thức Mimic|Ở Cấp 16",
-    "pl": "While knowing the move Mimic|Na Poziomie 16"
+    "pl": "Po nauczeniu się ataku Mimic|Na Poziomie 16"
   },
   {
     "preDexNum": 439,
@@ -8285,7 +8285,7 @@
     "sv": "När den kan tekniken Härmning|På natten eller skymningen|Vid nivå 18",
     "uk": "While knowing the move Mimic|During Night or Dusk|At Level 18",
     "vi": "Khi đã học chiêu thức Mimic|Vào Ban Đêm hoặc Hoàng Hôn|Ở Cấp 18",
-    "pl": "While knowing the move Mimic|During Night or Dusk|Na Poziomie 18"
+    "pl": "Po nauczeniu się ataku Mimic|W Nocy lub o Zmierzchu|Na Poziomie 18"
   },
   {
     "preDexNum": 439,
@@ -8317,7 +8317,7 @@
     "sv": "När den kan tekniken Härmning|På dagen eller gryningen|Vid nivå 18",
     "uk": "While knowing the move Mimic|During Day or Dawn|At Level 18",
     "vi": "Khi đã học chiêu thức Mimic|Vào Ban Ngày hoặc Bình Minh|Ở Cấp 18",
-    "pl": "While knowing the move Mimic|Za Dnia lub o Świcie|Na Poziomie 18"
+    "pl": "Po nauczeniu się ataku Mimic|Za Dnia lub o Świcie|Na Poziomie 18"
   },
   {
     "preDexNum": 440,
@@ -8349,7 +8349,7 @@
     "sv": "På dagen eller gryningen|Använd förmålet Oval sten (Super)",
     "uk": "During Day or Dawn|Use the Камінь Голиш (Great)",
     "vi": "Vào Ban Ngày hoặc Bình Minh|Sử dụng vật phẩm Đá Bầu Dục (Great)",
-    "pl": "Za Dnia lub o Świcie|Use the Oval Stone (Great)"
+    "pl": "Za Dnia lub o Świcie|Używając: Oval Stone (Super)"
   },
   {
     "preDexNum": 443,
@@ -8637,7 +8637,7 @@
     "sv": "Om Remoraid har fångats|Vid nivå 28",
     "uk": "If Remoraid has been caught|At Level 28",
     "vi": "Nếu Remoraid đã được thu phục|Ở Cấp 28",
-    "pl": "If Remoraid has been caught|Na Poziomie 28"
+    "pl": "Jeśli złapano Pokémona Remoraid|Na Poziomie 28"
   },
   {
     "preDexNum": 459,
@@ -8861,7 +8861,7 @@
     "sv": "På natten eller skymningen|Vid nivå 36",
     "uk": "During Night or Dusk|At Level 36",
     "vi": "Vào Ban Đêm hoặc Hoàng Hôn|Ở Cấp 36",
-    "pl": "During Night or Dusk|Na Poziomie 36"
+    "pl": "W Nocy lub o Zmierzchu|Na Poziomie 36"
   },
   {
     "preDexNum": 502,
@@ -9053,7 +9053,7 @@
     "sv": "Använd förmålet Lövsten (Super)",
     "uk": "Use the Листовий Камінь (Great)",
     "vi": "Sử dụng vật phẩm Thảo Thạch (Great)",
-    "pl": "Use the Leaf Stone (Great)"
+    "pl": "Używając: Leaf Stone (Super)"
   },
   {
     "preDexNum": 513,
@@ -9085,7 +9085,7 @@
     "sv": "Använd förmålet Eldsten (Super)",
     "uk": "Use the Вогняний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Hoả Thạch (Great)",
-    "pl": "Use the Fire Stone (Great)"
+    "pl": "Używając: Fire Stone (Super)"
   },
   {
     "preDexNum": 515,
@@ -9117,7 +9117,7 @@
     "sv": "Använd förmålet Vattensten (Super)",
     "uk": "Use the Водний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Thủy Thạch (Great)",
-    "pl": "Use the Water Stone (Great)"
+    "pl": "Używając: Water Stone (Super)"
   },
   {
     "preDexNum": 517,
@@ -9149,7 +9149,7 @@
     "sv": "Använd förmålet Månsten (Super)",
     "uk": "Use the Місячний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Nguyệt Quang Thạch (Great)",
-    "pl": "Use the Moon Stone (Great)"
+    "pl": "Używając: Moon Stone (Super)"
   },
   {
     "preDexNum": 519,
@@ -9309,7 +9309,7 @@
     "sv": "Använd förmålet Länkande lina (Super)",
     "uk": "Use the З’єднувальний Шнур (Great)",
     "vi": "Sử dụng vật phẩm Cáp Trao Đổi (Great)",
-    "pl": "Use the Linking Cord (Great)"
+    "pl": "Używając: Linking Cord (Super)"
   },
   {
     "preDexNum": 527,
@@ -9437,7 +9437,7 @@
     "sv": "Använd förmålet Länkande lina (Super)",
     "uk": "Use the З’єднувальний Шнур (Great)",
     "vi": "Sử dụng vật phẩm Cáp Trao Đổi (Great)",
-    "pl": "Use the Linking Cord (Great)"
+    "pl": "Używając: Linking Cord (Super)"
   },
   {
     "preDexNum": 535,
@@ -9661,7 +9661,7 @@
     "sv": "Använd förmålet Solsten (Super)",
     "uk": "Use the Сонячний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Thái Dương Thạch (Great)",
-    "pl": "Use the Sun Stone (Great)"
+    "pl": "Używając: Sun Stone (Super)"
   },
   {
     "preDexNum": 548,
@@ -9693,7 +9693,7 @@
     "sv": "Använd förmålet Vaknadsten (Super)",
     "uk": "Use the Камінь Світанка (Great)",
     "vi": "Sử dụng vật phẩm Triều Minh Thạch (Great)",
-    "pl": "Use the Dawn Stone (Great)"
+    "pl": "Używając: Dawn Stone (Super)"
   },
   {
     "preDexNum": 548,
@@ -9725,7 +9725,7 @@
     "sv": "Använd förmålet Solsten (Super)",
     "uk": "Use the Сонячний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Thái Dương Thạch (Great)",
-    "pl": "Use the Sun Stone (Great)"
+    "pl": "Używając: Sun Stone (Super)"
   },
   {
     "preDexNum": 551,
@@ -10077,7 +10077,7 @@
     "sv": "Använd förmålet Ljussten (Super)",
     "uk": "Use the Близкучий Камінь (Great)",
     "vi": "Sử dụng vật phẩm Huy Quang Thạch (Great)",
-    "pl": "Use the Shiny Stone (Great)"
+    "pl": "Używając: Shiny Stone (Super)"
   },
   {
     "preDexNum": 574,
@@ -10365,7 +10365,7 @@
     "sv": "Om Shelmet har fångats|Använd förmålet Länkande lina (Super)",
     "uk": "If Shelmet has been caught|Use the З’єднувальний Шнур (Great)",
     "vi": "Nếu Shelmet đã được thu phục|Sử dụng vật phẩm Cáp Trao Đổi (Great)",
-    "pl": "If Shelmet has been caught|Use the Linking Cord (Great)"
+    "pl": "Jeśli złapano Pokémona Shelmet|Używając: Linking Cord (Super)"
   },
   {
     "preDexNum": 590,
@@ -10621,7 +10621,7 @@
     "sv": "Använd förmålet Åsksten (Super)",
     "uk": "Use the Електро-Камінь (Great)",
     "vi": "Sử dụng vật phẩm Lôi Thạch (Great)",
-    "pl": "Use the Thunder Stone (Great)"
+    "pl": "Używając: Thunder Stone (Super)"
   },
   {
     "preDexNum": 605,
@@ -10717,7 +10717,7 @@
     "sv": "Använd förmålet Skuggsten (Super)",
     "uk": "Use the Сутінковий Камінь (Great)",
     "vi": "Sử dụng vật phẩm Hôn Vãn Thạch (Great)",
-    "pl": "Use the Dusk Stone (Great)"
+    "pl": "Używając: Dusk Stone (Super)"
   },
   {
     "preDexNum": 610,
@@ -10845,7 +10845,7 @@
     "sv": "Om Karrablast har fångats|Använd förmålet Länkande lina (Super)",
     "uk": "If Karrablast has been caught|Use the З’єднувальний Шнур (Great)",
     "vi": "Nếu Karrablast đã được thu phục|Sử dụng vật phẩm Cáp Trao Đổi (Great)",
-    "pl": "If Karrablast has been caught|Use the Linking Cord (Great)"
+    "pl": "Jeśli złapano Pokémona Karrablast|Używając: Linking Cord (Super)"
   },
   {
     "preDexNum": 619,
@@ -10973,7 +10973,7 @@
     "sv": "Använd förmålet Ledares hjälmkam (Ultra)",
     "uk": "Use the Емблема Лідера (Ultra)",
     "vi": "Sử dụng vật phẩm Huy Hiệu Chỉ Huy (Ultra)",
-    "pl": "Use the Leader’s Crest (Ultra)"
+    "pl": "Używając: Leader’s Crest (Ultra)"
   },
   {
     "preDexNum": 627,
@@ -11005,7 +11005,7 @@
     "sv": "På natten eller skymningen|Vid nivå 54",
     "uk": "During Night or Dusk|At Level 54",
     "vi": "Vào Ban Đêm hoặc Hoàng Hôn|Ở Cấp 54",
-    "pl": "During Night or Dusk|Na Poziomie 54"
+    "pl": "W Nocy lub o Zmierzchu|Na Poziomie 54"
   },
   {
     "preDexNum": 627,
@@ -11613,7 +11613,7 @@
     "sv": "Använd förmålet Ljussten (Super)",
     "uk": "Use the Близкучий Камінь (Great)",
     "vi": "Sử dụng vật phẩm Huy Quang Thạch (Great)",
-    "pl": "Use the Shiny Stone (Great)"
+    "pl": "Używając: Shiny Stone (Super)"
   },
   {
     "preDexNum": 672,
@@ -11677,7 +11677,7 @@
     "sv": "Om en pokémon av typen Mörk finns i laget|Vid nivå 32",
     "uk": "If a Темний-type Pokémon is in the party|At Level 32",
     "vi": "Nếu có 1 Pokémon hệ Bóng Tối trong đội|Ở Cấp 32",
-    "pl": "If a Mroczny-type Pokémon is in the party|Na Poziomie 32"
+    "pl": "Jeśli w drużynie jest Pokémon o typie Mrocznym|Na Poziomie 32"
   },
   {
     "preDexNum": 677,
@@ -11805,7 +11805,7 @@
     "sv": "Använd förmålet Skuggsten (Super)",
     "uk": "Use the Сутінковий Камінь (Great)",
     "vi": "Sử dụng vật phẩm Hôn Vãn Thạch (Great)",
-    "pl": "Use the Dusk Stone (Great)"
+    "pl": "Używając: Dusk Stone (Super)"
   },
   {
     "preDexNum": 682,
@@ -11837,7 +11837,7 @@
     "sv": "Använd förmålet Doftpåse (Super)",
     "uk": "Use the Сашет (Great)",
     "vi": "Sử dụng vật phẩm Túi Thơm (Great)",
-    "pl": "Use the Sachet (Great)"
+    "pl": "Używając: Sachet (Super)"
   },
   {
     "preDexNum": 684,
@@ -11869,7 +11869,7 @@
     "sv": "Använd förmålet Mosgrädde (Super)",
     "uk": "Use the Крем Грез (Great)",
     "vi": "Sử dụng vật phẩm Mộng Kem Tươi (Great)",
-    "pl": "Use the Whipped Dream (Great)"
+    "pl": "Używając: Whipped Dream (Super)"
   },
   {
     "preDexNum": 686,
@@ -11901,7 +11901,7 @@
     "sv": "När den kan tekniken Opp-och-ner|Vid nivå 30",
     "uk": "While knowing the move Topsy-Turvy|At Level 30",
     "vi": "Khi đã học chiêu thức Topsy-Turvy|Ở Cấp 30",
-    "pl": "While knowing the move Topsy-Turvy|Na Poziomie 30"
+    "pl": "Po nauczeniu się ataku Topsy-Turvy|Na Poziomie 30"
   },
   {
     "preDexNum": 688,
@@ -12029,7 +12029,7 @@
     "sv": "Använd förmålet Solsten (Super)",
     "uk": "Use the Сонячний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Thái Dương Thạch (Great)",
-    "pl": "Use the Sun Stone (Great)"
+    "pl": "Używając: Sun Stone (Super)"
   },
   {
     "preDexNum": 696,
@@ -12093,7 +12093,7 @@
     "sv": "På natten eller skymningen|Vid nivå 39",
     "uk": "During Night or Dusk|At Level 39",
     "vi": "Vào Ban Đêm hoặc Hoàng Hôn|Ở Cấp 39",
-    "pl": "During Night or Dusk|Na Poziomie 39"
+    "pl": "W Nocy lub o Zmierzchu|Na Poziomie 39"
   },
   {
     "preDexNum": 704,
@@ -12125,7 +12125,7 @@
     "sv": "På natten eller skymningen|Vid nivå 40",
     "uk": "During Night or Dusk|At Level 40",
     "vi": "Vào Ban Đêm hoặc Hoàng Hôn|Ở Cấp 40",
-    "pl": "During Night or Dusk|Na Poziomie 40"
+    "pl": "W Nocy lub o Zmierzchu|Na Poziomie 40"
   },
   {
     "preDexNum": 704,
@@ -12186,10 +12186,10 @@
     "id": "In certain weather conditions|At Level 50",
     "hi": "In certain weather conditions|At Level 50",
     "tl": "In certain weather conditions|At Level 50",
-    "sv": "I vissa väder|Vid nivå 50",
+    "sv": "I vissa vädertillstånd|Vid nivå 50",
     "uk": "In certain weather conditions|At Level 50",
     "vi": "Vào thời thiết nhất định|Ở Cấp 50",
-    "pl": "In certain weather conditions|Na Poziomie 50"
+    "pl": "W konkretnych warunkach pogodowych|Na Poziomie 50"
   },
   {
     "preDexNum": 708,
@@ -12221,7 +12221,7 @@
     "sv": "Använd förmålet Länkande lina (Super)",
     "uk": "Use the З’єднувальний Шнур (Great)",
     "vi": "Sử dụng vật phẩm Cáp Trao Đổi (Great)",
-    "pl": "Use the Linking Cord (Great)"
+    "pl": "Używając: Linking Cord (Super)"
   },
   {
     "preDexNum": 710,
@@ -12253,7 +12253,7 @@
     "sv": "Använd förmålet Länkande lina (Super)",
     "uk": "Use the З’єднувальний Шнур (Great)",
     "vi": "Sử dụng vật phẩm Cáp Trao Đổi (Great)",
-    "pl": "Use the Linking Cord (Great)"
+    "pl": "Używając: Linking Cord (Super)"
   },
   {
     "preDexNum": 712,
@@ -12285,7 +12285,7 @@
     "sv": "På natten eller skymningen|Vid nivå 37",
     "uk": "During Night or Dusk|At Level 37",
     "vi": "Vào Ban Đêm hoặc Hoàng Hôn|Ở Cấp 37",
-    "pl": "During Night or Dusk|Na Poziomie 37"
+    "pl": "W Nocy lub o Zmierzchu|Na Poziomie 37"
   },
   {
     "preDexNum": 712,
@@ -12413,7 +12413,7 @@
     "sv": "På natten eller skymningen|Vid nivå 36",
     "uk": "During Night or Dusk|At Level 36",
     "vi": "Vào Ban Đêm hoặc Hoàng Hôn|Ở Cấp 36",
-    "pl": "During Night or Dusk|Na Poziomie 36"
+    "pl": "W Nocy lub o Zmierzchu|Na Poziomie 36"
   },
   {
     "preDexNum": 723,
@@ -12733,7 +12733,7 @@
     "sv": "Använd förmålet Åsksten (Super)",
     "uk": "Use the Електро-Камінь (Great)",
     "vi": "Sử dụng vật phẩm Lôi Thạch (Great)",
-    "pl": "Use the Thunder Stone (Great)"
+    "pl": "Używając: Thunder Stone (Super)"
   },
   {
     "preDexNum": 739,
@@ -12765,7 +12765,7 @@
     "sv": "Använd förmålet Issten (Super)",
     "uk": "Use the Ледяний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Băng Thạch (Great)",
-    "pl": "Use the Ice Stone (Great)"
+    "pl": "Używając: Ice Stone (Super)"
   },
   {
     "preDexNum": 742,
@@ -12893,7 +12893,7 @@
     "sv": "På natten eller skymningen|Vid nivå 25",
     "uk": "During Night or Dusk|At Level 25",
     "vi": "Vào Ban Đêm hoặc Hoàng Hôn|Ở Cấp 25",
-    "pl": "During Night or Dusk|Na Poziomie 25"
+    "pl": "W Nocy lub o Zmierzchu|Na Poziomie 25"
   },
   {
     "preDexNum": 747,
@@ -13181,7 +13181,7 @@
     "sv": "När den kan tekniken Stampning|Vid nivå 28",
     "uk": "While knowing the move Тупот|At Level 28",
     "vi": "Khi đã học chiêu thức Stomp|Ở Cấp 28",
-    "pl": "While knowing the move Stąpnięcie|Na Poziomie 28"
+    "pl": "Po nauczeniu się ataku Stąpnięcie|Na Poziomie 28"
   },
   {
     "preDexNum": 767,
@@ -13405,7 +13405,7 @@
     "sv": "Vid nivå 13|Använd förmålet Solflöjt (Super)",
     "uk": "At Level 13|Use the Флейта Сонця (Great)",
     "vi": "Ở Cấp 13|Sử dụng vật phẩm Sáo Ánh Dương (Great)",
-    "pl": "Na Poziomie 13|Use the Sun Flute (Great)"
+    "pl": "Na Poziomie 13|Używając: Sun Flute (Super)"
   },
   {
     "preDexNum": 790,
@@ -13437,7 +13437,7 @@
     "sv": "Vid nivå 13|Använd förmålet Månflöjt (Super)",
     "uk": "At Level 13|Use the Флейта Місяця (Great)",
     "vi": "Ở Cấp 13|Sử dụng vật phẩm Sáo Nguyệt Quang (Great)",
-    "pl": "Na Poziomie 13|Use the Moon Flute (Great)"
+    "pl": "Na Poziomie 13|Używając: Moon Flute (Super)"
   },
   {
     "preDexNum": 803,
@@ -13469,7 +13469,7 @@
     "sv": "När den kan tekniken Drakpulsering|Vid nivå 29",
     "uk": "While knowing the move Dragon Pulse|At Level 29",
     "vi": "Khi đã học chiêu thức Dragon Pulse|Ở Cấp 29",
-    "pl": "While knowing the move Dragon Pulse|Na Poziomie 29"
+    "pl": "Po nauczeniu się ataku Dragon Pulse|Na Poziomie 29"
   },
   {
     "preDexNum": 808,
@@ -14109,7 +14109,7 @@
     "sv": "Använd förmålet Saftigt äpple (Super)",
     "uk": "Use the Сиропне Яблуко (Great)",
     "vi": "Sử dụng vật phẩm Táo Siro (Great)",
-    "pl": "Use the Syrupy Apple (Great)"
+    "pl": "Używając: Syrupy Apple (Super)"
   },
   {
     "preDexNum": 840,
@@ -14141,7 +14141,7 @@
     "sv": "Använd förmålet Suräpple (Super)",
     "uk": "Use the Кисле Яблуко (Great)",
     "vi": "Sử dụng vật phẩm Táo Chua (Great)",
-    "pl": "Use the Tart Apple (Great)"
+    "pl": "Używając: Tart Apple (Super)"
   },
   {
     "preDexNum": 840,
@@ -14173,7 +14173,7 @@
     "sv": "Använd förmålet Sötäpple (Super)",
     "uk": "Use the Солотке Яблуко (Great)",
     "vi": "Sử dụng vật phẩm Táo Ngọt (Great)",
-    "pl": "Use the Sweet Apple (Great)"
+    "pl": "Używając: Sweet Apple (Super)"
   },
   {
     "preDexNum": 843,
@@ -14269,7 +14269,7 @@
     "sv": "Med en viss karaktärstyp|Vid nivå 30",
     "uk": "With a certain Nature|At Level 30",
     "vi": "Với 1 tính cách nhất định|Ở Cấp 30",
-    "pl": "With a certain Nature|Na Poziomie 30"
+    "pl": "Z konkretną Naturą|Na Poziomie 30"
   },
   {
     "preDexNum": 848,
@@ -14365,7 +14365,7 @@
     "sv": "När den kan tekniken Provokation|Vid nivå 35",
     "uk": "While knowing the move Taunt|At Level 35",
     "vi": "Khi đã học chiêu thức Taunt|Ở Cấp 35",
-    "pl": "While knowing the move Taunt|Na Poziomie 35"
+    "pl": "Po nauczeniu się ataku Taunt|Na Poziomie 35"
   },
   {
     "preDexNum": 854,
@@ -14397,7 +14397,7 @@
     "sv": "Använd förmålet Trasig tekanna (Super)",
     "uk": "Use the Потрісканий Горщик (Great)",
     "vi": "Sử dụng vật phẩm Ấm Nứt (Great)",
-    "pl": "Use the Pęknięty Imbryk (Great)"
+    "pl": "Używając: Pęknięty Imbryk (Super)"
   },
   {
     "preDexNum": 854,
@@ -14429,7 +14429,7 @@
     "sv": "Använd förmålet Naggad tekanna (Super)",
     "uk": "Use the Сколений Горщик (Great)",
     "vi": "Sử dụng vật phẩm Ấm Nứt (Great)",
-    "pl": "Use the Chipped Pot (Great)"
+    "pl": "Używając: Chipped Pot (Super)"
   },
   {
     "preDexNum": 856,
@@ -14589,7 +14589,7 @@
     "sv": "I ett visst biom|Använd förmålet Jordgubbsgodis (Super)",
     "uk": "In a certain biome|Use the Полуничні Ласощі (Great)",
     "vi": "Ở 1 khu vực nhất định|Sử dụng vật phẩm Kẹo Dâu (Great)",
-    "pl": "In a certain biome|Use the Strawberry Sweet (Great)"
+    "pl": "W konkretnym biomie|Używając: Strawberry Sweet (Super)"
   },
   {
     "preDexNum": 868,
@@ -14621,7 +14621,7 @@
     "sv": "I ett visst biom|Använd förmålet Jordgubbsgodis (Super)",
     "uk": "In a certain biome|Use the Полуничні Ласощі (Great)",
     "vi": "Ở 1 khu vực nhất định|Sử dụng vật phẩm Kẹo Dâu (Great)",
-    "pl": "In a certain biome|Use the Strawberry Sweet (Great)"
+    "pl": "W konkretnym biomie|Używając: Strawberry Sweet (Super)"
   },
   {
     "preDexNum": 868,
@@ -14653,7 +14653,7 @@
     "sv": "I ett visst biom|Använd förmålet Jordgubbsgodis (Super)",
     "uk": "In a certain biome|Use the Полуничні Ласощі (Great)",
     "vi": "Ở 1 khu vực nhất định|Sử dụng vật phẩm Kẹo Dâu (Great)",
-    "pl": "In a certain biome|Use the Strawberry Sweet (Great)"
+    "pl": "W konkretnym biomie|Używając: Strawberry Sweet (Super)"
   },
   {
     "preDexNum": 868,
@@ -14685,7 +14685,7 @@
     "sv": "I ett visst biom|Använd förmålet Jordgubbsgodis (Super)",
     "uk": "In a certain biome|Use the Полуничні Ласощі (Great)",
     "vi": "Ở 1 khu vực nhất định|Sử dụng vật phẩm Kẹo Dâu (Great)",
-    "pl": "In a certain biome|Use the Strawberry Sweet (Great)"
+    "pl": "W konkretnym biomie|Używając: Strawberry Sweet (Super)"
   },
   {
     "preDexNum": 868,
@@ -14717,7 +14717,7 @@
     "sv": "I ett visst biom|Använd förmålet Jordgubbsgodis (Super)",
     "uk": "In a certain biome|Use the Полуничні Ласощі (Great)",
     "vi": "Ở 1 khu vực nhất định|Sử dụng vật phẩm Kẹo Dâu (Great)",
-    "pl": "In a certain biome|Use the Strawberry Sweet (Great)"
+    "pl": "W konkretnym biomie|Używając: Strawberry Sweet (Super)"
   },
   {
     "preDexNum": 868,
@@ -14749,7 +14749,7 @@
     "sv": "I ett visst biom|Använd förmålet Jordgubbsgodis (Super)",
     "uk": "In a certain biome|Use the Полуничні Ласощі (Great)",
     "vi": "Ở 1 khu vực nhất định|Sử dụng vật phẩm Kẹo Dâu (Great)",
-    "pl": "In a certain biome|Use the Strawberry Sweet (Great)"
+    "pl": "W konkretnym biomie|Używając: Strawberry Sweet (Super)"
   },
   {
     "preDexNum": 868,
@@ -14781,7 +14781,7 @@
     "sv": "I ett visst biom|Använd förmålet Jordgubbsgodis (Super)",
     "uk": "In a certain biome|Use the Полуничні Ласощі (Great)",
     "vi": "Ở 1 khu vực nhất định|Sử dụng vật phẩm Kẹo Dâu (Great)",
-    "pl": "In a certain biome|Use the Strawberry Sweet (Great)"
+    "pl": "W konkretnym biomie|Używając: Strawberry Sweet (Super)"
   },
   {
     "preDexNum": 868,
@@ -14813,7 +14813,7 @@
     "sv": "I ett visst biom|Använd förmålet Jordgubbsgodis (Super)",
     "uk": "In a certain biome|Use the Полуничні Ласощі (Great)",
     "vi": "Ở 1 khu vực nhất định|Sử dụng vật phẩm Kẹo Dâu (Great)",
-    "pl": "In a certain biome|Use the Strawberry Sweet (Great)"
+    "pl": "W konkretnym biomie|Używając: Strawberry Sweet (Super)"
   },
   {
     "preDexNum": 868,
@@ -14845,7 +14845,7 @@
     "sv": "I ett visst biom|Använd förmålet Jordgubbsgodis (Super)",
     "uk": "In a certain biome|Use the Полуничні Ласощі (Great)",
     "vi": "Ở 1 khu vực nhất định|Sử dụng vật phẩm Kẹo Dâu (Great)",
-    "pl": "In a certain biome|Use the Strawberry Sweet (Great)"
+    "pl": "W konkretnym biomie|Używając: Strawberry Sweet (Super)"
   },
   {
     "preDexNum": 872,
@@ -14877,7 +14877,7 @@
     "sv": "Med hög vänskap|På natten eller skymningen",
     "uk": "With high friendship|During Night or Dusk",
     "vi": "Với điểm tình bạn cao|Vào Ban Đêm hoặc Hoàng Hôn",
-    "pl": "With high friendship|During Night or Dusk"
+    "pl": "With high friendship|W Nocy lub o Zmierzchu"
   },
   {
     "preDexNum": 878,
@@ -14941,7 +14941,7 @@
     "sv": "Använd förmålet Metallegering (Ultra)",
     "uk": "Use the Металевий Сплав (Ultra)",
     "vi": "Sử dụng vật phẩm Sắt Hợp Kim (Ultra)",
-    "pl": "Use the Metal Alloy (Ultra)"
+    "pl": "Używając: Metal Alloy (Ultra)"
   },
   {
     "preDexNum": 885,
@@ -15037,7 +15037,7 @@
     "sv": "Använd förmålet Mörkets skriftrulle (Ultra)",
     "uk": "Use the Сувій Темряви (Ultra)",
     "vi": "Sử dụng vật phẩm Cuộn Giấy Bóng Đêm (Ultra)",
-    "pl": "Use the Scroll Of Darkness (Ultra)"
+    "pl": "Używając: Scroll Of Darkness (Ultra)"
   },
   {
     "preDexNum": 891,
@@ -15069,7 +15069,7 @@
     "sv": "Använd förmålet Vattnets skriftrulle (Ultra)",
     "uk": "Use the Сувій Вод (Ultra)",
     "vi": "Sử dụng vật phẩm Cuộn Giấy Thủy Triều (Ultra)",
-    "pl": "Use the Scroll Of Waters (Ultra)"
+    "pl": "Używając: Scroll Of Waters (Ultra)"
   },
   {
     "preDexNum": 906,
@@ -15709,7 +15709,7 @@
     "sv": "Använd förmålet Högtidsrustning (Super)",
     "uk": "Use the Благополучні Обладунки (Great)",
     "vi": "Sử dụng vật phẩm Giáp Bí Ẩn (Great)",
-    "pl": "Use the Auspicious Armor (Great)"
+    "pl": "Używając: Auspicious Armor (Super)"
   },
   {
     "preDexNum": 935,
@@ -15741,7 +15741,7 @@
     "sv": "Använd förmålet Spöktimsrustning (Super)",
     "uk": "Use the Злісні Обладунки (Great)",
     "vi": "Sử dụng vật phẩm Giáp Tà Ác (Great)",
-    "pl": "Use the Malicious Armor (Great)"
+    "pl": "Używając: Malicious Armor (Super)"
   },
   {
     "preDexNum": 938,
@@ -15773,7 +15773,7 @@
     "sv": "Använd förmålet Åsksten (Super)",
     "uk": "Use the Електро-Камінь (Great)",
     "vi": "Sử dụng vật phẩm Lôi Thạch (Great)",
-    "pl": "Use the Thunder Stone (Great)"
+    "pl": "Używając: Thunder Stone (Super)"
   },
   {
     "preDexNum": 940,
@@ -15965,7 +15965,7 @@
     "sv": "Använd förmålet Eldsten (Super)",
     "uk": "Use the Вогняний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Hoả Thạch (Great)",
-    "pl": "Use the Fire Stone (Great)"
+    "pl": "Używając: Fire Stone (Super)"
   },
   {
     "preDexNum": 953,
@@ -16253,7 +16253,7 @@
     "sv": "På natten eller skymningen|Vid nivå 30",
     "uk": "During Night or Dusk|At Level 30",
     "vi": "Vào Ban Đêm hoặc Hoàng Hôn|Ở Cấp 30",
-    "pl": "During Night or Dusk|Na Poziomie 30"
+    "pl": "W Nocy lub o Zmierzchu|Na Poziomie 30"
   },
   {
     "preDexNum": 974,
@@ -16285,7 +16285,7 @@
     "sv": "Använd förmålet Issten (Super)",
     "uk": "Use the Ледяний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Băng Thạch (Great)",
-    "pl": "Use the Ice Stone (Great)"
+    "pl": "Używając: Ice Stone (Super)"
   },
   {
     "preDexNum": 996,
@@ -16381,7 +16381,7 @@
     "sv": "Om du har samlat tillräckligt med skatt",
     "uk": "After gathering enough treasure",
     "vi": "Khi thu thập đủ kho báu",
-    "pl": "After gathering enough treasure"
+    "pl": "Po zebraniu wystarczającej ilości skarbu"
   },
   {
     "preDexNum": 999,
@@ -16413,7 +16413,7 @@
     "sv": "Om du har samlat tillräckligt med skatt",
     "uk": "After gathering enough treasure",
     "vi": "Khi thu thập đủ kho báu",
-    "pl": "After gathering enough treasure"
+    "pl": "Po zebraniu wystarczającej ilości skarbu"
   },
   {
     "preDexNum": 1011,
@@ -16445,7 +16445,7 @@
     "sv": "När den kan tekniken Drakens stridsrop",
     "uk": "While knowing the move Dragon Cheer",
     "vi": "Khi đã học chiêu thức Dragon Cheer",
-    "pl": "While knowing the move Dragon Cheer"
+    "pl": "Po nauczeniu się ataku Dragon Cheer"
   },
   {
     "preDexNum": 1012,
@@ -16477,7 +16477,7 @@
     "sv": "Använd förmålet Undermålig tekopp (Super)",
     "uk": "Use the Непримітна Чашка (Great)",
     "vi": "Sử dụng vật phẩm Cốc Trà Thường (Great)",
-    "pl": "Use the Unremarkable Teacup (Great)"
+    "pl": "Używając: Unremarkable Teacup (Super)"
   },
   {
     "preDexNum": 1012,
@@ -16509,7 +16509,7 @@
     "sv": "Använd förmålet Underbar tekopp (Super)",
     "uk": "Use the Шедевральна Чайна Чашка (Great)",
     "vi": "Sử dụng vật phẩm Cốc Trà Tuyệt Hảo (Great)",
-    "pl": "Use the Masterpiece Teacup (Great)"
+    "pl": "Używając: Masterpiece Teacup (Super)"
   },
   {
     "preDexNum": 2019,
@@ -16541,7 +16541,7 @@
     "sv": "På natten eller skymningen|Vid nivå 20",
     "uk": "During Night or Dusk|At Level 20",
     "vi": "Vào Ban Đêm hoặc Hoàng Hôn|Ở Cấp 20",
-    "pl": "During Night or Dusk|Na Poziomie 20"
+    "pl": "W Nocy lub o Zmierzchu|Na Poziomie 20"
   },
   {
     "preDexNum": 2027,
@@ -16573,7 +16573,7 @@
     "sv": "Använd förmålet Issten (Super)",
     "uk": "Use the Ледяний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Băng Thạch (Great)",
-    "pl": "Use the Ice Stone (Great)"
+    "pl": "Używając: Ice Stone (Super)"
   },
   {
     "preDexNum": 2037,
@@ -16605,7 +16605,7 @@
     "sv": "Använd förmålet Issten (Super)",
     "uk": "Use the Ледяний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Băng Thạch (Great)",
-    "pl": "Use the Ice Stone (Great)"
+    "pl": "Używając: Ice Stone (Super)"
   },
   {
     "preDexNum": 2050,
@@ -16733,7 +16733,7 @@
     "sv": "Använd förmålet Länkande lina (Super)",
     "uk": "Use the З’єднувальний Шнур (Great)",
     "vi": "Sử dụng vật phẩm Cáp Trao Đổi (Great)",
-    "pl": "Use the Linking Cord (Great)"
+    "pl": "Używając: Linking Cord (Super)"
   },
   {
     "preDexNum": 2088,
@@ -16861,7 +16861,7 @@
     "sv": "Använd förmålet Galarikaboja (Super)",
     "uk": "Use the Галарична Манжета (Great)",
     "vi": "Sử dụng vật phẩm Vòng Tay Galarica (Great)",
-    "pl": "Use the Galarica Cuff (Great)"
+    "pl": "Używając: Galarica Cuff (Super)"
   },
   {
     "preDexNum": 4079,
@@ -16893,7 +16893,7 @@
     "sv": "Använd förmålet Galarikakrans (Super)",
     "uk": "Use the Галарічний Вінок (Great)",
     "vi": "Sử dụng vật phẩm Vòng Hoa Galarica (Great)",
-    "pl": "Use the Galarica Wreath (Great)"
+    "pl": "Używając: Galarica Wreath (Super)"
   },
   {
     "preDexNum": 4083,
@@ -17053,7 +17053,7 @@
     "sv": "På natten eller skymningen|Vid nivå 35",
     "uk": "During Night or Dusk|At Level 35",
     "vi": "Vào Ban Đêm hoặc Hoàng Hôn|Ở Cấp 35",
-    "pl": "During Night or Dusk|Na Poziomie 35"
+    "pl": "W Nocy lub o Zmierzchu|Na Poziomie 35"
   },
   {
     "preDexNum": 4554,
@@ -17085,7 +17085,7 @@
     "sv": "Använd förmålet Issten (Super)",
     "uk": "Use the Ледяний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Băng Thạch (Great)",
-    "pl": "Use the Ice Stone (Great)"
+    "pl": "Używając: Ice Stone (Super)"
   },
   {
     "preDexNum": 4562,
@@ -17149,7 +17149,7 @@
     "sv": "Använd förmålet Eldsten (Super)",
     "uk": "Use the Вогняний Камінь (Great)",
     "vi": "Sử dụng vật phẩm Hoả Thạch (Great)",
-    "pl": "Use the Fire Stone (Great)"
+    "pl": "Używając: Fire Stone (Super)"
   },
   {
     "preDexNum": 6100,
@@ -17181,7 +17181,7 @@
     "sv": "Använd förmålet Lövsten (Super)",
     "uk": "Use the Листовий Камінь (Great)",
     "vi": "Sử dụng vật phẩm Thảo Thạch (Great)",
-    "pl": "Use the Leaf Stone (Great)"
+    "pl": "Używając: Leaf Stone (Super)"
   },
   {
     "preDexNum": 6211,
@@ -17213,7 +17213,7 @@
     "sv": "När den kan tekniken Tusen nålar|Vid nivå 32",
     "uk": "While knowing the move Barb Barrage|At Level 32",
     "vi": "Khi đã học chiêu thức Barb Barrage|Ở Cấp 32",
-    "pl": "While knowing the move Barb Barrage|Na Poziomie 32"
+    "pl": "Po nauczeniu się ataku Barb Barrage|Na Poziomie 32"
   },
   {
     "preDexNum": 6215,
@@ -17245,7 +17245,7 @@
     "sv": "På dagen eller gryningen|Använd förmålet Slipad klo (Super)",
     "uk": "During Day or Dawn|Use the Гострий Кіготь (Great)",
     "vi": "Vào Ban Ngày hoặc Bình Minh|Sử dụng vật phẩm Vuốt Sắc Nhọn (Great)",
-    "pl": "Za Dnia lub o Świcie|Use the Razor Claw (Great)"
+    "pl": "Za Dnia lub o Świcie|Używając: Razor Claw (Super)"
   },
   {
     "preDexNum": 6550,
@@ -17370,10 +17370,10 @@
     "id": "In certain weather conditions|At Level 50",
     "hi": "In certain weather conditions|At Level 50",
     "tl": "In certain weather conditions|At Level 50",
-    "sv": "I vissa väder|Vid nivå 50",
+    "sv": "I vissa vädertillstånd|Vid nivå 50",
     "uk": "In certain weather conditions|At Level 50",
     "vi": "Vào thời thiết nhất định|Ở Cấp 50",
-    "pl": "In certain weather conditions|Na Poziomie 50"
+    "pl": "W konkretnych warunkach pogodowych|Na Poziomie 50"
   },
   {
     "preDexNum": 8194,

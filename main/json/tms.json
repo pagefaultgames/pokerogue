@@ -27102,6 +27102,378 @@
     "move": "TEMPER_FLARE"
   },
   {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "TAKE_DOWN"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "DOUBLE_EDGE"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "ICE_BEAM"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "BLIZZARD"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "PSYBEAM"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "HYPER_BEAM"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "SOLAR_BEAM"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "THUNDERBOLT"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "THUNDER_WAVE"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "THUNDER"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "TOXIC"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "PSYCHIC"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "AGILITY"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "DOUBLE_TEAM"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "SWIFT"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "DREAM_EATER"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "FLASH"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "REST"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "TRI_ATTACK"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "SUBSTITUTE"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "THIEF"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "SNORE"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "CURSE"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "PROTECT"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "ZAP_CANNON"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "ICY_WIND"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "ENDURE"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "SWAGGER"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "SLEEP_TALK"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "RETURN"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "PAIN_SPLIT"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "IRON_TAIL"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "HIDDEN_POWER"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "RAIN_DANCE"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "SUNNY_DAY"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "PSYCH_UP"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "SHADOW_BALL"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "FACADE"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "CHARGE"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "TRICK"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "RECYCLE"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "SECRET_POWER"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "SIGNAL_BEAM"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "AERIAL_ACE"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "SHOCK_WAVE"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "GRAVITY"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "POWER_SWAP"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "GUARD_SWAP"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "GIGA_IMPACT"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "ZEN_HEADBUTT"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "TRICK_ROOM"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "CHARGE_BEAM"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "WONDER_ROOM"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "PSYSHOCK"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "FOUL_PLAY"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "ROUND"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "ALLY_SWITCH"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "ELECTROWEB"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "CONFIDE"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "EERIE_IMPULSE"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "SPEED_SWAP"
+  },
+  {
+    "dexNum": 137,
+    "id": "PORYGON",
+    "form": null,
+    "move": "TERA_BLAST"
+  },
+  {
     "dexNum": 138,
     "id": "OMANYTE",
     "form": null,
@@ -52062,378 +52434,6 @@
     "move": "ICE_SPINNER"
   },
   {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "TAKE_DOWN"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "DOUBLE_EDGE"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "ICE_BEAM"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "BLIZZARD"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "PSYBEAM"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "HYPER_BEAM"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "SOLAR_BEAM"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "THUNDERBOLT"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "THUNDER_WAVE"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "THUNDER"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "TOXIC"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "PSYCHIC"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "AGILITY"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "DOUBLE_TEAM"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "SWIFT"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "DREAM_EATER"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "FLASH"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "REST"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "TRI_ATTACK"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "SUBSTITUTE"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "THIEF"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "SNORE"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "CURSE"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "PROTECT"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "ZAP_CANNON"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "ICY_WIND"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "ENDURE"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "SWAGGER"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "SLEEP_TALK"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "RETURN"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "PAIN_SPLIT"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "IRON_TAIL"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "HIDDEN_POWER"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "RAIN_DANCE"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "SUNNY_DAY"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "PSYCH_UP"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "SHADOW_BALL"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "FACADE"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "CHARGE"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "TRICK"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "RECYCLE"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "SECRET_POWER"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "SIGNAL_BEAM"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "AERIAL_ACE"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "SHOCK_WAVE"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "GRAVITY"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "POWER_SWAP"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "GUARD_SWAP"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "GIGA_IMPACT"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "ZEN_HEADBUTT"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "TRICK_ROOM"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "CHARGE_BEAM"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "WONDER_ROOM"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "PSYSHOCK"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "FOUL_PLAY"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "ROUND"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "ALLY_SWITCH"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "ELECTROWEB"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "CONFIDE"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "EERIE_IMPULSE"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "SPEED_SWAP"
-  },
-  {
-    "dexNum": 233,
-    "id": "PORYGON2",
-    "form": null,
-    "move": "TERA_BLAST"
-  },
-  {
     "dexNum": 234,
     "id": "STANTLER",
     "form": null,
@@ -71631,7 +71631,283 @@
     "dexNum": 314,
     "id": "ILLUMISE",
     "form": null,
+    "move": "MEGA_PUNCH"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "ICE_PUNCH"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "THUNDER_PUNCH"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "MEGA_KICK"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "BODY_SLAM"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "TAKE_DOWN"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "DOUBLE_EDGE"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "COUNTER"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "SOLAR_BEAM"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "THUNDERBOLT"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "THUNDER_WAVE"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "THUNDER"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "TOXIC"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "DOUBLE_TEAM"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "CONFUSE_RAY"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "LIGHT_SCREEN"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "METRONOME"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "SWIFT"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "FLASH"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "REST"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "SUBSTITUTE"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "THIEF"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "SNORE"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "PROTECT"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "MUD_SLAP"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "GIGA_DRAIN"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "ENDURE"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
     "move": "CHARM"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "SWAGGER"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "ATTRACT"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "SLEEP_TALK"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "RETURN"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "BATON_PASS"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "ENCORE"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "HIDDEN_POWER"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "RAIN_DANCE"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "SUNNY_DAY"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "PSYCH_UP"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "SHADOW_BALL"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "FACADE"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "FOCUS_PUNCH"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "TAUNT"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "HELPING_HAND"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "TRICK"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "BRICK_BREAK"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "ENDEAVOR"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "SECRET_POWER"
   },
   {
     "dexNum": 314,
@@ -71643,7 +71919,127 @@
     "dexNum": 314,
     "id": "ILLUMISE",
     "form": null,
+    "move": "AIR_CUTTER"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "SILVER_WIND"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "SIGNAL_BEAM"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "AERIAL_ACE"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
     "move": "COVET"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "SHOCK_WAVE"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "WATER_PULSE"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "ROOST"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "TAILWIND"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "U_TURN"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "FLING"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "AIR_SLASH"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "BUG_BUZZ"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "ZEN_HEADBUTT"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "DEFOG"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "BUG_BITE"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "CHARGE_BEAM"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "OMINOUS_WIND"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "ROUND"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "ACROBATICS"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "STRUGGLE_BUG"
   },
   {
     "dexNum": 314,
@@ -71656,6 +72052,78 @@
     "id": "ILLUMISE",
     "form": null,
     "move": "DRAINING_KISS"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "PLAY_ROUGH"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "CONFIDE"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "ELECTRIC_TERRAIN"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "DAZZLING_GLEAM"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "INFESTATION"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "POWER_UP_PUNCH"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "LUNGE"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "SKITTER_SMACK"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "TERA_BLAST"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "POUNCE"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "TRAILBLAZE"
+  },
+  {
+    "dexNum": 314,
+    "id": "ILLUMISE",
+    "form": null,
+    "move": "CHILLING_WATER"
   },
   {
     "dexNum": 315,
@@ -243393,6 +243861,12 @@
     "dexNum": 8901,
     "id": "BLOODMOON_URSALUNA",
     "form": null,
+    "move": "MUD_SLAP"
+  },
+  {
+    "dexNum": 8901,
+    "id": "BLOODMOON_URSALUNA",
+    "form": null,
     "move": "ZAP_CANNON"
   },
   {
@@ -243622,6 +244096,12 @@
     "id": "BLOODMOON_URSALUNA",
     "form": null,
     "move": "HEAVY_SLAM"
+  },
+  {
+    "dexNum": 8901,
+    "id": "BLOODMOON_URSALUNA",
+    "form": null,
+    "move": "ROUND"
   },
   {
     "dexNum": 8901,
