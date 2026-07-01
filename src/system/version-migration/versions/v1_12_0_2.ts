@@ -57,6 +57,7 @@ function pullEggs(pullCount: number, ownedStarters: SpeciesId[]): EggData[] {
     [EggTier.COMMON]: commonCount,
   };
 
+  let pulledCount = 0;
   for (const [tier, count] of Object.entries(pullCounts)) {
     const eggTier = Number(tier) as EggTier;
     const ownedTierStarters = speciesDataRegistry
@@ -76,10 +77,11 @@ function pullEggs(pullCount: number, ownedStarters: SpeciesId[]): EggData[] {
       const eggOptions: IEggOptions = {
         pulled: false,
         sourceType: EggSourceType.EVENT,
-        hatchWaves: (Math.floor(i / 81) + 1) * 5,
+        hatchWaves: (Math.floor(pulledCount / 81) + 1) * 5,
         species: species.speciesId,
         isShiny: true,
       };
+      pulledCount++;
 
       eggs.push(new EggData(eggOptions));
     }
