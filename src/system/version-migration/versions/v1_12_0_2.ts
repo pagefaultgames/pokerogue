@@ -2,7 +2,6 @@ import { defaultStarterSpecies } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import type { IEggOptions } from "#data/egg";
-import type { PokemonSpecies } from "#data/pokemon-species";
 import { DexAttr } from "#enums/dex-attr";
 import { EggSourceType } from "#enums/egg-source-types";
 import { EggTier } from "#enums/egg-type";
@@ -11,11 +10,11 @@ import { EggData } from "#system/egg-data";
 import { VoucherType } from "#system/voucher";
 import type { DexData, DexEntry } from "#types/dex-data";
 import type { SystemSaveMigrator } from "#types/save-migrators";
-import { randSeedInt, randSeedItem } from "#utils/common";
+import { randSeedItem } from "#utils/common";
 
-const LEGENDARY_CHANCE = 2;
-const EPIC_CHANCE = 8;
-const RARE_CHANCE = 20;
+const LEGENDARY_RATIO = 0.02;
+const EPIC_RATIO = 0.08;
+const RARE_RATIO = 0.2;
 
 function getStarters(
   dexData: DexData | undefined,
@@ -41,59 +40,48 @@ function getStarters(
   return starters;
 }
 
-function rollTier(): EggTier {
-  const rand = randSeedInt(100);
-  let threshold = 0;
-
-  const tiers: [number, EggTier][] = [
-    [LEGENDARY_CHANCE, EggTier.LEGENDARY],
-    [EPIC_CHANCE, EggTier.EPIC],
-    [RARE_CHANCE, EggTier.RARE],
-  ];
-
-  for (const [chance, tier] of tiers) {
-    threshold += chance;
-    if (rand < threshold) {
-      return tier;
-    }
-  }
-
-  return EggTier.COMMON;
-}
-
 function pullEggs(pullCount: number, ownedStarters: SpeciesId[]): EggData[] {
   const eggs: EggData[] = [];
-  for (let i = 1; i <= pullCount; i++) {
-    let tier = rollTier();
-    let ownedTierStarters: PokemonSpecies[] = [];
+  const legendaryCount = Math.ceil(pullCount * LEGENDARY_RATIO);
+  pullCount -= legendaryCount;
+  const epicCount = Math.ceil(pullCount * EPIC_RATIO);
+  pullCount -= epicCount;
+  const rareCount = Math.ceil(pullCount * RARE_RATIO);
+  pullCount -= rareCount;
+  const commonCount = pullCount;
+  const pullCounts = {
+    [EggTier.LEGENDARY]: legendaryCount,
+    [EggTier.EPIC]: epicCount,
+    [EggTier.RARE]: rareCount,
+    [EggTier.COMMON]: commonCount,
+  };
 
-    while (tier >= EggTier.COMMON) {
-      ownedTierStarters = speciesDataRegistry
-        .getSpeciesForEggTier(tier)
-        .filter(ps => ownedStarters.includes(ps.speciesId));
-
-      if (ownedTierStarters.length > 0) {
-        break;
-      }
-
-      tier--;
-    }
+  for (const [tier, count] of Object.entries(pullCounts)) {
+    const eggTier = Number(tier) as EggTier;
+    const ownedTierStarters = speciesDataRegistry
+      .getSpeciesForEggTier(eggTier)
+      .filter(ps => ownedStarters.includes(ps.speciesId));
 
     if (ownedTierStarters.length === 0) {
+      pullCounts[eggTier] = 0;
+      pullCounts[eggTier - 1] += count; // move to next lower tier
+
       console.warn("Comp: No available starters"); // should be impossible
-      break;
+      continue;
     }
 
-    const species = randSeedItem(ownedTierStarters);
-    const eggOptions: IEggOptions = {
-      pulled: false,
-      sourceType: EggSourceType.EVENT,
-      hatchWaves: (Math.floor(i / 81) + 1) * 5,
-      species: species.speciesId,
-      isShiny: true,
-    };
+    for (let i = 0; i < count; i++) {
+      const species = randSeedItem(ownedTierStarters);
+      const eggOptions: IEggOptions = {
+        pulled: false,
+        sourceType: EggSourceType.EVENT,
+        hatchWaves: (Math.floor(i / 81) + 1) * 5,
+        species: species.speciesId,
+        isShiny: true,
+      };
 
-    eggs.push(new EggData(eggOptions));
+      eggs.push(new EggData(eggOptions));
+    }
   }
   return eggs;
 }
