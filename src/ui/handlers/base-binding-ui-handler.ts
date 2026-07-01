@@ -13,7 +13,7 @@ type CancelFn = (success?: boolean) => boolean;
 /**
  * Abstract class for handling UI elements related to button bindings.
  */
-export abstract class AbstractBindingUiHandler extends UiHandler {
+export abstract class BaseBindingUiHandler extends UiHandler {
   // Containers for different segments of the UI.
   protected optionSelectContainer: Phaser.GameObjects.Container;
   protected actionsContainer: Phaser.GameObjects.Container;
@@ -47,19 +47,11 @@ export abstract class AbstractBindingUiHandler extends UiHandler {
   // The specific setting being modified.
   protected target;
 
-  /**
-   * Constructor for the AbstractBindingUiHandler.
-   *
-   * @param mode - The UI mode.
-   */
   constructor(mode: UiMode | null = null) {
     super(mode);
   }
 
-  /**
-   * Setup UI elements.
-   */
-  setup() {
+  public override setup(): void {
     const ui = this.getUi();
     this.optionSelectContainer = globalScene.add.container(0, 0);
     this.actionsContainer = globalScene.add.container(0, 0);
@@ -116,7 +108,7 @@ export abstract class AbstractBindingUiHandler extends UiHandler {
     this.actionsContainer.add(this.cancelLabel);
   }
 
-  manageAutoCloseTimer() {
+  private manageAutoCloseTimer(): void {
     clearTimeout(this.countdownTimer);
     this.countdownTimer = setTimeout(() => {
       this.timeLeftAutoClose -= 1;
@@ -135,7 +127,7 @@ export abstract class AbstractBindingUiHandler extends UiHandler {
    * @param args - Arguments to be passed to the show method.
    * @returns `true` if successful.
    */
-  show(args: any[]): boolean {
+  public override show(args: any[]): boolean {
     super.show(args);
     this.buttonPressed = null;
     this.timeLeftAutoClose = 5;
@@ -159,7 +151,7 @@ export abstract class AbstractBindingUiHandler extends UiHandler {
    *
    * @returns The window width.
    */
-  getWindowWidth(): number {
+  protected getWindowWidth(): number {
     return 160;
   }
 
@@ -168,7 +160,7 @@ export abstract class AbstractBindingUiHandler extends UiHandler {
    *
    * @returns The window height.
    */
-  getWindowHeight(): number {
+  protected getWindowHeight(): number {
     return 64;
   }
 
@@ -178,7 +170,7 @@ export abstract class AbstractBindingUiHandler extends UiHandler {
    * @param button - The button to process.
    * @returns `true` if the input was processed successfully.
    */
-  processInput(button: Button): boolean {
+  public override processInput(button: Button): boolean {
     if (this.buttonPressed === null) {
       return false; // TODO: is false correct as default? (previously was `undefined`)
     }
@@ -219,7 +211,7 @@ export abstract class AbstractBindingUiHandler extends UiHandler {
    * @param cursor - The cursor position to set.
    * @returns `true` if the cursor was set successfully.
    */
-  setCursor(cursor: number): boolean {
+  public override setCursor(cursor: number): boolean {
     this.cursor = cursor;
     if (cursor === 1) {
       this.actionLabel.setColor(getTextColor(TextStyle.SETTINGS_SELECTED));
@@ -238,7 +230,7 @@ export abstract class AbstractBindingUiHandler extends UiHandler {
   /**
    * Clear the UI elements and state.
    */
-  clear() {
+  public override clear(): void {
     super.clear();
     clearTimeout(this.countdownTimer);
     this.timerText.setText("(5)");
@@ -259,7 +251,7 @@ export abstract class AbstractBindingUiHandler extends UiHandler {
    * @param assignedButtonIcon - The icon of the button that is assigned.
    * @param type - The type of button press.
    */
-  onInputDown(buttonIcon: string, assignedButtonIcon: string | null, type: string): void {
+  protected onInputDown(buttonIcon: string, assignedButtonIcon: string | null, type: string): void {
     clearTimeout(this.countdownTimer);
     this.timerText.setText("");
     this.newButtonIcon.setTexture(type);

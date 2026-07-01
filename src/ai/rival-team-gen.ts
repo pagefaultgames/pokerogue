@@ -317,6 +317,9 @@ export function getRandomRivalPartyMemberFunc(
       species = pool[choice[0]][choice[1]];
       CHOSEN_RIVAL_ROLLS[slot] = choice;
     }
+    if (Array.isArray(species)) {
+      species = randSeedItem(species);
+    }
 
     return globalScene.addEnemyPokemon(
       getPokemonSpecies(species),

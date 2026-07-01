@@ -3,6 +3,7 @@ import { globalScene } from "#app/global-scene";
 import type { SwitchEffectTransferModifier } from "#app/modifier/modifier";
 import type { FieldBattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { PartyUiMode } from "#enums/party-ui-mode";
 import { SwitchType } from "#enums/switch-type";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { UiMode } from "#enums/ui-mode";
@@ -11,7 +12,7 @@ import { PokemonPhase } from "#phases/pokemon-phase";
 import type { PostSummonPhase } from "#phases/post-summon-phase";
 import type { RecallPhase } from "#phases/recall-phase";
 import type { SummonPhase, SummonPhaseOptions } from "#phases/summon-phase";
-import { PartyOption, PartyUiMode } from "#ui/party-ui-handler";
+import { PartyOption } from "#ui/party-ui-handler";
 
 /**
  * Phase to handle all logical elements of switching 2 Pokemon in battle.

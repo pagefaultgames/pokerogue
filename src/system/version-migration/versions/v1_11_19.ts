@@ -8,8 +8,7 @@ import type { SettingsSaveMigrator } from "#types/save-migrators";
  */
 const fixGameSpeed: SettingsSaveMigrator = {
   version: "1.11.19",
-  // biome-ignore lint/complexity/noBannedTypes: TODO - refactor settings
-  migrate: (data: Object): void => {
+  migrate: (data: object): void => {
     if (Object.hasOwn(data, SettingKeys.Game_Speed)) {
       const savedValue = data[SettingKeys.Game_Speed];
       let newValue = 1;
