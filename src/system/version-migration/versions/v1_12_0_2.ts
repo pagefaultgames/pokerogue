@@ -14,7 +14,6 @@ import type { SystemSaveMigrator } from "#types/save-migrators";
 import { fixedInt, randSeedItem } from "#utils/common";
 import i18next from "i18next";
 
-const EGG_COUNT_RATIO = 1;
 const LEGENDARY_RATIO = 0.02;
 const EPIC_RATIO = 0.08;
 const RARE_RATIO = 0.2;
@@ -132,7 +131,7 @@ const shinyCompensationMigrator: SystemSaveMigrator = {
       true,
     ).length;
     const foundShinyCount = (data.gameStats?.shinyPokemonSeen ?? 0) + (data.gameStats?.shinyPokemonHatched ?? 0);
-    const eggsToPull = Math.ceil((foundShinyCount - shinyStarterCount) * EGG_COUNT_RATIO);
+    const eggsToPull = foundShinyCount - shinyStarterCount;
     if (eggsToPull <= 0) {
       return;
     }
