@@ -13,7 +13,6 @@ import {
 } from "#system/settings-keyboard";
 import type { InterfaceConfig } from "#types/configs/inputs";
 import { BaseControlSettingsUiHandler } from "#ui/base-control-settings-ui-handler";
-import { NavigationManager } from "#ui/navigation-menu";
 import { addTextObject } from "#ui/text";
 import { truncateString } from "#utils/common";
 import { toUpperSnakeCase } from "#utils/strings";
