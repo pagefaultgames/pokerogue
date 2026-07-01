@@ -157,7 +157,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
   private doHealPokemon(): void {
     const pokemon = this.getPokemon()!;
 
-    // If we would heal the user past full HP, don't.
+    // Avoid healing a Pokemon already at full HP
     if (this.hpHealed > 0 && pokemon.isFullHp()) {
       if (this.showFullHpMessage) {
         this.message = i18next.t("battle:hpIsFull", {
