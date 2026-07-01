@@ -10978,9 +10978,10 @@ export function initGenerationThree(): SpeciesDataMapConfig {
       1: AbilityId.PUNK_ROCK,
     },
     levelMoves: [
+      [EVOLVE_MOVE, MoveId.PSYBEAM],
       [RELEARN_MOVE, MoveId.HEALING_WISH],
       [RELEARN_MOVE, MoveId.SYNCHRONOISE],
-      [EVOLVE_MOVE, MoveId.PSYBEAM],
+      [RELEARN_MOVE, MoveId.FLASH_CANNON],
       [1, MoveId.WRAP],
       [1, MoveId.PSYWAVE],
       [1, MoveId.ASTONISH],
