@@ -12,6 +12,7 @@ import { VoucherType } from "#system/voucher";
 import type { DexData, DexEntry } from "#types/dex-data";
 import type { SystemSaveMigrator } from "#types/save-migrators";
 import { fixedInt, randSeedItem } from "#utils/common";
+import i18next from "i18next";
 
 const EGG_COUNT_RATIO = 1;
 const LEGENDARY_RATIO = 0.02;
@@ -92,7 +93,9 @@ function pullEggs(pullCount: number, ownedStarters: SpeciesId[]): EggData[] {
   globalScene.time.delayedCall(fixedInt(2000), () => {
     globalScene.ui.setOverlayMode(
       UiMode.ALERT_MODAL,
-      `You were affected by a save data loss bug in v1.12.0.0 that deleted all shiny Pokémon.\nAs a compensation you have received ${eggs.length} eggs containing a guaranteed shiny Pokémon.`,
+      i18next.t("migrators:eggCompensation", {
+        eggCount: eggs.length,
+      }),
     );
     globalScene.time.delayedCall(fixedInt(15000), () => {
       if (globalScene.ui.getMode() === UiMode.ALERT_MODAL) {
