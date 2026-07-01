@@ -44,10 +44,15 @@ export class StatStageChangePhase extends PokemonPhase {
     this.options.changes = deepCopy(options.changes).filter(c => c.stages !== 0); // Allow changes with 0 stages to be passed as no-ops
   }
 
+  // @ts-expect-error: TODO: the return type of `PokemonPhase#getPokemon` is wrong
+  public override getPokemon(): Pokemon | undefined {
+    return super.getPokemon();
+  }
+
   public override start(): void {
     const pokemon = this.getPokemon();
 
-    if (!pokemon.isActive(true)) {
+    if (!pokemon?.isActive(true)) {
       this.end();
       return;
     }
@@ -274,7 +279,10 @@ export class StatStageChangePhase extends PokemonPhase {
    * otherwise not significant beyond faster animation.
    */
   private triggerReactionAbilities(pokemon: Pokemon): void {
-    if (this.options.changes.some(c => c.stages > 0)) {
+    if (
+      this.options.sourceEffectType !== StatChangeSource.OPPORTUNIST
+      && this.options.changes.some(c => c.stages > 0)
+    ) {
       for (const opponent of pokemon.getOpponentsGenerator()) {
         applyAbAttrs("StatStageChangeCopyAbAttr", { pokemon: opponent, changes: this.options.changes });
       }

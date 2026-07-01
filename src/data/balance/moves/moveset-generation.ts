@@ -189,6 +189,7 @@ export const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
   MoveId.FIRST_IMPRESSION,
   MoveId.FISSURE,
   MoveId.FLING,
+  MoveId.FLIP_TURN,
   MoveId.FOCUS_PUNCH,
   MoveId.FUTURE_SIGHT,
   MoveId.GUILLOTINE,
@@ -221,6 +222,8 @@ export const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
   MoveId.SUCKER_PUNCH,
   MoveId.SYNCHRONOISE,
   MoveId.UPPER_HAND,
+  MoveId.U_TURN,
+  MoveId.VOLT_SWITCH,
   MoveId.WHIRLPOOL,
   MoveId.WRAP,
   // Moves that always change type.

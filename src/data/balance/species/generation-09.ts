@@ -843,19 +843,6 @@ export function initGenerationNine(): SpeciesDataMapConfig {
     levelMoves: [
       [1, MoveId.TACKLE],
       [1, MoveId.TAIL_WHIP],
-      [5, MoveId.DISARMING_VOICE],
-      [8, MoveId.ECHOED_VOICE],
-      [12, MoveId.MUD_SHOT],
-      [15, MoveId.COVET],
-      [17, MoveId.DIG],
-      [23, MoveId.HEADBUTT],
-      [26, MoveId.TAKE_DOWN],
-      [27, MoveId.YAWN],
-      [34, MoveId.WORK_UP],
-      [38, MoveId.UPROAR],
-      [42, MoveId.DOUBLE_EDGE],
-      [48, MoveId.EARTH_POWER],
-      [54, MoveId.BELCH],
     ],
     formLevelMoves: {
       male: [
