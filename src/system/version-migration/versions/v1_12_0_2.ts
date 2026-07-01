@@ -107,7 +107,7 @@ function pullEggs(pullCount: number, ownedStarters: SpeciesId[]): EggData[] {
 }
 
 const shinyCompensationMigrator: SystemSaveMigrator = {
-  version: "1.12.0.2",
+  version: "1.12.0.3",
   migrate: (data): void => {
     const defaultStarterCount = getStarters(
       data.dexData,
@@ -156,7 +156,7 @@ const shinyCompensationMigrator: SystemSaveMigrator = {
 };
 
 const voucherCompensationMigrator: SystemSaveMigrator = {
-  version: "1.12.0.2",
+  version: "1.12.0.3",
   migrate: (data): void => {
     if (
       !data?.voucherCounts
