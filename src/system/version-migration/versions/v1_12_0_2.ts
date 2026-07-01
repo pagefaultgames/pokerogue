@@ -114,11 +114,9 @@ const shinyCompensationMigrator: SystemSaveMigrator = {
       d => d?.caughtAttr > 0n && d?.ivs?.every(iv => iv === 15) && d?.natureAttr === 1,
       false,
     ).length;
-    const totalStarterCount = Math.max(getStarters(data.dexData, d => d?.caughtAttr > 0n, false).length, 1);
 
-    const defaultRatio = defaultStarterCount / totalStarterCount;
-    // It is overwhelmingly unlikely to have even one 15/15/15/15/15/15 starter
-    if (defaultStarterCount < 3 && defaultRatio < 0.1) {
+    // It is overwhelmingly unlikely to have even one 15/15/15/15/15/15 (non default) starter
+    if (defaultStarterCount < 3) {
       return;
     }
 
