@@ -161,6 +161,7 @@ const voucherCompensationMigrator: SystemSaveMigrator = {
     if (
       !data?.voucherCounts
       || data.voucherCounts[VoucherType.PLUS] == null
+      || data.voucherCounts[VoucherType.PREMIUM] == null
       || data.voucherCounts[VoucherType.GOLDEN] == null
     ) {
       console.warn("Missing voucherCounts in system save data.");
@@ -168,6 +169,7 @@ const voucherCompensationMigrator: SystemSaveMigrator = {
     }
     console.log("Applying voucher compensation");
     data.voucherCounts[VoucherType.PLUS] += 5;
+    data.voucherCounts[VoucherType.PREMIUM] += 2;
     data.voucherCounts[VoucherType.GOLDEN] += 1;
   },
 };
