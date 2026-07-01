@@ -3,12 +3,13 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { BattleStyle } from "#enums/battle-style";
 import { BattleType } from "#enums/battle-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { PartyUiMode } from "#enums/party-ui-mode";
 import { SwitchType } from "#enums/switch-type";
 import { UiMode } from "#enums/ui-mode";
 import { BattlePhase } from "#phases/battle-phase";
 import type { RecallPhase } from "#phases/recall-phase";
 import type { SwitchPhase } from "#phases/switch-phase";
-import { PartyOption, PartyUiMode } from "#ui/party-ui-handler";
+import { PartyOption } from "#ui/party-ui-handler";
 import i18next from "i18next";
 
 /**
