@@ -5,7 +5,7 @@ import { UiMode } from "#enums/ui-mode";
 import type { SettingType } from "#system/settings";
 import { Setting, SettingKeys } from "#system/settings";
 import type { MappingSettingName } from "#types/configs/inputs";
-import type { InputsIcons } from "#ui/abstract-control-settings-ui-handler";
+import type { InputsIcons } from "#ui/settings/base-control-settings-ui-handler";
 import { TabMenu } from "#ui/containers/tab-menu";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { ScrollBar } from "#ui/scroll-bar";
