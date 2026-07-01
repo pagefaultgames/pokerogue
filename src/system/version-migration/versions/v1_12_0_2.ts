@@ -13,6 +13,7 @@ import type { DexData, DexEntry } from "#types/dex-data";
 import type { SystemSaveMigrator } from "#types/save-migrators";
 import { fixedInt, randSeedItem } from "#utils/common";
 
+const EGG_COUNT_RATIO = 1;
 const LEGENDARY_RATIO = 0.02;
 const EPIC_RATIO = 0.08;
 const RARE_RATIO = 0.2;
@@ -128,7 +129,7 @@ const shinyCompensationMigrator: SystemSaveMigrator = {
       true,
     ).length;
     const foundShinyCount = (data.gameStats?.shinyPokemonSeen ?? 0) + (data.gameStats?.shinyPokemonHatched ?? 0);
-    const eggsToPull = foundShinyCount - shinyStarterCount;
+    const eggsToPull = Math.ceil((foundShinyCount - shinyStarterCount) * EGG_COUNT_RATIO);
     if (eggsToPull <= 0) {
       return;
     }
