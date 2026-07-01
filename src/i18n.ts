@@ -6,6 +6,7 @@ import i18next from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import HttpBackend from "i18next-http-backend";
 import { KoreanPostpositionProcessor } from "i18next-korean-postposition-processor";
+import { supportedLngs } from "./i18n-supported-lngs";
 
 // #region Interfaces/Types
 
@@ -59,7 +60,6 @@ const fonts: LoadingFontFaceProperty[] = [
       "da",
       "tr",
       "th",
-      "ro",
       "ru",
       "uk",
       "id",
@@ -165,34 +165,7 @@ await i18next
         "es-419": ["es-ES", "en"],
         default: ["en"],
       },
-      supportedLngs: [
-        "en", // English
-        "es-ES", // Spanish (Spain)
-        "es-419", // LATAM Spanish
-        "fr", // French
-        "it", // Italian
-        "de", // German
-        "zh-Hans", // Chinese Simplified
-        "zh-Hant", // Chinese Traditional
-        "pt-BR", // Brazilian Portuguese
-        "ko", // Korean
-        "ja", // Japanese
-        "ca", // Catalan
-        "eu", // Basque
-        "da", // Danish
-        "th", // Thai
-        "tr", // Turkish
-        "ro", // Romanian
-        "ru", // Russian
-        "id", // Indonesian
-        "hi", // Hindi
-        "tl", // Tagalog
-        "nb-NO", // Norwegian Bokmål
-        "sv", // Swedish
-        "uk", // Ukrainian
-        "vi", // Vietnamese
-        "pl", // Polish
-      ],
+      supportedLngs,
       backend: {
         loadPath(lng: string, [ns]: string[]) {
           // Use namespace maps where required
@@ -217,7 +190,15 @@ await i18next
       ns: nsEn,
       debug: import.meta.env.VITE_I18N_DEBUG === "1",
       interpolation: {
+        // Phaser is unable to parse the HTML escape codes produced by i18next, so turning this on results in codes like
+        // &amp; being displayed verbatim on screen.
+        // We use i18next solely for localizing values inside code anyways, so the risk of XSS from user input is virtually nonexistent.
         escapeValue: false,
+        // While using the `$t()` string syntax can allow nested locale keys to lazily look up interpolated text in the current chosen language,
+        // the fact that we reload the page after a language change renders this entirely moot - any nested lookups will be re-evaluated anyway.
+        // Moreover, this means of passing nested keys lacks the type-safety of calling `i18next.t` directly,
+        // which will be important once we get said strong typing set up correctly.
+        skipOnVariables: true,
       },
       postProcess: ["korean-postposition"],
     },

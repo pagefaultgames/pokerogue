@@ -1,10 +1,11 @@
 import { BerryType } from "#enums/berry-type";
 import { Button } from "#enums/buttons";
 import { MoveId } from "#enums/move-id";
+import { PartyUiMode } from "#enums/party-ui-mode";
 import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { GameManager } from "#test/framework/game-manager";
-import { type PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
+import type { PartyUiHandler } from "#ui/party-ui-handler";
 import type { RenameFormUiHandler } from "#ui/rename-form-ui-handler";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";

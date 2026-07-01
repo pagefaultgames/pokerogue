@@ -1,8 +1,8 @@
 import type { UiMode } from "#enums/ui-mode";
 import { SettingKeys, SettingType } from "#system/settings";
-import { AbstractSettingsUiHandler } from "#ui/abstract-settings-ui-handler";
+import { BaseSettingsUiHandler } from "#ui/base-settings-ui-handler";
 
-export class SettingsDisplayUiHandler extends AbstractSettingsUiHandler {
+export class SettingsDisplayUiHandler extends BaseSettingsUiHandler {
   /**
    * Creates an instance of SettingsGamepadUiHandler.
    *
@@ -144,7 +144,7 @@ export class SettingsDisplayUiHandler extends AbstractSettingsUiHandler {
         case "vi":
           this.settings[languageIndex].options[0] = {
             value: "Tiếng Việt",
-            label: "Tiếng Việt (Needs Help)",
+            label: "Tiếng Việt",
           };
           break;
         case "da":
@@ -153,22 +153,10 @@ export class SettingsDisplayUiHandler extends AbstractSettingsUiHandler {
             label: "Dansk (Needs Help)",
           };
           break;
-        case "nb-NO":
-          this.settings[languageIndex].options[0] = {
-            value: "Norsk bokmål",
-            label: "Norsk bokmål (Needs Help)",
-          };
-          break;
         case "sv":
           this.settings[languageIndex].options[0] = {
             value: "Svenska",
             label: "Svenska",
-          };
-          break;
-        case "ro":
-          this.settings[languageIndex].options[0] = {
-            value: "Română",
-            label: "Română (Needs Help)",
           };
           break;
         case "tl":
