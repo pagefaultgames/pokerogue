@@ -69,7 +69,7 @@ function pullEggs(pullCount: number, ownedStarters: SpeciesId[]): EggData[] {
       pullCounts[eggTier] = 0;
       pullCounts[eggTier - 1] += count; // move to next lower tier
 
-      console.warn("Comp: No available starters"); // should be impossible
+      console.warn("Comp: No available starters at tier:", EggTier[eggTier]);
       continue;
     }
 
