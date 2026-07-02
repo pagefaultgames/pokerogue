@@ -17,6 +17,7 @@ export const sharedConfig: UserConfigFnPromise = async ({ mode }) => {
       sourcemap: mode !== "production",
       chunkSizeWarningLimit: 10000,
       minify: "oxc",
+      manifest: true,
       rolldownOptions: {
         // TODO: Review if we even need this anymore in v8.0
         onwarn(warning, defaultHandler) {
@@ -67,6 +68,7 @@ export const sharedConfig: UserConfigFnPromise = async ({ mode }) => {
       (await import("./plugins/vite/vite-minify-json-plugin")).minifyPublicJsonFiles(),
       (await import("./plugins/vite/namespaces-i18n-plugin")).LocaleNamespace(),
       (await import("unplugin-inline-enum/vite")).default({ scanDir: "src" }),
+      (await import("./plugins/vite/static-shell-plugin")).staticShellPlugin(),
     ];
   }
   return opts;
