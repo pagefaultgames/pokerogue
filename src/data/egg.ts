@@ -188,7 +188,7 @@ export class Egg {
       // be done because species with no variants get filtered at rollSpecies but if the
       // species is set via options or the legendary gacha pokemon gets choosen the check never happens
 
-      // TODO This is a race condition with the initialization of `variantData`.
+      // TODO: This is a race condition with the initialization of `variantData`.
       // It doesn't seem to impact nonlocal instances, but it should still be fixed.
       if (this._species && !getPokemonSpecies(this._species).hasVariants()) {
         this._variantTier = VariantTier.STANDARD;
