@@ -5,5 +5,5 @@
 
 import type { RewardPool, RewardPoolWeights } from "#types/rewards";
 
-export const rewardPool: RewardPool = {};
-export const rewardPoolWeights: RewardPoolWeights = {};
+export const rewardPool: RewardPool = {} as RewardPool;
+export const rewardPoolWeights: RewardPoolWeights = {} as RewardPoolWeights;
