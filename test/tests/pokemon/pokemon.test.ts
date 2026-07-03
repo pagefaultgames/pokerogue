@@ -76,6 +76,26 @@ describe("Spec - Pokemon", () => {
     expect(fanRotom.isTmCompatible(MoveId.AIR_SLASH)).toBe(true);
   });
 
+  it("should exclude previously-taught TMs from getCompatibleTms when excludeUsedTMs is set, without affecting other party members", async () => {
+    await game.classicMode.runToSummon(SpeciesId.BULBASAUR, SpeciesId.BULBASAUR);
+
+    const [bulbasaurA, bulbasaurB] = game.scene.getPlayerParty();
+
+    const compatibleTms = bulbasaurA.getCompatibleTms(true, true);
+    expect(compatibleTms.length).toBeGreaterThan(0);
+    const usedTm = compatibleTms[0];
+
+    bulbasaurA.usedTMs = [usedTm];
+
+    // The used TM should no longer show up as a compatible/spawnable TM for bulbasaurA
+    expect(bulbasaurA.getCompatibleTms(true, true, true)).not.toContain(usedTm);
+    // still should show up if excludeUsedTMs isn't set
+    expect(bulbasaurA.getCompatibleTms(true, true)).toContain(usedTm);
+
+    // Pokeon who hasn't been taught this TM should still have it available
+    expect(bulbasaurB.getCompatibleTms(true, true, true)).toContain(usedTm);
+  });
+
   describe("Get correct fusion type", () => {
     beforeEach(async () => {
       game.override.enemySpecies(SpeciesId.ZUBAT).enableStarterFusion();

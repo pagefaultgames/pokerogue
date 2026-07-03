@@ -279,7 +279,10 @@ export class StatStageChangePhase extends PokemonPhase {
    * otherwise not significant beyond faster animation.
    */
   private triggerReactionAbilities(pokemon: Pokemon): void {
-    if (this.options.changes.some(c => c.stages > 0)) {
+    if (
+      this.options.sourceEffectType !== StatChangeSource.OPPORTUNIST
+      && this.options.changes.some(c => c.stages > 0)
+    ) {
       for (const opponent of pokemon.getOpponentsGenerator()) {
         applyAbAttrs("StatStageChangeCopyAbAttr", { pokemon: opponent, changes: this.options.changes });
       }
