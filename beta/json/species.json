@@ -32603,7 +32603,7 @@
     "generation": 5,
     "spriteKey": "609-mega",
     "formKey": "mega",
-    "hasVariants": false,
+    "hasVariants": true,
     "category": "Luring Pokémon",
     "type1": "GHOST",
     "type2": "FIRE",
