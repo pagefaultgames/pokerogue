@@ -180,6 +180,7 @@ export function staticShellPlugin(): VitePlugin {
       html = html.replace(STYLESHEET_LINK_PATTERN, "");
 
       fs.writeFileSync(indexPath, html);
+      fs.rmSync(path.join(outDir, ".vite"), { recursive: true, force: true });
 
       logger.info(`${green(`✓ Rewrote index.html into a deploy-invariant shell (entry: ${entry.file})`)}${logSuffix}`);
     },
