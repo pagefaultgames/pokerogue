@@ -18,6 +18,7 @@ export const FORBIDDEN_SINGLES_MOVES: ReadonlySet<MoveId> = new Set([
   MoveId.DECORATE,
   MoveId.DRAGON_CHEER,
   MoveId.EXPANDING_FORCE, // This needs to be adjusted to only spawn if Psychic Surge / Terrain generates with it.
+  MoveId.FLORAL_HEALING,
   MoveId.FOLLOW_ME,
   MoveId.HEAL_PULSE,
   MoveId.HELPING_HAND,
@@ -151,6 +152,7 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.SPIKE_CANNON, // No one who has it really cares for it outside of early levels.
   MoveId.SPLASH,
   MoveId.STOMP,
+  MoveId.STRUGGLE_BUG,
   MoveId.SUBMISSION,
   MoveId.SUPERSONIC,
   MoveId.SWALLOW,
