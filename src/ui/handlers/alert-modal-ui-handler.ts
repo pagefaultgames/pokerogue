@@ -5,7 +5,7 @@ import { ModalUiHandler } from "#ui/modal-ui-handler";
 import { addTextObject } from "#ui/text";
 import i18next from "i18next";
 
-export class AlertModalUiHandler extends ModalUiHandler {
+export class AlertModalUiHandler extends ModalUiHandler<any> {
   private label: Phaser.GameObjects.Text;
 
   constructor(mode: UiMode | null = null) {
@@ -60,6 +60,6 @@ export class AlertModalUiHandler extends ModalUiHandler {
       this.label.setText(args[0]);
     }
 
-    return super.show([config]);
+    return super.show([config] satisfies Parameters<ModalUiHandler["show"]>[0]);
   }
 }
