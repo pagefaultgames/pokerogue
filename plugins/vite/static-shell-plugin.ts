@@ -16,6 +16,7 @@ const VERSION = "1.0.0";
 interface ManifestEntry {
   file: string;
   css?: string[];
+  imports?: string[];
 }
 
 /**
@@ -46,6 +47,12 @@ const CRITICAL_STYLE = `<style>
 const BOOTSTRAP_SCRIPT = `<script>
 (function () {
   function inject(manifest) {
+    (manifest.preloads || []).forEach(function (href) {
+      var link = document.createElement("link");
+      link.rel = "modulepreload";
+      link.href = href;
+      document.head.appendChild(link);
+    });
     (manifest.css || []).forEach(function (href) {
       var link = document.createElement("link");
       link.rel = "stylesheet";
@@ -81,6 +88,40 @@ const MODULEPRELOAD_LINK_PATTERN = /<link rel="modulepreload"[^>]*>\n?/g;
 /** Matches Vite's injected `<link rel="stylesheet" crossorigin href="...">` tag(s). */
 const STYLESHEET_LINK_PATTERN = /<link rel="stylesheet" crossorigin href="[^"]*">\n?/g;
 
+/** The small runtime manifest written to dist/asset-manifest.json. */
+interface AssetManifest {
+  js: string;
+  css: string[];
+  preloads: string[];
+}
+
+function resolveAssetManifest(
+  manifest: Record<string, ManifestEntry>,
+  entry: ManifestEntry,
+  warn: (message: string) => void,
+): AssetManifest {
+  const cssFiles = new Set<string>(entry.css ?? []);
+  const preloadFiles: string[] = [];
+
+  for (const importKey of entry.imports ?? []) {
+    const chunk = manifest[importKey];
+    if (!chunk) {
+      warn(`"${importKey}" referenced by entry imports but missing from manifest.`);
+      continue;
+    }
+    preloadFiles.push(chunk.file);
+    for (const css of chunk.css ?? []) {
+      cssFiles.add(css);
+    }
+  }
+
+  return {
+    js: `./${entry.file}`,
+    css: [...cssFiles].map(file => `./${file}`),
+    preloads: preloadFiles.map(file => `./${file}`),
+  };
+}
+
 /**
  * Rewrites the built `index.html` so it no longer references any deploy-specific
  * (content-hashed) filenames directly, and writes a small `asset-manifest.json`
@@ -103,6 +144,7 @@ export function staticShellPlugin(): VitePlugin {
     },
     closeBundle(): void {
       const logSuffix = gray(` [${NAME}]`);
+      const warn = (message: string) => logger.warn(yellow(`${message}${logSuffix}`));
       logger.info(cyan(`\t→ Plugin: ${NAME} v${VERSION}`));
 
       const outDir = path.resolve("dist");
@@ -110,7 +152,7 @@ export function staticShellPlugin(): VitePlugin {
       const indexPath = path.join(outDir, "index.html");
 
       if (!fs.existsSync(manifestPath) || !fs.existsSync(indexPath)) {
-        logger.warn(yellow(`Skipping: expected ${manifestPath} and ${indexPath} to exist.${logSuffix}`));
+        warn(`Skipping: expected ${manifestPath} and ${indexPath} to exist.`);
         return;
       }
 
@@ -118,32 +160,24 @@ export function staticShellPlugin(): VitePlugin {
       const entry = manifest["index.html"];
 
       if (!entry) {
-        logger.warn(yellow(`Skipping: no "index.html" entry found in ${manifestPath}.${logSuffix}`));
+        warn(`Skipping: no "index.html" entry found in ${manifestPath}.`);
         return;
       }
 
-      const assetManifest = {
-        js: `./${entry.file}`,
-        css: (entry.css ?? []).map(file => `./${file}`),
-      };
-
+      const assetManifest = resolveAssetManifest(manifest, entry, warn);
       fs.writeFileSync(path.join(outDir, "asset-manifest.json"), JSON.stringify(assetManifest));
 
       let html = fs.readFileSync(indexPath, "utf-8");
       const hadEntryScript = ENTRY_SCRIPT_PATTERN.test(html);
 
+      if (!hadEntryScript) {
+        warn(`"${indexPath}" did not contain the expected Vite entry <script> tag - static shell was not applied.`);
+        return;
+      }
+
       html = html.replace(ENTRY_SCRIPT_PATTERN, CRITICAL_STYLE + BOOTSTRAP_SCRIPT);
       html = html.replace(MODULEPRELOAD_LINK_PATTERN, "");
       html = html.replace(STYLESHEET_LINK_PATTERN, "");
-
-      if (!hadEntryScript) {
-        logger.warn(
-          yellow(
-            `"${indexPath}" did not contain the expected Vite entry <script> tag - static shell was not applied.${logSuffix}`,
-          ),
-        );
-        return;
-      }
 
       fs.writeFileSync(indexPath, html);
 
