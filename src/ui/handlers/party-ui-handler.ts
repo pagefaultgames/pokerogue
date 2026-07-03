@@ -291,7 +291,7 @@ export class PartyUiHandler extends MessageUiHandler {
     // reset the infoOverlay
     this.moveInfoOverlay.clear();
 
-    this.partyUiMode = args[0]!;
+    this.partyUiMode = args[0] as PartyUiMode;
 
     this.fieldIndex = args.length > 1 && typeof args[1] === "number" ? args[1] : -1;
 
@@ -439,7 +439,7 @@ export class PartyUiHandler extends MessageUiHandler {
     return true;
   }
 
-  private processRenameOption(pokemon: Pokemon): boolean {
+  private processRenameOption(pokemon: PlayerPokemon): boolean {
     const ui = this.getUi();
     this.clearOptions();
     ui.playSelect();

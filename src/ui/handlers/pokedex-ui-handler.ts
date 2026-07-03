@@ -701,7 +701,7 @@ export class PokedexUiHandler extends MessageUiHandler {
       this.blockOpenPage = false;
     }
 
-    super.show(args);
+    super.show();
 
     this.starterSelectContainer.setVisible(true);
 

@@ -1,12 +1,12 @@
-import { Pokemon } from "#field/pokemon";
+import { PlayerPokemon } from "#field/pokemon";
 import type { FormModalConfig, InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
 import type { ModalConfig } from "#ui/modal-ui-handler";
 import i18next from "i18next";
 
-type RenameFormConfig = [FormModalConfig, Pokemon | string];
+type RenameFormConfig = [FormModalConfig, PlayerPokemon | string];
 
-export class RenameFormUiHandler extends FormModalUiHandler<RenameFormConfig> {
+export class RenameFormUiHandler extends FormModalUiHandler<any> {
   getModalTitle(_config?: ModalConfig): string {
     return i18next.t("menu:renamePokemon");
   }
@@ -37,10 +37,10 @@ export class RenameFormUiHandler extends FormModalUiHandler<RenameFormConfig> {
   }
 
   show(args: RenameFormConfig): boolean {
-    if (super.show(args)) {
+    if (super.show([args[0]] satisfies Parameters<FormModalUiHandler["show"]>[0])) {
       const config = args[0];
 
-      if (args[1] instanceof Pokemon) {
+      if (args[1] instanceof PlayerPokemon) {
         this.inputs[0].text = args[1].getNameToRender();
       } else {
         this.inputs[0].text = args[1];

@@ -25,7 +25,12 @@ const SINGLE_SHOP_ROW_YOFFSET = 12;
 const DOUBLE_SHOP_ROW_YOFFSET = 24;
 const OPTION_BUTTON_YPOSITION = -62;
 
-type ModifierSelectConfig = [player: boolean, ModifierTypeOption[], ModifierSelectCallback, rerrolCost: number];
+type ModifierSelectConfig = [
+  player: boolean,
+  ModifierTypeOption[]?,
+  (ModifierSelectCallback | null)?,
+  rerrolCost?: number,
+];
 
 export class ModifierSelectUiHandler extends AwaitableUiHandler {
   private modifierContainer: Phaser.GameObjects.Container;
@@ -167,7 +172,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     if (this.active) {
       if (args && args.length >= 3) {
         this.awaitingActionInput = true;
-        this.onActionInput = args[2];
+        this.onActionInput = args[2] ?? null;
       }
       this.moveInfoOverlay.active = this.moveInfoOverlayActive;
       return false;
@@ -212,11 +217,11 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     this.rerollButtonContainer.setPositionRelative(this.lockRarityButtonContainer, 0, canLockRarities ? -12 : 0);
 
-    this.rerollCost = args[3];
+    this.rerollCost = args[3] ?? 0;
 
     this.updateRerollCostText();
 
-    const typeOptions = args[1];
+    const typeOptions = args[1] ?? [];
     const hasShop = globalScene.gameMode.getShopStatus();
     const baseShopCost = new NumberHolder(globalScene.getWaveMoneyAmount(1));
     globalScene.applyModifier(HealShopCostModifier, true, baseShopCost);
@@ -267,7 +272,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.shopOptionsRows[row].push(option);
     }
 
-    const maxUpgradeCount = typeOptions.map(to => to.upgradeCount).reduce((max, current) => Math.max(current, max), 0);
+    const maxUpgradeCount = typeOptions?.map(to => to.upgradeCount).reduce((max, current) => Math.max(current, max), 0);
 
     /* Force updateModifiers without pokemonSpecificModifiers */
     globalScene.getModifierBar().updateModifiers(globalScene.modifiers, true);
@@ -395,7 +400,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
               updateCursorTarget();
             }
             this.awaitingActionInput = true;
-            this.onActionInput = args[2];
+            this.onActionInput = args[2] ?? null;
           });
         });
       });

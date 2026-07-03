@@ -63,21 +63,14 @@ type SummaryUiConfig =
       uiMode?: SummaryUiMode.DEFAULT,
       startPage?: Page | null | undefined,
       selectCallback?: (cursor: number) => void,
-      player?: boolean,
+      isPlayer?: boolean,
     ]
   | [
       pokemon: PlayerPokemon,
       uiMode: SummaryUiMode.LEARN_MOVE,
-      move?: Move,
+      move: Move,
       moveSelectCallback?: (cursor: number) => void,
-      player?: boolean,
-    ]
-  | [
-      pokemon: PlayerPokemon,
-      uiMode?: SummaryUiMode,
-      startPage?: Page | Move,
-      callback?: (cursor: number) => void,
-      player?: boolean,
+      isPlayer?: boolean,
     ];
 
 export class SummaryUiHandler extends UiHandler {
@@ -503,16 +496,16 @@ export class SummaryUiHandler extends UiHandler {
     this.genderText.setColor(getGenderColor(this.pokemon.getGender(true)));
     this.genderText.setShadowColor(getGenderColor(this.pokemon.getGender(true), true));
 
-    switch (this.summaryUiMode) {
+    switch (args[1]) {
       case SummaryUiMode.DEFAULT: {
-        const page = (args[2] as Page) ?? Page.PROFILE;
+        const page = args[2] ?? Page.PROFILE;
         this.hideMoveEffect(true);
         this.setCursor(page);
         this.selectCallback = args[3] ?? null;
         break;
       }
       case SummaryUiMode.LEARN_MOVE:
-        this.newMove = args[2] as Move;
+        this.newMove = args[2] ?? null;
         this.moveSelectFunction = args[3] ?? null;
 
         this.showMoveEffect(true);

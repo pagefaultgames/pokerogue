@@ -7,21 +7,15 @@ import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { GameData } from "#system/game-data";
 import type { AdminUiHandlerService, AdminUiHandlerServiceMode, SearchAccountResponse } from "#types/api";
-import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
+import type { FormModalConfig, InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
 import type { ModalConfig } from "#ui/modal-ui-handler";
 import { getTextColor } from "#ui/text";
 import { toTitleCase } from "#utils/strings";
 
-type AdminUiConfig = [
-  ModalConfig,
-  AdminMode,
-  // labels for doc
-  AdminResult?: SearchAccountResponse,
-  IsMessageError?: boolean,
-];
+type AdminUiConfig = [FormModalConfig, AdminMode, AdminResult?: SearchAccountResponse, IsMessageError?: boolean];
 
-export class AdminUiHandler extends FormModalUiHandler<AdminUiConfig> {
+export class AdminUiHandler extends FormModalUiHandler<any> {
   private adminMode: AdminMode;
   private adminResult: SearchAccountResponse;
   private config: ModalConfig;
@@ -136,7 +130,7 @@ export class AdminUiHandler extends FormModalUiHandler<AdminUiConfig> {
       .setColor(getTextColor(msgColor))
       .setShadowColor(getTextColor(msgColor, true));
 
-    if (!super.show(args)) {
+    if (!super.show([args[0]] satisfies Parameters<FormModalUiHandler["show"]>[0])) {
       return false;
     }
 

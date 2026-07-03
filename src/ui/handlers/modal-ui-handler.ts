@@ -11,14 +11,7 @@ export interface ModalConfig {
   fadeOut?: () => void;
 }
 
-function isModalConfig(obj): obj is ModalConfig {
-  return (
-    (obj !== null && typeof obj === "object" && Array.isArray(obj.buttonActions) && obj.fadeOut === undefined)
-    || typeof obj.fadeOut === "function"
-  );
-}
-
-export abstract class ModalUiHandler<Config = [ModalConfig]> extends UiHandler {
+export abstract class ModalUiHandler<C extends [ModalConfig] = [ModalConfig]> extends UiHandler {
   protected modalContainer: Phaser.GameObjects.Container;
   protected modalBg: Phaser.GameObjects.NineSlice;
   protected titleText: Phaser.GameObjects.Text;
@@ -104,14 +97,16 @@ export abstract class ModalUiHandler<Config = [ModalConfig]> extends UiHandler {
     this.modalContainer.add(buttonContainer);
   }
 
-  show(args: Config): boolean {
-    const config = args[0];
+  show(args: C): boolean {
+    const isModalConfig = args.length > 0 && "buttonActions" in args[0];
 
-    if (!isModalConfig(config)) {
+    if (!isModalConfig) {
       return false;
     }
 
-    super.show(args);
+    const config = args[0];
+
+    super.show();
     if (Object.hasOwn(config, "fadeOut") && typeof config.fadeOut === "function") {
       const [marginTop, marginRight, marginBottom, marginLeft] = this.getMargin();
 

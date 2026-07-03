@@ -11,7 +11,7 @@ import i18next from "i18next";
 
 type CancelFn = (success?: boolean) => boolean;
 
-interface BingdingUiConfig {
+interface BindingUiConfig {
   cancelHandler: CancelFn;
   target: MappingSettingName;
 }
@@ -133,7 +133,7 @@ export abstract class BaseBindingUiHandler extends UiHandler {
    * @param args - Arguments to be passed to the show method.
    * @returns `true` if successful.
    */
-  public override show(args: [BingdingUiConfig]): boolean {
+  public override show(args: [BindingUiConfig]): boolean {
     super.show(args);
     this.buttonPressed = null;
     this.timeLeftAutoClose = 5;

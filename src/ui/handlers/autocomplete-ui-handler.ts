@@ -21,7 +21,7 @@ export class AutoCompleteUiHandler extends BaseOptionSelectUiHandler {
 
     if (config.modalContainer && config.modalContainer instanceof Phaser.GameObjects.Container) {
       const { modalContainer } = config;
-      const show = super.show([config]);
+      const show = super.show(args);
       this.modalContainer = modalContainer;
       this.setupOptions();
 

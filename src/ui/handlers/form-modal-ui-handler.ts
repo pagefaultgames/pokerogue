@@ -13,7 +13,7 @@ export interface FormModalConfig extends ModalConfig {
   errorMessage?: string;
 }
 
-export abstract class FormModalUiHandler<Config = [FormModalConfig]> extends ModalUiHandler<Config> {
+export abstract class FormModalUiHandler<C extends [FormModalConfig] = [FormModalConfig]> extends ModalUiHandler {
   protected editing = false;
   protected inputContainers: Phaser.GameObjects.Container[] = [];
   protected inputs: InputText[] = [];
@@ -112,7 +112,7 @@ export abstract class FormModalUiHandler<Config = [FormModalConfig]> extends Mod
     }
   }
 
-  public override show(args: Config): boolean {
+  public override show(args: C): boolean {
     if (super.show(args)) {
       for (const ic of this.inputContainers) {
         ic.setActive(true).setVisible(true);

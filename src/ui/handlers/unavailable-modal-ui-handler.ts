@@ -12,7 +12,7 @@ import i18next from "i18next";
 
 type UnavailableModalConfig = [reconnectCallback: () => void];
 
-export class UnavailableModalUiHandler extends ModalUiHandler<UnavailableModalConfig> {
+export class UnavailableModalUiHandler extends ModalUiHandler<any> {
   private reconnectDuration: number;
   private reconnectCallback: () => void;
 
@@ -91,7 +91,7 @@ export class UnavailableModalUiHandler extends ModalUiHandler<UnavailableModalCo
       this.reconnectDuration = this.minTime;
       setTimeout(() => this.tryReconnect(), this.reconnectDuration);
 
-      return super.show([config] as unknown as UnavailableModalConfig);
+      return super.show([config] satisfies Parameters<ModalUiHandler["show"]>[0]);
     }
 
     return false;

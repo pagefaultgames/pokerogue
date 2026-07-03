@@ -2420,7 +2420,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                   form: starterAttributes.form,
                   female: starterAttributes.female,
                 };
-                ui.setOverlayMode(UiMode.POKEDEX_PAGE, this.lastSpecies, attributes, null, null, () => {
+                ui.setOverlayMode(UiMode.POKEDEX_PAGE, this.lastSpecies, attributes, null, () => {
                   if (this.lastSpecies) {
                     starterContainer = this.filteredStarterContainers[this.cursor];
                     const persistentStarterData = globalScene.gameData.starterData[this.lastSpecies.speciesId];

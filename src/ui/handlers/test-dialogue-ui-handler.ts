@@ -1,15 +1,15 @@
 import { UiMode } from "#enums/ui-mode";
-import { type PlayerPokemon, Pokemon } from "#field/pokemon";
+import { Pokemon } from "#field/pokemon";
 import type { OptionSelectItem } from "#ui/base-option-select-ui-handler";
 import type { FormModalConfig, InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
 import type { ModalConfig } from "#ui/modal-ui-handler";
 import i18next from "i18next";
 
-type TestDialogueUiConfig = [FormModalConfig, PlayerPokemon | string];
+type TestDialogueUiConfig = [FormModalConfig, Pokemon | string];
 
 /** Handler for the i18n testing menu used by the localization team. */
-export class TestDialogueUiHandler extends FormModalUiHandler<TestDialogueUiConfig> {
+export class TestDialogueUiHandler extends FormModalUiHandler<any> {
   keys: string[];
 
   setup() {
@@ -133,7 +133,7 @@ export class TestDialogueUiHandler extends FormModalUiHandler<TestDialogueUiConf
       }
     });
 
-    if (super.show(args)) {
+    if (super.show([args[0]] satisfies Parameters<FormModalUiHandler["show"]>[0])) {
       const config = args[0];
       this.inputs[0].resize(1150, 116);
       // TODO: Figure out what the type of `this.inputContainers.list` is

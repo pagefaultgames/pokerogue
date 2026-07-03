@@ -7,7 +7,7 @@ import i18next from "i18next";
 
 type SessionReloadModalConfig = [Local: boolean];
 
-export class SessionReloadModalUiHandler extends ModalUiHandler<SessionReloadModalConfig> {
+export class SessionReloadModalUiHandler extends ModalUiHandler<any> {
   private label: Phaser.GameObjects.Text;
 
   constructor(mode: UiMode | null = null) {
@@ -57,6 +57,6 @@ export class SessionReloadModalUiHandler extends ModalUiHandler<SessionReloadMod
       this.label.setText(i18next.t("gameData:reloadSaveDataLocal"));
     }
 
-    return super.show([config] as unknown as SessionReloadModalConfig);
+    return super.show([config] satisfies Parameters<ModalUiHandler["show"]>[0]);
   }
 }

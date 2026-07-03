@@ -20,6 +20,7 @@ export abstract class UiHandler {
   abstract setup(): void;
 
   /**
+   * UiHandler class:
    * @argument _args: Bypass arguments for extended classes
    */
   show(_args?: unknown): boolean {

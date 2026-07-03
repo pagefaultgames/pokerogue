@@ -17,8 +17,6 @@ import { fixedInt } from "#utils/common";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
-type MysteryEncounterConfig = [OptionSelectSettings];
-
 export class MysteryEncounterUiHandler extends UiHandler {
   private cursorContainer: Phaser.GameObjects.Container;
   private cursorObj?: Phaser.GameObjects.Image | undefined;
@@ -93,7 +91,7 @@ export class MysteryEncounterUiHandler extends UiHandler {
     this.dexProgressContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, 24, 28), Phaser.Geom.Rectangle.Contains);
   }
 
-  override show(args: MysteryEncounterConfig): boolean {
+  override show(args: [OptionSelectSettings?]): boolean {
     super.show();
 
     this.overrideSettings = args[0] ?? {};

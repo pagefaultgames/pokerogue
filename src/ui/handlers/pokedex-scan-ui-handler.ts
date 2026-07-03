@@ -1,7 +1,7 @@
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { UiMode } from "#enums/ui-mode";
-import { type PlayerPokemon, Pokemon } from "#field/pokemon";
+import { Pokemon } from "#field/pokemon";
 import type { OptionSelectItem } from "#ui/base-option-select-ui-handler";
 import { FilterTextRow } from "#ui/filter-text";
 import type { FormModalConfig, InputFieldConfig } from "#ui/form-modal-ui-handler";
@@ -9,9 +9,9 @@ import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
 import type { ModalConfig } from "#ui/modal-ui-handler";
 import i18next from "i18next";
 
-type PokedexScanUiConfig = [FormModalConfig, PlayerPokemon | string, FilterTextRow];
+type PokedexScanUiConfig = [FormModalConfig, Pokemon | string, FilterTextRow];
 
-export class PokedexScanUiHandler extends FormModalUiHandler<PokedexScanUiConfig> {
+export class PokedexScanUiHandler extends FormModalUiHandler<any> {
   keys: string[];
   reducedKeys: string[];
   parallelKeys: string[];
@@ -153,7 +153,7 @@ export class PokedexScanUiHandler extends FormModalUiHandler<PokedexScanUiConfig
       }
     });
 
-    if (super.show(args)) {
+    if (super.show([args[0]] satisfies Parameters<FormModalUiHandler["show"]>[0])) {
       const config = args[0];
       const label = this.formLabels[0];
 

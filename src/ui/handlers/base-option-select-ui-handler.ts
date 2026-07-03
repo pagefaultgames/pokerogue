@@ -34,7 +34,9 @@ export interface OptionSelectItem {
 const scrollUpLabel = "↑";
 const scrollDownLabel = "↓";
 
-export abstract class BaseOptionSelectUiHandler<Config = [OptionSelectConfig]> extends UiHandler {
+export abstract class BaseOptionSelectUiHandler<
+  C extends [OptionSelectConfig] = [OptionSelectConfig],
+> extends UiHandler {
   protected optionSelectContainer: Phaser.GameObjects.Container;
   protected optionSelectTextContainer: Phaser.GameObjects.Container;
   protected optionSelectBg: Phaser.GameObjects.NineSlice;
@@ -183,13 +185,17 @@ export abstract class BaseOptionSelectUiHandler<Config = [OptionSelectConfig]> e
     });
   }
 
-  public override show(args: Config): boolean {
+  public override show(args: C): boolean {
     const config = args[0];
-    if (!isOptionSelectConfig(config)) {
+
+    const isOptionSelectConfig =
+      typeof config === "object" && Object.hasOwn(config, "options") && config.options.length > 0;
+
+    if (!isOptionSelectConfig) {
       return false;
     }
 
-    super.show(args);
+    super.show();
     this.config = config;
 
     this.setupOptions();
@@ -431,8 +437,4 @@ export abstract class BaseOptionSelectUiHandler<Config = [OptionSelectConfig]> e
     }
     this.cursorObj = null;
   }
-}
-
-export function isOptionSelectConfig(obj): obj is OptionSelectConfig {
-  return typeof obj === "object" && Object.hasOwn(obj, "options") && obj.options.length > 0;
 }
