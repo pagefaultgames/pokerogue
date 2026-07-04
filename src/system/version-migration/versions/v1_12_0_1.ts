@@ -38,7 +38,7 @@ const fixDexData: SystemSaveMigrator = {
       const noDexData = dexEntry.caughtCount === 0 && dexEntry.hatchedCount === 0 && dexEntry.caughtAttr === 0n;
 
       if (hasStarterData && noDexData) {
-        console.warn("Missing dex data for %s (%d), creating backup data.");
+        console.warn("Missing dex data for %s (%d), creating backup data.", species, speciesId);
 
         data.dexData[speciesId] = {
           ...data.dexData[speciesId],

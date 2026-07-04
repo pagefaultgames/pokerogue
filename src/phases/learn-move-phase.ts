@@ -205,7 +205,9 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
       if (!pokemon.usedTMs) {
         pokemon.usedTMs = [];
       }
-      pokemon.usedTMs.push(this.moveId);
+      if (!pokemon.usedTMs.includes(this.moveId)) {
+        pokemon.usedTMs.push(this.moveId);
+      }
       globalScene.phaseManager.tryRemovePhase("SelectModifierPhase");
     } else if (this.learnMoveType === LearnMoveType.MEMORY) {
       if (this.cost === -1) {
