@@ -1,4 +1,5 @@
 import { EVOLVE_MOVE, FORGET_MOVE, RELEARN_MOVE } from "#app/constants";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { LearnMoveSituation } from "#enums/learn-move-situation";
 import { LearnableMoveSource } from "#enums/learnable-move-source";
 import type { MoveId } from "#enums/move-id";
