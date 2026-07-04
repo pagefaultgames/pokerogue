@@ -425,7 +425,7 @@ export class GameChallengesUiHandler extends UiHandler {
     super.show(args);
 
     if (this.tabMenu) {
-      this.tabMenu.setIndex(1);
+      this.tabMenu.setIndex(0);
       this.tabMenu.updateIcons();
     }
 
