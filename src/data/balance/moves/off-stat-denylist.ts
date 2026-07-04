@@ -183,6 +183,7 @@ const WORSE_OFFENSIVE_STAT_SPECIES_DENYLIST: Readonly<Partial<Record<SpeciesId, 
   [SpeciesId.SAWK]: DENY_SPECIAL_MOVES,
   [SpeciesId.KLAWF]: DENY_SPECIAL_MOVES,
   [SpeciesId.RAMPARDOS]: DENY_SPECIAL_MOVES,
+  [SpeciesId.CETITAN]: DENY_SPECIAL_MOVES,
 
   // Legendaries/Megas, can be more lax
   [SpeciesId.TAPU_BULU]: DENY_SPECIAL_MOVES,
