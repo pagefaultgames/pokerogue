@@ -1,6 +1,7 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
 import { GameManager } from "#test/framework/game-manager";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -33,6 +34,8 @@ describe("Abilities - Opportunist", () => {
 
     game.move.use(MoveId.SWORDS_DANCE);
     await game.toEndOfTurn();
-    expect(true).toEqual(true); // no loop if we got here
+
+    expect(game.field.getPlayerPokemon()).toHaveStatStage(Stat.ATK, 2);
+    expect(game.field.getEnemyPokemon()).toHaveStatStage(Stat.ATK, 2);
   });
 });

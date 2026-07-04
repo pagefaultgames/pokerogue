@@ -38,8 +38,6 @@ export class TouchControl {
    * Initialize touch controls by binding keys to buttons.
    */
   init() {
-    this.preventElementZoom(document.querySelector("#dpad"));
-    document.querySelectorAll(".apad-button").forEach(element => this.preventElementZoom(element as HTMLElement));
     // Select all elements with the 'data-key' attribute and bind keys to them
     for (const button of document.querySelectorAll("[data-key]")) {
       // @ts-expect-error - Bind the key to the button using the dataset key
@@ -173,39 +171,6 @@ export class TouchControl {
   }
 
   /**
-   * {@link https://stackoverflow.com/a/39778831/4622620|Source}
-   *
-   * Prevent zoom on specified element
-   * @param element
-   */
-  preventElementZoom(element: HTMLElement | null): void {
-    if (!element) {
-      return;
-    }
-    element.addEventListener("touchstart", (event: TouchEvent) => {
-      if (!(event.currentTarget instanceof HTMLElement)) {
-        return;
-      }
-
-      const currentTouchTimeStamp = event.timeStamp;
-      const previousTouchTimeStamp = Number(event.currentTarget.dataset.lastTouchTimeStamp) || currentTouchTimeStamp;
-      const timeStampDifference = currentTouchTimeStamp - previousTouchTimeStamp;
-      const fingers = event.touches.length;
-      event.currentTarget.dataset.lastTouchTimeStamp = String(currentTouchTimeStamp);
-
-      if (!timeStampDifference || timeStampDifference > 500 || fingers > 1) {
-        return;
-      } // not double-tap
-
-      event.preventDefault();
-
-      if (event.target instanceof HTMLElement) {
-        event.target.click();
-      }
-    });
-  }
-
-  /**
    * Deactivates all currently pressed keys.
    */
   deactivatePressedKey(): void {
@@ -217,6 +182,39 @@ export class TouchControl {
     }
     this.buttonLock = [];
   }
+}
+
+const doubleTapThresholdMillis = 500;
+
+/**
+ * {@link https://stackoverflow.com/a/39778831/4622620|Source}
+ *
+ * Installs a single document-level listener that suppresses the native double-tap-to-zoom
+ * gesture everywhere on the page, including elements added after this is called. Intended
+ * to be called once at startup.
+ */
+export function preventDoubleTapZoom(): void {
+  let lastTouchTimeStamp = 0;
+
+  document.addEventListener(
+    "touchstart",
+    (event: TouchEvent) => {
+      const currentTouchTimeStamp = event.timeStamp;
+      const timeStampDifference = currentTouchTimeStamp - lastTouchTimeStamp;
+      lastTouchTimeStamp = currentTouchTimeStamp;
+
+      if (!timeStampDifference || timeStampDifference > doubleTapThresholdMillis || event.touches.length > 1) {
+        return; // not a double-tap
+      }
+
+      event.preventDefault();
+
+      if (event.target instanceof HTMLElement) {
+        event.target.click();
+      }
+    },
+    { capture: true, passive: false },
+  );
 }
 
 /**
