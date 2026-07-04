@@ -10590,7 +10590,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       malePercent: 50,
       genderDiffs: false,
     }),
-    starter: SpeciesId.PIKACHU,
+    starter: SpeciesId.PICHU,
     evolutions: [],
     passives: AbilityId.TRANSISTOR,
     levelMoves: [

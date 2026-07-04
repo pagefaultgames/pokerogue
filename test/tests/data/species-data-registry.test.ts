@@ -138,4 +138,30 @@ describe("SpeciesDataRegistry", () => {
       }
     });
   });
+
+  describe("Stats", () => {
+    it("should have matching BST to the sum of base stats", () => {
+      for (const species of speciesDataRegistry.getAllSpecies()) {
+        // base species
+        const calculatedBST = species.baseStats.reduce((sum, stat) => sum + stat, 0);
+        expect
+          .soft(
+            species.baseTotal,
+            `Species ${SpeciesId[species.speciesId]} (${species.speciesId}) has baseTotal ${species.baseTotal} but sum of baseStats is ${calculatedBST}`,
+          )
+          .toBe(calculatedBST);
+
+        // forms
+        for (const form of species.forms) {
+          const calculatedFormBst = form.baseStats.reduce((sum, stat) => sum + stat, 0);
+          expect
+            .soft(
+              form.baseTotal,
+              `Form ${form.formKey} of species ${SpeciesId[species.speciesId]} (${species.speciesId}) has baseTotal ${form.baseTotal} but sum of baseStats is ${calculatedFormBst}`,
+            )
+            .toBe(calculatedFormBst);
+        }
+      }
+    });
+  });
 });
