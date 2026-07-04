@@ -271,6 +271,15 @@ const WORSE_OFFENSIVE_STAT_SPECIES_DENYLIST: Readonly<Partial<Record<SpeciesId, 
     2: DENY_PHYSICAL_MOVES, // Mega Charizard Y
     3: DENY_PHYSICAL_MOVES, // Gigantamax Charizard
   },
+  [SpeciesId.RAICHU]: {
+    1: DENY_SPECIAL_MOVES, // Mega Raichu X
+    2: DENY_PHYSICAL_MOVES, // Mega Raichu Y
+  },
+  [SpeciesId.MEWTWO]: {
+    0: DENY_PHYSICAL_MOVES,
+    1: DENY_SPECIAL_MOVES, // Mega Mewtwo X
+    2: DENY_PHYSICAL_MOVES, // Mega Mewtwo Y
+  },
 };
 
 /**
@@ -319,4 +328,5 @@ export const EXCLUDED_MOVES_FOR_WORSE_OFFENSIVE_STAT = new Set([
   MoveId.FREEZY_FROST,
   MoveId.TRAILBLAZE,
   MoveId.FLAME_CHARGE,
+  MoveId.FAKE_OUT,
 ]);
