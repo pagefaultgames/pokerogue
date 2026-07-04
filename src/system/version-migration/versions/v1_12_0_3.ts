@@ -95,7 +95,7 @@ function pullEggs(pullCount: number, ownedStarters: SpeciesId[]): EggData[] {
       await globalScene.ui.setOverlayMode(
         UiMode.ALERT_MODAL,
         i18next.t("migrators:eggCompensation", { eggCount: eggs.length }),
-        15000,
+        5000,
       );
     }
   });
