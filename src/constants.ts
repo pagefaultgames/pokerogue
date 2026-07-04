@@ -121,3 +121,6 @@ export const EVOLVE_MOVE = 0;
 
 /** Level of the daily boss */
 export const DAILY_BOSS_LEVEL = 75;
+
+/** Moves that are forgotten upon form change */
+export const FORGET_MOVE = -2;

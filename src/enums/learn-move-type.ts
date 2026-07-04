@@ -5,4 +5,6 @@ export enum LearnMoveType {
   MEMORY,
   /** For learning a move via TM */
   TM,
+  /** For automatically replacing a move upon form change */
+  FORM_CHANGE,
 }

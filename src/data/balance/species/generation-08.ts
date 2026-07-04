@@ -1,4 +1,4 @@
-import { EVOLVE_MOVE, RELEARN_MOVE } from "#app/constants";
+import { EVOLVE_MOVE, FORGET_MOVE, RELEARN_MOVE } from "#app/constants";
 import { EvoCondKey, EvolutionItem, SpeciesEvolution, SpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { GrowthRate } from "#data/exp";
 import {
@@ -8430,6 +8430,13 @@ export function initGenerationEight(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.RUSTED_SWORD),
         conditions: [],
       }),
+      new SpeciesFormChange({
+        speciesId: SpeciesId.ZACIAN,
+        preFormKey: "crowned",
+        evoFormKey: "hero-of-many-battles",
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.RUSTED_SWORD, false),
+        conditions: [],
+      }),
     ],
     eggTier: EggTier.LEGENDARY,
     passives: {
@@ -8457,6 +8464,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
     ],
     formLevelMoves: {
       crowned: [[EVOLVE_MOVE, MoveId.BEHEMOTH_BLADE]],
+      "hero-of-many-battles": [[EVOLVE_MOVE, MoveId.IRON_HEAD]],
     },
     tms: [
       MoveId.SWORDS_DANCE,
@@ -8605,6 +8613,13 @@ export function initGenerationEight(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.RUSTED_SHIELD),
         conditions: [],
       }),
+      new SpeciesFormChange({
+        speciesId: SpeciesId.ZAMAZENTA,
+        preFormKey: "crowned",
+        evoFormKey: "hero-of-many-battles",
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.RUSTED_SHIELD, false),
+        conditions: [],
+      }),
     ],
     eggTier: EggTier.LEGENDARY,
     passives: {
@@ -8631,6 +8646,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
     ],
     formLevelMoves: {
       crowned: [[EVOLVE_MOVE, MoveId.BEHEMOTH_BASH]],
+      "hero-of-many-battles": [[EVOLVE_MOVE, MoveId.IRON_HEAD]],
     },
     tms: [
       MoveId.BODY_SLAM,
@@ -9909,6 +9925,20 @@ export function initGenerationEight(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.SHADOW_REINS_OF_UNITY),
         conditions: [getSpeciesDependentFormChangeCondition(SpeciesId.SPECTRIER)],
       }),
+      new SpeciesFormChange({
+        speciesId: SpeciesId.CALYREX,
+        preFormKey: "ice",
+        evoFormKey: "",
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.ICY_REINS_OF_UNITY, false),
+        conditions: [],
+      }),
+      new SpeciesFormChange({
+        speciesId: SpeciesId.CALYREX,
+        preFormKey: "shadow",
+        evoFormKey: "",
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.SHADOW_REINS_OF_UNITY, false),
+        conditions: [],
+      }),
     ],
     eggTier: EggTier.LEGENDARY,
     passives: {
@@ -9935,6 +9965,9 @@ export function initGenerationEight(): SpeciesDataMapConfig {
     ],
     formLevelMoves: {
       "": [
+        [FORGET_MOVE, MoveId.GLACIAL_LANCE],
+        [FORGET_MOVE, MoveId.ASTRAL_BARRAGE],
+        [40, MoveId.PSYCHIC_TERRAIN],
         [1, MoveId.POUND],
         [36, MoveId.ZEN_HEADBUTT],
         [48, MoveId.ENERGY_BALL],
@@ -9944,6 +9977,8 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       ice: [
         [RELEARN_MOVE, MoveId.TORMENT],
         [EVOLVE_MOVE, MoveId.GLACIAL_LANCE],
+        [1, MoveId.SWORDS_DANCE],
+        [1, MoveId.STOMP],
         [1, MoveId.DOUBLE_KICK],
         [1, MoveId.TACKLE],
         [1, MoveId.TAIL_WHIP],
@@ -9967,6 +10002,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       shadow: [
         [RELEARN_MOVE, MoveId.CONFUSE_RAY],
         [EVOLVE_MOVE, MoveId.ASTRAL_BARRAGE],
+        [1, MoveId.STOMP],
         [1, MoveId.DOUBLE_KICK],
         [1, MoveId.TACKLE],
         [1, MoveId.TAIL_WHIP],

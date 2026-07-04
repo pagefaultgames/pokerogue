@@ -14565,6 +14565,20 @@ export function initGenerationFive(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.LIGHT_STONE),
         conditions: [getSpeciesDependentFormChangeCondition(SpeciesId.RESHIRAM)],
       }),
+      new SpeciesFormChange({
+        speciesId: SpeciesId.KYUREM,
+        preFormKey: "black",
+        evoFormKey: "",
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.DARK_STONE, false),
+        conditions: [getSpeciesDependentFormChangeCondition(SpeciesId.ZEKROM)],
+      }),
+      new SpeciesFormChange({
+        speciesId: SpeciesId.KYUREM,
+        preFormKey: "white",
+        evoFormKey: "",
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.LIGHT_STONE, false),
+        conditions: [getSpeciesDependentFormChangeCondition(SpeciesId.RESHIRAM)],
+      }),
     ],
     eggTier: EggTier.LEGENDARY,
     passives: {
@@ -14591,16 +14605,16 @@ export function initGenerationFive(): SpeciesDataMapConfig {
     ],
     formLevelMoves: {
       "": [
-        [43, MoveId.SCARY_FACE],
-        [50, MoveId.GLACIATE],
+        [EVOLVE_MOVE, MoveId.SCARY_FACE],
+        [EVOLVE_MOVE, MoveId.GLACIATE],
       ],
       black: [
-        [43, MoveId.FUSION_BOLT],
-        [50, MoveId.FREEZE_SHOCK],
+        [EVOLVE_MOVE, MoveId.FUSION_BOLT],
+        [EVOLVE_MOVE, MoveId.FREEZE_SHOCK],
       ],
       white: [
-        [43, MoveId.FUSION_FLARE],
-        [50, MoveId.ICE_BURN],
+        [EVOLVE_MOVE, MoveId.FUSION_FLARE],
+        [EVOLVE_MOVE, MoveId.ICE_BURN],
       ],
     },
     tms: [

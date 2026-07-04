@@ -9748,6 +9748,13 @@ export function initGenerationSix(): SpeciesDataMapConfig {
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.PRISON_BOTTLE),
         conditions: [],
       }),
+      new SpeciesFormChange({
+        speciesId: SpeciesId.HOOPA,
+        preFormKey: "unbound",
+        evoFormKey: "",
+        trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.PRISON_BOTTLE, false),
+        conditions: [],
+      }),
     ],
     eggTier: EggTier.EPIC,
     passives: {
@@ -9776,8 +9783,18 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       [64, MoveId.NASTY_PLOT],
     ],
     formLevelMoves: {
-      "": [[60, MoveId.HYPERSPACE_HOLE]],
-      unbound: [[60, MoveId.HYPERSPACE_FURY]],
+      "": [
+        [EVOLVE_MOVE, MoveId.HYPERSPACE_HOLE],
+        [35, MoveId.PHANTOM_FORCE],
+        [46, MoveId.ZEN_HEADBUTT],
+        [55, MoveId.SHADOW_BALL],
+        [68, MoveId.NASTY_PLOT],
+      ],
+      unbound: [
+        [EVOLVE_MOVE, MoveId.HYPERSPACE_FURY],
+        [46, MoveId.KNOCK_OFF],
+        [55, MoveId.DARK_PULSE],
+      ],
     },
     tms: [
       MoveId.FIRE_PUNCH,

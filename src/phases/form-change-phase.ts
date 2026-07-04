@@ -1,10 +1,15 @@
 import type { Animation } from "#app/animations";
+import { EVOLVE_MOVE, FORGET_MOVE } from "#app/constants";
+import { formChangeSignatureMoves } from "#app/data/form-change-signature-moves";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { getSpeciesFormChangeMessage } from "#data/form-change-triggers";
 import type { SpeciesFormChange } from "#data/pokemon-forms";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { LearnMoveSituation } from "#enums/learn-move-situation";
+import { LearnMoveType } from "#enums/learn-move-type";
+import { MoveId } from "#enums/move-id";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
@@ -17,6 +22,7 @@ export class FormChangePhase extends EvolutionPhase {
   public readonly phaseName = "FormChangePhase";
   private formChange: SpeciesFormChange;
   private modal: boolean;
+  private preFormMoveIds: number[] = [];
 
   constructor(pokemon: PlayerPokemon, formChange: SpeciesFormChange, modal: boolean) {
     super(pokemon, null, 0);
@@ -114,6 +120,8 @@ export class FormChangePhase extends EvolutionPhase {
     this.pokemonEvoSprite.setVisible(true);
     globalScene.animations.doCircleInward(this.evolutionBaseBg, this.evolutionContainer);
     globalScene.time.delayedCall(900, () => {
+      this.preFormMoveIds = this.pokemon.moveset.map(m => m?.moveId ?? -1);
+
       this.pokemon.changeForm(this.formChange).then(() => {
         if (!this.modal) {
           globalScene.phaseManager.unshiftNew("EndEvolutionPhase");
@@ -195,6 +203,62 @@ export class FormChangePhase extends EvolutionPhase {
 
   end(): void {
     this.pokemon.findAndRemoveTags(t => t.tagType === BattlerTagType.AUTOTOMIZED);
+
+    const forgetMoves = this.pokemon
+      .getLevelMoves(1, true, false, false, LearnMoveSituation.EVOLUTION)
+      .filter(lm => lm[0] === FORGET_MOVE);
+
+    for (const fm of forgetMoves) {
+      const moveId = fm[1];
+      const moveIndex = this.pokemon.moveset.findIndex(m => m?.moveId === moveId);
+      if (moveIndex !== -1) {
+        this.pokemon.moveset.splice(moveIndex, 1);
+      }
+    }
+
+    // For cases where the Pokemon has no moves left after forgetting
+    if (forgetMoves.length > 0 && this.pokemon.moveset.length === 0) {
+      globalScene.phaseManager.unshiftNew(
+        "LearnMovePhase",
+        globalScene.getPlayerParty().indexOf(this.pokemon),
+        MoveId.CONFUSION,
+        LearnMoveType.FORM_CHANGE,
+      );
+    }
+
+    // After form change, checks if there are any signature moves to be learned
+    const levelMoves = this.pokemon
+      .getLevelMoves(1, true, false, false, LearnMoveSituation.EVOLUTION)
+      .filter(lm => lm[0] === EVOLVE_MOVE);
+
+    const formRules = formChangeSignatureMoves[this.pokemon.species.speciesId]?.[this.pokemon.getFormKey()] ?? [];
+
+    for (const lm of levelMoves) {
+      const moveId = lm[1];
+      const alreadyKnows = this.pokemon.moveset.some(m => m?.moveId === moveId);
+      if (!alreadyKnows) {
+        const rules = formRules.filter(r => r.learn === moveId);
+
+        const replaceMoveId =
+          rules.map(r => r.replace).find(move => move !== undefined && this.preFormMoveIds.includes(move)) ?? undefined;
+
+        const hasExplicitReplace = rules.some(r => r.replace !== undefined);
+
+        if (hasExplicitReplace && replaceMoveId === undefined) {
+          continue;
+        }
+
+        globalScene.phaseManager.unshiftNew(
+          "LearnMovePhase",
+          globalScene.getPlayerParty().indexOf(this.pokemon),
+          moveId,
+          LearnMoveType.FORM_CHANGE,
+          -1,
+          replaceMoveId,
+        );
+      }
+    }
+
     if (this.modal) {
       globalScene.ui.revertMode().then(() => {
         if (globalScene.ui.getMode() === UiMode.PARTY) {
