@@ -240,11 +240,11 @@ export class FormChangePhase extends EvolutionPhase {
         const rules = formRules.filter(r => r.learn === moveId);
 
         const replaceMoveId =
-          rules.map(r => r.replace).find(move => move !== undefined && this.preFormMoveIds.includes(move)) ?? null;
+          rules.map(r => r.replace).find(move => move !== undefined && this.preFormMoveIds.includes(move)) ?? undefined;
 
         const hasExplicitReplace = rules.some(r => r.replace !== undefined);
 
-        if (hasExplicitReplace && replaceMoveId === null) {
+        if (hasExplicitReplace && replaceMoveId === undefined) {
           continue;
         }
 

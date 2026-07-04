@@ -2,10 +2,13 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 
 export interface FormChangeSignatureMove {
+  /** The move that will be learnt upon evolving. */
   learn: MoveId;
+  /** The move that will be replaced upon evolving, if any. */
   replace?: MoveId;
 }
 
+/** Object containing all signature moves learnt or lost when changing between forms. */
 export const formChangeSignatureMoves: Partial<Record<SpeciesId, Partial<Record<string, FormChangeSignatureMove[]>>>> =
   {
     [SpeciesId.ZAMAZENTA]: {

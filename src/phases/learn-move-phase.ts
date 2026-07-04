@@ -21,14 +21,14 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   private messageMode: UiMode;
   private readonly learnMoveType: LearnMoveType;
   private readonly cost: number;
-  private readonly replaceMoveId: MoveId | null;
+  private readonly replaceMoveId: MoveId | undefined;
 
   constructor(
     partyMemberIndex: number,
     moveId: MoveId,
     learnMoveType: LearnMoveType = LearnMoveType.LEARN_MOVE,
     cost = -1,
-    replaceMoveId: MoveId | null = null,
+    replaceMoveId?: MoveId,
   ) {
     super(partyMemberIndex);
 
@@ -61,10 +61,11 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
         globalScene.ui.getHandler() instanceof EvolutionSceneUiHandler ? UiMode.EVOLUTION_SCENE : UiMode.MESSAGE;
       globalScene.ui.setMode(this.messageMode);
 
-      const replaceIndex =
-        this.replaceMoveId === null ? -1 : currentMoveset.findIndex(m => m?.moveId === this.replaceMoveId);
-      const targetIndex = replaceIndex === -1 ? (currentMoveset.length < 4 ? currentMoveset.length : -1) : replaceIndex;
-      if (targetIndex === -1) {
+      const foundIndex = currentMoveset.findIndex(m => m?.moveId === this.replaceMoveId);
+      const replaceIndex = this.replaceMoveId === undefined || foundIndex === -1 ? undefined : foundIndex;
+      const targetIndex = replaceIndex ?? (currentMoveset.length < 4 ? currentMoveset.length : undefined);
+
+      if (targetIndex === undefined) {
         this.replaceMoveCheck(move, pokemon);
       } else {
         this.learnMove(targetIndex, move, pokemon);
