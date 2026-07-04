@@ -206,7 +206,7 @@ function applyMigrators(migrators: readonly SaveMigrator[], data: SaveData, save
     const isMigratorVersionHigher = compareVersions(saveVersion, migrator.version) === -1;
 
     if (isMigratorVersionHigher) {
-      const migratorNameVersion = `${migrator.name}-${migrator.version}`;
+      const migratorNameVersion = `${migrator.version}-${migrator.name}`;
       const hasAppliedMigratorsField = appliedMigratorsExists(data);
       let applyMigrator = true;
 
