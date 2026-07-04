@@ -21,42 +21,42 @@ import { getStarterValueFriendshipCap, TRAINER_MAX_FRIENDSHIP_WAVE, TRAINER_MIN_
 import type { SuppressAbilitiesTag } from "#data/arena-tag";
 import { NoCritTag, WeakenMoveScreenTag } from "#data/arena-tag";
 import {
-    AutotomizedTag,
-    BattlerTag,
-    type BattlerTagFromType,
-    CritBoostTag,
-    EncoreTag,
-    ExposedTag,
-    GroundedTag,
-    getBattlerTag,
-    HighestStatBoostTag,
-    MoveRestrictionBattlerTag,
-    PowerTrickTag,
-    SemiInvulnerableTag,
-    SubstituteTag,
-    TarShotTag,
-    TrappedTag,
-    TypeImmuneTag,
+  AutotomizedTag,
+  BattlerTag,
+  type BattlerTagFromType,
+  CritBoostTag,
+  EncoreTag,
+  ExposedTag,
+  GroundedTag,
+  getBattlerTag,
+  HighestStatBoostTag,
+  MoveRestrictionBattlerTag,
+  PowerTrickTag,
+  SemiInvulnerableTag,
+  SubstituteTag,
+  TarShotTag,
+  TrappedTag,
+  TypeImmuneTag,
 } from "#data/battler-tags";
 import { getDailyEventSeedBoss, isDailyForcedWaveHiddenAbility } from "#data/daily-seed/daily-run";
 import { isDailyEventSeed, isDailyFinalBoss } from "#data/daily-seed/daily-seed-utils";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import {
-    SpeciesFormChangeActiveTrigger,
-    SpeciesFormChangeLapseTeraTrigger,
-    SpeciesFormChangeMoveLearnedTrigger,
-    SpeciesFormChangePostMoveTrigger,
+  SpeciesFormChangeActiveTrigger,
+  SpeciesFormChangeLapseTeraTrigger,
+  SpeciesFormChangeMoveLearnedTrigger,
+  SpeciesFormChangePostMoveTrigger,
 } from "#data/form-change-triggers";
 import { Gender } from "#data/gender";
 import { getNatureStatMultiplier } from "#data/nature";
 import {
-    CustomPokemonData,
-    PokemonBattleData,
-    PokemonSummonData,
-    PokemonTempSummonData,
-    PokemonTurnData,
-    PokemonWaveData,
+  CustomPokemonData,
+  PokemonBattleData,
+  PokemonSummonData,
+  PokemonTempSummonData,
+  PokemonTurnData,
+  PokemonWaveData,
 } from "#data/pokemon-data";
 import type { SpeciesFormChange } from "#data/pokemon-forms";
 import type { PokemonSpeciesForm } from "#data/pokemon-species";
@@ -95,38 +95,38 @@ import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import {
-    BATTLE_STATS,
-    type BattleStat,
-    EFFECTIVE_STATS,
-    type EffectiveStat,
-    PERMANENT_STATS,
-    type PermanentStat,
-    Stat,
+  BATTLE_STATS,
+  type BattleStat,
+  EFFECTIVE_STATS,
+  type EffectiveStat,
+  PERMANENT_STATS,
+  type PermanentStat,
+  Stat,
 } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import type { TrainerSlot } from "#enums/trainer-slot";
 import { VolumeSetting } from "#enums/volume-setting";
 import { WeatherType } from "#enums/weather-type";
 import {
-    BaseStatModifier,
-    CritBoosterModifier,
-    EnemyDamageBoosterModifier,
-    EnemyDamageReducerModifier,
-    EnemyFusionChanceModifier,
-    EvoTrackerModifier,
-    HiddenAbilityRateBoosterModifier,
-    PokemonBaseStatFlatModifier,
-    PokemonBaseStatTotalModifier,
-    PokemonFriendshipBoosterModifier,
-    PokemonHeldItemModifier,
-    PokemonIncrementingStatModifier,
-    PokemonMultiHitModifier,
-    PokemonNatureWeightModifier,
-    ShinyRateBoosterModifier,
-    StatBoosterModifier,
-    SurviveDamageModifier,
-    TempCritBoosterModifier,
-    TempStatStageBoosterModifier,
+  BaseStatModifier,
+  CritBoosterModifier,
+  EnemyDamageBoosterModifier,
+  EnemyDamageReducerModifier,
+  EnemyFusionChanceModifier,
+  EvoTrackerModifier,
+  HiddenAbilityRateBoosterModifier,
+  PokemonBaseStatFlatModifier,
+  PokemonBaseStatTotalModifier,
+  PokemonFriendshipBoosterModifier,
+  PokemonHeldItemModifier,
+  PokemonIncrementingStatModifier,
+  PokemonMultiHitModifier,
+  PokemonNatureWeightModifier,
+  ShinyRateBoosterModifier,
+  StatBoosterModifier,
+  SurviveDamageModifier,
+  TempCritBoosterModifier,
+  TempStatStageBoosterModifier,
 } from "#modifiers/modifier";
 import { applyMoveAttrs } from "#moves/apply-attrs";
 import type { HitsTagAttr } from "#moves/move";
@@ -142,9 +142,9 @@ import { awardRibbonsToSpeciesLine } from "#system/ribbons/ribbon-methods";
 import type { AbAttrMap, AbAttrString, TypeMultiplierAbAttrParams } from "#types/ability-types";
 import type { Constructor } from "#types/common";
 import type {
-    GetAttackDamageParams,
-    GetAttackTypeEffectivenessParams,
-    GetBaseDamageParams,
+  GetAttackDamageParams,
+  GetAttackTypeEffectivenessParams,
+  GetBaseDamageParams,
 } from "#types/damage-params";
 import type { DamageCalculationResult, DamageResult } from "#types/damage-result";
 import type { Move } from "#types/move-types";
@@ -161,16 +161,16 @@ import { coerceArray } from "#utils/array";
 import { applyChallenges } from "#utils/challenge-utils";
 import { argbFromRgba, deltaRgb, rgbaFromArgb, rgbaToInt, rgbHexToRgba, rgbToHsv } from "#utils/color-utils";
 import {
-    BooleanHolder,
-    fixedInt,
-    getIvsFromId,
-    isBetween,
-    NumberHolder,
-    randSeedFloat,
-    randSeedInt,
-    randSeedIntRange,
-    randSeedItem,
-    toDmgValue,
+  BooleanHolder,
+  fixedInt,
+  getIvsFromId,
+  isBetween,
+  NumberHolder,
+  randSeedFloat,
+  randSeedInt,
+  randSeedIntRange,
+  randSeedItem,
+  toDmgValue,
 } from "#utils/common";
 import { calculateBossSegmentDamage } from "#utils/damage";
 import { getEnumValues } from "#utils/enums";
