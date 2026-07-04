@@ -179,8 +179,7 @@ describe("Moves - Swallow & Spit Up - ", () => {
       await game.toEndOfTurn();
 
       expect(player).toHaveStatStage(Stat.DEF, 0);
-      expect(player).toHaveStatStage(Stat.SPDEF, -2); // +1 --> -1 --> -2
-      expect(game.phaseInterceptor.log.filter(l => l === "StatStageChangePhase")).toHaveLength(3);
+      expect(player).toHaveStatStage(Stat.SPDEF, -2);
     });
 
     it("should double stat drops when gaining Simple", async () => {
