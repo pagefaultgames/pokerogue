@@ -191,6 +191,10 @@ function sortMigrators(migrators: SaveMigrator[]): void {
   migrators.sort((a, b) => compareVersions(a.version, b.version));
 }
 
+function appliedMigratorsExists(data: SaveData): data is { appliedMigrators: AppliedMigrators[] } {
+  return "appliedMigrators" in data && Array.isArray(data.appliedMigrators);
+}
+
 /**
  * Applies version migrators to the player's save data.
  * @param migrators - The {@linkcode SaveMigrator}s to be applied
@@ -200,13 +204,26 @@ function sortMigrators(migrators: SaveMigrator[]): void {
 function applyMigrators(migrators: readonly SaveMigrator[], data: SaveData, saveVersion: string): void {
   for (const migrator of migrators) {
     const isMigratorVersionHigher = compareVersions(saveVersion, migrator.version) === -1;
+
     if (isMigratorVersionHigher) {
-      migrator.migrate(data as any);
-      if ("appliedMigrators" in data && Array.isArray(data.appliedMigrators)) {
-        (data.appliedMigrators as AppliedMigrators[]).push({
-          name: `${migrator.name}-${migrator.version}`,
-          timestamp: Date.now(),
-        });
+      const migratorNameVersion = `${migrator.name}-${migrator.version}`;
+      const hasAppliedMigratorsField = appliedMigratorsExists(data);
+      let applyMigrator = true;
+
+      if (hasAppliedMigratorsField) {
+        for (const appliedMigrator of data.appliedMigrators) {
+          if (appliedMigrator.name === migratorNameVersion) {
+            applyMigrator = false;
+            break;
+          }
+        }
+      }
+      if (applyMigrator) {
+        migrator.migrate(data as any);
+
+        if (hasAppliedMigratorsField) {
+          data.appliedMigrators.push({ name: migratorNameVersion, timestamp: Date.now() });
+        }
       }
     }
   }
