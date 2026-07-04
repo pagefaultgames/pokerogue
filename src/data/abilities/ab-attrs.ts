@@ -5711,8 +5711,8 @@ class ForceSwitchOutHelper {
         });
       }
       /*
-       * For non-wild battles, it checks if the opposing party has any available Pokémon to switch in.
-       * If yes, the Pokémon leaves the field and a new SwitchPhase is initiated.
+       * For wild Pokémon battles, the Pokémon will flee if the conditions are met (`waveIndex` and double battles).
+       * It will not flee if it is a Mystery Encounter with fleeing disabled (checked in `getSwitchOutCondition()`) or if it is a wave 10x wild boss
        */
     } else if (globalScene.currentBattle.battleType === BattleType.WILD) {
       const allyPokemon = switchOutTarget.getAlly();
