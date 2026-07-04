@@ -5867,7 +5867,7 @@ export class PlayerPokemon extends Pokemon {
    * Get all TMs compatible with this Pokémon. Includes TMs from its fused species.
    * @returns An array of all compatible TMs
    */
-  getCompatibleTms(excludeKnown = false, excludeLevelUp = false): MoveId[] {
+  getCompatibleTms(excludeKnown = false, excludeLevelUp = false, excludeUsedTMs = false): MoveId[] {
     const tms = new Set(this.species.getTms(this.getFormKey()));
     if (this.fusionSpecies) {
       this.fusionSpecies.getTms(this.getFusionFormKey() ?? undefined).forEach(tm => tms.add(tm));
@@ -5877,6 +5877,9 @@ export class PlayerPokemon extends Pokemon {
     }
     if (excludeLevelUp) {
       this.getLevelMoves(undefined, true, false, true).forEach(lm => tms.delete(lm[1]));
+    }
+    if (excludeUsedTMs) {
+      this.usedTMs?.forEach(moveId => tms.delete(moveId));
     }
 
     return Array.from(tms);
