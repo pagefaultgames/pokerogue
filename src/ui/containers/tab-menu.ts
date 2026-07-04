@@ -64,7 +64,7 @@ export class TabMenu extends Phaser.GameObjects.Container {
 
   public updateIcons(): void {
     for (const settingName of Object.keys(this.navigationIcons)) {
-      if (specialIconKeys && specialIconKeys.includes(settingName)) {
+      if (specialIconKeys?.includes(settingName)) {
         this.navigationIcons[settingName].setTexture("keyboard").setFrame(specialIcons[settingName]).setAlpha(1);
         continue;
       }
