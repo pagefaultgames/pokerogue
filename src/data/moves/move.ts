@@ -2580,20 +2580,15 @@ export class RestAttr extends HealAttr {
  */
 export class VariableHealAttr extends HealAttr {
   /** A lambda function yielding the amount of HP to heal. */
-  private healFunc: (user: Pokemon, target: Pokemon, move: Move) => number;
+  private healFunc: (user: Pokemon) => number;
 
-  constructor(
-    healFunc: (user: Pokemon, target: Pokemon, move: Move) => number,
-    showAnim = false,
-    selfTarget = true,
-    failOnFullHp = true,
-  ) {
+  constructor(healFunc: (user: Pokemon) => number, showAnim = false, selfTarget = true, failOnFullHp = true) {
     super(1, showAnim, selfTarget, failOnFullHp);
     this.healFunc = healFunc;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, _args: any[]): boolean {
-    this.healRatio = this.healFunc(user, target, move);
+    this.healRatio = this.healFunc(user);
     return super.apply(user, target, move, _args);
   }
 }
@@ -9058,12 +9053,9 @@ const attackedByItemMessageFunc = (_user: Pokemon, target: Pokemon, _move: Move)
   return message;
 };
 
-const sunnyHealRatioFunc = (): number => {
-  if (globalScene.arena.weather?.isEffectSuppressed()) {
-    return 1 / 2;
-  }
-
-  switch (globalScene.arena.weatherType) {
+const sunnyHealRatioFunc = (user: Pokemon): number => {
+  const weatherType = getEffectiveWeatherForMove(user);
+  switch (weatherType) {
     case WeatherType.SUNNY:
     case WeatherType.HARSH_SUN:
       return 2 / 3;
@@ -9075,17 +9067,15 @@ const sunnyHealRatioFunc = (): number => {
     case WeatherType.FOG:
       return 1 / 4;
     case WeatherType.STRONG_WINDS:
-    default:
+    case WeatherType.NONE:
       return 1 / 2;
   }
+
+  weatherType satisfies never;
 };
 
-const shoreUpHealRatioFunc = (): number => {
-  if (globalScene.arena.weather?.isEffectSuppressed()) {
-    return 1 / 2;
-  }
-
-  return globalScene.arena.weatherType === WeatherType.SANDSTORM ? 2 / 3 : 1 / 2;
+const shoreUpHealRatioFunc = (user: Pokemon): number => {
+  return getEffectiveWeatherForMove(user) === WeatherType.SANDSTORM ? 2 / 3 : 1 / 2;
 };
 
 const swallowHealFunc = (user: Pokemon): number => {
