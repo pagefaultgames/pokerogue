@@ -62,7 +62,12 @@ export abstract class Challenge {
   public get ribbonAwarded(): RibbonFlag {
     return 0n as RibbonFlag;
   }
+
+  /**
+   * The category of the challenge for grouping in the UI.
+   */
   public abstract get category(): ChallengeCategory;
+
   /**
    * @param id - The enum value for the challenge
    */
