@@ -8,6 +8,7 @@ import { MoveCategory } from "#enums/move-category";
 import { MoveUseMode } from "#enums/move-use-mode";
 import { PokemonType } from "#enums/pokemon-type";
 import { TextStyle } from "#enums/text-style";
+import { TypeHints } from "#enums/type-hints";
 import { UiMode } from "#enums/ui-mode";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import type { PokemonMove } from "#moves/pokemon-move";
@@ -371,7 +372,7 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
    * @returns A color or undefined if the default color should be used
    */
   private getMoveColor(pokemon: Pokemon, pokemonMove: PokemonMove): string | undefined {
-    if (!globalScene.typeHints) {
+    if (globalScene.typeHints === TypeHints.OFF) {
       return;
     }
 
@@ -396,7 +397,11 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
         if (pokemonMove.getMove().category === MoveCategory.STATUS && effectiveness !== 0) {
           return;
         }
-        return getTypeDamageMultiplierColor(effectiveness ?? 0, "offense");
+        return getTypeDamageMultiplierColor(
+          effectiveness ?? 0,
+          "offense",
+          globalScene.typeHints === TypeHints.HIGH_CONTRAST,
+        );
       });
 
     return moveColors[0];
