@@ -153,10 +153,10 @@ export class GameChallengesUiHandler extends UiHandler {
     this.startText.setPositionRelative(this.startBg, (this.startBg.width - this.startText.displayWidth) / 2, 4);
 
     this.startCursor = globalScene.add
-      .nineslice(0, 0, "summary_moves_cursor", undefined, descriptionBg.width - 8, 16, 1, 1, 1, 1)
+      .nineslice(0, 0, "summary_moves_cursor", undefined, this.optionsWidth - 8, 16, 1, 1, 1, 1)
       .setName("9s-start-cursor")
       .setOrigin(0)
-      .setPositionRelative(this.startBg, 4, 5)
+      .setPositionRelative(this.startBg, 4, 4)
       .setVisible(false);
 
     const resetText = addTextObject(0, 0, i18next.t("settings:reset"), TextStyle.SETTINGS_LABEL);
@@ -259,7 +259,7 @@ export class GameChallengesUiHandler extends UiHandler {
     this.descriptionScrollTween = globalScene.tweens.add({
       targets: this.descriptionText,
       delay: 3200,
-      hold: 3200,
+      hold: 5000,
       repeatDelay: 3200,
       repeat: -1,
       yoyo: true,
@@ -425,7 +425,7 @@ export class GameChallengesUiHandler extends UiHandler {
     super.show(args);
 
     if (this.tabMenu) {
-      this.tabMenu.setIndex(1);
+      this.tabMenu.setIndex(0);
       this.tabMenu.updateIcons();
     }
 
