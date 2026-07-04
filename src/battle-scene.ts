@@ -94,7 +94,7 @@ import { hasExpSprite } from "#sprites/sprite-utils";
 import type { Variant } from "#sprites/variant";
 import { clearVariantData, variantData } from "#sprites/variant";
 import type { Achv } from "#system/achv";
-import { achvs, HeldItemAchv, MoneyAchv } from "#system/achv";
+import { achvs, MoneyAchv } from "#system/achv";
 import { GameData } from "#system/game-data";
 import { initGameSpeed } from "#system/game-speed";
 import type { PokemonData } from "#system/pokemon-data";
@@ -2417,23 +2417,6 @@ export class BattleScene extends SceneBase {
 
     reward.apply(params);
     return true;
-  }
-
-  // TODO: This is completely unused
-  addHeldItem(heldItemId: HeldItemId, pokemon: Pokemon, amount = 1, playSound?: boolean, ignoreUpdate?: boolean) {
-    pokemon.heldItemManager.add(heldItemId, amount);
-    if (!ignoreUpdate) {
-      this.updateItems(pokemon.isPlayer());
-    }
-    // TODO: Held items don't have sound names...?
-    const soundName = allHeldItems[heldItemId].soundName;
-    if (playSound) {
-      audioManager.playSound(soundName);
-    }
-
-    if (pokemon.isPlayer()) {
-      this.validateAchvs(HeldItemAchv, pokemon);
-    }
   }
 
   /**
