@@ -11,7 +11,6 @@ import { EggData } from "#system/egg-data";
 import { VoucherType } from "#system/voucher";
 import type { DexData, DexEntry } from "#types/dex-data";
 import type { SystemSaveMigrator } from "#types/save-migrators";
-import { playTween } from "#utils/anim-utils";
 import { fixedInt, randSeedItem } from "#utils/common";
 import i18next from "i18next";
 
@@ -91,27 +90,11 @@ function pullEggs(pullCount: number, ownedStarters: SpeciesId[]): EggData[] {
   }
 
   globalScene.time.delayedCall(fixedInt(2000), async () => {
-    const { height, width } = globalScene.scaledCanvas;
-    const { time, ui } = globalScene;
-
-    const overlay = new Phaser.GameObjects.Rectangle(globalScene, 0, -height, width, height, 0x070707)
-      .setName("egg-compensation-overlay")
-      .setOrigin(0)
-      .setAlpha(0);
-    ui.add(overlay);
-
-    await playTween({ targets: overlay, alpha: 0.7, duration: 750, ease: "Sine.easeOut" });
-
-    await ui.setOverlayMode(UiMode.ALERT_MODAL, i18next.t("migrators:eggCompensation", { eggCount: eggs.length }));
-
-    time.delayedCall(fixedInt(15000), async () => {
-      if (ui.getMode() === UiMode.ALERT_MODAL) {
-        await ui.revertMode();
-      }
-
-      await playTween({ targets: overlay, alpha: 0, duration: 500, ease: "Sine.easeOut" });
-      ui.remove(overlay, true);
-    });
+    await globalScene.ui.setOverlayMode(
+      UiMode.ALERT_MODAL,
+      i18next.t("migrators:eggCompensation", { eggCount: eggs.length }),
+      5000,
+    );
   });
 
   return eggs;
