@@ -200,13 +200,13 @@ function sortMigrators(migrators: SaveMigrator[]): void {
 function applyMigrators(migrators: readonly SaveMigrator[], data: SaveData, saveVersion: string): void {
   for (const migrator of migrators) {
     const isMigratorVersionHigher = compareVersions(saveVersion, migrator.version) === -1;
+
     if (isMigratorVersionHigher) {
       migrator.migrate(data as any);
-      if ("appliedMigrators" in data && Array.isArray(data.appliedMigrators)) {
-        (data.appliedMigrators as AppliedMigrators[]).push({
-          name: `${migrator.name}-${migrator.version}`,
-          timestamp: Date.now(),
-        });
+
+      if ("appliedMigrators" in data) {
+        const migratorNameVersion = `${migrator.version}-${migrator.name}`;
+        (data.appliedMigrators as AppliedMigrators)[migratorNameVersion] = Date.now();
       }
     }
   }

@@ -20,7 +20,7 @@ import type { TrainerData } from "#system/trainer-data";
 import type { SerializedDailyRunConfig } from "./daily-run";
 import type { DexData } from "./dex-data";
 
-export type AppliedMigrators = { name: string; timestamp: number };
+export type AppliedMigrators = { [key: string]: number };
 
 export interface SystemSaveData {
   trainerId: number;
@@ -38,7 +38,7 @@ export interface SystemSaveData {
   timestamp: number;
   eggPity: number[];
   unlockPity: number[];
-  appliedMigrators: AppliedMigrators[];
+  appliedMigrators: AppliedMigrators;
 }
 
 export interface SessionSaveData {

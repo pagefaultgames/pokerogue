@@ -145,7 +145,7 @@ export class GameData {
   public eggPity: number[];
   public unlockPity: number[];
 
-  public appliedMigrators: AppliedMigrators[] = [];
+  public appliedMigrators: AppliedMigrators = {};
 
   /**
    * @param fromRaw - If true, will skip initialization of fields that are normally randomized on new game start. Used for the admin panel; default `false`
@@ -575,7 +575,7 @@ export class GameData {
 
       return k.endsWith("Attr") && !["natureAttr", "abilityAttr", "passiveAttr"].includes(k) ? BigInt(v ?? 0) : v;
     }) as SystemSaveData;
-    ret.appliedMigrators ??= [];
+    ret.appliedMigrators ??= {};
     return ret;
   }
 
