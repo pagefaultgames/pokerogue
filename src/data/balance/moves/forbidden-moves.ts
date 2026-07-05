@@ -67,6 +67,7 @@ export const LEVEL_BASED_DENYLIST: ReadonlySet<MoveId> = new Set([
   MoveId.ABSORB,
   MoveId.ACID,
   MoveId.AIR_CUTTER,
+  MoveId.ARM_THRUST,
   MoveId.ASSURANCE, // Primarily a doubles move but functions as early game Dark STAB.
   MoveId.ASTONISH,
   MoveId.BABY_DOLL_EYES,

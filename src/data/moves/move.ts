@@ -5977,7 +5977,7 @@ export class IvyCudgelTypeAttr extends VariableMoveTypeAttr {
 export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, _target: Pokemon, move: Move, args: any[]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof NumberHolder)) {
+    if (!(moveType instanceof ValueHolder)) {
       return false;
     }
 

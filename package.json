@@ -1,7 +1,7 @@
 {
   "name": "pokemon-rogue-battle",
   "private": true,
-  "version": "1.12.0.1",
+  "version": "1.12.0.4",
   "type": "module",
   "scripts": {
     "start:prod": "vite --mode production",
@@ -59,7 +59,7 @@
     "phaser3-rex-plugins": "^1.80.20"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.14",
+    "@biomejs/biome": "2.5.0",
     "@commander-js/extra-typings": "^15.0.0",
     "@inquirer/prompts": "^8.5.2",
     "@ls-lint/ls-lint": "2.3.1",

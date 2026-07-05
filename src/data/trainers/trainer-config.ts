@@ -4727,9 +4727,13 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.PIDGEOT], TrainerSlot.TRAINER, true, p => {
         p.setBoss(true, 2);
         p.formIndex = 1; // Mega Pidgeot
-        p.generateAndPopulateMoveset();
         p.generateName();
         p.gender = Gender.MALE;
+        p.generateAndPopulateMoveset();
+        if (!p.moveset.some(move => move.moveId === MoveId.HURRICANE)) {
+          // Check if Hurricane is in the moveset, if not, replace the first move with Hurricane.
+          p.moveset[0] = new PokemonMove(MoveId.HURRICANE);
+        }
       }),
     )
     .setInstantTera(1), // Tera Fire Arcanine, Tera Grass Exeggutor, Tera Water Gyarados

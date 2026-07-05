@@ -1,4 +1,5 @@
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
+import { version } from "#package.json";
 import { getCookie } from "#utils/cookies";
 import type { SetRequired, UndefinedOnPartialDeep } from "type-fest";
 
@@ -84,6 +85,7 @@ export abstract class ApiBase {
       ...config.headers,
       Authorization: getCookie(SESSION_ID_COOKIE_NAME),
       "Content-Type": config.headers?.["Content-Type"] ?? "application/json",
+      "PKR-Client-Version": version,
     };
 
     // can't import `isLocal` due to circular import issues
