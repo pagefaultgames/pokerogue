@@ -306,8 +306,7 @@ export function getStarterData(
   const starterDataEntry = globalScene.gameData.starterData[starterId];
 
   // Unpacking to make a copy by values, not references
-  const copiedDexEntry = { ...dexEntry };
-  copiedDexEntry.ivs = [...dexEntry.ivs];
+  const copiedDexEntry = deepCopy(dexEntry);
   const copiedStarterDataEntry = { ...starterDataEntry };
   if (applyChallenge) {
     applyChallenges(ChallengeType.STARTER_SELECT_MODIFY, starterId, copiedDexEntry, copiedStarterDataEntry);
