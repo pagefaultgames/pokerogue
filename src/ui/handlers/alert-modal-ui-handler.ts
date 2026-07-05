@@ -45,7 +45,7 @@ export class AlertModalUiHandler extends ModalUiHandler {
     this.label = addTextObject(
       this.getWidth() / 2,
       this.getHeight() / 2,
-      "This is a placeholder message for the alert UI.\nIf you are reading this, someone forgot to set a messsage for this alert.",
+      "This is a placeholder message for the alert UI.\nIf you are reading this, someone forgot to set a message for this alert.",
       TextStyle.WINDOW,
       { fontSize: "48px", align: "center" },
     ) //
