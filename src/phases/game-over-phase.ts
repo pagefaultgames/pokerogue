@@ -78,37 +78,41 @@ export class GameOverPhase extends BattlePhase {
       );
     } else if (this.isVictory || !globalScene.enableRetries) {
       this.handleGameOver();
+    } else if (globalScene.gameMode.isDaily && globalScene.gameData.biomeCheckpoint) {
+      globalScene.ui.showText(i18next.t("battle:retryBattleDaily"), null, () => {
+        globalScene.ui.setMode(UiMode.OPTION_SELECT, {
+          options: [
+            {
+              label: i18next.t("battle:retryBattleOption"),
+              handler: () => {
+                this.doRetry();
+                return true;
+              },
+            },
+            {
+              label: i18next.t("battle:retryBiomeOption"),
+              handler: () => {
+                this.doRetry(true);
+                return true;
+              },
+            },
+            {
+              label: i18next.t("battle:quitOption"),
+              handler: () => {
+                this.handleGameOver();
+                return true;
+              },
+            },
+          ],
+          delay: 1000,
+        });
+      });
     } else {
       globalScene.ui.showText(i18next.t("battle:retryBattle"), null, () => {
         globalScene.ui.setMode(
           UiMode.CONFIRM,
           () => {
-            globalScene.ui.fadeOut(1250).then(() => {
-              globalScene.reset();
-              globalScene.phaseManager.clearPhaseQueue();
-              globalScene.gameData.loadSession(globalScene.sessionSlotId).then(() => {
-                globalScene.phaseManager.pushNew("EncounterPhase", true);
-
-                const availablePartyMembers = globalScene.getPokemonAllowedInBattle().length;
-
-                globalScene.phaseManager.pushNew("SummonPhase", 0, true, true);
-                if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-                  globalScene.phaseManager.pushNew("SummonPhase", 1, true, true);
-                }
-                if (
-                  globalScene.currentBattle.waveIndex > 1
-                  && globalScene.currentBattle.battleType !== BattleType.TRAINER
-                ) {
-                  globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
-                  if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-                    globalScene.phaseManager.pushNew("CheckSwitchPhase", 1, globalScene.currentBattle.double);
-                  }
-                }
-
-                globalScene.ui.fadeIn(1250);
-                this.end();
-              });
-            });
+            this.doRetry();
           },
           () => this.handleGameOver(),
           false,
@@ -118,6 +122,47 @@ export class GameOverPhase extends BattlePhase {
         );
       });
     }
+  }
+  /**
+   * Handles retry from the start of the biome and restart of battle.
+   * Available in Daily Run when Enable Retries is active.
+   */
+  private doRetry(biomeRetry = false): void {
+    globalScene.ui.fadeOut(1250).then(() => {
+      globalScene.reset();
+      globalScene.phaseManager.clearPhaseQueue();
+
+      const loadOption = biomeRetry
+        ? globalScene.gameData.loadBiomeCheckpoint()
+        : globalScene.gameData.loadSession(globalScene.sessionSlotId);
+
+      loadOption.then(() => {
+        this.setupRetryEncounter();
+      });
+    });
+  }
+
+  /**
+   * Sets up initial phases and UI transitions when restarting (battle or biome).
+   */
+  private setupRetryEncounter(): void {
+    globalScene.phaseManager.pushNew("EncounterPhase", true);
+
+    const availablePartyMembers = globalScene.getPokemonAllowedInBattle().length;
+
+    globalScene.phaseManager.pushNew("SummonPhase", 0, true, true);
+    if (globalScene.currentBattle.double && availablePartyMembers > 1) {
+      globalScene.phaseManager.pushNew("SummonPhase", 1, true, true);
+    }
+    if (globalScene.currentBattle.waveIndex > 1 && globalScene.currentBattle.battleType !== BattleType.TRAINER) {
+      globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
+      if (globalScene.currentBattle.double && availablePartyMembers > 1) {
+        globalScene.phaseManager.pushNew("CheckSwitchPhase", 1, globalScene.currentBattle.double);
+      }
+    }
+
+    globalScene.ui.fadeIn(1250);
+    this.end();
   }
 
   /**

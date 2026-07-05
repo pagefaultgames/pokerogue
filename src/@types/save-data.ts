@@ -70,6 +70,11 @@ export interface SessionSaveData {
    * Counts the amount of pokemon fainted in your party during the current arena encounter.
    */
   playerFaints: number;
+  /**
+   * Integral copy of a session save, that is ovewritten at the first wave of every biome.
+   * Only used in Daily Runs, if "Retry Battles" is enabled.
+   */
+  biomeCheckpoint?: Omit<SessionSaveData, "biomeCheckpoint">;
 }
 
 export interface Unlocks {
