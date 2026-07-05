@@ -6,45 +6,46 @@ import { ModalUiHandler } from "#ui/modal-ui-handler";
 import { addTextObject } from "#ui/text";
 import { playTween } from "#utils/anim-utils";
 import { fixedInt } from "#utils/common";
-import i18next from "i18next";
 
 export class AlertModalUiHandler extends ModalUiHandler {
   private label: Phaser.GameObjects.Text;
   private allowClosing = false;
   private overlay: Phaser.GameObjects.Rectangle;
 
+  private width = 250;
+  private height = 32;
+
   constructor(mode: UiMode | null = null) {
     super(mode);
   }
 
-  getModalTitle(): string {
+  public override getModalTitle(): string {
     return "";
   }
 
-  getWidth(): number {
-    return 250;
+  public override getWidth(): number {
+    return this.width;
   }
 
-  getHeight(): number {
-    return 32;
+  public override getHeight(): number {
+    return this.height;
   }
 
-  getMargin(): [number, number, number, number] {
+  public override getMargin(): [number, number, number, number] {
     return [0, 0, 48, 0];
   }
 
-  getButtonLabels(): string[] {
+  public override getButtonLabels(): string[] {
     return [];
   }
 
-  setup(): void {
+  public override setup(): void {
     super.setup();
 
     this.label = addTextObject(
-      //
       this.getWidth() / 2,
       this.getHeight() / 2,
-      i18next.t("alert"),
+      "This is a placeholder message for the alert UI.\nIf you are reading this, someone forgot to set a message for this alert.",
       TextStyle.WINDOW,
       { fontSize: "48px", align: "center" },
     ) //
@@ -59,12 +60,18 @@ export class AlertModalUiHandler extends ModalUiHandler {
    * `message`: The message that will be displayed in the alert box. \
    * `closeDelay`: Optional delay before allowing the user to close the modal. If not provided, the alert will be unclosable.
    */
-  show(args: [message: string, closeDelay?: number]): boolean {
+  public override show(args: [message: string, closeDelay?: number]): boolean {
     const config: ModalConfig = { buttonActions: [] };
 
     const msg = args[0];
     if (msg) {
-      this.label.setText(args[0]);
+      this.label.setText(msg);
+
+      this.width = Math.ceil(this.label.displayWidth) + 20;
+      this.label.x = this.getWidth() / 2;
+
+      this.height = Math.ceil(this.label.displayHeight) + 16;
+      this.label.y = this.getHeight() / 2;
     }
 
     const { height, width } = globalScene.scaledCanvas;
