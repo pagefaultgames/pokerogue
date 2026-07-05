@@ -1,12 +1,14 @@
-import { pokerogueApi } from "#api/pokerogue-api";
+import { pokerogueApi } from "#api/api";
 import { clientSessionId } from "#app/account";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
-import { pokemonEvolutions } from "#balance/pokemon-evolutions";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { bypassLogin } from "#constants/app-constants";
 import { modifierTypes } from "#data/data-lists";
 import { getCharVariantFromDialogue } from "#data/dialogue";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { BattleType } from "#enums/battle-type";
+import { Challenges } from "#enums/challenges";
 import { PlayerGender } from "#enums/player-gender";
 import { TrainerType } from "#enums/trainer-type";
 import { UiMode } from "#enums/ui-mode";
@@ -25,14 +27,15 @@ import { TrainerData } from "#system/trainer-data";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { SessionSaveData } from "#types/save-data";
 import { checkSpeciesValidForChallenge, isNuzlockeChallenge } from "#utils/challenge-utils";
-import { isLocalServerConnected } from "#utils/common";
+import { fixedInt, isLocalServerConnected } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 export class GameOverPhase extends BattlePhase {
   public readonly phaseName = "GameOverPhase";
+
   private isVictory: boolean;
-  private firstRibbons: PokemonSpecies[] = [];
+  private readonly firstRibbons: PokemonSpecies[] = [];
 
   constructor(isVictory = false) {
     super();
@@ -70,6 +73,8 @@ export class GameOverPhase extends BattlePhase {
         i18next.t("miscDialogue:endingName"),
         0,
         () => this.handleGameOver(),
+        0,
+        fixedInt(3000),
       );
     } else if (this.isVictory || !globalScene.enableRetries) {
       this.handleGameOver();
@@ -86,9 +91,9 @@ export class GameOverPhase extends BattlePhase {
 
                 const availablePartyMembers = globalScene.getPokemonAllowedInBattle().length;
 
-                globalScene.phaseManager.pushNew("SummonPhase", 0);
+                globalScene.phaseManager.pushNew("SummonPhase", 0, true, true);
                 if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-                  globalScene.phaseManager.pushNew("SummonPhase", 1);
+                  globalScene.phaseManager.pushNew("SummonPhase", 1, true, true);
                 }
                 if (
                   globalScene.currentBattle.waveIndex > 1
@@ -127,10 +132,16 @@ export class GameOverPhase extends BattlePhase {
         ribbonFlags |= ribbon;
       }
     }
+
+    // TODO: find a better way to handle blocking ribbons and achievements
     // Block other ribbons if flip stats or inverse is active
     const flip_or_inverse = ribbonFlags & (RibbonData.FLIP_STATS | RibbonData.INVERSE);
+    // Block other ribbons if passives on `all` is active
+    const passives = ribbonFlags & RibbonData.PASSIVE_CHALLENGE;
     if (flip_or_inverse) {
       ribbonFlags = flip_or_inverse;
+    } else if (globalScene.gameMode.challenges.some(c => c.id === Challenges.PASSIVES && c.value === 2)) {
+      ribbonFlags = passives;
     } else {
       if (globalScene.gameMode.isClassic) {
         ribbonFlags |= RibbonData.CLASSIC;
@@ -179,7 +190,7 @@ export class GameOverPhase extends BattlePhase {
         }
 
         const fadeDuration = this.isVictory ? 10000 : 5000;
-        globalScene.fadeOutBgm(fadeDuration, true);
+        audioManager.fadeOutBgm(fadeDuration);
         const activeBattlers = globalScene.getField().filter(p => p?.isActive(true));
         activeBattlers.map(p => p.hideInfo());
         globalScene.ui.fadeOut(fadeDuration).then(() => {
@@ -299,7 +310,7 @@ export class GameOverPhase extends BattlePhase {
       }
       if (
         !globalScene.gameData.unlocks[Unlockables.EVIOLITE]
-        && globalScene.getPlayerParty().some(p => p.getSpeciesForm(true).speciesId in pokemonEvolutions)
+        && globalScene.getPlayerParty().some(p => speciesDataRegistry.hasEvolutions(p.getSpeciesForm(true).speciesId))
       ) {
         globalScene.phaseManager.unshiftNew("UnlockPhase", Unlockables.EVIOLITE);
       }

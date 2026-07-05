@@ -2,6 +2,7 @@ import { DelayedAttackTag, type PositionalTag, WishTag } from "#data/positional-
 import { PositionalTagType } from "#enums/positional-tag-type";
 import type { Constructor } from "#types/common";
 import type { ObjectValues } from "#types/type-helpers";
+import type { Jsonify } from "type-fest";
 
 /**
  * Load the attributes of a {@linkcode PositionalTag}.
@@ -14,7 +15,7 @@ import type { ObjectValues } from "#types/type-helpers";
 export function loadPositionalTag<T extends PositionalTagType>({
   tagType,
   ...args
-}: toSerializedPosTag<T>): posTagInstanceMap[T];
+}: ToSerializedPosTag<T>): PosTagInstanceMap[T];
 /**
  * Load the attributes of a {@linkcode PositionalTag}.
  * @param tag - The {@linkcode SerializedPositionalTag} to instantiate
@@ -26,14 +27,16 @@ export function loadPositionalTag(tag: SerializedPositionalTag): PositionalTag;
 export function loadPositionalTag<T extends PositionalTagType>({
   tagType,
   ...rest
-}: toSerializedPosTag<T>): posTagInstanceMap[T] {
-  // Note: We need 2 type assertions here:
-  // 1 because TS doesn't narrow the type of TagClass correctly based on `T`.
-  // It converts it into `new (DelayedAttackTag | WishTag) => DelayedAttackTag & WishTag`
-  const tagClass = posTagConstructorMap[tagType] as new (args: posTagParamMap[T]) => posTagInstanceMap[T];
-  // 2 because TS doesn't narrow the type of `rest` correctly
+}: ToSerializedPosTag<T>): PosTagInstanceMap[T] {
+  // Note: We need 2 type assertions here; their rationales are explained below.
+  // Upvote https://github.com/microsoft/TypeScript/issues/55257 for a proposal that would fix these issues.
+
+  // 1. TypeScript has no way to know that the type of `tagClass` is linked to the choice of `T`,
+  // thus converting it to an unresolvable intersection of all constructors (which is actively unusable).
+  const tagClass = posTagConstructorMap[tagType] as unknown as Constructor<PosTagInstanceMap[T], [PosTagParamMap[T]]>;
+  // 2. TS (in a similar light) cannot infer that the rest parameter's type is linked to `T`,
   // (from `Omit<serializedPosTagParamMap[T], "tagType"> into `posTagParamMap[T]`)
-  return new tagClass(rest as unknown as posTagParamMap[T]);
+  return new tagClass(rest as unknown as PosTagParamMap[T]);
 }
 
 /** Const object mapping tag types to their constructors. */
@@ -46,32 +49,47 @@ const posTagConstructorMap = Object.freeze({
 };
 
 /** Type mapping positional tag types to their constructors. */
-type posTagMap = typeof posTagConstructorMap;
+type PosTagMap = typeof posTagConstructorMap;
 
 /** Type mapping all positional tag types to their instances. */
-type posTagInstanceMap = {
-  [k in PositionalTagType]: InstanceType<posTagMap[k]>;
+type PosTagInstanceMap = {
+  [k in PositionalTagType]: InstanceType<PosTagMap[k]>;
 };
 
 /** Type mapping all positional tag types to their constructors' parameters. */
-type posTagParamMap = {
-  [k in PositionalTagType]: ConstructorParameters<posTagMap[k]>[0];
+type PosTagParamMap = {
+  [k in PositionalTagType]: ConstructorParameters<PosTagMap[k]>[0];
 };
 
 /**
  * Generic type to convert a {@linkcode PositionalTagType} into the serialized representation of its corresponding class instance.
  *
- * Used in place of a mapped type to work around Typescript deficiencies in function type signatures.
+ * Used in place of a mapped type to work around TypeScript deficiencies in function type signatures
+ * (since an index signature would not be properly inferrable from `T`).
  */
-export type toSerializedPosTag<T extends PositionalTagType> = posTagParamMap[T] & { readonly tagType: T };
+export type ToSerializedPosTag<T extends PositionalTagType> = PosTagParamMap[T] & { readonly tagType: T };
 
 /**
  * Type mapping all positional tag types to their constructors' parameters, alongside the `tagType` selector.
  * Equivalent to their serialized representations.
  */
-type serializedPosTagMap = {
-  [k in PositionalTagType]: toSerializedPosTag<k>;
+type SerializedPosTagMap = {
+  [k in PositionalTagType]: ToSerializedPosTag<k>;
 };
 
 /** Union type containing all serialized {@linkcode PositionalTag}s. */
-export type SerializedPositionalTag = ObjectValues<serializedPosTagMap>;
+export type SerializedPositionalTag = ObjectValues<SerializedPosTagMap>;
+
+/**
+ * Dummy, TypeScript-only constant to ensure that all positional tag types have their corresponding parameter types correctly mapped to their serialized forms.
+ *
+ * If a PositionalTag fails to meet this requirement, TypeScript will throw an error on this statement.
+ *
+ * ⚠️ Does not actually exist at runtime, so it must not be used!
+ * @internal
+ */
+declare const EnsureAllPositionalTagsTurnIntoTheirArgumentsWhenSerialized: {
+  [k in PositionalTagType as Jsonify<PosTagInstanceMap[k]> extends Omit<SerializedPosTagMap[k], "tagType">
+    ? k
+    : never]: never;
+}[PositionalTagType];

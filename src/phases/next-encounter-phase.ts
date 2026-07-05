@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { EncounterPhase } from "#phases/encounter-phase";
 
@@ -6,13 +7,10 @@ import { EncounterPhase } from "#phases/encounter-phase";
  * Handles generating, loading and preparing for it.
  */
 export class NextEncounterPhase extends EncounterPhase {
-  public readonly phaseName: "NextEncounterPhase" | "NewBiomeEncounterPhase" = "NextEncounterPhase";
-  start() {
-    super.start();
-  }
+  public readonly phaseName = "NextEncounterPhase";
 
-  doEncounter(): void {
-    globalScene.playBgm(undefined, true);
+  protected override doEncounter(): void {
+    audioManager.playBgm(undefined, true);
 
     // Reset all player transient wave data/intel before starting a new wild encounter.
     // We exclusively reset wave data here as wild waves are considered one continuous "battle"
@@ -23,7 +21,7 @@ export class NextEncounterPhase extends EncounterPhase {
       }
     }
 
-    globalScene.arenaNextEnemy.setBiome(globalScene.arena.biomeType);
+    globalScene.arenaNextEnemy.setBiome(globalScene.arena.biomeId);
     globalScene.arenaNextEnemy.setVisible(true);
 
     const enemyField = globalScene.getEnemyField();
@@ -58,7 +56,7 @@ export class NextEncounterPhase extends EncounterPhase {
       x: "+=300",
       duration: 2000,
       onComplete: () => {
-        globalScene.arenaEnemy.setBiome(globalScene.arena.biomeType);
+        globalScene.arenaEnemy.setBiome(globalScene.arena.biomeId);
         globalScene.arenaEnemy.setX(globalScene.arenaNextEnemy.x);
         globalScene.arenaEnemy.setAlpha(1);
         globalScene.arenaNextEnemy.setX(globalScene.arenaNextEnemy.x - 300);
@@ -71,15 +69,18 @@ export class NextEncounterPhase extends EncounterPhase {
           globalScene.lastMysteryEncounter!.introVisuals = undefined;
         }
 
-        if (!this.tryOverrideForBattleSpec()) {
+        if (globalScene.currentBattle.isClassicFinalBoss) {
+          this.displayFinalBossDialogue();
+        } else {
           this.doEncounterCommon();
         }
       },
     });
   }
 
-  /**
-   * Do nothing (since this is simply the next wave in the same biome).
-   */
-  trySetWeatherIfNewBiome(): void {}
+  /** Do nothing (since this is simply the next wave in the same biome). */
+  protected override trySetWeatherIfNewBiome(): void {}
+
+  /** Do nothing (since this is simply the next wave in the same biome). */
+  protected override trySetTerrainIfNewBiome(): void {}
 }

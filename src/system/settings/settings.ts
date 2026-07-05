@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { hasTouchscreen } from "#app/touch-controls";
 import { isDev } from "#constants/app-constants";
@@ -148,6 +149,7 @@ export const SettingKeys = {
   Battle_Style: "BATTLE_STYLE",
   Enable_Retries: "ENABLE_RETRIES",
   Hide_IVs: "HIDE_IVS",
+  Hide_Move_Skip_Confirm: "HIDE_MOVE_SKIP_CONFIRM",
   Tutorials: "TUTORIALS",
   Touch_Controls: "TOUCH_CONTROLS",
   Vibration: "VIBRATION",
@@ -183,6 +185,7 @@ export const SettingKeys = {
   Show_Missing_Ribbons: "SHOW_MISSING_RIBBONS",
   Move_Touch_Controls: "MOVE_TOUCH_CONTROLS",
   Shop_Overlay_Opacity: "SHOP_OVERLAY_OPACITY",
+  Prefer_Baton_Pass: "PREFER_BATON_PASS",
 };
 
 export enum MusicPreference {
@@ -205,39 +208,23 @@ export const Setting: Setting[] = [
     label: i18next.t("settings:gameSpeed"),
     options: [
       {
-        value: "1",
-        label: i18next.t("settings:gameSpeed100x"),
-      },
-      {
-        value: "1.25",
-        label: i18next.t("settings:gameSpeed125x"),
-      },
-      {
-        value: "1.5",
-        label: i18next.t("settings:gameSpeed150x"),
-      },
-      {
         value: "2",
-        label: i18next.t("settings:gameSpeed200x"),
-      },
-      {
-        value: "2.5",
-        label: i18next.t("settings:gameSpeed250x"),
+        label: i18next.t("settings:gameSpeedSlow"),
       },
       {
         value: "3",
-        label: i18next.t("settings:gameSpeed300x"),
+        label: i18next.t("settings:gameSpeedNormal"),
       },
       {
         value: "4",
-        label: i18next.t("settings:gameSpeed400x"),
+        label: i18next.t("settings:gameSpeedFast"),
       },
       {
         value: "5",
-        label: i18next.t("settings:gameSpeed500x"),
+        label: i18next.t("settings:gameSpeedTurbo"),
       },
     ],
-    default: 3,
+    default: 1,
     type: SettingType.GENERAL,
     clamp: false,
   },
@@ -371,6 +358,22 @@ export const Setting: Setting[] = [
     label: i18next.t("settings:hideIvs"),
     options: OFF_ON,
     default: 0,
+    type: SettingType.GENERAL,
+  },
+  {
+    key: SettingKeys.Hide_Move_Skip_Confirm,
+    label: i18next.t("settings:hideMoveSkipConfirm"),
+    options: [
+      {
+        value: "Off",
+        label: i18next.t("settings:skip"),
+      },
+      {
+        value: "On",
+        label: i18next.t("settings:confirm"),
+      },
+    ],
+    default: 1,
     type: SettingType.GENERAL,
   },
   {
@@ -654,7 +657,7 @@ export const Setting: Setting[] = [
     key: SettingKeys.Master_Volume,
     label: i18next.t("settings:masterVolume"),
     options: VOLUME_OPTIONS,
-    default: 5,
+    default: 3,
     type: SettingType.AUDIO,
     clamp: true,
   },
@@ -662,7 +665,7 @@ export const Setting: Setting[] = [
     key: SettingKeys.BGM_Volume,
     label: i18next.t("settings:bgmVolume"),
     options: VOLUME_OPTIONS,
-    default: 10,
+    default: 5,
     type: SettingType.AUDIO,
     clamp: true,
   },
@@ -670,7 +673,7 @@ export const Setting: Setting[] = [
     key: SettingKeys.Field_Volume,
     label: i18next.t("settings:fieldVolume"),
     options: VOLUME_OPTIONS,
-    default: 10,
+    default: 5,
     type: SettingType.AUDIO,
     clamp: true,
   },
@@ -678,7 +681,7 @@ export const Setting: Setting[] = [
     key: SettingKeys.SE_Volume,
     label: i18next.t("settings:seVolume"),
     options: VOLUME_OPTIONS,
-    default: 10,
+    default: 5,
     type: SettingType.AUDIO,
     clamp: true,
   },
@@ -686,7 +689,7 @@ export const Setting: Setting[] = [
     key: SettingKeys.UI_Volume,
     label: i18next.t("settings:uiVolume"),
     options: VOLUME_OPTIONS,
-    default: 10,
+    default: 5,
     type: SettingType.AUDIO,
     clamp: true,
   },
@@ -721,6 +724,13 @@ export const Setting: Setting[] = [
     default: 7,
     type: SettingType.DISPLAY,
     requireReload: false,
+  },
+  {
+    key: SettingKeys.Prefer_Baton_Pass,
+    label: i18next.t("settings:preferBatonPass"),
+    options: OFF_ON,
+    default: 1,
+    type: SettingType.DISPLAY,
   },
 ];
 
@@ -765,26 +775,26 @@ export function setSetting(setting: string, value: number): boolean {
   }
   switch (Setting[index].key) {
     case SettingKeys.Game_Speed:
-      globalScene.gameSpeed = Number.parseFloat(Setting[index].options[value].value.replace("x", ""));
+      globalScene.gameSpeed = Number.parseFloat(Setting[index].options[value].value);
       break;
     case SettingKeys.Master_Volume:
-      globalScene.masterVolume = value ? Number.parseInt(Setting[index].options[value].value) * 0.01 : 0;
-      globalScene.updateSoundVolume();
+      audioManager.volume.main = value ? Number.parseInt(Setting[index].options[value].value) * 0.01 : 0;
+      audioManager.updateSoundVolume();
       break;
     case SettingKeys.BGM_Volume:
-      globalScene.bgmVolume = value ? Number.parseInt(Setting[index].options[value].value) * 0.01 : 0;
-      globalScene.updateSoundVolume();
+      audioManager.volume.bgm = value ? Number.parseInt(Setting[index].options[value].value) * 0.01 : 0;
+      audioManager.updateSoundVolume();
       break;
     case SettingKeys.Field_Volume:
-      globalScene.fieldVolume = value ? Number.parseInt(Setting[index].options[value].value) * 0.01 : 0;
-      globalScene.updateSoundVolume();
+      audioManager.volume.field = value ? Number.parseInt(Setting[index].options[value].value) * 0.01 : 0;
+      audioManager.updateSoundVolume();
       break;
     case SettingKeys.SE_Volume:
-      globalScene.seVolume = value ? Number.parseInt(Setting[index].options[value].value) * 0.01 : 0;
-      globalScene.updateSoundVolume();
+      audioManager.volume.se = value ? Number.parseInt(Setting[index].options[value].value) * 0.01 : 0;
+      audioManager.updateSoundVolume();
       break;
     case SettingKeys.UI_Volume:
-      globalScene.uiVolume = value ? Number.parseInt(Setting[index].options[value].value) * 0.01 : 0;
+      audioManager.volume.ui = value ? Number.parseInt(Setting[index].options[value].value) * 0.01 : 0;
       break;
     case SettingKeys.Battle_Music:
       globalScene.musicPreference = value;
@@ -809,6 +819,9 @@ export function setSetting(setting: string, value: number): boolean {
       break;
     case SettingKeys.Hide_IVs:
       globalScene.hideIvs = Setting[index].options[value].value === "On";
+      break;
+    case SettingKeys.Hide_Move_Skip_Confirm:
+      globalScene.hideMoveSkipConfirm = Setting[index].options[value].value === "Off";
       break;
     case SettingKeys.Skip_Seen_Dialogues:
       globalScene.skipSeenDialogues = Setting[index].options[value].value === "On";
@@ -919,6 +932,9 @@ export function setSetting(setting: string, value: number): boolean {
       break;
     case SettingKeys.Type_Hints:
       globalScene.typeHints = Setting[index].options[value].value === "On";
+      break;
+    case SettingKeys.Prefer_Baton_Pass:
+      globalScene.preferBatonPass = Setting[index].options[value].value === "On";
       break;
     case SettingKeys.Language:
       if (value && globalScene.ui) {

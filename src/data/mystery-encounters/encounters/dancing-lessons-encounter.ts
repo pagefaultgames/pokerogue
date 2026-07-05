@@ -37,15 +37,16 @@ import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encou
 import { MoveRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { DANCING_MOVES } from "#mystery-encounters/requirement-groups";
 import { PokemonData } from "#system/pokemon-data";
-import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import type { OptionSelectItem } from "#ui/base-option-select-ui-handler";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { groupStatChange } from "#utils/stat-change";
 import i18next from "i18next";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/dancingLessons";
 
 // Fire form
-const BAILE_STYLE_BIOMES = [
+const BAILE_STYLE_BIOMES: readonly BiomeId[] = [
   BiomeId.VOLCANO,
   BiomeId.BEACH,
   BiomeId.ISLAND,
@@ -56,7 +57,7 @@ const BAILE_STYLE_BIOMES = [
 ];
 
 // Electric form
-const POM_POM_STYLE_BIOMES = [
+const POM_POM_STYLE_BIOMES: readonly BiomeId[] = [
   BiomeId.CONSTRUCTION_SITE,
   BiomeId.POWER_PLANT,
   BiomeId.FACTORY,
@@ -67,7 +68,7 @@ const POM_POM_STYLE_BIOMES = [
 ];
 
 // Psychic form
-const PAU_STYLE_BIOMES = [
+const PAU_STYLE_BIOMES: readonly BiomeId[] = [
   BiomeId.JUNGLE,
   BiomeId.FAIRY_CAVE,
   BiomeId.MEADOW,
@@ -78,7 +79,7 @@ const PAU_STYLE_BIOMES = [
 ];
 
 // Ghost form
-const SENSU_STYLE_BIOMES = [
+const SENSU_STYLE_BIOMES: readonly BiomeId[] = [
   BiomeId.RUINS,
   BiomeId.SWAMP,
   BiomeId.CAVE,
@@ -139,7 +140,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
 
     // Set the form index based on the biome
     // Defaults to Baile style if somehow nothing matches
-    const currentBiome = globalScene.arena.biomeType;
+    const currentBiome = globalScene.arena.biomeId;
     if (BAILE_STYLE_BIOMES.includes(currentBiome)) {
       enemyPokemon.formIndex = 0;
     } else if (POM_POM_STYLE_BIOMES.includes(currentBiome)) {
@@ -156,8 +157,8 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
     const oricorio = globalScene.addEnemyPokemon(species, level, TrainerSlot.NONE, false, false, oricorioData);
 
     // Adds a real Pokemon sprite to the field (required for the animation)
-    for (const enemyPokemon of globalScene.getEnemyParty()) {
-      enemyPokemon.leaveField(true, true, true);
+    for (const enemy of globalScene.getEnemyParty()) {
+      enemy.leaveField(true, true, true);
     }
     globalScene.currentBattle.enemyParty = [oricorio];
     globalScene.field.add(oricorio);
@@ -175,13 +176,11 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
             queueEncounterMessage(`${namespace}:option.1.bossEnraged`);
-            globalScene.phaseManager.unshiftNew(
-              "StatStageChangePhase",
-              pokemon.getBattlerIndex(),
-              true,
-              [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF],
-              1,
-            );
+            globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+              battlerIndex: pokemon.getBattlerIndex(),
+              changes: groupStatChange([Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF], 1),
+              sourcePokemon: pokemon,
+            });
           },
         },
       ],

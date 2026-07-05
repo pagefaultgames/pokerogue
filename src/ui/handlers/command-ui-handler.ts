@@ -1,14 +1,14 @@
 import { MAX_TERAS_PER_ARENA } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { getPokemonNameWithAffix } from "#app/messages";
 import { getTypeRgb } from "#data/type";
 import { Button } from "#enums/buttons";
 import { Command } from "#enums/command";
+import { PartyUiMode } from "#enums/party-ui-mode";
 import { PokemonType } from "#enums/pokemon-type";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { CommandPhase } from "#phases/command-phase";
-import { PartyUiHandler, PartyUiMode } from "#ui/party-ui-handler";
+import { PartyUiHandler } from "#ui/party-ui-handler";
 import { addTextObject } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { canTerastallize } from "#utils/pokemon-utils";
@@ -91,17 +91,14 @@ export class CommandUiHandler extends UiHandler {
     }
     this.toggleTeraButton();
 
+    const pokemonName = commandPhase.getPokemon().getNameToRender({ prependFormName: false });
     const messageHandler = this.getUi().getMessageHandler();
     messageHandler.bg.setVisible(true);
     messageHandler.commandWindow.setVisible(true);
     messageHandler.movesWindowContainer.setVisible(false);
     messageHandler.message.setWordWrapWidth(this.canTera() ? 910 : 1110);
-    messageHandler.showText(
-      i18next.t("commandUiHandler:actionMessage", {
-        pokemonName: getPokemonNameWithAffix(commandPhase.getPokemon()),
-      }),
-      0,
-    );
+    messageHandler.showText(i18next.t("commandUiHandler:actionMessage", { pokemonName }), 0);
+
     if (this.getCursor() === Command.POKEMON) {
       this.setCursor(Command.FIGHT);
     } else {

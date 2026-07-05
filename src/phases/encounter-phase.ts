@@ -1,14 +1,13 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { PLAYER_PARTY_MAX_SIZE, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/constants";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { initEncounterAnims, loadEncounterAnimAssets } from "#data/battle-anims";
 import { getCharVariantFromDialogue } from "#data/dialogue";
 import { getNatureName } from "#data/nature";
-import { getRandomWeatherType } from "#data/weather";
-import { BattleSpec } from "#enums/battle-spec";
 import { BattleType } from "#enums/battle-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { BiomeId } from "#enums/biome-id";
@@ -40,7 +39,8 @@ import i18next from "i18next";
 export class EncounterPhase extends BattlePhase {
   // Union type is necessary as this is subclassed, and typescript will otherwise complain
   public readonly phaseName: "EncounterPhase" | "NextEncounterPhase" | "NewBiomeEncounterPhase" = "EncounterPhase";
-  private loaded: boolean;
+
+  private readonly loaded: boolean;
 
   constructor(loaded = false) {
     super();
@@ -113,7 +113,7 @@ export class EncounterPhase extends BattlePhase {
           if (
             globalScene.findModifier(m => m instanceof BoostBugSpawnModifier)
             && !globalScene.gameMode.isBoss(battle.waveIndex)
-            && globalScene.arena.biomeType !== BiomeId.END
+            && globalScene.arena.biomeId !== BiomeId.END
             && randSeedInt(10) === 0
           ) {
             enemySpecies = getGoldenBugNetSpecies(level);
@@ -124,7 +124,7 @@ export class EncounterPhase extends BattlePhase {
             TrainerSlot.NONE,
             !!globalScene.getEncounterBossSegments(battle.waveIndex, level, enemySpecies),
           );
-          if (globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
+          if (globalScene.currentBattle.isClassicFinalBoss) {
             battle.enemyParty[e].ivs.fill(31);
           }
           globalScene
@@ -152,14 +152,7 @@ export class EncounterPhase extends BattlePhase {
       }
 
       if (enemyPokemon.species.speciesId === SpeciesId.ETERNATUS) {
-        if (
-          globalScene.gameMode.isClassic
-          && (battle.battleSpec === BattleSpec.FINAL_BOSS || globalScene.gameMode.isWaveFinal(battle.waveIndex))
-        ) {
-          if (battle.battleSpec !== BattleSpec.FINAL_BOSS) {
-            enemyPokemon.formIndex = 1;
-            enemyPokemon.updateScale();
-          }
+        if (battle.isClassicFinalBoss) {
           enemyPokemon.setBoss();
         } else if (!(battle.waveIndex % 1000)) {
           enemyPokemon.formIndex = 1;
@@ -230,7 +223,7 @@ export class EncounterPhase extends BattlePhase {
         }),
       );
     } else {
-      const overridedBossSegments = Overrides.ENEMY_HEALTH_SEGMENTS_OVERRIDE > 1;
+      const overridedBossSegments = activeOverrides.ENEMY_HEALTH_SEGMENTS_OVERRIDE > 1;
       // for double battles, reduce the health segments for boss Pokemon unless there is an override
       if (!overridedBossSegments && battle.enemyParty.filter(p => p.isBoss()).length > 1) {
         for (const enemyPokemon of battle.enemyParty) {
@@ -297,7 +290,9 @@ export class EncounterPhase extends BattlePhase {
           this.doEncounter();
           globalScene.resetSeed();
         } else {
-          this.trySetWeatherIfNewBiome(); // Set weather before session gets saved
+          // Set weather and terrain before session gets saved
+          this.trySetWeatherIfNewBiome();
+          this.trySetTerrainIfNewBiome();
           // Game syncs to server on waves X1 and X6 (As of 1.2.0)
           globalScene.gameData
             .saveAll(true, battle.waveIndex % 5 === 1 || (globalScene.lastSavePlayTime ?? 0) >= 300)
@@ -314,11 +309,7 @@ export class EncounterPhase extends BattlePhase {
     });
   }
 
-  doEncounter() {
-    globalScene.playBgm(undefined, true);
-    globalScene.updateModifiers(false);
-    globalScene.setFieldScale(1);
-
+  private incrementMysteryEncounterChance(): void {
     const { battleType, waveIndex } = globalScene.currentBattle;
     if (
       globalScene.isMysteryEncounterValidForWave(battleType, waveIndex)
@@ -328,6 +319,12 @@ export class EncounterPhase extends BattlePhase {
       // Only do this AFTER session has been saved to avoid duplicating increments
       globalScene.mysteryEncounterSaveData.encounterSpawnChance += WEIGHT_INCREMENT_ON_SPAWN_MISS;
     }
+  }
+
+  protected doEncounter(): void {
+    audioManager.playBgm(undefined, true);
+    globalScene.updateModifiers(false);
+    globalScene.setFieldScale(1);
 
     for (const pokemon of globalScene.getPlayerParty()) {
       // Currently, a new wave is not considered a new battle if there is no arena reset
@@ -349,7 +346,9 @@ export class EncounterPhase extends BattlePhase {
       x: (_target, _key, value, fieldIndex: number) => (fieldIndex < 2 + enemyField.length ? value + 300 : value - 300),
       duration: 2000,
       onComplete: () => {
-        if (!this.tryOverrideForBattleSpec()) {
+        if (globalScene.currentBattle.isClassicFinalBoss) {
+          this.displayFinalBossDialogue();
+        } else {
           this.doEncounterCommon();
         }
       },
@@ -372,7 +371,7 @@ export class EncounterPhase extends BattlePhase {
   getEncounterMessage(): string {
     const enemyField = globalScene.getEnemyField();
 
-    if (globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
+    if (globalScene.currentBattle.isClassicFinalBoss) {
       return i18next.t("battle:bossAppeared", {
         bossName: getPokemonNameWithAffix(enemyField[0]),
       });
@@ -400,6 +399,8 @@ export class EncounterPhase extends BattlePhase {
   }
 
   doEncounterCommon(showEncounterMessage = true) {
+    this.incrementMysteryEncounterChance();
+
     const enemyField = globalScene.getEnemyField();
 
     if (globalScene.currentBattle.battleType === BattleType.WILD) {
@@ -424,7 +425,7 @@ export class EncounterPhase extends BattlePhase {
 
       const doSummon = () => {
         globalScene.currentBattle.started = true;
-        globalScene.playBgm(undefined);
+        audioManager.playBgm(undefined);
         globalScene.pbTray.showPbTray(globalScene.getPlayerParty());
         globalScene.pbTrayEnemy.showPbTray(globalScene.getEnemyParty());
         const doTrainerSummon = () => {
@@ -595,69 +596,77 @@ export class EncounterPhase extends BattlePhase {
         }
       }
     }
-    handleTutorial(Tutorial.Access_Menu).then(() => super.end());
+    handleTutorial(Tutorial.ACCESS_MENU).then(() => super.end());
 
     globalScene.phaseManager.pushNew("InitEncounterPhase");
   }
 
-  tryOverrideForBattleSpec(): boolean {
-    switch (globalScene.currentBattle.battleSpec) {
-      case BattleSpec.FINAL_BOSS: {
-        const enemy = globalScene.getEnemyPokemon();
-        globalScene.ui.showText(
-          this.getEncounterMessage(),
-          null,
-          () => {
-            const localizationKey = "battleSpecDialogue:encounter";
-            if (globalScene.ui.shouldSkipDialogue(localizationKey)) {
-              // Logging mirrors logging found in dialogue-ui-handler
-              console.log(`Dialogue ${localizationKey} skipped`);
-              this.doEncounterCommon(false);
-            } else {
-              const count = 5643853 + globalScene.gameData.gameStats.classicSessionsPlayed;
-              // The line below checks if an English ordinal is necessary or not based on whether an entry for encounterLocalizationKey exists in the language or not.
-              const ordinalUsed =
-                !i18next.exists(localizationKey, { fallbackLng: [] }) || i18next.resolvedLanguage === "en"
-                  ? i18next.t("battleSpecDialogue:key", {
-                      count,
-                      ordinal: true,
-                    })
-                  : "";
-              const cycleCount = count.toLocaleString() + ordinalUsed;
-              const genderIndex = globalScene.gameData.gender ?? PlayerGender.UNSET;
-              const genderStr = PlayerGender[genderIndex].toLowerCase();
-              const encounterDialogue = i18next.t(localizationKey, {
-                context: genderStr,
-                cycleCount,
-              });
-              if (!globalScene.gameData.getSeenDialogues()[localizationKey]) {
-                globalScene.gameData.saveSeenDialogue(localizationKey);
-              }
-              globalScene.ui.showDialogue(encounterDialogue, enemy?.species.name, null, () => {
-                this.doEncounterCommon(false);
-              });
-            }
-          },
-          1500,
-          true,
-        );
-        return true;
-      }
-    }
-    return false;
+  protected displayFinalBossDialogue(): void {
+    const { gameData, ui } = globalScene;
+    const enemy = globalScene.getEnemyPokemon();
+
+    ui.showText(
+      this.getEncounterMessage(),
+      null,
+      () => {
+        const localizationKey = "battleSpecDialogue:encounter";
+        if (ui.shouldSkipDialogue(localizationKey)) {
+          // Logging mirrors logging found in dialogue-ui-handler
+          console.log(`Dialogue ${localizationKey} skipped`);
+          this.doEncounterCommon(false);
+        } else {
+          const count = 5643853 + gameData.gameStats.classicSessionsPlayed;
+          // The line below checks if an English ordinal is necessary or not based on whether an entry for encounterLocalizationKey exists in the language or not.
+          const ordinalUsed =
+            !i18next.exists(localizationKey, { fallbackLng: [] }) || i18next.resolvedLanguage === "en"
+              ? i18next.t("battleSpecDialogue:key", {
+                  count,
+                  ordinal: true,
+                })
+              : "";
+          const cycleCount = count.toLocaleString() + ordinalUsed;
+          const cycleCountNoOrdinal = count.toLocaleString();
+          const genderIndex = gameData.gender ?? PlayerGender.UNSET;
+          const genderStr = PlayerGender[genderIndex].toLowerCase();
+          const encounterDialogue = i18next.t(localizationKey, {
+            context: genderStr,
+            cycleCount,
+            cycleCountNoOrdinal,
+          });
+          if (!gameData.getSeenDialogues()[localizationKey]) {
+            gameData.saveSeenDialogue(localizationKey);
+          }
+          ui.showDialogue(encounterDialogue, enemy?.species.name, null, () => {
+            this.doEncounterCommon(false);
+          });
+        }
+      },
+      1500,
+      true,
+    );
   }
 
   /**
    * Set biome weather if and only if this encounter is the start of a new biome.
-   *
+   * @remarks
    * By using function overrides, this should happen if and only if this phase
-   * is exactly a NewBiomeEncounterPhase or an EncounterPhase (to account for
-   * Wave 1 of a Daily Run), but NOT NextEncounterPhase (which starts the next
+   * is exactly a `NewBiomeEncounterPhase` or an `EncounterPhase` (to account for
+   * Wave 1 of a Daily Run), but NOT `NextEncounterPhase` (which starts the next
    * wave in the same biome).
    */
-  trySetWeatherIfNewBiome(): void {
-    if (!this.loaded) {
-      globalScene.arena.trySetWeather(getRandomWeatherType(globalScene.arena));
-    }
+  protected trySetWeatherIfNewBiome(): void {
+    globalScene.arena.setBiomeWeather();
+  }
+
+  /**
+   * Set biome terrain if and only if this encounter is the start of a new biome.
+   * @remarks
+   * By using function overrides, this should happen if and only if this phase
+   * is exactly a `NewBiomeEncounterPhase` or an `EncounterPhase` (to account for
+   * Wave 1 of a Daily Run), but NOT `NextEncounterPhase` (which starts the next
+   * wave in the same biome).
+   */
+  protected trySetTerrainIfNewBiome(): void {
+    globalScene.arena.setBiomeTerrain();
   }
 }

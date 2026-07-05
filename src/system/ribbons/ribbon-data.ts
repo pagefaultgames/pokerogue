@@ -12,8 +12,10 @@ export class RibbonData {
   /** Internal bitfield storing the unlock state for each ribbon */
   private payload: bigint;
 
-  //#region Ribbons
-  //#region Monotype challenge ribbons
+  // #region Ribbons
+
+  // #region Monotype ribbons
+
   /** Ribbon for winning the normal monotype challenge */
   public static readonly MONO_NORMAL = 0x1n as RibbonFlag;
   /** Ribbon for winning the fighting monotype challenge */
@@ -50,9 +52,11 @@ export class RibbonData {
   public static readonly MONO_DARK = 0x10000n as RibbonFlag;
   /** Ribbon for winning the fairy monotype challenge */
   public static readonly MONO_FAIRY = 0x20000n as RibbonFlag;
-  //#endregion Monotype ribbons
 
-  //#region Monogen ribbons
+  // #endregion Monotype ribbons
+
+  // #region Monogen ribbons
+
   /** Ribbon for winning the the mono gen 1 challenge */
   public static readonly MONO_GEN_1 = 0x40000n as RibbonFlag;
   /** Ribbon for winning the the mono gen 2 challenge */
@@ -71,7 +75,10 @@ export class RibbonData {
   public static readonly MONO_GEN_8 = 0x2000000n as RibbonFlag;
   /** Ribbon for winning the mono gen 9 challenge */
   public static readonly MONO_GEN_9 = 0x4000000n as RibbonFlag;
-  //#endregion Monogen ribbons
+
+  // #endregion Monogen ribbons
+
+  // #region Misc Ribbons
 
   // biome-ignore format: manual
   /** Ribbon for winning classic */
@@ -101,17 +108,22 @@ export class RibbonData {
   /** Ribbon for winning the limited support challenge set to no heal */
   public static readonly NO_HEAL        = 0x0800000000n as RibbonFlag;
   // biome-ignore format: manual
-  /** Ribbon for winning the limited uspport challenge set to no shop */
+  /** Ribbon for winning the limited support challenge set to no shop */
   public static readonly NO_SHOP        = 0x1000000000n as RibbonFlag;
   // biome-ignore format: manual
   /** Ribbon for winning the limited support challenge set to both*/
   public static readonly NO_SUPPORT     = 0x2000000000n as RibbonFlag;
+  /** Ribbon for winning the passive ability challenge */
+  public static readonly PASSIVE_CHALLENGE = 0x4000000000n as RibbonFlag;
 
+  // TODO: is this comment still accurate? ribbons appear to be using `bigint`s already
   // NOTE: max possible ribbon flag is 0x20000000000000 (53 total ribbons)
   // Once this is exceeded, bitfield needs to be changed to a bigint or even a uint array
   // Note that this has no impact on serialization as it is stored in hex.
 
-  //#endregion Ribbons
+  // #endregion Misc Ribbons
+
+  // #endregion Ribbons
 
   /** Create a new instance of RibbonData. Generally, {@linkcode fromJSON} is used instead. */
   constructor(value: number | bigint) {

@@ -3,9 +3,8 @@
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
-
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.8/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.5.0/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -16,7 +15,18 @@
     "enabled": true,
     "useEditorconfig": true,
     "indentStyle": "space",
-    "includes": ["**", "!src/data/balance/**"], // TODO: enable formatting of balance folder
+    "includes": [
+      "**",
+      "!src/data/balance/**",
+      "src/data/balance/species/**",
+      "src/data/balance/moves/forbidden-moves.ts",
+      "src/data/balance/moves/off-stat-denylist.ts",
+      "src/data/balance/moves/signature-moves.ts",
+      "src/data/balance/moves/superceded-moves.ts",
+      "src/data/balance/biomes/**",
+      "src/data/balance/timed-events.ts",
+      "src/data/balance/tm-pool-tiers.ts"
+    ], // TODO: enable formatting of balance folder
     "lineWidth": 120
   },
   "files": {
@@ -25,10 +35,12 @@
     // and having to verify whether each individual file is ignored
     "includes": [
       "**",
-      "!!.github",
+      "!.github/**/*.*", // workaround due to bug/design limitation, should be `"!.github"`
+      ".github/**/*.ts",
+      ".github/**/*.mts",
       "!!assets",
       "!!coverage",
-      "!!dist",
+      "!!dist*",
       "!!docs",
       "!!locales",
       "!!typedoc",
@@ -36,12 +48,7 @@
       "!!*.css",
       "!!*.html",
       // this file is too big
-      "!src/data/balance/tm-species-map.ts",
-      // there's some sort of bug when Biome parses this file
-      // relating to recursive variable assignment
-      // cf https://github.com/biomejs/biome/issues/8204
-      // TODO: remove this exclusion when the bug is fixed
-      "!!test/test-utils/setup/test-end-log.ts"
+      "!src/data/balance/tm-species-map.ts"
     ]
   },
   "assist": {
@@ -56,21 +63,20 @@
       }
     }
   },
-  // TODO: Remove unneeded `options` blocks once biome's JSON schema is fixed to not require them
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
       "correctness": {
         "noUndeclaredVariables": "error",
+        // we virtually always use base 10 number conversion
         "useParseIntRadix": "off",
         "noUnusedVariables": "error",
         "noSwitchDeclarations": "error",
         "noVoidTypeReturn": "error",
         "noUnusedImports": {
           "level": "error",
-          "fix": "safe",
-          "options": {}
+          "fix": "safe"
         },
         "noUnusedFunctionParameters": "error",
         "noUnusedLabels": "error",
@@ -81,29 +87,22 @@
       "style": {
         "useExplicitLengthCheck": {
           "level": "error",
-          "fix": "safe",
-          "options": {}
+          "fix": "safe"
         },
         "useAtIndex": "error",
-        "noNegationElse": {
-          "level": "error",
-          "fix": "unsafe", // duplicates else blocks
-          "options": {}
-        },
+        "noNegationElse": "error",
         // TODO: Fix all instances of this and promote to `error` - this and enums are the 2 things
         // barring us from `esModuleInterop`
         "noParameterProperties": "warn",
         "useConsistentBuiltinInstantiation": {
           "level": "error",
-          "fix": "safe",
-          "options": {}
+          "fix": "safe"
         },
         "noDefaultExport": "warn", // TODO: Fix `overrides.ts` and enable
         "noShoutyConstants": "error",
         "useThrowNewError": {
           "level": "error",
-          "fix": "safe",
-          "options": {}
+          "fix": "safe"
         },
         "useThrowOnlyError": "error",
         "useTrimStartEnd": "error",
@@ -111,24 +110,26 @@
           "level": "info", // TODO: Graduate to error eventually
           // NOTE: "checkAllProperties" has an immature implementation that
           // causes many false positives across files. Enable if/when maturity improves
-          "options": { "checkAllProperties": false }
+          "options": {
+            "checkAllProperties": false
+          }
         },
         "useConsistentObjectDefinitions": {
           "level": "error",
-          "options": { "syntax": "shorthand" }
+          "options": {
+            "syntax": "shorthand"
+          }
         },
         "useCollapsedIf": "error",
         "useCollapsedElseIf": "error",
         "useDeprecatedReason": "error",
         "useConsistentArrayType": {
           "level": "error",
-          "fix": "safe",
-          "options": {}
+          "fix": "safe"
         },
         "useShorthandAssign": {
           "level": "error",
-          "fix": "safe",
-          "options": {}
+          "fix": "safe"
         },
         "noSubstr": "error",
         "noYodaExpression": "error",
@@ -136,8 +137,7 @@
         "useEnumInitializers": "off", // large enums like MoveId/SpeciesId would make this cumbersome
         "useBlockStatements": {
           "level": "error",
-          "fix": "safe",
-          "options": {}
+          "fix": "safe"
         },
         "useConst": "error",
         "useImportType": "error",
@@ -148,16 +148,17 @@
           // TODO: Fix spots in the codebase where this flag would be triggered
           // and then set to "error" and re-enable the fixer
           "level": "warn",
-          "fix": "none",
-          "options": {}
+          "fix": "none"
         },
         "useSingleVarDeclarator": {
           "level": "error",
-          "fix": "safe",
-          "options": {}
+          "fix": "safe"
         },
+        // TODO: Consider enabling
         "useNodejsImportProtocol": "off",
-        "useTemplate": "off", // string concatenation is faster: https://stackoverflow.com/questions/29055518/are-es6-template-literals-faster-than-string-concatenation
+        // String concatenation can be more readable than template literals
+        // in some situations.
+        "useTemplate": "off",
         "useAsConstAssertion": "error",
         "noUnusedTemplateLiteral": "error",
         "useNumberNamespace": "error",
@@ -174,41 +175,110 @@
             }
           }
         },
-
-        // TODO: Wait until the rule gets options for ignoring doc comments and/or different parameter names,
-        // and THEN enable it codebase-wide
         "useUnifiedTypeSignatures": {
-          "level": "info",
-          "fix": "none",
-          "options": {}
+          "level": "warn",
+          "fix": "unsafe",
+          "options": {
+            // Disable warnings on functions that differ only by parameter names or JSDoc comments, as these are often intentional
+            // (e.g. marking one overload as deprecated)
+            "ignoreDifferentlyNamedParameters": true,
+            "ignoreDifferentJsDoc": true
+          }
         },
         "useGroupedAccessorPairs": "error",
         "useObjectSpread": "error",
-        "useNumericSeparators": "off" // TODO: Consider enabling?
+        "useNumericSeparators": "off", // TODO: Consider enabling?
+        "useNamingConvention": {
+          "level": "error",
+          "options": {
+            "requireAscii": true,
+            "strictCase": false,
+            // evaluated in order from top to bottom
+            "conventions": [
+              {
+                "selector": {
+                  "kind": "interface"
+                },
+                "formats": ["PascalCase"]
+              },
+              {
+                "selector": {
+                  "kind": "typeAlias"
+                },
+                "formats": ["PascalCase"]
+              },
+              {
+                "selector": {
+                  "kind": "class"
+                },
+                "formats": ["PascalCase"]
+              },
+              {
+                "selector": {
+                  "kind": "enum"
+                },
+                "formats": ["PascalCase"]
+              },
+              {
+                "selector": {
+                  "kind": "enumMember"
+                },
+                "formats": ["CONSTANT_CASE"]
+              },
+              // having this section last disables the built-in conventions
+              {
+                "match": ".*"
+              }
+            ]
+          }
+        },
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "paths": {
+              "node:test": {
+                "message": "Do not import from `node:test`, use `vitest`"
+              }
+            }
+          }
+        },
+        "noMultiAssign": "error",
+        "noMultilineString": "error"
       },
       "suspicious": {
+        "noExtraNonNullAssertion": "error",
         "useErrorMessage": "error",
-        "noEvolvingTypes": "warn", // TODO: Review and enable ASAP - this is VERY VERY BAD
+        "noEvolvingTypes": "error",
+        "noImplicitAnyLet": "off", // covered by noEvolvingTypes; no need for duplicate warnings
         "useNumberToFixedDigitsArgument": "error",
-        "useGuardForIn": "warn", // TODO: Review and enable ASAP - this is EVEN FRICKING WORSE
+        "useGuardForIn": "warn", // TODO: Review and enable ASAP
         "noDoubleEquals": "error",
         // While this would be a nice rule to enable, the current structure of the codebase makes this infeasible
         // due to being used for move/ability `args` params and save data-related code.
         // This can likely be enabled for all non-utils files once these are eventually reworked, but until then we leave it off.
         "noExplicitAny": "off",
-        "noAssignInExpressions": "off",
-        "noPrototypeBuiltins": "off", // TODO: enable this
+        "noAssignInExpressions": "info", // TODO: Increase to "error" once all instances are fixed
+        "noPrototypeBuiltins": "error",
         "noFallthroughSwitchClause": "error", // Prevents accidental automatic fallthroughs in switch cases (use disable comment if needed)
-        "noImplicitAnyLet": "warn", // TODO: Refactor and make this an error
         "noRedeclare": "info", // TODO: Refactor and make this an error
         "noGlobalIsNan": "error",
+        "noGlobalIsFinite": "error",
         "noAsyncPromiseExecutor": "warn", // TODO: Refactor and make this an error
         "noVar": "error",
         "noDocumentCookie": "off", // Firefox has minimal support for the "Cookie Store API"
         "noConstantBinaryExpressions": "error",
         "noTsIgnore": "error",
-        "useIterableCallbackReturn": "warn", // TODO: Refactor and change to error
-        "noNonNullAssertedOptionalChain": "warn" // TODO: Refactor and change to error
+        "useIterableCallbackReturn": {
+          "level": "warn", // TODO: refactor and make error
+          "options": {
+            "checkForEach": false
+          }
+        },
+        "noNonNullAssertedOptionalChain": "warn", // TODO: Refactor and change to error
+        "noDuplicateDependencies": "error",
+        "noImportCycles": "error",
+        "noProto": "error",
+        "noShadow": "warn" // TODO: refactor and make "error"
       },
       "complexity": {
         "useWhile": "error",
@@ -223,7 +293,13 @@
         "noThisInStatic": "error",
         "noUselessThisAlias": "error",
         "noUselessTernary": "error",
-        "useIndexOf": "error"
+        "useIndexOf": "error",
+        "noUselessUndefined": "error",
+        "useMaxParams": {
+          "level": "info", // TODO: Change to "error"... eventually...
+          "options": { "max": 7 }
+        },
+        "useArrayFind": "error"
       },
       "performance": {
         "noNamespaceImport": "error",
@@ -231,16 +307,8 @@
         "noBarrelFile": "error"
       },
       "nursery": {
-        "noProto": "error",
-        "useFind": "error",
-        "noUselessUndefined": "error",
-        "useMaxParams": {
-          "level": "info", // TODO: Change to "error"... eventually...
-          "options": { "max": 7 }
-        },
-        "noShadow": "warn", // TODO: refactor and make "error"
-        "noDuplicateDependencies": "error",
-        "noImportCycles": "error",
+        // TODO: Fix violations then enable this
+        "useAwaitThenable": "off",
         // TODO: Change to error once promises are used properly
         "noMisusedPromises": "info"
       }
@@ -259,9 +327,38 @@
   },
   "overrides": [
     {
-      "includes": ["**/scripts/**/*.js"],
+      "includes": ["**/src/ai/**/*.ts"],
       "linter": {
         "rules": {
+          "complexity": {
+            "noExcessiveCognitiveComplexity": {
+              "level": "info",
+              "options": {
+                // Code for AI behavior can have a slightly higher complexity due to the nature of decision trees and such
+                "maxAllowedComplexity": 20
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "includes": ["scripts/**/*"],
+      "linter": {
+        "rules": {
+          "style": {
+            // TODO: Remove this and replace it with an ambient module declaration once TSGo is capable of handling these
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "commander": {
+                    "message": "Imports from the commander package lack the strict type safety of @commander-js/extra-typings, producing type errors when passed to relevant utility functions."
+                  }
+                }
+              }
+            }
+          },
           "nursery": {
             "noFloatingPromises": "error"
           }
@@ -280,30 +377,39 @@
             "noNonNullAssertion": "off" // tedious in some tests
           },
           "nursery": {
+            // TODO: Enable for normal test folder files as well
             "noFloatingPromises": "error"
           }
         }
       }
     },
-
-    // Overrides to prevent unused import removal inside `overrides.ts`, enums & `.d.ts` files (for TSDoc linkcodes),
-    // as well as inside script boilerplate files (whose imports will _presumably_ be used in the generated file).
-    {
-      "includes": ["**/src/overrides.ts", "**/src/enums/**/*", "**/*.d.ts", "scripts/**/*.boilerplate.ts"],
-      "linter": {
-        "rules": {
-          "correctness": {
-            "noUnusedImports": "off"
-          }
-        }
-      }
-    },
+    // Prevent forcing type-only imports inside `overrides.ts` (where they serve as placeholders for actual runtime symbols)
     {
       "includes": ["**/src/overrides.ts"],
       "linter": {
         "rules": {
           "style": {
             "useImportType": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/**/*.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "patterns": [
+                  {
+                    "group": ["#test/*"],
+                    "message": "Do not import files from `test/` in `src/`."
+                  }
+                ]
+              }
+            }
           }
         }
       }

@@ -1,5 +1,6 @@
+// biome-ignore-all lint/style/useNamingConvention: Z moves are weird
 export enum MoveId {
-  /**{@link https://bulbapedia.bulbagarden.net/wiki/None_(move) | Source} */
+  /** A marker for "no move", typically used to signify status or ability-based interruptions. */
   NONE,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pound_(move) | Source} */
   POUND,
@@ -1872,4 +1873,6 @@ export enum MoveId {
   UPPER_HAND,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Malignant_Chain_(move) | Source} */
   MALIGNANT_CHAIN,
+  /**{@link https://bulbapedia.bulbagarden.net/wiki/Nihil_Light_(move) | Source} */
+  NIHIL_LIGHT,
 }

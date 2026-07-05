@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { modifierTypes } from "#data/data-lists";
 import { BattlerIndex } from "#enums/battler-index";
@@ -38,6 +39,7 @@ import { PersistentModifierRequirement } from "#mystery-encounters/mystery-encou
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import { randInt } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { groupStatChange } from "#utils/stat-change";
 import i18next from "i18next";
 
 /** the i18n namespace for this encounter */
@@ -190,7 +192,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
 
     globalScene
       .loadSe("PRSFX- Bug Bite", "battle_anims", "PRSFX- Bug Bite.wav")
-      .loadSe("Follow Me", "battle_anims", "Follow Me.mp3");
+      .loadSe("Follow Me", "battle_anims", "Follow Me.wav");
 
     // Get all player berry items, remove from party, and store reference
     const berryItems = globalScene.findModifiers(m => m instanceof BerryModifier) as BerryModifier[];
@@ -239,13 +241,11 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
             queueEncounterMessage(`${namespace}:option.1.bossEnraged`);
-            globalScene.phaseManager.unshiftNew(
-              "StatStageChangePhase",
-              pokemon.getBattlerIndex(),
-              true,
-              statChangesForBattle,
-              1,
-            );
+            globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+              battlerIndex: pokemon.getBattlerIndex(),
+              changes: groupStatChange(statChangesForBattle, 1),
+              sourcePokemon: pokemon,
+            });
           },
         },
       ],
@@ -402,7 +402,7 @@ function doGreedentSpriteSteal() {
 
   const greedentSprites = globalScene.currentBattle.mysteryEncounter!.introVisuals?.getSpriteAtIndex(1);
 
-  globalScene.playSound("battle_anims/Follow Me");
+  audioManager.playSound("battle_anims/Follow Me");
   globalScene.tweens.chain({
     targets: greedentSprites,
     tweens: [
@@ -493,11 +493,11 @@ function doGreedentEatBerries() {
     y: "-=8",
     loop: 5,
     onStart: () => {
-      globalScene.playSound("battle_anims/PRSFX- Bug Bite");
+      audioManager.playSound("battle_anims/PRSFX- Bug Bite");
     },
     onLoop: () => {
       if (index % 2 === 0) {
-        globalScene.playSound("battle_anims/PRSFX- Bug Bite");
+        audioManager.playSound("battle_anims/PRSFX- Bug Bite");
       }
       index++;
     },

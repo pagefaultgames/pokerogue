@@ -1,8 +1,8 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { NON_LEGEND_PARADOX_POKEMON, NON_LEGEND_ULTRA_BEASTS } from "#balance/special-species-groups";
-import { speciesStarterCosts } from "#balance/starters";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -94,16 +94,20 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
       false,
       false,
       false,
-      s => !NON_LEGEND_PARADOX_POKEMON.includes(s.speciesId) && !NON_LEGEND_ULTRA_BEASTS.includes(s.speciesId),
+      s =>
+        !NON_LEGEND_PARADOX_POKEMON.includes(s.speciesId)
+        && !NON_LEGEND_ULTRA_BEASTS.includes(s.speciesId)
+        && speciesDataRegistry.isStarter(s.speciesId), // The event expects the chosen pokemon to be a valid starter, and will break if a non-starter is chosen
     );
 
     let pokemon: PlayerPokemon;
-    /**
+    /*
      * Mon is determined as follows:
-     * If you roll the 1% for Shiny Magikarp, you get Magikarp with a random variant
-     * If an event with more than 1 valid event encounter species is active, you have 20% chance to get one of those
-     * If the rolled species has no HA, and there are valid event encounters, you will get one of those
-     * If the rolled species has no HA and there are no valid event encounters, you will get Shiny Magikarp
+     * - If you roll the 1% for Shiny Magikarp, you get Magikarp with a random variant
+     * - If an event with more than 1 valid event encounter species is active, you have 20% chance to get one of those
+     * - If the rolled species has no HA, and there are valid event encounters, you will get one of those
+     * - If the rolled species has no HA and there are no valid event encounters, you will get Shiny Magikarp
+     *
      * Mons rolled from the event encounter pool get 3 extra shiny rolls
      */
     if (
@@ -171,7 +175,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
       variant: pokemon.variant,
     });
 
-    const starterTier = speciesStarterCosts[species.speciesId];
+    const starterTier = speciesDataRegistry.getStarterCost(species.speciesId);
     // Prices decrease by starter tier less than 5, but only reduces cost by half at max
     let priceMultiplier = MAX_POKEMON_PRICE_MULTIPLIER * (Math.max(starterTier, 2.5) / 5);
     if (pokemon.shiny) {

@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { pokemonEvolutions } from "#balance/pokemon-evolutions";
 import { allMoves } from "#data/data-lists";
 import { SpeciesFormChangeItemTrigger } from "#data/form-change-triggers";
 import { Gender, getGenderColor, getGenderSymbol } from "#data/gender";
@@ -9,8 +9,11 @@ import { ChallengeType } from "#enums/challenge-type";
 import { Challenges } from "#enums/challenges";
 import { Command } from "#enums/command";
 import { FormChangeItem } from "#enums/form-change-item";
+import { LearnableMoveSource } from "#enums/learnable-move-source";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
+import { PartyUiMode } from "#enums/party-ui-mode";
+import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { TextStyle } from "#enums/text-style";
@@ -38,83 +41,6 @@ const DISCARD_BUTTON_Y = -73;
 const DISCARD_BUTTON_Y_DOUBLES = -58;
 
 const defaultMessage = i18next.t("partyUiHandler:choosePokemon");
-
-/**
- * Indicates the reason why the party UI is being opened.
- */
-export enum PartyUiMode {
-  /**
-   * Indicates that the party UI is open because of a user-opted switch.  This
-   * type of switch can be cancelled.
-   */
-  SWITCH,
-  /**
-   * Indicates that the party UI is open because of a faint or other forced
-   * switch (eg, move effect). This type of switch cannot be cancelled.
-   */
-  FAINT_SWITCH,
-  /**
-   * Indicates that the party UI is open because of a start-of-encounter optional
-   * switch. This type of switch can be cancelled.
-   */
-  // TODO: Rename to PRE_BATTLE_SWITCH
-  POST_BATTLE_SWITCH,
-  /**
-   * Indicates that the party UI is open because of the move Revival Blessing.
-   * This selection cannot be cancelled.
-   */
-  REVIVAL_BLESSING,
-  /**
-   * Indicates that the party UI is open to select a mon to apply a modifier to.
-   * This type of selection can be cancelled.
-   */
-  MODIFIER,
-  /**
-   * Indicates that the party UI is open to select a mon to apply a move
-   * modifier to (such as an Ether or PP Up).  This type of selection can be cancelled.
-   */
-  MOVE_MODIFIER,
-  /**
-   * Indicates that the party UI is open to select a mon to teach a TM.  This
-   * type of selection can be cancelled.
-   */
-  TM_MODIFIER,
-  /**
-   * Indicates that the party UI is open to select a mon to remember a move.
-   * This type of selection can be cancelled.
-   */
-  REMEMBER_MOVE_MODIFIER,
-  /**
-   * Indicates that the party UI is open to transfer items between mons.  This
-   * type of selection can be cancelled.
-   */
-  MODIFIER_TRANSFER,
-  /**
-   * Indicates that the party UI is open because of a DNA Splicer.  This
-   * type of selection can be cancelled.
-   */
-  SPLICE,
-  /**
-   * Indicates that the party UI is open to release a party member.  This
-   * type of selection can be cancelled.
-   */
-  RELEASE,
-  /**
-   * Indicates that the party UI is open to check the team.  This
-   * type of selection can be cancelled.
-   */
-  CHECK,
-  /**
-   * Indicates that the party UI is open to select a party member for an arbitrary effect.
-   * This is generally used in for Mystery Encounter or special effects that require the player to select a Pokemon
-   */
-  SELECT,
-  /**
-   * Indicates that the party UI is open to select a party member from which items will be discarded.
-   * This type of selection can be cancelled.
-   */
-  DISCARD,
-}
 
 export enum PartyOption {
   CANCEL = -1,
@@ -181,6 +107,8 @@ export class PartyUiHandler extends MessageUiHandler {
   private optionsBg: Phaser.GameObjects.NineSlice;
   private optionsCursorObj: Phaser.GameObjects.Image | null;
   private options: number[];
+  /** Prefix for memory mushroom options */
+  private optionPrefixes: (Phaser.GameObjects.Sprite | Phaser.GameObjects.Text | null)[] = [];
 
   private transferMode: boolean;
   private transferOptionCursor: number;
@@ -375,7 +303,9 @@ export class PartyUiHandler extends MessageUiHandler {
     this.populatePartySlots();
     // If we are currently transferring items, set the icon to its proper state and reveal the button.
     if (this.isItemManageMode()) {
-      this.partyDiscardModeButton.toggleIcon(this.partyUiMode as PartyUiMode.MODIFIER_TRANSFER | PartyUiMode.DISCARD);
+      this.partyDiscardModeButton.toggleIcon(
+        this.partyUiMode as typeof PartyUiMode.MODIFIER_TRANSFER | typeof PartyUiMode.DISCARD,
+      );
     }
     this.showPartyText();
     this.setCursor(0);
@@ -603,33 +533,29 @@ export class PartyUiHandler extends MessageUiHandler {
         }
         const hasMatchingModifier = matchingModifiers.some(m => m !== undefined); // checks if any items match
         const partySlot = this.partySlots.find(m => m.getPokemon() === newPokemon)!; // this gets pokemon [p] for us
-        if (p !== this.transferCursor) {
-          // this skips adding the able/not able labels on the pokemon doing the transfer
-          if (hasMatchingModifier) {
-            // if matchingModifier exists then the item exists on the new pokemon
-            ableToTransferText = i18next.t("partyUiHandler:notAble"); // start with not able
-            /**
-             * The amount of items that can be transferred in the `All` option
-             */
-            let ableAmount = 0;
-            for (const modifier of matchingModifiers) {
-              if (!modifier || modifier.getCountUnderMax() > 0) {
-                // if the modifier doesn't exist, or the stack count isn't at max, then we can transfer at least 1 stack
-                ableToTransferText = i18next.t("partyUiHandler:able");
-                ableAmount++;
-              }
-            }
-            // only show the amount if an item can be transferred and there are multiple items
-            ableToTransferText += ableAmount && matchingModifiers.length > 1 ? ` (${ableAmount})` : "";
-          } else {
-            // if no item matches, that means the pokemon doesn't have any of the item, and we need to show "Able"
-            ableToTransferText = i18next.t("partyUiHandler:able");
-            // only show the amount if there are multiple items
-            ableToTransferText += matchingModifiers.length > 1 ? ` (${matchingModifiers.length})` : "";
-          }
-        } else {
-          // this else relates to the transfer pokemon. We set the text to be blank so there's no "Able"/"Not able" text
+        if (p === this.transferCursor) {
+          // this relates to the transfer pokemon. We set the text to be blank so there's no "Able"/"Not able" text
           ableToTransferText = "";
+          // this skips adding the able/not able labels on the pokemon doing the transfer
+        } else if (hasMatchingModifier) {
+          // if matchingModifier exists then the item exists on the new pokemon
+          ableToTransferText = i18next.t("partyUiHandler:notAble"); // start with not able
+          /** The amount of items that can be transferred in the `All` option */
+          let ableAmount = 0;
+          for (const modifier of matchingModifiers) {
+            if (!modifier || modifier.getCountUnderMax() > 0) {
+              // if the modifier doesn't exist, or the stack count isn't at max, then we can transfer at least 1 stack
+              ableToTransferText = i18next.t("partyUiHandler:able");
+              ableAmount++;
+            }
+          }
+          // only show the amount if an item can be transferred and there are multiple items
+          ableToTransferText += ableAmount && matchingModifiers.length > 1 ? ` (${ableAmount})` : "";
+        } else {
+          // if no item matches, that means the pokemon doesn't have any of the item, and we need to show "Able"
+          ableToTransferText = i18next.t("partyUiHandler:able");
+          // only show the amount if there are multiple items
+          ableToTransferText += matchingModifiers.length > 1 ? ` (${matchingModifiers.length})` : "";
         }
         partySlot.slotHpLabel.setVisible(false);
         partySlot.slotHpBar.setVisible(false);
@@ -779,7 +705,9 @@ export class PartyUiHandler extends MessageUiHandler {
     // show move description
     const option = this.options[this.optionsCursor];
     const pokemon = globalScene.getPlayerParty()[this.cursor];
-    const move = allMoves[pokemon.getLearnableLevelMoves()[option]];
+    const learnableMoves = pokemon.getLearnableLevelMoves();
+    const moveId: MoveId | undefined = learnableMoves[option]?.[1];
+    const move = moveId === undefined ? undefined : allMoves[moveId];
     if (move) {
       this.moveInfoOverlay.show(move);
     } else {
@@ -1339,13 +1267,6 @@ export class PartyUiHandler extends MessageUiHandler {
 
     this.updateOptions();
 
-    /** When an item is being selected for transfer or discard, the message box is taller as the message occupies two lines */
-    if (this.isItemManageMode()) {
-      this.partyMessageBox.setSize(262 - Math.max(this.optionsBg.displayWidth - 56, 0), 42);
-    } else {
-      this.partyMessageBox.setSize(262 - Math.max(this.optionsBg.displayWidth - 56, 0), 30);
-    }
-
     this.setCursor(0);
   }
 
@@ -1398,7 +1319,7 @@ export class PartyUiHandler extends MessageUiHandler {
     }
     if (learnableMoves?.length > 0) {
       // show the move overlay with info for the first move
-      this.moveInfoOverlay.show(allMoves[learnableMoves[0]]);
+      this.moveInfoOverlay.show(allMoves[learnableMoves[0][1]]);
     }
   }
 
@@ -1425,10 +1346,10 @@ export class PartyUiHandler extends MessageUiHandler {
     this.options.push(PartyOption.RENAME);
 
     if (
-      pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId)
+      speciesDataRegistry.hasEvolutions(pokemon.species.speciesId)
       || (pokemon.isFusion()
         && pokemon.fusionSpecies
-        && pokemonEvolutions.hasOwnProperty(pokemon.fusionSpecies.speciesId))
+        && speciesDataRegistry.hasEvolutions(pokemon.fusionSpecies.speciesId))
     ) {
       this.options.push(PartyOption.UNPAUSE_EVOLUTION);
     }
@@ -1500,7 +1421,7 @@ export class PartyUiHandler extends MessageUiHandler {
           const allowBatonModifierSwitch = this.allowBatonModifierSwitch();
           const isBatonPassMove = this.isBatonPassMove();
 
-          if (allowBatonModifierSwitch && !isBatonPassMove) {
+          if (allowBatonModifierSwitch && !isBatonPassMove && globalScene.preferBatonPass) {
             // the BATON modifier gives an extra switch option for
             // pokemon-command switches, allowing buffs to be optionally passed
             this.options.push(PartyOption.PASS_BATON);
@@ -1512,6 +1433,11 @@ export class PartyUiHandler extends MessageUiHandler {
           this.options.push(
             isBatonPassMove && !allowBatonModifierSwitch ? PartyOption.PASS_BATON : PartyOption.SEND_OUT,
           );
+
+          if (allowBatonModifierSwitch && !isBatonPassMove && !globalScene.preferBatonPass) {
+            // If Pass Baton is not preferred, place it under SEND_OUT
+            this.options.push(PartyOption.PASS_BATON);
+          }
         }
         this.addCommonOptions(pokemon);
         break;
@@ -1567,6 +1493,20 @@ export class PartyUiHandler extends MessageUiHandler {
     this.addCancelAndScrollOptions();
 
     this.updateOptionsWindow();
+    this.updatePartyMessageBox();
+  }
+
+  private updatePartyMessageBox(): void {
+    if (!this.optionsMode || !this.optionsBg) {
+      return;
+    }
+
+    // Item management mode uses a taller message box due to two-line messages.
+    if (this.isItemManageMode()) {
+      this.partyMessageBox.setSize(262 - Math.max(this.optionsBg.displayWidth - 56, 0), 42);
+    } else {
+      this.partyMessageBox.setSize(262 - Math.max(this.optionsBg.displayWidth - 56, 0), 30);
+    }
   }
 
   updateOptionsHardcore(): void {
@@ -1586,7 +1526,12 @@ export class PartyUiHandler extends MessageUiHandler {
         break;
       case PartyUiMode.SWITCH:
       case PartyUiMode.RELEASE:
+        this.options.push(PartyOption.RELEASE);
+        break;
       case PartyUiMode.CHECK:
+        if (globalScene.phaseManager.getCurrentPhase().is("MysteryEncounterPhase")) {
+          break;
+        }
         this.options.push(PartyOption.RELEASE);
         break;
     }
@@ -1605,13 +1550,20 @@ export class PartyUiHandler extends MessageUiHandler {
     this.optionsContainer.add(this.optionsBg);
 
     let widestOptionWidth = 0;
+    let widestPrefixWidth = 0;
     const optionTexts: BBCodeText[] = [];
+    this.optionPrefixes = [];
 
     // TODO: Refactor this iteration to not be fucking bizarre
     for (let o = 0; o < this.options.length; o++) {
       const option = this.options.at(-(o + 1))!;
-      let altText = false;
+      let learningSource: LearnableMoveSource = -1 as LearnableMoveSource;
       let optionName: string;
+      /**
+       * Extra info used for displaying the prefix when using a memory mushroom
+       * This can be the level for level moves or the movetype for tm moves
+       */
+      let memoryMushroomExtraInfo: number | string | null = null;
       if (option === PartyOption.SCROLL_UP) {
         optionName = "↑";
       } else if (option === PartyOption.SCROLL_DOWN) {
@@ -1654,12 +1606,19 @@ export class PartyUiHandler extends MessageUiHandler {
         }
       } else if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER) {
         const learnableLevelMoves = pokemon.getLearnableLevelMoves();
-        const move = learnableLevelMoves[option];
+        const move: MoveId = learnableLevelMoves[option][1];
+        learningSource = learnableLevelMoves[option][2];
+        switch (learningSource) {
+          case LearnableMoveSource.LEVEL:
+          case LearnableMoveSource.FUSION_LEVEL:
+            memoryMushroomExtraInfo = learnableLevelMoves[option][0];
+            break;
+          case LearnableMoveSource.TM:
+          case LearnableMoveSource.FUSION_TM:
+            memoryMushroomExtraInfo = PokemonType[allMoves[move].type].toLowerCase();
+            break;
+        }
         optionName = allMoves[move].name;
-        altText = !pokemon
-          .getSpeciesForm()
-          .getLevelMoves()
-          .find(plm => plm[1] === move);
       } else if (option === PartyOption.ALL) {
         optionName = i18next.t("partyUiHandler:all");
         // add the number of items to the `all` option
@@ -1672,7 +1631,49 @@ export class PartyUiHandler extends MessageUiHandler {
 
       const yCoord = -6 - 16 * o;
       const optionText = addBBCodeTextObject(0, yCoord - 16, optionName, TextStyle.WINDOW, { maxLines: 1 });
-      if (altText) {
+      let optionPrefix: Phaser.GameObjects.Sprite | Phaser.GameObjects.Text | null = null;
+
+      if (learningSource > -1) {
+        // Memory mushroom prefixes
+        if (learningSource === LearnableMoveSource.LEVEL || learningSource === LearnableMoveSource.FUSION_LEVEL) {
+          optionPrefix = addTextObject(0, yCoord - 8, `${memoryMushroomExtraInfo}`, TextStyle.WINDOW).setOrigin(1, 0.5);
+          this.optionsContainer.add(optionPrefix);
+        } else {
+          let frameKey: string;
+          switch (learningSource) {
+            case LearnableMoveSource.EGG:
+            case LearnableMoveSource.FUSION_EGG:
+              frameKey = "common_egg";
+              break;
+            case LearnableMoveSource.PREVO:
+            case LearnableMoveSource.FUSION_PREVO:
+            case LearnableMoveSource.RELEARN:
+            case LearnableMoveSource.FUSION_RELEARN:
+            case LearnableMoveSource.EVOLUTION:
+            case LearnableMoveSource.FUSION_EVOLUTION:
+              frameKey = "big_mushroom";
+              break;
+            case LearnableMoveSource.TM:
+            case LearnableMoveSource.FUSION_TM:
+              frameKey = `tm_${memoryMushroomExtraInfo}`;
+              break;
+            default:
+              frameKey = "unknown";
+              break;
+          }
+          optionPrefix = globalScene.add
+            .sprite(0, yCoord - 8, "items", frameKey)
+            .setOrigin(0, 0.5)
+            .setScale(0.5);
+          this.optionsContainer.add(optionPrefix);
+        }
+        this.optionPrefixes.push(optionPrefix);
+      } else {
+        this.optionPrefixes.push(null);
+      }
+      if (learningSource % 2 === 1) {
+        // Color moves coming from a fusion source
+        // They are odd while their non-fusion counterparts are even
         optionText.setColor("#40c8f8");
         optionText.setShadowColor("#006090");
       }
@@ -1701,15 +1702,30 @@ export class PartyUiHandler extends MessageUiHandler {
       optionText.setText(`[shadow]${optionText.text}[/shadow]`);
 
       optionTexts.push(optionText);
-
-      widestOptionWidth = Math.max(optionText.displayWidth, widestOptionWidth);
-
+      const prefixWidth = optionPrefix ? optionPrefix.displayWidth + 1 : 0;
+      widestPrefixWidth = Math.max(prefixWidth, widestPrefixWidth);
+      widestOptionWidth = Math.max(optionText.displayWidth + prefixWidth, widestOptionWidth);
       this.optionsContainer.add(optionText);
     }
 
+    widestOptionWidth = Math.max(
+      widestOptionWidth,
+      optionTexts.reduce((max, t) => Math.max(max, t.displayWidth), 0) + widestPrefixWidth,
+    );
+
     this.optionsBg.width = Math.max(widestOptionWidth + 24, 94);
-    for (const optionText of optionTexts) {
-      optionText.x = 15 - this.optionsBg.width;
+    const prefixBaseX = 14;
+    const optionTextBaseX = 19;
+    for (let i = 0; i < optionTexts.length; i++) {
+      const optionText = optionTexts[i];
+      const prefix = this.optionPrefixes[i];
+      optionText.x = optionTextBaseX - this.optionsBg.width + widestPrefixWidth;
+      if (prefix) {
+        prefix.x =
+          prefix.originX === 1
+            ? prefixBaseX - this.optionsBg.width + widestPrefixWidth - 1
+            : prefixBaseX - this.optionsBg.width;
+      }
     }
   }
   startTransfer(): void {
@@ -1845,6 +1861,11 @@ export class PartyUiHandler extends MessageUiHandler {
     this.optionsContainer.removeAll(true);
     this.eraseOptionsCursor();
 
+    for (const optionPrefix of this.optionPrefixes) {
+      optionPrefix?.destroy();
+    }
+    this.optionPrefixes = [];
+
     this.partyMessageBox.setSize(262, 30);
     this.showPartyText();
   }
@@ -1936,8 +1957,6 @@ class PartySlot extends Phaser.GameObjects.Container {
   }
 
   setup(partyUiMode: PartyUiMode, tmMoveId: MoveId) {
-    const currentLanguage = i18next.resolvedLanguage ?? "en";
-    const offsetJa = currentLanguage === "ja";
     const isItemManageMode = partyUiMode === PartyUiMode.MODIFIER_TRANSFER || partyUiMode === PartyUiMode.DISCARD;
 
     this.slotBgKey = this.isBenched
@@ -1960,13 +1979,13 @@ class PartySlot extends Phaser.GameObjects.Container {
     // icon position relative to slot background
     let slotPb = { x: 4, y: 4 };
     // name position relative to slot background
-    let namePosition = { x: 24, y: 10 + (offsetJa ? 2 : 0) };
+    let namePosition = { x: 24, y: 10 };
     // maximum allowed length of name; must accomodate fusion symbol
     let maxNameTextWidth = 76 - (isFusion ? 8 : 0);
     // "Lv." label position relative to slot background
     let levelLabelPosition = { x: 24 + 8, y: 10 + 12 };
     // offset from "Lv." to the level number; should not be changed.
-    const levelTextToLevelLabelOffset = { x: 9, y: offsetJa ? 1.5 : 0 };
+    const levelTextToLevelLabelOffset = { x: 9, y: 0 };
     // offests from "Lv." to gender, spliced and status icons, these depend on the type of slot.
     let genderTextToLevelLabelOffset = { x: 68 - (isFusion ? 8 : 0), y: -9 };
     let splicedIconToLevelLabelOffset = { x: 68, y: 3.5 - 12 };
@@ -1977,7 +1996,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     let hpBarPosition = { x: 8, y: 31 };
     // offsets of hp bar overlay (showing the remaining hp) and number; should not be changed.
     const hpOverlayToBarOffset = { x: 16, y: 2 };
-    const hpTextToBarOffset = { x: -3, y: -2 + (offsetJa ? 2 : 0) };
+    const hpTextToBarOffset = { x: -3, y: -2 };
     // description position relative to slot background
     let descriptionLabelPosition = { x: 32, y: 46 };
 
@@ -1992,7 +2011,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     // Benched slots have significantly different parameters
     if (this.isBenched) {
       slotPb = { x: 2, y: 12 };
-      namePosition = { x: 21, y: 2 + (offsetJa ? 2 : 0) };
+      namePosition = { x: 21, y: 2 };
       maxNameTextWidth = 52;
       levelLabelPosition = { x: 21 + 8, y: 2 + 12 };
       genderTextToLevelLabelOffset = { x: 36, y: 0 };
@@ -2014,7 +2033,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     const slotInfoContainer = globalScene.add.container(0, 0);
     this.add(slotInfoContainer);
 
-    let displayName = this.pokemon.getNameToRender(false);
+    let displayName = this.pokemon.getNameToRender({ useIllusion: false });
     let nameTextWidth: number;
 
     const nameSizeTest = addTextObject(0, 0, displayName, TextStyle.PARTY);
@@ -2138,29 +2157,29 @@ class PartySlot extends Phaser.GameObjects.Container {
       this.slotDescriptionLabel,
     ]);
 
-    if (partyUiMode !== PartyUiMode.TM_MODIFIER) {
-      this.slotDescriptionLabel.setVisible(false);
-      this.slotHpLabel.setVisible(true);
-      this.slotHpBar.setVisible(true);
-      this.slotHpOverlay.setVisible(true);
-      this.slotHpText.setVisible(true);
-    } else {
+    if (partyUiMode === PartyUiMode.TM_MODIFIER) {
       this.slotHpLabel.setVisible(false);
       this.slotHpBar.setVisible(false);
       this.slotHpOverlay.setVisible(false);
       this.slotHpText.setVisible(false);
       let slotTmText: string;
 
-      if (this.pokemon.getMoveset().filter(m => m.moveId === tmMoveId).length > 0) {
+      if (this.pokemon.getMoveset().some(m => m.moveId === tmMoveId)) {
         slotTmText = i18next.t("partyUiHandler:learned");
-      } else if (this.pokemon.compatibleTms.indexOf(tmMoveId) === -1) {
-        slotTmText = i18next.t("partyUiHandler:notAble");
-      } else {
+      } else if (this.pokemon.isTmCompatible(tmMoveId)) {
         slotTmText = i18next.t("partyUiHandler:able");
+      } else {
+        slotTmText = i18next.t("partyUiHandler:notAble");
       }
 
       this.slotDescriptionLabel.setText(slotTmText);
       this.slotDescriptionLabel.setVisible(true);
+    } else {
+      this.slotDescriptionLabel.setVisible(false);
+      this.slotHpLabel.setVisible(true);
+      this.slotHpBar.setVisible(true);
+      this.slotHpOverlay.setVisible(true);
+      this.slotHpText.setVisible(true);
     }
   }
 
@@ -2316,7 +2335,7 @@ class PartyDiscardModeButton extends Phaser.GameObjects.Container {
    * @remarks
    * This will also reveal the button if it is currently hidden.
    */
-  public toggleIcon(partyMode: PartyUiMode.MODIFIER_TRANSFER | PartyUiMode.DISCARD): void {
+  public toggleIcon(partyMode: typeof PartyUiMode.MODIFIER_TRANSFER | typeof PartyUiMode.DISCARD): void {
     this.setActive(true).setVisible(true);
     switch (partyMode) {
       case PartyUiMode.MODIFIER_TRANSFER:

@@ -5,42 +5,66 @@
  */
 {
   "compilerOptions": {
-    "target": "ES2023",
+    "target": "ES2022",
     "module": "ES2022",
     // Modifying this option requires all values to be set manually because the defaults get overridden
     // Values other than "ES2024.Promise" taken from https://github.com/microsoft/TypeScript/blob/main/src/lib/es2023.full.d.ts
     "lib": [
-      "ES2023",
-      "ES2024.Promise",
+      // ES2022 stdlibs
+      "ES2022",
       "DOM",
-      "DOM.AsyncIterable",
-      "DOM.Iterable",
       "ScriptHost",
       "WebWorker.ImportScripts",
+      // future libs
+      "ES2023.Array",
+      "ES2024.Promise",
       "ES2024.Object",
       // NOTE: Be *very* mindful of these when updating typescript versions,
       // as their definitions may change in breaking ways
       "ESNext.Iterator",
       "ESNext.Collection"
     ],
-    "skipLibCheck": true, // Safe and almost always beneficial
+    // Skip typechecking `.d.ts` files for a ~20% speed boost
+    // Won't be necessary if https://github.com/microsoft/TypeScript/issues/30511 is ever resolved
+    "skipLibCheck": true,
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "strictNullChecks": true,
     "sourceMap": false,
+    "allowJs": false,
     "strict": false, // TODO: Enable this eventually
+    "exactOptionalPropertyTypes": true,
+    "strictNullChecks": true,
+    "strictBindCallApply": true,
+    "strictBuiltinIteratorReturn": true,
+    "strictFunctionTypes": true,
+    // TODO: Enable this when possible
+    "strictPropertyInitialization": false,
+    // TODO: Enable this when possible.
+    "noImplicitAny": false,
+    "noImplicitThis": true,
+    // Even with strict mode on, this is not useful as we do not throw non Errors,
+    // and it just makes it more cumbersome to catch errors.
+    "useUnknownInCatchVariables": false,
     "rootDir": ".",
     "outDir": "./build",
+    // Note: We actively CANNOT UNDER ANY CIRCUMSTANCES enable declaration emit, as main repo code uses
+    // mixins for classes with private/protected members (causing TS4094 errors).
+    // (This also means we cannot use `composite` or project references in any capacity.)
+    // See: https://github.com/microsoft/TypeScript/issues/17744
     "noEmit": true,
+    // Note: make sure more specific paths appear before less specific paths
     "paths": {
       "#abilities/*": ["./src/data/abilities/*.ts"],
-      "#api/*": ["./src/plugins/api/*.ts"],
-      "#balance/*": ["./src/data/balance/*.ts"],
+      "#api/*": ["./src/api/*.ts"],
+      "#audio/*": ["./src/audio/*.ts"],
+      "#biomes/*": ["./src/data/balance/biomes/*.ts"],
+      "#balance/*": ["./src/data/balance/species/*.ts", "./src/data/balance/*.ts"],
       "#constants/*": ["./src/constants/*.ts"],
       "#enums/*": ["./src/enums/*.ts"],
       "#events/*": ["./src/events/*.ts"],
       "#field/*": ["./src/field/*.ts"],
+      "#init/*": ["./src/init/*.ts"],
       "#inputs/*": ["./src/configs/inputs/*.ts"],
       "#modifiers/*": ["./src/modifier/*.ts"],
       "#moves/*": ["./src/data/moves/*.ts"],
@@ -52,7 +76,7 @@
       ],
       "#package.json": ["./package.json"],
       "#phases/*": ["./src/phases/*.ts"],
-      "#plugins/*": ["./src/plugins/vite/*.ts", "./src/plugins/*.ts"],
+      "#plugins/*": ["./plugins/phaser/*.ts"],
       "#sprites/*": ["./src/sprites/*.ts"],
       "#system/*": [
         "./src/system/settings/*.ts",
@@ -72,11 +96,17 @@
       ],
       "#utils/*": ["./src/utils/*.ts"],
       "#data/*": ["./src/data/pokemon-forms/*.ts", "./src/data/pokemon/*.ts", "./src/data/*.ts"],
+
+      // these must always be last
       "#test/*": ["./test/*.ts"],
       "#app/*": ["./src/*.ts"]
     }
   },
-  // Exclude checking for script JS files as those are covered by the folder's `jsconfig.json`
-  "include": ["**/*.ts", "**/*.d.ts"],
-  "exclude": ["node_modules", "dist"]
+  // We cannot use a blanket "**/*.ts" include here excluding `scripts` because it would bar us from checking any boilerplate files,
+  // which should be valid under _main repo_ settings.
+  // (`scripts` has its own TSConfig with extra subpath aliases, so attempting to typecheck them would cause errors about missing modules.)
+  // We also don't add the `.github/scripts/` directory here as those files
+  // need different settings to ensure they can be run by Node without issues.
+  "include": ["*.ts", "src", "test", "scripts/**/*.boilerplate.ts"],
+  "exclude": ["dist", "node_modules"]
 }

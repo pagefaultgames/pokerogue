@@ -47,7 +47,7 @@ jobs:
       - name: Purge Cloudflare Cache
         if: github.event_name == 'push' && github.ref_name == 'main'
         id: purge-cache
-        uses: NathanVaughn/actions-cloudflare-purge@v3.1.0
+        uses: NathanVaughn/actions-cloudflare-purge@e893da8393033106c170b0b9de0918112cf04800 # v4.0.0
         with:
           cf_auth: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           cf_zone: ${{ secrets.CLOUDFLARE_ZONE_ID }}

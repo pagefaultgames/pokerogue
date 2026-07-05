@@ -4,10 +4,11 @@ import { Phase } from "#app/phase";
 export class MessagePhase extends Phase {
   public readonly phaseName = "MessagePhase";
   private text: string;
-  private callbackDelay?: number | null;
-  private prompt?: boolean | null;
-  private promptDelay?: number | null;
-  private speaker?: string;
+  // TODO: Remove null from signatures
+  private callbackDelay?: number | null | undefined;
+  private prompt?: boolean | null | undefined;
+  private promptDelay?: number | null | undefined;
+  private speaker?: string | undefined;
 
   constructor(
     text: string,
@@ -36,7 +37,11 @@ export class MessagePhase extends Phase {
         this.text = this.text.split(pokename[p]).join(repname[p]);
       }
       const pageIndex = this.text.indexOf("$");
-      if (pageIndex !== -1) {
+      if (pageIndex === -1) {
+        for (let p = 0; p < globalScene.getPlayerField().length; p++) {
+          this.text = this.text.split(repname[p]).join(pokename[p]);
+        }
+      } else {
         let page0 = this.text.slice(0, pageIndex);
         let page1 = this.text.slice(pageIndex + 1);
         // Pokemon names must be re-inserted _after_ the split, otherwise the index will be wrong
@@ -53,10 +58,6 @@ export class MessagePhase extends Phase {
           this.speaker,
         );
         this.text = page0.trim();
-      } else {
-        for (let p = 0; p < globalScene.getPlayerField().length; p++) {
-          this.text = this.text.split(repname[p]).join(pokename[p]);
-        }
       }
     }
 

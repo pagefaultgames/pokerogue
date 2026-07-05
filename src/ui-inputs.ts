@@ -1,5 +1,7 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import type { InputsController } from "#app/inputs-controller";
+import { isDev } from "#constants/app-constants";
 import { Button } from "#enums/buttons";
 import { UiMode } from "#enums/ui-mode";
 import { Setting, SettingKeys, settingIndex } from "#system/settings";
@@ -34,7 +36,7 @@ export class UiInputs {
   detectInputMethod(evt): void {
     if (evt.controller_type === "keyboard") {
       //if the touch property is present and defined, then this is a simulated keyboard event from the touch screen
-      if (evt.hasOwnProperty("isTouch") && evt.isTouch) {
+      if (Object.hasOwn(evt, "isTouch") && evt.isTouch) {
         globalScene.inputMethod = "touch";
       } else {
         globalScene.inputMethod = "keyboard";
@@ -51,7 +53,7 @@ export class UiInputs {
         this.detectInputMethod(event);
 
         const actions = this.getActionsKeyDown();
-        if (!actions.hasOwnProperty(event.button)) {
+        if (!Object.hasOwn(actions, event.button)) {
           return;
         }
         actions[event.button]();
@@ -63,7 +65,7 @@ export class UiInputs {
       "input_up",
       event => {
         const actions = this.getActionsKeyUp();
-        if (!actions.hasOwnProperty(event.button)) {
+        if (!Object.hasOwn(actions, event.button)) {
           return;
         }
         actions[event.button]();
@@ -97,6 +99,11 @@ export class UiInputs {
       [Button.CYCLE_TERA]: () => this.buttonCycleOption(Button.CYCLE_TERA),
       [Button.SPEED_UP]: () => this.buttonSpeedChange(),
       [Button.SLOW_DOWN]: () => this.buttonSpeedChange(false),
+      [Button.DEV_CUSTOM]: () => {
+        if (isDev) {
+          import("./dev-function").then(m => m.customDevFunction());
+        }
+      },
     };
     return actions;
   }
@@ -120,6 +127,7 @@ export class UiInputs {
       [Button.CYCLE_TERA]: () => this.buttonInfo(false),
       [Button.SPEED_UP]: () => {},
       [Button.SLOW_DOWN]: () => {},
+      [Button.DEV_CUSTOM]: () => {},
     };
     return actions;
   }
@@ -195,7 +203,7 @@ export class UiInputs {
         break;
       case UiMode.MENU:
         globalScene.ui.revertMode();
-        globalScene.playSound("ui/select");
+        audioManager.playSound("ui/select");
         break;
       default:
         return;
@@ -226,14 +234,14 @@ export class UiInputs {
     const settingGameSpeed = settingIndex(SettingKeys.Game_Speed);
     const settingOptions = Setting[settingGameSpeed].options;
     let currentSetting = settingOptions.findIndex(item => item.value === globalScene.gameSpeed.toString());
-    // if current setting is -1, then the current game speed is not a valid option, so default to index 5 (3x)
+    // if current setting is -1, then the current game speed is not a valid option, so default to index 1 (3x)
     if (currentSetting === -1) {
-      currentSetting = 5;
+      currentSetting = 1;
     }
     let direction: number;
     if (up && globalScene.gameSpeed < 5) {
       direction = 1;
-    } else if (!up && globalScene.gameSpeed > 1) {
+    } else if (!up && globalScene.gameSpeed > 2) {
       direction = -1;
     } else {
       return;

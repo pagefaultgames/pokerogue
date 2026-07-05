@@ -1,6 +1,6 @@
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
-import { pokemonEvolutions } from "#balance/pokemon-evolutions";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { modifierTypes } from "#data/data-lists";
 import { MAX_PER_TYPE_POKEBALLS } from "#data/pokeball";
 import { AbilityId } from "#enums/ability-id";
@@ -292,14 +292,10 @@ function initGreatModifierPool() {
     new WeightedModifierType(modifierTypes.TM_GREAT, 3),
     new WeightedModifierType(
       modifierTypes.MEMORY_MUSHROOM,
-      (party: Pokemon[]) => {
-        if (!party.find(p => p.getLearnableLevelMoves().length)) {
-          return 0;
-        }
-        const highestPartyLevel = party
-          .map(p => p.level)
-          .reduce((highestLevel: number, level: number) => Math.max(highestLevel, level), 1);
-        return Math.min(Math.ceil(highestPartyLevel / 20), 4);
+      () => {
+        const { waveIndex } = globalScene.currentBattle;
+        const modeAdjustedWave = globalScene.gameMode.getWaveForDifficulty(waveIndex, true);
+        return Math.min(1 + Math.floor(modeAdjustedWave / 30), 4);
       },
       4,
     ),
@@ -314,7 +310,7 @@ function initGreatModifierPool() {
     ),
     new WeightedModifierType(
       modifierTypes.DNA_SPLICERS,
-      (party: Pokemon[]) => {
+      (party: readonly Pokemon[]) => {
         if (party.filter(p => !p.fusionSpecies).length > 1) {
           if (globalScene.gameMode.isSplicedOnly) {
             return 4;
@@ -329,7 +325,8 @@ function initGreatModifierPool() {
     ),
     new WeightedModifierType(
       modifierTypes.VOUCHER,
-      (_party: Pokemon[], rerollCount: number) => (globalScene.gameMode.isDaily ? 0 : Math.max(1 - rerollCount, 0)),
+      (_party: readonly Pokemon[], rerollCount: number) =>
+        globalScene.gameMode.isDaily ? 0 : Math.max(1 - rerollCount, 0),
       1,
     ),
   ].map(m => {
@@ -366,8 +363,8 @@ function initUltraModifierPool() {
           // Check if Pokemon's species (or fusion species, if applicable) can evolve or if they're G-Max'd
           if (
             !p.isMax()
-            && (p.getSpeciesForm(true).speciesId in pokemonEvolutions
-              || (p.isFusion() && p.getFusionSpeciesForm(true).speciesId in pokemonEvolutions))
+            && (speciesDataRegistry.hasEvolutions(p.getSpeciesForm(true).speciesId)
+              || (p.isFusion() && speciesDataRegistry.hasEvolutions(p.getFusionSpeciesForm(true).speciesId)))
           ) {
             // Check if Pokemon is already holding an Eviolite
             return !p.getHeldItems().some(i => i.type.id === "EVIOLITE");

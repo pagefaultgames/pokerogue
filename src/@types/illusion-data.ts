@@ -11,7 +11,7 @@ export interface IllusionData {
   /** The name of pokemon featured in the illusion */
   name: string;
   /** The nickname of the pokemon featured in the illusion */
-  nickname?: string;
+  nickname?: string | undefined;
   /** Whether the pokemon featured in the illusion is shiny or not */
   shiny: boolean;
   /** The variant of the pokemon featured in the illusion */
@@ -25,15 +25,15 @@ export interface IllusionData {
   /** The pokeball of the illusion */
   pokeball: PokeballType;
   /** The fusion species of the illusion if it's a fusion */
-  fusionSpecies?: PokemonSpecies;
+  fusionSpecies?: PokemonSpecies | undefined;
   /** The fusionFormIndex of the illusion */
-  fusionFormIndex?: number;
+  fusionFormIndex?: number | undefined;
   /** Whether the fusion species of the pokemon featured in the illusion is shiny or not */
-  fusionShiny?: boolean;
+  fusionShiny?: boolean | undefined;
   /** The variant of the fusion species of the pokemon featured in the illusion */
-  fusionVariant?: Variant;
+  fusionVariant?: Variant | undefined;
   /** The fusionGender of the illusion if it's a fusion */
-  fusionGender?: Gender;
+  fusionGender?: Gender | undefined;
   /** The level of the illusion (not used currently) */
-  level?: number;
+  level?: number | undefined;
 }

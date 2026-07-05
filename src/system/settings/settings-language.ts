@@ -74,8 +74,16 @@ export const languageOptions = [
     handler: () => changeLocaleHandler("zh-Hant"),
   },
   {
+    label: "ไทย",
+    handler: () => changeLocaleHandler("th"),
+  },
+  {
     label: "Català (Needs Help)",
     handler: () => changeLocaleHandler("ca"),
+  },
+  {
+    label: "Euskara (Needs Help)",
+    handler: () => changeLocaleHandler("eu"),
   },
   {
     label: "Türkçe (Needs Help)",
@@ -86,6 +94,14 @@ export const languageOptions = [
     handler: () => changeLocaleHandler("ru"),
   },
   {
+    label: "Українська (Needs Help)",
+    handler: () => changeLocaleHandler("uk"),
+  },
+  {
+    label: "Polski (Needs Help)",
+    handler: () => changeLocaleHandler("pl"),
+  },
+  {
     label: "Bahasa Indonesia (Needs Help)",
     handler: () => changeLocaleHandler("id"),
   },
@@ -94,16 +110,16 @@ export const languageOptions = [
     handler: () => changeLocaleHandler("hi"),
   },
   {
+    label: "Tiếng Việt",
+    handler: () => changeLocaleHandler("vi"),
+  },
+  {
     label: "Dansk (Needs Help)",
     handler: () => changeLocaleHandler("da"),
   },
   {
-    label: "Norsk bokmål (Needs Help)",
-    handler: () => changeLocaleHandler("nb-NO"),
-  },
-  {
-    label: "Română (Needs Help)",
-    handler: () => changeLocaleHandler("ro"),
+    label: "Svenska",
+    handler: () => changeLocaleHandler("sv"),
   },
   {
     label: "Tagalog (Needs Help)",

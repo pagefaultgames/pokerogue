@@ -1,9 +1,6 @@
 import { getPokemonNameWithAffix } from "#app/messages";
-import type { BattlerIndex } from "#enums/battler-index";
-import { PokemonType } from "#enums/pokemon-type";
 import type { Pokemon } from "#field/pokemon";
-import type { Move } from "#moves/move";
-import { isFieldTargeted, isSpreadMove } from "#moves/move-utils";
+import type { RGBArray } from "#types/sprite-types";
 import i18next from "i18next";
 
 export enum TerrainType {
@@ -30,49 +27,17 @@ export class Terrain {
     this.maxDuration = maxDuration;
   }
 
-  lapse(): boolean {
+  /**
+   * Tick down this terrain's duration.
+   * @returns Whether the current terrain should remain active (`turnsLeft > 0`)
+   */
+  public lapse(): boolean {
+    // TODO: Add separate flag for infinite duration terrains
     if (this.turnsLeft) {
       return !!--this.turnsLeft;
     }
 
     return true;
-  }
-
-  getAttackTypeMultiplier(attackType: PokemonType): number {
-    switch (this.terrainType) {
-      case TerrainType.ELECTRIC:
-        if (attackType === PokemonType.ELECTRIC) {
-          return 1.3;
-        }
-        break;
-      case TerrainType.GRASSY:
-        if (attackType === PokemonType.GRASS) {
-          return 1.3;
-        }
-        break;
-      case TerrainType.PSYCHIC:
-        if (attackType === PokemonType.PSYCHIC) {
-          return 1.3;
-        }
-        break;
-    }
-
-    return 1;
-  }
-
-  isMoveTerrainCancelled(user: Pokemon, targets: BattlerIndex[], move: Move): boolean {
-    switch (this.terrainType) {
-      case TerrainType.PSYCHIC:
-        // Cf https://bulbapedia.bulbagarden.net/wiki/Psychic_Terrain_(move)#Generation_VII
-        return (
-          !isFieldTargeted(move)
-          && !isSpreadMove(move)
-          && move.getPriority(user) > 0
-          && user.getOpponents(true).some(o => targets.includes(o.getBattlerIndex()) && o.isGrounded())
-        );
-    }
-
-    return false;
   }
 }
 
@@ -91,7 +56,7 @@ export function getTerrainName(terrainType: TerrainType): string {
   return "";
 }
 
-export function getTerrainColor(terrainType: TerrainType): [number, number, number] {
+export function getTerrainColor(terrainType: TerrainType): RGBArray {
   switch (terrainType) {
     case TerrainType.MISTY:
       return [232, 136, 200];

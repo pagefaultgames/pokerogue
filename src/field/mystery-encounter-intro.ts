@@ -1,6 +1,5 @@
 import { globalScene } from "#app/global-scene";
 import type { SpeciesId } from "#enums/species-id";
-import { doShinySparkleAnim } from "#field/anims";
 import { getSpriteKeysFromSpecies } from "#mystery-encounters/encounter-pokemon-utils";
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { loadPokemonVariantAssets } from "#sprites/pokemon-sprite";
@@ -361,7 +360,7 @@ export class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Container {
   playShinySparkles() {
     for (const sparkleConfig of this.shinySparkleSprites) {
       globalScene.time.delayedCall(500, () => {
-        doShinySparkleAnim(sparkleConfig.sprite, sparkleConfig.variant);
+        globalScene.animations.doShinySparkleAnim(sparkleConfig.sprite, sparkleConfig.variant);
       });
     }
   }

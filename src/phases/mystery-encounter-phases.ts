@@ -1,8 +1,8 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 import { getCharVariantFromDialogue } from "#data/dialogue";
 import { ArenaTagSide } from "#enums/arena-tag-side";
-import { BattleSpec } from "#enums/battle-spec";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
@@ -31,7 +31,7 @@ import i18next from "i18next";
 export class MysteryEncounterPhase extends Phase {
   public readonly phaseName = "MysteryEncounterPhase";
   private readonly FIRST_DIALOGUE_PROMPT_DELAY = 300;
-  optionSelectSettings?: OptionSelectSettings;
+  optionSelectSettings?: OptionSelectSettings | undefined;
 
   /**
    * Mostly useful for having repeated queries during a single encounter, where the queries and options may differ each time
@@ -297,7 +297,7 @@ export class MysteryEncounterBattlePhase extends Phase {
     const enemyField = globalScene.getEnemyField();
     const encounterMode = globalScene.currentBattle.mysteryEncounter!.encounterMode;
 
-    if (globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
+    if (globalScene.currentBattle.isClassicFinalBoss) {
       return i18next.t("battle:bossAppeared", { bossName: enemyField[0].name });
     }
 
@@ -330,7 +330,7 @@ export class MysteryEncounterBattlePhase extends Phase {
     if (encounterMode === MysteryEncounterMode.WILD_BATTLE || encounterMode === MysteryEncounterMode.BOSS_BATTLE) {
       // Summons the wild/boss Pokemon
       if (encounterMode === MysteryEncounterMode.BOSS_BATTLE) {
-        globalScene.playBgm();
+        audioManager.playBgm();
       }
       const availablePartyMembers = globalScene.getEnemyParty().filter(p => !p.isFainted()).length;
       globalScene.phaseManager.unshiftNew("SummonPhase", 0, false);
@@ -347,7 +347,7 @@ export class MysteryEncounterBattlePhase extends Phase {
       this.showEnemyTrainer();
       const doSummon = () => {
         globalScene.currentBattle.started = true;
-        globalScene.playBgm();
+        audioManager.playBgm();
         globalScene.pbTray.showPbTray(globalScene.getPlayerParty());
         globalScene.pbTrayEnemy.showPbTray(globalScene.getEnemyParty());
         const doTrainerSummon = () => {
@@ -568,7 +568,7 @@ export class MysteryEncounterRewardsPhase extends Phase {
 export class PostMysteryEncounterPhase extends Phase {
   public readonly phaseName = "PostMysteryEncounterPhase";
   private readonly FIRST_DIALOGUE_PROMPT_DELAY = 750;
-  onPostOptionSelect?: OptionPhaseCallback;
+  onPostOptionSelect?: OptionPhaseCallback | undefined;
 
   constructor() {
     super();

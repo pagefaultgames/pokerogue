@@ -111,7 +111,7 @@ const MAGMA: TrainerTierPools = {
   [TrainerPoolTier.UNCOMMON]: [
     SpeciesId.MAGBY,
     [SpeciesId.LILEEP, SpeciesId.ANORITH],
-    SpeciesId.DRAPION,
+    SpeciesId.SKORUPI,
     SpeciesId.DRUDDIGON,
     SpeciesId.DARUMAKA,
     SpeciesId.SALANDIT,
@@ -155,7 +155,13 @@ const GALACTIC_MARS: TrainerTierPools = {
     SpeciesId.SHELLOS,
     SpeciesId.CHINGLING,
   ],
-  [TrainerPoolTier.UNCOMMON]: [SpeciesId.PORYGON, SpeciesId.TOGEPI, SpeciesId.ELEKID, SpeciesId.MISDREAVUS],
+  [TrainerPoolTier.UNCOMMON]: [
+    SpeciesId.PORYGON,
+    SpeciesId.TOGEPI,
+    SpeciesId.ELEKID,
+    SpeciesId.MISDREAVUS,
+    [SpeciesId.SOLROCK, SpeciesId.LUNATONE],
+  ],
   [TrainerPoolTier.RARE]: [SpeciesId.HISUI_LILLIGANT],
 };
 
@@ -167,28 +173,41 @@ const GALACTIC_JUPITER: TrainerTierPools = {
     SpeciesId.SHELLOS,
     SpeciesId.NOSEPASS,
   ],
-  [TrainerPoolTier.UNCOMMON]: [SpeciesId.GLIGAR, SpeciesId.SWINUB, SpeciesId.DUSKULL, SpeciesId.SNOVER],
+  [TrainerPoolTier.UNCOMMON]: [
+    SpeciesId.GLIGAR,
+    SpeciesId.SWINUB,
+    SpeciesId.DUSKULL,
+    [SpeciesId.SOLROCK, SpeciesId.LUNATONE],
+    SpeciesId.SNOVER,
+  ],
   [TrainerPoolTier.RARE]: [SpeciesId.HISUI_SNEASEL],
 };
 
 const GALACTIC_SATURN: TrainerTierPools = {
-  [TrainerPoolTier.COMMON]: [SpeciesId.ZUBAT, SpeciesId.AIPOM, SpeciesId.OCTILLERY, SpeciesId.ABSOL, SpeciesId.SKORUPI],
-  [TrainerPoolTier.UNCOMMON]: [SpeciesId.RHYHORN, SpeciesId.MAGBY, SpeciesId.GALLADE, SpeciesId.SPIRITOMB],
-  [TrainerPoolTier.RARE]: [SpeciesId.OVERQWIL],
+  [TrainerPoolTier.COMMON]: [SpeciesId.ZUBAT, SpeciesId.AIPOM, SpeciesId.REMORAID, SpeciesId.ABSOL, SpeciesId.SKORUPI],
+  [TrainerPoolTier.UNCOMMON]: [
+    SpeciesId.RHYHORN,
+    SpeciesId.MAGBY,
+    [SpeciesId.SOLROCK, SpeciesId.LUNATONE],
+    SpeciesId.GALLADE,
+    SpeciesId.SPIRITOMB,
+  ],
+  [TrainerPoolTier.RARE]: [SpeciesId.HISUI_QWILFISH],
 };
 
 const PLASMA_ZINZOLIN: TrainerTierPools = {
   [TrainerPoolTier.COMMON]: [
     SpeciesId.SWINUB,
     SpeciesId.GLALIE,
-    SpeciesId.SNOVER,
     SpeciesId.MUNNA,
     SpeciesId.VENIPEDE,
     SpeciesId.FRILLISH,
     SpeciesId.CUBCHOO,
     SpeciesId.MIENFOO,
+    SpeciesId.ZORUA,
   ],
   [TrainerPoolTier.UNCOMMON]: [
+    SpeciesId.SNOVER,
     SpeciesId.BERGMITE,
     SpeciesId.EISCUE,
     SpeciesId.ALOLA_SANDSHREW,
@@ -206,15 +225,13 @@ const PLASMA_COLRESS: TrainerTierPools = {
     SpeciesId.NOSEPASS,
     SpeciesId.ROTOM,
     SpeciesId.DWEBBLE,
-    SpeciesId.BLIPBUG,
+    SpeciesId.MUNNA,
   ],
   [TrainerPoolTier.UNCOMMON]: [
-    SpeciesId.ELEKID,
-    SpeciesId.MAGBY,
+    [SpeciesId.MAGBY, SpeciesId.ELEKID],
     SpeciesId.BELDUM,
     SpeciesId.GOLETT,
     [SpeciesId.TIRTOUGA, SpeciesId.ARCHEN],
-    SpeciesId.TYNAMO,
     SpeciesId.VAROOM,
     SpeciesId.ALOLA_GRIMER,
   ],
@@ -223,45 +240,45 @@ const PLASMA_COLRESS: TrainerTierPools = {
 
 const FLARE: TrainerTierPools = {
   [TrainerPoolTier.COMMON]: [
-    SpeciesId.SCRAGGY,
-    SpeciesId.FOONGUS,
-    SpeciesId.BUNNELBY,
+    SpeciesId.ABSOL,
+    SpeciesId.CROAGUNK,
+    SpeciesId.BUDEW,
+    SpeciesId.VENIPEDE,
+    [SpeciesId.SCRAGGY, SpeciesId.PANCHAM],
     SpeciesId.FLETCHLING,
-    SpeciesId.PANCHAM,
     SpeciesId.ESPURR,
-    SpeciesId.SKRELP,
-    SpeciesId.CLAUNCHER,
+    SpeciesId.HELIOPTILE,
+    [SpeciesId.SKRELP, SpeciesId.CLAUNCHER],
     SpeciesId.KLEFKI,
-    SpeciesId.PHANTUMP,
-    SpeciesId.PUMPKABOO,
   ],
   [TrainerPoolTier.UNCOMMON]: [
     SpeciesId.LITWICK,
-    SpeciesId.HEATMOR,
+    SpeciesId.FLABEBE,
+    [SpeciesId.PHANTUMP, SpeciesId.PUMPKABOO],
     SpeciesId.BINACLE,
-    SpeciesId.HELIOPTILE,
     SpeciesId.AVALUGG,
     SpeciesId.CAPSAKID,
   ],
-  [TrainerPoolTier.RARE]: [SpeciesId.AERODACTYL, SpeciesId.HONEDGE, SpeciesId.GOOMY],
+  [TrainerPoolTier.RARE]: [SpeciesId.AERODACTYL, SpeciesId.HONEDGE, SpeciesId.SLIGGOO],
 };
 
 const FLARE_XEROSIC: TrainerTierPools = {
   [TrainerPoolTier.COMMON]: [
-    SpeciesId.EKANS,
+    SpeciesId.SNUBBULL,
     SpeciesId.LITWICK,
     SpeciesId.PANCHAM,
     SpeciesId.BINACLE,
     [SpeciesId.SKRELP, SpeciesId.CLAUNCHER],
     SpeciesId.HELIOPTILE,
     SpeciesId.KLEFKI,
+    SpeciesId.CAPSAKID,
   ],
   [TrainerPoolTier.UNCOMMON]: [
     SpeciesId.ROTOM, // Always Rotom-Heat, Xerosic has their specialty type set to fire
+    SpeciesId.LARVESTA,
+    SpeciesId.FLABEBE,
     [SpeciesId.TYRUNT, SpeciesId.AMAURA],
     SpeciesId.NOIBAT,
-    SpeciesId.SIZZLIPEDE,
-    SpeciesId.CAPSAKID,
   ],
   [TrainerPoolTier.RARE]: [SpeciesId.BELDUM, SpeciesId.HISUI_SLIGGOO, SpeciesId.HISUI_AVALUGG],
 };
@@ -270,17 +287,18 @@ const AETHER: TrainerTierPools = {
   [TrainerPoolTier.COMMON]: [
     SpeciesId.ABRA,
     SpeciesId.SLOWPOKE,
+    SpeciesId.EXEGGCUTE,
     SpeciesId.MR_MIME,
     SpeciesId.NATU,
     SpeciesId.MEDITITE,
     SpeciesId.BALTOY,
     SpeciesId.INKAY,
-    SpeciesId.EXEGGCUTE,
+    SpeciesId.MORELULL,
   ],
   [TrainerPoolTier.UNCOMMON]: [
     SpeciesId.PORYGON,
     [SpeciesId.STANTLER, SpeciesId.GIRAFARIG],
-    SpeciesId.SOLOSIS,
+    SpeciesId.MAGNEMITE,
     SpeciesId.HATENNA,
     SpeciesId.ALOLA_GRIMER,
     SpeciesId.GALAR_SLOWKING,
@@ -312,17 +330,16 @@ const SKULL: TrainerTierPools = {
 
 const MACRO_COSMOS: TrainerTierPools = {
   [TrainerPoolTier.COMMON]: [
-    SpeciesId.SMOOCHUM,
+    SpeciesId.HAPPINY,
     SpeciesId.MAWILE,
-    SpeciesId.VESPIQUEN,
     SpeciesId.FROSLASS,
     SpeciesId.GOTHITA,
-    SpeciesId.SPRITZEE,
+    SpeciesId.FLABEBE,
     SpeciesId.SALANDIT,
     SpeciesId.INDEEDEE,
-    SpeciesId.HATENNA,
+    [SpeciesId.HATENNA, SpeciesId.GARDEVOIR],
   ],
-  [TrainerPoolTier.UNCOMMON]: [SpeciesId.VULLABY, SpeciesId.FLABEBE, SpeciesId.TINKATINK, SpeciesId.GALAR_PONYTA],
+  [TrainerPoolTier.UNCOMMON]: [SpeciesId.SMOOCHUM, SpeciesId.VULLABY, SpeciesId.TINKATINK, SpeciesId.GALAR_PONYTA],
   [TrainerPoolTier.RARE]: [SpeciesId.HYDRAPPLE],
 };
 
@@ -366,7 +383,7 @@ const STAR_POISON: TrainerTierPools = {
     SpeciesId.FOONGUS,
     SpeciesId.MAREANIE,
   ],
-  [TrainerPoolTier.UNCOMMON]: [SpeciesId.GASTLY, SpeciesId.SALAZZLE, SpeciesId.GLIMMET, SpeciesId.PALDEA_WOOPER],
+  [TrainerPoolTier.UNCOMMON]: [SpeciesId.GASTLY, SpeciesId.SALANDIT, SpeciesId.GLIMMET, SpeciesId.PALDEA_WOOPER],
   [TrainerPoolTier.RARE]: [SpeciesId.BULBASAUR],
 };
 
@@ -381,13 +398,7 @@ const STAR_FAIRY: TrainerTierPools = {
     SpeciesId.HATENNA,
     SpeciesId.IMPIDIMP,
   ],
-  [TrainerPoolTier.UNCOMMON]: [
-    SpeciesId.RALTS,
-    SpeciesId.FLABEBE,
-    SpeciesId.MIMIKYU,
-    SpeciesId.MIMIKYU,
-    SpeciesId.ALOLA_VULPIX,
-  ],
+  [TrainerPoolTier.UNCOMMON]: [SpeciesId.RALTS, SpeciesId.FLABEBE, SpeciesId.MIMIKYU, SpeciesId.ALOLA_VULPIX],
   [TrainerPoolTier.RARE]: [SpeciesId.POPPLIO],
 };
 

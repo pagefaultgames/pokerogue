@@ -4,9 +4,13 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
+// NB: We cannot use `#XYZ` imports in this file since `vite-tsconfig-paths` has not been initialized yet.
+
 import type { UserConfig } from "vite";
 import { defineConfig } from "vitest/config";
 import { BaseSequencer, type TestSpecification } from "vitest/node";
+import { TEST_TIMEOUT } from "./test/constants";
+import { CustomDefaultReporter } from "./test/reporters/custom-default-reporter";
 import { sharedConfig } from "./vite.config";
 
 // biome-ignore lint/style/noDefaultExport: required for vitest
@@ -16,14 +20,17 @@ export default defineConfig(async config => {
     ...viteConfig,
     test: {
       passWithNoTests: false,
-      reporters: process.env.GITHUB_ACTIONS
-        ? ["github-actions", "./test/test-utils/reporters/custom-default-reporter.ts"]
-        : ["./test/test-utils/reporters/custom-default-reporter.ts"],
+      reporters: process.env.MERGE_REPORTS
+        ? ["github-actions", new CustomDefaultReporter()]
+        : process.env.GITHUB_ACTIONS
+          ? ["blob", new CustomDefaultReporter()]
+          : [new CustomDefaultReporter()],
       env: {
         TZ: "UTC",
       },
-      testTimeout: 20_000,
-      slowTestThreshold: 10_000,
+      isolate: false,
+      testTimeout: TEST_TIMEOUT,
+      slowTestThreshold: TEST_TIMEOUT / 2,
       // TODO: Vitest's current framework produces spurious errors for type tests with this option enabled.
       // We should move our type tests to a separate folder not covered by normal tests, and then enable the option.
       // expect: {
@@ -42,14 +49,20 @@ export default defineConfig(async config => {
       },
       typecheck: {
         tsconfig: "tsconfig.json",
-        include: ["./test/types/**/*.{test,spec}{-|.}d.ts"],
+        include: ["./test/tests/types/**/*.{test,spec}-d.ts"],
       },
       restoreMocks: true,
       watch: false,
       coverage: {
-        provider: "istanbul",
+        provider: "v8",
         reportsDirectory: "coverage",
-        reporter: ["text-summary", "html"],
+        reporter: process.env.MERGE_REPORTS
+          ? ["text-summary", "json-summary"]
+          : process.env.GITHUB_ACTIONS
+            ? []
+            : ["text-summary", "html"],
+        exclude: ["{src,test}/**/*.d.ts"],
+        include: ["src/**/*.ts", "test/utils/**/*.ts"],
       },
       name: "main",
       include: ["./test/**/*.{test,spec}.ts"],
@@ -58,7 +71,7 @@ export default defineConfig(async config => {
   return opts;
 });
 
-//#region Helpers
+// #region Helpers
 
 /**
  * Class for sorting test files in the desired order.
@@ -91,4 +104,4 @@ function getTestOrder(testName: string): number {
   return 3;
 }
 
-//#endregion
+// #endregion Helpers

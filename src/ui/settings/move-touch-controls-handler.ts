@@ -308,7 +308,7 @@ export class MoveTouchControlsHandler {
         return startDrag;
       }),
       pointermove: controlGroups.map(() => {
-        const drag = (event: PointerEvent) => this.drag(event);
+        const drag = (event: Event) => this.drag(event as PointerEvent);
         window.addEventListener("pointermove", drag, { passive: true });
         return drag;
       }),

@@ -3,47 +3,28 @@ import { TouchControl } from "#app/touch-controls";
 import { Button } from "#enums/buttons";
 import { Device } from "#enums/devices";
 import { UiMode } from "#enums/ui-mode";
-import cfg_keyboard_qwerty from "#inputs/cfg-keyboard-qwerty";
+import { CFG_KEYBOARD_QWERTY } from "#inputs/cfg-keyboard-qwerty";
 import { assign, getButtonWithKeycode, getIconForLatestInput, swap } from "#inputs/config-handler";
-import pad_dualshock from "#inputs/pad-dualshock";
-import pad_generic from "#inputs/pad-generic";
-import pad_procon from "#inputs/pad-procon";
-import pad_unlicensedSNES from "#inputs/pad-unlicensed-snes";
-import pad_xbox360 from "#inputs/pad-xbox360";
-import type { SettingGamepad } from "#system/settings-gamepad";
-import type { SettingKeyboard } from "#system/settings-keyboard";
+import { PAD_DUALSHOCK } from "#inputs/pad-dualshock";
+import { PAD_GENERIC } from "#inputs/pad-generic";
+import { PAD_PROCON } from "#inputs/pad-procon";
+import { PAD_UNLICENSED_SNES } from "#inputs/pad-unlicensed-snes";
+import { PAD_XBOX360 } from "#inputs/pad-xbox360";
+import type {
+  CustomInterfaceConfig,
+  CustomKeyboardConfig,
+  CustomPadConfig,
+  Interaction,
+  InterfaceConfig,
+  MappingSettingName,
+  SelectedDevice,
+} from "#types/configs/inputs";
 import { MoveTouchControlsHandler } from "#ui/move-touch-controls-handler";
 import type { SettingsGamepadUiHandler } from "#ui/settings-gamepad-ui-handler";
 import type { SettingsKeyboardUiHandler } from "#ui/settings-keyboard-ui-handler";
 import { deepCopy } from "#utils/data";
 import { getEnumValues } from "#utils/enums";
 import Phaser from "phaser";
-
-export interface DeviceMapping {
-  [key: string]: number;
-}
-
-export interface IconsMapping {
-  [key: string]: string;
-}
-
-export interface SettingMapping {
-  [key: string]: Button;
-}
-
-export interface MappingLayout {
-  [key: string]: SettingGamepad | SettingKeyboard | number;
-}
-
-export interface InterfaceConfig {
-  padID: string;
-  padType: string;
-  deviceMapping: DeviceMapping;
-  icons: IconsMapping;
-  settings: SettingMapping;
-  default: MappingLayout;
-  custom?: MappingLayout;
-}
 
 const repeatInputDelayMillis = 250;
 
@@ -74,16 +55,16 @@ export class InputsController {
   public events: Phaser.Events.EventEmitter;
 
   private buttonLock: Button[] = [];
-  private interactions: Map<Button, Map<string, boolean>> = new Map();
-  private configs: Map<string, InterfaceConfig> = new Map();
+  private readonly interactions: Partial<Record<Button, Interaction>> = {};
+  private configs: Record<string, InterfaceConfig> = {};
 
   public gamepadSupport = true;
-  public selectedDevice;
+  public selectedDevice: SelectedDevice;
 
   private disconnectedGamepads: string[] = [];
 
   public lastSource = "keyboard";
-  private inputInterval: NodeJS.Timeout[] = [];
+  private readonly inputInterval: NodeJS.Timeout[] = [];
   private touchControls: TouchControl;
   public moveTouchControlsHandler: MoveTouchControlsHandler;
 
@@ -98,20 +79,20 @@ export class InputsController {
    */
   constructor() {
     this.selectedDevice = {
-      [Device.GAMEPAD]: null,
       [Device.KEYBOARD]: "default",
     };
 
     for (const b of getEnumValues(Button)) {
+      // We don't want the menu key to be repeated
+      if (b === Button.MENU || b === Button.STATS) {
+        continue;
+      }
       this.interactions[b] = {
         pressTime: false,
         isPressed: false,
         source: null,
       };
     }
-    // We don't want the menu key to be repeated
-    delete this.interactions[Button.MENU];
-    delete this.interactions[Button.STATS];
     this.init();
   }
 
@@ -133,12 +114,12 @@ export class InputsController {
     if (typeof globalScene.input.gamepad !== "undefined") {
       globalScene.input.gamepad?.on(
         "connected",
-        function (thisGamepad) {
+        function (this: InputsController, thisGamepad: Phaser.Input.Gamepad.Gamepad) {
           if (!thisGamepad) {
             return;
           }
           this.refreshGamepads();
-          this.setupGamepad(thisGamepad);
+          this.setupGamepad();
           this.onReconnect(thisGamepad);
         },
         this,
@@ -146,7 +127,7 @@ export class InputsController {
 
       globalScene.input.gamepad?.on(
         "disconnected",
-        function (thisGamepad) {
+        function (this: InputsController, thisGamepad: Phaser.Input.Gamepad.Gamepad) {
           this.onDisconnect(thisGamepad); // when a gamepad is disconnected
         },
         this,
@@ -161,10 +142,8 @@ export class InputsController {
         }
       }
 
-      globalScene.input.gamepad?.on("down", this.gamepadButtonDown, this);
-      globalScene.input.gamepad?.on("up", this.gamepadButtonUp, this);
-      globalScene.input.keyboard?.on("keydown", this.keyboardKeyDown, this);
-      globalScene.input.keyboard?.on("keyup", this.keyboardKeyUp, this);
+      globalScene.input.gamepad?.on("down", this.gamepadButtonDown, this).on("up", this.gamepadButtonUp, this);
+      globalScene.input.keyboard?.on("keydown", this.keyboardKeyDown, this).on("keyup", this.keyboardKeyUp, this);
     }
     this.touchControls = new TouchControl();
     this.moveTouchControlsHandler = new MoveTouchControlsHandler(this.touchControls);
@@ -279,12 +258,9 @@ export class InputsController {
   /**
    * Initializes or updates configurations for connected gamepads.
    * It retrieves the names of all connected gamepads, sets up their configurations according to stored or default settings,
-   * and ensures these configurations are saved. If the connected gamepad is the currently chosen one,
-   * it reinitializes the chosen gamepad settings.
-   *
-   * @param thisGamepad The gamepad that is being set up.
+   * and ensures these configurations are saved.
    */
-  setupGamepad(_thisGamepad: Phaser.Input.Gamepad.Gamepad): void {
+  setupGamepad(): void {
     const allGamepads = this.getGamepadsName();
     for (const gamepad of allGamepads) {
       const gamepadID = gamepad.toLowerCase();
@@ -346,11 +322,11 @@ export class InputsController {
    *
    * @param event The keyboard event.
    */
-  keyboardKeyDown(event): void {
+  keyboardKeyDown(event: KeyboardEvent): void {
     this.lastSource = "keyboard";
     this.ensureKeyboardIsInit();
-    const buttonDown = getButtonWithKeycode(this.getActiveConfig(Device.KEYBOARD), event.keyCode);
-    if (buttonDown !== undefined) {
+    const buttonDown = getButtonWithKeycode(this.getActiveConfig(Device.KEYBOARD)!, event.keyCode);
+    if (buttonDown != null) {
       if (this.buttonLock.includes(buttonDown)) {
         return;
       }
@@ -374,10 +350,11 @@ export class InputsController {
    *
    * @param event The keyboard event.
    */
-  keyboardKeyUp(event): void {
+  keyboardKeyUp(event: KeyboardEvent): void {
     this.lastSource = "keyboard";
-    const buttonUp = getButtonWithKeycode(this.getActiveConfig(Device.KEYBOARD), event.keyCode);
-    if (buttonUp !== undefined) {
+    // Bang is safe here; can't receive keyboard input if no active keyboard
+    const buttonUp = getButtonWithKeycode(this.getActiveConfig(Device.KEYBOARD)!, event.keyCode);
+    if (buttonUp != null) {
       this.events.emit("input_up", {
         controller_type: "keyboard",
         button: buttonUp,
@@ -412,12 +389,12 @@ export class InputsController {
     ) {
       this.setChosenGamepad(pad.id);
     }
-    if (!this.gamepadSupport || pad.id.toLowerCase() !== this.selectedDevice[Device.GAMEPAD].toLowerCase()) {
+    if (!this.gamepadSupport || pad.id.toLowerCase() !== this.selectedDevice[Device.GAMEPAD]?.toLowerCase()) {
       return;
     }
     const activeConfig = this.getActiveConfig(Device.GAMEPAD);
     const buttonDown = activeConfig && getButtonWithKeycode(activeConfig, button.index);
-    if (buttonDown !== undefined) {
+    if (buttonDown != null) {
       if (this.buttonLock.includes(buttonDown)) {
         return;
       }
@@ -457,7 +434,8 @@ export class InputsController {
     if (!this.gamepadSupport || pad.id.toLowerCase() !== this.selectedDevice[Device.GAMEPAD]) {
       return;
     }
-    const buttonUp = getButtonWithKeycode(this.getActiveConfig(Device.GAMEPAD), button.index);
+    // Bang is safe here; can't receive gamepad input if no active gamepad
+    const buttonUp = getButtonWithKeycode(this.getActiveConfig(Device.GAMEPAD)!, button.index);
     if (buttonUp !== undefined) {
       this.events.emit("input_up", {
         controller_type: "gamepad",
@@ -481,19 +459,19 @@ export class InputsController {
     id = id.toLowerCase();
 
     if (id.includes("081f") && id.includes("e401")) {
-      return pad_unlicensedSNES;
+      return PAD_UNLICENSED_SNES as InterfaceConfig;
     }
     if (id.includes("xbox") && id.includes("360")) {
-      return pad_xbox360;
+      return PAD_XBOX360 as InterfaceConfig;
     }
     if (id.includes("054c")) {
-      return pad_dualshock;
+      return PAD_DUALSHOCK as InterfaceConfig;
     }
     if (id.includes("057e") && id.includes("2009")) {
-      return pad_procon;
+      return PAD_PROCON as InterfaceConfig;
     }
 
-    return pad_generic;
+    return PAD_GENERIC as InterfaceConfig;
   }
 
   /**
@@ -504,18 +482,18 @@ export class InputsController {
    */
   getConfigKeyboard(id: string): InterfaceConfig {
     if (id === "default") {
-      return cfg_keyboard_qwerty;
+      return CFG_KEYBOARD_QWERTY;
     }
 
-    return cfg_keyboard_qwerty;
+    return CFG_KEYBOARD_QWERTY;
   }
 
   /**
    * Deactivates all currently pressed keys.
    */
   deactivatePressedKey(): void {
-    for (const key of Object.keys(this.inputInterval)) {
-      clearInterval(this.inputInterval[key]);
+    for (const value of Object.values(this.inputInterval)) {
+      clearInterval(value);
     }
     this.buttonLock = [];
   }
@@ -526,14 +504,24 @@ export class InputsController {
    *
    * @returns InterfaceConfig The configuration object for the active gamepad, or null if not set.
    */
-  getActiveConfig(device: Device) {
-    if (this.configs[this.selectedDevice[device]]?.padID) {
-      return this.configs[this.selectedDevice[device]];
+  getActiveConfig(device: Device.KEYBOARD): CustomKeyboardConfig | null;
+  getActiveConfig(device: Device.GAMEPAD): CustomPadConfig | null;
+  getActiveConfig(device: Device): CustomInterfaceConfig | null;
+  getActiveConfig(device: Device): CustomInterfaceConfig | null {
+    const activeDevice = this.selectedDevice[device];
+    if (activeDevice == null) {
+      return null;
+    }
+    const config = this.configs[activeDevice];
+    if (config?.padID) {
+      config.custom ??= { ...config.default };
+      // Cast is safe here as we assign `custom` above if it was undefined
+      return config as CustomInterfaceConfig;
     }
     return null;
   }
 
-  getIconForLatestInputRecorded(settingName) {
+  getIconForLatestInputRecorded(settingName: MappingSettingName): string | undefined {
     if (this.lastSource === "keyboard") {
       this.ensureKeyboardIsInit();
     }
@@ -547,7 +535,7 @@ export class InputsController {
     return Device.KEYBOARD;
   }
 
-  getLastSourceConfig() {
+  getLastSourceConfig(): InterfaceConfig | null {
     const sourceDevice = this.getLastSourceDevice();
     if (sourceDevice === Device.KEYBOARD) {
       this.ensureKeyboardIsInit();
@@ -555,9 +543,8 @@ export class InputsController {
     return this.getActiveConfig(sourceDevice);
   }
 
-  getLastSourceType() {
-    const config = this.getLastSourceConfig();
-    return config?.padType;
+  getLastSourceType(): string | undefined {
+    return this.getLastSourceConfig()?.padType;
   }
 
   /**
@@ -567,26 +554,29 @@ export class InputsController {
    * @param selectedDevice The identifier of the device to configure.
    * @param mappingConfigs The mapping configuration to apply to the device.
    */
-  injectConfig(selectedDevice: string, mappingConfigs): void {
+  injectConfig(selectedDevice: string, mappingConfigs: InterfaceConfig): void {
     if (!this.configs[selectedDevice]) {
-      this.configs[selectedDevice] = {};
+      this.configs[selectedDevice] = {} as InterfaceConfig;
     }
     // A proper way of handling migrating keybinds would be much better
     const mappingOverrides = {
       BUTTON_CYCLE_VARIANT: "BUTTON_CYCLE_TERA",
     };
+    type MappingConfigKey = keyof typeof mappingConfigs.custom;
     for (const key in mappingConfigs.custom) {
-      if (mappingConfigs.custom[key] in mappingOverrides) {
-        mappingConfigs.custom[key] = mappingOverrides[mappingConfigs.custom[key]];
+      if (mappingConfigs.custom[key as MappingConfigKey] in mappingOverrides) {
+        // @ts-expect-error - TS narrows mappingConfigs.custom[key] to never for some reason
+        mappingConfigs.custom[key as MappingConfigKey] =
+          mappingOverrides[mappingConfigs.custom[key as MappingConfigKey] as keyof typeof mappingOverrides];
       }
     }
     this.configs[selectedDevice].custom = mappingConfigs.custom;
   }
 
   resetConfigs(): void {
-    this.configs = new Map();
+    this.configs = {};
     if (this.getGamepadsName()?.length > 0) {
-      this.setupGamepad(this.selectedDevice[Device.GAMEPAD]);
+      this.setupGamepad();
     }
     this.setupKeyboard();
   }
@@ -594,11 +584,11 @@ export class InputsController {
   /**
    * Swaps a binding in the configuration.
    *
-   * @param config The configuration object.
-   * @param settingName The name of the setting to swap.
-   * @param pressedButton The button that was pressed.
+   * @param config - The configuration object.
+   * @param settingName - The name of the setting to swap.
+   * @param pressedButton - The keycode of the button that was pressed.
    */
-  assignBinding(config, settingName, pressedButton): boolean {
+  assignBinding(config: CustomInterfaceConfig, settingName: MappingSettingName, pressedButton: number): boolean {
     this.deactivatePressedKey();
     if (config.padType === "keyboard") {
       return assign(config, settingName, pressedButton);

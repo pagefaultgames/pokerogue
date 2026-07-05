@@ -1,5 +1,7 @@
 import { timedEventManager } from "#app/global-event-manager";
+import { globalScene } from "#app/global-scene";
 import { initializeGame } from "#app/init/init";
+import { activeOverrides } from "#app/overrides";
 import { SceneBase } from "#app/scene-base";
 import { isMobile } from "#app/touch-controls";
 import { BiomeId } from "#enums/biome-id";
@@ -8,7 +10,7 @@ import { getBiomeHasProps } from "#field/arena";
 import { CacheBustedLoaderPlugin } from "#plugins/cache-busted-loader-plugin";
 import { getWindowVariantSuffix, WindowVariant } from "#ui/ui-theme";
 import { hasAllLocalizedSprites, localPing } from "#utils/common";
-import { getEnumValues } from "#utils/enums";
+import { enumValueToKey, getEnumValues } from "#utils/enums";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
 
@@ -25,7 +27,7 @@ export class LoadingScene extends SceneBase {
 
   preload() {
     localPing();
-
+    const startingBiome = activeOverrides.STARTING_BIOME_OVERRIDE ?? globalScene?.arena?.biomeId ?? BiomeId.TOWN;
     // TODO: Categorize these into sub-methods that make sense
     // I'm 99.9% sure the order doesn't matter here,
     // so we should organize these based on type more strongly
@@ -149,13 +151,13 @@ export class LoadingScene extends SceneBase {
 
       .loadImage("language_icon", "ui")
       .loadImage("saving_icon", "ui")
-      .loadImage("discord", "ui")
-      .loadImage("google", "ui")
+      .loadImage("discord_oauth", "ui")
+      .loadImage("google_oauth", "ui")
       .loadImage("settings_icon", "ui")
       .loadImage("link_icon", "ui")
       .loadImage("unlink_icon", "ui")
       .loadImage("default_bg", "arenas")
-      .loadBiomeImages()
+      .loadBiomeImages(startingBiome)
 
       // Load trainer images
       .loadAtlas("trainer_m_back", "trainer")
@@ -358,26 +360,10 @@ export class LoadingScene extends SceneBase {
       .loadSe("gacha_dial")
       .loadSe("gacha_running")
       .loadSe("gacha_dispense")
+      .loadSe("item_fanfare")
+      .loadSe("level_up_fanfare")
 
-      .loadSe("PRSFX- Transform", "battle_anims")
-      .loadBgm("menu")
-      .loadBgm("level_up_fanfare", "bw/level_up_fanfare.mp3")
-      .loadBgm("item_fanfare", "bw/item_fanfare.mp3")
-      .loadBgm("minor_fanfare", "bw/minor_fanfare.mp3")
-      .loadBgm("heal", "bw/heal.mp3")
-      .loadBgm("victory_trainer", "bw/victory_trainer.mp3")
-      .loadBgm("victory_team_plasma", "bw/victory_team_plasma.mp3")
-      .loadBgm("victory_gym", "bw/victory_gym.mp3")
-      .loadBgm("victory_champion", "bw/victory_champion.mp3")
-      .loadBgm("evolution", "bw/evolution.mp3")
-      .loadBgm("evolution_fanfare", "bw/evolution_fanfare.mp3");
-
-    // TODO: Shouldn't this be inside the middle of the code?
-    this.load.plugin(
-      "rextexteditplugin",
-      "https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rextexteditplugin.min.js",
-      true,
-    );
+      .loadSe("PRSFX- Transform", "battle_anims");
 
     this.loadLoadingScreen();
 
@@ -560,9 +546,10 @@ export class LoadingScene extends SceneBase {
     console.debug(`Destroyed ${LoadingScene.KEY} scene`);
   }
 
-  private loadBiomeImages(): this {
-    getEnumValues(BiomeId).forEach(bt => {
-      const btKey = BiomeId[bt].toLowerCase();
+  private loadBiomeImages(startingBiome: BiomeId = BiomeId.TOWN): this {
+    const biomesToLoad = new Set([BiomeId.TOWN, startingBiome]);
+    biomesToLoad.forEach(bt => {
+      const btKey = enumValueToKey(BiomeId, bt).toLowerCase();
       const isBaseAnimated = btKey === "end";
       const baseAKey = `${btKey}_a`;
       const baseBKey = `${btKey}_b`;

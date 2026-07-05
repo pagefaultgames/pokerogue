@@ -17,6 +17,14 @@
     {
       "tagName": "@interface",
       "syntaxKind": "modifier"
+    },
+    {
+      "tagName": "@package",
+      "syntaxKind": "modifier"
+    },
+    {
+      "tagName": "@template",
+      "syntaxKind": "block"
     }
   ]
 }

@@ -27,10 +27,10 @@ export const signatureSpecies: SignatureSpecies = new Proxy({
   BLAINE: [SpeciesId.GROWLITHE, SpeciesId.PONYTA, SpeciesId.MAGBY, SpeciesId.VULPIX],
   GIOVANNI: [SpeciesId.RHYHORN, SpeciesId.MEOWTH, [SpeciesId.NIDORAN_F, SpeciesId.NIDORAN_M], SpeciesId.DIGLETT], // Tera Ground Meowth
   // Gym Leaders- Johto
-  FALKNER: [SpeciesId.PIDGEY, SpeciesId.HOOTHOOT, SpeciesId.NATU, SpeciesId.MURKROW],
+  FALKNER: [SpeciesId.PIDGEY, SpeciesId.NATU, SpeciesId.MURKROW, SpeciesId.ZUBAT],
   BUGSY: [SpeciesId.SCYTHER, SpeciesId.SHUCKLE, SpeciesId.YANMA, [SpeciesId.PINSIR, SpeciesId.HERACROSS]],
   WHITNEY: [SpeciesId.MILTANK, SpeciesId.AIPOM, SpeciesId.IGGLYBUFF, [SpeciesId.GIRAFARIG, SpeciesId.STANTLER]],
-  MORTY: [SpeciesId.GASTLY, SpeciesId.MISDREAVUS, SpeciesId.DUSKULL, SpeciesId.HISUI_TYPHLOSION],
+  MORTY: [SpeciesId.GASTLY, SpeciesId.MISDREAVUS, SpeciesId.GALAR_CORSOLA, SpeciesId.HISUI_TYPHLOSION],
   CHUCK: [SpeciesId.POLIWRATH, SpeciesId.MANKEY, SpeciesId.TYROGUE, SpeciesId.MACHOP],
   JASMINE: [SpeciesId.STEELIX, SpeciesId.MAGNEMITE, SpeciesId.PINECO, SpeciesId.SKARMORY],
   PRYCE: [SpeciesId.SWINUB, SpeciesId.SEEL, SpeciesId.SHELLDER, SpeciesId.SNEASEL],
@@ -46,7 +46,7 @@ export const signatureSpecies: SignatureSpecies = new Proxy({
   LIZA: [SpeciesId.LUNATONE, SpeciesId.BALTOY, SpeciesId.SPOINK, SpeciesId.GARDEVOIR],
   JUAN: [SpeciesId.HORSEA, SpeciesId.SPHEAL, SpeciesId.BARBOACH, SpeciesId.CORPHISH],
   // Gym Leaders- Sinnoh
-  ROARK: [SpeciesId.CRANIDOS, SpeciesId.GEODUDE, SpeciesId.NOSEPASS, SpeciesId.LARVITAR],
+  ROARK: [SpeciesId.CRANIDOS, SpeciesId.GEODUDE, SpeciesId.NOSEPASS, SpeciesId.ROLYCOLY],
   GARDENIA: [SpeciesId.BUDEW, SpeciesId.CHERUBI, SpeciesId.TURTWIG, SpeciesId.LEAFEON],
   MAYLENE: [SpeciesId.RIOLU, SpeciesId.MEDITITE, SpeciesId.CHIMCHAR, SpeciesId.CROAGUNK],
   CRASHER_WAKE: [SpeciesId.BUIZEL, SpeciesId.WOOPER, SpeciesId.PIPLUP, SpeciesId.MAGIKARP],

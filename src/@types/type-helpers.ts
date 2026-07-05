@@ -2,7 +2,23 @@
  * A collection of custom utility types that aid in type checking and ensuring strict type conformity
  */
 
-import type { AbAttr } from "#abilities/ability";
+// biome-ignore assist/source/organizeImports: temporary until re-exports are removed
+import type { AbAttr } from "#abilities/ab-attrs";
+import type {
+  IntClosedRange,
+  NegativeInfinity,
+  PositiveInfinity,
+  RequiredKeysOf,
+  TupleOf,
+  IsStringLiteral,
+} from "type-fest";
+
+// Re-export a bunch of stuff from type-fest
+// TODO: Once the modifier rework makes merge conflicts less of a priority, remove these re-exports and change callsites to import directly from `type-fest`
+import type { ValueOf as ObjectValues } from "type-fest";
+export type { ObjectValues };
+export type { RequiredKeysOf as RequiredKeys };
+export type { Writable as Mutable } from "type-fest";
 
 /**
  * Exactly matches the type of the argument, preventing adding additional properties.
@@ -25,15 +41,6 @@ export type Exact<T> = {
 export type Closed<X> = X;
 
 /**
- * Helper type to strip `readonly` from all properties of the provided type.
- * Inverse of {@linkcode Readonly}
- * @typeParam T - The type to make mutable
- */
-export type Mutable<T> = {
-  -readonly [P in keyof T]: T[P];
-};
-
-/**
  * Type helper to obtain the keys associated with a given value inside an object. \
  * Functions similarly to `Pick`, but checking assignability of values instead of keys.
  * @typeParam O - The type of the object
@@ -44,19 +51,19 @@ export type InferKeys<O extends object, V> = {
 }[keyof O];
 
 /**
- * Utility type to obtain a union of the values of a given object. \
- * Functions similar to `keyof E`, except producing the values instead of the keys.
- * @typeParam E - The type of the object
- * @remarks
- * This can be used to convert an `enum` interface produced by `typeof Enum` into the union type representing its members.
+ * Type representing a given kind of {@linkcode Function}. \
+ * Defaults to a "top type" that is assignable to any function, but cannot be called without type assertions.
+ * @template Args - A tuple containing the arguments accepted by the function;
+ * defaults to `never` to render it uncallable without type assertions
+ * @template Return - The return type of the function; defaults to `unknown` to make the return value
+ * unusable without type assertions
+ * @example
+ * ```ts
+ * type MyCallback = AnyFn<[amount: number, message: string], void>;
+ * expectTypeOf<MyCallback>().toEqualTypeOf<(amount: number, message: string) => void>();
+ * ```
  */
-export type ObjectValues<E extends object> = E[keyof E];
-
-/**
- * Type helper that matches any `Function` type.
- * Equivalent to `Function`, but will not raise a warning from Biome.
- */
-export type AnyFn = (...args: any[]) => any;
+export type AnyFn<Args extends readonly unknown[] = never, Return = unknown> = (...args: Args) => Return;
 
 /**
  * Type helper to extract non-function properties from a type.
@@ -69,18 +76,6 @@ export type AnyFn = (...args: any[]) => any;
  */
 export type NonFunctionProperties<T> = {
   [K in keyof T as T[K] extends AnyFn ? never : K]: T[K];
-};
-
-/**
- * Type helper to extract out non-function properties from a type, recursively applying to nested properties.
- * This can be used to mimic the effects of JSON serialization and de-serialization on a given type.
- */
-export type NonFunctionPropertiesRecursive<Class> = {
-  [K in keyof Class as Class[K] extends AnyFn ? never : K]: Class[K] extends Array<infer U>
-    ? NonFunctionPropertiesRecursive<U>[]
-    : Class[K] extends object
-      ? NonFunctionPropertiesRecursive<Class[K]>
-      : Class[K];
 };
 
 /** Utility type for an abstract constructor. */
@@ -112,6 +107,76 @@ export type AtLeastOne<T extends object> = Partial<T> & ObjectValues<{ [K in key
  * @remarks
  * Brands should be either a string or unique symbol. This prevents overlap with other types.
  */
-export declare class Brander<B> {
+// TODO: Replace with Type-fest's tags (which can carry arbitrary metadata and are easier to remove)
+export declare class Brander<B extends string | symbol> {
   private __brand: B;
 }
+
+/**
+ * Negate a number, converting its sign from positive to negative or vice versa.
+ * @typeParam N - The number to negate
+ * @privateRemarks
+ * This should be used sparingly due to being slow for TypeScript to validate. \
+ * Moreover, `tsc`'s limitations on "round-tripping" of numbers inside template literals
+ * will cause this to fail for numbers not already in "simplest form"
+ * (cf. https://github.com/microsoft/TypeScript/issues/57404).
+ */
+export type Negate<N extends number> =
+  // Handle edge cases
+  number extends N
+    ? number
+    : N extends 0
+      ? 0
+      : N extends PositiveInfinity
+        ? NegativeInfinity
+        : N extends NegativeInfinity
+          ? PositiveInfinity
+          : // Handle negative numbers
+            `${N}` extends `-${infer P extends number}`
+            ? P
+            : // Handle positive numbers
+              `-${N}` extends `${infer R extends number}`
+              ? R
+              : number;
+
+/** Pick from `T` the set of required properties  */
+export type OnlyRequired<T extends object> = Pick<T, RequiredKeysOf<T>>;
+
+/**
+ * Type helper to create a union of tuples in a given range.
+ * @typeParam Min - The minimum length of the tuple (inclusive)
+ * @typeParam Max - The maximum length of the tuple (inclusive)
+ * @typeParam T - The type of the elements in the tuple
+ */
+export type TupleRange<Min extends number, Max extends number, T = unknown> =
+  IntClosedRange<Min, Max> extends infer Lengths extends number ? TupleOf<Lengths, T> : never;
+
+/**
+ * Internal type helper to encourage TypeScript's language service to prefer keeping a type opaque during hover expansion.
+ *
+ * Used for clarity of intent when preventing distributive conditional types from expanding into their full definitions
+ * while still allowing them to distribute over unions as normal.
+ * Is otherwise equivalent to {@linkcode NonNullable}.
+ * @internal
+ * @privateRemarks
+ * Any uses of this type should be double-checked to ensure that IDE hover tooltips are actually improved by its addition.
+ */
+export type PreventHoverExpansion<T> = T & {};
+
+export type StringLiteral<T extends string> = IsStringLiteral<T> extends true ? T : never;
+
+/**
+ * Renders all properties of `T` as `unknown`, while keeping the same keys.
+ *
+ * @remarks
+ * The purpose of this is merely to provide a hint as to what the
+ * properties of an object _might_ be, without any risk of accidentally using
+ * said properties improperly.
+ *
+ * Designed to be used for data migration.
+ *
+ * Allows for autocomplete to populate fields of the object with candidates.
+ */
+export type CoercePropertiesToUnknown<T extends object> = {
+  [K in keyof T]: unknown;
+};

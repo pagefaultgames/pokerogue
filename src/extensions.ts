@@ -1,6 +1,6 @@
 import "phaser";
 
-//#region Methods/Interfaces
+// #region Methods/Interfaces
 
 /**
  * Interface representing an object that can be passed to {@linkcode setPositionRelative}.
@@ -36,11 +36,11 @@ Phaser.GameObjects.NineSlice.prototype.setPositionRelative = setPositionRelative
 Phaser.GameObjects.Text.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative;
 
-//#endregion
+// #endregion Methods/Interfaces
 
-//#region Declaration Merging
+// #region Declaration Merging
 
-interface hasSetPositionRelative {
+interface HasSetPositionRelative {
   /**
    * Set this object's position relative to another object with a given offset.
    * @param guideObject - The object to base this object's position off of; must have defined
@@ -54,13 +54,13 @@ interface hasSetPositionRelative {
 
 declare module "phaser" {
   namespace GameObjects {
-    interface Container extends hasSetPositionRelative {}
-    interface Sprite extends hasSetPositionRelative {}
-    interface Image extends hasSetPositionRelative {}
-    interface NineSlice extends hasSetPositionRelative {}
-    interface Text extends hasSetPositionRelative {}
-    interface Rectangle extends hasSetPositionRelative {}
+    interface Container extends HasSetPositionRelative {}
+    interface Sprite extends HasSetPositionRelative {}
+    interface Image extends HasSetPositionRelative {}
+    interface NineSlice extends HasSetPositionRelative {}
+    interface Text extends HasSetPositionRelative {}
+    interface Rectangle extends HasSetPositionRelative {}
   }
 }
 
-//#endregion
+// #endregion Declaration Merging

@@ -1,4 +1,4 @@
-import { pokerogueApi } from "#api/pokerogue-api";
+import { pokerogueApi } from "#api/api";
 import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
 import { addTextObject } from "#ui/text";
@@ -220,7 +220,8 @@ export class DailyRunScoreboard extends Phaser.GameObjects.Container {
     this.loadingLabel.setVisible(true);
 
     if (category !== this.category) {
-      this.page = page = 1;
+      page = 1;
+      this.page = page;
     }
 
     executeIf(category !== this.category || this.pageCount === undefined, () =>

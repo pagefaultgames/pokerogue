@@ -1,6 +1,6 @@
 import { USE_SEASONAL_SPLASH_MESSAGES } from "#app/constants";
 
-//#region Interfaces/Types
+// #region Interfaces/Types
 
 type Month = "01" | "02" | "03" | "04" | "05" | "06" | "07" | "08" | "09" | "10" | "11" | "12";
 type Day =
@@ -41,7 +41,9 @@ interface Season {
   messages: string[];
 }
 
-//#region Constants
+// #endregion Interfaces/Types
+
+// #region Constants
 
 /** The weight multiplier for the battles-won splash message */
 const BATTLES_WON_WEIGHT_MULTIPLIER = 15;
@@ -50,7 +52,9 @@ const POKEMON_NAMES_WEIGHT_MULTIPLIER = 10;
 /** The weight multiplier for the seasonal splash messages */
 const SEASONAL_WEIGHT_MULTIPLIER = 15;
 
-//#region Common Messages
+// #endregion Constants
+
+// #region Common Messages
 
 const commonSplashMessages = [
   ...new Array(BATTLES_WON_WEIGHT_MULTIPLIER).fill("battlesWon"),
@@ -215,9 +219,24 @@ const commonSplashMessages = [
   "onARollout",
   "itsAlwaysNightDeepInTheAbyss",
   "folksThisIsInsane",
+  "tellYourFriends",
+  "doNotTrespass",
+  "shouldNotDrive",
+  "since2023",
+  "featuringYourFriendMalamar",
+  "gottaHatchEmAll",
+  "whatsYourFavorite",
+  "askYourDoctor",
+  "oneBattleAfterAnother",
+  "onlyUnfairWhenILose",
+  "twoPlusTwoNotFish",
+  "itsBeenTotalRuns",
+  "letsGetHumid",
 ];
 
-//#region Seasonal Messages
+// #endregion Common Messages
+
+// #region Seasonal Messages
 
 const seasonalSplashMessages: Season[] = [
   {
@@ -277,12 +296,24 @@ const seasonalSplashMessages: Season[] = [
       "aprilFools.timeYourInputsForHigherCatchrate",
       "aprilFools.certifiedButtonSimulator",
       "aprilFools.iHopeYouGetSuckerPunched",
+      "aprilFools.forgetYourPassword",
+      "aprilFools.notARealEvent",
+      "aprilFools.dataLossImminent",
+      "aprilFools.alwaysUnfair",
+      "aprilFools.internalBattery",
+      "aprilFools.lEvent",
     ],
+  },
+  {
+    name: "Pride Month",
+    start: "06-01",
+    end: "07-01",
+    messages: ["prideMonth.happyPrideMonth", "prideMonth.alwaysPridefulHere"],
   },
   {
     name: "Halloween",
     start: "10-15",
-    end: "10-31",
+    end: "11-01",
     messages: [
       "halloween.happyHalloween",
       "halloween.boo",
@@ -318,7 +349,7 @@ const seasonalSplashMessages: Season[] = [
   },
 ];
 
-//#endregion
+// #endregion Seasonal Messages
 
 export function getSplashMessages(): string[] {
   const splashMessages: string[] = [...commonSplashMessages];

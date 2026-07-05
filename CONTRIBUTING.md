@@ -1,19 +1,20 @@
 <!--
-SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+SPDX-FileCopyrightText: 2024-2026 Pagefault Games
 
 SPDX-License-Identifier: CC-BY-NC-SA-4.0
 -->
 
 # Contributing to PokéRogue
 
-Thank you for taking the time to contribute, every little bit helps. This project is entirely open-source and unmonetized - community contributions are what keep it alive!
+Thank you for taking the time to contribute; every little bit helps! This project is entirely open-source and unmonetized - community contributions are what keep it alive!
 
-Please make sure you understand everything relevant to your changes from the [Table of Contents](#-table-of-contents), and absolutely *feel free to reach out in the **#dev-corner** channel on [Discord](https://discord.gg/pokerogue)*.
+Please make sure you understand everything relevant to your changes from the [Table of Contents](#-table-of-contents), and absolutely *feel free to reach out in the **#pokerogue-dev** channel on [Discord](https://discord.gg/pokerogue)*.
 We are here to help and the better you understand what you're working on, the easier it will be for it to find its way into the game.
 
+> [!NOTE]
+> As per GitHub's [terms of service](https://docs.github.com/en/site-policy/github-terms/github-terms-of-service#6-contributions-under-repository-license), any contributions made to this repository will be licensed under this repository's terms.
+> If you use any external code, please make sure to follow its licensing information. Please make use of [SPDX snippets](https://reuse.software/spec-3.3/#in-line-snippet-comments) for any portion of the file that is licensed differently.
 
-Note that, as per GitHub's [terms of service](https://docs.github.com/en/site-policy/github-terms/github-terms-of-service#6-contributions-under-repository-license), any contributions made to this repository will be licensed under this repository's terms.
-If you use any external code, please make sure to follow its licensing information. Please make use of [SPDX snippets](https://reuse.software/spec-3.3/#in-line-snippet-comments) for the portion of the file that is licensed differently.
 
 ## 📄 Table of Contents
 
@@ -23,6 +24,8 @@ If you use any external code, please make sure to follow its licensing informati
 - [Documentation](#-documentation)
 - [Testing Your Changes](#-testing-your-changes)
 - [Development Save File (Unlock Everything)](#-development-save-file)
+- [Submitting a Pull Request](#-submitting-a-pull-request)
+
 
 ## 🛠️ Development Basics
 
@@ -43,15 +46,16 @@ We have a `.devcontainer/devcontainer.json` file, meaning we are compatible with
 
 This Linux environment comes with all required dependencies needed to start working on the project.
 
+> [!IMPORTANT]
+> Due to quirks of devcontainer port forwarding, **you must use `pnpm start:podman`** to start a local dev server from within a devcontainer.
+> _All other instructions remain the same as local development_.
+
 [codespaces-badge]: <https://github.com/codespaces/badge.svg>
 [codespaces-link]: <https://github.com/codespaces/new?hide_repo_select=true&repo=620476224&ref=beta>
 [devcontainer-ext]: <https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers>
 
-> [!IMPORTANT]
-> Due to quirks of devcontainer port forwarding, you must use **`pnpm start:podman`** to start a local dev server from within a devcontainer.
-> All other instructions remain the same as local development.
-
 ### Podman
+
 For those who prefer Docker containers, see [this instructions page](./docs/podman.md) for information on how to setup a development environment with Podman.
 
 ### Local Development
@@ -64,16 +68,22 @@ For those who prefer Docker containers, see [this instructions page](./docs/podm
 
 #### Running Locally
 
-1. Run `pnpm install` from the repository root
-    - *if you run into any errors, reach out in the **#dev-corner** channel on Discord*
-2. Run `pnpm start:dev` to locally run the project at `localhost:8000`
+1. If you haven't already, clone the repository: `git clone -v --depth 1 --recurse-submodules --shallow-submodules "https://github.com/pagefaultgames/pokerogue.git" .`
+    - `--depth 1` is recommended if you don't need the full history (you probably don't), since it'll save on bandwidth and disk space by not copying the entire repo history.
+    - If you need branches other than `beta` (which you probably don't, that's the primary branch that all development is based on), \
+      add `--no-single-branch`.
+2. Run `pnpm install` from the repository root
+    - *If you run into any errors, reach out in the **#pokerogue-dev** channel on Discord*
+3. Run `pnpm start:dev` to start the game, it'll be accessible in your browser at `localhost:8000`
+    - If you encounter errors related to missing files in `locales/` or `assets/`, you'll need to run `pnpm update-submodules` first.
+
 
 ## 🚀 Getting Started
 
 A great way to develop an understanding of how the project works is to look at test cases (located in [the `test` folder](./test/)).
 Tests show you both how things are supposed to work and the expected "flow" to get from point A to point B in battles.
 
-*This is a big project and you will be confused at times - never be afraid to reach out and ask questions in **#dev-corner***!
+*This is a big project and you will be confused at times - never be afraid to reach out and ask questions in **#pokerogue-dev***!
 
 ### Where to Look
 
@@ -81,8 +91,8 @@ Once you have your feet under you, check out the [Issues](https://github.com/pag
 Most issues are bugs and are labeled with their area, such as `Move`, `Ability`, `UI/UX`, etc. There are also priority labels:
 - `P0`: Completely gamebreaking (very rare)
 - `P1`: Major - Game crash
-- `P2`: Minor - Incorrect (but non-crashing) move/ability/interaction
-- `P3`: No gameplay impact - typo, minor graphical error, etc.
+- `P2`: Minor - Incorrect (but non-crashing) interactions (e.g. a move that lacks or has incorrect functionality)
+- `P3`: No gameplay impact - typos, minor graphical errors, etc.
 
 Also under issues, you can take a look at the [List of Partial / Unimplemented Moves and Abilities](https://github.com/pagefaultgames/pokerogue/issues/3503) and the [Bug Board](https://github.com/orgs/pagefaultgames/projects/3). The latter is essentially the same as the issues page, so take your pick.
 
@@ -90,27 +100,30 @@ You are free to comment on any issue so that you may be assigned to it and we ca
 
 ## 📚 Documentation
 
-You can find the auto-generated documentation [here](https://pagefaultgames.github.io/pokerogue/main/index.html).
+You can find the auto-generated API documentation [here](https://pagefaultgames.github.io/pokerogue/beta/index.html). It can be incomplete at times (as many methods lack documentation comments), but it's a great way to get a look at the overall structure of the codebase and find particular methods or classes you may be looking for.
 
 Additionally, the [docs folder](./docs) contains a variety of in-depth documents and guides useful for aspiring contributors. \
 Notable topics include:
 - [Commenting your code](./docs/comments.md)
 - [Linting & Formatting](./docs/linting.md)
 - [Localization](./docs/localization.md)
+- [The Phase System](./docs/phases.md)
 - [Enemy AI move selection](./docs/enemy-ai.md)
 - [Running with Podman](./docs/podman.md)
 
-Again, if you have unanswered questions please feel free to ask!
+Again, please feel free to ask any questions you may have!
 
 ## 🧪 Testing Your Changes
 
-You've just made a change - how can you check if it works? You have two areas to hit:
+You've just made a change - how can you check if it works? \
+You have two areas to hit:
 
 ### 1 - Manual Testing
 
 > This will likely be your first stop. After making a change, you'll want to spin the game up and make sure everything is as you expect. To do this, you will need a way to manipulate the game to produce the situation you're looking to test.
 
 [src/overrides.ts](./src/overrides.ts) contains overrides for most values you'll need to change for testing, controlled through the `overrides` object.
+There are a variety of overrides available, ranging from changing movesets and abilities to modifying battle conditions and forcing specific scenarios.
 For example, here is how you could test a scenario where the player Pokemon has the ability Drought and the enemy Pokemon has the move Water Gun:
 
 ```typescript
@@ -120,26 +133,118 @@ const overrides = {
 } satisfies Partial<InstanceType<typeof DefaultOverrides>>;
 ```
 
-Read through `src/overrides.ts` file to find the override that fits your needs - there are a lot of them!
-If the situation you're trying to test can't be created using existing overrides (or with the [Dev Save](#-development-save-file)), reach out in **#dev-corner**.
-You can get help testing your specific changes, and you might have found a new override that needs to be created!
+> [!NOTE]
+> If the situation you're trying to test can't be created using existing overrides (or with the [Dev Save](#-development-save-file)), reach out in **#pokerogue-dev**.
+> You can get help testing your specific changes, and you might have found a new override that needs to be created!
 
 ### 2 - Automatic Testing
 
-> PokéRogue uses [Vitest](https://vitest.dev/) for automatic testing. Checking out the existing tests in the [test](./test/) folder is a great way to understand how this works, and to get familiar with the project as a whole.
+<!-- TODO: Consider moving this to a separate document. There's tons more we could (and should) expand on here, like the `test:create` script, all of the test utils/etc, project conventions, etc etc.-->
 
-To make sure your changes didn't break any existing test cases, run `pnpm test:silent` in your terminal. You can also provide an argument to the command: to run only the Dancer (ability) tests, you could write `pnpm test:silent dancer`.
-  - __Note that passing all test cases does *not* guarantee that everything is working properly__. The project does not have complete regression testing.
+PokéRogue uses [Vitest](https://vitest.dev/) for automated testing.
+Checking out existing tests in the [test](./test/) folder is a great way to understand how the existing system works, as well as familiarizing yourself with the project as a whole.
 
-Most non-trivial changes (*especially bug fixes*) should come along with new test cases.
-  - To make a new test file, run `pnpm test:create` and follow the prompts. If the move/ability/etc. you're modifying already has tests, simply add new cases to the end of the file. As mentioned before, the easiest way to get familiar with the system and understand how to write your own tests is simply to read the existing tests, particularly ones similar to the tests you intend to write.
-  - Ensure that new tests:
-    - Are deterministic. In other words, the test should never pass or fail when it shouldn't due to randomness. This involves primarily ensuring that abilities and moves are never randomly selected.
-    - As much as possible, are unit tests. If you have made two distinct changes, they should be tested in two separate cases.
-    - Test edge cases. A good strategy is to think of edge cases beforehand and create tests for them using `it.todo`. Once the edge case has been handled, you can remove the `todo` marker.
+#### Writing tests
+Most non-trivial changes (_especially bug fixes_) should be accompanied by one or more new automated test cases.
 
-## 😈 Development Save File
-> Some issues may require you to have unlocks on your save file which go beyond normal overrides. For this reason, the repository contains a [save file](../test/test-utils/saves/everything.psrv) with _everything_ unlocked (even ones not legitimately obtainable, like unimplemented variant shinies).
+To create a new test file, run `pnpm test:create` and follow the on-screen prompts.
+If the move/ability/etc. you're modifying already has tests, you can add new cases to the test file or edit existing ones.
+
+Ensure that new test cases:
+- Are deterministic. In other words, the test should never pass or fail when it shouldn't due to randomness. Among other things, this involves ensuring that abilities and moves are never randomly selected.
+- Do not test multiple separate things in the same test case. If you have made two distinct changes, they should be tested in two separate cases.
+- Cover as many edge cases as possible. A good strategy is to think of edge cases beforehand and create tests for them using `it.todo`. Once the edge case has been handled, you can remove the `todo` marker.
+
+> [!CAUTION]
+> Testing UI-related code within the automated test harness is _usually_ a bad idea. \
+> While it can be done, such tests tend to be boilerplate-heavy, hard to maintain and prone to randomly breaking/timing out.
+> If your change is primarily UI-related, it's usually best to test it manually and only use automated tests for the underlying logic (if applicable).
+
+<!-- TODO: Decide on and suggest a specific placement hierarchy for test cases involving interactions between different moves/abilities/etc., and enforce said placement if feasible -->
+
+> [!NOTE]
+> While Vitest does support both Jest and Chai syntax for assertions, our project exclusively uses Jest-style assertions (`...toBe()`, `...toEqual()`, etc.) for internal consistency. (The Chai variants have been blacklisted via TypeScript declaration merging, ensuring they aren't accidentally used by mistake.)
+
+#### Running tests
+To make sure your changes didn't break any existing test cases, run `pnpm test:silent <files>` in your terminal to run test files associated with your changes. \
+You can provide additional arguments to the command to alter its behavior;
+a full list of supported arguments can be found on [Vitest's website](https://vitest.dev/guide/cli.html).
+
+> [!CAUTION]
+> Passing all test cases does **not** guarantee that everything is working properly.
+> The project does not have complete regression testing, so manual verification is still advised for most changes.
+
+## 💾 Development Save File
+> Some issues may require you to have unlocks on your save file which go beyond normal overrides.
+> For this reason, the repository contains a [save file](test/utils/saves/everything.prsv) with _everything_ unlocked (including things not legitimately obtainable, like unreleased variant shinies).
 
 1. Start the game up locally and navigate to `Menu -> Manage Data -> Import Data`
-2. Select [everything.prsv](test/test-utils/saves/everything.prsv) (`test/test-utils/saves/everything.prsv`) and confirm.
+2. Select [everything.prsv](test/utils/saves/everything.prsv) (`test/utils/saves/everything.prsv`) and hit "Confirm".
+3. The page will reload with everything unlocked! You can now test your changes with this save file.
+
+## ✅ Submitting a Pull Request
+
+Most information related to submitting a pull request is contained within comments inside the [default pull request template](./.github/pull_request_template.md). \
+This section serves to elaborate on particular parts of the PR creation workflow that cannot fit fully inside the margins.
+
+### PR Title Format
+This repository follows the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) standard for PR titles, enforced by an automated GitHub Actions workflow.
+
+Each PR must contain a valid prefix (and optionally a valid scope), followed by a colon and then the PR's subject line. \
+```
+fix(move): Future Sight no longer crashes
+^   ^      ^
+|   |      |__ Subject
+|   |_________ Scope (optional)
+|_____________ Prefix
+```
+
+> [!IMPORTANT]
+> If a save migrator, version increase or other breaking change is part of the PR, a `!` must be added before the `:`.
+
+Try to keep the title under 72 characters, as GitHub cuts off commit titles longer than this length.
+
+#### Examples
+`refactor(data)!: improve serialization of Pokemon save data`
+
+`balance: update TM compatibility lists`
+`fix(move): Retaliate now saves power boost between waves`
+`test: preserve text output of original shards`
+
+#### List of valid prefixes
+
+- "balance" - Changes related to game balance
+- "chore" - Misc project upkeep (e.g. updating submodules, updating dependencies, reverting a bad commit) not covered by other prefixes
+- "dev" - Improving the developer experience (such as by modifying lint rules or creating cli scripts)
+- "docs" - Primarily adding/updating documentation
+- "feat" - Adding a new feature (e.g. adding a new implementation of a move) or redesigning an existing feature
+- "fix" - Fixing a bug
+- "github" - Updating the CI pipeline or otherwise modifying something in the `./github/**` directory
+- "i18n" - Adding/modifying translation keys, etc
+- "misc" - A change that doesn't fit any other prefix
+- "perf" - A refactor aimed at improving performance
+- "refactor" - A change that doesn't impact functionality or fix any bugs (except incidentally)
+- "test" - Primarily adding/updating tests or modifying the test framework
+
+#### List of valid scopes
+
+- "ability"
+- "ai"
+- "audio"
+- "battle" - Relating to the general battle engine
+- "biomes"
+- "challenge"
+- "encounter" - Mystery Encounters
+- "event" - e.g. adding a Christmas event to the game
+- "graphics" - Anything related to art/graphics (adding new sprites, fixing a sprite that isn't displaying properly, etc)
+- "item"
+- "move"
+- "ui" - UI/UX
+
+> [!IMPORTANT]
+> All scopes are valid when using the "docs", "feat", "fix", "refactor" and "test" prefixes. \
+> All scopes except "audio", "battle", "graphics", and "ui" are valid when using the "balance" prefix. \
+> No other prefixes have valid scopes.
+>
+> There is a special "beta" scope for the "fix" prefix,
+> for fixing bugs that only existed on the `beta` branch that never made it onto `main`.

@@ -1,4 +1,3 @@
-import type { MoveId } from "#enums/move-id";
 import type { MovePhase } from "#phases/move-phase";
 import type { ObjectValues } from "#types/type-helpers";
 
@@ -13,7 +12,7 @@ import type { ObjectValues } from "#types/type-helpers";
 export const MovePhaseTimingModifier = Object.freeze({
   /**
    * Forces the given move to always act last.
-   * Used by {@linkcode MoveId.QUASH}.
+   * @see {@link https://bulbapedia.bulbagarden.net/wiki/Quash_(move) | Quash (Bulbapedia)}
    */
   LAST: 0,
   /**
@@ -22,13 +21,10 @@ export const MovePhaseTimingModifier = Object.freeze({
   NORMAL: 1,
   /**
    * Forces the given move to always act first.
-   * Used by {@linkcode MoveId.INSTRUCT} and {@linkcode MoveId.AFTER_YOU}.
+   * @see {@link https://bulbapedia.bulbagarden.net/wiki/Instruct_(move) | Instruct (Bulbapedia)}
+   * @see {@link https://bulbapedia.bulbagarden.net/wiki/After_You_(move) | After You (Bulbapedia)}
    */
   FIRST: 2,
 });
-export type MovePhaseTimingModifier = ObjectValues<typeof MovePhaseTimingModifier>;
 
-/**
- * Doc comment to suppress IDE unused import errors.
- * {@linkcode MoveId}
- */
+export type MovePhaseTimingModifier = ObjectValues<typeof MovePhaseTimingModifier>;

@@ -6,7 +6,7 @@ import { fixedInt, randInt } from "#utils/common";
 export class PokemonSpriteSparkleHandler {
   private sprites: Set<Phaser.GameObjects.Sprite>;
 
-  private counterTween?: Phaser.Tweens.Tween;
+  private counterTween?: Phaser.Tweens.Tween | undefined;
 
   setup(): this {
     this.sprites = new Set();

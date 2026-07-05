@@ -1,30 +1,32 @@
 import { MAX_TERAS_PER_ARENA } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { POKERUS_STARTER_COUNT, speciesStarterCosts } from "#balance/starters";
-import { allSpecies } from "#data/data-lists";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
+import { POKERUS_STARTER_COUNT } from "#balance/starters";
 import type { PokemonSpecies, PokemonSpeciesForm } from "#data/pokemon-species";
 import { BattlerIndex } from "#enums/battler-index";
+import { MAX_REGULAR_POKEMON_TYPE, MIN_REGULAR_POKEMON_TYPE, type RegularPokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
-import { randSeedItem } from "./common";
+import { randSeedIntRange, randSeedItem } from "#utils/common";
 
 /**
- * Gets the {@linkcode PokemonSpecies} object associated with the {@linkcode SpeciesId} enum given
- * @param species - The {@linkcode SpeciesId} to fetch.
- * If an array of `SpeciesId`s is passed (such as for named trainer spawn pools),
- * one will be selected at random.
+ * Gets the `PokemonSpecies` object associated with the given `SpeciesId`
+ * @param speciesId - The {@linkcode SpeciesId} to fetch.
  * @returns The associated {@linkcode PokemonSpecies} object
+ * @deprecated Use {@linkcode speciesDataRegistry.getSpecies}
  */
-export function getPokemonSpecies(species: SpeciesId | SpeciesId[]): PokemonSpecies {
-  if (Array.isArray(species)) {
-    // TODO: this RNG roll should not be handled by this function
-    species = species[Math.floor(Math.random() * species.length)];
-  }
-  if (species >= 2000) {
-    // the `!` is safe, `allSpecies` is static and contains all `SpeciesId`s
-    return allSpecies.find(s => s.speciesId === species)!;
-  }
-  return allSpecies[species - 1];
+// TODO: remove this function
+export function getPokemonSpecies(speciesId: SpeciesId): PokemonSpecies {
+  return speciesDataRegistry.getSpecies(speciesId);
+}
+
+/**
+ * Converts the internal id of the Pokemon into its national dex number
+ * @param speciesId - The {@linkcode SpeciesId} to get the dex number of
+ * @returns The national dex number matching the `SpeciesId`
+ */
+export function getDexNumber(speciesId: SpeciesId): SpeciesId {
+  return speciesId % 2000;
 }
 
 /**
@@ -38,7 +40,7 @@ export function getPokerusStarters(): PokemonSpecies[] {
   globalScene.executeWithSeedOffset(
     () => {
       while (pokerusStarters.length < POKERUS_STARTER_COUNT) {
-        const randomSpeciesId = Number.parseInt(randSeedItem(Object.keys(speciesStarterCosts)), 10);
+        const randomSpeciesId = randSeedItem(speciesDataRegistry.getAllStarters());
         const species = getPokemonSpecies(randomSpeciesId);
         if (!pokerusStarters.includes(species)) {
           pokerusStarters.push(species);
@@ -113,6 +115,14 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
   }
 
   fragB = `${fragB.slice(0, 1).toLowerCase()}${fragB.slice(1)}`;
+
+  // Prevents some unfortunate fusion names from Rapidash + X
+  if (fragA === "Rapi") {
+    fragA = "Rapid";
+    if (fragB === "ng") {
+      fragB = speciesBName.slice(speciesBName.length - 3);
+    }
+  }
 
   return `${speciesAPrefix || speciesBPrefix}${fragA}${fragB}${speciesBSuffix || speciesASuffix}`;
 }
@@ -189,4 +199,18 @@ export function canSpeciesTera(pokemon: Pokemon): boolean {
 export function canTerastallize(pokemon: PlayerPokemon): boolean {
   const hasAvailableTeras = globalScene.arena.playerTerasUsed < MAX_TERAS_PER_ARENA;
   return hasAvailableTeras && canSpeciesTera(pokemon);
+}
+
+export function decodeNickname(nickname: string, pokemonName: string): string {
+  try {
+    return decodeURIComponent(escape(atob(nickname))); // TODO: this seems jank, and `escape` is deprecated
+  } catch (err) {
+    console.error(`Failed to decode nickname for ${pokemonName}!\n`, err);
+    return pokemonName;
+  }
+}
+
+/** @returns A random {@linkcode RegularPokemonType} */
+export function getRandomRegularPokemonType(): RegularPokemonType {
+  return randSeedIntRange(MIN_REGULAR_POKEMON_TYPE, MAX_REGULAR_POKEMON_TYPE) as RegularPokemonType;
 }

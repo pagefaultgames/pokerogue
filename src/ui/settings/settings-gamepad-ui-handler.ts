@@ -1,11 +1,10 @@
 import { globalScene } from "#app/global-scene";
-import type { InterfaceConfig } from "#app/inputs-controller";
 import { Device } from "#enums/devices";
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
-import pad_dualshock from "#inputs/pad-dualshock";
-import pad_unlicensedSNES from "#inputs/pad-unlicensed-snes";
-import pad_xbox360 from "#inputs/pad-xbox360";
+import { PAD_DUALSHOCK } from "#inputs/pad-dualshock";
+import { PAD_UNLICENSED_SNES } from "#inputs/pad-unlicensed-snes";
+import { PAD_XBOX360 } from "#inputs/pad-xbox360";
 import {
   SettingGamepad,
   setSettingGamepad,
@@ -13,14 +12,15 @@ import {
   settingGamepadDefaults,
   settingGamepadOptions,
 } from "#system/settings-gamepad";
-import { AbstractControlSettingsUiHandler } from "#ui/abstract-control-settings-ui-handler";
+import type { InterfaceConfig } from "#types/configs/inputs";
+import { BaseControlSettingsUiHandler } from "#ui/base-control-settings-ui-handler";
 import { addTextObject } from "#ui/text";
 import { truncateString } from "#utils/common";
 import i18next from "i18next";
 
 /** Class representing the settings UI handler for gamepads */
 
-export class SettingsGamepadUiHandler extends AbstractControlSettingsUiHandler {
+export class SettingsGamepadUiHandler extends BaseControlSettingsUiHandler {
   /**
    * Creates an instance of SettingsGamepadUiHandler.
    *
@@ -32,7 +32,7 @@ export class SettingsGamepadUiHandler extends AbstractControlSettingsUiHandler {
     this.setting = SettingGamepad;
     this.settingDeviceDefaults = settingGamepadDefaults;
     this.settingDeviceOptions = settingGamepadOptions;
-    this.configs = [pad_xbox360, pad_dualshock, pad_unlicensedSNES];
+    this.configs = [PAD_XBOX360, PAD_DUALSHOCK, PAD_UNLICENSED_SNES];
     this.commonSettingsCount = 2;
     this.localStoragePropertyName = "settingsGamepad";
     this.settingBlacklisted = settingGamepadBlackList;
@@ -90,20 +90,20 @@ export class SettingsGamepadUiHandler extends AbstractControlSettingsUiHandler {
 
     // Iterate over the keys in the settingDevice enumeration.
     for (const [index, key] of Object.keys(this.setting).entries()) {
-      const setting = this.setting[key]; // Get the actual setting value using the key.
+      const setting = this.setting[key];
 
       // Check if the current setting corresponds to the controller setting.
       if (setting === this.setting.Controller) {
         // Iterate over all layouts excluding the 'noGamepads' special case.
-        for (const _key of Object.keys(this.layout)) {
-          if (_key === "noGamepads") {
+        for (const layoutKey of this.layout.keys()) {
+          if (layoutKey === "noGamepads") {
             continue;
           } // Skip updating the no gamepad layout.
 
           // Update the text of the first option label under the current setting to the name of the chosen gamepad,
           // truncating the name to 30 characters if necessary.
-          this.layout[_key].optionValueLabels[index][0].setText(
-            truncateString(globalScene.inputController.selectedDevice[Device.GAMEPAD], 20),
+          this.layout[layoutKey].optionValueLabels[index][0].setText(
+            truncateString(globalScene.inputController.selectedDevice[Device.GAMEPAD]!, 20),
           );
         }
       }

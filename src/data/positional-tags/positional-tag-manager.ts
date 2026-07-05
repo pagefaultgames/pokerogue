@@ -1,4 +1,4 @@
-import { loadPositionalTag, type toSerializedPosTag } from "#data/positional-tags/load-positional-tag";
+import { loadPositionalTag, type ToSerializedPosTag } from "#data/positional-tags/load-positional-tag";
 import type { PositionalTag } from "#data/positional-tags/positional-tag";
 import type { BattlerIndex } from "#enums/battler-index";
 import type { PositionalTagType } from "#enums/positional-tag-type";
@@ -13,10 +13,11 @@ export class PositionalTagManager {
 
   /**
    * Add a new {@linkcode PositionalTag} to the arena.
+   * @param tag - The parameters required to construct the given tag.
    * @remarks
    * This function does not perform any checking if the added tag is valid.
    */
-  public addTag<T extends PositionalTagType>(tag: toSerializedPosTag<T>): void {
+  public addTag<T extends PositionalTagType>(tag: ToSerializedPosTag<T>): void {
     this.tags.push(loadPositionalTag(tag));
   }
 

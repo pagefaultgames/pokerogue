@@ -3,13 +3,13 @@ import { getPokeballAtlasKey } from "#data/pokeball";
 import { Button } from "#enums/buttons";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import { PartyUiMode } from "#enums/party-ui-mode";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { getEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
 import type { OptionSelectSettings } from "#mystery-encounters/encounter-phase-utils";
 import type { MysteryEncounterOption } from "#mystery-encounters/mystery-encounter-option";
 import type { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
-import { PartyUiMode } from "#ui/party-ui-handler";
 import { ScrollingText } from "#ui/scrolling-text";
 import { addBBCodeTextObject, getBBCodeFrag } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
@@ -20,7 +20,7 @@ import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
 export class MysteryEncounterUiHandler extends UiHandler {
   private cursorContainer: Phaser.GameObjects.Container;
-  private cursorObj?: Phaser.GameObjects.Image;
+  private cursorObj?: Phaser.GameObjects.Image | undefined;
 
   private optionsContainer: Phaser.GameObjects.Container;
   // Length = max number of allowable options (4)
@@ -28,18 +28,18 @@ export class MysteryEncounterUiHandler extends UiHandler {
 
   private tooltipWindow: Phaser.GameObjects.NineSlice;
   private tooltipContainer: Phaser.GameObjects.Container;
-  private tooltipScrollTween?: Phaser.Tweens.Tween;
+  private tooltipScrollTween?: Phaser.Tweens.Tween | undefined;
 
   private descriptionWindow: Phaser.GameObjects.NineSlice;
   private descriptionContainer: Phaser.GameObjects.Container;
-  private descriptionScrollTween?: Phaser.Tweens.Tween;
+  private descriptionScrollTween?: Phaser.Tweens.Tween | undefined;
   private rarityBall: Phaser.GameObjects.Sprite;
 
   private dexProgressWindow: Phaser.GameObjects.NineSlice;
   private dexProgressContainer: Phaser.GameObjects.Container;
   private showDexProgress = false;
 
-  private overrideSettings?: OptionSelectSettings;
+  private overrideSettings?: OptionSelectSettings | undefined;
   private encounterOptions: MysteryEncounterOption[] = [];
   private optionsMeetsReqs: boolean[];
 

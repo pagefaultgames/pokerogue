@@ -182,9 +182,11 @@ export class SpeciesFormChangePreMoveTrigger extends SpeciesFormChangeMoveTrigge
 export class SpeciesFormChangePostMoveTrigger extends SpeciesFormChangeMoveTrigger {
   description = i18next.t("pokemonEvolutions:forms.postMove");
   canChange(pokemon: Pokemon): boolean {
-    return (
-      pokemon.summonData && pokemon.getLastXMoves(1).filter(m => this.movePredicate(m.move)).length > 0 === this.used
-    );
+    const lastMove = pokemon.getLastXMoves(1).at(0);
+    if (!lastMove) {
+      return false;
+    }
+    return this.movePredicate(lastMove.move) === this.used;
   }
 }
 

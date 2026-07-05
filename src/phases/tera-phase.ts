@@ -7,12 +7,12 @@ import { PokemonType } from "#enums/pokemon-type";
 import type { Pokemon } from "#field/pokemon";
 import { BattlePhase } from "#phases/battle-phase";
 import { achvs } from "#system/achv";
-import { toCamelCase } from "#utils/strings";
+import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import i18next from "i18next";
 
 export class TeraPhase extends BattlePhase {
   public readonly phaseName = "TeraPhase";
-  public pokemon: Pokemon;
+  public readonly pokemon: Pokemon;
 
   constructor(pokemon: Pokemon) {
     super();
@@ -26,9 +26,10 @@ export class TeraPhase extends BattlePhase {
     globalScene.phaseManager.queueMessage(
       i18next.t("battle:pokemonTerastallized", {
         pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon),
-        type: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.pokemon.getTeraType()])}`),
+        type: i18next.t(getPokemonTypeLocaleKey(this.pokemon.getTeraType())),
       }),
     );
+
     new CommonBattleAnim(CommonAnim.TERASTALLIZE, this.pokemon).play(false, () => {
       this.end();
     });
@@ -36,15 +37,14 @@ export class TeraPhase extends BattlePhase {
 
   end() {
     this.pokemon.isTerastallized = true;
+    // Remove added type from Forest's Curse/Trick-or-Treat
+    this.pokemon.summonData.addedType = null;
     this.pokemon.updateSpritePipelineData();
-
-    if (this.pokemon.isPlayer()) {
-      globalScene.arena.playerTerasUsed += 1;
-    }
 
     globalScene.triggerPokemonFormChange(this.pokemon, SpeciesFormChangeTeraTrigger);
 
     if (this.pokemon.isPlayer()) {
+      globalScene.arena.playerTerasUsed += 1;
       globalScene.validateAchv(achvs.TERASTALLIZE);
       if (this.pokemon.getTeraType() === PokemonType.STELLAR) {
         globalScene.validateAchv(achvs.STELLAR_TERASTALLIZE);
