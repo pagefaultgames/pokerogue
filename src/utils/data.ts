@@ -1,5 +1,6 @@
 import { loggedInUser } from "#app/account";
 import { saveKey } from "#app/constants";
+import type { SpeciesId } from "#enums/species-id";
 import type { StarterPreferences } from "#types/save-data";
 import { AES, enc } from "crypto-js";
 
@@ -79,9 +80,9 @@ export function isBareObject(obj: any): boolean {
 const StarterPrefers_DEFAULT: string = "{}";
 let StarterPrefers_private_latest: string = StarterPrefers_DEFAULT;
 
-export interface AllStarterPreferences {
-  [key: number]: StarterPreferences | undefined;
-}
+export type AllStarterPreferences = {
+  [key in SpeciesId]: StarterPreferences | undefined;
+};
 
 // called on starter selection show once
 export function loadStarterPreferences(): AllStarterPreferences {

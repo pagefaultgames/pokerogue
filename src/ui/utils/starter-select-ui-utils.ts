@@ -21,7 +21,6 @@ import { Passive } from "#enums/passive";
 import type { PokemonType } from "#enums/pokemon-type";
 import type { SpeciesId } from "#enums/species-id";
 import type { Variant } from "#sprites/variant";
-import type { GameData } from "#system/game-data";
 import type { DexEntry } from "#types/dex-data";
 import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { DexAttrProps, StarterDataEntry, StarterPreferences } from "#types/save-data";
@@ -63,10 +62,9 @@ export function getStarterSpeciesId(speciesId: number): number {
  * @param gameData - Optional game data, defaults to the data in globalScene
  * @returns true if the user has enough candies and a passive has not been unlocked already
  */
-export function isPassiveAvailable(speciesId: number, gameData?: GameData): boolean {
+export function isPassiveAvailable(speciesId: number, gameData = globalScene.gameData): boolean {
   // Get this species ID's starter data
   const starterId = getStarterSpeciesId(speciesId);
-  gameData ??= globalScene.gameData;
   const starterData = gameData.starterData[starterId];
 
   return (
@@ -81,9 +79,8 @@ export function isPassiveAvailable(speciesId: number, gameData?: GameData): bool
  * @param gameData - Optional game data, defaults to the data in globalScene
  * @returns true if the user has enough candies and all value reductions have not been unlocked already
  */
-export function isValueReductionAvailable(speciesId: number, gameData?: GameData): boolean {
+export function isValueReductionAvailable(speciesId: number, gameData = globalScene.gameData): boolean {
   const starterId = getStarterSpeciesId(speciesId);
-  gameData ??= globalScene.gameData;
   const starterData = gameData.starterData[starterId];
 
   return (
@@ -98,21 +95,24 @@ export function isValueReductionAvailable(speciesId: number, gameData?: GameData
  * @param gameData - Optional game data, defaults to the data in globalScene
  * @returns true if the user has enough candies
  */
-export function isSameSpeciesEggAvailable(speciesId: number, gameData?: GameData): boolean {
-  gameData ??= globalScene.gameData;
-
+export function isSameSpeciesEggAvailable(speciesId: number, gameData = globalScene.gameData): boolean {
   const starterId = getStarterSpeciesId(speciesId);
-  const hatchCount = globalScene.gameData.dexData[starterId].hatchedCount;
+  const hatchCount = gameData.dexData[starterId].hatchedCount;
   return (
     gameData.starterData[starterId].candyCount
     >= getSameSpeciesEggCandyCounts(speciesStarterCosts[starterId], hatchCount)
   );
 }
 
-export function isStarterValidForChallenge(starterId: StarterSpeciesId) {
+/**
+ * Determines if a starter is valid for challenges.
+ * @param starterId - The ID of the starter species to check
+ * @returns whether the starter is valid for challenges
+ */
+export function isStarterValidForChallenge(starterId: StarterSpeciesId): boolean {
   const species = getPokemonSpecies(starterId);
 
-  let allFormsValid = false;
+  let isStarterValid = false;
   if (species.forms?.length > 0) {
     for (let i = 0; i < species.forms.length; i++) {
       /* Here we are making a fake form index dex props for challenges
@@ -127,7 +127,7 @@ export function isStarterValidForChallenge(starterId: StarterSpeciesId) {
         globalScene.gameData.getDexAttrProps(tempFormProps),
         true,
       );
-      allFormsValid ||= isValidForChallenge;
+      isStarterValid ||= isValidForChallenge;
     }
   } else {
     const isValidForChallenge = checkStarterValidForChallenge(
@@ -135,10 +135,10 @@ export function isStarterValidForChallenge(starterId: StarterSpeciesId) {
       globalScene.gameData.getSpeciesDefaultDexAttrProps(species.speciesId),
       true,
     );
-    allFormsValid = isValidForChallenge;
+    isStarterValid = isValidForChallenge;
   }
 
-  return allFormsValid;
+  return isStarterValid;
 }
 
 /**
@@ -286,8 +286,7 @@ const languageSettings: { [key: string]: StarterSelectLanguageSetting } = {
 
 export function getStarterSelectTextSettings(): StarterSelectLanguageSetting {
   const currentLanguage = i18next.resolvedLanguage ?? "en";
-  const langSettingKey = Object.keys(languageSettings).find(lang => currentLanguage.includes(lang)) ?? "en";
-  const textSettings = languageSettings[langSettingKey];
+  const textSettings = languageSettings[currentLanguage] ?? languageSettings["en"];
   return textSettings;
 }
 
@@ -316,7 +315,12 @@ export function getStarterData(
   return { dexEntry: { ...copiedDexEntry }, starterDataEntry: { ...copiedStarterDataEntry } };
 }
 
-export function getFriendship(speciesId: number) {
+/**
+ * Get the current friendship and friendship cap for a given species.
+ * @param speciesId - The id of the species to get friendship for
+ * @returns An object containing the current friendship and friendship cap for the species
+ */
+export function getFriendship(speciesId: SpeciesId): { currentFriendship: number; friendshipCap: number } {
   let currentFriendship = globalScene.gameData.starterData[speciesId].friendship;
   if (!currentFriendship || currentFriendship === undefined) {
     currentFriendship = 0;
@@ -434,6 +438,10 @@ export function getStarterDetailsFromPreferences(
   };
 }
 
+/**
+ * Get the limit on starter points available for the current run.
+ * @returns the limit on starter points taking challenges into account
+ */
 export function getRunValueLimit(): number {
   const valueLimit = new NumberHolder(0);
   switch (globalScene.gameMode.modeId) {
@@ -450,6 +458,11 @@ export function getRunValueLimit(): number {
   return valueLimit.value;
 }
 
+/**
+ * Calculate the total value of a given party.
+ * @param party - An array of species IDs representing the player's starter party
+ * @returns The total value of the party
+ */
 export function getPartyValue(party: StarterSpeciesId[]) {
   return party.reduce(
     (total: number, starterId: StarterSpeciesId) => total + globalScene.gameData.getSpeciesStarterValue(starterId),
@@ -457,6 +470,12 @@ export function getPartyValue(party: StarterSpeciesId[]) {
   );
 }
 
+/**
+ * Sort an array of {@linkcode SpeciesId | species IDs} based on a given criteria and direction.
+ * @param speciesIds - An array of species IDs to be sorted
+ * @param sort - The criteria by which the species hould be sorted
+ * @param dir - The direction in which the species should be sorted
+ */
 export function sortSpecies(speciesIds: SpeciesId[], sort: SortCriteria, dir: SortDirection): void {
   speciesIds.sort((a, b) => {
     switch (sort) {
@@ -487,7 +506,13 @@ export function sortSpecies(speciesIds: SpeciesId[], sort: SortCriteria, dir: So
   });
 }
 
-export function getStarterMoves(starterId: StarterSpeciesId, formIndex: number) {
+/**
+ * Get the moves that a starter can have.
+ * @param starterId - The id of the starter species to get moves for
+ * @param formIndex - The form index of the starter to get moves for
+ * @returns An array of move IDs
+ */
+export function getStarterMoves(starterId: StarterSpeciesId, formIndex: number): MoveId[] {
   const starterMoves: MoveId[] = [];
   const { starterDataEntry } = getStarterData(starterId);
 

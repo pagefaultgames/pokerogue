@@ -3254,8 +3254,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
    * Designed to be used for unit tests that utilize this UI.
    */
   public clearStarterPreferences(): void {
-    this.starterPreferences = {};
-    this.originalStarterPreferences = {};
+    this.starterPreferences = {} as AllStarterPreferences;
+    this.originalStarterPreferences = {} as AllStarterPreferences;
   }
 
   public override destroy(): void {
