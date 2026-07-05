@@ -120,6 +120,14 @@ const systemShortKeys = {
   classicWinCount: "$wc",
 };
 
+const ErrorMessages = {
+  OUT_OF_DATE: i18next.t("gameData:reloadSaveData"),
+  OUT_OF_DATE_LOCAL: i18next.t("gameData:reloadSaveDataLocal"),
+  DATA_NOT_FOUND: i18next.t("gameData:saveDataNotFound"),
+  TOO_MANY_CONNECTIONS: i18next.t("gameData:tooManyConnections"),
+  FAILED_VALIDATION: i18next.t("gameData:failedSaveValidation"),
+};
+
 export class GameData {
   public trainerId: number;
   public secretId: number;
@@ -267,9 +275,14 @@ export class GameData {
     return dataValidated;
   }
 
-  private async showInvalidSaveModal<const T>(returnValue: T): Promise<T> {
+  private async showInvalidSaveModal<const T>(
+    returnValue: T,
+    message: string = ErrorMessages.FAILED_VALIDATION,
+  ): Promise<T> {
     const { promise, resolve } = Promise.withResolvers<T>();
-    await globalScene.ui.setMode(UiMode.ALERT_MODAL, i18next.t("gameData:failedSaveValidation"));
+
+    await globalScene.ui.setMode(UiMode.ALERT_MODAL, message);
+
     // TODO: This is a temporary hacky solution to ensure the modal displays when saving
     // on the starter select UI, which change the UI mode without awaiting this async call..
     globalScene.time.delayedCall(fixedInt(1000), () => {
@@ -278,10 +291,11 @@ export class GameData {
       if (globalScene.ui.getMode() === UiMode.ALERT_MODAL) {
         globalScene.time.delayedCall(fixedInt(4000), () => resolve(returnValue));
       } else {
-        globalScene.ui.setMode(UiMode.ALERT_MODAL, i18next.t("gameData:failedSaveValidation"));
+        globalScene.ui.setMode(UiMode.ALERT_MODAL, message);
         globalScene.time.delayedCall(fixedInt(4000), () => resolve(returnValue));
       }
     });
+
     return promise;
   }
 
@@ -289,7 +303,7 @@ export class GameData {
     const data = this.getSystemSaveData();
 
     if (!this.validateSystemData(data)) {
-      return this.showInvalidSaveModal(false);
+      return this.reinitializeSaveData({ message: ErrorMessages.FAILED_VALIDATION });
     }
     globalScene.ui.savingIcon.show();
 
@@ -332,11 +346,11 @@ export class GameData {
 
     if (typeof saveDataOrErr === "number" || !saveDataOrErr || saveDataOrErr.length === 0 || saveDataOrErr[0] !== "{") {
       if (saveDataOrErr === 404) {
-        globalScene.phaseManager.queueMessage(i18next.t("gameData:saveDataNotFound"), null, true);
+        globalScene.phaseManager.queueMessage(ErrorMessages.DATA_NOT_FOUND, null, true);
         return true;
       }
       if (typeof saveDataOrErr === "string" && saveDataOrErr.includes("Too many connections")) {
-        globalScene.phaseManager.queueMessage(i18next.t("gameData:tooManyConnections"), null, true);
+        globalScene.phaseManager.queueMessage(ErrorMessages.TOO_MANY_CONNECTIONS, null, true);
         return false;
       }
       return false;
@@ -599,7 +613,7 @@ export class GameData {
     }
 
     globalScene.phaseManager.clearPhaseQueue();
-    await this.reinitializeSaveData(JSON.stringify(systemData));
+    await this.reinitializeSaveData({ systemDataStr: JSON.stringify(systemData) });
     return false;
   }
 
@@ -616,15 +630,16 @@ export class GameData {
   /**
    * Discards local save data and re-populates it with data from the server (or the provided data).
    * @param systemDataStr - (Optional) Save data to load
+   * @param message - (Optional) The message to display to the user
    */
-  private async reinitializeSaveData(systemDataStr?: string): Promise<void> {
-    const { promise, resolve } = Promise.withResolvers<void>();
-
-    const alertMessage = systemDataStr
-      ? i18next.t("gameData:reloadSaveDataLocal")
-      : i18next.t("gameData:reloadSaveData");
-
-    await globalScene.ui.setMode(UiMode.ALERT_MODAL, alertMessage);
+  private async reinitializeSaveData({
+    systemDataStr,
+    message,
+  }: {
+    systemDataStr?: string;
+    message?: string;
+  } = {}): Promise<false> {
+    const alertMessage = systemDataStr ? ErrorMessages.OUT_OF_DATE_LOCAL : ErrorMessages.OUT_OF_DATE;
 
     this.clearLocalData();
 
@@ -634,8 +649,7 @@ export class GameData {
       await this.loadSystem();
     }
 
-    globalScene.time.delayedCall(fixedInt(5000), () => resolve());
-    return promise;
+    return this.showInvalidSaveModal(false, message ?? alertMessage);
   }
 
   /**
@@ -1332,7 +1346,7 @@ export class GameData {
       : this.getSystemSaveData(); // TODO: is this bang correct?
 
     if (!this.validateSystemData(systemData)) {
-      return this.showInvalidSaveModal(false);
+      return this.reinitializeSaveData({ message: ErrorMessages.FAILED_VALIDATION });
     }
 
     // Saving icon should go after validation to avoid confusing users.
