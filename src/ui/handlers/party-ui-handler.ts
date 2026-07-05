@@ -1941,8 +1941,6 @@ class PartySlot extends Phaser.GameObjects.Container {
   }
 
   setup(partyUiMode: PartyUiMode, tmMoveId: MoveId) {
-    const currentLanguage = i18next.resolvedLanguage ?? "en";
-    const offsetJa = currentLanguage === "ja";
     const isItemManageMode = partyUiMode === PartyUiMode.MODIFIER_TRANSFER || partyUiMode === PartyUiMode.DISCARD;
 
     this.slotBgKey = this.isBenched
@@ -1965,13 +1963,13 @@ class PartySlot extends Phaser.GameObjects.Container {
     // icon position relative to slot background
     let slotPb = { x: 4, y: 4 };
     // name position relative to slot background
-    let namePosition = { x: 24, y: 10 + (offsetJa ? 2 : 0) };
+    let namePosition = { x: 24, y: 10 };
     // maximum allowed length of name; must accomodate fusion symbol
     let maxNameTextWidth = 76 - (isFusion ? 8 : 0);
     // "Lv." label position relative to slot background
     let levelLabelPosition = { x: 24 + 8, y: 10 + 12 };
     // offset from "Lv." to the level number; should not be changed.
-    const levelTextToLevelLabelOffset = { x: 9, y: offsetJa ? 1.5 : 0 };
+    const levelTextToLevelLabelOffset = { x: 9, y: 0 };
     // offests from "Lv." to gender, spliced and status icons, these depend on the type of slot.
     let genderTextToLevelLabelOffset = { x: 68 - (isFusion ? 8 : 0), y: -9 };
     let splicedIconToLevelLabelOffset = { x: 68, y: 3.5 - 12 };
@@ -1982,7 +1980,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     let hpBarPosition = { x: 8, y: 31 };
     // offsets of hp bar overlay (showing the remaining hp) and number; should not be changed.
     const hpOverlayToBarOffset = { x: 16, y: 2 };
-    const hpTextToBarOffset = { x: -3, y: -2 + (offsetJa ? 2 : 0) };
+    const hpTextToBarOffset = { x: -3, y: -2 };
     // description position relative to slot background
     let descriptionLabelPosition = { x: 32, y: 46 };
 
@@ -1997,7 +1995,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     // Benched slots have significantly different parameters
     if (this.isBenched) {
       slotPb = { x: 2, y: 12 };
-      namePosition = { x: 21, y: 2 + (offsetJa ? 2 : 0) };
+      namePosition = { x: 21, y: 2 };
       maxNameTextWidth = 52;
       levelLabelPosition = { x: 21 + 8, y: 2 + 12 };
       genderTextToLevelLabelOffset = { x: 36, y: 0 };

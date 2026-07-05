@@ -101,6 +101,7 @@ interface SerializedPokemonSummonData {
  *
  * @sealed
  */
+// TODO: Change these `null`s into `undefined`s to save on storage space (or use custom serialization to skip them entirely)
 export class PokemonSummonData {
   /** [Atk, Def, SpAtk, SpDef, Spd, Acc, Eva] */
   public statStages: number[] = [0, 0, 0, 0, 0, 0, 0];
@@ -127,7 +128,13 @@ export class PokemonSummonData {
   public stats: number[] = [0, 0, 0, 0, 0, 0];
   public moveset: PokemonMove[] | null;
 
+  /**
+   * An array containing any temporary {@link https://bulbapedia.bulbagarden.net/wiki/Type_change | typing overrides}
+   * the user has been inflicted with, barring any added types from Forest's Curse or Trick-or-Treat.
+   */
+  // TODO: Review all instances where this is used to ensure that they interact with type-change moves correctly
   public types: PokemonType[] = [];
+  /** The "third" type added from Trick-or-Treat or Forest's Curse, if present. */
   public addedType: PokemonType | null = null;
 
   /** Data pertaining to this pokemon's Illusion, if it has one. */
@@ -309,7 +316,9 @@ export class PokemonWaveData {
  * Resets at the start of a new turn, as well as on switch.
  */
 export class PokemonTurnData {
-  public acted = false;
+  // #region Move usage-related properties
+  // All of these properties can likely go inside a "move-in-flight" object later
+
   /** How many times the current move should hit the target(s) */
   public hitCount = 0;
   /**
@@ -322,17 +331,33 @@ export class PokemonTurnData {
   public totalDamageDealt = 0;
   public singleHitDamageDealt = 0;
   public damageTaken = 0;
+  /**
+   * An array containing data about attacks received this turn, in FIFO order.
+   */
   public attacksReceived: AttackMoveResult[] = [];
-  public order: number;
   public statStagesIncreased = false;
   public statStagesDecreased = false;
   public moveEffectiveness: TypeDamageMultiplier | null = null;
   public combiningPledge?: MoveId;
+  public failedRunAway = false;
+  public joinedRound = false;
+
+  // #endregion Move usage-related properties
+
+  public acted = false;
+  public order: number;
   /** The Pokemon was brought in this turn by a switch action (not an intial encounter/summon) */
   public switchedInThisTurn = false;
   public summonedThisTurn = false;
-  public failedRunAway = false;
-  public joinedRound = false;
+
+  // TODO: This effectively only exists for castform/cherrim and is really ugly;
+  // revisit after form change rework
+  /**
+   * Tracker for what abilities have been applied due to form changes during this turn. \
+   * Used to prevent infinite loops from form change abilities triggering their own transformation conditions.
+   */
+  public formChangeAbilitiesApplied = new Set<AbilityId>();
+
   /**
    * Tracker for a pending status effect.
    *

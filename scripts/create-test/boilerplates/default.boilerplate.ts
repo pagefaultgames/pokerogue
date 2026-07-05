@@ -1,5 +1,5 @@
 /*
- * SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+ * SPDX-FileCopyrightText: 2024-2026 Pagefault Games
  *
  * SPDX-License-Identifier: AGPL-3.0-only
  */
@@ -9,7 +9,7 @@ import { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
-import { GameManager } from "#test/test-utils/game-manager";
+import { GameManager } from "#test/framework/game-manager";
 import i18next from "i18next";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -37,7 +37,7 @@ describe("{{description}}", () => {
       .enemyLevel(100);
   });
 
-  // Find more awesome utility functions inside `#test/test-utils`!
+  // Find more awesome utility functions inside `#test/utils`!
   it("should do XYZ", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
@@ -45,7 +45,7 @@ describe("{{description}}", () => {
 
     game.move.use(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.HOLD_HANDS);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
     expect(feebas).toHaveUsedMove({ move: MoveId.SPLASH, result: MoveResult.SUCCESS });

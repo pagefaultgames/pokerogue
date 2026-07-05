@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { MAX_STARTER_CANDY_COUNT } from "#constants/game-constants";
 import { EggTier } from "#enums/egg-type";
 import { ModifierTier } from "#enums/modifier-tier";
 import { TextStyle } from "#enums/text-style";
@@ -321,32 +322,28 @@ export function getTextStyleOptions(
       break;
     case TextStyle.PARTY:
     case TextStyle.PARTY_RED: {
-      switch (lang) {
-        case "ja":
-          styleOptions.padding = { top: -12, bottom: 4 };
-          break;
-      }
-      styleOptions.fontSize = defaultFontSize - 30;
+      styleOptions.padding = { top: 2, bottom: 16 };
+      styleOptions.fontSize = defaultFontSize - 48;
       styleOptions.fontFamily = "pkmnems";
       break;
     }
     case TextStyle.PARTY_CANCEL_BUTTON: {
       switch (lang) {
         case "ja":
-          styleOptions.fontSize = defaultFontSize - 42;
-          styleOptions.padding = { top: 4 };
+          styleOptions.fontSize = defaultFontSize - 54;
+          styleOptions.padding = { top: 4, bottom: 2 };
           break;
         case "ko":
-          styleOptions.fontSize = defaultFontSize - 38;
-          styleOptions.padding = { top: 4, left: 6 };
+          styleOptions.fontSize = defaultFontSize - 52;
+          styleOptions.padding = { top: 6, bottom: 12, left: 4 };
           break;
         case "zh-Hans":
         case "zh-Hant":
-          styleOptions.fontSize = defaultFontSize - 42;
-          styleOptions.padding = { top: 5, left: 14 };
+          styleOptions.fontSize = defaultFontSize - 48;
+          styleOptions.padding = { top: -4, bottom: 12 };
           break;
         default:
-          styleOptions.fontSize = defaultFontSize - 30;
+          styleOptions.fontSize = defaultFontSize - 48;
           styleOptions.padding = { left: 12 };
           break;
       }
@@ -356,10 +353,10 @@ export function getTextStyleOptions(
     case TextStyle.INSTRUCTIONS_TEXT: {
       switch (lang) {
         case "ja":
-          styleOptions.padding = { top: -3, bottom: 4 };
+          styleOptions.padding = { top: -4, bottom: 4 };
           break;
       }
-      styleOptions.fontSize = defaultFontSize - 30;
+      styleOptions.fontSize = defaultFontSize - 48;
       styleOptions.fontFamily = "pkmnems";
       shadowXpos = 3;
       shadowYpos = 3;
@@ -368,11 +365,19 @@ export function getTextStyleOptions(
     case TextStyle.MOVE_LABEL: {
       switch (lang) {
         case "ja":
-          styleOptions.fontSize = defaultFontSize - 16;
-          styleOptions.padding = { top: -14, bottom: 8 };
+          styleOptions.fontSize = defaultFontSize - 42;
+          break;
+        case "ko":
+          styleOptions.fontSize = defaultFontSize - 40;
+          styleOptions.padding = { top: -2 };
+          break;
+        case "zh-Hans":
+        case "zh-Hant":
+          styleOptions.fontSize = defaultFontSize - 32;
+          styleOptions.padding = { top: -18, bottom: 10 };
           break;
         default:
-          styleOptions.fontSize = defaultFontSize - 30;
+          styleOptions.fontSize = defaultFontSize - 48;
           break;
       }
       styleOptions.fontFamily = "pkmnems";
@@ -628,6 +633,30 @@ export function getTextColor(textStyle: TextStyle, shadow?: boolean): string {
         return shadow ? "#d0d0c8" : "#d0d0c8";
       }
       return shadow ? "#6b5a73" : "#6b5a73";
+  }
+}
+
+export const RAINBOW_TINT = [0xffef5c, 0x47ff69, 0x6b6bff, 0xff6969];
+
+/**
+ * Updates the text style of the candy count text based on the candy count.
+ * @param text - The text object to update
+ * @param candyCount - The candy count to update the text style based on
+ * @param defaultStyle - The default text style to use when the candy count is less than the max
+ * @param maxStyle - The text style to use when the candy count is at or above the max
+ */
+export function updateCandyCountTextStyle(
+  text: Phaser.GameObjects.Text | BBCodeText,
+  candyCount: number,
+  defaultStyle: TextStyle = TextStyle.WINDOW_ALT,
+  maxStyle: TextStyle = TextStyle.SUMMARY_GOLD,
+) {
+  if (candyCount >= MAX_STARTER_CANDY_COUNT) {
+    text.setColor(getTextColor(maxStyle));
+    text.setTint(...RAINBOW_TINT);
+  } else {
+    text.setColor(getTextColor(defaultStyle));
+    text.clearTint();
   }
 }
 

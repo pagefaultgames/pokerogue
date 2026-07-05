@@ -42,8 +42,9 @@ import { BerryUsedEvent } from "#events/battle-scene";
 import type { EnemyPokemon, Pokemon } from "#field/pokemon";
 import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#modifiers/modifier";
 import { BerryModifierType } from "#modifiers/modifier-type";
-import type { PokemonMove } from "#moves/pokemon-move";
-import type { StatStageChangePhase } from "#phases/stat-stage-change-phase";
+import { getMoveTargets } from "#moves/move-utils";
+import { PokemonMove } from "#moves/pokemon-move";
+import type { MoveReflectPhase } from "#phases/move-reflect-phase";
 import type {
   AbAttrCondition,
   AbAttrMap,
@@ -250,62 +251,6 @@ export class PostBattleInitFormChangeAbAttr extends PostBattleInitAbAttr {
 
   override apply({ pokemon }: AbAttrBaseParams): void {
     globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger, false);
-  }
-}
-
-export class PostTeraFormChangeStatChangeAbAttr extends AbAttr {
-  private readonly stats: readonly BattleStat[];
-  private readonly stages: number;
-
-  constructor(stats: BattleStat[], stages: number) {
-    super();
-
-    this.stats = stats;
-    this.stages = stages;
-  }
-
-  override apply({ pokemon, simulated }: AbAttrBaseParams): void {
-    const statStageChangePhases: StatStageChangePhase[] = [];
-
-    if (!simulated) {
-      const phaseManager = globalScene.phaseManager;
-      statStageChangePhases.push(
-        phaseManager.create("StatStageChangePhase", pokemon.getBattlerIndex(), true, this.stats, this.stages),
-      );
-
-      for (const statStageChangePhase of statStageChangePhases) {
-        phaseManager.unshiftPhase(statStageChangePhase);
-      }
-    }
-  }
-}
-
-/** Clears all weather whenever this attribute is applied */
-export class ClearWeatherAbAttr extends AbAttr {
-  /**
-   * @param _params - No parameters are used for this attribute.
-   */
-  override canApply(_params: AbAttrBaseParams): boolean {
-    return globalScene.arena.canSetWeather(WeatherType.NONE);
-  }
-
-  override apply({ pokemon, simulated }: AbAttrBaseParams): void {
-    if (!simulated) {
-      globalScene.arena.trySetWeather(WeatherType.NONE, pokemon);
-    }
-  }
-}
-
-/** Clears all terrain whenever this attribute is called. */
-export class ClearTerrainAbAttr extends AbAttr {
-  override canApply(_: AbAttrBaseParams): boolean {
-    return globalScene.arena.canSetTerrain(TerrainType.NONE);
-  }
-
-  public override apply({ pokemon, simulated }: AbAttrBaseParams): void {
-    if (!simulated) {
-      globalScene.arena.trySetTerrain(TerrainType.NONE, true, pokemon);
-    }
   }
 }
 
@@ -711,10 +656,11 @@ export class MoveImmunityStatStageChangeAbAttr extends MoveImmunityAbAttr {
 /**
  * Shared parameters for ability attributes that apply an effect after move was used by or against the the user.
  */
+// TODO: Have this take a reference to whatever move-in-flight object is passed around
 export interface PostMoveInteractionAbAttrParams extends AugmentMoveInteractionAbAttrParams {
   /** Stores the hit result of the move used in the interaction */
   readonly hitResult: HitResult;
-  /** The amount of damage dealt in the interaction */
+  /** The amount of damage dealt in the interaction. */
   readonly damage: number;
 }
 
@@ -760,7 +706,9 @@ export class ReverseDrainAbAttr extends PostDefendAbAttr {
   }
 }
 
+// TODO: Move `allOthers` to its own attribute class
 export class PostDefendStatStageChangeAbAttr extends PostDefendAbAttr {
+  // TODO: Review what conditions are actually used and whether they can be consolidated into the main class
   private readonly condition: PokemonDefendCondition;
   private readonly stat: BattleStat;
   private readonly stages: number;
@@ -817,35 +765,30 @@ export class PostDefendStatStageChangeAbAttr extends PostDefendAbAttr {
 }
 
 export class PostDefendHpGatedStatStageChangeAbAttr extends PostDefendAbAttr {
-  private readonly condition: PokemonDefendCondition;
   private readonly hpGate: number;
   private readonly stats: readonly BattleStat[];
   private readonly stages: number;
   private readonly selfTarget: boolean;
 
-  constructor(
-    condition: PokemonDefendCondition,
-    hpGate: number,
-    stats: BattleStat[],
-    stages: number,
-    selfTarget = true,
-  ) {
+  constructor(hpGate: number, stats: BattleStat[], stages: number, selfTarget = true) {
     super(true);
 
-    this.condition = condition;
     this.hpGate = hpGate;
     this.stats = stats;
     this.stages = stages;
     this.selfTarget = selfTarget;
   }
 
-  override canApply({ pokemon, opponent: attacker, move }: PostMoveInteractionAbAttrParams): boolean {
-    const hpGateFlat: number = Math.ceil(pokemon.getMaxHp() * this.hpGate);
-    const lastAttackReceived = pokemon.turnData.attacksReceived.at(-1);
-    const damageReceived = lastAttackReceived?.damage ?? 0;
-    return (
-      this.condition(pokemon, attacker, move) && pokemon.hp <= hpGateFlat && pokemon.hp + damageReceived > hpGateFlat
-    );
+  // TODO: This should trigger after the final hit of multi-strike moves, which requires an aggregated damage total
+  // across all strikes (similar to Wimp Out).
+  // The structure used for the former can likely be re-used for the latter.
+  override canApply({ pokemon, move, damage }: PostMoveInteractionAbAttrParams): boolean {
+    if (move.category === MoveCategory.STATUS) {
+      return false;
+    }
+
+    const threshold = toDmgValue(pokemon.getMaxHp() * this.hpGate);
+    return pokemon.hp <= threshold && pokemon.hp + damage > threshold;
   }
 
   override apply({ simulated, pokemon, opponent }: PostMoveInteractionAbAttrParams): void {
@@ -1555,8 +1498,11 @@ As such, we require that all subclasses have compatible `apply` parameters.
 The `Closed` type is used to indicate that subclasses should not modify the param typing.
 */
 export abstract class VariableMovePowerAbAttr extends PreAttackAbAttr {
+  /** Whether to skip this attribute's application during moveset generation */
+  protected readonly skipDuringMovesetGen: boolean = false;
+
   override canApply(_params: Closed<PreAttackModifyPowerAbAttrParams>): boolean {
-    return true;
+    return !this.skipDuringMovesetGen || globalScene.movesetGenInProgress;
   }
   override apply(_params: Closed<PreAttackModifyPowerAbAttrParams>): void {}
 }
@@ -1581,12 +1527,18 @@ export class MovePowerBoostAbAttr extends VariableMovePowerAbAttr {
 }
 
 export class MoveTypePowerBoostAbAttr extends MovePowerBoostAbAttr {
-  constructor(boostedType: PokemonType, powerMultiplier?: number) {
+  // Need to use declare here to override the parent class's property, allows for modification in subclass' constructor
+  protected declare readonly skipDuringMovesetGen: boolean;
+  constructor(boostedType: PokemonType, powerMultiplier?: number, skipDuringMovesetGen?: boolean) {
     super((pokemon, _defender, move) => pokemon?.getMoveType(move) === boostedType, powerMultiplier || 1.5, false);
+    if (skipDuringMovesetGen != null) {
+      this.skipDuringMovesetGen = skipDuringMovesetGen;
+    }
   }
 }
 
 export class LowHpMoveTypePowerBoostAbAttr extends MoveTypePowerBoostAbAttr {
+  protected override readonly skipDuringMovesetGen = true;
   // biome-ignore lint/complexity/noUselessConstructor: Changes the constructor params
   constructor(boostedType: PokemonType) {
     super(boostedType);
@@ -1686,8 +1638,8 @@ export interface StatMultiplierAbAttrParams extends AbAttrBaseParams {
 
 export class StatMultiplierAbAttr extends AbAttr {
   private declare readonly _: never;
-  private readonly stat: BattleStat;
-  private readonly multiplier: number;
+  public readonly stat: BattleStat;
+  public readonly multiplier: number;
   /**
    * Function determining if the stat multiplier is able to be applied to the move.
    *
@@ -2260,9 +2212,17 @@ export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
 
 /** Base class for ability attributes that active after a Pokemon is summoned */
 export abstract class PostSummonAbAttr extends AbAttr {
-  /** Should the ability activate when gained in battle? This will almost always be true */
+  /**
+   * Whether to activate the ability when gained in battle
+   * @defaultValue `true`
+   * @remarks
+   * Used exclusively by Imposter.
+   */
+  // TODO: Make this a publicly accessible getter
   private readonly activateOnGain: boolean;
 
+  // TODO: Evaluate if this should default to `false` for base class consistency
+  // TODO: Make `activateOnGain` parameter an overridable property
   constructor(showAbility = true, activateOnGain = true) {
     super(showAbility);
     this.activateOnGain = activateOnGain;
@@ -2423,7 +2383,7 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
   private readonly selfTarget: boolean;
   private readonly intimidate: boolean;
 
-  constructor(stats: readonly BattleStat[], stages: number, selfTarget = false, intimidate = true) {
+  constructor(stats: readonly BattleStat[], stages: number, selfTarget = false, intimidate = false) {
     super(true);
 
     this.stats = stats;
@@ -2571,7 +2531,7 @@ export class DownloadAbAttr extends PostSummonAbAttr {
 }
 
 export class PostSummonWeatherChangeAbAttr extends PostSummonAbAttr {
-  private readonly weatherType: WeatherType;
+  public readonly weatherType: WeatherType;
 
   constructor(weatherType: WeatherType) {
     super();
@@ -2584,6 +2544,7 @@ export class PostSummonWeatherChangeAbAttr extends PostSummonAbAttr {
       this.weatherType === WeatherType.HEAVY_RAIN
       || this.weatherType === WeatherType.HARSH_SUN
       || this.weatherType === WeatherType.STRONG_WINDS
+      || this.weatherType === WeatherType.NONE
       || !globalScene.arena.weather?.isImmutable();
     return weatherReplaceable && globalScene.arena.canSetWeather(this.weatherType);
   }
@@ -2975,6 +2936,10 @@ export class PreSwitchOutResetStatusAbAttr extends PreSwitchOutAbAttr {
 }
 
 export class PreSwitchOutHealAbAttr extends PreSwitchOutAbAttr {
+  constructor() {
+    super(false);
+  }
+
   override canApply({ pokemon }: AbAttrBaseParams): boolean {
     return !pokemon.isFullHp();
   }
@@ -3883,6 +3848,30 @@ export class PostWeatherChangeFormChangeAbAttr extends PostWeatherChangeAbAttr {
 }
 
 /**
+ * Ability attribute to change Eiscue to Ice form if snowing or hailing.
+ */
+// TODO: This is only required due to how tightly `PostWeatherChangeFormChangeAbAttr` is tied to its related abilities
+export class IceFaceFormChangeAbAttr extends PostWeatherChangeAbAttr {
+  private readonly formIndex: number;
+
+  constructor(formIndex: number) {
+    super();
+    this.formIndex = formIndex;
+  }
+
+  override canApply({ pokemon, weather }: PostWeatherChangeAbAttrParams): boolean {
+    return pokemon.formIndex === this.formIndex && (weather === WeatherType.HAIL || weather === WeatherType.SNOW);
+  }
+
+  override apply({ simulated, pokemon }: PostWeatherChangeAbAttrParams): void {
+    if (simulated) {
+      return;
+    }
+    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
+  }
+}
+
+/**
  * Adds a battler tag to the pokemon when the weather changes.
  * @sealed
  */
@@ -4702,14 +4691,10 @@ export class RunSuccessAbAttr extends AbAttr {
 
 type ArenaTrapCondition = (user: Pokemon, target: Pokemon) => boolean;
 
-/**
- * Base class for checking if a Pokemon is trapped by arena trap
- * @field {@linkcode arenaTrapCondition} Conditional for trapping abilities.
- * For example, Magnet Pull will only activate if opponent is Steel type.
- * @see {@linkcode applyCheckTrapped}
- */
+/** Base class for checking if a Pokemon is trapped by a trapping effect. */
 export class CheckTrappedAbAttr extends AbAttr {
   protected arenaTrapCondition: ArenaTrapCondition;
+
   constructor(condition: ArenaTrapCondition) {
     super(false);
     this.arenaTrapCondition = condition;
@@ -5181,10 +5166,6 @@ export class MoveAbilityBypassAbAttr extends AbAttr {
   }
 }
 
-export class AlwaysHitAbAttr extends AbAttr {
-  private declare readonly _: never;
-}
-
 /** Attribute for abilities that allow moves that make contact to ignore protection (i.e. Unseen Fist) */
 export class IgnoreProtectOnContactAbAttr extends AbAttr {
   private declare readonly _: never;
@@ -5221,13 +5202,25 @@ export class InfiltratorAbAttr extends AbAttr {
 
 /**
  * Attribute implementing the effects of {@link https://bulbapedia.bulbagarden.net/wiki/Magic_Bounce_(ability) | Magic Bounce}.
+ *
  * Allows the source to bounce back {@linkcode MoveFlags.REFLECTABLE | Reflectable}
- *  moves as if the user had used {@linkcode MoveId.MAGIC_COAT | Magic Coat}.
- * @sealed
- * @todo Make reflection a part of this ability's effects
+ * moves as if the user had used {@linkcode MoveId.MAGIC_COAT | Magic Coat}.
+ *
+ * The calling {@linkcode MoveEffectPhase} will "skip" targets with a reflection effect active,
+ * showing the flyout and activating this ability during the queued {@linkcode MoveReflectPhase}.
  */
-export class ReflectStatusMoveAbAttr extends AbAttr {
-  private declare readonly _: never;
+export class ReflectStatusMoveAbAttr extends PreDefendAbAttr {
+  override apply({ pokemon, opponent, move }: AugmentMoveInteractionAbAttrParams): void {
+    const newTargets = move.isMultiTarget() ? getMoveTargets(pokemon, move.id).targets : [opponent.getBattlerIndex()];
+    globalScene.phaseManager.unshiftNew(
+      "MovePhase",
+      pokemon,
+      newTargets,
+      new PokemonMove(move.id),
+      MoveUseMode.REFLECTED,
+      MovePhaseTimingModifier.FIRST,
+    );
+  }
 }
 
 // TODO: Make these ability attributes be flags instead of dummy attributes
@@ -5348,66 +5341,73 @@ export class PostSummonStatStageChangeOnArenaAbAttr extends PostSummonStatStageC
 }
 
 /**
- * Takes no damage from the first hit of a damaging move.
+ * Ability attribute to nullify damage from moves used against the user depending on their form.
  * This is used in the Disguise and Ice Face abilities.
  *
  * Does not apply to a user's substitute
  * @sealed
  */
+// TODO: This assumes the pokemon's base form has the damage immunity and its 1st form doesn't;
+// this should be reworked to not hardcode these assumptions
 export class FormBlockDamageAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
-  private readonly multiplier: number;
-  private readonly tagType: BattlerTagType;
-  private readonly recoilDamageFunc?: (pokemon: Pokemon) => number;
-  private readonly triggerMessageFunc: (pokemon: Pokemon, abilityName: string) => string;
+  private readonly formIndex: number;
+  /** The percentage of maximum HP to deal in recoil, or `0` to deal none. */
+  private readonly recoil: number;
+  /**
+   * The `i18n` locales key to show upon triggering.
+   * Within it, the following variables will be populated:
+   * - `pokemonNameWithAffix`: The name of the Pokémon with the ability
+   * - `abilityName`: The name of the ability being triggered
+   */
+  // TODO: Remove `abilityName` from contexts for greater translator freedoms & such
+  private readonly i18nKey: string;
 
   constructor(
-    condition: PokemonDefendCondition,
-    multiplier: number,
-    tagType: BattlerTagType,
-    triggerMessageFunc: (pokemon: Pokemon, abilityName: string) => string,
-    recoilDamageFunc?: (pokemon: Pokemon) => number,
+    formIndex: number,
+    i18nKey: string,
+    recoil: number,
+    // TODO: Since only Ice Face uses this, should this simply take the move and nothing else?
+    condition: PokemonDefendCondition = () => true,
   ) {
-    super(condition, multiplier);
+    super(condition, 0);
 
-    this.multiplier = multiplier;
-    this.tagType = tagType;
-    this.triggerMessageFunc = triggerMessageFunc;
-    if (recoilDamageFunc != null) {
-      this.recoilDamageFunc = recoilDamageFunc;
-    }
+    this.formIndex = formIndex;
+    this.i18nKey = i18nKey;
+    this.recoil = recoil;
   }
 
-  override canApply({ pokemon, opponent, move }: PreDefendModifyDamageAbAttrParams): boolean {
+  override canApply({ pokemon, opponent, move, damage }: PreDefendModifyDamageAbAttrParams): boolean {
     // TODO: Investigate whether the substitute check can be removed, as it should be accounted for in the move effect phase
-    return this.condition(pokemon, opponent, move) && !move.hitsSubstitute(opponent, pokemon);
+    return (
+      damage.value > 0
+      && pokemon.formIndex === this.formIndex
+      && this.condition(pokemon, opponent, move)
+      && !move.hitsSubstitute(opponent, pokemon)
+    );
   }
 
-  /**
-   * Applies the pre-defense ability to the Pokémon.
-   * Removes the appropriate `BattlerTagType` when hit by an attack and is in its defense form.
-   */
   override apply({ pokemon, simulated, damage }: PreDefendModifyDamageAbAttrParams): void {
-    if (!simulated) {
-      damage.value = this.multiplier;
-      pokemon.removeTag(this.tagType);
-      if (this.recoilDamageFunc) {
-        pokemon.damageAndUpdate(this.recoilDamageFunc(pokemon), {
-          result: HitResult.INDIRECT,
-          ignoreSegments: true,
-          ignoreFaintPhase: true,
-        });
-      }
+    if (simulated) {
+      return;
     }
+
+    damage.value = 0;
+    if (this.recoil > 0) {
+      pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() * this.recoil), {
+        result: HitResult.INDIRECT,
+        ignoreSegments: true,
+        ignoreFaintPhase: true,
+      });
+    }
+
+    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
   }
 
-  /**
-   * Gets the message triggered when the Pokémon avoids damage using the form-changing ability.
-   * @returns The trigger message.
-   */
   override getTriggerMessage({ pokemon }: PreDefendModifyDamageAbAttrParams, abilityName: string): string {
-    return this.triggerMessageFunc(pokemon, abilityName);
+    return i18next.t(this.i18nKey, { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName });
   }
 }
+
 /**
  * Base class for defining {@linkcode Ability} attributes before summon
  * (should use {@linkcode PostSummonAbAttr} for most ability)
@@ -5809,6 +5809,93 @@ class ForceSwitchOutHelper {
 }
 
 /**
+ * Parameters for ability attributes that modify move stats during AI move
+ * generation.
+ *
+ * @remarks
+ * Ability attributes should modify the parameters here to indicate that
+ * they modify the move's power or accuracy unconditionally
+ *
+ * @see {@linkcode AiMovegenMoveStatsAbAttr}
+ */
+export interface AiMovegenMoveStatsAbAttrParams extends AbAttrBaseParams {
+  /** Multiplier for move power*/
+  powerMult: NumberHolder;
+  /** Multiplier for move accuracy */
+  accMult: NumberHolder;
+  /** The move being evaluated */
+  move: Move;
+  /** True if the move does not charge due to the ability */
+  instantCharge: BooleanHolder;
+
+  /**
+   * Indicate the multi-hit move power check should be skipped.
+   * @privateRemarks
+   * Used for skill link
+   */
+  maxMultiHit: BooleanHolder;
+}
+
+/**
+ * Ability attribute for modifying move stats during AI move generation.
+ * Modifies the power and accuracy multiplier of the move, agnostic of the move's target.
+ *
+ * ⚠️ Should not be added for abilities that already have any `VariableMovePowerAbAttr`
+ *
+ * @remarks
+ * Meant to be used for things like Drizzle (which gives water moves a 1.5x power boost)
+ * or things like compound eyes / victory star (which are treated as increasing move accuracy).
+ *
+ * @see {@linkcode AiMovegenMoveStatsAbAttrParams}
+ */
+export class AiMovegenMoveStatsAbAttr extends AbAttr {
+  protected readonly effect: (params: AiMovegenMoveStatsAbAttrParams) => void;
+  constructor(effect: (params: AiMovegenMoveStatsAbAttrParams) => void) {
+    super(false);
+    this.effect = effect;
+  }
+
+  override canApply(_params: AiMovegenMoveStatsAbAttrParams): boolean {
+    return globalScene.movesetGenInProgress;
+  }
+  override apply(params: AiMovegenMoveStatsAbAttrParams): void {
+    this.effect(params);
+  }
+}
+
+/** Used for No Guard. */
+export class AlwaysHitAbAttr extends AiMovegenMoveStatsAbAttr {
+  constructor() {
+    super(({ accMult }: AiMovegenMoveStatsAbAttrParams) => {
+      accMult.value = Number.POSITIVE_INFINITY;
+    });
+  }
+}
+
+/**
+ * Ability attribute for the terrain-summoning abilities that modifies the base power of matching types
+ */
+export class SummonTerrainAiMovegenMoveStatsAbAttr extends AiMovegenMoveStatsAbAttr {
+  /**
+   * @param moveType - Moves with this type will have power boosted during moveset gen
+   * @param boostedMove - A tuple containing the move ID and a multiplier for its power
+   */
+  constructor(moveType: PokemonType, boostedMove?: [boostedMove: MoveId, boostAmount: number]) {
+    super(({ pokemon, move, powerMult }: AiMovegenMoveStatsAbAttrParams) => {
+      if (pokemon.hasAbility(AbilityId.LEVITATE) || pokemon.isOfType(PokemonType.FLYING)) {
+        return;
+      }
+      if (move.type === moveType) {
+        powerMult.value *= 1.3;
+      }
+      if (boostedMove && move.id === boostedMove[0]) {
+        powerMult.value *= boostedMove[1];
+      }
+    });
+  }
+}
+
+/**
  * Calculate the amount of recovery from the Shell Bell item.
  * @remarks
  * If the Pokémon is holding a Shell Bell, this function computes the amount of health
@@ -5936,9 +6023,6 @@ function getPokemonWithWeatherBasedForms() {
 
 export function getWeatherCondition(...weatherTypes: WeatherType[]): AbAttrCondition {
   return () => {
-    if (!globalScene?.arena) {
-      return false;
-    }
     if (globalScene.arena.weather?.isEffectSuppressed()) {
       return false;
     }
@@ -5969,8 +6053,6 @@ export const AbilityAttrs = Object.freeze({
   ChangeMovePriorityAbAttr,
   ChangeMovePriorityInBracketAbAttr,
   CheckTrappedAbAttr,
-  ClearTerrainAbAttr,
-  ClearWeatherAbAttr,
   CommanderAbAttr,
   ConditionalCritAbAttr,
   ConditionalUserFieldBattlerTagImmunityAbAttr,
@@ -6097,7 +6179,6 @@ export const AbilityAttrs = Object.freeze({
   PostSummonUserFieldRemoveStatusEffectAbAttr,
   PostSummonWeatherChangeAbAttr,
   PostSummonWeatherSuppressedFormChangeAbAttr,
-  PostTeraFormChangeStatChangeAbAttr,
   PostTerrainChangeAbAttr,
   PostTurnAbAttr,
   PostTurnFormChangeAbAttr,
@@ -6110,6 +6191,7 @@ export const AbilityAttrs = Object.freeze({
   PostVictoryFormChangeAbAttr,
   PostWeatherChangeAbAttr,
   PostWeatherChangeFormChangeAbAttr,
+  IceFaceFormChangeAbAttr,
   PostWeatherLapseAbAttr,
   PostWeatherLapseDamageAbAttr,
   PostWeatherLapseHealAbAttr,
@@ -6165,6 +6247,8 @@ export const AbilityAttrs = Object.freeze({
   VariableMovePowerBoostAbAttr,
   WeightMultiplierAbAttr,
   WonderSkinAbAttr,
+  AiMovegenMoveStatsAbAttr,
+  SummonTerrainAiMovegenMoveStatsAbAttr,
 });
 
 /** A map of of all {@linkcode AbAttr} constructors */

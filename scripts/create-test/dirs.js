@@ -41,7 +41,7 @@ export function getBoilerplatePath(testType) {
  * @returns {string} the path to the requested folder
  */
 function getTestFolderPath(...folders) {
-  return join(projectRoot, "test", ...folders);
+  return join(projectRoot, "test/tests", ...folders);
 }
 
 /**

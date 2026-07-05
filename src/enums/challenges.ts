@@ -9,4 +9,5 @@ export enum Challenges {
   LIMITED_CATCH,
   LIMITED_SUPPORT,
   HARDCORE,
+  PASSIVES,
 }

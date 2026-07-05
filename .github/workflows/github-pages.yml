@@ -36,7 +36,6 @@ jobs:
         with:
           sparse-checkout: |
             .nvmrc
-          sparse-checkout-cone-mode: false
 
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
         id: filter
@@ -44,7 +43,7 @@ jobs:
           filters: |
             all:
               - "src/**/*.ts"
-              - "test/test-utils/*.ts"
+              - "test/utils/*.ts"
               - "typedoc.config.js"
               - "tsdoc.json"
               - "tsconfig.json"

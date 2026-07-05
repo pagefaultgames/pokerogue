@@ -5,6 +5,7 @@ import type { Pokemon } from "#field/pokemon";
 import { hasExpSprite } from "#sprites/sprite-utils";
 import type { Variant, VariantSet } from "#sprites/variant";
 import { variantColorCache, variantData } from "#sprites/variant";
+import { cachedFetch } from "#utils/fetch-utils";
 
 // Regex patterns
 
@@ -73,7 +74,5 @@ export async function loadPokemonVariantAssets(
   if (!variantConfig || variantSet[variant] !== 1) {
     return;
   }
-  variantColorCache[spriteKey] = await scene
-    .cachedFetch(`./images/pokemon/variant/${fileRoot}.json`)
-    .then(res => res.json());
+  variantColorCache[spriteKey] = await cachedFetch(`./images/pokemon/variant/${fileRoot}.json`).then(res => res.json());
 }

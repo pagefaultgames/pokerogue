@@ -5,11 +5,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { select } from "@inquirer/prompts";
+import { number, select } from "@inquirer/prompts";
 import { toCamelCase, toTitleCase } from "../../helpers/casing.js";
 import { STARTER_OPTIONS } from "../constants.js";
 import {
-  promptAbilityIndex,
+  promptAbility,
   promptFormIndex,
   promptMoveset,
   promptNature,
@@ -26,7 +26,8 @@ import {
  *   variant?: Variant,
  *   moveset?: number[],
  *   nature?: number,
- *   abilityIndex?: number,
+ *   ability?: number,
+ *   passive?: number
  * }} StarterConfig
  */
 
@@ -36,6 +37,14 @@ import {
  * @remarks All 3 **must** be configured with at least a SpeciesId.
  */
 export async function promptStarters() {
+  const numStarters = await number({
+    message: "Please enter the number of starters.",
+    min: 1,
+    max: 6,
+    required: true,
+    default: 3,
+  });
+
   /** @type {StarterConfig[]} */
   const starters = [];
 
@@ -47,7 +56,7 @@ export async function promptStarters() {
     starters.push(starterConfig);
   }
 
-  while (starters.length < 3) {
+  while (starters.length < numStarters) {
     await promptStarter();
   }
 
@@ -91,8 +100,11 @@ async function promptStarterOptions(starterConfig) {
     case "nature":
       starterConfig.nature = await promptNature();
       break;
-    case "abilityIndex":
-      starterConfig.abilityIndex = await promptAbilityIndex();
+    case "ability":
+      starterConfig.ability = await promptAbility();
+      break;
+    case "passive":
+      starterConfig.passive = await promptAbility(true);
       break;
     case "finish":
       // Re-add all used options for next starter

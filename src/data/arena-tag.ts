@@ -164,12 +164,13 @@ export abstract class ArenaTag implements BaseArenaTag {
 
   /**
    * Apply this tag's effects during a turn.
-   * @param _args - Arguments used by subclasses.
+   * @param args - Arguments used by subclasses.
    */
   // TODO: Remove all boolean return values from subclasses
   // TODO: Move all classes with `apply` triggers into a unique sub-class to prevent
   // applying effects of tags that lack effect application
-  public apply(..._args: unknown[]): void {}
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: pseudo-abstract method
+  public apply(...args: unknown[]): void {}
 
   /**
    * Trigger effects when this tag is added to the Arena.
@@ -209,12 +210,14 @@ export abstract class ArenaTag implements BaseArenaTag {
 
   /**
    * Apply effects when this Tag overlaps by creating a new instance while one is already present.
-   * @param _source - The `Pokemon` having added the tag
+   * @param source - The `Pokemon` having added the tag
    */
-  public onOverlap(_source?: Pokemon): void {}
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: pseudo-abstract method
+  public onOverlap(source?: Pokemon): void {}
 
   /**
-   * Reduce this {@linkcode ArenaTag}'s duration and apply any end-of-turn effects
+   * Reduce this {@linkcode ArenaTag}'s duration and apply any end-of-turn effects.
+   * @remarks
    * Will ignore durations of all tags with durations `<=0`.
    * @returns `true` if this tag should be kept; `false` if it should be removed.
    */
@@ -1632,10 +1635,10 @@ export class PendingHealTag extends SerializableArenaTag {
     }
   }
 
-  /** This arena tag is removed at the end of the turn if no pending healing effects are on the field */
   override lapse(): boolean {
-    for (const key in this.pendingHeals) {
-      if (this.pendingHeals[key].length > 0) {
+    for (const pendingHeal of Object.values(this.pendingHeals)) {
+      // `?` works around a bug where somehow the pending heal object can be `null` (save data corruption?)
+      if (pendingHeal?.length > 0) {
         return true;
       }
     }

@@ -6,14 +6,15 @@
  */
 
 /**
- * @typedef {LABELS[number]} Label
+ * @typedef {typeof LABELS[number]} Label
  */
 
 /**
- * @typedef {"Bug Fixes" | "Balance" | "Translation" | "Art" | "Miscellaneous" | "Unknown" } CategoryName
+ * @typedef { "Bug Fixes" | "Balance" | "Translation" | "Art" | "Miscellaneous" | "Unknown" | "Beta" } CategoryName
  */
 
-/** @typedef {{
+/**
+ * @typedef {{
  *  name: CategoryName
  *  labels: Label[]
  * }} Category
@@ -44,6 +45,7 @@ export const CONFIG = {
     { name: "Miscellaneous", labels: ["Miscellaneous"] },
     // Used for PRs that don't have a changelog section
     { name: "Unknown", labels: [] },
+    { name: "Beta", labels: ["Beta"] },
   ],
 };
 
