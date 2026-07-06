@@ -12,6 +12,7 @@ import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
  * @param data - {@linkcode SystemSaveData}
  */
 const migrateUnselectableForms: SystemSaveMigrator = {
+  name: "migrateUnselectableForms",
   version: "1.7.0",
   migrate: (data: SystemSaveData): void => {
     if (data.starterData && data.dexData) {
@@ -43,6 +44,7 @@ function isArrayOfAtLeastTwo(arr: unknown): arr is unknown[] {
 }
 
 const migrateTera: SessionSaveMigrator = {
+  name: "migrateTera",
   version: "1.7.0",
   migrate: data => {
     // biome-ignore lint/style/noNegationElse: Improves readability

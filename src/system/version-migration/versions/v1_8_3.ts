@@ -10,6 +10,7 @@ import { getPokemonSpecies } from "#utils/pokemon-utils";
  * @param data - {@linkcode SystemSaveData}
  */
 const migratePichuForms: SystemSaveMigrator = {
+  name: "migratePichuForms",
   version: "1.8.3",
   migrate: (data: SystemSaveData): void => {
     if (data.starterData && data.dexData) {

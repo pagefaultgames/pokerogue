@@ -10,6 +10,7 @@ import { Stat } from "#enums/stat";
 import { WeatherType } from "#enums/weather-type";
 import { GameManager } from "#test/framework/game-manager";
 import type { GetEffectiveStatParams } from "#types/pokemon-common";
+import { ValueHolder } from "#utils/value-holder";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -114,7 +115,7 @@ describe("Abilities - Mega Sol", () => {
     game.move.use(MoveId.WEATHER_BALL);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
-    const moveType = new (await import("#utils/common")).NumberHolder(weatherBall.type);
+    const moveType = new ValueHolder(weatherBall.type);
     weatherBall
       .getAttrs("VariableMoveTypeAttr")[0]
       .apply(game.field.getPlayerPokemon(), game.field.getEnemyPokemon(), weatherBall, [moveType]);

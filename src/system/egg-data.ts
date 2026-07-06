@@ -19,6 +19,7 @@ export class EggData {
   constructor(source: Egg | any) {
     const sourceEgg = source instanceof Egg ? (source as Egg) : null;
     this.id = sourceEgg ? sourceEgg.id : source.id;
+    // TODO: If `id` is `undefined`, the tier will become `NaN`
     this.tier = sourceEgg ? sourceEgg.tier : (source.tier ?? Math.floor(this.id / EGG_SEED));
     // legacy egg
     if (source.species === 0) {

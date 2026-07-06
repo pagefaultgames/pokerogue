@@ -12,7 +12,7 @@ export const timedEvents: readonly TimedEvent[] = [
     name: "Mega Pride 2026",
     eventType: EventType.SHINY,
     startDate: new Date(Date.UTC(2026, 5, 23)),
-    endDate: new Date(Date.UTC(2026, 6, 14)),
+    endDate: new Date(Date.UTC(2026, 6, 17)),
     bannerKey: "pride2026",
     scale: 0.21,
     availableLangs: [
