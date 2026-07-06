@@ -288,9 +288,7 @@ function getTypeChartMultiplier(attackType: PokemonType, defType: PokemonType): 
 
 /**
  * Retrieve the color corresponding to a specific damage multiplier
- * @param highContrast - Whether to color super effective multipliers blue instead of green,
- * making them distinguishable from the not very effective oranges under protanopia
- * (red-green colorblindness); default `false`
+ * @param highContrast - (Default `false`) Whether to use alternate high-contrast colors for super effective moves
  * @returns The color, or `undefined` if the default color should be used
  */
 // TODO: This is literally never called with `defense`; remove that option
