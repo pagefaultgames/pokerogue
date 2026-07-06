@@ -192,7 +192,7 @@ export const tmPoolTiers: TmPoolTiers = {
   [MoveId.POWER_GEM]: ModifierTier.GREAT,
   [MoveId.DRAIN_PUNCH]: ModifierTier.GREAT,
   [MoveId.VACUUM_WAVE]: ModifierTier.COMMON,
-  [MoveId.FOCUS_BLAST]: ModifierTier.GREAT,
+  [MoveId.FOCUS_BLAST]: ModifierTier.ULTRA,
   [MoveId.ENERGY_BALL]: ModifierTier.GREAT,
   [MoveId.BRAVE_BIRD]: ModifierTier.ULTRA,
   [MoveId.EARTH_POWER]: ModifierTier.ULTRA,

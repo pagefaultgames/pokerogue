@@ -1115,8 +1115,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
     evolutions: [new SpeciesEvolution({ speciesId: SpeciesId.BUTTERFREE, level: 10 })],
     passives: AbilityId.STURDY,
     levelMoves: [
-      [RELEARN_MOVE, MoveId.TACKLE],
-      [EVOLVE_MOVE, MoveId.HARDEN],
+      [EVOLVE_MOVE, MoveId.HARDEN], // Tackle / String Shot intentionally missing so wild Pokemon spawn only with Harden.
       [1, MoveId.HARDEN],
     ],
     tms: [MoveId.IRON_DEFENSE],
@@ -1213,6 +1212,8 @@ export function initGenerationOne(): SpeciesDataMapConfig {
     },
     levelMoves: [
       [EVOLVE_MOVE, MoveId.GUST],
+      [1, MoveId.TACKLE],
+      [1, MoveId.STRING_SHOT],
       [11, MoveId.CONFUSION],
       [13, MoveId.POISON_POWDER],
       [13, MoveId.STUN_SPORE],
@@ -1356,7 +1357,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
     evolutions: [new SpeciesEvolution({ speciesId: SpeciesId.BEEDRILL, level: 10 })],
     passives: AbilityId.STURDY,
     levelMoves: [
-      [EVOLVE_MOVE, MoveId.HARDEN],
+      [EVOLVE_MOVE, MoveId.HARDEN], // Poison Sting / String Shot intentionally missing so wild Pokemon spawn only with Harden.
       [1, MoveId.HARDEN],
     ],
     tms: [MoveId.IRON_DEFENSE, MoveId.BUG_BITE, MoveId.ELECTROWEB, MoveId.TERA_BLAST],
@@ -1454,6 +1455,7 @@ export function initGenerationOne(): SpeciesDataMapConfig {
       [RELEARN_MOVE, MoveId.LASER_FOCUS],
       [EVOLVE_MOVE, MoveId.TWINEEDLE],
       [1, MoveId.POISON_STING],
+      [1, MoveId.STRING_SHOT],
       [11, MoveId.FURY_ATTACK],
       [13, MoveId.FURY_CUTTER],
       [15, MoveId.RAGE],
