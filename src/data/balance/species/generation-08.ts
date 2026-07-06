@@ -9140,7 +9140,6 @@ export function initGenerationEight(): SpeciesDataMapConfig {
       [1, MoveId.FOCUS_ENERGY],
       [1, MoveId.ENDURE],
       [1, MoveId.ROCK_SMASH],
-      [1, MoveId.SUCKER_PUNCH],
       [12, MoveId.AERIAL_ACE],
       [16, MoveId.SCARY_FACE],
       [20, MoveId.HEADBUTT],
@@ -9533,8 +9532,8 @@ export function initGenerationEight(): SpeciesDataMapConfig {
     eggTier: EggTier.EPIC,
     passives: AbilityId.MULTISCALE,
     levelMoves: [
-      [1, MoveId.VISE_GRIP],
       [1, MoveId.TWISTER],
+      [1, MoveId.VISE_GRIP],
       [6, MoveId.BITE],
       [12, MoveId.ANCIENT_POWER],
       [18, MoveId.DRAGON_BREATH],

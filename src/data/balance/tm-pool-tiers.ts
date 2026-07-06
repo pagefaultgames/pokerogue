@@ -176,7 +176,7 @@ export const tmPoolTiers: TmPoolTiers = {
   [MoveId.GASTRO_ACID]: ModifierTier.GREAT,
   [MoveId.POWER_SWAP]: ModifierTier.COMMON,
   [MoveId.GUARD_SWAP]: ModifierTier.COMMON,
-  [MoveId.WORRY_SEED]: ModifierTier.GREAT,
+  [MoveId.WORRY_SEED]: ModifierTier.COMMON,
   [MoveId.TOXIC_SPIKES]: ModifierTier.GREAT,
   [MoveId.FLARE_BLITZ]: ModifierTier.ULTRA,
   [MoveId.AURA_SPHERE]: ModifierTier.GREAT,
