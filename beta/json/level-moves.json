@@ -1172,13 +1172,6 @@
     "dexNum": 11,
     "id": "METAPOD",
     "form": null,
-    "level": "RELEARN_MOVE",
-    "move": "TACKLE"
-  },
-  {
-    "dexNum": 11,
-    "id": "METAPOD",
-    "form": null,
     "level": "EVOLVE_MOVE",
     "move": "HARDEN"
   },
@@ -1195,6 +1188,20 @@
     "form": null,
     "level": "EVOLVE_MOVE",
     "move": "GUST"
+  },
+  {
+    "dexNum": 12,
+    "id": "BUTTERFREE",
+    "form": null,
+    "level": 1,
+    "move": "TACKLE"
+  },
+  {
+    "dexNum": 12,
+    "id": "BUTTERFREE",
+    "form": null,
+    "level": 1,
+    "move": "STRING_SHOT"
   },
   {
     "dexNum": 12,
@@ -1356,6 +1363,13 @@
     "form": null,
     "level": 1,
     "move": "POISON_STING"
+  },
+  {
+    "dexNum": 15,
+    "id": "BEEDRILL",
+    "form": null,
+    "level": 1,
+    "move": "STRING_SHOT"
   },
   {
     "dexNum": 15,
@@ -20226,6 +20240,13 @@
     "dexNum": 150,
     "id": "MEWTWO",
     "form": null,
+    "level": 18,
+    "move": "PSYCH_UP"
+  },
+  {
+    "dexNum": 150,
+    "id": "MEWTWO",
+    "form": null,
     "level": 22,
     "move": "PSYBEAM"
   },
@@ -20255,14 +20276,14 @@
     "id": "MEWTWO",
     "form": null,
     "level": 36,
-    "move": "BARRIER"
+    "move": "LOW_KICK"
   },
   {
     "dexNum": 150,
     "id": "MEWTWO",
     "form": null,
     "level": 40,
-    "move": "LOW_KICK"
+    "move": "BARRIER"
   },
   {
     "dexNum": 150,
@@ -20332,7 +20353,7 @@
     "id": "MEWTWO",
     "form": null,
     "level": 86,
-    "move": "PSYCH_UP"
+    "move": "DYNAMIC_PUNCH"
   },
   {
     "dexNum": 150,
@@ -52951,6 +52972,13 @@
     "dexNum": 408,
     "id": "CRANIDOS",
     "form": null,
+    "level": 8,
+    "move": "ANCIENT_POWER"
+  },
+  {
+    "dexNum": 408,
+    "id": "CRANIDOS",
+    "form": null,
     "level": 10,
     "move": "PURSUIT"
   },
@@ -53015,7 +53043,7 @@
     "id": "CRANIDOS",
     "form": null,
     "level": 33,
-    "move": "ANCIENT_POWER"
+    "move": "ROCK_SLIDE"
   },
   {
     "dexNum": 408,
@@ -53065,6 +53093,13 @@
     "form": null,
     "level": 6,
     "move": "FOCUS_ENERGY"
+  },
+  {
+    "dexNum": 409,
+    "id": "RAMPARDOS",
+    "form": null,
+    "level": 8,
+    "move": "ANCIENT_POWER"
   },
   {
     "dexNum": 409,
@@ -53134,7 +53169,7 @@
     "id": "RAMPARDOS",
     "form": null,
     "level": 36,
-    "move": "ANCIENT_POWER"
+    "move": "ROCK_SLIDE"
   },
   {
     "dexNum": 409,
@@ -53182,6 +53217,13 @@
     "dexNum": 410,
     "id": "SHIELDON",
     "form": null,
+    "level": 8,
+    "move": "ANCIENT_POWER"
+  },
+  {
+    "dexNum": 410,
+    "id": "SHIELDON",
+    "form": null,
     "level": 10,
     "move": "METAL_SOUND"
   },
@@ -53211,7 +53253,7 @@
     "id": "SHIELDON",
     "form": null,
     "level": 28,
-    "move": "ANCIENT_POWER"
+    "move": "ROCK_SLIDE"
   },
   {
     "dexNum": 410,
@@ -53280,6 +53322,13 @@
     "dexNum": 411,
     "id": "BASTIODON",
     "form": null,
+    "level": 8,
+    "move": "ANCIENT_POWER"
+  },
+  {
+    "dexNum": 411,
+    "id": "BASTIODON",
+    "form": null,
     "level": 10,
     "move": "METAL_SOUND"
   },
@@ -53309,7 +53358,7 @@
     "id": "BASTIODON",
     "form": null,
     "level": 28,
-    "move": "ANCIENT_POWER"
+    "move": "ROCK_SLIDE"
   },
   {
     "dexNum": 411,
@@ -111676,13 +111725,6 @@
     "form": null,
     "level": 1,
     "move": "ROCK_SMASH"
-  },
-  {
-    "dexNum": 892,
-    "id": "URSHIFU",
-    "form": null,
-    "level": 1,
-    "move": "SUCKER_PUNCH"
   },
   {
     "dexNum": 892,
