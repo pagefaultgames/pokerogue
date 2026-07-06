@@ -9532,8 +9532,8 @@ export function initGenerationEight(): SpeciesDataMapConfig {
     eggTier: EggTier.EPIC,
     passives: AbilityId.MULTISCALE,
     levelMoves: [
-      [1, MoveId.TWISTER],
       [1, MoveId.VISE_GRIP],
+      [1, MoveId.TWISTER],
       [6, MoveId.BITE],
       [12, MoveId.ANCIENT_POWER],
       [18, MoveId.DRAGON_BREATH],
