@@ -11329,7 +11329,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "fighting",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.FIST_PLATE),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.MULTITYPE))],
       }),
       new SpeciesFormChange({
@@ -11337,7 +11337,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "flying",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.SKY_PLATE),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.MULTITYPE))],
       }),
       new SpeciesFormChange({
@@ -11345,7 +11345,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "poison",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.TOXIC_PLATE),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.MULTITYPE))],
       }),
       new SpeciesFormChange({
@@ -11353,7 +11353,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "ground",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.EARTH_PLATE),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.MULTITYPE))],
       }),
       new SpeciesFormChange({
@@ -11361,7 +11361,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "rock",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.STONE_PLATE),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.MULTITYPE))],
       }),
       new SpeciesFormChange({
@@ -11369,7 +11369,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "bug",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.INSECT_PLATE),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.MULTITYPE))],
       }),
       new SpeciesFormChange({
@@ -11377,7 +11377,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "ghost",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.SPOOKY_PLATE),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.MULTITYPE))],
       }),
       new SpeciesFormChange({
@@ -11385,7 +11385,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "steel",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.IRON_PLATE),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.MULTITYPE))],
       }),
       new SpeciesFormChange({
@@ -11393,7 +11393,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "fire",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.FLAME_PLATE),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.MULTITYPE))],
       }),
       new SpeciesFormChange({
@@ -11401,7 +11401,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "water",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.SPLASH_PLATE),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.MULTITYPE))],
       }),
       new SpeciesFormChange({
@@ -11409,7 +11409,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "grass",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.MEADOW_PLATE),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.MULTITYPE))],
       }),
       new SpeciesFormChange({
@@ -11417,7 +11417,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "electric",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.ZAP_PLATE),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.MULTITYPE))],
       }),
       new SpeciesFormChange({
@@ -11425,7 +11425,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "psychic",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.MIND_PLATE),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.MULTITYPE))],
       }),
       new SpeciesFormChange({
@@ -11433,7 +11433,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "ice",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.ICICLE_PLATE),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.MULTITYPE))],
       }),
       new SpeciesFormChange({
@@ -11441,7 +11441,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "dragon",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.DRACO_PLATE),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.MULTITYPE))],
       }),
       new SpeciesFormChange({
@@ -11449,7 +11449,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "dark",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.DREAD_PLATE),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.MULTITYPE))],
       }),
       new SpeciesFormChange({
@@ -11457,7 +11457,7 @@ export function initGenerationFour(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "fairy",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.PIXIE_PLATE),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.MULTITYPE))],
       }),
     ],

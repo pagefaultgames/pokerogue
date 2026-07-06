@@ -5161,6 +5161,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.summonData.speciesForm) {
       this.summonData.speciesForm = null;
       this.updateFusionPalette();
+      this.loadAssets(false);
     }
     this.summonData = new PokemonSummonData();
     this.tempSummonData = new PokemonTempSummonData();
@@ -5225,8 +5226,16 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   // #region Sprite and Animation Methods
 
-  setFrameRate(frameRate: number) {
-    globalScene.anims.get(this.getBattleSpriteKey()).frameRate = frameRate;
+  protected setFrameRate(frameRate: number) {
+    // TODO: Augment Phaser's unsafe typing until they do it themselves
+    const anim: Phaser.Animations.Animation | undefined = globalScene.anims.get(this.getBattleSpriteKey());
+    if (!anim) {
+      throw new Error(
+        `Could not set frame rate for animation ${this.getBattleSpriteKey()}; animation not found!`
+          + `\nPokemon: ${this.name}`,
+      );
+    }
+    anim.frameRate = frameRate;
     try {
       this.getSprite().play(this.getBattleSpriteKey());
     } catch (err: unknown) {
