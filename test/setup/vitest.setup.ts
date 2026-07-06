@@ -1,4 +1,5 @@
 import "vitest-canvas-mock";
+import "#test/setup/local-storage.setup";
 import "#app/i18n"; // tests don't go through `main.ts`, requiring this to be imported here as well
 
 import { PromptHandler } from "#test/helpers/prompt-handler";
