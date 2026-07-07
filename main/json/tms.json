@@ -12999,6 +12999,12 @@
     "dexNum": 36,
     "id": "CLEFABLE",
     "form": null,
+    "move": "AIR_SLASH"
+  },
+  {
+    "dexNum": 36,
+    "id": "CLEFABLE",
+    "form": null,
     "move": "FOCUS_BLAST"
   },
   {
@@ -169126,6 +169132,12 @@
     "id": "BURMY",
     "form": null,
     "move": "BUG_BITE"
+  },
+  {
+    "dexNum": 412,
+    "id": "BURMY",
+    "form": null,
+    "move": "STRUGGLE_BUG"
   },
   {
     "dexNum": 412,
@@ -349575,12 +349587,6 @@
     "dexNum": 903,
     "id": "SNEASLER",
     "form": null,
-    "move": "ELECTROWEB"
-  },
-  {
-    "dexNum": 903,
-    "id": "SNEASLER",
-    "form": null,
     "move": "WILD_CHARGE"
   },
   {
@@ -402843,6 +402849,12 @@
     "dexNum": 6100,
     "id": "HISUI_VOLTORB",
     "form": null,
+    "move": "ELECTROWEB"
+  },
+  {
+    "dexNum": 6100,
+    "id": "HISUI_VOLTORB",
+    "form": null,
     "move": "WILD_CHARGE"
   },
   {
@@ -403126,6 +403138,12 @@
     "id": "HISUI_ELECTRODE",
     "form": null,
     "move": "VOLT_SWITCH"
+  },
+  {
+    "dexNum": 6101,
+    "id": "HISUI_ELECTRODE",
+    "form": null,
+    "move": "ELECTROWEB"
   },
   {
     "dexNum": 6101,
@@ -404290,12 +404308,6 @@
     "id": "HISUI_SNEASEL",
     "form": null,
     "move": "ACID_SPRAY"
-  },
-  {
-    "dexNum": 6215,
-    "id": "HISUI_SNEASEL",
-    "form": null,
-    "move": "ELECTROWEB"
   },
   {
     "dexNum": 6215,
@@ -408694,6 +408706,12 @@
     "id": "PALDEA_TAUROS",
     "form": null,
     "move": "FACADE"
+  },
+  {
+    "dexNum": 8128,
+    "id": "PALDEA_TAUROS",
+    "form": null,
+    "move": "REVENGE"
   },
   {
     "dexNum": 8128,
