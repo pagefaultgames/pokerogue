@@ -46,6 +46,7 @@ function migrateSummonData(summonData: Record<string, unknown>): void {
  * @param data - {@linkcode SystemSaveData}
  */
 const fixMoveHistory: SessionSaveMigrator = {
+  name: "fixMoveHistory",
   version: "1.10.0",
   migrate: data => {
     data.party.forEach(pkmn => {

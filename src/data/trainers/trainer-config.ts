@@ -4753,12 +4753,24 @@ export const trainerConfigs: TrainerConfigs = {
       }),
     )
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.MEGANIUM, SpeciesId.TYPHLOSION, SpeciesId.FERALIGATR]))
-    .setPartyMemberFunc(2, getRandomPartyMemberFunc([SpeciesId.ESPEON, SpeciesId.UMBREON]))
+    .setPartyMemberFunc(
+      2,
+      getRandomPartyMemberFunc([SpeciesId.ESPEON, SpeciesId.UMBREON], TrainerSlot.TRAINER, true, p => {
+        p.generateAndPopulateMoveset();
+        if (p.species.speciesId === SpeciesId.ESPEON) {
+          replaceInMoveset(p.moveset, MoveId.PSYCHIC, MoveId.GLITZY_GLOW);
+        } else if (p.species.speciesId === SpeciesId.UMBREON) {
+          replaceInMoveset(p.moveset, MoveId.DARK_PULSE, MoveId.BADDY_BAD);
+          replaceInMoveset(p.moveset, MoveId.CRUNCH, MoveId.FOUL_PLAY);
+        }
+      }),
+    )
     .setPartyMemberFunc(
       3,
       getRandomPartyMemberFunc([SpeciesId.SNORLAX], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
         p.abilityIndex = 1; // Thick Fat
+        replaceInMoveset(p.moveset, MoveId.DOUBLE_EDGE, MoveId.BODY_SLAM);
       }),
     )
     .setPartyMemberFunc(
@@ -4767,6 +4779,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.MASTER_BALL;
         p.abilityIndex = 2; // Multiscale
+        replaceInMoveset(p.moveset, MoveId.EXTRASENSORY, MoveId.PSYCHIC);
       }),
     )
     .setPartyMemberFunc(
@@ -4862,6 +4875,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.formIndex = 1; // Mega
         p.setBoss(true, 2);
         p.generateAndPopulateMoveset();
+        replaceInMoveset(p.moveset, MoveId.HURRICANE, MoveId.HYPER_BEAM); // Aerilate Hyper Beam preferred over Hurricane
         p.generateName();
         p.gender = Gender.MALE;
       }),
@@ -4893,6 +4907,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.AGGRON], TrainerSlot.TRAINER, true, p => {
         p.abilityIndex = 0; // Sturdy
         p.generateAndPopulateMoveset();
+        replaceInMoveset(p.moveset, MoveId.DOUBLE_EDGE, MoveId.BODY_PRESS); // Avoid breaking self Sturdy
       }),
     )
     .setPartyMemberFunc(
@@ -4958,7 +4973,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       2,
       getRandomPartyMemberFunc([SpeciesId.KINGDRA, SpeciesId.BASCULEGION], TrainerSlot.TRAINER, true, p => {
-        p.abilityIndex = 0; // Swift Swim Kingra / Basculegion
+        p.abilityIndex = 0; // Swift Swim Kingdra / Basculegion
         p.generateAndPopulateMoveset();
       }),
     )
@@ -5144,6 +5159,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.AGGRON], TrainerSlot.TRAINER, true, p => {
         p.abilityIndex = 0; // Sturdy
         p.generateAndPopulateMoveset();
+        replaceInMoveset(p.moveset, MoveId.DOUBLE_EDGE, MoveId.BODY_PRESS); // Avoid breaking self Sturdy
       }),
     )
     .setPartyMemberFunc(
@@ -5443,7 +5459,6 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([SpeciesId.MIRAIDON], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.MASTER_BALL;
-        replaceInMoveset(p.moveset, MoveId.OUTRAGE, MoveId.DRAGON_PULSE); // Outrage significantly higher in the level compared to Pulse, move weighting jank
       }),
     )
     .setPartyMemberFunc(
@@ -5862,6 +5877,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
+        replaceInMoveset(p.moveset, MoveId.DOUBLE_EDGE, MoveId.SOLAR_BEAM); // Help out Typhlosion movegen
       }),
     )
     .setPartyMemberFunc(
@@ -5989,6 +6005,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.MASTER_BALL;
+        replaceInMoveset(p.moveset, MoveId.AQUA_TAIL, MoveId.ORIGIN_PULSE); // Avoid generating with off stat move
       }),
     ),
   [TrainerType.CYRUS]: new TrainerConfig(++t)
@@ -6626,6 +6643,8 @@ export const trainerConfigs: TrainerConfigs = {
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
         p.generateName();
+        p.friendship = 255; // In the case Veevee Volley generates
+        replaceInMoveset(p.moveset, MoveId.DOUBLE_EDGE, MoveId.VEEVEE_VOLLEY);
       }),
     )
     .setInstantTera(4), // Tera Fairy Sylveon
@@ -6714,6 +6733,8 @@ export const trainerConfigs: TrainerConfigs = {
         p.generateAndPopulateMoveset();
         p.generateName();
         p.pokeball = PokeballType.ULTRA_BALL;
+        p.friendship = 255; // In the case Veevee Volley generates
+        replaceInMoveset(p.moveset, MoveId.DOUBLE_EDGE, MoveId.VEEVEE_VOLLEY);
       }),
     )
     .setInstantTera(0), // Tera Fairy Sylveon

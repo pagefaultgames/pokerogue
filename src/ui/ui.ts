@@ -45,7 +45,6 @@ import { RunHistoryUiHandler } from "#ui/run-history-ui-handler";
 import { RunInfoUiHandler } from "#ui/run-info-ui-handler";
 import { SaveSlotSelectUiHandler } from "#ui/save-slot-select-ui-handler";
 import { SavingIconContainer } from "#ui/saving-icon-handler";
-import { SessionReloadModalUiHandler } from "#ui/session-reload-modal-ui-handler";
 import { SettingsAudioUiHandler } from "#ui/settings-audio-ui-handler";
 import { SettingsDisplayUiHandler } from "#ui/settings-display-ui-handler";
 import { SettingsGamepadUiHandler } from "#ui/settings-gamepad-ui-handler";
@@ -99,7 +98,6 @@ const noTransitionModes = [
   UiMode.LOGIN_FORM,
   UiMode.REGISTRATION_FORM,
   UiMode.LOADING,
-  UiMode.SESSION_RELOAD,
   UiMode.UNAVAILABLE,
   UiMode.RENAME_POKEMON,
   UiMode.RENAME_RUN,
@@ -150,7 +148,6 @@ const handlers = () => ({
   [UiMode.LOGIN_FORM]: new LoginFormUiHandler(),
   [UiMode.REGISTRATION_FORM]: new RegistrationFormUiHandler(),
   [UiMode.LOADING]: new LoadingModalUiHandler(),
-  [UiMode.SESSION_RELOAD]: new SessionReloadModalUiHandler(),
   [UiMode.UNAVAILABLE]: new UnavailableModalUiHandler(),
   [UiMode.CHALLENGE_SELECT]: new GameChallengesUiHandler(),
   [UiMode.RENAME_POKEMON]: new RenameFormUiHandler(),
@@ -162,7 +159,7 @@ const handlers = () => ({
   [UiMode.ADMIN]: new AdminUiHandler(),
   [UiMode.MYSTERY_ENCOUNTER]: new MysteryEncounterUiHandler(),
   [UiMode.CHANGE_PASSWORD_FORM]: new ChangePasswordFormUiHandler(),
-  [UiMode.ALERT_MODAL]: new AlertModalUiHandler()
+  [UiMode.ALERT_MODAL]: new AlertModalUiHandler(),
 });
 
 type Handlers = ReturnType<typeof handlers>;
