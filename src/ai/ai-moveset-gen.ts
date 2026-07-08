@@ -34,7 +34,10 @@ import {
   ULTRA_TIER_TM_LEVEL_REQUIREMENT,
   ULTRA_TM_MOVESET_WEIGHT,
 } from "#balance/moves/moveset-generation";
-import { getSpeciesDeniedOffensiveStat } from "#balance/moves/off-stat-denylist";
+import {
+  EXCLUDED_MOVES_FOR_WORSE_OFFENSIVE_STAT,
+  getSpeciesDeniedOffensiveStat,
+} from "#balance/moves/off-stat-denylist";
 import { FORCED_RIVAL_SIGNATURE_MOVES, FORCED_SIGNATURE_MOVES } from "#balance/moves/signature-moves";
 import { SUPERCEDED_MOVES } from "#balance/moves/superceded-moves";
 import { tmPoolTiers } from "#balance/tm-pool-tiers";
@@ -360,11 +363,18 @@ function filterMovePool(
 
   for (const [moveId, weight] of pool) {
     const move = allMoves[moveId];
+    // forbid doubles only moves in singles
+    const noDoublesMovesInSingles = isSingles && FORBIDDEN_SINGLES_MOVES.has(moveId);
+    // forbid level based denylist moves
+    const applyLevelBasedDenyList = level >= LEVEL_BASED_DENYLIST_THRESHOLD && LEVEL_BASED_DENYLIST.has(moveId);
+    // forbid moves that use the worse offensive stat
+    const excludeWorseOffensiveStatMoves =
+      move.category !== MoveCategory.STATUS
+      && !EXCLUDED_MOVES_FOR_WORSE_OFFENSIVE_STAT.has(moveId)
+      && worseOffensiveStatDenylist != null
+      && doesMoveMatchOffensiveCategory(move, worseOffensiveStatDenylist);
     const isSoftBlocked =
-      (!ignoreSoftBlocklists
-        && ((isSingles && FORBIDDEN_SINGLES_MOVES.has(moveId)) // forbid doubles only moves in singles
-          || (level >= LEVEL_BASED_DENYLIST_THRESHOLD && LEVEL_BASED_DENYLIST.has(moveId)))) // forbid level based denylist moves
-      || (worseOffensiveStatDenylist != null && doesMoveMatchOffensiveCategory(move, worseOffensiveStatDenylist)); // forbid moves that use the worse offensive stat
+      !ignoreSoftBlocklists && (noDoublesMovesInSingles || applyLevelBasedDenyList || excludeWorseOffensiveStatMoves);
     if (
       weight <= 0
       || move.name.endsWith(" (N)") // Forbid unimplemented moves
@@ -1243,7 +1253,7 @@ export function generateMoveset(pokemon: Pokemon, forceRivalSignatures = false):
   const unfilteredMovePool = new Map(movePool);
   filterMovePool(movePool, isBoss, hasTrainer, pokemon);
   if (movePool.size === 0 && unfilteredMovePool.size > 0) {
-    movePool = new Map(unfilteredMovePool);
+    movePool = unfilteredMovePool;
     filterMovePool(movePool, isBoss, hasTrainer, pokemon, true);
   }
 
