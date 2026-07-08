@@ -66,6 +66,7 @@ import { toCamelCase } from "#utils/strings";
 import type { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 import type { NonEmptyTuple } from "type-fest";
+import { isMegaSolSunny } from "./ability-utils";
 
 /**
  * Base set of parameters passed to every ability attribute's {@linkcode AbAttr.apply | apply} method.
@@ -6043,6 +6044,18 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
 }
 
 /**
+ * Applies weather form change on an ability that doesn't directly change the weather.
+ * In the odd case that Cherrim/Castform are granted Mega Sol.
+ */
+export class PostSummonTriggerWeatherFormChangeAbAttr extends PostSummonAbAttr {
+  override apply({ simulated }: AbAttrBaseParams): void {
+    if (!simulated) {
+      globalScene.arena.triggerWeatherBasedFormChanges();
+    }
+  }
+}
+
+/**
  * @returns all Pokémon on field that have weather-based forms
  */
 function getPokemonWithWeatherBasedForms() {
@@ -6056,10 +6069,15 @@ function getPokemonWithWeatherBasedForms() {
 }
 
 export function getWeatherCondition(...weatherTypes: WeatherType[]): AbAttrCondition {
-  return () => {
+  return pokemon => {
+    if (isMegaSolSunny(pokemon, weatherTypes)) {
+      return true;
+    }
+
     if (globalScene.arena.weather?.isEffectSuppressed()) {
       return false;
     }
+
     return weatherTypes.includes(globalScene.arena.weatherType);
   };
 }
@@ -6233,6 +6251,7 @@ export const AbilityAttrs = Object.freeze({
   PreApplyBattlerTagImmunityAbAttr,
   PreAttackAbAttr,
   PreAttackFieldMoveTypePowerBoostAbAttr,
+  PostSummonTriggerWeatherFormChangeAbAttr,
   PreAttackWeatherOverrideAbAttr,
   PreDefendAbAttr,
   PreDefendFullHpEndureAbAttr,

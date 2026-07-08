@@ -125,6 +125,7 @@ import {
   PostSummonStatStageChangeOnArenaAbAttr,
   PostSummonTerrainChangeAbAttr,
   PostSummonTransformAbAttr,
+  PostSummonTriggerWeatherFormChangeAbAttr,
   PostSummonUnnamedMessageAbAttr,
   PostSummonUserFieldRemoveStatusEffectAbAttr,
   PostSummonWeatherChangeAbAttr,
@@ -2191,6 +2192,7 @@ export function initAbilities() {
     new AbBuilder(AbilityId.ABILITY_314, 9).unimplemented().build(),
     new AbBuilder(AbilityId.MEGA_SOL, 9) //
       .attr(PreAttackWeatherOverrideAbAttr, WeatherType.SUNNY)
+      .attr(PostSummonTriggerWeatherFormChangeAbAttr)
       // Interactions with sand veil / snow cloak (which need to be tested)
       // Flyout conformity (needs investigation)
       .edgeCase()

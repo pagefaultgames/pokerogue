@@ -2,6 +2,7 @@ import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import type { Weather } from "#data/weather";
 import { getWeatherDamageMessage, getWeatherLapseMessage } from "#data/weather";
+import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { HitResult } from "#enums/hit-result";
 import { CommonAnim } from "#enums/move-anims-common";
@@ -28,6 +29,21 @@ export class WeatherEffectPhase extends CommonAnimPhase {
     this.weather = globalScene?.arena?.weather;
 
     if (!this.weather) {
+      if (
+        globalScene.getField(true).some(p => {
+          return (
+            p.getAbility().id === AbilityId.MEGA_SOL
+            || (p.hasPassive() && p.getPassiveAbility().id === AbilityId.MEGA_SOL)
+          );
+        })
+      ) {
+        this.executeForAll((pokemon: Pokemon) => {
+          if (!pokemon.switchOutStatus) {
+            applyAbAttrs("PostWeatherLapseAbAttr", { pokemon, weather: this.weather });
+          }
+        });
+      }
+
       return this.end();
     }
 

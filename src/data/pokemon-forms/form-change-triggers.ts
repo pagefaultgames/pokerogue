@@ -1,3 +1,4 @@
+import { isMegaSolSunny } from "#abilities/ability-utils";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { SpeciesFormChange } from "#data/pokemon-forms";
@@ -258,9 +259,12 @@ export class SpeciesFormChangeWeatherTrigger extends SpeciesFormChangeTrigger {
    * @returns `true` if the Pokemon can change forms, `false` otherwise
    */
   canChange(pokemon: Pokemon): boolean {
+    const isAbilitySuppressed = pokemon.summonData.abilitySuppressed;
+    if (!isAbilitySuppressed && isMegaSolSunny(pokemon, this.weathers)) {
+      return true;
+    }
     const currentWeather = globalScene.arena.weather?.weatherType ?? WeatherType.NONE;
     const isWeatherSuppressed = globalScene.arena.weather?.isEffectSuppressed();
-    const isAbilitySuppressed = pokemon.summonData.abilitySuppressed;
 
     return (
       !isAbilitySuppressed

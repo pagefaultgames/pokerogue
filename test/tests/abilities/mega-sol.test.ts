@@ -2,14 +2,18 @@ import { allMoves } from "#data/data-lists";
 import { getWeatherMultiplierForMove } from "#data/weather";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { BerryType } from "#enums/berry-type";
 import { MoveId } from "#enums/move-id";
 import { MoveResult } from "#enums/move-result";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
+import { BerryModifier } from "#modifiers/modifier";
 import { GameManager } from "#test/framework/game-manager";
 import type { GetEffectiveStatParams } from "#types/pokemon-common";
+import * as Utils from "#utils/common";
 import { ValueHolder } from "#utils/value-holder";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -195,5 +199,142 @@ describe("Abilities - Mega Sol", () => {
 
     params.ignoreOppAbility = false; // test with mega sol factored in
     expect(enemyPokemon.getEffectiveStat(Stat.DEF, params)).toBe(100);
+  });
+
+  it("should change castform form if included as passive ability", async () => {
+    game.override.ability(AbilityId.FORECAST).passiveAbility(AbilityId.MEGA_SOL);
+    await game.classicMode.startBattle(SpeciesId.CASTFORM);
+
+    const pokemon = game.field.getPlayerPokemon();
+    expect(pokemon.formIndex).toBe(1);
+  });
+
+  it("should let solar power boost damage and tick damage when included as passive ability", async () => {
+    game.override.ability(AbilityId.SOLAR_POWER).passiveAbility(AbilityId.MEGA_SOL);
+    await game.classicMode.startBattle(SpeciesId.GROOKEY);
+
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
+    const swift = allMoves[MoveId.SWIFT];
+    const boostedDamage = enemyPokemon.getAttackDamage({ source: playerPokemon, move: swift }).damage;
+    const unboostedDamage = enemyPokemon.getAttackDamage({
+      source: playerPokemon,
+      move: swift,
+      ignoreAbility: true,
+    }).damage;
+
+    expect(boostedDamage).toBeGreaterThan(unboostedDamage);
+
+    const maxHp = playerPokemon.getMaxHp();
+    game.move.use(MoveId.SPLASH);
+    await game.toEndOfTurn();
+
+    expect(playerPokemon.hp).toBe(maxHp - Utils.toDmgValue(maxHp / 8));
+  });
+
+  it("should let chlorophyll double speed when mega sol is included as passive ability", async () => {
+    game.override.ability(AbilityId.CHLOROPHYLL).passiveAbility(AbilityId.MEGA_SOL);
+    await game.classicMode.startBattle(SpeciesId.GROOKEY);
+
+    const playerPokemon = game.field.getPlayerPokemon();
+    const baseSpeed = playerPokemon.getEffectiveStat(Stat.SPD, { ignoreAbility: true });
+
+    expect(playerPokemon.getEffectiveStat(Stat.SPD)).toBe(baseSpeed * 2);
+  });
+
+  it("should let protosynthesis boost the highest non-Speed stat by 1.3x when mega sol is included as passive ability", async () => {
+    game.override.ability(AbilityId.PROTOSYNTHESIS).passiveAbility(AbilityId.MEGA_SOL);
+    await game.classicMode.startBattle(SpeciesId.GROOKEY);
+
+    const playerPokemon = game.field.getPlayerPokemon();
+    const baseAttack = playerPokemon.getStat(Stat.ATK, false);
+
+    expect(playerPokemon.getTag(BattlerTagType.PROTOSYNTHESIS)).toBeDefined();
+    expect(playerPokemon.getEffectiveStat(Stat.ATK)).toBe(Math.floor(baseAttack * 1.3));
+  });
+
+  it("should let leaf guard prevent status conditions when mega sol is included as passive ability", async () => {
+    game.override.ability(AbilityId.LEAF_GUARD).passiveAbility(AbilityId.MEGA_SOL);
+    await game.classicMode.startBattle(SpeciesId.GROOKEY);
+
+    const playerPokemon = game.field.getPlayerPokemon();
+    const statusEffects = [
+      StatusEffect.POISON,
+      StatusEffect.TOXIC,
+      StatusEffect.PARALYSIS,
+      StatusEffect.SLEEP,
+      StatusEffect.FREEZE,
+      StatusEffect.BURN,
+    ];
+
+    for (const statusEffect of statusEffects) {
+      expect(playerPokemon.canSetStatus(statusEffect, true)).toBe(false);
+    }
+  });
+
+  it("should let harvest always reactivate eaten berries when mega sol is included as passive ability", async () => {
+    game.override.ability(AbilityId.HARVEST).passiveAbility(AbilityId.MEGA_SOL);
+    vi.spyOn(Utils, "randSeedFloat").mockReturnValueOnce(0.75);
+    await game.classicMode.startBattle(SpeciesId.GROOKEY);
+
+    const playerPokemon = game.field.getPlayerPokemon();
+    playerPokemon.battleData.berriesEaten = [BerryType.LUM];
+
+    game.move.use(MoveId.SPLASH);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    const playerBerries = game.scene
+      .getModifiers(BerryModifier, true)
+      .filter(berry => berry.pokemonId === playerPokemon.id);
+    expect(playerBerries).toEqual([expect.objectContaining({ berryType: BerryType.LUM, stackCount: 1 })]);
+    expect(playerPokemon.battleData.berriesEaten).toEqual([]);
+  });
+
+  it("should let dry skin apply its damage tick when mega sol is included as passive ability", async () => {
+    game.override.ability(AbilityId.DRY_SKIN).passiveAbility(AbilityId.MEGA_SOL).weather(WeatherType.NONE);
+    await game.classicMode.startBattle(SpeciesId.GROOKEY);
+
+    const playerPokemon = game.field.getPlayerPokemon();
+    const maxHp = playerPokemon.getMaxHp();
+
+    game.move.use(MoveId.SPLASH);
+    await game.toEndOfTurn();
+
+    expect(playerPokemon.hp).toBe(maxHp - Utils.toDmgValue(maxHp / 8));
+  });
+
+  it("should result in net zero hp change when dry skin in rain with mega sol as passive ability", async () => {
+    game.override.ability(AbilityId.DRY_SKIN).passiveAbility(AbilityId.MEGA_SOL).weather(WeatherType.RAIN);
+    await game.classicMode.startBattle(SpeciesId.GROOKEY);
+
+    const playerPokemon = game.field.getPlayerPokemon();
+    const maxHp = playerPokemon.getMaxHp();
+
+    game.move.use(MoveId.SPLASH);
+    await game.toEndOfTurn();
+
+    expect(playerPokemon.hp).toBe(maxHp);
+  });
+
+  it("should not change cherrim back to normal form when sun starts and ends during battle", async () => {
+    game.override.ability(AbilityId.FLOWER_GIFT).passiveAbility(AbilityId.MEGA_SOL).weather(WeatherType.NONE);
+    await game.classicMode.startBattle(SpeciesId.CHERRIM);
+
+    const pokemon = game.field.getPlayerPokemon();
+    expect(pokemon.formIndex).toBe(1);
+
+    game.move.use(MoveId.SUNNY_DAY);
+    await game.toEndOfTurn();
+
+    expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SUNNY);
+    expect(pokemon.formIndex).toBe(1);
+
+    game.scene.arena.weather!.turnsLeft = 1;
+    await game.toNextTurn();
+    game.move.use(MoveId.SPLASH);
+    await game.toEndOfTurn();
+
+    expect(game.scene.arena.weather?.weatherType).toBeUndefined();
+    expect(pokemon.formIndex).not.toBe(0);
   });
 });
