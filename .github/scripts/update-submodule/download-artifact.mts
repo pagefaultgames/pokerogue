@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import fs from "node:fs";
-import path from "node:path";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { getInput, setFailed } from "@actions/core";
 import { context, getOctokit } from "@actions/github";
 
@@ -33,10 +33,10 @@ async function run(): Promise<void> {
 
     const temp = `${getInput("runner_temp", { required: true })}/artifacts`;
 
-    if (!fs.existsSync(temp)) {
-      fs.mkdirSync(temp);
+    if (!existsSync(temp)) {
+      mkdirSync(temp);
     }
-    fs.writeFileSync(path.join(temp, "pr-data.zip"), Buffer.from(download.data as string));
+    writeFileSync(join(temp, "pr-data.zip"), Buffer.from(download.data as string));
   } catch (error) {
     setFailed((error as Error).message);
   }
