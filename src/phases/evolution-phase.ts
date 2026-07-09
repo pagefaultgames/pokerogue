@@ -118,11 +118,7 @@ export class EvolutionPhase extends Phase {
    */
   protected configureSprite(pokemon: Pokemon, sprite: Phaser.GameObjects.Sprite, setPipeline = true): typeof sprite {
     const spriteKey = pokemon.getSpriteKey(true);
-    try {
-      sprite.play(spriteKey);
-    } catch (err: unknown) {
-      console.error(`Failed to play animation for ${spriteKey}`, err);
-    }
+    sprite.play(spriteKey);
 
     if (setPipeline) {
       sprite.setPipeline(globalScene.spritePipeline, {
