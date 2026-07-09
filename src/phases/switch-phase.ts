@@ -131,9 +131,12 @@ export class SwitchPhase extends PokemonPhase {
 
     // Decrement the switched-in Pokemon's turn counts so it's considered to have just entered
     // for the purposes of Fake Out and similar effects
-    switchedInPokemon.tempSummonData.turnCount--;
-    switchedInPokemon.tempSummonData.waveTurnCount--;
-
+    if (this.switchType !== SwitchType.INITIAL_SWITCH) {
+      switchedInPokemon.turnData.switchedInThisTurn = true;
+      switchedInPokemon.tempSummonData.turnCount--;
+      switchedInPokemon.tempSummonData.waveTurnCount--;
+    }
+  
     // If this switch is the result of a Baton (item/move), transfer all
     // relevant effects from the active Pokemon to the switched in Pokemon.
     // A similar effect occurs for the user's active Substitute and Shed Tail.
@@ -158,10 +161,6 @@ export class SwitchPhase extends PokemonPhase {
     // Swap the party positions of the switching Pokemon
     party[this.switchInIndex] = activePokemon;
     party[this.fieldIndex] = switchedInPokemon;
-
-    if (this.switchType !== SwitchType.INITIAL_SWITCH) {
-      switchedInPokemon.turnData.switchedInThisTurn = true;
-    }
   }
 
   /**

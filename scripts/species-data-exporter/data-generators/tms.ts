@@ -16,7 +16,7 @@ export async function generateTmsData(): Promise<void> {
   const entries: TmEntry[] = [];
 
   for (const speciesData of Object.values(speciesDataRegistry.data)) {
-    for (const move of speciesData.tms) {
+    for (const move of speciesDataRegistry.getTms(speciesData.species.speciesId)) {
       const data: TmEntry = {
         dexNum: speciesData.species.speciesId,
         id: SpeciesId[speciesData.species.speciesId],

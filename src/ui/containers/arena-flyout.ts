@@ -18,7 +18,7 @@ import i18next from "i18next";
 
 // #region Interfaces
 
-/** Base container for info about the currently active {@linkcode Weather}. */
+/** Interface for info about the currently active {@linkcode Weather}. */
 interface WeatherInfo {
   /** The localized name of the weather. */
   readonly name: string;
@@ -30,7 +30,7 @@ interface WeatherInfo {
   readonly weatherType: WeatherType;
 }
 
-/** Base container for info about the currently active {@linkcode Terrain}. */
+/** Interface for info about the currently active {@linkcode Terrain}. */
 interface TerrainInfo {
   /** The localized name of the terrain. */
   readonly name: string;
@@ -234,15 +234,27 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
   };
 
   /**
-   * Iterate through all currently present tags effects and decrement their durations, removing all tags expiring in this manner..
+   * Iterate through all currently present effects and decrement their durations,
+   * removing any that have expired.
    */
   readonly #onTurnEnd = (): void => {
-    this.arenaTags = this.arenaTags.filter(info => info.maxDuration === 0 || --info.duration >= 0);
+    const shouldPersist = (info: ArenaTagInfo | WeatherInfo | TerrainInfo): boolean => {
+      return info.maxDuration === 0 || --info.duration > 0;
+    };
+
+    this.arenaTags = this.arenaTags.filter(shouldPersist);
+
+    if (this.weatherInfo && !shouldPersist(this.weatherInfo)) {
+      this.weatherInfo = undefined;
+    }
+
+    if (this.terrainInfo && !shouldPersist(this.terrainInfo)) {
+      this.terrainInfo = undefined;
+    }
 
     this.updateFieldText();
   };
 
-  /** Destroy this element and remove all associated listeners. */
   public override destroy(fromScene?: boolean): void {
     const { eventTarget } = globalScene;
     const { eventTarget: arenaEventTarget } = globalScene.arena;
@@ -329,6 +341,11 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
    * @param event - The {@linkcode WeatherChangedEvent} having been emitted
    */
   readonly #onWeatherChanged = (event: WeatherChangedEvent): void => {
+    if (event.weatherType === (this.weatherInfo?.weatherType ?? WeatherType.NONE)) {
+      // no change
+      return;
+    }
+
     if (event.weatherType === WeatherType.NONE) {
       this.weatherInfo = undefined;
       this.updateFieldText();
@@ -350,6 +367,11 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
    * @param event - The {@linkcode TerrainChangedEvent} having been emitted
    */
   readonly #onTerrainChanged = (event: TerrainChangedEvent): void => {
+    if (event.terrainType === (this.terrainInfo?.terrainType ?? TerrainType.NONE)) {
+      // no change
+      return;
+    }
+
     if (event.terrainType === TerrainType.NONE) {
       this.terrainInfo = undefined;
       this.updateFieldText();

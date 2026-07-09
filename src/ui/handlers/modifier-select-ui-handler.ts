@@ -370,7 +370,13 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
             if (globalScene.shopCursorTarget === ShopCursorTarget.CHECK_TEAM) {
               this.setRowCursor(0);
               this.setCursor(2);
-            } else if (globalScene.shopCursorTarget === ShopCursorTarget.SHOP && !hasShop) {
+            } else if (
+              globalScene.shopCursorTarget === ShopCursorTarget.SHOP
+              && (!hasShop || this.shopOptionsRows.length === 0)
+            ) {
+              // No shop row exists to point at (e.g. the mode has no shop, or this is a
+              // boss/Gym wave where no shop items are offered). Fall back to the rewards row
+              // instead of leaving the cursor on a nonexistent shop row, which would crash.
               this.setRowCursor(ShopCursorTarget.REWARDS);
               this.setCursor(0);
             } else {
