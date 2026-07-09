@@ -1206,7 +1206,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   async updateSpritePipelineData(): Promise<void> {
     [this.getSprite(), this.getTintSprite()]
       .filter(s => !!s)
-      .map(s => {
+      .forEach(s => {
         s.pipelineData["teraColor"] = getTypeRgb(this.getTeraType());
         s.pipelineData["isTerastallized"] = this.isTerastallized;
       });
@@ -1225,27 +1225,17 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Attempts to animate a given {@linkcode Phaser.GameObjects.Sprite}
    * @see {@linkcode Phaser.GameObjects.Sprite.play}
-   * @param sprite - Sprite to animate
-   * @param tintSprite - Sprite placed on top of the sprite to add a color tint
-   * @param animConfig - String to pass to the sprite's {@linkcode Phaser.GameObjects.Sprite.play | play} method
-   * @returns true if the sprite was able to be animated
+   * @param sprite - The sprite to animate
+   * @param tintSprite - A sprite placed on top of the original sprite to add a color tint
+   * @param key - The animation key
    */
-  tryPlaySprite(sprite: Phaser.GameObjects.Sprite, tintSprite: Phaser.GameObjects.Sprite, key: string): boolean {
-    // Catch errors when trying to play an animation that doesn't exist
-    try {
-      sprite.play(key);
-      tintSprite.play(key);
-    } catch (error: unknown) {
-      console.error(`Couldn't play animation for '${key}'!\nIs the image for this Pokemon missing?\n`, error);
-
-      return false;
-    }
-
-    return true;
+  playSprite(sprite: Phaser.GameObjects.Sprite, tintSprite: Phaser.GameObjects.Sprite | null, key: string): void {
+    sprite.play(key);
+    tintSprite?.play(key);
   }
 
   playAnim(): void {
-    this.tryPlaySprite(this.getSprite(), this.getTintSprite()!, this.getBattleSpriteKey()); // TODO: is the bang correct?
+    this.playSprite(this.getSprite(), this.getTintSprite(), this.getBattleSpriteKey());
   }
 
   getFieldPositionOffset(): [number, number] {
@@ -5226,26 +5216,18 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   // #region Sprite and Animation Methods
 
-  protected setFrameRate(frameRate: number) {
+  protected setFrameRate(frameRate: number): void {
     // TODO: Augment Phaser's unsafe typing until they do it themselves
     const anim: Phaser.Animations.Animation | undefined = globalScene.anims.get(this.getBattleSpriteKey());
     if (!anim) {
-      throw new Error(
+      console.error(
         `Could not set frame rate for animation ${this.getBattleSpriteKey()}; animation not found!`
           + `\nPokemon: ${this.name}`,
       );
+      return;
     }
     anim.frameRate = frameRate;
-    try {
-      this.getSprite().play(this.getBattleSpriteKey());
-    } catch (err: unknown) {
-      console.error(`Failed to play animation for ${this.getBattleSpriteKey()}`, err);
-    }
-    try {
-      this.getTintSprite()?.play(this.getBattleSpriteKey());
-    } catch (err: unknown) {
-      console.error(`Failed to play animation for ${this.getBattleSpriteKey()}`, err);
-    }
+    this.playAnim();
   }
 
   tint(color: number, alpha?: number, duration?: number, ease?: string) {

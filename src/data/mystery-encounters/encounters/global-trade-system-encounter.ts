@@ -640,13 +640,9 @@ function doPokemonTradeSequence(tradedPokemon: PlayerPokemon, receivedPokemon: P
     receivedPokemonTintSprite.setVisible(false);
     receivedPokemonTintSprite.setTintFill(getPokeballTintColor(receivedPokemon.pokeball));
 
-    [tradedPokemonSprite, tradedPokemonTintSprite].map(sprite => {
+    [tradedPokemonSprite, tradedPokemonTintSprite].forEach(sprite => {
       const spriteKey = tradedPokemon.getSpriteKey(true);
-      try {
-        sprite.play(spriteKey);
-      } catch (err: unknown) {
-        console.error(`Failed to play animation for ${spriteKey}`, err);
-      }
+      sprite.play(spriteKey);
 
       sprite.setPipeline(globalScene.spritePipeline, {
         tone: [0.0, 0.0, 0.0, 0.0],
@@ -658,7 +654,7 @@ function doPokemonTradeSequence(tradedPokemon: PlayerPokemon, receivedPokemon: P
       sprite.setPipelineData("spriteKey", tradedPokemon.getSpriteKey());
       sprite.setPipelineData("shiny", tradedPokemon.shiny);
       sprite.setPipelineData("variant", tradedPokemon.variant);
-      ["spriteColors", "fusionSpriteColors"].map(k => {
+      ["spriteColors", "fusionSpriteColors"].forEach(k => {
         if (tradedPokemon.summonData.speciesForm) {
           k += "Base";
         }
@@ -666,13 +662,9 @@ function doPokemonTradeSequence(tradedPokemon: PlayerPokemon, receivedPokemon: P
       });
     });
 
-    [receivedPokemonSprite, receivedPokemonTintSprite].map(sprite => {
+    [receivedPokemonSprite, receivedPokemonTintSprite].forEach(sprite => {
       const spriteKey = receivedPokemon.getSpriteKey(true);
-      try {
-        sprite.play(spriteKey);
-      } catch (err: unknown) {
-        console.error(`Failed to play animation for ${spriteKey}`, err);
-      }
+      sprite.play(spriteKey);
 
       sprite.setPipeline(globalScene.spritePipeline, {
         tone: [0.0, 0.0, 0.0, 0.0],
@@ -684,7 +676,7 @@ function doPokemonTradeSequence(tradedPokemon: PlayerPokemon, receivedPokemon: P
       sprite.setPipelineData("spriteKey", receivedPokemon.getSpriteKey());
       sprite.setPipelineData("shiny", receivedPokemon.shiny);
       sprite.setPipelineData("variant", receivedPokemon.variant);
-      ["spriteColors", "fusionSpriteColors"].map(k => {
+      ["spriteColors", "fusionSpriteColors"].forEach(k => {
         if (receivedPokemon.summonData.speciesForm) {
           k += "Base";
         }

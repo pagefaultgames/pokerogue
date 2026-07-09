@@ -292,5 +292,14 @@ describe("Regression Tests - ai-moveset-gen.ts", () => {
       generateMoveset(pokemon);
       expect(pokemon.moveset).toHaveLength(4);
     });
+
+    it("should fall back to soft-blocked moves instead of generating an empty moveset", async () => {
+      pokemon = createTestablePokemon(SpeciesId.BLIPBUG, { level: 10, boss: true });
+      vi.spyOn(pokemon, "getLevelMoves").mockReturnValue([[1, MoveId.HELPING_HAND, LearnableMoveSource.OTHER]]);
+
+      generateMoveset(pokemon);
+
+      expect(pokemon.moveset.map(m => m.moveId)).toEqual([MoveId.HELPING_HAND]);
+    });
   });
 });
