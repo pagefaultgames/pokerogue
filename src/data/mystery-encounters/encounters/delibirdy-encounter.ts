@@ -33,7 +33,7 @@ import {
   HeldItemRequirement,
   MoneyRequirement,
 } from "#mystery-encounters/mystery-encounter-requirements";
-import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import type { OptionSelectItem } from "#ui/base-option-select-ui-handler";
 import { randSeedItem } from "#utils/common";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
@@ -141,7 +141,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
     return true;
   })
   .withOnVisualsStart(() => {
-    audioManager.fadeAndSwitchBgm("mystery_encounter_delibirdy");
+    audioManager.playBgm("mystery_encounter_delibirdy", true);
     return true;
   })
   .withOption(

@@ -1,7 +1,7 @@
 import type { TurnCommand } from "#app/battle";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { speciesStarterCosts } from "#balance/starters";
 import { TrappedTag } from "#data/battler-tags";
 import { getDailyEventSeedBoss } from "#data/daily-seed/daily-run";
 import { isDailyFinalBoss } from "#data/daily-seed/daily-seed-utils";
@@ -76,7 +76,8 @@ export class CommandPhase extends FieldPhase {
     // Switch back to the center pokemon. This can happen rarely in double battles with mid turn switching
     // TODO: Prevent this from happening in the first place
     if (globalScene.getPlayerField().filter(p => p.isActive()).length === 1) {
-      this.fieldIndex = FieldPosition.CENTER;
+      const activeIndex = globalScene.getPlayerField().findIndex(p => p.isActive());
+      this.fieldIndex = activeIndex === -1 ? FieldPosition.CENTER : activeIndex;
       return;
     }
 
@@ -363,7 +364,7 @@ export class CommandPhase extends FieldPhase {
       .getEnemyField()
       .some(p => p.isActive() && !dexData[p.species.speciesId].caughtAttr);
     const missingMultipleStarters =
-      gameData.getStarterCount(d => !!d.caughtAttr) < Object.keys(speciesStarterCosts).length - 1;
+      gameData.getStarterCount(d => !!d.caughtAttr) < speciesDataRegistry.getAllStarters().length - 1;
     const isCatchableDailyBoss = isDailyFinalBoss() && (getDailyEventSeedBoss()?.catchable ?? false);
 
     if (biomeId === BiomeId.END && battleType === BattleType.WILD) {

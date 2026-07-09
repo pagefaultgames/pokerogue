@@ -1,6 +1,7 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
-import { allSpecies, modifierTypes } from "#data/data-lists";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
+import { modifierTypes } from "#data/data-lists";
 import { getLevelTotalExp } from "#data/exp";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
@@ -12,7 +13,7 @@ import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { PlayerGender } from "#enums/player-gender";
-import { MAX_POKEMON_TYPE, PokemonType } from "#enums/pokemon-type";
+import { MAX_POKEMON_TYPE } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import { TrainerType } from "#enums/trainer-type";
@@ -42,7 +43,7 @@ import { trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyTemplate } from "#trainers/trainer-party-template";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import { NumberHolder, randSeedInt, randSeedShuffle } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { getPokemonSpecies, getRandomRegularPokemonType } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 /** i18n namespace for encounter */
@@ -129,7 +130,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
   .withEncounterTier(MysteryEncounterTier.ROGUE)
   .withDisallowedChallenges(Challenges.SINGLE_TYPE, Challenges.SINGLE_GENERATION)
   .withSceneWaveRangeRequirement(30, 140)
-  .withScenePartySizeRequirement(3, 6)
+  .withScenePartySizeRequirement(3)
   .withMaxAllowedEncounters(1)
   .withIntroSpriteConfigs([
     {
@@ -166,7 +167,7 @@ export const WeirdDreamEncounter: MysteryEncounter = MysteryEncounterBuilder.wit
     return true;
   })
   .withOnVisualsStart(() => {
-    audioManager.fadeAndSwitchBgm("mystery_encounter_weird_dream");
+    audioManager.playBgm("mystery_encounter_weird_dream", true);
     return true;
   })
   .withOption(
@@ -604,13 +605,7 @@ async function postProcessTransformedPokemon(
 
   // Randomize the second type of the pokemon
   // If the pokemon does not normally have a second type, it will gain 1
-  const newTypes = [PokemonType.UNKNOWN];
-  let newType = randSeedInt(18) as PokemonType;
-  while (newType === newTypes[0]) {
-    newType = randSeedInt(18) as PokemonType;
-  }
-  newTypes.push(newType);
-  newPokemon.customPokemonData.types = newTypes;
+  newPokemon.customPokemonData.types = [null, getRandomRegularPokemonType()];
 
   // Enable passive if previous had it
   newPokemon.passive = previousPokemon.passive;
@@ -638,7 +633,7 @@ function getTransformedSpecies(
     const bstMin = Math.max(originalBst + bstSearchRange[0], 0);
 
     // Get any/all species that fall within the Bst range requirements
-    let validSpecies = allSpecies.filter(s => {
+    let validSpecies = speciesDataRegistry.getAllSpecies().filter(s => {
       const speciesBst = s.getBaseStatTotal();
       const bstInRange = speciesBst >= bstMin && speciesBst <= bstCap;
       // Checks that a Pokemon has not already been added in the +600 or 570-600 slots;

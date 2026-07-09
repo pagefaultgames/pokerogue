@@ -99,7 +99,7 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
   MysteryEncounterType.DARK_DEAL,
 )
   .withEncounterTier(MysteryEncounterTier.ROGUE)
-  .withDisallowedChallenges(Challenges.HARDCORE)
+  .withDisallowedChallenges(Challenges.HARDCORE, Challenges.SINGLE_GENERATION)
   .withIntroSpriteConfigs([
     {
       spriteKey: "dark_deal_scientist",
@@ -123,7 +123,7 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
     },
   ])
   .withSceneWaveRangeRequirement(30, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
-  .withScenePartySizeRequirement(2, 6, true) // Must have at least 2 pokemon in party
+  .withScenePartySizeRequirement(2)
   .withCatchAllowed(true)
   .setLocalizationKey(`${namespace}`)
   .withTitle(`${namespace}:title`)

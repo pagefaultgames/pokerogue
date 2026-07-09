@@ -1,6 +1,6 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
-import { starterColors } from "#app/global-vars/starter-colors";
+import { getStarterColors } from "#app/global-vars/starter-colors";
 import type { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { addTextObject } from "#ui/text";
@@ -61,6 +61,10 @@ export class CandyBar extends Phaser.GameObjects.Container {
    * @param numCandiesAdded - The number of candies just to the starter1
    */
   showStarterSpeciesCandy(starterSpeciesId: SpeciesId, numCandiesAdded: number): void {
+    if (this.pendingCandyAdditions.length >= 5) {
+      // prevent forever showing candies after opening a bunch of eggs at once
+      return;
+    }
     if (this.shown) {
       if (!this.isHiding && this.speciesId === starterSpeciesId) {
         this.cumulativeCandiesAdded += numCandiesAdded;
@@ -85,7 +89,7 @@ export class CandyBar extends Phaser.GameObjects.Container {
       return;
     }
 
-    const colorScheme = starterColors[starterSpeciesId];
+    const colorScheme = getStarterColors(starterSpeciesId);
 
     this.candyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
     this.candyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));

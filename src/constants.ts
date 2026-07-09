@@ -118,3 +118,6 @@ export const RELEARN_MOVE = -1;
 
 /** Moves that can only be learned with an evolve */
 export const EVOLVE_MOVE = 0;
+
+/** Level of the daily boss */
+export const DAILY_BOSS_LEVEL = 75;

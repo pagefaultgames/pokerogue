@@ -13,14 +13,14 @@ import {
   settingGamepadOptions,
 } from "#system/settings-gamepad";
 import type { InterfaceConfig } from "#types/configs/inputs";
-import { AbstractControlSettingsUiHandler } from "#ui/abstract-control-settings-ui-handler";
+import { BaseControlSettingsUiHandler } from "#ui/base-control-settings-ui-handler";
 import { addTextObject } from "#ui/text";
 import { truncateString } from "#utils/common";
 import i18next from "i18next";
 
 /** Class representing the settings UI handler for gamepads */
 
-export class SettingsGamepadUiHandler extends AbstractControlSettingsUiHandler {
+export class SettingsGamepadUiHandler extends BaseControlSettingsUiHandler {
   /**
    * Creates an instance of SettingsGamepadUiHandler.
    *

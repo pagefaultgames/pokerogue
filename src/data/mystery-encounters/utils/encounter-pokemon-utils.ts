@@ -1,8 +1,8 @@
 import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { speciesStarterCosts } from "#balance/starters";
 import { modifierTypes } from "#data/data-lists";
 import { Gender } from "#data/gender";
 import {
@@ -16,6 +16,7 @@ import type { PokemonSpecies } from "#data/pokemon-species";
 import { getStatusEffectCatchRateMultiplier } from "#data/status-effect";
 import type { AbilityId } from "#enums/ability-id";
 import { ChallengeType } from "#enums/challenge-type";
+import { PartyUiMode } from "#enums/party-ui-mode";
 import { PlayerGender } from "#enums/player-gender";
 import type { PokeballType } from "#enums/pokeball";
 import type { PokemonType } from "#enums/pokemon-type";
@@ -33,7 +34,6 @@ import {
 } from "#mystery-encounters/encounter-dialogue-utils";
 import { achvs } from "#system/achv";
 import type { PartyOption } from "#ui/party-ui-handler";
-import { PartyUiMode } from "#ui/party-ui-handler";
 import { SummaryUiMode } from "#ui/summary-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, randSeedInt } from "#utils/common";
@@ -261,8 +261,9 @@ export function getRandomSpeciesByStarterCost(
   let min = Array.isArray(starterTiers) ? starterTiers[0] : starterTiers;
   let max = Array.isArray(starterTiers) ? starterTiers[1] : starterTiers;
 
-  let filteredSpecies: [PokemonSpecies, number][] = Object.keys(speciesStarterCosts)
-    .map(s => [Number.parseInt(s) as SpeciesId, speciesStarterCosts[s] as number])
+  let filteredSpecies: [PokemonSpecies, number][] = speciesDataRegistry
+    .getAllStarters()
+    .map(s => [s, speciesDataRegistry.getStarterCost(s)])
     .filter(s => {
       const pokemonSpecies = getPokemonSpecies(s[0]);
       return (
