@@ -23,7 +23,6 @@ import type { DexAttrProps, StarterDataEntry, StarterPreferences } from "#types/
 import { SortCriteria, type SortDirection } from "#ui/dropdown";
 import { applyChallenges, checkStarterValidForChallenge } from "#utils/challenge-utils";
 import { NumberHolder } from "#utils/common";
-import { deepCopy } from "#utils/data";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
@@ -299,7 +298,8 @@ export function getStarterData(
   const starterDataEntry = globalScene.gameData.starterData[starterId];
 
   // Unpacking to make a copy by values, not references
-  const copiedDexEntry = deepCopy(dexEntry);
+  const copiedDexEntry = { ...dexEntry };
+  copiedDexEntry.ivs = { ...dexEntry.ivs };
   const copiedStarterDataEntry = { ...starterDataEntry };
   if (applyChallenge) {
     applyChallenges(ChallengeType.STARTER_SELECT_MODIFY, starterId, copiedDexEntry, copiedStarterDataEntry);

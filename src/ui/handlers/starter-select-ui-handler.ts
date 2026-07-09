@@ -2675,7 +2675,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const starterPreferences = this.starterPreferences[starterId];
 
     // Stop animation for the previously selected starter
-    if (getPokemonSpecies(this.lastStarterId)) {
+    if (this.lastStarterId && getPokemonSpecies(this.lastStarterId)) {
       this.stopIconAnimation(this.oldCursor);
     }
 
