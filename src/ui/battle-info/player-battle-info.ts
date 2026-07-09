@@ -141,8 +141,8 @@ export class PlayerBattleInfo extends BattleInfo {
    * @param lastLevel - The level the Pokemon was at before the update
    * @param lastLevelExp - The relative EXP the Pokemon had within its level before the update
    */
-  public async updatePokemonExpDisplay(pokemon: PlayerPokemon, lastLevel: number): Promise<void> {
-    if (globalScene.expGainsSpeed === ExpGainsSpeed.SKIP) {
+  public async updatePokemonExpDisplay(pokemon: PlayerPokemon, lastLevel: number, skip: boolean): Promise<void> {
+    if (skip) {
       this.setLevelDisplay(pokemon.level);
       const relLevelExp = getLevelRelExp(pokemon.level + 1, pokemon.species.growthRate);
       this.expMaskRect.x = EXP_BAR_WIDTH * (relLevelExp === 0 ? 0 : pokemon.levelExp / relLevelExp);
@@ -154,6 +154,11 @@ export class PlayerBattleInfo extends BattleInfo {
     }
 
     await this.doUpdateExpAnimation(pokemon, pokemon.level, false);
+  }
+
+  public override async updateInfo(pokemon: PlayerPokemon, instant?: boolean): Promise<void> {
+    await super.updateInfo(pokemon, instant);
+    this.updatePokemonExpDisplay(pokemon, pokemon.level, true);
   }
 
   /**
@@ -195,10 +200,7 @@ export class PlayerBattleInfo extends BattleInfo {
 
     const levelDurationMultiplier = this.getLevelDurationMultiplier(lastLevel, pokemon.level);
     let duration = this.visible
-      ? ((nextWidth - this.expMaskRect.x) / EXP_BAR_WIDTH)
-        * BattleInfo.EXP_GAINS_DURATION_BASE
-        * durationMultiplier
-        * levelDurationMultiplier
+      ? ratio * BattleInfo.EXP_GAINS_DURATION_BASE * durationMultiplier * levelDurationMultiplier
       : 0;
     if (speed && speed >= ExpGainsSpeed.DEFAULT) {
       duration = speed >= ExpGainsSpeed.SKIP ? ExpGainsSpeed.DEFAULT : duration / Math.pow(2, speed);
@@ -224,7 +226,7 @@ export class PlayerBattleInfo extends BattleInfo {
             this.setLevelDisplay(level);
             globalScene.time.delayedCall(500 * levelDurationMultiplier, () => {
               this.expMaskRect.x = 0;
-              this.updateInfo(pokemon).then(() => resolve());
+              resolve();
             });
             return;
           }

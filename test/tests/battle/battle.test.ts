@@ -1,4 +1,4 @@
-import { allSpecies } from "#data/data-lists";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { AbilityId } from "#enums/ability-id";
 import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
@@ -52,7 +52,7 @@ describe("Phase - Battle Phase", () => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
     }).length;
-    expect(caughtCount).toBe(Object.keys(allSpecies).length);
+    expect(caughtCount).toBe(speciesDataRegistry.getAllSpecies().length);
   });
 
   it("start battle with selected team", async () => {

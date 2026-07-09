@@ -36,6 +36,7 @@ import { MoneyRequirement, WaveModulusRequirement } from "#mystery-encounters/my
 import { PokemonData } from "#system/pokemon-data";
 import { playTween } from "#utils/anim-utils";
 import { randSeedInt } from "#utils/common";
+import { groupStatChange } from "#utils/stat-change";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/teleportingHijinks";
@@ -230,13 +231,11 @@ async function doBiomeTransitionDialogueAndBattleInit() {
         tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
         mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
           queueEncounterMessage(`${namespace}:bossEnraged`);
-          globalScene.phaseManager.unshiftNew(
-            "StatStageChangePhase",
-            pokemon.getBattlerIndex(),
-            true,
-            statChangesForBattle,
-            1,
-          );
+          globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+            battlerIndex: pokemon.getBattlerIndex(),
+            changes: groupStatChange(statChangesForBattle, 1),
+            sourcePokemon: pokemon,
+          });
         },
       },
     ],
@@ -252,6 +251,8 @@ async function animateBiomeChange(nextBiome: BiomeId): Promise<void> {
     duration: 2000,
   });
 
+  const previousBiome = globalScene.arena.biomeId;
+  await globalScene.loadBiomeAssets(nextBiome);
   globalScene.newArena(nextBiome);
 
   const biomeKey = getBiomeKey(nextBiome);
@@ -285,6 +286,8 @@ async function animateBiomeChange(nextBiome: BiomeId): Promise<void> {
   if (globalScene.lastEnemyTrainer) {
     globalScene.lastEnemyTrainer.destroy();
   }
+
+  globalScene.clearBiomeAssets(previousBiome);
 
   // TODO: This is floating
   playTween({

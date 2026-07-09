@@ -29,6 +29,7 @@ import { modifyPlayerPokemonBST } from "#mystery-encounters/encounter-pokemon-ut
 import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { groupStatChange } from "#utils/stat-change";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/theStrongStuff";
@@ -47,7 +48,7 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
 )
   .withEncounterTier(MysteryEncounterTier.COMMON)
   .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
-  .withScenePartySizeRequirement(3, 6) // Must have at least 3 pokemon in party
+  .withScenePartySizeRequirement(3)
   .withMaxAllowedEncounters(1)
   .withHideWildIntroMessage(true)
   .withAutoHideIntroVisuals(false)
@@ -117,13 +118,11 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
             queueEncounterMessage(`${namespace}:option.2.statBoost`);
-            globalScene.phaseManager.unshiftNew(
-              "StatStageChangePhase",
-              pokemon.getBattlerIndex(),
-              true,
-              [Stat.DEF, Stat.SPDEF],
-              1,
-            );
+            globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+              battlerIndex: pokemon.getBattlerIndex(),
+              changes: groupStatChange([Stat.DEF, Stat.SPDEF], 1),
+              sourcePokemon: pokemon,
+            });
           },
         },
       ],

@@ -10,7 +10,7 @@ import type { Pokemon } from "#field/pokemon";
 import { getVariantTint } from "#sprites/variant";
 import { addTextObject } from "#ui/text";
 import { fixedInt, getLocalizedSpriteKey, getShinyDescriptor } from "#utils/common";
-import { toCamelCase } from "#utils/strings";
+import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import i18next from "i18next";
 
 /**
@@ -57,7 +57,6 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
   protected lastHp: number;
   protected lastMaxHp: number;
   protected lastHpFrame: string | null;
-  protected lastLevelCapped: boolean;
   protected lastStats: string;
 
   protected box: Phaser.GameObjects.Sprite;
@@ -360,7 +359,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
           globalScene.ui.showTooltip(
             "",
             i18next.t("fightUiHandler:teraHover", {
-              type: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.lastTeraType])}`),
+              type: i18next.t(getPokemonTypeLocaleKey(this.lastTeraType)),
             }),
           );
         }
@@ -567,7 +566,8 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
   async updateInfo(pokemon: Pokemon, instant?: boolean): Promise<void> {
     let resolve: (r: void | PromiseLike<void>) => void = () => {};
     const promise = new Promise<void>(r => (resolve = r));
-    if (!globalScene) {
+
+    if (!globalScene || !this.active) {
       return resolve();
     }
 

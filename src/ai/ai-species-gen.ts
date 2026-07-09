@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import type { SpeciesFormEvolution } from "#balance/pokemon-evolutions";
-import { pokemonEvolutions, pokemonPrevolutions } from "#balance/pokemon-evolutions";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import { PartyMemberStrength } from "#enums/party-member-strength";
@@ -115,12 +115,12 @@ export function determineEnemySpecies(
 ): SpeciesId {
   const requiredPrevo =
     tryForcePrevo
-    && Object.hasOwn(pokemonPrevolutions, species.speciesId)
+    && speciesDataRegistry.hasPrevolution(species.speciesId)
     && getRequiredPrevo(species, level, encounterKind);
   if (requiredPrevo) {
     return requiredPrevo;
   }
-  const evolutions = pokemonEvolutions[species.speciesId] ?? [];
+  const evolutions = speciesDataRegistry.getEvolutions(species.speciesId);
   if (
     // If evolutions shouldn't happen, add more cases here :)
     !allowEvolving
