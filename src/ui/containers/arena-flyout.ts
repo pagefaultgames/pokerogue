@@ -225,12 +225,16 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
    */
   readonly #onNewArena = (): void => {
     this.arenaTags = [];
+    this.weatherInfo = undefined;
+    this.terrainInfo = undefined;
     const { eventTarget } = globalScene.arena;
 
     eventTarget.addEventListener(ArenaEventType.WEATHER_CHANGED, this.#onWeatherChanged);
     eventTarget.addEventListener(ArenaEventType.TERRAIN_CHANGED, this.#onTerrainChanged);
     eventTarget.addEventListener(ArenaEventType.ARENA_TAG_ADDED, this.#onArenaTagAdded);
     eventTarget.addEventListener(ArenaEventType.ARENA_TAG_REMOVED, this.#onArenaTagRemoved);
+
+    this.updateFieldText();
   };
 
   /**
