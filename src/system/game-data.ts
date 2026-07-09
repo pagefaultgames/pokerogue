@@ -71,6 +71,7 @@ import type {
   VoucherCounts,
   VoucherUnlocks,
 } from "#types/save-data";
+import type { StarterSpeciesId } from "#types/starter-species-id";
 import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { fixedInt, NumberHolder, randInt, randSeedItem } from "#utils/common";
@@ -2115,13 +2116,13 @@ export class GameData {
     };
   }
 
-  getStarterDefaultAbilityIndex(starterId: SpeciesId, abilityAttr?: number): number {
+  getStarterDefaultAbilityIndex(starterId: StarterSpeciesId, abilityAttr?: number): number {
     abilityAttr ??= this.starterData[starterId].abilityAttr;
     const species = getPokemonSpecies(starterId);
     return abilityAttr & AbilityAttr.ABILITY_1 ? 0 : !species.ability2 || abilityAttr & AbilityAttr.ABILITY_2 ? 1 : 2;
   }
 
-  getSpeciesDefaultNature(speciesId: SpeciesId): Nature {
+  getSpeciesDefaultNature(speciesId: StarterSpeciesId): Nature {
     const dexEntry = this.dexData[speciesId];
     for (let n = 0; n < 25; n++) {
       if (dexEntry.natureAttr & (1 << (n + 1))) {
@@ -2131,7 +2132,7 @@ export class GameData {
     return 0 as Nature;
   }
 
-  getSpeciesDefaultNatureAttr(speciesId: SpeciesId): number {
+  getSpeciesDefaultNatureAttr(speciesId: StarterSpeciesId): number {
     return 1 << this.getSpeciesDefaultNature(speciesId);
   }
 

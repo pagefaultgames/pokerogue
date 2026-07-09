@@ -18,6 +18,7 @@ import { UiTheme } from "#enums/ui-theme";
 import { getVariantIcon, getVariantTint, type Variant } from "#sprites/variant";
 import { achvs } from "#system/achv";
 import type { StarterMoveset, StarterPreferences } from "#types/save-data";
+import type { StarterSpeciesId } from "#types/starter-species-id";
 import {
   getDexAttrFromPreferences,
   getFriendship,
@@ -98,7 +99,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
   /** Container for everything that's a preference (abilities, nature, form...) */
   private readonly pokemonPreferencesContainer: GameObjects.Container;
 
-  private speciesId: SpeciesId;
+  private speciesId: StarterSpeciesId;
 
   constructor(x: number, y: number) {
     super(globalScene, x, y);
@@ -484,7 +485,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     this.cleanStarterSprite();
   }
 
-  public setStarter(starterId: SpeciesId, starterPreferences: StarterPreferences): void {
+  public setStarter(starterId: StarterSpeciesId, starterPreferences: StarterPreferences): void {
     // Checking here to ensure achievements are loaded, and updated if unlocked while playing
     this.allowTera = Object.hasOwn(globalScene.gameData.achvUnlocks, achvs.TERASTALLIZE.id);
 
@@ -646,7 +647,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     this.pokemonAdditionalMoveCountLabel.setVisible(false);
   }
 
-  public setStarterDetails(starterId: SpeciesId, options: SpeciesDetails = {}): void {
+  public setStarterDetails(starterId: StarterSpeciesId, options: SpeciesDetails = {}): void {
     // Here we pass some options to override everything else
     let { shiny, formIndex, female, variant, abilityIndex, natureIndex, teraType } = options;
 
@@ -756,7 +757,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     this.statsContainer.updateIvs(dexEntry.ivs);
   }
 
-  private updatePassiveDisplay(starterId: SpeciesId, formIndex = 0): void {
+  private updatePassiveDisplay(starterId: StarterSpeciesId, formIndex = 0): void {
     this.pokemonPassiveLabelText.setVisible(false);
     this.pokemonPassiveText.setVisible(false);
     this.pokemonPassiveDisabledIcon.setVisible(false);

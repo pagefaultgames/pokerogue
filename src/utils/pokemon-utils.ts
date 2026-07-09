@@ -7,6 +7,7 @@ import { BattlerIndex } from "#enums/battler-index";
 import { MAX_REGULAR_POKEMON_TYPE, MIN_REGULAR_POKEMON_TYPE, type RegularPokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
+import type { StarterSpeciesId } from "#types/starter-species-id";
 import { randSeedIntRange, randSeedItem } from "#utils/common";
 
 /**
@@ -33,8 +34,8 @@ export function getDexNumber(speciesId: SpeciesId): SpeciesId {
  * Method to get the daily list of starters with Pokerus.
  * @returns A list of starters with Pokerus
  */
-export function getPokerusStarters(): SpeciesId[] {
-  const pokerusStarters: SpeciesId[] = [];
+export function getPokerusStarters(): StarterSpeciesId[] {
+  const pokerusStarters: StarterSpeciesId[] = [];
   const date = new Date();
   date.setUTCHours(0, 0, 0, 0);
   globalScene.executeWithSeedOffset(

@@ -11,6 +11,7 @@ import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { ModifierTypeOption } from "#modifiers/modifier-type";
 import type { DexEntry } from "#types/dex-data";
 import type { DexAttrProps, StarterDataEntry } from "#types/save-data";
+import type { StarterSpeciesId } from "#types/starter-species-id";
 import { BooleanHolder, type NumberHolder } from "./common";
 import { getPokemonSpecies } from "./pokemon-utils";
 
@@ -357,7 +358,7 @@ export function applyChallenges(challengeType: ChallengeType, ...args: any[]): b
  * @param soft - If `true`, allow it if it could become valid through evolution or form change.
  * @returns `true` if the species is considered valid.
  */
-export function checkStarterValidForChallenge(starterId: SpeciesId, props: DexAttrProps, soft: boolean) {
+export function checkStarterValidForChallenge(starterId: StarterSpeciesId, props: DexAttrProps, soft: boolean) {
   const species = getPokemonSpecies(starterId);
   if (!soft) {
     const isValidForChallenge = new BooleanHolder(true);
@@ -381,7 +382,7 @@ export function checkStarterValidForChallenge(starterId: SpeciesId, props: DexAt
         // Form check to deal with cases such as Basculin -> Basculegion
         // TODO: does this miss anything if checking forms of a stage 2 Pokémon?
         if (!e?.preFormKey || e.preFormKey === species.forms[props.formIndex].formKey) {
-          speciesToCheck.push(e.speciesId);
+          speciesToCheck.push(e.speciesId as StarterSpeciesId);
         }
       });
     }

@@ -28,7 +28,6 @@ import type { MoveId } from "#enums/move-id";
 import type { Nature } from "#enums/nature";
 import { Passive as PassiveAttr } from "#enums/passive";
 import { PokemonType } from "#enums/pokemon-type";
-import type { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { UiTheme } from "#enums/ui-theme";
@@ -39,6 +38,7 @@ import { getVariantIcon, getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
 import { RibbonData } from "#system/ribbons/ribbon-data";
 import type { DexAttrProps, Starter, StarterMoveset, StarterPreferences } from "#types/save-data";
+import type { StarterSpeciesId } from "#types/starter-species-id";
 import type { OptionSelectItem } from "#ui/base-option-select-ui-handler";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
 import { FilterBar } from "#ui/filter-bar";
@@ -63,7 +63,7 @@ import {
   isUpgradeAnimationEnabled,
   isUpgradeIconEnabled,
   isValueReductionAvailable,
-  sortSpecies,
+  sortStarterSpecies,
 } from "#ui/starter-select-ui-utils";
 import { StarterSummary } from "#ui/starter-summary";
 import { addTextObject, getTextColor } from "#ui/text";
@@ -146,16 +146,15 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   private pokerusCursorObjs: Phaser.GameObjects.Image[];
   private starterSelectScrollBar: ScrollBar;
   private scrollCursor: number;
-  private readonly allStarterSpeciesIds: SpeciesId[] = [];
-  private filteredStarterIds: SpeciesId[] = [];
-  private lastStarterId: SpeciesId;
+  private filteredStarterIds: StarterSpeciesId[] = [];
+  private lastStarterId: StarterSpeciesId;
 
   private partyColumn: GameObjects.Container;
   private partyIcons: Phaser.GameObjects.Sprite[];
   private partyCursorObj: Phaser.GameObjects.Image;
   private partyIconsCursorIndex: number;
   private readonly partyStarters: Starter[] = [];
-  public partyStarterIds: SpeciesId[] = [];
+  public partyStarterIds: StarterSpeciesId[] = [];
 
   private valueLimitLabel: Phaser.GameObjects.Text;
   private startCursorObj: Phaser.GameObjects.NineSlice;
@@ -177,7 +176,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   private moveInfoOverlay: MoveInfoOverlay;
 
   private starterMoveset: StarterMoveset | null;
-  private pokerusSpeciesIds: SpeciesId[] = [];
+  private pokerusSpeciesIds: StarterSpeciesId[] = [];
   private readonly canCycle: CanCycle = {};
 
   //variables to keep track of the dynamically rendered list of instruction prompts for starter select
@@ -260,15 +259,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     starterBoxContainer.add(this.cursorObj);
 
-    for (const species of speciesDataRegistry.getAllSpecies()) {
-      if (!speciesDataRegistry.isStarter(species.speciesId)) {
-        continue;
-      }
-      this.allStarterSpeciesIds.push(species.speciesId);
-    }
-
     for (let i = 0; i < 81; i++) {
-      const starterContainer = new StarterContainer(this.allStarterSpeciesIds[i]).setVisible(false);
+      const starterContainer = new StarterContainer(speciesDataRegistry.getAllStarters()[i]).setVisible(false);
       const pos = calcStarterContainerPosition(i);
       starterContainer.setPosition(pos.x, pos.y);
       this.iconAnimHandler.addOrUpdate(starterContainer.icon, PokemonIconAnimMode.NONE);
@@ -569,7 +561,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       // Deep copy the JSON (avoid re-loading from disk)
       this.originalStarterPreferences = deepCopy(this.starterPreferences);
 
-      this.allStarterSpeciesIds.forEach(starterId => {
+      speciesDataRegistry.getAllStarters().forEach(starterId => {
         // Initialize the StarterPreferences for this species
         this.starterPreferences[starterId] = this.initStarterPrefs(starterId, this.starterPreferences);
         this.originalStarterPreferences[starterId] = this.initStarterPrefs(
@@ -617,7 +609,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
    * @returns The {@linkcode StarterPreferences} for the species
    */
   protected initStarterPrefs(
-    starterId: SpeciesId,
+    starterId: StarterSpeciesId,
     preferences: AllStarterPreferences,
     ignoreChallenge = false,
   ): StarterPreferences {
@@ -1299,7 +1291,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   /** Update the preferences for shiny and variant for a given species ID. */
-  private setShinyAndVariant(speciesId: SpeciesId, shiny: boolean, variant: number): void {
+  private setShinyAndVariant(speciesId: StarterSpeciesId, shiny: boolean, variant: number): void {
     this.starterPreferences[speciesId] ??= {};
     this.originalStarterPreferences[speciesId] ??= {};
     this.starterPreferences[speciesId].shiny = shiny;
@@ -1309,7 +1301,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   /** Update the preferences for the form index for a given species ID. */
-  private setNewFormIndex(speciesId: SpeciesId, formIndex: number): void {
+  private setNewFormIndex(speciesId: StarterSpeciesId, formIndex: number): void {
     (this.starterPreferences[speciesId] ??= {}).formIndex = formIndex;
     (this.originalStarterPreferences[speciesId] ??= {}).formIndex = formIndex;
     // Updating tera type for new form
@@ -1324,7 +1316,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   /** Update the preferences for the gender for a given species ID. */
-  private setNewGender(speciesId: SpeciesId, female: boolean): void {
+  private setNewGender(speciesId: StarterSpeciesId, female: boolean): void {
     (this.starterPreferences[speciesId] ??= {}).female = female;
     (this.originalStarterPreferences[speciesId] ??= {}).female = female;
     // Updating form for gendered forms
@@ -1337,19 +1329,19 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   /** Update the preferences for the ability index for a given species ID. */
-  private setNewAbilityIndex(speciesId: SpeciesId, abilityIndex: number): void {
+  private setNewAbilityIndex(speciesId: StarterSpeciesId, abilityIndex: number): void {
     (this.starterPreferences[speciesId] ??= {}).abilityIndex = abilityIndex;
     (this.originalStarterPreferences[speciesId] ??= {}).abilityIndex = abilityIndex;
   }
 
   /** Update the preferences for the nature for a given species ID. */
-  private setNewNature(speciesId: SpeciesId, nature: number): void {
+  private setNewNature(speciesId: StarterSpeciesId, nature: number): void {
     (this.starterPreferences[speciesId] ??= {}).nature = nature;
     (this.originalStarterPreferences[speciesId] ??= {}).nature = nature;
   }
 
   /** Update the preferences for the tera type for a given species ID. */
-  private setNewTeraType(speciesId: SpeciesId, teraType: PokemonType): void {
+  private setNewTeraType(speciesId: StarterSpeciesId, teraType: PokemonType): void {
     (this.starterPreferences[speciesId] ??= {}).tera = teraType;
     (this.originalStarterPreferences[speciesId] ??= {}).tera = teraType;
   }
@@ -2155,7 +2147,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
    * @param starterId - The starter to check
    * @returns
    */
-  private isInParty(starterId: SpeciesId): [boolean, number] {
+  private isInParty(starterId: StarterSpeciesId): [boolean, number] {
     let removeIndex = 0;
     let isDupe = false;
     for (let s = 0; s < this.partyStarterIds.length; s++) {
@@ -2169,7 +2161,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   private addToParty(
-    starterId: SpeciesId,
+    starterId: StarterSpeciesId,
     dexAttr: bigint,
     abilityIndex: number,
     nature: Nature,
@@ -2217,8 +2209,9 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.updateInstructions();
   }
 
-  private updatePartyIcon(species: PokemonSpecies, index: number): void {
-    const props = this.getStarterDexAttrPropsFromPreferences(species.speciesId);
+  private updatePartyIcon(starterId: StarterSpeciesId, index: number): void {
+    const species = speciesDataRegistry.getSpecies(starterId);
+    const props = this.getStarterDexAttrPropsFromPreferences(starterId);
     this.partyIcons[index].setTexture(species.getIconAtlasKey(props.formIndex, props.shiny, props.variant));
     this.partyIcons[index].setFrame(species.getIconId(props.female, props.formIndex, props.shiny, props.variant));
     this.checkIconId(this.partyIcons[index], species, props.female, props.formIndex, props.shiny, props.variant);
@@ -2276,7 +2269,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
    *
    * @param id - The species ID to update the moveset for
    */
-  private updateSelectedStarterMoveset(id: SpeciesId): void {
+  private updateSelectedStarterMoveset(id: StarterSpeciesId): void {
     if (this.starterMoveset === null) {
       return;
     }
@@ -2304,14 +2297,14 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.starterSelectScrollBar.setScrollCursor(0);
 
     const sort = this.filterBar.getVals(DropDownColumn.SORT)[0];
-    sortSpecies(this.filteredStarterIds, sort.val, sort.dir);
+    sortStarterSpecies(this.filteredStarterIds, sort.val, sort.dir);
 
     this.updateScroll();
     this.tryUpdateValue();
   }
 
   private filterStarters(): void {
-    this.filteredStarterIds = this.allStarterSpeciesIds.filter(starterId => {
+    this.filteredStarterIds = speciesDataRegistry.getAllStarters().filter(starterId => {
       // Exclude starters which are not valid for the challenge
       if (globalScene.gameMode.modeId === GameModes.CHALLENGE && !isStarterValidForChallenge(starterId)) {
         return false;
@@ -2604,7 +2597,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       const species = this.starterContainers[cursor].species;
 
       if (species) {
-        this.setStarter(species.speciesId);
+        this.setStarter(species.speciesId as StarterSpeciesId);
         this.updateInstructions();
       } else {
         this.setNoStarter();
@@ -2668,7 +2661,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
    *
    * @param starterId - the id of the new starter
    */
-  private setStarter(starterId: SpeciesId): void {
+  private setStarter(starterId: StarterSpeciesId): void {
     const { dexEntry } = getStarterData(starterId);
 
     // Set the cursors, using preferences if possible, default options otherwise
@@ -2724,7 +2717,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const container = this.starterContainers[cursor];
     if (container) {
       const lastStarterIcon = container.icon;
-      const props = this.getStarterDexAttrPropsFromPreferences(container.species.speciesId);
+      const props = this.getStarterDexAttrPropsFromPreferences(container.species.speciesId as StarterSpeciesId);
       this.checkIconId(lastStarterIcon, container.species, props.female, props.formIndex, props.shiny, props.variant);
       this.iconAnimHandler.addOrUpdate(lastStarterIcon, PokemonIconAnimMode.NONE);
       // Resume the animation for the previously selected species
@@ -2749,8 +2742,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
    * @param starterId - the id of the new starter
    * @param save - whether the new details should be saved to local storage.
    */
-  private setStarterDetails(starterId: SpeciesId, save = true): void {
-    const species = getPokemonSpecies(starterId);
+  private setStarterDetails(starterId: StarterSpeciesId, save = true): void {
     const starterDetails = getStarterDetailsFromPreferences(starterId, this.starterPreferences[starterId]);
     const { shiny, variant, female, formIndex, abilityIndex, natureIndex, teraType } = starterDetails;
 
@@ -2758,7 +2750,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     const [isInParty, partyIndex]: [boolean, number] = this.isInParty(starterId); // we use this to firstly check if the pokemon is in the party, and if so, to get the party index in order to update the icon image
     if (isInParty) {
-      this.updatePartyIcon(species, partyIndex);
+      this.updatePartyIcon(starterId, partyIndex);
     }
 
     // If the starter is in the party, update the information in the party
@@ -2778,6 +2770,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     const currentContainer = this.starterContainers.find(p => p.species.speciesId === starterId);
     if (currentContainer) {
       const starterSprite = currentContainer.icon as Phaser.GameObjects.Sprite;
+      const species = speciesDataRegistry.getSpecies(starterId);
       starterSprite.setTexture(
         species.getIconAtlasKey(formIndex, shiny, variant),
         species.getIconId(female, formIndex, shiny, variant),
@@ -2811,7 +2804,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
    * @param starterId - the id of the current selected starter.
    * @param formIndex - the form index of the current starter.
    */
-  private updateCanCycle(starterId: SpeciesId, formIndex = 0): void {
+  private updateCanCycle(starterId: StarterSpeciesId, formIndex = 0): void {
     const { dexEntry, starterDataEntry } = getStarterData(starterId);
     const caughtAttr = dexEntry.caughtAttr || BigInt(0);
     const abilityAttr = starterDataEntry.abilityAttr;
@@ -2865,7 +2858,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
    * @param starterId - the id of the current selected starter.
    * @param formIndex - the form index of the current starter.
    */
-  private populateStarterMoveset(starterId: SpeciesId, formIndex = 0): void {
+  private populateStarterMoveset(starterId: StarterSpeciesId, formIndex = 0): void {
     const { starterDataEntry } = getStarterData(starterId);
 
     this.starterMoveset = null;
@@ -3015,7 +3008,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
     let isPartyValid = this.isPartyValid();
     if (addingToParty) {
-      const starterId = this.starterContainers[this.cursor].species.speciesId;
+      const starterId = this.starterContainers[this.cursor].species.speciesId as StarterSpeciesId;
       const isNewPokemonValid = checkStarterValidForChallenge(
         starterId,
         this.getStarterDexAttrPropsFromPreferences(starterId),
@@ -3028,7 +3021,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     /** this loop is used to set each container's alpha value and check if the user can select other pokemon. */
     const remainValue = valueLimit - newValue;
     for (const container of this.starterContainers) {
-      const starterId = container.species.speciesId;
+      const starterId = container.species.speciesId as StarterSpeciesId;
 
       /** Cost of pokemon species */
       const speciesStarterValue = globalScene.gameData.getSpeciesStarterValue(starterId);
@@ -3174,7 +3167,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
   }
 
-  private getStarterDexAttrPropsFromPreferences(starterId: SpeciesId): DexAttrProps {
+  private getStarterDexAttrPropsFromPreferences(starterId: StarterSpeciesId): DexAttrProps {
     return getStarterDexAttrPropsFromPreferences(starterId, this.starterPreferences[starterId]);
   }
 

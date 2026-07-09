@@ -1,4 +1,5 @@
 import { SpeciesId } from "#enums/species-id";
+import type { StarterSpeciesId } from "#types/starter-species-id";
 
 /** The maximum size of the player's party */
 export const PLAYER_PARTY_MAX_SIZE: number = 6;
@@ -23,7 +24,7 @@ export const TYPE_BOOST_ITEM_BOOST_PERCENT = 20;
 /**
  * The default species that a new player can choose from
  */
-export const defaultStarterSpecies: readonly SpeciesId[] = [
+export const defaultStarterSpecies: readonly StarterSpeciesId[] = [
   SpeciesId.BULBASAUR,
   SpeciesId.CHARMANDER,
   SpeciesId.SQUIRTLE,

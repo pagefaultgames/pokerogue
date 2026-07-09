@@ -20,6 +20,7 @@ import type { SpeciesId } from "#enums/species-id";
 import type { Variant } from "#sprites/variant";
 import type { DexEntry } from "#types/dex-data";
 import type { DexAttrProps, StarterDataEntry, StarterPreferences } from "#types/save-data";
+import type { StarterSpeciesId } from "#types/starter-species-id";
 import { SortCriteria, type SortDirection } from "#ui/dropdown";
 import { applyChallenges, checkStarterValidForChallenge } from "#utils/challenge-utils";
 import { NumberHolder } from "#utils/common";
@@ -99,7 +100,7 @@ export function isSameSpeciesEggAvailable(speciesId: number, gameData = globalSc
  * @param starterId - The ID of the starter species to check
  * @returns whether the starter is valid for challenges
  */
-export function isStarterValidForChallenge(starterId: SpeciesId): boolean {
+export function isStarterValidForChallenge(starterId: StarterSpeciesId): boolean {
   const species = getPokemonSpecies(starterId);
 
   let isStarterValid = false;
@@ -291,7 +292,7 @@ export function getStarterSelectTextSettings(): StarterSelectLanguageSetting {
  * @returns StarterPreferences for the species
  */
 export function getStarterData(
-  starterId: SpeciesId,
+  starterId: StarterSpeciesId,
   applyChallenge = true,
 ): { dexEntry: DexEntry; starterDataEntry: StarterDataEntry } {
   const dexEntry = globalScene.gameData.dexData[starterId];
@@ -330,7 +331,10 @@ export function getFriendship(speciesId: SpeciesId): { currentFriendship: number
  * @param speciesId - The id of the species to get props for
  * @returns the dex props
  */
-export function getDexAttrFromPreferences(speciesId: SpeciesId, starterPreferences: StarterPreferences = {}): bigint {
+export function getDexAttrFromPreferences(
+  speciesId: StarterSpeciesId,
+  starterPreferences: StarterPreferences = {},
+): bigint {
   let props = 0n;
   const { dexEntry } = getStarterData(speciesId);
   const caughtAttr = dexEntry.caughtAttr;
@@ -386,7 +390,7 @@ export function getDexAttrFromPreferences(speciesId: SpeciesId, starterPreferenc
  * @param starterPreferences - The {@linkcode StarterPreferences | starter preferences} for the species.
  */
 export function getStarterDexAttrPropsFromPreferences(
-  starterId: SpeciesId,
+  starterId: StarterSpeciesId,
   starterPreferences: StarterPreferences = {},
 ): DexAttrProps {
   // Shiny is always default, except in fresh start
@@ -406,7 +410,10 @@ export function getStarterDexAttrPropsFromPreferences(
  * @param species - The {@linkcode PokemonSpecies} for which species details are required.
  * @param starterPreferences - The {@linkcode StarterPreferences | starter preferences} for the species.
  */
-export function getStarterDetailsFromPreferences(starterId: SpeciesId, starterPreferences: StarterPreferences = {}) {
+export function getStarterDetailsFromPreferences(
+  starterId: StarterSpeciesId,
+  starterPreferences: StarterPreferences = {},
+) {
   const props = getStarterDexAttrPropsFromPreferences(starterId, starterPreferences);
   const species = getPokemonSpecies(starterId);
   const abilityIndex =
@@ -449,20 +456,20 @@ export function getRunValueLimit(): number {
  * @param party - An array of species IDs representing the player's starter party
  * @returns The total value of the party
  */
-export function getPartyValue(party: SpeciesId[]) {
+export function getPartyValue(party: StarterSpeciesId[]) {
   return party.reduce(
-    (total: number, starterId: SpeciesId) => total + globalScene.gameData.getSpeciesStarterValue(starterId),
+    (total: number, starterId: StarterSpeciesId) => total + globalScene.gameData.getSpeciesStarterValue(starterId),
     0,
   );
 }
 
 /**
- * Sort an array of {@linkcode SpeciesId | species IDs} based on a given criteria and direction.
+ * Sort an array of {@linkcode StarterSpeciesId | species IDs} based on a given criteria and direction.
  * @param speciesIds - An array of species IDs to be sorted
  * @param sort - The criteria by which the species hould be sorted
  * @param dir - The direction in which the species should be sorted
  */
-export function sortSpecies(speciesIds: SpeciesId[], sort: SortCriteria, dir: SortDirection): void {
+export function sortStarterSpecies(speciesIds: StarterSpeciesId[], sort: SortCriteria, dir: SortDirection): void {
   speciesIds.sort((a, b) => {
     switch (sort) {
       case SortCriteria.NUMBER:
@@ -498,7 +505,7 @@ export function sortSpecies(speciesIds: SpeciesId[], sort: SortCriteria, dir: So
  * @param formIndex - The form index of the starter to get moves for
  * @returns An array of move IDs
  */
-export function getStarterMoves(starterId: SpeciesId, formIndex: number): MoveId[] {
+export function getStarterMoves(starterId: StarterSpeciesId, formIndex: number): MoveId[] {
   const starterMoves: MoveId[] = [];
   const { starterDataEntry } = getStarterData(starterId);
 
