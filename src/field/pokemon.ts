@@ -4460,6 +4460,8 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       this.abilityIndex = abilityCount - 1;
     }
 
+    this.resetTeraOnMajorFormChange();
+
     globalScene.gameData.setPokemonSeen(this, false);
     this.setScale(this.getSpriteScale());
 
@@ -5199,6 +5201,20 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (wasTerastallized) {
       this.updateSpritePipelineData();
       globalScene.triggerPokemonFormChange(this, SpeciesFormChangeLapseTeraTrigger);
+    }
+  }
+
+  /**
+   * End this Pokémon's Terastallization if it has just changed into a Mega, Primal,
+   * Gigantamax, or Eternamax form, as these forms are incompatible with Terastallization.
+   *
+   * @remarks
+   * Must be called *after* {@linkcode formIndex} has been updated so that
+   * {@linkcode isMega} and {@linkcode isMax} reflect the new form.
+   */
+  protected resetTeraOnMajorFormChange(): void {
+    if (this.isTerastallized && (this.isMega() || this.isMax())) {
+      this.resetTera();
     }
   }
 
@@ -6208,6 +6224,8 @@ export class PlayerPokemon extends Pokemon {
         // Shouldn't happen
         this.abilityIndex = abilityCount - 1;
       }
+
+      this.resetTeraOnMajorFormChange();
 
       const updateAndResolve = () => {
         this.loadAssets().then(() => {
