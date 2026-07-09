@@ -297,7 +297,7 @@ export const tmPoolTiers: TmPoolTiers = {
   [MoveId.EXPANDING_FORCE]: ModifierTier.GREAT,
   [MoveId.STEEL_ROLLER]: ModifierTier.GREAT,
   [MoveId.SCALE_SHOT]: ModifierTier.ULTRA,
-  [MoveId.METEOR_BEAM]: ModifierTier.GREAT,
+  [MoveId.METEOR_BEAM]: ModifierTier.ULTRA,
   [MoveId.MISTY_EXPLOSION]: ModifierTier.GREAT,
   [MoveId.GRASSY_GLIDE]: ModifierTier.COMMON,
   [MoveId.RISING_VOLTAGE]: ModifierTier.GREAT,
