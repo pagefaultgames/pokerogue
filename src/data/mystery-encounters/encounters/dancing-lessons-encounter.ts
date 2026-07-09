@@ -45,6 +45,7 @@ import i18next from "i18next";
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/dancingLessons";
 
+// TODO: Put all in Meadow as their third biome, random between forms, currently just goes to Baile every time if done
 // Fire form
 const BAILE_STYLE_BIOMES: readonly BiomeId[] = [BiomeId.TEMPLE, BiomeId.TALL_GRASS];
 

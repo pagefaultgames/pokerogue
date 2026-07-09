@@ -187,7 +187,7 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
       yShadow: -2,
     },
     {
-      spriteKey: "bug_type_superfan",
+      spriteKey: "bug_type_superfan", //Quinn
       fileRoot: "trainer",
       hasShadow: true,
       x: -20,
