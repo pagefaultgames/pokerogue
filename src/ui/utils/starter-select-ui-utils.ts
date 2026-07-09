@@ -1,15 +1,12 @@
 import { VALUE_REDUCTION_MAX } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { speciesEggMoves } from "#balance/egg-moves";
-import { pokemonStarters } from "#balance/pokemon-evolutions";
-import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#balance/pokemon-level-moves";
 import {
   getPassiveCandyCount,
   getSameSpeciesEggCandyCounts,
   getStarterValueFriendshipCap,
   getValueReductionCandyCounts,
-  type StarterSpeciesId,
-  speciesStarterCosts,
 } from "#balance/starters";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { ChallengeType } from "#enums/challenge-type";
@@ -22,11 +19,11 @@ import type { PokemonType } from "#enums/pokemon-type";
 import type { SpeciesId } from "#enums/species-id";
 import type { Variant } from "#sprites/variant";
 import type { DexEntry } from "#types/dex-data";
-import type { LevelMoves } from "#types/pokemon-level-moves";
 import type { DexAttrProps, StarterDataEntry, StarterPreferences } from "#types/save-data";
 import { SortCriteria, type SortDirection } from "#ui/dropdown";
 import { applyChallenges, checkStarterValidForChallenge } from "#utils/challenge-utils";
 import { NumberHolder } from "#utils/common";
+import { deepCopy } from "#utils/data";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
@@ -49,13 +46,6 @@ export interface CanCycle {
   tera?: boolean | undefined;
 }
 
-export function getStarterSpeciesId(speciesId: number): number {
-  if (speciesStarterCosts.hasOwnProperty(speciesId)) {
-    return speciesId;
-  }
-  return pokemonStarters[speciesId];
-}
-
 /**
  * Determines if a passive upgrade is available for the given species ID
  * @param speciesId - The ID of the species to check the passive of
@@ -64,11 +54,11 @@ export function getStarterSpeciesId(speciesId: number): number {
  */
 export function isPassiveAvailable(speciesId: number, gameData = globalScene.gameData): boolean {
   // Get this species ID's starter data
-  const starterId = getStarterSpeciesId(speciesId);
+  const starterId = speciesDataRegistry.getStarter(speciesId);
   const starterData = gameData.starterData[starterId];
 
   return (
-    starterData.candyCount >= getPassiveCandyCount(speciesStarterCosts[starterId])
+    starterData.candyCount >= getPassiveCandyCount(speciesDataRegistry.getStarterCost(starterId))
     && !(starterData.passiveAttr & Passive.UNLOCKED)
   );
 }
@@ -80,11 +70,12 @@ export function isPassiveAvailable(speciesId: number, gameData = globalScene.gam
  * @returns true if the user has enough candies and all value reductions have not been unlocked already
  */
 export function isValueReductionAvailable(speciesId: number, gameData = globalScene.gameData): boolean {
-  const starterId = getStarterSpeciesId(speciesId);
+  const starterId = speciesDataRegistry.getStarter(speciesId);
   const starterData = gameData.starterData[starterId];
 
   return (
-    starterData.candyCount >= getValueReductionCandyCounts(speciesStarterCosts[starterId])[starterData.valueReduction]
+    starterData.candyCount
+      >= getValueReductionCandyCounts(speciesDataRegistry.getStarterCost(starterId))[starterData.valueReduction]
     && starterData.valueReduction < VALUE_REDUCTION_MAX
   );
 }
@@ -96,11 +87,11 @@ export function isValueReductionAvailable(speciesId: number, gameData = globalSc
  * @returns true if the user has enough candies
  */
 export function isSameSpeciesEggAvailable(speciesId: number, gameData = globalScene.gameData): boolean {
-  const starterId = getStarterSpeciesId(speciesId);
+  const starterId = speciesDataRegistry.getStarter(speciesId);
   const hatchCount = gameData.dexData[starterId].hatchedCount;
   return (
     gameData.starterData[starterId].candyCount
-    >= getSameSpeciesEggCandyCounts(speciesStarterCosts[starterId], hatchCount)
+    >= getSameSpeciesEggCandyCounts(speciesDataRegistry.getStarterCost(starterId), hatchCount)
   );
 }
 
@@ -109,7 +100,7 @@ export function isSameSpeciesEggAvailable(speciesId: number, gameData = globalSc
  * @param starterId - The ID of the starter species to check
  * @returns whether the starter is valid for challenges
  */
-export function isStarterValidForChallenge(starterId: StarterSpeciesId): boolean {
+export function isStarterValidForChallenge(starterId: SpeciesId): boolean {
   const species = getPokemonSpecies(starterId);
 
   let isStarterValid = false;
@@ -175,16 +166,16 @@ const languageSettings: { [key: string]: StarterSelectLanguageSetting } = {
     starterInfoXPos: 35,
   },
   "es-ES": {
-    starterInfoTextSize: "50px",
+    starterInfoTextSize: "52px",
     instructionTextSize: "28px",
     starterInfoYOffset: 0.5,
-    starterInfoXPos: 38,
+    starterInfoXPos: 39,
   },
   "es-419": {
     starterInfoTextSize: "50px",
     instructionTextSize: "28px",
     starterInfoYOffset: 0.5,
-    starterInfoXPos: 38,
+    starterInfoXPos: 37,
   },
   fr: {
     starterInfoTextSize: "54px",
@@ -195,10 +186,9 @@ const languageSettings: { [key: string]: StarterSelectLanguageSetting } = {
     instructionTextSize: "28px",
   },
   "pt-BR": {
-    starterInfoTextSize: "48px",
-    instructionTextSize: "32px",
-    starterInfoYOffset: 0.5,
-    starterInfoXPos: 33,
+    starterInfoTextSize: "54px",
+    instructionTextSize: "28px",
+    starterInfoXPos: 37,
   },
   zh: {
     starterInfoTextSize: "56px",
@@ -244,9 +234,10 @@ const languageSettings: { [key: string]: StarterSelectLanguageSetting } = {
     instructionTextSize: "28px",
     starterInfoXPos: 34,
   },
-  ro: {
-    starterInfoTextSize: "56px",
+  pl: {
+    starterInfoTextSize: "48px",
     instructionTextSize: "28px",
+    starterInfoYOffset: 0.5,
   },
   ru: {
     starterInfoTextSize: "46px",
@@ -262,7 +253,7 @@ const languageSettings: { [key: string]: StarterSelectLanguageSetting } = {
   },
   id: {
     starterInfoTextSize: "48px",
-    instructionTextSize: "32px",
+    instructionTextSize: "28px",
     starterInfoYOffset: 0.5,
     starterInfoXPos: 37,
   },
@@ -270,11 +261,13 @@ const languageSettings: { [key: string]: StarterSelectLanguageSetting } = {
     starterInfoTextSize: "56px",
     instructionTextSize: "28px",
   },
-  tl: {
-    starterInfoTextSize: "56px",
+  vi: {
+    starterInfoTextSize: "50px",
     instructionTextSize: "28px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 34,
   },
-  "nb-NO": {
+  tl: {
     starterInfoTextSize: "56px",
     instructionTextSize: "28px",
   },
@@ -299,7 +292,7 @@ export function getStarterSelectTextSettings(): StarterSelectLanguageSetting {
  * @returns StarterPreferences for the species
  */
 export function getStarterData(
-  starterId: StarterSpeciesId,
+  starterId: SpeciesId,
   applyChallenge = true,
 ): { dexEntry: DexEntry; starterDataEntry: StarterDataEntry } {
   const dexEntry = globalScene.gameData.dexData[starterId];
@@ -325,7 +318,7 @@ export function getFriendship(speciesId: SpeciesId): { currentFriendship: number
     currentFriendship = 0;
   }
 
-  const friendshipCap = getStarterValueFriendshipCap(speciesStarterCosts[speciesId]);
+  const friendshipCap = getStarterValueFriendshipCap(speciesDataRegistry.getStarterCost(speciesId));
 
   return { currentFriendship, friendshipCap };
 }
@@ -337,10 +330,7 @@ export function getFriendship(speciesId: SpeciesId): { currentFriendship: number
  * @param speciesId - The id of the species to get props for
  * @returns the dex props
  */
-export function getDexAttrFromPreferences(
-  speciesId: StarterSpeciesId,
-  starterPreferences: StarterPreferences = {},
-): bigint {
+export function getDexAttrFromPreferences(speciesId: SpeciesId, starterPreferences: StarterPreferences = {}): bigint {
   let props = 0n;
   const { dexEntry } = getStarterData(speciesId);
   const caughtAttr = dexEntry.caughtAttr;
@@ -396,15 +386,15 @@ export function getDexAttrFromPreferences(
  * @param starterPreferences - The {@linkcode StarterPreferences | starter preferences} for the species.
  */
 export function getStarterDexAttrPropsFromPreferences(
-  starterId: StarterSpeciesId,
+  starterId: SpeciesId,
   starterPreferences: StarterPreferences = {},
 ): DexAttrProps {
   // Shiny is always default, except in fresh start
   const shinyIsDefault = !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
   const defaults = globalScene.gameData.getSpeciesDefaultDexAttrProps(starterId, shinyIsDefault);
   return {
-    shiny: starterPreferences.shiny != null ? starterPreferences.shiny : defaults.shiny,
-    variant: starterPreferences.variant != null ? (starterPreferences.variant as Variant) : defaults.variant,
+    shiny: starterPreferences.shiny == null ? defaults.shiny : starterPreferences.shiny,
+    variant: starterPreferences.variant == null ? defaults.variant : (starterPreferences.variant as Variant),
     female: starterPreferences.female ?? defaults.female,
     formIndex: starterPreferences.formIndex ?? defaults.formIndex,
   };
@@ -416,10 +406,7 @@ export function getStarterDexAttrPropsFromPreferences(
  * @param species - The {@linkcode PokemonSpecies} for which species details are required.
  * @param starterPreferences - The {@linkcode StarterPreferences | starter preferences} for the species.
  */
-export function getStarterDetailsFromPreferences(
-  starterId: StarterSpeciesId,
-  starterPreferences: StarterPreferences = {},
-) {
+export function getStarterDetailsFromPreferences(starterId: SpeciesId, starterPreferences: StarterPreferences = {}) {
   const props = getStarterDexAttrPropsFromPreferences(starterId, starterPreferences);
   const species = getPokemonSpecies(starterId);
   const abilityIndex =
@@ -462,9 +449,9 @@ export function getRunValueLimit(): number {
  * @param party - An array of species IDs representing the player's starter party
  * @returns The total value of the party
  */
-export function getPartyValue(party: StarterSpeciesId[]) {
+export function getPartyValue(party: SpeciesId[]) {
   return party.reduce(
-    (total: number, starterId: StarterSpeciesId) => total + globalScene.gameData.getSpeciesStarterValue(starterId),
+    (total: number, starterId: SpeciesId) => total + globalScene.gameData.getSpeciesStarterValue(starterId),
     0,
   );
 }
@@ -511,22 +498,17 @@ export function sortSpecies(speciesIds: SpeciesId[], sort: SortCriteria, dir: So
  * @param formIndex - The form index of the starter to get moves for
  * @returns An array of move IDs
  */
-export function getStarterMoves(starterId: StarterSpeciesId, formIndex: number): MoveId[] {
+export function getStarterMoves(starterId: SpeciesId, formIndex: number): MoveId[] {
   const starterMoves: MoveId[] = [];
   const { starterDataEntry } = getStarterData(starterId);
 
-  let levelMoves: LevelMoves;
-  if (
-    pokemonFormLevelMoves.hasOwnProperty(starterId)
-    && formIndex
-    && pokemonFormLevelMoves[starterId].hasOwnProperty(formIndex)
-  ) {
-    levelMoves = pokemonFormLevelMoves[starterId][formIndex];
-  } else {
-    levelMoves = pokemonSpeciesLevelMoves[starterId];
+  const levelMoves = speciesDataRegistry.getLevelMoves(starterId, formIndex);
+  for (const [level, moveId] of levelMoves) {
+    if (level > 0 && level <= 5) {
+      starterMoves.push(moveId);
+    }
   }
-  starterMoves.push(...levelMoves.filter(lm => lm[0] > 0 && lm[0] <= 5).map(lm => lm[1]));
-  if (speciesEggMoves.hasOwnProperty(starterId)) {
+  if (Object.hasOwn(speciesEggMoves, starterId)) {
     for (let em = 0; em < 4; em++) {
       if (starterDataEntry.eggMoves & (1 << em)) {
         starterMoves.push(speciesEggMoves[starterId][em]);

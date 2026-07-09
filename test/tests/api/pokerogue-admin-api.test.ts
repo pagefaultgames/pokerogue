@@ -1,14 +1,14 @@
-import { PokerogueAdminApi } from "#api/pokerogue-admin-api";
+import { PokerogueAdminApi } from "#api/admin-api";
 import { initServerForApiTests } from "#test/setup/test-file-initialization";
 import { getApiBaseUrl } from "#test/utils/test-utils";
 import type { DiscordRequest, GoogleRequest, SearchAccountRequest, SearchAccountResponse } from "#types/api";
 import { HttpResponse, http } from "msw";
-import type { SetupServerApi } from "msw/node";
+import type { SetupServer } from "msw/node";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const apiBase = getApiBaseUrl();
 const adminApi = new PokerogueAdminApi(apiBase);
-let server: SetupServerApi;
+let server: SetupServer;
 
 beforeAll(async () => {
   server = await initServerForApiTests();

@@ -1,5 +1,5 @@
 import type { BattleScene } from "#app/battle-scene";
-import { speciesStarterCosts } from "#balance/starters";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
@@ -217,7 +217,7 @@ describe("Mystery Encounter Utils", () => {
       const pokeSpecies = getPokemonSpecies(result);
 
       expect(pokeSpecies.speciesId).toBe(result);
-      expect(speciesStarterCosts[result]).toBe(5);
+      expect(speciesDataRegistry.getStarterCost(result)).toBe(5);
     });
 
     it("gets species for a starter tier range", () => {
@@ -225,31 +225,33 @@ describe("Mystery Encounter Utils", () => {
       const pokeSpecies = getPokemonSpecies(result);
 
       expect(pokeSpecies.speciesId).toBe(result);
-      expect(speciesStarterCosts[result]).toBeGreaterThanOrEqual(5);
-      expect(speciesStarterCosts[result]).toBeLessThanOrEqual(8);
+      expect(speciesDataRegistry.getStarterCost(result)).toBeGreaterThanOrEqual(5);
+      expect(speciesDataRegistry.getStarterCost(result)).toBeLessThanOrEqual(8);
     });
 
     it("excludes species from search", () => {
-      // Only 9 tiers are: Kyogre, Groudon, Rayquaza, Arceus, Zacian, Koraidon, Miraidon, Terapagos
+      // Only 9 tiers are: Kyogre, Groudon, Rayquaza, Arceus, Zygarde, Zacian, Zamazenta, Koraidon, Miraidon, Terapagos
       const result = getRandomSpeciesByStarterCost(9, [
         SpeciesId.KYOGRE,
         SpeciesId.GROUDON,
         SpeciesId.RAYQUAZA,
         SpeciesId.ARCEUS,
+        SpeciesId.ZYGARDE,
         SpeciesId.KORAIDON,
         SpeciesId.MIRAIDON,
         SpeciesId.TERAPAGOS,
+        SpeciesId.ZACIAN,
       ]);
       const pokeSpecies = getPokemonSpecies(result);
-      expect(pokeSpecies.speciesId).toBe(SpeciesId.ZACIAN);
+      expect(pokeSpecies.speciesId).toBe(SpeciesId.ZAMAZENTA);
     });
 
     it("gets species of specified types", () => {
-      // Only 9 tiers are: Kyogre, Groudon, Rayquaza, Arceus, Zacian, Koraidon, Miraidon, Terapagos
+      // Only 9 tiers are: Kyogre, Groudon, Rayquaza, Arceus, Zygarde, Zacian, Zamazenta, Koraidon, Miraidon, Terapagos
       // TODO: This has to be changed
-      const result = getRandomSpeciesByStarterCost(9, undefined, [PokemonType.GROUND]);
+      const result = getRandomSpeciesByStarterCost(9, undefined, [PokemonType.WATER]);
       const pokeSpecies = getPokemonSpecies(result);
-      expect(pokeSpecies.speciesId).toBe(SpeciesId.GROUDON);
+      expect(pokeSpecies.speciesId).toBe(SpeciesId.KYOGRE);
     });
   });
 

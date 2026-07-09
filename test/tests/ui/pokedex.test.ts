@@ -1,4 +1,5 @@
-import { allAbilities, allSpecies } from "#data/data-lists";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
+import { allAbilities } from "#data/data-lists";
 import type { PokemonForm, PokemonSpecies } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
 import { Button } from "#enums/buttons";
@@ -11,7 +12,6 @@ import type { StarterPreferences } from "#types/save-data";
 import { FilterTextRow } from "#ui/filter-text";
 import { PokedexPageUiHandler } from "#ui/pokedex-page-ui-handler";
 import { PokedexUiHandler } from "#ui/pokedex-ui-handler";
-import { getStarterSpeciesId } from "#ui/starter-select-ui-utils";
 import { getPokemonSpecies } from "#utils/pokemon-utils";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -103,7 +103,7 @@ describe("UI - Pokedex", () => {
    */
   function getSpeciesWithAbility(ability: AbilityId): Set<SpeciesId> {
     const speciesSet = new Set<SpeciesId>();
-    for (const pkmn of allSpecies) {
+    for (const pkmn of speciesDataRegistry.getAllSpecies()) {
       if (
         [pkmn.ability1, pkmn.ability2, pkmn.getPassiveAbility(), pkmn.abilityHidden].includes(ability)
         || pkmn.forms.some(form =>
@@ -127,7 +127,7 @@ describe("UI - Pokedex", () => {
     const tySet = new Set<PokemonType>(types);
 
     // get the pokemon and its forms
-    outer: for (const pkmn of allSpecies) {
+    outer: for (const pkmn of speciesDataRegistry.getAllSpecies()) {
       // @ts-expect-error We know that type2 might be null.
       if (tySet.has(pkmn.type1) || tySet.has(pkmn.type2)) {
         speciesSet.add(pkmn.speciesId);
@@ -187,7 +187,8 @@ describe("UI - Pokedex", () => {
     }
   }
 
-  // #endregion
+  // #endregion Helper Functions
+
   // #region Filter Tests
 
   it("should filter to show only the pokemon with an ability when filtering by ability", async () => {
@@ -310,7 +311,7 @@ describe("UI - Pokedex", () => {
     ]);
     expect(
       pokedexHandler["filteredPokemonData"].every(pokemon =>
-        expectedPokemon.has(getStarterSpeciesId(pokemon.species.speciesId)),
+        expectedPokemon.has(speciesDataRegistry.getStarter(pokemon.species.speciesId)),
       ),
     ).toBe(true);
   });
@@ -325,7 +326,7 @@ describe("UI - Pokedex", () => {
 
     expect(
       pokedexHandler["filteredPokemonData"].every(
-        pokemon => getStarterSpeciesId(pokemon.species.speciesId) === SpeciesId.MUDKIP,
+        pokemon => speciesDataRegistry.getStarter(pokemon.species.speciesId) === SpeciesId.MUDKIP,
       ),
     ).toBe(true);
   });
@@ -351,7 +352,7 @@ describe("UI - Pokedex", () => {
 
     expect(
       pokedexHandler["filteredPokemonData"].every(pokemon =>
-        expectedPokemon.has(getStarterSpeciesId(pokemon.species.speciesId)),
+        expectedPokemon.has(speciesDataRegistry.getStarter(pokemon.species.speciesId)),
       ),
     ).toBe(true);
   });
@@ -368,7 +369,7 @@ describe("UI - Pokedex", () => {
 
     expect(
       pokedexHandler["filteredPokemonData"].every(pokemon =>
-        expectedPokemon.has(getStarterSpeciesId(pokemon.species.speciesId)),
+        expectedPokemon.has(speciesDataRegistry.getStarter(pokemon.species.speciesId)),
       ),
     ).toBe(true);
   });
@@ -386,7 +387,7 @@ describe("UI - Pokedex", () => {
 
     expect(
       pokedexHandler["filteredPokemonData"].every(pokemon =>
-        expectedPokemon.has(getStarterSpeciesId(pokemon.species.speciesId)),
+        expectedPokemon.has(speciesDataRegistry.getStarter(pokemon.species.speciesId)),
       ),
     ).toBe(true);
   });
@@ -403,7 +404,7 @@ describe("UI - Pokedex", () => {
 
     expect(
       pokedexHandler["filteredPokemonData"].every(
-        pokemon => getStarterSpeciesId(pokemon.species.speciesId) === SpeciesId.TREECKO,
+        pokemon => speciesDataRegistry.getStarter(pokemon.species.speciesId) === SpeciesId.TREECKO,
       ),
     ).toBe(true);
   });
@@ -445,7 +446,8 @@ describe("UI - Pokedex", () => {
     expect(filteredPokemon, "not shiny").not.toContain(SpeciesId.EKANS);
   });
 
-  // #endregion
+  // #endregion Filter Tests
+
   // #region UI Input Tests
 
   // TODO: fix cursor wrapping
@@ -471,7 +473,8 @@ describe("UI - Pokedex", () => {
     expect(selectedPokemon).toEqual(pokedexHandler["lastSpeciesId"].speciesId);
   });
 
-  // #endregion
+  // #endregion UI Input Tests
+
   // #region Pokedex Pages Tests
 
   it("should show caught battle form as caught", async () => {
@@ -499,5 +502,5 @@ describe("UI - Pokedex", () => {
     expect(pageHandler["isSeen"]()).toEqual(true);
   });
 
-  // #endregion
+  // #endregion Pokedex Pages Tests
 });

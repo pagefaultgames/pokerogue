@@ -98,6 +98,10 @@ export const languageOptions = [
     handler: () => changeLocaleHandler("uk"),
   },
   {
+    label: "Polski (Needs Help)",
+    handler: () => changeLocaleHandler("pl"),
+  },
+  {
     label: "Bahasa Indonesia (Needs Help)",
     handler: () => changeLocaleHandler("id"),
   },
@@ -106,20 +110,16 @@ export const languageOptions = [
     handler: () => changeLocaleHandler("hi"),
   },
   {
+    label: "Tiếng Việt",
+    handler: () => changeLocaleHandler("vi"),
+  },
+  {
     label: "Dansk (Needs Help)",
     handler: () => changeLocaleHandler("da"),
   },
   {
-    label: "Norsk bokmål (Needs Help)",
-    handler: () => changeLocaleHandler("nb-NO"),
-  },
-  {
     label: "Svenska",
     handler: () => changeLocaleHandler("sv"),
-  },
-  {
-    label: "Română (Needs Help)",
-    handler: () => changeLocaleHandler("ro"),
   },
   {
     label: "Tagalog (Needs Help)",

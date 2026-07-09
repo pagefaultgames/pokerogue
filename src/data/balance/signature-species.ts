@@ -46,7 +46,7 @@ export const signatureSpecies: SignatureSpecies = new Proxy({
   LIZA: [SpeciesId.LUNATONE, SpeciesId.BALTOY, SpeciesId.SPOINK, SpeciesId.GARDEVOIR],
   JUAN: [SpeciesId.HORSEA, SpeciesId.SPHEAL, SpeciesId.BARBOACH, SpeciesId.CORPHISH],
   // Gym Leaders- Sinnoh
-  ROARK: [SpeciesId.CRANIDOS, SpeciesId.GEODUDE, SpeciesId.NOSEPASS, SpeciesId.LARVITAR],
+  ROARK: [SpeciesId.CRANIDOS, SpeciesId.GEODUDE, SpeciesId.NOSEPASS, SpeciesId.ROLYCOLY],
   GARDENIA: [SpeciesId.BUDEW, SpeciesId.CHERUBI, SpeciesId.TURTWIG, SpeciesId.LEAFEON],
   MAYLENE: [SpeciesId.RIOLU, SpeciesId.MEDITITE, SpeciesId.CHIMCHAR, SpeciesId.CROAGUNK],
   CRASHER_WAKE: [SpeciesId.BUIZEL, SpeciesId.WOOPER, SpeciesId.PIPLUP, SpeciesId.MAGIKARP],

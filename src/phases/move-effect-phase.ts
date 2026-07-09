@@ -4,11 +4,11 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { ConditionalProtectTag } from "#data/arena-tag";
 import { MoveAnim } from "#data/battle-anims";
-import { DamageProtectedTag, ProtectedTag, SemiInvulnerableTag, SubstituteTag, TypeBoostTag } from "#data/battler-tags";
+import { ProtectedTag, SemiInvulnerableTag, SubstituteTag, TypeBoostTag } from "#data/battler-tags";
 import { SpeciesFormChangePostMoveTrigger } from "#data/form-change-triggers";
 import type { TypeDamageMultiplier } from "#data/type";
 import { ArenaTagSide } from "#enums/arena-tag-side";
-import { BattlerIndex } from "#enums/battler-index";
+import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { HitCheckResult } from "#enums/hit-check-result";
@@ -177,14 +177,15 @@ export class MoveEffectPhase extends PokemonPhase {
       this.moveHistoryEntry.result === MoveResult.SUCCESS
       || move.getAttrs("MoveEffectAttr").some(attr => attr.trigger === MoveEffectTrigger.POST_TARGET)
     ) {
-      const targetsForAnimation = this.getTargets();
+      const moveTargets = this.getTargets();
+      const targetsForAnimation = moveTargets.length > 0 ? moveTargets : [user];
       let animationsLeft = targetsForAnimation.length;
 
       for (const target of targetsForAnimation) {
         new MoveAnim(
           move.id as MoveId,
           user,
-          target?.getBattlerIndex() ?? BattlerIndex.ATTACKER,
+          target.getBattlerIndex(),
           // Some moves used in mystery encounters should be played even on an empty field
           globalScene.currentBattle?.mysteryEncounter?.hasBattleAnimationsWithoutTargets ?? false,
         ).play(move.hitsSubstitute(user, target), () => {
@@ -514,15 +515,15 @@ export class MoveEffectPhase extends PokemonPhase {
       );
     }
 
+    const protectionTags = target.findTags(t => t instanceof ProtectedTag);
+    const isStatusMove = this.move.category === MoveCategory.STATUS;
+
     // TODO: Break up this chunky boolean to make it more palatable
     return (
       ![MoveTarget.ENEMY_SIDE, MoveTarget.BOTH_SIDES].includes(this.move.moveTarget)
       && (bypassIgnoreProtect.value || !this.move.doesFlagEffectApply({ flag: MoveFlags.IGNORE_PROTECT, user, target }))
       && (hasConditionalProtectApplied.value
-        || (target.findTags(t => t instanceof DamageProtectedTag).length === 0
-          && target.findTags(t => t instanceof ProtectedTag).some(t => target.lapseTag(t.tagType)))
-        || (this.move.category !== MoveCategory.STATUS
-          && target.findTags(t => t instanceof DamageProtectedTag).some(t => target.lapseTag(t.tagType))))
+        || protectionTags.some(t => (!isStatusMove || t.blockStatus) && target.lapseTag(t.tagType)))
     );
   }
 
@@ -628,6 +629,11 @@ export class MoveEffectPhase extends PokemonPhase {
    * @returns A {@linkcode MoveDamageTuple} containing the results of damage application.
    */
   protected applyMoveDamage(user: Pokemon, target: Pokemon, effectiveness: TypeDamageMultiplier): MoveDamageTuple {
+    // TODO: make sure this doesn't break anything, possibly find better solution
+    if (this.move.hasAttr("HealOnAllyAttr") && target === user.getAlly()) {
+      return [HitCheckResult.HIT, 0, false];
+    }
+
     const isCritical = target.getCriticalHitResult(user, this.move);
 
     /*
@@ -701,7 +707,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
     user.turnData.totalDamageDealt += finalDmg;
     user.turnData.singleHitDamageDealt = finalDmg;
-    target.battleData.hitCount++;
+    target.summonData.hitCount++;
     target.turnData.damageTaken += finalDmg;
 
     target.turnData.attacksReceived.unshift({
@@ -728,11 +734,17 @@ export class MoveEffectPhase extends PokemonPhase {
   protected queueHitResultMessage(result: HitResult) {
     let msg: string | undefined;
     switch (result) {
+      case HitResult.EXTREMELY_EFFECTIVE:
+        msg = i18next.t("battle:hitResultExtremelyEffective");
+        break;
       case HitResult.SUPER_EFFECTIVE:
         msg = i18next.t("battle:hitResultSuperEffective");
         break;
       case HitResult.NOT_VERY_EFFECTIVE:
         msg = i18next.t("battle:hitResultNotVeryEffective");
+        break;
+      case HitResult.MOSTLY_INEFFECTIVE:
+        msg = i18next.t("battle:hitResultMostlyIneffective");
         break;
       case HitResult.ONE_HIT_KO:
         msg = i18next.t("battle:hitResultOneHitKo");
@@ -781,8 +793,10 @@ export class MoveEffectPhase extends PokemonPhase {
     /** Does {@linkcode hitResult} indicate that damage was dealt to the target? */
     const dealsDamage = [
       HitResult.EFFECTIVE,
+      HitResult.EXTREMELY_EFFECTIVE,
       HitResult.SUPER_EFFECTIVE,
       HitResult.NOT_VERY_EFFECTIVE,
+      HitResult.MOSTLY_INEFFECTIVE,
       HitResult.ONE_HIT_KO,
     ].includes(hitResult);
 
@@ -964,7 +978,7 @@ export class MoveEffectPhase extends PokemonPhase {
     }
   }
 
-  // # endregion Helpers
+  // #endregion Helpers
 }
 
 /**

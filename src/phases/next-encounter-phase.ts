@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { EncounterPhase } from "#phases/encounter-phase";
 
@@ -6,13 +7,10 @@ import { EncounterPhase } from "#phases/encounter-phase";
  * Handles generating, loading and preparing for it.
  */
 export class NextEncounterPhase extends EncounterPhase {
-  public readonly phaseName: "NextEncounterPhase" | "NewBiomeEncounterPhase" = "NextEncounterPhase";
-  start() {
-    super.start();
-  }
+  public readonly phaseName = "NextEncounterPhase";
 
-  doEncounter(): void {
-    globalScene.playBgm(undefined, true);
+  protected override doEncounter(): void {
+    audioManager.playBgm(undefined, true);
 
     // Reset all player transient wave data/intel before starting a new wild encounter.
     // We exclusively reset wave data here as wild waves are considered one continuous "battle"
@@ -71,7 +69,9 @@ export class NextEncounterPhase extends EncounterPhase {
           globalScene.lastMysteryEncounter!.introVisuals = undefined;
         }
 
-        if (!this.tryOverrideForBattleSpec()) {
+        if (globalScene.currentBattle.isClassicFinalBoss) {
+          this.displayFinalBossDialogue();
+        } else {
           this.doEncounterCommon();
         }
       },

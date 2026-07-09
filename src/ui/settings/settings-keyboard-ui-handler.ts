@@ -12,7 +12,7 @@ import {
   settingKeyboardOptions,
 } from "#system/settings-keyboard";
 import type { InterfaceConfig } from "#types/configs/inputs";
-import { AbstractControlSettingsUiHandler } from "#ui/abstract-control-settings-ui-handler";
+import { BaseControlSettingsUiHandler } from "#ui/base-control-settings-ui-handler";
 import { NavigationManager } from "#ui/navigation-menu";
 import { addTextObject } from "#ui/text";
 import { truncateString } from "#utils/common";
@@ -20,7 +20,7 @@ import { toUpperSnakeCase } from "#utils/strings";
 import i18next from "i18next";
 
 /** Class representing the settings UI handler for keyboards */
-export class SettingsKeyboardUiHandler extends AbstractControlSettingsUiHandler {
+export class SettingsKeyboardUiHandler extends BaseControlSettingsUiHandler {
   /**
    * Creates an instance of SettingsKeyboardUiHandler.
    *
@@ -143,13 +143,13 @@ export class SettingsKeyboardUiHandler extends AbstractControlSettingsUiHandler 
       // Check if the current setting corresponds to the layout setting.
       if (setting === this.setting.Default_Layout) {
         // Iterate over all layouts excluding the 'noGamepads' special case.
-        for (const _key of Object.keys(this.layout)) {
-          if (_key === "noKeyboard") {
+        for (const layoutKey of this.layout.keys()) {
+          if (layoutKey === "noKeyboard") {
             continue;
           } // Skip updating the no gamepad layout.
           // Update the text of the first option label under the current setting to the name of the chosen gamepad,
           // truncating the name to 30 characters if necessary.
-          this.layout[_key].optionValueLabels[index][0].setText(
+          this.layout[layoutKey].optionValueLabels[index][0].setText(
             truncateString(globalScene.inputController.selectedDevice[Device.KEYBOARD], 22),
           );
         }

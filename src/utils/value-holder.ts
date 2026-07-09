@@ -53,7 +53,6 @@ export class ValueHolder<Value, Base extends Primitive = Primitive> {
    * @sealed
    */
   constructor(value: Value, ...MISMATCH: RestrictParamNoExtend<Value, Base>);
-  // biome-ignore lint/nursery/noShadow: bug in biome with constructor overloads
   constructor(value: Value) {
     this.value = value as Value & Base;
   }
@@ -68,6 +67,6 @@ export class NumberHolder<T = number> extends ValueHolder<T, number> {}
 /**
  * An alias for a boolean-only {@linkcode ValueHolder}.
  * @deprecated
- * New code should prefer using `ValueHolder` instead - this is kept for compatibility
+ * New code should prefer using `ValueHolder` instead - this is kept for compatibility reasons
  */
 export class BooleanHolder<T = boolean> extends ValueHolder<T, boolean> {}

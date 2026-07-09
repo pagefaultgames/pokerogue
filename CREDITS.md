@@ -1,20 +1,19 @@
 <!--
-SPDX-FileCopyrightText: 2024-2025 Pagefault Games
+SPDX-FileCopyrightText: 2024-2026 Pagefault Games
 
 SPDX-License-Identifier: CC-BY-NC-SA-4.0
 -->
 
 # 🎨 Art and 🎵 Music
 
-## Head of Art
-- Firel
+## Head Artist
+- “Splash Damage” splashceles
 
 ## Team Members
 
 ### Senior Artist
 - damocleas
 - “Hanniel” hanniel.15
-- “Splash Damage” splashceles
 
 ### Artist
 - bwl626
@@ -31,9 +30,15 @@ SPDX-License-Identifier: CC-BY-NC-SA-4.0
 - “Togepi” togepimax
 - unicorn_power
 
+## Head Composer
+- Firel
+
+## Team Members
+
 ### Composers
 - Andr06
 - “Big” bird_obsession
+- MattCello
 - Leavannite
 - Lmz
 - unveiler
@@ -762,5 +767,5 @@ In addition to the lists below, please check [the PokéRogue wiki](https://wiki.
 ## External Tools
 - Sandstorm (Creator of "PokéRogue SearchDex")
 - Admiral-Billy (Offline App - Desktop)
-- Red (aka StonedModder) (iOS App)
+- Red (aka StonedModder) (former creator of an unofficial iOS App)
 - Ydarissep (Creator of the now defunct "Yda's Dex")

@@ -1,11 +1,9 @@
 import type { Ability } from "#abilities/ability";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { starterColors } from "#app/global-vars/starter-colors";
 import { speciesEggMoves } from "#balance/egg-moves";
-import { pokemonPrevolutions } from "#balance/pokemon-evolutions";
-import type { StarterSpeciesId } from "#balance/starters";
 import { allAbilities, allMoves } from "#data/data-lists";
-import { getEggTierForSpecies } from "#data/egg";
 import { GrowthRate, getGrowthRateColor } from "#data/exp";
 import { Gender, getGenderColor, getGenderSymbol } from "#data/gender";
 import { getNatureName } from "#data/nature";
@@ -29,10 +27,10 @@ import {
 } from "#ui/starter-select-ui-utils";
 import { StatsContainer } from "#ui/stats-container";
 import { addBBCodeTextObject, addTextObject, getTextColor, updateCandyCountTextStyle } from "#ui/text";
-import { BooleanHolder, getLocalizedSpriteKey, padInt, rgbHexToRgba, truncateString } from "#utils/common";
+import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
+import { BooleanHolder, getLocalizedSpriteKey, padInt, truncateString } from "#utils/common";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
-import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
@@ -100,7 +98,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
   /** Container for everything that's a preference (abilities, nature, form...) */
   private readonly pokemonPreferencesContainer: GameObjects.Container;
 
-  private speciesId: StarterSpeciesId;
+  private speciesId: SpeciesId;
 
   constructor(x: number, y: number) {
     super(globalScene, x, y);
@@ -116,7 +114,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
       .setOrigin(0, 1)
       .setVisible(false); // Pixel text 'No' shiny
 
-    this.pokemonNumberText = addTextObject(17, 1, "0000", TextStyle.SUMMARY_DEX_NUM).setOrigin(0);
+    this.pokemonNumberText = addTextObject(41, 1, "0000", TextStyle.SUMMARY_DEX_NUM).setOrigin(1, 0);
 
     this.pokemonNameText = addTextObject(6, 112, "", TextStyle.SUMMARY).setOrigin(0);
 
@@ -454,15 +452,15 @@ export class StarterSummary extends Phaser.GameObjects.Container {
   }
 
   protected setTypeIcons(type1: PokemonType | null, type2: PokemonType | null): void {
-    if (type1 !== null) {
-      this.type1Icon.setVisible(true).setFrame(PokemonType[type1].toLowerCase());
-    } else {
+    if (type1 === null) {
       this.type1Icon.setVisible(false);
-    }
-    if (type2 !== null) {
-      this.type2Icon.setVisible(true).setFrame(PokemonType[type2].toLowerCase());
     } else {
+      this.type1Icon.setVisible(true).setFrame(PokemonType[type1].toLowerCase());
+    }
+    if (type2 === null) {
       this.type2Icon.setVisible(false);
+    } else {
+      this.type2Icon.setVisible(true).setFrame(PokemonType[type2].toLowerCase());
     }
   }
 
@@ -486,7 +484,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     this.cleanStarterSprite();
   }
 
-  public setStarter(starterId: StarterSpeciesId, starterPreferences: StarterPreferences): void {
+  public setStarter(starterId: SpeciesId, starterPreferences: StarterPreferences): void {
     // Checking here to ensure achievements are loaded, and updated if unlocked while playing
     this.allowTera = Object.hasOwn(globalScene.gameData.achvUnlocks, achvs.TERASTALLIZE.id);
 
@@ -539,13 +537,13 @@ export class StarterSummary extends Phaser.GameObjects.Container {
       if (species.speciesId === SpeciesId.MANAPHY || species.speciesId === SpeciesId.PHIONE) {
         this.pokemonHatchedIcon.setFrame("manaphy");
       } else {
-        this.pokemonHatchedIcon.setFrame(getEggTierForSpecies(species));
+        this.pokemonHatchedIcon.setFrame(speciesDataRegistry.getEggTier(species.speciesId));
       }
       this.pokemonHatchedCountText.setText(`${dexEntry.hatchedCount}`);
 
       const defaultDexAttr = getDexAttrFromPreferences(starterId, starterPreferences);
 
-      if (Object.hasOwn(pokemonPrevolutions, species.speciesId)) {
+      if (speciesDataRegistry.hasPrevolution(species.speciesId)) {
         this.pokemonCaughtHatchedContainer.setVisible(false);
         this.pokemonShinyIcon.setY(104);
         this.pokemonFormText.setY(25);
@@ -648,7 +646,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     this.pokemonAdditionalMoveCountLabel.setVisible(false);
   }
 
-  public setStarterDetails(starterId: StarterSpeciesId, options: SpeciesDetails = {}): void {
+  public setStarterDetails(starterId: SpeciesId, options: SpeciesDetails = {}): void {
     // Here we pass some options to override everything else
     let { shiny, formIndex, female, variant, abilityIndex, natureIndex, teraType } = options;
 
@@ -693,14 +691,14 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     }
 
     // Set the gender text
-    if (species.malePercent !== null) {
+    if (species.malePercent === null) {
+      this.pokemonGenderText.setText("");
+    } else {
       const gender = female ? Gender.FEMALE : Gender.MALE;
       this.pokemonGenderText
         .setText(getGenderSymbol(gender))
         .setColor(getGenderColor(gender))
         .setShadowColor(getGenderColor(gender, true));
-    } else {
-      this.pokemonGenderText.setText("");
     }
 
     // Update ability text
@@ -733,7 +731,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
       });
     }
 
-    this.updatePassiveDisplay(starterId as StarterSpeciesId, formIndex);
+    this.updatePassiveDisplay(starterId, formIndex);
 
     // Update nature text
     this.pokemonNatureText.setText(getNatureName(natureIndex as unknown as Nature, true, true, false));
@@ -758,7 +756,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     this.statsContainer.updateIvs(dexEntry.ivs);
   }
 
-  private updatePassiveDisplay(starterId: StarterSpeciesId, formIndex = 0): void {
+  private updatePassiveDisplay(starterId: SpeciesId, formIndex = 0): void {
     this.pokemonPassiveLabelText.setVisible(false);
     this.pokemonPassiveText.setVisible(false);
     this.pokemonPassiveDisabledIcon.setVisible(false);
