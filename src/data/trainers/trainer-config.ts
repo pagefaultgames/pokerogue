@@ -5742,8 +5742,13 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc([SpeciesId.PERSIAN], TrainerSlot.TRAINER, true, p => {
-        p.generateAndPopulateMoveset();
+        p.abilityIndex = 1; // Technician
         p.gender = Gender.MALE;
+        p.generateAndPopulateMoveset();
+        if (!p.moveset.some(move => move.moveId === MoveId.FAKE_OUT)) {
+          // Check if Fake Out is in the moveset, if not, replace the third move with Fake Out.
+          p.moveset[2] = new PokemonMove(MoveId.FAKE_OUT);
+        }
       }),
     )
     .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.DUGTRIO, SpeciesId.ALOLA_DUGTRIO]))
