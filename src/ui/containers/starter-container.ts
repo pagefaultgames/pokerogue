@@ -117,6 +117,7 @@ export class StarterContainer extends Phaser.GameObjects.Container {
 
     [
       this.label,
+      ...this.shinyIcons,
       this.hiddenAbilityIcon,
       this.favoriteIcon,
       this.classicWinIcon,
