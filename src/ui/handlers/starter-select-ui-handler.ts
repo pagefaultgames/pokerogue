@@ -1307,7 +1307,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     // Updating tera type for new form
     this.setNewTeraType(speciesId, getPokemonSpecies(speciesId).forms[formIndex].type1);
     // Updating gender for gendered forms
-    if (getPokemonSpecies[speciesId]?.forms?.find(f => f.formKey === "female")) {
+    if (getPokemonSpecies(speciesId)?.forms?.find(f => f.formKey === "female")) {
       const newFemale = formIndex === 1;
       if (this.starterPreferences[speciesId].female !== newFemale) {
         this.setNewGender(speciesId, newFemale);
@@ -1320,7 +1320,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     (this.starterPreferences[speciesId] ??= {}).female = female;
     (this.originalStarterPreferences[speciesId] ??= {}).female = female;
     // Updating form for gendered forms
-    if (getPokemonSpecies[speciesId]?.forms?.find(f => f.formKey === "female")) {
+    if (getPokemonSpecies(speciesId)?.forms?.find(f => f.formKey === "female")) {
       const newFormIndex = female ? 1 : 0;
       if (this.starterPreferences[speciesId].formIndex !== newFormIndex) {
         this.setNewFormIndex(speciesId, newFormIndex);
