@@ -344,7 +344,7 @@ export function getDexAttrFromPreferences(
    *  If neither of these pass, we add DexAttr.MALE to our temp props
    */
   if (
-    starterPreferences[speciesId]?.female
+    starterPreferences.female
     || ((caughtAttr & DexAttr.FEMALE) > 0n && (caughtAttr & DexAttr.MALE) === 0n)
   ) {
     props += DexAttr.FEMALE;
@@ -355,12 +355,12 @@ export function getDexAttrFromPreferences(
    * If they're not there, it enables shiny state by default if any shiny was caught
    */
   if (
-    starterPreferences[speciesId]?.shiny
+    starterPreferences.shiny
     || ((caughtAttr & DexAttr.SHINY) > 0n && starterPreferences[speciesId]?.shiny !== false)
   ) {
     props += DexAttr.SHINY;
-    if (starterPreferences[speciesId]?.variant !== undefined) {
-      props += BigInt(Math.pow(2, starterPreferences[speciesId]?.variant)) * DexAttr.DEFAULT_VARIANT;
+    if (starterPreferences.variant !== undefined) {
+      props += BigInt(Math.pow(2, starterPreferences.variant)) * DexAttr.DEFAULT_VARIANT;
     } else if ((caughtAttr & DexAttr.VARIANT_3) > 0) {
       props += DexAttr.VARIANT_3;
     } else if ((caughtAttr & DexAttr.VARIANT_2) > 0) {
@@ -372,9 +372,9 @@ export function getDexAttrFromPreferences(
     props += DexAttr.NON_SHINY;
     props += DexAttr.DEFAULT_VARIANT; // we add the default variant here because non shiny versions are listed as default variant
   }
-  if (starterPreferences[speciesId]?.form) {
+  if (starterPreferences.form) {
     // this checks for the form of the pokemon
-    props += BigInt(Math.pow(2, starterPreferences[speciesId]?.form)) * DexAttr.DEFAULT_FORM;
+    props += BigInt(Math.pow(2, starterPreferences.form)) * DexAttr.DEFAULT_FORM;
   } else {
     // Get the first unlocked form
     props += globalScene.gameData.getFormAttr(globalScene.gameData.getFormIndex(caughtAttr));
