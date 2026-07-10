@@ -1430,6 +1430,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             success = this.setCursor(this.cursor - 9);
           }
         } else {
+          this.leaveGrid();
           this.filterBarCursor = this.filterBar.getNearestFilter(this.starterContainers[this.cursor]);
           this.setFilterMode(true);
           success = true;
@@ -1454,6 +1455,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           success = this.setCursor(this.cursor % 9);
         } else {
           // DOWN from single row of Pokemon > Go to filters
+          this.leaveGrid();
           this.filterBarCursor = this.filterBar.getNearestFilter(this.starterContainers[this.cursor]);
           this.setFilterMode(true);
           success = true;
@@ -1464,20 +1466,19 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           // LEFT from filtered Pokemon, on the left edge
           if (onScreenCurrentRow === 0) {
             // from the first row of starters we go to the random selection
-            this.cursorObj.setVisible(false);
+            this.leaveGrid();
             this.showRandomCursor();
           } else if (this.partyStarterIds.length === 0) {
             // no starter in team and not on first row > wrap around to the last column
             success = this.setCursor(this.cursor + Math.min(8, onScreenLastIndex - this.cursor));
           } else if (onScreenCurrentRow < 7) {
             // at least one pokemon in team > for the first 7 rows, go to closest starter
-            this.cursorObj.setVisible(false);
+            this.leaveGrid();
             this.partyIconsCursorIndex = findClosestStarterIndex(this.cursorObj.y - 1, this.partyStarterIds.length);
             this.movePartyIconsCursor(this.partyIconsCursorIndex);
           } else {
             // at least one pokemon in team > from the bottom 2 rows, go to start run button
-            this.cursorObj.setVisible(false);
-            this.setNoStarter();
+            this.leaveGrid();
             this.startCursorObj.setVisible(true);
           }
           success = true;
@@ -1493,20 +1494,19 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           // RIGHT from filtered Pokemon, on the right edge
           if (onScreenCurrentRow === 0) {
             // from the first row of starters we go to the random selection
-            this.cursorObj.setVisible(false);
+            this.leaveGrid();
             this.showRandomCursor();
           } else if (this.partyStarterIds.length === 0) {
             // no selected starter in team > wrap around to the first column
             success = this.setCursor(this.cursor - Math.min(8, this.cursor % 9));
           } else if (onScreenCurrentRow < 7) {
             // at least one pokemon in team > for the first 7 rows, go to closest starter
-            this.cursorObj.setVisible(false);
+            this.leaveGrid();
             this.partyIconsCursorIndex = findClosestStarterIndex(this.cursorObj.y - 1, this.partyStarterIds.length);
             this.movePartyIconsCursor(this.partyIconsCursorIndex);
           } else {
             // at least one pokemon in team > from the bottom 2 rows, go to start run button
-            this.cursorObj.setVisible(false);
-            this.setNoStarter();
+            this.leaveGrid();
             this.startCursorObj.setVisible(true);
           }
           success = true;
@@ -1514,6 +1514,12 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         break;
     }
     return success;
+  }
+
+  private leaveGrid(): void {
+    this.cursorObj.setVisible(false);
+    this.stopIconAnimation(this.cursor);
+    this.setNoStarter();
   }
 
   /** Opens the menu and populates its options. */
@@ -2615,7 +2621,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.filterMode = filterMode;
       this.setCursor(filterMode ? this.filterBarCursor : this.cursor);
       if (filterMode) {
-        this.setNoStarter(); //TODO: this probably needs to go somewhere else
         this.updateInstructions();
       }
       return true;
@@ -2632,7 +2637,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     );
     if (this.partyStarterIds.length > 0) {
       this.partyCursorObj.setVisible(true);
-      this.setStarter(this.partyStarterIds[index]);
+      this.setPartyStarter(this.partyStarterIds[index]);
     } else {
       this.partyCursorObj.setVisible(false);
       this.setNoStarter();
@@ -2642,7 +2647,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   /** Remove the current starter, resetting all cursors and stopping the icon animation. */
   // TODO: should call `resetStarterDetails` instead
   private setNoStarter(): void {
-    if (getPokemonSpecies(this.lastStarterId)) {
+    if (this.lastStarterId >= 0) {
+      //TODO: Relying on this oldCursor to be correct is clunky; find a better solution
       this.stopIconAnimation(this.oldCursor);
     }
     this.starterSummary.setNoStarter();
@@ -2689,6 +2695,21 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
   }
 
+  private setPartyStarter(starterId: StarterSpeciesId): void {
+    const { dexEntry } = getStarterData(starterId);
+
+    // Set the cursors, using preferences if possible, default options otherwise
+    const starterPreferences = this.starterPreferences[starterId];
+
+    this.starterSummary.setStarter(starterId, starterPreferences ?? {});
+
+    if (dexEntry?.caughtAttr) {
+      this.setStarterDetails(starterId, false);
+    } else {
+      this.resetStarterDetails();
+    }
+  }
+
   /**
    * Starts the icon animation of the container at the given cursor.
    *
@@ -2720,8 +2741,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       const props = this.getStarterDexAttrPropsFromPreferences(container.species.speciesId as StarterSpeciesId);
       this.checkIconId(lastStarterIcon, container.species, props.female, props.formIndex, props.shiny, props.variant);
       this.iconAnimHandler.addOrUpdate(lastStarterIcon, PokemonIconAnimMode.NONE);
-      // Resume the animation for the previously selected species
-      globalScene.tweens.getTweensOf(lastStarterIcon).forEach(tween => tween.resume());
     }
   }
 
