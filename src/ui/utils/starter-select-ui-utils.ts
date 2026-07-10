@@ -300,7 +300,7 @@ export function getStarterData(
 
   // Unpacking to make a copy by values, not references
   const copiedDexEntry = { ...dexEntry };
-  copiedDexEntry.ivs = { ...dexEntry.ivs };
+  copiedDexEntry.ivs = [...dexEntry.ivs];
   const copiedStarterDataEntry = { ...starterDataEntry };
   if (applyChallenge) {
     applyChallenges(ChallengeType.STARTER_SELECT_MODIFY, starterId, copiedDexEntry, copiedStarterDataEntry);
