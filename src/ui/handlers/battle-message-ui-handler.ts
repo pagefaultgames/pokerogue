@@ -318,7 +318,12 @@ export class BattleMessageUiHandler extends MessageUiHandler {
     this.nameCostText.setOrigin(1, 0);
     this.nameCostText.y = 2;
 
-    const contentWidth = this.nameText.displayWidth + (this.nameIcon.visible ? this.nameIcon.displayWidth : 0) + 8 + this.nameCostText.displayWidth + 16;
+    const contentWidth = 
+     this.nameText.displayWidth
+     + (this.nameIcon.visible ? this.nameIcon.displayWidth : 0)
+     + 8
+     + this.nameCostText.displayWidth
+     + 16;
     this.nameBox.width = Math.max(56, contentWidth + 4);
     this.nameCostText.x = this.nameBox.width - 8;
   }
