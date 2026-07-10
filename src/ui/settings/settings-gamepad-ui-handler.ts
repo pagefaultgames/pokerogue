@@ -66,7 +66,7 @@ export class SettingsGamepadUiHandler extends BaseControlSettingsUiHandler {
    * @param activeConfig - The active gamepad configuration.
    * @returns `true` if the layout was successfully applied, otherwise `false`.
    */
-  setLayout(activeConfig: InterfaceConfig): boolean {
+  setLayout(activeConfig: InterfaceConfig | null): activeConfig is InterfaceConfig {
     // Check if there is no active configuration (e.g., no gamepad connected).
     if (!activeConfig) {
       // Retrieve the layout for when no gamepads are connected.
