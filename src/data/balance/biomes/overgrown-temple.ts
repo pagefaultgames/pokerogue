@@ -9,83 +9,84 @@ import type { Biome, BiomeLinks, BiomePokemonPools, TerrainPool, TrainerPools, W
 
 const pokemonPool: BiomePokemonPools = {
   [BiomePoolTier.COMMON]: {
-    [TimeOfDay.DAWN]: [SpeciesId.SOLROCK],
-    [TimeOfDay.DAY]: [SpeciesId.SOLROCK],
-    [TimeOfDay.DUSK]: [SpeciesId.LUNATONE],
-    [TimeOfDay.NIGHT]: [SpeciesId.LUNATONE],
-    [TimeOfDay.ALL]: [SpeciesId.CLEFFA, SpeciesId.BRONZOR, SpeciesId.MUNNA, SpeciesId.MINIOR],
+    [TimeOfDay.DAWN]: [],
+    [TimeOfDay.DAY]: [],
+    [TimeOfDay.DUSK]: [],
+    [TimeOfDay.NIGHT]: [],
+    [TimeOfDay.ALL]: [
+      SpeciesId.GASTLY,
+      SpeciesId.NATU,
+      SpeciesId.DUSKULL,
+      SpeciesId.YAMASK,
+      SpeciesId.GOLETT,
+      SpeciesId.HONEDGE,
+    ],
   },
   [BiomePoolTier.UNCOMMON]: {
     [TimeOfDay.DAWN]: [],
     [TimeOfDay.DAY]: [],
     [TimeOfDay.DUSK]: [],
     [TimeOfDay.NIGHT]: [],
-    [TimeOfDay.ALL]: [SpeciesId.BALTOY, SpeciesId.ELGYEM],
+    [TimeOfDay.ALL]: [SpeciesId.CUBONE, SpeciesId.BALTOY, SpeciesId.CHINGLING, SpeciesId.SKORUPI, SpeciesId.LITWICK],
   },
   [BiomePoolTier.RARE]: {
     [TimeOfDay.DAWN]: [],
     [TimeOfDay.DAY]: [],
     [TimeOfDay.DUSK]: [],
     [TimeOfDay.NIGHT]: [],
-    [TimeOfDay.ALL]: [SpeciesId.STARYU, SpeciesId.SIGILYPH, SpeciesId.SOLOSIS],
+    [TimeOfDay.ALL]: [SpeciesId.GIMMIGHOUL],
   },
   [BiomePoolTier.SUPER_RARE]: {
     [TimeOfDay.DAWN]: [],
     [TimeOfDay.DAY]: [],
     [TimeOfDay.DUSK]: [],
     [TimeOfDay.NIGHT]: [],
-    [TimeOfDay.ALL]: [SpeciesId.PORYGON, SpeciesId.BELDUM],
+    [TimeOfDay.ALL]: [],
   },
   [BiomePoolTier.ULTRA_RARE]: {
     [TimeOfDay.DAWN]: [],
     [TimeOfDay.DAY]: [],
     [TimeOfDay.DUSK]: [],
     [TimeOfDay.NIGHT]: [],
-    [TimeOfDay.ALL]: [SpeciesId.COSMOG, SpeciesId.CELESTEELA],
+    [TimeOfDay.ALL]: [SpeciesId.HOOPA, SpeciesId.TAPU_KOKO],
   },
   [BiomePoolTier.BOSS]: {
     [TimeOfDay.DAWN]: [],
-    [TimeOfDay.DAY]: [SpeciesId.SOLROCK],
+    [TimeOfDay.DAY]: [],
     [TimeOfDay.DUSK]: [],
-    [TimeOfDay.NIGHT]: [SpeciesId.LUNATONE],
-    [TimeOfDay.ALL]: [
-      SpeciesId.CLEFABLE,
-      SpeciesId.BRONZONG,
-      SpeciesId.MUSHARNA,
-      SpeciesId.REUNICLUS,
-      SpeciesId.MINIOR,
-    ],
+    [TimeOfDay.NIGHT]: [],
+    [TimeOfDay.ALL]: [SpeciesId.CHIMECHO, SpeciesId.COFAGRIGUS, SpeciesId.GOLURK, SpeciesId.AEGISLASH],
   },
   [BiomePoolTier.BOSS_RARE]: {
     [TimeOfDay.DAWN]: [],
     [TimeOfDay.DAY]: [],
     [TimeOfDay.DUSK]: [],
     [TimeOfDay.NIGHT]: [],
-    [TimeOfDay.ALL]: [SpeciesId.METAGROSS, SpeciesId.PORYGON_Z],
+    [TimeOfDay.ALL]: [SpeciesId.GHOLDENGO],
   },
   [BiomePoolTier.BOSS_SUPER_RARE]: {
     [TimeOfDay.DAWN]: [],
     [TimeOfDay.DAY]: [],
     [TimeOfDay.DUSK]: [],
     [TimeOfDay.NIGHT]: [],
-    [TimeOfDay.ALL]: [SpeciesId.CELESTEELA],
+    [TimeOfDay.ALL]: [SpeciesId.HOOPA, SpeciesId.TAPU_KOKO],
   },
   [BiomePoolTier.BOSS_ULTRA_RARE]: {
     [TimeOfDay.DAWN]: [],
-    [TimeOfDay.DAY]: [SpeciesId.SOLGALEO],
+    [TimeOfDay.DAY]: [],
     [TimeOfDay.DUSK]: [],
-    [TimeOfDay.NIGHT]: [SpeciesId.LUNALA],
-    [TimeOfDay.ALL]: [SpeciesId.RAYQUAZA, SpeciesId.NECROZMA],
+    [TimeOfDay.NIGHT]: [],
+    [TimeOfDay.ALL]: [SpeciesId.REGIGIGAS],
   },
 };
 
 const trainerPool: TrainerPools = {
-  [BiomePoolTier.COMMON]: [],
-  [BiomePoolTier.UNCOMMON]: [],
+  [BiomePoolTier.COMMON]: [TrainerType.RUIN_MANIAC],
+  [BiomePoolTier.UNCOMMON]: [TrainerType.ACE_TRAINER],
   [BiomePoolTier.RARE]: [],
   [BiomePoolTier.SUPER_RARE]: [],
   [BiomePoolTier.ULTRA_RARE]: [],
-  [BiomePoolTier.BOSS]: [TrainerType.OLYMPIA],
+  [BiomePoolTier.BOSS]: [TrainerType.FANTINA],
   [BiomePoolTier.BOSS_RARE]: [],
   [BiomePoolTier.BOSS_SUPER_RARE]: [],
   [BiomePoolTier.BOSS_ULTRA_RARE]: [],
@@ -99,10 +100,10 @@ const terrainPool: TerrainPool = {
   [TerrainType.NONE]: 1,
 };
 
-const biomeLinks: BiomeLinks = [BiomeId.ANCIENT_RUINS];
+const biomeLinks: BiomeLinks = [BiomeId.DESERT, [BiomeId.SWAMP, 2], [BiomeId.ANCIENT_RUINS, 2]];
 
-export const spaceBiome: Biome = {
-  biomeId: BiomeId.SPACE,
+export const overgrownTempleBiome: Biome = {
+  biomeId: BiomeId.OVERGROWN_TEMPLE,
   pokemonPool,
   trainerPool,
   trainerChance: 16,

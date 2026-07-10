@@ -5760,7 +5760,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
         item: EvolutionItem.STRAWBERRY_SWEET,
         condition: {
           key: EvoCondKey.BIOME,
-          biome: [BiomeId.TOWN, BiomeId.PLAINS, BiomeId.GRASS, BiomeId.TALL_GRASS, BiomeId.METROPOLIS],
+          biome: [BiomeId.TOWN, BiomeId.PLAINS, BiomeId.ROLLING_FIELDS, BiomeId.TALL_GRASS, BiomeId.METROPOLIS],
         },
         evoDelay: [20, 25, 25],
       }),
@@ -5772,7 +5772,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
         item: EvolutionItem.STRAWBERRY_SWEET,
         condition: {
           key: EvoCondKey.BIOME,
-          biome: [BiomeId.BADLANDS, BiomeId.VOLCANO, BiomeId.GRAVEYARD, BiomeId.FACTORY, BiomeId.SLUM],
+          biome: [BiomeId.BADLANDS, BiomeId.VOLCANO, BiomeId.HAUNTED_PASS, BiomeId.FACTORY, BiomeId.SLUM],
         },
         evoDelay: [20, 25, 25],
       }),
@@ -5791,7 +5791,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
         evoFormKey: "mint-cream",
         level: 1,
         item: EvolutionItem.STRAWBERRY_SWEET,
-        condition: { key: EvoCondKey.BIOME, biome: [BiomeId.SEA, BiomeId.BEACH, BiomeId.LAKE, BiomeId.SEABED] },
+        condition: { key: EvoCondKey.BIOME, biome: [BiomeId.OCEAN, BiomeId.BEACH, BiomeId.LAKE, BiomeId.SEABED] },
         evoDelay: [20, 25, 25],
       }),
       new SpeciesFormEvolution({
@@ -5802,7 +5802,13 @@ export function initGenerationEight(): SpeciesDataMapConfig {
         item: EvolutionItem.STRAWBERRY_SWEET,
         condition: {
           key: EvoCondKey.BIOME,
-          biome: [BiomeId.DESERT, BiomeId.POWER_PLANT, BiomeId.DOJO, BiomeId.RUINS, BiomeId.CONSTRUCTION_SITE],
+          biome: [
+            BiomeId.DESERT,
+            BiomeId.THERMAL_PLANT,
+            BiomeId.DOJO,
+            BiomeId.ANCIENT_RUINS,
+            BiomeId.CONSTRUCTION_SITE,
+          ],
         },
         evoDelay: [20, 25, 25],
       }),
@@ -5814,7 +5820,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
         item: EvolutionItem.STRAWBERRY_SWEET,
         condition: {
           key: EvoCondKey.BIOME,
-          biome: [BiomeId.MOUNTAIN, BiomeId.CAVE, BiomeId.ICE_CAVE, BiomeId.FAIRY_CAVE, BiomeId.SNOWY_FOREST],
+          biome: [BiomeId.MOUNTAIN, BiomeId.CAVE, BiomeId.FROZEN_PATH, BiomeId.ENCHANTED_CAVE, BiomeId.SNOWY_TAIGA],
         },
         evoDelay: [20, 25, 25],
       }),
@@ -5824,7 +5830,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
         evoFormKey: "ruby-swirl",
         level: 1,
         item: EvolutionItem.STRAWBERRY_SWEET,
-        condition: { key: EvoCondKey.BIOME, biome: [BiomeId.WASTELAND, BiomeId.LABORATORY] },
+        condition: { key: EvoCondKey.BIOME, biome: [BiomeId.WASTELAND, BiomeId.ABANDONED_LAB] },
         evoDelay: [20, 25, 25],
       }),
       new SpeciesFormEvolution({
@@ -5833,7 +5839,7 @@ export function initGenerationEight(): SpeciesDataMapConfig {
         evoFormKey: "caramel-swirl",
         level: 1,
         item: EvolutionItem.STRAWBERRY_SWEET,
-        condition: { key: EvoCondKey.BIOME, biome: [BiomeId.TEMPLE, BiomeId.ISLAND] },
+        condition: { key: EvoCondKey.BIOME, biome: [BiomeId.OVERGROWN_TEMPLE, BiomeId.ISLAND] },
         evoDelay: [20, 25, 25],
       }),
       new SpeciesFormEvolution({

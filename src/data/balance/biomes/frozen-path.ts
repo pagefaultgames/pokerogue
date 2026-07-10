@@ -9,51 +9,74 @@ import type { Biome, BiomeLinks, BiomePokemonPools, TerrainPool, TrainerPools, W
 
 const pokemonPool: BiomePokemonPools = {
   [BiomePoolTier.COMMON]: {
-    [TimeOfDay.DAWN]: [SpeciesId.SOLROCK],
-    [TimeOfDay.DAY]: [SpeciesId.SOLROCK],
-    [TimeOfDay.DUSK]: [SpeciesId.LUNATONE],
-    [TimeOfDay.NIGHT]: [SpeciesId.LUNATONE],
-    [TimeOfDay.ALL]: [SpeciesId.CLEFFA, SpeciesId.BRONZOR, SpeciesId.MUNNA, SpeciesId.MINIOR],
+    [TimeOfDay.DAWN]: [],
+    [TimeOfDay.DAY]: [],
+    [TimeOfDay.DUSK]: [],
+    [TimeOfDay.NIGHT]: [],
+    [TimeOfDay.ALL]: [
+      SpeciesId.SEEL,
+      SpeciesId.SWINUB,
+      SpeciesId.SNORUNT,
+      SpeciesId.VANILLITE,
+      SpeciesId.CUBCHOO,
+      SpeciesId.BERGMITE,
+      SpeciesId.CRABRAWLER,
+      SpeciesId.SNOM,
+    ],
   },
   [BiomePoolTier.UNCOMMON]: {
     [TimeOfDay.DAWN]: [],
     [TimeOfDay.DAY]: [],
     [TimeOfDay.DUSK]: [],
     [TimeOfDay.NIGHT]: [],
-    [TimeOfDay.ALL]: [SpeciesId.BALTOY, SpeciesId.ELGYEM],
+    [TimeOfDay.ALL]: [
+      SpeciesId.SLOWKING,
+      SpeciesId.SNEASEL,
+      SpeciesId.SMOOCHUM,
+      SpeciesId.SPHEAL,
+      SpeciesId.EISCUE,
+      SpeciesId.CETODDLE,
+    ],
   },
   [BiomePoolTier.RARE]: {
     [TimeOfDay.DAWN]: [],
     [TimeOfDay.DAY]: [],
     [TimeOfDay.DUSK]: [],
     [TimeOfDay.NIGHT]: [],
-    [TimeOfDay.ALL]: [SpeciesId.STARYU, SpeciesId.SIGILYPH, SpeciesId.SOLOSIS],
+    [TimeOfDay.ALL]: [SpeciesId.LAPRAS, SpeciesId.DELIBIRD, SpeciesId.CRYOGONAL],
   },
   [BiomePoolTier.SUPER_RARE]: {
     [TimeOfDay.DAWN]: [],
     [TimeOfDay.DAY]: [],
     [TimeOfDay.DUSK]: [],
     [TimeOfDay.NIGHT]: [],
-    [TimeOfDay.ALL]: [SpeciesId.PORYGON, SpeciesId.BELDUM],
+    [TimeOfDay.ALL]: [SpeciesId.AMAURA],
   },
   [BiomePoolTier.ULTRA_RARE]: {
     [TimeOfDay.DAWN]: [],
     [TimeOfDay.DAY]: [],
     [TimeOfDay.DUSK]: [],
     [TimeOfDay.NIGHT]: [],
-    [TimeOfDay.ALL]: [SpeciesId.COSMOG, SpeciesId.CELESTEELA],
+    [TimeOfDay.ALL]: [SpeciesId.ARTICUNO, SpeciesId.REGICE],
   },
   [BiomePoolTier.BOSS]: {
     [TimeOfDay.DAWN]: [],
-    [TimeOfDay.DAY]: [SpeciesId.SOLROCK],
+    [TimeOfDay.DAY]: [],
     [TimeOfDay.DUSK]: [],
-    [TimeOfDay.NIGHT]: [SpeciesId.LUNATONE],
+    [TimeOfDay.NIGHT]: [],
     [TimeOfDay.ALL]: [
-      SpeciesId.CLEFABLE,
-      SpeciesId.BRONZONG,
-      SpeciesId.MUSHARNA,
-      SpeciesId.REUNICLUS,
-      SpeciesId.MINIOR,
+      SpeciesId.DEWGONG,
+      SpeciesId.GLALIE,
+      SpeciesId.WALREIN,
+      SpeciesId.WEAVILE,
+      SpeciesId.MAMOSWINE,
+      SpeciesId.FROSLASS,
+      SpeciesId.VANILLUXE,
+      SpeciesId.BEARTIC,
+      SpeciesId.CRYOGONAL,
+      SpeciesId.AVALUGG,
+      SpeciesId.CRABOMINABLE,
+      SpeciesId.CETITAN,
     ],
   },
   [BiomePoolTier.BOSS_RARE]: {
@@ -61,51 +84,53 @@ const pokemonPool: BiomePokemonPools = {
     [TimeOfDay.DAY]: [],
     [TimeOfDay.DUSK]: [],
     [TimeOfDay.NIGHT]: [],
-    [TimeOfDay.ALL]: [SpeciesId.METAGROSS, SpeciesId.PORYGON_Z],
+    [TimeOfDay.ALL]: [SpeciesId.JYNX, SpeciesId.LAPRAS, SpeciesId.GLACEON, SpeciesId.AURORUS],
   },
   [BiomePoolTier.BOSS_SUPER_RARE]: {
     [TimeOfDay.DAWN]: [],
     [TimeOfDay.DAY]: [],
     [TimeOfDay.DUSK]: [],
     [TimeOfDay.NIGHT]: [],
-    [TimeOfDay.ALL]: [SpeciesId.CELESTEELA],
+    [TimeOfDay.ALL]: [SpeciesId.ARTICUNO, SpeciesId.REGICE],
   },
   [BiomePoolTier.BOSS_ULTRA_RARE]: {
     [TimeOfDay.DAWN]: [],
-    [TimeOfDay.DAY]: [SpeciesId.SOLGALEO],
+    [TimeOfDay.DAY]: [],
     [TimeOfDay.DUSK]: [],
-    [TimeOfDay.NIGHT]: [SpeciesId.LUNALA],
-    [TimeOfDay.ALL]: [SpeciesId.RAYQUAZA, SpeciesId.NECROZMA],
+    [TimeOfDay.NIGHT]: [],
+    [TimeOfDay.ALL]: [SpeciesId.KYUREM],
   },
 };
 
 const trainerPool: TrainerPools = {
-  [BiomePoolTier.COMMON]: [],
-  [BiomePoolTier.UNCOMMON]: [],
+  [BiomePoolTier.COMMON]: [TrainerType.SNOW_WORKER],
+  [BiomePoolTier.UNCOMMON]: [TrainerType.SNOW_ACE_TRAINER],
   [BiomePoolTier.RARE]: [],
   [BiomePoolTier.SUPER_RARE]: [],
   [BiomePoolTier.ULTRA_RARE]: [],
-  [BiomePoolTier.BOSS]: [TrainerType.OLYMPIA],
+  [BiomePoolTier.BOSS]: [TrainerType.PRYCE, TrainerType.BRYCEN, TrainerType.WULFRIC, TrainerType.GRUSHA],
   [BiomePoolTier.BOSS_RARE]: [],
   [BiomePoolTier.BOSS_SUPER_RARE]: [],
   [BiomePoolTier.BOSS_ULTRA_RARE]: [],
 };
 
 const weatherPool: WeatherPool = {
-  [WeatherType.NONE]: 1,
+  [WeatherType.NONE]: 3,
+  [WeatherType.SNOW]: 4,
+  [WeatherType.HAIL]: 1,
 };
 
 const terrainPool: TerrainPool = {
   [TerrainType.NONE]: 1,
 };
 
-const biomeLinks: BiomeLinks = [BiomeId.ANCIENT_RUINS];
+const biomeLinks: BiomeLinks = [BiomeId.SNOWY_TAIGA];
 
-export const spaceBiome: Biome = {
-  biomeId: BiomeId.SPACE,
+export const frozenPathBiome: Biome = {
+  biomeId: BiomeId.FROZEN_PATH,
   pokemonPool,
   trainerPool,
-  trainerChance: 16,
+  trainerChance: 12,
   weatherPool,
   terrainPool,
   biomeLinks,

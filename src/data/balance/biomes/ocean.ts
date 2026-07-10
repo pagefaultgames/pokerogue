@@ -102,10 +102,10 @@ const terrainPool: TerrainPool = {
   [TerrainType.NONE]: 1,
 };
 
-const biomeLinks: BiomeLinks = [BiomeId.SEABED, BiomeId.ICE_CAVE];
+const biomeLinks: BiomeLinks = [BiomeId.SEABED, BiomeId.FROZEN_PATH];
 
-export const seaBiome: Biome = {
-  biomeId: BiomeId.SEA,
+export const oceanBiome: Biome = {
+  biomeId: BiomeId.OCEAN,
   pokemonPool,
   trainerPool,
   trainerChance: 12,

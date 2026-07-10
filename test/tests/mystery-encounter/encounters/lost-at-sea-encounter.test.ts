@@ -18,7 +18,7 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 const namespace = "mysteryEncounters/lostAtSea";
 /** Blastoise for surf. Pidgeot for fly. Abra for none. */
 const defaultParty = [SpeciesId.BLASTOISE, SpeciesId.PIDGEOT, SpeciesId.ABRA];
-const defaultBiome = BiomeId.SEA;
+const defaultBiome = BiomeId.OCEAN;
 const defaultWave = 33;
 
 describe("Lost at Sea - Mystery Encounter", () => {
@@ -41,7 +41,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<BiomeId, MysteryEncounterType[]>([
-        [BiomeId.SEA, [MysteryEncounterType.LOST_AT_SEA]],
+        [BiomeId.OCEAN, [MysteryEncounterType.LOST_AT_SEA]],
         [BiomeId.MOUNTAIN, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
       ]),
     );

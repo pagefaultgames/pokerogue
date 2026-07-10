@@ -103,7 +103,7 @@ const terrainPool: TerrainPool = {
   [TerrainType.NONE]: 1,
 };
 
-const biomeLinks: BiomeLinks = [BiomeId.GRAVEYARD, BiomeId.TALL_GRASS];
+const biomeLinks: BiomeLinks = [BiomeId.HAUNTED_PASS, BiomeId.TALL_GRASS];
 
 export const swampBiome: Biome = {
   biomeId: BiomeId.SWAMP,

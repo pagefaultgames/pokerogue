@@ -1,36 +1,41 @@
+import { abandonedLabBiome } from "#biomes/abandoned-lab";
 import { abyssBiome } from "#biomes/abyss";
+import { ancientRuinsBiome } from "#biomes/ancient-ruins";
 import { badlandsBiome } from "#biomes/badlands";
 import { beachBiome } from "#biomes/beach";
 import { caveBiome } from "#biomes/cave";
 import { constructionSiteBiome } from "#biomes/construction-site";
+import { crystalCavernBiome } from "#biomes/crystal-cavern";
 import { desertBiome } from "#biomes/desert";
 import { dojoBiome } from "#biomes/dojo";
+import { enchantedCaveBiome } from "#biomes/enchanted-cave";
 import { endBiome } from "#biomes/end";
 import { factoryBiome } from "#biomes/factory";
-import { fairyCaveBiome } from "#biomes/fairy-cave";
 import { forestBiome } from "#biomes/forest";
-import { grassBiome } from "#biomes/grass";
-import { graveyardBiome } from "#biomes/graveyard";
-import { iceCaveBiome } from "#biomes/ice-cave";
+import { frozenPathBiome } from "#biomes/frozen-path";
+import { hauntedPassBiome } from "#biomes/haunted-pass";
 import { islandBiome } from "#biomes/island";
 import { jungleBiome } from "#biomes/jungle";
-import { laboratoryBiome } from "#biomes/laboratory";
 import { lakeBiome } from "#biomes/lake";
 import { meadowBiome } from "#biomes/meadow";
 import { metropolisBiome } from "#biomes/metropolis";
 import { mountainBiome } from "#biomes/mountain";
+import { oceanBiome } from "#biomes/ocean";
+import { overgrownTempleBiome } from "#biomes/overgrown-temple";
 import { plainsBiome } from "#biomes/plains";
-import { powerPlantBiome } from "#biomes/power-plant";
-import { ruinsBiome } from "#biomes/ruins";
-import { seaBiome } from "#biomes/sea";
+import { rockyCoastBiome } from "#biomes/rocky-coast";
+import { rollingFieldsBiome } from "#biomes/rolling-fields";
+import { savannahBiome } from "#biomes/savannah";
 import { seabedBiome } from "#biomes/seabed";
 import { slumBiome } from "#biomes/slum";
-import { snowyForestBiome } from "#biomes/snowy-forest";
+import { snowyTaigaBiome } from "#biomes/snowy-taiga";
 import { spaceBiome } from "#biomes/space";
+import { summitBiome } from "#biomes/summit";
 import { swampBiome } from "#biomes/swamp";
 import { tallGrassBiome } from "#biomes/tall-grass";
-import { templeBiome } from "#biomes/temple";
+import { thermalPlantBiome } from "#biomes/thermal-plant";
 import { townBiome } from "#biomes/town";
+import { undergroundWellBiome } from "#biomes/underground-well";
 import { volcanoBiome } from "#biomes/volcano";
 import { wastelandBiome } from "#biomes/wasteland";
 import { allBiomes } from "#data/data-lists";
@@ -40,11 +45,11 @@ export function initBiomes(): void {
   const rawAllBiomes: readonly Biome[] = [
     townBiome,
     plainsBiome,
-    grassBiome,
+    rollingFieldsBiome,
     tallGrassBiome,
     metropolisBiome,
     forestBiome,
-    seaBiome,
+    oceanBiome,
     swampBiome,
     beachBiome,
     lakeBiome,
@@ -53,25 +58,30 @@ export function initBiomes(): void {
     badlandsBiome,
     caveBiome,
     desertBiome,
-    iceCaveBiome,
+    frozenPathBiome,
     meadowBiome,
-    powerPlantBiome,
+    thermalPlantBiome,
     volcanoBiome,
-    graveyardBiome,
+    hauntedPassBiome,
     dojoBiome,
     factoryBiome,
-    ruinsBiome,
+    ancientRuinsBiome,
     wastelandBiome,
     abyssBiome,
     spaceBiome,
     constructionSiteBiome,
     jungleBiome,
-    fairyCaveBiome,
-    templeBiome,
+    enchantedCaveBiome,
+    overgrownTempleBiome,
     slumBiome,
-    snowyForestBiome,
+    snowyTaigaBiome,
+    undergroundWellBiome,
+    rockyCoastBiome,
+    summitBiome,
+    savannahBiome,
+    crystalCavernBiome,
     islandBiome,
-    laboratoryBiome,
+    abandonedLabBiome,
     endBiome,
   ];
 

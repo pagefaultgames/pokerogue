@@ -47,16 +47,16 @@ const namespace = "mysteryEncounters/dancingLessons";
 
 // TODO: Put all in Meadow as their third biome, random between forms, currently just goes to Baile every time if done
 // Fire form
-const BAILE_STYLE_BIOMES: readonly BiomeId[] = [BiomeId.TEMPLE, BiomeId.TALL_GRASS];
+const BAILE_STYLE_BIOMES: readonly BiomeId[] = [BiomeId.OVERGROWN_TEMPLE, BiomeId.TALL_GRASS];
 
 // Electric form
-const POM_POM_STYLE_BIOMES: readonly BiomeId[] = [BiomeId.BEACH, BiomeId.GRASS, BiomeId.MEADOW];
+const POM_POM_STYLE_BIOMES: readonly BiomeId[] = [BiomeId.BEACH, BiomeId.ROLLING_FIELDS, BiomeId.MEADOW];
 
 // Psychic form
-const PAU_STYLE_BIOMES: readonly BiomeId[] = [BiomeId.ISLAND, BiomeId.RUINS];
+const PAU_STYLE_BIOMES: readonly BiomeId[] = [BiomeId.ISLAND, BiomeId.ANCIENT_RUINS];
 
 // Ghost form
-const SENSU_STYLE_BIOMES: readonly BiomeId[] = [BiomeId.GRAVEYARD, BiomeId.BADLANDS];
+const SENSU_STYLE_BIOMES: readonly BiomeId[] = [BiomeId.HAUNTED_PASS, BiomeId.BADLANDS];
 
 /**
  * Dancing Lessons encounter.

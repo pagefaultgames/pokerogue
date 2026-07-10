@@ -309,7 +309,7 @@ describe("Shop modifications", async () => {
 
     game.override
       .startingWave(9)
-      .startingBiome(BiomeId.ICE_CAVE)
+      .startingBiome(BiomeId.FROZEN_PATH)
       .battleStyle("single")
       .startingLevel(100) // Avoid levelling up
       .disableTrainerWaves()

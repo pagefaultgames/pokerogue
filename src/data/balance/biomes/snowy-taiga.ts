@@ -102,8 +102,8 @@ const terrainPool: TerrainPool = {
 
 const biomeLinks: BiomeLinks = [BiomeId.FOREST, [BiomeId.MOUNTAIN, 2], [BiomeId.LAKE, 2]];
 
-export const snowyForestBiome: Biome = {
-  biomeId: BiomeId.SNOWY_FOREST,
+export const snowyTaigaBiome: Biome = {
+  biomeId: BiomeId.SNOWY_TAIGA,
   pokemonPool,
   trainerPool,
   trainerChance: 8,

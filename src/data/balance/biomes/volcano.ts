@@ -147,7 +147,7 @@ const terrainPool: TerrainPool = {
   [TerrainType.NONE]: 1,
 };
 
-const biomeLinks: BiomeLinks = [BiomeId.BEACH, [BiomeId.ICE_CAVE, 3]];
+const biomeLinks: BiomeLinks = [BiomeId.BEACH, [BiomeId.FROZEN_PATH, 3]];
 
 export const volcanoBiome: Biome = {
   biomeId: BiomeId.VOLCANO,

@@ -28,8 +28,8 @@ const defaultWave = 45;
 const TRANSPORT_BIOMES = [
   BiomeId.SPACE,
   BiomeId.ISLAND,
-  BiomeId.LABORATORY,
-  BiomeId.FAIRY_CAVE,
+  BiomeId.ABANDONED_LAB,
+  BiomeId.ENCHANTED_CAVE,
   BiomeId.WASTELAND,
   BiomeId.DOJO,
 ];

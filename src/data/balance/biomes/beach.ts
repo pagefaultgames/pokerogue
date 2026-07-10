@@ -111,7 +111,7 @@ const terrainPool: TerrainPool = {
   [TerrainType.NONE]: 1,
 };
 
-const biomeLinks: BiomeLinks = [BiomeId.SEA, [BiomeId.ISLAND, 2]];
+const biomeLinks: BiomeLinks = [BiomeId.OCEAN, [BiomeId.ISLAND, 2]];
 
 export const beachBiome: Biome = {
   biomeId: BiomeId.BEACH,

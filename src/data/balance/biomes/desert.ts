@@ -116,7 +116,7 @@ const terrainPool: TerrainPool = {
   [TerrainType.NONE]: 1,
 };
 
-const biomeLinks: BiomeLinks = [BiomeId.RUINS, [BiomeId.CONSTRUCTION_SITE, 2]];
+const biomeLinks: BiomeLinks = [BiomeId.ANCIENT_RUINS, [BiomeId.CONSTRUCTION_SITE, 2]];
 
 export const desertBiome: Biome = {
   biomeId: BiomeId.DESERT,

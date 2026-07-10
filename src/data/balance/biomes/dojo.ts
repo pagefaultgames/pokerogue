@@ -120,7 +120,7 @@ const terrainPool: TerrainPool = {
   [TerrainType.NONE]: 1,
 };
 
-const biomeLinks: BiomeLinks = [BiomeId.PLAINS, [BiomeId.JUNGLE, 2], [BiomeId.TEMPLE, 2]];
+const biomeLinks: BiomeLinks = [BiomeId.PLAINS, [BiomeId.JUNGLE, 2], [BiomeId.OVERGROWN_TEMPLE, 2]];
 
 export const dojoBiome: Biome = {
   biomeId: BiomeId.DOJO,

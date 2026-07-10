@@ -44,8 +44,8 @@ const namespace = "mysteryEncounters/teleportingHijinks";
 const MONEY_COST_MULTIPLIER = 1.75;
 const BIOME_CANDIDATES = [
   BiomeId.SPACE,
-  BiomeId.FAIRY_CAVE,
-  BiomeId.LABORATORY,
+  BiomeId.ENCHANTED_CAVE,
+  BiomeId.ABANDONED_LAB,
   BiomeId.ISLAND,
   BiomeId.WASTELAND,
   BiomeId.DOJO,

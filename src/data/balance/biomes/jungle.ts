@@ -129,7 +129,7 @@ const terrainPool: TerrainPool = {
   [TerrainType.NONE]: 1,
 };
 
-const biomeLinks: BiomeLinks = [BiomeId.TEMPLE];
+const biomeLinks: BiomeLinks = [BiomeId.OVERGROWN_TEMPLE];
 
 export const jungleBiome: Biome = {
   biomeId: BiomeId.JUNGLE,

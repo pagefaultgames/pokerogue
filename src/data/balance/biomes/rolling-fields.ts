@@ -97,8 +97,8 @@ const terrainPool: TerrainPool = {
 
 const biomeLinks: BiomeLinks = [BiomeId.TALL_GRASS];
 
-export const grassBiome: Biome = {
-  biomeId: BiomeId.GRASS,
+export const rollingFieldsBiome: Biome = {
+  biomeId: BiomeId.ROLLING_FIELDS,
   pokemonPool,
   trainerPool,
   trainerChance: 6,

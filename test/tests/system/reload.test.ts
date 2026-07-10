@@ -76,7 +76,7 @@ describe("Reload", () => {
   it("should not have weather inconsistencies after a biome switch", async () => {
     game.override
       .startingWave(10)
-      .startingBiome(BiomeId.ICE_CAVE) // Will lead to Snowy Forest with randomly generated weather
+      .startingBiome(BiomeId.FROZEN_PATH) // Will lead to Snowy Forest with randomly generated weather
       .battleStyle("single")
       .startingLevel(100) // Avoid levelling up
       .disableTrainerWaves()

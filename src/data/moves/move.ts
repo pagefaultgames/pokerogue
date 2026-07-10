@@ -4229,59 +4229,64 @@ export class SecretPowerAttr extends MoveEffectAttr {
   private determineBiomeEffect(biome: BiomeId): MoveEffectAttr {
     let secondaryEffect: MoveEffectAttr;
     switch (biome) {
-      case BiomeId.PLAINS:
-      case BiomeId.GRASS:
-      case BiomeId.TALL_GRASS:
-      case BiomeId.FOREST:
-      case BiomeId.JUNGLE:
-      case BiomeId.MEADOW:
-        secondaryEffect = new StatusEffectAttr(StatusEffect.SLEEP, false);
-        break;
-      case BiomeId.SWAMP:
-      case BiomeId.MOUNTAIN:
-      case BiomeId.TEMPLE:
-      case BiomeId.RUINS:
-        secondaryEffect = new StatStageChangeAttr([Stat.SPD], -1, false);
-        break;
-      case BiomeId.ICE_CAVE:
-      case BiomeId.SNOWY_FOREST:
-        secondaryEffect = new StatusEffectAttr(StatusEffect.FREEZE, false);
-        break;
-      case BiomeId.VOLCANO:
-        secondaryEffect = new StatusEffectAttr(StatusEffect.BURN, false);
-        break;
-      case BiomeId.FAIRY_CAVE:
-        secondaryEffect = new StatStageChangeAttr([Stat.SPATK], -1, false);
-        break;
-      case BiomeId.DESERT:
-      case BiomeId.CONSTRUCTION_SITE:
-      case BiomeId.BEACH:
-      case BiomeId.ISLAND:
-      case BiomeId.BADLANDS:
-        secondaryEffect = new StatStageChangeAttr([Stat.ACC], -1, false);
-        break;
-      case BiomeId.SEA:
+      case BiomeId.OCEAN:
       case BiomeId.LAKE:
       case BiomeId.SEABED:
+      case BiomeId.UNDERGROUND_WELL:
         secondaryEffect = new StatStageChangeAttr([Stat.ATK], -1, false);
-        break;
-      case BiomeId.CAVE:
-      case BiomeId.WASTELAND:
-      case BiomeId.GRAVEYARD:
-      case BiomeId.ABYSS:
-      case BiomeId.SPACE:
-        secondaryEffect = new AddBattlerTagAttr(BattlerTagType.FLINCHED, false, true);
         break;
       case BiomeId.END:
         secondaryEffect = new StatStageChangeAttr([Stat.DEF], -1, false);
         break;
+      case BiomeId.ENCHANTED_CAVE:
+        secondaryEffect = new StatStageChangeAttr([Stat.SPATK], -1, false);
+        break;
+      case BiomeId.SWAMP:
+      case BiomeId.MOUNTAIN:
+      case BiomeId.ANCIENT_RUINS:
+      case BiomeId.OVERGROWN_TEMPLE:
+      case BiomeId.SUMMIT:
+      case BiomeId.SAVANNAH:
+        secondaryEffect = new StatStageChangeAttr([Stat.SPD], -1, false);
+        break;
+      case BiomeId.BEACH:
+      case BiomeId.BADLANDS:
+      case BiomeId.DESERT:
+      case BiomeId.CONSTRUCTION_SITE:
+      case BiomeId.ROCKY_COAST:
+      case BiomeId.ISLAND:
+        secondaryEffect = new StatStageChangeAttr([Stat.ACC], -1, false);
+        break;
+      case BiomeId.CAVE:
+      case BiomeId.HAUNTED_PASS:
+      case BiomeId.WASTELAND:
+      case BiomeId.ABYSS:
+      case BiomeId.SPACE:
+      case BiomeId.CRYSTAL_CAVERN:
+        secondaryEffect = new AddBattlerTagAttr(BattlerTagType.FLINCHED, false, true);
+        break;
+      case BiomeId.VOLCANO:
+        secondaryEffect = new StatusEffectAttr(StatusEffect.BURN, false);
+        break;
+      case BiomeId.FROZEN_PATH:
+      case BiomeId.SNOWY_TAIGA:
+        secondaryEffect = new StatusEffectAttr(StatusEffect.FREEZE, false);
+        break;
+      case BiomeId.PLAINS:
+      case BiomeId.ROLLING_FIELDS:
+      case BiomeId.TALL_GRASS:
+      case BiomeId.FOREST:
+      case BiomeId.MEADOW:
+      case BiomeId.JUNGLE:
+        secondaryEffect = new StatusEffectAttr(StatusEffect.SLEEP, false);
+        break;
       case BiomeId.TOWN:
       case BiomeId.METROPOLIS:
-      case BiomeId.SLUM:
+      case BiomeId.THERMAL_PLANT:
       case BiomeId.DOJO:
       case BiomeId.FACTORY:
-      case BiomeId.LABORATORY:
-      case BiomeId.POWER_PLANT:
+      case BiomeId.SLUM:
+      case BiomeId.ABANDONED_LAB:
       default:
         secondaryEffect = new StatusEffectAttr(StatusEffect.PARALYSIS, false);
         break;
@@ -7751,7 +7756,7 @@ export class CopyBiomeTypeAttr extends MoveEffectAttr {
         return PokemonType.PSYCHIC;
       case TerrainType.NONE:
       default:
-        return PokemonType.UNKNOWN;
+        return PokemonType.NORMAL;
     }
   }
 
@@ -7762,61 +7767,65 @@ export class CopyBiomeTypeAttr extends MoveEffectAttr {
    */
   private getTypeForBiome(biomeType: BiomeId): PokemonType {
     switch (biomeType) {
-      case BiomeId.TOWN:
-      case BiomeId.PLAINS:
-      case BiomeId.METROPOLIS:
-        return PokemonType.NORMAL;
-      case BiomeId.GRASS:
-      case BiomeId.TALL_GRASS:
-        return PokemonType.GRASS;
-      case BiomeId.FOREST:
-      case BiomeId.JUNGLE:
-        return PokemonType.BUG;
-      case BiomeId.SLUM:
-      case BiomeId.SWAMP:
-        return PokemonType.POISON;
-      case BiomeId.SEA:
-      case BiomeId.BEACH:
-      case BiomeId.LAKE:
-      case BiomeId.SEABED:
-        return PokemonType.WATER;
-      case BiomeId.MOUNTAIN:
-        return PokemonType.FLYING;
-      case BiomeId.BADLANDS:
-        return PokemonType.GROUND;
-      case BiomeId.CAVE:
-      case BiomeId.DESERT:
-        return PokemonType.ROCK;
-      case BiomeId.ICE_CAVE:
-      case BiomeId.SNOWY_FOREST:
-        return PokemonType.ICE;
-      case BiomeId.MEADOW:
-      case BiomeId.FAIRY_CAVE:
-      case BiomeId.ISLAND:
-        return PokemonType.FAIRY;
-      case BiomeId.POWER_PLANT:
-        return PokemonType.ELECTRIC;
-      case BiomeId.VOLCANO:
-        return PokemonType.FIRE;
-      case BiomeId.GRAVEYARD:
-      case BiomeId.TEMPLE:
-        return PokemonType.GHOST;
       case BiomeId.DOJO:
       case BiomeId.CONSTRUCTION_SITE:
         return PokemonType.FIGHTING;
+      case BiomeId.MOUNTAIN:
+        return PokemonType.FLYING;
+      case BiomeId.SWAMP:
+      case BiomeId.SLUM:
+        return PokemonType.POISON;
+      case BiomeId.BADLANDS:
+      case BiomeId.SAVANNAH:
+        return PokemonType.GROUND;
+      case BiomeId.CAVE:
+      case BiomeId.DESERT:
+      case BiomeId.CRYSTAL_CAVERN:
+        return PokemonType.ROCK;
+      case BiomeId.FOREST:
+      case BiomeId.JUNGLE:
+        return PokemonType.BUG;
+      case BiomeId.HAUNTED_PASS:
+      case BiomeId.OVERGROWN_TEMPLE:
+        return PokemonType.GHOST;
       case BiomeId.FACTORY:
-      case BiomeId.LABORATORY:
+      case BiomeId.ABANDONED_LAB:
         return PokemonType.STEEL;
-      case BiomeId.RUINS:
+      case BiomeId.VOLCANO:
+        return PokemonType.FIRE;
+      case BiomeId.OCEAN:
+      case BiomeId.BEACH:
+      case BiomeId.LAKE:
+      case BiomeId.SEABED:
+      case BiomeId.UNDERGROUND_WELL:
+      case BiomeId.ROCKY_COAST:
+        return PokemonType.WATER;
+      case BiomeId.ROLLING_FIELDS:
+      case BiomeId.TALL_GRASS:
+        return PokemonType.GRASS;
+      case BiomeId.THERMAL_PLANT:
+        return PokemonType.ELECTRIC;
+      case BiomeId.ANCIENT_RUINS:
       case BiomeId.SPACE:
         return PokemonType.PSYCHIC;
+      case BiomeId.FROZEN_PATH:
+      case BiomeId.SNOWY_TAIGA:
+      case BiomeId.SUMMIT:
+        return PokemonType.ICE;
       case BiomeId.WASTELAND:
       case BiomeId.END:
         return PokemonType.DRAGON;
       case BiomeId.ABYSS:
         return PokemonType.DARK;
+      case BiomeId.MEADOW:
+      case BiomeId.ENCHANTED_CAVE:
+      case BiomeId.ISLAND:
+        return PokemonType.FAIRY;
+      case BiomeId.TOWN:
+      case BiomeId.PLAINS:
+      case BiomeId.METROPOLIS:
       default:
-        return PokemonType.UNKNOWN;
+        return PokemonType.NORMAL;
     }
   }
 }
@@ -8045,72 +8054,82 @@ export class NaturePowerAttr extends CallMoveAttr {
     switch (biome) {
       case BiomeId.TOWN:
         return MoveId.ROUND;
-      case BiomeId.METROPOLIS:
-        return MoveId.TRI_ATTACK;
-      case BiomeId.SLUM:
-        return MoveId.SLUDGE_BOMB;
       case BiomeId.PLAINS:
         return MoveId.SILVER_WIND;
-      case BiomeId.GRASS:
+      case BiomeId.ROLLING_FIELDS:
         return MoveId.GRASS_KNOT;
       case BiomeId.TALL_GRASS:
-        return MoveId.POLLEN_PUFF;
-      case BiomeId.MEADOW:
-        return MoveId.GIGA_DRAIN;
+        return MoveId.ROUND;
+      case BiomeId.METROPOLIS:
+        return MoveId.ROUND;
       case BiomeId.FOREST:
-        return MoveId.BUG_BUZZ;
-      case BiomeId.JUNGLE:
-        return MoveId.LEAF_STORM;
-      case BiomeId.SEA:
-        return MoveId.HYDRO_PUMP;
+        return MoveId.ROUND;
+      case BiomeId.OCEAN:
+        return MoveId.ROUND;
       case BiomeId.SWAMP:
-        return MoveId.MUD_BOMB;
+        return MoveId.ROUND;
       case BiomeId.BEACH:
         return MoveId.SCALD;
       case BiomeId.LAKE:
-        return MoveId.BUBBLE_BEAM;
+        return MoveId.WATER_PULSE;
       case BiomeId.SEABED:
         return MoveId.BRINE;
-      case BiomeId.ISLAND:
-        return MoveId.LEAF_TORNADO;
       case BiomeId.MOUNTAIN:
         return MoveId.AIR_SLASH;
       case BiomeId.BADLANDS:
         return MoveId.EARTH_POWER;
-      case BiomeId.DESERT:
-        return MoveId.SCORCHING_SANDS;
-      case BiomeId.WASTELAND:
-        return MoveId.DRAGON_PULSE;
-      case BiomeId.CONSTRUCTION_SITE:
-        return MoveId.STEEL_BEAM;
       case BiomeId.CAVE:
         return MoveId.POWER_GEM;
-      case BiomeId.ICE_CAVE:
+      case BiomeId.DESERT:
+        return MoveId.SCORCHING_SANDS;
+      case BiomeId.FROZEN_PATH:
         return MoveId.ICE_BEAM;
-      case BiomeId.SNOWY_FOREST:
-        return MoveId.FROST_BREATH;
+      case BiomeId.MEADOW:
+        return MoveId.GIGA_DRAIN;
+      case BiomeId.THERMAL_PLANT:
+        return MoveId.CHARGE_BEAM;
       case BiomeId.VOLCANO:
         return MoveId.LAVA_PLUME;
-      case BiomeId.GRAVEYARD:
+      case BiomeId.HAUNTED_PASS:
         return MoveId.SHADOW_BALL;
-      case BiomeId.RUINS:
-        return MoveId.ANCIENT_POWER;
-      case BiomeId.TEMPLE:
-        return MoveId.EXTRASENSORY;
       case BiomeId.DOJO:
         return MoveId.FOCUS_BLAST;
-      case BiomeId.FAIRY_CAVE:
-        return MoveId.ALLURING_VOICE;
+      case BiomeId.FACTORY:
+        return MoveId.FLASH_CANNON;
+      case BiomeId.ANCIENT_RUINS:
+        return MoveId.ANCIENT_POWER;
+      case BiomeId.WASTELAND:
+        return MoveId.DRAGON_PULSE;
       case BiomeId.ABYSS:
         return MoveId.OMINOUS_WIND;
       case BiomeId.SPACE:
         return MoveId.DRACO_METEOR;
-      case BiomeId.FACTORY:
-        return MoveId.FLASH_CANNON;
-      case BiomeId.LABORATORY:
+      case BiomeId.CONSTRUCTION_SITE:
+        return MoveId.STEEL_BEAM;
+      case BiomeId.JUNGLE:
+        return MoveId.LEAF_STORM;
+      case BiomeId.ENCHANTED_CAVE:
+        return MoveId.ALLURING_VOICE;
+      case BiomeId.OVERGROWN_TEMPLE:
+        return MoveId.EXTRASENSORY;
+      case BiomeId.SLUM:
+        return MoveId.SLUDGE_BOMB;
+      case BiomeId.SNOWY_TAIGA:
+        return MoveId.FROST_BREATH;
+      case BiomeId.UNDERGROUND_WELL:
+        return MoveId.CHILLING_WATER;
+      case BiomeId.ROCKY_COAST:
+        return MoveId.BUBBLE_BEAM;
+      case BiomeId.SUMMIT:
+        return MoveId.ICY_WIND;
+      case BiomeId.SAVANNAH:
+        return MoveId.MUD_BOMB;
+      case BiomeId.CRYSTAL_CAVERN:
+        return MoveId.DAZZLING_GLEAM;
+      case BiomeId.ISLAND:
+        return MoveId.LEAF_TORNADO;
+      case BiomeId.ABANDONED_LAB:
         return MoveId.ZAP_CANNON;
-      case BiomeId.POWER_PLANT:
-        return MoveId.CHARGE_BEAM;
       case BiomeId.END:
         return MoveId.ETERNABEAM;
     }

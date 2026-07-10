@@ -936,9 +936,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
           switch (b.biome) {
             case BiomeId.VOLCANO:
               return 1;
-            case BiomeId.SEA:
+            case BiomeId.OCEAN:
               return 2;
-            case BiomeId.ICE_CAVE:
+            case BiomeId.FROZEN_PATH:
               return 3;
             case BiomeId.MOUNTAIN:
               return 4;

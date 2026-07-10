@@ -1906,6 +1906,7 @@ export class BattleScene extends SceneBase {
         }
         switch (this.arena.biomeId) {
           case BiomeId.BEACH:
+          case BiomeId.ROCKY_COAST:
             return 1;
           case BiomeId.SLUM:
             return 2;

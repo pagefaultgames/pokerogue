@@ -139,7 +139,7 @@ const terrainPool: TerrainPool = {
   [TerrainType.NONE]: 1,
 };
 
-const biomeLinks: BiomeLinks = [BiomeId.PLAINS, BiomeId.FAIRY_CAVE];
+const biomeLinks: BiomeLinks = [BiomeId.PLAINS, BiomeId.ENCHANTED_CAVE];
 
 export const meadowBiome: Biome = {
   biomeId: BiomeId.MEADOW,

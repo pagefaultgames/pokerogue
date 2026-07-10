@@ -952,14 +952,16 @@ export class Arena {
     switch (this.biomeId) {
       case BiomeId.SEABED:
       case BiomeId.CAVE:
-      case BiomeId.ICE_CAVE:
-      case BiomeId.POWER_PLANT:
+      case BiomeId.FROZEN_PATH:
+      case BiomeId.THERMAL_PLANT:
       case BiomeId.DOJO:
       case BiomeId.FACTORY:
       case BiomeId.ABYSS:
-      case BiomeId.FAIRY_CAVE:
-      case BiomeId.TEMPLE:
-      case BiomeId.LABORATORY:
+      case BiomeId.ENCHANTED_CAVE:
+      case BiomeId.OVERGROWN_TEMPLE:
+      case BiomeId.UNDERGROUND_WELL:
+      case BiomeId.CRYSTAL_CAVERN:
+      case BiomeId.ABANDONED_LAB:
         return false;
       default:
         return true;
@@ -1018,22 +1020,24 @@ export function getBiomeHasProps(biomeId: BiomeId): boolean {
     case BiomeId.BADLANDS:
     case BiomeId.CAVE:
     case BiomeId.DESERT:
-    case BiomeId.ICE_CAVE:
+    case BiomeId.FROZEN_PATH:
     case BiomeId.MEADOW:
-    case BiomeId.POWER_PLANT:
+    case BiomeId.THERMAL_PLANT:
     case BiomeId.VOLCANO:
-    case BiomeId.GRAVEYARD:
+    case BiomeId.HAUNTED_PASS:
     case BiomeId.FACTORY:
-    case BiomeId.RUINS:
+    case BiomeId.ANCIENT_RUINS:
     case BiomeId.WASTELAND:
     case BiomeId.ABYSS:
     case BiomeId.CONSTRUCTION_SITE:
     case BiomeId.JUNGLE:
-    case BiomeId.FAIRY_CAVE:
-    case BiomeId.TEMPLE:
-    case BiomeId.SNOWY_FOREST:
+    case BiomeId.ENCHANTED_CAVE:
+    case BiomeId.OVERGROWN_TEMPLE:
+    case BiomeId.SNOWY_TAIGA:
+    case BiomeId.UNDERGROUND_WELL:
+    case BiomeId.ROCKY_COAST:
     case BiomeId.ISLAND:
-    case BiomeId.LABORATORY:
+    case BiomeId.ABANDONED_LAB:
     case BiomeId.END:
       return true;
   }
