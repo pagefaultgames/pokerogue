@@ -6,6 +6,7 @@ import { UiMode } from "#enums/ui-mode";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { addBBCodeTextObject, addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
+import { formatMoney } from "#utils/common";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 
@@ -16,6 +17,7 @@ export class BattleMessageUiHandler extends MessageUiHandler {
   private nameBox: Phaser.GameObjects.NineSlice;
   private nameIcon: Phaser.GameObjects.Sprite;
   private nameText: Phaser.GameObjects.Text;
+  private nameCostText: Phaser.GameObjects.Text;
 
   public bg: Phaser.GameObjects.Sprite;
   public commandWindow: Phaser.GameObjects.NineSlice;
@@ -87,9 +89,15 @@ export class BattleMessageUiHandler extends MessageUiHandler {
       maxLines: 1,
     });
 
+    this.nameCostText = addTextObject(8, 0, "", TextStyle.MONEY, {
+      maxLines: 1,
+    });
+    this.nameCostText.setVisible(false);
+
     this.nameBoxContainer.add(this.nameBox);
     this.nameBoxContainer.add(this.nameIcon);
     this.nameBoxContainer.add(this.nameText);
+    this.nameBoxContainer.add(this.nameCostText);
     messageContainer.add(this.nameBoxContainer);
 
     this.initPromptSprite(messageContainer);
@@ -283,7 +291,7 @@ export class BattleMessageUiHandler extends MessageUiHandler {
     return coloredText(i18next.t("battleMessageUiHandler:ivNoGood"), value > starterIvs[typeIv], value);
   }
 
-  showNameText(name: string, iconFrame?: string): void {
+  showNameText(name: string, iconFrame?: string, cost?: number): void {
     this.nameBoxContainer.setVisible(true);
     this.nameText.setText(name);
 
@@ -292,12 +300,27 @@ export class BattleMessageUiHandler extends MessageUiHandler {
       this.nameIcon.setVisible(true);
       this.nameIcon.setScale(0.5);
       this.nameText.x = this.nameIcon.x + this.nameIcon.displayWidth + 4;
-      this.nameBox.width = this.nameText.displayWidth + this.nameIcon.displayWidth + 24;
     } else {
       this.nameIcon.setVisible(false);
       this.nameText.x = 8;
-      this.nameBox.width = this.nameText.displayWidth + 16;
     }
+
+    const hasCost = cost != null && cost > 0;
+    if (!hasCost) {
+      this.nameCostText.setVisible(false);
+      this.nameBox.width = this.nameText.displayWidth + (this.nameIcon.visible ? this.nameIcon.displayWidth : 0) + 24;
+      return;
+    }
+
+    const formattedMoney = formatMoney(globalScene.moneyFormat, cost);
+    this.nameCostText.setText(i18next.t("modifierSelectUiHandler:itemCost", { formattedMoney }));
+    this.nameCostText.setVisible(true);
+    this.nameCostText.setOrigin(1, 0);
+    this.nameCostText.y = 2;
+
+    const contentWidth = this.nameText.displayWidth + (this.nameIcon.visible ? this.nameIcon.displayWidth : 0) + 8 + this.nameCostText.displayWidth + 16;
+    this.nameBox.width = Math.max(56, contentWidth + 4);
+    this.nameCostText.x = this.nameBox.width - 8;
   }
 
   hideNameText(): void {
