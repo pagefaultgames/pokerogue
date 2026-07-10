@@ -2,10 +2,11 @@ import { globalScene } from "#app/global-scene";
 import type { BiomeId } from "#enums/biome-id";
 import { getBiomeKey } from "#field/arena";
 import { BattlePhase } from "#phases/battle-phase";
+import { fixedInt } from "#utils/common";
 
 export class SwitchBiomePhase extends BattlePhase {
   public readonly phaseName = "SwitchBiomePhase";
-  private nextBiome: BiomeId;
+  private readonly nextBiome: BiomeId;
 
   constructor(nextBiome: BiomeId) {
     super();
@@ -13,11 +14,12 @@ export class SwitchBiomePhase extends BattlePhase {
     this.nextBiome = nextBiome;
   }
 
-  async start() {
+  public override async start(): Promise<void> {
     super.start();
 
     if (this.nextBiome === undefined) {
-      return this.end();
+      this.end();
+      return;
     }
 
     // Kick off biome asset loading in parallel with the 2000ms slide-out
@@ -69,8 +71,9 @@ export class SwitchBiomePhase extends BattlePhase {
             if (globalScene.lastEnemyTrainer) {
               globalScene.lastEnemyTrainer.destroy();
             }
-            // Clear previous biome textures now that the transition is complete
-            globalScene.clearBiomeAssets(previousBiome);
+            // Clear previous biome textures now that the transition is complete.
+            // Delay to hopefully prevent race conditions
+            globalScene.time.delayedCall(fixedInt(3000), () => globalScene.clearBiomeAssets(previousBiome));
             this.end();
           },
         });
