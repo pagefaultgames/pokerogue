@@ -433,7 +433,7 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
       return false;
     }
     const noGamepads = this.layout["noGamepads"];
-    noGamepads.setVisable(false);
+    noGamepads.optionsContainer.setVisible(false);
     // Extract the type of the gamepad from the active configuration.
     const configType = activeConfig.padType;
 
