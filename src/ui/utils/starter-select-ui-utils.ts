@@ -343,10 +343,7 @@ export function getDexAttrFromPreferences(
    *  It then checks b) if the caughtAttr for the pokemon is female and NOT male - this means that the ONLY gender we've gotten is female, and we need to add DexAttr.FEMALE to our temp props
    *  If neither of these pass, we add DexAttr.MALE to our temp props
    */
-  if (
-    starterPreferences.female
-    || ((caughtAttr & DexAttr.FEMALE) > 0n && (caughtAttr & DexAttr.MALE) === 0n)
-  ) {
+  if (starterPreferences.female || ((caughtAttr & DexAttr.FEMALE) > 0n && (caughtAttr & DexAttr.MALE) === 0n)) {
     props += DexAttr.FEMALE;
   } else {
     props += DexAttr.MALE;
@@ -372,9 +369,9 @@ export function getDexAttrFromPreferences(
     props += DexAttr.NON_SHINY;
     props += DexAttr.DEFAULT_VARIANT; // we add the default variant here because non shiny versions are listed as default variant
   }
-  if (starterPreferences.form) {
+  if (starterPreferences.formIndex) {
     // this checks for the form of the pokemon
-    props += BigInt(Math.pow(2, starterPreferences.form)) * DexAttr.DEFAULT_FORM;
+    props += BigInt(Math.pow(2, starterPreferences.formIndex)) * DexAttr.DEFAULT_FORM;
   } else {
     // Get the first unlocked form
     props += globalScene.gameData.getFormAttr(globalScene.gameData.getFormIndex(caughtAttr));
