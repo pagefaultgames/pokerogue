@@ -310,6 +310,9 @@ export class BattleMessageUiHandler extends MessageUiHandler {
 
     const formattedMoney = formatMoney(globalScene.moneyFormat, cost);
     this.nameCostText.setText(i18next.t("modifierSelectUiHandler:itemCost", { formattedMoney }));
+    const textStyle = cost! <= globalScene.money ? TextStyle.MONEY : TextStyle.PARTY_RED;
+    this.nameCostText.setColor(getTextColor(textStyle, false));
+    this.nameCostText.setShadowColor(getTextColor(textStyle, true));
     this.nameCostText.setVisible(true);
     this.nameCostText.setOrigin(1, 0);
     this.nameCostText.y = 2;
