@@ -5,7 +5,6 @@ import { UiMode } from "#enums/ui-mode";
 import { SelectModifierPhase } from "#phases/select-modifier-phase";
 import { GameManager } from "#test/framework/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
-import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -43,7 +42,7 @@ describe("UI - ModifierSelectUiHandler - shop cursor target", () => {
 
     expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
 
-    const handler = scene.ui.handlers.find(h => h instanceof ModifierSelectUiHandler) as ModifierSelectUiHandler;
+    const handler = scene.ui.handlers[UiMode.MODIFIER_SELECT];
 
     // Precondition: this wave genuinely has no shop rows.
     expect(handler.shopOptionsRows).toHaveLength(0);

@@ -45,8 +45,8 @@ export class EvolutionSceneUiHandler extends MessageUiHandler {
     this.initPromptSprite(this.messageContainer);
   }
 
-  show(_args: any[]): boolean {
-    super.show(_args);
+  show(): boolean {
+    super.show();
 
     globalScene.ui.bringToTop(this.evolutionContainer);
     globalScene.ui.bringToTop(this.messageBg.setVisible(true));

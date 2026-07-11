@@ -18,7 +18,6 @@ import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } f
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import { TrainerConfig } from "#trainers/trainer-config";
 import { TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#trainers/trainer-party-template";
-import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/mysteriousChallengers";
@@ -159,9 +158,7 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
+      const modifierSelectHandler = game.scene.ui.handlers[UiMode.MODIFIER_SELECT];
       expect(modifierSelectHandler.options.length).toEqual(3);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toContain("TM_COMMON");
       expect(modifierSelectHandler.options[1].modifierTypeOption.type.id).toContain("TM_GREAT");
@@ -203,9 +200,7 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
+      const modifierSelectHandler = game.scene.ui.handlers[UiMode.MODIFIER_SELECT];
       expect(modifierSelectHandler.options.length).toEqual(4);
       expect(
         modifierSelectHandler.options[0].modifierTypeOption.type.tier
@@ -259,9 +254,7 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       await game.phaseInterceptor.to("SelectModifierPhase");
 
       expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
-      const modifierSelectHandler = scene.ui.handlers.find(
-        h => h instanceof ModifierSelectUiHandler,
-      ) as ModifierSelectUiHandler;
+      const modifierSelectHandler = game.scene.ui.handlers[UiMode.MODIFIER_SELECT];
       expect(modifierSelectHandler.options.length).toEqual(4);
       expect(
         modifierSelectHandler.options[0].modifierTypeOption.type.tier

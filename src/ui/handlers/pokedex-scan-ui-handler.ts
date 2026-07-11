@@ -1,15 +1,17 @@
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { UiMode } from "#enums/ui-mode";
-import type { PlayerPokemon } from "#field/pokemon";
+import { Pokemon } from "#field/pokemon";
 import type { OptionSelectItem } from "#ui/base-option-select-ui-handler";
 import { FilterTextRow } from "#ui/filter-text";
-import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
+import type { FormModalConfig, InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
 import type { ModalConfig } from "#ui/modal-ui-handler";
 import i18next from "i18next";
 
-export class PokedexScanUiHandler extends FormModalUiHandler {
+type PokedexScanUiConfig = [FormModalConfig, Pokemon | string, FilterTextRow];
+
+export class PokedexScanUiHandler extends FormModalUiHandler<any> {
   keys: string[];
   reducedKeys: string[];
   parallelKeys: string[];
@@ -94,13 +96,12 @@ export class PokedexScanUiHandler extends FormModalUiHandler {
     }
   }
 
-  // args[2] is an index of FilterTextRow
-  show(args: any[]): boolean {
+  show(args: PokedexScanUiConfig): boolean {
     this.row = args[2];
     const ui = this.getUi();
     const hasTitle = !!this.getModalTitle();
     this.updateFields(this.getInputFieldConfigs(), hasTitle);
-    this.updateContainer(args[0] as ModalConfig);
+    this.updateContainer(args[0]);
     const input = this.inputs[0];
     input.setMaxLength(255);
 
@@ -152,17 +153,17 @@ export class PokedexScanUiHandler extends FormModalUiHandler {
       }
     });
 
-    if (super.show(args)) {
-      const config = args[0] as ModalConfig;
+    if (super.show([args[0]] satisfies Parameters<FormModalUiHandler["show"]>[0])) {
+      const config = args[0];
       const label = this.formLabels[0];
 
       const inputWidth = label.width < 420 ? 200 : 200 - (label.width - 420) / 5.75;
       this.inputs[0].resize(inputWidth * 5.75, 116);
       // TODO: Figure out what the type of `this.inputContainers.list` is
       this.inputContainers[0].list[0]["width"] = inputWidth;
-      // TODO: shouldn't this be `const playerPokemon: PlayerPokemon | undefined = args[1];` and `if (playerPokemon)`?
-      if (args[1] && typeof (args[1] as PlayerPokemon).getNameToRender === "function") {
-        this.inputs[0].text = (args[1] as PlayerPokemon).getNameToRender();
+
+      if (args[1] instanceof Pokemon) {
+        this.inputs[0].text = args[1].getNameToRender();
       } else {
         this.inputs[0].text = args[1];
       }

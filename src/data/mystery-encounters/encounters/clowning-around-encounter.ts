@@ -470,7 +470,7 @@ function displayYesNoOptions(resolve) {
     maxOptions: 7,
     yOffset: 0,
   };
-  globalScene.ui.setModeWithoutClear(UiMode.OPTION_SELECT, config, null, true);
+  globalScene.ui.setModeWithoutClear(UiMode.OPTION_SELECT, config);
 }
 
 function onYesAbilitySwap(resolve) {

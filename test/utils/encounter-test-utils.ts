@@ -8,10 +8,8 @@ import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils"
 import { MysteryEncounterRewardsPhase } from "#phases/mystery-encounter-phases";
 import { VictoryPhase } from "#phases/victory-phase";
 import type { GameManager } from "#test/framework/game-manager";
-import type { MessageUiHandler } from "#ui/message-ui-handler";
+import type { BattleMessageUiHandler } from "#ui/battle-message-ui-handler";
 import type { MysteryEncounterUiHandler } from "#ui/mystery-encounter-ui-handler";
-import type { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
-import type { PartyUiHandler } from "#ui/party-ui-handler";
 import { expect, vi } from "vitest";
 
 /**
@@ -61,7 +59,7 @@ export async function runSelectMysteryEncounterOption(
     "MessagePhase",
     UiMode.MESSAGE,
     () => {
-      const uiHandler = game.scene.ui.getHandler<MessageUiHandler>();
+      const uiHandler = game.scene.ui.getHandler<BattleMessageUiHandler>();
       uiHandler.processInput(Button.ACTION);
     },
     () => game.isCurrentPhase("MysteryEncounterOptionSelectedPhase", "CommandPhase", "TurnInitPhase"),
@@ -113,7 +111,7 @@ export async function runSelectMysteryEncounterOption(
 
 async function handleSecondaryOptionSelect(game: GameManager, pokemonNo: number, optionNo?: number) {
   // Handle secondary option selections
-  const partyUiHandler = game.scene.ui.handlers[UiMode.PARTY] as PartyUiHandler;
+  const partyUiHandler = game.scene.ui.handlers[UiMode.PARTY];
   vi.spyOn(partyUiHandler, "show");
 
   const encounterUiHandler = game.scene.ui.getHandler<MysteryEncounterUiHandler>();
@@ -133,7 +131,7 @@ async function handleSecondaryOptionSelect(game: GameManager, pokemonNo: number,
   // If there is a second choice to make after selecting a Pokemon
   if (optionNo != null) {
     // Wait for Summary menu to close and second options to spawn
-    const secondOptionUiHandler = game.scene.ui.handlers[UiMode.OPTION_SELECT] as OptionSelectUiHandler;
+    const secondOptionUiHandler = game.scene.ui.handlers[UiMode.OPTION_SELECT];
     vi.spyOn(secondOptionUiHandler, "show");
     await vi.waitFor(() => expect(secondOptionUiHandler.show).toHaveBeenCalled());
 

@@ -5,7 +5,7 @@ import { isDev } from "#constants/app-constants";
 import { Button } from "#enums/buttons";
 import { UiMode } from "#enums/ui-mode";
 import { Setting, SettingKeys, settingIndex } from "#system/settings";
-import type { MessageUiHandler } from "#ui/message-ui-handler";
+import type { BattleMessageUiHandler } from "#ui/battle-message-ui-handler";
 import { PokedexPageUiHandler } from "#ui/pokedex-page-ui-handler";
 import { PokedexUiHandler } from "#ui/pokedex-ui-handler";
 import { RunInfoUiHandler } from "#ui/run-info-ui-handler";
@@ -186,7 +186,7 @@ export class UiInputs {
     switch (globalScene.ui?.getMode()) {
       // biome-ignore lint/suspicious/noFallthroughSwitchClause: falls through to show menu overlay
       case UiMode.MESSAGE: {
-        const messageHandler = globalScene.ui.getHandler<MessageUiHandler>();
+        const messageHandler = globalScene.ui.getHandler<BattleMessageUiHandler>();
         if (!messageHandler.pendingPrompt || messageHandler.isTextAnimationInProgress()) {
           return;
         }
@@ -251,7 +251,7 @@ export class UiInputs {
       Phaser.Math.Clamp(currentSetting + direction, 0, settingOptions.length - 1),
     );
     if (globalScene.ui?.getMode() === UiMode.SETTINGS) {
-      (globalScene.ui.getHandler() as SettingsUiHandler).show([]);
+      (globalScene.ui.getHandler() as SettingsUiHandler).show();
     }
   }
 }

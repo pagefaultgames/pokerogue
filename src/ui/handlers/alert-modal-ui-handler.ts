@@ -7,7 +7,7 @@ import { addTextObject } from "#ui/text";
 import { playTween } from "#utils/anim-utils";
 import { fixedInt } from "#utils/common";
 
-export class AlertModalUiHandler extends ModalUiHandler {
+export class AlertModalUiHandler extends ModalUiHandler<any> {
   private label: Phaser.GameObjects.Text;
   private allowClosing = false;
   private overlay: Phaser.GameObjects.Rectangle;
@@ -92,7 +92,7 @@ export class AlertModalUiHandler extends ModalUiHandler {
         this.allowClosing = true;
       });
     }
-    return super.show([config]);
+    return super.show([config] satisfies Parameters<ModalUiHandler["show"]>[0]);
   }
 
   public override processInput(): boolean {

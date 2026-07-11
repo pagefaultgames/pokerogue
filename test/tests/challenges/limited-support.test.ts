@@ -5,7 +5,6 @@ import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { ExpBoosterModifier } from "#modifiers/modifier";
 import { GameManager } from "#test/framework/game-manager";
-import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -39,9 +38,7 @@ describe("Challenges - Limited Support", () => {
     await game.phaseInterceptor.to("SelectModifierPhase");
 
     expect(game.scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
-    const modifierSelectHandler = game.scene.ui.handlers.find(
-      h => h instanceof ModifierSelectUiHandler,
-    ) as ModifierSelectUiHandler;
+    const modifierSelectHandler = game.scene.ui.handlers[UiMode.MODIFIER_SELECT];
     expect(modifierSelectHandler.shopOptionsRows).toHaveLength(0);
   });
 
@@ -80,9 +77,7 @@ describe("Challenges - Limited Support", () => {
     await game.phaseInterceptor.to("SelectModifierPhase");
 
     expect(game.scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
-    const modifierSelectHandler = game.scene.ui.handlers.find(
-      h => h instanceof ModifierSelectUiHandler,
-    ) as ModifierSelectUiHandler;
+    const modifierSelectHandler = game.scene.ui.handlers[UiMode.MODIFIER_SELECT];
     expect(modifierSelectHandler.shopOptionsRows).toHaveLength(0);
   });
 });

@@ -223,8 +223,8 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
    * @param args - Arguments to be passed to the show method.
    * @returns `true` if successful.
    */
-  public override show(args: any[]): boolean {
-    super.show(args);
+  public override show(): boolean {
+    super.show();
     this.updateBindings();
 
     const settings: object = Object.hasOwn(localStorage, this.localStorageKey)
@@ -442,7 +442,7 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
         const confirmationMessage =
           setting.options[cursor].confirmationMessage ?? i18next.t("settings:defaultConfirmMessage");
         globalScene.ui.showText(confirmationMessage, null, () => {
-          globalScene.ui.setOverlayMode(UiMode.CONFIRM, confirmUpdateSetting, cancelUpdateSetting, null, null, 1, 750);
+          globalScene.ui.setOverlayMode(UiMode.CONFIRM, confirmUpdateSetting, cancelUpdateSetting, false, null, 1, 750);
         });
       } else {
         saveSetting();

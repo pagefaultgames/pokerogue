@@ -91,10 +91,10 @@ export class MysteryEncounterUiHandler extends UiHandler {
     this.dexProgressContainer.setInteractive(new Phaser.Geom.Rectangle(0, 0, 24, 28), Phaser.Geom.Rectangle.Contains);
   }
 
-  override show(args: any[]): boolean {
-    super.show(args);
+  override show(args: [OptionSelectSettings?]): boolean {
+    super.show();
 
-    this.overrideSettings = (args[0] as OptionSelectSettings) ?? {};
+    this.overrideSettings = args[0] ?? {};
     const showDescriptionContainer =
       this.overrideSettings?.hideDescription == null ? true : !this.overrideSettings.hideDescription;
     const slideInDescription =

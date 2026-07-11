@@ -419,7 +419,7 @@ export class GameStatsUiHandler extends UiHandler {
   }
 
   show([username, data, callback]: [] | [username: string, data: GameData, callback?: () => void]): boolean {
-    super.show([]);
+    super.show();
 
     if (username != null && data != null) {
       this.gameData = data;

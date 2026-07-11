@@ -210,6 +210,8 @@ interface SpeciesDetails {
   natureIndex?: number | undefined;
 }
 
+type PokedexUiConfig = [GameData, ExitCallback?: () => void] | ["refresh"];
+
 export class PokedexUiHandler extends MessageUiHandler {
   private starterSelectContainer: Phaser.GameObjects.Container;
   private starterSelectScrollBar: ScrollBar;
@@ -680,7 +682,7 @@ export class PokedexUiHandler extends MessageUiHandler {
     this.starterSelectContainer.bringToTop(this.pokemonFormText);
   }
 
-  show(args: any[]): boolean {
+  show(args?: PokedexUiConfig): boolean {
     if (!this.starterPreferences) {
       this.starterPreferences = loadStarterPreferences();
     }
@@ -688,7 +690,7 @@ export class PokedexUiHandler extends MessageUiHandler {
     this.pokerusSpecies = getPokerusStarters();
 
     // When calling with "refresh", we do not reset the cursor and filters
-    if (args.length > 0) {
+    if (args && args.length > 0) {
       if (args[0] === "refresh") {
         return false;
       }
@@ -699,7 +701,7 @@ export class PokedexUiHandler extends MessageUiHandler {
       this.blockOpenPage = false;
     }
 
-    super.show(args);
+    super.show();
 
     this.starterSelectContainer.setVisible(true);
 
@@ -2404,7 +2406,7 @@ export class PokedexUiHandler extends MessageUiHandler {
           ui.revertMode();
         },
         cancel,
-        null,
+        false,
         null,
         19,
       );

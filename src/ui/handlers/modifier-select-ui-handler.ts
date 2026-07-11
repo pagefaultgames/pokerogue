@@ -25,6 +25,13 @@ const SINGLE_SHOP_ROW_YOFFSET = 12;
 const DOUBLE_SHOP_ROW_YOFFSET = 24;
 const OPTION_BUTTON_YPOSITION = -62;
 
+type ModifierSelectConfig = [
+  player: boolean,
+  ModifierTypeOption[]?,
+  (ModifierSelectCallback | null)?,
+  rerrolCost?: number,
+];
+
 export class ModifierSelectUiHandler extends AwaitableUiHandler {
   private modifierContainer: Phaser.GameObjects.Container;
   private rerollButtonContainer: Phaser.GameObjects.Container;
@@ -159,23 +166,30 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     globalScene.addInfoToggle(this.moveInfoOverlay);
   }
 
-  show(args: any[]): boolean {
+  show(args?: ModifierSelectConfig): boolean {
     globalScene.disableMenu = false;
 
     if (this.active) {
-      if (args.length >= 3) {
+      if (args && args.length >= 3) {
         this.awaitingActionInput = true;
-        this.onActionInput = args[2];
+        this.onActionInput = args[2] ?? null;
       }
       this.moveInfoOverlay.active = this.moveInfoOverlayActive;
       return false;
     }
 
-    if (args.length !== 4 || !Array.isArray(args[1]) || !(args[2] instanceof Function)) {
+    if (
+      (args
+        && (args.length !== 4
+          || !Array.isArray(args[1])
+          || !(args[2] instanceof Function)
+          || !(typeof args[3] === "number")))
+      || !args
+    ) {
       return false;
     }
 
-    super.show(args);
+    super.show();
 
     this.getUi().clearText();
 
@@ -203,11 +217,11 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     this.rerollButtonContainer.setPositionRelative(this.lockRarityButtonContainer, 0, canLockRarities ? -12 : 0);
 
-    this.rerollCost = args[3] as number;
+    this.rerollCost = args[3] ?? 0;
 
     this.updateRerollCostText();
 
-    const typeOptions = args[1] as ModifierTypeOption[];
+    const typeOptions = args[1] ?? [];
     const hasShop = globalScene.gameMode.getShopStatus();
     const baseShopCost = new NumberHolder(globalScene.getWaveMoneyAmount(1));
     globalScene.applyModifier(HealShopCostModifier, true, baseShopCost);
@@ -258,7 +272,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
       this.shopOptionsRows[row].push(option);
     }
 
-    const maxUpgradeCount = typeOptions.map(to => to.upgradeCount).reduce((max, current) => Math.max(current, max), 0);
+    const maxUpgradeCount = typeOptions?.map(to => to.upgradeCount).reduce((max, current) => Math.max(current, max), 0);
 
     /* Force updateModifiers without pokemonSpecificModifiers */
     globalScene.getModifierBar().updateModifiers(globalScene.modifiers, true);
@@ -392,7 +406,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
               updateCursorTarget();
             }
             this.awaitingActionInput = true;
-            this.onActionInput = args[2];
+            this.onActionInput = args[2] ?? null;
           });
         });
       });

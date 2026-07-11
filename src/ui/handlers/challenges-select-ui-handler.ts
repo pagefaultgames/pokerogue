@@ -305,8 +305,8 @@ export class GameChallengesUiHandler extends UiHandler {
     this.challengesContainer.update();
   }
 
-  public override show(args: any[]): boolean {
-    super.show(args);
+  public override show(): boolean {
+    super.show();
 
     const { challenges } = globalScene.gameMode;
 

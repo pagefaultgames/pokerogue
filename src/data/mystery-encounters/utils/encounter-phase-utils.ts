@@ -606,7 +606,7 @@ export function selectPokemonForOption(
           if (fullOptions[0]?.onHover) {
             fullOptions[0].onHover();
           }
-          globalScene.ui.setModeWithoutClear(UiMode.OPTION_SELECT, config, null, true);
+          globalScene.ui.setModeWithoutClear(UiMode.OPTION_SELECT, config);
         };
 
         const textPromptKey = globalScene.currentBattle.mysteryEncounter?.selectedOption?.dialogue?.secondOptionPrompt;

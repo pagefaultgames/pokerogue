@@ -121,8 +121,8 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
     globalScene.addInfoToggle(this.moveInfoOverlay, this);
   }
 
-  override show(args: [number?, Command?]): boolean {
-    super.show(args);
+  override show(args: [FieldIndex?: number, Command?]): boolean {
+    super.show();
 
     this.fieldIndex = args[0] ?? 0;
     this.fromCommand = args[1] ?? Command.FIGHT;

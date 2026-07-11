@@ -215,7 +215,7 @@ export class SelectModifierPhase extends BattlePhase {
       UiMode.PARTY,
       PartyUiMode.MODIFIER_TRANSFER,
       -1,
-      (fromSlotIndex: number, itemIndex: number, itemQuantity: number, toSlotIndex: number) => {
+      (fromSlotIndex: number, itemIndex: number, itemQuantity?: number, toSlotIndex?: number) => {
         if (
           toSlotIndex !== undefined
           && fromSlotIndex < 6

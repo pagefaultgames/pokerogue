@@ -1,13 +1,15 @@
 import { UiMode } from "#enums/ui-mode";
-import type { PlayerPokemon } from "#field/pokemon";
+import { Pokemon } from "#field/pokemon";
 import type { OptionSelectItem } from "#ui/base-option-select-ui-handler";
-import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
+import type { FormModalConfig, InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
 import type { ModalConfig } from "#ui/modal-ui-handler";
 import i18next from "i18next";
 
+type TestDialogueUiConfig = [FormModalConfig, Pokemon | string];
+
 /** Handler for the i18n testing menu used by the localization team. */
-export class TestDialogueUiHandler extends FormModalUiHandler {
+export class TestDialogueUiHandler extends FormModalUiHandler<any> {
   keys: string[];
 
   setup() {
@@ -73,11 +75,11 @@ export class TestDialogueUiHandler extends FormModalUiHandler {
     return [{ label: "Dialogue" }];
   }
 
-  show(args: any[]): boolean {
+  show(args: TestDialogueUiConfig): boolean {
     const ui = this.getUi();
     const hasTitle = !!this.getModalTitle();
     this.updateFields(this.getInputFieldConfigs(), hasTitle);
-    this.updateContainer(args[0] as ModalConfig);
+    this.updateContainer(args[0]);
     const input = this.inputs[0];
     input.setMaxLength(255);
 
@@ -131,14 +133,14 @@ export class TestDialogueUiHandler extends FormModalUiHandler {
       }
     });
 
-    if (super.show(args)) {
-      const config = args[0] as ModalConfig;
+    if (super.show([args[0]] satisfies Parameters<FormModalUiHandler["show"]>[0])) {
+      const config = args[0];
       this.inputs[0].resize(1150, 116);
       // TODO: Figure out what the type of `this.inputContainers.list` is
       this.inputContainers[0].list[0]["width"] = 200;
-      // TODO: shouldn't this be `const playerPokemon: PlayerPokemon | undefined = args[1];` and `if (playerPokemon)`?
-      if (args[1] && typeof (args[1] as PlayerPokemon).getNameToRender === "function") {
-        this.inputs[0].text = (args[1] as PlayerPokemon).getNameToRender();
+
+      if (args[1] instanceof Pokemon) {
+        this.inputs[0].text = args[1].getNameToRender();
       } else {
         this.inputs[0].text = args[1];
       }

@@ -5,7 +5,31 @@ import type { OptionSelectConfig } from "#ui/base-option-select-ui-handler";
 import { BaseOptionSelectUiHandler } from "#ui/base-option-select-ui-handler";
 import i18next from "i18next";
 
-export class ConfirmUiHandler extends BaseOptionSelectUiHandler {
+type FullPartyCaseConfig = [
+  OnSummary: () => void,
+  OnPokedex: () => void,
+  OnConfirm: () => void,
+  OnDeny: () => void,
+  "fullParty",
+  SwitchCheck?: boolean,
+  xOffset?: number,
+  yOffset?: number,
+  Delay?: number,
+];
+
+type CommonCaseConfig = [
+  OnConfirm: () => void,
+  OnDeny: () => void,
+  SwitchCheck?: boolean,
+  xOffset?: number | null,
+  yOffset?: number | null,
+  Delay?: number,
+  NoCancel?: boolean,
+];
+
+type ConfirmConfig = FullPartyCaseConfig | CommonCaseConfig;
+
+export class ConfirmUiHandler extends BaseOptionSelectUiHandler<any> {
   public static readonly windowWidth: number = 48;
 
   private switchCheck: boolean;
@@ -19,16 +43,29 @@ export class ConfirmUiHandler extends BaseOptionSelectUiHandler {
     return ConfirmUiHandler.windowWidth;
   }
 
-  show(args: any[]): boolean {
-    if (
-      args.length === 5
+  show(args: ConfirmConfig): boolean {
+    const isFullPartyCaseConfig =
+      args.length >= 5
       && args[0] instanceof Function
       && args[1] instanceof Function
       && args[2] instanceof Function
       && args[3] instanceof Function
-      && args[4] === "fullParty"
-    ) {
-      const config: OptionSelectConfig = {
+      && args[4] === "fullParty";
+    const isCommonCaseConfig = args.length >= 2 && args[0] instanceof Function && args[1] instanceof Function;
+    const isConfirmConfig = isFullPartyCaseConfig || isCommonCaseConfig;
+
+    if (!isConfirmConfig) {
+      return false;
+    }
+
+    let optionSelectConfig: OptionSelectConfig = {
+      options: [],
+    };
+    let xOffset = 0;
+    let yOffset = 0;
+
+    if (isFullPartyCaseConfig) {
+      optionSelectConfig = {
         options: [
           {
             label: i18next.t("partyUiHandler:summary"),
@@ -59,23 +96,15 @@ export class ConfirmUiHandler extends BaseOptionSelectUiHandler {
             },
           },
         ],
-        delay: args.length >= 9 && args[8] !== null ? (args[8] as number) : 0,
+        delay: typeof args[8] === "number" ? args[8] : 0,
       };
 
-      super.show([config]);
+      this.switchCheck = typeof args[5] === "boolean" && args[5];
 
-      this.switchCheck = args.length >= 6 && args[5] !== null && (args[5] as boolean);
-
-      const xOffset = args.length >= 7 && args[6] !== null ? (args[6] as number) : 0;
-      const yOffset = args.length >= 8 && args[7] !== null ? (args[7] as number) : 0;
-
-      this.optionSelectContainer.setPosition(globalScene.scaledCanvas.width - 1 + xOffset, -48 + yOffset);
-
-      this.setCursor(this.switchCheck ? this.switchCheckCursor : 0);
-      return true;
-    }
-    if (args.length >= 2 && args[0] instanceof Function && args[1] instanceof Function) {
-      const config: OptionSelectConfig = {
+      xOffset = typeof args[6] === "number" ? args[6] : 0;
+      yOffset = typeof args[7] === "number" ? args[7] : 0;
+    } else if (isCommonCaseConfig) {
+      optionSelectConfig = {
         options: [
           {
             label: i18next.t("menu:yes"),
@@ -92,24 +121,21 @@ export class ConfirmUiHandler extends BaseOptionSelectUiHandler {
             },
           },
         ],
-        delay: args.length >= 6 && args[5] !== null ? (args[5] as number) : 0,
-        noCancel: args.length >= 7 && args[6] !== null ? (args[6] as boolean) : false,
+        delay: typeof args[5] === "number" ? args[5] : 0,
+        noCancel: typeof args[6] === "boolean" ? args[6] : false,
       };
 
-      super.show([config]);
+      this.switchCheck = typeof args[2] === "boolean" && args[2];
 
-      this.switchCheck = args.length >= 3 && args[2] !== null && (args[2] as boolean);
-
-      const xOffset = args.length >= 4 && args[3] !== null ? (args[3] as number) : 0;
-      const yOffset = args.length >= 5 && args[4] !== null ? (args[4] as number) : 0;
-
-      this.optionSelectContainer.setPosition(globalScene.scaledCanvas.width - 1 + xOffset, -48 + yOffset);
-
-      this.setCursor(this.switchCheck ? this.switchCheckCursor : 0);
-
-      return true;
+      xOffset = typeof args[3] === "number" ? args[3] : 0;
+      yOffset = typeof args[4] === "number" ? args[4] : 0;
     }
-    return false;
+
+    this.optionSelectContainer.setPosition(globalScene.scaledCanvas.width - 1 + xOffset, -48 + yOffset);
+    this.setCursor(this.switchCheck ? this.switchCheckCursor : 0);
+
+    super.show([optionSelectConfig] satisfies Parameters<BaseOptionSelectUiHandler["show"]>[0]);
+    return true;
   }
 
   processInput(button: Button): boolean {

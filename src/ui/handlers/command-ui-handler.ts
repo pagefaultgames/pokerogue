@@ -14,6 +14,8 @@ import { UiHandler } from "#ui/ui-handler";
 import { canTerastallize } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
+type CommandUiConfig = [number];
+
 export class CommandUiHandler extends UiHandler {
   private commandsContainer: Phaser.GameObjects.Container;
   private cursorObj: Phaser.GameObjects.Image | null;
@@ -65,10 +67,10 @@ export class CommandUiHandler extends UiHandler {
     }
   }
 
-  show(args: any[]): boolean {
-    super.show(args);
+  show(args: CommandUiConfig): boolean {
+    super.show();
 
-    this.fieldIndex = args.length > 0 ? (args[0] as number) : 0;
+    this.fieldIndex = args.length > 0 ? args[0] : 0;
 
     this.commandsContainer.setVisible(true);
 

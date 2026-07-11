@@ -10,7 +10,9 @@ import { sessionIdKey } from "#utils/common";
 import { removeCookie } from "#utils/cookies";
 import i18next from "i18next";
 
-export class UnavailableModalUiHandler extends ModalUiHandler {
+type UnavailableModalConfig = [reconnectCallback: () => void];
+
+export class UnavailableModalUiHandler extends ModalUiHandler<any> {
   private reconnectDuration: number;
   private reconnectCallback: () => void;
 
@@ -79,7 +81,7 @@ export class UnavailableModalUiHandler extends ModalUiHandler {
     });
   }
 
-  show(args: any[]): boolean {
+  show(args: UnavailableModalConfig): boolean {
     if (args.length > 0 && args[0] instanceof Function) {
       const config: ModalConfig = {
         buttonActions: [],
@@ -89,7 +91,7 @@ export class UnavailableModalUiHandler extends ModalUiHandler {
       this.reconnectDuration = this.minTime;
       setTimeout(() => this.tryReconnect(), this.reconnectDuration);
 
-      return super.show([config]);
+      return super.show([config] satisfies Parameters<ModalUiHandler["show"]>[0]);
     }
 
     return false;

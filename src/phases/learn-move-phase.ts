@@ -8,7 +8,7 @@ import { SpeciesFormChangeMoveLearnedTrigger } from "#data/form-change-triggers"
 import { LearnMoveType } from "#enums/learn-move-type";
 import { MoveId } from "#enums/move-id";
 import { UiMode } from "#enums/ui-mode";
-import type { Pokemon } from "#field/pokemon";
+import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { Move } from "#moves/move";
 import { PlayerPartyMemberPokemonPhase } from "#phases/player-party-member-pokemon-phase";
 import { EvolutionSceneUiHandler } from "#ui/evolution-scene-ui-handler";
@@ -38,7 +38,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   public override start(): void {
     super.start();
 
-    const pokemon = this.getPokemon();
+    const pokemon = this.getPokemon() as PlayerPokemon;
     const move = allMoves[this.moveId];
     const currentMoveset = pokemon.getMoveset();
 
@@ -72,7 +72,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * @param move The Move to be learned
    * @param Pokemon The Pokemon learning the move
    */
-  async replaceMoveCheck(move: Move, pokemon: Pokemon) {
+  async replaceMoveCheck(move: Move, pokemon: PlayerPokemon) {
     const learnMovePrompt = i18next.t("battle:learnMovePrompt", {
       pokemonName: getPokemonNameWithAffix(pokemon),
       moveName: move.name,
@@ -108,7 +108,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * @param move The Move to be learned
    * @param Pokemon The Pokemon learning the move
    */
-  async forgetMoveProcess(move: Move, pokemon: Pokemon) {
+  async forgetMoveProcess(move: Move, pokemon: PlayerPokemon) {
     globalScene.ui.setMode(this.messageMode);
     await globalScene.ui.showTextPromise(i18next.t("battle:learnMoveForgetQuestion"), undefined, true);
     await globalScene.ui.setModeWithoutClear(
@@ -143,7 +143,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * @param move The Move to be learned
    * @param Pokemon The Pokemon learning the move
    */
-  async rejectMoveAndEnd(move: Move, pokemon: Pokemon) {
+  async rejectMoveAndEnd(move: Move, pokemon: PlayerPokemon) {
     if (globalScene.hideMoveSkipConfirm) {
       globalScene.ui.setMode(this.messageMode);
       globalScene.ui

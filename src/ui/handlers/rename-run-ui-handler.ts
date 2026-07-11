@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import { FormModalUiHandler, type InputFieldConfig } from "./form-modal-ui-handler";
+import { type FormModalConfig, FormModalUiHandler, type InputFieldConfig } from "./form-modal-ui-handler";
 import type { ModalConfig } from "./modal-ui-handler";
 
 export class RenameRunFormUiHandler extends FormModalUiHandler {
@@ -32,7 +32,7 @@ export class RenameRunFormUiHandler extends FormModalUiHandler {
     return [{ label: i18next.t("menu:runName") }];
   }
 
-  show(args: any[]): boolean {
+  show(args: [FormModalConfig]): boolean {
     if (!super.show(args)) {
       return false;
     }
@@ -41,7 +41,7 @@ export class RenameRunFormUiHandler extends FormModalUiHandler {
         input.text = "";
       });
     }
-    const config = args[0] as ModalConfig;
+    const config = args[0];
     this.submitAction = () => {
       this.sanitizeInputs();
       const sanitizedName = btoa(encodeURIComponent(this.inputs[0].text));

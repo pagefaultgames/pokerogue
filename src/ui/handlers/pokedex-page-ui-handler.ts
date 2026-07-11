@@ -210,6 +210,16 @@ enum MenuOptions {
   EVOLUTIONS,
 }
 
+type PokedexPageUiConfig =
+  | [
+      // TODO: add `| null | undefined`?
+      PokemonSpecies,
+      (StarterAttributes | null | undefined)?,
+      (SpeciesId[] | null)?,
+      ExitCallBack?: (() => void) | null,
+    ]
+  | ["refresh"];
+
 export class PokedexPageUiHandler extends MessageUiHandler {
   private starterSelectContainer: Phaser.GameObjects.Container;
   private shinyOverlay: Phaser.GameObjects.Image;
@@ -735,13 +745,13 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     this.previousStarterAttributes = [];
   }
 
-  public override show(args: any[]): boolean {
+  public override show(args: PokedexPageUiConfig): boolean {
     // Allow the use of candies if we are in one of the whitelisted phases
     this.canUseCandies = ["TitlePhase", "SelectStarterPhase", "CommandPhase"].includes(
       globalScene.phaseManager.getCurrentPhase().phaseName,
     );
 
-    if (args.length > 0 && args[0] === "refresh") {
+    if (args.length === 1 && args[0] === "refresh") {
       return false;
     }
     this.species = args[0];
@@ -755,14 +765,14 @@ export class PokedexPageUiHandler extends MessageUiHandler {
     this.filteredIndices = args[2] ?? null;
     this.starterSetup();
 
-    if (args[4] instanceof Function) {
-      this.exitCallback = args[4];
+    if (args[3] instanceof Function) {
+      this.exitCallback = args[3];
     }
 
     this.moveInfoOverlay.clear(); // clear this when removing a menu; the cancel button doesn't seem to trigger this automatically on controllers
     this.infoOverlay.clear();
 
-    super.show(args);
+    super.show();
 
     this.starterSelectContainer.setVisible(true);
     this.getUi().bringToTop(this.starterSelectContainer);
@@ -1182,14 +1192,14 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         success = true;
       } else if (this.previousSpecies.length > 0) {
         this.blockInput = true;
-        ui.setModeWithoutClear(UiMode.OPTION_SELECT).then(() => {
-          const species = this.previousSpecies.pop();
-          const starterAttributes = this.previousStarterAttributes.pop();
-          this.moveInfoOverlay.clear();
-          this.clearText();
-          ui.setModeForceTransition(UiMode.POKEDEX_PAGE, species, starterAttributes);
-          success = true;
-        });
+
+        const species = this.previousSpecies.pop();
+        const starterAttributes = this.previousStarterAttributes.pop();
+        this.moveInfoOverlay.clear();
+        this.clearText();
+        this.show([species as PokemonSpecies, starterAttributes]);
+        success = true;
+
         this.blockInput = false;
       } else {
         ui.revertMode().then(() => {
@@ -1619,7 +1629,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                         this.savedStarterAttributes.form = newFormIndex;
                         this.moveInfoOverlay.clear();
                         this.clearText();
-                        ui.setMode(UiMode.POKEDEX_PAGE, newSpecies, this.savedStarterAttributes);
+
+                        ui.setMode(UiMode.POKEDEX_PAGE, newSpecies as PokemonSpecies, this.savedStarterAttributes);
                         return true;
                       },
                       onHover: () => this.showText(conditionText),
@@ -2093,7 +2104,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
               return true;
             }
             this.blockInput = true;
-            ui.setModeWithoutClear(UiMode.OPTION_SELECT).then(() => {
+
+            // TODO: setMode NoOp, option select never shown, see show #ui/base-option-select-ui-handler.ts
+            ui.setModeWithoutClear(UiMode.OPTION_SELECT, { options: [] }).then(() => {
               // Always go back to first selection after scrolling around
               if (this.previousSpecies.length === 0) {
                 this.previousSpecies.push(this.species);
@@ -2127,45 +2140,39 @@ export class PokedexPageUiHandler extends MessageUiHandler {
             });
             this.blockInput = false;
             break;
-          case Button.RIGHT:
+          case Button.RIGHT: {
             if (this.filteredIndices && this.filteredIndices.length <= 1) {
               ui.playError();
               this.blockInput = false;
               return true;
             }
-            ui.setModeWithoutClear(UiMode.OPTION_SELECT).then(() => {
-              // Always go back to first selection after scrolling around
-              if (this.previousSpecies.length === 0) {
-                this.previousSpecies.push(this.species);
-                this.previousStarterAttributes.push({ ...this.savedStarterAttributes });
-              }
-              let newSpecies: PokemonSpecies;
-              if (this.filteredIndices) {
-                const index = this.filteredIndices.indexOf(this.species.speciesId);
-                const newIndex = index >= this.filteredIndices.length - 1 ? 0 : index + 1;
-                newSpecies = getPokemonSpecies(this.filteredIndices[newIndex]);
-              } else {
-                const allSpecies = speciesDataRegistry.getAllSpecies();
-                const index = allSpecies.findIndex(species => species.speciesId === this.species.speciesId);
-                const newIndex = index >= allSpecies.length - 1 ? 0 : index + 1;
-                newSpecies = allSpecies[newIndex];
-              }
-              const matchingForm = newSpecies.forms.find(
-                form => form.formKey === this.species?.forms[this.formIndex]?.formKey,
-              );
-              const newFormIndex = matchingForm ? matchingForm.formIndex : 0;
-              this.starterAttributes.form = newFormIndex;
-              this.savedStarterAttributes.form = newFormIndex;
-              this.moveInfoOverlay.clear();
-              this.clearText();
-              ui.setModeForceTransition(
-                UiMode.POKEDEX_PAGE,
-                newSpecies,
-                this.savedStarterAttributes,
-                this.filteredIndices,
-              );
-            });
+            // Always go back to first selection after scrolling around
+            if (this.previousSpecies.length === 0) {
+              this.previousSpecies.push(this.species);
+              this.previousStarterAttributes.push({ ...this.savedStarterAttributes });
+            }
+            let newSpecies: PokemonSpecies;
+            if (this.filteredIndices) {
+              const index = this.filteredIndices.indexOf(this.species.speciesId);
+              const newIndex = index >= this.filteredIndices.length - 1 ? 0 : index + 1;
+              newSpecies = getPokemonSpecies(this.filteredIndices[newIndex]);
+            } else {
+              const allSpecies = speciesDataRegistry.getAllSpecies();
+              const index = allSpecies.findIndex(species => species.speciesId === this.species.speciesId);
+              const newIndex = index >= allSpecies.length - 1 ? 0 : index + 1;
+              newSpecies = allSpecies[newIndex];
+            }
+            const matchingForm = newSpecies.forms.find(
+              form => form.formKey === this.species?.forms[this.formIndex]?.formKey,
+            );
+            const newFormIndex = matchingForm ? matchingForm.formIndex : 0;
+            this.starterAttributes.form = newFormIndex;
+            this.savedStarterAttributes.form = newFormIndex;
+            this.moveInfoOverlay.clear();
+            this.clearText();
+            this.show([newSpecies, this.savedStarterAttributes, this.filteredIndices]);
             break;
+          }
         }
       }
     }

@@ -7,13 +7,15 @@ import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { GameData } from "#system/game-data";
 import type { AdminUiHandlerService, AdminUiHandlerServiceMode, SearchAccountResponse } from "#types/api";
-import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
+import type { FormModalConfig, InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
 import type { ModalConfig } from "#ui/modal-ui-handler";
 import { getTextColor } from "#ui/text";
 import { toTitleCase } from "#utils/strings";
 
-export class AdminUiHandler extends FormModalUiHandler {
+type AdminUiConfig = [FormModalConfig, AdminMode, AdminResult?: SearchAccountResponse, IsMessageError?: boolean];
+
+export class AdminUiHandler extends FormModalUiHandler<any> {
   private adminMode: AdminMode;
   private adminResult: SearchAccountResponse;
   private config: ModalConfig;
@@ -98,9 +100,9 @@ export class AdminUiHandler extends FormModalUiHandler {
     return false;
   }
 
-  show(args: any[]): boolean {
-    this.config = args[0] as ModalConfig; // config
-    this.adminMode = args[1] as AdminMode; // admin mode
+  show(args: AdminUiConfig): boolean {
+    this.config = args[0]; // config
+    this.adminMode = args[1]; // admin mode
     this.adminResult = args[2] ?? {
       username: "",
       discordId: "",
@@ -128,7 +130,7 @@ export class AdminUiHandler extends FormModalUiHandler {
       .setColor(getTextColor(msgColor))
       .setShadowColor(getTextColor(msgColor, true));
 
-    if (!super.show(args)) {
+    if (!super.show([args[0]] satisfies Parameters<FormModalUiHandler["show"]>[0])) {
       return false;
     }
 

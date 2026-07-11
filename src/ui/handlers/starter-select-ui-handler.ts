@@ -295,6 +295,8 @@ interface SpeciesDetails {
   teraType?: PokemonType | undefined;
 }
 
+type StarterSelectUiConfig = [StarterSelectCallback?];
+
 export class StarterSelectUiHandler extends MessageUiHandler {
   private starterSelectContainer: Phaser.GameObjects.Container;
   private starterSelectScrollBar: ScrollBar;
@@ -1190,15 +1192,15 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.updateInstructions();
   }
 
-  show(args: any[]): boolean {
+  show(args: StarterSelectUiConfig): boolean {
     this.moveInfoOverlay.clear(); // clear this when removing a menu; the cancel button doesn't seem to trigger this automatically on controllers
     this.pokerusSpecies = getPokerusStarters();
 
     this.allowTera = Object.hasOwn(globalScene.gameData.achvUnlocks, achvs.TERASTALLIZE.id);
 
     if (args.length > 0 && args[0] instanceof Function) {
-      super.show(args);
-      this.starterSelectCallback = args[0] as StarterSelectCallback;
+      super.show();
+      this.starterSelectCallback = args[0];
 
       this.starterSelectContainer.setVisible(true);
 
@@ -2418,7 +2420,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
                   form: starterAttributes.form,
                   female: starterAttributes.female,
                 };
-                ui.setOverlayMode(UiMode.POKEDEX_PAGE, this.lastSpecies, attributes, null, null, () => {
+                ui.setOverlayMode(UiMode.POKEDEX_PAGE, this.lastSpecies, attributes, null, () => {
                   if (this.lastSpecies) {
                     starterContainer = this.filteredStarterContainers[this.cursor];
                     const persistentStarterData = globalScene.gameData.starterData[this.lastSpecies.speciesId];
@@ -4498,7 +4500,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           globalScene.phaseManager.getCurrentPhase().end();
         },
         cancel,
-        null,
+        false,
         null,
         19,
       );
@@ -4538,7 +4540,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             startRun();
           },
           cancel,
-          null,
+          false,
           null,
           19,
         );
