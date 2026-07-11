@@ -25,11 +25,11 @@ export class StarterSelectInstructionsContainer extends Phaser.GameObjects.Conta
   private goFilterLabel: Phaser.GameObjects.Text;
 
   // Constants used to determine the position of the buttons and labels
-  private INSTRUCTION_ROW_X = 4;
-  private INSTRUCTION_ROW_Y = 156;
-  private INSTRUCTION_TEXT_OFFSET = 9;
-  private FILTER_INSTRUCTION_ROW_X = 50;
-  private FILTER_INSTRUCTION_ROW_Y = 5;
+  private readonly INSTRUCTION_ROW_X = 4;
+  private readonly INSTRUCTION_ROW_Y = 156;
+  private readonly INSTRUCTION_TEXT_OFFSET = 9;
+  private readonly FILTER_INSTRUCTION_ROW_X = 50;
+  private readonly FILTER_INSTRUCTION_ROW_Y = 5;
 
   // Keep track of incremental position of the buttons
   private instructionRowX = this.INSTRUCTION_ROW_X;
