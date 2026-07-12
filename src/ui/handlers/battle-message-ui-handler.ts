@@ -295,10 +295,7 @@ export class BattleMessageUiHandler extends MessageUiHandler {
       this.nameText.x = 8;
     }
 
-    this.nameBox.width =
-      this.nameText.displayWidth +
-      (this.nameIcon.visible ? this.nameIcon.displayWidth + 4 : 0) +
-      16;
+    this.nameBox.width = this.nameText.displayWidth + (this.nameIcon.visible ? this.nameIcon.displayWidth + 4 : 0) + 16;
   }
 
   hideNameText(): void {
