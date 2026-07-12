@@ -1,10 +1,11 @@
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { DexAttr } from "#enums/dex-attr";
 import type { SpeciesId } from "#enums/species-id";
 import type { SystemSaveData } from "#types/save-data";
 import type { SessionSaveMigrator, SystemSaveMigrator } from "#types/save-migrators";
 import { validateIsArrayOfObjects } from "#utils/migrator-utils";
-import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 /**
  * If a starter is caught, but the only forms registered as caught are not starterSelectable,
@@ -23,7 +24,7 @@ const migrateUnselectableForms: SystemSaveMigrator = {
           // An unknown bug at some point in time caused some accounts to have starter data for pokedex number 0 which crashes
           return;
         }
-        const species = getPokemonSpecies(speciesNumber);
+        const species = speciesDataRegistry.getSpecies(speciesNumber);
         if (caughtAttr && species.forms?.length > 1) {
           const selectableForms = species.forms.filter(
             (form, formIndex) => form.isStarterSelectable && caughtAttr & globalScene.gameData.getFormAttr(formIndex),

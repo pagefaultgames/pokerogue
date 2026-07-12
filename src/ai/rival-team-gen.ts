@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { isBeta, isDev } from "#constants/app-constants";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { getTypeDamageMultiplier } from "#data/type";
@@ -11,7 +12,6 @@ import type { EnemyPokemon } from "#field/pokemon";
 import { RIVAL_6_POOL, type RivalPoolConfig } from "#trainers/rival-party-config";
 import { randSeedItem } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 /**
  * The maximum number of shared weaknesses to tolerate when balancing weakness
@@ -152,7 +152,7 @@ function calcPartyTypings(
     if (refSpecies == null) {
       continue;
     }
-    const refPokeSpecies = getPokemonSpecies(refSpecies);
+    const refPokeSpecies = speciesDataRegistry.getSpecies(refSpecies);
     const type1 = refPokeSpecies.type1;
     const type2 = refPokeSpecies.type2;
     if (balanceTypes) {
@@ -188,7 +188,7 @@ function checkTypingConstraints(
   if (!balanceTypes && !balanceWeaknesses) {
     return true;
   }
-  const { type1, type2 } = getPokemonSpecies(species);
+  const { type1, type2 } = speciesDataRegistry.getSpecies(species);
 
   if (
     balanceTypes
@@ -199,7 +199,7 @@ function checkTypingConstraints(
   }
 
   if (balanceWeaknesses) {
-    const weaknesses = getWeakTypes(getPokemonSpecies(species));
+    const weaknesses = getWeakTypes(speciesDataRegistry.getSpecies(species));
     for (const weakType of weaknesses) {
       if ((existingWeaknesses.get(weakType) ?? 0) >= MAX_SHARED_WEAKNESSES) {
         return false;
@@ -322,7 +322,7 @@ export function getRandomRivalPartyMemberFunc(
     }
 
     return globalScene.addEnemyPokemon(
-      getPokemonSpecies(species),
+      speciesDataRegistry.getSpecies(species),
       level,
       TrainerSlot.TRAINER,
       undefined,

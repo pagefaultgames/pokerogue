@@ -1,5 +1,6 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { modifierTypes } from "#data/data-lists";
 import { Challenges } from "#enums/challenges";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -16,7 +17,6 @@ import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { randSeedInt } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 /** i18n namespace for encounter */
 const namespace = "mysteryEncounters/darkDeal";
@@ -181,7 +181,9 @@ export const DarkDealEncounter: MysteryEncounter = MysteryEncounterBuilder.withE
         // Starter egg tier, 35/50/10/5 %odds for tiers 6/7/8/9+
         const roll = randSeedInt(100);
         const starterTier: number | [number, number] = roll >= 65 ? 6 : roll >= 15 ? 7 : roll >= 5 ? 8 : [9, 10];
-        const bossSpecies = getPokemonSpecies(getRandomSpeciesByStarterCost(starterTier, excludedBosses, bossTypes));
+        const bossSpecies = speciesDataRegistry.getSpecies(
+          getRandomSpeciesByStarterCost(starterTier, excludedBosses, bossTypes),
+        );
         const pokemonConfig: EnemyPokemonConfig = {
           species: bossSpecies,
           isBoss: true,

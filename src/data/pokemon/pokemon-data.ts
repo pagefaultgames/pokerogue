@@ -1,3 +1,4 @@
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import type { BattlerTag } from "#data/battler-tags";
 import { loadBattlerTag, SerializableBattlerTag } from "#data/battler-tags";
 import type { Gender } from "#data/gender";
@@ -18,7 +19,7 @@ import type { IllusionData } from "#types/illusion-data";
 import type { SerializedSpeciesForm } from "#types/pokemon-common";
 import type { TurnMove } from "#types/turn-move";
 import type { CoerceNullPropertiesToUndefined } from "#types/type-helpers";
-import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 /**
  * Permanent data that can customize a Pokemon in non-standard ways from its Species.
@@ -175,10 +176,10 @@ export class PokemonSummonData {
         if (illusionData.fusionSpecies != null) {
           switch (typeof illusionData.fusionSpecies) {
             case "object":
-              illusionData.fusionSpecies = getPokemonSpecies(illusionData.fusionSpecies.speciesId);
+              illusionData.fusionSpecies = speciesDataRegistry.getSpecies(illusionData.fusionSpecies.speciesId);
               break;
             case "number":
-              illusionData.fusionSpecies = getPokemonSpecies(illusionData.fusionSpecies);
+              illusionData.fusionSpecies = speciesDataRegistry.getSpecies(illusionData.fusionSpecies);
               break;
             default:
               illusionData.fusionSpecies = undefined;

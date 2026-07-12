@@ -28,7 +28,6 @@ import { trainerConfigs } from "#trainers/trainer-config";
 import type { SessionSaveData } from "#types/save-data";
 import { checkSpeciesValidForChallenge, isNuzlockeChallenge } from "#utils/challenge-utils";
 import { fixedInt, isLocalServerConnected } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 export class GameOverPhase extends BattlePhase {
@@ -318,11 +317,11 @@ export class GameOverPhase extends BattlePhase {
   }
 
   awardFirstClassicCompletion(pokemon: Pokemon, forStarter = false): void {
-    const speciesId = getPokemonSpecies(pokemon.species.speciesId);
+    const speciesId = speciesDataRegistry.getSpecies(pokemon.species.speciesId);
     const speciesRibbonCount = globalScene.gameData.incrementRibbonCount(speciesId, forStarter);
     // first time classic win, award voucher
     if (speciesRibbonCount === 1) {
-      this.firstRibbons.push(getPokemonSpecies(pokemon.species.getRootSpeciesId(forStarter)));
+      this.firstRibbons.push(speciesDataRegistry.getSpecies(pokemon.species.getRootSpeciesId(forStarter)));
     }
   }
 

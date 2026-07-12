@@ -158,7 +158,7 @@ import { deepMergeSpriteData } from "#utils/data";
 import { getEnumValues } from "#utils/enums";
 import { cachedFetch } from "#utils/fetch-utils";
 import { getModifierPoolForType, getModifierType } from "#utils/modifier-utils";
-import { decodeNickname, getPokemonSpecies } from "#utils/pokemon-utils";
+import { decodeNickname } from "#utils/pokemon-utils";
 import { capitalizeFirstLetterOnly } from "#utils/strings";
 import i18next from "i18next";
 import Phaser from "phaser";
@@ -926,7 +926,7 @@ export class BattleScene extends SceneBase {
       level = activeOverrides.ENEMY_LEVEL_OVERRIDE;
     }
     if (activeOverrides.ENEMY_SPECIES_OVERRIDE) {
-      species = getPokemonSpecies(activeOverrides.ENEMY_SPECIES_OVERRIDE);
+      species = speciesDataRegistry.getSpecies(activeOverrides.ENEMY_SPECIES_OVERRIDE);
       // The fact that a Pokemon is a boss or not can change based on its Species and level
       boss = this.getEncounterBossSegments(this.currentBattle.waveIndex, level, species) > 1;
     }
@@ -2343,7 +2343,7 @@ export class BattleScene extends SceneBase {
               .map(s => {
                 if (!filterAllEvolutions) {
                   while (speciesDataRegistry.hasPrevolution(s.speciesId)) {
-                    s = getPokemonSpecies(speciesDataRegistry.getPrevolution(s.speciesId)!);
+                    s = speciesDataRegistry.getSpecies(speciesDataRegistry.getPrevolution(s.speciesId)!);
                   }
                 }
                 return s;
