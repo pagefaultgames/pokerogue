@@ -1,4 +1,5 @@
 import type { BattleScene } from "#app/battle-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { AbilityId } from "#enums/ability-id";
 import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
@@ -14,7 +15,6 @@ import { HUMAN_TRANSITABLE_BIOMES } from "#mystery-encounters/mystery-encounters
 import { GameManager } from "#test/framework/game-manager";
 import { runMysteryEncounterToEnd } from "#test/utils/encounter-test-utils";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -194,7 +194,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
       await game.phaseInterceptor.to("SelectModifierPhase", false);
 
       expect(gyarados.exp).toBe(
-        expBefore + Math.floor((getPokemonSpecies(SpeciesId.LIEPARD).baseExp * defaultWave) / 5 + 1),
+        expBefore + Math.floor((speciesDataRegistry.getSpecies(SpeciesId.LIEPARD).baseExp * defaultWave) / 5 + 1),
       );
     });
 
@@ -209,7 +209,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
       await game.phaseInterceptor.to("SelectModifierPhase", false);
 
       expect(abra.exp).toBe(
-        expBefore + Math.floor((getPokemonSpecies(SpeciesId.LIEPARD).baseExp * defaultWave) / 5 + 1),
+        expBefore + Math.floor((speciesDataRegistry.getSpecies(SpeciesId.LIEPARD).baseExp * defaultWave) / 5 + 1),
       );
     });
 

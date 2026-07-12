@@ -30,7 +30,7 @@ import type { DexAttrProps, StarterDataEntry } from "#types/save-data";
 import { type BooleanHolder, isBetween, type NumberHolder, randSeedItem } from "#utils/common";
 import { deepCopy } from "#utils/data";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
-import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
@@ -480,8 +480,10 @@ export class SingleGenerationChallenge extends Challenge {
   }
 
   applyPokemonInBattle(pokemon: Pokemon, valid: BooleanHolder): boolean {
-    const baseGeneration = getPokemonSpecies(pokemon.species.speciesId).generation;
-    const fusionGeneration = pokemon.isFusion() ? getPokemonSpecies(pokemon.fusionSpecies!.speciesId).generation : 0;
+    const baseGeneration = speciesDataRegistry.getSpecies(pokemon.species.speciesId).generation;
+    const fusionGeneration = pokemon.isFusion()
+      ? speciesDataRegistry.getSpecies(pokemon.fusionSpecies!.speciesId).generation
+      : 0;
     if (
       pokemon.isPlayer()
       && (baseGeneration !== this.value || (pokemon.isFusion() && fusionGeneration !== this.value))

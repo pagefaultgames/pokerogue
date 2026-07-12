@@ -32,7 +32,6 @@ import { SpeciesId } from "#enums/species-id";
 import { VariantTier } from "#enums/variant-tier";
 import type { PlayerPokemon } from "#field/pokemon";
 import { getIvsFromId, randInt, randomString, randSeedInt } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 export const EGG_SEED = 1073741824;
@@ -190,7 +189,7 @@ export class Egg {
 
       // TODO: This is a race condition with the initialization of `variantData`.
       // It doesn't seem to impact nonlocal instances, but it should still be fixed.
-      if (this._species && !getPokemonSpecies(this._species).hasVariants()) {
+      if (this._species && !speciesDataRegistry.getSpecies(this._species).hasVariants()) {
         this._variantTier = VariantTier.STANDARD;
       }
       // Needs this._tier so it needs to be generated afer the tier override if bought from same species
@@ -241,10 +240,10 @@ export class Egg {
         this._species = this.rollSpecies()!; // TODO: is this bang correct?
       }
 
-      let pokemonSpecies = getPokemonSpecies(this._species);
+      let pokemonSpecies = speciesDataRegistry.getSpecies(this._species);
       // Special condition to have Phione eggs also have a chance of generating Manaphy
       if (this._species === SpeciesId.PHIONE && this._sourceType === EggSourceType.SAME_SPECIES_EGG) {
-        pokemonSpecies = getPokemonSpecies(
+        pokemonSpecies = speciesDataRegistry.getSpecies(
           randSeedInt(MANAPHY_EGG_MANAPHY_RATE) ? SpeciesId.PHIONE : SpeciesId.MANAPHY,
         );
       }
@@ -323,13 +322,13 @@ export class Egg {
         return (
           this.eggDescriptor
           ?? i18next.t("egg:sameSpeciesEgg", {
-            species: getPokemonSpecies(this._species).getName(),
+            species: speciesDataRegistry.getSpecies(this._species).getName(),
           })
         );
       case EggSourceType.GACHA_LEGENDARY:
         return (
           this.eggDescriptor
-          ?? `${i18next.t("egg:gachaTypeLegendary")} (${getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(this.timestamp)).getName()})`
+          ?? `${i18next.t("egg:gachaTypeLegendary")} (${speciesDataRegistry.getSpecies(getLegendaryGachaSpeciesForTimestamp(this.timestamp)).getName()})`
         );
       case EggSourceType.GACHA_SHINY:
         return this.eggDescriptor ?? i18next.t("egg:gachaTypeShiny");

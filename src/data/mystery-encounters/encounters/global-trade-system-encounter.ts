@@ -41,7 +41,6 @@ import type { OptionSelectItem } from "#ui/base-option-select-ui-handler";
 import { randInt, randSeedInt, randSeedItem, randSeedShuffle } from "#utils/common";
 import { getEnumKeys } from "#utils/enums";
 import { getRandomLocaleEntry } from "#utils/i18n";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
@@ -482,7 +481,7 @@ function getPokemonTradeOptions(): Map<number, EnemyPokemon[]> {
     if (pokemon.species.legendary || pokemon.species.subLegendary || pokemon.species.mythical) {
       const generation = pokemon.species.generation;
       const tradeOptions: EnemyPokemon[] = LEGENDARY_TRADE_POOLS[generation].map(s => {
-        const pokemonSpecies = getPokemonSpecies(s);
+        const pokemonSpecies = speciesDataRegistry.getSpecies(s);
         return new EnemyPokemon(pokemonSpecies, 5, TrainerSlot.NONE, false);
       });
       tradeOptionsMap.set(pokemon.id, tradeOptions);

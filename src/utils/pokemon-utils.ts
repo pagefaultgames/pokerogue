@@ -11,17 +11,6 @@ import type { StarterSpeciesId } from "#types/starter-species-id";
 import { randSeedIntRange, randSeedItem } from "#utils/common";
 
 /**
- * Gets the `PokemonSpecies` object associated with the given `SpeciesId`
- * @param speciesId - The {@linkcode SpeciesId} to fetch.
- * @returns The associated {@linkcode PokemonSpecies} object
- * @deprecated Use {@linkcode speciesDataRegistry.getSpecies}
- */
-// TODO: remove this function
-export function getPokemonSpecies(speciesId: SpeciesId): PokemonSpecies {
-  return speciesDataRegistry.getSpecies(speciesId);
-}
-
-/**
  * Converts the internal id of the Pokemon into its national dex number
  * @param speciesId - The {@linkcode SpeciesId} to get the dex number of
  * @returns The national dex number matching the `SpeciesId`
@@ -128,7 +117,7 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
 }
 
 export function getPokemonSpeciesForm(species: SpeciesId, formIndex: number): PokemonSpeciesForm {
-  const retSpecies: PokemonSpecies = getPokemonSpecies(species);
+  const retSpecies: PokemonSpecies = speciesDataRegistry.getSpecies(species);
 
   if (formIndex < retSpecies.forms.length) {
     return retSpecies.forms[formIndex];
