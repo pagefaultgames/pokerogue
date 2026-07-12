@@ -30,7 +30,7 @@ import { StatsContainer } from "#ui/stats-container";
 import { addBBCodeTextObject, addTextObject, getTextColor, updateCandyCountTextStyle } from "#ui/text";
 import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
 import { BooleanHolder, getLocalizedSpriteKey, padInt, truncateString } from "#utils/common";
-import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
@@ -490,7 +490,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     this.allowTera = Object.hasOwn(globalScene.gameData.achvUnlocks, achvs.TERASTALLIZE.id);
 
     this.speciesId = starterId;
-    const species = getPokemonSpecies(starterId);
+    const species = speciesDataRegistry.getSpecies(starterId);
 
     // First, we load from the dex entry to get defaults
     const { dexEntry } = getStarterData(starterId);
@@ -651,7 +651,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     // Here we pass some options to override everything else
     let { shiny, formIndex, female, variant, abilityIndex, natureIndex, teraType } = options;
 
-    const species = getPokemonSpecies(starterId);
+    const species = speciesDataRegistry.getSpecies(starterId);
 
     // We will only update the sprite if there is a change to form, shiny/variant
     // or gender for species with gender sprite differences
@@ -768,7 +768,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     const { starterDataEntry } = getStarterData(starterId);
 
     const passiveAttr = starterDataEntry.passiveAttr;
-    const passiveAbility = allAbilities[getPokemonSpecies(starterId).getPassiveAbility(formIndex)];
+    const passiveAbility = allAbilities[speciesDataRegistry.getSpecies(starterId).getPassiveAbility(formIndex)];
 
     if (passiveAbility) {
       const isUnlocked = !!(passiveAttr & Passive.UNLOCKED);

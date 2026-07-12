@@ -24,7 +24,6 @@ import type { StarterSpeciesId } from "#types/starter-species-id";
 import { SortCriteria, type SortDirection } from "#ui/dropdown";
 import { applyChallenges, checkStarterValidForChallenge } from "#utils/challenge-utils";
 import { NumberHolder } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 export interface SpeciesDetails {
@@ -101,7 +100,7 @@ export function isSameSpeciesEggAvailable(speciesId: number, gameData = globalSc
  * @returns whether the starter is valid for challenges
  */
 export function isStarterValidForChallenge(starterId: StarterSpeciesId): boolean {
-  const species = getPokemonSpecies(starterId);
+  const species = speciesDataRegistry.getSpecies(starterId);
 
   let isStarterValid = false;
   if (species.forms?.length > 0) {
@@ -412,7 +411,7 @@ export function getStarterDetailsFromPreferences(
   starterPreferences: StarterPreferences = {},
 ) {
   const props = getStarterDexAttrPropsFromPreferences(starterId, starterPreferences);
-  const species = getPokemonSpecies(starterId);
+  const species = speciesDataRegistry.getSpecies(starterId);
   const abilityIndex =
     starterPreferences?.abilityIndex ?? globalScene.gameData.getStarterDefaultAbilityIndex(starterId);
   const nature = starterPreferences?.nature ?? globalScene.gameData.getSpeciesDefaultNature(starterId);
@@ -486,7 +485,7 @@ export function sortStarterSpecies(speciesIds: StarterSpeciesId[], sort: SortCri
         return (avgIVsA - avgIVsB) * -dir;
       }
       case SortCriteria.NAME:
-        return getPokemonSpecies(a).name.localeCompare(getPokemonSpecies(b).name) * -dir;
+        return speciesDataRegistry.getSpecies(a).name.localeCompare(speciesDataRegistry.getSpecies(b).name) * -dir;
       case SortCriteria.CAUGHT:
         return (globalScene.gameData.dexData[a].caughtCount - globalScene.gameData.dexData[b].caughtCount) * -dir;
       case SortCriteria.HATCHED:

@@ -2064,7 +2064,7 @@ export class GameData {
   getSpeciesDefaultDexAttrProps(speciesId: SpeciesId, defaultIsShiny = true): DexAttrProps {
     const dexAttr = this.dexData[speciesId].caughtAttr;
     // Default is female only for species where malePercent is not null but 0
-    const female = getPokemonSpecies(speciesId).malePercent === 0;
+    const female = speciesDataRegistry.getSpecies(speciesId).malePercent === 0;
     const formIndex = 0;
     let variant: Variant = 0;
     let shiny = false;
@@ -2117,7 +2117,7 @@ export class GameData {
 
   getStarterDefaultAbilityIndex(starterId: StarterSpeciesId, abilityAttr?: number): number {
     abilityAttr ??= this.starterData[starterId].abilityAttr;
-    const species = getPokemonSpecies(starterId);
+    const species = speciesDataRegistry.getSpecies(starterId);
     return abilityAttr & AbilityAttr.ABILITY_1 ? 0 : !species.ability2 || abilityAttr & AbilityAttr.ABILITY_2 ? 1 : 2;
   }
 

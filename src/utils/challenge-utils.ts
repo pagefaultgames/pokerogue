@@ -358,7 +358,7 @@ export function applyChallenges(challengeType: ChallengeType, ...args: any[]): b
  * @returns `true` if the species is considered valid.
  */
 export function checkStarterValidForChallenge(starterId: StarterSpeciesId, props: DexAttrProps, soft: boolean) {
-  const species = getPokemonSpecies(starterId);
+  const species = speciesDataRegistry.getSpecies(starterId);
   if (!soft) {
     const isValidForChallenge = new BooleanHolder(true);
     applyChallenges(ChallengeType.STARTER_CHOICE, species, isValidForChallenge, props);

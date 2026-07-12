@@ -1,10 +1,10 @@
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import type { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import type { DexAttrProps } from "#types/save-data";
 import { addTextObject } from "#ui/text";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 export class StarterContainer extends Phaser.GameObjects.Container {
   public species: PokemonSpecies;
@@ -96,7 +96,7 @@ export class StarterContainer extends Phaser.GameObjects.Container {
   }
 
   setSpecies(speciesId: SpeciesId, props: DexAttrProps) {
-    this.species = getPokemonSpecies(speciesId);
+    this.species = speciesDataRegistry.getSpecies(speciesId);
 
     const { shiny, formIndex, female, variant } = props;
 
