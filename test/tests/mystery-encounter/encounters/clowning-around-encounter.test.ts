@@ -1,4 +1,5 @@
 import type { BattleScene } from "#app/battle-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import * as BattleAnims from "#data/battle-anims";
 import { modifierTypes } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
@@ -28,7 +29,6 @@ import { runMysteryEncounterToEnd, skipBattleRunMysteryEncounterRewardsPhase } f
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import type { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
 import type { PartyUiHandler } from "#ui/party-ui-handler";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/clowningAround";
@@ -103,12 +103,12 @@ describe("Clowning Around - Mystery Encounter", () => {
     expect(config.doubleBattle).toBe(true);
     expect(config.trainerConfig?.trainerType).toBe(TrainerType.HARLEQUIN);
     expect(config.pokemonConfigs?.[0]).toEqual({
-      species: getPokemonSpecies(SpeciesId.MR_MIME),
+      species: speciesDataRegistry.getSpecies(SpeciesId.MR_MIME),
       isBoss: true,
       moveSet: [MoveId.TEETER_DANCE, MoveId.ALLY_SWITCH, MoveId.DAZZLING_GLEAM, MoveId.PSYCHIC],
     });
     expect(config.pokemonConfigs?.[1]).toEqual({
-      species: getPokemonSpecies(SpeciesId.BLACEPHALON),
+      species: speciesDataRegistry.getSpecies(SpeciesId.BLACEPHALON),
       customPokemonData: expect.anything(),
       isBoss: true,
       moveSet: [MoveId.TRICK, MoveId.HYPNOSIS, MoveId.SHADOW_BALL, MoveId.MIND_BLOWN],

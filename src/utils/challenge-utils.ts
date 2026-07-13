@@ -12,7 +12,6 @@ import type { ModifierTypeOption } from "#modifiers/modifier-type";
 import type { DexEntry } from "#types/dex-data";
 import type { DexAttrProps, StarterDataEntry } from "#types/save-data";
 import { BooleanHolder, type NumberHolder } from "./common";
-import { getPokemonSpecies } from "./pokemon-utils";
 
 /**
  * @param challengeType - {@linkcode ChallengeType.STARTER_CHOICE}
@@ -371,7 +370,7 @@ export function checkStarterValidForChallenge(species: PokemonSpecies, props: De
     if (!checking) {
       return false;
     }
-    const checkingSpecies = getPokemonSpecies(checking);
+    const checkingSpecies = speciesDataRegistry.getSpecies(checking);
     if (checkSpeciesValidForChallenge(checkingSpecies, props, true)) {
       return true;
     }

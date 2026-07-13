@@ -327,7 +327,9 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
     const activeConfig = this.getActiveConfig();
 
     // Set the UI layout for the active configuration. If unsuccessful, exit the function early.
-    if (activeConfig == null || !this.setLayout(activeConfig)) {
+    // Note: `setLayout` is always invoked here (even when `activeConfig` is null) because it is
+    // responsible for displaying the "no gamepad connected" fallback message in that case.
+    if (!this.setLayout(activeConfig)) {
       return;
     }
 
@@ -420,7 +422,7 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
    * @param activeConfig - The active device configuration.
    * @returns `true` if the layout was successfully applied, otherwise `false`.
    */
-  protected setLayout(activeConfig: InterfaceConfig): boolean {
+  protected setLayout(activeConfig: InterfaceConfig | null): activeConfig is InterfaceConfig {
     // Check if there is no active configuration (e.g., no gamepad connected).
     if (!activeConfig) {
       // Retrieve the layout for when no gamepads are connected.
@@ -430,6 +432,8 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
       // Return false indicating the layout application was not successful due to lack of gamepad.
       return false;
     }
+    const noGamepads = this.layout["noGamepads"];
+    noGamepads?.optionsContainer?.setVisible(false);
     // Extract the type of the gamepad from the active configuration.
     const configType = activeConfig.padType;
 

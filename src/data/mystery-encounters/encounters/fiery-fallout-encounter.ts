@@ -1,5 +1,6 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { EncounterBattleAnim } from "#data/battle-anims";
 import { allAbilities, modifierTypes } from "#data/data-lists";
 import { Gender } from "#data/gender";
@@ -46,7 +47,6 @@ import {
 } from "#mystery-encounters/mystery-encounter-requirements";
 import { FIRE_RESISTANT_ABILITIES } from "#mystery-encounters/requirement-groups";
 import { randSeedInt } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { groupStatChange } from "#utils/stat-change";
 
 /** the i18n namespace for the encounter */
@@ -83,7 +83,7 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
     const encounter = globalScene.currentBattle.mysteryEncounter!;
 
     // Calculate boss mons
-    const volcaronaSpecies = getPokemonSpecies(SpeciesId.VOLCARONA);
+    const volcaronaSpecies = speciesDataRegistry.getSpecies(SpeciesId.VOLCARONA);
     const config: EnemyPartyConfig = {
       pokemonConfigs: [
         {
@@ -147,7 +147,7 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
     const pokemon = globalScene.getEnemyPokemon();
     globalScene.arena.trySetWeather(WeatherType.SUNNY, pokemon);
 
-    encounter.setDialogueToken("volcaronaName", getPokemonSpecies(SpeciesId.VOLCARONA).getName());
+    encounter.setDialogueToken("volcaronaName", speciesDataRegistry.getSpecies(SpeciesId.VOLCARONA).getName());
 
     return true;
   })
@@ -288,7 +288,7 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
 
         const primary = encounter.options[2].primaryPokemon!;
 
-        setEncounterExp([primary.id], getPokemonSpecies(SpeciesId.VOLCARONA).baseExp * 2);
+        setEncounterExp([primary.id], speciesDataRegistry.getSpecies(SpeciesId.VOLCARONA).baseExp * 2);
         leaveEncounterWithoutBattle();
       })
       .build(),

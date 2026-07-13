@@ -61,7 +61,7 @@ import { addWindow } from "#ui/ui-theme";
 import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
 import { BooleanHolder, getLocalizedSpriteKey, padInt } from "#utils/common";
 import { enumValueToKey, getEnumValues } from "#utils/enums";
-import { getDexNumber, getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { getDexNumber, getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import type { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
@@ -2103,7 +2103,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
               if (this.filteredIndices) {
                 const index = this.filteredIndices.indexOf(this.species.speciesId);
                 const newIndex = index <= 0 ? this.filteredIndices.length - 1 : index - 1;
-                newSpecies = getPokemonSpecies(this.filteredIndices[newIndex]);
+                newSpecies = speciesDataRegistry.getSpecies(this.filteredIndices[newIndex]);
               } else {
                 const allSpecies = speciesDataRegistry.getAllSpecies();
                 const index = allSpecies.findIndex(species => species.speciesId === this.species.speciesId);
@@ -2143,7 +2143,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
               if (this.filteredIndices) {
                 const index = this.filteredIndices.indexOf(this.species.speciesId);
                 const newIndex = index >= this.filteredIndices.length - 1 ? 0 : index + 1;
-                newSpecies = getPokemonSpecies(this.filteredIndices[newIndex]);
+                newSpecies = speciesDataRegistry.getSpecies(this.filteredIndices[newIndex]);
               } else {
                 const allSpecies = speciesDataRegistry.getAllSpecies();
                 const index = allSpecies.findIndex(species => species.speciesId === this.species.speciesId);

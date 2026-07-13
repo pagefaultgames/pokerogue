@@ -1,4 +1,5 @@
 import type { BattleScene } from "#app/battle-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { BiomeId } from "#enums/biome-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -11,7 +12,6 @@ import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
 import { GameManager } from "#test/framework/game-manager";
 import { runMysteryEncounterToEnd, runSelectMysteryEncounterOption } from "#test/utils/encounter-test-utils";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -103,7 +103,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
     });
 
     it("should award exp to surfable PKM (Blastoise)", async () => {
-      const laprasSpecies = getPokemonSpecies(SpeciesId.LAPRAS);
+      const laprasSpecies = speciesDataRegistry.getSpecies(SpeciesId.LAPRAS);
 
       await game.runToMysteryEncounter(MysteryEncounterType.LOST_AT_SEA, defaultParty);
       const party = game.scene.getPlayerParty();

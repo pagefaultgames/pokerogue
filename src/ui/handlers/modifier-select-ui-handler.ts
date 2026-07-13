@@ -84,7 +84,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.transferButtonContainer.setVisible(false);
     ui.add(this.transferButtonContainer);
 
-    const transferButtonText = addTextObject(-4, -2, i18next.t("modifierSelectUiHandler:manageItems"), TextStyle.PARTY);
+    const transferButtonText = addTextObject(-4, -6, i18next.t("modifierSelectUiHandler:manageItems"), TextStyle.PARTY);
     transferButtonText.setName("text-transfer-btn");
     transferButtonText.setOrigin(1, 0);
     this.transferButtonContainer.add(transferButtonText);
@@ -94,7 +94,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.checkButtonContainer.setVisible(false);
     ui.add(this.checkButtonContainer);
 
-    const checkButtonText = addTextObject(-4, -2, i18next.t("modifierSelectUiHandler:checkTeam"), TextStyle.PARTY);
+    const checkButtonText = addTextObject(-4, -6, i18next.t("modifierSelectUiHandler:checkTeam"), TextStyle.PARTY);
     checkButtonText.setName("text-use-btn");
     checkButtonText.setOrigin(1, 0);
     this.checkButtonContainer.add(checkButtonText);
@@ -104,7 +104,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.rerollButtonContainer.setVisible(false);
     ui.add(this.rerollButtonContainer);
 
-    const rerollButtonText = addTextObject(-4, -2, i18next.t("modifierSelectUiHandler:reroll"), TextStyle.PARTY);
+    const rerollButtonText = addTextObject(-4, -6, i18next.t("modifierSelectUiHandler:reroll"), TextStyle.PARTY);
     rerollButtonText.setName("text-reroll-btn");
     rerollButtonText.setOrigin(0, 0);
     this.rerollButtonContainer.add(rerollButtonText);
@@ -121,7 +121,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     this.lockRarityButtonText = addTextObject(
       -4,
-      -2,
+      -6,
       i18next.t("modifierSelectUiHandler:lockRarities"),
       TextStyle.PARTY,
     );
@@ -587,31 +587,35 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
       }
 
       const type = options[this.cursor].modifierTypeOption.type;
-      type && ui.showText(type.getDescription());
-      if (type instanceof TmModifierType) {
-        // prepare the move overlay to be shown with the toggle
-        this.moveInfoOverlay.show(allMoves[type.moveId]);
+      if (type) {
+        const messageHandler = ui.getMessageHandler();
+        ui.showText(type.getDescription());
+        messageHandler.showNameText(type.name, type.iconImage);
+        if (type instanceof TmModifierType) {
+          // prepare the move overlay to be shown with the toggle
+          this.moveInfoOverlay.show(allMoves[type.moveId]);
+        }
       }
     } else if (cursor === 0) {
       this.cursorObj.setPosition(
         6,
-        this.lockRarityButtonContainer.visible ? OPTION_BUTTON_YPOSITION - 8 : OPTION_BUTTON_YPOSITION + 4,
+        this.lockRarityButtonContainer.visible ? OPTION_BUTTON_YPOSITION - 11 : OPTION_BUTTON_YPOSITION + 1,
       );
       ui.showText(i18next.t("modifierSelectUiHandler:rerollDesc"));
     } else if (cursor === 1) {
       this.cursorObj.setPosition(
         (globalScene.game.canvas.width - this.transferButtonWidth - this.checkButtonWidth) / 6 - 30,
-        OPTION_BUTTON_YPOSITION + 4,
+        OPTION_BUTTON_YPOSITION + 1,
       );
       ui.showText(i18next.t("modifierSelectUiHandler:manageItemsDesc"));
     } else if (cursor === 2) {
       this.cursorObj.setPosition(
         (globalScene.game.canvas.width - this.checkButtonWidth) / 6 - 10,
-        OPTION_BUTTON_YPOSITION + 4,
+        OPTION_BUTTON_YPOSITION + 1,
       );
       ui.showText(i18next.t("modifierSelectUiHandler:checkTeamDesc"));
     } else {
-      this.cursorObj.setPosition(6, OPTION_BUTTON_YPOSITION + 4);
+      this.cursorObj.setPosition(6, OPTION_BUTTON_YPOSITION + 1);
       ui.showText(i18next.t("modifierSelectUiHandler:lockRaritiesDesc"));
     }
 
