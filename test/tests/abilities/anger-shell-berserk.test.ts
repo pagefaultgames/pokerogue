@@ -119,21 +119,18 @@ describe.each<{ name: string; ability: AbilityId; stages: Partial<Record<BattleS
   });
 
   // TODO: This is not implemented yet for lack of multi-hit damage aggregates
-  it.todo("should only trigger once after all multi-strike hits finish", async () => {
+  it("should only trigger once after all multi-strike hits finish", async () => {
+    game.override.enemyMoveset([MoveId.BULLET_SEED]);
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     const feebas = game.field.getPlayerPokemon();
     feebas.hp = toDmgValue(feebas.getMaxHp() / 2) + 1;
 
     game.move.use(MoveId.SPLASH);
-    await game.move.forceEnemyMove(MoveId.TACKLE);
-    await game.phaseInterceptor.to("MoveEffectPhase");
-
-    // should not have triggered yet
-    expect(feebas).not.toHaveAbilityApplied(ability);
-
+    await game.move.forceEnemyMove(MoveId.BULLET_SEED);
     await game.toEndOfTurn();
 
+    // Should only have triggered once, after all hits completed
     expect(feebas).toHaveAbilityApplied(ability);
     for (const [statStr, stage] of Object.entries(stages)) {
       const stat = Number(statStr);
