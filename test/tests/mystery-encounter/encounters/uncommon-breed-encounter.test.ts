@@ -14,7 +14,7 @@ import { Stat } from "#enums/stat";
 import type { BerryModifier } from "#modifiers/modifier";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import { generateModifierType } from "#mystery-encounters/encounter-phase-utils";
-import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounter-biomes";
 import { UncommonBreedEncounter } from "#mystery-encounters/uncommon-breed-encounter";
 import { MovePhase } from "#phases/move-phase";
 import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
