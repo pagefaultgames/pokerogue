@@ -1,5 +1,6 @@
 import type { determineEnemySpecies } from "#app/ai/ai-species-gen";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { allMoves, } from "#data/data-lists";
 import { type Gender, getGenderSymbol } from "#data/gender";
 import type { BiomeId } from "#enums/biome-id";
@@ -16,7 +17,6 @@ import type { EvoLevelThreshold } from "#types/species-gen-types";
 import { coerceArray } from "#utils/array";
 import { randSeedInt } from "#utils/common";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
@@ -143,7 +143,7 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.EVO_TREASURE_TRACKER:
           return i18next.t("pokemonEvolutions:treasure");
         case EvoCondKey.SPECIES_CAUGHT:
-          return i18next.t("pokemonEvolutions:caught", {species: getPokemonSpecies(cond.speciesCaught).name});
+          return i18next.t("pokemonEvolutions:caught", {species: speciesDataRegistry.getSpecies(cond.speciesCaught).name});
         case EvoCondKey.HELD_ITEM:
           return i18next.t(`pokemonEvolutions:heldItem.${toCamelCase(cond.itemKey)}`);
         case EvoCondKey.RANDOM_FORM:

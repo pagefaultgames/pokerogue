@@ -1,5 +1,6 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
+import { MoveResult } from "#enums/move-result";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { GameManager } from "#test/framework/game-manager";
@@ -158,5 +159,26 @@ describe("Moves - Parting Shot", () => {
 
     // Because the stat change (even if positive) was successful, the switch should occur
     expect(game.field.getPlayerPokemon().species.speciesId).toBe(SpeciesId.MEOWTH);
+  });
+
+  it("should allow the switched-in ally to use a move with FirstMoveCondition", async () => {
+    await game.classicMode.startBattle(SpeciesId.INCINEROAR, SpeciesId.GOLISOPOD);
+
+    game.move.use(MoveId.PARTING_SHOT);
+    game.doSelectPartyPokemon(1);
+    await game.toNextTurn();
+
+    const golisopod = game.field.getPlayerPokemon();
+
+    expect(golisopod.species.speciesId).toBe(SpeciesId.GOLISOPOD);
+    expect(golisopod.tempSummonData.waveTurnCount).toBe(1);
+
+    game.move.use(MoveId.FIRST_IMPRESSION);
+    await game.toNextTurn();
+
+    expect(golisopod).toHaveUsedMove({
+      move: MoveId.FIRST_IMPRESSION,
+      result: MoveResult.SUCCESS,
+    });
   });
 });

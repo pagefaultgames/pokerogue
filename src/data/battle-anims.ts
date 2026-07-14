@@ -292,6 +292,7 @@ class AnimTimedSoundEvent extends AnimTimedEvent {
   execute(battleAnim: BattleAnim): number {
     const soundConfig = { rate: this.pitch * 0.01, volume: this.volume * 0.01 };
     if (this.resourceName) {
+      // TODO: this `try` shouldn't be necessary, `playSound()` already encases itself in a `try`/`catch`
       try {
         audioManager.playSound(`battle_anims/${this.resourceName}`, soundConfig);
       } catch (err) {

@@ -137,9 +137,9 @@ export const EGG_MOVE_WEIGHT_MAX = 60;
  */
 export const EGG_MOVE_TO_LEVEL_WEIGHT = 0.85;
 /** The weight given to evolution moves */
-export const EVOLUTION_MOVE_WEIGHT = 70;
+export const EVOLUTION_MOVE_WEIGHT = 60;
 /** The weight given to relearn moves */
-export const RELEARN_MOVE_WEIGHT = 60;
+export const RELEARN_MOVE_WEIGHT = 50;
 
 /** The base weight multiplier to use
  *
@@ -189,6 +189,7 @@ export const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
   MoveId.FIRST_IMPRESSION,
   MoveId.FISSURE,
   MoveId.FLING,
+  MoveId.FLIP_TURN,
   MoveId.FOCUS_PUNCH,
   MoveId.FUTURE_SIGHT,
   MoveId.GUILLOTINE,
@@ -221,6 +222,8 @@ export const STAB_BLACKLIST: ReadonlySet<MoveId> = new Set([
   MoveId.SUCKER_PUNCH,
   MoveId.SYNCHRONOISE,
   MoveId.UPPER_HAND,
+  MoveId.U_TURN,
+  MoveId.VOLT_SWITCH,
   MoveId.WHIRLPOOL,
   MoveId.WRAP,
   // Moves that always change type.

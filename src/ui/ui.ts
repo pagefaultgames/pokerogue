@@ -44,7 +44,6 @@ import { RunHistoryUiHandler } from "#ui/run-history-ui-handler";
 import { RunInfoUiHandler } from "#ui/run-info-ui-handler";
 import { SaveSlotSelectUiHandler } from "#ui/save-slot-select-ui-handler";
 import { SavingIconContainer } from "#ui/saving-icon-handler";
-import { SessionReloadModalUiHandler } from "#ui/session-reload-modal-ui-handler";
 import { SettingsAudioUiHandler } from "#ui/settings-audio-ui-handler";
 import { SettingsDisplayUiHandler } from "#ui/settings-display-ui-handler";
 import { SettingsGamepadUiHandler } from "#ui/settings-gamepad-ui-handler";
@@ -98,7 +97,6 @@ const noTransitionModes = [
   UiMode.LOGIN_FORM,
   UiMode.REGISTRATION_FORM,
   UiMode.LOADING,
-  UiMode.SESSION_RELOAD,
   UiMode.UNAVAILABLE,
   UiMode.RENAME_POKEMON,
   UiMode.RENAME_RUN,
@@ -171,7 +169,6 @@ export class UI extends Phaser.GameObjects.Container {
       new LoginFormUiHandler(),
       new RegistrationFormUiHandler(),
       new LoadingModalUiHandler(),
-      new SessionReloadModalUiHandler(),
       new UnavailableModalUiHandler(),
       new GameChallengesUiHandler(),
       new RenameFormUiHandler(),

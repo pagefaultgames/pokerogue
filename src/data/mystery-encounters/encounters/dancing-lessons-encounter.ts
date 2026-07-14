@@ -1,5 +1,6 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { EncounterBattleAnim } from "#data/battle-anims";
 import { modifierTypes } from "#data/data-lists";
 import { BattlerIndex } from "#enums/battler-index";
@@ -38,56 +39,24 @@ import { MoveRequirement } from "#mystery-encounters/mystery-encounter-requireme
 import { DANCING_MOVES } from "#mystery-encounters/requirement-groups";
 import { PokemonData } from "#system/pokemon-data";
 import type { OptionSelectItem } from "#ui/base-option-select-ui-handler";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { groupStatChange } from "#utils/stat-change";
 import i18next from "i18next";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/dancingLessons";
 
+// TODO: Put all in Meadow as their third biome, random between forms, currently just goes to Baile every time if done
 // Fire form
-const BAILE_STYLE_BIOMES: readonly BiomeId[] = [
-  BiomeId.VOLCANO,
-  BiomeId.BEACH,
-  BiomeId.ISLAND,
-  BiomeId.WASTELAND,
-  BiomeId.MOUNTAIN,
-  BiomeId.BADLANDS,
-  BiomeId.DESERT,
-];
+const BAILE_STYLE_BIOMES: readonly BiomeId[] = [BiomeId.TEMPLE, BiomeId.TALL_GRASS];
 
 // Electric form
-const POM_POM_STYLE_BIOMES: readonly BiomeId[] = [
-  BiomeId.CONSTRUCTION_SITE,
-  BiomeId.POWER_PLANT,
-  BiomeId.FACTORY,
-  BiomeId.LABORATORY,
-  BiomeId.SLUM,
-  BiomeId.METROPOLIS,
-  BiomeId.DOJO,
-];
+const POM_POM_STYLE_BIOMES: readonly BiomeId[] = [BiomeId.BEACH, BiomeId.GRASS, BiomeId.MEADOW];
 
 // Psychic form
-const PAU_STYLE_BIOMES: readonly BiomeId[] = [
-  BiomeId.JUNGLE,
-  BiomeId.FAIRY_CAVE,
-  BiomeId.MEADOW,
-  BiomeId.PLAINS,
-  BiomeId.GRASS,
-  BiomeId.TALL_GRASS,
-  BiomeId.FOREST,
-];
+const PAU_STYLE_BIOMES: readonly BiomeId[] = [BiomeId.ISLAND, BiomeId.RUINS];
 
 // Ghost form
-const SENSU_STYLE_BIOMES: readonly BiomeId[] = [
-  BiomeId.RUINS,
-  BiomeId.SWAMP,
-  BiomeId.CAVE,
-  BiomeId.ABYSS,
-  BiomeId.GRAVEYARD,
-  BiomeId.LAKE,
-  BiomeId.TEMPLE,
-];
+const SENSU_STYLE_BIOMES: readonly BiomeId[] = [BiomeId.GRAVEYARD, BiomeId.BADLANDS];
 
 /**
  * Dancing Lessons encounter.
@@ -98,7 +67,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
   MysteryEncounterType.DANCING_LESSONS,
 )
   .withEncounterTier(MysteryEncounterTier.GREAT)
-  .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+  .withSceneWaveRangeRequirement(30, CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES[1])
   .withIntroSpriteConfigs([]) // Uses a real Pokemon sprite instead of ME Intro Visuals
   .withAnimations(EncounterAnim.DANCE)
   .withHideWildIntroMessage(true)
@@ -127,7 +96,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
   .withOnInit(() => {
     const encounter = globalScene.currentBattle.mysteryEncounter!;
 
-    const species = getPokemonSpecies(SpeciesId.ORICORIO);
+    const species = speciesDataRegistry.getSpecies(SpeciesId.ORICORIO);
     const level = getEncounterPokemonLevelForWave(STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
     const enemyPokemon = new EnemyPokemon(species, level, TrainerSlot.NONE, false);
     if (!enemyPokemon.moveset.some(m => m && m.getMove().id === MoveId.REVELATION_DANCE)) {
@@ -190,7 +159,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
       oricorioData,
     };
 
-    encounter.setDialogueToken("oricorioName", getPokemonSpecies(SpeciesId.ORICORIO).getName());
+    encounter.setDialogueToken("oricorioName", speciesDataRegistry.getSpecies(SpeciesId.ORICORIO).getName());
 
     return true;
   })
@@ -327,7 +296,6 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
         // Show the Oricorio a dance, and recruit it
         const encounter = globalScene.currentBattle.mysteryEncounter!;
         const oricorio = encounter.misc.oricorioData.toPokemon() as EnemyPokemon;
-        oricorio.passive = true;
 
         // Ensure the Oricorio's moveset gains the Dance move the player used
         const move = encounter.misc.selectedMove?.getMove().id;
