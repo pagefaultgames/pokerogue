@@ -5,6 +5,7 @@ import { isDev } from "#constants/app-constants";
 import { Button } from "#enums/buttons";
 import { UiMode } from "#enums/ui-mode";
 import { Setting, SettingKeys, settingIndex } from "#system/settings";
+import { GameChallengesUiHandler } from "#ui/handlers/challenges-select-ui-handler";
 import type { MessageUiHandler } from "#ui/message-ui-handler";
 import { PokedexPageUiHandler } from "#ui/pokedex-page-ui-handler";
 import { PokedexUiHandler } from "#ui/pokedex-ui-handler";
@@ -215,6 +216,7 @@ export class UiInputs {
       StarterSelectUiHandler,
       PokedexUiHandler,
       PokedexPageUiHandler,
+      GameChallengesUiHandler,
       SettingsUiHandler,
       RunInfoUiHandler,
       SettingsDisplayUiHandler,

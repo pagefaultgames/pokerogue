@@ -8,7 +8,7 @@ import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import { FieldTripEncounter } from "#mystery-encounters/field-trip-encounter";
-import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounter-biomes";
 import { GameManager } from "#test/framework/game-manager";
 import { runMysteryEncounterToEnd } from "#test/utils/encounter-test-utils";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";

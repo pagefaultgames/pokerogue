@@ -16,7 +16,7 @@ import { UiMode } from "#enums/ui-mode";
 import { BerryModifier, PokemonBaseStatTotalModifier } from "#modifiers/modifier";
 import { PokemonMove } from "#moves/pokemon-move";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
-import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounter-biomes";
 import { TheStrongStuffEncounter } from "#mystery-encounters/the-strong-stuff-encounter";
 import { MovePhase } from "#phases/move-phase";
 import { GameManager } from "#test/framework/game-manager";

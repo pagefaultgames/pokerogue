@@ -105,8 +105,8 @@ import {
   PokemonHeldItemModifierType,
 } from "#modifiers/modifier-type";
 import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
+import { allMysteryEncounters, mysteryEncountersByBiome } from "#mystery-encounters/mystery-encounter-biomes";
 import { MysteryEncounterSaveData } from "#mystery-encounters/mystery-encounter-save-data";
-import { allMysteryEncounters, mysteryEncountersByBiome } from "#mystery-encounters/mystery-encounters";
 import { expSpriteKeys } from "#sprites/sprite-keys";
 import { hasExpSprite } from "#sprites/sprite-utils";
 import type { Variant } from "#sprites/variant";
