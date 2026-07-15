@@ -55,7 +55,7 @@ import {
   IgnoreProtectOnContactAbAttr,
   IgnoreTypeImmunityAbAttr,
   IgnoreTypeStatusEffectImmunityAbAttr,
-  IncreasePpAbAttr,
+  IncreasePpUsedAbAttr,
   InfiltratorAbAttr,
   IntimidateImmunityAbAttr,
   LowHpMoveTypePowerBoostAbAttr,
@@ -434,7 +434,7 @@ export function initAbilities() {
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SANDSTORM)
       .build(),
     new AbBuilder(AbilityId.PRESSURE, 3) //
-      .attr(IncreasePpAbAttr)
+      .attr(IncreasePpUsedAbAttr)
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) =>
         i18next.t("abilityTriggers:postSummonPressure", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }),
       )

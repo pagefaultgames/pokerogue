@@ -19,7 +19,7 @@ import {
   type EnemyPokemonConfig,
   generateModifierType,
 } from "#mystery-encounters/encounter-phase-utils";
-import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounter-biomes";
 import { TrashToTreasureEncounter } from "#mystery-encounters/trash-to-treasure-encounter";
 import { MovePhase } from "#phases/move-phase";
 import { GameManager } from "#test/framework/game-manager";
