@@ -456,6 +456,7 @@ export function initAbilities() {
       .build(),
     new AbBuilder(AbilityId.KEEN_EYE, 3) //
       .attr(ProtectStatAbAttr, Stat.ACC)
+      .attr(IgnoreOpponentStatStagesAbAttr, [Stat.EVA])
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.HYPER_CUTTER, 3) //
