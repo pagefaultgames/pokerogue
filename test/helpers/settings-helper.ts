@@ -1,8 +1,10 @@
 import { SETTINGS_COLOR } from "#app/constants/colors";
+import { audioManager } from "#app/global-audio-manager";
 import { BattleStyle } from "#enums/battle-style";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { ExpNotification } from "#enums/exp-notification";
 import { PlayerGender } from "#enums/player-gender";
+import { TypeHints } from "#enums/type-hints";
 import type { GameManager } from "#test/framework/game-manager";
 import { GameManagerHelper } from "#test/helpers/game-manager-helper";
 import { getEnumStr } from "#test/utils/string-utils";
@@ -31,7 +33,7 @@ export class SettingsHelper extends GameManagerHelper {
     this.game.scene.enableTutorials = false;
     this.game.scene.battleStyle = BattleStyle.SET;
     this.game.scene.gameData.gender = PlayerGender.MALE; // set initial player gender;
-    this.game.scene.fieldVolume = 0;
+    audioManager.volume.field = 0;
   }
 
   /**
@@ -46,13 +48,24 @@ export class SettingsHelper extends GameManagerHelper {
   }
 
   /**
-   * Toggle the availability of type hints.
-   * @param enable - Whether to enable or disable type hints
+   * Change the current {@linkcode TypeHints} mode.
+   * @param mode - The `TypeHints` mode to set
    * @returns `this`
    */
-  public typeHints(enable: boolean): this {
-    this.game.scene.typeHints = enable;
-    this.log(`Type Hints ${enable ? "enabled" : "disabled"}!`);
+  public typeHints(mode: TypeHints): this {
+    this.game.scene.typeHints = mode;
+    this.log(`Type Hints set to ${getEnumStr(TypeHints, mode)}!`);
+    return this;
+  }
+
+  /**
+   * Toggle the option to skip level move confirmations
+   * @param enable - Whether to enable or disable level move confirmations
+   * @returns `this`
+   */
+  public skipLevelPrompt(enable: boolean): this {
+    this.game.scene.hideMoveSkipConfirm = enable;
+    this.log(`Skip Move Confirmation ${enable ? "enabled" : "disabled"}!`);
     return this;
   }
 

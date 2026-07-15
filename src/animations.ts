@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import type { BattleAnim } from "#data/battle-anims";
 import { PokeballType } from "#enums/pokeball";
@@ -259,7 +260,7 @@ export class Animation {
 
     // Play the animation
     sparkleSprite.play(animationKey);
-    globalScene.playSound("se/sparkle");
+    audioManager.playSound("se/sparkle");
   }
 
   public cos(index: number, amplitude: number): number {
@@ -270,7 +271,8 @@ export class Animation {
     return amplitude * Math.sin(index * (Math.PI / 128));
   }
 
-  // #endregion
+  // #endregion Public Methods
+
   // #region Private Methods
 
   private doDefaultPbOpenParticles(x: number, y: number, radius: number): void {
@@ -589,5 +591,5 @@ export class Animation {
     updateParticle();
   }
 
-  // #endregion
+  // #endregion Private Methods
 }

@@ -5,9 +5,9 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-import { CustomDefaultReporter } from "#test/reporters/custom-default-reporter";
 import type { UserConfig } from "vite";
 import { defineConfig } from "vitest/config";
+import { CustomDefaultReporter } from "../../test/reporters/custom-default-reporter";
 import { sharedConfig } from "../../vite.config";
 
 // biome-ignore lint/style/noDefaultExport: required for vitest

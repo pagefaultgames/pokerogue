@@ -1,7 +1,6 @@
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { dailyBiomeWeights } from "#balance/daily-biome-weights";
-import { pokemonStarters } from "#balance/pokemon-evolutions";
-import { speciesStarterCosts } from "#balance/starters";
 import { allChallenges } from "#data/challenge";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { BiomeId } from "#enums/biome-id";
@@ -17,7 +16,6 @@ import type { Starter, StarterMoveset } from "#types/save-data";
 import type { TupleRange } from "#types/type-helpers";
 import { isBetween, randSeedGauss, randSeedInt, randSeedItem } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import {
   getDailyRunStarter,
   isDailyEventSeed,
@@ -50,15 +48,13 @@ export function getDailyRunStarters(): StarterTuple {
       starterCosts.push(10 - (starterCosts[0] + starterCosts[1]));
 
       for (const cost of starterCosts) {
-        const costSpecies = Object.keys(speciesStarterCosts)
-          .map(s => Number.parseInt(s) as SpeciesId) // TODO: Remove
-          .filter(
-            s =>
-              speciesStarterCosts[s] === cost
-              && !starters.some(st => s === st.speciesId || pokemonStarters[st.speciesId] === s),
-          );
-        const randPkmSpecies = getPokemonSpecies(randSeedItem(costSpecies));
-        const starterSpecies = getPokemonSpecies(
+        const costSpecies = speciesDataRegistry.getStartersForCost(cost).filter(
+          s =>
+            // make sure there are no duplicate starters from the same line
+            !starters.some(st => s === st.speciesId || speciesDataRegistry.getStarter(s) === st.speciesId),
+        );
+        const randPkmSpecies = speciesDataRegistry.getSpecies(randSeedItem(costSpecies));
+        const starterSpecies = speciesDataRegistry.getSpecies(
           randPkmSpecies.getTrainerSpeciesForLevel(
             startingLevel,
             true,
@@ -175,7 +171,7 @@ function getDailyEventSeedStarters(): StarterTuple | null {
       return null;
     }
 
-    const species = getPokemonSpecies(starterConfig.speciesId);
+    const species = speciesDataRegistry.getSpecies(starterConfig.speciesId);
 
     const starter = getDailyRunStarter(species, starterConfig);
 
@@ -224,7 +220,7 @@ export function getDailyForcedWaveSpecies(waveIndex: number): PokemonSpecies | n
     return null;
   }
 
-  return getPokemonSpecies(forcedWave.speciesId);
+  return speciesDataRegistry.getSpecies(forcedWave.speciesId);
 }
 
 /**

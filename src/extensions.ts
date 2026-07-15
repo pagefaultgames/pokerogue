@@ -1,6 +1,6 @@
 import "phaser";
 
-//#region Methods/Interfaces
+// #region Types
 
 /**
  * Interface representing an object that can be passed to {@linkcode setPositionRelative}.
@@ -9,6 +9,17 @@ interface GuideObject
   extends Pick<Phaser.GameObjects.Components.ComputedSize, "width" | "height">,
     Pick<Phaser.GameObjects.Components.Transform, "x" | "y">,
     Pick<Phaser.GameObjects.Components.Origin, "originX" | "originY"> {}
+
+// #endregion Types
+
+// #region Original Functions
+
+const originalPlay = Phaser.GameObjects.Sprite.prototype.play;
+const originalStop = Phaser.GameObjects.Sprite.prototype.stop;
+
+// #endregion Original Functions
+
+// #region Augmented Functions
 
 /**
  * Set this object's position relative to another object with a given offset.
@@ -29,6 +40,32 @@ function setPositionRelative<T extends Phaser.GameObjects.Components.Transform>(
   return this.setPosition(guideObject.x + offsetX + x, guideObject.y + offsetY + y);
 }
 
+function play<T extends Phaser.GameObjects.Sprite>(
+  this: T,
+  key: string | Phaser.Animations.Animation | Phaser.Types.Animations.PlayAnimationConfig,
+  ignoreIfPlaying?: boolean,
+): Phaser.GameObjects.Sprite {
+  try {
+    return originalPlay.call(this, key, ignoreIfPlaying);
+  } catch (err: unknown) {
+    console.error(`Failed to play animation for "${key}"!`, err);
+    return this;
+  }
+}
+
+function stop<T extends Phaser.GameObjects.Sprite>(this: T): Phaser.GameObjects.Sprite {
+  try {
+    return originalStop.call(this);
+  } catch (err: unknown) {
+    console.error("Failed to stop animation!", err);
+    return this;
+  }
+}
+
+// #endregion Augmented Functions
+
+// #region Extensions
+
 Phaser.GameObjects.Container.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Sprite.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Image.prototype.setPositionRelative = setPositionRelative;
@@ -36,9 +73,12 @@ Phaser.GameObjects.NineSlice.prototype.setPositionRelative = setPositionRelative
 Phaser.GameObjects.Text.prototype.setPositionRelative = setPositionRelative;
 Phaser.GameObjects.Rectangle.prototype.setPositionRelative = setPositionRelative;
 
-//#endregion
+Phaser.GameObjects.Sprite.prototype.play = play;
+Phaser.GameObjects.Sprite.prototype.stop = stop;
 
-//#region Declaration Merging
+// #endregion Extensions
+
+// #region Declaration Merging
 
 interface HasSetPositionRelative {
   /**
@@ -63,4 +103,4 @@ declare module "phaser" {
   }
 }
 
-//#endregion
+// #endregion Declaration Merging

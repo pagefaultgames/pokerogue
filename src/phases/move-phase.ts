@@ -2,7 +2,7 @@ import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { MOVE_COLOR } from "#app/constants/colors";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { CenterOfAttentionTag, type EncoreTag } from "#data/battler-tags";
 import { SpeciesFormChangePreMoveTrigger } from "#data/form-change-triggers";
@@ -110,7 +110,8 @@ export class MovePhase extends PokemonPhase {
     };
   }
 
-  //#region Phase Start
+  // #region Phase Start
+
   public start(): void {
     super.start();
 
@@ -237,9 +238,9 @@ export class MovePhase extends PokemonPhase {
     this.end();
   }
 
-  //#endregion Phase Start
+  // #endregion Phase Start
 
-  //#region First Failure Check
+  // #region First Failure Check
 
   /**
    * Perform the first round of move failure checks, occurring before move usage text is displayed
@@ -369,7 +370,7 @@ export class MovePhase extends PokemonPhase {
       return false;
     }
 
-    if (Overrides.STATUS_ACTIVATION_OVERRIDE) {
+    if (activeOverrides.STATUS_ACTIVATION_OVERRIDE) {
       return false;
     }
 
@@ -377,17 +378,19 @@ export class MovePhase extends PokemonPhase {
     const move = this.move.getMove();
     if (
       move.findAttr(attr => attr.selfTarget && attr.is("HealStatusEffectAttr") && attr.isOfEffect(StatusEffect.FREEZE))
-      && (move.id !== MoveId.BURN_UP || pokemon.isOfType(PokemonType.FIRE, true, true))
+      && (move.id !== MoveId.BURN_UP || pokemon.isOfType(PokemonType.FIRE, { returnOriginalTypesIfStellar: true }))
     ) {
       this.thaw = true;
       return false;
     }
+    pokemon.status.incrementTurn();
     if (
-      Overrides.STATUS_ACTIVATION_OVERRIDE === false
+      activeOverrides.STATUS_ACTIVATION_OVERRIDE === false
       || this.move
         .getMove()
         .findAttr(attr => attr.selfTarget && attr.is("HealStatusEffectAttr") && attr.isOfEffect(StatusEffect.FREEZE))
-      || (!pokemon.randBattleSeedInt(5) && Overrides.STATUS_ACTIVATION_OVERRIDE !== true)
+      || ((!pokemon.randBattleSeedInt(4) || (pokemon.status.freezeTurnsRemaining ?? 0) <= 0)
+        && activeOverrides.STATUS_ACTIVATION_OVERRIDE !== true)
     ) {
       pokemon.cureStatus(StatusEffect.FREEZE);
       return false;
@@ -518,7 +521,7 @@ export class MovePhase extends PokemonPhase {
       return false;
     }
 
-    const proc = Overrides.STATUS_ACTIVATION_OVERRIDE ?? user.randBattleSeedInt(4) === 0;
+    const proc = activeOverrides.STATUS_ACTIVATION_OVERRIDE ?? user.randBattleSeedInt(8) === 0;
     if (!proc) {
       return false;
     }
@@ -527,9 +530,9 @@ export class MovePhase extends PokemonPhase {
     return true;
   }
 
-  //#endregion First Failure Check
+  // #endregion First Failure Check
 
-  //#region Second Failure Check
+  // #region Second Failure Check
 
   /**
    * Attempt to thaw the user if it successfully uses a self-thawing move.
@@ -708,7 +711,7 @@ export class MovePhase extends PokemonPhase {
    * - (on cart, not applicable to Pokerogue) Moves that fail if used ON a raid / special boss: selfdestruct/explosion/imprision/power split / guard split
    * - (on cart, not applicable to Pokerogue) Moves that fail during a "co-op" battle (like when Arven helps during raid boss): ally switch / teatime
    *
-   * After all checks, Powder causing the user to explode
+   * Powder after all other checks, causing the user to explode
    */
   protected secondFailureCheck(): boolean {
     const move = this.move.getMove();
@@ -717,7 +720,12 @@ export class MovePhase extends PokemonPhase {
     const arena = globalScene.arena;
 
     if (!move.applyConditions(user, this.getActiveTargetPokemon()[0], 2)) {
-      // TODO: Make pollen puff failing from heal block use its own message
+      if (move.hasAttr("HealOnAllyAttr")) {
+        failedText = i18next.t("battle:moveDisabledHealBlock", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(user),
+          moveName: move.name,
+        });
+      }
       this.failed = true;
     } else if (arena.isMoveWeatherCancelled(user, move)) {
       failedText = getWeatherBlockMessage(globalScene.arena.weatherType);
@@ -738,9 +746,9 @@ export class MovePhase extends PokemonPhase {
     return false;
   }
 
-  //#endregion Second Failure Check
+  // #endregion Second Failure Check
 
-  //#region Move Execution
+  // #region Move Execution
 
   /**
    * Check for cancellation edge cases - no targets remaining, or `MoveId.NONE` is in the queue
@@ -852,7 +860,7 @@ export class MovePhase extends PokemonPhase {
     const failedDueToTerrain = arena.isMoveTerrainCancelled(user, this.targets, move);
     let failed = failsConditions || failedDueToTerrain;
 
-    if (!failed && user.isOpponent(targets[0])) {
+    if (!failed && targets[0] != null && user.isOpponent(targets[0])) {
       const defendingSidePlayField = user.isPlayer() ? globalScene.getEnemyField() : globalScene.getPlayerField();
       const cancelled = new ValueHolder(false);
       defendingSidePlayField.forEach((pokemon: Pokemon) => {
@@ -918,9 +926,9 @@ export class MovePhase extends PokemonPhase {
     super.end();
   }
 
-  //#endregion Move Execution
+  // #endregion Move Execution
 
-  //#region Helpers
+  // #region Helpers
 
   /**
    * Handles the case where the move was cancelled or failed:
@@ -1056,5 +1064,5 @@ export class MovePhase extends PokemonPhase {
     }
   }
 
-  //#endregion Helpers
+  // #endregion Helpers
 }

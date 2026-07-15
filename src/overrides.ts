@@ -37,9 +37,9 @@ import type { IntClosedRange, TupleOf } from "type-fest";
  */
 
 /**
- * Overrides that are using when testing different in game situations
+ * Overrides can be added to this object to aid in testing different in-game situations.
  *
- * Any override added here will be used instead of the value in {@linkcode DefaultOverrides}
+ * Any override added here will be used instead of the value in {@linkcode DefaultOverrides}.
  *
  * If an override name starts with "STARTING", it will only apply when a new run begins.
  *
@@ -97,7 +97,7 @@ class DefaultOverrides {
    * This override's ability to force doubles trainer battles is deprecated due to not altering the spawned trainer's variant,
    * and may be removed in a future PR.
    */
-  readonly BATTLE_STYLE_OVERRIDE: BattleStyle | null = null;
+  readonly BATTLE_STYLE_OVERRIDE: BattleStyleOverride | null = null;
   /**
    * If present and non-`null`, will override the starting wave # when starting a new run.
    * Should never be set to a negative value.
@@ -114,6 +114,8 @@ class DefaultOverrides {
   readonly TIME_OF_DAY_OVERRIDE: Exclude<TimeOfDay, TimeOfDay.ALL> | null = null;
   /** Multiplies XP gained by this value including 0. Set to null to ignore the override. */
   readonly XP_MULTIPLIER_OVERRIDE: number | null = null;
+  /** If greater than `0`, adds candies on every instance of friendship gain. */
+  readonly IMMEDIATE_ADD_CANDY_OVERRIDE: number = 0;
   /**
    * Sets the level cap to this number during experience gain calculations.
    *
@@ -347,12 +349,9 @@ class DefaultOverrides {
 
 export const defaultOverrides = new DefaultOverrides();
 
-export default {
-  ...defaultOverrides,
-  ...overrides,
-} satisfies InstanceType<typeof DefaultOverrides>;
+export const activeOverrides = { ...defaultOverrides, ...overrides } satisfies InstanceType<OverridesType>;
 
-export type BattleStyle = "double" | "single" | "even-doubles" | "odd-doubles";
+export type BattleStyleOverride = "double" | "single" | "even-doubles" | "odd-doubles";
 
 export type RandomTrainerOverride = {
   /** The Type of trainer to force */
@@ -366,4 +365,4 @@ export type RandomTrainerOverride = {
 };
 
 /** The type of the {@linkcode DefaultOverrides} class */
-export type OverridesType = typeof DefaultOverrides;
+type OverridesType = typeof DefaultOverrides;

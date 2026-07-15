@@ -1,0 +1,39 @@
+# SPDX-FileCopyrightText: 2026 Pagefault Games
+# SPDX-FileContributor: NightKev
+#
+# SPDX-License-Identifier: AGPL-3.0-only
+
+# files that can affect the processing of all code files and/or the lint workflow itself
+all:
+  - "package.json"
+  - "pnpm-lock.yaml"
+  - ".nvmrc"
+  - ".github/workflows/linting.yml"
+
+# main repo TS files
+ts-files:
+  - "{src,test,plugins}/**/*.ts"
+  - "global.d.ts"
+  - "vite.config.ts"
+  - "vitest.config.ts"
+  - "tsconfig.json"
+  - ".env*"
+
+# main repo JS files
+js-files:
+  - ".dependency-cruiser.cjs"
+  - "typedoc.config.js"
+  - "plugins/typedoc/**/*.js"
+  - "jsconfig.json"
+
+# files/scripts used by github workflows
+github-scripts:
+  - ".github/scripts/**/*.mts"
+  - ".github/scripts/tsconfig.json"
+
+# scripts run locally and related files
+local-scripts:
+  - "scripts/**/*.ts"
+  - "scripts/tsconfig.json"
+  - "tsconfig.json"
+  - ".env*"

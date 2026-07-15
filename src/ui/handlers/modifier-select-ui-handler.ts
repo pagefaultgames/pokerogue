@@ -1,5 +1,6 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { allMoves } from "#data/data-lists";
 import { getPokeballAtlasKey } from "#data/pokeball";
@@ -83,7 +84,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.transferButtonContainer.setVisible(false);
     ui.add(this.transferButtonContainer);
 
-    const transferButtonText = addTextObject(-4, -2, i18next.t("modifierSelectUiHandler:manageItems"), TextStyle.PARTY);
+    const transferButtonText = addTextObject(-4, -6, i18next.t("modifierSelectUiHandler:manageItems"), TextStyle.PARTY);
     transferButtonText.setName("text-transfer-btn");
     transferButtonText.setOrigin(1, 0);
     this.transferButtonContainer.add(transferButtonText);
@@ -93,7 +94,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.checkButtonContainer.setVisible(false);
     ui.add(this.checkButtonContainer);
 
-    const checkButtonText = addTextObject(-4, -2, i18next.t("modifierSelectUiHandler:checkTeam"), TextStyle.PARTY);
+    const checkButtonText = addTextObject(-4, -6, i18next.t("modifierSelectUiHandler:checkTeam"), TextStyle.PARTY);
     checkButtonText.setName("text-use-btn");
     checkButtonText.setOrigin(1, 0);
     this.checkButtonContainer.add(checkButtonText);
@@ -103,7 +104,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.rerollButtonContainer.setVisible(false);
     ui.add(this.rerollButtonContainer);
 
-    const rerollButtonText = addTextObject(-4, -2, i18next.t("modifierSelectUiHandler:reroll"), TextStyle.PARTY);
+    const rerollButtonText = addTextObject(-4, -6, i18next.t("modifierSelectUiHandler:reroll"), TextStyle.PARTY);
     rerollButtonText.setName("text-reroll-btn");
     rerollButtonText.setOrigin(0, 0);
     this.rerollButtonContainer.add(rerollButtonText);
@@ -120,7 +121,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
 
     this.lockRarityButtonText = addTextObject(
       -4,
-      -2,
+      -6,
       i18next.t("modifierSelectUiHandler:lockRarities"),
       TextStyle.PARTY,
     );
@@ -275,7 +276,8 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
     const { promise: tweenPromise, resolve: tweenResolve } = Promise.withResolvers<void>();
     let i = 0;
 
-    // #region: animation
+    // #region animation
+
     /** Holds promises that resolve once each reward's *upgrade animation* has finished playing */
     const rewardAnimPromises: Promise<void>[] = [];
     /** Holds promises that resolves once *all* animations for a reward have finished playing */
@@ -368,7 +370,13 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
             if (globalScene.shopCursorTarget === ShopCursorTarget.CHECK_TEAM) {
               this.setRowCursor(0);
               this.setCursor(2);
-            } else if (globalScene.shopCursorTarget === ShopCursorTarget.SHOP && !hasShop) {
+            } else if (
+              globalScene.shopCursorTarget === ShopCursorTarget.SHOP
+              && (!hasShop || this.shopOptionsRows.length === 0)
+            ) {
+              // No shop row exists to point at (e.g. the mode has no shop, or this is a
+              // boss/Gym wave where no shop items are offered). Fall back to the rewards row
+              // instead of leaving the cursor on a nonexistent shop row, which would crash.
               this.setRowCursor(ShopCursorTarget.REWARDS);
               this.setCursor(0);
             } else {
@@ -390,7 +398,7 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
       });
     });
 
-    // #endregion: animation
+    // #endregion animation
 
     return true;
   }
@@ -579,31 +587,35 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
       }
 
       const type = options[this.cursor].modifierTypeOption.type;
-      type && ui.showText(type.getDescription());
-      if (type instanceof TmModifierType) {
-        // prepare the move overlay to be shown with the toggle
-        this.moveInfoOverlay.show(allMoves[type.moveId]);
+      if (type) {
+        const messageHandler = ui.getMessageHandler();
+        ui.showText(type.getDescription());
+        messageHandler.showNameText(type.name, type.iconImage);
+        if (type instanceof TmModifierType) {
+          // prepare the move overlay to be shown with the toggle
+          this.moveInfoOverlay.show(allMoves[type.moveId]);
+        }
       }
     } else if (cursor === 0) {
       this.cursorObj.setPosition(
         6,
-        this.lockRarityButtonContainer.visible ? OPTION_BUTTON_YPOSITION - 8 : OPTION_BUTTON_YPOSITION + 4,
+        this.lockRarityButtonContainer.visible ? OPTION_BUTTON_YPOSITION - 11 : OPTION_BUTTON_YPOSITION + 1,
       );
       ui.showText(i18next.t("modifierSelectUiHandler:rerollDesc"));
     } else if (cursor === 1) {
       this.cursorObj.setPosition(
         (globalScene.game.canvas.width - this.transferButtonWidth - this.checkButtonWidth) / 6 - 30,
-        OPTION_BUTTON_YPOSITION + 4,
+        OPTION_BUTTON_YPOSITION + 1,
       );
       ui.showText(i18next.t("modifierSelectUiHandler:manageItemsDesc"));
     } else if (cursor === 2) {
       this.cursorObj.setPosition(
         (globalScene.game.canvas.width - this.checkButtonWidth) / 6 - 10,
-        OPTION_BUTTON_YPOSITION + 4,
+        OPTION_BUTTON_YPOSITION + 1,
       );
       ui.showText(i18next.t("modifierSelectUiHandler:checkTeamDesc"));
     } else {
-      this.cursorObj.setPosition(6, OPTION_BUTTON_YPOSITION + 4);
+      this.cursorObj.setPosition(6, OPTION_BUTTON_YPOSITION + 1);
       ui.showText(i18next.t("modifierSelectUiHandler:lockRaritiesDesc"));
     }
 
@@ -894,7 +906,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
           }
           const value = t.getValue()!;
           if (!bounce && value > lastValue) {
-            globalScene.playSound("se/pb_bounce_1", {
+            audioManager.playSound("se/pb_bounce_1", {
               volume: 1 / ++bounceCount,
             });
             bounce = true;
@@ -915,7 +927,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
             {
               delay: remainingDuration - 2000 * (this.modifierTypeOption.upgradeCount - (u + 1 + upgradeCountOffset)),
               onStart: () => {
-                globalScene.playSound("se/upgrade", {
+                audioManager.playSound("se/upgrade", {
                   rate: 1 + 0.25 * u,
                 });
                 this.pbTint.setPosition(this.pb.x, this.pb.y).setTintFill(0xffffff).setVisible(true).setAlpha(0);
@@ -948,7 +960,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
     globalScene.time.delayedCall(remainingDuration + 2000, () => {
       if (isReward) {
         this.pb.setTexture("pb", `${this.getPbAtlasKey(0)}_open`);
-        globalScene.playSound("se/pb_rel");
+        audioManager.playSound("se/pb_rel");
 
         const { resolve: pbResolve, promise: pbPromise } = Promise.withResolvers<void>();
 
@@ -1035,7 +1047,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
   }
 
   updateCostText(): void {
-    const cost = Overrides.WAIVE_ROLL_FEE_OVERRIDE ? 0 : this.modifierTypeOption.cost;
+    const cost = activeOverrides.WAIVE_ROLL_FEE_OVERRIDE ? 0 : this.modifierTypeOption.cost;
     const textStyle = cost <= globalScene.money ? TextStyle.MONEY : TextStyle.PARTY_RED;
 
     const formattedMoney = formatMoney(globalScene.moneyFormat, cost);

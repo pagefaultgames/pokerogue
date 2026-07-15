@@ -1,8 +1,9 @@
 import "#app/polyfills"; // All polyfills MUST be loaded first for side effects
 import "#init/init-manifest"; // initializes the manifest, must be done *before* i18n is initialized due to being used for caching
-import "#plugins/i18n"; // Initializes i18n on import
+import "#app/i18n"; // Initializes i18n on import
 
 import { InvertPostFX } from "#app/pipelines/invert";
+import { preventDoubleTapZoom } from "#app/touch-controls";
 import { isBeta, isDev } from "#constants/app-constants";
 import { version } from "#package.json";
 import Phaser from "phaser";
@@ -14,6 +15,8 @@ import UIPlugin from "phaser3-rex-plugins/templates/ui/ui-plugin";
 if (isBeta || isDev) {
   document.title += " (Beta)";
 }
+
+preventDoubleTapZoom();
 
 async function startGame(): Promise<void> {
   const LoadingScene = (await import("./loading-scene")).LoadingScene;

@@ -1,4 +1,4 @@
-import { allSpecies } from "#data/data-lists";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { Gender } from "#data/gender";
 import { AbilityId } from "#enums/ability-id";
 import { Button } from "#enums/buttons";
@@ -8,7 +8,7 @@ import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import type { TitlePhase } from "#phases/title-phase";
 import { GameManager } from "#test/framework/game-manager";
-import type { OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import type { OptionSelectItem } from "#ui/base-option-select-ui-handler";
 import type { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
 import type { SaveSlotSelectUiHandler } from "#ui/save-slot-select-ui-handler";
 import type { StarterSelectUiHandler } from "#ui/starter-select-ui-handler";
@@ -37,7 +37,7 @@ describe.todo("UI - Starter select", () => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
     }).length;
-    expect(caughtCount).toBe(Object.keys(allSpecies).length);
+    expect(caughtCount).toBe(speciesDataRegistry.getAllSpecies().length);
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
@@ -96,7 +96,7 @@ describe.todo("UI - Starter select", () => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
     }).length;
-    expect(caughtCount).toBe(Object.keys(allSpecies).length);
+    expect(caughtCount).toBe(speciesDataRegistry.getAllSpecies().length);
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
@@ -157,7 +157,7 @@ describe.todo("UI - Starter select", () => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
     }).length;
-    expect(caughtCount).toBe(Object.keys(allSpecies).length);
+    expect(caughtCount).toBe(speciesDataRegistry.getAllSpecies().length);
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
@@ -221,7 +221,7 @@ describe.todo("UI - Starter select", () => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
     }).length;
-    expect(caughtCount).toBe(Object.keys(allSpecies).length);
+    expect(caughtCount).toBe(speciesDataRegistry.getAllSpecies().length);
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
@@ -281,7 +281,7 @@ describe.todo("UI - Starter select", () => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
     }).length;
-    expect(caughtCount).toBe(Object.keys(allSpecies).length);
+    expect(caughtCount).toBe(speciesDataRegistry.getAllSpecies().length);
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
@@ -340,7 +340,7 @@ describe.todo("UI - Starter select", () => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
     }).length;
-    expect(caughtCount).toBe(Object.keys(allSpecies).length);
+    expect(caughtCount).toBe(speciesDataRegistry.getAllSpecies().length);
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
@@ -401,7 +401,7 @@ describe.todo("UI - Starter select", () => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
     }).length;
-    expect(caughtCount).toBe(Object.keys(allSpecies).length);
+    expect(caughtCount).toBe(speciesDataRegistry.getAllSpecies().length);
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
@@ -461,7 +461,7 @@ describe.todo("UI - Starter select", () => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
     }).length;
-    expect(caughtCount).toBe(Object.keys(allSpecies).length);
+    expect(caughtCount).toBe(speciesDataRegistry.getAllSpecies().length);
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;
@@ -524,7 +524,7 @@ describe.todo("UI - Starter select", () => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;
     }).length;
-    expect(caughtCount).toBe(Object.keys(allSpecies).length);
+    expect(caughtCount).toBe(speciesDataRegistry.getAllSpecies().length);
     await game.runToTitle();
     game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       const currentPhase = game.scene.phaseManager.getCurrentPhase() as TitlePhase;

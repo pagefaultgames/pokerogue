@@ -1,5 +1,5 @@
 import type { BattleScene } from "#app/battle-scene";
-import { speciesStarterCosts } from "#balance/starters";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
@@ -20,7 +20,6 @@ import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MessagePhase } from "#phases/message-phase";
 import { GameManager } from "#test/framework/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -214,42 +213,44 @@ describe("Mystery Encounter Utils", () => {
   describe("getRandomSpeciesByStarterCost", () => {
     it("gets species for a starter tier", () => {
       const result = getRandomSpeciesByStarterCost(5);
-      const pokeSpecies = getPokemonSpecies(result);
+      const pokeSpecies = speciesDataRegistry.getSpecies(result);
 
       expect(pokeSpecies.speciesId).toBe(result);
-      expect(speciesStarterCosts[result]).toBe(5);
+      expect(speciesDataRegistry.getStarterCost(result)).toBe(5);
     });
 
     it("gets species for a starter tier range", () => {
       const result = getRandomSpeciesByStarterCost([5, 8]);
-      const pokeSpecies = getPokemonSpecies(result);
+      const pokeSpecies = speciesDataRegistry.getSpecies(result);
 
       expect(pokeSpecies.speciesId).toBe(result);
-      expect(speciesStarterCosts[result]).toBeGreaterThanOrEqual(5);
-      expect(speciesStarterCosts[result]).toBeLessThanOrEqual(8);
+      expect(speciesDataRegistry.getStarterCost(result)).toBeGreaterThanOrEqual(5);
+      expect(speciesDataRegistry.getStarterCost(result)).toBeLessThanOrEqual(8);
     });
 
     it("excludes species from search", () => {
-      // Only 9 tiers are: Kyogre, Groudon, Rayquaza, Arceus, Zacian, Koraidon, Miraidon, Terapagos
+      // Only 9 tiers are: Kyogre, Groudon, Rayquaza, Arceus, Zygarde, Zacian, Zamazenta, Koraidon, Miraidon, Terapagos
       const result = getRandomSpeciesByStarterCost(9, [
         SpeciesId.KYOGRE,
         SpeciesId.GROUDON,
         SpeciesId.RAYQUAZA,
         SpeciesId.ARCEUS,
+        SpeciesId.ZYGARDE,
         SpeciesId.KORAIDON,
         SpeciesId.MIRAIDON,
         SpeciesId.TERAPAGOS,
+        SpeciesId.ZACIAN,
       ]);
-      const pokeSpecies = getPokemonSpecies(result);
-      expect(pokeSpecies.speciesId).toBe(SpeciesId.ZACIAN);
+      const pokeSpecies = speciesDataRegistry.getSpecies(result);
+      expect(pokeSpecies.speciesId).toBe(SpeciesId.ZAMAZENTA);
     });
 
     it("gets species of specified types", () => {
-      // Only 9 tiers are: Kyogre, Groudon, Rayquaza, Arceus, Zacian, Koraidon, Miraidon, Terapagos
+      // Only 9 tiers are: Kyogre, Groudon, Rayquaza, Arceus, Zygarde, Zacian, Zamazenta, Koraidon, Miraidon, Terapagos
       // TODO: This has to be changed
-      const result = getRandomSpeciesByStarterCost(9, undefined, [PokemonType.GROUND]);
-      const pokeSpecies = getPokemonSpecies(result);
-      expect(pokeSpecies.speciesId).toBe(SpeciesId.GROUDON);
+      const result = getRandomSpeciesByStarterCost(9, undefined, [PokemonType.WATER]);
+      const pokeSpecies = speciesDataRegistry.getSpecies(result);
+      expect(pokeSpecies.speciesId).toBe(SpeciesId.KYOGRE);
     });
   });
 

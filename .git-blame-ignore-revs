@@ -23,6 +23,9 @@ a07d2c57a44361f4ad48e024067c9b7638c0d84d
 # [Refactor] Create global scene variable (#4766)
 0107b1d47ea4a898f39dd3534fcccd4241c03470
 
+# [Refactor] Replace all instances of `integer` with `number` (#5250)
+8d043a9f5540c988d45635e06b44102eb8aae050
+
 # [Misc][Refactor][GitHub] Ditch eslint for biome, and add a formatter (#5495)
 408b66f9135004e128d7d737904facc30529c771
 

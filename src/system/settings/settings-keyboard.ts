@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { isDev } from "#constants/app-constants";
 import { Button } from "#enums/buttons";
 import { UiMode } from "#enums/ui-mode";
-import type { SettingsKeyboardUiHandler } from "#ui/settings-keyboard-ui-handler";
+import type { SettingsKeyboardUiHandler } from "#ui/keyboard-settings-ui-handler";
 import i18next from "i18next";
 
 export enum SettingKeyboard {

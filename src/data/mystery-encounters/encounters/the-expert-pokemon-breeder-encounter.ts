@@ -1,5 +1,6 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
-import { speciesStarterCosts } from "#balance/starters";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { modifierTypes } from "#data/data-lists";
 import type { IEggOptions } from "#data/egg";
 import { getPokeballTintColor } from "#data/pokeball";
@@ -30,7 +31,6 @@ import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { trainerConfigs } from "#trainers/trainer-config";
 import { randSeedShuffle } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 /** the i18n namespace for the encounter */
@@ -135,7 +135,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
   .withEncounterTier(MysteryEncounterTier.ULTRA)
   .withDisallowedChallenges(Challenges.HARDCORE)
   .withSceneWaveRangeRequirement(25, 180)
-  .withScenePartySizeRequirement(4, 6, true) // Must have at least 4 legal pokemon in party
+  .withScenePartySizeRequirement(4)
   .withIntroSpriteConfigs([]) // These are set in onInit()
   .withIntroDialogue([
     {
@@ -477,20 +477,21 @@ function getPartyConfig(): EnemyPartyConfig {
   breederConfig.name = i18next.t(trainerNameKey);
 
   // First mon is *always* this special cleffa
-  const cleffaSpecies =
+  const cleffaSpeciesId =
     waveIndex < FIRST_STAGE_EVOLUTION_WAVE
       ? SpeciesId.CLEFFA
       : waveIndex < FINAL_STAGE_EVOLUTION_WAVE
         ? SpeciesId.CLEFAIRY
         : SpeciesId.CLEFABLE;
+  const cleffaSpecies = speciesDataRegistry.getSpecies(cleffaSpeciesId);
   const baseConfig: EnemyPartyConfig = {
     trainerType: TrainerType.EXPERT_POKEMON_BREEDER,
     pokemonConfigs: [
       {
         nickname: i18next.t(`${namespace}:cleffa1Nickname`, {
-          speciesName: getPokemonSpecies(cleffaSpecies).getName(),
+          speciesName: cleffaSpecies.getName(),
         }),
-        species: getPokemonSpecies(cleffaSpecies),
+        species: cleffaSpecies,
         isBoss: false,
         abilityIndex: 1, // Magic Guard
         shiny: false,
@@ -514,9 +515,9 @@ function getPartyConfig(): EnemyPartyConfig {
     baseConfig.pokemonConfigs!.push(
       {
         nickname: i18next.t(`${namespace}:cleffa2Nickname`, {
-          speciesName: getPokemonSpecies(cleffaSpecies).getName(),
+          speciesName: cleffaSpecies.getName(),
         }),
-        species: getPokemonSpecies(cleffaSpecies),
+        species: cleffaSpecies,
         isBoss: false,
         abilityIndex: 1, // Magic Guard
         shiny: true,
@@ -534,9 +535,9 @@ function getPartyConfig(): EnemyPartyConfig {
       },
       {
         nickname: i18next.t(`${namespace}:cleffa3Nickname`, {
-          speciesName: getPokemonSpecies(cleffaSpecies).getName(),
+          speciesName: cleffaSpecies.getName(),
         }),
-        species: getPokemonSpecies(cleffaSpecies),
+        species: cleffaSpecies,
         isBoss: false,
         abilityIndex: 2, // Friend Guard / Unaware
         shiny: true,
@@ -561,7 +562,7 @@ function getPartyConfig(): EnemyPartyConfig {
 
     baseConfig.pokemonConfigs!.push(
       {
-        species: getPokemonSpecies(pool1Species),
+        species: speciesDataRegistry.getSpecies(pool1Species),
         isBoss: false,
         modifierConfigs: [
           {
@@ -571,7 +572,7 @@ function getPartyConfig(): EnemyPartyConfig {
         ],
       },
       {
-        species: getPokemonSpecies(pool2Species),
+        species: speciesDataRegistry.getSpecies(pool2Species),
         isBoss: false,
         modifierConfigs: [
           {
@@ -604,9 +605,9 @@ function calculateEggRewardsForPokemon(pokemon: PlayerPokemon): [number, number]
   const rootSpecies = pokemon.species.getRootSpeciesId();
   let pointsFromStarterTier = 0;
   // 2 points for every 1 below 7 that the pokemon's starter tier is (max 12, min 0)
-  if (Object.hasOwn(speciesStarterCosts, rootSpecies)) {
-    const starterTier = speciesStarterCosts[rootSpecies];
-    pointsFromStarterTier = Math.min(Math.max(Math.floor(7 - starterTier) * 2, 0), 12);
+  const starterCost = speciesDataRegistry.getStarterCost(rootSpecies);
+  if (starterCost !== undefined) {
+    pointsFromStarterTier = Math.min(Math.max(Math.floor(7 - starterCost) * 2, 0), 12);
   }
 
   // Maximum of 30 points
@@ -699,7 +700,7 @@ function onGameOver() {
   encounter.misc.encounterFailed = true;
 
   // Revert BGM
-  globalScene.playBgm(globalScene.arena.bgm);
+  audioManager.playBgm(globalScene.arena.bgm);
 
   // Clear any leftover battle phases
   globalScene.phaseManager.clearPhaseQueue();
@@ -707,7 +708,7 @@ function onGameOver() {
   // Return enemy Pokemon
   const pokemon = globalScene.getEnemyPokemon();
   if (pokemon) {
-    globalScene.playSound("se/pb_rel");
+    audioManager.playSound("se/pb_rel");
     pokemon.hideInfo();
     pokemon.tint(getPokeballTintColor(pokemon.pokeball), 1, 250, "Sine.easeIn");
     globalScene.tweens.add({

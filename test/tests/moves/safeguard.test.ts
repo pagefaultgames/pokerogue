@@ -134,7 +134,7 @@ describe("Moves - Safeguard", () => {
     const player = game.field.getPlayerPokemon();
     game.field.mockAbility(player, AbilityId.STATIC);
     vi.spyOn(
-      allAbilities[AbilityId.STATIC].getAttrs("PostDefendContactApplyStatusEffectAbAttr")[0],
+      allAbilities[AbilityId.STATIC].getAttrs("PostDefendApplyStatusEffectAbAttr")[0],
       "canApply",
     ).mockReturnValue(true);
 

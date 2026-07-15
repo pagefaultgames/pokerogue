@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import type { Gender } from "#data/gender";
 import { CustomPokemonData, PokemonBattleData, PokemonSummonData } from "#data/pokemon-data";
 import { Status } from "#data/status-effect";
@@ -13,7 +14,7 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { EnemyPokemon, Pokemon } from "#field/pokemon";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { Variant } from "#sprites/variant";
-import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 export class PokemonData {
   public id: number;
@@ -69,18 +70,13 @@ export class PokemonData {
   public customPokemonData: CustomPokemonData;
   public fusionCustomPokemonData: CustomPokemonData;
 
-  // Deprecated attributes, needed for now to allow SessionData migration (see PR#4619 comments)
-  // TODO: Remove these once pre-session migration is implemented
-  public natureOverride: Nature | -1;
-  public mysteryEncounterPokemonData: CustomPokemonData | null;
-  public fusionMysteryEncounterPokemonData: CustomPokemonData | null;
-
   /**
    * Construct a new {@linkcode PokemonData} instance out of a {@linkcode Pokemon}
    * or JSON representation thereof.
    * @param source The {@linkcode Pokemon} to convert into data (or a JSON object representing one)
    */
   // TODO: Remove any from type signature in favor of 2 separate method funcs
+  // TODO: change the source to `unknown` or create a method explicitly for converting from raw JSON data
   constructor(source: Pokemon | any) {
     const sourcePokemon = source instanceof Pokemon ? source : undefined;
 
@@ -88,7 +84,10 @@ export class PokemonData {
     this.player = sourcePokemon?.isPlayer() ?? source.player;
     this.species = sourcePokemon?.species.speciesId ?? source.species;
     this.nickname = source.nickname;
-    this.formIndex = Math.max(Math.min(source.formIndex, getPokemonSpecies(this.species).forms.length - 1), 0);
+    this.formIndex = Math.max(
+      Math.min(source.formIndex, speciesDataRegistry.getSpecies(this.species).forms.length - 1),
+      0,
+    );
     this.abilityIndex = source.abilityIndex;
     this.passive = source.passive;
     this.shiny = source.shiny;
@@ -106,9 +105,14 @@ export class PokemonData {
     this.nature = source.nature ?? Nature.HARDY;
     this.moveset = source.moveset?.map((m: any) => PokemonMove.loadMove(m)) ?? [];
     this.status = source.status
-      ? new Status(source.status.effect, source.status.toxicTurnCount, source.status.sleepTurnsRemaining)
+      ? new Status(
+          source.status.effect,
+          source.status.toxicTurnCount,
+          source.status.sleepTurnsRemaining,
+          source.status.freezeTurnsRemaining,
+        )
       : null;
-    this.friendship = source.friendship ?? getPokemonSpecies(this.species).baseFriendship;
+    this.friendship = source.friendship ?? speciesDataRegistry.getSpecies(this.species).baseFriendship;
     this.metLevel = source.metLevel || 5;
     this.metBiome = source.metBiome ?? -1;
     this.metSpecies = source.metSpecies;
@@ -120,15 +124,6 @@ export class PokemonData {
     this.teraType = source.teraType as PokemonType;
     this.isTerastallized = !!source.isTerastallized;
     this.stellarTypesBoosted = source.stellarTypesBoosted ?? [];
-
-    // Deprecated, but needed for session data migration
-    this.natureOverride = source.natureOverride;
-    this.mysteryEncounterPokemonData = source.mysteryEncounterPokemonData
-      ? new CustomPokemonData(source.mysteryEncounterPokemonData)
-      : null;
-    this.fusionMysteryEncounterPokemonData = source.fusionMysteryEncounterPokemonData
-      ? new CustomPokemonData(source.fusionMysteryEncounterPokemonData)
-      : null;
 
     this.fusionSpecies = sourcePokemon?.fusionSpecies?.speciesId ?? source.fusionSpecies;
     this.fusionFormIndex = source.fusionFormIndex;
@@ -152,7 +147,7 @@ export class PokemonData {
   }
 
   toPokemon(battleType?: BattleType, partyMemberIndex = 0, double = false): Pokemon {
-    const species = getPokemonSpecies(this.species);
+    const species = speciesDataRegistry.getSpecies(this.species);
     const ret: Pokemon = this.player
       ? globalScene.addPlayerPokemon(
           species,

@@ -1,6 +1,6 @@
 import "vitest";
 
-import type Overrides from "#app/overrides";
+import type { activeOverrides } from "#app/overrides";
 import type { Phase } from "#app/phase";
 import type { ArenaTag } from "#data/arena-tag";
 import type { BattlerTag, BattlerTagTypeMap } from "#data/battler-tags";
@@ -25,13 +25,14 @@ import type { OneOther } from "#test/@types/test-helpers";
 import type { GameManager } from "#test/framework/game-manager";
 import type { PartiallyFilledArenaTag } from "#test/matchers/to-have-arena-tag";
 import type { PartiallyFilledBattlerTag } from "#test/matchers/to-have-battler-tag";
-import type { ToHaveEffectiveStatOptions } from "#test/matchers/to-have-effective-stat";
 import type { ToHaveHpOptions } from "#test/matchers/to-have-hp";
 import type { PartiallyFilledPositionalTag } from "#test/matchers/to-have-positional-tag";
 import type { PartiallyFilledStatus } from "#test/matchers/to-have-status-effect";
 import type { ToHaveTypesOptions } from "#test/matchers/to-have-types";
 import type { PhaseString } from "#types/phase-types";
+import type { GetEffectiveStatParams } from "#types/pokemon-common";
 import type { TurnMove } from "#types/turn-move";
+import type { AtLeastOne } from "#types/type-helpers";
 import type { toDmgValue } from "#utils/common";
 import type { If, IntClosedRange, Integer, IsNumericLiteral, IsStringLiteral, NonNegativeInteger } from "type-fest";
 import type { expect } from "vitest";
@@ -49,6 +50,7 @@ type IntLiteral<T extends number> = If<IsNumericLiteral<T>, NonNegativeInteger<T
  * @internal
  */
 type NonNumericLiteral<T extends number> = If<IsNumericLiteral<T>, never, T>;
+
 // #endregion Helper Types
 
 /**
@@ -78,6 +80,7 @@ declare module "vitest" {
     not: NegativeAssertion<T>;
 
     // #region Banned Chai Assertions
+
     // enforce consistent style by banning chai assertions at a type level (except `not` which is also in jest).
     // NB: We cannot place these in a nice interface since TS will complain about `Assertion` extending 2 interfaces with clashing types.
     // We also cannot make these anything other than `never` as TS will error about incompatible types (which prevents any custom error messages)
@@ -189,6 +192,7 @@ declare module "vitest" {
 }
 
 // #region Generic Matchers
+
 interface GenericMatchers<T> {
   /**
    * Check whether an array contains EXACTLY the given items (in any order).
@@ -214,9 +218,11 @@ interface GenericMatchers<T> {
    */
   toHaveKey: T extends ReadonlyMap<infer K, infer V> ? (expectedKey: K, expectedValue?: V) => void : never;
 }
+
 // #endregion Generic Matchers
 
 // #region GameManager Matchers
+
 interface GameManagerMatchers {
   /**
    * Check whether the {@linkcode GameManager} has shown the given message at least once in the current test case.
@@ -238,9 +244,11 @@ interface GameManagerMatchers {
    */
   toBeAtPhase(expectedPhase: PhaseString): void;
 }
+
 // #endregion GameManager Matchers
 
 // #region Arena Matchers
+
 declare class ArenaMatchers implements MatchersBase<keyof ArenaMatchersCommon> {
   common: ArenaMatchersCommon;
   negative: ArenaMatchersNegative;
@@ -301,6 +309,7 @@ interface ArenaMatchersNegative {
 // #endregion Arena Matchers
 
 // #region Pokemon Matchers
+
 interface PokemonMatchers {
   /**
    * Check whether a {@linkcode Pokemon}'s current typing includes the given types.
@@ -330,7 +339,7 @@ interface PokemonMatchers {
    * Check whether a {@linkcode Pokemon}'s effective stat equals a certain value.
    * @param stat - The {@linkcode EffectiveStat} to check
    * @param expectedValue - The expected value of `stat`; must be a non-negative integer
-   * @param options - The {@linkcode ToHaveEffectiveStatOptions | options} passed to the matcher
+   * @param options - The {@linkcode GetEffectiveStatParams | options} passed to the matcher
    * @remarks
    * This checks the value after all stat value modifications have occured.
    * If you want to query the raw stat value **before** modifiers are applied, use {@linkcode Pokemon.getStat} instead.
@@ -339,7 +348,7 @@ interface PokemonMatchers {
   toHaveEffectiveStat<S extends number>(
     stat: EffectiveStat,
     expectedValue: If<IsNumericLiteral<S>, NonNegativeInteger<S>, S>,
-    options?: ToHaveEffectiveStatOptions,
+    options?: AtLeastOne<GetEffectiveStatParams>,
   ): void;
 
   /**
@@ -429,7 +438,7 @@ interface PokemonMatchers {
    * @param ppUsed - The amount of PP that should have been consumed,
    * or `all` to indicate the move should be _out_ of PP
    * @throws {Error}
-   * Fails test if the Pokemon's moveset has been set via {@linkcode Overrides.MOVESET_OVERRIDE}/{@linkcode Overrides.ENEMY_MOVESET_OVERRIDE}
+   * Fails test if the Pokemon's moveset has been set via {@linkcode activeOverrides.MOVESET_OVERRIDE}/{@linkcode activeOverrides.ENEMY_MOVESET_OVERRIDE}
    * or does not contain exactly one copy of `moveId`.
    */
   toHaveUsedPP<P extends number | "all">(moveId: MoveId, ppUsed: If<IsNumericLiteral<P>, Integer<P>, P>): void;
