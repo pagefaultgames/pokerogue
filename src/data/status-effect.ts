@@ -8,18 +8,23 @@ export class Status {
   /** Toxic damage is `1/16 max HP * toxicTurnCount` */
   public toxicTurnCount = 0;
   public sleepTurnsRemaining?: number | undefined;
+  public freezeTurnsRemaining?: number | undefined;
 
   // TODO: Make this take an object?
-  constructor(effect: StatusEffect, toxicTurnCount = 0, sleepTurnsRemaining?: number) {
+  constructor(effect: StatusEffect, toxicTurnCount = 0, sleepTurnsRemaining?: number, freezeTurnsRemaining?: number) {
     this.effect = effect;
     this.toxicTurnCount = toxicTurnCount;
     this.sleepTurnsRemaining = sleepTurnsRemaining;
+    this.freezeTurnsRemaining = freezeTurnsRemaining;
   }
 
   incrementTurn(): void {
     this.toxicTurnCount++;
     if (this.sleepTurnsRemaining) {
       this.sleepTurnsRemaining--;
+    }
+    if (this.freezeTurnsRemaining) {
+      this.freezeTurnsRemaining--;
     }
   }
 
@@ -93,12 +98,16 @@ export function getStatusEffectHealText(statusEffect: StatusEffect, pokemonNameW
   return i18next.t(i18nKey, { pokemonNameWithAffix });
 }
 
+/**
+ * @returns The localized text for the given status effect's descriptor ("poisoning", "paralysis", etc).
+ */
+// TODO: Change parameter type to Exclude<StatusEffect, StatusEffect.NONE | StatusEffect.FAINT>
 export function getStatusEffectDescriptor(statusEffect: StatusEffect): string {
   if (statusEffect === StatusEffect.NONE) {
     return "";
   }
-  const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.description` as ParseKeys;
-  return i18next.t(i18nKey);
+
+  return i18next.t(`${getStatusEffectMessageKey(statusEffect)}.description`);
 }
 
 export function getStatusEffectCatchRateMultiplier(statusEffect: StatusEffect): number {
@@ -136,7 +145,7 @@ export function getRandomStatusEffect(statusEffectA: StatusEffect, statusEffectB
     return statusEffectA;
   }
 
-  return randIntRange(0, 2) ? statusEffectA : statusEffectB;
+  return randIntRange(0, 1) ? statusEffectA : statusEffectB;
 }
 
 /**
@@ -152,7 +161,7 @@ export function getRandomStatus(statusA: Status | null, statusB: Status | null):
     return statusA;
   }
 
-  return randIntRange(0, 2) ? statusA : statusB;
+  return randIntRange(0, 1) ? statusA : statusB;
 }
 
 /**

@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { isBeta, isDev } from "#constants/app-constants";
 import { Gender } from "#data/gender";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -10,7 +11,7 @@ import type { CustomDailyRunConfig, DailySeedBoss, DailySeedStarter, SerializedD
 import type { Starter, StarterMoveset } from "#types/save-data";
 import { isBetween } from "#utils/common";
 import { getEnumValues } from "#utils/enums";
-import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import Ajv from "ajv";
 import customDailyRunSchema from "./schema.json";
 
@@ -67,17 +68,26 @@ export function getSerializedDailyRunConfig(): SerializedDailyRunConfig | undefi
     return;
   }
 
-  const { seed, boss, luck, forcedWaves } = globalScene.gameMode.dailyConfig;
+  const { seed, boss, luck, forcedWaves, trainerManipulations, challenges, mysteryEncounters } =
+    globalScene.gameMode.dailyConfig;
   return {
     seed,
     boss,
     luck,
     forcedWaves,
+    trainerManipulations,
+    challenges,
+    mysteryEncounters,
   } satisfies SerializedDailyRunConfig;
 }
 
-export function isDailyFinalBoss() {
-  return globalScene.gameMode.isDaily && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex);
+/**
+ * Checks if the current wave is the final boss of a daily run.
+ * @param wave - (Default: current battle's wave index) The wave to check
+ * @returns Whether the given wave is the final boss of a daily run.
+ */
+export function isDailyFinalBoss(wave = globalScene.currentBattle?.waveIndex): boolean {
+  return globalScene.gameMode.isDaily && globalScene.gameMode.isWaveFinal(wave);
 }
 
 /**
@@ -103,7 +113,7 @@ export function validateDailyStarterConfig(config: DailySeedStarter): DailySeedS
   }
 
   // Fall back to default variant if none exists
-  const starterSpecies = getPokemonSpecies(config.speciesId);
+  const starterSpecies = speciesDataRegistry.getSpecies(config.speciesId);
   if (config.variant != null && !starterSpecies.hasVariants()) {
     console.warn("Variant for custom daily run seed starter does not exist, using base variant...", config.variant);
     config.variant = 0;
@@ -114,9 +124,15 @@ export function validateDailyStarterConfig(config: DailySeedStarter): DailySeedS
     config.nature = undefined;
   }
 
-  if (config.abilityIndex != null && !isBetween(config.abilityIndex, 0, 2)) {
-    console.warn("Invalid ability index used for custom daily run seed starter:", config.abilityIndex);
-    config.abilityIndex = undefined;
+  const abilityIds = getEnumValues(AbilityId);
+  if (config.ability != null && !abilityIds.includes(config.ability)) {
+    console.warn("Invalid ability used for custom daily run seed starter:", config.ability);
+    config.ability = undefined;
+  }
+
+  if (config.passive != null && !abilityIds.includes(config.passive)) {
+    console.warn("Invalid passive used for custom daily run seed starter:", config.passive);
+    config.passive = undefined;
   }
 
   return config;
@@ -145,7 +161,7 @@ export function validateDailyBossConfig(config: DailySeedBoss): DailySeedBoss | 
   }
 
   // Fall back to default variant if none exists
-  const starterSpecies = getPokemonSpecies(config.speciesId);
+  const starterSpecies = speciesDataRegistry.getSpecies(config.speciesId);
   if (config.variant != null && !starterSpecies.hasVariants()) {
     console.warn("Variant for custom daily run seed boss does not exist, using base variant...", config.variant);
     config.variant = 0;
@@ -178,6 +194,11 @@ export function validateDailyBossConfig(config: DailySeedBoss): DailySeedBoss | 
     config.passive = undefined;
   }
 
+  if (config.segments != null && (config.segments < 1 || !Number.isSafeInteger(config.segments))) {
+    console.warn("Invalid number of segments used for custom daily run seed boss:", config.segments);
+    config.segments = undefined;
+  }
+
   return config;
 }
 
@@ -193,7 +214,7 @@ export function getDailyRunStarter(species: PokemonSpecies, config?: DailySeedSt
   const pokemon = globalScene.addPlayerPokemon(
     species,
     startingLevel,
-    config?.abilityIndex,
+    undefined,
     config?.formIndex,
     undefined,
     isShiny,

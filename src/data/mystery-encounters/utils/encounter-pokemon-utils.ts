@@ -1,7 +1,8 @@
+import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { speciesStarterCosts } from "#balance/starters";
 import { modifierTypes } from "#data/data-lists";
 import { Gender } from "#data/gender";
 import {
@@ -15,6 +16,7 @@ import type { PokemonSpecies } from "#data/pokemon-species";
 import { getStatusEffectCatchRateMultiplier } from "#data/status-effect";
 import type { AbilityId } from "#enums/ability-id";
 import { ChallengeType } from "#enums/challenge-type";
+import { PartyUiMode } from "#enums/party-ui-mode";
 import { PlayerGender } from "#enums/player-gender";
 import type { PokeballType } from "#enums/pokeball";
 import type { PokemonType } from "#enums/pokemon-type";
@@ -32,11 +34,9 @@ import {
 } from "#mystery-encounters/encounter-dialogue-utils";
 import { achvs } from "#system/achv";
 import type { PartyOption } from "#ui/party-ui-handler";
-import { PartyUiMode } from "#ui/party-ui-handler";
 import { SummaryUiMode } from "#ui/summary-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { BooleanHolder, randSeedInt } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 /** Will give +1 level every 10 waves */
@@ -44,31 +44,22 @@ export const STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER = 1;
 
 /**
  * Gets the sprite key and file root for a given PokemonSpecies (accounts for gender, shiny, variants, forms, and experimental)
- * @param species
+ * @param speciesId
  * @param female
  * @param formIndex
  * @param shiny
  * @param variant
  */
 export function getSpriteKeysFromSpecies(
-  species: SpeciesId,
+  speciesId: SpeciesId,
   female?: boolean,
   formIndex?: number,
   shiny?: boolean,
   variant?: number,
 ): { spriteKey: string; fileRoot: string } {
-  const spriteKey = getPokemonSpecies(species).getSpriteKey(
-    female ?? false,
-    formIndex ?? 0,
-    shiny ?? false,
-    variant ?? 0,
-  );
-  const fileRoot = getPokemonSpecies(species).getSpriteAtlasPath(
-    female ?? false,
-    formIndex ?? 0,
-    shiny ?? false,
-    variant ?? 0,
-  );
+  const species = speciesDataRegistry.getSpecies(speciesId);
+  const spriteKey = species.getSpriteKey(female ?? false, formIndex ?? 0, shiny ?? false, variant ?? 0);
+  const fileRoot = species.getSpriteAtlasPath(female ?? false, formIndex ?? 0, shiny ?? false, variant ?? 0);
   return { spriteKey, fileRoot };
 }
 
@@ -260,19 +251,19 @@ export function getRandomSpeciesByStarterCost(
   let min = Array.isArray(starterTiers) ? starterTiers[0] : starterTiers;
   let max = Array.isArray(starterTiers) ? starterTiers[1] : starterTiers;
 
-  let filteredSpecies: [PokemonSpecies, number][] = Object.keys(speciesStarterCosts)
-    .map(s => [Number.parseInt(s) as SpeciesId, speciesStarterCosts[s] as number])
-    .filter(s => {
-      const pokemonSpecies = getPokemonSpecies(s[0]);
-      return (
-        pokemonSpecies
-        && (!excludedSpecies || !excludedSpecies.includes(s[0]))
-        && (allowSubLegendary || !pokemonSpecies.subLegendary)
-        && (allowLegendary || !pokemonSpecies.legendary)
-        && (allowMythical || !pokemonSpecies.mythical)
-      );
-    })
-    .map(s => [getPokemonSpecies(s[0]), s[1]]);
+  let filteredSpecies: [species: PokemonSpecies, cost: number][] = [];
+
+  for (const species of speciesDataRegistry.getAllStarters(true)) {
+    if (
+      species
+      && !excludedSpecies?.includes(species.speciesId)
+      && (allowSubLegendary || !species.subLegendary)
+      && (allowLegendary || !species.legendary)
+      && (allowMythical || !species.mythical)
+    ) {
+      filteredSpecies.push([species, speciesDataRegistry.getStarterCost(species.speciesId)]);
+    }
+  }
 
   if (types && types.length > 0) {
     filteredSpecies = filteredSpecies.filter(
@@ -472,7 +463,7 @@ export function trainerThrowPokeball(
       `trainer_${globalScene.gameData.gender === PlayerGender.FEMALE ? "f" : "m"}_back_pb`,
     );
     globalScene.time.delayedCall(512, () => {
-      globalScene.playSound("se/pb_throw");
+      audioManager.playSound("se/pb_throw");
 
       // Trainer throw frames
       globalScene.trainer.setFrame("2");
@@ -494,7 +485,7 @@ export function trainerThrowPokeball(
         onComplete: () => {
           pokeball.setTexture("pb", `${pokeballAtlasKey}_opening`);
           globalScene.time.delayedCall(17, () => pokeball.setTexture("pb", `${pokeballAtlasKey}_open`));
-          globalScene.playSound("se/pb_rel");
+          audioManager.playSound("se/pb_rel");
           pokemon.tint(getPokeballTintColor(pokeballType));
 
           globalScene.animations.addPokeballOpenParticles(pokeball.x, pokeball.y, pokeballType);
@@ -508,7 +499,7 @@ export function trainerThrowPokeball(
             onComplete: () => {
               pokeball.setTexture("pb", `${pokeballAtlasKey}_opening`);
               pokemon.setVisible(false);
-              globalScene.playSound("se/pb_catch");
+              audioManager.playSound("se/pb_catch");
               globalScene.time.delayedCall(17, () => pokeball.setTexture("pb", `${pokeballAtlasKey}`));
 
               const doShake = () => {
@@ -533,13 +524,13 @@ export function trainerThrowPokeball(
                   onRepeat: () => {
                     if (shakeCount++ < 3) {
                       if (randSeedInt(65536) < ballTwitchRate) {
-                        globalScene.playSound("se/pb_move");
+                        audioManager.playSound("se/pb_move");
                       } else {
                         shakeCounter.stop();
                         failCatch(pokemon, originalY, pokeball, pokeballType).then(() => resolve(false));
                       }
                     } else {
-                      globalScene.playSound("se/pb_lock");
+                      audioManager.playSound("se/pb_lock");
                       globalScene.animations.addPokeballCaptureStars(pokeball);
 
                       const pbTint = globalScene.add.sprite(pokeball.x, pokeball.y, "pb", "pb");
@@ -594,7 +585,7 @@ function failCatch(
   pokeballType: PokeballType,
 ) {
   return new Promise<void>(resolve => {
-    globalScene.playSound("se/pb_rel");
+    audioManager.playSound("se/pb_rel");
     pokemon.setY(originalY);
     if (pokemon.status?.effect !== StatusEffect.SLEEP) {
       pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
@@ -853,7 +844,7 @@ function removePb(pokeball: Phaser.GameObjects.Sprite) {
  */
 export async function doPokemonFlee(pokemon: EnemyPokemon): Promise<void> {
   await new Promise<void>(resolve => {
-    globalScene.playSound("se/flee");
+    audioManager.playSound("se/flee");
     // Ease pokemon out
     globalScene.tweens.add({
       targets: pokemon,
@@ -960,13 +951,15 @@ export function getGoldenBugNetSpecies(level: number): PokemonSpecies {
   for (const speciesWeightPair of GOLDEN_BUG_NET_SPECIES_POOL) {
     w += speciesWeightPair[1];
     if (roll < w) {
-      const initialSpecies = getPokemonSpecies(speciesWeightPair[0]);
-      return getPokemonSpecies(initialSpecies.getWildSpeciesForLevel(level, true, false, globalScene.gameMode));
+      const initialSpecies = speciesDataRegistry.getSpecies(speciesWeightPair[0]);
+      return speciesDataRegistry.getSpecies(
+        initialSpecies.getWildSpeciesForLevel(level, true, false, globalScene.gameMode),
+      );
     }
   }
 
   // Defaults to Scyther
-  return getPokemonSpecies(SpeciesId.SCYTHER);
+  return speciesDataRegistry.getSpecies(SpeciesId.SCYTHER);
 }
 
 /**

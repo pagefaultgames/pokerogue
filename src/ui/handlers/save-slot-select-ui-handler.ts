@@ -9,7 +9,7 @@ import { UiMode } from "#enums/ui-mode";
 import * as Modifier from "#modifiers/modifier";
 import type { PokemonData } from "#system/pokemon-data";
 import type { SessionSaveData } from "#types/save-data";
-import type { OptionSelectConfig } from "#ui/abstract-option-select-ui-handler";
+import type { OptionSelectConfig } from "#ui/base-option-select-ui-handler";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { RunDisplayMode } from "#ui/run-info-ui-handler";
 import { addTextObject } from "#ui/text";
@@ -373,7 +373,7 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
     if (!this.cursorObj) {
       this.cursorObj = globalScene.add.container(0, 0);
       const cursorBox = globalScene.add.nineslice(
-        0,
+        1,
         15,
         "select_cursor_highlight_thick",
         undefined,

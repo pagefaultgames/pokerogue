@@ -1,5 +1,5 @@
 import { getPokemonNameWithAffix } from "#app/messages";
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { MoveId } from "#enums/move-id";
 import type { Pokemon } from "#field/pokemon";
 import { getEnumStr } from "#test/utils/string-utils";
@@ -30,7 +30,7 @@ export function toHaveUsedPP(
     };
   }
 
-  const override = received.isPlayer() ? Overrides.MOVESET_OVERRIDE : Overrides.ENEMY_MOVESET_OVERRIDE;
+  const override = received.isPlayer() ? activeOverrides.MOVESET_OVERRIDE : activeOverrides.ENEMY_MOVESET_OVERRIDE;
   if (coerceArray(override).length > 0) {
     return {
       pass: this.isNot,
@@ -42,7 +42,7 @@ export function toHaveUsedPP(
   const pkmName = getPokemonNameWithAffix(received);
   const moveStr = getEnumStr(MoveId, moveId);
 
-  const movesetMoves = received.getMoveset().filter(pm => pm.moveId === moveId);
+  const movesetMoves = received.getMoveset().filter(pm => this.equals(pm.moveId, moveId, this.customTesters));
   if (movesetMoves.length !== 1) {
     return {
       pass: this.isNot,

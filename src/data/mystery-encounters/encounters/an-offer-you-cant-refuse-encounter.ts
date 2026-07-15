@@ -1,6 +1,6 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
-import { speciesStarterCosts } from "#balance/starters";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { modifierTypes } from "#data/data-lists";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -22,7 +22,6 @@ import {
   MoveRequirement,
 } from "#mystery-encounters/mystery-encounter-requirements";
 import { EXTORTION_ABILITIES, EXTORTION_MOVES } from "#mystery-encounters/requirement-groups";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 /** the i18n namespace for this encounter */
@@ -46,11 +45,12 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter = MysteryEncounterB
 )
   .withEncounterTier(MysteryEncounterTier.GREAT)
   .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
-  .withScenePartySizeRequirement(2, 6, true) // Must have at least 2 pokemon in party
+  .withScenePartySizeRequirement(2)
   .withIntroSpriteConfigs([
     {
-      spriteKey: SpeciesId.LIEPARD.toString(),
-      fileRoot: "pokemon",
+      species: SpeciesId.LIEPARD,
+      spriteKey: "",
+      fileRoot: "",
       hasShadow: true,
       repeat: true,
       x: 0,
@@ -84,7 +84,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter = MysteryEncounterB
     const pokemon = getHighestStatTotalPlayerPokemon(true, true);
 
     const baseSpecies = pokemon.getSpeciesForm().getRootSpeciesId();
-    const starterValue: number = speciesStarterCosts[baseSpecies] ?? 1;
+    const starterValue: number = speciesDataRegistry.getStarterCost(baseSpecies) ?? 1;
     const multiplier = Math.max((MONEY_MAXIMUM_MULTIPLIER / 10) * starterValue, MONEY_MINIMUM_MULTIPLIER);
     const price = globalScene.getWaveMoneyAmount(multiplier);
 
@@ -111,7 +111,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter = MysteryEncounterB
 
     const shinyCharm = generateModifierType(modifierTypes.SHINY_CHARM);
     encounter.setDialogueToken("itemName", shinyCharm?.name ?? i18next.t("modifierType:ModifierType.SHINY_CHARM.name"));
-    encounter.setDialogueToken("liepardName", getPokemonSpecies(SpeciesId.LIEPARD).getName());
+    encounter.setDialogueToken("liepardName", speciesDataRegistry.getSpecies(SpeciesId.LIEPARD).getName());
 
     return true;
   })
@@ -166,7 +166,11 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter = MysteryEncounterB
         // Update money and remove pokemon from party
         updatePlayerMoney(encounter.misc.price);
 
-        setEncounterExp(encounter.options[1].primaryPokemon!.id, getPokemonSpecies(SpeciesId.LIEPARD).baseExp, true);
+        setEncounterExp(
+          encounter.options[1].primaryPokemon!.id,
+          speciesDataRegistry.getSpecies(SpeciesId.LIEPARD).baseExp,
+          true,
+        );
 
         leaveEncounterWithoutBattle(true);
       })

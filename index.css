@@ -11,7 +11,10 @@
   --color-dark: hsl(0, 0%, 10%);
 }
 
-html {
+html,
+body,
+#app,
+#touchControls {
   touch-action: none;
 }
 

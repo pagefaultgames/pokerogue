@@ -48,8 +48,9 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
   .withPrimaryPokemonHealthRatioRequirement([0.51, 1]) // At least 1 Pokemon must have above half HP
   .withIntroSpriteConfigs([
     {
-      spriteKey: SpeciesId.KROKOROK.toString(),
-      fileRoot: "pokemon",
+      species: SpeciesId.KROKOROK,
+      spriteKey: "",
+      fileRoot: "",
       hasShadow: true,
       repeat: false,
       scale: 1.1,

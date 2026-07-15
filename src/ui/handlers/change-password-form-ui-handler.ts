@@ -1,5 +1,5 @@
+import { pokerogueApi } from "#api/api";
 import { globalScene } from "#app/global-scene";
-import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import { UiMode } from "#enums/ui-mode";
 import type { InputFieldConfig } from "#ui/form-modal-ui-handler";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";

@@ -41,16 +41,12 @@ export function addWindow(
   y: number,
   width: number,
   height: number,
-  mergeMaskTop?: boolean,
-  mergeMaskLeft?: boolean,
-  maskOffsetX?: number,
-  maskOffsetY?: number,
-  windowVariant?: WindowVariant,
+  mergeMaskTop = false,
+  mergeMaskLeft = false,
+  maskOffsetX = 0,
+  maskOffsetY = 0,
+  windowVariant: WindowVariant = WindowVariant.NORMAL,
 ): Phaser.GameObjects.NineSlice {
-  if (windowVariant === undefined) {
-    windowVariant = WindowVariant.NORMAL;
-  }
-
   const borderSize = globalScene.uiTheme === UiTheme.LEGACY ? 6 : 8;
 
   const window = globalScene.add.nineslice(
@@ -76,14 +72,14 @@ export function addWindow(
      */
     const maskRect = new Phaser.GameObjects.Rectangle(
       globalScene,
-      6 * (x - (mergeMaskLeft ? 2 : 0) - (maskOffsetX || 0)),
-      6 * (y + (mergeMaskTop ? 2 : 0) + (maskOffsetY || 0)),
+      6 * (x - (mergeMaskLeft ? 2 : 0) - maskOffsetX),
+      6 * (y + (mergeMaskTop ? 2 : 0) + maskOffsetY),
       width - (mergeMaskLeft ? 2 : 0),
       height - (mergeMaskTop ? 2 : 0),
       0xffffff,
-    );
-    maskRect.setOrigin(0);
-    maskRect.setScale(6);
+    )
+      .setOrigin(0)
+      .setScale(6);
     const mask = maskRect.createGeometryMask();
     window.setMask(mask);
   }
@@ -95,7 +91,7 @@ export function updateWindowType(windowTypeIndex: number): void {
   const windowObjects: [Phaser.GameObjects.NineSlice, WindowVariant][] = [];
   const themedObjects: (Phaser.GameObjects.Image | Phaser.GameObjects.NineSlice)[] = [];
   const traverse = (object: any) => {
-    if (object.hasOwnProperty("children") && object.children instanceof Phaser.GameObjects.DisplayList) {
+    if (Object.hasOwn(object, "children") && object.children instanceof Phaser.GameObjects.DisplayList) {
       const children = object.children as Phaser.GameObjects.DisplayList;
       for (const child of children.getAll()) {
         traverse(child);

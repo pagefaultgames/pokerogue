@@ -1,7 +1,8 @@
+import { DAILY_BOSS_LEVEL } from "#app/constants";
 import type { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
+import { isDailyFinalBoss } from "#data/daily-seed/daily-seed-utils";
 import { ArenaTagType } from "#enums/arena-tag-type";
-import { BattleSpec } from "#enums/battle-spec";
 import { BattleType } from "#enums/battle-type";
 import { BattlerIndex } from "#enums/battler-index";
 import { BiomeId } from "#enums/biome-id";
@@ -59,7 +60,6 @@ export class Battle {
   protected gameMode: GameMode;
   public waveIndex: number;
   public battleType: BattleType;
-  public battleSpec: BattleSpec;
   public trainer: Trainer | null;
   public enemyLevels: number[] | undefined;
   public enemyParty: EnemyPokemon[] = [];
@@ -81,6 +81,8 @@ export class Battle {
   public battleSeed: string = randomString(16, true);
   private battleSeedState: string | null = null;
   public moneyScattered = 0;
+  // TODO: These trackers are only used for Sticky Web + Mirror Armor edge cases
+  // and are abhorrently janky.
   /** Primarily for double battles, keeps track of last enemy and player pokemon that triggered its ability or used a move */
   public lastEnemyInvolved: number;
   public lastPlayerInvolved: number;
@@ -115,7 +117,6 @@ export class Battle {
     this.mysteryEncounterType = mysteryEncounterType;
     this.double = double;
 
-    this.initBattleSpec();
     this.enemyLevels =
       battleType === BattleType.TRAINER
         ? trainer?.getPartyLevels(this.waveIndex)
@@ -123,22 +124,21 @@ export class Battle {
           new Array(double ? 2 : 1).fill(null).map(() => this.getLevelForWave());
   }
 
-  private initBattleSpec(): void {
-    let spec = BattleSpec.DEFAULT;
-    if (this.gameMode.isWaveFinal(this.waveIndex) && this.gameMode.isClassic) {
-      spec = BattleSpec.FINAL_BOSS;
-    }
-    this.battleSpec = spec;
+  public get isClassicFinalBoss(): boolean {
+    return this.gameMode.isClassic && this.gameMode.isWaveFinal(this.waveIndex);
   }
 
   public getLevelForWave(): number {
+    if (isDailyFinalBoss(this.waveIndex)) {
+      return DAILY_BOSS_LEVEL;
+    }
     const levelWaveIndex = this.gameMode.getWaveForDifficulty(this.waveIndex);
     const baseLevel = 1 + levelWaveIndex / 2 + Math.pow(levelWaveIndex / 25, 2);
     const bossMultiplier = 1.2;
 
     if (this.gameMode.isBoss(this.waveIndex)) {
       const ret = Math.floor(baseLevel * bossMultiplier);
-      if (this.battleSpec === BattleSpec.FINAL_BOSS || !(this.waveIndex % 250)) {
+      if (this.isClassicFinalBoss || !(this.waveIndex % 250)) {
         return Math.ceil(ret / 25) * 25;
       }
       let levelOffset = 0;
@@ -269,7 +269,7 @@ export class Battle {
     }
     const wildOpponents = globalScene.getEnemyParty();
     for (const pokemon of wildOpponents) {
-      if (this.battleSpec === BattleSpec.FINAL_BOSS) {
+      if (this.isClassicFinalBoss) {
         if (pokemon.species.getFormSpriteKey(pokemon.formIndex) === SpeciesFormKey.ETERNAMAX) {
           return "battle_final";
         }
@@ -283,6 +283,12 @@ export class Battle {
       ) {
         if (globalScene.musicPreference === MusicPreference.GENFIVE) {
           switch (pokemon.species.speciesId) {
+            case SpeciesId.ARTICUNO:
+            case SpeciesId.ZAPDOS:
+            case SpeciesId.MOLTRES:
+            case SpeciesId.MEWTWO:
+            case SpeciesId.MEW:
+              return "battle_legendary_mew";
             case SpeciesId.REGIROCK:
             case SpeciesId.REGICE:
             case SpeciesId.REGISTEEL:
@@ -326,7 +332,10 @@ export class Battle {
               return "battle_legendary_regis_g6";
             case SpeciesId.GROUDON:
             case SpeciesId.KYOGRE:
-              return "battle_legendary_gro_kyo";
+              if (pokemon.getFormKey() === SpeciesFormKey.PRIMAL) {
+                return "battle_legendary_gro_kyo";
+              }
+              return "battle_legendary_rayquaza";
             case SpeciesId.RAYQUAZA:
               return "battle_legendary_rayquaza";
             case SpeciesId.DEOXYS:
@@ -342,7 +351,7 @@ export class Battle {
               return "battle_legendary_sinnoh";
             case SpeciesId.DIALGA:
             case SpeciesId.PALKIA:
-              if (pokemon.species.getFormSpriteKey(pokemon.formIndex) === SpeciesFormKey.ORIGIN) {
+              if (pokemon.getFormKey() === SpeciesFormKey.ORIGIN) {
                 return "battle_legendary_origin_forme";
               }
               return "battle_legendary_dia_pal";
@@ -371,6 +380,8 @@ export class Battle {
             case SpeciesId.TAPU_BULU:
             case SpeciesId.TAPU_FINI:
               return "battle_legendary_tapu";
+            case SpeciesId.COSMOG:
+            case SpeciesId.COSMOEM:
             case SpeciesId.SOLGALEO:
             case SpeciesId.LUNALA:
               return "battle_legendary_sol_lun";

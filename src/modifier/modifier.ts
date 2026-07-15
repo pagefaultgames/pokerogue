@@ -1,8 +1,10 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
-import Overrides from "#app/overrides";
-import { FusionSpeciesFormEvolution, pokemonEvolutions } from "#balance/pokemon-evolutions";
+import { activeOverrides } from "#app/overrides";
+import { FusionSpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#balance/starters";
 import { getBerryEffectFunc, getBerryPredicate } from "#data/berry";
 import { allMoves, modifierTypes } from "#data/data-lists";
@@ -41,7 +43,8 @@ import type {
 import type { VoucherType } from "#system/voucher";
 import type { ModifierInstanceMap, ModifierString } from "#types/modifier-types";
 import { addTextObject } from "#ui/text";
-import { BooleanHolder, hslToHex, NumberHolder, randSeedFloat, toDmgValue } from "#utils/common";
+import { hslToHex } from "#utils/color-utils";
+import { BooleanHolder, NumberHolder, randSeedFloat, toDmgValue } from "#utils/common";
 import { getModifierType } from "#utils/modifier-utils";
 import i18next from "i18next";
 
@@ -373,7 +376,7 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
         const modifierInstance = modifier as LapsingPersistentModifier;
         if (modifierInstance.getBattleCount() < modifierInstance.getMaxBattles()) {
           modifierInstance.resetBattleCount();
-          globalScene.playSound("se/restore");
+          audioManager.playSound("se/restore");
           return true;
         }
         // should never get here
@@ -502,7 +505,7 @@ export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
     this.stat = stat;
     // Note that, because we want X Accuracy to maintain its original behavior,
     // it will increment as it did previously, directly to the stat stage.
-    this.boost = stat !== Stat.ACC ? 0.2 : 1;
+    this.boost = stat === Stat.ACC ? 1 : 0.2;
   }
 
   match(modifier: Modifier): boolean {
@@ -1214,9 +1217,12 @@ export class EvolutionStatBoosterModifier extends StatBoosterModifier {
    * @see shouldApply
    */
   override apply(pokemon: Pokemon, stat: Stat, statValue: NumberHolder): boolean {
-    const isUnevolved = pokemon.getSpeciesForm(true).speciesId in pokemonEvolutions;
+    const isUnevolved = speciesDataRegistry.hasEvolutions(pokemon.getSpeciesForm(true).speciesId);
 
-    if (pokemon.isFusion() && pokemon.getFusionSpeciesForm(true).speciesId in pokemonEvolutions !== isUnevolved) {
+    if (
+      pokemon.isFusion()
+      && speciesDataRegistry.hasEvolutions(pokemon.getFusionSpeciesForm(true).speciesId) !== isUnevolved
+    ) {
       // Half boost applied if pokemon is fused and either part of fusion is fully evolved
       statValue.value *= 1 + (this.multiplier - 1) / 2;
       return true;
@@ -1829,7 +1835,7 @@ export class BerryModifier extends PokemonHeldItemModifier {
     this.consumed = !preserve.value;
 
     // munch the berry and trigger unburden-like effects
-    getBerryEffectFunc(this.berryType)(pokemon);
+    getBerryEffectFunc(this.berryType, true)(pokemon);
     applyAbAttrs("PostItemLostAbAttr", { pokemon });
 
     // Update berry eaten trackers for Belch, Harvest, Cud Chew, etc.
@@ -2260,7 +2266,6 @@ export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
     playerPokemon.level += levelCount.value;
     if (playerPokemon.level <= globalScene.getMaxExpLevel(true)) {
       playerPokemon.exp = getLevelTotalExp(playerPokemon.level, playerPokemon.species.growthRate);
-      playerPokemon.levelExp = 0;
     }
 
     playerPokemon.addFriendship(FRIENDSHIP_GAIN_FROM_RARE_CANDY, true);
@@ -2314,7 +2319,7 @@ export class RememberMoveModifier extends ConsumablePokemonModifier {
     globalScene.phaseManager.unshiftNew(
       "LearnMovePhase",
       globalScene.getPlayerParty().indexOf(playerPokemon),
-      playerPokemon.getLearnableLevelMoves()[this.levelMoveIndex],
+      playerPokemon.getLearnableLevelMoves()[this.levelMoveIndex][1],
       LearnMoveType.MEMORY,
       cost,
     );
@@ -2331,16 +2336,16 @@ export class EvolutionItemModifier extends ConsumablePokemonModifier {
    * @returns `true` if the evolution was successful
    */
   override apply(playerPokemon: PlayerPokemon): boolean {
-    let matchingEvolution = pokemonEvolutions.hasOwnProperty(playerPokemon.species.speciesId)
-      ? pokemonEvolutions[playerPokemon.species.speciesId].find(
-          e => e.evoItem === this.type.evolutionItem && e.validate(playerPokemon, false, e.item!),
-        )
+    let matchingEvolution = speciesDataRegistry.hasEvolutions(playerPokemon.species.speciesId)
+      ? speciesDataRegistry
+          .getEvolutions(playerPokemon.species.speciesId)
+          .find(e => e.evoItem === this.type.evolutionItem && e.validate(playerPokemon, false, e.item!))
       : null;
 
     if (!matchingEvolution && playerPokemon.isFusion()) {
-      matchingEvolution = pokemonEvolutions[playerPokemon.fusionSpecies!.speciesId].find(
-        e => e.evoItem === this.type.evolutionItem && e.validate(playerPokemon, true, e.item!),
-      );
+      matchingEvolution = speciesDataRegistry
+        .getEvolutions(playerPokemon.fusionSpecies!.speciesId)
+        .find(e => e.evoItem === this.type.evolutionItem && e.validate(playerPokemon, true, e.item!));
       if (matchingEvolution) {
         matchingEvolution = new FusionSpeciesFormEvolution(playerPokemon.species.speciesId, matchingEvolution);
       }
@@ -3246,6 +3251,13 @@ export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
   setTransferrableFalse(): void {
     this.isTransferable = false;
   }
+
+  public override apply(pokemon: Pokemon, target?: Pokemon, ...args: unknown[]): boolean {
+    if (pokemon.isFainted()) {
+      return false;
+    }
+    return super.apply(pokemon, target, ...args);
+  }
 }
 
 /**
@@ -3373,7 +3385,7 @@ export class TempExtraModifierModifier extends LapsingPersistentModifier {
         const newBattleCount = this.getMaxBattles() + modifierInstance.getBattleCount();
 
         modifierInstance.setNewBattleCount(newBattleCount);
-        globalScene.playSound("se/restore");
+        audioManager.playSound("se/restore");
         return true;
       }
     }
@@ -3711,8 +3723,8 @@ export class EnemyFusionChanceModifier extends EnemyPersistentModifier {
  */
 export function overrideModifiers(isPlayer = true): void {
   const modifiersOverride: ModifierOverride[] = isPlayer
-    ? Overrides.STARTING_MODIFIER_OVERRIDE
-    : Overrides.ENEMY_MODIFIER_OVERRIDE;
+    ? activeOverrides.STARTING_MODIFIER_OVERRIDE
+    : activeOverrides.ENEMY_MODIFIER_OVERRIDE;
   if (!modifiersOverride || modifiersOverride.length === 0 || !globalScene) {
     return;
   }
@@ -3753,8 +3765,8 @@ export function overrideModifiers(isPlayer = true): void {
  */
 export function overrideHeldItems(pokemon: Pokemon, isPlayer = true): void {
   const heldItemsOverride: ModifierOverride[] = isPlayer
-    ? Overrides.STARTING_HELD_ITEMS_OVERRIDE
-    : Overrides.ENEMY_HELD_ITEMS_OVERRIDE;
+    ? activeOverrides.STARTING_HELD_ITEMS_OVERRIDE
+    : activeOverrides.ENEMY_HELD_ITEMS_OVERRIDE;
   if (!heldItemsOverride || heldItemsOverride.length === 0 || !globalScene) {
     return;
   }
