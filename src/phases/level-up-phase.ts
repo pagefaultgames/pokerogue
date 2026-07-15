@@ -1,6 +1,10 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
+import { allMoves } from "#data/data-lists";
 import { ExpNotification } from "#enums/exp-notification";
+import { LearnableMoveSource } from "#enums/learnable-move-source";
+import { getBaseLearnableMoveSource } from "#field/learnsets";
 import type { PlayerPokemon } from "#field/pokemon";
 import { PlayerPartyMemberPokemonPhase } from "#phases/player-party-member-pokemon-phase";
 import { LevelAchv } from "#system/achv";
@@ -20,7 +24,7 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
     this.level = level;
   }
 
-  public override start() {
+  public override start(): void {
     super.start();
 
     if (this.level > globalScene.gameData.gameStats.highestLevel) {
@@ -30,41 +34,73 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
     globalScene.validateAchvs(LevelAchv, new NumberHolder(this.level));
 
     const prevStats = this.pokemon.stats.slice(0);
+
     this.pokemon.calculateStats();
     this.pokemon.updateInfo();
-    if (globalScene.expParty === ExpNotification.DEFAULT) {
-      globalScene.playSound("level_up_fanfare");
-      globalScene.ui.showText(
-        i18next.t("battle:levelUp", {
-          pokemonName: getPokemonNameWithAffix(this.pokemon),
-          level: this.level,
-        }),
-        null,
-        () =>
-          globalScene.ui
-            .getMessageHandler()
-            .promptLevelUpStats(this.partyMemberIndex, prevStats, false)
-            .then(() => this.end()),
-        null,
-        true,
-      );
-    } else if (globalScene.expParty === ExpNotification.SKIP) {
-      this.end();
-    } else {
-      // we still want to display the stats if activated
-      globalScene.ui
-        .getMessageHandler()
-        .promptLevelUpStats(this.partyMemberIndex, prevStats, false)
-        .then(() => this.end());
+
+    switch (globalScene.expParty) {
+      case ExpNotification.DEFAULT:
+        this.showLevelUpMessages(prevStats).then(() => this.end());
+        return;
+      case ExpNotification.ONLY_LEVEL_UP:
+        // we still want to display the stats if activated
+        globalScene.ui
+          .getMessageHandler()
+          .promptLevelUpStats(this.partyMemberIndex, prevStats, false)
+          .then(() => this.end());
+        return;
+      case ExpNotification.SKIP:
+        this.end();
+        return;
     }
   }
 
-  public override end() {
+  private async showLevelUpMessages(prevStats: number[]): Promise<void> {
+    audioManager.playSound("se/level_up_fanfare");
+
+    const { promise, resolve } = Promise.withResolvers<void>();
+
+    globalScene.ui.showText(
+      i18next.t("battle:levelUp", {
+        pokemonName: getPokemonNameWithAffix(this.pokemon),
+        level: this.level,
+      }),
+      null,
+      () =>
+        globalScene.ui
+          .getMessageHandler()
+          .promptLevelUpStats(this.partyMemberIndex, prevStats, false)
+          .then(() => resolve()),
+      null,
+      true,
+    );
+
+    return promise;
+  }
+
+  public override end(): void {
+    // this if check feels like an unnecessary optimization
     if (this.lastLevel < 100) {
-      // this feels like an unnecessary optimization
-      const levelMoves = this.getPokemon().getLevelMoves(this.lastLevel + 1);
-      for (const lm of levelMoves) {
-        globalScene.phaseManager.unshiftNew("LearnMovePhase", this.partyMemberIndex, lm[1]);
+      const levelMoves = this.getPokemon().getLevelMoves(this.lastLevel + 1, false, true);
+      const prevoMoves = levelMoves.filter(
+        ([, , source]) => getBaseLearnableMoveSource(source) === LearnableMoveSource.PREVO,
+      );
+      const newMoves = levelMoves.filter(
+        ([, , source]) => getBaseLearnableMoveSource(source) !== LearnableMoveSource.PREVO,
+      );
+
+      for (const [, moveId] of newMoves) {
+        globalScene.phaseManager.unshiftNew("LearnMovePhase", this.partyMemberIndex, moveId);
+      }
+      for (const [, moveId] of prevoMoves) {
+        globalScene.phaseManager.queueMessage(
+          i18next.t("battle:prevoMovePrompt", {
+            pokemonName: getPokemonNameWithAffix(this.pokemon),
+            moveName: allMoves[moveId].name,
+          }),
+          null,
+          true,
+        );
       }
     }
     if (!this.pokemon.pauseEvolutions) {
@@ -74,6 +110,7 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
         globalScene.phaseManager.unshiftNew("EvolutionPhase", this.pokemon, evolution, this.lastLevel);
       }
     }
-    return super.end();
+    super.end();
+    return;
   }
 }

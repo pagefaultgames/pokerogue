@@ -1,3 +1,4 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 import { UiMode } from "#enums/ui-mode";
@@ -19,7 +20,7 @@ export class UnlockPhase extends Phase {
     globalScene.time.delayedCall(2000, () => {
       globalScene.gameData.unlocks[this.unlockable] = true;
       // Sound loaded into game as is
-      globalScene.playSound("level_up_fanfare");
+      audioManager.playSound("se/level_up_fanfare");
       globalScene.ui.setMode(UiMode.MESSAGE);
       globalScene.ui.showText(
         i18next.t("battle:unlockedSomething", {

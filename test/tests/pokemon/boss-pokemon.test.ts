@@ -1,3 +1,4 @@
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -5,7 +6,6 @@ import { EFFECTIVE_STATS, Stat } from "#enums/stat";
 import type { EnemyPokemon } from "#field/pokemon";
 import { GameManager } from "#test/framework/game-manager";
 import { toDmgValue } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Boss Pokemon / Shields", () => {
@@ -38,24 +38,24 @@ describe("Boss Pokemon / Shields", () => {
     let wave = 5;
 
     // On normal waves, no shields...
-    expect(game.scene.getEncounterBossSegments(wave, level, getPokemonSpecies(SpeciesId.RATTATA))).toBe(0);
+    expect(game.scene.getEncounterBossSegments(wave, level, speciesDataRegistry.getSpecies(SpeciesId.RATTATA))).toBe(0);
     // ... expect (sub)-legendary and mythical Pokemon who always get shields
-    expect(game.scene.getEncounterBossSegments(wave, level, getPokemonSpecies(SpeciesId.MEW))).toBe(2);
+    expect(game.scene.getEncounterBossSegments(wave, level, speciesDataRegistry.getSpecies(SpeciesId.MEW))).toBe(2);
     // Pokemon with 670+ BST get an extra shield
-    expect(game.scene.getEncounterBossSegments(wave, level, getPokemonSpecies(SpeciesId.MEWTWO))).toBe(3);
+    expect(game.scene.getEncounterBossSegments(wave, level, speciesDataRegistry.getSpecies(SpeciesId.MEWTWO))).toBe(3);
 
     // Every 10 waves will always be a boss Pokemon with shield(s)
     wave = 50;
-    expect(game.scene.getEncounterBossSegments(wave, level, getPokemonSpecies(SpeciesId.RATTATA))).toBe(2);
+    expect(game.scene.getEncounterBossSegments(wave, level, speciesDataRegistry.getSpecies(SpeciesId.RATTATA))).toBe(2);
     // Every extra 250 waves adds a shield
     wave += 250;
-    expect(game.scene.getEncounterBossSegments(wave, level, getPokemonSpecies(SpeciesId.RATTATA))).toBe(3);
+    expect(game.scene.getEncounterBossSegments(wave, level, speciesDataRegistry.getSpecies(SpeciesId.RATTATA))).toBe(3);
     wave += 750;
-    expect(game.scene.getEncounterBossSegments(wave, level, getPokemonSpecies(SpeciesId.RATTATA))).toBe(6);
+    expect(game.scene.getEncounterBossSegments(wave, level, speciesDataRegistry.getSpecies(SpeciesId.RATTATA))).toBe(6);
 
     // Pokemon above level 100 get an extra shield
     level = 100;
-    expect(game.scene.getEncounterBossSegments(wave, level, getPokemonSpecies(SpeciesId.RATTATA))).toBe(7);
+    expect(game.scene.getEncounterBossSegments(wave, level, speciesDataRegistry.getSpecies(SpeciesId.RATTATA))).toBe(7);
   });
 
   it("should reduce the number of shields if we are in a double battle", async () => {

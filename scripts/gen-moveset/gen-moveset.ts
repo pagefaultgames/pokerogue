@@ -11,6 +11,7 @@
 
 import { __INTERNAL_TEST_EXPORTS, generateMoveset } from "#app/ai/ai-moveset-gen";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import type { PokemonForm } from "#data/pokemon-species";
 import { BattleType } from "#enums/battle-type";
 import { SpeciesId } from "#enums/species-id";
@@ -19,7 +20,6 @@ import type { Pokemon } from "#field/pokemon";
 import { EnemyPokemon } from "#field/pokemon";
 import { GameManager } from "#test/framework/game-manager";
 import { randomString } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import net from "node:net";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import type { SamplerPayload } from "./types";
@@ -75,7 +75,7 @@ function createTestablePokemon(
   speciesId: SpeciesId,
   { level, trainerSlot = TrainerSlot.NONE, boss = false, formIndex = 0 }: MockPokemonParams,
 ): EnemyPokemon {
-  const species = getPokemonSpecies(speciesId);
+  const species = speciesDataRegistry.getSpecies(speciesId);
   const pokemon = new EnemyPokemon(species, level, trainerSlot, boss);
   if (formIndex !== 0 && species?.forms.length > formIndex) {
     pokemon.formIndex = formIndex;
@@ -152,7 +152,7 @@ describe("gen-moveset", () => {
         }
       });
     }
-    if (payload.formIndex && getPokemonSpecies(payload.speciesId).forms[payload.formIndex] == null) {
+    if (payload.formIndex && speciesDataRegistry.getSpecies(payload.speciesId).forms[payload.formIndex] == null) {
       payload.formIndex = undefined;
     }
     pokemon = createTestablePokemon(payload.speciesId, payload);

@@ -1,17 +1,19 @@
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import type { InputsController } from "#app/inputs-controller";
 import { isDev } from "#constants/app-constants";
 import { Button } from "#enums/buttons";
 import { UiMode } from "#enums/ui-mode";
 import { Setting, SettingKeys, settingIndex } from "#system/settings";
+import { SettingsAudioUiHandler } from "#ui/audio-settings-ui-handler";
+import { SettingsDisplayUiHandler } from "#ui/display-settings-ui-handler";
+import { SettingsGamepadUiHandler } from "#ui/gamepad-settings-ui-handler";
+import { GameChallengesUiHandler } from "#ui/handlers/challenges-select-ui-handler";
+import { SettingsKeyboardUiHandler } from "#ui/keyboard-settings-ui-handler";
 import type { MessageUiHandler } from "#ui/message-ui-handler";
 import { PokedexPageUiHandler } from "#ui/pokedex-page-ui-handler";
 import { PokedexUiHandler } from "#ui/pokedex-ui-handler";
 import { RunInfoUiHandler } from "#ui/run-info-ui-handler";
-import { SettingsAudioUiHandler } from "#ui/settings-audio-ui-handler";
-import { SettingsDisplayUiHandler } from "#ui/settings-display-ui-handler";
-import { SettingsGamepadUiHandler } from "#ui/settings-gamepad-ui-handler";
-import { SettingsKeyboardUiHandler } from "#ui/settings-keyboard-ui-handler";
 import { SettingsUiHandler } from "#ui/settings-ui-handler";
 import { StarterSelectUiHandler } from "#ui/starter-select-ui-handler";
 import Phaser from "phaser";
@@ -202,7 +204,7 @@ export class UiInputs {
         break;
       case UiMode.MENU:
         globalScene.ui.revertMode();
-        globalScene.playSound("ui/select");
+        audioManager.playSound("ui/select");
         break;
       default:
         return;
@@ -214,6 +216,7 @@ export class UiInputs {
       StarterSelectUiHandler,
       PokedexUiHandler,
       PokedexPageUiHandler,
+      GameChallengesUiHandler,
       SettingsUiHandler,
       RunInfoUiHandler,
       SettingsDisplayUiHandler,

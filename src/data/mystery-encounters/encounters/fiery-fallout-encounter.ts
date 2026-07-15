@@ -1,5 +1,6 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { EncounterBattleAnim } from "#data/battle-anims";
 import { allAbilities, modifierTypes } from "#data/data-lists";
 import { Gender } from "#data/gender";
@@ -46,7 +47,7 @@ import {
 } from "#mystery-encounters/mystery-encounter-requirements";
 import { FIRE_RESISTANT_ABILITIES } from "#mystery-encounters/requirement-groups";
 import { randSeedInt } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { groupStatChange } from "#utils/stat-change";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/fieryFallout";
@@ -82,7 +83,7 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
     const encounter = globalScene.currentBattle.mysteryEncounter!;
 
     // Calculate boss mons
-    const volcaronaSpecies = getPokemonSpecies(SpeciesId.VOLCARONA);
+    const volcaronaSpecies = speciesDataRegistry.getSpecies(SpeciesId.VOLCARONA);
     const config: EnemyPartyConfig = {
       pokemonConfigs: [
         {
@@ -91,13 +92,11 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
           gender: Gender.MALE,
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-            globalScene.phaseManager.unshiftNew(
-              "StatStageChangePhase",
-              pokemon.getBattlerIndex(),
-              true,
-              [Stat.SPDEF, Stat.SPD],
-              1,
-            );
+            globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+              battlerIndex: pokemon.getBattlerIndex(),
+              changes: groupStatChange([Stat.SPDEF, Stat.SPD], 1),
+              sourcePokemon: pokemon,
+            });
           },
         },
         {
@@ -106,13 +105,11 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
           gender: Gender.FEMALE,
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
-            globalScene.phaseManager.unshiftNew(
-              "StatStageChangePhase",
-              pokemon.getBattlerIndex(),
-              true,
-              [Stat.SPDEF, Stat.SPD],
-              1,
-            );
+            globalScene.phaseManager.unshiftNew("StatStageChangePhase", {
+              battlerIndex: pokemon.getBattlerIndex(),
+              changes: groupStatChange([Stat.SPDEF, Stat.SPD], 1),
+              sourcePokemon: pokemon,
+            });
           },
         },
       ],
@@ -150,7 +147,7 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
     const pokemon = globalScene.getEnemyPokemon();
     globalScene.arena.trySetWeather(WeatherType.SUNNY, pokemon);
 
-    encounter.setDialogueToken("volcaronaName", getPokemonSpecies(SpeciesId.VOLCARONA).getName());
+    encounter.setDialogueToken("volcaronaName", speciesDataRegistry.getSpecies(SpeciesId.VOLCARONA).getName());
 
     return true;
   })
@@ -228,7 +225,7 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
       const encounter = globalScene.currentBattle.mysteryEncounter!;
       const nonFireTypes = globalScene
         .getPlayerParty()
-        .filter(p => p.isAllowedInBattle() && !p.isOfType(PokemonType.FIRE, false, false));
+        .filter(p => p.isAllowedInBattle() && !p.isOfType(PokemonType.FIRE, { includeTeraType: false }));
 
       for (const pkm of nonFireTypes) {
         const percentage = DAMAGE_PERCENTAGE / 100;
@@ -291,7 +288,7 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
 
         const primary = encounter.options[2].primaryPokemon!;
 
-        setEncounterExp([primary.id], getPokemonSpecies(SpeciesId.VOLCARONA).baseExp * 2);
+        setEncounterExp([primary.id], speciesDataRegistry.getSpecies(SpeciesId.VOLCARONA).baseExp * 2);
         leaveEncounterWithoutBattle();
       })
       .build(),

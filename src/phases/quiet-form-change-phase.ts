@@ -1,4 +1,5 @@
 import { applyOnLoseAbAttrs, applyPostFormChangeAbAttrs } from "#abilities/apply-ab-attrs";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { getSpeciesFormChangeMessage } from "#data/form-change-triggers";
@@ -49,6 +50,12 @@ export class QuietFormChangePhase extends BattlePhase {
     if (this.pokemon.isActive(true)) {
       await this.playFormChangeTween();
     } else {
+      // End early if an enemy pokemon is fainted to avoid animation softlocks
+      // TODO: Might be better to avoid triggering the form change altogether...
+      if (this.pokemon.isFainted() && !this.pokemon.isPlayer()) {
+        super.end();
+        return;
+      }
       await this.doChangeForm();
       this.showFormChangeTextAndEnd();
     }
@@ -115,7 +122,7 @@ export class QuietFormChangePhase extends BattlePhase {
       .setVisible(false)
       .setTintFill(0xffffff);
 
-    globalScene.playSound("battle_anims/PRSFX- Transform");
+    audioManager.playSound("battle_anims/PRSFX- Transform");
 
     await playTween({
       targets: pokemonTintSprite,
@@ -131,11 +138,7 @@ export class QuietFormChangePhase extends BattlePhase {
     const spriteKey = this.pokemon.getBattleSpriteKey();
     // TODO: Why do we play and then immediately stop the form tint sprite?
     // The thing isn't even visible anyways at this point in the code
-    try {
-      pokemonFormTintSprite.play(spriteKey).stop();
-    } catch (err: unknown) {
-      console.error(`Failed to play animation for ${spriteKey}`, err);
-    }
+    pokemonFormTintSprite.play(spriteKey).stop();
 
     pokemonFormTintSprite.setVisible(true);
     globalScene.tweens.add({
@@ -176,12 +179,7 @@ export class QuietFormChangePhase extends BattlePhase {
     );
     sprite.setOrigin(0.5, 1);
     const spriteKey = this.pokemon.getBattleSpriteKey();
-    // TODO: Move error handling elsewhere
-    try {
-      sprite.play(spriteKey).stop();
-    } catch (err: unknown) {
-      console.error(`Failed to play animation for ${spriteKey}`, err);
-    }
+    sprite.play(spriteKey).stop();
     sprite.setPipeline(globalScene.spritePipeline, {
       tone: [0.0, 0.0, 0.0, 0.0],
       hasShadow: false,
@@ -204,7 +202,7 @@ export class QuietFormChangePhase extends BattlePhase {
 
     // TODO: This eternatus boss fight code should almost certainly go in its own superclass phase
     if (globalScene.currentBattle.isClassicFinalBoss && this.pokemon.isEnemy()) {
-      globalScene.playBgm();
+      audioManager.playBgm();
       globalScene.phaseManager.unshiftNew(
         "PokemonHealPhase",
         this.pokemon.getBattlerIndex(),

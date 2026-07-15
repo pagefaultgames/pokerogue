@@ -1,4 +1,4 @@
-import Overrides from "#app/overrides";
+import { activeOverrides } from "#app/overrides";
 import { allMoves } from "#data/data-lists";
 import { BattlerIndex } from "#enums/battler-index";
 import { Command } from "#enums/command";
@@ -12,6 +12,7 @@ import type { CommandPhase } from "#phases/command-phase";
 import type { EnemyCommandPhase } from "#phases/enemy-command-phase";
 import type { MoveEffectPhase } from "#phases/move-effect-phase";
 import { GameManagerHelper } from "#test/helpers/game-manager-helper";
+import type { RandomMoveAttr } from "#types/move-types";
 import { coerceArray } from "#utils/array";
 import { toTitleCase } from "#utils/strings";
 import type { MockInstance } from "vitest";
@@ -176,8 +177,8 @@ export class MoveHelper extends GameManagerHelper {
     targetIndex?: BattlerIndex,
     useTera = false,
   ): void {
-    if ([Overrides.MOVESET_OVERRIDE].flat().length > 0) {
-      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([]);
+    if ([activeOverrides.MOVESET_OVERRIDE].flat().length > 0) {
+      vi.spyOn(activeOverrides, "MOVESET_OVERRIDE", "get").mockReturnValue([]);
       console.warn("Warning: `MoveHelper.use` overwriting player pokemon moveset and disabling moveset override!");
     }
 
@@ -195,25 +196,25 @@ export class MoveHelper extends GameManagerHelper {
   }
 
   /**
-   * Forces the Paralysis or Freeze status to activate on the next move by temporarily mocking {@linkcode Overrides.STATUS_ACTIVATION_OVERRIDE},
+   * Forces the Paralysis or Freeze status to activate on the next move by temporarily mocking {@linkcode activeOverrides.STATUS_ACTIVATION_OVERRIDE},
    * advancing to the next `MovePhase`, and then resetting the override to `null`
    * @param activated - `true` to force the status to activate, `false` to force the status to not activate (will cause Freeze to heal)
    */
   public async forceStatusActivation(activated: boolean): Promise<void> {
-    vi.spyOn(Overrides, "STATUS_ACTIVATION_OVERRIDE", "get").mockReturnValue(activated);
+    vi.spyOn(activeOverrides, "STATUS_ACTIVATION_OVERRIDE", "get").mockReturnValue(activated);
     await this.game.phaseInterceptor.to("MovePhase");
-    vi.spyOn(Overrides, "STATUS_ACTIVATION_OVERRIDE", "get").mockReturnValue(null);
+    vi.spyOn(activeOverrides, "STATUS_ACTIVATION_OVERRIDE", "get").mockReturnValue(null);
   }
 
   /**
-   * Forces the Confusion status to activate on the next move by temporarily mocking {@linkcode Overrides.CONFUSION_ACTIVATION_OVERRIDE},
+   * Forces the Confusion status to activate on the next move by temporarily mocking {@linkcode activeOverrides.CONFUSION_ACTIVATION_OVERRIDE},
    * advancing to the next `MovePhase`, and then resetting the override to `null`
    * @param activated - `true` to force the Pokemon to hit themself, `false` to forcibly disable it
    */
   public async forceConfusionActivation(activated: boolean): Promise<void> {
-    vi.spyOn(Overrides, "CONFUSION_ACTIVATION_OVERRIDE", "get").mockReturnValue(activated);
+    vi.spyOn(activeOverrides, "CONFUSION_ACTIVATION_OVERRIDE", "get").mockReturnValue(activated);
     await this.game.phaseInterceptor.to("MovePhase");
-    vi.spyOn(Overrides, "CONFUSION_ACTIVATION_OVERRIDE", "get").mockReturnValue(null);
+    vi.spyOn(activeOverrides, "CONFUSION_ACTIVATION_OVERRIDE", "get").mockReturnValue(null);
   }
 
   /**
@@ -227,12 +228,12 @@ export class MoveHelper extends GameManagerHelper {
    */
   public changeMoveset(pokemon: Pokemon, moveset: MoveId | MoveId[]): void {
     if (pokemon.isPlayer()) {
-      if (coerceArray(Overrides.MOVESET_OVERRIDE).length > 0) {
-        vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([]);
+      if (coerceArray(activeOverrides.MOVESET_OVERRIDE).length > 0) {
+        vi.spyOn(activeOverrides, "MOVESET_OVERRIDE", "get").mockReturnValue([]);
         console.warn("Player moveset override disabled due to use of `game.move.changeMoveset`!");
       }
-    } else if (coerceArray(Overrides.ENEMY_MOVESET_OVERRIDE).length > 0) {
-      vi.spyOn(Overrides, "ENEMY_MOVESET_OVERRIDE", "get").mockReturnValue([]);
+    } else if (coerceArray(activeOverrides.ENEMY_MOVESET_OVERRIDE).length > 0) {
+      vi.spyOn(activeOverrides, "ENEMY_MOVESET_OVERRIDE", "get").mockReturnValue([]);
       console.warn("Enemy moveset override disabled due to use of `game.move.changeMoveset`!");
     }
     moveset = coerceArray(moveset);
@@ -310,8 +311,8 @@ export class MoveHelper extends GameManagerHelper {
     const phase = this.game.scene.phaseManager.getCurrentPhase() as EnemyCommandPhase;
     const enemy = this.game.scene.getEnemyField()[phase.getFieldIndex()];
 
-    if ([Overrides.ENEMY_MOVESET_OVERRIDE].flat().length > 0) {
-      vi.spyOn(Overrides, "ENEMY_MOVESET_OVERRIDE", "get").mockReturnValue([]);
+    if ([activeOverrides.ENEMY_MOVESET_OVERRIDE].flat().length > 0) {
+      vi.spyOn(activeOverrides, "ENEMY_MOVESET_OVERRIDE", "get").mockReturnValue([]);
       console.warn(
         "Warning: `forceEnemyMove` overwrites the Pokemon's moveset and disables the enemy moveset override!",
       );
@@ -345,7 +346,9 @@ export class MoveHelper extends GameManagerHelper {
    * Triggers during the next upcoming {@linkcode MoveEffectPhase} that Metronome is used.
    * @param move - The move to force Metronome to call
    * @param once - If `true`, mocks the return value exactly once; default `false`
-   * @returns The spy that for Metronome that was mocked (Usually unneeded).
+   * @returns The spy for Metronome that was mocked (Usually unneeded).
+   * @remarks
+   * This will bypass all effects that would otherwise prevent the move from being used.
    * @example
    * ```ts
    * game.move.use(MoveId.METRONOME);
@@ -353,9 +356,15 @@ export class MoveHelper extends GameManagerHelper {
    * ```
    */
   public forceMetronomeMove(move: MoveId, once = false): MockInstance {
-    const spy = vi.spyOn(allMoves[MoveId.METRONOME].getAttrs("RandomMoveAttr")[0], "getMoveOverride");
+    const spy = vi.spyOn(
+      allMoves[MoveId.METRONOME].getAttrs("RandomMoveAttr")[0] as RandomMoveAttr & {
+        getMove: RandomMoveAttr["getMove"];
+      },
+      "getMove",
+    );
     if (once) {
-      spy.mockReturnValueOnce(move);
+      // Need to mock twice since it gets called twice - once for condition function, once for `apply` check
+      spy.mockReturnValueOnce(move).mockReturnValueOnce(move);
     } else {
       spy.mockReturnValue(move);
     }

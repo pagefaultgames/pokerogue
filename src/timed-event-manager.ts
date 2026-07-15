@@ -1,6 +1,6 @@
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { SHINY_CATCH_RATE_MULTIPLIER } from "#balance/rates";
 import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER } from "#balance/starters";
-import { allSpecies } from "#data/data-lists";
 import type { PokemonSpeciesFilter } from "#data/pokemon-species";
 import type { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -9,7 +9,6 @@ import type { TrainerType } from "#enums/trainer-type";
 import type { ModifierTypeKeys } from "#modifiers/modifier-type";
 import type { EventEncounter, EventMysteryEncounterTier, EventWeatherPools, TimedEvent } from "#types/events";
 import { randSeedShuffle } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 import { timedEvents } from "./data/balance/timed-events";
 import { globalScene } from "./global-scene";
@@ -90,7 +89,7 @@ export class TimedEventManager {
     speciesFilter: PokemonSpeciesFilter,
   ): EventEncounter[] {
     return this.getEventEncounters().filter(enc => {
-      const species = getPokemonSpecies(enc.species);
+      const species = speciesDataRegistry.getSpecies(enc.species);
       return (
         (allowSubLegendary || !species.subLegendary)
         && (allowLegendary || !species.legendary)
@@ -261,7 +260,7 @@ export class TimedEventManager {
     }
     this.cachedReplacementMap = new Map();
     const allPairs: { speciesId: SpeciesId; formIndex: number }[] = [];
-    for (const species of allSpecies) {
+    for (const species of speciesDataRegistry.getAllSpecies()) {
       const formCount = species.forms.length || 1;
       for (let f = 0; f < formCount; f++) {
         allPairs.push({ speciesId: species.speciesId, formIndex: f });

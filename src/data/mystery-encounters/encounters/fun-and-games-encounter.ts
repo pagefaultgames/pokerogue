@@ -1,5 +1,7 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { modifierTypes } from "#data/data-lists";
 import { SpeciesFormChangeActiveTrigger } from "#data/form-change-triggers";
@@ -26,7 +28,6 @@ import type { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { MoneyRequirement } from "#mystery-encounters/mystery-encounter-requirements";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 /** the i18n namespace for the encounter */
@@ -86,12 +87,11 @@ export const FunAndGamesEncounter: MysteryEncounter = MysteryEncounterBuilder.wi
   .withQuery(`${namespace}:query`)
   .withOnInit(() => {
     const encounter = globalScene.currentBattle.mysteryEncounter!;
-    globalScene.loadBgm("mystery_encounter_fun_and_games", "mystery_encounter_fun_and_games.mp3");
-    encounter.setDialogueToken("wobbuffetName", getPokemonSpecies(SpeciesId.WOBBUFFET).getName());
+    encounter.setDialogueToken("wobbuffetName", speciesDataRegistry.getSpecies(SpeciesId.WOBBUFFET).getName());
     return true;
   })
   .withOnVisualsStart(() => {
-    globalScene.fadeAndSwitchBgm("mystery_encounter_fun_and_games");
+    audioManager.playBgm("mystery_encounter_fun_and_games", true);
     return true;
   })
   .withOption(
@@ -210,7 +210,7 @@ async function summonPlayerPokemon() {
     });
 
     // Also loads Wobbuffet data (cannot be shiny)
-    const enemySpecies = getPokemonSpecies(SpeciesId.WOBBUFFET);
+    const enemySpecies = speciesDataRegistry.getSpecies(SpeciesId.WOBBUFFET);
     globalScene.currentBattle.enemyParty = [];
     const wobbuffet = globalScene.addEnemyPokemon(
       enemySpecies,
@@ -381,7 +381,7 @@ function summonPlayerPokemonAnimation(pokemon: PlayerPokemon): Promise<void> {
           angle: 1440,
           y: 132 + fpOffset[1],
           onComplete: () => {
-            globalScene.playSound("se/pb_rel");
+            audioManager.playSound("se/pb_rel");
             pokeball.destroy();
             globalScene.add.existing(pokemon);
             globalScene.field.add(pokemon);

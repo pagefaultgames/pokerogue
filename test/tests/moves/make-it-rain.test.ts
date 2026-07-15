@@ -28,17 +28,18 @@ describe("Moves - Make It Rain", () => {
       .enemyLevel(100);
   });
 
-  it("should only lower SPATK stat stage by 1 once in a double battle", async () => {
+  it("should only lower SPATK stat stage by 2 once in a double battle", async () => {
     await game.classicMode.startBattle(SpeciesId.CHARIZARD, SpeciesId.BLASTOISE);
 
     const playerPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.MAKE_IT_RAIN);
     game.move.select(MoveId.SPLASH, 1);
+    await game.move.forceHit();
 
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-1);
+    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-2);
   });
 
   it("should apply effects even if the target faints", async () => {
@@ -52,11 +53,12 @@ describe("Moves - Make It Rain", () => {
     const enemyPokemon = game.field.getEnemyPokemon();
 
     game.move.select(MoveId.MAKE_IT_RAIN);
+    await game.move.forceHit();
 
     await game.phaseInterceptor.to("StatStageChangePhase");
 
     expect(enemyPokemon.isFainted()).toBe(true);
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-1);
+    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-2);
   });
 
   it("should reduce Sp. Atk. once after KOing two enemies", async () => {
@@ -69,26 +71,28 @@ describe("Moves - Make It Rain", () => {
 
     game.move.select(MoveId.MAKE_IT_RAIN);
     game.move.select(MoveId.SPLASH, 1);
+    await game.move.forceHit();
 
     await game.phaseInterceptor.to("StatStageChangePhase");
 
     enemyPokemon.forEach(p => expect(p.isFainted()).toBe(true));
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-1);
+    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-2);
   });
 
-  it("should lower SPATK stat stage by 1 if it only hits the second target", async () => {
+  it("should lower SPATK stat stage by 2 if it only hits the second target", async () => {
     await game.classicMode.startBattle(SpeciesId.CHARIZARD, SpeciesId.BLASTOISE);
 
     const playerPokemon = game.field.getPlayerPokemon();
 
     game.move.select(MoveId.MAKE_IT_RAIN);
     game.move.select(MoveId.SPLASH, 1);
+    await game.move.forceHit();
 
     // Make Make It Rain miss the first target
     await game.move.forceMiss(true);
 
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-1);
+    expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-2);
   });
 });

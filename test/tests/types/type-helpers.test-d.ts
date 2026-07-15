@@ -1,6 +1,5 @@
 import type { AtLeastOne } from "#types/type-helpers";
-import { describe, it } from "node:test";
-import { expectTypeOf } from "vitest";
+import { describe, expectTypeOf, it } from "vitest";
 
 type FakeObj = {
   foo: number;

@@ -10,7 +10,7 @@ import type { Pokemon } from "#field/pokemon";
 import { getVariantTint } from "#sprites/variant";
 import { addTextObject } from "#ui/text";
 import { fixedInt, getLocalizedSpriteKey, getShinyDescriptor } from "#utils/common";
-import { toCamelCase } from "#utils/strings";
+import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import i18next from "i18next";
 
 /**
@@ -57,10 +57,6 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
   protected lastHp: number;
   protected lastMaxHp: number;
   protected lastHpFrame: string | null;
-  protected lastExp: number;
-  protected lastLevelExp: number;
-  protected lastLevel: number;
-  protected lastLevelCapped: boolean;
   protected lastStats: string;
 
   protected box: Phaser.GameObjects.Sprite;
@@ -223,9 +219,6 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
     this.lastHp = -1;
     this.lastMaxHp = -1;
     this.lastHpFrame = null;
-    this.lastExp = -1;
-    this.lastLevelExp = -1;
-    this.lastLevel = -1;
     this.baseLvContainerX = posParams.levelContainerX;
 
     // Initially invisible and shown via Pokemon.showInfo
@@ -366,7 +359,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
           globalScene.ui.showTooltip(
             "",
             i18next.t("fightUiHandler:teraHover", {
-              type: i18next.t(`pokemonInfo:type.${toCamelCase(PokemonType[this.lastTeraType])}`),
+              type: i18next.t(getPokemonTypeLocaleKey(this.lastTeraType)),
             }),
           );
         }
@@ -391,12 +384,11 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
     this.lastHp = pokemon.hp;
     this.lastMaxHp = pokemon.getMaxHp();
 
-    this.setLevel(pokemon.level);
-    this.lastLevel = pokemon.level;
+    this.setLevelDisplay(pokemon.level);
 
     this.shinyIcon.setVisible(pokemon.isShiny());
 
-    this.setTypes(pokemon.getTypes(true, false, undefined, true));
+    this.setTypes(pokemon.getTypes({ useIllusion: true }));
 
     const stats = this.statOrder.map(() => 0);
 
@@ -574,7 +566,8 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
   async updateInfo(pokemon: Pokemon, instant?: boolean): Promise<void> {
     let resolve: (r: void | PromiseLike<void>) => void = () => {};
     const promise = new Promise<void>(r => (resolve = r));
-    if (!globalScene) {
+
+    if (!globalScene || !this.active) {
       return resolve();
     }
 
@@ -594,14 +587,10 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
 
     this.updateStatusIcon(pokemon);
 
-    this.setTypes(pokemon.getTypes(true, false, undefined, true));
+    this.setTypes(pokemon.getTypes({ useIllusion: true }));
 
     if (this.lastHp !== pokemon.hp || this.lastMaxHp !== pokemon.getMaxHp()) {
       this.updatePokemonHp(pokemon, resolve, instant);
-    }
-    if (!this.player && this.lastLevel !== pokemon.level) {
-      this.setLevel(pokemon.level);
-      this.lastLevel = pokemon.level;
     }
 
     const stats = pokemon.getStatStages();
@@ -672,7 +661,7 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
    * @param level - The level to display
    * @param textureKey - The texture key for the level numbers
    */
-  setLevel(level: number, textureKey: "numbers" | "numbers_red" = "numbers"): void {
+  public setLevelDisplay(level: number, textureKey: "numbers" | "numbers_red" = "numbers"): void {
     this.levelNumbersContainer.removeAll(true);
     const levelStr = level.toString();
     for (let i = 0; i < levelStr.length; i++) {
