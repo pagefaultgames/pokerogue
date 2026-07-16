@@ -59,6 +59,7 @@ import { VoucherType, vouchers } from "#system/voucher";
 import type { DexData, DexEntry } from "#types/dex-data";
 import type {
   AchvUnlocks,
+  AppliedMigrators,
   DexAttrProps,
   RunHistoryData,
   SeenDialogues,
@@ -74,8 +75,7 @@ import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { fixedInt, NumberHolder, randInt, randSeedItem } from "#utils/common";
 import { decrypt, encrypt } from "#utils/data";
-import { getEnumKeys, getEnumValues } from "#utils/enums";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
+import { getEnumKeys } from "#utils/enums";
 import { toCamelCase } from "#utils/strings";
 import { AES, enc } from "crypto-js";
 import i18next from "i18next";
@@ -120,6 +120,14 @@ const systemShortKeys = {
   classicWinCount: "$wc",
 };
 
+const ErrorMessages = {
+  OUT_OF_DATE: i18next.t("gameData:reloadSaveData"),
+  OUT_OF_DATE_LOCAL: i18next.t("gameData:reloadSaveDataLocal"),
+  DATA_NOT_FOUND: i18next.t("gameData:saveDataNotFound"),
+  TOO_MANY_CONNECTIONS: i18next.t("gameData:tooManyConnections"),
+  FAILED_VALIDATION: i18next.t("gameData:failedSaveValidation"),
+};
+
 export class GameData {
   public trainerId: number;
   public secretId: number;
@@ -143,6 +151,8 @@ export class GameData {
   public eggs: Egg[];
   public eggPity: number[];
   public unlockPity: number[];
+
+  public appliedMigrators: AppliedMigrators = {};
 
   /**
    * @param fromRaw - If true, will skip initialization of fields that are normally randomized on new game start. Used for the admin panel; default `false`
@@ -199,6 +209,7 @@ export class GameData {
       timestamp: Date.now(),
       eggPity: this.eggPity.slice(0),
       unlockPity: this.unlockPity.slice(0),
+      appliedMigrators: this.appliedMigrators,
     };
   }
 
@@ -223,8 +234,10 @@ export class GameData {
       return false;
     }
 
-    for (const speciesId of getEnumValues(SpeciesId)) {
-      if (!speciesDataRegistry.isStarter(speciesId) || defaultStarterSpecies.includes(speciesId)) {
+    let dataValidated = true;
+
+    for (const speciesId of speciesDataRegistry.getAllStarters()) {
+      if (defaultStarterSpecies.includes(speciesId)) {
         continue;
       }
 
@@ -235,15 +248,17 @@ export class GameData {
 
       if (starterEntry == null) {
         console.error("Missing starter data for %s (%d)!", species, speciesId);
-        return false;
+        dataValidated = false;
+        continue;
       }
       if (dexEntry == null) {
         console.error("Missing dex data for %s (%d)!", species, speciesId);
-        return false;
+        dataValidated = false;
+        continue;
       }
 
       const hasStarterData =
-        starterEntry.abilityAttr > 1
+        starterEntry.abilityAttr > 0
         || starterEntry.eggMoves > 0
         || starterEntry.moveset != null
         || starterEntry.passiveAttr > 0
@@ -252,25 +267,48 @@ export class GameData {
       const noDexData = dexEntry.caughtCount === 0 && dexEntry.hatchedCount === 0 && dexEntry.caughtAttr === 0n;
 
       if (hasStarterData && noDexData) {
-        console.error("Corrupt save data detected, save rejected!");
+        console.error("Corrupt save data detected!");
         console.warn("Species: %s (%d)", species, speciesId);
         console.warn(starterEntry);
         console.warn(dexEntry);
-        return false;
+        dataValidated = false;
       }
     }
 
-    return true;
+    return dataValidated;
+  }
+
+  private async showInvalidSaveModal<const T>(
+    returnValue: T,
+    message: string = ErrorMessages.FAILED_VALIDATION,
+  ): Promise<T> {
+    const { promise, resolve } = Promise.withResolvers<T>();
+
+    await globalScene.ui.setMode(UiMode.ALERT_MODAL, message);
+
+    // TODO: This is a temporary hacky solution to ensure the modal displays when saving
+    // on the starter select UI, which change the UI mode without awaiting this async call..
+    globalScene.time.delayedCall(fixedInt(1000), () => {
+      // on the pokedex page, which changes the UiMode after calling this so the
+      // user never sees the alert modal.
+      if (globalScene.ui.getMode() === UiMode.ALERT_MODAL) {
+        globalScene.time.delayedCall(fixedInt(4000), () => resolve(returnValue));
+      } else {
+        globalScene.ui.setMode(UiMode.ALERT_MODAL, message);
+        globalScene.time.delayedCall(fixedInt(4000), () => resolve(returnValue));
+      }
+    });
+
+    return promise;
   }
 
   public async saveSystem(): Promise<boolean> {
-    globalScene.ui.savingIcon.show();
     const data = this.getSystemSaveData();
 
     if (!this.validateSystemData(data)) {
-      globalScene.ui.savingIcon.hide();
-      return false;
+      return this.reinitializeSaveData({ message: ErrorMessages.FAILED_VALIDATION });
     }
+    globalScene.ui.savingIcon.show();
 
     const maxIntAttrValue = 0x80000000;
     const systemData = JSON.stringify(data, (_k: any, v: any) =>
@@ -311,11 +349,11 @@ export class GameData {
 
     if (typeof saveDataOrErr === "number" || !saveDataOrErr || saveDataOrErr.length === 0 || saveDataOrErr[0] !== "{") {
       if (saveDataOrErr === 404) {
-        globalScene.phaseManager.queueMessage(i18next.t("gameData:saveDataNotFound"), null, true);
+        globalScene.phaseManager.queueMessage(ErrorMessages.DATA_NOT_FOUND, null, true);
         return true;
       }
       if (typeof saveDataOrErr === "string" && saveDataOrErr.includes("Too many connections")) {
-        globalScene.phaseManager.queueMessage(i18next.t("gameData:tooManyConnections"), null, true);
+        globalScene.phaseManager.queueMessage(ErrorMessages.TOO_MANY_CONNECTIONS, null, true);
         return false;
       }
       return false;
@@ -342,10 +380,12 @@ export class GameData {
 
   /**
    * Initialize system data _after_ it has been parsed from JSON.
-   * @param systemData The parsed `SystemSaveData` to initialize from
+   * @param systemData - The parsed `SystemSaveData` to initialize from
    */
   private initParsedSystem(systemData: SystemSaveData): void {
     applySystemVersionMigration(systemData);
+
+    this.appliedMigrators = systemData.appliedMigrators;
 
     this.trainerId = systemData.trainerId;
     this.secretId = systemData.secretId;
@@ -528,7 +568,7 @@ export class GameData {
 
   // TODO: Why is this static
   static parseSystemData(dataStr: string): SystemSaveData {
-    return JSON.parse(dataStr, (k: string, v: any) => {
+    const ret = JSON.parse(dataStr, (k: string, v: any) => {
       if (k === "gameStats") {
         return new GameStats(v);
       }
@@ -548,6 +588,8 @@ export class GameData {
 
       return k.endsWith("Attr") && !["natureAttr", "abilityAttr", "passiveAttr"].includes(k) ? BigInt(v ?? 0) : v;
     }) as SystemSaveData;
+    ret.appliedMigrators ??= {};
+    return ret;
   }
 
   convertSystemDataStr(dataStr: string, shorten = false): string {
@@ -578,7 +620,7 @@ export class GameData {
     }
 
     globalScene.phaseManager.clearPhaseQueue();
-    await this.reinitializeSaveData(JSON.stringify(systemData));
+    await this.reinitializeSaveData({ systemDataStr: JSON.stringify(systemData) });
     return false;
   }
 
@@ -595,11 +637,16 @@ export class GameData {
   /**
    * Discards local save data and re-populates it with data from the server (or the provided data).
    * @param systemDataStr - (Optional) Save data to load
+   * @param message - (Optional) The message to display to the user
    */
-  private async reinitializeSaveData(systemDataStr?: string): Promise<void> {
-    const { promise, resolve } = Promise.withResolvers<void>();
-
-    await globalScene.ui.setMode(UiMode.SESSION_RELOAD, !!systemDataStr);
+  private async reinitializeSaveData({
+    systemDataStr,
+    message,
+  }: {
+    systemDataStr?: string;
+    message?: string;
+  } = {}): Promise<false> {
+    const alertMessage = systemDataStr ? ErrorMessages.OUT_OF_DATE_LOCAL : ErrorMessages.OUT_OF_DATE;
 
     this.clearLocalData();
 
@@ -609,8 +656,7 @@ export class GameData {
       await this.loadSystem();
     }
 
-    globalScene.time.delayedCall(fixedInt(5000), () => resolve());
-    return promise;
+    return this.showInvalidSaveModal(false, message ?? alertMessage);
   }
 
   /**
@@ -1294,10 +1340,6 @@ export class GameData {
       }
     }
 
-    if (sync) {
-      globalScene.ui.savingIcon.show();
-    }
-
     const sessionData = useCachedSession
       ? this.parseSessionData(
           decrypt(localStorage.getItem(getSessionDataLocalStorageKey(globalScene.sessionSlotId))!, bypassLogin),
@@ -1311,10 +1353,12 @@ export class GameData {
       : this.getSystemSaveData(); // TODO: is this bang correct?
 
     if (!this.validateSystemData(systemData)) {
-      if (sync) {
-        globalScene.ui.savingIcon.hide();
-      }
-      return false;
+      return this.reinitializeSaveData({ message: ErrorMessages.FAILED_VALIDATION });
+    }
+
+    // Saving icon should go after validation to avoid confusing users.
+    if (sync) {
+      globalScene.ui.savingIcon.show();
     }
 
     const request = {
@@ -1827,7 +1871,7 @@ export class GameData {
       }
       return await this.setPokemonSpeciesCaught(
         pokemon,
-        getPokemonSpecies(prevolution),
+        speciesDataRegistry.getSpecies(prevolution),
         incrementCount,
         fromEgg,
         showMessage,

@@ -23,6 +23,7 @@ function updatePokemonMoveset(data: Record<string, unknown>): void {
  * @param data - {@linkcode SystemSaveData}
  */
 const migratePartyData: SessionSaveMigrator = {
+  name: "migratePartyData",
   version: "1.9.0",
   migrate: data => {
     data.party.forEach(updatePokemonMoveset);

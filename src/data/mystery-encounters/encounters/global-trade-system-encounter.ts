@@ -41,7 +41,6 @@ import type { OptionSelectItem } from "#ui/base-option-select-ui-handler";
 import { randInt, randSeedInt, randSeedItem, randSeedShuffle } from "#utils/common";
 import { getEnumKeys } from "#utils/enums";
 import { getRandomLocaleEntry } from "#utils/i18n";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 
@@ -482,7 +481,7 @@ function getPokemonTradeOptions(): Map<number, EnemyPokemon[]> {
     if (pokemon.species.legendary || pokemon.species.subLegendary || pokemon.species.mythical) {
       const generation = pokemon.species.generation;
       const tradeOptions: EnemyPokemon[] = LEGENDARY_TRADE_POOLS[generation].map(s => {
-        const pokemonSpecies = getPokemonSpecies(s);
+        const pokemonSpecies = speciesDataRegistry.getSpecies(s);
         return new EnemyPokemon(pokemonSpecies, 5, TrainerSlot.NONE, false);
       });
       tradeOptionsMap.set(pokemon.id, tradeOptions);
@@ -640,13 +639,9 @@ function doPokemonTradeSequence(tradedPokemon: PlayerPokemon, receivedPokemon: P
     receivedPokemonTintSprite.setVisible(false);
     receivedPokemonTintSprite.setTintFill(getPokeballTintColor(receivedPokemon.pokeball));
 
-    [tradedPokemonSprite, tradedPokemonTintSprite].map(sprite => {
+    [tradedPokemonSprite, tradedPokemonTintSprite].forEach(sprite => {
       const spriteKey = tradedPokemon.getSpriteKey(true);
-      try {
-        sprite.play(spriteKey);
-      } catch (err: unknown) {
-        console.error(`Failed to play animation for ${spriteKey}`, err);
-      }
+      sprite.play(spriteKey);
 
       sprite.setPipeline(globalScene.spritePipeline, {
         tone: [0.0, 0.0, 0.0, 0.0],
@@ -658,7 +653,7 @@ function doPokemonTradeSequence(tradedPokemon: PlayerPokemon, receivedPokemon: P
       sprite.setPipelineData("spriteKey", tradedPokemon.getSpriteKey());
       sprite.setPipelineData("shiny", tradedPokemon.shiny);
       sprite.setPipelineData("variant", tradedPokemon.variant);
-      ["spriteColors", "fusionSpriteColors"].map(k => {
+      ["spriteColors", "fusionSpriteColors"].forEach(k => {
         if (tradedPokemon.summonData.speciesForm) {
           k += "Base";
         }
@@ -666,13 +661,9 @@ function doPokemonTradeSequence(tradedPokemon: PlayerPokemon, receivedPokemon: P
       });
     });
 
-    [receivedPokemonSprite, receivedPokemonTintSprite].map(sprite => {
+    [receivedPokemonSprite, receivedPokemonTintSprite].forEach(sprite => {
       const spriteKey = receivedPokemon.getSpriteKey(true);
-      try {
-        sprite.play(spriteKey);
-      } catch (err: unknown) {
-        console.error(`Failed to play animation for ${spriteKey}`, err);
-      }
+      sprite.play(spriteKey);
 
       sprite.setPipeline(globalScene.spritePipeline, {
         tone: [0.0, 0.0, 0.0, 0.0],
@@ -684,7 +675,7 @@ function doPokemonTradeSequence(tradedPokemon: PlayerPokemon, receivedPokemon: P
       sprite.setPipelineData("spriteKey", receivedPokemon.getSpriteKey());
       sprite.setPipelineData("shiny", receivedPokemon.shiny);
       sprite.setPipelineData("variant", receivedPokemon.variant);
-      ["spriteColors", "fusionSpriteColors"].map(k => {
+      ["spriteColors", "fusionSpriteColors"].forEach(k => {
         if (receivedPokemon.summonData.speciesForm) {
           k += "Base";
         }

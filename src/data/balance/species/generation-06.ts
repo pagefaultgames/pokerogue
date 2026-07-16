@@ -3073,7 +3073,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
     starterCost: 2,
     evolutions: [new SpeciesEvolution({ speciesId: SpeciesId.PYROAR, level: 35 })],
     eggTier: EggTier.COMMON,
-    passives: AbilityId.BLAZE,
+    passives: AbilityId.INTIMIDATE,
     levelMoves: [
       [1, MoveId.TACKLE],
       [1, MoveId.LEER],
@@ -3240,7 +3240,7 @@ export function initGenerationSix(): SpeciesDataMapConfig {
       }),
     ],
     passives: {
-      0: AbilityId.BEAST_BOOST,
+      0: AbilityId.INTIMIDATE,
       1: AbilityId.INTIMIDATE,
     },
     levelMoves: [

@@ -4,6 +4,7 @@ import { GameMode, getGameMode } from "#app/game-mode";
 import { audioManager } from "#app/global-audio-manager";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { activeOverrides } from "#app/overrides";
 import { Phase } from "#app/phase";
 import { bypassLogin } from "#constants/app-constants";
@@ -22,7 +23,6 @@ import { vouchers } from "#system/voucher";
 import type { OptionSelectConfig, OptionSelectItem } from "#ui/base-option-select-ui-handler";
 import { SaveSlotUiMode } from "#ui/save-slot-select-ui-handler";
 import { isLocalServerConnected } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 const NO_SAVE_SLOT = -1;
@@ -248,7 +248,7 @@ export class TitlePhase extends Phase {
         const party = globalScene.getPlayerParty();
         const loadPokemonAssets: Promise<void>[] = [];
         for (const [index, starter] of starters.entries()) {
-          const species = getPokemonSpecies(starter.speciesId);
+          const species = speciesDataRegistry.getSpecies(starter.speciesId);
           const starterFormIndex = starter.formIndex;
           const starterGender =
             species.malePercent === null ? Gender.GENDERLESS : starter.female ? Gender.FEMALE : Gender.MALE;

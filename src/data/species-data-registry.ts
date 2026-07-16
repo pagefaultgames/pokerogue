@@ -438,7 +438,6 @@ export class SpeciesDataRegistry {
     }
 
     if (form == null) {
-      console.debug(`No form requested for ${speciesId} (${this.getSpecies(speciesId).name}), returning base form.`);
       return forms[0].formKey;
     }
 

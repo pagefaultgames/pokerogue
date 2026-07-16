@@ -179,7 +179,7 @@ import {
 import { calculateBossSegmentDamage } from "#utils/damage";
 import { getEnumValues } from "#utils/enums";
 import { cachedFetch } from "#utils/fetch-utils";
-import { decodeNickname, getFusedSpeciesName, getPokemonSpecies } from "#utils/pokemon-utils";
+import { decodeNickname, getFusedSpeciesName } from "#utils/pokemon-utils";
 import { weightedPick } from "#utils/random";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import { ValueHolder } from "#utils/value-holder";
@@ -379,7 +379,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         dataSource.fusionSpecies instanceof PokemonSpecies
           ? dataSource.fusionSpecies
           : dataSource.fusionSpecies
-            ? getPokemonSpecies(dataSource.fusionSpecies)
+            ? speciesDataRegistry.getSpecies(dataSource.fusionSpecies)
             : null;
       this.fusionFormIndex = dataSource.fusionFormIndex;
       this.fusionAbilityIndex = dataSource.fusionAbilityIndex;
@@ -1084,7 +1084,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     const species: PokemonSpecies =
-      useIllusion && this.summonData.illusion ? getPokemonSpecies(this.summonData.illusion.species) : this.species;
+      useIllusion && this.summonData.illusion
+        ? speciesDataRegistry.getSpecies(this.summonData.illusion.species)
+        : this.species;
     const formIndex = useIllusion && this.summonData.illusion ? this.summonData.illusion.formIndex : this.formIndex;
 
     if (species.forms && species.forms.length > 0) {
@@ -1206,7 +1208,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   async updateSpritePipelineData(): Promise<void> {
     [this.getSprite(), this.getTintSprite()]
       .filter(s => !!s)
-      .map(s => {
+      .forEach(s => {
         s.pipelineData["teraColor"] = getTypeRgb(this.getTeraType());
         s.pipelineData["isTerastallized"] = this.isTerastallized;
       });
@@ -1225,27 +1227,17 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Attempts to animate a given {@linkcode Phaser.GameObjects.Sprite}
    * @see {@linkcode Phaser.GameObjects.Sprite.play}
-   * @param sprite - Sprite to animate
-   * @param tintSprite - Sprite placed on top of the sprite to add a color tint
-   * @param animConfig - String to pass to the sprite's {@linkcode Phaser.GameObjects.Sprite.play | play} method
-   * @returns true if the sprite was able to be animated
+   * @param sprite - The sprite to animate
+   * @param tintSprite - A sprite placed on top of the original sprite to add a color tint
+   * @param key - The animation key
    */
-  tryPlaySprite(sprite: Phaser.GameObjects.Sprite, tintSprite: Phaser.GameObjects.Sprite, key: string): boolean {
-    // Catch errors when trying to play an animation that doesn't exist
-    try {
-      sprite.play(key);
-      tintSprite.play(key);
-    } catch (error: unknown) {
-      console.error(`Couldn't play animation for '${key}'!\nIs the image for this Pokemon missing?\n`, error);
-
-      return false;
-    }
-
-    return true;
+  playSprite(sprite: Phaser.GameObjects.Sprite, tintSprite: Phaser.GameObjects.Sprite | null, key: string): void {
+    sprite.play(key);
+    tintSprite?.play(key);
   }
 
   playAnim(): void {
-    this.tryPlaySprite(this.getSprite(), this.getTintSprite()!, this.getBattleSpriteKey()); // TODO: is the bang correct?
+    this.playSprite(this.getSprite(), this.getTintSprite(), this.getBattleSpriteKey());
   }
 
   getFieldPositionOffset(): [number, number] {
@@ -3049,9 +3041,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     let fusionOverride: PokemonSpecies | undefined;
 
     if (forStarter && this.isPlayer() && activeOverrides.STARTER_FUSION_SPECIES_OVERRIDE) {
-      fusionOverride = getPokemonSpecies(activeOverrides.STARTER_FUSION_SPECIES_OVERRIDE);
+      fusionOverride = speciesDataRegistry.getSpecies(activeOverrides.STARTER_FUSION_SPECIES_OVERRIDE);
     } else if (this.isEnemy() && activeOverrides.ENEMY_FUSION_SPECIES_OVERRIDE) {
-      fusionOverride = getPokemonSpecies(activeOverrides.ENEMY_FUSION_SPECIES_OVERRIDE);
+      fusionOverride = speciesDataRegistry.getSpecies(activeOverrides.ENEMY_FUSION_SPECIES_OVERRIDE);
     }
 
     this.fusionSpecies =
@@ -5161,6 +5153,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.summonData.speciesForm) {
       this.summonData.speciesForm = null;
       this.updateFusionPalette();
+      this.loadAssets(false);
     }
     this.summonData = new PokemonSummonData();
     this.tempSummonData = new PokemonTempSummonData();
@@ -5225,18 +5218,18 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   // #region Sprite and Animation Methods
 
-  setFrameRate(frameRate: number) {
-    globalScene.anims.get(this.getBattleSpriteKey()).frameRate = frameRate;
-    try {
-      this.getSprite().play(this.getBattleSpriteKey());
-    } catch (err: unknown) {
-      console.error(`Failed to play animation for ${this.getBattleSpriteKey()}`, err);
+  protected setFrameRate(frameRate: number): void {
+    // TODO: Augment Phaser's unsafe typing until they do it themselves
+    const anim: Phaser.Animations.Animation | undefined = globalScene.anims.get(this.getBattleSpriteKey());
+    if (!anim) {
+      console.error(
+        `Could not set frame rate for animation ${this.getBattleSpriteKey()}; animation not found!`
+          + `\nPokemon: ${this.name}`,
+      );
+      return;
     }
-    try {
-      this.getTintSprite()?.play(this.getBattleSpriteKey());
-    } catch (err: unknown) {
-      console.error(`Failed to play animation for ${this.getBattleSpriteKey()}`, err);
-    }
+    anim.frameRate = frameRate;
+    this.playAnim();
   }
 
   tint(color: number, alpha?: number, duration?: number, ease?: string) {
@@ -5714,7 +5707,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   private hasSameAbilityInRootForm(abilityIndex: number): boolean {
     const currentAbilityIndex = this.abilityIndex;
-    const rootForm = getPokemonSpecies(this.species.getRootSpeciesId());
+    const rootForm = speciesDataRegistry.getSpecies(this.species.getRootSpeciesId());
     return rootForm.getAbility(abilityIndex) === rootForm.getAbility(currentAbilityIndex);
   }
 
@@ -5867,7 +5860,7 @@ export class PlayerPokemon extends Pokemon {
    * Get all TMs compatible with this Pokémon. Includes TMs from its fused species.
    * @returns An array of all compatible TMs
    */
-  getCompatibleTms(excludeKnown = false, excludeLevelUp = false): MoveId[] {
+  getCompatibleTms(excludeKnown = false, excludeLevelUp = false, excludeUsedTMs = false): MoveId[] {
     const tms = new Set(this.species.getTms(this.getFormKey()));
     if (this.fusionSpecies) {
       this.fusionSpecies.getTms(this.getFusionFormKey() ?? undefined).forEach(tm => tms.add(tm));
@@ -5877,6 +5870,9 @@ export class PlayerPokemon extends Pokemon {
     }
     if (excludeLevelUp) {
       this.getLevelMoves(undefined, true, false, true).forEach(lm => tms.delete(lm[1]));
+    }
+    if (excludeUsedTMs) {
+      this.usedTMs?.forEach(moveId => tms.delete(moveId));
     }
 
     return Array.from(tms);
@@ -5994,7 +5990,7 @@ export class PlayerPokemon extends Pokemon {
       return new Promise(resolve => resolve(this));
     }
     return new Promise(resolve => {
-      const evolutionSpecies = getPokemonSpecies(evolution.speciesId);
+      const evolutionSpecies = speciesDataRegistry.getSpecies(evolution.speciesId);
       const isFusion = evolution instanceof FusionSpeciesFormEvolution;
       let ret: PlayerPokemon;
       if (isFusion) {
@@ -6057,9 +6053,9 @@ export class PlayerPokemon extends Pokemon {
       this.handleSpecialEvolutions(evolution);
       const isFusion = evolution instanceof FusionSpeciesFormEvolution;
       if (isFusion) {
-        this.fusionSpecies = getPokemonSpecies(evolution.speciesId);
+        this.fusionSpecies = speciesDataRegistry.getSpecies(evolution.speciesId);
       } else {
-        this.species = getPokemonSpecies(evolution.speciesId);
+        this.species = speciesDataRegistry.getSpecies(evolution.speciesId);
       }
       if (evolution.preFormKey !== null) {
         const formIndex = Math.max(

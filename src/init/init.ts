@@ -12,7 +12,7 @@ import { initCatchableSpecies } from "#init/init-catchable-species";
 import { initModifierPools } from "#modifiers/init-modifier-pools";
 import { initModifierTypes } from "#modifiers/modifier-type";
 import { initMoves } from "#moves/move";
-import { initMysteryEncounters } from "#mystery-encounters/mystery-encounters";
+import { initMysteryEncounters } from "#mystery-encounters/mystery-encounter-biomes";
 import { initAchievements } from "#system/achv";
 import { initVouchers } from "#system/voucher";
 import { initStatsKeys } from "#ui/game-stats-ui-handler";

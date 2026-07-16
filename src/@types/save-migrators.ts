@@ -32,16 +32,19 @@ export interface SessionSaveMigratorIn extends CoercePropertiesToUnknown<Session
 }
 
 export interface SessionSaveMigrator {
+  name: string;
   version: string;
   migrate: (data: SessionSaveMigratorIn) => void;
 }
 
 export interface SettingsSaveMigrator {
+  name: string;
   version: string;
   migrate: (data: object) => void;
 }
 
 export interface SystemSaveMigrator {
+  name: string;
   version: string;
   migrate: (data: SystemSaveData) => void;
 }

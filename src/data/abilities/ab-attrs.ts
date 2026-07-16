@@ -3764,7 +3764,7 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
  * @see {@link https://www.smogon.com/dex/sv/abilities/forewarn/}
  */
 function getForewarnPower(move: Move): number {
-  if (move.is("StatusMove")) {
+  if (move.is("StatusMove") || move.is("SelfStatusMove")) {
     return 1;
   }
 
@@ -5101,8 +5101,36 @@ export class FlinchStatStageChangeAbAttr extends FlinchEffectAbAttr {
   }
 }
 
-export class IncreasePpAbAttr extends AbAttr {
-  private declare readonly _: never;
+export interface IncreasePpUsedAbAttrParams extends Omit<AugmentMoveInteractionAbAttrParams, "move"> {
+  /** Holder for the amount of PP that will be consumed; can be modified by ability application */
+  readonly pp: NumberHolder;
+}
+
+/**
+ * Attribute for abilities that increase the PP consumption of received attacks.
+ *
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Pressure_(Ability)}
+ */
+export class IncreasePpUsedAbAttr extends AbAttr {
+  /**
+   * The amount of PP to increase.
+   * @defaultValue `1`
+   */
+  private readonly ppIncrease: number;
+
+  constructor(ppIncrease = 1) {
+    super();
+
+    this.ppIncrease = ppIncrease;
+  }
+
+  public override canApply({ pokemon, opponent }: IncreasePpUsedAbAttrParams): boolean {
+    return pokemon.isOpponent(opponent);
+  }
+
+  public override apply({ pp }: IncreasePpUsedAbAttrParams): void {
+    pp.value += this.ppIncrease;
+  }
 }
 
 /** @sealed */
@@ -6125,7 +6153,7 @@ export const AbilityAttrs = Object.freeze({
   IllusionBreakAbAttr,
   IllusionPostBattleAbAttr,
   IllusionPreSummonAbAttr,
-  IncreasePpAbAttr,
+  IncreasePpUsedAbAttr,
   InfiltratorAbAttr,
   IntimidateImmunityAbAttr,
   LowHpMoveTypePowerBoostAbAttr,

@@ -19,9 +19,9 @@ import type {
   MappingSettingName,
   SelectedDevice,
 } from "#types/configs/inputs";
+import type { SettingsGamepadUiHandler } from "#ui/gamepad-settings-ui-handler";
+import type { SettingsKeyboardUiHandler } from "#ui/keyboard-settings-ui-handler";
 import { MoveTouchControlsHandler } from "#ui/move-touch-controls-handler";
-import type { SettingsGamepadUiHandler } from "#ui/settings-gamepad-ui-handler";
-import type { SettingsKeyboardUiHandler } from "#ui/settings-keyboard-ui-handler";
 import { deepCopy } from "#utils/data";
 import { getEnumValues } from "#utils/enums";
 import Phaser from "phaser";

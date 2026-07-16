@@ -1,4 +1,5 @@
 import type { BattleScene } from "#app/battle-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { modifierTypes } from "#data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { Button } from "#enums/buttons";
@@ -14,7 +15,6 @@ import { GameManager } from "#test/framework/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
 import { ModifierSelectUiHandler } from "#ui/modifier-select-ui-handler";
 import { shiftCharCodes } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -187,7 +187,15 @@ describe("SelectModifierPhase", () => {
         ModifierTier.MASTER,
       ],
     };
-    const pokemon = new PlayerPokemon(getPokemonSpecies(SpeciesId.BULBASAUR), 10, undefined, 0, undefined, true, 2);
+    const pokemon = new PlayerPokemon(
+      speciesDataRegistry.getSpecies(SpeciesId.BULBASAUR),
+      10,
+      undefined,
+      0,
+      undefined,
+      true,
+      2,
+    );
 
     // Fill party with max shinies
     while (scene.getPlayerParty().length > 0) {

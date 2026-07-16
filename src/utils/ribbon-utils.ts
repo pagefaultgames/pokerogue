@@ -2,7 +2,6 @@ import { speciesDataRegistry } from "#app/global-species-data-registry";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { PokemonType } from "#enums/pokemon-type";
 import { RibbonData, type RibbonFlag } from "#system/ribbons/ribbon-data";
-import { getPokemonSpecies } from "./pokemon-utils";
 
 export function getRibbonForType(type: PokemonType): RibbonFlag {
   // Valid types: 0–17, excluding UNKNOWN (-1) and STELLAR (19)
@@ -58,7 +57,7 @@ export function getAvailableRibbons(species: PokemonSpecies): RibbonFlag[] {
     if (checking == null) {
       continue;
     }
-    const checkingSpecies = getPokemonSpecies(checking);
+    const checkingSpecies = speciesDataRegistry.getSpecies(checking);
 
     data |= getRibbonForGeneration(checkingSpecies.generation);
     data |= getRibbonForType(checkingSpecies.type1);

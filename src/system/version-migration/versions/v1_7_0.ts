@@ -1,10 +1,11 @@
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { DexAttr } from "#enums/dex-attr";
 import type { SpeciesId } from "#enums/species-id";
 import type { SystemSaveData } from "#types/save-data";
 import type { SessionSaveMigrator, SystemSaveMigrator } from "#types/save-migrators";
 import { validateIsArrayOfObjects } from "#utils/migrator-utils";
-import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 /**
  * If a starter is caught, but the only forms registered as caught are not starterSelectable,
@@ -12,6 +13,7 @@ import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
  * @param data - {@linkcode SystemSaveData}
  */
 const migrateUnselectableForms: SystemSaveMigrator = {
+  name: "migrateUnselectableForms",
   version: "1.7.0",
   migrate: (data: SystemSaveData): void => {
     if (data.starterData && data.dexData) {
@@ -22,7 +24,7 @@ const migrateUnselectableForms: SystemSaveMigrator = {
           // An unknown bug at some point in time caused some accounts to have starter data for pokedex number 0 which crashes
           return;
         }
-        const species = getPokemonSpecies(speciesNumber);
+        const species = speciesDataRegistry.getSpecies(speciesNumber);
         if (caughtAttr && species.forms?.length > 1) {
           const selectableForms = species.forms.filter(
             (form, formIndex) => form.isStarterSelectable && caughtAttr & globalScene.gameData.getFormAttr(formIndex),
@@ -38,11 +40,12 @@ const migrateUnselectableForms: SystemSaveMigrator = {
 
 export const systemMigrators: readonly SystemSaveMigrator[] = [migrateUnselectableForms] as const;
 
-function isArrayOfLengthTwo(arr: unknown): arr is [unknown, unknown] {
-  return Array.isArray(arr) && arr.length === 2;
+function isArrayOfAtLeastTwo(arr: unknown): arr is unknown[] {
+  return Array.isArray(arr) && arr.length >= 2;
 }
 
 const migrateTera: SessionSaveMigrator = {
+  name: "migrateTera",
   version: "1.7.0",
   migrate: data => {
     // biome-ignore lint/style/noNegationElse: Improves readability
@@ -54,7 +57,7 @@ const migrateTera: SessionSaveMigrator = {
           // Assert the modifier has the expected args structure
           const modifierArgs = data.modifiers[i].args;
           // Skip malformed modifiers (it is not the migrator's responsibility to fix/remove)
-          if (!isArrayOfLengthTwo(modifierArgs)) {
+          if (!isArrayOfAtLeastTwo(modifierArgs)) {
             continue;
           }
           data.party.forEach(p => {
@@ -87,7 +90,7 @@ const migrateTera: SessionSaveMigrator = {
         // Assert the modifier has the expected args structure
         const modifierArgs = data.enemyModifiers[i].args;
 
-        if (!isArrayOfLengthTwo(modifierArgs)) {
+        if (!isArrayOfAtLeastTwo(modifierArgs)) {
           data.enemyModifiers.splice(i, 1);
           continue;
         }

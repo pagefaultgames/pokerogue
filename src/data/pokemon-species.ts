@@ -27,8 +27,8 @@ import type { LevelMoves } from "#types/pokemon-species";
 import type { StarterMoveset } from "#types/save-data";
 import type { EvolutionLevel, EvolutionLevelWithThreshold } from "#types/species-gen-types";
 import { argbFromRgba, rgbaFromArgb } from "#utils/color-utils";
-import { randSeedFloat, randSeedGauss } from "#utils/common";
-import { getPokemonSpecies, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { randSeedFloat } from "#utils/common";
+import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase, toPascalCase } from "#utils/strings";
 import { QuantizerCelebi } from "@material/material-color-utilities";
 import i18next from "i18next";
@@ -373,12 +373,12 @@ export abstract class PokemonSpeciesForm {
 
     const replacement = timedEventManager.getEventPokemonSpriteReplacement(this.speciesId, formIndex);
     if (replacement) {
-      const replacementFormSpriteKey = getPokemonSpecies(replacement.speciesId).forms[
-        replacement.formIndex
-      ]?.getFormSpriteKey(replacement.formIndex);
+      const replacementFormSpriteKey = speciesDataRegistry
+        .getSpecies(replacement.speciesId)
+        .forms[replacement.formIndex]?.getFormSpriteKey(replacement.formIndex);
 
       const replacementShowGenderDiffs =
-        getPokemonSpecies(replacement.speciesId).genderDiffs
+        speciesDataRegistry.getSpecies(replacement.speciesId).genderDiffs
         && female
         && ![
           SpeciesFormKey.MEGA,
@@ -424,7 +424,7 @@ export abstract class PokemonSpeciesForm {
   getVariantDataIndex(formIndex?: number): string | number {
     let formkey: string | null = null;
     let variantDataIndex: number | string = this.speciesId;
-    const species = getPokemonSpecies(this.speciesId);
+    const species = speciesDataRegistry.getSpecies(this.speciesId);
     if (species.forms.length > 0 && formIndex !== undefined) {
       formkey = species.forms[formIndex]?.getFormSpriteKey(formIndex);
       if (formkey) {
@@ -481,18 +481,27 @@ export abstract class PokemonSpeciesForm {
     switch (this.speciesId) {
       case SpeciesId.DODUO:
       case SpeciesId.DODRIO:
-      case SpeciesId.MEGANIUM:
       case SpeciesId.TORCHIC:
       case SpeciesId.COMBUSKEN:
-      case SpeciesId.BLAZIKEN:
+      case SpeciesId.GIBLE:
+      case SpeciesId.GABITE:
       case SpeciesId.HIPPOPOTAS:
       case SpeciesId.HIPPOWDON:
       case SpeciesId.UNFEZANT:
       case SpeciesId.FRILLISH:
       case SpeciesId.JELLICENT:
-      case SpeciesId.PYROAR:
         ret += female ? "-f" : "";
         break;
+      case SpeciesId.MEGANIUM:
+      case SpeciesId.BLAZIKEN:
+      case SpeciesId.GARCHOMP:
+      case SpeciesId.PYROAR: {
+        const formKey = this.getFormKey();
+        if (formKey !== SpeciesFormKey.MEGA && formKey !== SpeciesFormKey.MEGA_Z) {
+          ret += female ? "-f" : "";
+        }
+        break;
+      }
     }
 
     let formSpriteKey = this.getFormSpriteKey(formIndex);
@@ -547,11 +556,11 @@ export abstract class PokemonSpeciesForm {
       }
     }
     let ret: string = speciesId.toString();
-    const forms = getPokemonSpecies(speciesId).forms;
+    const forms = speciesDataRegistry.getSpecies(speciesId).forms;
     if (forms.length > 0) {
       if (formIndex !== undefined && formIndex >= forms.length) {
         console.warn(
-          `Attempted accessing form with index ${formIndex} of species ${getPokemonSpecies(speciesId).getName()} with only ${forms.length || 0} forms`,
+          `Attempted accessing form with index ${formIndex} of species ${speciesDataRegistry.getSpecies(speciesId).getName()} with only ${forms.length || 0} forms`,
         );
         formIndex = Math.min(formIndex, forms.length - 1);
       }
@@ -1091,7 +1100,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
         const sId = e.speciesId;
         const level = e.level;
         evolutionLevels.push([sId, level]);
-        const nextEvolutionLevels = getPokemonSpecies(sId).getEvolutionLevels();
+        const nextEvolutionLevels = speciesDataRegistry.getSpecies(sId).getEvolutionLevels();
         for (const npl of nextEvolutionLevels) {
           evolutionLevels.push(npl);
         }
@@ -1132,7 +1141,7 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
           } else {
             prevolutionLevels.push([speciesId, level]);
           }
-          const subPrevolutionLevels = getPokemonSpecies(speciesId).getPrevolutionLevels(withThresholds);
+          const subPrevolutionLevels = speciesDataRegistry.getSpecies(speciesId).getPrevolutionLevels(withThresholds);
           for (const spl of subPrevolutionLevels) {
             prevolutionLevels.push(spl);
           }
@@ -1141,68 +1150,6 @@ export class PokemonSpecies extends PokemonSpeciesForm implements Localizable {
     }
 
     return prevolutionLevels;
-  }
-
-  // This could definitely be written better and more accurate to the getSpeciesForLevel logic, but it is only for generating movesets for evolved Pokemon
-  // TODO: Rework this absolutely horridly written slop
-  getSimulatedEvolutionChain(
-    currentLevel: number,
-    forTrainer = false,
-    isBoss = false,
-    player = false,
-  ): EvolutionLevel[] {
-    if (!speciesDataRegistry.hasPrevolution(this.speciesId)) {
-      return [[this.speciesId, 1]];
-    }
-
-    const ret: EvolutionLevel[] = [];
-    const prevolutionLevels = this.getPrevolutionLevels(false).reverse();
-    const levelDiff = player ? 0 : forTrainer || isBoss ? (forTrainer && isBoss ? 2.5 : 5) : 10;
-    ret.push([prevolutionLevels[0][0], 1]);
-    for (let l = 1; l < prevolutionLevels.length; l++) {
-      const evolution = speciesDataRegistry
-        .getEvolutions(prevolutionLevels[l - 1][0])
-        .find(e => e.speciesId === prevolutionLevels[l][0]);
-      ret.push([
-        prevolutionLevels[l][0],
-        Math.min(
-          Math.max(
-            evolution?.level!
-              + Math.round(
-                randSeedGauss(0.5, 1 + levelDiff * 0.2)
-                  * Math.max(evolution?.evoLevelThreshold?.[EvoLevelThresholdKind.WILD] ?? 0, 0.5)
-                  * 5,
-              )
-              - 1,
-            2,
-            evolution?.level!,
-          ),
-          currentLevel - 1,
-        ),
-      ]); // TODO: are those bangs correct?
-    }
-    const lastPrevolutionLevel = ret[prevolutionLevels.length - 1][1];
-    const evolution = speciesDataRegistry
-      .getEvolutions(prevolutionLevels.at(-1)![0])
-      .find(e => e.speciesId === this.speciesId);
-    ret.push([
-      this.speciesId,
-      Math.min(
-        Math.max(
-          lastPrevolutionLevel
-            + Math.round(
-              randSeedGauss(0.5, 1 + levelDiff * 0.2)
-                * Math.max(evolution?.evoLevelThreshold?.[EvoLevelThresholdKind.WILD] ?? 0, 0.5)
-                * 5,
-            ),
-          lastPrevolutionLevel + 1,
-          evolution?.level!,
-        ),
-        currentLevel,
-      ),
-    ]); // TODO: are those bangs correct?
-
-    return ret;
   }
 
   getCompatibleFusionSpeciesFilter(): PokemonSpeciesFilter {

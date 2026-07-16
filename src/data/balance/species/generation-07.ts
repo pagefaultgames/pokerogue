@@ -5260,7 +5260,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "fighting",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.FIGHTING_MEMORY),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.RKS_SYSTEM))],
       }),
       new SpeciesFormChange({
@@ -5268,7 +5268,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "flying",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.FLYING_MEMORY),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.RKS_SYSTEM))],
       }),
       new SpeciesFormChange({
@@ -5276,7 +5276,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "poison",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.POISON_MEMORY),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.RKS_SYSTEM))],
       }),
       new SpeciesFormChange({
@@ -5284,7 +5284,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "ground",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.GROUND_MEMORY),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.RKS_SYSTEM))],
       }),
       new SpeciesFormChange({
@@ -5292,7 +5292,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "rock",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.ROCK_MEMORY),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.RKS_SYSTEM))],
       }),
       new SpeciesFormChange({
@@ -5300,7 +5300,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "bug",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.BUG_MEMORY),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.RKS_SYSTEM))],
       }),
       new SpeciesFormChange({
@@ -5308,7 +5308,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "ghost",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.GHOST_MEMORY),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.RKS_SYSTEM))],
       }),
       new SpeciesFormChange({
@@ -5316,7 +5316,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "steel",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.STEEL_MEMORY),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.RKS_SYSTEM))],
       }),
       new SpeciesFormChange({
@@ -5324,7 +5324,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "fire",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.FIRE_MEMORY),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.RKS_SYSTEM))],
       }),
       new SpeciesFormChange({
@@ -5332,7 +5332,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "water",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.WATER_MEMORY),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.RKS_SYSTEM))],
       }),
       new SpeciesFormChange({
@@ -5340,7 +5340,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "grass",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.GRASS_MEMORY),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.RKS_SYSTEM))],
       }),
       new SpeciesFormChange({
@@ -5348,7 +5348,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "electric",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.ELECTRIC_MEMORY),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.RKS_SYSTEM))],
       }),
       new SpeciesFormChange({
@@ -5356,7 +5356,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "psychic",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.PSYCHIC_MEMORY),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.RKS_SYSTEM))],
       }),
       new SpeciesFormChange({
@@ -5364,7 +5364,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "ice",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.ICE_MEMORY),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.RKS_SYSTEM))],
       }),
       new SpeciesFormChange({
@@ -5372,7 +5372,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "dragon",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.DRAGON_MEMORY),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.RKS_SYSTEM))],
       }),
       new SpeciesFormChange({
@@ -5380,7 +5380,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "dark",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.DARK_MEMORY),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.RKS_SYSTEM))],
       }),
       new SpeciesFormChange({
@@ -5388,7 +5388,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
         preFormKey: "normal",
         evoFormKey: "fairy",
         trigger: new SpeciesFormChangeItemTrigger(FormChangeItem.FAIRY_MEMORY),
-        quiet: true,
+        quiet: false,
         conditions: [new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.RKS_SYSTEM))],
       }),
     ],
@@ -10566,7 +10566,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       malePercent: 50,
       genderDiffs: false,
     }),
-    starter: SpeciesId.PIKACHU,
+    starter: SpeciesId.PICHU,
     evolutions: [],
     passives: AbilityId.TRANSISTOR,
     levelMoves: [
@@ -12081,7 +12081,7 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       ],
     }),
     starter: SpeciesId.BATTLE_BOND_GRENINJA,
-    starterCost: 5,
+    starterCost: 6,
     evolutions: [],
     formChanges: [
       new SpeciesFormChange({
@@ -12107,11 +12107,10 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       1: AbilityId.SUPER_LUCK,
     },
     levelMoves: [
-      [RELEARN_MOVE, MoveId.BUBBLE],
       [1, MoveId.MAT_BLOCK],
       [1, MoveId.POUND],
       [1, MoveId.GROWL],
-      [5, MoveId.WATER_SHURIKEN],
+      [5, MoveId.BUBBLE],
       [8, MoveId.QUICK_ATTACK],
       [10, MoveId.LICK],
       [14, MoveId.WATER_PULSE],
@@ -12122,18 +12121,19 @@ export function initGenerationSeven(): SpeciesDataMapConfig {
       [28, MoveId.SPIKES],
       [30, MoveId.SMACK_DOWN],
       [33, MoveId.AERIAL_ACE],
-      [36, MoveId.ROLE_PLAY],
+      [36, MoveId.WATER_SHURIKEN],
       [38, MoveId.FEINT_ATTACK],
       [42, MoveId.SUBSTITUTE],
       [45, MoveId.BOUNCE],
       [49, MoveId.EXTRASENSORY],
       [56, MoveId.DOUBLE_TEAM],
+      [65, MoveId.NIGHT_SLASH],
       [68, MoveId.HYDRO_PUMP],
       [70, MoveId.HAZE],
-      [77, MoveId.NIGHT_SLASH],
+      [77, MoveId.DARK_PULSE],
     ],
     tms: [
-      // Froaki
+      // Froakie
       MoveId.TAKE_DOWN,
       MoveId.HYDRO_PUMP,
       MoveId.SURF,

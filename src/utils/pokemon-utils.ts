@@ -10,23 +10,6 @@ import type { EnemyPokemon, PlayerPokemon, Pokemon } from "#field/pokemon";
 import { randSeedIntRange, randSeedItem } from "#utils/common";
 
 /**
- * Gets the {@linkcode PokemonSpecies} object associated with the {@linkcode SpeciesId} enum given
- * @param species - The {@linkcode SpeciesId} to fetch.
- * If an array of `SpeciesId`s is passed (such as for named trainer spawn pools),
- * one will be selected at random.
- * @returns The associated {@linkcode PokemonSpecies} object
- * @deprecated Use {@linkcode speciesDataRegistry.getSpecies}
- */
-// TODO: remove this function
-export function getPokemonSpecies(species: SpeciesId | SpeciesId[]): PokemonSpecies {
-  if (Array.isArray(species)) {
-    // TODO: this RNG roll should not be handled by this function
-    species = species[Math.floor(Math.random() * species.length)];
-  }
-  return speciesDataRegistry.getSpecies(species);
-}
-
-/**
  * Converts the internal id of the Pokemon into its national dex number
  * @param speciesId - The {@linkcode SpeciesId} to get the dex number of
  * @returns The national dex number matching the `SpeciesId`
@@ -47,7 +30,7 @@ export function getPokerusStarters(): PokemonSpecies[] {
     () => {
       while (pokerusStarters.length < POKERUS_STARTER_COUNT) {
         const randomSpeciesId = randSeedItem(speciesDataRegistry.getAllStarters());
-        const species = getPokemonSpecies(randomSpeciesId);
+        const species = speciesDataRegistry.getSpecies(randomSpeciesId);
         if (!pokerusStarters.includes(species)) {
           pokerusStarters.push(species);
         }
@@ -134,7 +117,7 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
 }
 
 export function getPokemonSpeciesForm(species: SpeciesId, formIndex: number): PokemonSpeciesForm {
-  const retSpecies: PokemonSpecies = getPokemonSpecies(species);
+  const retSpecies: PokemonSpecies = speciesDataRegistry.getSpecies(species);
 
   if (formIndex < retSpecies.forms.length) {
     return retSpecies.forms[formIndex];

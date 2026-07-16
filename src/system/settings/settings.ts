@@ -636,7 +636,20 @@ export const Setting: Setting[] = [
   {
     key: SettingKeys.Type_Hints,
     label: i18next.t("settings:typeHints"),
-    options: OFF_ON,
+    options: [
+      {
+        value: "Off",
+        label: i18next.t("settings:off"),
+      },
+      {
+        value: "On",
+        label: i18next.t("settings:on"),
+      },
+      {
+        value: "High Contrast",
+        label: i18next.t("settings:highContrast"),
+      },
+    ],
     default: 0,
     type: SettingType.DISPLAY,
   },
@@ -942,7 +955,7 @@ export function setSetting(setting: string, value: number): boolean {
       globalScene.enableVibration = Setting[index].options[value].value !== "Disabled" && hasTouchscreen();
       break;
     case SettingKeys.Type_Hints:
-      globalScene.typeHints = Setting[index].options[value].value === "On";
+      globalScene.typeHints = value;
       break;
     case SettingKeys.Prefer_Baton_Pass:
       globalScene.preferBatonPass = Setting[index].options[value].value === "On";
