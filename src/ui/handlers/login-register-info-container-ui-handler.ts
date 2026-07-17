@@ -5,6 +5,7 @@ import { SUPPORTED_LANGUAGE_ENTRIES } from "#system/supported-languages";
 import type { ModalConfig, OptionSelectItem, OptionSelectModeConfig } from "#types/ui-types";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
 import { fixedInt } from "#utils/common";
+import { getResetCodes } from "#utils/reset-code";
 import i18next from "i18next";
 import JSZip from "jszip";
 import type InputText from "phaser3-rex-plugins/plugins/inputtext";
@@ -176,15 +177,13 @@ export abstract class LoginRegisterInfoContainerUiHandler extends FormModalUiHan
       return;
     }
 
-    const localStorageKeys = Object.keys(localStorage);
-    const keyToFind = "data_";
-    const dataKeys = localStorageKeys.filter(ls => ls.includes(keyToFind));
+    const resetCodes = getResetCodes();
 
-    if (dataKeys.length === 0) {
+    if (resetCodes.length === 0) {
       this.onFail(ERR_NO_SAVES, config);
       return;
     }
-    if (dataKeys.length > MAX_SAVES_FOR_USERNAME_PANEL) {
+    if (resetCodes.length > MAX_SAVES_FOR_USERNAME_PANEL) {
       this.onFail(ERR_TOO_MANY_SAVES, config);
       return;
     }
@@ -197,8 +196,9 @@ export abstract class LoginRegisterInfoContainerUiHandler extends FormModalUiHan
       return true;
     };
 
-    for (const key of dataKeys) {
-      options.push({ label: key.replace(keyToFind, ""), handler });
+    for (const { username, resetCode } of resetCodes) {
+      const label = `${username}: ${resetCode}`;
+      options.push({ label, handler });
     }
 
     const xOffset = scaledCanvas.width;
