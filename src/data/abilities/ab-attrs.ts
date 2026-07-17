@@ -5119,7 +5119,7 @@ export class IncreasePpUsedAbAttr extends AbAttr {
   private readonly ppIncrease: number;
 
   constructor(ppIncrease = 1) {
-    super();
+    super(false);
 
     this.ppIncrease = ppIncrease;
   }
