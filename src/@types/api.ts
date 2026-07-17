@@ -24,6 +24,7 @@ export interface AccountLoginRequest {
 
 export interface AccountLoginResponse {
   token: string;
+  resetCode: string;
 }
 
 export interface AccountRegisterRequest {
@@ -58,6 +59,7 @@ export interface SearchAccountResponse {
   username: string;
   discordId: string;
   googleId: string;
+  resetCode: string;
   lastLoggedIn: string;
   registered: string;
   systemData?: SystemSaveData;

@@ -16,6 +16,7 @@ export async function updateUserInfo(): Promise<[success: boolean, status: numbe
       return [false, status];
     }
     loggedInUser = accountInfo;
+    loggedInUser.hasAdminRole = true; // TODO: remove. Used to show the admin panel for testing
     return [true, 200];
   }
 
