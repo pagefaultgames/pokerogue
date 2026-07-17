@@ -8,6 +8,7 @@ import type {
   AccountRegisterRequest,
 } from "#types/api";
 import { removeCookie, setCookie } from "#utils/cookies";
+import { setResetCode } from "#utils/reset-code";
 
 /** A wrapper for PokéRogue account API requests. */
 export class PokerogueAccountApi extends ApiBase {
@@ -64,7 +65,7 @@ export class PokerogueAccountApi extends ApiBase {
       if (response.ok) {
         const loginResponse = (await response.json()) as AccountLoginResponse;
         setCookie(SESSION_ID_COOKIE_NAME, loginResponse.token);
-        console.log("Reset code:", loginResponse.resetCode);
+        setResetCode(loginData.username, loginResponse.resetCode);
         return null;
       }
       console.warn("Login failed!", response.status, response.statusText);
