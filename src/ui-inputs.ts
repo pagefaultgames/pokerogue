@@ -8,6 +8,7 @@ import { Setting, SettingKeys, settingIndex } from "#system/settings";
 import { SettingsAudioUiHandler } from "#ui/audio-settings-ui-handler";
 import { SettingsDisplayUiHandler } from "#ui/display-settings-ui-handler";
 import { SettingsGamepadUiHandler } from "#ui/gamepad-settings-ui-handler";
+import { GameChallengesUiHandler } from "#ui/handlers/challenges-select-ui-handler";
 import { SettingsKeyboardUiHandler } from "#ui/keyboard-settings-ui-handler";
 import type { MessageUiHandler } from "#ui/message-ui-handler";
 import { PokedexPageUiHandler } from "#ui/pokedex-page-ui-handler";
@@ -215,6 +216,7 @@ export class UiInputs {
       StarterSelectUiHandler,
       PokedexUiHandler,
       PokedexPageUiHandler,
+      GameChallengesUiHandler,
       SettingsUiHandler,
       RunInfoUiHandler,
       SettingsDisplayUiHandler,

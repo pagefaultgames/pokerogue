@@ -13,7 +13,6 @@ import {
 } from "#system/settings-keyboard";
 import type { InterfaceConfig } from "#types/configs/inputs";
 import { BaseControlSettingsUiHandler } from "#ui/base-control-settings-ui-handler";
-import { NavigationManager } from "#ui/navigation-menu";
 import { addTextObject } from "#ui/text";
 import { truncateString } from "#utils/common";
 import { toUpperSnakeCase } from "#utils/strings";
@@ -55,7 +54,7 @@ export class SettingsKeyboardUiHandler extends BaseControlSettingsUiHandler {
 
     const iconDelete = globalScene.add.sprite(0, 0, "keyboard");
     iconDelete.setOrigin(0, -0.1);
-    iconDelete.setPositionRelative(this.actionsBg, this.navigationContainer.width - 260, 4);
+    iconDelete.setPositionRelative(this.actionsBg, this.tabMenu.width - 260, 4);
     this.navigationIcons["BUTTON_DELETE"] = iconDelete;
 
     const deleteText = addTextObject(0, 0, i18next.t("settings:delete"), TextStyle.SETTINGS_LABEL);
@@ -78,7 +77,7 @@ export class SettingsKeyboardUiHandler extends BaseControlSettingsUiHandler {
       return;
     }
     globalScene.gameData.resetMappingToFactory();
-    NavigationManager.getInstance().updateIcons();
+    this.tabMenu?.updateIcons();
   }
 
   /**
@@ -97,7 +96,7 @@ export class SettingsKeyboardUiHandler extends BaseControlSettingsUiHandler {
     if (success) {
       this.saveCustomKeyboardMappingToLocalStorage(activeConfig);
       this.updateBindings();
-      NavigationManager.getInstance().updateIcons();
+      this.tabMenu?.updateIcons();
     }
   }
 
