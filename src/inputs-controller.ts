@@ -114,45 +114,45 @@ export class InputsController {
       this.loseFocus();
     });
 
-    // TODO: shouldn't this be `x != null` instead of `typeof x !== "undefined"`? the type indicates it can be `null`, not `undefined`
-    if (typeof globalScene.input.gamepad !== "undefined") {
-      globalScene.input.gamepad?.on(
+    if (globalScene.input.gamepad != null) {
+      globalScene.input.gamepad.on(
         "connected",
-        function (this: InputsController, thisGamepad: Phaser.Input.Gamepad.Gamepad) {
-          if (!thisGamepad) {
+        function (this: InputsController, gamepad: Phaser.Input.Gamepad.Gamepad) {
+          if (!gamepad) {
             return;
           }
           this.refreshGamepads();
           this.setupGamepads();
-          this.onReconnect(thisGamepad);
+          this.onReconnect(gamepad);
         },
         this,
       );
 
-      globalScene.input.gamepad?.on(
+      globalScene.input.gamepad.on(
         "disconnected",
-        function (this: InputsController, thisGamepad: Phaser.Input.Gamepad.Gamepad) {
-          this.onDisconnect(thisGamepad); // when a gamepad is disconnected
+        function (this: InputsController, gamepad: Phaser.Input.Gamepad.Gamepad) {
+          this.onDisconnect(gamepad); // when a gamepad is disconnected
         },
         this,
       );
 
       // Check to see if the gamepad has already been setup by the browser
-      globalScene.input.gamepad?.refreshPads();
-      if (globalScene.input.gamepad?.total) {
+      globalScene.input.gamepad.refreshPads();
+      if (globalScene.input.gamepad.total) {
         this.refreshGamepads();
-        for (const thisGamepad of this.gamepads) {
-          globalScene.input.gamepad.emit("connected", thisGamepad);
+        for (const gamepad of this.gamepads) {
+          globalScene.input.gamepad.emit("connected", gamepad);
         }
       }
 
       globalScene.input.gamepad //
-        ?.on("down", this.gamepadButtonDown, this)
+        .on("down", this.gamepadButtonDown, this)
         .on("up", this.gamepadButtonUp, this);
-      globalScene.input.keyboard //
-        ?.on("keydown", this.keyboardKeyDown, this)
-        .on("keyup", this.keyboardKeyUp, this);
     }
+
+    globalScene.input.keyboard //
+      ?.on("keydown", this.keyboardKeyDown, this)
+      .on("keyup", this.keyboardKeyUp, this);
 
     this.touchControls = new TouchControl();
     this.moveTouchControlsHandler = new MoveTouchControlsHandler(this.touchControls);
@@ -259,10 +259,13 @@ export class InputsController {
    * disconnections, it would be impossible to determine the connection status of gamepads. This method ensures
    * that disconnected gamepads are recognized and can be appropriately hidden in the gamepad selection menu.
    *
-   * @param thisGamepad The gamepad that has been disconnected.
+   * @param gamepad - The gamepad that has been disconnected.
    */
-  onDisconnect(thisGamepad: Phaser.Input.Gamepad.Gamepad): void {
-    this.disconnectedGamepads.push(thisGamepad.id);
+  onDisconnect(gamepad: Phaser.Input.Gamepad.Gamepad | undefined): void {
+    if (!gamepad) {
+      return;
+    }
+    this.disconnectedGamepads.push(gamepad.id);
   }
 
   /**
