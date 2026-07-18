@@ -147,6 +147,7 @@ export class GameData {
     return {
       trainerId: this.trainerId,
       secretId: this.secretId,
+      // TODO: save some settings (such as player gender) separately, outside of system data
       gender: settings.general.playerGender,
       dexData: this.dexData,
       starterData: this.starterData,
