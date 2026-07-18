@@ -188,11 +188,12 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
         const onPokemonSelected = (pokemon: PlayerPokemon) => {
           // Return the options for nature selection
           return getEnumValues(Nature).map((nature: Nature) => {
+            const newNature = !globalScene.gameData.checkSpeciesNatureUnlocked(pokemon.species, nature);
             const option: OptionSelectItem = {
-              label: getNatureName(nature, true, true, true),
-              style: globalScene.gameData.checkSpeciesNatureUnlocked(pokemon.species, nature)
-                ? TextStyle.WINDOW
-                : TextStyle.ME_OPTION_SPECIAL,
+              label: newNature
+                ? "(+) " + getNatureName(nature, true, true, true)
+                : getNatureName(nature, true, true, true),
+              style: newNature ? TextStyle.ME_OPTION_SPECIAL : TextStyle.WINDOW,
               handler: () => {
                 // Pokemon and second option selected
                 encounter.setDialogueToken("nature", getNatureName(nature));
@@ -275,8 +276,10 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
           const optionSelectItems: OptionSelectItem[] = [];
           abilities.forEach((ability: Ability, index) => {
             if (!optionSelectItems.some(o => o.label === ability.name)) {
+              const newAbility = !globalScene.gameData.checkStarterAbilityIndexUnlocked(pokemon.species, index);
               const option: OptionSelectItem = {
-                label: ability.name,
+                label: newAbility ? "(+) " + ability.name : ability.name,
+                style: newAbility ? TextStyle.ME_OPTION_SPECIAL : TextStyle.WINDOW,
                 handler: () => {
                   // Pokemon and ability selected
                   encounter.setDialogueToken("ability", ability.name);

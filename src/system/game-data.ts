@@ -2124,6 +2124,14 @@ export class GameData {
     return abilityAttr & AbilityAttr.ABILITY_1 ? 0 : !species.ability2 || abilityAttr & AbilityAttr.ABILITY_2 ? 1 : 2;
   }
 
+  checkStarterAbilityIndexUnlocked(species: PokemonSpecies, abilityIndex: number): boolean {
+    if (!this.isRootSpeciesUnlocked(species) || abilityIndex > 2) {
+      return true;
+    }
+    const abilityAttr = this.starterData[species.getRootSpeciesId(true)].abilityAttr;
+    return !!(abilityAttr & (1 << abilityIndex));
+  }
+
   getSpeciesDefaultNature(species: PokemonSpecies, dexEntry?: DexEntry): Nature {
     dexEntry ??= this.dexData[species.speciesId];
     for (let n = 0; n < 25; n++) {
