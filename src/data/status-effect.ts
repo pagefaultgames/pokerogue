@@ -98,12 +98,16 @@ export function getStatusEffectHealText(statusEffect: StatusEffect, pokemonNameW
   return i18next.t(i18nKey, { pokemonNameWithAffix });
 }
 
+/**
+ * @returns The localized text for the given status effect's descriptor ("poisoning", "paralysis", etc).
+ */
+// TODO: Change parameter type to Exclude<StatusEffect, StatusEffect.NONE | StatusEffect.FAINT>
 export function getStatusEffectDescriptor(statusEffect: StatusEffect): string {
   if (statusEffect === StatusEffect.NONE) {
     return "";
   }
-  const i18nKey = `${getStatusEffectMessageKey(statusEffect)}.description` as ParseKeys;
-  return i18next.t(i18nKey);
+
+  return i18next.t(`${getStatusEffectMessageKey(statusEffect)}.description`);
 }
 
 export function getStatusEffectCatchRateMultiplier(statusEffect: StatusEffect): number {

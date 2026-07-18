@@ -2,39 +2,33 @@ import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import type { Device } from "#enums/devices";
 import { TextStyle } from "#enums/text-style";
-import type { UiMode } from "#enums/ui-mode";
+import { UiMode } from "#enums/ui-mode";
 import { getIconWithSettingName } from "#inputs/config-handler";
 import type { CustomInterfaceConfig, InterfaceConfig, MappingSettingName } from "#types/configs/inputs";
-import { NavigationManager, NavigationMenu } from "#ui/navigation-menu";
+import type { InputsIcons, LayoutConfig } from "#types/ui-types";
+import { TabMenu } from "#ui/containers/tab-menu";
 import { ScrollBar } from "#ui/scroll-bar";
+import { specialIconKeys, specialIcons } from "#ui/special-icons";
 import { addTextObject, getTextColor } from "#ui/text";
 import { UiHandler } from "#ui/ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
-import { specialIconKeys, specialIcons } from "./special-icons";
 
-// TODO: Strongly type the index signature aside from simply being `string`
-export interface InputsIcons {
-  [key: string]: Phaser.GameObjects.Sprite;
-}
-
-export interface LayoutConfig {
-  optionsContainer: Phaser.GameObjects.Container;
-  inputsIcons: InputsIcons;
-  settingLabels: Phaser.GameObjects.Text[];
-  optionValueLabels: Phaser.GameObjects.Text[][];
-  optionCursors: number[];
-  keys: string[];
-  bindingSettings: string[];
-}
 /**
  * Abstract class for handling UI elements related to control settings.
  */
-export abstract class AbstractControlSettingsUiHandler extends UiHandler {
+export abstract class BaseControlSettingsUiHandler extends UiHandler {
   protected settingsContainer: Phaser.GameObjects.Container;
   protected optionsContainer: Phaser.GameObjects.Container;
-  protected navigationContainer: NavigationMenu;
+  protected tabMenu: TabMenu;
+  protected readonly settingsTabs = [
+    { mode: UiMode.SETTINGS, labelKey: "settings:general" },
+    { mode: UiMode.SETTINGS_DISPLAY, labelKey: "settings:display" },
+    { mode: UiMode.SETTINGS_AUDIO, labelKey: "settings:audio" },
+    { mode: UiMode.SETTINGS_GAMEPAD, labelKey: "settings:gamepad" },
+    { mode: UiMode.SETTINGS_KEYBOARD, labelKey: "settings:keyboard" },
+  ];
 
   protected scrollBar: ScrollBar;
   protected scrollCursor: number;
@@ -73,17 +67,12 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
   abstract saveSettingToLocalStorage(setting, cursor): void;
   abstract setSetting(setting, value: number): boolean;
 
-  /**
-   * Constructor for the AbstractSettingsUiHandler.
-   *
-   * @param mode - The UI mode.
-   */
   constructor(mode: UiMode | null = null) {
     super(mode);
     this.rowsToDisplay = 8;
   }
 
-  getLocalStorageSetting(): object {
+  private getLocalStorageSetting(): object {
     // Retrieve the settings from local storage or use an empty object if none exist.
     const settings: object = Object.hasOwn(localStorage, this.localStoragePropertyName)
       ? JSON.parse(localStorage.getItem(this.localStoragePropertyName)!)
@@ -91,10 +80,7 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
     return settings;
   }
 
-  /**
-   * Setup UI elements.
-   */
-  setup() {
+  public override setup(): void {
     const ui = this.getUi();
     this.navigationIcons = {};
 
@@ -106,22 +92,30 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
       Phaser.Geom.Rectangle.Contains,
     );
 
-    this.navigationContainer = new NavigationMenu(0, 0);
+    const tabLabels = this.settingsTabs.map(tab => i18next.t(tab.labelKey));
+    const menuWidth = globalScene.scaledCanvas.width;
+
+    this.tabMenu = new TabMenu(0, 0, menuWidth, tabLabels, _newIndex => {
+      globalScene.ui.setMode(this.settingsTabs[_newIndex].mode);
+    });
+
+    const activeIndex = this.settingsTabs.findIndex(tab => tab.mode === this.getUi().getMode());
+    if (activeIndex !== -1) {
+      this.tabMenu.setIndex(activeIndex);
+    }
+
+    const navHeight = this.tabMenu.height;
+    const navWidth = this.tabMenu.width;
 
     this.optionsBg = addWindow(
       0,
-      this.navigationContainer.height,
+      navHeight,
       globalScene.scaledCanvas.width - 2,
-      globalScene.scaledCanvas.height - 16 - this.navigationContainer.height - 2,
+      globalScene.scaledCanvas.height - 16 - navHeight - 2,
     );
     this.optionsBg.setOrigin(0, 0);
 
-    this.actionsBg = addWindow(
-      0,
-      globalScene.scaledCanvas.height - this.navigationContainer.height,
-      globalScene.scaledCanvas.width - 2,
-      22,
-    );
+    this.actionsBg = addWindow(0, globalScene.scaledCanvas.height - navHeight, globalScene.scaledCanvas.width - 2, 22);
     this.actionsBg.setOrigin(0, 0);
 
     /*
@@ -131,7 +125,7 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
 
     const iconAction = globalScene.add.sprite(0, 0, "keyboard");
     iconAction.setOrigin(0, -0.1);
-    iconAction.setPositionRelative(this.actionsBg, this.navigationContainer.width - 32, 4);
+    iconAction.setPositionRelative(this.actionsBg, navWidth - 32, 4);
     this.navigationIcons["BUTTON_ACTION"] = iconAction;
 
     const actionText = addTextObject(0, 0, i18next.t("settings:action"), TextStyle.SETTINGS_LABEL);
@@ -158,7 +152,7 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
 
     this.settingsContainer.add(this.optionsBg);
     this.settingsContainer.add(this.actionsBg);
-    this.settingsContainer.add(this.navigationContainer);
+    this.settingsContainer.add(this.tabMenu);
     this.settingsContainer.add(iconAction);
     this.settingsContainer.add(iconCancel);
     this.settingsContainer.add(iconReset);
@@ -321,21 +315,23 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
    *
    * @returns The active configuration for current device
    */
-  getActiveConfig(): CustomInterfaceConfig | null {
+  protected getActiveConfig(): CustomInterfaceConfig | null {
     return globalScene.inputController.getActiveConfig(this.device);
   }
 
   /**
    * Update the bindings for the current active device configuration.
    */
-  updateBindings(): void {
+  public updateBindings(): void {
     // Hide the options container for all layouts to reset the UI visibility.
     this.layout.keys().forEach(key => this.layout[key].optionsContainer.setVisible(false));
     // Fetch the active gamepad configuration from the input controller.
     const activeConfig = this.getActiveConfig();
 
     // Set the UI layout for the active configuration. If unsuccessful, exit the function early.
-    if (activeConfig == null || !this.setLayout(activeConfig)) {
+    // Note: `setLayout` is always invoked here (even when `activeConfig` is null) because it is
+    // responsible for displaying the "no gamepad connected" fallback message in that case.
+    if (!this.setLayout(activeConfig)) {
       return;
     }
 
@@ -373,7 +369,7 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
     this.setScrollCursor(this.scrollCursor);
   }
 
-  updateNavigationDisplay() {
+  private updateNavigationDisplay(): void {
     for (const settingName of Object.keys(this.navigationIcons)) {
       if (specialIconKeys.includes(settingName)) {
         this.navigationIcons[settingName].setTexture("keyboard");
@@ -399,11 +395,16 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
    * @param args - Arguments to be passed to the show method.
    * @returns `true` if successful.
    */
-  show(args: any[]): boolean {
+  public override show(args: any[]): boolean {
     super.show(args);
 
+    const activeIndex = this.settingsTabs.findIndex(tab => tab.mode === this.getUi().getMode());
+    if (activeIndex !== -1) {
+      this.tabMenu.setIndex(activeIndex);
+    }
+
     this.updateNavigationDisplay();
-    NavigationManager.getInstance().updateIcons();
+    this.tabMenu.updateIcons();
     // Update the bindings for the current active gamepad configuration.
     this.updateBindings();
 
@@ -428,7 +429,7 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
    * @param activeConfig - The active device configuration.
    * @returns `true` if the layout was successfully applied, otherwise `false`.
    */
-  setLayout(activeConfig: InterfaceConfig): boolean {
+  protected setLayout(activeConfig: InterfaceConfig | null): activeConfig is InterfaceConfig {
     // Check if there is no active configuration (e.g., no gamepad connected).
     if (!activeConfig) {
       // Retrieve the layout for when no gamepads are connected.
@@ -438,6 +439,8 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
       // Return false indicating the layout application was not successful due to lack of gamepad.
       return false;
     }
+    const noGamepads = this.layout["noGamepads"];
+    noGamepads?.optionsContainer?.setVisible(false);
     // Extract the type of the gamepad from the active configuration.
     const configType = activeConfig.padType;
 
@@ -465,7 +468,7 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
    * @param button - The button to process.
    * @returns `true` if the input was processed successfully.
    */
-  processInput(button: Button): boolean {
+  public override processInput(button: Button): boolean {
     const ui = this.getUi();
     // Defines the maximum number of rows that can be displayed on the screen.
     let success = false;
@@ -475,7 +478,6 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
     if (button === Button.CANCEL) {
       // Handle cancel button press, reverting UI mode to previous state.
       success = true;
-      NavigationManager.getInstance().reset();
       globalScene.ui.revertMode();
     } else {
       const cursor = this.cursor + this.scrollCursor; // Calculate the absolute cursor position.
@@ -563,7 +565,7 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
           break;
         case Button.CYCLE_FORM:
         case Button.CYCLE_SHINY:
-          success = this.navigationContainer.navigate(button);
+          success = this.tabMenu.navigate(button);
           break;
       }
     }
@@ -576,7 +578,7 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
     return success; // Return whether the input resulted in a successful action.
   }
 
-  resetScroll() {
+  protected resetScroll(): void {
     this.cursorObj?.destroy();
     this.cursorObj = null;
     this.cursor = 0;
@@ -591,7 +593,7 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
    * @param cursor - The cursor position to set.
    * @returns `true` if the cursor was set successfully.
    */
-  setCursor(cursor: number): boolean {
+  public override setCursor(cursor: number): boolean {
     const ret = super.setCursor(cursor);
     // If the optionsContainer is not initialized, return the result from the parent class directly.
     if (!this.optionsContainer) {
@@ -618,7 +620,7 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
    * @param scrollCursor - The scroll cursor position to set.
    * @returns `true` if the scroll cursor was set successfully.
    */
-  setScrollCursor(scrollCursor: number): boolean {
+  public setScrollCursor(scrollCursor: number): boolean {
     // Check if the new scroll position is the same as the current one; if so, do not update.
     if (scrollCursor === this.scrollCursor) {
       return false;
@@ -645,7 +647,7 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
    * @param save - Whether to save the setting to local storage.
    * @returns `true` if the option cursor was set successfully.
    */
-  setOptionCursor(settingIndex: number, cursor: number, save?: boolean): boolean {
+  public setOptionCursor(settingIndex: number, cursor: number, save?: boolean): boolean {
     // Retrieve the specific setting using the settingIndex from the settingDevice enumeration.
     const setting = this.setting[Object.keys(this.setting)[settingIndex]];
 
@@ -679,7 +681,7 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
   /**
    * Update the scroll position of the settings UI.
    */
-  updateSettingsScroll(): void {
+  private updateSettingsScroll(): void {
     // Return immediately if the options container is not initialized.
     if (!this.optionsContainer) {
       return;
@@ -704,7 +706,7 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
   /**
    * Clear the UI elements and state.
    */
-  clear(): void {
+  public override clear(): void {
     super.clear();
 
     // Hide the settings container to remove it from the view.
@@ -717,7 +719,7 @@ export abstract class AbstractControlSettingsUiHandler extends UiHandler {
   /**
    * Erase the cursor from the UI.
    */
-  eraseCursor(): void {
+  private eraseCursor(): void {
     // Check if a cursor object exists.
     if (this.cursorObj) {
       this.cursorObj.destroy();

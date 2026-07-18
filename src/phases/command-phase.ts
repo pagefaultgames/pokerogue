@@ -76,7 +76,8 @@ export class CommandPhase extends FieldPhase {
     // Switch back to the center pokemon. This can happen rarely in double battles with mid turn switching
     // TODO: Prevent this from happening in the first place
     if (globalScene.getPlayerField().filter(p => p.isActive()).length === 1) {
-      this.fieldIndex = FieldPosition.CENTER;
+      const activeIndex = globalScene.getPlayerField().findIndex(p => p.isActive());
+      this.fieldIndex = activeIndex === -1 ? FieldPosition.CENTER : activeIndex;
       return;
     }
 
@@ -518,6 +519,29 @@ export class CommandPhase extends FieldPhase {
    */
   private tryLeaveField(cursor?: number, isBatonSwitch = false): boolean {
     const currentBattle = globalScene.currentBattle;
+    const playerPokemon = this.getPokemon();
+
+    // A Pokemon under the Commander effect (Dondozo with Tatsugiri) cannot switch out or flee.
+    const commandedTag = playerPokemon.getTag(BattlerTagType.COMMANDED);
+    const isCommanded = commandedTag?.getSourcePokemon()?.isActive(true);
+
+    if (isCommanded) {
+      if (this.isSwitch) {
+        globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
+          globalScene.ui.showText(
+            i18next.t("battle:noEscapeForce"),
+            null,
+            () => {
+              globalScene.ui.showText("", 0);
+              globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
+            },
+            null,
+            true,
+          );
+        });
+      }
+      return false;
+    }
 
     if (isBatonSwitch || !this.handleTrap()) {
       currentBattle.turnCommands[this.fieldIndex] = this.isSwitch

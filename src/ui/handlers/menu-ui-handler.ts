@@ -9,7 +9,7 @@ import { Button } from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
-import type { OptionSelectConfig, OptionSelectItem } from "#ui/abstract-option-select-ui-handler";
+import type { OptionSelectConfig, OptionSelectItem } from "#types/ui-types";
 import type { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { BgmBar } from "#ui/bgm-bar";
 import { MessageUiHandler } from "#ui/message-ui-handler";

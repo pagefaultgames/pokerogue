@@ -12,7 +12,6 @@ import type { StarterAttributes } from "#types/save-data";
 import { FilterTextRow } from "#ui/filter-text";
 import { PokedexPageUiHandler } from "#ui/pokedex-page-ui-handler";
 import { PokedexUiHandler } from "#ui/pokedex-ui-handler";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -174,7 +173,7 @@ describe("UI - Pokedex", () => {
       setForms?: boolean;
     },
   ) {
-    const pokemon = getPokemonSpecies(species);
+    const pokemon = speciesDataRegistry.getSpecies(species);
     const checks: [PokemonSpecies | PokemonForm] = [pokemon];
     if (setForms) {
       checks.push(...pokemon.forms);
@@ -479,7 +478,7 @@ describe("UI - Pokedex", () => {
 
   it("should show caught battle form as caught", async () => {
     await game.importData("./test/utils/saves/data_pokedex_tests_v2.prsv");
-    const pageHandler = await runToPokedexPage(getPokemonSpecies(SpeciesId.VENUSAUR), { form: 1 });
+    const pageHandler = await runToPokedexPage(speciesDataRegistry.getSpecies(SpeciesId.VENUSAUR), { form: 1 });
 
     expect(pageHandler["species"].speciesId).toEqual(SpeciesId.VENUSAUR);
 
@@ -492,7 +491,7 @@ describe("UI - Pokedex", () => {
   // TODO: check tint of the sprite
   it("should show uncaught battle form as seen", async () => {
     await game.importData("./test/utils/saves/data_pokedex_tests_v2.prsv");
-    const pageHandler = await runToPokedexPage(getPokemonSpecies(SpeciesId.VENUSAUR), { form: 2 });
+    const pageHandler = await runToPokedexPage(speciesDataRegistry.getSpecies(SpeciesId.VENUSAUR), { form: 2 });
 
     expect(pageHandler["species"].speciesId).toEqual(SpeciesId.VENUSAUR);
 

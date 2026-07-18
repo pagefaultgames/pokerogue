@@ -24,7 +24,6 @@ import { Device } from "#enums/devices";
 import { DexAttr } from "#enums/dex-attr";
 import { GameDataType } from "#enums/game-data-type";
 import { GameModes } from "#enums/game-modes";
-import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
 import { PlayerGender } from "#enums/player-gender";
 import { SpeciesId } from "#enums/species-id";
@@ -60,6 +59,7 @@ import { VoucherType, vouchers } from "#system/voucher";
 import type { DexData, DexEntry } from "#types/dex-data";
 import type {
   AchvUnlocks,
+  AppliedMigrators,
   DexAttrProps,
   RunHistoryData,
   SeenDialogues,
@@ -76,7 +76,6 @@ import { applyChallenges } from "#utils/challenge-utils";
 import { fixedInt, NumberHolder, randInt, randSeedItem } from "#utils/common";
 import { decrypt, encrypt } from "#utils/data";
 import { getEnumKeys } from "#utils/enums";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import { AES, enc } from "crypto-js";
 import i18next from "i18next";
@@ -121,6 +120,14 @@ const systemShortKeys = {
   classicWinCount: "$wc",
 };
 
+const ErrorMessages = {
+  OUT_OF_DATE: i18next.t("gameData:reloadSaveData"),
+  OUT_OF_DATE_LOCAL: i18next.t("gameData:reloadSaveDataLocal"),
+  DATA_NOT_FOUND: i18next.t("gameData:saveDataNotFound"),
+  TOO_MANY_CONNECTIONS: i18next.t("gameData:tooManyConnections"),
+  FAILED_VALIDATION: i18next.t("gameData:failedSaveValidation"),
+};
+
 export class GameData {
   public trainerId: number;
   public secretId: number;
@@ -144,6 +151,8 @@ export class GameData {
   public eggs: Egg[];
   public eggPity: number[];
   public unlockPity: number[];
+
+  public appliedMigrators: AppliedMigrators = {};
 
   /**
    * @param fromRaw - If true, will skip initialization of fields that are normally randomized on new game start. Used for the admin panel; default `false`
@@ -200,6 +209,7 @@ export class GameData {
       timestamp: Date.now(),
       eggPity: this.eggPity.slice(0),
       unlockPity: this.unlockPity.slice(0),
+      appliedMigrators: this.appliedMigrators,
     };
   }
 
@@ -215,9 +225,90 @@ export class GameData {
     return this.unlocks[unlockable];
   }
 
+  /**
+   * @returns Whether the system data is valid
+   */
+  private validateSystemData(data: SystemSaveData): boolean {
+    if (data.starterData == null) {
+      console.error("Starter data missing!");
+      return false;
+    }
+
+    let dataValidated = true;
+
+    for (const speciesId of speciesDataRegistry.getAllStarters()) {
+      if (defaultStarterSpecies.includes(speciesId)) {
+        continue;
+      }
+
+      const starterEntry = data.starterData[speciesId];
+      const dexEntry = data.dexData[speciesId];
+
+      const species = SpeciesId[speciesId];
+
+      if (starterEntry == null) {
+        console.error("Missing starter data for %s (%d)!", species, speciesId);
+        dataValidated = false;
+        continue;
+      }
+      if (dexEntry == null) {
+        console.error("Missing dex data for %s (%d)!", species, speciesId);
+        dataValidated = false;
+        continue;
+      }
+
+      const hasStarterData =
+        starterEntry.abilityAttr > 0
+        || starterEntry.eggMoves > 0
+        || starterEntry.moveset != null
+        || starterEntry.passiveAttr > 0
+        || starterEntry.valueReduction > 0;
+
+      const noDexData = dexEntry.caughtCount === 0 && dexEntry.hatchedCount === 0 && dexEntry.caughtAttr === 0n;
+
+      if (hasStarterData && noDexData) {
+        console.error("Corrupt save data detected!");
+        console.warn("Species: %s (%d)", species, speciesId);
+        console.warn(starterEntry);
+        console.warn(dexEntry);
+        dataValidated = false;
+      }
+    }
+
+    return dataValidated;
+  }
+
+  private async showInvalidSaveModal<const T>(
+    returnValue: T,
+    message: string = ErrorMessages.FAILED_VALIDATION,
+  ): Promise<T> {
+    const { promise, resolve } = Promise.withResolvers<T>();
+
+    await globalScene.ui.setMode(UiMode.ALERT_MODAL, message);
+
+    // TODO: This is a temporary hacky solution to ensure the modal displays when saving
+    // on the starter select UI, which change the UI mode without awaiting this async call..
+    globalScene.time.delayedCall(fixedInt(1000), () => {
+      // on the pokedex page, which changes the UiMode after calling this so the
+      // user never sees the alert modal.
+      if (globalScene.ui.getMode() === UiMode.ALERT_MODAL) {
+        globalScene.time.delayedCall(fixedInt(4000), () => resolve(returnValue));
+      } else {
+        globalScene.ui.setMode(UiMode.ALERT_MODAL, message);
+        globalScene.time.delayedCall(fixedInt(4000), () => resolve(returnValue));
+      }
+    });
+
+    return promise;
+  }
+
   public async saveSystem(): Promise<boolean> {
-    globalScene.ui.savingIcon.show();
     const data = this.getSystemSaveData();
+
+    if (!this.validateSystemData(data)) {
+      return this.reinitializeSaveData({ message: ErrorMessages.FAILED_VALIDATION });
+    }
+    globalScene.ui.savingIcon.show();
 
     const maxIntAttrValue = 0x80000000;
     const systemData = JSON.stringify(data, (_k: any, v: any) =>
@@ -258,11 +349,11 @@ export class GameData {
 
     if (typeof saveDataOrErr === "number" || !saveDataOrErr || saveDataOrErr.length === 0 || saveDataOrErr[0] !== "{") {
       if (saveDataOrErr === 404) {
-        globalScene.phaseManager.queueMessage(i18next.t("gameData:saveDataNotFound"), null, true);
+        globalScene.phaseManager.queueMessage(ErrorMessages.DATA_NOT_FOUND, null, true);
         return true;
       }
       if (typeof saveDataOrErr === "string" && saveDataOrErr.includes("Too many connections")) {
-        globalScene.phaseManager.queueMessage(i18next.t("gameData:tooManyConnections"), null, true);
+        globalScene.phaseManager.queueMessage(ErrorMessages.TOO_MANY_CONNECTIONS, null, true);
         return false;
       }
       return false;
@@ -289,10 +380,12 @@ export class GameData {
 
   /**
    * Initialize system data _after_ it has been parsed from JSON.
-   * @param systemData The parsed `SystemSaveData` to initialize from
+   * @param systemData - The parsed `SystemSaveData` to initialize from
    */
   private initParsedSystem(systemData: SystemSaveData): void {
     applySystemVersionMigration(systemData);
+
+    this.appliedMigrators = systemData.appliedMigrators;
 
     this.trainerId = systemData.trainerId;
     this.secretId = systemData.secretId;
@@ -475,7 +568,7 @@ export class GameData {
 
   // TODO: Why is this static
   static parseSystemData(dataStr: string): SystemSaveData {
-    return JSON.parse(dataStr, (k: string, v: any) => {
+    const ret = JSON.parse(dataStr, (k: string, v: any) => {
       if (k === "gameStats") {
         return new GameStats(v);
       }
@@ -495,6 +588,8 @@ export class GameData {
 
       return k.endsWith("Attr") && !["natureAttr", "abilityAttr", "passiveAttr"].includes(k) ? BigInt(v ?? 0) : v;
     }) as SystemSaveData;
+    ret.appliedMigrators ??= {};
+    return ret;
   }
 
   convertSystemDataStr(dataStr: string, shorten = false): string {
@@ -525,7 +620,7 @@ export class GameData {
     }
 
     globalScene.phaseManager.clearPhaseQueue();
-    await this.reinitializeSaveData(JSON.stringify(systemData));
+    await this.reinitializeSaveData({ systemDataStr: JSON.stringify(systemData) });
     return false;
   }
 
@@ -542,11 +637,16 @@ export class GameData {
   /**
    * Discards local save data and re-populates it with data from the server (or the provided data).
    * @param systemDataStr - (Optional) Save data to load
+   * @param message - (Optional) The message to display to the user
    */
-  private async reinitializeSaveData(systemDataStr?: string): Promise<void> {
-    const { promise, resolve } = Promise.withResolvers<void>();
-
-    await globalScene.ui.setMode(UiMode.SESSION_RELOAD, !!systemDataStr);
+  private async reinitializeSaveData({
+    systemDataStr,
+    message,
+  }: {
+    systemDataStr?: string;
+    message?: string;
+  } = {}): Promise<false> {
+    const alertMessage = systemDataStr ? ErrorMessages.OUT_OF_DATE_LOCAL : ErrorMessages.OUT_OF_DATE;
 
     this.clearLocalData();
 
@@ -556,8 +656,7 @@ export class GameData {
       await this.loadSystem();
     }
 
-    globalScene.time.delayedCall(fixedInt(5000), () => resolve());
-    return promise;
+    return this.showInvalidSaveModal(false, message ?? alertMessage);
   }
 
   /**
@@ -1148,21 +1247,25 @@ export class GameData {
     // TODO: Add `null`/`undefined` to the corresponding type signatures for this
     // (or prevent them from being null)
     // If the value is able to *not exist*, it should say so in the code
-    const sessionData = JSON.parse(dataStr, (k: string, v: any) => {
-      // TODO: Move this to occur _after_ migrate scripts (and refactor all non-assignment duties into migrate scripts)
-      // This should ideally be just a giant assign block
+    const rawData = JSON.parse(dataStr);
+    applySessionVersionMigration(rawData);
+
+    for (const [k, v] of Object.entries(rawData)) {
       switch (k) {
         case "party":
         case "enemyParty": {
           const ret: PokemonData[] = [];
           for (const pd of v ?? []) {
+            // TODO: Consider invoking a dedicated deserialization method instead of the constructor
             ret.push(new PokemonData(pd));
           }
-          return ret;
+          rawData[k] = ret;
+          continue;
         }
 
         case "trainer":
-          return v ? new TrainerData(v) : null;
+          rawData[k] = v ? new TrainerData(v) : null;
+          continue;
 
         case "modifiers":
         case "enemyModifiers": {
@@ -1184,38 +1287,34 @@ export class GameData {
 
             ret.push(new PersistentModifierData(md, k === "modifiers"));
           }
-          return ret;
+          rawData[k] = ret;
+          continue;
         }
 
         case "arena":
-          return new ArenaData(v as SerializedArenaData);
+          rawData[k] = new ArenaData(v as SerializedArenaData);
+          continue;
 
         case "challenges": {
           const ret: ChallengeData[] = [];
           for (const c of v ?? []) {
             ret.push(new ChallengeData(c));
           }
-          return ret;
+          rawData[k] = ret;
+          continue;
         }
 
-        case "mysteryEncounterType":
-          return v as MysteryEncounterType;
-
         case "mysteryEncounterSaveData":
-          return new MysteryEncounterSaveData(v);
-
+          rawData[k] = new MysteryEncounterSaveData(v);
+          continue;
         case "dailyConfig":
           // make sure the config is valid
-          return parseDailySeed(JSON.stringify(v));
-
-        default:
-          return v;
+          rawData[k] = parseDailySeed(JSON.stringify(v));
+          continue;
       }
-    }) as SessionSaveData;
+    }
 
-    applySessionVersionMigration(sessionData);
-
-    return sessionData;
+    return rawData;
   }
 
   /**
@@ -1241,10 +1340,6 @@ export class GameData {
       }
     }
 
-    if (sync) {
-      globalScene.ui.savingIcon.show();
-    }
-
     const sessionData = useCachedSession
       ? this.parseSessionData(
           decrypt(localStorage.getItem(getSessionDataLocalStorageKey(globalScene.sessionSlotId))!, bypassLogin),
@@ -1256,6 +1351,15 @@ export class GameData {
     const systemData = useCachedSystem
       ? GameData.parseSystemData(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`)!, bypassLogin))
       : this.getSystemSaveData(); // TODO: is this bang correct?
+
+    if (!this.validateSystemData(systemData)) {
+      return this.reinitializeSaveData({ message: ErrorMessages.FAILED_VALIDATION });
+    }
+
+    // Saving icon should go after validation to avoid confusing users.
+    if (sync) {
+      globalScene.ui.savingIcon.show();
+    }
 
     const request = {
       system: systemData,
@@ -1767,7 +1871,7 @@ export class GameData {
       }
       return await this.setPokemonSpeciesCaught(
         pokemon,
-        getPokemonSpecies(prevolution),
+        speciesDataRegistry.getSpecies(prevolution),
         incrementCount,
         fromEgg,
         showMessage,

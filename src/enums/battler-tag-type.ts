@@ -93,4 +93,5 @@ export enum BattlerTagType {
   MAGIC_COAT = "MAGIC_COAT",
   SUPREME_OVERLORD = "SUPREME_OVERLORD",
   BYPASS_SPEED = "BYPASS_SPEED",
+  RAGE = "RAGE",
 }

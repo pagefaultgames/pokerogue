@@ -42,56 +42,18 @@ describe("Abilities - Protosynthesis", () => {
     // Nature of starting mon is randomized. We need to fix it to a neutral nature for the automated test.
     mew.setNature(Nature.HARDY);
     const enemy = game.field.getEnemyPokemon();
-    const def_before_boost = mew.getEffectiveStat(
-      Stat.DEF,
-      undefined,
-      undefined,
-      false,
-      undefined,
-      undefined,
-      false,
-      false,
-      true,
-    );
-    const atk_before_boost = mew.getEffectiveStat(
-      Stat.ATK,
-      undefined,
-      undefined,
-      false,
-      undefined,
-      undefined,
-      false,
-      false,
-      true,
-    );
+
+    const effectiveStatParams = { ignoreHeldItems: true };
+    const def_before_boost = mew.getEffectiveStat(Stat.DEF, effectiveStatParams);
+    const atk_before_boost = mew.getEffectiveStat(Stat.ATK, effectiveStatParams);
     const initialHp = enemy.hp;
     game.move.select(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
     const unboosted_dmg = initialHp - enemy.hp;
     enemy.hp = initialHp;
-    const def_after_boost = mew.getEffectiveStat(
-      Stat.DEF,
-      undefined,
-      undefined,
-      false,
-      undefined,
-      undefined,
-      false,
-      false,
-      true,
-    );
-    const atk_after_boost = mew.getEffectiveStat(
-      Stat.ATK,
-      undefined,
-      undefined,
-      false,
-      undefined,
-      undefined,
-      false,
-      false,
-      true,
-    );
+    const def_after_boost = mew.getEffectiveStat(Stat.DEF, effectiveStatParams);
+    const atk_after_boost = mew.getEffectiveStat(Stat.ATK, effectiveStatParams);
     game.move.select(MoveId.TACKLE);
     await game.toNextTurn();
     const boosted_dmg = initialHp - enemy.hp;

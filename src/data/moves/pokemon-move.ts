@@ -28,6 +28,7 @@ import i18next from "i18next";
  */
 export class PokemonMove {
   public moveId: MoveId;
+  // TODO: Consider making this readonly outside the class (since we provide functions to alter it already)
   public ppUsed: number;
   public ppUp: number;
 

@@ -1,6 +1,7 @@
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { NON_LEGEND_PARADOX_POKEMON } from "#balance/special-species-groups";
 import type { PokemonSpecies } from "#data/pokemon-species";
@@ -32,7 +33,6 @@ import type { MysteryEncounterOption } from "#mystery-encounters/mystery-encount
 import { MysteryEncounterOptionBuilder } from "#mystery-encounters/mystery-encounter-option";
 import { MoneyRequirement } from "#mystery-encounters/mystery-encounter-requirements";
 import { BooleanHolder, NumberHolder, randSeedInt } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/safariZone";
@@ -579,7 +579,7 @@ async function doEndTurn(cursorIndex: number) {
  * @returns A function to get a random species that has at most 5 starter cost and is not Mythical, Paradox, etc.
  */
 export function getSafariSpeciesSpawn(): PokemonSpecies {
-  return getPokemonSpecies(
+  return speciesDataRegistry.getSpecies(
     getRandomSpeciesByStarterCost([0, 5], NON_LEGEND_PARADOX_POKEMON, undefined, false, false, false),
   );
 }
