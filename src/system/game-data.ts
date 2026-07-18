@@ -2152,6 +2152,11 @@ export class GameData {
     return ret;
   }
 
+  checkSpeciesNatureUnlocked(species: PokemonSpecies, nature: Nature): boolean {
+    const dexEntry = this.dexData[species.speciesId];
+    return !!(dexEntry.natureAttr & (1 << (nature + 1)));
+  }
+
   /**
    * Obtain the value of a particular starter by SpeciesID
    * @param speciesId - The {@linkcode SpeciesId} of the starter

@@ -11,6 +11,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Nature } from "#enums/nature";
 import { getStatKey } from "#enums/stat";
+import { TextStyle } from "#enums/text-style";
 import type { PlayerPokemon, Pokemon } from "#field/pokemon";
 import type { PokemonHeldItemModifier } from "#modifiers/modifier";
 import { queueEncounterMessage, showEncounterText } from "#mystery-encounters/encounter-dialogue-utils";
@@ -189,6 +190,9 @@ export const TrainingSessionEncounter: MysteryEncounter = MysteryEncounterBuilde
           return getEnumValues(Nature).map((nature: Nature) => {
             const option: OptionSelectItem = {
               label: getNatureName(nature, true, true, true),
+              style: globalScene.gameData.checkSpeciesNatureUnlocked(pokemon.species, nature)
+                ? TextStyle.WINDOW
+                : TextStyle.ME_OPTION_SPECIAL,
               handler: () => {
                 // Pokemon and second option selected
                 encounter.setDialogueToken("nature", getNatureName(nature));
