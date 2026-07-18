@@ -306,7 +306,7 @@ export class BattleScene extends SceneBase {
     const updateSoundKeys = ["bgmVolume", "fieldVolume", "masterVolume", "soundEffectsVolume", "uiVolume"] as const;
 
     // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: necessary
-    eventBus.on("settings/updated", ({ key, value }: SettingsUpdateEventArgs) => {
+    eventBus.on("settings/update/success", ({ key, value }: SettingsUpdateEventArgs) => {
       if (updateSoundKeys.includes(key as VolumeSettingsKey) && typeof value === "number") {
         const keyMap = {
           bgmVolume: VolumeSetting.BGM,

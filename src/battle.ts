@@ -8,7 +8,6 @@ import { BattlerIndex } from "#enums/battler-index";
 import { BiomeId } from "#enums/biome-id";
 import type { Command } from "#enums/command";
 import { MoveId } from "#enums/move-id";
-import { MusicPreference } from "#enums/music-preference";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { PokeballType } from "#enums/pokeball";
@@ -255,7 +254,7 @@ export class Battle {
       if (!this.started && this.trainer?.config.encounterBgm && this.trainer.getEncounterMessages().length > 0) {
         return `encounter_${this.trainer.getEncounterBgm()}`;
       }
-      if (settings.audio.musicPreference === MusicPreference.GEN_FIVE) {
+      if (!settings.musicPreferenceAllGens) {
         return this.trainer?.getBattleBgm() ?? null;
       }
       return this.trainer?.getMixedBattleBgm() ?? null;
@@ -282,7 +281,7 @@ export class Battle {
         || pokemon.species.mythical
         || (pokemon.species.category.startsWith("Paradox") && globalScene.arena.biomeId !== BiomeId.END)
       ) {
-        if (settings.audio.musicPreference === MusicPreference.GEN_FIVE) {
+        if (!settings.musicPreferenceAllGens) {
           switch (pokemon.species.speciesId) {
             case SpeciesId.ARTICUNO:
             case SpeciesId.ZAPDOS:
@@ -306,7 +305,7 @@ export class Battle {
               return "battle_legendary_unova";
           }
         }
-        if (settings.audio.musicPreference === MusicPreference.ALL_GENS) {
+        if (settings.musicPreferenceAllGens) {
           switch (pokemon.species.speciesId) {
             case SpeciesId.ARTICUNO:
             case SpeciesId.ZAPDOS:

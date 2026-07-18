@@ -2,7 +2,7 @@ export type InputsEvent = "keyboard/init" | "gamepad/init";
 
 export type LanguageEvent = "language/change";
 
-export type SettingsEvent = "settings/updated" | "settings/update/failed" | "settings/saved";
+export type SettingsEvent = "settings/update/success" | "settings/update/failed" | "settings/saved";
 
 export type TouchControlsEvent =
   | "touchControls/move/start"

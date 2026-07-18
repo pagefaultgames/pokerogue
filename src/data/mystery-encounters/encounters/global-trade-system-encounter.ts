@@ -9,7 +9,6 @@ import type { PokemonSpecies } from "#data/pokemon-species";
 import { getTypeRgb } from "#data/type";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { ModifierTier } from "#enums/modifier-tier";
-import { MusicPreference } from "#enums/music-preference";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -127,11 +126,11 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
 
     // Load bgm
     let bgmKey: string;
-    if (settings.audio.musicPreference === MusicPreference.GEN_FIVE) {
-      bgmKey = "mystery_encounter_gen_5_gts";
-    } else {
+    if (settings.musicPreferenceAllGens) {
       // Mixed option
       bgmKey = "mystery_encounter_gen_6_gts";
+    } else {
+      bgmKey = "mystery_encounter_gen_5_gts";
     }
 
     // Load possible trade options

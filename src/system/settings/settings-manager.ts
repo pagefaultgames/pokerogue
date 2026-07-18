@@ -1,6 +1,7 @@
 import { eventBus } from "#app/event-bus";
 import { isDev } from "#constants/app-constants";
 import { GameDataType } from "#enums/game-data-type";
+import { MusicPreference } from "#enums/music-preference";
 import { PlayerGender } from "#enums/player-gender";
 import { SpriteSet } from "#enums/sprite-set";
 import { UiTheme } from "#enums/ui-theme";
@@ -70,6 +71,11 @@ class SettingsManager {
     return this.display.uiTheme === UiTheme.LEGACY;
   }
 
+  /** Getter for checking if the music from all gens should be used */
+  public get musicPreferenceAllGens(): boolean {
+    return this.audio.musicPreference === MusicPreference.ALL_GENS;
+  }
+
   /**
    * Updates a setting. Takes care of dispatching events and saving to local storage.
    * @param category - The category of the setting
@@ -89,7 +95,7 @@ class SettingsManager {
     }
 
     this._settings[category][key] = value;
-    eventBus.emit("settings/updated", { category, key, value });
+    eventBus.emit("settings/update/success", { category, key, value });
 
     this.saveToLocalStorage();
   }

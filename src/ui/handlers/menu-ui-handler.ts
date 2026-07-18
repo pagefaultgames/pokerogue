@@ -552,7 +552,7 @@ export class MenuUiHandler extends MessageUiHandler {
       this.showText("", 0);
       switch (adjustedCursor) {
         case MenuOptions.GAME_SETTINGS:
-          ui.setOverlayMode(UiMode.SETTINGS);
+          ui.setOverlayMode(UiMode.SETTINGS_GENERAL);
           success = true;
           break;
         case MenuOptions.ACHIEVEMENTS:

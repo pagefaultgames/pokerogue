@@ -1188,7 +1188,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.initTutorialOverlay(this.starterSelectContainer);
     this.starterSelectContainer.bringToTop(this.starterSelectMessageBoxContainer);
 
-    eventBus.on("settings/updated", ({ key, value }: SettingsUpdateEventArgs) => {
+    eventBus.on("settings/update/success", ({ key, value }: SettingsUpdateEventArgs) => {
       if (key === "candyUpgradeDisplayMode" && typeof value === "number") {
         this.onCandyUpgradeDisplayChanged();
       }

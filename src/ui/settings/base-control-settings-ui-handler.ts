@@ -24,7 +24,7 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
   protected optionsContainer: Phaser.GameObjects.Container;
   protected tabMenu: TabMenu;
   protected readonly settingsTabs = [
-    { mode: UiMode.SETTINGS, labelKey: "settings:general" },
+    { mode: UiMode.SETTINGS_GENERAL, labelKey: "settings:general" },
     { mode: UiMode.SETTINGS_DISPLAY, labelKey: "settings:display" },
     { mode: UiMode.SETTINGS_AUDIO, labelKey: "settings:audio" },
     { mode: UiMode.SETTINGS_GAMEPAD, labelKey: "settings:gamepad" },
