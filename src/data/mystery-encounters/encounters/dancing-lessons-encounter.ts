@@ -39,6 +39,7 @@ import { MoveRequirement } from "#mystery-encounters/mystery-encounter-requireme
 import { DANCING_MOVES } from "#mystery-encounters/requirement-groups";
 import { PokemonData } from "#system/pokemon-data";
 import type { OptionSelectItem } from "#types/ui-types";
+import { randSeedInt } from "#utils/common";
 import { groupStatChange } from "#utils/stat-change";
 import i18next from "i18next";
 
@@ -50,7 +51,7 @@ const namespace = "mysteryEncounters/dancingLessons";
 const BAILE_STYLE_BIOMES: readonly BiomeId[] = [BiomeId.TEMPLE, BiomeId.TALL_GRASS];
 
 // Electric form
-const POM_POM_STYLE_BIOMES: readonly BiomeId[] = [BiomeId.BEACH, BiomeId.GRASS, BiomeId.MEADOW];
+const POM_POM_STYLE_BIOMES: readonly BiomeId[] = [BiomeId.BEACH, BiomeId.GRASS];
 
 // Psychic form
 const PAU_STYLE_BIOMES: readonly BiomeId[] = [BiomeId.ISLAND, BiomeId.RUINS];
@@ -119,7 +120,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
     } else if (SENSU_STYLE_BIOMES.includes(currentBiome)) {
       enemyPokemon.formIndex = 3;
     } else {
-      enemyPokemon.formIndex = 0;
+      enemyPokemon.formIndex = randSeedInt(4);
     }
 
     const oricorioData = new PokemonData(enemyPokemon);
