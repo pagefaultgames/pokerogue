@@ -1,6 +1,5 @@
 import { globalScene } from "#app/global-scene";
 import { Device } from "#enums/devices";
-import { GameDataType } from "#enums/game-data-type";
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
 import { PAD_DUALSHOCK } from "#inputs/pad-dualshock";
@@ -17,7 +16,6 @@ import type { InterfaceConfig } from "#types/configs/inputs";
 import { BaseControlSettingsUiHandler } from "#ui/base-control-settings-ui-handler";
 import { addTextObject } from "#ui/text";
 import { truncateString } from "#utils/common";
-import { getDataTypeKey } from "#utils/data";
 import i18next from "i18next";
 
 /** Class representing the settings UI handler for gamepads */
@@ -31,7 +29,6 @@ export class SettingsGamepadUiHandler extends BaseControlSettingsUiHandler {
     this.settingDeviceOptions = settingGamepadOptions;
     this.configs = [PAD_XBOX360, PAD_DUALSHOCK, PAD_UNLICENSED_SNES];
     this.commonSettingsCount = 2;
-    this.localStoragePropertyName = getDataTypeKey(GameDataType.SETTINGS_GAMEPAD);
     this.settingBlacklisted = settingGamepadBlackList;
     this.device = Device.GAMEPAD;
   }

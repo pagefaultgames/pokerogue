@@ -1,6 +1,5 @@
 import { globalScene } from "#app/global-scene";
 import { Device } from "#enums/devices";
-import { GameDataType } from "#enums/game-data-type";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { CFG_KEYBOARD_QWERTY } from "#inputs/cfg-keyboard-qwerty";
@@ -16,7 +15,6 @@ import type { InterfaceConfig } from "#types/configs/inputs";
 import { BaseControlSettingsUiHandler } from "#ui/base-control-settings-ui-handler";
 import { addTextObject } from "#ui/text";
 import { truncateString } from "#utils/common";
-import { getDataTypeKey } from "#utils/data";
 import { toUpperSnakeCase } from "#utils/strings";
 import i18next from "i18next";
 
@@ -32,7 +30,6 @@ export class SettingsKeyboardUiHandler extends BaseControlSettingsUiHandler {
     this.configs = [CFG_KEYBOARD_QWERTY];
     this.commonSettingsCount = 0;
     this.textureOverride = "keyboard";
-    this.localStoragePropertyName = getDataTypeKey(GameDataType.SETTINGS_KEYBOARD);
     this.settingBlacklisted = settingKeyboardBlackList;
     this.device = Device.KEYBOARD;
 

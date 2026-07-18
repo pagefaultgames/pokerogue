@@ -123,10 +123,6 @@ export function getDataTypeKey(dataType: GameDataType, slotId = 0): string {
       return "runHistoryData";
     case GameDataType.MAPPING_CONFIG:
       return "mappingConfigs";
-    case GameDataType.SETTINGS_GAMEPAD:
-      return "settingsGamepad";
-    case GameDataType.SETTINGS_KEYBOARD:
-      return "settingsKeyboard";
   }
 }
 

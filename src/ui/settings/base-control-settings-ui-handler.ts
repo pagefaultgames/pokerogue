@@ -61,7 +61,6 @@ export abstract class BaseControlSettingsUiHandler extends UiHandler {
   protected commonSettingsCount;
   protected textureOverride;
   protected titleSelected;
-  protected localStoragePropertyName;
   protected rowsToDisplay: number;
   protected device: Device;
 
