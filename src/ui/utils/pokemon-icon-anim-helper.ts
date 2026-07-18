@@ -6,27 +6,37 @@ export enum PokemonIconAnimMode {
   NONE,
   PASSIVE,
   ACTIVE,
+  JUMP,
 }
 
 type PokemonIcon = Phaser.GameObjects.Container | Phaser.GameObjects.Sprite;
 
+interface IconState {
+  mode: PokemonIconAnimMode;
+  restY: number;
+}
+
 export class PokemonIconAnimHelper {
-  private icons: Map<PokemonIcon, PokemonIconAnimMode>;
-  private toggled: boolean;
+  private icons!: Map<PokemonIcon, IconState>;
+
+  private toggled = false;
+  private jumpOffset = 0;
 
   setup(): void {
     this.icons = new Map();
     this.toggled = false;
+    this.jumpOffset = 0;
 
+    // Existing passive/active animation.
     const onAlternate = (tween: Phaser.Tweens.Tween) => {
-      const value = tween.getValue();
-      this.toggled = !!value;
-      for (const i of this.icons.keys()) {
-        const icon = this.icons.get(i);
-        const delta = icon ? this.getModeYDelta(icon) : 0;
-        i.y += delta * (this.toggled ? 1 : -1);
+      this.toggled = !!tween.getValue();
+
+      for (const [icon, state] of this.icons) {
+        icon.y = state.restY + this.getCurrentOffset(state.mode);
       }
     };
+
+    // Idle up and down animation.
     globalScene.tweens.addCounter({
       duration: fixedInt(200),
       from: 0,
@@ -36,54 +46,103 @@ export class PokemonIconAnimHelper {
       onRepeat: onAlternate,
       onYoyo: onAlternate,
     });
+
+    // Jumping animation.
+    globalScene.tweens.chain({
+      targets: this,
+      loop: -1,
+      loopDelay: fixedInt(1000),
+      tweens: [
+        {
+          targets: this,
+          jumpOffset: -5,
+          duration: fixedInt(125),
+          ease: "Cubic.easeOut",
+          yoyo: true,
+          onUpdate: () => {
+            this.updateJumpIcons();
+          },
+        },
+        {
+          targets: this,
+          jumpOffset: -3,
+          duration: fixedInt(150),
+          ease: "Cubic.easeOut",
+          yoyo: true,
+          onUpdate: () => {
+            this.updateJumpIcons();
+          },
+        },
+      ],
+    });
   }
 
-  getModeYDelta(mode: PokemonIconAnimMode): number {
+  private getCurrentOffset(mode: PokemonIconAnimMode): number {
     switch (mode) {
-      case PokemonIconAnimMode.NONE:
-        return 0;
       case PokemonIconAnimMode.PASSIVE:
-        return -1;
+        return this.toggled ? -1 : 0;
+
       case PokemonIconAnimMode.ACTIVE:
-        return -2;
+        return this.toggled ? -2 : 0;
+
+      case PokemonIconAnimMode.JUMP:
+        return this.jumpOffset;
+
+      case PokemonIconAnimMode.NONE:
+      default:
+        return 0;
+    }
+  }
+
+  private updateJumpIcons(): void {
+    for (const [icon, state] of this.icons) {
+      icon.y = state.restY + this.getCurrentOffset(state.mode);
     }
   }
 
   addOrUpdate(icons: PokemonIcon | PokemonIcon[], mode: PokemonIconAnimMode): void {
     icons = coerceArray(icons);
-    for (const i of icons) {
-      if (this.icons.has(i) && this.icons.get(i) === mode) {
+
+    for (const icon of icons) {
+      const existing = this.icons.get(icon);
+
+      if (existing?.mode === mode) {
         continue;
       }
-      if (this.toggled) {
-        const lastYDelta = this.icons.has(i) ? this.icons.get(i)! : 0;
-        const yDelta = this.getModeYDelta(mode);
-        i.y += yDelta + lastYDelta;
-      }
-      this.icons.set(i, mode);
+
+      const restY = existing?.restY ?? icon.y;
+
+      const state: IconState = {
+        mode,
+        restY,
+      };
+
+      this.icons.set(icon, state);
+
+      icon.y = restY + this.getCurrentOffset(mode);
     }
   }
 
   remove(icons: PokemonIcon | PokemonIcon[]): void {
     icons = coerceArray(icons);
-    for (const i of icons) {
-      if (this.toggled) {
-        const icon = this.icons.get(i);
-        const delta = icon ? this.getModeYDelta(icon) : 0;
-        i.y -= delta;
+
+    for (const icon of icons) {
+      const state = this.icons.get(icon);
+
+      if (!state) {
+        continue;
       }
-      this.icons.delete(i);
+
+      icon.y = state.restY;
+      this.icons.delete(icon);
     }
   }
 
   removeAll(): void {
-    for (const i of this.icons.keys()) {
-      if (this.toggled) {
-        const icon = this.icons.get(i);
-        const delta = icon ? this.getModeYDelta(icon) : 0;
-        i.y -= delta;
-      }
-      this.icons.delete(i);
+    for (const [icon, state] of this.icons) {
+      icon.y = state.restY;
     }
+
+    this.icons.clear();
   }
 }

@@ -70,7 +70,7 @@ import { addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { checkStarterValidForChallenge } from "#utils/challenge-utils";
 import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
-import { fixedInt, getLocalizedSpriteKey, randIntRange } from "#utils/common";
+import { fixedInt, getLocalizedSpriteKey } from "#utils/common";
 import type { AllStarterPreferences } from "#utils/data";
 import { deepCopy, loadStarterPreferences, saveStarterPreferences } from "#utils/data";
 import { getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
@@ -569,12 +569,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         );
       });
 
-      this.starterContainers.forEach(container => {
-        const icon = container.icon;
-        const species = container.species;
-        this.setUpgradeAnimation(icon, species);
-      });
-
       this.starterSummary.applyChallengeVisibility();
 
       this.resetFilters();
@@ -766,49 +760,25 @@ export class StarterSelectUiHandler extends MessageUiHandler {
    * @param species - {@linkcode PokemonSpecies} of the icon used to check for upgrades
    * @param startPaused Should this animation be paused after it is added?
    */
-  protected setUpgradeAnimation(icon: Phaser.GameObjects.Sprite, species: PokemonSpecies, startPaused = false): void {
-    globalScene.tweens.killTweensOf(icon);
+  protected setUpgradeAnimation(starter: StarterContainer): void {
+    const icon = starter.icon;
+    const species = starter.species;
+
     // Skip animations if they are disabled
     if (globalScene.candyUpgradeDisplay === 0 || species.speciesId !== species.getRootSpeciesId(false)) {
+      this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.NONE); // Check that this does not interfere with setting mode to ACTIVE.
       return;
     }
 
-    icon.y = 2;
-
-    const tweenChain: Phaser.Types.Tweens.TweenChainBuilderConfig = {
-      targets: icon,
-      paused: startPaused,
-      loop: -1,
-      // Make the initial bounce a little randomly delayed
-      delay: randIntRange(0, 50) * 5,
-      loopDelay: fixedInt(1000),
-      tweens: [
-        {
-          targets: icon,
-          y: "-=5",
-          duration: fixedInt(125),
-          ease: "Cubic.easeOut",
-          yoyo: true,
-        },
-        {
-          targets: icon,
-          y: "-=3",
-          duration: fixedInt(150),
-          ease: "Cubic.easeOut",
-          yoyo: true,
-        },
-      ],
-    };
-
-    if (
+    const shouldJump =
       isPassiveAvailable(species.speciesId)
       || (globalScene.candyUpgradeNotification === 2
-        && (isValueReductionAvailable(species.speciesId) || isSameSpeciesEggAvailable(species.speciesId)))
-    ) {
-      const chain = globalScene.tweens.chain(tweenChain);
-      if (!startPaused) {
-        chain.play();
-      }
+        && (isValueReductionAvailable(species.speciesId) || isSameSpeciesEggAvailable(species.speciesId)));
+
+    if (shouldJump) {
+      this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.JUMP);
+    } else {
+      this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.NONE);
     }
   }
 
@@ -857,7 +827,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.setUpgradeIcon(starterContainer);
     }
     if (isUpgradeAnimationEnabled()) {
-      this.setUpgradeAnimation(starterContainer.icon, speciesDataRegistry.getSpecies(this.lastStarterId), true);
+      this.setUpgradeAnimation(starterContainer);
     }
   }
 
@@ -881,10 +851,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }
 
     // Loop through all animations when set to 'Animation' mode
-    this.filteredStarterIds.forEach((id, i) => {
-      const icon = this.starterContainers[i].icon;
-
-      this.setUpgradeAnimation(icon, speciesDataRegistry.getSpecies(id));
+    this.filteredStarterIds.forEach((_, i) => {
+      this.setUpgradeAnimation(this.starterContainers[i]);
     });
   }
 
@@ -2307,6 +2275,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
     this.updateScroll();
     this.tryUpdateValue();
+
+    this.starterContainers.forEach(container => {
+      this.setUpgradeAnimation(container);
+    });
   }
 
   private filterStarters(): void {
@@ -2581,6 +2553,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           container.candyUpgradeIcon.setVisible(false);
           container.candyUpgradeOverlayIcon.setVisible(false);
         }
+
+        this.setUpgradeAnimation(container);
       }
     });
   }
@@ -2718,12 +2692,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   protected startIconAnimation(cursor: number): void {
     const container = this.starterContainers[cursor];
     const icon = container.icon;
-    if (isUpgradeAnimationEnabled()) {
-      globalScene.tweens.getTweensOf(icon).forEach(tween => tween.pause());
-      // Reset the position of the icon
-      icon.x = -2;
-      icon.y = 2;
-    }
     // Initiates the small up and down idle animation
     this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.PASSIVE);
   }
@@ -2740,7 +2708,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       const lastStarterIcon = container.icon;
       const props = this.getStarterDexAttrPropsFromPreferences(container.species.speciesId as StarterSpeciesId);
       this.checkIconId(lastStarterIcon, container.species, props.female, props.formIndex, props.shiny, props.variant);
-      this.iconAnimHandler.addOrUpdate(lastStarterIcon, PokemonIconAnimMode.NONE);
+      this.setUpgradeAnimation(container);
     }
   }
 
