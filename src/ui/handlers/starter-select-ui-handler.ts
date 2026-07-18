@@ -846,9 +846,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     ).setOrigin(0);
 
     // Candy icon and count
-    const isLegacyUi = settings.isLegacyTheme;
     this.pokemonCandyContainer = globalScene.add
-      .container(isLegacyUi ? 7 : 4.5, 18)
+      .container(settings.isLegacyTheme ? 7 : 4.5, 18)
       .setInteractive(new Phaser.Geom.Rectangle(0, 0, 30, 20), Phaser.Geom.Rectangle.Contains);
     this.pokemonCandyIcon = globalScene.add //
       .sprite(0, 0, "candy")
@@ -878,7 +877,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     }).setOrigin(0);
 
     this.pokemonCaughtHatchedContainer = globalScene.add //
-      .container(isLegacyUi ? 4.5 : 2, 25)
+      .container(settings.isLegacyTheme ? 4.5 : 2, 25)
       .setScale(0.5);
 
     const pokemonCaughtIcon = globalScene.add //
@@ -893,7 +892,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       .setOrigin(0.15, 0.2)
       .setScale(0.8);
     this.pokemonShinyIcon = globalScene.add //
-      .sprite(isLegacyUi ? 8 : 14, 76, "shiny_icons")
+      .sprite(settings.isLegacyTheme ? 8 : 14, 76, "shiny_icons")
       .setOrigin(0.15, 0.2)
       .setScale(1);
     this.pokemonHatchedCountText = addTextObject(24, 19, "0", TextStyle.WINDOW_ALT) //
