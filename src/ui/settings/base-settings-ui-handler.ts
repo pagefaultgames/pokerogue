@@ -45,9 +45,8 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
   protected navigationIcons: InputsIcons;
 
   private cursorObj: Phaser.GameObjects.NineSlice | null;
-  private reloadRequired: boolean;
 
-  protected rowsToDisplay: number;
+  protected rowsToDisplay = 8;
   protected title: string;
 
   protected uiItems: SettingsUiItem[];
@@ -64,8 +63,6 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
       this.uiItems = uiItems.filter(uiItem => !uiItem.touchscreenOnly);
     }
 
-    this.reloadRequired = false;
-    this.rowsToDisplay = 8;
     this.title = capitalizeFirstLetter(category);
   }
 
@@ -507,14 +504,11 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
    */
   public override clear(): void {
     super.clear();
+
     this.settingsContainer.setVisible(false);
     this.setScrollCursor(0);
     this.eraseCursor();
     this.getUi().bgmBar.toggleBgmBar(settingsManager.display.showBgmBar);
-    if (this.reloadRequired) {
-      this.reloadRequired = false;
-      globalScene.reset(true, false, true);
-    }
   }
 
   /**
@@ -563,16 +557,14 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
       if (this.canLoseProgress()) {
         this.showConfirm(
           i18next.t("menuUiHandler:losingProgressionWarning"),
-          () => {
-            this.reloadRequired = true;
-            settingsManager.update(this.category, key as never, newValue);
-          },
+          () => settingsManager.updateAndReload(this.category, key as never, newValue),
           () => this.handleCancelConfirm(uiItem),
         );
         return;
       }
 
-      this.reloadRequired = true;
+      settingsManager.updateAndReload(this.category, key as never, newValue);
+      return;
     }
 
     settingsManager.update(this.category, key as never, newValue);
