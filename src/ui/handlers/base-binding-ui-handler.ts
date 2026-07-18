@@ -46,7 +46,7 @@ export abstract class BaseBindingUiHandler extends UiHandler {
 
   // The specific setting being modified.
   protected target;
-  protected tabMenu: TabMenu;
+  protected tabMenu: TabMenu | undefined;
 
   constructor(mode: UiMode | null = null) {
     super(mode);
@@ -190,7 +190,7 @@ export abstract class BaseBindingUiHandler extends UiHandler {
           this.cancelFn?.();
         } else {
           success = this.swapAction();
-          this.tabMenu.updateIcons();
+          this.tabMenu?.updateIcons();
           this.cancelFn?.(success);
         }
         break;
