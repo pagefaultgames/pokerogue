@@ -199,7 +199,7 @@ export class TargetSelectUiHandler extends UiHandler {
       this.targetFlashTween = null;
     }
 
-    for (const pokemon of this.targetsHighlighted) {
+    for (const pokemon of this.targetsHighlighted ?? []) {
       pokemon.setAlpha(pokemon.getTag(SubstituteTag) ? 0.5 : 1);
       this.highlightItems(pokemon.id, 1);
     }
@@ -208,7 +208,7 @@ export class TargetSelectUiHandler extends UiHandler {
       this.targetBattleInfoMoveTween.filter(t => t !== undefined).forEach(tween => tween.stop());
       this.targetBattleInfoMoveTween = [];
     }
-    for (const pokemon of this.targetsHighlighted) {
+    for (const pokemon of this.targetsHighlighted ?? []) {
       pokemon.getBattleInfo().resetY();
     }
   }

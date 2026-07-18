@@ -134,7 +134,7 @@ export class EggSummaryUiHandler extends MessageUiHandler {
       }
     });
     // Clears eggHatchData in EggSummaryUiHandler
-    this.eggHatchData.length = 0;
+    this.eggHatchData = [];
     // Removes Pokemon icons in EggSummaryUiHandler
     this.iconAnimHandler.removeAll();
   }
@@ -259,9 +259,11 @@ export class EggSummaryUiHandler extends MessageUiHandler {
       if (lastCursor > -1) {
         this.iconAnimHandler.addOrUpdate(this.pokemonContainers[lastCursor].icon, PokemonIconAnimMode.NONE);
       }
-      this.iconAnimHandler.addOrUpdate(this.pokemonContainers[cursor].icon, PokemonIconAnimMode.ACTIVE);
+      this.iconAnimHandler.addOrUpdate(this.pokemonContainers[cursor]?.icon ?? [], PokemonIconAnimMode.ACTIVE);
 
-      this.infoContainer.showHatchInfo(this.eggHatchData[cursor + this.scrollGridHandler.getItemOffset()]);
+      if (this.eggHatchData?.length > 0) {
+        this.infoContainer.showHatchInfo(this.eggHatchData[cursor + this.scrollGridHandler.getItemOffset()]);
+      }
     }
 
     return changed;

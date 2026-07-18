@@ -638,12 +638,12 @@ export class BattleScene extends SceneBase {
       hideOnComplete: true,
     });
 
-    this.reset(false, false, true);
+    this.reset(false);
 
     // Initialize UI-related aspects and then start the login phase.
     this.ui = new UI();
     this.uiContainer.add(this.ui);
-    this.ui.setup();
+    this.ui.init();
 
     this.phaseManager.toTitleScreen(true);
     this.phaseManager.shiftPhase();
@@ -1245,13 +1245,19 @@ export class BattleScene extends SceneBase {
         ease: "Sine.easeInOut",
         onComplete: () => {
           this.ui.freeUIData();
-          this.uiContainer.remove(this.ui, true);
-          this.uiContainer.destroy();
-          this.children.removeAll(true);
-          // TODO: Do we even need this?
-          this.game.domContainer.innerHTML = "";
-          // TODO: `launchBattle` calls `reset(false, false, true)`
-          this.launchBattle();
+          this.uiContainer.removeAll();
+
+          this.uiContainer = this.add //
+            .container(0, 0)
+            .setName("ui")
+            .setDepth(2)
+            .setScale(6);
+          this.uiContainer.add([this.modifierBar, this.enemyModifierBar]);
+          this.uiContainer.add(this.ui);
+          this.ui.setup();
+
+          this.phaseManager.toTitleScreen(true);
+          this.phaseManager.shiftPhase();
         },
       });
     }

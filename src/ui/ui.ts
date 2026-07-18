@@ -184,7 +184,7 @@ export class UI extends Phaser.GameObjects.Container {
     ];
   }
 
-  setup(): void {
+  init(): void {
     this.setName(`ui-${UiMode[this.mode]}`);
     for (const handler of this.handlers) {
       handler.setup();
@@ -192,19 +192,23 @@ export class UI extends Phaser.GameObjects.Container {
     this.overlay = globalScene.add.rectangle(0, 0, globalScene.scaledCanvas.width, globalScene.scaledCanvas.height, 0);
     this.overlay.setName("rect-ui-overlay");
     this.overlay.setOrigin(0, 0);
-    globalScene.uiContainer.add(this.overlay);
     this.overlay.setVisible(false);
-    this.setupTooltip();
 
     this.achvBar = new AchvBar();
-    this.achvBar.setup();
-
-    globalScene.uiContainer.add(this.achvBar);
 
     this.savingIcon = new SavingIconContainer();
-    this.savingIcon.setup();
 
+    this.achvBar.setup();
+    this.savingIcon.setup();
+    this.setupTooltip();
+    this.setup();
+  }
+
+  setup() {
+    globalScene.uiContainer.add(this.achvBar);
+    globalScene.uiContainer.add(this.overlay);
     globalScene.uiContainer.add(this.savingIcon);
+    globalScene.uiContainer.add(this.tooltipContainer);
   }
 
   private setupTooltip() {
@@ -227,8 +231,6 @@ export class UI extends Phaser.GameObjects.Container {
     this.tooltipContainer.add(this.tooltipBg);
     this.tooltipContainer.add(this.tooltipTitle);
     this.tooltipContainer.add(this.tooltipContent);
-
-    globalScene.uiContainer.add(this.tooltipContainer);
   }
 
   getHandler<H extends UiHandler = UiHandler>(): H {
@@ -660,7 +662,6 @@ export class UI extends Phaser.GameObjects.Container {
    * Attempts to free memory held by UI handlers
    */
   public freeUIData(): void {
-    this.handlers.forEach(h => h.destroy());
-    this.handlers = [];
+    this.handlers.forEach(h => h.clear());
   }
 }

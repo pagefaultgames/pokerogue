@@ -421,10 +421,14 @@ export class FightUiHandler extends UiHandler implements InfoToggle {
   clearMoves() {
     this.movesContainer.removeAll(true);
 
-    const opponents = (globalScene.phaseManager.getCurrentPhase() as CommandPhase).getPokemon().getOpponents();
-    opponents.forEach(opponent => {
-      (opponent as EnemyPokemon).updateEffectiveness();
-    });
+    const commandPhase = globalScene.phaseManager.getCurrentPhase();
+    console.log(commandPhase.phaseName);
+    if (commandPhase.is("CommandPhase")) {
+      const opponents = commandPhase.getPokemon()?.getOpponents();
+      opponents?.forEach(opponent => {
+        (opponent as EnemyPokemon).updateEffectiveness();
+      });
+    }
   }
 
   eraseCursor() {
