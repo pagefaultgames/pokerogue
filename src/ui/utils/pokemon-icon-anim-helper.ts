@@ -16,6 +16,17 @@ interface IconState {
   restY: number;
 }
 
+/**
+ * A helper class to handle icon animations in different menus (party, starter select, etc)
+ * How to use:
+ * `icons` is a list of {@linkcode PokemonIcon}, to each of which we associate a mode, and register the Y coordinate at rest.
+ * The handler contains two global tweens: one for idle animation (oscillation up and down) and one for a jumping animation.
+ * Calling `addOrUpdate` on a {@linkcode PokemonIcon} (or list of icons) assigns an animation mode:
+ * - NONE: no animation, icon does not move.
+ * - PASSIVE: idle animation, with a small oscillation amplitude.
+ * - ACTIVE: idle animation, with a larger oscillation amplitude.
+ * - JUMP: jumping animation (the icons will move up quickly, with a long interval in between).
+ */
 export class PokemonIconAnimHelper {
   private icons!: Map<PokemonIcon, IconState>;
 
