@@ -1,6 +1,7 @@
 import { pokerogueApi } from "#api/api";
 import { loggedInUser } from "#app/account";
 import { FAKE_TITLE_LOGO_CHANCE } from "#app/constants";
+import { eventBus } from "#app/event-bus";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
@@ -11,6 +12,7 @@ import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { version } from "#package.json";
 import { settings } from "#system/settings-manager";
+import type { SettingsUpdateEventArgs } from "#types/settings";
 import { TimedEventDisplay } from "#ui/event-display";
 import { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
 import { addTextObject } from "#ui/text";
@@ -112,6 +114,12 @@ export class TitleUiHandler extends OptionSelectUiHandler {
       this.splashMessageText,
       this.appVersionText,
     ]);
+
+    eventBus.on("settings/update/success", ({ key }: SettingsUpdateEventArgs) => {
+      if (key === "hideUsername" || key === "playerGender") {
+        this.updateUsername();
+      }
+    });
   }
 
   updateTitleStats(): void {

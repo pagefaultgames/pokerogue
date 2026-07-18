@@ -11,7 +11,6 @@ import { TabMenu } from "#ui/containers/tab-menu";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { ScrollBar } from "#ui/scroll-bar";
 import { addTextObject, getTextColor } from "#ui/text";
-import type { TitleUiHandler } from "#ui/title-ui-handler";
 import { addWindow } from "#ui/ui-theme";
 import { hasTouchscreen } from "#utils/app-utils";
 import { capitalizeFirstLetter } from "#utils/strings";
@@ -512,7 +511,6 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
     this.setScrollCursor(0);
     this.eraseCursor();
     this.getUi().bgmBar.toggleBgmBar(settingsManager.display.showBgmBar);
-    (this.getUi().handlers[UiMode.TITLE] as TitleUiHandler)?.updateUsername();
     if (this.reloadRequired) {
       this.reloadRequired = false;
       globalScene.reset(true, false, true);
