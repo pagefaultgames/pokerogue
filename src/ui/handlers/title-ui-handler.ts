@@ -3,6 +3,7 @@ import { loggedInUser } from "#app/account";
 import { FAKE_TITLE_LOGO_CHANCE } from "#app/constants";
 import { timedEventManager } from "#app/global-event-manager";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { isBeta, isDev } from "#constants/app-constants";
 import { getSplashMessages } from "#data/splash-messages";
 import { PlayerGender } from "#enums/player-gender";
@@ -14,7 +15,6 @@ import { TimedEventDisplay } from "#ui/event-display";
 import { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
 import { addTextObject } from "#ui/text";
 import { fixedInt, randInt, randItem } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 export class TitleUiHandler extends OptionSelectUiHandler {
@@ -139,7 +139,7 @@ export class TitleUiHandler extends OptionSelectUiHandler {
   /** Used solely to display a random Pokémon name in a splash message. */
   randomPokemon(): void {
     const rand = randInt(1025, 1);
-    const pokemon = getPokemonSpecies(rand as SpeciesId);
+    const pokemon = speciesDataRegistry.getSpecies(rand as SpeciesId);
     const splashMessage = this.splashMessage;
     if (
       this.splashMessage === "splashMessages:underratedPokemon"

@@ -11717,6 +11717,7 @@ export function initGenerationNine(): SpeciesDataMapConfig {
       MoveId.ROCK_SMASH,
       MoveId.UPROAR,
       MoveId.FACADE,
+      MoveId.REVENGE,
       MoveId.ENDEAVOR,
       MoveId.SECRET_POWER,
       MoveId.ROCK_TOMB,

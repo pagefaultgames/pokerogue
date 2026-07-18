@@ -12,6 +12,7 @@ import { validateIsArrayOfObjects } from "#utils/migrator-utils";
  * @param data - {@linkcode SystemSaveData}
  */
 const migrateAbilityData: SystemSaveMigrator = {
+  name: "migrateAbilityData",
   version: "1.0.4",
   migrate: (data: SystemSaveData): void => {
     if (data.starterData && data.dexData) {
@@ -29,6 +30,7 @@ const migrateAbilityData: SystemSaveMigrator = {
  * @param data - {@linkcode SystemSaveData}
  */
 const fixLegendaryStats: SystemSaveMigrator = {
+  name: "fixLegendaryStats",
   version: "1.0.4",
   migrate: (data: SystemSaveData): void => {
     if (
@@ -78,6 +80,7 @@ const fixLegendaryStats: SystemSaveMigrator = {
  * @param data - {@linkcode SystemSaveData}
  */
 const fixStarterData: SystemSaveMigrator = {
+  name: "fixStarterData",
   version: "1.0.4",
   migrate: (data: SystemSaveData): void => {
     if (data.starterData != null) {
@@ -104,6 +107,7 @@ export const systemMigrators: readonly SystemSaveMigrator[] = [
  * @param data - The `settings` object
  */
 const fixRerollTarget: SettingsSaveMigrator = {
+  name: "fixRerollTarget",
   version: "1.0.4",
   migrate: (data: object): void => {
     if (Object.hasOwn(data, "REROLL_TARGET") && !Object.hasOwn(data, SettingKeys.Shop_Cursor_Target)) {
@@ -124,6 +128,7 @@ export const settingsMigrators: readonly SettingsSaveMigrator[] = [fixRerollTarg
  *  @param data - {@linkcode SessionSaveData}
  */
 const migrateModifiers: SessionSaveMigrator = {
+  name: "migrateModifiers",
   version: "1.0.4",
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: necessary?
   migrate: data => {
@@ -191,6 +196,7 @@ const migrateModifiers: SessionSaveMigrator = {
 };
 
 const migrateCustomPokemonData: SessionSaveMigrator = {
+  name: "migrateCustomPokemonData",
   version: "1.0.4",
   migrate: data => {
     for (const pokemon of data.party) {

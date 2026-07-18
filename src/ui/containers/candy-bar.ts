@@ -61,6 +61,10 @@ export class CandyBar extends Phaser.GameObjects.Container {
    * @param numCandiesAdded - The number of candies just to the starter1
    */
   showStarterSpeciesCandy(starterSpeciesId: SpeciesId, numCandiesAdded: number): void {
+    if (this.pendingCandyAdditions.length >= 5) {
+      // prevent forever showing candies after opening a bunch of eggs at once
+      return;
+    }
     if (this.shown) {
       if (!this.isHiding && this.speciesId === starterSpeciesId) {
         this.cumulativeCandiesAdded += numCandiesAdded;

@@ -15,8 +15,6 @@ import { addWindow } from "#ui/ui-theme";
 import { fixedInt, formatLargeNumber } from "#utils/common";
 import i18next from "i18next";
 
-export type RunSelectCallback = (cursor: number) => void;
-
 export const RUN_HISTORY_LIMIT: number = 25;
 
 /**

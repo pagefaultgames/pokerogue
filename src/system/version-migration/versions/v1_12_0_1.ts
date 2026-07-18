@@ -6,6 +6,7 @@ import type { SystemSaveMigrator } from "#types/save-migrators";
 import { getEnumValues } from "#utils/enums";
 
 const fixDexData: SystemSaveMigrator = {
+  name: "fixDexData",
   version: "1.12.0.1",
   migrate: (data): void => {
     const defaultStarterAttr =

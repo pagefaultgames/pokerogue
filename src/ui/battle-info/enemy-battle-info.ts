@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { Stat } from "#enums/stat";
 import { TextStyle } from "#enums/text-style";
+import { TypeHints } from "#enums/type-hints";
 import { UiTheme } from "#enums/ui-theme";
 import type { EnemyPokemon } from "#field/pokemon";
 import { BattleFlyout } from "#ui/battle-flyout";
@@ -149,7 +150,7 @@ export class EnemyBattleInfo extends BattleInfo {
   updateEffectiveness(effectiveness?: string) {
     this.currentEffectiveness = effectiveness;
 
-    if (!globalScene.typeHints || effectiveness === undefined || this.flyoutMenu.flyoutVisible) {
+    if (globalScene.typeHints === TypeHints.OFF || effectiveness === undefined || this.flyoutMenu.flyoutVisible) {
       this.effectivenessContainer.setVisible(false);
       return;
     }

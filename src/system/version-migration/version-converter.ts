@@ -2,7 +2,7 @@
 
 import { version } from "#package.json";
 import { SessionMigrationError } from "#system/migration-errors";
-import type { SessionSaveData, SystemSaveData } from "#types/save-data";
+import type { AppliedMigrators, SessionSaveData, SystemSaveData } from "#types/save-data";
 import type {
   SessionSaveMigrator,
   SessionSaveMigratorIn,
@@ -13,16 +13,18 @@ import { validateIsArrayOfObjects } from "#utils/migrator-utils";
 
 /*
 // template for save migrator creation
-// versions/vA_B_C.ts
+// versions/vA_B_C_D.ts
 
-// The version for each migrator should match the filename, ie: `vA_B_C.ts` -> `version: "A.B.C"
+// The version for each migrator should match the filename, e.g.: `vA_B_C_D.ts` -> `version: "A.B.C.D"
 // This is the target version (aka the version we're ending up on after the migrators are run)
 
 // The name for each migrator should match its purpose. For example, if you're fixing
-// the ability index of a pokemon, it might be called `migratePokemonAbilityIndex`
+// the ability index of a pokemon, it might be called `migratePokemonAbilityIndex`.
+// Make sure the `name` field of the migrator matches the name of the const.
 
 const systemMigratorA: SystemSaveMigrator = {
-  version: "A.B.C",
+  name: "systemMigratorA",
+  version: "A.B.C.D",
   migrate: (data): void => {
     // migration code goes here
   },
@@ -31,7 +33,8 @@ const systemMigratorA: SystemSaveMigrator = {
 export const systemMigrators: readonly SystemSaveMigrator[] = [systemMigratorA] as const;
 
 const sessionMigratorA: SessionSaveMigrator = {
-  version: "A.B.C",
+  name: "sessionMigratorA",
+  version: "A.B.C.D",
   migrate: (data): void => {
     // migration code goes here
   },
@@ -40,7 +43,8 @@ const sessionMigratorA: SessionSaveMigrator = {
 export const sessionMigrators: readonly SessionSaveMigrator[] = [sessionMigratorA] as const;
 
 const settingsMigratorA: SettingsSaveMigrator = {
-  version: "A.B.C",
+  name: "settingsMigratorA",
+  version: "A.B.C.D",
   migrate: (data): void => {
     // migration code goes here
   },
@@ -196,8 +200,14 @@ function sortMigrators(migrators: SaveMigrator[]): void {
 function applyMigrators(migrators: readonly SaveMigrator[], data: SaveData, saveVersion: string): void {
   for (const migrator of migrators) {
     const isMigratorVersionHigher = compareVersions(saveVersion, migrator.version) === -1;
+
     if (isMigratorVersionHigher) {
       migrator.migrate(data as any);
+
+      if ("appliedMigrators" in data) {
+        const migratorNameVersion = `${migrator.version}-${migrator.name}`;
+        (data.appliedMigrators as AppliedMigrators)[migratorNameVersion] = Date.now();
+      }
     }
   }
 }

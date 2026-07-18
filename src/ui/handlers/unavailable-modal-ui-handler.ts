@@ -3,7 +3,7 @@ import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
 import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
-import type { ModalConfig } from "#ui/modal-ui-handler";
+import type { ModalConfig } from "#types/ui-types";
 import { ModalUiHandler } from "#ui/modal-ui-handler";
 import { addTextObject } from "#ui/text";
 import { sessionIdKey } from "#utils/common";

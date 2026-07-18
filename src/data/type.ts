@@ -288,6 +288,7 @@ function getTypeChartMultiplier(attackType: PokemonType, defType: PokemonType): 
 
 /**
  * Retrieve the color corresponding to a specific damage multiplier
+ * @param highContrast - (Default `false`) Whether to use alternate high-contrast colors for super effective moves
  * @returns The color, or `undefined` if the default color should be used
  */
 // TODO: This is literally never called with `defense`; remove that option
@@ -295,6 +296,7 @@ function getTypeChartMultiplier(attackType: PokemonType, defType: PokemonType): 
 export function getTypeDamageMultiplierColor(
   multiplier: TypeDamageMultiplier,
   side: "defense" | "offense",
+  highContrast = false,
 ): string | undefined {
   if (side === "offense") {
     switch (multiplier) {
@@ -309,11 +311,11 @@ export function getTypeDamageMultiplierColor(
       case 1:
         return;
       case 2:
-        return "#4AA500";
+        return highContrast ? "#2DB4FF" : "#4AA500";
       case 4:
-        return "#4BB400";
+        return highContrast ? "#00A4FF" : "#4BB400";
       case 8:
-        return "#52C200";
+        return highContrast ? "#0093FF" : "#52C200";
     }
   }
   switch (multiplier) {

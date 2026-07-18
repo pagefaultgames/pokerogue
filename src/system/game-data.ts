@@ -59,6 +59,7 @@ import { VoucherType, vouchers } from "#system/voucher";
 import type { DexData, DexEntry } from "#types/dex-data";
 import type {
   AchvUnlocks,
+  AppliedMigrators,
   DexAttrProps,
   RunHistoryData,
   SeenDialogues,
@@ -75,7 +76,6 @@ import { applyChallenges } from "#utils/challenge-utils";
 import { fixedInt, NumberHolder, randInt, randSeedItem } from "#utils/common";
 import { decrypt, encrypt } from "#utils/data";
 import { getEnumKeys } from "#utils/enums";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import { AES, enc } from "crypto-js";
 import i18next from "i18next";
@@ -152,6 +152,8 @@ export class GameData {
   public eggPity: number[];
   public unlockPity: number[];
 
+  public appliedMigrators: AppliedMigrators = {};
+
   /**
    * @param fromRaw - If true, will skip initialization of fields that are normally randomized on new game start. Used for the admin panel; default `false`
    */
@@ -207,6 +209,7 @@ export class GameData {
       timestamp: Date.now(),
       eggPity: this.eggPity.slice(0),
       unlockPity: this.unlockPity.slice(0),
+      appliedMigrators: this.appliedMigrators,
     };
   }
 
@@ -377,10 +380,12 @@ export class GameData {
 
   /**
    * Initialize system data _after_ it has been parsed from JSON.
-   * @param systemData The parsed `SystemSaveData` to initialize from
+   * @param systemData - The parsed `SystemSaveData` to initialize from
    */
   private initParsedSystem(systemData: SystemSaveData): void {
     applySystemVersionMigration(systemData);
+
+    this.appliedMigrators = systemData.appliedMigrators;
 
     this.trainerId = systemData.trainerId;
     this.secretId = systemData.secretId;
@@ -563,7 +568,7 @@ export class GameData {
 
   // TODO: Why is this static
   static parseSystemData(dataStr: string): SystemSaveData {
-    return JSON.parse(dataStr, (k: string, v: any) => {
+    const ret = JSON.parse(dataStr, (k: string, v: any) => {
       if (k === "gameStats") {
         return new GameStats(v);
       }
@@ -583,6 +588,8 @@ export class GameData {
 
       return k.endsWith("Attr") && !["natureAttr", "abilityAttr", "passiveAttr"].includes(k) ? BigInt(v ?? 0) : v;
     }) as SystemSaveData;
+    ret.appliedMigrators ??= {};
+    return ret;
   }
 
   convertSystemDataStr(dataStr: string, shorten = false): string {
@@ -1864,7 +1871,7 @@ export class GameData {
       }
       return await this.setPokemonSpeciesCaught(
         pokemon,
-        getPokemonSpecies(prevolution),
+        speciesDataRegistry.getSpecies(prevolution),
         incrementCount,
         fromEgg,
         showMessage,

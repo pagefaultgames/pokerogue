@@ -151,6 +151,7 @@ function migrateSystemHisuiBasculin(data: SystemSaveData): void {
  * The migrator will copy over some of the data.
  */
 const migrateSpeciesSplitSystem: SystemSaveMigrator = {
+  name: "migrateSpeciesSplitSystem",
   version: "1.12.0.0",
   migrate: (data: SystemSaveData): void => {
     if (!data.starterData || !data.dexData) {
@@ -222,6 +223,7 @@ function migrateSessionHisuiBasculin(pokemon: Record<string, unknown>, replaceSp
  * split into their own species in 1.12.0.0
  */
 const migrateSpeciesSplitSession: SessionSaveMigrator = {
+  name: "migrateSpeciesSplitSession",
   version: "1.12.0.0",
   migrate: data => {
     // Grab the mono-gen challenge number, used to avoid replacing species
@@ -253,6 +255,7 @@ const migrateSpeciesSplitSession: SessionSaveMigrator = {
 };
 
 const migrateRageFistHitCount: SessionSaveMigrator = {
+  name: "migrateRageFistHitCount",
   version: "1.12.0.0",
   migrate: data => {
     for (const p of data.party.concat(data.enemyParty)) {
@@ -263,6 +266,7 @@ const migrateRageFistHitCount: SessionSaveMigrator = {
 };
 
 const convertCustomPokemonDataTypes: SessionSaveMigrator = {
+  name: "convertCustomPokemonDataTypes",
   version: "1.12.0.0",
   migrate: data => {
     for (const p of data.party) {
@@ -298,6 +302,7 @@ function shiftFormChangeModifier(modifier: Record<string, unknown>): void {
 
 /** Shift the form change item values upward to account for newly added Mega Stones. */
 const shiftFormChangeItems: SessionSaveMigrator = {
+  name: "shiftFormChangeItems",
   version: "1.12.0.0",
   migrate: data => {
     if (validateIsArrayOfObjects(data.modifiers)) {
