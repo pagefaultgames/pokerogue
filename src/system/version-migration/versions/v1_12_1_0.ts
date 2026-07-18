@@ -246,15 +246,13 @@ function migrateKeys(data: object): void {
   }
 
   const lsGamepadSettings = localStorage.getItem("settingsGamepad");
-  if (lsGamepadSettings != null) {
+  if (lsGamepadSettings == null) {
+    data["gamepad"] = { activeIndex: 0, enabled: true };
+  } else {
     const oldGamepadSettings = JSON.parse(lsGamepadSettings);
 
-    if (Object.hasOwn(oldGamepadSettings, "CONTROLLER")) {
-      data["gamepad"]["activeIndex"] = oldGamepadSettings["CONTROLLER"];
-    }
-    if (Object.hasOwn(oldGamepadSettings, "GAMEPAD_SUPPORT")) {
-      data["gamepad"]["enabled"] = oldGamepadSettings["GAMEPAD_SUPPORT"];
-    }
+    data["gamepad"]["activeIndex"] = oldGamepadSettings["CONTROLLER"] ?? 0;
+    data["gamepad"]["enabled"] = !oldGamepadSettings["GAMEPAD_SUPPORT"];
 
     localStorage.removeItem("settingsGamepad");
   }
