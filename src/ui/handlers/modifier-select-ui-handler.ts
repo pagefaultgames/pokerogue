@@ -15,7 +15,7 @@ import { getPlayerShopModifierTypeOptionsForWave, TmModifierType } from "#modifi
 import type { ModifierSelectCallback } from "#phases/select-modifier-phase";
 import { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
-import { addTextObject, getModifierTierTextTint, getTextColor, getTextStyleOptions } from "#ui/text";
+import { addTextObject, getModifierTierTextTint, getTextColor, getTextStyleOptions, getTextWithColors } from "#ui/text";
 import { formatMoney, NumberHolder } from "#utils/common";
 import i18next from "i18next";
 import Phaser from "phaser";
@@ -590,7 +590,18 @@ export class ModifierSelectUiHandler extends AwaitableUiHandler {
       if (type) {
         const messageHandler = ui.getMessageHandler();
         ui.showText(type.getDescription());
-        messageHandler.showNameText(type.name, type.iconImage);
+
+        const cost = options[this.cursor].modifierTypeOption.cost;
+        if (cost > 0) {
+          const formattedMoney = formatMoney(globalScene.moneyFormat, cost);
+          const costStyleName = cost <= globalScene.money ? "MONEY" : "PARTY_RED";
+          const costText = i18next.t("modifierSelectUiHandler:itemCost", { formattedMoney });
+          const nameWithCost = `${type.name}\u00A0\u00A0\u00A0@[${costStyleName}]{${costText}}`;
+          messageHandler.showNameText(getTextWithColors(nameWithCost, TextStyle.MESSAGE, true), type.iconImage);
+        } else {
+          messageHandler.showNameText(type.name, type.iconImage);
+        }
+
         if (type instanceof TmModifierType) {
           // prepare the move overlay to be shown with the toggle
           this.moveInfoOverlay.show(allMoves[type.moveId]);

@@ -39,7 +39,7 @@ import { achvs } from "#system/achv";
 import { RibbonData } from "#system/ribbons/ribbon-data";
 import type { DexAttrProps, Starter, StarterMoveset, StarterPreferences } from "#types/save-data";
 import type { StarterSpeciesId } from "#types/starter-species-id";
-import type { OptionSelectItem } from "#ui/base-option-select-ui-handler";
+import type { OptionSelectItem } from "#types/ui-types";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
 import { FilterBar } from "#ui/filter-bar";
 import { MessageUiHandler } from "#ui/message-ui-handler";
@@ -81,8 +81,6 @@ const COLUMNS = 9;
 const ROWS = 9;
 const STARTER_ICONS_CURSOR_X_OFFSET = -3;
 const STARTER_ICONS_CURSOR_Y_OFFSET = 1;
-
-export type StarterSelectCallback = (starters: Starter[]) => void;
 
 // Position of UI elements
 const filterBarHeight = 17;

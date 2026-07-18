@@ -15,7 +15,7 @@ export class BattleMessageUiHandler extends MessageUiHandler {
   private levelUpStatsValuesContent: BBCodeText;
   private nameBox: Phaser.GameObjects.NineSlice;
   private nameIcon: Phaser.GameObjects.Sprite;
-  private nameText: Phaser.GameObjects.Text;
+  private nameText: BBCodeText;
 
   public bg: Phaser.GameObjects.Sprite;
   public commandWindow: Phaser.GameObjects.NineSlice;
@@ -83,9 +83,7 @@ export class BattleMessageUiHandler extends MessageUiHandler {
     this.nameIcon.setOrigin(0, 0);
     this.nameIcon.setVisible(false);
 
-    this.nameText = addTextObject(8, 0, "Rival", TextStyle.MESSAGE, {
-      maxLines: 1,
-    });
+    this.nameText = addBBCodeTextObject(8, 0, "Rival", TextStyle.MESSAGE, { maxLines: 1 });
 
     this.nameBoxContainer.add(this.nameBox);
     this.nameBoxContainer.add(this.nameIcon);
@@ -292,12 +290,12 @@ export class BattleMessageUiHandler extends MessageUiHandler {
       this.nameIcon.setVisible(true);
       this.nameIcon.setScale(0.5);
       this.nameText.x = this.nameIcon.x + this.nameIcon.displayWidth + 4;
-      this.nameBox.width = this.nameText.displayWidth + this.nameIcon.displayWidth + 24;
     } else {
       this.nameIcon.setVisible(false);
       this.nameText.x = 8;
-      this.nameBox.width = this.nameText.displayWidth + 16;
     }
+
+    this.nameBox.width = this.nameText.displayWidth + (this.nameIcon.visible ? this.nameIcon.displayWidth + 4 : 0) + 16;
   }
 
   hideNameText(): void {

@@ -174,8 +174,8 @@ input:-internal-autofill-selected {
 /* Hide buttons on specific UIs */
 
 /* Show #apadPreviousTab and #apadNextTab only in settings, except in touch configuration panel */
-#touchControls:not([data-ui-mode^="SETTINGS"]) #apadPreviousTab,
-#touchControls:not([data-ui-mode^="SETTINGS"]) #apadNextTab,
+#touchControls:not([data-ui-mode^="SETTINGS"], [data-ui-mode="CHALLENGE_SELECT"]) #apadPreviousTab,
+#touchControls:not([data-ui-mode^="SETTINGS"], [data-ui-mode="CHALLENGE_SELECT"]) #apadNextTab,
 #touchControls:is(.config-mode) #apadPreviousTab,
 #touchControls:is(.config-mode) #apadNextTab {
   display: none;

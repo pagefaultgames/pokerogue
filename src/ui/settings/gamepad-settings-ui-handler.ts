@@ -19,13 +19,7 @@ import { truncateString } from "#utils/common";
 import i18next from "i18next";
 
 /** Class representing the settings UI handler for gamepads */
-
 export class SettingsGamepadUiHandler extends BaseControlSettingsUiHandler {
-  /**
-   * Creates an instance of SettingsGamepadUiHandler.
-   *
-   * @param mode - The UI mode, optional.
-   */
   constructor(mode: UiMode | null = null) {
     super(mode);
     this.titleSelected = "Gamepad";
@@ -41,9 +35,6 @@ export class SettingsGamepadUiHandler extends BaseControlSettingsUiHandler {
 
   setSetting = setSettingGamepad;
 
-  /**
-   * Setup UI elements.
-   */
   setup() {
     super.setup();
     // If no gamepads are detected, set up a default UI prompt in the settings container.
