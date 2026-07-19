@@ -422,8 +422,8 @@ export class StarterSelectUiHandler extends MessageUiHandler {
 
   private starterSelectCallback: StarterSelectCallback | null;
 
-  private starterPreferences: StarterPreferences = loadStarterPreferences();
-  private originalStarterPreferences: StarterPreferences = this.starterPreferences;
+  private starterPreferences: StarterPreferences;
+  private originalStarterPreferences: StarterPreferences;
 
   /**
    * Used to check whether any moves were swapped using the reorder menu, to decide

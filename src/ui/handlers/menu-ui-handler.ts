@@ -794,9 +794,6 @@ export class MenuUiHandler extends MessageUiHandler {
 
   clear() {
     super.clear();
-    if (this.message) {
-      this.clearText();
-    }
     this.menuMessageBoxContainer.setVisible(false);
     this.menuContainer.setVisible(false);
     this.bgmBar.toggleBgmBar(false);

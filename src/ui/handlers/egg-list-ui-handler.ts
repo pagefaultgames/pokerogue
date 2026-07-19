@@ -155,11 +155,7 @@ export class EggListUiHandler extends MessageUiHandler {
    * @param index which egg in the list to display the info for
    */
   private setEggDetails(index: number): void {
-    const egg = globalScene.gameData.eggs?.[index];
-    if (!egg) {
-      return;
-    }
-
+    const egg = globalScene.gameData.eggs[index];
     this.eggSprite.setFrame(`egg_${egg.getKey()}`);
     this.eggNameText.setText(`${i18next.t("egg:egg")} (${egg.getEggDescriptor()})`);
     this.eggDateText.setText(
@@ -201,11 +197,8 @@ export class EggListUiHandler extends MessageUiHandler {
     changed = super.setCursor(cursor);
 
     if (changed) {
-      const icon = this.eggIcons?.[cursor] ?? [];
-
-      if (icon) {
-        this.cursorObj.setPositionRelative(icon, 114, 5);
-      }
+      const icon = this.eggIcons[cursor];
+      this.cursorObj.setPositionRelative(icon, 114, 5);
 
       if (lastCursor > -1) {
         this.iconAnimHandler.addOrUpdate(this.eggIcons[lastCursor], PokemonIconAnimMode.NONE);
