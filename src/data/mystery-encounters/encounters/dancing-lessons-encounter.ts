@@ -109,7 +109,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
     }
 
     // Set the form index based on the biome
-    // Defaults to Baile style if somehow nothing matches
+    // Picks a random form if none is specified for the current biome
     const currentBiome = globalScene.arena.biomeId;
     if (BAILE_STYLE_BIOMES.includes(currentBiome)) {
       enemyPokemon.formIndex = 0;
