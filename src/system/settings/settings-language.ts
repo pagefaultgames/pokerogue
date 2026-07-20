@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
+import type { SettingsDisplayUiHandler } from "#ui/display-settings-ui-handler";
 import type { LoginRegisterInfoContainerUiHandler } from "#ui/login-register-info-container-ui-handler";
-import type { SettingsDisplayUiHandler } from "#ui/settings-display-ui-handler";
 import i18next from "i18next";
 
 const cancelHandler = () => {
@@ -110,7 +110,7 @@ export const languageOptions = [
     handler: () => changeLocaleHandler("hi"),
   },
   {
-    label: "Tiếng Việt (Needs Help)",
+    label: "Tiếng Việt",
     handler: () => changeLocaleHandler("vi"),
   },
   {
@@ -118,16 +118,8 @@ export const languageOptions = [
     handler: () => changeLocaleHandler("da"),
   },
   {
-    label: "Norsk bokmål (Needs Help)",
-    handler: () => changeLocaleHandler("nb-NO"),
-  },
-  {
     label: "Svenska",
     handler: () => changeLocaleHandler("sv"),
-  },
-  {
-    label: "Română (Needs Help)",
-    handler: () => changeLocaleHandler("ro"),
   },
   {
     label: "Tagalog (Needs Help)",

@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
-import { starterColors } from "#app/global-vars/starter-colors";
+import { getStarterColors } from "#app/global-vars/starter-colors";
 import { speciesEggMoves } from "#balance/moves/egg-moves";
 import {
   getPassiveCandyCount,
@@ -30,8 +30,8 @@ import { getVariantIcon, getVariantTint } from "#sprites/variant";
 import type { GameData } from "#system/game-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
-import type { DexAttrProps, StarterAttributes } from "#types/save-data";
-import type { OptionSelectConfig } from "#ui/abstract-option-select-ui-handler";
+import type { DexAttrProps, StarterAttributes, StarterPreferences } from "#types/save-data";
+import type { OptionSelectConfig } from "#types/ui-types";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
 import { FilterBar } from "#ui/filter-bar";
 import { FilterText, FilterTextRow } from "#ui/filter-text";
@@ -43,7 +43,6 @@ import { addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
 import { BooleanHolder, fixedInt, getLocalizedSpriteKey, padInt, randIntRange } from "#utils/common";
-import type { StarterPreferences } from "#utils/data";
 import { loadStarterPreferences } from "#utils/data";
 import { enumValueToKey } from "#utils/enums";
 import { getDexNumber, getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
@@ -137,10 +136,6 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: "28px",
     starterInfoXPos: 34,
   },
-  ro: {
-    starterInfoTextSize: "56px",
-    instructionTextSize: "28px",
-  },
   ru: {
     starterInfoTextSize: "46px",
     instructionTextSize: "28px",
@@ -164,10 +159,6 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: "28px",
   },
   tl: {
-    starterInfoTextSize: "56px",
-    instructionTextSize: "28px",
-  },
-  "nb-NO": {
     starterInfoTextSize: "56px",
     instructionTextSize: "28px",
   },
@@ -1941,17 +1932,12 @@ export class PokedexUiHandler extends MessageUiHandler {
 
           // 'Candy Icon' mode
           if (globalScene.candyUpgradeDisplay === 0) {
-            if (!starterColors[this.getStarterSpeciesId(speciesId)]) {
-              // Default to white if no colors are found
-              starterColors[this.getStarterSpeciesId(speciesId)] = ["ffffff", "ffffff"];
-            }
-
             // Set the candy colors
             container.candyUpgradeIcon.setTint(
-              argbFromRgba(rgbHexToRgba(starterColors[this.getStarterSpeciesId(speciesId)][0])),
+              argbFromRgba(rgbHexToRgba(getStarterColors(this.getStarterSpeciesId(speciesId))[0])),
             );
             container.candyUpgradeOverlayIcon.setTint(
-              argbFromRgba(rgbHexToRgba(starterColors[this.getStarterSpeciesId(speciesId)][1])),
+              argbFromRgba(rgbHexToRgba(getStarterColors(this.getStarterSpeciesId(speciesId))[1])),
             );
           } else if (globalScene.candyUpgradeDisplay === 1) {
             container.candyUpgradeIcon.setVisible(false);

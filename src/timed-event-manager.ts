@@ -9,7 +9,6 @@ import type { TrainerType } from "#enums/trainer-type";
 import type { ModifierTypeKeys } from "#modifiers/modifier-type";
 import type { EventEncounter, EventMysteryEncounterTier, EventWeatherPools, TimedEvent } from "#types/events";
 import { randSeedShuffle } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 import { timedEvents } from "./data/balance/timed-events";
 import { globalScene } from "./global-scene";
@@ -90,7 +89,7 @@ export class TimedEventManager {
     speciesFilter: PokemonSpeciesFilter,
   ): EventEncounter[] {
     return this.getEventEncounters().filter(enc => {
-      const species = getPokemonSpecies(enc.species);
+      const species = speciesDataRegistry.getSpecies(enc.species);
       return (
         (allowSubLegendary || !species.subLegendary)
         && (allowLegendary || !species.legendary)
