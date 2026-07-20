@@ -10251,7 +10251,7 @@ export function initMoves() {
       .soundBased()
       .target(MoveTarget.RANDOM_NEAR_ENEMY)
       // Does not lock the user, does not stop Pokemon from sleeping
-      // Likely can make use of FrenzyAttr and an ArenaTag (just without the FrenzyMissFunc)
+      // Likely can make use of a MoveLockTag and an ArenaTag
       .partial(),
     new SelfStatusMove(MoveId.STOCKPILE, PokemonType.NORMAL, -1, 20, -1, 0, 3)
       .condition(user => (user.getTag(StockpilingTag)?.stockpiledCount ?? 0) < 3, 3)

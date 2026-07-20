@@ -54,7 +54,6 @@ describe("Frenzy Move Reset", () => {
 
     await game.move.forceStatusActivation(true);
     await game.toNextTurn();
-
     // Paralysis disrupts the follow-up, so nothing is re-queued and the tag is removed.
     expect(playerPokemon.summonData.moveQueue.length).toBe(0);
     expect(playerPokemon.summonData.tags.some(tag => tag.tagType === BattlerTagType.FRENZY)).toBe(false);
