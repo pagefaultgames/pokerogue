@@ -566,7 +566,8 @@ export abstract class BattleInfo extends Phaser.GameObjects.Container {
   async updateInfo(pokemon: Pokemon, instant?: boolean): Promise<void> {
     let resolve: (r: void | PromiseLike<void>) => void = () => {};
     const promise = new Promise<void>(r => (resolve = r));
-    if (!globalScene) {
+
+    if (!globalScene || !this.active) {
       return resolve();
     }
 

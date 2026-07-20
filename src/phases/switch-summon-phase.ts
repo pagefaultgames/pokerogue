@@ -13,8 +13,15 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import type { Pokemon } from "#field/pokemon";
 import { SwitchEffectTransferModifier } from "#modifiers/modifier";
 import { SummonPhase } from "#phases/summon-phase";
+import type { MoveAttrString } from "#types/move-types";
 import { inSpeedOrder } from "#utils/speed-order-generator";
 import i18next from "i18next";
+
+/**
+ * Unique attributes that signal a pokemon has been switched out.
+ * Any attribute extending these attributes does not need to be added to this list.
+ */
+const SELF_SWITCH_MOVE_ATTRS = ["ForceSwitchOutAttr", "PartingShotAttr"] as const satisfies readonly MoveAttrString[];
 
 export class SwitchSummonPhase extends SummonPhase {
   public readonly phaseName: "SwitchSummonPhase" | "ReturnPhase" = "SwitchSummonPhase";
@@ -222,7 +229,7 @@ export class SwitchSummonPhase extends SummonPhase {
 
     const currentCommand = globalScene.currentBattle.turnCommands[this.fieldIndex]?.command;
     const lastPokemonIsForceSwitchedAndNotFainted =
-      lastUsedMove?.hasAttr("ForceSwitchOutAttr") && !this.lastPokemon.isFainted();
+      SELF_SWITCH_MOVE_ATTRS.some(attr => lastUsedMove?.hasAttr(attr)) && !this.lastPokemon.isFainted();
     const lastPokemonHasForceSwitchAbAttr =
       this.lastPokemon.hasAbilityWithAttr("PostDamageForceSwitchAbAttr") && !this.lastPokemon.isFainted();
 

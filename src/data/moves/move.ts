@@ -5977,7 +5977,7 @@ export class IvyCudgelTypeAttr extends VariableMoveTypeAttr {
 export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, _target: Pokemon, move: Move, args: any[]): boolean {
     const moveType = args[0];
-    if (!(moveType instanceof NumberHolder)) {
+    if (!(moveType instanceof ValueHolder)) {
       return false;
     }
 
@@ -7534,6 +7534,12 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         .getAttrs("ForceSwitchOutAttr")
         .find(attr => attr.switchType === SwitchType.FORCE_SWITCH);
 
+      // Dondozo with an allied Tatsugiri in its mouth cannot switch or be forced out
+      const commandedTag = switchOutTarget.getTag(BattlerTagType.COMMANDED);
+      if (commandedTag?.getSourcePokemon()?.isActive(true)) {
+        return false;
+      }
+
       if (!this.selfSwitch) {
         if (move.hitsSubstitute(user, target)) {
           return false;
@@ -7547,12 +7553,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
           if (remainingPokemon.length <= 1) {
             return false;
           }
-        }
-
-        // Dondozo with an allied Tatsugiri in its mouth cannot be forced out
-        const commandedTag = switchOutTarget.getTag(BattlerTagType.COMMANDED);
-        if (commandedTag?.getSourcePokemon()?.isActive(true)) {
-          return false;
         }
 
         if (

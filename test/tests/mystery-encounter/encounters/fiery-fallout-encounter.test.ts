@@ -1,4 +1,5 @@
 import type { BattleScene } from "#app/battle-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import * as BattleAnims from "#data/battle-anims";
 import { Gender } from "#data/gender";
 import { Status } from "#data/status-effect";
@@ -15,7 +16,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { AttackTypeBoosterModifier, PokemonHeldItemModifier } from "#modifiers/modifier";
 import * as EncounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
 import { FieryFalloutEncounter } from "#mystery-encounters/fiery-fallout-encounter";
-import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounter-biomes";
 import { MovePhase } from "#phases/move-phase";
 import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
 import { GameManager } from "#test/framework/game-manager";
@@ -25,7 +26,6 @@ import {
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/utils/encounter-test-utils";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import i18next from "i18next";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -109,14 +109,14 @@ describe("Fiery Fallout - Mystery Encounter", () => {
       {
         pokemonConfigs: [
           {
-            species: getPokemonSpecies(SpeciesId.VOLCARONA),
+            species: speciesDataRegistry.getSpecies(SpeciesId.VOLCARONA),
             isBoss: false,
             gender: Gender.MALE,
             tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
             mysteryEncounterBattleEffects: expect.any(Function),
           },
           {
-            species: getPokemonSpecies(SpeciesId.VOLCARONA),
+            species: speciesDataRegistry.getSpecies(SpeciesId.VOLCARONA),
             isBoss: false,
             gender: Gender.FEMALE,
             tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
