@@ -63,6 +63,7 @@ const LATEST_VERSION = version;
 
 // Add migrator imports below
 
+import * as v1_0_3 from "#system/v1_0_3";
 import * as v1_0_4 from "#system/v1_0_4";
 import * as v1_7_0 from "#system/v1_7_0";
 import * as v1_8_3 from "#system/v1_8_3";
@@ -77,6 +78,7 @@ import * as v1_12_0_3 from "#system/v1_12_0_3";
 
 /** All system save migrators */
 const systemMigrators: SystemSaveMigrator[] = [
+  ...v1_0_3.systemMigrators,
   ...v1_0_4.systemMigrators,
   ...v1_7_0.systemMigrators,
   ...v1_8_3.systemMigrators,
