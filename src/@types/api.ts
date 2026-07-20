@@ -6,6 +6,7 @@ export interface UserInfo {
   discordId: string;
   googleId: string;
   hasAdminRole: boolean;
+  resetCode: string;
 }
 
 export interface TitleStatsResponse {
@@ -24,7 +25,6 @@ export interface AccountLoginRequest {
 
 export interface AccountLoginResponse {
   token: string;
-  resetCode: string;
 }
 
 export interface AccountRegisterRequest {
