@@ -57,7 +57,6 @@ import {
   IncreasePpUsedAbAttr,
   InfiltratorAbAttr,
   IntimidateImmunityAbAttr,
-  LevitatingAbAttr,
   LowHpMoveTypePowerBoostAbAttr,
   MaxMultiHitAbAttr,
   MoneyAbAttr,

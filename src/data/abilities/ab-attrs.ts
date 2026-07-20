@@ -6146,7 +6146,6 @@ export const AbilityAttrs = Object.freeze({
   IncreasePpUsedAbAttr,
   InfiltratorAbAttr,
   IntimidateImmunityAbAttr,
-  LevitatingAbAttr,
   LowHpMoveTypePowerBoostAbAttr,
   MaxMultiHitAbAttr,
   MoneyAbAttr,
