@@ -27,7 +27,6 @@ import { StatusEffect } from "#enums/status-effect";
 import { MoveUsedEvent } from "#events/battle-scene";
 import type { Pokemon } from "#field/pokemon";
 import { applyMoveAttrs } from "#moves/apply-attrs";
-import { frenzyMissFunc } from "#moves/move-utils";
 import type { PokemonMove } from "#moves/pokemon-move";
 import type { Move, PreUseInterruptAttr } from "#types/move-types";
 import type { TurnMove } from "#types/turn-move";
@@ -950,10 +949,6 @@ export class MovePhase extends PokemonPhase {
     }
 
     const pokemon = this.pokemon;
-
-    if (this.cancelled && pokemon.summonData.tags.some(t => t.tagType === BattlerTagType.FRENZY)) {
-      frenzyMissFunc(pokemon, this.move.getMove());
-    }
 
     const moveHistoryEntry = this.moveHistoryEntry;
     // TODO: probably redundant; everything that sets `failed/cancelled` changes the history entry

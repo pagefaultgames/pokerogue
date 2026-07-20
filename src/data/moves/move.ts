@@ -105,7 +105,7 @@ import {
   upperHandCondition,
   userSleptOrComatoseCondition,
 } from "#moves/move-condition";
-import { frenzyMissFunc, getCounterAttackTarget, getMoveTargets } from "#moves/move-utils";
+import { getCounterAttackTarget, getMoveTargets } from "#moves/move-utils";
 import { PokemonMove } from "#moves/pokemon-move";
 import type { MovePhase } from "#phases/move-phase";
 import type { Constructor } from "#types/common";
@@ -6550,52 +6550,6 @@ export class BypassRedirectAttr extends MoveAttr {
   }
 }
 
-export class FrenzyAttr extends MoveEffectAttr {
-  constructor() {
-    super(true, { lastHitOnly: true });
-  }
-
-  canApply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]) {
-    return !(this.selfTarget ? user : target).isFainted();
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(user, target, move, args)) {
-      return false;
-    }
-
-    // TODO: Disable if used via dancer
-    // TODO: Add support for moves that don't add the frenzy tag (Uproar, Rollout, etc.)
-
-    // If frenzy is not active, add a tag and push 1-2 extra turns of attacks to the user's move queue.
-    // Otherwise, tick down the existing tag.
-    if (!user.getTag(BattlerTagType.FRENZY) && user.getMoveQueue().length === 0) {
-      const turnCount = user.randBattleSeedIntRange(1, 2); // excludes initial use
-      for (let i = 0; i < turnCount; i++) {
-        // Re-roll a random target for each queued turn, rather than reusing the
-        // turn this move was first used against. Fixes frenzy moves always hitting
-        // the same target for their full duration in battles with multiple enemies.
-        //
-        // Note: this picks targets for all frenzy turns right away, when frenzy starts.
-        // If an enemy faints or switches out partway through, that change won't
-        // affect targets that were already picked for the remaining turns.
-        const { targets: candidateTargets } = getMoveTargets(user, move.id, MoveTarget.NEAR_ENEMY);
-        const frenzyTarget =
-          candidateTargets.length > 0
-            ? candidateTargets[user.randBattleSeedInt(candidateTargets.length)]
-            : target.getBattlerIndex();
-        user.pushMoveQueue({ move: move.id, targets: [frenzyTarget], useMode: MoveUseMode.IGNORE_PP });
-      }
-      user.addTag(BattlerTagType.FRENZY, turnCount, move.id, user.id);
-    } else {
-      applyMoveAttrs("AddBattlerTagAttr", user, target, move, args);
-      user.lapseTag(BattlerTagType.FRENZY);
-    }
-
-    return true;
-  }
-}
-
 /**
  * Attribute that grants {@link https://bulbapedia.bulbagarden.net/wiki/Semi-invulnerable_turn | semi-invulnerability} to the user during
  * the associated move's charging phase. Should only be used for {@linkcode ChargingMove | ChargingMoves} as a `chargeAttr`.
@@ -9416,7 +9370,6 @@ const MoveAttrs = Object.freeze({
   NoEffectAttr,
   TypelessAttr,
   BypassRedirectAttr,
-  FrenzyAttr,
   SemiInvulnerableAttr,
   LeechSeedAttr,
   FallDownAttr,
@@ -9579,9 +9532,7 @@ export function initMoves() {
       .attr(RecoilAttr)
       .recklessMove(),
     new AttackMove(MoveId.THRASH, PokemonType.NORMAL, MoveCategory.PHYSICAL, 120, 100, 10, -1, 0, 1)
-      .attr(FrenzyAttr)
-      .attr(MissEffectAttr, frenzyMissFunc)
-      .attr(NoEffectAttr, frenzyMissFunc)
+      .attr(AddBattlerTagAttr, BattlerTagType.FRENZY, true, false, 2, 3)
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new AttackMove(MoveId.DOUBLE_EDGE, PokemonType.NORMAL, MoveCategory.PHYSICAL, 120, 100, 15, -1, 0, 1)
       .attr(RecoilAttr, false, 0.33)
@@ -9715,9 +9666,7 @@ export function initMoves() {
       .powderMove()
       .reflectable(),
     new AttackMove(MoveId.PETAL_DANCE, PokemonType.GRASS, MoveCategory.SPECIAL, 120, 100, 10, -1, 0, 1)
-      .attr(FrenzyAttr)
-      .attr(MissEffectAttr, frenzyMissFunc)
-      .attr(NoEffectAttr, frenzyMissFunc)
+      .attr(AddBattlerTagAttr, BattlerTagType.FRENZY, true, false, 2, 3)
       .makesContact()
       .danceMove()
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
@@ -10114,9 +10063,7 @@ export function initMoves() {
         }),
       ),
     new AttackMove(MoveId.OUTRAGE, PokemonType.DRAGON, MoveCategory.PHYSICAL, 120, 100, 10, -1, 0, 2)
-      .attr(FrenzyAttr)
-      .attr(MissEffectAttr, frenzyMissFunc)
-      .attr(NoEffectAttr, frenzyMissFunc)
+      .attr(AddBattlerTagAttr, BattlerTagType.FRENZY, true, false, 2, 3)
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new StatusMove(MoveId.SANDSTORM, PokemonType.ROCK, -1, 5, -1, 0, 2)
       .attr(WeatherChangeAttr, WeatherType.SANDSTORM)
@@ -12332,9 +12279,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [Stat.SPATK], 1, true),
     new AttackMove(MoveId.RAGING_FURY, PokemonType.FIRE, MoveCategory.PHYSICAL, 120, 100, 10, -1, 0, 8)
       .makesContact(false)
-      .attr(FrenzyAttr)
-      .attr(MissEffectAttr, frenzyMissFunc)
-      .attr(NoEffectAttr, frenzyMissFunc)
+      .attr(AddBattlerTagAttr, BattlerTagType.FRENZY, true, false, 2, 3)
       .target(MoveTarget.RANDOM_NEAR_ENEMY),
     new AttackMove(MoveId.WAVE_CRASH, PokemonType.WATER, MoveCategory.PHYSICAL, 120, 100, 10, -1, 0, 8)
       .attr(RecoilAttr, false, 0.33)
