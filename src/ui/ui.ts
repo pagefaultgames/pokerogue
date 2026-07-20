@@ -204,7 +204,7 @@ export class UI extends Phaser.GameObjects.Container {
     this.setup();
   }
 
-  setup() {
+  setupUiContainer() {
     globalScene.uiContainer.add(this.achvBar);
     globalScene.uiContainer.add(this.overlay);
     globalScene.uiContainer.add(this.savingIcon);
@@ -662,6 +662,6 @@ export class UI extends Phaser.GameObjects.Container {
    * Attempts to free memory held by UI handlers
    */
   public freeUIData(): void {
-    this.handlers.forEach(h => h.clear());
+    this.handlers.forEach(h => h.active && h.clear());
   }
 }
