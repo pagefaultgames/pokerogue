@@ -26,6 +26,7 @@ export async function updateUserInfo(): Promise<[success: boolean, status: numbe
     discordId: "",
     googleId: "",
     hasAdminRole: false,
+    resetCode: "",
   };
   for (let s = 0; s < 5; s++) {
     if (localStorage.getItem(getSessionDataLocalStorageKey(s))) {

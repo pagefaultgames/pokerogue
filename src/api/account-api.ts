@@ -22,6 +22,7 @@ export class PokerogueAccountApi extends ApiBase {
 
       if (response.ok) {
         const resData = (await response.json()) as AccountInfoResponse;
+        setResetCode(resData.username, resData.resetCode);
         return [resData, response.status];
       }
       console.warn("Could not get account info!", response.status, response.statusText);
@@ -65,7 +66,6 @@ export class PokerogueAccountApi extends ApiBase {
       if (response.ok) {
         const loginResponse = (await response.json()) as AccountLoginResponse;
         setCookie(SESSION_ID_COOKIE_NAME, loginResponse.token);
-        setResetCode(loginData.username, loginResponse.resetCode);
         return null;
       }
       console.warn("Login failed!", response.status, response.statusText);
