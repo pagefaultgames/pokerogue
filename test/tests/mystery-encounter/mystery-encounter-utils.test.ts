@@ -20,7 +20,6 @@ import { MysteryEncounter } from "#mystery-encounters/mystery-encounter";
 import { MessagePhase } from "#phases/message-phase";
 import { GameManager } from "#test/framework/game-manager";
 import { initSceneWithoutEncounterPhase } from "#test/utils/game-manager-utils";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import Phaser from "phaser";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -214,7 +213,7 @@ describe("Mystery Encounter Utils", () => {
   describe("getRandomSpeciesByStarterCost", () => {
     it("gets species for a starter tier", () => {
       const result = getRandomSpeciesByStarterCost(5);
-      const pokeSpecies = getPokemonSpecies(result);
+      const pokeSpecies = speciesDataRegistry.getSpecies(result);
 
       expect(pokeSpecies.speciesId).toBe(result);
       expect(speciesDataRegistry.getStarterCost(result)).toBe(5);
@@ -222,7 +221,7 @@ describe("Mystery Encounter Utils", () => {
 
     it("gets species for a starter tier range", () => {
       const result = getRandomSpeciesByStarterCost([5, 8]);
-      const pokeSpecies = getPokemonSpecies(result);
+      const pokeSpecies = speciesDataRegistry.getSpecies(result);
 
       expect(pokeSpecies.speciesId).toBe(result);
       expect(speciesDataRegistry.getStarterCost(result)).toBeGreaterThanOrEqual(5);
@@ -242,7 +241,7 @@ describe("Mystery Encounter Utils", () => {
         SpeciesId.TERAPAGOS,
         SpeciesId.ZACIAN,
       ]);
-      const pokeSpecies = getPokemonSpecies(result);
+      const pokeSpecies = speciesDataRegistry.getSpecies(result);
       expect(pokeSpecies.speciesId).toBe(SpeciesId.ZAMAZENTA);
     });
 
@@ -250,7 +249,7 @@ describe("Mystery Encounter Utils", () => {
       // Only 9 tiers are: Kyogre, Groudon, Rayquaza, Arceus, Zygarde, Zacian, Zamazenta, Koraidon, Miraidon, Terapagos
       // TODO: This has to be changed
       const result = getRandomSpeciesByStarterCost(9, undefined, [PokemonType.WATER]);
-      const pokeSpecies = getPokemonSpecies(result);
+      const pokeSpecies = speciesDataRegistry.getSpecies(result);
       expect(pokeSpecies.speciesId).toBe(SpeciesId.KYOGRE);
     });
   });

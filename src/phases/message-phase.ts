@@ -24,6 +24,10 @@ export class MessagePhase extends Phase {
     this.prompt = prompt;
     this.promptDelay = promptDelay;
     this.speaker = speaker;
+
+    if (globalScene.manualMessageClear) {
+      this.prompt = true;
+    }
   }
 
   start() {

@@ -11,7 +11,7 @@ import { ContactHeldItemTransferChanceModifier } from "#modifiers/modifier";
 import { PokemonMove } from "#moves/pokemon-move";
 import { BugTypeSuperfanEncounter } from "#mystery-encounters/bug-type-superfan-encounter";
 import * as encounterPhaseUtils from "#mystery-encounters/encounter-phase-utils";
-import * as MysteryEncounters from "#mystery-encounters/mystery-encounters";
+import * as MysteryEncounters from "#mystery-encounters/mystery-encounter-biomes";
 import { MysteryEncounterPhase } from "#phases/mystery-encounter-phases";
 import { GameManager } from "#test/framework/game-manager";
 import {

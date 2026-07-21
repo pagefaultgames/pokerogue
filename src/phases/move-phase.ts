@@ -652,28 +652,16 @@ export class MovePhase extends PokemonPhase {
    * Deduct PP from the move being used, accounting for Pressure and other effects.
    */
   protected usePP(): void {
-    if (!isIgnorePP(this.useMode)) {
-      const move = this.move;
-      // "commit" to using the move, deducting PP.
-      const ppUsed = 1 + this.getPpIncreaseFromPressure(this.getActiveTargetPokemon());
-      move.usePp(ppUsed);
-      globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon.id, move.getMove(), move.ppUsed));
+    if (isIgnorePP(this.useMode)) {
+      return;
     }
-  }
-
-  /**
-   * Apply PP increasing abilities (currently only {@linkcode AbilityId.PRESSURE | Pressure})
-   * on all target Pokemon.
-   * @param targets - An array containing all active Pokemon targeted by this Phase's move
-   * @returns The amount of extra PP consumed due to Pressure
-   */
-  // TODO: This hardcodes the PP increase at 1 per opponent, rather than deferring to the ability.
-  // This is likely due to said ability being a stub...
-  public getPpIncreaseFromPressure(targets: Pokemon[]): number {
-    const foesWithPressure = this.pokemon
-      .getOpponents(true)
-      .filter(opponent => targets.includes(opponent) && opponent.hasAbilityWithAttr("IncreasePpAbAttr"));
-    return foesWithPressure.length;
+    const { move, pokemon: user } = this;
+    const ppHolder = new NumberHolder(1);
+    this.getActiveTargetPokemon().forEach(target => {
+      applyAbAttrs("IncreasePpUsedAbAttr", { pokemon: target, opponent: user, pp: ppHolder });
+    });
+    move.usePp(ppHolder.value);
+    globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon.id, move.getMove(), move.ppUsed));
   }
 
   /**

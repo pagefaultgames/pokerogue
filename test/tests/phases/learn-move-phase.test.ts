@@ -29,7 +29,7 @@ describe("Learn Move Phase", () => {
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.phaseInterceptor.to("LearnMovePhase");
-    const levelMove = pokemon.getLevelMoves(5)[0];
+    const levelMove = pokemon.getLevelMoves({ startingLevel: 5 })[0];
     const levelReq = levelMove[0];
     const levelMoveId = levelMove[1];
     expect(pokemon.level).toBeGreaterThanOrEqual(levelReq);
@@ -56,7 +56,7 @@ describe("Learn Move Phase", () => {
     });
     await game.phaseInterceptor.to("LearnMovePhase");
 
-    const levelMove = bulbasaur.getLevelMoves(5)[0];
+    const levelMove = bulbasaur.getLevelMoves({ startingLevel: 5 })[0];
     const levelReq = levelMove[0];
     const levelMoveId = levelMove[1];
     expect(bulbasaur.level).toBeGreaterThanOrEqual(levelReq);
@@ -89,7 +89,7 @@ describe("Learn Move Phase", () => {
     });
     await game.phaseInterceptor.to("LearnMovePhase");
 
-    const levelReq = bulbasaur.getLevelMoves(5)[0][0];
+    const levelReq = bulbasaur.getLevelMoves({ startingLevel: 5 })[0][0];
     expect(bulbasaur.level).toBeGreaterThanOrEqual(levelReq);
     expect(bulbasaur.getMoveset().map(m => m?.moveId)).toEqual(prevMoveset);
   });
@@ -113,7 +113,7 @@ describe("Learn Move Phase", () => {
     });
     await game.phaseInterceptor.to("LearnMovePhase");
 
-    const levelReq = bulbasaur.getLevelMoves(5)[0][0];
+    const levelReq = bulbasaur.getLevelMoves({ startingLevel: 5 })[0][0];
     expect(bulbasaur.level).toBeGreaterThanOrEqual(levelReq);
     expect(bulbasaur.getMoveset().map(m => m?.moveId)).toEqual(prevMoveset);
   });
