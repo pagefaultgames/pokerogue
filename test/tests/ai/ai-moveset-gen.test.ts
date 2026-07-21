@@ -13,7 +13,6 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { EnemyPokemon } from "#field/pokemon";
 import { GameManager } from "#test/framework/game-manager";
 import { NumberHolder } from "#utils/common";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
 /**
@@ -52,7 +51,7 @@ function createTestablePokemon(
 ): EnemyPokemon {
   const pokemon = new EnemyPokemon(speciesDataRegistry.getSpecies(speciesId), level, trainerSlot, boss);
   if (formIndex !== 0) {
-    const formIndexLength = getPokemonSpecies(speciesId)?.forms.length;
+    const formIndexLength = speciesDataRegistry.getSpecies(speciesId)?.forms.length;
     const name = speciesDataRegistry.getSpecies(speciesId).name;
     expect(formIndex, `${name} does not have a form with index ${formIndex}`).toBeLessThan(formIndexLength);
     pokemon.formIndex = formIndex;
@@ -291,6 +290,15 @@ describe("Regression Tests - ai-moveset-gen.ts", () => {
       // Generate the moveset
       generateMoveset(pokemon);
       expect(pokemon.moveset).toHaveLength(4);
+    });
+
+    it("should fall back to soft-blocked moves instead of generating an empty moveset", async () => {
+      pokemon = createTestablePokemon(SpeciesId.BLIPBUG, { level: 10, boss: true });
+      vi.spyOn(pokemon, "getLevelMoves").mockReturnValue([[1, MoveId.HELPING_HAND, LearnableMoveSource.OTHER]]);
+
+      generateMoveset(pokemon);
+
+      expect(pokemon.moveset.map(m => m.moveId)).toEqual([MoveId.HELPING_HAND]);
     });
   });
 });

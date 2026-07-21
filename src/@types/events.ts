@@ -1,6 +1,5 @@
 import type { BiomeId } from "#enums/biome-id";
 import type { EventType } from "#enums/event-type";
-import type { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import type { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { SpeciesId } from "#enums/species-id";
@@ -31,7 +30,6 @@ export interface EventMysteryEncounterTier {
 export interface EventWaveReward {
   /**
    * The wave at which the reward should be given.
-   * {@linkcode ClassicFixedBossWaves.RIVAL_1} and {@linkcode ClassicFixedBossWaves.RIVAL_2} are currently the only waves that give fixed rewards.
    */
   readonly wave: number;
   readonly type: ModifierTypeKeys;

@@ -388,6 +388,7 @@ interface PokemonMatchers {
    * Check whether a {@linkcode Pokemon} has applied a specific {@linkcode AbilityId}.
    * @param expectedAbilityId - The `AbilityId` that should have been applied
    */
+  // TODO: Naming this `toHaveAppliedAbility` would make more sense
   toHaveAbilityApplied(expectedAbilityId: AbilityId): void;
 
   /**

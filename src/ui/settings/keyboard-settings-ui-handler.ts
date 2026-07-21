@@ -13,7 +13,6 @@ import {
 } from "#system/settings-keyboard";
 import type { InterfaceConfig } from "#types/configs/inputs";
 import { BaseControlSettingsUiHandler } from "#ui/base-control-settings-ui-handler";
-import { NavigationManager } from "#ui/navigation-menu";
 import { addTextObject } from "#ui/text";
 import { truncateString } from "#utils/common";
 import { toUpperSnakeCase } from "#utils/strings";
@@ -21,11 +20,6 @@ import i18next from "i18next";
 
 /** Class representing the settings UI handler for keyboards */
 export class SettingsKeyboardUiHandler extends BaseControlSettingsUiHandler {
-  /**
-   * Creates an instance of SettingsKeyboardUiHandler.
-   *
-   * @param mode - The UI mode, optional.
-   */
   constructor(mode: UiMode | null = null) {
     super(mode);
     this.titleSelected = "Keyboard";
@@ -47,9 +41,6 @@ export class SettingsKeyboardUiHandler extends BaseControlSettingsUiHandler {
 
   setSetting = setSettingKeyboard;
 
-  /**
-   * Setup UI elements.
-   */
   setup() {
     super.setup();
     // If no gamepads are detected, set up a default UI prompt in the settings container.
@@ -63,7 +54,7 @@ export class SettingsKeyboardUiHandler extends BaseControlSettingsUiHandler {
 
     const iconDelete = globalScene.add.sprite(0, 0, "keyboard");
     iconDelete.setOrigin(0, -0.1);
-    iconDelete.setPositionRelative(this.actionsBg, this.navigationContainer.width - 260, 4);
+    iconDelete.setPositionRelative(this.actionsBg, this.tabMenu.width - 260, 4);
     this.navigationIcons["BUTTON_DELETE"] = iconDelete;
 
     const deleteText = addTextObject(0, 0, i18next.t("settings:delete"), TextStyle.SETTINGS_LABEL);
@@ -86,7 +77,7 @@ export class SettingsKeyboardUiHandler extends BaseControlSettingsUiHandler {
       return;
     }
     globalScene.gameData.resetMappingToFactory();
-    NavigationManager.getInstance().updateIcons();
+    this.tabMenu?.updateIcons();
   }
 
   /**
@@ -105,7 +96,7 @@ export class SettingsKeyboardUiHandler extends BaseControlSettingsUiHandler {
     if (success) {
       this.saveCustomKeyboardMappingToLocalStorage(activeConfig);
       this.updateBindings();
-      NavigationManager.getInstance().updateIcons();
+      this.tabMenu?.updateIcons();
     }
   }
 
@@ -115,7 +106,7 @@ export class SettingsKeyboardUiHandler extends BaseControlSettingsUiHandler {
    * @param activeConfig - The active keyboard configuration.
    * @returns `true` if the layout was successfully applied, otherwise `false`.
    */
-  setLayout(activeConfig: InterfaceConfig): boolean {
+  setLayout(activeConfig: InterfaceConfig | null): activeConfig is InterfaceConfig {
     // Check if there is no active configuration (e.g., no gamepad connected).
     if (!activeConfig) {
       // Retrieve the layout for when no gamepads are connected.

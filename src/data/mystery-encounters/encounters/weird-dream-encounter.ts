@@ -43,7 +43,7 @@ import { trainerConfigs } from "#trainers/trainer-config";
 import { TrainerPartyTemplate } from "#trainers/trainer-party-template";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import { NumberHolder, randSeedInt, randSeedShuffle } from "#utils/common";
-import { getPokemonSpecies, getRandomRegularPokemonType } from "#utils/pokemon-utils";
+import { getRandomRegularPokemonType } from "#utils/pokemon-utils";
 import i18next from "i18next";
 
 /** i18n namespace for encounter */
@@ -569,7 +569,7 @@ async function postProcessTransformedPokemon(
       isNewStarter = true;
       await showEncounterText(
         i18next.t("battle:addedAsAStarter", {
-          pokemonName: getPokemonSpecies(speciesRootForm).getName(),
+          pokemonName: speciesDataRegistry.getSpecies(speciesRootForm).getName(),
         }),
       );
     }
@@ -786,7 +786,11 @@ async function addEggMoveToNewPokemonMoveset(
 
       // For pokemon that the player owns (including ones just caught), unlock the egg move
       if (!forBattle && randomEggMoveIndex != null && globalScene.gameData.dexData[speciesRootForm].caughtAttr) {
-        await globalScene.gameData.setEggMoveUnlocked(getPokemonSpecies(speciesRootForm), randomEggMoveIndex, true);
+        await globalScene.gameData.setEggMoveUnlocked(
+          speciesDataRegistry.getSpecies(speciesRootForm),
+          randomEggMoveIndex,
+          true,
+        );
       }
     }
   }

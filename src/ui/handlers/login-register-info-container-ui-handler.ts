@@ -1,9 +1,8 @@
 import { globalScene } from "#app/global-scene";
 import { UiMode } from "#enums/ui-mode";
 import { languageOptions } from "#system/settings-language";
-import type { OptionSelectItem } from "#ui/base-option-select-ui-handler";
+import type { ModalConfig, OptionSelectItem } from "#types/ui-types";
 import { FormModalUiHandler } from "#ui/form-modal-ui-handler";
-import type { ModalConfig } from "#ui/modal-ui-handler";
 import { fixedInt } from "#utils/common";
 import i18next from "i18next";
 import JSZip from "jszip";

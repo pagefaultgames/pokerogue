@@ -9,7 +9,7 @@ import { activeOverrides } from "#app/overrides";
 import { isIos } from "#app/touch-controls";
 import { Tutorial } from "#app/tutorial";
 import { speciesEggMoves } from "#balance/moves/egg-moves";
-import { bypassLogin, isBeta, isDev } from "#constants/app-constants";
+import { bypassLogin, isBeta, isDev, systemSaveShortKeyMap } from "#constants/app-constants";
 import { MAX_STARTER_CANDY_COUNT } from "#constants/game-constants";
 import { EntryHazardTag } from "#data/arena-tag";
 import { getSerializedDailyRunConfig, parseDailySeed } from "#data/daily-seed/daily-seed-utils";
@@ -74,9 +74,8 @@ import type {
 import { RUN_HISTORY_LIMIT } from "#ui/run-history-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
 import { fixedInt, NumberHolder, randInt, randSeedItem } from "#utils/common";
-import { decrypt, encrypt } from "#utils/data";
+import { decrypt, encrypt, isValidJSON } from "#utils/data";
 import { getEnumKeys } from "#utils/enums";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 import { toCamelCase } from "#utils/strings";
 import { AES, enc } from "crypto-js";
 import i18next from "i18next";
@@ -102,24 +101,6 @@ function getDataTypeKey(dataType: GameDataType, slotId = 0): string {
       return "runHistoryData";
   }
 }
-
-const systemShortKeys = {
-  seenAttr: "$sa",
-  caughtAttr: "$ca",
-  natureAttr: "$na",
-  seenCount: "$s",
-  caughtCount: "$c",
-  hatchedCount: "$hc",
-  ivs: "$i",
-  moveset: "$m",
-  eggMoves: "$em",
-  candyCount: "$x",
-  friendship: "$f",
-  abilityAttr: "$a",
-  passiveAttr: "$pa",
-  valueReduction: "$vr",
-  classicWinCount: "$wc",
-};
 
 const ErrorMessages = {
   OUT_OF_DATE: i18next.t("gameData:reloadSaveData"),
@@ -593,15 +574,15 @@ export class GameData {
     return ret;
   }
 
-  convertSystemDataStr(dataStr: string, shorten = false): string {
+  private convertSystemDataStr(dataStr: string, shorten = false): string {
     if (!shorten) {
       // Account for past key oversight
       dataStr = dataStr.replace(/\$pAttr/g, "$pa");
     }
     dataStr = dataStr.replace(/"trainerId":\d+/g, `"trainerId":${this.trainerId}`);
     dataStr = dataStr.replace(/"secretId":\d+/g, `"secretId":${this.secretId}`);
-    const fromKeys = shorten ? Object.keys(systemShortKeys) : Object.values(systemShortKeys);
-    const toKeys = shorten ? Object.values(systemShortKeys) : Object.keys(systemShortKeys);
+    const fromKeys = shorten ? Object.keys(systemSaveShortKeyMap) : Object.values(systemSaveShortKeyMap);
+    const toKeys = shorten ? Object.values(systemSaveShortKeyMap) : Object.keys(systemSaveShortKeyMap);
     for (const k in fromKeys) {
       dataStr = dataStr.replace(new RegExp(`${fromKeys[k].replace("$", "\\$")}`, "g"), toKeys[k]);
     }
@@ -1464,15 +1445,12 @@ export class GameData {
   public importData(dataType: GameDataType, slotId = 0): void {
     const dataKey = `${getDataTypeKey(dataType, slotId)}_${loggedInUser?.username}`;
 
-    let saveFile: any = document.getElementById("saveFile");
-    if (saveFile) {
-      saveFile.remove();
-    }
+    document.getElementById("saveFile")?.remove();
 
-    saveFile = document.createElement("input");
+    const saveFile = document.createElement("input");
     saveFile.id = "saveFile";
     saveFile.type = "file";
-    saveFile.accept = ".prsv";
+    saveFile.accept = ".prsv, .json, .txt";
 
     // iOS requires user interaction with a visible element to trigger file input
     if (isIos()) {
@@ -1526,7 +1504,7 @@ export class GameData {
       saveFile.style.display = "none";
     }
 
-    saveFile.addEventListener("change", e => {
+    saveFile.addEventListener("change", ev => {
       const overlay = document.getElementById("iosUploadOverlay");
       const button = document.getElementById("iosUploadButton");
       overlay?.remove();
@@ -1536,9 +1514,17 @@ export class GameData {
 
       reader.onload = (_ => {
         return e => {
-          const dataName = i18next.t(`gameData:${toCamelCase(GameDataType[dataType])}`);
-          let dataStr = AES.decrypt(e.target?.result?.toString()!, saveKey).toString(enc.Utf8); // TODO: is this bang correct?
           let valid = false;
+          const dataName = i18next.t(`gameData:${toCamelCase(GameDataType[dataType])}`);
+          const saveData = e.target?.result?.toString() ?? "";
+
+          let dataStr: string;
+          if (isValidJSON(saveData)) {
+            dataStr = saveData;
+          } else {
+            dataStr = AES.decrypt(saveData, saveKey).toString(enc.Utf8);
+          }
+
           try {
             switch (dataType) {
               case GameDataType.SYSTEM: {
@@ -1629,9 +1615,9 @@ export class GameData {
             );
           });
         };
-      })((e.target as any).files[0]);
+      })((ev.target as any).files[0]);
 
-      reader.readAsText((e.target as any).files[0]);
+      reader.readAsText((ev.target as any).files[0]);
     });
 
     if (!isIos()) {
@@ -1872,7 +1858,7 @@ export class GameData {
       }
       return await this.setPokemonSpeciesCaught(
         pokemon,
-        getPokemonSpecies(prevolution),
+        speciesDataRegistry.getSpecies(prevolution),
         incrementCount,
         fromEgg,
         showMessage,

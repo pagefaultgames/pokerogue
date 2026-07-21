@@ -36,7 +36,7 @@ jobs:
       local-scripts: ${{ steps.filter.outputs.local-scripts }}
     steps:
       - name: Checkout GitHub repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # 7.0.0
         with:
           sparse-checkout: |
             .github/lint-filters.yml
@@ -54,7 +54,7 @@ jobs:
 
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # 7.0.0
         with:
           submodules: "recursive"
 
@@ -74,9 +74,7 @@ jobs:
             (
               needs.linting-path-filter.outputs.all == 'true' ||
               needs.linting-path-filter.outputs.ts-files == 'true' ||
-              needs.linting-path-filter.outputs.js-files == 'true' ||
-              needs.linting-path-filter.outputs.github-scripts == 'true' ||
-              needs.linting-path-filter.outputs.local-scripts == 'true'
+              needs.linting-path-filter.outputs.js-files == 'true'
             ) }}
 
       # Validate dependencies with dependency-cruiser - https://github.com/sverweij/dependency-cruiser

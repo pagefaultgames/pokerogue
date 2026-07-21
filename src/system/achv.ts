@@ -11,12 +11,12 @@ import {
 } from "#data/challenge";
 import { Challenges } from "#enums/challenges";
 import { PlayerGender } from "#enums/player-gender";
+import { PokemonType, type RegularPokemonType } from "#enums/pokemon-type";
 import { getShortenedStatKey, Stat } from "#enums/stat";
 import { TurnHeldItemTransferModifier } from "#modifiers/modifier";
 import type { ConditionFn } from "#types/common";
 import { isNuzlockeChallenge } from "#utils/challenge-utils";
 import { NumberHolder } from "#utils/common";
-import { toCamelCase } from "#utils/strings";
 import i18next from "i18next";
 import type { Modifier } from "typescript";
 
@@ -28,11 +28,15 @@ export enum AchvTier {
   MASTER,
 }
 
+function getGenderStr(): string {
+  const genderIndex = globalScene?.gameData?.gender ?? PlayerGender.MALE;
+  const genderStr = PlayerGender[genderIndex].toLowerCase();
+  return genderStr;
+}
+
 export class Achv {
   public localizationKey: string;
   public id: string;
-  public name: string;
-  public description: string;
   public iconImage: string;
   public score: number;
 
@@ -42,14 +46,7 @@ export class Achv {
 
   protected conditionFunc?: ConditionFn;
 
-  constructor(
-    localizationKey: string,
-    description: string,
-    iconImage: string,
-    score: number,
-    conditionFunc?: ConditionFn,
-  ) {
-    this.description = description;
+  constructor(localizationKey: string, iconImage: string, score: number, conditionFunc?: ConditionFn) {
     this.iconImage = iconImage;
     this.score = score;
     if (conditionFunc != null) {
@@ -58,21 +55,13 @@ export class Achv {
     this.localizationKey = localizationKey;
   }
 
-  /**
-   * Get the name of the achievement based on the gender of the player
-   * @param playerGender - the gender of the player (default: {@linkcode PlayerGender.UNSET})
-   * @returns the name of the achievement localized for the player gender
-   */
-  getName(playerGender: PlayerGender = PlayerGender.UNSET): string {
-    const genderStr = PlayerGender[playerGender].toLowerCase();
+  public get name(): string {
     // Localization key is used to get the name of the achievement
-    return i18next.t(`achv:${this.localizationKey}.name`, {
-      context: genderStr,
-    });
+    return i18next.t(`achv:${this.localizationKey}.name`, { context: getGenderStr() });
   }
 
-  getDescription(): string {
-    return this.description;
+  public get description(): string {
+    return i18next.t(`achv:${this.localizationKey}.description`, { context: getGenderStr() });
   }
 
   getIconImage(): string {
@@ -107,350 +96,140 @@ export class Achv {
 }
 
 export class MoneyAchv extends Achv {
-  moneyAmount: number;
+  private readonly moneyAmount: number;
 
   constructor(localizationKey: string, moneyAmount: number, iconImage: string, score: number) {
-    super(localizationKey, "", iconImage, score, () => globalScene.money >= this.moneyAmount);
+    super(localizationKey, iconImage, score, () => globalScene.money >= this.moneyAmount);
     this.moneyAmount = moneyAmount;
+  }
+
+  public override get description(): string {
+    return i18next.t("achv:moneyAchv.description", {
+      context: getGenderStr(),
+      moneyAmount: this.moneyAmount.toLocaleString("en-US"),
+    });
   }
 }
 
 export class RibbonAchv extends Achv {
-  ribbonAmount: number;
+  private readonly ribbonAmount: number;
 
   constructor(localizationKey: string, ribbonAmount: number, iconImage: string, score: number) {
-    super(
-      localizationKey,
-      "",
-      iconImage,
-      score,
-      () => globalScene.gameData.gameStats.ribbonsOwned >= this.ribbonAmount,
-    );
+    super(localizationKey, iconImage, score, () => globalScene.gameData.gameStats.ribbonsOwned >= this.ribbonAmount);
     this.ribbonAmount = ribbonAmount;
+  }
+
+  public override get description(): string {
+    return i18next.t("achv:ribbonAchv.description", {
+      context: getGenderStr(),
+      ribbonAmount: this.ribbonAmount.toLocaleString("en-US"),
+    });
   }
 }
 
 export class DamageAchv extends Achv {
-  damageAmount: number;
+  private readonly damageAmount: number;
   // intentionally overwriting base property
   protected declare readonly conditionFunc: ConditionFn<[number | NumberHolder]>;
 
   constructor(localizationKey: string, damageAmount: number, iconImage: string, score: number) {
-    super(localizationKey, "", iconImage, score);
+    super(localizationKey, iconImage, score);
     this.conditionFunc = (args: [NumberHolder | number]) =>
       (args[0] instanceof NumberHolder ? args[0].value : args[0]) >= this.damageAmount;
     this.damageAmount = damageAmount;
   }
+
+  public override get description(): string {
+    return i18next.t("achv:damageAchv.description", {
+      context: getGenderStr(),
+      damageAmount: this.damageAmount.toLocaleString("en-US"),
+    });
+  }
 }
 
 export class HealAchv extends Achv {
-  healAmount: number;
+  private readonly healAmount: number;
   protected declare readonly conditionFunc: ConditionFn<[number | NumberHolder]>;
 
   constructor(localizationKey: string, healAmount: number, iconImage: string, score: number) {
-    super(localizationKey, "", iconImage, score);
+    super(localizationKey, iconImage, score);
     this.conditionFunc = (args: [number | NumberHolder]) =>
       (args[0] instanceof NumberHolder ? args[0].value : args[0]) >= this.healAmount;
     this.healAmount = healAmount;
   }
+
+  public override get description(): string {
+    return i18next.t("achv:healAchv.description", {
+      context: getGenderStr(),
+      healAmount: this.healAmount.toLocaleString("en-US"),
+      HP: i18next.t(getShortenedStatKey(Stat.HP)),
+    });
+  }
 }
 
 export class LevelAchv extends Achv {
-  level: number;
+  private readonly level: number;
 
   constructor(localizationKey: string, level: number, iconImage: string, score: number) {
     super(
       localizationKey,
-      "",
       iconImage,
       score,
       (args: any[]) => (args[0] instanceof NumberHolder ? args[0].value : args[0]) >= this.level,
     );
     this.level = level;
   }
+
+  public get description(): string {
+    return i18next.t("achv:levelAchv.description", {
+      context: getGenderStr(),
+      level: this.level,
+    });
+  }
 }
 
 export class ModifierAchv extends Achv {
   constructor(
     localizationKey: string,
-    description: string,
     iconImage: string,
     score: number,
     modifierFunc: (modifier: Modifier) => boolean,
   ) {
-    super(localizationKey, description, iconImage, score, (args: any[]) => modifierFunc(args[0] as Modifier));
+    super(localizationKey, iconImage, score, (args: any[]) => modifierFunc(args[0] as Modifier));
   }
 }
 
 export class ChallengeAchv extends Achv {
   constructor(
     localizationKey: string,
-    description: string,
     iconImage: string,
     score: number,
     challengeFunc: (challenge: Challenge) => boolean,
   ) {
-    super(localizationKey, description, iconImage, score, (args: any[]) => challengeFunc(args[0] as Challenge));
+    super(localizationKey, iconImage, score, (args: any[]) => challengeFunc(args[0] as Challenge));
   }
 }
 
-/**
- * Get the description of an achievement from the localization file with all the necessary variables filled in
- * @param localizationKey The localization key of the achievement
- * @returns The description of the achievement
- */
-export function getAchievementDescription(localizationKey: string): string {
-  // We need to get the player gender from the game data to add the correct prefix to the achievement name
-  const genderIndex = globalScene?.gameData?.gender ?? PlayerGender.MALE;
-  const genderStr = PlayerGender[genderIndex].toLowerCase();
+export class MonoTypeChallengeAchv extends ChallengeAchv {
+  private readonly type: RegularPokemonType;
 
-  switch (localizationKey) {
-    case "10KMoney":
-      return i18next.t("achv:moneyAchv.description", {
-        context: genderStr,
-        moneyAmount: achvs._10K_MONEY.moneyAmount.toLocaleString("en-US"),
-      });
-    case "100KMoney":
-      return i18next.t("achv:moneyAchv.description", {
-        context: genderStr,
-        moneyAmount: achvs._100K_MONEY.moneyAmount.toLocaleString("en-US"),
-      });
-    case "1MMoney":
-      return i18next.t("achv:moneyAchv.description", {
-        context: genderStr,
-        moneyAmount: achvs._1M_MONEY.moneyAmount.toLocaleString("en-US"),
-      });
-    case "10MMoney":
-      return i18next.t("achv:moneyAchv.description", {
-        context: genderStr,
-        moneyAmount: achvs._10M_MONEY.moneyAmount.toLocaleString("en-US"),
-      });
-    case "250Dmg":
-      return i18next.t("achv:damageAchv.description", {
-        context: genderStr,
-        damageAmount: achvs._250_DMG.damageAmount.toLocaleString("en-US"),
-      });
-    case "1000Dmg":
-      return i18next.t("achv:damageAchv.description", {
-        context: genderStr,
-        damageAmount: achvs._1000_DMG.damageAmount.toLocaleString("en-US"),
-      });
-    case "2500Dmg":
-      return i18next.t("achv:damageAchv.description", {
-        context: genderStr,
-        damageAmount: achvs._2500_DMG.damageAmount.toLocaleString("en-US"),
-      });
-    case "10000Dmg":
-      return i18next.t("achv:damageAchv.description", {
-        context: genderStr,
-        damageAmount: achvs._10000_DMG.damageAmount.toLocaleString("en-US"),
-      });
-    case "250Heal":
-      return i18next.t("achv:healAchv.description", {
-        context: genderStr,
-        healAmount: achvs._250_HEAL.healAmount.toLocaleString("en-US"),
-        HP: i18next.t(getShortenedStatKey(Stat.HP)),
-      });
-    case "1000Heal":
-      return i18next.t("achv:healAchv.description", {
-        context: genderStr,
-        healAmount: achvs._1000_HEAL.healAmount.toLocaleString("en-US"),
-        HP: i18next.t(getShortenedStatKey(Stat.HP)),
-      });
-    case "2500Heal":
-      return i18next.t("achv:healAchv.description", {
-        context: genderStr,
-        healAmount: achvs._2500_HEAL.healAmount.toLocaleString("en-US"),
-        HP: i18next.t(getShortenedStatKey(Stat.HP)),
-      });
-    case "10000Heal":
-      return i18next.t("achv:healAchv.description", {
-        context: genderStr,
-        healAmount: achvs._10000_HEAL.healAmount.toLocaleString("en-US"),
-        HP: i18next.t(getShortenedStatKey(Stat.HP)),
-      });
-    case "lv100":
-      return i18next.t("achv:levelAchv.description", {
-        context: genderStr,
-        level: achvs.LV_100.level,
-      });
-    case "lv250":
-      return i18next.t("achv:levelAchv.description", {
-        context: genderStr,
-        level: achvs.LV_250.level,
-      });
-    case "lv1000":
-      return i18next.t("achv:levelAchv.description", {
-        context: genderStr,
-        level: achvs.LV_1000.level,
-      });
-    case "10Ribbons":
-      return i18next.t("achv:ribbonAchv.description", {
-        context: genderStr,
-        ribbonAmount: achvs._10_RIBBONS.ribbonAmount.toLocaleString("en-US"),
-      });
-    case "25Ribbons":
-      return i18next.t("achv:ribbonAchv.description", {
-        context: genderStr,
-        ribbonAmount: achvs._25_RIBBONS.ribbonAmount.toLocaleString("en-US"),
-      });
-    case "50Ribbons":
-      return i18next.t("achv:ribbonAchv.description", {
-        context: genderStr,
-        ribbonAmount: achvs._50_RIBBONS.ribbonAmount.toLocaleString("en-US"),
-      });
-    case "75Ribbons":
-      return i18next.t("achv:ribbonAchv.description", {
-        context: genderStr,
-        ribbonAmount: achvs._75_RIBBONS.ribbonAmount.toLocaleString("en-US"),
-      });
-    case "100Ribbons":
-      return i18next.t("achv:ribbonAchv.description", {
-        context: genderStr,
-        ribbonAmount: achvs._100_RIBBONS.ribbonAmount.toLocaleString("en-US"),
-      });
-    case "transferMaxStatStage":
-      return i18next.t("achv:transferMaxStatStage.description", {
-        context: genderStr,
-      });
-    case "maxFriendship":
-      return i18next.t("achv:maxFriendship.description", {
-        context: genderStr,
-      });
-    case "megaEvolve":
-      return i18next.t("achv:megaEvolve.description", { context: genderStr });
-    case "gigantamax":
-      return i18next.t("achv:gigantamax.description", { context: genderStr });
-    case "terastallize":
-      return i18next.t("achv:terastallize.description", { context: genderStr });
-    case "stellarTerastallize":
-      return i18next.t("achv:stellarTerastallize.description", {
-        context: genderStr,
-      });
-    case "splice":
-      return i18next.t("achv:splice.description", { context: genderStr });
-    case "miniBlackHole":
-      return i18next.t("achv:miniBlackHole.description", {
-        context: genderStr,
-      });
-    case "catchMythical":
-      return i18next.t("achv:catchMythical.description", {
-        context: genderStr,
-      });
-    case "catchSubLegendary":
-      return i18next.t("achv:catchSubLegendary.description", {
-        context: genderStr,
-      });
-    case "catchLegendary":
-      return i18next.t("achv:catchLegendary.description", {
-        context: genderStr,
-      });
-    case "seeShiny":
-      return i18next.t("achv:seeShiny.description", { context: genderStr });
-    case "shinyParty":
-      return i18next.t("achv:shinyParty.description", { context: genderStr });
-    case "hatchMythical":
-      return i18next.t("achv:hatchMythical.description", {
-        context: genderStr,
-      });
-    case "hatchSubLegendary":
-      return i18next.t("achv:hatchSubLegendary.description", {
-        context: genderStr,
-      });
-    case "hatchLegendary":
-      return i18next.t("achv:hatchLegendary.description", {
-        context: genderStr,
-      });
-    case "hatchShiny":
-      return i18next.t("achv:hatchShiny.description", { context: genderStr });
-    case "hiddenAbility":
-      return i18next.t("achv:hiddenAbility.description", {
-        context: genderStr,
-      });
-    case "perfectIvs":
-      return i18next.t("achv:perfectIvs.description", { context: genderStr });
-    case "classicVictory":
-      return i18next.t("achv:classicVictory.description", {
-        context: genderStr,
-      });
-    case "unevolvedClassicVictory":
-      return i18next.t("achv:unevolvedClassicVictory.description", {
-        context: genderStr,
-      });
-    case "monoGenOne":
-      return i18next.t("achv:monoGenOne.description", { context: genderStr });
-    case "monoGenTwo":
-      return i18next.t("achv:monoGenTwo.description", { context: genderStr });
-    case "monoGenThree":
-      return i18next.t("achv:monoGenThree.description", {
-        context: genderStr,
-      });
-    case "monoGenFour":
-      return i18next.t("achv:monoGenFour.description", {
-        context: genderStr,
-      });
-    case "monoGenFive":
-      return i18next.t("achv:monoGenFive.description", {
-        context: genderStr,
-      });
-    case "monoGenSix":
-      return i18next.t("achv:monoGenSix.description", { context: genderStr });
-    case "monoGenSeven":
-      return i18next.t("achv:monoGenSeven.description", {
-        context: genderStr,
-      });
-    case "monoGenEight":
-      return i18next.t("achv:monoGenEight.description", {
-        context: genderStr,
-      });
-    case "monoGenNine":
-      return i18next.t("achv:monoGenNine.description", {
-        context: genderStr,
-      });
-    case "monoNormal":
-    case "monoFighting":
-    case "monoFlying":
-    case "monoPoison":
-    case "monoGround":
-    case "monoRock":
-    case "monoBug":
-    case "monoGhost":
-    case "monoSteel":
-    case "monoFire":
-    case "monoWater":
-    case "monoGrass":
-    case "monoElectric":
-    case "monoPsychic":
-    case "monoIce":
-    case "monoDragon":
-    case "monoDark":
-    case "monoFairy":
-      return i18next.t("achv:monoType.description", {
-        context: genderStr,
-        type: i18next.t(`pokemonInfo:type.${toCamelCase(localizationKey.slice(4))}`),
-      });
-    case "freshStart":
-      return i18next.t("achv:freshStart.description", { context: genderStr });
-    case "inverseBattle":
-      return i18next.t("achv:inverseBattle.description", {
-        context: genderStr,
-      });
-    case "flipStats":
-      return i18next.t("achv:flipStats.description", { context: genderStr });
-    case "flipInverse":
-      return i18next.t("achv:flipInverse.description", { context: genderStr });
-    case "nuzlocke":
-      return i18next.t("achv:nuzlocke.description", { context: genderStr });
-    case "breedersInSpace":
-      return i18next.t("achv:breedersInSpace.description", {
-        context: genderStr,
-      });
-    case "dailyVictory":
-      return i18next.t("achv:dailyVictory.description", { context: genderStr });
-    case "passives":
-      return i18next.t("achv:passives.description", { context: genderStr });
-    default:
-      return "";
+  constructor(
+    localizationKey: string,
+    type: RegularPokemonType,
+    iconImage: string,
+    score: number,
+    challengeFunc: (challenge: Challenge) => boolean,
+  ) {
+    super(localizationKey, iconImage, score, (challenge: Challenge) => challengeFunc(challenge));
+    this.type = type;
+  }
+
+  public get description(): string {
+    const typeKey = PokemonType[this.type].toLowerCase();
+    return i18next.t("achv:monoType.description", {
+      context: getGenderStr(),
+      type: i18next.t(`pokemonInfo:type.${typeKey}`),
+    });
   }
 }
 
@@ -468,7 +247,6 @@ const passivesChallengeAchievementsBlock = () =>
 export const achvs = {
   CLASSIC_VICTORY: new Achv(
     "classicVictory",
-    "classicVictory.description",
     "classic_ribbon_default",
     250,
     () => globalScene.gameData.gameStats.sessionsWon === 0,
@@ -493,40 +271,33 @@ export const achvs = {
   LV_100: new LevelAchv("lv100", 100, "rare_candy", 25).setSecret(),
   LV_250: new LevelAchv("lv250", 250, "rarer_candy", 25).setSecret(true),
   LV_1000: new LevelAchv("lv1000", 1000, "candy_jar", 50).setSecret(true),
-  TRANSFER_MAX_STAT_STAGE: new Achv("transferMaxStatStage", "transferMaxStatStage.description", "baton", 25),
-  MAX_FRIENDSHIP: new Achv("maxFriendship", "maxFriendship.description", "ribbon_friendship", 25),
-  MEGA_EVOLVE: new Achv("megaEvolve", "megaEvolve.description", "mega_bracelet", 50),
-  GIGANTAMAX: new Achv("gigantamax", "gigantamax.description", "dynamax_band", 50),
-  TERASTALLIZE: new Achv("terastallize", "terastallize.description", "tera_orb", 25),
-  STELLAR_TERASTALLIZE: new Achv(
-    "stellarTerastallize",
-    "stellarTerastallize.description",
-    "stellar_tera_shard",
-    25,
-  ).setSecret(true),
-  SPLICE: new Achv("splice", "splice.description", "dna_splicers", 50),
+  TRANSFER_MAX_STAT_STAGE: new Achv("transferMaxStatStage", "baton", 25),
+  MAX_FRIENDSHIP: new Achv("maxFriendship", "ribbon_friendship", 25),
+  MEGA_EVOLVE: new Achv("megaEvolve", "mega_bracelet", 50),
+  GIGANTAMAX: new Achv("gigantamax", "dynamax_band", 50),
+  TERASTALLIZE: new Achv("terastallize", "tera_orb", 25),
+  STELLAR_TERASTALLIZE: new Achv("stellarTerastallize", "stellar_tera_shard", 25).setSecret(true),
+  SPLICE: new Achv("splice", "dna_splicers", 50),
   MINI_BLACK_HOLE: new ModifierAchv(
     "miniBlackHole",
-    "miniBlackHole.description",
     "mini_black_hole",
     25,
     modifier => modifier instanceof TurnHeldItemTransferModifier,
   ).setSecret(),
-  HIDDEN_ABILITY: new Achv("hiddenAbility", "hiddenAbility.description", "ability_charm", 25),
-  PERFECT_IVS: new Achv("perfectIvs", "perfectIvs.description", "blunder_policy", 25),
-  SEE_SHINY: new Achv("seeShiny", "seeShiny.description", "pb_gold", 50),
-  SHINY_PARTY: new Achv("shinyParty", "shinyParty.description", "shiny_charm", 50).setSecret(true),
-  CATCH_SUB_LEGENDARY: new Achv("catchSubLegendary", "catchSubLegendary.description", "rb", 50).setSecret(),
-  CATCH_MYTHICAL: new Achv("catchMythical", "catchMythical.description", "strange_ball", 75).setSecret(),
-  CATCH_LEGENDARY: new Achv("catchLegendary", "catchLegendary.description", "mb", 100).setSecret(),
-  HATCH_SUB_LEGENDARY: new Achv("hatchSubLegendary", "hatchSubLegendary.description", "epic_egg", 50).setSecret(),
-  HATCH_MYTHICAL: new Achv("hatchMythical", "hatchMythical.description", "manaphy_egg", 50).setSecret(),
-  HATCH_LEGENDARY: new Achv("hatchLegendary", "hatchLegendary.description", "legendary_egg", 100).setSecret(),
-  HATCH_SHINY: new Achv("hatchShiny", "hatchShiny.description", "rogue_egg", 100).setSecret(),
-  DAILY_VICTORY: new Achv("dailyVictory", "dailyVictory.description", "calendar", 100),
+  HIDDEN_ABILITY: new Achv("hiddenAbility", "ability_charm", 25),
+  PERFECT_IVS: new Achv("perfectIvs", "blunder_policy", 25),
+  SEE_SHINY: new Achv("seeShiny", "pb_gold", 50),
+  SHINY_PARTY: new Achv("shinyParty", "shiny_charm", 50).setSecret(true),
+  CATCH_SUB_LEGENDARY: new Achv("catchSubLegendary", "rb", 50).setSecret(),
+  CATCH_MYTHICAL: new Achv("catchMythical", "strange_ball", 75).setSecret(),
+  CATCH_LEGENDARY: new Achv("catchLegendary", "mb", 100).setSecret(),
+  HATCH_SUB_LEGENDARY: new Achv("hatchSubLegendary", "epic_egg", 50).setSecret(),
+  HATCH_MYTHICAL: new Achv("hatchMythical", "manaphy_egg", 50).setSecret(),
+  HATCH_LEGENDARY: new Achv("hatchLegendary", "legendary_egg", 100).setSecret(),
+  HATCH_SHINY: new Achv("hatchShiny", "rogue_egg", 100).setSecret(),
+  DAILY_VICTORY: new Achv("dailyVictory", "calendar", 100),
   FRESH_START: new ChallengeAchv(
     "freshStart",
-    "freshStart.description",
     "reviver_seed",
     100,
     c =>
@@ -537,28 +308,19 @@ export const achvs = {
   ),
   NUZLOCKE: new ChallengeAchv(
     "nuzlocke",
-    "nuzlocke.description",
     "leaf_stone",
     100,
     () => isNuzlockeChallenge() && !inverseAndFlipStatAchievementsBlock() && !passivesChallengeAchievementsBlock(),
   ),
   INVERSE_BATTLE: new ChallengeAchv(
     "inverseBattle",
-    "inverseBattle.description",
     "inverse",
     100,
     c => c instanceof InverseBattleChallenge && c.value > 0,
   ),
-  FLIP_STATS: new ChallengeAchv(
-    "flipStats",
-    "flipStats.description",
-    "dubious_disc",
-    100,
-    c => c instanceof FlipStatChallenge && c.value > 0,
-  ),
+  FLIP_STATS: new ChallengeAchv("flipStats", "dubious_disc", 100, c => c instanceof FlipStatChallenge && c.value > 0),
   MONO_GEN_ONE_VICTORY: new ChallengeAchv(
     "monoGenOne",
-    "monoGenOne.description",
     "ribbon_gen1",
     100,
     c =>
@@ -569,7 +331,6 @@ export const achvs = {
   ),
   MONO_GEN_TWO_VICTORY: new ChallengeAchv(
     "monoGenTwo",
-    "monoGenTwo.description",
     "ribbon_gen2",
     100,
     c =>
@@ -580,7 +341,6 @@ export const achvs = {
   ),
   MONO_GEN_THREE_VICTORY: new ChallengeAchv(
     "monoGenThree",
-    "monoGenThree.description",
     "ribbon_gen3",
     100,
     c =>
@@ -591,7 +351,6 @@ export const achvs = {
   ),
   MONO_GEN_FOUR_VICTORY: new ChallengeAchv(
     "monoGenFour",
-    "monoGenFour.description",
     "ribbon_gen4",
     100,
     c =>
@@ -602,7 +361,6 @@ export const achvs = {
   ),
   MONO_GEN_FIVE_VICTORY: new ChallengeAchv(
     "monoGenFive",
-    "monoGenFive.description",
     "ribbon_gen5",
     100,
     c =>
@@ -613,7 +371,6 @@ export const achvs = {
   ),
   MONO_GEN_SIX_VICTORY: new ChallengeAchv(
     "monoGenSix",
-    "monoGenSix.description",
     "ribbon_gen6",
     100,
     c =>
@@ -624,7 +381,6 @@ export const achvs = {
   ),
   MONO_GEN_SEVEN_VICTORY: new ChallengeAchv(
     "monoGenSeven",
-    "monoGenSeven.description",
     "ribbon_gen7",
     100,
     c =>
@@ -635,7 +391,6 @@ export const achvs = {
   ),
   MONO_GEN_EIGHT_VICTORY: new ChallengeAchv(
     "monoGenEight",
-    "monoGenEight.description",
     "ribbon_gen8",
     100,
     c =>
@@ -646,7 +401,6 @@ export const achvs = {
   ),
   MONO_GEN_NINE_VICTORY: new ChallengeAchv(
     "monoGenNine",
-    "monoGenNine.description",
     "ribbon_gen9",
     100,
     c =>
@@ -655,9 +409,9 @@ export const achvs = {
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock(),
   ),
-  MONO_NORMAL: new ChallengeAchv(
+  MONO_NORMAL: new MonoTypeChallengeAchv(
     "monoNormal",
-    "monoNormal.description",
+    PokemonType.NORMAL,
     "ribbon_normal",
     100,
     c =>
@@ -666,9 +420,9 @@ export const achvs = {
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock(),
   ),
-  MONO_FIGHTING: new ChallengeAchv(
+  MONO_FIGHTING: new MonoTypeChallengeAchv(
     "monoFighting",
-    "monoFighting.description",
+    PokemonType.FIGHTING,
     "ribbon_fighting",
     100,
     c =>
@@ -677,9 +431,9 @@ export const achvs = {
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock(),
   ),
-  MONO_FLYING: new ChallengeAchv(
+  MONO_FLYING: new MonoTypeChallengeAchv(
     "monoFlying",
-    "monoFlying.description",
+    PokemonType.FLYING,
     "ribbon_flying",
     100,
     c =>
@@ -688,9 +442,9 @@ export const achvs = {
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock(),
   ),
-  MONO_POISON: new ChallengeAchv(
+  MONO_POISON: new MonoTypeChallengeAchv(
     "monoPoison",
-    "monoPoison.description",
+    PokemonType.POISON,
     "ribbon_poison",
     100,
     c =>
@@ -699,9 +453,9 @@ export const achvs = {
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock(),
   ),
-  MONO_GROUND: new ChallengeAchv(
+  MONO_GROUND: new MonoTypeChallengeAchv(
     "monoGround",
-    "monoGround.description",
+    PokemonType.GROUND,
     "ribbon_ground",
     100,
     c =>
@@ -710,9 +464,9 @@ export const achvs = {
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock(),
   ),
-  MONO_ROCK: new ChallengeAchv(
+  MONO_ROCK: new MonoTypeChallengeAchv(
     "monoRock",
-    "monoRock.description",
+    PokemonType.ROCK,
     "ribbon_rock",
     100,
     c =>
@@ -721,9 +475,9 @@ export const achvs = {
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock(),
   ),
-  MONO_BUG: new ChallengeAchv(
+  MONO_BUG: new MonoTypeChallengeAchv(
     "monoBug",
-    "monoBug.description",
+    PokemonType.BUG,
     "ribbon_bug",
     100,
     c =>
@@ -732,9 +486,9 @@ export const achvs = {
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock(),
   ),
-  MONO_GHOST: new ChallengeAchv(
+  MONO_GHOST: new MonoTypeChallengeAchv(
     "monoGhost",
-    "monoGhost.description",
+    PokemonType.GHOST,
     "ribbon_ghost",
     100,
     c =>
@@ -743,9 +497,9 @@ export const achvs = {
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock(),
   ),
-  MONO_STEEL: new ChallengeAchv(
+  MONO_STEEL: new MonoTypeChallengeAchv(
     "monoSteel",
-    "monoSteel.description",
+    PokemonType.STEEL,
     "ribbon_steel",
     100,
     c =>
@@ -754,9 +508,9 @@ export const achvs = {
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock(),
   ),
-  MONO_FIRE: new ChallengeAchv(
+  MONO_FIRE: new MonoTypeChallengeAchv(
     "monoFire",
-    "monoFire.description",
+    PokemonType.FIRE,
     "ribbon_fire",
     100,
     c =>
@@ -765,9 +519,9 @@ export const achvs = {
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock(),
   ),
-  MONO_WATER: new ChallengeAchv(
+  MONO_WATER: new MonoTypeChallengeAchv(
     "monoWater",
-    "monoWater.description",
+    PokemonType.WATER,
     "ribbon_water",
     100,
     c =>
@@ -776,9 +530,9 @@ export const achvs = {
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock(),
   ),
-  MONO_GRASS: new ChallengeAchv(
+  MONO_GRASS: new MonoTypeChallengeAchv(
     "monoGrass",
-    "monoGrass.description",
+    PokemonType.GRASS,
     "ribbon_grass",
     100,
     c =>
@@ -787,9 +541,9 @@ export const achvs = {
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock(),
   ),
-  MONO_ELECTRIC: new ChallengeAchv(
+  MONO_ELECTRIC: new MonoTypeChallengeAchv(
     "monoElectric",
-    "monoElectric.description",
+    PokemonType.ELECTRIC,
     "ribbon_electric",
     100,
     c =>
@@ -798,9 +552,9 @@ export const achvs = {
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock(),
   ),
-  MONO_PSYCHIC: new ChallengeAchv(
+  MONO_PSYCHIC: new MonoTypeChallengeAchv(
     "monoPsychic",
-    "monoPsychic.description",
+    PokemonType.PSYCHIC,
     "ribbon_psychic",
     100,
     c =>
@@ -809,9 +563,9 @@ export const achvs = {
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock(),
   ),
-  MONO_ICE: new ChallengeAchv(
+  MONO_ICE: new MonoTypeChallengeAchv(
     "monoIce",
-    "monoIce.description",
+    PokemonType.ICE,
     "ribbon_ice",
     100,
     c =>
@@ -820,9 +574,9 @@ export const achvs = {
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock(),
   ),
-  MONO_DRAGON: new ChallengeAchv(
+  MONO_DRAGON: new MonoTypeChallengeAchv(
     "monoDragon",
-    "monoDragon.description",
+    PokemonType.DRAGON,
     "ribbon_dragon",
     100,
     c =>
@@ -831,9 +585,9 @@ export const achvs = {
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock(),
   ),
-  MONO_DARK: new ChallengeAchv(
+  MONO_DARK: new MonoTypeChallengeAchv(
     "monoDark",
-    "monoDark.description",
+    PokemonType.DARK,
     "ribbon_dark",
     100,
     c =>
@@ -842,9 +596,9 @@ export const achvs = {
       && !inverseAndFlipStatAchievementsBlock()
       && !passivesChallengeAchievementsBlock(),
   ),
-  MONO_FAIRY: new ChallengeAchv(
+  MONO_FAIRY: new MonoTypeChallengeAchv(
     "monoFairy",
-    "monoFairy.description",
+    PokemonType.FAIRY,
     "ribbon_fairy",
     100,
     c =>
@@ -855,29 +609,23 @@ export const achvs = {
   ),
   PASSIVES_CHALLENGE: new ChallengeAchv(
     "passives",
-    "passives.description",
     "ability_capsule",
     100,
     c => c instanceof PassivesChallenge && c.value > 0 && !inverseAndFlipStatAchievementsBlock(),
   ),
-  UNEVOLVED_CLASSIC_VICTORY: new Achv(
-    "unevolvedClassicVictory",
-    "unevolvedClassicVictory.description",
-    "eviolite",
-    50,
-    () => globalScene.getPlayerParty().some(p => speciesDataRegistry.hasEvolutions(p.getSpeciesForm(true).speciesId)),
+  UNEVOLVED_CLASSIC_VICTORY: new Achv("unevolvedClassicVictory", "eviolite", 50, () =>
+    globalScene.getPlayerParty().some(p => speciesDataRegistry.hasEvolutions(p.getSpeciesForm(true).speciesId)),
   ),
   FLIP_INVERSE: new ChallengeAchv(
     "flipInverse",
-    "flipInverse.description",
     "cracked_pot",
     50,
-    c =>
-      c instanceof FlipStatChallenge
-      && c.value > 0
+    ch =>
+      ch instanceof FlipStatChallenge
+      && ch.value > 0
       && globalScene.gameMode.challenges.some(c => c.id === Challenges.INVERSE_BATTLE && c.value > 0),
   ).setSecret(),
-  BREEDERS_IN_SPACE: new Achv("breedersInSpace", "breedersInSpace.description", "moon_stone", 50).setSecret(),
+  BREEDERS_IN_SPACE: new Achv("breedersInSpace", "moon_stone", 50).setSecret(),
 };
 
 export function initAchievements() {

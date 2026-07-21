@@ -113,6 +113,8 @@ export interface StarterAttributes {
   tera?: PokemonType | undefined;
 }
 
+export type StarterPreferences = Partial<Record<SpeciesId, StarterAttributes | undefined>>;
+
 export interface DexAttrProps {
   shiny: boolean;
   female: boolean;

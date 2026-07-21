@@ -137,9 +137,9 @@ export const EGG_MOVE_WEIGHT_MAX = 60;
  */
 export const EGG_MOVE_TO_LEVEL_WEIGHT = 0.85;
 /** The weight given to evolution moves */
-export const EVOLUTION_MOVE_WEIGHT = 70;
+export const EVOLUTION_MOVE_WEIGHT = 60;
 /** The weight given to relearn moves */
-export const RELEARN_MOVE_WEIGHT = 60;
+export const RELEARN_MOVE_WEIGHT = 50;
 
 /** The base weight multiplier to use
  *

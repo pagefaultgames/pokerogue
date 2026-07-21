@@ -1,5 +1,6 @@
 import { audioManager } from "#app/global-audio-manager";
 import { globalScene } from "#app/global-scene";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { activeOverrides } from "#app/overrides";
 import { Phase } from "#app/phase";
 import { SpeciesFormChangeMoveLearnedTrigger } from "#data/form-change-triggers";
@@ -10,7 +11,6 @@ import { overrideHeldItems, overrideModifiers } from "#modifiers/modifier";
 import type { Starter } from "#types/save-data";
 import { SaveSlotUiMode } from "#ui/handlers/save-slot-select-ui-handler";
 import { applyChallenges } from "#utils/challenge-utils";
-import { getPokemonSpecies } from "#utils/pokemon-utils";
 
 export class SelectStarterPhase extends Phase {
   public readonly phaseName = "SelectStarterPhase";
@@ -45,7 +45,7 @@ export class SelectStarterPhase extends Phase {
       if (!i && activeOverrides.STARTER_SPECIES_OVERRIDE) {
         starter.speciesId = activeOverrides.STARTER_SPECIES_OVERRIDE;
       }
-      const species = getPokemonSpecies(starter.speciesId);
+      const species = speciesDataRegistry.getSpecies(starter.speciesId);
       let starterFormIndex = starter.formIndex;
       if (
         starter.speciesId in activeOverrides.STARTER_FORM_OVERRIDES

@@ -10,6 +10,7 @@ import { getCharVariantFromDialogue } from "#data/dialogue";
 import { getNatureName } from "#data/nature";
 import { BattleType } from "#enums/battle-type";
 import { BiomeId } from "#enums/biome-id";
+import { Challenges } from "#enums/challenges";
 import { FieldPosition } from "#enums/field-position";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
@@ -127,6 +128,7 @@ export class EncounterPhase extends BattlePhase {
             level,
             TrainerSlot.NONE,
             !!globalScene.getEncounterBossSegments(battle.waveIndex, level, enemySpecies),
+            this.isEncounterShinyLocked(),
           );
           if (globalScene.currentBattle.isClassicFinalBoss) {
             battle.enemyParty[e].ivs.fill(31);
@@ -311,6 +313,16 @@ export class EncounterPhase extends BattlePhase {
         }
       });
     });
+  }
+
+  /**
+   * @returns `true` if the current encounter should be shiny locked, `false` otherwise
+   */
+  private isEncounterShinyLocked(): boolean {
+    const endAndIllegalMode =
+      globalScene.arena.biomeId === BiomeId.END
+      && (globalScene.gameMode.isEndless || globalScene.gameMode.hasChallenge(Challenges.FRESH_START));
+    return endAndIllegalMode;
   }
 
   private incrementMysteryEncounterChance(): void {
