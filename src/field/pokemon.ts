@@ -2702,12 +2702,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     // All Ground-type moves (other than Thousand Arrows) are rendered ineffective against opponents
     // rendered airborne by something other than their typing/semi-invuln (e.g. Levitate, Magnet Rise, Telekinesis).
     // Flying-types are ignored by this check as they lose their immunity in Inverse Battles.
-    const forciblyUngrounded = this.isForciblyUngrounded();
-    if (forciblyUngrounded && moveType === PokemonType.GROUND && !move?.hasAttr("NeutralDamageAgainstFlyingTypeAttr")) {
+    if (
+      this.isForciblyUngrounded()
+      && moveType === PokemonType.GROUND
+      && !move?.hasAttr("NeutralDamageAgainstFlyingTypeAttr")
+    ) {
       return 0;
     }
 
-    const forciblyGrounded = this.isForciblyGrounded();
     const multi = new NumberHolder(1);
     for (const defenderType of types) {
       const typeMulti = getTypeDamageMultiplier(moveType, defenderType);
@@ -2716,7 +2718,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       if (
         source?.isActive(true)
         && typeMulti === 0
-        && this.checkIgnoreTypeImmunity({ source, simulated, moveType, defenderType, forciblyGrounded })
+        && this.checkIgnoreTypeImmunity({ source, simulated, moveType, defenderType })
       ) {
         continue;
       }
@@ -2758,16 +2760,14 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     simulated,
     moveType,
     defenderType,
-    forciblyGrounded,
   }: {
     source: Pokemon;
     simulated: boolean;
     moveType: PokemonType;
     defenderType: PokemonType;
-    forciblyGrounded: boolean;
   }): boolean {
     // Flying-types knocked to the ground lose any Flying immunities they may have had
-    if (moveType === PokemonType.GROUND && defenderType === PokemonType.FLYING && forciblyGrounded) {
+    if (moveType === PokemonType.GROUND && defenderType === PokemonType.FLYING && this.isForciblyGrounded()) {
       return true;
     }
 
