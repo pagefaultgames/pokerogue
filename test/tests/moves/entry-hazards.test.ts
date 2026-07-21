@@ -215,14 +215,28 @@ describe("Moves - Entry Hazards", () => {
     });
 
     it("should not affect ungrounded Pokemon", async () => {
-      game.scene.arena.addTag(ArenaTagType.STICKY_WEB, 0, undefined, 0, ArenaTagSide.ENEMY);
-      await game.classicMode.startBattle(SpeciesId.MIGHTYENA, SpeciesId.EKANS);
+      game.scene.arena.addTag(ArenaTagType.STICKY_WEB, 0, undefined, 0, ArenaTagSide.PLAYER);
+      await game.classicMode.startBattle(SpeciesId.FEEBAS, SpeciesId.MILOTIC);
 
-      const enemy = game.field.getEnemyPokemon();
-      expect(enemy).toHaveStatStage(Stat.SPD, -1);
+      const [feebas, milotic] = game.field.getPlayerParty();
+      game.field.mockAbility(milotic, AbilityId.LEVITATE);
+
+      expect(feebas).toHaveStatStage(Stat.SPD, -1);
       expect(game).toHaveShownMessage(
         i18next.t("arenaTag:stickyWebActivateTrap", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(enemy),
+          pokemonNameWithAffix: getPokemonNameWithAffix(feebas),
+        }),
+      );
+
+      game.doSwitchPokemon(1);
+      await game.toNextTurn();
+
+      expect(milotic.isOnField()).toBe(true);
+      expect(milotic.isGrounded()).toBe(false);
+      expect(milotic).toHaveStatStage(Stat.SPD, 0);
+      expect(game).not.toHaveShownMessage(
+        i18next.t("arenaTag:stickyWebActivateTrap", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(milotic),
         }),
       );
     });
