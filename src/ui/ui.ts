@@ -201,7 +201,7 @@ export class UI extends Phaser.GameObjects.Container {
     this.achvBar.setup();
     this.savingIcon.setup();
     this.setupTooltip();
-    this.setup();
+    this.setupUiContainer();
   }
 
   setupUiContainer() {

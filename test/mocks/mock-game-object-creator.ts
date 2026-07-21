@@ -17,6 +17,7 @@ export class MockGameObjectCreator {
     return {
       transit: () => null,
       once: () => null,
+      setDepth: () => null,
     };
   }
 }
