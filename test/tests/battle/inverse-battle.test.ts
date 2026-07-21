@@ -223,12 +223,12 @@ describe("Inverse Battle", () => {
 
     enemy.summonData.types = [PokemonType.FLYING];
     expect(enemy.isGrounded()).toBe(false);
-    expect(enemy["isForciblyGrounded"]()).toBe(undefined);
+    expect(enemy["isForciblyUngrounded"]()).toBe(false);
     expect(enemy.getAttackTypeEffectiveness(PokemonType.GROUND)).toBe(2);
 
     game.field.mockAbility(enemy, AbilityId.LEVITATE);
 
-    expect(enemy["isForciblyGrounded"]()).toBe(false);
+    expect(enemy["isForciblyUngrounded"]()).toBe(true);
     expect(enemy.getAttackTypeEffectiveness(PokemonType.GROUND)).toBe(0);
   });
 });
