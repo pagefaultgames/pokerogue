@@ -385,11 +385,12 @@ export const invalidInstructMoves: ReadonlySet<MoveId> = new Set([
 ]);
 
 /**
- * Set of all {@linkcode SpeciesId}s that {@linkcode MoveId.TELEKINESIS} cannot directly affect.
+ * Set of all {@linkcode SpeciesId}s that
+ * {@link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move) | Telekinesis} cannot directly affect.
  * They can still receive the effect from Baton Passing, however.
  *
  * @remarks
- * Not included here is Gengar, which is only forbidden in its Mega form and which
+ * Not included here is Gengar, which is only forbidden in its Mega and GMax forms and which
  * _cannot_ receive either of Telekinesis' effects via Baton Pass.
  */
 export const invalidTelekinesisSpecies: ReadonlySet<SpeciesId> = new Set([

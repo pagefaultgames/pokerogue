@@ -6731,24 +6731,25 @@ export class LeechSeedAttr extends AddBattlerTagAttr {
 }
 
 /**
- * Attribute to add the {@linkcode BattlerTagType.IGNORE_FLYING | IGNORE_FLYING} BattlerTag to the target.
+ * Attribute to add the `IGNORE_FLYING` BattlerTag to the target.
  *
- * Used by {@linkcode MoveId.SMACK_DOWN} and {@linkcode MoveId.THOUSAND_ARROWS},
- * and does nothing if the target was not already ungrounded.
+ * Does nothing if the target was not already ungrounded.
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Smack_Down_(move)}
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Thousand_Arrows_(move)}
  */
 export class FallDownAttr extends AddBattlerTagAttr {
   constructor() {
     super(BattlerTagType.IGNORE_FLYING, false, false, 0, 0, true);
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, _args: any[]): boolean {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     // Smack Down and similar only apply their effects if the target is already ungrounded,
     // barring any prior semi-invulnerability.
     if (target.isGrounded(true)) {
       return false;
     }
 
-    if (!super.apply(user, target, move, _args)) {
+    if (!super.apply(user, target, move, args)) {
       return false;
     }
 
@@ -9094,28 +9095,29 @@ export class ForceLastAttr extends MoveEffectAttr {
   }
 }
 
+// #region Condition functions
+
 const failOnGroundedCondition: MoveConditionFunc = (_user, target) => !target.getTag(BattlerTagType.IGNORE_FLYING);
 
 const failOnBossCondition: MoveConditionFunc = (_user, target) => !target.isBossImmune();
 
-const failIfSingleBattle: MoveConditionFunc = (_user, _target, _move) => globalScene.currentBattle.double;
+const failIfSingleBattle: MoveConditionFunc = () => globalScene.currentBattle.double;
 
 const failIfLastCondition: MoveConditionFunc = () => globalScene.phaseManager.hasPhaseOfType("MovePhase");
 
-const failIfLastInPartyCondition: MoveConditionFunc = (user: Pokemon, _target: Pokemon, _move: Move) => {
+const failIfLastInPartyCondition: MoveConditionFunc = user => {
   const party: Pokemon[] = user.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty();
   return party.some(pokemon => pokemon.isActive() && !pokemon.isOnField());
 };
 
-const failIfGhostTypeCondition: MoveConditionFunc = (_user: Pokemon, target: Pokemon, _move: Move) =>
-  !target.isOfType(PokemonType.GHOST);
+const failIfGhostTypeCondition: MoveConditionFunc = (_user, target) => !target.isOfType(PokemonType.GHOST);
 
-const failIfNoTargetHeldItemsCondition: MoveConditionFunc = (_user: Pokemon, target: Pokemon, _move: Move) =>
+const failIfNoTargetHeldItemsCondition: MoveConditionFunc = (_user, target) =>
   target.getHeldItems().filter(i => i.isTransferable)?.length > 0;
 
-//#endregion Condition functions
+// #endregion Condition functions
 
-const attackedByItemMessageFunc = (_user: Pokemon, target: Pokemon) => {
+const attackedByItemMessageFunc: MoveMessageFunc = (_user, target) => {
   if (target == null) {
     // Fix bug when used against targets that have both fainted
     return "";

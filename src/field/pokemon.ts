@@ -1,4 +1,4 @@
-import type { PreAttackModifyDamageAbAttrParams } from "#abilities/ab-attrs";
+import type { PreAttackModifyDamageAbAttrParams, UngroundedAbAttr } from "#abilities/ab-attrs";
 import type { Ability } from "#abilities/ability";
 import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "#abilities/apply-ab-attrs";
 import { generateMoveset } from "#app/ai/ai-moveset-gen";
@@ -2449,7 +2449,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Return whether this Pokemon is currently on the ground.
-   *
+   * @remarks
    * To be considered grounded, a Pokemon must either:
    * - Be {@linkcode BattlerTagType.IGNORE_FLYING | forcibly grounded} from an effect like Smack Down or Ingrain
    * - Be under the effects of {@linkcode ArenaTagType.GRAVITY | harsh gravity}
@@ -2458,13 +2458,12 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
    *     {@linkcode BattlerTagType.TELEKINESIS | Telekinesis}
    *   - {@linkcode SemiInvulnerableTag | Semi-invulnerable} with `ignoreSemiInvulnerable` set to `false`
    *   - {@linkcode PokemonType.FLYING | Flying-type}
-   *   - {@linkcode AbilityId.LEVITATE | Levitating} from an unsuppressed Levitate/Eelevate ability
+   *   - {@linkcode UngroundedAbAttr | Ungrounded} from an unsuppressed Levitate/Eelevate ability
    * @param ignoreSemiInvulnerable - (Default `false`) Whether to ignore the target's semi-invulnerable state when determining groundedness
    * @param useIllusion - (Default `false`) Whether to use this Pokemon's illusion for typing-related calculations
    * @returns Whether this Pokemon is currently grounded, as described above.
    */
   // TODO: Make sure callers propagate `useIllusion` correctly
-  // TODO: Fix doc comment to link to the actual ability attribute
   public isGrounded(ignoreSemiInvulnerable = false, useIllusion = false): boolean {
     const forceGrounded = this.isForciblyGrounded();
     if (forceGrounded !== undefined) {
@@ -4303,8 +4302,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Transfer stat changes and volatile status effects from another Pokemon
-   * to this one.
+   * Transfer stat changes and volatile status effects from another Pokemon to this one.
    *
    * @remarks
    * Used to implement Baton Pass and switching via the Baton item.

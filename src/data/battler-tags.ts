@@ -138,7 +138,7 @@ export class BattlerTag implements BaseBattlerTag {
   // Fields that should never be serialized, as they must not change after instantiation
 
   /**
-   * Whether this Tag can be transferred via {@linkcode MoveId.BATON_PASS}.
+   * Whether this Tag can be transferred via {@link https://bulbapedia.bulbagarden.net/wiki/Baton_Pass_(move) | Baton Pass}.
    * @defaultValue `false`
    */
   // TODO: Remove this and make baton-passable subclasses override `isBatonPassable` below
@@ -148,7 +148,7 @@ export class BattlerTag implements BaseBattlerTag {
    * Check whether this Tag can be transferred to another Pokemon via Baton Pass.
    * @param recipient - The {@linkcode Pokemon} receiving this Tag (i.e. the one switching in)
    * Unused by default but exposed to allow for subclasses to perform custom logic.
-   * @returns Whether this Tag can be transferred via {@linkcode MoveId.BATON_PASS}.
+   * @returns Whether this Tag can be transferred via {@link https://bulbapedia.bulbagarden.net/wiki/Baton_Pass_(move) | Baton Pass}.
    * Defaults to returning the value set in the class constructor.
    */
   // biome-ignore lint/correctness/noUnusedFunctionParameters: default impl of function
@@ -2345,10 +2345,13 @@ export class SemiInvulnerableTag extends SerializableBattlerTag {
 
 /**
  * Battler Tag that lifts the affected Pokemon into the air, providing immunity to Ground-type moves.
- * Used by Magnet Rise.
+ *
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Magnet_Rise_(move)}
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move)}
  */
 export class FloatingTag extends SerializableBattlerTag {
   public override readonly tagType = BattlerTagType.FLOATING;
+
   constructor(turnCount: number) {
     super(BattlerTagType.FLOATING, BattlerTagLapseType.TURN_END, turnCount);
   }
@@ -2381,7 +2384,7 @@ export class FloatingTag extends SerializableBattlerTag {
 }
 
 /**
- * Tag used by {@link @link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move) | Telekinesis}
+ * Tag used by {@link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move) | Telekinesis}
  * to forcibly unground the user and guarantee that opposing moves will hit them.
  *
  * The effects of Telekinesis can be Baton Passed to a teammate, including ones unaffected by the original move. \

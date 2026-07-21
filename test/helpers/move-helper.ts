@@ -34,8 +34,8 @@ export class MoveHelper extends GameManagerHelper {
   }
 
   /**
-   * Intercept the next upcoming {@linkcode MoveEffectPhase} and mocks the invoked move's accuracy
-   * to `0`, guaranteeing a miss.
+   * Intercept the next upcoming {@linkcode MoveEffectPhase} and mock the invoked
+   * move's accuracy to `0`, guaranteeing a miss.
    * @param firstTargetOnly - Whether to only force a miss on the first target hit; default `false`.
    * @returns A Promise that resolves once the next `MoveEffectPhase` has been reached (not run).
    * @remarks
