@@ -82,7 +82,7 @@ import { Trainer } from "#field/trainer";
 import { applyTrainerItems } from "#items/all-trainer-items";
 import type { EnemyAttackStatusEffectChanceTrainerItemAttr } from "#items/enemy-tokens";
 import { assignEnemyHeldItemsForWave, assignItemsFromConfiguration } from "#items/held-item-pool";
-import type { MatchExact, Reward } from "#items/reward";
+import type { Reward } from "#items/reward";
 import type { TrainerItem } from "#items/trainer-item";
 import { TrainerItemManager } from "#items/trainer-item-manager";
 import { getNewTrainerItemFromPool } from "#items/trainer-item-pool";
@@ -94,7 +94,7 @@ import { hasExpSprite } from "#sprites/sprite-utils";
 import type { Variant } from "#sprites/variant";
 import { clearVariantData, variantData } from "#sprites/variant";
 import type { Achv } from "#system/achv";
-import { achvs, HeldItemAchv, MoneyAchv } from "#system/achv";
+import { achvs, MoneyAchv } from "#system/achv";
 import { GameData } from "#system/game-data";
 import { initGameSpeed } from "#system/game-speed";
 import type { PokemonData } from "#system/pokemon-data";
@@ -119,6 +119,7 @@ import {
   type TrainerItemSaveData,
 } from "#types/trainer-item-data-types";
 import type { TrainerItemEffectParamMap } from "#types/trainer-item-parameter";
+import type { Exact } from "#types/type-helpers";
 import { AbilityBar } from "#ui/ability-bar";
 import { ArenaFlyout } from "#ui/arena-flyout";
 import { CandyBar } from "#ui/candy-bar";
@@ -153,6 +154,7 @@ import { decodeNickname, getPokemonSpecies } from "#utils/pokemon-utils";
 import { capitalizeFirstLetterOnly } from "#utils/strings";
 import i18next from "i18next";
 import Phaser from "phaser";
+
 export type PokeballCounts = Record<Exclude<PokeballType, PokeballType.LUXURY_BALL>, number>;
 
 export interface InfoToggle {
@@ -2401,11 +2403,8 @@ export class BattleScene extends SceneBase {
     applyTrainerItems(effect, this.trainerItems, params);
   }
 
-  applyReward<T extends Reward>(
-    reward: T,
-    params: MatchExact<Parameters<T["apply"]>[0]>,
-    playSound?: boolean,
-  ): boolean {
+  // TODO: Move this outside of here?
+  applyReward<T extends Reward>(reward: T, params: Exact<Parameters<T["apply"]>[0]>, playSound?: boolean): boolean {
     const { soundName } = reward;
 
     if (playSound) {
@@ -2418,23 +2417,6 @@ export class BattleScene extends SceneBase {
 
     reward.apply(params);
     return true;
-  }
-
-  // TODO: This is completely unused
-  addHeldItem(heldItemId: HeldItemId, pokemon: Pokemon, amount = 1, playSound?: boolean, ignoreUpdate?: boolean) {
-    pokemon.heldItemManager.add(heldItemId, amount);
-    if (!ignoreUpdate) {
-      this.updateItems(pokemon.isPlayer());
-    }
-    // TODO: Held items don't have sound names...?
-    const soundName = allHeldItems[heldItemId].soundName;
-    if (playSound) {
-      audioManager.playSound(soundName);
-    }
-
-    if (pokemon.isPlayer()) {
-      this.validateAchvs(HeldItemAchv, pokemon);
-    }
   }
 
   /**

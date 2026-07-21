@@ -1,32 +1,7 @@
 import { globalScene } from "#app/global-scene";
-import { allHeldItems, allTrainerItems } from "#data/data-lists";
 import { HeldItemCategoryId, type HeldItemId, isItemInCategory } from "#enums/held-item-id";
-import type { TrainerItemId } from "#enums/trainer-item-id";
 import type { Pokemon } from "#field/pokemon";
 import type { PokemonItemMap } from "#types/held-item-data-types";
-
-export const trainerItemSortFunc = (a: TrainerItemId, b: TrainerItemId): number => {
-  const itemNameMatch = allTrainerItems[a].name.localeCompare(allTrainerItems[b].name);
-  const itemIdMatch = a - b;
-
-  if (itemIdMatch === 0) {
-    return itemNameMatch;
-    //Finally sort by item name
-  }
-  return itemIdMatch;
-};
-
-//TODO: revisit this function
-export const heldItemSortFunc = (a: HeldItemId, b: HeldItemId): number => {
-  const itemNameMatch = allHeldItems[a].name.localeCompare(allHeldItems[b].name);
-  const itemIdMatch = a - b;
-
-  if (itemIdMatch === 0) {
-    return itemNameMatch;
-    //Finally sort by item name
-  }
-  return itemIdMatch;
-};
 
 // Iterate over the party until an item is successfully given
 export function assignItemToFirstFreePokemon(item: HeldItemId, party: Pokemon[]): void {

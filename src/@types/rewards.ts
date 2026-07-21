@@ -1,5 +1,6 @@
 import type { HeldItemId } from "#enums/held-item-id";
 import type { RewardId } from "#enums/reward-id";
+import type { RarityTier } from "#enums/reward-tier";
 import type { TrainerItemId } from "#enums/trainer-item-id";
 import type { Pokemon } from "#field/pokemon";
 import type { AllRewardsType } from "#items/all-rewards";
@@ -39,12 +40,12 @@ export type RewardPoolEntry = {
 };
 
 export type RewardPool = {
-  [tier: string]: RewardPoolEntry[];
+  [tier in RarityTier]: RewardPoolEntry[];
 };
 
-export interface RewardPoolWeights {
-  [tier: string]: number[];
-}
+export type RewardPoolWeights = {
+  [tier in RarityTier]: number[];
+};
 
 export type SilentReward =
   | TrainerItemId

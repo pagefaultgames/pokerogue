@@ -33,7 +33,6 @@ export function isRememberMoveReward(reward: Reward): reward is RememberMoveRewa
  * @param tierOverride - An optional {@linkcode RarityTier} to override the option's rarity
  * @param upgradeCount - The number of tier upgrades having occurred; default `0`
  * @returns The generated {@linkcode RewardOption}, or `null` if no reward could be generated
- * @todo Remove `null` from signature eventually
  */
 export function generateRewardOptionFromId<T extends RewardPoolId>(
   specs: RewardSpecs<T>,
@@ -59,6 +58,7 @@ export function generateRewardOptionFromId<T extends RewardPoolId>(
 
   const tempReward = allRewards[id] as Reward | RewardGenerator;
   let reward = tempReward instanceof RewardGenerator ? tempReward.generateReward(pregenArgs) : tempReward;
+  // TODO: handle reward generator incompatibilities more gracefully than this
   if (!reward) {
     reward = new EmptyReward();
   }

@@ -24,9 +24,11 @@ export type { Writable as Mutable } from "type-fest";
  *
  * @typeParam T - The type to match exactly
  */
-export type Exact<T> = {
-  [K in keyof T]: T[K];
-};
+export type Exact<T> = T extends object
+  ? {
+      [K in keyof T]: T[K];
+    }
+  : T;
 
 /**
  * Type hint that indicates that the type is intended to be closed to a specific shape.

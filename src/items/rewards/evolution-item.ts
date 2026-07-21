@@ -1,5 +1,6 @@
 import { globalScene } from "#app/global-scene";
-import { EvolutionItem, FusionSpeciesFormEvolution, pokemonEvolutions } from "#balance/pokemon-evolutions";
+import { speciesDataRegistry } from "#app/global-species-data-registry";
+import { EvolutionItem, FusionSpeciesFormEvolution } from "#balance/pokemon-evolutions";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { SpeciesId } from "#enums/species-id";
 import type { PlayerPokemon } from "#field/pokemon";
@@ -14,9 +15,10 @@ export class EvolutionItemReward extends PokemonReward {
   constructor(evolutionItem: EvolutionItem) {
     super("", EvolutionItem[evolutionItem].toLowerCase(), (pokemon: PlayerPokemon) => {
       if (
-        Object.hasOwn(pokemonEvolutions, pokemon.species.speciesId)
-        && pokemonEvolutions[pokemon.species.speciesId].filter(e => e.validate(pokemon, false, this.evolutionItem))
-          .length > 0
+        speciesDataRegistry.hasEvolutions(pokemon.species.speciesId)
+        && speciesDataRegistry
+          .getEvolutions(pokemon.species.speciesId)
+          .filter(e => e.validate(pokemon, false, this.evolutionItem)).length > 0
         && pokemon.getFormKey() !== SpeciesFormKey.GIGANTAMAX
       ) {
         return null;
@@ -24,9 +26,10 @@ export class EvolutionItemReward extends PokemonReward {
       if (
         pokemon.isFusion()
         && pokemon.fusionSpecies
-        && Object.hasOwn(pokemonEvolutions, pokemon.fusionSpecies.speciesId)
-        && pokemonEvolutions[pokemon.fusionSpecies.speciesId].filter(e => e.validate(pokemon, true, this.evolutionItem))
-          .length > 0
+        && speciesDataRegistry.hasEvolutions(pokemon.fusionSpecies.speciesId)
+        && speciesDataRegistry
+          .getEvolutions(pokemon.fusionSpecies.speciesId)
+          .filter(e => e.validate(pokemon, true, this.evolutionItem)).length > 0
         && pokemon.getFusionFormKey() !== SpeciesFormKey.GIGANTAMAX
       ) {
         return null;
@@ -52,16 +55,16 @@ export class EvolutionItemReward extends PokemonReward {
    * @returns `true` if the evolution was successful
    */
   apply({ pokemon }: PokemonRewardParams): boolean {
-    let matchingEvolution = Object.hasOwn(pokemonEvolutions, pokemon.species.speciesId)
-      ? pokemonEvolutions[pokemon.species.speciesId].find(
-          e => e.evoItem === this.evolutionItem && e.validate(pokemon, false, e.item!),
-        )
+    let matchingEvolution = speciesDataRegistry.hasEvolutions(pokemon.species.speciesId)
+      ? speciesDataRegistry
+          .getEvolutions(pokemon.species.speciesId)
+          .find(e => e.evoItem === this.evolutionItem && e.validate(pokemon, false, e.item!))
       : null;
 
     if (!matchingEvolution && pokemon.isFusion()) {
-      matchingEvolution = pokemonEvolutions[pokemon.fusionSpecies!.speciesId].find(
-        e => e.evoItem === this.evolutionItem && e.validate(pokemon, true, e.item!),
-      );
+      matchingEvolution = speciesDataRegistry
+        .getEvolutions(pokemon.fusionSpecies!.speciesId)
+        .find(e => e.evoItem === this.evolutionItem && e.validate(pokemon, true, e.item!));
       if (matchingEvolution) {
         matchingEvolution = new FusionSpeciesFormEvolution(pokemon.species.speciesId, matchingEvolution);
       }
@@ -90,11 +93,12 @@ export class EvolutionItemRewardGenerator extends RewardGenerator {
 
     const party = globalScene.getPlayerParty();
 
+    // TODO: refactor once species code isn't a horrible burning mess
     const evolutionItemPool = [
       party
         .filter(
           p =>
-            Object.hasOwn(pokemonEvolutions, p.species.speciesId)
+            speciesDataRegistry.hasEvolutions(p.species.speciesId)
             && (!p.pauseEvolutions
               || p.species.speciesId === SpeciesId.SLOWPOKE
               || p.species.speciesId === SpeciesId.EEVEE
@@ -102,7 +106,7 @@ export class EvolutionItemRewardGenerator extends RewardGenerator {
               || p.species.speciesId === SpeciesId.SNORUNT),
         )
         .flatMap(p => {
-          const evolutions = pokemonEvolutions[p.species.speciesId];
+          const evolutions = speciesDataRegistry.getEvolutions(p.species.speciesId);
           return evolutions.filter(e => e.isValidItemEvolution(p));
         }),
       party
@@ -110,7 +114,7 @@ export class EvolutionItemRewardGenerator extends RewardGenerator {
           p =>
             p.isFusion()
             && p.fusionSpecies
-            && Object.hasOwn(pokemonEvolutions, p.fusionSpecies.speciesId)
+            && speciesDataRegistry.hasEvolutions(p.fusionSpecies.speciesId)
             && (!p.pauseEvolutions
               || p.fusionSpecies.speciesId === SpeciesId.SLOWPOKE
               || p.fusionSpecies.speciesId === SpeciesId.EEVEE
@@ -118,7 +122,7 @@ export class EvolutionItemRewardGenerator extends RewardGenerator {
               || p.fusionSpecies.speciesId === SpeciesId.SNORUNT),
         )
         .flatMap(p => {
-          const evolutions = pokemonEvolutions[p.fusionSpecies!.speciesId];
+          const evolutions = speciesDataRegistry.getEvolutions(p.fusionSpecies!.speciesId);
           return evolutions.filter(e => e.isValidItemEvolution(p, true));
         }),
     ]

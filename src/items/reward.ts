@@ -51,25 +51,20 @@ import i18next from "i18next";
  * and RewardOption, which is displayed during the select reward phase at the end of each encounter.
 */
 
-/**
- * Type helper to exactly match objects and nothing else.
- * @todo merge with `Exact` later on
- */
-export type MatchExact<T> = T extends object ? Exact<T> : T;
-
 export abstract class Reward {
   // TODO: This is set inconsistently across classes and is only really used for category checks
   public id: RewardId;
   private readonly localeKey: string;
-  private readonly iconImage: string;
+  public readonly iconName: string;
   public group: string; // TODO: Make a union type of all groups
   public readonly soundName: string;
   public tier: RarityTier;
 
   // TODO: These bangs are emphatically NOT correct
-  constructor(localeKey: string | null, iconImage: string | null, group?: string, soundName = "se/restore") {
+  // TODO: Move `id` into the constructor instead of assigning it in subclasses
+  constructor(localeKey: string | null, iconName: string | null, group?: string, soundName = "se/restore") {
     this.localeKey = localeKey!;
-    this.iconImage = iconImage!;
+    this.iconName = iconName!;
     this.group = group!;
     this.soundName = soundName;
   }
@@ -82,29 +77,30 @@ export abstract class Reward {
     return i18next.t(`${this.localeKey}.description`);
   }
 
-  // TODO: why does this exist if the underlying property is still public
-  public get iconName(): string {
-    return this.iconImage;
-  }
-
   // TODO: Should this be abstract?
   /**
    * Check whether this reward should be applied.
+   * @param params - The parameters used by this reward
+   * @returns Whether the reward should be allowed to apply its effects.
    */
-  // TODO: This is erroring on stuff with `undefined`
-  shouldApply(_params: MatchExact<Parameters<this["apply"]>[0]>): boolean {
+  // biome-ignore lint/correctness/noUnusedFunctionParameters: psuedo-abstract hook method
+  shouldApply(params: Exact<Parameters<this["apply"]>[0]>): boolean {
     return true;
   }
 
-  /** Apply this Reward's effects. */
-  // TODO: Remove `boolean` return from all superclasses' type signatures
-  abstract apply(_params?: unknown): void;
+  /**
+   * Apply this Reward's effects.
+   * @param params - The parameters used by this reward
+   */
+  // TODO: Remove `boolean` return from all subclasses' type signatures
+  abstract apply(params?: unknown): void;
 }
 
 /**
  * A {@linkcode RewardGenerator} represents a dynamic generator for a given type of reward.
  * These can be customized by lieu of {@linkcode RewardGenerator.generateReward | RewardGenerator} to alter the generation result.
  */
+// TODO: Make generic over the type of reward generated
 export abstract class RewardGenerator {
   /**
    * Dynamically generate a new reward.
@@ -122,12 +118,12 @@ export abstract class PokemonReward extends Reward {
 
   constructor(
     localeKey: string,
-    iconImage: string,
+    iconName: string,
     selectFilter?: PokemonSelectFilter,
     group?: string,
     soundName?: string,
   ) {
-    super(localeKey, iconImage, group, soundName);
+    super(localeKey, iconName, group, soundName);
     this.selectFilter = selectFilter;
   }
 
@@ -139,13 +135,13 @@ export abstract class PokemonMoveReward extends PokemonReward {
 
   constructor(
     localeKey: string,
-    iconImage: string,
+    iconName: string,
     id: RewardId,
     selectFilter?: PokemonSelectFilter,
     moveSelectFilter?: PokemonMoveSelectFilter,
     group?: string,
   ) {
-    super(localeKey, iconImage, selectFilter, group);
+    super(localeKey, iconName, selectFilter, group);
     this.moveSelectFilter = moveSelectFilter;
     this.id = id;
   }

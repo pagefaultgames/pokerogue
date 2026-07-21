@@ -15,7 +15,6 @@ import type { SpeciesId } from "#enums/species-id";
 import { TextStyle } from "#enums/text-style";
 import { TrainerVariant } from "#enums/trainer-variant";
 import { UiMode } from "#enums/ui-mode";
-import { heldItemSortFunc } from "#items/item-utility";
 import { getVariantTint } from "#sprites/variant";
 import type { PokemonData } from "#system/pokemon-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
@@ -887,7 +886,10 @@ export class RunInfoUiHandler extends UiHandler {
         this.runInfo.gameMode === GameModes.SPLICED_ENDLESS || this.runInfo.gameMode === GameModes.ENDLESS ? 0.25 : 0.5;
       const heldItemsContainer = globalScene.add.container(-82, 2);
       let row = 0;
-      for (const [index, item] of pokemon.heldItemManager.getItems().sort(heldItemSortFunc).entries()) {
+      for (const [index, item] of pokemon.heldItemManager
+        .getItems()
+        .sort((a, b) => a - b)
+        .entries()) {
         if (index > 36) {
           const overflowIcon = addTextObject(182, 4, "+", TextStyle.WINDOW);
           heldItemsContainer.add(overflowIcon);
