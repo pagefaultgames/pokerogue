@@ -155,7 +155,7 @@ export class SpeciesDataRegistry {
     const tms = [...speciesData.tms, ...(speciesData.formTms?.[formKey] ?? [])];
     const prevo = this.getPrevolution(speciesId);
     if (prevo !== null) {
-      const prevoTms = this.getTms(prevo, formKey);
+      const prevoTms = this.getTms(prevo, form ? formKey : undefined);
       tms.push(...prevoTms);
     }
 
@@ -438,7 +438,6 @@ export class SpeciesDataRegistry {
     }
 
     if (form == null) {
-      console.debug(`No form requested for ${speciesId} (${this.getSpecies(speciesId).name}), returning base form.`);
       return forms[0].formKey;
     }
 

@@ -5,9 +5,9 @@ import { UiMode } from "#enums/ui-mode";
 import type { SettingType } from "#system/settings";
 import { Setting, SettingKeys } from "#system/settings";
 import type { MappingSettingName } from "#types/configs/inputs";
-import type { InputsIcons } from "#ui/base-control-settings-ui-handler";
+import type { InputsIcons } from "#types/ui-types";
+import { TabMenu } from "#ui/containers/tab-menu";
 import { MessageUiHandler } from "#ui/message-ui-handler";
-import { NavigationManager, NavigationMenu } from "#ui/navigation-menu";
 import { ScrollBar } from "#ui/scroll-bar";
 import { addTextObject, getTextColor } from "#ui/text";
 import type { TitleUiHandler } from "#ui/title-ui-handler";
@@ -21,7 +21,14 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
   private settingsContainer: Phaser.GameObjects.Container;
   private optionsContainer: Phaser.GameObjects.Container;
   private messageBoxContainer: Phaser.GameObjects.Container;
-  private navigationContainer: NavigationMenu;
+  protected tabMenu: TabMenu;
+  protected readonly settingsTabs = [
+    { mode: UiMode.SETTINGS, labelKey: "settings:general" },
+    { mode: UiMode.SETTINGS_DISPLAY, labelKey: "settings:display" },
+    { mode: UiMode.SETTINGS_AUDIO, labelKey: "settings:audio" },
+    { mode: UiMode.SETTINGS_GAMEPAD, labelKey: "settings:gamepad" },
+    { mode: UiMode.SETTINGS_KEYBOARD, labelKey: "settings:keyboard" },
+  ];
 
   private scrollCursor: number;
   private scrollBar: ScrollBar;
@@ -62,10 +69,20 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
 
     this.navigationIcons = {};
 
-    this.navigationContainer = new NavigationMenu(0, 0);
-    const navWidth = this.navigationContainer.width;
-    const navHeight = this.navigationContainer.height;
+    const tabLabels = this.settingsTabs.map(tab => i18next.t(tab.labelKey));
 
+    const menuWidth = globalScene.scaledCanvas.width;
+
+    this.tabMenu = new TabMenu(0, 0, menuWidth, tabLabels, newIndex => {
+      globalScene.ui.setMode(this.settingsTabs[newIndex].mode);
+    });
+
+    const activeIndex = this.settingsTabs.findIndex(tab => tab.mode === this.getUi().getMode());
+    if (activeIndex !== -1) {
+      this.tabMenu.setIndex(activeIndex);
+    }
+    const navHeight = this.tabMenu.height;
+    const navWidth = this.tabMenu.width;
     this.optionsBg = addWindow(0, navHeight, canvasWidth - 2, canvasHeight - 16 - navHeight - 2)
       .setName("window-options-bg")
       .setOrigin(0);
@@ -171,7 +188,7 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
     this.settingsContainer.add([
       this.optionsBg,
       this.scrollBar,
-      this.navigationContainer,
+      this.tabMenu,
       actionsBg,
       this.optionsContainer,
       iconAction,
@@ -214,7 +231,7 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
         this.navigationIcons[settingName].alpha = 0;
       }
     }
-    NavigationManager.getInstance().updateIcons();
+    this.tabMenu?.updateIcons();
   }
 
   /**
@@ -225,6 +242,10 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
    */
   public override show(args: any[]): boolean {
     super.show(args);
+    const activeIndex = this.settingsTabs.findIndex(tab => tab.mode === this.getUi().getMode());
+    if (activeIndex !== -1) {
+      this.tabMenu.setIndex(activeIndex);
+    }
     this.updateBindings();
 
     const settings: object = Object.hasOwn(localStorage, this.localStorageKey)
@@ -285,7 +306,6 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
 
     if (button === Button.CANCEL) {
       success = true;
-      NavigationManager.getInstance().reset();
       // Reverts UI to its previous state on cancel.
       globalScene.ui.revertMode();
     } else {
@@ -332,7 +352,7 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
           break;
         case Button.CYCLE_FORM:
         case Button.CYCLE_SHINY:
-          success = this.navigationContainer.navigate(button);
+          success = this.tabMenu.navigate(button);
           break;
         case Button.ACTION: {
           const setting: Setting = this.settings[cursor];

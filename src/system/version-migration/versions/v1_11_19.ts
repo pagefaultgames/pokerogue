@@ -7,6 +7,7 @@ import type { SettingsSaveMigrator } from "#types/save-migrators";
  * @param data - The `settings` object
  */
 const fixGameSpeed: SettingsSaveMigrator = {
+  name: "fixGameSpeed",
   version: "1.11.19",
   migrate: (data: object): void => {
     if (Object.hasOwn(data, SettingKeys.Game_Speed)) {

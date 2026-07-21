@@ -6,9 +6,8 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-// biome-ignore-all lint/performance/noNamespaceImport: This is the intended import method for these modules
-import * as core from "@actions/core";
-import * as github from "@actions/github";
+import { getInput, info, setFailed } from "@actions/core";
+import { context, getOctokit } from "@actions/github";
 
 const PREFIXES = [
   "balance", // Primarily a balance change
@@ -64,33 +63,33 @@ const PREFIX_SCOPE_MAP: Readonly<Record<Prefixes, readonly AllScopes[]>> = {
 
 async function run(): Promise<void> {
   try {
-    const authToken = core.getInput("github_token", { required: true });
+    const authToken = getInput("github_token", { required: true });
 
-    const { eventName } = github.context;
+    const { eventName } = context;
     if (eventName !== "pull_request") {
-      core.setFailed(`Invalid event: ${eventName}`);
+      setFailed(`Invalid event: ${eventName}`);
       return;
     }
-    if (!github.context.payload.pull_request) {
-      core.setFailed("Error parsing pull request data!");
+    if (!context.payload.pull_request) {
+      setFailed("Error parsing pull request data!");
       return;
     }
 
-    const client = github.getOctokit(authToken);
+    const client = getOctokit(authToken);
     // The pull request info on the context isn't up to date.
     // When the user updates the title and re-runs the workflow, it would be outdated.
     // Therefore fetch the pull request via the REST API to ensure we use the current title.
     const { data: pullRequest } = await client.rest.pulls.get({
-      owner: github.context.payload.pull_request.base.user.login,
-      repo: github.context.payload.pull_request.base.repo.name,
-      pull_number: github.context.payload.pull_request.number,
+      owner: context.payload.pull_request.base.user.login,
+      repo: context.payload.pull_request.base.repo.name,
+      pull_number: context.payload.pull_request.number,
     });
 
     const { title } = pullRequest;
-    core.info(
+    info(
       "Info on PR title formatting: https://github.com/pagefaultgames/pokerogue/blob/beta/CONTRIBUTING.md#-submitting-a-pull-request",
     );
-    core.info(`Pull Request title: "${title}"`);
+    info(`Pull Request title: "${title}"`);
 
     // if (title.length > 72) {
     //   core.setFailed(`Max title length of 72 exceeded! Current length: ${title.length}`);
@@ -98,7 +97,7 @@ async function run(): Promise<void> {
     // }
 
     // Note: `!` allowed before `:` for changes including a save migrator and/or version increase
-    const info = `
+    const terminology = `
 Terminology: fix(move): Future Sight no longer crashes
              ^   ^      ^
              |   |      |__ Subject
@@ -106,13 +105,13 @@ Terminology: fix(move): Future Sight no longer crashes
              |_____________ Prefix
 `;
 
-    core.info(info);
+    info(terminology);
 
     // Example usage of regex: https://regex101.com/r/FeN8jG/9
     const regex = /^([a-z0-9]+)(\([a-z]+\))?!?: .+/;
     const regexResult = regex.exec(title);
     if (!regexResult) {
-      core.setFailed(`Pull Request title "${title}" failed to match - "Prefix(Scope): Subject"`);
+      setFailed(`Pull Request title "${title}" failed to match "Prefix(Scope): Subject" format!`);
       return;
     }
 
@@ -120,17 +119,17 @@ Terminology: fix(move): Future Sight no longer crashes
     const scope = regexResult[2]?.replace(/[()]/g, "") as AllScopes | undefined;
 
     if (!(PREFIXES as readonly string[]).includes(prefix)) {
-      core.setFailed(`Pull Request title "${title}" did not match any of the prefixes: [${PREFIXES}]`);
+      setFailed(`Pull Request title "${title}" did not match any of the prefixes: [${PREFIXES}]`);
       return;
     }
 
     // biome-ignore lint/style/useExplicitLengthCheck: doubles as a nullish check for `scope`
     if (scope?.length && !PREFIX_SCOPE_MAP[prefix as Prefixes].includes(scope)) {
-      core.setFailed(`Pull Request title "${title}" has an invalid prefix (${prefix}) + scope (${scope}) combination!`);
+      setFailed(`Pull Request title "${title}" has an invalid prefix (${prefix}) + scope (${scope}) combination!`);
       return;
     }
   } catch (error) {
-    core.setFailed((error as Error).message);
+    setFailed((error as Error).message);
   }
 }
 
