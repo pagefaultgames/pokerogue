@@ -31,8 +31,8 @@ describe("Move - Magnet Rise", () => {
     await game.classicMode.startBattle(SpeciesId.MAGNEZONE);
 
     game.move.use(MoveId.MAGNET_RISE);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceEnemyMove(MoveId.EARTHQUAKE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
     // magnezone levitated and was not hit by earthquake

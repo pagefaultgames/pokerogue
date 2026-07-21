@@ -54,8 +54,8 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
     game.move.use(MoveId.MUD_SLAP);
     await game.toEndOfTurn();
 
-    const feebas = game.field.getPlayerPokemon();
-    expect(feebas).toHaveUsedMove({ move: MoveId.MUD_SLAP, result: MoveResult.SUCCESS });
+    const player = game.field.getPlayerPokemon();
+    expect(player).toHaveUsedMove({ move: MoveId.MUD_SLAP, result: MoveResult.SUCCESS });
   });
 
   it.each([
@@ -64,29 +64,28 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
   ])("should cancel the effects of BattlerTagType.$name", async ({ tag }) => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    const karp = game.field.getEnemyPokemon();
-    karp.addTag(tag);
-    // Fake karp being ungrounded since Smack Down/etc require it to apply their effects
-    vi.spyOn(karp, "isGrounded").mockReturnValue(false);
+    const enemy = game.field.getEnemyPokemon();
+    enemy.addTag(tag);
+    expect(enemy.isGrounded(true)).toBe(false);
 
     game.move.use(MoveId.SMACK_DOWN);
     await game.toEndOfTurn();
 
-    expect(karp).not.toHaveBattlerTag(tag);
-    expect(karp).toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
+    expect(enemy).not.toHaveBattlerTag(tag);
+    expect(enemy).toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
   });
 
   it("should not affect already-grounded targets", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    const karp = game.field.getEnemyPokemon();
-    expect(karp.isGrounded()).toBe(true);
+    const enemy = game.field.getEnemyPokemon();
+    expect(enemy.isGrounded()).toBe(true);
 
     game.move.use(MoveId.SMACK_DOWN);
     await game.toEndOfTurn();
 
-    expect(karp).not.toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
-    expect(karp.isGrounded()).toBe(true);
+    expect(enemy).not.toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
+    expect(enemy.isGrounded()).toBe(true);
   });
 
   // NB: This test might sound useless, but semi-invulnerable pokemon are technically considered "ungrounded"
@@ -96,21 +95,21 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.THOUSAND_ARROWS);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.move.forceEnemyMove(MoveId.DIG);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
     // Magikarp should be grounded solely due to using Dig
-    const karp = game.field.getEnemyPokemon();
-    expect(karp).toHaveBattlerTag(BattlerTagType.UNDERGROUND);
-    expect(karp.isGrounded()).toBe(false);
-    expect(karp.isGrounded(true)).toBe(true);
+    const enemy = game.field.getEnemyPokemon();
+    expect(enemy).toHaveBattlerTag(BattlerTagType.UNDERGROUND);
+    expect(enemy.isGrounded()).toBe(false);
+    expect(enemy.isGrounded(true)).toBe(true);
     await game.toEndOfTurn();
 
     // Magikarp took damage but was not forcibly grounded
-    expect(karp).not.toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
-    expect(karp).toHaveBattlerTag(BattlerTagType.UNDERGROUND);
-    expect(karp).not.toHaveFullHp();
+    expect(enemy).not.toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
+    expect(enemy).toHaveBattlerTag(BattlerTagType.UNDERGROUND);
+    expect(enemy).not.toHaveFullHp();
   });
 
   // TODO: Sky drop is currently partially implemented
@@ -125,15 +124,15 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
       game.override.enemyPassiveAbility(AbilityId.LEVITATE);
       await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-      const karp = game.field.getEnemyPokemon();
-      expect(karp.isGrounded()).toBe(false);
+      const enemy = game.field.getEnemyPokemon();
+      expect(enemy.isGrounded()).toBe(false);
 
       game.move.use(MoveId.THOUSAND_ARROWS);
       await game.toEndOfTurn();
 
-      expect(karp).not.toHaveFullHp();
-      expect(karp).toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
-      expect(karp.isGrounded()).toBe(true);
+      expect(enemy).not.toHaveFullHp();
+      expect(enemy).toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
+      expect(enemy.isGrounded()).toBe(true);
     });
 
     it("should have a fixed 1x type effectiveness when hitting airborne Flying-types", async () => {
@@ -188,29 +187,20 @@ describe("Moves - Smack Down and Thousand Arrows", () => {
       game.challengeMode.addChallenge(Challenges.INVERSE_BATTLE, 1, 1);
       await game.challengeMode.startBattle(SpeciesId.FEEBAS);
 
-      const feebas = game.field.getPlayerPokemon();
+      const player = game.field.getPlayerPokemon();
       const butterfree = game.field.getEnemyPokemon();
 
-      const normalMult = butterfree.getAttackTypeEffectiveness(PokemonType.GROUND, { source: feebas });
+      const normalMult = butterfree.getAttackTypeEffectiveness(PokemonType.GROUND, { source: player });
+      const move = allMoves[MoveId.THOUSAND_ARROWS];
       // Bug and Flying respectively resist and are immune to Ground, which Inverse Battles turn into a 4x weakness
       expect(normalMult).toBe(4);
-      expect(
-        butterfree.getAttackTypeEffectiveness(PokemonType.GROUND, {
-          source: feebas,
-          move: allMoves[MoveId.THOUSAND_ARROWS],
-        }),
-      ).toBe(4);
+      expect(butterfree.getAttackTypeEffectiveness(PokemonType.GROUND, { source: player, move })).toBe(4);
 
       // should remain the same even after forcibly being grounded
       butterfree.addTag(BattlerTagType.IGNORE_FLYING, 0, 0);
 
       expect(butterfree.isGrounded()).toBe(true);
-      expect(
-        butterfree.getAttackTypeEffectiveness(PokemonType.GROUND, {
-          source: feebas,
-          move: allMoves[MoveId.THOUSAND_ARROWS],
-        }),
-      ).toBe(4);
+      expect(butterfree.getAttackTypeEffectiveness(PokemonType.GROUND, { source: player, move })).toBe(4);
     });
   });
 });

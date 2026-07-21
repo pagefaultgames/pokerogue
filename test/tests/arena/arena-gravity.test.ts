@@ -37,8 +37,8 @@ describe("Arena - Gravity", () => {
     const accSpy = vi.spyOn(allMoves[MoveId.TACKLE], "calculateBattleAccuracy");
 
     game.move.use(MoveId.GRAVITY);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceEnemyMove(MoveId.TACKLE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
     expect(game).toHaveArenaTag({ tagType: ArenaTagType.GRAVITY, side: ArenaTagSide.BOTH, turnCount: 4 });
@@ -50,8 +50,8 @@ describe("Arena - Gravity", () => {
 
     const accSpy = vi.spyOn(allMoves[MoveId.FISSURE], "calculateBattleAccuracy");
     game.move.use(MoveId.GRAVITY);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceEnemyMove(MoveId.FISSURE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
     expect(game).toHaveArenaTag(ArenaTagType.GRAVITY);
@@ -61,16 +61,16 @@ describe("Arena - Gravity", () => {
   it("should forcibly ground all Pokemon for the duration of the effect", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    const feebas = game.field.getPlayerPokemon();
+    const player = game.field.getPlayerPokemon();
     const fletchling = game.field.getEnemyPokemon();
-    expect(feebas.isGrounded()).toBe(true);
+    expect(player.isGrounded()).toBe(true);
     expect(fletchling.isGrounded()).toBe(false);
 
     game.move.use(MoveId.GRAVITY);
     await game.toEndOfTurn();
 
     expect(game).toHaveArenaTag(ArenaTagType.GRAVITY);
-    expect(feebas.isGrounded()).toBe(true);
+    expect(player.isGrounded()).toBe(true);
     expect(fletchling.isGrounded()).toBe(true);
     expect(fletchling["isForciblyGrounded"]()).toBe(true);
   });

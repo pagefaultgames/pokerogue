@@ -38,23 +38,23 @@ describe("Moves - Fly and Bounce", () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.FLY);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
-    const feebas = game.field.getPlayerPokemon();
-    const karp = game.field.getEnemyPokemon();
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
-    expect(feebas).toHaveUsedMove({ move: MoveId.FLY, result: MoveResult.OTHER });
-    expect(feebas).toHaveBattlerTag(BattlerTagType.FLYING);
-    expect(karp).toHaveUsedMove({ move: MoveId.TACKLE, result: MoveResult.MISS });
-    expect(karp).toHaveFullHp();
-    expect(feebas.getMoveQueue()[0]?.move).toBe(MoveId.FLY);
+    expect(player).toHaveUsedMove({ move: MoveId.FLY, result: MoveResult.OTHER });
+    expect(player).toHaveBattlerTag(BattlerTagType.FLYING);
+    expect(enemy).toHaveUsedMove({ move: MoveId.TACKLE, result: MoveResult.MISS });
+    expect(enemy).toHaveFullHp();
+    expect(player.getMoveQueue()[0]?.move).toBe(MoveId.FLY);
 
     await game.toNextTurn();
 
-    expect(feebas).toHaveUsedMove({ move: MoveId.FLY, result: MoveResult.SUCCESS });
-    expect(feebas).not.toHaveBattlerTag(BattlerTagType.FLYING);
-    expect(feebas).toHaveUsedPP(MoveId.FLY, 1);
+    expect(player).toHaveUsedMove({ move: MoveId.FLY, result: MoveResult.SUCCESS });
+    expect(player).not.toHaveBattlerTag(BattlerTagType.FLYING);
+    expect(player).toHaveUsedPP(MoveId.FLY, 1);
   });
 
   // TODO: Move to a No Guard test file
@@ -62,14 +62,15 @@ describe("Moves - Fly and Bounce", () => {
     game.override.enemyAbility(AbilityId.NO_GUARD);
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    const feebas = game.field.getPlayerPokemon();
-    const karp = game.field.getEnemyPokemon();
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.use(MoveId.FLY);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toEndOfTurn();
 
-    expect(feebas).not.toHaveFullHp();
-    expect(karp).toHaveUsedMove({ move: MoveId.TACKLE, result: MoveResult.SUCCESS });
+    expect(player).not.toHaveFullHp();
+    expect(enemy).toHaveUsedMove({ move: MoveId.TACKLE, result: MoveResult.SUCCESS });
   });
 
   // TODO: We currently cancel Fly/Bounce in a really scuffed way.
@@ -82,31 +83,31 @@ describe("Moves - Fly and Bounce", () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
     game.move.use(MoveId.BOUNCE);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceEnemyMove(MoveId.SPLASH);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
     // Bounce should've worked
-    const feebas = game.field.getPlayerPokemon();
-    expect(feebas).toHaveBattlerTag(BattlerTagType.FLYING);
+    const player = game.field.getPlayerPokemon();
+    expect(player).toHaveBattlerTag(BattlerTagType.FLYING);
 
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.move.forceEnemyMove(move);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(feebas).not.toHaveBattlerTag(BattlerTagType.FLYING);
-    expect(feebas).not.toHaveBattlerTag(BattlerTagType.CHARGING);
-    expect(feebas.getMoveQueue()).toHaveLength(0);
-    expect(feebas.visible).toBe(true);
+    expect(player).not.toHaveBattlerTag(BattlerTagType.FLYING);
+    expect(player).not.toHaveBattlerTag(BattlerTagType.CHARGING);
+    expect(player.getMoveQueue()).toHaveLength(0);
+    expect(player.visible).toBe(true);
     // check for tag addition for smack down/thousand arrows
     if (move !== MoveId.GRAVITY) {
-      expect(feebas).not.toHaveFullHp();
-      expect(feebas).toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
+      expect(player).not.toHaveFullHp();
+      expect(player).toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
     }
 
     await game.toEndOfTurn();
 
-    const karp = game.field.getEnemyPokemon();
-    expect(karp).toHaveFullHp();
+    const enemy = game.field.getEnemyPokemon();
+    expect(enemy).toHaveFullHp();
   });
 });

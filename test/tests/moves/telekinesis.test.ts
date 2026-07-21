@@ -36,55 +36,55 @@ describe("Move - Telekinesis", () => {
   it("should cause opposing non-OHKO moves to always hit the target", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    const feebas = game.field.getPlayerPokemon();
-    const karp = game.field.getEnemyPokemon();
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.use(MoveId.TELEKINESIS);
     await game.toNextTurn();
 
     expect(game).toHaveShownMessage(
       i18next.t("battlerTags:telekinesisOnAdd", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(karp),
+        pokemonNameWithAffix: getPokemonNameWithAffix(enemy),
       }),
     );
-    expect(karp).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
+    expect(enemy).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
     // This used to re-use Magnet Rise's effect in its prior state, hence why we need to check
-    expect(karp).not.toHaveBattlerTag(BattlerTagType.FLOATING);
+    expect(enemy).not.toHaveBattlerTag(BattlerTagType.FLOATING);
 
     game.move.use(MoveId.ICICLE_CRASH);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceMiss();
     await game.toEndOfTurn();
 
-    expect(feebas).toHaveUsedMove({ move: MoveId.ICICLE_CRASH, result: MoveResult.SUCCESS });
-    expect(karp).not.toHaveFullHp();
+    expect(player).toHaveUsedMove({ move: MoveId.ICICLE_CRASH, result: MoveResult.SUCCESS });
+    expect(enemy).not.toHaveFullHp();
   });
 
   it("should forcibly unground the target", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    const karp = game.field.getEnemyPokemon();
-    expect(karp.isGrounded()).toBe(true);
+    const enemy = game.field.getEnemyPokemon();
+    expect(enemy.isGrounded()).toBe(true);
 
     game.move.use(MoveId.TELEKINESIS);
     await game.toNextTurn();
 
-    expect(karp.isGrounded()).toBe(false);
+    expect(enemy.isGrounded()).toBe(false);
   });
 
   it("should be capable of coexisting with Magnet Rise", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    const karp = game.field.getEnemyPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.use(MoveId.TELEKINESIS);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.move.forceEnemyMove(MoveId.MAGNET_RISE);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toEndOfTurn();
 
-    expect(karp).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
-    expect(karp).toHaveBattlerTag(BattlerTagType.FLOATING);
-    expect(karp.isGrounded()).toBe(false);
+    expect(enemy).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
+    expect(enemy).toHaveBattlerTag(BattlerTagType.FLOATING);
+    expect(enemy.isGrounded()).toBe(false);
   });
 
   it("should last 3 turns, including the turn it is used", async () => {
@@ -93,21 +93,21 @@ describe("Move - Telekinesis", () => {
     game.move.use(MoveId.TELEKINESIS);
     await game.toEndOfTurn(false);
 
-    const karp = game.field.getEnemyPokemon();
-    expect(karp).toHaveBattlerTag({ tagType: BattlerTagType.TELEKINESIS, turnCount: 3 });
+    const enemy = game.field.getEnemyPokemon();
+    expect(enemy).toHaveBattlerTag({ tagType: BattlerTagType.TELEKINESIS, turnCount: 3 });
 
     await game.toNextTurn();
-    expect(karp).toHaveBattlerTag({ tagType: BattlerTagType.TELEKINESIS, turnCount: 2 });
+    expect(enemy).toHaveBattlerTag({ tagType: BattlerTagType.TELEKINESIS, turnCount: 2 });
 
     game.move.use(MoveId.SPLASH);
     await game.toNextTurn();
     game.move.use(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(karp).not.toHaveBattlerTag(BattlerTagType.TELEKINESIS);
+    expect(enemy).not.toHaveBattlerTag(BattlerTagType.TELEKINESIS);
     expect(game).toHaveShownMessage(
       i18next.t("battlerTags:telekinesisOnRemove", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(karp),
+        pokemonNameWithAffix: getPokemonNameWithAffix(enemy),
       }),
     );
   });
@@ -119,8 +119,8 @@ describe("Move - Telekinesis", () => {
   it.each(cases)("should fail if the target already has BattlerTagType.$name", async ({ tagType }) => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    const karp = game.field.getEnemyPokemon();
-    karp.addTag(tagType);
+    const enemy = game.field.getEnemyPokemon();
+    enemy.addTag(tagType);
 
     game.move.use(MoveId.TELEKINESIS);
     await game.toEndOfTurn();
@@ -141,15 +141,15 @@ describe("Move - Telekinesis", () => {
     await game.toNextTurn();
 
     // Adding tags directly did not work
-    const karp = game.field.getEnemyPokemon();
-    expect(karp).toHaveUsedMove({ move: MoveId.TELEKINESIS, result: MoveResult.FAIL });
+    const enemy = game.field.getEnemyPokemon();
+    expect(enemy).toHaveUsedMove({ move: MoveId.TELEKINESIS, result: MoveResult.FAIL });
 
     expect(diglett.isOnField()).toBe(false);
 
     // Transfer Telekinesis from Feebas to the invalid pokemon
     game.move.use(MoveId.BATON_PASS);
     game.doSelectPartyPokemon(1);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(feebas).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
@@ -165,8 +165,8 @@ describe("Move - Telekinesis", () => {
     game.override.enemyAbility(AbilityId.IMPOSTER);
     await game.classicMode.startBattle(SpeciesId.DIGLETT);
 
-    const karp = game.field.getEnemyPokemon();
-    expect(karp.summonData.speciesForm?.speciesId).toBe(SpeciesId.DIGLETT);
+    const enemy = game.field.getEnemyPokemon();
+    expect(enemy.summonData.speciesForm?.speciesId).toBe(SpeciesId.DIGLETT);
     expect(invalidTelekinesisSpecies).toContain(SpeciesId.DIGLETT);
 
     game.move.use(MoveId.TELEKINESIS);
@@ -175,7 +175,7 @@ describe("Move - Telekinesis", () => {
 
     const feebas = game.field.getPlayerPokemon();
     expect(feebas).toHaveUsedMove({ move: MoveId.TELEKINESIS, result: MoveResult.SUCCESS });
-    expect(karp).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
+    expect(enemy).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
   });
 
   it.each([
@@ -197,13 +197,13 @@ describe("Move - Telekinesis", () => {
     await game.toNextTurn();
 
     // Adding tags directly should have failed
-    const karp = game.field.getEnemyPokemon();
-    expect(karp).toHaveUsedMove({ move: MoveId.TELEKINESIS, result: MoveResult.FAIL });
+    const enemy = game.field.getEnemyPokemon();
+    expect(enemy).toHaveUsedMove({ move: MoveId.TELEKINESIS, result: MoveResult.FAIL });
     expect(gengar.isOnField()).toBe(false);
 
     game.move.use(MoveId.BATON_PASS);
     game.doSelectPartyPokemon(1);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(feebas).toHaveBattlerTag(BattlerTagType.TELEKINESIS);

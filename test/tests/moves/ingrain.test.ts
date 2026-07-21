@@ -47,22 +47,22 @@ describe("Move - Ingrain", () => {
   it("should forcibly ground the user without removing relevant effects", async () => {
     await game.classicMode.startBattle(SpeciesId.FEEBAS);
 
-    const feebas = game.field.getPlayerPokemon();
-    const karp = game.field.getEnemyPokemon();
-    karp.addTag(BattlerTagType.TELEKINESIS);
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
+    enemy.addTag(BattlerTagType.TELEKINESIS);
 
     game.move.use(MoveId.MUD_SHOT);
+    game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.move.forceEnemyMove(MoveId.INGRAIN);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    expect(karp).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
-    expect(karp).toHaveBattlerTag(BattlerTagType.INGRAIN);
-    expect(karp).toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
-    expect(karp.isGrounded()).toBe(true);
+    expect(enemy).toHaveBattlerTag(BattlerTagType.TELEKINESIS);
+    expect(enemy).toHaveBattlerTag(BattlerTagType.INGRAIN);
+    expect(enemy).toHaveBattlerTag(BattlerTagType.IGNORE_FLYING);
+    expect(enemy.isGrounded()).toBe(true);
     expect(game).not.toHaveShownMessage(
       i18next.t("battlerTags:telekinesisOnRemove", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(karp),
+        pokemonNameWithAffix: getPokemonNameWithAffix(enemy),
       }),
     );
 
@@ -70,6 +70,6 @@ describe("Move - Ingrain", () => {
     await game.move.forceMiss();
     await game.toEndOfTurn();
 
-    expect(feebas).toHaveUsedMove({ move: MoveId.MUD_SHOT, result: MoveResult.SUCCESS });
+    expect(player).toHaveUsedMove({ move: MoveId.MUD_SHOT, result: MoveResult.SUCCESS });
   });
 });
