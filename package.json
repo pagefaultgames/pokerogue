@@ -34,7 +34,7 @@
     "biome:all": "biome check --write --no-errors-on-unmatched --diagnostic-level=error",
     "biome:ci": "biome ci --diagnostic-level=error --reporter=github --reporter=default --no-errors-on-unmatched",
     "typedoc": "typedoc",
-    "depcruise": "depcruise src test",
+    "depcruise": "depcruise src test plugins/phaser plugins/vite",
     "postinstall": "lefthook install; git config --local fetch.recurseSubmodules true; git config --local blame.ignoreRevsFile .git-blame-ignore-revs",
     "update-locales": "pnpm update-submodules locales",
     "update-locales:remote": "pnpm update-submodules:remote locales",
