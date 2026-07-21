@@ -39,18 +39,18 @@ import { MoveRequirement } from "#mystery-encounters/mystery-encounter-requireme
 import { DANCING_MOVES } from "#mystery-encounters/requirement-groups";
 import { PokemonData } from "#system/pokemon-data";
 import type { OptionSelectItem } from "#types/ui-types";
+import { randSeedInt } from "#utils/common";
 import { groupStatChange } from "#utils/stat-change";
 import i18next from "i18next";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/dancingLessons";
 
-// TODO: Put all in Meadow as their third biome, random between forms, currently just goes to Baile every time if done
 // Fire form
 const BAILE_STYLE_BIOMES: readonly BiomeId[] = [BiomeId.TEMPLE, BiomeId.TALL_GRASS];
 
 // Electric form
-const POM_POM_STYLE_BIOMES: readonly BiomeId[] = [BiomeId.BEACH, BiomeId.GRASS, BiomeId.MEADOW];
+const POM_POM_STYLE_BIOMES: readonly BiomeId[] = [BiomeId.BEACH, BiomeId.GRASS];
 
 // Psychic form
 const PAU_STYLE_BIOMES: readonly BiomeId[] = [BiomeId.ISLAND, BiomeId.RUINS];
@@ -108,7 +108,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
     }
 
     // Set the form index based on the biome
-    // Defaults to Baile style if somehow nothing matches
+    // Picks a random form if none is specified for the current biome
     const currentBiome = globalScene.arena.biomeId;
     if (BAILE_STYLE_BIOMES.includes(currentBiome)) {
       enemyPokemon.formIndex = 0;
@@ -119,7 +119,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
     } else if (SENSU_STYLE_BIOMES.includes(currentBiome)) {
       enemyPokemon.formIndex = 3;
     } else {
-      enemyPokemon.formIndex = 0;
+      enemyPokemon.formIndex = randSeedInt(4);
     }
 
     const oricorioData = new PokemonData(enemyPokemon);

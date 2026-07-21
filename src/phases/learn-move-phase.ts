@@ -17,6 +17,7 @@ import i18next from "i18next";
 
 export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   public readonly phaseName = "LearnMovePhase";
+
   private readonly moveId: MoveId;
   private messageMode: UiMode;
   private readonly learnMoveType: LearnMoveType;
@@ -72,7 +73,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * @param move The Move to be learned
    * @param Pokemon The Pokemon learning the move
    */
-  async replaceMoveCheck(move: Move, pokemon: Pokemon) {
+  private async replaceMoveCheck(move: Move, pokemon: Pokemon): Promise<void> {
     const learnMovePrompt = i18next.t("battle:learnMovePrompt", {
       pokemonName: getPokemonNameWithAffix(pokemon),
       moveName: move.name,
@@ -108,7 +109,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * @param move The Move to be learned
    * @param Pokemon The Pokemon learning the move
    */
-  async forgetMoveProcess(move: Move, pokemon: Pokemon) {
+  private async forgetMoveProcess(move: Move, pokemon: Pokemon): Promise<void> {
     globalScene.ui.setMode(this.messageMode);
     await globalScene.ui.showTextPromise(i18next.t("battle:learnMoveForgetQuestion"), undefined, true);
     await globalScene.ui.setModeWithoutClear(
@@ -143,7 +144,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * @param move The Move to be learned
    * @param Pokemon The Pokemon learning the move
    */
-  async rejectMoveAndEnd(move: Move, pokemon: Pokemon) {
+  private async rejectMoveAndEnd(move: Move, pokemon: Pokemon): Promise<void> {
     if (globalScene.hideMoveSkipConfirm) {
       globalScene.ui.setMode(this.messageMode);
       globalScene.ui
@@ -200,11 +201,8 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * @param move The Move to be learned
    * @param Pokemon The Pokemon learning the move
    */
-  async learnMove(index: number, move: Move, pokemon: Pokemon, textMessage?: string) {
+  private async learnMove(index: number, move: Move, pokemon: Pokemon, textMessage?: string): Promise<void> {
     if (this.learnMoveType === LearnMoveType.TM) {
-      if (!pokemon.usedTMs) {
-        pokemon.usedTMs = [];
-      }
       if (!pokemon.usedTMs.includes(this.moveId)) {
         pokemon.usedTMs.push(this.moveId);
       }
