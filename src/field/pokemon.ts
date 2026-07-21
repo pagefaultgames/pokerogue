@@ -2505,9 +2505,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
       return true;
     }
 
-    const levitateHolder = new ValueHolder(false);
-    applyAbAttrs("UngroundedAbAttr", { pokemon: this, cancelled: levitateHolder });
-    return levitateHolder.value;
+    const isUngrounded = new ValueHolder(false);
+    applyAbAttrs("UngroundedAbAttr", { pokemon: this, isUngrounded });
+    return isUngrounded.value;
   }
 
   /**

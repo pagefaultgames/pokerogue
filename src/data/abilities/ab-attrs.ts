@@ -207,9 +207,18 @@ abstract class CancelInteractionAbAttr extends AbAttr {
 }
 
 /** @sealed */
-export class UngroundedAbAttr extends CancelInteractionAbAttr {
+interface UngroundedAbAttrParams extends AbAttrBaseParams {
+  isUngrounded: ValueHolder<boolean>;
+}
+
+/** @sealed */
+export class UngroundedAbAttr extends AbAttr {
   constructor() {
     super(false);
+  }
+
+  public override apply({ isUngrounded }: UngroundedAbAttrParams): void {
+    isUngrounded.value = true;
   }
 }
 
