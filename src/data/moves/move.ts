@@ -454,20 +454,23 @@ export abstract class Move implements Localizable {
    * - Dark types with moves affected by Prankster
    * @param user - The {@linkcode Pokemon} using this move
    * @param target - The {@linkcode Pokemon} targeted by this move
-   * @param type - The {@linkcode PokemonType} of the opponent that is being checked
-   * @returns Whether the move is blocked due to the target's typing.
+   * @returns Whether the move is blocked due to the target's typing. \
    * Self-targeted moves will return `false` regardless of circumstances.
    */
-  isTypeImmune(user: Pokemon, target: Pokemon, type: PokemonType): boolean {
+  public isTypeImmune(user: Pokemon, target: Pokemon): boolean {
     if (this.moveTarget === MoveTarget.USER) {
       return false;
     }
 
-    switch (type) {
-      case PokemonType.GRASS:
-        return this.hasFlag(MoveFlags.POWDER_MOVE);
-      case PokemonType.DARK:
-        return user.hasAbility(AbilityId.PRANKSTER) && this.category === MoveCategory.STATUS && user.isOpponent(target);
+    for (const type of target.getTypes({ returnOriginalTypesIfStellar: true })) {
+      switch (type) {
+        case PokemonType.GRASS:
+          return this.hasFlag(MoveFlags.POWDER_MOVE);
+        case PokemonType.DARK:
+          return (
+            user.hasAbility(AbilityId.PRANKSTER) && this.category === MoveCategory.STATUS && user.isOpponent(target)
+          );
+      }
     }
     return false;
   }

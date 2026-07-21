@@ -2623,7 +2623,7 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
         : 1,
     );
 
-    if (this.getTypes({ returnOriginalTypesIfStellar: true }).some(t => move.isTypeImmune(source, this, t))) {
+    if (move.isTypeImmune(source, this)) {
       typeMultiplier.value = 0;
     }
 
