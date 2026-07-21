@@ -37,7 +37,13 @@ import type { Variant } from "#sprites/variant";
 import { getVariantIcon, getVariantTint } from "#sprites/variant";
 import { achvs } from "#system/achv";
 import { RibbonData } from "#system/ribbons/ribbon-data";
-import type { DexAttrProps, Starter, StarterMoveset, StarterPreferences } from "#types/save-data";
+import type {
+  AllStarterPreferences,
+  DexAttrProps,
+  Starter,
+  StarterMoveset,
+  StarterPreferences,
+} from "#types/save-data";
 import type { StarterSpeciesId } from "#types/starter-species-id";
 import type { OptionSelectItem, StarterSelectCallback } from "#types/ui-types";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
@@ -71,7 +77,6 @@ import { addWindow } from "#ui/ui-theme";
 import { checkStarterValidForChallenge } from "#utils/challenge-utils";
 import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
 import { fixedInt, getLocalizedSpriteKey } from "#utils/common";
-import type { AllStarterPreferences } from "#utils/data";
 import { deepCopy, loadStarterPreferences, saveStarterPreferences } from "#utils/data";
 import { getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
 import i18next from "i18next";

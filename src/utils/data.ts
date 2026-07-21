@@ -1,7 +1,6 @@
 import { loggedInUser } from "#app/account";
 import { saveKey } from "#app/constants";
-import type { SpeciesId } from "#enums/species-id";
-import type { StarterPreferences } from "#types/save-data";
+import type { AllStarterPreferences } from "#types/save-data";
 import { AES, enc } from "crypto-js";
 
 /**
