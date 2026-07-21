@@ -58,6 +58,7 @@ import {
   IncreasePpUsedAbAttr,
   InfiltratorAbAttr,
   IntimidateImmunityAbAttr,
+  LevitatingAbAttr,
   LowHpMoveTypePowerBoostAbAttr,
   MaxMultiHitAbAttr,
   MoneyAbAttr,
@@ -345,6 +346,7 @@ export function initAbilities() {
         PokemonType.GROUND,
         (pokemon: Pokemon) => !pokemon.getTag(GroundedTag) && !globalScene.arena.getTag(ArenaTagType.GRAVITY),
       )
+      .attr(LevitatingAbAttr)
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.EFFECT_SPORE, 3) //
@@ -2185,6 +2187,7 @@ export function initAbilities() {
         PokemonType.GROUND,
         (pokemon: Pokemon) => !pokemon.getTag(GroundedTag) && !globalScene.arena.getTag(ArenaTagType.GRAVITY),
       )
+      .attr(LevitatingAbAttr)
       .attr(PostVictoryStatStageChangeAbAttr, beastBoostHighestStatCalc)
       .ignorable()
       .build(),

@@ -435,6 +435,20 @@ export class AttackTypeImmunityAbAttr extends TypeImmunityAbAttr {
   }
 }
 
+interface LevitatingAbAttrParams extends AbAttrBaseParams {
+  isLevitating: ValueHolder<boolean>;
+}
+
+export class LevitatingAbAttr extends AbAttr {
+  constructor() {
+    super(false);
+  }
+
+  public override apply({ isLevitating }: LevitatingAbAttrParams): void {
+    isLevitating.value = true;
+  }
+}
+
 export class TypeImmunityHealAbAttr extends TypeImmunityAbAttr {
   // biome-ignore lint/complexity/noUselessConstructor: Changes the type of `immuneType`
   constructor(immuneType: PokemonType) {
@@ -6156,6 +6170,7 @@ export const AbilityAttrs = Object.freeze({
   IncreasePpUsedAbAttr,
   InfiltratorAbAttr,
   IntimidateImmunityAbAttr,
+  LevitatingAbAttr,
   LowHpMoveTypePowerBoostAbAttr,
   MaxMultiHitAbAttr,
   MoneyAbAttr,

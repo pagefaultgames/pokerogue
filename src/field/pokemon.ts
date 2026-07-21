@@ -2442,10 +2442,13 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   public isGrounded(): boolean {
+    const isLevitating = new ValueHolder(false);
+    applyAbAttrs("LevitatingAbAttr", { pokemon: this, isLevitating });
+
     return (
       !!this.getTag(GroundedTag)
       || (!this.isOfType(PokemonType.FLYING, { returnOriginalTypesIfStellar: true })
-        && !this.hasAbility(AbilityId.LEVITATE)
+        && !isLevitating.value
         && !this.getTag(BattlerTagType.FLOATING)
         && !this.getTag(SemiInvulnerableTag))
     );
