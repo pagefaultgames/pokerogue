@@ -42,7 +42,7 @@ export class StarterSelectInstructionsContainer extends Phaser.GameObjects.Conta
     this.hideInstructions();
   }
 
-  setupInstructionButtons(): void {
+  private setupInstructionButtons(): void {
     // The font size should be set per language
     const textSettings = getStarterSelectTextSettings();
     const instructionTextSize = textSettings.instructionTextSize;
@@ -62,10 +62,9 @@ export class StarterSelectInstructionsContainer extends Phaser.GameObjects.Conta
       iRowY,
       i18next.t("starterSelectUiHandler:cycleShiny"),
       TextStyle.INSTRUCTIONS_TEXT,
-      {
-        fontSize: instructionTextSize,
-      },
-    ).setName("text-shiny-label");
+      { fontSize: instructionTextSize },
+    ) //
+      .setName("text-shiny-label");
 
     this.formIconElement = new Phaser.GameObjects.Sprite(globalScene, iRowX, iRowY, "keyboard", "F.png")
       .setName("sprite-form-icon-element")
@@ -76,10 +75,9 @@ export class StarterSelectInstructionsContainer extends Phaser.GameObjects.Conta
       iRowY,
       i18next.t("starterSelectUiHandler:cycleForm"),
       TextStyle.INSTRUCTIONS_TEXT,
-      {
-        fontSize: instructionTextSize,
-      },
-    ).setName("text-form-label");
+      { fontSize: instructionTextSize },
+    ) //
+      .setName("text-form-label");
 
     this.genderIconElement = new Phaser.GameObjects.Sprite(globalScene, iRowX, iRowY, "keyboard", "G.png")
       .setName("sprite-gender-icon-element")
@@ -91,7 +89,8 @@ export class StarterSelectInstructionsContainer extends Phaser.GameObjects.Conta
       i18next.t("starterSelectUiHandler:cycleGender"),
       TextStyle.INSTRUCTIONS_TEXT,
       { fontSize: instructionTextSize },
-    ).setName("text-gender-label");
+    ) //
+      .setName("text-gender-label");
 
     this.abilityIconElement = new Phaser.GameObjects.Sprite(globalScene, iRowX, iRowY, "keyboard", "E.png")
       .setName("sprite-ability-icon-element")
@@ -103,7 +102,8 @@ export class StarterSelectInstructionsContainer extends Phaser.GameObjects.Conta
       i18next.t("starterSelectUiHandler:cycleAbility"),
       TextStyle.INSTRUCTIONS_TEXT,
       { fontSize: instructionTextSize },
-    ).setName("text-ability-label");
+    ) //
+      .setName("text-ability-label");
 
     this.natureIconElement = new Phaser.GameObjects.Sprite(globalScene, iRowX, iRowY, "keyboard", "N.png")
       .setName("sprite-nature-icon-element")
@@ -115,7 +115,8 @@ export class StarterSelectInstructionsContainer extends Phaser.GameObjects.Conta
       i18next.t("starterSelectUiHandler:cycleNature"),
       TextStyle.INSTRUCTIONS_TEXT,
       { fontSize: instructionTextSize },
-    ).setName("text-nature-label");
+    ) //
+      .setName("text-nature-label");
 
     this.teraIconElement = new Phaser.GameObjects.Sprite(globalScene, iRowX, iRowY, "keyboard", "V.png")
       .setName("sprite-tera-icon-element")
@@ -126,10 +127,9 @@ export class StarterSelectInstructionsContainer extends Phaser.GameObjects.Conta
       iRowY,
       i18next.t("starterSelectUiHandler:cycleTera"),
       TextStyle.INSTRUCTIONS_TEXT,
-      {
-        fontSize: instructionTextSize,
-      },
-    ).setName("text-tera-label");
+      { fontSize: instructionTextSize },
+    ) //
+      .setName("text-tera-label");
 
     this.goFilterIconElement = new Phaser.GameObjects.Sprite(
       globalScene,
@@ -147,10 +147,11 @@ export class StarterSelectInstructionsContainer extends Phaser.GameObjects.Conta
       i18next.t("starterSelectUiHandler:goFilter"),
       TextStyle.INSTRUCTIONS_TEXT,
       { fontSize: instructionTextSize },
-    ).setName("text-goFilter-label");
+    ) //
+      .setName("text-goFilter-label");
   }
 
-  updateButtonIcon(
+  private updateButtonIcon(
     iconSetting: SettingKeyboard,
     gamepadType: string,
     iconElement: GameObjects.Sprite,
@@ -205,7 +206,7 @@ export class StarterSelectInstructionsContainer extends Phaser.GameObjects.Conta
     }
   }
 
-  updateFilterButtonIcon(iconSetting: SettingKeyboard, gamepadType: string): void {
+  private updateFilterButtonIcon(iconSetting: SettingKeyboard, gamepadType: string): void {
     let iconPath: string | undefined;
     // touch controls cannot be rebound as is, and are just emulating a keyboard event.
     // Additionally, since keyboard controls can be rebound (and will be displayed when they are), we need to have special handling for the touch controls
@@ -225,11 +226,13 @@ export class StarterSelectInstructionsContainer extends Phaser.GameObjects.Conta
     this.add([this.goFilterIconElement, this.goFilterLabel]);
   }
 
-  updateInstructions(canCycle: CanCycle, isCaught = false, filterMode = false): void {
+  public updateInstructions(canCycle: CanCycle, isCaught = false, filterMode = false): void {
     this.instructionRowX = this.INSTRUCTION_ROW_X;
     this.instructionRowY = this.INSTRUCTION_ROW_Y;
+
     this.hideInstructions();
     this.removeAll();
+
     let gamepadType: string;
     if (globalScene.inputMethod === "gamepad") {
       gamepadType = globalScene.inputController.getConfig(
@@ -279,25 +282,31 @@ export class StarterSelectInstructionsContainer extends Phaser.GameObjects.Conta
       }
     }
 
-    // if filter mode is inactivated and gamepadType is not undefined, update the button icons
+    // if filter mode is inactive and `gamepadType` is not `undefined`, update the button icons
     if (!filterMode) {
       this.updateFilterButtonIcon(SettingKeyboard.BUTTON_STATS, gamepadType);
     }
   }
 
-  hideInstructions(): void {
+  public hideInstructions(): void {
     this.shinyIconElement.setVisible(false);
     this.shinyLabel.setVisible(false);
+
     this.formIconElement.setVisible(false);
     this.formLabel.setVisible(false);
+
     this.genderIconElement.setVisible(false);
     this.genderLabel.setVisible(false);
+
     this.abilityIconElement.setVisible(false);
     this.abilityLabel.setVisible(false);
+
     this.natureIconElement.setVisible(false);
     this.natureLabel.setVisible(false);
+
     this.teraIconElement.setVisible(false);
     this.teraLabel.setVisible(false);
+
     this.goFilterIconElement.setVisible(false);
     this.goFilterLabel.setVisible(false);
   }

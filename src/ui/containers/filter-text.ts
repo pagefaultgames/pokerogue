@@ -3,12 +3,12 @@ import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import type { UiTheme } from "#enums/ui-theme";
 import type { AwaitableUiHandler } from "#ui/awaitable-ui-handler";
+import type { PokedexMonContainer } from "#ui/pokedex-mon-container";
 import type { StarterContainer } from "#ui/starter-container";
 import { addTextObject, getTextColor } from "#ui/text";
 import type { UI } from "#ui/ui";
 import { addWindow, WindowVariant } from "#ui/ui-theme";
 import i18next from "i18next";
-import type { PokedexMonContainer } from "./pokedex-mon-container";
 
 export enum FilterTextRow {
   NAME,

@@ -2048,7 +2048,7 @@ export class GameData {
   }
 
   /**
-   * Converts Pokédex attributes from {@linkcode bigint} to a readable {@linkcode DexAttrProps} interface.
+   * Converts Pokédex attributes from a `bigint` to a readable {@linkcode DexAttrProps} interface.
    *
    * @param dexAttr - The Pokédex attribute to convert
    * @returns the attributes in {@linkcode DexAttrProps} format
@@ -2088,10 +2088,6 @@ export class GameData {
       }
     }
     return 0 as Nature;
-  }
-
-  getSpeciesDefaultNatureAttr(speciesId: StarterSpeciesId): number {
-    return 1 << this.getSpeciesDefaultNature(speciesId);
   }
 
   getDexAttrLuck(dexAttr: bigint): number {

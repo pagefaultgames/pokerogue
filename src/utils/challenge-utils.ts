@@ -365,13 +365,9 @@ export function checkStarterValidForChallenge(starterId: StarterSpeciesId, props
     return isValidForChallenge.value;
   }
   // We check the validity of every evolution and form change, and require that at least one is valid
-  const speciesToCheck = [starterId];
+  const speciesToCheck: SpeciesId[] = [starterId];
   while (speciesToCheck.length > 0) {
-    const checking = speciesToCheck.pop();
-    // Linter complains if we don't handle this
-    if (checking == null) {
-      return false;
-    }
+    const checking = speciesToCheck.pop()!;
     const checkingSpecies = speciesDataRegistry.getSpecies(checking);
     if (checkSpeciesValidForChallenge(checkingSpecies, props, true)) {
       return true;
@@ -381,7 +377,7 @@ export function checkStarterValidForChallenge(starterId: StarterSpeciesId, props
         // Form check to deal with cases such as Basculin -> Basculegion
         // TODO: does this miss anything if checking forms of a stage 2 Pokémon?
         if (!e?.preFormKey || e.preFormKey === species.forms[props.formIndex].formKey) {
-          speciesToCheck.push(e.speciesId as StarterSpeciesId);
+          speciesToCheck.push(e.speciesId);
         }
       });
     }
