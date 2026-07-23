@@ -61,6 +61,7 @@ import { TimeOfDay } from "#enums/time-of-day";
 import type { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
 import { TrainerVariant } from "#enums/trainer-variant";
+import type { UiWindowStyle } from "#enums/ui-window-style";
 import { VolumeSetting } from "#enums/volume-setting";
 import { NewArenaEvent } from "#events/battle-scene";
 import { Arena, getBiomeHasProps, getBiomeKey } from "#field/arena";
@@ -134,7 +135,7 @@ import { PokeballTray } from "#ui/pokeball-tray";
 import { PokemonInfoContainer } from "#ui/pokemon-info-container";
 import { addTextObject, getTextColor, RAINBOW_TINT } from "#ui/text";
 import { UI } from "#ui/ui";
-import { addUiThemeOverrides } from "#ui/ui-theme";
+import { addUiThemeOverrides, updateWindowType } from "#ui/ui-theme";
 import { playTween } from "#utils/anim-utils";
 import {
   BooleanHolder,
@@ -323,6 +324,11 @@ export class BattleScene extends SceneBase {
         if (touchControls && typeof value === "boolean") {
           touchControls.classList.toggle("visible", value);
         }
+        return;
+      }
+
+      if (key === "uiWindowStyle" && typeof value === "number") {
+        updateWindowType(value as UiWindowStyle);
         return;
       }
 
