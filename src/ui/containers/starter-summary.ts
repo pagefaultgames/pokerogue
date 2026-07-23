@@ -576,7 +576,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
         this.pokemonHatchedIcon.setVisible(true);
         this.pokemonHatchedCountText.setVisible(true);
 
-        const { currentFriendship, friendshipCap } = getFriendship(species.speciesId);
+        const { currentFriendship, friendshipCap } = getFriendship(species.speciesId as StarterSpeciesId);
         const candyCropY = 16 - 16 * (currentFriendship / friendshipCap);
         this.pokemonCandyDarknessOverlay.setCrop(0, 0, 16, candyCropY);
 

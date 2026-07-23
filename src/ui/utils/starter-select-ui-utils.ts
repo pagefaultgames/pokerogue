@@ -8,28 +8,29 @@ import {
   getStarterValueFriendshipCap,
   getValueReductionCandyCounts,
 } from "#balance/starters";
-import type { PokemonSpecies } from "#data/pokemon-species";
 import { ChallengeType } from "#enums/challenge-type";
 import { Challenges } from "#enums/challenges";
 import { DexAttr } from "#enums/dex-attr";
 import { GameModes } from "#enums/game-modes";
 import type { MoveId } from "#enums/move-id";
 import { Passive } from "#enums/passive";
-import type { SpeciesId } from "#enums/species-id";
 import type { Variant } from "#sprites/variant";
+import { RibbonData } from "#system/ribbons/ribbon-data";
 import type { DexEntry } from "#types/dex-data";
 import type { DexAttrProps, StarterDataEntry, StarterPreferences } from "#types/save-data";
+import type { DefinedSpeciesDetails, SpeciesDetails } from "#types/starter-select-types";
 import type { StarterSpeciesId } from "#types/starter-species-id";
 import { SortCriteria, type SortDirection } from "#ui/dropdown";
 import { applyChallenges, checkStarterValidForChallenge } from "#utils/challenge-utils";
-import { NumberHolder } from "#utils/common";
+import { deepCopy } from "#utils/data";
+import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 
 /**
  * Determines if a passive upgrade is available for the given species ID
  * @param speciesId - The ID of the species to check the passive of
- * @param gameData - Optional game data, defaults to the data in globalScene
- * @returns true if the user has enough candies and a passive has not been unlocked already
+ * @param gameData - (Default `globalScene.gameData`) Game data to use
+ * @returns Whether the user has enough candies and a passive has not been unlocked already
  */
 export function isPassiveAvailable(speciesId: number, gameData = globalScene.gameData): boolean {
   // Get this species ID's starter data
@@ -45,8 +46,8 @@ export function isPassiveAvailable(speciesId: number, gameData = globalScene.gam
 /**
  * Determines if a value reduction upgrade is available for the given species ID
  * @param speciesId - The ID of the species to check the value reduction of
- * @param gameData - Optional game data, defaults to the data in globalScene
- * @returns true if the user has enough candies and all value reductions have not been unlocked already
+ * @param gameData - (Default `globalScene.gameData`) Game data to use
+ * @returns Whether the user has enough candies and all value reductions have not been unlocked already
  */
 export function isValueReductionAvailable(speciesId: number, gameData = globalScene.gameData): boolean {
   const starterId = speciesDataRegistry.getStarter(speciesId);
@@ -62,8 +63,8 @@ export function isValueReductionAvailable(speciesId: number, gameData = globalSc
 /**
  * Determines if an egg for the same starter can be bought for the given species ID
  * @param speciesId - The ID of the species to check the value reduction of
- * @param gameData - Optional game data, defaults to the data in globalScene
- * @returns true if the user has enough candies
+ * @param gameData - (Default `globalScene.gameData`) Game data to use
+ * @returns Whether the user has enough candies
  */
 export function isSameSpeciesEggAvailable(speciesId: number, gameData = globalScene.gameData): boolean {
   const starterId = speciesDataRegistry.getStarter(speciesId);
@@ -85,9 +86,9 @@ export function isStarterValidForChallenge(starterId: StarterSpeciesId): boolean
   let isStarterValid = false;
   if (species.forms?.length > 0) {
     for (let i = 0; i < species.forms.length; i++) {
-      /* Here we are making a fake form index dex props for challenges
-       * Since some pokemon rely on forms to be valid (i.e. blaze tauros for fire challenges), we make a fake form and dex props to use in the challenge
-       */
+      // Here we are making a fake form index dex props for challenges.
+      // Since some pokemon rely on forms to be valid (i.e. blaze tauros for fire challenges),
+      // we make a fake form and dex props to use in the challenge
       if (!species.forms[i].isStarterSelectable) {
         continue;
       }
@@ -111,18 +112,12 @@ export function isStarterValidForChallenge(starterId: StarterSpeciesId): boolean
   return isStarterValid;
 }
 
-/**
- * Determines if 'Icon' based upgrade notifications should be shown
- * @returns true if upgrade notifications are enabled and set to display an 'Icon'
- */
+/** @returns Whether upgrade notifications are enabled and set to display as an icon */
 export function isUpgradeIconEnabled(): boolean {
   return globalScene.candyUpgradeNotification !== 0 && globalScene.candyUpgradeDisplay === 0;
 }
 
-/**
- * Determines if 'Animation' based upgrade notifications should be shown
- * @returns true if upgrade notifications are enabled and set to display an 'Animation'
- */
+/** @returns Whether upgrade notifications are enabled and set to display as an animation */
 export function isUpgradeAnimationEnabled(): boolean {
   return globalScene.candyUpgradeNotification !== 0 && globalScene.candyUpgradeDisplay === 1;
 }
@@ -264,27 +259,27 @@ export function getStarterSelectTextSettings(): StarterSelectLanguageSetting {
 
 /**
  * Return a copy of the dex data and starter data for a given species,
- * sanitizing it by applying any challenges that restrict which options should be available.
+ * modifying it by applying any challenges that restrict which options should be available.
  *
  * @param speciesId - The species id to get data for
- * @param applyChallenge - Whether the current challenge should be taken into account
- * @returns StarterPreferences for the species
+ * @param applyChallenge - (Default `true`) Whether the current challenges should be taken into account
+ * @returns A copy of the starter's {@linkcode DexEntry} and {@linkcode StarterDataEntry}
  */
 export function getStarterData(
   starterId: StarterSpeciesId,
   applyChallenge = true,
 ): { dexEntry: DexEntry; starterDataEntry: StarterDataEntry } {
-  const dexEntry = globalScene.gameData.dexData[starterId];
-  const starterDataEntry = globalScene.gameData.starterData[starterId];
+  const originalDexEntry = globalScene.gameData.dexData[starterId];
+  const dexEntry: DexEntry = { ...originalDexEntry };
+  dexEntry.ivs = [...originalDexEntry.ivs];
+  dexEntry.ribbons = new RibbonData(originalDexEntry.ribbons.getRibbons());
+  const starterDataEntry: StarterDataEntry = deepCopy(globalScene.gameData.starterData[starterId]);
 
-  // Unpacking to make a copy by values, not references
-  const copiedDexEntry = { ...dexEntry };
-  copiedDexEntry.ivs = [...dexEntry.ivs];
-  const copiedStarterDataEntry = { ...starterDataEntry };
   if (applyChallenge) {
-    applyChallenges(ChallengeType.STARTER_SELECT_MODIFY, starterId, copiedDexEntry, copiedStarterDataEntry);
+    applyChallenges(ChallengeType.STARTER_SELECT_MODIFY, starterId, dexEntry, starterDataEntry);
   }
-  return { dexEntry: { ...copiedDexEntry }, starterDataEntry: { ...copiedStarterDataEntry } };
+
+  return { dexEntry, starterDataEntry };
 }
 
 /**
@@ -292,11 +287,8 @@ export function getStarterData(
  * @param speciesId - The id of the species to get friendship for
  * @returns An object containing the current friendship and friendship cap for the species
  */
-export function getFriendship(speciesId: SpeciesId): { currentFriendship: number; friendshipCap: number } {
-  let currentFriendship = globalScene.gameData.starterData[speciesId].friendship;
-  if (!currentFriendship || currentFriendship === undefined) {
-    currentFriendship = 0;
-  }
+export function getFriendship(speciesId: StarterSpeciesId): { currentFriendship: number; friendshipCap: number } {
+  const currentFriendship = globalScene.gameData.starterData[speciesId].friendship;
 
   const friendshipCap = getStarterValueFriendshipCap(speciesDataRegistry.getStarterCost(speciesId));
 
@@ -305,10 +297,11 @@ export function getFriendship(speciesId: SpeciesId): { currentFriendship: number
 
 /**
  * Creates a temporary dex attr props that will be used to check whether a pokemon is valid for a challenge
- * and to display the correct shiny, variant, and form based on the AllStarterPreferences
+ * and to display the correct shiny, variant, and form based on the starter preferences
  *
  * @param speciesId - The id of the species to get props for
- * @returns the dex props
+ * @param starterPreferences - (Optional) The {@linkcode StarterPreferences} of the starter
+ * @returns the dex props as a `bigint`
  */
 export function getDexAttrFromPreferences(
   speciesId: StarterSpeciesId,
@@ -318,18 +311,23 @@ export function getDexAttrFromPreferences(
   const { dexEntry } = getStarterData(speciesId);
   const caughtAttr = dexEntry.caughtAttr;
 
-  /*  this checks the gender of the pokemon; this works by checking a) that the starter preferences for the species exist, and if so, is it female. If so, it'll add DexAttr.FEMALE to our temp props
-   *  It then checks b) if the caughtAttr for the pokemon is female and NOT male - this means that the ONLY gender we've gotten is female, and we need to add DexAttr.FEMALE to our temp props
-   *  If neither of these pass, we add DexAttr.MALE to our temp props
+  /*
+   * This checks the gender of the pokemon by checking:
+   * - That the starter preferences for the species exist, and if so, if it's female.
+   *   If so, it'll add `DexAttr.FEMALE` to our temp props
+   * - If the `caughtAttr` for the pokemon is female and NOT male - this means that the ONLY gender we've gotten is female,
+   *   and we need to add `DexAttr.FEMALE` to our temp props
+   *
+   * If neither of these pass, we add `DexAttr.MALE` to our temp props
    */
   if (starterPreferences.female || ((caughtAttr & DexAttr.FEMALE) > 0n && (caughtAttr & DexAttr.MALE) === 0n)) {
     props += DexAttr.FEMALE;
   } else {
     props += DexAttr.MALE;
   }
-  /* This part is very similar to above, but instead of for gender, it checks for shiny within starter preferences.
-   * If they're not there, it enables shiny state by default if any shiny was caught
-   */
+
+  // This part is very similar to above, but instead of for gender, it checks for shiny within starter preferences.
+  // If they're not there, it enables shiny state by default if any shiny was caught
   if (
     starterPreferences.shiny
     || ((caughtAttr & DexAttr.SHINY) > 0n && starterPreferences[speciesId]?.shiny !== false)
@@ -346,10 +344,11 @@ export function getDexAttrFromPreferences(
     }
   } else {
     props += DexAttr.NON_SHINY;
-    props += DexAttr.DEFAULT_VARIANT; // we add the default variant here because non shiny versions are listed as default variant
+    // we add the default variant here because non shiny versions are listed as default variant
+    props += DexAttr.DEFAULT_VARIANT;
   }
+
   if (starterPreferences.formIndex) {
-    // this checks for the form of the pokemon
     props += BigInt(Math.pow(2, starterPreferences.formIndex)) * DexAttr.DEFAULT_FORM;
   } else {
     // Get the first unlocked form
@@ -360,59 +359,53 @@ export function getDexAttrFromPreferences(
 }
 
 /**
- * Convert starter preferences to {@linkcode DexAttrProps | dex props}, which are used as an input by various functions.
+ * Convert starter preferences to dex props, which are used as an input by various functions.
+ *
  * If any preferences are undefined, the default value for the species is given, based on its caught data.
- * @param species - The {@linkcode PokemonSpecies} for which dex props are required.
- * @param starterPreferences - The {@linkcode StarterPreferences | starter preferences} for the species.
+ * @param starterId - The {@linkcode StarterSpeciesId | starter} to get dex props for
+ * @param starterPreferences - (Optional) The {@linkcode StarterPreferences} for the species
+ * @returns The {@linkcode DexAttrProps} for the starter
  */
 export function getStarterDexAttrPropsFromPreferences(
   starterId: StarterSpeciesId,
   starterPreferences: StarterPreferences = {},
 ): DexAttrProps {
   // Shiny is always default, except in fresh start
-  const shinyIsDefault = !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
-  const defaults = globalScene.gameData.getSpeciesDefaultDexAttrProps(starterId, shinyIsDefault);
+  const isShinyDefault = !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
+  const defaults = globalScene.gameData.getSpeciesDefaultDexAttrProps(starterId, isShinyDefault);
+
   return {
-    shiny: starterPreferences.shiny == null ? defaults.shiny : starterPreferences.shiny,
-    variant: starterPreferences.variant == null ? defaults.variant : (starterPreferences.variant as Variant),
+    shiny: starterPreferences.shiny ?? defaults.shiny,
+    variant: (starterPreferences.variant as Variant) ?? defaults.variant,
     female: starterPreferences.female ?? defaults.female,
     formIndex: starterPreferences.formIndex ?? defaults.formIndex,
   };
 }
 
 /**
- * Convert starter preferences to {@linkcode SpeciesDetails | species details}.
+ * Convert starter preferences to {@linkcode SpeciesDetails} format.
+ *
  * If any preferences are undefined, the default value for the species is given, based on its caught data.
- * @param species - The {@linkcode PokemonSpecies} for which species details are required.
- * @param starterPreferences - The {@linkcode StarterPreferences | starter preferences} for the species.
+ * @param starterId - The {@linkcode StarterSpeciesId | starter} to get dex props for
+ * @param starterPreferences - (Optional) The {@linkcode StarterPreferences} for the species
+ * @returns The data in `SpeciesDetails` format
  */
 export function getStarterDetailsFromPreferences(
   starterId: StarterSpeciesId,
   starterPreferences: StarterPreferences = {},
 ) {
-  const props = getStarterDexAttrPropsFromPreferences(starterId, starterPreferences);
+  const { female, formIndex, shiny, variant } = getStarterDexAttrPropsFromPreferences(starterId, starterPreferences);
   const species = speciesDataRegistry.getSpecies(starterId);
-  const abilityIndex =
-    starterPreferences?.abilityIndex ?? globalScene.gameData.getStarterDefaultAbilityIndex(starterId);
-  const nature = starterPreferences?.nature ?? globalScene.gameData.getSpeciesDefaultNature(starterId);
-  const teraType = starterPreferences?.tera ?? species.type1;
-  return {
-    shiny: props.shiny,
-    formIndex: props.formIndex,
-    female: props.female,
-    variant: props.variant,
-    abilityIndex,
-    natureIndex: nature,
-    teraType,
-  };
+  const abilityIndex = starterPreferences.abilityIndex ?? globalScene.gameData.getStarterDefaultAbilityIndex(starterId);
+  const natureIndex = starterPreferences.nature ?? globalScene.gameData.getSpeciesDefaultNature(starterId);
+  const teraType = starterPreferences.tera ?? species.type1;
+
+  return { shiny, formIndex, female, variant, abilityIndex, natureIndex, teraType } satisfies DefinedSpeciesDetails;
 }
 
-/**
- * Get the limit on starter points available for the current run.
- * @returns the limit on starter points taking challenges into account
- */
+/** @returns The limit on starter points available for the current run, taking challenges into account */
 export function getRunValueLimit(): number {
-  const valueLimit = new NumberHolder(0);
+  const valueLimit = new ValueHolder(0);
   switch (globalScene.gameMode.modeId) {
     case GameModes.ENDLESS:
     case GameModes.SPLICED_ENDLESS:
@@ -432,7 +425,7 @@ export function getRunValueLimit(): number {
  * @param party - An array of species IDs representing the player's starter party
  * @returns The total value of the party
  */
-export function getPartyValue(party: StarterSpeciesId[]) {
+export function getPartyValue(party: StarterSpeciesId[]): number {
   return party.reduce(
     (total: number, starterId: StarterSpeciesId) => total + globalScene.gameData.getSpeciesStarterValue(starterId),
     0,
@@ -440,38 +433,45 @@ export function getPartyValue(party: StarterSpeciesId[]) {
 }
 
 /**
- * Sort an array of {@linkcode StarterSpeciesId | species IDs} based on a given criteria and direction.
+ * Sort an array of {@linkcode StarterSpeciesId} based on a given criteria and direction.
  * @param speciesIds - An array of species IDs to be sorted
  * @param sort - The criteria by which the species hould be sorted
  * @param dir - The direction in which the species should be sorted
  */
 export function sortStarterSpecies(speciesIds: StarterSpeciesId[], sort: SortCriteria, dir: SortDirection): void {
   speciesIds.sort((a, b) => {
+    const { gameData } = globalScene;
+    const { dexData, starterData } = gameData;
+
     switch (sort) {
       case SortCriteria.NUMBER:
         return (a - b) * -dir;
       case SortCriteria.COST:
-        return (globalScene.gameData.getSpeciesStarterValue(a) - globalScene.gameData.getSpeciesStarterValue(b)) * -dir;
+        return (gameData.getSpeciesStarterValue(a) - gameData.getSpeciesStarterValue(b)) * -dir;
       case SortCriteria.CANDY: {
-        const candyCountA = globalScene.gameData.starterData[a].candyCount;
-        const candyCountB = globalScene.gameData.starterData[b].candyCount;
+        const candyCountA = starterData[a].candyCount;
+        const candyCountB = starterData[b].candyCount;
         return (candyCountA - candyCountB) * -dir;
       }
       case SortCriteria.IV: {
-        const avgIVsA =
-          globalScene.gameData.dexData[a].ivs.reduce((a, b) => a + b, 0) / globalScene.gameData.dexData[a].ivs.length;
-        const avgIVsB =
-          globalScene.gameData.dexData[b].ivs.reduce((a, b) => a + b, 0) / globalScene.gameData.dexData[b].ivs.length;
+        const ivsA = dexData[a].ivs;
+        const avgIVsA = ivsA.reduce((total, cur) => total + cur, 0) / ivsA.length;
+
+        const ivsB = dexData[b].ivs;
+        const avgIVsB = ivsB.reduce((total, cur) => total + cur, 0) / ivsB.length;
+
         return (avgIVsA - avgIVsB) * -dir;
       }
       case SortCriteria.NAME:
         return speciesDataRegistry.getSpecies(a).name.localeCompare(speciesDataRegistry.getSpecies(b).name) * -dir;
       case SortCriteria.CAUGHT:
-        return (globalScene.gameData.dexData[a].caughtCount - globalScene.gameData.dexData[b].caughtCount) * -dir;
+        return (dexData[a].caughtCount - dexData[b].caughtCount) * -dir;
       case SortCriteria.HATCHED:
-        return (globalScene.gameData.dexData[a].hatchedCount - globalScene.gameData.dexData[b].hatchedCount) * -dir;
+        return (dexData[a].hatchedCount - dexData[b].hatchedCount) * -dir;
+      default: // to make Biome happy
+        sort satisfies never;
+        return 0;
     }
-    return 0;
   });
 }
 
@@ -491,6 +491,7 @@ export function getStarterMoves(starterId: StarterSpeciesId, formIndex: number):
       starterMoves.push(moveId);
     }
   }
+
   if (Object.hasOwn(speciesEggMoves, starterId)) {
     for (let em = 0; em < 4; em++) {
       if (starterDataEntry.eggMoves & (1 << em)) {
