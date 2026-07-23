@@ -6,7 +6,6 @@ import {
   AllyStatMultiplierAbAttr,
   AlwaysHitAbAttr,
   ArenaTrapAbAttr,
-  AttackTypeImmunityAbAttr,
   BattlerTagImmunityAbAttr,
   BlockCritAbAttr,
   BlockItemTheftAbAttr,
@@ -58,7 +57,6 @@ import {
   IncreasePpUsedAbAttr,
   InfiltratorAbAttr,
   IntimidateImmunityAbAttr,
-  LevitatingAbAttr,
   LowHpMoveTypePowerBoostAbAttr,
   MaxMultiHitAbAttr,
   MoneyAbAttr,
@@ -176,6 +174,7 @@ import {
   TypeImmunityAddBattlerTagAbAttr,
   TypeImmunityHealAbAttr,
   TypeImmunityStatStageChangeAbAttr,
+  UngroundedAbAttr,
   UserFieldBattlerTagImmunityAbAttr,
   UserFieldMoveTypePowerBoostAbAttr,
   UserFieldStatusEffectImmunityAbAttr,
@@ -185,7 +184,7 @@ import {
 import { AbBuilder, type Ability } from "#abilities/ability";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { GroundedTag, ProtectedTag } from "#data/battler-tags";
+import { ProtectedTag } from "#data/battler-tags";
 import { allAbilities, allMoves } from "#data/data-lists";
 import { Gender } from "#data/gender";
 import { getNonVolatileStatusEffects } from "#data/status-effect";
@@ -341,12 +340,7 @@ export function initAbilities() {
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.LEVITATE, 3) //
-      .attr(
-        AttackTypeImmunityAbAttr,
-        PokemonType.GROUND,
-        (pokemon: Pokemon) => !pokemon.getTag(GroundedTag) && !globalScene.arena.getTag(ArenaTagType.GRAVITY),
-      )
-      .attr(LevitatingAbAttr)
+      .attr(UngroundedAbAttr)
       .ignorable()
       .build(),
     new AbBuilder(AbilityId.EFFECT_SPORE, 3) //
@@ -1595,6 +1589,7 @@ export function initAbilities() {
           powerMult.value *= 0.5;
         }
         if (
+          // TODO: apply the ability
           pokemon.hasAbility(AbilityId.LEVITATE)
           || pokemon.hasAbility(AbilityId.EELEVATE)
           || pokemon.isOfType(PokemonType.FLYING)
@@ -2182,12 +2177,7 @@ export function initAbilities() {
       .attr(MovePowerBoostAbAttr, normalTypeMoveConversionCondition, 1.2)
       .build(),
     new AbBuilder(AbilityId.EELEVATE, 9) //
-      .attr(
-        AttackTypeImmunityAbAttr,
-        PokemonType.GROUND,
-        (pokemon: Pokemon) => !pokemon.getTag(GroundedTag) && !globalScene.arena.getTag(ArenaTagType.GRAVITY),
-      )
-      .attr(LevitatingAbAttr)
+      .attr(UngroundedAbAttr)
       .attr(PostVictoryStatStageChangeAbAttr, beastBoostHighestStatCalc)
       .ignorable()
       .build(),

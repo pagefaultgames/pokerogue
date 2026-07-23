@@ -206,6 +206,22 @@ abstract class CancelInteractionAbAttr extends AbAttr {
   }
 }
 
+/** @sealed */
+interface UngroundedAbAttrParams extends AbAttrBaseParams {
+  isUngrounded: ValueHolder<boolean>;
+}
+
+/** @sealed */
+export class UngroundedAbAttr extends AbAttr {
+  constructor() {
+    super(false);
+  }
+
+  public override apply({ isUngrounded }: UngroundedAbAttrParams): void {
+    isUngrounded.value = true;
+  }
+}
+
 export class BlockRecoilDamageAttr extends CancelInteractionAbAttr {
   private declare readonly _: never;
   constructor() {
@@ -416,36 +432,6 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
 
   override getCondition(): AbAttrCondition | null {
     return this.condition;
-  }
-}
-
-export class AttackTypeImmunityAbAttr extends TypeImmunityAbAttr {
-  // biome-ignore lint/complexity/noUselessConstructor: Changes the type of `immuneType`
-  constructor(immuneType: PokemonType, condition?: AbAttrCondition) {
-    super(immuneType, condition);
-  }
-
-  override canApply(params: TypeMultiplierAbAttrParams): boolean {
-    const { move } = params;
-    return (
-      move.category !== MoveCategory.STATUS // TODO: make Thousand Arrows ignore Levitate in a different manner
-      && !move.hasAttr("NeutralDamageAgainstFlyingTypeAttr")
-      && super.canApply(params)
-    );
-  }
-}
-
-interface LevitatingAbAttrParams extends AbAttrBaseParams {
-  isLevitating: ValueHolder<boolean>;
-}
-
-export class LevitatingAbAttr extends AbAttr {
-  constructor() {
-    super(false);
-  }
-
-  public override apply({ isLevitating }: LevitatingAbAttrParams): void {
-    isLevitating.value = true;
   }
 }
 
@@ -6114,7 +6100,6 @@ export const AbilityAttrs = Object.freeze({
   AllyStatMultiplierAbAttr,
   AlwaysHitAbAttr,
   ArenaTrapAbAttr,
-  AttackTypeImmunityAbAttr,
   BattlerTagImmunityAbAttr,
   BlockCritAbAttr,
   BlockItemTheftAbAttr,
@@ -6170,7 +6155,6 @@ export const AbilityAttrs = Object.freeze({
   IncreasePpUsedAbAttr,
   InfiltratorAbAttr,
   IntimidateImmunityAbAttr,
-  LevitatingAbAttr,
   LowHpMoveTypePowerBoostAbAttr,
   MaxMultiHitAbAttr,
   MoneyAbAttr,
@@ -6324,6 +6308,7 @@ export const AbilityAttrs = Object.freeze({
   VariableMovePowerAbAttr,
   VariableMovePowerBoostAbAttr,
   WeightMultiplierAbAttr,
+  UngroundedAbAttr,
   WonderSkinAbAttr,
   AiMovegenMoveStatsAbAttr,
   SummonTerrainAiMovegenMoveStatsAbAttr,
