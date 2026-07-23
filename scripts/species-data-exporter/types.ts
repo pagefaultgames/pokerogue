@@ -13,6 +13,7 @@ export interface SpeciesEntry {
   dexNum: number;
   id: string;
   form: string | null;
+  formDisplayName: string;
   name: string;
   starter: string;
   startercost: number | null;
@@ -29,6 +30,10 @@ export interface SpeciesEntry {
   ability2: string;
   hiddenAbility: string;
   passive: string;
+  eggMove1: string;
+  eggMove2: string;
+  eggMove3: string;
+  eggMove4: string;
   bst: number;
   hp: number;
   atk: number;

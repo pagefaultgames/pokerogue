@@ -462,17 +462,15 @@ export abstract class Move implements Localizable {
       return false;
     }
 
-    for (const type of target.getTypes({ returnOriginalTypesIfStellar: true })) {
-      switch (type) {
-        case PokemonType.GRASS:
-          return this.hasFlag(MoveFlags.POWDER_MOVE);
-        case PokemonType.DARK:
-          return (
-            user.hasAbility(AbilityId.PRANKSTER) && this.category === MoveCategory.STATUS && user.isOpponent(target)
-          );
-      }
+    let typeImmune = false;
+    if (target.isOfType(PokemonType.GRASS, { returnOriginalTypesIfStellar: true })) {
+      typeImmune ||= this.hasFlag(MoveFlags.POWDER_MOVE);
     }
-    return false;
+    if (target.isOfType(PokemonType.DARK, { returnOriginalTypesIfStellar: true })) {
+      typeImmune ||=
+        user.hasAbility(AbilityId.PRANKSTER) && this.category === MoveCategory.STATUS && user.isOpponent(target);
+    }
+    return typeImmune;
   }
 
   /**
