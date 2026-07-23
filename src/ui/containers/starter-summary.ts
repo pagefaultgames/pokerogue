@@ -16,13 +16,13 @@ import { UiTheme } from "#enums/ui-theme";
 import { getVariantIcon, getVariantTint, type Variant } from "#sprites/variant";
 import { achvs } from "#system/achv";
 import type { StarterMoveset, StarterPreferences } from "#types/save-data";
+import type { DefinedSpeciesDetails } from "#types/starter-select-types";
 import type { StarterSpeciesId } from "#types/starter-species-id";
 import {
   getDexAttrFromPreferences,
   getFriendship,
   getStarterData,
   getStarterSelectTextSettings,
-  type SpeciesDetails,
 } from "#ui/starter-select-ui-utils";
 import { StatsContainer } from "#ui/stats-container";
 import { addBBCodeTextObject, addTextObject, getTextColor, updateCandyCountTextStyle } from "#ui/text";
@@ -34,7 +34,6 @@ import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import type { SetNonNullable } from "type-fest";
 
 export class StarterSummary extends Phaser.GameObjects.Container {
   private readonly pokemonSprite: Phaser.GameObjects.Sprite;
@@ -650,7 +649,7 @@ export class StarterSummary extends Phaser.GameObjects.Container {
     this.pokemonAdditionalMoveCountLabel.setVisible(false);
   }
 
-  public setStarterDetails(starterId: StarterSpeciesId, options: SetNonNullable<Required<SpeciesDetails>>): void {
+  public setStarterDetails(starterId: StarterSpeciesId, options: DefinedSpeciesDetails): void {
     const { shiny, formIndex, female, variant, abilityIndex, natureIndex, teraType } = options;
 
     const species = speciesDataRegistry.getSpecies(starterId);

@@ -44,6 +44,7 @@ import type {
   StarterMoveset,
   StarterPreferences,
 } from "#types/save-data";
+import type { CanCycle } from "#types/starter-select-types";
 import type { StarterSpeciesId } from "#types/starter-species-id";
 import type { OptionSelectItem, StarterSelectCallback } from "#types/ui-types";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
@@ -55,7 +56,6 @@ import { ScrollBar } from "#ui/scroll-bar";
 import { StarterContainer } from "#ui/starter-container";
 import { StarterSelectInstructionsContainer } from "#ui/starter-select-instructions";
 import {
-  type CanCycle,
   getDexAttrFromPreferences,
   getPartyValue,
   getRunValueLimit,

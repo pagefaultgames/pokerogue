@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import type { PokemonSpecies } from "#data/pokemon-species";
 import { TextStyle } from "#enums/text-style";
-import type { SpeciesDetails } from "#ui/starter-select-ui-utils";
+import type { SpeciesDetails } from "#types/starter-select-types";
 import { addTextObject } from "#ui/text";
 
 export class PokedexMonContainer extends Phaser.GameObjects.Container {

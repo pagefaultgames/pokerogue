@@ -15,7 +15,6 @@ import { DexAttr } from "#enums/dex-attr";
 import { GameModes } from "#enums/game-modes";
 import type { MoveId } from "#enums/move-id";
 import { Passive } from "#enums/passive";
-import type { PokemonType } from "#enums/pokemon-type";
 import type { SpeciesId } from "#enums/species-id";
 import type { Variant } from "#sprites/variant";
 import type { DexEntry } from "#types/dex-data";
@@ -25,25 +24,6 @@ import { SortCriteria, type SortDirection } from "#ui/dropdown";
 import { applyChallenges, checkStarterValidForChallenge } from "#utils/challenge-utils";
 import { NumberHolder } from "#utils/common";
 import i18next from "i18next";
-
-export interface SpeciesDetails {
-  shiny?: boolean | undefined;
-  formIndex?: number | undefined;
-  female?: boolean | undefined;
-  variant?: Variant | undefined;
-  abilityIndex?: number | undefined;
-  natureIndex?: number | undefined;
-  teraType?: PokemonType | undefined;
-}
-
-export interface CanCycle {
-  ability?: boolean | undefined;
-  form?: boolean | undefined;
-  gender?: boolean | undefined;
-  shiny?: boolean | undefined;
-  nature?: boolean | undefined;
-  tera?: boolean | undefined;
-}
 
 /**
  * Determines if a passive upgrade is available for the given species ID

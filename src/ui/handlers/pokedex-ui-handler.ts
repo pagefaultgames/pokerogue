@@ -23,6 +23,7 @@ import type { GameData } from "#system/game-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import type { DexEntry } from "#types/dex-data";
 import type { AllStarterPreferences, DexAttrProps, StarterPreferences } from "#types/save-data";
+import type { SpeciesDetails } from "#types/starter-select-types";
 import type { OptionSelectConfig } from "#types/ui-types";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
 import { FilterBar } from "#ui/filter-bar";
@@ -31,12 +32,7 @@ import { MessageUiHandler } from "#ui/message-ui-handler";
 import { PokedexMonContainer } from "#ui/pokedex-mon-container";
 import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-helper";
 import { ScrollBar } from "#ui/scroll-bar";
-import {
-  isPassiveAvailable,
-  isSameSpeciesEggAvailable,
-  isValueReductionAvailable,
-  type SpeciesDetails,
-} from "#ui/starter-select-ui-utils";
+import { isPassiveAvailable, isSameSpeciesEggAvailable, isValueReductionAvailable } from "#ui/starter-select-ui-utils";
 import { addTextObject, getTextColor } from "#ui/text";
 import { addWindow } from "#ui/ui-theme";
 import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
