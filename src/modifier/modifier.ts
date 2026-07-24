@@ -3165,6 +3165,16 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
   }
 
   /**
+   * Checks if this item can steal and if the holder has not fainted.
+   * @param pokemon The {@linkcode Pokemon} holding this item
+   * @param target The {@linkcode Pokemon} to steal from (optional)
+   * @returns `true` if an item can be stolen; false otherwise.
+   */
+  override shouldApply(pokemon: Pokemon, target?: Pokemon): boolean {
+    return super.shouldApply(pokemon, target) && !pokemon.isFainted();
+  }
+
+  /**
    * Steals an item, chosen randomly, from a set of target Pokemon.
    * @param pokemon The {@linkcode Pokemon} holding this item
    * @param target The {@linkcode Pokemon} to steal from (optional)
@@ -3250,13 +3260,6 @@ export class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
 
   setTransferrableFalse(): void {
     this.isTransferable = false;
-  }
-
-  public override apply(pokemon: Pokemon, target?: Pokemon, ...args: unknown[]): boolean {
-    if (pokemon.isFainted()) {
-      return false;
-    }
-    return super.apply(pokemon, target, ...args);
   }
 }
 
