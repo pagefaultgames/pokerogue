@@ -105,7 +105,7 @@ export interface StarterMoveData {
 export interface StarterPreferences {
   nature?: number | undefined;
   abilityIndex?: number | undefined;
-  variant?: number | undefined;
+  variant?: Variant | undefined;
   formIndex?: number | undefined;
   female?: boolean | undefined;
   shiny?: boolean | undefined;

@@ -1064,7 +1064,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
         }
       }
       // Set to the highest valid index found or default to 0
-      starterPreferences.variant = highestValidIndex === -1 ? 0 : highestValidIndex;
+      starterPreferences.variant = (highestValidIndex === -1 ? 0 : highestValidIndex) as Variant;
     }
 
     if (starterPreferences.female !== undefined) {
@@ -1815,7 +1815,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
             let newVariant = props.variant;
             do {
-              newVariant = (newVariant + 1) % 3;
+              newVariant = ((newVariant + 1) % 3) as Variant;
               if (newVariant === 0) {
                 if (this.isCaught() & DexAttr.DEFAULT_VARIANT) {
                   break;

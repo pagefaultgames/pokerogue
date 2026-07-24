@@ -27,6 +27,7 @@ import { GameModes } from "#enums/game-modes";
 import type { MoveId } from "#enums/move-id";
 import type { Nature } from "#enums/nature";
 import { Passive as PassiveAttr } from "#enums/passive";
+import { PokemonIconAnimMode } from "#enums/pokemon-icon-anim-mode";
 import { PokemonType } from "#enums/pokemon-type";
 import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
@@ -51,7 +52,7 @@ import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, S
 import { FilterBar } from "#ui/filter-bar";
 import { MessageUiHandler } from "#ui/message-ui-handler";
 import { MoveInfoOverlay } from "#ui/move-info-overlay";
-import { PokemonIconAnimHelper, PokemonIconAnimMode } from "#ui/pokemon-icon-anim-helper";
+import { PokemonIconAnimHelper } from "#ui/pokemon-icon-anim-helper";
 import { ScrollBar } from "#ui/scroll-bar";
 import { StarterContainer } from "#ui/starter-container";
 import { StarterSelectInstructionsContainer } from "#ui/starter-select-instructions";
@@ -1148,7 +1149,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             // If shiny, we update the variant
             let newVariant = starterPreferences.variant ?? props.variant;
             do {
-              newVariant = (newVariant + 1) % 3;
+              newVariant = ((newVariant + 1) % 3) as Variant;
               if (newVariant === 0) {
                 if (dexEntry.caughtAttr & DexAttr.DEFAULT_VARIANT) {
                   break;
@@ -1262,7 +1263,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
   }
 
   /** Update the preferences for shiny and variant for a given species ID. */
-  private setShinyAndVariant(speciesId: StarterSpeciesId, shiny: boolean, variant: number): void {
+  private setShinyAndVariant(speciesId: StarterSpeciesId, shiny: boolean, variant: Variant): void {
     this.starterPreferences[speciesId] ??= {};
     this.originalStarterPreferences[speciesId] ??= {};
     this.starterPreferences[speciesId].shiny = shiny;

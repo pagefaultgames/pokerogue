@@ -14,7 +14,6 @@ import { DexAttr } from "#enums/dex-attr";
 import { GameModes } from "#enums/game-modes";
 import type { MoveId } from "#enums/move-id";
 import { Passive } from "#enums/passive";
-import type { Variant } from "#sprites/variant";
 import { RibbonData } from "#system/ribbons/ribbon-data";
 import type { DexEntry } from "#types/dex-data";
 import type { DexAttrProps, StarterDataEntry, StarterPreferences } from "#types/save-data";
@@ -376,7 +375,7 @@ export function getStarterDexAttrPropsFromPreferences(
 
   return {
     shiny: starterPreferences.shiny ?? defaults.shiny,
-    variant: (starterPreferences.variant as Variant) ?? defaults.variant,
+    variant: starterPreferences.variant ?? defaults.variant,
     female: starterPreferences.female ?? defaults.female,
     formIndex: starterPreferences.formIndex ?? defaults.formIndex,
   };
