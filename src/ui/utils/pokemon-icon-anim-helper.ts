@@ -23,16 +23,11 @@ interface IconState {
  * - `JUMP`: jumping animation (the icons will move up quickly, with a long interval in between).
  */
 export class PokemonIconAnimHelper {
-  private icons: Map<PokemonIcon, IconState> = new Map();
+  private readonly icons: Map<PokemonIcon, IconState> = new Map();
 
   private toggled = false;
-  private jumpOffset = 0;
 
-  setup(): void {
-    this.icons = new Map();
-    this.toggled = false;
-    this.jumpOffset = 0;
-
+  constructor() {
     // Existing passive/active animation.
     const onAlternate = (tween: Phaser.Tweens.Tween) => {
       this.toggled = !!tween.getValue();
@@ -92,10 +87,7 @@ export class PokemonIconAnimHelper {
         return this.toggled ? -2 : 0;
 
       case PokemonIconAnimMode.JUMP:
-        return this.jumpOffset;
-
       case PokemonIconAnimMode.NONE:
-      default:
         return 0;
     }
   }
@@ -106,7 +98,7 @@ export class PokemonIconAnimHelper {
     }
   }
 
-  addOrUpdate(icons: PokemonIcon | PokemonIcon[], mode: PokemonIconAnimMode): void {
+  public addOrUpdate(icons: PokemonIcon | PokemonIcon[], mode: PokemonIconAnimMode): void {
     icons = coerceArray(icons);
 
     for (const icon of icons) {
@@ -126,22 +118,7 @@ export class PokemonIconAnimHelper {
     }
   }
 
-  remove(icons: PokemonIcon | PokemonIcon[]): void {
-    icons = coerceArray(icons);
-
-    for (const icon of icons) {
-      const state = this.icons.get(icon);
-
-      if (!state) {
-        continue;
-      }
-
-      icon.y = state.restY;
-      this.icons.delete(icon);
-    }
-  }
-
-  removeAll(): void {
+  public removeAll(): void {
     for (const [icon, state] of this.icons) {
       icon.y = state.restY;
     }

@@ -47,7 +47,6 @@ export class EggListUiHandler extends MessageUiHandler {
     const eggListBg = globalScene.add.image(0, 0, "egg_list_bg").setOrigin(0);
 
     this.iconAnimHandler = new PokemonIconAnimHelper();
-    this.iconAnimHandler.setup();
 
     this.eggNameText = addTextObject(8, 68, "", TextStyle.SUMMARY).setOrigin(0);
 

@@ -505,7 +505,6 @@ export class PokedexUiHandler extends MessageUiHandler {
     }
 
     this.iconAnimHandler = new PokemonIconAnimHelper();
-    this.iconAnimHandler.setup();
 
     this.pokemonNumberText = addTextObject(6, 141, "", TextStyle.SUMMARY);
     this.pokemonNumberText.setOrigin(0, 0);

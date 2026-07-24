@@ -70,7 +70,6 @@ export class EggSummaryUiHandler extends MessageUiHandler {
     ui.add(this.eggHatchContainer);
 
     this.iconAnimHandler = new PokemonIconAnimHelper();
-    this.iconAnimHandler.setup();
 
     this.eggHatchBg = globalScene.add.image(0, 0, "egg_summary_bg");
     this.eggHatchBg.setOrigin(0, 0);

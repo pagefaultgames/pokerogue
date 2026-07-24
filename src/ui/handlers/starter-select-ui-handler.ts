@@ -231,7 +231,6 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.filterBar = this.setupFilterBar();
 
     this.iconAnimHandler = new PokemonIconAnimHelper();
-    this.iconAnimHandler.setup();
 
     this.partyColumn = this.setupPartyColumn();
 

@@ -250,7 +250,6 @@ export class PartyUiHandler extends MessageUiHandler {
     partyContainer.add(this.optionsContainer);
 
     this.iconAnimHandler = new PokemonIconAnimHelper();
-    this.iconAnimHandler.setup();
 
     const partyDiscardModeButton = new PartyDiscardModeButton(DISCARD_BUTTON_X, DISCARD_BUTTON_Y, this);
     partyContainer.add(partyDiscardModeButton);
