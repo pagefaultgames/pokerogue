@@ -41,6 +41,11 @@ import type { IntRange } from "type-fest";
 
 /**
  * The minimum level for a Pokémon to generate with a move it can only learn
+ * from a memory mushroom
+ */
+export const RELEARN_LEVEL_REQUIREMENT = 40;
+/**
+ * The minimum level for a Pokémon to generate with a move it can only learn
  * from a common tier TM
  */
 export const COMMON_TIER_TM_LEVEL_REQUIREMENT = 25;
