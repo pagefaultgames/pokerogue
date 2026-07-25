@@ -15,10 +15,10 @@ export interface SpeciesDetails {
 export type DefinedSpeciesDetails = Required<SetNonNullable<SpeciesDetails>>;
 
 export interface CanCycle {
-  ability?: boolean | undefined;
-  form?: boolean | undefined;
-  gender?: boolean | undefined;
-  shiny?: boolean | undefined;
-  nature?: boolean | undefined;
-  tera?: boolean | undefined;
+  ability: boolean;
+  form: boolean;
+  gender: boolean;
+  shiny: boolean;
+  nature: boolean;
+  tera: boolean;
 }
