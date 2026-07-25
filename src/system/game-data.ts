@@ -376,36 +376,7 @@ export class GameData {
 
     this.saveSetting(SettingKeys.Player_Gender, systemData.gender === PlayerGender.FEMALE ? 1 : 0);
 
-    if (systemData.starterData) {
-      this.starterData = systemData.starterData;
-    } else {
-      this.initStarterData();
-
-      if (systemData["starterMoveData"]) {
-        const starterMoveData = systemData["starterMoveData"];
-        for (const s of Object.keys(starterMoveData)) {
-          this.starterData[s].moveset = starterMoveData[s];
-        }
-      }
-
-      if (systemData["starterEggMoveData"]) {
-        const starterEggMoveData = systemData["starterEggMoveData"];
-        for (const s of Object.keys(starterEggMoveData)) {
-          this.starterData[s].eggMoves = starterEggMoveData[s];
-        }
-      }
-
-      this.migrateStarterAbilities(systemData, this.starterData);
-
-      const starterIds = Object.keys(this.starterData).map(s => Number.parseInt(s) as SpeciesId);
-      for (const s of starterIds) {
-        this.starterData[s].candyCount += systemData.dexData[s].caughtCount;
-        this.starterData[s].candyCount += systemData.dexData[s].hatchedCount * 2;
-        if (systemData.dexData[s].caughtAttr & DexAttr.SHINY) {
-          this.starterData[s].candyCount += 4;
-        }
-      }
-    }
+    this.starterData = systemData.starterData;
 
     if (systemData.gameStats) {
       this.gameStats = systemData.gameStats;
@@ -436,16 +407,16 @@ export class GameData {
     }
 
     if (systemData.voucherCounts) {
-      getEnumKeys(VoucherType).forEach(key => {
+      for (const key of getEnumKeys(VoucherType)) {
         const index = VoucherType[key];
-        this.voucherCounts[index] = systemData.voucherCounts[index] || 0;
-      });
+        this.voucherCounts[index] = systemData.voucherCounts[index] ?? 0;
+      }
     }
 
-    this.eggs = systemData.eggs ? systemData.eggs.map(e => e.toEgg()) : [];
+    this.eggs = systemData.eggs?.map(e => e.toEgg()) ?? [];
 
-    this.eggPity = systemData.eggPity ? systemData.eggPity.slice(0) : [0, 0, 0, 0];
-    this.unlockPity = systemData.unlockPity ? systemData.unlockPity.slice(0) : [0, 0, 0, 0];
+    this.eggPity = systemData.eggPity?.slice(0) ?? [0, 0, 0, 0];
+    this.unlockPity = systemData.unlockPity?.slice(0) ?? [0, 0, 0, 0];
 
     this.dexData = Object.assign(this.dexData, systemData.dexData);
     this.consolidateDexData(this.dexData);
@@ -453,6 +424,7 @@ export class GameData {
   }
 
   public async initSystem(systemDataStr: string, cachedSystemDataStr?: string): Promise<boolean> {
+    // TODO: is it really a good idea to try to continue on if the system save data is corrupt?
     try {
       let systemData = GameData.parseSystemData(systemDataStr);
 
@@ -2197,30 +2169,6 @@ export class GameData {
       }
       if (!Object.hasOwn(entry, "ribbons")) {
         entry.ribbons = new RibbonData(0);
-      }
-    }
-  }
-
-  migrateStarterAbilities(systemData: SystemSaveData, initialStarterData?: StarterData): void {
-    const starterIds = Object.keys(this.starterData).map(s => Number.parseInt(s) as SpeciesId);
-    const starterData = initialStarterData || systemData.starterData;
-    const dexData = systemData.dexData;
-    for (const s of starterIds) {
-      const dexAttr = dexData[s].caughtAttr;
-      starterData[s].abilityAttr =
-        (dexAttr & DexAttr.DEFAULT_VARIANT ? AbilityAttr.ABILITY_1 : 0)
-        | (dexAttr & DexAttr.VARIANT_2 ? AbilityAttr.ABILITY_2 : 0)
-        | (dexAttr & DexAttr.VARIANT_3 ? AbilityAttr.ABILITY_HIDDEN : 0);
-      if (dexAttr) {
-        if (!(dexAttr & DexAttr.DEFAULT_VARIANT)) {
-          dexData[s].caughtAttr ^= DexAttr.DEFAULT_VARIANT;
-        }
-        if (dexAttr & DexAttr.VARIANT_2) {
-          dexData[s].caughtAttr ^= DexAttr.VARIANT_2;
-        }
-        if (dexAttr & DexAttr.VARIANT_3) {
-          dexData[s].caughtAttr ^= DexAttr.VARIANT_3;
-        }
       }
     }
   }
