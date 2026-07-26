@@ -81,7 +81,10 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
   public override end(): void {
     // this if check feels like an unnecessary optimization
     if (this.lastLevel < 100) {
-      const levelMoves = this.getPokemon().getLevelMoves(this.lastLevel + 1, false, true);
+      const levelMoves = this.getPokemon().getLevelMoves({
+        startingLevel: this.lastLevel + 1,
+        includePrevolutionMoves: true,
+      });
       const prevoMoves = levelMoves.filter(
         ([, , source]) => getBaseLearnableMoveSource(source) === LearnableMoveSource.PREVO,
       );
