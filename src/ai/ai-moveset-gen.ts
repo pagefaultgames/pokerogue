@@ -124,6 +124,7 @@ function getAndWeightLevelMoves(pokemon: Pokemon): Map<MoveId, number> {
         break;
       case RELEARN_MOVE:
         weight = hasTrainer && level >= RELEARN_LEVEL_REQUIREMENT ? RELEARN_MOVE_WEIGHT : 0;
+        break;
     }
 
     movePool.set(id, weight);
