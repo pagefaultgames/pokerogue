@@ -134,7 +134,7 @@ export abstract class BaseOptionSelectUiHandler extends UiHandler {
       .join("\n");
     this.optionSelectText.setText(this.textContent);
 
-    options.forEach((option: OptionSelectItem, i: number) => {
+    optionsWithScroll.forEach((option: OptionSelectItem, i: number) => {
       if (option.item) {
         const itemIcon = globalScene.add.sprite(0, 0, "items", option.item);
         itemIcon.setScale(3 * this.scale);
