@@ -187,6 +187,7 @@ import i18next from "i18next";
 import Phaser from "phaser";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import type { NonEmptyTuple } from "type-fest";
+import type { LevelMoveContext } from "../@types/level-moves";
 import { getBaseLearnableMoveSource, getLevelMoves } from "./learnsets";
 
 type LearnableLevelMoves = [level: number | null, move: MoveId, source: LearnableMoveSource][];
@@ -1979,9 +1980,16 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     includeRelearnerMoves?: boolean;
     learnSituation?: LearnMoveSituation;
   } = {}): LevelMovesWithSource {
-    return getLevelMoves(
-      this,
+    const context: LevelMoveContext = {
+      level: this.level,
       startingLevel,
+      pokemonSpeciesForm: this.getSpeciesForm(),
+      pokemonFormIndex: this.formIndex,
+      fusionSpeciesForm: this.getFusionSpeciesForm(),
+      fusionFormIndex: this.fusionFormIndex,
+    };
+    return getLevelMoves(
+      context,
       includeEvolutionMoves,
       includePrevolutionMoves,
       includeRelearnerMoves,
