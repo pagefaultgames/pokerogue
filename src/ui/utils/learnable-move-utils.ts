@@ -14,7 +14,7 @@ export function getLearnableMoveSourceIconFrame(source: LearnableMoveSource, tmT
       return "big_mushroom";
     case LearnableMoveSource.TM:
     case LearnableMoveSource.FUSION_TM:
-      return `tm_${tmType}`;
+      return `tm_${tmType ?? "normal"}`;
     default:
       return "unknown";
   }

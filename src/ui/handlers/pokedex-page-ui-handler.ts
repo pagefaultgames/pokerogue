@@ -28,6 +28,7 @@ import { Button } from "#enums/buttons";
 import { Device } from "#enums/devices";
 import { DexAttr } from "#enums/dex-attr";
 import { EggSourceType } from "#enums/egg-source-types";
+import { LearnableMoveSource } from "#enums/learnable-move-source";
 import type { MoveId } from "#enums/move-id";
 import type { Nature } from "#enums/nature";
 import { Passive as PassiveAttr } from "#enums/passive";
@@ -1380,14 +1381,18 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
                 ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
                   options: this.tmMoves
-                    .map(m => {
+                    .map(moveId => {
                       const option: OptionSelectItem = {
-                        label: allMoves[m].name,
+                        label: `  ${allMoves[moveId].name}`,
                         handler: () => {
                           return false;
                         },
+                        item: getLearnableMoveSourceIconFrame(
+                          LearnableMoveSource.TM,
+                          PokemonType[allMoves[moveId].type].toLowerCase(),
+                        ),
                         onHover: () => {
-                          this.moveInfoOverlay.show(allMoves[m]);
+                          this.moveInfoOverlay.show(allMoves[moveId]);
                         },
                       };
                       return option;
