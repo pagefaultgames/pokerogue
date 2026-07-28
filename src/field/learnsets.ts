@@ -4,7 +4,7 @@ import { LearnMoveSituation } from "#enums/learn-move-situation";
 import { LearnableMoveSource } from "#enums/learnable-move-source";
 import type { MoveId } from "#enums/move-id";
 import type { Pokemon } from "#field/pokemon";
-import type { LevelMovesWithSource } from "#types/pokemon-species";
+import type { LevelMovesWithSource } from "#types/level-moves";
 import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 
 /**
