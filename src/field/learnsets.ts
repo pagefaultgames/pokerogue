@@ -10,12 +10,12 @@ import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
  * Helper method for {@linkcode getLevelMoves}
  *
  * Get all level moves the species form can learn on its own.
- * @param pokemon - The Pokemon to get the moves for
+ * @param context - Basic information about the Pokemon to get the level moves for
  * @param includeEvolutionMoves - Whether to include evolution moves
  * @param includeRelearnerMoves - Whether to include moves that would require a relearner. Note the move relearner inherently allows evolution moves
  * @param fromFusion - (Default `false`) Whether to get the moves from the fusion species
  * @remarks
- * `fromFusion` should only be used if the pokemon is a fusion
+ * `fromFusion` should only be used if a fusion species is being provided.
  * @returns A list of moves and the levels they can be learned at, along with the source of the move.
  * Excludes moves from prevolutions, but includes evolution moves and relearner moves.
  */
@@ -57,12 +57,12 @@ function getRegularLevelMoves(
  * Helper method for {@linkcode getLevelMoves}
  *
  * Get all level moves the species form and its prevolutions can learn.
- * @param pokemon - The Pokemon to get the prevolution moves for
+ * @param context - Basic information about the Pokemon to get the level moves for
  * @param includeEvolutionMoves - Whether to include evolution moves
  * @param includeRelearnerMoves - Whether to include moves that would require a relearner. Note the move relearner inherently allows evolution moves
  * @param fromFusion - (Default `false`) Whether to get the prevolution moves from the fusion species
  * @remarks
- * `fromFusion` should only be used if the pokemon is a fusion
+ * `fromFusion` should only be used if a fusion species is being provided.
  * @returns A list of moves and the levels they can be learned at, along with the source of the move
  */
 function getPrevolutionMoves(
@@ -210,6 +210,15 @@ function filterAndSortLevelMoves(
   return ret;
 }
 
+/**
+ * Get all level moves the species form can learn
+ * @param context - Basic information about the Pokemon to get the level moves for
+ * @param includeEvolutionMoves - (Default: false) Whether to include evolution moves
+ * @param includePrevolutionMoves - (Default: false) Whether to include moves from prevolutions
+ * @param includeRelearnerMoves - (Default: false) Whether to include moves that would require a relearner. Note the move relearner inherently allows evolution moves
+ * @param learnSituation - (Default: LearnMoveSituation.MISC) The situation in which the moves are being learned
+ * @returns An array of level, moveid and source tuples, sorted by level and source.
+ */
 export function getLevelMoves(
   context: LevelMoveContext,
   includeEvolutionMoves = false,
