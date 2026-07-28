@@ -219,6 +219,11 @@ export function getLevelMoves(
 ): LevelMovesWithSource {
   const levelMoves: LevelMovesWithSource = [];
   const isFusion = context.fusionSpeciesForm !== undefined;
+  if (includeRelearnerMoves) {
+    // Relearner moves inherently allow evolution moves
+    // Setting this to ture ensures the correct source is used
+    includeEvolutionMoves = true;
+  }
   if (learnSituation === LearnMoveSituation.EVOLUTION_FUSED && isFusion) {
     // For fusion evolutions, get ONLY the moves of the component mon that evolved
     levelMoves.push(...getRegularLevelMoves(context, includeEvolutionMoves, includeRelearnerMoves, true));
