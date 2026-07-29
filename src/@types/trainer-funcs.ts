@@ -1,3 +1,4 @@
+import type { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import type { PartyMemberStrength } from "#enums/party-member-strength";
 import type { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon } from "#field/pokemon";
@@ -6,7 +7,11 @@ import type { TrainerConfig } from "#trainers/trainer-config";
 import type { TrainerPartyTemplate } from "#trainers/trainer-party-template";
 
 export type PartyTemplateFunc = () => TrainerPartyTemplate;
-export type PartyMemberFunc = (level: number, strength: PartyMemberStrength) => EnemyPokemon;
+export type PartyMemberFunc = (
+  level: number,
+  strength: PartyMemberStrength,
+  evoThresholdKind: EvoLevelThresholdKind,
+) => EnemyPokemon;
 export type GenModifiersFunc = (party: readonly EnemyPokemon[]) => PersistentModifier[];
 export type GenAIFunc = (party: readonly EnemyPokemon[]) => void;
 

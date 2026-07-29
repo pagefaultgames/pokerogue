@@ -8,6 +8,7 @@ import { doubleBattleDialogue } from "#data/double-battle-dialogue";
 import { Gender } from "#data/gender";
 import type { PokemonSpecies, PokemonSpeciesFilter } from "#data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
+import type { EvoLevelThresholdKind } from "#enums/evo-level-threshold-kind";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import { MoveId } from "#enums/move-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
@@ -991,15 +992,17 @@ export function getRandomPartyMemberFunc(
   trainerSlot: TrainerSlot = TrainerSlot.TRAINER,
   ignoreEvolution = false,
   postProcess?: (enemyPokemon: EnemyPokemon) => void,
-): (level: number, strength: PartyMemberStrength) => EnemyPokemon {
-  return (level: number, strength: PartyMemberStrength) => {
+): PartyMemberFunc {
+  return (level: number, strength: PartyMemberStrength, evoThresholdKind: EvoLevelThresholdKind) => {
     let species: SpeciesId | readonly SpeciesId[] | typeof speciesPool = speciesPool;
     do {
       species = randSeedItem(species);
     } while (typeof species !== "number");
 
     if (!ignoreEvolution) {
-      species = speciesDataRegistry.getSpecies(species).getTrainerSpeciesForLevel(level, true, strength);
+      species = speciesDataRegistry
+        .getSpecies(species)
+        .getTrainerSpeciesForLevel(level, true, strength, evoThresholdKind);
     }
 
     return globalScene.addEnemyPokemon(

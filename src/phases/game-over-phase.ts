@@ -7,6 +7,7 @@ import { bypassLogin } from "#constants/app-constants";
 import { modifierTypes } from "#data/data-lists";
 import { getCharVariantFromDialogue } from "#data/dialogue";
 import type { PokemonSpecies } from "#data/pokemon-species";
+import { ChallengeType } from "#enums/challenge-type";
 import { Challenges } from "#enums/challenges";
 import { PlayerGender } from "#enums/player-gender";
 import { TrainerType } from "#enums/trainer-type";
@@ -25,8 +26,9 @@ import { awardRibbonsToSpeciesLine } from "#system/ribbons/ribbon-methods";
 import { TrainerData } from "#system/trainer-data";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { SessionSaveData } from "#types/save-data";
-import { checkSpeciesValidForChallenge, isNuzlockeChallenge } from "#utils/challenge-utils";
+import { applyChallenges, isNuzlockeChallenge } from "#utils/challenge-utils";
 import { fixedInt, isLocalServerConnected } from "#utils/common";
+import { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
 
 export class GameOverPhase extends BattlePhase {
@@ -131,16 +133,12 @@ export class GameOverPhase extends BattlePhase {
       }
     }
     // Award ribbons to all Pokémon in the player's party that are considered valid
-    // for the current game mode and challenges.
+    // for the current game mode and challenges (as in, they can be used in battle).
     for (const pokemon of globalScene.getPlayerParty()) {
       const species = pokemon.species;
-      if (
-        checkSpeciesValidForChallenge(
-          species,
-          globalScene.gameData.getSpeciesDexAttrProps(species, pokemon.getDexAttr()),
-          false,
-        )
-      ) {
+      const challengeAllowed = new ValueHolder(true);
+      applyChallenges(ChallengeType.POKEMON_IN_BATTLE, pokemon, challengeAllowed);
+      if (challengeAllowed.value) {
         awardRibbonsToSpeciesLine(species.speciesId, ribbonFlags as RibbonFlag);
       }
     }
