@@ -294,7 +294,7 @@ export class BattleScene extends SceneBase {
   public pokeballCounts: PokeballCounts;
   public money: number;
   public pokemonInfoContainer: PokemonInfoContainer;
-  private party: PlayerPokemon[];
+  private party: PlayerPokemon[] = [];
   /** Session save data that pertains to Mystery Encounters */
   public mysteryEncounterSaveData: MysteryEncounterSaveData = new MysteryEncounterSaveData();
   /** If the previous wave was a MysteryEncounter, tracks the object with this variable. Mostly used for visual object cleanup */
@@ -314,8 +314,8 @@ export class BattleScene extends SceneBase {
   private shopOverlayShown = false;
   private shopOverlayOpacity = 0.8;
 
-  public modifiers: PersistentModifier[];
-  private enemyModifiers: PersistentModifier[];
+  public modifiers: PersistentModifier[] = [];
+  private enemyModifiers: PersistentModifier[] = [];
   public uiContainer: Phaser.GameObjects.Container;
   public ui: UI;
 
@@ -404,10 +404,10 @@ export class BattleScene extends SceneBase {
   }
 
   /**
-   * Create game objects with loaded assets.
-   * Called by Phaser on new game start.
+   * This method is called by the Scene Manager when the scene starts,
+   * before `preload()` and `create()`.
    */
-  public create(): void {
+  public init() {
     this.scene.remove(LoadingScene.KEY);
     initGameSpeed(this);
     this.inputController = new InputsController();
@@ -423,16 +423,15 @@ export class BattleScene extends SceneBase {
     this.renderer.pipelines.add("Sprite", this.spritePipeline);
     this.fieldSpritePipeline = new FieldSpritePipeline(this.game);
     this.renderer.pipelines.add("FieldSprite", this.fieldSpritePipeline);
-
-    this.launchBattle();
   }
 
-  update() {
-    this.ui?.update();
-  }
-
-  // TODO: Split this up into multiple sub-methods
-  launchBattle() {
+  /**
+   * Create game objects with loaded assets.
+   * Called by Phaser on new game start.
+   *
+   * TODO: refactor; split to `init()`.
+   */
+  public create(): void {
     const biome = activeOverrides.STARTING_BIOME_OVERRIDE || BiomeId.PLAINS;
     const biomeKey = getBiomeKey(biome);
 
@@ -452,6 +451,25 @@ export class BattleScene extends SceneBase {
       .setSize(320, 240)
       .setVisible(false);
 
+    this.anims.create({
+      key: "prompt",
+      frames: this.anims.generateFrameNumbers("prompt", { start: 1, end: 4 }),
+      frameRate: 6,
+      repeat: -1,
+      showOnStart: true,
+    });
+    this.anims.create({
+      key: "tera_sparkle",
+      frames: this.anims.generateFrameNumbers("tera_sparkle", {
+        start: 0,
+        end: 12,
+      }),
+      frameRate: 18,
+      repeat: 0,
+      showOnStart: true,
+      hideOnComplete: true,
+    });
+
     this.field = this.add //
       .container(0, 0)
       .setName("field")
@@ -460,42 +478,6 @@ export class BattleScene extends SceneBase {
       .container(0, this.game.canvas.height)
       .setName("field-ui")
       .setDepth(1)
-      .setScale(6);
-
-    const transition = this.make.rexTransitionImagePack(
-      {
-        x: 0,
-        y: 0,
-        scale: 6,
-        key: "loading_bg",
-        origin: { x: 0, y: 0 },
-      },
-      true,
-    );
-
-    // TODO: fix the typing in a `.d.ts` file so the `ts-ignore` is no longer necessary
-    /* biome-ignore lint/suspicious/noTsIgnore: ts-ignore is necessary because `tsc` and `tsgo` require the directive to be on different lines,
-     *   meaning `@ts-expect-error` is guaranteed to emit a diagnostic on one of the lines depending on which one is used
-     */
-    // @ts-ignore
-    transition.transit({
-      mode: "blinds",
-      /* biome-ignore lint/suspicious/noTsIgnore: ts-ignore is necessary because `tsc` and `tsgo` require the directive to be on different lines,
-       *   meaning `@ts-expect-error` is guaranteed to emit a diagnostic on one of the lines depending on which one is used
-       */
-      // @ts-ignore
-      ease: "Cubic.easeInOut",
-      duration: 1250,
-    });
-    transition.once("complete", () => {
-      transition.destroy();
-    });
-    this.add.existing(transition);
-
-    this.uiContainer = this.add //
-      .container(0, 0)
-      .setName("ui")
-      .setDepth(2)
       .setScale(6);
 
     const overlayWidth = this.scaledCanvas.width;
@@ -510,9 +492,6 @@ export class BattleScene extends SceneBase {
       .setName("rect-shop-overlay")
       .setOrigin(0)
       .setAlpha(0);
-
-    this.modifiers = [];
-    this.enemyModifiers = [];
 
     this.modifierBar = new ModifierBar() //
       .setName("modifier-bar");
@@ -572,7 +551,6 @@ export class BattleScene extends SceneBase {
     this.arenaFlyout = new ArenaFlyout();
     this.pokemonInfoContainer = new PokemonInfoContainer(this.scaledCanvas.width + 52, -this.scaledCanvas.height + 66) //
       .setup();
-    this.updateUIPositions();
 
     this.damageNumberHandler = new DamageNumberHandler();
     this.spriteSparkleHandler = new PokemonSpriteSparkleHandler() //
@@ -598,10 +576,6 @@ export class BattleScene extends SceneBase {
       ])
       .moveBelow<Phaser.GameObjects.GameObject>(this.arenaFlyout, this.fieldOverlay);
 
-    this.uiContainer.add([this.modifierBar, this.enemyModifierBar]);
-
-    this.party = [];
-
     this.arenaPlayer = new ArenaBase(true) //
       .setName("arena-player");
     this.arenaPlayerTransition = new ArenaBase(true) //
@@ -619,31 +593,68 @@ export class BattleScene extends SceneBase {
       .setName("sprite-trainer");
     this.field.add(this.trainer);
 
-    this.anims.create({
-      key: "prompt",
-      frames: this.anims.generateFrameNumbers("prompt", { start: 1, end: 4 }),
-      frameRate: 6,
-      repeat: -1,
-      showOnStart: true,
-    });
-    this.anims.create({
-      key: "tera_sparkle",
-      frames: this.anims.generateFrameNumbers("tera_sparkle", {
-        start: 0,
-        end: 12,
-      }),
-      frameRate: 18,
-      repeat: 0,
-      showOnStart: true,
-      hideOnComplete: true,
-    });
+    this.updateUIPositions();
 
+    // TODO: remove reloadI18n and replace with defaultGameState
     this.reset(false, false, true);
+
+    this.uiContainer = this.add //
+      .container(0, 0)
+      .setName("ui")
+      .setDepth(2)
+      .setScale(6);
 
     // Initialize UI-related aspects and then start the login phase.
     this.ui = new UI();
+    this.uiContainer.add([this.modifierBar, this.enemyModifierBar]);
     this.uiContainer.add(this.ui);
-    this.ui.setup();
+    this.ui.init();
+
+    this.launchBattle();
+  }
+
+  update() {
+    this.ui?.update();
+  }
+
+  launchBattle() {
+    const transition = this.make.rexTransitionImagePack(
+      {
+        x: 0,
+        y: 0,
+        scale: 6,
+        key: "loading_bg",
+        origin: { x: 0, y: 0 },
+      },
+      true,
+    );
+    transition.setDepth(500);
+
+    // TODO: fix the typing in a `.d.ts` file so the `ts-ignore` is no longer necessary
+    /* biome-ignore lint/suspicious/noTsIgnore: ts-ignore is necessary because `tsc` and `tsgo` require the directive to be on different lines,
+     *   meaning `@ts-expect-error` is guaranteed to emit a diagnostic on one of the lines depending on which one is used
+     */
+    // @ts-ignore
+    transition.transit({
+      mode: "blinds",
+      /* biome-ignore lint/suspicious/noTsIgnore: ts-ignore is necessary because `tsc` and `tsgo` require the directive to be on different lines,
+       *   meaning `@ts-expect-error` is guaranteed to emit a diagnostic on one of the lines depending on which one is used
+       */
+      // @ts-ignore
+      ease: "Cubic.easeInOut",
+      duration: 1250,
+    });
+    transition.once("complete", () => {
+      transition.destroy();
+    });
+
+    this.add.existing(transition);
+
+    this.luckText.setVisible(false);
+    this.luckLabelText.setVisible(false);
+
+    this.arenaPlayerTransition.setVisible(false);
+    this.arenaNextEnemy.setVisible(false);
 
     this.phaseManager.toTitleScreen(true);
     this.phaseManager.shiftPhase();
@@ -1127,12 +1138,54 @@ export class BattleScene extends SceneBase {
     return this.currentBattle?.randSeedInt(range, min);
   }
 
-  // TODO: Break up function - this does far too much in 1 sitting
   reset(clearScene = false, clearData = false, reloadI18n = false): void {
     if (clearData) {
       this.gameData = new GameData();
     }
 
+    this.defaultGameState();
+
+    if (reloadI18n) {
+      const localizable: Localizable[] = [
+        ...speciesDataRegistry.getAllSpecies(),
+        ...allMoves,
+        ...getEnumValues(ModifierPoolType)
+          .map(mpt => getModifierPoolForType(mpt))
+          .flatMap(mp =>
+            Object.values(mp)
+              .flat()
+              .map(mt => mt.modifierType)
+              .filter((mt): mt is ModifierType & Localizable => "localize" in mt && typeof mt.localize === "function"),
+          ),
+      ];
+      for (const item of localizable) {
+        item.localize();
+      }
+    }
+
+    if (clearScene) {
+      // Reload variant data in case sprite set has changed
+      this.initVariantData();
+
+      audioManager.fadeOutBgm(250);
+      this.ui.freeUIData();
+      this.tweens.add({
+        targets: [this.uiContainer],
+        alpha: 0,
+        duration: 250,
+        ease: "Sine.easeInOut",
+        onComplete: () => {
+          this.uiContainer.setVisible(true);
+
+          this.launchBattle();
+          this.uiContainer.setAlpha(1);
+        },
+      });
+    }
+  }
+
+  // TODO: Break up function? this does far too much in 1 sitting
+  protected defaultGameState() {
     this.turnCommandManager.resetTurnOrder();
     this.gameMode = getGameMode(GameModes.CLASSIC);
 
@@ -1214,47 +1267,6 @@ export class BattleScene extends SceneBase {
     this.mysteryEncounterSaveData = new MysteryEncounterSaveData();
 
     this.updateGameInfo();
-
-    if (reloadI18n) {
-      const localizable: Localizable[] = [
-        ...speciesDataRegistry.getAllSpecies(),
-        ...allMoves,
-        ...getEnumValues(ModifierPoolType)
-          .map(mpt => getModifierPoolForType(mpt))
-          .flatMap(mp =>
-            Object.values(mp)
-              .flat()
-              .map(mt => mt.modifierType)
-              .filter((mt): mt is ModifierType & Localizable => "localize" in mt && typeof mt.localize === "function"),
-          ),
-      ];
-      for (const item of localizable) {
-        item.localize();
-      }
-    }
-
-    if (clearScene) {
-      // Reload variant data in case sprite set has changed
-      this.initVariantData();
-
-      audioManager.fadeOutBgm(250);
-      this.tweens.add({
-        targets: [this.uiContainer],
-        alpha: 0,
-        duration: 250,
-        ease: "Sine.easeInOut",
-        onComplete: () => {
-          this.ui.freeUIData();
-          this.uiContainer.remove(this.ui, true);
-          this.uiContainer.destroy();
-          this.children.removeAll(true);
-          // TODO: Do we even need this?
-          this.game.domContainer.innerHTML = "";
-          // TODO: `launchBattle` calls `reset(false, false, true)`
-          this.launchBattle();
-        },
-      });
-    }
   }
 
   // TODO: Invert the chances for this

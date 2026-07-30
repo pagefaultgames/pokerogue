@@ -520,7 +520,14 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
     (this.getUi().handlers[UiMode.TITLE] as TitleUiHandler)?.updateUsername();
     if (this.reloadRequired) {
       this.reloadRequired = false;
-      globalScene.reset(true, false, true);
+
+      // TODO: Major refactor needed to avoid recreating everything.
+      globalScene.ui.handlers.forEach(h => h.destroy());
+      globalScene.uiContainer.removeAll(true);
+      globalScene.uiContainer.destroy(true);
+      globalScene.children.removeAll(true);
+      globalScene.game.domContainer.innerHTML = "";
+      globalScene.create();
     }
   }
 

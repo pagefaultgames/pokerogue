@@ -120,6 +120,33 @@ export class MenuUiHandler extends MessageUiHandler {
     this.menuContainer.add(this.bgmBar);
 
     this.menuContainer.setVisible(false);
+
+    this.menuMessageBoxContainer = globalScene.add.container(0, 130);
+    this.menuMessageBoxContainer.setName("menu-message-box");
+    this.menuMessageBoxContainer.setVisible(false);
+
+    // Window for general messages
+    this.menuMessageBox = addWindow(0, 0, this.defaultMessageBoxWidth, 48);
+    this.menuMessageBox.setOrigin(0, 0);
+
+    // Full-width window used for testing dialog messages in debug mode
+    this.dialogueMessageBox = addWindow(
+      -this.textPadding,
+      0,
+      globalScene.scaledCanvas.width + this.textPadding * 2,
+      49,
+      false,
+      false,
+      0,
+      0,
+      WindowVariant.THIN,
+    );
+    this.dialogueMessageBox.setOrigin(0, 0);
+
+    this.menuMessageBoxContainer.add(this.menuMessageBox);
+    this.menuMessageBoxContainer.add(this.dialogueMessageBox);
+
+    this.menuContainer.add(this.menuMessageBoxContainer);
   }
 
   render() {
@@ -163,30 +190,6 @@ export class MenuUiHandler extends MessageUiHandler {
 
     ui.add(this.menuContainer);
 
-    this.menuMessageBoxContainer = globalScene.add.container(0, 130);
-    this.menuMessageBoxContainer.setName("menu-message-box");
-    this.menuMessageBoxContainer.setVisible(false);
-
-    // Window for general messages
-    this.menuMessageBox = addWindow(0, 0, this.defaultMessageBoxWidth, 48);
-    this.menuMessageBox.setOrigin(0, 0);
-    this.menuMessageBoxContainer.add(this.menuMessageBox);
-
-    // Full-width window used for testing dialog messages in debug mode
-    this.dialogueMessageBox = addWindow(
-      -this.textPadding,
-      0,
-      globalScene.scaledCanvas.width + this.textPadding * 2,
-      49,
-      false,
-      false,
-      0,
-      0,
-      WindowVariant.THIN,
-    );
-    this.dialogueMessageBox.setOrigin(0, 0);
-    this.menuMessageBoxContainer.add(this.dialogueMessageBox);
-
     const menuMessageText = addTextObject(this.textPadding, this.textPadding, "", TextStyle.WINDOW, { maxLines: 2 });
     menuMessageText.setName("menu-message");
     menuMessageText.setOrigin(0, 0);
@@ -199,8 +202,6 @@ export class MenuUiHandler extends MessageUiHandler {
 
     // By default we use the general purpose message window
     this.setDialogTestMode(false);
-
-    this.menuContainer.add(this.menuMessageBoxContainer);
 
     const manageDataOptions: any[] = []; // TODO: proper type
 
@@ -793,6 +794,10 @@ export class MenuUiHandler extends MessageUiHandler {
 
   clear() {
     super.clear();
+    if (this.message) {
+      this.clearText();
+    }
+    this.menuMessageBoxContainer.setVisible(false);
     this.menuContainer.setVisible(false);
     this.bgmBar.toggleBgmBar(false);
     this.eraseCursor();

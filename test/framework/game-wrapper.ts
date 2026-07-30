@@ -61,6 +61,7 @@ export class GameWrapper {
     this.scene = scene;
     this.injectMandatory();
 
+    this.scene.init();
     this.scene.preload();
     this.scene.create();
   }
@@ -197,7 +198,8 @@ export class GameWrapper {
     this.scene.sys.displayList = this.scene.add.displayList;
     this.scene.sys.updateList = new UpdateList(this.scene);
     this.scene["systems"] = this.scene.sys;
-    this.scene.input = this.game.input as any;
+    const input = (this.scene.input = this.game.input as any);
+    input.manager = { canvas: { style: { cursor: "default" } } } as any;
     this.scene.scene = this.scene as any; // TODO: This seems wacky
     this.scene.input.keyboard = new KeyboardPlugin(this.scene as any);
     this.scene.input.gamepad = new GamepadPlugin(this.scene as any);
