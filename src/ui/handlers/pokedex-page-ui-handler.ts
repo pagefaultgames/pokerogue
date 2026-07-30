@@ -12,6 +12,7 @@ import {
   getStarterValueFriendshipCap,
   getValueReductionCandyCounts,
 } from "#balance/starters";
+import { getTmNumber, tmPoolTiers } from "#balance/tm-pool-tiers";
 import { allAbilities, allMoves, catchableSpecies } from "#data/data-lists";
 import { Egg } from "#data/egg";
 import { GrowthRate, getGrowthRateColor } from "#data/exp";
@@ -29,6 +30,7 @@ import { Device } from "#enums/devices";
 import { DexAttr } from "#enums/dex-attr";
 import { EggSourceType } from "#enums/egg-source-types";
 import { LearnableMoveSource } from "#enums/learnable-move-source";
+import { ModifierTier } from "#enums/modifier-tier";
 import type { MoveId } from "#enums/move-id";
 import type { Nature } from "#enums/nature";
 import { Passive as PassiveAttr } from "#enums/passive";
@@ -1396,6 +1398,12 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                         ),
                         onHover: () => {
                           this.moveInfoOverlay.show(allMoves[moveId]);
+                          this.showText(
+                            i18next.t("pokedexUiHandler:tmMove", {
+                              number: getTmNumber(moveId),
+                              tier: toTitleCase(ModifierTier[tmPoolTiers[moveId]]), // TODO: Replace with localized tier
+                            }),
+                          );
                         },
                       };
                       return option;

@@ -6,7 +6,7 @@ import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { activeOverrides } from "#app/overrides";
 import { EvolutionItem } from "#balance/pokemon-evolutions";
-import { tmPoolTiers } from "#balance/tm-pool-tiers";
+import { getTmNumber, tmPoolTiers } from "#balance/tm-pool-tiers";
 import { getBerryEffectDescription, getBerryName } from "#data/berry";
 import { getDailyEventSeedLuck } from "#data/daily-run";
 import { allMoves, modifierTypes } from "#data/data-lists";
@@ -123,7 +123,7 @@ import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#ui/party-ui-
 import { PartyUiHandler } from "#ui/party-ui-handler";
 import { getModifierTierTextTint } from "#ui/text";
 import { applyChallenges } from "#utils/challenge-utils";
-import { BooleanHolder, formatMoney, NumberHolder, padInt, randSeedInt, randSeedItem } from "#utils/common";
+import { BooleanHolder, formatMoney, NumberHolder, randSeedInt, randSeedItem } from "#utils/common";
 import { getEnumKeys, getEnumValues } from "#utils/enums";
 import { getPokemonTypeLocaleKey } from "#utils/i18n";
 import { getModifierPoolForType, getModifierType } from "#utils/modifier-utils";
@@ -1149,7 +1149,7 @@ export class TmModifierType extends PokemonModifierType {
 
   get name(): string {
     return i18next.t("modifierType:ModifierType.TmModifierType.name", {
-      moveId: padInt(Object.keys(tmPoolTiers).indexOf(this.moveId.toString()) + 1, 3),
+      moveId: getTmNumber(this.moveId),
       moveName: allMoves[this.moveId].name,
     });
   }
