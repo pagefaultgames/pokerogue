@@ -1983,9 +1983,9 @@ export abstract class Pokemon extends Phaser.GameObjects.Container {
     const context: LevelMoveContext = {
       level: this.level,
       startingLevel,
-      pokemonSpeciesForm: this.getSpeciesForm(),
+      pokemonSpeciesForm: this.getSpeciesForm(true),
       pokemonFormIndex: this.formIndex,
-      fusionSpeciesForm: this.getFusionSpeciesForm(),
+      fusionSpeciesForm: this.getFusionSpeciesForm(true),
       fusionFormIndex: this.fusionFormIndex,
     };
     return getLevelMoves(
