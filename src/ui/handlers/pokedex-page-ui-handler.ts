@@ -1249,12 +1249,13 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                   options: this.levelMoves
                     .map(([level, moveId, source]) => {
                       const levelNumber = level > 0 ? String(level) : "";
+                      const learnedViaPrevo = source > 1; // Should be enough here as there are no tm/egg moves in the levelMoves list
                       const option: OptionSelectItem = {
                         label: levelNumber.padStart(3, "\u2007") + " " + allMoves[moveId].name,
                         handler: () => {
                           return false;
                         },
-                        item: source > 1 ? getLearnableMoveSourceIconFrame(source) : undefined,
+                        item: learnedViaPrevo ? getLearnableMoveSourceIconFrame(source) : undefined,
                         onHover: () => {
                           this.moveInfoOverlay.show(allMoves[moveId]);
                           if (level === 0) {
@@ -1263,6 +1264,8 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                             this.showText(i18next.t("pokedexUiHandler:onlyRecallMove"));
                           } else if (level <= 5) {
                             this.showText(i18next.t("pokedexUiHandler:onStarterSelectMove"));
+                          } else if (learnedViaPrevo) {
+                            this.showText(i18next.t("pokedexUiHandler:prevoRelearnMove", { level }));
                           } else {
                             this.showText(i18next.t("pokedexUiHandler:byLevelUpMove"));
                           }
