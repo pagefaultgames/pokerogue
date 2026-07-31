@@ -47,6 +47,7 @@ import { RibbonData } from "#system/ribbons/ribbon-data";
 import { SettingKeyboard } from "#system/settings-keyboard";
 import { settings } from "#system/settings-manager";
 import type { DexEntry } from "#types/dex-data";
+import type { SettingsUpdateEventArgs } from "#types/event-bus-types";
 import type { LevelMoves } from "#types/pokemon-species";
 import type {
   Starter,
@@ -55,7 +56,6 @@ import type {
   StarterMoveset,
   StarterPreferences,
 } from "#types/save-data";
-import type { SettingsUpdateEventArgs } from "#types/settings";
 import type { OptionSelectItem, StarterSelectCallback } from "#types/ui-types";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#ui/dropdown";
 import { FilterBar } from "#ui/filter-bar";

@@ -107,7 +107,7 @@ class SettingsManager {
    * @param key - The key of the setting
    * @param value - The updated value
    */
-  updateAndReload<C extends SettingsCategory>(category: C, key: keyof UserFacingSettings[C], value: any) {
+  public updateAndReload<C extends SettingsCategory>(category: C, key: keyof UserFacingSettings[C], value: any) {
     this.update(category, key, value);
     window.location.reload();
   }

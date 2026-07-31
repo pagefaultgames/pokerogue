@@ -116,6 +116,7 @@ import type { Voucher } from "#system/voucher";
 import { vouchers } from "#system/voucher";
 import { trainerConfigs } from "#trainers/trainer-config";
 import type { Constructor } from "#types/common";
+import type { SettingsUpdateEventArgs } from "#types/event-bus-types";
 import type { HeldModifierConfig } from "#types/held-modifier-config";
 import type { Localizable } from "#types/locales";
 import type {
@@ -125,7 +126,7 @@ import type {
   NewBattleSavedProps,
 } from "#types/new-battle-props";
 import type { SessionSaveData } from "#types/save-data";
-import type { SettingsUpdateEventArgs, VolumeSettingsKey } from "#types/settings";
+import type { VolumeSettingsKey } from "#types/settings";
 import { AbilityBar } from "#ui/ability-bar";
 import { ArenaFlyout } from "#ui/arena-flyout";
 import { CandyBar } from "#ui/candy-bar";

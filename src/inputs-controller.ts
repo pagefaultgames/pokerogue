@@ -21,7 +21,8 @@ import type {
   MappingSettingName,
   SelectedDevice,
 } from "#types/configs/inputs";
-import type { AnySettingKey, SettingsUpdateEventArgs } from "#types/settings";
+import type { SettingsUpdateEventArgs } from "#types/event-bus-types";
+import type { AnySettingKey } from "#types/settings";
 import type { SettingsGamepadUiHandler } from "#ui/gamepad-settings-ui-handler";
 import type { SettingsKeyboardUiHandler } from "#ui/keyboard-settings-ui-handler";
 import { MoveTouchControlsHandler } from "#ui/move-touch-controls-handler";

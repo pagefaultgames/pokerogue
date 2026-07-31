@@ -101,7 +101,7 @@ export type SettingUiItemOption = {
   confirmationMessage?: string;
 };
 
-export interface SettingsUiItem<K = string> {
+export interface SettingsUiItem<K = AnySettingKey> {
   key: K;
   label: string;
   options: SettingUiItemOption[];
@@ -138,9 +138,3 @@ export type VolumeSettingsKey = Exclude<AudioSettingsKey, "musicPreference">;
 
 /** All keys for the gamepad settings */
 export type GamepadSettingsKey = keyof GamepadSettings;
-
-export interface SettingsUpdateEventArgs {
-  category: SettingsCategory;
-  key: AnySettingKey;
-  value: string | number | boolean;
-}

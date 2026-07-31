@@ -1,6 +1,6 @@
-export type InputsEvent = "keyboard/init" | "gamepad/init";
+import type { AnySettingKey, SettingsCategory } from "#types/settings";
 
-export type LanguageEvent = "language/change";
+export type InputsEvent = "keyboard/init" | "gamepad/init";
 
 export type SettingsEvent = "settings/update/success" | "settings/update/failed" | "settings/saved";
 
@@ -10,3 +10,13 @@ export type TouchControlsEvent =
   | "touchControls/move/save"
   | "touchControls/move/cancel"
   | "touchControls/move/reset";
+
+export type AnyEvent = InputsEvent | SettingsEvent | TouchControlsEvent;
+
+export interface SettingsUpdateEventArgs {
+  category: SettingsCategory;
+  key: AnySettingKey;
+  value: string | number | boolean;
+}
+
+export type EventCallbackFn<D> = (data: D) => void;

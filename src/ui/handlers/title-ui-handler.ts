@@ -12,7 +12,7 @@ import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { version } from "#package.json";
 import { settings } from "#system/settings-manager";
-import type { SettingsUpdateEventArgs } from "#types/settings";
+import type { SettingsUpdateEventArgs } from "#types/event-bus-types";
 import { TimedEventDisplay } from "#ui/event-display";
 import { OptionSelectUiHandler } from "#ui/option-select-ui-handler";
 import { addTextObject } from "#ui/text";
