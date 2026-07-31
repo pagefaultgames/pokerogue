@@ -1,4 +1,3 @@
-import { eventBus } from "#app/event-bus";
 import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
 import { TextStyle } from "#enums/text-style";
@@ -456,7 +455,7 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
           globalScene.ui.setOverlayMode(UiMode.CONFIRM, confirmUpdateSetting, cancelUpdateSetting, null, null, 1, 750);
         });
       } else {
-        this.handleSaveSetting<typeof value>(uiItem, value);
+        this.handleSaveSetting(uiItem, value);
       }
     }
 
@@ -537,21 +536,8 @@ export class BaseSettingsUiHandler extends MessageUiHandler {
     this.optionValueLabels[settingIndex][optionIndex].setText(newLabel);
   }
 
-  private handleSaveSetting<V = any>(uiItem: SettingsUiItem, newValue: V): void {
+  protected handleSaveSetting<V = any>(uiItem: SettingsUiItem, newValue: V): void {
     const { key, requiresReload } = uiItem;
-
-    if (this.category === "display" && key === "language") {
-      eventBus.emit("language/change", newValue);
-      return;
-    }
-
-    if (this.category === "general" && uiItem.key === "moveTouchControls") {
-      eventBus.emit("touchControls/move/start");
-      eventBus.once("touchControls/move/end", () => {
-        this.setOptionCursor(-1, 0, false);
-      });
-      return;
-    }
 
     if (requiresReload) {
       if (this.canLoseProgress()) {

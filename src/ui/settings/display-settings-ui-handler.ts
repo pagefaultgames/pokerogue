@@ -1,8 +1,8 @@
-import { eventBus } from "#app/event-bus";
 import { globalScene } from "#app/global-scene";
 import { LANGUAGE_MAX_OPTIONS } from "#constants/app-constants";
 import { UiMode } from "#enums/ui-mode";
 import { SUPPORTED_LANGUAGE_ENTRIES, type SupportedLanguage } from "#system/supported-languages";
+import type { DisplaySettingsKey, SettingsUiItem } from "#types/settings";
 import type { OptionSelectItem } from "#types/ui-types";
 import { BaseSettingsUiHandler } from "#ui/base-settings-ui-handler";
 import { displaySettingUiItems } from "#ui/settings-ui-items";
@@ -11,36 +11,48 @@ import i18next from "i18next";
 export class SettingsDisplayUiHandler extends BaseSettingsUiHandler {
   constructor() {
     super("display", displaySettingUiItems);
+  }
 
-    eventBus.on("language/change", () => {
-      const options: OptionSelectItem[] = [];
+  protected override handleSaveSetting<V = any>(uiItem: SettingsUiItem<DisplaySettingsKey>, newValue: V): void {
+    if (uiItem.key === "language" && newValue) {
+      this.displayLanguageOptions();
+      return;
+    }
 
-      for (const [lang, props] of Object.entries(SUPPORTED_LANGUAGE_ENTRIES)) {
-        const label = props.label;
-        const handler = (): boolean => {
-          if (this.canLoseProgress()) {
-            this.showConfirm(
-              i18next.t("menuUiHandler:losingProgressionWarning"),
-              () => this.changeLanguageHandler(lang, label),
-              () => this.cancelLanguageChangeHandler(),
-            );
-            return true;
-          }
-          return this.changeLanguageHandler(lang, label);
-        };
+    super.handleSaveSetting(uiItem, newValue);
+  }
 
-        options.push({ label, handler });
+  private displayLanguageOptions(): void {
+    const options: OptionSelectItem[] = [];
+
+    for (const [lang, props] of Object.entries(SUPPORTED_LANGUAGE_ENTRIES)) {
+      if (lang === i18next.resolvedLanguage) {
+        continue;
       }
 
-      options.push({
-        label: i18next.t("settings:back"),
-        handler: () => {
-          return this.cancelLanguageChangeHandler();
-        },
-      });
+      const label = props.label;
 
-      globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, { options, maxOptions: LANGUAGE_MAX_OPTIONS });
+      const handler = (): boolean => {
+        if (this.canLoseProgress()) {
+          this.showConfirm(
+            i18next.t("menuUiHandler:losingProgressionWarning"),
+            () => this.changeLanguageHandler(lang, label),
+            () => this.cancelLanguageChangeHandler(),
+          );
+          return true;
+        }
+        return this.changeLanguageHandler(lang, label);
+      };
+
+      options.push({ label, handler });
+    }
+
+    options.push({
+      label: i18next.t("settings:back"),
+      handler: () => this.cancelLanguageChangeHandler(),
     });
+
+    globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, { options, maxOptions: LANGUAGE_MAX_OPTIONS });
   }
 
   private cancelLanguageChangeHandler(): boolean {
@@ -50,10 +62,6 @@ export class SettingsDisplayUiHandler extends BaseSettingsUiHandler {
   }
 
   private changeLanguageHandler(lang: SupportedLanguage, label: string): boolean {
-    if (lang === i18next.resolvedLanguage) {
-      return this.cancelLanguageChangeHandler();
-    }
-
     i18next.changeLanguage(lang);
     this.setOptionCursor(0, 0);
     this.updateOptionValueLabel(0, 0, label);

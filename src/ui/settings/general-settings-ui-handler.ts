@@ -1,4 +1,6 @@
+import { eventBus } from "#app/event-bus";
 import { globalScene } from "#app/global-scene";
+import type { GeneralSettingsKey, SettingsUiItem } from "#types/settings";
 import { BaseSettingsUiHandler } from "#ui/base-settings-ui-handler";
 import { generalSettingsUiItems } from "#ui/settings-ui-items";
 import { hasTouchscreen, isLandscapeMode } from "#utils/app-utils";
@@ -19,6 +21,18 @@ export class GeneralSettingsUiHandler extends BaseSettingsUiHandler {
     this.updateMoveTouchControlsSettingsLabel();
 
     return ret;
+  }
+
+  protected override handleSaveSetting<V = any>(uiItem: SettingsUiItem<GeneralSettingsKey>, newValue: V): void {
+    if (uiItem.key === "moveTouchControls" && newValue) {
+      eventBus.emit("touchControls/move/start");
+      eventBus.once("touchControls/move/end", () => {
+        this.setOptionCursor(-1, 0, false);
+      });
+      return;
+    }
+
+    super.handleSaveSetting(uiItem, newValue);
   }
 
   private updateMoveTouchControlsSettingsLabel(): void {
