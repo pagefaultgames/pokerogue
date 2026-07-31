@@ -1261,15 +1261,15 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                         onHover: () => {
                           this.moveInfoOverlay.show(allMoves[moveId]);
                           if (level === 0) {
-                            this.showText(i18next.t("pokedexUiHandler:onlyEvolutionMove"));
+                            this.showText(i18next.t("pokedexUiHandler:onlyEvolutionMove"), 0);
                           } else if (level === -1) {
-                            this.showText(i18next.t("pokedexUiHandler:onlyRecallMove"));
+                            this.showText(i18next.t("pokedexUiHandler:onlyRecallMove"), 0);
                           } else if (level <= 5) {
-                            this.showText(i18next.t("pokedexUiHandler:onStarterSelectMove"));
+                            this.showText(i18next.t("pokedexUiHandler:onStarterSelectMove"), 0);
                           } else if (learnedViaPrevo) {
-                            this.showText(i18next.t("pokedexUiHandler:prevoRelearnMove", { level }));
+                            this.showText(i18next.t("pokedexUiHandler:prevoRelearnMove", { level }), 0);
                           } else {
-                            this.showText(i18next.t("pokedexUiHandler:byLevelUpMove"));
+                            this.showText(i18next.t("pokedexUiHandler:byLevelUpMove"), 0);
                           }
                         },
                       };
@@ -1401,8 +1401,9 @@ export class PokedexPageUiHandler extends MessageUiHandler {
                           this.showText(
                             i18next.t("pokedexUiHandler:tmMove", {
                               number: getTmNumber(moveId),
-                              tier: toTitleCase(ModifierTier[tmPoolTiers[moveId]]), // TODO: Replace with localized tier
+                              tier: i18next.t(`modifier:tier.${ModifierTier[tmPoolTiers[moveId]].toLowerCase()}`),
                             }),
+                            0,
                           );
                         },
                       };
