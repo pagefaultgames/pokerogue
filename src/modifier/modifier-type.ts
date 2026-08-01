@@ -1303,7 +1303,13 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
           // Account for variable type changing moves
           // Get a variable type attribute of the move
           const variableTypeAttr = move.getAttrs("VariableMoveTypeAttr")[0];
-          const types = variableTypeAttr?.getTypesForItemSpawn(p, move) ?? [move.type];
+          let types: PokemonType[] = [];
+          if (variableTypeAttr) {
+            types = variableTypeAttr.getTypesForItemSpawn(p, move);
+          } else {
+            types = p.getMoveTypeForItemSpawn(move);
+          }
+          p.getMoveType;
           for (const type of types) {
             const currentWeight = attackMoveTypeWeights.get(type) ?? 0;
             if (currentWeight < 3) {
