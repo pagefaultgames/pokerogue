@@ -30,6 +30,7 @@ import {
   LEVEL_BASED_DENYLIST_THRESHOLD,
   MOVE_POWER_CEILING,
   RARE_EGG_MOVE_LEVEL_REQUIREMENT,
+  RELEARN_LEVEL_REQUIREMENT,
   RELEARN_MOVE_WEIGHT,
   STAB_BLACKLIST,
   ULTRA_TIER_TM_LEVEL_REQUIREMENT,
@@ -122,7 +123,8 @@ function getAndWeightLevelMoves(pokemon: Pokemon): Map<MoveId, number> {
         }
         break;
       case RELEARN_MOVE:
-        weight = hasTrainer ? RELEARN_MOVE_WEIGHT : 0;
+        weight = hasTrainer && level >= RELEARN_LEVEL_REQUIREMENT ? RELEARN_MOVE_WEIGHT : 0;
+        break;
     }
 
     movePool.set(id, weight);
