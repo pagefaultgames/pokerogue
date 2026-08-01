@@ -1,6 +1,5 @@
 import { applyAbAttrs } from "#abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import type { Weather } from "#data/weather";
 import { getWeatherAnim, getWeatherDamageMessage, getWeatherLapseMessage } from "#data/weather";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { HitResult } from "#enums/hit-result";
@@ -12,21 +11,12 @@ import { ValueHolder } from "#utils/value-holder";
 export class WeatherEffectPhase extends CommonAnimPhase {
   public readonly phaseName = "WeatherEffectPhase";
 
-  // TODO: is this field even necessary? it's immediately updated in `start()`
-  // so the stored value from the constructor is never used
-  public weather: Weather | null;
-
   constructor() {
     super(undefined, undefined, getWeatherAnim(globalScene.arena.weatherType));
-
-    this.weather = globalScene.arena.weather;
   }
 
   public override start(): void {
-    // Update weather state with any changes that occurred during the turn
-    this.weather = globalScene.arena.weather;
-    // buffer const used so TS actually understands the `null` guard
-    const weather = this.weather;
+    const weather = globalScene.arena.weather;
 
     if (!weather) {
       this.end();
