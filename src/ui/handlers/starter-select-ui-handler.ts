@@ -77,7 +77,7 @@ import {
   truncateString,
 } from "#utils/common";
 import { deepCopy, loadStarterPreferences, saveStarterPreferences } from "#utils/data";
-import { getDexNumber, getPokemonSpeciesForm, getPokerusStarters } from "#utils/pokemon-utils";
+import { getDexNumber, getPokerusStarters } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import i18next from "i18next";
 import type { GameObjects } from "phaser";
@@ -1844,7 +1844,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           const teraType = this.teraCursor;
           const moveset = this.starterMoveset?.slice(0) as StarterMoveset;
           const starterCost = globalScene.gameData.getSpeciesStarterValue(randomSpecies.speciesId);
-          const speciesForm = getPokemonSpeciesForm(randomSpecies.speciesId, props.formIndex);
+          const speciesForm = speciesDataRegistry.getPokemonSpeciesForm(randomSpecies.speciesId, props.formIndex);
           // Load assets and add to party
           speciesForm.loadAssets(props.female, props.formIndex, props.shiny, props.variant, true).then(() => {
             if (this.tryUpdateValue(starterCost, true)) {
@@ -2623,7 +2623,10 @@ export class StarterSelectUiHandler extends MessageUiHandler {
             break;
           case Button.CYCLE_TERA:
             if (this.canCycleTera) {
-              const speciesForm = getPokemonSpeciesForm(this.lastSpecies.speciesId, starterAttributes.form ?? 0);
+              const speciesForm = speciesDataRegistry.getPokemonSpeciesForm(
+                this.lastSpecies.speciesId,
+                starterAttributes.form ?? 0,
+              );
               if (speciesForm.type1 === this.teraCursor && speciesForm.type2 != null) {
                 starterAttributes.tera = speciesForm.type2;
                 originalStarterAttributes.tera = starterAttributes.tera;
@@ -2852,7 +2855,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
     this.starters.push(starter);
     this.starterSpecies.push(species);
     if (this.speciesLoaded.get(species.speciesId) || randomSelection) {
-      getPokemonSpeciesForm(species.speciesId, props.formIndex).cry();
+      speciesDataRegistry.getPokemonSpeciesForm(species.speciesId, props.formIndex).cry();
     }
     this.updateInstructions();
   }
@@ -3778,7 +3781,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           this.updateSelectedStarterMoveset(species.speciesId);
         }
 
-        const speciesForm = getPokemonSpeciesForm(species.speciesId, props.formIndex);
+        const speciesForm = speciesDataRegistry.getPokemonSpeciesForm(species.speciesId, props.formIndex);
         this.setTypeIcons(speciesForm.type1, speciesForm.type2);
 
         this.pokemonSprite.clearTint();
@@ -4082,7 +4085,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
         this.canCycleTera =
           !this.statsMode
           && this.allowTera
-          && getPokemonSpeciesForm(species.speciesId, formIndex ?? 0).type2 != null
+          && speciesDataRegistry.getPokemonSpeciesForm(species.speciesId, formIndex ?? 0).type2 != null
           && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
       }
 
@@ -4217,7 +4220,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
           return this.starterMoveset?.indexOf(move) === i;
         }) as StarterMoveset;
 
-        const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex!); // TODO: is the bang correct?
+        const speciesForm = speciesDataRegistry.getPokemonSpeciesForm(species.speciesId, formIndex!); // TODO: is the bang correct?
         const formText = species.getFormNameToDisplay(formIndex);
         this.pokemonFormText.setText(formText);
 
@@ -4667,7 +4670,7 @@ export class StarterSelectUiHandler extends MessageUiHandler {
       this.canCycleTera =
         !this.statsMode
         && this.allowTera
-        && getPokemonSpeciesForm(this.lastSpecies.speciesId, formIndex ?? 0).type2 != null
+        && speciesDataRegistry.getPokemonSpeciesForm(this.lastSpecies.speciesId, formIndex ?? 0).type2 != null
         && !globalScene.gameMode.hasChallenge(Challenges.FRESH_START);
       this.updateInstructions();
     }

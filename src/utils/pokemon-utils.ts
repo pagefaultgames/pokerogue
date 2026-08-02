@@ -2,7 +2,7 @@ import { MAX_TERAS_PER_ARENA } from "#app/constants";
 import { globalScene } from "#app/global-scene";
 import { speciesDataRegistry } from "#app/global-species-data-registry";
 import { POKERUS_STARTER_COUNT } from "#balance/starters";
-import type { PokemonSpecies, PokemonSpeciesForm } from "#data/pokemon-species";
+import type { PokemonSpecies } from "#data/pokemon-species";
 import { BattlerIndex } from "#enums/battler-index";
 import { MAX_REGULAR_POKEMON_TYPE, MIN_REGULAR_POKEMON_TYPE, type RegularPokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
@@ -114,15 +114,6 @@ export function getFusedSpeciesName(speciesAName: string, speciesBName: string):
   }
 
   return `${speciesAPrefix || speciesBPrefix}${fragA}${fragB}${speciesBSuffix || speciesASuffix}`;
-}
-
-export function getPokemonSpeciesForm(species: SpeciesId, formIndex: number): PokemonSpeciesForm {
-  const retSpecies: PokemonSpecies = speciesDataRegistry.getSpecies(species);
-
-  if (formIndex < retSpecies.forms.length) {
-    return retSpecies.forms[formIndex];
-  }
-  return retSpecies;
 }
 
 /**

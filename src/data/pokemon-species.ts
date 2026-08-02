@@ -28,7 +28,6 @@ import type { StarterMoveset } from "#types/save-data";
 import type { EvolutionLevel, EvolutionLevelWithThreshold } from "#types/species-gen-types";
 import { argbFromRgba, rgbaFromArgb } from "#utils/color-utils";
 import { randSeedFloat } from "#utils/common";
-import { getPokemonSpeciesForm } from "#utils/pokemon-utils";
 import { toCamelCase, toPascalCase } from "#utils/strings";
 import { QuantizerCelebi } from "@material/material-color-utilities";
 import i18next from "i18next";
@@ -452,7 +451,7 @@ export abstract class PokemonSpeciesForm {
 
     const replacementSpecies = timedEventManager.getEventPokemonSpriteReplacement(this.speciesId, formIndex);
     const generation = replacementSpecies
-      ? getPokemonSpeciesForm(replacementSpecies.speciesId, replacementSpecies.formIndex).generation
+      ? speciesDataRegistry.getPokemonSpeciesForm(replacementSpecies.speciesId, replacementSpecies.formIndex).generation
       : this.generation;
     return `pokemon_icons_${generation}${isVariant ? "v" : ""}`;
   }
@@ -506,9 +505,9 @@ export abstract class PokemonSpeciesForm {
 
     let formSpriteKey = this.getFormSpriteKey(formIndex);
     if (replacement) {
-      formSpriteKey = getPokemonSpeciesForm(replacement.speciesId, replacement.formIndex).getFormSpriteKey(
-        replacement.formIndex,
-      );
+      formSpriteKey = speciesDataRegistry
+        .getPokemonSpeciesForm(replacement.speciesId, replacement.formIndex)
+        .getFormSpriteKey(replacement.formIndex);
     }
     if (formSpriteKey) {
       switch (this.speciesId) {

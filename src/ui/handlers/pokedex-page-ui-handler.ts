@@ -61,7 +61,7 @@ import { addWindow } from "#ui/ui-theme";
 import { argbFromRgba, rgbHexToRgba } from "#utils/color-utils";
 import { BooleanHolder, getLocalizedSpriteKey, padInt } from "#utils/common";
 import { enumValueToKey, getEnumValues } from "#utils/enums";
-import { getDexNumber, getPokemonSpeciesForm } from "#utils/pokemon-utils";
+import { getDexNumber } from "#utils/pokemon-utils";
 import { toCamelCase, toTitleCase } from "#utils/strings";
 import type { ValueHolder } from "#utils/value-holder";
 import i18next from "i18next";
@@ -2754,7 +2754,7 @@ export class PokedexPageUiHandler extends MessageUiHandler {
 
       // Setting type icons and form text
       if (isFormCaught || isFormSeen) {
-        const speciesForm = getPokemonSpeciesForm(species.speciesId, formIndex!); // TODO: is the bang correct?
+        const speciesForm = speciesDataRegistry.getPokemonSpeciesForm(species.speciesId, formIndex!); // TODO: is the bang correct?
         this.setTypeIcons(speciesForm.type1, speciesForm.type2);
         // TODO: change this once forms are refactored
         if (normalForm.includes(species.speciesId) && !formIndex) {
